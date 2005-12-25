@@ -19,7 +19,7 @@ sub render_widget {
 
     Jifty->web->mason->out( <<"EOF");
     <script type="text/javascript"><!--
-        onLoadHook('createCalendarLink("@{[$self->input_name]}")');
+        onLoadHook('createCalendarLink("@{[$self->element_id]}")');
     --></script>
 EOF
     
