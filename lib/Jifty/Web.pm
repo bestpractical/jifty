@@ -802,7 +802,12 @@ sub tangent {
     } else {
         $clickable->state_variable( $_ => $self->{'state_variables'}{$_} )
             for keys %{ $self->{'state_variables'} };
-        Jifty->web->mason->redirect( $clickable->complete_url );
+
+        my $request = Jifty::Request->new(path => Jifty->web->request->path)
+          ->from_webform($clickable->get_parameters);
+        Jifty->web->_internal_request($request);
+
+        
     }
 }
 
