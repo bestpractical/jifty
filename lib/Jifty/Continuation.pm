@@ -165,7 +165,7 @@ sub call {
                                             notes => $self->notes,
                                             code => $self->code,
                                            );
-        $next->request->continuation(Jifty->web->session->continuation($next->parent))
+        $next->request->continuation(Jifty->web->session->get_continuation($next->parent))
           if defined $next->parent;
 
         # Redirect to right page if we're not there already

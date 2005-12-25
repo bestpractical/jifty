@@ -4,13 +4,12 @@ use strict;
 package Jifty::Web::Session;
 use base qw/Jifty::Object Class::Accessor/;
 use Cache::FileCache;
+use Digest::MD5;
+use CGI::Cookie;
 
-use vars qw/$CACHE/;
-$CACHE = Cache::FileCache->new();
+# We don't use Class::Accessor as we want to do our own 'set' and 'get' here
+#__PACKAGE__->mk_accessors(qw(_session));
 
-sub _cache {
-    return $CACHE;
-}
 
 
 
@@ -23,19 +22,62 @@ Load up the current session from a cookie
 
 sub load {
     my $self = shift;
-    $self->set_cookie();
+
+    my $m    = Jifty->web->mason;
+    return
+        if $m
+        && $m->is_subrequest;    # avoid reentrancy, as suggested by masonbook
+    my $session_class = 'Apache::Session::File';
+    my $pm            = "$session_class.pm";
+    $pm =~ s|::|/|g;
+    require $pm;
+
+    my %cookies       = CGI::Cookie->fetch();
+    my $cookiename = $self->cookie_name;
+    my $session_id =  $cookies{$cookiename} ? $cookies{$cookiename}->value() : undef;
+    
+    
+    $Storable::Deparse = 1;
+    $Storable::Eval    = 1;
+    my %session;
+
+    eval {
+        tie %session, $session_class,
+            ( $session_id ? $session_id : '12' ),
+            {
+            Directory     => '/tmp',
+            LockDirectory => '/tmp'
+            };
+    };
+
+    if ($@) {
+
+        # If the session is invalid, create a new session.
+        if ( $@ =~ /Object does not/i ) {
+            tie %session, $session_class, undef,
+                {
+                Directory     => '/tmp',
+                LockDirectory => '/tmp'
+                };
+            undef $cookies{$self->cookie_name};
+        } else {
+            $self->log->fatal( "Couldn't store your session:\n", $@ );
+            return;
+        }
+    }
+
+    $self->_session( tied(%session) );
+
 
 }
 
-=head2 session_hashref
 
-Returns a hashref of all the keys in this session
 
-=cut
 
-sub session_hashref {
-        my $self = shift;
-    return $self->_cache->get($self->session_id);
+sub _session {
+    my $self = shift;
+    $self->{'_session'} = shift if (@_);
+    return ($self->{'_session'});
 }
 
 =head2 get KEY
@@ -47,7 +89,7 @@ Returns the value for C<KEY> for the current user's session
 sub get {
     my $self = shift;
     my $key = shift;
-    return(($self->session_hashref||{})->{$key});
+    return($self->_session ? $self->_session->FETCH($key) : undef);
 
 }
 
@@ -63,9 +105,7 @@ sub set {
     my $key = shift;
     my $value = shift;
 
-    my $cache = $self->session_hashref();
-    $cache->{$key} = $value;
-    $self->_cache->set($self->session_id => $cache);
+    ($self->_session ? $self->_session->STORE($key => $value) : undef);
 
 }
 
@@ -143,39 +183,8 @@ sub continuations {
 }
 
 
-=head2 session_id
-
-Returns the JIFTY_SID_C<PORTNUM>.
-
-=cut
-
-sub session_id {
-    my $self = shift;
-    return $self->{_session_id} if ($self->{_session_id});
-    my %cookies       = CGI::Cookie->fetch();
-    my $cookiename = $self->cookie_name;
-    my $session_id =  $cookies{$cookiename} ? $cookies{$cookiename}->value() : $self->new_session_id;
-    $self->{_session_id} = $session_id;
-    return ($session_id);
-}
 
 
-
-=head2 new_session_id
-
-Get a new session id, stuff it in a cookie and send it to the browser
-
-=cut
-
-sub new_session_id { 
-    my $self = shift;
-    my $digest = Digest::MD5->new();
-    $digest->add( Jifty->web->serial);
-    $digest->add($$);
-    $digest->add(rand(10));
-    
-    return ($digest->b64digest);
-}
 
 =head2 set_cookie
 
@@ -189,11 +198,13 @@ sub set_cookie {
 
     my $cookie_name = $self->cookie_name;
     my %cookies    = CGI::Cookie->fetch();
+                my $session_id =  $cookies{$cookie_name} ? $cookies{$cookie_name}->value() : undef;
+
     if (   ( !$cookies{$cookie_name} ) or ( $self->expires  xor $cookies{$cookie_name}->expires ) ) {   
         my $cookie = new CGI::Cookie(
             -name    => $cookie_name,
-            -value   => $self->session_id,
-            -expires => $self->expires,
+            -value   => $self->get('_session_id'),
+            -expires => $self->get('_expires'),
         );
 
         # XXX TODO might need to change under mod_perl
@@ -224,8 +235,11 @@ Return this cache entry's expirey date, in the format expected by Cache::Cache;
 
 sub expires {
         my $self = shift;
-        $self->{'_expires'} = shift if (@_);
-        return ($self->{'_expires'} || '');
+        if(@_) {
+                my $expiry = shift;
+        $self->set('_expires' => $expiry);
+    }
+        return ($self->get('_expires'));
 }
 
 

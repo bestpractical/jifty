@@ -35,6 +35,7 @@ Creates a new C<Jifty::Web> object
 sub new {
     my $class = shift;
     my $self = bless {}, $class;
+    $self->session(Jifty::Web::Session->new());
     return ($self);
 }
 
@@ -102,7 +103,11 @@ Sets up the current C<session> object (an L<Jifty::Web::Session> tied hash).
 # Create the Jifty::Web::Session object
 sub setup_session {
     my $self = shift;
-    $self->session(Jifty::Web::Session->new());
+    my $m = Jifty->web->mason;
+        return
+                if $m
+                        && $m->is_subrequest;    # avoid reentrancy, as suggested by masonbook
+
     $self->session->load();
 }
 
@@ -135,9 +140,14 @@ sub current_user {
         my $user = shift;
          $self->session->set('user' => $user);
     }
-    return $self->temporary_current_user
-        || ($self->session ? $self->session->get('user') : undef)
-        || Jifty::CurrentUser->new();
+    if ($self->temporary_current_user) {
+        return $self->temporary_current_user;
+    } elsif ($self->session->get('user')) {
+        return $self->session->get('user');
+    }
+    else {
+        return Jifty::CurrentUser->new();
+    }
 }
 
 =head3 temporary_current_user [USER]
@@ -224,6 +234,7 @@ sub _internal_request {
             }
         }
     }
+    $self->session->set_cookie;
 
     $self->request->call_continuation
         if $self->response->success;

@@ -4,6 +4,7 @@ name('Jifty');
 requires(perl => '5.8.3');
 requires('Apache::Session');
 requires('App::CLI'); # App::CLI::Command
+requires('Cache::Cache'); #Cache::FileCache
 requires('CGI::Cookie');
 requires('CGI');                   # CGI::Fast
 requires('Class::Accessor');

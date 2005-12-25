@@ -1,11 +1,12 @@
 name: Jifty
-version: 0.1133680401
+version: 0.1133844404
 license: unknown
 distribution_type: module
 requires:
   perl: 5.8.3
   Apache::Session: 0
   App::CLI: 0
+  Cache::Cache: 0
   CGI::Cookie: 0
   CGI: 0
   Class::Accessor: 0
@@ -55,4 +56,4 @@ requires:
 no_index:
   directory:
     - inc
-generated_by: Module::Install version 0.390
+generated_by: Module::Install version 0.370
