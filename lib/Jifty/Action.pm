@@ -34,7 +34,7 @@ sub new {
     my $class = shift;
     my $self = bless {}, $class;
     my %args = (
-        moniker    => 'random-moniker-'.int(rand(99999)),
+        moniker    => 'random-moniker-'.Jifty->serial(),
         order      => undef,
         arguments  => {},
         @_);
