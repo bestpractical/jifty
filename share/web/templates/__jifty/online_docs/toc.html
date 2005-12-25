@@ -13,7 +13,6 @@ a:focus { background: #99ff99; border: 1px black dotted }
 <body style="background: #dddddd">
 <%PERL>
 my @found;
-my $app_dirname = Jifty::Util->app_root ."/lib";
 File::Find::find(
     { untaint => 1,
       wanted => sub {
@@ -24,7 +23,7 @@ File::Find::find(
         $name =~ s!\W!::!g;
         push @found, $name;
     },follow => ($^O ne 'MSWin32') },
-    $app_dirname,
+    Jifty::Util->app_root ."/lib",
 );
 
 File::Find::find(
@@ -39,8 +38,6 @@ File::Find::find(
     },follow => ($^O ne 'MSWin32') },
     Jifty::Util->jifty_root,
 );
-
-
 
 my $indent = 0;
 my $prev = '';
