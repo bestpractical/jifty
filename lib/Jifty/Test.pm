@@ -123,7 +123,7 @@ sub setup_mailbox {
 
 =head2 is_available
 
-Informs L<Email::Send> that L<BTDT::Test> is always available as a mailer.
+Informs L<Email::Send> that L<Jifty::Test> is always available as a mailer.
 
 =cut
 
@@ -132,7 +132,7 @@ sub is_available { 1 }
 =head2 send
 
 Should not be called manually, but is
-automatically called by L<Email::Send> when using L<BTDT::Test> as a mailer.
+automatically called by L<Email::Send> when using L<Jifty::Test> as a mailer.
 
 (Note that it is a class method.)
 
