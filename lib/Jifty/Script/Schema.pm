@@ -28,7 +28,7 @@ sub run {
     $self->check_usage();
     $self->setup_environment();
     $self->probe_database_existence();
-    $self->manage_database_existence() if ($self->{create_database} or $self->{drop_database});
+    $self->manage_database_existence();
     $self->setup_jifty_stuff();
     if ( $self->{create_all_tables} ) {
         $self->create_all_tables();
@@ -197,7 +197,6 @@ sub upgrade_tables {
 
     my $schema = Jifty::Model::Schema->new;
     my $log    = Log::Log4perl->get_logger("SchemaTool");
-
     # Find current versions
     my $dbv = $schema->in_db;
     my $appv
@@ -250,9 +249,7 @@ sub upgrade_tables {
 
             # Go through the columns
             for my $column ( $model->columns ) {
-                next
-                    if defined $column->refers_to
-                    and defined $column->by;
+                next if $column->virtual;
 
                 # If they're old, drop them
                 if (    defined $column->until
