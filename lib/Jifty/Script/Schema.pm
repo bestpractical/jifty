@@ -23,17 +23,15 @@ sub options {
 
 sub run {
     my $self = shift;
-
     my $docs = \*DATA;
 
     # Option handling
-    pod2usage( -exitval => 1, -input => $docs ) if $self->{help};
+    pod2usage( -exitval => 1, -input => $docs ) if  $self->{help};
     pod2usage( -exitval => 0, -verbose => 2, -input => $docs )
-        if $self->{man};
+        if  $self->{man};
 
     pod2usage("$0: Must specify exactly one of --install or --print!")
         unless $self->{install} xor $self->{print};
-
     # Default to current directory
     push @ARGV, "." unless @ARGV;
 

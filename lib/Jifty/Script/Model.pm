@@ -1,5 +1,5 @@
-package Jifty::Generator::Model;
-use base 'Jifty::Generator';
+package Jifty::Script::Model;
+use base 'Jifty::Script';
 
 sub options {
         ($_[0]->SUPER::options,

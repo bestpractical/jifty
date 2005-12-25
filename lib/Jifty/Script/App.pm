@@ -1,5 +1,5 @@
-package Jifty::Generator::App;
-use base 'Jifty::Generator::Command';
+package Jifty::Script::App;
+use base 'Jifty::Script::Command';
 
 use YAML;
 

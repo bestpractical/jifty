@@ -1,8 +1,9 @@
 use inc::Module::Install;
 name('Jifty');
 # this is a dev version, CPAN.pm will not install by default
+requires(perl => '5.8.3');
 requires('Apache::Session');
-requires('App::CLI');
+requires('App::CLI'); # App::CLI::Command
 requires('CGI::Cookie');
 requires('CGI');                   # CGI::Fast
 requires('Class::Accessor');
@@ -31,6 +32,7 @@ requires('Hash::Merge');
 requires('Hook::LexWrap');
 requires('Jifty::DBI');            # Jifty::DBI::Collection Jifty::DBI::Handle Jifty::DBI::Record::Cachable Jifty::DBI::SchemaGenerator
 requires('Log::Log4perl');
+requires('Locale::Maketext::Simple');
 requires('Module::Pluggable' => '2.95');
 requires('Module::Refresh');
 requires('Pod::Usage');
@@ -47,5 +49,6 @@ requires('WWW::Mechanize' => 1.12);
 requires('XML::XPath');
 requires('YAML');
 version('0.'.time());
-&auto_install;
+#&auto_bundle_deps();
+
 &WriteAll;
