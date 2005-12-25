@@ -1,34 +1,31 @@
 <%init>
 
-    # Set up application-specific parts
-    my $ApplicationClass = Jifty->config->framework('ApplicationClass');
-    # This creates a sub "models" which when called, finds packages under
-    # $ApplicationClass::Model, requires them, and returns a list of their
-    # names.
-       
+# Set up application-specific parts
+my $ApplicationClass = Jifty->config->framework('ApplicationClass');
 
-        my @models;   
+my @models;   
 
-    Module::Pluggable->import(
-        require     => 1,
-        search_path => [  $ApplicationClass . "::Model" ],
-        sub_name    => 'jifty_app_models',
-    );
+# This creates a sub "jifty_app_models" which when called, finds packages under
+# $ApplicationClass::Model, requires them, and returns a list of their
+# names.
+Module::Pluggable->import(
+    require     => 1,
+    search_path => [  $ApplicationClass . "::Model" ],
+    sub_name    => 'jifty_app_models',
+);
 
-        for my $model ( __PACKAGE__->jifty_app_models ) {
+for my $model ( __PACKAGE__->jifty_app_models ) {
 
-            # We don't want to get the Collections, or models that have a
-            # 'since' that is after the current application version.
+    # We don't want to get the Collections, or models that have a
+    # 'since' that is after the current application version.
 
-       # TODO XXX FIXME:
-       #   This *will* try to generate SQL for abstract base classes you might
-       #   stick in $AC::Model::.
-                next if not UNIVERSAL::isa( $model, 'Jifty::Record' );
-        push @models, $model
-
-
-        }
-
+    # TODO XXX FIXME:
+    #   This *will* try to generate SQL for abstract base classes you might
+    #   stick in $AC::Model::.
+    next if not UNIVERSAL::isa( $model, 'Jifty::Record' );
+    next if $model =~ /::SUPER$/;
+    push @models, $model;
+}
 
 </%init>
 <&|/_elements/wrapper, title => 'Jifty Administrative Console' &>
