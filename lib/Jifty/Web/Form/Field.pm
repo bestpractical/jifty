@@ -42,6 +42,7 @@ sub new {
         class         => '',
         input_name    => '',
         default_value => '',
+	render_mode   => 'update',
         @_,
     );
 
