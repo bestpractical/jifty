@@ -264,19 +264,10 @@ sub session {
 
     return undef unless $self->cookie_jar->as_string =~ /JIFTY_SID_\d+=([^;]+)/;
 
-    my %session;
-    require Apache::Session::File;
-    eval {
-        tie %session, 'Apache::Session::File',
-          $1,
-            {
-             Directory     => '/tmp',
-             LockDirectory => '/tmp'
-            };
-    };
-    return undef if $@;
-
-    return {%session};
+    my $session = Jifty::Web::Session->new;
+    $session->load($1);
+    $session->_session->release_all_locks();
+    return $session;
 }
 
 =head2 continuation [ID]
@@ -290,12 +281,12 @@ sub continuation {
     my $self = shift;
 
     my $session = $self->session;
-    return undef unless $session and $session->{continuations};
+    return undef unless $session;
     
     my $id = shift;
     ($id) = $self->uri =~ /J:C(?:ALL)?=([^&;]+)/ unless $id;
 
-    return $session->{continuations}{$id};
+    return $session->get_continuation($id);
 }
 
 1;

@@ -49,6 +49,7 @@ Load up the current session from a cookie
 
 sub load {
     my $self = shift;
+    my $session_id = shift;
 
     my $m    = Jifty->web->mason;
     return
@@ -57,10 +58,11 @@ sub load {
     
     require Apache::Session::File;
     
-
-    my %cookies       = CGI::Cookie->fetch();
-    my $cookiename = $self->cookie_name;
-    my $session_id =  $cookies{$cookiename} ? $cookies{$cookiename}->value() : undef;
+    unless ($session_id) {
+        my %cookies    = CGI::Cookie->fetch();
+        my $cookiename = $self->cookie_name;
+        $session_id    =  $cookies{$cookiename} ? $cookies{$cookiename}->value() : undef;
+    }
     
     $Storable::Deparse = 1;
     $Storable::Eval    = 1;
@@ -79,8 +81,6 @@ sub load {
                  Directory     => '/tmp',
                  LockDirectory => '/tmp',
                 };
-
-        undef $cookies{$self->cookie_name};
     }
 
     $self->_session( tied(%session) );

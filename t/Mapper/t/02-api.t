@@ -30,7 +30,7 @@ $mech->content_like(qr/Get the holy grail/, "Start page has expected content");
 $mech->content_unlike(qr/got the grail/, "Start page doesn't have output of run action");
 
 # ..and that the action does what we think it does
-$mech->get("$URL/index.html?J:A-grail=Continuations::Action::GetGrail");
+$mech->get("$URL/index.html?J:A-grail=GetGrail");
 $mech->content_like(qr/got the grail/, "Running the action produces the expected result");
 
 

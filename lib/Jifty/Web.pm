@@ -193,7 +193,18 @@ sub handle_request {
     #$self->log->debug( "Handling " . $ENV{'REQUEST_URI'} );
     $self->setup_session;
     $self->response( Jifty::Response->new ) unless $self->response;
-    $self->_internal_request( Jifty::Request->new->from_mason_args );
+
+    # We local the request if we have one right now -- for mason
+    # subrequests, for instance, we want to make sure we get back the
+    # original request after the subrequest ends.  If this is *not* a
+    # subrequest, than we want to *not* local it, so that the mason
+    # components have access to the outermost request
+    if ($self->request) {
+        local $self->{request};
+        $self->_internal_request( Jifty::Request->new->from_mason_args );
+    } else {
+        $self->_internal_request( Jifty::Request->new->from_mason_args );
+    }
 }
 
 # Called when continuations get run, as well as by handle_request;
