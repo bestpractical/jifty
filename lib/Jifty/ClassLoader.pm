@@ -89,7 +89,8 @@ sub require {
     Module::Pluggable->import(
         search_path =>
           [ $ActionBasePath, map { $ApplicationClass . "::" . $_ } 'Model', 'Action', 'Notification' ],
-        require => 1
+        require => 1,
+        inner => 0
     );
     $self->{models} = {map {($_ => 1)} grep {/^($ApplicationClass)::Model::([^:]+)$/ and not /Collection$/} $self->plugins};
     for my $full (keys %{$self->{models}}) {
