@@ -106,8 +106,9 @@ sub setup_jifty {
         @_
     );
 
-    $self->port( Jifty->config->framework('Web')->{'Port'}
-          || 8888 );
+    Jifty->config->framework('Web')->{'Port'} = $args{port} if $args{port};
+
+    $self->port( Jifty->config->framework('Web')->{'Port'} || 8888 );
 }
 
 =head2 handle_request

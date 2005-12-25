@@ -2,7 +2,7 @@ use warnings;
 use strict;
 
 package Jifty::Script::Schema;
-use base qw/Jifty::Script::Command/;
+use base qw/App::CLI::Command/;
 
 use Pod::Usage;
 use UNIVERSAL::require;
@@ -328,7 +328,7 @@ __DATA__
 
 =head1 NAME
 
-schema - Create SQL to update or create your Jifty app's tables
+Jifty::Script::Schema - Create SQL to update or create your Jifty app's tables
 
 =head1 SYNOPSIS
 

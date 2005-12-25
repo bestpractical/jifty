@@ -1,9 +1,8 @@
-#!/usr/bin/perl
 use warnings;
 use strict;
 
 package Jifty::Script::Server;
-use base qw/Jifty::Script::Command/;
+use base qw/App::CLI::Command/;
 
 use Jifty::Everything;
 use Jifty::Server;
@@ -15,23 +14,41 @@ Jifty::Script::Server - A standalone webserver for your Jifty application
 
 =head1 DESCRIPTION
 
-When you're getting started with Jifty, this is the server you want. It's lightweight
-    and easy to work with.
-
-
-=cut
-
+When you're getting started with Jifty, this is the server you
+want. It's lightweight and easy to work with.
 
 =head1 API
 
+=head2 options
+
+=over
+
+=item --port
+
+The port to run the server on.  This is overrides the port in the
+config file, if it is set there.  The default port is 8888.
+
+=back
+
+=cut
+
+sub options {
+    (
+     'p|port=s' => 'port',
+    )
+}
+
 =head2 run
 
-C<run> takes no arguments, but starts up a Jifty server process for you
+C<run> takes no arguments, but starts up a Jifty server process for
+you
 
 =cut
 
 sub run {
+    my $self = shift;
+    
     Jifty->new();
-    Jifty::Server->new()->run;
+    Jifty::Server->new(port => $self->{port})->run;
 }
 1;

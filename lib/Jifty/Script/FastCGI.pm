@@ -3,7 +3,7 @@ use warnings;
 
 
 package Jifty::Script::FastCGI;
-use base qw/Jifty::Script::Command/;
+use base qw/App::CLI::Command/;
 
 use File::Basename;
 use CGI::Fast;
