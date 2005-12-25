@@ -99,8 +99,9 @@ sub javascript {
                 @args{qw/mode path/} = ('Bottom', $hook->{append});
             } elsif (exists $hook->{prepend}) {
                 @args{qw/mode path/} = ('Top', $hook->{prepend});
-            } elsif (exists $hook->{refresh_self} and Jifty->web->current_region) {
-                @args{qw/mode path/} = ('Replace', Jifty->web->current_region->path);
+            } elsif ((exists $hook->{refresh_self} and Jifty->web->current_region) or $hook->{args}) {
+                # If we just pass arguments, treat as a refresh_self
+                 @args{qw/mode path/} = ('Replace', Jifty->web->current_region->path);
             } else {
                 # If we're not doing any of the above, skip this one
                 next;
