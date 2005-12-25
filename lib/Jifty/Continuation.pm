@@ -162,15 +162,15 @@ location.
 # TODO: Need better way of dealing with FROM
 sub return_location {
     my $self = shift;
-    my ($key, $value) = @_;
-    if ($key =~ /R-(.*?)-(.*)/) {
-        push @{$self->{return_locations}}, {return => $2, moniker => $1, destination => $value};
-    } elsif ($key =~ /A-(.*?)-(.*)/) {
-        push @{$self->{return_locations}}, {argument => $2, moniker => $1, destination => $value};
-    } elsif ($key =~ /A-(.*)/) {
-        push @{$self->{return_locations}}, {argument => $1, destination => $value};
-    } elsif (defined $key and length $key) {
-        push @{$self->{return_locations}}, {constant => $key, destination => $value};
+    my ($destination, $source) = @_;
+    if ($source =~ /R-(.*?)-(.*)/) {
+        push @{$self->{return_locations}}, {return => $2, moniker => $1, destination => $destination};
+    } elsif ($source =~ /A-(.*?)-(.*)/) {
+        push @{$self->{return_locations}}, {argument => $2, moniker => $1, destination => $destination};
+    } elsif ($source =~ /A-(.*)/) {
+        push @{$self->{return_locations}}, {argument => $1, destination => $destination};
+    } elsif (defined $source and length $source) {
+        push @{$self->{return_locations}}, {constant => $source, destination => $destination};
     }
 }
 
