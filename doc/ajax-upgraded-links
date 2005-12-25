@@ -1,0 +1,39 @@
+When I click "next page", 
+
+
+    If I don't have ajax, reload the whole page, with the changed helper parameters.
+
+
+        To reload the whole page, I'm going to need:
+
+            * All args to the current page.
+            * Which args should go away
+            * Which new args should be added.
+
+
+
+        Basically, this is 
+        
+            BASE PATH: framework->current_url
+            
+            PARAMS:  framework->current_request_args
+                with this_element->new_version_params replacing
+                      this_element->current_version_params
+                
+
+
+    if I have ajax, refetch the enclosing div, with the changed parameters.
+        To reload just that section of the page, I'm going to need:
+
+            * The path to the bit I want to replace.
+            * The name of the surrounding div to replace it with?
+            * The moniker? of the section to replace.
+            * The parameters I should pass to that section.
+             Are those the same as the things for the next-page link?
+
+
+        Basically, this would be: 
+        
+            BASE PATH this_element->direct_url (no params?)
+                  and replace  this_element->current_version_params
+                  with this_element->new_version_params
