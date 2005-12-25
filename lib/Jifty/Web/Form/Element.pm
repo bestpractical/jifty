@@ -81,27 +81,29 @@ sub javascript {
         my @hooks = ref $value eq "ARRAY" ? @{$value} : ($value);
         $response .= " $trigger=\"";
         for my $hook (@hooks) {
-            if ($hook->{submit}) {
-                my $moniker = ref $hook->{submit} ? $hook->{submit}->moniker : $hook->{submit};
-                $response .= qq!var a = new Action('@{[$moniker]}'); a.submit();!;
-            }
 
-            $response .= qq!update_region(!;
+            $response .= qq!update_region({!;
 
             # Region
-            $response .= qq!'@{[$hook->{region} || Jifty->framework->qualified_region]}'!;
+            $response .= qq!name: '@{[$hook->{region} || Jifty->framework->qualified_region]}'!;
+
+            # Submit action
+            if ($hook->{submit}) {
+                my $moniker = ref $hook->{submit} ? $hook->{submit}->moniker : $hook->{submit};
+                $response .= qq!, submit: '@{[$moniker]}'!;
+            }
 
             # Arguments
             my %these = ( %{$hook->{args} || {}});
-            $response .= qq!,{!;
+            $response .= qq!, args: {!;
             $response .= join(',', map {($a = $these{$_}) =~ s/'/\\'/g; "'$_':'$a'"} keys %these);
             $response .= qq!}!;
 
             # Fragment (optional)
-            $response .= qq!,'@{[$hook->{fragment}]}'!
+            $response .= qq!, fragment: '@{[$hook->{fragment}]}'!
               if $hook->{fragment};
 
-            $response .= qq!);!;
+            $response .= qq!});!;
         }
         $response .= "return false;\"";
     }
