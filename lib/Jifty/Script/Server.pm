@@ -21,14 +21,9 @@ want. It's lightweight and easy to work with.
 
 =head2 options
 
-=over
-
-=item --port
-
-The port to run the server on.  This is overrides the port in the
-config file, if it is set there.  The default port is 8888.
-
-=back
+The server takes only one option, C<--port>, the port to run the
+server on.  This is overrides the port in the config file, if it is
+set there.  The default port is 8888.
 
 =cut
 
@@ -41,7 +36,7 @@ sub options {
 =head2 run
 
 C<run> takes no arguments, but starts up a Jifty server process for
-you
+you.
 
 =cut
 

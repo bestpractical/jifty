@@ -13,7 +13,15 @@ Jifty::Script::App - Create the skeleton of a Jifty application
 
 =head1 DESCRIPTION
 
-If you want to create a Jifty application, 
+Creates a skeleton of a new Jifty application.  See
+L<Jifty::Manual::Tutorial> for an example of its use.
+
+=head2 options
+
+This script only takes one option, C<--name>, which is required; it is
+the name of the application to create.  Jifty will create a directory
+with that name, and place all of the files it creates inside that
+directory.
 
 =cut
 
@@ -22,6 +30,13 @@ sub options {
      'n|name=s' => 'name',
     )
 }
+
+=head2 run
+
+Create a directory for the application, a skeleton directory
+structure, and a C<Makefile.PL> for you application.
+
+=cut
 
 sub run {
     my $self = shift;
@@ -35,7 +50,7 @@ sub run {
     print("Creating new application ".$self->{name}."\n");
     mkdir($prefix);
 
-    foreach my $dir ($self->directories) {
+    foreach my $dir ($self->_directories) {
         $dir =~ s/__APP__/$modname/;
         print("Creating directory $dir\n");
         mkdir( "$prefix/$dir") or die "Can't create $prefix/$dir: $!";
@@ -60,7 +75,7 @@ EOT
     close MAKEFILE;
 }
 
-sub directories {
+sub _directories {
     return qw(
         bin
         etc

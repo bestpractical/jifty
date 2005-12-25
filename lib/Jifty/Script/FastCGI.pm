@@ -29,11 +29,11 @@ to call jifty a bit differently:
  FastCgiServer /path/to/your/jifty/app/bin/jifty -initial-env JIFTY_COMMAND=fastcgi
  ScriptAlias /  /path/to/your/jifty/app/bin/jifty/
 
+=head2 run
 
-
+Creates a new FastCGI process.
 
 =cut
-
  
 sub run {
     Jifty->new();

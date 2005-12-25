@@ -12,16 +12,26 @@ Jifty::Script::Model - Add a model class to your Jifty application
 
 =head1 DESCRIPTION
 
-
+This creates a skeleton of a new model class for your jifty
+application, complete with a skeleton of a test suite for it, as well.
 
 =head1 API
 
 =head2 options
 
+There are only two possible options to this script:
+
 =over
 
-=item --name
+=item --name NAME (required)
 
+Name of the model class.
+
+=item --force
+
+By default, this will stop and warn you if any of the files it is
+going to write already exist.  Passing the --force flag will make it
+overwrite the files.
 
 =back
 
@@ -121,12 +131,12 @@ is(\$collection->count, 1, "Still one left");
 
 EOT
 
-    $self->write("$root/lib/$appname/Model/$model.pm" => $modelFile,
-                 "$root/t/00-model-$model.t" => $testFile,
-                );
+    $self->_write("$root/lib/$appname/Model/$model.pm" => $modelFile,
+                  "$root/t/00-model-$model.t" => $testFile,
+                 );
 }
 
-sub mkpath {
+sub _mkpath {
     my $self = shift;
     my @parts = File::Spec->splitdir( shift );
     for (0..$#parts) {
@@ -137,7 +147,7 @@ sub mkpath {
     }
 } 
 
-sub write {
+sub _write {
     my $self = shift;
     my %files = (@_);
     my $halt;
@@ -145,24 +155,19 @@ sub write {
         my ($volume, $dir, $file) = File::Spec->splitpath($path);
 
         # Make sure the directories we need are there
-        $self->mkpath($dir);
+        $self->_mkpath($dir);
 
         # If it already exists, bail
-        if (-e $path) {
-            if ($self->{force}) {
-                print "File $path exists; overwriting\n";
-            } else {
-                print "File $path exists already;\nUse --force to overwrite\n";
-                $halt = 1;
-            }
-        } else {
-            print "Writing file $path\n";
+        if (-e $path and not $self->{force}) {
+            print "File $path exists already; Use --force to overwrite\n";
+            $halt = 11;
         }
     }
     exit if $halt;
     
     # Now that we've san-checked everything, we can write the files
     for my $path (keys %files) {
+        print "Writing file $path\n";
         # Actually write the file out
         open(FILE, ">$path")
           or die "Can't write to $path: $!";

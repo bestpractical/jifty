@@ -33,6 +33,11 @@ For example:
     # tcsh users
     setenv PAGER '/usr/bin/less'
 
+=head2 help_base
+
+Jifty's help system also looks in L<Jifty::Manual> and the
+subdirectories for any help commands that it can't find help for.
+
 =head1 AUTHOR
 
 Various folks at Best Practical Solutions, LLC.

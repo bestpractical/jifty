@@ -12,6 +12,7 @@ Jifty::Util - Things that don't fit anywhere else
 
 =cut
 
+use Jifty::Everything;
 use File::Spec;
 use File::ShareDir;
 use Cwd ();
