@@ -1,0 +1,26 @@
+<div id="salutation">
+% if (Jifty->web->current_user->id) {
+Hiya, <span class="user"><%Jifty->web->current_user->name%></span>.
+% }  else {
+You're not currently signed in. 
+% }
+</div>
+<ul class="menu">
+% $m->comp(".menu", item => $_) for (sort { $a->sort_order <=> $b->sort_order} Jifty->web->navigation->children);
+</ul>
+<%def .menu>
+<%args>
+$item
+</%args>
+  <li><% 
+    Jifty->web->link(
+        url   => $item->url,
+        label => $item->label,
+        class => $item->active ? "active" : ""
+    ) %></li>
+% if (my @kids = $item->children) {
+<ul class="menu submenu">
+% $m->comp(".menu", item => $_) for @kids;
+</ul>
+% }
+</%def>

@@ -35,6 +35,19 @@ sub absolute_path {
     return File::Spec->rel2abs($path, $root);
 } 
 
+=head2 jifty_root
+
+Returns the root directory that Jifty has been installed into.
+Uses %INC to figure out where Jifty.pm
+
+=cut
+
+sub jifty_root {
+    my $self = shift;
+    my ($vol,$dir,$file) = File::Spec->splitpath($INC{"Jifty.pm"}); 
+    return ($dir);   
+}
+
 
 =head1 AUTHOR
 

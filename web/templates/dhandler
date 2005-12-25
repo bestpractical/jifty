@@ -1,0 +1,47 @@
+<&| /_elements/wrapper, title => "Something's not quite right" &>
+
+<div id="overview">
+
+<p>You got to a page that we don't think exists.  Anyway, the software has logged this error. Sorry about this.</p>
+
+<p><%Jifty->web->link( url => "/", label => 'Go back home...')%></p>
+
+</div>
+</&>
+%# XXX TODO ACTUALLY LOG THIS.
+<%doc>
+Used as a poor man's 404 handler
+</%doc>
+<%init>
+
+# This code loads up any static file and displays it if it would 404 from dynamic content. Failing that, actually 404
+my $file = $m->dhandler_arg;
+my $type = "application/octet-stream";
+if ( $file =~ /\.(gif|png|jpe?g)$/i ) {
+    $type = "image/$1";
+    $type =~ s/jpg/jpeg/gi;
+} elsif ($file =~ /\.css$/i ) {
+    $type ='text/css';
+} elsif ($file =~ /\.js$/i) {
+    $type = 'application/x-javascript';
+}
+my $image = Jifty::Util->absolute_path( Jifty->config->framework('Web')->{'StaticRoot'}
+        || "static" )
+    . "/"
+    . $file;
+
+if ( ( -f $image && -r $image ) ) {
+    $r->header_out( 'Cache-Control' => 'max-age=3600, must-revalidate' );
+    $r->content_type($type);
+    open( FILE, "<$image" ) || die;
+    {
+        local $/ = \16384;
+        $m->out($_) while (<FILE>);
+        close(FILE);
+    }
+    $m->abort;
+}
+
+Jifty->log->error("404: user tried to get to ".$m->dhandler_arg);
+$r->header_out( Status => '404');
+</%init>

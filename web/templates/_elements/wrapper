@@ -1,0 +1,26 @@
+<& header, title => $title &>
+<body>
+  <div id="headers">
+    <%Jifty->web->link( url => "/", label => Jifty->config->framework('ApplicationName'))%>
+    <h1 class="title"><% $title %></h1>
+  </div>
+  <& sidebar &>
+  <div id="content">
+    <a name="content"></a>
+    <% Jifty->web->render_messages %>
+    <% $m->content |n%>
+    <div id="keybindings">
+       <script><!--
+       writeKeyBindingLegend();
+       --></script>
+    </div>
+  </div>
+  <div id="jifty-wait-message">Loading...</div>
+</body>
+</html>
+<%args>
+$title => ""
+</%args>
+<%init>
+$m->comp('/_elements/nav');
+</%init>
