@@ -1,0 +1,10 @@
+#!/usr/bin/perl -w
+use warnings;
+use strict;
+use JFDI::Generator;
+
+package main;
+
+JFDI::Generator->dispatch();
+
+1;

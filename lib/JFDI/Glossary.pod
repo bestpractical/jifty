@@ -1,0 +1,35 @@
+=head1 NAME
+
+JFDI::Glossary
+
+=head1 GLOSSARY
+
+We use words.  This is what they mean.
+
+=over 4
+
+=item action
+
+An action is a specifically designed RPC call that can do something to the system.
+
+Generally, an action takes L</argument>, which are represented as L</form field>s via the web UI
+
+
+=item active
+
+=item AJAX
+
+=item constructor
+
+=item mandatory
+
+=item moniker
+
+Every instance of an action (and other types of JFDI objects, too) has 
+a B<moniker>.  A moniker is an arbitrary-length nonempty string containing
+no semicolons.  Monikers need not be globally unique, but they must be unique
+within a single request.  Monikers have no semantic meaning.
+
+=item request
+
+=back

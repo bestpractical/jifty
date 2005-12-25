@@ -1,0 +1,25 @@
+#!/usr/bin/perl
+use warnings;
+use strict;
+use File::Basename;
+
+BEGIN {
+  my $dir = dirname(__FILE__);
+  push @INC, "$dir/../lib";
+  push @INC, "$dir/../../JFDI/lib";
+}
+
+# When a browser closes the connection early, the server will get a SIGPIPE.
+local $SIG{PIPE} = sub { warn "Trapped a SIGPIPE."};
+
+use JFDI::Everything;
+use JFDI::Server;
+
+my $app = JFDI->new(config_file => $ENV{'JFDI_CONFIG'} ||   
+                                   dirname(__FILE__).'/../etc/config.yml');
+
+my $server = JFDI::Server->new(application => $app);
+$server->recording_on if grep /^-r$/, @ARGV; # TODO XXX FIXME real option handling
+$server->run();
+
+1;
