@@ -96,6 +96,7 @@ Flush the session to diskd and quit.
 sub unload {
     my $self = shift;
 
+    return unless($self->_session);
     $self->_session->save();
     $self->_session->{object_store}->close;
     $self->_session->release_all_locks();
