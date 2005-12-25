@@ -1,0 +1,56 @@
+name: Jifty
+version: 0.1130215168
+license: unknown
+distribution_type: module
+requires:
+  perl: 5.8.3
+  Apache::Session: 0
+  App::CLI: 0
+  CGI::Cookie: 0
+  CGI: 0
+  Class::Accessor: 0
+  Clone: 0
+  Cwd: 0
+  Data::Page: 0
+  Data::UUID: 0
+  DBD::Pg: 0
+  Email::Send: 1.99_01
+  Email::Simple: 0
+  Email::Simple::Creator: 0
+  Exporter: 0
+  File::Basename: 0
+  File::Find: 0
+  File::Spec: 0
+  FindBin: 0
+  Getopt::Long: 0
+  HTML::Entities: 0
+  HTML::Mason: 1.3101
+  HTML::Mason::Plugin: 0
+  HTTP::Cookies: 0
+  HTTP::Server::Simple: 0.10
+  HTTP::Server::Simple::Mason: 0
+  HTTP::Server::Simple::Recorder: 0
+  Hash::Merge: 0
+  Hook::LexWrap: 0
+  Jifty::DBI: 0
+  Log::Log4perl: 0
+  Locale::Maketext::Simple: 0
+  Module::Pluggable: 2.95
+  Module::Refresh: 0
+  Pod::Usage: 0
+  Scalar::Util: 0
+  Test::Base: 0
+  Test::More: 0
+  Test::HTML::Lint: 0
+  Test::HTTP::Server::Simple: 0.02
+  Test::WWW::Mechanize: 0
+  Time::ParseDate: 0
+  UNIVERSAL::require: 0
+  URI: 0
+  WWW::Mechanize: 1.12
+  XML::XPath: 0
+  YAML: 0
+no_index:
+  directory:
+    - inc
+generated_by: Module::Install version 0.36

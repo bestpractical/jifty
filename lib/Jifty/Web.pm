@@ -860,6 +860,24 @@ sub link {
     "";
 }
 
+=head2 url
+
+Returns the root url of the server.  This is pulled from the
+configuration file.
+
+=cut
+
+sub url {
+    my $self = shift;
+    my $url  = Jifty->framework_config("Web")->{BaseURL} || "http://localhost";
+    my $port = Jifty->framework_config("Web")->{Port} || 8888;
+
+    if (($url =~ /^http\b/ and $port == 80) or ($url =~ /^https\b/ and $port == 443)) {
+        return $url;
+    } else {
+        return $url . ":" . $port;
+    }
+}
 
 1;
 
