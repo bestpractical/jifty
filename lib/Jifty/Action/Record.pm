@@ -130,8 +130,10 @@ sub arguments {
         elsif ( defined $column->type && $column->type =~ /^bool/i ) {
             $info->{render_as} = 'Checkbox';
         }
-        elsif (defined $column->render_as && $column->render_as =~ /^password$/i) {
-            unshift @fields, Jifty::DBI::Column->new({name => $field . "_confirm", type => 'Password'});
+        elsif ($column->name !~ /_confirm$/i
+                && defined $column->render_as 
+                && $column->render_as =~ /^password$/i) {
+            unshift @fields, Jifty::DBI::Column->new({name => $field . "_confirm", render_as => 'Password', type => 'Password'});
         }
 
         elsif ( defined $column->refers_to ) {
@@ -184,7 +186,7 @@ sub arguments {
         }
     
         # If we're hand-coding a render_as, hints or label, let's use it.
-        for ( qw(render_as label hints length type)) { 
+        for ( qw(render_as label hints length)) { 
         
             if ( defined $column->$_ and not $info->{$_}) {
                  $info->{$_} = $column->$_;

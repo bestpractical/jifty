@@ -379,7 +379,7 @@ We use this for marking password fields as not-autocomplete
 
 =cut
 
-sub other_widget_properties {}
+sub other_widget_properties {''}
 
 =head2 _widget_class
 
