@@ -223,8 +223,8 @@ sub argument_value {
 
 =head2 form_field ARGUMENT_NAME
 
-Returns a Jifty::Web::Form::Field object for this argument.  If there
-is no entry in the L</arguments> hash that matches the given
+Returns a L<Jifty::Web::Form::Field> object for this argument.  If
+there is no entry in the L</arguments> hash that matches the given
 C<FIELDNAME>, returns C<undef>.
 
 =cut
@@ -242,10 +242,10 @@ sub form_field {
 
 =head2 form_value ARGUMENT_NAME
 
-Returns a Jifty::Web::Form::Field object that renders a display value
-instead of an editable widget for this argument.  If there is no entry
-in the L</arguments> hash that matches the given C<FIELDNAME>, returns
-C<undef>.
+Returns a L<Jifty::Web::Form::Field> object that renders a display
+value instead of an editable widget for this argument.  If there is no
+entry in the L</arguments> hash that matches the given C<FIELDNAME>,
+returns C<undef>.
 
 =cut
 

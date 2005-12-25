@@ -7,7 +7,7 @@ use base qw/Jifty::Web::Form::Field/;
 
 =head2 render_widget
 
-Renders the select widget.
+Renders the whole radio button collection.
 
 =cut
 
@@ -21,7 +21,7 @@ sub render_widget {
 
 =head2 render_option option
 
-Renders one entry in a SELECT widget
+Renders a radio widget
 
 =cut
 
@@ -31,9 +31,11 @@ sub render_option {
     my $display = $opt->{'display'};
     my $value   = defined $opt->{'value'} ? $opt->{'value'} : '';
 
+    my $id = $self->input_name . "-" . $value;
+    $id =~ s/\s+/_/;
     my $field = qq! <input type="radio" !;
     $field .= qq! name="@{[ $self->input_name ]}"!;
-    $field .= qq! id="@{[ $self->input_name ]}"!;
+    $field .= qq! id="@{[ $id ]}"!;
     $field .= qq! value="@{[ $value ]}"!;
     $field .= $self->_widget_class;
 
