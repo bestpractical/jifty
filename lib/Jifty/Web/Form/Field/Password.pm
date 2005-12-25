@@ -21,4 +21,15 @@ The default value of a password field should B<always> be empty.
 
 sub current_value {''}
 
+
+=head2 other_widget_properties
+
+No completion in password fields ;)
+
+=cut
+
+sub other_widget_properties {
+
+    return q{autocomplete="off"};
+}
 1;

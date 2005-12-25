@@ -130,9 +130,8 @@ sub arguments {
         elsif ( defined $column->type && $column->type =~ /^bool/i ) {
             $info->{render_as} = 'Checkbox';
         }
-        elsif (defined $column->render_as &&  $column->render_as =~ /^password$/i) {
-            unshift @fields,
-              Jifty::DBI::Column->new({name => $field . "_confirm", type => 'Password'});
+        elsif (defined $column->render_as && $column->render_as =~ /^password$/i) {
+            unshift @fields, Jifty::DBI::Column->new({name => $field . "_confirm", type => 'Password'});
         }
 
         elsif ( defined $column->refers_to ) {
@@ -158,9 +157,7 @@ sub arguments {
         }
 
         # build up a validator sub if the column implements validation
-        if ( defined $column->validator
-            && $column->validator )
-        {
+        if ( defined $column->validator && $column->validator ) {
             $info->{ajax_validates} = 1;
             $info->{validator} = sub {
                 my $self  = shift;
@@ -187,9 +184,9 @@ sub arguments {
         }
     
         # If we're hand-coding a render_as, hints or label, let's use it.
-        for ( qw(render_as label hints length)) { 
+        for ( qw(render_as label hints length type)) { 
         
-            if ( defined $column->$_ && $column->$_) {
+            if ( defined $column->$_ and not $info->{$_}) {
                  $info->{$_} = $column->$_;
             }
         }
