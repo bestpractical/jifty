@@ -98,8 +98,8 @@ sub new {
       if $args{parent} and ref $args{parent};
 
     # We're cloning most of our attributes from a previous continuation
-    if ($args{clone} and Jifty->web->session->{continuations}{$args{clone}}) {
-        $self = Clone::clone(Jifty->web->session->{continuations}{$args{clone}});
+    if ($args{clone} and Jifty->web->session->get_continuation($args{clone})) {
+        $self = Clone::clone(Jifty->web->session->get_continuation($args{clone}));
         for (grep {/^J:A/} keys %{$args{request}->arguments}) {
             $self->request->merge_param($_ => $args{request}->arguments->{$_});
         }
@@ -118,8 +118,7 @@ sub new {
     $self->id($key);
 
     # Save it into the session
-    Jifty->web->session->{'continuations'}{$key} = $self;
-    Jifty->web->save_session;
+    Jifty->web->session->set_continuation($key => $self);
 
     return $self;
 }
@@ -166,9 +165,8 @@ sub call {
                                             notes => $self->notes,
                                             code => $self->code,
                                            );
-        $next->request->continuation(Jifty->web->session->{'continuations'}{$next->parent})
+        $next->request->continuation(Jifty->web->session->continuation($next->parent))
           if defined $next->parent;
-        Jifty->web->save_session;
 
         # Redirect to right page if we're not there already
         Jifty->web->mason->redirect($next->request->path . "?J:CALL=" . $next->id);
@@ -198,12 +196,11 @@ sub delete {
     my $self = shift;
 
     # Remove all continuations that point to me
-    $_->delete for grep {$_->parent eq $self->id} values %{Jifty->web->session->{'continuations'}};
+    $_->delete for grep {$_->parent eq $self->id} values %{Jifty->web->session->continuations};
 
     # Finally, remove me from the list of continuations
-    delete Jifty->web->session->{'continuations'}{$self->id};
+    Jifty->web->session->remove_continuation($self->id);
 
-    Jifty->web->save_session;
 }
 
 1;

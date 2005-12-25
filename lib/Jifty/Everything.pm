@@ -51,6 +51,7 @@ use Jifty::CurrentUser;
 use Jifty::Test;
 
 use Jifty::Web;
+use Jifty::Web::Session;
 use Jifty::Web::PageRegion;
 use Jifty::Web::Form;
 use Jifty::Web::Form::Clickable;

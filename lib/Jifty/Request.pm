@@ -338,11 +338,13 @@ sub _extract_continuations_from_webform {
     my %args = (@_);
 
     # Loading a continuation
-    $self->continuation(Jifty->web->session->{'continuations'}{$args{'J:C'}})    if $args{'J:C'};
-    $self->continuation(Jifty->web->session->{'continuations'}{$args{'J:CALL'}}) if $args{'J:CALL'};
+    foreach my $continuation_id ($args{'J:C'}, $args{'J:CALL'}  ) {
+        next unless $continuation_id;
+        $self->continuation(Jifty->web->session->get_continuation($continuation_id));
+    }
 
-    if ($args{'J:CLONE'} and Jifty->web->session->{'continuations'}{$args{'J:CLONE'}}) {
-        my %params = %{Jifty->web->session->{'continuations'}{$args{'J:CLONE'}}->request->arguments};
+    if ($args{'J:CLONE'} and Jifty->web->session->get_continuations($args{'J:CLONE'})) {
+        my %params = %{Jifty->web->session->get_continuations($args{'J:CLONE'})->request->arguments};
         $self->merge_param($_ => $params{$_}) for keys %params;
     }
 }
@@ -357,8 +359,8 @@ there is one.
 sub call_continuation {
     my $self = shift;
     my $cont = $self->arguments->{'J:CALL'};
-    return unless $cont and Jifty->web->session->{'continuations'}{$cont};
-    $self->continuation(Jifty->web->session->{'continuations'}{$cont});
+    return unless $cont and Jifty->web->session->get_continuation($cont);
+    $self->continuation(Jifty->web->session->get_continuation($cont));
     $self->continuation->call;
 }
 

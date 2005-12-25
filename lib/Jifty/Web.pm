@@ -9,6 +9,8 @@ Jifty::Web - Web framework for a Jifty application
 
 =cut
 
+
+
 use Jifty::Everything;
 use CGI::Cookie;
 use Apache::Session;
@@ -33,7 +35,6 @@ Creates a new C<Jifty::Web> object
 sub new {
     my $class = shift;
     my $self = bless {}, $class;
-    $self->session( {} );    # we need at least an empty session
     return ($self);
 }
 
@@ -94,57 +95,15 @@ sub serial {
 
 =head3 setup_session
 
-Sets up the current C<session> object (an L<Apache::Session> tied hash).
+Sets up the current C<session> object (an L<Jifty::Web::Session> tied hash).
 
 =cut
 
-# Create the Apache::Session object
+# Create the Jifty::Web::Session object
 sub setup_session {
     my $self = shift;
-    my $m    = $self->mason;
-    return
-        if $m
-        && $m->is_subrequest;    # avoid reentrancy, as suggested by masonbook
-    my %session;
-    my %cookies       = CGI::Cookie->fetch();
-    my $cookiename    = "JIFTY_SID_" . ( $ENV{'SERVER_PORT'} || 'NOPORT' );
-    my $session_class = 'Apache::Session::File';
-    my $pm            = "$session_class.pm";
-    $pm =~ s|::|/|g;
-    require $pm;
-
-    $Storable::Deparse = 1;
-    $Storable::Eval    = 1;
-
-    eval {
-        tie %session, $session_class,
-            (
-            $cookies{$cookiename} ? $cookies{$cookiename}->value() : undef ),
-            {
-            Directory     => '/tmp',
-            LockDirectory => '/tmp'
-            };
-    };
-
-    if ($@) {
-
-        # If the session is invalid, create a new session.
-        if ( $@ =~ /Object does not/i ) {
-            tie %session, $session_class, undef,
-                {
-                Directory     => '/tmp',
-                LockDirectory => '/tmp'
-                };
-            undef $cookies{$cookiename};
-        } else {
-            $self->log->fatal( "Couldn't store your session:\n", $@ );
-            return;
-        }
-    }
-
-    $self->session( \%session );
-
-    return ();
+    $self->session(Jifty::Web::Session->new());
+    $self->session->load();
 }
 
 =head3 session
@@ -153,61 +112,6 @@ Returns the current session's hash. In a regular user environment, it
 persists, but a request can stop that by handing it a regular hash to
 use.
 
-=head3 save_session
-
-If you're modifying something not at the top level of the session hash,
-L<Apache::Session> won't notice and won't save your changes.  Thus, you should
-call this method after you make any change to something nested inside the
-session.
-
-=cut
-
-sub save_session {
-    my $self = shift;
-    $self->session->{'i'}++;
-}
-
-=head3 session_expires [DURATION]
-
-Gets or sets how long the session cookie lasts.  C<DURATION> should be
-a relative offset like C<+3M> for "3 months" or C<+3y> for "3 years".
-Defaults to undefined, meaning that the session will expire when the
-browser is closed.
-
-=cut
-
-sub session_expires {
-    my $self = shift;
-    $self->session->{'_expires'} = shift if @_;
-    return $self->session->{'_expires'};
-}
-
-=head3 set_cookie
-
-Sets the session cookie
-
-=cut
-
-sub set_cookie {
-    my $self       = shift;
-    my $m          = $self->mason;
-    my %cookies    = CGI::Cookie->fetch();
-    my $cookiename = "JIFTY_SID_" . ( $ENV{'SERVER_PORT'} || 'NOPORT' );
-    my $session    = $self->session;
-    if (   ( !$cookies{$cookiename} )
-        or ( $session->{_expires} xor $cookies{$cookiename}->expires ) )
-    {
-        my $cookie = new CGI::Cookie(
-            -name    => $cookiename,
-            -value   => $session->{_session_id},
-            -expires => $session->{_expires},
-        );
-
-        # XXX TODO might need to change under mod_perl
-        $m->cgi_request->headers_out->{'Set-Cookie'} = $cookie->as_string
-            if ($m);
-    }
-}
 
 =head2 CURRENT USER
 
@@ -227,9 +131,12 @@ XXX TODO: This should be app-overridable
 
 sub current_user {
     my $self = shift;
-    $self->session->{'user'} = shift if (@_);
+    if (@_) {
+        my $user = shift;
+         $self->session->set('user' => $user);
+    }
     return $self->temporary_current_user
-        || $self->session->{'user'}
+        || ($self->session ? $self->session->get('user') : undef)
         || Jifty::CurrentUser->new();
 }
 
@@ -287,7 +194,6 @@ sub _internal_request {
 
     $self->request($request);
     $self->setup_page_actions;
-
     my @valid_actions;
     for my $request_action ( $self->request->actions ) {
         next unless $request_action->active;
@@ -307,7 +213,6 @@ sub _internal_request {
             $self->log->fatal($err);
         }
     }
-
     $self->save_continuation;
 
     unless ( $self->request->just_validating ) {
@@ -320,13 +225,10 @@ sub _internal_request {
         }
     }
 
-    $self->set_cookie;
-
     $self->request->call_continuation
         if $self->response->success;
 
     $self->redirect if $self->redirect_required;
-
     $self->request->do_mapping;
 }
 
