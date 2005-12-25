@@ -183,12 +183,6 @@ Returns a string of the fragment and associated javascript.
 sub render {
     my $self = shift;
 
-    # Make sure we're going to someplace sane
-    if ($self->path !~ m|/fragments/| or $self->path =~ /\.\./) {
-        warn "Attempt to call disallowed path '@{[$self->path]}' in region @{[$self->qualified_name]}";
-        return;
-    }
-
     my %arguments = %{$self->arguments};
     my $result = "";
     $result .= qq|<script type="text/javascript"><!--\n|;
@@ -197,10 +191,19 @@ sub render {
     $result .= qq|},'|. $self->path . qq|');\n|;
     $result .= qq| --></script>|;
     $result .= qq|<div id="region-| . $self->qualified_name . qq|">|;
-    $result .= Jifty->framework->mason->scomp($self->path,
-                                              region => $self->name,
-                                              qualified_region => $self->qualified_name,
-                                              %arguments);
+
+    # Use a subrequest so we can't show components we wouldn't
+    # normally be allowed to.  We pass in an empty 'J:ACTIONS' so that
+    # actions don't get run more than once.
+    Jifty->framework->mason->make_subrequest
+      ( comp => $self->path,
+        args => [ %{ Jifty->mason->request_args },
+                  region => $self->name,
+                  qualified_region => $self->qualified_name,
+                  'J:ACTIONS' => '',
+                  %arguments ],
+        out_method => \$result,
+      )->exec;
     $result .= qq|</div>|;
 
     return $result;

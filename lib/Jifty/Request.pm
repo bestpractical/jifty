@@ -257,6 +257,7 @@ sub _extract_actions_from_webform {
 
     my $active_actions;
     if (exists $args{'J:ACTIONS'}) {
+        $active_actions = {};
         $active_actions->{$_} = 1 for split ';', $args{'J:ACTIONS'};
     } # else $active_actions stays undef
 

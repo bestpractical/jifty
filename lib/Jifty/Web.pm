@@ -177,7 +177,7 @@ sub handle_request {
     $self->log->debug("Handling ".$ENV{'REQUEST_URI'});
 
     $self->request( Jifty::Request->new->from_mason_args );
-    $self->response( Jifty::Response->new );
+    $self->response( Jifty::Response->new ) unless $self->response;
     $self->setup_session;
     $self->setup_page_actions;
 
