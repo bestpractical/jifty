@@ -68,6 +68,8 @@ var Presentation = {
         var image_height;
         var image_total_height = 0;
         var image_src;
+        var code_listing = 0;
+
 
         var labelId = 0;
 
@@ -82,6 +84,7 @@ var Presentation = {
             image_height = 0;
 
             if (line.match(/^ /)) {
+              code_listing = 1; 
               this.content.lastChild.setAttribute('align', 'left');
               this.content.lastChild.setAttribute('class', 'pre');
               line = line.substring(1)
@@ -151,6 +154,17 @@ var Presentation = {
 
             var content_w = this.content.boxObject.width;
             var new_fs = Math.round((canvas_w/content_w) * this.size);
+
+            //if (new_fs > 600) { new_fs = 600 ;}
+//            else if (new_fs > 500) { new_fs = 500}
+//            else if (new_fs > 250) { new_fs = 250}
+//            else if (new_fs > 150) { new_fs = 150}
+//            else if (new_fs > 100) { new_fs = 100}
+//            else if (new_fs > 64) { new_fs = 64}
+            new_fs = new_fs - (new_fs % 32);
+            if (code_listing) { new_fs = 32;}
+
+            this.content.setAttribute('style', 'top: 0');
             this.content.setAttribute('style', 'font-size:'+ new_fs + "px");
 
             if (this.content.boxObject.width < image_total_width) {
@@ -166,6 +180,8 @@ var Presentation = {
                 this.content.setAttribute('style', 'font-size:'+ new_fs + "px");
             }
         }
+
+
 
         this.canvas.removeAttribute('rendering');
     },

@@ -13,43 +13,62 @@ Nifty Apps
 
 ----
 
-{{#i|Jesse Vincent}} 
+Jesse Vincent
+
 Best Practical
 ----
-How we're building useful applications in Perl 5 withg a single unified toolkit,
+How we're building useful applications in Perl 5 with a single unified toolkit, 
 using less time, energy, code, blood, sweat, tears, etc.
 ----
 
 Missing features
 
 ----
-No {{#i|Java}}
+No 
+Java
 ----
-No {{#i|Ruby}}
+No 
+Ruby
 ----
-No {{#i|XML}}
+No
+XML
 ----
-No {{#i|SQL}}
+No
+SQL
 ----
 I'm serious
 ----
- No {{#i|SELECT}}
+No
+SELECT
 ----
- No {{#i|INSERT}}
+No
+INSERT
 ----
- No {{#i|DELETE}}
+No
+DELETE
 ----
- No {{#i|UPDATE}}
+No
+UPDATE
 ----
- No {{#i|CREATE TABLE}}
+No
+CREATE
+TABLE
 ----
-No {{#i|TT}}
+No
+Template
+Toolkit
 ----
-No {{#i|Class::DBI}}
+No
+Class::DBI
 ----
-No {{#i|YAML}}
+No
+Catalyst
 ----
-That's a lie
+No 
+YAML
+----
+That's 
+a lie
 ----
 There's a little bit of YAML
 ----
@@ -59,32 +78,22 @@ config.yml
 ----
 Jifty's
 Influences
-
 ----
-
-1. RT
-
----- 
-
-2. DBIx::SearchBuilder
-
+RT
 ----
-
-3. My sick mind
-
+DBIx::SearchBuilder
 ----
-
-4. Ruby on Rails
-
+My sick mind
 ----
-
+Ruby on Rails
+----
 Rails makes me 
 jealous 
 
 ----
 
 Rails makes me 
-{{#b|really}} jealous
+really jealous
 
 ----
 
@@ -94,10 +103,42 @@ perfect
 
 ----
 
-It's 
-not
+Rails
+isn't
 Perl
 
+----
+
+
+No Larry
+
+----
+
+No Damian
+
+----
+
+No Autrijus
+
+----
+
+No Nordic 
+Ruby Workshop
+
+----
+
+No CPAN
+
+----
+
+I don't 
+know 
+Ruby
+
+----
+Rails
+isn't
+perfect
 ----
 
 Jifty
@@ -106,7 +147,9 @@ perfect
 
 ----
 
-That's a lie, too 
+That's 
+a lie, 
+too 
 
 ----
 
@@ -123,6 +166,14 @@ way
 down
 
 ----
+Mason
+----
+Helpers
+----
+Jifty::DBI
+----
+CPAN
+----
 
 We've 
 got
@@ -136,43 +187,39 @@ Perl
 (obviously)
 
 ----
-
 AJAX
-
 ----
-
 Declarative 
 Programming
-
 ----
-
-Web Services
-
+Web 
+Services
 ----
-
 Encapsulated
 cleverness
-
 ----
-
 MVC
-
 ----
-
 (Sort of)
-
 ----
-
 Web 2.0
-
 ----
-
-Sure it is.
-Nobody knows what it means. 
-My dog is Web 2.0 enabled.
+Sure 
+it is
 ----
-Go ahead. 
-Prove me wrong.
+Nobody 
+knows 
+what it 
+means
+----
+My DOG
+is Web 2.0
+enabled
+----
+Go ahead 
+
+Prove me 
+wrong
 ----
 
 How 
@@ -184,64 +231,41 @@ Works
 MODEL
 
 ----
-
-Models
-are 
-smart
-
-----
-
-Models 
-define
-schema
-
-----
-
-Models 
-encapsulate
-logic
-----
-
 Models
 are 
 Jifty::DBI
 
 ----
-
-Schema definition
-Schema versioning
-Advanced searching
-
+Models
+are 
+smart
 ----
 
-column complete =>
+Models 
+define
+schema
+----
+
+ column complete =>
    type is 'boolean',
    default is 'false',
-   since '0.1.1',
    label is 'Done';
-
 ----
-
- column summary =>
+  column summary =>
    type is 'varchar',
    label is 'Task',
    hints is '(Example: Get milk)';
-
 ----
-
+Schema 
+versioning
+----
   column description =>
+   since '0.1.1',
    type is 'text',
    render_as 'Textarea',
    label is 'Details';
 
 ----
-
-  column owner_id =>
-   refers_to BTDT::Model::User,
-   render_as 'Combobox';
-
-----
-
   column priority =>
    type is 'integer',
    default is 3,
@@ -251,86 +275,73 @@ column complete =>
      { display => 'low',     value => 2 };
 
 ----
+Models
+have
+relationships
+----
   column tags =>
    label is 'Tags',
-   refers_to BTDT::Model::TaskTagCollection by 'task_id';
- 
+   refers_to BTDT::Model::TaskTagCollection 
+             by 'task_id';
 ----
-
-That's all Perl
-
+  column owner_id =>
+   refers_to BTDT::Model::User,
+   since '0.2.0',
+   render_as 'Combobox';
 ----
-
-No source filters
-
+That's 
+all 
+Perl
 ----
-
-Another OO RDBMS Mapper?
-
+(No source filters)
 ----
-
-Yes.
-
+Another 
+OO RDBMS 
+Mapper?
 ----
-
-Ok...No.
-
+Yes
+----
+Ok...No
 ----
 Built on
-DBIx::SearchBuilder
-
+SearchBuilder
 ----
-
+It's 
+out
+now
+----
 It's in subversion
 svn://fsck.com/
-
-
 ----
 
 VIEW
 
 ----
-
 HTML::Mason
-
 ----
-
 With helpers
-
 ----
-
 AJAX 
-Templating
-
 ----
-
 Dynamic
 client-side
 includes
-
 ----
-
 Degrades 
 nicely
-
 ----
 Works 
 with 
 lynx
-
 ----
 
-In the future...
-
+In 
+the 
+future...
 ----
-
 UI 
 as
 API
-----
-
-
-
 ----
 
 CONTROLLER
@@ -339,20 +350,47 @@ CONTROLLER
 
 Other toolkits:
 
-Controller are tied to a URL
+Controller are
+tied to URLs
 
 ----
-
 Jifty:
 
-Controllers are generic RPC
-
+Controllers are 
+generic RPC
 ----
-
+Any controller
+on any page
+----
+Actions
+have
+arguments
+----
+Arguments
+have 
+types
+----
+Arguments
+return
+results
+----
+Automatic
+validation
+----
+If you want it
+----
+Automatic
+canonicalization
+----
+If you want it
+----
+Actions 
+=
+API
+----
 not 
-webservices
+"webservices"
 ...yet
-
 ----
 
 Only 
@@ -372,6 +410,12 @@ template!
 A
 Trivial 
 Example
+----
+Real
+Code
+----
+(I cheat just a tiny little bit. 
+But only to make the presentation better.)
 
 ----
 Application Code
@@ -382,7 +426,7 @@ Application Code
 
 ----
 
-lib/BlogDemo/Model/Entry.pm
+ lib/BlogDemo/Model/Entry.pm
 
 ----
  use warnings;
@@ -410,7 +454,7 @@ lib/BlogDemo/Model/Entry.pm
 
 ----
 
-web/templates/index.html
+ web/templates/index.html
 
 ----
  &lt;html&gt;&lt;body&gt;
@@ -418,21 +462,19 @@ web/templates/index.html
  
  % while (my $entry = $entries-&gt;next) {
  &lt;h2&gt;&lt;%$entry-&gt;title%&gt;&lt;/h2&gt;
- &lt;div class="body"&gt;
- &lt;%$entry-&gt;body%&gt;
- &lt;/div&gt;
+ &lt;div class="body"&gt;&lt;%$entry-&gt;body%&gt;&lt;/div&gt;
  % }
- &lt;/body&gt;
+ &lt;/body&gt;&lt;html&gt;
  &lt;%init&gt;
- my $entries = BlogDemo::Model::EntryCollection-&gt;new();
+ my $entries = 
+   BlogDemo::Model::EntryCollection-&gt;new();
  $entries-&gt;unlimit();
- $entries-&gt;rows_per_page(10);
  &lt;/%init&gt;
  
 
 ----
 
-web/templates/new_article.html
+ web/templates/new_article.html
 
 ----
  &lt;h2&gt;Create an article&lt;/h2&gt;
@@ -445,7 +487,9 @@ web/templates/new_article.html
  &lt;%Jifty-&gt;framework-&gt;form-&gt;end%&gt;
  
  &lt;%init&gt;
- my $action = Jifty-&gt;framework-&gt;new_action( class =&gt; 'CreateEntry', moniker =&gt; 'create' );
+ my $action = Jifty-&gt;framework-&gt;new_action( 
+        class =&gt; 'CreateEntry', 
+        moniker =&gt; 'create' );
  &lt;/%init&gt;
 
 ----
@@ -457,9 +501,7 @@ Sucks
 the 
 moment
 ----
-
 Unreleased
-
 ----
 
 Too 
@@ -479,7 +521,6 @@ etc/config.yml
     Driver: Pg
     Host: localhost
     Password: ''
-    RequireSSL: 0
     User: postgres
     Version: 0.0.2
   LogConfig: etc/log4perl.conf
@@ -491,12 +532,10 @@ etc/config.yml
     TemplateRoot: web/templates
 
 ----
-
 Don't worry.
 It's refactorable.
 ----
 
-----
 Generic code
 ----
 
@@ -505,13 +544,6 @@ Generic code
  bin/schema
  bin/standalone_server
 
-----
-
- etc/config.yml
-
-----
-
- web/templates/autohandler
 ----
 
  lib/Model/EntryCollection.pm
