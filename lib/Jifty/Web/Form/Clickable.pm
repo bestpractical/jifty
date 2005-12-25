@@ -438,8 +438,8 @@ sub generate {
             $hook->{region} ||= Jifty->web->qualified_region;
             $hook->{args}   ||= {};
 
-            $self->region_fragment( $hook->{region}, $hook->{fragment} )
-                if $hook->{fragment};
+            $self->region_fragment( $hook->{region}, $hook->{replace_with} )
+                if $hook->{replace_with};
             $self->region_argument( $hook->{region}, $_ => $hook->{args}{$_} )
                 for keys %{ $hook->{args} };
             if ( $hook->{submit} ) {
