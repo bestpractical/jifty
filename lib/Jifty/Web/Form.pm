@@ -288,6 +288,11 @@ sub unpost {
 
     my $url = $ENV{REQUEST_URI};
     $url =~ s/\?.*//g;
+
+    for (Jifty->framework->request->state_variables) {
+        Jifty->framework->request->add_next_page_state_variable(key => $_->key, value => $_->value)
+          unless Jifty->framework->request->next_page_state_variable($_->key);
+    }
     
     $self->next_page( url => $url );
 }
