@@ -24,7 +24,7 @@ sub wanted {
     my $data = <FILE>;
     close(FILE);
     $used{$1}++ while $data =~ /^use\s+([\w:]+)/gm;
-    while ($data =~ m|^use base qw/([^/]+)/|gm) {
+    while ($data =~ m|^use base qw/([\w\s:]+)/|gm) {
         $used{$_}++ for split ' ', $1;
     }
 }
