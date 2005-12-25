@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet href="chrome://global/skin/" type="text/css"?><?xml-stylesheet href="euroscon.css" type="text/css"?><page xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" id="presentation" xmlns:html="http:/www.w3.org/1999/xhtml" orient="vertical" onkeypress="Presentation.onKeyPress(event);">
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet href="chrome://global/skin/" type="text/css"?><?xml-stylesheet href="takahashi.css" type="text/css"?><page xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" id="presentation" xmlns:html="http:/www.w3.org/1999/xhtml" orient="vertical" onkeypress="Presentation.onKeyPress(event);">
 <html:textarea id="builtinCode" style="visibility: collapse">
 
 Jifty
@@ -9,15 +9,39 @@ Nifty Apps
 ----
 
 Jesse Vincent
-&gt;&gt;|&lt;&lt;
+»|«
 Best Practical
 ----
 How we're building useful applications in Perl 5 with a single unified toolkit, 
 using less time, energy, code, blood, sweat, tears, etc.
 ----
-
-Missing features
-
+Another
+framework?
+----
+No.
+----
+Another
+toolkit?
+----
+Yes.
+----
+Why?
+----
+We're building
+a new application.
+----
+Nothing met
+our needs.
+----
+We started by extracting
+useful bits from RT.
+----
+Now, we're Extracting 
+generalizations from 
+the new application
+----
+Jifty is missing
+lots of features.
 ----
 No 
 Java
@@ -147,7 +171,34 @@ No Damian
 
 ----
 
+No Sky
+
+----
+
+No clkao
+
+----
+
 No Autrijus
+
+----
+
+Ruby has
+Why the lucky stiff.
+
+----
+
+He jokes about
+Eigenclasses
+
+----
+
+Perl has Autrijus
+
+----
+
+He Implements 
+Eigenclasses
 
 ----
 
@@ -378,18 +429,22 @@ CONTROLLER
 ----
 
 Other toolkits:
-
-Controller are
+Controllers are
 tied to URLs
 
 ----
 Jifty:
-
 Controllers are 
 generic RPC
 ----
-Any controller
+Actions
+----
+Any action
 on any page
+----
+Repeatable
+----
+Composable
 ----
 Actions
 have
@@ -399,7 +454,12 @@ Arguments
 have 
 types
 ----
-Arguments
+View kit
+can render
+arguments
+as forms
+----
+Actions
 return
 results
 ----
@@ -431,9 +491,7 @@ display
 
 That's 
 just
-another 
-template!
-
+serializer
 ----
 
 A
@@ -442,10 +500,6 @@ Example
 ----
 Real
 Code
-----
-(I cheat just a tiny little bit. 
-But only to make the presentation better.)
-
 ----
 Application Code
 ----
@@ -486,6 +540,12 @@ Application Code
  web/templates/index.html
 
 ----
+ &lt;%init&gt;
+ my $entries = 
+   BlogDemo::Model::EntryCollection-&gt;new();
+ $entries-&gt;unlimit();
+ &lt;/%init&gt;
+---- 
  &lt;html&gt;&lt;body&gt;
  &lt;h1&gt;&lt;% Jifty-&gt;app_config('Name')%&gt;&lt;/h1&gt;
  
@@ -494,17 +554,17 @@ Application Code
  &lt;div class="body"&gt;&lt;%$entry-&gt;body%&gt;&lt;/div&gt;
  % }
  &lt;/body&gt;&lt;html&gt;
- &lt;%init&gt;
- my $entries = 
-   BlogDemo::Model::EntryCollection-&gt;new();
- $entries-&gt;unlimit();
- &lt;/%init&gt;
- 
 
 ----
 
  web/templates/new_article.html
 
+----
+ &lt;%init&gt;
+ my $action = Jifty-&gt;framework-&gt;new_action( 
+        class =&gt; 'CreateEntry', 
+        moniker =&gt; 'create' );
+ &lt;/%init&gt;
 ----
  &lt;h2&gt;Create an article&lt;/h2&gt;
  
@@ -514,13 +574,17 @@ Application Code
  % }
  &lt;%Jifty-&gt;framework-&gt;form-&gt;submit('Submit')%&gt;
  &lt;%Jifty-&gt;framework-&gt;form-&gt;end%&gt;
- 
- &lt;%init&gt;
- my $action = Jifty-&gt;framework-&gt;new_action( 
-        class =&gt; 'CreateEntry', 
-        moniker =&gt; 'create' );
- &lt;/%init&gt;
-
+----
+ jifty schema --install .
+ jifty server .
+----
+THAT'S IT
+----
+No more code
+----
+It runs
+----
+Ship it
 ----
 Jifty 
 Sucks
@@ -561,56 +625,96 @@ etc/config.yml
     TemplateRoot: web/templates
 
 ----
-Don't worry.
-It's refactorable.
+Don't worry. we 
+can refactor it.
 ----
 Actually...
 ----
-It was
-refactored
-on Friday
+We refactored
+it on Friday
 ----
 config.yml
 is now
 optional
 ----
-Generic code
+Lots of
+Dependencies
 ----
-
- bin/handler.fcgi
- bin/jfmi
- bin/schema
- bin/standalone_server
-
+Apache::Session App::CLI CGI::Cookie CGI Class::Accessor 
+Clone Cwd Data::Page Data::UUID DBD::Pg Email::Send 
+Email::Simple Email::Simple::Creator Exporter File::Basename 
+File::Find File::Spec FindBin Getopt::Long HTML::Entities 
+HTML::Mason HTML::Mason::Plugin HTTP::Cookies HTTP::Server::Simple 
+HTTP::Server::Simple::Mason HTTP::Server::Simple::Recorder 
+Hash::Merge Hook::LexWrap Jifty::DBI Log::Log4perl 
+Module::Pluggable Module::Refresh Pod::Usage Scalar::Util 
+Test::Base Test::More Test::HTML::Lint Test::HTTP::Server::Simple 
+Test::WWW::Mechanize Time::ParseDate UNIVERSAL::require URI 
+WWW::Mechanize XML::XPath YAML
 ----
-
- lib/Model/EntryCollection.pm
- lib/Action/CreateEntry.pm
- 
+Fixing 
+that
+too.
 ----
-
-Don't worry.
-It's refactorable.
+Future
+Directions
 ----
-
-Is it out yet?
-
+Halos
 ----
-
+Wiki-style
+UI Editor
+----
+Hardcode
+Session
+Tracing
+----
+Even 
+Less 
+Code
+----
+More 
+Docs
+----
+Sample
+Apps
+----
+"Jifty in a Jiffy"
+movies and 
+music videos
+----
+Continuations?
+----
+Out yet?
+----
 No.
-
 ----
-
+Why not?
+----
+Not 
+Done 
+Yet
+----
+Regularly
+Breaking
+the API
+----
 When?
-
 ----
-
-This 
-winter
-
+By 
+Christmas
 ----
-
+This
+Christmas
+----
+December 25, 2005
+----
+In three 
+months
+----
+Oh shit!
+----
 Thanks!
+Gotta go hack, now.
 
 
 </html:textarea>
