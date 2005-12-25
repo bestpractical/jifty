@@ -9,10 +9,9 @@ Jifty::Result - Outcome of running a L<Jifty::Action>
 
 =head1 DESCRIPTION
 
-C<Jifty::Result> encapsulates the outcome of running a L<Jifty::Action>.
-Results are also stored on the framework's L<Jifty::Response> object.
-The response is stored in the session during a redirect, so the
-information is still accessible even after a redirect.
+C<Jifty::Result> encapsulates the outcome of running a
+L<Jifty::Action>.  Results are also stored on the framework's
+L<Jifty::Response> object.
 
 =cut
 
@@ -26,8 +25,8 @@ __PACKAGE__->mk_accessors(qw(failure action_class message error _content));
 =head2 new
 
 Construct a new action result.  This is done automatically when the
-action is created, and can be accessed via the C<result> method on the
-action.
+action is created, and can be accessed via the
+L<Jifty::Action/result>.
 
 =cut
 
@@ -60,7 +59,6 @@ sub success {
 =head2 action_class [MESSAGE]
 
 Returns the class for the action that this result came from.
-
 
 =head2 message [MESSAGE]
 
@@ -101,7 +99,8 @@ sub field_error {
 
 =head2 field_errors
 
-Returns a hash which maps argument name to error.
+Returns a hash which maps L<argument|Jifty::Manual::Glossary/argument>
+name to error.
 
 =cut
 

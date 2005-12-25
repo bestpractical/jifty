@@ -25,12 +25,12 @@ are:
 
 =over
 
-=item name (required)
+=item name
 
 The (unqualified) name of the region.  This is used to generate a
 unique id -- it should consist of only letters and numbers.
 
-=item path (required)
+=item path
 
 The path to the fragment that this page region contains.  This B<must>
 be under a C</fragments> path.
@@ -39,6 +39,16 @@ be under a C</fragments> path.
 
 Specifies an optional set of parameter defaults.  These should all be
 simple scalars, as they might be passed across HTTP if AJAX is used.
+
+=item parent (optional)
+
+The parent L<Jifty::Web::PageRegion> that this region is enclosed in.
+
+=item region_wrapper (optional)
+
+A boolean; whether or not the region, when rendered, will include the
+HTML region preamble that makes Javascript aware of its presence.
+Defaults to false, as this is usually handled by Mason components.
 
 =back
 
@@ -248,6 +258,13 @@ sub render {
     return $result;
 }
 
+=head2 get_element [RULES]
+
+Returns a CSS2 selector which selects only elements under this region
+which fit the C<RULES>.  This method is used by AJAX code to specify
+where to add new regions.
+
+=cut
 
 sub get_element {
     my $self = shift;

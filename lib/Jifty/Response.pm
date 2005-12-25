@@ -11,6 +11,10 @@ Jifty::Response - Canonical internal representation of the result of a L<Jifty::
 
 =head1 DESCRIPTION
 
+The answer to a L<Jifty::Request> is a C<Jifty::Response> object.
+Currently, the response object exists merely to collect the
+L<Jifty::Result> objects of each L<Jifty::Action> that ran.
+
 =cut
 
 =head2 new
@@ -27,7 +31,7 @@ sub new {
 =head2 result MONIKER [RESULT]
 
 Gets or sets the L<Jifty::Result> of the L<Jifty::Action> with the given
-C<MONIKER>.
+I<MONIKER>.
 
 =cut
 
@@ -63,7 +67,7 @@ sub messages {
 
 =head2 success
 
-Returns true if none of the results are failures
+Returns true if none of the results are failures.
 
 =cut
 
@@ -75,7 +79,7 @@ sub success {
 
 =head2 failure
 
-Returns true if any of the results failed
+Returns true if any of the results failed.
 
 =cut
 

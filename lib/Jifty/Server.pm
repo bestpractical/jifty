@@ -53,7 +53,7 @@ sub new {
 =head2 mason_config
 
 The Jifty standalone server gets its Mason configuration from the same place that any other
-Jifty handler does: C<< Jifty::Handler->mason_config >>.
+Jifty handler does: L<Jifty::Handler/mason_config>.
 
 =cut
 

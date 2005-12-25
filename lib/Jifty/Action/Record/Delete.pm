@@ -24,7 +24,7 @@ use base qw/Jifty::Action::Record/;
 
 Overrides the L<Jifty::Action::Record/arguments> method to specify
 that all of the primary keys B<must> have values when submitted; that
-is, they are L<constructors|Jifty::Glossary/constructors>.  No other
+is, they are L<constructors|Jifty::Manual::Glossary/constructors>.  No other
 arguments are required.
 
 =cut

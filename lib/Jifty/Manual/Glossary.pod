@@ -1,6 +1,6 @@
 =head1 NAME
 
-Jifty::Glossary
+Jifty::Manual::Glossary
 
 =head1 GLOSSARY
 

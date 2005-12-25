@@ -29,12 +29,12 @@ The arguments for C<Autocomplete> are:
 
 =item action
 
-The L<moniker|Jifty::Glossary/moniker> of an action we want to pull a
+The L<moniker|Jifty::Manual::Glossary/moniker> of an action we want to pull a
 field to autocomplete from.
 
 =item argument
 
-The fully qualified name of the L<argument|Jifty::Glossary/argument>
+The fully qualified name of the L<argument|Jifty::Manual::Glossary/argument>
 to C<action> that we want to complete.
 
 =back

@@ -41,16 +41,6 @@ never need to write form handling logic. All you say is "I want an
 input for this argument here" and Jifty takes care of the rest. (Even
 autocomplete and validation)
 
-=item Perl
-
-Jifty is written in Perl. If you're familiar with Ruby, Perl might
-feel like Ruby's quirky big brother.
-
-=item CPAN
-
-If it's out there, it's in CPAN. Everything from AtomAPI libraries to
-Z39.50 library gateways.
-
 =item A Pony
 
 Jifty is the only web application framework that comes with a pony.
@@ -59,7 +49,7 @@ Jifty is the only web application framework that comes with a pony.
 
 =head2 Introduction
 
-If this is your first time using Jifty, L<Jifty::Help::Tutorial> is
+If this is your first time using Jifty, L<Jifty::Manual::Tutorial> is
 probably a better place to start.
 
 =cut

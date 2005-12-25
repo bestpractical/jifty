@@ -5,11 +5,24 @@ use strict;
 
 Jifty::::RightsFrom
 
+=head1 SYNOPSIS
+
+  package Application::Model::Thing::Schema;
+  use Jifty::DBI::Schema;
+  use Application::Model::Person;
+
+  column owner_id => refers_to Application::Model::Person;
+
+  package Application::Model::Thing;
+  use base qw( Application::Record );
+  use Jifty::RightsFrom column => 'owner';
+
 =head1 DESCRIPTION
 
-Provides a C<delegate_current_user_can> method that various task-related objects 
-can use as a base to make their own access control decisions based on 
-their task. L<Jifty::Record/current_user_can> uses this method to make an 
+Provides a C<delegate_current_user_can> method that various
+task-related objects can use as a base to make their own access
+control decisions based on their
+task. L<Jifty::Record/current_user_can> uses this method to make an
 access control decision if it exists.
 
 =cut
@@ -55,8 +68,6 @@ The arguments you want to hand to your sub.
 
 
 =back
-
-
 
 =cut
 

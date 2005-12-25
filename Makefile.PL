@@ -16,7 +16,7 @@ requires('Digest::MD5');
 requires('DBD::SQLite');
 requires('Email::Folder');
 requires('Email::LocalDelivery');
-requires('Email::Send' => '1.99_01');
+requires('Email::Send' => '1.99_01'); # Email::Send::Jifty::Test
 requires('Email::Simple');
 requires('Email::Simple::Creator');
 requires('Exporter');

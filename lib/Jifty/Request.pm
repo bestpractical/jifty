@@ -31,8 +31,8 @@ Each request contains several types of information:
 
 A request may contain one or more actions; these are represented as
 L<Jifty::Request::Action> objects. Each action request has a
-L<moniker|Jifty::Glossary/moniker>, a set of submitted
-L<arguments|Jifty::Glossary/arguments>, and an implementation class.
+L<moniker|Jifty::Manual::Glossary/moniker>, a set of submitted
+L<arguments|Jifty::Manual::Glossary/arguments>, and an implementation class.
 By default, all actions that are submitted are run; it is possible to
 only mark a subset of the submitted actions as "active", and only the
 active actions will be run.  These will eventually become full-fledge
@@ -53,7 +53,7 @@ L<Jifty::Continuation>.
 
 =item (optional) fragments
 
-L<Fragments|Jifty::Glossary/fragments> are standalone bits of reusable
+L<Fragments|Jifty::Manual::Glossary/fragments> are standalone bits of reusable
 code.  They are most commonly used in the context of AJAX, where
 fragments are the building blocks that can be updated independently.
 A request is either for a full page, or for multiple independent
@@ -460,7 +460,7 @@ Required argument: C<moniker>.
 Optional arguments: C<class>, C<order>, C<active>, C<arguments>.
 
 Adds a L<Jifty::Request::Action> with the given
-L<moniker|Jifty::Glossary/moniker> to the request.  If the request
+L<moniker|Jifty::Manual::Glossary/moniker> to the request.  If the request
 already contains an action with that moniker, it merges it in,
 overriding the implementation class, active state, and B<individual>
 arguments.  See L<Jifty::Action>.

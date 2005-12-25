@@ -4,9 +4,17 @@ use strict;
 package Jifty::Web::Form::Field::Checkbox;
 
 use base qw/Jifty::Web::Form::Field/;
+__PACKAGE__->mk_accessors(qw/checked value/);
+
+=head2 accessors
+
+Provide C<checked> and C<value> accessors, in addition to
+L<Jifty::Web::Form::Field>'s default accessors.  C<value> defaults to
+"1".
+
+=cut
 
 sub accessors { shift->SUPER::accessors(), 'checked' , 'value' }
-__PACKAGE__->mk_accessors(qw/checked value/);
 
 =head2 render_widget
 
