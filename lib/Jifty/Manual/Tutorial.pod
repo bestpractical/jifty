@@ -31,6 +31,8 @@ build your first application with Jifty.
 
 =head1 FUTURE TUTORIALS
 
+=head2 Upgrading your application's data model
+
 =head2 Access Control
 
 =head2 Web Services
