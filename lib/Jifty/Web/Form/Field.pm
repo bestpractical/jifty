@@ -361,9 +361,9 @@ sub render_widget {
     $field .= qq! id="@{[ $self->input_name ]}"!;
     $field .= qq! value="@{[HTML::Entities::encode_entities($self->current_value)]}"! if defined $self->current_value;
     $field .= $self->_widget_class; 
-    $field .= qq! size="@{[ $self->length() ]}" ! if ($self->length());
-    $field .= $self->other_widget_properties;
-    $field .= qq!      />\n!;
+    $field .= qq! size="@{[ $self->length() ]}"! if ($self->length());
+    $field .= " " .$self->other_widget_properties;
+    $field .= qq!  />\n!;
     Jifty->mason->out($field);
     return '';
 }
