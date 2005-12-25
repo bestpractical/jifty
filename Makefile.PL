@@ -36,7 +36,7 @@ requires('HTTP::Server::Simple::Mason' => '0.09');
 requires('HTTP::Server::Simple::Recorder');
 requires('Hash::Merge');
 requires('Hook::LexWrap');
-requires('Jifty::DBI');            # Jifty::DBI::Collection Jifty::DBI::Handle Jifty::DBI::Record::Cachable Jifty::DBI::SchemaGenerator
+requires('Jifty::DBI' => '0.06' );            # Jifty::DBI::Collection Jifty::DBI::Handle Jifty::DBI::Record::Cachable Jifty::DBI::SchemaGenerator
 requires('JSON');
 requires('Log::Log4perl');
 requires('Locale::Maketext::Simple');
