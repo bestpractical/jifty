@@ -15,7 +15,7 @@ sub render_widget {
     my $self  = shift;
     my $field = qq! <select !;
     $field .= qq! name="@{[ $self->input_name ]}"!;
-    $field .= qq! id="@{[ $self->input_name ]}"!;
+    $field .= qq! id="@{[ $self->element_id ]}"!;
     $field .= $self->_widget_class;
     $field .= qq!      >\n!;
     for my $opt (@{ $self->action->available_values($self->name) }) {

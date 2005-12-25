@@ -16,20 +16,20 @@ sub render_widget {
 
 my $field = <<"EOF";
 <nobr>
-<span id="@{[ $self->input_name ]}_Container" class="combobox">
+<span id="@{[ $self->element_id ]}_Container" class="combobox">
 <input name="@{[ $self->fallback_name ]}" 
-       id="@{[ $self->input_name ]}" 
+       id="@{[ $self->element_id ]}" 
        @{[ $self->_widget_class('combo-text')]}
        value="@{[ $self->current_value ]}" 
        type="text" 
        size="30"
-       autocomplete="off" /><span id="@{[ $self->input_name ]}_Button" 
+       autocomplete="off" /><span id="@{[ $self->element_id ]}_Button" 
        @{[ $self->_widget_class('combo-button')]}
         ></span></span><span style="display: none"></span><select 
         name="@{[ $self->input_name ]}" 
-        id="@{[ $self->input_name ]}_List" 
+        id="@{[ $self->_element_id ]}_List" 
         @{[ $self->_widget_class('combo-list')]}
-        onchange="ComboBox_SimpleAttach(this, this.form['@{[ $self->input_name ]}']); " 
+        onchange="ComboBox_SimpleAttach(this, this.form['@{[ $self->element_id ]}']); " 
         >
 <option style="display: none" value=""></option>
 EOF
@@ -50,7 +50,7 @@ EOF
 $field .= <<"EOF";
 </select>
 <script language="javascript"><!--
-ComboBox_InitWith('@{[ $self->input_name ]}');
+ComboBox_InitWith('@{[ $self->element_id ]}');
 //--></script>
 </nobr>
 EOF

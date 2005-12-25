@@ -27,7 +27,7 @@ sub render_widget {
     my $field;
     $field .= qq!<textarea!;
     $field .= qq! name="@{[ $self->input_name ]}"!;
-    $field .= qq! id="@{[ $self->input_name ]}"!;
+    $field .= qq! id="@{[ $self->element_id ]}"!;
     $field .= qq! rows="@{[$self->rows || 5 ]}"!;
     $field .= qq! cols="@{[$self->cols || 60]}"!;
     $field .= $self->_widget_class;

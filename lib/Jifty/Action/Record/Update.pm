@@ -96,7 +96,7 @@ sub take_action {
         $old = $old->id if UNIVERSAL::isa( $old, "Jifty::Record" );
 
         next if ( defined $old and defined $self->argument_value($field) and $old eq $self->argument_value($field) );
-        next if ( not length $old and not length $self->argument_value($field) );
+        next if (  not length $old and not length $self->argument_value($field) );
 
         my $setter = "set_$field";
         my ( $val, $msg ) = $self->record->$setter( $self->argument_value($field) );

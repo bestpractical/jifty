@@ -16,12 +16,12 @@ Renders the checkbox widget.
 
 sub render_widget {
     my $self  = shift;
-    my $field =  qq!<input type="hidden" name="@{[ $self->fallback_name ]}" id="@{[ $self->fallback_name ]}" value="0" />\n!;
+    my $field =  qq!<input type="hidden" name="@{[ $self->fallback_name ]}" value="0" />\n!;
 
     $field .= qq!<input!;
     $field .= qq! type="checkbox"!;
     $field .= qq! name="@{[ $self->input_name ]}"!;
-    $field .= qq! id="@{[ $self->input_name ]}"!;
+    $field .= qq! id="@{[ $self->element_id ]}"!;
     $field .= qq! value="@{[$self->value ||1]}"!;
     $field .= $self->_widget_class;
     $field .= qq! checked="checked"! if ($self->checked or $self->current_value);

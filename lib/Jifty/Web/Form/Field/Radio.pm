@@ -31,7 +31,7 @@ sub render_option {
     my $display = $opt->{'display'};
     my $value   = defined $opt->{'value'} ? $opt->{'value'} : '';
 
-    my $id = $self->input_name . "-" . $value;
+    my $id = $self->element_id . "-" . $value;
     $id =~ s/\s+/_/;
     my $field = qq! <input type="radio" !;
     $field .= qq! name="@{[ $self->input_name ]}"!;

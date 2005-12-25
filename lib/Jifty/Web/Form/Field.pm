@@ -81,8 +81,8 @@ C<new>.  Subclasses should extend this list.
 
 =cut
 
-sub accessors { shift->SUPER::accessors(), qw(name label input_name type sticky sticky_value default_value action mandatory ajax_validates ajax_autocomplete preamble hints render_mode length); }
-__PACKAGE__->mk_accessors(qw(name _label _input_name type sticky sticky_value default_value _action mandatory ajax_validates ajax_autocomplete preamble hints render_mode length));
+sub accessors { shift->SUPER::accessors(), qw(name label input_name type sticky sticky_value default_value action mandatory ajax_validates ajax_autocomplete preamble hints render_mode length _element_id); }
+__PACKAGE__->mk_accessors(qw(name _label _input_name type sticky sticky_value default_value _action mandatory ajax_validates ajax_autocomplete preamble hints render_mode length _element_id));
 
 =head2 name [VALUE]
 
@@ -193,6 +193,19 @@ sub label {
 
 }
 
+
+=head2 element_id 
+
+Returns a unique C<id> attribute for this field based on the field name. This is
+consistent for the life of the L<Jifty::Web::Form::Field> object but isn't predictable;
+
+=cut
+
+
+sub element_id {
+    my $self = shift;
+    return $self->_element_id || $self->_element_id( $self->input_name ."-".Jifty->web->serial); 
+}
 
 =head2 action [VALUE]
 
@@ -352,7 +365,7 @@ sub render_widget {
     my $field = qq!  <input !;
     $field .= qq! type="@{[ $self->type ]}"!;
     $field .= qq! name="@{[ $self->input_name ]}"!;
-    $field .= qq! id="@{[ $self->input_name ]}"!;
+    $field .= qq! id="@{[ $self->element_id ]}"!;
     $field .= qq! value="@{[HTML::Entities::encode_entities($self->current_value)]}"! if defined $self->current_value;
     $field .= $self->_widget_class; 
     $field .= qq! size="@{[ $self->length() ]}"! if ($self->length());
@@ -421,9 +434,9 @@ sub render_autocomplete {
     my $self = shift;
     return unless($self->ajax_autocomplete);
     Jifty->web->mason->out(
-qq!<div class="autocomplete" id="@{[$self->input_name]}-autocomplete" style="display:none;border:1px solid black;background-color:white;"></div>\n
+qq!<div class="autocomplete" id="@{[$self->element_id]}-autocomplete" style="display:none;border:1px solid black;background-color:white;"></div>\n
         <script type="text/javascript">
-          new Jifty.Autocompleter('@{[$self->input_name]}', '@{[$self->input_name]}-autocomplete', '/jifty/autocomplete.xml')
+          new Jifty.Autocompleter('@{[$self->input_name]}', '@{[$self->element_id]}-autocomplete', '/jifty/autocomplete.xml')
         </script>
   !
     );
