@@ -8,7 +8,36 @@ use CGI::Cookie;
 # We don't use Class::Accessor as we want to do our own 'set' and 'get' here
 #__PACKAGE__->mk_accessors(qw(_session));
 
+=head1 NAME
 
+Jifty::Web::Session - A Jifty session handler
+
+=head1 DESCRIPTION
+
+* Jifty sessions
+
+* User gets a per-app session cookie in their first response from the server
+* User gets an updated cookie on any request where:
+    1) if the cookie parameters have changed
+    2) if the user's current sessionid doesn't match the cookie's session id
+
+* The session cookie is handed out after all processing, but before any page 
+  content is displayed
+
+* The user gets a cookie even if we're doing a redirect.
+
+* In the future, we might want to not give the user a cookie.
+
+
+
+* Debugging
+
+** Should log:
+    * User presented a session cookie
+    * Loaded session from disk
+    * Failed to load session from disk (expired)
+    * Created a new session
+    * Sent a session cookie to the user.
 
 
 =head2 load
