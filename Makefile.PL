@@ -27,7 +27,7 @@ requires('HTML::Mason' => 1.3101);           # HTML::Mason::CGIHandler HTML::Mas
 requires('HTML::Mason::Plugin');
 requires('HTTP::Cookies');
 requires('HTTP::Server::Simple' => '0.10');
-requires('HTTP::Server::Simple::Mason');
+requires('HTTP::Server::Simple::Mason' => '0.09');
 requires('HTTP::Server::Simple::Recorder');
 requires('Hash::Merge');
 requires('Hook::LexWrap');
