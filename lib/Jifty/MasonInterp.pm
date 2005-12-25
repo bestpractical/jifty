@@ -1,13 +1,13 @@
 use warnings;
 use strict;
 
-package JFDI::MasonInterp;
+package Jifty::MasonInterp;
 
-use base qw/HTML::Mason::Interp JFDI::Object/;
+use base qw/HTML::Mason::Interp Jifty::Object/;
 
 =head2 make_request
 
-Overrides L<HTML::Mason::Interp>'s C<make_request> to call C<jfdi_munge_args>
+Overrides L<HTML::Mason::Interp>'s C<make_request> to call C<jifty_munge_args>
 on the request arguments and to log the execution (at debug level).
 
 =cut
@@ -19,7 +19,7 @@ sub make_request {
     # $p{'args'} is an arrayref that becomes %ARGS in Mason
 
     my $comp_args = { @{ $p{'args'} } };
-    $self->jfdi_munge_args($comp_args); # modifies $comp_args
+    $self->jifty_munge_args($comp_args); # modifies $comp_args
     $p{'args'} = [ %$comp_args ];
     
     # This is disabled in the logging conf files; comment out the MasonInterp
@@ -29,7 +29,7 @@ sub make_request {
     return $self->SUPER::make_request(%p);
 }
 
-=head2 jfdi_munge_args PARAMS
+=head2 jifty_munge_args PARAMS
 
 Takes a hashref PARAMS; does argument munging to it (modifying the contents
 of the reference passed in).
@@ -50,7 +50,7 @@ be poor behavior; avoid doing this.
 =cut
 
 
-sub jfdi_munge_args {
+sub jifty_munge_args {
     my $self = shift;
     my $args = shift;
 

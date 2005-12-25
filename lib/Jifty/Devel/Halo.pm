@@ -1,4 +1,4 @@
-   package JFDI::Devel::Halo;
+   package Jifty::Devel::Halo;
    use base qw(HTML::Mason::Plugin);
    use Time::HiRes;
 

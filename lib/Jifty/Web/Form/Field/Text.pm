@@ -1,12 +1,12 @@
 use warnings;
 use strict;
 
-package JFDI::Web::Form::Field::Text;
-use base qw/JFDI::Web::Form::Field/;
+package Jifty::Web::Form::Field::Text;
+use base qw/Jifty::Web::Form::Field/;
 
 =head1 NAME
 
-JFDI::Web::Form::Field::Text - Renders as a small text field
+Jifty::Web::Form::Field::Text - Renders as a small text field
 
 =cut
 

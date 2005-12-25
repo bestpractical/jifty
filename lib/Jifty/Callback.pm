@@ -1,11 +1,11 @@
 use strict;
 use warnings;
 
-package JFDI::Callback;
+package Jifty::Callback;
 
 =head1 NAME
 
-JFDI::Callback - Abstract base class for objects that can be called with keyword parameters
+Jifty::Callback - Abstract base class for objects that can be called with keyword parameters
 
 =head1 SYNOPSIS
 
@@ -14,26 +14,26 @@ JFDI::Callback - Abstract base class for objects that can be called with keyword
         $cb->call(with => "args");
     } 
 
-    function_with_callback(JFDI::Callback::String->new("just a string"));
-    function_with_callback(JFDI::Callback::Code->new(sub { some code }));
-    function_with_callback(JFDI::Callback::Component->new("/path/to/component"));
-    function_with_callback(JFDI::Callback::ComponentSource->new('<%args>...'));
+    function_with_callback(Jifty::Callback::String->new("just a string"));
+    function_with_callback(Jifty::Callback::Code->new(sub { some code }));
+    function_with_callback(Jifty::Callback::Component->new("/path/to/component"));
+    function_with_callback(Jifty::Callback::ComponentSource->new('<%args>...'));
 
     $callback->add_arguments( instead => "of", currying => "them" );
 
 =cut
 
-use base qw/Class::Accessor JFDI::Object/;
+use base qw/Class::Accessor Jifty::Object/;
 
 =head2 new CALLABLE
 
 Creates a new callback object for the callable object CALLABLE.  For example:
 
-  JFDI::Callback::String->new("some string")
-  JFDI::Callback::Code->new(sub { ... })
-  JFDI::Callback::Component->new("/_elements/something")
-  JFDI::Callback::Component->new(JFDI->mason->current_comp)
-  JFDI::Callback::ComponentSource->new('<%args>...')
+  Jifty::Callback::String->new("some string")
+  Jifty::Callback::Code->new(sub { ... })
+  Jifty::Callback::Component->new("/_elements/something")
+  Jifty::Callback::Component->new(Jifty->mason->current_comp)
+  Jifty::Callback::ComponentSource->new('<%args>...')
 
 =cut
 
@@ -83,9 +83,9 @@ the exact meaning of "call" is defined by the subclass.  Any arguments
 added with C<add_arguments> are also passed in, and they override any
 arguments given here.  The return value is similarly defined by the subclass.
 
-Within the C<JFDI> system, though, all callbacks are expected to output
-something through C<< JFDI->framework->mason >>; note that for 
-L<JFDI::Callback::Code>>, your subroutine must explicitly make calls to C<comp>
+Within the C<Jifty> system, though, all callbacks are expected to output
+something through C<< Jifty->framework->mason >>; note that for 
+L<Jifty::Callback::Code>>, your subroutine must explicitly make calls to C<comp>
 or C<out> on the mason object, whereas the other subclasses do that for you.
 
 =cut

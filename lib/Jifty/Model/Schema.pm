@@ -3,19 +3,19 @@ use strict;
 
 =head1 NAME
 
-JFDI::Model::Schema - Tracks in-db schema version
+Jifty::Model::Schema - Tracks in-db schema version
 
 =head1 SYNOPSIS
 
-  my $app = JFDI->new(config_file => "$ProjectRoot/etc/config.yml");
-  my $schema = JFDI::Model::Schema->new;
+  my $app = Jifty->new(config_file => "$ProjectRoot/etc/config.yml");
+  my $schema = Jifty::Model::Schema->new;
   my $db_version = $schema->in_db;
 
 =head1 DESCRIPTION
 
 =cut
 
-package JFDI::Model::Schema::Schema;
+package Jifty::Model::Schema::Schema;
 use Jifty::DBI::Schema;
 
 column major => type is 'integer';
@@ -23,10 +23,10 @@ column minor => type is 'integer';
 column rev   => type is 'integer';
 
 
-package JFDI::Model::Schema;
+package Jifty::Model::Schema;
 use version;
 
-use base qw( JFDI::Record );
+use base qw( Jifty::Record );
 
 =head2 table
 

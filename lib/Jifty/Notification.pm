@@ -1,21 +1,21 @@
 use warnings;
 use strict;
 
-package JFDI::Notification;
+package Jifty::Notification;
 
-use base qw/JFDI::Object Class::Accessor/;
+use base qw/Jifty::Object Class::Accessor/;
 use Email::Send;
 use Email::Simple;
 use Email::Simple::Creator;
 
 =head1 USAGE
 
-It is recommended that you subclass L<JFDI::Notification> and override C<body>, C<subject>,
+It is recommended that you subclass L<Jifty::Notification> and override C<body>, C<subject>,
 C<recipients>, and C<from> for each message.  (You may want a base class to provide C<from>, C<preface> and C<footer> for
 example.)  This lets you keep all of your notifications in the same place.
 
 However, if you really want to make a notification type in code without subclassing, you can
-create a C<JFDI::Notification> and call the C<set_body>, C<set_subject>, and so on methods on
+create a C<Jifty::Notification> and call the C<set_body>, C<set_subject>, and so on methods on
 it.
 
 =head1 METHODS
@@ -24,7 +24,7 @@ it.
 
 =head2 new [KEY1 => VAL1, ...]
 
-Creates a new L<JFDI::Notification>.  Any keyword args given are used to call set accessors
+Creates a new L<Jifty::Notification>.  Any keyword args given are used to call set accessors
 of the same name.
 
 Then it calls C<setup>.
@@ -78,8 +78,8 @@ sub send {
         body => join ("\n", $self->preface, $self->body, $self->footer)
     );
 
-    my $method = JFDI->framework_config('Mailer');
-    my $args_ref = JFDI->framework_config('MailerArgs');
+    my $method = Jifty->framework_config('Mailer');
+    my $args_ref = Jifty->framework_config('MailerArgs');
     $args_ref = [] unless defined $args_ref;
 
     my $sender = Email::Send->new({mailer => $method, mailer_args => $args_ref });

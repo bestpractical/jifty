@@ -1,15 +1,15 @@
 use warnings;
 use strict;
  
-package JFDI::Web::Form;
+package Jifty::Web::Form;
 
-use base qw/JFDI::Object Class::Accessor/;
+use base qw/Jifty::Object Class::Accessor/;
 
 __PACKAGE__->mk_accessors(qw(actions printed_actions helpers name));
 
 =head2 new ARGS
 
-Creates a new L<JFDI::Web::Form>.  Arguments: 
+Creates a new L<Jifty::Web::Form>.  Arguments: 
 
 =over
 
@@ -39,7 +39,7 @@ sub new {
 
 =head2 actions
 
-Returns a reference to a hash of L<JFDI::Action> objects in this form keyed by moniker.
+Returns a reference to a hash of L<Jifty::Action> objects in this form keyed by moniker.
 
 If you want to add actions to this form, use L</add_action>
 
@@ -53,14 +53,14 @@ Gets or sets the HTML name given to the form element.
 
 =head2 add_action PARAMHASH
 
-Calls L<JFDI::Web/new_action> with the paramhash given, and adds it to
+Calls L<Jifty::Web/new_action> with the paramhash given, and adds it to
 the form.
 
 =cut
 
 sub add_action {
     my $self = shift;
-   $self->register_action(JFDI->framework->new_action(@_));
+   $self->register_action(Jifty->framework->new_action(@_));
 } 
 
 
@@ -110,7 +110,7 @@ sub start {
     my $form_start = qq!<form method="post" action="$ENV{PATH_INFO}"!;
     $form_start   .= qq! name="@{[ $self->name ]}"! if defined $self->name;
     $form_start   .= qq! enctype="multipart/form-data" >\n!;
-    JFDI->mason->out($form_start);
+    Jifty->mason->out($form_start);
     '';
 } 
 
@@ -129,7 +129,7 @@ sub submit {
     
     $message = HTML::Entities::encode_entities($message);
     
-    JFDI->mason->out(qq{<input type="submit" class="submit" value="$message" onClick="jfdi_button_click();" />\n});
+    Jifty->mason->out(qq{<input type="submit" class="submit" value="$message" onClick="jifty_button_click();" />\n});
 
     return '';
 } 
@@ -146,7 +146,7 @@ be called again.
 sub end {
     my $self = shift;
 
-    JFDI->mason->out( qq!<div class="hidden">\n! );
+    Jifty->mason->out( qq!<div class="hidden">\n! );
 
     $self->_print_registered_actions();
 
@@ -154,9 +154,9 @@ sub end {
     $self->_preserve_state_variables();
 
 
-    JFDI->mason->out( qq!</div>\n! );
+    Jifty->mason->out( qq!</div>\n! );
 
-    JFDI->mason->out( qq!</form>\n! );
+    Jifty->mason->out( qq!</form>\n! );
 
     # Clear out all the registered actions and the name 
     $self = $self->new();
@@ -198,15 +198,15 @@ sub _print_registered_actions {
 
 =for private _preserve_request_helpers
 
-We want to serialze all JFDI::Helpers as part of the form
+We want to serialze all Jifty::Helpers as part of the form
 
 =cut
 
 sub _preserve_request_helpers {
     my $self = shift;
-    my %helper_args = JFDI->framework->request->helpers_as_query_args;
+    my %helper_args = Jifty->framework->request->helpers_as_query_args;
     for my $k (keys %helper_args) {
-        JFDI->mason->out( qq!<input type="hidden" name="$k" value="$helper_args{$k}" />\n! );
+        Jifty->mason->out( qq!<input type="hidden" name="$k" value="$helper_args{$k}" />\n! );
     } 
 
 }
@@ -218,19 +218,19 @@ sub _preserve_state_variables {
 
     # Preserve state variables from the previous request, so
     # we can re-present them if validation fails
-    foreach my $var (  JFDI->framework->request->state_variables  ) {
-        JFDI->mason->out( qq{<input type="hidden" name="J:V-} 
+    foreach my $var (  Jifty->framework->request->state_variables  ) {
+        Jifty->mason->out( qq{<input type="hidden" name="J:V-} 
                 . $var->key
                 . qq{" value="}
                 . $var->value
                 . qq{" />\n} );
 
     }
-    foreach my $var ( keys %{ JFDI->framework->{state_variables} } ) {
-        JFDI->mason->out( qq{<input type="hidden" name="J:NV-} 
+    foreach my $var ( keys %{ Jifty->framework->{state_variables} } ) {
+        Jifty->mason->out( qq{<input type="hidden" name="J:NV-} 
                 . $var
                 . qq{" value="}
-                . JFDI->framework->{'state_variables'}->{$var}
+                . Jifty->framework->{'state_variables'}->{$var}
                 . qq{" />\n} );
     }
 
@@ -255,7 +255,7 @@ Set the page this form should go to on success
 sub next_page {
     my $self = shift;
 
-    $self->add_action(class => "JFDI::Action::Redirect", moniker => "next_page", arguments => {@_});
+    $self->add_action(class => "Jifty::Action::Redirect", moniker => "next_page", arguments => {@_});
 }
 
 1;

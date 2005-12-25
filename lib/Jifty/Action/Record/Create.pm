@@ -1,22 +1,22 @@
 use warnings;
 use strict;
 
-package JFDI::Action::Record::Create;
+package Jifty::Action::Record::Create;
 
 =head1 NAME
 
-JFDI::Action::Record::Create - Automagic creation action
+Jifty::Action::Record::Create - Automagic creation action
 
 =head1 DESCRIPTION
 
-This class is used as the base class for L<JFDI::Action>s that are
-merely creating JFDI::Record objects.  To use it, subclass it and
+This class is used as the base class for L<Jifty::Action>s that are
+merely creating Jifty::Record objects.  To use it, subclass it and
 override the C<record_class> method to return the name of the
-JFDI::Record subclass that this action creates.
+Jifty::Record subclass that this action creates.
 
 =cut
 
-use base qw/JFDI::Action::Record/;
+use base qw/Jifty::Action::Record/;
 
 =head1 METHODS
 
@@ -39,8 +39,8 @@ sub arguments {
 
 =head2 take_action
 
-Overrides the virtual C<take_action> method on L<JFDI::Action> to call
-the appropriate C<JFDI::Record>'s C<create> method when the action is
+Overrides the virtual C<take_action> method on L<Jifty::Action> to call
+the appropriate C<Jifty::Record>'s C<create> method when the action is
 run, thus creating a new object in the database.
 
 =cut

@@ -1,5 +1,5 @@
-package JFDI::Generator::App;
-use base 'JFDI::Generator::Command';
+package Jifty::Generator::App;
+use base 'Jifty::Generator::Command';
 
 use YAML;
 

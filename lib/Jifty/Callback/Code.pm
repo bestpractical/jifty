@@ -1,12 +1,12 @@
 use strict;
 use warnings;
 
-package JFDI::Callback::Code;
-use base qw/JFDI::Callback/;
+package Jifty::Callback::Code;
+use base qw/Jifty::Callback/;
 
 =head1 NAME
 
-JFDI::Callback::Code - Callback that calls a subroutine
+Jifty::Callback::Code - Callback that calls a subroutine
 
 =head2 call [KEY1 => VAL1, ...]
 

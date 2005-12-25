@@ -3,18 +3,18 @@ use strict;
 
 =head1 NAME
 
-JFDI::Bootstrap
+Jifty::Bootstrap
 
 =head1 DESCRIPTION
 
-C<JFDI::Bootstrap> is an abstract baseclass for your application's bootstrapping.
+C<Jifty::Bootstrap> is an abstract baseclass for your application's bootstrapping.
 Use it to set up configuration files, initialize databases, etc.
 
 =cut
 
-package JFDI::Bootstrap;
+package Jifty::Bootstrap;
 
-use base qw/JFDI::Object/;
+use base qw/Jifty::Object/;
 
 =head2 run
 

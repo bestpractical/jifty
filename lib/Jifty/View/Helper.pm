@@ -1,12 +1,12 @@
 use warnings;
 use strict;
 
-package JFDI::View::Helper;
-use base qw/JFDI::Object Class::Accessor/;
+package Jifty::View::Helper;
+use base qw/Jifty::Object Class::Accessor/;
 
 =head2 new
 
-View helpers must be constructed with keyword arguments.  L<JFDI::View::Helper>
+View helpers must be constructed with keyword arguments.  L<Jifty::View::Helper>
 expects a C<moniker> argument; subclasses may expect other arguments.
 Subclasses should call C<$self = $class->SUPER::new(@_)> at the B<top> of their
 C<new> to set up the moniker and initial state.
@@ -51,7 +51,7 @@ __PACKAGE__->mk_accessors('moniker');
 
 =head2 fill_state_from_request
 
-If the incoming L<JFDI::Request> had a helper with a moniker that matches this
+If the incoming L<Jifty::Request> had a helper with a moniker that matches this
 helper's moniker, copy state from the request into the helper.
 
 =cut
@@ -59,7 +59,7 @@ helper's moniker, copy state from the request into the helper.
 sub fill_state_from_request {
     my $self = shift;
 
-    my $request_helper = JFDI->framework->request->helper( $self->moniker );
+    my $request_helper = Jifty->framework->request->helper( $self->moniker );
 
     return unless $request_helper;
 

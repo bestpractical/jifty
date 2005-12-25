@@ -1,9 +1,9 @@
 use warnings;
 use strict;
  
-package JFDI::Web::Form::Field::Password;
+package Jifty::Web::Form::Field::Password;
 
-use base qw/JFDI::Web::Form::Field/;
+use base qw/Jifty::Web::Form::Field/;
 
 =head2 type
 

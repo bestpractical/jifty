@@ -1,25 +1,25 @@
 use warnings;
 use strict;
 use Time::ParseDate ();
-package JFDI::Action::Record;
+package Jifty::Action::Record;
 
 =head1 NAME
 
-JFDI::Action::Record -- An action tied to a record in the database.
+Jifty::Action::Record -- An action tied to a record in the database.
 
 =head1 DESCRIPTION
 
 Represents a web-based action that is a create, update, or delete of a
-L<JFDI::Record> object.  This automatically populates the arguments
-method of L<JFDI::Action> so that you don't need to bother.  To
+L<Jifty::Record> object.  This automatically populates the arguments
+method of L<Jifty::Action> so that you don't need to bother.  To
 actually use this class, you probably want to inherit from one of
-L<JFDI::Action::Record::Create>, L<JFDI::Action::Record::Update>, or
-L<JFDI::Action::Record::Delete> and override the C<record_class>
+L<Jifty::Action::Record::Create>, L<Jifty::Action::Record::Update>, or
+L<Jifty::Action::Record::Delete> and override the C<record_class>
 method.
 
 =cut
 
-use base qw/JFDI::Action/;
+use base qw/Jifty::Action/;
 
 __PACKAGE__->mk_accessors(qw(record));
 
@@ -27,7 +27,7 @@ __PACKAGE__->mk_accessors(qw(record));
 
 =head2 record
 
-Access to the underlying JFDI::Record object that this action is
+Access to the underlying Jifty::Record object that this action is
 through the C<record> accessor.
 
 =cut
@@ -43,13 +43,13 @@ the constructor.
 
 sub record_class {
     my $self = shift;
-    $self->log->fatal("JFDI::Action::Record must be subclassed to be used");
+    $self->log->fatal("Jifty::Action::Record must be subclassed to be used");
 }
 
 
 =head2 new PARAMHASH
 
-Construct a new C<JFDI::Action::Record> (should only be called by C<<
+Construct a new C<Jifty::Action::Record> (should only be called by C<<
 framework->new_action >>.  The C<record> value, if provided in the
 PARAMHASH, will be used to load the record; otherwise, the parimary
 keys will be loaded from the action's argument values.
@@ -78,7 +78,7 @@ sub new {
     } else {
         # We could leave out the explicit current user, but it'd have a slight negative
         # performance implications
-        $self->record($record_class->new( current_user => JFDI->framework->current_user));
+        $self->record($record_class->new( current_user => Jifty->framework->current_user));
         my %given_pks = ();
         for my $pk (@{ $self->record->_primary_keys }) {
             $given_pks{$pk} = $self->argument_value($pk) if defined $self->argument_value($pk);
@@ -92,7 +92,7 @@ sub new {
 
 =head2 arguments
 
-Overrides JFDI::Action's arguments method, to automatically
+Overrides Jifty::Action's arguments method, to automatically
 provide a form field for every writable attribute of the underlying
 record.
 
@@ -119,7 +119,7 @@ sub arguments {
 
             # If the current value is actually a pointer to another object, dereference it
             $current_value = $current_value->id
-              if UNIVERSAL::isa( $current_value, 'JFDI::Record' );
+              if UNIVERSAL::isa( $current_value, 'Jifty::Record' );
             $info->{default_value} = $current_value if $self->record->id;
         }
 
@@ -137,9 +137,9 @@ sub arguments {
 
         elsif ( defined $column->refers_to ) {
             my $ref = $column->refers_to;
-            if ( UNIVERSAL::isa( $ref, 'JFDI::Record' ) ) {
+            if ( UNIVERSAL::isa( $ref, 'Jifty::Record' ) ) {
 
-                my $collection = JFDI::Collection->new(
+                my $collection = Jifty::Collection->new(
                     record_class => $ref,
                     current_user => $self->record->current_user
                 );
@@ -241,20 +241,20 @@ sub canonicalize_date {
 =head2 take_action
 
 Throws an error unless it is overridden; use
-JFDI::Action::Record::Update, ::Delete, or ::Create
+Jifty::Action::Record::Update, ::Delete, or ::Create
 
 =cut
 
 sub take_action {
     my $self = shift;
-    $self->log->fatal("Use one of the JFDI::Action::Record subclasses, ::Update or ::Create");
+    $self->log->fatal("Use one of the Jifty::Action::Record subclasses, ::Update or ::Create");
 }
 
 
 =head1 SEE ALSO
 
-L<JFDI::Action>, L<JFDI::Record>, L<Jifty::DBI::Record>,
-L<JFDI::Action::Record::Create>, L<JFDI::Action::Record::Update>
+L<Jifty::Action>, L<Jifty::Record>, L<Jifty::DBI::Record>,
+L<Jifty::Action::Record::Create>, L<Jifty::Action::Record::Update>
 
 =cut
 

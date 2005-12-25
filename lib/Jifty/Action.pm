@@ -1,22 +1,22 @@
 use warnings;
 use strict;
 
-package JFDI::Action;
+package Jifty::Action;
 
 =head1 NAME
 
-JFDI::Action - The ability to Do Things in the framework
+Jifty::Action - The ability to Do Things in the framework
 
 =head1 DESCRIPTION
 
-C<JFDI::Action> is the meat of the L<JFDI> framework; it controls how
+C<Jifty::Action> is the meat of the L<Jifty> framework; it controls how
 form elements interact with the underlying model.
 
 =cut
 
-use JFDI::Everything;
+use Jifty::Everything;
 
-use base qw/JFDI::Object Class::Accessor/;
+use base qw/Jifty::Object Class::Accessor/;
 
 __PACKAGE__->mk_accessors(qw(moniker just_validating argument_values order result));
 
@@ -43,7 +43,7 @@ sub new {
     $self->moniker($args{'moniker'});
     $self->order($args{'order'});
     $self->argument_values( { %{ $args{'arguments'} } } );
-    $self->result(JFDI->framework->response->result($self->moniker) || JFDI::Result->new);
+    $self->result(Jifty->framework->response->result($self->moniker) || Jifty::Result->new);
 
     return $self;
 }
@@ -62,26 +62,26 @@ arguments this action takes:
   }
 
 Each argument listed in the hash will be turned into a
-L<JFDI::Web::Form::Field> object.  For each argument, the hash that
-describes it is used to set up the L<JFDI::Web::Form::Field> object by
+L<Jifty::Web::Form::Field> object.  For each argument, the hash that
+describes it is used to set up the L<Jifty::Web::Form::Field> object by
 calling the keys as methods with the values as arguments.  That is, in
-the above example, JFDI will run code similar to the following:
+the above example, Jifty will run code similar to the following:
 
   # For 'argument_name'
-  $f = JFDI::Web::Form::Field->new;
+  $f = Jifty::Web::Form::Field->new;
   $f->name( "argument_name" );
   $f->label( "Properties go in this hash" );
 
 If an action has parameters that B<must> be passed to it to execute,
 these should have the C<constructor> property set.  This is separate
 from the C<mandatory> property, which deal with requiring that the
-user enter a value for that field.  See L<JFDI::Web::Form::Field>.
+user enter a value for that field.  See L<Jifty::Web::Form::Field>.
 
 =cut
 
 sub arguments {
     my  $self= shift;
-    JFDI->log->error("Subroutine arguments must be subclassed in ".ref($self));
+    Jifty->log->error("Subroutine arguments must be subclassed in ".ref($self));
     return {}
 }
 
@@ -91,13 +91,13 @@ sub arguments {
 Registers this action as being present.  This expects that an HTML
 form has already been opened.  Note that this is not a guarantee that
 the action will be run, even if the form is submitted.  See
-L<JFDI::Request> for the definition of "active" actions.
+L<Jifty::Request> for the definition of "active" actions.
 
 =cut
 
 sub register {
     my $self = shift;
-    JFDI->mason->out( '<input type="hidden" ' . ' name="' .  $self->register_name . '" ' . ' value="' .  ref($self) . qq|" />\n| );
+    Jifty->mason->out( '<input type="hidden" ' . ' name="' .  $self->register_name . '" ' . ' value="' .  ref($self) . qq|" />\n| );
 
 
 
@@ -108,7 +108,7 @@ sub register {
         my $default;
         $default = $self->argument_value($name) unless $info->{'not_sticky'};
         $default = $info->{'default_value'} unless defined $default;
-        JFDI::Web::Form::Field->new(
+        Jifty::Web::Form::Field->new(
             %$info,
             action        => $self,
             input_name    => $self->double_fallback_form_field_name($name),
@@ -147,7 +147,7 @@ Validate this action's arguments and return some XML describing the errors.
 
 The AJAX verification stuff uses this.
 
-XXX TODO REALLY, this should be using JFDI::Record::Form::Field->render_error to do the rendering 
+XXX TODO REALLY, this should be using Jifty::Record::Form::Field->render_error to do the rendering 
 of the error divs. 
 
 
@@ -159,10 +159,10 @@ sub validate_as_xml {
     $self->check_authorization || return;
     $self->just_validating(1);
     $self->setup || return;
-    JFDI->mason->cgi_request->content_type("text/xml");
-    JFDI->mason->out(qq{<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<validation id="@{[$self->register_name]}">\n});
+    Jifty->mason->cgi_request->content_type("text/xml");
+    Jifty->mason->out(qq{<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<validation id="@{[$self->register_name]}">\n});
     $self->validate_arguments;
-    JFDI->mason->out("</validation>\n");
+    Jifty->mason->out("</validation>\n");
 
 }
 
@@ -230,7 +230,7 @@ sub argument_value {
 
 =head2 form_field ARGUMENT_NAME
 
-Returns a JFDI::Web::Form::Field object for this argument.  If there
+Returns a Jifty::Web::Form::Field object for this argument.  If there
 is no entry in the L</arguments> hash that matches the given
 C<FIELDNAME>, returns C<undef>.
 
@@ -247,7 +247,7 @@ sub form_field {
 
             # form_fields overrides stickiness of what the user last entered.
             $self->{_private_form_fields_hash}{$arg_name}
-                = JFDI::Web::Form::Field->new(
+                = Jifty::Web::Form::Field->new(
                 action        => $self,
                 name          => $arg_name,
                 default_value => $field_info->{not_sticky} ? "" : $self->argument_value($arg_name),
@@ -255,7 +255,7 @@ sub form_field {
                 );
         }    # else $field remains undef
         else {
-            JFDI->log->warn("$arg_name isn't a valid field for $self");
+            Jifty->log->warn("$arg_name isn't a valid field for $self");
         }
     }
     return $self->{_private_form_fields_hash}{$arg_name};
@@ -270,7 +270,7 @@ a number, with lower numbers being run first.
 
 =head2 result
 
-Returns the L<JFDI::Result> method associated with this action.  This
+Returns the L<Jifty::Result> method associated with this action.  This
 information is stored in notes across a redirect, so the information
 is still available.
 
@@ -283,7 +283,7 @@ Returns nothing.
 
 sub render_errors {
     my $self = shift;
-    my $m = JFDI->mason; 
+    my $m = Jifty->mason; 
     
     if (defined $self->result->error) {
         $m->out('<div class="form_errors">');
@@ -311,7 +311,7 @@ sub button {
                  label => 'Click me!',
                  key_binding => undef,
                  @_);
-    my $field = JFDI::Web::Form::Field->new( action => $self, label => $args{'label'}, type => 'InlineButton', key_binding => $args{'key_binding'});
+    my $field = Jifty::Web::Form::Field->new( action => $self, label => $args{'label'}, type => 'InlineButton', key_binding => $args{'key_binding'});
     $field->input_name(join "|", map {$self->form_field_name($_)."=".$args{arguments}{$_}} keys %{$args{arguments}});
     $field->name(join '|', keys %{$args{arguments}}); # Only used internally
 
@@ -363,7 +363,7 @@ This is specifically to support checkboxes, which only show up in the
 query string if they are checked.  If you create a checkbox with the
 value of C<form_field_name> as its name and a value of 1, and a hidden
 input with the value of C<fallback_form_field_name> as its name and a
-value of 0, then the L<JFDI::Request> will contain the correct value
+value of 0, then the L<Jifty::Request> will contain the correct value
 either way.
 
 =cut
@@ -585,7 +585,7 @@ and C<value>, which should be (if in a SELECT, say) the string to
 display for the value, and the value to actually send to the server.
 Things that are allowed in the array include hashes with C<display>
 and C<value> (which are just sent through); hashes with C<collection>
-(a L<JFDI::Collection>), and C<display_from> and C<value_from> (the names
+(a L<Jifty::Collection>), and C<display_from> and C<value_from> (the names
 of methods to call on each record in the collection to get C<display> and
 C<value>); or strings, which are treated as both C<display> and C<value>.
 
@@ -681,7 +681,7 @@ sub validation_error {
     if ($self->just_validating) {
         # XXX FIXME TODO What if $error has ]]> in it?
         my $errdiv = $self->error_div_id($field);
-        JFDI->mason->out(qq{<error id="$errdiv"><![CDATA[$error]]></error>\n});
+        Jifty->mason->out(qq{<error id="$errdiv"><![CDATA[$error]]></error>\n});
     } else {
         $self->result->field_error($field => $error); 
     }
@@ -709,7 +709,7 @@ sub validation_ok {
 
     if ($self->just_validating) {
         my $errdiv = $self->error_div_id($field);
-        JFDI->mason->out(qq{<ok id="$errdiv" />\n});
+        Jifty->mason->out(qq{<ok id="$errdiv" />\n});
     }
 
     return 1;
@@ -728,7 +728,7 @@ sub validation_blank_xml {
 
     if ($self->just_validating) {
         my $errdiv = $self->error_div_id($field);
-        JFDI->mason->out(qq{<blank id="$errdiv" />\n});
+        Jifty->mason->out(qq{<blank id="$errdiv" />\n});
     } else {
         $self->log->fatal(q{ # Shouldn't happen.});
     }
@@ -750,7 +750,7 @@ sub validation_ignored_xml {
 
     if ($self->just_validating) {
         my $errdiv = $self->error_div_id($field);
-        JFDI->mason->out(qq{<ignored id="$errdiv" />\n});
+        Jifty->mason->out(qq{<ignored id="$errdiv" />\n});
     } else {
         # Shouldn't happen.
         $self->log->fatal(q{ # Shouldn't happen.});

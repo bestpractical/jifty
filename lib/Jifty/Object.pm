@@ -1,20 +1,20 @@
 use warnings;
 use strict;
 
-package JFDI::Object;
+package Jifty::Object;
 
 use Log::Log4perl;
 use HTML::Entities;
 
-=head1 JFDI::Object
+=head1 Jifty::Object
 
-C<JFDI::Object> is the superclass of most of JFDI's objects.  It is
+C<Jifty::Object> is the superclass of most of Jifty's objects.  It is
 used to provide convenient accessors to important global objects like
 the database handle or the logger object, while still allowing individual
 classes to overload these methods.
 
-We ought to be able to mix-in C<JFDI::Object> with any other class; thus,
-we will not define C<new> or C<_init> in C<JFDI::Object>, and we will not
+We ought to be able to mix-in C<Jifty::Object> with any other class; thus,
+we will not define C<new> or C<_init> in C<Jifty::Object>, and we will not
 make any assumptions about the underlying representation of C<$self>.
 
 =cut
@@ -39,7 +39,7 @@ sub current_user {
 Takes the ARGS paramhash passed to _init. Looks
      Find the current user. First, try to see if it's explicit.
      After that, check the caller's current_user. After that, look
-     at JFDI->framework->current_user
+     at Jifty->framework->current_user
 
 Fills in current_user with that value
 
@@ -82,8 +82,8 @@ sub _get_current_user {
     };
 
 
-    if ( JFDI->framework ) {
-        return $self->current_user( JFDI->framework->current_user );
+    if ( Jifty->framework ) {
+        return $self->current_user( Jifty->framework->current_user );
     }
 
     return undef;
@@ -91,7 +91,7 @@ sub _get_current_user {
 
 
 sub _handle {
-    return JFDI->handle();
+    return Jifty->handle();
 }
 
 =head2 log

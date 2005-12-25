@@ -1,4 +1,4 @@
-package JFDI::Web::Menu;
+package Jifty::Web::Menu;
 
 use base qw/Class::Accessor/;
 use URI;
@@ -7,7 +7,7 @@ __PACKAGE__->mk_accessors(qw(label parent sort_order));
 
 =head2 new PARAMHASH
 
-Creates a new L<JFDI::Web::Menu> object.  Possible keys in the
+Creates a new L<Jifty::Web::Menu> object.  Possible keys in the
 I<PARAMHASH> are C<label>, C<parent>, C<sort_order>, C<url>, and
 C<active>.  See the subroutines with the respecitve name below for
 each option's use.
@@ -20,7 +20,7 @@ Sets or returns the string that the menu item will be displayed as.
 
 =head2 parent [MENU]
 
-Gets or sets the parent L<JFDI::Web::Menu> of this item; this defaults
+Gets or sets the parent L<Jifty::Web::Menu> of this item; this defaults
 to null.
 
 =head2 sort_order [NUMBER]
@@ -67,7 +67,7 @@ sub active {
 If only a I<KEY> is provided, returns the child with that I<KEY>.
 
 Otherwise, creates or overwrites the child with that key, passing the
-I<PARAMHASH> to L<JFDI::Web::Menu/new>.  Additionally, the paramhash's
+I<PARAMHASH> to L<Jifty::Web::Menu/new>.  Additionally, the paramhash's
 C<label> defaults to the I<KEY>, and the C<sort_order> defaults to the
 pre-existing child's sort order (if a C<KEY> is being over-written) or
 the end of the list, if it is a new C<KEY>.
@@ -78,7 +78,7 @@ sub child {
     my $self = shift;
     my $key = shift;
     if (@_) {
-        $self->{children}{$key} = JFDI::Web::Menu->new({parent => $self,
+        $self->{children}{$key} = Jifty::Web::Menu->new({parent => $self,
                                                         sort_order => ($self->{children}{$key}{sort_order}
                                                                        || scalar values %{$self->{children}}),
                                                         label => $key,

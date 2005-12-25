@@ -1,4 +1,4 @@
-use t::JFDI;
+use t::Jifty;
 
 run_is_deeply;
 
@@ -371,14 +371,14 @@ just_validating: 1
 --- form
 J:A-mymoniker: DoSomething
 J:A:F-id-mymoniker: 23
-J:H-mymoniker: JFDI::View::Helper::This
+J:H-mymoniker: Jifty::View::Helper::This
 J:A:F-something-mymoniker: else
 J:H:S-bla-mymoniker: foo
 --- request
 helpers:
   mymoniker:
     moniker: mymoniker
-    class: JFDI::View::Helper::This
+    class: Jifty::View::Helper::This
     states:
       bla: foo
 actions:
@@ -393,14 +393,14 @@ actions:
 --- form
 J:A-mymoniker: DoSomething
 J:A:F-id-mymoniker: 23
-J:H-yourmoniker: JFDI::View::Helper::This
+J:H-yourmoniker: Jifty::View::Helper::This
 J:A:F-something-mymoniker: else
 J:H:S-bla-yourmoniker: foo
 --- request
 helpers:
   yourmoniker:
     moniker: yourmoniker
-    class: JFDI::View::Helper::This
+    class: Jifty::View::Helper::This
     states:
       bla: foo
 actions:
@@ -413,20 +413,20 @@ actions:
         something: else
 === just a helper
 --- form
-J:H-yourmoniker: JFDI::View::Helper::This
+J:H-yourmoniker: Jifty::View::Helper::This
 J:H:S-bla-yourmoniker: foo
 --- request
 helpers:
   yourmoniker:
     moniker: yourmoniker
-    class: JFDI::View::Helper::This
+    class: Jifty::View::Helper::This
     states:
       bla: foo
 actions: {}
 === two helpers
 --- form
-J:H-yourmoniker: JFDI::View::Helper::This
-J:H-hismoniker: JFDI::View::Helper::That
+J:H-yourmoniker: Jifty::View::Helper::This
+J:H-hismoniker: Jifty::View::Helper::That
 J:H:S-bla-yourmoniker: foo
 J:H:S-bap-yourmoniker: baz
 J:H:S-bla-hismoniker: feep
@@ -435,13 +435,13 @@ J:H:S-bot-hismoniker: asdf
 helpers:
   yourmoniker:
     moniker: yourmoniker
-    class: JFDI::View::Helper::This
+    class: Jifty::View::Helper::This
     states:
       bla: foo
       bap: baz
   hismoniker:
     moniker: hismoniker
-    class: JFDI::View::Helper::That
+    class: Jifty::View::Helper::That
     states:
       bla: feep
       bot: asdf

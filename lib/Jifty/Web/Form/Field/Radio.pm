@@ -1,9 +1,9 @@
 use warnings;
 use strict;
  
-package JFDI::Web::Form::Field::Radio;
+package Jifty::Web::Form::Field::Radio;
 
-use base qw/JFDI::Web::Form::Field/;
+use base qw/Jifty::Web::Form::Field/;
 
 =head2 render_widget
 
@@ -29,13 +29,13 @@ sub render_option {
     $field .= qq! id="@{[ $self->input_name ]}"!;
     $field .= qq! value="@{[ $value ]}"!;
     $field .= qq! class="@{[ $self->class ]}@{[ $self->ajax_validates ? ' ajaxvalidation' : '' ]}" !;
-    $field .= qq!          jfdiaction="@{[ $self->action->register_name ]}"!
+    $field .= qq!          jiftyaction="@{[ $self->action->register_name ]}"!
         if ( $self->ajax_validates );
 
         $field .= qq! checked="1" !
             if defined $self->default_value and $self->default_value eq $value;
         $field .= qq!>$display\n!;
-    JFDI->mason->out($field);
+    Jifty->mason->out($field);
     '';
 }
 

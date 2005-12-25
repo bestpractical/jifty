@@ -1,9 +1,9 @@
 use warnings;
 use strict;
  
-package JFDI::Web::Form::Field::InlineButton;
+package Jifty::Web::Form::Field::InlineButton;
 
-use base qw/JFDI::Web::Form::Field::Button/;
+use base qw/Jifty::Web::Form::Field::Button/;
 
 
 =head2 render

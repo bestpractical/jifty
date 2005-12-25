@@ -1,9 +1,9 @@
 use warnings;
 use strict;
  
-package JFDI::Web::Form::Field::Checkbox;
+package Jifty::Web::Form::Field::Checkbox;
 
-use base qw/JFDI::Web::Form::Field/;
+use base qw/Jifty::Web::Form::Field/;
 
 =head2 render_widget
 
@@ -17,7 +17,7 @@ sub render_widget {
     $field .= qq!<input type="checkbox" name="@{[ $self->input_name ]}" value="1" !;
     $field .= qq! checked="checked" ! if $self->default_value;
     $field .= qq! />\n!;
-    JFDI->mason->out($field);
+    Jifty->mason->out($field);
     '';
 }
 

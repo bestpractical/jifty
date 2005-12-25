@@ -1,9 +1,9 @@
 use warnings;
 use strict;
  
-package JFDI::Web::Form::Field::Combobox;
+package Jifty::Web::Form::Field::Combobox;
 
-use base qw/JFDI::Web::Form::Field/;
+use base qw/Jifty::Web::Form::Field/;
 
 =head2 render_widget
 
@@ -55,7 +55,7 @@ EOF
 
 
 
-        JFDI->mason->out($field);
+        Jifty->mason->out($field);
     '';
 }
 

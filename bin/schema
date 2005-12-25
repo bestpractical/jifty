@@ -7,7 +7,7 @@ use File::Basename;
 BEGIN {
     my $dir = dirname(__FILE__);
     push @INC, "$dir/../lib";
-    push @INC, "$dir/../../JFDI/lib";
+    push @INC, "$dir/../../Jifty/lib";
 }
 
 use Getopt::Long;
@@ -39,13 +39,13 @@ if ( $OPTIONS->{include} ) {
 }
 unshift @INC, "$ProjectRoot/lib";
 
-# Import JFDI
-JFDI->require                or die $UNIVERSAL::require::ERROR;
-JFDI::Model::Schema->require or die $UNIVERSAL::require::ERROR;
+# Import Jifty
+Jifty->require                or die $UNIVERSAL::require::ERROR;
+Jifty::Model::Schema->require or die $UNIVERSAL::require::ERROR;
 
 # We trap the various "die" errors
 eval {
-    JFDI->new(
+    Jifty->new(
         config_file => "$ProjectRoot/etc/config.yml",
         no_handle   => ( $OPTIONS->{'create'} and $OPTIONS->{'install'} ),
         logger_component => 'SchemaTool',
@@ -80,10 +80,10 @@ else {
 create_db() if $OPTIONS->{create};
 
 # Set up application-specific parts
-my $ApplicationClass = JFDI->framework_config('ApplicationClass');
-my $SG               = Jifty::DBI::SchemaGenerator->new( JFDI->handle )
+my $ApplicationClass = Jifty->framework_config('ApplicationClass');
+my $SG               = Jifty::DBI::SchemaGenerator->new( Jifty->handle )
   or die "Can't make Jifty::DBI::SchemaGenerator";
-my $schema = JFDI::Model::Schema->new;
+my $schema = Jifty::Model::Schema->new;
 
 # This creates a sub "models" which when called, finds packages under
 # $ApplicationClass::Model, requires them, and returns a list of their
@@ -91,7 +91,7 @@ my $schema = JFDI::Model::Schema->new;
 require Module::Pluggable;
 Module::Pluggable->import(
     require     => 1,
-    search_path => [ "JFDI::Model", $ApplicationClass . "::Model" ],
+    search_path => [ "Jifty::Model", $ApplicationClass . "::Model" ],
     sub_name    => 'models',
 );
 
@@ -99,7 +99,7 @@ if ( $OPTIONS->{tables} ) {
     $log->info("Generating SQL for application $ApplicationClass...");
 
     my $appv =
-        version->new( JFDI->framework_config('Database')->{'Version'} );
+        version->new( Jifty->framework_config('Database')->{'Version'} );
 
     for my $model ( __PACKAGE__->models ) {
 
@@ -110,7 +110,7 @@ if ( $OPTIONS->{tables} ) {
         #   This *will* try to generate SQL for abstract base classes you might
         #   stick in $AC::Model::.
         do { $log->info("Skipping $model"); next }
-          if not UNIVERSAL::isa( $model, 'JFDI::Record' )
+          if not UNIVERSAL::isa( $model, 'Jifty::Record' )
              or (UNIVERSAL::can( $model, 'since') and $appv < $model->since);
 
         $log->info("Using $model");
@@ -124,11 +124,11 @@ if ( $OPTIONS->{tables} ) {
     elsif ( $OPTIONS->{'install'} ) {
 
         # Start a transactoin
-        JFDI->handle->begin_transaction;
+        Jifty->handle->begin_transaction;
 
         # Run all CREATE commands
         for my $statement ( $SG->create_table_sql_statements ) {
-            my $ret = JFDI->handle->simple_query($statement);
+            my $ret = Jifty->handle->simple_query($statement);
             $ret or die "error creating a table: " . $ret->error_message;
         }
 
@@ -144,7 +144,7 @@ if ( $OPTIONS->{tables} ) {
         die $@ if $@;
 
         # Commit it all
-        JFDI->handle->commit;
+        Jifty->handle->commit;
     }
 
 }
@@ -152,7 +152,7 @@ else {
 
     # Find current versions
     my $dbv  = $schema->in_db;
-    my $appv = version->new( JFDI->framework_config('Database')->{'Version'} );
+    my $appv = version->new( Jifty->framework_config('Database')->{'Version'} );
     if ( $appv < $dbv ) {
         print "Version $appv from module older than $dbv in database!\n";
         exit;
@@ -179,7 +179,7 @@ else {
 
         # We don't want to get the Collections, for example.
         do { warn "Skipping $model\n"; next }
-          unless UNIVERSAL::isa( $model, 'JFDI::Record' );
+          unless UNIVERSAL::isa( $model, 'Jifty::Record' );
 
         # Set us up the table
         $model = $model->new;
@@ -192,7 +192,7 @@ else {
         {
 
             # Create it
-            unshift @{$UPGRADES{$model->since}}, $t->sql_create_table( JFDI->handle->dbh );
+            unshift @{$UPGRADES{$model->since}}, $t->sql_create_table( Jifty->handle->dbh );
         }
         else {
 
@@ -218,7 +218,7 @@ else {
                       "ALTER TABLE "
                       . $model->table
                       . " ADD COLUMN "
-                      . $t->column($column->name)->line( JFDI->handle->dbh );
+                      . $t->column($column->name)->line( Jifty->handle->dbh );
                 }
             }
         }
@@ -240,7 +240,7 @@ else {
         }
     }
     elsif ( $OPTIONS->{'install'} ) {
-        JFDI->handle->begin_transaction;
+        Jifty->handle->begin_transaction;
         for my $version (sort {version->new($a) <=> version->new($b)} keys %UPGRADES) {
             $log->info("Upgrading through $version");
             for my $thing (@{$UPGRADES{$version}}) {
@@ -248,27 +248,27 @@ else {
                     $log->info("Running upgrade script");
                     $thing->();
                 } else {
-                    my $ret = JFDI->handle->simple_query($thing);
+                    my $ret = Jifty->handle->simple_query($thing);
                     $ret or die "error updating a table: " . $ret->error_message;
                 }
             }
         }
         $schema->update($appv);
         $log->info("Upgraded to version $appv");
-        JFDI->handle->commit;
+        Jifty->handle->commit;
     }
 }
 
 sub create_db {
     my $handle   = Jifty::DBI::Handle->new();
-    my $database = JFDI->framework_config('Database')->{'Database'};
+    my $database = Jifty->framework_config('Database')->{'Database'};
 
     if ( $OPTIONS->{'print'} ) {
         print "DROP DATABASE $database;\n" if $OPTIONS->{'force'};
         print "CREATE DATABASE $database;\n";
         return;
     }
-    my %db_config = %{ JFDI->framework_config('Database') };
+    my %db_config = %{ Jifty->framework_config('Database') };
     my %lc_db_config;
     for ( keys %db_config ) {
         $lc_db_config{ lc($_) } = $db_config{$_};
@@ -284,14 +284,14 @@ sub create_db {
 
     $handle->disconnect;
 
-    JFDI->_setup_handle;
+    Jifty->_setup_handle;
 }
 
 __END__
 
 =head1 NAME
 
-schema - Create SQL to update or create your JFDI app's tables
+schema - Create SQL to update or create your Jifty app's tables
 
 =head1 SYNOPSIS
 
@@ -337,10 +337,10 @@ Send DROP DATABASE command, if used in conjunction with B<--create>
 =item B<--include> I<libpath>, B<-I> I<libpath>
 
 Prepends I<libpath> to Perl's C<@INC> array.  (You may want
-this in order to locate your JFDI framework libraries.) You can
+this in order to locate your Jifty framework libraries.) You can
 specify this as many times as you want:
 
-  schema --print -I ../JFDI/lib -I ~/MyLibs ProjectRoot
+  schema --print -I ../Jifty/lib -I ~/MyLibs ProjectRoot
 
 Note that I<ProjectRoot>/lib is automatically added to C<@INC>.
 
@@ -360,9 +360,9 @@ Looks in the directory I<ProjectRoot>/lib/ for all model classes and
 generates SQL statements to create or update database tables for all
 of the models.  It either prints the SQL to standard output
 (B<--print>) or actually issues the C<CREATE TABLE> or C<ALTER TABLE>
-statements on JFDI's database (B<--install>).  (Note that even if you
+statements on Jifty's database (B<--install>).  (Note that even if you
 are just displaying the SQL, you need to have correctly configured
-your JFDI database in I<ProjectRoot>C</etc/config.yml>, because the
+your Jifty database in I<ProjectRoot>C</etc/config.yml>, because the
 SQL generated may depend on the database type.)
 
 =head1 BUGS

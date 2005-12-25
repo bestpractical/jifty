@@ -1,14 +1,14 @@
 use warnings;
 use strict;
 
-package JFDI::View::Helper::Collection;
-use base qw/JFDI::View::Helper/;
+package Jifty::View::Helper::Collection;
+use base qw/Jifty::View::Helper/;
 
 use Data::Page;
 
 =head1 STATE
 
-L<JFDI::View::Helper::Collection> objects have a state variable called
+L<Jifty::View::Helper::Collection> objects have a state variable called
 current_page, which is 1-based.
 
 =head1 METHODS
@@ -17,7 +17,7 @@ current_page, which is 1-based.
 =head2 new
 
 Creates a new collection helper.  Should take the following named arguments:
-C<moniker> (interpreted by L<JFDI::View::Helper>) and C<collection>, a L<JFDI::Collection>
+C<moniker> (interpreted by L<Jifty::View::Helper>) and C<collection>, a L<Jifty::Collection>
 which is to be displayed.  
 
 The collection should already have had some limits set on it (or C<un_limit>).
@@ -40,7 +40,7 @@ sub new {
 
 =head2 collection [VALUE]
 
-Gets or sets the L<JFDI::Collection> that this view helper controls.
+Gets or sets the L<Jifty::Collection> that this view helper controls.
 
 =cut
 
@@ -60,26 +60,26 @@ The number of rows per page.  Defaults to 20.
 
 =item item_renderer
 
-A L<JFDI::Callback>, which takes arguments "item" and "collection".  This item should
+A L<Jifty::Callback>, which takes arguments "item" and "collection".  This item should
 render a single item from the collection.  By default, renders a C<LI> element containing
 the item's C<id> and C<name>.
 
 =item next_page, previous_page
 
-L<JFDI::Callback>s which render Next Page and Previous Page links.  They take a
+L<Jifty::Callback>s which render Next Page and Previous Page links.  They take a
 >"query_args"
 argument, which if appended to an URL should create a link to the next or previous page.
 By default, create a link to the current component's path called "Next Page" or "Previous Page".
 
 =item status_info
 
-A L<JFDI::Callback> which takes the following arguments: 
+A L<Jifty::Callback> which takes the following arguments: 
 total_entries entries_per_page current_page entries_on_this_page first_page last_page first last previous_page next_page, and skipped.  See L<Data::Page> for their definitions.  You can use this to display messages like
 "Page 2 of 3".  By default, displays nothing.
 
 =item none_found
 
-A L<JFDI::Callback> which is called if the collection is empty.
+A L<Jifty::Callback> which is called if the collection is empty.
 
 =back
 
@@ -89,16 +89,16 @@ sub render_as_list {
     my $self = shift;
     my %args = (
         rows_per_page => 20,
-        item_renderer => JFDI::Callback::ComponentSource->new(
+        item_renderer => Jifty::Callback::ComponentSource->new(
             q{<%args>$item</%args><li> <%$item->id%> <% $item->name()%></li> }),
-        next_page => JFDI::Callback::ComponentSource->new(q{<%args>$query_args</%args>
+        next_page => Jifty::Callback::ComponentSource->new(q{<%args>$query_args</%args>
             <span class="next-page"><a href="<% $m->{top_path} %>?<% $query_args %>#content">Next Page</a></span>
             }),
-        previous_page => JFDI::Callback::ComponentSource->new(q{<%args>$query_args</%args>
+        previous_page => Jifty::Callback::ComponentSource->new(q{<%args>$query_args</%args>
             <span class="prev-page"><a href="<% $m->{top_path} %>?<% $query_args %>#content">Previous Page</a></span>
             }),
         status_info => undef,
-        none_found => JFDI::Callback::String->new("No items found."),
+        none_found => Jifty::Callback::String->new("No items found."),
         @_
     );
 
@@ -140,7 +140,7 @@ sub render_as_list {
 
         # Navigation
         $args{$direction}->call(
-            query_args => JFDI->framework->query_string(JFDI->framework->request->clone->add_helper(
+            query_args => Jifty->framework->query_string(Jifty->framework->request->clone->add_helper(
                 moniker => $self->moniker,
                 class => ref($self),
                 states => { current_page => $self->collection->pager->$direction() },

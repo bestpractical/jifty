@@ -43,7 +43,7 @@ my %required;
 }
 
 for (sort keys %used) {
-    next if /JFDI|BTDT|Jifty::DBI/ or lc $_ eq $_;
+    next if /Jifty|BTDT|Jifty::DBI/ or lc $_ eq $_;
     ok(delete $required{$_}, "$_ in Makefile.PL");
     delete $used{$_};
 }

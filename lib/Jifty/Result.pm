@@ -1,24 +1,24 @@
 use warnings;
 use strict;
 
-package JFDI::Result;
+package Jifty::Result;
 
 =head1 NAME
 
-JFDI::Result - Outcome of running a L<JFDI::Action>
+Jifty::Result - Outcome of running a L<Jifty::Action>
 
 =head1 DESCRIPTION
 
-C<JFDI::Result> encapsulates the outcome of running a L<JFDI::Action>.
-Results are also stored on the framework's L<JFDI::Response> object.
+C<Jifty::Result> encapsulates the outcome of running a L<Jifty::Action>.
+Results are also stored on the framework's L<Jifty::Response> object.
 The response is stored in the session during a redirect, so the
 information is still accessible even after a redirect.
 
 =cut
 
-use JFDI::Everything;
+use Jifty::Everything;
 
-use base qw/JFDI::Object Class::Accessor/;
+use base qw/Jifty::Object Class::Accessor/;
 
 __PACKAGE__->mk_accessors(qw(failure message error _content));
 

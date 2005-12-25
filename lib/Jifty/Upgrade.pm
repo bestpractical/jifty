@@ -3,24 +3,24 @@ use strict;
 
 =head1 NAME
 
-JFDI::Upgrade
+Jifty::Upgrade
 
 =head1 DESCRIPTION
 
-C<JFDI::Upgrade> is an abstract baseclass to use to customize schema
+C<Jifty::Upgrade> is an abstract baseclass to use to customize schema
 and data upgrades that happen.
 
 =cut
 
-package JFDI::Upgrade;
+package Jifty::Upgrade;
 
-use base qw/JFDI::Object Exporter/;
+use base qw/Jifty::Object Exporter/;
 use vars qw/%UPGRADES @EXPORT/;
 @EXPORT = qw/since/;
 
 =head2 since I<VERSION> I<SUB>
 
-C<since> is meant to be called by subclasses of C<JFDI::Upgrade>.
+C<since> is meant to be called by subclasses of C<Jifty::Upgrade>.
 Calling it signifies that I<SUB> should be run when upgrading to
 version I<VERSION>, after tables and columns are added, but before
 tables and columns are removed.  If multiple subroutines are given for

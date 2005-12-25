@@ -1,4 +1,4 @@
-package JFDI::Generator;
+package Jifty::Generator;
 use base qw/App::CLI/;
 
 sub dispatch { 

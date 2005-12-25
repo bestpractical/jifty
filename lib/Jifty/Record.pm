@@ -1,21 +1,21 @@
 use warnings;
 use strict;
 
-package JFDI::Record;
+package Jifty::Record;
 
 =head1 NAME
 
-JFDI::Record - Represents a JFDI object that lives in the database.
+Jifty::Record - Represents a Jifty object that lives in the database.
 
 =head1 DESCRIPTION
 
-C<JFDI::Record> is a kind of L<JFDI::Object> that has a database
+C<Jifty::Record> is a kind of L<Jifty::Object> that has a database
 representation; that is, it is also a L<Jifty::DBI::Record>
 as well.
 
 =cut
 
-use base qw/JFDI::Object/;
+use base qw/Jifty::Object/;
 use base qw/Jifty::DBI::Record::Cachable/;
 
 sub _init {
@@ -176,7 +176,7 @@ sub _set {
     my $self = shift;
 
     unless ($self->check_update_rights(@_)) {
-        JFDI->log->logcluck("Permission denied");
+        Jifty->log->logcluck("Permission denied");
         return (0, 'Permission denied');
     }
     $self->SUPER::_set(@_);
@@ -227,7 +227,7 @@ Overrides L<Jifty::DBI::Record> to check the delete ACL.
 sub delete {
     my $self = shift;
     unless ($self->check_delete_rights(@_)) {
-            JFDI->log->logcluck("Permission denied");
+            Jifty->log->logcluck("Permission denied");
             return(0, 'Permission denied');
         }
     $self->SUPER::delete(@_); 

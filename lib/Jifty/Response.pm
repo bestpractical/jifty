@@ -1,13 +1,13 @@
 use warnings;
 use strict;
 
-package JFDI::Response;
+package Jifty::Response;
 
-use base qw/JFDI::Object Class::Accessor/;
+use base qw/Jifty::Object Class::Accessor/;
 
 =head1 NAME
 
-JFDI::Response - Canonical internal representation of the result of a L<JFDI::Action>
+Jifty::Response - Canonical internal representation of the result of a L<Jifty::Action>
 
 =head1 DESCRIPTION
 
@@ -15,7 +15,7 @@ JFDI::Response - Canonical internal representation of the result of a L<JFDI::Ac
 
 =head2 new
 
-Creates a new L<JFDI::Response> object.
+Creates a new L<Jifty::Response> object.
 
 =cut
 
@@ -26,7 +26,7 @@ sub new {
 
 =head2 result MONIKER [RESULT]
 
-Gets or sets the L<JFDI::Result> of the L<JFDI::Action> with the given
+Gets or sets the L<Jifty::Result> of the L<Jifty::Action> with the given
 C<MONIKER>.
 
 =cut
@@ -40,7 +40,7 @@ sub result {
 
 =head2 results
 
-Returns a hash which maps moniker to its L<JFDI::Result>
+Returns a hash which maps moniker to its L<Jifty::Result>
 
 =cut
 

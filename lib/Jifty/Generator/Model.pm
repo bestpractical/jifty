@@ -1,5 +1,5 @@
-package JFDI::Generator::Model;
-use base 'JFDI::Generator';
+package Jifty::Generator::Model;
+use base 'Jifty::Generator';
 
 sub options {
         ($_[0]->SUPER::options,

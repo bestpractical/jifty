@@ -1,9 +1,9 @@
 use warnings;
 use strict;
  
-package JFDI::Web::Form::Field::Button;
+package Jifty::Web::Form::Field::Button;
 
-use base qw/JFDI::Web::Form::Field/;
+use base qw/Jifty::Web::Form::Field/;
 
 =head2 render_widget
 
@@ -17,9 +17,9 @@ sub render_widget {
         . $self->input_name 
         . '" value="'
         . $self->label
-        . '" onClick="jfdi_button_click();" '
+        . '" onClick="jifty_button_click();" '
         . ' />'."\n";
-    JFDI->mason->out($field);
+    Jifty->mason->out($field);
     return '';
 }
 

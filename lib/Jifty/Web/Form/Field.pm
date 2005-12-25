@@ -1,26 +1,26 @@
 use warnings;
 use strict;
  
-package JFDI::Web::Form::Field;
+package Jifty::Web::Form::Field;
 
 =head1 NAME
 
-JFDI::Web::Form::Field - Web input of some sort
+Jifty::Web::Form::Field - Web input of some sort
 
 =head1 DESCRIPTION
 
-Describes a form input in a L<JFDI::Action>.
-C<JFDI::Web::Form::Field>s know what action they are on, and aquire
-properties from the L<JFDI::Action> which they are part of.  Each key
-in the L<JFDI::Action/arguments> hash becomes a
-C<JFDI::Web::Form::Field> whose L</name> is that key.
+Describes a form input in a L<Jifty::Action>.
+C<Jifty::Web::Form::Field>s know what action they are on, and aquire
+properties from the L<Jifty::Action> which they are part of.  Each key
+in the L<Jifty::Action/arguments> hash becomes a
+C<Jifty::Web::Form::Field> whose L</name> is that key.
 
-C<JFDI::Web::Form::Field>s stringify using the L</render> method, to
+C<Jifty::Web::Form::Field>s stringify using the L</render> method, to
 aid in placing them in L<HTML::Mason> components.
 
 =cut
 
-use base qw/JFDI::Object Class::Accessor/;
+use base qw/Jifty::Object Class::Accessor/;
 
 use Scalar::Util;
 use HTML::Entities;
@@ -28,7 +28,7 @@ use overload '""' => sub {shift->render};
 
 =head2 new
 
-Creates a new L<JFDI::Web::Form::Field> (possibly magically blessing into a subclass).
+Creates a new L<Jifty::Web::Form::Field> (possibly magically blessing into a subclass).
 Should only be called from C<< $action->arguments >>.
 
 =cut
@@ -52,7 +52,7 @@ sub new {
         $subclass = ucfirst($args{'type'});
     }
     if ($subclass) { 
-        $subclass = 'JFDI::Web::Form::Field::' . $subclass unless $subclass =~ /::/;
+        $subclass = 'Jifty::Web::Form::Field::' . $subclass unless $subclass =~ /::/;
         if ( $subclass->require() ) {
             bless $self, $subclass;
         }
@@ -64,9 +64,9 @@ sub new {
 
 
     # now that the form field has been instantiated, register the action with the form.
-    if ($self->action and not (JFDI->framework->form->has_action($self->action))) {
-        JFDI->framework->form->register_action( $self->action);
-        JFDI->framework->form->print_action_registration($self->action->moniker);
+    if ($self->action and not (Jifty->framework->form->has_action($self->action))) {
+        Jifty->framework->form->register_action( $self->action);
+        Jifty->framework->form->print_action_registration($self->action->moniker);
     }
     return $self;
 }
@@ -87,8 +87,8 @@ __PACKAGE__->mk_accessors(qw(name class _label _input_name type default_value _a
 Gets or sets the name of the field.  This is seperate from the name of
 the label (see L</label>) and the form input name (see
 L</input_name>), though both default to this name.  This name should
-match to a key in the L<JFDI::Action/arguments> hash.  If this
-C<JFDI::Web::Form::Field> was created via L<JFDI::Action/form_field>,
+match to a key in the L<Jifty::Action/arguments> hash.  If this
+C<Jifty::Web::Form::Field> was created via L<Jifty::Action/form_field>,
 this is automatically set for you.
 
 =head2 class [VALUE]
@@ -168,10 +168,10 @@ sub label {
 
 =head2 action [VALUE]
 
-Gets or sets the L<JFDI::Action> object that this
-C<JFDI::Web::Form::Field> is associated with.  This is called
-automatically if this C<JFDI::Action> was created via
-L<JFDI::Web::Form::Field/form_field>.
+Gets or sets the L<Jifty::Action> object that this
+C<Jifty::Web::Form::Field> is associated with.  This is called
+automatically if this C<Jifty::Action> was created via
+L<Jifty::Web::Form::Field/form_field>.
 
 =cut
 
@@ -197,7 +197,7 @@ sub render_key_binding {
     my $self = shift;
     my $key  = $self->key_binding;
     if ($key) {
-        JFDI->mason->out( "<script><!--\naddKeyBinding(".
+        Jifty->mason->out( "<script><!--\naddKeyBinding(".
                 "'" . uc($key) . "', "
                 . "'click', "
                 . "'". $self->input_name . "',"
@@ -213,7 +213,7 @@ outputs the label, the widget itself, any hints, and any errors, using
 L</render_label>, L</render_widget>, L</render_hints>,
 L</render_errors> respectively.  Returns an empty string.
 
-This is also what C<JFDI::Web::Form::Field>s do when stringified.
+This is also what C<Jifty::Web::Form::Field>s do when stringified.
 
 =cut
 
@@ -238,7 +238,7 @@ Output the start of div that wraps the form field
 
 sub render_wrapper_start {
     my $self = shift;
-    JFDI->mason->out('<div class="form_field">' ."\n");
+    Jifty->mason->out('<div class="form_field">' ."\n");
 }
 
 
@@ -251,7 +251,7 @@ Output the div that wraps the form field
 
 sub render_wrapper_end {
     my $self = shift;
-    JFDI->mason->out("</div>"."\n");
+    Jifty->mason->out("</div>"."\n");
 }
 
 
@@ -271,7 +271,7 @@ Use this for sticking instructions right in front of a widget
 
 sub render_preamble {
     my $self = shift;
-    JFDI->mason->out(
+    Jifty->mason->out(
 qq!<span class="preamble @{[$self->class]}" >@{[$self->preamble || '' ]}</span>\n!
     );
 
@@ -288,7 +288,7 @@ an empty string.
 
 sub render_label {
     my $self = shift;
-    JFDI->mason->out(
+    Jifty->mason->out(
 qq!<label class="label @{[$self->class]}" for="@{[$self->input_name ]}">@{[$self->label ]}</label>\n!
     );
 
@@ -313,9 +313,9 @@ sub render_widget {
     # XXX TODO FIXME worry about escaping default value?
     $field .= qq! value="@{[HTML::Entities::encode_entities($self->default_value)]}"! if defined $self->default_value;
     $field .= qq! class="@{[ $self->class ]}@{[ $self->ajax_validates ? ' ajaxvalidation' : '' ]}" !;
-    $field .= qq!          jfdiaction="@{[ $self->action->register_name ]}"!;
+    $field .= qq!          jiftyaction="@{[ $self->action->register_name ]}"!;
     $field .= qq!      />\n!;
-    JFDI->mason->out($field);
+    Jifty->mason->out($field);
     return '';
 }
 
@@ -329,7 +329,7 @@ subclasses commonly override this.  Returns an empty string.
 
 sub render_hints { 
     my $self = shift;
-    JFDI->mason->out(
+    Jifty->mason->out(
 qq!<span class="hints @{[$self->class]}">@{[$self->hints || '']}</span>\n!
     );
 
@@ -348,7 +348,7 @@ none -- AJAX could fill it in.
 sub render_errors {
     my $self = shift;
 
-    JFDI->mason->out(
+    Jifty->mason->out(
 qq!<span class="error @{[$self->input_name]}" id="@{[$self->action->error_div_id($self->name)]}">
       @{[  $self->action->result->field_error( $self->name ) || '']}
     </span>\n!

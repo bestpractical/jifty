@@ -1,31 +1,31 @@
 use warnings;
 use strict;
 
-package JFDI::Action::Record::Update;
+package Jifty::Action::Record::Update;
 
 =head1 NAME
 
-JFDI::Action::Record::Update - automagic update action
+Jifty::Action::Record::Update - automagic update action
 
 =head1 DESCRIPTION
 
-This class is used as the base class for L<JFDI::Action>s that are
-merely updating JFDI::Record objects.  To use it, subclass it and
+This class is used as the base class for L<Jifty::Action>s that are
+merely updating Jifty::Record objects.  To use it, subclass it and
 override the C<record_class> method to return the name of the
-JFDI::Record subclass that this action should update.
+Jifty::Record subclass that this action should update.
 
 =cut
 
-use base qw/JFDI::Action::Record/;
+use base qw/Jifty::Action::Record/;
 
 =head1 METHODS
 
 =head2 arguments
 
-Overrides L<JFDI::Action::Record>'s C<arguments> method to further
+Overrides L<Jifty::Action::Record>'s C<arguments> method to further
 specify that all of the primary keys *must* have values when
 submitted; that is, they are "constructors."  See
-L<JFDI::Action/arguments> for the distinction between "constructor"
+L<Jifty::Action/arguments> for the distinction between "constructor"
 and "mandatory."
 
 =cut
@@ -46,8 +46,8 @@ sub arguments {
 
 =head2 take_action
 
-Overrides the virtual C<take_action> method on L<JFDI::Action> to call
-the appropriate C<JFDI::Record>'s C<Set> methods when the action is
+Overrides the virtual C<take_action> method on L<Jifty::Action> to call
+the appropriate C<Jifty::Record>'s C<Set> methods when the action is
 run, thus updating the object in the database.
 
 =cut
@@ -76,7 +76,7 @@ sub take_action {
 
         # Skip fields that have not changed
         my $old = $self->record->$field;
-        $old = $old->id if UNIVERSAL::isa( $old, "JFDI::Record" );
+        $old = $old->id if UNIVERSAL::isa( $old, "Jifty::Record" );
 
         next if ( defined $old and $old eq $self->argument_value($field) );
         next if ( not $old and not $self->argument_value($field) );

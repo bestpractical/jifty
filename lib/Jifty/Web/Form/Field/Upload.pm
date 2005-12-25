@@ -1,9 +1,9 @@
 use warnings;
 use strict;
  
-package JFDI::Web::Form::Field::Upload;
+package Jifty::Web::Form::Field::Upload;
 
-use base qw/JFDI::Web::Form::Field/;
+use base qw/Jifty::Web::Form::Field/;
 
 =head2 render_widget
 
@@ -14,7 +14,7 @@ Renders the file upload widget.
 sub render_widget {
     my $self  = shift;
     my $field = qq!<input type="file" name="@{[ $self->input_name ]}" />!;
-    JFDI->mason->out($field);
+    Jifty->mason->out($field);
     '';
 }
 

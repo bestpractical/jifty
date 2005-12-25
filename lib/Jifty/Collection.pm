@@ -1,32 +1,32 @@
 use warnings;
 use strict;
 
-package JFDI::Collection;
+package Jifty::Collection;
 
 =head1 NAME
 
-JFDI::Collection - Collection of JFDI::Record objects
+Jifty::Collection - Collection of Jifty::Record objects
 
 =head1 SYNOPSIS
 
   package Foo::Model::BarCollection
-  use base qw/JFDI::Collection/;
+  use base qw/Jifty::Collection/;
 
 
 
 =head1 DESCRIPTION
 
 This is a wrapper over L<Jifty::DBI::Collection> that at the same time
-is a L<JFDI::Object>.  To use it, subclass it.
+is a L<Jifty::Object>.  To use it, subclass it.
 
 Alternatively, an 'anonymous' collection can be made by creating a new
-C<JFDI::Collection> object, and calling
+C<Jifty::Collection> object, and calling
 C<record_class('Foo::Model::Bar')> or similar on it.
 
-In addition, each L<JFDI::Collection> includes a L<Data::Page> object
+In addition, each L<Jifty::Collection> includes a L<Data::Page> object
 to help with calculations related to paged data.  You should B<not>
 use the C<first_row> and C<rows_per_page> methods from
-L<Jifty::DBI::Collection> on a L<JFDI::Collection>.  Instead, if you'd
+L<Jifty::DBI::Collection> on a L<Jifty::Collection>.  Instead, if you'd
 like to use paging, you should use the C<set_page_info> method to
 B<set> the number of records per page and first record on the current
 page, and you should use the L<Data::Page> object returned by the
@@ -34,7 +34,7 @@ C<pager> method to B<get> information related to paging.
 
 =cut
 
-use base qw/JFDI::Object Jifty::DBI::Collection Class::Accessor/;
+use base qw/Jifty::Object Jifty::DBI::Collection Class::Accessor/;
 use Data::Page;
 use UNIVERSAL::require;
 

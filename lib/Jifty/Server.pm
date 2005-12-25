@@ -1,30 +1,30 @@
 use warnings;
 use strict;
 
-package JFDI::Server;
+package Jifty::Server;
 
 =head1 NAME
 
-JFDI::Server - Standalone web server for JFDI applications
+Jifty::Server - Standalone web server for Jifty applications
 
 =head1 SYNOPSIS
 
-  use JFDI::Server;
-  my $app = JFDI->new( ... );
-  my $server = JFDI::Server->new(application => $app);
+  use Jifty::Server;
+  my $app = Jifty->new( ... );
+  my $server = Jifty::Server->new(application => $app);
   $server->run();
 
 =head1 DESCRIPTION
 
-C<JFDI::Server> is a subclass of L<HTML::Server::Simple::Mason> which
-creates a handy standalone testbed for a JFDI application.
+C<Jifty::Server> is a subclass of L<HTML::Server::Simple::Mason> which
+creates a handy standalone testbed for a Jifty application.
 
 =cut
 
-use JFDI::Everything;
+use Jifty::Everything;
 use base qw/HTTP::Server::Simple::Mason/;
 use base qw/Class::Accessor/;
-use base qw/JFDI::Object/;
+use base qw/Jifty::Object/;
 use File::Spec;
 use FindBin;
 use Module::Refresh;
@@ -35,7 +35,7 @@ use HTTP::Server::Simple::Recorder;
 
 =head2 new
 
-Creates a new C<JFDI::Server> object.
+Creates a new C<Jifty::Server> object.
 
 =cut
 
@@ -44,9 +44,9 @@ sub new {
     my $self  = {};
     bless $self, $class;
 
-    $self->setup_jfdi(@_);
+    $self->setup_jifty(@_);
 
-    $self->recording_on if $ENV{'JFDI_RECORD'};
+    $self->recording_on if $ENV{'Jifty_RECORD'};
 
     return ($self);
 
@@ -54,12 +54,12 @@ sub new {
 
 =head2 mason_config
 
-The JFDI standalone server gets its Mason configuration from the same place that any other
-JFDI handler does: C<< JFDI::Handler->mason_config >>.
+The Jifty standalone server gets its Mason configuration from the same place that any other
+Jifty handler does: C<< Jifty::Handler->mason_config >>.
 
 =cut
 
-sub mason_config { JFDI::Handler->mason_config } 
+sub mason_config { Jifty::Handler->mason_config } 
 
 =head2 handle_error
 
@@ -96,19 +96,19 @@ EOF
 }
 
 
-=head2 setup_jfdi
+=head2 setup_jifty
 
-Sets up the JFDI singleton.  This is called automatically by L</new>.
+Sets up the Jifty singleton.  This is called automatically by L</new>.
 
 =cut
 
-sub setup_jfdi {
+sub setup_jifty {
     my $self = shift;
     my %args = (
         @_
     );
 
-    $self->port( JFDI->framework_config('Web')->{'Port'}
+    $self->port( Jifty->framework_config('Web')->{'Port'}
           || 8888 );
 }
 
@@ -126,9 +126,9 @@ sub handle_request {
 
     Module::Refresh->refresh;
 
-    $HTML::Mason::Commands::framework = JFDI::Web->new();
+    $HTML::Mason::Commands::framework = Jifty::Web->new();
      $self->SUPER::handle_request(@_); 
-    JFDI::Handler->cleanup_request();
+    Jifty::Handler->cleanup_request();
     undef $HTML::Mason::Commands::framework;
 }
 
@@ -154,14 +154,14 @@ Returns the filename prefix used if L<HTTP::Server::Simple::Recorder> support is
 
 sub recorder_prefix {
     # XXX TODO FIXME get from config
-    JFDI->absolute_path("log/recorded/jfdi-recorded.$$")
+    Jifty->absolute_path("log/recorded/jifty-recorded.$$")
 } 
 
 =head2 recording_on
 
 Sets this server to use L<HTTP::Server::Simple::Recorder>.
 
-(See also the C<JFDI_RECORD> environment variable and the C<-r> switch to C<standalone_server>.)
+(See also the C<Jifty_RECORD> environment variable and the C<-r> switch to C<standalone_server>.)
 
 =cut
 

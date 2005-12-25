@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-package JFDI::Test::WWW::Mechanize;
+package Jifty::Test::WWW::Mechanize;
 use base qw/Test::WWW::Mechanize/;
 
 use Test::HTML::Lint; # exports html_ok
@@ -13,7 +13,7 @@ my $Test = Test::Builder->new;
 
 =head1 NAME
 
-JFDI::Test::WWW::Mechanize - Subclass of L<Test::WWW::Mechanize> with extra JFDI features
+Jifty::Test::WWW::Mechanize - Subclass of L<Test::WWW::Mechanize> with extra Jifty features
 
 =head1 METHODS
 

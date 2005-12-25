@@ -1,10 +1,10 @@
 #!/usr/bin/perl -w
 use warnings;
 use strict;
-use JFDI::Generator;
+use Jifty::Generator;
 
 package main;
 
-JFDI::Generator->dispatch();
+Jifty::Generator->dispatch();
 
 1;

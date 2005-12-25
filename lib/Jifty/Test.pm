@@ -2,7 +2,7 @@ use warnings;
 use strict;
 
 
-package JFDI::Test;
+package Jifty::Test;
 
 =head2 setup
 
@@ -11,8 +11,8 @@ Loads up application specific test modules
 =cut
 
 sub setup {
-    JFDI->new( config_file => 'etc/config.yml' );
-    my $test_class = JFDI->framework_config('ApplicationClass') . "::Test";
+    Jifty->new( config_file => 'etc/config.yml' );
+    my $test_class = Jifty->framework_config('ApplicationClass') . "::Test";
     $test_class->require;
 
     unless ($UNIVERSAL::require::ERROR) {
@@ -23,19 +23,19 @@ sub setup {
 
 =head2 make_server
 
-Loads the config file, creates a new L<JFDI::Server>, and calls
+Loads the config file, creates a new L<Jifty::Server>, and calls
 C<< I<ApplicationClass>::Test->setup_test >>.
 
 =cut
 
 sub make_server {
 
-    JFDI::Test->setup();
+    Jifty::Test->setup();
 
     require Test::HTTP::Server::Simple;
-    unshift @JFDI::Server::ISA, 'Test::HTTP::Server::Simple';
+    unshift @Jifty::Server::ISA, 'Test::HTTP::Server::Simple';
 
-    my $server = JFDI::Server->new;
+    my $server = Jifty::Server->new;
 
     return $server;
 } 

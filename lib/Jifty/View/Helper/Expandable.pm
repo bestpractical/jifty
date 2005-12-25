@@ -1,14 +1,14 @@
 use warnings;
 use strict;
 
-package JFDI::View::Helper::Expandable;
-use base qw/JFDI::View::Helper/;
+package Jifty::View::Helper::Expandable;
+use base qw/Jifty::View::Helper/;
 
 __PACKAGE__->mk_accessors(qw(element label));
 
 =head1 STATE
 
-L<JFDI::View::Helper::Expandable> objects have a state variable called
+L<Jifty::View::Helper::Expandable> objects have a state variable called
 C<expanded>.
 
 =head1 METHODS
@@ -17,8 +17,8 @@ C<expanded>.
 =head2 new
 
 Creates a new helper.  Should take the following named arguments:
-C<moniker> (interpreted by L<JFDI::View::Helper>), C<label> (the text of the
-link to expand the expandable), and C<element> (a L<JFDI::Callback> which is
+C<moniker> (interpreted by L<Jifty::View::Helper>), C<label> (the text of the
+link to expand the expandable), and C<element> (a L<Jifty::Callback> which is
 called if the expandable is expanded).
 
 =cut
@@ -61,16 +61,16 @@ sub render {
         $self->element->call;
     }
     else {
-        my $query_args = JFDI->framework->query_string(
-            JFDI->framework->request->clone->add_helper(
+        my $query_args = Jifty->framework->query_string(
+            Jifty->framework->request->clone->add_helper(
                 moniker => $self->moniker,
                 class   => ref($self),
                 states  => { expanded => 1 },
                 )->helpers_as_query_args
         );
         my $label = HTML::Entities::encode_entities( $self->label );
-        JFDI->mason->out(
-            qq{<a href="@{[ JFDI->mason->{top_path} ]}?$query_args">$label</a>}
+        Jifty->mason->out(
+            qq{<a href="@{[ Jifty->mason->{top_path} ]}?$query_args">$label</a>}
         );
     }
     return '';

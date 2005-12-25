@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-package JFDI::Mason;
+package Jifty::Mason;
 
 use strict;
 use warnings;
@@ -12,16 +12,16 @@ use HTML::Mason::CGIHandler;
 BEGIN {
   my $dir = dirname(__FILE__);
   push @INC, "$dir/../lib";
-  push @INC, "$dir/../../JFDI/lib";
+  push @INC, "$dir/../../Jifty/lib";
 }
 
-use JFDI::Everything;
+use Jifty::Everything;
 
 
-JFDI->new(config_file => $ENV{'JFDI_CONFIG'} ||   dirname(__FILE__).'/../etc/config.yml');
+Jifty->new(config_file => $ENV{'Jifty_CONFIG'} ||   dirname(__FILE__).'/../etc/config.yml');
  
 
-our $Handler = HTML::Mason::CGIHandler->new( JFDI::Handler->mason_config );
+our $Handler = HTML::Mason::CGIHandler->new( Jifty::Handler->mason_config );
 
 while ( my $cgi = CGI::Fast->new ) {
     # the whole point of fastcgi requires the env to get reset here..
@@ -35,7 +35,7 @@ while ( my $cgi = CGI::Fast->new ) {
     Module::Refresh->refresh;
 
 
-    $HTML::Mason::Commands::framework = JFDI::Web->new();
+    $HTML::Mason::Commands::framework = Jifty::Web->new();
 
     if ( ( !$Handler->interp->comp_exists( $cgi->path_info ) )
         && ( $Handler->interp->comp_exists( $cgi->path_info . "/index.html" ) ) ) {
@@ -43,7 +43,7 @@ while ( my $cgi = CGI::Fast->new ) {
     }
 
     eval { $Handler->handle_cgi_object($cgi); };
-    JFDI::Handler->cleanup_request(); 
+    Jifty::Handler->cleanup_request(); 
     $HTML::Mason::Commands::framework = undef;
     # Cleanup and inhibit warnings
 

@@ -1,55 +1,55 @@
 use warnings;
 use strict;
 
-package JFDI::Everything;
+package Jifty::Everything;
 
 =head1 NAME
 
-JFDI::Everything - Load all of the JFDI modules
+Jifty::Everything - Load all of the Jifty modules
 
 =cut
 
 # Could use Module::Pluggable, I guess.
 
-use JFDI;
+use Jifty;
 
-use JFDI::Action;
-use JFDI::Action::Record;
-use JFDI::Action::Record::Create;
-use JFDI::Action::Record::Update;
+use Jifty::Action;
+use Jifty::Action::Record;
+use Jifty::Action::Record::Create;
+use Jifty::Action::Record::Update;
 
-use JFDI::Collection;
+use Jifty::Collection;
 
-use JFDI::Handler;
+use Jifty::Handler;
 
-use JFDI::MasonInterp;
+use Jifty::MasonInterp;
 
-use JFDI::Model::Schema;
+use Jifty::Model::Schema;
 
-use JFDI::Object;
+use Jifty::Object;
 
-use JFDI::Record;
+use Jifty::Record;
 
-use JFDI::Request;
-use JFDI::Result;
-use JFDI::Response;
+use Jifty::Request;
+use Jifty::Result;
+use Jifty::Response;
 
 # We can _not_ load Server.pm unless we're in a Server context because
 # HTTP::Server::Simple::Mason bastardizes HTML::Mason::FakeApache::send_http_header
 # with hook::lexwrap
-#use JFDI::Server;
+#use Jifty::Server;
 
-use JFDI::Test;
+use Jifty::Test;
 
-use JFDI::View::Helper;
+use Jifty::View::Helper;
 
-use JFDI::Web;
-use JFDI::Web::Form;
-use JFDI::Web::Form::Field;
-use JFDI::Web::Menu;
+use Jifty::Web;
+use Jifty::Web::Form;
+use Jifty::Web::Form::Field;
+use Jifty::Web::Menu;
 
 use Module::Pluggable;
-Module::Pluggable->import(search_path => ['JFDI::Web::Form::Field', 'JFDI::View::Helper', 'JFDI::Callback'], require => 1);
+Module::Pluggable->import(search_path => ['Jifty::Web::Form::Field', 'Jifty::View::Helper', 'Jifty::Callback'], require => 1);
 __PACKAGE__->plugins;
 
 1;

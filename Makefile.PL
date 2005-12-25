@@ -1,5 +1,5 @@
 use inc::Module::Install;
-name('JFDI');
+name('Jifty');
 # this is a dev version, CPAN.pm will not install by default
 requires('Apache::Session');
 requires('CGI::Cookie');

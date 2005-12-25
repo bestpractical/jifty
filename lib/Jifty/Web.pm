@@ -1,18 +1,18 @@
 use warnings;
 use strict;
 
-package JFDI::Web;
+package Jifty::Web;
 
 =head1 NAME
 
-JFDI::Web - Web framework for a JFDI application
+Jifty::Web - Web framework for a Jifty application
 
 =cut
 
-use JFDI::Everything;
+use Jifty::Everything;
 use CGI::Cookie;
 use Apache::Session;
-use base qw/Class::Accessor JFDI::Object/;
+use base qw/Class::Accessor Jifty::Object/;
 
 use UNIVERSAL::require;
 
@@ -22,7 +22,7 @@ __PACKAGE__->mk_accessors(qw(next_page request response session temporary_curren
 
 =head2 new
 
-Creates a new C<JFDI::Web> object
+Creates a new C<Jifty::Web> object
 
 =cut
 
@@ -57,7 +57,7 @@ sub setup_session {
     return if $m && $m->is_subrequest;   # avoid reentrancy, as suggested by masonbook
     my %session;
     my %cookies       = CGI::Cookie->fetch();
-    my $cookiename    = "JFDI_SID_" . $ENV{'SERVER_PORT'};
+    my $cookiename    = "Jifty_SID_" . $ENV{'SERVER_PORT'};
     my $session_class = 'Apache::Session::File';
     my $pm            = "$session_class.pm";
     $pm =~ s|::|/|g;
@@ -132,7 +132,7 @@ stop that by handing it a regular hash to use.
 =head2 current_user [USER]
 
 Getter/setter for the current user; this gets or sets the 'user' key
-in the session.  These are L<JFDI::Record> objects.
+in the session.  These are L<Jifty::Record> objects.
 
 If a temporary_current_user has been set, will return that instead.
 
@@ -157,12 +157,12 @@ To restore the original value, set temporary_current_user to undef.
 
 
 
-This method sets up a current session, prepares a JFDI::Request object
+This method sets up a current session, prepares a Jifty::Request object
 and loads page-specific actions.  Then it handles the meat of the
-request.  That is, it C<run>s all of the L<JFDI::Action>s that have
-been marked C<active> in the current L<JFDI::Request>.  To be run,
+request.  That is, it C<run>s all of the L<Jifty::Action>s that have
+been marked C<active> in the current L<Jifty::Request>.  To be run,
 each action must also pass the L</is_allowed> check.  It then
-L</redirect>s if a L</next_page> has been set.  See L<JFDI::Request>
+L</redirect>s if a L</next_page> has been set.  See L<Jifty::Request>
 for information about active actions.
 
 =cut
@@ -172,8 +172,8 @@ sub handle_request {
     
     $self->log->debug("Handling ".$ENV{'REQUEST_URI'});
 
-    $self->request( JFDI::Request->new->from_mason_args );
-    $self->response( JFDI::Response->new );
+    $self->request( Jifty::Request->new->from_mason_args );
+    $self->response( Jifty::Response->new );
     $self->setup_session;
     $self->setup_page_actions;
 
@@ -226,16 +226,16 @@ sub setup_page_actions {
 
 =head2 request [VALUE]
 
-Gets or sets the current L<JFDI::Request>.
+Gets or sets the current L<Jifty::Request>.
 
 =head2 response [VALUE]
 
-Gets or sets the current L<JFDI::Response> object.
+Gets or sets the current L<Jifty::Response> object.
 
 =head2 actions 
 
 Gets the actions that have been created with this framework with C<new_action>
-(whether automatically via a L<JFDI::Request>, or in Mason code), as L<JFDI::Action>
+(whether automatically via a L<Jifty::Request>, or in Mason code), as L<Jifty::Action>
 objects. (These are actually stored in the mason notes, so that they are magically saved over redirects.)
 
 =cut
@@ -294,10 +294,10 @@ against the class name.
 
 If you call:
 
-    JFDI->framework->allow_actions ( qr'.*' );
-    JFDI->framework->deny_actions  ( qr'Foo' );
-    JFDI->framework->allow_actions ( qr'FooBar' );
-    JFDI->framework->deny_actions ( qr'FooBarDeleteTheWorld' );
+    Jifty->framework->allow_actions ( qr'.*' );
+    Jifty->framework->deny_actions  ( qr'Foo' );
+    Jifty->framework->allow_actions ( qr'FooBar' );
+    Jifty->framework->deny_actions ( qr'FooBarDeleteTheWorld' );
 
 
 calls to MyApp::Action::Baz will succeed.
@@ -321,7 +321,7 @@ sub restrict_actions {
 
     for my $restriction (@restrictions) {
         # Fully qualify it if it's a string and not already so
-        my $base_path = JFDI->framework_config('ActionBasePath');
+        my $base_path = Jifty->framework_config('ActionBasePath');
         $restriction = $base_path . "::" . $restriction
           unless ref $restriction or $restriction =~ /^\Q$base_path\E/;
 
@@ -343,7 +343,7 @@ sub is_allowed {
     my $self = shift;
     my $class = shift;
 
-    my $base_path = JFDI->framework_config('ActionBasePath');
+    my $base_path = Jifty->framework_config('ActionBasePath');
     $class = $base_path . "::" . $class
       unless $class =~ /^\Q$base_path\E/;
 
@@ -369,7 +369,7 @@ sub is_allowed {
 =head2 next_page [VALUE]
 
 Gets or sets the next page for the framework to show.  This is
-normally set during the C<take_action> method or a L<JFDI::Action>
+normally set during the C<take_action> method or a L<Jifty::Action>
 
 =head2 redirect_required
 
@@ -425,7 +425,7 @@ sub redirect {
 
 =head2 save_state_to_session
 
-Saves the current L<JFDI::Response>, as well as the current Mason
+Saves the current L<Jifty::Response>, as well as the current Mason
 notes into the user's session.
 
 Returns the key for this state.
@@ -454,7 +454,7 @@ sub save_state_to_session {
 
 =head2 restore_state_from_session UUID
 
-Restores the last L<JFDI::Response>, as well as the previous Mason
+Restores the last L<Jifty::Response>, as well as the previous Mason
 notes, from the user's session, under the key UUID.
 
 =cut
@@ -478,7 +478,7 @@ sub restore_state_from_session {
 
 =head2 form
 
-Returns the current L<JFDI::Web::Form> object, creating one if there
+Returns the current L<Jifty::Web::Form> object, creating one if there
 isn't one already.
 
 =cut
@@ -486,17 +486,17 @@ isn't one already.
 sub form {
     my $self = shift;
 
-    $self->{form} ||= JFDI::Web::Form->new;
+    $self->{form} ||= Jifty::Web::Form->new;
     return $self->{form};
 }
 
 =head2 new_action class => CLASS, moniker => MONIKER, order => ORDER, arguments => PARAMHASH
 
-Creates a new action (an instance of a subclass of L<JFDI::Action>)
+Creates a new action (an instance of a subclass of L<Jifty::Action>)
 
 C<CLASS> is appended to the C<ActionBasePath> found in the
 configuration file, and an instance of that class is created, passing
-the C<JFDI::Web> object, the C<MONIKER>, and any other arguments that
+the C<Jifty::Web> object, the C<MONIKER>, and any other arguments that
 C<new_action> was supplied.
 
 C<MONIKER> is a unique designator of an action on a page.  The moniker
@@ -506,7 +506,7 @@ used to tie together argumentss that relate to the same action.
 C<ORDER> defines the order in which the action is run, with lower
 numerical values running first.
 
-C<ARGUMENTS> are passed to the L<JFDI::Action/new> method.  In
+C<ARGUMENTS> are passed to the L<Jifty::Action/new> method.  In
 addition, if the current request (C<$self->request>) contains an
 action with a matching moniker, any arguments thare are in that
 requested action but not in the C<PARAMHASH> list are set.  This
@@ -542,9 +542,9 @@ sub new_action {
     $class = $1; # 'untaint'
 
     # Prepend the base path (probably "App::Action") unless it's there already
-    my $base_path = JFDI->framework_config('ActionBasePath');
+    my $base_path = Jifty->framework_config('ActionBasePath');
     $class = $base_path . "::" . $class
-      unless $class =~ /^\Q$base_path\E::/ or $class =~ /^JFDI::Action::/;
+      unless $class =~ /^\Q$base_path\E::/ or $class =~ /^Jifty::Action::/;
     
     unless ($class->require) {
         # The implementation class is provided by the client, so this isn't a "shouldn't happen"
@@ -568,7 +568,7 @@ sub new_action {
 
 =head2 new_action_from_request REQUESTACTION
 
-Given a L<JFDI::Request::Action>, creates a new action using C<new_action>.
+Given a L<Jifty::Request::Action>, creates a new action using C<new_action>.
 
 =cut
 
@@ -585,7 +585,7 @@ sub new_action_from_request {
 =head2 render_messages
 
 Outputs any messages that have been added, in a <div id="messages">
-tag.  Messages are added by calling C<message> on a L<JFDI::Result>.
+tag.  Messages are added by calling C<message> on a L<Jifty::Result>.
 
 =cut
 
@@ -662,7 +662,7 @@ Returns an URL-encoded query string piece representing the arguments
 passed to it; any parameter to the current request that is not
 specified here is also included with the current value.
 
-Note that L<JFDI::Action> parameters are skipped to avoid actions
+Note that L<Jifty::Action> parameters are skipped to avoid actions
 taking place that shouldn't.
 
 =cut
@@ -671,7 +671,7 @@ sub query_string_from_current {
   my $self = shift;
   my %args = ($self->mason->request_args, @_);
   for (keys %args) {
-    delete $args{$_} if /^JFDI::Action-/;
+    delete $args{$_} if /^Jifty::Action-/;
   }
   return $self->query_string( %args );
 }
@@ -692,14 +692,14 @@ sub parameter_value {
 
 =head2 expandable_element moniker => MONIKER [, label => LABEL] [, element => ELEMENT]
 
-Renders an expandable element (ie, L<JFDI::View::Helper::Expandable>)
+Renders an expandable element (ie, L<Jifty::View::Helper::Expandable>)
 with the given label, moniker, and element.  The named parameters are
-passed to the L<JFDI::View::Helper::Expandable> constructor;
+passed to the L<Jifty::View::Helper::Expandable> constructor;
 C<MONIKER> is the only required value.
 
 XXX TODO David Glasser, why is this helper in this class? it feels very strangely placed
 DG says: API was made by obra in a SubEthaEdit session.  Feel free to suggest a better one
-(I think I suggested just putting JFDI::View::Helper::Expandable->new(whatever)->render
+(I think I suggested just putting Jifty::View::Helper::Expandable->new(whatever)->render
 in the code at the time and was told that that was bad.)
 
 =cut
@@ -713,13 +713,13 @@ sub expandable_element {
         @_
     ); 
 
-    my $expander = JFDI::View::Helper::Expandable->new(%args)->render;
+    my $expander = Jifty::View::Helper::Expandable->new(%args)->render;
 } 
 
 
 =head2 navigation
 
-Returns the L<JFDI::Web::Menu> for this web request; one is
+Returns the L<Jifty::Web::Menu> for this web request; one is
 automatically created if it hasn't been already.
 
 =cut
@@ -728,7 +728,7 @@ sub navigation {
     my $self = shift;
     my $nav = $self->mason->notes("navigation");
     unless ($nav) {
-        $nav = JFDI::Web::Menu->new();
+        $nav = Jifty::Web::Menu->new();
         $self->mason->notes(navigation => $nav);
     }
     return $nav;

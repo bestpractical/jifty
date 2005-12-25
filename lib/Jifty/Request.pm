@@ -1,18 +1,18 @@
 use warnings;
 use strict;
 
-package JFDI::Request;
+package Jifty::Request;
 
-use base qw/JFDI::Object Class::Accessor Clone/;
+use base qw/Jifty::Object Class::Accessor Clone/;
 __PACKAGE__->mk_accessors(qw(just_validating notes_id));
 
 =head1 NAME
 
-JFDI::Request - Canonical internal representation of an incoming JFDI request
+Jifty::Request - Canonical internal representation of an incoming Jifty request
 
 =head1 DESCRIPTION
 
-A user interacts with JFDI by invoking zero or more B<action>s.  
+A user interacts with Jifty by invoking zero or more B<action>s.  
 These can be specified in several ways:
 
 =over
@@ -32,9 +32,9 @@ by sending XML or YAML to a defined URL on the server
 =back
 
 This class parses the submission and makes it available as a protocol-independent
-B<JFDI::Request> object.
+B<Jifty::Request> object.
 
-Each JFDI::Request contains several types of information:
+Each Jifty::Request contains several types of information:
 
 =over 4
 
@@ -50,7 +50,7 @@ standard web user interface, may use a "session" mechanism.
 
 =item actions
 
-A request may contain one or more actions; these are represented as JFDI::Request::Action
+A request may contain one or more actions; these are represented as Jifty::Request::Action
 objects. Each action request has a moniker, a set of submitted arguments, and an
 implementation class. An action request can either be active, in which case it is a request
 for the action to be executed; otherwise, it merely provides default values for an action
@@ -86,27 +86,27 @@ is a little fuzzy now.)
 
 =item moniker
 
-This string has no semantic value for the JFDI code, but your application can parse it.
-It must be unique within a request.  Specifically, JFDI will use the moniker to match up
+This string has no semantic value for the Jifty code, but your application can parse it.
+It must be unique within a request.  Specifically, Jifty will use the moniker to match up
 items in a request with items generated in the course of responding to the request (which
 often means you want to include things like record IDs in the moniker), and
-the WebForm Request Protocol uses the moniker for grouping, but as far as JFDI is concerned
+the WebForm Request Protocol uses the moniker for grouping, but as far as Jifty is concerned
 the moniker is just an arbitrary (non-semicolon-containing) string.
 
 =back
 
-=head1 JFDI WebForm Request Protocol
+=head1 Jifty WebForm Request Protocol
 
-The primary source of JFDI requests through the website are "WebForm Requests".  These are
-requests submitted using CGI GET or POST requests to the JFDI project's website.
-(Currently, the URL that JFDI WebForms are sent to is more or less irrelevant, but this might
+The primary source of Jifty requests through the website are "WebForm Requests".  These are
+requests submitted using CGI GET or POST requests to the Jifty project's website.
+(Currently, the URL that Jifty WebForms are sent to is more or less irrelevant, but this might
 change.)
 
 Much of this is still open to change.
 
 In addition, if any CGI query B<name> is of the form C<foo=bar;baz=quux> (with an
 arbitrary value), it is treated as if the query actually contains the arguments that
-it appears to; see L<JFDI::MasonInterp> for details.  This is so that submit buttons
+it appears to; see L<Jifty::MasonInterp> for details.  This is so that submit buttons
 can send multiple arguments. 
 
 XXX TODO: alex, this was something you fixed, right?
@@ -139,7 +139,7 @@ correspond to any action declaration is undefined.)
 
 For each helper, the client sends a query argument whose name is C<J:H-I<moniker>>
 and whose value is the fully qualified class name of the helper's implementation
-class (eg, C<JFDI::View::Helper::Expandable>).  This is the "helper declaration".
+class (eg, C<Jifty::View::Helper::Expandable>).  This is the "helper declaration".
 The state variables of the helper are specified with query arguments of the
 form C<J:H:S-I<statename>-I<moniker>>.
 
@@ -150,15 +150,15 @@ value should dictate the response type; for now it's always returning XML.
 
 =back 
 
-=head1 JFDI WebURL Request Protocol
+=head1 Jifty WebURL Request Protocol
 
 Not yet designed or implemented.
 
-=head1 JFDI XML REST Request Protocol
+=head1 Jifty XML REST Request Protocol
 
 Not yet designed or implemented.  (Should be able to load some defaults from URL.)
 
-=head1 JFDI YAML REST Request Protocool
+=head1 Jifty YAML REST Request Protocool
 
 Not yet designed or implemented.  (Should be able to load some defaults from URL.)
 
@@ -194,17 +194,17 @@ Returns itself.
 sub from_mason_args {
     my $self = shift;
 
-    return $self->from_webform(%{ JFDI->mason->request_args });
+    return $self->from_webform(%{ Jifty->mason->request_args });
 }
 
 
 =head2 from_webform %QUERY_ARGS
 
-Parses web form arguments into the JFDI::Request data structure.
+Parses web form arguments into the Jifty::Request data structure.
 Takes in the query arguments, as parsed by Mason (thus, repeated
 arguments have already been turned into array refs).  This does
 not wipe out preexisting request data; thus, multiple C<from_*>
-functions can be called on the same JFDI::Request.
+functions can be called on the same Jifty::Request.
 
 Returns itself.
 
@@ -368,7 +368,7 @@ sub next_page_state_variables {
 
 =head2 next_page_state_variable NAME
 
-Returns the JFDI::Request::StateVariable object for the variable named
+Returns the Jifty::Request::StateVariable object for the variable named
 NAME.
 
 =cut
@@ -404,7 +404,7 @@ sub add_next_page_state_variable {
                  value => undef,
                  @_);
 
-    my $state_var = JFDI::Request::StateVariable->new();
+    my $state_var = Jifty::Request::StateVariable->new();
     
     for my $k (qw/key value/) {
         $state_var->$k($args{$k}) if defined $args{$k};
@@ -427,7 +427,7 @@ sub state_variables {
 
 =head2 state_variable NAME
 
-Returns the JFDI::Request::StateVariable object for the variable named
+Returns the Jifty::Request::StateVariable object for the variable named
 NAME.
 
 =cut
@@ -463,7 +463,7 @@ sub add_state_variable {
                  value => undef,
                  @_);
 
-    my $state_var = JFDI::Request::StateVariable->new();
+    my $state_var = Jifty::Request::StateVariable->new();
     
     for my $k (qw/key value/) {
         $state_var->$k($args{$k}) if defined $args{$k};
@@ -478,7 +478,7 @@ sub add_state_variable {
 
 =head2 actions
 
-Returns a list of the actions in the request, as L<JFDI::Request::Action> objects.
+Returns a list of the actions in the request, as L<Jifty::Request::Action> objects.
 
 =cut
 
@@ -490,7 +490,7 @@ sub actions {
 
 =head2 action MONIKER
 
-Returns a L<JFDI::Request::Action> object for the action with the given moniker,
+Returns a L<Jifty::Request::Action> object for the action with the given moniker,
 or undef if no such helper was sent.
 
 =cut
@@ -509,7 +509,7 @@ Required argument: moniker.
 
 Optional arguments: class, active, arguments.
 
-Adds a L<JFDI::Request::Action> with the given moniker to the Request.
+Adds a L<Jifty::Request::Action> with the given moniker to the Request.
 If the request already contains an action with that moniker, it merges 
 it in, overriding the implementation class, active state, and B<individual>
 arguments.
@@ -527,7 +527,7 @@ sub add_action {
         @_
     );
 
-    my $action = $self->{'actions'}->{ $args{'moniker'} } || JFDI::Request::Action->new;
+    my $action = $self->{'actions'}->{ $args{'moniker'} } || Jifty::Request::Action->new;
 
     for my $k (qw/moniker class order active/) {
         $action->$k($args{$k}) if defined $args{$k};
@@ -546,7 +546,7 @@ sub add_action {
 
 =head2 helpers
 
-Returns a list of the view helpers in the request, as L<JFDI::Request::Helper> objects.
+Returns a list of the view helpers in the request, as L<Jifty::Request::Helper> objects.
 
 =cut
 
@@ -557,7 +557,7 @@ sub helpers {
 
 =head2 helper MONIKER
 
-Returns a L<JFDI::Request::Helper> object for the helper with the given moniker,
+Returns a L<Jifty::Request::Helper> object for the helper with the given moniker,
 or undef if no such helper was sent.
 
 =cut
@@ -575,7 +575,7 @@ Required argument: moniker.
 
 Optional arguments: class, states.
 
-Adds a L<JFDI::Request::Helper> with the given moniker to the Request.
+Adds a L<Jifty::Request::Helper> with the given moniker to the Request.
 If the request already contains a helper with that moniker, it merges 
 it in, overriding the implementation class and B<individual> states.
 
@@ -590,7 +590,7 @@ sub add_helper {
         @_
     );
 
-    my $helper = $self->{'helpers'}->{ $args{'moniker'} } || JFDI::Request::Helper->new;
+    my $helper = $self->{'helpers'}->{ $args{'moniker'} } || Jifty::Request::Helper->new;
 
     for my $k (qw/moniker class/) {
         $helper->$k($args{$k}) if defined $args{$k};
@@ -607,7 +607,7 @@ sub add_helper {
     $self;
 } 
 
-package JFDI::Request::Action;
+package Jifty::Request::Action;
 use base 'Class::Accessor';
 __PACKAGE__->mk_accessors( qw/moniker arguments class order active/);
 
@@ -621,7 +621,7 @@ sub argument {
     $self->arguments->{$key};
 }
 
-package JFDI::Request::Helper;
+package Jifty::Request::Helper;
 use base 'Class::Accessor';
 __PACKAGE__->mk_accessors( qw/moniker states class/);
 
@@ -635,7 +635,7 @@ sub state {
     $self->states->{$key};
 }
 
-package JFDI::Request::StateVariable;
+package Jifty::Request::StateVariable;
 use base 'Class::Accessor';
 __PACKAGE__->mk_accessors (qw/key value/);
 

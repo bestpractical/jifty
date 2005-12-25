@@ -1,4 +1,4 @@
-package JFDI::Generator::Command;
+package Jifty::Generator::Command;
 use base 'App::CLI::Command';
 
 
