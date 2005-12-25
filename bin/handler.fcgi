@@ -1,18 +1,15 @@
 #!/usr/bin/perl
-package Jifty::Mason;
 
 use strict;
 use warnings;
-use File::Basename;
-
-
+use Cwd qw(abs_path);
+use File::Basename qw(dirname);
 BEGIN {
-  my $dir = dirname(__FILE__);
-  push @INC, "$dir/../lib";
-  push @INC, "$dir/../../Jifty/lib";
-}
+    my $dir = dirname(abs_path($0));
+    push @INC, "$dir/../lib";
+    push @INC, "$dir/../../Jifty/lib";
+}   
 
-use Jifty::Script::FastCGI;
 Jifty::Script::FastCGI->run();
 
 
