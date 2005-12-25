@@ -42,8 +42,8 @@ sub new {
         class         => '',
         input_name    => '',
         default_value => '',
-        sticky_value => '',
-	render_mode   => 'update',
+        sticky_value  => '',
+        render_mode   => 'update',
         @_,
     );
 
@@ -221,9 +221,9 @@ sub current_value {
 
     if ($self->sticky_value and $self->sticky and (!Jifty->web->response->result($self->action->moniker) or $self->action->result->failure)) {
         return $self->sticky_value;
-        } else {
-            return $self->default_value;
-        }
+    } else {
+        return $self->default_value;
+    }
 }
 
 =head2 render

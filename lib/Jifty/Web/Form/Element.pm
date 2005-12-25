@@ -90,10 +90,9 @@ sub javascript {
 
             # Submit action
             if ( $hook->{submit} ) {
-                my $moniker = ref $hook->{submit}
-                    ? $hook->{submit}->moniker
-                    : $hook->{submit};
-                $response .= qq!, submit: '@{[$moniker]}'!;
+                $hook->{submit} = [ $hook->{submit} ] unless ref $hook->{submit} eq "ARRAY";
+                my $moniker = join ',' => map {"'$_'"} map { ref $_ ? $_->moniker : $_ } @{ $hook->{submit} };
+                $response .= qq!, submit: [ @{[$moniker]} ]!;
             }
 
             # Arguments

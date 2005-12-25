@@ -28,8 +28,9 @@ Renders one entry in a SELECT widget
 sub render_option {
     my $self = shift;
     my $opt = shift;
-        my $display = $opt->{'display'};
-        my $value   = $opt->{'value'} ||'' ;
+    my $display = $opt->{'display'};
+    my $value   = defined $opt->{'value'} ? $opt->{'value'} : '';
+
     my $field = qq! <input type="radio" !;
     $field .= qq! name="@{[ $self->input_name ]}"!;
     $field .= qq! id="@{[ $self->input_name ]}"!;
