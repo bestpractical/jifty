@@ -214,7 +214,7 @@ sub _collection_value {
     return unless UNIVERSAL::isa( $classname, 'Jifty::DBI::Collection' );
 
     my $coll = $classname->new( current_user => $self->current_user );
-    $coll->limit( FIELD => $column->by(), VALUE => $self->id );
+    $coll->limit( column => $column->by(), value => $self->id );
     return $coll;
 }
 

@@ -59,7 +59,7 @@ sub Jifty::ClassLoader::INC {
         my $modelclass = $ApplicationClass . "::Model::" . $3;
         return undef unless $self->{models}{$modelclass};
 
-        warn "Auto-creating '$2' action for $modelclass ($module)";
+        # warn "Auto-creating '$2' action for $modelclass ($module)";
         my $content = "package ".$ActionBasePath."::$2$3;"
           . "use base qw/Jifty::Action::Record::$2/;"
           . "sub record_class {'$modelclass'};"
