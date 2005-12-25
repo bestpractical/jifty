@@ -135,11 +135,35 @@ Out of the box, Jifty comes with a CSS style, Javascript libraries and
 a Pony. Have a look in /usr/local/share/jifty/web/static.
 
 
-=item lib
 =item lib/MyWebLog
+
+For a full treatment of the Jifty object model see
+L<Jifty::Manual::ObjectModel>.
+
+To build a basic Jifty application, you only need to worry about two
+sorts of classes, B<Models> and B<Actions>.
+
 =item lib/MyWebLog/Model
+
+The real base of your application lives in
+C<lib/B<AppName>/Model>. Classes here define your application's data
+structures and how they relate to each other.  Jifty will use your model
+classes to set up and upgrade your database's schema when it needs to.
+
+
 =item lib/MyWebLog/Action
+
+When we said you only need to worry about B<Models> and B<Actions>,
+we weren't telling the whole truth.  Jifty will take care basic
+database-interaction (C<CREATE, READ, UPDATE, DELETE>) B<Actions> for
+your B<Models>, but they're there if you want to change anything.)
+
 =item t
+
+Jifty starts off your application with a basic harness, but can't yet write 
+all your tests for you. (It does, however, build up simple for model classes
+you generate.)
+
 
 =back
 
