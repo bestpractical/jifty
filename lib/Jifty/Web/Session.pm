@@ -55,43 +55,36 @@ sub load {
         if $m
         && $m->is_subrequest;    # avoid reentrancy, as suggested by masonbook
     
-    require Apache::Session::Flex;
+    require Apache::Session::File;
     
 
     my %cookies       = CGI::Cookie->fetch();
     my $cookiename = $self->cookie_name;
     my $session_id =  $cookies{$cookiename} ? $cookies{$cookiename}->value() : undef;
     
-    
     $Storable::Deparse = 1;
     $Storable::Eval    = 1;
     my %session;
     eval {
-        tie %session, 'Apache::Session::Flex', ( $session_id ? $session_id : undef ),
+        tie %session, 'Apache::Session::File', ( $session_id ? $session_id : undef ),
                 {
-                  Store => 'File',
-                Lock => 'Null',
-                Generate => 'MD5',
-                Serialize => 'Storable'
+                 Directory     => '/tmp',
+                 LockDirectory => '/tmp',
                 };
 
             };
-
     if ($@) {
-        tie %session, 'Apache::Session::Flex', undef,
+        tie %session, 'Apache::Session::File', undef,
                 {
-                Store => 'File',
-                Lock => 'Null',
-                Generate => 'MD5',
-                Serialize => 'Storable'
+                 Directory     => '/tmp',
+                 LockDirectory => '/tmp',
                 };
 
-            undef $cookies{$self->cookie_name};
+        undef $cookies{$self->cookie_name};
     }
 
     $self->_session( tied(%session) );
-
-
+    $session{_session_id} = $session{_session_id} || $session_id;
 }
 
 =head2 unload
@@ -102,6 +95,10 @@ Flush the session to diskd and quit.
 
 sub unload {
     my $self = shift;
+
+    $self->_session->save();
+    $self->_session->{object_store}->close;
+    $self->_session->release_all_locks();
     $self->_session(undef);
 }
 

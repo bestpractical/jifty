@@ -51,7 +51,7 @@ sub run {
         Module::Refresh->refresh;
 
 
-        local $HTML::Mason::Commands::framework = Jifty::Web->new();
+        local $HTML::Mason::Commands::JiftyWeb = Jifty::Web->new();
 
         if ( ( !$Handler->interp->comp_exists( $cgi->path_info ) )
              && ( $Handler->interp->comp_exists( $cgi->path_info . "/index.html" ) ) ) {
