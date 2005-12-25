@@ -203,12 +203,12 @@ sub handle_request {
     $self->setup_page_actions;
 
     for my $request_action ($self->request->actions) {
+        next unless $request_action->active;
         unless ($self->is_allowed($request_action->class)) {
             $self->log->warn("Attempt to call denied action '".$request_action->class."'");
             next;
         }
 
-        next unless $request_action->active;
 
         my $action = $self->new_action_from_request($request_action);
 
