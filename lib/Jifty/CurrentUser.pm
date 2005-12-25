@@ -47,11 +47,21 @@ sub _init { 1}
 
 =head2 id
 
-Returns C<0>. When your application subclasses this class,  L</id> should return the integer id for the current user.
+Returns C<0> if we don't have a user_object. 
+When we I<do> have a user_object, return that user's id.
+When your application subclasses this class,  L</id> should return the integer id for the current user.
 
 =cut
 
-sub id { 0 }
+sub id {
+    my $self = shift;
+    if ($self->user_object) {
+        return ($self->user_object->id());
+    } else {
+        return '0';
+    }
+
+}
 
 =head2 current_user
 
