@@ -299,6 +299,9 @@ sub _form_widget {
         else {
             Jifty->log->warn("$arg_name isn't a valid field for $self");
         }
+    } elsif ( $args{render_as} ) {
+        bless $self->{_private_form_fields_hash}{$arg_name},
+          "Jifty::Web::Form::Field::$args{render_as}";
     }
     return $self->{_private_form_fields_hash}{$arg_name};
 }

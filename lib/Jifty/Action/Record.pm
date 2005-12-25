@@ -205,8 +205,6 @@ sub arguments {
 Canonicalizes the argument named ARGUMENT_NAME. This routine actually just makes sure 
 we can canonicalize dates and then passes on to the superclass.
 
-
-
 =cut
 
 
@@ -225,6 +223,11 @@ sub canonicalize_argument {
 
 }
 
+=head2 canonicalize_date
+
+Parses the date using L<Time::ParseDate>.
+
+=cut
 
 sub canonicalize_date {
     my $self = shift;
@@ -232,11 +235,9 @@ sub canonicalize_date {
     return undef unless defined $val and $val =~ /\S/;
     my $epoch =  Time::ParseDate::parsedate($val, FUZZY => 1, PREFER_FUTURE => 1, GMT =>0) || '';
     return undef unless $epoch;
-    my $dt  = DateTime->from_epoch( epoch =>$epoch);
+    my $dt  = DateTime->from_epoch( epoch =>$epoch, time_zone => 'local');
     return $dt->ymd;
 }
-
-
 
 =head2 take_action
 
