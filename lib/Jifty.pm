@@ -424,6 +424,8 @@ Returns the current L<Jifty::Web> object.
 =cut
 
 sub framework {
+
+    $HTML::Mason::Commands::framework ||= Jifty::Web->new();
     return $HTML::Mason::Commands::framework;
 } 
 
