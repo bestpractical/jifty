@@ -7,7 +7,6 @@ Nifty Apps
 ----
 ...in a Jiffy
 ----
-
 Jesse Vincent
 »|«
 Best Practical
@@ -38,7 +37,7 @@ useful bits from RT.
 ----
 Now, we're extracting 
 generalizations from 
-the new application
+the new application.
 ----
 Jifty is missing
 lots of features.
@@ -74,11 +73,11 @@ CREATE
 TABLE
 ----
 No
-Template
-Toolkit
+Class::DBI
 ----
 No
-Class::DBI
+Template
+Toolkit
 ----
 No
 Catalyst
@@ -141,12 +140,12 @@ My sick mind
 Ruby on Rails
 ----
 Rails makes me 
-jealous 
+jealous.
 
 ----
 
 Rails makes me 
-really jealous
+really jealous.
 
 ----
 
@@ -187,7 +186,7 @@ No Autrijus
 ----
 
 Ruby has
-Why the lucky stiff.
+Why the lucky stiff
 
 ----
 
@@ -323,7 +322,10 @@ Models
 are 
 smart
 ----
-
+Models
+encapsulate
+cleverness
+----
 Models 
 define
 schema
@@ -377,6 +379,11 @@ all
 Perl
 ----
 (No source filters)
+----
+What about 
+the database?
+----
+ jifty schema --install 
 ----
 Another 
 OO RDBMS 
@@ -504,6 +511,10 @@ serializer
 ----
 AND MORE
 ----
+Iterative web development:
+Mason reloads changed pages per hit
+Jifty reloads changed {{#i|libs}} per hit
+----
 Sending Email
 Recieving Email
 ----
@@ -516,9 +527,8 @@ FastCGI handler
 Stub generators
 Test helpers
 ----
-A
-Trivial 
-Example
+A TRIVIAL
+EXAMPLE
 ----
 Real
 Code
