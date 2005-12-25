@@ -1,0 +1,24 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN"
+"http://www.w3.org/TR/html4/">
+<html lang="en">
+<head>
+<title><% $n || 'Jifty' %> - Online Documentation</title>
+<style type="text/css"><!--
+a { text-decoration: none }
+a:hover { text-decoration: underline }
+a:focus { background: #99ff99; border: 1px black dotted }
+--></style>
+</head>
+<FRAMESET COLS="*, 250">
+    <FRAME src="./content.html" name="podcontent">
+    <FRAME src="./toc.html" name="podtoc">
+    <NOFRAMES>
+        <a style="display: none" href="#toc">Table of Contents</a>
+<& content.html, Target => '' &>
+        <h1><a id="toc">Table of Contents</a></h1>
+<& toc.html, Target => '' &>
+    </NOFRAMES>
+</FRAMESET>
+<%args>
+$n => undef
+</%args>
