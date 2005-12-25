@@ -1,5 +1,5 @@
 name: Jifty
-version: 0.1130215168
+version: 0.1130214067
 license: unknown
 distribution_type: module
 requires:
@@ -53,4 +53,4 @@ requires:
 no_index:
   directory:
     - inc
-generated_by: Module::Install version 0.36
+generated_by: Module::Install version 0.37
