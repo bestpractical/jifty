@@ -1,8 +1,8 @@
   <script type="text/javascript" src="/js/prototype.js"></script>
-%# <script type="text/javascript" src="/js/rico.js"></script>
   <script type="text/javascript" src="/js/behaviour.js"></script>
+  <script type="text/javascript" src="/js/scriptaculous/scriptaculous.js"></script>
   <script type="text/javascript" src="/js/jifty.js"></script>
-  <script type="text/javascript" src="/js/app_behaviour.js"></script>
-  <script type="text/javascript" src="/js/bps_util.js"></script>
   <script type="text/javascript" src="/js/combobox.js"></script>
   <script type="text/javascript" src="/js/key_bindings.js"></script>
+  <script type="text/javascript" src="/js/bps_util.js"></script>
+  <script type="text/javascript" src="/js/app_behaviour.js"></script>
