@@ -15,7 +15,7 @@ Jifty::Server - Standalone web server for Jifty applications
 
 =head1 DESCRIPTION
 
-C<Jifty::Server> is a subclass of L<HTML::Server::Simple::Mason> which
+C<Jifty::Server> is a subclass of L<HTTP::Server::Simple::Mason> which
 creates a handy standalone web server for a lightweight Jifty application.
 
 =cut
