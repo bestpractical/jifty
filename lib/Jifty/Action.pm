@@ -568,21 +568,17 @@ does have a autocomplete_C<ARGUMENT> function, invoke that function.
 sub autocomplete_argument {
     my $self  = shift;
     my $field = shift;
-    warn "completing $field";
     my $field_info = $self->arguments->{$field};
-    warn YAML::Dump($self->arguments);
     my $value = $self->argument_value($field);
 
     my $default_autocomplete = 'autocomplete_' . $field;
 
     if ( $field_info->{autocomplete_coderef}  ) 
     {
-        warn "We can complete with a coderef";
-        return $field_info->{autocomplete_coderef}->( $self, $value );
+        return $field_info->{autocomplete_coderef}->(  $value );
     }
 
     elsif ( $self->can($default_autocomplete) ) {
-        warn "We can completre with a default";
         return $self->$default_autocomplete( $value );
     }
 
