@@ -1,4 +1,5 @@
 use inc::Module::Install;
+tests('t/*.t t/*/t/*.t');
 name('Jifty');
 # this is a dev version, CPAN.pm will not install by default
 requires(perl => '5.8.3');
@@ -61,6 +62,8 @@ version('0.'.time());
 
 install_script('bin/jifty');
 install_share;
+
+
 
 &WriteAll;
 
