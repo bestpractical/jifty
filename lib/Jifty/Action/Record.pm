@@ -141,7 +141,7 @@ sub arguments {
                 }
             };
             
-            $field_info->{$field . "_confirm"} = {render_as => 'Password', validator => $same, mandatory => 1};
+            $field_info->{$field . "_confirm"} = {render_as => 'Password', validator => $same, mandatory => 0};
         }
 
         elsif ( defined $column->refers_to ) {
