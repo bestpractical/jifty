@@ -155,14 +155,8 @@ var Presentation = {
             var content_w = this.content.boxObject.width;
             var new_fs = Math.round((canvas_w/content_w) * this.size);
 
-            //if (new_fs > 600) { new_fs = 600 ;}
-//            else if (new_fs > 500) { new_fs = 500}
-//            else if (new_fs > 250) { new_fs = 250}
-//            else if (new_fs > 150) { new_fs = 150}
-//            else if (new_fs > 100) { new_fs = 100}
-//            else if (new_fs > 64) { new_fs = 64}
             new_fs = new_fs - (new_fs % 32);
-            if (code_listing) { new_fs = 32;}
+            if (code_listing) { new_fs = 48;}
 
             this.content.setAttribute('style', 'top: 0');
             this.content.setAttribute('style', 'font-size:'+ new_fs + "px");
