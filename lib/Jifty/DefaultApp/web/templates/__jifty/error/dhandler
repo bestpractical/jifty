@@ -1,0 +1,18 @@
+<&|/_elements/wrapper, title => 'Something went awry' &>
+
+<h1>Sorry, something went awry</h1>
+<p>
+For one reason or another, you got to a web page that caused a bit of an error. And then you got to our "basic" error handler. Which means we haven't written a pretty, easy to understand error message for you just yet. The message we <em>do</em> have is:</p>
+<blockquote>
+<b><%$m->dhandler_arg%></b>
+</blockquote>
+
+
+<p>There's a pretty good chance that error message doesn't mean anything to you, but we'd rather you have a little bit of information about what went wrong than nothing. We've logged this error, so we know we need to write something friendly explaining just what happened and how to fix it. 
+</p>
+
+<p>For now <% Jifty->web->link(  url =>"/", label => 'head on back home')%> and try to forget that we let you down.</p>
+</&>
+<%init>
+Jifty->log->error("Unhandled web error ". $m->dhandler_arg);
+</%init>

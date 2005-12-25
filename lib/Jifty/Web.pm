@@ -949,7 +949,12 @@ automatically created if it hasn't been already.
 
 sub navigation {
     my $self = shift;
-    $self->{navigation} ||= Jifty::Web::Menu->new();
+    if (!$self->{navigation}) {
+        $self->{navigation} = Jifty::Web::Menu->new();
+    if (Jifty->config->framework('AdminMode')) {
+            $self->{navigation}->child(AdminMode       => url => "/__jifty/admin/", label => "Administration", sort_order => 999);
+        }
+    }
     return $self->{navigation};
 }
 

@@ -1,0 +1,19 @@
+<%args>
+$id => undef
+$object_type
+</%args>
+<%init>
+my $record_class =  Jifty->config->framework('ApplicationClass')."::Model::".$object_type;
+my $record = $record_class->new();
+$record->load($id);
+my $update = Jifty->web->new_action(
+    class   => "Update".$object_type,
+    moniker => "update-" . Jifty->web->serial,
+    record  => $record
+);
+</%init>
+<div class="read item inline">
+% foreach my $argument ($update->argument_names) {
+<%$update->form_field($argument)%>
+%}
+</div>

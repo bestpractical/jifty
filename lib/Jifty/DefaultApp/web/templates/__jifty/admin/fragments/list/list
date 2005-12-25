@@ -1,0 +1,62 @@
+<%args>
+$object_type
+$page => 1
+$new_slot => 1
+$render_submit => 1
+$item_path => "/__jifty/admin/fragments/list/view"
+</%args>
+<%init>
+my $collection_class =  Jifty->config->framework('ApplicationClass')."::Model::".$object_type."Collection";
+my $collection = $collection_class->new();
+$collection->unlimit();
+$collection->set_page_info( current_page => $page,
+                           per_page     => 25
+                          );
+if ($collection->pager->total_entries == 0) {
+    $m->out("No items found.");
+}
+
+</%init>
+% if ($collection->pager->last_page > 1) {
+    <span class="page-count">Page <% $page %> of <% $collection->pager->last_page %></span>   
+% }
+<dl class="list">
+<%perl>
+while ( my $item = $collection->next ) {
+    Jifty->web->region(
+        name     => 'item-' . $item->id,
+        path     => $item_path,
+        defaults => { id => $item->id}
+    );
+}
+
+</%perl>
+</dl>
+
+<div class="paging">
+% if ($collection->pager->previous_page) {
+<span class="prev-page">
+  <% Jifty->web->link( label => "Previous Page", onclick => { args => { page => $collection->pager->previous_page } } ) %>
+</span>
+% }
+% if ($collection->pager->next_page) {
+<span class="next-page">
+  <% Jifty->web->link( label => "Next Page", onclick => { args => { page => $collection->pager->next_page } } ) %>
+</span>
+% }
+</div>
+
+% if ($collection->count and $render_submit) { 
+<% Jifty->web->form->submit( label =>  "Save") %>
+% }
+
+% if ($new_slot) {
+<% Jifty->web->region(
+        name => 'new_item',
+        path => "/__jifty/admin/fragments/list/new_item",
+        defaults => {   object_type => $object_type },
+        ) %>
+
+% }
+
+

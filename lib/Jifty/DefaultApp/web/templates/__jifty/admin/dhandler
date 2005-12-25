@@ -1,0 +1,21 @@
+<%init>
+my $object_type = $m->dhandler_arg;
+
+my $collection_class =  Jifty->config->framework('ApplicationClass')."::Model::".$object_type."Collection";
+my $records = $collection_class->new();
+$records->unlimit;
+</%init>
+<&|/_elements/wrapper &>
+<h1>Manage records: <%$object_type%></h1>
+<% Jifty->web->form->start %>
+
+<% Jifty->web->region(name => 'admin-$object_type',
+                       path => "/__jifty/admin/fragments/list/list", 
+                        defaults => { object_type => $object_type , 
+                        render_submit => 1 }) %>
+
+<% Jifty->web->form->end %>
+
+<h2>Done?</h2>
+<% Jifty->web->return(label => 'Back to the admin console') %>
+</&>

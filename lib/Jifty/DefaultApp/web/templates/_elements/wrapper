@@ -7,6 +7,12 @@
   <& sidebar &>
   <div id="content">
     <a name="content"></a>
+% if (Jifty->config->framework('AdminMode') ) {
+<div class="warning admin_mode">
+Alert: Jifty <% Jifty->web->tangent( label => 'administration mode' , url => '/__jifty/admin/')%> is enabled.
+</div>
+
+% }
     <% Jifty->web->render_messages %>
     <% $m->content |n%>
     <div id="keybindings">

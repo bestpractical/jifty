@@ -192,6 +192,7 @@ sub guess {
 
     return {
         framework => {
+            AdminMode       => 1,
             ActionBasePath   => $name . "::Action",
             ApplicationClass => $name,
             ApplicationName  => $name,
