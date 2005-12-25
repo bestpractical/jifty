@@ -14,6 +14,7 @@ Output the basic edit widget and some javascript to pop up a calendar
 
 sub render_widget {
     my $self  = shift;
+    $self->length(12);
     $self->SUPER::render_widget();
 
     Jifty->mason->out( <<"EOF");
