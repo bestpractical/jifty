@@ -2,19 +2,14 @@
 <html:textarea id="builtinCode" style="visibility: collapse">
 
 Jifty
-
 ----
-
 Nifty Apps
-
 ----
-
 ...in a Jiffy
-
 ----
 
 Jesse Vincent
-
+&gt;&gt;|&lt;&lt;
 Best Practical
 ----
 How we're building useful applications in Perl 5 with a single unified toolkit, 
@@ -75,6 +70,40 @@ There's a little bit of YAML
 config.yml
 ----
 (we're fixing that)
+----
+About 
+the 
+name
+----
+Jifty
+----
+JFDI
+----
+JUST
+----
+.......
+----
+DO
+----
+IT
+----
+Bad
+Product
+Name
+----
+Big Sites
+Hate It
+----
+Learned the
+hard way
+----
+Request
+Tracker
+FAQ
+Manager
+----
+So, it's 
+named Jifty!
 ----
 Jifty's
 Influences
@@ -512,7 +541,7 @@ configuration
 
 etc/config.yml
 
----
+----
  framework:
   ActionBasePath: BlogDemo::Action
   ApplicationClass: BlogDemo
@@ -535,7 +564,16 @@ etc/config.yml
 Don't worry.
 It's refactorable.
 ----
-
+Actually...
+----
+It was
+refactored
+on Friday
+----
+config.yml
+is now
+optional
+----
 Generic code
 ----
 
