@@ -73,7 +73,7 @@ sub Jifty::ClassLoader::INC {
         my $record_class = $ApplicationClass . "::Model::" . $2;
         return undef unless $self->{models}{$record_class} || $record_class->require();
 
-        return $self->return_class( "package " . $ApplicationClass . "::Model::" . $2 . "Collection;\n"."use base qw/@{[$ApplicationClass]}::Collection/;\n"." 1;"
+        return $self->return_class( "package " . $ApplicationClass . "::Model::" . $2 . "Collection;\n"."use base qw/@{[$ApplicationClass]}::Collection/;\n sub record_class { '@{[$ApplicationClass]}::Model::$2' }\n"." 1;"
         );
 
     } elsif ( $module

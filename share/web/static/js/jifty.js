@@ -376,8 +376,7 @@ function update() {
 
     // And when we get the result back..
     var onComplete = function(transport, object) {
-        var allcontent;
-        // In case there's no XML i nthe response, or what have you
+        // In case there's no XML in the response, or what have you
         try {
             // Grab the XML response
             var response = transport.responseXML.documentElement;
