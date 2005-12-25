@@ -64,7 +64,7 @@ sub new {
     }
     $self->{parameter} = {};
 
-    for (Jifty->framework->request->state_variables) {
+    for (Jifty->framework->request->next_page_state_variables) {
         if ($_->key =~ /^region-(.*?)\.(.*)$/) {
             $self->region_argument($1, $2 => $_->value);
         } elsif ($_->key =~ /^region-(.*)$/) {
@@ -116,7 +116,7 @@ Sets the state variable named C<KEY> to C<VALUE>.
 sub state_variable {
     my $self = shift;
     my ($key, $value) = @_;
-    $self->parameter("J:V-$key" => $value);
+    $self->parameter("J:NV-$key" => $value);
 }
 
 =head2 region_fragment NAME PATH

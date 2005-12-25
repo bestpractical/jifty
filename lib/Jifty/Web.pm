@@ -801,6 +801,19 @@ sub set_variable {
 
 }
 
+=head2 state_variables
+
+=cut 
+
+sub state_variables {
+  my $self = shift;
+  my %vars;
+  $vars{"J:V-".$_->key} = $_->value for Jifty->framework->request->state_variables;
+  $vars{"J:NV-".$_} = $self->{'state_variables'}->{$_} for keys %{$self->{'state_variables'}};
+
+  return %vars;
+}
+
 =head2 get_region [QUALIFIED NAME]
 
 Given a fully C<QUALIFIED NAME> of a region, returns the

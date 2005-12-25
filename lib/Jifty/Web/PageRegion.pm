@@ -168,9 +168,15 @@ sub enter {
     $self->qualified_name(Jifty->framework->qualified_region);
     
     # Merge in the settings passed in via state variables
-    for (Jifty->framework->request->state_variables) {
-        $self->argument($2 => $_->value) if $_->key =~ /^region-(.*?)\.(.*)/ and $1 eq $self->qualified_name;
-        $self->path($_->value) if $_->key =~ /^region-(.*?)$/ and $1 eq $self->qualified_name;
+    for (Jifty->framework->request->next_page_state_variables) {
+        if ($_->key =~ /^region-(.*?)\.(.*)/ and $1 eq $self->qualified_name and $_->value ne $self->default_argument($2)) {
+            $self->argument($2 => $_->value);
+            Jifty->framework->set_variable("region-$1.$2" => $_->value);
+        }
+        if ($_->key =~ /^region-(.*?)$/ and $1 eq $self->qualified_name and $_->value ne $self->default_path) {
+            $self->path($_->value);
+            Jifty->framework->set_variable("region-$1" => $_->value);
+        }
     }
 }
 
@@ -198,8 +204,7 @@ sub render {
     Jifty->framework->mason->make_subrequest
       ( comp => $self->path,
         args => [ %{ Jifty->mason->request_args },
-                  region => $self->name,
-                  qualified_region => $self->qualified_name,
+                  region => $self,
                   'J:ACTIONS' => '',
                   %arguments ],
         out_method => \$result,

@@ -239,25 +239,14 @@ sub _preserve_request_helpers {
 sub _preserve_state_variables {
     my $self = shift;
 
-
-    # Preserve state variables from the previous request, so
-    # we can re-present them if validation fails
-    foreach my $var (  Jifty->framework->request->state_variables  ) {
-        Jifty->mason->out( qq{<input type="hidden" name="J:V-} 
-                . $var->key
+    my %vars = Jifty->framework->state_variables;
+    for (keys %vars) {
+        Jifty->mason->out( qq{<input type="hidden" name="} 
+                . $_
                 . qq{" value="}
-                . $var->value
-                . qq{" />\n} );
-
-    }
-    foreach my $var ( keys %{ Jifty->framework->{state_variables} } ) {
-        Jifty->mason->out( qq{<input type="hidden" name="J:NV-} 
-                . $var
-                . qq{" value="}
-                . Jifty->framework->{'state_variables'}->{$var}
+                . $vars{$_}
                 . qq{" />\n} );
     }
-
 }
 
 
@@ -273,28 +262,6 @@ sub next_page {
     my $self = shift;
 
     $self->add_action(class => "Jifty::Action::Redirect", moniker => "next_page", arguments => {@_});
-}
-
-=head2 unpost
-
-Send a redirect back to the same page after the actions run.  This
-ensures that reloading won't re-post any actions that you might have
-just done.
-
-=cut
-
-sub unpost {
-    my $self = shift;
-
-    my $url = $ENV{REQUEST_URI};
-    $url =~ s/\?.*//g;
-
-    for (Jifty->framework->request->state_variables) {
-        Jifty->framework->request->add_next_page_state_variable(key => $_->key, value => $_->value)
-          unless Jifty->framework->request->next_page_state_variable($_->key);
-    }
-    
-    $self->next_page( url => $url );
 }
 
 1;
