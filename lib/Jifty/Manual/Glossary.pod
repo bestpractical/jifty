@@ -10,37 +10,124 @@ We use words.  This is what they mean.
 
 =item action
 
-An action is a specifically designed RPC call that can do something to the system.
-
-Generally, an action takes L</argument>s, which are represented as L</form field>s via the web UI
-
+An B<action> is a specifically designed RPC call that can do something
+to the system.  An action takes any number of L</argument>s, which are
+L</canonicalize>d, L</validate>d, and then used by the action to do
+something useful.  Each action has a L</result>.  See
+L<Jifty::Action>.
 
 =item active
 
+For an L</action> to be run, it needs to be B<active>.  Most of the
+time, all actions submitted are active, but it is possible to specify
+that only specific action as active; any non-active actions are
+ignored.  See L<Jifty::Request>.
+
 =item AJAX
+
+An acronym standing for B<Asynchronous Xml And Javascript>.  Though
+technically incorrect, it is the buzzword that is used to describe
+doing asynchronous requests to the server while the user waits.  This
+can lead to very "dynamic" pages, as the browser does not need to
+refresh the entire page to update a small section of the screen.  In
+Jifty, the sections of the screen are called L</region>s.  See
+L<Jifty::PageRegion>.
 
 =item argument
 
-An B<argument> is a named parameter to an L</action>.
+An B<argument> is a named parameter to an L</action>.  These are
+generally rendered on the screen as L</form field>s.  See
+L<Jifty::Action>.
+
+=item canonicalize
+
+To turn an L</argument> into a more standard form.  For instance,
+translating a user-typed date into a date object or a SQL-formatted
+date string would be done by a canonicalizer.  See L<Jifty::Action>.
 
 =item constructor
 
+A property an L</argument>; the action B<must> have a value submitted
+for this argument in order to be constructed.  This is different from
+L</mandatory>, in that mandatory fields can be left empty by the user.
+For instance, the C<id> of a L<Jifty::Action::Record::Update> is a
+constructor.  See L<Jifty::Action>.
+
+=item continuation
+
+A concept stolen from Lisp, Scheme, Smalltalk, and Perl6.  The
+continuation of any particular piece of code is the deferred
+operations that care about the return value at that point.  In the
+context of Jifty, a continuation is a deferred L</request> that may
+pull L</argument>s and the like from the L</result>s of the current
+request.  Continuations can be arbitrarily nested, so they are often
+used to keep track of tangents that the user went on.  See
+L<Jifty::Continuation>.
+
+=item form field
+
+A widget which is is rendered by the browser.  These are generally
+created to ask the user for a value for a L</argumenr> to an
+L</action>.  See L<Jifty::Web::Form::Field>.
+
+=item fragment
+
+A section of HTML which is contained in a L</region>.  Fragments are a
+kind of standalone Mason component which are meant to be requested
+individually by the browser.  Because of this, they can only take
+strings and the like as arguments, not references or objects!
+
 =item mandatory
+
+A property an L</argument>; the user must enter a value for the action
+to validate.  This is the simplest level of L<validation|/validate>.
 
 =item moniker
 
-Every instance of an action (and other types of Jifty objects, too) has 
-a B<moniker>.  A moniker is an arbitrary-length nonempty string containing
-no semicolons.  Monikers need not be globally unique, but they must be unique
-within a single request.  Monikers have no semantic meaning.
+Every instance of a L<Jifty::Action> has a B<moniker>.  A moniker is
+an arbitrary-length nonempty string containing no semicolons.
+Monikers need not be globally unique, but they must be unique within a
+single request.  Monikers have no semantic meaning.
+
+=item region
+
+An area of the page which can be replaced by JavaScript.  The content
+in the region is called a L</fragment>.  You can think of the region
+as the box, and the fragment as the content in the box.  See
+L<Jifty::PageRegion>.
 
 =item request
 
-=item request_param
+A single query which lists L</action>s to be run, together with a page
+or list of L</fragment>s to return.  This most often comes from the
+browser as query parameters, but may come from other sources as a
+L<JSON> or L<YAML> POST request.  The answer to a request is a
+L</response>.  See L<Jifty::Request>.
 
-A request_parameter (request_param for short) is the "key" side of a key=value pair
-passed to the server by a browser.
+=item response
 
+The answer to a L</request>, it contains a L</result> for every action
+that was run.  See L<Jifty::Response>.
 
+=item result
+
+The answer to a L</action>, it contains information about if the
+action was a success or failure, and further detail about why or how.
+It can also contain arbitrary "content".  See L<Jifty::Result>.
+
+=item sticky
+
+A property of L</form field>s.  If a field is "sticky," values that
+the user entered are placed back there when the page is rendered
+again, avoiding making the user type them again.  Most L</action>s
+have form fields which are sticky on failure, so the user can update
+the information and try again.
+
+=item validate
+
+To check that the provided value of a L</argument> is a possible value
+for it to have.  See L<Jifty::Web::Form::Field>.
 
 =back
+
+=cut
