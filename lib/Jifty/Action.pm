@@ -43,6 +43,7 @@ sub new {
     $self->order($args{'order'});
     $self->argument_values( { %{ $args{'arguments'} } } );
     $self->result(Jifty->framework->response->result($self->moniker) || Jifty::Result->new);
+    $self->result->action_class(ref($self));
 
     return $self;
 }

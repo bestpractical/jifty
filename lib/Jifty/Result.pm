@@ -20,7 +20,7 @@ use Jifty::Everything;
 
 use base qw/Jifty::Object Class::Accessor/;
 
-__PACKAGE__->mk_accessors(qw(failure message error _content));
+__PACKAGE__->mk_accessors(qw(failure action_class message error _content));
 
 
 =head2 new
@@ -56,6 +56,11 @@ sub success {
     my $self = shift;
     return not $self->failure(map {not $_} @_);
 }
+
+=head2 action_class [MESSAGE]
+
+Returns the class for the action that this result came from.
+
 
 =head2 message [MESSAGE]
 

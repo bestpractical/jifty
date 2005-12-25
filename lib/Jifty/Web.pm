@@ -473,7 +473,7 @@ sub restore_state_from_session {
     $self->save_session; # $session won't notice the deep modification otherwise
 
     my $notes = $self->mason->notes;
-
+    warn YAML::Dump($state->{'response'});
     $self->response($state->{'response'}) if $state->{'response'};
     %$notes = %{ $state->{'notes'} } if $state->{'notes'};
 
