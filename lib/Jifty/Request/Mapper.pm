@@ -3,6 +3,69 @@ use strict;
 
 package Jifty::Request::Mapper;
 
+=head1 NAME
+
+Jifty::Request::Mapper - Maps response values into arbitrary query
+parameters
+
+=head1 DESCRIPTION
+
+C<Jifty::Request::Mapper> is used to insert values into parameters
+that you can't know when you originally constructed the request.  The
+prime example of this is a Create action to a View page -- where you
+can't know what ID to supply to the View page until after the Create
+action has run.  This problem can be fixed by establishing a mapping
+between some part of the L<Jifty::Result> of the Create action, and
+the ID query parameter.
+
+=head1 METHODS
+
+=head2 query_parameters HASH
+
+Extended syntax for generating query parameters.  This is used by
+L<Jifty::Web::Form::Clickable> for its C<parameters> argument, as well
+as for C<results> of continuations.
+
+Possible syntaxes for each key => value pair in the C<HASH> are:
+
+=over
+
+=item C<< KEY => STRING >>
+
+The simplest form -- the C<KEY> will have the literal value of the
+C<STRING> supplied
+
+=item C<< KEY => { result => ACTION } >>
+
+The C<KEY> will take on the value of the content named C<KEY> from the
+result of the C<ACTION>.  C<ACTION> may either be a L<Jifty::Action>
+object, or a moniker thereof.
+
+=item C<< KEY => { result => ACTION, name => STRING } >>
+
+The C<KEY> will take on the value of the content named C<STRING> from
+the result of the C<ACTION>.  C<ACTION> may either be a L<Jifty::Action>
+object, or a moniker thereof.
+
+=item C<< KEY => { argument => ACTION } >>
+
+The C<KEY> will take on the value of the argument named C<KEY> from
+the C<ACTION>.  C<ACTION> may either be a L<Jifty::Action> object, or
+a moniker thereof.
+
+=item C<< KEY => { argument => ACTION. name => STRING } >>
+
+The C<KEY> will take on the value of the argument named C<STRING> from
+the C<ACTION>.  C<ACTION> may either be a L<Jifty::Action> object, or
+a moniker thereof.
+
+=back
+
+C<result_of> and C<argument_to> are valid synonyms for C<result> and
+C<argument>, above.
+
+=cut
+
 sub query_parameters {
     my $class = shift;
 
@@ -34,6 +97,38 @@ sub query_parameters {
     return %return;
 }
 
+
+=head2 map PARAMHASH
+
+Responsible for doing the actual mapping that L</query_parameters>
+above sets up.  That is, takes magical query parameters and extracts
+the values they were ment to have.
+
+=over
+
+=item destination
+
+The C<key> from a query parameter
+
+=item source
+
+The C<value> of a query parameter
+
+=item request
+
+The L<Jifty::Request> object to pull action arguments from.  Defauts
+to the current request.
+
+=item response
+
+The L<Jifty::Response> object to pull results from.  Defaults to the
+current response.
+
+=back
+
+Returns a key => value pair.
+
+=cut
 
 sub map {
     my $class = shift;
