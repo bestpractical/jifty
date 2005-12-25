@@ -1,5 +1,5 @@
 name: Jifty
-version: 0.1135413778
+version: 0.1135415006
 license: unknown
 distribution_type: module
 tests: t/*.t t/*/t/*.t
@@ -56,6 +56,7 @@ requires:
   Test::HTTP::Server::Simple: 0.02
   Test::WWW::Mechanize: 0
   Time::ParseDate: 0
+  Time::HiRes: 0
   UNIVERSAL::require: 0
   URI: 0
   WWW::Mechanize: 1.12

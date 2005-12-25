@@ -53,6 +53,7 @@ requires('Test::HTML::Lint');
 requires('Test::HTTP::Server::Simple' => 0.02);
 requires('Test::WWW::Mechanize');
 requires('Time::ParseDate');
+requires('Time::HiRes');
 requires('UNIVERSAL::require');
 requires('URI');
 requires('WWW::Mechanize' => 1.12);

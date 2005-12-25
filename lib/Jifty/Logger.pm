@@ -51,7 +51,7 @@ sub new {
         } else {
             my %default = (
                 'log4perl.rootLogger'        => "ALL,Screen",
-                'log4perl.logger.SchemaTool' => "INFO,Screen",
+                '#log4perl.logger.SchemaTool' => "INFO,Screen",
                 'log4perl.appender.Screen'   => 'Log::Log4perl::Appender::Screen',
                 'log4perl.appender.Screen.stderr' => 1,
                 'log4perl.appender.Screen.layout' =>
