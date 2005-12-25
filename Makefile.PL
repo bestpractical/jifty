@@ -21,7 +21,7 @@ requires('File::Spec');
 requires('FindBin');
 requires('Getopt::Long');
 requires('HTML::Entities');
-requires('HTML::Mason' => 1.3101);           # HTML::Mason::CGIHandler HTML::Mason::Interp
+requires('HTML::Mason' => 1.3101);           # HTML::Mason::CGIHandler HTML::Mason::Interp HTML::Mason::Plugin
 requires('HTML::Mason::Plugin');
 requires('HTTP::Cookies');
 requires('HTTP::Server::Simple' => '0.10');
@@ -47,4 +47,5 @@ requires('WWW::Mechanize' => 1.12);
 requires('XML::XPath');
 requires('YAML');
 version('0.'.time());
+&auto_install;
 &WriteAll;
