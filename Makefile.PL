@@ -12,7 +12,6 @@ requires('Clone');
 requires('Cwd');
 requires('Data::JavaScript::Anon');
 requires('Data::Page');
-requires('Data::UUID');
 requires('DBD::SQLite');
 requires('Email::Send' => '1.99_01');
 requires('Email::Simple');
