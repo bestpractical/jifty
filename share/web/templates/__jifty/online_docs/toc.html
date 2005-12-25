@@ -43,6 +43,7 @@ my $indent = 0;
 my $prev = '';
 foreach my $file (sort @found) {
     my ($parent, $name) = ($1, $2) if $file =~ /(?:(.*)::)?(\w+)$/;
+    $parent = '' unless defined $parent;
     if ($file =~ /^$prev\::(.*)/) {
         my $foo = $1;
         while ($foo =~ s/(\w+):://) {
