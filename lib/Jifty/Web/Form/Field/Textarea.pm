@@ -32,7 +32,7 @@ sub render_widget {
     $field .= qq! cols="@{[$self->cols || 60]}"!;
     $field .= qq! class="@{[ $self->class ]}@{[ $self->ajax_validates ? ' ajaxvalidation' : '' ]}" !;
     $field .= qq! >!;
-    $field .= $self->default_value if $self->default_value;
+    $field .= $self->current_value if $self->current_value;
     $field .= qq!</textarea>\n!;
     Jifty->mason->out($field);
     '';

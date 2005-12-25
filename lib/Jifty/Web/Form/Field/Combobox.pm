@@ -20,7 +20,7 @@ my $field = <<"EOF";
 <input name="@{[ $self->fallback_name ]}" 
        id="@{[ $self->input_name ]}" 
       class="@{[ $self->class ]}@{[ $self->ajax_validates ? ' ajaxvalidation' : '' ]} combo-text" 
-       value="@{[ $self->default_value ]}" 
+       value="@{[ $self->current_value ]}" 
        type="text" 
        size="30"
        autocomplete="off" /><span id="@{[ $self->input_name ]}_Button" class="combo-button"></span></span><span style="display: none"></span><select 
@@ -39,7 +39,7 @@ EOF
         # TODO XXX FIXME worry about escape value, display?
         $field .= qq!<option value="$value"!;
         $field .= qq! selected="selected"!
-            if defined $self->default_value and $self->default_value eq $value;
+            if defined $self->current_value and $self->current_value eq $value;
         $field .= qq!>$display</option>\n!;
     } 
     

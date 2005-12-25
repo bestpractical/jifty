@@ -108,14 +108,12 @@ sub register {
 
     while ( my ( $name, $info ) = each %args ) {
         next unless $info->{'constructor'};
-        my $default;
-        $default = $self->argument_value($name) unless $info->{'not_sticky'};
-        $default = $info->{'default_value'} unless defined $default;
         Jifty::Web::Form::Field->new(
             %$info,
             action        => $self,
             input_name    => $self->double_fallback_form_field_name($name),
-            default_value => $default,
+            sticky       => 0,
+            default_value => ($self->argument_value($name) || $info->{'default_value'}),
             render_as     => 'Hidden'
         )->render();
     }
@@ -289,15 +287,13 @@ sub _form_widget {
                 = Jifty::Web::Form::Field->new(
                 action        => $self,
                 name          => $args{'argument'},
-                default_value => $field_info->{not_sticky} ? "" : $self->argument_value($args{'argument'}),
+                sticky       => 1, # default to sticky. an actual value in the action's arguments can override
+                sticky_value => $self->argument_value($args{'argument'}),
                 render_mode => $args{'render_mode'},
                 %$field_info,
                 %args
                 );
 
-            # ..unless this action failed last time
-            $self->{_private_form_fields_hash}{$arg_name}->default_value($self->argument_value($args{'argument'}))
-              if not $field_info->{not_sticky} and not $self->result->success;
             
         }    # else $field remains undef
         else {

@@ -42,6 +42,7 @@ sub new {
         class         => '',
         input_name    => '',
         default_value => '',
+        sticky_value => '',
 	render_mode   => 'update',
         @_,
     );
@@ -80,8 +81,8 @@ C<new>.  Subclasses should extend this list.
 
 =cut
 
-sub accessors { qw(name class label input_name type default_value action mandatory ajax_validates preamble hints key_binding render_mode length); }
-__PACKAGE__->mk_accessors(qw(name class _label _input_name type default_value _action mandatory ajax_validates preamble hints key_binding render_mode length));
+sub accessors { qw(name class label input_name type sticky sticky_value default_value action mandatory ajax_validates preamble hints key_binding render_mode length); }
+__PACKAGE__->mk_accessors(qw(name class _label _input_name type sticky sticky_value default_value _action mandatory ajax_validates preamble hints key_binding render_mode length));
 
 =head2 name [VALUE]
 
@@ -109,6 +110,13 @@ Sets this form field's "submit" key binding to VALUE.
 =head2 default_value [VALUE]
 
 Gets or sets the default value for the form.
+
+=head2 sticky_value [VALUE]
+
+Gets or sets the value for the form field that was submitted in the last action.
+
+
+
 
 =head2 input_name [VALUE]
 
@@ -184,6 +192,27 @@ sub action {
     # the reference to not get caught in a loop
     Scalar::Util::weaken( $self->{_action} ) if @_;
     return $action;
+}
+
+=head2 current_value
+
+Gets the current value we should be using for this form field.
+
+If the argument is marked as "sticky" (default) and there is a value for this 
+field from a previous action submit AND that action did not have a "success" 
+response, returns that submit's value. Otherwise, returns the action's argument's 
+default_value for this field.
+
+=cut
+
+sub current_value {
+    my $self = shift;
+
+    if ($self->sticky_value and $self->sticky and (!Jifty->framework->response->result($self->action->moniker) or $self->action->result->failure)) {
+        return $self->sticky_value;
+        } else {
+            return $self->default_value;
+        }
 }
 
 
@@ -317,8 +346,7 @@ sub render_widget {
     $field .= qq! type="@{[ $self->type ]}"!;
     $field .= qq! name="@{[ $self->input_name ]}"!;
     $field .= qq! id="@{[ $self->input_name ]}"!;
-    # XXX TODO FIXME worry about escaping default value?
-    $field .= qq! value="@{[HTML::Entities::encode_entities($self->default_value)]}"! if defined $self->default_value;
+    $field .= qq! value="@{[HTML::Entities::encode_entities($self->current_value)]}"! if defined $self->current_value;
     $field .= qq! class="@{[ $self->class ]}@{[ $self->ajax_validates ? ' ajaxvalidation' : '' ]}" !;
     $field .= qq! size="@{[ $self->length() ]}"! if ($self->length());
     $field .= qq!      />\n!;
@@ -338,7 +366,7 @@ sub render_value {
     my $field = '<span';
     $field .= qq! class="@{[ $self->class ]}" !;
 
-    $field .= HTML::Entities::encode_entities($self->default_value) if defined $self->default_value;
+    $field .= HTML::Entities::encode_entities($self->current_value) if defined $self->current_value;
     $field .= qq!</span>\n!;
     Jifty->mason->out($field);
     return '';

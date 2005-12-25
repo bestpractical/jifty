@@ -13,12 +13,12 @@ The HTML input type is C<password>.
 
 sub type { 'password' }
 
-=head2 default_value
+=head2 current_value
 
 The default value of a password field should B<always> be empty.
 
 =cut
 
-sub default_value {''}
+sub current_value {''}
 
 1;

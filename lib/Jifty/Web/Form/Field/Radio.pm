@@ -37,7 +37,7 @@ sub render_option {
     $field .= qq! class="@{[ $self->class ]}@{[ $self->ajax_validates ? ' ajaxvalidation' : '' ]}" !;
 
     $field .= qq! checked="1" !
-      if defined $self->default_value and $self->default_value eq $value;
+      if defined $self->current_value and $self->current_value eq $value;
     $field .= qq!>$display\n!;
     Jifty->mason->out($field);
     '';

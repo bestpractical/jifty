@@ -24,7 +24,7 @@ sub render_widget {
         # TODO XXX FIXME worry about escape value, display?
         $field .= qq!<option value="$value"!;
         $field .= qq! selected="selected"!
-            if defined $self->default_value and $self->default_value eq $value;
+            if defined $self->current_value and $self->current_value eq $value;
         $field .= qq!>$display</option>\n!;
     } 
     $field .= qq!</select>\n!;
