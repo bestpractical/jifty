@@ -1,3 +1,0 @@
----
-framework:
-  LogConfig: t/test.log4perl.conf

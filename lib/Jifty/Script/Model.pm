@@ -76,7 +76,7 @@ use strict;
 
 =head1 DESCRIPTION
 
-A test harness for the $model model.
+A basic test harness for the $model model.
 
 =cut
 
@@ -120,12 +120,9 @@ is(\$collection->count, 1, "Finds one record with specific id");
 \$collection->redo_search;
 is(\$collection->count, 0, "Deleted row is gone");
 
-TODO: {
-    local \$TODO = "unlimit doesn't reset count_all or count?";
-
-    \$collection->unlimit;
-    is(\$collection->count, 1, "Still one left");
-}
+# And the other one is still there
+\$collection->unlimit;
+is(\$collection->count, 1, "Still one left");
 
 EOT
 

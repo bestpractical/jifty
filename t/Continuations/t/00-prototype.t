@@ -9,13 +9,9 @@ This is a template for your own tests. Copy it and modify it.
 
 =cut
 
-BEGIN { -d 't/Continuations' &&  chdir 't/Continuations'; require 't/utils.pl'; };
-
-use Test::More tests => 2;
-
-use_ok('Jifty');
-Jifty->new(  );
-
+BEGIN {chdir "t/Continuations"}
+use lib '../../lib';
+use Jifty::Test tests => 1;
 
 ok(1, "Loaded the test script");
 1;

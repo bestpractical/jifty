@@ -9,13 +9,9 @@ This is a template for your own tests. Copy it and modify it.
 
 =cut
 
-BEGIN { -d 't/Mapper' &&  chdir 't/Mapper'; require 't/utils.pl'; };
-
-use Test::More tests => 2;
-
-use_ok('Jifty');
-Jifty->new(  );
-
+BEGIN {chdir "t/Mapper"}
+use lib '../../lib';
+use Jifty::Test tests => 1;
 
 ok(1, "Loaded the test script");
 1;

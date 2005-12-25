@@ -38,7 +38,7 @@ sub run {
     foreach my $dir ($self->directories) {
         $dir =~ s/__APP__/$modname/;
         print("Creating directory $dir\n");
-        mkdir( "$prefix/$dir");
+        mkdir( "$prefix/$dir") or die "Can't create $prefix/$dir: $!";
 
     }
 
@@ -47,6 +47,16 @@ sub run {
     # Mark it executable
     chmod(0555, "$prefix/bin/jifty");
 
+    # Write a makefile
+    open(MAKEFILE, ">$prefix/Makefile.PL") or die "Can't write Makefile.PL: $!";
+    print MAKEFILE <<"EOT";
+use inc::Module::Install;
+name('$modname');
+version('0.01');
+requires('Jifty');
+
+EOT
+    close MAKEFILE;
 }
 
 sub directories {

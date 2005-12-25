@@ -9,15 +9,11 @@ Continuations tests
 
 =cut
 
-BEGIN { -d 't/Continuations' &&  chdir 't/Continuations'; require 't/utils.pl'; };
+BEGIN {chdir "t/Continuations"}
+use lib '../../lib';
+use Jifty::Test tests => 47;
 
-use Test::More tests => 49;
-
-use_ok('Jifty');
 use_ok('Jifty::Test::WWW::Mechanize');
-Jifty->new(  );
-
-ok(1, "Loaded the test script");
 
 # Create a continuation by hand
 

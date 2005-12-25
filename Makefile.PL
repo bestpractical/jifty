@@ -14,6 +14,8 @@ requires('Data::JavaScript::Anon');
 requires('Data::Page');
 requires('Digest::MD5');
 requires('DBD::SQLite');
+requires('Email::Folder');
+requires('Email::LocalDelivery');
 requires('Email::Send' => '1.99_01');
 requires('Email::Simple');
 requires('Email::Simple::Creator');

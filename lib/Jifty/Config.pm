@@ -172,6 +172,10 @@ sub load {
     $config = Hash::Merge::merge( $self->stash, $site );
     $self->stash($config);
 
+    # Finally, check for global postload hooks (these are used by the
+    # test harness)
+    $self->$Jifty::Config::postload()
+      if $Jifty::Config::postload;
 }
 
 =head2 guess

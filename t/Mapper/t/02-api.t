@@ -9,15 +9,11 @@ Continuations tests
 
 =cut
 
-BEGIN { -d 't/Mapper' &&  chdir 't/Mapper'; require 't/utils.pl'; };
+BEGIN {chdir "t/Mapper"}
+use lib '../../lib';
+use Jifty::Test no_plan => 1;
 
-use Test::More no_plan => 1;
-
-use_ok('Jifty');
 use_ok('Jifty::Test::WWW::Mechanize');
-Jifty->new(  );
-
-ok(1, "Loaded the test script");
 
 # Set up server
 my $server = Jifty::Test->make_server;

@@ -9,15 +9,10 @@ Tests for request mapper
 
 =cut
 
-BEGIN { -d 't/Mapper' &&  chdir 't/Mapper'; require 't/utils.pl'; };
-
-use Test::More tests => 34;
-
-use_ok('Jifty');
+BEGIN {chdir "t/Mapper"}
+use lib '../../lib';
+use Jifty::Test tests => 32;
 use_ok('Jifty::Test::WWW::Mechanize');
-Jifty->new(  );
-
-ok(1, "Loaded the test script");
 
 # Set up server
 my $server = Jifty::Test->make_server;

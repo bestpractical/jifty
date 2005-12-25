@@ -50,8 +50,6 @@ use Jifty::CurrentUser;
 # with hook::lexwrap
 #use Jifty::Server;
 
-use Jifty::Test;
-
 use Jifty::Web;
 use Jifty::Web::Session;
 use Jifty::Web::PageRegion;
