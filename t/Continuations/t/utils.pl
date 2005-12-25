@@ -6,7 +6,7 @@ BEGIN {
     
     # This needs to happen before the handle is created, so it can't happen in
     # BTDT::Test->setup_test
-    system("JIFTY_VENDOR_CONFIG=t/test_config.yml bin/jifty schema --install --create --force ."); 
+    system("JIFTY_VENDOR_CONFIG=t/test_config.yml bin/jifty schema --drop-database --create-database --setup ."); 
 }
 
 use Jifty::Everything;

@@ -1,5 +1,5 @@
 name: Jifty
-version: 0.1135311003
+version: 0.1135315985
 license: unknown
 distribution_type: module
 tests: t/*.t t/*/t/*.t
@@ -15,6 +15,7 @@ requires:
   Cwd: 0
   Data::JavaScript::Anon: 0
   Data::Page: 0
+  Digest::MD5: 0
   DBD::SQLite: 0
   Email::Send: 1.99_01
   Email::Simple: 0
@@ -40,11 +41,13 @@ requires:
   JSON: 0
   Log::Log4perl: 0
   Locale::Maketext::Simple: 0
+  Math::BigInt: 0
   Module::Pluggable: 2.95
   Module::Refresh: 0
   Pod::Usage: 0
   Pod::Simple::Text: 0
   Scalar::Util: 0
+  String::Koremutake: 0
   Test::Base: 0
   Test::More: 0
   Test::HTML::Lint: 0

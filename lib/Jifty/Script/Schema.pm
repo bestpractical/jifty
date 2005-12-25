@@ -12,13 +12,13 @@ use Jifty::DBI::SchemaGenerator;
 
 sub options {
     return (
-        "install|i"    => "install",
-        "print|p"      => "print",
-        "create|c"     => "create_database",
-        "force"        => "force",
-        "include|I=s@" => "include",
-        "help|?"       => "help",
-        "man"          => "man"
+        "setup"             => "setup_tables",
+        "print|p"           => "print",
+        "create-database|c" => "create_database",
+        "drop-database"     => "drop_database",
+        "include|I=s@"      => "include",
+        "help|?"            => "help",
+        "man"               => "man"
     );
 }
 
@@ -28,20 +28,17 @@ sub run {
     $self->_check_usage();
     $self->_setup_environment();
     $self->_probe_database_existence();
-    $self->create_db() if $self->{create_database};
+    $self->manage_database_existence() if ($self->{create_database} or $self->{drop_database});
     $self->_setup_jifty_stuff();
     if ( $self->{create_all_tables} ) {
         $self->create_all_tables();
-    } else {
+    } elsif ($self->{'setup_tables'}) {
         $self->upgrade_tables();
     }
 }
 
 sub _setup_environment {
     my $self = shift;
-
-    # Default to current directory
-    push @ARGV, "." unless @ARGV;
 
     # Set up include path
     my $ProjectRoot = shift @ARGV || ".";
@@ -62,8 +59,6 @@ sub _check_usage {
     pod2usage( -exitval => 1, -input => $docs ) if $self->{help};
     pod2usage( -exitval => 0, -verbose => 2, -input => $docs )
         if $self->{man};
-    pod2usage("$0: Must specify exactly one of --install or --print!")
-        unless $self->{install} xor $self->{print};
 }
 
 sub _setup_jifty_stuff {
@@ -93,7 +88,7 @@ sub _probe_database_existence {
     my $self = shift;
 
     my $no_handle = 0;
-    if ( $self->{'create_database'} and $self->{'install'} ) {
+    if ( $self->{'create_database'} or $self->{'drop_database'}) {
         $no_handle = 1;
     }
 
@@ -113,13 +108,8 @@ sub _probe_database_existence {
         $self->{create_database}   = 1;
     } elsif ($@) {
         die $@;
-    } elsif ( $self->{create_database} and $self->{force} ) {
+    } elsif ( $self->{create_database} and $self->{setup_tables} ) {
         $self->{create_all_tables} = 1;
-
-        # Don't fall through to exit
-    } else {
-        print "Database is installed and up to date; nothing to do\n";
-        exit;
     }
 
 }
@@ -161,7 +151,8 @@ sub create_all_tables {
 
     if ( $self->{'print'} ) {
         print $self->{'_schema_generator'}->create_table_sql_text;
-    } elsif ( $self->{'install'} ) {
+    }
+    {
 
         # Start a transactoin
         Jifty->handle->begin_transaction;
@@ -190,6 +181,7 @@ sub create_all_tables {
         # Commit it all
         Jifty->handle->commit;
     }
+        $log->info("Set up version $appv");
 }
 
 =head2 upgrade_tables 
@@ -307,7 +299,7 @@ sub upgrade_tables {
                 print "$_;\n";
             }
         }
-    } elsif ( $self->{'install'} ) {
+    } else {
         Jifty->handle->begin_transaction;
         for my $version (
             sort { version->new($a) <=> version->new($b) }
@@ -333,14 +325,21 @@ sub upgrade_tables {
     }
 }
 
-sub create_db {
+sub manage_database_existence {
     my $self     = shift;
     my $handle   = Jifty::Handle->new();
     my $database = lc Jifty->config->framework('Database')->{'Database'};
     my $driver   = Jifty->config->framework('Database')->{'Driver'};
 
+
+
+
+
+
+
+
     if ( $self->{'print'} ) {
-        print "DROP DATABASE $database;\n" if $self->{'force'};
+        print "DROP DATABASE $database;\n" if $self->{'drop_database'};
         print "CREATE DATABASE $database;\n";
         return;
     }
@@ -350,20 +349,30 @@ sub create_db {
     $connect_args{'database'} = 'template1' if ( $driver eq 'Pg' );
     $handle->connect(%connect_args);
 
+    if ($self->{'drop_database'}) {
     if ( $driver eq 'SQLite' ) {
         unlink($database);
     } else {
         $handle->simple_query("DROP DATABASE $database");
 
     }
+
+    }
+
+    if ($self->{'create_database'}) {
+
     if ( $driver ne 'SQLite' ) {
         $handle->simple_query("CREATE DATABASE $database");
     }
+
+    }
     $handle->disconnect;
 
-    # reinit our handle
-    Jifty->handle( Jifty::Handle->new() );
-    Jifty->handle->connect();
+    if (not $self->{'drop_database'} or $self->{'create_database'}) {
+        # reinit our handle
+        Jifty->handle( Jifty::Handle->new() );
+        Jifty->handle->connect();
+    }
 }
 
 1;
@@ -376,16 +385,14 @@ Jifty::Script::Schema - Create SQL to update or create your Jifty app's tables
 
 =head1 SYNOPSIS
 
-  jifty schema --install      Creates tables on SQL server 
-  jifty schema --print          Prints commands to update tables,
-                                #now that they have been created
+  
+  jifty schema --setup      Creates or updates your application's database tables
 
  Options:
-   --print            Print output instead of running on SQL server
-   --install          Run commands on server
+   --print              Print SQL, rather than executing commands
 
-   --create           Creates the database, if necessary
-   --force            Drops the database before creating, in conjunction with B<--create>
+   --create-database  Creates the database, if necessary
+   --drop-database    Drops the database before creating, in conjunction with B<--create>
 
    --include libpath  add libpath to C<@INC> (can be used multiple times)
    -I        libpath
@@ -394,26 +401,27 @@ Jifty::Script::Schema - Create SQL to update or create your Jifty app's tables
 
 =head1 OPTIONS
 
-I<ProjectRoot> defaults to the current directory.  One of I<--install>
-or I<--print> must be specified.
+I<ProjectRoot> defaults to the current directory.
 
 =over 8
 
-=item B<--install>
-
-Run the commands on the server
 
 =item B<--print>
 
-Prints the commands to standard output
+Rather than actually running the database create/update/drop commands, Prints the commands to standard output
 
-=item B<--create>
+=item B<--create-database>
 
 Send CREATE DATABASE command
 
-=item B<--force>
+=item B<--drop-database>
 
 Send DROP DATABASE command, if used in conjunction with B<--create>
+
+=item B<--setup>
+
+Actually set up your app's tables (create or update as needed)
+
 
 =item B<--include> I<libpath>, B<-I> I<libpath>
 
@@ -441,15 +449,17 @@ Looks in the directory I<ProjectRoot>/lib/ for all model classes and
 generates SQL statements to create or update database tables for all
 of the models.  It either prints the SQL to standard output
 (B<--print>) or actually issues the C<CREATE TABLE> or C<ALTER TABLE>
-statements on Jifty's database (B<--install>).  (Note that even if you
+statements on Jifty's database.
+
+(Note that even if you
 are just displaying the SQL, you need to have correctly configured
 your Jifty database in I<ProjectRoot>C</etc/config.yml>, because the
 SQL generated may depend on the database type.)
 
 =head1 BUGS
 
-Due to limitations of L<Jifty::DBI::SchemaGenerator>, this
-probably only works with Postgres, and possibly recent mysql.
+Due to limitations of L<DBIx::DBSchema>, this
+probably only works with PostgreSQL, MySQL and SQLite.
 
 It is possible that some of this functionality should be rolled into
 L<Jifty::DBI::SchemaGenerator>
