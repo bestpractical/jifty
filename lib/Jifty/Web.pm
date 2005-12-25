@@ -161,7 +161,9 @@ sub current_user {
     else {
         my $class = Jifty->config->framework('CurrentUserClass');
         $class->require;
-        return $class->new();
+        my $object = $class->new();
+        $object->is_superuser(1) if Jifty->config->framework('AdminMode');
+        return ($object);
     }
 }
 
