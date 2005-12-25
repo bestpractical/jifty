@@ -92,17 +92,6 @@ sub javascript {
                 push @actions, map { ref $_ ? $_->moniker : $_ } @{ $hook->{submit} };
             }
 
-            # Only go on if we have non-submit arguments
-            next unless grep {$_ ne "submit"} keys %{$hook};
-
-            # What element we're replacing.
-            if ($hook->{element}) {
-                $args{element} = $hook->{element};
-                $args{region}  = $args{element} =~ /^#region-(\S+)/ ? "$1-".Jifty->web->serial : Jifty->web->serial;
-            } else {
-                $args{region}  = $hook->{region} || Jifty->web->qualified_region;
-            }
-
             # Placement
             if (exists $hook->{replace_with}) {
                 @args{qw/mode path/} = ('Replace', $hook->{replace_with});
@@ -112,6 +101,17 @@ sub javascript {
                 @args{qw/mode path/} = ('Top', $hook->{prepend});
             } elsif (exists $hook->{refresh_self} and Jifty->web->current_region) {
                 @args{qw/mode path/} = ('Replace', Jifty->web->current_region->path);
+            } else {
+                # If we're not doing any of the above, skip this one
+                next;
+            }
+
+            # What element we're replacing.
+            if ($hook->{element}) {
+                $args{element} = $hook->{element};
+                $args{region}  = $args{element} =~ /^#region-(\S+)/ ? "$1-".Jifty->web->serial : Jifty->web->serial;
+            } else {
+                $args{region}  = $hook->{region} || Jifty->web->qualified_region;
             }
 
             # Arguments

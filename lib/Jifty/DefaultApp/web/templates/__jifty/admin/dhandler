@@ -9,7 +9,7 @@ $records->unlimit;
 <h1>Manage records: <%$object_type%></h1>
 <% Jifty->web->form->start %>
 
-<% Jifty->web->region(name => 'admin-$object_type',
+<% Jifty->web->region(name => "admin-$object_type",
                       path => "/__jifty/admin/fragments/list/list", 
                       defaults => { object_type => $object_type , 
                                     render_submit => 1 }) %>

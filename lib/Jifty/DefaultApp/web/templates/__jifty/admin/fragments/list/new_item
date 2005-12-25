@@ -19,6 +19,7 @@ Jifty->web->form->submit(
                  { submit => $create },
                  { refresh_self => 1 },
                  {
+                   element => $region->parent->get_element('dl.list'),
                    append => '/__jifty/admin/fragments/list/view',
                    args   => { 
                               object_type => $object_type,
