@@ -42,9 +42,7 @@ sub new {
     return $self;
 }
 
-sub _init {
-   return shift; 
-}
+sub _init { 1}
 
 
 =head2 id
@@ -64,7 +62,8 @@ For the somewhat obvious reason that you can't actually lift yourself up by tugg
 =cut
 
 sub current_user {
-    return shift;
+    my $self = shift;
+    return $self;
 }
 
 

@@ -12,19 +12,23 @@ Jifty::Everything - Load all of the Jifty modules
 # Could use Module::Pluggable, I guess.
 
 use Jifty;
+use Jifty::Object;
 use Jifty::Config;
 use Jifty::Handle;
 use Jifty::ClassLoader;
 use Jifty::Util;
 
+use Jifty::Record;
+use Jifty::Collection;
 use Jifty::Action;
 use Jifty::Action::Record;
 use Jifty::Action::Record::Create;
 use Jifty::Action::Record::Update;
 
-use Jifty::Collection;
 
 use Jifty::Continuation;
+
+use Jifty::LetMe;
 
 use Jifty::Logger;
 use Jifty::Handler;
@@ -33,9 +37,7 @@ use Jifty::MasonInterp;
 
 use Jifty::Model::Schema;
 
-use Jifty::Object;
 
-use Jifty::Record;
 
 use Jifty::Request;
 use Jifty::Request::Mapper;

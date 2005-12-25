@@ -1,5 +1,5 @@
 name: Jifty
-version: 0.1134281048
+version: 0.1134969992
 license: unknown
 distribution_type: module
 requires:
@@ -12,6 +12,7 @@ requires:
   Class::Accessor: 0
   Clone: 0
   Cwd: 0
+  Data::JavaScript::Anon: 0
   Data::Page: 0
   Data::UUID: 0
   DBD::SQLite: 0
@@ -29,7 +30,7 @@ requires:
   HTML::Mason::Plugin: 0
   HTTP::Cookies: 0
   HTTP::Server::Simple: 0.10
-  HTTP::Server::Simple::Mason: 0
+  HTTP::Server::Simple::Mason: 0.09
   HTTP::Server::Simple::Recorder: 0
   Hash::Merge: 0
   Hook::LexWrap: 0
@@ -51,9 +52,10 @@ requires:
   URI: 0
   WWW::Mechanize: 1.12
   version: 0
+  XML::Writer: 0
   XML::XPath: 0
   YAML: 0
 no_index:
   directory:
     - inc
-generated_by: Module::Install version 0.370
+generated_by: Module::Install version 0.410

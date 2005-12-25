@@ -195,6 +195,7 @@ sub guess {
             AdminMode       => 1,
             ActionBasePath   => $name . "::Action",
             ApplicationClass => $name,
+            CurrentUserClass => $name ."::CurrentUser",
             ApplicationName  => $name,
             Database         => {
                 Database => lc $name,
