@@ -77,48 +77,12 @@ sub _init {
     unless ($self->current_user) {
         Carp::confess("Collection created without a current user");
     }
-
-    
-    
     $self->table($self->new_item->table());
-    
-    $self->pager(Data::Page->new);
+    $self->SUPER::_init(%args);
 
-    $self->pager->total_entries(0);
-    $self->pager->entries_per_page(10);
-    $self->pager->current_page(1);
-    
-    $self->clean_slate;
-    $self->order_by( FIELD => 'id', ORDER => 'asc');
+    $self->order_by( column => 'id',order => 'asc');
 }
 
-=head2 set_page_info [per_page => NUMBER,] [current_page => NUMBER]
-
-Sets the current page (one-based) and number of items per page on the
-pager object, and pulls the number of elements from the collection.
-This both sets up the collection's L<Data::Page> object so that you
-can use its calculations, and sets the L<Jifty::DBI::Collection>
-C<first_row> and C<rows_per_page> so that queries return values from
-the selected page.
-
-=cut
-
-sub set_page_info {
-  my $self = shift;
-  my %args = (
-    per_page => undef,
-    current_page => undef, # 1-based
-    @_
-  );
-  
-  $self->pager->total_entries($self->count_all)
-              ->entries_per_page($args{'per_page'})
-              ->current_page($args{'current_page'});
-  
-  $self->rows_per_page($args{'per_page'});
-  $self->first_row($self->pager->first);
-  
-}
 
 =head2 new_item
 
