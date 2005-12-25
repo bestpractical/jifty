@@ -133,8 +133,34 @@ Called before the object is deleted.
 
 =cut
 
-sub current_user_can { 1 }
+=head2 current_user_can RIGHT
 
+Does the current user have the right "RIGHT" for this object.
+
+The default implementation returns true if the current user is a superuser
+or a boostrap user and false otherwise.
+
+
+=cut
+
+sub current_user_can {
+    my $self  = shift;
+    my $right = shift;
+
+    if (   $self->current_user->is_bootstrap_user
+        or $self->current_user->is_superuser )
+    {
+        return (1);
+    }
+    unless ( UNIVERSAL::isa( $self->current_user, 'Jifty::CurrentUser' ) ) {
+        $self->log->error(
+            "Hm. called to authenticate without a currentuser - "
+                . $self->current_user );
+        return (0);
+    }
+    return (0);
+
+}
 
 =head2 check_create_rights ATTRIBUTES
 
