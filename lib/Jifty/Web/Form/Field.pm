@@ -412,8 +412,7 @@ Renders a "view" version of the widget for field. Usually, this is just plain te
 sub render_value {
     my $self  = shift;
     my $field = '<span';
-    $field .= qq! class="@{[ $self->classes ]}" !;
-
+    $field .= qq! class="@{[ $self->classes ]}"> !;
     $field .= HTML::Entities::encode_entities($self->current_value) if defined $self->current_value;
     $field .= qq!</span>\n!;
     Jifty->web->out($field);

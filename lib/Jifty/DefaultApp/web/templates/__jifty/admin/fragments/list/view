@@ -14,6 +14,6 @@ my $update = Jifty->web->new_action(
 </%init>
 <div class="read item inline">
 % foreach my $argument ($update->argument_names) {
-<%$update->form_field($argument)%>
-%}
+<%$update->form_field($argument, render_mode => 'read')%>
+% }
 </div>

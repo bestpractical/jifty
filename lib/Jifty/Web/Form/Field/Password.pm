@@ -29,7 +29,17 @@ No completion in password fields ;)
 =cut
 
 sub other_widget_properties {
-
     return q{autocomplete="off"};
+}
+
+=head2 render_value 
+
+Never render a value for a password
+
+=cut
+
+
+sub render_value {
+    return '-';
 }
 1;
