@@ -22,6 +22,7 @@ use base qw/Jifty::Action::Record/;
 
 =head2 arguments
 
+
 Set the default value in each of the fields to whatever the default of
 the column is in the model
 

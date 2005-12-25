@@ -137,7 +137,6 @@ sub arguments {
                 if ( $value ne $self->argument_value($field) ) {
                     return $self->validation_error($field . '_confirm' => "The passwords you typed didn't match each other.");
                 } else {
-                    warn "passwords match";
                     return $self->validation_ok($field . '_confirm');
                 }
             };
