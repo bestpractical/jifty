@@ -40,7 +40,8 @@ sub since {
 =head2 versions
 
 Returns the list of versions that have been registered; this is called
-by the C<bin/schema> tool to determine what to do while upgrading.
+by the L<Jifty::Script::Schema> tool to determine what to do while
+upgrading.
 
 =cut
 

@@ -119,6 +119,7 @@ also selects it as the current form.  Returns undef if it can't be found.
 sub action_form {
     my $self = shift;
     my $moniker = shift;
+    Carp::confess("No moniker") unless $moniker;
 
     my $i;
     for my $form ($self->forms) {
@@ -251,5 +252,50 @@ sub follow_link_ok {
     # right place?
     html_ok($self->content);
 } 
+
+=head2 session
+
+Returns the server-side session associated with this Mechanize object.
+
+=cut
+
+sub session {
+    my $self = shift;
+
+    return undef unless $self->cookie_jar->as_string =~ /JIFTY_SID_\d+=([^;]+)/;
+
+    my %session;
+    require Apache::Session::File;
+    eval {
+        tie %session, 'Apache::Session::File',
+          $1,
+            {
+             Directory     => '/tmp',
+             LockDirectory => '/tmp'
+            };
+    };
+    return undef if $@;
+
+    return {%session};
+}
+
+=head2 continuation [ID]
+
+Returns the current continuation of the Mechanize object, if any.  Or,
+given an ID, returns the continuation with that ID.
+
+=cut
+
+sub continuation {
+    my $self = shift;
+
+    my $session = $self->session;
+    return undef unless $session and $session->{continuations};
+    
+    my $id = shift;
+    ($id) = $self->uri =~ /J:C(?:ALL)?=([^&;]+)/ unless $id;
+
+    return $session->{continuations}{$id};
+}
 
 1;

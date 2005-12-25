@@ -11,9 +11,11 @@ sub parse_arg { shift; @_ ? @_ : 'index'; }
 
 sub run {
     my $self = shift;
+    my @topics = @_;
 
+    push @topics, 'commands' unless (@topics);
 
-    foreach my $topic (@_) {
+    foreach my $topic (@topics) {
         if ($topic eq 'commands') {
             my @cmd;
             my $dir = $INC{'Jifty/Script.pm'};

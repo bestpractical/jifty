@@ -3,7 +3,7 @@ use warnings;
 
 
 package Jifty::Script::FastCGI;
-use base qw/App::CLI::Command/;
+use base qw/Jifty::Script::Command/;
 
 use File::Basename;
 use CGI::Fast;
@@ -11,6 +11,28 @@ use Module::Refresh;
 use HTML::Mason::CGIHandler;
 use Jifty::Everything;
 
+=head1 NAME
+
+Jifty::Script::FastCGI - A FastCGI server for your Jifty application
+
+=head1 DESCRIPTION
+
+When you're ready to move up to something that can handle the increasing load your
+new world-changing application is generating, you'll need something a bit heavier-duty
+than the pure-perl Jifty standalone server.  C<FastCGI> is what you're looking for.
+
+Because Apache's FastCGI dispatcher can't pass commandline flags to your script, you'll need
+to call jifty a bit differently:
+
+ AddHandler fastcgi-script fcgi
+ DocumentRoot /path/to/your/jifty/app/web/templates
+ FastCgiServer /path/to/your/jifty/app/bin/jifty -initial-env JIFTY_COMMAND=fastcgi
+ ScriptAlias /  /path/to/your/jifty/app/bin/jifty/
+
+
+
+
+=cut
 
  
 sub run {

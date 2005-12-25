@@ -34,7 +34,7 @@ sub render_widget {
     $field .= qq! >!;
     $field .= $self->current_value if $self->current_value;
     $field .= qq!</textarea>\n!;
-    Jifty->mason->out($field);
+    Jifty->web->mason->out($field);
     '';
 }
 

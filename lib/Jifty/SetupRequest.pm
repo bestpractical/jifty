@@ -6,7 +6,7 @@ sub start_request_hook {
     local $m = $context->request;
     unless ( $m->is_subrequest() ) {
         # can't get a base_comp in a plugin yet
-        #    Jifty->framework->handle_request();
+        #    Jifty->web->handle_request();
     }
 }
 1;

@@ -107,7 +107,7 @@ sub setup_jifty {
         @_
     );
 
-    $self->port( Jifty->framework_config('Web')->{'Port'}
+    $self->port( Jifty->config->framework('Web')->{'Port'}
           || 8888 );
 }
 
@@ -115,7 +115,7 @@ sub setup_jifty {
 
 Overrives L<HTML::Server::Simple::Mason>'s handle_request method to
 make use of L<Module::Refresh> to refresh any relevant modules, as
-well as to set up the C<$framework> global before handling the actual
+well as to set up the C<$JiftyWeb> global before handling the actual
 request.
 
 =cut
@@ -125,7 +125,7 @@ sub handle_request {
 
     Module::Refresh->refresh;
 
-    local $HTML::Mason::Commands::framework = Jifty::Web->new();
+    local $HTML::Mason::Commands::JiftyWeb = Jifty::Web->new();
      $self->SUPER::handle_request(@_); 
     Jifty::Handler->cleanup_request();
 }
@@ -152,7 +152,7 @@ Returns the filename prefix used if L<HTTP::Server::Simple::Recorder> support is
 
 sub recorder_prefix {
     # XXX TODO FIXME get from config
-    Jifty->absolute_path("log/recorded/jifty-recorded.$$")
+    Jifty::Util->absolute_path("log/recorded/jifty-recorded.$$")
 } 
 
 =head2 recording_on

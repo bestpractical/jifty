@@ -23,7 +23,7 @@ Note that at this time there are no objects with L<Jifty::Handler> as a class.
 
 =head2 mason_config
 
-Returns our Mason config.  We have a global called C<$framework>, use C<Jifty::MasonInterp>
+Returns our Mason config.  We use C<Jifty::MasonInterp>
 as our Mason interpreter, and have a component root as specified in the C<Web/TemplateRoot> framework
 configuration variable (or C<html> by default).  All interpolations are HTML-escaped by default, and
 we use the fatal error mode.
@@ -32,10 +32,10 @@ we use the fatal error mode.
 
 sub mason_config {
     return (
-        allow_globals => [qw[$framework]],
+        allow_globals => [qw[$JiftyWeb]],
         interp_class  => 'Jifty::MasonInterp',
-        comp_root     => Jifty->absolute_path(
-            Jifty->framework_config('Web')->{'TemplateRoot'} || "html"
+        comp_root     => Jifty::Util->absolute_path(
+            Jifty->config->framework('Web')->{'TemplateRoot'} || "html"
         ),
         error_mode => 'fatal',
         error_format => 'text',

@@ -1,5 +1,5 @@
 name: Jifty
-version: 0.1130214067
+version: 0.1132783772
 license: unknown
 distribution_type: module
 requires:
@@ -38,6 +38,7 @@ requires:
   Module::Pluggable: 2.95
   Module::Refresh: 0
   Pod::Usage: 0
+  Pod::Simple::Text: 0
   Scalar::Util: 0
   Test::Base: 0
   Test::More: 0

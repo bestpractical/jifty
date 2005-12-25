@@ -78,8 +78,8 @@ sub send {
         body => join ("\n", $self->preface, $self->body, $self->footer)
     );
 
-    my $method = Jifty->framework_config('Mailer');
-    my $args_ref = Jifty->framework_config('MailerArgs');
+    my $method = Jifty->config->framework('Mailer');
+    my $args_ref = Jifty->config->framework('MailerArgs');
     $args_ref = [] unless defined $args_ref;
 
     my $sender = Email::Send->new({mailer => $method, mailer_args => $args_ref });

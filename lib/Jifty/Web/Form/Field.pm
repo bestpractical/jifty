@@ -66,9 +66,9 @@ sub new {
 
 
     # now that the form field has been instantiated, register the action with the form.
-    if ($self->action and not (Jifty->framework->form->has_action($self->action))) {
-        Jifty->framework->form->register_action( $self->action);
-        Jifty->framework->form->print_action_registration($self->action->moniker);
+    if ($self->action and not (Jifty->web->form->has_action($self->action))) {
+        Jifty->web->form->register_action( $self->action);
+        Jifty->web->form->print_action_registration($self->action->moniker);
     }
     return $self;
 }
@@ -81,8 +81,8 @@ C<new>.  Subclasses should extend this list.
 
 =cut
 
-sub accessors { shift->SUPER::accessors(), qw(name class label input_name type sticky sticky_value default_value action mandatory ajax_validates ajax_autocomplete preamble hints key_binding render_mode length); }
-__PACKAGE__->mk_accessors(qw(name class _label _input_name type sticky sticky_value default_value _action mandatory ajax_validates ajax_autocomplete preamble hints key_binding render_mode length));
+sub accessors { shift->SUPER::accessors(), qw(name label input_name type sticky sticky_value default_value action mandatory ajax_validates ajax_autocomplete preamble hints render_mode length); }
+__PACKAGE__->mk_accessors(qw(name _label _input_name type sticky sticky_value default_value _action mandatory ajax_validates ajax_autocomplete preamble hints render_mode length));
 
 =head2 name [VALUE]
 
@@ -115,8 +115,12 @@ Gets or sets the default value for the form.
 
 Gets or sets the value for the form field that was submitted in the last action.
 
+=cut
 
-
+sub id {
+    my $self = shift;
+    return $self->input_name;
+}
 
 =head2 input_name [VALUE]
 
@@ -208,32 +212,11 @@ default_value for this field.
 sub current_value {
     my $self = shift;
 
-    if ($self->sticky_value and $self->sticky and (!Jifty->framework->response->result($self->action->moniker) or $self->action->result->failure)) {
+    if ($self->sticky_value and $self->sticky and (!Jifty->web->response->result($self->action->moniker) or $self->action->result->failure)) {
         return $self->sticky_value;
         } else {
             return $self->default_value;
         }
-}
-
-
-=head2 render_key_binding
-
-Adds the key binding for this input, if one exists.
-
-
-=cut
-
-sub render_key_binding {
-    my $self = shift;
-    my $key  = $self->key_binding;
-    if ($key) {
-        Jifty->mason->out( "<script><!--\naddKeyBinding(".
-                "'" . uc($key) . "', "
-                . "'click', "
-                . "'". $self->input_name . "',"
-                . "'".$self->label."'"
-                . ");\n-->\n</script>\n" );
-    }
 }
 
 =head2 render
@@ -255,11 +238,11 @@ sub render {
 
     $self->render_label();
     if ($self->render_mode eq 'update') { 
-    $self->render_widget();
-    $self->render_autocomplete();
-    $self->render_key_binding();
-    $self->render_hints();
-    $self->render_errors();
+        $self->render_widget();
+        $self->render_autocomplete();
+        $self->render_key_binding();
+        $self->render_hints();
+        $self->render_errors();
     } elsif ($self->render_mode eq 'read'){ 
         $self->render_value();
     }
@@ -277,8 +260,7 @@ Renders a default CSS class for each part of our widget.
 
 sub classes {
     my $self = shift;
-    my $simple_class = join(' ', ($self->class||''), ($self->name||''), ($self->input_name||''));
-
+    return join(' ', ($self->class||''), ($self->name||''), ($self->input_name||''));
 }
 
 
@@ -290,7 +272,7 @@ Output the start of div that wraps the form field
 
 sub render_wrapper_start {
     my $self = shift;
-    Jifty->mason->out('<div class="form_field">' ."\n");
+    Jifty->web->mason->out('<div class="form_field">' ."\n");
 }
 
 =head2 render_wrapper_end
@@ -301,12 +283,8 @@ Output the div that wraps the form field
 
 sub render_wrapper_end {
     my $self = shift;
-    Jifty->mason->out("</div>"."\n");
+    Jifty->web->mason->out("</div>"."\n");
 }
-
-
-
-
 
 =head2 render_preamble
 
@@ -321,7 +299,7 @@ Use this for sticking instructions right in front of a widget
 
 sub render_preamble {
     my $self = shift;
-    Jifty->mason->out(
+    Jifty->web->mason->out(
 qq!<span class="preamble @{[$self->classes]}" >@{[$self->preamble || '' ]}</span>\n!
     );
 
@@ -338,7 +316,7 @@ an empty string.
 
 sub render_label {
     my $self = shift;
-    Jifty->mason->out(
+    Jifty->web->mason->out(
 qq!<label class="label @{[$self->classes]}" for="@{[$self->input_name ]}">@{[$self->label ]}</label>\n!
     );
 
@@ -365,7 +343,7 @@ sub render_widget {
     $field .= qq! size="@{[ $self->length() ]}"! if ($self->length());
     $field .= " " .$self->other_widget_properties;
     $field .= qq!  />\n!;
-    Jifty->mason->out($field);
+    Jifty->web->mason->out($field);
     return '';
 }
 
@@ -410,7 +388,7 @@ sub render_value {
 
     $field .= HTML::Entities::encode_entities($self->current_value) if defined $self->current_value;
     $field .= qq!</span>\n!;
-    Jifty->mason->out($field);
+    Jifty->web->mason->out($field);
     return '';
 }
 
@@ -427,7 +405,7 @@ Returns an empty string.
 sub render_autocomplete { 
     my $self = shift;
     return unless($self->ajax_autocomplete);
-    Jifty->mason->out(
+    Jifty->web->mason->out(
 qq!<div class="autocomplete" id="@{[$self->input_name]}-autocomplete" style="display:none;border:1px solid black;background-color:white;"></div>\n
         <script type="text/javascript">
           new Jifty.Autocompleter('@{[$self->input_name]}', '@{[$self->input_name]}-autocomplete', '/jifty/autocomplete.xml')
@@ -448,7 +426,7 @@ subclasses commonly override this.  Returns an empty string.
 
 sub render_hints { 
     my $self = shift;
-    Jifty->mason->out(
+    Jifty->web->mason->out(
 qq!<span class="hints @{[$self->classes]}">@{[$self->hints || '']}</span>\n!
     );
 
@@ -469,7 +447,7 @@ sub render_errors {
 
     return unless $self->action;
 
-    Jifty->mason->out(
+    Jifty->web->mason->out(
 qq!<span class="error @{[$self->classes]}" id="@{[$self->action->error_div_id($self->name)]}">
       @{[  $self->action->result->field_error( $self->name ) || '']}
     </span>\n!

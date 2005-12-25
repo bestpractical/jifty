@@ -39,7 +39,7 @@ sub current_user {
 Takes the ARGS paramhash passed to _init. Looks
      Find the current user. First, try to see if it's explicit.
      After that, check the caller's current_user. After that, look
-     at Jifty->framework->current_user
+     at Jifty->web->current_user
 
 Fills in current_user with that value
 
@@ -55,16 +55,13 @@ sub _get_current_user {
     if ( $args{'current_user'} ) {
         return $self->current_user( $args{'current_user'} );
     }
-    my $current_user;
     my $depth = 1;
     my $caller;
     eval {
-
-
         package DB;
 
         # get the caller in array context to populate @DB::args
-        while (  not $current_user and $depth < 10) {
+        while (  not $self->current_user and $depth < 10) {
             #local @DB::args;
             my ($package, $filename, $line, $subroutine, $hasargs,
                                $wantarray, $evaltext, $is_require, $hints, $bitmask)= caller( $depth++ );
@@ -74,16 +71,19 @@ sub _get_current_user {
             next unless UNIVERSAL::can($caller_self => 'current_user');
 
             eval {
-            if ( $caller_self->current_user and $caller_self->current_user->id) {
-                return($self->current_user($caller_self->current_user() ));
-            } };
+                if ( $caller_self->current_user and $caller_self->current_user->id) {
+                    $self->current_user($caller_self->current_user());
+                }
+            };
             # Skip all that error checking
         } 
     };
+    # If we found something, return it
+    return $self->current_user if $self->current_user;
 
-
-    if ( Jifty->framework and Jifty->framework->current_user->id ) {
-        return $self->current_user( Jifty->framework->current_user );
+    # Fallback to web ui framework
+    if ( Jifty->web ) {
+        return $self->current_user( Jifty->web->current_user );
     }
 
     return undef;

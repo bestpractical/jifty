@@ -36,6 +36,7 @@ requires('Locale::Maketext::Simple');
 requires('Module::Pluggable' => '2.95');
 requires('Module::Refresh');
 requires('Pod::Usage');
+requires('Pod::Simple::Text');
 requires('Scalar::Util');
 requires('Test::Base');            # Test::Base::Filter
 requires('Test::More');

@@ -35,7 +35,6 @@ The fields for C<Redirect> are:
 
 =item url
 
-=item preserve_helpers
 
 =back
 
@@ -44,7 +43,6 @@ The fields for C<Redirect> are:
 sub arguments {
         {
             url => { constructor => 1 },
-            preserve_helpers => {},
         }
 
 }
@@ -58,17 +56,11 @@ Set up a redirect
 sub take_action {
     my $self = shift;
     return 1 unless ($self->argument_value('url'));
-    return 0 unless Jifty->framework->response->success;
+    return 0 unless Jifty->web->response->success;
 
     my $page = $self->argument_value('url');
 
-    my %helper_args = Jifty->framework->request->helpers_as_query_args(split ' ',$self->argument_value('preserve_helpers') || "");
-
-    if (keys %helper_args) {
-        $page .= ( $page =~ /\?/ ? ';' : '?' ) . join(";", map {"$_=$helper_args{$_}"} keys %helper_args);
-    }
-
-    Jifty->framework->next_page($page);
+    Jifty->web->next_page($page);
     return 1;
 }
 

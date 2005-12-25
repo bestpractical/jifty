@@ -2,7 +2,7 @@ use warnings;
 use strict;
 
 package Jifty::Script::Schema;
-use base qw/App::CLI::Command/;
+use base qw/Jifty::Script::Command/;
 
 use Pod::Usage;
 use UNIVERSAL::require;
@@ -47,9 +47,15 @@ sub run {
     Jifty::Model::Schema->require or die $UNIVERSAL::require::ERROR;
 
     # We trap the various "die" errors
+   
+    my $no_handle = 0;
+    if ($self->{'create'} and $self->{'install'}) { 
+        $no_handle = 1;
+    }
+    
     eval {
         Jifty->new(
-            no_handle        => ( $self->{'create'} and $self->{'install'}),
+            no_handle        => $no_handle,
             logger_component => 'SchemaTool',
         );
     };
@@ -81,7 +87,7 @@ sub run {
     $self->create_db() if $self->{create};
 
     # Set up application-specific parts
-    my $ApplicationClass = Jifty->framework_config('ApplicationClass');
+    my $ApplicationClass = Jifty->config->framework('ApplicationClass');
     my $SG               = Jifty::DBI::SchemaGenerator->new( Jifty->handle )
         or die "Can't make Jifty::DBI::SchemaGenerator";
     my $schema = Jifty::Model::Schema->new;
@@ -100,7 +106,7 @@ sub run {
         $log->info("Generating SQL for application $ApplicationClass...");
 
         my $appv = version->new(
-            Jifty->framework_config('Database')->{'Version'} );
+            Jifty->config->framework('Database')->{'Version'} );
 
         for my $model ( __PACKAGE__->models ) {
 
@@ -156,7 +162,7 @@ sub run {
         # Find current versions
         my $dbv  = $schema->in_db;
         my $appv = version->new(
-            Jifty->framework_config('Database')->{'Version'} );
+            Jifty->config->framework('Database')->{'Version'} );
         if ( $appv < $dbv ) {
             print "Version $appv from module older than $dbv in database!\n";
             exit;
@@ -286,30 +292,34 @@ sub run {
 
 sub create_db {
     my $self = shift;
-    my $handle   = Jifty::DBI::Handle->new();
-    my $database = lc Jifty->framework_config('Database')->{'Database'};
+    my $handle   = Jifty::Handle->new();
+    my $database = lc Jifty->config->framework('Database')->{'Database'};
+    my $driver = Jifty->config->framework('Database')->{'Driver'};
 
     if ( $self->{'print'} ) {
         print "DROP DATABASE $database;\n" if $self->{'force'};
         print "CREATE DATABASE $database;\n";
         return;
     }
-    my %db_config = %{ Jifty->framework_config('Database') };
-    my %lc_db_config;
-    for ( keys %db_config ) {
-        $lc_db_config{ lc($_) } = $db_config{$_};
-    }
 
-    $lc_db_config{'database'} = 'template1';
-    $handle->connect(%lc_db_config);
+    # Everything but the template1 database is assumed
+    my %connect_args;
+    $connect_args{'database'} = 'template1' if ($driver eq 'Pg');
+    $handle->connect(%connect_args);
     warn "About to create the database";
 
-    $handle->simple_query("DROP DATABASE $database");
+    if ($driver eq 'SQLite') { 
+        unlink($database);
+    } else {
+         $handle->simple_query("DROP DATABASE $database");
+
+    }
     $handle->simple_query("CREATE DATABASE $database");
 
     $handle->disconnect;
-    Jifty->_setup_handle;
-
+    # reinit our handle
+    Jifty->handle(Jifty::Handle->new());
+    Jifty->handle->connect();
 }
 
 1;

@@ -78,7 +78,7 @@ sub new {
     } else {
         # We could leave out the explicit current user, but it'd have a slight negative
         # performance implications
-        $self->record($record_class->new( current_user => Jifty->framework->current_user));
+        $self->record($record_class->new( current_user => Jifty->web->current_user));
         my %given_pks = ();
         for my $pk (@{ $self->record->_primary_keys }) {
             $given_pks{$pk} = $self->argument_value($pk) if defined $self->argument_value($pk);
@@ -130,10 +130,19 @@ sub arguments {
         elsif ( defined $column->type && $column->type =~ /^bool/i ) {
             $info->{render_as} = 'Checkbox';
         }
-        elsif ($column->name !~ /_confirm$/i
-                && defined $column->render_as 
+        elsif (defined $column->render_as 
                 && $column->render_as =~ /^password$/i) {
-            unshift @fields, Jifty::DBI::Column->new({name => $field . "_confirm", render_as => 'Password', type => 'Password'});
+            my $same = sub {
+                my ($self, $value) = @_;
+                if ( $value ne $self->argument_value($field) ) {
+                    return $self->validation_error($field . '_confirm' => "The passwords you typed didn't match each other.");
+                } else {
+                    warn "passwords match";
+                    return $self->validation_ok($field . '_confirm');
+                }
+            };
+            
+            $field_info->{$field . "_confirm"} = {render_as => 'Password', validator => $same};
         }
 
         elsif ( defined $column->refers_to ) {
@@ -196,7 +205,7 @@ sub arguments {
 
 
         # If we're hand-coding a render_as, hints or label, let's use it.
-        for ( qw(render_as label hints length)) { 
+        for ( qw(render_as label hints length mandatory)) { 
         
             if ( defined $column->$_ and not $info->{$_}) {
                  $info->{$_} = $column->$_;

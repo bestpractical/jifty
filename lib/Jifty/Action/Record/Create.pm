@@ -32,6 +32,7 @@ sub arguments {
     
     my $args = $self->SUPER::arguments;
     for my $arg (keys %{$args}) {
+        next unless $self->record->column($arg);
         $args->{$arg}{default_value} = $self->record->column($arg)->default if not $args->{$arg}->{default_value};
     }
     return $args;
@@ -51,7 +52,7 @@ sub take_action {
 
     my %values;
     $values{$_} = $self->argument_value($_)
-      for grep { defined $self->argument_value($_) } $self->argument_names;
+      for grep { defined $self->record->column($_) and defined $self->argument_value($_) } $self->argument_names;
     
     my ($id) = $record->create(%values);
 

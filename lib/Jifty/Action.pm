@@ -17,7 +17,7 @@ form elements interact with the underlying model.
 
 use base qw/Jifty::Object Class::Accessor/;
 
-__PACKAGE__->mk_accessors(qw(moniker just_validating argument_values order result));
+__PACKAGE__->mk_accessors(qw(moniker argument_values order result));
 
 =head2 new
 
@@ -34,15 +34,14 @@ sub new {
     my $class = shift;
     my $self = bless {}, $class;
     my %args = (
-        moniker    => 'random-moniker-'.Jifty->serial(),
         order      => undef,
         arguments  => {},
         @_);
 
-    $self->moniker($args{'moniker'});
+    $self->moniker($args{'moniker'} || 'auto-'.Jifty->web->serial);
     $self->order($args{'order'});
     $self->argument_values( { %{ $args{'arguments'} } } );
-    $self->result(Jifty->framework->response->result($self->moniker) || Jifty::Result->new);
+    $self->result(Jifty->web->response->result($self->moniker) || Jifty::Result->new);
     $self->result->action_class(ref($self));
 
     return $self;
@@ -96,7 +95,7 @@ L<Jifty::Request> for the definition of "active" actions.
 
 sub register {
     my $self = shift;
-    Jifty->mason->out( qq!<input type="hidden"! .
+    Jifty->web->mason->out( qq!<input type="hidden"! .
                        qq! name="@{[$self->register_name]}"! .
                        qq! id="@{[$self->register_name]}"! .
                        qq! value="@{[ref($self)]}"! .
@@ -123,48 +122,36 @@ sub register {
 
 =head2 run
 
-Checks authorization with L</check_authorization>, calls C</setup>,
-canonicalizes each argument with L</canonicalize_arguments>,
-validates the form fields that have been submitted using
-L</validate_arguments>, calls L</take_action>, then calls
-L</cleanup>.  Each step must return a true value, or C<run> will skip
-any remaining steps.
+This routine, unsurprisingly, actually runs the action.
+
+If the result of the action is currently a success (validation did not
+fail), then calls L</take_action>, and finally L</cleanup>.
 
 =cut
 
 sub run {
     my $self = shift;
-    $self->check_authorization || return;
-    $self->setup || return;
-    $self->canonicalize_arguments || return;
-    $self->validate_arguments || return;
-    $self->take_action || return;
-    $self->cleanup || return;
+    return unless $self->result->success;
+    $self->take_action;
+    $self->cleanup;
 }
 
-=head2 validate_as_xml
-
-Validate this action's arguments and return some XML describing the errors.
-
-The AJAX verification stuff uses this.
-
-XXX TODO REALLY, this should be using Jifty::Record::Form::Field->render_error to do the rendering 
-of the error divs. 
+=head2 validate
 
 
+Checks authorization with L</check_authorization>, calls C</setup>,
+canonicalizes each argument with L</canonicalize_arguments>, validates
+the form fields that have been submitted, but doesn't actually call
+L</take_action>.
 
 =cut
 
-sub validate_as_xml {
+sub validate {
     my $self = shift;
     $self->check_authorization || return;
-    $self->just_validating(1);
     $self->setup || return;
-    Jifty->mason->cgi_request->content_type("text/xml");
-    Jifty->mason->out(qq{<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<validation id="@{[$self->register_name]}">\n});
-    $self->validate_arguments;
-    Jifty->mason->out("</validation>\n");
-
+    $self->canonicalize_arguments || return;
+    $self->_validate_arguments;
 }
 
 =head2 check_authorization
@@ -199,6 +186,9 @@ L</arguments> are the most commonly overridden methods.
 
 By default, does nothing.
 
+The return value from this method is NOT returned. (Instead, you 
+should be using the L<Jifty::Result> object).
+
 =cut
 
 sub take_action { 1; }
@@ -207,6 +197,8 @@ sub take_action { 1; }
 =head2 cleanup
 
 Perform any action specific cleanup.  By default, does nothing.
+
+Runs after take_action -- whether or not take_action returns success.
 
 =cut
 
@@ -285,11 +277,11 @@ sub _form_widget {
             # form_fields overrides stickiness of what the user last entered.
             $self->{_private_form_fields_hash}{$arg_name}
                 = Jifty::Web::Form::Field->new(
-                action        => $self,
-                name          => $args{'argument'},
+                action       => $self,
+                name         => $args{'argument'},
                 sticky       => 1, # default to sticky. an actual value in the action's arguments can override
                 sticky_value => $self->argument_value($args{'argument'}),
-                render_mode => $args{'render_mode'},
+                render_mode  => $args{'render_mode'},
                 %$field_info,
                 %args
                 );
@@ -328,7 +320,7 @@ Returns nothing.
 
 sub render_errors {
     my $self = shift;
-    my $m = Jifty->mason; 
+    my $m = Jifty->web->mason; 
     
     if (defined $self->result->error) {
         $m->out('<div class="form_errors">');
@@ -342,26 +334,52 @@ sub render_errors {
 
 =head2 button { arguments => { PARAMHASH }, label => LABEL }
 
-Create and render a button. 
-
-turns  'arguments' paramhash into arguments passed to the action on submit.
-
-paints LABEL onto the button
+Create and render a button.  It functions nearly identically like
+L<Jifty::Web/button>, except it takes C<arguments> in addition to
+C<parameters>.
 
 =cut
 
 sub button {
     my $self = shift;
     my %args = ( arguments => {},
-                 label => 'Click me!',
-                 key_binding => undef,
                  @_);
+
+    $args{parameters}{$self->form_field_name($_)} = $args{arguments}{$_}
+      for keys %{$args{arguments}};
+
+    Jifty->web->link(%args,
+                     submit => $self,
+                    );
+}
+
+=head2 tangent
+
+=cut
+
+sub tangent {
+    my $self = shift;
+    my %args = ( mapping => {},
+                 label => 'Click me!',
+                 path => undef,
+                 key_binding => undef,
+                 run => 0,
+                 @_);
+    
     my $field = Jifty::Web::Form::Field->new( action => $self, label => $args{'label'}, type => 'InlineButton', key_binding => $args{'key_binding'});
-    $field->input_name(join "|", map {$self->form_field_name($_)."=".$args{arguments}{$_}} keys %{$args{arguments}});
-    $field->name(join '|', keys %{$args{arguments}}); # Only used internally
+    my @args = ("J:PATH=".$args{path},
+                "J:ACTIONS=".($args{run} ? $self->moniker : ""),
+               );
+    push @args, "J:C=".Jifty->web->request->continuation->id
+      if Jifty->web->request->continuation;
+
+    $field->input_name(join "|", 
+                       @args,
+                       map {"J:C-$_=".$self->form_field_name($args{mapping}{$_})} keys %{$args{mapping}});
+    $field->name(join '|', keys %{$args{mapping}}); # Only used internally
 
     return $field;
-
+    
 }
 
 =head1 NAME METHODS
@@ -529,25 +547,20 @@ sub canonicalize_argument {
     }
 }
 
-=head2 validate_arguments
+=head2 _validate_arguments
 
 Validates the form fields.  This is done by calling
-L</validate_argument> for each field described by L</arguments>
+L</_validate_argument> for each field described by L</arguments>
 
 =cut
 
-sub validate_arguments {
+sub _validate_arguments {
     my $self   = shift;
-    my @fields = $self->argument_names;
+    
+    $self->_validate_argument($_)
+      for $self->argument_names;
 
-    my $all_fields_ok = 1;
-    foreach my $field (@fields) {
-        unless ( $self->validate_argument($field) ) {
-
-            $all_fields_ok = 0;
-        }
-    }
-    return $all_fields_ok;
+    return $self->result->success;
 }
 
 
@@ -584,7 +597,7 @@ sub autocomplete_argument {
 
 }
 
-=head2 validate_argument ARGUMENT
+=head2 _validate_argument ARGUMENT
 
 Validate your form fields.  If the field C<ARGUMENT> is mandatory,
 checks for a value. 
@@ -597,25 +610,19 @@ validate_C<ARGUMENT> function, invoke that function.
 
 =cut
 
-sub validate_argument {
+sub _validate_argument {
     my $self  = shift;
     my $field = shift;
 
+    return unless $field;
     my $field_info = $self->arguments->{$field};
-
-    if ( $self->just_validating and not $field_info->{ajax_validates} ) {
-        return $self->validation_ignored_xml($field);
-    }
+    return unless $field_info;
 
     my $value = $self->argument_value($field);
 
     if ( !defined $value || !length $value ) {
 
-        # Never try to validate blank fields in AJAX
-        if ( $self->just_validating ) {
-            return $self->validation_blank_xml($field);
-        }
-        elsif ( $field_info->{mandatory} ) {
+        if ( $field_info->{mandatory} ) {
             return $self->validation_error( $field => "You need to fill in this field" );
         }
     }
@@ -744,8 +751,7 @@ sub _values_for_field {
 =head2 validation_error FIELD => ERROR TEXT
 
 If this is called inside a real form submission, sets the appropriate
-Mason error notes field and returns 0.  If called inside an AJAX
-validation, it returns the XML response.  FIELD is the unqualified name
+Mason error notes field and returns 0.  FIELD is the unqualified name
 of the field.
 
 Inside a validator you should write:
@@ -759,23 +765,16 @@ sub validation_error {
     my $field = shift;
     my $error = shift;
   
-    if ($self->just_validating) {
-        # XXX FIXME TODO What if $error has ]]> in it?
-        my $errdiv = $self->error_div_id($field);
-        Jifty->mason->out(qq{<error id="$errdiv"><![CDATA[$error]]></error>\n});
-    } else {
-        $self->result->field_error($field => $error); 
-    }
+    $self->result->field_error($field => $error); 
   
     return 0;
 }
 
 =head2 validation_ok FIELD
 
-If this is called inside a real form submission, clears the appropriate Mason error notes field
-and returns 1.
-If called inside an AJAX validation, it the empty string.  FIELD is the unqualified
-name of the field.
+If this is called inside a real form submission, clears the
+appropriate Mason error notes field and returns 1.  FIELD is the
+unqualified name of the field.
 
 Inside a validator you should write:
 
@@ -788,58 +787,10 @@ sub validation_ok {
     my $self = shift;
     my $field = shift;
 
-    if ($self->just_validating) {
-        my $errdiv = $self->error_div_id($field);
-        Jifty->mason->out(qq{<ok id="$errdiv" />\n});
-    }
+    $self->result->field_error($field => undef);
 
     return 1;
 }
-
-=head2 validation_blank_xml FIELD
-
-Outputs a record in the XML validation response indicating that FIELD was blank.
-Automatically called by C<validate_argument>; application code does not need to call it.
-
-=cut
-
-sub validation_blank_xml {
-    my $self = shift;
-    my $field = shift;
-
-    if ($self->just_validating) {
-        my $errdiv = $self->error_div_id($field);
-        Jifty->mason->out(qq{<blank id="$errdiv" />\n});
-    } else {
-        $self->log->fatal(q{ # Shouldn't happen.});
-    }
-
-  return 1;
-}
-
-=head2 validation_ignored_xml FIELD
-
-Outputs a record in the XML validation response indicating that FIELD was not
-required to be validated.  Automatically called by C<validate_argument>;
-application code does not need to call it.
-
-=cut
-
-sub validation_ignored_xml {
-    my $self = shift;
-    my $field = shift;
-
-    if ($self->just_validating) {
-        my $errdiv = $self->error_div_id($field);
-        Jifty->mason->out(qq{<ignored id="$errdiv" />\n});
-    } else {
-        # Shouldn't happen.
-        $self->log->fatal(q{ # Shouldn't happen.});
-    }
-
-    return 1;
-}
-
 
 =head2 inject_arguments HASH
 
@@ -864,7 +815,7 @@ sub inject_arguments {
     my $self = shift;
     
     # XXX TODO this doesn't use an API. That's wrong
-    my $args = Jifty->mason->{'request_args'};
+    my $args = Jifty->web->mason->{'request_args'};
         push @$args, @_;
 
 }

@@ -1,0 +1,10 @@
+<%init>
+Jifty->web->handle_request();
+</%init>
+<% Jifty->web->render_messages %>
+
+<% $m->call_next %>
+
+<pre>
+<% YAML::Dump(Jifty->web->request->arguments) %>
+</pre>

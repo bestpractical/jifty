@@ -44,6 +44,23 @@ sub arguments {
     return $arguments;
 }
 
+=head2 validate_arguments
+
+We only need to validate arguments that got B<submitted> -- thus, a
+mandatory argument that isn't submitted isn't invalid, as it's not
+going to change the record.
+
+=cut
+
+sub _validate_arguments {
+    my $self   = shift;
+    
+    $self->_validate_argument($_)
+      for grep {exists $self->argument_values->{$_}} $self->argument_names;
+
+    return $self->result->success;
+}
+
 =head2 take_action
 
 Overrides the virtual C<take_action> method on L<Jifty::Action> to call
@@ -82,8 +99,7 @@ sub take_action {
         next if ( not $old and not $self->argument_value($field) );
 
         my $setter = "set_$field";
-        my ( $val, $msg )
-            = $self->record->$setter( $self->argument_value($field) );
+        my ( $val, $msg ) = $self->record->$setter( $self->argument_value($field) );
         $self->result->field_error($field, $msg)
           if not $val and $msg;
 

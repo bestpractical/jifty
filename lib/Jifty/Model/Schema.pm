@@ -61,8 +61,8 @@ sub in_db {
 Updates the version number of the schema that is stored in the
 database; VERSION should be a version object.  Note that this does not
 actually update the tables and column themselves, merely the number
-that is recorded as the current version.  See C<bin/schema> for the
-program that updates schemas.
+that is recorded as the current version.  See L<Jifty::Script::Schema>
+for the program that updates schemas.
 
 =cut
 

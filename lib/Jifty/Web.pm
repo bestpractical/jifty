@@ -16,6 +16,8 @@ use base qw/Class::Accessor Jifty::Object/;
 
 use UNIVERSAL::require;
 
+use vars qw/$SERIAL/;
+
 __PACKAGE__->mk_accessors(qw(next_page request response session temporary_current_user action_limits));
 
 =head1 METHODS
@@ -64,6 +66,9 @@ sub setup_session {
     $pm =~ s|::|/|g;
     require $pm;
 
+    $Storable::Deparse = 1;
+    $Storable::Eval    = 1;
+
     eval {
         tie %session, $session_class,
           ( $cookies{$cookiename} ? $cookies{$cookiename}->value() : undef ),
@@ -74,7 +79,6 @@ sub setup_session {
     };
 
     if ($@) {
-
         # If the session is invalid, create a new session.
         if ( $@ =~ /Object does not/i ) {
             tie %session, $session_class, undef,
@@ -92,7 +96,6 @@ sub setup_session {
 
     $self->session(\%session);
 
-    $self->restore_state_from_session($self->request->notes_id) if ($self->request and $self->request->notes_id);
     return ();
 }
 
@@ -195,13 +198,23 @@ for information about active actions.
 sub handle_request {
     my $self = shift;
     
-    $self->log->debug("Handling ".$ENV{'REQUEST_URI'});
-
-    $self->request( Jifty::Request->new->from_mason_args );
-    $self->response( Jifty::Response->new ) unless $self->response;
     $self->setup_session;
+    $self->response( Jifty::Response->new ) unless $self->response;
+    $self->_internal_request(Jifty::Request->new->from_mason_args);
+} 
+
+# Called when continuations get run, as well as by handle_request;
+# takes a Jifty::Request
+sub _internal_request {
+    my $self = shift;
+    my ($request) = @_;
+    $self->log->debug("Handling ".$ENV{'REQUEST_URI'});
+    $self->log->warn("Handling ".$ENV{'REQUEST_URI'}."\n".YAML::Dump($request)) unless $request->arguments->{region} or $ENV{REQUEST_URI} =~ m!^/(js|css|images)!;
+
+    $self->request( $request );
     $self->setup_page_actions;
 
+    my @valid_actions;
     for my $request_action ($self->request->actions) {
         next unless $request_action->active;
         unless ($self->is_allowed($request_action->class)) {
@@ -209,28 +222,40 @@ sub handle_request {
             next;
         }
 
-
         my $action = $self->new_action_from_request($request_action);
-
-        eval {
-            $self->request->just_validating ? $action->validate_as_xml :
-                                              $action->run ; 
-            };
+        next unless $action;
         $self->response->result($action->moniker => $action->result);
 
-        # $@ is too magical -- accessing it twice can make it empty
-        # the second time (?!)  Remove magic by stuffing it elsewhere.
-        my $err = $@;
-        if ($err) {
+        eval {
+            push @valid_actions, $action
+              if $action->validate;
+        };
+        if (my $err = $@) {
             $self->log->fatal($err);
-            return;
+        }
+    }
+
+    $self->save_continuation;
+
+    unless ($self->request->just_validating) {
+        for my $action (@valid_actions) {
+            eval {
+                $action->run;
+            };
+
+            if (my $err = $@) {
+                $self->log->fatal($err);
+            }
         }
     }
 
     $self->set_cookie;
-    $self->redirect if $self->redirect_required;
-} 
 
+    $self->request->call_continuation
+      if $self->response->success;
+    
+    $self->redirect if $self->redirect_required;
+}
 
 =head2 setup_page_actions
 
@@ -257,6 +282,8 @@ Gets or sets the current L<Jifty::Request>.
 
 Gets or sets the current L<Jifty::Response> object.
 
+=head1 ACTIONS
+
 =head2 actions 
 
 Gets the actions that have been created with this framework with C<new_action>
@@ -268,16 +295,16 @@ objects. (These are actually stored in the mason notes, so that they are magical
 sub actions {
     my $self = shift;
 
-    $self->mason->notes->{'actions'} ||= {};
+    $self->{'actions'} ||= {};
     return sort {($a->order || 0) <=> ($b->order || 0)}
-      values %{ $self->mason->notes->{'actions'} };
+      values %{ $self->{'actions'} };
 } 
 
 sub _add_action {
     my $self = shift;
     my $action = shift;
    
-    $self->mason->notes->{'actions'}{$action->moniker} = $action;
+    $self->{'actions'}{$action->moniker} = $action;
 } 
 
 
@@ -319,10 +346,10 @@ against the class name.
 
 If you call:
 
-    Jifty->framework->allow_actions ( qr'.*' );
-    Jifty->framework->deny_actions  ( qr'Foo' );
-    Jifty->framework->allow_actions ( qr'FooBar' );
-    Jifty->framework->deny_actions ( qr'FooBarDeleteTheWorld' );
+    Jifty->web->allow_actions ( qr'.*' );
+    Jifty->web->deny_actions  ( qr'Foo' );
+    Jifty->web->allow_actions ( qr'FooBar' );
+    Jifty->web->deny_actions ( qr'FooBarDeleteTheWorld' );
 
 
 calls to MyApp::Action::Baz will succeed.
@@ -346,7 +373,7 @@ sub restrict_actions {
 
     for my $restriction (@restrictions) {
         # Fully qualify it if it's a string and not already so
-        my $base_path = Jifty->framework_config('ActionBasePath');
+        my $base_path = Jifty->config->framework('ActionBasePath');
         $restriction = $base_path . "::" . $restriction
           unless ref $restriction or $restriction =~ /^\Q$base_path\E/;
 
@@ -368,7 +395,7 @@ sub is_allowed {
     my $self = shift;
     my $class = shift;
 
-    my $base_path = Jifty->framework_config('ActionBasePath');
+    my $base_path = Jifty->config->framework('ActionBasePath');
     $class = $base_path . "::" . $class
       unless $class =~ /^\Q$base_path\E/;
 
@@ -391,6 +418,8 @@ sub is_allowed {
     return $allow;
 }
 
+=head1 REDIRECTS AND CONTINUATIONS
+
 =head2 next_page [VALUE]
 
 Gets or sets the next page for the framework to show.  This is
@@ -409,7 +438,7 @@ sub redirect_required {
     my $self = shift;
 
     if (   $self->next_page and (($self->next_page ne $self->mason->request_comp->path ) 
-                                or $self->request->next_page_state_variables))
+                                or $self->request->state_variables))
     {
         return (1);
 
@@ -425,8 +454,7 @@ sub redirect_required {
 Redirect to the next page. If you pass this method a parameter, it
 redirects to that URL rather than B<next_page>.
 
-It appends a C<J:N> parameter which is used to recreate the mason
-notes structure after the redirect.
+It creates a continuation of where you want to be, and then calls it.
 
 =cut
 
@@ -434,70 +462,140 @@ sub redirect {
     my $self = shift;
     my $page = shift || $self->next_page;
 
-    my $uuid = $self->save_state_to_session();
-
-    $page .= ( $page =~ /\?/ ? ';' : '?' )
-        . join(
-        ';',
-       (map  { "J:V-" . $_->key . "=" . $_->value }
-            $self->request->next_page_state_variables)
-        ,
-        "J:N=$uuid");
-
-    $self->mason->redirect($page);
+    if ($self->response->results or $self->request->state_variables or %{$self->mason->notes}) {
+        my $request = Jifty::Request->new();
+        $request->path($page);
+        $request->from_webform(map  { "J:V-" . $_->key => $_->value } $self->request->state_variables);
+        my $cont = Jifty::Continuation->new(request  => $request,
+                                            response => $self->response,
+                                            notes    => $self->mason->notes,
+                                            parent   => $self->request->continuation,
+                                           );
+        $self->mason->redirect($page . "?J:CALL=" . $cont->id);
+    } else {
+        $self->mason->redirect($page);
+    }
+    
 }
 
-=head2 save_state_to_session
-
-Saves the current L<Jifty::Response>, as well as the current Mason
-notes into the user's session.
-
-Returns the key for this state.
+=head2 save_continuation
 
 =cut
 
-sub save_state_to_session {
+sub save_continuation {
     my $self = shift;
-    my $uuid = shift;
 
-    my $session = $self->session;
-    my $key;
-    do {
-        $key = '';
-        $key .= chr(int(rand(55))+65) for(1..6) ;
-    } while ( exists $session->{'state'}{$key} );
+    my %args = %{$self->request->arguments};
+    if ($args{'J:CLONE'} or grep {/^J:C-/} keys %args) {
+        # Saving a continuation
+        my $c = Jifty::Continuation->new(request  => $self->request,
+                                         response => $self->response,
+                                         notes    => $self->mason->notes,
+                                         parent   => $self->request->continuation,
+                                         clone    => $args{'J:CLONE'},
+                                        );
+        for my $key (keys %args) {
+            if ($key =~ /^J:C-(.*)/) {
+                $c->return_location($1 => $args{$key});
+                delete $self->request->arguments->{$key};
+            }
+        }
+        # XXX Only if we're cloning should we do the following check, I think??  Cloning isn't a stack push, so it works out
+        if ($args{'J:CLONE'} and $self->request->just_validating and $self->response->failure) {
+            # We don't get to redirect to the new page; redirect to the same page, new cont
+            Jifty->web->mason->redirect($self->request->path . "?J:C=".$c->id);
+        } else {
+            # Set us up with the new continuation
+            Jifty->web->mason->redirect($args{'J:PATH'} . ($args{'J:PATH'} =~ /\?/ ? "&" : "?") . "J:C=".$c->id);
+        }
 
-    $self->session->{'state'}{$key} = {
-        notes    => $self->mason->notes,
-        response => $self->response,
-    };
-
-    $self->save_session;
-    return ($key);
+        delete $self->request->arguments->{'J:CLONE'};
+    }
 }
 
-=head2 restore_state_from_session UUID
-
-Restores the last L<Jifty::Response>, as well as the previous Mason
-notes, from the user's session, under the key UUID.
+=head2 multipage
 
 =cut
 
-sub restore_state_from_session {
+sub multipage {
     my $self = shift;
-    my $uuid = shift;
+    my ($start, %args) = @_;
 
-    my $session = $self->session;
-    return unless $session->{'state'} and $session->{'state'}{$uuid};
-    my $state = delete $session->{'state'}{$uuid};
-    $self->save_session; # $session won't notice the deep modification otherwise
+    my $request_action = Jifty->web->caller->action($args{moniker});
 
-    my $notes = $self->mason->notes;
-    $self->response($state->{'response'}) if $state->{'response'};
-    %$notes = %{ $state->{'notes'} } if $state->{'notes'};
+    unless ($request_action) {
+        my $request = Jifty::Request->new();
+        $request->merge_param('J:CALL' => Jifty->web->request->continuation->id)
+          if Jifty->web->request->continuation;
+        $request->path("/");
+        $request->add_action( %args );
+        my $cont = Jifty::Continuation->new(request => $request);
+        Jifty->web->redirect($start . "?J:C=" . $cont->id);
+    }
 
+    my $action = Jifty->web->new_action_from_request($request_action);
+    $action->result(Jifty->web->request->continuation->response->result($args{moniker}))
+      if Jifty->web->request->continuation->response;
+    return $action;
+}
 
-} 
+=head2 tangent PARAMHASH
+
+=cut
+
+sub tangent {
+    my $self = shift;
+
+    my $clickable = Jifty::Web::Form::Clickable->new(return_values => {"" => ""}, @_);
+    if (defined wantarray) {
+        return $clickable->generate->render;
+    } else {
+        $clickable->state_variable($_ => $self->{'state_variables'}{$_}) for keys %{$self->{'state_variables'}};
+        Jifty->web->mason->redirect($clickable->complete_url);
+    }
+}
+
+=head2 goto
+
+=cut
+
+sub goto {
+    my $self = shift;
+    Jifty->web->redirect(Jifty::Web::Form::Clickable->new(@_)->url);
+}
+
+=head2 link
+
+=cut
+
+sub link {
+    my $self = shift;
+    return Jifty::Web::Form::Clickable->new(@_)->generate->render;
+}
+
+=head2 return
+
+=cut
+
+sub return {
+    my $self = shift;
+
+    $self->link(call => Jifty->web->request->continuation, @_);
+}
+
+=head2 caller
+
+Returns the L<Jifty::Request> of our enclosing continuation
+
+=cut
+
+sub caller {
+    my $self = shift;
+    
+    return Jifty::Request->new unless $self->request->continuation;
+    return $self->request->continuation->request;
+}
+
 
 =head2 form
 
@@ -541,43 +639,52 @@ sub new_action {
     my $self = shift;
 
     my %args = (
-                class     => undef,
-                moniker   => undef,
-                arguments => {},
-                @_
-               );
+        class     => undef,
+        moniker   => undef,
+        arguments => {},
+        @_
+    );
 
-    my $class   = delete $args{class};
 
-    my $action_in_request = $self->request->action( $args{moniker} );
+    my %arguments =  %{ $args{arguments} };
+
+    if ( $args{'moniker'} ) {
+        my $action_in_request = $self->request->action( $args{moniker} );
 
     # Fields explicitly passed to new_action take precedence over those passed
     # from the request; we read from the request to implement "sticky fields".
-    # XXX TODO REFACTOR ME TO SANITY
-    my %arguments = (( $action_in_request ? %{ $action_in_request->arguments || {} } : () ), %{$args{arguments}}); 
-
+    #
+    if ($action_in_request and $action_in_request->arguments) {
+      %arguments = (%{ $action_in_request->arguments }, %arguments);
+    }
+    }
     # "Untaint" -- the implementation class is provided by the client!)
     # Allows anything that a normal package name allows
-    unless ($class =~ /^([0-9a-zA-Z_:]+)$/) {
-        $self->log->error("Bad action implementation class name: ", $class);
+    my $class = delete $args{class};
+    unless ( $class =~ /^([0-9a-zA-Z_:]+)$/ ) {
+        $self->log->error( "Bad action implementation class name: ", $class );
         return;
-    } 
-    $class = $1; # 'untaint'
+    }
+    $class = $1;    # 'untaint'
 
     # Prepend the base path (probably "App::Action") unless it's there already
-    my $base_path = Jifty->framework_config('ActionBasePath');
+    my $base_path = Jifty->config->framework('ActionBasePath');
     $class = $base_path . "::" . $class
-      unless $class =~ /^\Q$base_path\E::/ or $class =~ /^Jifty::Action::/;
-    
-    unless ($class->require) {
-        # The implementation class is provided by the client, so this isn't a "shouldn't happen"
-        $self->log->error("Error requiring $class: ", $UNIVERSAL::require::ERROR);
+        unless $class =~ /^\Q$base_path\E::/
+        or $class     =~ /^Jifty::Action::/;
+
+    unless ( $class->require ) {
+
+# The implementation class is provided by the client, so this isn't a "shouldn't happen"
+        $self->log->error( "Error requiring $class: ",
+            $UNIVERSAL::require::ERROR );
         return;
     }
 
     my $action;
+
     # XXX TODO bullet proof
-    eval { $action = $class->new(%args, arguments => {%arguments}); };
+    eval { $action = $class->new( %args, arguments => {%arguments} ); };
     if ($@) {
         my $err = $@;
         $self->log->fatal($err);
@@ -628,12 +735,12 @@ sub render_messages {
         $self->mason->out(qq{<div id="$plural">});
         foreach my $moniker (keys %results) {
             if ($results{$moniker}->$type()) {
-                $self->mason->out(qq/<div class="$type / . $moniker . '">');
+                $self->mason->out(qq{<div class="$type $moniker">});
                 $self->mason->out($results{$moniker}->$type());
-                $self->mason->out('</div>');
+                $self->mason->out(qq{</div>});
             }
         }
-        $self->mason->out('</div>');
+        $self->mason->out(qq{</div>});
     }
     return '';
 }
@@ -699,47 +806,6 @@ sub query_string_from_current {
   return $self->query_string( %args );
 }
 
-
-=head2 parameter_value KEY
-
-Returns the value of top-level parameter with the provided C<KEY>.
-
-=cut
-
-sub parameter_value {
-  my $self = shift;
-  my $param_name = shift;
-  return $self->mason->request_args->{$param_name};
-}
-
-
-=head2 expandable_element moniker => MONIKER [, label => LABEL] [, element => ELEMENT]
-
-Renders an expandable element (ie, L<Jifty::View::Helper::Expandable>)
-with the given label, moniker, and element.  The named parameters are
-passed to the L<Jifty::View::Helper::Expandable> constructor;
-C<MONIKER> is the only required value.
-
-XXX TODO David Glasser, why is this helper in this class? it feels very strangely placed
-DG says: API was made by obra in a SubEthaEdit session.  Feel free to suggest a better one
-(I think I suggested just putting Jifty::View::Helper::Expandable->new(whatever)->render
-in the code at the time and was told that that was bad.)
-
-=cut
-
-sub expandable_element {
-    my $self = shift;
-    my %args = (
-        label => undef,
-        moniker => undef,
-        element => undef,
-        @_
-    ); 
-
-    my $expander = Jifty::View::Helper::Expandable->new(%args)->render;
-} 
-
-
 =head2 navigation
 
 Returns the L<Jifty::Web::Menu> for this web request; one is
@@ -749,12 +815,8 @@ automatically created if it hasn't been already.
 
 sub navigation {
     my $self = shift;
-    my $nav = $self->mason->notes("navigation");
-    unless ($nav) {
-        $nav = Jifty::Web::Menu->new();
-        $self->mason->notes(navigation => $nav);
-    }
-    return $nav;
+    $self->{navigation} ||= Jifty::Web::Menu->new();
+    return $self->{navigation};
 }
 
 
@@ -765,7 +827,6 @@ Gets a page specific variable from the request object.
 Hm. should these methods be on the request and response objects?
 
 =cut
-
 
 sub get_variable {
     my $self = shift;
@@ -802,16 +863,22 @@ sub set_variable {
 
 =head2 state_variables
 
-=cut 
+Returns all of the state variables that have been set for the next
+request, as a hash; they have already been prefixed with C<J:V->
 
+=cut
+
+# FIXME: it seems wrong to have an accessor that exposes the
+# representation, so to speak
 sub state_variables {
   my $self = shift;
   my %vars;
-  $vars{"J:V-".$_->key} = $_->value for Jifty->framework->request->state_variables;
-  $vars{"J:NV-".$_} = $self->{'state_variables'}->{$_} for keys %{$self->{'state_variables'}};
+  $vars{"J:V-".$_} = $self->{'state_variables'}->{$_} for keys %{$self->{'state_variables'}};
 
   return %vars;
 }
+
+=head1 REGIONS
 
 =head2 get_region [QUALIFIED NAME]
 
@@ -879,20 +946,6 @@ sub qualified_region {
     return join("-", map {$_->name} @{$self->{'region_stack'} || []});
 }
 
-=head2 link PARAMHASH
-
-Generates and renders a L<Jifty::Web::Form::Link> object.  The
-C<PARAMHASH> is passed firectly to L<Jifty::Web::Form::Link/new>.
-
-=cut
-
-sub link {
-    my $self = shift;
-    $self->mason->out(Jifty::Web::Form::Link->new(@_)->render);
-
-    "";
-}
-
 =head2 url [SCHEME]
 
 Returns the root url of the server.  This is pulled from the
@@ -903,8 +956,8 @@ scheme with the given C<SCHEME>.
 
 sub url {
     my $self = shift;
-    my $url  = Jifty->framework_config("Web")->{BaseURL} || "http://localhost";
-    my $port = Jifty->framework_config("Web")->{Port} || 8888;
+    my $url  = Jifty->config->framework("Web")->{BaseURL} || "http://localhost";
+    my $port = Jifty->config->framework("Web")->{Port} || 8888;
 
     $url =~ s/^\w+/shift/e if @_;
 
@@ -914,6 +967,23 @@ sub url {
         return $url . ":" . $port;
     }
 }
+
+=head2 serial 
+
+Returns an integer, guaranteed to be unique within the runtime of a
+particular process (ie, within the lifetime of Jifty.pm).  There's no
+sort of global uniqueness guarantee, but it should be good enough for
+generating things like moniker names.
+
+=cut
+
+sub serial {
+    my $class = shift;
+    # We don't use a lexical for the serial number, because then it would be
+    # reset on module refresh
+    $SERIAL ||= 0;
+    return join(".", ++$SERIAL ,$$, int(rand(999))); # Start at 1.
+} 
 
 1;
 

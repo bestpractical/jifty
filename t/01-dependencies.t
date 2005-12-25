@@ -18,6 +18,7 @@ find( \&wanted, qw/ lib bin t /);
 
 sub wanted {
     return unless -f $_;
+    return if $File::Find::dir =~ m!/inc(/|$)!;
     local $/;
     open(FILE, $_) or return;
     my $data = <FILE>;
@@ -43,7 +44,7 @@ my %required;
 }
 
 for (sort keys %used) {
-    next if /Jifty|BTDT|Jifty::DBI/ or lc $_ eq $_;
+    next if /^(Jifty|BTDT|Jifty::DBI|inc|t)/ or lc $_ eq $_;
     ok(delete $required{$_}, "$_ in Makefile.PL");
     delete $used{$_};
 }

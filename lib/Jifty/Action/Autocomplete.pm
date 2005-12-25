@@ -22,20 +22,6 @@ L<Jifty::Result> object
 package Jifty::Action::Autocomplete;
 use base qw/Jifty::Action/;
 
-=head2 new
-
-By default, redirect actions happen as late as possible in the run
-order.
-
-=cut
-
-sub new {
-    my $class = shift;
-    my $self = $class->SUPER::new(@_);
-
-    return $self;
-}
-
 =head2 arguments
 
 The arguments for C<Autocomplete> are:
@@ -49,9 +35,6 @@ The moniker of an action we want to pull a field to autocomplete from
 =item argument
 
 The name of the argument to C<action> that we want to complete
-
-
-=item preserve_helpers
 
 =back
 
@@ -76,10 +59,10 @@ sub take_action {
 
     my $moniker = $self->argument_value('action');
     # XXX TODO: we should just be getting the arg name, not the field name somehow
-    my (undef, $arg_name, undef)  = Jifty->framework->request->parse_form_field_name($self->argument_value('argument'));
+    my (undef, $arg_name, undef)  = Jifty->web->request->parse_form_field_name($self->argument_value('argument'));
 
-    my $request_action = Jifty->framework->request->action($moniker);
-    my $action = Jifty->framework->new_action_from_request($request_action);
+    my $request_action = Jifty->web->request->action($moniker);
+    my $action = Jifty->web->new_action_from_request($request_action);
 
     my @completions = $action->autocomplete_argument($arg_name);
     #@completions = ( { label => 'foo', value => 'bar' });

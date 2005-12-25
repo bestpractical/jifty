@@ -165,17 +165,17 @@ L<Jifty::Request/state_variables>.
 sub enter {
     my $self = shift;
 
-    $self->qualified_name(Jifty->framework->qualified_region);
+    $self->qualified_name(Jifty->web->qualified_region);
     
     # Merge in the settings passed in via state variables
-    for (Jifty->framework->request->next_page_state_variables) {
+    for (Jifty->web->request->state_variables) {
         if ($_->key =~ /^region-(.*?)\.(.*)/ and $1 eq $self->qualified_name and $_->value ne $self->default_argument($2)) {
             $self->argument($2 => $_->value);
-            Jifty->framework->set_variable("region-$1.$2" => $_->value);
+            Jifty->web->set_variable("region-$1.$2" => $_->value);
         }
         if ($_->key =~ /^region-(.*?)$/ and $1 eq $self->qualified_name and $_->value ne $self->default_path) {
             $self->path($_->value);
-            Jifty->framework->set_variable("region-$1" => $_->value);
+            Jifty->web->set_variable("region-$1" => $_->value);
         }
     }
 }
@@ -201,9 +201,9 @@ sub render {
     # Use a subrequest so we can't show components we wouldn't
     # normally be allowed to.  We pass in an empty 'J:ACTIONS' so that
     # actions don't get run more than once.
-    Jifty->framework->mason->make_subrequest
+    Jifty->web->mason->make_subrequest
       ( comp => $self->path,
-        args => [ %{ Jifty->mason->request_args },
+        args => [ %{ Jifty->web->mason->request_args },
                   region => $self,
                   'J:ACTIONS' => '',
                   %arguments ],

@@ -37,39 +37,75 @@ to generate a simple class which descends from L<Jifty::Collection>.
 If it is a C<::Action::CreateFoo> or a C<::Action::UpdateFoo>, it
 creates the appropriate L<Jifty::Action::Record> subclass.
 
+Also autogenerates stub classes for C<ApplicationClass>,
+C<ApplicationClass::Collection> and C<ApplicationClass::Record>.
+
 =cut
 
 # This subroutine's name is fully qualified, as perl will ignore a 'sub INC'
 sub Jifty::ClassLoader::INC {
-    my ($self, $module) = @_;
-    my $ApplicationClass = Jifty->framework_config('ApplicationClass');
-    my $ActionBasePath = Jifty->framework_config('ActionBasePath');
+    my ( $self, $module ) = @_;
+    my $ApplicationClass = Jifty->config->framework('ApplicationClass');
+    my $ActionBasePath   = Jifty->config->framework('ActionBasePath');
+    return undef unless ( $module and $ApplicationClass );
 
-    if ($module =~ m!^($ApplicationClass)(?:/|::)Model(?:/|::)([^:]+)Collection(\.pm)?$!) {
+    if ( $module =~ m!^($ApplicationClass)(\.pm)?$! ) {
+        return $self->return_class( "use warnings; use strict; package " . $ApplicationClass . ";\n"." 1;" );
+    } 
+    elsif ( $module =~ m!^(?:$ApplicationClass)(?:/|::)(Record|Collection)(\.pm)?$! ) {
+        return $self->return_class( "use warnings; use strict; package " . $ApplicationClass . "::". $1.";\n".
+            "use base qw/Jifty::$1/; our \$VERSION ='0.01';\n"."1;" );
+    } 
+    
+    
+    
+    elsif ( $module
+        =~ m!^($ApplicationClass)(?:/|::)Model(?:/|::)([^:]+)Collection(\.pm)?$!
+        )
+    {
+
         # Auto-create Collection classes
-        return undef unless $self->{models}{$ApplicationClass . "::Model::" . $2};
-        
-        my $content = "package ".$ApplicationClass."::Model::".$2."Collection;use base qw/Jifty::Collection/; 1;";
-        open my $fh, '<', \$content;
-        return $fh;
+        return undef
+            unless $self->{models}{ $ApplicationClass . "::Model::" . $2 };
 
+        return $self->return_class( "package " . $ApplicationClass . "::Model::" . $2 . "Collection;\n"."use base qw/@{[$ApplicationClass]}::Collection/;\n"." 1;"
+        );
 
-    } elsif ($module =~ m!^($ApplicationClass)(?:/|::)Action(?:/|::)(Create|Update|Delete)([^\.:]+)(\.pm)?$!) {
+    } elsif ( $module
+        =~ m!^($ApplicationClass)(?:/|::)Action(?:/|::)(Create|Update|Delete)([^\.:]+)(\.pm)?$!
+        )
+    {
+
         # Auto-create CRUD classes
         my $modelclass = $ApplicationClass . "::Model::" . $3;
         return undef unless $self->{models}{$modelclass};
 
         # warn "Auto-creating '$2' action for $modelclass ($module)";
-        my $content = "package ".$ActionBasePath."::$2$3;"
-          . "use base qw/Jifty::Action::Record::$2/;"
-          . "sub record_class {'$modelclass'};"
-          . "1;";
-        open my $fh, '<', \$content;
-        return $fh;
-        
+        return $self->return_class( "package " . $ActionBasePath . "::$2$3;\n"
+                . "use base qw/Jifty::Action::Record::$2/;\n"
+                . "sub record_class {'$modelclass'};\n"
+                . "1;" );
+
     }
     return undef;
 }
+
+=head2 return_class CODE
+
+Takes CODE as a string and returns an open filehandle containing that CODE.
+
+
+=cut
+
+
+sub return_class {
+    my $self = shift;
+        my $content = shift;
+        open my $fh, '<', \$content;
+        return $fh;
+
+}
+
 
 =head2 require
 
@@ -82,9 +118,11 @@ base class.
 sub require {
     my $self = shift;
     
-    my $ApplicationClass = Jifty->framework_config('ApplicationClass');
+    my $ApplicationClass = Jifty->config->framework('ApplicationClass');
+    # if we don't even have an application class, this trick will not work
+    return unless  ($ApplicationClass); 
     $ApplicationClass->require;
-    my $ActionBasePath = Jifty->framework_config('ActionBasePath');
+    my $ActionBasePath = Jifty->config->framework('ActionBasePath');
 
     Module::Pluggable->import(
         search_path =>

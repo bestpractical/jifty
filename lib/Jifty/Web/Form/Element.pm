@@ -62,8 +62,8 @@ C<new> parameter hash.
 
 =cut
 
-sub accessors { shift->handlers }
-__PACKAGE__->mk_accessors(qw(onclick));
+sub accessors { shift->handlers, qw(class key_binding id label) }
+__PACKAGE__->mk_accessors(qw(onclick class key_binding id label ));
 
 =head2 javascript
 
@@ -85,7 +85,7 @@ sub javascript {
             $response .= qq!update_region({!;
 
             # Region
-            $response .= qq!name: '@{[$hook->{region} || Jifty->framework->qualified_region]}'!;
+            $response .= qq!name: '@{[$hook->{region} || Jifty->web->qualified_region]}'!;
 
             # Submit action
             if ($hook->{submit}) {
@@ -108,6 +108,25 @@ sub javascript {
         $response .= "return false;\"";
     }
     return $response;
+}
+
+=head2 render_key_binding
+
+Adds the key binding for this input, if one exists.
+
+=cut
+
+sub render_key_binding {
+    my $self = shift;
+    my $key  = $self->key_binding;
+    if ($key) {
+        Jifty->web->mason->out( "<script><!--\naddKeyBinding(".
+                "'" . uc($key) . "', "
+                . "'click', "
+                . "'". $self->id . "',"
+                . "'". $self->label."'"
+                . ");\n-->\n</script>\n" );
+    }
 }
 
 1;

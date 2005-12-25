@@ -4,7 +4,7 @@ use strict;
 package Jifty::Request;
 
 use base qw/Jifty::Object Class::Accessor Clone/;
-__PACKAGE__->mk_accessors(qw(just_validating notes_id));
+__PACKAGE__->mk_accessors(qw(arguments just_validating path continuation));
 
 =head1 NAME
 
@@ -56,13 +56,6 @@ implementation class. An action request can either be active, in which case it i
 for the action to be executed; otherwise, it merely provides default values for an action
 in the response with the same moniker.  (Not that we've defined responses yet.)
 
-=item view helper states
-
-A request may set state variables of view helpers that are created in a response document.
-(Not yet implemented as a part of the Request.)
-
-JV: need a bit more details.
-
 =item request options
 
 Various options associated with the request; for example, whether it should return
@@ -73,7 +66,7 @@ JV: I wanna see more about this
 
 =back 
 
-Actions and view helpers are specified by several things:
+Actions are specified by several things:
 
 =over 4
 
@@ -109,12 +102,6 @@ arbitrary value), it is treated as if the query actually contains the arguments 
 it appears to; see L<Jifty::MasonInterp> for details.  This is so that submit buttons
 can send multiple arguments. 
 
-XXX TODO: alex, this was something you fixed, right?
-
-(Note that under the current implementation there B<needs>
-to be a semicolon; a single C<foo=bar> will not trigger this.  We may want to change
-this.)
-
 WebForm Requests specify their information in the following way:
 
 =over 4
@@ -134,14 +121,6 @@ specified with query arguments of the form C<J:A:F-I<argumentname>-I<moniker>>.
 
 (For now, the behavior when C<J:ACTIONS> contains a moniker that does not
 correspond to any action declaration is undefined.)
-
-=item view helper states
-
-For each helper, the client sends a query argument whose name is C<J:H-I<moniker>>
-and whose value is the fully qualified class name of the helper's implementation
-class (eg, C<Jifty::View::Helper::Expandable>).  This is the "helper declaration".
-The state variables of the helper are specified with query arguments of the
-form C<J:H:S-I<statename>-I<moniker>>.
 
 =item request options
 
@@ -177,10 +156,18 @@ Here, we'll show an example YAML parse of a typical somewhat complex request. be
 
 sub new {
     my $class = shift;
-    bless {
-        'actions' => {},
-        'helpers' => {},
-    }, $class;
+    my $self = bless {}, $class;
+
+    $self->{actions} = {};
+    $self->{'state_variables'} = {};
+    $self->arguments({});
+
+    my %args = @_;
+    for (keys %args) {
+        $self->$_($args{$_}) if $self->can($_);
+    }
+
+    return $self;
 }
 
 =head2 from_mason_args
@@ -194,7 +181,9 @@ Returns itself.
 sub from_mason_args {
     my $self = shift;
 
-    return $self->from_webform(%{ Jifty->mason->request_args });
+    $self->path( Jifty->web->mason->request_comp->path );
+
+    return $self->from_webform(%{ Jifty->web->mason->request_args });
 }
 
 
@@ -215,38 +204,44 @@ sub from_webform {
 
     my %args = (@_);
 
+    $self->_extract_continuations_from_webform(%args);
+    $self->arguments(\%args);
 
     # XXX TODO: We can do a lot better performancewise with a nice, happy grep.
     $self->_extract_actions_from_webform(%args);
-    $self->_extract_helpers_from_webform(%args);
     $self->_extract_state_variables_from_webform(%args);
-
-    $self->notes_id($args{'J:N'}) if ($args{'J:N'});
 
     $self->just_validating(1) if defined $args{'J:VALIDATE'} and length $args{'J:VALIDATE'};
 
     return $self;
 }
   
+sub merge_param {
+    my $self = shift;
+
+    my ($key, $value) = @_;
+    $self->arguments->{$key} = $value;
+
+    if ($key =~ /^J:A-(?:(\d+)-)?(.+)/s) {
+        $self->add_action(moniker => $2, class => $value, order => $1, arguments => {}, active => 1);
+    } elsif ($key =~ /^J:A:F-(\w+)-(.+)/s and $self->action($2)) {
+        $self->action($2)->argument($1 => $value);
+    } elsif ($key =~ /^J:V-(.*)/s) {
+        $self->add_state_variable(key => $1, value => $value);
+    }
+}
 
 sub _extract_state_variables_from_webform {
     my $self = shift;
     my %args = (@_);
 
     foreach my $state_variable ( keys %args ) {
-        if(  $state_variable  =~ /^J:NV-(.*)$/s) {
-        $self->add_next_page_state_variable(
-            key     => $1,
-            value   => $args{$state_variable}
-        );
-    } 
-        elsif(  $state_variable  =~ /^J:V-(.*)$/s) {
-        $self->add_state_variable(
-            key     => $1,
-            value   => $args{$state_variable}
-        );
-
-    }
+        if(  $state_variable  =~ /^J:V-(.*)$/s) {
+            $self->add_state_variable(
+                key     => $1,
+                value   => $args{$state_variable}
+            );
+        }
     }
 }
 
@@ -335,59 +330,31 @@ sub _extract_actions_from_webform {
     } 
 }
 
-sub _extract_helpers_from_webform {
+sub _extract_continuations_from_webform {
     my $self = shift;
     my %args = (@_);
 
-    for my $maybe_helper (keys %args) {
-        next unless $maybe_helper =~ /^J:H-(.+)/s;
+    # Loading a continuation
+    $self->continuation(Jifty->web->session->{'continuations'}{$args{'J:C'}})    if $args{'J:C'};
+    $self->continuation(Jifty->web->session->{'continuations'}{$args{'J:CALL'}}) if $args{'J:CALL'};
 
-        my $moniker = $1;
-        my $class = $args{$maybe_helper};
-
-        my $states = {};
-        for my $maybe_state (keys %args) {
-            next unless $maybe_state =~ /^J:H:S-(\w+)-\Q$moniker/s;
-            $states->{$1} = $args{$maybe_state};
-        } 
-
-        $self->add_helper(
-            moniker => $moniker,
-            class => $class,
-            states => $states,
-        );
-    } 
-
+    if ($args{'J:CLONE'} and Jifty->web->session->{'continuations'}{$args{'J:CLONE'}}) {
+        my %params = %{Jifty->web->session->{'continuations'}{$args{'J:CLONE'}}->request->arguments};
+        $self->merge_param($_ => $params{$_}) for keys %params;
+    }
 }
 
-=head2 helpers_as_query_args [MONIKERS]
-
-Returns a hash (suitable to be passed to C<$framework->query_string>
-or turned into hidden inputs) of query arguments to represent the
-current view helper state.  May be passed an optional set of monikers
-to limit the return values to.
-
-=cut
-
-sub helpers_as_query_args {
+sub call_continuation {
     my $self = shift;
-    my @monikers = @_ || keys %{$self->{'helpers'}};
+    my $cont = $self->arguments->{'J:CALL'};
+    return unless $cont and Jifty->web->session->{'continuations'}{$cont};
+    $self->continuation(Jifty->web->session->{'continuations'}{$cont});
+    $self->continuation->call;
+}
 
-    my @args;
-    for my $helper (grep {defined} map {$self->helper($_)} @monikers) {
-        push @args, "J:H-".$helper->moniker, $helper->class;
-        for my $statename (keys %{ $helper->states }) {
-            push @args, "J:H:S-$statename-".$helper->moniker, $helper->state($statename);
-        } 
-    } 
-    return @args;
-} 
+=head2 path
 
-
-=head2 notes_id
-
-Returns the current request's key for the session notes hash. This is used to get at things
-like preserved helpers and the results of actions.
+Returns the path that was requested
 
 =cut
 
@@ -396,66 +363,6 @@ like preserved helpers and the results of actions.
 This method returns true if the client has asked us to not actually _run_ any actions.
 
 =cut
-
-
-=head2 next_page_state_variables
-
-Returns an array of all of this request's state variables
-
-=cut
-
-sub next_page_state_variables { 
-    my $self = shift;
-    return values %{$self->{'next_page_state_variables'}};
-}
-
-=head2 next_page_state_variable NAME
-
-Returns the Jifty::Request::StateVariable object for the variable named
-NAME.
-
-=cut
-
-sub next_page_state_variable {
-    my $self = shift;
-    my $name = shift;
-    return $self->{'next_page_state_variables'}{$name};
-
-}
-
-=head2 add_next_page_state_variable PARMAMS
-
-Adds a state variable to this request's internal representation.
-
-Takes a key and a value. At some distant point in the future, it might also
-make sense for it to take a moniker.
-
-=over
-
-=item key
-
-=item value
-
-=back
-
-=cut
-
-sub add_next_page_state_variable {
-    my $self = shift;
-    my %args = (
-                 key => undef,
-                 value => undef,
-                 @_);
-
-    my $state_var = Jifty::Request::StateVariable->new();
-    
-    for my $k (qw/key value/) {
-        $state_var->$k($args{$k}) if defined $args{$k};
-    } 
-    $self->{'next_page_state_variables'}{$args{'key'}} = $state_var;
-
-}
-
 
 =head2 state_variables
 
@@ -471,7 +378,7 @@ sub state_variables {
 =head2 state_variable NAME
 
 Returns the Jifty::Request::StateVariable object for the variable named
-NAME.
+C<NAME>, or undef of there is no such variable.
 
 =cut
 
@@ -479,7 +386,6 @@ sub state_variable {
     my $self = shift;
     my $name = shift;
     return $self->{'state_variables'}{$name};
-
 }
 
 =head2 add_state_variable PARMAMS
@@ -534,7 +440,7 @@ sub actions {
 =head2 action MONIKER
 
 Returns a L<Jifty::Request::Action> object for the action with the given moniker,
-or undef if no such helper was sent.
+or undef if no such action was sent.
 
 =cut
 
@@ -587,69 +493,6 @@ sub add_action {
     $self;
 } 
 
-=head2 helpers
-
-Returns a list of the view helpers in the request, as L<Jifty::Request::Helper> objects.
-
-=cut
-
-sub helpers {
-    my $self = shift;
-    return values %{ $self->{'helpers'} };
-}
-
-=head2 helper MONIKER
-
-Returns a L<Jifty::Request::Helper> object for the helper with the given moniker,
-or undef if no such helper was sent.
-
-=cut
-
-sub helper {
-    my $self = shift;
-    my $moniker = shift;
-    return $self->{'helpers'}{$moniker};
-} 
-
-
-=head2 add_helper
-
-Required argument: moniker.
-
-Optional arguments: class, states.
-
-Adds a L<Jifty::Request::Helper> with the given moniker to the Request.
-If the request already contains a helper with that moniker, it merges 
-it in, overriding the implementation class and B<individual> states.
-
-=cut
-
-sub add_helper {
-    my $self = shift;
-    my %args = (
-        moniker => undef,
-        class => undef,
-        states => undef,
-        @_
-    );
-
-    my $helper = $self->{'helpers'}->{ $args{'moniker'} } || Jifty::Request::Helper->new;
-
-    for my $k (qw/moniker class/) {
-        $helper->$k($args{$k}) if defined $args{$k};
-    } 
-    
-    if ($args{'states'}) {
-        for my $k (keys %{ $args{'states'} }) {
-            $helper->state($k, $args{'states'}{$k});
-        } 
-    }
-
-    $self->{'helpers'}{$args{'moniker'}} = $helper;
-
-    $self;
-} 
-
 package Jifty::Request::Action;
 use base 'Class::Accessor';
 __PACKAGE__->mk_accessors( qw/moniker arguments class order active/);
@@ -662,20 +505,6 @@ sub argument {
 
     $self->arguments->{$key} = shift if @_;
     $self->arguments->{$key};
-}
-
-package Jifty::Request::Helper;
-use base 'Class::Accessor';
-__PACKAGE__->mk_accessors( qw/moniker states class/);
-
-sub state {
-    my $self = shift;
-    my $key  = shift;
-
-    $self->states({}) unless $self->states;
-
-    $self->states->{$key} = shift if @_;
-    $self->states->{$key};
 }
 
 package Jifty::Request::StateVariable;

@@ -12,7 +12,7 @@ Loads up application specific test modules
 
 sub setup {
     Jifty->new( config_file => 'etc/config.yml' );
-    my $test_class = Jifty->framework_config('ApplicationClass') . "::Test";
+    my $test_class = Jifty->config->framework('ApplicationClass') . "::Test";
     $test_class->require;
 
     unless ($UNIVERSAL::require::ERROR) {

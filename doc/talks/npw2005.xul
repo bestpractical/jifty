@@ -583,7 +583,7 @@ Application Code
  &lt;/%init&gt;
 ---- 
  &lt;html&gt;&lt;body&gt;
- &lt;h1&gt;&lt;% Jifty-&gt;app_config('Name')%&gt;&lt;/h1&gt;
+ &lt;h1&gt;&lt;% Jifty-&gt;config->app('Name')%&gt;&lt;/h1&gt;
  
  % while (my $entry = $entries-&gt;next) {
   &lt;h2&gt;&lt;%$entry-&gt;title%&gt;&lt;/h2&gt;
@@ -610,7 +610,7 @@ Application Code
  % foreach my $arg ($creator-&gt;argument_names) {
  &lt;%$creator-&gt;form_field($arg)%&gt;
  % }
- &lt;%Jifty-&gt;framework-&gt;form-&gt;submit('Save')%&gt;
+ &lt;%Jifty-&gt;framework-&gt;form-&gt;submit( label => 'Save')%&gt;
  &lt;%Jifty-&gt;framework-&gt;form-&gt;end%&gt;
 ----
  jifty schema --install .

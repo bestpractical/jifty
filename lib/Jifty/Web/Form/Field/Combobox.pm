@@ -57,7 +57,7 @@ EOF
 
 
 
-        Jifty->mason->out($field);
+        Jifty->web->mason->out($field);
     '';
 }
 
