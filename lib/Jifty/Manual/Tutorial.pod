@@ -15,7 +15,91 @@ build your first application with Jifty.
 
 =head2 Installing Jifty
 
+No bones about it. We believe pretty strongly in the DRY (Don't Repeat
+Yourself) principle. That's one of the big reasons we love Perl and
+CPAN. Jifty makes use of lots of amazing code from CPAN.  At last count,
+it directly depended on 60 packages from CPAN.  Most of these libraries
+are cross-platform pure-perl packages and should run great out of the
+box on any platform you can get Perl onto.
+
+We've gone to lengths to make sure you don't spend your day downloading
+library after library by bundling everything we can inside the Jifty
+package.  With luck, all you'll need to install is a few tricky libraries
+that actually need to be compiled for your operating system. (Little
+things like perl's database interface and the embedded SQLite that Jifty
+defaults to.)
+
+You can either grab a complete Jifty package from http://jifty.org/download
+or install from CPAN. If you get the "slim" version from CPAN, you'll have
+to install Jifty's dependencies yourself. (Though we help out with that 
+where we can.)  If you want to get up and running quickly, grab:
+
+    http://download.jifty.org/pub/jifty/jifty-latest.tgz
+
+Either way, the installation process is the same:
+  
+  # tar xzvf jifty-<version>tgz
+  # cd jifty-version
+  # perl Makefile.PL
+  # make
+  # make test
+  # make install
+ 
+If the tests don't pass, we want to hear about it. Please join us
+on jifty-devel@lists.jifty.org and report the failure. (See 
+"Getting Help" below for info on how to join the list.)
+
+
 =head2 Setting up the Scaffolding
+
+Once you have Jifty happily installed, you're ready to 
+create your first application. 
+
+Jifty is intentionally a bit minimalist. All you I<really>
+need to make an application go is a copy of the C<jifty> commandline
+tool (inside your new application's C<bin/> directory.  
+
+Of course, it's often helpful to have a bit more structure around to
+help guide your work. Jifty comes with tools to build that structure for
+you:
+
+Change directory to some place it will be safe to create a new
+Jifty application. (Jifty will create a subdirectory for you).
+
+  # jifty app --name MyWeblog
+
+  Creating new application MyWebLog
+  Creating directory bin
+  Creating directory etc
+  Creating directory doc
+  Creating directory log
+  Creating directory web
+  Creating directory web/templates
+  Creating directory web/static
+  Creating directory lib
+  Creating directory lib/MyWebLog
+  Creating directory lib/MyWebLog/Model
+  Creating directory lib/MyWebLog/Action
+  Creating directory t
+  
+Let's take those one by one
+
+=over
+
+=item bin
+=item etc
+=item doc
+=item log
+=item web
+=item web/templates
+=item web/static
+=item lib
+=item lib/MyWebLog
+=item lib/MyWebLog/Model
+=item lib/MyWebLog/Action
+=item t
+
+=back
 
 =head2 Building your data model
 
@@ -28,6 +112,13 @@ build your first application with Jifty.
 =head2 Building a user interface
 
 =head2 Deploying your application in production
+
+=head1 GETTING HELO
+
+=head2 Joining the mailing list
+
+=head2 Browsing the wiki
+
 
 =head1 FUTURE TUTORIALS
 
