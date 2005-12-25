@@ -25,10 +25,9 @@ sub load {
     return
         if $m
         && $m->is_subrequest;    # avoid reentrancy, as suggested by masonbook
-    my $session_class = 'Apache::Session::File';
-    my $pm            = "$session_class.pm";
-    $pm =~ s|::|/|g;
-    require $pm;
+    
+    require Apache::Session::Flex;
+    
 
     my %cookies       = CGI::Cookie->fetch();
     my $cookiename = $self->cookie_name;
@@ -38,30 +37,27 @@ sub load {
     $Storable::Deparse = 1;
     $Storable::Eval    = 1;
     my %session;
-
     eval {
-        tie %session, $session_class,
-            ( $session_id ? $session_id : '12' ),
-            {
-            Directory     => '/tmp',
-            LockDirectory => '/tmp'
+        tie %session, 'Apache::Session::Flex', ( $session_id ? $session_id : undef ),
+                {
+                  Store => 'File',
+                Lock => 'Null',
+                Generate => 'MD5',
+                Serialize => 'Storable'
+                };
+
             };
-    };
 
     if ($@) {
-
-        # If the session is invalid, create a new session.
-        if ( $@ =~ /Object does not/i ) {
-            tie %session, $session_class, undef,
+        tie %session, 'Apache::Session::Flex', undef,
                 {
-                Directory     => '/tmp',
-                LockDirectory => '/tmp'
+                Store => 'File',
+                Lock => 'Null',
+                Generate => 'MD5',
+                Serialize => 'Storable'
                 };
+
             undef $cookies{$self->cookie_name};
-        } else {
-            $self->log->fatal( "Couldn't store your session:\n", $@ );
-            return;
-        }
     }
 
     $self->_session( tied(%session) );
