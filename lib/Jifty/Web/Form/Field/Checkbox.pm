@@ -22,6 +22,9 @@ sub render_widget {
     $field .= qq! value="1"!;
     $field .= qq! class="@{[ $self->class ]}@{[ $self->ajax_validates ? ' ajaxvalidation' : '' ]}" !;
     $field .= qq! checked="checked"! if $self->current_value;
+
+    $field .= $self->javascript;
+    
     $field .= qq! />\n!;
     Jifty->mason->out($field);
     '';

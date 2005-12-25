@@ -757,7 +757,7 @@ sub get_variable {
 
 }
 
-=head2 set_variable PARAMHAS
+=head2 set_variable NAME VALUE
 
 Takes a key-value pair for variables to serialize and hand off to the next page.
 
@@ -781,4 +781,95 @@ sub set_variable {
 
 }
 
+=head2 region PARAMHASH, 
+
+The paramhash takes:
+
+name
+
+path
+
+defaults
+
+=cut
+
+sub region {
+    my $self = shift;
+    my $m = $self->mason;
+    my %args = (
+                name => undef,
+                path => undef,
+                defaults => {},
+                @_
+               );
+
+    # Add ourselves to the region stack
+    local $self->{'region_stack'} = [@{$self->{'region_stack'} || []}, \%args];
+
+    $args{qualified_region} = $self->qualified_region;
+    warn "Repeated region: $args{qualified_region}"
+      if $self->{'region_seen'}{$args{qualified_region}}++;
+
+    # Merge in the settings passed in via state variables
+    my %merged = %{$args{defaults}};
+    for ($self->request->state_variables) {
+        $merged{$1} = $_->value if $_->key =~ /^region-$args{qualified_region}\.(.*)/;
+        $args{path} = $_->value if $_->key =~ /^region-$args{qualified_region}$/;
+    }
+
+    $m->out(qq|<script type="text/javascript"><!--\n|);
+    $m->out(qq|region('$args{qualified_region}',{|);
+    $m->out(join(',', map {($a = $merged{$_})=~s/'/\\'/g;qq|'$_':'$merged{$_}'|} keys %merged));
+    $m->out(qq|},'$args{path}');\n|);
+    $m->out(qq| --></script>|);
+    $m->out(qq!<div id="region-! . $args{qualified_region} . qq!">!);
+    $m->comp($args{path},
+             region => $args{name},
+             qualified_region => $args{qualified_region},
+             %merged);
+    $m->out(qq!</div>!);
+
+    "";
+}
+
+=head2 current_region
+
+Returns the name of the current region
+
+=cut
+
+sub current_region {
+    my $self = shift;
+    return $self->{'region_stack'} ? $self->{'region_stack'}[-1]{name} : undef;
+}
+
+=head2 qualified_region
+
+=cut
+
+sub qualified_region {
+    my $self = shift;
+    return join("-", map {$_->{name}} @{$self->{'region_stack'} || []});
+}
+
+=head2 link PARAMHASH
+
+label
+
+url
+
+onFoo
+
+=cut
+
+sub link {
+    my $self = shift;
+    $self->mason->out(Jifty::Web::Form::Link->new(@_)->render);
+
+    "";
+}
+
+
 1;
+
+

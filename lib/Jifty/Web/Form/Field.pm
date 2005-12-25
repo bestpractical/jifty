@@ -20,7 +20,7 @@ aid in placing them in L<HTML::Mason> components.
 
 =cut
 
-use base qw/Jifty::Object Class::Accessor/;
+use base qw/Jifty::Web::Form::Element Class::Accessor/;
 
 use Scalar::Util;
 use HTML::Entities;
@@ -81,7 +81,7 @@ C<new>.  Subclasses should extend this list.
 
 =cut
 
-sub accessors { qw(name class label input_name type sticky sticky_value default_value action mandatory ajax_validates preamble hints key_binding render_mode length); }
+sub accessors { shift->SUPER::accessors(), qw(name class label input_name type sticky sticky_value default_value action mandatory ajax_validates preamble hints key_binding render_mode length); }
 __PACKAGE__->mk_accessors(qw(name class _label _input_name type sticky sticky_value default_value _action mandatory ajax_validates preamble hints key_binding render_mode length));
 
 =head2 name [VALUE]
