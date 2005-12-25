@@ -30,7 +30,6 @@ File::Find::find(
 File::Find::find(
     { untaint => 1,
       wanted => sub {
-        warn $File::Find::name;
         return unless $File::Find::name =~ /^(?:.*?)(Jifty.*?\.(?:pm|pod))$/;
         my $name = $1;
         $name =~ s/.*lib\b.//;
