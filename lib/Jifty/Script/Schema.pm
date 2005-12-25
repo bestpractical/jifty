@@ -116,9 +116,9 @@ sub run {
        # TODO XXX FIXME:
        #   This *will* try to generate SQL for abstract base classes you might
        #   stick in $AC::Model::.
-            do { $log->info("Skipping $model"); next }
-                if not UNIVERSAL::isa( $model, 'Jifty::Record' )
-                or ( UNIVERSAL::can( $model, 'since' )
+                next if not UNIVERSAL::isa( $model, 'Jifty::Record' );
+            do { log->info("Skipping $model"); next }
+                if ( UNIVERSAL::can( $model, 'since' )
                 and $appv < $model->since );
 
             $log->info("Using $model");
@@ -192,7 +192,7 @@ sub run {
         for my $model ( __PACKAGE__->models ) {
 
             # We don't want to get the Collections, for example.
-            do { warn "Skipping $model\n"; next }
+            do { next }
                 unless UNIVERSAL::isa( $model, 'Jifty::Record' );
 
             # Set us up the table
@@ -306,7 +306,6 @@ sub create_db {
     my %connect_args;
     $connect_args{'database'} = 'template1' if ($driver eq 'Pg');
     $handle->connect(%connect_args);
-    warn "About to create the database";
 
     if ($driver eq 'SQLite') { 
         unlink($database);
@@ -314,8 +313,9 @@ sub create_db {
          $handle->simple_query("DROP DATABASE $database");
 
     }
-    $handle->simple_query("CREATE DATABASE $database");
-
+    if ($driver ne 'SQLite') { 
+        $handle->simple_query("CREATE DATABASE $database");
+    }
     $handle->disconnect;
     # reinit our handle
     Jifty->handle(Jifty::Handle->new());
@@ -332,9 +332,9 @@ schema - Create SQL to update or create your Jifty app's tables
 
 =head1 SYNOPSIS
 
-  jifty schema --install ProjectRoot  # Creates tables on SQL server 
-  jifty schema --print   ProjectRoot  # Prints commands to update tables,
-                                # now that they have been created
+  jifty schema --install      Creates tables on SQL server 
+  jifty schema --print          Prints commands to update tables,
+                                #now that they have been created
 
  Options:
    --print            Print output instead of running on SQL server
