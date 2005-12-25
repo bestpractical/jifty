@@ -58,7 +58,7 @@ sub create {
     my %attribs = @_;
     
     unless ($self->check_create_rights(@_)) {
-        $self->log->error($self->current_user->email. " tried to create a ", ref $self, " without permission");
+        $self->log->error($self->current_user->id. " tried to create a ", ref $self, " without permission");
         wantarray ? return (0, 'Permission denied') : return(0);
     }
 

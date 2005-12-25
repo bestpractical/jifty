@@ -82,7 +82,7 @@ sub _get_current_user {
     };
 
 
-    if ( Jifty->framework ) {
+    if ( Jifty->framework and Jifty->framework->current_user->id ) {
         return $self->current_user( Jifty->framework->current_user );
     }
 
