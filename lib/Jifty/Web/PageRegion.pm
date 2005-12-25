@@ -56,7 +56,7 @@ sub new {
 
     # Name and path are required
     unless (defined $args{name} and defined $args{path}) {
-        warn "Name and path are required for page regions";
+        warn "Name and path are required for page regions. We got ".join(",", %args);
         return;
     }
 
