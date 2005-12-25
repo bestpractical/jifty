@@ -204,7 +204,9 @@ sub render {
 
     $result .= qq|<script type="text/javascript"><!--\n|;
     $result .= qq|region('|. $self->qualified_name .qq|',{|;
-    $result .= join(',', map {($a = $arguments{$_})=~s/'/\\'/g;qq|'$_':'$a'|} keys %arguments);
+    $result .= join(',', map {($a = $arguments{$_})=~s/'/\\'/g;qq|'$_':'$a'|}
+                         grep {defined $arguments{$_}}
+                         keys %arguments);
     $result .= qq|},'|. $self->path . qq|');\n|;
     $result .= qq| --></script>|;
     $result .= qq|<div id="region-| . $self->qualified_name . qq|">|;
