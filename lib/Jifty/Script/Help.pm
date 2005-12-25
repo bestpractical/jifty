@@ -5,7 +5,7 @@ use File::Find qw(find);
 use Jifty::I18N;
 
 sub help_base {
-    return "Jifty::Help";
+    return "Jifty::Manual";
 }
 
 1;
