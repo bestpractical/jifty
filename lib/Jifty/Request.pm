@@ -15,125 +15,51 @@ Jifty::Request - Canonical internal representation of an incoming Jifty request
 
 =head1 DESCRIPTION
 
-A user interacts with Jifty by invoking zero or more B<action>s.  
-These can be specified in several ways:
+This document discusses the ins and outs of getting data from the web
+browser (or any other source) and figuring out what it means.  Most of
+the time, you won't need to worry about the details, but they are
+provided below if you're curious.
 
-=over
+This class parses the submission and makes it available as a
+protocol-independent B<Jifty::Request> object.
 
-=item web form submission
-
-(which contains specially formatted inputs and hidden arguments),
-
-=item via the Web Services interface 
-
-by POST'ing YAML or JSON to a defined URL on the server
-
-=item (eventually) extra parameters in the path part of the URL
-
-=back
-
-This class parses the submission and makes it available as a protocol-independent
-B<Jifty::Request> object.
-
-Each Jifty::Request contains several types of information:
+Each request contains several types of information:
 
 =over 4
 
 =item actions
 
 A request may contain one or more actions; these are represented as
-Jifty::Request::Action objects. Each action request has a
+L<Jifty::Request::Action> objects. Each action request has a
 L<moniker|Jifty::Glossary/moniker>, a set of submitted
-L<arguments|Jifty::Glossary/arguments>, and an implementation
-class. For an action to actually be run, it must be marked "active;"
-otherwise it is just along for the ride.
+L<arguments|Jifty::Glossary/arguments>, and an implementation class.
+By default, all actions that are submitted are run; it is possible to
+only mark a subset of the submitted actions as "active", and only the
+active actions will be run.  These will eventually become full-fledge
+L<Jifty::Action> objects.
 
-=item request options
+=item state variables
 
-Various options associated with the request; for example, whether it should return
-a response and if so what format the response should be in.  Possibly API versioning
-falls here too.  Probably "validate-only" too.
+State variables are used to pass around bits of information which are
+needed more than once but not often enough to be stored in the
+session.  Additionally, they are per-browser window, unlike session
+information.
 
-JV: I wanna see more about this
+=item continuations
 
-=back 
+Continuations can be called or created during the course of a request,
+though each request has at most one "current" continuation.  See
+L<Jifty::Continuation>.
 
-Actions are specified by several things:
+=item (optional) fragments
 
-=over 4
-
-=item implementation class
-
-The class which implements the object.  This might be an application class (generally the
-case for actions) or a framework class (generally the case for view objects).  (Whether
-or not the C<I<MyApp>::Action::> part is considered part of the implementation class name
-is a little fuzzy now.)
-
-=item moniker
-
-This string has no semantic value for the Jifty code, but your application can parse it.
-It must be unique within a request.  Specifically, Jifty will use the moniker to match up
-items in a request with items generated in the course of responding to the request (which
-often means you want to include things like record IDs in the moniker), and
-the WebForm Request Protocol uses the moniker for grouping, but as far as Jifty is concerned
-the moniker is just an arbitrary (non-semicolon-containing) string.
+L<Fragments|Jifty::Glossary/fragments> are standalone bits of reusable
+code.  They are most commonly used in the context of AJAX, where
+fragments are the building blocks that can be updated independently.
+A request is either for a full page, or for multiple independent
+fragments.  See L<Jifty::PageRegion>.
 
 =back
-
-=head1 Jifty WebForm Request Protocol
-
-The primary source of Jifty requests through the website are "WebForm Requests".  These are
-requests submitted using CGI GET or POST requests to the Jifty project's website.
-(Currently, the URL that Jifty WebForms are sent to is more or less irrelevant, but this might
-change.)
-
-Much of this is still open to change.
-
-In addition, if any CGI query B<name> is of the form C<foo=bar;baz=quux> (with an
-arbitrary value), it is treated as if the query actually contains the arguments that
-it appears to; see L<Jifty::MasonInterp> for details.  This is so that submit buttons
-can send multiple arguments. 
-
-WebForm Requests specify their information in the following way:
-
-=over 4
-
-=item authorization information
-
-This is fetched from the session object.  There should be a hook in the application code
-that should look at the session object and return this stuff.  (Not sure on the details yet.)
-
-=item actions
-
-Active actions and argument defaults are specified in similar ways.  For
-each action, the client sends a query argument whose name is C<J:A-I<moniker>>
-and whose value is the fully qualified class name of the action's implementation
-class.  This is the "action declaration".  The action's arguments are
-specified with query arguments of the form C<J:A:F-I<argumentname>-I<moniker>>.
-
-(For now, the behavior when C<J:ACTIONS> contains a moniker that does not
-correspond to any action declaration is undefined.)
-
-=item request options
-
-The existence of C<J:VALIDATE> says that the request is only validating arguments.  Perhaps its
-value should dictate the response type; for now it's always returning XML.
-
-=back 
-
-=head1 Jifty WebURL Request Protocol
-
-Not yet designed or implemented.
-
-=head1 Jifty XML REST Request Protocol
-
-Not yet designed or implemented.  (Should be able to load some defaults from URL.)
-
-=head1 Jifty YAML REST Request Protocool
-
-Not yet designed or implemented.  (Should be able to load some defaults from URL.)
-
-
 
 =head1 METHODS
 
@@ -196,6 +122,12 @@ sub fill {
 
 =head2 from_data_structure
 
+Fills in the request from a data structure.  This is called once the
+YAML or JSON has been parsed.  See L</SERIALIZATION> for details of
+how to construct a proper data structure.
+
+Returns itself.
+
 =cut
 
 sub from_data_structure {
@@ -256,9 +188,8 @@ sub from_mason_args {
 
 Parses web form arguments into the Jifty::Request data structure.
 Takes in the query arguments, as parsed by Mason (thus, repeated
-arguments have already been turned into array refs).  This does
-not wipe out preexisting request data; thus, multiple C<from_*>
-functions can be called on the same Jifty::Request.
+arguments have already been turned into array refs).  See
+L</SERIALIZATION> for details of how query parameters are parsed.
 
 Returns itself.
 
@@ -323,7 +254,6 @@ sub _extract_state_variables_from_webform {
         }
     }
 }
-
 
 =head2 parse_form_field_name FIELDNAME
 
@@ -441,13 +371,16 @@ Returns the path that was requested
 
 =head2 just_validating
 
-This method returns true if the client has asked us to not actually _run_ any actions.
+This method returns true if the request was merely for validation.  If
+this flag is set, then all active actions are validated, but no
+actions are run.
 
 =cut
 
 =head2 state_variables
 
-Returns an array of all of this request's state variables
+Returns an array of all of this request's state variables, as
+L<Jifty::Request::StateVariable>s.
 
 =cut
 
@@ -458,8 +391,8 @@ sub state_variables {
 
 =head2 state_variable NAME
 
-Returns the Jifty::Request::StateVariable object for the variable named
-C<NAME>, or undef of there is no such variable.
+Returns the L<Jifty::Request::StateVariable> object for the variable
+named I<NAME>, or undef of there is no such variable.
 
 =cut
 
@@ -469,20 +402,10 @@ sub state_variable {
     return $self->{'state_variables'}{$name};
 }
 
-=head2 add_state_variable PARMAMS
+=head2 add_state_variable PARAMHASH
 
 Adds a state variable to this request's internal representation.
-
-Takes a key and a value. At some distant point in the future, it might also
-make sense for it to take a moniker.
-
-=over
-
-=item key
-
-=item value
-
-=back
+Takes a C<key> and a C<value>.
 
 =cut
 
@@ -502,13 +425,10 @@ sub add_state_variable {
 
 }
 
-
-
-
-
 =head2 actions
 
-Returns a list of the actions in the request, as L<Jifty::Request::Action> objects.
+Returns a list of the actions in the request, as
+L<Jifty::Request::Action> objects.
 
 =cut
 
@@ -520,8 +440,8 @@ sub actions {
 
 =head2 action MONIKER
 
-Returns a L<Jifty::Request::Action> object for the action with the given moniker,
-or undef if no such action was sent.
+Returns a L<Jifty::Request::Action> object for the action with the
+given moniker, or undef if no such action was sent.
 
 =cut
 
@@ -533,16 +453,17 @@ sub action {
 
 
 
-=head2 add_action
+=head2 add_action PARAMHASH
 
-Required argument: moniker.
+Required argument: C<moniker>.
 
-Optional arguments: class, active, arguments.
+Optional arguments: C<class>, C<order>, C<active>, C<arguments>.
 
-Adds a L<Jifty::Request::Action> with the given moniker to the Request.
-If the request already contains an action with that moniker, it merges 
-it in, overriding the implementation class, active state, and B<individual>
-arguments.
+Adds a L<Jifty::Request::Action> with the given
+L<moniker|Jifty::Glossary/moniker> to the request.  If the request
+already contains an action with that moniker, it merges it in,
+overriding the implementation class, active state, and B<individual>
+arguments.  See L<Jifty::Action>.
 
 =cut
 
@@ -574,12 +495,29 @@ sub add_action {
     $self;
 } 
 
+=head2 fragments
+
+Returns a list of fragments requested, as L<Jifty::Request::Fragment> objects.
+
+=cut
 
 sub fragments {
     my $self = shift;
 
     return values %{$self->{'fragments'}}
 }
+
+=head2 add_fragment PARAMHASH
+
+Required arguments: C<name>, C<path>
+
+Optional arguments: C<arguments>, C<wrapper>
+
+Adds a L<Jifty::Request::Fragment> with the given name to the request.
+If the request already contains a fragment with that name, it merges
+it in.  See L<Jifty::PageRegion>.
+
+=cut
 
 sub add_fragment {
     my $self = shift;
@@ -609,6 +547,14 @@ sub add_fragment {
     return $self;
 }
 
+=head2 do_mapping PARAMHASH
+
+Takes two possible arguments, C<request> and C<response>; they default
+to the current L<Jifty::Request> and the current L<Jufty::Response>.
+Calls L<Jifty::Request::Mapper/map> on every argument of this request,
+pulling arguments and results from the given C<request> and C<response>.
+
+=cut
 
 sub do_mapping {
     my $self = shift;
@@ -631,6 +577,24 @@ package Jifty::Request::Action;
 use base 'Class::Accessor';
 __PACKAGE__->mk_accessors( qw/moniker arguments class order active/);
 
+=head2 Jifty::Request::Action
+
+A small package that encapsulates the bits of an action request:
+
+=head3 moniker [NAME]
+
+=head3 argument NAME [VALUE]
+
+=head3 arguments
+
+=head3 class [CLASS]
+
+=head3 order [INTEGER]
+
+=head3 active [BOOLEAN]
+
+=cut
+
 sub argument {
     my $self = shift;
     my $key  = shift;
@@ -646,10 +610,35 @@ package Jifty::Request::StateVariable;
 use base 'Class::Accessor';
 __PACKAGE__->mk_accessors (qw/key value/);
 
+=head2 Jifty::Request::StateVariable
+
+A small package that encapsulates the bits of a state variable:
+
+=head3 key
+
+=head3 value
+
+=cut
 
 package Jifty::Request::Fragment;
 use base 'Class::Accessor';
 __PACKAGE__->mk_accessors( qw/name path wrapper arguments/ );
+
+=head2 Jifty::Request::Fragment
+
+A small package that encapsulates the bits of a fragment request:
+
+=head3 name [NAME]
+
+=head3 path [PATH]
+
+=head3 wrapper [BOOLEAN]
+
+=head3 argument NAME [VALUE]
+
+=head3 arguments
+
+=cut
 
 sub argument {
     my $self = shift;
@@ -660,6 +649,66 @@ sub argument {
     $self->arguments->{$key} = shift if @_;
     $self->arguments->{$key};
 }
+
+=head1 SERIALIZATION
+
+=head2 CGI Query parameters
+
+The primary source of Jifty requests through the website are CGI query
+parameters.  These are requests submitted using CGI GET or POST
+requests to your Jifty application.  See L<Jifty::MasonInterp> for
+details of the CGI parsing.
+
+=head2 actions
+
+=head3 registration
+
+For each action, the client sends a query argument whose name is
+C<J:A-I<moniker>> and whose value is the fully qualified class name of
+the action's implementation class.  This is the action "registration."
+The registration may also take the form C<J:A-I<order>-I<moniker>>,
+which also sets the action's run order.
+
+=head3 arguments
+
+The action's arguments are specified with query arguments of the form
+C<J:A:F-I<argumentname>-I<moniker>>.  To cope with checkboxes and the
+like (which don't submit anything when left unchecked) we provide two
+levels of fallback, which are checked if the first doesn't exist:
+C<J:A:F:F-I<argumentname>-I<moniker>> and
+C<J:A:F:F:F-I<argumentname>-I<moniker>>.
+
+=head2 state variables
+
+State variables are set via C<J:V-I<name>> being set to the value of
+the state parameter.
+
+=head2 continuations
+
+The current continuation set by passing the parameter C<J:C>, which is
+set to the id of the continuation.  To create a new continuation, the
+parameter C<J:CREATE> is passed.  Calling a continuation is a ssimple
+as passing C<J:CALL> with the id of the continuation to call.
+
+=head2 request options
+
+The existence of C<J:VALIDATE> says that the request is only
+validating arguments.  C<J:ACTIONS> is set to a semicolon-separated
+list of monikers; the actions with those monikers will be marked
+active, while all other actions are marked inactive.  In the absence
+of C<J:ACTIONS>, all actions are active.
+
+=back 
+
+=head1 YAML POST Request Protocool
+
+To be spec'd later
+
+=head1 JSON POST Request Protocool
+
+To be spec'd later
+
+=cut
 
 1;
 
