@@ -414,7 +414,7 @@ function update() {
                                 Element.update(element, response_fragment.textContent.stripScripts());
                             }
                             // We need to give the browser some "settle" time before we eval scripts in the body
-                            setTimeout((function() {arguments[0].evalScripts()}).bind(response_fragment.textContent), 10);
+                            setTimeout((function() { this.evalScripts() }).bind(response_fragment.textContent), 10);
                         }
                     }
 
