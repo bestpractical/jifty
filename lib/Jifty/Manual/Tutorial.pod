@@ -169,28 +169,275 @@ you generate.)
 
 =head2 Building your data model
 
+As you might imagine by the fact that this tutorial application is
+named "MyWebLog", we're building a simple weblog application. In future
+tutorials, we'll add authentication, comments, RSS and Atom feeds.
+
+
+=head3 Posts
+
+Weblogs tend to center around posts, so it's no surprise that the first model
+we'll be creating is the C<post>.
+
+  # cd MyWeblog
+  # jifty model --name post
+  Writing file /tmp/MyWeblog/t/00-model-Post.t
+  Writing file /tmp/MyWeblog/lib/MyWeblog/Model/Post.pm
+  
+Great! Now you've got a "Post" model. Not that it models anything yet.
+
+Open  C<lib/MyWeblog/Model/Post.pm> in your favorite text editor.
+
+You should see something like this:
+
+  package MyWeblog::Model::Post::Schema;
+  use Jifty::DBI::Schema;
+  
+  # You column definitions go here.  See L<Jifty::DBI::Schema> for
+  # documentation about how to write column definitions.
+  
+  package MyWeblog::Model::Post;
+  use base qw/MyWeblog::Record/;
+  
+  # Your model-specific methods go here.
+  
+  1;
+  
+Now it's time to tell the model class about posts. We're going to start
+by giving our post a C<body> and a C<title> and a C<category>. (In a future 
+tutorial, we'll become fully folksonomy-compliant and upgrade that C<category>
+to a C<tags> table.
+
+Position your cursor right after:
+  
+  # You column definitions go here.  See L<Jifty::DBI::Schema> for
+  # documentation about how to write column definitions.
+
+Add the following lines:
+
+
+ column title =>
+        type is 'text',
+        label is 'Title',
+        default is 'Untitled post';
+
+ column body => 
+        type is 'text',
+        label is 'Content',
+        render_as 'Textarea';
+
+
+
+Save your model class.
+
 =head2 Setting up the database
+
+Ok. It's time to initialize MyWeblog's database. By default, Jifty
+sets up your application with the SQLite database engine.  If you'd
+rather use PostgreSQL or MySQL, you'll need to add some content
+to etc/jifty.yml. (Have a look at C<Jifty::Config> for a bit more
+information).
+
+# jifty schema --setup
+INFO - Generating SQL for application MyWeblog...
+INFO - Using MyWeblog::Model::Post
+INFO - Using Jifty::Model::Schema
+INFO - Set up version v0.0.1
 
 =head2 Starting the Jifty application server
 
-=head2 Exploring your new (default) application
+Ok. You have a working, if simplistic, application.  Start up a
+webserver and have a look around.  Be sure to check out the AJAX-enabled
+administrative UI, online documentation browser and the Pony.
+
+# ./bin/jifty/server
+INFO - You can connect to your server at http://localhost:8888/
+
 
 =head2 Building a user interface
 
-=head2 Deploying your application in production
+So, the administrative web does give you everything you need to work 
+with your application's data, but it's not much of a weblog.
+
+
+=head3 Posting
+
+Let's create a page to post a new weblog entry:
+
+ # cd web/templates/
+
+Open a new file called "post" in your text editor. Make it look like this:
+
+  <%init>
+  my $action = Jifty->web->new_action(class =>'CreatePost');
+  </%init>
+
+  <&|/_elements/wrapper, title => "Post to your weblog" &>
+  <% Jifty->web->form->start() %>
+  <% Jifty->web->form->next_page( url => '/') %>
+  <% $action->form_field('title') %>
+  <% $action->form_field('body') %>
+  <% Jifty->web->form->submit( label => 'Post' ) %>
+  <% Jifty->web->form->end() %>
+  </&>
+  
+
+=head3 Viewing
+
+t's really easy to get a "basic" listing of entries and a little bit
+more complex to get a pretty AJAXified paged list. We'll show you how
+to do both and you can decide which one works best for you.
+
+
+=head4 The quick and dirty way
+
+Open a new file called "index.html" in your text editor. (Your webserver
+will treat /index.html as the "default" page for your site).  Make it
+look like this:
+
+ <%init>
+ my $posts = Jifty::Model::PostCollection();
+ $posts->unlimit();
+ </%init>
+
+ <&|/_elements/wrapper, title => Jifty->config->framework('AppName') &>
+ <dl>
+ % while (my $post = $posts->next) {
+  <dt><%$post->title%></dt>
+  <dd><%$post->body%></dd>
+ % }
+ </dl>
+ </&>
+
+
+=head4 The complex way that gets you lots of cool toys
+ 
+The "complex way" involves using one of Jifty's advanced features:
+I<Page regions>. These regions let your application reload page sections
+indepentently, either using AJAX on modern, high end, browsers or regular GET requests
+with downlevel browsers like C<lynx>, C<w3m> or the browser on your mobile phone.
+
+The downside of this approach is that each separate region needs to live in
+its own I<fragment> file.
+
+So, we'll start off about the same:
+
+Open a new file called C<web/templates/index.html> in your text editor.  Fill it with this:
+
+ <&|/_elements/wrapper, title => Jifty->config->framework('AppName') &>
+
+ <% Jifty->web->region(name => "myweblog-posts",
+                       path => "/fragments/page_of_posts" %>
+ </&>
+
+
+If you're on the ball, you've probably already guessed that you need to
+create a file called C<web/templates/fragments/page_of_posts> and stuff it with this
+ 
+
+ <%args>
+ $page => 1
+ </%args>
+ <%init>
+ my $posts = MyWeblog::Model::PostCollection->new();
+ $posts->unlimit();
+ $posts->set_page_info( current_page => $page,
+                            per_page     => 25
+                           );
+ $m->out("No items found.") if ($posts->pager->total_entries == 0);
+ 
+ </%init>
+ % if ($posts->pager->last_page > 1) {
+    Page <% $page %> of <% $posts->pager->last_page %>
+ % }
+ <dl class="list">
+ % while (my $post = $posts->next) {
+  <dt><%$post->title%></dt>
+  <dd><%$post->body%></dd>
+ % }
+ </dl>
+ 
+ % if ($posts->pager->previous_page) {
+   <% Jifty->web->link( label => "Previous Page", onclick => { args => { page => $posts->pager->previous_page } } ) %>
+ % }
+ % if ($posts->pager->next_page) {
+   <% Jifty->web->link( label => "Next Page", onclick => { args => { page => $posts->pager->next_page } } ) %>
+ % }
+ 
+
+And now, fire up your Jifty webserver again. Go create a post by browsing
+B</post> on your webserver. 
+
+
+
+=head2 Navigation
+
+Of course, having to remember the URL to get to the posting page is
+a bit annoying.  To get a "Post" button in the menu, you'll need to
+override the default menus:
+
+Jifty's "default" menus live in C<_elements/nav> in the default
+application template (along with the Pony)
+
+For now, you'll need to override C<_elements/nav>. (We're working on
+ways to make this better.
+
+Inside your applications C<web/templates> directory, create a directory
+called C<_elements>.
+
+Inside C<_elements/nav>, open up a new file called C<nav> in your text
+editor and insert this content:
+
+ <%init>
+ my $top = Jifty->web->navigation;
+ $top->child( Home => url => "/", sort_order => 1 );
+ $top->child( Post  => url => "/post", label      => "Post", sort_order => 2);
+ return();
+ </%init>
+
+For more information about the menuing system, see the documentation
+in L<Jifty::Menu>.
+
+=head2
+
+And that's just about everything you need to get started building Jifty
+applications.  We're working hard to make Jifty even easier to use and
+to obsolute the "hard bits" of this tutorial as quickly as we can.
+
+Please join us on the C<jifty-devel> mailinglist to talk about how you're 
+using Jifty or what you find difficult or hard to use about it.
 
 =head1 GETTING HELP
 
 =head2 Joining the mailing list
 
+jifty-devel@lists.jifty.org is where we discuss how we're building Jifty, what
+we're having trouble with and so on.
+
+To join the list, send mail to C<jifty-devel-subscribe@lists.jifty.org>.
+
 =head2 Browsing the wiki
+
+We've got a wiki! (Actually, the wiki is Jifty's primary website)
+
+Please visit L<http://jifty.org>, browse and contribute.
+
+The wiki is powered by I<Wifty>, a Wiki built on Jifty. Its code is freely 
+available from the jifty subversion repository.
+
+=head1 REPORTING BUGS
+
+At this incredibly early stage in its life, please report bugs in Jifty
+to C<jifty-devel@lists.jifty.org>.
 
 
 =head1 FUTURE TUTORIALS
 
+=head2 Access Control and Security
+
 =head2 Upgrading your application's data model
 
-=head2 Access Control
+=head2 Deploying your application in production
 
 =head2 Web Services
 
