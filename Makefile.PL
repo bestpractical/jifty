@@ -12,6 +12,7 @@ requires('Clone');
 requires('Cwd');
 requires('Data::JavaScript::Anon');
 requires('Data::Page');
+requires('Digest::MD5');
 requires('DBD::SQLite');
 requires('Email::Send' => '1.99_01');
 requires('Email::Simple');
@@ -37,11 +38,13 @@ requires('Jifty::DBI');            # Jifty::DBI::Collection Jifty::DBI::Handle J
 requires('JSON');
 requires('Log::Log4perl');
 requires('Locale::Maketext::Simple');
+requires('Math::BigInt');
 requires('Module::Pluggable' => '2.95');
 requires('Module::Refresh');
 requires('Pod::Usage');
 requires('Pod::Simple::Text');
 requires('Scalar::Util');
+requires('String::Koremutake');
 requires('Test::Base');            # Test::Base::Filter
 requires('Test::More');
 requires('Test::HTML::Lint');
