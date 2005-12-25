@@ -221,22 +221,25 @@ Sets the session cookie
 =cut
 
 sub set_cookie {
-    my $self       = shift;
-    my $m          = Jifty->web->mason;
+    my $self = shift;
+    my $m    = Jifty->web->mason;
 
     my $cookie_name = $self->cookie_name;
-    my %cookies    = CGI::Cookie->fetch();
-                my $session_id =  $cookies{$cookie_name} ? $cookies{$cookie_name}->value() : undef;
+    my %cookies     = CGI::Cookie->fetch();
+    my $session_id
+        = $cookies{$cookie_name} ? $cookies{$cookie_name}->value() : undef;
+    my $cookie = new CGI::Cookie(
+        -name    => $cookie_name,
+        -value   => $self->get('_session_id'),
+        -expires => $self->get('_expires'),
+    );
 
-    if (   ( !$cookies{$cookie_name} ) or ( $self->expires  xor $cookies{$cookie_name}->expires ) ) {   
-        my $cookie = new CGI::Cookie(
-            -name    => $cookie_name,
-            -value   => $self->get('_session_id'),
-            -expires => $self->get('_expires'),
-        );
-
-        # XXX TODO might need to change under mod_perl
-        $m->cgi_request->headers_out->{'Set-Cookie'} = $cookie->as_string if ($m);
+    # XXX TODO might need to change under mod_perl
+    if ( not $cookies{$cookie_name}
+        or ( $cookies{$cookie_name} ne $cookie->as_string ) )
+    {
+        $m->cgi_request->headers_out->{'Set-Cookie'} = $cookie->as_string
+            if ($m);
     }
 }
 
