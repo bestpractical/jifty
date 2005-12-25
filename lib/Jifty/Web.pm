@@ -90,19 +90,7 @@ sub setup_session {
         }
     }
 
-    if ( !$cookies{$cookiename} ) {
-        my $cookie = new CGI::Cookie(
-            -name  => $cookiename,
-            -value => $session{_session_id},
-            -path  => '/',
-        );
-        # XXX TODO might need to change under mod_perl
-         
-        $m->cgi_request->headers_out->{'Set-Cookie'} = $cookie->as_string if ($m);
-
-    }
     $self->session(\%session);
-
 
     $self->restore_state_from_session($self->request->notes_id) if ($self->request and $self->request->notes_id);
     return ();
@@ -122,6 +110,18 @@ sub save_session {
     $self->session->{'i'}++;
 } 
 
+=head2 session_expires [DURATION]
+
+Gets or sets how long the session cookie lasts.  C<DURATION> should be
+a relative offset like C<+3M> for "3 months" or C<+1y> for "3 years"
+
+=cut
+
+sub session_expires {
+    my $self = shift;
+    $self->session->{'_expires'} = shift if @_;
+    return $self->session->{'_expires'};
+}
 
 =head2 session
 
@@ -129,6 +129,29 @@ Returns the current session's hash. In a regular user environment, it persists, 
 stop that by handing it a regular hash to use.
 
 =cut
+
+=head2 set_cookie
+
+Sets the session cookie
+
+=cut
+
+sub set_cookie {
+    my $self       = shift;
+    my $m          = $self->mason;
+    my %cookies    = CGI::Cookie->fetch();
+    my $cookiename = "JIFTY_SID_" . ($ENV{'SERVER_PORT'} || 'NOPORT');
+    my $session    = $self->session;
+    if ( (!$cookies{$cookiename}) or ($session->{_expires} xor $cookies{$cookiename}->expires) ) {
+        my $cookie = new CGI::Cookie(
+            -name    => $cookiename,
+            -value   => $session->{_session_id},
+            -expires => $session->{_expires},
+        );
+        # XXX TODO might need to change under mod_perl
+        $m->cgi_request->headers_out->{'Set-Cookie'} = $cookie->as_string if ($m);
+    }
+}
 
 =head2 current_user [USER]
 
@@ -158,8 +181,6 @@ To restore the original value, set temporary_current_user to undef.
 =cut
 
 =head2 handle_request
-
-
 
 This method sets up a current session, prepares a Jifty::Request object
 and loads page-specific actions.  Then it handles the meat of the
@@ -207,6 +228,7 @@ sub handle_request {
         }
     }
 
+    $self->set_cookie;
     $self->redirect if $self->redirect_required;
 } 
 
