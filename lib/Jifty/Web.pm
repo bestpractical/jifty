@@ -410,7 +410,7 @@ sub redirect_required {
     my $self = shift;
 
     if (   $self->next_page and (($self->next_page ne $self->mason->request_comp->path ) 
-                                or $self->request->next_page_state_variables))
+                                or $self->request->next_page_state_variables or $self->request->state_variables))
     {
         return (1);
 
@@ -435,14 +435,13 @@ sub redirect {
     my $self = shift;
     my $page = shift || $self->next_page;
 
-
     my $uuid = $self->save_state_to_session();
 
     $page .= ( $page =~ /\?/ ? ';' : '?' )
         . join(
         ';',
        (map  { "J:V-" . $_->key . "=" . $_->value }
-            $self->request->next_page_state_variables )
+            $self->request->next_page_state_variables, $self->request->state_variables )
         ,
         "J:N=$uuid");
 

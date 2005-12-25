@@ -286,7 +286,10 @@ just done.
 sub unpost {
     my $self = shift;
 
-    $self->next_page( url => $ENV{REQUEST_URI} );
+    my $url = $ENV{REQUEST_URI};
+    $url =~ s/\?.*//g;
+    
+    $self->next_page( url => $url );
 }
 
 1;
