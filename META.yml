@@ -6,7 +6,7 @@ tests: t/*.t t/*/t/*.t
 requires:
   perl: 5.8.3
   Apache::Session: 0
-  App::CLI: 0
+  App::CLI: 0.02
   Cache::Cache: 0
   Carp: 0
   CGI::Cookie: 0

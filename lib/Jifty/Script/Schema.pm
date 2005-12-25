@@ -118,7 +118,8 @@ sub probe_database_existence {
 
 =head2 create_all_tables
 
-Create all tables for this application's models. Generally, this happens on installation.
+Create all tables for this application's models. Generally, this happens on
+installation.
 
 =cut
 
@@ -379,7 +380,6 @@ Jifty::Script::Schema - Create SQL to update or create your Jifty app's tables
 
 =head1 SYNOPSIS
 
-  
   jifty schema --setup      Creates or updates your application's database tables
 
  Options:
@@ -399,7 +399,6 @@ I<ProjectRoot> defaults to the current directory.
 
 =over 8
 
-
 =item B<--print>
 
 Rather than actually running the database create/update/drop commands, Prints the commands to standard output
@@ -415,7 +414,6 @@ Send DROP DATABASE command, if used in conjunction with B<--create>
 =item B<--setup>
 
 Actually set up your app's tables (create or update as needed)
-
 
 =item B<--include> I<libpath>, B<-I> I<libpath>
 

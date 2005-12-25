@@ -66,7 +66,7 @@ sub run {
 package @{[$appname]}::Model::@{[$model]}::Schema;
 use Jifty::DBI::Schema;
 
-# You column definitions go here.  See L<Jifty::DBI::Schema> for
+# Your column definitions go here.  See L<Jifty::DBI::Schema> for
 # documentation about how to write column definitions.
 
 package @{[$appname]}::Model::@{[$model]};
