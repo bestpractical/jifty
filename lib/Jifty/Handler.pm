@@ -9,7 +9,7 @@ Jifty::Handler - Methods related to the Mason handler
 
 =head1 SYNOPSIS
 
-  use Jifty::Handler
+  use Jifty::Handler;
 
   my $cgihandler = HTML::Mason::CGIHandler->new( Jifty::Handler->mason_config );
 
@@ -18,15 +18,19 @@ Jifty::Handler - Methods related to the Mason handler
 
 =head1 DESCRIPTION
 
-L<Jifty::Handler> provides methods required to deal with Mason CGI handlers.
-Note that at this time there are no objects with L<Jifty::Handler> as a class.
+L<Jifty::Handler> provides methods required to deal with Mason CGI
+handlers.  Note that at this time there are no objects with
+L<Jifty::Handler> as a class.
 
 =head2 mason_config
 
-Returns our Mason config.  We use C<Jifty::MasonInterp>
-as our Mason interpreter, and have a component root as specified in the C<Web/TemplateRoot> framework
-configuration variable (or C<html> by default).  All interpolations are HTML-escaped by default, and
-we use the fatal error mode.
+Returns our Mason config.  We use C<Jifty::MasonInterp> as our Mason
+interpreter, and have a component root as specified in the
+C<Web/TemplateRoot> framework configuration variable (or C<html> by
+default).  Additionally, we set up a C<jifty> component root, as
+specified by the C<Web/DefaultTemplateRoot> configuration.  All
+interpolations are HTML-escaped by default, and we use the fatal error
+mode.
 
 =cut
 
@@ -49,8 +53,7 @@ sub mason_config {
 =head2 cleanup_request
 
 Dispatchers should call this at the end of each request, as a class method.
-
-Currently, tries to flush L<Jifty::DBI>'s cache. 
+It flushes the session to disk, as well as flushing L<Jifty::DBI>'s cache. 
 
 =cut
 

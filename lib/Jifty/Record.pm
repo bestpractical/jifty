@@ -10,8 +10,7 @@ Jifty::Record - Represents a Jifty object that lives in the database.
 =head1 DESCRIPTION
 
 C<Jifty::Record> is a kind of L<Jifty::Object> that has a database
-representation; that is, it is also a L<Jifty::DBI::Record>
-as well.
+representation; that is, it is also a L<Jifty::DBI::Record> as well.
 
 =cut
 
@@ -46,8 +45,6 @@ Override's L<Jifty::DBI::Record> in these ways:
 =item Automatically load by id after create
 
 =item actually stop creating the new record if a field fails to validate.
-
-=item calls C<validate_I<foo>> instead of C<ValidateI<Foo>> 
 
 =back
 
@@ -85,8 +82,8 @@ sub create {
 
 =head2 load_or_create
 
-Attempts to load a record with the named parameters passed in.
-If it can't do so, it creates a new record.
+Attempts to load a record with the named parameters passed in.  If it
+can't do so, it creates a new record.
 
 =cut
 
@@ -103,7 +100,6 @@ sub load_or_create {
 }
 
 
-
 =head2 current_user_can RIGHT [, ATTRIBUTES]
 
 Should return true if the current user (C<$self->current_user>) is
@@ -115,7 +111,8 @@ allowed to do I<RIGHT>.  Possible values for I<RIGHT> are:
 
 Called just before an object's C<create> method is called, as well as
 before parameter validation.  It is also passed the attributes that
-the object is trying to be created with.
+the object is trying to be created with, as the attributes aren't on
+the object yet to be inspected.
 
 =item read
 
@@ -131,22 +128,11 @@ Called before the object is deleted.
 
 =back
 
-=cut
-
-=head2 current_user_can RIGHT
-
-Does the current user have the right "RIGHT" for this object.
-
-The default implementation returns true if the current user is a superuser
-or a boostrap user.
-
-
-If the user is looking to delegate the access control decision to another 
-object (by creating a C<delegate_current_user_can> subroutine), it hands off
-to that routine. 
-
-Otherwise, it returns false.
-
+The default implementation returns true if the current user is a
+superuser or a boostrap user.  If the user is looking to delegate the
+access control decision to another object (by creating a
+C<delegate_current_user_can> subroutine), it hands off to that
+routine.  Otherwise, it returns false.
 
 =cut
 
@@ -195,7 +181,7 @@ sub check_read_rights { return shift->current_user_can('read', field => shift) }
 
 =head2 check_update_rights
 
-Internal helper to call L</current_user_can> with C<edit>.
+Internal helper to call L</current_user_can> with C<update>.
 
 =cut
 
@@ -204,7 +190,7 @@ sub check_update_rights { return shift->current_user_can('update', @_) }
 
 =head2 check_delete_rights
 
-Internal helper to call L</current_user_can> with C<admin>.
+Internal helper to call L</current_user_can> with C<delete>.
 
 =cut
 

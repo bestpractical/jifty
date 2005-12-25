@@ -16,7 +16,8 @@ Jifty::LetMe - A way to expose single-link URLs to your applications
 
 =head2 new
 
-Create a new "LetMe" authentication object
+Create a new "LetMe" authentication object; it takes no parameters.
+It calls L</_init> to do any initialization.
 
 =cut
 
@@ -32,26 +33,24 @@ sub new {
 
 =head2 _init @_
 
-Easy initialization for local subclasses
+Called with whatever L</new> was called with.  By default, does nothing.
 
 =cut
-
 
 sub _init { return shift }
 
 =head2 user
 
-Contains an app-specific "user" object that one can call 
+Contains an app-specific "user" object.
 
 =cut
 
-
-
 =head2 currentuser_from_token
 
-If the user has presented a valid token, returns an (app-specific subclass of the) L<Jifty::CurrentUser> 
-object for the  user who has the email address in $self->email.
-If no user has that email address, returns undef.
+If the user has presented a valid token, returns an (app-specific
+subclass of the) L<Jifty::CurrentUser> object for the user who has the
+email address in $self->email.  If no user has that email address,
+returns undef.
 
 =cut
 
@@ -65,8 +64,8 @@ sub validated_current_user {
 
 =head2 _user_from_email ADDRESS
 
-Returns an (app-specific subclass of the) L<Jifty::CurrentUser> object for the  user 
-who has the email address ADDRESS.
+Returns an (app-specific subclass of the) L<Jifty::CurrentUser> object
+for the user who has the email address I<ADDRESS>.
 
 =cut
 
@@ -127,15 +126,11 @@ mylongusername@example.com/update_task/23/until/20050101/bekidrikufryvagygefuba
 
 into 
 
-     email => mylongusername@example.com,
+      email => mylongusername@example.com,
       token => 'update_task/23'
       until => 20050101,
       checksum_provided => bekidrikufryvagygefuba
  
-
-
-
-
 =cut
 
 sub from_token {
@@ -162,17 +157,17 @@ trip cleanly with from_token
 
 =cut
 
+sub as_token {
+    my $self = shift;
+    $self->_generate_token( email => $self->email );
+}
+
 =head2 as_encoded_token
 
 A variant of as_token that encodes the user's email address suitably
 for passing in a URL
 
 =cut
-
-sub as_token {
-    my $self = shift;
-    $self->_generate_token( email => $self->email );
-}
 
 sub as_encoded_token {
     my $self = shift;
@@ -186,18 +181,17 @@ sub _generate_token {
         $args{'email'},
         $self->path,
         %{$self->args},
-        (defined $self->until ? ( 'until', $self->until ) : () ),
+        (defined $self->until ? ( 'until', $self->until ) : () ), #?
         $self->generate_checksum  
         );
 
 }
 
 
-
-
 =head2 as_url
 
-Returns the fully qualified URL for this LetMe. It's composed of Jifty->web->url, $self->base_path and $self->as_encoded_token
+Returns the fully qualified URL for this LetMe. It's composed of
+Jifty->web->url, L</base_path> and L</as_encoded_token>
 
 =cut
 
@@ -210,8 +204,8 @@ sub as_url {
 
 =head2 base_path
 
-By default, all  "LetMe" actions live at URLs under '/let' inside your application.
-Override this subroutine to change that.
+By default, all "LetMe" actions live at URLs under '/let' inside your
+application.  Override this subroutine to change that.
 
 By default, it returns '/let'
 
@@ -257,8 +251,8 @@ sub validate {
 
 =head2 _correct_checksum_provided
 
-Returns true if the checksum the user provided is correct. Doesn't actually
-do much input checking. You want to call "validate"
+Returns true if the checksum the user provided is correct. Doesn't
+actually do much input checking. You want to call "validate"
 
 =cut
 

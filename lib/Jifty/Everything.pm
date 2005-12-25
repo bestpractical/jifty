@@ -5,7 +5,7 @@ package Jifty::Everything;
 
 =head1 NAME
 
-Jifty::Everything - Load all of the Jifty modules
+Jifty::Everything - Load all of the important Jifty modules at once.
 
 =cut
 
@@ -66,4 +66,3 @@ Module::Pluggable->import(search_path => ['Jifty::Web::Form::Field'], require =>
 __PACKAGE__->plugins;
 
 1;
-

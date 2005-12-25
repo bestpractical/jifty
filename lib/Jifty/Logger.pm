@@ -20,13 +20,14 @@ use base qw/Jifty::Object/;
 
 =head1 METHODS
 
-=head2 new  COMPONENT
+=head2 new COMPONENT
 
 This class method instantiates a new C<Jifty::Logger> object. This
 object deals with logging for the system.
 
 Takes an optional name for this Jifty's logging "component" - See
-L<Log4Perl> for some detail about what that is.
+L<Log4Perl> for some detail about what that is.  It sets up a "warn"
+handler which logs warnings to the specified component.
 
 =cut
 

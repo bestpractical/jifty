@@ -20,7 +20,7 @@ request.  They can also store arbitrary code to be run when the
 continuation is called.
 
 Continuations can also be arbitrarily nested.  This means that
-returning from one continuation may drop you into the continuation
+returning from one continuation will drop you into the continuation
 that is one higher in the stack.
 
 Continuations are generally created just before their request would
@@ -53,27 +53,44 @@ C<PARAMHASH>:
 
 =over
 
-=item request
-
-The L<Jifty::Request> object to save away.  This parameter is required.
-
 =item parent
 
-The id of a continuation that this continuation should return to.
+A L<Jifty::Continuation> object, or the C<id> of one.  This represents
+the continuation that this continuation should return to when it is
+called.  Defaults to the current continuation of the current
+L<Jifty::Request>.
+
+=item request
+
+The L<Jifty::Request> object to save away.  Defaults to an empty
+L<Jifty::Request> object.
 
 =item response
 
 The L<Jifty::Response> object that will be loaded up when the
-continuation is run.  Most of the time, the response isn'at stored in
+continuation is run.  Most of the time, the response isn't stored in
 the continuation, since the continuation was saved away B<before> the
 actions got run.  In the case when continuations are used to preserve
-state across a redirect, however, we tuck the L<Jifty::Result> value
-of the previous request into the continuation as well.
+state across a redirect, however, we tuck the L<Jifty::Response> value
+of the previous request into the continuation as well.  Defaults to an
+empty L<Jifty::Response> object.
 
 =item notes
 
 An anonymous hash of the contents of the
 L<HTML::Mason::Request/notes>.
+
+=item code
+
+An optional subroutine reference to evaluate when the continuation is
+called.
+
+=item clone
+
+There is a interface to support continuation "cloning," a process
+which is useful to creating multi-page wizards and the like.  However,
+this feature is still very much in flux; the documentation is waiting
+for the interface to settle down a bit before being written.
 
 =back
 
@@ -84,10 +101,10 @@ sub new {
     my $self = bless { notes => {}}, $class;
 
     my %args = (
-                request  => Jifty::Request->new(),
-                notes    => Jifty->web->mason->notes,
-                response => Jifty::Response->new(),
                 parent   => Jifty->web->request->continuation,
+                request  => Jifty::Request->new(),
+                response => Jifty::Response->new(),
+                notes    => Jifty->web->mason->notes,
                 code     => undef,
                 clone    => undef,
                 @_

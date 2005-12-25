@@ -9,7 +9,8 @@ Jifty::Handle -- A database handle class for Jifty
 
 =head1 DESCRIPTION
 
-A wrapper around Jifty::DBI::Handle to do our special stuff
+A wrapper around Jifty::DBI::Handle which is aware of versions in the
+database
 
 =cut
 
@@ -20,16 +21,15 @@ our @ISA;
 
 =head2 new PARAMHASH
 
-This class method instantiates a new C<JiftyHandle> object. This object deals
-with  database handles for the system.
+This class method instantiates a new L<Jifty::Handle> object. This
+object deals with database handles for the system.  After it is
+created, it will be a subclass of L<Jifty::DBI::Handle>.
 
 =cut
-
 
 # Setup database handle based on config data
 sub new {
     my $class = shift;
-
 
     if (Jifty->config->framework('Database')->{Driver} eq 'Oracle') {
         $ENV{'NLS_LANG'} = "AMERICAN_AMERICA.AL32UTF8";
@@ -46,7 +46,8 @@ sub new {
 
 =head2 connect ARGS
 
-A subclass method of Jifty::DBI::Handle that defaults to our default DB config
+Like L<Jifty::DBI>'s connect method but pulls the name of the database
+from the current L<Jifty::Config>.
 
 =cut
 

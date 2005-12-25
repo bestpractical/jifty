@@ -15,17 +15,17 @@ Jifty::CurrentUser
 =head1 DESCRIPTION
 
 Most applications need to have a concept of who the current user
-is. So Jifty supports this concept internally. Every object (except the
-CurrentUser itself) is instantiated with a L<Jifty::CurrentUser> subclass
-as a parameter to the creator.
-
+is. So Jifty supports this concept internally. Every L<Jifty::Object>
+(which most things in Jifty are descended from) except the CurrentUser
+itself is instantiated with a L<Jifty::CurrentUser> subclass as a
+parameter to the creator.
 
 This class describes (and implements a trivial version) of the access
 control API that a Jifty application needs to implemenet to provide
 user-based access control
 
-It's generally expected that your application will override this class if you
-want any sort of access control.
+It's generally expected that your application will override this class
+if you want any sort of access control.
 
 =cut
 
@@ -33,7 +33,6 @@ want any sort of access control.
 
 Creates a new L<Jifty::CurrentUser> object.  Calls L<_init>, an
 app-specific initialization routine.
-
 
 =cut
 
@@ -61,40 +60,6 @@ sub superuser {
     return $self;
 }
 
-=head2 id
-
-Returns C<0> if we don't have a user_object.  When we I<do> have a
-user_object, return that user's id.  
-
-=cut
-
-sub id {
-    my $self = shift;
-    if ($self->user_object) {
-        return ($self->user_object->id());
-    } else {
-        return '0';
-    }
-
-}
-
-=head2 current_user
-
-Every class in a Jifty application has a L</current_user>
-method that returns the user who's doing things, in the form of a
-L<Jifty::CurrentUser> object a subclass thereof.  For the somewhat
-obvious reason that you can't actually lift yourself up by tugging
-on your own bootstraps, a Jifty::CurrentUser object return I<itself>
-rather than another C<Jifty::CurrentUser object>
-
-=cut
-
-sub current_user {
-    my $self = shift;
-    return $self;
-}
-
-
 =head2 user_object 
 
 This gets or sets your application's user object for the current
@@ -119,26 +84,49 @@ Example:
 
 =cut
 
+=head2 id
+
+Returns C<0> if we don't have a L<user_object>.  When we I<do> have a
+user_object, return that user's id.
+
+=cut
+
+sub id {
+    my $self = shift;
+    if ($self->user_object) {
+        return ($self->user_object->id());
+    } else {
+        return '0';
+    }
+
+}
+
+=head2 current_user
+
+Every class in a Jifty application has a L</current_user> method that
+returns the user who's doing things, in the form of a
+L<Jifty::CurrentUser> object a subclass thereof.  For the somewhat
+obvious reason that you can't actually lift yourself up by tugging on
+your own bootstraps, a L<Jifty::CurrentUser> object return I<itself>
+rather than another C<Jifty::CurrentUser object>
+
+=cut
+
+sub current_user {
+    my $self = shift;
+    return $self;
+}
 
 =head1 AUTHENTICATION AND AUTHORIZATION
 
-To use Jifty's built-in authentication and authorization system,
-your user objects need to implement a couple of API methods:
-
-=over
-
-=item username
-
-=item password_is
-
-=item auth_token
-
-=back
+To use Jifty's built-in authentication and authorization system, your
+user objects need to implement the following API methods:
 
 =head2 password_is STRING
 
 Your L<user_object> should have a method called C<password_is> which
-returns true if passed a string that matches the user's current password.
+returns true if passed a string that matches the user's current
+password.
 
 =cut
 
@@ -151,6 +139,8 @@ sub password_is {
 
 =head2 username
 
+Return a string which identifies the user in some way.
+
 =cut
 
 sub username {
@@ -161,6 +151,9 @@ sub username {
 
 =head2 auth_token
 
+Return a string which proves that the user is who they claim to be.  A
+simple way to do this, for example, would be to hash the username and
+some server-side secret.
 
 =cut
 
@@ -171,25 +164,24 @@ sub auth_token {
 
 }
 
-
 =head1 RIGHTS AND ACCESS CONTROL
 
-In any system that relies on users' rights to perform actions, it's sometimes
-necessary to walk around the access control system. There are two primary
-cases for this:
+In any system that relies on users' rights to perform actions, it's
+sometimes necessary to walk around the access control system. There
+are two primary cases for this:
 
 =cut
 
 =head2 is_superuser 
 
-Sometimes, while the system is running, you need to do something on behalf
-of a user that they shouldn't be able to do themselves. Maybe you need
-to let a new user sign up for your service (You don't want to let any
-user create more users, right?) or to write an entry to a changelog. If
-the user has the C<is_superuser> flag set, things still get read from
-the database, but the user can walk around any and all ACL checks. Think
-"Neo" from the Matrix. The superuser can walk through walls, stop bullets
-and so on.
+Sometimes, while the system is running, you need to do something on
+behalf of a user that they shouldn't be able to do themselves. Maybe
+you need to let a new user sign up for your service (You don't want to
+let any user create more users, right?) or to write an entry to a
+changelog. If the user has the C<is_superuser> flag set, things still
+get read from the database, but the user can walk around any and all
+ACL checks. Think "Neo" from the Matrix. The superuser can walk
+through walls, stop bullets and so on.
 
 
 =cut
@@ -197,18 +189,18 @@ and so on.
 =head2 is_bootstrap_user
 
 When your system is first getting going, you can't assume
-B<anything>. There probably aren't any rights in the system to check. A
-user with the L</is_bootstrap_user> flag set is a self-reliant
-superuser. Nothing is read from the database, no ACLs are checked.
-You probably never need to do anything with bootstrap users.
+B<anything>. There probably aren't any rights in the system to
+check. A user with the L</is_bootstrap_user> flag set is a
+self-reliant superuser. Nothing is read from the database, no ACLs are
+checked.  You probably never need to do anything with bootstrap users.
 
 =cut
 
 
 =head2 current_user_can ACTION
 
-For a currentuser object, the current user can always C<read>, but never
-write or do anything else.
+For a current user object, the current user can always C<read>, but
+never write or do anything else.
 
 =cut
 

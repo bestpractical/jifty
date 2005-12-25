@@ -13,6 +13,10 @@ Jifty::Model::Schema - Tracks in-db schema version
 
 =head1 DESCRIPTION
 
+Every Jifty application automatically inherits this table, which
+describes what version of the schema is in the database currently.
+This allows Jifty to smartly upgrade between schema versions.
+
 =cut
 
 package Jifty::Model::Schema::Schema;
@@ -38,7 +42,6 @@ sub table { '_db_version' }
 
 sub _init { } # we really don't need a current_user for this
 
-
 =head2 in_db
 
 Returns the version of the schema that is stored in the database, as a
@@ -61,7 +64,7 @@ sub in_db {
 Updates the version number of the schema that is stored in the
 database; VERSION should be a version object.  Note that this does not
 actually update the tables and column themselves, merely the number
-that is recorded as the current version.  See L<Jifty::Script::Schema>
+that is recorded as the current version!  See L<Jifty::Script::Schema>
 for the program that updates schemas.
 
 =cut

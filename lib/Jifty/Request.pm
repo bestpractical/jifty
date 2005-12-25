@@ -24,13 +24,11 @@ These can be specified in several ways:
 
 (which contains specially formatted inputs and hidden arguments),
 
-        
-=item (eventually) via the Web Services interface 
+=item via the Web Services interface 
 
-by sending XML or YAML to a defined URL on the server
+by POST'ing YAML or JSON to a defined URL on the server
 
 =item (eventually) extra parameters in the path part of the URL
-
 
 =back
 
@@ -41,23 +39,14 @@ Each Jifty::Request contains several types of information:
 
 =over 4
 
-=item credentials
-
-Generally this includes the current user object, if one exists.  Some access
-mechanisms may specify credentials on each HTTP request and some, like the
-standard web user interface, may use a "session" mechanism.
-
-(The exact information used here is application-specified.)
-
-(Not yet implemented.)
-
 =item actions
 
-A request may contain one or more actions; these are represented as Jifty::Request::Action
-objects. Each action request has a moniker, a set of submitted arguments, and an
-implementation class. An action request can either be active, in which case it is a request
-for the action to be executed; otherwise, it merely provides default values for an action
-in the response with the same moniker.  (Not that we've defined responses yet.)
+A request may contain one or more actions; these are represented as
+Jifty::Request::Action objects. Each action request has a
+L<moniker|Jifty::Glossary/moniker>, a set of submitted
+L<arguments|Jifty::Glossary/arguments>, and an implementation
+class. For an action to actually be run, it must be marked "active;"
+otherwise it is just along for the ride.
 
 =item request options
 
