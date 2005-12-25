@@ -127,9 +127,8 @@ Returns the current L<Jifty::Web> object.
 =cut
 
 sub web {
-
     $HTML::Mason::Commands::JiftyWeb ||= Jifty::Web->new();
-    return $HTML::Mason::Commands::JiftyWeb;;
+    return $HTML::Mason::Commands::JiftyWeb;
 } 
 
 =head1 AUTHOR
