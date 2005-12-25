@@ -67,8 +67,8 @@ sub Jifty::ClassLoader::INC {
     {
 
         # Auto-create Collection classes
-        return undef
-            unless $self->{models}{ $ApplicationClass . "::Model::" . $2 };
+        my $record_class = $ApplicationClass . "::Model::" . $2;
+        return undef unless $self->{models}{$record_class} || $record_class->require();
 
         return $self->return_class( "package " . $ApplicationClass . "::Model::" . $2 . "Collection;\n"."use base qw/@{[$ApplicationClass]}::Collection/;\n"." 1;"
         );
