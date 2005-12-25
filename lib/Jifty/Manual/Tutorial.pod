@@ -1,0 +1,40 @@
+=head1 NAME
+
+Jifty::Manual::Tutorial -- Zero to Jifty in a Jiffy
+
+=head1 DESCRIPTION
+
+This tutorial should give you everything you need to 
+build your first application with Jifty.
+
+=cut
+
+=head1 HOW TO
+
+=head2 The requirements
+
+=head2 Installing Jifty
+
+=head2 Setting up the Scaffolding
+
+=head2 Building your data model
+
+=head2 Setting up the database
+
+=head2 Starting the Jifty application server
+
+=head2 Exploring your new (default) application
+
+=head2 Building a user interface
+
+=head2 Deploying your application in production
+
+=head1 FUTURE TUTORIALS
+
+=head2 Access Control
+
+=head2 Web Services
+
+=head2 Continuations in depth
+
+=cut
