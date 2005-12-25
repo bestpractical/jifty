@@ -1,21 +1,3 @@
-=head3 Configuration
-
-This method will load the main configuration file for the application
-and use that to find a vendor configuration file. (If it doesn't find
-a framework variable named 'VendorConfig', it will use the
-C<JIFTY_VENDOR_CONFIG> environment variable.
-
-After loading the vendor configuration file (if it exists), the
-framework will look for a site configuration file, specified in either
-the framework's C<SiteConfig> or the C<JIFTY_SITE_CONFIG> environment
-variable.
-
-Values in the site configuration file clobber those in the vendor
-confjguration file. Values in the vendor configuration file clobber
-those in the application configuration file.
-
-=cut
-
 use warnings;
 use strict;
 
@@ -53,36 +35,9 @@ __PACKAGE__->mk_accessors(qw/stash/);
 
 =head2 new PARAMHASH
 
-This class method instantiates a new C<Jifty> object. This object deals
-with configuration files, logging and database handles for the system.
-
-=head3 Arguments
-
-=over
-
-=item no_handle
-
-If this is set to true, Jifty will not connect to a database.  Only use
-this if you're about to drop the database or do something extreme like
-that; most of Jifty expects the handle to exist.  Defaults to false.
-
-=back
-
-=head3 Configuration
-
-This method will load the main configuration file for the application
-and use that to find a vendor configuration file. (If it doesn't find
-a framework variable named 'VendorConfig', it will use the
-C<JIFTY_VENDOR_CONFIG> environment variable.
-
-After loading the vendor configuration file (if it exists), the
-framework will look for a site configuration file, specified in either
-the framework's C<SiteConfig> or the C<JIFTY_SITE_CONFIG> environment
-variable.
-
-Values in the site configuration file clobber those in the vendor
-configuration file. Values in the vendor configuration file clobber
-those in the application configuration file.
+This class method instantiates a new C<Jifty::Config> object. This
+object deals with configuration files.  After it is created, it calls
+L</load>.
 
 =cut
 
@@ -94,62 +49,32 @@ sub new {
     return $self;
 }
 
-=head2 framework VARIABLE
+=head2 load
 
-Get the framework configuration variable C<VARIABLE>.  
+First, several defaults are assumed based on the name of the
+application -- see L</guess>.  Then, Jifty loads the main
+configuration file for the application, looking for the
+C<JIFTY_CONFIG> environment variable or C<etc/config.yml> under the
+application's base directory.
+
+It uses the main contifuration file to find a vendor configuration
+file -- if it doesn't find a framework variable named 'VendorConfig',
+it will use the C<JIFTY_VENDOR_CONFIG> environment variable.
+
+After loading the vendor configuration file (if it exists), the
+framework will look for a site configuration file, specified in either
+the framework's C<SiteConfig> or the C<JIFTY_SITE_CONFIG> environment
+variable.
+
+Values in the site configuration file clobber those in the vendor
+configuration file. Values in the vendor configuration file clobber
+those in the application configuration file.
 
 If the value begins and ends with %, converts it with
-C<Jifty::Util/absolute_path> to an absolute path.  (This is unnecessary for most
-configuration variables which specify files, but is needed for variables such as
-C<MailerArgs> that only sometimes specify files.)
-
-=cut
-
-sub framework {
-    my $self = shift;
-    my $var  = shift;
-
-    $self->_get( 'framework', $var );
-}
-
-=head2 app VARIABLE
-
-Get the application configuration variable C<VARIABLE>.
-
-If the value begins and ends with %, converts it with
-C<Jifty::Util/absolute_path> to an absolute path.  (This is unnecessary for most
-configuration variables which specify files, but is needed for variables such as
-C<MailerArgs> that only sometimes specify files.)
-
-=cut
-
-sub app {
-    my $self = shift;
-    my $var  = shift;
-
-    $self->_get( 'application', $var );
-}
-
-sub _get {
-    my $self    = shift;
-    my $section = shift;
-    my $var     = shift;
-
-    $self->stash->{$section}->{$var};
-}
-
-=head2 load 
-
-Loads all configuration files. See the docs for C<new> to see how this
-works.
-
-=over
-
-
-It looks for ENV{'JIFTY_CONFIG'} or  etc/config.yml in this 
-app's base directory.
-
-=back
+C<Jifty::Util/absolute_path> to an absolute path.  (This is
+unnecessary for most configuration variables which specify files, but
+is needed for variables such as C<MailerArgs> that only sometimes
+specify files.)
 
 =cut
 
@@ -162,7 +87,7 @@ sub load {
 
     my $app;
 
-# Override anything in the default guessed config with anything from a config file
+    # Override anything in the default guessed config with anything from a config file
     if ( -f $file and -r $file ) {
         $app = $self->load_file($file);
         $app = Hash::Merge::merge( $self->stash, $app );
@@ -195,6 +120,41 @@ sub load {
     $self->$Jifty::Config::postload()
       if $Jifty::Config::postload;
 }
+
+=head2 framework VARIABLE
+
+Get the framework configuration variable C<VARIABLE>.  
+
+=cut
+
+sub framework {
+    my $self = shift;
+    my $var  = shift;
+
+    $self->_get( 'framework', $var );
+}
+
+=head2 app VARIABLE
+
+Get the application configuration variable C<VARIABLE>.
+
+=cut
+
+sub app {
+    my $self = shift;
+    my $var  = shift;
+
+    $self->_get( 'application', $var );
+}
+
+sub _get {
+    my $self    = shift;
+    my $section = shift;
+    my $var     = shift;
+
+    $self->stash->{$section}->{$var};
+}
+
 
 =head2 guess
 
@@ -256,12 +216,7 @@ sub load_file {
     return $hashref;
 }
 
-=head2 _expand_relative_paths
-
-Does a DFS, turning all leaves that look like %paths% into absolute paths.
-
-=cut
-
+# Does a DFS, turning all leaves that look like C<%paths%> into absolute paths.
 sub _expand_relative_paths {
     my $self  = shift;
     my $datum = shift;

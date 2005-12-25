@@ -1,11 +1,19 @@
 =for properties
 
-default_value
+constructor
 canonicalizer
-mandatory
-validator
-valid_values
 available_values
+ajax_validates
+ajax_autocomplete
+
+default_value
+valid_values
+validator
+render_as
+label
+hints
+length
+mandatory
 
 
 =cut

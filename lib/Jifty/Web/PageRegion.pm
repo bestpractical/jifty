@@ -16,7 +16,7 @@ can be updated via AJAX or via query parameters.
 
 use base qw/Jifty::Object Class::Accessor/;
 __PACKAGE__->mk_accessors(qw(name default_path default_arguments qualified_name parent region_wrapper));
-use Data::JavaScript::Anon;
+use Jifty::JSON;
 
 =head2 new PARAMHASH
 
@@ -222,7 +222,7 @@ sub render {
     if ($self->region_wrapper) {
         $result .= qq|<script type="text/javascript">\n|;
         $result .= qq|new Region('|. $self->qualified_name .qq|',|;
-        $result .= Data::JavaScript::Anon->anon_dump(\%arguments);
+        $result .= Jifty::JSON::objToJson(\%arguments, {quotapos => 1});
         $result .= qq|,'|. $self->path . qq|');\n|;
         $result .= qq|</script>|;
         $result .= qq|<div id="region-| . $self->qualified_name . qq|">|;

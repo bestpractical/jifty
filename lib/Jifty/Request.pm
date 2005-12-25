@@ -6,7 +6,7 @@ package Jifty::Request;
 use base qw/Jifty::Object Class::Accessor Clone/;
 __PACKAGE__->mk_accessors(qw(arguments just_validating path continuation));
 
-use JSON;
+use Jifty::JSON;
 use YAML;
 
 =head1 NAME
@@ -195,7 +195,7 @@ sub fill {
     # Check it for something appropriate
     if ($data) {
         if ($ct eq "text/x-json") {
-            return $self->from_data_structure(JSON::jsonToObj($data));
+            return $self->from_data_structure(Jifty::JSON::jsonToObj($data));
         } elsif ($ct eq "text/x-yaml") {
             return $self->from_data_structure(YAML::Load($data));
         }

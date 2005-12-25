@@ -46,10 +46,12 @@ sub record_class {
 
 =head2 new PARAMHASH
 
-Construct a new C<Jifty::Action::Record> (should only be called by C<<
+Construct a new C<Jifty::Action::Record> (as mentioned in
+L<Jifty::Action>, this should only be called by C<<
 framework->new_action >>.  The C<record> value, if provided in the
-PARAMHASH, will be used to load the record; otherwise, the parimary
-keys will be loaded from the action's argument values.
+PARAMHASH, will be used to load the L</record>; otherwise, the
+parimary keys will be loaded from the action's argument values, and
+the L</record> loaded from those primary keys.
 
 =cut
 
@@ -89,9 +91,9 @@ sub new {
 
 =head2 arguments
 
-Overrides Jifty::Action's arguments method, to automatically
+Overrides the L<Jifty::Action/arguments> method, to automatically
 provide a form field for every writable attribute of the underlying
-record.
+L</record>.
 
 =cut
 
@@ -216,8 +218,9 @@ sub arguments {
 
 =head2 _canonicalize_argument ARGUMENT_NAME
 
-Canonicalizes the argument named ARGUMENT_NAME. This routine actually just makes sure 
-we can canonicalize dates and then passes on to the superclass.
+Canonicalizes the argument named ARGUMENT_NAME. This routine actually
+just makes sure we canonicalize dates and then passes on to the
+superclass.
 
 =cut
 
@@ -237,9 +240,9 @@ sub _canonicalize_argument {
 
 }
 
-=head2 _canonicalize_date
+=head2 _canonicalize_date DATE
 
-Parses the date using L<Time::ParseDate>.
+Parses and returns the date using L<Time::ParseDate>.
 
 =cut
 
@@ -256,13 +259,13 @@ sub _canonicalize_date {
 =head2 take_action
 
 Throws an error unless it is overridden; use
-Jifty::Action::Record::Update, ::Delete, or ::Create
+Jifty::Action::Record::Create, ::Update, or ::Delete
 
 =cut
 
 sub take_action {
     my $self = shift;
-    $self->log->fatal("Use one of the Jifty::Action::Record subclasses, ::Update or ::Create");
+    $self->log->fatal("Use one of the Jifty::Action::Record subclasses, ::Create, ::Update or ::Delete");
 }
 
 

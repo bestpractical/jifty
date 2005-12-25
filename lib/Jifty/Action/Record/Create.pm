@@ -10,9 +10,9 @@ Jifty::Action::Record::Create - Automagic creation action
 =head1 DESCRIPTION
 
 This class is used as the base class for L<Jifty::Action>s that are
-merely creating Jifty::Record objects.  To use it, subclass it and
+merely creating L<Jifty::Record> objects.  To use it, subclass it and
 override the C<record_class> method to return the name of the
-Jifty::Record subclass that this action creates.
+L<Jifty::Record> subclass that this action creates.
 
 =cut
 
@@ -21,7 +21,6 @@ use base qw/Jifty::Action::Record/;
 =head1 METHODS
 
 =head2 arguments
-
 
 Set the default value in each of the fields to whatever the default of
 the column is in the model
@@ -34,7 +33,8 @@ sub arguments {
     my $args = $self->SUPER::arguments;
     for my $arg (keys %{$args}) {
         next unless $self->record->column($arg);
-        $args->{$arg}{default_value} = $self->record->column($arg)->default if not $args->{$arg}->{default_value};
+        $args->{$arg}{default_value} = $self->record->column($arg)->default
+          if not $args->{$arg}->{default_value};
     }
     return $args;
 }
@@ -44,6 +44,11 @@ sub arguments {
 Overrides the virtual C<take_action> method on L<Jifty::Action> to call
 the appropriate C<Jifty::Record>'s C<create> method when the action is
 run, thus creating a new object in the database.
+
+The C<id> of the new row is returned in the C<id> content of the
+L<Jifty::Result> for the action.  You can use this in conjunction with
+L<request mapping|Jifty::Request::Mapper> in order to give later parts
+of the request access to the C<id>.
 
 =cut
 
@@ -67,18 +72,16 @@ sub take_action {
  
     # Return the id that we created
     $self->result->content(id => $self->record->id);
-
     $self->report_success if  not $self->result->failure;
-
 
     return 1;
 }
 
 =head2 report_success
 
-Sets self->result->message to a default success message. Override this if you want
-to report some other happy-friendly result
-
+Sets the L<Jifty::Result/message> to default success message,
+"Created". Override this if you want to report some other
+more user-friendly result.
 
 =cut
 

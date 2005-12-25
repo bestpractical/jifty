@@ -45,7 +45,7 @@ fragment the region was originally rendered with.
 =cut
 
 use base qw/Jifty::Object Class::Accessor/;
-use Data::JavaScript::Anon;
+use Jifty::JSON;
 
 =head2 handlers
 
@@ -123,7 +123,7 @@ sub javascript {
 
             push @fragments, \%args;
         }
-        $response .= qq| $trigger="update( @{[ Data::JavaScript::Anon->anon_dump( {actions => \@actions, fragments => \@fragments }) ]} );|;
+        $response .= qq| $trigger="update( @{[ Jifty::JSON::objToJson( {actions => \@actions, fragments => \@fragments }, {quotapos => 1}) ]} );|;
         $response .= qq|return false;"|;
     }
     return $response;

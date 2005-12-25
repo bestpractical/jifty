@@ -3,12 +3,13 @@ use strict;
 
 =head1 NAME
 
-Jifty::Bootstrap
+Jifty::Bootstrap - Insert initial data into your database
 
 =head1 DESCRIPTION
 
-C<Jifty::Bootstrap> is an abstract baseclass for your application's bootstrapping.
-Use it to set up configuration files, initialize databases, etc.
+C<Jifty::Bootstrap> is an abstract base class for your application's
+bootstrapping.  Use it to set up initial data in your database when
+your application if first installed.
 
 =cut
 

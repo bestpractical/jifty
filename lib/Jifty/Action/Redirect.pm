@@ -3,7 +3,7 @@ use strict;
 
 =head1 NAME
 
-Jifty::Action::Redirect
+Jifty::Action::Redirect - Redirect the browser
 
 =cut
 
@@ -13,7 +13,8 @@ use base qw/Jifty::Action/;
 =head2 new
 
 By default, redirect actions happen as late as possible in the run
-order.
+order.  Defaults the L<Jifty::Action/order> to be 100 so it runs later
+than most actions.
 
 =cut
 
@@ -22,21 +23,14 @@ sub new {
     my $self = $class->SUPER::new(@_);
 
     # XXX TODO This is wrong -- it should be -1 or some equivilent, so
-    # it is worted last all the time.
+    # it is sorted last all the time.
     $self->order(100) unless defined $self->order;
     return $self;
 }
 
 =head2 arguments
 
-The fields for C<Redirect> are:
-
-=over 4
-
-=item url
-
-
-=back
+The only argument to redirect is the C<url> to redirect to.
 
 =cut
 
@@ -49,7 +43,10 @@ sub arguments {
 
 =head2 take_action
 
-Set up a redirect
+If the other actions in the request have been a success so far,
+redirects to the provided C<url>.  The redirect preserves all of the
+L<Jifty::Result>s for this action, in case the destination page wishes
+to inspect them.
 
 =cut
 

@@ -1,5 +1,5 @@
 name: Jifty
-version: 0.1135381515
+version: 0.1135387493
 license: unknown
 distribution_type: module
 tests: t/*.t t/*/t/*.t
@@ -8,12 +8,12 @@ requires:
   Apache::Session: 0
   App::CLI: 0
   Cache::Cache: 0
+  Carp: 0
   CGI::Cookie: 0
   CGI: 0
   Class::Accessor: 0
   Clone: 0
   Cwd: 0
-  Data::JavaScript::Anon: 0
   Data::Page: 0
   Digest::MD5: 0
   DBD::SQLite: 0

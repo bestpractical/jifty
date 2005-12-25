@@ -5,14 +5,14 @@ package Jifty::Action::Record::Update;
 
 =head1 NAME
 
-Jifty::Action::Record::Update - automagic update action
+Jifty::Action::Record::Update - Automagic update action
 
 =head1 DESCRIPTION
 
 This class is used as the base class for L<Jifty::Action>s that are
-merely updating Jifty::Record objects.  To use it, subclass it and
+merely updating L<Jifty::Record> objects.  To use it, subclass it and
 override the C<record_class> method to return the name of the
-Jifty::Record subclass that this action should update.
+L<Jifty::Record> subclass that this action should update.
 
 =cut
 
@@ -22,11 +22,10 @@ use base qw/Jifty::Action::Record/;
 
 =head2 arguments
 
-Overrides L<Jifty::Action::Record>'s C<arguments> method to further
-specify that all of the primary keys *must* have values when
-submitted; that is, they are "constructors."  See
-L<Jifty::Action/arguments> for the distinction between "constructor"
-and "mandatory."
+Overrides the L<Jifty::Action::Record/arguments> method to further
+specify that all of the primary keys B<must> have values when
+submitted; that is, they are
+L<constructors|Jifty::Glossary/constructors>.
 
 =cut
 
@@ -48,7 +47,9 @@ sub arguments {
 
 We only need to validate arguments that got B<submitted> -- thus, a
 mandatory argument that isn't submitted isn't invalid, as it's not
-going to change the record.
+going to change the record.  This is opposed to the behavior inherited
+from L<Jifty::Action>, where mandatory arguments B<must> be present
+for the action to run.
 
 =cut
 
@@ -63,9 +64,9 @@ sub _validate_arguments {
 
 =head2 take_action
 
-Overrides the virtual C<take_action> method on L<Jifty::Action> to call
-the appropriate C<Jifty::Record>'s C<Set> methods when the action is
-run, thus updating the object in the database.
+Overrides the virtual C<take_action> method on L<Jifty::Action> to
+call the appropriate C<Jifty::Record>'s C<set_> methods when the
+action is run, thus updating the object in the database.
 
 =cut
 
@@ -109,7 +110,7 @@ sub take_action {
         $changed = 1 if $val;
     }
 
-    # Remove the record
+    # XXX: This should be only on ::Delete 
     if ($self->argument_value("delete")) {
         my ( $val, $msg ) = $self->record->delete;
         $self->result->error($msg)
@@ -126,9 +127,9 @@ sub take_action {
 
 =head2 report_success
 
-Sets self->result->message to a default success message. Override this if you want
-to report some other happy-friendly result
-
+Sets the L<Jifty::Result/message> to default success message,
+"Updated". Override this if you want to report some other more
+user-friendly result.
 
 =cut
 
@@ -136,4 +137,5 @@ sub report_success {
     my $self = shift;
     $self->result->message("Updated")
 }
+
 1;

@@ -5,12 +5,12 @@ requires(perl => '5.8.3');
 requires('Apache::Session');
 requires('App::CLI'); # App::CLI::Command
 requires('Cache::Cache'); #Cache::FileCache
+requires('Carp');
 requires('CGI::Cookie');
 requires('CGI');                   # CGI::Fast
 requires('Class::Accessor');
 requires('Clone');
 requires('Cwd');
-requires('Data::JavaScript::Anon');
 requires('Data::Page');
 requires('Digest::MD5');
 requires('DBD::SQLite');

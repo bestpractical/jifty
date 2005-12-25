@@ -24,6 +24,7 @@ use Jifty::Action;
 use Jifty::Action::Record;
 use Jifty::Action::Record::Create;
 use Jifty::Action::Record::Update;
+use Jifty::Action::Record::Delete;
 
 
 use Jifty::Continuation;

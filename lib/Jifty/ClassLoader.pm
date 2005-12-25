@@ -32,13 +32,44 @@ sub new {
 =head2 INC
 
 The hook that is called when a module has been C<require>'d that
-cannot be found on disk.  If the module is a Collection, it attempts
-to generate a simple class which descends from L<Jifty::Collection>.
-If it is a C<::Action::CreateFoo> or a C<::Action::UpdateFoo>, it
-creates the appropriate L<Jifty::Action::Record> subclass.
+cannot be found on disk.  The following stub classes are
+auto-generated:
 
-Also autogenerates stub classes for C<ApplicationClass>,
-C<ApplicationClass::Collection> and C<ApplicationClass::Record>.
+=over
+
+=item I<Application>
+
+An empty application base class is created that doen't provide any
+methods or inherit from anything.
+
+=item I<Application>::Record
+
+An empty class that descends from L<Jifty::Record> is created.
+
+=item I<Application>::Collection
+
+An empty class that descends from L<Jifty::Collection> is created.
+
+=item I<CurrentUserClass> (generally I<Application>::CurrentUser)
+
+...where I<CurrentUserClass> is defined by the C<CurrentUserClass>
+from the L<configuration file|Jifty::Config>.  This defaults to an
+empty class which is a subclass of L<Jifty::CurrentUser>.
+
+=item I<Application>::Model::I<Anything>Collection
+
+If C<I<Application>::Model::I<Something>> is a valid model class, then
+it creates a subclass of L<Jifty::Collection> whose C<record_class> is
+C<I<Application>::Model::I<Something>>.
+
+=item I<Application>::Action::(Create or Update or Delete)I<Anything>
+
+If C<I<Application>::Model::I<Something>> is a valid model class, then
+it creates a subclass of L<Jifty::Action::Record::Create>,
+L<Jifty::Action::Record::Update>, or L<Jifty::Action::Record::Delete>
+whose I<record_class> is C<I<Application>::Model::I<Something>>.
+
+=back
 
 =cut
 
@@ -98,8 +129,8 @@ sub Jifty::ClassLoader::INC {
 
 =head2 return_class CODE
 
-Takes CODE as a string and returns an open filehandle containing that CODE.
-
+A helper method; takes CODE as a string and returns an open filehandle
+containing that CODE.
 
 =cut
 
@@ -112,12 +143,12 @@ sub return_class {
 
 }
 
-
 =head2 require
 
 Loads all of the application's Actions and Models.  It additionally
 C<require>'s all Collections and Create/Update actions for each Model
-base class.
+base class -- which will auto-create them using the above code if they
+do not exist on disk.
 
 =cut
 
