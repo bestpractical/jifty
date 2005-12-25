@@ -14,6 +14,7 @@ Jifty::Util - Things that don't fit anywhere else
 
 use File::Spec;
 use File::ShareDir;
+use Cwd ();
 
 =head2 absolute_path PATH
 
@@ -69,23 +70,36 @@ these criteria.
 =cut
 
 sub app_root {
-    require FindBin;
-    require Cwd;
 
-    my $cwd = Cwd::cwd();
+    my @roots;
 
-    for ($cwd, $FindBin::Bin) {
-        my @root = File::Spec->splitdir( $_ );
+    push( @roots, Cwd::cwd() );
+
+    eval { require FindBin };
+    if ( my $err = $@ ) {
+
+        #warn $@;
+    } else {
+        push @roots, $FindBin::Bin;
+    }
+
+    for (@roots) {
+        my @root = File::Spec->splitdir($_);
         while (@root) {
-            my $try = File::Spec->catdir(@root, "bin", "jifty");
-            if (-e $try and -x $try and $try ne "/usr/bin/jifty" and $try ne "/usr/local/bin/jifty") {
+            my $try = File::Spec->catdir( @root, "bin", "jifty" );
+            if (    -e $try
+                and -x $try
+                and $try ne "/usr/bin/jifty"
+                and $try ne "/usr/local/bin/jifty" )
+            {
                 return File::Spec->catdir(@root);
             }
             pop @root;
         }
     }
-
-    die "Can't guess application root from current path ($cwd) or bin path ($FindBin::Bin)\n";
+    die "Can't guess application root from current path ("
+        . Cwd::cwd()
+        . ") or bin path ($FindBin::Bin)\n";
 }
 
 =head2 app_name

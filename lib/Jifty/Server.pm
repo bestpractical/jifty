@@ -25,7 +25,6 @@ use base qw/HTTP::Server::Simple::Mason/;
 use base qw/Class::Accessor/;
 use base qw/Jifty::Object/;
 use File::Spec;
-use FindBin;
 use Module::Refresh;
 use Log::Log4perl;
 use HTTP::Server::Simple::Recorder;
