@@ -163,9 +163,9 @@ sub load_configuration {
 
     $file = $ENV{'JIFTY_CONFIG'} ||  dirname($0).'/../etc/config.yml';
     # Die unless we find it
-    die "Can't find configuration file $file" unless -f $file and -r $file;
-    $app_config =
-      Jifty->load_config_file( $file ) ;
+    $app_config = (-f $file and -r $file) ?
+      Jifty->load_config_file( $file ) :
+      Jifty->guess_configuration;
 
     # Load the $app_config so we know where to find the vendor config file
     Jifty->_config($app_config);
@@ -185,6 +185,38 @@ sub load_configuration {
 
     $config = Hash::Merge::merge( $config, $site_config  );
     Jifty->_config($config);
+
+}
+
+=head2 guess_configuration
+
+=cut
+
+sub guess_configuration {
+    my $self = shift;
+
+    require FindBin;
+    my $path = $FindBin::Bin;
+    my ($name) = $path =~ m|/([^/]+)/bin| or die "Can't guess application name from $path";
+
+    return {
+            framework => {
+                          ActionBasePath   => $name."::Action",
+                          ApplicationClass => $name,
+                          Database => {
+                                       Database => lc $name,
+                                       Driver   => "Pg",
+                                       Host     => "localhost",
+                                       Password => "",
+                                       User     => "postgres",
+                                       Version  => "0.0.1",
+                                      },
+                          Web => {
+                                  StaticRoot   => "web/static",
+                                  TemplateRoot => "web/templates",
+                                 }
+                         }
+           };
 
 }
 
