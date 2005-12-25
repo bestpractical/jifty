@@ -39,7 +39,7 @@ requires:
   HTTP::Server::Simple::Recorder: 0
   Hash::Merge: 0
   Hook::LexWrap: 0
-  Jifty::DBI: 0
+  Jifty::DBI: 0.06
   JSON: 0
   Log::Log4perl: 0
   Locale::Maketext::Simple: 0

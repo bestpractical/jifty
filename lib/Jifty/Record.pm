@@ -138,7 +138,14 @@ Called before the object is deleted.
 Does the current user have the right "RIGHT" for this object.
 
 The default implementation returns true if the current user is a superuser
-or a boostrap user and false otherwise.
+or a boostrap user.
+
+
+If the user is looking to delegate the access control decision to another 
+object (by creating a C<delegate_current_user_can> subroutine), it hands off
+to that routine. 
+
+Otherwise, it returns false.
 
 
 =cut
@@ -152,6 +159,12 @@ sub current_user_can {
     {
         return (1);
     }
+
+    
+    if ($self->can('delegate_current_user_can')) {
+        return $self->delegate_current_user_can($right, @_); 
+    }
+
     unless ( UNIVERSAL::isa( $self->current_user, 'Jifty::CurrentUser' ) ) {
         $self->log->error(
             "Hm. called to authenticate without a currentuser - "

@@ -7,10 +7,10 @@ Jifty::::RightsFrom
 
 =head1 DESCRIPTION
 
-Provides a current_user_can method that various task-related objects 
+Provides a C<delegate_current_user_can> method that various task-related objects 
 can use as a base to make their own access control decisions based on 
-their task.
-
+their task. L<Jifty::Record/current_user_can> uses this method to make an 
+access control decision if it exists.
 
 =cut
 
@@ -21,12 +21,11 @@ use base qw/Exporter/;
 sub import {
     my $class = shift;
     export_curried_sub(
-        sub_name  => '_current_user_can',
-        as        => 'current_user_can',
+        sub_name  => 'delegate_current_user_can',
+        as        => 'delegate_current_user_can',
         export_to => $class,
         args      => \@_
     );
-
 }
 
 
@@ -78,7 +77,7 @@ sub export_curried_sub {
     Jifty::RightsFrom->export_to_level( 2, $args{export_to}, $args{as} );
 }
 1;
-=head2 current_user_can
+=head2 delegate_current_user_can
 
 Seeing and editing task transactions (as well as other activities) are
 based on your rights on the
@@ -88,7 +87,7 @@ we must rely on the value in the I<ATTRIBUTES> passed in.
 
 =cut
 
-sub _current_user_can {
+sub delegate_current_user_can {
     my $self    = shift;
     my $object_type = shift; #always 'column' for now
     my $col_name = shift;
@@ -117,6 +116,7 @@ sub _current_user_can {
     }
     return $obj->current_user_can($right);
 }
+
 
 1;
 
