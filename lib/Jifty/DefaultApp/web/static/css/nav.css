@@ -1,4 +1,4 @@
-// from http://www.456bereastreet.com/lab/csstabs/nested/#
+/* from http://www.456bereastreet.com/lab/csstabs/nested/# */
 
 
 div#navigation {
@@ -57,21 +57,15 @@ div#navigation ul#menu a:hover {
         font-weight:bold;
         border:1px solid #000;
         text-transform:uppercase;
-        //background-image:url("/imagestab-bg.gif");
-        //background-repeat:repeat-x;
-        //background-position:bottom left;
 }
 div#navigation ul#menu a:hover {
         background-color:#24568E;
-        //background-image:url("/images/tab-bg-on.gif");
-        //border-bottom-color:#24568E;
 }
 div#navigation ul#menu li.active a:link,
 div#navigation ul#menu li.active a:visited,
 div#navigation ul#menu li.active a:hover {
         background-color:#24568E;
         font-weight: bold;
-        //background-image:url("tab-bg-on.gif");
         border-bottom-color:#24568E;
 }
 div#navigation ul#submenu a:link,
