@@ -24,7 +24,7 @@ sub make_request {
     
     # This is disabled in the logging conf files; comment out the MasonInterp
     # line if you want it back.
-    $self->log->debug("Executing '$p{'comp'}' with args: ", {filter=>\&YAML::Dump, value=> $comp_args});
+    #$self->log->debug("Executing '$p{'comp'}' with args: ", {filter=>\&YAML::Dump, value=> $comp_args});
 
 
     return $self->SUPER::make_request(%p);

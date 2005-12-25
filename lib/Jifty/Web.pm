@@ -190,7 +190,7 @@ For more details about continuations, see L<Jifty::Continuation>.
 sub handle_request {
     my $self = shift;
 
-    $self->log->debug( "Handling " . $ENV{'REQUEST_URI'} );
+    #$self->log->debug( "Handling " . $ENV{'REQUEST_URI'} );
     $self->setup_session;
     $self->response( Jifty::Response->new ) unless $self->response;
     $self->_internal_request( Jifty::Request->new->from_mason_args );
