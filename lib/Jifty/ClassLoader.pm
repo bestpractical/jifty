@@ -50,6 +50,10 @@ An empty class that descends from L<Jifty::Record> is created.
 
 An empty class that descends from L<Jifty::Collection> is created.
 
+=item I<ApplicationClass::Notification>.
+
+An empty class that descends from L<Jifty::Notification>.
+
 =item I<CurrentUserClass> (generally I<Application>::CurrentUser)
 
 ...where I<CurrentUserClass> is defined by the C<CurrentUserClass>
