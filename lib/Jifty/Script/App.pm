@@ -62,6 +62,7 @@ sub directories {
         lib/__APP__
         lib/__APP__/Model
         lib/__APP__/Action
+        t
     );
 }
 

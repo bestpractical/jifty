@@ -28,7 +28,7 @@ sub absolute_path {
     my $self = shift;
     my $path = shift;
 
-    return File::Spec->rel2abs($path, Jifty::Util->app_root);
+    return File::Spec->rel2abs($path || '', Jifty::Util->app_root);
 } 
 
 =head2 jifty_root
@@ -70,7 +70,7 @@ these criteria.
 =cut
 
 sub app_root {
-
+    my $self = shift;
     my @roots;
 
     push( @roots, Cwd::cwd() );

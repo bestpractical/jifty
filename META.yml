@@ -1,5 +1,5 @@
 name: Jifty
-version: 0.1135241771
+version: 0.1135277390
 license: unknown
 distribution_type: module
 tests: t/*.t t/*/t/*.t
@@ -22,6 +22,7 @@ requires:
   Email::Simple::Creator: 0
   Exporter: 0
   File::Basename: 0
+  File::Copy: 0
   File::Find: 0
   File::ShareDir: 0
   File::Spec: 0

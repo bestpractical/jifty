@@ -68,12 +68,10 @@ sub new {
 
     # Load the configuration. stash it in ->config
     __PACKAGE__->config( Jifty::Config->new() );
-
     __PACKAGE__->logger( Jifty::Logger->new( $args{'logger_component'} ) );
 
     unless ( $args{'no_handle'} or not Jifty->config->framework('Database') )
     {
-
         Jifty->handle( Jifty::Handle->new() );
         Jifty->handle->connect();
         Jifty->handle->check_schema_version();

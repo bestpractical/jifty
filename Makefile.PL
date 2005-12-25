@@ -19,6 +19,7 @@ requires('Email::Simple');
 requires('Email::Simple::Creator');
 requires('Exporter');
 requires('File::Basename');
+requires('File::Copy');
 requires('File::Find');
 requires('File::ShareDir');
 requires('File::Spec');
