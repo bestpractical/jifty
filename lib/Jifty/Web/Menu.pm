@@ -105,6 +105,21 @@ sub child {
     return $self->{children}{$key}
 }
 
+=head2 active_child
+
+Returns the first active child node, or C<undef> is there is none.
+
+=cut
+
+sub active_child {
+    my $self = shift;
+    foreach my $kid ($self->children) {
+        return $kid if $kid->active;
+    }
+    return undef;
+}
+
+
 =head2 delete KEY
 
 Removes the child with the provided I<KEY>.
