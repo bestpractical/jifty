@@ -41,23 +41,23 @@ sub new {
 
     my $log_config
         = Jifty::Util->absolute_path( Jifty->config->framework('LogConfig') );
-    if ( defined Jifty->config->framework('LogReload') ) {
-        Log::Log4perl->init_and_watch( $log_config,
-            Jifty->config->framework('LogReload') );
-    } elsif ( -f $log_config and -r $log_config ) {
-        Log::Log4perl->init($log_config);
-    }
-
-    else {
-        my %default = (
-            'log4perl.rootLogger'      => "ALL,Screen",
-            'log4perl.appender.Screen' => 'Log::Log4perl::Appender::Screen',
-            'log4perl.appender.Screen.stderr' => 1,
-            'log4perl.appender.Screen.layout' =>
-                'Log::Log4perl::Layout::SimpleLayout'
-        );
-
-        Log::Log4perl->init( \%default );
+    if (not Log::Log4perl->initialized) {
+        if ( defined Jifty->config->framework('LogReload') ) {
+            Log::Log4perl->init_and_watch( $log_config,
+                Jifty->config->framework('LogReload') );
+        } elsif ( -f $log_config and -r $log_config ) {
+            Log::Log4perl->init($log_config);
+        } else {
+            my %default = (
+                'log4perl.rootLogger'        => "ALL,Screen",
+                'log4perl.logger.SchemaTool' => "ERROR,Screen",
+                'log4perl.appender.Screen'   => 'Log::Log4perl::Appender::Screen',
+                'log4perl.appender.Screen.stderr' => 1,
+                'log4perl.appender.Screen.layout' =>
+                    'Log::Log4perl::Layout::SimpleLayout'
+            );
+            Log::Log4perl->init( \%default );
+        }
     }
     my $logger = Log::Log4perl->get_logger($component);
     $SIG{__WARN__} = sub {

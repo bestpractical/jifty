@@ -41,6 +41,8 @@ sub setup {
         $self->stash(Hash::Merge::merge($self->stash, $class->test_config($self)));
     };
 
+    Jifty->new( no_handle => 1 );
+
     my $schema = Jifty::Script::Schema->new;
     $schema->{drop_database} =
       $schema->{create_database} =

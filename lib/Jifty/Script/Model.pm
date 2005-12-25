@@ -80,12 +80,7 @@ A basic test harness for the $model model.
 
 =cut
 
-
-use Test::More tests => 12;
-
-# Make sure we load Jifty
-use_ok('Jifty');
-Jifty->new();
+use Jifty::Test tests => 11;
 
 # Make sure we can load the model
 use_ok('@{[$appname]}::Model::@{[$model]}');

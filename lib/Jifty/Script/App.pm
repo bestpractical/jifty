@@ -55,6 +55,7 @@ name('$modname');
 version('0.01');
 requires('Jifty');
 
+WriteAll;
 EOT
     close MAKEFILE;
 }
