@@ -25,19 +25,21 @@ sub options {
 sub run {
     my $self = shift;
 
-    $self->_check_usage();
-    $self->_setup_environment();
-    $self->_probe_database_existence();
+    $self->check_usage();
+    $self->setup_environment();
+    $self->probe_database_existence();
     $self->manage_database_existence() if ($self->{create_database} or $self->{drop_database});
-    $self->_setup_jifty_stuff();
+    $self->setup_jifty_stuff();
     if ( $self->{create_all_tables} ) {
         $self->create_all_tables();
     } elsif ($self->{'setup_tables'}) {
         $self->upgrade_tables();
+    } else {
+        print "Done.\n";
     }
 }
 
-sub _setup_environment {
+sub setup_environment {
     my $self = shift;
 
     # Set up include path
@@ -51,7 +53,7 @@ sub _setup_environment {
 
 }
 
-sub _check_usage {
+sub check_usage {
     my $self = shift;
 
     # Option handling
@@ -61,7 +63,7 @@ sub _check_usage {
         if $self->{man};
 }
 
-sub _setup_jifty_stuff {
+sub setup_jifty_stuff {
 
     my $self = shift;
 
@@ -84,7 +86,7 @@ sub _setup_jifty_stuff {
     );
 }
 
-sub _probe_database_existence {
+sub probe_database_existence {
     my $self = shift;
 
     my $no_handle = 0;
@@ -98,14 +100,14 @@ sub _probe_database_existence {
             logger_component => 'SchemaTool',
         );
     };
-
-    if ( $@ =~ /doesn't match application schema version/ ) {
-        $self->{upgrade} = 1;
-    } elsif ( $@ =~ /no version in the database/ ) {
+    if ( $@ =~ /doesn't match application schema version/i ) {
+        $self->{setup_tables} = 1;
+    } elsif ( $@ =~ /no version in the database/i ) {
         $self->{create_all_tables} = 1;
-    } elsif ( $@ =~ /database .*? does not exist/ ) {
+    } elsif ( $@ =~ /database .*? does not exist/i ) {
         $self->{create_all_tables} = 1;
         $self->{create_database}   = 1;
+        Jifty->new( no_handle        => 1, logger_component => 'SchemaTool',);
     } elsif ($@) {
         die $@;
     } elsif ( $self->{create_database} and $self->{setup_tables} ) {
@@ -332,12 +334,6 @@ sub manage_database_existence {
     my $driver   = Jifty->config->framework('Database')->{'Driver'};
 
 
-
-
-
-
-
-
     if ( $self->{'print'} ) {
         print "DROP DATABASE $database;\n" if $self->{'drop_database'};
         print "CREATE DATABASE $database;\n";
@@ -349,26 +345,27 @@ sub manage_database_existence {
     $connect_args{'database'} = 'template1' if ( $driver eq 'Pg' );
     $handle->connect(%connect_args);
 
-    if ($self->{'drop_database'}) {
-    if ( $driver eq 'SQLite' ) {
-        unlink($database);
-    } else {
-        $handle->simple_query("DROP DATABASE $database");
+    if ( $self->{'drop_database'} ) {
+        if ( $driver eq 'SQLite' ) {
+            unlink($database);
+        } else {
+            $handle->simple_query("DROP DATABASE $database");
+
+        }
 
     }
 
-    }
+    if ( $self->{'create_database'} ) {
 
-    if ($self->{'create_database'}) {
-
-    if ( $driver ne 'SQLite' ) {
-        $handle->simple_query("CREATE DATABASE $database");
-    }
+        if ( $driver ne 'SQLite' ) {
+            $handle->simple_query("CREATE DATABASE $database");
+        }
 
     }
     $handle->disconnect;
 
-    if (not $self->{'drop_database'} or $self->{'create_database'}) {
+    if ( not $self->{'drop_database'} or $self->{'create_database'} ) {
+
         # reinit our handle
         Jifty->handle( Jifty::Handle->new() );
         Jifty->handle->connect();
