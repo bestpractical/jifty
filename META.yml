@@ -1,5 +1,5 @@
 name: Jifty
-version: 0.1134969992
+version: 0.1135122420
 license: unknown
 distribution_type: module
 requires:
@@ -35,6 +35,7 @@ requires:
   Hash::Merge: 0
   Hook::LexWrap: 0
   Jifty::DBI: 0
+  JSON: 0
   Log::Log4perl: 0
   Locale::Maketext::Simple: 0
   Module::Pluggable: 2.95
