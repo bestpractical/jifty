@@ -1,0 +1,87 @@
+// from http://www.456bereastreet.com/lab/csstabs/nested/#
+
+
+div#navigation {
+        border:1px solid #000;
+        width:598px;
+        height:45px;
+        position:relative;
+}
+div#navigation ul {
+        width:598px;
+        font-family:Tahoma,"Trebuchet MS", sans-serif;
+        font-size:11px;
+        line-height:11px;
+        color:#000;
+}
+ul#menu {
+        margin:0;
+        padding:6px 0 5px 0;
+        background-color:#202F66;
+        list-style-type:none;
+        border-bottom:2px solid #000;
+}
+ul#menu li {
+        display:inline;
+        margin:0;
+        padding:0;
+}
+ul#submenu {
+        margin:0;
+        padding:5px 0;
+        background-color:#24568E;
+        list-style-type:none;
+        position: relative;
+        top:5px;
+        left:0;
+}
+ul#submenu li {
+        display:inline;
+        margin:0;
+        padding:0;
+}
+ul#submenu li+li {
+        border-left:1px solid #ccc;
+}
+div#navigation a:link,
+div#navigation a:visited,
+div#navigation a:hover {
+        color:#fff;
+        text-decoration:none;
+        padding:5px;
+        background-color:#202F66;
+}
+div#navigation ul#menu a:link,
+div#navigation ul#menu a:visited,
+div#navigation ul#menu a:hover {
+        font-weight:bold;
+        border:1px solid #000;
+        text-transform:uppercase;
+        //background-image:url("/imagestab-bg.gif");
+        //background-repeat:repeat-x;
+        //background-position:bottom left;
+}
+div#navigation ul#menu a:hover {
+        background-color:#24568E;
+        //background-image:url("/images/tab-bg-on.gif");
+        //border-bottom-color:#24568E;
+}
+div#navigation ul#menu li.active a:link,
+div#navigation ul#menu li.active a:visited,
+div#navigation ul#menu li.active a:hover {
+        background-color:#24568E;
+        font-weight: bold;
+        //background-image:url("tab-bg-on.gif");
+        border-bottom-color:#24568E;
+}
+div#navigation ul#submenu a:link,
+div#navigation ul#submenu a:visited,
+div#navigation ul#submenu a:hover {
+        font-weight:normal;
+        padding:0 5px;
+        background-color:#24568E;
+        border:0;
+}
+div#navigation ul#submenu a:hover {
+        text-decoration:underline;
+}

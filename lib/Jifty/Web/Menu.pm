@@ -84,7 +84,24 @@ sub child {
                                                         label => $key,
                                                         @_
                                                        });
+    # Activate it
+    my $url = $self->{children}{$key}->url;
+    # XXX TODO cleanup for mod_perl
+    my $base_path = Jifty->web->mason->cgi_request->path_info;
+    chomp($base_path);
+        
+    $base_path =~ s/index\.html$//g;
+    $base_path =~ s/\/+$//g;
+    $url =~ s/\/+$//i;
+    if ($url eq $base_path) {
+        $self->{children}{$key}->active(1); 
     }
+
+
+}
+
+
+
     return $self->{children}{$key}
 }
 

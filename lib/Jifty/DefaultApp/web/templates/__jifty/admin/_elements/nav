@@ -29,22 +29,11 @@
 
         }
 
-
+my $nav = Jifty->web->navigation->child("Administration");
+ foreach my $model (@models) {
+ next unless ($model =~ /^(?:.*)::(.*?)$/);
+ my $type = $1;
+ $nav->child($type   => url => '/__jifty/admin/'.$type);
+ }
+ return;
 </%init>
-<&|/_elements/wrapper, title => 'Jifty Administrative Console' &>
-
-<h1>Database Administration</h1>
-
-<p>This console lets you manage the records in your Jifty database. Below, you should see a list of all your database tables. Feel free to go through and add, delete or modify records.</p>
-
-<p>To disable this administrative console, add "framework: AdminMode: 0" to your application's configuration file.</p>
-    
-
-
-% foreach my $model (@models) {
-% next unless ($model =~ /^(?:.*)::(.*?)$/);
-% my $type = $1;
-<li><% Jifty->web->tangent( url => '/__jifty/admin/'.$type, label => $type)%>
-%}
-
-</&>

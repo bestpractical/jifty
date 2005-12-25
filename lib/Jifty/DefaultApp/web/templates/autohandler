@@ -9,8 +9,10 @@ if ($m->base_comp->path =~ m|/_elements/|) {
 #    $m->notes->{'login-nextpage'} =  $m->{top_path};
 #    Jifty->web->redirect('/welcome/');
 }
+$m->comp('/_elements/nav');
+$m->call_next();
+return;
 </%init>
-<%$m->call_next()%>
 <%def .setup_actions>
 <%init>
 Jifty->web->allow_actions(qr/.*/);

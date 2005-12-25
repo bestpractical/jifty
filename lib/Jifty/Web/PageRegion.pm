@@ -190,6 +190,9 @@ sub render {
     my $self = shift;
 
     my %arguments =  %{$self->arguments};
+
+    # undef arguments cause warnings. We hatesses the warnings, we do.
+    map { defined  $arguments{$_} || delete $arguments{$_} } keys %arguments;
     my $result = "";
 
     # We need to tell the browser this is a region and

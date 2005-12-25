@@ -5,21 +5,28 @@ Hiya, <span class="user"><%Jifty->web->current_user->name%></span>.
 You're not currently signed in. 
 % }
 </div>
-<ul class="menu">
-% $m->comp(".menu", item => $_) for (sort { $a->sort_order <=> $b->sort_order} Jifty->web->navigation->children);
+<div id="navigation">
+<ul id="menu">
+<%perl>
+
+
+$m->comp( ".menu", item => $_ )
+    for ( sort { $a->sort_order <=> $b->sort_order }
+    Jifty->web->navigation->children );
+</%perl>
 </ul>
+</div>
 <%def .menu>
 <%args>
 $item
 </%args>
-  <li><% 
+  <li <%  $item->active ? 'class="active"' : '' |n %>><% 
     Jifty->web->link(
         url   => $item->url,
         label => $item->label,
-        class => $item->active ? "active" : ""
     ) %></li>
 % if (my @kids = $item->children) {
-<ul class="menu submenu">
+<ul id="submenu">
 % $m->comp(".menu", item => $_) for @kids;
 </ul>
 % }

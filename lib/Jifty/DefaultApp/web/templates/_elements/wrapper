@@ -28,5 +28,4 @@ Alert: Jifty <% Jifty->web->tangent( label => 'administration mode' , url => '/_
 $title => ""
 </%args>
 <%init>
-$m->comp('/_elements/nav');
 </%init>

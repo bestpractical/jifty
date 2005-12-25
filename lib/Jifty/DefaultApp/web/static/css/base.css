@@ -107,3 +107,36 @@ div#jifty-wait-message {
     top: 10px;
     right: 10px;
 }
+
+
+
+div.warning {
+ position: absolute;
+ top: 0;
+ left: 0;
+ right: 0;
+
+ background-color: red;
+ color: white;
+ padding: .5em;
+ border-bottom: 1px solid #000;
+}
+
+div.warning a {
+ color: white;
+
+}
+
+div#salutation {
+ float: right;
+}
+
+ul.menu {
+  display: block;
+
+}
+
+h1.title {
+  border-bottom: 1px solid black;
+
+}
