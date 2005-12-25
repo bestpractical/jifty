@@ -17,11 +17,9 @@ sub render_widget {
     $self->SUPER::render_widget();
 
     Jifty->mason->out( <<"EOF");
-    <script language="JavaScript">
-    <!--
-document.write('<a href="#" onClick="openCalWindow(' + "'@{[$self->input_name]}'" +')\">Calendar</a>');
-    //-->
-    </script>
+    <script type="text/javascript"><!--
+        onLoadHook('createCalendarLink("@{[$self->input_name]}")');
+    --></script>
 EOF
     
     return '';
