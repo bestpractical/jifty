@@ -122,7 +122,7 @@ sub default_argument {
     my $self = shift;
     my $name = shift;
     $self->{default_arguments}{$name} = shift if @_;
-    return $self->{default_arguments}{$name};
+    return $self->{default_arguments}{$name} || '';
 }
 
 =head2 argument NAME [VALUE]
@@ -190,7 +190,6 @@ sub render {
     my $self = shift;
 
     my %arguments =  %{$self->arguments};
-    map { defined $arguments{$_} || delete $arguments{$_} } keys %arguments;
     my $result = "";
 
     # We need to tell the browser this is a region and
