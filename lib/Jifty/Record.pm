@@ -174,9 +174,12 @@ sub check_create_rights { return shift->current_user_can('create', @_) }
 
 Internal helper to call L</current_user_can> with C<read>.
 
+Passed C<column> as a named parameter for the column the user is checking rights
+on.
+
 =cut
 
-sub check_read_rights { return shift->current_user_can('read', field => shift) }
+sub check_read_rights { return shift->current_user_can('read', column => shift) }
 
 
 =head2 check_update_rights
