@@ -119,14 +119,6 @@ div.subline {
     float: left;  
 }
 
-div.inline div.form_field textarea {
-    height: 3em;
-}
-
-
-div.inline div.form_field .summary {
-    width: 30em;
-}
 
 .selected {
     background: #dddddd;
