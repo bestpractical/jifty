@@ -1,7 +1,8 @@
 name: Jifty
-version: 0.1135122420
+version: 0.1135241771
 license: unknown
 distribution_type: module
+tests: t/*.t t/*/t/*.t
 requires:
   perl: 5.8.3
   Apache::Session: 0
@@ -22,6 +23,7 @@ requires:
   Exporter: 0
   File::Basename: 0
   File::Find: 0
+  File::ShareDir: 0
   File::Spec: 0
   FindBin: 0
   Getopt::Long: 0
@@ -59,4 +61,4 @@ requires:
 no_index:
   directory:
     - inc
-generated_by: Module::Install version 0.410
+generated_by: Module::Install version 0.460
