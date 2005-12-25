@@ -263,16 +263,9 @@ sub _preserve_state_variables {
 
 =head2 next_page PARAMHASH
 
-Set the page this form should go to on success
-
-
-=over
-
-=item url
- 
-=item preserve_helpers
-
-=back
+Set the page this form should go to on success.  This simply creates a
+L<Jifty::Action::Redirect> action; any parameters in the C<PARAMHASH>
+are passed as arguments to the L<Jifty::Action::Redirect> action.
 
 =cut
 
@@ -280,6 +273,20 @@ sub next_page {
     my $self = shift;
 
     $self->add_action(class => "Jifty::Action::Redirect", moniker => "next_page", arguments => {@_});
+}
+
+=head2 unpost
+
+Send a redirect back to the same page after the actions run.  This
+ensures that reloading won't re-post any actions that you might have
+just done.
+
+=cut
+
+sub unpost {
+    my $self = shift;
+
+    $self->next_page( url => $ENV{REQUEST_URI} );
 }
 
 1;
