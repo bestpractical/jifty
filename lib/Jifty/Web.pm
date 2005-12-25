@@ -76,8 +76,8 @@ sub url {
 
 =head3 serial 
 
-Returns an integer, guaranteed to be unique within the runtime of a
-particular process (ie, within the lifetime of Jifty.pm).  There's no
+Returns a unique identifier, guaranteed to be unique within the runtime of
+a particular process (ie, within the lifetime of Jifty.pm).  There's no
 sort of global uniqueness guarantee, but it should be good enough for
 generating things like moniker names.
 
@@ -89,7 +89,7 @@ sub serial {
     # We don't use a lexical for the serial number, because then it would be
     # reset on module refresh
     $SERIAL ||= 0;
-    return join( ".", ++$SERIAL, $$, int( rand(999) ) );    # Start at 1.
+    return join( "S", ++$SERIAL, $$ );    # Start at 1.
 }
 
 =head2 SESSION MANAGEMENT
