@@ -51,8 +51,8 @@ sub new {
 
 =head2 load
 
-First, several defaults are assumed based on the name of the
-application -- see L</guess>.  Then, Jifty loads the main
+
+Jifty first loads the main
 configuration file for the application, looking for the
 C<JIFTY_CONFIG> environment variable or C<etc/config.yml> under the
 application's base directory.
@@ -70,6 +70,12 @@ Values in the site configuration file clobber those in the vendor
 configuration file. Values in the vendor configuration file clobber
 those in the application configuration file.
 
+Once we're all done loading from files, several defaults are
+assumed based on the name of the application -- see L</guess>. 
+
+After we have the config file, we call the coderef in C<$Jifty::Config::postload>,
+if it exists.
+
 If the value begins and ends with %, converts it with
 C<Jifty::Util/absolute_path> to an absolute path.  (This is
 unnecessary for most configuration variables which specify files, but
@@ -81,7 +87,7 @@ specify files.)
 sub load {
     my $self = shift;
 
-    $self->stash( $self->guess );
+    $self->stash( {} );
 
     my $file = $ENV{'JIFTY_CONFIG'} || Jifty::Util->app_root . '/etc/config.yml';
 
@@ -114,6 +120,11 @@ sub load {
 
     $config = Hash::Merge::merge( $self->stash, $site );
     $self->stash($config);
+
+    # Merge guessed values in for anything we didn't explicitly define
+    # Whatever's in the stash overrides anything we guess
+    $self->stash( Hash::Merge::merge( $self->guess, $self->stash ));
+
 
     # Finally, check for global postload hooks (these are used by the
     # test harness)
@@ -152,23 +163,26 @@ sub _get {
     my $section = shift;
     my $var     = shift;
 
-    $self->stash->{$section}->{$var};
+    return  $self->stash->{$section}->{$var} 
 }
 
 
 =head2 guess
 
-Attempts to guess (and return) a configuration hash, in the absence of
-a configuration file.  It uses the name of the directory containing
-the Jifty binary as the name of the application and database.
+Attempts to guess (and return) a configuration hash based solely
+on what we already know. (Often, in the complete absence of
+a configuration file).  It uses the name of the directory containing
+the Jifty binary as a default for C<ApplicationName> if it can't find one.
 
 =cut
 
 sub guess {
     my $self = shift;
 
-    my $name = Jifty::Util->app_name;
-
+    # Walk around a potential loop by calling guess to get the app name
+    my $name = ( $self->stash->{framework}->{ApplicationName}
+        ? $self->stash->{framework}->{ApplicationName}
+        : Jifty::Util->app_name );
     return {
         framework => {
             AdminMode       => 1,
