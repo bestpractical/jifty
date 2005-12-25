@@ -18,6 +18,7 @@ use Jifty::DBI::Handle;
 use UNIVERSAL::require;
 use YAML;
 use File::Spec;
+use File::Basename;
 use Log::Log4perl;
 use Hash::Merge;
 Hash::Merge::set_behavior( 'RIGHT_PRECEDENT' );
@@ -44,7 +45,7 @@ with configuration files, logging and database handles for the system.
 
 The relative or absolute path to this application's default
 configuration file.  This value can be overridden with the
-C<Jifty_CONFIG> environment variable -- see below.
+C<JIFTY_CONFIG> environment variable -- see below.
 
 =item no_handle
 
@@ -59,11 +60,11 @@ that; most of Jifty expects the handle to exist.  Defaults to false.
 This method will load the main configuration file for the application
 and use that to find a vendor configuration file. (If it doesn't find
 a framework variable named 'VendorConfig', it will use the
-C<Jifty_VENDOR_CONFIG> environment variable.
+C<JIFTY_VENDOR_CONFIG> environment variable.
 
 After loading the vendor configuration file (if it exists), the
 framework will look for a site configuration file, specified in either
-the framework's C<SiteConfig> or the C<Jifty_SITE_CONFIG> environment
+the framework's C<SiteConfig> or the C<JIFTY_SITE_CONFIG> environment
 variable.
 
 Values in the site configuration file clobber those in the vendor
@@ -162,12 +163,10 @@ sub load_configuration {
     my $class = shift;
     my $file = shift;
 
-    defined $file
-      or die "You didn't specify a 'config_file' argument for Jifty->new()";
 
     my ( $app_config, $vendor_config, $site_config, $config );
 
-    $file = $ENV{'Jifty_CONFIG'} || $file;
+    $file = $ENV{'JIFTY_CONFIG'} ||  dirname($0).'/../etc/config.yml';
 
     # Die unless we find it
     die "Can't find configuration file $file" unless -f $file and -r $file;
@@ -180,7 +179,7 @@ sub load_configuration {
 
     $vendor_config =
       Jifty->load_config_file( Jifty->absolute_path( Jifty->framework_config('VendorConfig')
-          || $ENV{'Jifty_VENDOR_CONFIG'} ));
+          || $ENV{'JIFTY_VENDOR_CONFIG'} ));
 
     # First, we load the app and vendor configs. This way, we can
     # figure out if we have a special name for the siteconfig file
@@ -189,7 +188,7 @@ sub load_configuration {
 
     $site_config =
       Jifty->load_config_file( Jifty->absolute_path( Jifty->framework_config('SiteConfig')
-          || $ENV{'Jifty_SITE_CONFIG'} ));
+          || $ENV{'JIFTY_SITE_CONFIG'} ));
 
     $config = Hash::Merge::merge( $config, $site_config  );
     Jifty->_config($config);

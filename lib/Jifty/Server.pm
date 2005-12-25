@@ -10,14 +10,13 @@ Jifty::Server - Standalone web server for Jifty applications
 =head1 SYNOPSIS
 
   use Jifty::Server;
-  my $app = Jifty->new( ... );
-  my $server = Jifty::Server->new(application => $app);
+  my $server = Jifty::Server->new();
   $server->run();
 
 =head1 DESCRIPTION
 
 C<Jifty::Server> is a subclass of L<HTML::Server::Simple::Mason> which
-creates a handy standalone testbed for a Jifty application.
+creates a handy standalone web server for a lightweight Jifty application.
 
 =cut
 
@@ -46,7 +45,7 @@ sub new {
 
     $self->setup_jifty(@_);
 
-    $self->recording_on if $ENV{'Jifty_RECORD'};
+    $self->recording_on if $ENV{'JIFTY_RECORD'};
 
     return ($self);
 
@@ -161,7 +160,7 @@ sub recorder_prefix {
 
 Sets this server to use L<HTTP::Server::Simple::Recorder>.
 
-(See also the C<Jifty_RECORD> environment variable and the C<-r> switch to C<standalone_server>.)
+(See also the C<JIFTY_RECORD> environment variable and the C<-r> switch to C<standalone_server>.)
 
 =cut
 

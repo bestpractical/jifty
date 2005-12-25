@@ -9,17 +9,7 @@ BEGIN {
   push @INC, "$dir/../../Jifty/lib";
 }
 
-# When a browser closes the connection early, the server will get a SIGPIPE.
-local $SIG{PIPE} = sub { warn "Trapped a SIGPIPE."};
-
-use Jifty::Everything;
-use Jifty::Server;
-
-my $app = Jifty->new(config_file => $ENV{'Jifty_CONFIG'} ||   
-                                   dirname(__FILE__).'/../etc/config.yml');
-
-my $server = Jifty::Server->new(application => $app);
-$server->recording_on if grep /^-r$/, @ARGV; # TODO XXX FIXME real option handling
-$server->run();
+use Jifty::Script::StandaloneServer;
+Jifty::Script::StandaloneServer->run;
 
 1;

@@ -57,7 +57,7 @@ sub setup_session {
     return if $m && $m->is_subrequest;   # avoid reentrancy, as suggested by masonbook
     my %session;
     my %cookies       = CGI::Cookie->fetch();
-    my $cookiename    = "Jifty_SID_" . $ENV{'SERVER_PORT'};
+    my $cookiename    = "JIFTY_SID_" . $ENV{'SERVER_PORT'};
     my $session_class = 'Apache::Session::File';
     my $pm            = "$session_class.pm";
     $pm =~ s|::|/|g;

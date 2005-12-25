@@ -1,6 +1,6 @@
 package t::Jifty;
 use Test::Base -Base;
-BEGIN { $ENV{'Jifty_VENDOR_CONFIG'} = 't/test_config.yml' }
+BEGIN { $ENV{'JIFTY_VENDOR_CONFIG'} = 't/test_config.yml' }
 use Jifty::Everything;
 
 filters {
