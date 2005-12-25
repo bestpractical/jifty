@@ -348,7 +348,7 @@ like preserved helpers and the results of actions.
 
 =cut
 
-=head just_validating
+=head2 just_validating
 
 This method returns true if the client has asked us to not actually _run_ any actions.
 

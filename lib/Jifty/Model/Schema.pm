@@ -48,7 +48,10 @@ version object.
 
 sub in_db {
   my $self = shift;
-  my (@v) = $self->_handle->fetch_result("SELECT major, minor, rev FROM ".$self->table);
+  my @v;
+    if ($self->_handle->dbh->ping) {
+  @v=$self->_handle->fetch_result("SELECT major, minor, rev FROM ".$self->table);
+    }
   return undef unless @v == 3; # No version in db yet
   return version->new(join (".", @v));
 }

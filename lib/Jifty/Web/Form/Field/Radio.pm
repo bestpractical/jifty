@@ -19,6 +19,12 @@ sub render_widget {
     }
 }
 
+=head2 render_option option
+
+Renders one entry in a SELECT widget
+
+=cut
+
 sub render_option {
     my $self = shift;
     my $opt = shift;

@@ -14,6 +14,22 @@ XXX TODO the superclass should be more general, so we can just override those th
 
 =cut
 
+=head2 render_wrapper_start
+
+Don't show a wrapper for an inline button
+
+=head2 render_wrapper_end
+
+Don't show a wrapper for an inline button
+
+=head2 render_label
+
+Don't show a label for an inline button
+
+=cut
+
+
+
 sub render_wrapper_start { }
 sub render_wrapper_end {}
 sub render_label {}

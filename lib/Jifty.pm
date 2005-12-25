@@ -83,16 +83,12 @@ sub new {
         @_
     );
 
-
     Jifty->load_configuration($args{'config_file'});
-
     Jifty->_log_init($args{'logger_component'});
-
     unless ($args{'no_handle'}) {
         Jifty->_setup_handle();
         Jifty->check_db_schema();
-    }
-        
+         }
     my $ApplicationClass = Jifty->framework_config('ApplicationClass');
     $ApplicationClass->require;
 
@@ -102,7 +98,6 @@ sub new {
         require => 1
     );
     Jifty->plugins;
-
 }
 
 
@@ -167,10 +162,8 @@ sub load_configuration {
     my ( $app_config, $vendor_config, $site_config, $config );
 
     $file = $ENV{'JIFTY_CONFIG'} ||  dirname($0).'/../etc/config.yml';
-
     # Die unless we find it
     die "Can't find configuration file $file" unless -f $file and -r $file;
-    
     $app_config =
       Jifty->load_config_file( $file ) ;
 
@@ -192,6 +185,7 @@ sub load_configuration {
 
     $config = Hash::Merge::merge( $config, $site_config  );
     Jifty->_config($config);
+
 }
 
 
@@ -275,21 +269,25 @@ sub _log_init {
     my $component = shift;
     $component = '' unless defined $component;
     
-
-    my $log_config = Jifty->framework_config('LogConfig');
-
-    die "Logging not configured!" unless defined $log_config;
-    
-    $log_config = Jifty->absolute_path($log_config);
-
+    my $log_config = Jifty->absolute_path( Jifty->framework_config('LogConfig'));
     if (defined Jifty->framework_config('LogReload')) {
         Log::Log4perl->init_and_watch($log_config, Jifty->framework_config('LogReload'));
-    } else {
+    } elsif (-f $log_config and -r $log_config)  {
         Log::Log4perl->init($log_config);
     } 
 
-    my $logger = Log::Log4perl->get_logger($component);
+    else {
+        my %default = (
+        "log4perl.rootLogger"       => "ALL,Screen",
+        'log4perl.appender.Screen'         => 'Log::Log4perl::Appender::Screen',
+        'log4perl.appender.Screen.stderr'  => 0,
+        'log4perl.appender.Screen.layout' => 'Log::Log4perl::Layout::SimpleLayout');
 
+        Log::Log4perl->init(\%default);
+
+
+    }
+    my $logger = Log::Log4perl->get_logger($component);
     $SIG{__WARN__} = sub {
         # This caller_depth line tells Log4perl to report
         # the error as coming from on step further up the
@@ -301,7 +299,6 @@ sub _log_init {
         # don't try to use it to log warnings
         $logger->warn(@_) if Log::Log4perl->initialized;
     };
-
     if (0) {
     $SIG{__DIE__} = sub {
         # This caller_depth line tells Log4perl to report
@@ -366,14 +363,14 @@ then error out.
 sub check_db_schema {
 
         my $appv = version->new( Jifty->framework_config('Database')->{'Version'} );
-        my $dbv  = Jifty::Model::Schema->new->in_db;
+        my $dbv  =  Jifty::Model::Schema->new->in_db;
         die "Schema has no version in the database; perhaps you need to run bin/schema --install?\n"
           unless defined $dbv;
 
         die "Schema version in database ($dbv) doesn't match application schema version ($appv)\n".
           "Please run bin/schema to upgrade the database.\n"
             unless $appv == $dbv;
-    
+   
         } 
 
 =head2 serial 

@@ -96,7 +96,7 @@ framework:
     StaticRoot: static
     BaseURL: http://localhost
   Database:
-    Database: @{[$self->{'name'}]}
+    Database: @{[lc $self->{'name'}]}
     Driver: Pg
     Host: localhost
     User: postgres

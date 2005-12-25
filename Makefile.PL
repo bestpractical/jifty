@@ -2,10 +2,12 @@ use inc::Module::Install;
 name('Jifty');
 # this is a dev version, CPAN.pm will not install by default
 requires('Apache::Session');
+requires('App::CLI');
 requires('CGI::Cookie');
 requires('CGI');                   # CGI::Fast
 requires('Class::Accessor');
 requires('Clone');
+requires('Cwd');
 requires('Data::Page');
 requires('Data::UUID');
 requires('DBD::Pg');

@@ -12,11 +12,12 @@ __PACKAGE__->mk_accessors(qw(actions printed_actions helpers name));
 Creates a new L<Jifty::Web::Form>.  Arguments: 
 
 =over
-
    
 =item helpers
 
 =item  name 
+
+=back
 
 =cut
 
@@ -82,7 +83,7 @@ sub register_action {
 
 =head2 has_action MONIKER
 
-If this form has an action whose monkier is C<MONIKER, returns it. Otherwise returns undef.
+If this form has an action whose monkier is C<MONIKER>, returns it. Otherwise returns undef.
 
 
 =cut
