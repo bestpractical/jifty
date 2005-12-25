@@ -1,6 +1,6 @@
 <div id="salutation">
-% if (Jifty->web->current_user->id) {
-Hiya, <span class="user"><%Jifty->web->current_user->name%></span>.
+% if (Jifty->web->current_user->id and Jifty->web->current_user->user_object) {
+Hiya, <span class="user"><%Jifty->web->current_user->user_object->name%></span>.
 % }  else {
 You're not currently signed in. 
 % }

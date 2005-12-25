@@ -128,6 +128,9 @@ sub require {
     # if we don't even have an application class, this trick will not work
     return unless  ($ApplicationClass); 
     $ApplicationClass->require;
+
+    Jifty->config->framework('CurrentUserClass')->require;
+
     my $ActionBasePath = Jifty->config->framework('ActionBasePath');
 
     Module::Pluggable->import(

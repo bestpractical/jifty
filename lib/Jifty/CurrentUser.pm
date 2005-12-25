@@ -147,6 +147,21 @@ Sometimes, while the system is running, you need to do something on behalf of a 
 
 =cut
 
+=head2 superuser
+
+A convenience constructor that returns a new superuser  L<CurrentUser> object
+
+=cut
+
+sub superuser {
+    my $class = shift;
+    my $self = $class->new();
+    $self->is_superuser(1);
+    return $self;
+}
+
+
+
 =head2 is_bootstrap_user
 
 When your system is first getting going, you can't assume B<anything>. There
