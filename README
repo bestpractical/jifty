@@ -1,1 +1,95 @@
-You'll have Jifty as a Gifty on 2005-12-25.
+Jifty(3)              User Contributed Perl Documentation             Jifty(3)
+
+
+
+NNAAMMEE
+       Jifty -- Just Do It
+
+DDEESSCCRRIIPPTTIIOONN
+       Yet another web framework.
+
+       WWhhaatt''ss ccooooll aabboouutt JJiiffttyy?? ((BBuuzzzzwwoorrddss))
+
+
+       DRY (Don't Repeat Yourself)
+           Jifty tries not to make you say things more than once.
+
+       Full-stack
+           Out of the proverbial box, Jifty comes with one way to do every-
+           thing you should need to do: One database mapper, one templating
+           system, one web services layer, one AJAX toolkit, one set of han-
+           dlers for standalone or FastCGI servers. We work hard to make all
+           the bits play well together, so you don't have to.
+
+       Continuations
+           With Jifty, it's easy to let the user go off and do something else,
+           like fill out a wizard, look something up in the help system or go
+           twiddle their preferences and come right back to where they were.
+
+       Form-based dispatch
+           This is one of the things that Jifty does that we've not seen any-
+           where else. Jifty owns your form rendering and processing. This
+           means you never need to write form handling logic. All you say is
+           "I want an input for this argument here" and Jifty takes care of
+           the rest. (Even autocomplete and validation)
+
+       A Pony
+           Jifty is the only web application framework that comes with a pony.
+
+       IInnttrroodduuccttiioonn
+
+       If this is your first time using Jifty, Jifty::Manual::Tutorial is
+       probably a better place to start.
+
+MMEETTHHOODDSS
+       nneeww PPAARRAAMMHHAASSHH
+
+       This class method instantiates a new "Jifty" object. This object deals
+       with configuration files, logging and database handles for the system.
+       Most of the time, the server will call this for you to set up your
+       "Jifty" object.  If you are writing command-line programs htat want to
+       use your libraries (as opposed to web services) you will need to call
+       this yourself.
+
+       See Jifty::Config for details on how to configure your Jifty applica-
+       tion.
+
+       _A_r_g_u_m_e_n_t_s
+
+       no_handle
+           If this is set to true, Jifty will not create a Jifty::Handle and
+           connect to a database.  Only use this if you're about to drop the
+           database or do something extreme like that; most of Jifty expects
+           the handle to exist.  Defaults to false.
+
+       ccoonnffiigg
+
+       An accessor for the Jifty::Config object that stores the configuration
+       for the Jifty application.
+
+       llooggggeerr
+
+       An accessor for our Jifty::Logger object for the application.
+
+       hhaannddllee
+
+       An accessor for the Jifty::Handle object that stores the database han-
+       dle for the application.
+
+       wweebb
+
+       An accessor for the Jifty::Web object that the web interface uses.
+
+LLIICCEENNSSEE
+       Jifty is Copyright 2005 Best Practical Solutions, LLC.  Jifty is dis-
+       tributed under the same terms as Perl itself.
+
+SSEEEE AALLSSOO
+       <http://jifty.org>
+
+AAUUTTHHOORRSS
+       Jesse Vincent, Alex Vandiver and David Glasser.
+
+
+
+perl v5.8.7                       2005-12-25                          Jifty(3)

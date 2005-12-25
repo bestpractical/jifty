@@ -166,9 +166,20 @@ sub web {
     return $HTML::Mason::Commands::JiftyWeb;
 }
 
-=head1 AUTHOR
 
-Various folks at Best Practical Solutions, LLC.
+=head1 LICENSE
+
+Jifty is Copyright 2005 Best Practical Solutions, LLC.
+Jifty is distributed under the same terms as Perl itself.
+
+=head1 SEE ALSO
+
+L<http://jifty.org>
+
+=head1 AUTHORS
+
+Jesse Vincent, Alex Vandiver and David Glasser.
+
 
 =cut
 
