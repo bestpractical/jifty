@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet href="chrome://global/skin/" type="text/css"?><?xml-stylesheet href="takahashi.css" type="text/css"?><page xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" id="presentation" xmlns:html="http:/www.w3.org/1999/xhtml" orient="vertical" onkeypress="Presentation.onKeyPress(event);">
 <html:textarea id="builtinCode" style="visibility: collapse">
 
-Jifty
+&#9832; Jifty
 ----
 Nifty Apps
 ----
@@ -36,7 +36,7 @@ our needs.
 We started by extracting
 useful bits from RT.
 ----
-Now, we're Extracting 
+Now, we're extracting 
 generalizations from 
 the new application
 ----
@@ -176,7 +176,10 @@ No Sky
 ----
 
 No clkao
-
+----
+Put your hand down, Artur
+----
+(Yes, we use SVK)
 ----
 
 No Autrijus
@@ -207,7 +210,7 @@ Ruby Workshop
 
 ----
 
-No CPAN
+No CRAN
 
 ----
 
@@ -401,6 +404,12 @@ HTML::Mason
 ----
 With helpers
 ----
+Session 
+handler
+----
+Access
+control
+----
 AJAX 
 ----
 Dynamic
@@ -493,7 +502,20 @@ That's
 just
 serializer
 ----
-
+AND MORE
+----
+Sending Email
+Recieving Email
+----
+URL-based auth
+Password-based auth
+----
+Standalone server
+FastCGI handler
+----
+Stub generators
+Test helpers
+----
 A
 Trivial 
 Example
@@ -501,11 +523,17 @@ Example
 Real
 Code
 ----
+Live
+demo?
+----
+I know
+better
+----
 Application Code
 ----
+ lib/BlogDemo/Model/Entry.pm
  web/templates/new_article.html
  web/templates/index.html
- lib/BlogDemo/Model/Entry.pm
 
 ----
 
@@ -561,7 +589,7 @@ Application Code
 
 ----
  &lt;%init&gt;
- my $action = Jifty-&gt;framework-&gt;new_action( 
+ my $create = Jifty-&gt;framework-&gt;new_action( 
         class =&gt; 'CreateEntry', 
         moniker =&gt; 'create' );
  &lt;/%init&gt;
@@ -569,10 +597,10 @@ Application Code
  &lt;h2&gt;Create an article&lt;/h2&gt;
  
  &lt;%Jifty-&gt;framework-&gt;form-&gt;start%&gt;
- % foreach my $field ($action-&gt;argument_names) {
- &lt;%$action-&gt;form_field($field)%&gt;
+ % foreach my $arg ($creator-&gt;argument_names) {
+ &lt;%$creator-&gt;form_field($arg)%&gt;
  % }
- &lt;%Jifty-&gt;framework-&gt;form-&gt;submit('Submit')%&gt;
+ &lt;%Jifty-&gt;framework-&gt;form-&gt;submit('Save')%&gt;
  &lt;%Jifty-&gt;framework-&gt;form-&gt;end%&gt;
 ----
  jifty schema --install .
@@ -710,7 +738,7 @@ months
 Oh shit!
 ----
 Thanks!
-Gotta go hack, now.
+Gotta go hack now.
 
 
 </html:textarea>

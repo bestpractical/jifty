@@ -197,6 +197,7 @@ sub guess_configuration {
             framework => {
                           ActionBasePath   => $name."::Action",
                           ApplicationClass => $name,
+                          ApplicationName => $name,
                           Database => {
                                        Database => lc $name,
                                        Driver   => "Pg",
