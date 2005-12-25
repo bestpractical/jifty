@@ -512,8 +512,6 @@ Application Code
  lib/BlogDemo/Model/Entry.pm
 
 ----
- use warnings;
- use strict;
  
  package BlogDemo::Model::Entry::Schema;
  use Jifty::DBI::Schema;
@@ -550,8 +548,10 @@ Application Code
  &lt;h1&gt;&lt;% Jifty-&gt;app_config('Name')%&gt;&lt;/h1&gt;
  
  % while (my $entry = $entries-&gt;next) {
- &lt;h2&gt;&lt;%$entry-&gt;title%&gt;&lt;/h2&gt;
- &lt;div class="body"&gt;&lt;%$entry-&gt;body%&gt;&lt;/div&gt;
+  &lt;h2&gt;&lt;%$entry-&gt;title%&gt;&lt;/h2&gt;
+  &lt;div class="body"&gt;
+    &lt;%$entry-&gt;body%&gt;
+  &lt;/div&gt;
  % }
  &lt;/body&gt;&lt;html&gt;
 
@@ -590,21 +590,17 @@ Jifty
 Sucks
 
 ----
-...for 
-the 
+...for the 
 moment
 ----
+It's 
 Unreleased
 ----
-
-Too 
-much 
+There's
+Too much 
 configuration
-
 ----
-
 etc/config.yml
-
 ----
  framework:
   ActionBasePath: BlogDemo::Action
