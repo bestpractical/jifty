@@ -280,7 +280,7 @@ sub _log_init {
         my %default = (
         "log4perl.rootLogger"       => "ALL,Screen",
         'log4perl.appender.Screen'         => 'Log::Log4perl::Appender::Screen',
-        'log4perl.appender.Screen.stderr'  => 0,
+        'log4perl.appender.Screen.stderr'  => 1,
         'log4perl.appender.Screen.layout' => 'Log::Log4perl::Layout::SimpleLayout');
 
         Log::Log4perl->init(\%default);
