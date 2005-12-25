@@ -13,8 +13,7 @@ Renders the button widget.
 
 sub render_widget {
     my $self  = shift;
-    my $field = '<input type="'.$self->type
-        . '" name="'
+    my $field = '<input type="submit" name="'
         . $self->input_name 
         . '" value="'
         . $self->label
