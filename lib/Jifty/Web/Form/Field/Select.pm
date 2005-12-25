@@ -16,7 +16,7 @@ sub render_widget {
     my $field = qq! <select !;
     $field .= qq! name="@{[ $self->input_name ]}"!;
     $field .= qq! id="@{[ $self->input_name ]}"!;
-    $field .= qq! class="@{[ $self->class ]}@{[ $self->ajax_validates ? ' ajaxvalidation' : '' ]}" !;
+    $field .= $self->_widget_class;
     $field .= qq!      >\n!;
     for my $opt (@{ $self->action->available_values($self->name) }) {
         my $display = $opt->{'display'};

@@ -20,7 +20,7 @@ sub render_widget {
     $field .= qq! name="@{[ $self->input_name ]}"!;
     $field .= qq! id="@{[ $self->input_name ]}"!;
     $field .= qq! value="1"!;
-    $field .= qq! class="@{[ $self->class ]}@{[ $self->ajax_validates ? ' ajaxvalidation' : '' ]}" !;
+    $field .= $self->_widget_class;
     $field .= qq! checked="checked"! if $self->current_value;
 
     $field .= $self->javascript;

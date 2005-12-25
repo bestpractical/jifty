@@ -30,7 +30,7 @@ sub render_widget {
     $field .= qq! id="@{[ $self->input_name ]}"!;
     $field .= qq! rows="@{[$self->rows || 5 ]}"!;
     $field .= qq! cols="@{[$self->cols || 60]}"!;
-    $field .= qq! class="@{[ $self->class ]}@{[ $self->ajax_validates ? ' ajaxvalidation' : '' ]}" !;
+    $field .= $self->_widget_class;
     $field .= qq! >!;
     $field .= $self->current_value if $self->current_value;
     $field .= qq!</textarea>\n!;

@@ -266,6 +266,21 @@ sub render {
     return ('');
 }
 
+
+=head2 classes
+
+Renders a default CSS class for each part of our widget.
+
+=cut
+
+
+sub classes {
+    my $self = shift;
+    my $simple_class = join(' ', ($self->class||''), ($self->name||''), ($self->input_name||''));
+
+}
+
+
 =head2 render_wrapper_start
 
 Output the start of div that wraps the form field
@@ -276,8 +291,6 @@ sub render_wrapper_start {
     my $self = shift;
     Jifty->mason->out('<div class="form_field">' ."\n");
 }
-
-
 
 =head2 render_wrapper_end
 
@@ -308,7 +321,7 @@ Use this for sticking instructions right in front of a widget
 sub render_preamble {
     my $self = shift;
     Jifty->mason->out(
-qq!<span class="preamble @{[$self->class]}" >@{[$self->preamble || '' ]}</span>\n!
+qq!<span class="preamble @{[$self->classes]}" >@{[$self->preamble || '' ]}</span>\n!
     );
 
     return '';
@@ -325,7 +338,7 @@ an empty string.
 sub render_label {
     my $self = shift;
     Jifty->mason->out(
-qq!<label class="label @{[$self->class]}" for="@{[$self->input_name ]}">@{[$self->label ]}</label>\n!
+qq!<label class="label @{[$self->classes]}" for="@{[$self->input_name ]}">@{[$self->label ]}</label>\n!
     );
 
     return '';
@@ -347,11 +360,25 @@ sub render_widget {
     $field .= qq! name="@{[ $self->input_name ]}"!;
     $field .= qq! id="@{[ $self->input_name ]}"!;
     $field .= qq! value="@{[HTML::Entities::encode_entities($self->current_value)]}"! if defined $self->current_value;
-    $field .= qq! class="@{[ $self->class ]}@{[ $self->ajax_validates ? ' ajaxvalidation' : '' ]}" !;
+    $field .= $self->_widget_class; 
     $field .= qq! size="@{[ $self->length() ]}"! if ($self->length());
     $field .= qq!      />\n!;
     Jifty->mason->out($field);
     return '';
+}
+
+=head2 _widget_class
+
+Returns the "class=" line for our widget. Optionally takes extra classes to append to our list.
+
+=cut
+
+sub _widget_class {
+    my $self = shift;
+    my @classes = ('widget', $self->classes, ($self->ajax_validates ? ' ajaxvalidation' : ''),@_);
+
+    return qq! class="!. join(' ',@classes).  qq!"!
+
 }
 
 =head2 render_value
@@ -364,7 +391,7 @@ Renders a "view" version of the widget for field. Usually, this is just plain te
 sub render_value {
     my $self  = shift;
     my $field = '<span';
-    $field .= qq! class="@{[ $self->class ]}" !;
+    $field .= qq! class="@{[ $self->classes ]}" !;
 
     $field .= HTML::Entities::encode_entities($self->current_value) if defined $self->current_value;
     $field .= qq!</span>\n!;
@@ -383,7 +410,7 @@ subclasses commonly override this.  Returns an empty string.
 sub render_hints { 
     my $self = shift;
     Jifty->mason->out(
-qq!<span class="hints @{[$self->class]}">@{[$self->hints || '']}</span>\n!
+qq!<span class="hints @{[$self->classes]}">@{[$self->hints || '']}</span>\n!
     );
 
     return '';
@@ -404,7 +431,7 @@ sub render_errors {
     return unless $self->action;
 
     Jifty->mason->out(
-qq!<span class="error @{[$self->input_name]}" id="@{[$self->action->error_div_id($self->name)]}">
+qq!<span class="error @{[$self->classes]}" id="@{[$self->action->error_div_id($self->name)]}">
       @{[  $self->action->result->field_error( $self->name ) || '']}
     </span>\n!
     );

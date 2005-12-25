@@ -13,7 +13,9 @@ Renders the file upload widget.
 
 sub render_widget {
     my $self  = shift;
-    my $field = qq!<input type="file" name="@{[ $self->input_name ]}" />!;
+    my $field = qq!<input type="file" name="@{[ $self->input_name ]}" !;
+    $field .= $self->_widget_class();
+        $field .= qq!/>!;
     Jifty->mason->out($field);
     '';
 }

@@ -34,7 +34,7 @@ sub render_option {
     $field .= qq! name="@{[ $self->input_name ]}"!;
     $field .= qq! id="@{[ $self->input_name ]}"!;
     $field .= qq! value="@{[ $value ]}"!;
-    $field .= qq! class="@{[ $self->class ]}@{[ $self->ajax_validates ? ' ajaxvalidation' : '' ]}" !;
+    $field .= $self->_widget_class;
 
     $field .= qq! checked="1" !
       if defined $self->current_value and $self->current_value eq $value;

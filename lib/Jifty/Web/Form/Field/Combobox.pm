@@ -19,14 +19,16 @@ my $field = <<"EOF";
 <span id="@{[ $self->input_name ]}_Container" class="combobox">
 <input name="@{[ $self->fallback_name ]}" 
        id="@{[ $self->input_name ]}" 
-      class="@{[ $self->class ]}@{[ $self->ajax_validates ? ' ajaxvalidation' : '' ]} combo-text" 
+       @{[ $self->_widget_class('combo-text')]}
        value="@{[ $self->current_value ]}" 
        type="text" 
        size="30"
-       autocomplete="off" /><span id="@{[ $self->input_name ]}_Button" class="combo-button"></span></span><span style="display: none"></span><select 
+       autocomplete="off" /><span id="@{[ $self->input_name ]}_Button" 
+       @{[ $self->_widget_class('combo-button')]}
+        ></span></span><span style="display: none"></span><select 
         name="@{[ $self->input_name ]}" 
         id="@{[ $self->input_name ]}_List" 
-        class="@{[ $self->class ]} combo-list" 
+        @{[ $self->_widget_class('combo-list')]}
         onchange="ComboBox_SimpleAttach(this, this.form['@{[ $self->input_name ]}']); " 
         >
 <option style="display: none" value=""></option>
