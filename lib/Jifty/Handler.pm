@@ -40,6 +40,7 @@ sub mason_config {
         error_mode => 'fatal',
         error_format => 'text',
         default_escape_flags => 'h',
+        #       plugins => ['Jifty::SetupRequest']
     );
 }
 

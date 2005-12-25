@@ -33,6 +33,7 @@ use Jifty::Record;
 use Jifty::Request;
 use Jifty::Result;
 use Jifty::Response;
+use Jifty::CurrentUser;
 
 # We can _not_ load Server.pm unless we're in a Server context because
 # HTTP::Server::Simple::Mason bastardizes HTML::Mason::FakeApache::send_http_header

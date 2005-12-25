@@ -25,3 +25,7 @@ sub new {
     bless $self, $class;
     return $self;
 }
+
+sub id { 0 }
+
+1;

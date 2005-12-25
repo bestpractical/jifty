@@ -29,6 +29,7 @@ Creates a new C<Jifty::Web> object
 sub new {
     my $class = shift;
     my $self = bless { }, $class;
+    $self->session({}); # we need at least an empty session
     return($self);
 }
 
@@ -136,12 +137,15 @@ in the session.  These are L<Jifty::Record> objects.
 
 If a temporary_current_user has been set, will return that instead.
 
+If the current application has no loaded current user, we get an empty Jifty::CurrentUser object
+XXX TODO: This should be app-overridable
+
 =cut
 
 sub current_user {
     my $self = shift;
     $self->session->{'user'} = shift if (@_);
-    return $self->temporary_current_user || $self->session->{'user'};
+    return $self->temporary_current_user || $self->session->{'user'} || Jifty::CurrentUser->new();
 }
 
 =head2 temporary_current_user [USER]
