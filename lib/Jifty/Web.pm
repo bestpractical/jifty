@@ -882,10 +882,11 @@ sub link {
     "";
 }
 
-=head2 url
+=head2 url [SCHEME]
 
 Returns the root url of the server.  This is pulled from the
-configuration file.
+configuration file.  Optionally overrides the defaults (http or https)
+scheme with the given C<SCHEME>.
 
 =cut
 
@@ -893,6 +894,8 @@ sub url {
     my $self = shift;
     my $url  = Jifty->framework_config("Web")->{BaseURL} || "http://localhost";
     my $port = Jifty->framework_config("Web")->{Port} || 8888;
+
+    $url =~ s/^\w+/shift/e if @_;
 
     if (($url =~ /^http\b/ and $port == 80) or ($url =~ /^https\b/ and $port == 443)) {
         return $url;
