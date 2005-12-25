@@ -155,7 +155,9 @@ var Presentation = {
             var content_w = this.content.boxObject.width;
             var new_fs = Math.round((canvas_w/content_w) * this.size);
 
-            new_fs = new_fs - (new_fs % 32);
+            if (new_fs > 32) {
+                new_fs = new_fs - (new_fs % 32) 
+            }
             if (code_listing) { new_fs = 48;}
 
             this.content.setAttribute('style', 'top: 0');
