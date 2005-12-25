@@ -204,8 +204,8 @@ sub guess {
                 Version  => "0.0.1",
             },
             Web => {
-                DefaultStaticRoot => Jifty::Util->jifty_root .'/DefaultApp/web/static',
-                DefaultTemplateRoot => Jifty::Util->jifty_root .'/DefaultApp/web/templates',
+                DefaultStaticRoot => Jifty::Util->jifty_root .'/Jifty/DefaultApp/web/static',
+                DefaultTemplateRoot => Jifty::Util->jifty_root .'/Jifty/DefaultApp/web/templates',
                 StaticRoot   => "web/static",
                 TemplateRoot => "web/templates",
             }

@@ -1,0 +1,110 @@
+body {
+}
+
+body.calpopup {
+}
+
+#info-wrapper, #content-wrapper {
+    margin-top: 20px;
+}
+
+#info-wrapper {
+    width: 20%;
+    float: left;
+    clear: left;
+}
+
+#content-wrapper {
+    float: right;
+    width: 78%;
+}
+
+#info {
+    margin-top: 0.5em;
+    padding: 0.2em;
+}
+
+#content, #info {
+    font-size: 1.1em;
+}
+
+
+#sidebar span.user {
+    font-weight: bold;
+}
+
+#sidebar h2 {
+  border: none;
+  background: none;
+  padding: 0;
+  padding-top: 4px;
+}
+
+
+div#sidebar textarea {
+    width: 180px;
+    font-size: 80%;
+}
+
+ul.menu {
+    font-size: 1.3em;
+    line-height: 1.5em;
+    list-style: none;
+    padding-left: 0;
+    margin-left: 0.5em;
+}
+
+ul.menu ul.submenu {
+    font-size: 0.95em;
+    line-height: 1.1em;
+    margin-top: 0.1em;
+    margin-bottom: 0.2em;
+}
+
+.error {
+    color: #a00000;
+}
+
+hr {
+    border: 1px dotted gray;
+    clear: both;
+} 
+
+.messages .message {
+    display: block;
+}
+
+div#messages,  div#errors {
+     background-color: rgb(240,234,183);
+     border: 1px solid rgb(230,224,173);
+     margin-top: 10px;
+     margin-bottom: 10px;
+     padding: 5px;
+     font-size: 1.2em;
+
+}
+
+div.spacer {
+    clear: both;
+}
+
+.next-page, .prev-page {
+    display: block;
+    float: left;
+    margin: 0.5em 0;
+    padding: 0.2em 0.5em 0.5em 0.5em;
+    border-top: 1px solid gray;
+}
+
+.next-page { padding-right: 1em; }
+.prev-page { padding-left: 1em; }
+
+div#jifty-wait-message {
+    color: red;
+    display: none;
+    background: black;
+    font-size: 2em;
+    position: fixed;
+    top: 10px;
+    right: 10px;
+}

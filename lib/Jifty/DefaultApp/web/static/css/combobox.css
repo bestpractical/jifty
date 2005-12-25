@@ -1,0 +1,36 @@
+/*
+%# ComboBox styles... some properties like height and width must be dynamically
+%# set in the JS (at least for now).
+
+.combobox {
+%#    border: 2px inset #333;
+%#    padding-left: 0.5em;
+%#    padding-bottom: 0.1em;
+}
+*/
+
+.combobox .combo-button {
+/*%#    padding: 0 2px 0 2px;*/
+    padding-top: 2px;
+    margin: 0;
+    background: ButtonFace;
+    color: ButtonText;
+    border-right: 2px outset ButtonHighlight;
+    border-bottom: 2px outset ButtonHighlight;
+    border-top: 1px inset #000;
+    border-left: 0px inset #fff; 
+    margin-left: 0;
+    padding-left: 0;
+    cursor: default;
+    font-size: 8pt;
+}
+
+.combobox .combo-text {
+    border: 1px inset #333;
+    margin: 0;
+    padding: 0;
+}
+
+.combobox .combo-list {
+    z-index: 200;
+}

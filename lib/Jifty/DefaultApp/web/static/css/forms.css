@@ -1,0 +1,133 @@
+div.form {
+    background-color: #f6f6f6;
+    padding: 0.2em;
+    margin: 0 auto;
+}
+
+div.form_field {
+    clear: both;
+    padding-top: 0.5em;
+}
+
+.twocolumn {
+    width: 49%;
+    float: left;
+}
+
+div.form_field label {
+    float: left;
+    width: 15%;
+    text-align: right;
+    font-size: 80%;
+    padding: 0.2em 0.5em 0 0;
+}
+
+div.form_field .hints {
+    width: 83%;
+    font-size: 80%;
+    padding-top: 0.2em;
+    float: right;
+    text-align: left;
+    color: #999999;
+}
+
+div.form_field .error {
+    float: right;
+    width: 88%;
+    text-align: left;
+}
+
+div.form_field span.formw {
+    float: right;
+    width: 88%;
+    text-align: left;
+}
+
+input, textarea {
+    border: 1px inset black;
+    padding: 0.2em;
+}
+
+.submit {
+    clear: both;
+    border: 1px outset #793300;
+    background: white;
+    padding: 0.2em 1em;
+    font-weight: bold;
+    margin: 0.5em 0 0 16%;
+}
+
+h2.inline input {
+    font-size: 115%;
+}
+
+span.submit_button {
+    padding-left: 60%;
+    padding-right: 5px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+/*
+These styles are meant to be placed after (and hence override) the current CSS
+for forms.  Some of the rules aren't needed if previous behavior doesn't need to
+be overrided.  ".inline" is our hypothetical inline form class.
+*/
+
+div.inline,
+div.inline .submit_button
+{
+    clear: both;
+}
+
+div.inline div.form_field {
+    float: left;
+
+    /* to counter previous rules */
+    clear: none;
+
+    /* aesthetic */
+    margin-right: 0.5em;
+}
+
+div.inline div.form_field label,
+div.inline .hints,
+div.inline .error
+{
+    display: block;
+
+    /* to counter previous rules */
+    float: none;
+    width: auto;
+    text-align: left;
+}
+
+
+div.inline .hints {
+    display: none;
+
+}
+
+div.inline div.form_field label {
+    /* aesthetic */
+    padding-bottom: 0.1em;
+}
+
+
+div.subline {
+    display: inline;
+    float: left;  
+}
+
+div.inline div.form_field textarea {
+    height: 3em;
+}
+
+
+div.inline div.form_field .summary {
+    width: 30em;
+}
+
+.selected {
+    background: #dddddd;
+}

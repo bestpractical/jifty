@@ -45,7 +45,7 @@ Uses %INC to figure out where Jifty.pm
 sub jifty_root {
     my $self = shift;
     my ($vol,$dir,$file) = File::Spec->splitpath($INC{"Jifty.pm"}); 
-    return ($dir);   
+    return (Jifty::Util->absolute_path($dir));   
 }
 
 

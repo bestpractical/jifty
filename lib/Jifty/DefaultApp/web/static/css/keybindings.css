@@ -1,0 +1,27 @@
+div.keybindings {
+    color: #666666;
+    margin-top: 2em;
+
+}
+
+div.keybindings:before {
+    content: "Hotkeys:";
+}
+
+
+dl.keybindings dt  {
+    margin: 0;
+    font-weight: bold;
+    display: inline;
+
+}
+dl.keybindings dt:after  {
+    content: ":";
+
+}
+dl.keybindings dd  {
+    margin-right: 1.5em;
+    margin-left: 0.5em;
+    display: inline;
+    white-space: nowrap;
+}

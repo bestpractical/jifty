@@ -34,9 +34,10 @@ sub mason_config {
     return (
         allow_globals => [qw[$JiftyWeb]],
         interp_class  => 'Jifty::MasonInterp',
-        comp_root     => Jifty::Util->absolute_path(
-            Jifty->config->framework('Web')->{'TemplateRoot'} || "html"
-        ),
+        comp_root     => [ 
+                            [application =>  Jifty::Util->absolute_path( Jifty->config->framework('Web')->{'TemplateRoot'} || "html")],
+                            [jifty => Jifty->config->framework('Web')->{'DefaultTemplateRoot'}
+                                ]],
         error_mode => 'fatal',
         error_format => 'text',
         default_escape_flags => 'h',
