@@ -12,12 +12,16 @@ We use words.  This is what they mean.
 
 An action is a specifically designed RPC call that can do something to the system.
 
-Generally, an action takes L</argument>, which are represented as L</form field>s via the web UI
+Generally, an action takes L</argument>s, which are represented as L</form field>s via the web UI
 
 
 =item active
 
 =item AJAX
+
+=item argument
+
+An B<argument> is a named parameter to an L</action>.
 
 =item constructor
 
@@ -31,5 +35,12 @@ no semicolons.  Monikers need not be globally unique, but they must be unique
 within a single request.  Monikers have no semantic meaning.
 
 =item request
+
+=item request_param
+
+A request_parameter (request_param for short) is the "key" side of a key=value pair
+passed to the server by a browser.
+
+
 
 =back

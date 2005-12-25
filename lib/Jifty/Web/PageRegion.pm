@@ -191,6 +191,17 @@ sub render {
 
     my %arguments = %{$self->arguments};
     my $result = "";
+
+    # We need to tell the browser this is a region and
+    # what its default arguments are as well as the path of the "fragment".
+    
+    # We do this by passing in a snippet of javascript which encodes this 
+    # information.
+
+    # Alex is sad about: Anything which is replaced _must_ start life as a fragment.
+    # We don't have a good answer for this yet.
+
+
     $result .= qq|<script type="text/javascript"><!--\n|;
     $result .= qq|region('|. $self->qualified_name .qq|',{|;
     $result .= join(',', map {($a = $arguments{$_})=~s/'/\\'/g;qq|'$_':'$a'|} keys %arguments);
