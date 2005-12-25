@@ -125,10 +125,9 @@ sub handle_request {
 
     Module::Refresh->refresh;
 
-    $HTML::Mason::Commands::framework = Jifty::Web->new();
+    local $HTML::Mason::Commands::framework = Jifty::Web->new();
      $self->SUPER::handle_request(@_); 
     Jifty::Handler->cleanup_request();
-    undef $HTML::Mason::Commands::framework;
 }
 
 

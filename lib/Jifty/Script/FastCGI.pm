@@ -29,7 +29,7 @@ sub run {
         Module::Refresh->refresh;
 
 
-        $HTML::Mason::Commands::framework = Jifty::Web->new();
+        local $HTML::Mason::Commands::framework = Jifty::Web->new();
 
         if ( ( !$Handler->interp->comp_exists( $cgi->path_info ) )
              && ( $Handler->interp->comp_exists( $cgi->path_info . "/index.html" ) ) ) {
@@ -38,8 +38,6 @@ sub run {
 
         eval { $Handler->handle_cgi_object($cgi); };
         Jifty::Handler->cleanup_request(); 
-        $HTML::Mason::Commands::framework = undef;
-        # Cleanup and inhibit warnings
     }
 }
 

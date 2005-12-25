@@ -55,8 +55,8 @@ Currently, tries to flush L<Jifty::DBI>'s cache.
 
 sub cleanup_request {
     # Clean out the cache. the performance impact should be marginal.
-    # Consistency is imprived, too.
-    Jifty::Record->flush_cache if UNIVERSAL::can('Jifty::Record', 'flush_cache');
+    # Consistency is improved, too.
+    Jifty::Record->flush_cache;
 }
 
 1;
