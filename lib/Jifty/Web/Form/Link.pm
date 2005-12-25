@@ -65,7 +65,7 @@ sub new {
     $self->{parameter} = {};
 
     for (Jifty->framework->request->state_variables) {
-        if ($_->key =~ /^region-(.*)\.(.*)$/) {
+        if ($_->key =~ /^region-(.*?)\.(.*)$/) {
             $self->region_argument($1, $2 => $_->value);
         } elsif ($_->key =~ /^region-(.*)$/) {
             $self->region_fragment($1, $_->value);

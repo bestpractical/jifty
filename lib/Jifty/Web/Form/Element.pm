@@ -91,7 +91,7 @@ sub javascript {
             $response .= qq!'@{[$hook->{region} || Jifty->framework->qualified_region]}'!;
 
             # Arguments
-            my %these = ( (map {($_->key, $_->value)} Jifty->framework->request->state_variables), %{$hook->{args} || {}});
+            my %these = ( %{$hook->{args} || {}});
             $response .= qq!,{!;
             $response .= join(',', map {($a = $these{$_}) =~ s/'/\\'/g; "'$_':'$a'"} keys %these);
             $response .= qq!}!;
