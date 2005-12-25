@@ -9,7 +9,7 @@ Tests for request mapper
 
 =cut
 
-BEGIN {require 't/utils.pl' };
+BEGIN { -d 't/Mapper' &&  chdir 't/Mapper'; require 't/utils.pl'; };
 
 use Test::More tests => 34;
 

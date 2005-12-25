@@ -9,7 +9,7 @@ Continuations tests
 
 =cut
 
-BEGIN {require 't/utils.pl' };
+BEGIN { -d 't/Mapper' &&  chdir 't/Mapper'; require 't/utils.pl'; };
 
 use Test::More no_plan => 1;
 

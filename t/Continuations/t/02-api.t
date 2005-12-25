@@ -9,7 +9,7 @@ Continuations tests
 
 =cut
 
-BEGIN {require 't/utils.pl' };
+BEGIN { -d 't/Continuations' &&  chdir 't/Continuations'; require 't/utils.pl'; };
 
 use Test::More tests => 33;
 

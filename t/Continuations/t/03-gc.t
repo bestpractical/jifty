@@ -4,6 +4,7 @@ use warnings;
 use strict;
 
 # {{{ Setup
+BEGIN { -d 't/Continuations' &&  chdir 't/Continuations'; require 't/utils.pl'; };
 use Test::More 'skip_all' => "test file not done yet";
 
 #### garbage collection

@@ -1,4 +1,5 @@
 use lib '../../lib';
+use lib 'lib';
 
 BEGIN { 
     $ENV{'JIFTY_VENDOR_CONFIG'} = 't/test_config.yml';
