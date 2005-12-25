@@ -62,7 +62,10 @@ sub take_action {
         return;
     }
 
-   
+ 
+    # We inject the id of the created record so it's accessible from view components
+    $self->inject_arguments( id => $record->id) ;
+
     $self->report_success if  not $self->result->failure;
 
 

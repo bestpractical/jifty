@@ -5,7 +5,7 @@ package Jifty;
 
 =head1 NAME
 
-Jifty -- Just Finally Do It
+Jifty -- Just Do It
 
 =head1 DESCRIPTION
 

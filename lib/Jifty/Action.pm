@@ -841,4 +841,33 @@ sub validation_ignored_xml {
 }
 
 
+=head2 inject_arguments HASH
+
+Sometimes, you need to perform some sort of backend action, say creating a new row
+in your database, and get that information back to your view just like you were accessing
+an existing row.  For this, you can "inject" arguments back into the %ARGS hash
+accessible to the view. This model somewhat falls down if you, say, create two rows and 
+then try to go to a page to display the row.
+
+Currently, this injection happens _after_ Jifty pulls out your arguments for action processing.
+This is _only_ for view-level stuff.
+
+
+=head3 EXAMPLE
+
+    $self->inject_arguments( id => $self->record->id) 
+
+=cut
+
+
+sub inject_arguments {
+    my $self = shift;
+    
+    # XXX TODO this doesn't use an API. That's wrong
+    my $args = Jifty->mason->{'request_args'};
+        push @$args, @_;
+
+}
+
+
 1;
