@@ -14,7 +14,6 @@ form elements interact with the underlying model.
 
 =cut
 
-use Jifty::Everything;
 
 use base qw/Jifty::Object Class::Accessor/;
 
