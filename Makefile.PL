@@ -10,6 +10,7 @@ requires('CGI');                   # CGI::Fast
 requires('Class::Accessor');
 requires('Clone');
 requires('Cwd');
+requires('Data::JavaScript::Anon');
 requires('Data::Page');
 requires('Data::UUID');
 requires('DBD::SQLite');
@@ -49,6 +50,7 @@ requires('UNIVERSAL::require');
 requires('URI');
 requires('WWW::Mechanize' => 1.12);
 requires('version');
+requires('XML::Writer');
 requires('XML::XPath');
 requires('YAML');
 version('0.'.time());
