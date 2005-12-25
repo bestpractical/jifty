@@ -76,12 +76,12 @@ sub check_schema_version {
         = version->new( Jifty->config->framework('Database')->{'Version'} );
     my $dbv = Jifty::Model::Schema->new->in_db;
     die
-        "Schema has no version in the database; perhaps you need to run bin/jifty schema --install?\n"
+        "Schema has no version in the database; perhaps you need to run this:\n\t bin/jifty schema --setup\n"
         unless defined $dbv;
 
     die
         "Schema version in database ($dbv) doesn't match application schema version ($appv)\n"
-        . "Please run `bin/jifty schema --install` to upgrade the database.\n"
+        . "Please run `bin/jifty schema --setup` to upgrade the database.\n"
         unless $appv == $dbv;
 
 }
