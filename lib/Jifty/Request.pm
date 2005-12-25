@@ -319,7 +319,7 @@ sub _extract_actions_from_webform {
         for my $type (qw/J:A:F:F:F J:A:F:F J:A:F/) {
             for my $key (keys %args) {
                 my ($t, $a, $m) = $self->parse_form_field_name($key);
-                $arguments->{$a} = $args{$key} if $t eq $type and $m eq $moniker;
+                $arguments->{$a} = $args{$key} if defined $t and $t eq $type and $m eq $moniker;
             }
         }
 
