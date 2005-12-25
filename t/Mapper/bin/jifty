@@ -1,0 +1,13 @@
+#!/usr/bin/perl
+use warnings;
+use strict;
+use File::Basename qw(dirname); 
+
+BEGIN {
+    my $dir = dirname(__FILE__); 
+    push @INC, "$dir/../lib";
+    push @INC, "$dir/../../../lib";
+}
+
+use Jifty::Script;
+Jifty::Script->dispatch();

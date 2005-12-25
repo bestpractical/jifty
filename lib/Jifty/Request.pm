@@ -503,6 +503,23 @@ sub add_action {
     $self;
 } 
 
+sub do_mapping {
+    my $self = shift;
+
+    my %args = (
+                request  => Jifty->web->request,
+                response => Jifty->web->response,
+                @_,
+               );
+
+    for (keys %{$self->arguments}) {
+        my ($key, $value) = Jifty::Request::Mapper->map(destination => $_, source => $self->arguments->{$_}, %args);
+        next unless $key ne $_;
+        delete $self->arguments->{$_};
+        $self->merge_param($key => $value);
+    }
+}
+
 package Jifty::Request::Action;
 use base 'Class::Accessor';
 __PACKAGE__->mk_accessors( qw/moniker arguments class order active/);

@@ -326,6 +326,8 @@ sub _internal_request {
         if $self->response->success;
 
     $self->redirect if $self->redirect_required;
+
+    $self->request->do_mapping;
 }
 
 =head3 setup_page_actions
@@ -688,7 +690,9 @@ sub save_continuation {
     my $self = shift;
 
     my %args = %{ $self->request->arguments };
-    if ( $args{'J:CLONE'} or grep {/^J:C-/} keys %args ) {
+    my $clone = delete $self->request->arguments->{'J:CLONE'};
+    my $create = delete $self->request->arguments->{'J:CREATE'};
+    if ( $clone or $create ) {
 
         # Saving a continuation
         my $c = Jifty::Continuation->new(
@@ -696,17 +700,11 @@ sub save_continuation {
             response => $self->response,
             notes    => $self->mason->notes,
             parent   => $self->request->continuation,
-            clone    => $args{'J:CLONE'},
+            clone    => $clone,
         );
-        for my $key ( keys %args ) {
-            if ( $key =~ /^J:C-(.*)/ ) {
-                $c->return_location( $1 => $args{$key} );
-                delete $self->request->arguments->{$key};
-            }
-        }
 
 # XXX Only if we're cloning should we do the following check, I think??  Cloning isn't a stack push, so it works out
-        if (    delete $self->request->arguments->{'J:CLONE'}
+        if ( $clone
             and $self->request->just_validating
             and $self->response->failure )
         {
@@ -795,7 +793,7 @@ sub tangent {
     my $self = shift;
 
     my $clickable = Jifty::Web::Form::Clickable->new(
-        return_values  => { "" => "" },
+        returns        => { },
         preserve_state => 1,
         @_
     );

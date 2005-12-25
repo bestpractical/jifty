@@ -38,6 +38,7 @@ use Jifty::Object;
 use Jifty::Record;
 
 use Jifty::Request;
+use Jifty::Request::Mapper;
 use Jifty::Result;
 use Jifty::Response;
 use Jifty::CurrentUser;

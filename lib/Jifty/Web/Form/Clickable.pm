@@ -17,18 +17,18 @@ use base qw/Jifty::Web::Form::Element Class::Accessor/;
 =head2 accessors
 
 Clickable adds C<url>, C<escape_label>, C<continuation>, C<call>,
-C<return_values>, C<submit>, and C<preserve_state> to the list of
-accessors and mutators, in addition to those offered by
+C<returns>, C<submit>, and C<preserve_state> to the list of accessors
+and mutators, in addition to those offered by
 L<Jifty::Web::Form::Element/accessors>.
 
 =cut
 
 sub accessors {
     shift->SUPER::accessors,
-        qw(url escape_label continuation call return_values submit preserve_state);
+        qw(url escape_label continuation call returns submit preserve_state);
 }
 __PACKAGE__->mk_accessors(
-    qw(url escape_label continuation call return_values submit preserve_state)
+    qw(url escape_label continuation call returns submit preserve_state)
 );
 
 =head2 new PARAMHASH
@@ -66,12 +66,12 @@ The continuation to call when the link is clicked.  This will happen
 after actions have run, if any.  Like C<continuation>, this may be a
 L<Jifty::Continuation> object or the C<id> of such.
 
-=item return_values
+=item returns
 
 Passing this parameter implies the creation of a continuation when the
 link is clicked.  It takes an anonymous hash of return location to
-where the return value is pulled from.  See
-L<Jifty::Continuation/return_location> for details.
+where the return value is pulled from.  See L<Jifty::Request::Mapper>
+for details.
 
 =item submit
 
@@ -126,9 +126,6 @@ sub new {
         $self->$field( $args{$field} ) if exists $args{$field};
     }
 
-    $self->parameter( $_ => $args{parameters}{$_} )
-        for %{ $args{parameters} };
-
     # Anything doing fragment replacement needs to preserve the
     # current state as well
     if ( grep { $self->$_ } $self->handlers or $self->preserve_state ) {
@@ -142,6 +139,9 @@ sub new {
             }
         }
     }
+
+    $self->parameter( $_ => $args{parameters}{$_} )
+        for %{ $args{parameters} };
 
     return $self;
 }
@@ -173,12 +173,12 @@ The continuation to call when the link is clicked.  This will happen
 after actions have run, if any.  Like C<continuation>, this may be a
 L<Jifty::Continuation> object or the C<id> of such.
 
-=head2 return_values
+=head2 returns
 
 Passing this parameter implies the creation of a continuation when the
 link is clicked.  It takes an anonymous hash of return location to
-where the return value is pulled from.  See
-L<Jifty::Continuation/return_location> for details.
+where the return value is pulled from.  See L<Jifty::Request::Mapper>
+for details.
 
 =head2 submit
 
@@ -202,13 +202,9 @@ Sets the given HTTP paramter named C<KEY> to the given C<VALUE>.
 
 sub parameter {
     my $self = shift;
-    my ( $key, $value, $fallback ) = @_;
-    if ( defined $value and length $value ) {
-        $self->{parameters}{$key} = $value;
-    } else {
-        delete $self->{parameters}{$key};
-        $self->{fallback}{$key} = $fallback;
-    }
+    my ( $key, $value ) = @_;
+    ($key, $value) = Jifty::Request::Mapper->query_parameters($key => $value);
+    $self->{parameters}{$key} = $value;
 }
 
 =head2 state_variable KEY VALUE
@@ -220,7 +216,12 @@ Sets the state variable named C<KEY> to C<VALUE>.
 sub state_variable {
     my $self = shift;
     my ( $key, $value, $fallback ) = @_;
-    $self->parameter( "J:V-$key" => $value, $fallback );
+    if ( defined $value and length $value ) {
+        $self->{state_variable}{"J:V-$key"} = $value;
+    } else {
+        delete $self->{state_variable}{"J:V-$key"};
+        $self->{fallback}{"J:V-$key"} = $fallback;
+    }
 }
 
 =head2 region_fragment NAME PATH
@@ -274,7 +275,20 @@ L</get_parameters>.
 sub parameters {
     my $self = shift;
 
-    my %parameters = %{ $self->{parameters} };
+    my %parameters;
+
+    if ( $self->returns ) {
+        %parameters = Jifty::Request::Mapper->query_parameters( %{ $self->returns } );
+        $parameters{"J:CREATE"} = 1;
+        $parameters{"J:PATH"} = Jifty::Web::Form::Clickable->new( url => $self->url,
+                                                                  parameters => $self->{parameters},
+                                                                  continuation => undef,
+                                                                )->complete_url;
+    } else {
+        %parameters = %{ $self->{parameters} };        
+    }
+
+    %parameters = ( %{$self->{state_variable} || {}}, %parameters );
 
     $parameters{"J:CALL"} = $self->call
         if $self->call;
@@ -282,12 +296,6 @@ sub parameters {
     $parameters{"J:C"} = $self->continuation
         if $self->continuation
         and not $self->call;
-
-    if ( $self->return_values ) {
-        my %return_values = %{ $self->return_values };
-        $parameters{"J:C-$_"} = $return_values{$_} for keys %return_values;
-        $parameters{"J:PATH"} = $self->url;
-    }
 
     return %parameters;
 }
@@ -301,7 +309,7 @@ The hash of parameters as they would be needed on a POST request.
 sub post_parameters {
     my $self = shift;
 
-    my %parameters = ( $self->parameters, %{ $self->{fallback} || {} } );
+    my %parameters = ( %{ $self->{fallback} || {} }, $self->parameters );
 
     # Actions to be submitted
     $parameters{"J:ACTIONS"} = join( ';', @{ $self->submit } )
@@ -310,7 +318,7 @@ sub post_parameters {
     my ($root) = $ENV{'REQUEST_URI'} =~ /([^\?]*)/;
 
     # Add a redirect, if this isn't to the right page
-    if ( $self->url ne $root and not $self->return_values ) {
+    if ( $self->url ne $root and not $self->returns ) {
         require Jifty::Action::Redirect;
         my $redirect = Jifty::Action::Redirect->new(
             arguments => { url => $self->url } );
@@ -347,7 +355,7 @@ sub complete_url {
     my %parameters = $self->get_parameters;
 
     my ($root) = $ENV{'REQUEST_URI'} =~ /([^\?]*)/;
-    my $url = $self->return_values ? $root : $self->url;
+    my $url = $self->returns ? $root : $self->url;
     if (%parameters) {
         $url .= ( $url =~ /\?/ ) ? ";" : "?";
         $url .= Jifty->web->query_string(%parameters);
