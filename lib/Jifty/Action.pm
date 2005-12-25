@@ -81,7 +81,6 @@ user enter a value for that field.  See L<Jifty::Web::Form::Field>.
 
 sub arguments {
     my  $self= shift;
-    Jifty->log->error("Subroutine arguments must be subclassed in ".ref($self));
     return {}
 }
 

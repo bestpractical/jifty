@@ -230,7 +230,7 @@ sub canonicalize_date {
     my $self = shift;
     my $val = shift;
     return undef unless defined $val and $val =~ /\S/;
-    my $epoch =  Time::ParseDate::parsedate($val, FUZZY => 1, PREFER_FUTURE => 1, GMT =>1) || '';
+    my $epoch =  Time::ParseDate::parsedate($val, FUZZY => 1, PREFER_FUTURE => 1, GMT =>0) || '';
     return undef unless $epoch;
     my $dt  = DateTime->from_epoch( epoch =>$epoch);
     return $dt->ymd;

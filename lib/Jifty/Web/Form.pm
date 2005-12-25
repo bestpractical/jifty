@@ -30,11 +30,33 @@ sub new {
         @_,
     );
 
+    $self->_init(%args);
+    return $self;
+}
+
+=for private _init
+
+Reinitialize this form. 
+
+=over
+
+=item name
+
+The form name
+
+=back
+
+=cut
+
+
+sub _init {
+    my $self = shift;
+    my %args = (name => undef,
+                @_);
+
     $self->actions( {} ) ;
     $self->printed_actions( {} ) ;
     $self->name($args{name});
-
-    return $self;
 }
 
 
@@ -161,7 +183,7 @@ sub end {
     Jifty->mason->out( qq!</form>\n! );
 
     # Clear out all the registered actions and the name 
-    $self = $self->new();
+    $self->_init();
 
     '';
 } 
