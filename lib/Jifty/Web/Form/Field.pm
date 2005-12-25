@@ -137,7 +137,7 @@ sub input_name {
       || (
           $self->action
         ? $self->action->form_field_name( $self->name )
-        : undef
+        : ''
       );
 }
 
@@ -400,6 +400,8 @@ none -- AJAX could fill it in.
 
 sub render_errors {
     my $self = shift;
+
+    return unless $self->action;
 
     Jifty->mason->out(
 qq!<span class="error @{[$self->input_name]}" id="@{[$self->action->error_div_id($self->name)]}">

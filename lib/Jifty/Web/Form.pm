@@ -137,11 +137,12 @@ sub start {
     '';
 } 
 
-=head2 submit MESSAGE
+=head2 submit MESSAGE, [PARAMETERS]
 
 Renders a submit button with the text MESSAGE on it (which will be
 HTML escaped).  Returns the empty string (for ease of use in
-interpolation).
+interpolation).  Any extra PARAMETERS are passed to
+L<Jifty::Web::Form::Field::Button>'s constructor.
 
 =cut
 
@@ -149,10 +150,9 @@ sub submit {
     my $self = shift;
     my $message = shift;
     
-    
-    $message = HTML::Entities::encode_entities($message);
+    my $button = Jifty::Web::Form::Field->new(type => "submit", render_as => "Button", label => $message, @_);
     Jifty->mason->out(qq{<span class="submit_button">}); 
-    Jifty->mason->out(qq{<input type="submit" class="submit" value="$message" onClick="jifty_button_click();" />\n});
+    Jifty->mason->out($button->render_widget);
     Jifty->mason->out(qq{</span>});
 
     return '';

@@ -13,11 +13,13 @@ Renders the button widget.
 
 sub render_widget {
     my $self  = shift;
-    my $field = '<input type="submit" name="'
+    my $field = '<input type="'.$self->type
+        . '" name="'
         . $self->input_name 
         . '" value="'
         . $self->label
-        . '" onClick="jifty_button_click();" '
+        . '"'
+        . $self->javascript
         . ' />'."\n";
     Jifty->mason->out($field);
     return '';
