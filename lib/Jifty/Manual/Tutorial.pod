@@ -324,10 +324,10 @@ So, we'll start off about the same:
 
 Open a new file called C<web/templates/index.html> in your text editor.  Fill it with this:
 
- <&|/_elements/wrapper, title => Jifty->config->framework('AppName') &>
+ <&|/_elements/wrapper, title => Jifty->config->framework('ApplicationName') &>
 
  <% Jifty->web->region(name => "myweblog-posts",
-                       path => "/fragments/page_of_posts" %>
+                       path => "/fragments/page_of_posts") %>
  </&>
 
 
