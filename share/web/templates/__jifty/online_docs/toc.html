@@ -26,14 +26,16 @@ File::Find::find(
     Jifty::Util->app_root ."/lib",
 );
 
+
 File::Find::find(
     { untaint => 1,
       wanted => sub {
-        return unless /(\w+)\.(?:pm|pod)$/;
-        my $name = $File::Find::name;
+        warn $File::Find::name;
+        return unless $File::Find::name =~ /^(?:.*?)(Jifty.*?\.(?:pm|pod))$/;
+        my $name = $1;
         $name =~ s/.*lib\b.//;
         $name =~ s!\.(?:pm|pod)!!i;
-        $name =~ s!\W!::!g;
+        $name =~ s!\/!::!g;
         push @found, $name;
     },follow => ($^O ne 'MSWin32') },
     Jifty::Util->jifty_root,
