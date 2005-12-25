@@ -25,7 +25,13 @@ Renders the textarea widget.
 sub render_widget {
     my $self  = shift;
     my $field;
-    $field .= qq!<textarea name="@{[ $self->input_name ]}" rows="@{[$self->rows || 5 ]}" cols="@{[$self->cols || 60]}">!;
+    $field .= qq!<textarea!;
+    $field .= qq! name="@{[ $self->input_name ]}"!;
+    $field .= qq! id="@{[ $self->input_name ]}"!;
+    $field .= qq! rows="@{[$self->rows || 5 ]}"!;
+    $field .= qq! cols="@{[$self->cols || 60]}"!;
+    $field .= qq! class="@{[ $self->class ]}@{[ $self->ajax_validates ? ' ajaxvalidation' : '' ]}" !;
+    $field .= qq! >!;
     $field .= $self->default_value if $self->default_value;
     $field .= qq!</textarea>\n!;
     Jifty->mason->out($field);

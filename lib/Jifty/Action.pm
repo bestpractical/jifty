@@ -289,6 +289,11 @@ sub _form_widget {
                 render_mode => $args{'render_mode'},
                 %$field_info
                 );
+
+            # ..unless this action failed last time
+            $self->{_private_form_fields_hash}{$arg_name}->default_value($self->argument_value($args{'argument'}))
+              if not $field_info->{not_sticky} and not $self->result->success;
+            
         }    # else $field remains undef
         else {
             Jifty->log->warn("$arg_name isn't a valid field for $self");

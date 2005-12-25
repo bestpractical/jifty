@@ -319,7 +319,6 @@ sub render_widget {
     # XXX TODO FIXME worry about escaping default value?
     $field .= qq! value="@{[HTML::Entities::encode_entities($self->default_value)]}"! if defined $self->default_value;
     $field .= qq! class="@{[ $self->class ]}@{[ $self->ajax_validates ? ' ajaxvalidation' : '' ]}" !;
-    $field .= qq!          jiftyaction="@{[ $self->action->register_name ]}"!;
     $field .= qq!      />\n!;
     Jifty->mason->out($field);
     return '';
@@ -336,7 +335,6 @@ sub render_value {
     my $self  = shift;
     my $field = '<span';
     $field .= qq! class="@{[ $self->class ]}" !;
-    $field .= qq!          jiftyaction="@{[ $self->action->register_name ]}">!;
 
     $field .= HTML::Entities::encode_entities($self->default_value) if defined $self->default_value;
     $field .= qq!</span>\n!;

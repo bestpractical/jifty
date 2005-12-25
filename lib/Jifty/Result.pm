@@ -73,7 +73,7 @@ also automatically sets the result to be a L</failure>.
 sub error {
     my $self = shift;
     
-    $self->failure(1);
+    $self->failure(1) if @_ and $_[0];
     $self->{error} = shift if @_;
     return $self->{error};
 }
@@ -89,7 +89,7 @@ sub field_error {
     my $self = shift;
     my $field = shift;
 
-    $self->failure(1);
+    $self->failure(1) if @_ and $_[0];
     $self->{field_errors}{ $field } = shift if @_;
     return $self->{field_errors}{ $field };
 }
