@@ -13,9 +13,15 @@ Renders the checkbox widget.
 
 sub render_widget {
     my $self  = shift;
-    my $field =  qq!<input type="hidden" name="@{[ $self->fallback_name ]}" value="0" />\n!;
-    $field .= qq!<input type="checkbox" name="@{[ $self->input_name ]}" value="1" !;
-    $field .= qq! checked="checked" ! if $self->default_value;
+    my $field =  qq!<input type="hidden" name="@{[ $self->fallback_name ]}" id="@{[ $self->fallback_name ]}" value="0" />\n!;
+
+    $field .= qq!<input!;
+    $field .= qq! type="checkbox"!;
+    $field .= qq! name="@{[ $self->input_name ]}"!;
+    $field .= qq! id="@{[ $self->input_name ]}"!;
+    $field .= qq! value="1"!;
+    $field .= qq! class="@{[ $self->class ]}@{[ $self->ajax_validates ? ' ajaxvalidation' : '' ]}" !;
+    $field .= qq! checked="checked"! if $self->default_value;
     $field .= qq! />\n!;
     Jifty->mason->out($field);
     '';
