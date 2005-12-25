@@ -130,7 +130,7 @@ sub arguments {
         elsif ( defined $column->type && $column->type =~ /^bool/i ) {
             $info->{render_as} = 'Checkbox';
         }
-        elsif ( defined $column->render_as eq "Password" ) {
+        elsif ( defined $column->render_as =~ /^password$/i) {
             unshift @fields,
               Jifty::DBI::Column->new({name => $field . "_confirm", type => 'Password'});
         }
