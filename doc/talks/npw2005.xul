@@ -422,7 +422,7 @@ Application Code
 ----
  web/templates/new_article.html
  web/templates/index.html
- lib/Model/Entry.pm
+ lib/BlogDemo/Model/Entry.pm
 
 ----
 
