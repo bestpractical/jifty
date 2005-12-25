@@ -219,7 +219,7 @@ default_value for this field.
 sub current_value {
     my $self = shift;
 
-    if ($self->sticky_value and $self->sticky and (!Jifty->web->response->result($self->action->moniker) or $self->action->result->failure)) {
+    if ($self->sticky_value and $self->sticky) {
         return $self->sticky_value;
     } else {
         return $self->default_value;

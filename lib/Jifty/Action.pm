@@ -17,7 +17,7 @@ form elements interact with the underlying model.
 
 use base qw/Jifty::Object Class::Accessor/;
 
-__PACKAGE__->mk_accessors(qw(moniker argument_values order result));
+__PACKAGE__->mk_accessors(qw(moniker argument_values order result sticky_on_success sticky_on_failure));
 
 =head2 new
 
@@ -36,6 +36,8 @@ sub new {
     my %args = (
         order      => undef,
         arguments  => {},
+        sticky_on_success => 0,
+        sticky_on_failure => 1,
         @_);
 
     $self->moniker($args{'moniker'} || 'auto-'.Jifty->web->serial);
@@ -43,6 +45,9 @@ sub new {
     $self->argument_values( { %{ $args{'arguments'} } } );
     $self->result(Jifty->web->response->result($self->moniker) || Jifty::Result->new);
     $self->result->action_class(ref($self));
+
+    $self->sticky_on_success($args{sticky_on_success});
+    $self->sticky_on_failure($args{sticky_on_failure});
 
     return $self;
 }
@@ -274,13 +279,18 @@ sub _form_widget {
     if ( not exists $self->{_private_form_fields_hash}{$arg_name} ) {
 
         my $field_info = $self->arguments->{$args{'argument'}};
+
+        my $sticky = 0;
+        $sticky = 1 if $self->sticky_on_failure and (!Jifty->web->response->result($self->moniker) or $self->result->failure);
+        $sticky = 1 if $self->sticky_on_success and (Jifty->web->response->result($self->moniker) and $self->result->success);
+
         if ($field_info) {
             # form_fields overrides stickiness of what the user last entered.
             $self->{_private_form_fields_hash}{$arg_name}
                 = Jifty::Web::Form::Field->new(
                 action       => $self,
                 name         => $args{'argument'},
-                sticky       => 1, # default to sticky. an actual value in the action's arguments can override
+                sticky       => $sticky,
                 sticky_value => $self->argument_value($args{'argument'}),
                 render_mode  => $args{'render_mode'},
                 %$field_info,

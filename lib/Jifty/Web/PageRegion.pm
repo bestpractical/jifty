@@ -214,6 +214,7 @@ sub render {
     # Use a subrequest so we can't show components we wouldn't
     # normally be allowed to.  We pass in an empty 'J:ACTIONS' so that
     # actions don't get run more than once.
+    local Jifty->web->{request};
     Jifty->web->mason->make_subrequest
       ( comp => $self->path,
         args => [ %{ Jifty->web->mason->request_args },
