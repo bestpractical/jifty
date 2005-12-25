@@ -184,7 +184,17 @@ sub arguments {
                 }
             };
         }
-    
+   
+        my $autocomplete_method = "autocomplete_".$field;
+        if ($self->record->can($autocomplete_method) ) {
+            $info->{'ajax_autocomplete'} = 1;
+            $info->{'autocomplete_coderef'} = sub { 
+                    my $self = shift; 
+                    my $value = shift;
+                    &{$self->record->$autocomplete_method}($value);
+                }
+        }
+
         # If we're hand-coding a render_as, hints or label, let's use it.
         for ( qw(render_as label hints length)) { 
         

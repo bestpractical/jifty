@@ -326,7 +326,6 @@ sub _log_init {
         # don't try to use it to log warnings
         $logger->warn(@_) if Log::Log4perl->initialized;
     };
-    if (0) {
     $SIG{__DIE__} = sub {
         # This caller_depth line tells Log4perl to report
         # the error as coming from on step further up the
@@ -336,8 +335,8 @@ sub _log_init {
         local $Log::Log4perl::caller_depth =
             $Log::Log4perl::caller_depth + 1;
         $logger->logdie(@_);
+        die $@;
     };
-    }
 }
 
 

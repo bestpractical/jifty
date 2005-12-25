@@ -216,7 +216,6 @@ sub handle_request {
             $self->request->just_validating ? $action->validate_as_xml :
                                               $action->run ; 
             };
-
         $self->response->result($action->moniker => $action->result);
 
         # $@ is too magical -- accessing it twice can make it empty

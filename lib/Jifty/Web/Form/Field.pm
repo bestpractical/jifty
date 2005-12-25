@@ -81,8 +81,8 @@ C<new>.  Subclasses should extend this list.
 
 =cut
 
-sub accessors { shift->SUPER::accessors(), qw(name class label input_name type sticky sticky_value default_value action mandatory ajax_validates preamble hints key_binding render_mode length); }
-__PACKAGE__->mk_accessors(qw(name class _label _input_name type sticky sticky_value default_value _action mandatory ajax_validates preamble hints key_binding render_mode length));
+sub accessors { shift->SUPER::accessors(), qw(name class label input_name type sticky sticky_value default_value action mandatory ajax_validates ajax_autocomplete preamble hints key_binding render_mode length); }
+__PACKAGE__->mk_accessors(qw(name class _label _input_name type sticky sticky_value default_value _action mandatory ajax_validates ajax_autocomplete preamble hints key_binding render_mode length));
 
 =head2 name [VALUE]
 
@@ -256,6 +256,7 @@ sub render {
     $self->render_label();
     if ($self->render_mode eq 'update') { 
     $self->render_widget();
+    $self->render_autocomplete();
     $self->render_key_binding();
     $self->render_hints();
     $self->render_errors();
@@ -413,6 +414,30 @@ sub render_value {
     return '';
 }
 
+
+
+=head2 render_autocomplete
+
+Renders an empty div that /jifty/autocomplete.xml can fill in. Also renders the tiny snippet
+of javascript to make that call if necessary.
+Returns an empty string.
+
+=cut
+
+sub render_autocomplete { 
+    my $self = shift;
+    return unless($self->ajax_autocomplete);
+    Jifty->mason->out(
+qq!<div class="autocomplete" id="@{[$self->input_name]}-autocomplete" style="display:none;border:1px solid black;background-color:white;"></div>\n
+        <script type="text/javascript">
+          new Jifty.Autocompleter('@{[$self->input_name]}', '@{[$self->input_name]}-autocomplete', '/jifty/autocomplete.xml')
+        </script>
+  !
+    );
+
+    return '';
+
+}
 
 =head2 render_hints
 

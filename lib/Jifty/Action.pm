@@ -482,7 +482,7 @@ sub canonicalize_arguments {
 
     my $all_fields_ok = 1;
     foreach my $field (@fields) {
-        next unless exists $self->argument_values->{$field};
+        next unless $field and exists $self->argument_values->{$field};
         unless ( $self->canonicalize_argument($field) ) {
 
             $all_fields_ok = 0;
@@ -506,6 +506,8 @@ also invoke that function.
 sub canonicalize_argument {
     my $self  = shift;
     my $field = shift;
+
+
 
     my $field_info = $self->arguments->{$field};
     my $value = $self->argument_value($field);
@@ -549,14 +551,52 @@ sub validate_arguments {
 }
 
 
-=head2 validate_argument FIELDNAME
+=head2 autocomplete_argument ARGUMENT
 
-Validate your form fields.  If the field FIELDNAME is mandatory,
-checks for a value. If the field has an attribute named B<validator>, 
+Get back a list of possible completions for C<ARGUMENT>.
+
+If the field has an attribute named B<autocomplete>, call the subroutine
+reference B<autocomplete> points to.
+
+If the action doesn't have an explicit B<autocomplete> attribute, but
+does have a autocomplete_C<ARGUMENT> function, invoke that function.
+
+
+=cut
+
+
+sub autocomplete_argument {
+    my $self  = shift;
+    my $field = shift;
+    warn "completing $field";
+    my $field_info = $self->arguments->{$field};
+    warn YAML::Dump($self->arguments);
+    my $value = $self->argument_value($field);
+
+    my $default_autocomplete = 'autocomplete_' . $field;
+
+    if ( $field_info->{autocomplete_coderef}  ) 
+    {
+        warn "We can complete with a coderef";
+        return $field_info->{autocomplete_coderef}->( $self, $value );
+    }
+
+    elsif ( $self->can($default_autocomplete) ) {
+        warn "We can completre with a default";
+        return $self->$default_autocomplete( $value );
+    }
+
+}
+
+=head2 validate_argument ARGUMENT
+
+Validate your form fields.  If the field C<ARGUMENT> is mandatory,
+checks for a value. 
+If the field has an attribute named B<validator>, 
 call the subroutine reference validator points to.
 
 If the action doesn't have an explicit B<validator> attribute, but does have a 
-validate_FIELDNAME function, invoke that function.
+validate_C<ARGUMENT> function, invoke that function.
 
 
 =cut
