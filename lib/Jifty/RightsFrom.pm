@@ -76,7 +76,7 @@ sub export_curried_sub {
     local @{Jifty::RightsFrom::EXPORT_OK} = ($args{as});
     Jifty::RightsFrom->export_to_level( 2, $args{export_to}, $args{as} );
 }
-1;
+
 =head2 delegate_current_user_can
 
 Seeing and editing task transactions (as well as other activities) are

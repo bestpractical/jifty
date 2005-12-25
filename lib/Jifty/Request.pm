@@ -698,8 +698,6 @@ list of monikers; the actions with those monikers will be marked
 active, while all other actions are marked inactive.  In the absence
 of C<J:ACTIONS>, all actions are active.
 
-=back 
-
 =head1 YAML POST Request Protocool
 
 To be spec'd later

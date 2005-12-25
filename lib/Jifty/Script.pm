@@ -8,7 +8,7 @@ use UNIVERSAL::require;
 C<prepare> figures out which command to run. If the user wants
 C<--help> give them help. If they have no command on the commandline,
 but a JIFTY_COMMAND environment variable, try that. If they have
-neither, show em help. Otherwise, lett App::CLI figure it out.
+neither, shows the help. Otherwise, let App::CLI figure it out.
 
 =cut
 

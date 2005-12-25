@@ -45,7 +45,7 @@ Contains an app-specific "user" object.
 
 =cut
 
-=head2 currentuser_from_token
+=head2 validated_current_user
 
 If the user has presented a valid token, returns an (app-specific
 subclass of the) L<Jifty::CurrentUser> object for the user who has the
