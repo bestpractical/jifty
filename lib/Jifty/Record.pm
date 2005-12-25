@@ -239,8 +239,11 @@ sub _collection_value {
     return undef unless $classname;
     return unless UNIVERSAL::isa( $classname, 'Jifty::DBI::Collection' );
 
+
     my $coll = $classname->new( current_user => $self->current_user );
-    $coll->limit( column => $column->by(), value => $self->id );
+    if ($column->by and $self->id) { 
+            $coll->limit( column => $column->by(), value => $self->id );
+    }
     return $coll;
 }
 
