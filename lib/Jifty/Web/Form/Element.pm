@@ -23,7 +23,7 @@ is a hash reference, with the following possible keys:
 
 =item submit (optional)
 
-The moniker of an action to be submitted when the event is fired.
+An action (or moniker of an action) to be submitted when the event is fired.
 
 =item region (optional)
 
@@ -82,7 +82,8 @@ sub javascript {
         $response .= " $trigger=\"";
         for my $hook (@hooks) {
             if ($hook->{submit}) {
-                $response .= qq!var a = new Action('@{[$hook->{submit}]}'); a.submit();!;
+                my $moniker = ref $hook->{submit} ? $hook->{submit}->moniker : $hook->{submit};
+                $response .= qq!var a = new Action('@{[$moniker]}'); a.submit();!;
             }
 
             $response .= qq!update_region(!;
