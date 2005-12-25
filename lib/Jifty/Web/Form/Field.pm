@@ -167,7 +167,15 @@ to clear the SELECT after the user types in the INPUT.
 sub fallback_name {
     my $self = shift;
 
+    if ($self->action) {
     return $self->action->fallback_form_field_name( $self->name );
+    }
+    else {
+        # XXX TODO, we should have a more graceful way to compose these in the absence of an action
+        my $name = $self->input_name;
+        $name =~ s/^J:A:F/J:A:F:F/;
+        return($name)
+    }
 }
 
 
