@@ -1,5 +1,5 @@
 name: Jifty
-version: 0.1133394302
+version: 0.1133680401
 license: unknown
 distribution_type: module
 requires:
@@ -13,7 +13,7 @@ requires:
   Cwd: 0
   Data::Page: 0
   Data::UUID: 0
-  DBD::Pg: 0
+  DBD::SQLite: 0
   Email::Send: 1.99_01
   Email::Simple: 0
   Email::Simple::Creator: 0
@@ -49,9 +49,10 @@ requires:
   UNIVERSAL::require: 0
   URI: 0
   WWW::Mechanize: 1.12
+  version: 0
   XML::XPath: 0
   YAML: 0
 no_index:
   directory:
     - inc
-generated_by: Module::Install version 0.37
+generated_by: Module::Install version 0.390
