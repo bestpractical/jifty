@@ -80,8 +80,8 @@ C<new>.  Subclasses should extend this list.
 
 =cut
 
-sub accessors { qw(name class label input_name type default_value action mandatory ajax_validates preamble hints key_binding render_mode); }
-__PACKAGE__->mk_accessors(qw(name class _label _input_name type default_value _action mandatory ajax_validates preamble hints key_binding render_mode));
+sub accessors { qw(name class label input_name type default_value action mandatory ajax_validates preamble hints key_binding render_mode length); }
+__PACKAGE__->mk_accessors(qw(name class _label _input_name type default_value _action mandatory ajax_validates preamble hints key_binding render_mode length));
 
 =head2 name [VALUE]
 
@@ -320,6 +320,7 @@ sub render_widget {
     # XXX TODO FIXME worry about escaping default value?
     $field .= qq! value="@{[HTML::Entities::encode_entities($self->default_value)]}"! if defined $self->default_value;
     $field .= qq! class="@{[ $self->class ]}@{[ $self->ajax_validates ? ' ajaxvalidation' : '' ]}" !;
+    $field .= qq! size="@{[ $self->length() ]}"! if ($self->length());
     $field .= qq!      />\n!;
     Jifty->mason->out($field);
     return '';

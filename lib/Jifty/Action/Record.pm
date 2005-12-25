@@ -187,7 +187,7 @@ sub arguments {
         }
     
         # If we're hand-coding a render_as, hints or label, let's use it.
-        for ( qw(render_as label hints)) { 
+        for ( qw(render_as label hints length)) { 
         
             if ( defined $column->$_ && $column->$_) {
                  $info->{$_} = $column->$_;

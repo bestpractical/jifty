@@ -244,7 +244,8 @@ sub form_field {
     my $self = shift;
     my $arg_name = shift;
     $self->_form_widget( argument => $arg_name,
-                         render_mode => 'update');
+                         render_mode => 'update',
+                         @_);
 
 }
 
@@ -263,7 +264,8 @@ sub form_value {
     my $self = shift;
     my $arg_name = shift;
     $self->_form_widget( argument => $arg_name,
-                         render_mode => 'read');
+                         render_mode => 'read',
+                         @_);
 
 }
 
@@ -282,7 +284,6 @@ sub _form_widget {
 
         my $field_info = $self->arguments->{$args{'argument'}};
         if ($field_info) {
-
             # form_fields overrides stickiness of what the user last entered.
             $self->{_private_form_fields_hash}{$arg_name}
                 = Jifty::Web::Form::Field->new(
@@ -290,7 +291,8 @@ sub _form_widget {
                 name          => $args{'argument'},
                 default_value => $field_info->{not_sticky} ? "" : $self->argument_value($args{'argument'}),
                 render_mode => $args{'render_mode'},
-                %$field_info
+                %$field_info,
+                %args
                 );
 
             # ..unless this action failed last time
