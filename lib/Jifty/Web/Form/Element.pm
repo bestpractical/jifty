@@ -45,6 +45,7 @@ fragment the region was originally rendered with.
 =cut
 
 use base qw/Jifty::Object Class::Accessor/;
+use Data::JavaScript::Anon;
 
 =head2 handlers
 
@@ -79,37 +80,42 @@ sub javascript {
         my $value = $self->$trigger;
         next unless $value;
         my @hooks = ref $value eq "ARRAY" ? @{$value} : ($value);
-        $response .= " $trigger=\"";
+        $response .= qq| $trigger="|;
         for my $hook (@hooks) {
+            my %args;
+            # What element we're replacing.
+            if ($hook->{element}) {
+                $args{element} = $hook->{element};
+                $args{region}  = $args{element} =~ /^#region-(\S+)/ ? "$1-".Jifty->web->serial : Jifty->web->serial;
 
-            $response .= qq!update_region({!;
-
-            # Region
-            $response
-                .= qq!name: '@{[$hook->{region} || Jifty->web->qualified_region]}'!;
+            } else {
+                $args{region}  = $hook->{region} || Jifty->web->qualified_region;
+            }
 
             # Submit action
             if ( $hook->{submit} ) {
                 $hook->{submit} = [ $hook->{submit} ] unless ref $hook->{submit} eq "ARRAY";
-                my $moniker = join ',' => map {"'$_'"} map { ref $_ ? $_->moniker : $_ } @{ $hook->{submit} };
-                $response .= qq!, submit: [ @{[$moniker]} ]!;
+                $args{submit} = [map { ref $_ ? $_->moniker : $_ } @{ $hook->{submit} } ];
             }
 
             # Arguments
-            my %these = ( %{ $hook->{args} || {} } );
-            $response .= qq!, args: {!;
-            $response .= join( ',',
-                map { ( $a = $these{$_} ) =~ s/'/\\'/g; "'$_':'$a'" }
-                    keys %these );
-            $response .= qq!}!;
+            $args{args} = {Jifty::Request::Mapper->query_parameters( %{ $hook->{args} || {} } )};
 
-            # Fragment (optional)
-            $response .= qq!, fragment: '@{[$hook->{fragment}]}'!
-                if $hook->{fragment};
+            # Placement
+            if (exists $hook->{replace_with}) {
+                @args{qw/mode path/} = ('Replace', $hook->{replace_with});
+            } elsif ($hook->{append}) {
+                @args{qw/mode path/} = ('Bottom', $hook->{append});
+            } elsif ($hook->{prepend}) {
+                @args{qw/mode path/} = ('Top', $hook->{prepend});
+            } 
 
-            $response .= qq!});!;
+            # Effects
+            $args{$_} = $hook->{$_} for grep {exists $hook->{$_}} qw/effect/;
+
+            $response .= "update( @{[ Data::JavaScript::Anon->anon_dump(\%args) ]} );";
         }
-        $response .= "return false;\"";
+        $response .= qq|return false;"|;
     }
     return $response;
 }

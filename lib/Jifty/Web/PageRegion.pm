@@ -15,7 +15,7 @@ can be updated via AJAX or via query parameters.
 =cut
 
 use base qw/Jifty::Object Class::Accessor/;
-__PACKAGE__->mk_accessors(qw(name default_path default_arguments qualified_name));
+__PACKAGE__->mk_accessors(qw(name default_path default_arguments qualified_name parent));
 
 =head2 new PARAMHASH
 
@@ -51,11 +51,13 @@ sub new {
                 name => undef,
                 path => undef,
                 defaults => {},
+                _bootstrap => undef,
+                parent => undef,
                 @_
                );
 
     # Name and path are required
-    unless (defined $args{name} and defined $args{path}) {
+    if (not $args{_bootstrap} and (not defined $args{name} or not defined $args{path})) {
         warn "Name and path are required for page regions. We got ".join(",", %args);
         return;
     }
@@ -71,6 +73,7 @@ sub new {
     $self->default_path($args{path});
     $self->default_arguments($args{defaults});
     $self->arguments({});
+    $self->parent($args{parent});
 
     return $self;
 }
@@ -228,6 +231,12 @@ sub render {
     $result .= qq|</div>|;
 
     return $result;
+}
+
+
+sub get_element {
+    my $self = shift;
+    return "#region-" . $self->qualified_name . ' ' . join(' ', @_);
 }
 
 1;

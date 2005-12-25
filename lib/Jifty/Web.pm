@@ -972,6 +972,7 @@ sub region {
 
     # Add ourselves to the region stack
     my $region = Jifty::Web::PageRegion->new(@_) or return;
+    $region->parent(Jifty->web->current_region);
     local $self->{'region_stack'}
         = [ @{ $self->{'region_stack'} || [] }, $region ];
     $region->enter;
@@ -997,7 +998,7 @@ there is none.
 sub current_region {
     my $self = shift;
     return $self->{'region_stack'}
-        ? $self->{'region_stack'}[-1]->name
+        ? $self->{'region_stack'}[-1]
         : undef;
 }
 
