@@ -129,8 +129,9 @@ sub submit {
     
     
     $message = HTML::Entities::encode_entities($message);
-    
+    Jifty->mason->out(qq{<span class="submit_button">}); 
     Jifty->mason->out(qq{<input type="submit" class="submit" value="$message" onClick="jifty_button_click();" />\n});
+    Jifty->mason->out(qq{</span>});
 
     return '';
 } 
