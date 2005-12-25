@@ -39,6 +39,7 @@ creates the appropriate L<Jifty::Action::Record> subclass.
 
 =cut
 
+# This subroutine's name is fully qualified, as perl will ignore a 'sub INC'
 sub Jifty::ClassLoader::INC {
     my ($self, $module) = @_;
     my $ApplicationClass = Jifty->framework_config('ApplicationClass');
