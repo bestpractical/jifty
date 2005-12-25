@@ -76,7 +76,7 @@ Adds C<ACTION> as an action for this form. Called so that actions' form fields c
 sub register_action {
     my $self = shift;
     my $action = shift;
-     $self->actions->{$action->moniker } =  $action;
+    $self->actions->{ $action->moniker } =  $action;
     return $action;
 }
 
