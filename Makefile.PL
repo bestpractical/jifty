@@ -61,7 +61,7 @@ requires('version');
 requires('XML::Writer');
 requires('XML::XPath');
 requires('YAML');
-version('0.'.time());
+version_from('lib/Jifty.pm');
 #&auto_bundle_deps();
 &auto_install();
 

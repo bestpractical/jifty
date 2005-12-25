@@ -3,6 +3,8 @@ use strict;
 
 package Jifty;
 
+our $VERSION = '0.51225';
+
 =head1 NAME
 
 Jifty -- Just Do It
