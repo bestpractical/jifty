@@ -9,7 +9,58 @@ Jifty -- Just Do It
 
 =head1 DESCRIPTION
 
-Yet another web framework.  
+Yet another web framework.
+
+=head2 What's cool about Jifty? (Buzzwords)
+
+=over 4
+
+=item DRY (Don't Repeat Yourself)
+
+Jifty tries not to make you say things more than once.
+
+=item Full-stack
+
+Out of the proverbial box, Jifty comes with one way to do everything
+you should need to do: One database mapper, one templating system, one
+web services layer, one AJAX toolkit, one set of handlers for
+standalone or FastCGI servers. We work hard to make all the bits play
+well together, so you don't have to.
+
+=item Continuations
+
+With Jifty, it's easy to let the user go off and do something else,
+like fill out a wizard, look something up in the help system or go
+twiddle their preferences and come right back to where they were.
+
+=item Form-based dispatch
+
+This is one of the things that Jifty does that we've not seen anywhere
+else. Jifty owns your form rendering and processing. This means you
+never need to write form handling logic. All you say is "I want an
+input for this argument here" and Jifty takes care of the rest. (Even
+autocomplete and validation)
+
+=item Perl
+
+Jifty is written in Perl. If you're familiar with Ruby, Perl might
+feel like Ruby's quirky big brother.
+
+=item CPAN
+
+If it's out there, it's in CPAN. Everything from AtomAPI libraries to
+Z39.50 library gateways.
+
+=item A Pony
+
+Jifty is the only web application framework that comes with a pony.
+
+=back
+
+=head2 Introduction
+
+If this is your first time using Jifty, L<Jifty::Help::Tutorial> is
+probably a better place to start.
 
 =cut
 
@@ -24,8 +75,15 @@ use vars qw/$HANDLE $CONFIG $LOGGER/;
 
 =head2 new PARAMHASH
 
-This class method instantiates a new C<Jifty> object. This object deals
-with configuration files, logging and database handles for the system.
+This class method instantiates a new C<Jifty> object. This object
+deals with configuration files, logging and database handles for the
+system.  Most of the time, the server will call this for you to set up
+your C<Jifty> object.  If you are writing command-line programs htat
+want to use your libraries (as opposed to web services) you will need
+to call this yourself.
+
+See L<Jifty::Config> for details on how to configure your Jifty
+application.
 
 =head3 Arguments
 
@@ -33,27 +91,12 @@ with configuration files, logging and database handles for the system.
 
 =item no_handle
 
-If this is set to true, Jifty will not connect to a database.  Only use
-this if you're about to drop the database or do something extreme like
-that; most of Jifty expects the handle to exist.  Defaults to false.
+If this is set to true, Jifty will not create a L<Jifty::Handle> and
+connect to a database.  Only use this if you're about to drop the
+database or do something extreme like that; most of Jifty expects the
+handle to exist.  Defaults to false.
 
 =back
-
-=head3 Configuration
-
-This method will load the main configuration file for the application
-and use that to find a vendor configuration file. (If it doesn't find
-a framework variable named 'VendorConfig', it will use the
-C<JIFTY_VENDOR_CONFIG> environment variable.
-
-After loading the vendor configuration file (if it exists), the
-framework will look for a site configuration file, specified in either
-the framework's C<SiteConfig> or the C<JIFTY_SITE_CONFIG> environment
-variable.
-
-Values in the site configuration file clobber those in the vendor
-confjguration file. Values in the vendor configuration file clobber
-those in the application configuration file.
 
 =cut
 
@@ -121,7 +164,7 @@ sub handle {
 
 =head2 web
 
-Returns the current L<Jifty::Web> object.
+An accessor for the L<Jifty::Web> object that the web interface uses.
 
 =cut
 

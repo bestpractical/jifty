@@ -46,9 +46,7 @@ $body =~ s{</body>\s*</html>\s*$}{};
 $n    =~ s{/}{::}g;
 $m->print("<h1>$n</h1>");
 $m->print("<h2>Schema</h2><pre>$schema</pre>") if ($schema);
-$body =~ s/(?<!\$)\b(Jifty::[a-zA-Z0-9:]+)\b/<a href="content.html?n=$1">$1<\/a>/g;
-$body =~ s{(?<![\$:])(?<!Jifty::)\b((?!Jifty::)\w+::\w+)\b}{<a
-href="http://search.cpan.org/search?query=$1&mode=module">$1</a>}g;
+$body =~ s{<a href="http://search\.cpan\.org/perldoc\?(Jifty%3A%3A[^"]+)"([^>]*)>}{<a href="content.html?n=$1"$2>}g;
 $body =~ s!</li>\n\t<ul>!<ul>!;
 $body =~ s!</ul>!</ul></li>!;
 $body =~ s!<p></p>!!;

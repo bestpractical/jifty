@@ -7,13 +7,12 @@ Jifty::Action::Autocomplete
 
 =head1 DESCRIPTION
 
-A built-in Jifty action which returns suggested autocompletions 
-for a given argument of an action. Generally this is called by
-Jifty's internals through C</jifty/autocomplete.xml>.
+A built-in L<Jifty::Action> which returns suggested autocompletions
+for a given argument of an action. Generally this is called by Jifty's
+internals through C</jifty/autocomplete.xml>.
 
-This action gets its data to C<autocomplete.xml> by filling in a
-L<Jifty::Result> object
-
+This action gets its data to C<autocomplete.xml> by filling in the
+C<completions> of the L<Jifty::Result/content>.
 
 =cut
 
@@ -30,27 +29,30 @@ The arguments for C<Autocomplete> are:
 
 =item action
 
-The moniker of an action we want to pull a field to autocomplete from
+The L<moniker|Jifty::Glossary/moniker> of an action we want to pull a
+field to autocomplete from.
 
 =item argument
 
-The name of the argument to C<action> that we want to complete
+The fully qualified name of the L<argument|Jifty::Glossary/argument>
+to C<action> that we want to complete.
 
 =back
 
 =cut
 
 sub arguments {
-        {
-            action => {},
-            argument => {}
-        }
-
+    {
+        action => {},
+        argument => {}
+    }
 }
 
 =head2 take_action
 
-Go off and actually look up the possible completions
+Find the submitted action in the L<Jifty::Request> named by the
+C<action> above, and ask it for autocompletion possibilites for the
+L<argument> in question.
 
 =cut
 
@@ -64,8 +66,7 @@ sub take_action {
     my $request_action = Jifty->web->request->action($moniker);
     my $action = Jifty->web->new_action_from_request($request_action);
 
-    my @completions = $action->autocomplete_argument($arg_name);
-    #@completions = ( { label => 'foo', value => 'bar' });
+    my @completions = $action->_autocomplete_argument($arg_name);
     $self->result->content->{completions} = \@completions;
 
     return 1;

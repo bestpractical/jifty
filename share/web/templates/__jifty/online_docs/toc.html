@@ -53,6 +53,7 @@ foreach my $file (sort @found) {
         }
         $indent++;
     } elsif ($prev !~ /^$parent\::/) {
+        $indent = 0 unless length $parent;
         while ($parent =~ s/(\w+)//) {
             next if $prev =~ s/\b$1:://;
             while ($prev =~ s/:://) {

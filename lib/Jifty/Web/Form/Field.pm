@@ -1,3 +1,15 @@
+=for properties
+
+default_value
+canonicalizer
+mandatory
+validator
+valid_values
+available_values
+
+
+=cut
+
 use warnings;
 use strict;
  

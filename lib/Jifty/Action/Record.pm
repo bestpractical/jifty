@@ -27,11 +27,8 @@ __PACKAGE__->mk_accessors(qw(record));
 
 =head2 record
 
-Access to the underlying Jifty::Record object that this action is
+Access to the underlying L<Jifty::Record> object for this action is
 through the C<record> accessor.
-
-=cut
-
 
 =head2 record_class
 
@@ -196,7 +193,7 @@ sub arguments {
         my $autocomplete_method = "autocomplete_".$field;
         if ($self->record->can($autocomplete_method) ) {
             $info->{'ajax_autocomplete'} = 1;
-            $info->{'autocomplete_coderef'} = sub { 
+            $info->{'autocompleter'} = sub { 
                     my $value = shift;
                     return $self->record->$autocomplete_method( $value);
                 };
@@ -217,7 +214,7 @@ sub arguments {
 }
 
 
-=head2 canonicalize_argument ARGUMENT_NAME
+=head2 _canonicalize_argument ARGUMENT_NAME
 
 Canonicalizes the argument named ARGUMENT_NAME. This routine actually just makes sure 
 we can canonicalize dates and then passes on to the superclass.
@@ -225,28 +222,28 @@ we can canonicalize dates and then passes on to the superclass.
 =cut
 
 
-sub canonicalize_argument {
+sub _canonicalize_argument {
     my $self = shift;
     my $arg_name = shift;
 
 
     if (exists $self->arguments->{$arg_name}->{'render_as'} 
      and $self->arguments->{$arg_name}->{'render_as'} eq 'Date') {
-        my $value = $self->canonicalize_date($self->argument_value($arg_name));
+        my $value = $self->_canonicalize_date($self->argument_value($arg_name));
         $self->argument_value($arg_name => $value);
     }
 
-    return($self->SUPER::canonicalize_argument($arg_name));
+    return($self->SUPER::_canonicalize_argument($arg_name));
 
 }
 
-=head2 canonicalize_date
+=head2 _canonicalize_date
 
 Parses the date using L<Time::ParseDate>.
 
 =cut
 
-sub canonicalize_date {
+sub _canonicalize_date {
     my $self = shift;
     my $val = shift;
     return undef unless defined $val and $val =~ /\S/;

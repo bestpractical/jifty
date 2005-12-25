@@ -1,3 +1,21 @@
+=head3 Configuration
+
+This method will load the main configuration file for the application
+and use that to find a vendor configuration file. (If it doesn't find
+a framework variable named 'VendorConfig', it will use the
+C<JIFTY_VENDOR_CONFIG> environment variable.
+
+After loading the vendor configuration file (if it exists), the
+framework will look for a site configuration file, specified in either
+the framework's C<SiteConfig> or the C<JIFTY_SITE_CONFIG> environment
+variable.
+
+Values in the site configuration file clobber those in the vendor
+confjguration file. Values in the vendor configuration file clobber
+those in the application configuration file.
+
+=cut
+
 use warnings;
 use strict;
 
