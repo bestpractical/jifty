@@ -101,7 +101,6 @@ div.spacer {
 
 div#jifty-wait-message {
     color: red;
-    display: none;
     background: black;
     font-size: 2em;
     position: fixed;

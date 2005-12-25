@@ -21,7 +21,7 @@ Alert: Jifty <% Jifty->web->tangent( label => 'administration mode' , url => '/_
        --></script>
     </div>
   </div>
-  <div id="jifty-wait-message">Loading...</div>
+  <div id="jifty-wait-message" style="display: none">Loading...</div>
 </body>
 </html>
 <%args>
