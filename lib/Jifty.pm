@@ -113,6 +113,9 @@ sub new {
     __PACKAGE__->config( Jifty::Config->new() );
     __PACKAGE__->logger( Jifty::Logger->new( $args{'logger_component'} ) );
 
+    my $loader = Jifty::ClassLoader->new();
+    $loader->require;
+
     unless ( $args{'no_handle'} or not Jifty->config->framework('Database') )
     {
         Jifty->handle( Jifty::Handle->new() );
@@ -120,8 +123,6 @@ sub new {
         Jifty->handle->check_schema_version();
     }
 
-    my $loader = Jifty::ClassLoader->new();
-    $loader->require;
 }
 
 =head2 config
