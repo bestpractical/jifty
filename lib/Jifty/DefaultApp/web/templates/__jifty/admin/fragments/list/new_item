@@ -15,28 +15,23 @@ my $record_class =  Jifty->config->framework('ApplicationClass')."::Model::".$ob
 
 Jifty->web->form->submit(
     label    => 'Create',
-    on_click => [
-        {   submit => $create },
-        {   # maybe we want a "refresh self" shortcut
-            replace_with => '/__jifty/admin/fragments/list/new_item' ,
-            args => { object_type => $object_type } 
-            },
-        {   # if we're replacing something else, we specify an element
-            # might be able to say fragment => 'fragmentname' instead
-            append => '/__jifty/admin/fragments/list/view',
-            args   => { 
-                        object_type => $object_type,
-                        id        => { result_of => $create, name => 'id' },
-                }
-        },
-        ]
-
-
+    onclick  => [
+                 { submit => $create },
+                 { refresh_self => 1 },
+                 {
+                   append => '/__jifty/admin/fragments/list/view',
+                   args   => { 
+                              object_type => $object_type,
+                              id          => { result_of => $create, name => 'id' },
+                             },
+                 },
+                ]
     ) %>
 </div>
 <%doc>
 
-When you hit "save" and create a item, you want to put a fragment containing the new item in the associated
-list and put back a new create_item div.
+When you hit "save" and create a item, you want to put a fragment
+containing the new item in the associated list and refresh the current
+fragment
 
 </%doc>

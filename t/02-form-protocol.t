@@ -24,6 +24,7 @@ arguments:
   J:A:F-id-mymoniker: 23
   J:A:F-something-mymoniker: else
   J:ACTIONS: mymoniker
+fragments: {}
 === two actions
 --- form
 J:A-mymoniker: DoSomething
@@ -58,6 +59,7 @@ arguments:
   J:A:F-id-second: 42
   J:A:F-something-second: bla
   J:ACTIONS: mymoniker;second
+fragments: {}
 === two different actions
 --- form
 J:A-mymoniker: DoSomething
@@ -92,6 +94,7 @@ arguments:
   J:A:F-id-second: 42
   J:A:F-something-second: bla
   J:ACTIONS: mymoniker;second
+fragments: {}
 === ignore arguments without actions
 --- form
 J:A-mymoniker: DoSomething
@@ -117,6 +120,7 @@ arguments:
   J:A:F-id-second: 42
   J:A:F-something-second: bla
   J:ACTIONS: mymoniker;second
+fragments: {}
 === one active, one inactive action
 --- form
 J:A-mymoniker: DoSomething
@@ -151,6 +155,7 @@ arguments:
   J:A:F-id-second: 42
   J:A:F-something-second: bla
   J:ACTIONS: second
+fragments: {}
 === two actions, no J:ACTIONS
 --- form
 J:A-mymoniker: DoSomething
@@ -183,6 +188,7 @@ arguments:
   J:A-second: DoThat
   J:A:F-id-second: 42
   J:A:F-something-second: bla
+fragments: {}
 === ignore totally random stuff
 --- form
 J:A: bloopybloopy
@@ -223,6 +229,7 @@ arguments:
   J:A-second: DoThat
   J:A:F-id-second: 42
   J:A:F-something-second: bla
+fragments: {}
 === order doesn't matter
 --- form
 J:A:F-id-mymoniker: 23
@@ -255,6 +262,7 @@ arguments:
   J:A-second: DoThat
   J:A:F-something-mymoniker: else
   J:A-mymoniker: DoSomething
+fragments: {}
 === fallbacks being ignored
 --- form
 J:A-mymoniker: DoSomething
@@ -278,6 +286,7 @@ arguments:
   J:A:F:F-id-mymoniker: 96
   J:A:F-something-mymoniker: else
   J:ACTIONS: mymoniker
+fragments: {}
 === fallbacks being ignored (other order)
 --- form
 J:A-mymoniker: DoSomething
@@ -301,6 +310,7 @@ arguments:
   J:A:F-id-mymoniker: 23
   J:A:F-something-mymoniker: else
   J:ACTIONS: mymoniker
+fragments: {}
 === fallbacks being used
 --- form
 J:A-mymoniker: DoSomething
@@ -322,6 +332,7 @@ arguments:
   J:A:F:F-id-mymoniker: 96
   J:A:F-something-mymoniker: else
   J:ACTIONS: mymoniker
+fragments: {}
 === two different actions, one with fallback, one without
 --- form
 J:A-mymoniker: DoSomething
@@ -358,6 +369,7 @@ arguments:
   J:A:F-id-second: 42
   J:A:F-something-second: feepy
   J:ACTIONS: mymoniker;second
+fragments: {}
 === double fallbacks being ignored (with single fallback)
 --- form
 J:A-mymoniker: DoSomething
@@ -383,6 +395,7 @@ arguments:
   J:A:F-id-mymoniker: 123
   J:A:F-something-mymoniker: else
   J:ACTIONS: mymoniker
+fragments: {}
 === double fallbacks being ignored (without single fallback)
 --- form
 J:A-mymoniker: DoSomething
@@ -406,6 +419,7 @@ arguments:
   J:A:F-id-mymoniker: 123
   J:A:F-something-mymoniker: else
   J:ACTIONS: mymoniker
+fragments: {}
 === double fallbacks being ignored (single fallback used)
 --- form
 J:A-mymoniker: DoSomething
@@ -429,6 +443,7 @@ arguments:
   J:A:F:F-id-mymoniker: 456
   J:A:F-something-mymoniker: else
   J:ACTIONS: mymoniker
+fragments: {}
 === double fallbacks being used
 --- form
 J:A-mymoniker: DoSomething
@@ -450,6 +465,7 @@ arguments:
   J:A:F:F:F-id-mymoniker: 789
   J:A:F-something-mymoniker: else
   J:ACTIONS: mymoniker
+fragments: {}
 === just validating
 ---- form
 J:A-mymoniker: DoSomething
@@ -487,3 +503,4 @@ arguments:
   J:A:F-id-second: 42
   J:A:F-something-second: bla
   J:ACTIONS: mymoniker;second
+fragments: {}

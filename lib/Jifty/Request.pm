@@ -6,6 +6,9 @@ package Jifty::Request;
 use base qw/Jifty::Object Class::Accessor Clone/;
 __PACKAGE__->mk_accessors(qw(arguments just_validating path continuation));
 
+use JSON;
+use YAML;
+
 =head1 NAME
 
 Jifty::Request - Canonical internal representation of an incoming Jifty request
@@ -157,13 +160,87 @@ sub new {
     my $class = shift;
     my $self = bless {}, $class;
 
-    $self->{actions} = {};
+    $self->{'actions'} = {};
     $self->{'state_variables'} = {};
+    $self->{'fragments'} = {};
     $self->arguments({});
 
     my %args = @_;
     for (keys %args) {
         $self->$_($args{$_}) if $self->can($_);
+    }
+
+    return $self;
+}
+
+=head2 fill
+
+Attempt to fill in the request from any number of various methods --
+YAML, JSON, etc.  Falls back to query parameters.
+
+=cut
+
+sub fill {
+    my $self = shift;
+
+    # If this is a subrequest, we need to pull from the mason args in
+    # order to avoid infinite looping
+    $self->from_mason_args
+      if Jifty->web->mason->is_subrequest;
+
+    # Grab content type and posted data, if any
+    my $ct   = Jifty->web->mason->cgi_request->header_in("Content-Type");
+    my $data = Jifty->web->mason->request_args->{POSTDATA};
+
+    # Check it for something appropriate
+    if ($data) {
+        if ($ct eq "text/x-json") {
+            return $self->from_data_structure(JSON::jsonToObj($data));
+        } elsif ($ct eq "text/x-yaml") {
+            return $self->from_data_structure(YAML::Load($data));
+        }
+    }
+
+    # Fall back on using the mason args
+    return $self->from_mason_args;
+}
+
+=head2 from_data_structure
+
+=cut
+
+sub from_data_structure {
+    my $self = shift;
+    my $data = shift;
+
+    # TODO: continuations
+
+    $self->path($data->{path});
+
+    my %actions = %{$data->{actions} || {}};
+    for my $a (values %actions) {
+        $self->add_action(moniker   => $a->{moniker},
+                          class     => $a->{class},
+                          # TODO: ORDER
+                          arguments => {map {$_ => $a->{fields}{$_}{value}
+                                                || $a->{fields}{$_}{fallback}
+                                                || $a->{fields}{$_}{doublefallback}}
+                                        keys %{$a->{fields} || {}} },
+                         );
+    }
+
+    my %variables = %{$data->{variables} || {}};
+    for my $v (keys %variables) {
+        $self->add_state_variable(key => $v, value => $variables{$v});
+    }
+
+    my %fragments = %{$data->{fragments} || {}};
+    for my $f (values %fragments) {
+        $self->add_fragment(name      => $f->{name},
+                            path      => $f->{path},
+                            arguments => $f->{args},
+                            wrapper   => $f->{wrapper} || 0,
+                           );
     }
 
     return $self;
@@ -231,6 +308,9 @@ sub merge_param {
 
     my ($key, $value) = @_;
     $self->arguments->{$key} = $value;
+
+    my $args = Jifty->web->mason->{'request_args'};
+    push @$args, $key => $value;
 
     if ($key =~ /^J:A-(?:(\d+)-)?(.+)/s) {
         $self->add_action(moniker => $2, class => $value, order => $1, arguments => {}, active => 1);
@@ -505,6 +585,42 @@ sub add_action {
     $self;
 } 
 
+
+sub fragments {
+    my $self = shift;
+
+    return values %{$self->{'fragments'}}
+}
+
+sub add_fragment {
+    my $self = shift;
+
+    my %args = (
+                name      => undef,
+                path      => undef,
+                arguments => undef,
+                wrapper   => undef,
+                @_
+               );
+
+    my $fragment = $self->{'actions'}->{ $args{'name'} } || Jifty::Request::Fragment->new;
+
+    for my $k (qw/name path wrapper/) {
+        $fragment->$k($args{$k}) if defined $args{$k};
+    } 
+    
+    if ($args{'arguments'}) {
+        for my $k (keys %{ $args{'arguments'} }) {
+            $fragment->argument($k, $args{'arguments'}{$k});
+        } 
+    }
+
+    $self->{'fragments'}{$args{'name'}} = $fragment;
+
+    return $self;
+}
+
+
 sub do_mapping {
     my $self = shift;
 
@@ -536,12 +652,25 @@ sub argument {
     $self->arguments->{$key};
 }
 
+
 package Jifty::Request::StateVariable;
 use base 'Class::Accessor';
 __PACKAGE__->mk_accessors (qw/key value/);
 
 
+package Jifty::Request::Fragment;
+use base 'Class::Accessor';
+__PACKAGE__->mk_accessors( qw/name path wrapper arguments/ );
 
+sub argument {
+    my $self = shift;
+    my $key  = shift;
+
+    $self->arguments({}) unless $self->arguments;
+
+    $self->arguments->{$key} = shift if @_;
+    $self->arguments->{$key};
+}
 
 1;
 

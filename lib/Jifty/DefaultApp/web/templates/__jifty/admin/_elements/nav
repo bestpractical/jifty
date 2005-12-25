@@ -29,11 +29,11 @@
 
         }
 
-my $nav = Jifty->web->navigation->child("Administration");
- foreach my $model (@models) {
- next unless ($model =~ /^(?:.*)::(.*?)$/);
- my $type = $1;
- $nav->child($type   => url => '/__jifty/admin/'.$type);
- }
- return;
+my $nav = Jifty->web->navigation->child("Administration" => url => '/__jifty/admin/');
+foreach my $model (@models) {
+    next unless ($model =~ /^(?:.*)::(.*?)$/);
+    my $type = $1;
+    $nav->child($type   => url => '/__jifty/admin/'.$type);
+}
+return;
 </%init>

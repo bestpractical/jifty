@@ -1,3 +1,4 @@
+  <script type="text/javascript" src="/js/json.js"></script>
   <script type="text/javascript" src="/js/prototype.js"></script>
   <script type="text/javascript" src="/js/behaviour.js"></script>
   <script type="text/javascript" src="/js/scriptaculous/scriptaculous.js"></script>

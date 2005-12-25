@@ -15,7 +15,8 @@ can be updated via AJAX or via query parameters.
 =cut
 
 use base qw/Jifty::Object Class::Accessor/;
-__PACKAGE__->mk_accessors(qw(name default_path default_arguments qualified_name parent));
+__PACKAGE__->mk_accessors(qw(name default_path default_arguments qualified_name parent region_wrapper));
+use Data::JavaScript::Anon;
 
 =head2 new PARAMHASH
 
@@ -53,6 +54,7 @@ sub new {
                 defaults => {},
                 _bootstrap => undef,
                 parent => undef,
+                region_wrapper => 1,
                 @_
                );
 
@@ -74,6 +76,7 @@ sub new {
     $self->default_arguments($args{defaults});
     $self->arguments({});
     $self->parent($args{parent});
+    $self->region_wrapper(not $args{_bootstrap} and $args{region_wrapper});
 
     return $self;
 }
@@ -169,7 +172,7 @@ sub enter {
     my $self = shift;
 
     $self->qualified_name(Jifty->web->qualified_region);
-    
+
     # Merge in the settings passed in via state variables
     for (Jifty->web->request->state_variables) {
         if ($_->key =~ /^region-(.*?)\.(.*)/ and $1 eq $self->qualified_name and $_->value ne $self->default_argument($2)) {
@@ -195,8 +198,16 @@ sub render {
     my %arguments =  %{$self->arguments};
 
     # undef arguments cause warnings. We hatesses the warnings, we do.
-    map { defined  $arguments{$_} || delete $arguments{$_} } keys %arguments;
+    defined $arguments{$_} or delete $arguments{$_} for keys %arguments;
     my $result = "";
+
+    # Map out the arguments
+    for (keys %arguments) {
+        my ($key, $value) = Jifty::Request::Mapper->map(destination => $_, source => $arguments{$_});
+        next unless $key ne $_;
+        delete $arguments{$_};
+        $arguments{$key} = $value;
+    }
 
     # We need to tell the browser this is a region and
     # what its default arguments are as well as the path of the "fragment".
@@ -207,28 +218,32 @@ sub render {
     # Alex is sad about: Anything which is replaced _must_ start life as a fragment.
     # We don't have a good answer for this yet.
 
-
-    $result .= qq|<script type="text/javascript"><!--\n|;
-    $result .= qq|region('|. $self->qualified_name .qq|',{|;
-    $result .= join(',', map {($a = $arguments{$_})=~s/'/\\'/g;qq|'$_':'$a'|}
-                         grep {defined $arguments{$_}}
-                         keys %arguments);
-    $result .= qq|},'|. $self->path . qq|');\n|;
-    $result .= qq| --></script>|;
-    $result .= qq|<div id="region-| . $self->qualified_name . qq|">|;
+    # We only render the region wrapper if we're asked to (which is true by default)
+    if ($self->region_wrapper) {
+        $result .= qq|<script type="text/javascript">\n|;
+        $result .= qq|new Region('|. $self->qualified_name .qq|',|;
+        $result .= Data::JavaScript::Anon->anon_dump(\%arguments);
+        $result .= qq|,'|. $self->path . qq|');\n|;
+        $result .= qq|</script>|;
+        $result .= qq|<div id="region-| . $self->qualified_name . qq|">|;
+    }
 
     # Use a subrequest so we can't show components we wouldn't
     # normally be allowed to.  We pass in an empty 'J:ACTIONS' so that
     # actions don't get run more than once.
+
     Jifty->web->mason->make_subrequest
       ( comp => $self->path,
-        args => [ %{ Jifty->web->mason->request_args },
+        args => [ %{ Jifty->web->request->arguments },
                   region => $self,
                   'J:ACTIONS' => '',
                   %arguments ],
         out_method => \$result,
       )->exec;
-    $result .= qq|</div>|;
+
+    if ($self->region_wrapper) {
+        $result .= qq|</div>|;
+    }
 
     return $result;
 }

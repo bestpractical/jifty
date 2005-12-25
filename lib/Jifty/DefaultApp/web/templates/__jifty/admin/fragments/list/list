@@ -26,7 +26,7 @@ while ( my $item = $collection->next ) {
     Jifty->web->region(
         name     => 'item-' . $item->id,
         path     => $item_path,
-        defaults => { id => $item->id}
+        defaults => { id => $item->id, object_type => $object_type }
     );
 }
 

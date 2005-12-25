@@ -74,20 +74,15 @@ sub query_parameters {
     for my $key (keys %parameters) {
         if (ref $parameters{$key} eq "HASH") {
             my %mapping = %{$parameters{$key}};
-            if ($mapping{result} or $mapping{result_of}) {
-                # Pulling result of action
-                my $action = $mapping{result} || $mapping{result_of};
-                $action = $action->moniker if ref $action;
+
+            for (grep {/(result(_of)?|argument(_to)?)/} keys %mapping) {
+                my $action  = $mapping{$_};
+                my $moniker = ref $action ? $action->moniker : $action;
                 my $name = $mapping{name} || $key;
-                $return{"J:M-$key"} = "R-$action-$name";
-            } elsif ($mapping{argument} or $mapping{argument_to}) {
-                # Pulling argument of action
-                my $action = $mapping{argument} || $mapping{argument_to};
-                $action = $action->moniker if ref $action;
-                my $name = $mapping{name} || $key;
-                $return{"J:M-$key"} = "A-$action-$name";
-            } else {
-                warn "Don't know what to do with ".YAML::Dump(\%mapping);
+
+                my $type = ($_ =~ /result/) ? "R" : "A";
+
+                $return{"J:M-$key"} = join("|", $type, $moniker, $name);
             }
         } else {
             $return{$key} = $parameters{$key};
@@ -145,12 +140,13 @@ sub map {
 
     my $destination = $1;
 
-    if ($args{source} =~ /^A-([^-]+)-(.*)/) {
-        return ($destination => $args{request}->action($1) ? $args{request}->action($1)->argument($2) : undef);
-    } elsif ($args{source} =~ /^R-([^-]+)-(.*)/) {
-        return ($destination => $args{response}->result($1) ? $args{response}->result($1)->content($2) : undef);
-    } elsif ($args{source} =~ /^A-(.*)/) {
-        return ($destination => $args{request}->arguments->{$1});
+    my @bits = split(/\|/, $args{source});
+    if ($bits[0] eq "A" and @bits == 3) {
+        return ($destination => $args{request}->action($bits[1]) ? $args{request}->action($bits[1])->argument($bits[2]) : undef);
+    } elsif ($bits[0] eq "R" and @bits == 3) {
+        return ($destination => $args{response}->result($bits[1]) ? $args{response}->result($bits[1])->content($bits[2]) : undef);
+    } elsif ($bits[0] eq "A" and @bits == 2) {
+        return ($destination => $args{request}->arguments->{$bits[1]});
     } else {
         return ($destination => $args{source});
     }

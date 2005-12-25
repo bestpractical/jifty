@@ -86,10 +86,8 @@ sub take_action {
         # Boolean and integer fields should be skipped if blank.
         # (This logic should be moved into SB or something.)
         next
-            if ( defined $column->type
-            and
-            ( $column->type =~ /^bool/i || $column->type =~ /^int/i )
-            && $self->argument_value($field) eq '' );
+            if ( defined $column->type and ( $column->type =~ /^bool/i || $column->type =~ /^int/i )
+            and defined $self->argument_value($field) and $self->argument_value($field) eq '' );
 
         # Skip fields that have not changed
         my $old = $self->record->$field;

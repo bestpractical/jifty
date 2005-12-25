@@ -14,6 +14,7 @@ Jifty::Web - Web framework for a Jifty application
 use Jifty::Everything;
 use CGI::Cookie;
 use Apache::Session;
+use XML::Writer;
 use base qw/Class::Accessor Jifty::Object/;
 
 use UNIVERSAL::require;
@@ -116,9 +117,8 @@ Sets up the current C<session> object (an L<Jifty::Web::Session> tied hash).
 sub setup_session {
     my $self = shift;
     my $m = Jifty->web->mason;
-        return
-                if $m
-                        && $m->is_subrequest;    # avoid reentrancy, as suggested by masonbook
+    # avoid reentrancy, as suggested by masonbook
+    return if $m and $m->is_subrequest;
 
     $self->session->load();
 }
@@ -216,9 +216,9 @@ sub handle_request {
     # components have access to the outermost request
     if ($self->request) {
         local $self->{request};
-        $self->_internal_request( Jifty::Request->new->from_mason_args );
+        $self->_internal_request( Jifty::Request->new->fill );
     } else {
-        $self->_internal_request( Jifty::Request->new->from_mason_args );
+        $self->_internal_request( Jifty::Request->new->fill );
     }
 }
 
@@ -267,6 +267,9 @@ sub _internal_request {
 
     $self->redirect if $self->redirect_required;
     $self->request->do_mapping;
+
+    # This may be a request for fragments, not for a whole page
+    $self->serve_fragments if $self->request->fragments;
 }
 
 =head3 setup_page_actions
@@ -1027,6 +1030,48 @@ L<Jifty::Web::PageRegion>, or the empty string if there is none..
 sub qualified_region {
     my $self = shift;
     return join( "-", map { $_->name } @{ $self->{'region_stack'} || [] } );
+}
+
+sub serve_fragments {
+    my $self = shift;
+
+    my $output = "";
+    my $writer = XML::Writer->new( OUTPUT => \$output );
+    $writer->xmlDecl( "UTF-8", "yes" );
+    $writer->startTag("response");
+    for my $f ($self->request->fragments) {
+        $writer->startTag( "fragment", id => $f->name );
+        my @names = split '-', $f->name;
+
+        # Set up the region stack
+        local Jifty->web->{'region_stack'} = [];
+        while (my $region = shift @names) {
+            my $new = @names ? Jifty::Web::PageRegion->new(name => $region, _bootstrap => 1, parent => Jifty->web->current_region)
+                             : Jifty::Web::PageRegion->new(
+                                                           name           => $region,
+                                                           path           => $f->path,
+                                                           region_wrapper => $f->wrapper,
+                                                           parent         => Jifty->web->current_region,
+                                                           defaults       => $f->arguments,
+                                                          );
+            push @{Jifty->web->{'region_stack'}}, $new;
+            $new->enter;
+        }
+
+        # Stuff the rendered region into the XML
+        $writer->cdata(Jifty->web->current_region->render);
+        $writer->endTag();
+    }
+    $writer->endTag();
+
+    # Spit out a correct content-type; we set this *here* instead of
+    # above because each of the subrequests attempts to set it to
+    # text/html -- so we have to override them after the fact.
+    $self->mason->cgi_request->content_type('text/xml; charset=utf=8');
+
+    # Output the data
+    $self->mason->out($output);
+    $self->mason->abort;
 }
 
 1;

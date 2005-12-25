@@ -79,42 +79,50 @@ sub javascript {
     for my $trigger ( $self->handlers ) {
         my $value = $self->$trigger;
         next unless $value;
-        my @hooks = ref $value eq "ARRAY" ? @{$value} : ($value);
-        $response .= qq| $trigger="|;
-        for my $hook (@hooks) {
-            my %args;
-            # What element we're replacing.
-            if ($hook->{element}) {
-                $args{element} = $hook->{element};
-                $args{region}  = $args{element} =~ /^#region-(\S+)/ ? "$1-".Jifty->web->serial : Jifty->web->serial;
 
-            } else {
-                $args{region}  = $hook->{region} || Jifty->web->qualified_region;
-            }
+        my @fragments;
+        my @actions;
+
+        for my $hook (ref $value eq "ARRAY" ? @{$value} : ($value)) {
+            my %args;
 
             # Submit action
             if ( $hook->{submit} ) {
                 $hook->{submit} = [ $hook->{submit} ] unless ref $hook->{submit} eq "ARRAY";
-                $args{submit} = [map { ref $_ ? $_->moniker : $_ } @{ $hook->{submit} } ];
+                push @actions, map { ref $_ ? $_->moniker : $_ } @{ $hook->{submit} };
+            }
+
+            # Only go on if we have non-submit arguments
+            next unless grep {$_ ne "submit"} keys %{$hook};
+
+            # What element we're replacing.
+            if ($hook->{element}) {
+                $args{element} = $hook->{element};
+                $args{region}  = $args{element} =~ /^#region-(\S+)/ ? "$1-".Jifty->web->serial : Jifty->web->serial;
+            } else {
+                $args{region}  = $hook->{region} || Jifty->web->qualified_region;
+            }
+
+            # Placement
+            if (exists $hook->{replace_with}) {
+                @args{qw/mode path/} = ('Replace', $hook->{replace_with});
+            } elsif (exists $hook->{append}) {
+                @args{qw/mode path/} = ('Bottom', $hook->{append});
+            } elsif (exists $hook->{prepend}) {
+                @args{qw/mode path/} = ('Top', $hook->{prepend});
+            } elsif (exists $hook->{refresh_self} and Jifty->web->current_region) {
+                @args{qw/mode path/} = ('Replace', Jifty->web->current_region->path);
             }
 
             # Arguments
             $args{args} = {Jifty::Request::Mapper->query_parameters( %{ $hook->{args} || {} } )};
 
-            # Placement
-            if (exists $hook->{replace_with}) {
-                @args{qw/mode path/} = ('Replace', $hook->{replace_with});
-            } elsif ($hook->{append}) {
-                @args{qw/mode path/} = ('Bottom', $hook->{append});
-            } elsif ($hook->{prepend}) {
-                @args{qw/mode path/} = ('Top', $hook->{prepend});
-            } 
-
             # Effects
-            $args{$_} = $hook->{$_} for grep {exists $hook->{$_}} qw/effect/;
+            $args{$_} = $hook->{$_} for grep {exists $hook->{$_}} qw/effect effect_args/;
 
-            $response .= "update( @{[ Data::JavaScript::Anon->anon_dump(\%args) ]} );";
+            push @fragments, \%args;
         }
+        $response .= qq| $trigger="update( @{[ Data::JavaScript::Anon->anon_dump( {actions => \@actions, fragments => \@fragments }) ]} );|;
         $response .= qq|return false;"|;
     }
     return $response;

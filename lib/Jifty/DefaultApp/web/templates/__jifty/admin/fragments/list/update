@@ -20,7 +20,7 @@ my $update = Jifty->web->new_action(
         label   => "Save",
         onclick => [
             { submit => $update },
-            {   replace_with => '/__jifty/admin/fragments/list/new_item',
+            {   replace_with => '/__jifty/admin/fragments/list/view',
                 args         => { object_type => $object_type, id => $id }
             }
         ]
