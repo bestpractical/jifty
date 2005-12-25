@@ -184,6 +184,8 @@ sub guess {
                 User     => "",
                 Version  => "0.0.1",
             },
+            Mailer => 'Sendmail',
+            MailerArgs => [],
             Web => {
                 DefaultStaticRoot => Jifty::Util->share_root .'/web/static',
                 DefaultTemplateRoot => Jifty::Util->share_root . '/web/templates',

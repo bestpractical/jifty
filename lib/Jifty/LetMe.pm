@@ -100,7 +100,7 @@ sub generate_checksum {
 
     # build an md5sum of the email token and until and our secret
     my $digest = Digest::MD5->new();
-    $digest->add( $user->insecure_url_auth_token );
+    $digest->add( $user->auth_token );
     $digest->add( $self->path );
     my %args = %{$self->args};
     $digest->add( $_, $args{$_}) for sort keys %args;

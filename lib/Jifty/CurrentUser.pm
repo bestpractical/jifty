@@ -131,7 +131,7 @@ your user objects need to implement a couple of API methods:
 
 =item password_is
 
-=item insecure_url_auth_token
+=item auth_token
 
 =back
 
@@ -159,15 +159,15 @@ sub username {
     return($self->user_object->username(@_));
 }
 
-=head2 insecure_url_auth_token
+=head2 auth_token
 
 
 =cut
 
-sub insecure_url_auth_token {
+sub auth_token {
     my $self = shift;
     return undef unless ($self->user_object);
-    return ($self->user_object->insecure_url_auth_token);
+    return ($self->user_object->auth_token);
 
 }
 
