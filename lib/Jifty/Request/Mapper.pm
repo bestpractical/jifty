@@ -129,28 +129,35 @@ sub map {
     my $class = shift;
 
     my %args = (
-                source      => undef,
-                destination => undef,
-                request     => Jifty->web->request,
-                response    => Jifty->web->response,
-                @_
-               );
+        source      => undef,
+        destination => undef,
+        request     => Jifty->web->request,
+        response    => Jifty->web->response,
+        @_
+    );
 
-    return ($args{destination} => $args{source}) unless $args{destination} =~ /^J:M-(.*)/;
+    return ( $args{destination} => $args{source} )
+        unless $args{destination} =~ /^J:M-(.*)/;
 
     my $destination = $1;
 
-    my @bits = split(/\|/, $args{source});
-    if ($bits[0] eq "A" and @bits == 3) {
-        return ($destination => $args{request}->action($bits[1]) ? $args{request}->action($bits[1])->argument($bits[2]) : undef);
-    } elsif ($bits[0] eq "R" and @bits == 3) {
-        return ($destination => $args{response}->result($bits[1]) ? $args{response}->result($bits[1])->content($bits[2]) : undef);
-    } elsif ($bits[0] eq "A" and @bits == 2) {
-        return ($destination => $args{request}->arguments->{$bits[1]});
-    } else {
-        return ($destination => $args{source});
+    my @bits = split( /\|/, $args{source} );
+    if ( $bits[0] ) {
+        if ( $bits[0] eq "A" and @bits == 3 ) {
+            return ( $destination => $args{request}->action( $bits[1] )
+                ? $args{request}->action( $bits[1] )->argument( $bits[2] )
+                : undef );
+        } elsif ( $bits[0] eq "R" and @bits == 3 ) {
+            return ( $destination => $args{response}->result( $bits[1] )
+                ? $args{response}->result( $bits[1] )->content( $bits[2] )
+                : undef );
+        } elsif ( $bits[0] eq "A" and @bits == 2 ) {
+            return (
+                $destination => $args{request}->arguments->{ $bits[1] } );
+        }
     }
-    
+    return ( $destination => $args{source} );
+
 }
 
 
