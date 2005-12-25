@@ -197,10 +197,10 @@ sub guess {
             ApplicationName  => $name,
             Database         => {
                 Database => lc $name,
-                Driver   => "Pg",
+                Driver   => "SQLite",
                 Host     => "localhost",
                 Password => "",
-                User     => "postgres",
+                User     => "",
                 Version  => "0.0.1",
             },
             Web => {
