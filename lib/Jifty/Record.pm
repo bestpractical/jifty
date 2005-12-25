@@ -189,7 +189,7 @@ sub _value {
     unless ($self->check_read_rights(@_)) {
         return (undef);
     }
-    $self->SUPER::_value(@_);
+    Encode::decode_utf8($self->SUPER::_value(@_));
 }
 
 

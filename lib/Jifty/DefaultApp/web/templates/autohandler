@@ -1,4 +1,5 @@
 <%init>
+$r->content_type('text/html; charset=utf-8');
 Jifty->web->handle_request();
 
 if ($m->base_comp->path =~ m|/_elements/|) {
