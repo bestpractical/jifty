@@ -2,40 +2,45 @@ use warnings;
 use strict;
 
 package Jifty::Script::Schema;
+use base qw/App::CLI::Command/;
 
-use Getopt::Long;
 use Pod::Usage;
 use UNIVERSAL::require;
 use YAML;
 use version;
 use Jifty::DBI::SchemaGenerator;
-use vars qw/$OPTIONS/;
 
-$OPTIONS = {};
+sub options {
+    return 
+      ("install|i" => "install",
+       "print|p"   => "print",
+       "create|c"  => "create",
+       "force"     => "force",
+       "include|I=s@" => "include",
+       "help|?"    => "help",
+       "man"       => "man");
+}
 
 sub run {
+    my $self = shift;
 
     my $docs = \*DATA;
 
     # Option handling
-    Getopt::Long::Configure('bundling');
-    GetOptions( $OPTIONS, "install|i", "print|p", "create|c", "force",
-        "include|I=s@", "help|?", "man" )
-        or pod2usage( exitval => 2, -input => $docs );
-    pod2usage( -exitval => 1, -input => $docs ) if $OPTIONS->{help};
+    pod2usage( -exitval => 1, -input => $docs ) if $self->{help};
     pod2usage( -exitval => 0, -verbose => 2, -input => $docs )
-        if $OPTIONS->{man};
+        if $self->{man};
 
     pod2usage("$0: Must specify exactly one of --install or --print!")
-        unless $OPTIONS->{install} xor $OPTIONS->{print};
+        unless $self->{install} xor $self->{print};
 
     # Default to current directory
     push @ARGV, "." unless @ARGV;
 
     # Set up include path
-    my $ProjectRoot = shift;
-    if ( $OPTIONS->{include} ) {
-        unshift @INC, @{ $OPTIONS->{include} };
+    my $ProjectRoot = shift || ".";
+    if ( $self->{include} ) {
+        unshift @INC, @{ $self->{include} };
     }
     unshift @INC, "$ProjectRoot/lib";
 
@@ -46,26 +51,26 @@ sub run {
     # We trap the various "die" errors
     eval {
         Jifty->new(
-            no_handle        => ( $OPTIONS->{'create'} and $OPTIONS->{'install'}),
+            no_handle        => ( $self->{'create'} and $self->{'install'}),
             logger_component => 'SchemaTool',
         );
     };
 
     if ( $@ =~ /doesn't match application schema version/ ) {
-        $OPTIONS->{upgrade} = 1;
+        $self->{upgrade} = 1;
     }
     elsif ( $@ =~ /no version in the database/ ) {
-        $OPTIONS->{tables} = 1;
+        $self->{tables} = 1;
     }
     elsif ( $@ =~ /database .*? does not exist/ ) {
-        $OPTIONS->{tables} = 1;
-        $OPTIONS->{create} = 1;
+        $self->{tables} = 1;
+        $self->{create} = 1;
     }
     elsif ($@) {
         die $@;
     }
-    elsif ( $OPTIONS->{create} and $OPTIONS->{force}) {
-        $OPTIONS->{tables} = 1;
+    elsif ( $self->{create} and $self->{force}) {
+        $self->{tables} = 1;
 
         # Don't fall through to exit
     }
@@ -75,7 +80,7 @@ sub run {
     }
 
     my $log = Log::Log4perl->get_logger("SchemaTool");
-    create_db() if $OPTIONS->{create};
+    $self->create_db() if $self->{create};
 
     # Set up application-specific parts
     my $ApplicationClass = Jifty->framework_config('ApplicationClass');
@@ -93,7 +98,7 @@ sub run {
         sub_name    => 'models',
     );
 
-    if ( $OPTIONS->{tables} ) {
+    if ( $self->{tables} ) {
         $log->info("Generating SQL for application $ApplicationClass...");
 
         my $appv = version->new(
@@ -117,10 +122,10 @@ sub run {
             $ret or die "couldn't add model $model: " . $ret->error_message;
         }
 
-        if ( $OPTIONS->{'print'} ) {
+        if ( $self->{'print'} ) {
             print $SG->create_table_sql_text;
         }
-        elsif ( $OPTIONS->{'install'} ) {
+        elsif ( $self->{'install'} ) {
 
             # Start a transactoin
             Jifty->handle->begin_transaction;
@@ -236,7 +241,7 @@ sub run {
             }
         }
 
-        if ( $OPTIONS->{'print'} ) {
+        if ( $self->{'print'} ) {
             for ( map { @{ $UPGRADES{$_} } }
                 sort { version->new($a) <=> version->new($b) }
                 keys %UPGRADES )
@@ -255,7 +260,7 @@ sub run {
                 }
             }
         }
-        elsif ( $OPTIONS->{'install'} ) {
+        elsif ( $self->{'install'} ) {
             Jifty->handle->begin_transaction;
             for my $version ( sort { version->new($a) <=> version->new($b) }
                 keys %UPGRADES )
@@ -282,11 +287,12 @@ sub run {
 }
 
 sub create_db {
+    my $self = shift;
     my $handle   = Jifty::DBI::Handle->new();
     my $database = lc Jifty->framework_config('Database')->{'Database'};
 
-    if ( $OPTIONS->{'print'} ) {
-        print "DROP DATABASE $database;\n" if $OPTIONS->{'force'};
+    if ( $self->{'print'} ) {
+        print "DROP DATABASE $database;\n" if $self->{'force'};
         print "CREATE DATABASE $database;\n";
         return;
     }
@@ -318,8 +324,8 @@ schema - Create SQL to update or create your Jifty app's tables
 
 =head1 SYNOPSIS
 
-  schema --install ProjectRoot  # Creates tables on SQL server 
-  schema --print   ProjectRoot  # Prints commands to update tables,
+  jifty schema --install ProjectRoot  # Creates tables on SQL server 
+  jifty schema --print   ProjectRoot  # Prints commands to update tables,
                                 # now that they have been created
 
  Options:

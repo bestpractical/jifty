@@ -3,6 +3,7 @@ use warnings;
 use strict;
 
 package Jifty::Script::StandaloneServer;
+use base qw/App::CLI::Command/;
 
 use Jifty::Everything;
 use Jifty::Server;
