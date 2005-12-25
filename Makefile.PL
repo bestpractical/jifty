@@ -3,7 +3,7 @@ name('Jifty');
 # this is a dev version, CPAN.pm will not install by default
 requires(perl => '5.8.3');
 requires('Apache::Session');
-requires('App::CLI'); # App::CLI::Command
+requires('App::CLI' => 0.02 ); # App::CLI::Command
 requires('Cache::Cache'); #Cache::FileCache
 requires('Carp');
 requires('CGI::Cookie');
