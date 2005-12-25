@@ -255,7 +255,7 @@ sub _to_record {
     # XXX TODO FIXME we need to figure out the right way to call new here
     # perhaps the handle should have an initiializer for records/collections
     my $object = $classname->new();
-    $object->load_by_cols(id => $value);
+    $object->load_by_cols(( $column->by || 'id')  => $value);
     return $object;
 }
 
