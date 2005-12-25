@@ -88,16 +88,10 @@ sub new {
     unless ($args{'no_handle'}) {
         Jifty->_setup_handle();
         Jifty->check_db_schema();
-         }
-    my $ApplicationClass = Jifty->framework_config('ApplicationClass');
-    $ApplicationClass->require;
+    }
 
-    Module::Pluggable->import(
-        search_path =>
-          [ map { $ApplicationClass . "::" . $_ } 'Model', 'Action', 'Notification' ],
-        require => 1
-    );
-    Jifty->plugins;
+    my $loader = Jifty::ClassLoader->new();
+    $loader->require;
 }
 
 

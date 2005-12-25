@@ -12,6 +12,7 @@ Jifty::Everything - Load all of the Jifty modules
 # Could use Module::Pluggable, I guess.
 
 use Jifty;
+use Jifty::ClassLoader;
 
 use Jifty::Action;
 use Jifty::Action::Record;
