@@ -87,12 +87,54 @@ Let's take those one by one
 =over
 
 =item bin
+
+Inside C<bin/>, you'll find  C<jifty>, the Jifty command dispatcher. Some
+of the most important commands are C<schema>, which sets up or updates
+your database schema and C<server>, which starts u a standalone
+webserver.To find out what commands your C<jifty> comes with, run:
+
+    C<jifty help>
+
 =item etc
+
+Configuration files live in C<etc/>, though if you don't have a config
+file, Jifty will supply some sane defaults
+
 =item doc
+
+Jifty won't magically write your documentation for you, but when B<you>
+write your docs, you should drop them in C<docs/>.
+
+
 =item log
-=item web
+
+Jifty uses L<Log::Log4perl> to configure its logging. By default, it
+dumps logs named C<server.log> and C<error.log> into C<log>
+
+
 =item web/templates
+
+Jifty uses L<HTML::Mason> as its primary templating system. You should
+drop your application's templates into C<web/templates/>.  Out of the
+box, Jifty comes with an application "skeleton" that it installs in
+C</usr/local/share/jifty>web/templates/>.  This default application is
+a convenient way to get a basic application up and running quickly,
+but probably wants some customization as you build a more advanced
+application.
+
 =item web/static
+
+Some nontrivial percentage of the "stuff"  your web application serves
+out doesn't need to be (or I<shouldn't> be) passed through your templating
+engine.
+
+Just drop your static files into C<web/static/> and Jifty will serve
+them out if it can't find a template with the right name.
+
+Out of the box, Jifty comes with a CSS style, Javascript libraries and
+a Pony. Have a look in /usr/local/share/jifty/web/static.
+
+
 =item lib
 =item lib/MyWebLog
 =item lib/MyWebLog/Model
@@ -113,7 +155,7 @@ Let's take those one by one
 
 =head2 Deploying your application in production
 
-=head1 GETTING HELO
+=head1 GETTING HELP
 
 =head2 Joining the mailing list
 
