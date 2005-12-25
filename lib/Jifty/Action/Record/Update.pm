@@ -94,9 +94,14 @@ sub take_action {
         # Skip fields that have not changed
         my $old = $self->record->$field;
         $old = $old->id if UNIVERSAL::isa( $old, "Jifty::Record" );
-
+    
+        # if both the new and old values are defined and equal, we don't want to change em
         next if ( defined $old and defined $self->argument_value($field) and $old eq $self->argument_value($field) );
-        next if (  not length $old and not length $self->argument_value($field) );
+
+        
+        # If _both_ the values are ''
+        next if (  (not defined $old or not length $old)
+                    and ( not defined $self->argument_value($field) or not length $self->argument_value($field) ));
 
         my $setter = "set_$field";
         my ( $val, $msg ) = $self->record->$setter( $self->argument_value($field) );
