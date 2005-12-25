@@ -10,6 +10,7 @@ BEGIN {
     push @INC, "$dir/../../Jifty/lib";
 }   
 
+use Jifty::Script::FastCGI;
 Jifty::Script::FastCGI->run();
 
 
