@@ -117,10 +117,14 @@ dumps logs named C<server.log> and C<error.log> into C<log>
 Jifty uses L<HTML::Mason> as its primary templating system. You should
 drop your application's templates into C<web/templates/>.  Out of the
 box, Jifty comes with an application "skeleton" that it installs in
-C</usr/local/share/jifty>web/templates/>.  This default application is
+C<share/web/templates/>.  This default application is
 a convenient way to get a basic application up and running quickly,
 but probably wants some customization as you build a more advanced
 application.
+
+You can find where Perl stuck Jifty's default templates with this oneliner:
+
+ perl -MJifty::Util -e 'print Jifty::Util->share_root'
 
 =item web/static
 
