@@ -4,9 +4,9 @@ use strict;
 package Jifty::Notification;
 
 use base qw/Jifty::Object Class::Accessor/;
-use Email::Send;
-use Email::Simple;
-use Email::Simple::Creator;
+use Email::Send ();
+use Email::Simple ();
+use Email::Simple::Creator ();
 
 =head1 USAGE
 
