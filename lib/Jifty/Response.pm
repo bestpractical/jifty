@@ -51,6 +51,8 @@ sub results {
 
 =head2 messages
 
+Returns the aggregate messages of all of the L<Jifty::Result>s.
+
 =cut
 
 sub messages {

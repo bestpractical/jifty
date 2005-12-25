@@ -45,6 +45,7 @@ use Jifty::Test;
 use Jifty::View::Helper;
 
 use Jifty::Web;
+use Jifty::Web::PageRegion;
 use Jifty::Web::Form;
 use Jifty::Web::Form::Element;
 use Jifty::Web::Form::Link;

@@ -781,84 +781,76 @@ sub set_variable {
 
 }
 
+=head2 get_region [QUALIFIED NAME]
+
+Given a fully C<QUALIFIED NAME> of a region, returns the
+L<Jifty::Web::PageRegion> with that name, or undef if no such region
+exists.
+
+=cut
+
+sub get_region {
+    my $self = shift;
+    my ($name) = @_;
+    return $self->{'regions'}{$name};
+}
+
 =head2 region PARAMHASH, 
 
-The paramhash takes:
-
-name
-
-path
-
-defaults
+Creates and renders a L<Jifty::Web::PageRegion>; the C<PARAMHASH> is
+passed directly to its L<Jifty::Web::PageRegion/new> method.  The
+region is then added to the stack of regions, and the fragment is
+rendered.
 
 =cut
 
 sub region {
     my $self = shift;
-    my $m = $self->mason;
-    my %args = (
-                name => undef,
-                path => undef,
-                defaults => {},
-                @_
-               );
 
     # Add ourselves to the region stack
-    local $self->{'region_stack'} = [@{$self->{'region_stack'} || []}, \%args];
+    my $region = Jifty::Web::PageRegion->new(@_) or return;
+    local $self->{'region_stack'} = [@{$self->{'region_stack'} || []}, $region];
+    $region->enter;
 
-    $args{qualified_region} = $self->qualified_region;
-    warn "Repeated region: $args{qualified_region}"
-      if $self->{'region_seen'}{$args{qualified_region}}++;
+    # Keep track of the fully qualified name (which should be unique)
+    warn "Repeated region: ". $self->qualified_region
+      if $self->{'regions'}{$self->qualified_region};
+    $self->{'regions'}{$self->qualified_region} = $region;
 
-    # Merge in the settings passed in via state variables
-    my %merged = %{$args{defaults}};
-    for ($self->request->state_variables) {
-        $merged{$1} = $_->value if $_->key =~ /^region-$args{qualified_region}\.(.*)/;
-        $args{path} = $_->value if $_->key =~ /^region-$args{qualified_region}$/;
-    }
-
-    $m->out(qq|<script type="text/javascript"><!--\n|);
-    $m->out(qq|region('$args{qualified_region}',{|);
-    $m->out(join(',', map {($a = $merged{$_})=~s/'/\\'/g;qq|'$_':'$merged{$_}'|} keys %merged));
-    $m->out(qq|},'$args{path}');\n|);
-    $m->out(qq| --></script>|);
-    $m->out(qq!<div id="region-! . $args{qualified_region} . qq!">!);
-    $m->comp($args{path},
-             region => $args{name},
-             qualified_region => $args{qualified_region},
-             %merged);
-    $m->out(qq!</div>!);
+    # Render it
+    $self->mason->out($region->render);
 
     "";
 }
 
 =head2 current_region
 
-Returns the name of the current region
+Returns the name of the current L<Jifty::Web::PageRegion>, or undef if
+there is none.
 
 =cut
 
 sub current_region {
     my $self = shift;
-    return $self->{'region_stack'} ? $self->{'region_stack'}[-1]{name} : undef;
+    return $self->{'region_stack'} ? $self->{'region_stack'}[-1]->name : undef;
 }
 
 =head2 qualified_region
+
+Returns the fully qualified name of the current
+L<Jifty::Web::PageRegion>, or the empty string if there is none..
 
 =cut
 
 sub qualified_region {
     my $self = shift;
-    return join("-", map {$_->{name}} @{$self->{'region_stack'} || []});
+    return join("-", map {$_->name} @{$self->{'region_stack'} || []});
 }
 
 =head2 link PARAMHASH
 
-label
-
-url
-
-onFoo
+Generates and renders a L<Jifty::Web::Form::Link> object.  The
+C<PARAMHASH> is passed firectly to L<Jifty::Web::Form::Link/new>.
 
 =cut
 
