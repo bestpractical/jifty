@@ -384,8 +384,20 @@ var Presentation = {
 
     get data(){
         if (!this._data) {
-            this.textbox.value = document.getElementById('builtinCode').firstChild.nodeValue;
-            this._data = this.textbox.value.split("----");
+             // Make sure you break the text into parts smaller than 4096
+             // characters, and name them as indicated. Tweak as required.
+             // (What a hack. A JS programmer should find a better way.)
+             // Luc St-Louis, and email is lucs@pobox.com.
+
+                 nodes = document.getElementById('builtinCode').childNodes;
+                 content = '';
+                for (i in nodes) {
+                    if (nodes[i].nodeValue) {
+                    content = content + nodes[i].nodeValue;
+                    }
+                }
+    
+               this._data = content.split("----");
         }
 
         return this._data;
