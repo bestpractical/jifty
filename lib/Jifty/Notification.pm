@@ -58,14 +58,14 @@ Your subclass should override this to set the various field values.
 
 sub setup {}
 
-=head2 send
+=head2 send_one_message
 
 Delivers the notification, using the L<Email::Send> mailer defined in the C<Mailer>
 and C<MailerArgs> configuration arguments.
 
 =cut
 
-sub send {
+sub send_one_message {
     my $self = shift;
     return unless $self->recipients;
 
@@ -112,12 +112,118 @@ Gets or sets the addresses of the recipients of the notification, as a list of s
 
 =cut
 
-__PACKAGE__->mk_accessors(qw/body preface footer subject from _recipients/);
+__PACKAGE__->mk_accessors(qw/body preface footer subject from _recipients _to_list to/);
 
 sub recipients {
     my $self = shift;
     $self->_recipients([@_]) if @_;
     return @{ $self->_recipients || [] };
 } 
+
+
+
+
+=head2 to_list USER, USER, USER
+
+Gets or sets the list of L<BTDT::Model::User>s that the message will
+be sent to.  Each user is sent a separate copy of the email.  If
+passed no parameters, returns the users that have been set.  This also
+suppresses duplicates to users.
+
+=cut
+
+sub to_list {
+    my $self = shift;
+    if (@_) {
+        my %ids = ();
+        $ids{$self->to->id} = undef if $self->to;
+        $ids{$_->id} = $_ for @_;
+        $self->_to_list([grep defined, values %ids]);
+    }
+    return @{ $self->_to_list || [] };
+}
+
+=head2 send
+
+Sends an indivual email to every user in L</to_list>; it does this by
+setting L</to> and L</recipient> to the first user in L</to_list>
+calling L<Jifty::Notification>'s C<send> method, and progressing down
+the list.
+
+Additionally, if L</to> was set elsewhere, sends an email to that
+person, as well.
+
+=cut
+
+sub send {
+    my $self = shift;
+
+    if ($self->to) {
+        $self->recipients($self->to->email);
+        $self->send_one_message(@_);
+    }
+    for my $to ($self->to_list) {
+        $self->to($to);
+        $self->recipients($to->email);
+        $self->send_one_message(@_);
+    }
+}
+
+=head2 to
+
+Of the list of users that C<to> provided, returns the one which mail
+is currently being sent to.  This is set by the L</send> method, such
+that it is available to all of the methods that
+L<Jifty::Notification>'s C<send> method calls.
+
+=cut
+
+=head2 preface
+
+Print a headerfor the message. You want to override this to print a message.
+
+Returns the message as a scalar.
+
+=cut
+
+sub preface {
+    my $self = shift;
+
+    return '';
+}
+
+
+=head2 footer
+
+Print a footer for the message. You want to override this to print a message.
+
+Returns the message as a scalar.
+
+=cut
+
+sub footer {
+    return undef;
+}
+
+
+=head2 magic_letme_token_for PATH
+
+Returns a L<Jifty::LetMe> token which allows the current user to access a path on the
+site. 
+
+=cut
+
+
+sub magic_letme_token_for {
+    my $self = shift;
+    my $path = shift;
+    my %args = @_;
+    
+    my $letme = Jifty::LetMe->new();
+    $letme->email($self->to->email);
+    $letme->path($path);
+    $letme->args(\%args);
+    return ($letme->as_url);
+}
 
 1;
