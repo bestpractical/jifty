@@ -2,6 +2,9 @@ use warnings;
 use strict;
 
 package Jifty::LetMe;
+use Digest::MD5;
+use Math::BigInt;
+use String::Koremutake;
 
 use base qw/Jifty::Object Class::Accessor/;
 
