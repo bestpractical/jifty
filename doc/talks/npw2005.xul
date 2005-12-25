@@ -1,0 +1,702 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet href="chrome://global/skin/" type="text/css"?><?xml-stylesheet href="euroscon.css" type="text/css"?><page xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" id="presentation" xmlns:html="http:/www.w3.org/1999/xhtml" orient="vertical" onkeypress="Presentation.onKeyPress(event);"><html:textarea id="builtinCode" style="visibility: collapse">
+
+Jifty
+
+----
+
+Nifty Apps
+
+----
+
+...in a Jiffy
+
+----
+
+{{#i|Jesse Vincent}} 
+Best Practical
+----
+How we're building useful applications in Perl 5 withg a single unified toolkit,
+using less time, energy, code, blood, sweat, tears, etc.
+----
+
+Missing features
+
+----
+No {{#i|Java}}
+----
+No {{#i|Ruby}}
+----
+No {{#i|XML}}
+----
+No {{#i|SQL}}
+----
+I'm serious
+----
+ No {{#i|SELECT}}
+----
+ No {{#i|INSERT}}
+----
+ No {{#i|DELETE}}
+----
+ No {{#i|UPDATE}}
+----
+ No {{#i|CREATE TABLE}}
+----
+No {{#i|TT}}
+----
+No {{#i|Class::DBI}}
+----
+No {{#i|YAML}}
+----
+That's a lie
+----
+There's a little bit of YAML
+----
+config.yml
+----
+(we're fixing that)
+----
+Jifty's
+Influences
+
+----
+
+1. RT
+
+---- 
+
+2. DBIx::SearchBuilder
+
+----
+
+3. My sick mind
+
+----
+
+4. Ruby on Rails
+
+----
+
+Rails makes me 
+jealous 
+
+----
+
+Rails makes me 
+{{#b|really}} jealous
+
+----
+
+Rails 
+isn't 
+perfect
+
+----
+
+It's 
+not
+Perl
+
+----
+
+Jifty
+is 
+perfect
+
+----
+
+That's a lie, too 
+
+----
+
+Jifty
+is 
+Perl,
+though
+
+----
+
+All
+the
+way
+down
+
+----
+
+We've 
+got
+BUZZWORDS
+
+----
+
+Perl
+----
+
+(obviously)
+
+----
+
+AJAX
+
+----
+
+Declarative 
+Programming
+
+----
+
+Web Services
+
+----
+
+Encapsulated
+cleverness
+
+----
+
+MVC
+
+----
+
+(Sort of)
+
+----
+
+Web 2.0
+
+----
+
+Sure it is.
+Nobody knows what it means. 
+My dog is Web 2.0 enabled.
+----
+Go ahead. 
+Prove me wrong.
+----
+
+How 
+Jifty
+Works
+
+----
+
+MODEL
+
+----
+
+Models
+are 
+smart
+
+----
+
+Models 
+define
+schema
+
+----
+
+Models 
+encapsulate
+logic
+----
+
+Models
+are 
+Jifty::DBI
+
+----
+
+Schema definition
+Schema versioning
+Advanced searching
+
+----
+
+column complete =>
+   type is 'boolean',
+   default is 'false',
+   since '0.1.1',
+   label is 'Done';
+
+----
+
+ column summary =>
+   type is 'varchar',
+   label is 'Task',
+   hints is '(Example: Get milk)';
+
+----
+
+  column description =>
+   type is 'text',
+   render_as 'Textarea',
+   label is 'Details';
+
+----
+
+  column owner_id =>
+   refers_to BTDT::Model::User,
+   render_as 'Combobox';
+
+----
+
+  column priority =>
+   type is 'integer',
+   default is 3,
+   valid_values are 
+     { display => 'high',    value => 4 },
+     { display => 'normal',  value => 3 },
+     { display => 'low',     value => 2 };
+
+----
+  column tags =>
+   label is 'Tags',
+   refers_to BTDT::Model::TaskTagCollection by 'task_id';
+ 
+----
+
+That's all Perl
+
+----
+
+No source filters
+
+----
+
+Another OO RDBMS Mapper?
+
+----
+
+Yes.
+
+----
+
+Ok...No.
+
+----
+Built on
+DBIx::SearchBuilder
+
+----
+
+It's in subversion
+svn://fsck.com/
+
+
+----
+
+VIEW
+
+----
+
+HTML::Mason
+
+----
+
+With helpers
+
+----
+
+AJAX 
+Templating
+
+----
+
+Dynamic
+client-side
+includes
+
+----
+
+Degrades 
+nicely
+
+----
+Works 
+with 
+lynx
+
+----
+
+In the future...
+
+----
+
+UI 
+as
+API
+----
+
+
+
+----
+
+CONTROLLER
+
+----
+
+Other toolkits:
+
+Controller are tied to a URL
+
+----
+
+Jifty:
+
+Controllers are generic RPC
+
+----
+
+not 
+webservices
+...yet
+
+----
+
+Only 
+missing
+results 
+display
+
+----
+
+That's 
+just
+another 
+template!
+
+----
+
+A
+Trivial 
+Example
+
+----
+Application Code
+----
+ web/templates/new_article.html
+ web/templates/index.html
+ lib/Model/Entry.pm
+
+----
+
+lib/BlogDemo/Model/Entry.pm
+
+----
+ use warnings;
+ use strict;
+ 
+ package BlogDemo::Model::Entry::Schema;
+ use Jifty::DBI::Schema;
+ 
+ column title => 
+     type is 'text',
+     default is 'Untitled';
+ 
+ 
+ column body => 
+     type is 'text',
+     render_as 'Textarea';
+     
+----
+ package BlogDemo::Model::Entry;
+ use base qw/Jifty::Record/;
+ 
+ sub since { '0.0.2'}
+ 
+ 1;
+
+----
+
+web/templates/index.html
+
+----
+ &lt;html&gt;&lt;body&gt;
+ &lt;h1&gt;&lt;% Jifty-&gt;app_config('Name')%&gt;&lt;/h1&gt;
+ 
+ % while (my $entry = $entries-&gt;next) {
+ &lt;h2&gt;&lt;%$entry-&gt;title%&gt;&lt;/h2&gt;
+ &lt;div class="body"&gt;
+ &lt;%$entry-&gt;body%&gt;
+ &lt;/div&gt;
+ % }
+ &lt;/body&gt;
+ &lt;%init&gt;
+ my $entries = BlogDemo::Model::EntryCollection-&gt;new();
+ $entries-&gt;unlimit();
+ $entries-&gt;rows_per_page(10);
+ &lt;/%init&gt;
+ 
+
+----
+
+web/templates/new_article.html
+
+----
+ &lt;h2&gt;Create an article&lt;/h2&gt;
+ 
+ &lt;%Jifty-&gt;framework-&gt;form-&gt;start%&gt;
+ % foreach my $field ($action-&gt;argument_names) {
+ &lt;%$action-&gt;form_field($field)%&gt;
+ % }
+ &lt;%Jifty-&gt;framework-&gt;form-&gt;submit('Submit')%&gt;
+ &lt;%Jifty-&gt;framework-&gt;form-&gt;end%&gt;
+ 
+ &lt;%init&gt;
+ my $action = Jifty-&gt;framework-&gt;new_action( class =&gt; 'CreateEntry', moniker =&gt; 'create' );
+ &lt;/%init&gt;
+ 
+----
+
+Jifty 
+Sucks
+
+----
+...for 
+the 
+moment
+----
+
+Unreleased
+
+----
+
+Too 
+much 
+configuration
+
+----
+
+etc/config.yml
+
+---
+ framework:
+  ActionBasePath: BlogDemo::Action
+  ApplicationClass: BlogDemo
+  Database:
+    Database: blogdemo
+    Driver: Pg
+    Host: localhost
+    Password: ''
+    RequireSSL: 0
+    User: postgres
+    Version: 0.0.2
+  LogConfig: etc/log4perl.conf
+  SiteConfig: etc/site_config.yml
+  Web:
+    BaseURL: http://localhost
+    Port: 8009
+    StaticRoot: web/static
+    TemplateRoot: web/templates
+
+----
+
+Don't worry.
+It's refactorable.
+----
+
+----
+Generic code
+----
+
+ bin/handler.fcgi
+ bin/jfmi
+ bin/schema
+ bin/standalone_server
+
+----
+
+ etc/config.yml
+
+----
+
+ web/templates/autohandler
+----
+
+ lib/Model/EntryCollection.pm
+ lib/Action/CreateEntry.pm
+ 
+----
+
+Don't worry.
+It's refactorable.
+----
+
+Is it out yet?
+
+----
+
+No.
+
+----
+
+When?
+
+----
+
+This 
+winter
+
+----
+
+Thanks!
+
+
+</html:textarea>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<deck flex="1" id="deck">
+
+<vbox flex="1"
+	onmousemove="Presentation.onMouseMoveOnCanvas(event);">
+	<toolbox id="canvasToolbar">
+		<toolbar>
+			<toolbarbutton oncommand="Presentation.home()" label="|&lt;&lt;"
+				observes="canBack"/>
+			<toolbarbutton oncommand="Presentation.back()" label="&lt;"
+				observes="canBack"/>
+			<toolbarbutton oncommand="Presentation.forward()" label="&gt;"
+				observes="canForward"/>
+			<toolbarbutton oncommand="Presentation.end()" label="&gt;&gt;|"
+				observes="canForward"/>
+			<toolbarseparator/>
+			<hbox align="center">
+				<textbox id="current_page" size="4"
+					oninput="if (this.value) Presentation.showPage(parseInt(this.value)-1);"/>
+				<description value="/"/>
+				<description id="max_page"/>
+			</hbox>
+			<toolbarseparator/>
+			<vbox flex="2">
+				<spacer flex="1"/>
+				<scrollbar id="scroller"
+					align="center" orient="horizontal"
+					oncommand="Presentation.showPage(parseInt(event.target.getAttribute('curpos')));"
+					onclick="Presentation.showPage(parseInt(event.target.getAttribute('curpos')));"
+					onmousedown="Presentation.onScrollerDragStart();"
+					onmousemove="Presentation.onScrollerDragMove();"
+					onmouseup="Presentation.onScrollerDragDrop();"/>
+				<spacer flex="1"/>
+			</vbox>
+			<toolbarseparator/>
+			<spacer flex="1"/>
+			<toolbarseparator/>
+			<toolbarbutton id="toggleEva" label="Eva"
+				type="checkbox"
+				autoCheck="false"
+				oncommand="Presentation.toggleEvaMode();"/>
+			<toolbarseparator/>
+			<toolbarbutton label="Edit"
+				oncommand="Presentation.toggleEditMode();"/>
+			<toolbarbutton oncommand="Presentation.reload();" label="Reload"/>
+		</toolbar>
+	</toolbox>
+	<vbox flex="1" id="canvas"
+		onclick="Presentation.onPresentationClick(event);">
+		<spacer flex="1"/>
+		<hbox flex="1">
+			<spacer flex="1"/>
+			<vbox id="content"/>
+			<spacer flex="1"/>
+		</hbox>
+		<spacer flex="1"/>
+	</vbox>
+</vbox>
+
+
+<vbox flex="1" id="edit">
+	<toolbox>
+		<toolbar>
+			<toolbarbutton label="New Page"
+				oncommand="Presentation.addPage()"/>
+			<spacer flex="1"/>
+			<toolbarseparator/>
+			<toolbarbutton label="View"
+				oncommand="Presentation.toggleEditMode();"/>
+			<toolbarbutton oncommand="Presentation.reload();" label="Reload"/>
+		</toolbar>
+	</toolbox>
+	<textbox id="textField" flex="1" multiline="true"
+		oninput="Presentation.onEdit()"/>
+	<hbox collapsed="true">
+		<iframe id="dataLoader" onload="if (window.Presentation) Presentation.onDataLoad();"/>
+	</hbox>
+</vbox>
+
+</deck>
+
+
+<broadcasterset>
+	<broadcaster id="canBack"/>
+	<broadcaster id="canForward"/>
+</broadcasterset>
+
+<commandset>
+	<command id="cmd_forward"
+		oncommand="if (Presentation.isPresentationMode) Presentation.forward();"/>
+	<command id="cmd_back"
+		oncommand="if (Presentation.isPresentationMode) Presentation.back();"/>
+	<command id="cmd_home"
+		oncommand="if (Presentation.isPresentationMode) Presentation.home();"/>
+	<command id="cmd_end"
+		oncommand="if (Presentation.isPresentationMode) Presentation.end();"/>
+</commandset>
+<keyset>
+	<key keycode="VK_ENTER"      command="cmd_forward"/>
+	<key keycode="VK_RETURN"     command="cmd_forward"/>
+	<key keycode="VK_PAGE_DOWN"  command="cmd_forward"/>
+	<key keycode="VK_RIGHT"      command="cmd_forward"/>
+	<key keycode="VK_DOWN"       command="cmd_forward"/>
+	<!--key keycode="VK_BACK_SPACE" command="cmd_back"/-->
+	<key keycode="VK_PAGE_UP"    command="cmd_back"/>
+        <!--<key keycode="VK_BACK_UP"    command="cmd_back"/>-->
+        <!--<key keycode="VK_BACK_LEFT"  command="cmd_back"/>-->
+	<key keycode="VK_HOME"       command="cmd_home"/>
+	<key keycode="VK_END"        command="cmd_end"/>
+	<key key="n" modifiers="accel" oncommand="Presentation.addPage();"/>
+	<key key="r" modifiers="accel" oncommand="window.location.reload();"/>
+	<key key="e" modifiers="accel" oncommand="Presentation.toggleEditMode();"/>
+	<key key="a" modifiers="accel" oncommand="Presentation.toggleEvaMode();"/>
+</keyset>
+
+
+<script src="takahashi.js" type="application/x-javascript" />
+</page>
+<!-- ***** BEGIN LICENSE BLOCK *****
+   - Version: MPL 1.1
+   -
+   - The contents of this file are subject to the Mozilla Public License Version
+   - 1.1 (the "License"); you may not use this file except in compliance with
+   - the License. You may obtain a copy of the License at
+   - http://www.mozilla.org/MPL/
+   -
+   - Software distributed under the License is distributed on an "AS IS" basis,
+   - WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+   - for the specific language governing rights and limitations under the
+   - License.
+   -
+   - The Original Code is the Takahashi-Method-based Presentation Tool in XUL.
+   -
+   - The Initial Developer of the Original Code is SHIMODA Hiroshi.
+   - Portions created by the Initial Developer are Copyright (C) 2005
+   - the Initial Developer. All Rights Reserved.
+   -
+   - Contributor(s): SHIMODA Hiroshi <piro@p.club.ne.jp>
+   -
+   - ***** END LICENSE BLOCK ***** -->
+
+
