@@ -140,7 +140,7 @@ sub start {
     my $form_start = qq!<form method="post" action="$ENV{PATH_INFO}"!;
     $form_start   .= qq! name="@{[ $self->name ]}"! if defined $self->name;
     $form_start   .= qq! enctype="multipart/form-data" >\n!;
-    Jifty->web->mason->out($form_start);
+    Jifty->web->out($form_start);
     '';
 } 
 
@@ -157,9 +157,9 @@ sub submit {
     my $self = shift;
     
     my $button = Jifty::Web::Form::Clickable->new(submit => undef, @_)->generate;
-    Jifty->web->mason->out(qq{<span class="submit_button">}); 
+    Jifty->web->out(qq{<span class="submit_button">}); 
     $button->render_widget;
-    Jifty->web->mason->out(qq{</span>});
+    Jifty->web->out(qq{</span>});
 
     return '';
 } 
@@ -175,15 +175,15 @@ internal state such that L</start> may be called again.
 sub end {
     my $self = shift;
 
-    Jifty->web->mason->out( qq!<div class="hidden">\n! );
+    Jifty->web->out( qq!<div class="hidden">\n! );
 
     $self->_print_registered_actions();
     $self->_preserve_state_variables();
     $self->_preserve_continuations();
 
-    Jifty->web->mason->out( qq!</div>\n! );
+    Jifty->web->out( qq!</div>\n! );
 
-    Jifty->web->mason->out( qq!</form>\n! );
+    Jifty->web->out( qq!</form>\n! );
 
     # Clear out all the registered actions and the name 
     $self->_init();
@@ -228,7 +228,7 @@ sub _preserve_state_variables {
 
     my %vars = Jifty->web->state_variables;
     for (keys %vars) {
-        Jifty->web->mason->out( qq{<input type="hidden" name="} 
+        Jifty->web->out( qq{<input type="hidden" name="} 
                 . $_
                 . qq{" value="}
                 . $vars{$_}
@@ -240,11 +240,11 @@ sub _preserve_continuations {
     my $self = shift;
 
     if ($self->call) {
-        Jifty->web->mason->out( qq{<input type="hidden" name="J:CALL" value="}
+        Jifty->web->out( qq{<input type="hidden" name="J:CALL" value="}
                                 . (ref $self->call ? $self->call->id : $self->call)
                                 . qq{" />});
     } elsif (Jifty->web->request->continuation) {
-        Jifty->web->mason->out( qq{<input type="hidden" name="J:C" value="}
+        Jifty->web->out( qq{<input type="hidden" name="J:C" value="}
                                 . Jifty->web->request->continuation->id
                                 . qq{" />});
     }

@@ -16,7 +16,7 @@ sub render_widget {
     my $field = qq!<input type="file" name="@{[ $self->input_name ]}" !;
     $field .= $self->_widget_class();
         $field .= qq!/>!;
-    Jifty->web->mason->out($field);
+    Jifty->web->out($field);
     '';
 }
 

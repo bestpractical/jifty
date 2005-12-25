@@ -42,7 +42,7 @@ sub render_option {
     $field .= qq! checked="1" !
       if defined $self->current_value and $self->current_value eq $value;
     $field .= qq!>$display\n!;
-    Jifty->web->mason->out($field);
+    Jifty->web->out($field);
     '';
 }
 

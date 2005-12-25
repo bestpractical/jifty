@@ -29,7 +29,7 @@ sub render_widget {
     $field .= $self->javascript;
     
     $field .= qq! />\n!;
-    Jifty->web->mason->out($field);
+    Jifty->web->out($field);
     '';
 }
 

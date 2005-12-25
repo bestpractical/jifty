@@ -89,12 +89,12 @@ sub render {
     $label = Jifty->web->mason->interp->apply_escapes( $label, 'h' )
         if ( $self->escape_label );
 
-    Jifty->web->mason->out(qq(<a));
-    Jifty->web->mason->out(qq( id="@{[$self->id]}"))       if $self->id;
-    Jifty->web->mason->out(qq( class="@{[$self->class]}")) if $self->class;
-    Jifty->web->mason->out(qq( href="@{[$self->url]}"));
-    Jifty->web->mason->out( $self->javascript() );
-    Jifty->web->mason->out(qq(>@{[$label]}</a>));
+    Jifty->web->out(qq(<a));
+    Jifty->web->out(qq( id="@{[$self->id]}"))       if $self->id;
+    Jifty->web->out(qq( class="@{[$self->class]}")) if $self->class;
+    Jifty->web->out(qq( href="@{[$self->url]}"));
+    Jifty->web->out( $self->javascript() );
+    Jifty->web->out(qq(>@{[$label]}</a>));
     $self->render_key_binding();
 
     return ('');

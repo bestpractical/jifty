@@ -100,7 +100,7 @@ L<Jifty::Request> for the definition of "active" actions.
 
 sub register {
     my $self = shift;
-    Jifty->web->mason->out( qq!<input type="hidden"! .
+    Jifty->web->out( qq!<input type="hidden"! .
                        qq! name="@{[$self->register_name]}"! .
                        qq! id="@{[$self->register_name]}"! .
                        qq! value="@{[ref($self)]}"! .

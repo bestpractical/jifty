@@ -24,7 +24,7 @@ sub render_widget {
         ' />',
         "\n"
     );
-    Jifty->web->mason->out($field);
+    Jifty->web->out($field);
     return '';
 }
 

@@ -147,7 +147,7 @@ sub render_key_binding {
     my $self = shift;
     my $key  = $self->key_binding;
     if ($key) {
-        Jifty->web->mason->out( "<script><!--\naddKeyBinding(" . "'"
+        Jifty->web->out( "<script><!--\naddKeyBinding(" . "'"
                 . uc($key) . "', "
                 . "'click', " . "'"
                 . $self->id . "'," . "'"

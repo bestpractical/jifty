@@ -17,7 +17,7 @@ sub render_widget {
     $self->length(12);
     $self->SUPER::render_widget();
 
-    Jifty->web->mason->out( <<"EOF");
+    Jifty->web->out( <<"EOF");
     <script type="text/javascript"><!--
         onLoadHook('createCalendarLink("@{[$self->element_id]}")');
     --></script>

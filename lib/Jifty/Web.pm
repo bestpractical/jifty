@@ -49,6 +49,18 @@ sub mason {
     return HTML::Mason::Request->instance;
 }
 
+
+=head3 out
+
+Send a string to the browser. The default implementation uses Mason->out;
+
+=cut
+
+sub out {
+    shift->mason->out(@_);
+}
+
+
 =head3 url [SCHEME]
 
 Returns the root url of the server.  This is pulled from the
@@ -794,15 +806,15 @@ sub render_messages {
         next unless grep { $results{$_}->$type() } keys %results;
 
         my $plural = $type . "s";
-        $self->mason->out(qq{<div id="$plural">});
+        $self->out(qq{<div id="$plural">});
         foreach my $moniker ( keys %results ) {
             if ( $results{$moniker}->$type() ) {
-                $self->mason->out(qq{<div class="$type $moniker">});
-                $self->mason->out( $results{$moniker}->$type() );
-                $self->mason->out(qq{</div>});
+                $self->out(qq{<div class="$type $moniker">});
+                $self->out( $results{$moniker}->$type() );
+                $self->out(qq{</div>});
             }
         }
-        $self->mason->out(qq{</div>});
+        $self->out(qq{</div>});
     }
     return '';
 }
@@ -983,7 +995,7 @@ sub region {
     $self->{'regions'}{ $self->qualified_region } = $region;
 
     # Render it
-    $self->mason->out( $region->render );
+    $self->out( $region->render );
 
     "";
 }

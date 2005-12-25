@@ -28,7 +28,7 @@ sub render_widget {
         $field .= qq!>$display</option>\n!;
     } 
     $field .= qq!</select>\n!;
-    Jifty->web->mason->out($field);
+    Jifty->web->out($field);
     '';
 }
 
