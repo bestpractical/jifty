@@ -49,6 +49,8 @@ sub Jifty::ClassLoader::INC {
     my $ActionBasePath   = Jifty->config->framework('ActionBasePath');
     return undef unless ( $module and $ApplicationClass );
 
+    #$self->require unless ($self->{'models'}); # XXX TODO: should only do this if we need to;
+
     if ( $module =~ m!^($ApplicationClass)(\.pm)?$! ) {
         return $self->return_class( "use warnings; use strict; package " . $ApplicationClass . ";\n"." 1;" );
     } 
@@ -75,12 +77,13 @@ sub Jifty::ClassLoader::INC {
         =~ m!^($ApplicationClass)(?:/|::)Action(?:/|::)(Create|Update|Delete)([^\.:]+)(\.pm)?$!
         )
     {
-
+         
         # Auto-create CRUD classes
         my $modelclass = $ApplicationClass . "::Model::" . $3;
-        return undef unless $self->{models}{$modelclass};
+        $modelclass->require;
+        return undef unless eval {$modelclass->table}; #self->{models}{$modelclass};
 
-        # warn "Auto-creating '$2' action for $modelclass ($module)";
+        my $class = $ActionBasePath ."::".$2.$3;
         return $self->return_class( "package " . $ActionBasePath . "::$2$3;\n"
                 . "use base qw/Jifty::Action::Record::$2/;\n"
                 . "sub record_class {'$modelclass'};\n"
@@ -110,7 +113,7 @@ sub return_class {
 =head2 require
 
 Loads all of the application's Actions and Models.  It additionally
-C<require>'s all Collections and Update/Delete actions for each Model
+C<require>'s all Collections and Create/Update actions for each Model
 base class.
 
 =cut
@@ -133,8 +136,8 @@ sub require {
     $self->{models} = {map {($_ => 1)} grep {/^($ApplicationClass)::Model::([^:]+)$/ and not /Collection$/} $self->plugins};
     for my $full (keys %{$self->{models}}) {
         my($short) = $full =~ /::Model::(.*)/;
-        require ($full . "Collection");
-        require ($ActionBasePath . "::" . $_ . $short) for qw/Create Update/;
+         ($full . "Collection")->require;
+         ($ActionBasePath . "::" . $_ . $short)->require for qw/Create Update/;
     }
 
 }
