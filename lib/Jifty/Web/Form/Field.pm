@@ -79,8 +79,8 @@ C<new>.  Subclasses should extend this list.
 
 =cut
 
-sub accessors { qw(name class label input_name type default_value action mandatory ajax_validates preamble hints key_binding); }
-__PACKAGE__->mk_accessors(qw(name class _label _input_name type default_value _action mandatory ajax_validates preamble hints key_binding));
+sub accessors { qw(name class label input_name type default_value action mandatory ajax_validates preamble hints key_binding render_mode); }
+__PACKAGE__->mk_accessors(qw(name class _label _input_name type default_value _action mandatory ajax_validates preamble hints key_binding render_mode));
 
 =head2 name [VALUE]
 
@@ -221,11 +221,17 @@ sub render {
     my $self = shift;
     $self->render_wrapper_start();
     $self->render_preamble();
+
+
     $self->render_label();
+    if ($self->render_mode eq 'update') { 
     $self->render_widget();
     $self->render_key_binding();
     $self->render_hints();
     $self->render_errors();
+    } elsif ($self->render_mode eq 'read'){ 
+        $self->render_value();
+    }
     $self->render_wrapper_end();
     return ('');
 }
@@ -315,6 +321,25 @@ sub render_widget {
     $field .= qq! class="@{[ $self->class ]}@{[ $self->ajax_validates ? ' ajaxvalidation' : '' ]}" !;
     $field .= qq!          jiftyaction="@{[ $self->action->register_name ]}"!;
     $field .= qq!      />\n!;
+    Jifty->mason->out($field);
+    return '';
+}
+
+=head2 render_value
+
+Renders a "view" version of the widget for field. Usually, this is just plain text.
+
+=cut
+
+
+sub render_value {
+    my $self  = shift;
+    my $field = '<span';
+    $field .= qq! class="@{[ $self->class ]}" !;
+    $field .= qq!          jiftyaction="@{[ $self->action->register_name ]}">!;
+
+    $field .= HTML::Entities::encode_entities($self->default_value) if defined $self->default_value;
+    $field .= qq!</span>\n!;
     Jifty->mason->out($field);
     return '';
 }

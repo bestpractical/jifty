@@ -236,21 +236,57 @@ C<FIELDNAME>, returns C<undef>.
 
 =cut
 
+
 sub form_field {
-    my $self       = shift;
+    my $self = shift;
     my $arg_name = shift;
+    $self->_form_widget( argument => $arg_name,
+                         render_mode => 'update');
+
+}
+
+
+=head2 form_value ARGUMENT_NAME
+
+Returns a Jifty::Web::Form::Field object that renders a display value instead of an editable widget for this argument.  If there
+is no entry in the L</arguments> hash that matches the given
+C<FIELDNAME>, returns C<undef>.
+
+=cut
+
+
+
+sub form_value {
+    my $self = shift;
+    my $arg_name = shift;
+    $self->_form_widget( argument => $arg_name,
+                         render_mode => 'read');
+
+}
+
+
+
+sub _form_widget {
+    my $self       = shift;
+    my %args = ( argument => undef,
+                 render_mode => 'update',
+                 @_);
+
+
+    my $arg_name = $args{'argument'}. '!!' .$args{'render_mode'};
 
     if ( not exists $self->{_private_form_fields_hash}{$arg_name} ) {
 
-        my $field_info = $self->arguments->{$arg_name};
+        my $field_info = $self->arguments->{$args{'argument'}};
         if ($field_info) {
 
             # form_fields overrides stickiness of what the user last entered.
             $self->{_private_form_fields_hash}{$arg_name}
                 = Jifty::Web::Form::Field->new(
                 action        => $self,
-                name          => $arg_name,
-                default_value => $field_info->{not_sticky} ? "" : $self->argument_value($arg_name),
+                name          => $args{'argument'},
+                default_value => $field_info->{not_sticky} ? "" : $self->argument_value($args{'argument'}),
+                render_mode => $args{'render_mode'},
                 %$field_info
                 );
         }    # else $field remains undef
