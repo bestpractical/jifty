@@ -4,7 +4,7 @@ $object_type
 </%args>
 <%init>
 my $record_class =  Jifty->config->framework('ApplicationClass')."::Model::".$object_type;
-my $record = $object_type->new();
+my $record = $record_class->new();
 $record->load($id);
 my $update = Jifty->web->new_action(
     class   => "Update".$object_type,
