@@ -20,6 +20,7 @@ requires('Email::Simple::Creator');
 requires('Exporter');
 requires('File::Basename');
 requires('File::Find');
+requires('File::ShareDir');
 requires('File::Spec');
 requires('FindBin');
 requires('Getopt::Long');
@@ -57,4 +58,9 @@ requires('YAML');
 version('0.'.time());
 #&auto_bundle_deps();
 &auto_install();
+
+install_script('bin/jifty');
+install_share;
+
 &WriteAll;
+

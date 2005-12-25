@@ -12,8 +12,8 @@ a:focus { background: #99ff99; border: 1px black dotted }
 </head>
 <body>
 <%PERL>
-my $jifty_dirname = File::Basename::dirname($INC{'Jifty.pm'})."/";
-my $app_dirname = File::Basename::dirname($0)."/../lib/";
+my $jifty_dirname = Jifty::Util->jifty_root."/";
+my $app_dirname = Jifty::Util->app_root."/lib/";
 $n =~ s/::/\//g;
 
 my @options = (

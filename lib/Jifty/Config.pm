@@ -140,7 +140,7 @@ sub load {
 
     $self->stash( $self->guess );
 
-    my $file = $ENV{'JIFTY_CONFIG'} || dirname($0) . '/../etc/config.yml';
+    my $file = $ENV{'JIFTY_CONFIG'} || Jifty::Util->app_root . '/etc/config.yml';
 
     my $app;
 
@@ -185,10 +185,7 @@ the Jifty binary as the name of the application and database.
 sub guess {
     my $self = shift;
 
-    require FindBin;
-    my $path = $FindBin::Bin;
-    my ($name) = $path =~ m{.*/([^/]+)/(?:bin|t)}
-        or die "Can't guess application name from $path";
+    my $name = Jifty::Util->app_name;
 
     return {
         framework => {
@@ -206,8 +203,8 @@ sub guess {
                 Version  => "0.0.1",
             },
             Web => {
-                DefaultStaticRoot => Jifty::Util->jifty_root .'/Jifty/DefaultApp/web/static',
-                DefaultTemplateRoot => Jifty::Util->jifty_root .'/Jifty/DefaultApp/web/templates',
+                DefaultStaticRoot => Jifty::Util->share_root .'/web/static',
+                DefaultTemplateRoot => Jifty::Util->share_root . '/web/templates',
                 StaticRoot   => "web/static",
                 TemplateRoot => "web/templates",
             }

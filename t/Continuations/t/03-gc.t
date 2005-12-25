@@ -1,3 +1,10 @@
+#!/usr/bin/perl
+
+use warnings;
+use strict;
+
+# {{{ Setup
+use Test::More 'skip_all' => "test file not done yet";
 
 #### garbage collection
 #  for now, an "on request, sweep all continuations older than the last 50"?
