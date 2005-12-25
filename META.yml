@@ -1,5 +1,5 @@
 name: Jifty
-version: 0.1135277390
+version: 0.1135287184
 license: unknown
 distribution_type: module
 tests: t/*.t t/*/t/*.t

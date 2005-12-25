@@ -81,7 +81,7 @@ A test harness for the $model model.
 =cut
 
 
-use Test::More no_plan => 1;
+use Test::More tests => 12;
 
 # Make sure we load Jifty
 use_ok('Jifty');
@@ -106,19 +106,31 @@ is(\$o->id, \$id, "Create returned the right id");
 ok(\$o->id, "$model create returned another value");
 isnt(\$o->id, \$id, "And it is different from the previous one");
 
-# Searches
+# Searches in general
 my \$collection =  @{[$appname]}::Model::@{[$model]}Collection->new(current_user => \$system_user);
 \$collection->unlimit;
 is(\$collection->count, 2, "Finds two records");
-print \$_->id, "\\n" while \$_ = \$collection->next;
 
+# Searches in specific
 \$collection->limit(column => 'id', value => \$o->id);
 is(\$collection->count, 1, "Finds one record with specific id");
+
+# Delete one of them
+\$o->delete;
+\$collection->redo_search;
+is(\$collection->count, 0, "Deleted row is gone");
+
+TODO: {
+    local \$TODO = "unlimit doesn't reset count_all or count?";
+
+    \$collection->unlimit;
+    is(\$collection->count, 1, "Still one left");
+}
 
 EOT
 
     $self->write("$root/lib/$appname/Model/$model.pm" => $modelFile,
-                 "$root/t/00-Model-$model.t" => $testFile,
+                 "$root/t/00-model-$model.t" => $testFile,
                 );
 }
 
