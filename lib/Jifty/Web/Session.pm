@@ -69,8 +69,16 @@ sub load {
 
 }
 
+=head2 unload
 
+Flush the session to diskd and quit.
 
+=cut
+
+sub unload {
+    my $self = shift;
+    $self->_session(undef);
+}
 
 sub _session {
     my $self = shift;

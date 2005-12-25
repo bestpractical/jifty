@@ -57,6 +57,7 @@ Currently, tries to flush L<Jifty::DBI>'s cache.
 sub cleanup_request {
     # Clean out the cache. the performance impact should be marginal.
     # Consistency is improved, too.
+    Jifty->web->session->unload();
     Jifty::Record->flush_cache;
 }
 
