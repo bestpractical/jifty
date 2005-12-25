@@ -15,22 +15,25 @@ Jifty::CurrentUser
 =head1 DESCRIPTION
 
 Most applications need to have a concept of who the current user
-is. So Jifty supports this concept internally. Every object (except
-the currentuser) is instantiated with a Jifty::CurrentUser (or
-subclass) as a parameter to the creator.
+is. So Jifty supports this concept internally. Every object (except the
+CurrentUser itself) is instantiated with a L<Jifty::CurrentUser> subclass
+as a parameter to the creator.
 
 
-This class describes (and implements a trivial version) of the access control API that a Jifty application needs to implemenet to provide user-based
-access control
+This class describes (and implements a trivial version) of the access
+control API that a Jifty application needs to implemenet to provide
+user-based access control
 
-It's generally expected that your application will override this if
-you want any sort of access control.
+It's generally expected that your application will override this class if you
+want any sort of access control.
 
 =cut
 
 =head2 new
 
-Creates a new L<Jifty::CurrentUser> object.
+Creates a new L<Jifty::CurrentUser> object.  Calls L<_init>, an
+app-specific initialization routine.
+
 
 =cut
 
@@ -44,12 +47,24 @@ sub new {
 
 sub _init { 1}
 
+=head2 superuser
+
+A convenience constructor that returns a new CurrentUser object that's
+marked as a superuser.
+
+=cut
+
+sub superuser {
+    my $class = shift;
+    my $self = $class->new();
+    $self->is_superuser(1);
+    return $self;
+}
 
 =head2 id
 
-Returns C<0> if we don't have a user_object. 
-When we I<do> have a user_object, return that user's id.
-When your application subclasses this class,  L</id> should return the integer id for the current user.
+Returns C<0> if we don't have a user_object.  When we I<do> have a
+user_object, return that user's id.  
 
 =cut
 
@@ -65,9 +80,12 @@ sub id {
 
 =head2 current_user
 
-Every class in a Jifty application has a L</current_user> method that returns the user 
-who's doing things, in the form of a L<Jifty::CurrentUser> object a subclass thereof.
-For the somewhat obvious reason that you can't actually lift yourself up by tugging on your own bootstraps, a Jifty::CurrentUser object return I<itself> rather than another C<Jifty::CurrentUser object>
+Every class in a Jifty application has a L</current_user>
+method that returns the user who's doing things, in the form of a
+L<Jifty::CurrentUser> object a subclass thereof.  For the somewhat
+obvious reason that you can't actually lift yourself up by tugging
+on your own bootstraps, a Jifty::CurrentUser object return I<itself>
+rather than another C<Jifty::CurrentUser object>
 
 =cut
 
@@ -79,19 +97,48 @@ sub current_user {
 
 =head2 user_object 
 
-This gets or sets your application's user object for the current user. Generally, you're epxected to set and load it in the _init method in your subclass
+This gets or sets your application's user object for the current
+user. Generally, you're epxected to set and load it in the _init method
+in your L<Jifty::CurrentUser> subclass.
+
+Example:  
+
+	sub _init {
+	    my $self = shift;
+	    my %args = (@_);
+	
+	    if (delete $args{'_bootstrap'} ) {
+	        $self->is_bootstrap_user(1);
+	    } elsif (keys %args) {
+	        $self->user_object(Wifty::Model::User->new(current_user => $self));
+	        $self->user_object->load_by_cols(%args);
+	    }
+	    $self->SUPER::_init(%args);
+	}
+	
 
 =cut
 
 
-=head1 USERNAME AND PASSWORD ROUTINES
+=head1 AUTHENTICATION AND AUTHORIZATION
 
-=head2 username
+To use Jifty's built-in authentication and authorization system,
+your user objects need to implement a couple of API methods:
+
+=over
+
+=item username
+
+=item password_is
+
+=item insecure_url_auth_token
+
+=back
 
 =head2 password_is STRING
 
-Your L<user_object> should have a method called C<password_is> which returns true if passed a string
-that matches the user's current password.
+Your L<user_object> should have a method called C<password_is> which
+returns true if passed a string that matches the user's current password.
 
 =cut
 
@@ -102,71 +149,75 @@ sub password_is {
 
 }
 
-
-
-=head2 set_password
-
-
-=head1 OTHER USER METADATA
-
-=head2 email
+=head2 username
 
 =cut
 
-sub email {'undefined'}
+sub username {
+    my $self = shift;
+    return undef unless ($self->user_object);
+    return($self->user_object->username(@_));
+}
 
-
-=head2 email_address_confirmed
-
-
-=head1 TOKEN BASED AUTHENTICATION
-
-=head2 insecure_auth_token
+=head2 insecure_url_auth_token
 
 
 =cut
 
 sub insecure_url_auth_token {
     my $self = shift;
+    return undef unless ($self->user_object);
     return ($self->user_object->insecure_url_auth_token);
 
 }
 
 
-=head1 ABILITY TO LEAP TALL BUILDINGS IN A SINGLE BOUND
+=head1 RIGHTS AND ACCESS CONTROL
 
 In any system that relies on users' rights to perform actions, it's sometimes
 necessary to walk around the access control system. There are two primary
 cases for this:
 
+=cut
 
 =head2 is_superuser 
 
-Sometimes, while the system is running, you need to do something on behalf of a user that they shouldn't be able to do themselves. Maybe you need to let a new user sign up for your service (You don't want to let any user create more users, right?) or to write an entry to a changelog. If the user has the C<is_superuser> flag set, things still get read from the database, but the user can walk around any and all ACL checks. Think "Neo" from the Matrix. The superuser can walk through walls, stop bullets and so on.
+Sometimes, while the system is running, you need to do something on behalf
+of a user that they shouldn't be able to do themselves. Maybe you need
+to let a new user sign up for your service (You don't want to let any
+user create more users, right?) or to write an entry to a changelog. If
+the user has the C<is_superuser> flag set, things still get read from
+the database, but the user can walk around any and all ACL checks. Think
+"Neo" from the Matrix. The superuser can walk through walls, stop bullets
+and so on.
 
 
 =cut
-
-=head2 superuser
-
-A convenience constructor that returns a new superuser  L<CurrentUser> object
-
-=cut
-
-sub superuser {
-    my $class = shift;
-    my $self = $class->new();
-    $self->is_superuser(1);
-    return $self;
-}
-
-
 
 =head2 is_bootstrap_user
 
-When your system is first getting going, you can't assume B<anything>. There
-probably aren't any rights in the system to check. A user with the L</is_bootstrap_user> flag set is a self-reliant superuser. Nothing is read from the database, no ACLs are checked.  You probably never need to do anything with bootstrap users.
+When your system is first getting going, you can't assume
+B<anything>. There probably aren't any rights in the system to check. A
+user with the L</is_bootstrap_user> flag set is a self-reliant
+superuser. Nothing is read from the database, no ACLs are checked.
+You probably never need to do anything with bootstrap users.
 
 =cut
+
+
+=head2 current_user_can ACTION
+
+For a currentuser object, the current user can always C<read>, but never
+write or do anything else.
+
+=cut
+
+
+sub current_user_can {
+    my $self = shift;
+    my $action = shift;
+    return (1) if $action eq 'read';
+    return (0);
+}
 
 1;
