@@ -117,6 +117,13 @@ Gets or sets the value for the form field that was submitted in the last action.
 
 =cut
 
+=head2 id 
+
+For the purposes of L<Jifty::Web::Form::Element>, the unique id of
+this field is its input name.
+
+=cut
+
 sub id {
     my $self = shift;
     return $self->input_name;

@@ -1,6 +1,6 @@
 use warnings;
 use strict;
- 
+
 package Jifty::Web::Form::Link;
 
 =head1 NAME
@@ -9,12 +9,21 @@ Jifty::Web::Form::Link - Creates a state-preserving HTML link
 
 =head1 DESCRIPTION
 
-Describes an HTML link that may be AJAX-enabled.
+Describes an HTML link that may be AJAX-enabled.  Most of the
+computation of this comes from L<Jifty::Web::Form::Clickable>, which
+generates L<Jifty::Web::Form::Link>s.
 
 =cut
 
 use base qw/Jifty::Web::Form::Element Class::Accessor/;
-use URI;
+
+=head2 accessors
+
+Link adds C<url> and C<escape_label> to the list of possible accessors
+and mutators, in addition to those offered by
+L<Jifty::Web::Form::Element/accessors>.
+
+=cut
 
 sub accessors { shift->SUPER::accessors(), qw(url escape_label); }
 __PACKAGE__->mk_accessors(qw(url escape_label));
@@ -30,39 +39,29 @@ the C<PARAMHASH> are:
 
 The URL of the link; defaults to the current URL.
 
-=item label
-
-The text of the link
-
 =item escape_label
 
 HTML escape the label? Defaults to true
 
-=item parameters (optional)
+=item anything from L<Jifty::Web::Form::Element>
 
-A hashref of default parameters to append to the url.
+Any parameter which L<Jifty::Web::Form::Element/new> can take.
 
 =back
-
-The parameters may also include AJAX hooks; see
-L<Jifty::Web::Form::Element>.
-
-The link automatically persists any L<Jifty::Request/state_variables>
-that were set in the previous request.
 
 =cut
 
 sub new {
     my $class = shift;
-    my $self = bless {}, $class;
+    my $self  = bless {}, $class;
 
     my %args = (
-                url   => $ENV{PATH_INFO},
-                label => "Click me!",
-                escape_label => 1,
-                class => '',
-                @_
-               );
+        url          => $ENV{PATH_INFO},
+        label        => "Click me!",
+        escape_label => 1,
+        class        => '',
+        @_
+    );
 
     for my $field ( $self->accessors() ) {
         $self->$field( $args{$field} ) if exists $args{$field};
@@ -87,13 +86,14 @@ sub render {
     my $self = shift;
 
     my $label = $self->label;
-    $label = Jifty->web->mason->interp->apply_escapes($label, 'h') if ($self->escape_label);
+    $label = Jifty->web->mason->interp->apply_escapes( $label, 'h' )
+        if ( $self->escape_label );
 
     Jifty->web->mason->out(qq(<a));
-    Jifty->web->mason->out(qq( id="@{[$self->id]}")) if $self->id;
+    Jifty->web->mason->out(qq( id="@{[$self->id]}"))       if $self->id;
     Jifty->web->mason->out(qq( class="@{[$self->class]}")) if $self->class;
     Jifty->web->mason->out(qq( href="@{[$self->url]}"));
-    Jifty->web->mason->out($self->javascript());
+    Jifty->web->mason->out( $self->javascript() );
     Jifty->web->mason->out(qq(>@{[$label]}</a>));
     $self->render_key_binding();
 

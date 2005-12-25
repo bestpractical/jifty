@@ -1,6 +1,6 @@
 use warnings;
 use strict;
- 
+
 package Jifty::Web::Form::Element;
 
 =head1 NAME
@@ -73,9 +73,9 @@ Returns the javsscript necessary to make the events happen.
 
 sub javascript {
     my $self = shift;
-    
+
     my $response = "";
-    for my $trigger ($self->handlers) {
+    for my $trigger ( $self->handlers ) {
         my $value = $self->$trigger;
         next unless $value;
         my @hooks = ref $value eq "ARRAY" ? @{$value} : ($value);
@@ -85,23 +85,28 @@ sub javascript {
             $response .= qq!update_region({!;
 
             # Region
-            $response .= qq!name: '@{[$hook->{region} || Jifty->web->qualified_region]}'!;
+            $response
+                .= qq!name: '@{[$hook->{region} || Jifty->web->qualified_region]}'!;
 
             # Submit action
-            if ($hook->{submit}) {
-                my $moniker = ref $hook->{submit} ? $hook->{submit}->moniker : $hook->{submit};
+            if ( $hook->{submit} ) {
+                my $moniker = ref $hook->{submit}
+                    ? $hook->{submit}->moniker
+                    : $hook->{submit};
                 $response .= qq!, submit: '@{[$moniker]}'!;
             }
 
             # Arguments
-            my %these = ( %{$hook->{args} || {}});
+            my %these = ( %{ $hook->{args} || {} } );
             $response .= qq!, args: {!;
-            $response .= join(',', map {($a = $these{$_}) =~ s/'/\\'/g; "'$_':'$a'"} keys %these);
+            $response .= join( ',',
+                map { ( $a = $these{$_} ) =~ s/'/\\'/g; "'$_':'$a'" }
+                    keys %these );
             $response .= qq!}!;
 
             # Fragment (optional)
             $response .= qq!, fragment: '@{[$hook->{fragment}]}'!
-              if $hook->{fragment};
+                if $hook->{fragment};
 
             $response .= qq!});!;
         }
@@ -109,6 +114,23 @@ sub javascript {
     }
     return $response;
 }
+
+=head2 class
+
+Sets the CSS class that the element will display as
+
+=head2 key_binding
+
+Sets the key binding associated with this elements
+
+=head2 id
+
+Subclasses must override this to provide each element with a unique id.
+
+=head2 label
+
+Sets the label of the element.  This will be used for the key binding
+legend, at very least.
 
 =head2 render_key_binding
 
@@ -120,11 +142,11 @@ sub render_key_binding {
     my $self = shift;
     my $key  = $self->key_binding;
     if ($key) {
-        Jifty->web->mason->out( "<script><!--\naddKeyBinding(".
-                "'" . uc($key) . "', "
-                . "'click', "
-                . "'". $self->id . "',"
-                . "'". $self->label."'"
+        Jifty->web->mason->out( "<script><!--\naddKeyBinding(" . "'"
+                . uc($key) . "', "
+                . "'click', " . "'"
+                . $self->id . "'," . "'"
+                . $self->label . "'"
                 . ");\n-->\n</script>\n" );
     }
 }

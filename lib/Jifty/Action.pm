@@ -332,11 +332,11 @@ sub render_errors {
     return '';
 }
 
-=head2 button { arguments => { PARAMHASH }, label => LABEL }
+=head2 button arguments => { KEY => VALUE }, PARAMHASH
 
 Create and render a button.  It functions nearly identically like
-L<Jifty::Web/button>, except it takes C<arguments> in addition to
-C<parameters>.
+L<Jifty::Web/link>, except it takes C<arguments> in addition to
+C<parameters>, and defaults to submitting this L<Jifty::Action>.
 
 =cut
 
@@ -351,35 +351,6 @@ sub button {
     Jifty->web->link(%args,
                      submit => $self,
                     );
-}
-
-=head2 tangent
-
-=cut
-
-sub tangent {
-    my $self = shift;
-    my %args = ( mapping => {},
-                 label => 'Click me!',
-                 path => undef,
-                 key_binding => undef,
-                 run => 0,
-                 @_);
-    
-    my $field = Jifty::Web::Form::Field->new( action => $self, label => $args{'label'}, type => 'InlineButton', key_binding => $args{'key_binding'});
-    my @args = ("J:PATH=".$args{path},
-                "J:ACTIONS=".($args{run} ? $self->moniker : ""),
-               );
-    push @args, "J:C=".Jifty->web->request->continuation->id
-      if Jifty->web->request->continuation;
-
-    $field->input_name(join "|", 
-                       @args,
-                       map {"J:C-$_=".$self->form_field_name($args{mapping}{$_})} keys %{$args{mapping}});
-    $field->name(join '|', keys %{$args{mapping}}); # Only used internally
-
-    return $field;
-    
 }
 
 =head1 NAME METHODS

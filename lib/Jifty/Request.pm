@@ -145,12 +145,11 @@ Not yet designed or implemented.  (Should be able to load some defaults from URL
 
 =head1 METHODS
 
-=head2 new
+=head2 new PARAMHASH
 
-
-=head1 EXAMPLE DATA STRUCTURE
-
-Here, we'll show an example YAML parse of a typical somewhat complex request. before we get going ;)
+Creates a new request object.  For each key in the I<PARAMHASH>, the
+method of that name is called, with the I<PARAMHASH>'s value as its
+sole argument.
 
 =cut
 
@@ -204,10 +203,14 @@ sub from_webform {
 
     my %args = (@_);
 
+    # We pull in the continuations first, because if we have a
+    # J:CLONE, we want the cloned values to be fallbacks
     $self->_extract_continuations_from_webform(%args);
+
+    # Pull in all of the arguments
     $self->arguments(\%args);
 
-    # XXX TODO: We can do a lot better performancewise with a nice, happy grep.
+    # Extract actions and state variables
     $self->_extract_actions_from_webform(%args);
     $self->_extract_state_variables_from_webform(%args);
 
@@ -215,7 +218,14 @@ sub from_webform {
 
     return $self;
 }
-  
+
+=head2 merge_param KEY => VALUE
+
+Merges a single query parameter into the request.  This may add
+actions, change action arguments, or change state variables.
+
+=cut
+
 sub merge_param {
     my $self = shift;
 
@@ -306,19 +316,12 @@ sub _extract_actions_from_webform {
         my $class = $args{$maybe_action};
 
         my $arguments = {};
-        for my $maybe_super_fallback_argument (keys %args) {
-            next unless $maybe_super_fallback_argument =~ /^J:A:F:F:F-(\w+)-\Q$moniker/s;
-            $arguments->{$1} = $args{$maybe_super_fallback_argument};
-        } 
-        for my $maybe_fallback_argument (keys %args) {
-            next unless $maybe_fallback_argument =~ /^J:A:F:F-(\w+)-\Q$moniker/s;
-            $arguments->{$1} = $args{$maybe_fallback_argument};
-        } 
-        for my $maybe_argument (keys %args) {
-            next unless $maybe_argument =~ /^J:A:F-(\w+)-\Q$moniker/s;
-            $arguments->{$1} = $args{$maybe_argument};
-        } 
-
+        for my $type (qw/J:A:F:F:F J:A:F:F J:A:F/) {
+            for my $key (keys %args) {
+                my ($t, $a, $m) = $self->parse_form_field_name($key);
+                $argument->{$a} = $args{$key} if $t eq $type and $m eq $moniker;
+            }
+        }
 
         $self->add_action(
             moniker => $moniker,
@@ -343,6 +346,13 @@ sub _extract_continuations_from_webform {
         $self->merge_param($_ => $params{$_}) for keys %params;
     }
 }
+
+=head2 call_continuation
+
+Calls the L<Jifty::Continuation> associated with this request, if
+there is one.
+
+=cut
 
 sub call_continuation {
     my $self = shift;

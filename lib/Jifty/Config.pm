@@ -20,7 +20,7 @@ use File::Spec;
 use File::Basename;
 use Log::Log4perl;
 use Hash::Merge;
-Hash::Merge::set_behavior( 'RIGHT_PRECEDENT' );
+Hash::Merge::set_behavior('RIGHT_PRECEDENT');
 
 require Module::Pluggable;
 
@@ -30,8 +30,6 @@ use base qw/Class::Accessor/;
 use vars qw/$CONFIG/;
 
 __PACKAGE__->mk_accessors(qw/stash/);
-
-
 
 =head1 METHODS
 
@@ -72,12 +70,11 @@ those in the application configuration file.
 
 sub new {
     my $proto = shift;
-    my $self = {};
+    my $self  = {};
     bless $self, $proto;
     $self->load();
     return $self;
 }
-
 
 =head2 framework VARIABLE
 
@@ -91,12 +88,11 @@ C<MailerArgs> that only sometimes specify files.)
 =cut
 
 sub framework {
-  my $self = shift;
-  my $var = shift;
-  
-  $self->_get('framework', $var);
-}
+    my $self = shift;
+    my $var  = shift;
 
+    $self->_get( 'framework', $var );
+}
 
 =head2 app VARIABLE
 
@@ -110,20 +106,19 @@ C<MailerArgs> that only sometimes specify files.)
 =cut
 
 sub app {
-  my $self = shift;
-  my $var = shift;
-  
-  $self->_get('application', $var);
+    my $self = shift;
+    my $var  = shift;
+
+    $self->_get( 'application', $var );
 }
 
 sub _get {
-  my $self = shift;
-  my $section = shift;
-  my $var = shift;
-  
-  $self->stash->{$section}->{$var};
-}
+    my $self    = shift;
+    my $section = shift;
+    my $var     = shift;
 
+    $self->stash->{$section}->{$var};
+}
 
 =head2 load 
 
@@ -140,26 +135,26 @@ app's base directory.
 
 =cut
 
-
 sub load {
     my $self = shift;
 
-    $self->stash($self->guess);
+    $self->stash( $self->guess );
 
     my $file = $ENV{'JIFTY_CONFIG'} || dirname($0) . '/../etc/config.yml';
 
     my $app;
-    # Override anything in the default guessed config with anything from a config file
+
+# Override anything in the default guessed config with anything from a config file
     if ( -f $file and -r $file ) {
         $app = $self->load_file($file);
-        $app = Hash::Merge::merge($self->stash, $app );
+        $app = Hash::Merge::merge( $self->stash, $app );
+
         # Load the $app so we know where to find the vendor config file
         $self->stash($app);
     }
     my $vendor = $self->load_file(
         Jifty::Util->absolute_path(
-            $self->framework('VendorConfig')
-                || $ENV{'JIFTY_VENDOR_CONFIG'}
+            $self->framework('VendorConfig') || $ENV{'JIFTY_VENDOR_CONFIG'}
         )
     );
 
@@ -192,30 +187,30 @@ sub guess {
 
     require FindBin;
     my $path = $FindBin::Bin;
-    my ($name) = $path =~ m{.*/([^/]+)/(?:bin|t)} or die "Can't guess application name from $path";
+    my ($name) = $path =~ m{.*/([^/]+)/(?:bin|t)}
+        or die "Can't guess application name from $path";
 
     return {
-            framework => {
-                          ActionBasePath   => $name."::Action",
-                          ApplicationClass => $name,
-                          ApplicationName  => $name,
-                          Database => {
-                                       Database => lc $name,
-                                       Driver   => "Pg",
-                                       Host     => "localhost",
-                                       Password => "",
-                                       User     => "postgres",
-                                       Version  => "0.0.1",
-                                      },
-                          Web => {
-                                  StaticRoot   => "web/static",
-                                  TemplateRoot => "web/templates",
-                                 }
-                         }
-           };
+        framework => {
+            ActionBasePath   => $name . "::Action",
+            ApplicationClass => $name,
+            ApplicationName  => $name,
+            Database         => {
+                Database => lc $name,
+                Driver   => "Pg",
+                Host     => "localhost",
+                Password => "",
+                User     => "postgres",
+                Version  => "0.0.1",
+            },
+            Web => {
+                StaticRoot   => "web/static",
+                TemplateRoot => "web/templates",
+            }
+        }
+    };
 
 }
-
 
 =head2 load_file PATH
 
@@ -228,14 +223,15 @@ sub load_file {
 
     my $self = shift;
     my $file = shift;
+
     # only try to load files that exist
-    return {} unless ($file && -f $file);
-    my $hashref = YAML::LoadFile($file )
+    return {} unless ( $file && -f $file );
+    my $hashref = YAML::LoadFile($file)
         or die "I couldn't load config file $file: $!";
 
     $hashref = $self->_expand_relative_paths($hashref);
     return $hashref;
-} 
+}
 
 =head2 _expand_relative_paths
 
@@ -244,27 +240,26 @@ Does a DFS, turning all leaves that look like %paths% into absolute paths.
 =cut
 
 sub _expand_relative_paths {
-    my $self = shift;
+    my $self  = shift;
     my $datum = shift;
 
-    if (ref $datum eq 'ARRAY') {
+    if ( ref $datum eq 'ARRAY' ) {
         return [ map { $self->_expand_relative_paths($_) } @$datum ];
-    } elsif (ref $datum eq 'HASH') {
-        for my $key (keys %$datum) {
+    } elsif ( ref $datum eq 'HASH' ) {
+        for my $key ( keys %$datum ) {
             my $new_val = $self->_expand_relative_paths( $datum->{$key} );
             $datum->{$key} = $new_val;
-        } 
+        }
         return $datum;
-    } elsif (ref $datum) {
+    } elsif ( ref $datum ) {
         return $datum;
     } else {
-        if (defined $datum and $datum =~ /^%(.+)%$/) {
+        if ( defined $datum and $datum =~ /^%(.+)%$/ ) {
             $datum = Jifty::Util->absolute_path($1);
         }
         return $datum;
-    } 
-} 
-
+    }
+}
 
 =head1 AUTHOR
 

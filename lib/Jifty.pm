@@ -61,19 +61,20 @@ sub new {
     my $ignored_class = shift;
 
     my %args = (
-        no_handle => 0,
+        no_handle        => 0,
         logger_component => undef,
         @_
     );
 
-    # Load the configuration. stash it in ->config  
-    __PACKAGE__->config(Jifty::Config->new());
+    # Load the configuration. stash it in ->config
+    __PACKAGE__->config( Jifty::Config->new() );
 
-    __PACKAGE__->logger(Jifty::Logger->new($args{'logger_component'}));
+    __PACKAGE__->logger( Jifty::Logger->new( $args{'logger_component'} ) );
 
-    unless ($args{'no_handle'} or not Jifty->config->framework('Database') ) {
+    unless ( $args{'no_handle'} or not Jifty->config->framework('Database') )
+    {
 
-        Jifty->handle(Jifty::Handle->new());
+        Jifty->handle( Jifty::Handle->new() );
         Jifty->handle->connect();
         Jifty->handle->check_schema_version();
     }
@@ -82,25 +83,25 @@ sub new {
     $loader->require;
 }
 
+=head2 config
 
-# Getter/setter for config hash
+An accessor for the L<Jifty::Config> object that stores the
+configuration for the Jifty application.
+
+=cut
+
 sub config {
     my $class = shift;
     $CONFIG = shift if (@_);
     return $CONFIG;
 }
 
-
 =head2 logger
 
-An accessor for our L<Log4Perl> configuration.
-
-Not actually that interesting, as Log4Perl seems to maintain all its state
-internally.
+An accessor for our L<Jifty::Logger> object for the application.
 
 =cut
 
-# Getter/setter for config hash
 sub logger {
     my $class = shift;
     $LOGGER = shift if (@_);
@@ -109,18 +110,18 @@ sub logger {
 
 =head2 handle
 
-Get/set our L<Jifty::Handle> object
+An accessor for the L<Jifty::Handle> object that stores the database
+handle for the application.
 
 =cut
 
-sub handle  {
+sub handle {
     my $class = shift;
     $HANDLE = shift if (@_);
     return $HANDLE;
 }
 
-
-=head2 framework
+=head2 web
 
 Returns the current L<Jifty::Web> object.
 
@@ -129,7 +130,7 @@ Returns the current L<Jifty::Web> object.
 sub web {
     $HTML::Mason::Commands::JiftyWeb ||= Jifty::Web->new();
     return $HTML::Mason::Commands::JiftyWeb;
-} 
+}
 
 =head1 AUTHOR
 
