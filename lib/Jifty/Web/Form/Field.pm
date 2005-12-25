@@ -288,7 +288,7 @@ Renders a default CSS class for each part of our widget.
 
 sub classes {
     my $self = shift;
-    return join(' ', ($self->class||''), ($self->name||''), ($self->input_name||''));
+    return join(' ', ($self->class||''), ($self->name||''));
 }
 
 
