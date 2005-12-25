@@ -3,8 +3,6 @@ use strict;
 
 package Jifty::Web::Session;
 use base qw/Jifty::Object Class::Accessor/;
-use Cache::FileCache;
-use Digest::MD5;
 use CGI::Cookie;
 
 # We don't use Class::Accessor as we want to do our own 'set' and 'get' here
@@ -176,9 +174,9 @@ Return a hash of all the continuations in this session. Keyed by continuation_C<
 
 sub continuations {
     my $self = shift;
-    my $session = $self->session_hashref;
     my %continuations;
-    map { $continuations{$_} = $session->{$_} } grep { /^_continuation_/ } keys %$session;
+    # XXX TODO: we're deeply abusing the API. that's uncool. We want to replace Apache::Session
+    map { $continuations{$_} = $self->get($_) } grep { /^_continuation_/ } keys %{$self->_session->{'data'}};
     return %continuations;
 }
 
