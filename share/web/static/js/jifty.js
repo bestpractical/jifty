@@ -376,6 +376,7 @@ function update() {
 
     // And when we get the result back..
     var onComplete = function(transport, object) {
+        var allcontent;
         // In case there's no XML i nthe response, or what have you
         try {
             // Grab the XML response
@@ -413,9 +414,8 @@ function update() {
                             } else {
                                 Element.update(element, response_fragment.textContent.stripScripts());
                             }
-                            // TODO: this wants a setTimeout so it
-                            // runs delayed, but scoping hates us
-                            response_fragment.textContent.evalScripts();
+                            // We need to give the browser some "settle" time before we eval scripts in the body
+                            setTimeout((function() {arguments[0].evalScripts()}).bind(response_fragment.textContent), 10);
                         }
                     }
 
