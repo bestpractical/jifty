@@ -2,7 +2,6 @@
 
 
 div#navigation {
-        border:1px solid #000;
         width:598px;
         height:45px;
         position:relative;
@@ -31,8 +30,8 @@ ul#submenu {
         padding:5px 0;
         background-color:#24568E;
         list-style-type:none;
-        position: relative;
-        top:5px;
+        position: absolute;
+        top: 22px;
         left:0;
 }
 ul#submenu li {
