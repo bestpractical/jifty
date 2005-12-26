@@ -10,6 +10,7 @@ Continuations tests
 =cut
 
 BEGIN {chdir "t/Mapper"}
+END {unlink Jifty->config->framework('Database')->{'Database'}}
 use lib '../../lib';
 use Jifty::Test no_plan => 1;
 

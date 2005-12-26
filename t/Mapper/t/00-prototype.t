@@ -10,6 +10,7 @@ This is a template for your own tests. Copy it and modify it.
 =cut
 
 BEGIN {chdir "t/Mapper"}
+END {unlink Jifty->config->framework('Database')->{'Database'}}
 use lib '../../lib';
 use Jifty::Test tests => 1;
 

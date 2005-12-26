@@ -10,6 +10,7 @@ Tests for request mapper
 =cut
 
 BEGIN {chdir "t/Mapper"}
+END {unlink Jifty->config->framework('Database')->{'Database'}}
 use lib '../../lib';
 use Jifty::Test tests => 32;
 use_ok('Jifty::Test::WWW::Mechanize');

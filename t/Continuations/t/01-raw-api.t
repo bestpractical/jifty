@@ -10,6 +10,7 @@ Continuations tests
 =cut
 
 BEGIN {chdir "t/Continuations"}
+END {unlink Jifty->config->framework('Database')->{'Database'}}
 use lib '../../lib';
 use Jifty::Test tests => 47;
 

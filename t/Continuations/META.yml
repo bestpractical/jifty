@@ -1,8 +1,0 @@
-name: Jifty-Test-Continuations
-version: 0.01
-license: unknown
-distribution_type: module
-no_index:
-  directory:
-    - inc
-generated_by: Module::Install version 0.46
