@@ -2,10 +2,13 @@ use warnings;
 use strict;
 
 package Jifty::Script::App;
-use base 'App::CLI::Command';
+use base qw'App::CLI::Command Class::Accessor';
 
 use YAML;
 use File::Copy;
+
+__PACKAGE__->mk_accessors(qw/prefix dist_name mod_name/);
+
 
 =head1 NAME
 
@@ -41,40 +44,74 @@ structure, and a C<Makefile.PL> for you application.
 sub run {
     my $self = shift;
 
-    my $prefix = $self->{name} ||''; 
+    $self->prefix( $self->{name} ||''); 
 
-    unless ($prefix =~ /\w+/ ) { die "You need to give your new Jifty app a --name"."\n";}
+    unless ($self->prefix =~ /\w+/ ) { die "You need to give your new Jifty app a --name"."\n";}
 
-    my $modname = $self->{modname} || ucfirst($prefix);
+    # Turn my-app-name into My::App::Name.
 
-    print("Creating new application ".$self->{name}."\n");
-    mkdir($prefix);
+    $self->mod_name (join ("::", map { ucfirst } split (/\-/, $self->prefix)));
+    my $dist = $self->mod_name;
+    $self->dist_name($self->prefix);
 
-    foreach my $dir ($self->_directories) {
-        $dir =~ s/__APP__/$modname/;
-        print("Creating directory $dir\n");
-        mkdir( "$prefix/$dir") or die "Can't create $prefix/$dir: $!";
+    print("Creating new application ".$self->mod_name."\n");
+    $self->_make_directories();
+    $self->_install_jifty_binary();
+    $self->_write_makefile();
+    $self->_write_config();
 
-    }
 
+}
+
+sub _install_jifty_binary {
+    my $self = shift;
+    my $prefix = $self->prefix;
     # Copy our running copy of 'jifty' to bin/jifty
     copy($0, "$prefix/bin/jifty");
     # Mark it executable
     chmod(0555, "$prefix/bin/jifty");
+}
 
+
+
+sub _write_makefile {
+    my $self = shift;
+    my $mod_name = $self->mod_name;
+    my $prefix = $self->prefix;
     # Write a makefile
     open(MAKEFILE, ">$prefix/Makefile.PL") or die "Can't write Makefile.PL: $!";
     print MAKEFILE <<"EOT";
 use inc::Module::Install;
-name('$modname');
+name('$mod_name');
 version('0.01');
-requires('Jifty');
+requires('Jifty' => '@{[$Jifty::VERSION]}');
 
 WriteAll;
 EOT
     close MAKEFILE;
-}
+} 
 
+sub _make_directories {
+    my $self = shift;
+
+    mkdir($self->prefix);
+    my @dirs = qw( lib/ );
+    my @dir_parts = split('::',$self->mod_name);
+    my $lib_dir = "";
+    foreach my $part (@dir_parts) {
+        $lib_dir .=  $part ."/";
+        push @dirs, "lib/". $lib_dir;
+    }
+
+    @dirs = (@dirs, $self->_directories); 
+
+    foreach my $dir (@dirs) {
+        $dir =~ s/__APP__/$lib_dir/;
+        print("Creating directory $dir\n");
+        mkdir( $self->prefix."/$dir") or die "Can't create ". $self->prefix."/$dir: $!";
+
+    }
+}
 sub _directories {
     return qw(
         bin
@@ -84,12 +121,21 @@ sub _directories {
         web
         web/templates
         web/static
-        lib
-        lib/__APP__
         lib/__APP__/Model
         lib/__APP__/Action
         t
     );
+}
+
+
+sub _write_config {
+    my $self = shift;
+    my $cfg = Jifty::Config->new();
+    my $default_config = $cfg->guess($self->dist_name);
+    my $file = join("/",$self->prefix, 'etc','config.yml');
+    print("Creating configuration file $file\n");
+    YAML::DumpFile($file => $default_config);
+
 }
 
 

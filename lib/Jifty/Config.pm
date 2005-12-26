@@ -180,29 +180,41 @@ sub guess {
     my $self = shift;
 
     # Walk around a potential loop by calling guess to get the app name
-    my $name = ( $self->stash->{framework}->{ApplicationName}
-        ? $self->stash->{framework}->{ApplicationName}
-        : Jifty::Util->app_name );
+    my $app_name;
+    if (@_) {
+        $app_name = shift;
+    } elsif ($self->stash->{framework}->{ApplicationName}) {
+
+        $app_name =  $self->stash->{framework}->{ApplicationName};
+    } else {
+        $app_name =  Jifty::Util->app_name;
+    }
+
+    my $app_class = $app_name;
+    $app_class =~ s/-/::/g;
+    my $db_name = lc $app_name;
+    $db_name =~ s/-/_/g;
     return {
         framework => {
-            AdminMode       => 1,
-            ActionBasePath   => $name . "::Action",
-            ApplicationClass => $name,
-            CurrentUserClass => $name ."::CurrentUser",
-            ApplicationName  => $name,
+            AdminMode        => 1,
+            ActionBasePath   => $app_class . "::Action",
+            ApplicationClass => $app_class,
+            CurrentUserClass => $app_class . "::CurrentUser",
+            ApplicationName  => $app_name,
             Database         => {
-                Database => lc $name,
+                Database =>  $db_name,
                 Driver   => "SQLite",
                 Host     => "localhost",
                 Password => "",
                 User     => "",
                 Version  => "0.0.1",
             },
-            Mailer => 'Sendmail',
+            Mailer     => 'Sendmail',
             MailerArgs => [],
-            Web => {
-                DefaultStaticRoot => Jifty::Util->share_root .'/web/static',
-                DefaultTemplateRoot => Jifty::Util->share_root . '/web/templates',
+            Web        => {
+                DefaultStaticRoot => Jifty::Util->share_root . '/web/static',
+                DefaultTemplateRoot => Jifty::Util->share_root
+                    . '/web/templates',
                 StaticRoot   => "web/static",
                 TemplateRoot => "web/templates",
             }
@@ -231,6 +243,7 @@ sub load_file {
     $hashref = $self->_expand_relative_paths($hashref);
     return $hashref;
 }
+
 
 # Does a DFS, turning all leaves that look like C<%paths%> into absolute paths.
 sub _expand_relative_paths {
