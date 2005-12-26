@@ -179,7 +179,7 @@ Weblogs tend to center around posts, so it's no surprise that the first model
 to create is the C<post>:
 
   # cd MyWeblog
-  # jifty model --name post
+  # jifty model --name Post
   Writing file /tmp/MyWeblog/t/00-model-Post.t
   Writing file /tmp/MyWeblog/lib/MyWeblog/Model/Post.pm
 
