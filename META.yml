@@ -1,5 +1,5 @@
 name: Jifty
-version: 0.51225
+version: 0.51225_01
 license: unknown
 distribution_type: module
 tests: t/*.t t/*/t/*.t

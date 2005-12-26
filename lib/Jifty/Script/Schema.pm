@@ -10,6 +10,13 @@ use YAML;
 use version;
 use Jifty::DBI::SchemaGenerator;
 
+=head2 options
+
+Returns a hash of all the options this script takes. (See the usage message for details)
+
+=cut
+
+
 sub options {
     return (
         "setup"             => "setup_tables",
@@ -22,14 +29,27 @@ sub options {
     );
 }
 
+=head2 run
+
+Prints a help message if the users want it. If not, goes about its
+business.
+
+Sets up the environment, checks current database state, creates or deletes
+a database as necessary and then creates or updates your models' schema.
+
+
+
+=cut
+
+
 sub run {
     my $self = shift;
 
-    $self->check_usage();
+    $self->print_help();
     $self->setup_environment();
     $self->probe_database_existence();
     $self->manage_database_existence();
-    $self->setup_jifty_stuff();
+    $self->prepare_mode_classes();
     if ( $self->{create_all_tables} ) {
         $self->create_all_tables();
     } elsif ($self->{'setup_tables'}) {
@@ -38,6 +58,16 @@ sub run {
         print "Done.\n";
     }
 }
+
+
+=head2 setup_environment
+
+If the user has specified an C<--include> flag or a path on the
+commandline, add it to the application's C<@INC>.  After that, get a
+minimal Jifty environment set up
+
+=cut
+
 
 sub setup_environment {
     my $self = shift;
@@ -53,7 +83,17 @@ sub setup_environment {
 
 }
 
-sub check_usage {
+=head2 print_help
+
+Prints out help for the package using pod2usage.
+
+If the user specified --help, prints a brief usage message
+
+If the user specified --man, prints out a manpage
+
+=cut
+
+sub print_help {
     my $self = shift;
 
     # Option handling
@@ -63,7 +103,14 @@ sub check_usage {
         if $self->{man};
 }
 
-sub setup_jifty_stuff {
+=head2 prepare_mode_classes
+
+Reads in our application class from the config file, sets up a schema generator
+and finds all our app's models.
+
+=cut
+
+sub prepare_mode_classes {
 
     my $self = shift;
 
@@ -85,6 +132,14 @@ sub setup_jifty_stuff {
         sub_name => 'models',
     );
 }
+
+
+=head2 probe_database_existence
+
+Probes our database to see if it exists and is up to date.
+
+=cut
+
 
 sub probe_database_existence {
     my $self = shift;
@@ -324,6 +379,16 @@ sub upgrade_tables {
         Jifty->handle->commit;
     }
 }
+
+
+=head2 manage_database_existence
+
+If the user wants the database created, creates the database. If the user wants 
+the old database deleted, does that too.
+
+
+=cut
+
 
 sub manage_database_existence {
     my $self     = shift;
