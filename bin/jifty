@@ -4,10 +4,14 @@ use strict;
 use File::Basename qw(dirname); 
 
 BEGIN {
-    my $dir = dirname(__FILE__); 
-    unshift @INC, "$dir/../../Jifty/lib";
-    unshift @INC, "$dir/../lib";
-    push @INC, "$dir/../../Jifty/deps";
+    eval {
+        require Jifty::Util;
+        my $root = Jifty::Util->app_root;
+        unshift @INC, "$root/lib";
+        unshift @INC, "$root/../Jifty/lib";
+        push    @INC, "$root/../Jifty/deps";
+    }
+
 }
 
 use Jifty::Script;
