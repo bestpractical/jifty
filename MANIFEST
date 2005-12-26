@@ -184,7 +184,6 @@ t/03-sessions.t
 t/99-pod-coverage.t
 t/99-pod.t
 t/Continuations/bin/jifty
-t/Continuations/continuationstest
 t/Continuations/lib/Continuations/Action/CrossBridge.pm
 t/Continuations/lib/Continuations/Action/GetGrail.pm
 t/Continuations/Makefile.PL
@@ -206,7 +205,6 @@ t/Mapper/bin/jifty
 t/Mapper/lib/Mapper/Action/CrossBridge.pm
 t/Mapper/lib/Mapper/Action/GetGrail.pm
 t/Mapper/Makefile.PL
-t/Mapper/mappertest
 t/Mapper/t/00-prototype.t
 t/Mapper/t/01-raw-api.t
 t/Mapper/t/02-api.t
