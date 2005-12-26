@@ -192,11 +192,6 @@ Returns the message as a scalar.
 
 =cut
 
-sub preface {
-    my $self = shift;
-
-    return '';
-}
 
 
 =head2 footer
@@ -206,10 +201,6 @@ Print a footer for the message. You want to override this to print a message.
 Returns the message as a scalar.
 
 =cut
-
-sub footer {
-    return undef;
-}
 
 
 =head2 magic_letme_token_for PATH
