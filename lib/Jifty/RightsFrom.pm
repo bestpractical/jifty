@@ -3,7 +3,7 @@ use strict;
 
 =head1 NAME
 
-Jifty::::RightsFrom
+Jifty::RightsFrom
 
 =head1 SYNOPSIS
 
