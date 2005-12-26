@@ -1,0 +1,11 @@
+=head1 NAME
+
+Jifty::Manual::ObjectModel -- An overview of the Jifty object model
+
+=head1 CONTENT
+
+XXX TODO WRITE ME
+
+=cut
+
+1;
