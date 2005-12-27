@@ -178,7 +178,9 @@ Returns itself.
 sub from_mason_args {
     my $self = shift;
 
-    $self->path( Jifty->web->mason->request_comp->path );
+    my $path = $ENV{REQUEST_URI};
+    $path =~ s/\?.*//;
+    $self->path( $path );
 
     return $self->from_webform(%{ Jifty->web->mason->request_args });
 }
