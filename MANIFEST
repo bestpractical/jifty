@@ -186,8 +186,6 @@ t/99-pod.t
 t/Continuations/bin/jifty
 t/Continuations/lib/Continuations/Action/CrossBridge.pm
 t/Continuations/lib/Continuations/Action/GetGrail.pm
-t/Continuations/Makefile.PL
-t/Continuations/META.yml
 t/Continuations/t/00-prototype.t
 t/Continuations/t/01-raw-api.t
 t/Continuations/t/02-api.t
@@ -204,7 +202,6 @@ t/Jifty.pm
 t/Mapper/bin/jifty
 t/Mapper/lib/Mapper/Action/CrossBridge.pm
 t/Mapper/lib/Mapper/Action/GetGrail.pm
-t/Mapper/Makefile.PL
 t/Mapper/t/00-prototype.t
 t/Mapper/t/01-raw-api.t
 t/Mapper/t/02-api.t
