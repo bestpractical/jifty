@@ -3,16 +3,5 @@ use warnings;
 use strict;
 use File::Basename qw(dirname); 
 
-BEGIN {
-    eval {
-        require Jifty::Util;
-        my $root = Jifty::Util->app_root;
-        unshift @INC, "$root/lib";
-        unshift @INC, "$root/../Jifty/lib";
-        push    @INC, "$root/../Jifty/deps";
-    }
-
-}
-
 use Jifty::Script;
 Jifty::Script->dispatch();
