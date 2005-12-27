@@ -77,10 +77,18 @@ sub _init {
     }
     $self->table($self->new_item->table());
     $self->SUPER::_init(%args);
-
-    $self->order_by( column => 'id',order => 'asc');
 }
 
+=head2 implicit_clauses
+
+Defaults to ordering by the C<id> column.
+
+=cut
+
+sub implicit_clauses {
+    my $self = shift;
+    $self->order_by( column => 'id',order => 'asc');
+}
 
 =head2 new_item
 
