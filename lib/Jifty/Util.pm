@@ -98,19 +98,19 @@ sub app_root {
             pop @root;
         }
     }
-    die "Can't guess application root from current path ("
+    warn "Can't guess application root from current path ("
         . Cwd::cwd()
         . ") or bin path ($FindBin::Bin)\n";
 }
 
-=head2 app_name
+=head2 default_app_name
 
 Returns the default name of the application.  This is the name of the
 application's root directory, as defined by L</app_root>.
 
 =cut
 
-sub app_name {
+sub default_app_name {
     my $self = shift;
     my @root = File::Spec->splitdir( Jifty::Util->app_root);
     return pop @root;
