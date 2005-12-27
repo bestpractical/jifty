@@ -6,6 +6,7 @@ use base qw'App::CLI::Command Class::Accessor';
 
 use YAML;
 use File::Copy;
+use Jifty::Config;
 
 __PACKAGE__->mk_accessors(qw/prefix dist_name mod_name/);
 
@@ -130,7 +131,7 @@ sub _directories {
 
 sub _write_config {
     my $self = shift;
-    my $cfg = Jifty::Config->new();
+    my $cfg = Jifty::Config->new(load_config => 0);
     my $default_config = $cfg->guess($self->dist_name);
     my $file = join("/",$self->prefix, 'etc','config.yml');
     print("Creating configuration file $file\n");
