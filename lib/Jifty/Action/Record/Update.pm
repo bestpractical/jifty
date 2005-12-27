@@ -39,7 +39,6 @@ sub arguments {
         $arguments->{$pk}{'render_as'} = 'Unrendered'; 
         # primary key fields should always be hidden fields
     }
-    $arguments->{delete} = {render_as => "Unrendered"};
     return $arguments;
 }
 
@@ -105,15 +104,6 @@ sub take_action {
         my $setter = "set_$field";
         my ( $val, $msg ) = $self->record->$setter( $self->argument_value($field) );
         $self->result->field_error($field, $msg)
-          if not $val and $msg;
-
-        $changed = 1 if $val;
-    }
-
-    # XXX: This should be only on ::Delete 
-    if ($self->argument_value("delete")) {
-        my ( $val, $msg ) = $self->record->delete;
-        $self->result->error($msg)
           if not $val and $msg;
 
         $changed = 1 if $val;
