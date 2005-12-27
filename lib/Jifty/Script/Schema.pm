@@ -9,6 +9,7 @@ use UNIVERSAL::require;
 use YAML;
 use version;
 use Jifty::DBI::SchemaGenerator;
+use Jifty::Config;
 
 =head2 options
 
