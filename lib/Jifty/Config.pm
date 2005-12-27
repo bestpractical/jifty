@@ -14,6 +14,7 @@ Jifty::Config -- wrap a jifty configuration file
 
 use Jifty::Everything;
 use Jifty::DBI::Handle;
+use Jifty::Util;
 use UNIVERSAL::require;
 use YAML;
 use File::Spec;
@@ -36,16 +37,31 @@ __PACKAGE__->mk_accessors(qw/stash/);
 =head2 new PARAMHASH
 
 This class method instantiates a new C<Jifty::Config> object. This
-object deals with configuration files.  After it is created, it calls
-L</load>.
+object deals with configuration files.  
+
+PARAMHASH currently takes a single option
+
+=over
+
+=item load_config
+
+This boolean defaults to true. If true, L</load> will be called upon initialization.
+
+=back
+
 
 =cut
 
 sub new {
     my $proto = shift;
+    my %args = ( load_config => 1,
+                 @_ 
+             );
     my $self  = {};
     bless $self, $proto;
-    $self->load();
+    $self->stash( {} );
+
+    $self->load() if ($args{'load_config'});
     return $self;
 }
 
@@ -87,7 +103,6 @@ specify files.)
 sub load {
     my $self = shift;
 
-    $self->stash( {} );
 
     my $file = $ENV{'JIFTY_CONFIG'} || Jifty::Util->app_root . '/etc/config.yml';
 
@@ -187,7 +202,7 @@ sub guess {
 
         $app_name =  $self->stash->{framework}->{ApplicationName};
     } else {
-        $app_name =  Jifty::Util->app_name;
+        $app_name =  Jifty::Util->default_app_name;
     }
 
     my $app_class = $app_name;
