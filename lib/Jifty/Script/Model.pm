@@ -58,9 +58,9 @@ sub run {
     die "You need to give your new model a --name\n"
       unless $model =~ /\w+/;
 
-    # XXX TODO ALEX: This code should be using the config file.
+    Jifty->new( no_handle => 1 );
     my $root = Jifty::Util->app_root;
-    my $appname = Jifty::Util->default_app_name;
+    my $appname = Jifty->config->framework("ApplicationName");
     my $path = "$root/lib/$appname/Model/$model.pm";
 
     my $modelFile = <<"EOT";
