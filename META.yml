@@ -7,16 +7,16 @@ requires:
   perl: 5.8.3
   Apache::Session: 0
   App::CLI: 0.02
+  CGI: 0
+  CGI::Cookie: 0
   Cache::Cache: 0
   Carp: 0
-  CGI::Cookie: 0
-  CGI: 0
   Class::Accessor: 0
   Clone: 0
   Cwd: 0
+  DBD::SQLite: 0
   Data::Page: 0
   Digest::MD5: 0
-  DBD::SQLite: 0
   Email::Folder: 0
   Email::LocalDelivery: 0
   Email::Send: 1.99_01
@@ -39,30 +39,31 @@ requires:
   HTTP::Server::Simple::Recorder: 0
   Hash::Merge: 0
   Hook::LexWrap: 0
-  Jifty::DBI: 0.06
   JSON: 0
-  Log::Log4perl: 0
+  Jifty::DBI: 0.06
   Locale::Maketext::Simple: 0
+  Log::Log4perl: 0
   Math::BigInt: 0
   Module::Pluggable: 2.95
   Module::Refresh: 0
-  Pod::Usage: 0
   Pod::Simple::Text: 0
+  Pod::Usage: 0
   Scalar::Util: 0
   String::Koremutake: 0
   Test::Base: 0
-  Test::More: 0
   Test::HTML::Lint: 0
   Test::HTTP::Server::Simple: 0.02
+  Test::More: 0.62
+  Test::Pod::Coverage: 0
   Test::WWW::Mechanize: 0
-  Time::ParseDate: 0
   Time::HiRes: 0
+  Time::ParseDate: 0
   UNIVERSAL::require: 0
   URI: 0
   WWW::Mechanize: 1.12
-  version: 0
   XML::Writer: 0
   XML::XPath: 0
+  version: 0
   YAML: 0
 no_index:
   directory:

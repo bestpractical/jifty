@@ -287,11 +287,11 @@ treat the URL C</index.html> as the I<default> page for your site).  Make it
 look like this:
 
   <%init>
-  my $posts = Jifty::Model::PostCollection();
+  my $posts = MyWeblog::Model::PostCollection->new();
   $posts->unlimit();
   </%init>
 
-  <&|/_elements/wrapper, title => Jifty->config->framework('AppName') &>
+  <&|/_elements/wrapper, title => Jifty->config->framework('ApplicationName') &>
   <dl>
   % while (my $post = $posts->next) {
    <dt><%$post->title%></dt>
@@ -368,7 +368,7 @@ working on ways to make this better.)
 Inside your applications F<web/templates> directory, create a directory called
 F<_elements>.
 
-Inside F<_elements/nav>, open up a new file called C<nav> in your text editor
+Inside F<_elements>, open up a new file called C<nav> in your text editor
 and insert:
 
   <%init>
