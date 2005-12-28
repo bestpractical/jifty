@@ -24,10 +24,11 @@ $item
     Jifty->web->link(
         url   => $item->url,
         label => $item->label,
-    ) %></li>
+    ) %>
 % if (my @kids = $item->children) {
 <ul id="submenu">
 % $m->comp(".menu", item => $_) for @kids;
 </ul>
 % }
+</li>
 </%def>
