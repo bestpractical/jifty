@@ -68,8 +68,10 @@ Change directory to some place it will be safe to create a new
 Jifty application. (Jifty will create a subdirectory for you).
 
   # jifty app --name MyWeblog
-
+  Can't guess application root from current path (/your/current/directory) or bin path (/usr/bin)
   Creating new application MyWebLog
+  Creating directory lib
+  Creating directory lib/MyWebLog
   Creating directory bin
   Creating directory etc
   Creating directory doc
@@ -77,11 +79,10 @@ Jifty application. (Jifty will create a subdirectory for you).
   Creating directory web
   Creating directory web/templates
   Creating directory web/static
-  Creating directory lib
-  Creating directory lib/MyWebLog
   Creating directory lib/MyWebLog/Model
   Creating directory lib/MyWebLog/Action
   Creating directory t
+  Creating configuration file MyWeblog/etc/config.yml
 
 Let's take those one by one.
 
@@ -104,7 +105,7 @@ file, Jifty will supply some sane defaults.
 =item doc
 
 Jifty won't magically write your documentation for you, but when B<you>
-write your docs, put them in F<docs/>.
+write your docs, put them in F<doc/>.
 
 =item log
 

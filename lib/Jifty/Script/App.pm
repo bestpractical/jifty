@@ -96,12 +96,13 @@ sub _make_directories {
     my $self = shift;
 
     mkdir($self->prefix);
-    my @dirs = qw( lib/ );
+    my @dirs = qw( lib );
     my @dir_parts = split('::',$self->mod_name);
     my $lib_dir = "";
     foreach my $part (@dir_parts) {
-        $lib_dir .=  $part ."/";
-        push @dirs, "lib/". $lib_dir;
+        $lib_dir .= '/' if length $lib_dir;
+        $lib_dir .=  $part;
+        push @dirs, "lib/$lib_dir";
     }
 
     @dirs = (@dirs, $self->_directories); 
