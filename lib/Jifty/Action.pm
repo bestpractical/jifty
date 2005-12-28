@@ -512,7 +512,7 @@ from L</arguments>.
 
 sub argument_names {
     my $self = shift;
-    return (keys %{$self->arguments});
+    return (sort keys %{$self->arguments});
 }
 
 
