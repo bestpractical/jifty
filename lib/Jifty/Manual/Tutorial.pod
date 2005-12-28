@@ -283,7 +283,8 @@ decide which one works best for you.
 
 =head4 The quick and dirty way
 
-Open a new file called F<index.html> in your text editor. (Your webserver will
+Open a new file called F<index.html> in the F<web/templates> directory
+in your text editor. (Your webserver will
 treat the URL C</index.html> as the I<default> page for your site).  Make it
 look like this:
 
@@ -312,7 +313,7 @@ your mobile phone.
 The downside of this approach is that each separate region needs to live in
 its own I<fragment> file.
 
-Both the easy way and complex way start off about the same.  Open a new file
+The complex way starts off about the same as the easy way.  Open a new file
 called F<web/templates/index.html> in your text editor.  Fill it with this:
 
   <&|/_elements/wrapper, title => Jifty->config->framework('ApplicationName') &>
