@@ -149,7 +149,7 @@ sorts of classes, B<Models> and B<Actions>.
 =item lib/MyWebLog/Model
 
 The real base of your application lives in
-C<lib/B<AppName>/Model>. Classes here define your application's data
+C<lib/B<ApplicationName>/Model>. Classes here define your application's data
 structures and how they relate to each other.  Jifty will use your model
 classes to set up and upgrade your database's schema when it needs to.
 
