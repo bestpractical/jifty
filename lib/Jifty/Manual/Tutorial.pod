@@ -377,7 +377,6 @@ and insert:
   my $top = Jifty->web->navigation;
   $top->child( Home => url => "/", sort_order => 1 );
   $top->child( Post  => url => "/post", label      => "Post", sort_order => 2);
-  return();
   </%init>
 
 For more information about the menu system, see the documentation in
