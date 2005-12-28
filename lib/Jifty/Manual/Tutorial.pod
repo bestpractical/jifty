@@ -380,7 +380,7 @@ and insert:
   </%init>
 
 For more information about the menu system, see the documentation in
-L<Jifty::Menu>.
+L<Jifty::Web::Menu>.
 
 =head2 That's it!
 
