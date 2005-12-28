@@ -57,7 +57,7 @@ L<Fragments|Jifty::Manual::Glossary/fragments> are standalone bits of reusable
 code.  They are most commonly used in the context of AJAX, where
 fragments are the building blocks that can be updated independently.
 A request is either for a full page, or for multiple independent
-fragments.  See L<Jifty::PageRegion>.
+fragments.  See L<Jifty::Web::PageRegion>.
 
 =back
 

@@ -28,7 +28,7 @@ incorrect, it is the buzzword that describes doing asynchronous requests to the
 server while the user waits.  This can lead to very "dynamic" pages, as the
 browser does not need to refresh the entire page to update a small section of
 the screen.  In Jifty, the sections of the screen are called L</region>s.  See
-L<Jifty::PageRegion>.
+L<Jifty::Web::PageRegion>.
 
 =item argument
 
