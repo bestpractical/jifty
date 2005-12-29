@@ -232,7 +232,7 @@ sub render {
     if ($self->region_wrapper) {
         $result .= qq|<script type="text/javascript">\n|;
         $result .= qq|new Region('|. $self->qualified_name .qq|',|;
-        $result .= Jifty::JSON::objToJson(\%arguments, {quotapos => 1});
+        $result .= Jifty::JSON::objToJson(\%arguments, {singlequote => 1});
         $result .= qq|,'|. $self->path . qq|');\n|;
         $result .= qq|</script>|;
         $result .= qq|<div id="region-| . $self->qualified_name . qq|">|;
