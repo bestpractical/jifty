@@ -402,14 +402,14 @@ Returns nothing.
 sub button {
     my $self = shift;
     my %args = ( arguments => {},
+                 submit => $self,
                  @_);
 
+    Jifty->web->form->register_action( $self );
     $args{parameters}{$self->form_field_name($_)} = $args{arguments}{$_}
       for keys %{$args{arguments}};
 
-    Jifty->web->link(%args,
-                     submit => $self,
-                    );
+    Jifty->web->link(%args);
 }
 
 =head1 NAMING METHODS
