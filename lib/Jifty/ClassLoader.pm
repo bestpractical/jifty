@@ -178,7 +178,7 @@ sub require {
     for my $full (keys %{$self->{models}}) {
         my($short) = $full =~ /::Model::(.*)/;
          ($full . "Collection")->require;
-         ($ActionBasePath . "::" . $_ . $short)->require for qw/Create Update/;
+         ($ActionBasePath . "::" . $_ . $short)->require for qw/Create Update Delete/;
     }
 
 }
