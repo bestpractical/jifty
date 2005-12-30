@@ -35,16 +35,19 @@ following files and directories:
 
         t/
             #some test files.
-At least that's the scaffolding Jifty creates for you. Behind the scenes,
-Jifty is actually doing a lot more. Rather than create a bunch of little
-"stub" classes and libraries for you, Jifty generates them on the fly. It's
-always possible to I<actually> create these libraries when you need to customize
-the default behavior, but we work really hard to make sure you don't need to.
 
-Right now, Jifty is autocreating libraries, static web pages and web templates.
+At least that's the scaffolding Jifty creates for you. Behind the
+scenes, Jifty is actually doing a lot more. Rather than create a bunch
+of little "stub" classes and libraries for you, Jifty generates them
+on the fly. It's always possible to I<actually> create these libraries
+when you need to customize the default behavior, but we work really
+hard to make sure you don't need to.
 
-We're not 100% satisfied with how Jifty autocreates web templates and static pages
-and are working to redesign that.
+Right now, Jifty is autocreating libraries, static web pages and web
+templates.
+
+We're not 100% satisfied with how Jifty autocreates web templates and
+static pages and are working to redesign that.
 
 The library you I<see> when creating a Jifty app is:
 
@@ -95,7 +98,7 @@ You get one each of the these:
 =item MyWeblog::Record
 
 This class is, as discussed above, a thin wrapper around
-L<Jifty::Record>. You might choose to create your own MyWeblog::Record
+L<Jifty::Record>. You might choose to create your own C<MyWeblog::Record>
 if you want to build in custom access control by overriding
 L<Jifty::Record/current_user_can> or want to implement methods that
 every model class should have access to.
@@ -109,8 +112,8 @@ but if you want the rope, it's here.
 
 =item MyWeblog::Notification 
 
-jC<MyWeblog::Notification> is an app-specific of the
-C<Jifty::Notification> email driver. You might want to override this
+C<MyWeblog::Notification> is an app-specific implementation of the
+L<Jifty::Notification> email driver. You might want to override this
 class if you want to set an application-specific header or footer for
 all outgoing email.
 
@@ -126,12 +129,12 @@ as the same user.) We're working to generalize the authentication system
 we've used in a few Jifty apps so far to the point where it feels "right"
 as a core Jifty component, but we're not quite there just yet.
 
-Most of what you'll need to override in C<MyWeblog::CurrentUser> is the
-C<_init> function, which needs to load up an application-specific model
-class that represents one of your users into its C<user_object> accessor.
-To make all this work, you'll also need an application-specific C<Login>
-L<Jifty::Action> subclass and likely also a passel of user-management
-code.
+Most of what you'll need to override in C<MyWeblog::CurrentUser> is
+the C<_init> function, which needs to load up an application-specific
+model class that represents one of your users into its C<user_object>
+accessor.  To make all this work, you'll also need an
+application-specific C<MyWeblog::Action::Login> and likely also a
+passel of user-management code.
 
 (And yes, this is the topic of a future generalization and a future
 tutorial. At that point, a bunch of this documentation will be extracted
@@ -154,18 +157,19 @@ of the box, but sometimes when you're going to be getting collections
 matching certain criteria often, it makes sense to actually create your
 own subclass and start dropping methods in.
 
-=item MyWeblog::Action::CreatePost, MyWeblog::Action::UpdatePost, MyWeblog::Action::DeletePost
+=item MyWeblog::Action::CreatePost, MyWeblog::Action::UpdatePost,
+MyWeblog::Action::DeletePost
 
 One of Jifty's strengths is that it makes it easy to build applications by
 tying application-specific controller functions to your model classes and
 intuiting what parameters they take by having a look inside the models.
 
-For each C<::Record> class in your model, Jifty creates three
+For each class in your model, Jifty creates three
 actions, C<Create>,C<Update> and C<Delete>.  They're named,
 perhaps a bit unadventureously, C<MyWeblog::Action::CreatePost>,
 C<MyWeblog::Action::UpdatePost>, C<MyWeblog::Action::DeletePost>
-and inherit directly from C<Jifty::Action::Record::Create>,
-C<Jifty::Action::Record::Update> and C<Jifty::Action::Record::Delete>,
+and inherit directly from L<Jifty::Action::Record::Create>,
+L<Jifty::Action::Record::Update> and L<Jifty::Action::Record::Delete>,
 respectively. Sometimes, it makes sense to override these default actions
 when you want to change the behaviour of one or more of the actions.
 One common use is to add or remove AJAX validation or autocompletion
@@ -176,13 +180,11 @@ will hand things off to. By putting logic in your actions, you make your
 model classes less useful and run into trouble when you want to start
 scripting your model outside a web environment.
 
-
 =back
 
-
-There's no reason you need to stick with these default "implementations" if they're not meeting your needs. Just create your own classes and Jifty will use your real classes instead.
-
-
+There's no reason you need to stick with these default
+"implementations" if they're not meeting your needs. Just create your
+own classes and Jifty will use your real classes instead.
 
 =cut
 
