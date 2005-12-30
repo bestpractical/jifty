@@ -72,7 +72,7 @@ sub objToJson {
         $arg =~ s/([\x00-\x07\x0b\x0e-\x1f])/'\\u00' . unpack('H2',$1)/eg;
         return "'" . $arg ."'";
     };
-    return JSON::Converter::objToJson($obj, $args);
+    return JSON::objToJson($obj, $args);
 }
 
 1;

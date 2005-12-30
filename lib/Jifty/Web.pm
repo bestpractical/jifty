@@ -1055,7 +1055,9 @@ sub serve_fragments {
     # text/html -- so we have to override them after the fact.
     $self->mason->cgi_request->content_type('text/xml; charset=utf=8');
 
-    # Output the data
+    # Clear the buffer (in case something else snuck out) then output
+    # the data and bail
+    $self->mason->clear_buffer;
     $self->mason->out($output);
     $self->mason->abort;
 }
