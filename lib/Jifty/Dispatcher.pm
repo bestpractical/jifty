@@ -7,23 +7,32 @@ Jifty::Dispatcher
 XXX TODO HEY YOU: THIS CODE DOES NOT EXIST YET. THIS IS JUST SPECULATIVE.
 
 
-C<Jifty::Dispatcher> takes requests for pages, walks through a dispatch table, possibly
-running code or transforming the request before finally handing off control to the templating
-system to display the page the user requested or whatever else the system has decided to 
-display instead.  Generally, this is B<not> the place to be performing model and user specific 
-access control checks or updating your database based on what the user has sent in. But it might be 
-a good place to enable or disable specific C<Jifty::Action>s using L<Jifty::Web/allow_actions> and L<Jifty::Web/deny_actions> or to completely disallow user access to private "component" templates such as the _elements directory in a default Jifty application.  It's also the right way to enable L<Jifty::LetMe> actions.
+C<Jifty::Dispatcher> takes requests for pages, walks through a
+dispatch table, possibly running code or transforming the request
+before finally handing off control to the templating system to display
+the page the user requested or whatever else the system has decided to
+display instead.  Generally, this is B<not> the place to be performing
+model and user specific access control checks or updating your
+database based on what the user has sent in. But it might be a good
+place to enable or disable specific C<Jifty::Action>s using
+L<Jifty::Web/allow_actions> and L<Jifty::Web/deny_actions> or to
+completely disallow user access to private "component" templates such
+as the _elements directory in a default Jifty application.  It's also
+the right way to enable L<Jifty::LetMe> actions.
 
-The Dispatcher runs _before_ any actions are evaluated, but I<after> we've processed all the user's 
-input.
+The Dispatcher runs I<before> any actions are evaluated, but I<after>
+we've processed all the user's input.
 
-This is smack-dab in the middle of Jifty::Web->handle_request.  
+This is smack-dab in the middle of L<Jifty::Webd/handle_request>.
 
-It doesn't matter whether the page the user's asked us to display exists, we're running the dispatcher.
+It doesn't matter whether the page the user's asked us to display
+exists, we're running the dispatcher.
 
-Dispatcher directives are evaluated in order until we get to either a "render_page", "redirect" or an "abort".
+Dispatcher directives are evaluated in order until we get to either a
+"render_page", "redirect" or an "abort".
 
-Each directive's code block runs in its own scope, but shares a common C<$dispatcher> object.
+Each directive's code block runs in its own scope, but shares a common
+C<$dispatcher> object.
 
 =head1 EXAMPLE
 
@@ -89,7 +98,6 @@ Sets the page that we'll render when we actually do our rendering. Takes the pat
 =head2 redirect
 
 Redirect might have reason to want to be internal instead of external. not sure
-
 
 =cut 
 
