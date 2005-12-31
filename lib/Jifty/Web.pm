@@ -1053,7 +1053,7 @@ sub serve_fragments {
     # Spit out a correct content-type; we set this *here* instead of
     # above because each of the subrequests attempts to set it to
     # text/html -- so we have to override them after the fact.
-    $self->mason->cgi_request->content_type('text/xml; charset=utf=8');
+    $self->mason->cgi_request->content_type('text/xml; charset=utf-8');
 
     # Clear the buffer (in case something else snuck out) then output
     # the data and bail
