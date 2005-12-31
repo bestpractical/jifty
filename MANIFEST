@@ -31,17 +31,17 @@ lib/Jifty/Collection.pm
 lib/Jifty/Config.pm
 lib/Jifty/Continuation.pm
 lib/Jifty/CurrentUser.pm
+lib/Jifty/Dispatcher.pm
 lib/Jifty/Everything.pm
 lib/Jifty/Handle.pm
 lib/Jifty/Handler.pm
 lib/Jifty/I18N.pm
 lib/Jifty/JSON.pm
-lib/Jifty/JSON/Converter.pm
-lib/Jifty/JSON/Parser.pm
 lib/Jifty/LetMe.pm
 lib/Jifty/Logger.pm
 lib/Jifty/Manual/AccessControl.pod
 lib/Jifty/Manual/Glossary.pod
+lib/Jifty/Manual/ObjectModel.pod
 lib/Jifty/Manual/Tutorial.pod
 lib/Jifty/MasonInterp.pm
 lib/Jifty/Model/Schema.pm
@@ -90,6 +90,7 @@ lib/Jifty/Web/Session.pm
 LICENSE
 Makefile.PL
 MANIFEST			This list of files
+MANIFEST.SKIP
 META.yml
 README
 share/web/static/css/app-base.css
