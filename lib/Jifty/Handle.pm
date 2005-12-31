@@ -60,7 +60,9 @@ sub canonical_database_name {
     my $self_or_class = shift;
     my $db_config = Jifty->config->framework('Database');
 
-    my $db = lc $db_config->{'Database'};
+    # XXX TODO consider canonicalizing to all-lowercase, once there are no
+    # legacy databases
+    my $db = $db_config->{'Database'};
 
     if ($db_config->{'Driver'} eq 'SQLite') {
         $db = Jifty::Util->absolute_path($db);
