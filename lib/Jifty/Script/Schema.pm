@@ -394,9 +394,8 @@ the old database deleted, does that too.
 sub manage_database_existence {
     my $self     = shift;
     my $handle   = Jifty::Handle->new();
-    my $database = lc Jifty->config->framework('Database')->{'Database'};
+    my $database = Jifty::Handle->canonical_database_name;
     my $driver   = Jifty->config->framework('Database')->{'Driver'};
-
 
     if ( $self->{'print'} ) {
         print "DROP DATABASE $database;\n" if $self->{'drop_database'};

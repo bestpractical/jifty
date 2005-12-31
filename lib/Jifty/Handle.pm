@@ -31,18 +31,43 @@ created, it will be a subclass of L<Jifty::DBI::Handle>.
 sub new {
     my $class = shift;
 
-    if (Jifty->config->framework('Database')->{Driver} eq 'Oracle') {
+    my $driver = Jifty->config->framework('Database')->{'Driver'};
+    if ($driver eq 'Oracle') {
         $ENV{'NLS_LANG'} = "AMERICAN_AMERICA.AL32UTF8";
         $ENV{'NLS_NCHAR'} = "AL32UTF8";
     }
    
     # We do this to avoid Jifty::DBI::Handle's magic reblessing, because
     # it breaks subclass methods.
-    my $driver_class  = "Jifty::DBI::Handle::".  Jifty->config->framework('Database')->{Driver};
+    my $driver_class  = "Jifty::DBI::Handle::".  $driver;
     $driver_class->require;
     unshift @ISA, $driver_class;
     return $class->SUPER::new();
 }
+
+=head2 canonical_database_name
+
+Returns the canonical name of the application's database (the actual name that will
+be given to the database driver).  This name is a lower-case version of the C<Database>
+argument in the C<Database> section of the framework config.
+
+For SQLite databases (where the database name is actually a filename), this also converts
+a relative path into an absolute path based at the application root.
+
+=cut
+
+sub canonical_database_name {
+    my $self_or_class = shift;
+    my $db_config = Jifty->config->framework('Database');
+
+    my $db = lc $db_config->{'Database'};
+
+    if ($db_config->{'Driver'} eq 'SQLite') {
+        $db = Jifty::Util->absolute_path($db);
+    } 
+
+    return $db;
+} 
 
 =head2 connect ARGS
 
@@ -54,8 +79,8 @@ from the current L<Jifty::Config>.
 sub connect {
     my $self = shift;
     my %args = (@_);
-    my %db_config =  %{Jifty->config->framework('Database')};
-    
+    my %db_config =  (%{Jifty->config->framework('Database')}, Database => $self->canonical_database_name);
+
     my %lc_db_config;
     for (keys %db_config) {
         $lc_db_config{lc($_)} = $db_config{$_};

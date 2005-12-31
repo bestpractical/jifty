@@ -1,4 +1,4 @@
-#line 1 "inc/Module/Install/Share.pm - /usr/local/share/perl/5.8.7/Module/Install/Share.pm"
+#line 1 "inc/Module/Install/Share.pm - /Library/Perl/5.8.6/Module/Install/Share.pm"
 package Module::Install::Share;
 
 use Module::Install::Base;
