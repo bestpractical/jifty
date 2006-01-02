@@ -1025,27 +1025,32 @@ sub serve_fragments {
     my $writer = XML::Writer->new( OUTPUT => \$output );
     $writer->xmlDecl( "UTF-8", "yes" );
     $writer->startTag("response");
-    for my $f ($self->request->fragments) {
+    for my $f ( $self->request->fragments ) {
         $writer->startTag( "fragment", id => $f->name );
         my @names = split '-', $f->name;
 
         # Set up the region stack
         local Jifty->web->{'region_stack'} = [];
-        while (my $region = shift @names) {
-            my $new = @names ? Jifty::Web::PageRegion->new(name => $region, _bootstrap => 1, parent => Jifty->web->current_region)
-                             : Jifty::Web::PageRegion->new(
-                                                           name           => $region,
-                                                           path           => $f->path,
-                                                           region_wrapper => $f->wrapper,
-                                                           parent         => Jifty->web->current_region,
-                                                           defaults       => $f->arguments,
-                                                          );
-            push @{Jifty->web->{'region_stack'}}, $new;
+        while ( my $region = shift @names ) {
+            my $new = @names
+                ? Jifty::Web::PageRegion->new(
+                name       => $region,
+                _bootstrap => 1,
+                parent     => Jifty->web->current_region
+                )
+                : Jifty::Web::PageRegion->new(
+                name           => $region,
+                path           => $f->path,
+                region_wrapper => $f->wrapper,
+                parent         => Jifty->web->current_region,
+                defaults       => $f->arguments,
+                );
+            push @{ Jifty->web->{'region_stack'} }, $new;
             $new->enter;
         }
 
         # Stuff the rendered region into the XML
-        $writer->cdata(Jifty->web->current_region->render);
+        $writer->cdata( Jifty->web->current_region->render );
         $writer->endTag();
     }
     $writer->endTag();
