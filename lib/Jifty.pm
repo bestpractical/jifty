@@ -61,7 +61,7 @@ use UNIVERSAL::require;
 
 use base qw/Jifty::Object/;
 
-use vars qw/$HANDLE $CONFIG $LOGGER/;
+use vars qw/$HANDLE $CONFIG $LOGGER $DISPATCHER/;
 
 =head1 METHODS
 
@@ -103,17 +103,16 @@ sub new {
 
     # Load the configuration. stash it in ->config
     __PACKAGE__->config( Jifty::Config->new() );
+
     __PACKAGE__->logger( Jifty::Logger->new( $args{'logger_component'} ) );
+    __PACKAGE__->dispatcher(Jifty::Dispatcher->new());
 
-    my $loader = Jifty::ClassLoader->new();
-    $loader->require;
 
-    unless ( $args{'no_handle'} or not Jifty->config->framework('Database') )
-    {
-        Jifty->handle( Jifty::Handle->new() );
-        Jifty->handle->connect();
-        Jifty->handle->check_schema_version();
-    }
+   # Get a classloader set up
+   Jifty::ClassLoader->new->require;
+
+   # Let's get the database rocking and rolling
+   __PACKAGE__->setup_database_connection(%args);
 
 }
 
@@ -155,9 +154,23 @@ sub handle {
     return $HANDLE;
 }
 
+=head2 dispatcher
+
+An accessor for the C<Jifty::Dispatcher> object that we use to make decisions about how
+to dispatch each request made by a web client.
+
+
+=cut
+
+sub dispatcher {
+    my $class = shift;
+    $DISPATCHER = shift if (@_);
+    return $DISPATCHER;
+}
+
 =head2 web
 
-An accessor for the L<Jifty::Web> object that the web interface uses.
+An accessor for the L<Jifty::Web> object that the web interface uses. 
 
 =cut
 
@@ -166,6 +179,38 @@ sub web {
     return $HTML::Mason::Commands::JiftyWeb;
 }
 
+
+=head2 setup_database_connection
+
+Set up our database connection. Optionally takes a param hash with a single argument
+
+=over
+
+=item no_handle
+
+Defaults to false. If true, Jifty won't try to set up a database handle
+
+=back
+
+
+If C<no_handle> is set or our application's config file is missing a C<Database> configuration
+ section or I<has> a C<SkipDatabase: 1> directive in its framework configuration, does nothing.
+
+=cut
+
+sub setup_database_connection {
+    my $self = shift;
+    my %args = (no_handle =>0,
+                @_);
+    unless ( $args{'no_handle'}
+        or __PACKAGE__->config->framework('SkipDatabase')
+        or not __PACKAGE__->config->framework('Database') )
+    {
+        __PACKAGE__->handle( Jifty::Handle->new() );
+        __PACKAGE__->handle->connect();
+        __PACKAGE__->handle->check_schema_version();
+    }
+}
 
 =head1 LICENSE
 

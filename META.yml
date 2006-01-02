@@ -59,6 +59,7 @@ requires:
   Time::HiRes: 0
   Time::ParseDate: 0
   UNIVERSAL::require: 0
+  UNIVERSAL: 0
   URI: 0
   WWW::Mechanize: 1.12
   XML::Writer: 0

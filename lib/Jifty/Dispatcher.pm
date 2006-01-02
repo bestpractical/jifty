@@ -1,3 +1,11 @@
+package Jifty::Dispatcher;
+use warnings;
+use strict;
+use Jifty;
+use UNIVERSAL qw(isa);
+
+use vars qw/%_TABLE @ENT/;
+
 =head1 NAME
 
 Jifty::Dispatcher
@@ -39,10 +47,10 @@ C<$dispatcher> object.
 package MyWeblog::Dispatcher;
 use base 'Jifty::Dispatcher';
 
-url qr|^/error/| => { render_page };
-url qr|^/| => { Jifty::Web->handle_request }; # XXX TODO, DO WE WANT THIS HERE OR AT THE END?
-url qr|/_elements/| => { redirect( url => '/errors/'.$dispatcher->url)  };             
-url qr|^/let/(.*)$| => {
+on url qr|^/error/|, run { render_page };
+on url qr|^/|, run { Jifty::Web->handle_request }; # XXX TODO, DO WE WANT THIS HERE OR AT THE END?
+on url qr|/_elements/|, run { redirect( url => '/errors/'.$dispatcher->url)  };             
+on url qr|^/let/(.*)$|, run {
 
     # Because we're granting permissions on /let/... based on an auth token
     # we tighten up the ::Action::.* permissions. 
@@ -100,5 +108,101 @@ Sets the page that we'll render when we actually do our rendering. Takes the pat
 Redirect might have reason to want to be internal instead of external. not sure
 
 =cut 
+
+=head1 IMPLEMENTATION
+
+=head2 new 
+
+Create a new dispatcher object
+
+=cut
+
+sub new {
+    my $class = shift;
+    my $self  = {};
+    bless $self, $class;
+    return $self;
+}
+
+=for private on
+
+C<on> takes named arguments. 
+
+=over
+
+=item condition
+
+A coderef that runs to determine if this rule cares about the current request 
+
+=item action
+
+This rgument is a coderef that Jifty should run when the "condition" 
+coderef returns true.
+
+=item priority 
+
+This argument is an integer priority that determines what order the rules
+will run in.  Priority C<1> rules run first, followed by priority C<2>
+rules. Order within a priority isn't guaranteed.  We recommend you use
+priorities between C<100> and C<200> for every day activities.
+
+In the future, Jifty should autoincrement rule priorities.
+
+=back
+
+=cut
+
+sub on {
+    my $self = Jifty->dispatcher;
+    
+    my %args = (
+        condition => sub {undef},
+        action    => sub {undef},
+        priority  => undef,
+        @_
+    );
+    $self->add_entry(
+        priority => $args{'priority'},
+        entry    => \%args
+    );
+
+    return (1);
+}
+
+=head2 add_entry
+
+instance method
+
+=cut
+
+sub add_entry {
+    my $self = shift;
+    my %args = (
+        priority => undef,
+        entry    => undef,
+        @_
+    );
+
+    $args{'priority'} ||= 100;
+    warn "Can't add a dispatch table entry without content"
+        unless ( $args{'entry'} );
+    push @{ $self->{'_entries'}{$args{'priority'} }}, $args{'entry'};
+}
+
+sub entries {
+    my $self = shift;
+    return map @{ $self->{'_entries'}{$_} }, sort keys %{$self->{'_entries'}};
+}
+
+sub url ($) {
+    my $url = shift;
+
+    return ( condition => sub { die "need to implement matcher for $url"; } );
+}
+
+sub run (&) {
+    my $action = shift;
+    return ( action => $action );
+}
 
 1;
