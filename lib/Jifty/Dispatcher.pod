@@ -51,27 +51,29 @@ C<Jifty::Dispatcher> takes requests for pages, walks through a
 dispatch table, possibly running code or transforming the request
 before finally handing off control to the templating system to display
 the page the user requested or whatever else the system has decided to
-display instead.  Generally, this is B<not> the place to be performing
-model and user specific access control checks or updating your
-database based on what the user has sent in. But it might be a good
-place to enable or disable specific C<Jifty::Action>s using
-L<Jifty::Web/allow_actions> and L<Jifty::Web/deny_actions> or to
-completely disallow user access to private "component" templates such
-as the _elements directory in a default Jifty application.  It's also
-the right way to enable L<Jifty::LetMe> actions.
+display instead.
+
+Generally, this is B<not> the place to be performing model and user specific
+access control checks or updating your database based on what the user has sent
+in. But it might be a good place to enable or disable specific
+C<Jifty::Action>s using L<Jifty::Web/allow_actions> and
+L<Jifty::Web/deny_actions> or to completely disallow user access to private
+"component" templates such as the _elements directory in a default Jifty
+application.  It's also the right way to enable L<Jifty::LetMe> actions.
 
 The Dispatcher runs I<before> any actions are evaluated, but I<after>
-we've processed all the user's input.
+we've processed all the user's input.  It's intended to replace all the
+F<autohandler>, F<dhandler> and C<index.html> boilerplate code commonly
+found in Mason applications.
 
 It doesn't matter whether the page the user's asked us to display
 exists, we're running the dispatcher.
 
 Dispatcher directives are evaluated in order until we get to either a
-"render_page", "redirect" or an "abort".
+C<show>, C<redirect> or an C<abort>.
 
 Each directive's code block runs in its own scope, but shares a common
-C<$dispatcher> object.
-
+C<$Dispatcher> object.
 
 =cut
 
