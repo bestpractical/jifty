@@ -1,0 +1,150 @@
+=pod
+
+=head1 NAME
+
+Jifty::Dispatcher - The Jifty Dispatcher
+
+=head1 SYNOPSIS
+
+In your F<autohandler>, change the C<< $m->call_next >> statement to:
+
+    require MyApp::Dispatcher;
+    MyApp::Dispatcher->handle_request;
+
+In B<MyApp::Dispatcher>:
+
+    package MyApp::Dispatcher;
+    use Jifty::Dispatcher -base;
+
+    in ['blog', 'wiki'] => [
+        run {
+            default model => "MyApp::Model::\u$1" };
+        },
+        on PUT 'entries/*' => run {
+            set entry_id => $1;
+            show '/display/entry';
+        };
+        on '*/*' => run {
+            my ($page, $action) = ($1, $2);
+            my $item = get('model_class')->load($name)
+              or next_action;
+
+            set page   => $name;
+            set action => $action;
+            set item   => $item;
+
+            show "/display/$action";
+        },
+        on '*' => run { dispatch "$1/view" },
+        on ''  => show '/display/list',
+    ];
+
+    in qr{logs/(\d+)} => [
+        when { $1 > 100 } => show '/error',
+        default model => 'MyApp::Model::Log',
+        run { dispatch "/wiki/LogPage-$1" },
+    ]
+
+=head1 DESCRIPTION
+
+C<Jifty::Dispatcher> takes requests for pages, walks through a
+dispatch table, possibly running code or transforming the request
+before finally handing off control to the templating system to display
+the page the user requested or whatever else the system has decided to
+display instead.  Generally, this is B<not> the place to be performing
+model and user specific access control checks or updating your
+database based on what the user has sent in. But it might be a good
+place to enable or disable specific C<Jifty::Action>s using
+L<Jifty::Web/allow_actions> and L<Jifty::Web/deny_actions> or to
+completely disallow user access to private "component" templates such
+as the _elements directory in a default Jifty application.  It's also
+the right way to enable L<Jifty::LetMe> actions.
+
+The Dispatcher runs I<before> any actions are evaluated, but I<after>
+we've processed all the user's input.
+
+It doesn't matter whether the page the user's asked us to display
+exists, we're running the dispatcher.
+
+Dispatcher directives are evaluated in order until we get to either a
+"render_page", "redirect" or an "abort".
+
+Each directive's code block runs in its own scope, but shares a common
+C<$dispatcher> object.
+
+
+=cut
+
+=head1 Data your dispatch routines has access to
+
+=head2 $Dispatcher
+
+The current dispatcher object.
+
+=head2 get $arg
+
+Return the argument value.
+
+=head1 Things your dispatch routine might do
+
+=head2 in $match => $action
+
+Match against the current requested path.  If matched, set the current
+context to the directory and process the action, which may be an array
+reference of more actions.
+
+All wildcards in the C<$match> string becomes capturing regex patterns.  You
+can also pass in an array reference of matches, or a regex pattern.
+
+The C<$match> string may be qualified with a HTTP method name, such as
+C<GET>, C<POST> and C<PUT>.
+
+=head2 on $match => $action
+
+Like C<in>, except it has to match the whole path instead of just the prefix.
+Does not set current directory context for its actions.
+
+=head2 when {...} => $action
+
+Like C<on>, except using an user-supplied test condition. 
+
+=head2 run {...}
+
+Run a block of code unconditionally; all actions are allowed inside a C<run>
+block, as well as user code.
+
+=head2 set $arg => $val
+
+Adds an argument to what we're passing to our template.
+
+=head2 default $arg => $val
+
+Adds an argument to what we're passing to our template,
+if it is not defined currently.
+
+=head2 del $arg
+
+Deletes an argument we were passing to our template.
+
+=head2 show $component
+
+Display the presentation component.  If not specified, use the
+default page in call_next.
+
+=head2 dispatch $path
+
+Dispatch again using $path as the request path, preserving args.
+
+=head2 next_action
+
+Break out from the current C<run> block and go on the next action.
+
+=head2 abort $code
+
+Abort the request.
+
+=head2 redirect $uri
+
+Redirect to another URI.
+
+=cut
