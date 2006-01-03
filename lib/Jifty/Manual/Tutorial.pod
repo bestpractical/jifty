@@ -246,7 +246,7 @@ Ok. You have a working, if simplistic, application.  Start up a webserver and
 have a look around.  Be sure to check out the AJAX-enabled administrative UI,
 the online documentation browser, and the Pony.
 
-  # ./bin/jifty/server
+  # ./bin/jifty server
   INFO - You can connect to your server at http://localhost:8888/
 
 =head2 Building a user interface
