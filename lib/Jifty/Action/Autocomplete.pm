@@ -9,9 +9,9 @@ Jifty::Action::Autocomplete
 
 A built-in L<Jifty::Action> which returns suggested autocompletions
 for a given argument of an action. Generally this is called by Jifty's
-internals through C</jifty/autocomplete.xml>.
+internals through C</__jifty/autocomplete.xml>.
 
-This action gets its data to C<autocomplete.xml> by filling in the
+This action gets its data to C</__jifty/autocomplete.xml> by filling in the
 C<completions> of the L<Jifty::Result/content>.
 
 =cut

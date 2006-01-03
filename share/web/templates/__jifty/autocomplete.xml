@@ -1,0 +1,25 @@
+<%init>
+# Note: the only point to this file is to set the content_type; the actual
+# behavior is accomplished inside the framework.  It will go away once we
+# have infrastructure for serving things of various content-types.
+$r->content_type('text/xml');
+my $ref =  Jifty->web->response->result('autocomplete')->content;
+my @options = @{$ref->{'completions'}||[]};
+</%init>
+<body>
+<ul>
+% foreach my $item ( @options) {
+%    if (exists $item->{label}) {
+<li><span class="informal"><% $item->{label} %></span><span style="visibility: hidden"><% $item->{value} %></span></li>
+%    } else {
+<li><% $item->{value} %></li>
+%    }
+%}
+</ul>
+</body>
+<%method setup_actions>
+<%init>
+Jifty->web->deny_actions(qr/.*/);
+Jifty->web->allow_actions('Jifty::Action::Autocomplete');
+</%init>
+</%method>

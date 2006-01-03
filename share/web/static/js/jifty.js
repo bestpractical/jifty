@@ -77,7 +77,7 @@ Action.prototype = {
         var id = this.register.id;
 
         new Ajax.Request(
-            '/validator.xml',  // Right now, the URL is actually completely irrelevant
+            '/__jifty/validator.xml',  // Right now, the URL is actually completely irrelevant
             {
                 asynchronous: 1,
                 method: "get",

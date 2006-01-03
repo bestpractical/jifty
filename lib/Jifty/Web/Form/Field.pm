@@ -443,7 +443,7 @@ sub render_value {
 
 =head2 render_autocomplete
 
-Renders an empty div that /jifty/autocomplete.xml can fill in. Also renders the tiny snippet
+Renders an empty div that /__jifty/autocomplete.xml can fill in. Also renders the tiny snippet
 of javascript to make that call if necessary.
 Returns an empty string.
 
@@ -455,7 +455,7 @@ sub render_autocomplete {
     Jifty->web->out(
 qq!<div class="autocomplete" id="@{[$self->element_id]}-autocomplete" style="display:none;border:1px solid black;background-color:white;"></div>\n
         <script type="text/javascript">
-          new Jifty.Autocompleter('@{[$self->element_id]}', '@{[$self->element_id]}-autocomplete', '/jifty/autocomplete.xml')
+          new Jifty.Autocompleter('@{[$self->element_id]}', '@{[$self->element_id]}-autocomplete', '/__jifty/autocomplete.xml')
         </script>
   !
     );
