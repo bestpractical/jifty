@@ -18,12 +18,12 @@ In B<MyApp::Dispatcher>:
 
     in ['blog', 'wiki'] => [
         run {
-            default model => "MyApp::Model::\u$1" };
+            default model => "MyApp::Model::\u$1"
         },
         on PUT 'entries/*' => run {
             set entry_id => $1;
             show '/display/entry';
-        };
+        },
         on '*/*' => run {
             my ($page, $action) = ($1, $2);
             my $item = get('model_class')->load($name)
@@ -38,12 +38,12 @@ In B<MyApp::Dispatcher>:
         on '*' => run { dispatch "$1/view" },
         on ''  => show '/display/list',
     ];
-
     in qr{logs/(\d+)} => [
         when { $1 > 100 } => show '/error',
         default model => 'MyApp::Model::Log',
         run { dispatch "/wiki/LogPage-$1" },
-    ]
+    ];
+    # ... more action rules ...
 
 =head1 DESCRIPTION
 
