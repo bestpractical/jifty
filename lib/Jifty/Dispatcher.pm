@@ -1,208 +1,360 @@
 package Jifty::Dispatcher;
-use warnings;
+
+# See Dispatcher.pod for documentaiton
+
 use strict;
-use Jifty;
-use UNIVERSAL qw(isa);
+use warnings;
+use Exporter;
+use base 'Exporter';
 
-use vars qw/%_TABLE @ENT/;
+our @EXPORT = qw<
+    in on run when set del default
 
-=head1 NAME
+    show dispatch abort redirect
 
-Jifty::Dispatcher
+    GET POST PUT HEAD DELETE OPTIONS
 
-=head1 DESCRIPTION
+    get next_action last_action
 
-XXX TODO HEY YOU: THIS CODE DOES NOT EXIST YET. THIS IS JUST SPECULATIVE.
+    $Dispatcher
+>;
 
+our $Dispatcher;
 
-C<Jifty::Dispatcher> takes requests for pages, walks through a
-dispatch table, possibly running code or transforming the request
-before finally handing off control to the templating system to display
-the page the user requested or whatever else the system has decided to
-display instead.  Generally, this is B<not> the place to be performing
-model and user specific access control checks or updating your
-database based on what the user has sent in. But it might be a good
-place to enable or disable specific C<Jifty::Action>s using
-L<Jifty::Web/allow_actions> and L<Jifty::Web/deny_actions> or to
-completely disallow user access to private "component" templates such
-as the _elements directory in a default Jifty application.  It's also
-the right way to enable L<Jifty::LetMe> actions.
+sub ret (@);
+sub in ($$@)      { ret @_ } # partial match at beginning of path component
+sub on ($$@)      { ret @_ } # exact match on the path component
+sub when (&@)     { ret @_ } # exact match on the path component
+sub run (&@)      { ret @_ } # execute a block of code
+sub show (;$@)    { ret @_ } # render a page
+sub dispatch ($@) { ret @_ } # run dispatch again with another URI
+sub redirect ($@) { ret @_ } # web redirect
+sub abort (;$@)   { ret @_ } # abort request
+sub default ($$@) { ret @_ } # set parameter if it's not yet set
+sub set ($$@)     { ret @_ } # set parameter
+sub del ($@)      { ret @_ } # remove parameter
+sub get ($)       { $Dispatcher->{args}{$_[0]} }
 
-The Dispatcher runs I<before> any actions are evaluated, but I<after>
-we've processed all the user's input.
+sub qualify ($@);
+sub GET ($)     { qualify method => @_ }
+sub POST ($)    { qualify method => @_ }
+sub PUT ($)     { qualify method => @_ }
+sub HEAD ($)    { qualify method => @_ }
+sub DELETE ($)  { qualify method => @_ }
+sub OPTIONS ($) { qualify method => @_ }
 
-This is smack-dab in the middle of L<Jifty::Webd/handle_request>.
+sub import {
+    my $class = shift;
+    my $pkg   = caller;
+    my @args  = grep {!/^-[Bb]ase/} @_;
 
-It doesn't matter whether the page the user's asked us to display
-exists, we're running the dispatcher.
+    no strict 'refs';
+    @{$pkg.'::ACTIONS'} = ();
 
-Dispatcher directives are evaluated in order until we get to either a
-"render_page", "redirect" or an "abort".
+    if (@args != @_) {
+        # User said "-base", let's push ourselves into their @ISA.
+        push @{$pkg.'::ISA'}, $class;
+    }
 
-Each directive's code block runs in its own scope, but shares a common
-C<$dispatcher> object.
-
-=head1 EXAMPLE
-
-package MyWeblog::Dispatcher;
-use base 'Jifty::Dispatcher';
-
-on url qr|^/error/|, run { render_page };
-on url qr|^/|, run { Jifty::Web->handle_request }; # XXX TODO, DO WE WANT THIS HERE OR AT THE END?
-on url qr|/_elements/|, run { redirect( url => '/errors/'.$dispatcher->url)  };             
-on url qr|^/let/(.*)$|, run {
-
-    # Because we're granting permissions on /let/... based on an auth token
-    # we tighten up the ::Action::.* permissions. 
-
-    Jifty->web->deny_actions(qr/.*/);
-    Jifty->web->allow_actions(qr/Jifty::Action::Redirect/);
-
-    $let_me = Jifty::LetMe->new();
-    $let_me->from_token($1);
-
-    redirect('/error/let_me/invalid_token') unless ($let_me->validate);
-
-    # This "local" current_user is never persisted to the database.
-    # This will persist only for the rest of the current request.
-    Jifty->web->temporary_current_user($let_me->validated_current_user);
-   
-    set_page($let_me->path);
-    pass_arguments(%{$let_me->args});
-};
+    $class->export_to_level(1, @_);
+}
 
 
+###################################################
+# Magically figure out the arity based on caller info.
+sub ret (@) {
+    my $pkg   = caller(1);
+    my $sub   = (caller(1))[3];
+    my $proto = prototype($sub);
+    my $op    = $sub;
 
-=cut
+    $proto =~ tr/@;//d;
+    $op    =~ s/.*:://;
 
-=head1 Data your dispatch routines has access to
+    if ($Dispatcher) {
+        # We are under an operation -- carry the action forward
+        foreach my $action ([$op => splice(@_, 0, length($proto))], @_) {
+            $Dispatcher->handle_action($action);
+        }
+    }
+    elsif (wantarray) {
+        ([$op => splice(@_, 0, length($proto))], @_);
+    }
+    elsif (defined wantarray) {
+        [[$op => splice(@_, 0, length($proto))], @_];
+    }
+    else {
+        no strict 'refs';
+        push @{$pkg.'::ACTIONS'}, [$op => splice(@_, 0, length($proto))], @_;
+    }
+}
 
-=head2 url
+sub qualify ($@) {
+    my $key = shift;
+    my $op  = (caller(1))[3];
+    $op =~ s/.*:://;
+    return { $key => $op, '' => $_[0] };
+}
 
-=head1 Things your dispatch routine might do
-
-=head2 pass_arguments
-
-Adds an argument to what we're passing to our template
-
-Takes a hash of  key => value pairs.
-
-
-=head2 delete_arguments
-
-Deletes an argument we were passing to our template. Could be something we decided to pass
-earlier or something the user wanted to pass in.
-
-Takes an array of argument names.
-
-=head2 set_page 
-
-Sets the page that we'll render when we actually do our rendering. Takes the path to a template.
-
-=head2 render_page 
-
-=head2 abort
-
-=head2 redirect
-
-Redirect might have reason to want to be internal instead of external. not sure
-
-=cut 
-
-=head1 IMPLEMENTATION
-
-=head2 new 
-
-Create a new dispatcher object
-
-=cut
+sub actions {
+    my $self = shift;
+    my $pkg = ref($self) || $self;
+    no strict 'refs';
+    @{$pkg.'::ACTIONS'};
+}
 
 sub new {
-    my $class = shift;
-    my $self  = {};
-    bless $self, $class;
-    return $self;
-}
-
-=for private on
-
-C<on> takes named arguments. 
-
-=over
-
-=item condition
-
-A coderef that runs to determine if this rule cares about the current request 
-
-=item action
-
-This rgument is a coderef that Jifty should run when the "condition" 
-coderef returns true.
-
-=item priority 
-
-This argument is an integer priority that determines what order the rules
-will run in.  Priority C<1> rules run first, followed by priority C<2>
-rules. Order within a priority isn't guaranteed.  We recommend you use
-priorities between C<100> and C<200> for every day activities.
-
-In the future, Jifty should autoincrement rule priorities.
-
-=back
-
-=cut
-
-sub on {
-    my $self = Jifty->dispatcher;
-    
-    my %args = (
-        condition => sub {undef},
-        action    => sub {undef},
-        priority  => undef,
-        @_
-    );
-    $self->add_entry(
-        priority => $args{'priority'},
-        entry    => \%args
-    );
-
-    return (1);
-}
-
-=head2 add_entry
-
-instance method
-
-=cut
-
-sub add_entry {
     my $self = shift;
-    my %args = (
-        priority => undef,
-        entry    => undef,
-        @_
+    return $self if ref($self);
+
+    bless({
+        path   => '',
+        cwd    => '',
+        action => undef,
+        @_,
+    } => $self);
+}
+
+sub handle_request {
+    my $self = shift;
+
+    my $m    = Jifty->web->mason;
+    my $path = $m->request_comp->path;
+    $path =~ s{/index\.html$}{};
+    if ($path =~ s{/dhandler$}{}) {
+        $path = join('/', $path, $m->dhandler_arg);
+    }
+
+    local $Dispatcher = $self->new(
+        mason  => Jifty->web->mason,
+        args   => { $m->request_args },
     );
 
-    $args{'priority'} ||= 100;
-    warn "Can't add a dispatch table entry without content"
-        unless ( $args{'entry'} );
-    push @{ $self->{'_entries'}{$args{'priority'} }}, $args{'entry'};
+    HANDLER: {
+        $Dispatcher->do_dispatch($path);
+    }
 }
 
-sub entries {
+sub handle_actions {
     my $self = shift;
-    return map @{ $self->{'_entries'}{$_} }, sort keys %{$self->{'_entries'}};
+
+    ACTION: foreach my $action (@_) {
+        $self->handle_action($action);
+    }
 }
 
-sub url ($) {
-    my $url = shift;
+sub handle_action {
+    my ($self, $action) = @_;
+    my ($op, @args) = @$action;
 
-    return ( condition => sub { die "need to implement matcher for $url"; } );
+    # Handle the case where $op is an array.
+    local $@;
+    eval {
+        for my $sub_action (@$op, @args) {
+            $self->handle_action($sub_action);
+        }
+    };
+    return unless $@;
+
+    local $self->{op} = $op;
+    my $meth = "do_$op";
+    $self->$meth(@args);
 }
 
-sub run (&) {
-    my $action = shift;
-    return ( action => $action );
+no warnings 'exiting';
+
+sub next_action { next ACTION }
+sub last_action { last HANDLER }
+
+sub do_in {
+    my ($self, $cond, $actions) = @_;
+    if ( my $regex = $self->match($cond) ) {
+        # match again to establish $1 $2 etc in the dynamic scope
+        $self->{path} =~ $regex;
+
+        # enter the matched directory
+        local $self->{cwd} = substr($self->{path}, 0, $+[0]);
+        $self->{cwd} =~ s{/$}{};
+
+        $self->handle_actions(@$actions);
+    }
+}
+
+sub do_when {
+    my ($self, $code, $actions) = @_;
+    if ( $code->() ) {
+        $self->handle_actions(@$actions);
+    }
+}
+
+sub do_on {
+    my ($self, $cond, $actions) = @_;
+    if ( my $regex = $self->match($cond) ) {
+        # match again to establish $1 $2 etc in the dynamic scope
+        $self->{path} =~ $regex;
+
+        $self->handle_actions(@$actions);
+    }
+}
+
+sub do_run {
+    my ($self, $code) = @_;
+
+    # establish void context and make a call
+    $code->();
+
+    # XXX maybe call with all the $1..$x as @_ too? or is it too gonzo?
+    # $code->(map { substr($PATH, $-[$_], ($+[$_]-$-[$_])) } 1..$#-));
+
+    return;
+}
+
+sub do_redirect {
+    my ($self, $path) = @_;
+    $self->{mason}->redirect($path);
+    last_action;
+}
+
+sub do_abort {
+    my $self = shift;
+    $self->{mason}->abort(@_);
+    last_action;
+}
+
+sub do_show {
+    my ($self, $path) = @_;
+    my $m = $self->{mason};
+
+    if (!defined $path) {
+        $m->call_next(%{$self->{args}});
+    }
+    else {
+        $path = "$self->{cwd}/$path" unless $path =~ m{^/};
+        $m->comp($path, %{$self->{args}});
+    }
+
+    $self->last_action;
+}
+
+sub do_set {
+    my ($self, $key, $value) = @_;
+    $self->{args}{$key} = $value;
+}
+
+sub do_del {
+    my ($self, $key) = @_;
+    delete $self->{args}{$key};
+}
+
+sub do_default {
+    my ($self, $key, $value) = @_;
+    $self->{args}{$key} = $value
+      unless defined $self->{args}{$key};
+}
+
+sub do_dispatch {
+    my $self = shift;
+
+    $self->{path} = shift;
+    $self->{cwd}  = '';
+
+    # Normalize the path.
+    $self->{path} =~ s{/+}{/}g;
+    $self->{path} =~ s{/$}{};
+
+    HANDLER: {
+        $self->handle_actions($self->actions, ['show']);
+    }
+    last_action;
+}
+
+sub match {
+    my ($self, $cond) = @_;
+
+    # Handle the case where $cond is an array.
+    {
+        local $@;
+        my $rv = eval {
+            for my $sub_cond (@$cond) {
+                return($self->match($sub_cond) or next);
+            }
+        };
+        return $rv unless $@;
+    }
+
+    # Handle the case where $cond is a hash.
+    {
+        local $@;
+        my $rv =eval {
+            for my $key (sort keys %$cond) {
+                next if $key eq '';
+                my $meth = "match_$key";
+                $self->$meth($cond->{$key}) or return;
+            }
+            # All precondition passed, get original condition literal
+            return $self->match($cond->{''});
+        };
+        return $rv unless $@;
+    }
+
+    # Now we know $cond is a scalar, match against it.
+    my $regex = $self->compile_cond($cond) or return;
+    $self->{path} =~ $regex or return;
+    return $regex;
+}
+
+sub match_method {
+    my ($self, $method) = @_;
+    lc($self->{mason}->cgi_request->method) eq lc($method);
+}
+
+sub compile_cond {
+    my ($self, $cond) = @_;
+
+    # Previously compiled (eg. a qr{} -- return it verbatim)
+    return $cond if ref $cond;
+
+    # Escape and normalize
+    $cond = quotemeta($cond);
+    $cond =~ s{(?:\\\/)+}{/}g;
+    $cond =~ s{/$}{};
+
+    if ($cond =~ m{^/}) {
+        # '/foo' => qr{^/foo}
+        $cond = "\\A$cond"
+    }
+    elsif (length($cond)) {
+        # 'foo' => qr{^$cwd/foo}
+        $cond = "(?<=\\A$self->{cwd}/)$cond"
+    }
+    else {
+        # empty path -- just match $cwd itself
+        $cond = "(?<=\\A$self->{cwd})";
+    }
+
+    if ($Dispatcher->{action} eq 'on') {
+        # "on" anchors on complete match only
+        $cond .= '\\z';
+    }
+    else {
+        # "in" anchors on prefix match in directory boundary
+        $cond .= '(?=/|\\z)';
+    }
+
+    # Make all metachars into capturing submatches
+    unless ($cond =~ s{( (?: \\ [*?] )+ )}{'('. $self->compile_glob($1) .')'}egx) {
+        $cond = "($cond)";
+    }
+
+    return qr{$cond};
+}
+
+sub compile_glob {
+    my ($self, $glob) = @_;
+    $glob =~ s{\\}{}g;
+    $glob =~ s{\*}{[^/]+}g;
+    $glob =~ s{\?}{[^/]}g;
+    $glob;
 }
 
 1;
