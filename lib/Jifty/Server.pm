@@ -103,6 +103,7 @@ Sets up the Jifty singleton.  This is called automatically by L</new>.
 sub setup_jifty {
     my $self = shift;
     my %args = (
+                port => undef,
         @_
     );
 
@@ -122,12 +123,11 @@ request.
 
 sub handle_request {
     my $self = shift;
+    my $cgi = shift;
 
-    Module::Refresh->refresh;
+    Jifty->handler->handle_request( mason_handler => $self->mason_handler,
+                                    cgi  => $cgi);
 
-    local $HTML::Mason::Commands::JiftyWeb = Jifty::Web->new();
-     $self->SUPER::handle_request(@_); 
-    Jifty::Handler->cleanup_request();
 }
 
 
@@ -140,7 +140,6 @@ logging framework to record the server's startup
 
 sub print_banner {
     my $self = shift;
-
     $self->log->info("You can connect to your server at ", Jifty::Web->url, "/");
 } 
 

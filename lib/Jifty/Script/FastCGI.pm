@@ -37,29 +37,16 @@ Creates a new FastCGI process.
  
 sub run {
     Jifty->new();
-    my $Handler = HTML::Mason::CGIHandler->new( Jifty::Handler->mason_config );
-
+    my $handler = HTML::Mason::CGIHandler->new( Jifty->handler->mason_config );
     while ( my $cgi = CGI::Fast->new ) {
         # the whole point of fastcgi requires the env to get reset here..
         # So we must squash it again
         $ENV{'PATH'}   = '/bin:/usr/bin';
-        $ENV{'CDPATH'} = '' if defined $ENV{'CDPATH'};
         $ENV{'SHELL'}  = '/bin/sh' if defined $ENV{'SHELL'};
-        $ENV{'ENV'}    = '' if defined $ENV{'ENV'};
-        $ENV{'IFS'}    = '' if defined $ENV{'IFS'};
-
-        Module::Refresh->refresh;
-
-
-        local $HTML::Mason::Commands::JiftyWeb = Jifty::Web->new();
-
-        if ( ( !$Handler->interp->comp_exists( $cgi->path_info ) )
-             && ( $Handler->interp->comp_exists( $cgi->path_info . "/index.html" ) ) ) {
-            $cgi->path_info( $cgi->path_info . "/index.html" );
+        for (qw(CDPATH ENV IFS)) {
+        $ENV{$_} = '' if (defined $ENV{$_} );
         }
-
-        eval { $Handler->handle_cgi_object($cgi); };
-        Jifty::Handler->cleanup_request(); 
+        Jifty->handler->handle_request(mason_handler => $handler, cgi => $cgi);
     }
 }
 
