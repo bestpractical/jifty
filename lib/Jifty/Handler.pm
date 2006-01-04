@@ -9,9 +9,10 @@ Jifty::Handler - Methods related to the Mason handler
 
 =head1 SYNOPSIS
 
-  use Jifty::Handler;
+  use Jifty;
+  Jifty->new();
 
-  my $cgihandler = HTML::Mason::CGIHandler->new( Jifty::Handler->mason_config );
+  my $cgihandler = HTML::Mason::CGIHandler->new( Jifty->handler->mason_config );
 
   # after each request is handled
   Jifty::Handler->cleanup_request;
@@ -19,8 +20,22 @@ Jifty::Handler - Methods related to the Mason handler
 =head1 DESCRIPTION
 
 L<Jifty::Handler> provides methods required to deal with Mason CGI
-handlers.  Note that at this time there are no objects with
-L<Jifty::Handler> as a class.
+handlers.  
+
+=head2 new
+
+Create a new Jifty::Handler object. Generally, Jifty.pm does this only once at startup.
+
+=cut
+
+sub new {
+    my $class = shift;
+    my $self = {};
+    bless $self, $class;
+    return $self;
+
+}
+
 
 =head2 mason_config
 
@@ -49,6 +64,53 @@ sub mason_config {
     );
 }
 
+
+=head2 handle_request
+
+When your server processs (be it Jifty-internal, FastCGI or anything else) wants
+to handle a request coming in from the outside world, you should call C<handle_request>.
+It expects a few parameters. C<cgi> is required. 
+
+=over
+
+=item cgi
+
+A L<CGI>.pm object that your server has already set up and loaded with your request's data
+
+=item mason_handler
+
+An initialized L<HTML::Mason> CGIHandler or subclass. 
+
+=item
+
+=back
+
+=cut
+
+
+sub handle_request {
+    my $self = shift;
+    my %args = (
+        mason_handler => undef,
+        cgi           => undef,
+        @_
+    );
+
+    my $handler = $args{'mason_handler'};
+    my $cgi     = $args{'cgi'};
+    if ( ( !$handler->interp->comp_exists( $cgi->path_info ) )
+        && ($handler->interp->comp_exists( $cgi->path_info . "/index.html" ) )
+        )
+    {
+        $cgi->path_info( $cgi->path_info . "/index.html" );
+    }
+    Module::Refresh->refresh;
+    local $HTML::Mason::Commands::JiftyWeb = Jifty::Web->new();
+
+    eval { $handler->handle_cgi_object($cgi); };
+    $self->cleanup_request();
+
+}
 
 =head2 cleanup_request
 
