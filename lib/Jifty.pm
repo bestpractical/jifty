@@ -106,13 +106,15 @@ sub new {
 
     __PACKAGE__->logger( Jifty::Logger->new( $args{'logger_component'} ) );
     __PACKAGE__->dispatcher(Jifty::Dispatcher->new());
-
+    __PACKAGE__->handler(Jifty::Handler->new());
 
    # Get a classloader set up
    Jifty::ClassLoader->new->require;
 
    # Let's get the database rocking and rolling
    __PACKAGE__->setup_database_connection(%args);
+
+
 
 }
 
@@ -136,6 +138,18 @@ An accessor for our L<Jifty::Logger> object for the application.
 =cut
 
 sub logger {
+    my $class = shift;
+    $LOGGER = shift if (@_);
+    return $LOGGER;
+}
+
+=head2 handler
+
+An accessor for our L<Jifty::Handler> object.
+
+=cut
+
+sub handler {
     my $class = shift;
     $LOGGER = shift if (@_);
     return $LOGGER;
