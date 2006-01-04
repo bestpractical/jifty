@@ -1,11 +1,160 @@
 package Jifty::Dispatcher;
-
-# See Dispatcher.pod for documentaiton
-
 use strict;
 use warnings;
 use Exporter;
 use base 'Exporter';
+
+=head1 NAME
+
+Jifty::Dispatcher - The Jifty Dispatcher
+
+=head1 SYNOPSIS
+
+In your F<autohandler>, change the C<< $m->call_next >> statement to:
+
+    require MyApp::Dispatcher;
+    MyApp::Dispatcher->handle_request;
+
+In B<MyApp::Dispatcher>:
+
+    package MyApp::Dispatcher;
+    use Jifty::Dispatcher -base;
+
+    in ['blog', 'wiki'] => [
+        run {
+            default model => "MyApp::Model::\u$1"
+        },
+        on PUT 'entries/*' => run {
+            set entry_id => $1;
+            show '/display/entry';
+        },
+        on '*/*' => run {
+            my ($page, $rule) = ($1, $2);
+            my $item = get('model_class')->load($name)
+              or next_rule;
+
+            set page   => $name;
+            set rule => $rule;
+            set item   => $item;
+
+            show "/display/$rule";
+        },
+        on '*' => run { dispatch "$1/view" },
+        on ''  => show '/display/list',
+    ];
+    in qr{logs/(\d+)} => [
+        when { $1 > 100 } => show '/error',
+        default model => 'MyApp::Model::Log',
+        run { dispatch "/wiki/LogPage-$1" },
+    ];
+    # ... more rule rules ...
+
+=head1 DESCRIPTION
+
+C<Jifty::Dispatcher> takes requests for pages, walks through a
+dispatch table, possibly running code or transforming the request
+before finally handing off control to the templating system to display
+the page the user requested or whatever else the system has decided to
+display instead.
+
+Generally, this is B<not> the place to be performing model and user specific
+access control checks or updating your database based on what the user has sent
+in. But it might be a good place to enable or disable specific
+C<Jifty::Action>s using L<Jifty::Web/allow_rules> and
+L<Jifty::Web/deny_rules> or to completely disallow user access to private
+"component" templates such as the _elements directory in a default Jifty
+application.  It's also the right way to enable L<Jifty::LetMe> rules.
+
+The Dispatcher runs I<before> any rules are evaluated, but I<after>
+we've processed all the user's input.  It's intended to replace all the
+F<autohandler>, F<dhandler> and C<index.html> boilerplate code commonly
+found in Mason applications.
+
+It doesn't matter whether the page the user's asked us to display
+exists.  We're running the dispatcher either way. 
+
+Dispatcher directives are evaluated in order until we get to either a
+C<show>, C<redirect> or an C<abort>.
+
+Each directive's code block runs in its own scope, but shares a common
+C<$Dispatcher> object.
+
+=cut
+
+=head1 Data your dispatch routines has access to
+
+=head2 $Dispatcher
+
+The current dispatcher object.
+
+=head2 get $arg
+
+Return the argument value. 
+
+=head1 Things your dispatch routine might do
+
+=head2 in $match => $rule
+
+Match against the current requested path.  If matched, set the current
+context to the directory and process the rule, which may be an array
+reference of more rules.
+
+All wildcards in the C<$match> string becomes capturing regex patterns.  You
+can also pass in an array reference of matches, or a regex pattern.
+
+The C<$match> string may be qualified with a HTTP method name, such as
+C<GET>, C<POST> and C<PUT>.
+
+=head2 on $match => $rule
+
+Like C<in>, except it has to match the whole path instead of just the prefix.
+Does not set current directory context for its rules.
+
+=head2 when {...} => $rule
+
+Like C<on>, except using an user-supplied test condition. 
+
+=head2 run {...}
+
+Run a block of code unconditionally; all rules are allowed inside a C<run>
+block, as well as user code.
+
+=head2 set $arg => $val
+
+Adds an argument to what we're passing to our template overriding 
+any value the user sent or we've already set.
+
+=head2 default $arg => $val
+
+Adds an argument to what we're passing to our template,
+but only if it is not defined currently.
+
+=head2 del $arg
+
+Deletes an argument we were passing to our template.
+
+=head2 show $component
+
+Display the presentation component.  If not specified, use the
+default page in call_next.
+
+=head2 dispatch $path
+
+Dispatch again using $path as the request path, preserving args.
+
+=head2 next_rule
+
+Break out from the current C<run> block and go on the next rule.
+
+=head2 abort $code
+
+Abort the request.
+
+=head2 redirect $uri
+
+Redirect to another URI.
+
+=cut
 
 our @EXPORT = qw<
     in on run when set del default
@@ -14,7 +163,7 @@ our @EXPORT = qw<
 
     GET POST PUT HEAD DELETE OPTIONS
 
-    get next_action last_action
+    get next_rule last_rule
 
     $Dispatcher
 >;
@@ -49,7 +198,7 @@ sub import {
     my @args  = grep {!/^-[Bb]ase/} @_;
 
     no strict 'refs';
-    @{$pkg.'::ACTIONS'} = ();
+    @{$pkg.'::RULES'} = ();
 
     if (@args != @_) {
         # User said "-base", let's push ourselves into their @ISA.
@@ -72,9 +221,9 @@ sub ret (@) {
     $op    =~ s/.*:://;
 
     if ($Dispatcher) {
-        # We are under an operation -- carry the action forward
-        foreach my $action ([$op => splice(@_, 0, length($proto))], @_) {
-            $Dispatcher->handle_action($action);
+        # We are under an operation -- carry the rule forward
+        foreach my $rule ([$op => splice(@_, 0, length($proto))], @_) {
+            $Dispatcher->handle_rule($rule);
         }
     }
     elsif (wantarray) {
@@ -85,7 +234,7 @@ sub ret (@) {
     }
     else {
         no strict 'refs';
-        push @{$pkg.'::ACTIONS'}, [$op => splice(@_, 0, length($proto))], @_;
+        push @{$pkg.'::RULES'}, [$op => splice(@_, 0, length($proto))], @_;
     }
 }
 
@@ -96,11 +245,11 @@ sub qualify ($@) {
     return { $key => $op, '' => $_[0] };
 }
 
-sub actions {
+sub rules {
     my $self = shift;
     my $pkg = ref($self) || $self;
     no strict 'refs';
-    @{$pkg.'::ACTIONS'};
+    @{$pkg.'::RULES'};
 }
 
 sub new {
@@ -110,7 +259,7 @@ sub new {
     bless({
         path   => '',
         cwd    => '',
-        action => undef,
+        rule => undef,
         @_,
     } => $self);
 }
@@ -135,23 +284,23 @@ sub handle_request {
     }
 }
 
-sub handle_actions {
+sub handle_rules {
     my $self = shift;
 
-    ACTION: foreach my $action (@_) {
-        $self->handle_action($action);
+    RULE: foreach my $rule (@_) {
+        $self->handle_rule($rule);
     }
 }
 
-sub handle_action {
-    my ($self, $action) = @_;
-    my ($op, @args) = @$action;
+sub handle_rule {
+    my ($self, $rule) = @_;
+    my ($op, @args) = @$rule;
 
     # Handle the case where $op is an array.
     local $@;
     eval {
-        for my $sub_action (@$op, @args) {
-            $self->handle_action($sub_action);
+        for my $sub_rule (@$op, @args) {
+            $self->handle_rule($sub_rule);
         }
     };
     return unless $@;
@@ -163,11 +312,11 @@ sub handle_action {
 
 no warnings 'exiting';
 
-sub next_action { next ACTION }
-sub last_action { last HANDLER }
+sub next_rule { next RULE }
+sub last_rule { last HANDLER }
 
 sub do_in {
-    my ($self, $cond, $actions) = @_;
+    my ($self, $cond, $rules) = @_;
     if ( my $regex = $self->match($cond) ) {
         # match again to establish $1 $2 etc in the dynamic scope
         $self->{path} =~ $regex;
@@ -176,24 +325,24 @@ sub do_in {
         local $self->{cwd} = substr($self->{path}, 0, $+[0]);
         $self->{cwd} =~ s{/$}{};
 
-        $self->handle_actions(@$actions);
+        $self->handle_rules(@$rules);
     }
 }
 
 sub do_when {
-    my ($self, $code, $actions) = @_;
+    my ($self, $code, $rules) = @_;
     if ( $code->() ) {
-        $self->handle_actions(@$actions);
+        $self->handle_rules(@$rules);
     }
 }
 
 sub do_on {
-    my ($self, $cond, $actions) = @_;
+    my ($self, $cond, $rules) = @_;
     if ( my $regex = $self->match($cond) ) {
         # match again to establish $1 $2 etc in the dynamic scope
         $self->{path} =~ $regex;
 
-        $self->handle_actions(@$actions);
+        $self->handle_rules(@$rules);
     }
 }
 
@@ -212,13 +361,13 @@ sub do_run {
 sub do_redirect {
     my ($self, $path) = @_;
     $self->{mason}->redirect($path);
-    last_action;
+    last_rule;
 }
 
 sub do_abort {
     my $self = shift;
     $self->{mason}->abort(@_);
-    last_action;
+    last_rule;
 }
 
 sub do_show {
@@ -233,7 +382,7 @@ sub do_show {
         $m->comp($path, %{$self->{args}});
     }
 
-    $self->last_action;
+    $self->last_rule;
 }
 
 sub do_set {
@@ -263,9 +412,9 @@ sub do_dispatch {
     $self->{path} =~ s{/$}{};
 
     HANDLER: {
-        $self->handle_actions($self->actions, ['show']);
+        $self->handle_rules($self->rules, ['show']);
     }
-    last_action;
+    last_rule;
 }
 
 sub match {
@@ -332,7 +481,7 @@ sub compile_cond {
         $cond = "(?<=\\A$self->{cwd})";
     }
 
-    if ($Dispatcher->{action} eq 'on') {
+    if ($Dispatcher->{rule} eq 'on') {
         # "on" anchors on complete match only
         $cond .= '\\z';
     }
