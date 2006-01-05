@@ -42,6 +42,7 @@ requires('Jifty::DBI' => '0.06' );            # Jifty::DBI::Collection Jifty::DB
 requires('Locale::Maketext::Simple');
 requires('Log::Log4perl');
 requires('Math::BigInt');
+requires('Module::Install' => '0.50');
 requires('Module::Pluggable' => '2.95');
 requires('Module::Refresh');
 requires('Pod::Simple::Text');
