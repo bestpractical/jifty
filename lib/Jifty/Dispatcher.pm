@@ -376,7 +376,7 @@ sub do_run {
 
 sub do_redirect {
     my ($self, $path) = @_;
-    $self->{mason}->redirect($path);
+    Jifty->web->redirect($path);
     last_rule;
 }
 
