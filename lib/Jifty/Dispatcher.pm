@@ -20,7 +20,7 @@ In B<MyApp::Dispatcher>:
     package MyApp::Dispatcher;
     use Jifty::Dispatcher -base;
 
-    in ['blog', 'wiki'] => [
+    under ['blog', 'wiki'] => [
         run {
             default model => "MyApp::Model::\u$1"
         },
@@ -42,12 +42,12 @@ In B<MyApp::Dispatcher>:
         on '*' => run { dispatch "$1/view" },
         on ''  => show '/display/list',
     ];
-    in qr{logs/(\d+)} => [
+    under qr{logs/(\d+)} => [
         when { $1 > 100 } => show '/error',
         default model => 'MyApp::Model::Log',
         run { dispatch "/wiki/LogPage-$1" },
     ];
-    # ... more rule rules ...
+    # ... more rules ...
 
 =head1 DESCRIPTION
 
@@ -93,7 +93,7 @@ Return the argument value.
 
 =head1 Things your dispatch routine might do
 
-=head2 in $match => $rule
+=head2 under $match => $rule
 
 Match against the current requested path.  If matched, set the current
 context to the directory and process the rule, which may be an array
@@ -107,12 +107,12 @@ C<GET>, C<POST> and C<PUT>.
 
 =head2 on $match => $rule
 
-Like C<in>, except it has to match the whole path instead of just the prefix.
+Like C<under>, except it has to match the whole path instead of just the prefix.
 Does not set current directory context for its rules.
 
 =head2 when {...} => $rule
 
-Like C<on>, except using an user-supplied test condition. 
+Like C<undef>, except using an user-supplied test condition. 
 
 =head2 run {...}
 
@@ -157,7 +157,7 @@ Redirect to another URI.
 =cut
 
 our @EXPORT = qw<
-    in on run when set del default
+    under on run when set del default
 
     show dispatch abort redirect
 
@@ -171,7 +171,7 @@ our @EXPORT = qw<
 our $Dispatcher;
 
 sub ret (@);
-sub in ($$@)      { ret @_ } # partial match at beginning of path component
+sub under ($$@)      { ret @_ } # partial match at beginning of path component
 sub on ($$@)      { ret @_ } # exact match on the path component
 sub when (&@)     { ret @_ } # exact match on the path component
 sub run (&@)      { ret @_ } # execute a block of code
@@ -305,7 +305,7 @@ sub handle_rule {
     };
     return unless $@;
 
-    local $self->{op} = $op;
+    local $self->{rule} = $op;
     my $meth = "do_$op";
     $self->$meth(@args);
 }
@@ -315,7 +315,7 @@ no warnings 'exiting';
 sub next_rule { next RULE }
 sub last_rule { last HANDLER }
 
-sub do_in {
+sub do_under {
     my ($self, $cond, $rules) = @_;
     if ( my $regex = $self->match($cond) ) {
         # match again to establish $1 $2 etc in the dynamic scope
@@ -387,6 +387,7 @@ sub do_show {
 
 sub do_set {
     my ($self, $key, $value) = @_;
+
     $self->{args}{$key} = $value;
 }
 
@@ -480,7 +481,6 @@ sub compile_cond {
         # empty path -- just match $cwd itself
         $cond = "(?<=\\A$self->{cwd})";
     }
-
     if ($Dispatcher->{rule} eq 'on') {
         # "on" anchors on complete match only
         $cond .= '\\z';
