@@ -218,7 +218,9 @@ sub ret (@) {
     my $op    = $sub;
 
     $proto =~ tr/@;//d;
-    $op    =~ s/.*:://;
+    if (my $idx = rindex($op, '::')) {
+        $op = substr($op, $idx + 2);
+    }
 
     if ($Dispatcher) {
         # We are under an operation -- carry the rule forward
