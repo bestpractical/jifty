@@ -29,15 +29,14 @@ In B<MyApp::Dispatcher>:
             show '/display/entry';
         },
         on '*/*' => run {
-            my ($page, $rule) = ($1, $2);
-            my $item = get('model_class')->load($name)
-              or next_rule;
+            my ($page, $op) = ($1, $2);
+            my $item = get('model_class')->load($page) or next_rule;
 
-            set page   => $name;
-            set rule => $rule;
-            set item   => $item;
+            set item => $item;
+            set page => $name;
+            set op   => $op;
 
-            show "/display/$rule";
+            show "/display/$op";
         },
         on '*' => run { dispatch "$1/view" },
         on ''  => show '/display/list',
@@ -112,7 +111,7 @@ Does not set current directory context for its rules.
 
 =head2 when {...} => $rule
 
-Like C<undef>, except using an user-supplied test condition. 
+Like C<under>, except using an user-supplied test condition. 
 
 =head2 run {...}
 
@@ -259,8 +258,8 @@ sub new {
     return $self if ref($self);
 
     bless({
-        path   => '',
-        cwd    => '',
+        cwd  => '',
+        path => '',
         rule => undef,
         @_,
     } => $self);
@@ -325,7 +324,7 @@ sub do_under {
 
         # enter the matched directory
         local $self->{cwd} = substr($self->{path}, 0, $+[0]);
-        $self->{cwd} =~ s{/$}{};
+        chop $self->{cwd} if substr($self->{cwd}, -1) eq '/';
 
         $self->handle_rules(@$rules);
     }
