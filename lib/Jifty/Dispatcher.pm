@@ -30,10 +30,10 @@ In B<MyApp::Dispatcher>:
         },
         on '*/*' => run {
             my ($page, $op) = ($1, $2);
-            my $item = get('model_class')->load($page) or next_rule;
+            my $item = get('model')->load($page) or next_rule;
 
             set item => $item;
-            set page => $name;
+            set page => $page;
             set op   => $op;
 
             show "/display/$op";
@@ -59,12 +59,12 @@ display instead.
 Generally, this is B<not> the place to be performing model and user specific
 access control checks or updating your database based on what the user has sent
 in. But it might be a good place to enable or disable specific
-C<Jifty::Action>s using L<Jifty::Web/allow_rules> and
-L<Jifty::Web/deny_rules> or to completely disallow user access to private
-"component" templates such as the _elements directory in a default Jifty
-application.  It's also the right way to enable L<Jifty::LetMe> rules.
+C<Jifty::Action>s using L<Jifty::Web/allow_actions> and
+L<Jifty::Web/deny_actions> or to completely disallow user access to private
+"component" templates such as the F<_elements> directory in a default Jifty
+application.  It's also the right way to enable L<Jifty::LetMe> actions.
 
-The Dispatcher runs I<before> any rules are evaluated, but I<after>
+The Dispatcher runs I<before> any actions are evaluated, but I<after>
 we've processed all the user's input.  It's intended to replace all the
 F<autohandler>, F<dhandler> and C<index.html> boilerplate code commonly
 found in Mason applications.
@@ -95,8 +95,10 @@ Return the argument value.
 =head2 under $match => $rule
 
 Match against the current requested path.  If matched, set the current
-context to the directory and process the rule, which may be an array
-reference of more rules.
+context to the directory and process the rule.
+
+The C<$rule> may be an array reference of more rules, a code reference, a
+method name of your dispatcher class, or a fully qualified subroutine name.
 
 All wildcards in the C<$match> string becomes capturing regex patterns.  You
 can also pass in an array reference of matches, or a regex pattern.
@@ -116,7 +118,8 @@ Like C<under>, except using an user-supplied test condition.
 =head2 run {...}
 
 Run a block of code unconditionally; all rules are allowed inside a C<run>
-block, as well as user code.
+block, as well as user code.  This is merely a syntactic sugar of C<sub>
+or C<do> blocks.
 
 =head2 set $arg => $val
 
@@ -285,17 +288,29 @@ sub handle_request {
     }
 }
 
-sub handle_rules {
-    my $self = shift;
+sub handle_rules ($) {
+    my ($self, $rules) = @_;
 
-    RULE: foreach my $rule (@_) {
+    local $@;
+    my @rules;
+    eval { @rules = @$rules };
+    @rules = $rules if $@;
+
+    RULE: foreach my $rule (@rules) {
         $self->handle_rule($rule);
     }
 }
 
 sub handle_rule {
     my ($self, $rule) = @_;
-    my ($op, @args) = @$rule;
+    my ($op, @args);
+    
+    # Handle the case where $op is a code reference.
+    {
+        local $@;
+        eval { ($op, @args) = @$rule };
+        ($op, @args) = (run => $rule) if $@;
+    }
 
     # Handle the case where $op is an array.
     local $@;
@@ -326,14 +341,14 @@ sub do_under {
         local $self->{cwd} = substr($self->{path}, 0, $+[0]);
         chop $self->{cwd} if substr($self->{cwd}, -1) eq '/';
 
-        $self->handle_rules(@$rules);
+        $self->handle_rules($rules);
     }
 }
 
 sub do_when {
     my ($self, $code, $rules) = @_;
     if ( $code->() ) {
-        $self->handle_rules(@$rules);
+        $self->handle_rules($rules);
     }
 }
 
@@ -343,7 +358,7 @@ sub do_on {
         # match again to establish $1 $2 etc in the dynamic scope
         $self->{path} =~ $regex;
 
-        $self->handle_rules(@$rules);
+        $self->handle_rules($rules);
     }
 }
 
@@ -351,7 +366,7 @@ sub do_run {
     my ($self, $code) = @_;
 
     # establish void context and make a call
-    $code->();
+    ($self->can($code) || $code)->($self);
 
     # XXX maybe call with all the $1..$x as @_ too? or is it too gonzo?
     # $code->(map { substr($PATH, $-[$_], ($+[$_]-$-[$_])) } 1..$#-));
@@ -414,7 +429,7 @@ sub do_dispatch {
     $self->{path} =~ s{/$}{};
 
     HANDLER: {
-        $self->handle_rules($self->rules, ['show']);
+        $self->handle_rules([$self->rules, 'show']);
     }
     last_rule;
 }
