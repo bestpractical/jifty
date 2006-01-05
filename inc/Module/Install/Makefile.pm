@@ -1,4 +1,4 @@
-#line 1 "inc/Module/Install/Makefile.pm - /Library/Perl/5.8.6/Module/Install/Makefile.pm"
+#line 1 "inc/Module/Install/Makefile.pm - /usr/lib/perl5/site_perl/5.8.7/Module/Install/Makefile.pm"
 package Module::Install::Makefile;
 use Module::Install::Base; @ISA = qw(Module::Install::Base);
 
@@ -65,14 +65,14 @@ sub write {
     $args->{test} = {TESTS => $self->tests} if $self->tests;
 
     if ($] >= 5.005) {
-	$args->{ABSTRACT} = $self->abstract;
-	$args->{AUTHOR} = $self->author;
+        $args->{ABSTRACT} = $self->abstract;
+        $args->{AUTHOR} = $self->author;
     }
     if ( eval($ExtUtils::MakeMaker::VERSION) >= 6.10 ) {
         $args->{NO_META} = 1;
     }
     if ( eval($ExtUtils::MakeMaker::VERSION) > 6.17 ) {
-	$args->{SIGN} = 1 if $self->sign;
+        $args->{SIGN} = 1 if $self->sign;
     }
     delete $args->{SIGN} unless $self->is_admin;
 
@@ -154,4 +154,4 @@ sub postamble {
 
 __END__
 
-#line 287
+#line 286

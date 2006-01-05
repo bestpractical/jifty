@@ -1,10 +1,12 @@
-name: Jifty
-version: 0.51228
-license: unknown
 distribution_type: module
-tests: t/*.t t/*/t/*.t
+generated_by: Module::Install version 0.520
+license: unknown
+name: Jifty
+no_index:
+  directory:
+    - inc
+    - t
 requires:
-  perl: 5.8.3
   Apache::Session: 0
   App::CLI: 0.03
   CGI: 0
@@ -44,6 +46,7 @@ requires:
   Locale::Maketext::Simple: 0
   Log::Log4perl: 0
   Math::BigInt: 0
+  Module::Install: 0.50
   Module::Pluggable: 2.95
   Module::Refresh: 0
   Pod::Simple::Text: 0
@@ -58,15 +61,14 @@ requires:
   Test::WWW::Mechanize: 0
   Time::HiRes: 0
   Time::ParseDate: 0
-  UNIVERSAL::require: 0
   UNIVERSAL: 0
+  UNIVERSAL::require: 0
   URI: 0
   WWW::Mechanize: 1.12
   XML::Writer: 0
   XML::XPath: 0
-  version: 0
   YAML: 0
-no_index:
-  directory:
-    - inc
-generated_by: Module::Install version 0.460
+  perl: 5.8.3
+  version: 0
+tests: t/*.t t/*/t/*.t
+version: 0.51228
