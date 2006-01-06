@@ -291,10 +291,12 @@ sub handle_request {
 sub handle_rules ($) {
     my ($self, $rules) = @_;
 
-    local $@;
     my @rules;
-    eval { @rules = @$rules };
-    @rules = $rules if $@;
+    {
+        local $@;
+        eval { @rules = @$rules };
+        @rules = $rules if $@;
+    }
 
     RULE: foreach my $rule (@rules) {
         $self->handle_rule($rule);
@@ -313,16 +315,17 @@ sub handle_rule {
     }
 
     # Handle the case where $op is an array.
+    my $sub_rules;
     {
         local $@;
-        my @sub_rules = eval { @$op, @args };
-        unless ($@) {
-            for my $sub_rule (@sub_rules) {
-                $self->handle_rule($sub_rule);
-            }
-            return;
+        eval { $sub_rules = [@$op, @args] };
+    }
+
+    if ($sub_rules) {
+        for my $sub_rule (@$sub_rules) {
+            $self->handle_rule($sub_rule);
         }
-    };
+    }
 
     local $self->{rule} = $op;
     my $meth = "do_$op";
