@@ -313,13 +313,16 @@ sub handle_rule {
     }
 
     # Handle the case where $op is an array.
-    local $@;
-    eval {
-        for my $sub_rule (@$op, @args) {
-            $self->handle_rule($sub_rule);
+    {
+        local $@;
+        my @sub_rules = eval { @$op, @args };
+        unless ($@) {
+            for my $sub_rule (@sub_rules) {
+                $self->handle_rule($sub_rule);
+            }
+            return;
         }
     };
-    return unless $@;
 
     local $self->{rule} = $op;
     my $meth = "do_$op";
