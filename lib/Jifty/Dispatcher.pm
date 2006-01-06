@@ -43,7 +43,7 @@ In B<MyApp::Dispatcher>:
     ];
     under qr{logs/(\d+)} => [
         when { $1 > 100 } => show '/error',
-        default model => 'MyApp::Model::Log',
+        set model => 'MyApp::Model::Log',
         run { dispatch "/wiki/LogPage-$1" },
     ];
     # ... more rules ...
@@ -58,24 +58,49 @@ display instead.
 
 Generally, this is B<not> the place to be performing model and user specific
 access control checks or updating your database based on what the user has sent
-in. But it might be a good place to enable or disable specific
-C<Jifty::Action>s using L<Jifty::Web/allow_actions> and
+in. You want to do that in your model classes. (Well, I<we> want you to do
+that, but you're free to ignore our advice).
+The Dispatcher runs rules in several stages:
+
+=over
+
+=item before
+
+
+L<before> rules are run before Jifty evaluates actions. They're the perfect place to enable or disable L<Jifty::Action>s  using L<Jifty::Web/allow_actions> and
 L<Jifty::Web/deny_actions> or to completely disallow user access to private
 "component" templates such as the F<_elements> directory in a default Jifty
-application.  It's also the right way to enable L<Jifty::LetMe> actions.
+application.  They're also the right way to enable L<Jifty::LetMe> actions.
 
-The Dispatcher runs I<before> any actions are evaluated, but I<after>
-we've processed all the user's input.  It's intended to replace all the
-F<autohandler>, F<dhandler> and C<index.html> boilerplate code commonly
-found in Mason applications.
+If you want to block Jifty from doing any updates on a C<GET> request, this
+is the place.
 
-It doesn't matter whether the page the user's asked us to display
-exists.  We're running the dispatcher either way. 
+You can entirely stop processing with the C<redirect> and C<abort> directives.
+
+=item on
+
+L<on> rules are run after Jifty evaluates actions, so they have full access
+to the results actions users have performed. They're the right place
+to set up view-specific objects or load up values for your templates.
 
 Dispatcher directives are evaluated in order until we get to either a
 C<show>, C<redirect> or an C<abort>.
 
-Each directive's code block runs in its own scope, but shares a common
+=item after
+
+L<after> rules let you clean up after rendering your page. Delete your cache files, write your transaction logs, whatever. 
+
+At this point, it's too late to C<show>, C<redirect> or C<abort> page display.
+
+=back
+
+
+C<Jifty::Dispatcher> is intended to replace all the
+F<autohandler>, F<dhandler> and C<index.html> boilerplate code commonly
+found in Mason applications, but there's nothing stopping you from using
+those features in your application when they're more convenient.
+
+Each directive's code block runs in its own scope, but all share a common
 C<$Dispatcher> object.
 
 =cut
@@ -111,15 +136,25 @@ C<GET>, C<POST> and C<PUT>.
 Like C<under>, except it has to match the whole path instead of just the prefix.
 Does not set current directory context for its rules.
 
+=head2 before $match => $rule
+
+Just like C<on>, except it runs I<before> actions are evaluated.
+
+=head2 after $match => $rule
+
+Just like C<on>, except it runs I<after> the page is rendered.
+
+
 =head2 when {...} => $rule
 
-Like C<under>, except using an user-supplied test condition. 
+Like C<under>, except using an user-supplied test condition.  You can stick 
+any Perl you want inside the {...}; it's just an anonymous subroutine.
 
 =head2 run {...}
 
 Run a block of code unconditionally; all rules are allowed inside a C<run>
-block, as well as user code.  This is merely a syntactic sugar of C<sub>
-or C<do> blocks.
+block, as well as user code.  You can think of the {...} as an anonymous 
+subroutine.
 
 =head2 set $arg => $val
 
@@ -159,7 +194,9 @@ Redirect to another URI.
 =cut
 
 our @EXPORT = qw<
-    under on run when set del default
+    under run when set del default
+
+    before on after
 
     show dispatch abort redirect
 
@@ -174,7 +211,9 @@ our $Dispatcher;
 
 sub ret (@);
 sub under ($$@)   { ret @_ }    # partial match at beginning of path component
+sub before ($$@)      { ret @_ }    # exact match on the path component
 sub on ($$@)      { ret @_ }    # exact match on the path component
+sub after ($$@)      { ret @_ }    # exact match on the path component
 sub when (&@)     { ret @_ }    # exact match on the path component
 sub run (&@)      { ret @_ }    # execute a block of code
 sub show (;$@)    { ret @_ }    # render a page
@@ -285,7 +324,7 @@ sub handle_request {
     );
 
 HANDLER: {
-        $Dispatcher->do_dispatch($path);
+        $Dispatcher->_do_dispatch($path);
     }
 }
 
@@ -330,7 +369,7 @@ sub handle_rule {
 
     # Now we know op is a scalar.
     local $self->{rule} = $op;
-    my $meth = "do_$op";
+    my $meth = "_do_$op";
     $self->$meth(@args);
 }
 
@@ -339,7 +378,14 @@ no warnings 'exiting';
 sub next_rule { next RULE }
 sub last_rule { last HANDLER }
 
-sub do_under {
+=head2 _do_under
+
+This method is called by the dispatcher internally. You shouldn't need to.
+
+=cut
+
+
+sub _do_under {
     my ( $self, $cond, $rules ) = @_;
     if ( my $regex = $self->match($cond) ) {
 
@@ -354,25 +400,68 @@ sub do_under {
     }
 }
 
-sub do_when {
+=head2 _do_when
+
+This method is called by the dispatcher internally. You shouldn't need to.
+
+=cut
+
+sub _do_when {
     my ( $self, $code, $rules ) = @_;
     if ( $code->() ) {
         $self->handle_rules($rules);
     }
 }
 
-sub do_on {
+=head2 _do_before
+
+This method is called by the dispatcher internally. You shouldn't need to.
+
+=cut
+
+sub _do_before {
     my ( $self, $cond, $rules ) = @_;
     if ( my $regex = $self->match($cond) ) {
-
         # match again to establish $1 $2 etc in the dynamic scope
         $self->{path} =~ $regex;
-
         $self->handle_rules($rules);
     }
 }
 
-sub do_run {
+=head2 _do_on
+
+This method is called by the dispatcher internally. You shouldn't need to.
+
+=cut
+
+sub _do_on {
+    my ( $self, $cond, $rules ) = @_;
+    if ( my $regex = $self->match($cond) ) {
+        # match again to establish $1 $2 etc in the dynamic scope
+        $self->{path} =~ $regex;
+        $self->handle_rules($rules);
+    }
+}
+
+=head2 _do_after
+
+This method is called by the dispatcher internally. You shouldn't need to.
+
+=cut
+
+sub _do_after {
+    my ( $self, $cond, $rules ) = @_;
+    if ( my $regex = $self->match($cond) ) {
+        # match again to establish $1 $2 etc in the dynamic scope
+        $self->{path} =~ $regex;
+        $self->handle_rules($rules);
+    }
+}
+
+
+
+
+sub _do_run {
     my ( $self, $code ) = @_;
 
     # establish void context and make a call
@@ -384,7 +473,7 @@ sub do_run {
     return;
 }
 
-=head2 do_redirect PATH
+=head2 _do_redirect PATH
 
 This method is called by the dispatcher internally. You shouldn't need to.
 
@@ -392,13 +481,13 @@ Redirect the user to the URL provded in the mandatory PATH argument.
 
 =cut
 
-sub do_redirect {
+sub _do_redirect {
     my ( $self, $path ) = @_;
     Jifty->web->redirect($path);
     last_rule;
 }
 
-=head2 do_abort 
+=head2 _do_abort 
 
 This method is called by the dispatcher internally. You shouldn't need to.
 
@@ -406,13 +495,13 @@ Don't display any page. just stop.
 
 =cut
 
-sub do_abort {
+sub _do_abort {
     my $self = shift;
     $self->{mason}->abort(@_);
     last_rule;
 }
 
-=head2 do_show [PATH]
+=head2 _do_show [PATH]
 
 This method is called by the dispatcher internally. You shouldn't need to.
 
@@ -421,7 +510,7 @@ Otherwise, just render whatever we were going to anyway.
 
 =cut
 
-sub do_show {
+sub _do_show {
     use YAML;
     my $self = shift;
     my $path;
@@ -444,24 +533,32 @@ sub do_show {
     $self->last_rule;
 }
 
-sub do_set {
+sub _do_set {
     my ( $self, $key, $value ) = @_;
 
     $self->{args}{$key} = $value;
 }
 
-sub do_del {
+sub _do_del {
     my ( $self, $key ) = @_;
     delete $self->{args}{$key};
 }
 
-sub do_default {
+sub _do_default {
     my ( $self, $key, $value ) = @_;
     $self->{args}{$key} = $value
         unless defined $self->{args}{$key};
 }
 
-sub do_dispatch {
+=head2 _do_dispatch [PATH]
+
+Actually run the dispatcher.
+
+=cut
+
+
+
+sub _do_dispatch {
     my $self = shift;
 
     $self->{path} = shift;
@@ -566,7 +663,7 @@ sub compile_cond {
 
     # Make all metachars into capturing submatches
     unless (
-        $cond =~ s{( (?: \\ [*?] )+ )}{'('. $self->compile_glob($1) .')'}egx )
+        $cond =~ s{( (?: \\ [*?] )+ )}{'('. $self->_compile_glob($1) .')'}egx )
     {
         $cond = "($cond)";
     }
@@ -574,7 +671,17 @@ sub compile_cond {
     return qr{$cond};
 }
 
-sub compile_glob {
+=head2 _compile_glob METAEXPRESSION
+
+Private function.
+
+Turns a metaexpression containing * and % into a capturing perl regex pattern.
+
+
+=cut
+
+
+sub _compile_glob {
     my ( $self, $glob ) = @_;
     $glob =~ s{\\}{}g;
     $glob =~ s{\*}{[^/]+}g;
