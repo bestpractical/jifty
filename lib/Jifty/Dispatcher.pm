@@ -173,18 +173,18 @@ our @EXPORT = qw<
 our $Dispatcher;
 
 sub ret (@);
-sub under ($$@)      { ret @_ } # partial match at beginning of path component
-sub on ($$@)      { ret @_ } # exact match on the path component
-sub when (&@)     { ret @_ } # exact match on the path component
-sub run (&@)      { ret @_ } # execute a block of code
-sub show (;$@)    { ret @_ } # render a page
-sub dispatch ($@) { ret @_ } # run dispatch again with another URI
-sub redirect ($@) { ret @_ } # web redirect
-sub abort (;$@)   { ret @_ } # abort request
-sub default ($$@) { ret @_ } # set parameter if it's not yet set
-sub set ($$@)     { ret @_ } # set parameter
-sub del ($@)      { ret @_ } # remove parameter
-sub get ($)       { $Dispatcher->{args}{$_[0]} }
+sub under ($$@)   { ret @_ }    # partial match at beginning of path component
+sub on ($$@)      { ret @_ }    # exact match on the path component
+sub when (&@)     { ret @_ }    # exact match on the path component
+sub run (&@)      { ret @_ }    # execute a block of code
+sub show (;$@)    { ret @_ }    # render a page
+sub dispatch ($@) { ret @_ }    # run dispatch again with another URI
+sub redirect ($@) { ret @_ }    # web redirect
+sub abort (;$@)   { ret @_ }    # abort request
+sub default ($$@) { ret @_ }    # set parameter if it's not yet set
+sub set ($$@)     { ret @_ }    # set parameter
+sub del ($@)      { ret @_ }    # remove parameter
+sub get ($) { $Dispatcher->{args}{ $_[0] } }
 
 sub qualify ($@);
 sub GET ($)     { qualify method => @_ }
@@ -197,54 +197,53 @@ sub OPTIONS ($) { qualify method => @_ }
 sub import {
     my $class = shift;
     my $pkg   = caller;
-    my @args  = grep {!/^-[Bb]ase/} @_;
+    my @args  = grep { !/^-[Bb]ase/ } @_;
 
     no strict 'refs';
-    @{$pkg.'::RULES'} = ();
+    @{ $pkg . '::RULES' } = ();
 
-    if (@args != @_) {
+    if ( @args != @_ ) {
+
         # User said "-base", let's push ourselves into their @ISA.
-        push @{$pkg.'::ISA'}, $class;
+        push @{ $pkg . '::ISA' }, $class;
     }
 
-    $class->export_to_level(1, @_);
+    $class->export_to_level( 1, @_ );
 }
-
 
 ###################################################
 # Magically figure out the arity based on caller info.
 sub ret (@) {
     my $pkg   = caller(1);
-    my $sub   = (caller(1))[3];
+    my $sub   = ( caller(1) )[3];
     my $proto = prototype($sub);
     my $op    = $sub;
 
     $proto =~ tr/@;//d;
-    if (my $idx = rindex($op, '::')) {
-        $op = substr($op, $idx + 2);
+    if ( my $idx = rindex( $op, '::' ) ) {
+        $op = substr( $op, $idx + 2 );
     }
 
     if ($Dispatcher) {
+
         # We are under an operation -- carry the rule forward
-        foreach my $rule ([$op => splice(@_, 0, length($proto))], @_) {
+        foreach my $rule ( [ $op => splice( @_, 0, length($proto) ) ], @_ ) {
             $Dispatcher->handle_rule($rule);
         }
-    }
-    elsif (wantarray) {
-        ([$op => splice(@_, 0, length($proto))], @_);
-    }
-    elsif (defined wantarray) {
-        [[$op => splice(@_, 0, length($proto))], @_];
-    }
-    else {
+    } elsif (wantarray) {
+        ( [ $op => splice( @_, 0, length($proto) ) ], @_ );
+    } elsif ( defined wantarray ) {
+        [ [ $op => splice( @_, 0, length($proto) ) ], @_ ];
+    } else {
         no strict 'refs';
-        push @{$pkg.'::RULES'}, [$op => splice(@_, 0, length($proto))], @_;
+        push @{ $pkg . '::RULES' },
+            [ $op => splice( @_, 0, length($proto) ) ], @_;
     }
 }
 
 sub qualify ($@) {
     my $key = shift;
-    my $op  = (caller(1))[3];
+    my $op  = ( caller(1) )[3];
     $op =~ s/.*:://;
     return { $key => $op, '' => $_[0] };
 }
@@ -253,19 +252,20 @@ sub rules {
     my $self = shift;
     my $pkg = ref($self) || $self;
     no strict 'refs';
-    @{$pkg.'::RULES'};
+    @{ $pkg . '::RULES' };
 }
 
 sub new {
     my $self = shift;
     return $self if ref($self);
 
-    bless({
-        cwd  => '',
-        path => '',
-        rule => undef,
-        @_,
-    } => $self);
+    bless(
+        {   cwd  => '',
+            path => '',
+            rule => undef,
+            @_,
+        } => $self
+    );
 }
 
 sub handle_request {
@@ -273,23 +273,24 @@ sub handle_request {
 
     my $m    = Jifty->web->mason;
     my $path = $m->request_comp->path;
+
     $path =~ s{/index\.html$}{};
-    if ($path =~ s{/dhandler$}{}) {
-        $path = join('/', $path, $m->dhandler_arg);
+    if ( $path =~ s{/dhandler$}{} ) {
+        $path = join( '/', $path, $m->dhandler_arg );
     }
 
     local $Dispatcher = $self->new(
-        mason  => Jifty->web->mason,
-        args   => { $m->request_args },
+        mason => Jifty->web->mason,
+        args  => { $m->request_args },
     );
 
-    HANDLER: {
+HANDLER: {
         $Dispatcher->do_dispatch($path);
     }
 }
 
 sub handle_rules ($) {
-    my ($self, $rules) = @_;
+    my ( $self, $rules ) = @_;
 
     my @rules;
     {
@@ -298,27 +299,27 @@ sub handle_rules ($) {
         @rules = $rules if $@;
     }
 
-    RULE: foreach my $rule (@rules) {
+RULE: foreach my $rule (@rules) {
         $self->handle_rule($rule);
     }
 }
 
 sub handle_rule {
-    my ($self, $rule) = @_;
-    my ($op, @args);
-    
+    my ( $self, $rule ) = @_;
+    my ( $op,   @args );
+
     # Handle the case where $op is a code reference.
     {
         local $@;
-        eval { ($op, @args) = @$rule };
-        ($op, @args) = (run => $rule) if $@;
+        eval { ( $op, @args ) = @$rule };
+        ( $op, @args ) = ( run => $rule ) if $@;
     }
 
     # Handle the case where $op is an array.
     my $sub_rules;
     {
         local $@;
-        eval { $sub_rules = [@$op, @args] };
+        eval { $sub_rules = [ @$op, @args ] };
     }
 
     if ($sub_rules) {
@@ -327,6 +328,7 @@ sub handle_rule {
         }
     }
 
+    # Now we know op is a scalar.
     local $self->{rule} = $op;
     my $meth = "do_$op";
     $self->$meth(@args);
@@ -338,29 +340,31 @@ sub next_rule { next RULE }
 sub last_rule { last HANDLER }
 
 sub do_under {
-    my ($self, $cond, $rules) = @_;
+    my ( $self, $cond, $rules ) = @_;
     if ( my $regex = $self->match($cond) ) {
+
         # match again to establish $1 $2 etc in the dynamic scope
         $self->{path} =~ $regex;
 
         # enter the matched directory
-        local $self->{cwd} = substr($self->{path}, 0, $+[0]);
-        chop $self->{cwd} if substr($self->{cwd}, -1) eq '/';
+        local $self->{cwd} = substr( $self->{path}, 0, $+[0] );
+        chop $self->{cwd} if substr( $self->{cwd}, -1 ) eq '/';
 
         $self->handle_rules($rules);
     }
 }
 
 sub do_when {
-    my ($self, $code, $rules) = @_;
+    my ( $self, $code, $rules ) = @_;
     if ( $code->() ) {
         $self->handle_rules($rules);
     }
 }
 
 sub do_on {
-    my ($self, $cond, $rules) = @_;
+    my ( $self, $cond, $rules ) = @_;
     if ( my $regex = $self->match($cond) ) {
+
         # match again to establish $1 $2 etc in the dynamic scope
         $self->{path} =~ $regex;
 
@@ -369,10 +373,10 @@ sub do_on {
 }
 
 sub do_run {
-    my ($self, $code) = @_;
+    my ( $self, $code ) = @_;
 
     # establish void context and make a call
-    ($self->can($code) || $code)->($self);
+    ( $self->can($code) || $code )->();
 
     # XXX maybe call with all the $1..$x as @_ too? or is it too gonzo?
     # $code->(map { substr($PATH, $-[$_], ($+[$_]-$-[$_])) } 1..$#-));
@@ -380,11 +384,27 @@ sub do_run {
     return;
 }
 
+=head2 do_redirect PATH
+
+This method is called by the dispatcher internally. You shouldn't need to.
+
+Redirect the user to the URL provded in the mandatory PATH argument.
+
+=cut
+
 sub do_redirect {
-    my ($self, $path) = @_;
+    my ( $self, $path ) = @_;
     Jifty->web->redirect($path);
     last_rule;
 }
+
+=head2 do_abort 
+
+This method is called by the dispatcher internally. You shouldn't need to.
+
+Don't display any page. just stop.
+
+=cut
 
 sub do_abort {
     my $self = shift;
@@ -392,36 +412,53 @@ sub do_abort {
     last_rule;
 }
 
+=head2 do_show [PATH]
+
+This method is called by the dispatcher internally. You shouldn't need to.
+
+Render a template. If the scalar argument "PATH" is given, render that component.
+Otherwise, just render whatever we were going to anyway.
+
+=cut
+
 sub do_show {
-    my ($self, $path) = @_;
+    use YAML;
+    my $self = shift;
+    my $path;
+    $path = shift if (@_);
     my $m = $self->{mason};
-
-    if (!defined $path) {
-        $m->call_next(%{$self->{args}});
+    eval {
+        if ( !defined $path )
+        {
+            $m->call_next( %{ $self->{args} } );
+        } else {
+            $path = "$self->{cwd}/$path" unless $path =~ m{^/};
+            $m->comp( $path, %{ $self->{args} } );
+        }
+    };
+    if ( my $err = $@ ) {
+        die "Dispatcher couldn't run a mason component"
+            . ( $path ? " ($path)" : '' ) . ":\n"
+            . $err;
     }
-    else {
-        $path = "$self->{cwd}/$path" unless $path =~ m{^/};
-        $m->comp($path, %{$self->{args}});
-    }
-
     $self->last_rule;
 }
 
 sub do_set {
-    my ($self, $key, $value) = @_;
+    my ( $self, $key, $value ) = @_;
 
     $self->{args}{$key} = $value;
 }
 
 sub do_del {
-    my ($self, $key) = @_;
+    my ( $self, $key ) = @_;
     delete $self->{args}{$key};
 }
 
 sub do_default {
-    my ($self, $key, $value) = @_;
+    my ( $self, $key, $value ) = @_;
     $self->{args}{$key} = $value
-      unless defined $self->{args}{$key};
+        unless defined $self->{args}{$key};
 }
 
 sub do_dispatch {
@@ -434,54 +471,67 @@ sub do_dispatch {
     $self->{path} =~ s{/+}{/}g;
     $self->{path} =~ s{/$}{};
 
-    HANDLER: {
-        $self->handle_rules([$self->rules, 'show']);
+HANDLER: {
+        $self->handle_rules( [ $self->rules, 'show' ] );
     }
     last_rule;
 }
 
 sub match {
-    my ($self, $cond) = @_;
+    my ( $self, $cond ) = @_;
 
     # Handle the case where $cond is an array.
-    {
+    if ( ref($cond) eq 'ARRAY' ) {
         local $@;
         my $rv = eval {
-            for my $sub_cond (@$cond) {
-                return($self->match($sub_cond) or next);
+            for my $sub_cond (@$cond)
+            {
+                return ( $self->match($sub_cond) or next );
             }
         };
-        return $rv unless $@;
+        if ( my $err = $@ ) {
+            warn "$self match failed: $err";
+        } else {
+            return $rv;
+        }
     }
 
     # Handle the case where $cond is a hash.
-    {
+    elsif ( ref($cond) eq 'HASH' ) {
         local $@;
-        my $rv =eval {
-            for my $key (sort keys %$cond) {
+        my $rv = eval {
+            for my $key ( sort keys %$cond )
+            {
                 next if $key eq '';
                 my $meth = "match_$key";
-                $self->$meth($cond->{$key}) or return;
+                $self->$meth( $cond->{$key} ) or return;
             }
+
             # All precondition passed, get original condition literal
-            return $self->match($cond->{''});
+            return $self->match( $cond->{''} );
         };
-        return $rv unless $@;
+        if ( my $err = $@ ) {
+            warn "$self match failed: $err";
+        } else {
+            return $rv;
+        }
     }
 
     # Now we know $cond is a scalar, match against it.
-    my $regex = $self->compile_cond($cond) or return;
-    $self->{path} =~ $regex or return;
-    return $regex;
+    else {
+        my $regex = $self->compile_cond($cond) or return;
+        $self->{path} =~ $regex or return;
+        return $regex;
+    }
 }
 
 sub match_method {
-    my ($self, $method) = @_;
-    lc($self->{mason}->cgi_request->method) eq lc($method);
+    my ( $self, $method ) = @_;
+    lc( $self->{mason}->cgi_request->method ) eq lc($method);
 }
 
 sub compile_cond {
-    my ($self, $cond) = @_;
+    my ( $self, $cond ) = @_;
 
     # Previously compiled (eg. a qr{} -- return it verbatim)
     return $cond if ref $cond;
@@ -491,29 +541,33 @@ sub compile_cond {
     $cond =~ s{(?:\\\/)+}{/}g;
     $cond =~ s{/$}{};
 
-    if ($cond =~ m{^/}) {
+    if ( $cond =~ m{^/} ) {
+
         # '/foo' => qr{^/foo}
-        $cond = "\\A$cond"
-    }
-    elsif (length($cond)) {
+        $cond = "\\A$cond";
+    } elsif ( length($cond) ) {
+
         # 'foo' => qr{^$cwd/foo}
-        $cond = "(?<=\\A$self->{cwd}/)$cond"
-    }
-    else {
+        $cond = "(?<=\\A$self->{cwd}/)$cond";
+    } else {
+
         # empty path -- just match $cwd itself
         $cond = "(?<=\\A$self->{cwd})";
     }
-    if ($Dispatcher->{rule} eq 'on') {
+    if ( $Dispatcher->{rule} eq 'on' ) {
+
         # "on" anchors on complete match only
         $cond .= '\\z';
-    }
-    else {
+    } else {
+
         # "in" anchors on prefix match in directory boundary
         $cond .= '(?=/|\\z)';
     }
 
     # Make all metachars into capturing submatches
-    unless ($cond =~ s{( (?: \\ [*?] )+ )}{'('. $self->compile_glob($1) .')'}egx) {
+    unless (
+        $cond =~ s{( (?: \\ [*?] )+ )}{'('. $self->compile_glob($1) .')'}egx )
+    {
         $cond = "($cond)";
     }
 
@@ -521,7 +575,7 @@ sub compile_cond {
 }
 
 sub compile_glob {
-    my ($self, $glob) = @_;
+    my ( $self, $glob ) = @_;
     $glob =~ s{\\}{}g;
     $glob =~ s{\*}{[^/]+}g;
     $glob =~ s{\?}{[^/]}g;
