@@ -45,7 +45,7 @@ requires('Math::BigInt');
 requires('Module::Install' => '0.50');
 requires('Module::Pluggable' => '2.95');
 requires('Module::Refresh');
-requires('Pod::Simple::Text');
+requires('Pod::Simple'); #Pod::Simple::Text
 requires('Pod::Usage');
 requires('Scalar::Util');
 requires('String::Koremutake');
