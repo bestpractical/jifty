@@ -3,6 +3,7 @@ use strict;
 use warnings;
 use Exporter;
 use base 'Exporter';
+           
 
 =head1 NAME
 
@@ -10,7 +11,7 @@ Jifty::Dispatcher - The Jifty Dispatcher
 
 =head1 SYNOPSIS
 
-In your F<autohandler>, change the C<< $m->call_next >> statement to:
+In your F<autohandler>, put these two lines first:
 
     require MyApp::Dispatcher;
     MyApp::Dispatcher->handle_request;
@@ -129,7 +130,22 @@ All wildcards in the C<$match> string becomes capturing regex patterns.  You
 can also pass in an array reference of matches, or a regex pattern.
 
 The C<$match> string may be qualified with a HTTP method name, such as
-C<GET>, C<POST> and C<PUT>.
+
+=over
+
+=item GET
+
+=item POST
+
+=item PUT
+
+=item OPTIONS
+
+=item DELETE
+
+=item HEAD
+
+=back
 
 =head2 on $match => $rule
 
@@ -183,6 +199,10 @@ Dispatch again using $path as the request path, preserving args.
 
 Break out from the current C<run> block and go on the next rule.
 
+=head2 last_rule
+
+Break out from the current C<run> block and stop running rules in this stage.
+
 =head2 abort $code
 
 Abort the request.
@@ -209,29 +229,43 @@ our @EXPORT = qw<
 
 our $Dispatcher;
 
-sub ret (@);
-sub under ($$@)   { ret @_ }    # partial match at beginning of path component
-sub before ($$@)      { ret @_ }    # exact match on the path component
-sub on ($$@)      { ret @_ }    # exact match on the path component
-sub after ($$@)      { ret @_ }    # exact match on the path component
-sub when (&@)     { ret @_ }    # exact match on the path component
-sub run (&@)      { ret @_ }    # execute a block of code
-sub show (;$@)    { ret @_ }    # render a page
-sub dispatch ($@) { ret @_ }    # run dispatch again with another URI
-sub redirect ($@) { ret @_ }    # web redirect
-sub abort (;$@)   { ret @_ }    # abort request
-sub default ($$@) { ret @_ }    # set parameter if it's not yet set
-sub set ($$@)     { ret @_ }    # set parameter
-sub del ($@)      { ret @_ }    # remove parameter
+sub _ret (@);
+sub under ($$@)   { _ret @_ }    # partial match at beginning of path component
+sub before ($$@)  { _ret @_ }    # exact match on the path component
+sub on ($$@)      { _ret @_ }    # exact match on the path component
+sub after ($$@)   { _ret @_ }    # exact match on the path component
+sub when (&@)     { _ret @_ }    # exact match on the path component
+sub run (&@)      { _ret @_ }    # execute a block of code
+sub show (;$@)    { _ret @_ }    # render a page
+sub dispatch ($@) { _ret @_ }    # run dispatch again with another URI
+sub redirect ($@) { _ret @_ }    # web redirect
+sub abort (;$@)   { _ret @_ }    # abort request
+sub default ($$@) { _ret @_ }    # set parameter if it's not yet set
+sub set ($$@)     { _ret @_ }    # set parameter
+sub del ($@)      { _ret @_ }    # remove parameter
 sub get ($) { $Dispatcher->{args}{ $_[0] } }
 
-sub qualify ($@);
-sub GET ($)     { qualify method => @_ }
-sub POST ($)    { qualify method => @_ }
-sub PUT ($)     { qualify method => @_ }
-sub HEAD ($)    { qualify method => @_ }
-sub DELETE ($)  { qualify method => @_ }
-sub OPTIONS ($) { qualify method => @_ }
+sub _qualify ($@);
+sub GET ($)     { _qualify method => @_ }
+sub POST ($)    { _qualify method => @_ }
+sub PUT ($)     { _qualify method => @_ }
+sub HEAD ($)    { _qualify method => @_ }
+sub DELETE ($)  { _qualify method => @_ }
+sub OPTIONS ($) { _qualify method => @_ }
+
+=head2 import
+
+Jifty::Dispatcher is an L<Exporter>, that is, part of its role is to
+blast a bunch of symbols into another package. In this case, that other
+package is the dispatcher for your application.
+
+You never call import directly. Just:
+
+    use Jifty::Dispatcher -base;
+
+in C<MyApp::Dispatcher>
+
+=cut
 
 sub import {
     my $class = shift;
@@ -239,8 +273,9 @@ sub import {
     my @args  = grep { !/^-[Bb]ase/ } @_;
 
     no strict 'refs';
-    @{ $pkg . '::RULES' } = ();
-
+    for (qw(RULES RULES_SETUP RULES_CLEANUP)) {
+        @{ $pkg . '::' . $_ } = ();
+    }
     if ( @args != @_ ) {
 
         # User said "-base", let's push ourselves into their @ISA.
@@ -252,7 +287,7 @@ sub import {
 
 ###################################################
 # Magically figure out the arity based on caller info.
-sub ret (@) {
+sub _ret (@) {
     my $pkg   = caller(1);
     my $sub   = ( caller(1) )[3];
     my $proto = prototype($sub);
@@ -267,32 +302,69 @@ sub ret (@) {
 
         # We are under an operation -- carry the rule forward
         foreach my $rule ( [ $op => splice( @_, 0, length($proto) ) ], @_ ) {
-            $Dispatcher->handle_rule($rule);
+            $Dispatcher->_handle_rule($rule);
         }
     } elsif (wantarray) {
         ( [ $op => splice( @_, 0, length($proto) ) ], @_ );
     } elsif ( defined wantarray ) {
         [ [ $op => splice( @_, 0, length($proto) ) ], @_ ];
     } else {
+        my $ruleset;
+        if ( $op eq 'before' ) {
+            $ruleset = 'RULES_SETUP';
+        } elsif ( $op eq 'after' ) {
+            $ruleset = 'RULES_CLEANUP';
+        } else {
+            $ruleset = 'RULES_RUN';
+        }
+
         no strict 'refs';
-        push @{ $pkg . '::RULES' },
+
+        # XXX TODO, need to spec stage here.
+        push @{ $pkg . '::' . $ruleset },
             [ $op => splice( @_, 0, length($proto) ) ], @_;
     }
 }
 
-sub qualify ($@) {
+sub _qualify ($@) {
     my $key = shift;
     my $op  = ( caller(1) )[3];
     $op =~ s/.*:://;
     return { $key => $op, '' => $_[0] };
 }
 
+=head2 rules STAGE
+
+Returns an array of all the rules for the stage STAGE.
+
+Valid values for STAGE are
+
+=over
+
+=item SETUP
+
+=item RUN
+
+=item CLEANUP
+
+=back
+
+=cut
+
 sub rules {
-    my $self = shift;
-    my $pkg = ref($self) || $self;
+    my $self  = shift;
+    my $stage = shift;
+    my $pkg   = ref($self) || $self;
     no strict 'refs';
-    @{ $pkg . '::RULES' };
+    @{ $pkg . '::RULES_' . $stage };
 }
+
+=head2 new
+
+Creates a new Jifty::Dispatcher object. You probably don't ever want
+to do this. (Jifty.pm does it for you)
+
+=cut
 
 sub new {
     my $self = shift;
@@ -306,6 +378,17 @@ sub new {
         } => $self
     );
 }
+
+=head2 handle_request
+
+Actually do what your dispatcher does. For now, the right thing
+to do is to put the following two lines first:
+
+    require MyApp::Dispatcher;
+    MyApp::Dispatcher->handle_request;
+
+
+=cut
 
 sub handle_request {
     my $self = shift;
@@ -328,7 +411,15 @@ HANDLER: {
     }
 }
 
-sub handle_rules ($) {
+=head2 _handle_rules RULESET
+
+When handed an arrayref or array of rules (RULESET), walks through the 
+rules in order, executing as it goes.
+
+
+=cut
+
+sub _handle_rules ($) {
     my ( $self, $rules ) = @_;
 
     my @rules;
@@ -337,13 +428,21 @@ sub handle_rules ($) {
         eval { @rules = @$rules };
         @rules = $rules if $@;
     }
-
 RULE: foreach my $rule (@rules) {
-        $self->handle_rule($rule);
+        $self->_handle_rule($rule);
     }
 }
 
-sub handle_rule {
+=head2 _handle_rule RULE
+
+When handed a single rule in the form of a coderef, C<_handle_rule>, 
+calls C<_do_run> on that rule and returns the result. When handed a 
+rule that turns out to be an array of subrules, recursively calls
+itself and evaluates the subrules in order.
+
+=cut
+
+sub _handle_rule {
     my ( $self, $rule ) = @_;
     my ( $op,   @args );
 
@@ -363,7 +462,7 @@ sub handle_rule {
 
     if ($sub_rules) {
         for my $sub_rule (@$sub_rules) {
-            $self->handle_rule($sub_rule);
+            $self->_handle_rule($sub_rule);
         }
     }
 
@@ -371,6 +470,7 @@ sub handle_rule {
     local $self->{rule} = $op;
     my $meth = "_do_$op";
     $self->$meth(@args);
+
 }
 
 no warnings 'exiting';
@@ -384,10 +484,9 @@ This method is called by the dispatcher internally. You shouldn't need to.
 
 =cut
 
-
 sub _do_under {
     my ( $self, $cond, $rules ) = @_;
-    if ( my $regex = $self->match($cond) ) {
+    if ( my $regex = $self->_match($cond) ) {
 
         # match again to establish $1 $2 etc in the dynamic scope
         $self->{path} =~ $regex;
@@ -396,7 +495,7 @@ sub _do_under {
         local $self->{cwd} = substr( $self->{path}, 0, $+[0] );
         chop $self->{cwd} if substr( $self->{cwd}, -1 ) eq '/';
 
-        $self->handle_rules($rules);
+        $self->_handle_rules($rules);
     }
 }
 
@@ -409,7 +508,7 @@ This method is called by the dispatcher internally. You shouldn't need to.
 sub _do_when {
     my ( $self, $code, $rules ) = @_;
     if ( $code->() ) {
-        $self->handle_rules($rules);
+        $self->_handle_rules($rules);
     }
 }
 
@@ -421,11 +520,13 @@ This method is called by the dispatcher internally. You shouldn't need to.
 
 sub _do_before {
     my ( $self, $cond, $rules ) = @_;
-    if ( my $regex = $self->match($cond) ) {
+    if ( my $regex = $self->_match($cond) ) {
+
         # match again to establish $1 $2 etc in the dynamic scope
         $self->{path} =~ $regex;
-        $self->handle_rules($rules);
+        $self->_handle_rules($rules);
     }
+
 }
 
 =head2 _do_on
@@ -436,10 +537,11 @@ This method is called by the dispatcher internally. You shouldn't need to.
 
 sub _do_on {
     my ( $self, $cond, $rules ) = @_;
-    if ( my $regex = $self->match($cond) ) {
+    if ( my $regex = $self->_match($cond) ) {
+
         # match again to establish $1 $2 etc in the dynamic scope
         $self->{path} =~ $regex;
-        $self->handle_rules($rules);
+        $self->_handle_rules($rules);
     }
 }
 
@@ -451,15 +553,13 @@ This method is called by the dispatcher internally. You shouldn't need to.
 
 sub _do_after {
     my ( $self, $cond, $rules ) = @_;
-    if ( my $regex = $self->match($cond) ) {
+    if ( my $regex = $self->_match($cond) ) {
+
         # match again to establish $1 $2 etc in the dynamic scope
         $self->{path} =~ $regex;
-        $self->handle_rules($rules);
+        $self->_handle_rules($rules);
     }
 }
-
-
-
 
 sub _do_run {
     my ( $self, $code ) = @_;
@@ -483,7 +583,8 @@ Redirect the user to the URL provded in the mandatory PATH argument.
 
 sub _do_redirect {
     my ( $self, $path ) = @_;
-    Jifty->web->redirect($path);
+    eval {Jifty->web->redirect($path);};
+    die $@ unless ( UNIVERSAL::isa $@, 'HTML::Mason::Exception::Abort' ) ;
     last_rule;
 }
 
@@ -497,7 +598,8 @@ Don't display any page. just stop.
 
 sub _do_abort {
     my $self = shift;
-    $self->{mason}->abort(@_);
+    eval {Jifty->web->mason->abort(@_)};
+    die $@ unless ( UNIVERSAL::isa $@, 'HTML::Mason::Exception::Abort' ) ;
     last_rule;
 }
 
@@ -515,22 +617,17 @@ sub _do_show {
     my $self = shift;
     my $path;
     $path = shift if (@_);
-    my $m = $self->{mason};
     eval {
         if ( !defined $path )
         {
-            $m->call_next( %{ $self->{args} } );
+            Jifty->web->mason->call_next( %{ $self->{args} } );
         } else {
             $path = "$self->{cwd}/$path" unless $path =~ m{^/};
-            $m->comp( $path, %{ $self->{args} } );
+            Jifty->web->mason->comp( $path, %{ $self->{args} } );
         }
     };
-    if ( my $err = $@ ) {
-        die "Dispatcher couldn't run a mason component"
-            . ( $path ? " ($path)" : '' ) . ":\n"
-            . $err;
-    }
-    $self->last_rule;
+    die $@ unless ( UNIVERSAL::isa $@, 'HTML::Mason::Exception::Abort' ) ;
+    last_rule;
 }
 
 sub _do_set {
@@ -552,11 +649,15 @@ sub _do_default {
 
 =head2 _do_dispatch [PATH]
 
-Actually run the dispatcher.
+First, this routine runs all the C<before> dispatcher rules, then it runs
+Jifty->web->handle_request(), then it runs all the main C<on> rules,
+evaluating each one in turn.  If it gets through all the rules without
+running an C<abort>, C<redirect> or C<show> directive, it C<shows>
+the template originally requested.
+
+Once it's done with that, it runs all the C<after> "cleanup" rules.
 
 =cut
-
-
 
 sub _do_dispatch {
     my $self = shift;
@@ -567,14 +668,32 @@ sub _do_dispatch {
     # Normalize the path.
     $self->{path} =~ s{/+}{/}g;
     $self->{path} =~ s{/$}{};
-
-HANDLER: {
-        $self->handle_rules( [ $self->rules, 'show' ] );
+    eval {
+        HANDLER: {
+            $self->_handle_rules( [ $self->rules('SETUP') ] );
+            eval {Jifty->web->handle_request();};
+            die $@ unless ( UNIVERSAL::isa $@, 'HTML::Mason::Exception::Abort' ) ;
+            $self->_handle_rules( [ $self->rules('RUN'), 'show' ] );
+            $self->_handle_rules( [ $self->rules('CLEANUP') ] );
+        }
+        last_rule;
+    };
+    if ( my $err = $@ ) {
+        warn ref($err) .$err;
     }
-    last_rule;
 }
 
-sub match {
+=head2 _match CONDITION
+
+Returns the regular expression matched if the current request fits
+the condition defined by CONDITION. 
+
+C<CONDITION> can be a regular expression, a "simple string" to match against, 
+or an arrayref or hashref of those. It should even be nestable.
+
+=cut
+
+sub _match {
     my ( $self, $cond ) = @_;
 
     # Handle the case where $cond is an array.
@@ -583,11 +702,11 @@ sub match {
         my $rv = eval {
             for my $sub_cond (@$cond)
             {
-                return ( $self->match($sub_cond) or next );
+                return ( $self->_match($sub_cond) or next );
             }
         };
         if ( my $err = $@ ) {
-            warn "$self match failed: $err";
+            warn "$self _match failed: $err";
         } else {
             return $rv;
         }
@@ -600,15 +719,15 @@ sub match {
             for my $key ( sort keys %$cond )
             {
                 next if $key eq '';
-                my $meth = "match_$key";
+                my $meth = "_match_$key";
                 $self->$meth( $cond->{$key} ) or return;
             }
 
             # All precondition passed, get original condition literal
-            return $self->match( $cond->{''} );
+            return $self->_match( $cond->{''} );
         };
         if ( my $err = $@ ) {
-            warn "$self match failed: $err";
+            warn "$self _match failed: $err";
         } else {
             return $rv;
         }
@@ -616,18 +735,32 @@ sub match {
 
     # Now we know $cond is a scalar, match against it.
     else {
-        my $regex = $self->compile_cond($cond) or return;
+        my $regex = $self->_compile_condition($cond) or return;
         $self->{path} =~ $regex or return;
         return $regex;
     }
 }
 
-sub match_method {
+=head2 _match_method METHOD
+
+Takes an HTTP method. Returns true if the current request
+came in with that method.
+
+=cut
+
+sub _match_method {
     my ( $self, $method ) = @_;
     lc( $self->{mason}->cgi_request->method ) eq lc($method);
 }
 
-sub compile_cond {
+=head2 _compile_condition CONDITION
+
+Takes a condition defined as a simple string ad return it as a regex
+condition.
+
+=cut
+
+sub _compile_condition {
     my ( $self, $cond ) = @_;
 
     # Previously compiled (eg. a qr{} -- return it verbatim)
@@ -662,8 +795,8 @@ sub compile_cond {
     }
 
     # Make all metachars into capturing submatches
-    unless (
-        $cond =~ s{( (?: \\ [*?] )+ )}{'('. $self->_compile_glob($1) .')'}egx )
+    unless ( $cond
+        =~ s{( (?: \\ [*?] )+ )}{'('. $self->_compile_glob($1) .')'}egx )
     {
         $cond = "($cond)";
     }
@@ -680,7 +813,6 @@ Turns a metaexpression containing * and % into a capturing perl regex pattern.
 
 =cut
 
-
 sub _compile_glob {
     my ( $self, $glob ) = @_;
     $glob =~ s{\\}{}g;
@@ -688,5 +820,7 @@ sub _compile_glob {
     $glob =~ s{\?}{[^/]}g;
     $glob;
 }
+
+
 
 1;
