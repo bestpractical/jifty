@@ -162,11 +162,13 @@ share/web/templates/__jifty/admin/fragments/list/new_item
 share/web/templates/__jifty/admin/fragments/list/update
 share/web/templates/__jifty/admin/fragments/list/view
 share/web/templates/__jifty/admin/index.html
+share/web/templates/__jifty/autocomplete.xml
 share/web/templates/__jifty/error/dhandler
 share/web/templates/__jifty/online_docs/autohandler
 share/web/templates/__jifty/online_docs/content.html
 share/web/templates/__jifty/online_docs/index.html
 share/web/templates/__jifty/online_docs/toc.html
+share/web/templates/__jifty/validator.xml
 share/web/templates/_elements/header
 share/web/templates/_elements/javascript
 share/web/templates/_elements/nav
@@ -180,8 +182,11 @@ share/web/templates/let/autohandler
 share/web/templates/let/dhandler
 share/web/templates/validator.xml
 t/01-dependencies.t
+t/02-connect.t
 t/02-form-protocol.t
 t/03-sessions.t
+t/04-dispatcher.t
+t/04-forms.t
 t/99-pod-coverage.t
 t/99-pod.t
 t/Continuations/bin/jifty
