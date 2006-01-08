@@ -54,6 +54,7 @@ lib/Jifty/Response.pm
 lib/Jifty/Result.pm
 lib/Jifty/RightsFrom.pm
 lib/Jifty/Script.pm
+lib/Jifty/Script/Action.pm
 lib/Jifty/Script/App.pm
 lib/Jifty/Script/FastCGI.pm
 lib/Jifty/Script/Help.pm
@@ -185,6 +186,7 @@ t/02-connect.t
 t/02-form-protocol.t
 t/03-sessions.t
 t/04-dispatcher.t
+t/04-forms.t
 t/99-pod-coverage.t
 t/99-pod.t
 t/Continuations/bin/jifty
