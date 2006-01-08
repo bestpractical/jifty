@@ -95,7 +95,7 @@ of the most important commands are C<schema>, which sets up or updates
 your database schema and C<server>, which starts a standalone
 webserver. To find out what commands your F<jifty> comes with, run:
 
-    C<jifty help>
+    jifty help
 
 =item etc
 
@@ -424,6 +424,8 @@ Future tutorials include:
 =item * Access Control and Security
 
 =item * Upgrading your application's data model
+
+=item * The dispatcher in depth
 
 =item * Deploying your application in production
 
