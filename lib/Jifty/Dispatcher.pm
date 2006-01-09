@@ -584,7 +584,7 @@ Redirect the user to the URL provded in the mandatory PATH argument.
 sub _do_redirect {
     my ( $self, $path ) = @_;
     eval {Jifty->web->redirect($path);};
-    die $@ unless ( UNIVERSAL::isa $@, 'HTML::Mason::Exception::Abort' ) ;
+    die $@ if ( $@ and not UNIVERSAL::isa $@, 'HTML::Mason::Exception::Abort' ) ;
     last_rule;
 }
 
@@ -599,7 +599,7 @@ Don't display any page. just stop.
 sub _do_abort {
     my $self = shift;
     eval {Jifty->web->mason->abort(@_)};
-    die $@ unless ( UNIVERSAL::isa $@, 'HTML::Mason::Exception::Abort' ) ;
+    die $@ if ( $@ and not UNIVERSAL::isa $@, 'HTML::Mason::Exception::Abort' ) ;
     last_rule;
 }
 
@@ -626,7 +626,7 @@ sub _do_show {
             Jifty->web->mason->comp( $path, %{ $self->{args} } );
         }
     };
-    die $@ unless ( UNIVERSAL::isa $@, 'HTML::Mason::Exception::Abort' ) ;
+    die $@ if ( $@ and not UNIVERSAL::isa $@, 'HTML::Mason::Exception::Abort' ) ;
     last_rule;
 }
 
@@ -672,7 +672,7 @@ sub _do_dispatch {
         HANDLER: {
             $self->_handle_rules( [ $self->rules('SETUP') ] );
             eval {Jifty->web->handle_request();};
-            die $@ unless ( UNIVERSAL::isa $@, 'HTML::Mason::Exception::Abort' ) ;
+            die $@ if ( $@ and not UNIVERSAL::isa $@, 'HTML::Mason::Exception::Abort' ) ;
             $self->_handle_rules( [ $self->rules('RUN'), 'show' ] );
             $self->_handle_rules( [ $self->rules('CLEANUP') ] );
         }

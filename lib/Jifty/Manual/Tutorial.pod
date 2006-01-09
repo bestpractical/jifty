@@ -332,8 +332,8 @@ a file called F<web/templates/fragments/page_of_posts> containing:
   my $posts = MyWeblog::Model::PostCollection->new();
   $posts->unlimit();
   $posts->set_page_info( current_page => $page,
-                             per_page     => 25
-                            );
+                         per_page     => 25
+                       );
   $m->out("No items found.") if ($posts->pager->total_entries == 0);
 
   </%init>
@@ -376,8 +376,8 @@ and insert:
   <%init>
   my $top = Jifty->web->navigation;
   $top->child( Home => url => "/");
-  $top->child( Post  => url => "/post", 
-                        label => "Post Article");
+  $top->child( Post => url => "/post", 
+                       label => "Post Article");
   </%init>
 
 For more information about the menu system, see the documentation in
@@ -392,7 +392,7 @@ to obsolete the I<hard bits> of this tutorial as quickly as we can.
 Please join us on the C<jifty-devel> mailing list to talk about how you're 
 using Jifty or what you find difficult or hard to use about it.
 
-=head1 GETTING HELP
+ /=head1 GETTING HELP
 
 =head2 Joining the mailing list
 
