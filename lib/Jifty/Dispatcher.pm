@@ -61,16 +61,17 @@ Generally, this is B<not> the place to be performing model and user specific
 access control checks or updating your database based on what the user has sent
 in. You want to do that in your model classes. (Well, I<we> want you to do
 that, but you're free to ignore our advice).
+
 The Dispatcher runs rules in several stages:
 
 =over
 
 =item before
 
-
-L<before> rules are run before Jifty evaluates actions. They're the perfect place to enable or disable L<Jifty::Action>s  using L<Jifty::Web/allow_actions> and
-L<Jifty::Web/deny_actions> or to completely disallow user access to private
-"component" templates such as the F<_elements> directory in a default Jifty
+B<before> rules are run before Jifty evaluates actions. They're the perfect
+place to enable or disable L<Jifty::Action>s using L<Jifty::Web/allow_actions>
+and L<Jifty::Web/deny_actions> or to completely disallow user access to private
+I<component> templates such as the F<_elements> directory in a default Jifty
 application.  They're also the right way to enable L<Jifty::LetMe> actions.
 
 If you want to block Jifty from doing any updates on a C<GET> request, this
@@ -80,7 +81,7 @@ You can entirely stop processing with the C<redirect> and C<abort> directives.
 
 =item on
 
-L<on> rules are run after Jifty evaluates actions, so they have full access
+B<on> rules are run after Jifty evaluates actions, so they have full access
 to the results actions users have performed. They're the right place
 to set up view-specific objects or load up values for your templates.
 
@@ -89,12 +90,12 @@ C<show>, C<redirect> or an C<abort>.
 
 =item after
 
-L<after> rules let you clean up after rendering your page. Delete your cache files, write your transaction logs, whatever. 
+B<after> rules let you clean up after rendering your page. Delete your cache
+files, write your transaction logs, whatever. 
 
 At this point, it's too late to C<show>, C<redirect> or C<abort> page display.
 
 =back
-
 
 C<Jifty::Dispatcher> is intended to replace all the
 F<autohandler>, F<dhandler> and C<index.html> boilerplate code commonly
@@ -174,7 +175,7 @@ subroutine.
 
 =head2 set $arg => $val
 
-Adds an argument to what we're passing to our template overriding 
+Adds an argument to what we're passing to our template, overriding 
 any value the user sent or we've already set.
 
 =head2 default $arg => $val
@@ -655,7 +656,7 @@ evaluating each one in turn.  If it gets through all the rules without
 running an C<abort>, C<redirect> or C<show> directive, it C<shows>
 the template originally requested.
 
-Once it's done with that, it runs all the C<after> "cleanup" rules.
+Once it's done with that, it runs all the cleanup rules defined with C<after>.
 
 =cut
 
@@ -688,8 +689,18 @@ sub _do_dispatch {
 Returns the regular expression matched if the current request fits
 the condition defined by CONDITION. 
 
-C<CONDITION> can be a regular expression, a "simple string" to match against, 
-or an arrayref or hashref of those. It should even be nestable.
+C<CONDITION> can be a regular expression, a "simple string" with shell
+wildcard characters (C<*> and C<?>) to match against, or an arrayref or hashref
+of those. It should even be nestable.
+
+Arrayref conditions represents alternatives: the match succeeds as soon
+as the first match is found.
+
+Hashref conditions are conjunctions: each non-empty hash key triggers a
+separate C<_match_$keyname> call on the dispatcher object. For example, a
+C<method> key would call C<_match_method> with its value to be matched against.
+After each subcondition is tried (in lexographical order) and succeeded,
+the value associated with the C<''> key is matched again as the condition.
 
 =cut
 
