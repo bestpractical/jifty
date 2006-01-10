@@ -46,7 +46,7 @@ sub options {
 
 =head2 run
 
-Creates a skeleton file under C<lib/I<Application>/Model/I<Model>>, as
+Creates a skeleton file under C<lib/I<ApplicationClass>/Model/I<Model>>, as
 well as a skeleton tests file.
 
 =cut
@@ -60,18 +60,18 @@ sub run {
 
     Jifty->new( no_handle => 1 );
     my $root = Jifty::Util->app_root;
-    my $appname = Jifty->config->framework("ApplicationName");
-    my $path = "$root/lib/$appname/Model/$model.pm";
+    my $appclass = Jifty->config->framework("ApplicationClass");
+    my $path = "$root/lib/$appclass/Model/$model.pm";
 
     my $modelFile = <<"EOT";
-package @{[$appname]}::Model::@{[$model]}::Schema;
+package @{[$appclass]}::Model::@{[$model]}::Schema;
 use Jifty::DBI::Schema;
 
 # Your column definitions go here.  See L<Jifty::DBI::Schema> for
 # documentation about how to write column definitions.
 
-package @{[$appname]}::Model::@{[$model]};
-use base qw/@{[$appname]}::Record/;
+package @{[$appclass]}::Model::@{[$model]};
+use base qw/@{[$appclass]}::Record/;
 
 # Your model-specific methods go here.
 
@@ -94,14 +94,14 @@ A basic test harness for the $model model.
 use Jifty::Test tests => 11;
 
 # Make sure we can load the model
-use_ok('@{[$appname]}::Model::@{[$model]}');
+use_ok('@{[$appclass]}::Model::@{[$model]}');
 
 # Grab a system use
-my \$system_user = @{[$appname]}::CurrentUser->superuser;
+my \$system_user = @{[$appclass]}::CurrentUser->superuser;
 ok(\$system_user, "Found a system user");
 
 # Try testing a create
-my \$o = @{[$appname]}::Model::@{[$model]}->new(current_user => \$system_user);
+my \$o = @{[$appclass]}::Model::@{[$model]}->new(current_user => \$system_user);
 my (\$id) = \$o->create();
 ok(\$id, "$model create returned success");
 ok(\$o->id, "New $model has valid id set");
@@ -113,7 +113,7 @@ ok(\$o->id, "$model create returned another value");
 isnt(\$o->id, \$id, "And it is different from the previous one");
 
 # Searches in general
-my \$collection =  @{[$appname]}::Model::@{[$model]}Collection->new(current_user => \$system_user);
+my \$collection =  @{[$appclass]}::Model::@{[$model]}Collection->new(current_user => \$system_user);
 \$collection->unlimit;
 is(\$collection->count, 2, "Finds two records");
 
@@ -132,7 +132,7 @@ is(\$collection->count, 1, "Still one left");
 
 EOT
 
-    $self->_write("$root/lib/$appname/Model/$model.pm" => $modelFile,
+    $self->_write("$root/lib/$appclass/Model/$model.pm" => $modelFile,
                   "$root/t/00-model-$model.t" => $testFile,
                  );
 }

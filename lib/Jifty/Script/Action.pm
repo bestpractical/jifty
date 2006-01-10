@@ -47,7 +47,7 @@ sub options {
 
 =head2 run
 
-Creates a skeleton file under C<lib/I<Application>/Action/I<Action>>, as
+Creates a skeleton file under C<lib/I<ApplicationClass>/Action/I<Action>>, as
 well as a skeleton tests file.
 
 =cut
@@ -61,8 +61,8 @@ sub run {
 
     Jifty->new( no_handle => 1 );
     my $root = Jifty::Util->app_root;
-    my $appname = Jifty->config->framework("ApplicationName");
-    my $path = "$root/lib/$appname/Action/$action.pm";
+    my $appclass = Jifty->config->framework("ApplicationClass");
+    my $path = "$root/lib/$appclass/Action/$action.pm";
 
     my $actionFile = <<"EOT";
 use strict;
@@ -70,12 +70,12 @@ use warnings;
 
 =head1 NAME
 
-@{[$appname]}::Action::@{[$action]}
+@{[$appclass]}::Action::@{[$action]}
 
 =cut
 
-package @{[$appname]}::Action::@{[$action]};
-use base qw/@{[$appname]}::Action Jifty::Action/;
+package @{[$appclass]}::Action::@{[$action]};
+use base qw/@{[$appclass]}::Action Jifty::Action/;
 
 =head2 arguments
 
@@ -128,11 +128,11 @@ A (very) basic test harness for the $action action.
 use Jifty::Test tests => 1;
 
 # Make sure we can load the action
-use_ok('@{[$appname]}::Action::@{[$action]}');
+use_ok('@{[$appclass]}::Action::@{[$action]}');
 
 EOT
 
-    $self->_write("$root/lib/$appname/Action/$action.pm" => $actionFile,
+    $self->_write("$root/lib/$appclass/Action/$action.pm" => $actionFile,
                   "$root/t/00-action-$action.t" => $testFile,
                  );
 }
