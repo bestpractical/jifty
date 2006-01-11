@@ -49,7 +49,7 @@ requires('Pod::Simple'); #Pod::Simple::Text
 requires('Pod::Usage');
 requires('Scalar::Util');
 requires('String::Koremutake');
-requires('Test::Base');            # Test::Base::Filter
+requires('Test::Base' => 0.44);            # Test::Base::Filter
 requires('Test::HTML::Lint');
 requires('Test::HTTP::Server::Simple' => 0.02);
 requires('Test::More' => 0.62);
@@ -68,6 +68,7 @@ requires('YAML');
 version_from('lib/Jifty.pm');
 #&auto_bundle_deps();
 &auto_install();
+#&auto_include_dependent_dists();
 
 install_script('bin/jifty');
 install_share;

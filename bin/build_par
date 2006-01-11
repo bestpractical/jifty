@@ -1,0 +1,23 @@
+#!/bin/sh
+pp  -z 9 -s \
+	-o ../par/jifty-`perl -e'print $^O'`-`grep '^version' META.yml|cut -d" " -f 2` \
+	-M `grep :: Makefile.PL  |cut -d\' -f 2|grep -v '^use' |xargs -n 1  echo -n " -M "` \
+	-I lib -I inc\
+	-M `(cd inc ;find -type f -name \*.pm|cut -c 3-| grep -v '^Module/Install.pm$'|xargs -n 1  echo -n " -M ")` \
+	-M `(cd lib ;find -type f -name \*.pm|cut -c 3-| xargs -n 1  echo -n " -M ")` \
+	-a 'share/;lib/auto/Jifty/' \
+	bin/jifty
+
+
+# Make a parball
+# Execute code to get dependencies
+# Compress it a lot
+# -s 
+# name it as "jifty-platform-version" in jifty/par (next to jifty-trunk)
+# include all our dependencies from Makefile.PL
+# use the "lib" directory
+# include all of Jifty's libs to pick up dependencies
+# include Jifty's share directory in the par
+# do all this by sourcing bin/jifty
+
+
