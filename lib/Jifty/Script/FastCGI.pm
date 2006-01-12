@@ -29,6 +29,25 @@ to call jifty a bit differently:
  FastCgiServer /path/to/your/jifty/app/bin/jifty -initial-env JIFTY_COMMAND=fastcgi
  ScriptAlias /  /path/to/your/jifty/app/bin/jifty/
 
+For B<lighttpd> (L<http://www.lighttpd.net/>), use this setting:
+
+ server.modules  = ( "mod_fastcgi" )
+ server.document-root = "/path/to/your/jifty/app/web/templates"
+ fastcgi.server = (
+        "" => (
+            "your_jifty_app" => (
+                "socket"       => "/tmp/your_jifty_app.socket",
+                "check-local"  => "disable",
+                "bin-path"     => "/path/to/your/jifty/app/bin/jifty",
+                "bin-environment" => ( "JIFTY_COMMAND" => "fastcgi" ),
+                "min-procs"    => 1,
+                "max-procs"    => 5,
+                "max-load-per-proc" => 1,
+                "idle-timeout" => 20,
+            )
+        )
+    )
+
 =head2 run
 
 Creates a new FastCGI process.
@@ -43,6 +62,8 @@ sub run {
         # So we must squash it again
         $ENV{'PATH'}   = '/bin:/usr/bin';
         $ENV{'SHELL'}  = '/bin/sh' if defined $ENV{'SHELL'};
+        $ENV{'PATH_INFO'}   = $ENV{'SCRIPT_NAME'}
+            if $ENV{'SERVER_SOFTWARE'} =~ /^lighttpd\b/;
         for (qw(CDPATH ENV IFS)) {
         $ENV{$_} = '' if (defined $ENV{$_} );
         }
