@@ -406,6 +406,7 @@ sub manage_database_existence {
     # Everything but the template1 database is assumed
     my %connect_args;
     $connect_args{'database'} = 'template1' if ( $driver eq 'Pg' );
+    $connect_args{'database'} = 'mysql' if ( $driver eq 'mysql' );
     $handle->connect(%connect_args);
 
     if ( $self->{'drop_database'} ) {
