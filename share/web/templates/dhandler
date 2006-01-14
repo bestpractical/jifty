@@ -18,6 +18,7 @@ Used as a poor man's 404 handler
 # XXX TODO: move into a library
 # This code loads up any static file and displays it if it would 404 from dynamic content. Failing that, actually 404
 my $file = $m->dhandler_arg;
+warn $file;
 my $type = "application/octet-stream";
 if ( $file =~ /\.(gif|png|jpe?g)$/i ) {
     $type = "image/$1";
@@ -26,6 +27,8 @@ if ( $file =~ /\.(gif|png|jpe?g)$/i ) {
     $type = 'text/css';
 } elsif ( $file =~ /\.js$/i ) {
     $type = 'application/x-javascript';
+} elsif ($file =~ /\.ico$/i){ 
+    $type = 'image/x-icon';
 }
 
 my @options = (
