@@ -41,6 +41,11 @@ sub new {
 
     my %args = @_;
 
+    # initialize message bits to avoid 'undef' warnings
+    for (qw(body preface footer subject)) {
+            $self->$_('');
+    }
+
     while (my ($arg, $value) = each %args) {
 	if ($self->can($arg)) {
 	    $self->$arg($value);
@@ -73,13 +78,13 @@ not being sent -- for example, the recipients list could be empty.
 
 sub send_one_message {
     my $self = shift;
-    return unless $self->recipients;
+    return unless my @recipients = $self->recipients;
 
     my $message = Email::Simple->create(
         header => [
-            From => $self->from,
-            To   => (join ', ', $self->recipients),
-            Subject => $self->subject,
+            From => $self->from || 'A Jifty Application <nobody>',
+            To   => join (', ', @recipients),
+            Subject => $self->subject || 'No subject',
         ],
         body => join ("\n", $self->preface, $self->body, $self->footer)
     );
@@ -123,7 +128,7 @@ __PACKAGE__->mk_accessors(qw/body preface footer subject from _recipients _to_li
 sub recipients {
     my $self = shift;
     $self->_recipients([@_]) if @_;
-    return @{ $self->_recipients || [] };
+    return @{ $self->_recipients };
 } 
 
 

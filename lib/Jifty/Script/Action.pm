@@ -62,7 +62,7 @@ sub run {
     Jifty->new( no_handle => 1 );
     my $root = Jifty::Util->app_root;
     my $appclass = Jifty->config->framework("ApplicationClass");
-    my $path = "$root/lib/$appclass/Action/$action.pm";
+    my $appclass_path =  File::Spec->catfile(split(/::/,Jifty->config->framework("ApplicationClass")));
 
     my $actionFile = <<"EOT";
 use strict;
@@ -115,7 +115,7 @@ EOT
 
 
     my $testFile = <<"EOT";
-#!/usr/bin/perl -w
+#!/usr/bin/perl
 use warnings;
 use strict;
 
@@ -132,7 +132,7 @@ use_ok('@{[$appclass]}::Action::@{[$action]}');
 
 EOT
 
-    $self->_write("$root/lib/$appclass/Action/$action.pm" => $actionFile,
+    $self->_write("$root/lib/$appclass_path/Action/$action.pm" => $actionFile,
                   "$root/t/00-action-$action.t" => $testFile,
                  );
 }

@@ -61,7 +61,7 @@ sub run {
     Jifty->new( no_handle => 1 );
     my $root = Jifty::Util->app_root;
     my $appclass = Jifty->config->framework("ApplicationClass");
-    my $path = "$root/lib/$appclass/Model/$model.pm";
+    my $appclass_path = File::Spec->catfile(split (/::/, $appclass));
 
     my $modelFile = <<"EOT";
 package @{[$appclass]}::Model::@{[$model]}::Schema;
@@ -81,7 +81,7 @@ EOT
 
 
     my $testFile = <<"EOT";
-#!/usr/bin/perl -w
+#!/usr/bin/perl
 use warnings;
 use strict;
 
@@ -132,7 +132,7 @@ is(\$collection->count, 1, "Still one left");
 
 EOT
 
-    $self->_write("$root/lib/$appclass/Model/$model.pm" => $modelFile,
+    $self->_write("$root/lib/$appclass_path/Model/$model.pm" => $modelFile,
                   "$root/t/00-model-$model.t" => $testFile,
                  );
 }
