@@ -63,8 +63,8 @@ C<new> parameter hash.
 
 =cut
 
-sub accessors { shift->handlers, qw(class key_binding id label) }
-__PACKAGE__->mk_accessors(qw(onclick class key_binding id label ));
+sub accessors { shift->handlers, qw(class key_binding id label tooltip) }
+__PACKAGE__->mk_accessors(qw(onclick class key_binding id label tooltip));
 
 =head2 javascript
 

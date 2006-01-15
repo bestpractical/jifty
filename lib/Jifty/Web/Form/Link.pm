@@ -25,8 +25,8 @@ L<Jifty::Web::Form::Element/accessors>.
 
 =cut
 
-sub accessors { shift->SUPER::accessors(), qw(url escape_label); }
-__PACKAGE__->mk_accessors(qw(url escape_label));
+sub accessors { shift->SUPER::accessors(), qw(url escape_label tooltip); }
+__PACKAGE__->mk_accessors(qw(url escape_label tooltip));
 
 =head2 new PARAMHASH
 
@@ -39,9 +39,13 @@ the C<PARAMHASH> are:
 
 The URL of the link; defaults to the current URL.
 
+=item tooltip
+
+Additional information about the link target.
+
 =item escape_label
 
-HTML escape the label? Defaults to true
+HTML escape the label and tooltip? Defaults to true
 
 =item anything from L<Jifty::Web::Form::Element>
 
@@ -58,6 +62,7 @@ sub new {
     my %args = (
         url          => $ENV{PATH_INFO},
         label        => "Click me!",
+        tooltip      => undef,
         escape_label => 1,
         class        => '',
         @_
@@ -89,9 +94,14 @@ sub render {
     $label = Jifty->web->mason->interp->apply_escapes( $label, 'h' )
         if ( $self->escape_label );
 
+    my $tooltip = $self->tooltip;
+    $tooltip = Jifty->web->mason->interp->apply_escapes( $tooltip, 'h' )
+        if ( $tooltip and $self->escape_label );
+
     Jifty->web->out(qq(<a));
     Jifty->web->out(qq( id="@{[$self->id]}"))       if $self->id;
     Jifty->web->out(qq( class="@{[$self->class]}")) if $self->class;
+    Jifty->web->out(qq( title="@{[$self->tooltip]}")) if $tooltip;
     Jifty->web->out(qq( href="@{[$self->url]}"));
     Jifty->web->out( $self->javascript() );
     Jifty->web->out(qq(>@{[$label]}</a>));

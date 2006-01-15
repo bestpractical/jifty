@@ -25,10 +25,10 @@ L<Jifty::Web::Form::Element/accessors>.
 
 sub accessors {
     shift->SUPER::accessors,
-        qw(url escape_label continuation call returns submit preserve_state);
+        qw(url escape_label tooltip continuation call returns submit preserve_state);
 }
 __PACKAGE__->mk_accessors(
-    qw(url escape_label continuation call returns submit preserve_state)
+    qw(url escape_label tooltip continuation call returns submit preserve_state)
 );
 
 =head2 new PARAMHASH
@@ -48,10 +48,14 @@ button.  Defaults to the current page.
 
 The text on the clickable object.
 
+=item tooltip
+
+Additional information about the link target.
+
 =item escape_label
 
-If set to true, HTML escapes the content of the label before
-displaying it.  This is only relevant for objects that are rendered as
+If set to true, HTML escapes the content of the label and tooltip before
+displaying them.  This is only relevant for objects that are rendered as
 HTML links.  The default is true.
 
 =item continuation
@@ -102,6 +106,7 @@ sub new {
     my %args = (
         url            => $root,
         label          => 'Click me!',
+        tooltip        => '',
         class          => '',
         escape_label   => 1,
         continuation   => Jifty->web->request->continuation,
