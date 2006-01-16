@@ -34,9 +34,10 @@ defaults to.)
 You can either grab a complete Jifty package from http://jifty.org/download
 or install from CPAN. If you get the I<slim> version from CPAN, you'll have
 to install Jifty's dependencies yourself. (Though we help out with that 
-where we can.)  If you want to get up and running quickly, grab:
+where we can.)  If you want to get up and running quickly, grab the latest
+version from:
 
-    http://download.jifty.org/pub/jifty/jifty-latest.tgz
+    http://download.jifty.org/pub/jifty/
 
 Either way, the installation process is the same:
 
