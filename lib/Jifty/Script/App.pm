@@ -4,9 +4,9 @@ use strict;
 package Jifty::Script::App;
 use base qw'App::CLI::Command Class::Accessor';
 
-use YAML;
 use File::Copy;
 use Jifty::Config;
+use Jifty::YAML;
 
 __PACKAGE__->mk_accessors(qw/prefix dist_name mod_name/);
 
@@ -136,7 +136,7 @@ sub _write_config {
     my $default_config = $cfg->guess($self->dist_name);
     my $file = join("/",$self->prefix, 'etc','config.yml');
     print("Creating configuration file $file\n");
-    YAML::DumpFile($file => $default_config);
+    Jifty::YAML::DumpFile($file => $default_config);
 
 }
 

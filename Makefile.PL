@@ -37,7 +37,6 @@ requires('HTTP::Server::Simple::Mason' => '0.09');
 requires('HTTP::Server::Simple::Recorder');
 requires('Hash::Merge');
 requires('Hook::LexWrap');
-requires('JSON');
 requires('Jifty::DBI' => '0.06' );            # Jifty::DBI::Collection Jifty::DBI::Handle Jifty::DBI::Record::Cachable Jifty::DBI::SchemaGenerator
 requires('Locale::Maketext::Simple');
 requires('Log::Log4perl');
@@ -64,7 +63,16 @@ requires('WWW::Mechanize' => 1.12);
 requires('XML::Writer');
 requires('XML::XPath');
 requires('version');
-requires('YAML');
+
+if (can_cc()) {
+    requires('YAML::Syck' => 0.27) unless can_use('YAML' => 0.35);
+    requires('JSON::Syck' => 0.05) unless can_use('JSON' => 0.01);
+}
+else {
+    requires('YAML' => 0.35) unless can_use('YAML::Syck' => 0.27);
+    requires('JSON' => 0.01) unless can_use('JSON::Syck' => 0.05);
+}
+
 version_from('lib/Jifty.pm');
 #&auto_bundle_deps();
 &auto_install();

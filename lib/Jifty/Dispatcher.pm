@@ -614,7 +614,6 @@ Otherwise, just render whatever we were going to anyway.
 =cut
 
 sub _do_show {
-    use YAML;
     my $self = shift;
     my $path;
     $path = shift if (@_);

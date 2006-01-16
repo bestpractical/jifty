@@ -7,7 +7,7 @@ use base qw/Jifty::Object Class::Accessor Clone/;
 __PACKAGE__->mk_accessors(qw(arguments just_validating path continuation));
 
 use Jifty::JSON;
-use YAML;
+use Jifty::YAML;
 
 =head1 NAME
 
@@ -112,7 +112,7 @@ sub fill {
         if ($ct eq "text/x-json") {
             return $self->from_data_structure(Jifty::JSON::jsonToObj($data));
         } elsif ($ct eq "text/x-yaml") {
-            return $self->from_data_structure(YAML::Load($data));
+            return $self->from_data_structure(Jifty::YAML::Load($data));
         }
     }
 

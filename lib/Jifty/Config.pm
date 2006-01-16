@@ -15,8 +15,8 @@ Jifty::Config -- wrap a jifty configuration file
 use Jifty::Everything;
 use Jifty::DBI::Handle;
 use Jifty::Util;
+use Jifty::YAML;
 use UNIVERSAL::require;
-use YAML;
 use File::Spec;
 use File::Basename;
 use Log::Log4perl;
@@ -252,7 +252,7 @@ sub load_file {
 
     # only try to load files that exist
     return {} unless ( $file && -f $file );
-    my $hashref = YAML::LoadFile($file)
+    my $hashref = Jifty::YAML::LoadFile($file)
         or die "I couldn't load config file $file: $!";
 
     $hashref = $self->_expand_relative_paths($hashref);

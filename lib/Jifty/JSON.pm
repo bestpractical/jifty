@@ -9,19 +9,36 @@ Jifty::JSON -- Wrapper around L<JSON>
 
 =head1 DESCRIPTION
 
-Provides a wrapper around the L<JSON> library.  The JSON specification
-at L<http://www.crockford.com/JSON/> states that only double-quotes
-are possible for specifying strings.  However, for the purposes of
-embedding Javascript-compatible objects in XHTML attributes (which use
+Provides a wrapper around the L<JSON> library.
+
+The JSON specification at L<http://www.crockford.com/JSON/> states that only
+double-quotes are possible for specifying strings.  However, for the purposes
+of embedding Javascript-compatible objects in XHTML attributes (which use
 double-quotes), we sometimes want to provide strings in single quotes.
 This provides a version of L<JSON/objToJson> which allows
 single-quoted string output.
+
+If the faster L<JSON::Syck> is available, it is preferred over the pure-perl
+L<JSON>, as it provides native support for single-quoted strings..
 
 =head1 METHODS
 
 =cut
 
-use JSON ();
+BEGIN {
+    local $@;
+    no strict 'refs';
+    no warnings 'once';
+    if (eval { require JSON::Syck; $JSON::Syck::VERSION >= 0.05 }) {
+        *jsonToObj = *jsonToObj_syck;
+        *objToJson = *objToJson_syck;
+    }
+    else {
+        require JSON;
+        *jsonToObj = *jsonToObj_pp;
+        *objToJson = *objToJson_pp;
+    }
+}
 
 =head2 jsonToObj JSON, [ARGUMENTS]
 
@@ -30,7 +47,12 @@ identical to L<JSON/jsonToObj>.
 
 =cut
 
-sub jsonToObj {
+sub jsonToObj_syck {
+    local $JSON::Syck::SingleQuote = 0;
+    JSON::Syck::Load($_[0]);
+}
+
+sub jsonToObj_pp {
     return JSON::jsonToObj(@_);
 }
 
@@ -44,10 +66,17 @@ double quotes.
 
 =cut
 
+sub objToJson_syck {
+    my ($obj, $args) = @_;
+
+    local $JSON::Syck::SingleQuote = $args->{singlequote};
+    JSON::Syck::Dump($obj);
+}
+
 # We should escape double-quotes somehow, so that we can guarantee
 # that double-quotes *never* appear in the JSON string that is
 # returned.
-sub objToJson {
+sub objToJson_pp {
     my ($obj, $args) = @_;
 
     # Unless we're asking for single-quoting, just do what JSON.pm
