@@ -109,14 +109,12 @@ sub Jifty::ClassLoader::INC {
       return $self->return_class( "package " . $CurrentUserClass . ";\n" . "use base 'Jifty::CurrentUser';\n" . " 1;" );
       }
     elsif ( $module
-        =~ m!^($ApplicationClassPrefix)::Model::([^:]+)Collection$!
+        =~ m!^($ApplicationClassPrefix)::Model::(\w+)Collection$!
         )
     {
 
         # Auto-create Collection classes
         my $record_class = $ApplicationClassPrefix . "::Model::" . $2;
-        return undef unless $self->{models}{$record_class} || $record_class->require();
-
         return $self->return_class( "package " . $ApplicationClassPrefix . "::Model::" . $2 . "Collection;\n"."use base qw/@{[$ApplicationClassPrefix]}::Collection/;\n sub record_class { '@{[$ApplicationClassPrefix]}::Model::$2' }\n"." 1;"
         );
 
@@ -183,7 +181,7 @@ sub require {
         require => 1,
         inner => 0
     );
-    $self->{models} = {map {($_ => 1)} grep {/^($ApplicationClassPrefix)::Model::([^:]+)$/ and not /Collection$/} $self->plugins};
+    $self->{models} = {map {($_ => 1)} grep {/^($ApplicationClassPrefix)::Model::(.*)$/ and not /Collection$/} $self->plugins};
     for my $full (keys %{$self->{models}}) {
         my($short) = $full =~ /::Model::(.*)/;
          ($full . "Collection")->require;
