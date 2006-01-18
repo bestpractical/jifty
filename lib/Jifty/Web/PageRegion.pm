@@ -238,19 +238,14 @@ sub render {
         $result .= qq|<div id="region-| . $self->qualified_name . qq|">|;
     }
 
-    # Use a subrequest so we can't show components we wouldn't
-    # normally be allowed to.  We pass in an empty 'J:ACTIONS' so that
-    # actions don't get run more than once.
+    # Merge in defaults
+    %arguments = (%{ Jifty->web->request->arguments }, region => $self, 'J:ACTIONS' => '', %arguments);
 
-    Jifty->web->mason->make_subrequest
-      ( comp => $self->path,
-        args => [ %{ Jifty->web->request->arguments },
-                  region => $self,
-                  'J:ACTIONS' => '',
-                  %arguments ],
-        out_method => \$result,
-      )->exec;
-
+    
+    $Jifty::Dispatcher::Dispatcher->{handler}->interp->make_request(comp => $self->path,
+                                                                    args => [ %arguments ],
+                                                                    out_method => \$result,
+                                                                   )->exec;
     if ($self->region_wrapper) {
         $result .= qq|</div>|;
     }
