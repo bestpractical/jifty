@@ -14,10 +14,9 @@ might have been expecting some sort of answer.  It allows one to
 re-visit that context later by providing the continuation again.
 Continuations are stored on the user's session.
 
-Continuations store a L<Jifty::Request> object, the contents of the
-mason C<notes> hash, and the L<Jifty::Response> object for the
-request.  They can also store arbitrary code to be run when the
-continuation is called.
+Continuations store a L<Jifty::Request> object and the
+L<Jifty::Response> object for the request.  They can also store
+arbitrary code to be run when the continuation is called.
 
 Continuations can also be arbitrarily nested.  This means that
 returning from one continuation will drop you into the continuation
@@ -43,7 +42,7 @@ use Clone;
 use base qw/Class::Accessor/;
 
 __PACKAGE__->mk_accessors(qw(id parent
-                             request notes response code
+                             request response code
                              ));
 
 =head2 new PARAMHASH
@@ -75,11 +74,6 @@ state across a redirect, however, we tuck the L<Jifty::Response> value
 of the previous request into the continuation as well.  Defaults to an
 empty L<Jifty::Response> object.
 
-=item notes
-
-An anonymous hash of the contents of the
-L<HTML::Mason::Request/notes>.
-
 =item code
 
 An optional subroutine reference to evaluate when the continuation is
@@ -98,13 +92,12 @@ for the interface to settle down a bit before being written.
 
 sub new {
     my $class = shift;
-    my $self = bless { notes => {}}, $class;
+    my $self = bless { }, $class;
 
     my %args = (
                 parent   => Jifty->web->request->continuation,
                 request  => Jifty::Request->new(),
                 response => Jifty::Response->new(),
-                notes    => Jifty->web->mason->notes,
                 code     => undef,
                 clone    => undef,
                 @_
@@ -158,7 +151,6 @@ sub call {
     my $self = shift;
 
     if (defined $self->request->path and $ENV{REQUEST_URI} ne $self->request->path . "?J:CALL=" . $self->id) {
-
         # Clone our request
         my $request = Clone::clone($self->request);
         
@@ -179,14 +171,13 @@ sub call {
         my $next = Jifty::Continuation->new(parent => $self->parent, 
                                             request => $request,
                                             response => $response,
-                                            notes => $self->notes,
                                             code => $self->code,
                                            );
         $next->request->continuation(Jifty->web->session->get_continuation($next->parent))
           if defined $next->parent;
 
         # Redirect to right page if we're not there already
-        Jifty->web->mason->redirect($next->request->path . "?J:CALL=" . $next->id);
+        Jifty->web->_redirect($next->request->path . "?J:CALL=" . $next->id);
     } else {
         # Pull state information out of the continuation and set it
         # up; we use clone so that the continuation itself is
@@ -194,7 +185,6 @@ sub call {
 
         # TODO: maybe not use clone?  Use something happier?
         Jifty->web->response( Clone::clone($self->response) ) if $self->response;
-        %{Jifty->web->mason->notes} = %{$self->notes};
         $self->code->(Jifty->web->request)
           if $self->code;
         Jifty->web->_internal_request( Clone::clone($self->request) );

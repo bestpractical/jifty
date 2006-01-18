@@ -1,6 +1,3 @@
-<%init>
-Jifty->web->handle_request();
-</%init>
 <% Jifty->web->render_messages %>
 
 <% $m->call_next %>

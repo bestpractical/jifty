@@ -63,7 +63,7 @@ sub load {
         my $cookiename = $self->cookie_name;
         $session_id    =  $cookies{$cookiename} ? $cookies{$cookiename}->value() : undef;
     }
-    
+
     $Storable::Deparse = 1;
     $Storable::Eval    = 1;
     my %session;
@@ -85,6 +85,7 @@ sub load {
 
     $self->_session( tied(%session) );
     $session{_session_id} = $session{_session_id} || $session_id;
+
 }
 
 =head2 unload
@@ -223,7 +224,6 @@ Sets the session cookie
 
 sub set_cookie {
     my $self = shift;
-    my $m    = Jifty->web->mason;
 
     my $cookie_name = $self->cookie_name;
     my %cookies     = CGI::Cookie->fetch();
@@ -239,8 +239,7 @@ sub set_cookie {
     if ( not $cookies{$cookie_name}
         or ( $cookies{$cookie_name} ne $cookie->as_string ) )
     {
-        $m->cgi_request->headers_out->{'Set-Cookie'} = $cookie->as_string
-            if ($m);
+        Jifty->web->response->add_header( 'Set-Cookie' => $cookie->as_string );
     }
 }
 

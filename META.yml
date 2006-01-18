@@ -41,7 +41,6 @@ requires:
   HTTP::Server::Simple::Recorder: 0
   Hash::Merge: 0
   Hook::LexWrap: 0
-  JSON: 0
   Jifty::DBI: 0.06
   Locale::Maketext::Simple: 0
   Log::Log4perl: 0
@@ -67,7 +66,6 @@ requires:
   WWW::Mechanize: 1.12
   XML::Writer: 0
   XML::XPath: 0
-  YAML: 0
   perl: 5.8.3
   version: 0
 tests: t/*.t t/*/t/*.t

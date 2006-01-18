@@ -25,7 +25,17 @@ Creates a new L<Jifty::Response> object.
 
 sub new {
     my $class = shift;
-    bless {results => {}}, $class;
+    bless {results => {}, headers => []}, $class;
+}
+
+sub add_header {
+    my $self = shift;
+    push @{$self->{headers}}, [@_];
+}
+
+sub headers {
+    my $self = shift;
+    return @{$self->{headers}};
 }
 
 =head2 result MONIKER [RESULT]

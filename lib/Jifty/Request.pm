@@ -91,21 +91,22 @@ sub new {
 =head2 fill
 
 Attempt to fill in the request from any number of various methods --
-YAML, JSON, etc.  Falls back to query parameters.
+YAML, JSON, etc.  Falls back to query parameters.  Takes a CGI object.
 
 =cut
 
 sub fill {
     my $self = shift;
+    my ($cgi) = @_;
 
     # If this is a subrequest, we need to pull from the mason args in
     # order to avoid infinite looping
-    $self->from_mason_args
-      if Jifty->web->mason->is_subrequest;
+    $self->from_cgi($cgi)
+      if Jifty->web->mason and Jifty->web->mason->is_subrequest;
 
     # Grab content type and posted data, if any
-    my $ct   = Jifty->web->mason->cgi_request->header_in("Content-Type");
-    my $data = Jifty->web->mason->request_args->{POSTDATA};
+    my $ct   = $ENV{"CONTENT_TYPE"};
+    my $data = $cgi->param('POSTDATA');
 
     # Check it for something appropriate
     if ($data) {
@@ -117,7 +118,7 @@ sub fill {
     }
 
     # Fall back on using the mason args
-    return $self->from_mason_args;
+    return $self->from_cgi($cgi);
 }
 
 =head2 from_data_structure
@@ -167,31 +168,43 @@ sub from_data_structure {
     return $self;
 }
 
-=head2 from_mason_args
+=head2 from_cgi CGI
 
-Calls C<from_webform> with the current mason request's args.
+Calls C<from_webform> with the CGI's parameters.
 
 Returns itself.
 
 =cut
 
-sub from_mason_args {
+sub from_cgi {
     my $self = shift;
-
-    my $path = $ENV{REQUEST_URI};
+    my ($cgi) = @_;
+    
+    my $path = $cgi->path_info;
     $path =~ s/\?.*//;
     $self->path( $path );
 
-    return $self->from_webform(%{ Jifty->web->mason->request_args });
+    use HTML::Mason::Utils;
+    my %args = HTML::Mason::Utils::cgi_request_args( $cgi, $cgi->request_method );
+
+    my @splittable_names = grep /=|\|/, keys %args;
+    for my $splittable (@splittable_names) {
+        delete $args{$splittable};
+        for my $newarg (split /\|/, $splittable) {
+            # If there are multiple =s, you just lose.
+            my ($k, $v) = split /=/, $newarg;
+            $args{$k} = $args{$k} ? (ref $args{$k} ? [@{$args{$k}},$v] : [$args{$k}, $v] ) : $v;
+        }
+    }
+    return $self->from_webform( %args );
 }
 
 
 =head2 from_webform %QUERY_ARGS
 
 Parses web form arguments into the Jifty::Request data structure.
-Takes in the query arguments, as parsed by Mason (thus, repeated
-arguments have already been turned into array refs).  See
-L</SERIALIZATION> for details of how query parameters are parsed.
+Takes in the query arguments. See L</SERIALIZATION> for details of how
+query parameters are parsed.
 
 Returns itself.
 
@@ -230,9 +243,6 @@ sub merge_param {
 
     my ($key, $value) = @_;
     $self->arguments->{$key} = $value;
-
-    my $args = Jifty->web->mason->{'request_args'};
-    push @$args, $key => $value;
 
     if ($key =~ /^J:A-(?:(\d+)-)?(.+)/s) {
         $self->add_action(moniker => $2, class => $value, order => $1, arguments => {}, active => 1);
@@ -658,8 +668,18 @@ sub argument {
 
 The primary source of Jifty requests through the website are CGI query
 parameters.  These are requests submitted using CGI GET or POST
-requests to your Jifty application.  See L<Jifty::MasonInterp> for
-details of the CGI parsing.
+requests to your Jifty application.
+
+=head2 argument munging
+
+In addition to standard Mason argument munging, Jifty also takes
+arguments with a B<name> of
+
+   bla=bap|beep=bop|foo=bar
+
+and an arbitrary value, and makes them appear as if they were actually
+separate arguments.  The purpose is to allow submit buttons to act as
+if they'd sent multiple values, without using JavaScript.
 
 =head2 actions
 

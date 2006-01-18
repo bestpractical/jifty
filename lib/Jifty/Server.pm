@@ -41,7 +41,6 @@ sub new {
     my $class = shift;
     my $self  = {};
     bless $self, $class;
-
     $self->setup_jifty(@_);
 
     $self->recording_on if $ENV{'JIFTY_RECORD'};
@@ -104,7 +103,7 @@ sub setup_jifty {
     my $self = shift;
     my %args = (
                 port => undef,
-        @_
+                @_
     );
 
     Jifty->config->framework('Web')->{'Port'} = $args{port} if $args{port};
@@ -124,6 +123,12 @@ request.
 sub handle_request {
     my $self = shift;
     my $cgi = shift;
+
+    use Hook::LexWrap;
+    wrap 'HTML::Mason::FakeApache::send_http_header', pre => sub {
+        my $r = shift;
+        $r->header_out( @{$_} ) for Jifty->web->response->headers;
+    };
 
     Jifty->handler->handle_request( mason_handler => $self->mason_handler,
                                     cgi  => $cgi);

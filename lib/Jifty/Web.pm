@@ -47,6 +47,7 @@ Returns a L<HTML::Mason::Request> object
 =cut
 
 sub mason {
+    use HTML::Mason::Request;
     return HTML::Mason::Request->instance;
 }
 
@@ -209,7 +210,6 @@ For more details about continuations, see L<Jifty::Continuation>.
 sub handle_request {
     my $self = shift;
 
-    #$self->log->debug( "Handling " . $ENV{'REQUEST_URI'} );
     $self->setup_session;
     $self->response( Jifty::Response->new ) unless $self->response;
 
@@ -220,10 +220,12 @@ sub handle_request {
     # components have access to the outermost request
     if ($self->request) {
         local $self->{request};
-        $self->_internal_request( Jifty::Request->new->fill );
+        $self->_internal_request( Jifty::Request->new->fill(@_) );
     } else {
-        $self->_internal_request( Jifty::Request->new->fill );
+        $self->_internal_request( Jifty::Request->new->fill(@_) );
     }
+
+  REQUEST_ABORT:
 }
 
 # Called when continuations get run, as well as by handle_request;
@@ -233,7 +235,6 @@ sub _internal_request {
     my ($request) = @_;
 
     $self->request($request);
-    $self->setup_page_actions;
     my @valid_actions;
     for my $request_action ( $self->request->actions ) {
         next unless $request_action->active;
@@ -264,7 +265,7 @@ sub _internal_request {
             }
         }
     }
-    $self->session->set_cookie;
+    $self->session->set_cookie();
 
     $self->request->call_continuation
         if $self->response->success;
@@ -274,21 +275,6 @@ sub _internal_request {
 
     # This may be a request for fragments, not for a whole page
     $self->serve_fragments if $self->request->fragments;
-}
-
-=head3 setup_page_actions
-
-Probe the page the current user has requested to see if it has any
-special actions it wants to run, if it wants to massage the existing
-actions, etc.
-
-=cut
-
-sub setup_page_actions {
-    my $self = shift;
-    if ( $self->mason->base_comp->method_exists('setup_actions') ) {
-        $self->mason->base_comp->call_method('setup_actions');
-    }
 }
 
 =head3 request [VALUE]
@@ -305,8 +291,7 @@ Gets or sets the current L<Jifty::Response> object.
 
 Gets the actions that have been created with this framework with
 C<new_action> (whether automatically via a L<Jifty::Request>, or in
-Mason code), as L<Jifty::Action> objects. (These are actually stored
-in the mason notes, so that they are magically saved over redirects.)
+Mason code), as L<Jifty::Action> objects.
 
 =cut
 
@@ -579,7 +564,7 @@ sub redirect_required {
     my $self = shift;
 
     if ($self->next_page
-        and ( ( $self->next_page ne $self->mason->request_comp->path )
+        and ( ( $self->next_page ne $self->request->path )
             or $self->request->state_variables )
         )
     {
@@ -604,8 +589,7 @@ sub redirect {
     my $page = shift || $self->next_page;
 
     if (   $self->response->results
-        or $self->request->state_variables
-        or %{ $self->mason->notes } )
+        or $self->request->state_variables )
     {
         my $request = Jifty::Request->new();
         $request->path($page);
@@ -614,12 +598,27 @@ sub redirect {
         my $cont = Jifty::Continuation->new(
             request  => $request,
             response => $self->response,
-            notes    => $self->mason->notes,
             parent   => $self->request->continuation,
         );
-        $self->mason->redirect( $page . "?J:CALL=" . $cont->id );
-    } else {
+        $page = $page . "?J:CALL=" . $cont->id;
+    }
+    $self->_redirect($page);
+}
+
+sub _redirect {
+    my $self = shift;
+    my ($page) = @_;
+
+    if ($self->mason) {
         $self->mason->redirect($page);
+    } else {
+        # This is designed to work under CGI or FastCGI; will need an
+        # abstraction for mod_perl
+        my $apache = HTML::Mason::FakeApache->new();
+        $apache->header_out( Location => $page );
+        $apache->header_out( Status => 302 );
+        $apache->send_http_header();
+        goto REQUEST_ABORT;
     }
 
 }
@@ -644,7 +643,6 @@ sub save_continuation {
         my $c = Jifty::Continuation->new(
             request  => $self->request,
             response => $self->response,
-            notes    => $self->mason->notes,
             parent   => $self->request->continuation,
             clone    => $clone,
         );
@@ -656,12 +654,12 @@ sub save_continuation {
         {
 
 # We don't get to redirect to the new page; redirect to the same page, new cont
-            Jifty->web->mason->redirect(
+            $self->_redirect(
                 $self->request->path . "?J:C=" . $c->id );
         } else {
 
             # Set us up with the new continuation
-            Jifty->web->mason->redirect( $args{'J:PATH'}
+            $self->_redirect( Jifty::Web->url . $args{'J:PATH'}
                     . ( $args{'J:PATH'} =~ /\?/ ? "&" : "?" ) . "J:C="
                     . $c->id );
         }
@@ -831,8 +829,7 @@ sub render_messages {
 
 =head3 render_request_debug_info
 
-Outputs the request arguments and any Mason notes in a <div
-id="debug"> tag.
+Outputs the request arguments.
 
 =cut
 
@@ -843,9 +840,6 @@ sub render_request_debug_info {
     $m->out('<div class="debug">');
     $m->out('<hr /><h1>Request args</h1><pre>');
     $m->out( YAML::Dump( { $m->request_args } ) );
-    $m->out('</pre>');
-    $m->out('<hr /><h1>$m->notes</h1><pre>');
-    $m->out( YAML::Dump( $m->notes ) );
     $m->out('</pre></div>');
 
     return '';

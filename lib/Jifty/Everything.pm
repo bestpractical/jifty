@@ -33,8 +33,6 @@ use Jifty::LetMe ();
 use Jifty::Logger ();
 use Jifty::Handler ();
 
-use Jifty::MasonInterp ();
-
 use Jifty::Model::Schema ();
 
 

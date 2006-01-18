@@ -57,10 +57,11 @@ before finally handing off control to the templating system to display
 the page the user requested or whatever else the system has decided to
 display instead.
 
-Generally, this is B<not> the place to be performing model and user specific
-access control checks or updating your database based on what the user has sent
-in. You want to do that in your model classes. (Well, I<we> want you to do
-that, but you're free to ignore our advice).
+Generally, this is B<not> the place to be performing model and user
+specific access control checks or updating your database based on what
+the user has sent in. You want to do that in your model
+classes. (Well, I<we> want you to do that, but you're free to ignore
+our advice).
 
 The Dispatcher runs rules in several stages:
 
@@ -68,42 +69,43 @@ The Dispatcher runs rules in several stages:
 
 =item before
 
-B<before> rules are run before Jifty evaluates actions. They're the perfect
-place to enable or disable L<Jifty::Action>s using L<Jifty::Web/allow_actions>
-and L<Jifty::Web/deny_actions> or to completely disallow user access to private
-I<component> templates such as the F<_elements> directory in a default Jifty
-application.  They're also the right way to enable L<Jifty::LetMe> actions.
+B<before> rules are run before Jifty evaluates actions. They're the
+perfect place to enable or disable L<Jifty::Action>s using
+L<Jifty::Web/allow_actions> and L<Jifty::Web/deny_actions> or to
+completely disallow user access to private I<component> templates such
+as the F<_elements> directory in a default Jifty application.  They're
+also the right way to enable L<Jifty::LetMe> actions.
 
-If you want to block Jifty from doing any updates on a C<GET> request, this
-is the place.
-
-You can entirely stop processing with the C<redirect> and C<abort> directives.
+You can entirely stop processing with the C<redirect> and C<abort>
+directives.
 
 =item on
 
-B<on> rules are run after Jifty evaluates actions, so they have full access
-to the results actions users have performed. They're the right place
-to set up view-specific objects or load up values for your templates.
+L<on> rules are run after Jifty evaluates actions, so they have full
+access to the results actions users have performed. They're the right
+place to set up view-specific objects or load up values for your
+templates.
 
 Dispatcher directives are evaluated in order until we get to either a
 C<show>, C<redirect> or an C<abort>.
 
 =item after
 
-B<after> rules let you clean up after rendering your page. Delete your cache
-files, write your transaction logs, whatever. 
+L<after> rules let you clean up after rendering your page. Delete your
+cache files, write your transaction logs, whatever.
 
-At this point, it's too late to C<show>, C<redirect> or C<abort> page display.
+At this point, it's too late to C<show>, C<redirect> or C<abort> page
+display.
 
 =back
 
-C<Jifty::Dispatcher> is intended to replace all the
-F<autohandler>, F<dhandler> and C<index.html> boilerplate code commonly
-found in Mason applications, but there's nothing stopping you from using
-those features in your application when they're more convenient.
+C<Jifty::Dispatcher> is intended to replace all the F<autohandler>,
+F<dhandler> and C<index.html> boilerplate code commonly found in Mason
+applications, but there's nothing stopping you from using those
+features in your application when they're more convenient.
 
-Each directive's code block runs in its own scope, but all share a common
-C<$Dispatcher> object.
+Each directive's code block runs in its own scope, but all share a
+common C<$Dispatcher> object.
 
 =cut
 
@@ -244,7 +246,7 @@ sub abort (;$@)   { _ret @_ }    # abort request
 sub default ($$@) { _ret @_ }    # set parameter if it's not yet set
 sub set ($$@)     { _ret @_ }    # set parameter
 sub del ($@)      { _ret @_ }    # remove parameter
-sub get ($) { $Dispatcher->{args}{ $_[0] } }
+sub get ($) { $Dispatcher->{cgi}->param( $_[0] ) }
 
 sub _qualify ($@);
 sub GET ($)     { _qualify method => @_ }
@@ -393,18 +395,15 @@ to do is to put the following two lines first:
 
 sub handle_request {
     my $self = shift;
+    my ($cgi, $handler) = @_;
 
-    my $m    = Jifty->web->mason;
-    my $path = $m->request_comp->path;
+    my $path = $cgi->path_info;
 
     $path =~ s{/index\.html$}{};
-    if ( $path =~ s{/dhandler$}{} ) {
-        $path = join( '/', $path, $m->dhandler_arg );
-    }
 
     local $Dispatcher = $self->new(
-        mason => Jifty->web->mason,
-        args  => { $m->request_args },
+        handler => $handler,
+        cgi     => $cgi,
     );
 
 HANDLER: {
@@ -584,8 +583,7 @@ Redirect the user to the URL provded in the mandatory PATH argument.
 
 sub _do_redirect {
     my ( $self, $path ) = @_;
-    eval {Jifty->web->redirect($path);};
-    die $@ if ( $@ and not UNIVERSAL::isa $@, 'HTML::Mason::Exception::Abort' ) ;
+    Jifty->web->redirect($path);
     last_rule;
 }
 
@@ -599,8 +597,6 @@ Don't display any page. just stop.
 
 sub _do_abort {
     my $self = shift;
-    eval {Jifty->web->mason->abort(@_)};
-    die $@ if ( $@ and not UNIVERSAL::isa $@, 'HTML::Mason::Exception::Abort' ) ;
     last_rule;
 }
 
@@ -617,14 +613,13 @@ sub _do_show {
     my $self = shift;
     my $path;
     $path = shift if (@_);
+    $path ||= $self->{cgi}->path_info;
+    $path = "$self->{cwd}/$path" unless $path =~ m{^/};
+    $path .= "index.html" if $path =~ m{/$};
+
+    $self->{cgi}->path_info($path);
     eval {
-        if ( !defined $path )
-        {
-            Jifty->web->mason->call_next( %{ $self->{args} } );
-        } else {
-            $path = "$self->{cwd}/$path" unless $path =~ m{^/};
-            Jifty->web->mason->comp( $path, %{ $self->{args} } );
-        }
+        $self->{handler}->handle_cgi_object($self->{cgi});
     };
     die $@ if ( $@ and not UNIVERSAL::isa $@, 'HTML::Mason::Exception::Abort' ) ;
     last_rule;
@@ -633,18 +628,18 @@ sub _do_show {
 sub _do_set {
     my ( $self, $key, $value ) = @_;
 
-    $self->{args}{$key} = $value;
+    $self->{cgi}->param($key, $value);
 }
 
 sub _do_del {
     my ( $self, $key ) = @_;
-    delete $self->{args}{$key};
+    $self->{cgi}->delete($key);
 }
 
 sub _do_default {
     my ( $self, $key, $value ) = @_;
-    $self->{args}{$key} = $value
-        unless defined $self->{args}{$key};
+    $self->{cgi}->param($key, $value)
+        unless defined $self->{cgi}->param($key);
 }
 
 =head2 _do_dispatch [PATH]
@@ -668,11 +663,11 @@ sub _do_dispatch {
     # Normalize the path.
     $self->{path} =~ s{/+}{/}g;
     $self->{path} =~ s{/$}{};
+
     eval {
         HANDLER: {
             $self->_handle_rules( [ $self->rules('SETUP') ] );
-            eval {Jifty->web->handle_request();};
-            die $@ if ( $@ and not UNIVERSAL::isa $@, 'HTML::Mason::Exception::Abort' ) ;
+            Jifty->web->handle_request($self->{cgi});
             $self->_handle_rules( [ $self->rules('RUN'), 'show' ] );
             $self->_handle_rules( [ $self->rules('CLEANUP') ] );
         }
@@ -760,7 +755,7 @@ came in with that method.
 
 sub _match_method {
     my ( $self, $method ) = @_;
-    lc( $self->{mason}->cgi_request->method ) eq lc($method);
+    lc( $self->{cgi}->method ) eq lc($method);
 }
 
 =head2 _compile_condition CONDITION

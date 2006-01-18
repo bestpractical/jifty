@@ -2,6 +2,8 @@
 use warnings;
 use strict;
 
+BEGIN {chdir "t/TestApp"}
+use lib '../../lib';
 use Jifty::Test tests => 5;
 use Jifty::Test::WWW::Mechanize;
 

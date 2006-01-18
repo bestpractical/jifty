@@ -1,14 +1,9 @@
 <%init>
 $r->content_type('text/html; charset=utf-8');
-Jifty->web->handle_request();
 
 if ($m->base_comp->path =~ m|/_elements/|) {
     # Requesting an internal component by hand -- naughty
     $m->redirect("/errors/requested_private_component");
-#} elsif (not Jifty->web->current_user->id and $m->request_comp->path !~ m{^/(?:welcome|dhandler|css|js|images|validator\.xml)} ) {
-#    # Not logged in, trying to access a protected page
-#    $m->notes->{'login-nextpage'} =  $m->{top_path};
-#    Jifty->web->redirect('/welcome/');
 }
 $m->comp('/_elements/nav');
 $m->call_next();

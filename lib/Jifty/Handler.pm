@@ -39,8 +39,7 @@ sub new {
 
 =head2 mason_config
 
-Returns our Mason config.  We use C<Jifty::MasonInterp> as our Mason
-interpreter, and have a component root as specified in the
+Returns our Mason config.  We use the component root specified in the
 C<Web/TemplateRoot> framework configuration variable (or C<html> by
 default).  Additionally, we set up a C<jifty> component root, as
 specified by the C<Web/DefaultTemplateRoot> configuration.  All
@@ -52,7 +51,6 @@ mode.
 sub mason_config {
     return (
         allow_globals => [qw[$JiftyWeb]],
-        interp_class  => 'Jifty::MasonInterp',
         comp_root     => [ 
                             [application =>  Jifty::Util->absolute_path( Jifty->config->framework('Web')->{'TemplateRoot'} || "html")],
                             [jifty => Jifty->config->framework('Web')->{'DefaultTemplateRoot'}
@@ -98,16 +96,14 @@ sub handle_request {
 
     my $handler = $args{'mason_handler'};
     my $cgi     = $args{'cgi'};
-    if ( ( !$handler->interp->comp_exists( $cgi->path_info ) )
-        && ($handler->interp->comp_exists( $cgi->path_info . "/index.html" ) )
-        )
-    {
-        $cgi->path_info( $cgi->path_info . "/index.html" );
-    }
     Module::Refresh->refresh;
     local $HTML::Mason::Commands::JiftyWeb = Jifty::Web->new();
 
-    eval { $handler->handle_cgi_object($cgi); };
+    my $dispatcher = Jifty->config->framework('ApplicationClass')."::Dispatcher";
+    $dispatcher->require;
+    
+    $dispatcher->handle_request($cgi, $handler);
+
     $self->cleanup_request();
 
 }
