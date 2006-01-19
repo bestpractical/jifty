@@ -617,6 +617,9 @@ sub _do_show {
     $path = "$self->{cwd}/$path" unless $path =~ m{^/};
     $path .= "index.html" if $path =~ m{/$};
 
+    $self->_do_redirect($path . "/") 
+      if -d Jifty::Util->absolute_path( (Jifty->config->framework('Web')->{'TemplateRoot'} || "html") . $path );
+    
     $self->{cgi}->path_info($path);
     eval {
         $self->{handler}->handle_cgi_object($self->{cgi});
