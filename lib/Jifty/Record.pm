@@ -217,7 +217,9 @@ sub _value {
     unless ($self->check_read_rights(@_)) {
         return (undef);
     }
-    Encode::decode_utf8($self->SUPER::_value(@_));
+    my $value = $self->SUPER::_value(@_);
+    utf8::upgrade($value);
+    $value;
 }
 
 
