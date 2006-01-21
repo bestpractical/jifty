@@ -224,8 +224,6 @@ sub handle_request {
     } else {
         $self->_internal_request( Jifty::Request->new->fill(@_) );
     }
-
-  REQUEST_ABORT:
 }
 
 # Called when continuations get run, as well as by handle_request;
@@ -618,7 +616,7 @@ sub _redirect {
         $apache->header_out( Location => $page );
         $apache->header_out( Status => 302 );
         $apache->send_http_header();
-        goto REQUEST_ABORT;
+        Jifty::Dispatcher::last_rule();
     }
 
 }

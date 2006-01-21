@@ -314,7 +314,7 @@ Region.prototype = {
         return {
             name: this.name,
             path: this.setPath(path),
-            args: this.setArgs(args),
+            args: this.setArgs(args)
         }
     }
 };
@@ -407,14 +407,20 @@ function update() {
                          response_fragment != null;
                          response_fragment = response_fragment.nextSibling) {
                         if (response_fragment.getAttribute("id") == f['region']) {
+                            var textContent;
+                            if (response_fragment.textContent) {
+                                textContent = response_fragment.textContent;
+                            } else {
+                                textContent = response_fragment.firstChild.nodeValue;
+                            }
                             // Once we find it, do the insertion
                             if (insertion) {
-                                new insertion(element, response_fragment.textContent.stripScripts());
+                                new insertion(element, textContent.stripScripts());
                             } else {
-                                Element.update(element, response_fragment.textContent.stripScripts());
+                                Element.update(element, textContent.stripScripts());
                             }
                             // We need to give the browser some "settle" time before we eval scripts in the body
-                            setTimeout((function() { this.evalScripts() }).bind(response_fragment.textContent), 10);
+                            setTimeout((function() { this.evalScripts() }).bind(textContent), 10);
                         }
                     }
 
@@ -466,7 +472,7 @@ function update() {
     // Set up our options
     var options = { postBody: JSON.stringify(request),
                     onComplete: onComplete,
-                    requestHeaders: ['Content-Type', 'text/x-json'],
+                    requestHeaders: ['Content-Type', 'text/x-json']
     };
 
     // Go!
@@ -532,3 +538,19 @@ Object.extend(Object.extend(Jifty.Autocompleter.prototype, Ajax.Autocompleter.pr
 
 });
 
+
+// Define hasOwnProperty for Safari
+if( !Object.prototype.hasOwnProperty ) {
+    Object.prototype.hasOwnProperty = function( property ) {
+        try {
+            var prototype = this.constructor.prototype;
+            while( prototype ) {
+                if( prototype[ property ] == this[ property ] ) {
+                    return false;
+                }
+                prototype = prototype.prototype;
+            }
+        } catch( e ) {}
+        return true;
+    }
+}
