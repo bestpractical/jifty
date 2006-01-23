@@ -612,19 +612,28 @@ Otherwise, just render whatever we were going to anyway.
 sub _do_show {
     my $self = shift;
     my $path;
+
+    # Fix up the path
     $path = shift if (@_);
     $path ||= $self->{cgi}->path_info;
     $path = "$self->{cwd}/$path" unless $path =~ m{^/};
     $path .= "index.html" if $path =~ m{/$};
 
+    # Redirect to directory (and then index) if they requested the directory itself
     $self->_do_redirect($path . "/") 
       if -d Jifty::Util->absolute_path( (Jifty->config->framework('Web')->{'TemplateRoot'} || "html") . $path );
     
+    # Set the request path
     $self->{cgi}->path_info($path);
-    eval {
-        $self->{handler}->handle_cgi_object($self->{cgi});
+
+    # Handle the request with Mason
+    eval { $self->{handler}->handle_cgi_object($self->{cgi}); };
+
+    # Handle parse errors
+    if ( $@ and not UNIVERSAL::isa $@, 'HTML::Mason::Exception::Abort' ) {
+        warn "Mason error: $@";
+        Jifty->web->redirect("/__jifty/error/mason_parse_error");
     };
-    die $@ if ( $@ and not UNIVERSAL::isa $@, 'HTML::Mason::Exception::Abort' ) ;
     last_rule;
 }
 
