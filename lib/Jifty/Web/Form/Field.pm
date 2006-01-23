@@ -320,7 +320,9 @@ Output the start of div that wraps the form field
 
 sub render_wrapper_start {
     my $self = shift;
-    Jifty->web->out('<div class="form_field">' ."\n");
+    my @classes = qw(form_field);
+    if ($self->mandatory) { push @classes, 'mandatory' }
+    Jifty->web->out('<div class="'.join(' ', @classes).'">' ."\n");
 }
 
 =head2 render_wrapper_end
