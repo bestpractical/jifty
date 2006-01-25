@@ -111,7 +111,7 @@ sub new {
     if ($args{clone} and Jifty->web->session->get_continuation($args{clone})) {
         $self = Clone::clone(Jifty->web->session->get_continuation($args{clone}));
         for (grep {/^J:A/} keys %{$args{request}->arguments}) {
-            $self->request->merge_param($_ => $args{request}->arguments->{$_});
+            $self->request->argument($_ => $args{request}->arguments->{$_});
         }
         $self->response($args{response});
     } else {
@@ -187,7 +187,9 @@ sub call {
         Jifty->web->response( Clone::clone($self->response) ) if $self->response;
         $self->code->(Jifty->web->request)
           if $self->code;
-        Jifty->web->_internal_request( Clone::clone($self->request) );
+        local Jifty->web->{request} = Clone::clone($self->request);
+        Jifty->handler->dispatcher->handle_request();
+        Jifty::Dispatcher::last_rule();
     }
 
 }

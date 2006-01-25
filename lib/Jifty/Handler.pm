@@ -22,6 +22,11 @@ Jifty::Handler - Methods related to the Mason handler
 L<Jifty::Handler> provides methods required to deal with Mason CGI
 handlers.  
 
+=cut
+
+use base qw/Class::Accessor/;
+__PACKAGE__->mk_accessors(qw(mason dispatcher));
+
 =head2 new
 
 Create a new Jifty::Handler object. Generally, Jifty.pm does this only once at startup.
@@ -33,7 +38,6 @@ sub new {
     my $self = {};
     bless $self, $class;
     return $self;
-
 }
 
 
@@ -58,6 +62,7 @@ sub mason_config {
         error_mode => 'fatal',
         error_format => 'text',
         default_escape_flags => 'h',
+        autoflush => 0,
         #       plugins => ['Jifty::SetupRequest']
     );
 }
@@ -67,19 +72,12 @@ sub mason_config {
 
 When your server processs (be it Jifty-internal, FastCGI or anything else) wants
 to handle a request coming in from the outside world, you should call C<handle_request>.
-It expects a few parameters. C<cgi> is required. 
 
 =over
 
 =item cgi
 
 A L<CGI>.pm object that your server has already set up and loaded with your request's data
-
-=item mason_handler
-
-An initialized L<HTML::Mason> CGIHandler or subclass. 
-
-=item
 
 =back
 
@@ -89,23 +87,89 @@ An initialized L<HTML::Mason> CGIHandler or subclass.
 sub handle_request {
     my $self = shift;
     my %args = (
-        mason_handler => undef,
         cgi           => undef,
         @_
     );
 
-    my $handler = $args{'mason_handler'};
-    my $cgi     = $args{'cgi'};
     Module::Refresh->refresh;
-    local $HTML::Mason::Commands::JiftyWeb = Jifty::Web->new();
 
-    my $dispatcher = Jifty->config->framework('ApplicationClass')."::Dispatcher";
-    $dispatcher->require;
-    
-    $dispatcher->handle_request($cgi, $handler);
+    local $HTML::Mason::Commands::JiftyWeb = Jifty::Web->new();
+    Jifty->web->request(Jifty::Request->new()->fill($args{cgi}));
+
+    $self->mason(Jifty::MasonHandler->new(
+        $self->mason_config,
+        out_method => sub {
+            my $m = HTML::Mason::Request->instance;
+            my $r = $m->cgi_request;
+            # Send headers if they have not been sent by us or by user.
+            # We use instance here because if we store $request we get a
+            # circular reference and a big memory leak.
+            unless ($r->http_header_sent) {
+                $r->send_http_header();
+            }
+
+            $r->content_type || $r->content_type('text/html; charset=utf-8'); # Set up a default
+
+            if ($r->content_type =~ /charset=([\w-]+)$/ ) {
+                my $enc = $1;
+                binmode *STDOUT, ":encoding($enc)";
+            }
+            # We could perhaps install a new, faster out_method here that
+            # wouldn't have to keep checking whether headers have been
+            # sent and what the $r->method is.  That would require
+            # additions to the Request interface, though.
+            print STDOUT grep {defined} @_;
+        },
+    ));
+    $self->mason->interp->set_escape(
+        h => \&Jifty::Handler::escape_utf8 );
+    $self->mason->interp->set_escape(
+        u => \&Jifty::Handler::escape_uri );
+
+
+    $self->dispatcher(Jifty->config->framework('ApplicationClass')."::Dispatcher");
+    $self->dispatcher->require;
+    $self->dispatcher->handle_request();
 
     $self->cleanup_request();
 
+}
+
+=head2 escape_utf8 SCALARREF
+
+Does a css-busting but minimalist escaping of whatever html you're passing in.
+
+=cut
+
+sub escape_utf8 {
+    my $ref = shift;
+    my $val = $$ref;
+    use bytes;
+    $val =~ s/&/&#38;/g;
+    $val =~ s/</&lt;/g;
+    $val =~ s/>/&gt;/g;
+    $val =~ s/\(/&#40;/g;
+    $val =~ s/\)/&#41;/g;
+    $val =~ s/"/&#34;/g;
+    $val =~ s/'/&#39;/g;
+    $$ref = $val;
+    Encode::_utf8_on($$ref);
+
+}
+
+=head2 escape_uri SCALARREF
+
+Escapes URI component according to RFC2396
+
+=cut
+
+use Encode qw();
+
+sub escape_uri {
+    my $ref = shift;
+    $$ref = Encode::encode_utf8($$ref);
+    $$ref =~ s/([^a-zA-Z0-9_.!~*'()-])/uc sprintf("%%%02X", ord($1))/eg;
+    Encode::_utf8_on($$ref);
 }
 
 =head2 cleanup_request

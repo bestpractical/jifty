@@ -19,6 +19,6 @@ for my $image (qw(pony.jpg)) {
     my $res = $mech->response;
     
     is($res->header('Content-Type'), 'image/jpeg', 'Content-Type is image/jpeg');
-    like($res->status_line, qr/^200 H::S::Mason OK$/, 'Status line is from Mason');
+    like($res->status_line, qr/^200 Jifty OK$/, 'Status line is from Mason');
 }
 

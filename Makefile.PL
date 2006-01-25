@@ -20,6 +20,7 @@ requires('Email::LocalDelivery');
 requires('Email::Send' => '1.99_01'); # Email::Send::Jifty::Test
 requires('Email::Simple');
 requires('Email::Simple::Creator');
+requires('Encode');
 requires('Exporter');
 requires('File::Basename');
 requires('File::Copy');
@@ -32,8 +33,7 @@ requires('HTML::Entities');
 requires('HTML::Mason' => 1.3101);           # HTML::Mason::CGIHandler HTML::Mason::Interp HTML::Mason::Plugin
 requires('HTML::Mason::Plugin');
 requires('HTTP::Cookies');
-requires('HTTP::Server::Simple' => '0.10');
-requires('HTTP::Server::Simple::Mason' => '0.09');
+requires('HTTP::Server::Simple' => '0.10');  # HTTP::Server::Simple::CGI
 requires('HTTP::Server::Simple::Recorder');
 requires('Hash::Merge');
 requires('Hook::LexWrap');

@@ -32,8 +32,7 @@ unique id -- it should consist of only letters and numbers.
 
 =item path
 
-The path to the fragment that this page region contains.  This B<must>
-be under a C</fragments> path.
+The path to the fragment that this page region contains.
 
 =item defaults (optional)
 
@@ -241,11 +240,10 @@ sub render {
     # Merge in defaults
     %arguments = (%{ Jifty->web->request->arguments }, region => $self, 'J:ACTIONS' => '', %arguments);
 
-    
-    $Jifty::Dispatcher::Dispatcher->{handler}->interp->make_request(comp => $self->path,
-                                                                    args => [ %arguments ],
-                                                                    out_method => \$result,
-                                                                   )->exec;
+    Jifty->handler->mason->interp->make_request(comp => $self->path,
+                                                args => [ %arguments ],
+                                                out_method => \$result,
+                                               )->exec;
     if ($self->region_wrapper) {
         $result .= qq|</div>|;
     }

@@ -9,15 +9,3 @@ $m->comp('/_elements/nav');
 $m->call_next();
 return;
 </%init>
-<%def .setup_actions>
-<%init>
-Jifty->web->allow_actions(qr/.*/);
-# this method turns around and calls the setup_actions method 
-# it's called by Jifty::Web->setup_page_actions.
-my $delegate = $m->fetch_comp($m->next_comp->path);
-if ($delegate and $delegate->method_exists('setup_actions')) {
-    $delegate->call_method('setup_actions');
-}
-
-</%init>
-</%def>

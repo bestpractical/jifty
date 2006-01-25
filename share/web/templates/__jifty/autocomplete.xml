@@ -17,9 +17,3 @@ my @options = @{$ref->{'completions'}||[]};
 %}
 </ul>
 </body>
-<%method setup_actions>
-<%init>
-Jifty->web->deny_actions(qr/.*/);
-Jifty->web->allow_actions('Jifty::Action::Autocomplete');
-</%init>
-</%method>

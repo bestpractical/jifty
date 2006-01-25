@@ -56,7 +56,6 @@ Creates a new FastCGI process.
  
 sub run {
     Jifty->new();
-    my $handler = HTML::Mason::CGIHandler->new( Jifty->handler->mason_config );
     while ( my $cgi = CGI::Fast->new ) {
         # the whole point of fastcgi requires the env to get reset here..
         # So we must squash it again
@@ -65,9 +64,9 @@ sub run {
         $ENV{'PATH_INFO'}   = $ENV{'SCRIPT_NAME'}
             if $ENV{'SERVER_SOFTWARE'} =~ /^lighttpd\b/;
         for (qw(CDPATH ENV IFS)) {
-        $ENV{$_} = '' if (defined $ENV{$_} );
+            $ENV{$_} = '' if (defined $ENV{$_} );
         }
-        Jifty->handler->handle_request(mason_handler => $handler, cgi => $cgi);
+        Jifty->handler->handle_request( cgi => $cgi );
     }
 }
 

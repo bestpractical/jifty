@@ -361,7 +361,7 @@ sub register {
             %$info,
             action        => $self,
             input_name    => $self->double_fallback_form_field_name($name),
-            sticky       => 0,
+            sticky        => 0,
             default_value => ($self->argument_value($name) || $info->{'default_value'}),
             render_as     => 'Hidden'
         )->render();
@@ -430,6 +430,12 @@ sub register_name {
 }
 
 
+sub _prefix_field {
+    my $self = shift;
+    my ($field_name, $prefix) = @_;
+    return join("-", $prefix, $field_name, $self->moniker);
+}
+
 =head2 form_field_name ARGUMENT
 
 Turn one of this action's L<arguments|Jifty::Manual::Glossary/arguments> into
@@ -439,10 +445,8 @@ a fully qualified name; takes the name of the field as an argument.
 
 sub form_field_name {
     my $self = shift;
-    my $field_name = shift;
-    return "J:A:F-$field_name-".$self->moniker;
+    return $self->_prefix_field(shift, "J:A:F");
 }
-
 
 =head2 fallback_form_field_name ARGUMENT
 
@@ -462,8 +466,7 @@ its true value.
 
 sub fallback_form_field_name {
     my $self = shift;
-    my $field_name = shift;
-    return "J:A:F:F-$field_name-".$self->moniker;
+    return $self->_prefix_field(shift, "J:A:F:F");
 }
 
 
@@ -481,8 +484,7 @@ Probably we need a more flexible system, though.
 
 sub double_fallback_form_field_name {
     my $self = shift;
-    my $field_name = shift;
-    return "J:A:F:F:F-$field_name-".$self->moniker;
+    return $self->_prefix_field(shift, "J:A:F:F:F");
 }
 
 

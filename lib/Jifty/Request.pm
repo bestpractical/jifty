@@ -4,7 +4,7 @@ use strict;
 package Jifty::Request;
 
 use base qw/Jifty::Object Class::Accessor Clone/;
-__PACKAGE__->mk_accessors(qw(arguments just_validating path continuation));
+__PACKAGE__->mk_accessors(qw(arguments just_validating path _continuation));
 
 use Jifty::JSON;
 use Jifty::YAML;
@@ -99,11 +99,6 @@ sub fill {
     my $self = shift;
     my ($cgi) = @_;
 
-    # If this is a subrequest, we need to pull from the mason args in
-    # order to avoid infinite looping
-    $self->from_cgi($cgi)
-      if Jifty->web->mason and Jifty->web->mason->is_subrequest;
-
     # Grab content type and posted data, if any
     my $ct   = $ENV{"CONTENT_TYPE"};
     my $data = $cgi->param('POSTDATA');
@@ -193,12 +188,13 @@ sub from_cgi {
         for my $newarg (split /\|/, $splittable) {
             # If there are multiple =s, you just lose.
             my ($k, $v) = split /=/, $newarg;
-            $args{$k} = $args{$k} ? (ref $args{$k} ? [@{$args{$k}},$v] : [$args{$k}, $v] ) : $v;
+            $args{$k} = $v;
+            # The following breaks page regions and the like, sadly:
+            #$args{$k} ? (ref $args{$k} ? [@{$args{$k}},$v] : [$args{$k}, $v] ) : $v;
         }
     }
     return $self->from_webform( %args );
 }
-
 
 =head2 from_webform %QUERY_ARGS
 
@@ -231,27 +227,53 @@ sub from_webform {
     return $self;
 }
 
-=head2 merge_param KEY => VALUE
+=head2 argument KEY [=> VALUE]
 
 Merges a single query parameter into the request.  This may add
 actions, change action arguments, or change state variables.
 
 =cut
 
-sub merge_param {
+sub argument {
     my $self = shift;
 
-    my ($key, $value) = @_;
-    $self->arguments->{$key} = $value;
+    my $key = shift;
+    if (@_) {
+        my $value = shift;
+        $self->arguments->{$key} = $value;
 
+        if ($key =~ /^J:A-(?:(\d+)-)?(.+)/s) {
+            $self->add_action(moniker => $2, class => $value, order => $1, arguments => {}, active => 1);
+        } elsif ($key =~ /^J:A:F-(\w+)-(.+)/s and $self->action($2)) {
+            $self->action($2)->argument($1 => $value);
+        } elsif ($key =~ /^J:V-(.*)/s) {
+            $self->add_state_variable(key => $1, value => $value);
+        }
+    }
+    return $self->arguments->{$key};
+}
+
+=head2 delete KEY
+
+Removes the argument supplied -- this is the opposite of L</argument>,
+above.
+
+=cut
+
+sub delete {
+    my $self = shift;
+
+    my $key = shift;
+    delete $self->arguments->{$key};
     if ($key =~ /^J:A-(?:(\d+)-)?(.+)/s) {
-        $self->add_action(moniker => $2, class => $value, order => $1, arguments => {}, active => 1);
+        $self->remove_action($2);
     } elsif ($key =~ /^J:A:F-(\w+)-(.+)/s and $self->action($2)) {
-        $self->action($2)->argument($1 => $value);
+        $self->action($2)->delete($1);
     } elsif ($key =~ /^J:V-(.*)/s) {
-        $self->add_state_variable(key => $1, value => $value);
+        $self->remove_state_variable($1);
     }
 }
+
 
 sub _extract_state_variables_from_webform {
     my $self = shift;
@@ -348,16 +370,30 @@ sub _extract_continuations_from_webform {
     my $self = shift;
     my %args = (@_);
 
-    # Loading a continuation
-    foreach my $continuation_id ($args{'J:C'}, $args{'J:CALL'}  ) {
-        next unless $continuation_id;
-        $self->continuation(Jifty->web->session->get_continuation($continuation_id));
-    }
-
     if ($args{'J:CLONE'} and Jifty->web->session->get_continuations($args{'J:CLONE'})) {
         my %params = %{Jifty->web->session->get_continuations($args{'J:CLONE'})->request->arguments};
-        $self->merge_param($_ => $params{$_}) for keys %params;
+        $self->argument($_ => $params{$_}) for keys %params;
     }
+}
+
+=head2 continuation [CONTINUATION]
+
+Gets or sets the continuation associated with the request.
+
+=cut
+
+sub continuation {
+    my $self = shift;
+
+    $self->_continuation(@_) if @_;
+    return $self->_continuation if $self->_continuation;
+
+    foreach my $continuation_id ($self->argument('J:C'), $self->argument('J:CALL') ) {
+        next unless $continuation_id;
+        return Jifty->web->session->get_continuation($continuation_id);
+    }
+
+    return undef;
 }
 
 =head2 call_continuation
@@ -434,7 +470,19 @@ sub add_state_variable {
         $state_var->$k($args{$k}) if defined $args{$k};
     } 
     $self->{'state_variables'}{$args{'key'}} = $state_var;
+}
 
+=head2 remove_state_variable KEY
+
+Removes the given state variable.  The opposite of
+L</add_state_variable>, above.
+
+=cut
+
+sub remove_state_variable {
+    my $self = shift;
+    my ($key) = @_;
+    delete $self->{'state_variables'}{$key};
 }
 
 =head2 actions
@@ -462,8 +510,6 @@ sub action {
     my $moniker = shift;
     return $self->{'actions'}{$moniker};
 } 
-
-
 
 =head2 add_action PARAMHASH
 
@@ -506,6 +552,18 @@ sub add_action {
 
     $self;
 } 
+
+=head2 remove_action MONIKER
+
+Removes an action with the given moniker.
+
+=cut
+
+sub remove_action {
+    my $self = shift;
+    my ($moniker) = @_;
+    delete $self->{'actions'}{$moniker};
+}
 
 =head2 fragments
 
@@ -581,7 +639,7 @@ sub do_mapping {
         my ($key, $value) = Jifty::Request::Mapper->map(destination => $_, source => $self->arguments->{$_}, %args);
         next unless $key ne $_;
         delete $self->arguments->{$_};
-        $self->merge_param($key => $value);
+        $self->argument($key => $value);
     }
 }
 
@@ -615,6 +673,16 @@ sub argument {
 
     $self->arguments->{$key} = shift if @_;
     $self->arguments->{$key};
+}
+
+=head3 delete
+
+=cut
+
+sub delete {
+    my $self = shift;
+    my $argument = shift;
+    delete $self->arguments->{$argument};
 }
 
 
@@ -660,6 +728,16 @@ sub argument {
 
     $self->arguments->{$key} = shift if @_;
     $self->arguments->{$key};
+}
+
+=head3 delete
+
+=cut
+
+sub delete {
+    my $self = shift;
+    my $argument = shift;
+    delete $self->arguments->{$argument};
 }
 
 =head1 SERIALIZATION

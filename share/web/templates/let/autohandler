@@ -1,9 +1,0 @@
-<%init>
-# this component stops people from calling subcomponents directly
-if ($m->is_subrequest) {
-    $m->call_next;
-    return;
-} else {
-    $m->redirect('/errors/path/forbidden');
-}
-</%init>

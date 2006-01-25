@@ -24,6 +24,7 @@ requires:
   Email::Send: 1.99_01
   Email::Simple: 0
   Email::Simple::Creator: 0
+  Encode: 0
   Exporter: 0
   File::Basename: 0
   File::Copy: 0
@@ -37,7 +38,6 @@ requires:
   HTML::Mason::Plugin: 0
   HTTP::Cookies: 0
   HTTP::Server::Simple: 0.10
-  HTTP::Server::Simple::Mason: 0.09
   HTTP::Server::Simple::Recorder: 0
   Hash::Merge: 0
   Hook::LexWrap: 0

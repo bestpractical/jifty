@@ -111,7 +111,7 @@ sub serial {
 =head3 setup_session
 
 Sets up the current C<session> object (a L<Jifty::Web::Session> tied
-hash).
+hash).  Aborts if the session is already loaded.
 
 =cut
 
@@ -119,9 +119,8 @@ hash).
 sub setup_session {
     my $self = shift;
     my $m = Jifty->web->mason;
-    # avoid reentrancy, as suggested by masonbook
-    return if $m and $m->is_subrequest;
 
+    return if $self->session->loaded;
     $self->session->load();
 }
 
@@ -182,16 +181,17 @@ undef.
 
 =head2 REQUEST
 
-=head3 handle_request
+=head3 handle_request [REQUEST]
 
-This method sets up a current session, prepares a L<Jifty::Request>
-object and loads page-specific actions.
+This method sets up a current session, and then processes the given
+L<Jifty::Request> object.  If no request object is given, processes
+the request object in L</request>.
 
-Each action is vetted in three ways -- first, it must be marked as
-C<active> by the L<Jifty::Request> (this is the default).  Second, it
-must be in the set of allowed classes of actions (see L</is_allowed>,
-below).  Finally, the action must validate.  If it passes all of these
-criteria, the action is fit to be run.
+Each action on the request is vetted in three ways -- first, it must
+be marked as C<active> by the L<Jifty::Request> (this is the default).
+Second, it must be in the set of allowed classes of actions (see
+L</is_allowed>, below).  Finally, the action must validate.  If it
+passes all of these criteria, the action is fit to be run.
 
 Before they are run, however, the request has a chance to be
 interrupted and saved away into a continuation, to be resumed at some
@@ -209,32 +209,13 @@ For more details about continuations, see L<Jifty::Continuation>.
 
 sub handle_request {
     my $self = shift;
+    die "No request to handle" unless Jifty->web->request;
+    
+    Jifty->web->response( Jifty::Response->new ) unless $self->response;
+    Jifty->web->setup_session;
 
-    $self->setup_session;
-    $self->response( Jifty::Response->new ) unless $self->response;
-
-    # We local the request if we have one right now -- for mason
-    # subrequests, for instance, we want to make sure we get back the
-    # original request after the subrequest ends.  If this is *not* a
-    # subrequest, than we want to *not* local it, so that the mason
-    # components have access to the outermost request
-    if ($self->request) {
-        local $self->{request};
-        $self->_internal_request( Jifty::Request->new->fill(@_) );
-    } else {
-        $self->_internal_request( Jifty::Request->new->fill(@_) );
-    }
-}
-
-# Called when continuations get run, as well as by handle_request;
-# takes a Jifty::Request
-sub _internal_request {
-    my $self = shift;
-    my ($request) = @_;
-
-    $self->request($request);
     my @valid_actions;
-    for my $request_action ( $self->request->actions ) {
+            for my $request_action ( $self->request->actions ) {
         next unless $request_action->active;
         unless ( $self->is_allowed( $request_action->class ) ) {
             $self->log->warn( "Attempt to call denied action '"
@@ -700,7 +681,7 @@ sub multipage {
 
     unless ($request_action) {
         my $request = Jifty::Request->new();
-        $request->merge_param(
+        $request->argument(
             'J:CALL' => Jifty->web->request->continuation->id )
             if Jifty->web->request->continuation;
         $request->path("/");
@@ -762,9 +743,8 @@ sub tangent {
 
         my $request = Jifty::Request->new(path => Jifty->web->request->path)
           ->from_webform($clickable->get_parameters);
-        Jifty->web->_internal_request($request);
-
-        
+        local Jifty->web->{request} = $request;
+        Jifty->web->handle_request();
     }
 }
 
@@ -1067,8 +1047,7 @@ sub serve_fragments {
     # text/html -- so we have to override them after the fact.
     $self->response->add_header("Content-Type" => 'text/xml; charset=utf-8');
 
-    # Clear the buffer (in case something else snuck out) then output
-    # the data and bail
+    # Print a header and the content, and then bail
     my $apache = HTML::Mason::FakeApache->new();
     $apache->send_http_header();
     print $output;

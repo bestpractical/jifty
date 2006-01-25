@@ -232,6 +232,7 @@ our @EXPORT = qw<
 
 our $Dispatcher;
 
+sub request       { Jifty->web->request }
 sub _ret (@);
 sub under ($$@)   { _ret @_ }    # partial match at beginning of path component
 sub before ($$@)  { _ret @_ }    # exact match on the path component
@@ -246,7 +247,7 @@ sub abort (;$@)   { _ret @_ }    # abort request
 sub default ($$@) { _ret @_ }    # set parameter if it's not yet set
 sub set ($$@)     { _ret @_ }    # set parameter
 sub del ($@)      { _ret @_ }    # remove parameter
-sub get ($) { $Dispatcher->{cgi}->param( $_[0] ) }
+sub get ($) { request->argument( $_[0] ) }
 
 sub _qualify ($@);
 sub GET ($)     { _qualify method => @_ }
@@ -395,16 +396,11 @@ to do is to put the following two lines first:
 
 sub handle_request {
     my $self = shift;
-    my ($cgi, $handler) = @_;
 
-    my $path = $cgi->path_info;
-
+    my $path = Jifty->web->request->path;
     $path =~ s{/index\.html$}{};
 
-    local $Dispatcher = $self->new(
-        handler => $handler,
-        cgi     => $cgi,
-    );
+    local $Dispatcher = $self->new();
 
 HANDLER: {
         $Dispatcher->_do_dispatch($path);
@@ -615,7 +611,7 @@ sub _do_show {
 
     # Fix up the path
     $path = shift if (@_);
-    $path ||= $self->{cgi}->path_info;
+    $path ||= request->path;
     $path = "$self->{cwd}/$path" unless $path =~ m{^/};
     $path .= "index.html" if $path =~ m{/$};
 
@@ -624,10 +620,10 @@ sub _do_show {
       if -d Jifty::Util->absolute_path( (Jifty->config->framework('Web')->{'TemplateRoot'} || "html") . $path );
     
     # Set the request path
-    $self->{cgi}->path_info($path);
+    request->path($path);
 
     # Handle the request with Mason
-    eval { $self->{handler}->handle_cgi_object($self->{cgi}); };
+    eval { Jifty->handler->mason->handle_comp(request->path); };
 
     # Handle parse errors
     if ( $@ and not UNIVERSAL::isa $@, 'HTML::Mason::Exception::Abort' ) {
@@ -640,18 +636,18 @@ sub _do_show {
 sub _do_set {
     my ( $self, $key, $value ) = @_;
 
-    $self->{cgi}->param($key, $value);
+    request->argument($key, $value);
 }
 
 sub _do_del {
     my ( $self, $key ) = @_;
-    $self->{cgi}->delete($key);
+    request->delete($key);
 }
 
 sub _do_default {
     my ( $self, $key, $value ) = @_;
-    $self->{cgi}->param($key, $value)
-        unless defined $self->{cgi}->param($key);
+    request->argument($key, $value)
+        unless defined request->argument($key);
 }
 
 =head2 _do_dispatch [PATH]
@@ -679,7 +675,7 @@ sub _do_dispatch {
     eval {
         HANDLER: {
             $self->_handle_rules( [ $self->rules('SETUP') ] );
-            Jifty->web->handle_request($self->{cgi});
+            Jifty->web->handle_request();
             $self->_handle_rules( [ $self->rules('RUN'), 'show' ] );
             $self->_handle_rules( [ $self->rules('CLEANUP') ] );
         }
@@ -825,8 +821,7 @@ sub _compile_condition {
 
 Private function.
 
-Turns a metaexpression containing * and % into a capturing perl regex pattern.
-
+Turns a metaexpression containing * and ? into a capturing perl regex pattern.
 
 =cut
 

@@ -51,11 +51,6 @@ sub load {
     my $self = shift;
     my $session_id = shift;
 
-    my $m    = Jifty->web->mason;
-    return
-        if $m
-        && $m->is_subrequest;    # avoid reentrancy, as suggested by masonbook
-    
     require Apache::Session::File;
     
     unless ($session_id) {
@@ -85,7 +80,6 @@ sub load {
 
     $self->_session( tied(%session) );
     $session{_session_id} = $session{_session_id} || $session_id;
-
 }
 
 =head2 unload
@@ -102,6 +96,17 @@ sub unload {
     $self->_session->{object_store}->close;
     $self->_session->release_all_locks();
     $self->_session(undef);
+}
+
+=head2 loaded
+
+Returns true if the session has already been loaded
+
+=cut
+
+sub loaded {
+    my $self = shift;
+    return $self->_session && $self->get('_session_id');
 }
 
 sub _session {
