@@ -11,7 +11,7 @@ Continuations tests
 
 BEGIN {chdir "t/Mapper"}
 use lib '../../lib';
-use Jifty::Test no_plan => 1;
+use Jifty::Test tests => 8;
 
 use_ok('Jifty::Test::WWW::Mechanize');
 
@@ -29,6 +29,11 @@ $mech->content_unlike(qr/got the grail/, "Start page doesn't have output of run 
 $mech->get("$URL/index.html?J:A-grail=GetGrail");
 $mech->content_like(qr/got the grail/, "Running the action produces the expected result");
 
+# Feeding the first action into the second should cause both to run
+$mech->form(2);
+ok($mech->click_button(value => "Do both"));
+$mech->content_like(qr/got the grail/i, "Got the grail");
+$mech->content_like(qr/crossed the bridge/i, "And crossed the bridge");
 
 
 1;

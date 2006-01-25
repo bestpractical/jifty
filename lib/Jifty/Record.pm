@@ -218,7 +218,7 @@ sub _value {
         return (undef);
     }
     my $value = $self->SUPER::_value(@_);
-    utf8::upgrade($value);
+    utf8::upgrade($value) if defined $value;
     $value;
 }
 

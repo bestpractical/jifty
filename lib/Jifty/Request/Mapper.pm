@@ -144,16 +144,14 @@ sub map {
     my @bits = split( /\|/, $args{source} );
     if ( $bits[0] ) {
         if ( $bits[0] eq "A" and @bits == 3 ) {
-            return ( $destination => $args{request}->action( $bits[1] )
-                ? $args{request}->action( $bits[1] )->argument( $bits[2] )
-                : undef );
-        } elsif ( $bits[0] eq "R" and @bits == 3 ) {
-            return ( $destination => $args{response}->result( $bits[1] )
-                ? $args{response}->result( $bits[1] )->content( $bits[2] )
-                : undef );
+            return ( $destination => undef ) unless $args{request}->action( $bits[1] );
+            return ( $destination => $args{request}->action( $bits[1] )->argument( $bits[2] ) );
+        } elsif ( $bits[0] eq "R" and @bits == 3 ) { 
+            return ( $destination => undef ) unless $args{request}->action( $bits[1] );
+            return ( $args{destination} => $args{source} ) unless $args{response}->result( $bits[1] );
+            return ( $destination => $args{response}->result( $bits[1] )->content( $bits[2] ) );
         } elsif ( $bits[0] eq "A" and @bits == 2 ) {
-            return (
-                $destination => $args{request}->arguments->{ $bits[1] } );
+            return ( $destination => $args{request}->arguments->{ $bits[1] } );
         }
     }
     return ( $destination => $args{source} );

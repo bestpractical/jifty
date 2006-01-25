@@ -13,8 +13,8 @@ sub arguments {
 sub validate_quest {
     my $self = shift;
     my $value = shift || '';
-    if ($value !~ /grail/i) {
-        return $self->validation_error( quest => "Something about the grail" );
+    if ($value !~ /grail|Aaaaaargh/i) {
+        return $self->validation_error( quest => "Something about the grail or castle aaargh" );
     }
     return $self->validation_ok( 'quest' );
 }

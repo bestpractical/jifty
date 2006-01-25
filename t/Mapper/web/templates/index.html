@@ -5,3 +5,12 @@
 <% Jifty->web->form->submit( label => 'Get the holy grail') %>
 
 <% Jifty->web->form->end %>
+
+
+<% Jifty->web->form->start %>
+% my $grail  = Jifty->web->form->add_action( class => 'GetGrail',    order => 1 );
+% my $bridge = Jifty->web->new_action( class => 'CrossBridge', order => 2 );
+<% $bridge->form_field( 'quest',  default_value => { result_of => $grail, name => 'castle' } ) %>
+<% $bridge->form_field( 'colour', default_value => 'Green' ) %>
+<% Jifty->web->form->submit( label => 'Do both') %>
+<% Jifty->web->form->end %>

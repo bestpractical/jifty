@@ -243,24 +243,39 @@ sub _internal_request {
             next;
         }
 
+        # Make sure we can instantiate the action
         my $action = $self->new_action_from_request($request_action);
         next unless $action;
-        $self->response->result( $action->moniker => $action->result );
 
-        eval { push @valid_actions, $action if $action->validate; };
-        if ( my $err = $@ ) {
-            $self->log->fatal($err);
-        }
+        # Try validating -- note that this is just the first pass; as
+        # actions are run, they may fill in values which alter
+        # validation of later actions
+        $self->response->result( $action->moniker => $action->result );
+        $action->validate;
+
+        push @valid_actions, $request_action;
     }
     $self->save_continuation;
 
     unless ( $self->request->just_validating ) {
-        for my $action (@valid_actions) {
-            eval { $action->run; };
+        for my $request_action (@valid_actions) {
 
+            # Pull the action out of the request (again, since
+            # mappings may have affected parameters)
+            my $action = $self->new_action_from_request($request_action);
+            next unless $action;
+
+            # Try validating again
+            $action->result(Jifty::Result->new);
+            $self->response->result( $action->moniker => $action->result );
+            eval { $action->run if $action->validate; };
             if ( my $err = $@ ) {
                 $self->log->fatal($err);
             }
+
+            # Fill in the request with any results that that action
+            # may have yielded.
+            $self->request->do_mapping;
         }
     }
     $self->session->set_cookie();
