@@ -8,9 +8,20 @@
 
 
 <% Jifty->web->form->start %>
-% my $grail  = Jifty->web->form->add_action( class => 'GetGrail',    order => 1 );
-% my $bridge = Jifty->web->new_action( class => 'CrossBridge', order => 2 );
-<% $bridge->form_field( 'quest',  default_value => { result_of => $grail, name => 'castle' } ) %>
-<% $bridge->form_field( 'colour', default_value => 'Green' ) %>
+% my $grail_1  = Jifty->web->form->add_action( class => 'GetGrail', order => 1 );
+% my $bridge_1 = Jifty->web->new_action( class => 'CrossBridge',    order => 2 );
+<% $bridge_1->form_field( 'quest',  default_value => { result_of => $grail_1, name => 'castle' } ) %>
+<% $bridge_1->form_field( 'colour', default_value => 'Green' ) %>
+<% Jifty->web->form->submit( label => 'Do both') %>
+<% Jifty->web->form->end %>
+
+
+<% Jifty->web->form->start %>
+% my $grail_2  = Jifty->web->form->add_action( class => 'GetGrail', order => 1 );
+% my $bridge_2 = Jifty->web->new_action( class => 'CrossBridge', 
+%                                        order => 2,
+%                                        arguments => { quest => { result_of => $grail_2, name => 'castle' } } );
+<% $bridge_2->form_field( 'quest' ) %>
+<% $bridge_2->form_field( 'colour', default_value => 'Green' ) %>
 <% Jifty->web->form->submit( label => 'Do both') %>
 <% Jifty->web->form->end %>

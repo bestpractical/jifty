@@ -86,12 +86,13 @@ sub new {
 
     # If they key and/or value imply that this argument is going to be
     # a mapped argument, then do the mapping and mark the field as hidden.
-    my ($key, $value) = Jifty::Request::Mapper->query_parameters($self->input_name, $self->default_value);
+    my ($key, $value) = Jifty::Request::Mapper->query_parameters($self->input_name, $self->current_value);
     if ($key ne $self->input_name) {
         require Jifty::Web::Form::Field::Hidden;
         bless $self, "Jifty::Web::Form::Field::Hidden";
         $self->input_name($key);
         $self->default_value($value);
+        $self->sticky_value(undef);
     }
 
     # now that the form field has been instantiated, register the action with the form.
