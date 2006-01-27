@@ -145,7 +145,9 @@ fail), then calls L</take_action>, and finally L</cleanup>.
 
 sub run {
     my $self = shift;
+    $self->log->debug("Running action");
     return unless $self->result->success;
+    $self->log->debug("Taking action");
     $self->take_action;
     $self->cleanup;
 }
@@ -601,6 +603,7 @@ sub _validate_arguments {
     $self->_validate_argument($_)
       for $self->argument_names;
 
+
     return $self->result->success;
 }
 
@@ -623,6 +626,9 @@ sub _validate_argument {
     my $field = shift;
 
     return unless $field;
+    
+    $self->log->debug(" validating argument $field");
+
     my $field_info = $self->arguments->{$field};
     return unless $field_info;
 

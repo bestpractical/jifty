@@ -210,12 +210,12 @@ For more details about continuations, see L<Jifty::Continuation>.
 sub handle_request {
     my $self = shift;
     die "No request to handle" unless Jifty->web->request;
-    
     Jifty->web->response( Jifty::Response->new ) unless $self->response;
     Jifty->web->setup_session;
 
     my @valid_actions;
             for my $request_action ( $self->request->actions ) {
+        $self->log->debug("Found action ".$request_action->class . " " . $request_action->moniker);
         next unless $request_action->active;
         unless ( $self->is_allowed( $request_action->class ) ) {
             $self->log->warn( "Attempt to call denied action '"
@@ -249,7 +249,13 @@ sub handle_request {
             # Try validating again
             $action->result(Jifty::Result->new);
             $self->response->result( $action->moniker => $action->result );
-            eval { $action->run if $action->validate; };
+            eval {
+                $self->log->debug("Validating action ".ref($action). " ".$action->moniker);
+                if ($action->validate) { 
+                    $self->log->debug("Running action.");
+                    $action->run 
+                }
+            };
             if ( my $err = $@ ) {
                 $self->log->fatal($err);
             }

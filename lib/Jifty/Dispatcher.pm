@@ -2,7 +2,7 @@ package Jifty::Dispatcher;
 use strict;
 use warnings;
 use Exporter;
-use base 'Exporter';
+use base qw/Exporter Jifty::Object/;
            
 
 =head1 NAME
@@ -398,7 +398,8 @@ sub handle_request {
     my $self = shift;
 
     my $path = Jifty->web->request->path;
-    $path =~ s{/index\.html$}{};
+    # XXX TODO: jesse commented this out because it weirdly breaks things
+    #    $path =~ s{/index\.html$}{};
 
     local $Dispatcher = $self->new();
 
@@ -518,6 +519,7 @@ sub _do_before {
     my ( $self, $cond, $rules ) = @_;
     if ( my $regex = $self->_match($cond) ) {
 
+        $self->log->debug("Matched 'before' rule $regex for ".$self->{'path'});
         # match again to establish $1 $2 etc in the dynamic scope
         $self->{path} =~ $regex;
         $self->_handle_rules($rules);
@@ -535,6 +537,7 @@ sub _do_on {
     my ( $self, $cond, $rules ) = @_;
     if ( my $regex = $self->_match($cond) ) {
 
+        $self->log->debug("Matched 'on' rule $regex for ".$self->{'path'});
         # match again to establish $1 $2 etc in the dynamic scope
         $self->{path} =~ $regex;
         $self->_handle_rules($rules);
@@ -550,7 +553,7 @@ This method is called by the dispatcher internally. You shouldn't need to.
 sub _do_after {
     my ( $self, $cond, $rules ) = @_;
     if ( my $regex = $self->_match($cond) ) {
-
+        $self->log->debug("Matched 'on' rule $regex for ".$self->{'path'});
         # match again to establish $1 $2 etc in the dynamic scope
         $self->{path} =~ $regex;
         $self->_handle_rules($rules);
@@ -579,6 +582,7 @@ Redirect the user to the URL provded in the mandatory PATH argument.
 
 sub _do_redirect {
     my ( $self, $path ) = @_;
+    $self->log->debug("Redirecting to $path");
     Jifty->web->redirect($path);
     last_rule;
 }
@@ -593,6 +597,7 @@ Don't display any page. just stop.
 
 sub _do_abort {
     my $self = shift;
+    $self->log->debug("Aborting processing");
     last_rule;
 }
 
@@ -612,40 +617,54 @@ sub _do_show {
     # Fix up the path
     $path = shift if (@_);
     $path ||= request->path;
-    $path = "$self->{cwd}/$path" unless $path =~ m{^/};
-    $path .= "index.html" if $path =~ m{/$};
 
-    # Redirect to directory (and then index) if they requested the directory itself
+    # If we've got a working directory (from an "under" rule) and we have 
+    # a relative path, prepend the working directory
+    $path = "$self->{cwd}/$path" unless $path =~ m{^/};
+
+    # If we're requesting a directory, go looking for the index.html
+    if ($path =~ m{/$} and 
+        Jifty->handler->mason->interp->comp_exists($path."/index.html")) {
+         $path .= "index.html" 
+    }
+    # Redirect to directory (and then index) if they requested 
+    # the directory itself
+    
+    # XXX TODO, we should search all component roots
     $self->_do_redirect($path . "/") 
       if -d Jifty::Util->absolute_path( (Jifty->config->framework('Web')->{'TemplateRoot'} || "html") . $path );
     
     # Set the request path
     request->path($path);
 
-    # Handle the request with Mason
+    $self->log->debug("Having Mason handle ".request->path);
     eval { Jifty->handler->mason->handle_comp(request->path); };
-
+    my $err = $@;
     # Handle parse errors
-    if ( $@ and not UNIVERSAL::isa $@, 'HTML::Mason::Exception::Abort' ) {
-        warn "Mason error: $@";
+    if ( $err and not UNIVERSAL::isa $err, 'HTML::Mason::Exception::Abort' ) {
+        warn "Mason error: $err";
         Jifty->web->redirect("/__jifty/error/mason_parse_error");
-    };
+    } elsif ($err) {
+        die $err;
+    }
     last_rule;
 }
 
 sub _do_set {
     my ( $self, $key, $value ) = @_;
-
+    $self->log->debug("Setting argument $key to $value");
     request->argument($key, $value);
 }
 
 sub _do_del {
     my ( $self, $key ) = @_;
+    $self->log->debug("Deleting argument $key");
     request->delete($key);
 }
 
 sub _do_default {
     my ( $self, $key, $value ) = @_;
+    $self->log->debug("Setting argument default $key to $value");
     request->argument($key, $value)
         unless defined request->argument($key);
 }
@@ -672,6 +691,7 @@ sub _do_dispatch {
     $self->{path} =~ s{/+}{/}g;
     $self->{path} =~ s{/$}{};
 
+    $self->log->debug("Dispatching request to ".$self->{path});
     eval {
         HANDLER: {
             $self->_handle_rules( [ $self->rules('SETUP') ] );
@@ -763,6 +783,7 @@ came in with that method.
 
 sub _match_method {
     my ( $self, $method ) = @_;
+    $self->log->debug("Matching URL ".$self->{cgi}->method." against ".$method);
     lc( $self->{cgi}->method ) eq lc($method);
 }
 
