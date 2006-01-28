@@ -1,0 +1,30 @@
+
+div.halo_actions {
+display: none;
+float: left;
+//border: solid 1px black;
+//margin: 1em;
+//padding: 0;
+position: absolute;
+}
+
+div.halo_actions dl {
+ background: #ccc;
+ list-style-type: none;
+ border: yellow 2px solid;
+
+ margin: 0em;
+ padding: 0.5em;
+ 
+}
+
+div.halo_actions dl a {
+ color: black;
+}
+
+span.halo_button {
+color: yellow;
+position: fixed;
+z-index: 9999;
+font-size:2em;
+}

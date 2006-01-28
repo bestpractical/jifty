@@ -3,6 +3,7 @@
   <script type="text/javascript" src="/js/behaviour.js"></script>
   <script type="text/javascript" src="/js/scriptaculous/scriptaculous.js"></script>
   <script type="text/javascript" src="/js/jifty.js"></script>
+  <script type="text/javascript" src="/js/halo.js"></script>
   <script type="text/javascript" src="/js/combobox.js"></script>
   <script type="text/javascript" src="/js/key_bindings.js"></script>
   <script type="text/javascript" src="/js/bps_util.js"></script>
