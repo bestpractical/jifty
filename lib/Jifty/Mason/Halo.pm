@@ -23,6 +23,7 @@ sub start_component_hook {
         push @$STACK,
             {
             id         => $halo_base,
+            args        => $context->args,
             start_time => Time::HiRes::time(),
             path        => $context->comp->path,
             subcomponent => (  $context->comp->is_subcomp() ? 1:0),
@@ -35,10 +36,6 @@ sub start_component_hook {
     return if $self->_unrendered_component($context);
 
     $context->request->out('<span class="halo">');
-    $context->request->out(
-        qq{<span class="halo_button" id="halo-@{[$halo_base]}" onClick="toggle_display('halo-@{[$halo_base]}-menu')"><img src="/images/halo.png" alt="O"/></span>
-}
-    );
 }
 
 sub end_component_hook {
@@ -61,7 +58,6 @@ sub end_component_hook {
     return if $self->_unrendered_component($context);
 
     # print out the div with our halo magic actions.
-    $self->render_halo_actions($context, $frame);
     # if we didn't render a beginning of the span, don't render an end
     $context->request->out('</span>') unless ($frame->{'proscribed'});
 
@@ -69,28 +65,25 @@ sub end_component_hook {
 
 sub render_halo_actions {
     my $self    = shift;
-    my $context = shift;
     my $stack_frame = shift;
-    my $comp    = $context->comp();
-    my $args = $context->args;
 
-    $context->request->out( 
+    Jifty->web->mason->out( 
         qq{
 <div class="halo_actions" id="halo-@{[$stack_frame->{'id'}]}-menu">
-<span class="halo_name">@{[$comp->name]}</span>
+<span class="halo_name" onClick="toggle_display('halo-@{[$stack_frame->{'id'}]}-menu')">@{[$stack_frame->{'name'}]}</span>
 <dl>
 <dt>Path</dt>
-<dt>@{[$comp->path]}</dd>
+<dt>@{[$stack_frame->{'path'}]}</dd>
 <dt>Render time</dt>
 <dd>@{[$stack_frame->{'render_time'}]}</dd>
 <dt>});
 # XXX TODO: we shouldn't be doing direct rendering of this if we can avoid it.
 # but it would require a rework of how the render_xxx subs work in jifty core
-$context->request->out(Jifty->web->tangent( url =>"/=/edit/mason_component/".$comp->path, label => 'Edit'));
+Jifty->web->mason->out(Jifty->web->tangent( url =>"/=/edit/mason_component/".$stack_frame->{'path'}, label => 'Edit'));
 
-$context->request->out(qq{</dt>
+Jifty->web->mason->out(qq{</dt>
 <dt>Variables</dt>
-<dd>@{[YAML::Dump($args)]}</dd>
+<dd><pre>@{[YAML::Dump($stack_frame->{'args'})]}</pre></dd>
 
 </dl>
 </div>
@@ -130,6 +123,7 @@ sub render_component_tree {
     Jifty->web->mason->out('<ul>');
 
     foreach my $item (@stack) {
+        $item->{'render_time'} ||= int((Time::HiRes::time - $item->{'start_time'}) * 1000)/1000;
         if ( $item->{depth} > $depth ) {
             Jifty->web->mason->out("<ul>");
         } elsif ( $item->{depth} < $depth ) {
@@ -138,17 +132,17 @@ sub render_component_tree {
 
         Jifty->web->mason->out( "<li>");
 
-        Jifty->web->mason->out(qq{<span class="halo_comp_info"} );
-
+        Jifty->web->mason->out(qq{<span class="halo_comp_info" } );
         Jifty->web->mason->out(qq{onClick="toggle_display('halo-}.$item->{id}.qq{-menu');"});
         Jifty->web->mason->out(qq{>}
                 . $item->{'path'} . " - "
                 . $item->{'render_time'}
-                . qq{</span>}
+                . qq{</span> }
                 );
 
     Jifty->web->mason->out(Jifty->web->tangent( url =>"/=/edit/mason_component/".$item->{'path'}, label => 'Edit'))
         unless ($item->{subcomponent});
+    $self->render_halo_actions($item);
     Jifty->web->mason->out( "</li>");
         $depth = $item->{'depth'};
     }

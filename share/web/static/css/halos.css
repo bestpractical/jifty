@@ -1,11 +1,10 @@
-
 div.halo_actions {
-display: none;
-float: left;
-//border: solid 1px black;
-//margin: 1em;
-//padding: 0;
-position: fixed;
+  display: none;
+  position: fixed;
+  right: 0;
+  bottom: 0;
+
+
 }
 
 div.halo_actions dl {
@@ -13,8 +12,8 @@ div.halo_actions dl {
  list-style-type: none;
  border: yellow 2px solid;
 
- margin: 0em;
- padding: 0.5em;
+ margin: 1em;
+ padding:1em;
  
 }
 
@@ -23,36 +22,40 @@ div.halo_actions dl a {
 }
 
 span.halo_button {
-color: yellow;
-position: absolute;
-z-index: 9999;
-font-size:2em;
+  color: yellow;
+  position: absolute;
+  z-index: 9999;
+  font-size:2em;
 }
 
 div#render_info_tree {
    display: none;
-    position: fixed;
-    font-size: 0.5em;
-    
-    border 1px solid yellow;
-
- right: 1em;
-  bottom: 1.5em;
- 
-border: 2px solid #fc0;
-padding: 1em;
+   position: fixed;
+   font-size: 0.5em;
+   border 1px solid yellow;
+   right: 1em;
+   bottom: 1em;
+   border: 2px solid #fc0;
+   padding: 1em;
 }
 
 div#render_info_tree ul {
- list-style: none;
- padding-left: 1em;
+   list-style: none;
+   padding-left: 1em;
 }
 
 
 div#render_info {
-    position: fixed;
-right:0.5em;
-bottom:0;
+  position: fixed;
+  right:0.5em;
+  bottom:0;
 }
 
+span.halo_name {
+  color: black;
+  background-color: yellow;
+  border: 1px solid black;
+  position: static;
+  padding: 0.25em;
+}
 
