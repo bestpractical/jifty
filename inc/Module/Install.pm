@@ -1,4 +1,4 @@
-#line 1 "/home/chmrr/work/rt/local/jifty/inc/Module/Install.pm - /usr/lib/perl5/site_perl/5.8.7/Module/Install.pm"
+#line 1 "/home/jesse/svk/jifty.org/jifty/trunk/inc/Module/Install.pm - /usr/local/share/perl/5.8.7/Module/Install.pm"
 package Module::Install;
 
 use 5.004;

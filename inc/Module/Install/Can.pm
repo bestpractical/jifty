@@ -1,4 +1,4 @@
-#line 1 "inc/Module/Install/Can.pm - /usr/lib/perl5/site_perl/5.8.7/Module/Install/Can.pm"
+#line 1 "inc/Module/Install/Can.pm - /usr/local/share/perl/5.8.7/Module/Install/Can.pm"
 package Module::Install::Can;
 use Module::Install::Base; @ISA = qw(Module::Install::Base);
 $VERSION = '0.01';
@@ -52,6 +52,7 @@ sub can_cc {
 # Fix Cygwin bug on maybe_command();
 if ($^O eq 'cygwin') {
     require ExtUtils::MM_Cygwin;
+    require ExtUtils::MM_Win32;
     if (!defined(&ExtUtils::MM_Cygwin::maybe_command)) {
         *ExtUtils::MM_Cygwin::maybe_command = sub {
             my ($self, $file) = @_;

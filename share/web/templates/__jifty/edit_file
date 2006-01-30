@@ -1,0 +1,16 @@
+<%args>
+$path=> undef
+$editor => undef
+$next => undef
+</%args>
+<%init>
+my $title = "Editing file ".$editor->argument_value('source_path');
+</%init>
+<&|/_elements/wrapper, title => $title &>
+<%Jifty->web->form->start( call => $next, moniker => 'edit')%>
+<%$editor->form_field('file_type')%>
+<%$editor->form_field('destination_path')%>
+<%$editor->form_field('content')%>
+<% Jifty->web->form->submit(label => 'Save changes')%>
+<%Jifty->web->form->end()%>
+</&>
