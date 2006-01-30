@@ -83,7 +83,13 @@ if (typeof window.onload != 'function') {
     }
 }
 
-function jifty_button_click() {
+function toggle_display (id) {
+var e = document.getElementById(id);
+if (e.style.display !="block" ) {
+    e.style.display="block";
+} else {
+   e.style.display="none";
+} 
 
-1;
+
 }

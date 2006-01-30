@@ -5,7 +5,7 @@ float: left;
 //border: solid 1px black;
 //margin: 1em;
 //padding: 0;
-position: absolute;
+position: fixed;
 }
 
 div.halo_actions dl {
@@ -24,7 +24,35 @@ div.halo_actions dl a {
 
 span.halo_button {
 color: yellow;
-position: fixed;
+position: absolute;
 z-index: 9999;
 font-size:2em;
 }
+
+div#render_info_tree {
+   display: none;
+    position: fixed;
+    font-size: 0.5em;
+    
+    border 1px solid yellow;
+
+ right: 1em;
+  bottom: 1.5em;
+ 
+border: 2px solid #fc0;
+padding: 1em;
+}
+
+div#render_info_tree ul {
+ list-style: none;
+ padding-left: 1em;
+}
+
+
+div#render_info {
+    position: fixed;
+right:0.5em;
+bottom:0;
+}
+
+
