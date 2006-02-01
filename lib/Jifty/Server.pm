@@ -47,9 +47,9 @@ sub new {
     use Hook::LexWrap;
     wrap 'HTML::Mason::FakeApache::send_http_header', pre => sub {
         my $r = shift;
-        $r->header_out( @{$_} ) for Jifty->web->response->headers;
         my $status = $r->header_out('Status') || '200 Jifty OK';
         print STDOUT "HTTP/1.0 $status\n";
+        $r->header_out( @{$_} ) for Jifty->web->response->headers;
     };
 
     return ($self);

@@ -240,6 +240,8 @@ sub render {
     # Merge in defaults
     %arguments = (%{ Jifty->web->request->arguments }, region => $self, 'J:ACTIONS' => '', %arguments);
 
+    ### XXX TODO this should create a new Jifty::Request and go
+    ### through the dispatcher
     Jifty->handler->mason->interp->make_request(comp => $self->path,
                                                 args => [ %arguments ],
                                                 out_method => \$result,

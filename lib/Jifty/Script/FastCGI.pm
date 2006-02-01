@@ -56,6 +56,13 @@ Creates a new FastCGI process.
  
 sub run {
     Jifty->new();
+
+    use Hook::LexWrap;
+    wrap 'HTML::Mason::FakeApache::send_http_header', pre => sub {
+        my $r = shift;
+        $r->header_out( @{$_} ) for Jifty->web->response->headers;
+    };
+
     while ( my $cgi = CGI::Fast->new ) {
         # the whole point of fastcgi requires the env to get reset here..
         # So we must squash it again
