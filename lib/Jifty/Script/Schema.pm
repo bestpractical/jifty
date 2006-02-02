@@ -49,7 +49,7 @@ sub run {
     $self->setup_environment();
     $self->probe_database_existence();
     $self->manage_database_existence();
-    $self->prepare_mode_classes();
+    $self->prepare_model_Classes();
     if ( $self->{create_all_tables} ) {
         $self->create_all_tables();
     } elsif ($self->{'setup_tables'}) {
@@ -103,14 +103,14 @@ sub print_help {
         if $self->{man};
 }
 
-=head2 prepare_mode_classes
+=head2 prepare_model_Classes
 
 Reads in our application class from the config file, sets up a schema generator
 and finds all our app's models.
 
 =cut
 
-sub prepare_mode_classes {
+sub prepare_model_Classes {
 
     my $self = shift;
 
