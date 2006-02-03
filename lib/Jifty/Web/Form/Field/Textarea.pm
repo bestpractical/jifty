@@ -32,7 +32,7 @@ sub render_widget {
     $field .= qq! cols="@{[$self->cols || 60]}"!;
     $field .= $self->_widget_class;
     $field .= qq! >!;
-    $field .= $self->current_value if $self->current_value;
+    $field .= Jifty->web->escape($self->current_value) if $self->current_value;
     $field .= qq!</textarea>\n!;
     Jifty->web->out($field);
     '';

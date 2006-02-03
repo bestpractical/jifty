@@ -862,6 +862,17 @@ sub query_string {
     return ( join( ';', @params ) );
 }
 
+=head3 escape STRING
+
+HTML-escapes the given string and returns it
+
+=cut
+
+sub escape {
+    my $self = shift;
+    return join '', map {$self->mason->interp->apply_escapes( $_, 'h' )} @_;
+}
+
 =head3 navigation
 
 Returns the L<Jifty::Web::Menu> for this web request; one is

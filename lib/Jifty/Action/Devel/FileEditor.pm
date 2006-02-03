@@ -6,6 +6,7 @@ use File::Spec;
 
 sub new {
     my $class = shift; my $self = $class->SUPER::new(@_);
+    $self->sticky_on_success(1);
     $self->get_default_content; 
     return($self);
 
@@ -44,8 +45,8 @@ sub get_default_content {
     foreach my $item (@{$cfg{comp_root}}) {
         $local_template_base = $item->[1] if ($item->[0] eq 'application');
         my $qualified_path = File::Spec->catfile($item->[1],$path);
-         if (-f $qualified_path and -r $qualified_path)  {
-            $self->argument_value(source_path => $qualified_path);
+        if (-f $qualified_path and -r $qualified_path)  {
+            $self->argument_value(qualified_path => $qualified_path);
             my $filehandle;
             open ($filehandle, "<$qualified_path")||die "Couldn't read $qualified_path: $!";
             $out = join('',<$filehandle>);
@@ -60,36 +61,29 @@ sub get_default_content {
 sub validate_destination_path {
     my $self = shift;
     my $value = shift;
-    $self->{'write_to'} =  ($value or $self->argument_value('source_path'));
+    $self->{'write_to'} = ($value or $self->argument_value('qualified_path'));
     unless ($self->{'write_to'}) {
         return  $self->validation_error( destination_path => "No destination path set. Where should I write this file?");
     }
     if (-f $self->{'write_to'} and not -w $self->{'write_to'}) {
         return  $self->validation_error( destination_path => "Can't save the file to ".$self->{'write_to'});
-
     }
     return $self->validation_ok;
 }
 
 sub take_action {
     my $self = shift;
-    
     my $dest  = $self->{'write_to'};
-    warn "Making directory $dest";
     $self->_make_path($dest);
     my $writehandle = IO::File->new();
     $writehandle->open(">$dest") || die "Couldn't open $dest for writing: ".$!;
-    warn YAML::Dump($self);
     $writehandle->print( $self->argument_value('content')) || die " Couldn't write to $dest: ".$!;
     $writehandle->close() || die "Couldn't close filehandle $dest ".$!;
     $self->result->message("Updated $dest");
-    $self->redirect('/=/edit/component/'.$dest);
-
 }
 
 
 sub _make_path {
-
     my $self = shift;
     my $whole_path = shift;
     my @dirs = File::Spec->splitdir( $whole_path );
@@ -105,7 +99,5 @@ sub _make_path {
     }
 
 }
-
-
 
 1;
