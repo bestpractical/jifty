@@ -1,3 +1,4 @@
+bin/build_par
 bin/jifty
 doc/ajax-upgraded-links
 doc/talks/npw2005.xul
@@ -20,6 +21,7 @@ lib/Email/Send/Jifty/Test.pm
 lib/Jifty.pm
 lib/Jifty/Action.pm
 lib/Jifty/Action/Autocomplete.pm
+lib/Jifty/Action/Devel/FileEditor.pm
 lib/Jifty/Action/Record.pm
 lib/Jifty/Action/Record/Create.pm
 lib/Jifty/Action/Record/Delete.pm
@@ -43,6 +45,8 @@ lib/Jifty/Manual/AccessControl.pod
 lib/Jifty/Manual/Glossary.pod
 lib/Jifty/Manual/ObjectModel.pod
 lib/Jifty/Manual/Tutorial.pod
+lib/Jifty/Mason/Halo.pm
+lib/Jifty/MasonHandler.pm
 lib/Jifty/MasonInterp.pm
 lib/Jifty/Model/Schema.pm
 lib/Jifty/Notification.pm
@@ -102,6 +106,7 @@ share/web/static/css/base.css
 share/web/static/css/calendar.css
 share/web/static/css/combobox.css
 share/web/static/css/forms.css
+share/web/static/css/halos.css
 share/web/static/css/keybindings.css
 share/web/static/css/main.css
 share/web/static/css/nav.css
@@ -116,6 +121,7 @@ share/web/static/js/behaviour.js
 share/web/static/js/bps_util.js
 share/web/static/js/combobox.js
 share/web/static/js/dom-drag.js
+share/web/static/js/halo.js
 share/web/static/js/ie7/blank.gif
 share/web/static/js/ie7/ie7-base64.php
 share/web/static/js/ie7/ie7-content.htc
@@ -165,6 +171,7 @@ share/web/templates/__jifty/admin/fragments/list/update
 share/web/templates/__jifty/admin/fragments/list/view
 share/web/templates/__jifty/admin/index.html
 share/web/templates/__jifty/autocomplete.xml
+share/web/templates/__jifty/edit_file
 share/web/templates/__jifty/error/dhandler
 share/web/templates/__jifty/online_docs/autohandler
 share/web/templates/__jifty/online_docs/content.html
@@ -214,3 +221,14 @@ t/Mapper/t/01-raw-api.t
 t/Mapper/t/02-api.t
 t/Mapper/web/templates/autohandler
 t/Mapper/web/templates/index.html
+t/TestApp/bin/jifty
+t/TestApp/lib/TestApp/Model/User.pm
+t/TestApp/t/00-load.t
+t/TestApp/t/00-model-User.t
+t/TestApp/t/00-prototype.t
+t/TestApp/t/01-config.t
+t/TestApp/t/01-trivial.t
+t/TestApp/t/16-images.t
+t/TestApp/testapp
+t/TestApp/web/static/images/pony.jpg
+t/TestApp/web/templates/index.html
