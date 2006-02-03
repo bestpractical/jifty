@@ -136,13 +136,17 @@ sub from_data_structure {
 
     my %actions = %{$data->{actions} || {}};
     for my $a (values %actions) {
+        my %arguments;
+        for my $arg (keys %{$a->{fields} || {}}) {
+            for my $type (qw/doublefallback fallback value/) {
+                $arguments{$arg} = $a->{fields}{$arg}{$type}
+                  if exists $a->{fields}{$arg}{$type};
+            }
+        }
         $self->add_action(moniker   => $a->{moniker},
                           class     => $a->{class},
                           # TODO: ORDER
-                          arguments => {map {$_ => $a->{fields}{$_}{value}
-                                                || $a->{fields}{$_}{fallback}
-                                                || $a->{fields}{$_}{doublefallback}}
-                                        keys %{$a->{fields} || {}} },
+                          arguments => \%arguments,
                          );
     }
 
@@ -174,7 +178,7 @@ Returns itself.
 sub from_cgi {
     my $self = shift;
     my ($cgi) = @_;
-    
+
     my $path = $cgi->path_info;
     $path =~ s/\?.*//;
     $self->path( $path );

@@ -240,12 +240,22 @@ sub render {
     # Merge in defaults
     %arguments = (%{ Jifty->web->request->arguments }, region => $self, 'J:ACTIONS' => '', %arguments);
 
-    ### XXX TODO this should create a new Jifty::Request and go
-    ### through the dispatcher
-    Jifty->handler->mason->interp->make_request(comp => $self->path,
-                                                args => [ %arguments ],
-                                                out_method => \$result,
-                                               )->exec;
+    # Make a fake request and throw it at the dispatcher
+    my $subrequest = Jifty::Request->new;
+    $subrequest->from_webform( %arguments );
+    $subrequest->path ($self->path );
+    local Jifty->web->{request} = $subrequest;
+
+    # Convince Mason to tack its response onto a variable and not send
+    # headers when it does so
+    Jifty->handler->mason->interp->out_method(sub {
+        HTML::Mason::Request->instance->auto_send_headers(0);
+        $result .= $_[0];
+    });
+
+    # Call into the dispatcher
+    Jifty->dispatcher->handle_request;
+
     if ($self->region_wrapper) {
         $result .= qq|</div>|;
     }
