@@ -20,7 +20,7 @@ use base qw/Jifty::DBI::Record::Cachable/;
 sub _init {
     my $self = shift;
     my %args = (@_);
-     $self->_get_current_user(%args);
+    $self->_get_current_user(%args);
     
     $self->SUPER::_init(@_);
 

@@ -52,8 +52,14 @@ version object.
 sub in_db {
   my $self = shift;
   my @v;
-  if ($self->_handle->dbh->ping) {
-      @v = $self->_handle->fetch_result("SELECT major, minor, rev FROM ".$self->table);
+  if ($self->_handle and $self->_handle->dbh->ping) {
+      # This may barf all over the place.  That's almost expected in
+      # some circumstances, so we eat all warnings and errors right
+      # here, right now.
+      eval {
+          local $SIG{__WARN__} = sub {};
+          @v = $self->_handle->fetch_result("SELECT major, minor, rev FROM ".$self->table);
+      };
   }
   return undef unless @v == 3; # No version in db yet
   return version->new(join (".", @v));
