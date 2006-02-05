@@ -93,7 +93,6 @@ lib/Jifty/Web/Menu.pm
 lib/Jifty/Web/PageRegion.pm
 lib/Jifty/Web/Session.pm
 lib/Jifty/YAML.pm
-LICENSE
 Makefile.PL
 MANIFEST			This list of files
 MANIFEST.SKIP
