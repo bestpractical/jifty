@@ -41,6 +41,9 @@ sub setup {
         $self->stash(Hash::Merge::merge($self->stash, $class->test_config($self)));
     };
 
+    my $root = Jifty::Util->app_root;
+    unshift @INC, "$root/lib" if ($root);
+
     Jifty->new( no_handle => 1 );
 
     Log::Log4perl->get_logger("SchemaTool")->less_logging(3);
