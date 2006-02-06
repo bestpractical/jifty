@@ -243,7 +243,8 @@ sub render {
     # Make a fake request and throw it at the dispatcher
     my $subrequest = Jifty::Request->new;
     $subrequest->from_webform( %arguments );
-    $subrequest->path ($self->path );
+    $subrequest->path( $self->path );
+    $subrequest->is_subrequest( 1 );
     local Jifty->web->{request} = $subrequest;
 
     # Convince Mason to tack its response onto a variable and not send

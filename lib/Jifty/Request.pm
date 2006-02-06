@@ -4,7 +4,7 @@ use strict;
 package Jifty::Request;
 
 use base qw/Jifty::Object Class::Accessor Clone/;
-__PACKAGE__->mk_accessors(qw(arguments just_validating path _continuation));
+__PACKAGE__->mk_accessors(qw(is_subrequest arguments just_validating path _continuation));
 
 use Jifty::JSON;
 use Jifty::YAML;

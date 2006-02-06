@@ -63,6 +63,7 @@ sub mason_config {
         error_format => 'text',
         default_escape_flags => 'h',
         autoflush => 0,
+        request_class => 'Jifty::MasonRequest',
         plugins => ['Jifty::Mason::Halo']
     );
 }
@@ -101,12 +102,6 @@ sub handle_request {
         out_method => sub {
             my $m = HTML::Mason::Request->instance;
             my $r = $m->cgi_request;
-            # Send headers if they have not been sent by us or by user.
-            # We use instance here because if we store $request we get a
-            # circular reference and a big memory leak.
-            unless ($r->http_header_sent) {
-                $r->send_http_header();
-            }
 
             $r->content_type || $r->content_type('text/html; charset=utf-8'); # Set up a default
 
@@ -114,6 +109,11 @@ sub handle_request {
                 my $enc = $1;
                 binmode *STDOUT, ":encoding($enc)";
             }
+
+            unless ($r->http_header_sent or not $m->auto_send_headers) {
+                $r->send_http_header();
+            }
+
             # We could perhaps install a new, faster out_method here that
             # wouldn't have to keep checking whether headers have been
             # sent and what the $r->method is.  That would require
