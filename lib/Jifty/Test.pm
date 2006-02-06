@@ -177,10 +177,8 @@ END {
         Log::Log4perl->get_logger("SchemaTool")->less_logging(3);
         my $schema = Jifty::Script::Schema->new;
         $schema->{drop_database} = 1;
-        $schema->{setup_tables}  = 1;
         $schema->run;
         Log::Log4perl->get_logger("SchemaTool")->more_logging(3);
-        Jifty->handle->connect();
     }
 }
 
