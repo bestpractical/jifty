@@ -1067,7 +1067,11 @@ sub serve_fragments {
     # Print a header and the content, and then bail
     my $apache = HTML::Mason::FakeApache->new();
     $apache->send_http_header();
+
+    # Wide characters at this point should be harmlessly treated as UTF-8 octets.
+    no warnings 'utf8';
     print $output;
+
     Jifty::Dispatcher::last_rule;
 }
 
