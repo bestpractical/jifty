@@ -10,7 +10,7 @@ Continuations tests
 =cut
 
 BEGIN {chdir "t/Continuations"}
-use lib '../../lib';
+use lib '../lib';
 use Jifty::Test tests => 31;
 
 use_ok('Jifty::Test::WWW::Mechanize');

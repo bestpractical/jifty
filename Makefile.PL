@@ -30,7 +30,7 @@ requires('File::Spec');
 requires('FindBin');
 requires('Getopt::Long');
 requires('HTML::Entities');
-requires('HTML::Mason' => 1.3101);           # HTML::Mason::CGIHandler HTML::Mason::Interp HTML::Mason::Plugin
+requires('HTML::Mason' => 1.3101);           # HTML::Mason::CGIHandler HTML::Mason::Interp HTML::Mason::Plugin HTML::Mason::Request::CGI
 requires('HTML::Mason::Plugin');
 requires('HTTP::Cookies');
 requires('HTTP::Server::Simple' => '0.10');  # HTTP::Server::Simple::CGI
