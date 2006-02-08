@@ -19,7 +19,7 @@ Alert: Jifty <% Jifty->web->tangent( label => 'administration mode' , url => '/_
   document.write('</div>');
   document.write('<div id="jifty-wait-message" style="display: none">Loading...</div>');
   --></script>
-% Jifty::Mason::Halo->render_component_tree();
+%# Jifty::Mason::Halo->render_component_tree();
 </body>
 </html>
 %$m->notes('in_body' => 0);

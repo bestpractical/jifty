@@ -47,7 +47,6 @@ lib/Jifty/Manual/ObjectModel.pod
 lib/Jifty/Manual/Tutorial.pod
 lib/Jifty/Mason/Halo.pm
 lib/Jifty/MasonHandler.pm
-lib/Jifty/MasonInterp.pm
 lib/Jifty/Model/Schema.pm
 lib/Jifty/Notification.pm
 lib/Jifty/Object.pm
@@ -186,8 +185,6 @@ share/web/templates/autohandler
 share/web/templates/dhandler
 share/web/templates/favicon.ico
 share/web/templates/index.html
-share/web/templates/let/autohandler
-share/web/templates/let/dhandler
 t/01-dependencies.t
 t/02-connect.t
 t/02-form-protocol.t

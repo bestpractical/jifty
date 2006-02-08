@@ -63,7 +63,7 @@ sub mason_config {
         error_format => 'text',
         default_escape_flags => 'h',
         autoflush => 0,
-        plugins => ['Jifty::Mason::Halo']
+       # plugins => ['Jifty::Mason::Halo']
     );
 }
 
