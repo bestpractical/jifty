@@ -87,7 +87,7 @@ sub child {
     # Activate it
     my $url = $self->{children}{$key}->url;
     # XXX TODO cleanup for mod_perl
-    my $base_path = Jifty->web->mason->cgi_request->path_info;
+    my $base_path = Jifty->web->request->path;
     chomp($base_path);
         
     $base_path =~ s/index\.html$//g;

@@ -63,7 +63,6 @@ sub mason_config {
         error_format => 'text',
         default_escape_flags => 'h',
         autoflush => 0,
-        request_class => 'Jifty::MasonRequest',
         plugins => ['Jifty::Mason::Halo']
     );
 }
@@ -99,6 +98,7 @@ sub handle_request {
 
     $self->mason(Jifty::MasonHandler->new(
         $self->mason_config,
+        cgi => $args{cgi},
         out_method => sub {
             my $m = HTML::Mason::Request->instance;
             my $r = $m->cgi_request;
