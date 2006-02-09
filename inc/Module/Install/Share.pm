@@ -4,27 +4,28 @@ package Module::Install::Share;
 use Module::Install::Base;
 @ISA = qw(Module::Install::Base);
 
-$VERSION = '0.01';
+$VERSION = '0.02';
 
 use strict;
 
 sub install_share {
-    my $self = shift;
-    my $dir  = shift;
+    my ($self, $dir) = @_;
 
     if ( ! defined $dir ) {
         die "Cannot find the 'share' directory" unless -d 'share';
         $dir = 'share';
     }
 
-    $self->postamble(<<".");
+    $self->postamble(<<"END_MAKEFILE");
 config ::
 \t\$(NOECHO) \$(MOD_INSTALL) \\
-\t\t\"$dir\" \$(INST_ARCHAUTODIR)
+\t\t\"$dir\" \$(INST_AUTODIR)
 
-.
+END_MAKEFILE
 }
+
+1;
 
 __END__
 
-#line 62
+#line 65

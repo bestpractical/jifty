@@ -1,6 +1,8 @@
 #line 1 "inc/Module/Install/WriteAll.pm - /usr/lib/perl5/site_perl/5.8.7/Module/Install/WriteAll.pm"
 package Module::Install::WriteAll;
-use Module::Install::Base; @ISA = qw(Module::Install::Base);
+
+use Module::Install::Base;
+@ISA = qw(Module::Install::Base);
 
 sub WriteAll {
     my $self = shift;

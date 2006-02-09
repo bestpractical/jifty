@@ -6,7 +6,7 @@ use strict 'vars';
 use vars qw{$VERSION};
 BEGIN {
     # Don't forget to update Module::Install::Admin too!
-    $VERSION = '0.52';
+    $VERSION = '0.55';
 }
 
 # inc::Module::Install must be loaded first

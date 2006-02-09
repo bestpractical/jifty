@@ -2,9 +2,12 @@
 package Module::Install::Base;
 
 # Suspend handler for "redefined" warnings
-BEGIN { my $w = $SIG{__WARN__}; $SIG{__WARN__} = sub { $w } };
+BEGIN {
+	my $w = $SIG{__WARN__};
+	$SIG{__WARN__} = sub { $w };
+}
 
-#line 30
+#line 36
 
 sub new {
     my ($class, %args) = @_;
@@ -18,7 +21,7 @@ sub new {
     bless(\%args, $class);
 }
 
-#line 48
+#line 56
 
 sub AUTOLOAD {
     my $self = shift;
@@ -28,20 +31,18 @@ sub AUTOLOAD {
     goto &$autoload;
 }
 
-#line 62
+#line 72
 
 sub _top { $_[0]->{_top} }
 
-#line 73
+#line 85
 
 sub admin {
-    my $self = shift;
-    $self->_top->{admin} or Module::Install::Base::FakeAdmin->new;
+    $_[0]->_top->{admin} or Module::Install::Base::FakeAdmin->new;
 }
 
 sub is_admin {
-    my $self = shift;
-    $self->admin->VERSION;
+    $_[0]->admin->VERSION;
 }
 
 sub DESTROY {}
@@ -50,14 +51,16 @@ package Module::Install::Base::FakeAdmin;
 
 my $Fake;
 sub new { $Fake ||= bless(\@_, $_[0]) }
+
 sub AUTOLOAD {}
+
 sub DESTROY {}
+
+# Restore warning handler
+BEGIN {
+	$SIG{__WARN__} = $SIG{__WARN__}->();
+}
 
 1;
 
-# Restore warning handler
-BEGIN { $SIG{__WARN__} = $SIG{__WARN__}->() };
-
-__END__
-
-#line 120
+#line 134
