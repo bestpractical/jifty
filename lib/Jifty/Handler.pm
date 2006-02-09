@@ -59,11 +59,7 @@ sub mason_config {
                           [application =>  Jifty::Util->absolute_path( Jifty->config->framework('Web')->{'TemplateRoot'} )],
                           [jifty => Jifty->config->framework('Web')->{'DefaultTemplateRoot'}],
                          ],
-        default_escape_flags => Jifty->config->framework('Web')->{'DefaultEscapeFlags'},
-        autoflush    => Jifty->config->framework('Web')->{'Autoflush'},
-        error_mode   => Jifty->config->framework('Web')->{'ErrorMode'},
-        error_format => Jifty->config->framework('Web')->{'ErrorFormat'},
-        plugins      => Jifty->config->framework('Web')->{'Plugins'},
+        %{ Jifty->config->framework('Web')->{'MasonConfig'} },
     );
 }
 

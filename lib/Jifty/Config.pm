@@ -230,14 +230,16 @@ sub guess {
                 DefaultTemplateRoot => Jifty::Util->share_root . '/web/templates',
                 StaticRoot   => "web/static",
                 TemplateRoot => "web/templates",
-                Autoflush    => 0,
-                ErrorMode    => 'fatal',
-                ErrorFormat  => 'text',
-                DefaultEscapeFlags => 'h',
-                Plugins      => ['Jifty::Mason::Halo'],
+                MasonConfig => {
+                    autoflush    => 0,
+                    error_mode   => 'fatal',
+                    error_format => 'text',
+                    default_escape_flags => 'h',
+                    plugins      => ['Jifty::Mason::Halo'],
+                },
                 Globals      => [],
-            }
-        }
+            },
+        },
     };
 
 }
