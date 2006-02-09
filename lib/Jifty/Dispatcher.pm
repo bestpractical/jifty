@@ -474,6 +474,7 @@ no warnings 'exiting';
 
 sub next_rule { next RULE }
 sub last_rule { last HANDLER }
+sub next_show { last HANDLE_WEB }
 
 =head2 _do_under
 
@@ -695,7 +696,9 @@ sub _do_dispatch {
     eval {
         HANDLER: {
             $self->_handle_rules( [ $self->rules('SETUP') ] );
-            Jifty->web->handle_request();
+          HANDLE_WEB: {
+                Jifty->web->handle_request();
+            }
             $self->_handle_rules( [ $self->rules('RUN'), 'show' ] );
             $self->_handle_rules( [ $self->rules('CLEANUP') ] );
         }

@@ -181,15 +181,26 @@ sub call {
     } else {
         # Pull state information out of the continuation and set it
         # up; we use clone so that the continuation itself is
-        # immutable.
+        # immutable.  It is vaguely possible that there are results in
+        # the response already (set up by the dispatcher) so we place
+        # results from the continuation's response into the existing
+        # response only if it wouldn't clobber something.
+        my %results = $self->response->results;
+        Jifty->web->response->result($_,Clone::clone($results{$_}))
+          for grep {not Jifty->web->response->result($_)} keys %results;
 
-        # TODO: maybe not use clone?  Use something happier?
-        Jifty->web->response( Clone::clone($self->response) ) if $self->response;
+        # Run any code in the continuation
         $self->code->(Jifty->web->request)
           if $self->code;
-        local Jifty->web->{request} = Clone::clone($self->request);
-        Jifty->handler->dispatcher->handle_request();
-        Jifty::Dispatcher::last_rule();
+
+        # Enter the request in the continuation, and handle it
+        Jifty->web->request(Clone::clone($self->request));
+        Jifty->web->handle_request();
+
+        # Now we want to skip the rest of the
+        # Jifty::Web->handle_request that we were called from.  Pop up
+        # to the dispatcher
+        Jifty::Dispatcher::next_show();
     }
 
 }
