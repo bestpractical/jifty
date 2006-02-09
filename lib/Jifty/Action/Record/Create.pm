@@ -57,8 +57,7 @@ sub take_action {
     my $record = $self->record;
 
     my %values;
-    $values{$_} = $self->argument_value($_)
-      for grep { defined $self->record->column($_) and defined $self->argument_value($_) } $self->argument_names;
+    $values{$_} = $self->argument_value($_) for grep { defined $self->argument_value($_) } $self->argument_names;
     
     my ($id) = $record->create(%values);
 
