@@ -235,7 +235,7 @@ sub guess {
                     error_mode   => 'fatal',
                     error_format => 'text',
                     default_escape_flags => 'h',
-                    plugins      => ['Jifty::Mason::Halo'],
+                    #plugins      => ['Jifty::Mason::Halo'],
                 },
                 Globals      => [],
             },
