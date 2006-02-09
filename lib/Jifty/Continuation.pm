@@ -186,8 +186,10 @@ sub call {
         # results from the continuation's response into the existing
         # response only if it wouldn't clobber something.
         my %results = $self->response->results;
-        Jifty->web->response->result($_,Clone::clone($results{$_}))
-          for grep {not Jifty->web->response->result($_)} keys %results;
+        for (keys %results) {
+            next if Jifty->web->response->result($_);
+            Jifty->web->response->result($_,Clone::clone($results{$_}));
+        }
 
         # Run any code in the continuation
         $self->code->(Jifty->web->request)

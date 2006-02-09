@@ -103,7 +103,9 @@ sub add_action {
 
 =head2 register_action ACTION
 
-Adds C<ACTION> as an action for this form. Called so that actions' form fields can register the action against the form they're being used in.
+Adds C<ACTION> as an action for this form. Called so that actions'
+form fields can register the action against the form they're being
+used in.
 
 =cut
 
@@ -235,8 +237,9 @@ sub print_action_registration {
 }
 
 
-# At the point this is called, it should only include actions we're registering that have no form fields
-# and haven't been explicitly registered.
+# At the point this is called, it should only include actions we're
+# registering that have no form fields and haven't been explicitly
+# registered.
 sub _print_registered_actions {
     my $self = shift;
     for my $a ( keys %{ $self->actions } ) {

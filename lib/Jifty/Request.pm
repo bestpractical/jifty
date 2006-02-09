@@ -411,6 +411,7 @@ sub call_continuation {
     my $self = shift;
     my $cont = $self->arguments->{'J:CALL'};
     return unless $cont and Jifty->web->session->get_continuation($cont);
+    $self->log->debug("Calling continuation $cont");
     $self->continuation(Jifty->web->session->get_continuation($cont));
     $self->continuation->call;
 }

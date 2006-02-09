@@ -248,6 +248,7 @@ sub handle_request {
 
             # Try validating again
             $action->result(Jifty::Result->new);
+            $action->result->action_class(ref $action);
             $self->response->result( $action->moniker => $action->result );
             eval {
                 $self->log->debug("Validating action ".ref($action). " ".$action->moniker);
