@@ -5,7 +5,7 @@ package Jifty::Web::Form;
 
 use base qw/Jifty::Object Class::Accessor/;
 
-__PACKAGE__->mk_accessors(qw(actions printed_actions name call));
+__PACKAGE__->mk_accessors(qw(actions printed_actions name call is_open));
 
 =head2 new ARGS
 
@@ -75,6 +75,18 @@ Gets or sets the HTML name given to the form element.
 
 =cut
 
+=head2 is_open [BOOL]
+
+This accessor returns true if Jifty is currently in the middle of rendering a form 
+(if it's printed a <form> but not yet printed a </form> tag.) Use this in your 
+components to decide whether to open a form or not if you might be called from a 
+template that opened the form for you.
+
+=cut
+
+
+
+
 =head2 add_action PARAMHASH
 
 Calls L<Jifty::Web/new_action> with the paramhash given, and adds it to
@@ -133,6 +145,11 @@ sub start {
     my $self = shift;
 
     my %args = (@_);
+
+    if ($self->is_open) {
+        Jifty->logger->warning("Trying to open a form when we already have one open");
+    }
+
     for (keys %args) {
         $self->$_($args{$_}) if $self->can($_);
     }
@@ -141,6 +158,7 @@ sub start {
     $form_start   .= qq! name="@{[ $self->name ]}"! if defined $self->name;
     $form_start   .= qq! enctype="multipart/form-data" >\n!;
     Jifty->web->out($form_start);
+    $self->is_open(1);
     '';
 } 
 
@@ -175,6 +193,9 @@ internal state such that L</start> may be called again.
 sub end {
     my $self = shift;
 
+    unless ($self->is_open) {
+        Jifty->logger->warning("Trying to close a form when we don't have one open");
+    }
     Jifty->web->out( qq!<div class="hidden">\n! );
 
     $self->_print_registered_actions();
@@ -184,7 +205,7 @@ sub end {
     Jifty->web->out( qq!</div>\n! );
 
     Jifty->web->out( qq!</form>\n! );
-
+    $self->is_open(0);
     # Clear out all the registered actions and the name 
     $self->_init();
 
