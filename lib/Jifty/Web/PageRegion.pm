@@ -249,10 +249,7 @@ sub render {
 
     # Convince Mason to tack its response onto a variable and not send
     # headers when it does so
-    Jifty->handler->mason->interp->out_method(sub {
-        HTML::Mason::Request->instance->auto_send_headers(0);
-        $result .= $_[0];
-    });
+    Jifty->handler->mason->interp->out_method( sub { $result .= $_[0]; });
 
     # Call into the dispatcher
     Jifty->dispatcher->handle_request;

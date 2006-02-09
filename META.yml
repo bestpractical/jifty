@@ -1,5 +1,5 @@
 distribution_type: module
-generated_by: Module::Install version 0.540
+generated_by: Module::Install version 0.550
 license: unknown
 name: Jifty
 no_index:
@@ -14,6 +14,7 @@ requires:
   Cache::Cache: 0
   Carp: 0
   Class::Accessor: 0
+  Class::Container: 0
   Clone: 0
   Cwd: 0
   DBD::SQLite: 0
@@ -48,6 +49,7 @@ requires:
   Module::Install::Admin: 0.50
   Module::Pluggable: 2.95
   Module::Refresh: 0
+  Params::Validate: 0
   Pod::Simple: 0
   Pod::Usage: 0
   Scalar::Util: 0

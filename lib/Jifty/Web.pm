@@ -609,17 +609,16 @@ sub _redirect {
     my $self = shift;
     my ($page) = @_;
 
-    if ($self->mason) {
-        $self->mason->redirect($page);
-    } else {
-        # This is designed to work under CGI or FastCGI; will need an
-        # abstraction for mod_perl
-        my $apache = HTML::Mason::FakeApache->new();
-        $apache->header_out( Location => $page );
-        $apache->header_out( Status => 302 );
-        $apache->send_http_header();
-        Jifty::Dispatcher::last_rule();
-    }
+    # This is designed to work under CGI or FastCGI; will need an
+    # abstraction for mod_perl
+    $self->mason->clear_buffer if $self->mason;
+    my $apache = $self->mason ? $self->mason->fake_apache : HTML::Mason::FakeApache->new();
+
+    $apache->header_out( Location => $page );
+    $apache->header_out( Status => 302 );
+    $apache->send_http_header();
+    $self->mason->abort if $self->mason;
+    Jifty::Dispatcher::last_rule();
 
 }
 

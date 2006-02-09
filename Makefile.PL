@@ -10,6 +10,7 @@ requires('CGI::Cookie');
 requires('Cache::Cache'); #Cache::FileCache
 requires('Carp');
 requires('Class::Accessor');
+requires('Class::Container');
 requires('Clone');
 requires('Cwd');
 requires('DBD::SQLite');
@@ -30,7 +31,7 @@ requires('File::Spec');
 requires('FindBin');
 requires('Getopt::Long');
 requires('HTML::Entities');
-requires('HTML::Mason' => 1.3101);           # HTML::Mason::CGIHandler HTML::Mason::Interp HTML::Mason::Plugin HTML::Mason::Request::CGI
+requires('HTML::Mason' => 1.3101);           # HTML::Mason::Exceptions HTML::Mason::FakeApache HTML::Mason::MethodMaker HTML::Mason::Request HTML::Mason::Utils
 requires('HTML::Mason::Plugin');
 requires('HTTP::Cookies');
 requires('HTTP::Server::Simple' => '0.10');  # HTTP::Server::Simple::CGI
@@ -44,6 +45,7 @@ requires('Math::BigInt');
 requires('Module::Install::Admin' => '0.50');
 requires('Module::Pluggable' => '2.95');
 requires('Module::Refresh');
+requires('Params::Validate');
 requires('Pod::Simple'); #Pod::Simple::Text
 requires('Pod::Usage');
 requires('Scalar::Util');

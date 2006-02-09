@@ -199,7 +199,6 @@ sub guess {
     if (@_) {
         $app_name = shift;
     } elsif ($self->stash->{framework}->{ApplicationName}) {
-
         $app_name =  $self->stash->{framework}->{ApplicationName};
     } else {
         $app_name =  Jifty::Util->default_app_name;
@@ -228,10 +227,15 @@ sub guess {
             MailerArgs => [],
             Web        => {
                 DefaultStaticRoot => Jifty::Util->share_root . '/web/static',
-                DefaultTemplateRoot => Jifty::Util->share_root
-                    . '/web/templates',
+                DefaultTemplateRoot => Jifty::Util->share_root . '/web/templates',
                 StaticRoot   => "web/static",
                 TemplateRoot => "web/templates",
+                Autoflush    => 0,
+                ErrorMode    => 'fatal',
+                ErrorFormat  => 'text',
+                DefaultEscapeFlags => 'h',
+                Plugins      => ['Jifty::Mason::Halo'],
+                Globals      => [],
             }
         }
     };

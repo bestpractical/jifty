@@ -12,7 +12,7 @@ Jifty::Handler - Methods related to the Mason handler
   use Jifty;
   Jifty->new();
 
-  my $cgihandler = HTML::Mason::CGIHandler->new( Jifty->handler->mason_config );
+  my $handler = Jifty::Handler->handle_request( cgi => $cgi );
 
   # after each request is handled
   Jifty::Handler->cleanup_request;
@@ -54,16 +54,16 @@ mode.
 
 sub mason_config {
     return (
-        allow_globals => [qw[$JiftyWeb]],
+        allow_globals => [qw[$JiftyWeb], @{Jifty->config->framework('Web')->{'Globals'} || []}],
         comp_root     => [ 
-                            [application =>  Jifty::Util->absolute_path( Jifty->config->framework('Web')->{'TemplateRoot'} || "html")],
-                            [jifty => Jifty->config->framework('Web')->{'DefaultTemplateRoot'}
-                                ]],
-        error_mode => 'fatal',
-        error_format => 'text',
-        default_escape_flags => 'h',
-        autoflush => 0,
-       # plugins => ['Jifty::Mason::Halo']
+                          [application =>  Jifty::Util->absolute_path( Jifty->config->framework('Web')->{'TemplateRoot'} )],
+                          [jifty => Jifty->config->framework('Web')->{'DefaultTemplateRoot'}],
+                         ],
+        default_escape_flags => Jifty->config->framework('Web')->{'DefaultEscapeFlags'},
+        autoflush    => Jifty->config->framework('Web')->{'Autoflush'},
+        error_mode   => Jifty->config->framework('Web')->{'ErrorMode'},
+        error_format => Jifty->config->framework('Web')->{'ErrorFormat'},
+        plugins      => Jifty->config->framework('Web')->{'Plugins'},
     );
 }
 
@@ -99,33 +99,7 @@ sub handle_request {
     $self->mason(Jifty::MasonHandler->new(
         $self->mason_config,
         cgi => $args{cgi},
-        out_method => sub {
-            my $m = HTML::Mason::Request->instance;
-            my $r = $m->cgi_request;
-
-            $r->content_type || $r->content_type('text/html; charset=utf-8'); # Set up a default
-
-            if ($r->content_type =~ /charset=([\w-]+)$/ ) {
-                my $enc = $1;
-                binmode *STDOUT, ":encoding($enc)";
-            }
-
-            unless ($r->http_header_sent or not $m->auto_send_headers) {
-                $r->send_http_header();
-            }
-
-            # We could perhaps install a new, faster out_method here that
-            # wouldn't have to keep checking whether headers have been
-            # sent and what the $r->method is.  That would require
-            # additions to the Request interface, though.
-            print STDOUT grep {defined} @_;
-        },
     ));
-    $self->mason->interp->set_escape(
-        h => \&Jifty::Handler::escape_utf8 );
-    $self->mason->interp->set_escape(
-        u => \&Jifty::Handler::escape_uri );
-
 
     $self->dispatcher(Jifty->config->framework('ApplicationClass')."::Dispatcher");
     $self->dispatcher->require;
@@ -133,43 +107,6 @@ sub handle_request {
 
     $self->cleanup_request();
 
-}
-
-=head2 escape_utf8 SCALARREF
-
-Does a css-busting but minimalist escaping of whatever html you're passing in.
-
-=cut
-
-sub escape_utf8 {
-    my $ref = shift;
-    my $val = $$ref;
-    use bytes;
-    $val =~ s/&/&#38;/g;
-    $val =~ s/</&lt;/g;
-    $val =~ s/>/&gt;/g;
-    $val =~ s/\(/&#40;/g;
-    $val =~ s/\)/&#41;/g;
-    $val =~ s/"/&#34;/g;
-    $val =~ s/'/&#39;/g;
-    $$ref = $val;
-    Encode::_utf8_on($$ref);
-
-}
-
-=head2 escape_uri SCALARREF
-
-Escapes URI component according to RFC2396
-
-=cut
-
-use Encode qw();
-
-sub escape_uri {
-    my $ref = shift;
-    $$ref = Encode::encode_utf8($$ref);
-    $$ref =~ s/([^a-zA-Z0-9_.!~*'()-])/uc sprintf("%%%02X", ord($1))/eg;
-    Encode::_utf8_on($$ref);
 }
 
 =head2 cleanup_request
