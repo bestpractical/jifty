@@ -25,7 +25,7 @@ handlers.
 =cut
 
 use base qw/Class::Accessor/;
-__PACKAGE__->mk_accessors(qw(mason dispatcher cgi));
+__PACKAGE__->mk_accessors(qw(mason dispatcher cgi apache));
 
 =head2 new
 
@@ -63,6 +63,15 @@ sub mason_config {
     );
 }
 
+=head2 cgi
+
+Returns the L<CGI> object for the current request, or C<undef> if
+there is none.
+
+=head2 apache
+
+Returns the L<HTML::Mason::FakeApache> or L<Apache> objecvt for the
+current request, ot C<undef> if there is none.
 
 =head2 handle_request
 
@@ -89,6 +98,14 @@ sub handle_request {
 
     Module::Refresh->refresh;
     $self->cgi($args{cgi});
+    $self->apache(HTML::Mason::FakeApache->new(cgi => $self->cgi));
+
+    # Creating a new CGI object breaks FastCGI in all sorts of painful
+    # ways.  So wrap the call and preempt it if we already have one
+    use Hook::LexWrap;
+    wrap 'CGI::new', pre => sub {
+        $_[-1] = Jifty->handler->cgi if Jifty->handler->cgi;
+    };
 
     local $HTML::Mason::Commands::JiftyWeb = Jifty::Web->new();
     Jifty->web->request(Jifty::Request->new()->fill($self->cgi));
@@ -97,7 +114,6 @@ sub handle_request {
 
     $self->mason(Jifty::MasonHandler->new(
         $self->mason_config,
-        cgi => $args{cgi},
     ));
 
     $self->dispatcher(Jifty->config->framework('ApplicationClass')."::Dispatcher");
@@ -122,6 +138,7 @@ sub cleanup_request {
     Jifty->web->session->unload();
     Jifty::Record->flush_cache;
     $self->cgi(undef);
+    $self->apache(undef);
 }
 
 1;

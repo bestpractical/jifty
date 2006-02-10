@@ -33,14 +33,11 @@ use vars qw($VERSION);
 __PACKAGE__->valid_params
     (
      interp => { isa => 'HTML::Mason::Interp' },
-     cgi => { isa => 'CGI' },
     );
 
 __PACKAGE__->contained_objects
     (
      interp => 'HTML::Mason::Interp',
-     fake_apache => { class   => 'HTML::Mason::FakeApache', # $r
-                      delayed => 1 },
     );
 
 
@@ -79,7 +76,7 @@ sends a header if need be.
 
 sub out_method {
     my $m = HTML::Mason::Request->instance;
-    my $r = $m->fake_apache;
+    my $r = Jifty->handler->apache;
 
     $r->content_type || $r->content_type('text/html; charset=utf-8'); # Set up a default
 
@@ -138,7 +135,7 @@ sub escape_uri {
 
 =head2 handle_comp COMPONENT
 
-Takes a component path to render.  Deals with setting up a
+Takes a component path to render.  Deals with setting up a global
 L<HTML::Mason::FakeApache> and Request object, and calling the
 component.
 
@@ -147,10 +144,9 @@ component.
 sub handle_comp {
     my ($self, $comp) = (shift, shift);
 
-    # Create a new HTML::Mason::FakeApache object.  But we don't really use it.
-    my $r = $self->create_delayed_object('fake_apache', cgi => $self->{cgi});
+    # Set up the global
+    my $r = Jifty->handler->apache;
     $self->interp->set_global('$r', $r);
-    $self->interp->delayed_object_params('request', fake_apache => $r);
 
     my %args = $self->request_args($r);
 
@@ -205,15 +201,6 @@ use HTML::Mason::Exceptions;
 use HTML::Mason::Request;
 use base qw(HTML::Mason::Request);
 
-use Params::Validate qw(BOOLEAN);
-Params::Validate::validation_options( on_fail => sub { param_error( join '', @_ ) } );
-
-__PACKAGE__->valid_params
-    ( fake_apache => { isa => 'HTML::Mason::FakeApache' } );
-
-use HTML::Mason::MethodMaker
-    ( read_only  => [ 'fake_apache' ] );
-
 =head2 auto_send_headers
 
 Doesn't send headers if this is a subrequest (according to the current
@@ -235,7 +222,7 @@ running the component, and we're supposed to send headers, sends them.
 sub exec
 {
     my $self = shift;
-    my $r = $self->fake_apache;
+    my $r = Jifty->handler->apache;
     my $retval;
 
     eval { $retval = $self->SUPER::exec(@_) };

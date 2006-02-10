@@ -616,18 +616,7 @@ sub _redirect {
     # Clear out the mason output, if any
     $self->mason->clear_buffer if $self->mason;
 
-    # Now, we need to get out hands on a HTML::Mason::FakeApache --
-    # but *carefully*.  FakeApache wants a CGI object, and if it
-    # doesn't get one, it makes one for itself.  The difficulty is
-    # that under FastCGI, if you ever create a second CGI object, it
-    # wedges all future requests with the state of that request.
-
-    # Hence, we use the FakeApache that HTTP::Mason::Request::Jifty
-    # held onto, or we make one by hand, passing it the cgi object
-    # that the handler is still holding onto
-    my $apache = $self->mason ?
-      $self->mason->fake_apache :
-      HTML::Mason::FakeApache->new( cgi => Jifty->handler->cgi );
+    my $apache = Jifty->handler->apache;
 
     # Headers..
     $apache->header_out( Location => $page );
@@ -1082,7 +1071,7 @@ sub serve_fragments {
     $self->response->add_header("Content-Type" => 'text/xml; charset=utf-8');
 
     # Print a header and the content, and then bail
-    my $apache = HTML::Mason::FakeApache->new( cgi => Jifty->handler->cgi );
+    my $apache = Jifty->handler->apache;
     $apache->send_http_header();
 
     # Wide characters at this point should be harmlessly treated as UTF-8 octets.
