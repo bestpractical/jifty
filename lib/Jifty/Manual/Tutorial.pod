@@ -31,7 +31,7 @@ that actually need to be compiled for your operating system. (Little
 things like Perl's database interface and the embedded SQLite that Jifty
 defaults to.)
 
-You can either grab a complete Jifty package from http://jifty.org/download
+You can either grab a complete Jifty package from http://download.jifty.org/pub/jifty/
 or install from CPAN. If you get the I<slim> version from CPAN, you'll have
 to install Jifty's dependencies yourself. (Though we help out with that 
 where we can.)  If you want to get up and running quickly, grab the latest
@@ -41,8 +41,8 @@ version from:
 
 Either way, the installation process is the same:
 
-  # tar xzvf jifty-<version>tgz
-  # cd jifty-version
+  # tar xzvf jifty-<version>.tgz
+  # cd jifty-<version>
   # perl Makefile.PL
   # make
   # make test
@@ -361,7 +361,7 @@ on your webserver.
 =head2 Navigation
 
 Of course, having to remember the URL to get to the posting page is a bit
-annoying.  To get a B<Post> button in the menu, you to override the default
+annoying.  To get a B<Post> button in the menu, you need to override the default
 menus.
 
 Jifty's I<default> menus live in F<_elements/nav> in the default application
