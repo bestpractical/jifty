@@ -25,7 +25,7 @@ handlers.
 =cut
 
 use base qw/Class::Accessor/;
-__PACKAGE__->mk_accessors(qw(mason dispatcher));
+__PACKAGE__->mk_accessors(qw(mason dispatcher cgi));
 
 =head2 new
 
@@ -88,9 +88,10 @@ sub handle_request {
     );
 
     Module::Refresh->refresh;
+    $self->cgi($args{cgi});
 
     local $HTML::Mason::Commands::JiftyWeb = Jifty::Web->new();
-    Jifty->web->request(Jifty::Request->new()->fill($args{cgi}));
+    Jifty->web->request(Jifty::Request->new()->fill($self->cgi));
 
     Jifty->log->debug("Recieved request for ".Jifty->web->request->path);
 
@@ -115,10 +116,12 @@ It flushes the session to disk, as well as flushing L<Jifty::DBI>'s cache.
 =cut
 
 sub cleanup_request {
+    my $self = shift;
     # Clean out the cache. the performance impact should be marginal.
     # Consistency is improved, too.
     Jifty->web->session->unload();
     Jifty::Record->flush_cache;
+    $self->cgi(undef);
 }
 
 1;

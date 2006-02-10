@@ -612,12 +612,29 @@ sub _redirect {
 
     # This is designed to work under CGI or FastCGI; will need an
     # abstraction for mod_perl
-    $self->mason->clear_buffer if $self->mason;
-    my $apache = $self->mason ? $self->mason->fake_apache : HTML::Mason::FakeApache->new();
 
+    # Clear out the mason output, if any
+    $self->mason->clear_buffer if $self->mason;
+
+    # Now, we need to get out hands on a HTML::Mason::FakeApache --
+    # but *carefully*.  FakeApache wants a CGI object, and if it
+    # doesn't get one, it makes one for itself.  The difficulty is
+    # that under FastCGI, if you ever create a second CGI object, it
+    # wedges all future requests with the state of that request.
+
+    # Hence, we use the FakeApache that HTTP::Mason::Request::Jifty
+    # held onto, or we make one by hand, passing it the cgi object
+    # that the handler is still holding onto
+    my $apache = $self->mason ?
+      $self->mason->fake_apache :
+      HTML::Mason::FakeApache->new( cgi => Jifty->handler->cgi );
+
+    # Headers..
     $apache->header_out( Location => $page );
     $apache->header_out( Status => 302 );
     $apache->send_http_header();
+
+    # Abort or last_rule out of here
     $self->mason->abort if $self->mason;
     Jifty::Dispatcher::last_rule();
 
