@@ -1082,7 +1082,7 @@ sub serve_fragments {
     $self->response->add_header("Content-Type" => 'text/xml; charset=utf-8');
 
     # Print a header and the content, and then bail
-    my $apache = HTML::Mason::FakeApache->new();
+    my $apache = HTML::Mason::FakeApache->new( cgi => Jifty->handler->cgi );
     $apache->send_http_header();
 
     # Wide characters at this point should be harmlessly treated as UTF-8 octets.
