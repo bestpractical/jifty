@@ -53,7 +53,9 @@ mode.
 =cut
 
 sub mason_config {
-    return (
+    my %config = (
+        static_source => 1,
+        use_object_files => 1,
         allow_globals => [qw[$JiftyWeb], @{Jifty->config->framework('Web')->{'Globals'} || []}],
         comp_root     => [ 
                           [application =>  Jifty::Util->absolute_path( Jifty->config->framework('Web')->{'TemplateRoot'} )],
@@ -61,6 +63,18 @@ sub mason_config {
                          ],
         %{ Jifty->config->framework('Web')->{'MasonConfig'} },
     );
+
+    # In developer mode, we want halos, refreshing and all that other good stuff. 
+    if (Jifty->config->framework('DevelMode') ) {
+        push @{$config{'plugins'}}, 'Jifty::Mason::Halo';
+            $config{static_source}        = 0;
+            $config{use_object_files}        = 0;
+            
+            
+
+    }
+    return (%config);
+        
 }
 
 =head2 cgi
@@ -96,7 +110,7 @@ sub handle_request {
         @_
     );
 
-    Module::Refresh->refresh;
+    Module::Refresh->refresh if (Jifty->config->framework('DevelMode') );
     $self->cgi($args{cgi});
     $self->apache(HTML::Mason::FakeApache->new(cgi => $self->cgi));
 

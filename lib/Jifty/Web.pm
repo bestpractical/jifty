@@ -254,10 +254,13 @@ sub handle_request {
                 $self->log->debug("Validating action ".ref($action). " ".$action->moniker);
                 if ($action->validate) { 
                     $self->log->debug("Running action.");
-                    $action->run 
+                    $action->run; 
                 }
             };
             if ( my $err = $@ ) {
+                # poor man's exception propagation
+                # We need to get "LAST RULE" exceptions back up to the dispatcher
+                die $err if ($err =~ /^LAST RULE/);
                 $self->log->fatal($err);
             }
 

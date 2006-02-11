@@ -473,7 +473,7 @@ sub _handle_rule {
 no warnings 'exiting';
 
 sub next_rule { next RULE }
-sub last_rule { last HANDLER }
+sub last_rule { die "LAST RULE"; }
 sub next_show { last HANDLE_WEB }
 
 =head2 _do_under
@@ -643,8 +643,9 @@ sub _do_show {
     my $err = $@;
     # Handle parse errors
     if ( $err and not UNIVERSAL::isa $err, 'HTML::Mason::Exception::Abort' ) {
+        # XXX TODO: get this into the browser somehow
         warn "Mason error: $err";
-        Jifty->web->redirect("/__jifty/error/mason_parse_error");
+        Jifty->web->redirect("/__jifty/error/mason_internal_error");
     } elsif ($err) {
         die $err;
     }
@@ -702,10 +703,9 @@ sub _do_dispatch {
             $self->_handle_rules( [ $self->rules('RUN'), 'show' ] );
             $self->_handle_rules( [ $self->rules('CLEANUP') ] );
         }
-        last_rule;
     };
     if ( my $err = $@ ) {
-        warn ref($err) .$err;
+        warn ref($err) . " " ."'$err'" if ( $err !~ /^LAST RULE/);
     }
 }
 

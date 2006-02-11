@@ -211,6 +211,7 @@ sub guess {
     return {
         framework => {
             AdminMode        => 1,
+            DevelMode        => 1,
             ActionBasePath   => $app_class . "::Action",
             ApplicationClass => $app_class,
             CurrentUserClass => $app_class . "::CurrentUser",
