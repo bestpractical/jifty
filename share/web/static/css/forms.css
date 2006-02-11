@@ -71,13 +71,12 @@ span.submit_button {
 /*
 These styles are meant to be placed after (and hence override) the current CSS
 for forms.  Some of the rules aren't needed if previous behavior doesn't need to
-be overrided.  ".inline" is our hypothetical inline form class.
+be overridden.  ".inline" is our inline form class.
 */
 
 div.inline,
 div.inline .submit_button
 {
-    clear: both;
 }
 
 div.inline div.form_field {
