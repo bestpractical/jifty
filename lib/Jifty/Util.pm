@@ -17,6 +17,10 @@ use File::Spec;
 use File::ShareDir;
 use Cwd ();
 
+# Trivial memoization to ward off evil Cwd calls.
+use vars qw/%ABSOLUTE_PATH $JIFTY_ROOT $SHARE_ROOT $APP_ROOT/;
+
+
 =head2 absolute_path PATH
 
 C<absolute_path> converts PATH into an absolute path, relative to the
@@ -27,22 +31,26 @@ as an object or class method.
 
 sub absolute_path {
     my $self = shift;
-    my $path = shift;
+    my $path = shift || '';
 
-    return File::Spec->rel2abs($path || '', Jifty::Util->app_root);
+    return $ABSOLUTE_PATH{$path} if (exists $ABSOLUTE_PATH{$path});
+    return $ABSOLUTE_PATH{$path} = File::Spec->rel2abs($path , Jifty::Util->app_root);
 } 
 
 =head2 jifty_root
 
 Returns the root directory that Jifty has been installed into.
-Uses %INC to figure out where Jifty.pm
+Uses %INC to figure out where Jifty.pm is.
 
 =cut
 
 sub jifty_root {
     my $self = shift;
+    unless ($JIFTY_ROOT) {
     my ($vol,$dir,$file) = File::Spec->splitpath($INC{"Jifty.pm"});
-    return (File::Spec->rel2abs($dir));   
+    $JIFTY_ROOT = File::Spec->rel2abs($dir);   
+}
+    return ($JIFTY_ROOT);
 }
 
 
@@ -55,8 +63,8 @@ currently only used to store the common Mason components.
 
 sub share_root {
     my $self = shift;
-    my $dir =  File::Spec->rel2abs( File::ShareDir::module_dir('Jifty') );
-    return $dir;
+
+    return $SHARE_ROOT ||=  File::Spec->rel2abs( File::ShareDir::module_dir('Jifty') );
 }
 
 =head2 app_root
@@ -73,6 +81,10 @@ these criteria.
 
 sub app_root {
     my $self = shift;
+
+
+    return $APP_ROOT if ($APP_ROOT);
+    
     my @roots;
 
     push( @roots, Cwd::cwd() );
@@ -94,7 +106,7 @@ sub app_root {
                 and $try ne "/usr/bin/jifty"
                 and $try ne "/usr/local/bin/jifty" )
             {
-                return File::Spec->catdir(@root);
+                return $APP_ROOT = File::Spec->catdir(@root);
             }
             pop @root;
         }
