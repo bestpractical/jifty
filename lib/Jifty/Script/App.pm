@@ -120,6 +120,9 @@ sub _directories {
         etc
         doc
         log
+        var
+        var/sessions
+        var/mason
         web
         web/templates
         web/static
