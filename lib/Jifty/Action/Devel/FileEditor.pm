@@ -74,7 +74,9 @@ sub validate_destination_path {
 sub take_action {
     my $self = shift;
     my $dest  = $self->{'write_to'};
-    $self->_make_path($dest);
+    my @dirs = File::Spec->splitdir( $dest );
+    pop @dirs; # discard filename. we only want to make the directory ;)
+    Jifty::Util->make_path( File::Spec->catdir(@dirs));
     my $writehandle = IO::File->new();
     $writehandle->open(">$dest") || die "Couldn't open $dest for writing: ".$!;
     $writehandle->print( $self->argument_value('content')) || die " Couldn't write to $dest: ".$!;
@@ -83,21 +85,5 @@ sub take_action {
 }
 
 
-sub _make_path {
-    my $self = shift;
-    my $whole_path = shift;
-    my @dirs = File::Spec->splitdir( $whole_path );
-    pop @dirs; # get the filename ripped off the directory
-    my $path ='';
-    foreach my $dir ( @dirs) {
-        $path = File::Spec->catdir($path, $dir);
-        if (-d $path) { next }
-        if (-w $path) { die "$path not writable"; }
-        
-        
-        mkdir($path) || die "Couldn't create directory $path: $!";
-    }
-
-}
 
 1;

@@ -45,6 +45,7 @@ sub jifty_root {
     return (File::Spec->rel2abs($dir));   
 }
 
+
 =head2 share_root
 
 Returns the 'share' directory of the installed Jifty module.  This is
@@ -116,9 +117,32 @@ sub default_app_name {
     return pop @root;
 }
 
+=head2 make_path PATH
+
+When handed a directory, creates that directory, starting as far up the 
+chain as necessary. (This is what 'mkdir -p' does in your shell)
+
+=cut
+
+sub make_path {
+    my $self = shift;
+    my $whole_path = shift;
+    my @dirs = File::Spec->splitdir( $whole_path );
+    my $path ='';
+    foreach my $dir ( @dirs) {
+        $path = File::Spec->catdir($path, $dir);
+        if (-d $path) { next }
+        if (-w $path) { die "$path not writable"; }
+        
+        
+        mkdir($path) || die "Couldn't create directory $path: $!";
+    }
+
+}
+
 =head1 AUTHOR
 
-Various folks at BestPractical Solutions, LLC.
+Various folks at Best Practical Solutions, LLC.
 
 =cut
 
