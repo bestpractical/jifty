@@ -37,7 +37,26 @@ sub new {
     my $class = shift;
     my $self = {};
     bless $self, $class;
+
+    $self->create_cache_directories();
+
     return $self;
+}
+
+
+=head2 create_cache_directories
+
+Attempts to create our app's session storage and mason cache directories.
+
+=cut
+
+sub create_cache_directories {
+    my $self = shift;
+
+    for ( Jifty->config->framework('Web')->{'SessionDir'},
+          Jifty->config->framework('Web')->{'DataDir'}) {
+        Jifty::Util->make_path( Jifty::Util->absolute_path($_) );
+    }
 }
 
 
@@ -56,6 +75,7 @@ sub mason_config {
     my %config = (
         static_source => 1,
         use_object_files => 1,
+        data_dir =>  Jifty::Util->absolute_path( Jifty->config->framework('Web')->{'DataDir'} ),
         allow_globals => [qw[$JiftyWeb], @{Jifty->config->framework('Web')->{'Globals'} || []}],
         comp_root     => [ 
                           [application =>  Jifty::Util->absolute_path( Jifty->config->framework('Web')->{'TemplateRoot'} )],

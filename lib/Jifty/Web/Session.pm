@@ -62,19 +62,22 @@ sub load {
     $Storable::Deparse = 1;
     $Storable::Eval    = 1;
     my %session;
+
+    my $session_dir = Jifty::Util->absolute_path( Jifty->config->framework('Web')->{'SessionDir'} );
+
     eval {
         tie %session, 'Apache::Session::File', ( $session_id ? $session_id : undef ),
                 {
-                 Directory     => '/tmp',
-                 LockDirectory => '/tmp',
+                 Directory     => $session_dir,
+                 LockDirectory => $session_dir,
                 };
 
             };
     if ($@) {
         tie %session, 'Apache::Session::File', undef,
                 {
-                 Directory     => '/tmp',
-                 LockDirectory => '/tmp',
+                 Directory     => $session_dir,
+                 LockDirectory => $session_dir,
                 };
     }
 

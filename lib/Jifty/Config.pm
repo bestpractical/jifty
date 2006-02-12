@@ -229,6 +229,8 @@ sub guess {
             Web        => {
                 DefaultStaticRoot => Jifty::Util->share_root . '/web/static',
                 DefaultTemplateRoot => Jifty::Util->share_root . '/web/templates',
+                SessionDir  => "var/session",
+                DataDir     => "var/mason",
                 StaticRoot   => "web/static",
                 TemplateRoot => "web/templates",
                 MasonConfig => {
@@ -236,7 +238,6 @@ sub guess {
                     error_mode   => 'fatal',
                     error_format => 'text',
                     default_escape_flags => 'h',
-                    #plugins      => ['Jifty::Mason::Halo'],
                 },
                 Globals      => [],
             },
