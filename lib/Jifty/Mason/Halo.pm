@@ -73,7 +73,7 @@ sub render_halo_actions {
 <span class="halo_name" onClick="toggle_display('halo-@{[$stack_frame->{'id'}]}-menu')">@{[$stack_frame->{'name'}]}</span>
 <dl>
 <dt>Path</dt>
-<dt>@{[$stack_frame->{'path'}]}</dd>
+<dd>@{[$stack_frame->{'path'}]}</dd>
 <dt>Render time</dt>
 <dd>@{[$stack_frame->{'render_time'}]}</dd>
 <dt>});
@@ -127,7 +127,7 @@ sub render_component_tree {
         if ( $item->{depth} > $depth ) {
             Jifty->web->mason->out("<ul>");
         } elsif ( $item->{depth} < $depth ) {
-            Jifty->web->mason->out("</ul>\n");
+            Jifty->web->mason->out("</ul>\n") for ($item->{depth}+1 .. $depth);
         }
 
         Jifty->web->mason->out( "<li>");
@@ -138,16 +138,16 @@ sub render_component_tree {
                 . $item->{'path'} . " - "
                 . $item->{'render_time'}
                 . qq{</span> }
-                );
+        );
 
-    Jifty->web->mason->out(Jifty->web->tangent( url =>"/=/edit/mason_component/".$item->{'path'}, label => 'Edit'))
-        unless ($item->{subcomponent});
-    $self->render_halo_actions($item);
-    Jifty->web->mason->out( "</li>");
+        Jifty->web->mason->out(Jifty->web->tangent( url =>"/=/edit/mason_component/".$item->{'path'}, label => 'Edit'))
+          unless ($item->{subcomponent});
+        $self->render_halo_actions($item);
+        Jifty->web->mason->out( "</li>");
         $depth = $item->{'depth'};
     }
 
-    Jifty->web->mason->out('</ul>');
+    Jifty->web->mason->out("</ul>\n") for (1 .. $depth);
     Jifty->web->mason->out('</div>');
 
 }
