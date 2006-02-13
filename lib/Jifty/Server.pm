@@ -49,7 +49,6 @@ sub new {
         my $r = shift;
         my $status = $r->header_out('Status') || '200 Jifty OK';
         print STDOUT "HTTP/1.0 $status\n";
-        $r->header_out( @{$_} ) for Jifty->web->response->headers;
     };
 
     return ($self);
