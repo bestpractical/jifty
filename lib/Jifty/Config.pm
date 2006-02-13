@@ -73,7 +73,7 @@ configuration file for the application, looking for the
 C<JIFTY_CONFIG> environment variable or C<etc/config.yml> under the
 application's base directory.
 
-It uses the main contifuration file to find a vendor configuration
+It uses the main configuration file to find a vendor configuration
 file -- if it doesn't find a framework variable named 'VendorConfig',
 it will use the C<JIFTY_VENDOR_CONFIG> environment variable.
 

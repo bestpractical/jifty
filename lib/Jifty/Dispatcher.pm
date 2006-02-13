@@ -286,7 +286,7 @@ sub import {
         push @{ $pkg . '::ISA' }, $class;
     }
 
-    $class->export_to_level( 1, @_ );
+    $class->export_to_level( 1, @args );
 }
 
 ###################################################

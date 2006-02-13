@@ -70,7 +70,7 @@ use vars qw/$HANDLE $CONFIG $LOGGER $DISPATCHER/;
 This class method instantiates a new C<Jifty> object. This object
 deals with configuration files, logging and database handles for the
 system.  Most of the time, the server will call this for you to set up
-your C<Jifty> object.  If you are writing command-line programs htat
+your C<Jifty> object.  If you are writing command-line programs that
 want to use your libraries (as opposed to web services) you will need
 to call this yourself.
 

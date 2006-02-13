@@ -457,14 +457,14 @@ C<new_action> was supplied.
 
 C<MONIKER> is a unique designator of an action on a page.  The moniker
 is content-free and non-fattening, and may be auto-generated.  It is
-used to tie together argumentss that relate to the same action.
+used to tie together arguments that relate to the same action.
 
 C<ORDER> defines the order in which the action is run, with lower
 numerical values running first.
 
 C<ARGUMENTS> are passed to the L<Jifty::Action/new> method.  In
 addition, if the current request (C<$self->request>) contains an
-action with a matching moniker, any arguments thare are in that
+action with a matching moniker, any arguments that are in that
 requested action but not in the C<PARAMHASH> list are set.  This
 implements "sticky fields".
 

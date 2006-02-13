@@ -139,7 +139,7 @@ sub arguments {
 This routine, unsurprisingly, actually runs the action.
 
 If the result of the action is currently a success (validation did not
-fail), then calls L</take_action>, and finally L</cleanup>.
+fail), C<run> calls L</take_action>, and finally L</cleanup>.
 
 =cut
 
@@ -213,9 +213,9 @@ sub take_action { 1; }
 
 =head2 cleanup
 
-Perform any action specific cleanup.  By default, does nothing.
+Perform any action-specific cleanup.  By default, does nothing.
 
-Runs after take_action -- whether or not take_action returns success.
+Runs after L</take_action> -- whether or not L</take_action> returns success.
 
 =cut
 

@@ -9,7 +9,7 @@ Jifty::Bootstrap - Insert initial data into your database
 
 C<Jifty::Bootstrap> is an abstract base class for your application's
 bootstrapping.  Use it to set up initial data in your database when
-your application if first installed.
+your application is first installed.
 
 =cut
 
@@ -19,8 +19,9 @@ use base qw/Jifty::Object/;
 
 =head2 run
 
-C<run> is the workhorse method for the Bootstrap class. This takes care of setting up 
-internal datastrutures and initializing things, in an application-dependent manner.
+C<run> is the workhorse method for the Bootstrap class.  This takes care of
+setting up internal data structures and initializing things in an
+application-dependent manner.
 
 =cut
 
