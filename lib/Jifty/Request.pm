@@ -325,6 +325,15 @@ sub parse_form_field_name {
     return ( $type, $argument, $moniker );
 }
 
+=head2 webform_to_data_structure HASHREF
+
+Converts the data from a webform's %args to the datastructure that
+L<Jifty::Request> uses internally.
+
+XXX TODO: ALEX: DOC ME
+
+=cut
+
 sub webform_to_data_structure {
     my $self = shift;
     my %args = (@_);
