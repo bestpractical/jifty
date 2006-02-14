@@ -1,0 +1,3214 @@
+----------------------------------------------------------------------
+r23705:  jesse | 2006-02-13 23:03:07 -0500
+
+ * Version bump
+----------------------------------------------------------------------
+r23702:  jesse | 2006-02-13 23:00:20 -0500
+
+* Stub doc
+----------------------------------------------------------------------
+r23701:  jesse | 2006-02-13 22:47:09 -0500
+
+ r23700@truegrounds (orig r579):  alexmv | 2006-02-13 19:47:08 -0500
+  r9083@zoq-fot-pik:  chmrr | 2006-02-13 19:46:06 -0500
+   * During Jifty::Web->handle_request, only validate once if possible
+   * During from_webform handling, transform into data structure to
+     reduce code duplicaction
+ 
+
+----------------------------------------------------------------------
+r23699:  jesse | 2006-02-13 22:46:11 -0500
+
+* Documentation coverage pass.
+----------------------------------------------------------------------
+r23698:  jesse | 2006-02-13 19:21:54 -0500
+
+
+----------------------------------------------------------------------
+r23617:  jesse | 2006-02-12 20:25:14 -0500
+
+* Doc cleanup from Ben Cornett
+----------------------------------------------------------------------
+r23615:  jesse | 2006-02-12 20:23:11 -0500
+
+
+* Moved the wrapping of CGI->new() to something that runs once per process
+* Stop using Hook::LexWrap for sending HTTP headers.
+* In lay-speak: paint on some really bitchin 'go faster' stripes.
+
+----------------------------------------------------------------------
+r23610:  jesse | 2006-02-12 15:32:05 -0500
+
+* Caching! Caching is always the answer. (This change cuts out about half of the per-hit overhead on standalone)
+
+----------------------------------------------------------------------
+r23609:  jesse | 2006-02-12 14:38:07 -0500
+
+* Use explicit session and data directories. This should get rid of all those apache sessions in /tmp
+----------------------------------------------------------------------
+r23608:  jesse | 2006-02-12 14:36:55 -0500
+
+* Set up our app templater to create directories for var data
+----------------------------------------------------------------------
+r23607:  jesse | 2006-02-12 14:36:28 -0500
+
+* extracted make_path from Jifty::Action::Devel::FileEditor, so we can use it to create var directories
+
+----------------------------------------------------------------------
+r23605:  jesse | 2006-02-11 18:52:28 -0500
+
+* clearing floats on inline submit buttons. stupid rule that broke things
+----------------------------------------------------------------------
+r23601:  jesse | 2006-02-11 16:59:14 -0500
+
+* Refactored the dispatcher to use exceptions rather than LABELS: so that Devel::DProf doesn't fall over
+* Added a new "DevelMode" flag, to toggle the peformance-killing development aids.
+
+----------------------------------------------------------------------
+r23600:  jesse | 2006-02-10 22:44:18 -0500
+
+ r23590@truegrounds (orig r567):  alexmv | 2006-02-10 04:25:59 -0500
+  r9032@zoq-fot-pik:  chmrr | 2006-02-10 04:25:15 -0500
+   * Missed a call to FakeApache->new
+ 
+ r23591@truegrounds (orig r568):  alexmv | 2006-02-10 05:12:21 -0500
+  r9036@zoq-fot-pik:  chmrr | 2006-02-10 05:11:43 -0500
+   * One FakeApache object per handle_request
+   * Trap calls to CGI->new
+ 
+
+----------------------------------------------------------------------
+r23589:  jesse | 2006-02-10 14:25:35 -0500
+
+- Tutorial_ja.pod
+utf8-encoded Japanese translation. I also uploaded shift_jis-encoded
+html version at http://www.tcool.org/jifty/Tutorial.html
+
+- Tutorial.patch
+a few correction of Tutorial.pod
+
+Kenichi Ishigaki (aka charsbar at #jifty)
+
+
+----------------------------------------------------------------------
+r23575:  jesse | 2006-02-09 20:58:23 -0500
+
+ r23536@truegrounds (orig r555):  alexmv | 2006-02-07 20:29:13 -0500
+  r8966@zoq-fot-pik:  chmrr | 2006-02-07 20:28:20 -0500
+   * Temporary fix for HTML::Mason::FakeApache creating a new CGI
+  object, which breaks FastCGI
+ 
+ r23537@truegrounds (orig r556):  jesse | 2006-02-07 20:47:03 -0500
+ * Administratively disabled halos for the moment
+ r23538@truegrounds (orig r557):  alexmv | 2006-02-08 19:01:31 -0500
+  r8979@zoq-fot-pik:  chmrr | 2006-02-08 19:00:46 -0500
+   * Add 'is distinct' back again, with a note that is is unimplemented
+    (it's used in Wifty, though)
+ 
+ r23539@truegrounds (orig r558):  alexmv | 2006-02-08 19:15:29 -0500
+  r8981@zoq-fot-pik:  chmrr | 2006-02-08 19:08:55 -0500
+   * Module::Install bump
+ 
+ r23540@truegrounds (orig r559):  alexmv | 2006-02-08 19:15:51 -0500
+  r8982@zoq-fot-pik:  chmrr | 2006-02-08 19:14:39 -0500
+   * Update deps
+   * Move more Mason config (and defaults) into Jifty::Config or
+     Jifty::MasonHandler as appropriate
+   * Doc Jifty::MasonHandler more
+   * $m->redirect now calls Jifty->web->redirect, so redirect code is
+     only in one place
+ 
+ r23541@truegrounds (orig r560):  alexmv | 2006-02-08 19:42:02 -0500
+  r8985@zoq-fot-pik:  chmrr | 2006-02-08 19:41:23 -0500
+   * Give users more rope to hang themselves with, by handing a whole
+     hash from the config file to Mason's config
+ 
+ r23571@truegrounds (orig r563):  jesse | 2006-02-09 04:24:46 -0500
+ * Disable halos for now
+ 
+ r23572@truegrounds (orig r564):  alexmv | 2006-02-09 06:17:56 -0500
+  r9018@zoq-fot-pik:  chmrr | 2006-02-09 06:17:12 -0500
+   * last_rule does the wrong thing when calling continuations -- it can
+     cause nothing to be rendered (!)
+   * The response of a GET request in the second phase of a continuation
+     call can have results in it already, if they were added based on
+     the dispatcher, for example.  Those results (call then "C") take
+     priority over the results saved in the continuation (call them
+     "B"), which in turn took priority over results the earlier versions
+     of "C" (call then "A") which happened before the continuation was
+     pushed.
+       Because of this, we can't just load the whole response up, but
+     instead have to copy results out of it.
+ 
+ r23573@truegrounds (orig r565):  alexmv | 2006-02-09 17:37:06 -0500
+  r9024@zoq-fot-pik:  chmrr | 2006-02-09 17:36:27 -0500
+   * Need to make sure we set the action class of the result after we
+  re-init it after validation and saving continuations
+ 
+ r23574@truegrounds (orig r566):  alexmv | 2006-02-09 20:09:15 -0500
+  r9026@zoq-fot-pik:  chmrr | 2006-02-09 20:08:36 -0500
+   * Hate FastCGI.  Specifically, it doesn't like there being other CGI
+  objects, or it wedges.
+ 
+
+----------------------------------------------------------------------
+r23552:  jesse | 2006-02-09 04:22:25 -0500
+
+* We don't want to clean valid arguments just because they're not columns
+
+----------------------------------------------------------------------
+r23535:  jesse | 2006-02-09 01:34:00 -0500
+
+* Exposing an API for finding out if we're currently inside a form
+
+----------------------------------------------------------------------
+r23501:  jesse | 2006-02-07 13:34:47 -0500
+
+Testapp tests wrong
+----------------------------------------------------------------------
+r23500:  jesse | 2006-02-07 13:26:19 -0500
+
+ r23294@truegrounds (orig r548):  alexmv | 2006-02-06 03:27:52 -0500
+  r8948@zoq-fot-pik:  chmrr | 2006-02-06 03:27:00 -0500
+   * Test apps should get their application's library root added to @INC
+ 
+ r23295@truegrounds (orig r549):  autrijus | 2006-02-06 09:06:20 -0500
+ * fragments containing unicode strings should be served
+   without warnings; turn off "wide characters in output"
+   warnings lexically for the serve_fragment block.
+ r23296@truegrounds (orig r550):  alexmv | 2006-02-06 16:48:33 -0500
+  r8950@zoq-fot-pik:  chmrr | 2006-02-06 16:47:45 -0500
+   * We're only dropping tables if the tests all succeeded
+ 
+ r23297@truegrounds (orig r551):  alexmv | 2006-02-06 17:42:14 -0500
+  r8956@zoq-fot-pik:  chmrr | 2006-02-06 17:41:35 -0500
+   * Fixes to only print HTTP header once
+ 
+ r23498@truegrounds (orig r552):  alexmv | 2006-02-06 22:26:51 -0500
+  r8961@zoq-fot-pik:  chmrr | 2006-02-06 22:25:57 -0500
+   * Doc fixes
+ 
+ r23499@truegrounds (orig r553):  jesse | 2006-02-07 09:39:39 -0500
+ * Minor cleanups for dependency checking tests --jesse
+ 
+
+----------------------------------------------------------------------
+r23113:  jesse | 2006-02-05 16:49:09 -0500
+
+* Removed pre-release license docs
+----------------------------------------------------------------------
+r23112:  jesse | 2006-02-04 21:06:56 -0500
+
+ r23106@truegrounds (orig r541):  trs | 2006-02-02 16:48:34 -0500
+  r8419@wintermute:  tom | 2006-02-02 16:47:37 -0500
+  Fix typo
+ 
+ r23107@truegrounds (orig r542):  kevinr | 2006-02-03 02:45:00 -0500
+  r10757@RANDOM-THREE-NINETY-TWO:  kevinr | 2006-02-03 02:43:01 -0500
+  * Added the remaining (very basic) TestApp tests.  I've now got a handle on how
+  to do this, so some *real* tests should be forthcoming Real Soon Now.
+ 
+ r23108@truegrounds (orig r543):  kevinr | 2006-02-03 02:45:05 -0500
+  r10758@RANDOM-THREE-NINETY-TWO:  kevinr | 2006-02-03 02:43:59 -0500
+  * Updated manifest
+ 
+ r23109@truegrounds (orig r544):  alexmv | 2006-02-03 06:48:55 -0500
+  r8884@zoq-fot-pik:  chmrr | 2006-02-03 06:47:57 -0500
+  `jifty schema` overhaul:
+   * Removed references to old 'ProjectRoot'
+   * Removed non-useful --include option
+   * Trap possible warnings and errors in 'get version from db' check
+   * Make dependencies chain more clear for schema generation
+   * Add missing 'else' in create_all_tables
+   * Fix logic in manage_database_existance for printing, reconnection
+   * Doc updates for all of the above
+   * Test harness needs to disconnect before wiping db
+   * 'wiping db' involves explicitly setting up the db after we drop it
+ 
+ r23110@truegrounds (orig r545):  alexmv | 2006-02-03 09:09:18 -0500
+  r8886@zoq-fot-pik:  chmrr | 2006-02-03 09:08:36 -0500
+   * Tweaks to make halo editing work a bit happier
+ 
+ r23111@truegrounds (orig r546):  alexmv | 2006-02-03 13:16:01 -0500
+  r8893@zoq-fot-pik:  chmrr | 2006-02-03 13:14:57 -0500
+   * Fragments now go through the dispatcher
+   * I really wanted defined-or; false action arguments were being
+  ignored when looking through possible values in fragment requests
+ 
+
+----------------------------------------------------------------------
+r23047:  jesse | 2006-02-01 20:36:33 -0500
+
+* fixing case
+----------------------------------------------------------------------
+r23046:  jesse | 2006-02-01 20:05:04 -0500
+
+* Typo fix
+----------------------------------------------------------------------
+r23043:  jesse | 2006-02-01 19:33:22 -0500
+
+ r23042@truegrounds (orig r537):  alexmv | 2006-02-01 17:57:05 -0500
+  r8872@zoq-fot-pik:  chmrr | 2006-02-01 17:56:24 -0500
+   * Fixes to make Jifty work under FastCGI again
+ 
+
+----------------------------------------------------------------------
+r23017:  jesse | 2006-01-29 23:35:14 -0500
+
+* File edity
+----------------------------------------------------------------------
+r23016:  jesse | 2006-01-29 23:32:05 -0500
+
+* even yet still more halo
+----------------------------------------------------------------------
+r23014:  jesse | 2006-01-29 19:21:39 -0500
+
+* A lot more work on halos. The tool starts to feel useful.
+----------------------------------------------------------------------
+r23011:  jesse | 2006-01-28 13:30:31 -0500
+
+* Turned off halos by default.
+----------------------------------------------------------------------
+r23010:  jesse | 2006-01-28 13:30:06 -0500
+
+* First pass at halos.
+----------------------------------------------------------------------
+r23008:  jesse | 2006-01-27 14:43:36 -0500
+
+* Added a bunch of debug logging
+----------------------------------------------------------------------
+r22965:  jesse | 2006-01-25 09:33:55 -0500
+
+ r22942@truegrounds (orig r524):  alexmv | 2006-01-23 23:28:09 +0100
+  r8773@zoq-fot-pik:  chmrr | 2006-01-23 17:27:31 -0500
+   * More gracefully handle mason errors
+ 
+ r22943@truegrounds (orig r525):  alexmv | 2006-01-23 23:29:35 +0100
+  r8775@zoq-fot-pik:  chmrr | 2006-01-23 17:28:57 -0500
+   * Clean up to work with most recent dispatcher, etc
+ 
+ r22944@truegrounds (orig r526):  alexmv | 2006-01-25 03:08:28 +0100
+  r8777@zoq-fot-pik:  chmrr | 2006-01-24 21:07:50 -0500
+   * Mapping of arguments of actions
+ 
+ r22945@truegrounds (orig r527):  alexmv | 2006-01-25 03:25:23 +0100
+  r8779@zoq-fot-pik:  chmrr | 2006-01-24 21:24:47 -0500
+   * Support mapping on both sticky_value and default_value
+ 
+ r22946@truegrounds (orig r528):  alexmv | 2006-01-25 11:30:27 +0100
+  r8797@zoq-fot-pik:  chmrr | 2006-01-25 05:29:23 -0500
+   * More topsy-turvy-ness.  We no longer are a H::S::S::Mason, as that
+     constructed the mason object at the wrong time.
+   * Dispatcher all goes through Jifty::Request
+   * Don't need to worry about subrequests hitting
+     jifty->web->handle_request anymore
+ 
+
+----------------------------------------------------------------------
+r22886:  jesse | 2006-01-23 08:05:03 -0500
+
+* Mandatory form fields now have a css marker.
+----------------------------------------------------------------------
+r22743:  jesse | 2006-01-21 15:28:58 -0500
+
+ r22740@truegrounds (orig r518):  autrijus | 2006-01-20 08:45:40 -0500
+ * Now that DBD 1.50 has solid unicode support, use utf8::upgrade
+   instead of decode because the DBD may indeed return ustrings.
+ r22741@truegrounds (orig r519):  alexmv | 2006-01-21 00:52:30 -0500
+  r8732@zoq-fot-pik:  chmrr | 2006-01-21 00:25:15 -0500
+   * Jump through some hoops for safari
+   * Better escape mechanism after redirect
+ 
+ r22742@truegrounds (orig r520):  alexmv | 2006-01-21 04:22:28 -0500
+  r8765@zoq-fot-pik:  chmrr | 2006-01-21 04:21:28 -0500
+   * Temporary workaround for Spiffy-activated 'require' order bug in
+     HTTP::Server::Simple.  It's complicated.  Blame Canada.
+ 
+
+----------------------------------------------------------------------
+r22737:  jesse | 2006-01-19 13:08:33 -0500
+
+ r22736@truegrounds (orig r517):  alexmv | 2006-01-19 13:02:27 -0500
+  r8723@zoq-fot-pik:  chmrr | 2006-01-19 13:01:52 -0500
+   * Redirect to directory if we find one
+ 
+
+----------------------------------------------------------------------
+r22729:  jesse | 2006-01-19 11:43:08 -0500
+
+ r22728@truegrounds (orig r516):  alexmv | 2006-01-18 14:24:48 -0500
+  r8672@zoq-fot-pik:  chmrr | 2006-01-18 14:24:05 -0500
+   * Sketchy sketchy way of making fragments work under the Brave New
+  Order; they're not going though the dispatcher, though they should be.
+ 
+
+----------------------------------------------------------------------
+r22430:  jesse | 2006-01-18 09:41:16 -0500
+
+ r22412@truegrounds (orig r508):  autrijus | 2006-01-15 13:50:31 -0500
+ * force charset to UTF8 for both __jifty xml utils.
+ r22413@truegrounds (orig r509):  autrijus | 2006-01-15 13:54:41 -0500
+ * Add "tooltip" field to form elements (maps to HTML "title" attribute).
+ r22414@truegrounds (orig r510):  autrijus | 2006-01-16 05:20:40 -0500
+ * YAML::Syck and JSON::Syck support.
+ r22415@truegrounds (orig r511):  trs | 2006-01-16 10:04:49 -0500
+  r8268@wintermute:  tom | 2006-01-16 10:04:07 -0500
+  Fix for mysql
+ 
+ r22429@truegrounds (orig r515):  alexmv | 2006-01-17 21:24:09 -0500
+  r8670@zoq-fot-pik:  chmrr | 2006-01-17 21:23:28 -0500
+   * Dispatcher calls Jifty::Web and Mason, not the other way around
+   * Do away with setup_actions
+   * Stop using mason notes
+ 
+
+----------------------------------------------------------------------
+r22411:  jesse | 2006-01-16 11:19:26 -0500
+
+Distribution instruction updates from Grant Grueninger
+----------------------------------------------------------------------
+r22410:  jesse | 2006-01-15 20:51:47 -0500
+
+* removed a debugging statement
+----------------------------------------------------------------------
+r22409:  jesse | 2006-01-15 20:46:40 -0500
+
+* Don't automatically require Record classes when loading Collection classes. This lets us have circular relationships between record types and collections.
+----------------------------------------------------------------------
+r22407:  jesse | 2006-01-14 14:37:40 -0500
+
+Better support for apps named Foo::Bar or Foo-Bar instead of FooBar
+----------------------------------------------------------------------
+r22405:  jesse | 2006-01-14 14:02:59 -0500
+
+* Pass at an icon
+----------------------------------------------------------------------
+r22404:  jesse | 2006-01-14 13:29:51 -0500
+
+ r22390@truegrounds (orig r495):  alexmv | 2006-01-11 13:56:16 -0500
+  r8625@zoq-fot-pik:  chmrr | 2006-01-11 13:55:41 -0500
+   * Site-specific stuff should go in the siteconfig
+   * Avoid double-escaping <'s by doing markdown then scrub; loosen
+     scrubbing to allow all of markdown through
+ 
+ r22391@truegrounds (orig r496):  alexmv | 2006-01-11 16:59:34 -0500
+  r8627@zoq-fot-pik:  chmrr | 2006-01-11 16:58:57 -0500
+   * Make /login compile
+   * Remove extraneous lines from autohandler
+ 
+ r22392@truegrounds (orig r497):  autrijus | 2006-01-11 23:40:57 -0500
+ * Jifty::DBI::Collection - Fix two misuse of keys():
+     - to test hash emptiness, simply use the hash.
+     - to build subclauses, we should sort the keys first just like restrictions.
+ r22393@truegrounds (orig r498):  autrijus | 2006-01-12 01:59:07 -0500
+ * lighttpd support.
+ r22394@truegrounds (orig r499):  kevinr | 2006-01-12 20:55:12 -0500
+  r10310@SAD-GIRL-IN-SNOW:  kevinr | 2006-01-09 18:57:17 -0500
+  * Added an app for testing
+ 
+ r22395@truegrounds (orig r500):  kevinr | 2006-01-12 20:55:15 -0500
+  r10311@SAD-GIRL-IN-SNOW:  kevinr | 2006-01-09 19:02:07 -0500
+  * Ported another test from Hiveminder
+ 
+ r22396@truegrounds (orig r501):  kevinr | 2006-01-12 20:55:20 -0500
+ 
+
+----------------------------------------------------------------------
+r22402:  jesse | 2006-01-14 13:23:12 -0500
+
+* Jifty::Script::Schema support for basic mysql love
+
+----------------------------------------------------------------------
+r22346:  jesse | 2006-01-10 17:26:41 -0500
+
+* First stab at a parbuilder for jifty. it's still not quite right.
+----------------------------------------------------------------------
+r22343:  jesse | 2006-01-10 07:18:34 -0500
+
+Merge down
+----------------------------------------------------------------------
+r22220:  jesse | 2006-01-08 13:19:22 -0500
+
+* manifest update
+----------------------------------------------------------------------
+r22214:  jesse | 2006-01-08 10:10:06 -0500
+
+* POD nit
+----------------------------------------------------------------------
+r22212:  jesse | 2006-01-08 10:05:14 -0500
+
+* MANIFEST update.
+----------------------------------------------------------------------
+r22207:  jesse | 2006-01-08 09:59:42 -0500
+
+* Jos pointed out we should be skipping .svn directories
+----------------------------------------------------------------------
+r22205:  jesse | 2006-01-08 04:59:53 -0500
+
+ r22204@truegrounds (orig r479):  kevinr | 2006-01-07 09:04:12 +0100
+  r10294@sad-girl-in-snow:  kevinr | 2006-01-07 02:03:19 -0600
+  * Started porting tests from $PROJECT to Jifty.  These are almost straight
+  copy-and-paste, except to reference Jifty::Test (and, of course, to make sure
+  they all still passed :).  If people care about ordering, they can feel free
+  to renumber the tests themselves -- it didn't look like it mattered to me.
+ 
+
+----------------------------------------------------------------------
+r22198:  jesse | 2006-01-06 17:46:08 -0500
+
+* The first version of the dispatcher that I think is basically feature complete
+
+* The next step is to entirely replace the mason->jifty->mason call chain with a jifty->mason call chain.
+
+----------------------------------------------------------------------
+r22194:  jesse | 2006-01-06 17:13:13 -0500
+
+* Depend on Module::Install::Admin instead of Module::Install. Thanks to sri.
+----------------------------------------------------------------------
+r22193:  jesse | 2006-01-06 17:08:19 -0500
+
+* Parrot is incorrectly the CPAN owner for Pod::Simple::Text. Instead,
+  depend on Pod::Simple
+
+----------------------------------------------------------------------
+r22192:  jesse | 2006-01-06 11:52:37 -0500
+
+* _do and _compile functions are private. mark them as so with a leading _
+* start to add and document before and after matches
+----------------------------------------------------------------------
+r22190:  jesse | 2006-01-06 09:57:12 -0500
+
+* do_show was being called with a extra $self argument
+* perltidied
+* added a bit more error reporting. 
+
+----------------------------------------------------------------------
+r22189:  jesse | 2006-01-06 09:48:40 -0500
+
+ r22188@truegrounds (orig r472):  autrijus | 2006-01-06 15:48:08 +0100
+ * another try at not swallowing $@.
+
+----------------------------------------------------------------------
+r22187:  jesse | 2006-01-06 08:36:55 -0500
+
+ r22184@truegrounds (orig r470):  autrijus | 2006-01-06 14:14:05 +0100
+ * Do not let eval mask errors in op array dispatch.
+
+----------------------------------------------------------------------
+r22147:  jesse | 2006-01-05 17:46:51 -0500
+
+ r22139@truegrounds (orig r462):  autrijus | 2006-01-05 20:39:11 +0100
+ * Large dose of DWIM coming to Jifty::Dispatcher - any method name,
+   fully qualified subroutine name, as well as \&coderef can serve
+   as valid rules.  run{} becomes merely sugar around do{} and sub{}.
+ r22142@truegrounds (orig r464):  autrijus | 2006-01-05 20:58:11 +0100
+ 20:55 <obra> fwiw, your redirect should use Jifty->web->redirect
+ 20:56 <obra> that will preserve action results, etc across the redirect
+ r22143@truegrounds (orig r465):  alexmv | 2006-01-05 22:11:19 +0100
+  r8586@zoq-fot-pik:  chmrr | 2006-01-05 16:10:30 -0500
+   * Updated Module::Install; also, don't index t/
+ 
+ r22144@truegrounds (orig r466):  alexmv | 2006-01-05 22:14:32 +0100
+  r8588@zoq-fot-pik:  chmrr | 2006-01-05 16:12:40 -0500
+   * Updated Module::Install
+ 
+ r22145@truegrounds (orig r467):  alexmv | 2006-01-05 22:14:40 +0100
+ 
+
+----------------------------------------------------------------------
+r22137:  jesse | 2006-01-05 13:39:05 -0500
+
+ r22135@truegrounds (orig r460):  autrijus | 2006-01-05 17:30:02 +0100
+ * Jifty::Dispatcher - do not use s/// in sub ret(), so now set=>$1
+   works magically.
+ r22136@truegrounds (orig r461):  autrijus | 2006-01-05 18:01:12 +0100
+ * More doc cleanup.
+ * "under" should not reset dynamic scope.
+
+----------------------------------------------------------------------
+r22133:  jesse | 2006-01-05 11:21:06 -0500
+
+* in -> under
+* fix to a bogus dispatcher->{'op'} from audrey
+----------------------------------------------------------------------
+r22131:  jesse | 2006-01-05 10:16:07 -0500
+
+* Added a missing Module::Install dependency from Rob Kinyon.
+----------------------------------------------------------------------
+r22110:  jesse | 2006-01-04 11:55:19 -0500
+
+* Autoinstantiate a "blank" dispatcher if necessary.
+* Doc the dispatcher (a bit) in the objectmodel
+----------------------------------------------------------------------
+r22109:  jesse | 2006-01-04 11:54:31 -0500
+
+* Removed now-duplicated dispatcher docs
+----------------------------------------------------------------------
+r22108:  jesse | 2006-01-04 11:54:17 -0500
+
+* Changed "action" to "rule" in Jifty::Dispatcher per discussion with audrey
+* Started integrating Jifty::Dispatcher docs into the Jifty::Dispatcher code.
+
+
+----------------------------------------------------------------------
+r22107:  jesse | 2006-01-04 11:33:50 -0500
+
+* FastCGI and standalone handlers now use Jifty->handler to do their dispatch
+----------------------------------------------------------------------
+r22106:  jesse | 2006-01-04 11:33:06 -0500
+
+* Jifty::Handler is now an object, not a utility. It has the power to "run" a request.
+----------------------------------------------------------------------
+r22105:  jesse | 2006-01-04 11:32:09 -0500
+
+* Jifty::Handler is no longer a utility class. now Jifty->handler exists
+----------------------------------------------------------------------
+r22104:  jesse | 2006-01-04 11:29:57 -0500
+
+* Jifty::Everything shouldn't import anything
+----------------------------------------------------------------------
+r22079:  jesse | 2006-01-03 12:26:06 -0500
+
+* Stevan spotted a typo in the tutorial
+----------------------------------------------------------------------
+r22078:  jesse | 2006-01-03 12:24:58 -0500
+
+ r22063@truegrounds (orig r444):  autrijus | 2006-01-03 13:46:41 +0100
+ * Upgrade to Scriptaculous 1.5.1.
+ r22073@truegrounds (orig r445):  autrijus | 2006-01-03 15:31:25 +0100
+ * Shiny new Jifty dispatcher.
+ r22074@truegrounds (orig r446):  autrijus | 2006-01-03 15:32:40 +0100
+ * docs.
+ r22075@truegrounds (orig r447):  autrijus | 2006-01-03 15:33:27 +0100
+ * fixed some typo.
+ r22076@truegrounds (orig r448):  autrijus | 2006-01-03 15:36:16 +0100
+ * more wordsmithing.
+ r22077@truegrounds (orig r449):  autrijus | 2006-01-03 16:04:45 +0100
+ * Move autocomplete.xml and validator.xml to __jifty/.
+
+----------------------------------------------------------------------
+r22051:  jesse | 2006-01-02 13:10:34 -0500
+
+ r22004@truegrounds (orig r439):  glasser | 2005-12-31 20:06:34 +0100
+  r52913@david-glassers-powerbook-g4-15:  glasser | 2005-12-31 14:06:00 -0500
+  This canonicalization broke things.  Reverting temporarily.
+ 
+ r22038@truegrounds (orig r440):  glasser | 2006-01-02 02:55:48 +0100
+  r52919@david-glassers-powerbook-g4-15:  glasser | 2006-01-01 16:45:36 -0500
+  Upgrade Rico lib to 1.1.0.
+ 
+
+----------------------------------------------------------------------
+r22050:  jesse | 2006-01-02 13:10:21 -0500
+
+* A bit more fleshing out of the Dispatcher
+----------------------------------------------------------------------
+r22030:  jesse | 2006-01-01 11:49:59 -0500
+
+* Perltidies web.pm
+----------------------------------------------------------------------
+r22001:  jesse | 2005-12-31 13:59:39 -0500
+
+ r21975@truegrounds (orig r433):  alexmv | 2005-12-30 19:37:34 +0100
+  r8517@zoq-fot-pik:  chmrr | 2005-12-30 13:36:48 -0500
+   * Buttons should register the action
+   * Allow users to override the 'submit' argument
+ 
+ r21976@truegrounds (orig r434):  alexmv | 2005-12-30 23:49:44 +0100
+  r8527@zoq-fot-pik:  chmrr | 2005-12-30 17:49:01 -0500
+   * Mostly wrapping, L<> and C<> nits, and a few minor clarifications
+ 
+ r21977@truegrounds (orig r435):  alexmv | 2005-12-31 00:05:45 +0100
+  r8530@zoq-fot-pik:  chmrr | 2005-12-30 18:05:13 -0500
+   * Wrapping and formatting tweaks.
+  
+  Overall, looks like it makes some sense.  The syntax won't work, alas,
+  since you can only have magic function prototypes as the first
+  argument.  But we can come up with something similar.  Or we may just
+  need to stick "sub" in front of those braces -- horrors!
+ 
+ r21978@truegrounds (orig r436):  alexmv | 2005-12-31 01:00:48 +0100
+  r8532@zoq-fot-pik:  chmrr | 2005-12-30 19:00:18 -0500
+   * Typo in content encoding was making fragments incorrectly render UTF-8
+ 
+ r21999@truegrounds (orig r437):  glasser | 2005-12-31 19:32:01 +0100
+  r52905@david-glassers-powerbook-g4-15:  glasser | 2005-12-31 12:39:39 -0500
+  Allow use of relative paths for SQLite.
+  r52906@david-glassers-powerbook-g4-15:  glasser | 2005-12-31 13:02:12 -0500
+  Better: move database argument canonicalization into Jifty::Handle.
+  r52907@david-glassers-powerbook-g4-15:  glasser | 2005-12-31 13:29:40 -0500
+  Patch now implemented as canonical_database_name.
+ 
+ r22000@truegrounds (orig r438):  glasser | 2005-12-31 19:56:25 +0100
+  r52910@david-glassers-powerbook-g4-15:  glasser | 2005-12-31 13:55:47 -0500
+  Add a MANIFEST.SKIP, and remake manifest (rm MANIFEST; make manifest).
+ 
+
+----------------------------------------------------------------------
+r21948:  jesse | 2005-12-30 10:32:17 -0500
+
+* First pass at a design for a Dispatcher. wants comment from audrey and alex
+----------------------------------------------------------------------
+r21947:  jesse | 2005-12-30 09:29:17 -0500
+
+* Actually load up Delete actions
+----------------------------------------------------------------------
+r21946:  jesse | 2005-12-30 09:28:40 -0500
+
+Pulling
+----------------------------------------------------------------------
+r21945:  jesse | 2005-12-30 09:28:07 -0500
+
+* Actually described how Jifty::ClassLoader works its magic, so that users can build apps that use actions
+----------------------------------------------------------------------
+r21865:  jesse | 2005-12-28 12:20:49 -0500
+
+* Fixed a missing dep
+* .051228
+----------------------------------------------------------------------
+r21864:  jesse | 2005-12-28 12:13:47 -0500
+
+ r21846@truegrounds (orig r407):  alexmv | 2005-12-27 14:11:43 -0500
+  r8424@zoq-fot-pik:  chmrr | 2005-12-27 14:10:55 -0500
+   * Sorted deps
+   * Added requirement of Test::Base 0.62
+   * Added Test::Pod::Coverage; patch from Todd Chapman <todd@chaka.net>
+   * Tutorial fixes; patch from Anton Berezin <tobez@tobez.org>
+ 
+ r21847@truegrounds (orig r408):  alexmv | 2005-12-27 15:17:15 -0500
+  r8426@zoq-fot-pik:  chmrr | 2005-12-27 15:16:45 -0500
+   * Move the order_by into implicit_clauses, so other implicit_clauses
+     can override ordering
+ 
+ r21848@truegrounds (orig r409):  alexmv | 2005-12-27 16:46:17 -0500
+  r8428@zoq-fot-pik:  chmrr | 2005-12-27 16:45:40 -0500
+   * Pull request path from ENV rather than Mason, so we keep things
+     like dhandlers out of the request path.  This also makes
+     continuations to dhandlers happy.
+ 
+ r21849@truegrounds (orig r410):  alexmv | 2005-12-27 18:07:06 -0500
+  r8430@zoq-fot-pik:  chmrr | 2005-12-27 18:06:33 -0500
+   * Only cleanup after tests if they succeeded
+   * Add automagic database dropping to after-tests cleanup
+ 
+ r21850@truegrounds (orig r411):  alexmv | 2005-12-27 18:49:18 -0500
+  r8432@zoq-fot-pik:  chmrr | 2005-12-27 18:20:58 -0500
+   * Remove last vestiges of ::Delete from ::Update
+ 
+ r21851@truegrounds (orig r412):  autrijus | 2005-12-27 20:46:13 -0500
+ * We really want App::CLI 0.03, not 0.02.
+ r21852@truegrounds (orig r413):  glasser | 2005-12-27 22:27:20 -0500
+  r52756@david-glassers-powerbook-g4-15:  glasser | 2005-12-27 11:54:08 -0500
+  * Make 'jifty app' not put extra slashes on filenames.  (Although, hmm, maybe we should be using catfile here?)
+  * Update 'jifty app' output in tutorial.
+ 
+ r21853@truegrounds (orig r414):  glasser | 2005-12-27 22:28:05 -0500
+  r52757@david-glassers-powerbook-g4-15:  glasser | 2005-12-27 12:41:09 -0500
+  Fix POD references to Jifty::Web::PageRegion.
+ 
+ r21854@truegrounds (orig r415):  glasser | 2005-12-27 22:28:17 -0500
+  r52758@david-glassers-powerbook-g4-15:  glasser | 2005-12-27 12:45:16 -0500
+  Clarify tutorial file location.
+ 
+ r21855@truegrounds (orig r416):  glasser | 2005-12-27 22:32:30 -0500
+  r52759@david-glassers-powerbook-g4-15:  glasser | 2005-12-27 12:46:26 -0500
+  Typo in tutorial (no constructor call)
+ 
+ r21856@truegrounds (orig r417):  glasser | 2005-12-27 22:32:46 -0500
+  r52760@david-glassers-powerbook-g4-15:  glasser | 2005-12-27 12:50:13 -0500
+  Oops, the typo was worse -- wrong package name.
+ 
+ r21857@truegrounds (orig r418):  glasser | 2005-12-27 22:32:59 -0500
+  r52761@david-glassers-powerbook-g4-15:  glasser | 2005-12-27 13:24:05 -0500
+  I don't think this return does anything, and is distracting.  Maybe I'm wrong.
+ 
+ r21858@truegrounds (orig r419):  glasser | 2005-12-27 22:33:15 -0500
+  r52762@david-glassers-powerbook-g4-15:  glasser | 2005-12-27 13:25:44 -0500
+  Typo in tutorial (ApplicationName, not AppNamE)'
+  
+ 
+ r21859@truegrounds (orig r420):  glasser | 2005-12-27 22:33:42 -0500
+  r52763@david-glassers-powerbook-g4-15:  glasser | 2005-12-27 13:43:45 -0500
+  Another moved module reference
+ 
+ r21860@truegrounds (orig r421):  glasser | 2005-12-27 22:33:55 -0500
+  r52764@david-glassers-powerbook-g4-15:  glasser | 2005-12-27 13:46:57 -0500
+  Change some stuff in tutorial that was just plugging in defaults.
+ 
+ r21861@truegrounds (orig r422):  glasser | 2005-12-27 22:34:07 -0500
+  r52765@david-glassers-powerbook-g4-15:  glasser | 2005-12-27 14:20:10 -0500
+  Proper submenu nesting for nav.  (It looks right in lynx now.)  Somebody with sharper eyes than me should ensure that the proper CSS is still being applied, but it looks good to me.
+ 
+ r21862@truegrounds (orig r423):  glasser | 2005-12-27 22:34:21 -0500
+  r52798@david-glassers-powerbook-g4-15:  glasser | 2005-12-27 22:22:01 -0500
+   r52791@david-glassers-powerbook-g4-15 (orig r407):  alexmv | 2005-12-27 14:11:43 -0500
+    r8424@zoq-fot-pik:  chmrr | 2005-12-27 14:10:55 -0500
+     * Sorted deps
+     * Added requirement of Test::Base 0.62
+     * Added Test::Pod::Coverage; patch from Todd Chapman <todd@chaka.net>
+     * Tutorial fixes; patch from Anton Berezin <tobez@tobez.org>
+   
+   r52792@david-glassers-powerbook-g4-15 (orig r408):  alexmv | 2005-12-27 15:17:15 -0500
+    r8426@zoq-fot-pik:  chmrr | 2005-12-27 15:16:45 -0500
+     * Move the order_by into implicit_clauses, so other implicit_clauses
+       can override ordering
+   
+   r52793@david-glassers-powerbook-g4-15 (orig r409):  alexmv | 2005-12-27 16:46:17 -0500
+    r8428@zoq-fot-pik:  chmrr | 2005-12-27 16:45:40 -0500
+     * Pull request path from ENV rather than Mason, so we keep things
+       like dhandlers out of the request path.  This also makes
+       continuations to dhandlers happy.
+   
+   r52794@david-glassers-powerbook-g4-15 (orig r410):  alexmv | 2005-12-27 18:07:06 -0500
+    r8430@zoq-fot-pik:  chmrr | 2005-12-27 18:06:33 -0500
+     * Only cleanup after tests if they succeeded
+     * Add automagic database dropping to after-tests cleanup
+   
+   r52795@david-glassers-powerbook-g4-15 (orig r411):  alexmv | 2005-12-27 18:49:18 -0500
+    r8432@zoq-fot-pik:  chmrr | 2005-12-27 18:20:58 -0500
+     * Remove last vestiges of ::Delete from ::Update
+   
+   r52796@david-glassers-powerbook-g4-15 (orig r412):  autrijus | 2005-12-27 20:46:13 -0500
+   * We really want App::CLI 0.03, not 0.02.
+  
+ 
+ r21863@truegrounds (orig r424):  autrijus | 2005-12-27 23:09:48 -0500
+ * Jifty::Action->argument_names should sort keys lexographically,
+   not random hash-ordering.
+
+----------------------------------------------------------------------
+r21829:  jesse | 2005-12-27 02:37:56 -0500
+
+ r21828@truegrounds (orig r406):  alexmv | 2005-12-27 02:36:26 -0500
+  r8417@zoq-fot-pik:  chmrr | 2005-12-27 02:34:53 -0500
+   * Remove files from MANIFEST that we no longer include
+   * Quiet down logging when we create the db and start up the server
+ 
+
+----------------------------------------------------------------------
+r21826:  jesse | 2005-12-27 02:27:05 -0500
+
+* hcchien pointed out that 'jifty server' didn't work right for non-installed apps
+  alemxv pointed out that this was due to my boneheaded surgery on bin/jifty
+----------------------------------------------------------------------
+r21808:  jesse | 2005-12-27 00:08:36 -0500
+
+ * hcchien reported that we had missed a rename in the model. Left a mean note for alex about code to fix
+----------------------------------------------------------------------
+r21801:  jesse | 2005-12-26 19:39:38 -0500
+
+ r21800@truegrounds (orig r398):  alexmv | 2005-12-26 16:48:07 -0500
+  r8402@zoq-fot-pik:  chmrr | 2005-12-26 16:47:31 -0500
+   * Clean up t/*/ directories
+   * Make Mapper and Continuations tests clean up after themselves
+   * Reduce logging to screen during testing
+ 
+
+----------------------------------------------------------------------
+r21799:  jesse | 2005-12-26 19:39:22 -0500
+
+* Removed magical guessed library targets that were only useful at BPS
+----------------------------------------------------------------------
+r21798:  jesse | 2005-12-26 19:38:27 -0500
+
+jifty schema updated to require Jifty::Config
+----------------------------------------------------------------------
+r21797:  jesse | 2005-12-26 19:37:00 -0500
+
+jifty app  updated to not try to load a config file
+----------------------------------------------------------------------
+r21796:  jesse | 2005-12-26 19:36:10 -0500
+
+Jifty::Config can now be loaded _without_ actually loading the config file; updated Jifty::Util->default_app_name
+----------------------------------------------------------------------
+r21795:  jesse | 2005-12-26 19:35:05 -0500
+
+ * Jifty::Util->app_name renamed to Jifty::Util->default_app_name
+Jifty::Util->app_root failure softened to a warning to support app creation
+----------------------------------------------------------------------
+r21769:  jesse | 2005-12-26 13:13:09 -0500
+
+ r21768@truegrounds (orig r397):  alexmv | 2005-12-26 03:39:29 -0500
+  r8400@zoq-fot-pik:  chmrr | 2005-12-26 03:38:52 -0500
+   * Colonectomy on the NAME given in the POD to make it correct
+ 
+
+----------------------------------------------------------------------
+r21764:  jesse | 2005-12-26 02:18:06 -0500
+
+* Fixed a lowercase value that should have been ucfirst. Thanks to chromatic
+----------------------------------------------------------------------
+r21762:  jesse | 2005-12-26 02:15:41 -0500
+
+* Added a stub for the object model docs
+----------------------------------------------------------------------
+r21760:  jesse | 2005-12-26 02:14:34 -0500
+
+* Refactored Jifty::Config to allow the application class to be specified when calling Config->guess 
+* Refactored Jifty::Script::App into bite-sized morsels
+* Made Jifty::Script::App generate a config file
+* Made Jifty::Script::App and Jifty::Config::Guess happy with multi-level package names
+----------------------------------------------------------------------
+r21755:  jesse | 2005-12-26 00:29:23 -0500
+
+Updated pod for Jifty::Script::Schema. Now it passes tests
+
+----------------------------------------------------------------------
+r21754:  jesse | 2005-12-26 00:13:52 -0500
+
+ r21752@truegrounds (orig r390):  alexmv | 2005-12-25 23:52:06 -0500
+  r8387@zoq-fot-pik:  chmrr | 2005-12-25 23:43:34 -0500
+   * Remove the content from these files; they only serve to mark that
+  their parent dir is a jifty app root, and having old versions of the
+  bin/jifty code might be confusing
+ 
+ r21753@truegrounds (orig r391):  alexmv | 2005-12-25 23:52:09 -0500
+  r8388@zoq-fot-pik:  chmrr | 2005-12-25 23:50:23 -0500
+   * Use the application root (which is smarter), not the binary's
+     parent dir, as the place to start looking for lib/
+ 
+
+----------------------------------------------------------------------
+r21750:  jesse | 2005-12-25 23:43:46 -0500
+
+* Use a better pod translator for the readme
+----------------------------------------------------------------------
+r21748:  jesse | 2005-12-25 22:19:24 -0500
+
+* Now that we are post-release, bump the version to say so
+----------------------------------------------------------------------
+r21746:  jesse | 2005-12-25 22:17:42 -0500
+
+* Track the manifest
+----------------------------------------------------------------------
+r21740:  jesse | 2005-12-25 21:27:39 -0500
+
+* Removed a couple of the things that stopped non-subclassable use of Jifty::Notification
+----------------------------------------------------------------------
+r21738:  jesse | 2005-12-25 18:51:33 -0500
+
+* Change how we load the "default" config to actually use the application name set in the config file if we have one
+----------------------------------------------------------------------
+r21736:  jesse | 2005-12-25 16:57:17 -0500
+
+* POD Cleanups from chromatic.
+* Improvements to our pod-coverage tester from chromatic.
+----------------------------------------------------------------------
+r21733:  jesse | 2005-12-25 16:48:15 -0500
+
+* Glossary and Tutorial cleanups and fixes from chromatic
+----------------------------------------------------------------------
+r21732:  jesse | 2005-12-25 16:32:24 -0500
+
+* Updated Jifty::Record::check_read_rights to use the same keys as update_rights 
+----------------------------------------------------------------------
+r21698:  jesse | 2005-12-25 02:44:59 -0500
+
+* Versioning inc
+----------------------------------------------------------------------
+r21692:  jesse | 2005-12-25 02:20:58 -0500
+
+Moving our dependencies out of the core jifty distribution
+----------------------------------------------------------------------
+r21689:  jesse | 2005-12-25 02:19:19 -0500
+
+* Cleanup to Jifty.pm POD
+----------------------------------------------------------------------
+r21688:  jesse | 2005-12-25 02:15:37 -0500
+
+ r21686@truegrounds (orig r372):  jesse | 2005-12-25 02:13:00 -0500
+ * Removed XS dependencies from the pure perl deps section
+ r21687@truegrounds (orig r373):  jesse | 2005-12-25 02:15:18 -0500
+ * First pass at adidng some deps for OSX
+ 
+
+----------------------------------------------------------------------
+r21683:  jesse | 2005-12-25 01:43:45 -0500
+
+ r21682@truegrounds (orig r369):  jesse | 2005-12-25 01:30:23 -0500
+ * Removing file that shouldn't have been there
+ 
+
+----------------------------------------------------------------------
+r21681:  jesse | 2005-12-25 01:43:26 -0500
+
+* updates to deps
+----------------------------------------------------------------------
+r21678:  jesse | 2005-12-25 00:36:01 -0500
+
+* Deps updated. we may win on more pureperl stuff
+----------------------------------------------------------------------
+r21570:  jesse | 2005-12-24 23:13:08 -0500
+
+ r20152@truegrounds (orig r2):  jesse | 2005-11-28 03:45:21 -0500
+ * Added a README
+ r21117@truegrounds (orig r3):  jesse | 2005-12-24 19:53:35 -0500
+  r17259@truegrounds (orig r2102):  jesse | 2005-10-08 17:31:00 -0400
+   r17255@hualien:  jesse | 2005-10-08 13:20:25 -0400
+    * JFDI -> Jifty step 1
+  
+ 
+ r21118@truegrounds (orig r4):  jesse | 2005-12-24 19:53:41 -0500
+  r17260@truegrounds (orig r2103):  jesse | 2005-10-08 17:31:10 -0400
+   r17256@hualien:  jesse | 2005-10-08 13:22:11 -0400
+   * JFDI->Jifty step two
+  
+ 
+ r21119@truegrounds (orig r5):  jesse | 2005-12-24 19:53:49 -0500
+  r17261@truegrounds (orig r2104):  jesse | 2005-10-08 17:31:46 -0400
+   r17257@hualien:  jesse | 2005-10-08 13:29:55 -0400
+   * JFDI -> Jifty, final 
+  
+ 
+ r21120@truegrounds (orig r6):  jesse | 2005-12-24 19:54:00 -0500
+  r17263@truegrounds (orig r2105):  jesse | 2005-10-08 18:38:50 -0400
+   r17262@hualien:  jesse | 2005-10-08 14:36:34 -0400
+   * made our scripts stubs, so we can just wrap libs
+  
+ 
+ r21121@truegrounds (orig r7):  jesse | 2005-12-24 19:54:04 -0500
+  r17268@truegrounds (orig r2106):  jesse | 2005-10-08 23:09:34 -0400
+   r17264@hualien:  jesse | 2005-10-08 18:03:02 -0400
+   * Cleanups to autorequire syntax
+   
+  
+ 
+ r21122@truegrounds (orig r8):  jesse | 2005-12-24 19:54:11 -0500
+  r17269@truegrounds (orig r2107):  jesse | 2005-10-08 23:09:44 -0400
+   r17265@hualien:  jesse | 2005-10-08 19:06:14 -0400
+   * Enough refactoring to make two apps run!
+  
+ 
+ r21123@truegrounds (orig r9):  jesse | 2005-12-24 19:54:22 -0500
+  r17295@truegrounds (orig r2118):  jesse | 2005-10-11 16:24:04 -0400
+   r17291@hualien:  jesse | 2005-10-11 11:53:20 -0400
+   * need to use the FastCGI handler
+  
+ 
+ r21124@truegrounds (orig r10):  jesse | 2005-12-24 19:54:25 -0500
+  r17297@truegrounds (orig r2120):  jesse | 2005-10-11 16:24:25 -0400
+   r17293@hualien:  jesse | 2005-10-11 12:23:21 -0400
+   * notes on how we'll do ajax-upgraded widgets with jifty
+  
+ 
+ r21125@truegrounds (orig r11):  jesse | 2005-12-24 19:54:29 -0500
+  r17307@truegrounds (orig r2130):  alexmv | 2005-10-11 20:41:29 -0400
+   r6731@zoq-fot-pik:  chmrr | 2005-10-11 20:40:56 -0400
+    * First pass at Big Box
+  
+ 
+ r21126@truegrounds (orig r12):  jesse | 2005-12-24 19:54:33 -0500
+  r17319@truegrounds (orig r2133):  jesse | 2005-10-12 15:59:47 -0400
+   r17311@hualien:  jesse | 2005-10-12 11:22:18 -0400
+   * First cut of non-editable form field widgets
+  
+ 
+ r21127@truegrounds (orig r13):  jesse | 2005-12-24 19:54:36 -0500
+  r17325@truegrounds (orig r2134):  alexmv | 2005-10-12 20:17:53 -0400
+   r6745@zoq-fot-pik:  chmrr | 2005-10-12 20:16:59 -0400
+    * Failed form fields are no longer forced to their defaults
+    * Working Big Box
+    * Task owners must look like email addresses
+    * _Checking_ if a task has errors shouldn't make it fail
+    * Remove jiftyaction attribute (doesn't validate)
+  
+ 
+ r21128@truegrounds (orig r14):  jesse | 2005-12-24 19:54:40 -0500
+  r17326@truegrounds (orig r2135):  jesse | 2005-10-12 23:30:09 -0400
+   r17320@hualien:  jesse | 2005-10-12 12:03:27 -0400
+    * Default warnings/errors to stderr
+  
+ 
+ r21129@truegrounds (orig r15):  jesse | 2005-12-24 19:54:43 -0500
+  r17327@truegrounds (orig r2136):  jesse | 2005-10-12 23:30:18 -0400
+   r17321@hualien:  jesse | 2005-10-12 12:32:46 -0400
+   * Mason 1.3101
+  
+ 
+ r21130@truegrounds (orig r16):  jesse | 2005-12-24 19:54:47 -0500
+  r17328@truegrounds (orig r2137):  jesse | 2005-10-12 23:30:25 -0400
+   r17322@hualien:  jesse | 2005-10-12 19:26:03 -0400
+   * Cleanups to support hte new blogdemo app
+  
+ 
+ r21131@truegrounds (orig r17):  jesse | 2005-12-24 19:54:50 -0500
+  r17333@truegrounds (orig r2140):  root | 2005-10-13 02:54:28 -0400
+  * gotta render form fields as update or view. but not ''
+  
+ 
+ r21132@truegrounds (orig r18):  jesse | 2005-12-24 19:54:59 -0500
+  r17347@truegrounds (orig r2142):  jesse | 2005-10-13 21:59:05 -0400
+   r17331@hualien:  jesse | 2005-10-13 12:41:57 -0400
+   * Cleaning up the feed lists and task lists
+   
+  
+ 
+ r21133@truegrounds (orig r19):  jesse | 2005-12-24 19:55:02 -0500
+  r17393@truegrounds (orig r2145):  trs | 2005-10-13 22:45:49 -0400
+   r6627@wintermute:  tom | 2005-10-13 22:32:09 -0400
+   * Fixed the jumping behavior of the calendar links and made them use
+     the createCalendarLink() function for consistency
+   
+   * Fixed a Jifty test that wanted HTML::Mason::Plugin in Makefile.PL
+  
+ 
+ r21134@truegrounds (orig r20):  jesse | 2005-12-24 19:55:08 -0500
+  r17396@truegrounds (orig r2148):  alexmv | 2005-10-14 01:07:01 -0400
+   r6761@zoq-fot-pik:  chmrr | 2005-10-14 01:06:10 -0400
+    * Checking off tasks submits the action, updates the CSS class
+    * Use /fragments for things that might get round-trip'd
+    * Consolidate tasklists, task element view
+  
+ 
+ r21135@truegrounds (orig r21):  jesse | 2005-12-24 19:55:12 -0500
+  r17401@truegrounds (orig r2153):  alexmv | 2005-10-15 07:09:50 -0400
+   r6772@zoq-fot-pik:  chmrr | 2005-10-15 07:06:38 -0400
+    * AJAX structure
+  
+ 
+ r21136@truegrounds (orig r22):  jesse | 2005-12-24 19:55:15 -0500
+  r17405@truegrounds (orig r2154):  jesse | 2005-10-15 23:32:19 -0400
+   r17392@hualien:  jesse | 2005-10-15 19:11:52 -0400
+   * Added autoinstall to the makefile for jifty
+  
+ 
+ r21137@truegrounds (orig r23):  jesse | 2005-12-24 19:55:18 -0500
+  r17407@truegrounds (orig r2156):  jesse | 2005-10-15 23:32:43 -0400
+   r17404@hualien:  jesse | 2005-10-15 23:31:56 -0400
+    * warning avoidance
+  
+ 
+ r21138@truegrounds (orig r24):  jesse | 2005-12-24 19:55:21 -0500
+  r17419@truegrounds (orig r2162):  jesse | 2005-10-16 20:44:10 -0400
+   r17418@hualien:  jesse | 2005-10-16 20:43:23 -0400
+   * checkpoint
+  
+ 
+ r21139@truegrounds (orig r25):  jesse | 2005-12-24 19:55:32 -0500
+  r17433@truegrounds (orig r2165):  jesse | 2005-10-17 14:50:49 -0400
+   r17432@hualien:  jesse | 2005-10-17 14:49:28 -0400
+    * Working on bigbox
+  
+ 
+ r21140@truegrounds (orig r26):  jesse | 2005-12-24 19:55:36 -0500
+  r17439@truegrounds (orig r2168):  jesse | 2005-10-17 21:22:53 -0400
+   r17438@hualien:  jesse | 2005-10-17 21:22:30 -0400
+   * Switched from "not_sticky" to "sticky". 
+   * Moved the logic into the Form::Field object
+  
+ 
+ r21141@truegrounds (orig r27):  jesse | 2005-12-24 19:55:39 -0500
+  r17444@truegrounds (orig r2171):  root | 2005-10-17 23:29:50 -0400
+  * Fixed a circualr dep
+  
+ 
+ r21142@truegrounds (orig r28):  jesse | 2005-12-24 19:55:43 -0500
+  r17448@truegrounds (orig r2172):  jesse | 2005-10-18 00:25:47 -0400
+   r17446@hualien:  jesse | 2005-10-18 00:23:56 -0400
+   * Now results record what their action class was. this means we can get at em after a redirect
+  
+ 
+ r21143@truegrounds (orig r29):  jesse | 2005-12-24 19:55:47 -0500
+  r17452@truegrounds (orig r2175):  alexmv | 2005-10-18 17:48:43 -0400
+   r6840@zoq-fot-pik:  chmrr | 2005-10-18 17:46:29 -0400
+    * AJAX take two
+  
+ 
+ r21144@truegrounds (orig r30):  jesse | 2005-12-24 19:55:50 -0500
+  r17455@truegrounds (orig r2176):  jesse | 2005-10-18 23:13:39 -0400
+   r17454@hualien:  jesse | 2005-10-18 23:12:25 -0400
+   * First draft of the npw2005 slides.
+   
+  
+ 
+ r21145@truegrounds (orig r31):  jesse | 2005-12-24 19:55:54 -0500
+  r17470@truegrounds (orig r2177):  jesse | 2005-10-20 03:42:38 -0400
+   r17457@truegrounds:  jesse | 2005-10-19 16:25:56 -0400
+   * lucs fixed the takahashi javascript
+  
+ 
+ r21146@truegrounds (orig r32):  jesse | 2005-12-24 19:55:58 -0500
+  r17856@truegrounds (orig r2180):  alexmv | 2005-10-20 06:55:26 -0400
+   r6849@zoq-fot-pik:  chmrr | 2005-10-20 06:54:23 -0400
+    * More AJAX, now with more API
+  
+ 
+ r21147@truegrounds (orig r33):  jesse | 2005-12-24 19:56:02 -0500
+  r17857@truegrounds (orig r2181):  alexmv | 2005-10-20 19:56:50 -0400
+   r6851@zoq-fot-pik:  chmrr | 2005-10-20 19:56:12 -0400
+    * Move to using subrequests for fragment calls
+  
+ 
+ r21148@truegrounds (orig r34):  jesse | 2005-12-24 19:56:10 -0500
+  r17860@truegrounds (orig r2182):  jesse | 2005-10-21 04:13:51 -0400
+   r17859@truegrounds:  jesse | 2005-10-21 14:12:26 -0400
+   * slides updates
+  
+ 
+ r21149@truegrounds (orig r35):  jesse | 2005-12-24 19:56:14 -0500
+  r17861@truegrounds (orig r2183):  alexmv | 2005-10-21 05:36:03 -0400
+   r6853@zoq-fot-pik:  chmrr | 2005-10-21 02:49:50 -0400
+    * Javascript fixes -- maintain as much state as possible
+  
+ 
+ r21150@truegrounds (orig r36):  jesse | 2005-12-24 19:56:18 -0500
+  r17862@truegrounds (orig r2184):  alexmv | 2005-10-21 05:36:12 -0400
+   r6856@zoq-fot-pik:  chmrr | 2005-10-21 05:35:40 -0400
+    * We don't need no steenkin' config files
+  
+ 
+ r21151@truegrounds (orig r37):  jesse | 2005-12-24 19:56:21 -0500
+  r17884@truegrounds (orig r2185):  jesse | 2005-10-21 05:55:18 -0400
+   r17883@truegrounds:  jesse | 2005-10-21 05:53:46 -0400
+   * alex found a missing blogdeom
+  
+ 
+ r21152@truegrounds (orig r38):  jesse | 2005-12-24 19:56:37 -0500
+  r17887@truegrounds (orig r2186):  jesse | 2005-10-21 06:38:28 -0400
+   r17886@truegrounds:  jesse | 2005-10-21 06:37:32 -0400
+   checkpoint
+  
+ 
+ r21153@truegrounds (orig r39):  jesse | 2005-12-24 19:56:45 -0500
+  r17888@truegrounds (orig r2187):  alexmv | 2005-10-21 07:05:49 -0400
+   r6859@zoq-fot-pik:  chmrr | 2005-10-21 07:03:27 -0400
+    * Auto-create Collection and (Create|Update)Foo whenever possible
+  
+ 
+ r21154@truegrounds (orig r40):  jesse | 2005-12-24 19:56:50 -0500
+  r17889@truegrounds (orig r2188):  alexmv | 2005-10-21 08:19:31 -0400
+   r6864@zoq-fot-pik:  chmrr | 2005-10-21 07:43:35 -0400
+    * Merge various bin scripts into one 'jifty'
+   r6865@zoq-fot-pik:  chmrr | 2005-10-21 08:19:00 -0400
+    * Forgot to include one file
+  
+ 
+ r21155@truegrounds (orig r41):  jesse | 2005-12-24 19:56:54 -0500
+  r17895@truegrounds (orig r2189):  jesse | 2005-10-22 08:35:28 -0400
+   r17891@truegrounds:  jesse | 2005-10-22 11:31:01 -0400
+   * Added a tiny comment to explain why sub INC had its name fully qualified
+  
+ 
+ r21156@truegrounds (orig r42):  jesse | 2005-12-24 19:56:58 -0500
+  r17896@truegrounds (orig r2190):  jesse | 2005-10-22 08:35:40 -0400
+   r17892@truegrounds:  jesse | 2005-10-22 17:49:18 -0400
+   * updates!
+  
+ 
+ r21157@truegrounds (orig r43):  jesse | 2005-12-24 19:57:01 -0500
+  r17897@truegrounds (orig r2191):  jesse | 2005-10-22 08:35:52 -0400
+   r17893@truegrounds:  jesse | 2005-10-22 18:17:54 -0400
+   * made monotype code bigger
+  
+ 
+ r21158@truegrounds (orig r44):  jesse | 2005-12-24 19:57:16 -0500
+  r17898@truegrounds (orig r2192):  jesse | 2005-10-22 08:36:02 -0400
+   r17894@truegrounds:  jesse | 2005-10-22 18:34:17 -0400
+   * more updates
+  
+ 
+ r21159@truegrounds (orig r45):  jesse | 2005-12-24 19:57:19 -0500
+  r17902@truegrounds (orig r2193):  jesse | 2005-10-23 05:34:59 -0400
+   r17899@truegrounds:  jesse | 2005-10-23 14:51:03 -0400
+   * Updates this morning
+  
+ 
+ r21160@truegrounds (orig r46):  jesse | 2005-12-24 19:57:23 -0500
+  r17903@truegrounds (orig r2194):  jesse | 2005-10-23 05:40:11 -0400
+   r17900@truegrounds:  jesse | 2005-10-23 15:32:38 -0400
+   * Slide updates
+  
+ 
+ r21161@truegrounds (orig r47):  jesse | 2005-12-24 19:57:26 -0500
+  r17957@truegrounds (orig r2196):  jesse | 2005-10-24 15:22:00 -0400
+   r17956@truegrounds:  jesse | 2005-10-25 01:16:26 -0400
+   * bin/jifty work
+  
+ 
+ r21162@truegrounds (orig r48):  jesse | 2005-12-24 19:57:30 -0500
+  r18024@truegrounds (orig r2198):  alexmv | 2005-10-25 13:22:18 -0400
+   r6894@zoq-fot-pik:  chmrr | 2005-10-25 13:21:15 -0400
+    * Cleaning out bin directories
+  
+ 
+ r21163@truegrounds (orig r49):  jesse | 2005-12-24 19:57:34 -0500
+  r18033@truegrounds (orig r2200):  jesse | 2005-10-25 15:01:44 -0400
+   r18026@truegrounds:  jesse | 2005-10-26 00:45:29 -0400
+   * Removed spurious debug statemetn from Jifty
+  
+ 
+ r21164@truegrounds (orig r50):  jesse | 2005-12-24 19:57:37 -0500
+  r18049@truegrounds (orig r2209):  jesse | 2005-10-26 13:43:52 -0400
+   r18044@truegrounds:  jesse | 2005-10-26 20:03:03 -0400
+   eichin spotted a js logic bug
+  
+ 
+ r21165@truegrounds (orig r51):  jesse | 2005-12-24 19:57:41 -0500
+  r18067@truegrounds (orig r2215):  alexmv | 2005-10-26 20:37:02 -0400
+   r6913@zoq-fot-pik:  chmrr | 2005-10-26 18:54:28 -0400
+    * Uncomment XMLHTPRequest for IE
+    * Use url base path from config
+    * Add META.yml
+  
+ 
+ r21166@truegrounds (orig r52):  jesse | 2005-12-24 19:57:45 -0500
+  r18070@truegrounds (orig r2218):  alexmv | 2005-10-26 23:00:08 -0400
+   r6922@zoq-fot-pik:  chmrr | 2005-10-26 22:59:23 -0400
+    * Remove undef warning
+   r6923@zoq-fot-pik:  chmrr | 2005-10-26 22:59:36 -0400
+    * Optional "remember me" checkbox
+  
+ 
+ r21167@truegrounds (orig r53):  jesse | 2005-12-24 19:57:55 -0500
+  r18071@truegrounds (orig r2219):  alexmv | 2005-10-27 01:07:25 -0400
+   r6925@zoq-fot-pik:  chmrr | 2005-10-27 01:06:54 -0400
+    * Jesse is clevz0r -- uri should take an optional scheme
+  
+ 
+ r21168@truegrounds (orig r54):  jesse | 2005-12-24 19:57:58 -0500
+  r18072@truegrounds (orig r2220):  alexmv | 2005-10-27 12:36:31 -0400
+   r6927@zoq-fot-pik:  chmrr | 2005-10-27 12:30:23 -0400
+    * Remove a little login debugging
+    * New tasks auto-redirect to the same page, so reloading can't re-POST
+  
+ 
+ r21169@truegrounds (orig r55):  jesse | 2005-12-24 19:58:02 -0500
+  r18074@truegrounds (orig r2222):  alexmv | 2005-10-27 15:08:00 -0400
+   r6930@zoq-fot-pik:  chmrr | 2005-10-27 15:07:01 -0400
+    * Mention title of email in confirm email page
+    * State-preserving changes in AJAX
+    * Fix date tests for redirect to view task after edit
+    * Don't include query parameters in unpost redirect
+    * Include current state vars in redirect
+  
+ 
+ r21170@truegrounds (orig r56):  jesse | 2005-12-24 19:58:05 -0500
+  r18076@truegrounds (orig r2224):  alexmv | 2005-10-27 23:13:07 -0400
+   r6935@zoq-fot-pik:  chmrr | 2005-10-27 22:35:23 -0400
+    * Setting render_as for form_fields reblesses the Jifty::Web::Form::Field
+    * Able to create default tasks from tasklists
+    * Fix date creation bug
+  
+ 
+ r21171@truegrounds (orig r57):  jesse | 2005-12-24 19:58:09 -0500
+  r18078@truegrounds (orig r2226):  alexmv | 2005-10-28 16:33:09 -0400
+   r6945@zoq-fot-pik:  chmrr | 2005-10-28 16:32:05 -0400
+    * Submit buttons are now buttons
+    * AJAX-ify several buttons
+    * Remove old JS code
+    * JS trace helpers
+  
+ 
+ r21172@truegrounds (orig r58):  jesse | 2005-12-24 19:58:13 -0500
+  r18079@truegrounds (orig r2227):  alexmv | 2005-10-28 17:06:08 -0400
+   r6947@zoq-fot-pik:  chmrr | 2005-10-28 17:05:46 -0400
+    * Monikers are so old school.  Use actions themselves as arguments
+  
+ 
+ r21173@truegrounds (orig r59):  jesse | 2005-12-24 19:58:17 -0500
+  r18080@truegrounds (orig r2228):  alexmv | 2005-10-28 18:44:57 -0400
+   r6949@zoq-fot-pik:  chmrr | 2005-10-28 18:43:36 -0400
+    * Bail out unless we know the email address
+    * Snip out signature from email body
+  
+ 
+ r21174@truegrounds (orig r60):  jesse | 2005-12-24 19:58:20 -0500
+  r18083@truegrounds (orig r2229):  jesse | 2005-10-29 16:38:40 -0400
+   r18058@truegrounds:  jesse | 2005-10-28 03:16:44 -0400
+   * First pass at dependencies
+   r18060@truegrounds:  jesse | 2005-10-30 01:00:40 -0400
+   cleaned up the Jifty::DBI api
+   r18082@truegrounds:  jesse | 2005-10-30 01:34:53 -0400
+   * Cleanups after the merge
+  
+ 
+ r21175@truegrounds (orig r61):  jesse | 2005-12-24 19:58:24 -0500
+  r18089@truegrounds (orig r2234):  alexmv | 2005-10-30 16:46:47 -0500
+   r6955@zoq-fot-pik:  chmrr | 2005-10-30 16:45:20 -0500
+    * Revert the part of r2222 that send current page variables with
+   redirect; this should be done with making ->unpost bounce the current
+   variables forward to the next page's.
+  
+ 
+ r21176@truegrounds (orig r62):  jesse | 2005-12-24 19:58:27 -0500
+  r18090@truegrounds (orig r2235):  jesse | 2005-10-31 08:46:00 -0500
+   r18084@truegrounds:  jesse | 2005-10-31 19:45:03 -0500
+   *fixed news sorting
+  
+ 
+ r21177@truegrounds (orig r63):  jesse | 2005-12-24 19:58:36 -0500
+  r18138@truegrounds (orig r2237):  alexmv | 2005-11-01 16:48:21 -0500
+   r6982@zoq-fot-pik:  chmrr | 2005-11-01 16:40:31 -0500
+    * More correct state variable use
+    * Axe 'unpost'
+    * More state preservation in AJAX
+  
+ 
+ r21178@truegrounds (orig r64):  jesse | 2005-12-24 19:58:40 -0500
+  r18365@truegrounds (orig r2245):  jesse | 2005-11-05 00:25:03 -0500
+   r18362@truegrounds:  jesse | 2005-11-04 19:43:52 -0500
+   * refitted CSS classes for form fields. makes it easier to style things, if a bit verbose
+  
+ 
+ r21179@truegrounds (orig r65):  jesse | 2005-12-24 19:58:44 -0500
+  r18447@truegrounds (orig r2254):  jesse | 2005-11-07 02:48:59 -0500
+   r18445@truegrounds:  jesse | 2005-11-07 02:29:31 -0500
+   * made password render_as case insensitive, as the prefs page had text fields for passwords
+  
+ 
+ r21180@truegrounds (orig r66):  jesse | 2005-12-24 19:58:47 -0500
+  r18448@truegrounds (orig r2255):  jesse | 2005-11-07 02:49:06 -0500
+   r18446@truegrounds:  jesse | 2005-11-07 02:47:49 -0500
+   * Fixes for password fields
+  
+ 
+ r21181@truegrounds (orig r67):  jesse | 2005-12-24 19:58:51 -0500
+  r18450@truegrounds (orig r2256):  jesse | 2005-11-07 03:10:45 -0500
+   r18449@truegrounds:  jesse | 2005-11-07 03:09:30 -0500
+    another crack at password fields
+  
+ 
+ r21182@truegrounds (orig r68):  jesse | 2005-12-24 19:58:54 -0500
+  r18452@truegrounds (orig r2257):  jesse | 2005-11-07 03:12:47 -0500
+   r18451@truegrounds:  jesse | 2005-11-07 03:11:47 -0500
+    space error
+  
+ 
+ r21183@truegrounds (orig r69):  jesse | 2005-12-24 19:58:58 -0500
+  r18454@truegrounds (orig r2258):  jesse | 2005-11-07 03:16:17 -0500
+   r18453@truegrounds:  jesse | 2005-11-07 03:15:15 -0500
+   * take 6000
+  
+ 
+ r21184@truegrounds (orig r70):  jesse | 2005-12-24 19:59:02 -0500
+  r18456@truegrounds (orig r2259):  jesse | 2005-11-07 14:37:45 -0500
+   r18455@truegrounds:  jesse | 2005-11-07 14:36:27 -0500
+    trying to find and fix the consistency bug
+  
+ 
+ r21185@truegrounds (orig r71):  jesse | 2005-12-24 19:59:07 -0500
+  r18585@truegrounds (orig r2265):  jesse | 2005-11-08 16:26:58 -0500
+   r18584@truegrounds:  jesse | 2005-11-08 16:25:54 -0500
+   * really factored stuff out to Jifty::DBI
+   
+  
+ 
+ r21186@truegrounds (orig r72):  jesse | 2005-12-24 19:59:10 -0500
+  r18851@truegrounds (orig r2300):  jesse | 2005-11-14 00:07:20 -0500
+   r18845@truegrounds:  jesse | 2005-11-13 23:58:59 -0500
+   * Made Jifty::Framework work even outside a web context
+  
+ 
+ r21187@truegrounds (orig r73):  jesse | 2005-12-24 19:59:14 -0500
+  r18865@truegrounds (orig r2306):  jesse | 2005-11-14 01:26:20 -0500
+   r18864@truegrounds:  jesse | 2005-11-14 01:24:21 -0500
+   * you never think those little API fixes will hurt anything
+  
+ 
+ r21188@truegrounds (orig r74):  jesse | 2005-12-24 19:59:18 -0500
+  r18915@truegrounds (orig r2322):  alexmv | 2005-11-16 00:33:42 -0500
+   r7215@zoq-fot-pik:  chmrr | 2005-11-16 00:32:50 -0500
+    * Don't post to /empty with the action -- race condition
+    * Named parameters to update_region
+  
+ 
+ r21189@truegrounds (orig r75):  jesse | 2005-12-24 19:59:23 -0500
+  r18926@truegrounds (orig r2327):  jesse | 2005-11-17 01:08:42 -0500
+   r18922@truegrounds:  jesse | 2005-11-16 23:01:25 -0500
+   * First pass at autocompleted fields. doesn't quite work
+  
+ 
+ r21190@truegrounds (orig r76):  jesse | 2005-12-24 19:59:27 -0500
+  r18927@truegrounds (orig r2328):  jesse | 2005-11-17 01:08:48 -0500
+   r18923@truegrounds:  jesse | 2005-11-17 01:04:39 -0500
+   * A working attempt at autocomplete.
+  
+ 
+ r21191@truegrounds (orig r77):  jesse | 2005-12-24 19:59:32 -0500
+  r18929@truegrounds (orig r2329):  jesse | 2005-11-17 01:42:58 -0500
+   r18928@truegrounds:  jesse | 2005-11-17 01:40:57 -0500
+   * Tag autocompletion sorts by most popular
+   * We no longer try to check acls for actions that aren't active
+   * autocomplete submissions don't try to run the ting they're autocmpleting
+  
+ 
+ r21192@truegrounds (orig r78):  jesse | 2005-12-24 19:59:36 -0500
+  r18936@truegrounds (orig r2334):  jesse | 2005-11-17 16:35:45 -0500
+   r18932@truegrounds:  jesse | 2005-11-17 16:34:15 -0500
+   * better serial generation 
+  
+ 
+ r21193@truegrounds (orig r79):  jesse | 2005-12-24 19:59:40 -0500
+  r18987@truegrounds (orig r2341):  jesse | 2005-11-19 15:32:42 -0500
+   r18986@truegrounds:  jesse | 2005-11-19 15:32:12 -0500
+   * Classloader cleanups to stop loading inner packages
+  
+ 
+ r21194@truegrounds (orig r80):  jesse | 2005-12-24 19:59:44 -0500
+  r19051@truegrounds (orig r2365):  jesse | 2005-11-22 04:09:47 -0500
+   r19049@truegrounds:  jesse | 2005-11-22 04:05:43 -0500
+   * And when you insert a form before your other forms, all forms of hell break loose
+  
+ 
+ r21195@truegrounds (orig r81):  jesse | 2005-12-24 19:59:49 -0500
+  r19646@truegrounds (orig r2410):  jesse | 2005-11-30 18:57:06 -0500
+   r19645@truegrounds:  jesse | 2005-11-30 18:29:23 -0500
+    r18593@truegrounds:  jesse | 2005-11-08 17:15:15 -0500
+     r18591@truegrounds (orig r2266):  alexmv | 2005-11-08 16:34:35 -0500
+      r7059@zoq-fot-pik:  chmrr | 2005-11-08 16:33:37 -0500
+       * Look ma, no helpers.  Temporary replacements dropped in
+     
+     r18592@truegrounds (orig r2267):  alexmv | 2005-11-08 16:34:53 -0500
+      r7060@zoq-fot-pik:  chmrr | 2005-11-08 16:33:55 -0500
+       * Continuations working epsilon better
+     
+    
+    r18594@truegrounds:  jesse | 2005-11-08 17:17:52 -0500
+     r18566@truegrounds (orig r2262):  root | 2005-11-08 12:49:06 -0500
+     * Task edit style updates
+     
+    
+    r18595@truegrounds:  jesse | 2005-11-08 17:17:54 -0500
+     r18568@truegrounds (orig r2263):  root | 2005-11-08 13:11:27 -0500
+     * CSS hackery
+     
+    
+    r18653@truegrounds:  jesse | 2005-11-09 15:49:52 -0500
+     r18602@truegrounds (orig r2272):  alexmv | 2005-11-08 18:19:49 -0500
+      r7070@zoq-fot-pik:  chmrr | 2005-11-08 18:19:08 -0500
+       * Hackish API for making linksandbuttonsthat pop the stack
+       * First steps toward preserving J:C arg when needed
+     
+     r18603@truegrounds (orig r2273):  alexmv | 2005-11-09 14:55:48 -0500
+      r7081@zoq-fot-pik:  chmrr | 2005-11-09 14:55:22 -0500
+       * Jifty::Web->(button|link) both take parameters
+       * Jifty::Action->button takes parameters, but calls Jifty::Web->button
+       * Started another doc pass
+     
+    
+    r18654@truegrounds:  jesse | 2005-11-09 18:45:04 -0500
+    * Linkified
+    
+    r18656@truegrounds:  jesse | 2005-11-09 18:45:20 -0500
+     r18655@truegrounds (orig r2274):  alexmv | 2005-11-09 17:22:58 -0500
+      r7083@zoq-fot-pik:  chmrr | 2005-11-09 17:22:27 -0500
+       * Some docs, notably a bunch of continuations
+     
+    
+    r18658@truegrounds:  jesse | 2005-11-10 14:07:22 -0500
+    
+    r18659@truegrounds:  jesse | 2005-11-10 15:40:52 -0500
+    * Now guessed configu is the base of the config file, not an alternative to it
+    r18663@truegrounds:  jesse | 2005-11-10 15:51:07 -0500
+     r18660@truegrounds (orig r2276):  alexmv | 2005-11-10 15:50:10 -0500
+      r7085@zoq-fot-pik:  chmrr | 2005-11-09 18:25:39 -0500
+       * Don't explode if I don't recognize the continuation, silently fail
+     
+     r18661@truegrounds (orig r2277):  alexmv | 2005-11-10 15:50:23 -0500
+      r7086@zoq-fot-pik:  chmrr | 2005-11-10 15:49:53 -0500
+       * Coderefs through continuations
+     
+     r18662@truegrounds (orig r2278):  alexmv | 2005-11-10 15:50:32 -0500
+     
+    
+    r18666@truegrounds:  jesse | 2005-11-10 16:28:14 -0500
+    * started to add users
+    r18667@truegrounds:  jesse | 2005-11-10 16:28:46 -0500
+    * Config file loading cleanups
+    
+    r18701@truegrounds:  jesse | 2005-11-10 16:37:19 -0500
+    * new_article became new_entry
+    r18703@truegrounds:  jesse | 2005-11-10 22:32:35 -0500
+    * Refactored "config" to its own package to clean out Jifty::
+    
+    r18704@truegrounds:  jesse | 2005-11-10 22:33:35 -0500
+    * checkpoint of new blogdemo pseudocode
+    r18708@truegrounds:  jesse | 2005-11-10 22:34:16 -0500
+     r18706@truegrounds (orig r2285):  alexmv | 2005-11-10 16:51:50 -0500
+      r7100@zoq-fot-pik:  chmrr | 2005-11-10 16:51:16 -0500
+       * First pass at a "gosub" call
+     
+     r18707@truegrounds (orig r2286):  alexmv | 2005-11-10 16:51:56 -0500
+     
+    
+    r18712@truegrounds:  jesse | 2005-11-10 22:39:01 -0500
+     * jesse and alex's hit list
+    r18713@truegrounds:  jesse | 2005-11-10 23:44:51 -0500
+    * made Jifty::Handle its own subclass
+    r18719@truegrounds:  jesse | 2005-11-11 13:37:33 -0500
+     r18718@truegrounds (orig r2292):  alexmv | 2005-11-11 13:15:51 -0500
+      r7112@zoq-fot-pik:  chmrr | 2005-11-11 13:15:18 -0500
+       * Validation rototill.  XML is now generated by /validator.xml not by
+         random function calls.
+     
+    
+    r18720@truegrounds:  jesse | 2005-11-11 14:57:32 -0500
+    * Tiny style cleanups to render_messages
+    
+    r18724@truegrounds:  jesse | 2005-11-11 17:32:13 -0500
+     * checkpoint
+    r18726@truegrounds:  jesse | 2005-11-13 14:08:49 -0500
+     * A bit of Jifty script command help cleanup
+    r18867@truegrounds:  jesse | 2005-11-14 01:35:14 -0500
+    * makefile deps update
+    r18937@truegrounds:  jesse | 2005-11-17 17:25:19 -0500
+     r18914@truegrounds (orig r2321):  alexmv | 2005-11-15 18:25:25 -0500
+      r7213@zoq-fot-pik:  chmrr | 2005-11-15 18:24:42 -0500
+       * No defaults from arguments which aren't columns
+       * Save continuations after validation
+       * Only redirect if not validating or success
+     
+     r18933@truegrounds (orig r2331):  alexmv | 2005-11-17 15:16:39 -0500
+      r7218@zoq-fot-pik:  chmrr | 2005-11-17 15:11:57 -0500
+       * Automagic password_confirm
+     
+     r18934@truegrounds (orig r2332):  alexmv | 2005-11-17 15:16:47 -0500
+      r7219@zoq-fot-pik:  chmrr | 2005-11-17 15:12:23 -0500
+       * Remove all references to bin/schema
+     
+     r18935@truegrounds (orig r2333):  alexmv | 2005-11-17 15:16:53 -0500
+      r7220@zoq-fot-pik:  chmrr | 2005-11-17 15:12:45 -0500
+       * Fix current_user bug ( was grabbing framework all the time)
+     
+    
+    r18994@truegrounds:  jesse | 2005-11-20 17:06:53 -0500
+    * Cleanups and warning avoidance and more correct monikerization
+    r18998@truegrounds:  jesse | 2005-11-20 21:36:29 -0500
+    * moved serial and mason out of the base class
+    r19016@truegrounds:  jesse | 2005-11-21 01:12:04 -0500
+    * Switched "framework" to "web"
+    r19017@truegrounds:  jesse | 2005-11-21 01:13:46 -0500
+    * Added the other new wiki components 
+    
+    r19022@truegrounds:  jesse | 2005-11-21 01:29:37 -0500
+     * Removed Text::Markdown from our dist, as it's on CPAN now
+    r19024@truegrounds:  jesse | 2005-11-21 02:03:11 -0500
+    * Recent changes
+    r19025@truegrounds:  jesse | 2005-11-21 02:15:38 -0500
+    * Added menu structure
+    r19026@truegrounds:  jesse | 2005-11-21 02:17:27 -0500
+    * Render menus if you are not logged in
+    r19027@truegrounds:  jesse | 2005-11-21 02:19:09 -0500
+    * Reverted men stuff
+    
+    r19033@truegrounds:  jesse | 2005-11-21 14:45:22 -0500
+    * Reverted the change to nav
+    r19043@truegrounds:  jesse | 2005-11-21 16:31:42 -0500
+     r19038@truegrounds (orig r2356):  alexmv | 2005-11-21 15:38:27 -0500
+      r7288@zoq-fot-pik:  chmrr | 2005-11-21 15:37:14 -0500
+       * Pull mandatory from column
+       * Move jifty stuff out of btdt_behavior.js
+       * autocomplete cleanups
+       * multiplace frobing
+     
+    
+    r19054@truegrounds:  jesse | 2005-11-22 14:51:32 -0500
+     r19050@truegrounds (orig r2364):  alexmv | 2005-11-22 02:27:49 -0500
+      r7299@zoq-fot-pik:  chmrr | 2005-11-22 02:26:32 -0500
+       * s/Jifty->web->form->add_action/Jifty->web->new_action/g
+       * Paging on groups, news, invitations
+       * 'Accept all' button for invites
+     
+    
+    r19057@truegrounds:  jesse | 2005-11-22 16:44:30 -0500
+     r19055@truegrounds (orig r2367):  alexmv | 2005-11-22 16:15:53 -0500
+      r7308@zoq-fot-pik:  chmrr | 2005-11-22 16:14:59 -0500
+       * Revert r2327
+     
+     r19056@truegrounds (orig r2368):  alexmv | 2005-11-22 16:32:30 -0500
+      r7312@zoq-fot-pik:  chmrr | 2005-11-22 16:30:15 -0500
+       * Updates only need to validate arguments that get submitted
+     
+    
+    r19060@truegrounds:  jesse | 2005-11-22 18:14:18 -0500
+    * Continuations - holy grail
+    r19063@truegrounds:  jesse | 2005-11-22 18:15:32 -0500
+     *removed crack
+    r19067@truegrounds:  jesse | 2005-11-22 18:18:47 -0500
+     r19055@truegrounds (orig r2367):  alexmv | 2005-11-22 16:15:53 -0500
+      r7308@zoq-fot-pik:  chmrr | 2005-11-22 16:14:59 -0500
+       * Revert r2327
+     
+     r19056@truegrounds (orig r2368):  alexmv | 2005-11-22 16:32:30 -0500
+      r7312@zoq-fot-pik:  chmrr | 2005-11-22 16:30:15 -0500
+       * Updates only need to validate arguments that get submitted
+     
+     r19065@truegrounds (orig r2373):  alexmv | 2005-11-22 18:18:06 -0500
+      r7319@zoq-fot-pik:  chmrr | 2005-11-22 18:17:02 -0500
+       * JiftyWiki -> Wifty because I like my tab completion, dammit
+     
+     r19066@truegrounds (orig r2374):  alexmv | 2005-11-22 18:18:17 -0500
+     
+    
+    r19068@truegrounds:  jesse | 2005-11-22 18:21:35 -0500
+    * more wifty rename
+    r19069@truegrounds:  jesse | 2005-11-22 18:21:52 -0500
+    More rename
+    r19342@truegrounds:  jesse | 2005-11-26 01:51:05 -0500
+     * All sorts of updates to Wifty. It's starting to look like a real app
+    
+    r19343@truegrounds:  jesse | 2005-11-26 01:51:35 -0500
+    * ClassLoader now autocreates ::Record, ::Collection and $AppName base classes
+    r19344@truegrounds:  jesse | 2005-11-26 01:53:18 -0500
+    * added rico 
+    r19345@truegrounds:  jesse | 2005-11-26 01:54:02 -0500
+     * cleaning up css a bit
+    
+    r19346@truegrounds:  jesse | 2005-11-26 01:54:21 -0500
+    * Added IE7. it almost improves IE
+    r19349@truegrounds:  jesse | 2005-11-26 01:54:38 -0500
+     r19347@truegrounds (orig r2380):  alexmv | 2005-11-25 15:37:10 -0500
+      r7348@zoq-fot-pik:  chmrr | 2005-11-25 15:34:12 -0500
+       * validate_argument(s?) -> _validate_argument$1 to avoid possible infinite look with arguments named "arguments" or "argument"
+     
+     r19348@truegrounds (orig r2381):  alexmv | 2005-11-25 15:37:21 -0500
+      r7349@zoq-fot-pik:  chmrr | 2005-11-25 15:34:50 -0500
+       * Use *latest* possible match when auto-guessing config
+     
+    
+    r19359@truegrounds:  jesse | 2005-11-26 22:07:18 -0500
+    * We really don't want to pull in mandatoryness from tasks
+    
+    r19360@truegrounds:  jesse | 2005-11-26 22:21:06 -0500
+    * don't run the quicksearch if the user doesn't want to.
+    r19361@truegrounds:  jesse | 2005-11-26 22:21:53 -0500
+    * Don't create a task if the user doesn't put in a summary.
+    r19362@truegrounds:  jesse | 2005-11-26 22:24:17 -0500
+    * If the moniker the test looks for isn't there, carp.
+    
+    r19363@truegrounds:  jesse | 2005-11-26 22:28:25 -0500
+    * more explicit test info
+    r19509@truegrounds:  jesse | 2005-11-27 22:37:56 -0500
+    * Look Ma! full support for SQLite
+    r19511@truegrounds:  jesse | 2005-11-28 01:26:03 -0500
+    * Switched to Markdown
+    r19535@truegrounds:  jesse | 2005-11-29 03:26:58 -0500
+     r19533@truegrounds (orig r2400):  alexmv | 2005-11-29 02:05:55 -0500
+      r7379@zoq-fot-pik:  chmrr | 2005-11-29 02:04:44 -0500
+       * Jifty::Web::Form::Link gutted; most of it now in Jifty::Web::Form::Clickable
+       * Elements have key bindings, ids, labels, and classes
+       * Changed everything to use new link syntax; "button" is gone
+      
+       * Tests for low-level continuations
+       * Only make new continuations during CALL if we absolutely need to
+       * Snip J:C-* out of request when it is saved into a continuation, so
+         we don't infinite loop
+      
+       * Continuations non-raw API needs tests
+       * Lots of docs needed
+     
+     r19534@truegrounds (orig r2401):  alexmv | 2005-11-29 02:06:06 -0500
+     
+    
+    r19536@truegrounds:  jesse | 2005-11-29 03:46:17 -0500
+    * Added a BPS logo 
+    r19542@truegrounds:  jesse | 2005-11-29 15:51:24 -0500
+     r19537@truegrounds (orig r2402):  root | 2005-11-29 04:15:12 -0500
+     * Fixed to cope with API changes (removed web->submit)
+     
+     r19538@truegrounds (orig r2403):  root | 2005-11-29 04:21:42 -0500
+     * "ApplicationName" not "Name"
+     
+     r19539@truegrounds (orig r2404):  alexmv | 2005-11-29 15:18:17 -0500
+      r7387@zoq-fot-pik:  chmrr | 2005-11-29 12:52:14 -0500
+       * Continuations don't need to specify paths for their requests all
+         the time (eg, counter demo)
+     
+     r19540@truegrounds (orig r2405):  alexmv | 2005-11-29 15:18:36 -0500
+      r7388@zoq-fot-pik:  chmrr | 2005-11-29 15:17:26 -0500
+       * More Jifty continuation tests, using the API this time
+       * Small contoinuation bugfixes
+     
+     r19541@truegrounds (orig r2406):  alexmv | 2005-11-29 15:41:10 -0500
+      r7391@zoq-fot-pik:  chmrr | 2005-11-29 15:40:33 -0500
+       * Login as continuations
+     
+    
+    r19644@truegrounds:  jesse | 2005-11-30 18:23:33 -0500
+     r19549@truegrounds (orig r2407):  alexmv | 2005-11-29 18:57:52 -0500
+      r7393@zoq-fot-pik:  chmrr | 2005-11-29 18:57:08 -0500
+       * Use new submit syntax
+       * No more Rico (JS bugs)
+       * New form syntax
+       * Half-broken task review
+     
+     r19642@truegrounds (orig r2408):  alexmv | 2005-11-30 16:48:44 -0500
+      r7402@zoq-fot-pik:  chmrr | 2005-11-30 16:47:48 -0500
+       * Task review using continuations
+     
+     r19643@truegrounds (orig r2409):  alexmv | 2005-11-30 16:48:52 -0500
+      r7403@zoq-fot-pik:  chmrr | 2005-11-30 16:48:10 -0500
+       * Forgot control loop for task review
+     
+    
+   
+  
+ 
+ r21196@truegrounds (orig r82):  jesse | 2005-12-24 19:59:56 -0500
+  r19650@truegrounds (orig r2414):  alexmv | 2005-11-30 19:45:43 -0500
+   r7410@zoq-fot-pik:  chmrr | 2005-11-30 19:44:55 -0500
+    * Syntax error fix
+  
+ 
+ r21197@truegrounds (orig r83):  jesse | 2005-12-24 20:00:00 -0500
+  r19652@truegrounds (orig r2416):  alexmv | 2005-12-01 15:37:29 -0500
+   r7417@zoq-fot-pik:  chmrr | 2005-12-01 15:36:51 -0500
+    * Doc pass
+    * perltidy some
+  
+ 
+ r21198@truegrounds (orig r84):  jesse | 2005-12-24 20:00:09 -0500
+  r19657@truegrounds (orig r2417):  jesse | 2005-12-01 18:53:13 -0500
+   r19655@truegrounds:  jesse | 2005-12-01 18:51:14 -0500
+    r19654@truegrounds:  jesse | 2005-12-01 18:50:35 -0500
+     r19647@truegrounds (orig r2411):  alexmv | 2005-11-30 19:00:06 -0500
+      r7406@zoq-fot-pik:  chmrr | 2005-11-30 18:59:31 -0500
+       * Reverse order of source and destination for return locations; it
+      made no sense before, it now pretends to maybe make sense
+       * Clean up task review a little
+     
+     r19651@truegrounds (orig r2415):  jesse | 2005-11-30 19:49:00 -0500
+     * I bet this broke everything - sketch of loop
+    
+   
+  
+ 
+ r21199@truegrounds (orig r85):  jesse | 2005-12-24 20:00:17 -0500
+  r19658@truegrounds (orig r2418):  jesse | 2005-12-01 18:53:25 -0500
+   r19656@truegrounds:  jesse | 2005-12-01 18:52:34 -0500
+   * Design sketches for how ajaxy mutlisubmit and args stuff should work
+  
+ 
+ r21200@truegrounds (orig r86):  jesse | 2005-12-24 20:00:21 -0500
+  r19660@truegrounds (orig r2419):  jesse | 2005-12-01 22:30:32 -0500
+   r19659@truegrounds:  jesse | 2005-12-01 22:29:51 -0500
+   * Test passes are good
+  
+ 
+ r21201@truegrounds (orig r87):  jesse | 2005-12-24 20:00:25 -0500
+  r19679@truegrounds (orig r2420):  alexmv | 2005-12-02 00:50:05 -0500
+   r7419@zoq-fot-pik:  chmrr | 2005-12-01 16:54:29 -0500
+    * Typo and warning cleanup
+  
+ 
+ r21202@truegrounds (orig r88):  jesse | 2005-12-24 20:00:29 -0500
+  r19680@truegrounds (orig r2421):  alexmv | 2005-12-02 00:50:14 -0500
+   r7483@zoq-fot-pik:  chmrr | 2005-12-02 00:49:03 -0500
+    * Make sure the class isn't empty
+  
+ 
+ r21203@truegrounds (orig r89):  jesse | 2005-12-24 20:00:33 -0500
+  r19687@truegrounds (orig r2423):  jesse | 2005-12-02 01:47:59 -0500
+   r19685@truegrounds:  jesse | 2005-12-02 01:46:48 -0500
+   * Script::Schema cleanups
+   
+  
+ 
+ r21204@truegrounds (orig r90):  jesse | 2005-12-24 20:00:37 -0500
+  r19719@truegrounds (orig r2426):  jesse | 2005-12-03 16:46:31 -0500
+   r19712@truegrounds:  jesse | 2005-12-03 15:22:03 -0500
+   * checkpointy
+  
+ 
+ r21205@truegrounds (orig r91):  jesse | 2005-12-24 20:00:41 -0500
+  r19721@truegrounds (orig r2428):  jesse | 2005-12-03 16:47:09 -0500
+   r19714@truegrounds:  jesse | 2005-12-03 16:44:10 -0500
+    * Default templates!
+  
+ 
+ r21206@truegrounds (orig r92):  jesse | 2005-12-24 20:00:50 -0500
+  r19732@truegrounds (orig r2436):  jesse | 2005-12-04 03:18:06 -0500
+   r19724@truegrounds:  jesse | 2005-12-04 03:13:27 -0500
+   * Switched Jifty to default to SQLite.
+   * Added a missing dependency
+   
+  
+ 
+ r21207@truegrounds (orig r93):  jesse | 2005-12-24 20:00:54 -0500
+  r19733@truegrounds (orig r2437):  jesse | 2005-12-04 03:21:37 -0500
+   r19725@truegrounds:  jesse | 2005-12-04 03:14:43 -0500
+    * YES. This should live somewhere else. But now all of Jifty's deps are actually packaged with Jifty. It might not actually hurt badly to install
+  
+ 
+ r21208@truegrounds (orig r94):  jesse | 2005-12-24 20:03:17 -0500
+  r19737@truegrounds (orig r2439):  jesse | 2005-12-04 19:05:53 -0500
+   r19735@truegrounds:  jesse | 2005-12-04 15:45:01 -0500
+    * checkpoint
+  
+ 
+ r21209@truegrounds (orig r95):  jesse | 2005-12-24 20:03:26 -0500
+  r19738@truegrounds (orig r2440):  jesse | 2005-12-04 19:06:04 -0500
+   r19736@truegrounds:  jesse | 2005-12-04 19:03:41 -0500
+   * Better default admin ui
+  
+ 
+ r21210@truegrounds (orig r96):  jesse | 2005-12-24 20:03:35 -0500
+  r19745@truegrounds (orig r2443):  jesse | 2005-12-05 12:36:58 -0500
+   r19740@truegrounds:  jesse | 2005-12-05 12:07:28 -0500
+   * updated prototype
+  
+ 
+ r21211@truegrounds (orig r97):  jesse | 2005-12-24 20:03:44 -0500
+  r19746@truegrounds (orig r2444):  jesse | 2005-12-05 12:37:48 -0500
+   r19743@truegrounds:  jesse | 2005-12-05 12:35:53 -0500
+   * the scriptaculous library doesn't work if we don't include it
+  
+ 
+ r21212@truegrounds (orig r98):  jesse | 2005-12-24 20:03:50 -0500
+  r19750@truegrounds (orig r2447):  alexmv | 2005-12-05 14:34:54 -0500
+   r7518@zoq-fot-pik:  chmrr | 2005-12-05 14:33:40 -0500
+    * Argument mapping; needs quite a bit of naming love
+    * Continuations use mapping arch for return values
+  
+ 
+ r21213@truegrounds (orig r99):  jesse | 2005-12-24 20:03:57 -0500
+  r19752@truegrounds (orig r2448):  alexmv | 2005-12-05 15:04:56 -0500
+   r7557@zoq-fot-pik:  chmrr | 2005-12-05 15:04:28 -0500
+    * Helps if I check in the mapper code
+  
+ 
+ r21214@truegrounds (orig r100):  jesse | 2005-12-24 20:04:01 -0500
+  r19754@truegrounds (orig r2449):  alexmv | 2005-12-05 16:15:46 -0500
+   r7559@zoq-fot-pik:  chmrr | 2005-12-05 16:15:17 -0500
+    * Some sketchy docs
+  
+ 
+ r21215@truegrounds (orig r101):  jesse | 2005-12-24 20:04:05 -0500
+  r19755@truegrounds (orig r2450):  alexmv | 2005-12-05 17:27:20 -0500
+   r7561@zoq-fot-pik:  chmrr | 2005-12-05 17:26:25 -0500
+    * Use an internal request to eliminate one redirect during ->tangent
+      in void context
+  
+ 
+ r21216@truegrounds (orig r102):  jesse | 2005-12-24 20:04:09 -0500
+  r19758@truegrounds (orig r2451):  jesse | 2005-12-05 23:45:43 -0500
+   r19757@truegrounds:  jesse | 2005-12-05 23:44:15 -0500
+   * Ditched Apache::Session
+  
+ 
+ r21217@truegrounds (orig r103):  jesse | 2005-12-24 20:04:13 -0500
+  r19761@truegrounds (orig r2452):  jesse | 2005-12-06 02:02:38 -0500
+   r19759@truegrounds:  jesse | 2005-12-06 01:33:06 -0500
+   * Checkpoint
+  
+ 
+ r21218@truegrounds (orig r104):  jesse | 2005-12-24 20:04:17 -0500
+  r19762@truegrounds (orig r2453):  jesse | 2005-12-06 02:02:45 -0500
+   r19760@truegrounds:  jesse | 2005-12-06 01:57:39 -0500
+   * The rest of the API
+   
+  
+ 
+ r21219@truegrounds (orig r105):  jesse | 2005-12-24 20:04:20 -0500
+  r19764@truegrounds (orig r2454):  jesse | 2005-12-06 02:17:23 -0500
+   r19763@truegrounds:  jesse | 2005-12-06 02:16:43 -0500
+    *let's try unloading the session
+  
+ 
+ r21220@truegrounds (orig r106):  jesse | 2005-12-24 20:04:24 -0500
+  r19767@truegrounds (orig r2455):  jesse | 2005-12-06 16:43:58 -0500
+   r19765@truegrounds:  jesse | 2005-12-06 02:41:54 -0500
+   * Trying apache::session::flex
+  
+ 
+ r21221@truegrounds (orig r107):  jesse | 2005-12-24 20:04:35 -0500
+  r19768@truegrounds (orig r2456):  jesse | 2005-12-06 16:44:08 -0500
+   r19766@truegrounds:  jesse | 2005-12-06 16:43:22 -0500
+   * notes aobut sessions
+  
+ 
+ r21222@truegrounds (orig r108):  jesse | 2005-12-24 20:04:38 -0500
+  r19770@truegrounds (orig r2458):  alexmv | 2005-12-07 13:55:19 -0500
+   r7583@zoq-fot-pik:  chmrr | 2005-12-07 13:54:05 -0500
+    * Bludgeon sessions into a happy place.  Not pretty.
+  
+ 
+ r21223@truegrounds (orig r109):  jesse | 2005-12-24 20:04:42 -0500
+  r19773@truegrounds (orig r2459):  jesse | 2005-12-07 14:21:10 -0500
+   r19772@truegrounds:  jesse | 2005-12-07 14:20:15 -0500
+   * Cookies need to be set if they're not the same as what we got
+  
+ 
+ r21224@truegrounds (orig r110):  jesse | 2005-12-24 20:04:46 -0500
+  r19778@truegrounds (orig r2461):  alexmv | 2005-12-07 16:46:33 -0500
+   r7589@zoq-fot-pik:  chmrr | 2005-12-07 16:45:28 -0500
+    * Move quicksearch into BTDT from Jifty core
+  
+ 
+ r21225@truegrounds (orig r111):  jesse | 2005-12-24 20:04:50 -0500
+  r19784@truegrounds (orig r2465):  jesse | 2005-12-07 18:30:07 -0500
+   r19782@truegrounds:  jesse | 2005-12-07 18:28:11 -0500
+   * Better error reporting when you call page region wrong
+  
+ 
+ r21226@truegrounds (orig r112):  jesse | 2005-12-24 20:04:54 -0500
+  r19787@truegrounds (orig r2466):  jesse | 2005-12-07 21:14:53 -0500
+   r19785@truegrounds:  jesse | 2005-12-07 21:10:17 -0500
+   * Don't repeat ourselves
+   
+   r19786@truegrounds:  jesse | 2005-12-07 21:13:47 -0500
+   * helps to have the component
+  
+ 
+ r21227@truegrounds (orig r113):  jesse | 2005-12-24 20:04:58 -0500
+  r19789@truegrounds (orig r2467):  jesse | 2005-12-07 21:19:53 -0500
+   r19788@truegrounds:  jesse | 2005-12-07 21:17:18 -0500
+    * Revert. Revert. Ok
+  
+ 
+ r21228@truegrounds (orig r114):  jesse | 2005-12-24 20:05:02 -0500
+  r19790@truegrounds (orig r2468):  alexmv | 2005-12-07 21:29:30 -0500
+   r7599@zoq-fot-pik:  chmrr | 2005-12-07 21:28:03 -0500
+    * Some acceptance fixes; AJAX accept on view page is broken because Form.Element.serialize is wrong
+    * AJAX can submit multiple actions
+    * Various syntactical cleanups
+  
+ 
+ r21229@truegrounds (orig r115):  jesse | 2005-12-24 20:05:08 -0500
+  r19866@truegrounds (orig r2471):  alexmv | 2005-12-07 22:55:32 -0500
+   r7601@zoq-fot-pik:  chmrr | 2005-12-07 22:54:19 -0500
+    * Radio buttons can't have the same id as each other, despite having
+      the same name, otherwise serialization gets sad.
+    * POD reformatting
+  
+ 
+ r21230@truegrounds (orig r116):  jesse | 2005-12-24 20:05:21 -0500
+  r19867@truegrounds (orig r2472):  alexmv | 2005-12-07 23:10:22 -0500
+   r7606@zoq-fot-pik:  chmrr | 2005-12-07 23:09:00 -0500
+    * Avoid some warnings by only including defined arguments
+  
+ 
+ r21231@truegrounds (orig r117):  jesse | 2005-12-24 20:08:20 -0500
+  r19868@truegrounds (orig r2473):  alexmv | 2005-12-08 14:18:40 -0500
+   r7608@zoq-fot-pik:  chmrr | 2005-12-08 14:14:48 -0500
+    * Use script.aculo.us effects for spiffier styling on the 'loading'
+  
+ 
+ r21232@truegrounds (orig r118):  jesse | 2005-12-24 20:08:24 -0500
+  r19871@truegrounds (orig r2476):  alexmv | 2005-12-09 01:16:07 -0500
+   r7610@zoq-fot-pik:  chmrr | 2005-12-09 00:53:24 -0500
+    * Accepted and pending tasks in searches
+    * Inbox only shows accepted tasks
+    * Can skip entries in task transactions (if they return undef)
+    * Defaults for searches work again
+    * Fragments localize the request
+    * Can submit '0' as a valid value for Jifty::Action::Record::Update
+    * Must be owner or requestor to create tasks
+    * Better stringification for acceptance in task transaction history
+    * Tasks for testing have current_user of their owner
+    * Stickiness can be on failure or success, on a per-action basis
+  
+ 
+ r21233@truegrounds (orig r119):  jesse | 2005-12-24 20:08:27 -0500
+  r19872@truegrounds (orig r2477):  alexmv | 2005-12-09 02:29:46 -0500
+   r7621@zoq-fot-pik:  chmrr | 2005-12-09 02:28:13 -0500
+    * Move defaults areound for tasklist region
+    * Move 'local' of request to handle_request
+    * Unaccepted tasks doesnt have a 'new' box
+    * Fix sessions in test suite
+  
+ 
+ r21234@truegrounds (orig r120):  jesse | 2005-12-24 20:08:32 -0500
+  r19876@truegrounds (orig r2480):  jesse | 2005-12-09 18:10:06 -0500
+   r19865@truegrounds:  jesse | 2005-12-09 18:05:49 -0500
+   * Make menus automatically hilight the current page. 
+   * Change the default menu style
+   * Pony.
+  
+ 
+ r21235@truegrounds (orig r121):  jesse | 2005-12-24 20:08:37 -0500
+  r19935@truegrounds (orig r2488):  jesse | 2005-12-11 05:04:27 -0500
+   r19919@truegrounds:  jesse | 2005-12-11 04:17:37 -0500
+   * Basic tests for sessions
+  
+ 
+ r21236@truegrounds (orig r122):  jesse | 2005-12-24 20:08:40 -0500
+  r19936@truegrounds (orig r2489):  jesse | 2005-12-11 05:04:34 -0500
+   r19920@truegrounds:  jesse | 2005-12-11 04:18:22 -0500
+   * ClassLoader updates to actually require things in the right order (and avoid redefinition warnings)
+  
+ 
+ r21237@truegrounds (orig r123):  jesse | 2005-12-24 20:08:44 -0500
+  r19937@truegrounds (orig r2490):  jesse | 2005-12-11 05:04:41 -0500
+   r19921@truegrounds:  jesse | 2005-12-11 04:19:31 -0500
+   * Password confirm fields are all mandatory
+  
+ 
+ r21238@truegrounds (orig r124):  jesse | 2005-12-24 20:08:47 -0500
+  r19958@truegrounds (orig r2508):  jesse | 2005-12-12 04:47:34 -0500
+   r19951@truegrounds:  jesse | 2005-12-12 04:25:11 -0500
+   * When loading a record object, use the related object's key
+  
+ 
+ r21239@truegrounds (orig r125):  jesse | 2005-12-24 20:08:53 -0500
+  r20445@truegrounds (orig r2516):  autrijus | 2005-12-13 17:31:47 -0500
+  * In admin mode, change per-model-item admin pages from tangents to links.
+  
+  23:29 <obra> (tangents are the wrong thing to use there and should have been
+               smashed, as you can nav there directly)
+  
+ 
+ r21240@truegrounds (orig r126):  jesse | 2005-12-24 20:08:57 -0500
+  r20460@truegrounds (orig r2519):  jesse | 2005-12-14 22:39:12 -0500
+   r20459@truegrounds:  jesse | 2005-12-14 22:37:43 -0500
+   * if the user tries to get a collection, be smart and pull in the record class
+  
+ 
+ r21241@truegrounds (orig r127):  jesse | 2005-12-24 20:09:01 -0500
+  r20476@truegrounds (orig r2526):  alexmv | 2005-12-15 00:49:38 -0500
+   r7729@zoq-fot-pik:  chmrr | 2005-12-15 00:48:42 -0500
+    * Automagic fade-in for new tasks
+   
+    * For fragments, build full fragments stack, and possibly region wrapper if need be
+    * Page regions have parents
+  
+ 
+ r21242@truegrounds (orig r128):  jesse | 2005-12-24 20:09:06 -0500
+  r20480@truegrounds (orig r2530):  alexmv | 2005-12-15 02:24:33 -0500
+   r7745@zoq-fot-pik:  chmrr | 2005-12-15 02:24:01 -0500
+    * fragment became "replace_with"
+    * Numbers are people, too!  This makes paging work again
+  
+ 
+ r21243@truegrounds (orig r129):  jesse | 2005-12-24 20:09:09 -0500
+  r20483@truegrounds (orig r2533):  autrijus | 2005-12-15 02:29:50 -0500
+  * Jifty really wants a new HTTP::Server::Simple::Mason.
+ 
+ r21244@truegrounds (orig r130):  jesse | 2005-12-24 20:09:13 -0500
+  r20484@truegrounds (orig r2534):  jesse | 2005-12-15 02:39:13 -0500
+   r20474@truegrounds:  jesse | 2005-12-15 02:36:20 -0500
+   * Generator was dead code
+  
+ 
+ r21245@truegrounds (orig r131):  jesse | 2005-12-24 20:09:17 -0500
+  r20485@truegrounds (orig r2535):  jesse | 2005-12-15 02:39:22 -0500
+   r20475@truegrounds:  jesse | 2005-12-15 02:37:26 -0500
+   * Online documentation browser
+  
+ 
+ r21246@truegrounds (orig r132):  jesse | 2005-12-24 20:09:22 -0500
+  r20498@truegrounds (orig r2542):  jesse | 2005-12-15 15:36:02 -0500
+   r20497@truegrounds:  jesse | 2005-12-15 15:28:10 -0500
+    * UTF8 fixes from audrey
+  
+ 
+ r21247@truegrounds (orig r133):  jesse | 2005-12-24 20:09:25 -0500
+  r20508@truegrounds (orig r2548):  jesse | 2005-12-15 20:48:48 -0500
+   r20503@truegrounds:  jesse | 2005-12-15 20:46:09 -0500
+   * Checkboxes can now be used to pick items from lists
+  
+ 
+ r21248@truegrounds (orig r134):  jesse | 2005-12-24 20:09:29 -0500
+  r20517@truegrounds (orig r2553):  jesse | 2005-12-15 22:12:48 -0500
+   r20515@truegrounds:  jesse | 2005-12-15 22:10:50 -0500
+   * Jifty web form field ids are now unique. This may have broken BTDT ajax
+  
+ 
+ r21249@truegrounds (orig r135):  jesse | 2005-12-24 20:09:33 -0500
+  r20529@truegrounds (orig r2561):  jesse | 2005-12-15 23:43:28 -0500
+   r20525@truegrounds:  jesse | 2005-12-15 23:41:52 -0500
+   * don't use elemnt ids when we don't have to. (That breaks if an element doesn't have an id)
+  
+ 
+ r21250@truegrounds (orig r136):  jesse | 2005-12-24 20:09:37 -0500
+  r20532@truegrounds (orig r2562):  jesse | 2005-12-16 01:19:56 -0500
+   r20530@truegrounds:  jesse | 2005-12-16 00:46:57 -0500
+   Scriptaculous 1.50
+  
+ 
+ r21251@truegrounds (orig r137):  jesse | 2005-12-24 20:09:42 -0500
+  r20533@truegrounds (orig r2563):  jesse | 2005-12-16 01:20:04 -0500
+   r20531@truegrounds:  jesse | 2005-12-16 00:54:23 -0500
+   * It helps if Jesse understands how javascript works.
+  
+ 
+ r21252@truegrounds (orig r138):  jesse | 2005-12-24 20:09:48 -0500
+  r20535@truegrounds (orig r2564):  jesse | 2005-12-16 01:29:56 -0500
+   r20534@truegrounds:  jesse | 2005-12-16 01:28:56 -0500
+   * Helps if I check in
+  
+ 
+ r21253@truegrounds (orig r139):  jesse | 2005-12-24 20:09:52 -0500
+  r20556@truegrounds (orig r2569):  jesse | 2005-12-16 19:34:58 -0500
+   r20537@truegrounds:  jesse | 2005-12-16 03:32:26 -0500
+   * Date fields also need to be called by id, not name 
+  
+ 
+ r21254@truegrounds (orig r140):  jesse | 2005-12-24 20:09:56 -0500
+  r20557@truegrounds (orig r2570):  jesse | 2005-12-16 19:36:04 -0500
+   r20538@truegrounds:  jesse | 2005-12-16 03:32:54 -0500
+   * don't clear a session if we have no session
+  
+ 
+ r21255@truegrounds (orig r141):  jesse | 2005-12-24 20:09:59 -0500
+  r20558@truegrounds (orig r2571):  jesse | 2005-12-16 19:36:30 -0500
+   r20539@truegrounds:  jesse | 2005-12-16 03:35:03 -0500
+   * remove an extra warning
+  
+ 
+ r21256@truegrounds (orig r142):  jesse | 2005-12-24 20:10:03 -0500
+  r20559@truegrounds (orig r2572):  jesse | 2005-12-16 19:36:45 -0500
+   r20540@truegrounds:  jesse | 2005-12-16 19:10:41 -0500
+   *Simplifed Jifty::Web::Serial generation
+  
+ 
+ r21257@truegrounds (orig r143):  jesse | 2005-12-24 20:10:08 -0500
+  r20560@truegrounds (orig r2573):  jesse | 2005-12-16 19:37:06 -0500
+   r20541@truegrounds:  jesse | 2005-12-16 19:11:29 -0500
+   * There's no reason to have element ids in the element's class
+  
+ 
+ r21258@truegrounds (orig r144):  jesse | 2005-12-24 20:10:12 -0500
+  r20561@truegrounds (orig r2574):  jesse | 2005-12-16 19:37:35 -0500
+   r20542@truegrounds:  jesse | 2005-12-16 19:13:42 -0500
+   * CSS cleanups
+  
+ 
+ r21259@truegrounds (orig r145):  jesse | 2005-12-24 20:10:16 -0500
+  r20562@truegrounds (orig r2575):  jesse | 2005-12-16 19:37:51 -0500
+   r20543@truegrounds:  jesse | 2005-12-16 19:16:15 -0500
+   * Validator committed to default app. It hsould probably be in __jifty
+  
+ 
+ r21260@truegrounds (orig r146):  jesse | 2005-12-24 20:10:19 -0500
+  r20789@truegrounds (orig r2586):  jesse | 2005-12-18 02:35:36 -0500
+   r20788@truegrounds:  jesse | 2005-12-18 02:34:16 -0500
+   * mason->out -> out
+     (It's a tiny step, but a step)
+   
+   
+  
+ 
+ r21261@truegrounds (orig r147):  jesse | 2005-12-24 20:10:29 -0500
+  r20827@truegrounds (orig r2605):  jesse | 2005-12-18 22:16:25 -0500
+   r20807@truegrounds:  jesse | 2005-12-18 22:05:59 -0500
+   Cleaned up CurrentUser to _delegate_ to the User object, rather than be the user object.
+  
+ 
+ r21262@truegrounds (orig r148):  jesse | 2005-12-24 20:10:34 -0500
+  r20833@truegrounds (orig r2608):  jesse | 2005-12-19 03:52:01 -0500
+   r20829@truegrounds:  jesse | 2005-12-19 03:28:23 -0500
+   
+  
+ 
+ r21263@truegrounds (orig r149):  jesse | 2005-12-24 20:10:37 -0500
+  r20834@truegrounds (orig r2609):  jesse | 2005-12-19 03:52:10 -0500
+   r20830@truegrounds:  jesse | 2005-12-19 03:29:23 -0500
+   * Jifty now knows about apps' CurrentUser classes
+   * LetMes have been extracted to Jifty
+  
+ 
+ r21264@truegrounds (orig r150):  jesse | 2005-12-24 20:10:41 -0500
+  r20835@truegrounds (orig r2610):  jesse | 2005-12-19 03:52:22 -0500
+   r20831@truegrounds:  jesse | 2005-12-19 03:48:29 -0500
+   * Autogenerate a CurrentUser class if we don't have one.
+   * Abstract out more love to Jifty::CurrentUser
+  
+ 
+ r21265@truegrounds (orig r151):  jesse | 2005-12-24 20:10:45 -0500
+  r20839@truegrounds (orig r2612):  jesse | 2005-12-19 18:12:32 -0500
+   r20836@truegrounds:  jesse | 2005-12-19 03:58:27 -0500
+   * make auto-current-user classes truly auto
+  
+ 
+ r21266@truegrounds (orig r152):  jesse | 2005-12-24 20:10:48 -0500
+  r20840@truegrounds (orig r2613):  jesse | 2005-12-19 18:12:42 -0500
+   r20837@truegrounds:  jesse | 2005-12-19 18:10:57 -0500
+   * Checkpoint much?
+  
+ 
+ r21267@truegrounds (orig r153):  jesse | 2005-12-24 20:10:52 -0500
+  r20841@truegrounds (orig r2614):  alexmv | 2005-12-19 19:37:05 -0500
+   r7874@zoq-fot-pik:  chmrr | 2005-12-19 19:34:45 -0500
+    * Bold New Plan for AJAX or AHAH components.  One request can return
+      multiple fragments.
+    * Also, requests can come from JSON or YAML POST requests
+  
+ 
+ r21268@truegrounds (orig r154):  jesse | 2005-12-24 20:10:57 -0500
+  r20852@truegrounds (orig r2616):  jesse | 2005-12-19 23:22:43 -0500
+   r20843@truegrounds:  jesse | 2005-12-19 23:09:06 -0500
+   * removed swap file
+  
+ 
+ r21269@truegrounds (orig r155):  jesse | 2005-12-24 20:11:06 -0500
+  r20853@truegrounds (orig r2617):  jesse | 2005-12-19 23:22:49 -0500
+   r20844@truegrounds:  jesse | 2005-12-19 23:13:41 -0500
+   * we don't want password confirms to be mandatory if the _password_ isn't mandatory
+   
+  
+ 
+ r21270@truegrounds (orig r156):  jesse | 2005-12-24 20:11:11 -0500
+  r20854@truegrounds (orig r2618):  jesse | 2005-12-19 23:22:56 -0500
+   r20845@truegrounds:  jesse | 2005-12-19 23:14:30 -0500
+   * Finished fleshing out currentuser API
+  
+ 
+ r21271@truegrounds (orig r157):  jesse | 2005-12-24 20:11:15 -0500
+  r20862@truegrounds (orig r2623):  jesse | 2005-12-20 11:10:37 -0500
+   r20859@truegrounds:  jesse | 2005-12-20 00:06:48 -0500
+   * show values in admin ui (make the "read mode" for form::field widgets work)
+  
+ 
+ r21272@truegrounds (orig r158):  jesse | 2005-12-24 20:11:19 -0500
+  r20864@truegrounds (orig r2625):  jesse | 2005-12-20 11:11:01 -0500
+   r20861@truegrounds:  jesse | 2005-12-20 11:08:19 -0500
+   * Admin UI  now gets the create/edit ajaxy hotness
+  
+ 
+ r21273@truegrounds (orig r159):  jesse | 2005-12-24 20:11:23 -0500
+  r20874@truegrounds (orig r2626):  alexmv | 2005-12-20 13:16:06 -0500
+   r7889@zoq-fot-pik:  chmrr | 2005-12-20 13:15:00 -0500
+    * All create actions return the id (factored out of BTDT)
+    * Admin UI gets javascript magic
+    * Fix Jifty/t/*/t tests to work with (temporary) new mapper interface
+    * Better checks to not push fragments when they're not needed
+  
+ 
+ r21274@truegrounds (orig r160):  jesse | 2005-12-24 20:11:27 -0500
+  r20875@truegrounds (orig r2627):  alexmv | 2005-12-20 13:27:58 -0500
+   r7891@zoq-fot-pik:  chmrr | 2005-12-20 13:27:27 -0500
+    * Indent fixes
+    * Also, for some reason "Wifty::Model::User::SUPER" starts showing
+      up.  Skip it.  Quite possibly there should be a method on Jifty
+      that returns your model classes, so we obey DRY.
+  
+ 
+ r21275@truegrounds (orig r161):  jesse | 2005-12-24 20:11:31 -0500
+  r20878@truegrounds (orig r2629):  jesse | 2005-12-20 18:59:07 -0500
+   r20877@truegrounds:  jesse | 2005-12-20 18:57:56 -0500
+   * Jifty::RightsFrom is a generalization of BTDT::ACLFromTask that lets you specify the acls as coming from any related column's object
+  
+ 
+ r21276@truegrounds (orig r162):  jesse | 2005-12-24 20:11:42 -0500
+  r20879@truegrounds (orig r2630):  alexmv | 2005-12-20 19:05:34 -0500
+   r7903@zoq-fot-pik:  chmrr | 2005-12-20 19:03:37 -0500
+    * ./lib/Jifty/DefaultApp moved to ./share
+    * Added magic symlink to ./lib/Jifty/auto/Jifty to make share dir
+      accessible during dev work
+    * Re-spec application root dir
+  
+ 
+ r21277@truegrounds (orig r163):  jesse | 2005-12-24 20:11:51 -0500
+  r20891@truegrounds (orig r2635):  jesse | 2005-12-20 23:59:47 -0500
+   r20890@truegrounds:  jesse | 2005-12-20 23:58:28 -0500
+   * By default, Jifty applications let superuser and bootstrap users do aaaaaaanything.
+     And regular users can't do anything.
+  
+ 
+ r21278@truegrounds (orig r164):  jesse | 2005-12-24 20:11:55 -0500
+  r20898@truegrounds (orig r2641):  alexmv | 2005-12-21 00:53:05 -0500
+   r7917@zoq-fot-pik:  chmrr | 2005-12-21 00:52:13 -0500
+    * Just providing args counts as a refresh_self
+  
+ 
+ r21279@truegrounds (orig r165):  jesse | 2005-12-24 20:11:58 -0500
+  r20909@truegrounds (orig r2642):  alexmv | 2005-12-21 01:21:44 -0500
+   r7919@zoq-fot-pik:  chmrr | 2005-12-21 01:21:12 -0500
+    * Use .bind() to get around scoping issues so we can call setTimeout
+   and give browsers the delay they need to update their DOM
+  
+ 
+ r21280@truegrounds (orig r166):  jesse | 2005-12-24 20:12:02 -0500
+  r20911@truegrounds (orig r2644):  alexmv | 2005-12-21 02:18:10 -0500
+   r7923@zoq-fot-pik:  chmrr | 2005-12-21 02:16:56 -0500
+    * Make record_class DTRT, so we can inerit from the generated class
+   if need be
+   r7924@zoq-fot-pik:  chmrr | 2005-12-21 02:17:10 -0500
+    * Typo and var cleanup
+  
+ 
+ r21281@truegrounds (orig r167):  jesse | 2005-12-24 20:12:05 -0500
+  r20925@truegrounds (orig r2655):  jesse | 2005-12-22 02:36:06 -0500
+   r20924@truegrounds:  jesse | 2005-12-22 02:34:35 -0500
+   * first pass at recursive tests
+  
+ 
+ r21282@truegrounds (orig r168):  jesse | 2005-12-24 20:12:09 -0500
+  r20931@truegrounds (orig r2657):  jesse | 2005-12-22 04:11:34 -0500
+   r20927@truegrounds:  jesse | 2005-12-22 03:53:54 -0500
+   * Refactor Jifty::Util to not die if FindBin can't work its magic
+   * Remove extra use of FindBin from Jifty::Server
+  
+ 
+ r21283@truegrounds (orig r169):  jesse | 2005-12-24 20:12:12 -0500
+  r20932@truegrounds (orig r2658):  jesse | 2005-12-22 04:12:19 -0500
+   r20928@truegrounds:  jesse | 2005-12-22 03:55:22 -0500
+   * Updated Contn. and Mapper test suites to _work_ when called from Jifty's test harness
+  
+ 
+ r21284@truegrounds (orig r170):  jesse | 2005-12-24 20:12:16 -0500
+  r20933@truegrounds (orig r2659):  jesse | 2005-12-22 04:13:01 -0500
+   r20929@truegrounds:  jesse | 2005-12-22 03:57:25 -0500
+   * Test subpackages - only using a new Module::Install
+  
+ 
+ r21285@truegrounds (orig r171):  jesse | 2005-12-24 20:12:20 -0500
+  r20936@truegrounds (orig r2662):  alexmv | 2005-12-22 11:30:52 -0500
+   r7948@zoq-fot-pik:  chmrr | 2005-12-22 11:22:40 -0500
+    * Remove Jifty::Script::Command (pushed into App::CLI::Command)
+    * Make Jifty::Script::App build basic framework
+    * Extract most of Jifty::Script::Help into App::CLI::Command::Help
+    * Allow --port option to Jifty::Script::Server
+  
+ 
+ r21286@truegrounds (orig r172):  jesse | 2005-12-24 20:12:30 -0500
+  r20937@truegrounds (orig r2663):  alexmv | 2005-12-22 12:19:34 -0500
+   r7950@zoq-fot-pik:  chmrr | 2005-12-22 12:19:04 -0500
+    * Jifty::Util->jifty_root now actually works, making the online docs work
+  
+ 
+ r21287@truegrounds (orig r173):  jesse | 2005-12-24 20:12:36 -0500
+  r20938@truegrounds (orig r2664):  alexmv | 2005-12-22 15:32:48 -0500
+   r7952@zoq-fot-pik:  chmrr | 2005-12-22 12:46:55 -0500
+    * Avoid an undefined warning
+  
+ 
+ r21288@truegrounds (orig r174):  jesse | 2005-12-24 20:12:40 -0500
+  r20939@truegrounds (orig r2665):  alexmv | 2005-12-22 15:33:03 -0500
+   r7953@zoq-fot-pik:  chmrr | 2005-12-22 15:32:07 -0500
+    * Add another dep (but this one's in core, at least)
+    * Add the 't' directory
+    * Avoid some undef warnings in Jifty::Util::absolute_path
+  
+ 
+ r21289@truegrounds (orig r175):  jesse | 2005-12-24 20:12:43 -0500
+  r20942@truegrounds (orig r2666):  alexmv | 2005-12-22 15:52:29 -0500
+   r7956@zoq-fot-pik:  chmrr | 2005-12-22 15:51:58 -0500
+    * Checkpoint 'jifty model' code
+  
+ 
+ r21290@truegrounds (orig r176):  jesse | 2005-12-24 20:12:47 -0500
+  r20951@truegrounds (orig r2667):  alexmv | 2005-12-22 16:35:26 -0500
+   r7961@zoq-fot-pik:  chmrr | 2005-12-22 16:34:44 -0500
+    * Another checkpoint
+  
+ 
+ r21291@truegrounds (orig r177):  jesse | 2005-12-24 20:12:50 -0500
+  r20996@truegrounds (orig r2695):  autrijus | 2005-12-22 23:33:00 -0500
+   r7135@not:  autrijus | 2005-12-23 12:31:59 +0800
+   * Jifty::Web::Menu - Implement active_child() to return the
+     first active child node.
+  
+ 
+ r21292@truegrounds (orig r178):  jesse | 2005-12-24 20:12:57 -0500
+  r21001@truegrounds (orig r2700):  jesse | 2005-12-23 00:49:32 -0500
+   r20941@truegrounds:  jesse | 2005-12-22 15:53:16 -0500
+   * Warning silencing. Jifty now doesnt warn on testing
+   
+  
+ 
+ r21293@truegrounds (orig r179):  jesse | 2005-12-24 20:13:03 -0500
+  r21003@truegrounds (orig r2702):  jesse | 2005-12-23 00:50:10 -0500
+   r20985@truegrounds:  jesse | 2005-12-22 20:16:48 -0500
+   * a fix to Jifty::DBI broke btdt
+  
+ 
+ r21294@truegrounds (orig r180):  jesse | 2005-12-24 20:13:07 -0500
+  r21004@truegrounds (orig r2703):  jesse | 2005-12-23 00:50:17 -0500
+   r20986@truegrounds:  jesse | 2005-12-22 20:19:15 -0500
+   We don't use Data::UUID. kill it
+  
+ 
+ r21295@truegrounds (orig r181):  jesse | 2005-12-24 20:13:11 -0500
+  r21005@truegrounds (orig r2704):  jesse | 2005-12-23 00:50:24 -0500
+   r20987@truegrounds:  jesse | 2005-12-22 20:44:17 -0500
+   removed outdated Jifty::DBI dep
+  
+ 
+ r21296@truegrounds (orig r182):  jesse | 2005-12-24 20:13:14 -0500
+  r21006@truegrounds (orig r2705):  jesse | 2005-12-23 00:50:31 -0500
+   r20988@truegrounds:  jesse | 2005-12-22 21:10:04 -0500
+   * We don't use Jifty::Script::Command anymore
+  
+ 
+ r21297@truegrounds (orig r183):  jesse | 2005-12-24 20:13:17 -0500
+  r21008@truegrounds (orig r2707):  jesse | 2005-12-23 00:50:43 -0500
+   r20990@truegrounds:  jesse | 2005-12-22 23:37:31 -0500
+   * Jifty::LetMe was missing dependencies
+  
+ 
+ r21298@truegrounds (orig r184):  jesse | 2005-12-24 20:13:21 -0500
+  r21009@truegrounds (orig r2708):  jesse | 2005-12-23 00:50:49 -0500
+   r20991@truegrounds:  jesse | 2005-12-22 23:38:02 -0500
+   * First refactoring of Jifty::Script::Schema
+  
+ 
+ r21299@truegrounds (orig r185):  jesse | 2005-12-24 20:13:25 -0500
+  r21010@truegrounds (orig r2709):  jesse | 2005-12-23 00:50:55 -0500
+   r20992@truegrounds:  jesse | 2005-12-23 00:37:15 -0500
+   * Cleaned up dependency check algorithm
+  
+ 
+ r21300@truegrounds (orig r186):  jesse | 2005-12-24 20:13:28 -0500
+  r21011@truegrounds (orig r2710):  jesse | 2005-12-23 00:51:07 -0500
+   r20993@truegrounds:  jesse | 2005-12-23 00:37:54 -0500
+   * Overhauled arguments for Jifty::Script::Schema
+  
+ 
+ r21301@truegrounds (orig r187):  jesse | 2005-12-24 20:13:32 -0500
+  r21012@truegrounds (orig r2711):  jesse | 2005-12-23 00:51:13 -0500
+   r20994@truegrounds:  jesse | 2005-12-23 00:39:39 -0500
+   * Jifty::Handle docs updated to refer to new args to jifty schema
+  
+ 
+ r21302@truegrounds (orig r188):  jesse | 2005-12-24 20:13:41 -0500
+  r21013@truegrounds (orig r2712):  jesse | 2005-12-23 00:51:20 -0500
+   r20995@truegrounds:  jesse | 2005-12-23 00:40:04 -0500
+   * Cleaned up deps
+  
+ 
+ r21303@truegrounds (orig r189):  jesse | 2005-12-24 20:13:45 -0500
+  r21023@truegrounds (orig r2715):  alexmv | 2005-12-23 13:02:23 -0500
+   r8015@zoq-fot-pik:  chmrr | 2005-12-23 13:01:06 -0500
+    * Test file reworking!  Jifty::Test now isa Test::More, and
+   additionally magically changes your config options and resets the
+   database.  BTDT::Test now isa Jifty::Test, and just overrides a couple
+   things.
+    * The mail testing stuff from BTDT was moved into Jifty
+    * The default user and task rows are now created all of the time,
+   instead of if you just called make_server.  This means the id of the
+   user created for letme testing changed, changing the token.
+  
+ 
+ r21304@truegrounds (orig r190):  jesse | 2005-12-24 20:13:50 -0500
+  r21034@truegrounds (orig r2719):  alexmv | 2005-12-23 15:51:24 -0500
+   r8025@zoq-fot-pik:  chmrr | 2005-12-23 15:50:31 -0500
+    * Only init the log4perl object once
+    * Updated deps in META.yaml
+    * Output new testing code for model classes
+    * Make generated Makefile.PL actually work
+    * SchemaTool only shows errors
+  
+ 
+ r21305@truegrounds (orig r191):  jesse | 2005-12-24 20:13:53 -0500
+  r21035@truegrounds (orig r2720):  jesse | 2005-12-23 16:15:20 -0500
+   r21031@truegrounds:  jesse | 2005-12-23 16:13:30 -0500
+   Deps updated
+  
+ 
+ r21306@truegrounds (orig r192):  jesse | 2005-12-24 20:13:57 -0500
+  r21036@truegrounds (orig r2721):  jesse | 2005-12-23 16:15:32 -0500
+   r21032@truegrounds:  jesse | 2005-12-23 16:13:46 -0500
+   * Jifty::Script::Schema updated
+   
+  
+ 
+ r21307@truegrounds (orig r193):  jesse | 2005-12-24 20:14:01 -0500
+  r21040@truegrounds (orig r2725):  alexmv | 2005-12-23 16:46:11 -0500
+   r8035@zoq-fot-pik:  chmrr | 2005-12-23 16:39:43 -0500
+    * Remove a couple of lingering BTDT mentions
+  
+ 
+ r21308@truegrounds (orig r194):  jesse | 2005-12-24 20:14:04 -0500
+  r21041@truegrounds (orig r2726):  alexmv | 2005-12-23 16:46:19 -0500
+   r8036@zoq-fot-pik:  chmrr | 2005-12-23 16:45:39 -0500
+    * Make submenus not break the main menu layout
+  
+ 
+ r21309@truegrounds (orig r195):  jesse | 2005-12-24 20:14:08 -0500
+  r21044@truegrounds (orig r2727):  jesse | 2005-12-23 17:31:24 -0500
+   r21043@truegrounds:  jesse | 2005-12-23 17:29:16 -0500
+   * Updated how delegated acl decisions happen
+  
+ 
+ r21310@truegrounds (orig r196):  jesse | 2005-12-24 20:14:13 -0500
+  r21057@truegrounds (orig r2729):  alexmv | 2005-12-23 18:58:56 -0500
+   r8045@zoq-fot-pik:  chmrr | 2005-12-23 18:55:48 -0500
+    * Docs checkpoint
+  
+ 
+ r21311@truegrounds (orig r197):  jesse | 2005-12-24 20:14:18 -0500
+  r21058@truegrounds (orig r2730):  alexmv | 2005-12-24 00:26:26 -0500
+   r8047@zoq-fot-pik:  chmrr | 2005-12-24 00:25:35 -0500
+    * Fork'd JSON.pm temporarily
+    * Added Jifty::Action::Record::Delete
+    * More docs checkpointing (Up to continuation!)
+  
+ 
+ r21312@truegrounds (orig r198):  jesse | 2005-12-24 20:14:23 -0500
+  r21060@truegrounds (orig r2731):  jesse | 2005-12-24 01:00:33 -0500
+   r21051@truegrounds:  jesse | 2005-12-23 23:29:31 -0500
+   * Extracted notification magic from BTDT
+  
+ 
+ r21313@truegrounds (orig r199):  jesse | 2005-12-24 20:14:28 -0500
+  r21061@truegrounds (orig r2732):  jesse | 2005-12-24 01:00:40 -0500
+   r21052@truegrounds:  jesse | 2005-12-23 23:30:59 -0500
+   * In admin mode, your currentuser objects default to superuserness 
+  
+ 
+ r21314@truegrounds (orig r200):  jesse | 2005-12-24 20:14:32 -0500
+  r21064@truegrounds (orig r2735):  jesse | 2005-12-24 01:01:04 -0500
+   r21055@truegrounds:  jesse | 2005-12-24 00:46:08 -0500
+   * Extracted 'let' functionality to Jifty
+   * renamed insecure_url_auth_token to auth_token
+  
+ 
+ r21315@truegrounds (orig r201):  jesse | 2005-12-24 20:14:36 -0500
+  r21066@truegrounds (orig r2737):  jesse | 2005-12-24 01:01:28 -0500
+  
+ 
+ r21316@truegrounds (orig r202):  jesse | 2005-12-24 20:14:40 -0500
+  r21069@truegrounds (orig r2739):  jesse | 2005-12-24 01:20:09 -0500
+   r21067@truegrounds:  jesse | 2005-12-24 01:18:47 -0500
+   * Don't let email::send export to us
+  
+ 
+ r21317@truegrounds (orig r203):  jesse | 2005-12-24 20:14:43 -0500
+  r21074@truegrounds (orig r2740):  alexmv | 2005-12-24 03:58:27 -0500
+   r8059@zoq-fot-pik:  chmrr | 2005-12-24 03:57:14 -0500
+    * More doc checkpointing
+  
+ 
+ r21318@truegrounds (orig r204):  jesse | 2005-12-24 20:14:50 -0500
+  r21077@truegrounds (orig r2741):  jesse | 2005-12-24 04:14:32 -0500
+   r21070@truegrounds:  jesse | 2005-12-24 03:44:53 -0500
+   * Classloader before the database potentially doesn't work
+  
+ 
+ r21319@truegrounds (orig r205):  jesse | 2005-12-24 20:14:54 -0500
+  r21078@truegrounds (orig r2742):  jesse | 2005-12-24 04:14:45 -0500
+   r21071@truegrounds:  jesse | 2005-12-24 03:46:49 -0500
+   * Actually try to load Jifty on upgrade.
+   * Upgrade refers-to columns that aren't virtual
+  
+ 
+ r21320@truegrounds (orig r206):  jesse | 2005-12-24 20:14:56 -0500
+  r21079@truegrounds (orig r2743):  jesse | 2005-12-24 04:14:54 -0500
+   r21072@truegrounds:  jesse | 2005-12-24 03:52:41 -0500
+   * Turn back on logging of Schema messages
+  
+ 
+ r21321@truegrounds (orig r207):  jesse | 2005-12-24 20:15:00 -0500
+  r21081@truegrounds (orig r2745):  jesse | 2005-12-24 04:17:02 -0500
+   r21076@truegrounds:  jesse | 2005-12-24 04:11:25 -0500
+   * Missing dep, tuning down logger 
+  
+ 
+ r21322@truegrounds (orig r208):  jesse | 2005-12-24 20:15:03 -0500
+  r21082@truegrounds (orig r2746):  alexmv | 2005-12-24 05:25:53 -0500
+   r8067@zoq-fot-pik:  chmrr | 2005-12-24 05:25:07 -0500
+    * More request docs
+  
+ 
+ r21323@truegrounds (orig r209):  jesse | 2005-12-24 20:15:07 -0500
+  r21083@truegrounds (orig r2747):  alexmv | 2005-12-24 05:38:10 -0500
+   r8069@zoq-fot-pik:  chmrr | 2005-12-24 05:37:39 -0500
+    * More small docs cleanups
+    * Remove old stub code (Jifty::Devel::Halo, Jifty::SetupRequest)
+  
+ 
+ r21324@truegrounds (orig r210):  jesse | 2005-12-24 20:15:11 -0500
+  r21087@truegrounds (orig r2748):  jesse | 2005-12-24 15:05:25 -0500
+   r21085@truegrounds:  jesse | 2005-12-24 15:02:17 -0500
+   * Tutorial outline
+  
+ 
+ r21325@truegrounds (orig r211):  jesse | 2005-12-24 20:15:14 -0500
+  r21088@truegrounds (orig r2749):  jesse | 2005-12-24 15:05:38 -0500
+   r21086@truegrounds:  jesse | 2005-12-24 15:03:44 -0500
+   * Another tutorial
+  
+ 
+ r21326@truegrounds (orig r212):  jesse | 2005-12-24 20:15:27 -0500
+  r21090@truegrounds (orig r2750):  jesse | 2005-12-24 15:41:36 -0500
+   r21089@truegrounds:  jesse | 2005-12-24 15:40:18 -0500
+   * Checkpoint
+  
+ 
+ r21327@truegrounds (orig r213):  jesse | 2005-12-24 20:15:31 -0500
+  r21091@truegrounds (orig r2751):  alexmv | 2005-12-24 16:05:26 -0500
+   r8076@zoq-fot-pik:  chmrr | 2005-12-24 16:04:30 -0500
+    * We only need one glossary
+    * Flesh out all of the definitions in it
+  
+ 
+ r21328@truegrounds (orig r214):  jesse | 2005-12-24 20:15:34 -0500
+  r21092@truegrounds (orig r2752):  alexmv | 2005-12-24 16:10:05 -0500
+   r8078@zoq-fot-pik:  chmrr | 2005-12-24 16:09:34 -0500
+    * Point Jifty::Script::Help at Jifty::Manual::*, so you can type
+   'jifty help tutorial'
+  
+ 
+ r21329@truegrounds (orig r215):  jesse | 2005-12-24 20:15:38 -0500
+  r21095@truegrounds (orig r2753):  alexmv | 2005-12-24 16:48:13 -0500
+   r8080@zoq-fot-pik:  chmrr | 2005-12-24 16:47:42 -0500
+    * Now that I actually understand what .bind() does, use it correctly
+  
+ 
+ r21330@truegrounds (orig r216):  jesse | 2005-12-24 20:15:41 -0500
+  r21097@truegrounds (orig r2755):  jesse | 2005-12-24 16:59:29 -0500
+   r21094@truegrounds:  jesse | 2005-12-24 16:56:00 -0500
+   Checkpoint
+  
+ 
+ r21331@truegrounds (orig r217):  jesse | 2005-12-24 20:15:44 -0500
+  r21099@truegrounds (orig r2756):  jesse | 2005-12-24 17:23:08 -0500
+   r21098@truegrounds:  jesse | 2005-12-24 17:20:45 -0500
+   Checkpoint
+  
+ 
+ r21332@truegrounds (orig r218):  jesse | 2005-12-24 20:15:48 -0500
+  r21101@truegrounds (orig r2758):  alexmv | 2005-12-24 17:28:53 -0500
+   r8082@zoq-fot-pik:  chmrr | 2005-12-24 17:26:04 -0500
+    * Jifty::Glossary -> Jifty::Manual::Glossary
+    * More docs; down to Jifty::Script and Jifty::JSON not passing docs tests
+  
+ 
+ r21333@truegrounds (orig r219):  jesse | 2005-12-24 20:15:52 -0500
+  r21103@truegrounds (orig r2759):  alexmv | 2005-12-24 17:55:18 -0500
+   r8090@zoq-fot-pik:  chmrr | 2005-12-24 17:54:24 -0500
+    * All but Jifty::JSON (which isn't our fault) and
+   Jifty::Script::Schema (which I don't understand anymore) doc'd
+  
+ 
+ r21334@truegrounds (orig r220):  jesse | 2005-12-24 20:15:57 -0500
+  r21106@truegrounds (orig r2760):  root | 2005-12-24 19:17:31 -0500
+   r21105@truegrounds:  root | 2005-12-24 19:14:55 -0500
+   * Proper checkpoint
+  
+ 
+ r21335@truegrounds (orig r221):  jesse | 2005-12-24 20:16:00 -0500
+  r21108@truegrounds (orig r2761):  jesse | 2005-12-24 19:25:24 -0500
+   r21107@truegrounds:  jesse | 2005-12-24 19:24:05 -0500
+   * Fixing tutorial typos
+  
+ 
+ r21336@truegrounds (orig r222):  jesse | 2005-12-24 20:16:10 -0500
+  r21113@truegrounds (orig r2762):  jesse | 2005-12-24 19:50:35 -0500
+   r21109@truegrounds:  jesse | 2005-12-24 19:37:20 -0500
+   * Fixed docs for an installed Jifty
+  
+ 
+ r21337@truegrounds (orig r223):  jesse | 2005-12-24 20:16:13 -0500
+  r21114@truegrounds (orig r2763):  jesse | 2005-12-24 19:50:52 -0500
+   r21110@truegrounds:  jesse | 2005-12-24 19:43:47 -0500
+   * Even yet still more tweaks.
+  
+ 
+ r21338@truegrounds (orig r224):  jesse | 2005-12-24 20:16:16 -0500
+  r21115@truegrounds (orig r2764):  jesse | 2005-12-24 19:51:05 -0500
+   r21111@truegrounds:  jesse | 2005-12-24 19:44:35 -0500
+   * removed a warning
+  
+ 
+ r21339@truegrounds (orig r225):  jesse | 2005-12-24 20:16:19 -0500
+  r21116@truegrounds (orig r2765):  jesse | 2005-12-24 19:51:21 -0500
+   r21112@truegrounds:  jesse | 2005-12-24 19:48:43 -0500
+   * Bumped the version 
+  
+ 
+ r21340@truegrounds (orig r226):  jesse | 2005-12-24 20:25:54 -0500
+ 
+ r21341@truegrounds (orig r227):  jesse | 2005-12-24 20:26:13 -0500
+ 
+ r21342@truegrounds (orig r228):  jesse | 2005-12-24 20:29:37 -0500
+  r19646@truegrounds (orig r2410):  jesse | 2005-11-30 18:57:06 -0500
+   r19645@truegrounds:  jesse | 2005-11-30 18:29:23 -0500
+    r18593@truegrounds:  jesse | 2005-11-08 17:15:15 -0500
+     r18591@truegrounds (orig r2266):  alexmv | 2005-11-08 16:34:35 -0500
+      r7059@zoq-fot-pik:  chmrr | 2005-11-08 16:33:37 -0500
+       * Look ma, no helpers.  Temporary replacements dropped in
+     
+     r18592@truegrounds (orig r2267):  alexmv | 2005-11-08 16:34:53 -0500
+      r7060@zoq-fot-pik:  chmrr | 2005-11-08 16:33:55 -0500
+       * Continuations working epsilon better
+     
+    
+    r18594@truegrounds:  jesse | 2005-11-08 17:17:52 -0500
+     r18566@truegrounds (orig r2262):  root | 2005-11-08 12:49:06 -0500
+     * Task edit style updates
+     
+    
+    r18595@truegrounds:  jesse | 2005-11-08 17:17:54 -0500
+     r18568@truegrounds (orig r2263):  root | 2005-11-08 13:11:27 -0500
+     * CSS hackery
+     
+    
+    r18653@truegrounds:  jesse | 2005-11-09 15:49:52 -0500
+     r18602@truegrounds (orig r2272):  alexmv | 2005-11-08 18:19:49 -0500
+      r7070@zoq-fot-pik:  chmrr | 2005-11-08 18:19:08 -0500
+       * Hackish API for making linksandbuttonsthat pop the stack
+       * First steps toward preserving J:C arg when needed
+     
+     r18603@truegrounds (orig r2273):  alexmv | 2005-11-09 14:55:48 -0500
+      r7081@zoq-fot-pik:  chmrr | 2005-11-09 14:55:22 -0500
+       * Jifty::Web->(button|link) both take parameters
+       * Jifty::Action->button takes parameters, but calls Jifty::Web->button
+       * Started another doc pass
+     
+    
+    r18654@truegrounds:  jesse | 2005-11-09 18:45:04 -0500
+    * Linkified
+    
+    r18656@truegrounds:  jesse | 2005-11-09 18:45:20 -0500
+     r18655@truegrounds (orig r2274):  alexmv | 2005-11-09 17:22:58 -0500
+      r7083@zoq-fot-pik:  chmrr | 2005-11-09 17:22:27 -0500
+       * Some docs, notably a bunch of continuations
+     
+    
+    r18658@truegrounds:  jesse | 2005-11-10 14:07:22 -0500
+    
+    r18659@truegrounds:  jesse | 2005-11-10 15:40:52 -0500
+    * Now guessed configu is the base of the config file, not an alternative to it
+    r18663@truegrounds:  jesse | 2005-11-10 15:51:07 -0500
+     r18660@truegrounds (orig r2276):  alexmv | 2005-11-10 15:50:10 -0500
+      r7085@zoq-fot-pik:  chmrr | 2005-11-09 18:25:39 -0500
+       * Don't explode if I don't recognize the continuation, silently fail
+     
+     r18661@truegrounds (orig r2277):  alexmv | 2005-11-10 15:50:23 -0500
+      r7086@zoq-fot-pik:  chmrr | 2005-11-10 15:49:53 -0500
+       * Coderefs through continuations
+     
+     r18662@truegrounds (orig r2278):  alexmv | 2005-11-10 15:50:32 -0500
+     
+    
+    r18666@truegrounds:  jesse | 2005-11-10 16:28:14 -0500
+    * started to add users
+    r18667@truegrounds:  jesse | 2005-11-10 16:28:46 -0500
+    * Config file loading cleanups
+    
+    r18701@truegrounds:  jesse | 2005-11-10 16:37:19 -0500
+    * new_article became new_entry
+    r18703@truegrounds:  jesse | 2005-11-10 22:32:35 -0500
+    * Refactored "config" to its own package to clean out Jifty::
+    
+    r18704@truegrounds:  jesse | 2005-11-10 22:33:35 -0500
+    * checkpoint of new blogdemo pseudocode
+    r18708@truegrounds:  jesse | 2005-11-10 22:34:16 -0500
+     r18706@truegrounds (orig r2285):  alexmv | 2005-11-10 16:51:50 -0500
+      r7100@zoq-fot-pik:  chmrr | 2005-11-10 16:51:16 -0500
+       * First pass at a "gosub" call
+     
+     r18707@truegrounds (orig r2286):  alexmv | 2005-11-10 16:51:56 -0500
+     
+    
+    r18712@truegrounds:  jesse | 2005-11-10 22:39:01 -0500
+     * jesse and alex's hit list
+    r18713@truegrounds:  jesse | 2005-11-10 23:44:51 -0500
+    * made Jifty::Handle its own subclass
+    r18719@truegrounds:  jesse | 2005-11-11 13:37:33 -0500
+     r18718@truegrounds (orig r2292):  alexmv | 2005-11-11 13:15:51 -0500
+      r7112@zoq-fot-pik:  chmrr | 2005-11-11 13:15:18 -0500
+       * Validation rototill.  XML is now generated by /validator.xml not by
+         random function calls.
+     
+    
+    r18720@truegrounds:  jesse | 2005-11-11 14:57:32 -0500
+    * Tiny style cleanups to render_messages
+    
+    r18724@truegrounds:  jesse | 2005-11-11 17:32:13 -0500
+     * checkpoint
+    r18726@truegrounds:  jesse | 2005-11-13 14:08:49 -0500
+     * A bit of Jifty script command help cleanup
+    r18867@truegrounds:  jesse | 2005-11-14 01:35:14 -0500
+    * makefile deps update
+    r18937@truegrounds:  jesse | 2005-11-17 17:25:19 -0500
+     r18914@truegrounds (orig r2321):  alexmv | 2005-11-15 18:25:25 -0500
+      r7213@zoq-fot-pik:  chmrr | 2005-11-15 18:24:42 -0500
+       * No defaults from arguments which aren't columns
+       * Save continuations after validation
+       * Only redirect if not validating or success
+     
+     r18933@truegrounds (orig r2331):  alexmv | 2005-11-17 15:16:39 -0500
+      r7218@zoq-fot-pik:  chmrr | 2005-11-17 15:11:57 -0500
+       * Automagic password_confirm
+     
+     r18934@truegrounds (orig r2332):  alexmv | 2005-11-17 15:16:47 -0500
+      r7219@zoq-fot-pik:  chmrr | 2005-11-17 15:12:23 -0500
+       * Remove all references to bin/schema
+     
+     r18935@truegrounds (orig r2333):  alexmv | 2005-11-17 15:16:53 -0500
+      r7220@zoq-fot-pik:  chmrr | 2005-11-17 15:12:45 -0500
+       * Fix current_user bug ( was grabbing framework all the time)
+     
+    
+    r18994@truegrounds:  jesse | 2005-11-20 17:06:53 -0500
+    * Cleanups and warning avoidance and more correct monikerization
+    r18998@truegrounds:  jesse | 2005-11-20 21:36:29 -0500
+    * moved serial and mason out of the base class
+    r19016@truegrounds:  jesse | 2005-11-21 01:12:04 -0500
+    * Switched "framework" to "web"
+    r19017@truegrounds:  jesse | 2005-11-21 01:13:46 -0500
+    * Added the other new wiki components 
+    
+    r19022@truegrounds:  jesse | 2005-11-21 01:29:37 -0500
+     * Removed Text::Markdown from our dist, as it's on CPAN now
+    r19024@truegrounds:  jesse | 2005-11-21 02:03:11 -0500
+    * Recent changes
+    r19025@truegrounds:  jesse | 2005-11-21 02:15:38 -0500
+    * Added menu structure
+    r19026@truegrounds:  jesse | 2005-11-21 02:17:27 -0500
+    * Render menus if you are not logged in
+    r19027@truegrounds:  jesse | 2005-11-21 02:19:09 -0500
+    * Reverted men stuff
+    
+    r19033@truegrounds:  jesse | 2005-11-21 14:45:22 -0500
+    * Reverted the change to nav
+    r19043@truegrounds:  jesse | 2005-11-21 16:31:42 -0500
+     r19038@truegrounds (orig r2356):  alexmv | 2005-11-21 15:38:27 -0500
+      r7288@zoq-fot-pik:  chmrr | 2005-11-21 15:37:14 -0500
+       * Pull mandatory from column
+       * Move jifty stuff out of btdt_behavior.js
+       * autocomplete cleanups
+       * multiplace frobing
+     
+    
+    r19054@truegrounds:  jesse | 2005-11-22 14:51:32 -0500
+     r19050@truegrounds (orig r2364):  alexmv | 2005-11-22 02:27:49 -0500
+      r7299@zoq-fot-pik:  chmrr | 2005-11-22 02:26:32 -0500
+       * s/Jifty->web->form->add_action/Jifty->web->new_action/g
+       * Paging on groups, news, invitations
+       * 'Accept all' button for invites
+     
+    
+    r19057@truegrounds:  jesse | 2005-11-22 16:44:30 -0500
+     r19055@truegrounds (orig r2367):  alexmv | 2005-11-22 16:15:53 -0500
+      r7308@zoq-fot-pik:  chmrr | 2005-11-22 16:14:59 -0500
+       * Revert r2327
+     
+     r19056@truegrounds (orig r2368):  alexmv | 2005-11-22 16:32:30 -0500
+      r7312@zoq-fot-pik:  chmrr | 2005-11-22 16:30:15 -0500
+       * Updates only need to validate arguments that get submitted
+     
+    
+    r19060@truegrounds:  jesse | 2005-11-22 18:14:18 -0500
+    * Continuations - holy grail
+    r19063@truegrounds:  jesse | 2005-11-22 18:15:32 -0500
+     *removed crack
+    r19067@truegrounds:  jesse | 2005-11-22 18:18:47 -0500
+     r19055@truegrounds (orig r2367):  alexmv | 2005-11-22 16:15:53 -0500
+      r7308@zoq-fot-pik:  chmrr | 2005-11-22 16:14:59 -0500
+       * Revert r2327
+     
+     r19056@truegrounds (orig r2368):  alexmv | 2005-11-22 16:32:30 -0500
+      r7312@zoq-fot-pik:  chmrr | 2005-11-22 16:30:15 -0500
+       * Updates only need to validate arguments that get submitted
+     
+     r19065@truegrounds (orig r2373):  alexmv | 2005-11-22 18:18:06 -0500
+      r7319@zoq-fot-pik:  chmrr | 2005-11-22 18:17:02 -0500
+       * JiftyWiki -> Wifty because I like my tab completion, dammit
+     
+     r19066@truegrounds (orig r2374):  alexmv | 2005-11-22 18:18:17 -0500
+     
+    
+    r19068@truegrounds:  jesse | 2005-11-22 18:21:35 -0500
+    * more wifty rename
+    r19069@truegrounds:  jesse | 2005-11-22 18:21:52 -0500
+    More rename
+    r19342@truegrounds:  jesse | 2005-11-26 01:51:05 -0500
+     * All sorts of updates to Wifty. It's starting to look like a real app
+    
+    r19343@truegrounds:  jesse | 2005-11-26 01:51:35 -0500
+    * ClassLoader now autocreates ::Record, ::Collection and $AppName base classes
+    r19344@truegrounds:  jesse | 2005-11-26 01:53:18 -0500
+    * added rico 
+    r19345@truegrounds:  jesse | 2005-11-26 01:54:02 -0500
+     * cleaning up css a bit
+    
+    r19346@truegrounds:  jesse | 2005-11-26 01:54:21 -0500
+    * Added IE7. it almost improves IE
+    r19349@truegrounds:  jesse | 2005-11-26 01:54:38 -0500
+     r19347@truegrounds (orig r2380):  alexmv | 2005-11-25 15:37:10 -0500
+      r7348@zoq-fot-pik:  chmrr | 2005-11-25 15:34:12 -0500
+       * validate_argument(s?) -> _validate_argument$1 to avoid possible infinite look with arguments named "arguments" or "argument"
+     
+     r19348@truegrounds (orig r2381):  alexmv | 2005-11-25 15:37:21 -0500
+      r7349@zoq-fot-pik:  chmrr | 2005-11-25 15:34:50 -0500
+       * Use *latest* possible match when auto-guessing config
+     
+    
+    r19359@truegrounds:  jesse | 2005-11-26 22:07:18 -0500
+    * We really don't want to pull in mandatoryness from tasks
+    
+    r19360@truegrounds:  jesse | 2005-11-26 22:21:06 -0500
+    * don't run the quicksearch if the user doesn't want to.
+    r19361@truegrounds:  jesse | 2005-11-26 22:21:53 -0500
+    * Don't create a task if the user doesn't put in a summary.
+    r19362@truegrounds:  jesse | 2005-11-26 22:24:17 -0500
+    * If the moniker the test looks for isn't there, carp.
+    
+    r19363@truegrounds:  jesse | 2005-11-26 22:28:25 -0500
+    * more explicit test info
+    r19509@truegrounds:  jesse | 2005-11-27 22:37:56 -0500
+    * Look Ma! full support for SQLite
+    r19511@truegrounds:  jesse | 2005-11-28 01:26:03 -0500
+    * Switched to Markdown
+    r19535@truegrounds:  jesse | 2005-11-29 03:26:58 -0500
+     r19533@truegrounds (orig r2400):  alexmv | 2005-11-29 02:05:55 -0500
+      r7379@zoq-fot-pik:  chmrr | 2005-11-29 02:04:44 -0500
+       * Jifty::Web::Form::Link gutted; most of it now in Jifty::Web::Form::Clickable
+       * Elements have key bindings, ids, labels, and classes
+       * Changed everything to use new link syntax; "button" is gone
+      
+       * Tests for low-level continuations
+       * Only make new continuations during CALL if we absolutely need to
+       * Snip J:C-* out of request when it is saved into a continuation, so
+         we don't infinite loop
+      
+       * Continuations non-raw API needs tests
+       * Lots of docs needed
+     
+     r19534@truegrounds (orig r2401):  alexmv | 2005-11-29 02:06:06 -0500
+     
+    
+    r19536@truegrounds:  jesse | 2005-11-29 03:46:17 -0500
+    * Added a BPS logo 
+    r19542@truegrounds:  jesse | 2005-11-29 15:51:24 -0500
+     r19537@truegrounds (orig r2402):  root | 2005-11-29 04:15:12 -0500
+     * Fixed to cope with API changes (removed web->submit)
+     
+     r19538@truegrounds (orig r2403):  root | 2005-11-29 04:21:42 -0500
+     * "ApplicationName" not "Name"
+     
+     r19539@truegrounds (orig r2404):  alexmv | 2005-11-29 15:18:17 -0500
+      r7387@zoq-fot-pik:  chmrr | 2005-11-29 12:52:14 -0500
+       * Continuations don't need to specify paths for their requests all
+         the time (eg, counter demo)
+     
+     r19540@truegrounds (orig r2405):  alexmv | 2005-11-29 15:18:36 -0500
+      r7388@zoq-fot-pik:  chmrr | 2005-11-29 15:17:26 -0500
+       * More Jifty continuation tests, using the API this time
+       * Small contoinuation bugfixes
+     
+     r19541@truegrounds (orig r2406):  alexmv | 2005-11-29 15:41:10 -0500
+      r7391@zoq-fot-pik:  chmrr | 2005-11-29 15:40:33 -0500
+       * Login as continuations
+     
+    
+    r19644@truegrounds:  jesse | 2005-11-30 18:23:33 -0500
+     r19549@truegrounds (orig r2407):  alexmv | 2005-11-29 18:57:52 -0500
+      r7393@zoq-fot-pik:  chmrr | 2005-11-29 18:57:08 -0500
+       * Use new submit syntax
+       * No more Rico (JS bugs)
+       * New form syntax
+       * Half-broken task review
+     
+     r19642@truegrounds (orig r2408):  alexmv | 2005-11-30 16:48:44 -0500
+      r7402@zoq-fot-pik:  chmrr | 2005-11-30 16:47:48 -0500
+       * Task review using continuations
+     
+     r19643@truegrounds (orig r2409):  alexmv | 2005-11-30 16:48:52 -0500
+      r7403@zoq-fot-pik:  chmrr | 2005-11-30 16:48:10 -0500
+       * Forgot control loop for task review
+     
+    
+   
+  
+ 
+ r21344@truegrounds (orig r229):  jesse | 2005-12-24 20:30:12 -0500
+  r19686@truegrounds (orig r2422):  alexmv | 2005-12-02 01:02:05 -0500
+   r7486@zoq-fot-pik:  chmrr | 2005-12-02 01:01:39 -0500
+    * The 'page' of a revision is a *Page* not a *Revision*
+  
+ 
+ r21345@truegrounds (orig r230):  jesse | 2005-12-24 20:30:41 -0500
+  r19734@truegrounds (orig r2438):  jesse | 2005-12-04 03:22:31 -0500
+   r19726@truegrounds:  jesse | 2005-12-04 03:15:23 -0500
+    * Switched to asking for autopackaged dependencies
+  
+ 
+ r21346@truegrounds (orig r231):  jesse | 2005-12-24 20:30:54 -0500
+  r19744@truegrounds (orig r2442):  jesse | 2005-12-05 12:36:48 -0500
+   r19739@truegrounds:  jesse | 2005-12-04 19:35:41 -0500
+   * Turn off admin mode on Wifty and Hiveminder
+  
+ 
+ r21347@truegrounds (orig r232):  jesse | 2005-12-24 20:31:13 -0500
+  r20457@truegrounds (orig r2518):  jesse | 2005-12-14 22:03:43 -0500
+   r20456@truegrounds:  jesse | 2005-12-14 22:01:33 -0500
+   * Use less code (especially the stuff that we can pull from the default app
+  
+ 
+ r21348@truegrounds (orig r233):  jesse | 2005-12-24 20:31:33 -0500
+  r20462@truegrounds (orig r2520):  jesse | 2005-12-14 23:59:17 -0500
+   r20461@truegrounds:  jesse | 2005-12-14 23:58:07 -0500
+   * Page history!
+  
+ 
+ r21349@truegrounds (orig r234):  jesse | 2005-12-24 20:31:48 -0500
+  r20464@truegrounds (orig r2521):  jesse | 2005-12-15 00:06:59 -0500
+   r20463@truegrounds:  jesse | 2005-12-15 00:06:02 -0500
+   * oop. regex
+  
+ 
+ r21350@truegrounds (orig r235):  jesse | 2005-12-24 20:32:01 -0500
+  r20466@truegrounds (orig r2522):  jesse | 2005-12-15 00:09:37 -0500
+   r20465@truegrounds:  jesse | 2005-12-15 00:08:39 -0500
+   * nav
+  
+ 
+ r21351@truegrounds (orig r236):  jesse | 2005-12-24 20:32:15 -0500
+  r20468@truegrounds (orig r2523):  jesse | 2005-12-15 00:11:12 -0500
+   r20467@truegrounds:  jesse | 2005-12-15 00:10:13 -0500
+   * as of date
+  
+ 
+ r21352@truegrounds (orig r237):  jesse | 2005-12-24 20:32:27 -0500
+  r20470@truegrounds (orig r2524):  jesse | 2005-12-15 00:13:39 -0500
+   r20469@truegrounds:  jesse | 2005-12-15 00:12:31 -0500
+   * as of date
+  
+ 
+ r21353@truegrounds (orig r238):  jesse | 2005-12-24 20:32:40 -0500
+  r20472@truegrounds (orig r2525):  jesse | 2005-12-15 00:15:59 -0500
+   r20471@truegrounds:  jesse | 2005-12-15 00:14:59 -0500
+   * goto latest
+  
+ 
+ r21354@truegrounds (orig r239):  jesse | 2005-12-24 20:32:54 -0500
+  r20572@truegrounds (orig r2584):  jesse | 2005-12-17 18:16:19 -0500
+   r20571@truegrounds:  jesse | 2005-12-17 18:15:05 -0500
+   *move around the header styles
+  
+ 
+ r21355@truegrounds (orig r240):  jesse | 2005-12-24 20:33:08 -0500
+  r20856@truegrounds (orig r2620):  jesse | 2005-12-19 23:23:29 -0500
+   r20849@truegrounds:  jesse | 2005-12-19 23:18:32 -0500
+   * updated wifty model class to include password support needed by new currentuser stuff
+  
+ 
+ r21356@truegrounds (orig r241):  jesse | 2005-12-24 20:33:21 -0500
+  r20857@truegrounds (orig r2621):  jesse | 2005-12-19 23:23:36 -0500
+   r20850@truegrounds:  jesse | 2005-12-19 23:19:46 -0500
+   * Wifty::CurrentUser
+  
+ 
+ r21357@truegrounds (orig r242):  jesse | 2005-12-24 20:33:36 -0500
+  r20858@truegrounds (orig r2622):  jesse | 2005-12-19 23:23:47 -0500
+   r20851@truegrounds:  jesse | 2005-12-19 23:20:28 -0500
+   * login page
+  
+ 
+ r21359@truegrounds (orig r243):  jesse | 2005-12-24 20:33:51 -0500
+  r20863@truegrounds (orig r2624):  jesse | 2005-12-20 11:10:50 -0500
+   r20860@truegrounds:  jesse | 2005-12-20 11:06:34 -0500
+   * Fixed some of the worst style errors
+  
+ 
+ r21360@truegrounds (orig r244):  jesse | 2005-12-24 20:34:03 -0500
+  r20879@truegrounds (orig r2630):  alexmv | 2005-12-20 19:05:34 -0500
+   r7903@zoq-fot-pik:  chmrr | 2005-12-20 19:03:37 -0500
+    * ./lib/Jifty/DefaultApp moved to ./share
+    * Added magic symlink to ./lib/Jifty/auto/Jifty to make share dir
+      accessible during dev work
+    * Re-spec application root dir
+  
+ 
+ r21361@truegrounds (orig r245):  jesse | 2005-12-24 20:34:16 -0500
+  r20886@truegrounds (orig r2633):  jesse | 2005-12-20 22:56:35 -0500
+   r20882@truegrounds:  jesse | 2005-12-20 22:53:03 -0500
+   * ACL cleanups. HM should now be acled correctly
+  
+ 
+ r21362@truegrounds (orig r246):  jesse | 2005-12-24 20:34:30 -0500
+  r20891@truegrounds (orig r2635):  jesse | 2005-12-20 23:59:47 -0500
+   r20890@truegrounds:  jesse | 2005-12-20 23:58:28 -0500
+   * By default, Jifty applications let superuser and bootstrap users do aaaaaaanything.
+     And regular users can't do anything.
+  
+ 
+ r21363@truegrounds (orig r247):  jesse | 2005-12-24 20:34:43 -0500
+  r20936@truegrounds (orig r2662):  alexmv | 2005-12-22 11:30:52 -0500
+   r7948@zoq-fot-pik:  chmrr | 2005-12-22 11:22:40 -0500
+    * Remove Jifty::Script::Command (pushed into App::CLI::Command)
+    * Make Jifty::Script::App build basic framework
+    * Extract most of Jifty::Script::Help into App::CLI::Command::Help
+    * Allow --port option to Jifty::Script::Server
+  
+ 
+ r21364@truegrounds (orig r248):  jesse | 2005-12-24 20:34:57 -0500
+  r21007@truegrounds (orig r2706):  jesse | 2005-12-23 00:50:37 -0500
+   r20989@truegrounds:  jesse | 2005-12-22 21:11:41 -0500
+   * Wifty does acls now
+  
+ 
+ r21365@truegrounds (orig r249):  jesse | 2005-12-24 20:35:13 -0500
+  r21016@truegrounds (orig r2713):  jesse | 2005-12-23 01:12:21 -0500
+   r21015@truegrounds:  jesse | 2005-12-23 01:10:42 -0500
+   * First draft. we _clearly_ need to refactor out the email validator, if nothing else.
+  
+ 
+ r21366@truegrounds (orig r250):  jesse | 2005-12-24 20:35:27 -0500
+  r21025@truegrounds (orig r2717):  alexmv | 2005-12-23 14:11:40 -0500
+   r8022@zoq-fot-pik:  chmrr | 2005-12-23 14:10:14 -0500
+    * Fix compiler error in SendPasswordReminder
+    * Fix possible undef warning
+    * Very premissive ACLs
+  
+ 
+ r21367@truegrounds (orig r251):  jesse | 2005-12-24 20:35:40 -0500
+  r21033@truegrounds (orig r2718):  alexmv | 2005-12-23 15:51:18 -0500
+   r8024@zoq-fot-pik:  chmrr | 2005-12-23 14:24:08 -0500
+    * No, this order is still wrong, but less wrong than the other way.
+   I think.  The problem is that scrubber escapes < and > once, and then
+   markdown escapes the &'s therein.
+  
+ 
+ r21368@truegrounds (orig r252):  jesse | 2005-12-24 20:35:51 -0500
+  r21034@truegrounds (orig r2719):  alexmv | 2005-12-23 15:51:24 -0500
+   r8025@zoq-fot-pik:  chmrr | 2005-12-23 15:50:31 -0500
+    * Only init the log4perl object once
+    * Updated deps in META.yaml
+    * Output new testing code for model classes
+    * Make generated Makefile.PL actually work
+    * SchemaTool only shows errors
+  
+ 
+ r21369@truegrounds (orig r253):  jesse | 2005-12-24 20:36:04 -0500
+  r21039@truegrounds (orig r2724):  alexmv | 2005-12-23 16:39:14 -0500
+   r8031@zoq-fot-pik:  chmrr | 2005-12-23 16:38:18 -0500
+    * Makefile and tests
+  
+ 
+ r21370@truegrounds (orig r254):  jesse | 2005-12-24 20:36:17 -0500
+  r21044@truegrounds (orig r2727):  jesse | 2005-12-23 17:31:24 -0500
+   r21043@truegrounds:  jesse | 2005-12-23 17:29:16 -0500
+   * Updated how delegated acl decisions happen
+  
+ 
+ r21371@truegrounds (orig r255):  jesse | 2005-12-24 20:36:31 -0500
+  r21046@truegrounds (orig r2728):  jesse | 2005-12-23 17:35:01 -0500
+   r21045@truegrounds:  jesse | 2005-12-23 17:33:49 -0500
+   * revisions are created by the superuser
+  
+ 
+ r21372@truegrounds (orig r256):  jesse | 2005-12-24 20:36:46 -0500
+  r21062@truegrounds (orig r2733):  jesse | 2005-12-24 01:00:47 -0500
+   r21053@truegrounds:  jesse | 2005-12-23 23:31:35 -0500
+   * Wifty really lets you login
+  
+ 
+ r21373@truegrounds (orig r257):  jesse | 2005-12-24 20:36:59 -0500
+  r21063@truegrounds (orig r2734):  jesse | 2005-12-24 01:00:54 -0500
+   r21054@truegrounds:  jesse | 2005-12-24 00:28:52 -0500
+   * Checkpoint
+  
+ 
+ r21374@truegrounds (orig r258):  jesse | 2005-12-24 20:37:13 -0500
+  r21065@truegrounds (orig r2736):  jesse | 2005-12-24 01:01:14 -0500
+   r21056@truegrounds:  jesse | 2005-12-24 00:52:39 -0500
+   * users can log in and log out of wifty and sign up for accounts.
+   
+  
+ 
+ r21375@truegrounds (orig r259):  jesse | 2005-12-24 20:37:27 -0500
+  r21080@truegrounds (orig r2744):  jesse | 2005-12-24 04:15:21 -0500
+   r21073@truegrounds:  jesse | 2005-12-24 03:53:11 -0500
+   * Mostly have recording of who-performs-an-update
+  
+ 
+ r21376@truegrounds (orig r260):  jesse | 2005-12-24 20:37:40 -0500
+  r21096@truegrounds (orig r2754):  jesse | 2005-12-24 16:58:23 -0500
+  Updated user model
+  
+ 
+ r21569@truegrounds (orig r261):  jesse | 2005-12-24 23:07:37 -0500
+ Updates from audrey
+
+----------------------------------------------------------------------
+r19515:  jesse | 2005-11-28 02:32:48 -0500
+
+* First post
+----------------------------------------------------------------------
