@@ -145,7 +145,8 @@ sub from_data_structure {
         }
         $self->add_action(moniker   => $a->{moniker},
                           class     => $a->{class},
-                          # TODO: ORDER
+                          order     => $a->{order},
+                          active    => exists $a->{active} ? $a->{active} : 1,
                           arguments => \%arguments,
                          );
     }
@@ -169,7 +170,9 @@ sub from_data_structure {
 
 =head2 from_cgi CGI
 
-Calls C<from_webform> with the CGI's parameters.
+Calls C<from_webform> with the CGI's parameters, after doing Mason
+parameter mapping, and splitting C<|>'s in argument names.  See
+L</argument munging>.
 
 Returns itself.
 
@@ -220,11 +223,11 @@ sub from_webform {
     $self->_extract_continuations_from_webform(%args);
 
     # Pull in all of the arguments
+    # XXX ALEX: I think this breaks J:CLONE
     $self->arguments(\%args);
 
     # Extract actions and state variables
-    $self->_extract_actions_from_webform(%args);
-    $self->_extract_state_variables_from_webform(%args);
+    $self->from_data_structure($self->webform_to_data_structure(%args));
 
     $self->just_validating(1) if defined $args{'J:VALIDATE'} and length $args{'J:VALIDATE'};
 
@@ -250,6 +253,7 @@ sub argument {
             $self->add_action(moniker => $2, class => $value, order => $1, arguments => {}, active => 1);
         } elsif ($key =~ /^J:A:F-(\w+)-(.+)/s and $self->action($2)) {
             $self->action($2)->argument($1 => $value);
+            $self->action($2)->modified(1);
         } elsif ($key =~ /^J:V-(.*)/s) {
             $self->add_state_variable(key => $1, value => $value);
         }
@@ -273,23 +277,9 @@ sub delete {
         $self->remove_action($2);
     } elsif ($key =~ /^J:A:F-(\w+)-(.+)/s and $self->action($2)) {
         $self->action($2)->delete($1);
+        $self->action($2)->modified(1);
     } elsif ($key =~ /^J:V-(.*)/s) {
         $self->remove_state_variable($1);
-    }
-}
-
-
-sub _extract_state_variables_from_webform {
-    my $self = shift;
-    my %args = (@_);
-
-    foreach my $state_variable ( keys %args ) {
-        if(  $state_variable  =~ /^J:V-(.*)$/s) {
-            $self->add_state_variable(
-                key     => $1,
-                value   => $args{$state_variable}
-            );
-        }
     }
 }
 
@@ -335,39 +325,50 @@ sub parse_form_field_name {
     return ( $type, $argument, $moniker );
 }
 
-sub _extract_actions_from_webform {
+sub webform_to_data_structure {
     my $self = shift;
     my %args = (@_);
 
+
+    my $data = {actions => {}, variables => {}};
+
+    # Pass path through
+    $data->{path} = $self->path;
+
+    # Are we only setting some actions as active?
     my $active_actions;
     if (exists $args{'J:ACTIONS'}) {
         $active_actions = {};
         $active_actions->{$_} = 1 for split ';', $args{'J:ACTIONS'};
     } # else $active_actions stays undef
 
-    for my $maybe_action (keys %args) {
-        next unless $maybe_action =~ /^J:A-(?:(\d+)-)?(.+)/s;
+    # Mapping from argument types to data structure names
+    my %types = ("J:A:F:F:F" => "doublefallback", "J:A:F:F" => "fallback", "J:A:F" => "value");
 
-        my $order   = $1;
-        my $moniker = $2;
-        my $class = $args{$maybe_action};
-
-        my $arguments = {};
-        for my $type (qw/J:A:F:F:F J:A:F:F J:A:F/) {
-            for my $key (keys %args) {
-                my ($t, $a, $m) = $self->parse_form_field_name($key);
-                $arguments->{$a} = $args{$key} if defined $t and $t eq $type and $m eq $moniker;
-            }
+    # The "sort" here is key; it ensures that action registrations
+    # come before action arguments
+    for my $key (sort keys %args) {
+        my $value = $args{$key};
+        if( $key  =~ /^J:V-(.*)$/s ) {
+            # It's a variable
+            $data->{variables}{$1} = $value;
+        } elsif ($key =~ /^J:A-(?:(\d+)-)?(.+)/s) {
+            # It's an action declatation
+            $data->{actions}{$2} = {
+                order   => $1,
+                moniker => $2,
+                class   => $value,
+                active  => ($active_actions ? ($active_actions->{$2} || 0) : 1),
+            };
+        } else {
+            # It's possibly a form field
+            my ($t, $a, $m) = $self->parse_form_field_name($key);
+            next unless $t and $types{$t} and $data->{actions}{$m};
+            $data->{actions}{$m}{fields}{$a}{$types{$t}} = $value;
         }
+    }
 
-        $self->add_action(
-            moniker => $moniker,
-            class => $class,
-            order => $order,
-            arguments => $arguments,
-            active => ($active_actions ? ($active_actions->{$moniker} || 0) : 1)
-        );
-    } 
+    return $data;
 }
 
 sub _extract_continuations_from_webform {
@@ -605,7 +606,7 @@ sub add_fragment {
                 @_
                );
 
-    my $fragment = $self->{'actions'}->{ $args{'name'} } || Jifty::Request::Fragment->new;
+    my $fragment = $self->{'fragments'}->{ $args{'name'} } || Jifty::Request::Fragment->new;
 
     for my $k (qw/name path wrapper/) {
         $fragment->$k($args{$k}) if defined $args{$k};
@@ -650,7 +651,7 @@ sub do_mapping {
 
 package Jifty::Request::Action;
 use base 'Class::Accessor';
-__PACKAGE__->mk_accessors( qw/moniker arguments class order active/);
+__PACKAGE__->mk_accessors( qw/moniker arguments class order active modified/);
 
 =head2 Jifty::Request::Action
 

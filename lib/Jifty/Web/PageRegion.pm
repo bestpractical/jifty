@@ -238,12 +238,14 @@ sub render {
     }
 
     # Merge in defaults
-    %arguments = (%{ Jifty->web->request->arguments }, region => $self, 'J:ACTIONS' => '', %arguments);
+    %arguments = (%{ Jifty->web->request->arguments }, region => $self, %arguments);
 
     # Make a fake request and throw it at the dispatcher
     my $subrequest = Jifty::Request->new;
     $subrequest->from_webform( %arguments );
     $subrequest->path( $self->path );
+    # Remove all of the actions
+    $subrequest->remove_action( $_->moniker ) for $subrequest->actions;
     $subrequest->is_subrequest( 1 );
     local Jifty->web->{request} = $subrequest;
 

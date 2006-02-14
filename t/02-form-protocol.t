@@ -10,6 +10,7 @@ J:A:F-id-mymoniker: 23
 J:A:F-something-mymoniker: else
 J:ACTIONS: mymoniker
 --- request
+path: ~
 state_variables: {}
 actions:
   mymoniker:
@@ -35,6 +36,7 @@ J:A:F-id-second: 42
 J:A:F-something-second: bla
 J:ACTIONS: mymoniker;second
 --- request
+path: ~
 state_variables: {}
 actions:
   mymoniker:
@@ -70,6 +72,7 @@ J:A:F-id-second: 42
 J:A:F-something-second: bla
 J:ACTIONS: mymoniker;second
 --- request
+path: ~
 state_variables: {}
 actions:
   mymoniker:
@@ -104,6 +107,7 @@ J:A:F-id-second: 42
 J:A:F-something-second: bla
 J:ACTIONS: mymoniker;second
 --- request
+path: ~
 state_variables: {}
 actions:
   mymoniker:
@@ -131,6 +135,7 @@ J:A:F-id-second: 42
 J:A:F-something-second: bla
 J:ACTIONS: second
 --- request
+path: ~
 state_variables: {}
 actions:
   mymoniker:
@@ -165,6 +170,7 @@ J:A-second: DoThat
 J:A:F-id-second: 42
 J:A:F-something-second: bla
 --- request
+path: ~
 state_variables: {}
 actions:
   mymoniker:
@@ -202,6 +208,7 @@ J:A-second: DoThat
 J:A:F-id-second: 42
 J:A:F-something-second: bla
 --- request
+path: ~
 state_variables: {}
 actions:
   mymoniker:
@@ -239,6 +246,7 @@ J:A-second: DoThat
 J:A:F-something-mymoniker: else
 J:A-mymoniker: DoSomething
 --- request
+path: ~
 state_variables: {}
 actions:
   mymoniker:
@@ -271,6 +279,7 @@ J:A:F:F-id-mymoniker: 96
 J:A:F-something-mymoniker: else
 J:ACTIONS: mymoniker
 --- request
+path: ~
 state_variables: {}
 actions:
   mymoniker:
@@ -295,6 +304,7 @@ J:A:F-id-mymoniker: 23
 J:A:F-something-mymoniker: else
 J:ACTIONS: mymoniker
 --- request
+path: ~
 state_variables: {}
 actions:
   mymoniker:
@@ -318,6 +328,7 @@ J:A:F:F-id-mymoniker: 96
 J:A:F-something-mymoniker: else
 J:ACTIONS: mymoniker
 --- request
+path: ~
 state_variables: {}
 actions:
   mymoniker:
@@ -344,6 +355,7 @@ J:A:F-id-second: 42
 J:A:F-something-second: feepy
 J:ACTIONS: mymoniker;second
 --- request
+path: ~
 state_variables: {}
 actions:
   mymoniker:
@@ -379,6 +391,7 @@ J:A:F-id-mymoniker: 123
 J:A:F-something-mymoniker: else
 J:ACTIONS: mymoniker
 --- request
+path: ~
 state_variables: {}
 actions:
   mymoniker:
@@ -404,6 +417,7 @@ J:A:F-id-mymoniker: 123
 J:A:F-something-mymoniker: else
 J:ACTIONS: mymoniker
 --- request
+path: ~
 state_variables: {}
 actions:
   mymoniker:
@@ -428,6 +442,7 @@ J:A:F:F-id-mymoniker: 456
 J:A:F-something-mymoniker: else
 J:ACTIONS: mymoniker
 --- request
+path: ~
 state_variables: {}
 actions:
   mymoniker:
@@ -451,6 +466,7 @@ J:A:F:F:F-id-mymoniker: 789
 J:A:F-something-mymoniker: else
 J:ACTIONS: mymoniker
 --- request
+path: ~
 state_variables: {}
 actions:
   mymoniker:
@@ -477,6 +493,7 @@ J:A:F-id-second: 42
 J:A:F-something-second: bla
 J:ACTIONS: mymoniker;second
 --- request
+path: ~
 state_variables: {}
 actions:
   mymoniker:

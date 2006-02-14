@@ -214,7 +214,7 @@ sub handle_request {
     Jifty->web->setup_session;
 
     my @valid_actions;
-            for my $request_action ( $self->request->actions ) {
+    for my $request_action ( $self->request->actions ) {
         $self->log->debug("Found action ".$request_action->class . " " . $request_action->moniker);
         next unless $request_action->active;
         unless ( $self->is_allowed( $request_action->class ) ) {
@@ -227,10 +227,12 @@ sub handle_request {
         # Make sure we can instantiate the action
         my $action = $self->new_action_from_request($request_action);
         next unless $action;
+        $request_action->modified(0);
 
         # Try validating -- note that this is just the first pass; as
         # actions are run, they may fill in values which alter
         # validation of later actions
+        $self->log->debug("Validating action ".ref($action). " ".$action->moniker);
         $self->response->result( $action->moniker => $action->result );
         $action->validate;
 
@@ -241,22 +243,26 @@ sub handle_request {
     unless ( $self->request->just_validating ) {
         for my $request_action (@valid_actions) {
 
-            # Pull the action out of the request (again, since
-            # mappings may have affected parameters)
-            my $action = $self->new_action_from_request($request_action);
-            next unless $action;
-
-            # Try validating again
-            $action->result(Jifty::Result->new);
-            $action->result->action_class(ref $action);
-            $self->response->result( $action->moniker => $action->result );
             eval {
-                $self->log->debug("Validating action ".ref($action). " ".$action->moniker);
-                if ($action->validate) { 
-                    $self->log->debug("Running action.");
-                    $action->run; 
+                # Pull the action out of the request (again, since
+                # mappings may have affected parameters).  This
+                # returns the cached version unless the request has
+                # changed
+                my $action = $self->new_action_from_request($request_action);
+                next unless $action;
+                if ($request_action->modified) {
+                    # If the request's action was changed, re-validate
+                    $action->result(Jifty::Result->new);
+                    $action->result->action_class(ref $action);
+                    $self->response->result( $action->moniker => $action->result );
+                    $self->log->debug("Re-validating action ".ref($action). " ".$action->moniker);
+                    next unless $action->validate;
                 }
+            
+                $self->log->debug("Running action.");
+                $action->run; 
             };
+
             if ( my $err = $@ ) {
                 # poor man's exception propagation
                 # We need to get "LAST RULE" exceptions back up to the dispatcher
@@ -540,6 +546,8 @@ Given a L<Jifty::Request::Action>, creates a new action using C<new_action>.
 sub new_action_from_request {
     my $self       = shift;
     my $req_action = shift;
+    return $self->{'actions'}{ $req_action->moniker } if 
+      $self->{'actions'}{ $req_action->moniker } and not $req_action->modified;
     $self->new_action(
         class     => $req_action->class,
         moniker   => $req_action->moniker,
@@ -597,8 +605,8 @@ sub redirect {
     {
         my $request = Jifty::Request->new();
         $request->path($page);
-        $request->from_webform( map { "J:V-" . $_->key => $_->value }
-                $self->request->state_variables );
+        $request->add_state_variable( key => $_->key, value => $_->value )
+          for $self->request->state_variables;
         my $cont = Jifty::Continuation->new(
             request  => $request,
             response => $self->response,
