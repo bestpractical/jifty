@@ -30,13 +30,13 @@ BEGIN {
     no strict 'refs';
     no warnings 'once';
     if (eval { require JSON::Syck; $JSON::Syck::VERSION >= 0.05 }) {
-        *jsonToObj = *jsonToObj_syck;
-        *objToJson = *objToJson_syck;
+        *jsonToObj = *_jsonToObj_syck;
+        *objToJson = *_objToJson_syck;
     }
     else {
         require JSON;
-        *jsonToObj = *jsonToObj_pp;
-        *objToJson = *objToJson_pp;
+        *jsonToObj = *_jsonToObj_pp;
+        *objToJson = *_objToJson_pp;
     }
 }
 
@@ -47,12 +47,12 @@ identical to L<JSON/jsonToObj>.
 
 =cut
 
-sub jsonToObj_syck {
+sub _jsonToObj_syck {
     local $JSON::Syck::SingleQuote = 0;
     JSON::Syck::Load($_[0]);
 }
 
-sub jsonToObj_pp {
+sub _jsonToObj_pp {
     return JSON::jsonToObj(@_);
 }
 
@@ -66,7 +66,7 @@ double quotes.
 
 =cut
 
-sub objToJson_syck {
+sub _objToJson_syck {
     my ($obj, $args) = @_;
 
     local $JSON::Syck::SingleQuote = $args->{singlequote};
@@ -76,7 +76,7 @@ sub objToJson_syck {
 # We should escape double-quotes somehow, so that we can guarantee
 # that double-quotes *never* appear in the JSON string that is
 # returned.
-sub objToJson_pp {
+sub _objToJson_pp {
     my ($obj, $args) = @_;
 
     # Unless we're asking for single-quoting, just do what JSON.pm

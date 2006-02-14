@@ -4,13 +4,72 @@ use base qw/Jifty::Action/;
 use File::Spec;
 
 
+=head1 NAME
+
+Jifty::Action::Devel::FileEditor
+
+=head1 DESCRIPTION
+
+This action allows you to edit mason components (and eventually libraries)
+using Jifty's I<Action> system.  It should only be enabled when you're
+running Jifty in C<DevelMode>. 
+
+=head1 WARNING
+
+B<THIS ACTION LETS YOU REMOTELY EDIT EXECUTABLE CODE>.
+
+B<THIS IS DANGEROUS>
+
+
+
+=cut
+
+=head2 new
+
+Create a new C<FileEditor> action.
+
+=cut
+
 sub new {
-    my $class = shift; my $self = $class->SUPER::new(@_);
+    my $class = shift; 
+    my $self = $class->SUPER::new(@_);
     $self->sticky_on_success(1);
     $self->get_default_content; 
     return($self);
 
 }
+
+=head2 arguments
+
+Sets up this action's arguments.
+
+=over
+
+=item path
+
+Where to save the file
+
+=item file_type
+
+(One of mason_component or library)
+
+=item source_path
+
+Where to read the file from.
+
+=item destination_path
+
+Where to write the file to. If the current user can't write to 
+the source_path, defaults to something inside the app's directory.
+
+=item content
+
+The actual content of the file we're editing.
+
+
+=back
+
+=cut
 
 
 sub arguments {
@@ -30,6 +89,14 @@ sub arguments {
     }
 
 }
+
+
+=head2 get_default_content
+
+Finds the version of the C<source_path> (of type C<file_type>) and loads it into C<content>.
+
+
+=cut
 
 sub get_default_content {
     my $self = shift;
@@ -58,10 +125,16 @@ sub get_default_content {
     $self->argument_value(destination_path => File::Spec->catfile($local_template_base, $path));
 }
 
+=head2 validate_destination_path PATH
+
+Returns true if the user can write to the directory C<PATH>. False otherwise. Should be refactored to a C<path_writable> routine and a trivial validator.
+
+=cut
+
 sub validate_destination_path {
     my $self = shift;
     my $value = shift;
-    $self->{'write_to'} = ($value or $self->argument_value('qualified_path'));
+    $self->{'write_to'} = $value;
     unless ($self->{'write_to'}) {
         return  $self->validation_error( destination_path => "No destination path set. Where should I write this file?");
     }
@@ -70,6 +143,13 @@ sub validate_destination_path {
     }
     return $self->validation_ok;
 }
+
+
+=head2 take_action
+
+Writes the C<content> out to the C<destination_path>.
+
+=cut
 
 sub take_action {
     my $self = shift;

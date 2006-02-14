@@ -5,6 +5,25 @@ use base qw/HTML::Mason::Plugin/;
 use Time::HiRes ();
 
 
+=head1 NAME
+
+Jifty::Mason::Halo
+
+=head1 DESCRIPTION
+
+
+=cut
+
+
+=head2 start_component_hook CONTEXT_OBJECT
+
+Whenever we start to render a component, check to see if we can draw a halo around the component.
+
+Either way, record halo metadata.
+
+=cut
+
+
 sub start_component_hook {
     my $self    = shift;
     my $context = shift;
@@ -38,6 +57,14 @@ sub start_component_hook {
     $context->request->out('<span class="halo">');
 }
 
+=head2 end_component_hook CONTEXT_OBJECT
+
+When we're done rendering a component, record how long it took
+and close off the halo C<span> if we have one.
+
+
+=cut
+
 sub end_component_hook {
     my $self    = shift;
     my $context = shift;
@@ -62,6 +89,15 @@ sub end_component_hook {
     $context->request->out('</span>') unless ($frame->{'proscribed'});
 
 }
+
+
+=head2 render_halo_actions STACK_FRAME
+
+When we're rendering the whole Mason component tree, this routine will
+render our bits for just one stack frame.
+
+
+=cut
 
 sub render_halo_actions {
     my $self    = shift;
@@ -112,6 +148,15 @@ sub _unrendered_component {
     }
 
 }
+
+=head2 render_component_tree
+
+Once we're just about to finish rendering our HTML page (just before
+the C<</body>> tag, we should call render_component_tree to output all
+the halo data and metadata.
+
+
+=cut
 
 sub render_component_tree {
     my $self  = shift;

@@ -28,6 +28,14 @@ sub new {
     bless {results => {}, headers => []}, $class;
 }
 
+
+=head2 add_header KEY => VALUE
+
+Add an HTTP header to the outgoing HTTP response. 
+
+=cut
+
+
 sub add_header {
     my $self = shift;
     # This one is so we can get jifty's headers into mason
@@ -37,6 +45,14 @@ sub add_header {
 
     push @{$self->{headers}}, [@_];
 }
+
+=head2 headers
+
+Returns an array of key-value pairs of all the HTTP headers we want to
+stick on the outgoing HTTP request.
+
+
+=cut
 
 sub headers {
     my $self = shift;

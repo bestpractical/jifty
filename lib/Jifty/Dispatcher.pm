@@ -111,6 +111,10 @@ common C<$Dispatcher> object.
 
 =head1 Data your dispatch routines has access to
 
+=head2 request
+
+The current L<Jifty::Request> object.
+
 =head2 $Dispatcher
 
 The current dispatcher object.
@@ -196,7 +200,7 @@ default page in call_next.
 
 =head2 dispatch $path
 
-Dispatch again using $path as the request path, preserving args.
+eispatch again using $path as the request path, preserving args.
 
 =head2 next_rule
 
@@ -213,6 +217,11 @@ Abort the request.
 =head2 redirect $uri
 
 Redirect to another URI.
+
+
+=head2 next_show
+
+INTERNAL MAGIC YOU SHOULD NOT USE THAT ALEX SHOULD RENAME ;)
 
 =cut
 
