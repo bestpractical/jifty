@@ -63,29 +63,35 @@ sub out {
 }
 
 
-=head3 url [SCHEME]
+=head3 url
 
-Returns the root url of the server.  This is pulled from the
-configuration file.  Optionally overrides the default (http or https)
-scheme with the given C<SCHEME>.
+Returns the root url of this Jifty application.  This is pulled from the
+configuration file.  
+
 
 =cut
 
 sub url {
     my $self = shift;
-    my $url  = Jifty->config->framework("Web")->{BaseURL}
-        || "http://localhost";
-    my $port = Jifty->config->framework("Web")->{Port} || 8888;
-
-    $url =~ s/^\w+/shift/e if @_;
-
-    if (   ( $url =~ /^http\b/ and $port == 80 )
-        or ( $url =~ /^https\b/ and $port == 443 ) )
-    {
-        return $url;
-    } else {
-        return $url . ":" . $port;
+    my $url  = Jifty->config->framework("Web")->{BaseURL};
+    my $port = Jifty->config->framework("Web")->{Port};
+    
+    my $scheme = 'http';
+    if ($url =~ /^(\w+)/) {
+        $scheme = $1;
     }
+
+    if ($ENV{'HTTP_HOST'}) {
+        return $scheme ."://".$ENV{'HTTP_HOST'};
+    }
+
+    my $append_port = 0;
+    if (   ( $scheme  eq 'http' and $port != 80 )
+        or ( $scheme  eq'https' and $port != 443 ) ) {
+        $append_port = 1;
+    }
+    return( $url . ($append_port ? ":$port" : ""));
+
 }
 
 =head3 serial 

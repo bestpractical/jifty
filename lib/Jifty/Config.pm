@@ -229,6 +229,8 @@ sub guess {
             Web        => {
                 DefaultStaticRoot => Jifty::Util->share_root . '/web/static',
                 DefaultTemplateRoot => Jifty::Util->share_root . '/web/templates',
+                Port => '8888',
+                BaseURL => 'http://localhost',
                 SessionDir  => "var/session",
                 DataDir     => "var/mason",
                 StaticRoot   => "web/static",
