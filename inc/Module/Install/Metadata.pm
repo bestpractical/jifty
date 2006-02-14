@@ -1,12 +1,14 @@
-#line 1 "inc/Module/Install/Metadata.pm - /usr/lib/perl5/site_perl/5.8.7/Module/Install/Metadata.pm"
+#line 1 "inc/Module/Install/Metadata.pm - /usr/local/share/perl/5.8.7/Module/Install/Metadata.pm"
 package Module::Install::Metadata;
 
-use Module::Install::Base;
-@ISA = qw{Module::Install::Base};
-
-$VERSION = '0.06';
-
 use strict 'vars';
+use Module::Install::Base;
+
+use vars qw($VERSION @ISA);
+BEGIN {
+    $VERSION = '0.06';
+    @ISA     = 'Module::Install::Base';
+}
 
 my @scalar_keys = qw{
     name module_name abstract author version license
