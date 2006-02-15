@@ -8,6 +8,7 @@ requires('App::CLI' => 0.03 ); # App::CLI::Command::Help App::CLI::Command
 requires('CGI');                   # CGI::Fast
 requires('CGI::Cookie');
 requires('Cache::Cache'); #Cache::FileCache
+requires('Calendar::Simple');
 requires('Carp');
 requires('Class::Accessor');
 requires('Class::Container');
