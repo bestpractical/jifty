@@ -1,0 +1,3 @@
+<&| /_elements/wrapper, title => "Test of dispatch" &>
+  Basic test.  (Count <% $ARGS{count} %>)
+</&>
