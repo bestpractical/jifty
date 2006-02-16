@@ -230,9 +230,11 @@ sub render {
     # We only render the region wrapper if we're asked to (which is true by default)
     if ($self->region_wrapper) {
         $result .= qq|<script type="text/javascript">\n|;
-        $result .= qq|new Region('|. $self->qualified_name .qq|',|;
-        $result .= Jifty::JSON::objToJson(\%arguments, {singlequote => 1});
-        $result .= qq|,'|. $self->path . qq|');\n|;
+        $result .= qq|new Region('|. $self->qualified_name . qq|',|;
+        $result .= Jifty::JSON::objToJson(\%arguments, {singlequote => 1}) . qq|,|;
+        $result .= qq|'| . $self->path . qq|',|;
+        $result .= $self->parent ? qq|'| . $self->parent->qualified_name . qq|'| : q|null|;
+        $result .= qq|);\n|;
         $result .= qq|</script>|;
         $result .= qq|<div id="region-| . $self->qualified_name . qq|">|;
     }

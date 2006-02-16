@@ -16,29 +16,78 @@ Handlers are placed on L<Jifty::Web::Form::Element> objects by calling
 the name of the javascript event handler, such as C<onclick>, with a
 set of arguments.
 
-The format of the arguments passed to C<onclick> (or any similar method)
-is a hash reference, with the following possible keys:
+The format of the arguments passed to C<onclick> (or any similar
+method) is a hash reference.  It takes a number of possible keys.  The
+most important is the mode of the fragment replacement, if any; it is
+specified by providing at most one of the following keys:
 
 =over
 
-=item submit (optional)
+=item append => PATH
 
-An action (or moniker of an action) to be submitted when the event is fired.
+Add the given C<PATH> as a new fragment, just before the close of the
+CSS selector given by C<element>, which defaults to the end of the
+current region.
 
-=item region (optional)
+=item prepend => PATH
+
+Add the given C<PATH> as a new fragment, just aftger the start of the
+CSS selector given by C<element>, which defaults to the start of the
+current region.
+
+=item replace_with => PATH
+
+Replaces the region specified by the C<region> parameter (which
+defaults to the current region) with the fragment located at the given
+C<PATH>.
+
+=item refresh => REGION
+
+Refreshes the given C<REGION>, which should be a
+L<Jifty::Web::PageRegion> object, or the fully qualified name of such.
+
+=item refresh_self => 1
+
+Refreshes the current region; this is the default action, if C<args>
+are supplied, but no other mode is given.
+
+=back
+
+The following options are also supported:
+
+=over
+
+=item region => REGION
 
 The region that should be updated.  This defaults to the current
 region.
 
-=item args (optional)
+=item element => CSS SELECTOR
 
-Arguments to the region.  These will override the default arguments to
-the region.
+A css selector specifying where the new region should be placed; used
+with C<append> and C<prepend>, above.  The
+L<Jifty::Web::PageRegion/get_element> method may be useful in
+specifying elements of parent page regions.
 
-=item fragment (optional)
+=item submit => MONIKER
 
-The fragment that should go into the region.  The default is whatever
-fragment the region was originally rendered with.
+An action, moniker of an action, or array reference to such; these
+actions are submitted when the event is fired.
+
+=item args => HASHREF
+
+Arguments to the region.  These will override the arguments to the
+region that the region was given when it was last rendered.
+
+=item effect => STRING
+
+The Prototype visual effect to use when updating or creating the
+fragment.
+
+=item effect_args => HASHREF
+
+A hashref of arguments to pass to the effect when it is creted.  These
+can be used to change the duration of the effect, for instance.
 
 =back
 
@@ -92,27 +141,34 @@ sub javascript {
                 push @actions, map { ref $_ ? $_->moniker : $_ } @{ $hook->{submit} };
             }
 
+            $hook->{region} ||= Jifty->web->qualified_region;
+
             # Placement
-            if (exists $hook->{replace_with}) {
-                @args{qw/mode path/} = ('Replace', $hook->{replace_with});
-            } elsif (exists $hook->{append}) {
+            if (exists $hook->{append}) {
                 @args{qw/mode path/} = ('Bottom', $hook->{append});
+                $hook->{element} ||= "#region-".$hook->{region};
             } elsif (exists $hook->{prepend}) {
                 @args{qw/mode path/} = ('Top', $hook->{prepend});
+                $hook->{element} ||= "#region-".$hook->{region};
+            } elsif (exists $hook->{replace_with}) {
+                @args{qw/mode path region/} = ('Replace', $hook->{replace_with}, $hook->{region});
+            } elsif (exists $hook->{refresh}) {
+                @args{qw/mode path region/} = ('Replace', $hook->{refresh}->path, $hook->{refresh});
             } elsif ((exists $hook->{refresh_self} and Jifty->web->current_region) or $hook->{args}) {
                 # If we just pass arguments, treat as a refresh_self
-                 @args{qw/mode path/} = ('Replace', Jifty->web->current_region->path);
+                @args{qw/mode path region/} = ('Replace', Jifty->web->current_region->path, Jifty->web->current_region);
             } else {
                 # If we're not doing any of the above, skip this one
                 next;
             }
 
+            # Qualified name if we have a ref
+            $args{region} = $args{region}->qualified_name if ref $args{region};
+
             # What element we're replacing.
             if ($hook->{element}) {
-                $args{element} = $hook->{element};
+                $args{element} = ref $hook->{element} ? "#region-".$hook->{element}->qualified_name : $hook->{element};
                 $args{region}  = $args{element} =~ /^#region-(\S+)/ ? "$1-".Jifty->web->serial : Jifty->web->serial;
-            } else {
-                $args{region}  = $hook->{region} || Jifty->web->qualified_region;
             }
 
             # Arguments

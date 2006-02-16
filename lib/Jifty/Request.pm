@@ -158,11 +158,20 @@ sub from_data_structure {
 
     my %fragments = %{$data->{fragments} || {}};
     for my $f (values %fragments) {
-        $self->add_fragment(name      => $f->{name},
-                            path      => $f->{path},
-                            arguments => $f->{args},
-                            wrapper   => $f->{wrapper} || 0,
-                           );
+        my $current = $self->add_fragment(
+            name      => $f->{name},
+            path      => $f->{path},
+            arguments => $f->{args},
+            wrapper   => $f->{wrapper} || 0,
+        );
+        while ($f->{parent}) {
+            $f = $f->{parent};
+            $current = $current->parent(Jifty::Request::Fragment->new({
+                name => $f->{name},
+                path => $f->{path},
+                arguments => $f->{args},
+            }));
+        }
     }
 
     return $self;
@@ -468,7 +477,8 @@ sub state_variable {
 =head2 add_state_variable PARAMHASH
 
 Adds a state variable to this request's internal representation.
-Takes a C<key> and a C<value>.
+Takes a C<key> and a C<value>; returns the newly-added
+L<Jifty::Request::StateVariable>.
 
 =cut
 
@@ -485,6 +495,8 @@ sub add_state_variable {
         $state_var->$k($args{$k}) if defined $args{$k};
     } 
     $self->{'state_variables'}{$args{'key'}} = $state_var;
+
+    return $state_var;
 }
 
 =head2 remove_state_variable KEY
@@ -533,10 +545,12 @@ Required argument: C<moniker>.
 Optional arguments: C<class>, C<order>, C<active>, C<arguments>.
 
 Adds a L<Jifty::Request::Action> with the given
-L<moniker|Jifty::Manual::Glossary/moniker> to the request.  If the request
-already contains an action with that moniker, it merges it in,
+L<moniker|Jifty::Manual::Glossary/moniker> to the request.  If the
+request already contains an action with that moniker, it merges it in,
 overriding the implementation class, active state, and B<individual>
-arguments.  See L<Jifty::Action>.
+arguments.  Returns the newly added L<Jifty::Request::Action>.
+
+See L<Jifty::Action>.
 
 =cut
 
@@ -592,6 +606,18 @@ sub fragments {
     return values %{$self->{'fragments'}}
 }
 
+=head2 fragment NAME
+
+Returns the requested fragment with that name
+
+=cut
+
+sub fragment {
+    my $self = shift;
+    my $name = shift;
+    return $self->{'fragments'}{$name};
+}
+
 =head2 add_fragment PARAMHASH
 
 Required arguments: C<name>, C<path>
@@ -600,7 +626,9 @@ Optional arguments: C<arguments>, C<wrapper>
 
 Adds a L<Jifty::Request::Fragment> with the given name to the request.
 If the request already contains a fragment with that name, it merges
-it in.  See L<Jifty::PageRegion>.
+it in.  Returns the newly added L<Jifty::Request::Fragment>.
+
+See L<Jifty::PageRegion>.
 
 =cut
 
@@ -717,7 +745,7 @@ A small package that encapsulates the bits of a state variable:
 
 package Jifty::Request::Fragment;
 use base 'Class::Accessor';
-__PACKAGE__->mk_accessors( qw/name path wrapper arguments/ );
+__PACKAGE__->mk_accessors( qw/name path wrapper arguments parent/ );
 
 =head2 Jifty::Request::Fragment
 

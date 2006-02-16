@@ -241,10 +241,11 @@ var fragments = $H();
 
 var Region = Class.create();
 Region.prototype = {
-    initialize: function(name, args, path) {
+    initialize: function(name, args, path, parent) {
         this.name = name;
         this.args = $H(args);
         this.path = path;
+        this.parent = parent ? fragments[parent] : null;
         if (fragments[name]) {
             // If this fragment already existed, we want to wipe out
             // whatever evil lies we might have said earlier; do this
@@ -311,10 +312,24 @@ Region.prototype = {
     },
 
     data_structure: function(path, args) {
+        // Set the path and args, if given
+        if (path)
+            this.setPath(path);
+        if (args)
+            this.setArgs(args);
+
+        // If we have a parent, find our not-qualified name
+        var shortname = this.name;
+        if (this.parent) {
+            shortname = this.name.substr(this.parent.name.length + 1);
+        }
+
+        // Return a nummy data structure
         return {
-            name: this.name,
-            path: this.setPath(path),
-            args: this.setArgs(args)
+            name: shortname,
+            path: this.path,
+            args: this.args,
+            parent: this.parent ? this.parent.data_structure(null,null) : null
         }
     }
 };
@@ -357,17 +372,44 @@ function update() {
         var f = named_args['fragments'][i];
 
         var name = f['region'];
+
+        // Find where we are going to go
+        var element = $('region-' + f['region']);
+        if (f['element']) {
+            var possible = document.getElementsBySelector(f['element']);
+            if (possible.length == 0)
+                element = null;
+            else
+                element = possible[0];
+        }
+        f['element'] = element;
+
+        // If we can't find out where we're going, bail
+        if (element == null)
+            continue;
+
         f['is_new'] = (fragments[name] ? false : true);
-        
         // If it's new, we need to create it so we can dump it
-        if (f['is_new'])
-            new Region(name, f['args'], f['path']);
+        if (f['is_new']) {
+            // Find what region we're inside
+            f['parent'] = null;
+            if (f['mode'] && ((f['mode'] == "Before") || (f['mode'] == "After")))
+                element = element.parentNode;
+            while ((element != null) && (f['parent'] == null)) {
+                if (/^region-/.test(element.getAttribute("id")))
+                    f['parent'] = element.getAttribute("id").replace(/^region-/,"");
+                element = element.parentNode;
+            }
+
+            // Make the region (for now)
+            new Region(name, f['args'], f['path'], f['parent']);
+        }
 
         // Update with all new values
         var fragment_request = fragments[name].data_structure(f['path'], f['args']);
 
-        // Ask for the wrapper if we are making a new region
         if (f['is_new'])
+            // Ask for the wrapper if we are making a new region
             fragment_request['wrapper'] = 1;
 
         // Push it onto the request stack
@@ -384,54 +426,43 @@ function update() {
             // For each fragment we requested
             for (var i = 0; i < named_args['fragments'].length; i++) {
                 var f = named_args['fragments'][i];
+                var element = f['element'];
 
-                // Find the element that is getting dealt with
-                var element = $('region-' + f['region']);
-                if (f['element']) {
-                    var possible = document.getElementsBySelector(f['element']);
-                    if (possible.length == 0)
-                        element = null;
-                    else
-                        element = possible[0];
-                }
                 // Change insertion mode if need be
                 var insertion = null;
                 if (f['mode'] && (f['mode'] != 'Replace')) {
                     insertion = eval('Insertion.'+f['mode']);
                 }
 
-                // If we found something to replace
-                if (element) {
-                    // Loop through the result looking for it
-                    for (var response_fragment = response.firstChild;
-                         response_fragment != null;
-                         response_fragment = response_fragment.nextSibling) {
-                        if (response_fragment.getAttribute("id") == f['region']) {
-                            var textContent;
-                            if (response_fragment.textContent) {
-                                textContent = response_fragment.textContent;
-                            } else {
-                                textContent = response_fragment.firstChild.nodeValue;
-                            }
-                            // Once we find it, do the insertion
-                            if (insertion) {
-                                new insertion(element, textContent.stripScripts());
-                            } else {
-                                Element.update(element, textContent.stripScripts());
-                            }
-                            // We need to give the browser some "settle" time before we eval scripts in the body
-                            setTimeout((function() { this.evalScripts() }).bind(textContent), 10);
+                // Loop through the result looking for it
+                for (var response_fragment = response.firstChild;
+                     response_fragment != null;
+                     response_fragment = response_fragment.nextSibling) {
+                    if (response_fragment.getAttribute("id") == f['region']) {
+                        var textContent;
+                        if (response_fragment.textContent) {
+                            textContent = response_fragment.textContent;
+                        } else {
+                            textContent = response_fragment.firstChild.nodeValue;
                         }
+                        // Once we find it, do the insertion
+                        if (insertion) {
+                            new insertion(element, textContent.stripScripts());
+                        } else {
+                            Element.update(element, textContent.stripScripts());
+                        }
+                        // We need to give the browser some "settle" time before we eval scripts in the body
+                        setTimeout((function() { this.evalScripts() }).bind(textContent), 10);
                     }
+                }
 
-                    // Also, set us up the effect
-                    if (f['effect']) {
-                        var effect = eval('Effect.'+f['effect']);
-                        var effect_args  = f['effect_args'] || {};
-                        if (f['is_new'])
-                            Element.hide($('region-'+f['region']));
-                        (effect)($('region-'+f['region']), effect_args);
-                    }
+                // Also, set us up the effect
+                if (f['effect']) {
+                    var effect = eval('Effect.'+f['effect']);
+                    var effect_args  = f['effect_args'] || {};
+                    if (f['is_new'])
+                        Element.hide($('region-'+f['region']));
+                    (effect)($('region-'+f['region']), effect_args);
                 }
             }
         } finally {

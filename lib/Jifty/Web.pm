@@ -1090,30 +1090,27 @@ sub serve_fragments {
     $writer->xmlDecl( "UTF-8", "yes" );
     $writer->startTag("response");
     for my $f ( $self->request->fragments ) {
-        $writer->startTag( "fragment", id => $f->name );
-        my @names = split '-', $f->name;
-
         # Set up the region stack
         local Jifty->web->{'region_stack'} = [];
-        while ( my $region = shift @names ) {
-            my $new = @names
-                ? Jifty::Web::PageRegion->new(
-                name       => $region,
-                _bootstrap => 1,
-                parent     => Jifty->web->current_region
-                )
-                : Jifty::Web::PageRegion->new(
-                name           => $region,
+        my @regions;
+        do {
+            push @regions, $f;
+        } while ($f = $f->parent);
+        
+        for $f (reverse @regions) {
+            my $new = Jifty::Web::PageRegion->new(
+                name           => $f->name,
                 path           => $f->path,
                 region_wrapper => $f->wrapper,
                 parent         => Jifty->web->current_region,
                 defaults       => $f->arguments,
-                );
+            );
             push @{ Jifty->web->{'region_stack'} }, $new;
             $new->enter;
         }
 
         # Stuff the rendered region into the XML
+        $writer->startTag( "fragment", id => Jifty->web->current_region->qualified_name );
         $writer->cdata( Jifty->web->current_region->render );
         $writer->endTag();
     }
