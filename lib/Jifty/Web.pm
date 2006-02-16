@@ -562,6 +562,43 @@ sub new_action_from_request {
     );
 }
 
+=head3 failed_actions
+
+Returns an array of L<Jifty::Action> objects, one for each
+L<Jifty::Request::Action> that is marked as failed in the current
+response.
+
+=cut
+
+sub failed_actions {
+    my $self = shift;
+    my @actions;
+    for my $req_action ($self->request->actions) {
+        next unless $self->response->result($req_action->moniker);
+        next unless $self->response->result($req_action->moniker)->failure;
+        push @actions, $self->new_action_from_request($req_action);
+    }
+    return @actions;
+}
+
+=head3 succeeded_actions
+
+As L</failed_actions>, but for actions that completed successfully;
+less often used.
+
+=cut
+
+sub succeeded_actions {
+    my $self = shift;
+    my @actions;
+    for my $req_action ($self->request->actions) {
+        next unless $self->response->result($req_action->moniker);
+        next unless $self->response->result($req_action->moniker)->success;
+        push @actions, $self->new_action_from_request($req_action);
+    }
+    return @actions;
+}
+
 =head2 REDIRECTS AND CONTINUATIONS
 
 =head3 next_page [VALUE]

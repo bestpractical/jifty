@@ -4,48 +4,6 @@ body {
 body.calpopup {
 }
 
-#info-wrapper, #content-wrapper {
-    margin-top: 20px;
-}
-
-#info-wrapper {
-    width: 20%;
-    float: left;
-    clear: left;
-}
-
-#content-wrapper {
-    float: right;
-    width: 78%;
-}
-
-#info {
-    margin-top: 0.5em;
-    padding: 0.2em;
-}
-
-#content, #info {
-    font-size: 1.1em;
-}
-
-
-#sidebar span.user {
-    font-weight: bold;
-}
-
-#sidebar h2 {
-  border: none;
-  background: none;
-  padding: 0;
-  padding-top: 4px;
-}
-
-
-div#sidebar textarea {
-    width: 180px;
-    font-size: 80%;
-}
-
 ul.menu {
     font-size: 1.3em;
     line-height: 1.5em;
@@ -127,10 +85,6 @@ div.warning a {
 
 }
 
-div#salutation {
- float: right;
-}
-
 ul.menu {
   display: block;
 
@@ -138,5 +92,4 @@ ul.menu {
 
 h1.title {
   border-bottom: 1px solid black;
-
 }
