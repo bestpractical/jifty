@@ -164,8 +164,7 @@ sub from_data_structure {
             arguments => $f->{args},
             wrapper   => $f->{wrapper} || 0,
         );
-        while ($f->{parent}) {
-            $f = $f->{parent};
+        while ($f = $f->{parent}) {
             $current = $current->parent(Jifty::Request::Fragment->new({
                 name => $f->{name},
                 path => $f->{path},
@@ -579,7 +578,7 @@ sub add_action {
 
     $self->{'actions'}{$args{'moniker'}} = $action;
 
-    $self;
+    return $action;
 } 
 
 =head2 remove_action MONIKER
@@ -657,7 +656,7 @@ sub add_fragment {
 
     $self->{'fragments'}{$args{'name'}} = $fragment;
 
-    return $self;
+    return $fragment;
 }
 
 =head2 do_mapping PARAMHASH
