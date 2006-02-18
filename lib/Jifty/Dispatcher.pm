@@ -412,7 +412,12 @@ sub handle_request {
 
     local $Dispatcher = $self->new();
 
-            $Dispatcher->_do_dispatch($path); 
+    eval {
+        $Dispatcher->_do_dispatch($path);
+    };
+    if ( my $err = $@ ) {
+        $self->log->warn(ref($err) . " " ."'$err'") if ( $err !~ /^LAST RULE/);
+    }
 }
 
 =head2 _handle_rules RULESET
@@ -624,7 +629,8 @@ sub _do_show {
 
     # Fix up the path
     $path = shift if (@_);
-    $path ||= request->path;
+    $path ||= $self->{path};
+    $self->log->debug("Showing path $path");
 
     # If we've got a working directory (from an "under" rule) and we have 
     # a relative path, prepend the working directory
@@ -640,7 +646,7 @@ sub _do_show {
     
     # XXX TODO, we should search all component roots
     $self->_do_redirect($path . "/") 
-      if -d Jifty::Util->absolute_path( (Jifty->config->framework('Web')->{'TemplateRoot'} || "html") . $path );
+      if $path !~ m{/$} and -d Jifty::Util->absolute_path( (Jifty->config->framework('Web')->{'TemplateRoot'} || "html") . $path );
     
     # Set the request path
     request->path($path);
@@ -702,17 +708,16 @@ sub _do_dispatch {
 
     $self->log->debug("Dispatching request to ".$self->{path});
     eval {
-            $self->_handle_rules( [ $self->rules('SETUP') ] );
-            HANDLE_WEB: { Jifty->web->handle_request(); }
-            $self->_handle_rules( [ $self->rules('RUN'), 'show' ] );
-            $self->_handle_rules( [ $self->rules('CLEANUP') ] );
+        $self->_handle_rules( [ $self->rules('SETUP') ] );
+        HANDLE_WEB: { Jifty->web->handle_request(); }
+        $self->_handle_rules( [ $self->rules('RUN'), 'show' ] );
+        $self->_handle_rules( [ $self->rules('CLEANUP') ] );
     };
     if ( my $err = $@ ) {
-        warn ref($err) . " " ."'$err'" if ( $err !~ /^LAST RULE/);
+        $self->log->warn(ref($err) . " " ."'$err'") if ( $err !~ /^LAST RULE/);
     }
     last_rule;
 }
-
 
 =head2 _match CONDITION
 
