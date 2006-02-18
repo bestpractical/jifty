@@ -412,9 +412,7 @@ sub handle_request {
 
     local $Dispatcher = $self->new();
 
-HANDLER: {
-        $Dispatcher->_do_dispatch($path);
-    }
+            $Dispatcher->_do_dispatch($path); 
 }
 
 =head2 _handle_rules RULESET
@@ -704,19 +702,17 @@ sub _do_dispatch {
 
     $self->log->debug("Dispatching request to ".$self->{path});
     eval {
-        HANDLER: {
             $self->_handle_rules( [ $self->rules('SETUP') ] );
-          HANDLE_WEB: {
-                Jifty->web->handle_request();
-            }
+            HANDLE_WEB: { Jifty->web->handle_request(); }
             $self->_handle_rules( [ $self->rules('RUN'), 'show' ] );
             $self->_handle_rules( [ $self->rules('CLEANUP') ] );
-        }
     };
     if ( my $err = $@ ) {
         warn ref($err) . " " ."'$err'" if ( $err !~ /^LAST RULE/);
     }
+    last_rule;
 }
+
 
 =head2 _match CONDITION
 
