@@ -14,20 +14,20 @@ isa_ok($server, 'Jifty::Server');
 my $URL     = $server->started_ok;
 my $mech    = Jifty::Test::WWW::Mechanize->new();
 
-$mech->get_ok("$URL/dispatch/basic");
+$mech->get_ok("$URL/dispatch/basic", "Got /dispatch/basic");
 $mech->content_contains("Basic test.");
 $mech->content_contains("Count 0");
 
-$mech->get_ok("$URL/dispatch/basic-show");
+$mech->get_ok("$URL/dispatch/basic-show", "Got /dispatch/basic-show");
 $mech->content_contains("Basic test with forced show.");
 $mech->content_contains("Count 1");
 
-$mech->get_ok("$URL/dispatch/show/");
+$mech->get_ok("$URL/dispatch/show/", "Got /dispatch/show");
 $mech->content_contains("Basic test with forced show.");
 $mech->content_contains("Count 2");
 $mech->content_lacks("Count 3");
 
-$mech->get_ok("$URL/dispatch/");
+$mech->get_ok("$URL/dispatch/", "Got /dispatch/");
 $mech->content_contains("Basic test.");
 $mech->content_contains("Count 3");
 $mech->content_lacks("Count 4");
