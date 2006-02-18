@@ -1,6 +1,8 @@
-#line 1 "inc/Module/Install/Include.pm - /usr/local/share/perl/5.8.7/Module/Install/Include.pm"
+#line 1 "inc/Module/Install/Include.pm - /usr/lib/perl5/site_perl/5.8.7/Module/Install/Include.pm"
 package Module::Install::Include;
-use Module::Install::Base; @ISA = qw(Module::Install::Base);
+
+use Module::Install::Base;
+@ISA = qw(Module::Install::Base);
 
 sub include { +shift->admin->include(@_) };
 sub include_deps { +shift->admin->include_deps(@_) };

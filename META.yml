@@ -1,5 +1,5 @@
 distribution_type: module
-generated_by: Module::Install version 0.520
+generated_by: Module::Install version 0.560
 license: unknown
 name: Jifty
 no_index:
@@ -12,6 +12,7 @@ requires:
   CGI: 0
   CGI::Cookie: 0
   Cache::Cache: 0
+  Calendar::Simple: 0
   Carp: 0
   Class::Accessor: 0
   Class::Container: 0
@@ -71,4 +72,4 @@ requires:
   perl: 5.8.3
   version: 0
 tests: t/*.t t/*/t/*.t
-version: 0.51228
+version: 0.60213

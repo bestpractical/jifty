@@ -1,7 +1,11 @@
-#line 1 "inc/Module/Install/Scripts.pm - /usr/local/share/perl/5.8.7/Module/Install/Scripts.pm"
+#line 1 "inc/Module/Install/Scripts.pm - /usr/lib/perl5/site_perl/5.8.7/Module/Install/Scripts.pm"
 package Module::Install::Scripts;
-use Module::Install::Base; @ISA = qw(Module::Install::Base);
+
+use Module::Install::Base;
+@ISA = qw(Module::Install::Base);
+
 $VERSION = '0.02';
+
 use strict;
 use File::Basename ();
 
