@@ -6,4 +6,5 @@
   <script type="text/javascript" src="/js/combobox.js"></script>
   <script type="text/javascript" src="/js/key_bindings.js"></script>
   <script type="text/javascript" src="/js/bps_util.js"></script>
+  <script type="text/javascript" src="/js/rico.js"></script>
   <script type="text/javascript" src="/js/app_behaviour.js"></script>

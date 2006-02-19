@@ -16,7 +16,7 @@
 
 //-------------------- rico.js
 var Rico = {
-  Version: '1.1.0',
+  Version: '1.1.1_beta',
   prototypeVersion: parseFloat(Prototype.Version.split(".")[0] + "." + Prototype.Version.split(".")[1])
 }
 
@@ -203,6 +203,9 @@ Rico.Accordion.prototype = {
 
    showTab: function( accordionTab, animate ) {
 
+      if ( this.lastExpandedTab == accordionTab )
+         return;
+ 
       var doAnimate = arguments.length == 1 ? true : animate;
 
       if ( this.options.onHideTab )
@@ -409,9 +412,10 @@ Rico.AjaxEngine.prototype = {
    _requestOptions: function(options,xmlDoc) {
       var requestHeaders = ['X-Rico-Version', Rico.Version ];
       var sendMethod = 'post';
-      if ( xmlDoc == null )
+      if ( xmlDoc == null ) {
         if (Rico.prototypeVersion < 1.4)
-        requestHeaders.push( 'Content-type', 'text/xml' );
+        	requestHeaders.push( 'Content-type', 'text/xml' );
+	  }
       else
           sendMethod = 'get';
       (!options) ? options = {} : '';
@@ -1546,13 +1550,7 @@ Rico.Dropzone.prototype = {
 
 //-------------------- ricoEffects.js
 
-/**
-  *  Use the Effect namespace for effects.  If using scriptaculous effects
-  *  this will already be defined, otherwise we'll just create an empty
-  *  object for it...
- **/
-if ( window.Effect == undefined )
-   Rico.Effect = {};
+Rico.Effect = {};
 
 Rico.Effect.SizeAndPosition = Class.create();
 Rico.Effect.SizeAndPosition.prototype = {
@@ -2133,7 +2131,7 @@ Rico.GridViewPort.prototype = {
       this.div = table.parentNode;
       this.table = table
       this.rowHeight = rowHeight;
-      this.div.style.height = this.rowHeight * visibleRows;
+      this.div.style.height = (this.rowHeight * visibleRows) + "px";
       this.div.style.overflow = "hidden";
       this.buffer = buffer;
       this.liveGrid = liveGrid;
@@ -2280,6 +2278,11 @@ Rico.LiveGrid.prototype = {
       this.processingRequest = null;
       this.unprocessedRequest = null;
 
+      if (this.options.sortCol) {
+          this.sortCol = options.sortCol;
+          this.sortDir = options.sortDir;
+      }
+
       this.initAjax(url);
       if ( this.options.prefetchBuffer || this.options.prefetchOffset > 0) {
          var offset = 0;
@@ -2288,33 +2291,32 @@ Rico.LiveGrid.prototype = {
             this.scroller.moveScroll(offset);
             this.viewPort.scrollTo(this.scroller.rowToPixel(offset));            
          }
-         if (this.options.sortCol) {
-             this.sortCol = options.sortCol;
-             this.sortDir = options.sortDir;
-         }
          this.requestContentRefresh(offset);
       }
    },
 
    addLiveGridHtml: function() {
      // Check to see if need to create a header table.
-     if (this.table.getElementsByTagName("thead").length > 0){
-       // Create Table this.tableId+'_header'
-       var tableHeader = this.table.cloneNode(true);
-       tableHeader.setAttribute('id', this.tableId+'_header');
-       tableHeader.setAttribute('class', this.table.className+'_header');
+      if (this.table.getElementsByTagName("thead").length == 0)
+	     return;
+		
+      // Create Table this.tableId+'_header'
+      var tableHeader = this.table.cloneNode(true);
+      tableHeader.setAttribute('id', this.tableId+'_header');
+      tableHeader.setAttribute('class', this.table.className+'_header');
 
-       // Clean up and insert
-       for( var i = 0; i < tableHeader.tBodies.length; i++ ) 
-       tableHeader.removeChild(tableHeader.tBodies[i]);
-       this.table.deleteTHead();
-       this.table.parentNode.insertBefore(tableHeader,this.table);
-     }
+      // Clean up and insert
+      for( var i = 0; i < tableHeader.tBodies.length; i++ ) 
+      tableHeader.removeChild(tableHeader.tBodies[i]);
+      this.table.deleteTHead();
+     // this.table.parentNode.insertBefore(tableHeader,this.table);
 
-    new Insertion.Before(this.table, "<div id='"+this.tableId+"_container'></div>");
-    this.table.previousSibling.appendChild(this.table);
-    new Insertion.Before(this.table,"<div id='"+this.tableId+"_viewport' style='float:left;'></div>");
-    this.table.previousSibling.appendChild(this.table);
+   	  new Insertion.Before(this.table, "<div id='"+this.tableId+"_container'></div>");
+   	  this.table.previousSibling.appendChild(this.table);
+	  new Insertion.Before(this.table, tableHeader)
+      //this.table.parentNode.insertBefore(tableHeder, this.table)
+   	  new Insertion.Before(this.table,"<div id='"+this.tableId+"_viewport' style='float:left;'></div>");
+   	  this.table.previousSibling.appendChild(this.table);
    },
 
 
@@ -2507,7 +2509,7 @@ Rico.LiveGridSort.prototype = {
    // event handler....
    headerCellClicked: function(evt) {
       var eventTarget = evt.target ? evt.target : evt.srcElement;
-      var cellId = eventTarget.id;
+      var cellId = eventTarget.id || eventTarget.parentNode.id;
       var columnNumber = parseInt(cellId.substring( cellId.lastIndexOf('_') + 1 ));
       var sortedColumnIndex = this.getSortedColumnIndex();
       if ( sortedColumnIndex != -1 ) {
@@ -2635,117 +2637,6 @@ Rico.TableColumn.prototype = {
 
 
 //-------------------- ricoUtil.js
-Rico.ArrayExtensions = new Array();
-
-if (Object.prototype.extend) {
-   // in prototype.js...
-   Rico.ArrayExtensions[ Rico.ArrayExtensions.length ] = Object.prototype.extend;
-}else{
-  Object.prototype.extend = function(object) {
-    return Object.extend.apply(this, [this, object]);
-  }
-  Rico.ArrayExtensions[ Rico.ArrayExtensions.length ] = Object.prototype.extend;
-}
-
-if (Array.prototype.push) {
-   // in prototype.js...
-   Rico.ArrayExtensions[ Rico.ArrayExtensions.length ] = Array.prototype.push;
-}
-
-if (!Array.prototype.remove) {
-   Array.prototype.remove = function(dx) {
-      if( isNaN(dx) || dx > this.length )
-         return false;
-      for( var i=0,n=0; i<this.length; i++ )
-         if( i != dx )
-            this[n++]=this[i];
-      this.length-=1;
-   };
-  Rico.ArrayExtensions[ Rico.ArrayExtensions.length ] = Array.prototype.remove;
-}
-
-if (!Array.prototype.removeItem) {
-   Array.prototype.removeItem = function(item) {
-      for ( var i = 0 ; i < this.length ; i++ )
-         if ( this[i] == item ) {
-            this.remove(i);
-            break;
-         }
-   };
-  Rico.ArrayExtensions[ Rico.ArrayExtensions.length ] = Array.prototype.removeItem;
-}
-
-if (!Array.prototype.indices) {
-   Array.prototype.indices = function() {
-      var indexArray = new Array();
-      for ( index in this ) {
-         var ignoreThis = false;
-         for ( var i = 0 ; i < Rico.ArrayExtensions.length ; i++ ) {
-            if ( this[index] == Rico.ArrayExtensions[i] ) {
-               ignoreThis = true;
-               break;
-            }
-         }
-         if ( !ignoreThis )
-            indexArray[ indexArray.length ] = index;
-      }
-      return indexArray;
-   }
-  Rico.ArrayExtensions[ Rico.ArrayExtensions.length ] = Array.prototype.indices;
-}
-
-  Rico.ArrayExtensions[ Rico.ArrayExtensions.length ] = Array.prototype.unique;
-  Rico.ArrayExtensions[ Rico.ArrayExtensions.length ] = Array.prototype.inArray;
-
-
-// Create the loadXML method and xml getter for Mozilla
-if ( window.DOMParser &&
-	  window.XMLSerializer &&
-	  window.Node && Node.prototype && Node.prototype.__defineGetter__ ) {
-
-   if (!Document.prototype.loadXML) {
-      Document.prototype.loadXML = function (s) {
-         var doc2 = (new DOMParser()).parseFromString(s, "text/xml");
-         while (this.hasChildNodes())
-            this.removeChild(this.lastChild);
-
-         for (var i = 0; i < doc2.childNodes.length; i++) {
-            this.appendChild(this.importNode(doc2.childNodes[i], true));
-         }
-      };
-	}
-
-	Document.prototype.__defineGetter__( "xml",
-	   function () {
-		   return (new XMLSerializer()).serializeToString(this);
-	   }
-	 );
-}
-
-document.getElementsByTagAndClassName = function(tagName, className) {
-  if ( tagName == null )
-     tagName = '*';
-
-  var children = document.getElementsByTagName(tagName) || document.all;
-  var elements = new Array();
-
-  if ( className == null )
-    return children;
-
-  for (var i = 0; i < children.length; i++) {
-    var child = children[i];
-    var classNames = child.className.split(' ');
-    for (var j = 0; j < classNames.length; j++) {
-      if (classNames[j] == className) {
-        elements.push(child);
-        break;
-      }
-    }
-  }
-
-  return elements;
-}
-
 var RicoUtil = {
 
    getElementsComputedStyle: function ( htmlElement, cssProperty, mozillaEquivalentCSS) {
