@@ -23,6 +23,7 @@ function createCalendarLink(input) {
         var link = document.createElement('a');
         link.setAttribute('href', '#');
         link.setAttribute('onclick', "openCalWindow('"+input+"'); return false;");
+        link.setAttribute('class', 'calendar-link');
         
         var text = document.createTextNode('Calendar');
         link.appendChild(text);
