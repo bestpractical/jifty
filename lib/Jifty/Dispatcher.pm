@@ -637,17 +637,28 @@ sub _do_show {
     $path = "$self->{cwd}/$path" unless $path =~ m{^/};
 
     # If we're requesting a directory, go looking for the index.html
-    if ($path =~ m{/$} and 
-        Jifty->handler->mason->interp->comp_exists($path."/index.html")) {
-         $path .= "index.html" 
+    if ( $path =~ m{/$} and
+        Jifty->handler->mason->interp->comp_exists( $path . "/index.html" ) )
+    {
+        warn "Canonicalized $path with /index.html";
+        $path .= "/index.html";
     }
-    # Redirect to directory (and then index) if they requested 
+
+    # Redirect to directory (and then index) if they requested
     # the directory itself
-    
+
     # XXX TODO, we should search all component roots
-    $self->_do_redirect($path . "/") 
-      if $path !~ m{/$} and -d Jifty::Util->absolute_path( (Jifty->config->framework('Web')->{'TemplateRoot'} || "html") . $path );
     
+    if ($path !~ m{/$}
+        and -d Jifty::Util->absolute_path(
+            Jifty->config->framework('Web')->{'TemplateRoot'} . $path
+        )
+        )
+    {
+
+        $self->_do_dispatch( $path . "/" );
+    }
+
     # Set the request path
     request->path($path);
 
@@ -704,7 +715,6 @@ sub _do_dispatch {
 
     # Normalize the path.
     $self->{path} =~ s{/+}{/}g;
-    $self->{path} =~ s{/$}{};
 
     $self->log->debug("Dispatching request to ".$self->{path});
     eval {
