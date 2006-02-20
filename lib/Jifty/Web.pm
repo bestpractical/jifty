@@ -664,6 +664,9 @@ sub _redirect {
     my $self = shift;
     my ($page) = @_;
 
+    # $page can't lead with // or it assumes it's a URI scheme.
+    $page =~ s{^/+}{/};
+
     # This is designed to work under CGI or FastCGI; will need an
     # abstraction for mod_perl
 
@@ -672,6 +675,7 @@ sub _redirect {
 
     my $apache = Jifty->handler->apache;
 
+    $self->log->debug("Redirecting to $page");
     # Headers..
     $apache->header_out( Location => $page );
     $apache->header_out( Status => 302 );
