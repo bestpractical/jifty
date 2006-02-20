@@ -640,7 +640,6 @@ sub _do_show {
     if ( $path =~ m{/$} and
         Jifty->handler->mason->interp->comp_exists( $path . "/index.html" ) )
     {
-        warn "Canonicalized $path with /index.html";
         $path .= "/index.html";
     }
 
@@ -656,7 +655,7 @@ sub _do_show {
         )
     {
 
-        $self->_do_dispatch( $path . "/" );
+        $self->_do_show( $path . "/" );
     }
 
     # Set the request path
@@ -725,6 +724,7 @@ sub _do_dispatch {
     };
     if ( my $err = $@ ) {
         $self->log->warn(ref($err) . " " ."'$err'") if ( $err !~ /^LAST RULE/);
+
     }
     last_rule;
 }
@@ -844,7 +844,7 @@ sub _compile_condition {
     if ( $Dispatcher->{rule} eq 'on' ) {
 
         # "on" anchors on complete match only
-        $cond .= '\\z';
+        $cond .= '/?\\z';
     } else {
 
         # "in" anchors on prefix match in directory boundary
