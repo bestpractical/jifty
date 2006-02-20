@@ -149,8 +149,16 @@ state that we need.
 
 sub call {
     my $self = shift;
+    my $called_uri = $ENV{'REQUEST_URI'};
+    my $request_path = $self->request->path;
 
-    if (defined $self->request->path and $ENV{REQUEST_URI} ne $self->request->path . "?J:CALL=" . $self->id) {
+    # XXX TODO: WE should be using URI canonicalization
+    $called_uri =~ s{/+}{/}g; 
+    $request_path =~ s{/+}{/}g; 
+
+
+    if (defined $request_path and 
+        ($called_uri ne $request_path . "?J:CALL=" . $self->id)) {
         # Clone our request
         my $request = Clone::clone($self->request);
         
