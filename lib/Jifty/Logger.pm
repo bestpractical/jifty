@@ -50,7 +50,7 @@ sub new {
             Log::Log4perl->init($log_config);
         } else {
             my %default = (
-                'log4perl.rootLogger'        => "ALL,Screen",
+                'log4perl.rootLogger'        => "INFO,Screen",
                 '#log4perl.logger.SchemaTool' => "INFO,Screen",
                 'log4perl.appender.Screen'   => 'Log::Log4perl::Appender::Screen',
                 'log4perl.appender.Screen.stderr' => 1,
