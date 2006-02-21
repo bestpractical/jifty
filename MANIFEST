@@ -111,10 +111,6 @@ share/web/static/css/keybindings.css
 share/web/static/css/main.css
 share/web/static/css/nav.css
 share/web/static/favicon.ico
-share/web/static/images/atom.png
-share/web/static/images/ical.png
-share/web/static/images/pdf.png
-share/web/static/images/plaintext.png
 share/web/static/images/pony.jpg
 share/web/static/js/app_behaviour.js
 share/web/static/js/behaviour.js
