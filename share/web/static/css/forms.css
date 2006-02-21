@@ -48,9 +48,14 @@ input, textarea {
     padding: 0.2em;
 }
 
-.submit {
+.submit_button {
+    display: block;
     clear: both;
-    border: 1px outset #793300;
+}
+
+.submit_button input {
+    clear: both;
+    border: 1px outset black;
     background: white;
     padding: 0.2em 1em;
     font-weight: bold;
@@ -61,20 +66,12 @@ h2.inline input {
     font-size: 115%;
 }
 
-span.submit_button {
-    padding-left: 60%;
-    padding-right: 5px;
-    padding-top: 5px;
-    padding-bottom: 5px;
-}
-
 /*
 These styles are meant to be placed after (and hence override) the current CSS
 for forms.  Some of the rules aren't needed if previous behavior doesn't need to
 be overridden.  ".inline" is our inline form class.
 */
 
-div.inline,
 div.inline .submit_button
 {
 }
