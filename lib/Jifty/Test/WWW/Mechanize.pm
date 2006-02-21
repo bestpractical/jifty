@@ -255,7 +255,8 @@ sub follow_link_ok {
 
 =head2 session
 
-Returns the server-side session associated with this Mechanize object.
+Returns the server-side L<Jifty::Web::Session> object associated with
+this Mechanize object.
 
 =cut
 
@@ -287,6 +288,21 @@ sub continuation {
     ($id) = $self->uri =~ /J:C(?:ALL)?=([^&;]+)/ unless $id;
 
     return $session->get_continuation($id);
+}
+
+=head2 current_user
+
+Returns the L<Jifty::CurrentUser> object or descendant, if any.
+
+=cut
+
+sub current_user {
+    my $self = shift;
+
+    my $session = $self->session;
+    return undef unless $session;
+
+    return $session->get('user');
 }
 
 1;
