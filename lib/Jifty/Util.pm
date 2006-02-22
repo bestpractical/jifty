@@ -152,6 +152,28 @@ sub make_path {
 
 }
 
+=head2 require PATH
+
+Uses L<UNIVERSAL::require> to require the provided C<PATH>.
+Additionally, logs any failures at the C<error> log level.
+
+=cut
+
+sub require {
+    my $self = shift;
+    my $class = shift;
+
+    $class->require;
+    if ($UNIVERSAL::require::ERROR) {
+        my $error = $UNIVERSAL::require::ERROR;
+        $error =~ s/ at .*?\n$//;
+        Jifty->log->error(sprintf("$error at %s line %d\n",
+                                 (caller)[1,2]));
+        return 0;
+    }
+    return 1;
+}
+
 =head1 AUTHOR
 
 Various folks at Best Practical Solutions, LLC.

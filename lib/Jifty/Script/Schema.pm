@@ -66,8 +66,8 @@ sub setup_environment {
     my $self = shift;
 
     # Import Jifty
-    Jifty->require                or die $UNIVERSAL::require::ERROR;
-    Jifty::Model::Schema->require or die $UNIVERSAL::require::ERROR;
+    Jifty::Util->require("Jifty");
+    Jifty::Util->require("Jifty::Model::Schema");
 }
 
 
@@ -226,7 +226,7 @@ sub create_all_tables {
         # Load initial data
         eval {
             my $bootstrapper = $self->{'_application_class'} . "::Bootstrap";
-            $bootstrapper->require();
+            Jifty::Util->require($bootstrapper);
 
             $bootstrapper->run()
                 if ( UNIVERSAL::can( $bootstrapper => 'run' ) );
@@ -274,7 +274,8 @@ sub upgrade_tables {
     # Figure out what versions the upgrade knows about.
     eval {
         my $upgrader = $self->{'_application_class'} . "::Upgrade";
-        $upgrader->require();
+        Jifty::Util->require($upgrader);
+
         $UPGRADES{$_} = [ $upgrader->upgrade_to($_) ]
             for grep { $appv >= version->new($_) and $dbv < version->new($_) }
             $upgrader->versions();

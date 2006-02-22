@@ -168,7 +168,8 @@ sub current_user {
     }
     else {
         my $class = Jifty->config->framework('CurrentUserClass');
-        $class->require;
+        Jifty::Util->require($class);
+
         my $object = $class->new();
         $object->is_superuser(1) if Jifty->config->framework('AdminMode');
         return ($object);
@@ -520,16 +521,11 @@ sub new_action {
         unless $class =~ /^\Q$base_path\E::/
         or $class     =~ /^Jifty::Action::/;
 
-    unless ( $class->require ) {
-
-# The implementation class is provided by the client, so this isn't a "shouldn't happen"
-        $self->log->error( "Error requiring $class: ",
-            $UNIVERSAL::require::ERROR );
-        return;
-    }
+    # The implementation class is provided by the client, so this
+    # isn't a "shouldn't happen"
+    return unless Jifty::Util->require( $class );
 
     my $action;
-
     # XXX TODO bullet proof
     eval { $action = $class->new( %args, arguments => {%arguments} ); };
     if ($@) {
@@ -643,7 +639,7 @@ sub redirect {
     my $self = shift;
     my $page = shift || $self->next_page;
 
-    if (   $self->response->results
+    if ( ($self->response and $self->response->results)
         or $self->request->state_variables )
     {
         my $request = Jifty::Request->new();

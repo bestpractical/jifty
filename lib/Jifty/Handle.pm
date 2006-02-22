@@ -40,7 +40,8 @@ sub new {
     # We do this to avoid Jifty::DBI::Handle's magic reblessing, because
     # it breaks subclass methods.
     my $driver_class  = "Jifty::DBI::Handle::".  $driver;
-    $driver_class->require;
+    Jifty::Util->require($driver_class);
+
     unshift @ISA, $driver_class;
     return $class->SUPER::new();
 }

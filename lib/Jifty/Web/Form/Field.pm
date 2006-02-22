@@ -75,9 +75,7 @@ sub new {
     }
     if ($subclass) { 
         $subclass = 'Jifty::Web::Form::Field::' . $subclass unless $subclass =~ /::/;
-        if ( $subclass->require() ) {
-            bless $self, $subclass;
-        }
+        bless $self, $subclass if Jifty::Util->require($subclass);
     }
 
     for my $field ( $self->accessors() ) {

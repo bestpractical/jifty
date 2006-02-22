@@ -63,9 +63,7 @@ sub new {
     my $self = $class->SUPER::new(%args);
 
     my $record_class = $self->record_class;
-    $record_class->require;
-
-    $self->log->error("Can't require $record_class") if $UNIVERSAL::require::ERROR;
+    Jifty::Util->require($record_class);
 
     # Set up record
     if (ref $record_class) {
