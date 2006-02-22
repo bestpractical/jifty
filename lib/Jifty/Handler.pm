@@ -152,7 +152,7 @@ sub handle_request {
     ));
 
     $self->dispatcher(Jifty->config->framework('ApplicationClass')."::Dispatcher");
-    $self->dispatcher->require;
+    $self->dispatcher->require or Jifty->log->error("Compile error in ".$self->dispatcher.": $@");
     $self->dispatcher->handle_request();
 
     $self->cleanup_request();
