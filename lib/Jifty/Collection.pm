@@ -34,7 +34,6 @@ the C<pager> method to B<get> information related to paging.
 
 use base qw/Jifty::Object Jifty::DBI::Collection Class::Accessor/;
 use Data::Page;
-use UNIVERSAL::require;
 
 =head1 MODEL
 

@@ -15,6 +15,7 @@ Jifty::Util - Things that don't fit anywhere else
 use Jifty::Everything;
 use File::Spec;
 use File::ShareDir;
+use UNIVERSAL::require;
 use Cwd ();
 
 # Trivial memoization to ward off evil Cwd calls.

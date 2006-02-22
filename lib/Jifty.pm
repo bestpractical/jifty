@@ -57,7 +57,6 @@ probably a better place to start.
 =cut
 
 use Jifty::Everything;
-use UNIVERSAL::require;
 
 use base qw/Jifty::Object/;
 

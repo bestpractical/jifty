@@ -5,7 +5,6 @@ package Jifty::Script::Schema;
 use base qw/App::CLI::Command/;
 
 use Pod::Usage;
-use UNIVERSAL::require;
 use version;
 use Jifty::DBI::SchemaGenerator;
 use Jifty::Config;

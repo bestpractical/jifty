@@ -16,7 +16,6 @@ use Jifty::Everything;
 use Jifty::DBI::Handle;
 use Jifty::Util;
 use Jifty::YAML;
-use UNIVERSAL::require;
 use File::Spec;
 use File::Basename;
 use Log::Log4perl;

@@ -1,7 +1,6 @@
 package Jifty::Script;
 use base qw/App::CLI App::CLI::Command/;
 use Jifty::I18N;
-use UNIVERSAL::require;
 
 =head2 prepare
 
