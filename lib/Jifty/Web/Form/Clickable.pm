@@ -428,7 +428,7 @@ sub as_button {
 
 Returns a L<Jifty::Web::Form::Field::InlineButton> or
 I<Jifty::Web::Form::Link>, whichever is more appropriate given the
-paramters.
+parameters.
 
 =cut
 

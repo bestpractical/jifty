@@ -21,7 +21,7 @@ itself is instantiated with a L<Jifty::CurrentUser> subclass as a
 parameter to the creator.
 
 This class describes (and implements a trivial version) of the access
-control API that a Jifty application needs to implemenet to provide
+control API that a Jifty application needs to implement to provide
 user-based access control
 
 It's generally expected that your application will override this class
@@ -63,7 +63,7 @@ sub superuser {
 =head2 user_object 
 
 This gets or sets your application's user object for the current
-user. Generally, you're epxected to set and load it in the _init method
+user. Generally, you're expected to set and load it in the _init method
 in your L<Jifty::CurrentUser> subclass.
 
 Example:  
