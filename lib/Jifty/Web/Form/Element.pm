@@ -31,7 +31,7 @@ current region.
 
 =item prepend => PATH
 
-Add the given C<PATH> as a new fragment, just aftger the start of the
+Add the given C<PATH> as a new fragment, just after the start of the
 CSS selector given by C<element>, which defaults to the start of the
 current region.
 
@@ -86,7 +86,7 @@ fragment.
 
 =item effect_args => HASHREF
 
-A hashref of arguments to pass to the effect when it is creted.  These
+A hashref of arguments to pass to the effect when it is created.  These
 can be used to change the duration of the effect, for instance.
 
 =back
@@ -117,7 +117,7 @@ __PACKAGE__->mk_accessors(qw(onclick class key_binding id label tooltip));
 
 =head2 javascript
 
-Returns the javsscript necessary to make the events happen.
+Returns the javascript necessary to make the events happen.
 
 =cut
 

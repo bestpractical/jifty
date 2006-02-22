@@ -81,7 +81,7 @@ for details.
 
 A list of actions to run when the object is clicked.  This may be an
 array refrence of a single element; each element may either be a
-moniker of a L<Jifty::Action>.  An undefined value submits B<all>
+moniker or a L<Jifty::Action>.  An undefined value submits B<all>
 actions in the form, an empty list reference (the default) submits
 none.
 

@@ -9,7 +9,7 @@ __PACKAGE__->mk_accessors(qw(label parent sort_order));
 
 Creates a new L<Jifty::Web::Menu> object.  Possible keys in the
 I<PARAMHASH> are C<label>, C<parent>, C<sort_order>, C<url>, and
-C<active>.  See the subroutines with the respecitve name below for
+C<active>.  See the subroutines with the respective name below for
 each option's use.
 
 =cut

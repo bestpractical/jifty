@@ -87,7 +87,7 @@ sub load {
 
 =head2 unload
 
-Flush the session to diskd and quit.
+Flush the session to disk and quit.
 
 =cut
 

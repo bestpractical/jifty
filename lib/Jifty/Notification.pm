@@ -191,7 +191,7 @@ L<Jifty::Notification>'s C<send> method calls.
 
 =head2 preface
 
-Print a headerfor the message. You want to override this to print a message.
+Print a header for the message. You want to override this to print a message.
 
 Returns the message as a scalar.
 
