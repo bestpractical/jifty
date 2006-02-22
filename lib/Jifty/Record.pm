@@ -217,9 +217,12 @@ sub _value {
     unless ($self->check_read_rights(@_)) {
         return (undef);
     }
-    my $value = $self->SUPER::_value(@_);
-    utf8::upgrade($value) if defined $value;
-    $value;
+    return   Encode::decode_utf8($self->SUPER::_value(@_));
+#   This is the "Right' way to do things according to audrey, but it breaks
+#    
+#    my $value = $self->SUPER::_value(@_);
+#    utf8::upgrade($value) if defined $value;
+#    $value;
 }
 
 
