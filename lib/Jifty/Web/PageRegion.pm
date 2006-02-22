@@ -180,7 +180,17 @@ L<Jifty::Request/state_variables>.
 sub enter {
     my $self = shift;
 
+    $self->log->warn("Region occurred in more than once place: ".$self->qualified_name)
+      if (defined $self->parent and $self->parent != Jifty->web->current_region);
+
+    $self->parent(Jifty->web->current_region);
+    push @{Jifty->web->{'region_stack'}}, $self;
     $self->qualified_name(Jifty->web->qualified_region);
+
+    # Keep track of the fully qualified name (which should be unique)
+    $self->log->warn("Repeated region: " . $self->qualified_name)
+        if Jifty->web->{'regions'}{ $self->qualified_name };
+    Jifty->web->{'regions'}{ $self->qualified_name } = $self;
 
     # Merge in the settings passed in via state variables
     for (Jifty->web->request->state_variables) {
@@ -192,6 +202,20 @@ sub enter {
             $self->path($_->value);
             Jifty->web->set_variable("region-$1" => $_->value);
         }
+    }
+}
+
+=head2 exit 
+
+=cut
+
+sub exit {
+    my $self = shift;
+
+    if (Jifty->web->current_region != $self) {
+        $self->log->warn("Attempted to exit page region ".$self->qualified_name." when it wasn't the most recent");
+    } else {
+        pop @{Jifty->web->{'region_stack'}};
     }
 }
 

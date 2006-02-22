@@ -17,8 +17,6 @@ use Apache::Session;
 use XML::Writer;
 use base qw/Class::Accessor Jifty::Object/;
 
-use UNIVERSAL::require;
-
 use vars qw/$SERIAL/;
 
 __PACKAGE__->mk_accessors(
@@ -35,7 +33,7 @@ Creates a new C<Jifty::Web> object
 
 sub new {
     my $class = shift;
-    my $self = bless {}, $class;
+    my $self = bless {region_stack => []}, $class;
     $self->session(Jifty::Web::Session->new());
     return ($self);
 }
@@ -1022,8 +1020,9 @@ sub get_region {
 
 Creates and renders a L<Jifty::Web::PageRegion>; the C<PARAMHASH> is
 passed directly to its L<Jifty::Web::PageRegion/new> method.  The
-region is then added to the stack of regions, and the fragment is
-rendered.
+region is then L<Jifty::Web::PageRegion/enter>ed, then
+L<Jifty::Web::PageRegion/render>ed, and finally
+L<Jifty::Web::PageRegion/exit>ed.
 
 =cut
 
@@ -1032,19 +1031,16 @@ sub region {
 
     # Add ourselves to the region stack
     my $region = Jifty::Web::PageRegion->new(@_) or return;
-    $region->parent(Jifty->web->current_region);
-    local $self->{'region_stack'}
-        = [ @{ $self->{'region_stack'} || [] }, $region ];
-    $region->enter;
 
-    # Keep track of the fully qualified name (which should be unique)
-    warn "Repeated region: " . $self->qualified_region
-        if $self->{'regions'}{ $self->qualified_region };
-    $self->{'regions'}{ $self->qualified_region } = $region;
+    # Enter the region
+    $region->enter;
 
     # Render it
     $self->out( $region->render );
 
+    # Exit it when we're done
+    $region->exit;
+    
     "";
 }
 
@@ -1105,7 +1101,6 @@ sub serve_fragments {
                 parent         => Jifty->web->current_region,
                 defaults       => $f->arguments,
             );
-            push @{ Jifty->web->{'region_stack'} }, $new;
             $new->enter;
         }
 
@@ -1113,6 +1108,8 @@ sub serve_fragments {
         $writer->startTag( "fragment", id => Jifty->web->current_region->qualified_name );
         $writer->cdata( Jifty->web->current_region->render );
         $writer->endTag();
+
+        Jifty->web->current_region->exit while Jifty->web->current_region;
     }
     $writer->endTag();
 
