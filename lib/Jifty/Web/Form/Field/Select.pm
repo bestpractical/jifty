@@ -20,7 +20,8 @@ sub render_widget {
     $field .= qq!      >\n!;
     for my $opt (@{ $self->action->available_values($self->name) }) {
         my $display = $opt->{'display'};
-        my $value   = $opt->{'value'} ||'' ;
+        my $value   = $opt->{'value'};
+        $value = "" unless defined $value;
         # TODO XXX FIXME worry about escape value, display?
         $field .= qq!<option value="$value"!;
         $field .= qq! selected="selected"!
