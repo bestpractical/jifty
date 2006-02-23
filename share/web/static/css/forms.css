@@ -55,11 +55,14 @@ input, textarea {
 
 .submit_button input {
     clear: both;
+    margin: 0.5em 0 0 16%;
+}
+
+input.button {
     border: 1px outset black;
     background: white;
     padding: 0.2em 1em;
     font-weight: bold;
-    margin: 0.5em 0 0 16%;
 }
 
 h2.inline input {
