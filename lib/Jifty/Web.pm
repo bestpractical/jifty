@@ -215,8 +215,6 @@ For more details about continuations, see L<Jifty::Continuation>.
 sub handle_request {
     my $self = shift;
     die "No request to handle" unless Jifty->web->request;
-    Jifty->web->response( Jifty::Response->new ) unless $self->response;
-    Jifty->web->setup_session;
 
     my @valid_actions;
     for my $request_action ( $self->request->actions ) {
@@ -637,7 +635,7 @@ sub redirect {
     my $self = shift;
     my $page = shift || $self->next_page;
 
-    if ( ($self->response and $self->response->results)
+    if (   $self->response->results
         or $self->request->state_variables )
     {
         my $request = Jifty::Request->new();
@@ -806,7 +804,7 @@ sub tangent {
             for keys %{ $self->{'state_variables'} };
 
         my $request = Jifty::Request->new(path => Jifty->web->request->path)
-          ->from_webform($clickable->get_parameters);
+          ->from_webform(%{Jifty->web->request->arguments}, $clickable->get_parameters);
         local Jifty->web->{request} = $request;
         Jifty->web->handle_request();
     }

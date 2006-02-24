@@ -145,6 +145,10 @@ sub handle_request {
     local $HTML::Mason::Commands::JiftyWeb = Jifty::Web->new();
     Jifty->web->request(Jifty::Request->new()->fill($self->cgi));
 
+    Jifty->web->response( Jifty::Response->new );
+    Jifty->web->setup_session;
+    Jifty->web->session->set_cookie;
+
     Jifty->log->debug("Received request for ".Jifty->web->request->path);
 
     $self->mason(Jifty::MasonHandler->new(
