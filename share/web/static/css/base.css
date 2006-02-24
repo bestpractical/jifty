@@ -4,21 +4,6 @@ body {
 body.calpopup {
 }
 
-ul.menu {
-    font-size: 1.3em;
-    line-height: 1.5em;
-    list-style: none;
-    padding-left: 0;
-    margin-left: 0.5em;
-}
-
-ul.menu ul.submenu {
-    font-size: 0.95em;
-    line-height: 1.1em;
-    margin-top: 0.1em;
-    margin-bottom: 0.2em;
-}
-
 .error {
     color: #a00000;
 }

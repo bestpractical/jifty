@@ -1,0 +1,32 @@
+<%args>
+$menu => undef
+</%args>
+<%init>
+# Default to the app menu
+$menu = Jifty->web->navigation if not defined $menu;
+</%init>
+<ul class="menu">
+<%perl>
+$m->comp( ".menu", item => $_ )
+    for sort { $a->sort_order <=> $b->sort_order }
+             $menu->children;
+</%perl>
+</ul>
+
+<%def .menu>
+  <%args>
+    $item
+  </%args>
+  <li <%  $item->active ? 'class="active"' : '' |n %>><% 
+    Jifty->web->link(
+        url   => $item->url,
+        label => $item->label,
+    ) %>
+% if (my @kids = $item->children) {
+    <ul class="submenu">
+% $m->comp(".menu", item => $_) for @kids;
+    </ul>
+% }
+  </li>
+</%def>
+

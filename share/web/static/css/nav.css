@@ -13,19 +13,19 @@ div#navigation ul {
         line-height:11px;
         color:#000;
 }
-ul#menu {
+ul.menu {
         margin:0;
         padding:6px 0 5px 0;
         background-color:#202F66;
         list-style-type:none;
         border-bottom:2px solid #000;
 }
-ul#menu li {
+ul.menu li {
         display:inline;
         margin:0;
         padding:0;
 }
-ul#submenu {
+ul.submenu {
         margin:0;
         padding:5px 0;
         background-color:#24568E;
@@ -34,12 +34,12 @@ ul#submenu {
         top: 22px;
         left:0;
 }
-ul#submenu li {
+ul.submenu li {
         display:inline;
         margin:0;
         padding:0;
 }
-ul#submenu li+li {
+ul.submenu li+li {
         border-left:1px solid #ccc;
 }
 div#navigation a:link,
@@ -50,31 +50,31 @@ div#navigation a:hover {
         padding:5px;
         background-color:#202F66;
 }
-div#navigation ul#menu a:link,
-div#navigation ul#menu a:visited,
-div#navigation ul#menu a:hover {
+div#navigation ul.menu a:link,
+div#navigation ul.menu a:visited,
+div#navigation ul.menu a:hover {
         font-weight:bold;
         border:1px solid #000;
         text-transform:uppercase;
 }
-div#navigation ul#menu a:hover {
+div#navigation ul.menu a:hover {
         background-color:#24568E;
 }
-div#navigation ul#menu li.active a:link,
-div#navigation ul#menu li.active a:visited,
-div#navigation ul#menu li.active a:hover {
+div#navigation ul.menu li.active a:link,
+div#navigation ul.menu li.active a:visited,
+div#navigation ul.menu li.active a:hover {
         background-color:#24568E;
         font-weight: bold;
         border-bottom-color:#24568E;
 }
-div#navigation ul#submenu a:link,
-div#navigation ul#submenu a:visited,
-div#navigation ul#submenu a:hover {
+div#navigation ul.submenu a:link,
+div#navigation ul.submenu a:visited,
+div#navigation ul.submenu a:hover {
         font-weight:normal;
         padding:0 5px;
         background-color:#24568E;
         border:0;
 }
-div#navigation ul#submenu a:hover {
+div#navigation ul.submenu a:hover {
         text-decoration:underline;
 }

@@ -1,0 +1,3 @@
+<div class="page_nav">
+<& /_elements/menu, menu => Jifty->web->page_navigation &>
+</div>

@@ -946,6 +946,22 @@ sub navigation {
     return $self->{navigation};
 }
 
+=head3 page_navigation
+
+Returns the L<Jifty::Web::Menu> for this web request; one is
+automatically created if it hasn't been already.  This is useful
+for separating page-level navigation from app-level navigation.
+
+=cut
+
+sub page_navigation {
+    my $self = shift;
+    if (!$self->{page_navigation}) {
+        $self->{page_navigation} = Jifty::Web::Menu->new();
+    }
+    return $self->{page_navigation};
+}
+
 =head2 STATE VARIABLES
 
 =head3 get_variable NAME
