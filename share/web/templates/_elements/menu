@@ -17,16 +17,19 @@ $m->comp( ".menu", item => $_ )
   <%args>
     $item
   </%args>
-  <li <%  $item->active ? 'class="active"' : '' |n %>><% 
+  <%init>
+    my @kids = $item->children;
+  </%init>
+  <li <%  $item->active ? 'class="active"' : '' |n %>><%
     Jifty->web->link(
         url   => $item->url,
         label => $item->label,
-    ) %>
-% if (my @kids = $item->children) {
+    ) %><% @kids ? '' : '</li>' |n %>
+% if (@kids) {
     <ul class="submenu">
 % $m->comp(".menu", item => $_) for @kids;
     </ul>
-% }
   </li>
+% }
 </%def>
 
