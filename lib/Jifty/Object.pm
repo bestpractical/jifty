@@ -60,6 +60,9 @@ sub _get_current_user {
     }
     my $depth = 1;
     my $caller;
+
+    local $SIG{'__DIE__'} = 'IGNORE';
+
     eval {
         package DB;
 
