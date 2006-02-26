@@ -81,6 +81,7 @@ sub export_curried_sub {
     );
     no strict 'refs';
     no warnings 'redefine';
+    # XXX TODO clkao points out that this call should use Hook::LexWrap
     local *{ $args{'as'} } = sub { \&{  $args{'sub_name'} }(shift @_, @{ $args{'args'} }, @_ ) };
 
     local @{Jifty::RightsFrom::EXPORT_OK} = ($args{as});

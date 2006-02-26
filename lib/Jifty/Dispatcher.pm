@@ -407,10 +407,11 @@ sub handle_request {
     my $self = shift;
 
     my $path = Jifty->web->request->path;
+    # XXX TODO: jesse commented this out because it weirdly breaks things
+    #    $path =~ s{/index\.html$}{};
 
     local $Dispatcher = $self->new();
-    local $SIG{__DIE__} = 'IGNORE';
-    local $SIG{__WARN__} = 'IGNORE';
+
     eval {
         $Dispatcher->_do_dispatch($path);
     };
