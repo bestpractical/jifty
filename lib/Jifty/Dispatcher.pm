@@ -406,14 +406,18 @@ to do is to put the following two lines first:
 sub handle_request {
     my $self = shift;
 
-    my $path = Jifty->web->request->path;
-    # XXX TODO: jesse commented this out because it weirdly breaks things
-    #    $path =~ s{/index\.html$}{};
 
     local $Dispatcher = $self->new();
 
+    # Mason introduces a DIE handler that generates a mason exception
+    # which in turn generates a backtrace. That's fine when you only
+    # do it once per request. But it's really, really painful when you do it
+    # often, as is the case with fragments
+    #
+    local $SIG{__DIE__} = 'IGNORE';
+
     eval {
-        $Dispatcher->_do_dispatch($path);
+        $Dispatcher->_do_dispatch( Jifty->web->request->path);
     };
     if ( my $err = $@ ) {
         $self->log->warn(ref($err) . " " ."'$err'") if ( $err !~ /^LAST RULE/);
