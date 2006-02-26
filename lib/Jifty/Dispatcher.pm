@@ -455,18 +455,17 @@ sub _handle_rule {
     my ( $self, $rule ) = @_;
     my ( $op,   @args );
 
-    # Handle the case where $op is a code reference.
-    {
-        local $@;
-        eval { ( $op, @args ) = @$rule };
-        ( $op, @args ) = ( run => $rule ) if $@;
+    # Handle the case where $rule is an array reference.
+    if (ref($rule) eq 'ARRAY') {
+        ( $op, @args ) = @$rule;
+    } else {
+        ( $op, @args ) = ( run => $rule );
     }
 
     # Handle the case where $op is an array.
     my $sub_rules;
-    {
-        local $@;
-        eval { $sub_rules = [ @$op, @args ] };
+    if (ref($op) eq 'ARRAY' ) {
+         $sub_rules = [ @$op, @args ];
     }
 
     if ($sub_rules) {
