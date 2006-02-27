@@ -164,12 +164,13 @@ sub require {
     my $self = shift;
     my $class = shift;
 
+    my $path =  join('/', split(/::/,$class)).".pm";
+   return 1 if $INC{$path};
     $class->require;
     if ($UNIVERSAL::require::ERROR) {
-        my $error = $UNIVERSAL::require::ERROR;
+       my $error = $UNIVERSAL::require::ERROR;
         $error =~ s/ at .*?\n$//;
-        Jifty->log->error(sprintf("$error at %s line %d\n",
-                                 (caller)[1,2]));
+        Jifty->log->error(sprintf("$error at %s line %d\n", (caller)[1,2]));
         return 0;
     }
     return 1;
