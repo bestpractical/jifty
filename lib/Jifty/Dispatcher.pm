@@ -408,13 +408,14 @@ sub handle_request {
 
 
     local $Dispatcher = $self->new();
-
+    # We don't want the previous mason request hanging aroudn once we start dispatching
+    local $HTML::Mason::Commands::m = undef;
     # Mason introduces a DIE handler that generates a mason exception
     # which in turn generates a backtrace. That's fine when you only
     # do it once per request. But it's really, really painful when you do it
     # often, as is the case with fragments
     #
-    local $SIG{__DIE__} = 'IGNORE';
+    local $SIG{__DIE__} = 'DEFAULT';
 
     eval {
         $Dispatcher->_do_dispatch( Jifty->web->request->path);
@@ -488,7 +489,17 @@ sub _handle_rule {
 no warnings 'exiting';
 
 sub next_rule { next RULE }
-sub last_rule { die "LAST RULE"; }
+sub last_rule { 
+    
+    # Mason introduces a DIE handler that generates a mason exception
+    # which in turn generates a backtrace. That's fine when you only
+    # do it once per request. But it's really, really painful when you do it
+    # often, as is the case with fragments
+   
+      local $SIG{__DIE__} = 'IGNORE';
+
+    die "LAST RULE"; 
+}
 sub next_show { last HANDLE_WEB }
 
 =head2 _do_under

@@ -67,7 +67,7 @@ sub _get_current_user {
     # do it once per request. But it's really, really painful when you do it
     # often, as is the case with fragments
     #
-    local $SIG{__DIE__} = 'IGNORE';
+    local $SIG{__DIE__} = 'DEFAULT';
     eval {
         package DB;
 
