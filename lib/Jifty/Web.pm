@@ -647,7 +647,12 @@ sub redirect {
             response => $self->response,
             parent   => $self->request->continuation,
         );
-        $page = $page . "?J:CALL=" . $cont->id;
+        if ($page =~ /\?/) {
+            $page .= "&";
+        } else {
+            $page .= "?";
+        }
+        $page .="J:CALL=" . $cont->id;
     }
     $self->_redirect($page);
 }
@@ -674,7 +679,7 @@ sub _redirect {
     $apache->send_http_header();
 
     # Abort or last_rule out of here
-#    $self->mason->abort if $self->mason;
+    $self->mason->abort if $self->mason;
     Jifty::Dispatcher::last_rule();
 
 }
