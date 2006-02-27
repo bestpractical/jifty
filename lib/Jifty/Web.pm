@@ -674,7 +674,7 @@ sub _redirect {
     $apache->send_http_header();
 
     # Abort or last_rule out of here
-    $self->mason->abort if $self->mason;
+#    $self->mason->abort if $self->mason;
     Jifty::Dispatcher::last_rule();
 
 }
