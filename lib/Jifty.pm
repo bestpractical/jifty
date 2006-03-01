@@ -104,11 +104,12 @@ sub new {
     __PACKAGE__->config( Jifty::Config->new() );
 
     __PACKAGE__->logger( Jifty::Logger->new( $args{'logger_component'} ) );
+   # Get a classloader set up
+   Jifty::ClassLoader->new->require;
+
     __PACKAGE__->dispatcher(Jifty::Dispatcher->new());
     __PACKAGE__->handler(Jifty::Handler->new());
 
-   # Get a classloader set up
-   Jifty::ClassLoader->new->require;
 
    # Let's get the database rocking and rolling
    __PACKAGE__->setup_database_connection(%args);

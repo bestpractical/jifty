@@ -48,6 +48,8 @@ sub new {
     };
 
 
+    $self->dispatcher(Jifty->config->framework('ApplicationClass')."::Dispatcher");
+    Jifty::Util->require($self->dispatcher);
     return $self;
 }
 
@@ -151,12 +153,8 @@ sub handle_request {
 
     Jifty->log->debug("Received request for ".Jifty->web->request->path);
 
-    $self->mason(Jifty::MasonHandler->new(
-        $self->mason_config,
-    ));
 
-    $self->dispatcher(Jifty->config->framework('ApplicationClass')."::Dispatcher");
-    Jifty::Util->require($self->dispatcher);
+    $self->mason(Jifty::MasonHandler->new( $self->mason_config,));
     $self->dispatcher->handle_request();
 
     $self->cleanup_request();

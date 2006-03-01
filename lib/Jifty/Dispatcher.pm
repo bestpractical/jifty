@@ -286,6 +286,7 @@ sub import {
     my @args  = grep { !/^-[Bb]ase/ } @_;
 
     no strict 'refs';
+    no warnings 'once';
     for (qw(RULES RULES_SETUP RULES_CLEANUP)) {
         @{ $pkg . '::' . $_ } = ();
     }
