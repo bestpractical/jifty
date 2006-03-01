@@ -31,7 +31,7 @@ span.halo_button {
 div#render_info_tree {
    display: none;
    position: fixed;
-   font-size: 0.5em;
+   background: white;
    border: 1px solid yellow;
    right: 1em;
    bottom: 1em;

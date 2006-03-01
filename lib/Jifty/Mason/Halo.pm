@@ -3,7 +3,7 @@ use strict;
 package Jifty::Mason::Halo;
 use base qw/HTML::Mason::Plugin/;
 use Time::HiRes ();
-
+Jifty->handle->log_sql_statements(1);
 
 =head1 NAME
 
@@ -36,8 +36,10 @@ sub start_component_hook {
     my $halo_base = Jifty->web->serial;
 
     $context->request->notes('_halo_depth' => ++$DEPTH);
-
-
+    if ($STACK->[-1]) {
+        push @{$STACK->[-1]->{sql_statements}}, Jifty->handle->sql_statement_log;
+        Jifty->handle->clear_sql_statement_log;
+    }
 
         push @$STACK,
             {
@@ -79,6 +81,12 @@ sub end_component_hook {
 
     my $frame = $STACK->[$FRAME_ID];
     $frame->{'render_time'} = int((Time::HiRes::time - $frame->{'start_time'}) * 1000)/1000;
+
+
+    push @{$frame->{sql_statements}}, Jifty->handle->sql_statement_log;
+    Jifty->handle->clear_sql_statement_log;
+
+
     $context->request->notes('_halo_depth' => $DEPTH-1 );
 
     # If 
@@ -119,8 +127,9 @@ Jifty->web->mason->out(Jifty->web->tangent( url =>"/=/edit/mason_component/".$st
 
 Jifty->web->mason->out(qq{</dt>
 <dt>Variables</dt>
-<dd><pre>@{[YAML::Dump($stack_frame->{'args'})]}</pre></dd>
-
+<dd><textarea rows="5" cols="80">@{[YAML::Dump($stack_frame->{'args'})]}</textarea></dd>
+<dt>SQL Statements</dt>
+<dd><textarea rows="5" cols="80">@{[YAML::Dump($stack_frame->{'sql_statements'})]}</textarea></dd>
 </dl>
 </div>
 })
