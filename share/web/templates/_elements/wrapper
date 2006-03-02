@@ -13,7 +13,7 @@ Alert: Jifty <% Jifty->web->tangent( label => 'administration mode' , url => '/_
 % }
   <% Jifty->web->render_messages %>
   <% $m->content |n%>
-  <script language="javascript"><!--
+  <script type="text/javascript"><!--
   document.write('<div id="keybindings">');
   writeKeyBindingLegend();
   document.write('</div>');
