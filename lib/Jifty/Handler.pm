@@ -36,10 +36,11 @@ Create a new Jifty::Handler object. Generally, Jifty.pm does this only once at s
 
 sub new {
     my $class = shift;
-    my $self = {};
+    my $self  = {};
     bless $self, $class;
 
     $self->create_cache_directories();
+
     # Creating a new CGI object breaks FastCGI in all sorts of painful
     # ways.  So wrap the call and preempt it if we already have one
     use CGI;
@@ -47,9 +48,10 @@ sub new {
         $_[-1] = Jifty->handler->cgi if Jifty->handler->cgi;
     };
 
-
-    $self->dispatcher(Jifty->config->framework('ApplicationClass')."::Dispatcher");
-    Jifty::Util->require($self->dispatcher);
+    $self->dispatcher(
+        Jifty->config->framework('ApplicationClass') . "::Dispatcher" );
+    Jifty::Util->require( $self->dispatcher );
+    $self->mason( Jifty::MasonHandler->new( $self->mason_config ) );
     return $self;
 }
 
@@ -156,7 +158,6 @@ sub handle_request {
     # This should done in "new", but something is causing Jifty to handle 
     # one and only one session. after that, it gives us http headers but no content
     #
-    $self->mason(Jifty::MasonHandler->new( $self->mason_config,));
     $self->dispatcher->handle_request();
 
     $self->cleanup_request();
