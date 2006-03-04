@@ -275,12 +275,14 @@ sub render {
     $subrequest->is_subrequest( 1 );
     local Jifty->web->{request} = $subrequest;
 
-    # Convince Mason to tack its response onto a variable and not send
+    # While we're inside this region, 
+    # have Mason to tack its response onto a variable and not send
     # headers when it does so
-    Jifty->handler->mason->interp->out_method( sub { $result .= $_[0]; });
+    # XXX TODO: this internals diving is icky
+    local Jifty->handler->mason->interp->{'out_method'} = \$result;
 
     # Call into the dispatcher
-    Jifty->dispatcher->handle_request;
+     Jifty->dispatcher->handle_request;
 
     if ($self->region_wrapper) {
         $result .= qq|</div>|;
