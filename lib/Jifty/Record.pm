@@ -80,6 +80,16 @@ sub create {
 }
 
 
+=head2 primary_key
+
+Returns the default primary key for record columns: 'id'.
+This routine short-circuits a much heavier call up through Jifty::DBI
+
+=cut
+
+sub primary_key {'id'}
+
+
 =head2 load_or_create
 
 Attempts to load a record with the named parameters passed in.  If it
@@ -286,11 +296,11 @@ sub _to_record {
 
     return unless defined $value;
     return undef unless $classname;
-    return unless UNIVERSAL::isa( $classname, 'Jifty::DBI::Record' );
+    return unless UNIVERSAL::isa( $classname, 'Jifty::Record' );
 
     # XXX TODO FIXME we need to figure out the right way to call new here
     # perhaps the handle should have an initiializer for records/collections
-    my $object = $classname->new();
+    my $object = $classname->new(current_user => $self->current_user);
     $object->load_by_cols(( $column->by || 'id')  => $value);
     return $object;
 }
