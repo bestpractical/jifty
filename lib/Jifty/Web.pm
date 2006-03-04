@@ -165,10 +165,7 @@ sub current_user {
         return $self->session->get('user');
     }
     else {
-        my $class = Jifty->config->framework('CurrentUserClass');
-        Jifty::Util->require($class);
-
-        my $object = $class->new();
+        my $object = Jifty->config->framework('CurrentUserClass')->new();
         $object->is_superuser(1) if Jifty->config->framework('AdminMode');
         return ($object);
     }
