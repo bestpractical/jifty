@@ -15,7 +15,7 @@ representation; that is, it is also a L<Jifty::DBI::Record> as well.
 =cut
 
 use base qw/Jifty::Object/;
-use base qw/Jifty::DBI::Record::Cachable/;
+use base qw/Jifty::DBI::Record::Memcached/;
 
 sub _init {
     my $self = shift;
@@ -53,30 +53,33 @@ Override's L<Jifty::DBI::Record> in these ways:
 sub create {
     my $self    = shift;
     my %attribs = @_;
-    
-    unless ($self->check_create_rights(@_)) {
-        $self->log->error($self->current_user->id. " tried to create a ", ref $self, " without permission");
-        wantarray ? return (0, 'Permission denied') : return(0);
-    }
 
+    unless ( $self->check_create_rights(@_) ) {
+        $self->log->error( $self->current_user->id . " tried to create a ",
+            ref $self, " without permission" );
+        wantarray ? return ( 0, 'Permission denied' ) : return (0);
+    }
 
     foreach my $key ( keys %attribs ) {
         my $method = "validate_$key";
         next unless $self->can($method);
-        my ($val, $msg ) = $self->$method( $attribs{$key} );
+        my ( $val, $msg ) = $self->$method( $attribs{$key} );
         unless ($val) {
             $self->log->error("There was a validation error for $key");
-            return ($val, $msg);
+            return ( $val, $msg );
         }
+
         # remove blank values. We'd rather have nulls
-        if (exists $attribs{$key} and (not defined $attribs{$key} or $attribs{$key} eq "")) {
+        if ( exists $attribs{$key}
+            and ( not defined $attribs{$key} or $attribs{$key} eq "" ) )
+        {
             delete $attribs{$key};
         }
     }
 
     my $id = $self->SUPER::create(%attribs);
-    $self->load_by_cols(id => $id) if ($id);
-    return wantarray  ? ($id, "Record created") : $id;
+    $self->load_by_cols( id => $id ) if ($id);
+    return wantarray ? ( $id, "Record created" ) : $id;
 }
 
 
@@ -303,6 +306,18 @@ sub _to_record {
     my $object = $classname->new(current_user => $self->current_user);
     $object->load_by_cols(( $column->by || 'id')  => $value);
     return $object;
+}
+
+=head2 cache_key_prefix
+
+Returns a unique key for this application for the Memcached cache.
+This should be global within a given Jifty application instance.
+
+=cut
+
+
+sub cache_key_prefix {
+    Jifty->config->framework('Database')->{'Database'};
 }
 
 1;
