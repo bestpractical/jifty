@@ -12,8 +12,6 @@ Jifty::Config -- wrap a jifty configuration file
 
 =cut
 
-use Jifty::Everything;
-use Jifty::DBI::Handle;
 use Jifty::Util;
 use Jifty::YAML;
 use File::Spec;
@@ -222,6 +220,7 @@ sub guess {
                 Password => "",
                 User     => "",
                 Version  => "0.0.1",
+                RecordBaseClass => 'Jifty::DBI::Record::Cachable'
             },
             Mailer     => 'Sendmail',
             MailerArgs => [],

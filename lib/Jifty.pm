@@ -56,9 +56,9 @@ probably a better place to start.
 
 =cut
 
-use Jifty::Everything;
 
 use base qw/Jifty::Object/;
+use Jifty::Everything;
 
 use vars qw/$HANDLE $CONFIG $LOGGER $DISPATCHER/;
 
@@ -102,6 +102,13 @@ sub new {
 
     # Load the configuration. stash it in ->config
     __PACKAGE__->config( Jifty::Config->new() );
+
+    # Now that we've loaded the configuration, we can remove the temporary 
+    # Jifty::DBI::Record baseclass for records and insert our "real" baseclass,
+    # which is likely Record::Cachable or Record::Memcached
+    pop @Jifty::Record::ISA;
+    Jifty::Util->require( Jifty->config->framework('Database')->{'RecordBaseClass'});
+    push @Jifty::Record::ISA, Jifty->config->framework('Database')->{'RecordBaseClass'};
 
     __PACKAGE__->logger( Jifty::Logger->new( $args{'logger_component'} ) );
    # Get a classloader set up
