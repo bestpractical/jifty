@@ -40,7 +40,18 @@ sub setup {
         my $self = shift;
         $self->stash(Hash::Merge::merge($self->stash, $class->test_config($self)));
     };
+    {
+        # Cache::Memcached stores things. And doesn't let them
+        # expire from the cache easily. This is fine in production,
+        # but during testing each test script needs its own namespace.
+        # we use the pid.
 
+        no warnings qw/redefine/;
+    
+        sub Jifty::Record::cache_key_prefix {
+            'jifty-test-' . $$;
+        }
+    }
     my $root = Jifty::Util->app_root;
     unshift @INC, "$root/lib" if ($root);
 
