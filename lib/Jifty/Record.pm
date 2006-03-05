@@ -15,7 +15,7 @@ representation; that is, it is also a L<Jifty::DBI::Record> as well.
 =cut
 
 use base qw/Jifty::Object/;
-use base qw/Jifty::DBI::Record::Cachable/;
+use base qw/Jifty::DBI::Record::Memcached/;
 
 sub _init {
     my $self = shift;
