@@ -1,0 +1,32 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+use LWP::UserAgent;
+use Getopt::Long;
+
+my($class, $host, $path, $format, $moniker);
+GetOptions("class=s" => \$class,
+           "host=s" => \$host,
+           "path=s" => \$path,
+           "format=s" => \$format,
+           "moniker=s" => \$moniker);
+$format  ||= "yaml";
+$host    ||= "http://localhost:8888";
+$path    ||= "/__jifty/webservices/$format";
+$moniker ||= "moniker";
+
+my %args = @ARGV;
+
+my $ua = LWP::UserAgent->new;
+my $res = $ua->post("$host$path", {
+                           "J:A-$moniker" => $class,
+                           map {("J:A:F-$_-$moniker" => $args{$_})} keys %args
+                          });
+
+if ($res->is_success) {
+    print $res->content;
+} else {
+    die $res->status_line;
+}
+
