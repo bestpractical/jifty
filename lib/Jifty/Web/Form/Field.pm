@@ -4,7 +4,7 @@ constructor
 canonicalizer
 available_values
 ajax_validates
-ajax_autocomplete
+autocompleter
 
 default_value
 valid_values
@@ -109,8 +109,8 @@ C<new>.  Subclasses should extend this list.
 
 =cut
 
-sub accessors { shift->SUPER::accessors(), qw(name label input_name type sticky sticky_value default_value action mandatory ajax_validates ajax_autocomplete preamble hints render_mode length _element_id); }
-__PACKAGE__->mk_accessors(qw(name _label _input_name type sticky sticky_value default_value _action mandatory ajax_validates ajax_autocomplete preamble hints render_mode length _element_id));
+sub accessors { shift->SUPER::accessors(), qw(name label input_name type sticky sticky_value default_value action mandatory ajax_validates autocompleter preamble hints render_mode length _element_id); }
+__PACKAGE__->mk_accessors(qw(name _label _input_name type sticky sticky_value default_value _action mandatory ajax_validates autocompleter preamble hints render_mode length _element_id));
 
 =head2 name [VALUE]
 
@@ -461,7 +461,7 @@ Returns an empty string.
 
 sub render_autocomplete { 
     my $self = shift;
-    return unless($self->ajax_autocomplete);
+    return unless($self->autocompleter);
     Jifty->web->out(
 qq!<div class="autocomplete" id="@{[$self->element_id]}-autocomplete" style="display:none;border:1px solid black;background-color:white;"></div>\n
         <script type="text/javascript">

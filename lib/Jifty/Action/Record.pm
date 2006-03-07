@@ -192,7 +192,6 @@ sub arguments {
    
         my $autocomplete_method = "autocomplete_".$field;
         if ($self->record->can($autocomplete_method) ) {
-            $info->{'ajax_autocomplete'} = 1;
             $info->{'autocompleter'} = sub { 
                     my $value = shift;
                     return $self->record->$autocomplete_method( $value);
