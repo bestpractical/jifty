@@ -94,7 +94,8 @@ sub take_action {
         $old = $old->id if UNIVERSAL::isa( $old, "Jifty::Record" );
     
         # if both the new and old values are defined and equal, we don't want to change em
-        next if ( defined $old and defined $self->argument_value($field) and $old eq $self->argument_value($field) );
+        # XXX TODO "$old" is a cheap hack to scalarize datetime objects
+        next if ( defined $old and defined $self->argument_value($field) and "$old" eq $self->argument_value($field) );
 
         
         # If _both_ the values are ''
