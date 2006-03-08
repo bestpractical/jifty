@@ -64,6 +64,9 @@ sub run {
     my $appclass_path = File::Spec->catfile(split (/::/, $appclass));
 
     my $modelFile = <<"EOT";
+use strict;
+use warnings;
+
 package @{[$appclass]}::Model::@{[$model]}::Schema;
 use Jifty::DBI::Schema;
 
