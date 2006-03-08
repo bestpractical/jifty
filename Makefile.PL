@@ -42,6 +42,7 @@ requires('Hook::LexWrap');
 requires('Jifty::DBI' => '0.16' );            # Jifty::DBI::Collection Jifty::DBI::Handle Jifty::DBI::Record::Cachable Jifty::DBI::SchemaGenerator
 requires('Locale::Maketext::Simple');
 requires('Log::Log4perl');
+requires('LWP::UserAgent');
 requires('Math::BigInt');
 requires('Module::Install::Admin' => '0.50');
 requires('Module::Pluggable' => '2.95');

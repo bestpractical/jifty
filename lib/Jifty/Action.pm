@@ -167,7 +167,7 @@ sub validate {
     my $self = shift;
     $self->check_authorization || return;
     $self->setup || return;
-    $self->_canonicalize_arguments || return;
+    $self->_canonicalize_arguments;
     $self->_validate_arguments;
 }
 
@@ -537,15 +537,9 @@ sub _canonicalize_arguments {
     my $self   = shift;
     my @fields = $self->argument_names;
 
-    my $all_fields_ok = 1;
     foreach my $field (@fields) {
-        next unless $field and exists $self->argument_values->{$field};
-        unless ( $self->_canonicalize_argument($field) ) {
-
-            $all_fields_ok = 0;
-        }
+        $self->_canonicalize_argument($field) if exists $self->argument_values->{$field};
     }
-    return $all_fields_ok;
 }
 
 
@@ -574,17 +568,14 @@ sub _canonicalize_argument {
     if ( $field_info->{canonicalizer}
         and UNIVERSAL::isa( $field_info->{canonicalizer}, 'CODE' ) )
     {
-        return $field_info->{canonicalizer}->( $self, $value );
+        $value = $field_info->{canonicalizer}->( $self, $value );
     }
 
     elsif ( $self->can($default_method) ) {
-        return $self->$default_method( $value );
+        $value = $self->$default_method( $value );
     }
 
-    # If none of the checks have failed so far, then it's ok
-    else {
-        return $field;
-    }
+    $self->argument_value($field => $value);
 }
 
 =head2 _validate_arguments
@@ -702,7 +693,7 @@ sub _autocomplete_argument {
 
     if ( $field_info->{autocompleter}  )
     {
-        return $field_info->{autocompleter}->(  $value );
+        return $field_info->{autocompleter}->( $self, $value );
     }
 
     elsif ( $self->can($default_autocomplete) ) {

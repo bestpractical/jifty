@@ -192,10 +192,23 @@ sub arguments {
    
         my $autocomplete_method = "autocomplete_".$field;
         if ($self->record->can($autocomplete_method) ) {
-            $info->{'autocompleter'} = sub { 
-                    my $value = shift;
-                    return $self->record->$autocomplete_method( $value);
-                };
+            $info->{'autocompleter'} ||= sub { 
+                my($self, $value) = @_;
+                return $self->record->$autocomplete_method( $value);
+            };
+        }
+
+	my $canonicalize_method = "canonicalize_".$field;
+        if ($self->record->can($canonicalize_method) ) {
+            $info->{'canonicalizer'} ||= sub {
+                my($self, $value) = @_;
+                return $self->record->$canonicalize_method( $value );
+            };
+        } elsif (defined $column->render_as and $column->render_as eq "Date") {
+            $info->{'canonicalizer'} ||= sub {
+                my($self, $value) = @_;
+                return _canonicalize_date($self, $value );
+            };
         }
 
 
@@ -212,30 +225,6 @@ sub arguments {
     return $field_info;
 }
 
-
-=head2 _canonicalize_argument ARGUMENT_NAME
-
-Canonicalizes the argument named ARGUMENT_NAME. This routine actually
-just makes sure we canonicalize dates and then passes on to the
-superclass.
-
-=cut
-
-
-sub _canonicalize_argument {
-    my $self = shift;
-    my $arg_name = shift;
-
-
-    if (exists $self->arguments->{$arg_name}->{'render_as'} 
-     and $self->arguments->{$arg_name}->{'render_as'} eq 'Date') {
-        my $value = $self->_canonicalize_date($self->argument_value($arg_name));
-        $self->argument_value($arg_name => $value);
-    }
-
-    return($self->SUPER::_canonicalize_argument($arg_name));
-
-}
 
 =head2 _canonicalize_date DATE
 
