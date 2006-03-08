@@ -45,6 +45,7 @@ sub new {
     for (qw(body preface footer subject)) {
             $self->$_('');
     }
+    $self->_recipients([]);
 
     while (my ($arg, $value) = each %args) {
 	if ($self->can($arg)) {
