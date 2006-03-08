@@ -78,7 +78,7 @@ sub create {
         }
     }
 
-    my $id = $self->SUPER::create(%attribs);
+    my($id,$msg) = $self->SUPER::create(%attribs);
     $self->load_by_cols( id => $id ) if ($id);
     return wantarray ? ( $id, "Record created" ) : $id;
 }
@@ -231,7 +231,9 @@ sub _value {
     unless ($self->check_read_rights(@_)) {
         return (undef);
     }
-    return   Encode::decode_utf8($self->SUPER::_value(@_));
+    my $value = $self->SUPER::_value(@_);
+    return $value if ref $value;
+    return   Encode::decode_utf8($value);
 #   This is the "Right' way to do things according to audrey, but it breaks
 #    
 #    my $value = $self->SUPER::_value(@_);
