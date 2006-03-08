@@ -112,6 +112,7 @@ sub new {
         continuation   => Jifty->web->request->continuation,
         submit         => [],
         preserve_state => 0,
+	parameters     => {},
         @_,
     );
 
@@ -146,7 +147,7 @@ sub new {
     }
 
     $self->parameter( $_ => $args{parameters}{$_} )
-        for %{ $args{parameters} };
+        for keys %{ $args{parameters} };
 
     return $self;
 }
