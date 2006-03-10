@@ -323,21 +323,24 @@ sub _ret (@) {
     } elsif ( defined wantarray ) {
         [ [ $op => splice( @_, 0, length($proto) ) ], @_ ];
     } else {
-        my $ruleset;
-        if ( $op eq 'before' ) {
-            $ruleset = 'RULES_SETUP';
-        } elsif ( $op eq 'after' ) {
-            $ruleset = 'RULES_CLEANUP';
-        } else {
-            $ruleset = 'RULES_RUN';
-        }
-
-        no strict 'refs';
-
-        # XXX TODO, need to spec stage here.
-        push @{ $pkg . '::' . $ruleset },
-            [ $op => splice( @_, 0, length($proto) ) ], @_;
+        _push_rule($pkg, [ $op => splice( @_, 0, length($proto) ) ] );
     }
+}
+
+sub _push_rule($$) {
+    my($pkg, $rule) = @_;
+    my $op = $rule->[0];
+    my $ruleset;
+    if ( $op eq 'before' ) {
+        $ruleset = 'RULES_SETUP';
+    } elsif ( $op eq 'after' ) {
+        $ruleset = 'RULES_CLEANUP';
+    } else {
+        $ruleset = 'RULES_RUN';
+    }
+    no strict 'refs';
+    # XXX TODO, need to spec stage here.
+    push @{ $pkg . '::' . $ruleset }, $rule;
 }
 
 sub _qualify ($@) {

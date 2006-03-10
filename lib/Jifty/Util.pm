@@ -12,6 +12,7 @@ Jifty::Util - Things that don't fit anywhere else
 
 =cut
 
+use Jifty;
 use File::Spec;
 use File::ShareDir;
 use UNIVERSAL::require;
@@ -164,14 +165,22 @@ sub require {
     my $class = shift;
 
     my $path =  join('/', split(/::/,$class)).".pm";
-   return 1 if $INC{$path};
-    $class->require;
+    return 1 if $INC{$path};
+
+    my $retval = $class->require;
     if ($UNIVERSAL::require::ERROR) {
        my $error = $UNIVERSAL::require::ERROR;
         $error =~ s/ at .*?\n$//;
         Jifty->log->error(sprintf("$error at %s line %d\n", (caller)[1,2]));
         return 0;
     }
+
+    # If people forget the '1;' line in the dispatcher, don't eit them
+    if ($class =~ /::Dispatcher$/ and ref $retval eq "ARRAY") {
+        Jifty->log->error("$class did not return a true value; assuming it was a dispatcher rule");
+        Jifty::Dispatcher::_push_rule($class, $_) for @{$retval};
+    }
+
     return 1;
 }
 
