@@ -16,8 +16,8 @@ Alert: Jifty <% Jifty->web->tangent( label => 'administration mode' , url => '/_
   <script type="text/javascript"><!--
   document.write('<div id="keybindings">');
   writeKeyBindingLegend();
-  document.write('</div>');
-  document.write('<div id="jifty-wait-message" style="display: none">Loading...</div>');
+  document.write('<\/div>');
+  document.write('<div id="jifty-wait-message" style="display: none">Loading...<\/div>');
   --></script>
 % Jifty::Mason::Halo->render_component_tree() if (Jifty->config->framework('DevelMode') );
 </body>

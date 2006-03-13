@@ -394,7 +394,7 @@ sub render_widget {
     my $self  = shift;
     my $field = qq!  <input !;
     $field .= qq! type="@{[ $self->type ]}"!;
-    $field .= qq! name="@{[ $self->input_name ]}"!;
+    $field .= qq! name="@{[ $self->input_name ]}"! if ($self->input_name);
     $field .= qq! id="@{[ $self->element_id ]}"!;
     $field .= qq! value="@{[HTML::Entities::encode_entities($self->current_value)]}"! if defined $self->current_value;
     $field .= $self->_widget_class; 
