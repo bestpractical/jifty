@@ -12,6 +12,7 @@ Makefile.PL as dependencies.
 
 use Test::More qw(no_plan);
 use File::Find;
+use Module::CoreList;
 
 my %used;
 find( \&wanted, qw/ lib bin t /);
@@ -44,9 +45,16 @@ my %required;
 }
 
 for (sort keys %used) {
-    next if /^(Jifty|BTDT|Jifty::DBI|TestApp|inc|t)/ or lc $_ eq $_;
+    my $first_in = Module::CoreList->first_release($_);
+    next if defined $first_in and $first_in <= 5.006;
+    next if /^(Jifty|BTDT|Jifty::DBI|TestApp|inc|t)/;
     ok(delete $required{$_}, "$_ in Makefile.PL");
     delete $used{$_};
+}
+
+for (keys %required) {
+    my $first_in = Module::CoreList->first_release($_);
+    fail("Required module $_ is already in core") if defined $first_in and $first_in <= 5.006;
 }
 
 1;

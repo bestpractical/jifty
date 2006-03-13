@@ -207,6 +207,10 @@ sub enter {
 
 =head2 exit 
 
+Exits the page region, if it is the most recent one.  Normally, you
+won't need to call this by hand; however, if you are calling L</enter>
+by hand, you will need to call the corresponding C<exit>.
+
 =cut
 
 sub exit {
