@@ -58,14 +58,12 @@ sub take_action {
 
     my %values;
     $values{$_} = $self->argument_value($_) for grep { defined $self->argument_value($_) } $self->argument_names;
-    warn "Values are ".YAML::Dump([$self->arguments]);
-    
-    my ($id) = $record->create(%values);
+    my ($id, $msg) = $record->create(%values);
 
     # Handle errors?
     unless ( $record->id ) {
         $self->result->error("An error occurred.  Try again later");
-        $self->log->error("Create of ".ref($record)." failed: ", $id);
+        $self->log->error("Create of ".ref($record)." failed: $msg");
         return;
     }
 
@@ -87,7 +85,7 @@ unlike L<Jifty::Action::Record::Update>, columns which are marked as
 
 sub possible_fields {
     my $self = shift;
-    return map {$_->name} $self->record->columns;
+    return map {$_->name} grep {$_->type ne "serial"} $self->record->columns;
 }
 
 =head2 report_success
