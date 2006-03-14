@@ -58,6 +58,7 @@ sub take_action {
 
     my %values;
     $values{$_} = $self->argument_value($_) for grep { defined $self->argument_value($_) } $self->argument_names;
+    warn "Values are ".YAML::Dump([$self->arguments]);
     
     my ($id) = $record->create(%values);
 
@@ -74,6 +75,19 @@ sub take_action {
     $self->report_success if  not $self->result->failure;
 
     return 1;
+}
+
+=head2 possible_fields
+
+Returns all of the columns on the record class.  This is because,
+unlike L<Jifty::Action::Record::Update>, columns which are marked as
+'immutable' should still be able to be set at creation time.
+
+=cut
+
+sub possible_fields {
+    my $self = shift;
+    return map {$_->name} $self->record->columns;
 }
 
 =head2 report_success

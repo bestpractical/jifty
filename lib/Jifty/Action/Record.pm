@@ -101,7 +101,7 @@ sub arguments {
 
     my $field_info = {};
 
-    my @fields = $self->record->writable_attributes;
+    my @fields = $self->possible_fields;
 
     # we use a while here because we may be modifying the fields on the fly.
     while ( my $field = shift @fields ) {
@@ -225,6 +225,17 @@ sub arguments {
     return $field_info;
 }
 
+=head2 possible_fields
+
+Returns the list of fields on the object that the action can update.
+This defaults to only the writable fields of the object.
+
+=cut
+
+sub possible_fields {
+    my $self = shift;
+    return $self->record->writable_attributes;
+}
 
 =head2 _canonicalize_date DATE
 
