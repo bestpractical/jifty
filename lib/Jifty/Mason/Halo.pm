@@ -43,14 +43,14 @@ sub start_component_hook {
 
         push @$STACK,
             {
-            id         => $halo_base,
-            args        => $context->args,
-            start_time => Time::HiRes::time(),
-            path        => $context->comp->path,
+            id           => $halo_base,
+            args         => [map {UNIVERSAL::isa($_,"GLOB") ? "*GLOB*" : $_} @{$context->args}],
+            start_time   => Time::HiRes::time(),
+            path         => $context->comp->path,
             subcomponent => (  $context->comp->is_subcomp() ? 1:0),
-            name        => $context->comp->name,
-            proscribed => ($self->_unrendered_component($context) ? 1 :0 ),
-            depth => $DEPTH
+            name         => $context->comp->name,
+            proscribed   => ($self->_unrendered_component($context) ? 1 :0 ),
+            depth        => $DEPTH
             };
 
         push @$INDEX_STACK, $#{@$STACK};
