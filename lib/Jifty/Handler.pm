@@ -154,10 +154,7 @@ sub handle_request {
     Jifty->web->session->set_cookie;
 
     Jifty->log->debug("Received request for ".Jifty->web->request->path);
-
-    # This should done in "new", but something is causing Jifty to handle 
-    # one and only one session. after that, it gives us http headers but no content
-    #
+    
     $self->dispatcher->handle_request();
 
     $self->cleanup_request();
