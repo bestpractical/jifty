@@ -79,7 +79,7 @@ sub _get_current_user {
             my $caller_self      = $DB::args[0];
             next unless (ref($caller_self)); #skip class methods;
             next if ($caller_self eq $self);
-            next unless UNIVERSAL::can($caller_self => 'current_user');
+            next unless $caller_self->can('current_user');
 
             eval {
                 if ( $caller_self->current_user and $caller_self->current_user->id) {

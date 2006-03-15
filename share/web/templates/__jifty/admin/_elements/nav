@@ -22,7 +22,7 @@ for my $model ( __PACKAGE__->jifty_app_models ) {
     # TODO XXX FIXME:
     #   This *will* try to generate SQL for abstract base classes you might
     #   stick in $AC::Model::.
-    next if not UNIVERSAL::isa( $model, 'Jifty::Record' );
+    next unless $model->isa( 'Jifty::Record' );
     next if $model =~ /::SUPER$/;
     push @models, $model;
 }

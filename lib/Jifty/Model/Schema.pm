@@ -79,7 +79,7 @@ sub update {
   my $self = shift;
   my $ver = shift;
 
-  unless (UNIVERSAL::isa($ver, "version")) {
+  unless ( eval { $ver->isa( 'version' ) } ) {
     $self->log->fatal("Version must be a version object");
     return;
   }

@@ -124,7 +124,7 @@ Sets this server to use L<HTTP::Server::Simple::Recorder>.
 sub recording_on {
     my $class = shift;
     our @ISA;
-    unshift @ISA, "HTTP::Server::Simple::Recorder" unless UNIVERSAL::isa($class, 'HTTP::Server::Simple::Recorder');
+    unshift @ISA, "HTTP::Server::Simple::Recorder" unless $class->isa('HTTP::Server::Simple::Recorder');
 } 
 
 1;

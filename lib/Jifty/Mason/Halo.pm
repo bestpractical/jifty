@@ -45,7 +45,7 @@ sub start_component_hook {
 
     push @$STACK, {
         id           => $halo_base,
-        args         => [map {UNIVERSAL::isa($_,"GLOB") ? "*GLOB*" : $_} @{$context->args}],
+        args         => [map { eval { fileno( $_ ) }  ? "*GLOB*" : $_} @{$context->args}],
         start_time   => Time::HiRes::time(),
         path         => $context->comp->path,
         subcomponent => (  $context->comp->is_subcomp() ? 1:0),

@@ -683,7 +683,7 @@ sub _do_show {
     eval { Jifty->handler->mason->handle_comp(request->path); };
     my $err = $@;
     # Handle parse errors
-    if ( $err and not UNIVERSAL::isa $err, 'HTML::Mason::Exception::Abort' ) {
+    if ( $err and not eval { $err->isa( 'HTML::Mason::Exception::Abort' ) } ) {
         # XXX TODO: get this into the browser somehow
         warn "Mason error: $err";
         Jifty->web->redirect("/__jifty/error/mason_internal_error");

@@ -69,7 +69,7 @@ sub new {
     if (ref $record_class) {
         $self->record($record_class);
         $self->argument_value($_, $self->record->$_) for @{ $self->record->_primary_keys };
-    } elsif (UNIVERSAL::isa($args{record}, $record_class)) {
+    } elsif (ref $args{record} and $args{record}->isa($record_class)) {
         $self->record($args{record});
         $self->argument_value($_, $self->record->$_) for @{ $self->record->_primary_keys };
     } else {
@@ -116,7 +116,7 @@ sub arguments {
 
             # If the current value is actually a pointer to another object, dereference it
             $current_value = $current_value->id
-              if UNIVERSAL::isa( $current_value, 'Jifty::Record' );
+              if ref($current_value) and $current_value->isa( 'Jifty::Record' );
             $info->{default_value} = $current_value if $self->record->id;
         }
 
@@ -142,11 +142,11 @@ sub arguments {
         }
 
         elsif ( defined $column->refers_to ) {
-            my $ref = $column->refers_to;
-            if ( UNIVERSAL::isa( $ref, 'Jifty::Record' ) ) {
+            my $refers_to = $column->refers_to;
+            if ( ref($refers_to) and $refers_to->isa( 'Jifty::Record' ) ) {
 
                 my $collection = Jifty::Collection->new(
-                    record_class => $ref,
+                    record_class => $refers_to,
                     current_user => $self->record->current_user
                 );
                 $collection->unlimit;

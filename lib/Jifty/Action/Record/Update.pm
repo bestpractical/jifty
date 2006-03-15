@@ -91,7 +91,8 @@ sub take_action {
 
         # Skip fields that have not changed
         my $old = $self->record->$field;
-        $old = $old->id if UNIVERSAL::isa( $old, "Jifty::Record" );
+        # XXX TODO: This ignore "by" on columns
+        $old = $old->id if ref($old) and $old->isa( 'Jifty::Record' );
     
         # if both the new and old values are defined and equal, we don't want to change em
         # XXX TODO "$old" is a cheap hack to scalarize datetime objects

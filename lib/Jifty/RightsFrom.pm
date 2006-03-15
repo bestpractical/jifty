@@ -98,29 +98,34 @@ we must rely on the value in the I<ATTRIBUTES> passed in.
 =cut
 
 sub delegate_current_user_can {
-    my $self    = shift;
-    my $object_type = shift; #always 'column' for now
-    my $col_name = shift;
-    my $right   = shift;
-    my %attribs = @_;
+    my $self        = shift;
+    my $object_type = shift;    #always 'column' for now
+    my $col_name    = shift;
+    my $right       = shift;
+    my %attribs     = @_;
     $right = 'update' if $right ne 'read';
     my $obj;
 
     my $column   = $self->column($col_name);
     my $obj_type = $column->refers_to();
 
+    # XXX TODO: this card is bloody hard to follow. it's my fault. --jesse
 
-    if ( UNIVERSAL::isa( $attribs{ $column->name }, $obj_type ) ) {
-        $obj = $attribs{ $column->name };
-    } elsif ( $attribs{ $column->name }
-        || $self->__value( $column->name )
-        || $self->{ $column->name } )
+    my $foreign_key = $attribs{ $column->name };
+    # We only do the isa if the foreign_key is a reference
+    # We could also do this using eval, but it's an order of magnitude slower
+    if ( ref($foreign_key) and $foreign_key->isa($obj_type) ) {
+        $obj = $foreign_key;    # the fk is actually an object
+    } elsif (
+        my $fk_value = (
+                   $foreign_key
+                || $self->__value( $column->name )
+                || $self->{ $column->name }
+        )
+        )
     {
         $obj = $obj_type->new( current_user => $self->current_user );
-        $obj->load_by_cols(
-                   ( $column->by || 'id' ) => $attribs{ $column->name }
-                || $self->__value( $column->name )
-                || $self->{ $column->name } );
+        $obj->load_by_cols( ( $column->by || 'id' ) => $fk_value );
     } else {
         return 0;
     }

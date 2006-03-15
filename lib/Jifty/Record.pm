@@ -165,7 +165,7 @@ sub current_user_can {
         return $self->delegate_current_user_can($right, @_); 
     }
 
-    unless ( UNIVERSAL::isa( $self->current_user, 'Jifty::CurrentUser' ) ) {
+    unless ( $self->current_user->isa( 'Jifty::CurrentUser' ) ) {
         $self->log->error(
             "Hm. called to authenticate without a currentuser - "
                 . $self->current_user );
@@ -260,7 +260,7 @@ sub _collection_value {
     my $classname = $column->refers_to();
 
     return undef unless $classname;
-    return unless UNIVERSAL::isa( $classname, 'Jifty::DBI::Collection' );
+    return unless $classname->isa( 'Jifty::DBI::Collection' );
 
 
     my $coll = $classname->new( current_user => $self->current_user );
@@ -302,7 +302,7 @@ sub _to_record {
 
     return unless defined $value;
     return undef unless $classname;
-    return unless UNIVERSAL::isa( $classname, 'Jifty::Record' );
+    return unless $classname->isa( 'Jifty::Record' );
 
     # XXX TODO FIXME we need to figure out the right way to call new here
     # perhaps the handle should have an initiializer for records/collections

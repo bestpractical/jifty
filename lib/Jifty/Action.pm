@@ -566,7 +566,7 @@ sub _canonicalize_argument {
     my $default_method = 'canonicalize_' . $field;
 
     if ( $field_info->{canonicalizer}
-        and UNIVERSAL::isa( $field_info->{canonicalizer}, 'CODE' ) )
+        and defined &{ $field_info->{canonicalizer} } )
     {
         $value = $field_info->{canonicalizer}->( $self, $value );
     }
@@ -651,7 +651,7 @@ sub _validate_argument {
 
     # Finally, fall back to running a validator sub
     if ( $field_info->{validator}
-        and UNIVERSAL::isa( $field_info->{validator}, 'CODE' ) )
+        and defined &{ $field_info->{validator} } )
     {
         return $field_info->{validator}->( $self, $value );
     }
