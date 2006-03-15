@@ -1,61 +1,89 @@
-div.halo_actions {
-  display: none;
-  position: fixed;
-  right: 0;
-  bottom: 0;
-
-
+.halo_actions {
+    position: fixed;
+    width: 300px;
+    border: 1px solid black;
+    background: #ccc;
 }
 
-div.halo_actions dl {
- background: #ccc;
- list-style-type: none;
- border: yellow 2px solid;
-
- margin: 1em;
- padding:1em;
- 
+.halo_actions h1 {
+    color: #fff;
+    background-color: #600;
+    border-bottom: 1px solid black;
+    padding: 0.25em;
+    margin: 0;
+    cursor: pointer;
+    font-size: 120%;
 }
 
-div.halo_actions dl a {
- color: black;
+.halo_actions h1 a { 
+    color: #fff;
 }
 
-span.halo_button {
-  color: yellow;
-  position: absolute;
-  z-index: 9999;
-  font-size:2em;
+.halo_actions .section {
+    color: #ccc;
+    background-color: #300;
+    border-top: 1px solid black;
+    margin-top: 0.5em;
+    font-size: 120%;
+    font-weight: bold;
 }
 
-div#render_info_tree {
-   display: none;
-   position: fixed;
-   background: white;
-   border: 1px solid yellow;
-   right: 1em;
-   bottom: 1em;
-   border: 2px solid #fc0;
-   padding: 1em;
+.halo_actions .section a {
+    text-align: center;
+    color: #ccc;
 }
 
-div#render_info_tree ul {
-   list-style: none;
-   padding-left: 1em;
+.halo_actions .body {
+    font-size: 110%;
+    margin:0;
+    padding:0 1em;
 }
 
-
-div#render_info {
-  position: fixed;
-  right:0.5em;
-  bottom:0;
+.halo_actions .body ul {
+    margin:0;
+    padding:0;
+    margin-left: 1em;
 }
 
-span.halo_name {
-  color: black;
-  background-color: yellow;
-  border: 1px solid black;
-  position: static;
-  padding: 0.25em;
+.halo_actions .body .path {
+    font-family: monospace;
+    font-size: 120%;
+    text-align: center;
 }
 
+.halo_actions .body .time {
+    font-style: italic;
+    text-align: center;
+}
+
+.halo_actions .body .fixed {
+    font-family: monospace;
+}
+
+.halo_button {
+    color: yellow;
+    position: absolute;
+    z-index: 9999;
+    font-size:2em;
+}
+
+#render_info_tree {
+    position: fixed;
+    background: white;
+    border: 1px solid yellow;
+    right: 1em;
+    bottom: 1em;
+    border: 2px solid #fc0;
+    padding: 1em;
+}
+
+#render_info_tree ul {
+    list-style: none;
+    padding-left: 1em;
+}
+
+#render_info {
+    position: fixed;
+    right:0.5em;
+    bottom:0;
+}

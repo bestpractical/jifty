@@ -1,0 +1,55 @@
+<div class="halo_actions" id="halo-<% $id %>-menu" style="display: none; top: 5px; left: 500px"  onMouseOver="halo_over('<% $id %>')"onMouseOut="halo_out('<% $id %>')">
+<h1 id="halo-<% $id %>-title">
+  <span style="float: right;"><a href="#" onClick="halo_toggle('<% $id %>'); return false">[ X ]</a></span>
+  <% $frame->{name} %>
+</h1>
+<div class="body">
+<div class="path"><% $frame->{path} %></div>
+<div class="time">Rendered in <% $frame->{'render_time'} %>s</div>
+</div>
+% if (@args) {
+<div class="section">Variables</div>
+<div class="body"><ul class="fixed">
+% for my $e (@args) {
+<li><b><% $e->[0] %></b>:
+% if ($e->[1]) {
+% my $expanded = Jifty->web->serial;
+<span onmouseover="Element.show('<% $expanded %>')" onmouseout="Element.hide('<% $expanded %>')"><% $e->[1] %></span>
+<div id="<% $expanded %>" style="display: none; position: absolute; left: 200px; border: 1px solid black; background: #ccc; padding: 1em; padding-top: 0"><pre><% YAML::Dump($e->[2]) %></pre></div>
+% } else {
+<% $e->[2] %>
+% }
+</li>
+% }
+</ul></div>
+% }
+% if (@stmts) {
+<div class="section">SQL Statements</div>
+<div class="body"><ul>
+% for (@stmts) {
+<li class="fixed"><% $_ %></li>
+% }
+</ul></div>
+% }
+<div class="section"><% Jifty->web->tangent( url =>"/=/edit/mason_component/".$frame->{'path'}, label => 'Edit') %></div>
+</div>
+<%args>
+$frame
+</%args>
+<%init>
+my $id = $frame->{id};
+
+my @args;
+while (my ($key, $value) = splice(@{$frame->{args}},0,2)) {
+    push @args, [$key, ref($value), $value];
+}
+@args = sort {$a->[0] cmp $b->[0]} @args;
+
+my $prev = '';
+my @stmts;
+for (@{$frame->{'sql_statements'}}) {
+    push @stmts, $_->[1] if $_->[1] ne $prev;
+    $prev = $_->[1];
+}
+
+</%init>

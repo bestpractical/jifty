@@ -28,6 +28,8 @@ sub start_component_hook {
     my $self    = shift;
     my $context = shift;
 
+    return if $context->comp->path eq "/__jifty/halo";
+
     my $DEPTH = $context->request->notes('_halo_depth') || 0;
     my $STACK = $context->request->notes('_halo_stack')
         || $context->request->notes( '_halo_stack' => [] );
@@ -41,22 +43,21 @@ sub start_component_hook {
         Jifty->handle->clear_sql_statement_log;
     }
 
-        push @$STACK,
-            {
-            id           => $halo_base,
-            args         => [map {UNIVERSAL::isa($_,"GLOB") ? "*GLOB*" : $_} @{$context->args}],
-            start_time   => Time::HiRes::time(),
-            path         => $context->comp->path,
-            subcomponent => (  $context->comp->is_subcomp() ? 1:0),
-            name         => $context->comp->name,
-            proscribed   => ($self->_unrendered_component($context) ? 1 :0 ),
-            depth        => $DEPTH
-            };
+    push @$STACK, {
+        id           => $halo_base,
+        args         => [map {UNIVERSAL::isa($_,"GLOB") ? "*GLOB*" : $_} @{$context->args}],
+        start_time   => Time::HiRes::time(),
+        path         => $context->comp->path,
+        subcomponent => (  $context->comp->is_subcomp() ? 1:0),
+        name         => $context->comp->name,
+        proscribed   => ($self->_unrendered_component($context) ? 1 :0 ),
+        depth        => $DEPTH
+    };
 
-        push @$INDEX_STACK, $#{@$STACK};
+    push @$INDEX_STACK, $#{@$STACK};
     return if $self->_unrendered_component($context);
 
-    $context->request->out('<span class="halo">');
+    $context->request->out(qq{<div id="halo-@{[$halo_base]}">});
 }
 
 =head2 end_component_hook CONTEXT_OBJECT
@@ -71,7 +72,7 @@ sub end_component_hook {
     my $self    = shift;
     my $context = shift;
 
-
+    return if $context->comp->path eq "/__jifty/halo";
 
     my $STACK = $context->request->notes('_halo_stack');
     my $INDEX_STACK = $context->request->notes('_halo_index_stack');
@@ -94,7 +95,7 @@ sub end_component_hook {
 
     # print out the div with our halo magic actions.
     # if we didn't render a beginning of the span, don't render an end
-    $context->request->out('</span>') unless ($frame->{'proscribed'});
+    $context->request->out('</div>') unless ($frame->{'proscribed'});
 
 }
 
@@ -111,28 +112,7 @@ sub render_halo_actions {
     my $self    = shift;
     my $stack_frame = shift;
 
-    Jifty->web->mason->out( 
-        qq{
-<div class="halo_actions" id="halo-@{[$stack_frame->{'id'}]}-menu">
-<span class="halo_name" onClick="toggle_display('halo-@{[$stack_frame->{'id'}]}-menu')">@{[$stack_frame->{'name'}]}</span>
-<dl>
-<dt>Path</dt>
-<dd>@{[$stack_frame->{'path'}]}</dd>
-<dt>Render time</dt>
-<dd>@{[$stack_frame->{'render_time'}]}</dd>
-<dt>});
-# XXX TODO: we shouldn't be doing direct rendering of this if we can avoid it.
-# but it would require a rework of how the render_xxx subs work in jifty core
-Jifty->web->mason->out(Jifty->web->tangent( url =>"/=/edit/mason_component/".$stack_frame->{'path'}, label => 'Edit'));
-
-Jifty->web->mason->out(qq{</dt>
-<dt>Variables</dt>
-<dd><textarea rows="5" cols="80">@{[YAML::Dump($stack_frame->{'args'})]}</textarea></dd>
-<dt>SQL Statements</dt>
-<dd><textarea rows="5" cols="80">@{[YAML::Dump($stack_frame->{'sql_statements'})]}</textarea></dd>
-</dl>
-</div>
-})
+    Jifty->web->mason->comp("/__jifty/halo", frame => $stack_frame);
 }
 
 
@@ -172,8 +152,8 @@ sub render_component_tree {
     my @stack = @{ Jifty->web->mason->notes('_halo_stack') };
 
     my $depth = 1;
-    Jifty->web->mason->out(q{<div id="render_info" onClick="toggle_display('render_info_tree')">Page info</div>});
-    Jifty->web->mason->out('<div id="render_info_tree">');
+    Jifty->web->mason->out(q{<a href="#" id="render_info" onClick="Element.toggle('render_info_tree'); return false">Page info</a>});
+    Jifty->web->mason->out('<div style="display: none" id="render_info_tree">');
     Jifty->web->mason->out('<ul>');
 
     foreach my $item (@stack) {
@@ -186,17 +166,19 @@ sub render_component_tree {
 
         Jifty->web->mason->out( "<li>");
 
-        Jifty->web->mason->out(qq{<span class="halo_comp_info" } );
-        Jifty->web->mason->out(qq{onClick="toggle_display('halo-}.$item->{id}.qq{-menu');"});
-        Jifty->web->mason->out(qq{>}
-                . $item->{'path'} . " - "
+        Jifty->web->mason->out(qq{<a href="#" class="halo_comp_info" } );
+        my $id = $item->{id};
+        Jifty->web->mason->out(qq|onMouseOver="halo_over('@{[$id]}')" |); 
+        Jifty->web->mason->out(qq|onMouseOut="halo_out('@{[$id]}')" |); 
+        Jifty->web->mason->out(qq|onClick="halo_toggle('$id'); return false;">|);
+        Jifty->web->mason->out(
+                  $item->{'path'} . " - "
                 . $item->{'render_time'}
-                . qq{</span> }
+                . qq{</a> }
         );
 
         Jifty->web->mason->out(Jifty->web->tangent( url =>"/=/edit/mason_component/".$item->{'path'}, label => 'Edit'))
           unless ($item->{subcomponent});
-        $self->render_halo_actions($item);
         Jifty->web->mason->out( "</li>");
         $depth = $item->{'depth'};
     }
@@ -204,6 +186,9 @@ sub render_component_tree {
     Jifty->web->mason->out("</ul>\n") for (1 .. $depth);
     Jifty->web->mason->out('</div>');
 
+    foreach my $item (@stack) {
+        $self->render_halo_actions($item);
+    }
 }
 
 
