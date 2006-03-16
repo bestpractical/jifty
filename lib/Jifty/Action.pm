@@ -535,11 +535,9 @@ described by L</arguments>.
 # better solution.
 sub _canonicalize_arguments {
     my $self   = shift;
-    my @fields = $self->argument_names;
 
-    foreach my $field (@fields) {
-        $self->_canonicalize_argument($field) if exists $self->argument_values->{$field};
-    }
+    $self->_canonicalize_argument($_)
+      for $self->argument_names;
 }
 
 
@@ -565,13 +563,13 @@ sub _canonicalize_argument {
     my $value = $self->argument_value($field);
     my $default_method = 'canonicalize_' . $field;
 
+    return unless defined $value;
+
     if ( $field_info->{canonicalizer}
         and defined &{ $field_info->{canonicalizer} } )
     {
         $value = $field_info->{canonicalizer}->( $self, $value );
-    }
-
-    elsif ( $self->can($default_method) ) {
+    } elsif ( $self->can($default_method) ) {
         $value = $self->$default_method( $value );
     }
 
