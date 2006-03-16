@@ -72,7 +72,7 @@ sub end_component_hook {
     my $self    = shift;
     my $context = shift;
 
-    return if $context->comp->path eq "/__jifty/halo";
+    return if $context->comp->path =~ "^/__jifty/halo";
 
     my $STACK = $context->request->notes('_halo_stack');
     my $INDEX_STACK = $context->request->notes('_halo_index_stack');
@@ -82,7 +82,6 @@ sub end_component_hook {
 
     my $frame = $STACK->[$FRAME_ID];
     $frame->{'render_time'} = int((Time::HiRes::time - $frame->{'start_time'}) * 1000)/1000;
-
 
     push @{$frame->{sql_statements}}, Jifty->handle->sql_statement_log;
     Jifty->handle->clear_sql_statement_log;
@@ -98,23 +97,6 @@ sub end_component_hook {
     $context->request->out('</div>') unless ($frame->{'proscribed'});
 
 }
-
-
-=head2 render_halo_actions STACK_FRAME
-
-When we're rendering the whole Mason component tree, this routine will
-render our bits for just one stack frame.
-
-
-=cut
-
-sub render_halo_actions {
-    my $self    = shift;
-    my $stack_frame = shift;
-
-    Jifty->web->mason->comp("/__jifty/halo", frame => $stack_frame);
-}
-
 
 =head2 _unrendered_component CONTEXT
 
@@ -151,44 +133,12 @@ sub render_component_tree {
     my $self  = shift;
     my @stack = @{ Jifty->web->mason->notes('_halo_stack') };
 
-    my $depth = 1;
-    Jifty->web->mason->out(q{<a href="#" id="render_info" onClick="Element.toggle('render_info_tree'); return false">Page info</a>});
-    Jifty->web->mason->out('<div style="display: none" id="render_info_tree">');
-    Jifty->web->mason->out('<ul>');
-
-    foreach my $item (@stack) {
-        $item->{'render_time'} ||= int((Time::HiRes::time - $item->{'start_time'}) * 1000)/1000;
-        if ( $item->{depth} > $depth ) {
-            Jifty->web->mason->out("<ul>");
-        } elsif ( $item->{depth} < $depth ) {
-            Jifty->web->mason->out("</ul>\n") for ($item->{depth}+1 .. $depth);
-        }
-
-        Jifty->web->mason->out( "<li>");
-
-        Jifty->web->mason->out(qq{<a href="#" class="halo_comp_info" } );
-        my $id = $item->{id};
-        Jifty->web->mason->out(qq|onMouseOver="halo_over('@{[$id]}')" |); 
-        Jifty->web->mason->out(qq|onMouseOut="halo_out('@{[$id]}')" |); 
-        Jifty->web->mason->out(qq|onClick="halo_toggle('$id'); return false;">|);
-        Jifty->web->mason->out(
-                  $item->{'path'} . " - "
-                . $item->{'render_time'}
-                . qq{</a> }
-        );
-
-        Jifty->web->mason->out(Jifty->web->tangent( url =>"/=/edit/mason_component/".$item->{'path'}, label => 'Edit'))
-          unless ($item->{subcomponent});
-        Jifty->web->mason->out( "</li>");
-        $depth = $item->{'depth'};
+    for (@stack) {
+        $_->{'render_time'} = int((Time::HiRes::time - $_->{'start_time'}) * 1000)/1000
+          unless defined $_->{'render_time'};
     }
 
-    Jifty->web->mason->out("</ul>\n") for (1 .. $depth);
-    Jifty->web->mason->out('</div>');
-
-    foreach my $item (@stack) {
-        $self->render_halo_actions($item);
-    }
+    Jifty->web->mason->comp("/__jifty/halo", stack => \@stack );
 }
 
 

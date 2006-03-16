@@ -1,12 +1,93 @@
-<div class="halo_actions" id="halo-<% $id %>-menu" style="display: none; top: 5px; left: 500px"  onMouseOver="halo_over('<% $id %>')"onMouseOut="halo_out('<% $id %>')">
+<a href="#" id="render_info" onClick="Element.toggle('render_info_tree'); return false">Page info</a>
+<div style="display: none" id="render_info_tree">
+<ul>
+% foreach my $item (@stack) {
+%     if ( $item->{depth} > $depth ) {
+<ul>
+%     } elsif ( $item->{depth} < $depth ) {
+%         for ($item->{depth}+1 .. $depth) {
+</ul>
+%         }
+%     }
+
+<li><a href="#" class="halo_comp_info" onMouseOver="halo_over('<% $item->{id} %>')"
+                                       onMouseOut="halo_out('<% $item->{id} %>')"
+                                       onClick="halo_toggle('<% $item->{id} %>'); return false;">
+<% $item->{'path'} %> - <% $item->{'render_time'} %></a> 
+% unless ($item->{subcomponent}) {
+<% Jifty->web->tangent( url =>"/=/edit/mason_component/".$item->{'path'}, label => 'Edit') %>
+% }
+</li>
+% $depth = $item->{'depth'};
+% }
+
+% for (1 .. $depth) {
+</ul>
+% }
+</div>
+
+% foreach my $item (@stack) {
+<& .frame, frame => $item &>
+% }
+<%args>
+@stack
+</%args>
+<%init>
+for my $id (0..$#stack) {
+    my @kids;
+    my $looking = $id;
+    while (++$looking <= $#stack and $stack[$looking]->{depth} >= $stack[$id]->{depth} + 1) {
+        push @kids, {id => $stack[$looking]{id}, path => $stack[$looking]{path}, render_time => $stack[$looking]{render_time}}
+          if $stack[$looking]->{depth} == $stack[$id]->{depth} + 1;
+    }
+    $stack[$id]{kids} = \@kids;
+
+    if ($stack[$id]{depth} > 1) {
+        $looking = $id;
+        $looking-- while ($stack[$looking]{depth} >= $stack[$id]{depth});
+        $stack[$id]{parent} = {id => $stack[$looking]{id}, path => $stack[$looking]{path}, render_time => $stack[$looking]{render_time}};
+    }
+}
+
+my $depth = 1;
+
+</%init>
+
+
+
+<%def .frame>
+<div class="halo_actions" id="halo-<% $id %>-menu" style="display: none; top: 5px; left: 500px; min-width: 200px; width: 300px; z-index: 5;">
 <h1 id="halo-<% $id %>-title">
   <span style="float: right;"><a href="#" onClick="halo_toggle('<% $id %>'); return false">[ X ]</a></span>
   <% $frame->{name} %>
 </h1>
+<div style="position: absolute; bottom: 3px; right: 3px"><span class="resize" title="Resize" id="halo-<% $id %>-resize"></span></div>
+
 <div class="body">
 <div class="path"><% $frame->{path} %></div>
 <div class="time">Rendered in <% $frame->{'render_time'} %>s</div>
 </div>
+% if ($frame->{parent}) {
+<div class="section">Parent</div>
+<div class="body"><ul>
+<li><a href="#" class="halo_comp_info" onMouseOver="halo_over('<% $frame->{parent}{id} %>')"
+                                       onMouseOut="halo_out('<% $frame->{parent}{id} %>')"
+                                       onClick="halo_toggle('<% $frame->{parent}{id} %>'); return false;">
+<% $frame->{parent}{'path'} %> - <% $frame->{parent}{'render_time'} %></a></li>
+</ul></div>
+% }
+% if (@{$frame->{kids}}) {
+<div class="section">Children</div>
+<div class="body"><ul>
+% for my $item (@{$frame->{kids}}) {
+<li><a href="#" class="halo_comp_info" onMouseOver="halo_over('<% $item->{id} %>')"
+                                       onMouseOut="halo_out('<% $item->{id} %>')"
+                                       onClick="halo_toggle('<% $item->{id} %>'); return false;">
+<% $item->{'path'} %> - <% $item->{'render_time'} %></a></li>
+% }
+</ul>
+</div>
+% }
 % if (@args) {
 <div class="section">Variables</div>
 <div class="body"><ul class="fixed">
@@ -14,10 +95,12 @@
 <li><b><% $e->[0] %></b>:
 % if ($e->[1]) {
 % my $expanded = Jifty->web->serial;
-<span onmouseover="Element.show('<% $expanded %>')" onmouseout="Element.hide('<% $expanded %>')"><% $e->[1] %></span>
-<div id="<% $expanded %>" style="display: none; position: absolute; left: 200px; border: 1px solid black; background: #ccc; padding: 1em; padding-top: 0"><pre><% YAML::Dump($e->[2]) %></pre></div>
-% } else {
+<a href="#" onclick="Element.toggle('<% $expanded %>'); return false"><% $e->[1] %></a>
+<div id="<% $expanded %>" style="display: none; position: absolute; left: 200px; border: 1px solid black; background: #ccc; padding: 1em; padding-top: 0; width: 300px; height: 500px; overflow: auto"><pre><% YAML::Dump($e->[2]) %></pre></div>
+% } elsif (defined $e->[2]) {
 <% $e->[2] %>
+% } else {
+<i>undef</i>
 % }
 </li>
 % }
@@ -25,13 +108,25 @@
 % }
 % if (@stmts) {
 <div class="section">SQL Statements</div>
-<div class="body"><ul>
+<div class="body" style="height: 300px; overflow: auto"><ul>
 % for (@stmts) {
-<li class="fixed"><% $_ %></li>
+<li>
+<span class="fixed"><% $_->[1] %></span><br />
+% if (@{$_->[2]}) {
+<b>Bindings:</b> <tt><% join(',', @{$_->[2]}) %></tt><br />
+% }
+<i><% $_->[3] %> seconds</i>
+</li>
 % }
 </ul></div>
 % }
-<div class="section"><% Jifty->web->tangent( url =>"/=/edit/mason_component/".$frame->{'path'}, label => 'Edit') %></div>
+<div class="section">
+% unless ($frame->{subcomponent}) {
+<% Jifty->web->tangent( url =>"/=/edit/mason_component/".$frame->{'path'}, label => 'Edit') %>
+% } else {
+&nbsp;     
+% }
+</div>
 </div>
 <%args>
 $frame
@@ -46,10 +141,7 @@ while (my ($key, $value) = splice(@{$frame->{args}},0,2)) {
 @args = sort {$a->[0] cmp $b->[0]} @args;
 
 my $prev = '';
-my @stmts;
-for (@{$frame->{'sql_statements'}}) {
-    push @stmts, $_->[1] if $_->[1] ne $prev;
-    $prev = $_->[1];
-}
+my @stmts = @{$frame->{'sql_statements'}};
 
 </%init>
+</%def>

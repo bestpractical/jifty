@@ -1,6 +1,5 @@
 .halo_actions {
     position: fixed;
-    width: 300px;
     border: 1px solid black;
     background: #ccc;
 }
@@ -17,6 +16,19 @@
 
 .halo_actions h1 a { 
     color: #fff;
+}
+
+.halo_actions .resize {
+    border: 5px solid #ccc;
+    border-bottom-color: #000;
+    border-right-color: #666;
+    border-left-color: #aaa;
+    cursor: pointer;
+    color: #ccc;
+    display: block;
+    height: 0;
+    width: 0;
+    overflow: hidden;
 }
 
 .halo_actions .section {
