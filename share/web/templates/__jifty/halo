@@ -113,7 +113,7 @@ my $depth = 1;
 <li>
 <span class="fixed"><% $_->[1] %></span><br />
 % if (@{$_->[2]}) {
-<b>Bindings:</b> <tt><% join(',', @{$_->[2]}) %></tt><br />
+<b>Bindings:</b> <tt><% join(',', map {defined $_ ? $_ : "undef"} @{$_->[2]}) %></tt><br />
 % }
 <i><% $_->[3] %> seconds</i>
 </li>
