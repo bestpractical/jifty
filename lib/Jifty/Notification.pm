@@ -8,7 +8,8 @@ use Email::Send ();
 use Email::Simple ();
 use Email::Simple::Creator ();
 
-__PACKAGE__->mk_accessors(qw/body preface footer subject from _recipients/);
+__PACKAGE__->mk_accessors(qw/body preface footer subject from _recipients _to_list to/);
+
 
 =head1 USAGE
 
@@ -124,8 +125,6 @@ list of strings (not a reference).
 
 =cut
 
-__PACKAGE__->mk_accessors(qw/body preface footer subject from _recipients _to_list to/);
-
 sub recipients {
     my $self = shift;
     $self->_recipients([@_]) if @_;
@@ -133,14 +132,31 @@ sub recipients {
 } 
 
 
+=head2 email_from OBJECT
 
+Returns the email address from the given object.  This defaults to
+calling an 'email' method on the object.  This method will be called
+by L</send> to get email addresses (for L</to>) out of the list of
+L</recipients>.
 
-=head2 to_list USER, USER, USER
+=cut
 
-Gets or sets the list of L<BTDT::Model::User>s that the message will
-be sent to.  Each user is sent a separate copy of the email.  If
-passed no parameters, returns the users that have been set.  This also
-suppresses duplicates to users.
+sub email_from {
+    my $self = shift;
+    my ($obj) = @_;
+    if ($obj->can('email')) {
+        return $obj->email;
+    } else {
+        die "No 'email' method on ".ref($obj) . "; override 'email_from'";
+    }
+}
+
+=head2 to_list [OBJECT, OBJECT...]
+
+Gets or sets the list of objects that the message will be sent to.
+Each one is sent a separate copy of the email.  If passed no
+parameters, returns the objects that have been set.  This also
+suppresses duplicates.
 
 =cut
 

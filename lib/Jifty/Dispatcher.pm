@@ -11,11 +11,6 @@ Jifty::Dispatcher - The Jifty Dispatcher
 
 =head1 SYNOPSIS
 
-In your F<autohandler>, put these two lines first:
-
-    require MyApp::Dispatcher;
-    MyApp::Dispatcher->handle_request;
-
 In B<MyApp::Dispatcher>:
 
     package MyApp::Dispatcher;

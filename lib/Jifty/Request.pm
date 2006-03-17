@@ -662,7 +662,7 @@ sub add_fragment {
 =head2 do_mapping PARAMHASH
 
 Takes two possible arguments, C<request> and C<response>; they default
-to the current L<Jifty::Request> and the current L<Jufty::Response>.
+to the current L<Jifty::Request> and the current L<Jifty::Response>.
 Calls L<Jifty::Request::Mapper/map> on every argument of this request,
 pulling arguments and results from the given C<request> and C<response>.
 
@@ -840,11 +840,11 @@ list of monikers; the actions with those monikers will be marked
 active, while all other actions are marked inactive.  In the absence
 of C<J:ACTIONS>, all actions are active.
 
-=head1 YAML POST Request Protocool
+=head1 YAML POST Request Protocol
 
 To be spec'd later
 
-=head1 JSON POST Request Protocool
+=head1 JSON POST Request Protocol
 
 To be spec'd later
 
