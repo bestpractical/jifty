@@ -843,12 +843,21 @@ Generates and renders a L<Jifty::Web::Form::Clickable> using the given
 I<PARAMHASH>, additionally defaults to calling the current
 continuation.
 
+Takes an additional argument, C<to>, which can specify a default path
+to return to if there is no current continuation.
+
 =cut
 
 sub return {
     my $self = shift;
+    my %args = (@_);
+    my $continuation = Jifty->web->request->continuation;
+    if (not $continuation and $args{to}) {
+        $continuation = Jifty::Continuation->new(request => Jifty::Request->new(path => $args{to}));
+    }
+    delete $args{to};
 
-    $self->link( call => Jifty->web->request->continuation, @_ );
+    $self->link( call => $continuation, %args );
 }
 
 =head3 render_messages
