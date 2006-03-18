@@ -56,7 +56,7 @@ function writeKeyBindingLegend() {
     var content = '';
     for  (var key in bindings) {
     if ( bindings[key]['label']) {
-    content = content + '<dt>'+key + '</dt>' +'<dd>'+bindings[key]['label'] +'</dd>'; 
+    content = content + '<div class="keybinding"><dt>'+key + '</dt>' +'<dd>'+bindings[key]['label'] +'</dd></div>'; 
     }
     }
     if (content) {

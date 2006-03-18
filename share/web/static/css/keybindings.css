@@ -8,6 +8,9 @@ div.keybindings:before {
     content: "Hotkeys:";
 }
 
+dl.keybindings .keybinding {
+    display: inline;
+}
 
 dl.keybindings dt  {
     margin: 0;
