@@ -16,7 +16,7 @@
 
 //-------------------- rico.js
 var Rico = {
-  Version: '1.1.1_beta',
+  Version: '1.1.2',
   prototypeVersion: parseFloat(Prototype.Version.split(".")[0] + "." + Prototype.Version.split(".")[1])
 }
 
@@ -202,10 +202,9 @@ Rico.Accordion.prototype = {
    },
 
    showTab: function( accordionTab, animate ) {
+     if ( this.lastExpandedTab == accordionTab )
+        return;
 
-      if ( this.lastExpandedTab == accordionTab )
-         return;
- 
       var doAnimate = arguments.length == 1 ? true : animate;
 
       if ( this.options.onHideTab )
@@ -297,7 +296,7 @@ Rico.Accordion.Tab.prototype = {
       this.expanded = true;
       this.titleBar.style.backgroundColor = this.accordion.options.expandedBg;
       this.titleBar.style.color           = this.accordion.options.expandedTextColor;
-      this.content.style.overflow         = "visible";
+      this.content.style.overflow         = "auto";
    },
 
    titleBarClicked: function(e) {
@@ -412,10 +411,9 @@ Rico.AjaxEngine.prototype = {
    _requestOptions: function(options,xmlDoc) {
       var requestHeaders = ['X-Rico-Version', Rico.Version ];
       var sendMethod = 'post';
-      if ( xmlDoc == null ) {
+      if ( xmlDoc == null )
         if (Rico.prototypeVersion < 1.4)
-        	requestHeaders.push( 'Content-type', 'text/xml' );
-	  }
+        requestHeaders.push( 'Content-type', 'text/xml' );
       else
           sendMethod = 'get';
       (!options) ? options = {} : '';
@@ -2278,11 +2276,6 @@ Rico.LiveGrid.prototype = {
       this.processingRequest = null;
       this.unprocessedRequest = null;
 
-      if (this.options.sortCol) {
-          this.sortCol = options.sortCol;
-          this.sortDir = options.sortDir;
-      }
-
       this.initAjax(url);
       if ( this.options.prefetchBuffer || this.options.prefetchOffset > 0) {
          var offset = 0;
@@ -2291,32 +2284,33 @@ Rico.LiveGrid.prototype = {
             this.scroller.moveScroll(offset);
             this.viewPort.scrollTo(this.scroller.rowToPixel(offset));            
          }
+         if (this.options.sortCol) {
+             this.sortCol = options.sortCol;
+             this.sortDir = options.sortDir;
+         }
          this.requestContentRefresh(offset);
       }
    },
 
    addLiveGridHtml: function() {
      // Check to see if need to create a header table.
-      if (this.table.getElementsByTagName("thead").length == 0)
-	     return;
-		
-      // Create Table this.tableId+'_header'
-      var tableHeader = this.table.cloneNode(true);
-      tableHeader.setAttribute('id', this.tableId+'_header');
-      tableHeader.setAttribute('class', this.table.className+'_header');
+     if (this.table.getElementsByTagName("thead").length > 0){
+       // Create Table this.tableId+'_header'
+       var tableHeader = this.table.cloneNode(true);
+       tableHeader.setAttribute('id', this.tableId+'_header');
+       tableHeader.setAttribute('class', this.table.className+'_header');
 
-      // Clean up and insert
-      for( var i = 0; i < tableHeader.tBodies.length; i++ ) 
-      tableHeader.removeChild(tableHeader.tBodies[i]);
-      this.table.deleteTHead();
-     // this.table.parentNode.insertBefore(tableHeader,this.table);
+       // Clean up and insert
+       for( var i = 0; i < tableHeader.tBodies.length; i++ ) 
+       tableHeader.removeChild(tableHeader.tBodies[i]);
+       this.table.deleteTHead();
+       this.table.parentNode.insertBefore(tableHeader,this.table);
+     }
 
-   	  new Insertion.Before(this.table, "<div id='"+this.tableId+"_container'></div>");
-   	  this.table.previousSibling.appendChild(this.table);
-	  new Insertion.Before(this.table, tableHeader)
-      //this.table.parentNode.insertBefore(tableHeder, this.table)
-   	  new Insertion.Before(this.table,"<div id='"+this.tableId+"_viewport' style='float:left;'></div>");
-   	  this.table.previousSibling.appendChild(this.table);
+    new Insertion.Before(this.table, "<div id='"+this.tableId+"_container'></div>");
+    this.table.previousSibling.appendChild(this.table);
+    new Insertion.Before(this.table,"<div id='"+this.tableId+"_viewport' style='float:left;'></div>");
+    this.table.previousSibling.appendChild(this.table);
    },
 
 
@@ -2509,7 +2503,7 @@ Rico.LiveGridSort.prototype = {
    // event handler....
    headerCellClicked: function(evt) {
       var eventTarget = evt.target ? evt.target : evt.srcElement;
-      var cellId = eventTarget.id || eventTarget.parentNode.id;
+      var cellId = eventTarget.id;
       var columnNumber = parseInt(cellId.substring( cellId.lastIndexOf('_') + 1 ));
       var sortedColumnIndex = this.getSortedColumnIndex();
       if ( sortedColumnIndex != -1 ) {
@@ -2631,194 +2625,6 @@ Rico.TableColumn.prototype = {
    setSorted: function(direction) {
       // direction must by one of Rico.TableColumn.UNSORTED, .SORT_ASC, or .SORT_DESC...
       this.currentSort = direction;
-   }
-
-};
-
-
-//-------------------- ricoUtil.js
-var RicoUtil = {
-
-   getElementsComputedStyle: function ( htmlElement, cssProperty, mozillaEquivalentCSS) {
-      if ( arguments.length == 2 )
-         mozillaEquivalentCSS = cssProperty;
-
-      var el = $(htmlElement);
-      if ( el.currentStyle )
-         return el.currentStyle[cssProperty];
-      else
-         return document.defaultView.getComputedStyle(el, null).getPropertyValue(mozillaEquivalentCSS);
-   },
-
-   createXmlDocument : function() {
-      if (document.implementation && document.implementation.createDocument) {
-         var doc = document.implementation.createDocument("", "", null);
-
-         if (doc.readyState == null) {
-            doc.readyState = 1;
-            doc.addEventListener("load", function () {
-               doc.readyState = 4;
-               if (typeof doc.onreadystatechange == "function")
-                  doc.onreadystatechange();
-            }, false);
-         }
-
-         return doc;
-      }
-
-      if (window.ActiveXObject)
-          return Try.these(
-            function() { return new ActiveXObject('MSXML2.DomDocument')   },
-            function() { return new ActiveXObject('Microsoft.DomDocument')},
-            function() { return new ActiveXObject('MSXML.DomDocument')    },
-            function() { return new ActiveXObject('MSXML3.DomDocument')   }
-          ) || false;
-
-      return null;
-   },
-
-   getContentAsString: function( parentNode ) {
-      return parentNode.xml != undefined ? 
-         this._getContentAsStringIE(parentNode) :
-         this._getContentAsStringMozilla(parentNode);
-   },
-
-  _getContentAsStringIE: function(parentNode) {
-     var contentStr = "";
-     for ( var i = 0 ; i < parentNode.childNodes.length ; i++ ) {
-         var n = parentNode.childNodes[i];
-         if (n.nodeType == 4) {
-             contentStr += n.nodeValue;
-         }
-         else {
-           contentStr += n.xml;
-       }
-     }
-     return contentStr;
-  },
-
-  _getContentAsStringMozilla: function(parentNode) {
-     var xmlSerializer = new XMLSerializer();
-     var contentStr = "";
-     for ( var i = 0 ; i < parentNode.childNodes.length ; i++ ) {
-          var n = parentNode.childNodes[i];
-          if (n.nodeType == 4) { // CDATA node
-              contentStr += n.nodeValue;
-          }
-          else {
-            contentStr += xmlSerializer.serializeToString(n);
-        }
-     }
-     return contentStr;
-  },
-
-   toViewportPosition: function(element) {
-      return this._toAbsolute(element,true);
-   },
-
-   toDocumentPosition: function(element) {
-      return this._toAbsolute(element,false);
-   },
-
-   /**
-    *  Compute the elements position in terms of the window viewport
-    *  so that it can be compared to the position of the mouse (dnd)
-    *  This is additions of all the offsetTop,offsetLeft values up the
-    *  offsetParent hierarchy, ...taking into account any scrollTop,
-    *  scrollLeft values along the way...
-    *
-    * IE has a bug reporting a correct offsetLeft of elements within a
-    * a relatively positioned parent!!!
-    **/
-   _toAbsolute: function(element,accountForDocScroll) {
-
-      if ( navigator.userAgent.toLowerCase().indexOf("msie") == -1 )
-         return this._toAbsoluteMozilla(element,accountForDocScroll);
-
-      var x = 0;
-      var y = 0;
-      var parent = element;
-      while ( parent ) {
-
-         var borderXOffset = 0;
-         var borderYOffset = 0;
-         if ( parent != element ) {
-            var borderXOffset = parseInt(this.getElementsComputedStyle(parent, "borderLeftWidth" ));
-            var borderYOffset = parseInt(this.getElementsComputedStyle(parent, "borderTopWidth" ));
-            borderXOffset = isNaN(borderXOffset) ? 0 : borderXOffset;
-            borderYOffset = isNaN(borderYOffset) ? 0 : borderYOffset;
-         }
-
-         x += parent.offsetLeft - parent.scrollLeft + borderXOffset;
-         y += parent.offsetTop - parent.scrollTop + borderYOffset;
-         parent = parent.offsetParent;
-      }
-
-      if ( accountForDocScroll ) {
-         x -= this.docScrollLeft();
-         y -= this.docScrollTop();
-      }
-
-      return { x:x, y:y };
-   },
-
-   /**
-    *  Mozilla did not report all of the parents up the hierarchy via the
-    *  offsetParent property that IE did.  So for the calculation of the
-    *  offsets we use the offsetParent property, but for the calculation of
-    *  the scrollTop/scrollLeft adjustments we navigate up via the parentNode
-    *  property instead so as to get the scroll offsets...
-    *
-    **/
-   _toAbsoluteMozilla: function(element,accountForDocScroll) {
-      var x = 0;
-      var y = 0;
-      var parent = element;
-      while ( parent ) {
-         x += parent.offsetLeft;
-         y += parent.offsetTop;
-         parent = parent.offsetParent;
-      }
-
-      parent = element;
-      while ( parent &&
-              parent != document.body &&
-              parent != document.documentElement ) {
-         if ( parent.scrollLeft  )
-            x -= parent.scrollLeft;
-         if ( parent.scrollTop )
-            y -= parent.scrollTop;
-         parent = parent.parentNode;
-      }
-
-      if ( accountForDocScroll ) {
-         x -= this.docScrollLeft();
-         y -= this.docScrollTop();
-      }
-
-      return { x:x, y:y };
-   },
-
-   docScrollLeft: function() {
-      if ( window.pageXOffset )
-         return window.pageXOffset;
-      else if ( document.documentElement && document.documentElement.scrollLeft )
-         return document.documentElement.scrollLeft;
-      else if ( document.body )
-         return document.body.scrollLeft;
-      else
-         return 0;
-   },
-
-   docScrollTop: function() {
-      if ( window.pageYOffset )
-         return window.pageYOffset;
-      else if ( document.documentElement && document.documentElement.scrollTop )
-         return document.documentElement.scrollTop;
-      else if ( document.body )
-         return document.body.scrollTop;
-      else
-         return 0;
    }
 
 };
