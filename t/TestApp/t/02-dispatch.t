@@ -4,7 +4,7 @@ use strict;
 
 BEGIN {chdir "t/TestApp"}
 use lib '../../lib';
-use Jifty::Test tests => 16;
+use Jifty::Test tests => 24;
 use Jifty::Test::WWW::Mechanize;
 
 my $server  = Jifty::Test->make_server;
