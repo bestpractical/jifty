@@ -10,7 +10,7 @@ A basic test harness for the User model.
 
 BEGIN {chdir "t/TestApp"}
 use lib '../../lib';
-use Jifty::Test tests => 11;
+use Jifty::Test tests => 12;
 
 # Make sure we can load the model
 use_ok('TestApp::Model::User');
@@ -25,6 +25,7 @@ my ($id) = $o->create( name => $$, email => $$ );
 ok($id, "User create returned success");
 ok($o->id, "New User has valid id set");
 is($o->id, $id, "Create returned the right id");
+is($o->name, $$, "Created object has the right name");
 
 # And another
 $o->create( name => $$, email => $$ );
