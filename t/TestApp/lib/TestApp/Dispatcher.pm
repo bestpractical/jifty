@@ -11,6 +11,8 @@ on '/dispatch/show/' => run {
 
 
 my $count = 0;
+my $before = 0;
+my $after = 0;
 
 on '/dispatch/basic' => run {
     set count => $count++;
@@ -19,6 +21,15 @@ on '/dispatch/basic' => run {
 on '/dispatch/basic-show' => run {
     set count => $count++;
     show '/dispatch/basic-show';
+};
+
+before '/dispatch/*' => run {
+    set before => $before++;
+    set after => $after;
+};
+
+after '/dispatch/*' => run {
+    $after++;
 };
 
 1;
