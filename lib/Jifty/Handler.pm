@@ -119,19 +119,21 @@ there is none.
 
 =head2 apache
 
-Returns the L<HTML::Mason::FakeApache> or L<Apache> objecvt for the
+Returns the L<HTML::Mason::FakeApache> or L<Apache> object for the
 current request, ot C<undef> if there is none.
 
 =head2 handle_request
 
-When your server processs (be it Jifty-internal, FastCGI or anything else) wants
-to handle a request coming in from the outside world, you should call C<handle_request>.
+When your server processs (be it Jifty-internal, FastCGI or anything
+else) wants to handle a request coming in from the outside world, you
+should call C<handle_request>.
 
 =over
 
 =item cgi
 
-A L<CGI>.pm object that your server has already set up and loaded with your request's data
+A L<CGI> object that your server has already set up and loaded with
+your request's data.
 
 =back
 

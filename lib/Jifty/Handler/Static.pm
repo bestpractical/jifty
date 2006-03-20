@@ -47,21 +47,27 @@ sub handle_request {
     my $self = shift;
     my $path = shift;
 
-    #if ( Jifty->web->request->header('If-Modified-Since') and not Jifty->config->framework('DevelMode') ) { $self->respond_not_modified(); }
+    #if ( Jifty->handler->cgi->http('If-Modified-Since') and not Jifty->config->framework('DevelMode') ) { $self->respond_not_modified(); }
 
     my $local_path = $self->file_path($path);
     unless ($local_path) {
         return undef;
     }
-    if ( $self->client_accepts_gzipped_content ) {
-      return $self->send_gzipped($local_path);
+
+    my $mime_type = $self->mime_type($local_path);
+    
+    if ( $self->client_accepts_gzipped_content and $mime_type =~ m!^(text/|application/x-javascript)! ) {
+        return $self->send_gzipped($local_path, $mime_type);
     } else {
-       return  $self->send_uncompressed($local_path);
+        return  $self->send_uncompressed($local_path, $mime_type);
     }
 
 }
 
-sub client_accepts_gzipped_content {0}
+sub client_accepts_gzipped_content {
+    my $self = shift;
+    return Jifty->handler->cgi->http('Accept-Encoding') =~ /\bgzip\b/;
+}
 
 sub file_path {
     my $self    = shift;
@@ -87,7 +93,6 @@ sub mime_type {
     my $self       = shift;
     my $local_path = shift;
 
-    # XXX TODO: make this a pkg global
     my $mimeobj   = $mime->mimeTypeOf($local_path);
     my $mime_type = (
           $mimeobj
@@ -99,13 +104,45 @@ sub mime_type {
 }
 
 
-sub send_gzipped { die 'unimplemented' }
+sub send_gzipped {
+    my $self       = shift;
+    my $local_path = shift;
+    my $mime_type  = shift;
+
+    my $fh = IO::File->new( $local_path, 'r' );
+    if ( defined $fh ) {
+        binmode $fh;
+
+        $self->log->debug("Sending gzip'd file $local_path");
+        # This is designed to work under CGI or FastCGI; will need an
+        # abstraction for mod_perl
+
+        # Clear out the mason output, if any
+        Jifty->web->mason->clear_buffer if Jifty->web->mason;
+
+        my $apache = Jifty->handler->apache;
+
+        $apache->content_type($mime_type);
+        $apache->header_out( "Content-Encoding" => "gzip");
+        $apache->header_out( Status => 200 );
+        $apache->send_http_header();
+
+        undef $/;
+        require Compress::Zlib;
+        binmode STDOUT;
+        # XXX TODO: Cache this
+        print STDOUT Compress::Zlib::memGzip(<$fh>);
+        
+        return 1;
+    } else {
+        return undef;
+    }
+}
 
 sub send_uncompressed {
     my $self       = shift;
     my $local_path = shift;
-
-    my $mime_type = $self->mime_type($local_path);
+    my $mime_type  = shift;
 
     my $fh = IO::File->new( $local_path, 'r' );
     if ( defined $fh ) {
@@ -120,7 +157,6 @@ sub send_uncompressed {
         my $apache = Jifty->handler->apache;
 
         $apache->content_type($mime_type);
-   #$apache->header_out( 'Cache-Control' => 'max-age=3600, must-revalidate' );
         $apache->header_out( Status => 200 );
         $apache->send_http_header();
         $apache->send_fd($fh);
