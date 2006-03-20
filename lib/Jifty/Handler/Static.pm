@@ -21,7 +21,10 @@ This class takes care of serving out static files for a Jifty application.
 When fully operational, it will use an algorithm along the lines of the following:
 
 * Static files are served out of a separate root
-* If static files go through the dispatcher:
+* If static files go through apache:
+    * How do we merge together the two static roots?
+* If static files go through Jifty::Handler
+    * We need a flag to allow them to go through the dispatcher, too
     * return "True" (304) for if-modified-since unless develmode.
     * if the browser accepts gzipped data,
         see if we have a cached gzipped copy
