@@ -91,6 +91,12 @@ A boolean; whether state variables are preserved across the link.
 Defaults to true if there are any AJAX actions on the link, false
 otherwise.
 
+=item parameters
+
+A hash reference of query parameters that go on the link or button.
+These will end up being submitted exactly like normal query
+parameters.
+
 =item Anything from L<Jifty::Web::Form::Element>
 
 =back
