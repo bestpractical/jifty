@@ -19,6 +19,7 @@ requires('Email::Send' => '1.99_01'); # Email::Send::Jifty::Test
 requires('Email::Simple');
 requires('Email::Simple::Creator');
 requires('Encode');
+requires('File::MMagic');
 requires('File::ShareDir');
 requires('HTML::Entities');
 requires('HTML::Mason' => 1.3101);           # HTML::Mason::Exceptions HTML::Mason::FakeApache HTML::Mason::MethodMaker HTML::Mason::Request HTML::Mason::Utils
@@ -32,6 +33,7 @@ requires('Jifty::DBI' => '0.16' );            # Jifty::DBI::Collection Jifty::DB
 requires('Locale::Maketext::Simple');
 requires('Log::Log4perl');
 requires('LWP::UserAgent');
+requires('MIME::Types');
 requires('Module::CoreList');
 requires('Module::Install::Admin' => '0.50');
 requires('Module::Pluggable' => '2.95');

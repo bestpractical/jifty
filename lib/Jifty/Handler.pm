@@ -26,7 +26,7 @@ handlers.
 
 use base qw/Class::Accessor/;
 use Hook::LexWrap;
-__PACKAGE__->mk_accessors(qw(mason dispatcher cgi apache));
+__PACKAGE__->mk_accessors(qw(mason dispatcher static_handler cgi apache));
 
 =head2 new
 
@@ -52,6 +52,9 @@ sub new {
         Jifty->config->framework('ApplicationClass') . "::Dispatcher" );
     Jifty::Util->require( $self->dispatcher );
     $self->mason( Jifty::MasonHandler->new( $self->mason_config ) );
+
+    $self->static_handler(Jifty::Handler::Static->new());
+
     return $self;
 }
 
@@ -138,24 +141,29 @@ A L<CGI>.pm object that your server has already set up and loaded with your requ
 sub handle_request {
     my $self = shift;
     my %args = (
-        cgi           => undef,
+        cgi => undef,
         @_
     );
 
-    Module::Refresh->refresh if (Jifty->config->framework('DevelMode') );
-    $self->cgi($args{cgi});
-    $self->apache(HTML::Mason::FakeApache->new(cgi => $self->cgi));
+    Module::Refresh->refresh if ( Jifty->config->framework('DevelMode') );
+    $self->cgi( $args{cgi} );
+    $self->apache( HTML::Mason::FakeApache->new( cgi => $self->cgi ) );
 
     local $HTML::Mason::Commands::JiftyWeb = Jifty::Web->new();
-    Jifty->web->request(Jifty::Request->new()->fill($self->cgi));
+    Jifty->web->request( Jifty::Request->new()->fill( $self->cgi ) );
 
     Jifty->web->response( Jifty::Response->new );
     Jifty->web->setup_session;
     Jifty->web->session->set_cookie;
 
-    Jifty->log->debug("Received request for ".Jifty->web->request->path);
-    
-    $self->dispatcher->handle_request();
+    Jifty->log->debug( "Received request for " . Jifty->web->request->path );
+
+    my $sent_response = 0;
+    $sent_response
+        = $self->static_handler->handle_request( Jifty->web->request->path )
+        if ( Jifty->config->framework('Web')->{'ServeStaticFiles'} );
+
+    $self->dispatcher->handle_request() unless ($sent_response);
 
     $self->cleanup_request();
 

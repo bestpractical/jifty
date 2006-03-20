@@ -233,6 +233,7 @@ sub guess {
                 DataDir     => "var/mason",
                 StaticRoot   => "web/static",
                 TemplateRoot => "web/templates",
+                ServeStaticFiles => 1,
                 MasonConfig => {
                     autoflush    => 0,
                     error_mode   => 'fatal',

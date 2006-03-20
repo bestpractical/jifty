@@ -1,12 +1,22 @@
-  <script type="text/javascript" src="/js/json.js"></script>
-  <script type="text/javascript" src="/js/prototype.js"></script>
-  <script type="text/javascript" src="/js/behaviour.js"></script>
-  <script type="text/javascript" src="/js/scriptaculous/scriptaculous.js"></script>
-  <script type="text/javascript" src="/js/jifty.js"></script>
-  <script type="text/javascript" src="/js/dom-drag.js"></script>
-  <script type="text/javascript" src="/js/halo.js"></script>
-  <script type="text/javascript" src="/js/combobox.js"></script>
-  <script type="text/javascript" src="/js/key_bindings.js"></script>
-  <script type="text/javascript" src="/js/bps_util.js"></script>
-  <script type="text/javascript" src="/js/rico.js"></script>
-  <script type="text/javascript" src="/js/app_behaviour.js"></script>
+<%init>
+# XXX TODO: stick this into libs
+
+my @libs = qw(
+  /static/js/json.js
+  /static/js/prototype.js
+  /static/js/behaviour.js
+  /static/js/scriptaculous/scriptaculous.js
+  /static/js/jifty.js
+  /static/js/dom-drag.js
+  /static/js/halo.js
+  /static/js/combobox.js
+  /static/js/key_bindings.js
+  /static/js/bps_util.js
+  /static/js/rico.js
+  /static/js/app_behaviour.js
+);
+
+</%init>
+% for (@libs) {
+   <script type="text/javascript" src="<%$_%>"></script>
+% }

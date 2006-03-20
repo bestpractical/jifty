@@ -13,51 +13,6 @@
 Used as a poor man's 404 handler
 </%doc>
 <%init>
-
-# XXX TODO: Use MIME Magic to serve the right mime types
-# XXX TODO: move into a library
-# This code loads up any static file and displays it if it would 404 from dynamic content. Failing that, actually 404
-my $file = $m->dhandler_arg;
-my $type = "application/octet-stream";
-if ( $file =~ /\.(gif|png|jpe?g)$/i ) {
-    $type = "image/$1";
-    $type =~ s/jpg/jpeg/gi;
-} elsif ( $file =~ /\.css$/i ) {
-    $type = 'text/css';
-} elsif ( $file =~ /\.js$/i ) {
-    $type = 'application/x-javascript';
-} elsif ($file =~ /\.ico$/i){ 
-    $type = 'image/x-icon';
-}
-
-my @options = (
-
-    Jifty::Util->absolute_path(
-        Jifty->config->framework('Web')->{'StaticRoot'} || "static"
-        )
-        . "/"
-        . $file,
-
-    Jifty->config->framework('Web')->{'DefaultStaticRoot'} . "/" . $file
-);
-
-my $image;
-
-foreach $image (@options) {
-
-    if ( ( -f $image && -r $image ) ) {
-        $r->header_out( 'Cache-Control' => 'max-age=3600, must-revalidate' );
-        $r->content_type($type);
-        open( FILE, "<$image" ) || die;
-        {
-            local $/ = \16384;
-            $m->out($_) while (<FILE>);
-            close(FILE);
-        }
-        return;
-    }
-}
-
 Jifty->log->error("404: user tried to get to ".$m->dhandler_arg);
 $r->header_out( Status => '404');
 </%init>

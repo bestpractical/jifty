@@ -6,7 +6,7 @@
   
   <title><% $title %></title>
   
-  <link rel="stylesheet" type="text/css" href="/css/main.css" media="all" />
+  <link rel="stylesheet" type="text/css" href="/static/css/main.css" media="all" />
   <& javascript &> 
 </head>
 <%args>
