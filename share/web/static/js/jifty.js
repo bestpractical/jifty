@@ -378,11 +378,8 @@ function update() {
     for (var i = 0; i < named_args['actions'].length; i++) {
         var moniker = named_args['actions'][i];
         var a = new Action(moniker);
-        if (a.register) {
-            if (a.hasUpload)
-                return true;
+        if (a.register)
             request['actions'][moniker] = a.data_structure();
-        }
     }
 
     request['fragments'] = {};
@@ -529,7 +526,6 @@ function update() {
     new Ajax.Request(document.URL,
                      options
                     );
-    return false;
 }
 
 function trace( msg ){
