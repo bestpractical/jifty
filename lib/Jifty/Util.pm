@@ -65,7 +65,16 @@ currently only used to store the common Mason components.
 sub share_root {
     my $self = shift;
 
-    return $SHARE_ROOT ||=  File::Spec->rel2abs( File::ShareDir::module_dir('Jifty') );
+    $SHARE_ROOT ||=  eval { File::Spec->rel2abs( File::ShareDir::module_dir('Jifty') )};
+    if (not $SHARE_ROOT or not -d $SHARE_ROOT) {
+        # XXX TODO: This is a bloody hack
+        # Module::Install::ShareDir and File::ShareDir don't play nicely
+        # together
+        my @root = File::Spec->splitdir($self->jifty_root); # lib
+        pop @root; # Jifty-version
+        $SHARE_ROOT = File::Spec->catdir(@root,"share");
+    }
+    return ($SHARE_ROOT);
 }
 
 =head2 app_root
@@ -127,7 +136,13 @@ application's root directory, as defined by L</app_root>.
 sub default_app_name {
     my $self = shift;
     my @root = File::Spec->splitdir( Jifty::Util->app_root);
-    return pop @root;
+    my $name =  pop @root;
+    # Jifty-0.10211 should become Jifty
+    if ($name =~ /^(.*?)-(.*\..*)$/) {
+        $name = $1;
+
+    }
+    return $name;
 }
 
 =head2 make_path PATH
