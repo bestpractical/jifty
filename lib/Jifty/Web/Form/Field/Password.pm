@@ -43,6 +43,12 @@ sub render_value {
     return '-';
 }
 
+=head2 classes
+
+Output password fields with the class 'password'
+
+=cut
+
 sub classes {
     my $self = shift;
     return join(' ', 'password', ($self->SUPER::classes));
