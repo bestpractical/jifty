@@ -231,6 +231,8 @@ our @EXPORT = qw<
 
     get next_rule last_rule
 
+    already_run
+
     $Dispatcher
 >;
 
@@ -586,8 +588,33 @@ sub _do_after {
     }
 }
 
+=head2 already_run
+
+Returns true if the code block has run once already in this request.
+This can be useful for 'after' rules to ensure that they only run
+once, even if there is a sub-dispatch which would cause it to run more
+than once.  The idiom is:
+
+    after '/some/path/*' => run {
+        return if already_run;
+        # ...
+    };
+
+=cut
+
+sub already_run {
+    my $id = $Dispatcher->{call_rule};
+    return 1 if get "__seen_$id";
+    set "__seen_$id" => 1;
+    return 0;
+}
+
 sub _do_run {
     my ( $self, $code ) = @_;
+
+    # Keep track of the coderef being run, so we can know about
+    # already_run
+    local $self->{call_rule} = $code;
 
     # establish void context and make a call
     ( $self->can($code) || $code )->();
@@ -729,16 +756,23 @@ sub _do_dispatch {
     $self->{path} =~ s{/+}{/}g;
 
     $self->log->debug("Dispatching request to ".$self->{path});
+
     eval {
         $self->_handle_rules( [ $self->rules('SETUP') ] );
         HANDLE_WEB: { Jifty->web->handle_request(); }
         $self->_handle_rules( [ $self->rules('RUN'), 'show' ] );
+    };
+    if ( my $err = $@ ) {
+        $self->log->warn(ref($err) . " " ."'$err'") if ( $err !~ /^LAST RULE/);
+    }
+
+    eval {
         $self->_handle_rules( [ $self->rules('CLEANUP') ] );
     };
     if ( my $err = $@ ) {
         $self->log->warn(ref($err) . " " ."'$err'") if ( $err !~ /^LAST RULE/);
-
     }
+
     last_rule;
 }
 

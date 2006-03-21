@@ -13,6 +13,7 @@ on '/dispatch/show/' => run {
 my $count = 0;
 my $before = 0;
 my $after = 0;
+my $after_once = 0;
 
 on '/dispatch/basic' => run {
     set count => $count++;
@@ -24,8 +25,14 @@ on '/dispatch/basic-show' => run {
 };
 
 before '/dispatch/*' => run {
-    set before => $before++;
-    set after => $after;
+    set before     => $before++;
+    set after      => $after;
+    set after_once => $after_once;
+};
+
+after '/dispatch/*' => run {
+    return if already_run;
+    $after_once++;
 };
 
 after '/dispatch/*' => run {

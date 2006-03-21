@@ -1,3 +1,4 @@
 <&| /_elements/wrapper, title => "Test of dispatch" &>
-  Basic test with forced show.  (Count <% $ARGS{count} %>, before <% $ARGS{before} %>, after <% $ARGS{after} %>)
+  Basic test with forced show.
+<% YAML::Dump(\%ARGS) %>
 </&>
