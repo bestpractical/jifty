@@ -52,6 +52,10 @@ input.text, input.date, input.password, textarea, select {
     padding: 0.2em;
 }
 
+input.date {
+    width: 10em;
+}
+
 .submit_button {
     display: block;
     clear: both;
@@ -63,9 +67,7 @@ input.text, input.date, input.password, textarea, select {
 }
 
 input.button {
-    border: 1px outset black;
-    background: white;
-    padding: 0.2em 1em;
+    padding: 0.15em 1em;
     font-weight: bold;
 }
 

@@ -230,6 +230,12 @@ Behaviour.register({
         elt.onblur = function () {
             Form.Element.validate(this);
         } 
+    },
+    'input.date': function(e) {
+        if ( !Element.hasClassName( e, 'has-calendar-link' ) ) {
+            createCalendarLink(e);
+            Element.addClassName( e, 'has-calendar-link' );
+        }
     }
 });
 
