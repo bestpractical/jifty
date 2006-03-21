@@ -42,4 +42,10 @@ Never render a value for a password
 sub render_value {
     return '-';
 }
+
+sub classes {
+    my $self = shift;
+    return join(' ', 'password', ($self->SUPER::classes));
+}
+
 1;

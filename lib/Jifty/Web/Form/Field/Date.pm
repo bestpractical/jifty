@@ -5,6 +5,10 @@ package Jifty::Web::Form::Field::Date;
 
 use base qw/Jifty::Web::Form::Field/;
 
+sub classes {
+    my $self = shift;
+    return join(' ', 'date', ($self->SUPER::classes));
+}
 
 =head2 render_widget
 
