@@ -14,8 +14,7 @@ jesse@bestpractical.com
 
 »|« Best Practical
 ----
-How we're building useful applications in Perl 5 with a single unified framework,
-using less time, energy, code, blood, sweat, tears, etc.
+How we're building useful applications in Perl 5 with a single unified framework, using less time, energy, code, blood, sweat, tears, etc.
 ----
 Another
 framework?
@@ -33,6 +32,9 @@ We like
 pain?
 ----
 No!
+
+
+
 ----
 We're building a 
 new application.
@@ -55,29 +57,58 @@ Java stuff
 We ignored the
 Java stuff
 ----
-Everything 
-had good ideas
+We looked at
+RT
+----
+Everything had
+some good ideas
+----
+Maypole has
+a default app
+----
+Catalyst has
+a cool dispatcher
+----
+Rails is
+full stack
+----
+Rails has
+pretty syntax
+----
+Seaside has
+continuations
+----
+RT has database
+interaction
 ----
 Nothing met
 our needs
 ----
-We made RT
+Maypole isn't
+easy enough
+----
+Catalyst has too
+many ways to do it
+----
+Rails isn't perl
+----
+Seaside is   
+Smalltalk
+----
+Seaside is   
+space alien
 ----
 RT is 10
+years old
 ----
-Good stuff
+Stole the
+good stuff
 ----
-Stole it
-----
-Bad stuff
-----
-Threw it away
-----
-The new app
-felt good
-----
-Extracted and 
-generalized
+Threw away
+the bad stuff
+
+
+
 ----
 Jifty is missing
 lots of features
@@ -125,8 +156,8 @@ No
 Template
 Toolkit
 ----
-No
-Catalyst
+No hand-built
+HTML forms
 ----
 No 
 YAML
@@ -134,11 +165,75 @@ YAML
 That's 
 a lie
 ----
-There's a little bit of YAML
+There's a little
+bit of YAML
 ----
 config.yml
 ----
 (It's optional)
+----
+Sometimes not having
+things is a feature
+----
+We've 
+got
+BUZZWORDS
+----
+Web 2.0
+----
+Sure 
+it is
+----
+What does
+it mean?
+----
+My DOG
+is Web 2.0
+enabled
+----
+Go ahead 
+----
+Prove me 
+wrong
+----
+Perl
+----
+(obviously)
+----
+Full
+Stack
+----
+AJAX
+----
+And it works
+in lynx, too
+----
+Declarative 
+Programming
+----
+Web 
+Services
+----
+Encapsulated
+cleverness
+----
+Continuations
+----
+MVC
+----
+(Sort of)
+----
+It also comes
+with a pony
+----
+Part of the install:
+{{img src="pony.png" width="640" height="422"}}
+----
+No other framework
+can claim that
+
+
+
 ----
 The 
 name
@@ -173,130 +268,19 @@ Manager
 So, it's 
 named Jifty!
 ----
-Jifty's
-Influences
-----
-RT
-----
-DBIx::SearchBuilder
-----
-Ruby on Rails
-----
-Rails makes me 
-jealous.
-
+How it's put
+together
+XX pretty picture?
 ----
 
-Rails makes me 
-really jealous.
-
-----
-
-Rails 
-isn't 
-perfect
-
-----
-
-Rails
-isn't
-Perl
-
-----
-
-Rails
-isn't
-perfect
-
-----
-
-Jifty
-is 
-perfect
-
-----
-
-That's 
-a lie, 
 
 
-----
 
-Jifty
-is 
-Perl,
-though
-
-----
-More 
-influences
-----
-Seaside
-----
-My sick mind
-----
-
-We've 
-got
-BUZZWORDS
-
-----
-
-Perl
-----
-
-(obviously)
-
-----
-Full
-Stack
-----
-AJAX
-----
-Declarative 
-Programming
-----
-Web 
-Services
-----
-Encapsulated
-cleverness
-----
-MVC
-----
-(Sort of)
-----
-Web 2.0
-----
-Sure 
-it is
-----
-What does
-it mean?
-----
-My DOG
-is Web 2.0
-enabled
-----
-Go ahead 
-----
-Prove me 
-wrong
-----
-
-How 
-Jifty
-Works
-
-----
-
-MODEL
-
+MODELS
 ----
 Models
 are 
 Jifty::DBI
-
 ----
 Models
 are 
@@ -310,7 +294,6 @@ Models
 define
 schema
 ----
-
  column complete =>
    type is 'boolean',
    default is 'false',
@@ -329,7 +312,9 @@ versioning
    type is 'text',
    render_as 'Textarea',
    label is 'Details';
-
+----
+Models
+do validation
 ----
   column priority =>
    type is 'integer',
@@ -346,11 +331,11 @@ relationships
 ----
   column tags =>
    label is 'Tags',
-   refers_to BTDT::Model::TaskTagCollection 
+   refers_to MyApp::Model::TaskTagCollection
              by 'task_id';
 ----
   column owner_id =>
-   refers_to BTDT::Model::User,
+   refers_to MyApp::Model::User,
    since '0.2.0',
    render_as 'Combobox';
 ----
@@ -381,60 +366,13 @@ Ok...No
 Built on
 SearchBuilder
 ----
-It's 
-out
-now
-----
-It's in subversion
-http://svn.jifty.org/jifty.org/
-----
 
-VIEW
 
-----
-Session 
-handler
-----
-Access
-control
-----
-AJAX 
-----
-Dynamic
-client-side
-includes
-----
-Degrades 
-nicely
-----
-Works 
-with 
-lynx
-----
 
-In 
-the 
-future...
+ACTIONS
 ----
-UI 
-as
-API
-----
-
-CONTROLLER
-
-----
-
-Other toolkits:
-Controllers are
-tied to URLs
-
-----
-Jifty:
-Controllers are 
-generic RPC
-----
-Actions
+Actions are
+your controllers
 ----
 Any action
 on any page
@@ -451,14 +389,13 @@ Arguments
 have 
 types
 ----
-View kit
+Jifty
 can render
 arguments
 as forms
 ----
-Actions
-return
-results
+No more &lt;input&gt;
+tags everywhere
 ----
 Automatic
 validators
@@ -471,6 +408,10 @@ canonicalizers
 ----
 If you
 want them
+----
+Actions
+return
+results
 ----
 Actions 
 =
@@ -493,9 +434,34 @@ serializer
 serializer 
 last week)
 ----
-Iterative 
-web 
-development
+
+
+
+DISPATCHER
+----
+
+
+
+REGIONS
+----
+  Jifty->web->form->submit(
+    label   => 'Create',
+    onclick => [
+      { submit => $action },
+      { refresh => "someplace" },
+    ],
+  );
+----
+
+
+
+CONTINUATIONS
+----
+
+
+
+Developer
+mode
 ----
 Mason reloads 
 changed pages    
@@ -504,6 +470,23 @@ per request
 Jifty reloads
 changed {{#iu|libraries}}
 per request
+----
+Halos
+----
+Give you real-time
+information about each
+part of the page
+----
+SQL queries,
+arguments,
+profiling
+----
+XXX image goes here
+----
+
+
+
+Other bits
 ----
 Sending 
 Email
@@ -524,8 +507,12 @@ FastCGI
 handler
 ----
 Stub generators
+----
 Test helpers
 ----
+
+
+
 A TRIVIAL
 EXAMPLE
 ----
@@ -623,62 +610,77 @@ It runs
 ----
 Ship it
 ----
-Jifty 
-Sucks
 
+
+
+
+Jifty
+Sucks
 ----
-...for the 
-moment
+...for now
 ----
 Lots of
 Dependencies
 ----
-Apache::Session App::CLI CGI::Cookie CGI Class::Accessor 
-Clone Cwd Data::Page Data::UUID DBD::Pg Email::Send 
-Email::Simple Email::Simple::Creator Exporter File::Basename 
-File::Find File::Spec FindBin Getopt::Long HTML::Entities 
-HTML::Mason HTML::Mason::Plugin HTTP::Cookies HTTP::Server::Simple 
-HTTP::Server::Simple::Mason HTTP::Server::Simple::Recorder 
-Hash::Merge Hook::LexWrap Jifty::DBI Log::Log4perl 
-Module::Pluggable Module::Refresh Pod::Usage Scalar::Util 
-Test::Base Test::More Test::HTML::Lint Test::HTTP::Server::Simple 
-Test::WWW::Mechanize Time::ParseDate UNIVERSAL::require URI 
-WWW::Mechanize XML::XPath YAML
+Apache::Session App::CLI Cache::Cache Calendar::Simple Class::Accessor
+Class::Container Clone Compress::Zlib DBD::SQLite Data::Page
+Digest::MD5 Email::Folder Email::LocalDelivery Email::Send
+Email::Simple Email::Simple::Creator Encode File::MMagic
+File::ShareDir HTML::Entities HTML::Mason HTML::Mason::Plugin
+HTTP::Cookies HTTP::Date HTTP::Server::Simple
+HTTP::Server::Simple::Recorder Hash::Merge Hook::LexWrap Jifty::DBI
+Locale::Maketext::Simple Log::Log4perl LWP::UserAgent MIME::Types
+Module::CoreList Module::Install::Admin Module::Pluggable
+Module::Refresh Params::Validate Pod::Simple Scalar::Util
+String::Koremutake Test::Base Test::HTML::Lint
+Test::HTTP::Server::Simple Test::More Test::Pod::Coverage
+Test::WWW::Mechanize Time::HiRes Time::ParseDate UNIVERSAL::require
+URI WWW::Mechanize XML::Writer XML::XPath
 ----
-Fixing 
+Fixing
 that
 too.
 ----
 Future
 Directions
 ----
-Halos
-----
 Wiki-style
 UI Editor
 ----
-Hardcode
-Session
-Tracing
-----
-Even 
-Less 
+Even
+Less
 Code
 ----
-More 
+More
 Docs
 ----
 Sample
 Apps
 ----
 "Jifty in a Jiffy"
-movies and 
+movies and
 music videos
 ----
-Continuations?
+How do I get it
+----
+  cpan Jifty
+----
+  http://svn.jifty.org/
+----
+  http://jifty.org/
+----
+How do I get started
+----
+  perldoc Jifty::Manual::Tutorial
+----
+  perldoc Jifty::Manual::Tutorial_ja
+  (thanks to Kenichi Ishigaki)
+----
+#jifty on freenode.net
+----
+jifty-devel@lists.jifty.org
 ----
 Thanks!
-Gotta go hack now.
 ----
 
 
