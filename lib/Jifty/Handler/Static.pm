@@ -46,6 +46,14 @@ sub new {
     bless $self, $class;
 }
 
+
+=head2 handle_request $path
+
+Handle a request for C<$path>. If we can't find a static file of that name, return undef.
+
+
+=cut
+
 sub handle_request {
     my $self = shift;
     my $path = shift;
@@ -67,10 +75,27 @@ sub handle_request {
 
 }
 
+
+=head2 client_accepts_gzipped_content
+
+Returns true if it looks like the client accepts gzip encoding. Otherwise, returns false.
+
+
+=cut
+
+
 sub client_accepts_gzipped_content {
     my $self = shift;
     return Jifty->handler->cgi->http('Accept-Encoding') =~ /\bgzip\b/;
 }
+
+
+=head2 file_path $path
+
+Returns the system path for C<$path>, inside the application's static root or, failing that, Jifty's static root.
+Returns undef if it can't find the file in either path.
+
+=cut
 
 sub file_path {
     my $self    = shift;
@@ -92,6 +117,13 @@ sub file_path {
 
 }
 
+=head2 mime_type $path
+
+Returns the mime type of the file whose path on disk is C<$path>. Tries to use
+L<MIME::Types> to guess first. If that fails, it falls back to C<File::MMagic>.
+
+=cut
+
 sub mime_type {
     my $self       = shift;
     my $local_path = shift;
@@ -105,6 +137,15 @@ sub mime_type {
 
     return ($mime_type);
 }
+
+
+=head2 send_gzipped $path $mimetype
+
+Print a gzipped version of C<$path> to STDOUT (the client), identified with a mimetype of C<$mimetype>.
+Eventually, this will cache the file on disk. Right now, it just does the gzipping in memory.
+
+
+=cut
 
 
 sub send_gzipped {
@@ -142,6 +183,13 @@ sub send_gzipped {
     }
 }
 
+=head2 send_gzipped $path $mimetype
+
+Print an uncompressed version of C<$path> to STDOUT (the client), identified with a mimetype of C<$mimetype>.
+
+=cut
+
+
 sub send_uncompressed {
     my $self       = shift;
     my $local_path = shift;
@@ -168,14 +216,6 @@ sub send_uncompressed {
     } else {
         return undef;
     }
-}
-
-sub missing_file {
-    # not currently used
-    my $self = shift;
-    my $file = shift;
-    Jifty->log->error("404: user tried to get to ".$file);
-    Jifty->web->redirect('/__jifty/error/file_not_found');
 }
 
 1;
