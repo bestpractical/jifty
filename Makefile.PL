@@ -10,6 +10,7 @@ requires('Calendar::Simple');
 requires('Class::Accessor');
 requires('Class::Container');
 requires('Clone');
+requires('Compress::Zlib');
 requires('DBD::SQLite');
 requires('Data::Page');
 requires('Digest::MD5');
@@ -25,6 +26,7 @@ requires('HTML::Entities');
 requires('HTML::Mason' => 1.3101);           # HTML::Mason::Exceptions HTML::Mason::FakeApache HTML::Mason::MethodMaker HTML::Mason::Request HTML::Mason::Utils
 requires('HTML::Mason::Plugin');
 requires('HTTP::Cookies');
+requires('HTTP::Date');
 requires('HTTP::Server::Simple' => '0.10');  # HTTP::Server::Simple::CGI
 requires('HTTP::Server::Simple::Recorder');
 requires('Hash::Merge');

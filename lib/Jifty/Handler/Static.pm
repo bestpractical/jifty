@@ -1,7 +1,10 @@
 use warnings;
 use strict;
-use File::MMagic;
-use MIME::Types;
+use File::MMagic ();
+use MIME::Types ();
+use Compress::Zlib ();
+use HTTP::Date ();
+
 
 package Jifty::Handler::Static;
 
@@ -40,6 +43,12 @@ When fully operational, it will use an algorithm along the lines of the followin
 
 =cut
 
+
+=head2 new
+
+Create a new static file handler. Likely, only the C<Jifty::Handler> needs to do this.
+
+=cut
 sub new {
     my $class = shift;
     my $self = {};
@@ -68,9 +77,9 @@ sub handle_request {
     my $mime_type = $self->mime_type($local_path);
     
     if ( $self->client_accepts_gzipped_content and $mime_type =~ m!^(text/|application/x-javascript)! ) {
-        return $self->send_gzipped($local_path, $mime_type);
+        return $self->send_file($local_path, $mime_type, 'gzip');
     } else {
-        return  $self->send_uncompressed($local_path, $mime_type);
+        return  $self->send_file($local_path, $mime_type, 'uncompressed');
     }
 
 }
@@ -139,83 +148,73 @@ sub mime_type {
 }
 
 
-=head2 send_gzipped $path $mimetype
+=head2 send_file $path $mimetype $compression
 
-Print a gzipped version of C<$path> to STDOUT (the client), identified with a mimetype of C<$mimetype>.
-Eventually, this will cache the file on disk. Right now, it just does the gzipping in memory.
+Print C<$path> to STDOUT (the client), identified with a mimetype of C<$mimetype>.
+
+If C<$compression> is C<gzip>, gzip the output stream.
 
 
 =cut
 
 
-sub send_gzipped {
+sub send_file {
     my $self       = shift;
     my $local_path = shift;
     my $mime_type  = shift;
+    my $compression = shift;
+
 
     my $fh = IO::File->new( $local_path, 'r' );
     if ( defined $fh ) {
         binmode $fh;
 
-        $self->log->debug("Sending gzip'd file $local_path");
         # This is designed to work under CGI or FastCGI; will need an
         # abstraction for mod_perl
 
         # Clear out the mason output, if any
         Jifty->web->mason->clear_buffer if Jifty->web->mason;
 
+        my @file_info = stat($local_path);
         my $apache = Jifty->handler->apache;
 
-        $apache->content_type($mime_type);
-        $apache->header_out( "Content-Encoding" => "gzip");
         $apache->header_out( Status => 200 );
+        $apache->content_type($mime_type);
+        my $now = time();
+        $apache->header_out(Expires =>  HTTP::Date::time2str($now + 31536000));  # Expire in a year
+        $apache->header_out('Last-Modified' =>  HTTP::Date::time2str( $file_info[9]));
+        $apache->header_out('Content-Length' => $file_info[7]) unless ($compression eq 'gzip');  
+
+        $apache->header_out( "Content-Encoding" => "gzip") if ($compression eq 'gzip');
         $apache->send_http_header();
 
+        if ($compression eq 'gzip') {
         undef $/;
-        require Compress::Zlib;
         binmode STDOUT;
         # XXX TODO: Cache this
         print STDOUT Compress::Zlib::memGzip(<$fh>);
-        
+        } else{
+            $apache->send_fd($fh);
+        }
+        close($fh);
         return 1;
     } else {
         return undef;
     }
 }
 
-=head2 send_gzipped $path $mimetype
 
-Print an uncompressed version of C<$path> to STDOUT (the client), identified with a mimetype of C<$mimetype>.
+=head2 send_not_modified
+
+Sends a "304 Not modified" response to the browser, telling it to use a cached copy.
 
 =cut
 
+sub send_not_modified {
+    my $self = shift;
+    Jifty->handler->apache->header_out( Status => 304 );
+    return 1;
 
-sub send_uncompressed {
-    my $self       = shift;
-    my $local_path = shift;
-    my $mime_type  = shift;
-
-    my $fh = IO::File->new( $local_path, 'r' );
-    if ( defined $fh ) {
-        binmode $fh;
-
-        # This is designed to work under CGI or FastCGI; will need an
-        # abstraction for mod_perl
-
-        # Clear out the mason output, if any
-        Jifty->web->mason->clear_buffer if Jifty->web->mason;
-
-        my $apache = Jifty->handler->apache;
-
-        $apache->content_type($mime_type);
-        $apache->header_out( Status => 200 );
-        $apache->send_http_header();
-        $apache->send_fd($fh);
-        close($fh);
-        return 1;
-    } else {
-        return undef;
-    }
 }
 
 1;
