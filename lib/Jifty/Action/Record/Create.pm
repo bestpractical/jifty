@@ -57,7 +57,16 @@ sub take_action {
     my $record = $self->record;
 
     my %values;
-    $values{$_} = $self->argument_value($_) for grep { defined $self->argument_value($_) } $self->argument_names;
+    for (grep { defined $self->argument_value($_) } $self->argument_names) {
+        $values{$_} = $self->argument_value($_);
+        if (ref $values{$_} eq "Fh") { # CGI.pm's "lightweight filehandle class"
+            local $/;
+            my $fh = $values{$_};
+            binmode $fh;
+            $values{$_} = scalar <$fh>;
+        }
+    }
+
     my ($id, $msg) = $record->create(%values);
 
     # Handle errors?

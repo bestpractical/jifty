@@ -2,7 +2,6 @@
 $object_type
 $page => 1
 $new_slot => 1
-$render_submit => 1
 $item_path => "/__jifty/admin/fragments/list/view"
 </%args>
 <%init>
@@ -45,10 +44,6 @@ while ( my $item = $collection->next ) {
 </span>
 % }
 </div>
-
-% if ($collection->count and $render_submit) { 
-<% Jifty->web->form->submit( label =>  "Save") %>
-% }
 
 % if ($new_slot) {
 <% Jifty->web->region(

@@ -33,4 +33,15 @@ sub render_widget {
     '';
 }
 
+=head2 render_value
+
+The 'value', rendered, is empty so that BLOBs and the like don't get
+streamed to the browser.
+
+=cut
+
+sub render_value {
+    '';
+}
+
 1;

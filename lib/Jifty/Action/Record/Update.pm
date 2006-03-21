@@ -74,7 +74,6 @@ sub take_action {
     my $changed = 0;
 
     for my $field ( $self->argument_names ) {
-
         # Skip values that weren't submitted
         next unless exists $self->argument_values->{$field};
 
@@ -83,11 +82,20 @@ sub take_action {
         # Skip nonexistent fields
         next unless $column;
 
+        # Grab the value
+        my $value = $self->argument_value($field);
+
         # Boolean and integer fields should be skipped if blank.
         # (This logic should be moved into SB or something.)
         next
             if ( defined $column->type and ( $column->type =~ /^bool/i || $column->type =~ /^int/i )
-            and defined $self->argument_value($field) and $self->argument_value($field) eq '' );
+            and defined $value and $value eq '' );
+
+        if (ref $value eq "Fh") { # CGI.pm's "lightweight filehandle class"
+            local $/;
+            binmode $value;
+            $value = scalar <$value>;
+        }
 
         # Skip fields that have not changed
         my $old = $self->record->$field;
@@ -96,15 +104,14 @@ sub take_action {
     
         # if both the new and old values are defined and equal, we don't want to change em
         # XXX TODO "$old" is a cheap hack to scalarize datetime objects
-        next if ( defined $old and defined $self->argument_value($field) and "$old" eq "".$self->argument_value($field) );
+        next if ( defined $old and defined $value and "$old" eq "$value" );
 
-        
         # If _both_ the values are ''
         next if (  (not defined $old or not length $old)
-                    and ( not defined $self->argument_value($field) or not length $self->argument_value($field) ));
+                    and ( not defined $value or not length $value ));
 
         my $setter = "set_$field";
-        my ( $val, $msg ) = $self->record->$setter( $self->argument_value($field) );
+        my ( $val, $msg ) = $self->record->$setter( $value );
         $self->result->field_error($field, $msg)
           if not $val and $msg;
 

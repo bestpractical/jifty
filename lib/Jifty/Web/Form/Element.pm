@@ -181,8 +181,7 @@ sub javascript {
 
             push @fragments, \%args;
         }
-        $response .= qq| $trigger="update( @{[ Jifty::JSON::objToJson( {actions => \@actions, fragments => \@fragments }, {singlequote => 1}) ]} );|;
-        $response .= qq|return false;"|;
+        $response .= qq| $trigger="update( @{[ Jifty::JSON::objToJson( {actions => \@actions, fragments => \@fragments }, {singlequote => 1}) ]} ) "|;
     }
     return $response;
 }

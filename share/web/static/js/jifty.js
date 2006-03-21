@@ -50,6 +50,16 @@ Action.prototype = {
         return serialized.join('&');
     },
 
+    // Returns true if there is a file upload form as one of our elements
+    hasUpload: function() {
+        var fields = this.fields();
+        for (var i = 0; i < fields.length; i++) {
+            if (fields[i].getAttribute("type") == "file")
+                return true;
+        }
+        return false;
+    },
+
     // Return the action as a data strcture suitible to be JSON'd
     data_structure: function() {
         var a = {};
@@ -368,8 +378,11 @@ function update() {
     for (var i = 0; i < named_args['actions'].length; i++) {
         var moniker = named_args['actions'][i];
         var a = new Action(moniker);
-        if (a.register)
+        if (a.register) {
+            if (a.hasUpload)
+                return true;
             request['actions'][moniker] = a.data_structure();
+        }
     }
 
     request['fragments'] = {};
@@ -516,6 +529,7 @@ function update() {
     new Ajax.Request(document.URL,
                      options
                     );
+    return false;
 }
 
 function trace( msg ){

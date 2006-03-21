@@ -227,13 +227,14 @@ sub _set {
     
 sub _value {
     my $self = shift;
+    my $column = shift;
 
-    unless ($self->check_read_rights(@_)) {
+    unless ($self->check_read_rights( $column => @_ )) {
         return (undef);
     }
-    my $value = $self->SUPER::_value(@_);
-    return $value if ref $value;
-    return   Encode::decode_utf8($value);
+    my $value = $self->SUPER::_value( $column => @_ );
+    return $value if ref $value or $self->column($column)->type eq 'blob';
+    return Encode::decode_utf8($value);
 #   This is the "Right' way to do things according to audrey, but it breaks
 #    
 #    my $value = $self->SUPER::_value(@_);
