@@ -82,7 +82,12 @@ sub out_method {
 
     if ($r->content_type =~ /charset=([\w-]+)$/ ) {
         my $enc = $1;
-        binmode *STDOUT, ":encoding($enc)";
+	if (lc($enc) =~ /utf-?8/) {
+            binmode *STDOUT, ":utf8";
+	}
+	else {
+            binmode *STDOUT, ":encoding($enc)";
+	}
     }
 
     unless ($r->http_header_sent or not $m->auto_send_headers) {

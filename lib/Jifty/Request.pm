@@ -266,7 +266,17 @@ sub argument {
             $self->add_state_variable(key => $1, value => $value);
         }
     }
-    return $self->arguments->{$key};
+
+    defined(my $val = $self->arguments->{$key}) or return undef;
+
+    if (ref $val eq 'ARRAY') {
+        utf8::decode($_) for @$val;
+    }
+    else {
+        utf8::decode($val);
+    }
+
+    $val;
 }
 
 =head2 delete KEY
