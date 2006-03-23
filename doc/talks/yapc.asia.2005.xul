@@ -2,9 +2,11 @@
 <html:textarea id="builtinCode" style="visibility: collapse">
 
 &#9832; Jifty
+~Jifty
 ----
 Nifty Apps
 in a Jiffy
+~ a subtitle
 ----
 {{img src="#" width="0" height="0"}}
 {{img src="pony.png" width="640" height="422"}}
@@ -20,8 +22,10 @@ Another
 framework?
 ----
 Yes.
+~X
 ----
 (Sorry, clkao)
+~ so so so so so sorry
 ----
 Why?
 ----
@@ -114,6 +118,7 @@ Jifty is missing
 lots of features
 ----
 :-(
+~ :(
 ----
 No 
 Java
@@ -716,7 +721,97 @@ New section:
 
 
 
-<deck flex="1" id="deck"><vbox flex="1" onmousemove="Presentation.onMouseMoveOnCanvas(event);"><toolbox id="canvasToolbar"><toolbar><toolbarbutton oncommand="Presentation.home()" label="|&lt;&lt;" observes="canBack"/><toolbarbutton oncommand="Presentation.back()" label="&lt;" observes="canBack"/><toolbarbutton oncommand="Presentation.forward()" label="&gt;" observes="canForward"/><toolbarbutton oncommand="Presentation.end()" label="&gt;&gt;|" observes="canForward"/><toolbarseparator/><hbox align="center"><textbox id="current_page" size="4" oninput="if (this.value) Presentation.showPage(parseInt(this.value)-1);"/><description value="/"/><description id="max_page"/></hbox><toolbarseparator/><vbox flex="2"><spacer flex="1"/><scrollbar id="scroller" align="center" orient="horizontal" oncommand="Presentation.showPage(parseInt(event.target.getAttribute('curpos')));" onclick="Presentation.showPage(parseInt(event.target.getAttribute('curpos')));" onmousedown="Presentation.onScrollerDragStart();" onmousemove="Presentation.onScrollerDragMove();" onmouseup="Presentation.onScrollerDragDrop();"/><spacer flex="1"/></vbox><toolbarseparator/><spacer flex="1"/><toolbarseparator/><toolbarbutton id="toggleEva" label="Eva" type="checkbox" autoCheck="false" oncommand="Presentation.toggleEvaMode();"/><toolbarseparator/><toolbarbutton label="Edit" oncommand="Presentation.toggleEditMode();"/><toolbarbutton oncommand="Presentation.reload();" label="Reload"/></toolbar></toolbox><vbox flex="1" id="canvas" onclick="Presentation.onPresentationClick(event);"><spacer flex="1"/><hbox flex="1"><spacer flex="1"/><vbox id="content"/><spacer flex="1"/></hbox><spacer flex="1"/></vbox></vbox><vbox flex="1" id="edit"><toolbox><toolbar><toolbarbutton label="New Page" oncommand="Presentation.addPage()"/><spacer flex="1"/><toolbarseparator/><toolbarbutton label="View" oncommand="Presentation.toggleEditMode();"/><toolbarbutton oncommand="Presentation.reload();" label="Reload"/></toolbar></toolbox><textbox id="textField" flex="1" multiline="true" oninput="Presentation.onEdit()"/><hbox collapsed="true"><iframe id="dataLoader" onload="if (window.Presentation) Presentation.onDataLoad();"/></hbox></vbox></deck><broadcasterset><broadcaster id="canBack"/><broadcaster id="canForward"/></broadcasterset><commandset><command id="cmd_forward" oncommand="if (Presentation.isPresentationMode) Presentation.forward();"/><command id="cmd_back" oncommand="if (Presentation.isPresentationMode) Presentation.back();"/><command id="cmd_home" oncommand="if (Presentation.isPresentationMode) Presentation.home();"/><command id="cmd_end" oncommand="if (Presentation.isPresentationMode) Presentation.end();"/></commandset><keyset><key keycode="VK_ENTER"      command="cmd_forward"/><key keycode="VK_RETURN"     command="cmd_forward"/><key keycode="VK_PAGE_DOWN"  command="cmd_forward"/><key keycode="VK_RIGHT"      command="cmd_forward"/><key keycode="VK_DOWN"       command="cmd_forward"/><!--key keycode="VK_BACK_SPACE" command="cmd_back"/--><key keycode="VK_UP"    command="cmd_back"/><key keycode="VK_PAGE_UP"    command="cmd_back"/><!--<key keycode="VK_BACK_UP"    command="cmd_back"/>--><!--<key keycode="VK_BACK_LEFT"  command="cmd_back"/>--><key keycode="VK_HOME"       command="cmd_home"/><!--<key keycode="VK_END"        command="cmd_end"/>--><key key="n" modifiers="accel" oncommand="Presentation.addPage();"/><key key="r" modifiers="accel" oncommand="window.location.reload();"/><key key="e" modifiers="accel" oncommand="Presentation.toggleEditMode();"/><key key="a" modifiers="accel" oncommand="Presentation.toggleEvaMode();"/></keyset><script src="takahashi.js" type="application/x-javascript" /></page>
+
+<deck flex="1" id="deck">
+<vbox flex="1" onmousemove="Presentation.onMouseMoveOnCanvas(event);">
+<toolbox id="canvasToolbar">
+<toolbar>
+<toolbarbutton oncommand="Presentation.home()" label="|&lt;&lt;" observes="canBack"/>
+<toolbarbutton oncommand="Presentation.back()" label="&lt;" observes="canBack"/>
+<toolbarbutton oncommand="Presentation.forward()" label="&gt;" observes="canForward"/>
+<toolbarbutton oncommand="Presentation.end()" label="&gt;&gt;|" observes="canForward"/>
+<toolbarseparator/>
+<hbox align="center">
+<textbox id="current_page" size="4" oninput="if (this.value) Presentation.showPage(parseInt(this.value)-1);"/>
+<description value="/"/>
+<description id="max_page"/>
+</hbox>
+<toolbarseparator/>
+<vbox flex="2">
+<spacer flex="1"/>
+<scrollbar id="scroller" align="center" orient="horizontal" oncommand="Presentation.showPage(parseInt(event.target.getAttribute('curpos')));" onclick="Presentation.showPage(parseInt(event.target.getAttribute('curpos')));" onmousedown="Presentation.onScrollerDragStart();" onmousemove="Presentation.onScrollerDragMove();" onmouseup="Presentation.onScrollerDragDrop();"/>
+<spacer flex="1"/>
+</vbox>
+<toolbarseparator/>
+<spacer flex="1"/>
+<toolbarseparator/>
+<toolbarbutton id="toggleEva" label="Eva" type="checkbox" autoCheck="false" oncommand="Presentation.toggleEvaMode();"/>
+<toolbarseparator/>
+<toolbarbutton label="Edit" oncommand="Presentation.toggleEditMode();"/>
+<toolbarbutton oncommand="Presentation.reload();" label="Reload"/>
+</toolbar>
+</toolbox>
+<vbox flex="1" id="canvas" onclick="Presentation.onPresentationClick(event);">
+<spacer flex="1"/>
+<hbox flex="1">
+<spacer flex="1"/>
+<vbox id="content">
+</vbox>
+<spacer flex="1"/>
+</hbox>
+<spacer flex="1"/>
+</vbox>
+</vbox>
+<vbox flex="1" id="edit">
+<toolbox>
+<toolbar>
+<toolbarbutton label="New Page" oncommand="Presentation.addPage()"/>
+<spacer flex="1"/>
+<toolbarseparator/>
+<toolbarbutton label="View" oncommand="Presentation.toggleEditMode();"/>
+<toolbarbutton oncommand="Presentation.reload();" label="Reload"/>
+</toolbar>
+</toolbox>
+<textbox id="textField" flex="1" multiline="true" oninput="Presentation.onEdit()"/>
+<hbox collapsed="true">
+<iframe id="dataLoader" onload="if (window.Presentation) Presentation.onDataLoad();"/>
+</hbox>
+</vbox>
+</deck>
+<broadcasterset>
+<broadcaster id="canBack"/>
+<broadcaster id="canForward"/>
+</broadcasterset>
+<commandset>
+<command id="cmd_forward" oncommand="if (Presentation.isPresentationMode) Presentation.forward();"/>
+<command id="cmd_back" oncommand="if (Presentation.isPresentationMode) Presentation.back();"/>
+<command id="cmd_home" oncommand="if (Presentation.isPresentationMode) Presentation.home();"/>
+<command id="cmd_end" oncommand="if (Presentation.isPresentationMode) Presentation.end();"/>
+</commandset>
+<keyset>
+<key keycode="VK_ENTER"      command="cmd_forward"/>
+<key keycode="VK_RETURN"     command="cmd_forward"/>
+<key keycode="VK_PAGE_DOWN"  command="cmd_forward"/>
+<key keycode="VK_RIGHT"      command="cmd_forward"/>
+<key keycode="VK_DOWN"       command="cmd_forward"/>
+<!--key keycode="VK_BACK_SPACE" command="cmd_back"/-->
+<key keycode="VK_UP"    command="cmd_back"/>
+<key keycode="VK_PAGE_UP"    command="cmd_back"/>
+<!--
+<key keycode="VK_BACK_UP"    command="cmd_back"/>-->
+<!--
+<key keycode="VK_BACK_LEFT"  command="cmd_back"/>-->
+<key keycode="VK_HOME"       command="cmd_home"/>
+<!--
+<key keycode="VK_END"        command="cmd_end"/>-->
+<key key="n" modifiers="accel" oncommand="Presentation.addPage();"/>
+<key key="r" modifiers="accel" oncommand="window.location.reload();"/>
+<key key="e" modifiers="accel" oncommand="Presentation.toggleEditMode();"/>
+<key key="a" modifiers="accel" oncommand="Presentation.toggleEvaMode();"/>
+</keyset>
+<script src="takahashi.js" type="application/x-javascript" />
+</page>
+
 <!-- ***** BEGIN LICENSE BLOCK *****
    - Version: MPL 1.1
    -

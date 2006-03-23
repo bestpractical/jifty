@@ -159,3 +159,9 @@ tabbox, tabpanels, tabpanel {
 	position: relative;
 }
 
+.subtitle {
+    color: yellow;
+    text-align: center;
+    font-size: 50px;
+    bottom: 0;
+}

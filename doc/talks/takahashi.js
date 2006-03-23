@@ -9,6 +9,9 @@ var Presentation = {
         this.deck     = document.getElementById('deck');
         this.scroller = document.getElementById('scroller');
 
+               this.canvas.appendChild(document.createElement('description'));
+               this.canvas.lastChild.setAttribute('id', "caption");
+               this.canvas.lastChild.setAttribute('class', 'subtitle');
         this.toolbar         = document.getElementById('canvasToolbar');
         this.toolbarHeight   = this.toolbar.boxObject.height;
         this.isToolbarHidden = true;
@@ -82,14 +85,20 @@ var Presentation = {
             line = text[i];
             image_width  = 0;
             image_height = 0;
+            var subtitle = '';
+
+            if (line.match(/^~/)) {
+              subtitle = line.substring(1);
+              line = '';
+            }
+
 
             if (line.match(/^ /)) {
               code_listing = 1; 
               this.content.lastChild.setAttribute('align', 'left');
               this.content.lastChild.setAttribute('class', 'pre');
               line = line.substring(1)
-            }
-
+            } 
             while (line.match(/^([^\{]+)?(\{\{ima?ge? +src="([^"]+)" +width="([0-9]+)" +height="([0-9]+)"[^\}]*\}\}|\{\{(([^\|]+)?\||)([^\}]+)\}\})(.+)?/))
             {
                 if (RegExp.$1) {
@@ -147,6 +156,13 @@ var Presentation = {
         }
 
         this.content.setAttribute('style', 'font-size:10px;');
+          caption =  document.getElementById('caption');
+        if (subtitle) {
+               caption.setAttribute('value', subtitle);
+        } else {
+               caption.setAttribute('value', '');
+
+        }
 
         if (this.content.boxObject.width) {
             var canvas_w  = this.canvas.boxObject.width;
@@ -170,15 +186,12 @@ var Presentation = {
             }
 
             var content_h = this.content.boxObject.height;
-            if(content_h >= canvas_h){
+            if(content_h >= (canvas_h - 50)){ // That 50 is space for subtitles
                 content_h = this.content.boxObject.height;
                 new_fs = Math.round((canvas_h/content_h) * new_fs);
                 this.content.setAttribute('style', 'font-size:'+ new_fs + "px");
             }
         }
-
-
-
         this.canvas.removeAttribute('rendering');
     },
 
