@@ -201,7 +201,7 @@ sub guess {
         $app_name =  Jifty::Util->default_app_name;
     }
 
-    my $app_class = $app_name;
+    my $app_class =  $self->stash->{framework}->{ApplicationClass} ||$app_name;
     $app_class =~ s/-/::/g;
     my $db_name = lc $app_name;
     $db_name =~ s/-/_/g;
