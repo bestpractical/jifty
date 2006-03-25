@@ -536,11 +536,13 @@ function trace( msg ){
 
 
 function show_wait_message (){
-    new Effect.Appear('jifty-wait-message', {duration: 0.5});
+    if ($('jifty-wait-message'))
+        new Effect.Appear('jifty-wait-message', {duration: 0.5});
 }
 
 function hide_wait_message (){
-    new Effect.Fade('jifty-wait-message', {duration: 0.2});
+    if ($('jifty-wait-message'))
+        new Effect.Fade('jifty-wait-message', {duration: 0.2});
 }
 
 
