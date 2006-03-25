@@ -86,6 +86,11 @@
 .t {
         font-style: italic;
 }
+
+.h {
+        color: #ff0000;
+}
+
 .tag {
         color: #33ff33;
 }

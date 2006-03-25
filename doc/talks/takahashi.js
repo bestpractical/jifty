@@ -187,9 +187,9 @@ var Presentation = {
 
             var content_h = this.content.boxObject.height;
             if(content_h >= (canvas_h - 50)){ // That 50 is space for subtitles
-                content_h = this.content.boxObject.height;
-                new_fs = Math.round((canvas_h/content_h) * new_fs);
+                new_fs = Math.round(((canvas_h-50)/content_h) * new_fs);
                 this.content.setAttribute('style', 'font-size:'+ new_fs + "px");
+                content_h = this.content.boxObject.height;
             }
         }
         this.canvas.removeAttribute('rendering');

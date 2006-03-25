@@ -2,46 +2,57 @@
 <html:textarea id="builtinCode" style="visibility: collapse">
 
 &#9832; Jifty
-~Jifty
+----
+Jesse Vincent
+ 
+ 
+  
+
+ 
+»|« Best Practical
+jesse@bestpractical.com
 ----
 Nifty Apps
 in a Jiffy
-~ a subtitle
+~ あっという間にJifty
 ----
 {{img src="#" width="0" height="0"}}
 {{img src="pony.png" width="640" height="422"}}
 ----
-Jesse Vincent
-jesse@bestpractical.com
-
-»|« Best Practical
-----
-How we're building useful applications in Perl 5 with a single unified framework, using less time, energy, code, blood, sweat, tears, etc.
+How we're building useful applications
+in Perl 5 with a single unified framework, 
+using less time, energy, code, blood, 
+sweat, tears, etc.
 ----
 Another
 framework?
+~ またフレームワーク？
 ----
 Yes.
-~X
+~ そう
 ----
 (Sorry, clkao)
-~ so so so so so sorry
+~ clkaoごめん
 ----
 Why?
+~ なぜ？
 ----
 We're 
 crazy?
+~ 頭大丈夫？
 ----
 We like
 pain?
+~ マゾなんじゃないの？
 ----
 No!
-
-
-
+~ 違います！
+----
+We built RT
+from scratch
 ----
 We're building a 
-new application.
+new application
 ----
 We looked at
 Maypole
@@ -58,32 +69,29 @@ Seaside
 We looked at
 Java stuff
 ----
-We ignored the
-Java stuff
-----
-We looked at
-RT
+(We ignored the
+Java stuff)
 ----
 Everything had
-some good ideas
+good ideas
 ----
-Maypole has
-a default app
+Maypole's
+default app
 ----
-Catalyst has
-a cool dispatcher
+Catalyst's
+Dispatcher
 ----
-Rails is
-full stack
+Rails'
+Stack
 ----
-Rails has
-pretty syntax
+Rails'
+Beauty
 ----
-Seaside has
-continuations
+Seaside's 
+Continuations
 ----
-RT has database
-interaction
+Seaside's
+Page Halos 
 ----
 Nothing met
 our needs
@@ -91,34 +99,53 @@ our needs
 Maypole isn't
 easy enough
 ----
-Catalyst has too
-many ways to do it
+Catalyst is 
+too flexible
 ----
-Rails isn't perl
+Rails 
+isn't 
+Perl
+
+Please translate as 
+"Matz-san, Please 
+accept my apologies. 
+Ruby is a beautiful 
+language, but I am 
+addicted to Perl"
 ----
-Seaside is   
+Seaside is
 Smalltalk
 ----
-Seaside is   
+Seaside is
 space alien
 ----
-RT is 10
-years old
+Java is 
+Java
 ----
-Stole the
+We threw away
+the bad stuff
+----
+We stole the
 good stuff
 ----
-Threw away
-the bad stuff
-
-
-
+We added 
+our own magic
 ----
-Jifty is missing
-lots of features
+Jifty::Actions
+----
+Jifty::PageRegions
+----
+Lots of
+cool stuff!
+----
+...but
+----
+Jifty is still
+missing many
+features
 ----
 :-(
-~ :(
+~ &#9785;
 ----
 No 
 Java
@@ -180,11 +207,9 @@ config.yml
 Sometimes not having
 things is a feature
 ----
-We've 
-got
-BUZZWORDS
+{{#tag|BUZZWORDS}}
 ----
-Web 2.0
+{{#i|Web 2.0}}
 ----
 Sure 
 it is
@@ -201,47 +226,56 @@ Go ahead
 Prove me 
 wrong
 ----
-Perl
+{{#i|Perl}}
 ----
 (obviously)
 ----
-Full
-Stack
+{{#i|Full}}
+{{#i|Stack}}
 ----
-AJAX
+(Fits together
+top to bottom)
 ----
-And it works
-in lynx, too
+{{#i|AJAX}}
 ----
-Declarative 
-Programming
+(And it works
+in lynx, too)
 ----
-Web 
-Services
+{{#i|Declarative}}
+{{#i|Programming}}
 ----
-Encapsulated
-cleverness
+(Easy to read
+and write)
 ----
-Continuations
+{{#i|Web}}
+{{#i|Services}}
 ----
-MVC
+(Serve your API
+to the world)
+----
+{{#i|Encapsulated}}
+{{#i|cleverness}}
+----
+(One good place
+for your logic)
+----
+{{#i|Continuations}}
+----
+('gosub' for web 
+ applications)
+----
+{{#i|MVC}}
 ----
 (Sort of)
 ----
-It also comes
-with a pony
+{{#i|A Pony}}
 ----
-Part of the install:
 {{img src="pony.png" width="640" height="422"}}
 ----
-No other framework
-can claim that
-
-
-
+Rails is
+anti-pony
 ----
-The 
-name
+{{#tag|THE NAME}}
 ----
 Jifty
 ----
@@ -249,7 +283,7 @@ JFDI
 ----
 JUST
 ----
-.......
+_______
 ----
 DO
 ----
@@ -265,23 +299,15 @@ Hate It
 Learned the
 hard way
 ----
-Request
-Tracker
-FAQ
-Manager
+ {{#tag|R}}equest
+ {{#tag|T}}racker
+ {{#tag|F}}AQ
+ {{#tag|M}}anager
 ----
 So, it's 
 named Jifty!
 ----
-How it's put
-together
-XX pretty picture?
-----
-
-
-
-
-MODELS
+{{#tag|MODELS}}
 ----
 Models
 are 
@@ -318,8 +344,7 @@ versioning
    render_as 'Textarea',
    label is 'Details';
 ----
-Models
-do validation
+Validation
 ----
   column priority =>
    type is 'integer',
@@ -345,10 +370,12 @@ relationships
    render_as 'Combobox';
 ----
 That's 
-all 
+pure
 Perl
 ----
-(No source filters)
+(No 
+source 
+filters)
 ----
 What about 
 the database?
@@ -371,10 +398,7 @@ Ok...No
 Built on
 SearchBuilder
 ----
-
-
-
-ACTIONS
+{{#tag|ACTIONS}}
 ----
 Actions are
 your controllers
@@ -394,9 +418,8 @@ Arguments
 have 
 types
 ----
-Jifty
-can render
-arguments
+Jifty renders
+actions
 as forms
 ----
 No more &lt;input&gt;
@@ -405,14 +428,14 @@ tags everywhere
 Automatic
 validators
 ----
-If you
-want them
+(If you
+want them)
 ----
 Automatic
 canonicalizers
 ----
-If you
-want them
+(If you
+want them)
 ----
 Actions
 return
@@ -422,32 +445,27 @@ Actions
 =
 API
 ----
-not 
-"webservices"
+Not web 
+services
 ...yet
 ----
-Only 
-missing
+Missing
 results 
 display
 ----
 That's 
-just
+just a
 serializer
 ----
 (Added the 
 serializer 
 last week)
 ----
-
-
-
-DISPATCHER
+{{#tag|DISPATCHER}}
 ----
 
-
-
-REGIONS
+----
+{{#tag|REGIONS}}
 ----
   Jifty->web->form->submit(
     label   => 'Create',
@@ -457,16 +475,12 @@ REGIONS
     ],
   );
 ----
-
-
-
-CONTINUATIONS
+{{#tag|CONTINUATIONS}}
 ----
 
-
-
-Developer
-mode
+----
+{{#tag|DEVELOPER}}
+{{#tag|MODE}]
 ----
 Mason reloads 
 changed pages    
@@ -478,13 +492,19 @@ per request
 ----
 Halos
 ----
-Give you real-time
-information about each
-part of the page
+Real-time
+info about
+the page
 ----
-SQL queries,
-arguments,
-profiling
+SQL queries
+----
+Actions +
+Arguments
+----
+Profiling
+----
+Live 
+editing
 ----
 XXX image goes here
 ----
@@ -506,7 +526,7 @@ Password-based
 authentication
 ----
 Standalone
-webserver
+web server
 ----
 FastCGI 
 handler
@@ -516,10 +536,8 @@ Stub generators
 Test helpers
 ----
 
-
-
-A TRIVIAL
-EXAMPLE
+{{#tag|A TRIVIAL}}
+{{#tag|EXAMPLE}}
 ----
 Real
 Code
@@ -538,7 +556,7 @@ Application Code
 
 ----
 
- lib/BlogDemo/Model/Entry.pm
+ {{#iu|lib/BlogDemo/Model/Entry.pm}}
 
 ----
  
@@ -564,7 +582,7 @@ Application Code
 
 ----
 
- web/templates/index.html
+ {{#iu|web/templates/index.html}}
 
 ----
  &lt;%init&gt;
@@ -586,7 +604,7 @@ Application Code
 
 ----
 
- web/templates/new_article.html
+{{#iu|web/templates/new_article.html}}
 
 ----
  &lt;%init&gt;
@@ -607,47 +625,52 @@ Application Code
  jifty schema --setup
  jifty server 
 ----
-THAT'S IT
+THAT'S 
+IT
 ----
-No more code
+No 
+more 
+code
 ----
-It runs
+It 
+runs
 ----
-Ship it
+Ship 
+it
 ----
-
-
-
-
-Jifty
-Sucks
+{{#tag| JIFTY }}
+{{#tag| SUCKS }}
 ----
 ...for now
 ----
-Lots of
+A few CPAN
 Dependencies
 ----
-Apache::Session App::CLI Cache::Cache Calendar::Simple Class::Accessor
-Class::Container Clone Compress::Zlib DBD::SQLite Data::Page
-Digest::MD5 Email::Folder Email::LocalDelivery Email::Send
-Email::Simple Email::Simple::Creator Encode File::MMagic
-File::ShareDir HTML::Entities HTML::Mason HTML::Mason::Plugin
-HTTP::Cookies HTTP::Date HTTP::Server::Simple
-HTTP::Server::Simple::Recorder Hash::Merge Hook::LexWrap Jifty::DBI
-Locale::Maketext::Simple Log::Log4perl LWP::UserAgent MIME::Types
-Module::CoreList Module::Install::Admin Module::Pluggable
-Module::Refresh Params::Validate Pod::Simple Scalar::Util
-String::Koremutake Test::Base Test::HTML::Lint
+Apache::Session App::CLI Cache::Cache Calendar::Simple
+Class::Accessor Class::Container Clone Compress::Zlib DBD::SQLite
+Data::Page Digest::MD5 Email::Folder Email::LocalDelivery Email::Send
+Email::Simple Email::Simple::Creator Encode File::MMagic File::ShareDir
+HTML::Entities HTML::Mason HTML::Mason::Plugin HTTP::Cookies HTTP::Date
+HTTP::Server::Simple HTTP::Server::Simple::Recorder Hash::Merge
+Hook::LexWrap Jifty::DBI Locale::Maketext::Simple Log::Log4perl
+LWP::UserAgent MIME::Types Module::CoreList Module::Install::Admin
+Module::Pluggable Module::Refresh Params::Validate Pod::Simple
+Scalar::Util String::Koremutake Test::Base Test::HTML::Lint
 Test::HTTP::Server::Simple Test::More Test::Pod::Coverage
-Test::WWW::Mechanize Time::HiRes Time::ParseDate UNIVERSAL::require
-URI WWW::Mechanize XML::Writer XML::XPath
+Test::WWW::Mechanize Time::HiRes Time::ParseDate UNIVERSAL::require URI
+WWW::Mechanize XML::Writer XML::XPath
 ----
 Fixing
 that
-too.
 ----
-Future
-Directions
+No Plugin
+Architecture
+----
+Fixing
+that
+too
+----
+{{#tag|THE FUTURE}}
 ----
 Wiki-style
 UI Editor
@@ -666,13 +689,14 @@ Apps
 movies and
 music videos
 ----
-How do I get it
+{#tag|GET JIFTY}
 ----
-  cpan Jifty
+ cpan Jifty
 ----
-  http://svn.jifty.org/
+ svn co
+   http://svn.jifty.org/svn/jifty.org
 ----
-  http://jifty.org/
+ http://jifty.org/
 ----
 How do I get started
 ----
@@ -687,41 +711,11 @@ jifty-devel@lists.jifty.org
 ----
 Thanks!
 ----
-
-
-
-Features to show off:
-
-Halos
-Dispatcher
-Continuations
 Autocompleters
 Canonicalizers
 Actions
 LetMes
-
-
-New section:
-    * philosophy
-    * problems
-        * plugins
 </html:textarea>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <deck flex="1" id="deck">
 <vbox flex="1" onmousemove="Presentation.onMouseMoveOnCanvas(event);">
 <toolbox id="canvasToolbar">
