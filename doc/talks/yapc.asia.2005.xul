@@ -48,11 +48,26 @@ pain?
 No!
 ~ 違います！
 ----
+Dear God, 
+WHY?!?!?!
+----
 We built RT
 from scratch
 ----
+RT has lots of 
+infrastructure
+----
 We're building a 
 new application
+----
+We learned
+our lesson
+----
+This time, we'd
+use a framework
+----
+We looked at
+the options
 ----
 We looked at
 Maypole
@@ -71,6 +86,15 @@ Java stuff
 ----
 (We ignored the
 Java stuff)
+----
+We looked at
+Borges
+----
+We looked at
+CGI::Application
+----
+We looked at
+10+ more
 ----
 Everything had
 good ideas
@@ -93,6 +117,8 @@ Continuations
 Seaside's
 Page Halos 
 ----
+But...
+----
 Nothing met
 our needs
 ----
@@ -100,7 +126,7 @@ Maypole isn't
 easy enough
 ----
 Catalyst is 
-too flexible
+too scattered
 ----
 Rails 
 isn't 
@@ -131,12 +157,8 @@ good stuff
 We added 
 our own magic
 ----
-Jifty::Actions
-----
-Jifty::PageRegions
-----
-Lots of
-cool stuff!
+We have lots 
+of cool stuff!
 ----
 ...but
 ----
@@ -209,6 +231,37 @@ things is a feature
 ----
 {{#tag|BUZZWORDS}}
 ----
+{{#i|Perl}}
+----
+(obviously)
+----
+{{#i|Full}}
+{{#i|Stack}}
+----
+(Fits together
+top to bottom)
+----
+{{#i|Don't}}
+{{#i|Repeat}}
+{{#i|Yourself}}
+----
+(Say it once)
+----
+Even better:
+(Never say it!)
+----
+{{#i|Declarative}}
+{{#i|Programming}}
+----
+(Easy to read
+and write)
+----
+{{#i|Encapsulated}}
+{{#i|cleverness}}
+----
+(One good place
+for your logic)
+----
 {{#i|Web 2.0}}
 ----
 Sure 
@@ -226,43 +279,21 @@ Go ahead
 Prove me 
 wrong
 ----
-{{#i|Perl}}
-----
-(obviously)
-----
-{{#i|Full}}
-{{#i|Stack}}
-----
-(Fits together
-top to bottom)
-----
-{{#i|AJAX}}
-----
-(And it works
-in lynx, too)
-----
-{{#i|Declarative}}
-{{#i|Programming}}
-----
-(Easy to read
-and write)
-----
 {{#i|Web}}
 {{#i|Services}}
 ----
 (Serve your API
 to the world)
 ----
-{{#i|Encapsulated}}
-{{#i|cleverness}}
+{{#i|AJAX}}
 ----
-(One good place
-for your logic)
+(And it works
+in lynx, too)
 ----
 {{#i|Continuations}}
 ----
 ('gosub' for web 
- applications)
+applications)
 ----
 {{#i|MVC}}
 ----
@@ -270,12 +301,13 @@ for your logic)
 ----
 {{#i|A Pony}}
 ----
-{{img src="pony.png" width="640" height="422"}}
-----
 Rails is
 anti-pony
 ----
-{{#tag|THE NAME}}
+{{img src="pony.png" width="640" height="422"}}
+----
+{{#tag|WHAT'S WITH}}
+{{#tag|THE NAME?}}
 ----
 Jifty
 ----
@@ -284,6 +316,8 @@ JFDI
 JUST
 ----
 _______
+
+~ If not offensive, please use the Kana for "fucking"
 ----
 DO
 ----
@@ -300,9 +334,28 @@ Learned the
 hard way
 ----
  {{#tag|R}}equest
+  
+  
+ 
+~
+----
+ {{#tag|R}}equest
+ {{#tag|T}}racker
+  
+  
+~  
+----
+ {{#tag|R}}equest
+ {{#tag|T}}racker
+ {{#tag|F}}AQ
+  
+~
+----
+ {{#tag|R}}equest
  {{#tag|T}}racker
  {{#tag|F}}AQ
  {{#tag|M}}anager
+~
 ----
 So, it's 
 named Jifty!
@@ -463,9 +516,28 @@ last week)
 ----
 {{#tag|DISPATCHER}}
 ----
-
+Centralized
+Control Flow
+----
+Not actually
+necessary
+----
+Separates
+flow and
+templates
 ----
 {{#tag|REGIONS}}
+----
+AJAX 
+page
+updates
+----
+Standardized
+----
+Addressable
+----
+Downlevel
+compatible
 ----
   Jifty->web->form->submit(
     label   => 'Create',
@@ -477,17 +549,28 @@ last week)
 ----
 {{#tag|CONTINUATIONS}}
 ----
-
+They're 
+not real
+----
+Jifty level,
+not 
+Perl level
+----
+Save state
+for later
+----
+Back button
+compatible
 ----
 {{#tag|DEVELOPER}}
-{{#tag|MODE}]
+{{#tag|MODE}}
 ----
 Mason reloads 
-changed pages    
+changed templates
 per request
 ----
 Jifty reloads
-changed {{#iu|libraries}}
+changed {{#i|libraries}}
 per request
 ----
 Halos
@@ -508,10 +591,9 @@ editing
 ----
 XXX image goes here
 ----
-
-
-
-Other bits
+{{#tag|Other}}
+{{#tag|Checklist}}
+{{#tag|Features}}
 ----
 Sending 
 Email
@@ -531,16 +613,29 @@ web server
 FastCGI 
 handler
 ----
-Stub generators
+Fast static
+content 
+server
 ----
-Test helpers
+Online
+developer
+documentation
 ----
-
+Built-in
+database
+administration
+----
+Stub 
+generators
+----
+Test 
+helpers
+----
 {{#tag|A TRIVIAL}}
 {{#tag|EXAMPLE}}
 ----
 Real
-Code
+code
 ----
 Live
 demo?
@@ -548,98 +643,93 @@ demo?
 I know
 better
 ----
-Application Code
-----
  lib/BlogDemo/Model/Entry.pm
- web/templates/new_article.html
- web/templates/index.html
-
+ lib/BlogDemo/Dispatcher.pm
+ web/templates/new_entry.html
+ Reb/templates/index.html
 ----
-
- {{#iu|lib/BlogDemo/Model/Entry.pm}}
-
+{{#i|./lib/BlogDemo/Model/Entry.pm}}
 ----
- 
  package BlogDemo::Model::Entry::Schema;
  use Jifty::DBI::Schema;
  
- column title => 
-     type is 'text',
-     default is 'Untitled';
+ column title =&gt;
+      type is 'text',
+      default is 'Untitled';
  
- 
- column body => 
-     type is 'text',
-     render_as 'Textarea';
-     
+ column body =&gt;
+      type is 'text',
+      render_as 'Textarea';
+
 ----
  package BlogDemo::Model::Entry;
- use base qw/Jifty::Record/;
- 
- sub since { '0.0.2'}
- 
- 1;
-
+ use base qw/BlogDemo::Record/;
 ----
-
- {{#iu|web/templates/index.html}}
-
+{{#i|./lib/BlogDemo/Dispatcher.pm}}
 ----
- &lt;%init&gt;
- my $entries = 
-   BlogDemo::Model::EntryCollection-&gt;new();
- $entries-&gt;unlimit();
- &lt;/%init&gt;
+ package BlogDemo::Dispatcher;
+ use Jifty::Dispatcher -base;
+ 
+ on '/' =&gt; run {
+     my $entries = 
+        BlogDemo::Model::EntryCollection-&gt;new();
+     $entries-&gt;unlimit();
+ 
+     set entries =&gt; $entries;
+ };
 ---- 
- &lt;html&gt;&lt;body&gt;
- &lt;h1&gt;&lt;% Jifty-&gt;config->app('Name')%&gt;&lt;/h1&gt;
+ on '/new_entry.html' =&gt; run {
+     my $create = Jifty-&gt;web-&gt;new_action(
+         class   =&gt; 'CreateEntry',
+         moniker =&gt; 'create');
  
+     set create =&gt; $create;
+ };
+----
+{{#i|./web/templates/new_entry.html}}
+----
+ &lt;%args&gt;
+ $create
+ &lt;/%args&gt;
+ &lt;&amp;|/_elements/wrapper, 
+    title=&gt; 'Create an article' &amp;&gt;
+ &lt;%Jifty-&gt;web-&gt;form-&gt;start%&gt;
+ % foreach my $arg ($create-&gt;argument_names) {
+ &lt;%$create-&gt;form_field($arg)%&gt;
+ % }
+ &lt;%Jifty-&gt;web-&gt;form-&gt;submit( label =&gt; 'Save')%&gt;
+ &lt;%Jifty-&gt;web-&gt;form-&gt;end%&gt;
+ &lt;/&amp;&gt;
+ ----
+{{#i|./web/templates/index.html}}
+----
+ &lt;%args&gt;
+ $entries
+ &lt;/%args&gt;
+ &lt;&amp;|/_elements/wrapper&amp;&gt;
  % while (my $entry = $entries-&gt;next) {
   &lt;h2&gt;&lt;%$entry-&gt;title%&gt;&lt;/h2&gt;
   &lt;div class="body"&gt;
     &lt;%$entry-&gt;body%&gt;
   &lt;/div&gt;
  % }
- &lt;/body&gt;&lt;html&gt;
-
-----
-
-{{#iu|web/templates/new_article.html}}
-
-----
- &lt;%init&gt;
- my $create = Jifty-&gt;framework-&gt;new_action( 
-        class =&gt; 'CreateEntry', 
-        moniker =&gt; 'create' );
- &lt;/%init&gt;
-----
- &lt;h2&gt;Create an article&lt;/h2&gt;
- 
- &lt;%Jifty-&gt;framework-&gt;form-&gt;start%&gt;
- % foreach my $arg ($creator-&gt;argument_names) {
- &lt;%$creator-&gt;form_field($arg)%&gt;
- % }
- &lt;%Jifty-&gt;framework-&gt;form-&gt;submit( label => 'Save')%&gt;
- &lt;%Jifty-&gt;framework-&gt;form-&gt;end%&gt;
+ &lt;/&amp;&gt;
 ----
  jifty schema --setup
  jifty server 
 ----
-THAT'S 
-IT
+ALL DONE
 ----
 No 
 more 
 code
 ----
-It 
-runs
+It runs
 ----
-Ship 
-it
+Ship it
 ----
-{{#tag| JIFTY }}
-{{#tag| SUCKS }}
+{{#tag|JIFTY}}
+{{#tag|SUCKS}}
 ----
 ...for now
 ----
@@ -670,20 +760,26 @@ Fixing
 that
 too
 ----
+No I18N
+----
+Audrey hsa 
+fixed it 
+on her branch
+----
 {{#tag|THE FUTURE}}
 ----
 Wiki-style
 UI Editor
 ----
 Even
-Less
-Code
+less
+code
 ----
 More
-Docs
+docs
 ----
 Sample
-Apps
+apps
 ----
 "Jifty in a Jiffy"
 movies and
