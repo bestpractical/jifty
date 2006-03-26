@@ -137,6 +137,9 @@ sub load {
     # Whatever's in the stash overrides anything we guess
     $self->stash( Hash::Merge::merge( $self->guess, $self->stash ));
 
+    # There are a couple things we want to guess that we don't want
+    # getting stuck in a default config file for an app
+    $self->stash( Hash::Merge::merge( $self->defaults, $self->stash));
 
     # Finally, check for global postload hooks (these are used by the
     # test harness)
@@ -226,8 +229,6 @@ sub guess {
             Mailer     => 'Sendmail',
             MailerArgs => [],
             Web        => {
-                DefaultStaticRoot => Jifty::Util->share_root . '/web/static',
-                DefaultTemplateRoot => Jifty::Util->share_root . '/web/templates',
                 Port => '8888',
                 BaseURL => 'http://localhost',
                 SessionDir  => "var/session",
@@ -244,6 +245,28 @@ sub guess {
                 Globals      => [],
             },
         },
+    };
+
+}
+
+
+=head2 defaults
+
+We have a couple default values that shouldn't be included in the
+"guessed" config, as that routine is used when initializing a new 
+application. Generally, these are platform-specific file locations.
+
+=cut
+
+sub defaults {
+    my $self = shift;
+    return {
+        framework => {
+            Web => {
+                DefaultStaticRoot => Jifty::Util->share_root . '/web/static',
+                DefaultTemplateRoot => Jifty::Util->share_root . '/web/templates',
+            }
+        }
     };
 
 }
