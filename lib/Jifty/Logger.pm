@@ -49,9 +49,10 @@ sub new {
         } elsif ( -f $log_config and -r $log_config ) {
             Log::Log4perl->init($log_config);
         } else {
+            my $log_level = Jifty->config->framework('LogLevel');
             my %default = (
-                'log4perl.rootLogger'        => "INFO,Screen",
-                '#log4perl.logger.SchemaTool' => "INFO,Screen",
+                'log4perl.rootLogger'        => "$log_level,Screen",
+                '#log4perl.logger.SchemaTool' => "$log_level,Screen",
                 'log4perl.appender.Screen'   => 'Log::Log4perl::Appender::Screen',
                 'log4perl.appender.Screen.stderr' => 1,
                 'log4perl.appender.Screen.layout' =>

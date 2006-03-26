@@ -213,6 +213,7 @@ sub guess {
             ApplicationClass => $app_class,
             CurrentUserClass => $app_class . "::CurrentUser",
             ApplicationName  => $app_name,
+            LogLevel         => 'INFO',
             Database         => {
                 Database =>  $db_name,
                 Driver   => "SQLite",
