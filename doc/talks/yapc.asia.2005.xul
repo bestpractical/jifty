@@ -598,7 +598,7 @@ XXX image goes here
 Sending 
 Email
 ----
-Recieving 
+Receiving 
 Email
 ----
 URL-based 
@@ -646,7 +646,7 @@ better
  lib/BlogDemo/Model/Entry.pm
  lib/BlogDemo/Dispatcher.pm
  web/templates/new_entry.html
- Reb/templates/index.html
+ web/templates/index.html
 ----
 {{#i|./lib/BlogDemo/Model/Entry.pm}}
 ----
@@ -762,7 +762,7 @@ too
 ----
 No I18N
 ----
-Audrey hsa 
+Audrey has 
 fixed it 
 on her branch
 ----
@@ -785,7 +785,7 @@ apps
 movies and
 music videos
 ----
-{#tag|GET JIFTY}
+{{#tag|GET JIFTY}}
 ----
  cpan Jifty
 ----
