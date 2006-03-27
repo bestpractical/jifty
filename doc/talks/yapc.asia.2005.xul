@@ -23,16 +23,17 @@ How we're building useful applications
 in Perl 5 with a single unified framework, 
 using less time, energy, code, blood, 
 sweat, tears, etc.
+~ 手間暇かけずに便利なアプリをつくる方法教えます
 ----
 Another
 framework?
-~ またフレームワーク？
+~ で、またフレームワーク？
 ----
 Yes.
 ~ そう
 ----
 (Sorry, clkao)
-~ clkaoごめん
+~（clkao、ごめん）
 ----
 Why?
 ~ なぜ？
@@ -46,337 +47,428 @@ pain?
 ~ マゾなんじゃないの？
 ----
 No!
-~ 違います！
+~ 違いますって！
 ----
 Dear God, 
 WHY?!?!?!
+~ じゃあいったいどうして？！
 ----
 We built RT
 from scratch
+~ いちからつくったRTがあるじゃないか
 ----
 RT has lots of 
 infrastructure
+~ 機能豊富だよ。CPANのバグトラッカーにも使われてる
 ----
 We're building a 
 new application
+~ でも、新しいアプリを作りたいんだ
 ----
 We learned
 our lesson
+~ いろいろ学んだこともある
 ----
 This time, we'd
 use a framework
+~ 今度はフレームワークを使いたいんだよ
 ----
 We looked at
 the options
+~ ほかのフレームワークも見てみたさ
 ----
 We looked at
 Maypole
+~ Maypoleだって
 ----
 We looked at
 Catalyst
+~ Catalystだって
 ----
 We looked at
 Rails
+~ Railsだって
 ----
 We looked at
 Seaside
+~ Seasideだって
 ----
 We looked at
 Java stuff
+~ Javaのだって見た
 ----
 (We ignored the
 Java stuff)
+~ （Javaのは無視したけどね）
 ----
 We looked at
 Borges
+~ Borgesも
 ----
 We looked at
 CGI::Application
+~ CGI::Applicationも見た
 ----
 We looked at
 10+ more
+~ ほかにもたくさん見たよ
 ----
 Everything had
 good ideas
+~ それぞれにいいところもあった
 ----
 Maypole's
 default app
+~ Maypoleならデフォルトのアプリ
 ----
 Catalyst's
 Dispatcher
+~ Catalystのディスパッチャもいいね
 ----
 Rails'
 Stack
+~ Railsのスタック
 ----
 Rails'
 Beauty
+~ Railsの美しさ
 ----
 Seaside's 
 Continuations
+~ Seasideの継続
 ----
 Seaside's
 Page Halos 
+~ Seasideのツールバー風ページハロ
 ----
 But...
+~ でもね
 ----
 Nothing met
 our needs
+~ どれにも満足できなかったんだ
 ----
 Maypole isn't
 easy enough
+~ Maypoleはイマイチわかりづらいし
 ----
 Catalyst is 
 too scattered
+~ Catalystはごちゃごちゃしすぎ
 ----
 Rails 
 isn't 
 Perl
-
-Please translate as 
-"Matz-san, Please 
-accept my apologies. 
-Ruby is a beautiful 
-language, but I am 
-addicted to Perl"
+~ Matzさん、ごめん！　Rubyはlikeなんです
 ----
 Seaside is
 Smalltalk
+~ SeasideはSmalltalkだから
 ----
 Seaside is
 space alien
+~ 宇宙人だし
 ----
 Java is 
 Java
+~ Javaはやっぱりジャバくさい
 ----
 We threw away
 the bad stuff
+~ だから、いらないものは放り投げて
 ----
 We stole the
 good stuff
+~ いいところだけパクったんだ
 ----
 We added 
 our own magic
+~ そこにちょちょいと魔法をかけたら
 ----
 We have lots 
 of cool stuff!
+~ クールなものがたくさんできたわけ
 ----
 ...but
+~ ……ただねえ
 ----
 Jifty is still
 missing many
 features
+~ Jiftyにはまだまだ足りないものがたくさんある
 ----
 :-(
 ~ &#9785;
 ----
 No 
 Java
+~ Javaはないし
 ----
 No 
 Ruby
+~ Rubyもない
 ----
 No
 XML
+~ XMLも
 ----
 No
 SQL
+~ SQLもね
 ----
 I'm serious
+~ や、こいつはマジで
 ----
 No
 SELECT
+~ SELECTはできないし
 ----
 No
 INSERT 
+~ INSERTもだめ
 ----
 No
 DELETE
+~ DELETEも
 ----
 No
 UPDATE
+~ UPDATEも
 ----
 No
 CREATE
 TABLE
+~ CREATE TABLEも
 ----
 No
 ALTER
 TABLE
+~ ALTER TABLEもできていない
 ----
 No
 Class::DBI
+~ Class::DBIはないし
 ----
 No
 Template
 Toolkit
+~ Template Toolkitもない
 ----
 No hand-built
 HTML forms
+~ お手製のHTMLフォームも
 ----
 No 
 YAML
+~ YAMLもない
 ----
 That's 
 a lie
+~ あ、これはウソ
 ----
 There's a little
 bit of YAML
+~ YAMLはちょっとだけ使ってる
 ----
 config.yml
 ----
 (It's optional)
+~ （オプションだけどね）
 ----
 Sometimes not having
 things is a feature
+~ まあ、ときには「ない」ってのが売りだったりもする
 ----
 {{#tag|BUZZWORDS}}
+~ ほんとの売り文句はなにかって？
 ----
 {{#i|Perl}}
 ----
 (obviously)
+~ （そりゃそうだよね）
 ----
 {{#i|Full}}
 {{#i|Stack}}
+~ フルスタック
 ----
 (Fits together
 top to bottom)
+~ （どんな案件でも対応できるってことさ）
 ----
 {{#i|Don't}}
 {{#i|Repeat}}
 {{#i|Yourself}}
+~ 同じことは二度もさせない
 ----
 (Say it once)
+~ （一度でじゅうぶん）
 ----
 Even better:
 (Never say it!)
+~ もっといいのは「以心伝心」だけどね！
 ----
 {{#i|Declarative}}
 {{#i|Programming}}
+~ 宣言指向なプログラミング
 ----
 (Easy to read
 and write)
+~（読みやすいし、書きやすいでしょ）
 ----
 {{#i|Encapsulated}}
 {{#i|cleverness}}
+~ バッドノウハウのカプセル化
 ----
 (One good place
 for your logic)
+~ （そういうロジックは一箇所にまとめようってこと）
 ----
 {{#i|Web 2.0}}
+~ Web 2.0
 ----
 Sure 
 it is
+~ いや、本当に
 ----
 What does
 it mean?
+~ でも、Web 2.0ってどういう意味だろうね
 ----
 My DOG
 is Web 2.0
 enabled
+~ うちの犬はWeb 2.0対応だよ
 ----
 Go ahead 
+~ さあ
 ----
 Prove me 
 wrong
+~ 嘘だと思うなら証明してごらん
 ----
 {{#i|Web}}
 {{#i|Services}}
+~ ウェブサービス
 ----
 (Serve your API
 to the world)
+~ （APIを公開してみんなに使ってもらおう）
 ----
 {{#i|AJAX}}
+~ Ajax
 ----
 (And it works
 in lynx, too)
+~ （lynxでも大丈夫）
 ----
 {{#i|Continuations}}
+~ 継続
 ----
 ('gosub' for web 
 applications)
+~ （ウェブアプリにおける「gosub」だね）
 ----
 {{#i|MVC}}
+~ MVC
 ----
 (Sort of)
+~ （みたいなものかな）
 ----
 {{#i|A Pony}}
+~ バッドノウハウ
+----
+XXX to Jesse: You said "Pony" is "a slang for "an unreasonable feature." Is it a rough variant of "A word-for-word translation of a foreign language text, especially one used secretly by students as an aid in studying or test-taking (American Heritage), right? Namely, something you need to do unconventional, probably ugly-but-efficient (bad know-how) things?
 ----
 Rails is
 anti-pony
+~ Railsはこういうのが嫌いだね
 ----
 {{img src="pony.png" width="640" height="422"}}
 ----
 {{#tag|WHAT'S WITH}}
 {{#tag|THE NAME?}}
+~ ところで名前の意味は？
 ----
 Jifty
+~ ジフティ
 ----
 JFDI
+~ ジフディ
 ----
 JUST
+~ ジゃあ
 ----
-_______
-
-~ If not offensive, please use the Kana for "fucking"
+~ フンフンフンと
 ----
 DO
+~ デっちあげて
 ----
 IT
+~ ィきまっしょい
 ----
 Bad
 Product
 Name
+~ とんでもない名前だよね
 ----
 Big Sites
 Hate It
+~ 大きなところはそういうの嫌がるんだ
 ----
 Learned the
 hard way
+~ ずいぶん苦労させられたよ
 ----
  {{#tag|R}}equest
   
   
  
-~
+~リクエスト
 ----
  {{#tag|R}}equest
  {{#tag|T}}racker
   
   
-~  
+~ リクエスト・トラッカー
 ----
  {{#tag|R}}equest
  {{#tag|T}}racker
  {{#tag|F}}AQ
   
-~
+~ リクエスト・トラッカー・FAQ
 ----
  {{#tag|R}}equest
  {{#tag|T}}racker
  {{#tag|F}}AQ
  {{#tag|M}}anager
-~
+~ マニュアル嫁！（うちで作ったRTのことだよ）
 ----
 So, it's 
 named Jifty!
+~ Jiftyってのはその流れをくんでいるわけさ！
 ----
 {{#tag|MODELS}}
+~ モデル
 ----
 Models
 are 
 Jifty::DBI
+~ モデルはJifty::DBI
 ----
 Models
 are 
 smart
+~ これは賢いよ
 ----
 Models
 encapsulate
 cleverness
+~ バッドノウハウのかたまり
 ----
 Models 
 define
 schema
+~ スキーマも定義してくれる
 ----
  column complete =>
    type is 'boolean',
@@ -390,6 +482,7 @@ schema
 ----
 Schema 
 versioning
+~ スキーマのバージョニングも
 ----
   column description =>
    since '0.1.1',
@@ -398,6 +491,7 @@ versioning
    label is 'Details';
 ----
 Validation
+~ ヴァリデーションも
 ----
   column priority =>
    type is 'integer',
@@ -411,6 +505,7 @@ Validation
 Models
 have
 relationships
+~ リレーションだってバッチリ
 ----
   column tags =>
    label is 'Tags',
@@ -425,119 +520,155 @@ relationships
 That's 
 pure
 Perl
+~ これ全部Pure Perl
 ----
 (No 
 source 
 filters)
+~ （ソースフィルタなんて使ってないよ）
 ----
 What about 
 the database?
+~ データベースはどうなってるって？
 ----
  jifty schema --setup
 ----
 What about
 upgrades?
+~ アップグレードしたい？
 ----
  jifty schema --setup
 ----
 Another 
 OO RDBMS 
 Mapper?
+~ 新しいO/Rマッパなの？
 ----
 Yes
+~ そう
 ----
 Ok...No
+~ はいはい……違いますよ
 ----
 Built on
 SearchBuilder
+~ SearchBuilderの上に乗ってます
 ----
 {{#tag|ACTIONS}}
+~ アクション
 ----
 Actions are
 your controllers
+~ アクションってのはコントローラね
 ----
 Any action
 on any page
+~ どのページにどんなアクションを書いても大丈夫
 ----
 Repeatable
+~ 繰り返してもいい
 ----
 Composable
+~ 組み合わせてもいい
 ----
 Actions
 have
 arguments
+~ アクションは引数を取るし
 ----
 Arguments
 have 
 types
+~ 引数には型もある
 ----
 Jifty renders
 actions
 as forms
+~ アクションをフォーム扱いすることもできるから
 ----
 No more &lt;input&gt;
 tags everywhere
+~ もうあちこちにinputタグを書かなくても大丈夫
 ----
 Automatic
 validators
+~ ヴァリデーションも自動でしてくれる
 ----
 (If you
 want them)
+~ （そうしたければね）
 ----
 Automatic
 canonicalizers
+~ 正規化も自動
 ----
 (If you
 want them)
+~ （そうしたければね）
 ----
 Actions
 return
 results
+~ アクションは結果も返す
 ----
 Actions 
 =
 API
+~ つまり、アクションはAPIってこと
 ----
 Not web 
 services
 ...yet
+~ でもウェブサービスじゃないんだな……まだ
 ----
 Missing
 results 
 display
+~ 結果の表示はできないから
 ----
 That's 
 just a
 serializer
+~ シリアライザ止まり
 ----
 (Added the 
 serializer 
 last week)
+~ （先週作ったばっかりなんだよ）
 ----
 {{#tag|DISPATCHER}}
+~ ディスパッチャ
 ----
 Centralized
 Control Flow
+~ コントロールのフローは中央管理
 ----
 Not actually
 necessary
+~ 本当は必要ないんだけどね
 ----
 Separates
 flow and
 templates
+~ フローとテンプレートは分かれてる
 ----
 {{#tag|REGIONS}}
+~ リージョン
 ----
 AJAX 
 page
 updates
+~ Ajaxによるページの更新
 ----
 Standardized
+~ 規格化されてるし
 ----
 Addressable
+~ アドレス化もできる
 ----
 Downlevel
 compatible
+~ 下位互換性もバッチリ
 ----
   Jifty->web->form->submit(
     label   => 'Create',
@@ -548,100 +679,130 @@ compatible
   );
 ----
 {{#tag|CONTINUATIONS}}
+~ 継続
 ----
 They're 
 not real
+~ 本物じゃないんだけどね
 ----
 Jifty level,
 not 
 Perl level
+~ あくまでJiftyレベルでの話
 ----
 Save state
 for later
+~ あとで使うために状態保存
 ----
 Back button
 compatible
+~ 「戻る」ボタンにも対応してます
 ----
 {{#tag|DEVELOPER}}
 {{#tag|MODE}}
+~ 開発者モード
 ----
 Mason reloads 
 changed templates
 per request
+~ Masonは変更のあったテンプレートを毎回リロード
 ----
 Jifty reloads
 changed {{#i|libraries}}
 per request
+~ Jiftyは変更のあったライブラリを毎回リロード
 ----
 Halos
+~ ハロ
 ----
 Real-time
 info about
 the page
+~ そのページのリアルタイムな情報
 ----
 SQL queries
+~ SQLクエリ
 ----
 Actions +
 Arguments
+~ アクション＋引数
 ----
 Profiling
+~ プロファイリング
 ----
 Live 
 editing
+~ ライブ編集
 ----
 XXX image goes here
 ----
 {{#tag|Other}}
 {{#tag|Checklist}}
 {{#tag|Features}}
+~ ほかにもいろいろ盛りだくさん
 ----
 Sending 
 Email
+~ メールの送信
 ----
 Receiving 
 Email
+~ メールの受信
 ----
 URL-based 
 authentication
+~ URLベースの認証
 ----
 Password-based
 authentication
+~ パスワードベースの認証
 ----
 Standalone
 web server
+~ スタンドアロンなウェブサーバ
 ----
 FastCGI 
 handler
+~ FastCGIハンドラ
 ----
 Fast static
 content 
 server
+~ 静的コンテンツ用の高速サーバ
 ----
 Online
 developer
 documentation
+~ 開発者向けオンラインドキュメント
 ----
 Built-in
 database
 administration
+~ 組み込みデータベース管理
 ----
 Stub 
 generators
+~ スタブ生成プログラム
 ----
 Test 
 helpers
+~ テストヘルパー
 ----
 {{#tag|A TRIVIAL}}
 {{#tag|EXAMPLE}}
+~ 10分なんてかからないJiftyアプリ！
 ----
 Real
 code
+~ 本物のコードだよ
 ----
 Live
 demo?
+~ ライブデモ？
 ----
 I know
 better
+~ まあ、見てなって
 ----
  lib/BlogDemo/Model/Entry.pm
  lib/BlogDemo/Dispatcher.pm
@@ -719,22 +880,29 @@ better
  jifty server 
 ----
 ALL DONE
+~ おしまい
 ----
 No 
 more 
 code
+~ コードはこれだけ
 ----
 It runs
+~ これで動くんですって
 ----
 Ship it
+~ 出荷できちゃう
 ----
 {{#tag|JIFTY}}
 {{#tag|SUCKS}}
+~ Jiftyのダメなところ
 ----
 ...for now
+~ ……いまのところ、だけどね
 ----
 A few CPAN
 Dependencies
+~ 少々CPAN厨
 ----
 Apache::Session App::CLI Cache::Cache Calendar::Simple
 Class::Accessor Class::Container Clone Compress::Zlib DBD::SQLite
@@ -752,40 +920,52 @@ WWW::Mechanize XML::Writer XML::XPath
 ----
 Fixing
 that
+~ なんとかします
 ----
 No Plugin
 Architecture
+~ プラグイン機構がない
 ----
 Fixing
 that
 too
+~ これもなんとか
 ----
 No I18N
+~ 国際化してない
 ----
 Audrey has 
 fixed it 
 on her branch
+~ Audreyのブランチでは直ってます
 ----
 {{#tag|THE FUTURE}}
+~ これからの予定
 ----
 Wiki-style
 UI Editor
+~ Wiki風のUIエディタ
 ----
 Even
 less
 code
+~ コードをもっと減らす
 ----
 More
 docs
+~ ドキュメントはもっと増やす
 ----
 Sample
 apps
+~ サンプルアプリケーション
 ----
 "Jifty in a Jiffy"
 movies and
 music videos
+~ ムービーとミュージックビデオ
 ----
 {{#tag|GET JIFTY}}
+~ 使ってみたくなった？
 ----
  cpan Jifty
 ----
@@ -795,17 +975,22 @@ music videos
  http://jifty.org/
 ----
 How do I get started
+~ とっかかりがほしい？
 ----
   perldoc Jifty::Manual::Tutorial
 ----
   perldoc Jifty::Manual::Tutorial_ja
   (thanks to Kenichi Ishigaki)
+~ 日本語版もあるよ
 ----
 #jifty on freenode.net
+~ IRCはここ
 ----
 jifty-devel@lists.jifty.org
+~ メーリングリストはここ
 ----
 Thanks!
+~ ご静聴ありがとう！
 ----
 Autocompleters
 Canonicalizers
