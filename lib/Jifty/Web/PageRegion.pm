@@ -189,7 +189,7 @@ sub enter {
 
     # Keep track of the fully qualified name (which should be unique)
     $self->log->warn("Repeated region: " . $self->qualified_name)
-        if Jifty->web->{'regions'}{ $self->qualified_name };
+        if Jifty->web->get_region( $self->qualified_name ) and Jifty->web->get_region( $self->qualified_name ) ne $self;
     Jifty->web->{'regions'}{ $self->qualified_name } = $self;
 
     # Merge in the settings passed in via state variables

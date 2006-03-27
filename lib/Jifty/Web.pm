@@ -1119,7 +1119,8 @@ sub serve_fragments {
         } while ($f = $f->parent);
         
         for $f (reverse @regions) {
-            my $new = Jifty::Web::PageRegion->new(
+            my $new = $self->get_region( join '-', grep {$_} $self->qualified_region, $f->name );
+            $new ||= Jifty::Web::PageRegion->new(
                 name           => $f->name,
                 path           => $f->path,
                 region_wrapper => $f->wrapper,
