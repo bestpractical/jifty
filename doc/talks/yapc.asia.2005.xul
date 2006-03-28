@@ -398,6 +398,7 @@ JFDI
 JUST
 ~ ジゃあ
 ----
+_______
 ~ フンフンフンと
 ----
 DO
@@ -715,14 +716,14 @@ per request
 Halos
 ~ ハロ
 ----
-{{img src="halo-overview.png" width="640" height="422"}}
+{{img src="halo-overview.png" width="906" height="790"}}
 ----
 Real-time
 info about
 the page
 ~ そのページのリアルタイムな情報
 ----
-{{img src="component-tree.png" width="640" height="422"}}
+{{img src="component-tree.png" width="428" height="391"}}
 ----
 SQL queries
 ~ SQLクエリ
@@ -815,7 +816,7 @@ I know
 better
 ~ まあ、見てなって
 ----
-{{img src="blogdemo.png" width="640" height="422"}}
+{{img src="blogdemo.png" width="917" height="752"}}
 ----
  lib/BlogDemo/Model/Entry.pm
  lib/BlogDemo/Dispatcher.pm
@@ -860,7 +861,7 @@ better
      set create =&gt; $create;
  };
 ----
-{{img src="blogdemo.png" width="640" height="422"}}
+{{img src="blogdemo.png" width="917" height="752"}}
 ----
 {{#i|./web/templates/index.html}}
 ----
