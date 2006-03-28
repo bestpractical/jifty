@@ -715,10 +715,14 @@ per request
 Halos
 ~ ハロ
 ----
+{{img src="halo-overview.png" width="640" height="422"}}
+----
 Real-time
 info about
 the page
 ~ そのページのリアルタイムな情報
+----
+{{img src="component-tree.png" width="640" height="422"}}
 ----
 SQL queries
 ~ SQLクエリ
@@ -730,11 +734,18 @@ Arguments
 Profiling
 ~ プロファイリング
 ----
+{{img src="halo.png" width="468" height="665"}}
+----
 Live 
 editing
 ~ ライブ編集
 ----
-XXX image goes here
+{{img src="edit.png" width="640" height="422"}}
+----
+Debug
+Screens
+----
+{{img src="error.png" width="640" height="422"}}
 ----
 {{#tag|Other}}
 {{#tag|Checklist}}
@@ -804,6 +815,8 @@ I know
 better
 ~ まあ、見てなって
 ----
+{{img src="blogdemo.png" width="640" height="422"}}
+----
  lib/BlogDemo/Model/Entry.pm
  lib/BlogDemo/Dispatcher.pm
  web/templates/new_entry.html
@@ -847,21 +860,8 @@ better
      set create =&gt; $create;
  };
 ----
-{{#i|./web/templates/new_entry.html}}
+{{img src="blogdemo.png" width="640" height="422"}}
 ----
- &lt;%args&gt;
- $create
- &lt;/%args&gt;
- &lt;&amp;|/_elements/wrapper, 
-    title=&gt; 'Create an article' &amp;&gt;
- &lt;%Jifty-&gt;web-&gt;form-&gt;start%&gt;
- % foreach my $arg ($create-&gt;argument_names) {
- &lt;%$create-&gt;form_field($arg)%&gt;
- % }
- &lt;%Jifty-&gt;web-&gt;form-&gt;submit( label =&gt; 'Save')%&gt;
- &lt;%Jifty-&gt;web-&gt;form-&gt;end%&gt;
- &lt;/&amp;&gt;
- ----
 {{#i|./web/templates/index.html}}
 ----
  &lt;%args&gt;
@@ -874,6 +874,23 @@ better
     &lt;%$entry-&gt;body%&gt;
   &lt;/div&gt;
  % }
+ &lt;/&amp;&gt;
+----
+{{#i|./web/templates/new_entry.html}}
+----
+{{img src="new-entry.png" width="918" height="754"}}
+----
+ &lt;%args&gt;
+ $create
+ &lt;/%args&gt;
+ &lt;&amp;|/_elements/wrapper, 
+    title=&gt; 'Create an article' &amp;&gt;
+ &lt;%Jifty-&gt;web-&gt;form-&gt;start%&gt;
+ % foreach my $arg ($create-&gt;argument_names) {
+ &lt;%$create-&gt;form_field($arg)%&gt;
+ % }
+ &lt;%Jifty-&gt;web-&gt;form-&gt;submit( label =&gt; 'Save')%&gt;
+ &lt;%Jifty-&gt;web-&gt;form-&gt;end%&gt;
  &lt;/&amp;&gt;
 ----
  jifty schema --setup
