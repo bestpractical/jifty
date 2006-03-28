@@ -91,6 +91,10 @@ sub take_action {
             if ( defined $column->type and ( $column->type =~ /^bool/i || $column->type =~ /^int/i )
             and defined $value and $value eq '' );
 
+        # Skip file uploads if blank
+        next if lc $self->arguments->{$field}{render_as} eq "upload"
+          and (not defined $value or not ref $value);
+
         if (ref $value eq "Fh") { # CGI.pm's "lightweight filehandle class"
             local $/;
             binmode $value;
