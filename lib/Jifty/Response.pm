@@ -3,8 +3,6 @@ use strict;
 
 package Jifty::Response;
 
-use base qw/Jifty::Object Class::Accessor/;
-
 =head1 NAME
 
 Jifty::Response - Canonical internal representation of the result of a L<Jifty::Action>
@@ -16,6 +14,10 @@ Currently, the response object exists merely to collect the
 L<Jifty::Result> objects of each L<Jifty::Action> that ran.
 
 =cut
+
+use base qw/Jifty::Object Class::Accessor/;
+
+__PACKAGE__->mk_accessors(qw(error));
 
 =head2 new
 
@@ -96,21 +98,28 @@ sub messages {
     return map {$_, $results{$_}->message} grep {defined $results{$_}->message and length $results{$_}->message} keys %results;
 }
 
+=head2 error [MESSAGE]
+
+Gets or sets a generalized error response.  Setting an error also
+makes the response a L</failure>.
+
 =head2 success
 
-Returns true if none of the results are failures.
+Returns true if none of the results are failures and there is no
+L</error> set.
 
 =cut
 
 sub success {
     my $self = shift;
-    return 1 unless grep {$_->failure} values %{$self->{results}};
-    return 0;
+    return 0 if grep {$_->failure} values %{$self->{results}};
+    return 1;
 }
 
 =head2 failure
 
-Returns true if any of the results failed.
+Returns true if any of the results failed or there was an L</error>
+set.
 
 =cut
 

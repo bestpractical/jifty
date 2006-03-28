@@ -1,0 +1,22 @@
+# These are dispatcher rules that halos and error handling need to be
+# able to edit files in place.  These should become a plugin of some
+# sort, when we have that infrastructure.
+
+before '*', run {
+    Jifty->web->deny_actions(qw/Jifty::Action::Devel/)
+      unless Jifty->config->framework('DevelMode');
+};
+
+on qr'^/__jifty/edit/(.*?)/(.*)$', run {
+    my $editor = Jifty->web->new_action(
+        class     => 'Jifty::Action::Devel::FileEditor',
+        moniker   => 'editpage',
+        arguments => {
+            source_path => $2,
+            file_type   => $1,
+        }
+    );
+
+    set editor => $editor;
+    show '/__jifty/edit_file';
+};

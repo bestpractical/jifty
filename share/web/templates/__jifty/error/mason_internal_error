@@ -1,0 +1,56 @@
+<&| $wrapper, title => "Mason error" &>
+
+Error in <% $file %>, lines <% "@lines" %>:
+<pre><% $msg %></pre>
+
+<% Jifty->web->return( label => "Try again" ) %>
+
+<h2>Call stack</h2>
+<ul>
+% for my $frame (@stack) {
+%   next if $frame->filename =~ m{/HTML/Mason/};
+%   if (-w $frame->filename) {
+%     my $path = $frame->filename;
+%     for (map {$_->[1]} @{Jifty->handler->mason->interp->comp_root}) {
+%       last if $path =~ s/^\Q$_\E//;
+%     }
+%     if ($path ne $frame->filename) {
+<li>Template <% Jifty->web->tangent( url =>"/__jifty/edit/mason_component$path",
+                            label => "$path line ".$frame->line,
+                            parameters => { line => $frame->line } ) %></li>
+%     } else {
+<li><% Jifty->web->tangent( url =>"/__jifty/edit/library$path",
+                            label => "$path line ".$frame->line,
+                            parameters => { line => $frame->line } ) %></li>
+%     }
+%   } else {
+<li><% $frame->filename %> line <% $frame->line %></li>
+%   }
+% }
+</ul>
+
+</&>
+<%init>
+my $wrapper = "/_elements/wrapper";
+
+my $cont = Jifty->web->request->continuation;
+$wrapper = "/__jifty/error/_elements/wrapper"
+  if $cont and $cont->request->path eq "/__jifty/error/mason_internal_error";
+
+# If we're not in devel, bail
+if (not Jifty->config->framework("DevelMode") or not $cont) {
+    $m->comp({content => sub {
+        $m->comp("_elements/error_text", error => "mason internal error");
+    }, $wrapper, title => "Something went awry"});
+    $m->abort;
+}
+
+my $e = $cont->response->error;
+my $msg = $e->message;
+$msg =~ s/, <\S+> (line|chunk) \d+\././;
+
+my $info = $e->analyze_error;
+my $file = $info->{file};
+my @lines = @{$info->{lines}};
+my @stack = @{$info->{frames}};
+</%init>

@@ -66,7 +66,6 @@ the source_path, defaults to something inside the app's directory.
 
 The actual content of the file we're editing.
 
-
 =back
 
 =cut
@@ -75,8 +74,7 @@ The actual content of the file we're editing.
 sub arguments {
     my $self = shift;
 
-    {   path      => { type => 'text', constructor => 1 },
-        file_type => {
+    {   file_type => {
             default      => 'mason_component',
             render_as    => 'Select',
             valid_values => [qw/mason_component library/],
@@ -93,8 +91,8 @@ sub arguments {
 
 =head2 get_default_content
 
-Finds the version of the C<source_path> (of type C<file_type>) and loads it into C<content>.
-
+Finds the version of the C<source_path> (of type C<file_type>) and
+loads it into C<content>.
 
 =cut
 
@@ -108,26 +106,35 @@ sub get_default_content {
     my $out = '';
     my %cfg = Jifty->handler->mason_config;
     
-    my $local_template_base;
-    foreach my $item (@{$cfg{comp_root}}) {
-        $local_template_base = $item->[1] if ($item->[0] eq 'application');
-        my $qualified_path = File::Spec->catfile($item->[1],$path);
-        if (-f $qualified_path and -r $qualified_path)  {
-            $self->argument_value(qualified_path => $qualified_path);
-            my $filehandle;
-            open ($filehandle, "<$qualified_path")||die "Couldn't read $qualified_path: $!";
-            $out = join('',<$filehandle>);
-            close($filehandle);
-            last; # We want the first match
+    my($local_template_base, $qualified_path);
+    if ($type eq "mason_component") {
+        foreach my $item (@{$cfg{comp_root}}) {
+            $local_template_base = $item->[1] if $item->[0] eq 'application';
+            $qualified_path = File::Spec->catfile($item->[1],$path);
+            # We want the first match
+            last if -f $qualified_path and -r $qualified_path;
+            undef $qualified_path;
         }
+        $self->argument_value(destination_path => File::Spec->catfile($local_template_base, $path));
+    } else {
+        $qualified_path = "/$path" if -f "/$path" and -r "/$path";
+        $self->argument_value(destination_path => $qualified_path);
     }
-    $self->argument_value(content => $out);
-    $self->argument_value(destination_path => File::Spec->catfile($local_template_base, $path));
+
+    if ($qualified_path) {
+        local $/;
+        my $filehandle;
+        open ($filehandle, "<$qualified_path")||die "Couldn't read $qualified_path: $!";
+        $self->argument_value(content => <$filehandle>);
+        close($filehandle);
+    }
 }
 
 =head2 validate_destination_path PATH
 
-Returns true if the user can write to the directory C<PATH>. False otherwise. Should be refactored to a C<path_writable> routine and a trivial validator.
+Returns true if the user can write to the directory C<PATH>. False
+otherwise. Should be refactored to a C<path_writable> routine and a
+trivial validator.
 
 =cut
 
@@ -141,7 +148,7 @@ sub validate_destination_path {
     if (-f $self->{'write_to'} and not -w $self->{'write_to'}) {
         return  $self->validation_error( destination_path => "Can't save the file to ".$self->{'write_to'});
     }
-    return $self->validation_ok;
+    return $self->validation_ok( 'write_to' );
 }
 
 
@@ -158,8 +165,12 @@ sub take_action {
     pop @dirs; # discard filename. we only want to make the directory ;)
     Jifty::Util->make_path( File::Spec->catdir(@dirs));
     my $writehandle = IO::File->new();
+
+    my $content = $self->argument_value('content');
+    $content =~ s/\r\n/\n/g;
+
     $writehandle->open(">$dest") || die "Couldn't open $dest for writing: ".$!;
-    $writehandle->print( $self->argument_value('content')) || die " Couldn't write to $dest: ".$!;
+    $writehandle->print( $content ) || die " Couldn't write to $dest: ".$!;
     $writehandle->close() || die "Couldn't close filehandle $dest ".$!;
     $self->result->message("Updated $dest");
 }

@@ -7,7 +7,6 @@ my $title = "Editing file ".$editor->argument_value('source_path');
 </%init>
 <&|/_elements/wrapper, title => $title &>
 <% Jifty->web->form->start %>
-<%$editor->form_field('file_type')%>
 <%$editor->form_field('destination_path')%>
 <%$editor->form_field('content')%>
 <% Jifty->web->return(label => 'Save and return', submit => $editor )%>

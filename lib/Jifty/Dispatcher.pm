@@ -706,9 +706,18 @@ sub _do_show {
     my $err = $@;
     # Handle parse errors
     if ( $err and not eval { $err->isa( 'HTML::Mason::Exception::Abort' ) } ) {
-        # XXX TODO: get this into the browser somehow
-        warn "Mason error: $err";
-        Jifty->web->redirect("/__jifty/error/mason_internal_error");
+        # Save the request away, and redirect to an error page
+        Jifty->web->response->error($err);
+        my $c = Jifty::Continuation->new(
+            request  => Jifty->web->request,
+            response => Jifty->web->response,
+            parent   => Jifty->web->request->continuation,
+        );
+
+        warn "$err";
+
+        # Redirect with a continuation
+        Jifty->web->_redirect( "/__jifty/error/mason_internal_error?J:C=" . $c->id );
     } elsif ($err) {
         die $err;
     }
