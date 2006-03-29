@@ -896,8 +896,7 @@ better
 ALL DONE
 ~ おしまい
 ----
-No 
-more 
+No more 
 code
 ~ コードはこれだけ
 ----
@@ -941,8 +940,7 @@ Architecture
 ~ プラグイン機構がない
 ----
 Fixing
-that
-too
+that too
 ~ これもなんとか
 ----
 No I18N
@@ -960,8 +958,7 @@ Wiki-style
 UI Editor
 ~ Wiki風のUIエディタ
 ----
-Even
-less
+Even less
 code
 ~ コードをもっと減らす
 ----
@@ -1006,11 +1003,6 @@ jifty-devel@lists.jifty.org
 Domo 
 Arigato!
 ~ サンキュー！
-----
-Autocompleters
-Canonicalizers
-Actions
-LetMes
 </html:textarea>
 <deck flex="1" id="deck">
 <vbox flex="1" onmousemove="Presentation.onMouseMoveOnCanvas(event);">
