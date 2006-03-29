@@ -159,7 +159,7 @@ too scattered
 Rails 
 isn't 
 Perl
-~ Matzさん、ごめん！　Rubyはlikeなんです
+~ Matzさん、ごめん！　ぼくはPerl厨なんです
 ----
 Seaside is
 Smalltalk
@@ -375,9 +375,7 @@ applications)
 ~ （みたいなものかな）
 ----
 {{#i|A Pony}}
-~ バッドノウハウ
-----
-XXX to Jesse: You said "Pony" is "a slang for "an unreasonable feature." Is it a rough variant of "A word-for-word translation of a foreign language text, especially one used secretly by students as an aid in studying or test-taking (American Heritage), right? Namely, something you need to do unconventional, probably ugly-but-efficient (bad know-how) things?
+~ 突拍子もないおねだりにも対応してるよ
 ----
 Rails is
 anti-pony
@@ -745,6 +743,7 @@ editing
 ----
 Debug
 Screens
+~ デバッグスクリーン
 ----
 {{img src="error.png" width="640" height="422"}}
 ----
@@ -1008,7 +1007,7 @@ jifty-devel@lists.jifty.org
 ~ メーリングリストはここ
 ----
 Thanks!
-~ ご静聴ありがとう！
+~ サンキュー！
 ----
 Autocompleters
 Canonicalizers
