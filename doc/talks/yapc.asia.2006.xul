@@ -1071,6 +1071,7 @@ Arigato!
 <command id="cmd_end" oncommand="if (Presentation.isPresentationMode) Presentation.end();"/>
 </commandset>
 <keyset>
+<key key=" "      command="cmd_forward"/>
 <key keycode="VK_ENTER"      command="cmd_forward"/>
 <key keycode="VK_RETURN"     command="cmd_forward"/>
 <key keycode="VK_PAGE_DOWN"  command="cmd_forward"/>
