@@ -156,9 +156,8 @@ Catalyst is
 too scattered
 ~ Catalystはごちゃごちゃしすぎ
 ----
-Rails 
-isn't 
-Perl
+Rails is
+not Perl
 ~ Matzさん、ごめん！　ぼくはPerl厨なんです
 ----
 Seaside is
@@ -516,13 +515,11 @@ relationships
    since '0.2.0',
    render_as 'Combobox';
 ----
-That's 
-pure
+Pure
 Perl
 ~ これ全部Pure Perl
 ----
-(No 
-source 
+(No source 
 filters)
 ~ （ソースフィルタなんて使ってないよ）
 ----
@@ -711,6 +708,18 @@ changed {{#i|libraries}}
 per request
 ~ Jiftyは変更のあったライブラリを毎回リロード
 ----
+Debug
+Screens
+~ デバッグスクリーン
+----
+{{img src="error.png" width="640" height="422"}}
+----
+Live 
+editing
+~ ライブ編集
+----
+{{img src="edit.png" width="640" height="422"}}
+----
 Halos
 ~ ハロ
 ----
@@ -734,18 +743,6 @@ Profiling
 ~ プロファイリング
 ----
 {{img src="halo.png" width="468" height="665"}}
-----
-Live 
-editing
-~ ライブ編集
-----
-{{img src="edit.png" width="640" height="422"}}
-----
-Debug
-Screens
-~ デバッグスクリーン
-----
-{{img src="error.png" width="640" height="422"}}
 ----
 {{#tag|Other}}
 {{#tag|Checklist}}
@@ -815,7 +812,7 @@ I know
 better
 ~ まあ、見てなって
 ----
-{{img src="blogdemo.png" width="917" height="752"}}
+{{img src="blogdemo.png" width="633" height="315"}}
 ----
  lib/BlogDemo/Model/Entry.pm
  lib/BlogDemo/Dispatcher.pm
@@ -860,7 +857,7 @@ better
      set create =&gt; $create;
  };
 ----
-{{img src="blogdemo.png" width="917" height="752"}}
+{{img src="blogdemo.png" width="633" height="315"}}
 ----
 {{#i|./web/templates/index.html}}
 ----
@@ -878,7 +875,7 @@ better
 ----
 {{#i|./web/templates/new_entry.html}}
 ----
-{{img src="new-entry.png" width="918" height="754"}}
+{{img src="new-entry.png" width="623" height="405"}}
 ----
  &lt;%args&gt;
  $create
@@ -1006,7 +1003,8 @@ How do I get started
 jifty-devel@lists.jifty.org
 ~ メーリングリストはここ
 ----
-Thanks!
+Domo 
+Arigato!
 ~ サンキュー！
 ----
 Autocompleters
