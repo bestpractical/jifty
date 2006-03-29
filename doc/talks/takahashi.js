@@ -174,7 +174,7 @@ var Presentation = {
             if (new_fs > 32) {
                 new_fs = new_fs - (new_fs % 32) 
             }
-            if (code_listing) { new_fs = 48;}
+            //if (code_listing) { new_fs = 48;}
 
             this.content.setAttribute('style', 'top: 0');
             this.content.setAttribute('style', 'font-size:'+ new_fs + "px");
@@ -186,8 +186,8 @@ var Presentation = {
             }
 
             var content_h = this.content.boxObject.height;
-            if(content_h >= (canvas_h - 50)){ // That 50 is space for subtitles
-                new_fs = Math.round(((canvas_h-50)/content_h) * new_fs);
+            if(content_h >= (canvas_h - 70)){ // That 50 is space for subtitles
+                new_fs = Math.round(((canvas_h-70)/content_h) * new_fs);
                 this.content.setAttribute('style', 'font-size:'+ new_fs + "px");
                 content_h = this.content.boxObject.height;
             }
