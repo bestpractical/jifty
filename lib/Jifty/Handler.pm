@@ -51,7 +51,7 @@ sub new {
     $self->dispatcher(
         Jifty->config->framework('ApplicationClass') . "::Dispatcher" );
     Jifty::Util->require( $self->dispatcher );
-    $self->mason( Jifty::Templater::Mason::Handler->new( $self->mason_config ) );
+    $self->mason( Jifty::View::Mason::Handler->new( $self->mason_config ) );
 
     $self->static_handler(Jifty::Handler::Static->new());
 

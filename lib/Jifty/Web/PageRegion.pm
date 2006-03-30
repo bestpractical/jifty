@@ -292,7 +292,7 @@ sub render {
     $result .= qq|</div>| if ($self->region_wrapper);
 
     #XXX TODO: There's gotta be a better way to localize it
-    Jifty->handler->mason->interp->out_method( \&Jifty::Templater::Mason::Handler::out_method);
+    Jifty->handler->mason->interp->out_method( \&Jifty::View::Mason::Handler::out_method);
 
     return $result;
 }

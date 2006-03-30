@@ -1,11 +1,11 @@
 use strict;
 use warnings;
 
-package Jifty::Templater::Mason::Handler;
+package Jifty::View::Mason::Handler;
 
 =head1 NAME
 
-Jifty::Templater::Mason::Handler - Handler for Mason requests inside of Jifty
+Jifty::View::Mason::Handler - Handler for Mason requests inside of Jifty
 
 =head1 SUMMARY
 
