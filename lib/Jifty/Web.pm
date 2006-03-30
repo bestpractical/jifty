@@ -122,7 +122,6 @@ hash).  Aborts if the session is already loaded.
 # Create the Jifty::Web::Session object
 sub setup_session {
     my $self = shift;
-    my $m = Jifty->web->mason;
 
     return if $self->session->loaded;
     $self->session->load();
@@ -890,24 +889,6 @@ sub render_messages {
         }
         $self->out(qq{</div>});
     }
-    return '';
-}
-
-=head3 render_request_debug_info
-
-Outputs the request arguments.
-
-=cut
-
-sub render_request_debug_info {
-    my $self = shift;
-    my $m    = $self->mason;
-    use YAML;
-    $m->out('<div class="debug">');
-    $m->out('<hr /><h1>Request args</h1><pre>');
-    $m->out( YAML::Dump( { $m->request_args } ) );
-    $m->out('</pre></div>');
-
     return '';
 }
 

@@ -3,6 +3,7 @@ use strict;
 package Jifty::Mason::Halo;
 use base qw/HTML::Mason::Plugin/;
 use Time::HiRes ();
+use YAML ();
 Jifty->handle->log_sql_statements(1);
 
 =head1 NAME

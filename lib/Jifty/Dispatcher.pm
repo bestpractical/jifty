@@ -409,13 +409,14 @@ sub handle_request {
 
 
     local $Dispatcher = $self->new();
+
+    # XXX TODO: refactor this out somehow?
     # We don't want the previous mason request hanging aroudn once we start dispatching
     local $HTML::Mason::Commands::m = undef;
     # Mason introduces a DIE handler that generates a mason exception
     # which in turn generates a backtrace. That's fine when you only
     # do it once per request. But it's really, really painful when you do it
     # often, as is the case with fragments
-    #
     local $SIG{__DIE__} = 'DEFAULT';
 
     eval {
@@ -672,14 +673,14 @@ sub _do_show {
     $path ||= $self->{path};
     $self->log->debug("Showing path $path");
 
-    # If we've got a working directory (from an "under" rule) and we have 
+    # If we've got a working directory (from an "under" rule) and we have
     # a relative path, prepend the working directory
     $path = "$self->{cwd}/$path" unless $path =~ m{^/};
 
-    # If we're requesting a directory, go looking for the index.html
-    if ( $path =~ m{/$} and
-        Jifty->handler->mason->interp->comp_exists( $path . "/index.html" ) )
+    # When we're requesting a directory, go looking for the index.html
+    if ( $path =~ m{/$} and $self->template_exists( $path . "/index.html" ) )
     {
+
         $path .= "/index.html";
     }
 
@@ -687,40 +688,18 @@ sub _do_show {
     # the directory itself
 
     # XXX TODO, we should search all component roots
-    
-    if ($path !~ m{/$}
-        and -d Jifty::Util->absolute_path(
-            Jifty->config->framework('Web')->{'TemplateRoot'} . $path
-        )
-        )
-    {
 
+    if ($path !~ m{/$}
+        and -d Jifty::Util->absolute_path( Jifty->config->framework('Web')->{'TemplateRoot'} . $path))
+    {
         $self->_do_show( $path . "/" );
     }
 
     # Set the request path
     request->path($path);
+    $self->render_template(request->path);
 
-    $self->log->debug("Having Mason handle ".request->path);
-    eval { Jifty->handler->mason->handle_comp(request->path); };
-    my $err = $@;
-    # Handle parse errors
-    if ( $err and not eval { $err->isa( 'HTML::Mason::Exception::Abort' ) } ) {
-        # Save the request away, and redirect to an error page
-        Jifty->web->response->error($err);
-        my $c = Jifty::Continuation->new(
-            request  => Jifty->web->request,
-            response => Jifty->web->response,
-            parent   => Jifty->web->request->continuation,
-        );
 
-        warn "$err";
-
-        # Redirect with a continuation
-        Jifty->web->_redirect( "/__jifty/error/mason_internal_error?J:C=" . $c->id );
-    } elsif ($err) {
-        die $err;
-    }
     last_rule;
 }
 
@@ -933,6 +912,58 @@ sub _compile_glob {
     $glob;
 }
 
+=head2 template_exists PATH
+
+Returns true if PATH is a valid template inside your template root.
+
+=cut
+
+sub template_exists {
+    my $self = shift;
+    my $template = shift;
+
+      return  Jifty->handler->mason->interp->comp_exists( $template);
+
+}
+
+
+=head2 render_template PATH
+
+Use our templating system to render a template. If there's an error, do the right thing.
+
+
+=cut
+
+sub render_template {
+    my $self = shift;
+    my $template = shift;
+
+    $self->log->debug( "Handling template " . $template );
+    eval { Jifty->handler->mason->handle_comp( $template ); };
+    my $err = $@;
+
+    # Handle parse errors
+    if ( $err and not eval { $err->isa('HTML::Mason::Exception::Abort') } ) {
+
+        # Save the request away, and redirect to an error page
+        Jifty->web->response->error($err);
+        my $c = Jifty::Continuation->new(
+            request  => Jifty->web->request,
+            response => Jifty->web->response,
+            parent   => Jifty->web->request->continuation,
+        );
+
+        warn "$err";
+
+        # Redirect with a continuation
+        Jifty->web->_redirect(
+            "/__jifty/error/mason_internal_error?J:C=" . $c->id );
+    }
+    elsif ($err) {
+        die $err;
+    }
+
+}
 
 
 1;

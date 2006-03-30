@@ -36,7 +36,7 @@ my %required;
     ok(open(MAKEFILE,"Makefile.PL"), "Opened Makefile");
     my $data = <MAKEFILE>;
     close(FILE);
-    while ($data =~ /^requires\('([\w:]+)'.*?(?:#(.*))?$/gm) {
+    while ($data =~ /^\s*?requires\('([\w:]+)'.*?(?:#(.*))?$/gm) {
         $required{$1}++;
         if (defined $2 and length $2) {
             $required{$_}++ for split ' ', $2;
