@@ -380,15 +380,15 @@ Returns nothing.
 
 sub render_errors {
     my $self = shift;
-    my $m = Jifty->web->mason; 
     
     if (defined $self->result->error) {
-        $m->out('<div class="form_errors">');
         # XXX TODO FIXME escape?
-        $m->out('<span class="error">'. $self->result->error .'</span>');
-        $m->out('</div>');
+        Jifty->web->out( '<div class="form_errors">'
+                . '<span class="error">'
+                . $self->result->error
+                . '</span>'
+                . '</div>' );
     }
-
     return '';
 }
 

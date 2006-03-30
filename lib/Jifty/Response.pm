@@ -40,10 +40,10 @@ Add an HTTP header to the outgoing HTTP response.
 
 sub add_header {
     my $self = shift;
-    # This one is so we can get jifty's headers into mason
-    # Otherwise we'd have to wrap mason's output layer
      Jifty->handler->apache->header_out( @_ );
 
+    # This one is so we can get jifty's headers into mason
+    # Otherwise we'd have to wrap mason's output layer
 
     push @{$self->{headers}}, [@_];
 }
