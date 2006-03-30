@@ -279,26 +279,20 @@ sub render {
     $subrequest->is_subrequest( 1 );
     local Jifty->web->{request} = $subrequest;
 
-    # While we're inside this region, 
-    # have Mason to tack its response onto a variable and not send
-    # headers when it does so
+    # While we're inside this region, # have Mason to tack its response 
+    # onto a variable and not send headers when it does so
+    
     # XXX TODO: this internals diving is icky
    
     my $region_content = '';
     Jifty->handler->mason->interp->out_method( \$region_content);
-    
-    
-
     # Call into the dispatcher
     eval { Jifty->dispatcher->handle_request};
-
-     $result .= $region_content;
-    if ($self->region_wrapper) {
-        $result .= qq|</div>|;
-    }
+    $result .= $region_content;
+    $result .= qq|</div>| if ($self->region_wrapper);
 
     #XXX TODO: There's gotta be a better way to localize it
-    Jifty->handler->mason->interp->out_method( \&Jifty::MasonHandler::out_method);
+    Jifty->handler->mason->interp->out_method( \&Jifty::Templater::Mason::Handler::out_method);
 
     return $result;
 }

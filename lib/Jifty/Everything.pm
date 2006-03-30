@@ -33,7 +33,7 @@ use Jifty::LetMe ();
 use Jifty::Logger ();
 use Jifty::Handler ();
 use Jifty::Handler::Static ();
-use Jifty::MasonHandler ();
+use Jifty::Templater::Mason::Handler ();
 
 use Jifty::Model::Schema ();
 
