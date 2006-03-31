@@ -53,7 +53,7 @@ sub new {
     Jifty::Util->require( $self->dispatcher );
     $self->mason( Jifty::View::Mason::Handler->new( $self->mason_config ) );
 
-    $self->static_handler(Jifty::Handler::Static->new());
+    $self->static_handler(Jifty::View::Static::Handler->new());
 
     return $self;
 }

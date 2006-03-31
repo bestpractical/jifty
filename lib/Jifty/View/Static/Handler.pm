@@ -6,7 +6,7 @@ use Compress::Zlib ();
 use HTTP::Date ();
 
 
-package Jifty::Handler::Static;
+package Jifty::View::Static::Handler;
 
 use base qw/Jifty::Object/;
 
@@ -15,7 +15,7 @@ our $magic = File::MMagic->new();
 
 =head1 NAME
 
-Jifty::Handler::Static
+Jifty::View::Static::Handler
 
 head1 DESCRIPTION
 
