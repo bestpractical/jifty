@@ -1,25 +1,103 @@
-# English translation of PACKAGE.
-# Copyright (C) 2006 Free Software Foundation, Inc.
-# <>, 2006.
-# 
-# 
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-03-31 17:41+0900\n"
-"PO-Revision-Date: 2006-03-31 17:42+0900\n"
-"Last-Translator:  <>\n"
-"Language-Team: English <en@li.org>\n"
+"POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=iso-8859-1\n"
+"Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: "
 
-msgid ""
+#: share/web/templates/_elements/wrapper:11
+msgid "Administration mode is enabled."
 msgstr ""
 
-#
-msgid "Jifty"
-msgstr "Jifty"
+#: share/web/templates/_elements/wrapper:11
+msgid "Alert"
+msgstr ""
 
+#: share/web/templates/helpers/calendar.html:4
+msgid "Close window"
+msgstr ""
+
+#: share/web/templates/__jifty/admin/index.html:33
+msgid "Database Administration"
+msgstr ""
+
+#: share/web/templates/__jifty/edit_file:6
+#. ($editor->argument_value('source_path')
+msgid "Editing file %1"
+msgstr ""
+
+#: share/web/templates/dhandler:7
+msgid "Go back home..."
+msgstr ""
+
+#: share/web/templates/_elements/sidebar:3
+#. (Jifty->web->current_user->user_object->name)
+msgid "Hiya, <span class=\"user\">%1</span>."
+msgstr ""
+
+#: share/web/templates/__jifty/online_docs/toc.html:6
+msgid "Jifty Developer Documentation Online"
+msgstr ""
+
+#: share/web/templates/__jifty/online_docs/content.html:6
+msgid "Jifty Pod Online"
+msgstr ""
+
+#: share/web/templates/_elements/wrapper:20
+msgid "Loading..."
+msgstr ""
+
+#: lib/Jifty/Web.pm:213
+msgid "No request to handle"
+msgstr ""
+
+#: share/web/templates/__jifty/online_docs/index.html:5
+msgid "Online Documentation"
+msgstr ""
+
+#: lib/Jifty/Record.pm:222 lib/Jifty/Record.pm:281 lib/Jifty/Record.pm:61
+msgid "Permission denied"
+msgstr ""
+
+#: lib/Jifty/Record.pm:83
+msgid "Record created"
+msgstr ""
+
+#: share/web/templates/__jifty/online_docs/content.html:48
+msgid "Schema"
+msgstr ""
+
+#: share/web/templates/dhandler:1
+msgid "Something's not quite right"
+msgstr ""
+
+#: share/web/templates/__jifty/online_docs/index.html:16 share/web/templates/__jifty/online_docs/index.html:18
+msgid "Table of Contents"
+msgstr ""
+
+#: share/web/templates/__jifty/admin/index.html:35
+msgid "This console lets you manage the records in your Jifty database. Below, you should see a list of all your database tables. Feel free to go through and add, delete or modify records."
+msgstr ""
+
+#: share/web/templates/.index.html.swp:1 share/web/templates/index.html:1
+msgid "Welcome to your new Jifty application"
+msgstr ""
+
+#: share/web/templates/dhandler:5
+msgid "You got to a page that we don't think exists.  Anyway, the software has logged this error. Sorry about this."
+msgstr ""
+
+#: share/web/templates/.index.html.swp:1 share/web/templates/index.html:3
+#. ('http://hdl.loc.gov/loc.pnp/cph.3c13461')
+msgid "You said you wanted a pony. (Source %1)"
+msgstr ""

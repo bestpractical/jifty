@@ -1,0 +1,1 @@
+find {bin,lib,share/web/templates/} -type f |xargs xgettext.pl -p share/po -o en.po
