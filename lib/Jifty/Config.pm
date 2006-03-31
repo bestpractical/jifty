@@ -228,13 +228,16 @@ sub guess {
             },
             Mailer     => 'Sendmail',
             MailerArgs => [],
+            L10N       => {
+                PoDir => 'share/po',
+            },
             Web        => {
                 Port => '8888',
                 BaseURL => 'http://localhost',
                 SessionDir  => "var/session",
                 DataDir     => "var/mason",
-                StaticRoot   => "web/static",
-                TemplateRoot => "web/templates",
+                StaticRoot   => "share/web/static",
+                TemplateRoot => "share/web/templates",
                 ServeStaticFiles => 1,
                 MasonConfig => {
                     autoflush    => 0,
@@ -262,6 +265,9 @@ sub defaults {
     my $self = shift;
     return {
         framework => {
+            L10N => {
+                DefaultPoDir => Jifty::Util->share_root . '/po',
+            },
             Web => {
                 DefaultStaticRoot => Jifty::Util->share_root . '/web/static',
                 DefaultTemplateRoot => Jifty::Util->share_root . '/web/templates',
