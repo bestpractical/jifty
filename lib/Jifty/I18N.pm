@@ -50,7 +50,7 @@ sub new {
     $self->init;
 
     my $lh         = eval { $class->get_handle };
-    my $loc_method = sub  { $lh->maketext(@_); };
+    my $loc_method = sub  { return undef unless (defined $_[0]); $lh->maketext(@_); };
     {
         no strict 'refs';
         no warnings 'redefine';
