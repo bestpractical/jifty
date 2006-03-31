@@ -1,2 +1,2 @@
 % $r->content_type("text/x-yaml");
-<% YAML::Dump({Jifty->web->response->results}) |n%>
+<% Jifty::YAML::Dump({Jifty->web->response->results}) |n%>

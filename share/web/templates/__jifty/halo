@@ -96,7 +96,7 @@ my $depth = 1;
 % if ($e->[1]) {
 % my $expanded = Jifty->web->serial;
 <a href="#" onclick="Element.toggle('<% $expanded %>'); return false"><% $e->[1] %></a>
-<div id="<% $expanded %>" style="display: none; position: absolute; left: 200px; border: 1px solid black; background: #ccc; padding: 1em; padding-top: 0; width: 300px; height: 500px; overflow: auto"><pre><% YAML::Dump($e->[2]) %></pre></div>
+<div id="<% $expanded %>" style="display: none; position: absolute; left: 200px; border: 1px solid black; background: #ccc; padding: 1em; padding-top: 0; width: 300px; height: 500px; overflow: auto"><pre><% Jifty::YAML::Dump($e->[2]) %></pre></div>
 % } elsif (defined $e->[2]) {
 <% $e->[2] %>
 % } else {
@@ -107,7 +107,7 @@ my $depth = 1;
 </ul></div>
 % }
 % if (@stmts) {
-<div class="section">SQL Statements</div>
+<div class="section"><%_('SQL Statements')%></div>
 <div class="body" style="height: 300px; overflow: auto"><ul>
 % for (@stmts) {
 <li>
@@ -115,7 +115,7 @@ my $depth = 1;
 % if (@{$_->[2]}) {
 <b>Bindings:</b> <tt><% join(',', map {defined $_ ? ($_ =~ /\0/ ? "*BLOB*" : $_ ) : "undef"} @{$_->[2]}) %></tt><br />
 % }
-<i><% $_->[3] %> seconds</i>
+<i><% _('[_1] seconds', $_->[3]) %></i>
 </li>
 % }
 </ul></div>
