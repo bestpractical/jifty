@@ -46,7 +46,7 @@ my %required;
 
 for (sort keys %used) {
     my $first_in = Module::CoreList->first_release($_);
-    next if defined $first_in and $first_in <= 5.006;
+    next if defined $first_in and $first_in <= 5.00803;
     next if /^(Jifty|BTDT|Jifty::DBI|TestApp|inc|t)/;
     ok(delete $required{$_}, "$_ in Makefile.PL");
     delete $used{$_};

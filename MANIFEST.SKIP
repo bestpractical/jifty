@@ -17,3 +17,5 @@ merge_bleadperl$
 \#
 ^bleadperl\.patch$
 .*.swp
+var/*
+t/*/var/*
