@@ -123,9 +123,10 @@ sub _directories {
         var
         var/sessions
         var/mason
-        web
-        web/templates
-        web/static
+        share/po
+        share/web
+        share/web/templates
+        share/web/static
         lib/__APP__/Model
         lib/__APP__/Action
         t

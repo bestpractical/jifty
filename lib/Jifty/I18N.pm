@@ -9,23 +9,22 @@ Jifty::I18N - Internationalization framework for Jifty
 
 =head1 METHODS
 
-=head2 loc
+=head2 C<loc> /  C<_>
 
 This module exports the C<loc> method, which it inherits from
-L<Locale::Maketext::Simple>.
+L<Locale::Maketext::Simple>. Jifty aliases this method to C<_()> for 
+your convenience.
 
 =cut
 
-use base 'Exporter';
 
-our @EXPORT = 'loc';
-
-require Locale::Maketext::Simple;
-Locale::Maketext::Simple->import(
-    Subclass => '',
-    Path     => substr(__FILE__, 0, -3),
-    Style    => 'gettext',
-    Encoding => 'locale',
+use Locale::Maketext::Simple (
+    Path        => [Jifty->config->framework('PoDir'),  Jifty->config->framework('DefaultPoDir')],
+    Style       => 'gettext',
+    Decode      => 1,
 );
+
+# Allow _() everywhere to loc
+*_ = \&loc;
 
 1;
