@@ -1,0 +1,25 @@
+# English translation of PACKAGE.
+# Copyright (C) 2006 Free Software Foundation, Inc.
+# <>, 2006.
+# 
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2006-03-31 17:41+0900\n"
+"PO-Revision-Date: 2006-03-31 17:42+0900\n"
+"Last-Translator:  <>\n"
+"Language-Team: English <en@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=iso-8859-1\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: "
+
+msgid ""
+msgstr ""
+
+#
+msgid "Jifty"
+msgstr "Jifty"
+

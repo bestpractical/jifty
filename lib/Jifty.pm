@@ -103,7 +103,7 @@ sub new {
     # Load the configuration. stash it in ->config
     __PACKAGE__->config( Jifty::Config->new() );
 
-    require Jifty::I18N; # can't do this before we have the config set up
+    Jifty::I18N->new(); # can't do this before we have the config set up
 
 
     # Now that we've loaded the configuration, we can remove the temporary 

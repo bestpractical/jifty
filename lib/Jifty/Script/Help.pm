@@ -2,7 +2,6 @@ package Jifty::Script::Help;
 use strict;
 use base qw( App::CLI::Command::Help );
 use File::Find qw(find);
-use Jifty::I18N;
 
 sub help_base {
     return "Jifty::Manual";

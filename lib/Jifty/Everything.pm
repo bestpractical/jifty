@@ -10,6 +10,7 @@ Jifty::Everything - Load all of the important Jifty modules at once.
 =cut
 
 use Jifty ();
+use Jifty::I18N ();
 use Jifty::Dispatcher ();
 use Jifty::Object ();
 use Jifty::Config ();
