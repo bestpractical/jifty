@@ -2,7 +2,7 @@
 "http://www.w3.org/TR/html4/">
 <html lang="en">
 <head>
-<title><% $n || 'Jifty' %> - Online Documentation</title>
+<title><%_( $n || 'Jifty') %> - <%_('Online Documentation')%></title>
 <style type="text/css"><!--
 a { text-decoration: none }
 a:hover { text-decoration: underline }
@@ -13,9 +13,9 @@ a:focus { background: #99ff99; border: 1px black dotted }
     <FRAME src="./content.html" name="podcontent">
     <FRAME src="./toc.html" name="podtoc">
     <NOFRAMES>
-        <a style="display: none" href="#toc">Table of Contents</a>
+        <a style="display: none" href="#toc"><%_('Table of Contents')%></a>
 <& content.html, Target => '' &>
-        <h1><a id="toc">Table of Contents</a></h1>
+        <h1><a id="toc"><%_('Table of Contents')%></a></h1>
 <& toc.html, Target => '' &>
     </NOFRAMES>
 </FRAMESET>

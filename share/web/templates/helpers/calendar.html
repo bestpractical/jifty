@@ -1,18 +1,18 @@
 <& /_elements/header, title => 'Calendar' &>
 <body class="calpopup">
 
-<a href="#" onclick="window.close(); return false;">Close window</a>
+<a href="#" onclick="window.close(); return false;"><% _('Close window')%></a>
 
 <div class="calendar">
   <table>
     <caption>
       <a class="prev" href="calendar.html?DisplayedMonth=<%$prev_month%>&DisplayedYear=<%$prev_year%>&field=<%$field%>">Prev</a>
-      <span class="month"><% $months[$DisplayedMonth-1] %> <% $DisplayedYear %></span>
+      <span class="month"><% $months[$DisplayedMonth-1] %> <% _($DisplayedYear) %></span>
       <a class="next" href="calendar.html?DisplayedMonth=<%$next_month%>&DisplayedYear=<%$next_year%>&field=<%$field%>">Next</a>
     </caption>
     <tr>
 % foreach my $wday (@weekdays) {
-      <th><%$wday%></th>
+      <th><%_($wday)%></th>
 % }
     </tr>
 % foreach my $week (@cal) {

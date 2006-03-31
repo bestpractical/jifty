@@ -123,6 +123,7 @@ sub _directories {
         var
         var/sessions
         var/mason
+        share
         share/po
         share/web
         share/web/templates

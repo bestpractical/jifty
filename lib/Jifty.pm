@@ -2,6 +2,7 @@ use warnings;
 use strict;
 
 package Jifty;
+use encoding 'utf8';
 
 our $VERSION = '0.60321';
 

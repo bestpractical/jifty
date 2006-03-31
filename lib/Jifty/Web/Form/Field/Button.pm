@@ -18,7 +18,7 @@ sub render_widget {
         '<input',
         'type="submit"',
         'name="' . $self->input_name . '" ',
-        'value="' . $self->label . '"',
+        'value="' . _($self->label ). '"',
         $self->_widget_class('button'),
         $self->javascript,
         ' />',

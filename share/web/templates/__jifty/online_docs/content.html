@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" >
 <head>
-<title><% $n || 'Jifty' %> - Jifty Pod Online</title>
+<title><% _( $n || 'Jifty') %> - <%_('Jifty Pod Online')%></title>
 <style type="text/css"><!--
 a { text-decoration: none }
 a:hover { text-decoration: underline }
@@ -45,7 +45,7 @@ $body =~ s{.*?<body [^>]+>}{}s;
 $body =~ s{</body>\s*</html>\s*$}{};
 $n    =~ s{/}{::}g;
 $m->print("<h1>$n</h1>");
-$m->print("<h2>Schema</h2><pre>$schema</pre>") if ($schema);
+$m->print("<h2><%_('Schema')%></h2><pre>$schema</pre>") if ($schema);
 $body =~ s{<a href="http://search\.cpan\.org/perldoc\?(Jifty%3A%3A[^"]+)"([^>]*)>}{<a href="content.html?n=$1"$2>}g;
 $body =~ s!</li>\n\t<ul>!<ul>!;
 $body =~ s!</ul>!</ul></li>!;

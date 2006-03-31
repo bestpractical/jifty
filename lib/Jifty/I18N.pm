@@ -11,11 +11,20 @@ Jifty::I18N - Internationalization framework for Jifty
 
 =head1 METHODS
 
-=head2 C<loc> /  C<_>
+=head2 C<_>
 
 This module exports the C<loc> method, which it inherits from
 L<Locale::Maketext::Simple>. Jifty aliases this method to C<_()> for 
 your convenience.
+
+=cut
+
+
+=head2 new
+
+Set up Jifty's internationalization for your application.  This pulls
+in Jifty's PO files, your PO files and then exports the _ function into
+the wider world.
 
 =cut
 
@@ -26,12 +35,13 @@ sub new {
     bless $self, $class;
 
     Locale::Maketext::Lexicon->import(
-        {
-        '*' => [
-            Gettext => Jifty->config->framework('L10N')->{'PoDir'} . '/*.po',
-            Gettext => Jifty->config->framework('L10N')->{'DefaultPoDir'} . '/*.po'
-        ],
-            
+        {   '*' => [
+                Gettext => Jifty->config->framework('L10N')->{'PoDir'}
+                    . '/*.po',
+                Gettext => Jifty->config->framework('L10N')->{'DefaultPoDir'}
+                    . '/*.po'
+            ],
+
             _decode => 1,
         }
     );
@@ -41,10 +51,11 @@ sub new {
 
     my $lh         = eval { $class->get_handle };
     my $loc_method = sub  { $lh->maketext(@_); };
-    no strict 'refs';
-    *{ caller(0) . "::loc" } = $loc_method;
-    *_ = \&{ caller(0) . "::loc" };
-    warn "here for " . caller(0);
+    {
+        no strict 'refs';
+        no warnings 'redefine';
+        *_ = $loc_method;
+    }
     return $self;
 }
 

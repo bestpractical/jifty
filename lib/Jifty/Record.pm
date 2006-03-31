@@ -58,7 +58,7 @@ sub create {
     unless ( $self->check_create_rights(@_) ) {
         $self->log->error( $self->current_user->id . " tried to create a ",
             ref $self, " without permission" );
-        wantarray ? return ( 0, 'Permission denied' ) : return (0);
+        wantarray ? return ( 0, _('Permission denied') ) : return (0);
     }
 
     foreach my $key ( keys %attribs ) {
@@ -80,7 +80,7 @@ sub create {
 
     my($id,$msg) = $self->SUPER::create(%attribs);
     $self->load_by_cols( id => $id ) if ($id);
-    return wantarray ? ( $id, "Record created" ) : $id;
+    return wantarray ? ( $id, _("Record created") ) : $id;
 }
 
 
@@ -219,7 +219,7 @@ sub _set {
 
     unless ($self->check_update_rights(@_)) {
         Jifty->log->logcluck("Permission denied");
-        return (0, 'Permission denied');
+        return (0, _('Permission denied'));
     }
     $self->SUPER::_set(@_);
 }
@@ -278,7 +278,7 @@ sub delete {
     my $self = shift;
     unless ($self->check_delete_rights(@_)) {
             Jifty->log->logcluck("Permission denied");
-            return(0, 'Permission denied');
+            return(0, _('Permission denied'));
         }
     $self->SUPER::delete(@_); 
 }

@@ -23,7 +23,7 @@ $m->comp( ".menu", item => $_ )
   <li <%  $item->active ? 'class="active"' : '' |n %>><%
     Jifty->web->link(
         url   => $item->url,
-        label => $item->label,
+        label => _($item->label),
     ) %><% @kids ? '' : '</li>' |n %>
 % if (@kids) {
     <ul class="submenu">

@@ -1,14 +1,14 @@
 <body>
   <div id="headers">
-    <%Jifty->web->link( url => "/", label => Jifty->config->framework('ApplicationName'))%>
-    <h1 class="title"><% $title %></h1>
+    <%Jifty->web->link( url => "/", label => _(Jifty->config->framework('ApplicationName')))%>
+    <h1 class="title"><% _($title) %></h1>
   </div>
   <& sidebar &>
   <div id="content">
     <a name="content"></a>
 % if (Jifty->config->framework('AdminMode') ) {
 <div class="warning admin_mode">
-Alert: Jifty <% Jifty->web->tangent( label => 'administration mode' , url => '/__jifty/admin/')%> is enabled.
+<%_('Alert')%>: <% Jifty->web->tangent( label => _('Administration mode is enabled.') , url => '/__jifty/admin/')%>
 </div>
 % }
   <% Jifty->web->render_messages %>
@@ -17,7 +17,7 @@ Alert: Jifty <% Jifty->web->tangent( label => 'administration mode' , url => '/_
   document.write('<div id="keybindings">');
   writeKeyBindingLegend();
   document.write('<\/div>');
-  document.write('<div id="jifty-wait-message" style="display: none">Loading...<\/div>');
+  document.write('<div id="jifty-wait-message" style="display: none"><%_('Loading...')%><\/div>');
   --></script>
 % Jifty::Mason::Halo->render_component_tree() if (Jifty->config->framework('DevelMode') );
 </body>

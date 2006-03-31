@@ -30,11 +30,11 @@ for my $model ( __PACKAGE__->jifty_app_models ) {
 </%init>
 <&|/_elements/wrapper, title => 'Jifty Administrative Console' &>
 
-<h1>Database Administration</h1>
+<h1><%_('Database Administration')%></h1>
 
-<p>This console lets you manage the records in your Jifty database. Below, you should see a list of all your database tables. Feel free to go through and add, delete or modify records.</p>
+<p><%_('This console lets you manage the records in your Jifty database. Below, you should see a list of all your database tables. Feel free to go through and add, delete or modify records.')%></p>
 
-<p>To disable this administrative console, add "framework: AdminMode: 0" to your application's configuration file.</p>
+<p><%_('To disable this administrative console, add "framework: AdminMode: 0" to your application's configuration file.')%></p>
     
 
 <ul>

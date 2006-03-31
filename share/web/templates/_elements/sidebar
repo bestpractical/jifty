@@ -1,8 +1,8 @@
 <div id="salutation">
 % if (Jifty->web->current_user->id and Jifty->web->current_user->user_object) {
-Hiya, <span class="user"><%Jifty->web->current_user->user_object->name%></span>.
+<%_('Hiya, <span class="user">[_1]</span>.',Jifty->web->current_user->user_object->name)%>
 % }  else {
-You're not currently signed in. 
+<%_(q{You're not currently signed in.})%>
 % }
 </div>
 <div id="navigation">

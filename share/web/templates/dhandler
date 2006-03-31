@@ -1,14 +1,13 @@
-<&| /_elements/wrapper, title => "Something's not quite right" &>
+<&| /_elements/wrapper, title => _("Something's not quite right") &>
 
 <div id="overview">
 
-<p>You got to a page that we don't think exists.  Anyway, the software has logged this error. Sorry about this.</p>
+<p><%_("You got to a page that we don't think exists.  Anyway, the software has logged this error. Sorry about this.")%></p>
 
-<p><%Jifty->web->link( url => "/", label => 'Go back home...')%></p>
+<p><%Jifty->web->link( url => "/", label => _('Go back home...'))%></p>
 
 </div>
 </&>
-%# XXX TODO ACTUALLY LOG THIS.
 <%doc>
 Used as a poor man's 404 handler
 </%doc>

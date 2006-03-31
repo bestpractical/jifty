@@ -210,7 +210,7 @@ For more details about continuations, see L<Jifty::Continuation>.
 
 sub handle_request {
     my $self = shift;
-    die "No request to handle" unless Jifty->web->request;
+    die _( "No request to handle" ) unless Jifty->web->request;
 
     my @valid_actions;
     for my $request_action ( $self->request->actions ) {

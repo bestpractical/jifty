@@ -104,7 +104,7 @@ sub render {
     Jifty->web->out(qq( title="@{[$self->tooltip]}")) if $tooltip;
     Jifty->web->out(qq( href="@{[$self->url]}"));
     Jifty->web->out( $self->javascript() );
-    Jifty->web->out(qq(>@{[$label]}</a>));
+    Jifty->web->out(qq(>@{[_($label)]}</a>));
     $self->render_key_binding();
 
     return ('');

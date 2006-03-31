@@ -358,7 +358,7 @@ Use this for sticking instructions right in front of a widget
 sub render_preamble {
     my $self = shift;
     Jifty->web->out(
-qq!<span class="preamble @{[$self->classes]}" >@{[$self->preamble || '' ]}</span>\n!
+qq!<span class="preamble @{[$self->classes]}" >@{[_($self->preamble) || '' ]}</span>\n!
     );
 
     return '';
@@ -375,7 +375,7 @@ an empty string.
 sub render_label {
     my $self = shift;
     Jifty->web->out(
-qq!<label class="label @{[$self->classes]}" for="@{[$self->input_name ]}">@{[$self->label ]}</label>\n!
+qq!<label class="label @{[$self->classes]}" for="@{[$self->input_name ]}">@{[_($self->label) ]}</label>\n!
     );
 
     return '';
@@ -443,7 +443,7 @@ sub render_value {
     my $self  = shift;
     my $field = '<span';
     $field .= qq! class="@{[ $self->classes ]}"> !;
-    $field .= HTML::Entities::encode_entities($self->current_value) if defined $self->current_value;
+    $field .= HTML::Entities::encode_entities(_($self->current_value)) if defined $self->current_value;
     $field .= qq!</span>\n!;
     Jifty->web->out($field);
     return '';

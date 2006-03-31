@@ -33,7 +33,7 @@ requires('HTTP::Server::Simple::Recorder');
 requires('Hash::Merge');
 requires('Hook::LexWrap');
 requires('Jifty::DBI' => '0.16' );            # Jifty::DBI::Collection Jifty::DBI::Handle Jifty::DBI::Record::Cachable Jifty::DBI::SchemaGenerator
-requires('Locale::Maketext::Simple');
+requires('Locale::Maketext::Lexicon');
 requires('Log::Log4perl');
 requires('LWP::UserAgent');
 requires('MIME::Types');
