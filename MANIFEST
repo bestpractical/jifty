@@ -77,6 +77,7 @@ lib/Jifty/Script/App.pm
 lib/Jifty/Script/FastCGI.pm
 lib/Jifty/Script/Help.pm
 lib/Jifty/Script/Model.pm
+lib/Jifty/Script/Po.pm
 lib/Jifty/Script/Schema.pm
 lib/Jifty/Script/Server.pm
 lib/Jifty/Server.pm

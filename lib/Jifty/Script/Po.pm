@@ -71,9 +71,11 @@ sub update_catalogs {
     my @catalogs = File::Find::Rule->file->in(
         Jifty->config->framework('L10N')->{'PoDir'} );
     foreach my $catalog (@catalogs) {
-        $self->update_catalog( '', $catalog );
+        $self->update_catalog( $catalog );
     }
-    #$self->update_catalog( File::Spec->catfile( Jifty->config->framework('L10N')->{'PoDir'}, $self->{'language'} . ".po"));
+    if ($self->{'language'}) { 
+        $self->update_catalog( File::Spec->catfile( Jifty->config->framework('L10N')->{'PoDir'}, $self->{'language'} . ".po"));
+    }
 
 }
 
