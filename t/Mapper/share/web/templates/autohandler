@@ -3,5 +3,5 @@
 <% $m->call_next %>
 
 <pre>
-<% YAML::Dump(Jifty->web->request->arguments) %>
+<% Jifty::YAML::Dump(Jifty->web->request->arguments) %>
 </pre>
