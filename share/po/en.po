@@ -15,6 +15,11 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#: share/web/templates/__jifty/halo:118
+#. ($_->[3])
+msgid "%1 seconds"
+msgstr ""
+
 #: share/web/templates/_elements/wrapper:11
 msgid "Administration mode is enabled."
 msgstr ""
@@ -73,6 +78,10 @@ msgstr ""
 msgid "Record created"
 msgstr ""
 
+#: share/web/templates/__jifty/halo:110
+msgid "SQL Statements"
+msgstr ""
+
 #: share/web/templates/__jifty/online_docs/content.html:48
 msgid "Schema"
 msgstr ""
@@ -89,7 +98,7 @@ msgstr ""
 msgid "This console lets you manage the records in your Jifty database. Below, you should see a list of all your database tables. Feel free to go through and add, delete or modify records."
 msgstr ""
 
-#: share/web/templates/.index.html.swp:1 share/web/templates/index.html:1
+#: share/web/templates/index.html:1
 msgid "Welcome to your new Jifty application"
 msgstr ""
 
@@ -97,7 +106,7 @@ msgstr ""
 msgid "You got to a page that we don't think exists.  Anyway, the software has logged this error. Sorry about this."
 msgstr ""
 
-#: share/web/templates/.index.html.swp:1 share/web/templates/index.html:3
+#: share/web/templates/index.html:3
 #. ('http://hdl.loc.gov/loc.pnp/cph.3c13461')
 msgid "You said you wanted a pony. (Source %1)"
 msgstr ""
