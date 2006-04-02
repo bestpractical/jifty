@@ -40,7 +40,7 @@ requires('MIME::Types');
 requires('Module::CoreList');
 requires('Module::Install::Admin' => '0.50');
 requires('Module::Pluggable' => '2.95');
-requires('Module::Refresh');
+requires('Module::Refresh' => '0.09');
 requires('Params::Validate');
 requires('Pod::Simple'); #Pod::Simple::Text
 requires('Scalar::Util');
