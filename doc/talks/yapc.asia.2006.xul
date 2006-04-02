@@ -14,8 +14,7 @@ jesse@bestpractical.com
 ----
 Nifty Apps
 in a Jiffy
-~ 〄 Ĵïƒƫȳ 〄
-~ あっという間にMøøse
+~ あっという間にJifty
 ----
 How we're building useful applications
 in Perl 5 with a single unified framework, 
@@ -1036,8 +1035,6 @@ Arigato!
 </toolbar>
 </toolbox>
 <vbox flex="1" id="canvas" onclick="Presentation.onPresentationClick(event);">
-<description id="caption" class="subtitle" />
-<description id="caption2" class="subtitle" />
 <spacer flex="1"/>
 <hbox flex="1">
 <spacer flex="1"/>
