@@ -1,0 +1,61 @@
+# Login plugin
+package Login::Dispatcher;
+
+on 'login'    => 'login';
+on 'logout'   => 'logout';
+on 'signup'   => 'a_moment';
+
+after 'logout' => run {...clear_cookie...};
+before 'login' => run {...check_for_already_logged_in...};
+
+# RequiredAuth plugin
+package RequiredAuth::Dispatcher;
+
+before '*' => [
+    plugin Login,
+    run { ...check for auth, otherwise 401...  }
+],
+
+on 'auth_required' => run {...}
+
+# Dummy application
+package Dummy::Dispatcher;
+
+## implicit from config.yml:
+##    plugins:
+##       - RequireAuth:
+##           prefix: /blah
+##           args: vals
+##       - Login:
+##           prefix: /blah
+##           args: vals
+# trigger RequireAuth;
+
+after plugins 'Login::*' => [
+    on "logout" => show '/my/logout',
+]
+
+before plugins '*' => [
+    on "logout" => show '/my/logout',
+]
+
+on 'logout' => [
+    show '/my/logout',
+    plugin Login,
+]
+
+after 'login' => [
+]
+after PUT 'login' => [
+]
+
+after plugin Login => (
+before plugin Login => (
+    on "logout" => show '/my/logout',
+);
+
+
+on 'logout' => [
+    before_plugin Login,
+        show '/my/logout',
+]
