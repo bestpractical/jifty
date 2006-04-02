@@ -514,9 +514,17 @@ from L</arguments>.
 
 =cut
 
+
 sub argument_names {
-    my $self = shift;
-    return (sort keys %{$self->arguments});
+    my $self      = shift;
+    my %arguments = %{ $self->arguments };
+    return (
+        sort {
+            (($arguments{$a}->{'sort_order'} ||0 ) <=> ($arguments{$b}->{'sort_order'} || 0))
+                || (($arguments{$a}->{'name'} || '') cmp ($arguments{$b}->{'name'} ||'' ))
+                || $a cmp $b
+            } keys %arguments
+    );
 }
 
 
