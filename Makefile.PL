@@ -33,7 +33,7 @@ requires('HTTP::Server::Simple::Recorder');
 requires('Hash::Merge');
 requires('Hook::LexWrap');
 requires('Jifty::DBI' => '0.16' );            # Jifty::DBI::Collection Jifty::DBI::Handle Jifty::DBI::Record::Cachable Jifty::DBI::SchemaGenerator
-requires('Locale::Maketext::Lexicon');
+requires('Locale::Maketext::Lexicon' => '0.56');
 requires('Log::Log4perl');
 requires('LWP::UserAgent');
 requires('MIME::Types');
@@ -60,12 +60,13 @@ requires('XML::XPath');
 requires('version');
 
 if (can_cc()) {
-    requires('YAML::Syck' => 0.27) unless can_use('YAML' => 0.35);
-    requires('JSON::Syck' => 0.05) unless can_use('JSON' => 0.01);
+    # Always require the Syck bindings if a C compiler is available
+    requires('YAML::Syck' => 0.41);
+    requires('JSON::Syck' => 0.10);
 }
 else {
-    requires('YAML' => 0.35) unless can_use('YAML::Syck' => 0.27);
-    requires('JSON' => 0.01) unless can_use('JSON::Syck' => 0.05);
+    requires('YAML' => 0.35) unless can_use('YAML::Syck' => 0.41);
+    requires('JSON' => 0.01) unless can_use('JSON::Syck' => 0.10);
 }
 
 version_from('lib/Jifty.pm');
