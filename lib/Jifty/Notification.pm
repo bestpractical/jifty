@@ -187,7 +187,11 @@ sub send {
     my $self = shift;
 
     if ($self->to) {
-        $self->recipients($self->to->email);
+        if ($self->to->can('email')) {
+            $self->recipients($self->to->email);
+        } else {
+            $self->recipients($self->to);
+        }
         $self->send_one_message(@_);
     }
     for my $to ($self->to_list) {
