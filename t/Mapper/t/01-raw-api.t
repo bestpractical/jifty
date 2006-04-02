@@ -48,7 +48,7 @@ $mech->content_like(qr/foo: baz/, "Passing parameter sets to value");
 $mech->content_lacks(qr/J:M-foo/, "Doesn't have mapping parameter");
 
 $mech->get("$URL/index.html?J:M-foo=A|bar;bar=baz;bar=troz");
-$mech->content_like(qr/bar: &#38;1\n\s+- baz\n\s+- troz/, "Multiple parameters are list");
+$mech->content_like(qr/bar: &#38;1\s*\n\s+- baz\n\s+- troz/, "Multiple parameters are list");
 $mech->content_like(qr/foo: \*1/, "Multiple parameters are to same reference");
 $mech->content_lacks(qr/J:M-foo/, "Doesn't have mapping parameter");
 

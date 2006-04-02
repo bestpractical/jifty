@@ -83,8 +83,7 @@ sub out_method {
     if ($r->content_type =~ /charset=([\w-]+)$/ ) {
         my $enc = $1;
 	if (lc($enc) =~ /utf-?8/) {
-            # XXX TODO: utf8 binmode breaks things right now
-            #    binmode *STDOUT, ":utf8";
+            binmode *STDOUT, ":utf8";
 	}
 	else {
             binmode *STDOUT, ":encoding($enc)";
@@ -191,7 +190,6 @@ L<Jifty::Request> object.
 sub request_args {
     return %{Jifty->web->request->arguments};
 }
-
 
 ###########################################################
 package HTML::Mason::Request::Jifty;

@@ -39,14 +39,14 @@ sub new {
                 Gettext => Jifty->config->framework('L10N')->{'PoDir'}
                     . '/*.po',
                 Gettext => Jifty->config->framework('L10N')->{'DefaultPoDir'}
-                    . '/*.po'
+                    . '/*.po',
             ],
-
             _decode => 1,
+            _auto   => 1,
+            _style  => 'gettext',
         }
     );
 
-    $Jifty::I18N::en::Lexicon{_AUTO} = 1;    # autocreate missing keys
     $self->init;
 
     my $lh         = eval { $class->get_handle };

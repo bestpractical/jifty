@@ -173,8 +173,9 @@ tabbox, tabpanels, tabpanel {
     text-align: center;
     font-size: 40px;
     background: black;
-    bottom: 10;
+    height: auto;
     padding-bottom: 10px;
     padding-top: 10px;
+    margin: 0px;
     spacing: 10px;
 }

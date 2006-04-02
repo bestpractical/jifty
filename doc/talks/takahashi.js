@@ -9,9 +9,6 @@ var Presentation = {
         this.deck     = document.getElementById('deck');
         this.scroller = document.getElementById('scroller');
 
-               this.canvas.appendChild(document.createElement('description'));
-               this.canvas.lastChild.setAttribute('id', "caption");
-               this.canvas.lastChild.setAttribute('class', 'subtitle');
         this.toolbar         = document.getElementById('canvasToolbar');
         this.toolbarHeight   = this.toolbar.boxObject.height;
         this.isToolbarHidden = true;
@@ -75,6 +72,8 @@ var Presentation = {
 
 
         var labelId = 0;
+        var subtitle = '';
+        var subtitle2 = '';
 
         for (var i = 0; i < text.length; i++)
         {
@@ -85,10 +84,14 @@ var Presentation = {
             line = text[i];
             image_width  = 0;
             image_height = 0;
-            var subtitle = '';
 
             if (line.match(/^~/)) {
-              subtitle = line.substring(1);
+              if (subtitle) {
+               subtitle2 = line.substring(1);
+              }
+              else {
+               subtitle = line.substring(1);
+              }
               line = '';
             }
 
@@ -157,10 +160,18 @@ var Presentation = {
 
         this.content.setAttribute('style', 'font-size:10px;');
           caption =  document.getElementById('caption');
+          caption2 =  document.getElementById('caption2');
         if (subtitle) {
                caption.setAttribute('value', subtitle);
         } else {
                caption.setAttribute('value', '');
+
+        }
+
+        if (subtitle2) {
+               caption2.setAttribute('value', subtitle2);
+        } else {
+               caption2.setAttribute('value', '');
 
         }
 

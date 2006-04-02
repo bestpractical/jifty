@@ -90,8 +90,17 @@ sub mason_config {
     my %config = (
         static_source => 1,
         use_object_files => 1,
+        preprocess => sub {
+            # Force UTF-8 semantics on all our components by
+            # prepending this block to all components as Mason
+            # components defaults to parse the text as Latin-1
+            ${$_[0]} =~ s{}{<%INIT>use utf8;</%INIT>\n};
+        },
         data_dir =>  Jifty::Util->absolute_path( Jifty->config->framework('Web')->{'DataDir'} ),
-        allow_globals => [qw[$JiftyWeb], @{Jifty->config->framework('Web')->{'Globals'} || []}],
+        allow_globals => [
+            qw[ $JiftyWeb ],
+            @{Jifty->config->framework('Web')->{'Globals'} || []},
+        ],
         comp_root     => [ 
                           [application =>  Jifty::Util->absolute_path( Jifty->config->framework('Web')->{'TemplateRoot'} )],
                           [jifty => Jifty->config->framework('Web')->{'DefaultTemplateRoot'}],

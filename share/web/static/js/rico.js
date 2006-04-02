@@ -2143,7 +2143,7 @@ Rico.GridViewPort.prototype = {
 
    populateRow: function(htmlRow, row) {
       for (var j=0; j < row.length; j++) {
-         htmlRow.cells[j].innerHTML = row[j]
+         try { htmlRow.cells[j].innerHTML = row[j] } catch (e) {};
       }
    },
    
@@ -2489,7 +2489,9 @@ Rico.LiveGridSort.prototype = {
       var headerRow   = this.headerTable.rows[0];
       var headerCells = headerRow.cells;
       for ( var i = 0 ; i < headerCells.length ; i++ ) {
-         this.addSortBehaviorToColumn( i, headerCells[i] );
+         if (headerCells[i].tagName == 'TH') {
+           this.addSortBehaviorToColumn( i, headerCells[i] );
+         }
       }
    },
 
@@ -2584,7 +2586,12 @@ Rico.LiveGridSort.prototype = {
    },
 
    deriveColumnNameFromCell: function(cell,columnNumber) {
-      var cellContent = cell.innerText != undefined ? cell.innerText : cell.textContent;
+        var cellContent = 
+            (cell.attributes.name != undefined)
+                ? cell.attributes.name.value.toString()
+                : (cell.innerText != undefined)
+                    ? cell.innerText
+                    : cell.textContent;
       return cellContent ? cellContent.toLowerCase().split(' ').join('_') : "col_" + columnNumber;
    }
 };

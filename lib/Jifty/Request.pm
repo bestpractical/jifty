@@ -270,10 +270,10 @@ sub argument {
     defined(my $val = $self->arguments->{$key}) or return undef;
 
     if (ref $val eq 'ARRAY') {
-        utf8::decode($_) for @$val;
+        Encode::_utf8_on($_) for @$val;
     }
     else {
-        utf8::decode($val);
+        Encode::_utf8_on($val);
     }
 
     $val;

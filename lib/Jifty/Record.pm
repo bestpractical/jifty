@@ -235,7 +235,7 @@ sub _value {
     my $value = $self->SUPER::_value( $column => @_ );
     return $value if ref $value or $self->column($column)->type eq 'blob';
 
-    utf8::decode($value) if defined $value;
+    Encode::_utf8_on($value) if defined $value;
     $value;
 }
 
