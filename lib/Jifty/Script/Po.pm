@@ -88,7 +88,7 @@ sub update_catalog {
     $logger->info( "Updating message catalog '$translation'");
     $LMExtract->read_po($translation, USE_GETTEXT_STYLE) if ( -f $translation );
     $LMExtract->compile(USE_GETTEXT_STYLE);
-    $LMExtract->write_po($translation, USE_GETTEXT_STYLE);
+    $LMExtract->write_po($translation);
 }
 
 
