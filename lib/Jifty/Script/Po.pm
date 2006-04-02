@@ -86,8 +86,8 @@ sub update_catalog {
     my $translation = shift;
     my $logger =Log::Log4perl->get_logger("main");
     $logger->info( "Updating message catalog '$translation'");
-    $LMExtract->read_po($translation) if ( -f $translation );
-    $LMExtract->compile;
+    $LMExtract->read_po($translation, USE_GETTEXT_STYLE) if ( -f $translation );
+    $LMExtract->compile(USE_GETTEXT_STYLE);
     $LMExtract->write_po($translation, USE_GETTEXT_STYLE);
 }
 
