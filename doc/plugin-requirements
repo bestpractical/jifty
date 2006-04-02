@@ -1,0 +1,52 @@
+21:36 <obra> so. what would people like to see out of a jifty plugin framework?
+21:39 <audreyt> I'd like to see that a dispatcher plugin cannot affect an action plugin
+21:43 <obra> What do you mean? I'd expect that a plugin would be able to install dispatcher rules and actions
+21:43 <obra> so we could make the "EditFile" thing a plugin
+21:44 <audreyt> I'd like to see JiftyX::EditFile::Dispatch
+21:44 <audreyt> er Dispatcher
+21:44 <audreyt> JiftyX::EditFile::Action
+21:44 <audreyt> as separate namespaces (maybe inside the same EditFile.pm)
+21:44 <audreyt> of course, JiftyX is better spelled as Jifty::Plugin
+21:44 <obra> Jiftyhashi?
+21:45 <audreyt> Java has coffee beans
+21:45 <audreyt> maybe Jifty has tea bags
+21:45 <audreyt> Jif::Tea::Bag
+21:45 <obra> *groan*
+21:46 <obra> so. about plugins
+21:46 <obra> I guess there are two different things here
+21:46 <obra> 1) plugins for parts of jifty should be in the right namespaces
+21:46 <obra> 2) should a plugin be able to install dispatcher rules directly?
+21:46 <obra> ie, "use this plugin and it adds rules at these trigger points"
+21:48 <obra> I want "Login" and "Signup" to become plugins
+21:48 <obra> so I can stop cargo culting them between apps
+21:48 <audreyt> so sorta like rt callbacks
+21:48 <obra> yeah. was thinking more like plagger's system. it looks pretty
+21:48 <obra> named points. so even if they move between files, you don't lose
+21:48 <audreyt> yup
+21:49 <obra> so. this means I need to be able to:
+21:49 <obra> install actions
+21:49 <obra> install dispatcher rules at all stages
+21:49 <obra> install static content
+21:49 <obra> install templates
+21:49 <obra> possibly install widgets (aka form fields)
+21:49 <obra> install javascript libs and css files
+21:50 <obra> (special cases of static content)
+21:50 <obra> (but also hooks to add those things to the generated header)
+21:50 <audreyt> right
+21:50 <obra> what else am I missing? ;)
+21:50 <obra> oh. new jifty commands?
+21:51 <audreyt> po files are considered templates?
+21:51 <obra> # ./bin/jifty fooplugin
+21:51 <obra> no. pofiles are anotehr item for the list
+21:51 <audreyt> declare dependency? (normal cpan semantics?)
+21:51 <obra> another
+21:51 <obra> yeah. I'd just use perl require lines
+21:51 <audreyt> partial ordering? (run this before that)
+21:52 <obra> in dispatchers?
+21:52 <obra> or actions?
+21:52 <obra> or what?
+21:57 <audreyt> sorry
+21:57 <audreyt> from callbacks
+21:57 <obra> nod. I worry a little bit about the complexity. when would we want it for callbacks other than the dispatcher rules?
+21:58 <audreyt> if all your login etc are in well known places
+
