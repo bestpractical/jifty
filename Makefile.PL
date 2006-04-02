@@ -21,6 +21,7 @@ requires('Email::Send' => '1.99_01'); # Email::Send::Jifty::Test
 requires('Email::Simple');
 requires('Email::Simple::Creator');
 requires('Encode');
+requires('File::Find::Rule');
 requires('File::MMagic');
 requires('File::ShareDir');
 requires('HTML::Entities');
