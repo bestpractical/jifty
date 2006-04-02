@@ -94,7 +94,7 @@ sub mason_config {
             # Force UTF-8 semantics on all our components by
             # prepending this block to all components as Mason
             # components defaults to parse the text as Latin-1
-            ${$_[0]} =~ s{}{<%INIT>use utf8;</%INIT>\n};
+            ${$_[0]} =~ s!^!<\%INIT>use utf8;</\%INIT>\n!;
         },
         data_dir =>  Jifty::Util->absolute_path( Jifty->config->framework('Web')->{'DataDir'} ),
         allow_globals => [
