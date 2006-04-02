@@ -1,0 +1,41 @@
+For Jifty:
+
+* It should be possible for Jifty's developers to package bin/jifty as a 
+  single platform-specifc "runnable" application, including lib/ share/ and all
+  non-core perl dependencies. (+ libraries?)
+
+
+
+For any Jifty application:
+
+* It should be possible for an end-user to package the source code of a Jifty 
+  application as a single platform-specific "runnable" application.
+
+* Ideally, it should be possible to turn a packaged application into 
+  an unpacked copy of the application's source code and dependent libraries.
+
+* It should be possible to install a Jifty application on a local disk 
+  such that multiple instances of the application can run with only
+  a site_config.yml file. (or without it)
+
+* It should be possible for an end user of one of these installed
+  applications to snapshot the application and all its assets, internal
+  libraries and dependencies to a private directory)
+
+    In all cases:
+        * --with-deps includes the installed versions of our dependencies.
+        * plugins are treated as CPAN dists for the purposes of dependency management
+
+    jifty package --file /tmp/myapp.exe --with-deps
+        * Takes multiple forms of targets
+        * Defaults to the zipped form
+        * --file is the path of the output file 
+
+    jifty dist --with-deps
+        * make a source distribution of this application, suitable for handing to a developer
+    jifty isolate  --with-deps 
+        * needs a better name 
+        * Pull in all dependencies, as well as jifty.
+
+    jifty install/uninstall
+        * some sort of management. will also work on plugins

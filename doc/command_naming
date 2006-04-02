@@ -1,0 +1,10 @@
+Current commands are all nouns. we should be moving to simple active verbs
+    
+    jifty server -> jifty run
+    jifty fastcgi -> jifty run --fastcgi
+    jifty action -> jifty create --action=
+    jifty app   -> jifty create --app=
+    jifty model -> Jifty create --model=
+
+    jifty schema -> jifty setup --schema
+    jifty po    -> jifty setup --lexicon / jifty create --lexicon
