@@ -80,6 +80,7 @@ sub update_catalogs {
 }
 
 
+use constant USE_GETTEXT_STYLE => 1;
 sub update_catalog {
     my $self       = shift;
     my $translation = shift;
@@ -87,7 +88,7 @@ sub update_catalog {
     $logger->info( "Updating message catalog '$translation'");
     $LMExtract->read_po($translation) if ( -f $translation );
     $LMExtract->compile;
-    $LMExtract->write_po($translation);
+    $LMExtract->write_po($translation, USE_GETTEXT_STYLE);
 }
 
 
