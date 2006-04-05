@@ -1,0 +1,5 @@
+# This exists for the test files; they get all kinds of unhappy if the
+# application's name is 'Jifty', because of namespace issues.
+
+framework:
+  ApplicationName: JiftyApp
