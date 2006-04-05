@@ -13,6 +13,8 @@ make up a Jifty application's API
 use Jifty::Everything;
 use base qw/Class::Accessor Jifty::Object/;
 
+require Module::Pluggable;
+
 __PACKAGE__->mk_accessors(qw(action_limits));
 
 =head1 METHODS
@@ -29,6 +31,15 @@ sub new {
 
     $self->reset;
 
+    Module::Pluggable->import(
+        search_path => [
+            Jifty->config->framework('ActionBasePath'),
+            Jifty->config->framework('ApplicationClass') . "::Action",
+            "Jifty::Action"
+        ],
+        sub_name => "_actions",
+    );
+
     return ($self);
 }
 
@@ -42,7 +53,7 @@ otherwise, it prefixes it with the C<ActionBasePath>.
 =cut
 
 sub qualify {
-    my $self = shift;
+    my $self   = shift;
     my $action = shift;
 
     my $base_path = Jifty->config->framework('ActionBasePath');
@@ -146,6 +157,7 @@ sub restrict {
         or $polarity     eq "deny";
 
     for my $restriction (@restrictions) {
+
         # Don't let the user "allow .*"
         die "For security reasons, Jifty won't let you allow all actions"
             if $polarity eq "allow"
@@ -197,6 +209,18 @@ sub is_allowed {
         }
     }
     return $allow;
+}
+
+=head2 actions
+
+Lists the class names of all of the allowed actions for this Jifty
+application.
+
+=cut
+
+sub actions {
+    my $self = shift;
+    return sort grep { $self->is_allowed($_) } $self->_actions;
 }
 
 1;
