@@ -36,13 +36,23 @@ for my $model ( __PACKAGE__->jifty_app_models ) {
 
 <p><%_(q{To disable this administrative console, add "framework: AdminMode: 0" to your application's configuration file.})%></p>
     
-
+<h2><%_('Models')%></h2>
 <ul>
 % foreach my $model (@models) {
 % next unless ($model =~ /^(?:.*)::(.*?)$/);
 % my $type = $1;
-<li><% Jifty->web->link( url => '/__jifty/admin/'.$type, label => $type)%>
+<li><% Jifty->web->link( url => '/__jifty/admin/model/'.$type, label => $type)%>
 %}
 </ul>
+
+<h2><%_('Actions')%></h2>
+<ul>
+% foreach my $action (Jifty->api->actions) {
+<li><% Jifty->web->link( url => '/__jifty/admin/action/'.$action, label => $action) %>
+% }
+</ul>
+
+<h2>Done?</h2>
+<% Jifty->web->return( to => "/", label => 'Back to the application') %>
 
 </&>

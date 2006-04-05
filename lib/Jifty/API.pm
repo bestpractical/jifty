@@ -214,7 +214,9 @@ sub is_allowed {
 =head2 actions
 
 Lists the class names of all of the allowed actions for this Jifty
-application.
+application; this may include actions under the C<Jifty::Action::>
+namespace, in addition to actions under your application's
+C<ActionBasePath>.
 
 =cut
 

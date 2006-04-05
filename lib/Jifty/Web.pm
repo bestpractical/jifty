@@ -242,32 +242,35 @@ sub handle_request {
     unless ( $self->request->just_validating ) {
         for my $request_action (@valid_actions) {
 
-            eval {
-                # Pull the action out of the request (again, since
-                # mappings may have affected parameters).  This
-                # returns the cached version unless the request has
-                # been changed by argument mapping from previous
-                # actions (Jifty::Request::Mapper)
-                my $action = $self->new_action_from_request($request_action);
-                next unless $action;
-                if ($request_action->modified) {
-                    # If the request's action was changed, re-validate
-                    $action->result(Jifty::Result->new);
-                    $action->result->action_class(ref $action);
-                    $self->response->result( $action->moniker => $action->result );
-                    $self->log->debug("Re-validating action ".ref($action). " ".$action->moniker);
-                    next unless $action->validate;
-                }
-            
-                $self->log->debug("Running action.");
-                $action->run; 
-            };
+            # Pull the action out of the request (again, since
+            # mappings may have affected parameters).  This
+            # returns the cached version unless the request has
+            # been changed by argument mapping from previous
+            # actions (Jifty::Request::Mapper)
+            my $action = $self->new_action_from_request($request_action);
+            next unless $action;
+            if ($request_action->modified) {
+                # If the request's action was changed, re-validate
+                $action->result(Jifty::Result->new);
+                $action->result->action_class(ref $action);
+                $self->response->result( $action->moniker => $action->result );
+                $self->log->debug("Re-validating action ".ref($action). " ".$action->moniker);
+                next unless $action->validate;
+            }
+
+            $self->log->debug("Running action.");
+            eval { $action->run; };
 
             if ( my $err = $@ ) {
                 # poor man's exception propagation
                 # We need to get "LAST RULE" exceptions back up to the dispatcher
-                die $err if ($err =~ /^LAST RULE/);
+                die $err if ( $err =~ /^LAST RULE/ );
                 $self->log->fatal($err);
+                $action->result->error(
+                    Jifty->config->framework("DevelMode")
+                    ? $err
+                    : "There was an error completing the request.  Please try again later."
+                );
             }
 
             # Fill in the request with any results that that action
