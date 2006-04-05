@@ -61,7 +61,7 @@ probably a better place to start.
 use base qw/Jifty::Object/;
 use Jifty::Everything;
 
-use vars qw/$HANDLE $CONFIG $LOGGER $DISPATCHER/;
+use vars qw/$HANDLE $CONFIG $LOGGER $HANDLER $DISPATCHER $API/;
 
 =head1 METHODS
 
@@ -120,6 +120,7 @@ sub new {
 
     __PACKAGE__->dispatcher(Jifty::Dispatcher->new());
     __PACKAGE__->handler(Jifty::Handler->new());
+    __PACKAGE__->api(Jifty::API->new());
 
 
    # Let's get the database rocking and rolling
@@ -162,8 +163,8 @@ An accessor for our L<Jifty::Handler> object.
 
 sub handler {
     my $class = shift;
-    $LOGGER = shift if (@_);
-    return $LOGGER;
+    $HANDLER = shift if (@_);
+    return $HANDLER;
 }
 
 =head2 handle
@@ -181,9 +182,8 @@ sub handle {
 
 =head2 dispatcher
 
-An accessor for the C<Jifty::Dispatcher> object that we use to make decisions about how
-to dispatch each request made by a web client.
-
+An accessor for the C<Jifty::Dispatcher> object that we use to make
+decisions about how to dispatch each request made by a web client.
 
 =cut
 
@@ -191,6 +191,19 @@ sub dispatcher {
     my $class = shift;
     $DISPATCHER = shift if (@_);
     return $DISPATCHER;
+}
+
+=head2 api
+
+An accessor for the L<Jifty::API> object that publishes and controls
+information about the application's L<Jifty::Action>s.
+
+=cut
+
+sub api {
+    my $class = shift;
+    $API = shift if (@_);
+    return $API;
 }
 
 =head2 web
@@ -207,7 +220,8 @@ sub web {
 
 =head2 setup_database_connection
 
-Set up our database connection. Optionally takes a param hash with a single argument
+Set up our database connection. Optionally takes a param hash with a
+single argument.  This method is automatically called by L</new>.
 
 =over
 

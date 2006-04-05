@@ -17,6 +17,7 @@ use Jifty::Config ();
 use Jifty::Handle ();
 use Jifty::ClassLoader ();
 use Jifty::Util ();
+use Jifty::API ();
 
 use Jifty::Record ();
 use Jifty::Collection ();

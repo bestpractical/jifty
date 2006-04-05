@@ -137,11 +137,13 @@ sub default_app_name {
     my $self = shift;
     my @root = File::Spec->splitdir( Jifty::Util->app_root);
     my $name =  pop @root;
-    # Jifty-0.10211 should become Jifty
-    if ($name =~ /^(.*?)-(.*\..*)$/) {
-        $name = $1;
 
-    }
+    # Jifty-0.10211 should become Jifty
+    $name = $1 if $name =~ /^(.*?)-(.*\..*)$/;
+
+    # But don't actually allow "Jifty" as the name
+    $name = "JiftyApp" if lc $name eq "jifty";
+
     return $name;
 }
 

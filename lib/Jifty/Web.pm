@@ -20,7 +20,7 @@ use base qw/Class::Accessor Jifty::Object/;
 use vars qw/$SERIAL/;
 
 __PACKAGE__->mk_accessors(
-    qw(next_page request response session temporary_current_user action_limits)
+    qw(next_page request response session temporary_current_user)
 );
 
 =head1 METHODS
@@ -191,7 +191,7 @@ the request object in L</request>.
 Each action on the request is vetted in three ways -- first, it must
 be marked as C<active> by the L<Jifty::Request> (this is the default).
 Second, it must be in the set of allowed classes of actions (see
-L</is_allowed>, below).  Finally, the action must validate.  If it
+L<Jifty::API/is_allowed>).  Finally, the action must validate.  If it
 passes all of these criteria, the action is fit to be run.
 
 Before they are run, however, the request has a chance to be
@@ -216,7 +216,7 @@ sub handle_request {
     for my $request_action ( $self->request->actions ) {
         $self->log->debug("Found action ".$request_action->class . " " . $request_action->moniker);
         next unless $request_action->active;
-        unless ( $self->is_allowed( $request_action->class ) ) {
+        unless ( Jifty->api->is_allowed( $request_action->class ) ) {
             $self->log->warn( "Attempt to call denied action '"
                     . $request_action->class
                     . "'" );
@@ -246,7 +246,8 @@ sub handle_request {
                 # Pull the action out of the request (again, since
                 # mappings may have affected parameters).  This
                 # returns the cached version unless the request has
-                # changed
+                # been changed by argument mapping from previous
+                # actions (Jifty::Request::Mapper)
                 my $action = $self->new_action_from_request($request_action);
                 next unless $action;
                 if ($request_action->modified) {
@@ -293,149 +294,6 @@ Gets or sets the current L<Jifty::Request> object.
 =head3 response [VALUE]
 
 Gets or sets the current L<Jifty::Response> object.
-
-=head2 ACTIONS
-
-=head3 actions 
-
-Gets the actions that have been created with this framework with
-C<new_action> (whether automatically via a L<Jifty::Request>, or in
-Mason code), as L<Jifty::Action> objects.
-
-=cut
-
-sub actions {
-    my $self = shift;
-
-    $self->{'actions'} ||= {};
-    return
-        sort { ( $a->order || 0 ) <=> ( $b->order || 0 ) }
-        values %{ $self->{'actions'} };
-}
-
-sub _add_action {
-    my $self   = shift;
-    my $action = shift;
-
-    $self->{'actions'}{ $action->moniker } = $action;
-}
-
-=head3 allow_actions RESTRICTIONS
-
-Takes a list of strings or regular expressions, and adds them in order
-to the list of limits for the purposes of L</is_allowed>.  See
-L</restrict_actions> for the details of how limits are processed.
-
-=cut
-
-sub allow_actions {
-    my $self = shift;
-    $self->restrict_actions( allow => @_ );
-}
-
-=head3 deny_actions RESTRICTIONS
-
-Takes a list of strings or regular expressions, and adds them in order
-to the list of limits for the purposes of L</is_allowed>.  See
-L</restrict_actions> for the details of how limits are processed.
-
-=cut
-
-sub deny_actions {
-    my $self = shift;
-    $self->restrict_actions( deny => @_ );
-}
-
-=head3 restrict_actions POLARITY RESTRICTIONS
-
-Method that L</allow_actions> and and L</deny_actions> call
-internally; I<POLARITY> is either C<allow> or C<deny>.  Allow and deny
-limits are evaluated in the order they're called.  The last limit that
-applies will be the one which takes effect.  Regexes are matched
-against the class; strings are fully qualified with the application's
-I<ActionBasePath> (if they not already) and used as an exact match
-against the class name.
-
-If you call:
-
-    Jifty->web->allow_actions ( qr'.*' );
-    Jifty->web->deny_actions  ( qr'Foo' );
-    Jifty->web->allow_actions ( qr'FooBar' );
-    Jifty->web->deny_actions ( qr'FooBarDeleteTheWorld' );
-
-
-calls to MyApp::Action::Baz will succeed.
-calls to MyApp::Action::Foo will fail.
-calls to MyApp::Action::FooBar will pass.
-calls to MyApp::Action::TrueFoo will fail.
-calls to MyApp::Action::TrueFooBar will pass.
-calls to MyApp::Action::TrueFooBarDeleteTheWorld will fail.
-calls to MyApp::Action::FooBarDeleteTheWorld will fail.
-
-=cut
-
-sub restrict_actions {
-    my $self         = shift;
-    my $polarity     = shift;
-    my @restrictions = @_;
-
-    die "Polarity must be 'allow' or 'deny'"
-        unless $polarity eq "allow"
-        or $polarity     eq "deny";
-
-    $self->action_limits( [] ) unless $self->action_limits;
-
-    for my $restriction (@restrictions) {
-
-        # Fully qualify it if it's a string and not already so
-        my $base_path = Jifty->config->framework('ActionBasePath');
-        $restriction = $base_path . "::" . $restriction
-            unless ref $restriction
-            or $restriction =~ /^\Q$base_path\E/;
-
-        # Add to list of restrictions
-        push @{ $self->action_limits },
-            { $polarity => 1, restriction => $restriction };
-    }
-}
-
-=head3 is_allowed CLASS
-
-Returns false if the I<CLASS> name (which is fully qualified with the
-application's ActionBasePath if it is not already) is allowed to be
-executed.  See L</restrict_actions> above for the rules that the class
-name must pass.
-
-=cut
-
-sub is_allowed {
-    my $self  = shift;
-    my $class = shift;
-
-    my $base_path = Jifty->config->framework('ActionBasePath');
-    $class = $base_path . "::" . $class
-        unless $class =~ /^\Q$base_path\E/;
-
-    # Assume that it passes
-    my $allow = 1;
-
-    $self->action_limits( [] ) unless $self->action_limits;
-
-    for my $limit ( @{ $self->action_limits } ) {
-
-        # For each limit
-        if ( ( ref $limit->{restriction} and $class =~ $limit->{restriction} )
-            or ( $class eq $limit->{restriction} ) )
-        {
-
-            # If the restriction passes, set the current allow/deny
-            # bit according to if this was a positive or negative
-            # limit
-            $allow = $limit->{allow} ? 1 : 0;
-        }
-    }
-    return $allow;
-}
 
 =head3 form
 
@@ -508,10 +366,7 @@ sub new_action {
     $class = $1;    # 'untaint'
 
     # Prepend the base path (probably "App::Action") unless it's there already
-    my $base_path = Jifty->config->framework('ActionBasePath');
-    $class = $base_path . "::" . $class
-        unless $class =~ /^\Q$base_path\E::/
-        or $class     =~ /^Jifty::Action::/;
+    $class = Jifty->api->qualify($class);
 
     # The implementation class is provided by the client, so this
     # isn't a "shouldn't happen"
@@ -526,7 +381,7 @@ sub new_action {
         return;
     }
 
-    $self->_add_action($action);
+    $self->{'actions'}{ $action->moniker } = $action;
 
     return $action;
 }

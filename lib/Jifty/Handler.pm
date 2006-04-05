@@ -166,6 +166,7 @@ sub handle_request {
     Jifty->web->response( Jifty::Response->new );
     Jifty->web->setup_session;
     Jifty->web->session->set_cookie;
+    Jifty->api->reset;
 
     Jifty->log->debug( "Received request for " . Jifty->web->request->path );
 

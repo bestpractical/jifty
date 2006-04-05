@@ -8,7 +8,6 @@ use Jifty::Server;
 use Jifty::Script::Schema;
 use Email::LocalDelivery;
 use Email::Folder;
-use Hook::LexWrap;
 
 =head2 import_extra
 

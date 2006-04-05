@@ -66,10 +66,10 @@ The Dispatcher runs rules in several stages:
 
 B<before> rules are run before Jifty evaluates actions. They're the
 perfect place to enable or disable L<Jifty::Action>s using
-L<Jifty::Web/allow_actions> and L<Jifty::Web/deny_actions> or to
-completely disallow user access to private I<component> templates such
-as the F<_elements> directory in a default Jifty application.  They're
-also the right way to enable L<Jifty::LetMe> actions.
+L<Jifty::API/allow> and L<Jifty::API/deny> or to completely disallow
+user access to private I<component> templates such as the F<_elements>
+directory in a default Jifty application.  They're also the right way
+to enable L<Jifty::LetMe> actions.
 
 You can entirely stop processing with the C<redirect> and C<abort>
 directives.

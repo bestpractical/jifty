@@ -170,7 +170,6 @@ share/web/static/js/jsTrace.js
 share/web/static/js/key_bindings.js
 share/web/static/js/prototype.js
 share/web/static/js/rico.js
-share/web/static/js/rico.js.rej
 share/web/static/js/scriptaculous/builder.js
 share/web/static/js/scriptaculous/controls.js
 share/web/static/js/scriptaculous/dragdrop.js
@@ -213,8 +212,6 @@ share/web/templates/dhandler
 share/web/templates/helpers/calendar.html
 share/web/templates/index.html
 SIGNATURE
-svk-commitFyzdP.tmp
-svk-commitqPHs1.tmp
 t/00-load.t
 t/01-dependencies.t
 t/02-connect.t
