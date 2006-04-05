@@ -3,8 +3,8 @@
 # sort, when we have that infrastructure.
 
 before '*', run {
-    Jifty->web->deny_actions(qw/Jifty::Action::Devel/)
-      unless Jifty->config->framework('DevelMode');
+    Jifty->api->allow(qr/^Jifty::Action::Devel/)
+      if Jifty->config->framework('DevelMode');
 };
 
 on qr'^/__jifty/edit/(.*?)/(.*)$', run {
