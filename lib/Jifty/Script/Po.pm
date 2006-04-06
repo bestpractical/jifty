@@ -10,8 +10,9 @@ use Jifty::YAML;
 use Locale::Maketext::Extract;
 use File::Find::Rule;
 use MIME::Types;
-our $mime  = MIME::Types->new();
+our $MIME = MIME::Types->new();
 our $LMExtract = Locale::Maketext::Extract->new;
+use constant USE_GETTEXT_STYLE => 1;
 
 __PACKAGE__->mk_accessors(qw/language/);
 
@@ -54,16 +55,25 @@ sub run {
 
 =head2 _check_mime_type FILENAME
 
+This routine returns a mimetype for the file C<FILENAME>.
+
 =cut
 
 sub _check_mime_type {
     my $self       = shift;
     my $local_path = shift;
-    my $mimeobj = $mime->mimeTypeOf($local_path);
+    my $mimeobj = $MIME->mimeTypeOf($local_path);
     my $mime_type = ($mimeobj ? $mimeobj->type : "unknown");
     return if ( $mime_type =~ /^image/ );
     return 1;
 }
+
+=head2 update_catalogs
+
+Extracts localizable messages from all files in your application, finds
+all your message catalogs and updates them with new and changed messages.
+
+=cut
 
 sub update_catalogs {
     my $self = shift;
@@ -79,8 +89,13 @@ sub update_catalogs {
 
 }
 
+=head2 update_catalog FILENAME
 
-use constant USE_GETTEXT_STYLE => 1;
+Reads C<FILENAME>, a message catalog and integrates new or changed 
+translations.
+
+=cut
+
 sub update_catalog {
     my $self       = shift;
     my $translation = shift;
@@ -92,6 +107,12 @@ sub update_catalog {
 }
 
 
+=head2 extract_messages
+
+Find all translatable messages in your application, using 
+L<Locale::Maketext::Extract>.
+
+=cut
 
 sub extract_messages {
     my $self = shift;
