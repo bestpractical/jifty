@@ -1,4 +1,5 @@
 package Jifty::Script;
+use App::CLI;
 use base qw/App::CLI App::CLI::Command/;
 
 =head2 prepare
