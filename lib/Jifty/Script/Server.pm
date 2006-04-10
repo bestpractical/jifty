@@ -6,6 +6,7 @@ use base qw/App::CLI::Command/;
 
 use Jifty::Everything;
 use Jifty::Server;
+use File::Path ();
 
 
 =head1 NAME
@@ -43,6 +44,9 @@ you.
 sub run {
     my $self = shift;
     
+    # Purge stale mason cache data
+    File::Path::rmtree(['var/mason/cache', 'var/mason/obj']) if -d 'var/mason';
+
     Jifty->new();
     Jifty::Server->new(port => $self->{port})->run;
 }
