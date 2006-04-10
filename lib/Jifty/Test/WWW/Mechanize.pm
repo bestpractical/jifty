@@ -39,7 +39,7 @@ field I<FIELD1> is I<VALUE1>, and so on.
 
 sub moniker_for {
   my $self = shift;
-  my $action = shift;
+  my $action = Jifty->api->qualify(shift);
   my %args = @_;
 
   for my $f ($self->forms) {

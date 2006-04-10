@@ -63,14 +63,16 @@ sub out {
 
 =head3 url
 
-Returns the root url of this Jifty application.  This is pulled from the
-configuration file.  
-
+Returns the root url of this Jifty application.  This is pulled from
+the configuration file.  Takes an optional named parameter C<scheme>
+to specify the scheme.
 
 =cut
 
 sub url {
     my $self = shift;
+    my %args = @_;
+
     my $url  = Jifty->config->framework("Web")->{BaseURL};
     my $port = Jifty->config->framework("Web")->{Port};
     
@@ -78,6 +80,7 @@ sub url {
     if ($url =~ /^(\w+)/) {
         $scheme = $1;
     }
+    $scheme = $args{scheme} if $args{scheme};
 
     if ($ENV{'HTTP_HOST'}) {
         return $scheme ."://".$ENV{'HTTP_HOST'};

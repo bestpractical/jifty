@@ -181,10 +181,23 @@ sub javascript {
 
             push @fragments, \%args;
         }
-        $response .= qq| $trigger="return update( @{[ Jifty::JSON::objToJson( {actions => \@actions, fragments => \@fragments }, {singlequote => 1}) ]} ) "|;
+
+        my $update = "update( ". Jifty::JSON::objToJson( {actions => \@actions, fragments => \@fragments }, {singlequote => 1}) ." )";
+        $response .= $self->javascript_preempt ? qq| $trigger="return $update"| : qq| $trigger="$update; return true;"|;
     }
     return $response;
 }
+
+=head2 javascript_preempt
+
+Returns true if the the javascript's handlers should prevent the web
+browser's standard effects from happening; that is, for C<onclick>, it
+prevents buttons from submitting and the like.  The default is to
+return true, but this can be overridden.
+
+=cut
+
+sub javascript_preempt { return 1 };
 
 =head2 class
 

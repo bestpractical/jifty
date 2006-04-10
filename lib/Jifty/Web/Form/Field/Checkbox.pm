@@ -41,4 +41,13 @@ sub render_widget {
     '';
 }
 
+=head2 javascript_preempt
+
+By default, javascript (such as onclick handlers) should not actually
+prevent browsers from placing the checkmark in the checkbox.
+
+=cut
+
+sub javascript_preempt { return 0; }
+
 1;
