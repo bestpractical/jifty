@@ -4,7 +4,11 @@ bin/service
 bin/xgettext
 Changelog
 doc/ajax-upgraded-links
+doc/command_naming
 doc/edit-in-place
+doc/packaging
+doc/plugin-requirements
+doc/plugin-syntax
 doc/talks/blogdemo.png
 doc/talks/component-tree.png
 doc/talks/edit.png
@@ -19,6 +23,7 @@ doc/talks/pony.png
 doc/talks/takahashi.css
 doc/talks/takahashi.js
 doc/talks/yapc.asia.2006.xul
+etc/config.yml
 inc/Module/AutoInstall.pm
 inc/Module/Install.pm
 inc/Module/Install/AutoInstall.pm
@@ -42,6 +47,7 @@ lib/Jifty/Action/Record/Create.pm
 lib/Jifty/Action/Record/Delete.pm
 lib/Jifty/Action/Record/Update.pm
 lib/Jifty/Action/Redirect.pm
+lib/Jifty/API.pm
 lib/Jifty/Bootstrap.pm
 lib/Jifty/ClassLoader.pm
 lib/Jifty/Collection.pm
@@ -115,7 +121,12 @@ MANIFEST			This list of files
 MANIFEST.SKIP
 META.yml
 README
+share/dtd/xhtml-lat1.ent
+share/dtd/xhtml-special.ent
+share/dtd/xhtml-symbol.ent
+share/dtd/xhtml1-strict.dtd
 share/po/en.po
+share/po/ja.po
 share/web/static/css/app-base.css
 share/web/static/css/app.css
 share/web/static/css/autohandler
@@ -178,13 +189,14 @@ share/web/static/js/scriptaculous/scriptaculous.js
 share/web/static/js/scriptaculous/slider.js
 share/web/static/js/scriptaculous/unittest.js
 share/web/templates/__jifty/admin/_elements/nav
+share/web/templates/__jifty/admin/action/dhandler
 share/web/templates/__jifty/admin/autohandler
-share/web/templates/__jifty/admin/dhandler
 share/web/templates/__jifty/admin/fragments/list/list
 share/web/templates/__jifty/admin/fragments/list/new_item
 share/web/templates/__jifty/admin/fragments/list/update
 share/web/templates/__jifty/admin/fragments/list/view
 share/web/templates/__jifty/admin/index.html
+share/web/templates/__jifty/admin/model/dhandler
 share/web/templates/__jifty/autocomplete.xml
 share/web/templates/__jifty/edit_file
 share/web/templates/__jifty/error/_elements/error_text

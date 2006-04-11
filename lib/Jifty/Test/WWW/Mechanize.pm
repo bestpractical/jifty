@@ -162,13 +162,14 @@ found.
 
 # When it sees something like
 # http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd as a DOCTYPE, this will make
-# it open dtd/xhtml1-strict.dtd instead -- great for offline hacking!
+# it open static/dtd/xhtml1-strict.dtd instead -- great for offline hacking!
  
 # This "require" is just to give us something to hook on to, and to prevent a
 # future require from taking effect.
 require 'XML/Parser/LWPExternEnt.pl';
 wrap 'XML::Parser::lwp_ext_ent_handler', pre => sub {
-    $_[2] =~ s{ \A .+ / ([^/]+) \z }{dtd/$1}xms;
+    my $root = Jifty::Util->share_root;
+    $_[2] =~ s{ \A .+ / ([^/]+) \z }{$root/dtd/$1}xms;
     open my $fh, '<', $_[2] or die "can't open $_[2]: $!";
     my $content = do {local $/; <$fh>};
     close $fh;
