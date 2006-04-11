@@ -43,11 +43,14 @@ you.
 
 sub run {
     my $self = shift;
-    
-    # Purge stale mason cache data
-    File::Path::rmtree(['var/mason/cache', 'var/mason/obj']) if -d 'var/mason';
-
     Jifty->new();
+
+    # Purge stale mason cache data
+    my $data_dir = Jifty->config->framework('Web')->{'DataDir'};
+    if (-d $data_dir) {
+        File::Path::rmtree(["$data_dir/cache", "$data_dir/obj"]);
+    }
+
     Jifty::Server->new(port => $self->{port})->run;
 }
 1;
