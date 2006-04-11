@@ -82,7 +82,7 @@ sub _get_current_user {
             next unless $caller_self->can('current_user');
 
             eval {
-                if ( $caller_self->current_user and $caller_self->current_user->id) {
+                if ( $caller_self->current_user and defined $caller_self->current_user->id) {
                     $self->current_user($caller_self->current_user());
                 }
             };
