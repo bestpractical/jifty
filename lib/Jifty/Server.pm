@@ -24,7 +24,6 @@ use Jifty::Everything;
 use base qw/HTTP::Server::Simple::CGI/;
 use base qw/Jifty::Object/;
 use File::Spec;
-use Module::Refresh;
 use Log::Log4perl;
 use HTTP::Server::Simple;
 use HTTP::Server::Simple::Recorder;

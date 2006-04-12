@@ -25,7 +25,8 @@ handlers.
 =cut
 
 use base qw/Class::Accessor/;
-use Hook::LexWrap;
+use Hook::LexWrap ();
+use Module::Refresh ();
 __PACKAGE__->mk_accessors(qw(mason dispatcher static_handler cgi apache));
 
 =head2 new
