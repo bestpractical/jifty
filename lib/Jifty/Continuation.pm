@@ -39,7 +39,7 @@ L<Jifty::Web/handle_request>.
 use Jifty::Everything;
 use Clone;
 
-use base qw/Class::Accessor/;
+use base qw/Class::Accessor::Fast/;
 
 __PACKAGE__->mk_accessors(qw(id parent
                              request response code

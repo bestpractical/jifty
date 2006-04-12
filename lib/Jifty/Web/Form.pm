@@ -3,7 +3,7 @@ use strict;
  
 package Jifty::Web::Form;
 
-use base qw/Jifty::Object Class::Accessor/;
+use base qw/Jifty::Object Class::Accessor::Fast/;
 
 __PACKAGE__->mk_accessors(qw(actions printed_actions name call is_open));
 

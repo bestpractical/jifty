@@ -17,7 +17,7 @@ for how to return values from actions.
 =cut
 
 
-use base qw/Jifty::Object Class::Accessor/;
+use base qw/Jifty::Object Class::Accessor::Fast/;
 
 __PACKAGE__->mk_accessors(qw(moniker argument_values order result sticky_on_success sticky_on_failure));
 

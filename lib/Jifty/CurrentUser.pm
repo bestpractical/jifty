@@ -3,7 +3,7 @@ use strict;
 
 package Jifty::CurrentUser;
 
-use base qw/Jifty::Object Class::Accessor/;
+use base qw/Jifty::Object Class::Accessor::Fast/;
 
 __PACKAGE__->mk_accessors(qw(is_superuser is_bootstrap_user user_object));
 

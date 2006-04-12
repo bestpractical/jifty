@@ -2,10 +2,10 @@ use warnings;
 use strict;
 
 package Jifty::Web::Session;
-use base qw/Jifty::Object Class::Accessor/;
+use base qw/Jifty::Object Class::Accessor::Fast/;
 use CGI::Cookie;
 
-# We don't use Class::Accessor as we want to do our own 'set' and 'get' here
+# We don't use Class::Accessor::Fast as we want to do our own 'set' and 'get' here
 #__PACKAGE__->mk_accessors(qw(_session));
 
 =head1 NAME

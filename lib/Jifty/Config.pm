@@ -23,7 +23,7 @@ Hash::Merge::set_behavior('RIGHT_PRECEDENT');
 require Module::Pluggable;
 
 use File::Basename();
-use base qw/Class::Accessor/;
+use base qw/Class::Accessor::Fast/;
 
 use vars qw/$CONFIG/;
 

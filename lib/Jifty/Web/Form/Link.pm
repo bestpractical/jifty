@@ -15,7 +15,7 @@ generates L<Jifty::Web::Form::Link>s.
 
 =cut
 
-use base qw/Jifty::Web::Form::Element Class::Accessor/;
+use base qw/Jifty::Web::Form::Element Class::Accessor::Fast/;
 
 =head2 accessors
 

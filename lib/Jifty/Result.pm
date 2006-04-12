@@ -17,7 +17,7 @@ L<Jifty::Response> object.
 
 use Jifty::Everything;
 
-use base qw/Jifty::Object Class::Accessor/;
+use base qw/Jifty::Object Class::Accessor::Fast/;
 
 __PACKAGE__->mk_accessors(qw(failure action_class message error _content));
 

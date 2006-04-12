@@ -93,7 +93,7 @@ can be used to change the duration of the effect, for instance.
 
 =cut
 
-use base qw/Jifty::Object Class::Accessor/;
+use base qw/Jifty::Object Class::Accessor::Fast/;
 use Jifty::JSON;
 
 =head2 handlers

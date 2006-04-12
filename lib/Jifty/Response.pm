@@ -15,7 +15,7 @@ L<Jifty::Result> objects of each L<Jifty::Action> that ran.
 
 =cut
 
-use base qw/Jifty::Object Class::Accessor/;
+use base qw/Jifty::Object Class::Accessor::Fast/;
 
 __PACKAGE__->mk_accessors(qw(error));
 

@@ -3,7 +3,7 @@ use strict;
 
 package Jifty::Request;
 
-use base qw/Jifty::Object Class::Accessor Clone/;
+use base qw/Jifty::Object Class::Accessor::Fast Clone/;
 __PACKAGE__->mk_accessors(qw(is_subrequest arguments just_validating path _continuation));
 
 use Jifty::JSON;
@@ -696,7 +696,7 @@ sub do_mapping {
 }
 
 package Jifty::Request::Action;
-use base 'Class::Accessor';
+use base 'Class::Accessor::Fast';
 __PACKAGE__->mk_accessors( qw/moniker arguments class order active modified/);
 
 =head2 Jifty::Request::Action
@@ -739,7 +739,7 @@ sub delete {
 
 
 package Jifty::Request::StateVariable;
-use base 'Class::Accessor';
+use base 'Class::Accessor::Fast';
 __PACKAGE__->mk_accessors (qw/key value/);
 
 =head2 Jifty::Request::StateVariable
@@ -753,7 +753,7 @@ A small package that encapsulates the bits of a state variable:
 =cut
 
 package Jifty::Request::Fragment;
-use base 'Class::Accessor';
+use base 'Class::Accessor::Fast';
 __PACKAGE__->mk_accessors( qw/name path wrapper arguments parent/ );
 
 =head2 Jifty::Request::Fragment

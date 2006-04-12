@@ -24,7 +24,7 @@ handlers.
 
 =cut
 
-use base qw/Class::Accessor/;
+use base qw/Class::Accessor::Fast/;
 use Hook::LexWrap qw(wrap);
 use Module::Refresh ();
 __PACKAGE__->mk_accessors(qw(mason dispatcher static_handler cgi apache));

@@ -12,7 +12,7 @@ either a button or a link.
 
 =cut
 
-use base qw/Jifty::Web::Form::Element Class::Accessor/;
+use base qw/Jifty::Web::Form::Element Class::Accessor::Fast/;
 
 =head2 accessors
 

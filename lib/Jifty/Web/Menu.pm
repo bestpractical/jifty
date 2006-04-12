@@ -1,6 +1,6 @@
 package Jifty::Web::Menu;
 
-use base qw/Class::Accessor/;
+use base qw/Class::Accessor::Fast/;
 use URI;
 
 __PACKAGE__->mk_accessors(qw(label parent sort_order));
