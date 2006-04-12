@@ -2,6 +2,7 @@ use strict;
 use warnings;
 
 package Jifty::Handler;
+use Hook::LexWrap;
 
 =head1 NAME
 
