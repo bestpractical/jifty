@@ -232,15 +232,18 @@ Returns a string of the fragment and associated javascript.
 sub render {
     my $self = shift;
 
-    my %arguments =  %{$self->arguments};
+    my %arguments = %{ $self->arguments };
 
     # undef arguments cause warnings. We hatesses the warnings, we do.
     defined $arguments{$_} or delete $arguments{$_} for keys %arguments;
     my $result = "";
 
     # Map out the arguments
-    for (keys %arguments) {
-        my ($key, $value) = Jifty::Request::Mapper->map(destination => $_, source => $arguments{$_});
+    for ( keys %arguments ) {
+        my ( $key, $value ) = Jifty::Request::Mapper->map(
+            destination => $_,
+            source      => $arguments{$_}
+        );
         next unless $key ne $_;
         delete $arguments{$_};
         $arguments{$key} = $value;
@@ -248,51 +251,55 @@ sub render {
 
     # We need to tell the browser this is a region and
     # what its default arguments are as well as the path of the "fragment".
-    
-    # We do this by passing in a snippet of javascript which encodes this 
+
+    # We do this by passing in a snippet of javascript which encodes this
     # information.
 
-    # Alex is sad about: Anything which is replaced _must_ start life as a fragment.
-    # We don't have a good answer for this yet.
+# Alex is sad about: Anything which is replaced _must_ start life as a fragment.
+# We don't have a good answer for this yet.
 
-    # We only render the region wrapper if we're asked to (which is true by default)
-    if ($self->region_wrapper) {
-        $result .= qq|<script type="text/javascript">\n|;
-        $result .= qq|new Region('|. $self->qualified_name . qq|',|;
-        $result .= Jifty::JSON::objToJson(\%arguments, {singlequote => 1}) . qq|,|;
-        $result .= qq|'| . $self->path . qq|',|;
-        $result .= $self->parent ? qq|'| . $self->parent->qualified_name . qq|'| : q|null|;
-        $result .= qq|);\n|;
-        $result .= qq|</script>|;
-        $result .= qq|<div id="region-| . $self->qualified_name . qq|">|;
+# We only render the region wrapper if we're asked to (which is true by default)
+    if ( $self->region_wrapper ) {
+        $result .= qq|<script type="text/javascript">\n|
+            . qq|new Region('| . $self->qualified_name . qq|',|
+            . Jifty::JSON::objToJson( \%arguments, { singlequote => 1 } ) . qq|,| 
+            . qq|'| . $self->path . qq|',|
+            . ( $self->parent ? qq|'| . $self->parent->qualified_name . qq|'| : q|null|)
+            . qq|);\n|
+            . qq|</script>|
+            . qq|<div id="region-| . $self->qualified_name . qq|">|;
     }
 
     # Merge in defaults
-    %arguments = (%{ Jifty->web->request->arguments }, region => $self, %arguments);
+    %arguments = ( %{ Jifty->web->request->arguments }, 
+                    region => $self, 
+                    %arguments );
 
     # Make a fake request and throw it at the dispatcher
     my $subrequest = Jifty::Request->new;
-    $subrequest->from_webform( %arguments );
+    $subrequest->from_webform(%arguments);
     $subrequest->path( $self->path );
+
     # Remove all of the actions
-    $subrequest->remove_action( $_->moniker ) for $subrequest->actions;
-    $subrequest->is_subrequest( 1 );
+    $subrequest->clear_actions;
+    $subrequest->is_subrequest(1);
     local Jifty->web->{request} = $subrequest;
 
-    # While we're inside this region, # have Mason to tack its response 
+    # While we're inside this region, # have Mason to tack its response
     # onto a variable and not send headers when it does so
-    
+
     # XXX TODO: this internals diving is icky
-   
+
     my $region_content = '';
-    Jifty->handler->mason->interp->out_method( \$region_content);
+    Jifty->handler->mason->interp->out_method( \$region_content );
+
     # Call into the dispatcher
-    eval { Jifty->dispatcher->handle_request};
+    Jifty->dispatcher->handle_request;
     $result .= $region_content;
-    $result .= qq|</div>| if ($self->region_wrapper);
+    $result .= qq|</div>| if ( $self->region_wrapper );
 
     #XXX TODO: There's gotta be a better way to localize it
-    Jifty->handler->mason->interp->out_method( \&Jifty::View::Mason::Handler::out_method);
+    Jifty->handler->mason->interp->out_method( \&Jifty::View::Mason::Handler::out_method );
 
     return $result;
 }

@@ -591,6 +591,18 @@ sub add_action {
     return $action;
 } 
 
+
+=head2 clear_actions
+
+Removes all actions from this request
+
+=cut
+
+sub clear_actions {
+    my $self = shift;
+    $self->{'actions'} = {};
+}
+
 =head2 remove_action MONIKER
 
 Removes an action with the given moniker.

@@ -407,7 +407,6 @@ to do is to put the following two lines first:
 sub handle_request {
     my $self = shift;
 
-
     local $Dispatcher = $self->new();
 
     # XXX TODO: refactor this out somehow?
