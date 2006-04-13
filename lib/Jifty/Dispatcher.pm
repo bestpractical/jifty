@@ -195,7 +195,7 @@ default page in call_next.
 
 =head2 dispatch $path
 
-eispatch again using $path as the request path, preserving args.
+Dispatch again using $path as the request path, preserving args.
 
 =head2 next_rule
 
