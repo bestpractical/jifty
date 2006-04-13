@@ -26,13 +26,13 @@ specified by providing at most one of the following keys:
 =item append => PATH
 
 Add the given C<PATH> as a new fragment, just before the close of the
-CSS selector given by C<element>, which defaults to the end of the
+CSS selector given by L</element>, which defaults to the end of the
 current region.
 
 =item prepend => PATH
 
 Add the given C<PATH> as a new fragment, just after the start of the
-CSS selector given by C<element>, which defaults to the start of the
+CSS selector given by L</element>, which defaults to the start of the
 current region.
 
 =item replace_with => PATH
@@ -65,7 +65,7 @@ region.
 =item element => CSS SELECTOR
 
 A css selector specifying where the new region should be placed; used
-with C<append> and C<prepend>, above.  The
+with L</append> and L</prepend>, above.  The
 L<Jifty::Web::PageRegion/get_element> method may be useful in
 specifying elements of parent page regions.
 

@@ -25,10 +25,10 @@ L<Jifty::Web::Form::Element/accessors>.
 
 sub accessors {
     shift->SUPER::accessors,
-        qw(url escape_label tooltip continuation call returns submit preserve_state);
+        qw(url escape_label tooltip continuation call returns submit preserve_state button);
 }
 __PACKAGE__->mk_accessors(
-    qw(url escape_label tooltip continuation call returns submit preserve_state)
+    qw(url escape_label tooltip continuation call returns submit preserve_state button)
 );
 
 =head2 new PARAMHASH
@@ -97,6 +97,16 @@ A hash reference of query parameters that go on the link or button.
 These will end up being submitted exactly like normal query
 parameters.
 
+=item button
+
+By default, Jifty will attempt to make the clickable into a link
+rather than a button, if there are no actions to run on submit.
+Providing a true value for C<button> forces L<generate> to produce a
+L<Jifty::Web::Form::Clickable::InlineButton> instead of a
+L<Jifty::Web::Form::Link>.  Note that providing a false value will
+B<not> guarantee that you get a link, as a button may be necessary
+based on the presence of the L</submit> parameter.
+
 =item Anything from L<Jifty::Web::Form::Element>
 
 =back
@@ -118,7 +128,8 @@ sub new {
         continuation   => Jifty->web->request->continuation,
         submit         => [],
         preserve_state => 0,
-	parameters     => {},
+        parameters     => {},
+        button         => 0,
         @_,
     );
 
@@ -463,7 +474,7 @@ sub generate {
         }
     }
 
-    return ( ( not( $self->submit ) || @{ $self->submit } )
+    return ( ( not( $self->submit ) || @{ $self->submit } || $self->button )
         ? $self->as_button(@_)
         : $self->as_link(@_) );
 }
