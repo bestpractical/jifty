@@ -13,6 +13,7 @@ use MIME::Types;
 our $MIME = MIME::Types->new();
 our $LMExtract = Locale::Maketext::Extract->new;
 use constant USE_GETTEXT_STYLE => 1;
+use constant USE_MAKETEXT_STYLE => !USE_GETTEXT_STYLE;
 
 __PACKAGE__->mk_accessors(qw/language/);
 
@@ -103,7 +104,7 @@ sub update_catalog {
     $logger->info( "Updating message catalog '$translation'");
     $LMExtract->read_po($translation, USE_GETTEXT_STYLE) if ( -f $translation );
     $LMExtract->compile(USE_GETTEXT_STYLE);
-    $LMExtract->write_po($translation);
+    $LMExtract->write_po($translation, USE_MAKETEXT_STYLE, USE_GETTEXT_STYLE);
 }
 
 
