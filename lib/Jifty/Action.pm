@@ -78,6 +78,8 @@ sub new {
         sticky_on_failure => 1,
         @_);
 
+    $self->_get_current_user;
+
     $self->moniker($args{'moniker'} || 'auto-'.Jifty->web->serial);
     $self->order($args{'order'});
     $self->argument_values( { %{ $args{'arguments'} } } );
