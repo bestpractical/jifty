@@ -34,8 +34,8 @@ requires('HTTP::Server::Simple::Recorder');
 requires('Hash::Merge');
 requires('Hook::LexWrap');
 requires('Jifty::DBI' => '0.16' );            # Jifty::DBI::Collection Jifty::DBI::Handle Jifty::DBI::Record::Cachable Jifty::DBI::SchemaGenerator
-requires('Locale::Maketext::Extract' => '0.11');
-requires('Locale::Maketext::Lexicon' => '0.57');
+requires('Locale::Maketext::Extract' => '0.12');
+requires('Locale::Maketext::Lexicon' => '0.58');
 requires('Log::Log4perl');
 requires('LWP::UserAgent');
 requires('MIME::Types');
