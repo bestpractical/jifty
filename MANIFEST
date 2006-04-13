@@ -37,7 +37,6 @@ inc/Module/Install/Scripts.pm
 inc/Module/Install/Share.pm
 inc/Module/Install/Win32.pm
 inc/Module/Install/WriteAll.pm
-jifty_trunk
 lib/Email/Send/Jifty/Test.pm
 lib/Jifty.pm
 lib/Jifty/Action.pm
