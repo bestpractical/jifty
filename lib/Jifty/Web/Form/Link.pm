@@ -91,11 +91,11 @@ sub render {
     my $self = shift;
 
     my $label = $self->label;
-    $label = Jifty->web->mason->interp->apply_escapes( $label, 'h' )
+    $label = Jifty->web->escape( $label )
         if ( $self->escape_label );
 
     my $tooltip = $self->tooltip;
-    $tooltip = Jifty->web->mason->interp->apply_escapes( $tooltip, 'h' )
+    $tooltip = Jifty->web->escape( $tooltip )
         if ( $tooltip and $self->escape_label );
 
     Jifty->web->out(qq(<a));

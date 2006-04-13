@@ -766,7 +766,7 @@ sub query_string {
     my @params;
     while ( ( my $key, my $value ) = each %args ) {
         push @params,
-            $key . "=" . $self->mason->interp->apply_escapes( $value, 'u' );
+            $key . "=" . $self->escape_uri( $value );
     }
     return ( join( ';', @params ) );
 }
@@ -779,7 +779,18 @@ HTML-escapes the given string and returns it
 
 sub escape {
     my $self = shift;
-    return join '', map {$self->mason->interp->apply_escapes( $_, 'h' )} @_;
+    return join '', map {Jifty::View::Mason::Handler::escape_utf8( \$_ ); $_} @_;
+}
+
+=head3 escape_uri STRING
+
+URI-escapes the given string and returns it
+
+=cut
+
+sub escape_uri {
+    my $self = shift;
+    return join '', map {Jifty::View::Mason::Handler::escape_uri( \$_ ); $_} @_;
 }
 
 =head3 navigation
