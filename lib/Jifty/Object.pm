@@ -72,23 +72,24 @@ sub _get_current_user {
         package DB;
 
         # get the caller in array context to populate @DB::args
-        while (  not $self->current_user and $depth < 10) {
-            #local @DB::args;
-            my ($package, $filename, $line, $subroutine, $hasargs,
-                               $wantarray, $evaltext, $is_require, $hints, $bitmask)= caller( $depth++ );
-            my $caller_self      = $DB::args[0];
-            next unless (ref($caller_self)); #skip class methods;
-            next if ($caller_self eq $self);
-            next unless $caller_self->can('current_user');
+        while ( not $self->current_user and $depth < 10 ) {
 
-            eval {
-                if ( $caller_self->current_user and defined $caller_self->current_user->id) {
-                    $self->current_user($caller_self->current_user());
-                }
-            };
-            # Skip all that error checking
-        } 
+            #local @DB::args;
+            my ($package,   $filename, $line,       $subroutine, $hasargs,
+                $wantarray, $evaltext, $is_require, $hints,      $bitmask
+                )
+                = caller( $depth++ );
+            my $caller_self = $DB::args[0];
+            next unless ( ref($caller_self) );    #skip class methods;
+            next if ( $caller_self eq $self );
+            next
+                unless ( $caller_self->can('current_user')
+                and $caller_self->current_user
+                and defined $caller_self->current_user->id );
+            $self->current_user( $caller_self->current_user() );
+        }
     };
+
     # If we found something, return it
     return $self->current_user if $self->current_user;
 
