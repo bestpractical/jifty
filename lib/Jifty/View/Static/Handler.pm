@@ -95,6 +95,7 @@ Returns true if it looks like the client accepts gzip encoding. Otherwise, retur
 
 sub client_accepts_gzipped_content {
     my $self = shift;
+    no warnings 'uninitialized';
     return Jifty->handler->cgi->http('Accept-Encoding') =~ /\bgzip\b/;
 }
 
