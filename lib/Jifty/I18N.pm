@@ -49,8 +49,16 @@ sub new {
 
     $self->init;
 
-    my $lh         = eval { $class->get_handle };
-    my $loc_method = sub  { return undef unless (defined $_[0]); $lh->maketext(@_); };
+    # Allow hard-coded languages in the config file
+    my $lang = Jifty->config->framework('L10N')->{'Lang'};
+    $lang = [defined $lang ? $lang : ()] unless ref($lang) eq 'ARRAY';
+
+    my $lh         = $class->get_handle(@$lang);
+    my $loc_method = sub {
+        return undef unless (defined $_[0]);
+        $lh->maketext(@_);
+    };
+
     {
         no strict 'refs';
         no warnings 'redefine';
