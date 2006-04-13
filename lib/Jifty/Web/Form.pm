@@ -149,7 +149,7 @@ sub start {
     my %args = (@_);
 
     if ($self->is_open) {
-        warn("Trying to open a form when we already have one open");
+        $self->log->warn("Trying to open a form when we already have one open");
     }
 
     for (keys %args) {
@@ -196,7 +196,7 @@ sub end {
     my $self = shift;
 
     unless ($self->is_open) {
-        warn("Trying to close a form when we don't have one open");
+        $self->log->warn("Trying to close a form when we don't have one open");
     }
     Jifty->web->out( qq!<div class="hidden">\n! );
 
