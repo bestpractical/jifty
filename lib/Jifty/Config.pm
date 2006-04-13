@@ -208,6 +208,9 @@ sub guess {
     $app_class =~ s/-/::/g;
     my $db_name = lc $app_name;
     $db_name =~ s/-/_/g;
+
+    my $app_root = Jifty::Util->app_root;
+
     return {
         framework => {
             AdminMode        => 1,
@@ -229,15 +232,15 @@ sub guess {
             Mailer     => 'Sendmail',
             MailerArgs => [],
             L10N       => {
-                PoDir => 'share/po',
+                PoDir => "$app_root/share/po",
             },
             Web        => {
                 Port => '8888',
                 BaseURL => 'http://localhost',
-                SessionDir  => "var/session",
-                DataDir     => "var/mason",
-                StaticRoot   => "share/web/static",
-                TemplateRoot => "share/web/templates",
+                SessionDir  => "$app_root/var/session",
+                DataDir     => "$app_root/var/mason",
+                StaticRoot   => "$app_root/share/web/static",
+                TemplateRoot => "$app_root/share/web/templates",
                 ServeStaticFiles => 1,
                 MasonConfig => {
                     autoflush    => 0,
