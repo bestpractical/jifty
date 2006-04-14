@@ -3,4 +3,267 @@
 	Copyright: 2004-2005, Dean Edwards (http://dean.edwards.name/)
 	License: http://creativecommons.org/licenses/LGPL/2.1/
 */
-IE7.addModule("ie7-layout",function(){ie7Layout=this;HEADER+="*{boxSizing:content-box}";this.hasLayout=(appVersion<5.5)?function(e){return e.clientWidth}:function(e){return e.currentStyle.hasLayout};this.boxSizing=function(e){if(!ie7Layout.hasLayout(e)){e.style.height="0cm";if(e.currentStyle.verticalAlign=="auto")e.runtimeStyle.verticalAlign="top";_1(e)}};function _1(e){if(e!=viewport&&e.currentStyle.position!="absolute"){collapseMarginTop(e);collapseMarginBottom(e)}};var firstElementChild=cssQuery.valueOf("firstElementChild");var lastElementChild=cssQuery.valueOf("lastElementChild");function collapseMarginTop(e){if(!e.runtimeStyle.marginTop){var p=e.parentElement;if(p&&ie7Layout.hasLayout(p)&&e==firstElementChild(p))return;var f=firstElementChild(e);if(f&&f.currentStyle.styleFloat=="none"&&ie7Layout.hasLayout(f)){collapseMarginTop(f);m=_3(e,e.currentStyle.marginTop);c=_3(f,f.currentStyle.marginTop);if(m<0||c<0){e.runtimeStyle.marginTop=m+c}else{e.runtimeStyle.marginTop=Math.max(c,m)}f.runtimeStyle.marginTop="0px"}}};eval(String(collapseMarginTop).replace(/Top/g,"Bottom").replace(/first/g,"last"));function _3(e,v){return(v=="auto")?0:getPixelValue(e,v)};var U=/^[.\d][\w%]*$/,A=/^(auto|0cm)$/,N="[.\\d]";var applyWidth,applyHeight;function borderBox(e){applyWidth(e);applyHeight(e)};function fixWidth(H){applyWidth=function(e){if(!PERCENT.test(e.currentStyle.width))fixWidth(e);_1(e)};function fixWidth(e,v){if(!e.runtimeStyle.fixedWidth){if(!v)v=e.currentStyle.width;e.runtimeStyle.fixedWidth=(U.test(v))?Math.max(0,getFixedWidth(e,v)):v;setOverrideStyle(e,"width",e.runtimeStyle.fixedWidth)}};function layoutWidth(e){if(!isFixed(e)){var l=e.offsetParent;while(l&&!ie7Layout.hasLayout(l))l=l.offsetParent}return(l||viewport).clientWidth};function getPixelWidth(e,v){if(PERCENT.test(v))return parseInt(parseFloat(v)/100*layoutWidth(e));return getPixelValue(e,v)};var getFixedWidth=function(e,v){var b=e.currentStyle["box-sizing"]=="border-box";var a=0;if(quirksMode&&!b)a+=getBorderWidth(e)+getPaddingWidth(e);else if(!quirksMode&&b)a-=getBorderWidth(e)+getPaddingWidth(e);return getPixelWidth(e,v)+a};function getBorderWidth(e){return e.offsetWidth-e.clientWidth};function getPaddingWidth(e){return getPixelWidth(e,e.currentStyle.paddingLeft)+getPixelWidth(e,e.currentStyle.paddingRight)};eval(String(getPaddingWidth).replace(/padding/g,"margin").replace(/Padding/g,"Margin"));HEADER+="*{minWidth:none;maxWidth:none;min-width:none;max-width:none}";function minWidth(e){if(e.currentStyle["min-width"]!=null){e.style.minWidth=e.currentStyle["min-width"]}if(register(minWidth,e,e.currentStyle.minWidth!="none")){ie7Layout.boxSizing(e);fixWidth(e);resizeWidth(e)}};eval(String(minWidth).replace(/min/g,"max"));ie7Layout.minWidth=minWidth;ie7Layout.maxWidth=maxWidth;function resizeWidth(e){var r=e.getBoundingClientRect();var w=r.right-r.left;if(e.currentStyle.minWidth!="none"&&w<=getFixedWidth(e,e.currentStyle.minWidth)){e.runtimeStyle.width=getFixedWidth(e,e.currentStyle.minWidth)}else if(e.currentStyle.maxWidth!="none"&&w>=getFixedWidth(e,e.currentStyle.maxWidth)){e.runtimeStyle.width=getFixedWidth(e,e.currentStyle.maxWidth)}else{e.runtimeStyle.width=e.runtimeStyle.fixedWidth}};function fixRight(e){if(register(fixRight,e,/^(fixed|absolute)$/.test(e.currentStyle.position)&&getDefinedStyle(e,"left")!="auto"&&getDefinedStyle(e,"right")!="auto"&&A.test(getDefinedStyle(e,"width")))){resizeRight(e);ie7Layout.boxSizing(e)}};ie7Layout.fixRight=fixRight;function resizeRight(e){var l=getPixelWidth(e,e.runtimeStyle._4||e.currentStyle.left);var w=layoutWidth(e)-getPixelWidth(e,e.currentStyle.right)-l-getMarginWidth(e);if(parseInt(e.runtimeStyle.width)==w)return;e.runtimeStyle.width="";if(isFixed(e)||H||e.offsetWidth<w){if(!quirksMode)w-=getBorderWidth(e)+getPaddingWidth(e);if(w<0)w=0;e.runtimeStyle.fixedWidth=w;setOverrideStyle(e,"width",w)}};var _2=0;addResize(function(){var i,w=(_2<viewport.clientWidth);_2=viewport.clientWidth;for(i in minWidth.elements){var e=minWidth.elements[i];var f=(parseInt(e.runtimeStyle.width)==getFixedWidth(e,e.currentStyle.minWidth));if(w&&f)e.runtimeStyle.width="";if(w==f)resizeWidth(e)}for(i in maxWidth.elements){var e=maxWidth.elements[i];var f=(parseInt(e.runtimeStyle.width)==getFixedWidth(e,e.currentStyle.maxWidth));if(!w&&f)e.runtimeStyle.width="";if(w!=f)resizeWidth(e)}for(i in fixRight.elements)resizeRight(fixRight.elements[i])});if(window.IE7_BOX_MODEL!==false){ie7CSS.addRecalc("width",N,quirksMode?applyWidth:_1)}ie7CSS.addRecalc("min-width",N,minWidth);ie7CSS.addRecalc("max-width",N,maxWidth);ie7CSS.addRecalc("right",N,fixRight)};ie7CSS.addRecalc("border-spacing",N,function(e){if(e.currentStyle.borderCollapse!="collapse"){e.cellSpacing=getPixelValue(e,e.currentStyle["border-spacing"])}});ie7CSS.addRecalc("box-sizing","content-box",this.boxSizing);ie7CSS.addRecalc("box-sizing","border-box",borderBox);var _0=new ParseMaster;_0.add(/Width/,"Height");_0.add(/width/,"height");_0.add(/Left/,"Top");_0.add(/left/,"top");_0.add(/Right/,"Bottom");_0.add(/right/,"bottom");eval(_0.exec(String(fixWidth)));fixWidth();fixHeight(true)});
+IE7.addModule("ie7-layout", function() {
+// big, ugly box-model hack + min/max stuff
+
+// #tantek > #erik > #dean { voice-family: hacker; }
+
+// this module is useful to other modules so it is global
+//  (all modules are anyway through the modules collection)
+ie7Layout = this;
+
+// -----------------------------------------------------------------------
+// "layout"
+// -----------------------------------------------------------------------
+
+HEADER += "*{boxSizing:content-box}";
+
+// does an element have "layout" ?
+this.hasLayout = (appVersion < 5.5) ? function($element) {
+	// element.currentStyle.hasLayout doesn't work for IE5.0
+	return $element.clientWidth;
+} : function($element) {
+	return $element.currentStyle.hasLayout;
+};
+
+// give an element "layout"
+this.boxSizing = function($element) {
+	if (!ie7Layout.hasLayout($element)) {
+	//#	$element.runtimeStyle.fixedHeight =
+		$element.style.height = "0cm";
+		if ($element.currentStyle.verticalAlign == "auto")
+			$element.runtimeStyle.verticalAlign = "top";
+		// when an element acquires "layout", margins no longer collapse correctly
+		_collapseMargins($element);
+	}
+};
+
+// -----------------------------------------------------------------------
+// Margin Collapse
+// -----------------------------------------------------------------------
+
+function _collapseMargins($element) {
+	if ($element != viewport && $element.currentStyle.position != "absolute") {
+		collapseMarginTop($element);
+		collapseMarginBottom($element);
+	}
+};
+
+var firstElementChild = cssQuery.valueOf("firstElementChild");
+var lastElementChild = cssQuery.valueOf("lastElementChild");
+
+function collapseMarginTop($element) {
+	if (!$element.runtimeStyle.marginTop) {
+		var $parentElement = $element.parentElement;
+		if ($parentElement && ie7Layout.hasLayout($parentElement) && $element == firstElementChild($parentElement)) return;
+		var $firstChild = firstElementChild($element);
+		if ($firstChild && $firstChild.currentStyle.styleFloat == "none" && ie7Layout.hasLayout($firstChild)) {
+			collapseMarginTop($firstChild);
+			$marginTop = _getMargin($element, $element.currentStyle.marginTop);
+			$childMarginTop = _getMargin($firstChild, $firstChild.currentStyle.marginTop);
+			if ($marginTop < 0 || $childMarginTop < 0) {
+				$element.runtimeStyle.marginTop = $marginTop + $childMarginTop;
+			} else {
+				$element.runtimeStyle.marginTop = Math.max($childMarginTop, $marginTop);
+			}
+			$firstChild.runtimeStyle.marginTop = "0px";
+		}
+	}
+};
+eval(String(collapseMarginTop).replace(/Top/g, "Bottom").replace(/first/g, "last"));
+
+function _getMargin($element, $value) {
+	return ($value == "auto") ? 0 : getPixelValue($element, $value);
+};
+
+// -----------------------------------------------------------------------
+// box-model
+// -----------------------------------------------------------------------
+
+// constants
+var $UNIT = /^[.\d][\w%]*$/, $AUTO = /^(auto|0cm)$/, $NUMERIC = "[.\\d]";
+
+var applyWidth, applyHeight;
+function borderBox($element){
+	applyWidth($element);
+	applyHeight($element);
+};
+
+function fixWidth($HEIGHT) {
+	applyWidth = function($element) {
+		if (!PERCENT.test($element.currentStyle.width)) fixWidth($element);
+		_collapseMargins($element);
+	};
+
+	function fixWidth($element, $value) {
+		if (!$element.runtimeStyle.fixedWidth) {
+			if (!$value) $value = $element.currentStyle.width;
+			$element.runtimeStyle.fixedWidth = ($UNIT.test($value)) ? Math.max(0, getFixedWidth($element, $value)) : $value;
+			setOverrideStyle($element, "width", $element.runtimeStyle.fixedWidth);
+		}
+	};
+
+	function layoutWidth($element) {
+		if (!isFixed($element)) {
+			var $layoutParent = $element.offsetParent;
+			while ($layoutParent && !ie7Layout.hasLayout($layoutParent)) $layoutParent = $layoutParent.offsetParent;
+		}
+		return ($layoutParent || viewport).clientWidth;
+	};
+
+	function getPixelWidth($element, $value) {
+		if (PERCENT.test($value)) return parseInt(parseFloat($value) / 100 * layoutWidth($element));
+		return getPixelValue($element, $value);
+	};
+
+	var getFixedWidth = function($element, $value) {
+		var $borderBox = $element.currentStyle["box-sizing"] == "border-box";
+		var $adjustment = 0;
+		if (quirksMode && !$borderBox)
+			$adjustment += getBorderWidth($element) + getPaddingWidth($element);
+		else if (!quirksMode && $borderBox)
+			$adjustment -= getBorderWidth($element) + getPaddingWidth($element);
+		return getPixelWidth($element, $value) + $adjustment;
+	};
+
+	// easy way to get border thickness for elements with "layout"
+	function getBorderWidth($element) {
+		return $element.offsetWidth - $element.clientWidth;
+	};
+
+	// have to do some pixel conversion to get padding thickness :-(
+	function getPaddingWidth($element) {
+		return getPixelWidth($element, $element.currentStyle.paddingLeft) +
+			getPixelWidth($element, $element.currentStyle.paddingRight);
+	};
+	// clone the getPaddingWidth function to make a getMarginWidth function
+	eval(String(getPaddingWidth).replace(/padding/g, "margin").replace(/Padding/g, "Margin"));
+
+// -----------------------------------------------------------------------
+// min/max
+// -----------------------------------------------------------------------
+
+	HEADER += "*{minWidth:none;maxWidth:none;min-width:none;max-width:none}";
+
+	// handle min-width property
+	function minWidth($element) {
+		// IE6 supports min-height so we frig it here
+		//#if ($element.currentStyle.minHeight == "auto") $element.runtimeStyle.minHeight = 0;
+		if ($element.currentStyle["min-width"] != null) {
+			$element.style.minWidth = $element.currentStyle["min-width"];
+		}
+		if (register(minWidth, $element, $element.currentStyle.minWidth != "none")) {
+			ie7Layout.boxSizing($element);
+			fixWidth($element);
+			resizeWidth($element);
+		}
+	};
+	// clone the minWidth function to make a maxWidth function
+	eval(String(minWidth).replace(/min/g, "max"));
+	// expose these methods
+	ie7Layout.minWidth = minWidth;
+	ie7Layout.maxWidth = maxWidth;
+
+	// apply min/max restrictions
+	function resizeWidth($element) {
+		// check boundaries
+		var $rect = $element.getBoundingClientRect();
+		var $width = $rect.right - $rect.left;
+
+		if ($element.currentStyle.minWidth != "none" && $width <= getFixedWidth($element, $element.currentStyle.minWidth)) {
+			$element.runtimeStyle.width = getFixedWidth($element, $element.currentStyle.minWidth);
+		} else if ($element.currentStyle.maxWidth != "none" && $width >= getFixedWidth($element, $element.currentStyle.maxWidth)) {
+			$element.runtimeStyle.width = getFixedWidth($element, $element.currentStyle.maxWidth);
+		} else {
+			$element.runtimeStyle.width = $element.runtimeStyle.fixedWidth; // || "auto";
+		}
+	};
+
+// -----------------------------------------------------------------------
+// right/bottom
+// -----------------------------------------------------------------------
+
+	function fixRight($element) {
+		if (register(fixRight, $element, /^(fixed|absolute)$/.test($element.currentStyle.position) &&
+		    getDefinedStyle($element, "left") != "auto" &&
+		    getDefinedStyle($element, "right") != "auto" &&
+		    $AUTO.test(getDefinedStyle($element, "width")))) {
+		    	resizeRight($element);
+		    	ie7Layout.boxSizing($element);
+		}
+	};
+	ie7Layout.fixRight = fixRight;
+
+	function resizeRight($element) {
+		var $left = getPixelWidth($element, $element.runtimeStyle._left || $element.currentStyle.left);
+		var $width = layoutWidth($element) - getPixelWidth($element, $element.currentStyle.right) -	$left - getMarginWidth($element);
+		if (parseInt($element.runtimeStyle.width) == $width) return;
+		$element.runtimeStyle.width = "";
+		if (isFixed($element) || $HEIGHT || $element.offsetWidth < $width) {
+	    	if (!quirksMode) $width -= getBorderWidth($element) + getPaddingWidth($element);
+			if ($width < 0) $width = 0;
+			$element.runtimeStyle.fixedWidth = $width;
+			setOverrideStyle($element, "width", $width);
+		}
+	};
+
+// -----------------------------------------------------------------------
+// window.onresize
+// -----------------------------------------------------------------------
+
+	// handle window resize
+	var _clientWidth = 0;
+	addResize(function() {
+		var i, $wider = (_clientWidth < viewport.clientWidth);
+		_clientWidth = viewport.clientWidth;
+		// resize elements with "min-width" set
+		for (i in minWidth.elements) {
+			var $element = minWidth.elements[i];
+			var $fixedWidth = (parseInt($element.runtimeStyle.width) == getFixedWidth($element, $element.currentStyle.minWidth));
+			if ($wider && $fixedWidth) $element.runtimeStyle.width = "";
+			if ($wider == $fixedWidth) resizeWidth($element);
+		}
+		// resize elements with "max-width" set
+		for (i in maxWidth.elements) {
+			var $element = maxWidth.elements[i];
+			var $fixedWidth = (parseInt($element.runtimeStyle.width) == getFixedWidth($element, $element.currentStyle.maxWidth));
+			if (!$wider && $fixedWidth) $element.runtimeStyle.width = "";
+			if ($wider != $fixedWidth) resizeWidth($element);
+		}
+		// resize elements with "right" set
+		for (i in fixRight.elements) resizeRight(fixRight.elements[i]);
+	});
+
+// -----------------------------------------------------------------------
+// fix CSS
+// -----------------------------------------------------------------------
+	if (window.IE7_BOX_MODEL !== false) {
+		ie7CSS.addRecalc("width", $NUMERIC, quirksMode ? applyWidth : _collapseMargins);
+	}
+	ie7CSS.addRecalc("min-width", $NUMERIC, minWidth);
+	ie7CSS.addRecalc("max-width", $NUMERIC, maxWidth);
+	ie7CSS.addRecalc("right", $NUMERIC, fixRight);
+};
+ie7CSS.addRecalc("border-spacing", $NUMERIC, function($element) {
+	if ($element.currentStyle.borderCollapse != "collapse") {
+		$element.cellSpacing = getPixelValue($element, $element.currentStyle["border-spacing"]);
+	}
+});
+ie7CSS.addRecalc("box-sizing", "content-box", this.boxSizing);
+ie7CSS.addRecalc("box-sizing", "border-box", borderBox);
+
+// clone the fixWidth function to create a fixHeight function
+var _rotate = new ParseMaster;
+_rotate.add(/Width/, "Height");
+_rotate.add(/width/, "height");
+_rotate.add(/Left/, "Top");
+_rotate.add(/left/, "top");
+_rotate.add(/Right/, "Bottom");
+_rotate.add(/right/, "bottom");
+eval(_rotate.exec(String(fixWidth)));
+
+// apply box-model + min/max fixes
+fixWidth();
+fixHeight(true);
+
+});

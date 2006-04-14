@@ -1,1 +1,3 @@
-<component lightweight="true"><attach event="ondocumentready" onevent="IE7.init()"/></component>
+<component lightweight="true">
+ <attach event="ondocumentready" onevent="IE7.init()"/>
+</component>

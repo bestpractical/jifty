@@ -3,4 +3,1203 @@
 	Copyright: 2004-2005, Dean Edwards (http://dean.edwards.name/)
 	License: http://creativecommons.org/licenses/LGPL/2.1/
 */
-eval(function(p,a,c,k,e,d){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a)>35?String.fromCharCode(c+29):c.toString(36))};if(!''.replace(/^/,String)){while(c--)d[e(c)]=k[c]||e(c);k=[function(e){return d[e]}];e=function(){return'\\w+'};c=1};while(c--)if(k[c])p=p.replace(new RegExp('\\b'+e(c)+'\\b','g'),k[c]);return p}('x(!1M.1j)z 6(){1l{1M.1j=8;4 1W=8.2m=z 26;8.O=6(){7"1j 2q 0.9 (5G)"};4 36=/36/.B(42.41.40);4 1G=(36)?6(m){1M.1G(1j+"\\n\\n"+m)}:1W;4 2t=5F.2t.1g(/5E (\\d\\.\\d)/)[1];4 2z=K.5D!="5C";x(/5B/.B(42.41.40)||2t<5||!/^5A/.B(K.1J.2A))7;4 1H=K.39=="1H";4 1t,5z;4 1J=K.1J,2s,3X,17=K.17;4 5y="!";4 22={};4 1u=1C;1j.2m=6(n,s){x(!22[n]){x(1u)1k("s="+2o(s));22[n]=z s()}};4 R=/^[\\w\\.]+[^:]*$/;6 1I(h,p){x(R.B(h))h=(p||"")+h;7 h};6 2e(h,p){h=1I(h,p);7 h.1d(0,h.3n("/")+1)};4 s=K.3Z[K.3Z.y-1];1l{1k(s.3z)}1i(i){}4 1R=2e(s.5x);4 1F;1l{4 l=(5w()>=5)?"5v":"5u";1F=z 5t(l+".5s")}1i(i){}4 2w={};6 2y(h,p){1l{h=1I(h,p);x(!2w[h]){1F.5r("5q",h,1C);1F.5p();x(1F.3Y==0||1F.3Y==5o){2w[h]=1F.5n}}}1i(i){1G("2x [1]: 30 5m 5l "+h)}37{7 2w[h]||""}};4 5k=1I("5j.5i",1R);6 1E(V){x(V!=1L){V.2v=13.16.2v;V.12=13.16.12}7 V};1E.12=6(p,c){x(!p)p={};x(!c)c=p.J;x(c=={}.J)c=z 26("8.2v()");c.Y=z 26("7 8");c.Y.16=z 8.Y;c.Y.16.12(p);c.16=z c.Y;c.Y.16.J=c.16.J=c;c.1r=8;c.12=F.32;c.2u=8.2u;7 c};1E.Y=z 26("7 8");1E.Y.16={J:1E,2v:6(){7 F.32.5h.1r.2k(8,F)},12:6(V){x(8==8.J.16&&8.J.12){7 8.J.Y.16.12(V)}D(4 i 5g V){2K(i){1o"J":1o"O":1o"Y":2X}x(2V V[i]=="6"&&V[i]!=8[i]){V[i].1r=8[i]}8[i]=V[i]}x(V.O!=8.O&&V.O!={}.O){V.O.1r=8.O;8.O=V.O}7 8}};6 13(){};8.13=1E.12({J:13,O:6(){7"[5f "+(8.J.2Z||"5e")+"]"},5d:6(1h){7 8.J==1h||1h.2u(8.J)}});13.2Z="13";13.1r=1L;13.2u=6(1h){1f(1h&&1h.1r!=8)1h=1h.1r;7 3J(1h)};13.Y.1r=1E;2a 8.13;4 3A=13.12({J:6(){8.5c=[];8.1p=[]},1s:1W});x(2t<5.5)1k(2y("Z-5b.3a",1R));4 35=1C;1j.1s=6(){1l{x(35)7;35=1H=1c;2s=K.2s;3X=(2z)?2s:1J;x(1K&&1t)1t.2k();15.2k();1n();1G("1u 5a")}1i(e){1G("2x [2]: "+e.38)}};4 1p=[];6 2C(r){1p.11(r)};6 1n(){H.3P();x(1K&&1t)1t.1n();15.1n();D(4 i=0;i<1p.y;i++)1p[i]()};6 23(){4 E=0,R=1,L=2;4 G=/\\(/g,S=/\\$\\d/,I=/^\\$\\d+$/,T=/([\'"])\\1\\+(.*)\\+\\1\\1$/,3Q=/\\\\./g,Q=/\'/,3W=/\\25[^\\25]*\\25/g;4 1X=8;8.18=6(e,r){x(!r)r="";4 l=(34(2o(e)).1g(G)||"").y+1;x(S.B(r)){x(I.B(r)){r=3e(r.1d(1))-1}1b{4 i=l;4 q=Q.B(34(r))?\'"\':"\'";1f(i)r=r.2S("$"+i--).2p(q+"+a[o+"+i+"]+"+q);r=z 26("a,o","7"+q+r.19(T,"$1")+q)}}3V(e||"/^$/",r,l)};8.1U=6(s){24.y=0;7 3R(3S(s,8.2r).19(z 1Z(1D,8.33?"2I":"g"),3T),8.2r).19(3W,"")};8.59=6(){1D.y=0};4 24=[];4 1D=[];4 3U=6(){7"("+2o(8[E]).1d(1,-1)+")"};1D.O=6(){7 8.2p("|")};6 3V(){F.O=3U;1D[1D.y]=F}6 3T(){x(!F[0])7"";4 i=1,j=0,p;1f(p=1D[j++]){x(F[i]){4 r=p[R];2K(2V r){1o"6":7 r(F,i);1o"58":7 F[r+i]}4 d=(F[i].57(1X.2r)==-1)?"":"\\25"+F[i]+"\\25";7 d+r}1b i+=p[L]}};6 3S(s,e){7 e?s.19(z 1Z("\\\\"+e+"(.)","g"),6(m,c){24[24.y]=c;7 e}):s};6 3R(s,e){4 i=0;7 e?s.19(z 1Z("\\\\"+e,"g"),6(){7 e+(24[i++]||"")}):s};6 34(s){7 s.19(3Q,"")}};23.16={J:23,33:1C,2r:""};13.12(23.16);4 1V=23.12({33:1c});4 H=6(){4 2q="2.0.2";4 C=/\\s*,\\s*/;4 H=6(s,14){1l{4 m=[];4 u=F.32.2Q&&!14;4 b=(14)?(14.J==3G)?14:[14]:[K];4 31=3D(s).2S(C),i;D(i=0;i<31.y;i++){s=2R(31[i]);x(3K&&s.1d(0,3).2p("")==" *#"){s=s.1d(2);14=3H([],b,s[1])}1b 14=b;4 j=0,t,f,a,c="";1f(j<s.y){t=s[j++];f=s[j++];c+=t+f;a="";x(s[j]=="("){1f(s[j++]!=")"&&j<s.y){a+=s[j]}a=a.1d(0,-1);c+="("+a+")"}14=(u&&1P[c])?1P[c]:3F(14,t,f,a);x(u)1P[c]=14}m=m.3t(14)}2a H.30;7 m}1i(e){H.30=e;7[]}};H.O=6(){7"6 H() {\\n  [2q "+2q+"]\\n}"};4 1P={};H.2Q=1C;H.3P=6(s){x(s){s=2R(s).2p("");2a 1P[s]}1b 1P={}};4 22={};4 1u=1C;H.2m=6(n,s){x(1u)1k("s="+2o(s));22[n]=z s()};H.Y=6(c){7 c?1k(c):8};4 1B={};4 2n={};4 56={1g:/\\[([\\w-]+(\\|[\\w-]+)?)\\s*(\\W?=)?\\s*([^\\]]*)\\]/};4 55=[];1B[" "]=6(r,f,t,n){4 e,i,j;D(i=0;i<f.y;i++){4 s=2l(f[i],t,n);D(j=0;(e=s[j]);j++){x(1q(e)&&2T(e,n))r.11(e)}}};1B["#"]=6(r,f,i){4 e,j;D(j=0;(e=f[j]);j++)x(e.1a==i)r.11(e)};1B["."]=6(r,f,c){c=z 1Z("(^|\\\\s)"+c+"(\\\\s|$)");4 e,i;D(i=0;(e=f[i]);i++)x(c.B(e.2Z))r.11(e)};1B[":"]=6(r,f,p,a){4 t=2n[p],e,i;x(t)D(i=0;(e=f[i]);i++)x(t(e,a))r.11(e)};2n["21"]=6(e){4 d=2U(e);x(d.2Y)D(4 i=0;i<d.2Y.y;i++){x(d.2Y[i]==e)7 1c}};2n["2N"]=6(e){};4 1q=6(e){7(e&&e.3B==1&&e.2P!="!")?e:1L};4 3N=6(e){1f(e&&(e=e.54)&&!1q(e))2X;7 e};4 2W=6(e){1f(e&&(e=e.53)&&!1q(e))2X;7 e};4 3L=6(e){7 1q(e.3O)||2W(e.3O)};4 52=6(e){7 1q(e.3M)||3N(e.3M)};4 51=6(e){4 c=[];e=3L(e);1f(e){c.11(e);e=2W(e)}7 c};4 3K=1c;4 2O=6(e){4 d=2U(e);7(2V d.3I=="50")?/\\.4Z$/i.B(d.4Y):3J(d.3I=="4X 4W")};4 2U=6(e){7 e.4V||e.K};4 2l=6(e,t){7(t=="*"&&e.1A)?e.1A:e.2l(t)};4 4U=6(e,t,n){x(t=="*")7 1q(e);x(!2T(e,n))7 1C;x(!2O(e))t=t.4T();7 e.2P==t};4 2T=6(e,n){7!n||(n=="*")||(e.4S==n)};4 4R=6(e){7 e.4Q};6 3H(r,f,1a){4 m,i,j;D(i=0;i<f.y;i++){x(m=f[i].1A.4P(1a)){x(m.1a==1a)r.11(m);1b x(m.y!=1L){D(j=0;j<m.y;j++){x(m[j].1a==1a)r.11(m[j])}}}}7 r};x(![].11)3G.16.11=6(){D(4 i=0;i<F.y;i++){8[8.y]=F[i]}7 8.y};4 N=/\\|/;6 3F(14,t,f,a){x(N.B(f)){f=f.2S(N);a=f[0];f=f[1]}4 r=[];x(1B[t]){1B[t](r,14,f,a)}7 r};4 S=/^[^\\s>+~]/;4 3E=/[\\s#.:>+~()@]|[^\\s#.:>+~()@]+/g;6 2R(s){x(S.B(s))s=" "+s;7 s.1g(3E)||[]};4 W=/\\s*([\\s>+~(),]|^|$)\\s*/g;4 I=/([\\s>+~,]|[^(]\\+|^)([#.:@])/g;4 3D=6(s){7 s.19(W,"$1").19(I,"$1*$2")};4 1y={O:6(){7"\'"},1g:/^(\'[^\']*\')|("[^"]*")$/,B:6(s){7 8.1g.B(s)},18:6(s){7 8.B(s)?s:8+s+8},3C:6(s){7 8.B(s)?s.1d(1,-1):s}};4 1N=6(t){7 1y.3C(t)};4 E=/([\\/()[\\]?{}|*+-])/g;6 4O(s){7 s.19(E,"\\\\$1")};1u=1c;7 H}();H.2Q=1c;H.2m("Z",6(){1q=6(e){7(e&&e.3B==1&&e.2P!="!"&&!e.3d)?e:1L}});H.Y("1N=F[1]",3k);4 1K=!H.Y("2O(F[1])",1J);4 2h=":21{Z-21:21}:2N{Z-21:2N}"+(1K?"":"*{4N:0}");4 15=z(3A.12({2F:z 1V,1O:"",1w:"",2L:[],1s:6(){8.2M();8.2g()},2g:6(){15.1Y.X=2h+8.1O+8.1w},3y:6(){4 20=K.2l("1e"),s;D(4 i=20.y-1;(s=20[i]);i--){x(!s.2H&&!s.Z){8.2L.11(s.3z)}}},2k:6(){8.3y();8.2g();z 28("1O");8.3u()},3w:6(e,r){8.2F.18(e,r)},1n:6(){4 R=/3v\\d+/g;4 s=2h.1g(/[{,]/g).y;4 20=s+(8.1O.X.1g(/\\{/g)||"").y;4 3x=8.1Y.4M,r;4 2j,c,2i,e,i,j,k,1a;D(i=s;i<20;i++){r=3x[i];x(r&&(2j=r.1e.X.1g(R))){2i=H(r.4L);x(2i.y)D(j=0;j<2j.y;j++){1a=2j[j];c=15.1p[1a.1d(10)][2];D(k=0;(e=2i[k]);k++){x(e.1v[1a])c(e)}}}}},2C:6(p,t,h,r){t=z 1Z("([{;\\\\s])"+p+"\\\\s*:\\\\s*"+t+"[^;}]*");4 i=8.1p.y;x(r)r=p+":"+r;8.3w(t,6(m,o){7(r?m[o+1]+r:m[o])+";Z-"+m[o].1d(1)+";3v"+i+":1"});8.1p.11(F);7 i},1N:6(s){7 s.X||""},2M:6(){x(1H||!1K)K.2M();1b K.4K("<1e Z=1c></1e>");8.1Y=17[17.y-1];8.1Y.Z=1c;8.1Y.X=2h},3u:6(){D(4 i=0;i<17.y;i++){x(!17[i].Z&&17[i].X){17[i].X=""}}}}));6 28(m){8.1z=m;8.1S();15[m]=8;15.2g()};13.12({J:28,O:6(){7"@1z "+8.1z+"{"+8.X+"}"},1n:1W,1S:6(){8.X="";8.1N();8.3m();8.X=3j(8.X);f={}},1N:6(){4 3r=[].3t(15.2L);4 M=/@1z\\s+([^{]*)\\{([^@]+\\})\\s*\\}/2I;4 A=/\\4J\\b|^$/i,S=/\\4I\\b/i,P=/\\4H\\b/i;6 3q(c,m){2f.v=m;7 c.19(M,2f)};6 2f(4G,m,c){m=2J(m);2K(m){1o"1O":1o"1w":x(m!=2f.v)7"";1o"1A":7 c}7""};6 2J(m){x(A.B(m))7"1A";1b x(S.B(m))7(P.B(m))?"1A":"1O";1b x(P.B(m))7"1w"};4 1X=8;6 2G(s,p,m,l){4 c="";x(!l){m=2J(s.1z);l=0}x(m=="1A"||m==1X.1z){x(l<3){D(4 i=0;i<s.3s.y;i++){c+=2G(s.3s[i],2e(s.2d,p),m,l+1)}}c+=3l(s.2d?3p(s,p):3r.3h()||"");c=3q(c,1X.1z)}7 c};4 f={};6 3p(s,p){4 u=1I(s.2d,p);x(f[u])7"";f[u]=(s.2H)?"":3o(15.1N(s,p),2e(s.2d,p));7 f[u]};4 U=/(4F\\s*\\(\\s*[\'"]?)([\\w\\.]+[^:\\)]*[\'"]?\\))/2I;6 3o(c,p){7 c.19(U,"$1"+p.1d(0,p.3n("/")+1)+"$2")};D(4 i=0;i<17.y;i++){x(!17[i].2H&&!17[i].Z){8.X+=2G(17[i])}}},3m:6(){8.X=15.2F.1U(8.X)},1n:1W});4 1y=H.Y("1y");4 2b=[];6 3l(c){7 1x.1U(2c.1U(c))};6 2E(m,o){7 1y+(2b.11(m[o])-1)+1y};6 3k(v){7 1y.B(v)?1k(2b[1k(v)]):v};4 1x=z 1V;1x.18(/\\/\\*[^*]*\\*+([^\\/][^*]*\\*+)*\\//);1x.18(/\'[^\']*\'/,2E);1x.18(/"[^"]*"/,2E);1x.18(/\\s+/," ");1x.18(/@(4E|4D)[^;\\n]+[;\\n]|<!\\-\\-|\\-\\->/);4 2c=z 1V;2c.18(/\\\\\'/,"\\\\4C");2c.18(/\\\\"/,"\\\\4B");4 2D=z 1V;2D.18(/\'(\\d+)\'/,3i);6 3j(c){7 2D.1U(c)};6 3i(m,o){7 2b[m[o+1]]};4 2B=[];6 4A(h){2C(h);1Q(1M,"4z",h)};6 1Q(e,t,h){e.4y(t,h);2B.11(F)};6 3g(e,t,h){1l{e.4x(t,h)}1i(i){}};1Q(1M,"4w",6(){4 h;1f(h=2B.3h()){3g(h[0],h[1],h[2])}});6 4v(h,e,c){x(!h.29)h.29={};x(c)h.29[e.2A]=e;1b 2a h.29[e.2A];7 c};1Q(1M,"4u",6(){x(!15.1w)z 28("1w");15.1w.1n()});4 3f=/^\\d+(4t)?$/i;4 4s=/^\\d+%$/;4 4r=6(e,v){x(3f.B(v))7 3e(v);4 s=e.1e.1m;4 r=e.1T.1m;e.1T.1m=e.1v.1m;e.1e.1m=v||0;v=e.1e.4q;e.1e.1m=s;e.1T.1m=r;7 v};6 4p(t){4 e=K.4o(t||"4n");e.1e.X="3c:4m;4l:0;4k:4j;4i:4h;4g:4f(0 0 0 0);1m:-4e";e.3d=1c;7 e};4 27="Z-";6 4d(e){7 e.1v["Z-3c"]=="4c"};6 4b(e,p){7 e.1v[27+p]||e.1v[p]};6 4a(e,p,v){x(e.1v[27+p]==1L){e.1T[27+p]=e.1v[p]}e.1T[p]=v};6 49(o,c,u){4 t=48(6(){1l{x(!o.1S)7;o.1S(o,c,u);3b(t)}1i(i){3b(t)}},10)};1u=1c;x(2z)1k(2y("Z-47.3a",1R));15.1s();x(1K&&1t)1t.1s();x(1H)1j.1s();1b{1J.46(1I("Z-1S.45",1R));1Q(K,"44",6(){x(K.39=="1H")43(1j.1s,0)})}}1i(e){1G("2x [0]: "+e.38)}37{}};',62,353,'||||var||function|return|this|||||||||||||||||||||||||if|length|new||test||for||arguments||cssQuery||constructor|document||||toString|||||||that||cssText|valueOf|ie7||push|specialize|Common|fr|ie7CSS|prototype|styleSheets|add|replace|id|else|true|slice|style|while|match|klass|catch|IE7|eval|try|left|recalc|case|recalcs|thisElement|ancestor|init|ie7HTML|loaded|currentStyle|print|encoder|Quote|media|all|selectors|false|_0|ICommon|httpRequest|alert|complete|makePath|documentElement|isHTML|null|window|getText|screen|cache|addEventHandler|path|load|runtimeStyle|exec|Parser|DUMMY|self|styleSheet|RegExp|st|link|modules|ParseMaster|_1|x01|Function|_2|StyleSheet|elements|delete|_3|safeString|href|getPath|_4|refresh|HEADER|el|ca|apply|getElementsByTagName|addModule|pseudoClasses|String|join|version|escapeChar|body|appVersion|ancestorOf|inherit|_5|Error|loadFile|quirksMode|uniqueID|_6|addRecalc|decoder|_7|parser|_8|disabled|gi|_9|switch|styles|createStyleSheet|visited|isXML|tagName|caching|_10|split|compareNamespace|getDocument|typeof|nextElementSibling|continue|links|className|error|se|callee|ignoreCase|_11|_12|ie7_debug|finally|description|readyState|js|clearInterval|position|ie7_anon|parseInt|PIXEL|removeEventHandler|pop|_13|decode|getString|_14|parse|lastIndexOf|_15|_16|_17|_18|imports|concat|trash|ie7_recalc|addFix|ru|getInlineStyles|innerHTML|Fix|nodeType|remove|parseSelector|ST|select|Array|_19|mimeType|Boolean|isMSIE|firstElementChild|lastChild|previousElementSibling|firstChild|clearCache|ES|_20|_21|_22|_23|_24|DE|viewport|status|scripts|search|location|top|setTimeout|onreadystatechange|htc|addBehavior|quirks|setInterval|addTimer|setOverrideStyle|getDefinedStyle|fixed|isFixed|9999|rect|clip|none|border|block|display|padding|absolute|object|createElement|createTempElement|pixelLeft|getPixelValue|PERCENT|px|onbeforeprint|register|onunload|detachEvent|attachEvent|onresize|addResize|x22|x27|import|namespace|url|ma|bprint|bscreen|ball|write|selectorText|rules|margin|regEscape|item|innerText|getTextContent|scopeName|toUpperCase|compareTagName|ownerDocument|Document|XML|URL|xml|unknown|childElements|lastElementChild|nextSibling|previousSibling|attributeSelectors|AttributeSelector|indexOf|number|reset|successfully|ie5|fixes|instanceOf|Object|common|in|caller|gif|blank|BLANK_GIF|file|loading|responseText|200|send|GET|open|XMLHTTP|ActiveXObject|Microsoft|Msxml2|ScriptEngineMajorVersion|src|ANON|ie7Layout|ms_|ie7_off|CSS1Compat|compatMode|MSIE|navigator|alpha'.split('|'),0,{}))
+
+/* W3C compliance for Microsoft Internet Explorer */
+
+/* credits/thanks:
+	Shaggy, Martijn Wargers, Jimmy Cerra, Mark D Anderson,
+	Lars Dieckow, Erik Arvidsson, Gellért Gyuris, James Denny,
+	Unknown W Brackets, Benjamin Westfarer, Rob Eberhardt,
+	Bill Edney, Kevin Newman, James Crompton, Matthew Mastracci,
+	Doug Wright, Richard York, Kenneth Kolano, MegaZone,
+	Thomas Verelst
+*/
+
+if (!window.IE7) new function() {
+try {
+// -----------------------------------------------------------------------
+// globals
+// -----------------------------------------------------------------------
+window.IE7 = this;
+// in case of error...
+var DUMMY = this.addModule = new Function;
+// IE7 version info
+this.toString = function(){return "IE7 version 0.9 (alpha)"};
+// error reporting
+var ie7_debug = /ie7_debug/.test(top.location.search);
+var alert = (ie7_debug) ? function($message){window.alert(IE7+"\n\n"+$message)} : DUMMY;
+// IE version info
+var appVersion = navigator.appVersion.match(/MSIE (\d\.\d)/)[1];
+var quirksMode = document.compatMode != "CSS1Compat";
+// IE7 can be turned "off"
+if (/ie7_off/.test(top.location.search) || appVersion < 5 ||
+	!/^ms_/.test(document.documentElement.uniqueID)) return;
+// if using the favelet then the document has already loaded
+var complete = document.readyState == "complete";
+// another global
+var ie7HTML, ie7Layout; // loaded separately
+// handy
+var documentElement = document.documentElement, body, viewport, styleSheets = document.styleSheets;
+var ANON = "!";
+// -----------------------------------------------------------------------
+// external
+// -----------------------------------------------------------------------
+
+// cache for the various modules that make up IE7.
+//  modules are stored as functions. these are executed
+//  after the style sheet text has been loaded.
+// storing the modules as functions means that we avoid
+//  name clashes with other modules.
+var modules = {};
+var loaded = false;
+IE7.addModule = function($name, $script) {
+	if (!modules[$name]) {
+		if (loaded) eval("$script=" + String($script));
+		modules[$name] = new $script();
+	}
+};
+
+var $RELATIVE = /^[\w\.]+[^:]*$/;
+function makePath($href, $path) {
+	if ($RELATIVE.test($href)) $href = ($path || "") + $href;
+	return $href;
+};
+
+function getPath($href, $path) {
+	$href = makePath($href, $path);
+	return $href.slice(0, $href.lastIndexOf("/") + 1);
+};
+
+// get the path to this script
+var $script = document.scripts[document.scripts.length - 1];
+// create global variables from the inner text of the IE7 script
+try {
+	eval($script.innerHTML);
+} catch ($ignore) {
+	// ignore errors
+}
+var path = getPath($script.src);
+// we'll use microsoft's http request object to load external files
+var httpRequest;
+try {
+	var $lib = (ScriptEngineMajorVersion() >= 5) ? "Msxml2" : "Microsoft";
+	httpRequest = new ActiveXObject($lib + ".XMLHTTP");
+} catch ($ignore) {
+	// ActiveX disabled
+}
+var _fileCache = {};
+function loadFile($href, $path) {
+try {
+	$href = makePath($href, $path);
+	if (!_fileCache[$href]) {
+		// easy to load a file huh?
+		httpRequest.open("GET", $href, false);
+		httpRequest.send();
+		if (httpRequest.status == 0 || httpRequest.status == 200) {
+			_fileCache[$href] = httpRequest.responseText;
+		}
+	}
+} catch ($ignore) {
+	alert("Error [1]: error loading file " + $href);
+} finally {
+	return _fileCache[$href] || "";
+}};
+
+// a small transparent image used as a placeholder
+var BLANK_GIF = makePath("blank.gif", path);
+
+// -----------------------------------------------------------------------
+// OO support
+// -----------------------------------------------------------------------
+
+/*    ---   (require) /common/src?common.js       ---    */
+/*
+	common, version 1.0.4 (2005/06/05)
+	Copyright 2005, Dean Edwards
+	License: http://creativecommons.org/licenses/LGPL/2.1/
+*/
+
+// this function may be used to cast any javascript object
+//  to a common object
+function ICommon(that) {
+	if (that != null) {
+		that.inherit = Common.prototype.inherit;
+		that.specialize = Common.prototype.specialize;
+	}
+	return that;
+};
+
+// sub-classing
+ICommon.specialize = function($prototype, $constructor) {
+	// initialise class properties
+	if (!$prototype) $prototype = {};
+	if (!$constructor) $constructor = $prototype.constructor;
+	if ($constructor == {}.constructor) $constructor = new Function("this.inherit()");
+	// build the inheritance chain
+	//  insert a dummy constructor between the ancestor
+	//  and the new constructor. this allows standard
+	//  prototype inheritance plus chained constructor
+	//  functions.
+	$constructor.valueOf = new Function("return this");
+	$constructor.valueOf.prototype = new this.valueOf;
+	$constructor.valueOf.prototype.specialize($prototype);
+	$constructor.prototype = new $constructor.valueOf;
+	$constructor.valueOf.prototype.constructor =
+	$constructor.prototype.constructor = $constructor;
+	$constructor.ancestor = this;
+	$constructor.specialize = arguments.callee;
+	$constructor.ancestorOf = this.ancestorOf;
+	return $constructor;
+};
+
+// root of the inheritance chain
+ICommon.valueOf = new Function("return this");
+
+// common interface
+ICommon.valueOf.prototype = {
+constructor: ICommon,
+inherit: function() {
+//-
+//   Call this method from any other method to call that method's ancestor.
+//   If there is no ancestor function then this function will throw an error.
+//-
+	return arguments.callee.caller.ancestor.apply(this, arguments);
+},
+specialize: function(that) {
+//-
+//   Add the interface of another object to this object
+//-
+	// if this object is the prototype then specialize the /real/ prototype
+	if (this == this.constructor.prototype && this.constructor.specialize) {
+		return this.constructor.valueOf.prototype.specialize(that);
+	}
+	// add each of one of the source object's properties to this object
+	for (var i in that) {
+		switch (i) {
+			case "constructor": // don't do this one!
+			case "toString":    // do this one maually
+			case "valueOf":     // ignore this one...
+				continue;
+		}
+		// implement inheritance
+		if (typeof that[i] == "function" && that[i] != this[i]) {
+			that[i].ancestor = this[i];
+		}
+		// add the property
+		this[i] = that[i];
+	}
+	// do the "toString" function manually
+	if (that.toString != this.toString && that.toString != {}.toString) {
+		that.toString.ancestor = this.toString;
+		this.toString = that.toString;
+	}
+	return this;
+}};
+
+// create the root
+function Common() {
+//--
+//   empty constructor function
+//--
+};
+this.Common = ICommon.specialize({
+constructor: Common,
+toString: function() {
+    return "[common " + (this.constructor.className || "Object") + "]";
+},
+instanceOf: function(klass) {
+    return this.constructor == klass || klass.ancestorOf(this.constructor);
+}
+});
+Common.className = "Common";
+Common.ancestor = null;
+Common.ancestorOf = function(klass) {
+	// Is this class an ancestor of the supplied class?
+	while (klass && klass.ancestor != this) klass = klass.ancestor;
+	return Boolean(klass);
+};
+
+// preserve the common prototype so that we can tell when a
+//  property of the root class has changed
+Common.valueOf.ancestor = ICommon;
+
+// c'est fini!
+delete this.Common;
+
+var Fix = Common.specialize({
+	constructor: function() {
+		this.fixes = [];
+		this.recalcs = [];
+	},
+	init: DUMMY
+});
+
+// -----------------------------------------------------------------------
+// IE5.0 compatibility
+// -----------------------------------------------------------------------
+
+/* FAVELET */
+
+// load an external module to patch IE5.0 and override the functions above
+if (appVersion < 5.5) eval(loadFile("ie7-ie5.js", path));
+
+// -----------------------------------------------------------------------
+// initialisation
+// -----------------------------------------------------------------------
+
+var _initialised = false;
+IE7.init = function() {
+try {
+	// prevent further loading
+	if (_initialised) return;
+	_initialised = complete = true;
+
+	// frequently used references
+	body = document.body;
+	viewport = (quirksMode) ? body : documentElement;
+
+	// apply CSS/DOM fixes
+	if (isHTML && ie7HTML) ie7HTML.apply();
+	ie7CSS.apply();
+	recalc();
+	alert("loaded successfully");
+} catch ($error) {
+	alert("Error [2]: " + $error.description);
+}};
+
+// a store for functions that will be called when refreshing IE7
+var recalcs = [];
+function addRecalc($recalc) {
+	recalcs.push($recalc);
+};
+function recalc() {
+	cssQuery.clearCache();
+	if (isHTML && ie7HTML) ie7HTML.recalc();
+	// re-apply style sheet rules (re-calculate ie7 classes)
+	ie7CSS.recalc();
+	// apply global fixes to the document
+	for (var i = 0; i < recalcs.length; i++) recalcs[i]();
+};
+
+// -----------------------------------------------------------------------
+//  Parser
+// -----------------------------------------------------------------------
+
+/*    ---   (include) /my/src?ParseMaster.js   ---    */
+/*
+	ParseMaster, version 1.0.2 (2005-08-19)
+	Copyright 2005, Dean Edwards
+	License: http://creativecommons.org/licenses/LGPL/2.1/
+*/
+
+/* a multi-pattern parser */
+
+// KNOWN BUG: erroneous behavior when using escapeChar with a replacement value that is a function
+
+function ParseMaster() {
+	// constants
+	var $EXPRESSION = 0, $REPLACEMENT = 1, $LENGTH = 2;
+	// used to determine nesting levels
+	var $GROUPS = /\(/g, $SUB_REPLACE = /\$\d/, $INDEXED = /^\$\d+$/,
+	    $TRIM = /(['"])\1\+(.*)\+\1\1$/, $$ESCAPE = /\\./g, $QUOTE = /'/,
+	    $$DELETED = /\x01[^\x01]*\x01/g;
+	var self = this;
+	// public
+	this.add = function($expression, $replacement) {
+		if (!$replacement) $replacement = "";
+		// count the number of sub-expressions
+		//  - add one because each pattern is itself a sub-expression
+		var $length = (_internalEscape(String($expression)).match($GROUPS) || "").length + 1;
+		// does the pattern deal with sub-expressions?
+		if ($SUB_REPLACE.test($replacement)) {
+			// a simple lookup? (e.g. "$2")
+			if ($INDEXED.test($replacement)) {
+				// store the index (used for fast retrieval of matched strings)
+				$replacement = parseInt($replacement.slice(1)) - 1;
+			} else { // a complicated lookup (e.g. "Hello $2 $1")
+				// build a function to do the lookup
+				var i = $length;
+				var $quote = $QUOTE.test(_internalEscape($replacement)) ? '"' : "'";
+				while (i) $replacement = $replacement.split("$" + i--).join($quote + "+a[o+" + i + "]+" + $quote);
+				$replacement = new Function("a,o", "return" + $quote + $replacement.replace($TRIM, "$1") + $quote);
+			}
+		}
+		// pass the modified arguments
+		_add($expression || "/^$/", $replacement, $length);
+	};
+	// execute the global replacement
+	this.exec = function($string) {
+		_escaped.length = 0;
+		return _unescape(_escape($string, this.escapeChar).replace(
+			new RegExp(_patterns, this.ignoreCase ? "gi" : "g"), _replacement), this.escapeChar).replace($$DELETED, "");
+	};
+	// clear the patterns collection so that this object may be re-used
+	this.reset = function() {
+		_patterns.length = 0;
+	};
+
+	// private
+	var _escaped = [];  // escaped characters
+	var _patterns = []; // patterns stored by index
+	var _toString = function(){return "(" + String(this[$EXPRESSION]).slice(1, -1) + ")"};
+	_patterns.toString = function(){return this.join("|")};
+	// create and add a new pattern to the patterns collection
+	function _add() {
+		arguments.toString = _toString;
+		// store the pattern - as an arguments object (i think this is quicker..?)
+		_patterns[_patterns.length] = arguments;
+	}
+	// this is the global replace function (it's quite complicated)
+	function _replacement() {
+		if (!arguments[0]) return "";
+		var i = 1, j = 0, $pattern;
+		// loop through the patterns
+		while ($pattern = _patterns[j++]) {
+			// do we have a result?
+			if (arguments[i]) {
+				var $replacement = $pattern[$REPLACEMENT];
+				switch (typeof $replacement) {
+					case "function": return $replacement(arguments, i);
+					case "number": return arguments[$replacement + i];
+				}
+				var $delete = (arguments[i].indexOf(self.escapeChar) == -1) ? "" :
+					"\x01" + arguments[i] + "\x01";
+				return $delete + $replacement;
+			// skip over references to sub-expressions
+			} else i += $pattern[$LENGTH];
+		}
+	};
+	// encode escaped characters
+	function _escape($string, $escapeChar) {
+		return $escapeChar ? $string.replace(new RegExp("\\" + $escapeChar + "(.)", "g"), function($match, $char) {
+			_escaped[_escaped.length] = $char;
+			return $escapeChar;
+		}) : $string;
+	};
+	// decode escaped characters
+	function _unescape($string, $escapeChar) {
+		var i = 0;
+		return $escapeChar ? $string.replace(new RegExp("\\" + $escapeChar, "g"), function() {
+			return $escapeChar + (_escaped[i++] || "");
+		}) : $string;
+	};
+	function _internalEscape($string) {
+		return $string.replace($$ESCAPE, "");
+	};
+};
+ParseMaster.prototype = {
+	constructor: ParseMaster,
+	ignoreCase: false,
+	escapeChar: ""
+};
+Common.specialize(ParseMaster.prototype);
+var Parser = ParseMaster.specialize({ignoreCase: true});
+
+// -----------------------------------------------------------------------
+//  cssQuery
+// -----------------------------------------------------------------------
+
+/*    ---   (include) /my/cssQuery/src?cssQuery.js   ---    */
+/*
+	cssQuery, version 2.0.2 (2005-08-19)
+	Copyright: 2004-2005, Dean Edwards (http://dean.edwards.name/)
+	License: http://creativecommons.org/licenses/LGPL/2.1/
+*/
+
+// the following functions allow querying of the DOM using CSS selectors
+var cssQuery = function() {
+var version = "2.0.2";
+
+// -----------------------------------------------------------------------
+// main query function
+// -----------------------------------------------------------------------
+
+var $COMMA = /\s*,\s*/;
+var cssQuery = function($selector, $$from) {
+try {
+	var $match = [];
+	var $useCache = arguments.callee.caching && !$$from;
+	var $base = ($$from) ? ($$from.constructor == Array) ? $$from : [$$from] : [document];
+	// process comma separated selectors
+	var $$selectors = parseSelector($selector).split($COMMA), i;
+	for (i = 0; i < $$selectors.length; i++) {
+		// convert the selector to a stream
+		$selector = _toStream($$selectors[i]);
+		// faster chop if it starts with id (MSIE only)
+		if (isMSIE && $selector.slice(0, 3).join("") == " *#") {
+			$selector = $selector.slice(2);
+			$$from = _msie_selectById([], $base, $selector[1]);
+		} else $$from = $base;
+		// process the stream
+		var j = 0, $token, $filter, $arguments, $cacheSelector = "";
+		while (j < $selector.length) {
+			$token = $selector[j++];
+			$filter = $selector[j++];
+			$cacheSelector += $token + $filter;
+			// some pseudo-classes allow arguments to be passed
+			//  e.g. nth-child(even)
+			$arguments = "";
+			if ($selector[j] == "(") {
+				while ($selector[j++] != ")" && j < $selector.length) {
+					$arguments += $selector[j];
+				}
+				$arguments = $arguments.slice(0, -1);
+				$cacheSelector += "(" + $arguments + ")";
+			}
+			// process a token/filter pair use cached results if possible
+			$$from = ($useCache && cache[$cacheSelector]) ?
+				cache[$cacheSelector] : select($$from, $token, $filter, $arguments);
+			if ($useCache) cache[$cacheSelector] = $$from;
+		}
+		$match = $match.concat($$from);
+	}
+	delete cssQuery.error;
+	return $match;
+} catch ($error) {
+	cssQuery.error = $error;
+	return [];
+}};
+
+// -----------------------------------------------------------------------
+// public interface
+// -----------------------------------------------------------------------
+
+cssQuery.toString = function() {
+	return "function cssQuery() {\n  [version " + version + "]\n}";
+};
+
+// caching
+var cache = {};
+cssQuery.caching = false;
+cssQuery.clearCache = function($selector) {
+	if ($selector) {
+		$selector = _toStream($selector).join("");
+		delete cache[$selector];
+	} else cache = {};
+};
+
+// allow extensions
+var modules = {};
+var loaded = false;
+cssQuery.addModule = function($name, $script) {
+	if (loaded) eval("$script=" + String($script));
+	modules[$name] = new $script();;
+};
+
+// hackery
+cssQuery.valueOf = function($code) {
+	return $code ? eval($code) : this;
+};
+
+// -----------------------------------------------------------------------
+// declarations
+// -----------------------------------------------------------------------
+
+var selectors = {};
+var pseudoClasses = {};
+// a safari bug means that these have to be declared here
+var AttributeSelector = {match: /\[([\w-]+(\|[\w-]+)?)\s*(\W?=)?\s*([^\]]*)\]/};
+var attributeSelectors = [];
+
+// -----------------------------------------------------------------------
+// selectors
+// -----------------------------------------------------------------------
+
+// descendant selector
+selectors[" "] = function($results, $from, $tagName, $namespace) {
+	// loop through current selection
+	var $element, i, j;
+	for (i = 0; i < $from.length; i++) {
+		// get descendants
+		var $subset = getElementsByTagName($from[i], $tagName, $namespace);
+		// loop through descendants and add to results selection
+		for (j = 0; ($element = $subset[j]); j++) {
+			if (thisElement($element) && compareNamespace($element, $namespace))
+				$results.push($element);
+		}
+	}
+};
+
+// ID selector
+selectors["#"] = function($results, $from, $id) {
+	// loop through current selection and check ID
+	var $element, j;
+	for (j = 0; ($element = $from[j]); j++) if ($element.id == $id) $results.push($element);
+};
+
+// class selector
+selectors["."] = function($results, $from, $className) {
+	// create a RegExp version of the class
+	$className = new RegExp("(^|\\s)" + $className + "(\\s|$)");
+	// loop through current selection and check class
+	var $element, i;
+	for (i = 0; ($element = $from[i]); i++)
+		if ($className.test($element.className)) $results.push($element);
+};
+
+// pseudo-class selector
+selectors[":"] = function($results, $from, $pseudoClass, $arguments) {
+	// retrieve the cssQuery pseudo-class function
+	var $test = pseudoClasses[$pseudoClass], $element, i;
+	// loop through current selection and apply pseudo-class filter
+	if ($test) for (i = 0; ($element = $from[i]); i++)
+		// if the cssQuery pseudo-class function returns "true" add the element
+		if ($test($element, $arguments)) $results.push($element);
+};
+
+// -----------------------------------------------------------------------
+// pseudo-classes
+// -----------------------------------------------------------------------
+
+pseudoClasses["link"] = function($element) {
+	var $document = getDocument($element);
+	if ($document.links) for (var i = 0; i < $document.links.length; i++) {
+		if ($document.links[i] == $element) return true;
+	}
+};
+
+pseudoClasses["visited"] = function($element) {
+	// can't do this without jiggery-pokery
+};
+
+// -----------------------------------------------------------------------
+// DOM traversal
+// -----------------------------------------------------------------------
+
+// IE5/6 includes comments (LOL) in it's elements collections.
+// so we have to check for this. the test is tagName != "!". LOL (again).
+var thisElement = function($element) {
+	return ($element && $element.nodeType == 1 && $element.tagName != "!") ? $element : null;
+};
+
+// return the previous element to the supplied element
+//  previousSibling is not good enough as it might return a text or comment node
+var previousElementSibling = function($element) {
+	while ($element && ($element = $element.previousSibling) && !thisElement($element)) continue;
+	return $element;
+};
+
+// return the next element to the supplied element
+var nextElementSibling = function($element) {
+	while ($element && ($element = $element.nextSibling) && !thisElement($element)) continue;
+	return $element;
+};
+
+// return the first child ELEMENT of an element
+//  NOT the first child node (though they may be the same thing)
+var firstElementChild = function($element) {
+	return thisElement($element.firstChild) || nextElementSibling($element.firstChild);
+};
+
+var lastElementChild = function($element) {
+	return thisElement($element.lastChild) || previousElementSibling($element.lastChild);
+};
+
+// return child elements of an element (not child nodes)
+var childElements = function($element) {
+	var $childElements = [];
+	$element = firstElementChild($element);
+	while ($element) {
+		$childElements.push($element);
+		$element = nextElementSibling($element);
+	}
+	return $childElements;
+};
+
+// -----------------------------------------------------------------------
+// browser compatibility
+// -----------------------------------------------------------------------
+
+// all of the functions in this section can be overwritten. the default
+//  configuration is for IE. The functions below reflect this. standard
+//  methods are included in a separate module. It would probably be better
+//  the other way round of course but this makes it easier to keep IE7 trim.
+
+var isMSIE = true;
+
+var isXML = function($element) {
+	var $document = getDocument($element);
+	return (typeof $document.mimeType == "unknown") ?
+		/\.xml$/i.test($document.URL) :
+		Boolean($document.mimeType == "XML Document");
+};
+
+// return the element's containing document
+var getDocument = function($element) {
+	return $element.ownerDocument || $element.document;
+};
+
+var getElementsByTagName = function($element, $tagName) {
+	return ($tagName == "*" && $element.all) ? $element.all : $element.getElementsByTagName($tagName);
+};
+
+var compareTagName = function($element, $tagName, $namespace) {
+	if ($tagName == "*") return thisElement($element);
+	if (!compareNamespace($element, $namespace)) return false;
+	if (!isXML($element)) $tagName = $tagName.toUpperCase();
+	return $element.tagName == $tagName;
+};
+
+var compareNamespace = function($element, $namespace) {
+	return !$namespace || ($namespace == "*") || ($element.scopeName == $namespace);
+};
+
+var getTextContent = function($element) {
+	return $element.innerText;
+};
+
+function _msie_selectById($results, $from, id) {
+	var $match, i, j;
+	for (i = 0; i < $from.length; i++) {
+		if ($match = $from[i].all.item(id)) {
+			if ($match.id == id) $results.push($match);
+			else if ($match.length != null) {
+				for (j = 0; j < $match.length; j++) {
+					if ($match[j].id == id) $results.push($match[j]);
+				}
+			}
+		}
+	}
+	return $results;
+};
+
+// for IE5.0
+if (![].push) Array.prototype.push = function() {
+	for (var i = 0; i < arguments.length; i++) {
+		this[this.length] = arguments[i];
+	}
+	return this.length;
+};
+
+// -----------------------------------------------------------------------
+// query support
+// -----------------------------------------------------------------------
+
+// select a set of matching elements.
+// "from" is an array of elements.
+// "token" is a character representing the type of filter
+//  e.g. ">" means child selector
+// "filter" represents the tag name, id or class name that is being selected
+// the function returns an array of matching elements
+var $NAMESPACE = /\|/;
+function select($$from, $token, $filter, $arguments) {
+	if ($NAMESPACE.test($filter)) {
+		$filter = $filter.split($NAMESPACE);
+		$arguments = $filter[0];
+		$filter = $filter[1];
+	}
+	var $results = [];
+	if (selectors[$token]) {
+		selectors[$token]($results, $$from, $filter, $arguments);
+	}
+	return $results;
+};
+
+// -----------------------------------------------------------------------
+// parsing
+// -----------------------------------------------------------------------
+
+// convert css selectors to a stream of tokens and filters
+//  it's not a real stream. it's just an array of strings.
+var $STANDARD_SELECT = /^[^\s>+~]/;
+var $$STREAM = /[\s#.:>+~()@]|[^\s#.:>+~()@]+/g;
+function _toStream($selector) {
+	if ($STANDARD_SELECT.test($selector)) $selector = " " + $selector;
+	return $selector.match($$STREAM) || [];
+};
+
+var $WHITESPACE = /\s*([\s>+~(),]|^|$)\s*/g;
+var $IMPLIED_ALL = /([\s>+~,]|[^(]\+|^)([#.:@])/g;
+var parseSelector = function($selector) {
+	return $selector
+	// trim whitespace
+	.replace($WHITESPACE, "$1")
+	// e.g. ".class1" --> "*.class1"
+	.replace($IMPLIED_ALL, "$1*$2");
+};
+
+var Quote = {
+	toString: function() {return "'"},
+	match: /^('[^']*')|("[^"]*")$/,
+	test: function($string) {
+		return this.match.test($string);
+	},
+	add: function($string) {
+		return this.test($string) ? $string : this + $string + this;
+	},
+	remove: function($string) {
+		return this.test($string) ? $string.slice(1, -1) : $string;
+	}
+};
+
+var getText = function($text) {
+	return Quote.remove($text);
+};
+
+var $ESCAPE = /([\/()[\]?{}|*+-])/g;
+function regEscape($string) {
+	return $string.replace($ESCAPE, "\\$1");
+};
+
+// -----------------------------------------------------------------------
+// modules
+// -----------------------------------------------------------------------
+
+// -------- >>      insert modules here for packaging       << -------- \\
+
+loaded = true;
+
+// -----------------------------------------------------------------------
+// return the query function
+// -----------------------------------------------------------------------
+
+return cssQuery;
+
+}(); // cssQuery
+cssQuery.caching = true;
+cssQuery.addModule("ie7", function() {
+	thisElement = function($element) {
+		return ($element && $element.nodeType == 1 && $element.tagName != "!" && !$element.ie7_anon) ? $element : null;
+	};
+});
+cssQuery.valueOf("getText=arguments[1]", getString);
+
+// -----------------------------------------------------------------------
+//  IE7 CSS
+// -----------------------------------------------------------------------
+
+// assume html unless explicitly defined
+var isHTML = !cssQuery.valueOf("isXML(arguments[1])", documentElement);
+var HEADER = ":link{ie7-link:link}:visited{ie7-link:visited}" + (isHTML ? "" : "*{margin:0}");
+
+var ie7CSS = new (Fix.specialize({ // single instance
+	parser: new Parser,
+	screen: "",
+	print: "",
+	styles: [],
+	init: function() {
+		this.createStyleSheet();
+		this.refresh();
+	},
+	refresh: function() {
+		ie7CSS.styleSheet.cssText = HEADER + this.screen + this.print;
+	},
+	getInlineStyles: function() {
+		// load inline styles
+		var $$styleSheets = document.getElementsByTagName("style"), $styleSheet;
+		for (var i = $$styleSheets.length - 1; ($styleSheet = $$styleSheets[i]); i--) {
+			if (!$styleSheet.disabled && !$styleSheet.ie7) {
+				this.styles.push($styleSheet.innerHTML);
+			}
+		}
+	},
+	apply: function() {
+		this.getInlineStyles();
+		this.refresh();
+		new StyleSheet("screen");
+		this.trash();
+	},
+	addFix: function($expression, $replacement) {
+		this.parser.add($expression, $replacement);
+	},
+	recalc: function() {
+		// we're going to read through all style rules.
+		//  certain rules have had ie7 properties added to them.
+		//   e.g. p{top:0; ie7_recalc2:1; left:0}
+		//  this flags a property in the rule as needing a fix.
+		//  the selector text is then used to query the document.
+		//  we can then loop through the results of the query
+		//  and fix the elements.
+		// we ignore the IE7 rules - so count them in the header
+		var $RECALCS = /ie7_recalc\d+/g;
+		var $start = HEADER.match(/[{,]/g).length;
+		// only calculate screen fixes. print fixes don't show up anyway
+		var $$stop = $start + (this.screen.cssText.match(/\{/g)||"").length;
+		var $$rules = this.styleSheet.rules, $rule;
+		var $$calcs, $calc, $$elements, $element, i, j, k, id;
+		// loop through all rules
+		for (i = $start; i < $$stop; i++) {
+			$rule = $$rules[i];
+			// search for the "ie7_recalc" flag (there may be more than one)
+			if ($rule && ($$calcs = $rule.style.cssText.match($RECALCS))) {
+				// use the selector text to query the document
+				$$elements = cssQuery($rule.selectorText);
+				// if there are matching elements then loop
+				//  through the recalc functions and apply them
+				//  to each element
+				if ($$elements.length) for (j = 0; j < $$calcs.length; j++) {
+					// get the matching flag (e.g. ie7_recalc3)
+					id = $$calcs[j];
+					// extract the numeric id from the end of the flag
+					//  and use it to index the collection of recalc
+					//  functions
+					$calc = ie7CSS.recalcs[id.slice(10)][2];
+					for (k = 0; ($element = $$elements[k]); k++) {
+						// apply the fix
+						if ($element.currentStyle[id]) $calc($element);
+					}
+				}
+			}
+		}
+	},
+	// recalcs occur whenever the document is refreshed using document.recalc()
+	addRecalc: function($propertyName, $test, $handler, $replacement) {
+		$test = new RegExp("([{;\\s])" + $propertyName + "\\s*:\\s*" + $test + "[^;}]*");
+		var $id = this.recalcs.length;
+        if ($replacement) $replacement = $propertyName + ":" + $replacement;
+		this.addFix($test, function($match, $offset) {
+			return ($replacement ?  $match[$offset + 1] + $replacement : $match[$offset]) +
+				";ie7-" + $match[$offset].slice(1) + ";ie7_recalc" + $id + ":1";
+		});
+		this.recalcs.push(arguments);
+		return $id;
+	},
+	// retrieve the text of a style sheet
+	getText: function($styleSheet) {
+		// without the CSS2 module we assume CSS1, so it is safe to get Microsoft's stored text
+		return $styleSheet.cssText || "";
+	},
+	createStyleSheet: function() {
+		// create the IE7 style sheet
+		if (complete || !isHTML) document.createStyleSheet();
+		// this fixes a bug to do with the <base> tag
+		else document.write("<style ie7=true></style>");
+		// get the new style sheet
+		this.styleSheet = styleSheets[styleSheets.length - 1];
+		// flag it so we can ignore it during parsing
+		this.styleSheet.ie7 = true;
+		this.styleSheet.cssText = HEADER;
+	},
+	trash: function() {
+		// trash the old style sheets
+		for (var i = 0; i < styleSheets.length; i++) {
+			if (!styleSheets[i].ie7 && styleSheets[i].cssText) {
+				styleSheets[i].cssText = "";
+			}
+		}
+	}
+}));
+
+// -----------------------------------------------------------------------
+//  IE7 StyleSheet class
+// -----------------------------------------------------------------------
+
+function StyleSheet($media) {
+	this.media = $media;
+	this.load();
+	ie7CSS[$media] = this;
+	ie7CSS.refresh();
+};
+Common.specialize({
+	constructor: StyleSheet,
+	toString: function() {
+		return "@media " + this.media + "{" + this.cssText + "}";
+	},
+	recalc: DUMMY,
+	load: function() {
+		this.cssText = "";
+		this.getText();
+		this.parse();
+		this.cssText = decode(this.cssText);
+		$fileCache = {};
+	},
+	getText: function() {
+		// store for style sheet text
+		var _inlineStyles = [].concat(ie7CSS.styles);
+		// parse media decalarations
+		var $MEDIA = /@media\s+([^{]*)\{([^@]+\})\s*\}/gi;
+		var $ALL = /\ball\b|^$/i, $SCREEN = /\bscreen\b/i, $PRINT = /\bprint\b/i;
+		function _parseMedia($cssText, $media) {
+			_filterMedia.$value = $media;
+			return $cssText.replace($MEDIA, _filterMedia);
+		};
+		function _filterMedia($$match, $media, $cssText) {
+			$media = _simpleMedia($media);
+			switch ($media) {
+				case "screen":
+				case "print":
+					if ($media != _filterMedia.$value) return "";
+				case "all":
+					return $cssText;
+			}
+			return "";
+		};
+		function _simpleMedia($media) {
+			if ($ALL.test($media)) return "all";
+			else if ($SCREEN.test($media)) return ($PRINT.test($media)) ? "all" : "screen";
+			else if ($PRINT.test($media)) return "print";
+		};
+		var self = this;
+		function _getCSSText($styleSheet, $path, $media, $level) {
+			var $cssText = "";
+			if (!$level) {
+				$media = _simpleMedia($styleSheet.media);
+				$level = 0;
+			}
+			if ($media == "all" || $media == self.media) {
+				// IE only allows importing style sheets three levels deep.
+				// it will crash if you try to access a level below this
+				if ($level < 3) {
+					// loop through imported style sheets
+					for (var i = 0; i < $styleSheet.imports.length; i++) {
+						// call this function recursively to get all imported style sheets
+						$cssText += _getCSSText($styleSheet.imports[i], getPath($styleSheet.href, $path), $media, $level + 1);
+					}
+				}
+				// retrieve inline style or load an external style sheet
+				$cssText += _encode($styleSheet.href ? _loadStyleSheet($styleSheet, $path) : _inlineStyles.pop() || "");
+				$cssText = _parseMedia($cssText, self.media);
+			}
+			return $cssText;
+		};
+		// store loaded cssText URLs
+		var $fileCache = {};
+		// load an external style sheet
+		function _loadStyleSheet($styleSheet, $path) {
+			var $url = makePath($styleSheet.href, $path);
+			// if the style sheet has already loaded then don't duplicate it
+			if ($fileCache[$url]) return "";
+			// load from source
+			$fileCache[$url] = ($styleSheet.disabled) ? "" :
+				_fixUrls(ie7CSS.getText($styleSheet, $path), getPath($styleSheet.href, $path));
+			return $fileCache[$url];
+		};
+		// fix css paths
+		// we're lumping all css text into one big style sheet so relative
+		//  paths have to be fixed. this is necessary anyway because of other
+		//  explorer bugs.
+		var $URL = /(url\s*\(\s*['"]?)([\w\.]+[^:\)]*['"]?\))/gi;
+		function _fixUrls($cssText, $pathname) {
+			// hack & slash
+			return $cssText.replace($URL, "$1" + $pathname.slice(0, $pathname.lastIndexOf("/") + 1) + "$2");
+		};
+
+		// load all style sheets in the document
+		for (var i = 0; i < styleSheets.length; i++) {
+			if (!styleSheets[i].disabled && !styleSheets[i].ie7) {
+				this.cssText += _getCSSText(styleSheets[i]);
+			}
+		}
+	}, // end: load
+	parse: function() {
+		this.cssText = ie7CSS.parser.exec(this.cssText);
+	},
+	recalc: DUMMY
+});
+
+// -----------------------------------------------------------------------
+// encoding
+// -----------------------------------------------------------------------
+
+var Quote = cssQuery.valueOf("Quote");
+var _strings = [];
+
+function _encode($cssText) {
+	return encoder.exec(safeString.exec($cssText));
+};
+
+function _encodeString($match, $offset) {
+	return Quote + (_strings.push($match[$offset]) - 1) + Quote;
+};
+
+function getString($value) {
+	return Quote.test($value) ? eval(_strings[eval($value)]) : $value;
+};
+
+var encoder = new Parser;
+// comments
+encoder.add(/\/\*[^*]*\*+([^\/][^*]*\*+)*\//);
+// strings
+encoder.add(/'[^']*'/, _encodeString);
+encoder.add(/"[^"]*"/, _encodeString);
+// white space
+encoder.add(/\s+/, " ");
+// get rid
+encoder.add(/@(namespace|import)[^;\n]+[;\n]|<!\-\-|\-\->/);
+
+var safeString = new Parser;
+safeString.add(/\\'/, "\\x27");
+safeString.add(/\\"/, "\\x22");
+
+// -----------------------------------------------------------------------
+// decoding
+// -----------------------------------------------------------------------
+
+var decoder = new Parser;
+// comments
+decoder.add(/'(\d+)'/, _decodeString);
+
+function decode($cssText) {
+	return decoder.exec($cssText);
+};
+
+function _decodeString($match, $offset) {
+	return _strings[$match[$offset + 1]];
+};
+
+// -----------------------------------------------------------------------
+// event handling
+// -----------------------------------------------------------------------
+
+var _handlers = [];
+
+function addResize($handler) {
+	addRecalc($handler);
+	addEventHandler(window, "onresize", $handler);
+};
+
+// add an event handler (function) to an element
+function addEventHandler($element, $type, $handler) {
+	$element.attachEvent($type, $handler);
+	// store the handler so it can be detached later
+	_handlers.push(arguments);
+};
+
+// remove an event handler assigned to an element by IE7
+function removeEventHandler($element, $type, $handler) {
+try {
+	$element.detachEvent($type, $handler);
+} catch ($ignore) {
+	// write a letter of complaint to microsoft..
+}};
+
+// remove event handlers (they eat memory)
+addEventHandler(window, "onunload", function() {
+	var $handler;
+ 	while ($handler = _handlers.pop()) {
+ 		removeEventHandler($handler[0], $handler[1], $handler[2]);
+ 	}
+});
+
+function register($handler, $element, $condition) { // -@DRE
+	//var $set = $handler[$element.uniqueID];
+	if (!$handler.elements) $handler.elements = {};
+	if ($condition) $handler.elements[$element.uniqueID] = $element;
+	else delete $handler.elements[$element.uniqueID];
+	//return !$set && $condition;
+	return $condition;
+};
+
+// -----------------------------------------------------------------------
+// events
+// -----------------------------------------------------------------------
+
+addEventHandler(window, "onbeforeprint", function() {
+	if (!ie7CSS.print) new StyleSheet("print");
+	ie7CSS.print.recalc();
+});
+
+// -----------------------------------------------------------------------
+// pixel conversion
+// -----------------------------------------------------------------------
+
+// this is handy because it means that web developers can mix and match
+//  measurement units in their style sheets. it is not uncommon to
+//  express something like padding in "em" units whilst border thickness
+//  is most often expressed in pixels.
+
+var PIXEL = /^\d+(px)?$/i;
+var PERCENT = /^\d+%$/;
+var getPixelValue = function($element, $value) {
+	if (PIXEL.test($value)) return parseInt($value);
+	var $style = $element.style.left;
+	var $runtimeStyle = $element.runtimeStyle.left;
+	$element.runtimeStyle.left = $element.currentStyle.left;
+	$element.style.left = $value || 0;
+	$value = $element.style.pixelLeft;
+	$element.style.left = $style;
+	$element.runtimeStyle.left = $runtimeStyle;
+	return $value;
+};
+
+// create a temporary element which is used to inherit styles
+//  from the target element. the temporary element can be resized
+//  to determine pixel widths/heights
+function createTempElement($tagName) {
+	var $element = document.createElement($tagName || "object");
+	$element.style.cssText = "position:absolute;padding:0;display:block;border:none;clip:rect(0 0 0 0);left:-9999";
+	$element.ie7_anon = true;
+	return $element;
+};
+
+// -----------------------------------------------------------------------
+// generic
+// -----------------------------------------------------------------------
+
+var _IE7_ = "ie7-";
+
+function isFixed($element) {
+	return $element.currentStyle["ie7-position"] == "fixed";
+};
+
+// original style
+function getDefinedStyle($element, $propertyName) {
+	return $element.currentStyle[_IE7_ + $propertyName] || $element.currentStyle[$propertyName];
+};
+
+function setOverrideStyle($element, $propertyName, $value) {
+	if ($element.currentStyle[_IE7_ + $propertyName] == null) {
+		$element.runtimeStyle[_IE7_ + $propertyName] = $element.currentStyle[$propertyName];
+	}
+	$element.runtimeStyle[$propertyName] = $value;
+};
+
+function addTimer($object, $cssText, $url) {
+	var $timer = setInterval(function() {
+	try {
+		// wait until the object has loaded
+		if (!$object.load) return;
+		$object.load($object, $cssText, $url);
+		clearInterval($timer);
+	} catch ($ignore) {
+		// remote scripting
+		clearInterval($timer);
+	}}, 10);
+};
+
+// -----------------------------------------------------------------------
+//  modules
+// -----------------------------------------------------------------------
+
+// -------- >>      insert modules here for packaging       << -------- \\
+
+loaded = true;
+
+// -----------------------------------------------------------------------
+//  quirks mode patches
+// -----------------------------------------------------------------------
+
+/* FAVELET */
+
+// load an external module to patch IE in quirks mode and override the functions above
+if (quirksMode) eval(loadFile("ie7-quirks.js", path));
+
+// -----------------------------------------------------------------------
+//  initialise
+// -----------------------------------------------------------------------
+
+ie7CSS.init();
+if (isHTML && ie7HTML) ie7HTML.init();
+
+// this script may be inserted via a favelet so the page may already be loaded
+if (complete) IE7.init();
+else {
+	// if we can load behaviors then use ondocumentready
+	documentElement.addBehavior(makePath("ie7-load.htc", path));
+	// otherwise this will kick in
+	addEventHandler(document, "onreadystatechange", function() {
+		// if we are going to wait this long then wem may as well let
+		//  window.onload execute first
+		if (document.readyState == "complete") setTimeout(IE7.init, 0);
+	});
+}
+
+// -----------------------------------------------------------------------
+//  error handling
+// -----------------------------------------------------------------------
+
+} catch ($error) {
+	alert("Error [0]: " + $error.description);
+} finally {
+	// have a beer...
+}};
