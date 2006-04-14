@@ -106,6 +106,7 @@ lib/Jifty/Web/Form/Field/Hidden.pm
 lib/Jifty/Web/Form/Field/InlineButton.pm
 lib/Jifty/Web/Form/Field/Password.pm
 lib/Jifty/Web/Form/Field/Radio.pm
+lib/Jifty/Web/Form/Field/ResetButton.pm
 lib/Jifty/Web/Form/Field/Select.pm
 lib/Jifty/Web/Form/Field/Text.pm
 lib/Jifty/Web/Form/Field/Textarea.pm
@@ -167,14 +168,9 @@ share/web/static/js/ie7/ie7-object.htc
 share/web/static/js/ie7/ie7-overflow.js
 share/web/static/js/ie7/ie7-quirks.js
 share/web/static/js/ie7/ie7-recalc.js
-share/web/static/js/ie7/ie7-server.css
 share/web/static/js/ie7/ie7-squish.js
 share/web/static/js/ie7/ie7-standard-p.js
 share/web/static/js/ie7/ie7-xml-extras.js
-share/web/static/js/ie7/ie7.gif
-share/web/static/js/ie7/README.txt
-share/web/static/js/ie7/test-trans.png
-share/web/static/js/ie7/test.html
 share/web/static/js/jifty.js
 share/web/static/js/json.js
 share/web/static/js/jsTrace.js
@@ -270,3 +266,4 @@ t/TestApp/t/00-prototype.t
 t/TestApp/t/01-config.t
 t/TestApp/t/02-dispatch.t
 t/TestApp/t/03-static.t
+t/TestApp/web/templates/after
