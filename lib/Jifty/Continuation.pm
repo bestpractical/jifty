@@ -153,12 +153,20 @@ sub call {
     my $request_path = $self->request->path;
 
     # XXX TODO: WE should be using URI canonicalization
-    $called_uri =~ s{/+}{/}g; 
+    my $escape;
+    $called_uri =~ s{/+}{/}g;
+    $called_uri = $escape while $called_uri ne ($escape = URI::Escape::uri_unescape($called_uri));
     $request_path =~ s{/+}{/}g; 
-
+    $request_path = $escape while $request_path ne ($escape = URI::Escape::uri_unescape($request_path));
 
     if (defined $request_path and 
-        ($called_uri ne $request_path . "?J:CALL=" . $self->id)) {
+        ($called_uri !~ /^\Q$request_path\E[?&;]J:CALL=@{[$self->id]}/)) {
+        # If we needed to fix up the path (it contains invalid
+        # characters) then warn, because this may cause infinite
+        # redirects
+        Jifty->log->warn("Redirect to '@{[$self->request->path]}' contains unsafe characters")
+          if $self->request->path =~ m{[^A-Za-z0-9\-_.!~*'()/?&;+]};
+
         # Clone our request
         my $request = Clone::clone($self->request);
         
