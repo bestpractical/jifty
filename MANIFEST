@@ -266,4 +266,3 @@ t/TestApp/t/00-prototype.t
 t/TestApp/t/01-config.t
 t/TestApp/t/02-dispatch.t
 t/TestApp/t/03-static.t
-t/TestApp/web/templates/after

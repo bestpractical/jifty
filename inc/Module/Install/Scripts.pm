@@ -1,18 +1,20 @@
-#line 1 "inc/Module/Install/Scripts.pm - /usr/lib/perl5/site_perl/5.8.7/Module/Install/Scripts.pm"
+#line 1
 package Module::Install::Scripts;
 
-use Module::Install::Base;
-@ISA = qw(Module::Install::Base);
-
-$VERSION = '0.02';
-
 use strict;
+use Module::Install::Base;
 use File::Basename ();
+
+use vars qw{$VERSION @ISA};
+BEGIN {
+	$VERSION = '0.61';
+	@ISA     = qw(Module::Install::Base);
+}
 
 sub prompt_script {
     my ($self, $script_file) = @_;
-    my ($prompt, $abstract, $default);
 
+    my ($prompt, $abstract, $default);
     foreach my $line ( $self->_read_script($script_file) ) {
         last unless $line =~ /^#/;
         $prompt = $1   if $line =~ /^#\s*prompt:\s+(.*)/;

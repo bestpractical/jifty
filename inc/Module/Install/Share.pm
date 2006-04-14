@@ -1,12 +1,13 @@
-#line 1 "inc/Module/Install/Share.pm - /usr/lib/perl5/site_perl/5.8.7/Module/Install/Share.pm"
+#line 1
 package Module::Install::Share;
 
-use Module::Install::Base;
-@ISA = qw(Module::Install::Base);
-
-$VERSION = '0.02';
+BEGIN {
+	$VERSION = '0.61';
+	@ISA     = qw{Module::Install::Base};
+}
 
 use strict;
+use Module::Install::Base;
 
 sub install_share {
     my ($self, $dir) = @_;
@@ -28,4 +29,4 @@ END_MAKEFILE
 
 __END__
 
-#line 65
+#line 90
