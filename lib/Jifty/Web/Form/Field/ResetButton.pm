@@ -6,7 +6,7 @@ package Jifty::Web::Form::Field::ResetButton;
 use base qw/Jifty::Web::Form::Field::InlineButton/;
 
 
-=head2 render
+=head2 render_widget
 
 Renders the reset button widget
 
