@@ -14,13 +14,11 @@ requires('Compress::Zlib');
 requires('DBD::SQLite');
 requires('Data::Page');
 requires('Date::Manip');
-requires('Digest::MD5');
 requires('Email::Folder');
 requires('Email::LocalDelivery');
 requires('Email::Send' => '1.99_01'); # Email::Send::Jifty::Test
 requires('Email::Simple');
 requires('Email::Simple::Creator');
-requires('Encode');
 requires('File::Find::Rule');
 requires('File::MMagic');
 requires('File::ShareDir');
@@ -45,7 +43,6 @@ requires('Module::Pluggable' => '2.95');
 requires('Module::Refresh' => '0.09');
 requires('Params::Validate');
 requires('Pod::Simple'); #Pod::Simple::Text
-requires('Scalar::Util');
 requires('String::Koremutake');
 requires('Test::Base' => 0.44);            # Test::Base::Filter
 requires('Test::HTML::Lint');
@@ -53,7 +50,6 @@ requires('Test::HTTP::Server::Simple' => 0.02);
 requires('Test::More' => 0.62);
 requires('Test::Pod::Coverage');
 requires('Test::WWW::Mechanize');
-requires('Time::HiRes');
 requires('UNIVERSAL::require');
 requires('URI');
 requires('WWW::Mechanize' => 1.12);

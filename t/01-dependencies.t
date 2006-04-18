@@ -19,13 +19,13 @@ find( \&wanted, qw/ lib bin t /);
 
 sub wanted {
     return unless -f $_;
-    return if $File::Find::dir =~ m!/inc(/|$)!;
+    return if $File::Find::name =~ /\.pod$/;
     local $/;
     open(FILE, $_) or return;
     my $data = <FILE>;
     close(FILE);
-    $used{$1}++ while $data =~ /^use\s+([\w:]+)/gm;
-    while ($data =~ m|^use base qw/([\w\s:]+)/|gm) {
+    $used{$1}++ while $data =~ /^\s*use\s+([\w:]+)/gm;
+    while ($data =~ m|^\s*use base qw.([\w\s:]+)|gm) {
         $used{$_}++ for split ' ', $1;
     }
 }
@@ -36,10 +36,10 @@ my %required;
     ok(open(MAKEFILE,"Makefile.PL"), "Opened Makefile");
     my $data = <MAKEFILE>;
     close(FILE);
-    while ($data =~ /^\s*?requires\('([\w:]+)'.*?(?:#(.*))?$/gm) {
-        $required{$1}++;
-        if (defined $2 and length $2) {
-            $required{$_}++ for split ' ', $2;
+    while ($data =~ /^\s*?requires\('([\w:]+)'(?:\s*=>\s*['"]?([\d\.]+)['"]?)?.*?(?:#(.*))?$/gm) {
+        $required{$1} = $2;
+        if (defined $3 and length $3) {
+            $required{$_} = undef for split ' ', $3;
         }
     }
 }
@@ -47,14 +47,15 @@ my %required;
 for (sort keys %used) {
     my $first_in = Module::CoreList->first_release($_);
     next if defined $first_in and $first_in <= 5.00803;
-    next if /^(Jifty|BTDT|Jifty::DBI|TestApp|inc|t)/;
-    ok(delete $required{$_}, "$_ in Makefile.PL");
+    next if /^(Jifty|Jifty::DBI|inc|t|TestApp|Application)(::|$)/;
+    ok(exists $required{$_}, "$_ in Makefile.PL");
     delete $used{$_};
+    delete $required{$_};
 }
 
-for (keys %required) {
-    my $first_in = Module::CoreList->first_release($_);
-    fail("Required module $_ is already in core") if defined $first_in and $first_in <= 5.006;
+for (sort keys %required) {
+    my $first_in = Module::CoreList->first_release($_, $required{$_});
+    fail("Required module $_ is already in core") if defined $first_in and $first_in <= 5.00803;
 }
 
 1;
