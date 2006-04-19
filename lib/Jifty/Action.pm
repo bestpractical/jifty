@@ -573,6 +573,7 @@ sub _canonicalize_argument {
     my $value = $self->argument_value($field);
     my $default_method = 'canonicalize_' . $field;
 
+    # XXX TODO: Do we really want to skip undef values?
     return unless defined $value;
 
     if ( $field_info->{canonicalizer}

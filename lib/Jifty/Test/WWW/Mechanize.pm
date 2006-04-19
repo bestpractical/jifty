@@ -74,11 +74,8 @@ sub fill_in_action {
     my $moniker = shift;
     my %args = @_;
 
-    my $action_form = $self->action_form($moniker);
-    
-    unless ($action_form) {
-        return;
-    } 
+    my $action_form = $self->action_form($moniker, keys %args);
+    return unless $action_form;
 
     for my $arg (keys %args) {
         my $input = $action_form->find_input("J:A:F-$arg-$moniker");
@@ -109,25 +106,29 @@ sub fill_in_action_ok {
     $Test->ok($ret, "Filled in action $moniker");
 } 
 
-=head2 action_form MONIKER
+=head2 action_form MONIKER [ARGUMENTNAMES]
 
-Returns the form (as an L<HTML::Form> object) corresponding to the given moniker, and
-also selects it as the current form.  Returns undef if it can't be found.
+Returns the form (as an L<HTML::Form> object) corresponding to the
+given moniker (which also contains inputs for the given
+argumentnames), and also selects it as the current form.  Returns
+undef if it can't be found.
 
 =cut
 
 sub action_form {
     my $self = shift;
     my $moniker = shift;
+    my @fields = @_;
     Carp::confess("No moniker") unless $moniker;
 
     my $i;
     for my $form ($self->forms) {
         $i++;
-        if ($form->find_input("J:A-$moniker", "hidden")) {
-            $self->form_number($i); #select it, for $mech->submit etc
-            return $form;
-        } 
+        next unless $form->find_input("J:A-$moniker", "hidden");
+        next if grep {not $form->find_input("J:A:F-$_-$moniker")} @fields;
+
+        $self->form_number($i); #select it, for $mech->submit etc
+        return $form;
     } 
     return;
 } 
@@ -144,7 +145,7 @@ sub action_field_value {
     my $moniker = shift;
     my $field = shift;
 
-    my $action_form = $self->action_form($moniker);
+    my $action_form = $self->action_form($moniker, $field);
     return unless $action_form;
     
     my $input = $action_form->find_input("J:A:F-$field-$moniker");
