@@ -1,0 +1,129 @@
+01:01 <audreyt> I think DNS is your programming language of choice ;)
+01:01 <obra> *snicker*
+01:01 <obra> . o O {You must have seen the cname on quit.fsck.com }
+01:02 <audreyt> rofl
+01:02 <audreyt> mm, instead of passing cookies
+01:02 <audreyt> and maintain url transparency across post and get
+01:03 <audreyt> just pass the J:C and session token in DNS!]
+01:03 <obra> *groan*
+01:03 <audreyt> deadbeef18405930.hiveminder.com/
+01:03 <obra> alex and I were talking about client-side continuation serialization today
+01:03 <obra> We're about to do continuation garbage collection
+01:03 <audreyt> instead of passing it as part of request_uri
+01:03 <audreyt> in pathinfo
+01:04 <audreyt> this guarantees auth zone separation etc
+01:04 <audreyt> (very bad idea.)
+01:04 <obra> laugh
+01:04 <obra> definitely "Worst Impractical"
+01:04 <audreyt> this is not unlike .NET Passport
+01:05 <audreyt> where you visit something.microsoft.com that redispatch to your domain
+01:05 <audreyt> but there is a reason why it failed.
+01:05 <obra> *nod* OpenId seems to be doing a bit better at it
+01:05 <audreyt> right
+01:05 <audreyt> so, client side CC
+01:05 <audreyt> in hidden fields
+01:05 <obra> I worry about the amount of content you might need to pass around. and the fact that you lose GET support
+01:05 <audreyt> HMAC_SHA1 with server digest
+01:06 <audreyt> for small continuations (practically everything)
+01:06 <audreyt> you can embed it as part of pathuri
+01:06 <obra> except our continuations aren't that small. and when deeply nested you totally lose
+01:06 <audreyt> /=/deadbeefdeadbeefbeefbeef1982398102957190824091840984124/moose.html
+01:06 <audreyt> yeah. in which case you fallback to cookie storage.
+01:07 <obra> oh. you mean having a continuation id in the url and a cookie with the content?
+01:07 <audreyt> yeah
+01:07 <audreyt> the id is the cookie key
+01:07 <audreyt> you can have multipel cookies
+01:07 <audreyt> they can expire using normal cookie expiry semantics
+01:07 <obra> and then every GET or POST pushes all the cookies to the server
+01:07 <audreyt> not neccessarily
+01:08 <obra> using the path restriction in the cookie?
+01:08 <audreyt> the path component protects you
+01:08 <audreyt> the path component protects yothat's what cookies are for
+01:08 <audreyt> ys
+01:08 <obra> hm.
+01:08 <audreyt> self validating
+01:08 <audreyt> in a sense.
+01:08 <obra> you have a compelling argument, madam.
+01:08 <obra> hm
+01:08 <audreyt> I believe it's somewhat original
+01:08 <audreyt> or at least independent invention :)
+01:08 <obra> :)
+01:09 <obra> So. the first step is that alex is getting continuations into their own database table
+01:09 <obra> alex really wanted to sign them, rather than do digest validation
+01:09 <obra> because he wants _no_ server state for a continuation
+01:09 <audreyt> a private key is a state.
+01:09 <audreyt> same as a server secret.
+01:09 <obra> er. sorry. no unique state
+01:09 <audreyt> same.
+01:10 <audreyt> if you do HMAC_SHA1, only the server secret is required
+01:10 <audreyt> not nonce
+01:10 <audreyt> global shared secret
+01:10 <obra> ahhh.
+01:10 <audreyt> cheaper than signing.
+01:10 <obra> I missed that. sorry
+01:10 <audreyt> equally strong.
+01:10 <audreyt> np :)
+01:11 <obra> It's certainly an interesting argument for "how jifty can scale up"
+01:12 <obra> if we have the cookie and url scheme, is there a reason to complicate it with sometimes having hidden form fields?
+01:12 <audreyt> only if you want per-form, as in region, continuation
+01:13 <obra> regions have their own paths ;)
+01:13 <audreyt> good then
+01:14 <audreyt> so, cookie is specced to be min 4k
+01:14 <obra> I will admit that I get twitchy about how easily this is remotely 0wnable if you capture the server secret.
+01:14 <audreyt> and at least 20 per thing
+01:14 <audreyt> that gives 80k min storage
+01:14 <audreyt> in practice the 20 limit is not enforced
+01:14 <audreyt> so you get effectively unlimited storage with splitting
+01:15 <audreyt> I'll note that if you get server secret then you can set up fake forms.
+01:15 <audreyt> both requires owner permission on the share/
+01:16 <audreyt> and really there's little point in worrying at that stage.
+01:16 <obra> that also requires dHa willing dispatcher
+01:16 <obra> Alex's proposed attack was:
+01:16 <audreyt> nod.
+01:16 <obra> push a results message at the user containing "You must change your password. click here"
+01:16 <obra> phishing attack with a valid url
+01:17 <obra> I'd probably be mollified with a randomly generated session key 
+01:17 <obra> and actually have the session key stored server-side and ~nothing else
+01:18 <obra> (Does that make sense?)
+01:19 <audreyt> thinking
+01:19 <audreyt> how is it any different than the old cookie sessionid scheme?
+01:19 <audreyt> I mean the attack
+01:20 <audreyt> persumably the action will always need old passwd as input
+01:20 <audreyt> so it can't be automated
+01:21 <audreyt> I fail to see why client side state has anything to do with this.
+01:21 <obra> jifty action results contain messages.
+01:21 <obra> jifty apps display those messages
+01:21 <obra> the messages are defined to be able to contain html
+01:21 <audreyt> you mean rogue action classes?
+01:21 <obra> imagine an attack that pushes a mini form submitting to a third party into that html
+01:22 <obra> no, someone who redirects you back to hiveminder with a continuation constructed to make it appear that you needed to change your pw
+01:22 <audreyt> it is clearly result-message scrubbing thing...
+01:22 <audreyt> anyway. back
+01:22 <audreyt> if you want to have login/logout
+01:22 <audreyt> and continuations never work across logouts
+01:23 <audreyt> then the server secret is just the session id.
+01:23 <audreyt> i.e. nonce.
+01:23 <audreyt> which you don't give the user in entirety
+01:23 <audreyt> just as you observed
+01:23 <obra> nod
+01:23 <obra> I think that works
+01:23 <audreyt> and for public non-currentuser-related requests
+01:23 <audreyt> it may make sense to have a sessionless form
+01:24 <audreyt> where bookmarks may be shared.
+01:24 <obra> The case that didn't work in my head was with a global nonce.
+01:24 <audreyt> but I think the use case is rarer
+01:24 <audreyt> I think per-session makes most sense.
+01:24 <obra> indeed. It's been my conjecture that even anonymous users can be given sessions.
+01:24 <audreyt> if Inever logout, my bookmarks always work
+01:25 <audreyt> if I logout, they only work if I-or the server- explicitly requested affinity
+01:25 <obra> and the server has the option to deny that request 
+01:25 <audreyt> otherwise it's thrown away, and the logout link should reset the continuation cookies.
+01:25 <audreyt> yes.
+01:25 <audreyt> ok, very good design, I think.
+01:25 <obra> I'm reasonably happy with that, I think
+01:26 <audreyt> woot :)
+01:26 <audreyt> now I must run to $job
+01:26 <obra> shall we throw this log in jifty/doc?
+01:26 <audreyt> already horribly late ;)
+01:26 <audreyt> sure, please do
+01:26 <obra> oops. so sorry.
