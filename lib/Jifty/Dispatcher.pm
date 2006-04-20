@@ -886,9 +886,10 @@ sub _compile_condition {
     }
 
     # Make all metachars into capturing submatches
-    unless ( $cond
-        =~ s{( (?: \\ [*?] )+ )}{'('. $self->_compile_glob($1) .')'}egx )
-    {
+    if ( $cond =~ / \\ [*?] /x) {
+        $cond = _compile_glob($cond);
+    }
+    else {
         $cond = "($cond)";
     }
 
@@ -901,13 +902,59 @@ Private function.
 
 Turns a metaexpression containing * and ? into a capturing perl regex pattern.
 
+The rules are:
+
+=over 4
+
+=item *
+
+A C<*> between two C</> characthers, or between a C</> and end of string,
+should at match one or more non-slash characters:
+
+    /foo/*/bar
+    /foo/*/
+    /foo/*
+    /*
+
+=item *
+
+All other C<*> can match zero or more non-slash characters: 
+
+    /*bar
+    /foo*bar
+    *
+
+=item *
+
+Consecutive C<?> marks are captured together:
+
+    /foo???bar      # One capture for ???
+    /foo??*         # Two captures, one for ?? and one for *
+
+=back
+
 =cut
 
 sub _compile_glob {
     my ( $self, $glob ) = @_;
-    $glob =~ s{\\}{}g;
-    $glob =~ s{\*}{[^/]+}g;
-    $glob =~ s{\?}{[^/]}g;
+    $glob =~ s{
+        # Stars between two slashes, or between a slash and end-of-string,
+        # should at match one or more non-slash characters.
+        (?<= \\ /)      # lookbehind for slash
+        \\ \*           # star
+        (?= \\ / | \z)  # lookahead for slash or end-of-string
+    }{([^/]+)}gx;
+    $glob =~ s{
+        # All other stars can match zero or more non-slash character.
+        \\ \*
+    }{([^/]*)}gx;
+    $glob =~ s{
+        # Consecutive question marks are captured as one unit;
+        # we do this by capturing them and then repeat the result pattern
+        # for that many times.  The divide-by-two takes care of the
+        # extra backslashes.
+        ( (?: \\ \? )+ )
+    }{([^/]{${ \( length($1)/2 ) }})}gx;
     $glob;
 }
 
