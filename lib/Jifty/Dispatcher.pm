@@ -862,6 +862,11 @@ sub _compile_condition {
     $cond =~ s{(?:\\\/)+}{/}g;
     $cond =~ s{/$}{};
 
+    my $has_capture = ( $cond =~ / \\ [*?] /x);
+    if ($has_capture) {
+        $cond = $self->_compile_glob($cond);
+    }
+
     if ( $cond =~ m{^/} ) {
 
         # '/foo' => qr{^/foo}
@@ -875,6 +880,7 @@ sub _compile_condition {
         # empty path -- just match $cwd itself
         $cond = "(?<=\\A$self->{cwd})";
     }
+
     if ( $Dispatcher->{rule} eq 'on' ) {
 
         # "on" anchors on complete match only
@@ -886,10 +892,7 @@ sub _compile_condition {
     }
 
     # Make all metachars into capturing submatches
-    if ( $cond =~ / \\ [*?] /x) {
-        $cond = _compile_glob($cond);
-    }
-    else {
+    if (!$has_capture) {
         $cond = "($cond)";
     }
 
@@ -940,9 +943,9 @@ sub _compile_glob {
     $glob =~ s{
         # Stars between two slashes, or between a slash and end-of-string,
         # should at match one or more non-slash characters.
-        (?<= \\ /)      # lookbehind for slash
-        \\ \*           # star
-        (?= \\ / | \z)  # lookahead for slash or end-of-string
+        (?<= /)      # lookbehind for slash
+        \\ \*        # star
+        (?= / | \z)  # lookahead for slash or end-of-string
     }{([^/]+)}gx;
     $glob =~ s{
         # All other stars can match zero or more non-slash character.
