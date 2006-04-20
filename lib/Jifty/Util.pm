@@ -124,6 +124,7 @@ sub app_root {
     warn "Can't guess application root from current path ("
         . Cwd::cwd()
         . ") or bin path ($FindBin::Bin)\n";
+    return undef;
 }
 
 =head2 default_app_name
