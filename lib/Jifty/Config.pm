@@ -209,7 +209,7 @@ sub guess {
     my $db_name = lc $app_name;
     $db_name =~ s/-/_/g;
 
-    return {
+    my $guess = {
         framework => {
             AdminMode        => 1,
             DevelMode        => 1,
@@ -235,10 +235,10 @@ sub guess {
             Web        => {
                 Port => '8888',
                 BaseURL => 'http://localhost',
-                SessionDir  => "%var/session%",
-                DataDir     => "%var/mason%",
-                StaticRoot   => "%share/web/static%",
-                TemplateRoot => "%share/web/templates%",
+                SessionDir  => "var/session",
+                DataDir     => "var/mason",
+                StaticRoot   => "share/web/static",
+                TemplateRoot => "share/web/templates",
                 ServeStaticFiles => 1,
                 MasonConfig => {
                     autoflush    => 0,
@@ -250,6 +250,8 @@ sub guess {
             },
         },
     };
+
+    return $self->_expand_relative_paths($guess);
 
 }
 
