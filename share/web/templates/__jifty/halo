@@ -115,7 +115,7 @@ my $depth = 1;
 % if (@{$_->[2]}) {
 <b>Bindings:</b> <tt><% join(',', map {defined $_ ? ($_ =~ /\0/ ? "*BLOB*" : $_ ) : "undef"} @{$_->[2]}) %></tt><br />
 % }
-<i><% _('[_1] seconds', $_->[3]) %></i>
+<i><% _('%1 seconds', $_->[3]) %></i>
 </li>
 % }
 </ul></div>

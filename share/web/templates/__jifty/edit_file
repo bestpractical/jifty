@@ -3,7 +3,7 @@ $path=> undef
 $editor => undef
 </%args>
 <%init>
-my $title = _("Editing file [_1]",$editor->argument_value('source_path'));
+my $title = _("Editing file %1",$editor->argument_value('source_path'));
 </%init>
 <&|/_elements/wrapper, title => $title &>
 <% Jifty->web->form->start %>
