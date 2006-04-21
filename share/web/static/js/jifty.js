@@ -428,6 +428,10 @@ function update() {
                 element = element.parentNode;
             }
 
+            if (f['parent']) {
+                f['region'] = name = f['parent'] + '-' + name;
+            }
+
             // Make the region (for now)
             new Region(name, f['args'], f['path'], f['parent']);
         } else if (f['path'] == null) {
