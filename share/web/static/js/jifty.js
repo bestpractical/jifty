@@ -241,7 +241,7 @@ Behaviour.register({
             Form.Element.validate(this);
         } 
     },
-    'input.date': function(e) {
+    'input[type="text"].date': function(e) {
         if ( !Element.hasClassName( e, 'has-calendar-link' ) ) {
             createCalendarLink(e);
             Element.addClassName( e, 'has-calendar-link' );
@@ -422,7 +422,7 @@ function update() {
             f['parent'] = null;
             if (f['mode'] && ((f['mode'] == "Before") || (f['mode'] == "After")))
                 element = element.parentNode;
-            while ((element != null) && (f['parent'] == null)) {
+            while ((element != null) && (element.getAttribute) && (f['parent'] == null)) {
                 if (/^region-/.test(element.getAttribute("id")))
                     f['parent'] = element.getAttribute("id").replace(/^region-/,"");
                 element = element.parentNode;
