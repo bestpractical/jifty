@@ -31,7 +31,7 @@ my $nav = Jifty->web->navigation->child("Administration" => url => '/__jifty/adm
 foreach my $model (@models) {
     next unless ($model =~ /^(?:.*)::(.*?)$/);
     my $type = $1;
-    $nav->child($type   => url => '/__jifty/admin/'.$type);
+    $nav->child($type   => url => '/__jifty/admin/model/'.$type);
 }
 return;
 </%init>
