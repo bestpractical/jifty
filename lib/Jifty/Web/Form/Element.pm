@@ -39,7 +39,7 @@ current region.
 
 Replaces the region specified by the C<region> parameter (which
 defaults to the current region) with the fragment located at the given
-C<PATH>.
+C<PATH>.  If C<undef> is passed as the C<PATH>, acts like a L</delete>.
 
 =item refresh => REGION
 
@@ -48,8 +48,12 @@ L<Jifty::Web::PageRegion> object, or the fully qualified name of such.
 
 =item refresh_self => 1
 
-Refreshes the current region; this is the default action, if C<args>
-are supplied, but no other mode is given.
+Refreshes the current region; this is the default action, if a
+non-empty C<args> is supplied, but no other mode is given.
+
+=item delete => REGION
+
+Removes the given C<REGION> from the page, permanently.
 
 =back
 
@@ -151,14 +155,24 @@ sub javascript {
                 @args{qw/mode path/} = ('Top', $hook->{prepend});
                 $hook->{element} ||= "#region-".$hook->{region};
             } elsif (exists $hook->{replace_with}) {
-                @args{qw/mode path region/} = ('Replace', $hook->{replace_with}, $hook->{region});
+                if (defined $hook->{replace_with}) {
+                    @args{qw/mode path region/} = ('Replace', $hook->{replace_with}, $hook->{region});
+                } else {
+                    @args{qw/mode region/} = ('Delete', $hook->{region});
+                }
             } elsif (exists $hook->{refresh}) {
                 my $region = ref $hook->{refresh} ? $hook->{refresh} : Jifty->web->get_region($hook->{refresh});
-                warn "Can't find region ".$hook->{refresh} and next unless $region;
-                @args{qw/mode path region/} = ('Replace', $hook->{refresh}->path, $hook->{refresh});
-            } elsif ((exists $hook->{refresh_self} and Jifty->web->current_region) or $hook->{args}) {
+                if ($region) {
+                    @args{qw/mode path region/} = ('Replace', $region->path, $region->qualified_name);
+                } else {
+                    $self->log->debug("Can't find region ".$hook->{refresh});
+                    @args{qw/mode path region/} = ('Replace', undef, $hook->{refresh});
+                }
+            } elsif ((exists $hook->{refresh_self} and Jifty->web->current_region) or ($hook->{args} and %{$hook->{args}})) {
                 # If we just pass arguments, treat as a refresh_self
                 @args{qw/mode path region/} = ('Replace', Jifty->web->current_region->path, Jifty->web->current_region);
+            } elsif (exists $hook->{delete}) {
+                @args{qw/mode region/} = ('Delete', $hook->{delete});
             } else {
                 # If we're not doing any of the above, skip this one
                 next;

@@ -143,6 +143,11 @@ sub new {
         $args{submit} = [ $args{submit} ] unless ref $args{submit} eq "ARRAY";
         $args{submit}
             = [ map { ref $_ ? $_->moniker : $_ } @{ $args{submit} } ];
+
+        # If they have an onclick, add any and all submit actions to the onclick's submit list
+        if ($args{onclick}) {
+            $args{onclick} = [ (ref $args{onclick} eq "ARRAY" ? @{ $args{onclick} } : $args{onclick}), map { submit => $_ }, @{$args{submit}} ];
+        }
     }
 
     for my $field ( $self->accessors() ) {

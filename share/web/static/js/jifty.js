@@ -407,6 +407,14 @@ function update() {
         if (element == null)
             continue;
 
+        // If we're removing the element, do it now
+        // XXX TODO: Effects on this?
+        if (f['mode'] == "Delete") {
+            fragments[name] = null;
+            Element.remove(element);
+            continue;
+        }
+
         f['is_new'] = (fragments[name] ? false : true);
         // If it's new, we need to create it so we can dump it
         if (f['is_new']) {
@@ -422,6 +430,9 @@ function update() {
 
             // Make the region (for now)
             new Region(name, f['args'], f['path'], f['parent']);
+        } else if (f['path'] == null) {
+            // If they didn't know tha path, fill it in now
+            f['path'] == fragments[name].path;
         }
 
         // Update with all new values

@@ -410,6 +410,7 @@ sub button {
                  @_);
 
     Jifty->web->form->register_action( $self );
+    Jifty->web->form->print_action_registration($self->moniker);
     $args{parameters}{$self->form_field_name($_)} = $args{arguments}{$_}
       for keys %{$args{arguments}};
 
