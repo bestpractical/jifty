@@ -720,10 +720,14 @@ sub return {
     $self->link( call => $continuation, %args );
 }
 
-=head3 render_messages
+=head3 render_messages [MONIKER]
 
 Outputs any messages that have been added, in a <div id="messages">
 tag.  Messages are added by calling L<Jifty::Result/message>.
+
+If a moniker is specified, only messages for that moniker 
+are rendered.
+
 
 =cut
 
@@ -731,21 +735,24 @@ tag.  Messages are added by calling L<Jifty::Result/message>.
 
 sub render_messages {
     my $self = shift;
-
+    my $only_moniker = '';
+    $only_moniker = shift if (@_);
     my %results = $self->response->results;
 
     return '' unless %results;
 
+    my @monikers = ($only_moniker) || sort keys %results;
+
     for my $type (qw(error message)) {
-        next unless grep { $results{$_}->$type() } keys %results;
+        next unless grep { $results{$_}->$type() } @monikers;
 
         my $plural = $type . "s";
         $self->out(qq{<div id="$plural">});
-        foreach my $moniker ( keys %results ) {
+        foreach my $moniker ( @monikers ) {
             if ( $results{$moniker}->$type() ) {
-                $self->out(qq{<div class="$type $moniker">});
-                $self->out( $results{$moniker}->$type() );
-                $self->out(qq{</div>});
+                $self->out( qq{<div class="$type $moniker">}
+                    . $results{$moniker}->$type()
+                    . qq{</div>} );
             }
         }
         $self->out(qq{</div>});
