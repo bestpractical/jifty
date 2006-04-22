@@ -42,12 +42,10 @@ $wrapper = "/__jifty/error/_elements/wrapper"
 if ( not Jifty->config->framework("DevelMode") or not $cont ) {
   $m->comp(
     $wrapper,
-    {
       content => sub {
         $m->comp( "_elements/error_text", error => "mason internal error" );
       },
       title => "Something went awry"
-    }
   );
   $m->abort;
 }
