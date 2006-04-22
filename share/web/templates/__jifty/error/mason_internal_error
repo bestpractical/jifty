@@ -35,22 +35,29 @@ my $wrapper = "/_elements/wrapper";
 
 my $cont = Jifty->web->request->continuation;
 $wrapper = "/__jifty/error/_elements/wrapper"
-  if $cont and $cont->request->path eq "/__jifty/error/mason_internal_error";
+  if $cont
+  and $cont->request->path eq "/__jifty/error/mason_internal_error";
 
 # If we're not in devel, bail
-if (not Jifty->config->framework("DevelMode") or not $cont) {
-    $m->comp({content => sub {
-        $m->comp("_elements/error_text", error => "mason internal error");
-    }, $wrapper, title => "Something went awry"});
-    $m->abort;
+if ( not Jifty->config->framework("DevelMode") or not $cont ) {
+  $m->comp(
+    $wrapper,
+    {
+      content => sub {
+        $m->comp( "_elements/error_text", error => "mason internal error" );
+      },
+      title => "Something went awry"
+    }
+  );
+  $m->abort;
 }
 
-my $e = $cont->response->error;
+my $e   = $cont->response->error;
 my $msg = $e->message;
 $msg =~ s/, <\S+> (line|chunk) \d+\././;
 
-my $info = $e->analyze_error;
-my $file = $info->{file};
-my @lines = @{$info->{lines}};
-my @stack = @{$info->{frames}};
+my $info  = $e->analyze_error;
+my $file  = $info->{file};
+my @lines = @{ $info->{lines} };
+my @stack = @{ $info->{frames} };
 </%init>
