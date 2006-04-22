@@ -21,7 +21,7 @@ method.
 
 use base qw/Jifty::Action/;
 
-__PACKAGE__->mk_accessors(qw(record));
+__PACKAGE__->mk_accessors(qw(record _cached_arguments));
 
 =head1 METHODS
 
@@ -95,134 +95,148 @@ L</record>.
 
 =cut
 
-# XXX TODO  should this be memoized?
 sub arguments {
-    my $self = shift;
+  my $self = shift;
 
+  unless ( $self->_cached_arguments ) {
     my $field_info = {};
 
     my @fields = $self->possible_fields;
 
     # we use a while here because we may be modifying the fields on the fly.
     while ( my $field = shift @fields ) {
-        my $info = {};
-        my $column;
-        if (ref $field) {
-            $column = $field;
-            $field = $column->name;
-        } else {
-            $column = $self->record->column($field);
-            my $current_value = $self->record->$field;
+      my $info = {};
+      my $column;
+      if ( ref $field ) {
+        $column = $field;
+        $field  = $column->name;
+      }
+      else {
+        $column = $self->record->column($field);
+        my $current_value = $self->record->$field;
 
-            # If the current value is actually a pointer to another object, dereference it
-            $current_value = $current_value->id
-              if ref($current_value) and $current_value->isa( 'Jifty::Record' );
-            $info->{default_value} = $current_value if $self->record->id;
-        }
+# If the current value is actually a pointer to another object, dereference it
+        $current_value = $current_value->id
+          if ref($current_value)
+          and $current_value->isa('Jifty::Record');
+        $info->{default_value} = $current_value if $self->record->id;
+      }
 
-        if ( defined $column->valid_values && $column->valid_values ) {
-            $info->{valid_values} = [ @{$column->valid_values } ];
-            $info->{render_as}    = 'Select';
-        }
-        elsif ( defined $column->type && $column->type =~ /^bool/i ) {
-            $info->{render_as} = 'Checkbox';
-        }
-        elsif (defined $column->render_as 
-                && $column->render_as =~ /^password$/i) {
-            my $same = sub {
-                my ($self, $value) = @_;
-                if ( $value ne $self->argument_value($field) ) {
-                    return $self->validation_error($field . '_confirm' => "The passwords you typed didn't match each other.");
-                } else {
-                    return $self->validation_ok($field . '_confirm');
-                }
-            };
-            
-            $field_info->{$field . "_confirm"} = {render_as => 'Password', validator => $same, mandatory => 0};
-        }
+      if ( defined $column->valid_values && $column->valid_values ) {
+        $info->{valid_values} = [ @{ $column->valid_values } ];
+        $info->{render_as}    = 'Select';
+      }
+      elsif ( defined $column->type && $column->type =~ /^bool/i ) {
+        $info->{render_as} = 'Checkbox';
+      }
+      elsif ( defined $column->render_as
+        && $column->render_as =~ /^password$/i )
+      {
+        my $same = sub {
+          my ( $self, $value ) = @_;
+          if ( $value ne $self->argument_value($field) ) {
+            return $self->validation_error( $field
+                . '_confirm' =>
+                "The passwords you typed didn't match each other." );
+          }
+          else {
+            return $self->validation_ok( $field . '_confirm' );
+          }
+        };
 
-        elsif ( defined $column->refers_to ) {
-            my $refers_to = $column->refers_to;
-            if ( ref($refers_to) and $refers_to->isa( 'Jifty::Record' ) ) {
+        $field_info->{ $field . "_confirm" } = {
+          render_as => 'Password',
+          validator => $same,
+          mandatory => 0
+        };
+      }
 
-                my $collection = Jifty::Collection->new(
-                    record_class => $refers_to,
-                    current_user => $self->record->current_user
-                );
-                $collection->unlimit;
+      elsif ( defined $column->refers_to ) {
+        my $refers_to = $column->refers_to;
+        if ( ref($refers_to) and $refers_to->isa('Jifty::Record') ) {
 
-                # XXX This assumes a ->name and a ->id method
-                $info->{valid_values} = [
-                    {   display_from => 'name',
-                        value_from   => 'id',
-                        collection   => $collection
-                    }
-                ];
+          my $collection = Jifty::Collection->new(
+            record_class => $refers_to,
+            current_user => $self->record->current_user
+          );
+          $collection->unlimit;
 
-                $info->{render_as} = 'Select';
+          # XXX This assumes a ->name and a ->id method
+          $info->{valid_values} = [
+            { display_from => 'name',
+              value_from   => 'id',
+              collection   => $collection
             }
-        }
+          ];
 
-        # build up a validator sub if the column implements validation
-        if ( defined $column->validator && $column->validator ) {
-            $info->{ajax_validates} = 1;
-            $info->{validator} = sub {
-                my $self  = shift;
-                my $value = shift;
-                my ( $is_valid, $message )
-                    = &{ $column->validator }( $self->record, $value );
-                if ($is_valid) {
-                    return $self->validation_ok($field);
-                }
-                else {
-                    unless ($message) {
-                        $self->log->error(
-                            qq{_Schema validator for $field didn't explain why the value '$value' is invalid}
-                        );
-                    }
-                    return (
-                        $self->validation_error(
-                            $field => $message
-                                || q{That doesn't look right, but I don't know why}
-                        )
-                    );
-                }
-            };
+          $info->{render_as} = 'Select';
         }
-   
-        my $autocomplete_method = "autocomplete_".$field;
-        if ($self->record->can($autocomplete_method) ) {
-            $info->{'autocompleter'} ||= sub { 
-                my($self, $value) = @_;
-                return $self->record->$autocomplete_method( $value);
-            };
-        }
+      }
 
-	my $canonicalize_method = "canonicalize_".$field;
-        if ($self->record->can($canonicalize_method) ) {
-            $info->{'canonicalizer'} ||= sub {
-                my($self, $value) = @_;
-                return $self->record->$canonicalize_method( $value );
-            };
-        } elsif (defined $column->render_as and $column->render_as eq "Date") {
-            $info->{'canonicalizer'} ||= sub {
-                my($self, $value) = @_;
-                return _canonicalize_date($self, $value );
-            };
-        }
-
-
-        # If we're hand-coding a render_as, hints or label, let's use it.
-        for ( qw(render_as label hints length mandatory sort_order)) { 
-        
-            if ( defined $column->$_ ) {
-                 $info->{$_} = $column->$_;
+      # build up a validator sub if the column implements validation
+      if ( defined $column->validator && $column->validator ) {
+        $info->{ajax_validates} = 1;
+        $info->{validator} = sub {
+          my $self  = shift;
+          my $value = shift;
+          my ( $is_valid, $message )
+            = &{ $column->validator }( $self->record, $value );
+          if ($is_valid) {
+            return $self->validation_ok($field);
+          }
+          else {
+            unless ($message) {
+              $self->log->error(
+                qq{_Schema validator for $field didn't explain why the value '$value' is invalid}
+              );
             }
+            return (
+              $self->validation_error(
+                $field => $message
+                  || q{That doesn't look right, but I don't know why}
+              )
+            );
+          }
+        };
+      }
+
+      my $autocomplete_method = "autocomplete_" . $field;
+      if ( $self->record->can($autocomplete_method) ) {
+        $info->{'autocompleter'} ||= sub {
+          my ( $self, $value ) = @_;
+          return $self->record->$autocomplete_method($value);
+        };
+      }
+
+      my $canonicalize_method = "canonicalize_" . $field;
+      if ( $self->record->can($canonicalize_method) ) {
+        $info->{'canonicalizer'} ||= sub {
+          my ( $self, $value ) = @_;
+          return $self->record->$canonicalize_method($value);
+        };
+      }
+      elsif ( defined $column->render_as
+        and $column->render_as eq "Date" )
+      {
+        $info->{'canonicalizer'} ||= sub {
+          my ( $self, $value ) = @_;
+          return _canonicalize_date( $self, $value );
+        };
+      }
+
+      # If we're hand-coding a render_as, hints or label, let's use it.
+      for (qw(render_as label hints length mandatory sort_order)) {
+
+        if ( defined $column->$_ ) {
+          $info->{$_} = $column->$_;
         }
-        $field_info->{$field} = $info;
+      }
+      $field_info->{$field} = $info;
     }
 
-    return $field_info;
+    $self->_cached_arguments($field_info);
+  }
+  return $self->_cached_arguments();
 }
 
 =head2 possible_fields
