@@ -744,7 +744,7 @@ sub render_messages {
     my @monikers = ($only_moniker) || sort keys %results;
 
     for my $type (qw(error message)) {
-        next unless grep { $results{$_}->$type() } @monikers;
+        next unless grep { defined $results{$_}  and $results{$_}->$type() } @monikers;
 
         my $plural = $type . "s";
         $self->out(qq{<div id="$plural">});
