@@ -25,8 +25,8 @@ L<Jifty::Web::Form::Element/accessors>.
 
 =cut
 
-sub accessors { shift->SUPER::accessors(), qw(url escape_label tooltip); }
-__PACKAGE__->mk_accessors(qw(url escape_label tooltip));
+sub accessors { shift->SUPER::accessors(), qw(url escape_label tooltip target); }
+__PACKAGE__->mk_accessors(qw(url escape_label tooltip target));
 
 =head2 new PARAMHASH
 
@@ -41,7 +41,12 @@ The URL of the link; defaults to the current URL.
 
 =item tooltip
 
-Additional information about the link target.
+Additional information about the link.
+
+=item target
+
+Target of the link.  Mostly useful when specified as "_blank" to open
+a new window or as the name of a already existing window.
 
 =item escape_label
 
@@ -65,6 +70,7 @@ sub new {
         tooltip      => undef,
         escape_label => 1,
         class        => '',
+        target       => '',
         @_
     );
 
@@ -99,9 +105,10 @@ sub render {
         if ( $tooltip and $self->escape_label );
 
     Jifty->web->out(qq(<a));
-    Jifty->web->out(qq( id="@{[$self->id]}"))       if $self->id;
-    Jifty->web->out(qq( class="@{[$self->class]}")) if $self->class;
+    Jifty->web->out(qq( id="@{[$self->id]}"))         if $self->id;
+    Jifty->web->out(qq( class="@{[$self->class]}"))   if $self->class;
     Jifty->web->out(qq( title="@{[$self->tooltip]}")) if $tooltip;
+    Jifty->web->out(qq( target="@{[$self->target]}")) if $self->target;
     Jifty->web->out(qq( href="@{[$self->url]}"));
     Jifty->web->out( $self->javascript() );
     Jifty->web->out(qq(>$label</a>));
