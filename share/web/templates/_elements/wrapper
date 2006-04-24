@@ -14,8 +14,9 @@
   <% Jifty->web->render_messages %>
   <% $m->content |n%>
   <script type="text/javascript"><!--
+  Jifty.KeyBindings.activate();
   document.write('<div id="keybindings">');
-  writeKeyBindingLegend();
+  Jifty.KeyBindings.writeLegend();
   document.write('<\/div>');
   document.write('<div id="jifty-wait-message" style="display: none"><%_('Loading...')%><\/div>');
   --></script>
