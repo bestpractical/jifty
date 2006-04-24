@@ -182,12 +182,14 @@ END {
         unlink mailbox();
 
         # Remove testing db
-        Jifty->handle->disconnect() if (Jifty->handle);
+        if (Jifty->handle) {
+        Jifty->handle->disconnect();
         Log::Log4perl->get_logger("SchemaTool")->less_logging(3);
         my $schema = Jifty::Script::Schema->new;
         $schema->{drop_database} = 1;
         $schema->run;
         Log::Log4perl->get_logger("SchemaTool")->more_logging(3);
+        }
     }
 }
 
