@@ -11,7 +11,7 @@ Jifty::JSON -- Wrapper around L<JSON>
 
 Provides a wrapper around the L<JSON> library.
 
-The JSON specification at L<http://www.crockford.com/JSON/> states that only
+The JSON specification at L<http://www.json.org/> states that only
 double-quotes are possible for specifying strings.  However, for the purposes
 of embedding Javascript-compatible objects in XHTML attributes (which use
 double-quotes), we sometimes want to provide strings in single quotes.
