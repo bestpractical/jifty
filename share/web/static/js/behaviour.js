@@ -125,7 +125,10 @@ document.getElementsBySelector = function(selector) {
       var tagName = bits[0];
       var id = bits[1];
       var element = document.getElementById(id);
-      if (tagName && element.nodeName.toLowerCase() != tagName) {
+      if (!element) {
+        // id doesn't exist on the page; no use continuing
+        return new Array();
+      } else if (tagName && element.nodeName.toLowerCase() != tagName) {
         // tag with that ID not found, return false
         return new Array();
       }
