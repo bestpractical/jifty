@@ -80,28 +80,31 @@ not being sent -- for example, the recipients list could be empty.
 
 sub send_one_message {
     my $self = shift;
-    return unless my @recipients = $self->recipients;
-
+    my @recipients = $self->recipients;
+    my $to = join( ', ',
+      map { ( $_->can('email') ? $_->email : $_ ) } grep {$_} @recipients );
+     return unless ($to);
     my $message = Email::Simple->create(
-        header => [
-            From => $self->from || 'A Jifty Application <nobody>',
-            To   => join (', ', @recipients),
-            Subject => $self->subject || 'No subject',
-        ],
-        body => join ("\n", $self->preface, $self->body, $self->footer)
+      header => [
+        From => $self->from || 'A Jifty Application <nobody>',
+        To => $to,
+        Subject => $self->subject || 'No subject',
+      ],
+      body => join( "\n", $self->preface, $self->body, $self->footer )
     );
 
-    my $method = Jifty->config->framework('Mailer');
+    my $method   = Jifty->config->framework('Mailer');
     my $args_ref = Jifty->config->framework('MailerArgs');
     $args_ref = [] unless defined $args_ref;
 
-    my $sender = Email::Send->new({mailer => $method, mailer_args => $args_ref });
-    
+    my $sender
+      = Email::Send->new( { mailer => $method, mailer_args => $args_ref } );
+
     my $ret = $sender->send($message);
 
     unless ($ret) {
-        $self->log->error("Error sending mail: $ret");
-    } 
+      $self->log->error("Error sending mail: $ret");
+    }
 
     $ret;
 } 
@@ -173,7 +176,7 @@ sub to_list {
 
 =head2 send
 
-Sends an indivual email to every user in L</to_list>; it does this by
+Sends an individual email to every user in L</to_list>; it does this by
 setting L</to> and L</recipient> to the first user in L</to_list>
 calling L<Jifty::Notification>'s C<send> method, and progressing down
 the list.
@@ -186,17 +189,9 @@ person, as well.
 sub send {
     my $self = shift;
 
-    if ($self->to) {
-        if ($self->to->can('email')) {
-            $self->recipients($self->to->email);
-        } else {
-            $self->recipients($self->to);
-        }
-        $self->send_one_message(@_);
-    }
-    for my $to ($self->to_list) {
+    for my $to ($self->to, $self->to_list) {
         $self->to($to);
-        $self->recipients($to->email);
+        $self->recipients($to);
         $self->send_one_message(@_);
     }
 }

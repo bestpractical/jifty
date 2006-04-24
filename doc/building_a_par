@@ -1,0 +1,93 @@
+Incomplete instructions
+
+ $ pp `find lib/ -name \*pm |perl -ne '$_ =~ s/.pm$//;print "-M ". join("::",grep { ! /(?:lib|\-)/ } split("/",$_)) '`  -I lib bin/jifty
+use warnings;
+use strict;
+use Cwd qw(cwd);
+use Module::CoreList;
+use File::Copy;
+use File::Path qw(mkpath);
+use File::Spec::Functions qw(splitdir catfile catdir);
+use CPAN;
+use CPAN::Config;
+use YAML;
+use Time::Local;
+
+@INC = grep {! /local/} @INC; # don't want cpan.pm to make decisions based locally installed modules;
+use vars qw/$INSTALLED $FAILED $SKIP_DEPS_FOR/;
+$INSTALLED     = {};
+$FAILED        = {};
+$SKIP_DEPS_FOR = { };
+process_cpan();
+
+sub process_cpan {
+
+    #    my $self = shift;
+    my $path = cwd();
+    my @modules = @ARGV;
+
+    # We install Scalar::Util first to break a scary dependency loop.
+    mkdir "$path/.cpan";
+    mkdir "$path/.cpan/build";
+    print join "\n", @modules, "\n";
+
+    unshift @INC, '$path/lib';
+    $ENV{'PERL5LIB'} = "$path/lib";
+
+    $CPAN::Config->{build_dir}            = "$path/.cpan/build";
+    $CPAN::Config->{cpan_home}            = "$path/.cpan/build";
+    $CPAN::Config->{histfile}             = "$path/.cpan/histfile;";
+    $CPAN::Config->{keep_source_where}    = "$path/.cpan/sources";
+    $CPAN::Config->{prerequisites_policy} = "follow";
+    $CPAN::Config->{makepl_arg}
+        = "PREFIX=$path PERL5LIB=$path/lib LIB=$path/lib INSTALLMAN1DIR=$path/man/man1 INSTALLMAN3DIR=$path/man/man3 INSTALLBIN=$path/bin INSTALLSCRIPT=$path/bin";
+    $CPAN::Config->{make_install_arg} =~ s/UNINST=1//;
+
+    my @objs = map { CPAN::Shell->expand( 'Module', $_ ) } @modules;
+    for my $i ( 0 .. $#objs ) {
+        delete $objs[$i]
+            if grep { $_->{RO}->{CPAN_FILE} eq $objs[$i]->{RO}->{CPAN_FILE} }
+            @objs[ $i + 1 .. $#objs ];
+    }
+
+    foreach my $mod (@modules) {
+
+        #foreach my $mod ( grep { defined $_ } @objs ) {
+        install_mod($mod);
+    }
+    print YAML::Dump($FAILED);
+}
+
+sub install_mod {
+    my $mod_name = shift;
+    my $version = shift;
+    my $mod = CPAN::Shell->expand( 'Module', $mod_name );
+    my $first_in = Module::CoreList->first_release($mod_name => $version);
+    if ( defined $first_in and $first_in <= 5.00803 ) { print "Skipping $mod_name. It's been core since $first_in\n"; return }
+    if ( $mod->distribution->isa_perl ) { print "Skipping $mod_name. It's only in the core. OOPS\n";return}
+    if ( $INSTALLED->{ $mod->cpan_file } ) { print "Skipping $mod_name. We've already installed it\n";return}
+
+    if ( $FAILED->{ $mod->cpan_file } >= 3 ) {
+        print YAML::Dump($INSTALLED);
+        print YAML::Dump($FAILED);
+
+        die "We've tried to install "
+            . $mod->distribution->as_string
+            . " twice";
+
+    }
+
+    # Install to local
+    unless ( $SKIP_DEPS_FOR->{$mod_name} ) {
+        $mod->make;
+        my $deps = $mod->distribution->prereq_pm;
+        foreach my $dep ( keys %$deps ) {
+            install_mod($dep => $deps->{$dep});
+        }
+    }
+    #$mod->force();
+    $mod->install;
+    $INSTALLED->{ $mod->cpan_file } = 1;
+}
+
+1;
