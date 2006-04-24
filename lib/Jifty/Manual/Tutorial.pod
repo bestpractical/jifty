@@ -371,8 +371,16 @@ working on ways to make this better.)
 Inside your applications F<web/templates> directory, create a directory called
 F<_elements>.
 
-Inside F<_elements>, open up a new file called C<nav> in your text editor
-and insert:
+  mkdir web/templates/_elements
+
+You may want to start with the stock jifty template, in which case you
+only need to add the C<< $top->child( Post... >> part
+
+  cat $(perl -MJifty::Util -e 'print Jifty::Util->share_root' \
+    )/web/templates/_elements/nav > web/templates/_elements/nav
+
+Otherwise, inside F<_elements>, open up a new file called C<nav> in your
+text editor and insert:
 
   <%init>
   my $top = Jifty->web->navigation;
