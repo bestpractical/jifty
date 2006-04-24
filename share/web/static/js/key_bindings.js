@@ -10,6 +10,9 @@ Jifty.KeyBindings = {
     listener: null,
 
     activate: function() {
+        if ( Jifty.KeyBindings.listener )
+            return;
+        
         Jifty.KeyBindings.listener = DOM.Events.addListener(
                                         window,
                                         "keydown",
@@ -63,23 +66,44 @@ Jifty.KeyBindings = {
         return Jifty.KeyBindings.bindings[key];
     },
 
-    writeLegend: function() {
-        var content = "";
+    writeLegend: function(e) {
+        if (    !document.createElement
+             || !document.createTextNode
+             || Element.hasClassName(e, 'keybindings-written') )
+            return;
+        
+        
+        /* definition list */
+        var dl = document.createElement("dl");
+        dl.setAttribute("class", "keybindings");
+
+    
+        /* terms of the list */
         
         for (var key in Jifty.KeyBindings.bindings) {
-            if ( Jifty.KeyBindings.bindings[key]["label"] ) {
-                content = content + '<div class="keybinding"><dt>'+key + '</dt>' +'<dd>'+Jifty.KeyBindings.bindings[key]['label'] +'</dd></div>'; 
+            if ( Jifty.KeyBindings.get(key)["label"] ) {
+                var div = document.createElement("div");
+                div.setAttribute("class", "keybinding");
+                
+                var dt = document.createElement("dt");
+                dt.appendChild( document.createTextNode( key ) );
+
+                var dd = document.createElement("dd");
+                dd.appendChild( document.createTextNode( Jifty.KeyBindings.get(key)["label"] ) );
+                
+                div.appendChild( dt );
+                div.appendChild( dd );
+                dl.appendChild( div );
             }
         }
         
-        if (content) {
-            document.write('<div class="keybindings">');
-            document.write('<dl class="keybindings">');
-            document.write(content);
-            document.write('</dl>');
-            document.write('</div>');
-        }
+        e.appendChild( dl );
+        Element.addClassName(e, 'keybindings-written');
+        
+        /* since we wrote the legend, now obey it */
+        Jifty.KeyBindings.activate();
     }
 }
 
+Behaviour.register({ "div.keybindings": Jifty.KeyBindings.writeLegend });
 

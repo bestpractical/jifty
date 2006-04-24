@@ -13,13 +13,8 @@
 % }
   <% Jifty->web->render_messages %>
   <% $m->content |n%>
-  <script type="text/javascript"><!--
-  Jifty.KeyBindings.activate();
-  document.write('<div id="keybindings">');
-  Jifty.KeyBindings.writeLegend();
-  document.write('<\/div>');
-  document.write('<div id="jifty-wait-message" style="display: none"><%_('Loading...')%><\/div>');
-  --></script>
+  <& /_elements/keybindings &>
+  <div id="jifty-wait-message" style="display: none"><%_('Loading...')%></div>
 % Jifty::Mason::Halo->render_component_tree() if (Jifty->config->framework('DevelMode') );
 </body>
 </html>
