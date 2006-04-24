@@ -395,7 +395,7 @@ function update() {
         // Find where we are going to go
         var element = $('region-' + f['region']);
         if (f['element']) {
-            var possible = document.getElementsBySelector(f['element']);
+            var possible = cssQuery(f['element']);
             if (possible.length == 0)
                 element = null;
             else
