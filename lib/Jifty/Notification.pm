@@ -173,7 +173,7 @@ sub to_list {
 
 =head2 send
 
-Sends an indivual email to every user in L</to_list>; it does this by
+Sends an individual email to every user in L</to_list>; it does this by
 setting L</to> and L</recipient> to the first user in L</to_list>
 calling L<Jifty::Notification>'s C<send> method, and progressing down
 the list.
