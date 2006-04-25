@@ -14,7 +14,7 @@ Jifty.KeyBindings = {
             return;
         
         Jifty.KeyBindings.listener = DOM.Events.addListener(
-                                        window,
+                                        document,
                                         "keydown",
                                         Jifty.KeyBindings.doClick
                                      );

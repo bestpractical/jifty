@@ -31,7 +31,7 @@ my @libs = qw(
       JSAN.addRespository('/static/js');
    */
       JSAN = {};
-      JSAN.use = function() {};
+      JSAN.use = function() { };
    </script>
 
 % for (@libs) {
