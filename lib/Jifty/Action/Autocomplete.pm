@@ -43,7 +43,7 @@ to C<action> that we want to complete.
 
 sub arguments {
     {
-        action => {},
+        moniker => {},
         argument => {}
     }
 }
@@ -59,14 +59,13 @@ L<argument> in question.
 sub take_action {
     my $self = shift;
 
-    my $moniker = $self->argument_value('action');
-    # XXX TODO: we should just be getting the arg name, not the field name somehow
-    my (undef, $arg_name, undef)  = Jifty->web->request->parse_form_field_name($self->argument_value('argument'));
+    my $moniker = $self->argument_value('moniker');
+    my $argument = $self->argument_value('argument');
 
     my $request_action = Jifty->web->request->action($moniker);
     my $action = Jifty->web->new_action_from_request($request_action);
 
-    my @completions = $action->_autocomplete_argument($arg_name);
+    my @completions = $action->_autocomplete_argument($argument);
     $self->result->content->{completions} = \@completions;
 
     return 1;

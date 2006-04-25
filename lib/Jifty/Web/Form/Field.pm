@@ -465,7 +465,7 @@ sub render_autocomplete {
     Jifty->web->out(
 qq!<div class="autocomplete" id="@{[$self->element_id]}-autocomplete" style="display:none;border:1px solid black;background-color:white;"></div>\n
         <script type="text/javascript">
-          new Jifty.Autocompleter('@{[$self->element_id]}', '@{[$self->element_id]}-autocomplete', '/__jifty/autocomplete.xml')
+          new Jifty.Autocompleter('@{[$self->element_id]}','@{[$self->element_id]}-autocomplete')
         </script>
   !
     );
