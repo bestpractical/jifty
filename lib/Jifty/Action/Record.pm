@@ -204,7 +204,9 @@ sub arguments {
       if ( $self->record->can($autocomplete_method) ) {
         $info->{'autocompleter'} ||= sub {
           my ( $self, $value ) = @_;
-          return $self->record->$autocomplete_method($value);
+          my %columns;
+          $columns{$_} = $self->argument_value($_) for grep {$_ ne $field} $self->possible_fields;
+          return $self->record->$autocomplete_method($value, %columns);
         };
       }
 

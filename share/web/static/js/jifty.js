@@ -39,6 +39,15 @@ Action.prototype = {
         return elements;
     },
 
+    getField: function(name) {
+        var elements = this.fields();
+        for (var i = 0; i < elements.length; i++) {
+            if (Form.Element.getField(elements[i]) == name)
+                return elements[i];
+        }
+        return null;
+    },
+
     // Serialize and return all fields needed for this action
     serialize: function() {
         var fields = this.fields();
@@ -568,40 +577,36 @@ function hide_wait_message (){
 
 Jifty.Autocompleter = Class.create();
 Object.extend(Object.extend(Jifty.Autocompleter.prototype, Ajax.Autocompleter.prototype), {
-  initialize: function(element, update, url, options) {
-    this.baseInitialize(element, update, options);
-    this.options.asynchronous  = true;
-    this.options.method        = 'get';
-    this.options.onComplete    = this.onComplete.bind(this);
-    this.options.defaultParams = this.options.parameters || null;
-    this.url                   = url;
+  initialize: function(field, div) {
+    this.field  = $(field);
+    this.action = Form.Element.getAction(this.field);
+    this.url    = '/__jifty/autocomplete.xml';
+
+
+    this.baseInitialize(this.field, $(div));
   },
 
   getUpdatedChoices: function() {
-    entry = encodeURIComponent("J:A-autocomplete")
-        + "=" +encodeURIComponent("Jifty::Action::Autocomplete");
+      var request = { path: this.url, actions: {} };
 
-    entry += '&' + encodeURIComponent("J:A:F-argument-autocomplete") 
-        + "=" + encodeURIComponent(this.options.paramName);
-      
-    entry += '&' + encodeURIComponent("J:A:F-action-autocomplete") 
-        + "=" + encodeURIComponent(
-                        Form.Element.getMoniker(this.element)
-                        );
+      var a = {};
+      a['moniker'] = 'autocomplete';
+      a['class']   = 'Jifty::Action::Autocomplete';
+      a['fields']  = {};
+      a['fields']['moniker']  = this.action.moniker;
+      a['fields']['argument'] = Form.Element.getField(this.field);
+      request['actions']['autocomplete'] = a;
+      request['actions'][this.action.moniker] = this.action.data_structure();
+      request['actions'][this.action.moniker]['active']  = 0;
 
-    entry += '&'+ encodeURIComponent("J:ACTIONS") + '=' + encodeURIComponent("autocomplete");
+      var options = { postBody: JSON.stringify(request),
+                      onComplete: this.onComplete.bind(this),
+                      requestHeaders: ['Content-Type', 'text/x-json']
+      };
 
-
-    this.options.parameters = this.options.callback ?
-      this.options.callback(this.element, entry) : entry;
-
-    if(this.options.defaultParams)
-      this.options.parameters += '&' + this.options.defaultParams;
-      
-    var action =  Form.Element.getAction(this.element);
-      this.options.parameters += '&' + action.serialize();
-
-    new Ajax.Request(this.url, this.options);
+      new Ajax.Request(this.url,
+                       options
+                       );
   }
 
 
