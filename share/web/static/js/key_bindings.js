@@ -28,10 +28,11 @@ Jifty.KeyBindings = {
         if (e.target.nodeType == 3) // defeat Safari bug
             e.target = e.target.parentNode;
        
-        // Safari or Mozilla
-        if (    ( !e.metaKey && !e.altKey && !e.ctrlKey )
-             && (    (e.target == document.body)
-                  || (e.target == document.getElementsByTagName("html")[0]) ))
+        /* XXX TODO: Is there a better way to do this and still support
+                     opera?
+         */            
+        if (    !e.metaKey && !e.altKey && !e.ctrlKey
+             && !e.target.nodeName.match(/^(INPUT|TEXTAREA)$/) )
         {
             var code    = String.fromCharCode(e.keyCode);
             var binding = Jifty.KeyBindings.get(code);
