@@ -316,7 +316,7 @@ Renders a default CSS class for each part of our widget.
 
 sub classes {
     my $self = shift;
-    return join(' ', ($self->class||''), ($self->name||''));
+    return join(' ', ($self->class||''), ($self->name ? "argument-".$self->name : ''));
 }
 
 
