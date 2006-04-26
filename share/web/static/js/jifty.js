@@ -250,7 +250,7 @@ Behaviour.register({
             Form.Element.validate(this);
         } 
     },
-    'input[type="text"].date': function(e) {
+    'input.date': function(e) {
         if ( !Element.hasClassName( e, 'has-calendar-link' ) ) {
             createCalendarLink(e);
             Element.addClassName( e, 'has-calendar-link' );
