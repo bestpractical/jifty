@@ -72,7 +72,7 @@ sub create {
 
         # remove blank values. We'd rather have nulls
         if ( exists $attribs{$key}
-            and ( not defined $attribs{$key} or $attribs{$key} eq "" ) )
+            and ( not defined $attribs{$key} or (not ref $attribs{$key} and $attribs{$key} eq "" )) )
         {
             delete $attribs{$key};
         }
