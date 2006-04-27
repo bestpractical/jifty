@@ -56,8 +56,10 @@ Take some user defined string like "tomorrow" and turn it into a C<Jifty::Dateti
 sub new_from_string {
   my $class  = shift;
   my $string = shift;
-
-  my $now = Date::Manip::UnixDate( $string, "%o" );
+  my $now;
+  { local $ENV{'TZ'} = "GMT"; 
+    $now = Date::Manip::UnixDate( $string, "%o" );
+  }
   return undef unless $now;
   my $self = $class->from_epoch( epoch => $now, time_zone => 'gmt' );
   $self->_get_current_user();
