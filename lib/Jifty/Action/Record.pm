@@ -153,7 +153,7 @@ sub arguments {
 
       elsif ( defined $column->refers_to ) {
         my $refers_to = $column->refers_to;
-        if ( ref($refers_to) and $refers_to->isa('Jifty::Record') ) {
+        if ( UNIVERSAL::isa($refers_to, 'Jifty::Record') ) {
 
           my $collection = Jifty::Collection->new(
             record_class => $refers_to,
