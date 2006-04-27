@@ -98,11 +98,13 @@ Jifty.KeyBindings = {
             }
         }
         
-        e.appendChild( dl );
-        Element.addClassName(e, 'keybindings-written');
+        if ( dl.hasChildNodes() ) {
+            e.appendChild( dl );
+            Element.addClassName(e, 'keybindings-written');
         
-        /* since we wrote the legend, now obey it */
-        Jifty.KeyBindings.activate();
+            /* since we wrote the legend, now obey it */
+            Jifty.KeyBindings.activate();
+        }
     }
 }
 
