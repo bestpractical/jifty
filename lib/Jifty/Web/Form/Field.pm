@@ -505,9 +505,7 @@ sub render_errors {
     return unless $self->action;
 
     Jifty->web->out(
-qq!<span class="error @{[$self->classes]}" id="@{[$self->action->error_div_id($self->name)]}">
-      @{[  $self->action->result->field_error( $self->name ) || '']}
-    </span>\n!
+qq!<span class="error @{[$self->classes]}" id="@{[$self->action->error_div_id($self->name)]}">@{[  $self->action->result->field_error( $self->name ) || '']}</span>\n!
     );
     return '';
 }

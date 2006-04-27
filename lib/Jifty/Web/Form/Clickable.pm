@@ -339,10 +339,6 @@ sub post_parameters {
 
     my %parameters = ( %{ $self->{fallback} || {} }, $self->parameters );
 
-    # Actions to be submitted
-    $parameters{"J:ACTIONS"} = join( ';', @{ $self->submit } )
-        if $self->submit;
-
     my ($root) = $ENV{'REQUEST_URI'} =~ /([^\?]*)/;
 
     # Add a redirect, if this isn't to the right page
@@ -352,6 +348,11 @@ sub post_parameters {
             arguments => { url => $self->url } );
         $parameters{ $redirect->register_name } = ref $redirect;
         $parameters{ $redirect->form_field_name('url') } = $self->url;
+        $parameters{"J:ACTIONS"} = join( ';', @{ $self->submit }, $redirect->moniker )
+          if $self->submit;
+    } else {
+        $parameters{"J:ACTIONS"} = join( ';', @{ $self->submit } )
+          if $self->submit;
     }
 
     return %parameters;
