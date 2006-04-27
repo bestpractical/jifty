@@ -263,10 +263,8 @@ sub _canonicalize_date {
     my $self = shift;
     my $val = shift;
     return undef unless defined $val and $val =~ /\S/;
-    my $epoch =  Date::Manip::UnixDate(Date::Manip::ParseDate($val),'%s');
-    return undef unless $epoch;
-    my $dt  = DateTime->from_epoch( epoch =>$epoch, time_zone => 'local');
-    return $dt->ymd;
+    return undef unless my $obj = Jifty::DateTime->new_from_string($val);
+    return $obj->ymd;
 }
 
 =head2 take_action

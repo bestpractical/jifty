@@ -3,7 +3,7 @@ use strict;
 
 package Jifty;
 use encoding 'utf8';
-
+$ENV{'TZ'} = "GMT";
 our $VERSION = '0.60321';
 
 =head1 NAME
