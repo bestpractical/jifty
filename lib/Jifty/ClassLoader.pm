@@ -138,7 +138,7 @@ sub Jifty::ClassLoader::INC {
         return undef unless eval {$modelclass->table}; #self->{models}{$modelclass};
 
         my $class = $ActionBasePath ."::".$2.$3;
-        return $self->return_class( "package $class\n"
+        return $self->return_class( "package $class;\n"
                 . "use base qw/Jifty::Action::Record::$2/;\n"
                 . "sub record_class {'$modelclass'};\n"
                 . "1;" );
