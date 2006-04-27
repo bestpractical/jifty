@@ -1,9 +1,12 @@
+AUTHORS
 bin/build_par
 bin/jifty
 bin/service
 bin/xgettext
 Changelog
 doc/ajax-upgraded-links
+doc/building_a_par
+doc/client_side_continuations
 doc/command_naming
 doc/edit-in-place
 doc/packaging
@@ -54,6 +57,7 @@ lib/Jifty/Collection.pm
 lib/Jifty/Config.pm
 lib/Jifty/Continuation.pm
 lib/Jifty/CurrentUser.pm
+lib/Jifty/DateTime.pm
 lib/Jifty/Dispatcher.pm
 lib/Jifty/Everything.pm
 lib/Jifty/Handle.pm
@@ -69,6 +73,7 @@ lib/Jifty/Manual/Tutorial.pod
 lib/Jifty/Manual/Tutorial_ja.pod
 lib/Jifty/Mason/Halo.pm
 lib/Jifty/Model/Schema.pm
+lib/Jifty/Model/Session.pm
 lib/Jifty/Notification.pm
 lib/Jifty/Object.pm
 lib/Jifty/Record.pm
@@ -266,4 +271,3 @@ t/TestApp/t/00-prototype.t
 t/TestApp/t/01-config.t
 t/TestApp/t/02-dispatch.t
 t/TestApp/t/03-static.t
-t/TestApp/web/templates/after
