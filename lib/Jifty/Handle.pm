@@ -101,18 +101,50 @@ then error out.
 =cut
 
 sub check_schema_version {
-    my $appv
-        = version->new( Jifty->config->framework('Database')->{'Version'} );
-    require Jifty::Model::Schema;
-    my $dbv = Jifty::Model::Schema->new->in_db;
-    die
-        "Schema has no version in the database; perhaps you need to run this:\n\t bin/jifty schema --setup\n"
-        unless defined $dbv;
+    require Jifty::Model::Metadata;
 
-    die
-        "Schema version in database ($dbv) doesn't match application schema version ($appv)\n"
-        . "Please run `bin/jifty schema --setup` to upgrade the database.\n"
-        unless $appv == $dbv;
+    # Application db version check
+    {
+        my $dbv  = Jifty::Model::Metadata->load("application_db_version");
+        my $appv = Jifty->config->framework('Database')->{'Version'};
+
+        # Backwards compatibility -- it used to be in _db_version
+        if ( not defined $dbv ) {
+            my @v;
+            eval {
+                local $SIG{__WARN__} = sub { };
+                @v = Jifty->handle->fetch_result(
+                    "SELECT major, minor, rev FROM _db_version");
+            };
+            $dbv = join( ".", @v ) if @v == 3;
+        }
+
+        die
+            "Application schema has no version in the database; perhaps you need to run this:\n"
+            . "\t bin/jifty schema --setup\n"
+            unless defined $dbv;
+
+        die
+            "Application schema version in database ($dbv) doesn't match application schema version ($appv)\n"
+            . "Please run `bin/jifty schema --setup` to upgrade the database.\n"
+            unless version->new($appv) == version->new($dbv);
+    }
+
+    # Jifty db version check
+    {
+
+        # If we got here, the application had a version (somehow) so
+        # this is an upgrade.  If $dbv is undef, it's because it's
+        # from before when the _jifty_metadata table existed.
+        my $dbv
+            = version->new( Jifty::Model::Metadata->load("jifty_db_version")
+                || '0.60426' );
+        my $appv = version->new($Jifty::VERSION);
+        die
+            "Internal jifty schema version in database ($dbv) doesn't match running jifty version ($appv)\n"
+            . "Please run `bin/jifty schema --setup` to upgrade the database.\n"
+            unless $appv == $dbv;
+    }
 
 }
 

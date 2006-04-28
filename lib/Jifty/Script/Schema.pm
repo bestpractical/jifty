@@ -48,7 +48,8 @@ sub run {
     if ( $self->{create_all_tables} ) {
         $self->create_all_tables();
     } elsif ( $self->{'setup_tables'} ) {
-        $self->upgrade_tables();
+        $self->upgrade_jifty_tables();
+        $self->upgrade_appliction_tables();
     } else {
         print "Done.\n";
     }
@@ -66,7 +67,7 @@ sub setup_environment {
 
     # Import Jifty
     Jifty::Util->require("Jifty");
-    Jifty::Util->require("Jifty::Model::Schema");
+    Jifty::Util->require("Jifty::Model::Metadata");
 }
 
 
@@ -143,7 +144,7 @@ sub probe_database_existence {
             logger_component => 'SchemaTool',
         );
     };
-    if ( $@ =~ /doesn't match application schema version/i ) {
+    if ( $@ =~ /doesn't match (application schema|running jifty) version/i) {
         # We found an out-of-date DB.  Upgrade it
         $self->{setup_tables} = 1;
     } elsif ( $@ =~ /no version in the database/i ) {
@@ -179,13 +180,14 @@ happens on installation.
 sub create_all_tables {
     my $self = shift;
 
-    my $schema = Jifty::Model::Schema->new;
     my $log    = Log::Log4perl->get_logger("SchemaTool");
     $log->info(
         "Generating SQL for application $self->{'_application_class'}...");
 
     my $appv
         = version->new( Jifty->config->framework('Database')->{'Version'} );
+    my $jiftyv
+        = version->new( $Jifty::VERSION || '0.60426' );
 
     for my $model ( __PACKAGE__->models ) {
 
@@ -196,9 +198,9 @@ sub create_all_tables {
        #   This *will* try to generate SQL for abstract base classes you might
        #   stick in $AC::Model::.
         next unless $model->isa( 'Jifty::Record' );
-        do { log->info("Skipping $model"); next }
+        do { $log->info("Skipping $model"); next }
             if ( $model->can( 'since' )
-            and $appv < $model->since );
+            and ($model =~ /^Jifty::Model::/ ? $jiftyv : $appv) < $model->since );
 
         $log->info("Using $model");
         my $ret = $self->{'_schema_generator'}->add_model( $model->new );
@@ -219,8 +221,9 @@ sub create_all_tables {
             $ret or die "error creating a table: " . $ret->error_message;
         }
 
-        # Update the version in the database
-        $schema->update($appv);
+        # Update the versions in the database
+        Jifty::Model::Metadata->store( application_db_version => $appv);
+        Jifty::Model::Metadata->store( jifty_db_version => $jiftyv);
 
         # Load initial data
         eval {
@@ -235,52 +238,79 @@ sub create_all_tables {
         # Commit it all
         Jifty->handle->commit;
     }
-    $log->info("Set up version $appv");
+    $log->info("Set up version $appv, jifty version $jiftyv");
 }
 
 
-=head2 upgrade_tables 
+=head2 upgrade_jifty_tables
 
-Upgrade your app's tables to match your current model.
+Upgrade Jifty's internal tables.
+
+=cut
+
+sub upgrade_jifty_tables {
+    my $self = shift;
+    my $dbv  = version->new( Jifty::Model::Metadata->load( 'jifty_db_version' ) || '0.60426' );
+    my $appv = version->new( $Jifty::VERSION );
+
+    $self->upgrade_tables( "Jifty" => $dbv, $appv, "Jifty::Upgrade::Internal" );
+    Jifty::Model::Metadata->store( jifty_db_version => $appv );
+}
+
+=head2 upgrade_appliction_tables
+
+Upgrade the application's tables.
+
+=cut
+
+sub upgrade_appliction_tables {
+    my $self = shift;
+    my $dbv = version->new( Jifty::Model::Metadata->load( 'application_db_version' ) );
+    my $appv
+        = version->new( Jifty->config->framework('Database')->{'Version'} );
+
+    $self->upgrade_tables( $self->{_application_class} => $dbv, $appv );
+    Jifty::Model::Metadata->store( application_db_version => $appv );
+}
+
+=head2 upgrade_tables BASECLASS, FROM, TO, [UPGRADECLASS]
+
+Given a C<BASECLASS> to upgrade, and two L<version> objects, C<FROM>
+and C<TO>, performs the needed transforms to the database.
+C<UPGRADECLASS>, if not specified, defaults to C<BASECLASS>::Upgrade
 
 =cut
 
 sub upgrade_tables {
     my $self = shift;
+    my ($baseclass, $dbv, $appv, $upgradeclass ) = @_;
+    $upgradeclass ||= $baseclass."::Upgrade";
 
-    my $schema = Jifty::Model::Schema->new;
     my $log    = Log::Log4perl->get_logger("SchemaTool");
     # Find current versions
-    my $dbv = $schema->in_db;
-    my $appv
-        = version->new( Jifty->config->framework('Database')->{'Version'} );
 
     if ( $appv < $dbv ) {
-        print "Version $appv from module older than $dbv in database!\n";
-        exit;
+        print "$baseclass version $appv from module older than $dbv in database!\n";
+        return;
     } elsif ( $appv == $dbv ) {
-
         # Shouldn't happen
-        print "Version $appv up to date.\n";
-        exit;
+        print "$baseclass version $appv up to date.\n";
+        return;
     }
     $log->info(
-        "Gerating SQL to update $self->{'_application_class'} $dbv database to $appv"
+        "Gerating SQL to upgrade $baseclass $dbv database to $appv"
     );
 
-    my %UPGRADES;
-
     # Figure out what versions the upgrade knows about.
+    my %UPGRADES;
     eval {
-        my $upgrader = $self->{'_application_class'} . "::Upgrade";
-        Jifty::Util->require($upgrader);
-
-        $UPGRADES{$_} = [ $upgrader->upgrade_to($_) ]
+        Jifty::Util->require($upgradeclass);
+        $UPGRADES{$_} = [ $upgradeclass->upgrade_to($_) ]
             for grep { $appv >= version->new($_) and $dbv < version->new($_) }
-            $upgrader->versions();
+            $upgradeclass->versions();
     };
 
-    for my $model ( __PACKAGE__->models ) {
+    for my $model ( grep {/^\Q$baseclass\E::Model::/} __PACKAGE__->models ) {
 
         # We don't want to get the Collections, for example.
         do {next} unless $model->isa( 'Jifty::Record' );
@@ -372,7 +402,6 @@ sub upgrade_tables {
                 }
             }
         }
-        $schema->update($appv);
         $log->info("Upgraded to version $appv");
         Jifty->handle->commit;
     }
