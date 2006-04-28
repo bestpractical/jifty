@@ -163,7 +163,7 @@ sub arguments {
 
           # XXX This assumes a ->name and a ->id method
           $info->{valid_values} = [
-            { display_from => 'name',
+            { display_from => $refers_to->can('name') ? "name" : "id",
               value_from   => 'id',
               collection   => $collection
             }
