@@ -22,9 +22,8 @@ as versions of Jifty itself, for instance.
 package Jifty::Model::Metadata::Schema;
 use Jifty::DBI::Schema;
 
-column key => type is 'text';
+column key   => type is 'text';
 column value => type is 'text';
-
 
 package Jifty::Model::Metadata;
 use version;
@@ -37,7 +36,7 @@ Schemas are stored in the table C<_jifty_metadata>.
 
 =cut
 
-sub table { '_jifty_metadata' }
+sub table {'_jifty_metadata'}
 
 =head2 since
 
@@ -45,7 +44,7 @@ The metadata table first appeared in Jifty version 0.60427
 
 =cut
 
-sub since { '0.60427' }
+sub since {'0.60427'}
 
 =head2 load KEY
 
@@ -56,15 +55,17 @@ such a key cannot be found.
 
 sub load {
     my $self = shift;
-    $self = $self->new() unless ref $self;
+    $self = $self->new( current_user => Jifty::CurrentUser->superuser )
+        unless ref $self;
     return undef unless $self->_handle and $self->_handle->dbh->ping;
 
     my ($key) = @_;
+
     # This may barf all over the place.  That's almost expected in
     # some circumstances, so we eat all warnings and errors right
     # here, right now.
     eval {
-        local $SIG{__WARN__} = sub {};
+        local $SIG{__WARN__} = sub { };
         $self->load_by_cols( key => $key );
     };
     return undef unless $self->id;
@@ -80,14 +81,15 @@ value if it existed.
 
 sub store {
     my $self = shift;
-    $self = $self->new() unless ref $self;
+    $self = $self->new( current_user => Jifty::CurrentUser->superuser )
+        unless ref $self;
 
-    my ($key, $value) = @_;
+    my ( $key, $value ) = @_;
     $self->load_by_cols( key => $key );
-    if ($self->id) {
+    if ( $self->id ) {
         $self->set_value($value);
     } else {
-        $self->create( key => $key, value => $value);
+        $self->create( key => $key, value => $value );
     }
 }
 
