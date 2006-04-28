@@ -42,7 +42,7 @@ sub table {'_jifty_sessions'}
 
 =head2 since
 
-Sessions first started getting stored i nthe database in Jifty version
+Sessions first started getting stored in the database in Jifty version
 0.60428
 
 =cut
