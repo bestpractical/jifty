@@ -12,7 +12,7 @@ Jifty::Web::Session - A Jifty session handler
 
 =cut
 
-=head1 new
+=head2 new
 
 Returns a new, empty session.
 

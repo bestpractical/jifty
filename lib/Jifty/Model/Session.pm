@@ -39,7 +39,25 @@ Sessions are stored in the table C<_jifty_sessions>.
 =cut
 
 sub table {'_jifty_sessions'}
+
+=head2 since
+
+Sessions first started getting stored i nthe database in Jifty version
+0.60428
+
+=cut
+
 sub since { '0.60428' }
+
+=head2 current_user
+
+Everyone is treated as the superuser when dealing with session
+objects.  This avoids infinite recursion, as otherwise it would try to
+look up the current user in the session object to find out who we
+are...
+
+=cut
+
 sub current_user { return Jifty::CurrentUser->superuser }
 
 =head2 new_session_id
