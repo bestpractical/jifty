@@ -127,18 +127,18 @@ sub Jifty::ClassLoader::INC {
         );
 
     } elsif ( $module
-        =~ m!^($ApplicationClassPrefix)::Action::(Create|Update|Delete)([^\.:]+)$!
+        =~ m!^($ApplicationClassPrefix)::Action::(Create|Update|Delete)([^\.]+)$!
         )
     {
          
-        # Auto-create CRUD classes
+        # Auto-create CRUD classes - this applies to model subclasses too
         my $modelclass = $ApplicationClassPrefix . "::Model::" . $3;
         Jifty::Util->require($modelclass);
 
         return undef unless eval {$modelclass->table}; #self->{models}{$modelclass};
 
         my $class = $ActionBasePath ."::".$2.$3;
-        return $self->return_class( "package " . $ActionBasePath . "::$2$3;\n"
+        return $self->return_class( "package $class;\n"
                 . "use base qw/Jifty::Action::Record::$2/;\n"
                 . "sub record_class {'$modelclass'};\n"
                 . "1;" );

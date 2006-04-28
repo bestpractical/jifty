@@ -13,6 +13,7 @@ requires('Clone');
 requires('Compress::Zlib');
 requires('DBD::SQLite');
 requires('Data::Page');
+requires('DateTime');
 requires('Date::Manip');
 requires('Email::Folder');
 requires('Email::LocalDelivery');

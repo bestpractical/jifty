@@ -1,3 +1,10 @@
+SVN revision r932
+
+  * Form fields no longer automatically insert the field name by itself
+    as a class.  Instead, the class has changed to "argument-<fieldname>"
+	to avoid conflicts with generic class names (such as date).
+
+
 SVN revision r809
 
   * Move allow and deny'ing of actions into Jifty::API; this breaks
