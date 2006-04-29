@@ -11,7 +11,7 @@ requires('Class::Accessor'); # Class::Accessor::Fast
 requires('Class::Container');
 requires('Clone');
 requires('Compress::Zlib');
-requires('DBD::SQLite');
+requires('DBD::SQLite' => 1.11 );
 requires('Data::Page');
 requires('DateTime');
 requires('Date::Manip');

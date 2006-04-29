@@ -28,13 +28,14 @@ the same version, they are run in order that they were set up.
 
 =cut
 
-sub since { 
-  my ($version, $sub) = @_;
-  if (exists $UPGRADES{$version}) {
-    $UPGRADES{$version} = sub { $UPGRADES{$version}->(); $sub->(); }
-  } else {
-    $UPGRADES{$version} = $sub;
-  }
+sub since {
+    my ($version, $sub) = @_;
+    my $package = (caller)[0];
+    if (exists $UPGRADES{$package}{$version}) {
+        $UPGRADES{$package}{$version} = sub { $UPGRADES{$package}{$version}->(); $sub->(); }
+    } else {
+        $UPGRADES{$package}{$version} = $sub;
+    }
 }
 
 =head2 versions
@@ -46,7 +47,8 @@ upgrading.
 =cut
 
 sub versions {
-  return sort keys %UPGRADES;
+    my $class = shift;
+    return sort keys %{$UPGRADES{$class} || {}};
 }
 
 =head2 upgrade_to I<VERSION>
@@ -57,9 +59,9 @@ no subroutine was registered, returns a no-op subroutine.
 =cut
 
 sub upgrade_to {
-  my $self = shift;
+  my $class = shift;
   my $version = shift;
-  return $UPGRADES{$version} || sub {};
+  return $UPGRADES{$class}{$version} || sub {};
 }
 
 1;

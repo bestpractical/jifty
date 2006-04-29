@@ -37,8 +37,8 @@ use Jifty::Handler ();
 use Jifty::View::Static::Handler ();
 use Jifty::View::Mason::Handler ();
 
-use Jifty::Model::Schema ();
-
+use Jifty::Model::Metadata ();
+use Jifty::Model::Session ();
 
 
 use Jifty::Request ();

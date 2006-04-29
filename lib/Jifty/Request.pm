@@ -138,9 +138,13 @@ sub from_data_structure {
     for my $a (values %actions) {
         my %arguments;
         for my $arg (keys %{$a->{fields} || {}}) {
-            for my $type (qw/doublefallback fallback value/) {
-                $arguments{$arg} = $a->{fields}{$arg}{$type}
-                  if exists $a->{fields}{$arg}{$type};
+            if (ref $a->{fields}{$arg}) {
+                for my $type (qw/doublefallback fallback value/) {
+                    $arguments{$arg} = $a->{fields}{$arg}{$type}
+                      if exists $a->{fields}{$arg}{$type};
+                }
+            } else {
+                $arguments{$arg} = $a->{fields}{$arg};
             }
         }
         $self->add_action(moniker   => $a->{moniker},

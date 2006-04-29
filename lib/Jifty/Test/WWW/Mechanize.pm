@@ -13,13 +13,15 @@ my $Test = Test::Builder->new;
 
 =head1 NAME
 
-Jifty::Test::WWW::Mechanize - Subclass of L<Test::WWW::Mechanize> with extra Jifty features
+Jifty::Test::WWW::Mechanize - Subclass of L<Test::WWW::Mechanize> with
+extra Jifty features
 
 =head1 METHODS
 
 =head2 new
 
-Overrides L<Test::WWW::Mechanize>'s C<new> to automatically give the bot a cookie jar.
+Overrides L<Test::WWW::Mechanize>'s C<new> to automatically give the
+bot a cookie jar.
 
 =cut
 
@@ -32,8 +34,8 @@ sub new {
 
 =head2 moniker_for ACTION, FIELD1 => VALUE1, FIELD2 => VALUE2
 
-Finds the moniker of the first action of type I<ACTION> whose "constructor"
-field I<FIELD1> is I<VALUE1>, and so on.
+Finds the moniker of the first action of type I<ACTION> whose
+"constructor" field I<FIELD1> is I<VALUE1>, and so on.
 
 =cut
 
@@ -63,9 +65,10 @@ sub moniker_for {
 
 =head2 fill_in_action MONIKER, FIELD1 => VALUE1, FIELD2 => VALUE2, ...
 
-Finds the fields on the current page with the names FIELD1, FIELD2, etc in the MONIKER
-action, and fills them in.  Returns the L<HTML::Form> object of the form
-that the action is in, or undef if it can't find all the fields.
+Finds the fields on the current page with the names FIELD1, FIELD2,
+etc in the MONIKER action, and fills them in.  Returns the
+L<HTML::Form> object of the form that the action is in, or undef if it
+can't find all the fields.
 
 =cut
 
@@ -90,11 +93,13 @@ sub fill_in_action {
 
 =head2 fill_in_action_ok MONIKER, FIELD1 => VALUE1, FIELD2 => VALUE2, ...
 
-Finds the fields on the current page with the names FIELD1, FIELD2, etc in the MONIKER
-action, and fills them in.  Returns the L<HTML::Form> object of the form
-that the action is in, or undef if it can't find all the fields.
+Finds the fields on the current page with the names FIELD1, FIELD2,
+etc in the MONIKER action, and fills them in.  Returns the
+L<HTML::Form> object of the form that the action is in, or undef if it
+can't find all the fields.
 
-Also, passes if it finds all of the fields and fails if any of the fields are missing.
+Also, passes if it finds all of the fields and fails if any of the
+fields are missing.
 
 =cut
 
@@ -135,8 +140,8 @@ sub action_form {
 
 =head2 action_field_value MONIKER, FIELD
 
-Finds the fields on the current page with the names FIELD in the action 
-MONIKER, and returns its value, or undef if it can't be found.
+Finds the fields on the current page with the names FIELD in the
+action MONIKER, and returns its value, or undef if it can't be found.
 
 =cut
 
@@ -152,14 +157,6 @@ sub action_field_value {
     return unless $input;
     return $input->value;
 }
-
-=head2 field_error_text MONIKER, FIELD
-
-Finds the error span on the current page for the name FIELD in the action
-MONIKER, and returns the text (tags stripped) from it.  (If the field can't be
-found.
-
-=cut
 
 # When it sees something like
 # http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd as a DOCTYPE, this will make
@@ -180,6 +177,14 @@ wrap 'XML::Parser::lwp_ext_ent_cleanup', pre => sub {
     $_[-1] = 1; # just return please
 };
 
+=head2 field_error_text MONIKER, FIELD
+
+Finds the error span on the current page for the name FIELD in the
+action MONIKER, and returns the text (tags stripped) from it.  (If the
+field can't be found.
+
+=cut
+
 sub field_error_text {
     my $self = shift;
     my $moniker = shift;
@@ -199,8 +204,9 @@ sub field_error_text {
 
 =head2 uri
 
-L<WWW::Mechanize> has a bug where it returns the wrong value for C<uri> after
-redirect.  This fixes that.  See http://rt.cpan.org/NoAuth/Bug.html?id=9059
+L<WWW::Mechanize> has a bug where it returns the wrong value for
+C<uri> after redirect.  This fixes that.  See
+http://rt.cpan.org/NoAuth/Bug.html?id=9059
 
 =cut
 
@@ -208,7 +214,8 @@ sub uri { shift->response->request->uri }
 
 =head2 get_html_ok URL
 
-Calls C<get> URL, followed by testing the HTML using L<Test::HTML::Lint>.
+Calls C<get> URL, followed by testing the HTML using
+L<Test::HTML::Lint>.
 
 =cut
 
@@ -222,7 +229,8 @@ sub get_html_ok {
 
 =head2 submit_html_ok 
 
-Calls C<submit>, followed by testing the HTML using L<Test::HTML::Lint>.
+Calls C<submit>, followed by testing the HTML using
+L<Test::HTML::Lint>.
 
 =cut
 
@@ -269,7 +277,6 @@ sub session {
 
     my $session = Jifty::Web::Session->new;
     $session->load($1);
-    $session->_session->release_all_locks();
     return $session;
 }
 
