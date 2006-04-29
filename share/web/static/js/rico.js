@@ -785,7 +785,7 @@ Rico.Corner = {
    },
 
    _roundTopCorners: function(el, color, bgColor) {
-      var corner = this._createCorner(bgColor);
+      var corner = this._createCorner(el, bgColor);
       for(var i=0 ; i < this.options.numSlices ; i++ )
          corner.appendChild(this._createCornerSlice(color,bgColor,i,"top"));
       el.style.paddingTop = 0;
@@ -793,16 +793,22 @@ Rico.Corner = {
    },
 
    _roundBottomCorners: function(el, color, bgColor) {
-      var corner = this._createCorner(bgColor);
+      var corner = this._createCorner(el, bgColor);
       for(var i=(this.options.numSlices-1) ; i >= 0 ; i-- )
          corner.appendChild(this._createCornerSlice(color,bgColor,i,"bottom"));
       el.style.paddingBottom = 0;
       el.appendChild(corner);
    },
 
-   _createCorner: function(bgColor) {
+   _createCorner: function(el, bgColor) {
       var corner = document.createElement("div");
       corner.style.backgroundColor = (this._isTransparent() ? "transparent" : bgColor);
+      var paddingLeft = "-" + RicoUtil.getElementsComputedStyle(el, "paddingLeft", "padding-left");
+      var paddingRight = "-" + RicoUtil.getElementsComputedStyle(el, "paddingRight", "padding-right");
+      
+      corner.style.marginRight = paddingRight;
+      corner.style.marginLeft  = paddingLeft;
+
       return corner;
    },
 
