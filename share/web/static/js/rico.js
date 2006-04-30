@@ -1,3 +1,12 @@
+/*
+ * This is a slightly modified version of Rico which has improved
+ * corner rounding methods that try to take care of preserving padding.
+ * 
+ * Replacing it with a stock Rico probably isn't a good idea unless you
+ * repatch it or don't plan on using any of the corner rounding.
+ *
+ */
+
 /**
   *
   *  Copyright 2005 Sabre Airline Solutions
@@ -16,7 +25,7 @@
 
 //-------------------- rico.js
 var Rico = {
-  Version: '1.1.2',
+  Version: '1.1.2.jifty.r963',
   prototypeVersion: parseFloat(Prototype.Version.split(".")[0] + "." + Prototype.Version.split(".")[1])
 }
 
