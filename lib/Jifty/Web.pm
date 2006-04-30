@@ -13,7 +13,6 @@ Jifty::Web - Web framework for a Jifty application
 
 use Jifty::Everything;
 use CGI::Cookie;
-use Apache::Session;
 use XML::Writer;
 use base qw/Class::Accessor::Fast Jifty::Object/;
 
