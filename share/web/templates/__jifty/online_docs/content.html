@@ -34,8 +34,10 @@ foreach my $file (@options) {
 my $body;
 my $schema;
 my $converter = Pod::Simple::HTML->new();
-if ($total_body =~ /package (.*?)::Schema;(.*)package/ismx) {
-     $schema = $2;
+if($n !~ /^Jifty\//) {
+    if ($total_body =~ /package (.*?)::Schema;(.*)package/ismx) {
+         $schema = $2;
+    }
 }
 
 
