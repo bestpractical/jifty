@@ -59,12 +59,12 @@ requires('version');
 
 if (can_cc()) {
     # Always require the Syck bindings if a C compiler is available
-    requires('YAML::Syck' => 0.43);
-    requires('JSON::Syck' => 0.11);
+    requires('YAML::Syck' => 0.44);
+    requires('JSON::Syck' => 0.12);
 }
 else {
-    requires('YAML' => 0.35) unless can_use('YAML::Syck' => 0.43);
-    requires('JSON' => 0.01) unless can_use('JSON::Syck' => 0.11);
+    requires('YAML' => 0.35) unless can_use('YAML::Syck' => 0.44);
+    requires('JSON' => 0.01) unless can_use('JSON::Syck' => 0.12);
 }
 
 version_from('lib/Jifty.pm');
