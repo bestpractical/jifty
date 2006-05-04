@@ -713,7 +713,7 @@ sub do_mapping {
 
 package Jifty::Request::Action;
 use base 'Class::Accessor::Fast';
-__PACKAGE__->mk_accessors( qw/moniker arguments class order active modified/);
+__PACKAGE__->mk_accessors( qw/moniker arguments class order active modified has_run/);
 
 =head2 Jifty::Request::Action
 
@@ -730,6 +730,8 @@ A small package that encapsulates the bits of an action request:
 =head3 order [INTEGER]
 
 =head3 active [BOOLEAN]
+
+=head3 has_run [BOOLEAN]
 
 =cut
 
