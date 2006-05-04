@@ -144,13 +144,14 @@ sub probe_database_existence {
             logger_component => 'SchemaTool',
         );
     };
+    
     if ( $@ =~ /doesn't match (application schema|running jifty) version/i) {
         # We found an out-of-date DB.  Upgrade it
         $self->{setup_tables} = 1;
     } elsif ( $@ =~ /no version in the database/i ) {
         # No version table.  Assume the DB is empty.
         $self->{create_all_tables} = 1;
-    } elsif ( $@ =~ /database .*? does not exist/i ) {
+    } elsif ( $@ =~ /database .*? does not exist/i or $@ =~ /unknown database/) {
         # No database exists; we'll need to make one and fill it up
         $self->{create_database}   = 1;
         $self->{create_all_tables} = 1;
@@ -250,7 +251,18 @@ Upgrade Jifty's internal tables.
 
 sub upgrade_jifty_tables {
     my $self = shift;
-    my $dbv  = version->new( Jifty::Model::Metadata->load( 'jifty_db_version' ) || '0.60426' );
+    my $dbv  = Jifty::Model::Metadata->load( 'jifty_db_version' );
+    unless ($dbv) {
+        # Backwards combatibility -- it usd to be 'key' not 'data_key';
+        eval {
+            local $SIG{__WARN__} = sub { };
+            $dbv = Jifty->handle->fetch_result(
+                "SELECT value FROM _jifty_metadata WHERE key = 'jifty_db_version'");
+        };
+    }
+    $dbv ||= '0.60426';
+    $dbv = version->new($dbv);
+
     my $appv = version->new( $Jifty::VERSION );
 
     $self->upgrade_tables( "Jifty" => $dbv, $appv, "Jifty::Upgrade::Internal" );

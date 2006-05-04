@@ -108,8 +108,8 @@ sub check_schema_version {
         my $dbv  = Jifty::Model::Metadata->load("application_db_version");
         my $appv = Jifty->config->framework('Database')->{'Version'};
 
-        # Backwards compatibility -- it used to be in _db_version
         if ( not defined $dbv ) {
+            # First layer of backwards compatibility -- it used to be in _db_version
             my @v;
             eval {
                 local $SIG{__WARN__} = sub { };
@@ -117,6 +117,14 @@ sub check_schema_version {
                     "SELECT major, minor, rev FROM _db_version");
             };
             $dbv = join( ".", @v ) if @v == 3;
+        }
+        if ( not defined $dbv ) {
+            # It was also called the 'key' column, not the data_key column
+            eval {
+                local $SIG{__WARN__} = sub { };
+                $dbv = Jifty->handle->fetch_result(
+                    "SELECT value FROM _jifty_metadata WHERE key = 'application_db_version'");
+            };
         }
 
         die

@@ -18,7 +18,7 @@ package Jifty::Model::Session::Schema;
 use Jifty::DBI::Schema;
 
 column session_id => type is 'varchar(32)';
-column key => type is 'text';
+column data_key => type is 'text';
 column value => type is 'blob',
   filters are 'Jifty::DBI::Filter::Storable';
 column created => type is 'timestamp',

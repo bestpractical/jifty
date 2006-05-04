@@ -16,7 +16,7 @@ package Jifty::Upgrade;
 
 use base qw/Jifty::Object Exporter/;
 use vars qw/%UPGRADES @EXPORT/;
-@EXPORT = qw/since/;
+@EXPORT = qw/since rename/;
 
 =head2 since I<VERSION> I<SUB>
 
@@ -59,9 +59,39 @@ no subroutine was registered, returns a no-op subroutine.
 =cut
 
 sub upgrade_to {
-  my $class = shift;
-  my $version = shift;
-  return $UPGRADES{$class}{$version} || sub {};
+    my $class = shift;
+    my $version = shift;
+    return $UPGRADES{$class}{$version} || sub {};
+}
+
+=head2 rename table => CLASS, [column => COLUMN,] to => NAME
+
+Used in upgrade subroutines, this executes the necessary SQL to rename
+the table, or column in the table, to a new name.
+
+=cut
+
+sub rename {
+    my (%args) = @_;
+
+    $args{table} ||= $args{in};
+    die "Must provide a table to rename";
+
+    Jifty::Util->require($args{table});
+    $args{table} = $args{table}->table;
+
+    if ($args{column}) {
+        my $driver = Jifty->config->framework('Database')->{'Driver'};
+        if ($driver eq "SQLite") {
+            # SQLite doesn't support renaming columns -- cruel hack to
+            # just add the new name
+            die "SQLite does not support table renaming.  We are sad!";
+        } else {
+            Jifty->handle->simple_query("ALTER TABLE $args{table} RENAME $args{column} TO $args{to}");
+        }
+    } else {
+        Jifty->handle->simple_query("ALTER TABLE $args{table} RENAME TO $args{to}");
+    }
 }
 
 1;

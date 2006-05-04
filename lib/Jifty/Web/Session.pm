@@ -113,7 +113,7 @@ sub get {
     $setting->load_by_cols(
         session_id => $self->id,
         key_type   => $key_type,
-        key        => $key
+        data_key   => $key
     );
     return $setting->value;
 }
@@ -139,7 +139,7 @@ sub set {
     $setting->load_by_cols(
         session_id => $self->id,
         key_type   => $key_type,
-        key        => $key
+        data_key   => $key
     );
     if ( $setting->id ) {
         $setting->set_value($value);
@@ -147,7 +147,7 @@ sub set {
         $setting->create(
             session_id => $self->id,
             key_type   => $key_type,
-            key        => $key,
+            data_key   => $key,
             value      => $value
         );
     }
@@ -171,7 +171,7 @@ sub remove {
     $setting->load_by_cols(
         session_id => $self->id,
         key_type   => $key_type,
-        key        => $key
+        data_key   => $key
     );
     $setting->delete if $setting->id;
 }

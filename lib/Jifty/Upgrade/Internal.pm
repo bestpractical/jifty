@@ -20,4 +20,9 @@ since '0.60427' => sub {
     Jifty::Model::Metadata->store( application_db_version => version->new(join'.',@v));
 };
 
+since '0.60504' => sub {
+    rename column => 'key', in => 'Jifty::Model::Session',  to => 'data_key';
+    rename column => 'key', in => 'Jifty::Model::Metadata', to => 'data_key';
+};
+
 1;
