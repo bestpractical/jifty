@@ -117,9 +117,9 @@ L<Jifty::Notification> email driver. You might want to override this
 class if you want to set an application-specific header or footer for
 all outgoing email.
 
-=item MyWeblog::Dispatcher>
+=item MyWeblog::Dispatcher
 
-C<MyWeblog::Dispatcher> is an application-speciific "dispatcher" class that
+C<MyWeblog::Dispatcher> is an application-specific "dispatcher" class that
 allows you to write code that runs when a client makes a request to the server
 I<before> Jifty runs I<actions> or renders I<templates>.  See L<Jifty::Dispatcher>
 for more information about the dispatcher.

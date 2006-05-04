@@ -321,5 +321,11 @@ sub cache_key_prefix {
     Jifty->config->framework('Database')->{'Database'};
 }
 
+sub _cache_config {
+    {   'cache_p'       => 1,
+        'cache_for_sec' => 60,
+    };
+}
+
 1;
 

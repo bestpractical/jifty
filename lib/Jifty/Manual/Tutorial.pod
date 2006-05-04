@@ -194,7 +194,7 @@ You should see something like this:
   package MyWeblog::Model::Post::Schema;
   use Jifty::DBI::Schema;
 
-  # Your column definitions go here.  See L<Jifty::DBI::Schema> for
+  # Your column definitions go here.  See Jifty::DBI::Schema for
   # documentation about how to write column definitions.
 
   package MyWeblog::Model::Post;
@@ -402,6 +402,19 @@ Please join us on the C<jifty-devel> mailing list to talk about how you're
 using Jifty or what you find difficult or hard to use about it.
 
 =head1 GETTING HELP
+
+=head2 Online Help
+
+The C<jifty> command-line application comes with builtin help.
+
+  jifty help
+
+  jifty help <command>
+
+If your server is running with administration mode enabled (the
+configuration file C<AdminMode> setting is missing or non-zero), you can
+click the "Online Docs" link in your browser for an extensive list of
+per-module Jifty documentation.
 
 =head2 Joining the mailing list
 
