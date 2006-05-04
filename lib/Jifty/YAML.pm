@@ -19,7 +19,7 @@ BEGIN {
     no strict 'refs';
     no warnings 'once';
 
-    if ( eval { require YAML::Syck; $YAML::Syck::VERSION >= 0.27 } ) {
+    if ( eval { require YAML::Syck; $YAML::Syck->VERSION(0.27) } ) {
         *Load     = *YAML::Syck::Load;
 
         # XXX Force non-Syck Dump until it can handle dumping circular
