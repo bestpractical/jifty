@@ -2,9 +2,21 @@
 use strict;
 use Test::More qw(no_plan);
 
+# by Eric Wilhelm in response to Randal Schwartz pointing out that
+# CPAN.pm chokes on the VERSION >... construct
+# I dare not mention it here.
+
 use ExtUtils::MakeMaker;
 use_ok('Jifty::Everything');
-my @files = grep({$_ !~ m#^/#} map({$INC{$_}} grep(/^Jifty\//, keys(%INC))));
+
+# XXX there may be a more cross-platform and harness-friendly way to say
+# this.  Tricky bit is that the harness absolutifies the lib paths or
+# plans to chdir() somewhere.
+
+# just look for Jifty.pm
+my $dir = $INC{'Jifty.pm'};
+$dir =~ s/Jifty\.pm$//;
+my @files = grep({$_ =~ m/^$dir/} map({$INC{$_}} grep(/^Jifty\//, keys(%INC))));
 ok(scalar(@files));
 
 foreach my $file (@files) {
