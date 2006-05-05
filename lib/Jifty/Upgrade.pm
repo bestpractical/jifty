@@ -75,7 +75,7 @@ sub rename {
     my (%args) = @_;
 
     $args{table} ||= $args{in};
-    die "Must provide a table to rename";
+    die "Must provide a table to rename" unless $args{table};
 
     Jifty::Util->require($args{table});
     $args{table} = $args{table}->table;
