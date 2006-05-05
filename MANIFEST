@@ -73,7 +73,6 @@ lib/Jifty/Manual/Tutorial.pod
 lib/Jifty/Manual/Tutorial_ja.pod
 lib/Jifty/Mason/Halo.pm
 lib/Jifty/Model/Metadata.pm
-lib/Jifty/Model/Schema.pm
 lib/Jifty/Model/Session.pm
 lib/Jifty/Notification.pm
 lib/Jifty/Object.pm
@@ -229,9 +228,9 @@ share/web/templates/index.html
 SIGNATURE
 t/00-load.t
 t/01-dependencies.t
+t/01-version_checks.t
 t/02-connect.t
 t/03-form-protocol.t
-t/04-sessions.t
 t/05-dispatcher.t
 t/06-forms.t
 t/07-limit-actions.t
@@ -262,6 +261,7 @@ t/Mapper/t/00-prototype.t
 t/Mapper/t/01-raw-api.t
 t/Mapper/t/02-api.t
 t/TestApp/bin/jifty
+t/TestApp/lib/TestApp/Action/DoSomething.pm
 t/TestApp/lib/TestApp/Dispatcher.pm
 t/TestApp/lib/TestApp/Model/User.pm
 t/TestApp/share/web/static/images/pony.jpg
@@ -274,3 +274,4 @@ t/TestApp/t/01-config.t
 t/TestApp/t/02-dispatch.t
 t/TestApp/t/03-static.t
 t/TestApp/t/04-sessions.t
+t/TestApp/t/05-actions-before-redirect.pm

@@ -1,11 +1,22 @@
-SVN revision r932
+0.60505 - Cinco de Jifty! (5 May 2006)
+
+  * Native support for times and timezones.
+
+  * Bug fixes (Many contributors)
+
+  * Documentation updates (Many contributors)
+
+  * Win32 Support (Audrey Tang)
+
+  * New Session layer based on Jifty instead of Apache::Session.
+    Designed for AJAX and Continations (alexmv)
+
+  * Jifty internal metadata store (The begining of an internal configuration
+    management system (alexmv)
 
   * Form fields no longer automatically insert the field name by itself
     as a class.  Instead, the class has changed to "argument-<fieldname>"
 	to avoid conflicts with generic class names (such as date).
-
-
-SVN revision r809
 
   * Move allow and deny'ing of actions into Jifty::API; this breaks
     backwards compatibility.
