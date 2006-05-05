@@ -124,7 +124,7 @@ sub check_schema_version {
                 local $SIG{__WARN__} = sub { };
                 $dbv = Jifty->handle->fetch_result(
                     "SELECT value FROM _jifty_metadata WHERE key = 'application_db_version'");
-            };
+            } or undef($dbv);
         }
 
         die

@@ -14,8 +14,10 @@ Jifty::Util - Things that don't fit anywhere else
 
 use Jifty;
 use File::Spec;
+use File::Path;
 use File::ShareDir;
 use UNIVERSAL::require;
+use ExtUtils::MakeMaker ();
 use Cwd ();
 
 # Trivial memoization to ward off evil Cwd calls.
@@ -112,7 +114,7 @@ sub app_root {
         while (@root) {
             my $try = File::Spec->catdir( @root, "bin", "jifty" );
             if (    -e $try
-                and -x $try
+                and (-x $try or MM->maybe_command($try))
                 and $try ne "/usr/bin/jifty"
                 and $try ne "/usr/local/bin/jifty" )
             {
@@ -158,17 +160,7 @@ chain as necessary. (This is what 'mkdir -p' does in your shell)
 sub make_path {
     my $self = shift;
     my $whole_path = shift;
-    my @dirs = File::Spec->splitdir( $whole_path );
-    my $path ='';
-    foreach my $dir ( @dirs) {
-        $path = File::Spec->catdir($path, $dir);
-        if (-d $path) { next }
-        if (-w $path) { die "$path not writable"; }
-        
-        
-        mkdir($path) || die "Couldn't create directory $path: $!";
-    }
-
+    File::Path::mkpath([$whole_path]);
 }
 
 =head2 require PATH

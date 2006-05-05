@@ -2,6 +2,7 @@ package Jifty::Action::Devel::FileEditor;
 
 use base qw/Jifty::Action/;
 use File::Spec;
+use File::Basename ();
 
 
 =head1 NAME
@@ -161,9 +162,9 @@ Writes the C<content> out to the C<destination_path>.
 sub take_action {
     my $self = shift;
     my $dest  = $self->{'write_to'};
-    my @dirs = File::Spec->splitdir( $dest );
-    pop @dirs; # discard filename. we only want to make the directory ;)
-    Jifty::Util->make_path( File::Spec->catdir(@dirs));
+
+    # discard filename. we only want to make the directory ;)
+    Jifty::Util->make_path( File::Basename::dirname( $dest ) );
     my $writehandle = IO::File->new();
 
     my $content = $self->argument_value('content');
