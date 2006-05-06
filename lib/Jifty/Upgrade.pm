@@ -83,9 +83,14 @@ sub rename {
     if ($args{column}) {
         my $driver = Jifty->config->framework('Database')->{'Driver'};
         if ($driver eq "SQLite") {
-            # SQLite doesn't support renaming columns -- cruel hack to
-            # just add the new name
-            die "SQLite does not support table renaming.  We are sad!";
+            # It's possible to work around this, but it's a PITA that
+            # I haven't figured out all of the details of.  It
+            # involves creating a temporary table that's a duplicate
+            # of the current table, copying the data over, dropping
+            # the original table, recreating it with the column
+            # renamed, transferring the data back, and then dropping
+            # the temporary table.  Painful enough for ya?
+            die "SQLite does not support renaming columns in tables.  We are sad!";
         } else {
             Jifty->handle->simple_query("ALTER TABLE $args{table} RENAME $args{column} TO $args{to}");
         }
