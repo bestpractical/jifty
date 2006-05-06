@@ -1,6 +1,6 @@
 use warnings;
 use strict;
- 
+
 package Jifty::Web::Form;
 
 use base qw/Jifty::Object Class::Accessor::Fast/;
@@ -9,11 +9,11 @@ __PACKAGE__->mk_accessors(qw(actions printed_actions name call is_open));
 
 =head2 new ARGS
 
-Creates a new L<Jifty::Web::Form>.  Arguments: 
+Creates a new L<Jifty::Web::Form>.  Arguments:
 
 =over
-   
-=item  name 
+
+=item  name
 
 =back
 
@@ -35,7 +35,7 @@ sub new {
 
 =for private _init
 
-Reinitialize this form. 
+Reinitialize this form.
 
 =over
 
@@ -77,9 +77,9 @@ Gets or sets the HTML name given to the form element.
 
 =head2 is_open [BOOL]
 
-This accessor returns true if Jifty is currently in the middle of rendering a form 
-(if it's printed a <form> but not yet printed a </form> tag.) Use this in your 
-components to decide whether to open a form or not if you might be called from a 
+This accessor returns true if Jifty is currently in the middle of rendering a form
+(if it's printed a <form> but not yet printed a </form> tag.) Use this in your
+components to decide whether to open a form or not if you might be called from a
 template that opened the form for you.
 
 =cut
@@ -97,7 +97,7 @@ the form.
 sub add_action {
     my $self = shift;
     $self->register_action(Jifty->web->new_action(@_));
-} 
+}
 
 
 
@@ -162,7 +162,7 @@ sub start {
     Jifty->web->out($form_start);
     $self->is_open(1);
     '';
-} 
+}
 
 =head2 submit MESSAGE, [PARAMETERS]
 
@@ -175,14 +175,14 @@ L<Jifty::Web::Form::Field::Button>'s constructor.
 
 sub submit {
     my $self = shift;
-    
+
     my $button = Jifty::Web::Form::Clickable->new(submit => undef, @_)->generate;
-    Jifty->web->out(qq{<span class="submit_button">}); 
+    Jifty->web->out(qq{<span class="submit_button">});
     $button->render_widget;
     Jifty->web->out(qq{</span>});
 
     return '';
-} 
+}
 
 =head2 end
 
@@ -208,16 +208,16 @@ sub end {
 
     Jifty->web->out( qq!</form>\n! );
     $self->is_open(0);
-    # Clear out all the registered actions and the name 
+    # Clear out all the registered actions and the name
     $self->_init();
 
     '';
-} 
+}
 
 
 =head2 print_action_registration MONIKER
 
-Print out the action registration goo for this action _right now_, unless we've already done so. 
+Print out the action registration goo for this action _right now_, unless we've already done so.
 
 =cut
 
@@ -225,7 +225,7 @@ Print out the action registration goo for this action _right now_, unless we've 
 sub print_action_registration {
     my $self = shift;
     my $moniker = shift;
-  
+
 
     my $action = $self->has_action($moniker);
     return unless ($action);
@@ -252,7 +252,7 @@ sub _preserve_state_variables {
 
     my %vars = Jifty->web->state_variables;
     for (keys %vars) {
-        Jifty->web->out( qq{<input type="hidden" name="} 
+        Jifty->web->out( qq{<input type="hidden" name="}
                 . $_
                 . qq{" value="}
                 . $vars{$_}
