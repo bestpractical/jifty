@@ -1,6 +1,16 @@
 package TestApp::Dispatcher;
 use Jifty::Dispatcher -base;
 
+before '/redirect' => run {
+    Jifty->web->request->add_action(
+        moniker => 'thing',
+        class   => 'DoSomething',
+    );
+    redirect '/index.html';
+};
+
+
+
 on '/dispatch/' => run {
     dispatch "/dispatch/basic";
 };

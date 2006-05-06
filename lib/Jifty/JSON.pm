@@ -29,7 +29,7 @@ BEGIN {
     local $@;
     no strict 'refs';
     no warnings 'once';
-    if (eval { require JSON::Syck; $JSON::Syck::VERSION >= 0.05 }) {
+    if (eval { require JSON::Syck; JSON::Syck->VERSION(0.05) }) {
         *jsonToObj = *_jsonToObj_syck;
         *objToJson = *_objToJson_syck;
     }

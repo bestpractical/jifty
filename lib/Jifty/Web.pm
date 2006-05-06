@@ -262,6 +262,7 @@ sub handle_request {
 
             $self->log->debug("Running action.");
             eval { $action->run; };
+            $request_action->has_run(1);
 
             if ( my $err = $@ ) {
                 # poor man's exception propagation
@@ -491,13 +492,25 @@ sub redirect {
     my $self = shift;
     my $page = shift || $self->next_page;
 
+    my @unrun = grep {not $_->has_run} Jifty->web->request->actions;
+
     if (   $self->response->results
-        or $self->request->state_variables )
+        or $self->request->state_variables
+        or @unrun )
     {
         my $request = Jifty::Request->new();
         $request->path($page);
         $request->add_state_variable( key => $_->key, value => $_->value )
           for $self->request->state_variables;
+        for (@unrun) {
+            $request->add_action(
+                moniker   => $_->moniker,
+                class     => $_->class,
+                order     => $_->order,
+                active    => $_->active,
+                arguments => $_->arguments,
+            );
+        }
         my $cont = Jifty::Continuation->new(
             request  => $request,
             response => $self->response,

@@ -47,7 +47,7 @@ The parent L<Jifty::Web::PageRegion> that this region is enclosed in.
 
 A boolean; whether or not the region, when rendered, will include the
 HTML region preamble that makes Javascript aware of its presence.
-Defaults to false, as this is usually handled by Mason components.
+Defaults to true.
 
 =back
 

@@ -22,8 +22,8 @@ as versions of Jifty itself, for instance.
 package Jifty::Model::Metadata::Schema;
 use Jifty::DBI::Schema;
 
-column key   => type is 'text';
-column value => type is 'text';
+column data_key => type is 'text';
+column value    => type is 'text';
 
 package Jifty::Model::Metadata;
 use version;
@@ -66,7 +66,7 @@ sub load {
     # here, right now.
     eval {
         local $SIG{__WARN__} = sub { };
-        $self->load_by_cols( key => $key );
+        $self->load_by_cols( data_key => $key );
     };
     return undef unless $self->id;
     return $self->value;
@@ -85,11 +85,11 @@ sub store {
         unless ref $self;
 
     my ( $key, $value ) = @_;
-    $self->load_by_cols( key => $key );
+    $self->load_by_cols( data_key => $key );
     if ( $self->id ) {
         $self->set_value($value);
     } else {
-        $self->create( key => $key, value => $value );
+        $self->create( data_key => $key, value => $value );
     }
 }
 

@@ -137,17 +137,6 @@ EOT
                  );
 }
 
-sub _mkpath {
-    my $self = shift;
-    my @parts = File::Spec->splitdir( shift );
-    for (0..$#parts) {
-        my $path = File::Spec->catdir(@parts[0..$_]);
-        next if -e $path and -d $path;
-        print("Creating directory $path\n");
-        mkdir $path or die "Can't create $path: $!";
-    }
-}
-
 sub _write {
     my $self = shift;
     my %files = (@_);
@@ -156,7 +145,7 @@ sub _write {
         my ($volume, $dir, $file) = File::Spec->splitpath($path);
 
         # Make sure the directories we need are there
-        $self->_mkpath($dir);
+        Jifty::Util::make_path($dir);
 
         # If it already exists, bail
         if (-e $path and not $self->{force}) {

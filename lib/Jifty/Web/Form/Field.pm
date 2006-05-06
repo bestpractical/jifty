@@ -1,4 +1,4 @@
-=for properties
+=begin properties
 
 constructor
 canonicalizer
@@ -15,6 +15,7 @@ hints
 length
 mandatory
 
+=end properties
 
 =cut
 
