@@ -33,7 +33,7 @@ sub new {
     return $self;
 }
 
-=for private _init
+=head2 PRIVATE _init
 
 Reinitialize this form.
 

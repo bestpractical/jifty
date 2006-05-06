@@ -35,7 +35,7 @@ sub current_user {
     return($self->{'_current_user'});
 }
 
-=for private _get_current_user
+=head2 PRIVATE _get_current_user
 
 Takes the ARGS paramhash passed to _init.
      Find the current user. First, try to see if it's explicit.
