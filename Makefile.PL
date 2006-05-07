@@ -67,6 +67,9 @@ else {
     requires('JSON' => 0.01) unless can_use('JSON::Syck' => 0.12);
 }
 
+
+no_index package => 'DB';
+
 version_from('lib/Jifty.pm');
 #&auto_bundle_deps();
 &auto_install();
@@ -78,5 +81,5 @@ install_share;
 # Test all of our sub-dist tests too
 tests('t/*.t t/*/t/*.t');
 
-&WriteAll;
+WriteAll;
 
