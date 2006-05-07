@@ -148,7 +148,7 @@ sub _write {
         my ($volume, $dir, $file) = File::Spec->splitpath($path);
 
         # Make sure the directories we need are there
-	Jifty::Util::make_path($dir);
+	Jifty::Util->make_path($dir);
 
         # If it already exists, bail
         if (-e $path and not $self->{force}) {
