@@ -1,3 +1,21 @@
+0.60507 (7 May 2006)
+
+* Pod fixes from Eric Wilhelm
+  lib/Jifty/Object.pm - removed incorrect '=for' directive
+  lib/Jifty/Web/Form/Field.pm - removed incorrect '=for' directive
+  lib/Jifty/Web/Form.pm - removed incorrect '=for' directive
+  
+
+* Better failure messages on when schema upgrades with SQLite fail from Alex Vandiver
+   * Be a little more explicit about SQLite's limitation, and a possible
+     (painful) workaround
+ 
+* Update the inc tree to 0.62 for various fixes,
+   in particular improved share_dir compatibility. --Audrey Tang
+
+* We were inconsistently using Jifty::Util::make_path as a subroutine. It's a class method.
+  This could break the stub generators and tutorial.  Thanks to Sean E. Millichamp
+
 0.60505 - Cinco de Jifty! (5 May 2006)
 
   * Native support for times and timezones.

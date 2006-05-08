@@ -5,10 +5,11 @@ use strict;
 use Module::Install::Base;
 use File::Basename ();
 
-use vars qw{$VERSION @ISA};
+use vars qw{$VERSION $ISCORE @ISA};
 BEGIN {
-	$VERSION = '0.61';
-	@ISA     = qw(Module::Install::Base);
+	$VERSION = '0.62';
+	$ISCORE  = 1;
+	@ISA     = qw{Module::Install::Base};
 }
 
 sub prompt_script {

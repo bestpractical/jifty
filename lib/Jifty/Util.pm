@@ -160,6 +160,7 @@ chain as necessary. (This is what 'mkdir -p' does in your shell)
 sub make_path {
     my $self = shift;
     my $whole_path = shift;
+    return 1 if (-d $whole_path);
     File::Path::mkpath([$whole_path]);
 }
 
