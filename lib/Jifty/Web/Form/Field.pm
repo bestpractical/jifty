@@ -331,6 +331,7 @@ sub render_wrapper_start {
     my $self = shift;
     my @classes = qw(form_field);
     if ($self->mandatory) { push @classes, 'mandatory' }
+    if ($self->name)      { push @classes, 'argument-'.$self->name }
     Jifty->web->out('<div class="'.join(' ', @classes).'">' ."\n");
 }
 
