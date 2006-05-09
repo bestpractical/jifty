@@ -110,8 +110,9 @@ Action.prototype = {
                             for (var field = action.firstChild; field != null; field = field.nextSibling) {
                                 // Possibilities for field.nodeName: it could be #text (whitespace),
                                 // or 'blank' (the field was blank, don't mess with the error div), or 'ok'
-                                // (clear the error div!) or 'error' (fill in the error div!)
-                                if (field.nodeName == 'error') {
+                                // (clear the error and warning div!) or 'error' (fill in the error div, clear 
+				// the warning div!) or 'warning' (fill in the warning div and clear the error div!)
+                                if (field.nodeName == 'error' || field.nodeName == 'warning') {
                                     var err_div = document.getElementById(field.getAttribute("id"));
                                     if (err_div != null) {
                                         err_div.innerHTML = field.firstChild.data;

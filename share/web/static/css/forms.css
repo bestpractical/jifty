@@ -31,7 +31,7 @@ div.form_field .hints {
     color: #999999;
 }
 
-div.form_field .error {
+div.form_field .error, div.form_field .warning {
     float: right;
     width: 88%;
     text-align: left;

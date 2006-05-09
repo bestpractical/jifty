@@ -1,0 +1,80 @@
+* Plugins should be able to provide
+
+    * New actions
+    * New templates
+    * New models?
+
+* Plugins should be configurable
+    * should be able to be told about your  
+        * actions
+        * templates
+        * models
+
+* Plugins should be able to add dispatcher rules
+
+* The application should be able to spec what order 
+  dispatcher rules are run in. This gets sticky. 
+
+* If you don't spec explicit dispatcher rule ordering, what do you get?
+
+    for each of (before, on, after) {
+        run the plugin rules in the order plugins are defined
+        run my app's rules
+
+    }
+
+
+
+        before plugin Jifty::Login => {
+            before 'login' => {
+                .....
+            }
+        }
+
+
+
+Plugins provide templates.
+
+
+    auto/Jifty/Plugin/Login/share  (module::sharedir. wherever it puts stuff)
+
+
+    plugins have a default path they expose templates at.
+
+    so, Plugin::Login would expose templates at
+
+    /=/Login/
+
+    That path is 100% overridable by the app when it loads the plugin
+
+    An app's content always overrides a plugin's content.
+
+    If two plugins provide PO files or (templates to the same location,
+        either a built in location or an app-driven location), the most
+        recently loaded plugin's content override the older plugin's
+        content.
+
+
+Anatomy of a plugin -  In the end, plugins are apps. and apps are plugins.
+
+
+Jifty::Plugin::<name>
+
+    t/
+    lib/
+        Jifty/
+            Plugin/
+                <name>.pm
+                <name>/
+                        Dispatcher.pm
+                        Action/
+                        Model/ 
+    share/
+        po/
+        web/
+            static/
+            templates/
+~
+
+We're defining mount points for templates
+

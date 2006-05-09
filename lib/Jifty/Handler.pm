@@ -62,15 +62,14 @@ sub new {
 
 =head2 create_cache_directories
 
-Attempts to create our app's session storage and mason cache directories.
+Attempts to create our app's mason cache directory.
 
 =cut
 
 sub create_cache_directories {
     my $self = shift;
 
-    for ( Jifty->config->framework('Web')->{'SessionDir'},
-          Jifty->config->framework('Web')->{'DataDir'}) {
+    for ( Jifty->config->framework('Web')->{'DataDir'} ) {
         Jifty::Util->make_path( Jifty::Util->absolute_path($_) );
     }
 }
