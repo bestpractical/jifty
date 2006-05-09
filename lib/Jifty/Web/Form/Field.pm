@@ -279,8 +279,8 @@ sub current_value {
 =head2 render
 
 Outputs this form element in a span with class C<form_field>.  This
-outputs the label, the widget itself, any hints, and any errors, using
-L</render_label>, L</render_widget>, L</render_hints>,
+outputs the label, the widget itself, any hints, any errors, and any
+warnings using L</render_label>, L</render_widget>, L</render_hints>,
 L</render_errors> respectively.  Returns an empty string.
 
 This is also what C<Jifty::Web::Form::Field>s do when stringified.
@@ -300,6 +300,7 @@ sub render {
         $self->render_key_binding();
         $self->render_hints();
         $self->render_errors();
+        $self->render_warnings();
     } elsif ($self->render_mode eq 'read'){ 
         $self->render_value();
     }
@@ -508,6 +509,24 @@ sub render_errors {
 
     Jifty->web->out(
 qq!<span class="error @{[$self->classes]}" id="@{[$self->action->error_div_id($self->name)]}">@{[  $self->action->result->field_error( $self->name ) || '']}</span>\n!
+    );
+    return '';
+}
+
+=head2 render_warnings
+
+Outputs a <div> with any warnings for this action, even if there are
+none -- AJAX could fill it in.
+
+=cut
+
+sub render_warnings {
+    my $self = shift;
+
+    return unless $self->action;
+
+    Jifty->web->out(
+qq!<span class="warning @{[$self->classes]}" id="@{[$self->action->warning_div_id($self->name)]}">@{[  $self->action->result->field_warning( $self->name ) || '']}</span>\n!
     );
     return '';
 }

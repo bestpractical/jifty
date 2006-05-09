@@ -109,6 +109,32 @@ sub field_errors {
     return %{$self->{field_errors}};
 }
 
+=head2 field_warning FIELD [WARNING]
+
+Gets or sets the warning string for a specific field on the action.
+
+=cut
+
+sub field_warning {
+    my $self = shift;
+    my $field = shift;
+
+    $self->{field_warnings}{ $field } = shift if @_;
+    return $self->{field_warnings}{ $field };
+}
+
+=head2 field_warnings
+
+Returns a hash which maps L<argument|Jifty::Manual::Glossary/argument>
+name to warning.
+
+=cut
+
+sub field_warnings {
+    my $self = shift;
+    return %{$self->{field_warnings}};
+}
+
 =head2 content [KEY [, VALUE]]
 
 Gets or sets the content C<KEY>.  This is used when actions need to

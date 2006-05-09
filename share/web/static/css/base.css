@@ -8,6 +8,10 @@ body.calpopup {
     color: #a00000;
 }
 
+.warning {
+    color: #00a0a0;
+}
+
 hr {
     clear: both;
 } 

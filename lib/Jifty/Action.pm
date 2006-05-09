@@ -507,6 +507,20 @@ sub error_div_id {
   return 'errors-' . $self->form_field_name($field_name);
 }
 
+=head2 warning_div_id ARGUMENT
+
+Turn one of this action's L<arguments|Jifty::Manual::Glossary/arguments> into
+the id for the div in which its warnings live; takes name of the field
+as an argument.
+
+=cut
+
+sub warning_div_id {
+  my $self = shift;
+  my $field_name = shift;
+  return 'warnings-' . $self->form_field_name($field_name);
+}
+
 
 =head1 VALIDATION METHODS
 
@@ -817,6 +831,27 @@ sub validation_error {
     my $error = shift;
   
     $self->result->field_error($field => $error); 
+  
+    return 0;
+}
+
+=head2 validation_warning ARGUMENT => WARNING TEXT
+
+Used to report a warning during validation.  Inside a validator you
+should write:
+
+  return $self->validation_warning( $field => "warning");
+
+..where C<$field> is the name of the argument which is at fault.
+
+=cut
+
+sub validation_warning {
+    my $self = shift;
+    my $field = shift;
+    my $warning = shift;
+  
+    $self->result->field_warning($field => $warning); 
   
     return 0;
 }
