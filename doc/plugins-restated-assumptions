@@ -55,7 +55,7 @@ Plugins provide templates.
         content.
 
 
-Anatomy of a plugin
+Anatomy of a plugin -  In the end, plugins are apps. and apps are plugins.
 
 
 Jifty::Plugin::<name>
