@@ -235,7 +235,6 @@ sub guess {
             Web        => {
                 Port => '8888',
                 BaseURL => 'http://localhost',
-                SessionDir  => "var/session",
                 DataDir     => "var/mason",
                 StaticRoot   => "share/web/static",
                 TemplateRoot => "share/web/templates",

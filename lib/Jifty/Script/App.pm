@@ -130,7 +130,6 @@ sub _directories {
         doc
         log
         var
-        var/sessions
         var/mason
         share
         share/po
