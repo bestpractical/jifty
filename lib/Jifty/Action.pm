@@ -870,6 +870,7 @@ sub validation_ok {
     my $field = shift;
 
     $self->result->field_error($field => undef);
+    $self->result->field_warning($field => undef);
 
     return 1;
 }

@@ -281,7 +281,8 @@ sub current_value {
 Outputs this form element in a span with class C<form_field>.  This
 outputs the label, the widget itself, any hints, any errors, and any
 warnings using L</render_label>, L</render_widget>, L</render_hints>,
-L</render_errors> respectively.  Returns an empty string.
+L</render_errors>, and L</render_warnings>, respectively.  Returns an
+empty string.
 
 This is also what C<Jifty::Web::Form::Field>s do when stringified.
 
