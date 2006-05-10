@@ -62,7 +62,7 @@ probably a better place to start.
 use base qw/Jifty::Object/;
 use Jifty::Everything;
 
-use vars qw/$HANDLE $CONFIG $LOGGER $HANDLER $DISPATCHER $API/;
+use vars qw/$HANDLE $CONFIG $LOGGER $HANDLER $API/;
 
 =head1 METHODS
 
@@ -116,10 +116,9 @@ sub new {
     push @Jifty::Record::ISA, Jifty->config->framework('Database')->{'RecordBaseClass'};
 
     __PACKAGE__->logger( Jifty::Logger->new( $args{'logger_component'} ) );
-   # Get a classloader set up
-   Jifty::ClassLoader->new->require;
+    # Get a classloader set up
+    Jifty::ClassLoader->new->require;
 
-    __PACKAGE__->dispatcher(Jifty::Dispatcher->new());
     __PACKAGE__->handler(Jifty::Handler->new());
     __PACKAGE__->api(Jifty::API->new());
 
@@ -179,19 +178,6 @@ sub handle {
     my $class = shift;
     $HANDLE = shift if (@_);
     return $HANDLE;
-}
-
-=head2 dispatcher
-
-An accessor for the C<Jifty::Dispatcher> object that we use to make
-decisions about how to dispatch each request made by a web client.
-
-=cut
-
-sub dispatcher {
-    my $class = shift;
-    $DISPATCHER = shift if (@_);
-    return $DISPATCHER;
 }
 
 =head2 api

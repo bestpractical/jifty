@@ -284,7 +284,7 @@ sub import {
 
     no strict 'refs';
     no warnings 'once';
-    for (qw(RULES RULES_SETUP RULES_CLEANUP)) {
+    for (qw(RULES_RUN RULES_SETUP RULES_CLEANUP)) {
         @{ $pkg . '::' . $_ } = ();
     }
     if ( @args != @_ ) {
