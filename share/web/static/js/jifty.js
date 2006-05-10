@@ -105,22 +105,34 @@ Action.prototype = {
                     function (request) {
                         var response  = request.responseXML.documentElement;
                         for (var action = response.firstChild; action != null; action = action.nextSibling) {
-                            if ((action.nodeName != 'action') || (action.getAttribute("id") != id))
-                                continue;
-                            for (var field = action.firstChild; field != null; field = field.nextSibling) {
-                                // Possibilities for field.nodeName: it could be #text (whitespace),
-                                // or 'blank' (the field was blank, don't mess with the error div), or 'ok'
-                                // (clear the error and warning div!) or 'error' (fill in the error div, clear 
-				// the warning div!) or 'warning' (fill in the warning div and clear the error div!)
-                                if (field.nodeName == 'error' || field.nodeName == 'warning') {
-                                    var err_div = document.getElementById(field.getAttribute("id"));
-                                    if (err_div != null) {
-                                        err_div.innerHTML = field.firstChild.data;
+                            if ((action.nodeName == 'validationaction') && (action.getAttribute("id") == id)) {
+                                for (var field = action.firstChild; field != null; field = field.nextSibling) {
+                                    // Possibilities for field.nodeName: it could be #text (whitespace),
+                                    // or 'blank' (the field was blank, don't mess with the error div), or 'ok'
+                                    // (clear the error and warning div!) or 'error' (fill in the error div, clear 
+                                    // the warning div!) or 'warning' (fill in the warning div and clear the error div!)
+                                    if (field.nodeName == 'error' || field.nodeName == 'warning') {
+                                        var err_div = document.getElementById(field.getAttribute("id"));
+                                        if (err_div != null) {
+                                            err_div.innerHTML = field.firstChild.data;
+                                        }
+                                    } else if (field.nodeName == 'ok') {
+                                        var err_div = document.getElementById(field.getAttribute("id"));
+                                        if (err_div != null) {
+                                            err_div.innerHTML = '';
+                                        }
                                     }
-                                } else if (field.nodeName == 'ok') {
-                                    var err_div = document.getElementById(field.getAttribute("id"));
-                                    if (err_div != null) {
-                                        err_div.innerHTML = '';
+                                }
+                            } else if ((action.nodeName == 'canonicalizeaction') && (action.getAttribute("id") == id)) {
+                                for (var field = action.firstChild; field != null; field = field.nextSibling) {
+                                    // Possibilities for field.nodeName: it could be 'ignored', 'blank' or 'update'
+                                    if (field.nodeName == 'update') {
+                                        var field_name = field.getAttribute("name");
+                                        for (var form_number in document.forms) {
+                                            if (document.forms[form_number].elements[field_name] == null)
+                                                continue;
+                                            document.forms[form_number].elements[field_name].value = field.firstChild.data;
+                                        }
                                     }
                                 }
                             }

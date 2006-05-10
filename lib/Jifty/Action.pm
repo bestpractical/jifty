@@ -129,6 +129,20 @@ requiring that the user enter a value for that field.
 See L<Jifty::Web::Form::Field> for the list of possible keys that each
 argument can have.
 
+In addition to the list there, you may use this additional key:
+
+=over
+
+=item ajax_canonicalizes
+
+This key takes a boolean value that determines if the value displayed in
+the form field is updated via AJAX with the result returned by this argument's
+L<canonicalize|Jifty::Manual::Glossary/canonicalize> function.
+
+Defaults to false.
+
+=back
+
 =cut
 
 sub arguments {

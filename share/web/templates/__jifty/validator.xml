@@ -8,7 +8,7 @@ $writer->xmlDecl( "UTF-8", "yes" );
 $writer->startTag("validation");
 for my $ra ( Jifty->web->request->actions ) {
     my $action = Jifty->web->new_action_from_request($ra);
-    $writer->startTag( "action", id => $action->register_name );
+    $writer->startTag( "validationaction", id => $action->register_name );
     for my $arg ( $action->argument_names ) {
         if ( not $action->arguments->{$arg}->{ajax_validates} ) {
             $writer->emptyTag( "ignored", id => $action->error_div_id($arg) );
@@ -34,6 +34,22 @@ for my $ra ( Jifty->web->request->actions ) {
         } else {
             $writer->emptyTag( "ok", id => $action->error_div_id($arg) );
             $writer->emptyTag( "ok", id => $action->warning_div_id($arg) );
+        }
+    }
+    $writer->endTag();
+    $writer->startTag( "canonicalizeaction", id => $action->register_name );
+    for my $arg ( $action->argument_names ) {
+        if ( not $action->arguments->{$arg}->{ajax_canonicalizes} ) {
+            $writer->emptyTag( "ignored", name => $action->form_field_name($arg) );
+        } elsif ( not defined $action->argument_value($arg)
+            or length $action->argument_value($arg) == 0 ) {
+            $writer->emptyTag( "blank", name => $action->form_field_name($arg) );
+        } else {
+            $writer->dataElement(
+                "update",
+                $action->argument_value($arg),
+                name => $action->form_field_name($arg)
+            );
         }
     }
     $writer->endTag();
