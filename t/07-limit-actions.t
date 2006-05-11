@@ -10,13 +10,11 @@ limit what users can do with temporary credentials (LetMes, etc)
 
 =cut
 
-use Jifty::Test tests => 22;
+use Jifty::Test tests => 21;
 
 use_ok('Jifty::API');
 
 my $api = Jifty::API->new();
-
-is(Jifty->config->framework("ActionBasePath"), "JiftyApp::Action", "Action base path is as expected");
 
 ok($api->is_allowed("Jifty::Action::Autocomplete"), "Some Jifty actions are allowed");
 ok(!$api->is_allowed("Jifty::Action::Record::Update"), "Most are not");

@@ -62,7 +62,7 @@ probably a better place to start.
 use base qw/Jifty::Object/;
 use Jifty::Everything;
 
-use vars qw/$HANDLE $CONFIG $LOGGER $HANDLER $API/;
+use vars qw/$HANDLE $CONFIG $LOGGER $HANDLER $API @PLUGINS/;
 
 =head1 METHODS
 
@@ -117,7 +117,17 @@ sub new {
 
     __PACKAGE__->logger( Jifty::Logger->new( $args{'logger_component'} ) );
     # Get a classloader set up
-    Jifty::ClassLoader->new->require;
+    Jifty::ClassLoader->new(base => Jifty->config->framework('ApplicationClass'))->require;
+
+    # Set up plugins
+    my @plugins;
+    for my $plugin (@{Jifty->config->framework('Plugins')}) {
+        my $class = "Jifty::Plugin::".(keys %{$plugin})[0];
+        my %options = %{ $plugin->{(keys %{$plugin})[0]} };
+        Jifty::Util->require($class);
+        push @plugins, $class->new(%options);
+    }
+    __PACKAGE__->plugins(@plugins);
 
     __PACKAGE__->handler(Jifty::Handler->new());
     __PACKAGE__->api(Jifty::API->new());
@@ -204,6 +214,17 @@ sub web {
     return $HTML::Mason::Commands::JiftyWeb;
 }
 
+=head2 plugins
+
+Returns a list of L<Jifty::Plugin> objects for this Jifty application.
+
+=cut
+
+sub plugins {
+    my $class = shift;
+    @PLUGINS = @_ if @_;
+    return @PLUGINS;
+}
 
 =head2 setup_database_connection
 

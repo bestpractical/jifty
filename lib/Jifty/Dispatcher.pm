@@ -1015,4 +1015,22 @@ sub render_template {
 }
 
 
+=head2 import_plugins
+
+Imports rules from L<Jifty/plugins> into the main dispatcher's space.
+
+=cut
+
+sub import_plugins {
+    my $self = shift;
+    for my $stage (qw/SETUP RUN CLEANUP/) {
+        my @rules;
+        push @rules, $_->dispatcher->rules($stage) for Jifty->plugins;
+        push @rules, $self->rules($stage);
+
+        no strict 'refs';
+        @{ $self . "::RULES_$stage" } = @rules;
+    }
+}
+
 1;

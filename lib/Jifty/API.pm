@@ -33,9 +33,9 @@ sub new {
 
     Module::Pluggable->import(
         search_path => [
-            Jifty->config->framework('ActionBasePath'),
             Jifty->config->framework('ApplicationClass') . "::Action",
-            "Jifty::Action"
+            "Jifty::Action",
+            map {ref($_)."::Action"} Jifty->plugins,
         ],
         sub_name => "_actions",
     );
@@ -46,9 +46,9 @@ sub new {
 =head2 qualify ACTIONNAME
 
 Returns the fully qualified package name for the given provided
-action.  If the C<ACTIONNAME> starts with C<Jifty::Action> or your
-application's C<ActionBasePath>, simply returns the given name;
-otherwise, it prefixes it with the C<ActionBasePath>.
+action.  If the C<ACTIONNAME> starts with C<Jifty::> or
+C<ApplicationClass>::Action, simply returns the given name; otherwise,
+it prefixes it with the C<ApplicationClass>::Action.
 
 =cut
 
@@ -56,10 +56,10 @@ sub qualify {
     my $self   = shift;
     my $action = shift;
 
-    my $base_path = Jifty->config->framework('ActionBasePath');
+    my $base_path = Jifty->config->framework('ApplicationClass') . "::Action";
 
     return $action
-        if $action =~ /^Jifty::Action/
+        if $action =~ /^Jifty::/
         or $action =~ /^\Q$base_path\E/;
 
     return $base_path . "::" . $action;
@@ -67,11 +67,10 @@ sub qualify {
 
 =head2 reset
 
-Resets which actions are allowed to the defaults; that is, all actions
-from the application's C<ActionBasePath>, and
-L<Jifty::Action::Autocomplete> and L<Jifty::Action::Redirect> are
-allowed; everything else is denied.  See L</restrict> for the details
-of how limits are processed.
+Resets which actions are allowed to the defaults; that is, all of the
+application's actions, L<Jifty::Action::Autocomplete>, and
+L<Jifty::Action::Redirect> are allowed; everything else is denied.
+See L</restrict> for the details of how limits are processed.
 
 =cut
 
@@ -79,7 +78,7 @@ sub reset {
     my $self = shift;
 
     # Set up defaults
-    my $app_actions = Jifty->config->framework('ActionBasePath');
+    my $app_actions = Jifty->config->framework('ApplicationClass') . "::Action";
 
     $self->action_limits(
         [   { deny => 1, restriction => qr/.*/ },
@@ -176,10 +175,9 @@ sub restrict {
 
 =head2 is_allowed CLASS
 
-Returns false if the I<CLASS> name (which is fully qualified with the
-application's ActionBasePath if it is not already) is allowed to be
-executed.  See L</restrict> above for the rules that the class
-name must pass.
+Returns false if the I<CLASS> name (which is fully qualified if it is
+not already) is allowed to be executed.  See L</restrict> above for
+the rules that the class name must pass.
 
 =cut
 
@@ -215,8 +213,7 @@ sub is_allowed {
 
 Lists the class names of all of the allowed actions for this Jifty
 application; this may include actions under the C<Jifty::Action::>
-namespace, in addition to actions under your application's
-C<ActionBasePath>.
+namespace, in addition to your application's actions.
 
 =cut
 

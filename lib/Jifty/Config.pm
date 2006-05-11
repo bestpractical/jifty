@@ -213,9 +213,7 @@ sub guess {
         framework => {
             AdminMode        => 1,
             DevelMode        => 1,
-            ActionBasePath   => $app_class . "::Action",
             ApplicationClass => $app_class,
-            CurrentUserClass => $app_class . "::CurrentUser",
             ApplicationName  => $app_name,
             LogLevel         => 'INFO',
             Database         => {
@@ -232,6 +230,7 @@ sub guess {
             L10N       => {
                 PoDir => "%share/po%",
             },
+            Plugins    => [],
             Web        => {
                 Port => '8888',
                 BaseURL => 'http://localhost',

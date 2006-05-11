@@ -52,6 +52,8 @@ sub new {
     $self->dispatcher(
         Jifty->config->framework('ApplicationClass') . "::Dispatcher" );
     Jifty::Util->require( $self->dispatcher );
+    $self->dispatcher->import_plugins;
+
     $self->mason( Jifty::View::Mason::Handler->new( $self->mason_config ) );
 
     $self->static_handler(Jifty::View::Static::Handler->new());
@@ -108,14 +110,17 @@ sub mason_config {
         %{ Jifty->config->framework('Web')->{'MasonConfig'} },
     );
 
+    for my $plugin (Jifty->plugins) {
+        my $comp_root = $plugin->template_root;
+        next unless $comp_root;
+        push @{ $config{comp_root} }, [ ref($plugin)."-".Jifty->web->serial => $comp_root ];
+    }
+
     # In developer mode, we want halos, refreshing and all that other good stuff. 
     if (Jifty->config->framework('DevelMode') ) {
         push @{$config{'plugins'}}, 'Jifty::Mason::Halo';
-            $config{static_source}        = 0;
-            $config{use_object_files}        = 0;
-            
-            
-
+        $config{static_source}    = 0;
+        $config{use_object_files} = 0;
     }
     return (%config);
         
@@ -167,6 +172,7 @@ sub handle_request {
     Jifty->web->setup_session;
     Jifty->web->session->set_cookie;
     Jifty->api->reset;
+    $_->new_request for Jifty->plugins;
 
     Jifty->log->debug( "Received request for " . Jifty->web->request->path );
 

@@ -44,7 +44,6 @@ lib/Email/Send/Jifty/Test.pm
 lib/Jifty.pm
 lib/Jifty/Action.pm
 lib/Jifty/Action/Autocomplete.pm
-lib/Jifty/Action/Devel/FileEditor.pm
 lib/Jifty/Action/Record.pm
 lib/Jifty/Action/Record/Create.pm
 lib/Jifty/Action/Record/Delete.pm
@@ -200,7 +199,6 @@ share/web/templates/__jifty/admin/fragments/list/view
 share/web/templates/__jifty/admin/index.html
 share/web/templates/__jifty/admin/model/dhandler
 share/web/templates/__jifty/autocomplete.xml
-share/web/templates/__jifty/edit_file
 share/web/templates/__jifty/error/_elements/error_text
 share/web/templates/__jifty/error/_elements/wrapper
 share/web/templates/__jifty/error/dhandler

@@ -110,18 +110,15 @@ Returns undef if it can't find the file in either path.
 sub file_path {
     my $self    = shift;
     my $file    = shift;
-    my @options = (qw(StaticRoot DefaultStaticRoot));
+    my @options = map {Jifty->config->framework('Web')->{$_}} (qw(StaticRoot DefaultStaticRoot));
+    push @options, grep {$_} map {$_->static_root} Jifty->plugins;
 
     # Chomp a leading "/static" - should this be configurable?
     $file =~ s/^\/*?static//; 
 
     foreach my $path (@options) {
-
-        my $abspath = Jifty::Util->absolute_path(
-            Jifty->config->framework('Web')->{$path} . "/" . $file );
-
+        my $abspath = Jifty::Util->absolute_path( $path . "/" . $file );
         return $abspath if ( -f $abspath && -r $abspath );
-
     }
     return undef;
 
