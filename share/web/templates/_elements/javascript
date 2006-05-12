@@ -2,10 +2,9 @@
 # XXX TODO: stick this into libs
 
 my @libs = qw(
+  /static/js/jsan/JSAN.js
   /static/js/json.js
   /static/js/prototype.js
-  /static/js/jsan/Upgrade/Array/push.js
-  /static/js/jsan/DOM/Events.js
   /static/js/cssquery/cssQuery.js
   /static/js/cssquery/cssQuery-level2.js
   /static/js/cssquery/cssQuery-level3.js
@@ -25,16 +24,12 @@ my @libs = qw(
 );
 
 </%init>
-   <script type="text/javascript">
-   /*
-      JSAN.errorLevel = 'warn';
-      JSAN.addRespository('/static/js');
-   */
-      JSAN = {};
-      JSAN.use = function() { };
-   </script>
-
 % for (@libs) {
    <script type="text/javascript" src="<%$_%>"></script>
 % }
+
+   <script type="text/javascript">
+      JSAN.errorLevel = 'warn';
+      JSAN.addRespository('/static/js/jsan');
+   </script>
 
