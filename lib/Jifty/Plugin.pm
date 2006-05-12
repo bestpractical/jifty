@@ -11,7 +11,25 @@ Jifty::Plugin - Describes a plugin to the Jifty framework
 
 Plugins are like mini-apps.  They come in packages with share
 directories which provide static and template files; they provide
-actions; they have dispatcher rules.  
+actions; they have dispatcher rules.
+
+To use a plugin in your Jifty application, find the C<Plugins:> line
+in the C<config.yml> file:
+
+      Plugins:
+        - SpiffyThing: {}
+        - SomePlugin:
+            arguments: to
+            the: constructor
+
+The dispatcher for a plugin should live in
+C<Jifty::Plugin::I<name>::Disptcher>; it is written like any other
+L<Jifty::Dispatcher>.  Plugin dispatcher rules are checked before the
+application's rules; however, see L<Jifty::Dispatcher/Plugins and rule
+ordering> for how to manually specify exceptions to this.
+
+Actions and models under a plugin's namespace are automatically
+discovered and made available to applications.
 
 =cut
 
