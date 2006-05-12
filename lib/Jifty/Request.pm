@@ -435,7 +435,9 @@ sub continuation {
 =head2 call_continuation
 
 Calls the L<Jifty::Continuation> associated with this request, if
-there is one.
+there is one.  Returns true if the continuation was called
+successfully -- if calling the continuation requires a redirect, this
+function will throw an exception to its enclosing dispatcher.
 
 =cut
 
@@ -446,6 +448,7 @@ sub call_continuation {
     $self->log->debug("Calling continuation $cont");
     $self->continuation(Jifty->web->session->get_continuation($cont));
     $self->continuation->call;
+    return 1;
 }
 
 =head2 path

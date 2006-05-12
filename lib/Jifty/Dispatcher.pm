@@ -213,11 +213,6 @@ Abort the request.
 
 Redirect to another URI.
 
-
-=head2 next_show
-
-INTERNAL MAGIC YOU SHOULD NOT USE THAT ALEX SHOULD RENAME ;)
-
 =cut
 
 our @EXPORT = qw<
@@ -501,7 +496,6 @@ sub last_rule {
 
     die "LAST RULE"; 
 }
-sub next_show { last HANDLE_WEB }
 
 =head2 _do_under
 
@@ -697,7 +691,6 @@ sub _do_show {
     # Set the request path
     request->path($path);
     $self->render_template(request->path);
-
 
     last_rule;
 }
