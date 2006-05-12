@@ -180,7 +180,7 @@ sub require {
 
     my $retval = $class->require;
     if ($UNIVERSAL::require::ERROR) {
-       my $error = $UNIVERSAL::require::ERROR;
+        my $error = $UNIVERSAL::require::ERROR;
         $error =~ s/ at .*?\n$//;
         Jifty->log->error(sprintf("$error at %s line %d\n", (caller)[1,2]));
         return 0;

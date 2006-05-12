@@ -45,7 +45,7 @@ __PACKAGE__->contained_objects
 
 Takes a number of key-value parameters; see L<HTML::Mason::Params>.
 Defaults the C<out_method> to L</out_method>, and the C<request_class>
-to L<HTML::MAson::request::Jifty> (below).  Finally, adds C<h> and
+to L<HTML::Mason::Request::Jifty> (below).  Finally, adds C<h> and
 C<u> escapes, which map to L</escape_uri> and L<escape_utf8>
 respectively.
 

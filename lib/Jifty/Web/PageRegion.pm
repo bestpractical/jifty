@@ -294,7 +294,7 @@ sub render {
     Jifty->handler->mason->interp->out_method( \$region_content );
 
     # Call into the dispatcher
-    Jifty->dispatcher->handle_request;
+    Jifty->handler->dispatcher->handle_request;
     $result .= $region_content;
     $result .= qq|</div>| if ( $self->region_wrapper );
 

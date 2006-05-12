@@ -1,4 +1,4 @@
-package Jifty::Action::Devel::FileEditor;
+package Jifty::Plugin::EditInPlace::Action::FileEditor;
 
 use base qw/Jifty::Action/;
 use File::Spec;
@@ -7,7 +7,7 @@ use File::Basename ();
 
 =head1 NAME
 
-Jifty::Action::Devel::FileEditor
+Jifty::Plugin::EditInPlace::Action::FileEditor
 
 =head1 DESCRIPTION
 
@@ -20,8 +20,6 @@ running Jifty in C<DevelMode>.
 B<THIS ACTION LETS YOU REMOTELY EDIT EXECUTABLE CODE>.
 
 B<THIS IS DANGEROUS>
-
-
 
 =cut
 
