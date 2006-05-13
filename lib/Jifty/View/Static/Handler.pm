@@ -135,6 +135,17 @@ sub mime_type {
     my $self       = shift;
     my $local_path = shift;
 
+    # The key is the file extension, the value is the MIME type to send.
+    my %type_override = (
+        # MIME::Types returns application/javascript for .js, but Opera
+        # chokes on ajax-fetched JS that has a type other than the one below
+        # JSAN.js fetches JS via Ajax when it loads JSAN modules
+        'js' => 'application/x-javascript',
+    );
+
+    return ($type_override{$1})
+        if $local_path =~ /\.(.+)$/ and defined $type_override{$1};
+
     my $mimeobj   = $mime->mimeTypeOf($local_path);
     my $mime_type = (
           $mimeobj

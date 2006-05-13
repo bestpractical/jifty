@@ -214,13 +214,7 @@ sub call {
         # Enter the request in the continuation, and handle it
         Jifty->web->request(Clone::clone($self->request));
         Jifty->web->handle_request();
-
-        # Now we want to skip the rest of the
-        # Jifty::Web->handle_request that we were called from.  Pop up
-        # to the dispatcher
-        Jifty::Dispatcher::next_show();
     }
-
 }
 
 =head2 delete

@@ -104,6 +104,34 @@ common C<$Dispatcher> object.
 
 =cut
 
+=head1 Plugins and rule ordering
+
+By default, L<Jifty::Plugin> dispatcher rules are added in the order
+they are specified in the application's configuration file; that is,
+after all the plugin dispatchers have run in order, then tha
+application's dispatcher runs.  It is possible to specify rules which
+should be reordered with respect to this rule, however.  This us done
+by using a variant on the C<before> and C<after> syntax:
+
+    before plugin NAME =>
+        RULE(S);
+    
+    after plugin NAME =>
+        RULE(S);
+
+C<NAME> may either be a string, which must match the plugin name
+exactly, or a regular expression, which is matched against the plugin
+name.  The rule will be placed at the first boundry that it matches --
+that is, given a C<before plugin qr/^Jifty::Plugin::Auth::/> and both
+a C<Jifty::Plugin::Auth::Basic> and a C<Jifty::Plugin::Auth::Complex>,
+the rules will be placed before the first.
+
+C<RULES> may wither be a single C<before>, C<on>, C<under>, or
+C<after> rule to change the ordering of, or an array reference of
+rules to reorder.
+
+=cut
+
 =head1 Data your dispatch routines has access to
 
 =head2 request
@@ -213,10 +241,9 @@ Abort the request.
 
 Redirect to another URI.
 
+=head2 plugin
 
-=head2 next_show
-
-INTERNAL MAGIC YOU SHOULD NOT USE THAT ALEX SHOULD RENAME ;)
+See L</Plugins and rule odering>, above.
 
 =cut
 
@@ -228,6 +255,8 @@ our @EXPORT = qw<
     show dispatch abort redirect
 
     GET POST PUT HEAD DELETE OPTIONS
+
+    plugin
 
     get next_rule last_rule
 
@@ -263,6 +292,8 @@ sub HEAD ($)    { _qualify method => @_ }
 sub DELETE ($)  { _qualify method => @_ }
 sub OPTIONS ($) { _qualify method => @_ }
 
+sub plugin ($) { return { plugin => @_ } }
+
 =head2 import
 
 Jifty::Dispatcher is an L<Exporter>, that is, part of its role is to
@@ -284,7 +315,7 @@ sub import {
 
     no strict 'refs';
     no warnings 'once';
-    for (qw(RULES_RUN RULES_SETUP RULES_CLEANUP)) {
+    for (qw(RULES_RUN RULES_SETUP RULES_CLEANUP RULES_DEFERRED)) {
         @{ $pkg . '::' . $_ } = ();
     }
     if ( @args != @_ ) {
@@ -328,7 +359,9 @@ sub _push_rule($$) {
     my($pkg, $rule) = @_;
     my $op = $rule->[0];
     my $ruleset;
-    if ( $op eq 'before' ) {
+    if ( ($op eq "before" or $op eq "after") and ref $rule->[1] and $rule->[1]{plugin} ) {
+        $ruleset = 'RULES_DEFERRED';
+    } elsif ( $op eq 'before' ) {
         $ruleset = 'RULES_SETUP';
     } elsif ( $op eq 'after' ) {
         $ruleset = 'RULES_CLEANUP';
@@ -501,7 +534,6 @@ sub last_rule {
 
     die "LAST RULE"; 
 }
-sub next_show { last HANDLE_WEB }
 
 =head2 _do_under
 
@@ -698,7 +730,6 @@ sub _do_show {
     request->path($path);
     $self->render_template(request->path);
 
-
     last_rule;
 }
 
@@ -814,7 +845,10 @@ sub _match {
             }
 
             # All precondition passed, get original condition literal
-            return $self->_match( $cond->{''} );
+            return $self->_match( $cond->{''} ) if $cond->{''};
+
+            # Or, if we don't have a literal, we win.
+            return 1;
         };
         if ( my $err = $@ ) {
             warn "$self _match failed: $err";
@@ -842,6 +876,12 @@ sub _match_method {
     my ( $self, $method ) = @_;
     $self->log->debug("Matching URL ".$self->{cgi}->method." against ".$method);
     lc( $self->{cgi}->method ) eq lc($method);
+}
+
+sub _match_plugin {
+    my ( $self, $plugin ) = @_;
+    warn "Deferred check shouldn't happen";
+    return 0;
 }
 
 =head2 _compile_condition CONDITION
@@ -971,8 +1011,7 @@ sub template_exists {
     my $self = shift;
     my $template = shift;
 
-      return  Jifty->handler->mason->interp->comp_exists( $template);
-
+    return  Jifty->handler->mason->interp->comp_exists( $template);
 }
 
 
@@ -1023,14 +1062,78 @@ Imports rules from L<Jifty/plugins> into the main dispatcher's space.
 
 sub import_plugins {
     my $self = shift;
+
+    # Find the deferred rules
+    my @deferred;
+    push @deferred, $_->dispatcher->rules('DEFERRED') for Jifty->plugins;
+    push @deferred, $self->rules('DEFERRED');
+
+    # XXX TODO: Examine @deferred and find rles that cannot fire
+    # because they match no plugins; they should become un-deferred in
+    # the appropriate group.  This is so 'before plugin qr/Auth/' runs
+    # even if we have no auth plugin
+
     for my $stage (qw/SETUP RUN CLEANUP/) {
+        my @groups;
+        push @groups, {name => ref $_,  rules => [$_->dispatcher->rules($stage)]} for Jifty->plugins;
+        push @groups, {name => 'Jifty', rules => [$self->rules($stage)]};
+
+        my @left;
         my @rules;
-        push @rules, $_->dispatcher->rules($stage) for Jifty->plugins;
-        push @rules, $self->rules($stage);
+        for (@groups) {
+            my $name        = $_->{name};
+            my @group_rules = @{$_->{rules}};
+
+            # XXX TODO: 'after' rules should possibly be placed after
+            # the *last* thing they could match
+            push @rules, $self->_match_deferred(\@deferred, before => $name, $stage);
+            push @rules, @group_rules;
+            push @rules, $self->_match_deferred(\@deferred, after => $name, $stage);
+        }
 
         no strict 'refs';
         @{ $self . "::RULES_$stage" } = @rules;
     }
+    if (@deferred) {
+        warn "Leftover unmatched deferred rules: ".YAML::Dump(\@deferred);
+    }
+}
+
+sub _match_deferred {
+    my $self = shift;
+    my ($deferred, $time, $name, $stage) = @_;
+    my %stages = (SETUP => "before", RUN => "on", CLEANUP => "after");
+    $stage = $stages{$stage};
+
+    my @matches;
+    for my $op (@{$deferred}) {
+        # Only care if we're on the correct side of the correct plugin
+        next unless $op->[0] eq $time;
+
+        # Regex or string match, appropriately
+        next unless (
+            ref $op->[1]{plugin}
+            ? ( $name =~ $op->[1]{plugin} )
+            : ( $op->[1]{plugin} eq $name ) );
+
+        # Find the list of subrules
+        my @subrules = ref $op->[2] eq "ARRAY" ? @{$op->[2]} : ($op->[2]);
+
+        # Only toplevel rules make sense (before, after, on)
+        warn "Invalid subrule ".$_->[0] for grep {$_->[0] !~ /^(before|on|after)$/} @subrules;
+        @subrules = grep {$_->[0] =~ /^(before|on|after)$/} @subrules;
+
+        # Only match if the stage matches
+        push @matches, grep {$_->[0] eq $stage} @subrules;
+        @subrules = grep {$_->[0] ne $stage} @subrules;
+
+        $op->[2] = [@subrules];
+    }
+
+    # Clean out any completely matched rules
+    @$deferred = grep {@{$_->[2]}} @$deferred;
+
+    return @matches;
 }
 
 1;

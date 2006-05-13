@@ -281,8 +281,8 @@ sub handle_request {
     }
     $self->session->set_cookie();
 
-    $self->request->call_continuation
-        if $self->response->success;
+    # If there's a continuation call, don't do the rest of this
+    return if $self->response->success and $self->request->call_continuation;
 
     $self->redirect if $self->redirect_required;
     $self->request->do_mapping;
