@@ -2,16 +2,16 @@
 
 */
 
-var JSAN = function () { JSAN.addRepository(arguments) }
+var JSAN = function () { JSAN.addRepository(arguments) };
 
-JSAN.VERSION = 0.10;
+JSAN.VERSION = "0.10-jifty1";
 
 /*
 
 */
 
 JSAN.globalScope   = self;
-JSAN.includePath   = ['.', 'lib'];
+JSAN.includePath   = [".", "lib"];
 JSAN.errorLevel    = "none";
 JSAN.errorMessage  = "";
 JSAN.loaded        = {};
@@ -42,7 +42,7 @@ JSAN.require = function (pkg) {
 
     try {
         var classdef = eval(pkg);
-        if (typeof classdef != 'undefined') return classdef;
+        if (typeof classdef != "undefined") return classdef;
     } catch (e) { /* nice try, eh? */ }
 
 
@@ -87,7 +87,7 @@ JSAN.addRepository = function () {
 JSAN._flatten = function( list1 ) {
     var list2 = new Array();
     for ( var i = 0; i < list1.length; i++ ) {
-        if ( typeof list1[i] == 'object' ) {
+        if ( typeof list1[i] == "object" ) {
             list2 = JSAN._flatten( list1[i], list2 );
         }
         else {
@@ -99,9 +99,9 @@ JSAN._flatten = function( list1 ) {
 
 JSAN._findMyPath = function () {
     if (document) {
-        var scripts = document.getElementsByTagName('script');
+        var scripts = document.getElementsByTagName("script");
         for ( var i = 0; i < scripts.length; i++ ) {
-            var src = scripts[i].getAttribute('src');
+            var src = scripts[i].getAttribute("src");
             if (src) {
                 var inc = src.match(/^(.*?)\/?JSAN.js/);
                 if (inc && inc[1]) {
@@ -120,13 +120,13 @@ JSAN._findMyPath = function () {
 JSAN._findMyPath();
 
 JSAN._convertPathToUrl = function (path, repository) {
-    return repository.concat('/' + path);
+    return repository.concat("/" + path);
 };
     
 
 JSAN._convertPackageToPath = function (pkg) {
-    var path = pkg.replace(/\./g, '/');
-        path = path.concat('.js');
+    var path = pkg.replace(/\./g, "/");
+        path = path.concat(".js");
     return path;
 }
 
@@ -191,7 +191,7 @@ JSAN._exportItems = function (classdef, importList) {
 }
 
 JSAN._exportList = function (classdef, exportList) {
-    if (typeof(exportList) != 'object') return null;
+    if (typeof(exportList) != "object") return null;
     for (var i = 0; i < exportList.length; i++) {
         var name = exportList[i];
 
@@ -201,16 +201,16 @@ JSAN._exportList = function (classdef, exportList) {
 }
 
 JSAN._makeNamespace = function(js, pkg) {
-    var spaces = pkg.split('.');
+    var spaces = pkg.split(".");
     var parent = JSAN.globalScope;
     eval(js);
     var classdef = eval(pkg);
     for (var i = 0; i < spaces.length; i++) {
         var name = spaces[i];
         if (i == spaces.length - 1) {
-            if (typeof parent[name] == 'undefined') {
+            if (typeof parent[name] == "undefined") {
                 parent[name] = classdef;
-                if ( typeof classdef['prototype'] != 'undefined' ) {
+                if ( typeof classdef["prototype"] != "undefined" ) {
                     parent[name].prototype = classdef.prototype;
                 }
             }
