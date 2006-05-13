@@ -1,10 +1,17 @@
 /*
+ * This is not a stock JSAN.js.  To increase browser compatibility,
+ * s/'/"/g has been applied to the file and the range of valid response
+ * codes for JSAN.Request has been expanded (lifted from Prototype, in
+ * fact).
+ */
+
+/*
 
 */
 
 var JSAN = function () { JSAN.addRepository(arguments) };
 
-JSAN.VERSION = "0.10-jifty1";
+JSAN.VERSION = "0.10-jifty2";
 
 /*
 
@@ -273,7 +280,7 @@ JSAN.Request.prototype = {
         this._req.open("GET", url, false);
         try {
             this._req.send(null);
-            if (this._req.status == 200 || this._req.status == 0)
+            if ( this.responseIsSuccess() )
                 return this._req.responseText;
         } catch (e) {
             JSAN._handleError("File not found: " + url);
@@ -282,6 +289,12 @@ JSAN.Request.prototype = {
 
         JSAN._handleError("File not found: " + url);
         return null;
+    },
+
+    responseIsSuccess: function() {
+        return this._req.status == undefined
+            || this._req.status == 0
+            || (this._req.status >= 200 && this._req.status < 300);
     }
 };
 
