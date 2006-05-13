@@ -2,7 +2,6 @@
 # XXX TODO: stick this into libs
 
 my @libs = qw(
-  /static/js/jsan/JSAN.js
   /static/js/json.js
   /static/js/prototype.js
   /static/js/cssquery/cssQuery.js
@@ -24,12 +23,17 @@ my @libs = qw(
 );
 
 </%init>
+   <script type="text/javascript" src="/static/js/jsan/JSAN.js"></script>
+   <script type="text/javascript">
+     JSAN.includePath = [ "/static/js/jsan" ];
+% if ( Jifty->config->framework("DevelMode") ) {
+     JSAN.errorLevel = "warn";
+% } else {
+     JSAN.errorLevel = "none";
+% }
+   </script>
+
 % for (@libs) {
    <script type="text/javascript" src="<%$_%>"></script>
 % }
-
-   <script type="text/javascript">
-      JSAN.errorLevel = 'warn';
-      JSAN.addRespository('/static/js/jsan');
-   </script>
 
