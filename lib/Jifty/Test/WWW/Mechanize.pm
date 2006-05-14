@@ -4,6 +4,8 @@ use warnings;
 package Jifty::Test::WWW::Mechanize;
 use base qw/Test::WWW::Mechanize/;
 
+$ENV{'http_proxy'} = ''; # Otherwise Test::WWW::Mechanize tries to go through your HTTP proxy
+
 use Test::HTML::Lint; # exports html_ok
 use HTTP::Cookies;
 use XML::XPath;
