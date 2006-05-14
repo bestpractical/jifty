@@ -359,7 +359,7 @@ sub _push_rule($$) {
     my($pkg, $rule) = @_;
     my $op = $rule->[0];
     my $ruleset;
-    if ( ($op eq "before" or $op eq "after") and ref $rule->[1] and $rule->[1]{plugin} ) {
+    if ( ($op eq "before" or $op eq "after") and ref $rule->[1] and ref $rule->[1] eq 'HASH' and $rule->[1]{plugin} ) {
         $ruleset = 'RULES_DEFERRED';
     } elsif ( $op eq 'before' ) {
         $ruleset = 'RULES_SETUP';
