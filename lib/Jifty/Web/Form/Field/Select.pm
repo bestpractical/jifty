@@ -1,4 +1,4 @@
-vse warnings;
+use warnings;
 use strict;
  
 package Jifty::Web::Form::Field::Select;
