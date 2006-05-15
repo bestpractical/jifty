@@ -909,11 +909,15 @@ sub get_region {
     return $self->{'regions'}{$name};
 }
 
-=head3 region PARAMHASH, 
+=head3 region (PARAMHASH or REGION)
 
-Creates and renders a L<Jifty::Web::PageRegion>; the C<PARAMHASH> is
-passed directly to its L<Jifty::Web::PageRegion/new> method.  The
-region is then L<Jifty::Web::PageRegion/enter>ed, then
+If passed an even number of arguments as a C<PARAMHASH>, the PARAMHASH
+is used to created and renders a L<Jifty::Web::PageRegion>; the
+C<PARAMHASH> is passed directly to its L<Jifty::Web::PageRegion/new>
+method.  Otherwise, it acts on the given C<REGION>.
+
+However it procures the region, it is
+L<Jifty::Web::PageRegion/enter>ed, then
 L<Jifty::Web::PageRegion/render>ed, and finally
 L<Jifty::Web::PageRegion/exit>ed.
 
@@ -922,8 +926,12 @@ L<Jifty::Web::PageRegion/exit>ed.
 sub region {
     my $self = shift;
 
-    # Add ourselves to the region stack
-    my $region = Jifty::Web::PageRegion->new(@_) or return;
+    my $region;
+    if (@_ % 2) {
+        $region = shift;
+    } else {
+        $region = Jifty::Web::PageRegion->new(@_) or return; 
+    }
 
     # Enter the region
     $region->enter;
