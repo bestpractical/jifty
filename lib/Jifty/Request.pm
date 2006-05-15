@@ -712,6 +712,12 @@ sub do_mapping {
         delete $self->arguments->{$_};
         $self->argument($key => $value);
     }
+    for ($self->state_variables) {
+        my ($key, $value) = Jifty::Request::Mapper->map(destination => $_->key, source => $_->value, %args);
+        next unless $key ne $_;
+        $self->remove_state_variable($_->key);
+        $self->add_state_variable(key => $key, value => $value);
+    }
 }
 
 package Jifty::Request::Action;

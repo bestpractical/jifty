@@ -262,12 +262,13 @@ sub region_fragment {
     my $self = shift;
     my ( $region, $fragment ) = @_;
 
-    my $defaults = Jifty->web->get_region($region);
+    my $name = ref $region ? $region->qualified_name : $region;
+    my $defaults = Jifty->web->get_region($name);
 
     if ( $defaults and $fragment eq $defaults->default_path ) {
-        $self->state_variable( "region-$region" => undef, $fragment );
+        $self->state_variable( "region-$name" => undef, $fragment );
     } else {
-        $self->state_variable( "region-$region" => $fragment );
+        $self->state_variable( "region-$name" => $fragment );
     }
 }
 
@@ -282,12 +283,13 @@ sub region_argument {
     my $self = shift;
     my ( $region, $argument, $value ) = @_;
 
-    my $defaults = Jifty->web->get_region($region);
+    my $name = ref $region ? $region->qualified_name : $region;
+    my $defaults = Jifty->web->get_region($name);
 
     if ( $defaults and $value eq $defaults->default_argument($argument) ) {
-        $self->state_variable( "region-$region.$argument" => undef, $value );
+        $self->state_variable( "region-$name.$argument" => undef, $value );
     } else {
-        $self->state_variable( "region-$region.$argument" => $value );
+        $self->state_variable( Jifty::Request::Mapper->query_parameters( "region-$name.$argument" => $value ) );
     }
 
 }
@@ -464,7 +466,7 @@ sub generate {
         next unless $value;
         my @hooks = ref $value eq "ARRAY" ? @{$value} : ($value);
         for my $hook (@hooks) {
-            $hook->{region} ||= Jifty->web->qualified_region;
+            $hook->{region} ||= $hook->{refresh} || Jifty->web->qualified_region;
             $hook->{args}   ||= {};
 
             $self->region_fragment( $hook->{region}, $hook->{replace_with} )

@@ -238,17 +238,6 @@ sub render {
     defined $arguments{$_} or delete $arguments{$_} for keys %arguments;
     my $result = "";
 
-    # Map out the arguments
-    for ( keys %arguments ) {
-        my ( $key, $value ) = Jifty::Request::Mapper->map(
-            destination => $_,
-            source      => $arguments{$_}
-        );
-        next unless $key ne $_;
-        delete $arguments{$_};
-        $arguments{$key} = $value;
-    }
-
     # We need to tell the browser this is a region and
     # what its default arguments are as well as the path of the "fragment".
 
@@ -285,11 +274,9 @@ sub render {
     $subrequest->is_subrequest(1);
     local Jifty->web->{request} = $subrequest;
 
-    # While we're inside this region, # have Mason to tack its response
+    # While we're inside this region, have Mason to tack its response
     # onto a variable and not send headers when it does so
-
-    # XXX TODO: this internals diving is icky
-
+    #XXX TODO: There's gotta be a better way to localize it
     my $region_content = '';
     Jifty->handler->mason->interp->out_method( \$region_content );
 
@@ -298,7 +285,7 @@ sub render {
     $result .= $region_content;
     $result .= qq|</div>| if ( $self->region_wrapper );
 
-    #XXX TODO: There's gotta be a better way to localize it
+
     Jifty->handler->mason->interp->out_method( \&Jifty::View::Mason::Handler::out_method );
 
     return $result;
