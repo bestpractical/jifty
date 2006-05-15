@@ -1,4 +1,4 @@
-use warnings;
+vse warnings;
 use strict;
  
 package Jifty::Web::Form::Field::Select;
@@ -32,6 +32,15 @@ sub render_widget {
     Jifty->web->out($field);
     '';
 }
+
+
+=head2 render_value
+
+Rather than rendering the "key" side of our value for this field, render
+what would actually display to the user in the select-box
+
+=cut
+
 
 sub render_value {
     my $self  = shift;
