@@ -466,7 +466,8 @@ sub redirect_required {
 
     if ($self->next_page
         and ( ( $self->next_page ne $self->request->path )
-            or $self->request->state_variables )
+            or $self->request->state_variables
+            or $self->{'state_variables'} )
         )
     {
         return (1);
@@ -493,12 +494,15 @@ sub redirect {
 
     if (   $self->response->results
         or $self->request->state_variables
+        or $self->{'state_variables'}
         or @unrun )
     {
         my $request = Jifty::Request->new();
         $request->path($page);
         $request->add_state_variable( key => $_->key, value => $_->value )
           for $self->request->state_variables;
+        $request->add_state_variable( key => $_, value => $self->{'state_variables'}->{$_} )
+          for keys %{ $self->{'state_variables'} };
         for (@unrun) {
             $request->add_action(
                 moniker   => $_->moniker,
@@ -671,8 +675,8 @@ sub tangent {
     if ( defined wantarray ) {
         return $clickable->generate->render;
     } else {
-        $clickable->state_variable( $_->key, $_->value )
-            for $self->request->state_variables;
+        $clickable->state_variable( $_ => $self->{'state_variables'}{$_} )
+            for keys %{ $self->{'state_variables'} };
 
         my $request = Jifty::Request->new(path => Jifty->web->request->path)
           ->from_webform(%{Jifty->web->request->arguments}, $clickable->get_parameters);
@@ -872,7 +876,8 @@ sub set_variable {
     my $name  = shift;
     my $value = shift;
 
-    $self->request->add_state_variable( key => $name, value => $value );
+    $self->{'state_variables'}->{$name} = $value;
+
 }
 
 =head3 state_variables
@@ -887,8 +892,8 @@ request, as a hash; they have already been prefixed with C<J:V->
 sub state_variables {
     my $self = shift;
     my %vars;
-    $vars{ "J:V-" . $_->key } = $_->value
-        for $self->request->state_variables;
+    $vars{ "J:V-" . $_ } = $self->{'state_variables'}->{$_}
+        for keys %{ $self->{'state_variables'} };
 
     return %vars;
 }
