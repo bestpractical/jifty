@@ -16,6 +16,7 @@ use_ok('Jifty::Everything');
 # just look for Jifty.pm
 my $dir = $INC{'Jifty.pm'};
 $dir =~ s/Jifty\.pm$//;
+$dir = quotemeta $dir;  # as MSWin32 has backslashes in the path
 my @files = grep({$_ =~ m/^$dir/} map({$INC{$_}} grep(/^Jifty\//, keys(%INC))));
 ok(scalar(@files));
 
