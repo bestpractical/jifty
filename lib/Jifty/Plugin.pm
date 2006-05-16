@@ -11,7 +11,9 @@ Jifty::Plugin - Describes a plugin to the Jifty framework
 
 Plugins are like mini-apps.  They come in packages with share
 directories which provide static and template files; they provide
-actions; they have dispatcher rules.
+actions; they have dispatcher rules.  To create the skeleton of a new
+plugin, you can use the command:
+    jifty plugin --name SomePlugin
 
 To use a plugin in your Jifty application, find the C<Plugins:> line
 in the C<config.yml> file:
