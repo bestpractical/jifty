@@ -19,7 +19,7 @@ if ($collection->pager->total_entries == 0) {
 % if ($collection->pager->last_page > 1) {
     <span class="page-count">Page <% $page %> of <% $collection->pager->last_page %></span>   
 % }
-<dl class="list">
+<div class="list">
 <%perl>
 while ( my $item = $collection->next ) {
     Jifty->web->region(
@@ -30,7 +30,7 @@ while ( my $item = $collection->next ) {
 }
 
 </%perl>
-</dl>
+</div>
 
 <div class="paging">
 % if ($collection->pager->previous_page) {

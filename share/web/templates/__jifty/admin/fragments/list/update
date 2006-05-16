@@ -12,7 +12,7 @@ my $update = Jifty->web->new_action(
     record  => $record
 );
 </%init>
-<div class="update record inline <%$object_type%>">
+<div class="jifty_admin update item inline <%$object_type%>">
 % foreach my $argument ($update->argument_names) {
 <%$update->form_field($argument)%>
 %}
