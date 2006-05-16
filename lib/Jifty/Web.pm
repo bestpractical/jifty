@@ -914,40 +914,23 @@ sub get_region {
     return $self->{'regions'}{$name};
 }
 
-=head3 region (PARAMHASH or REGION)
+=head3 region PARAMHASH
 
-If passed an even number of arguments as a C<PARAMHASH>, the PARAMHASH
-is used to created and renders a L<Jifty::Web::PageRegion>; the
-C<PARAMHASH> is passed directly to its L<Jifty::Web::PageRegion/new>
-method.  Otherwise, it acts on the given C<REGION>.
-
-However it procures the region, it is
-L<Jifty::Web::PageRegion/enter>ed, then
-L<Jifty::Web::PageRegion/render>ed, and finally
-L<Jifty::Web::PageRegion/exit>ed.
+The provided PARAMHASH is used to create and render a
+L<Jifty::Web::PageRegion>; the C<PARAMHASH> is passed directly to its
+L<Jifty::Web::PageRegion/new> method, and then
+L<Jifty::Web::PageRegion/render> is called.
 
 =cut
 
 sub region {
     my $self = shift;
 
-    my $region;
-    if (@_ % 2) {
-        $region = shift;
-    } else {
-        $region = Jifty::Web::PageRegion->new(@_) or return; 
-    }
-
-    # Enter the region
-    $region->enter;
+    # Create a region
+    my $region = Jifty::Web::PageRegion->new(@_) or return; 
 
     # Render it
-    $self->out( $region->render );
-
-    # Exit it when we're done
-    $region->exit;
-    
-    "";
+    $region->render;
 }
 
 =head3 current_region
@@ -964,16 +947,18 @@ sub current_region {
         : undef;
 }
 
-=head3 qualified_region
+=head3 qualified_region [REGION]
 
 Returns the fully qualified name of the current
-L<Jifty::Web::PageRegion>, or the empty string if there is none..
+L<Jifty::Web::PageRegion>, or the empty string if there is none.  If
+C<REGION> is supplied, gives the qualified name of C<REGION> were it
+placed in the current region.
 
 =cut
 
 sub qualified_region {
     my $self = shift;
-    return join( "-", map { $_->name } @{ $self->{'region_stack'} || [] } );
+    return join( "-", map { $_->name } @{ $self->{'region_stack'} || [] }, @_ );
 }
 
 =head3 serve_fragments
@@ -1013,7 +998,7 @@ sub serve_fragments {
 
         # Stuff the rendered region into the XML
         $writer->startTag( "fragment", id => Jifty->web->current_region->qualified_name );
-        $writer->cdata( Jifty->web->current_region->render );
+        $writer->cdata( Jifty->web->current_region->as_string );
         $writer->endTag();
 
         Jifty->web->current_region->exit while Jifty->web->current_region;
