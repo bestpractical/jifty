@@ -1036,7 +1036,7 @@ sub render_template {
         # Save the request away, and redirect to an error page
         Jifty->web->response->error($err);
         my $c = Jifty::Continuation->new(
-            request  => Jifty->web->request,
+            request  => Jifty->web->request->top_request,
             response => Jifty->web->response,
             parent   => Jifty->web->request->continuation,
         );

@@ -4,7 +4,7 @@ use strict;
 package Jifty::Request;
 
 use base qw/Jifty::Object Class::Accessor::Fast Clone/;
-__PACKAGE__->mk_accessors(qw(is_subrequest arguments just_validating path _continuation));
+__PACKAGE__->mk_accessors(qw(_top_request arguments just_validating path _continuation));
 
 use Jifty::JSON;
 use Jifty::YAML;
@@ -718,6 +718,31 @@ sub do_mapping {
         $self->remove_state_variable($_->key);
         $self->add_state_variable(key => $key, value => $value);
     }
+}
+
+=head2 is_subrequest
+
+Returns true if this request is a subrequest.
+
+=cut
+
+sub is_subrequest {
+    my $self = shift;
+    return $self->_top_request ? 1 : undef;
+}
+
+=head2 top_request
+
+Returns the top-level request for this request; if this is a
+subrequest, this is the user-created request that the handler got
+originally.  Otherwise, returns itself;
+
+=cut
+
+sub top_request {
+    my $self = shift;
+    $self->_top_request(@_) if @_;
+    return $self->_top_request || $self;
 }
 
 package Jifty::Request::Action;

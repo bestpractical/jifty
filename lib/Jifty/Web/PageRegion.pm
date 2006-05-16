@@ -267,10 +267,10 @@ sub as_string {
     my $subrequest = Jifty::Request->new;
     $subrequest->from_webform(%arguments);
     $subrequest->path( $self->path );
+    $subrequest->top_request( Jifty->web->request->top_request );
 
     # Remove all of the actions
     $subrequest->clear_actions;
-    $subrequest->is_subrequest(1);
     local Jifty->web->{request} = $subrequest;
 
     # While we're inside this region, have Mason to tack its response
