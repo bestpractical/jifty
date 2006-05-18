@@ -38,8 +38,8 @@ sub options {
 
 =head2 run
 
-Create a directory for the application, a skeleton directory
-structure, and a C<Makefile.PL> for you application.
+Create a directory for the plugin, a skeleton directory structure, and
+a C<Makefile.PL> for your plugin.
 
 =cut
 
@@ -48,7 +48,7 @@ sub run {
 
     $self->prefix( $self->{name} ||''); 
 
-    unless ($self->prefix =~ /\w+/ ) { die "You need to give your new Jifty app a --name"."\n";}
+    unless ($self->prefix =~ /\w+/ ) { die "You need to give your new Jifty plugin a --name"."\n";}
     $self->prefix( $self->prefix );
 
     # Turn my-plugin-name into My::Plugin::Name.
@@ -124,7 +124,7 @@ sub _make_directories {
     @dirs = (@dirs, $self->_directories); 
 
     foreach my $dir (@dirs) {
-        $dir =~ s/__APP__/$self->lib_dir/e;
+        $dir =~ s/__LIB__/$self->lib_dir/e;
         print("Creating directory $dir\n");
         mkdir( $self->prefix."/$dir") or die "Can't create ". $self->prefix."/$dir: $!";
     }
@@ -138,8 +138,8 @@ sub _directories {
         share/web
         share/web/templates
         share/web/static
-        lib/__APP__/Model
-        lib/__APP__/Action
+        lib/__LIB__/Model
+        lib/__LIB__/Action
         t
     );
 }

@@ -6,7 +6,7 @@ $region
 my $record_class =  Jifty->config->framework('ApplicationClass')."::Model::".$object_type;
  my $create = Jifty->web->new_action(class => 'Create'.$object_type);
 </%init>
-<div class="create item inline">
+<div class="jifty_admin create item inline">
 % foreach my $argument ($create->argument_names) {
         <%$create->form_field($argument)%>
 %}

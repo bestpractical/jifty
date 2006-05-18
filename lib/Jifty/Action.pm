@@ -706,7 +706,12 @@ sub _validate_argument {
 
 =head2 _autocomplete_argument ARGUMENT
 
-Get back a list of possible completions for C<ARGUMENT>.
+Get back a list of possible completions for C<ARGUMENT>.  The list
+should either be a list of scalar values or a list of hash references.
+Each hash reference must have a key named C<value>.  There can also
+additionally be a key named C<label> which, if present, will be used
+as the user visible label.  If C<label> is not present then the
+contents of C<value> will be used for the label.
 
 If the field has an attribute named B<autocompleter>, call the
 subroutine reference B<autocompleter> points to.

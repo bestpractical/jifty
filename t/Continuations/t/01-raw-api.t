@@ -41,25 +41,25 @@ $mech->content_like(qr/help about the index/i, "Correct content on new page");
 ok($mech->continuation, "With a continuation set");
 
 # Create a continuation using with return values
-$mech->get("$URL/index.html?J:CREATE=1;J:M-foo=A|bar;J:PATH=/index-help.html");
+$mech->get("$URL/index.html?J:CREATE=1;J:M-foo=A`bar;J:PATH=/index-help.html");
 like($mech->uri, qr/index-help.html/, "Got to new page");
 $mech->content_like(qr/help about the index/i, "Correct content on new page");
 ok($mech->continuation, "With a continuation set");
 my $first = $mech->continuation->id;
 
 # Hit same URL again
-$mech->get("$URL/index.html?J:CREATE=1;J:M-foo=A|bar;J:PATH=/index-help.html");
+$mech->get("$URL/index.html?J:CREATE=1;J:M-foo=A`bar;J:PATH=/index-help.html");
 ok($mech->continuation, "Also sets a continuation");
 isnt($first, $mech->continuation->id, "Different continuation this time");
 
 # Create continuation from submit with an action
-$mech->get("$URL/index.html?J:CREATE=1;J:M-foo=A|bar;J:PATH=/index-help.html;J:A-grail=GetGrail");
+$mech->get("$URL/index.html?J:CREATE=1;J:M-foo=A`bar;J:PATH=/index-help.html;J:A-grail=GetGrail");
 $mech->content_unlike(qr/got the grail/i, "Action didn't run");
 ok($mech->continuation->request->action("grail"), "Continuation has the action stored");
 my $pending = $mech->continuation->id;
 
 # Create continuation from submit with action that doesn't validate
-$mech->get("$URL/index.html?J:CREATE=1;J:M-foo=A|bar;J:PATH=/index-help.html;J:A-cross=CrossBridge");
+$mech->get("$URL/index.html?J:CREATE=1;J:M-foo=A`bar;J:PATH=/index-help.html;J:A-cross=CrossBridge");
 $mech->content_unlike(qr/crossed the bridge/i, "action didn't run");
 ok($mech->continuation->response->result("cross")->failure, "Action's result was failure");
 
@@ -99,7 +99,7 @@ $mech->content_like(qr/got the grail/i, "Action ran");
 
 #### Nesting
 # Inside one of the existing conts, create a new cont
-$mech->get("$URL/index-help.html?J:C=$first;J:CREATE=1;J:M-troz=A|zort;J:PATH=/help-help.html");
+$mech->get("$URL/index-help.html?J:C=$first;J:CREATE=1;J:M-troz=A`zort;J:PATH=/help-help.html");
 like($mech->uri, qr/help-help.html/, "Got to new page");
 $mech->content_like(qr/help about help/i, "Correct content on new page");
 ok($mech->continuation, "With a continuation set");
@@ -118,7 +118,7 @@ like($mech->uri, qr/index.html/, "Back at first page");
 
 #### Nested returns
 # Inside one of the existing conts, create a new cont with a CALL at the same time
-$mech->get("$URL/index-help.html?J:CALL=$first;J:CREATE=1;J:M|troz=A-zort;J:PATH=/help-help.html");
+$mech->get("$URL/index-help.html?J:CALL=$first;J:CREATE=1;J:M`troz=A-zort;J:PATH=/help-help.html");
 like($mech->uri, qr/help-help.html/, "Got to new page");
 $mech->content_like(qr/help about help/i, "Correct content on new page");
 ok($mech->continuation, "With a continuation set");

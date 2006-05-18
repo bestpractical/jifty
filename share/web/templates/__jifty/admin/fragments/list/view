@@ -12,7 +12,7 @@ my $update = Jifty->web->new_action(
     record  => $record
 );
 </%init>
-<div class="read item inline">
+<div class="jifty_admin read item inline">
 % foreach my $argument ($update->argument_names) {
 <%$update->form_field($argument, render_mode => 'read')%>
 % }
@@ -28,6 +28,4 @@ my $update = Jifty->web->new_action(
 
         )
 %>
-
-
 </div>

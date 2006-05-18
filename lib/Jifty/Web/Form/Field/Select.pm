@@ -33,4 +33,29 @@ sub render_widget {
     '';
 }
 
+
+=head2 render_value
+
+Rather than rendering the "key" side of our value for this field, render
+what would actually display to the user in the select-box
+
+=cut
+
+
+sub render_value {
+    my $self  = shift;
+    my $field = '<span';
+    $field .= qq! class="@{[ $self->classes ]}"> !;
+    my $value = $self->current_value;
+    if(defined $value) {
+        my @value = grep { $_->{value} eq $value }
+                        @{ $self->action->available_values($self->name) };
+        $value = $value[0]->{display} if scalar @value;
+    }
+    $field .= HTML::Entities::encode_entities(_($value)) if defined $value;
+    $field .= qq!</span>\n!;
+    Jifty->web->out($field);
+    return '';
+}
+
 1;

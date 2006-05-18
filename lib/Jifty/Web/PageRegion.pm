@@ -81,11 +81,17 @@ sub new {
     }
 
     $self->name($args{name});
+    $self->qualified_name(Jifty->web->qualified_region($self));
     $self->default_path($args{path});
     $self->default_arguments($args{defaults});
     $self->arguments({});
-    $self->parent($args{parent});
+    $self->parent($args{parent} || Jifty->web->current_region);
     $self->region_wrapper(not $args{_bootstrap} and $args{region_wrapper});
+
+    # Keep track of the fully qualified name (which should be unique)
+    $self->log->warn("Repeated region: " . $self->qualified_name)
+        if Jifty->web->get_region( $self->qualified_name );
+    Jifty->web->{'regions'}{ $self->qualified_name } = $self;
 
     return $self;
 }
@@ -180,17 +186,8 @@ L<Jifty::Request/state_variables>.
 sub enter {
     my $self = shift;
 
-    $self->log->warn("Region occurred in more than once place: ".$self->qualified_name)
-      if (defined $self->parent and $self->parent != Jifty->web->current_region);
-
-    $self->parent(Jifty->web->current_region);
+    # Add ourselves to the region stack
     push @{Jifty->web->{'region_stack'}}, $self;
-    $self->qualified_name(Jifty->web->qualified_region);
-
-    # Keep track of the fully qualified name (which should be unique)
-    $self->log->warn("Repeated region: " . $self->qualified_name)
-        if Jifty->web->get_region( $self->qualified_name ) and Jifty->web->get_region( $self->qualified_name ) ne $self;
-    Jifty->web->{'regions'}{ $self->qualified_name } = $self;
 
     # Merge in the settings passed in via state variables
     for (Jifty->web->request->state_variables) {
@@ -223,42 +220,33 @@ sub exit {
     }
 }
 
-=head2 render
+=head2 as_string
 
-Returns a string of the fragment and associated javascript.
+Deals with the bulk of the effort to show a page region.  Returns a
+string of the fragment and associated javascript (if any).
 
 =cut
 
-sub render {
+sub as_string {
     my $self = shift;
 
+    if (Jifty->web->current_region ne $self) {
+        # XXX TODO: Possibly we should just call ->enter
+        warn "Attempt to call as_string on a region which is not the current region";
+        return "";
+    }
+    
     my %arguments = %{ $self->arguments };
 
     # undef arguments cause warnings. We hatesses the warnings, we do.
     defined $arguments{$_} or delete $arguments{$_} for keys %arguments;
     my $result = "";
 
-    # Map out the arguments
-    for ( keys %arguments ) {
-        my ( $key, $value ) = Jifty::Request::Mapper->map(
-            destination => $_,
-            source      => $arguments{$_}
-        );
-        next unless $key ne $_;
-        delete $arguments{$_};
-        $arguments{$key} = $value;
-    }
-
-    # We need to tell the browser this is a region and
-    # what its default arguments are as well as the path of the "fragment".
-
-    # We do this by passing in a snippet of javascript which encodes this
-    # information.
-
-# Alex is sad about: Anything which is replaced _must_ start life as a fragment.
-# We don't have a good answer for this yet.
-
-# We only render the region wrapper if we're asked to (which is true by default)
+    # We need to tell the browser this is a region and what its
+    # default arguments are as well as the path of the "fragment".  We
+    # do this by passing in a snippet of javascript which encodes this
+    # information.  We only render this region wrapper if we're asked
+    # to (which is true by default)
     if ( $self->region_wrapper ) {
         $result .= qq|<script type="text/javascript">\n|
             . qq|new Region('| . $self->qualified_name . qq|',|
@@ -279,17 +267,15 @@ sub render {
     my $subrequest = Jifty::Request->new;
     $subrequest->from_webform(%arguments);
     $subrequest->path( $self->path );
+    $subrequest->top_request( Jifty->web->request->top_request );
 
     # Remove all of the actions
     $subrequest->clear_actions;
-    $subrequest->is_subrequest(1);
     local Jifty->web->{request} = $subrequest;
 
-    # While we're inside this region, # have Mason to tack its response
+    # While we're inside this region, have Mason to tack its response
     # onto a variable and not send headers when it does so
-
-    # XXX TODO: this internals diving is icky
-
+    #XXX TODO: There's gotta be a better way to localize it
     my $region_content = '';
     Jifty->handler->mason->interp->out_method( \$region_content );
 
@@ -298,10 +284,25 @@ sub render {
     $result .= $region_content;
     $result .= qq|</div>| if ( $self->region_wrapper );
 
-    #XXX TODO: There's gotta be a better way to localize it
     Jifty->handler->mason->interp->out_method( \&Jifty::View::Mason::Handler::out_method );
 
     return $result;
+}
+
+=head2 render
+
+Calls L</enter>, outputs the results of L</as_string>, and then calls
+L</exit>.  Returns an empty string.
+
+=cut
+
+sub render {
+    my $self = shift;
+
+    $self->enter;
+    Jifty->web->out($self->as_string);
+    $self->exit;
+    "";
 }
 
 =head2 get_element [RULES]

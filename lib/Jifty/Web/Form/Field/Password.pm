@@ -40,7 +40,8 @@ Never render a value for a password
 
 
 sub render_value {
-    return '-';
+    Jifty->web->out('-');
+    return '';
 }
 
 =head2 classes

@@ -119,6 +119,12 @@ div.inline div.form_field label {
 }
 
 
+/* So the admin ui is one row per line */
+
+.jifty_admin.item.inline {
+     clear: both;
+ }
+
 div.subline {
     display: inline;
     float: left;  

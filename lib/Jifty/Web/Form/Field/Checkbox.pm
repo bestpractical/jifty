@@ -41,6 +41,27 @@ sub render_widget {
     '';
 }
 
+=head2 render_value
+
+Renders value as a checkbox widget.
+
+=cut
+
+sub render_value {
+    my $self  = shift;
+    my $field .= qq!<input type="checkbox"!;
+    $field .= qq! name="@{[ $self->input_name ]}"!;
+    $field .= qq! id="@{[ $self->element_id ]}"!;
+    $field .= qq! value="@{[$self->value ||1]}"!;
+    $field .= $self->_widget_class;
+    $field .= qq! checked="checked"! if ($self->checked or $self->current_value);
+    $field .= qq! disabled readonly!;
+    $field .= qq! />\n!;
+
+    Jifty->web->out($field);
+    return '';
+}
+
 =head2 javascript_preempt
 
 By default, javascript (such as onclick handlers) should not actually

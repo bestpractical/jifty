@@ -9,7 +9,9 @@ my @options = @{$ref->{'completions'}||[]};
 <body>
 <ul>
 % foreach my $item ( @options) {
-%    if (exists $item->{label}) {
+%    if (!ref($item)) {
+<li><% $item %></li>
+%    } elsif (exists $item->{label}) {
 <li><span class="informal"><% $item->{label} %></span><span style="visibility: hidden"><% $item->{value} %></span></li>
 %    } else {
 <li><% $item->{value} %></li>

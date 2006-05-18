@@ -19,6 +19,7 @@ use File::ShareDir;
 use UNIVERSAL::require;
 use ExtUtils::MakeMaker ();
 use Cwd ();
+use Config;
 
 # Trivial memoization to ward off evil Cwd calls.
 use vars qw/%ABSOLUTE_PATH $JIFTY_ROOT $SHARE_ROOT $APP_ROOT/;
@@ -114,9 +115,16 @@ sub app_root {
         while (@root) {
             my $try = File::Spec->catdir( @root, "bin", "jifty" );
             if (    -e $try
-                and (-x $try or MM->maybe_command($try))
-                and $try ne "/usr/bin/jifty"
-                and $try ne "/usr/local/bin/jifty" )
+                # XXX: Just a quick hack
+                # MSWin32's 'maybe_command' sees only file extension.
+                # Maybe we should check 'jifty.bat' instead on Win32,
+                # if it is (or would be) provided.
+                # Also, /usr/bin or /usr/local/bin should be taken from
+                # %Config{bin} or %Config{scriptdir} or something like that
+                # for portablility.
+                and (-x $try or MM->maybe_command($try) or $^O eq 'MSWin32')
+                and $try ne File::Spec->catdir($Config{bin}, "jifty")
+                and $try ne File::Spec->catdir($Config{scriptdir}, "jifty") )
             {
                 return $APP_ROOT = File::Spec->catdir(@root);
             }
@@ -126,7 +134,7 @@ sub app_root {
     warn "Can't guess application root from current path ("
         . Cwd::cwd()
         . ") or bin path ($FindBin::Bin)\n";
-    return undef;
+    return ''; # returning undef causes tons of 'uninitialized...' warnings.
 }
 
 =head2 default_app_name
@@ -174,6 +182,13 @@ Additionally, logs any failures at the C<error> log level.
 sub require {
     my $self = shift;
     my $class = shift;
+
+    # Quick hack to silence warnings.
+    # Maybe some dependencies were lost.
+    unless ($class) {
+        Jifty->log->error(sprintf("no class was given at %s line %d\n", (caller)[1,2]));
+        return 0;
+    }
 
     my $path =  join('/', split(/::/,$class)).".pm";
     return 1 if $INC{$path};

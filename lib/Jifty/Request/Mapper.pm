@@ -82,7 +82,7 @@ sub query_parameters {
 
                 my $type = ($_ =~ /result/) ? "R" : "A";
 
-                $return{"J:M-$key"} = join("|", $type, $moniker, $name);
+                $return{"J:M-$key"} = join("`", $type, $moniker, $name);
             }
         } else {
             $return{$key} = $parameters{$key};
@@ -141,7 +141,7 @@ sub map {
 
     my $destination = $1;
 
-    my @bits = split( /\|/, $args{source} );
+    my @bits = split( /\`/, $args{source} );
     if ( $bits[0] ) {
         if ( $bits[0] eq "A" and @bits == 3 ) {
             return ( $destination => undef ) unless $args{request}->action( $bits[1] );
