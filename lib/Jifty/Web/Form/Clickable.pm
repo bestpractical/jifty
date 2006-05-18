@@ -231,7 +231,6 @@ Sets the given HTTP paramter named C<KEY> to the given C<VALUE>.
 sub parameter {
     my $self = shift;
     my ( $key, $value ) = @_;
-    ($key, $value) = Jifty::Request::Mapper->query_parameters($key => $value);
     $self->{parameters}{$key} = $value;
 }
 
@@ -289,9 +288,20 @@ sub region_argument {
     if ( $defaults and $value eq $defaults->default_argument($argument) ) {
         $self->state_variable( "region-$name.$argument" => undef, $value );
     } else {
-        $self->state_variable( Jifty::Request::Mapper->query_parameters( "region-$name.$argument" => $value ) );
+        $self->state_variable( "region-$name.$argument" => $value );
     }
 
+}
+
+# Query-map any complex structures
+sub _map {
+    my %args = @_;
+    for (keys %args) {
+        my ($key, $value) = Jifty::Request::Mapper->query_parameters($_ => $args{$_});
+        delete $args{$_};
+        $args{$key} = $value;
+    }
+    return %args;
 }
 
 =head2 parameters
@@ -318,7 +328,7 @@ sub parameters {
         %parameters = %{ $self->{parameters} };        
     }
 
-    %parameters = ( %{$self->{state_variable} || {}}, %parameters );
+    %parameters = _map( %{$self->{state_variable} || {}}, %parameters );
 
     $parameters{"J:CALL"} = $self->call
         if $self->call;
@@ -339,9 +349,13 @@ The hash of parameters as they would be needed on a POST request.
 sub post_parameters {
     my $self = shift;
 
-    my %parameters = ( %{ $self->{fallback} || {} }, $self->parameters );
+    my %parameters = ( _map( %{ $self->{fallback} || {} } ), $self->parameters );
 
     my ($root) = $ENV{'REQUEST_URI'} =~ /([^\?]*)/;
+
+    # Submit actions should only show up once
+    my %uniq;
+    $self->submit([grep {not $uniq{$_}++} @{$self->submit}]) if $self->submit;
 
     # Add a redirect, if this isn't to the right page
     if ( $self->url ne $root and not $self->returns ) {

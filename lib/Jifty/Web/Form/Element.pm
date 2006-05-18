@@ -188,7 +188,16 @@ sub javascript {
             }
 
             # Arguments
-            $args{args} = {Jifty::Request::Mapper->query_parameters( %{ $hook->{args} || {} } )};
+            $args{args} = $hook->{args} || {};
+
+            # We're going to pass complex query mapping structures
+            # as-is to the server, but we need to make sure we're not
+            # trying to pass around Actions, merely their monikers.
+            for my $key (keys %{$args{args}}) {
+                next unless ref $args{args}{$key} eq "HASH";
+                $args{args}{$key}{$_} = $args{args}{$key}{$_}->moniker
+                  for grep {ref $args{args}{$key}{$_}} keys %{$args{args}{$key}};
+            }
 
             # Effects
             $args{$_} = $hook->{$_} for grep {exists $hook->{$_}} qw/effect effect_args/;
