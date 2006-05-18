@@ -40,7 +40,7 @@ requires:
   Hash::Merge: 0
   Hook::LexWrap: 0
   JSON::Syck: 0.12
-  Jifty::DBI: 0.16
+  Jifty::DBI: 0.21
   LWP::UserAgent: 0
   Locale::Maketext::Extract: 0.20
   Locale::Maketext::Lexicon: 0.60

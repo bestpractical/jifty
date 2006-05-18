@@ -986,12 +986,22 @@ sub serve_fragments {
         
         for $f (reverse @regions) {
             my $new = $self->get_region( join '-', grep {$_} $self->qualified_region, $f->name );
+
+            # Arguments can be complex mapped hash values.  Get their
+            # real values by mapping.
+            my %defaults = %{$f->arguments};
+            for (keys %defaults) {
+                my ($key, $value) = Jifty::Request::Mapper->map(destination => $_, source => $defaults{$_});
+                delete $defaults{$_};
+                $defaults{$key} = $value;
+            }
+
             $new ||= Jifty::Web::PageRegion->new(
                 name           => $f->name,
                 path           => $f->path,
                 region_wrapper => $f->wrapper,
                 parent         => Jifty->web->current_region,
-                defaults       => $f->arguments,
+                defaults       => \%defaults,
             );
             $new->enter;
         }

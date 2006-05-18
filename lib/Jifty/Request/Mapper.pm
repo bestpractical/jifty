@@ -136,7 +136,14 @@ sub map {
         @_
     );
 
-    return ( $args{destination} => $args{source} )
+    my @original = ($args{destination} => $args{source});
+
+    # In case the source is a harhref, we force ourselves to go the
+    # *other* direction first.
+    ($args{destination}, $args{source}) = $class->query_parameters($args{destination} => $args{source});
+
+    # Bail unless it's a mapping
+    return ( @original )
         unless $args{destination} =~ /^J:M-(.*)/;
 
     my $destination = $1;
@@ -144,16 +151,22 @@ sub map {
     my @bits = split( /\`/, $args{source} );
     if ( $bits[0] ) {
         if ( $bits[0] eq "A" and @bits == 3 ) {
-            return ( $destination => undef ) unless $args{request}->action( $bits[1] );
-            return ( $destination => $args{request}->action( $bits[1] )->argument( $bits[2] ) );
+            # No such action -- value is undef
+            return ( $destination => undef ) unless $args{request}->top_request->action( $bits[1] );
+            # We have a value
+            return ( $destination => $args{request}->top_request->action( $bits[1] )->argument( $bits[2] ) );
         } elsif ( $bits[0] eq "R" and @bits == 3 ) { 
-            return ( $destination => undef ) unless $args{request}->action( $bits[1] );
-            return ( $args{destination} => $args{source} ) unless $args{response}->result( $bits[1] );
+            # No such action -- value is undef
+            return ( $destination => undef ) unless $args{request}->top_request->action( $bits[1] );
+            # Action exists but hasn't run yet -- defer until later
+            return ( @original ) unless $args{response}->result( $bits[1] );
+            # We have a value
             return ( $destination => $args{response}->result( $bits[1] )->content( $bits[2] ) );
         } elsif ( $bits[0] eq "A" and @bits == 2 ) {
             return ( $destination => $args{request}->arguments->{ $bits[1] } );
         }
     }
+    # As a fallback, just set it to the value
     return ( $destination => $args{source} );
 
 }
