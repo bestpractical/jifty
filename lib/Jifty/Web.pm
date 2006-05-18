@@ -989,7 +989,7 @@ sub serve_fragments {
 
             # Arguments can be complex mapped hash values.  Get their
             # real values by mapping.
-            my %defaults = %{$f->arguments};
+            my %defaults = %{$f->arguments || {}};
             for (keys %defaults) {
                 my ($key, $value) = Jifty::Request::Mapper->map(destination => $_, source => $defaults{$_});
                 delete $defaults{$_};
