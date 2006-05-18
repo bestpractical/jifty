@@ -26,11 +26,8 @@ my @libs = qw(
    <script type="text/javascript" src="/static/js/jsan/JSAN.js"></script>
    <script type="text/javascript">
      JSAN.includePath = [ "/static/js/jsan" ];
-% if ( Jifty->config->framework("DevelMode") ) {
-     JSAN.errorLevel = "warn";
-% } else {
+     // You might want to change this to "warn" for development
      JSAN.errorLevel = "none";
-% }
    </script>
 
 % for (@libs) {
