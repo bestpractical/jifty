@@ -32,7 +32,8 @@ unique id -- it should consist of only letters and numbers.
 
 =item path
 
-The path to the fragment that this page region contains.
+The path to the fragment that this page region contains.  Defaults to
+C</__jifty/empty>, which, as its name implies, is empty.
 
 =item defaults (optional)
 
@@ -59,17 +60,16 @@ sub new {
 
     my %args = (
                 name => undef,
-                path => undef,
+                path => "/__jifty/empty",
                 defaults => {},
-                _bootstrap => undef,
                 parent => undef,
                 region_wrapper => 1,
                 @_
                );
 
-    # Name and path are required
-    if (not $args{_bootstrap} and (not defined $args{name} or not defined $args{path})) {
-        warn "Name and path are required for page regions. We got ".join(",", %args);
+    # Name is required
+    if (not defined $args{name}) {
+        warn "Name is required for page regions.";
         return;
     }
 
@@ -86,7 +86,7 @@ sub new {
     $self->default_arguments($args{defaults});
     $self->arguments({});
     $self->parent($args{parent} || Jifty->web->current_region);
-    $self->region_wrapper(not $args{_bootstrap} and $args{region_wrapper});
+    $self->region_wrapper($args{region_wrapper});
 
     # Keep track of the fully qualified name (which should be unique)
     $self->log->warn("Repeated region: " . $self->qualified_name)

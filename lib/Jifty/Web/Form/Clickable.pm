@@ -482,9 +482,17 @@ sub generate {
         for my $hook (@hooks) {
             $hook->{region} ||= $hook->{refresh} || Jifty->web->qualified_region;
             $hook->{args}   ||= {};
+            my $region = ref $hook->{region} ? $hook->{region} : Jifty->web->get_region( $hook->{region} );
 
-            $self->region_fragment( $hook->{region}, $hook->{replace_with} )
-                if $hook->{replace_with};
+            if ($hook->{replace_with}) {
+                # Toggle region if the toggle flag is set, and clicking wouldn't change path
+                if ($hook->{toggle} and $region and $hook->{replace_with} eq $region->path) {
+                    $self->region_fragment( $hook->{region}, "/__jifty/empty" )
+                } else {
+                    $self->region_fragment( $hook->{region}, $hook->{replace_with} )
+                }
+                
+            }
             $self->region_argument( $hook->{region}, $_ => $hook->{args}{$_} )
                 for keys %{ $hook->{args} };
             if ( $hook->{submit} ) {
