@@ -393,7 +393,7 @@ function update() {
     var request = $H();
 
     // Set request base path
-    request['path'] = document.URL;
+    request['path'] = '/__jifty/empty';
 
     // Build actions structure
     request['actions'] = {};
@@ -456,6 +456,11 @@ function update() {
 
             // Make the region (for now)
             new Region(name, f['args'], f['path'], f['parent']);
+        } else if ((f['path'] != null) && f['toggle'] && (f['path'] == fragments[name].path)) {
+            // If they set the 'toggle' flag, and clicking wouldn't change the path
+            Element.update(element, '');
+            fragments[name].path = null;
+            continue;
         } else if (f['path'] == null) {
             // If they didn't know tha path, fill it in now
             f['path'] == fragments[name].path;

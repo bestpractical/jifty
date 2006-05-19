@@ -61,6 +61,12 @@ The following options are also supported:
 
 =over
 
+=item toggle => BOOLEAN
+
+If set to true, then the link will possibly toggle the region to
+empty, if the region's current path is the same as the path the region
+is trying to be set to.
+
 =item region => REGION
 
 The region that should be updated.  This defaults to the current
@@ -186,6 +192,9 @@ sub javascript {
                 $args{element} = ref $hook->{element} ? "#region-".$hook->{element}->qualified_name : $hook->{element};
                 $args{region}  = $args{element} =~ /^#region-(\S+)/ ? "$1-".Jifty->web->serial : Jifty->web->serial;
             }
+
+            # Toggle functionality
+            $args{toggle} = 1 if $hook->{toggle};
 
             # Arguments
             $args{args} = $hook->{args} || {};
