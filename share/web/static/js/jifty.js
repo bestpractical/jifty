@@ -80,7 +80,7 @@ Action.prototype = {
         for (var i = 0; i < fields.length; i++) {
             var f = fields[i];
 
-            if ((Form.Element.getType(f) != "registration") && Form.Element.getValue(f)) {
+            if ((Form.Element.getType(f) != "registration") && (Form.Element.getValue(f) != null)) {
                 if (! a['fields'][Form.Element.getField(f)])
                     a['fields'][Form.Element.getField(f)] = {};
                 a['fields'][Form.Element.getField(f)][Form.Element.getType(f)] = Form.Element.getValue(f);
