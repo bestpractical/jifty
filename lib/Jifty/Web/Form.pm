@@ -230,7 +230,7 @@ sub print_action_registration {
     my $action = $self->has_action($moniker);
     return unless ($action);
     return if exists $self->printed_actions->{$moniker};
-     $self->printed_actions->{$moniker} = 1;
+    $self->printed_actions->{$moniker} = 1;
 
     $action->register();
 
