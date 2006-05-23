@@ -488,7 +488,7 @@ subclasses commonly override this.  Returns an empty string.
 sub render_hints { 
     my $self = shift;
     Jifty->web->out(
-qq!<span class="hints @{[$self->classes]}">@{[$self->hints || '']}</span>\n!
+qq!<span class="hints @{[$self->classes]}">@{[_($self->hints) || '']}</span>\n!
     );
 
     return '';

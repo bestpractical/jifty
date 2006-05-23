@@ -72,7 +72,7 @@ user-friendly result.
 
 sub report_success {
     my $self = shift;
-    $self->result->message("Deleted")
+    $self->result->message(_("Deleted"))
 }
 
 1;

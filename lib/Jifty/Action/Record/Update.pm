@@ -143,7 +143,7 @@ user-friendly result.
 
 sub report_success {
     my $self = shift;
-    $self->result->message("Updated")
+    $self->result->message(_("Updated"))
 }
 
 1;
