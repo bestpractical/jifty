@@ -17,6 +17,7 @@ my @libs = qw(
   /static/js/halo.js
   /static/js/combobox.js
   /static/js/key_bindings.js
+  /static/js/context_menu.js
   /static/js/bps_util.js
   /static/js/rico.js
   /static/js/app_behaviour.js

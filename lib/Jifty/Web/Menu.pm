@@ -168,10 +168,10 @@ sub render_as_context_menu {
     my @kids = $self->children;
     my $id = Jifty->web->serial;
     Jifty->web->out(
-        qq{<ul class="menu">} .qq{<li class="closed contextual">}.  qq{<span class="title">} . $self->label() . qq{</span>}
+        qq{<ul class="context_menu">} .qq{<li class="closed toplevel">}.  qq{<span class="title">} . $self->label() . qq{</span>}
             . (
             @kids
-            ? qq{<span class="expand"><a href="#" onClick="Jifty.ContextMenu.hideshow('}.$id.qq{'; return false;">+</a></span>}
+            ? qq{<span class="expand"><a href="#" onClick="Jifty.ContextMenu.hideshow('}.$id.qq{'); return false;">+</a></span>}
             : ''
             )
             . qq{<ul id="}.$id.  qq{">}

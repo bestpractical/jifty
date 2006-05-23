@@ -1,0 +1,85 @@
+ul.context_menu {
+    clear: none;
+    float: left;
+}
+
+ul.context_menu, ul.context_menu ul {
+    list-style: none;
+    margin-left: 0;
+    padding-left: 0;
+}
+
+.context_menu li.toplevel {
+    float: left;
+    margin: 0 0.5em 0 0;
+    padding: 0.2em;
+
+    border: 1px solid #ccc;
+    border-top-color: white;
+    border-left-color: white;
+
+    color: #793300;
+}
+
+.context_menu li.toplevel ul li {
+    color: gray;
+}
+
+.context_menu li.toplevel .title {
+    font-weight: bold;
+}
+
+.context_menu li.toplevel ul {
+    font-size: 0.9em;
+    display: none;
+}
+
+.context_menu .open span.expand a {
+    background-image: url(/static/images/silk/bullet_arrow_up.png);
+}
+
+.context_menu span.expand a {
+    background: url(/static/images/silk/bullet_arrow_down.png) no-repeat center center;
+    padding-left: 16px;
+    border: 1px solid transparent;
+    color: white;
+    margin-left: 0.3em;
+}
+
+.context_menu li.toplevel:hover .expand a {
+    border-top: 1px solid grey;
+    border-left: 1px solid grey;
+    border-right: 1px solid lightgrey;
+    border-bottom: 1px solid lightgrey;
+}
+
+.context_menu li.open a {
+    border-bottom-color: transparent;
+}
+
+.context_menu li.open, .context_menu li.closed:hover {
+    border-top: 1px solid lightgrey;
+    border-left: 1px solid lightgrey;
+    border-right: 1px solid grey;
+    border-bottom: 1px solid grey;
+}
+
+.context_menu li.toplevel span.expand a:active {
+    border-top: 1px solid white;
+    border-left: 1px solid white;
+    border-right: 1px solid grey;
+    border-bottom: 1px solid grey;
+
+    position: relative;
+    top: 1px;
+    left: 1px;
+}
+
+.context_menu li ul li {
+    padding: 0.2em;
+}
+
+.context_menu li.open ul li:hover {
+    background: #eee;
+}
+
