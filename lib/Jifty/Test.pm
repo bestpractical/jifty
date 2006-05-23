@@ -177,7 +177,7 @@ END {
     return if $Test->{Original_Pid} != $$;
 
     # If all tests passed..
-    unless (grep {not $_} $Test->summary) {
+    unless ($Test->expected_tests != $Test->current_test or grep {not $_} $Test->summary) {
         # Clean up mailbox
         unlink mailbox();
 
