@@ -943,7 +943,8 @@ sub _compile_condition {
 
 Private function.
 
-Turns a metaexpression containing * and ? into a capturing perl regex pattern.
+Turns a metaexpression containing *, ? into a capturing perl regex pattern.
+Also supports the noncapturing [] notation.
 
 The rules are:
 
@@ -974,6 +975,10 @@ Consecutive C<?> marks are captured together:
     /foo???bar      # One capture for ???
     /foo??*         # Two captures, one for ?? and one for *
 
+=item *
+
+Character classes C<[a-z]> denote character classes; they are not captured.
+
 =back
 
 =cut
@@ -998,7 +1003,26 @@ sub _compile_glob {
         # extra backslashes.
         ( (?: \\ \? )+ )
     }{([^/]{${ \( length($1)/2 ) }})}gx;
+    $glob =~ s{
+        # Brackets denote character classes
+        (
+            \\ \[           # opening
+            (?:             # one or more characters:
+                \\ [^\]]    # ...escaped (but not the closing bracket)
+            |
+                [^\\]       # ...normal
+            )+
+            \\ \]           # closing
+        )
+    }{$self->_unescape($1)}egx;
     $glob;
+}
+
+sub _unescape {
+    my $self = shift;
+    my $text = shift;
+    $text =~ s{\\(.)}{$1}g;
+    return $text;
 }
 
 =head2 template_exists PATH
