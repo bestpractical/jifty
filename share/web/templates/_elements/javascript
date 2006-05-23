@@ -16,6 +16,7 @@ my @libs = qw(
   /static/js/dom-drag.js
   /static/js/halo.js
   /static/js/combobox.js
+  /static/js/jifty_utils.js
   /static/js/key_bindings.js
   /static/js/context_menu.js
   /static/js/bps_util.js

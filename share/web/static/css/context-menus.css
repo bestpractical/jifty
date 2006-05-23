@@ -32,6 +32,18 @@ ul.context_menu, ul.context_menu ul {
 .context_menu li.toplevel ul {
     font-size: 0.9em;
     display: none;
+
+    padding: 0.1em 0.2em 0.5em 0.1em;
+    background: white;
+    border-top: 1px dotted lightgrey;
+    border-left: 1px solid lightgrey;
+    border-right: 1px solid grey;
+    border-bottom: 1px solid grey;
+}
+
+.context_menu li.toplevel ul a {
+    width: 100%;
+    display: block;
 }
 
 .context_menu .open span.expand a {
@@ -61,7 +73,11 @@ ul.context_menu, ul.context_menu ul {
     border-top: 1px solid lightgrey;
     border-left: 1px solid lightgrey;
     border-right: 1px solid grey;
-    border-bottom: 1px solid grey;
+    border-bottom-color: transparent;
+}
+
+.context_menu li.closed:hover {
+    border-bottom-color: grey;
 }
 
 .context_menu li.toplevel span.expand a:active {

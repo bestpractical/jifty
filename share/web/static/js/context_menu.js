@@ -43,9 +43,20 @@ Jifty.ContextMenu = {
         }
     
         var li = Jifty.ContextMenu.getParentListItem(ul);
+
+        if ( ul.style.position == "" ) {
+            var x = Jifty.Utils.findPosX( li );
+            var y = Jifty.Utils.findPosY( li ) + li.offsetHeight;
+
+            ul.style.position = "absolute";
+            ul.style.left = x + "px";
+            ul.style.top = y + "px";
+            ul.style.width = li.offsetWidth * 2 + "px";
+        }
+
         Element.removeClassName(li, "closed");
         Element.addClassName(li, "open");
-                             
+         
         ul.style.display = "block";
         Jifty.ContextMenu.currently_open = ul.id;
     },
