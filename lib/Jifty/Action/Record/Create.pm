@@ -107,7 +107,7 @@ more user-friendly result.
 
 sub report_success {
     my $self = shift;
-    $self->result->message("Created")
+    $self->result->message(_("Created"))
 }
 
 
