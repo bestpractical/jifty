@@ -174,8 +174,6 @@ sub render_as_context_menu {
             ? qq{<span class="expand"><a href="#" onClick="Jifty.ContextMenu.hideshow('}.$id.qq{'; return false;">+</a></span>}
             : ''
             )
-            . qq{</dt>}
-            . qq{<dd>}
             . qq{<ul id="}.$id.  qq{">}
     );
     for (@kids) {
