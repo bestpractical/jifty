@@ -943,8 +943,9 @@ sub _compile_condition {
 
 Private function.
 
-Turns a metaexpression containing *, ? into a capturing perl regex pattern.
-Also supports the noncapturing [] notation.
+Turns a metaexpression containing C<*> and C<?> into a capturing regex pattern.
+
+Also supports the non-capturing C<[]> and C<{}> notation.
 
 The rules are:
 
@@ -977,7 +978,11 @@ Consecutive C<?> marks are captured together:
 
 =item *
 
-Character classes C<[a-z]> denote character classes; they are not captured.
+Brackets such as C<[a-z]> denote character classes; they are not captured.
+
+=item *
+
+Braces such as C<{xxx,yyy}]> denote alternations; they are not captured.
 
 =back
 
@@ -1008,6 +1013,8 @@ sub _compile_glob {
         (
             \\ \[           # opening
             (?:             # one or more characters:
+                \\ \\ \\ \] # ...escaped closing bracket
+            |
                 \\ [^\]]    # ...escaped (but not the closing bracket)
             |
                 [^\\]       # ...normal
@@ -1015,6 +1022,20 @@ sub _compile_glob {
             \\ \]           # closing
         )
     }{$self->_unescape($1)}egx;
+    $glob =~ s{
+        # Braces denote alternations
+        (
+            \\ \{           # opening
+            (?:             # one or more characters:
+                \\ \\ \\ \} # ...escaped closing brace
+            |
+                \\ [^\}]    # ...escaped (but not the closing brace)
+            |
+                [^\\]       # ...normal
+            )+
+            \\ \}           # closing
+        )
+    }{'(?:'.join('|', split(/,/, $1)).')'}egx;
     $glob;
 }
 
