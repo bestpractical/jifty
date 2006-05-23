@@ -199,7 +199,7 @@ Return this menu item as a C<Jifty::Web::Link>, either the one we were initializ
 
 sub as_link {
      my $self = shift;
-     ($self->link ? $self->link : Jifty->web->link(label => $self->label, url => $self->url)); 
+     ($self->link ? $self->link : Jifty->web->link(label => _($self->label), url => $self->url)); 
 }
 
 1;
