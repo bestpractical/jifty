@@ -3,7 +3,7 @@ package Jifty::Web::Menu;
 use base qw/Class::Accessor::Fast/;
 use URI;
 
-__PACKAGE__->mk_accessors(qw(label parent sort_order));
+__PACKAGE__->mk_accessors(qw(label parent sort_order link));
 
 =head2 new PARAMHASH
 
@@ -13,6 +13,14 @@ C<active>.  See the subroutines with the respective name below for
 each option's use.
 
 =cut
+
+sub new {
+    my $package = shift;
+    # Class::Accessor only wants a hashref;
+    $package->SUPER::new( ref($_[0]) eq 'HASH' ? @_ : {@_} );
+
+}
+
 
 =head2 label [STRING]
 
@@ -27,6 +35,14 @@ to null.
 
 Gets or sets the sort order of the item, as it will be displayed under
 the parent.  This defaults to adding onto the end.
+
+
+=head2 link
+
+Gets or set a Jifty::Web::Link object that represents this menu item. If
+you're looking to do complex ajaxy things with menus, this is likely
+the option you want.
+
 
 =head2 url
 
@@ -144,6 +160,46 @@ sub children {
     my @kids = values %{$self->{children} || {}};
     @kids = sort {$a->sort_order <=> $b->sort_order} @kids;
     return wantarray ? @kids : \@kids;
+}
+
+
+sub render_as_context_menu {
+    my $self = shift;
+    my @kids = $self->children;
+    my $id = Jifty->web->serial;
+    Jifty->web->out(
+        qq{<ul class="menu">} .qq{<li class="closed contextual">}.  qq{<span class="title">} . $self->label() . qq{</span>}
+            . (
+            @kids
+            ? qq{<span class="expand"><a href="#" onClick="Jifty.ContextMenu.hideshow('}.$id.qq{'; return false;">+</a></span>}
+            : ''
+            )
+            . qq{</dt>}
+            . qq{<dd>}
+            . qq{<ul id="}.$id.  qq{">}
+    );
+    for (@kids) {
+        Jifty->web->out("<li>");
+
+        # We should be able to get this as a string.
+        $_->as_link;
+        Jifty->web->out("</li>");
+    }
+
+    Jifty->web->out(qq{</ul></li></ul>});
+    '';
+
+}
+
+=head2 as_link
+
+Return this menu item as a C<Jifty::Web::Link>, either the one we were initialized with or a new one made from the C</label> and c</url>
+
+=cut
+
+sub as_link {
+     my $self = shift;
+     ($self->link ? $self->link : Jifty->web->link(label => $self->label, url => $self->url)); 
 }
 
 1;

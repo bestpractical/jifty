@@ -707,7 +707,7 @@ I<PARAMHASH>.
 
 sub link {
     my $self = shift;
-    return Jifty::Web::Form::Clickable->new(@_)->generate->render;
+    return Jifty::Web::Form::Clickable->new(@_)->generate;
 }
 
 =head3 return PARAMHASH
