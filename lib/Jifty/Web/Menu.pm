@@ -163,6 +163,13 @@ sub children {
 }
 
 
+=head2 render_as_context_menu
+
+Render this menu with html markup as an inline dropdown menu.
+
+
+=cut
+
 sub render_as_context_menu {
     my $self = shift;
     my @kids = $self->children;
