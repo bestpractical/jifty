@@ -45,7 +45,7 @@ use base qw/Jifty::Web::Form::Element Class::Accessor::Fast/;
 
 use Scalar::Util;
 use HTML::Entities;
-use overload '""' => sub {shift->render};
+use overload '""' => sub { shift->render};
 
 =head2 new
 

@@ -1,3 +1,12 @@
+/*
+ * This is a slightly modified version of Rico which has improved
+ * corner rounding methods that try to take care of preserving padding.
+ * 
+ * Replacing it with a stock Rico probably isn't a good idea unless you
+ * repatch it or don't plan on using any of the corner rounding.
+ *
+ */
+
 /**
   *
   *  Copyright 2005 Sabre Airline Solutions
@@ -16,7 +25,7 @@
 
 //-------------------- rico.js
 var Rico = {
-  Version: '1.1.2',
+  Version: '1.1.2.jifty.r963',
   prototypeVersion: parseFloat(Prototype.Version.split(".")[0] + "." + Prototype.Version.split(".")[1])
 }
 
@@ -785,7 +794,7 @@ Rico.Corner = {
    },
 
    _roundTopCorners: function(el, color, bgColor) {
-      var corner = this._createCorner(bgColor);
+      var corner = this._createCorner(el, bgColor);
       for(var i=0 ; i < this.options.numSlices ; i++ )
          corner.appendChild(this._createCornerSlice(color,bgColor,i,"top"));
       el.style.paddingTop = 0;
@@ -793,16 +802,22 @@ Rico.Corner = {
    },
 
    _roundBottomCorners: function(el, color, bgColor) {
-      var corner = this._createCorner(bgColor);
+      var corner = this._createCorner(el, bgColor);
       for(var i=(this.options.numSlices-1) ; i >= 0 ; i-- )
          corner.appendChild(this._createCornerSlice(color,bgColor,i,"bottom"));
       el.style.paddingBottom = 0;
       el.appendChild(corner);
    },
 
-   _createCorner: function(bgColor) {
+   _createCorner: function(el, bgColor) {
       var corner = document.createElement("div");
       corner.style.backgroundColor = (this._isTransparent() ? "transparent" : bgColor);
+      var paddingLeft = "-" + RicoUtil.getElementsComputedStyle(el, "paddingLeft", "padding-left");
+      var paddingRight = "-" + RicoUtil.getElementsComputedStyle(el, "paddingRight", "padding-right");
+      
+      corner.style.marginRight = paddingRight;
+      corner.style.marginLeft  = paddingLeft;
+
       return corner;
    },
 

@@ -80,7 +80,7 @@ Action.prototype = {
         for (var i = 0; i < fields.length; i++) {
             var f = fields[i];
 
-            if ((Form.Element.getType(f) != "registration") && Form.Element.getValue(f)) {
+            if ((Form.Element.getType(f) != "registration") && (Form.Element.getValue(f) != null)) {
                 if (! a['fields'][Form.Element.getField(f)])
                     a['fields'][Form.Element.getField(f)] = {};
                 a['fields'][Form.Element.getField(f)][Form.Element.getType(f)] = Form.Element.getValue(f);
@@ -417,7 +417,7 @@ function update() {
         // Find where we are going to go
         var element = $('region-' + f['region']);
         if (f['element']) {
-            var possible = document.getElementsBySelector(f['element']);
+            var possible = cssQuery(f['element']);
             if (possible.length == 0)
                 element = null;
             else

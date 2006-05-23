@@ -17,6 +17,9 @@ generates L<Jifty::Web::Form::Link>s.
 
 use base qw/Jifty::Web::Form::Element Class::Accessor::Fast/;
 
+# Since we don't inherit from Form::Field, we don't otherwise stringify
+use overload '""' => sub { shift->render};
+
 =head2 accessors
 
 Link adds C<url> and C<escape_label> to the list of possible accessors

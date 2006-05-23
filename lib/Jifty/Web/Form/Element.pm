@@ -258,7 +258,7 @@ sub render_key_binding {
     my $self = shift;
     my $key  = $self->key_binding;
     if ($key) {
-        Jifty->web->out( "<script><!--\naddKeyBinding(" . "'"
+        Jifty->web->out( "<script><!--\nJifty.KeyBindings.add(" . "'"
                 . uc($key) . "', "
                 . "'click', " . "'"
                 . $self->id . "'," . "'"

@@ -4,19 +4,35 @@
 my @libs = qw(
   /static/js/json.js
   /static/js/prototype.js
+  /static/js/cssquery/cssQuery.js
+  /static/js/cssquery/cssQuery-level2.js
+  /static/js/cssquery/cssQuery-level3.js
+  /static/js/cssquery/cssQuery-standard.js
   /static/js/behaviour.js
-  /static/js/scriptaculous/scriptaculous.js
+  /static/js/scriptaculous/builder.js
+  /static/js/scriptaculous/effects.js
+  /static/js/scriptaculous/controls.js
   /static/js/jifty.js
   /static/js/dom-drag.js
   /static/js/halo.js
   /static/js/combobox.js
+  /static/js/jifty_utils.js
   /static/js/key_bindings.js
+  /static/js/context_menu.js
   /static/js/bps_util.js
   /static/js/rico.js
   /static/js/app_behaviour.js
 );
 
 </%init>
+   <script type="text/javascript" src="/static/js/jsan/JSAN.js"></script>
+   <script type="text/javascript">
+     JSAN.includePath = [ "/static/js/jsan" ];
+     // You might want to change this to "warn" for development
+     JSAN.errorLevel = "none";
+   </script>
+
 % for (@libs) {
    <script type="text/javascript" src="<%$_%>"></script>
 % }
+

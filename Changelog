@@ -1,6 +1,24 @@
   * Removed the ActionBasePath and CurrentUserClass configuration
     variables.  This breaks backwards compatibility.
 
+  * If you've overridden /_elements/javascript in your app, you'll want to 
+    take a look at the new stock version to see what has changed.
+
+  * The JS method document.getElementsBySelector() no longer exists.  Use 
+    cssQuery() instead.
+
+* The keybinding JS code is now a more proper library 
+    (Jifty.KeyBindings) and less intrusive.  If you've overridden the 
+    default /_elements/wrapper in your app, you'll want to make sure you get 
+    rid of the keybinding javascript (see the stock wrapper).  Just include 
+    <& /_elements/keybindings &> wherever you want the keybindings for a 
+    page to appear.
+
+* This shouldn't be the cause of breakage, but the included rico.js is 
+    no longer a stock Rico build.  See the comments at the top of the file 
+    if you're interested.
+
+
 0.60507 (7 May 2006)
 
   * Pod fixes from Eric Wilhelm

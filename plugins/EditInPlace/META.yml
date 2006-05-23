@@ -1,5 +1,7 @@
+build_requires: 
+  ExtUtils::MakeMaker: 6.11
 distribution_type: module
-generated_by: Module::Install version 0.610
+generated_by: Module::Install version 0.620
 license: unknown
 name: Jifty-Plugin-EditInPlace
 no_index: 
