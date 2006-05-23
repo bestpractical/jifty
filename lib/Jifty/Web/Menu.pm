@@ -175,7 +175,7 @@ sub render_as_context_menu {
     my @kids = $self->children;
     my $id = Jifty->web->serial;
     Jifty->web->out(
-        qq{<ul class="context_menu">} .qq{<li class="closed toplevel">}.  qq{<span class="title">} . $self->label() . qq{</span>}
+        qq{<ul class="context_menu">} .qq{<li class="closed toplevel">}.  qq{<span class="title">} . $self->as_link() . qq{</span>}
             . (
             @kids
             ? qq{<span class="expand"><a href="#" onClick="Jifty.ContextMenu.hideshow('}.$id.qq{'); return false;">+</a></span>}
@@ -200,11 +200,21 @@ sub render_as_context_menu {
 
 Return this menu item as a C<Jifty::Web::Link>, either the one we were initialized with or a new one made from the C</label> and c</url>
 
+If there's no C</url> and no C</link>, renders just the label.
+
 =cut
 
 sub as_link {
-     my $self = shift;
-     ($self->link ? $self->link : Jifty->web->link(label => _($self->label), url => $self->url)); 
+    my $self = shift;
+    if ( $self->link ) {
+        return $self->link;
+    } elsif ( $self->url ) {
+        return Jifty->web->link( label => _( $self->label ),
+            url => $self->url );
+
+    } else {
+        return _( $self->label );
+    }
 }
 
 1;
