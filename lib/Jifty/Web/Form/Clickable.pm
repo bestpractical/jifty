@@ -364,10 +364,10 @@ sub post_parameters {
             arguments => { url => $self->url } );
         $parameters{ $redirect->register_name } = ref $redirect;
         $parameters{ $redirect->form_field_name('url') } = $self->url;
-        $parameters{"J:ACTIONS"} = join( ';', @{ $self->submit }, $redirect->moniker )
+        $parameters{"J:ACTIONS"} = join( '!', @{ $self->submit }, $redirect->moniker )
           if $self->submit;
     } else {
-        $parameters{"J:ACTIONS"} = join( ';', @{ $self->submit } )
+        $parameters{"J:ACTIONS"} = join( '!', @{ $self->submit } )
           if $self->submit;
     }
 

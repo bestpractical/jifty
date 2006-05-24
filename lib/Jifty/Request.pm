@@ -205,8 +205,8 @@ sub from_cgi {
     for my $splittable (@splittable_names) {
         delete $args{$splittable};
         for my $newarg (split /\|/, $splittable) {
-            # If there are multiple =s, you just lose.
-            my ($k, $v) = split /=/, $newarg;
+            # If your key has a '=', you may just lose
+            my ($k, $v) = split /=/, $newarg, 2;
             $args{$k} = $v;
             # The following breaks page regions and the like, sadly:
             #$args{$k} ? (ref $args{$k} ? [@{$args{$k}},$v] : [$args{$k}, $v] ) : $v;
@@ -370,7 +370,7 @@ sub webform_to_data_structure {
     my $active_actions;
     if (exists $args{'J:ACTIONS'}) {
         $active_actions = {};
-        $active_actions->{$_} = 1 for split ';', $args{'J:ACTIONS'};
+        $active_actions->{$_} = 1 for split '!', $args{'J:ACTIONS'};
     } # else $active_actions stays undef
 
     # Mapping from argument types to data structure names
@@ -578,12 +578,13 @@ sub add_action {
         order => undef,
         active => 1,
         arguments => undef,
+        has_run => undef,
         @_
     );
 
     my $action = $self->{'actions'}->{ $args{'moniker'} } || Jifty::Request::Action->new;
 
-    for my $k (qw/moniker class order active/) {
+    for my $k (qw/moniker class order active has_run/) {
         $action->$k($args{$k}) if defined $args{$k};
     } 
     

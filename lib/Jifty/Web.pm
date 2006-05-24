@@ -216,6 +216,7 @@ sub handle_request {
     for my $request_action ( $self->request->actions ) {
         $self->log->debug("Found action ".$request_action->class . " " . $request_action->moniker);
         next unless $request_action->active;
+        next if $request_action->has_run;
         unless ( Jifty->api->is_allowed( $request_action->class ) ) {
             $self->log->warn( "Attempt to call denied action '"
                     . $request_action->class
@@ -490,12 +491,12 @@ sub redirect {
     my $self = shift;
     my $page = shift || $self->next_page;
 
-    my @unrun = grep {not $_->has_run} Jifty->web->request->actions;
+    my @actions = Jifty->web->request->actions;
 
     if (   $self->response->results
         or $self->request->state_variables
         or $self->{'state_variables'}
-        or @unrun )
+        or @actions )
     {
         my $request = Jifty::Request->new();
         $request->path($page);
@@ -503,12 +504,13 @@ sub redirect {
           for $self->request->state_variables;
         $request->add_state_variable( key => $_, value => $self->{'state_variables'}->{$_} )
           for keys %{ $self->{'state_variables'} };
-        for (@unrun) {
+        for (@actions) {
             $request->add_action(
                 moniker   => $_->moniker,
                 class     => $_->class,
                 order     => $_->order,
-                active    => $_->active,
+                active    => $_->active && (not $_->has_run),
+                has_run   => $_->has_run,
                 arguments => $_->arguments,
             );
         }

@@ -34,7 +34,7 @@ J:A:F-something-mymoniker: else
 J:A-second: DoSomething
 J:A:F-id-second: 42
 J:A:F-something-second: bla
-J:ACTIONS: mymoniker;second
+J:ACTIONS: mymoniker!second
 --- request
 path: ~
 state_variables: {}
@@ -60,7 +60,7 @@ arguments:
   J:A-second: DoSomething
   J:A:F-id-second: 42
   J:A:F-something-second: bla
-  J:ACTIONS: mymoniker;second
+  J:ACTIONS: mymoniker!second
 fragments: {}
 === two different actions
 --- form
@@ -70,7 +70,7 @@ J:A:F-something-mymoniker: else
 J:A-second: DoThat
 J:A:F-id-second: 42
 J:A:F-something-second: bla
-J:ACTIONS: mymoniker;second
+J:ACTIONS: mymoniker!second
 --- request
 path: ~
 state_variables: {}
@@ -96,7 +96,7 @@ arguments:
   J:A-second: DoThat
   J:A:F-id-second: 42
   J:A:F-something-second: bla
-  J:ACTIONS: mymoniker;second
+  J:ACTIONS: mymoniker!second
 fragments: {}
 === ignore arguments without actions
 --- form
@@ -105,7 +105,7 @@ J:A:F-id-mymoniker: 23
 J:A:F-something-mymoniker: else
 J:A:F-id-second: 42
 J:A:F-something-second: bla
-J:ACTIONS: mymoniker;second
+J:ACTIONS: mymoniker!second
 --- request
 path: ~
 state_variables: {}
@@ -123,7 +123,7 @@ arguments:
   J:A:F-something-mymoniker: else
   J:A:F-id-second: 42
   J:A:F-something-second: bla
-  J:ACTIONS: mymoniker;second
+  J:ACTIONS: mymoniker!second
 fragments: {}
 === one active, one inactive action
 --- form
@@ -353,7 +353,7 @@ J:A:F:F-something-second: bla
 J:A-second: DoThat
 J:A:F-id-second: 42
 J:A:F-something-second: feepy
-J:ACTIONS: mymoniker;second
+J:ACTIONS: mymoniker!second
 --- request
 path: ~
 state_variables: {}
@@ -380,7 +380,7 @@ arguments:
   J:A-second: DoThat
   J:A:F-id-second: 42
   J:A:F-something-second: feepy
-  J:ACTIONS: mymoniker;second
+  J:ACTIONS: mymoniker!second
 fragments: {}
 === double fallbacks being ignored (with single fallback)
 --- form
@@ -519,5 +519,5 @@ arguments:
   J:VALIDATE: 1
   J:A:F-id-second: 42
   J:A:F-something-second: bla
-  J:ACTIONS: mymoniker;second
+  J:ACTIONS: mymoniker!second
 fragments: {}
