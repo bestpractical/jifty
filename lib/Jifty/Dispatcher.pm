@@ -903,7 +903,7 @@ sub _compile_condition {
     $cond =~ s{/$}{};
 
     my $has_capture = ( $cond =~ / \\ [*?] /x);
-    if ($has_capture) {
+    if ($has_capture or $cond =~ / \\ [[{] /x) {
         $cond = $self->_compile_glob($cond);
     }
 
@@ -1024,8 +1024,7 @@ sub _compile_glob {
     }{$self->_unescape($1)}egx;
     $glob =~ s{
         # Braces denote alternations
-        (
-            \\ \{           # opening
+        \\ \{ (         # opening (not part of expression)
             (?:             # one or more characters:
                 \\ \\ \\ \} # ...escaped closing brace
             |
@@ -1033,9 +1032,8 @@ sub _compile_glob {
             |
                 [^\\]       # ...normal
             )+
-            \\ \}           # closing
-        )
-    }{'(?:'.join('|', split(/,/, $1)).')'}egx;
+        ) \\ \}         # closing (not part of expression)
+    }{'(?:'.join('|', split(/\\,/, $1)).')'}egx;
     $glob;
 }
 
