@@ -175,7 +175,9 @@ sub render_as_context_menu {
     my @kids = $self->children;
     my $id = Jifty->web->serial;
     Jifty->web->out(
-        qq{<ul class="context_menu">} .qq{<li class="closed toplevel">}.  qq{<span class="title">} . $self->as_link() . qq{</span>}
+        qq{<ul class="context_menu">} .qq{<li class="closed toplevel">}.  qq{<span class="title">});
+     $self->as_link();
+     Jifty->web->out( qq{</span>}
             . (
             @kids
             ? qq{<span class="expand"><a href="#" onClick="Jifty.ContextMenu.hideshow('}.$id.qq{'); return false;">+</a></span>}
@@ -187,7 +189,9 @@ sub render_as_context_menu {
         Jifty->web->out("<li>");
 
         # We should be able to get this as a string.
-        $_->as_link;
+        # Either stringify the link object or output the label
+        # This is really icky. XXX TODO 
+        Jifty->web->out($_->as_link);
         Jifty->web->out("</li>");
     }
 
