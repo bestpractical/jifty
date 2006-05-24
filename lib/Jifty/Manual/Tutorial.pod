@@ -70,9 +70,9 @@ Jifty application. (Jifty will create a subdirectory for you).
 
   # jifty app --name MyWeblog
   Can't guess application root from current path (/your/current/directory) or bin path (/usr/bin)
-  Creating new application MyWebLog
+  Creating new application MyWeblog
   Creating directory lib
-  Creating directory lib/MyWebLog
+  Creating directory lib/MyWeblog
   Creating directory bin
   Creating directory etc
   Creating directory doc
@@ -80,8 +80,8 @@ Jifty application. (Jifty will create a subdirectory for you).
   Creating directory web
   Creating directory web/templates
   Creating directory web/static
-  Creating directory lib/MyWebLog/Model
-  Creating directory lib/MyWebLog/Action
+  Creating directory lib/MyWeblog/Model
+  Creating directory lib/MyWeblog/Action
   Creating directory t
   Creating configuration file MyWeblog/etc/config.yml
 
@@ -139,7 +139,7 @@ them out if it can't find a template with the right name.
 Out of the box, Jifty comes with a CSS style, Javascript libraries and
 a Pony. Look in F</usr/local/share/jifty/web/static>.
 
-=item lib/MyWebLog
+=item lib/MyWeblog
 
 For a full treatment of the Jifty object model see
 L<Jifty::Manual::ObjectModel>.
@@ -147,14 +147,14 @@ L<Jifty::Manual::ObjectModel>.
 To build a basic Jifty application, you only need to worry about two
 sorts of classes, B<Models> and B<Actions>.
 
-=item lib/MyWebLog/Model
+=item lib/MyWeblog/Model
 
 The real base of your application lives in
 C<lib/B<ApplicationName>/Model>. Classes here define your application's data
 structures and how they relate to each other.  Jifty will use your model
 classes to set up and upgrade your database's schema when it needs to.
 
-=item lib/MyWebLog/Action
+=item lib/MyWeblog/Action
 
 When we said you only need to worry about B<Models> and B<Actions>,
 we weren't telling the whole truth.  Jifty will take care of basic
@@ -172,7 +172,7 @@ classes you generate.)
 =head2 Building your data model
 
 As you might imagine by the fact that this tutorial application is named
-B<MyWebLog>, the example here is a simple weblog application.  Future
+B<MyWeblog>, the example here is a simple weblog application.  Future
 tutorials, will add authentication, comments, and RSS and Atom feeds.
 
 =head3 Posts
@@ -238,8 +238,9 @@ for a bit more information).
   # jifty schema --setup
   INFO - Generating SQL for application MyWeblog...
   INFO - Using MyWeblog::Model::Post
-  INFO - Using Jifty::Model::Schema
-  INFO - Set up version v0.0.1
+  INFO - Using Jifty::Model::Session
+  INFO - Using Jifty::Model::Metadata
+  INFO - Set up version v0.0.1, jifty version 0.605070
 
 =head2 Starting the Jifty application server
 
@@ -259,7 +260,7 @@ application's data, but it's not much of a weblog.
 
 Create a page to post a new weblog entry:
 
-  # cd web/templates/
+  # cd share/web/templates/
 
 Open a new file called F<post> in your text editor. Make it look like this:
 
@@ -303,6 +304,9 @@ look like this:
   </dl>
   </&>
 
+(If you cut and paste the code above, make sure it's lined up in column 1,
+or it won't work.)
+
 =head4 The complex way that gets you lots of cool toys
 
 The I<complex way> involves using one of Jifty's advanced features: I<Page
@@ -315,7 +319,7 @@ The downside of this approach is that each separate region needs to live in
 its own I<fragment> file.
 
 The complex way starts off about the same as the easy way.  Open a new file
-called F<web/templates/index.html> in your text editor.  Fill it with this:
+called F<share/web/templates/index.html> in your text editor.  Fill it with this:
 
   <&|/_elements/wrapper, title => Jifty->config->framework('ApplicationName') &>
 
@@ -324,7 +328,7 @@ called F<web/templates/index.html> in your text editor.  Fill it with this:
   </&>
 
 If you're on the ball, you've probably already guessed that you need to create
-a file called F<web/templates/fragments/page_of_posts> containing:
+a file called F<share/web/templates/fragments/page_of_posts> containing:
 
   <%args>
   $page => 1
@@ -368,16 +372,16 @@ Jifty's I<default> menus live in F<_elements/nav> in the default application
 template (along with the Pony).  For now, override F<_elements/nav>. (We're
 working on ways to make this better.)
 
-Inside your applications F<web/templates> directory, create a directory called
+Inside your applications F<share/web/templates> directory, create a directory called
 F<_elements>.
 
-  mkdir web/templates/_elements
+  mkdir share/web/templates/_elements
 
 You may want to start with the stock jifty template, in which case you
 only need to add the C<< $top->child( Post... >> part
 
   cat $(perl -MJifty::Util -e 'print Jifty::Util->share_root' \
-    )/web/templates/_elements/nav > web/templates/_elements/nav
+    )/share/web/templates/_elements/nav > share/web/templates/_elements/nav
 
 Otherwise, inside F<_elements>, open up a new file called C<nav> in your
 text editor and insert:
