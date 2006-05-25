@@ -101,7 +101,7 @@ sub child {
                                                         @_
                                                        });
     # Activate it
-    my $url = $self->{children}{$key}->url;
+    if (my $url = $self->{children}{$key}->url) {
     # XXX TODO cleanup for mod_perl
     my $base_path = Jifty->web->request->path;
     chomp($base_path);
@@ -112,7 +112,7 @@ sub child {
     if ($url eq $base_path) {
         $self->{children}{$key}->active(1); 
     }
-
+	}
 
 }
 
