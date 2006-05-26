@@ -13,7 +13,15 @@ Creates a new L<Jifty::Web::Form>.  Arguments:
 
 =over
 
-=item  name
+=item name
+
+The name given to the form.  This is mostly for naming specific forms
+for testing.
+
+=item call
+
+All buttons in this form will act as continuation calls for the given
+continuation id.
 
 =back
 
@@ -42,6 +50,10 @@ Reinitialize this form.
 =item name
 
 The form name
+
+=item call
+
+The continuation id to call
 
 =back
 
@@ -75,6 +87,12 @@ Gets or sets the HTML name given to the form element.
 
 =cut
 
+=head2 call [CONTID]
+
+Gets or sets the continuation ID that will be called for this form.
+
+=cut
+
 =head2 is_open [BOOL]
 
 This accessor returns true if Jifty is currently in the middle of rendering a form
@@ -83,9 +101,6 @@ components to decide whether to open a form or not if you might be called from a
 template that opened the form for you.
 
 =cut
-
-
-
 
 =head2 add_action PARAMHASH
 
@@ -120,8 +135,8 @@ sub register_action {
 
 =head2 has_action MONIKER
 
-If this form has an action whose monkier is C<MONIKER>, returns it. Otherwise returns undef.
-
+If this form has an action whose monkier is C<MONIKER>, returns
+it. Otherwise returns undef.
 
 =cut
 

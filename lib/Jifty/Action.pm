@@ -437,6 +437,29 @@ sub button {
     Jifty->web->link(%args);
 }
 
+=head3 return PARAMHASH
+
+Creates and renders a button, like L</button>, which additionally
+defaults to calling the current continuation.
+
+Takes an additional argument, C<to>, which can specify a default path
+to return to if there is no current continuation.
+
+=cut
+
+sub return {
+    my $self = shift;
+    my %args = (@_);
+    my $continuation = Jifty->web->request->continuation;
+    if (not $continuation and $args{to}) {
+        $continuation = Jifty::Continuation->new(request => Jifty::Request->new(path => $args{to}));
+    }
+    delete $args{to};
+
+    $self->button( call => $continuation, %args );
+}
+
+
 =head1 NAMING METHODS
 
 These methods return the names of HTML form elements related to this

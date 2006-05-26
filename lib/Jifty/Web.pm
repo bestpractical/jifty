@@ -496,6 +496,7 @@ sub redirect {
     if (   $self->response->results
         or $self->request->state_variables
         or $self->{'state_variables'}
+        or $self->request->continuation
         or @actions )
     {
         my $request = Jifty::Request->new();
@@ -514,6 +515,7 @@ sub redirect {
                 arguments => $_->arguments,
             );
         }
+        $request->continuation($self->request->continuation);
         my $cont = Jifty::Continuation->new(
             request  => $request,
             response => $self->response,
@@ -675,7 +677,7 @@ sub tangent {
         @_
     );
     if ( defined wantarray ) {
-        return $clickable->generate->render;
+        return $clickable->generate;
     } else {
         $clickable->state_variable( $_ => $self->{'state_variables'}{$_} )
             for keys %{ $self->{'state_variables'} };
