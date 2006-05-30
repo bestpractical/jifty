@@ -163,6 +163,26 @@ sub children {
 }
 
 
+=head2 render_as_menu
+
+Render this menu with HTML markup as multiple dropdowns, suitable for
+an application's menu
+
+=cut
+
+sub render_as_menu {
+    my $self = shift;
+    my @kids = $self->children;
+    Jifty->web->out(qq{<ul class="menu">});
+
+    for (@kids) {
+	$_->render_as_hierarchical_menu_item();
+    }
+    Jifty->web->out(qq{</ul>});
+    '';
+}
+
+
 =head2 render_as_context_menu
 
 Render this menu with html markup as an inline dropdown menu.
@@ -170,32 +190,55 @@ Render this menu with html markup as an inline dropdown menu.
 
 =cut
 
+
 sub render_as_context_menu {
+	my $self = shift;
+    	Jifty->web->out( qq{<ul class="context_menu">});
+	$self->render_as_hierarchical_menu_item();
+	Jifty->web->out(qq{</ul>});
+	'';
+}
+
+=head2 render_as_hierarchical_menu_item
+
+Render an <li> for this item. suitable for use in a regular or contextual
+menu. Currently renders one level of submenu, if it exists.
+
+=cut
+
+sub render_as_hierarchical_menu_item {
     my $self = shift;
-    my @kids = $self->children;
-    my $id = Jifty->web->serial;
-    Jifty->web->out(
-        qq{<ul class="context_menu">} .qq{<li class="closed toplevel">}.  qq{<span class="title">});
-     $self->as_link();
-     Jifty->web->out( qq{</span>}
-            . (
-            @kids
-            ? qq{<span class="expand"><a href="#" onClick="Jifty.ContextMenu.hideshow('}.$id.qq{'); return false;">+</a></span>}
-            : ''
-            )
-            . qq{<ul id="}.$id.  qq{">}
+    my %args = (
+        class => '',
+        @_
     );
-    for (@kids) {
-        Jifty->web->out("<li>");
+    my @kids = $self->children;
+    my $id   = Jifty->web->serial;
+    Jifty->web->out( qq{<li class="toplevel }
+            . ( $self->active ? 'open active' : 'closed' ) . qq{">}
+            . qq{<span class="title">} );
+    Jifty->web->out( $self->as_link() );
+    Jifty->web->out(qq{</span>});
+    if (@kids) {
+        Jifty->web->out(
+            qq{<span class="expand"><a href="#" onClick="Jifty.ContextMenu.hideshow('}
+                . $id
+                . qq{'); return false;">+</a></span>}
+                . qq{<ul id="}
+                . $id
+                . qq{">} );
+        for (@kids) {
+            Jifty->web->out(qq{<li class="submenu }.($_->active ? 'active' : '' ).qq{">});
 
-        # We should be able to get this as a string.
-        # Either stringify the link object or output the label
-        # This is really icky. XXX TODO 
-        Jifty->web->out($_->as_link);
-        Jifty->web->out("</li>");
+            # We should be able to get this as a string.
+            # Either stringify the link object or output the label
+            # This is really icky. XXX TODO
+            Jifty->web->out( $_->as_link );
+            Jifty->web->out("</li>");
+        }
+        Jifty->web->out(qq{</ul>});
     }
-
-    Jifty->web->out(qq{</ul></li></ul>});
+    Jifty->web->out(qq{</li>});
     '';
 
 }
@@ -213,8 +256,7 @@ sub as_link {
     if ( $self->link ) {
         return $self->link;
     } elsif ( $self->url ) {
-        return Jifty->web->link( label => _( $self->label ),
-            url => $self->url );
+        return Jifty->web->link( label => _( $self->label ), url => $self->url );
 
     } else {
         return _( $self->label );
