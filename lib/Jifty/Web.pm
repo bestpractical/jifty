@@ -1017,6 +1017,29 @@ sub serve_fragments {
 
         Jifty->web->current_region->exit while Jifty->web->current_region;
     }
+
+    my %results = Jifty->web->response->results;
+    for (keys %results) {
+        $writer->startTag("result", moniker => $_, class => $results{$_}->action_class);
+        $writer->dataElement("success", $results{$_}->success);
+
+        $writer->dataElement("message", $results{$_}->message) if $results{$_}->message;
+        $writer->dataElement("error", $results{$_}->error) if $results{$_}->error;
+
+        my %warnings = $results{$_}->field_warnings;
+        my %errors   = $results{$_}->field_errors;
+        my %fields; $fields{$_}++ for keys(%warnings), keys(%errors);
+        for (sort keys %fields) {
+            next unless $warnings{$_} or $errors{$_};
+            $writer->startTag("field", name => $_);
+            $writer->dataElement("warning", $warnings{$_}) if $warnings{$_};
+            $writer->dataElement("error", $errors{$_}) if $errors{$_};
+            $writer->endTag();
+        }
+
+        $writer->endTag();
+    }
+
     $writer->endTag();
 
     # Spit out a correct content-type; we set this *here* instead of

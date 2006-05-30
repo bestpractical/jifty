@@ -499,21 +499,23 @@ function update() {
                 for (var response_fragment = response.firstChild;
                      response_fragment != null;
                      response_fragment = response_fragment.nextSibling) {
-                    if (response_fragment.getAttribute("id") == f['region']) {
-                        var textContent;
-                        if (response_fragment.textContent) {
-                            textContent = response_fragment.textContent;
-                        } else {
-                            textContent = response_fragment.firstChild.nodeValue;
+                    if (response_fragment.nodeName == 'fragment') {
+                        if (response_fragment.getAttribute("id") == f['region']) {
+                            var textContent;
+                            if (response_fragment.textContent) {
+                                textContent = response_fragment.textContent;
+                            } else {
+                                textContent = response_fragment.firstChild.nodeValue;
+                            }
+                            // Once we find it, do the insertion
+                            if (insertion) {
+                                new insertion(element, textContent.stripScripts());
+                            } else {
+                                Element.update(element, textContent.stripScripts());
+                            }
+                            // We need to give the browser some "settle" time before we eval scripts in the body
+                            setTimeout((function() { this.evalScripts() }).bind(textContent), 10);
                         }
-                        // Once we find it, do the insertion
-                        if (insertion) {
-                            new insertion(element, textContent.stripScripts());
-                        } else {
-                            Element.update(element, textContent.stripScripts());
-                        }
-                        // We need to give the browser some "settle" time before we eval scripts in the body
-                        setTimeout((function() { this.evalScripts() }).bind(textContent), 10);
                     }
                 }
 
@@ -524,6 +526,21 @@ function update() {
                     if (f['is_new'])
                         Element.hide($('region-'+f['region']));
                     (effect)($('region-'+f['region']), effect_args);
+                }
+            }
+            for (var result = response.firstChild;
+                 result != null;
+                 result = result.nextSibling) {
+                if (result.nodeName == 'result') {
+                    for (var key = result.firstChild;
+                         key != null;
+                         key = key.nextSibling) {
+                        if (key.nodeName == 'message') {
+                            // alert(key.textContent);
+                        } else if (key.nodeName == 'error') {
+                            // alert('ERROR: '+key.textContent);
+                        }
+                    }
                 }
             }
         } finally {
