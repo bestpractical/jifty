@@ -480,6 +480,7 @@ sub generate {
         next unless $value;
         my @hooks = ref $value eq "ARRAY" ? @{$value} : ($value);
         for my $hook (@hooks) {
+            next unless ref $hook eq "HASH";
             $hook->{region} ||= $hook->{refresh} || Jifty->web->qualified_region;
             $hook->{args}   ||= {};
             my $region = ref $hook->{region} ? $hook->{region} : Jifty->web->get_region( $hook->{region} );

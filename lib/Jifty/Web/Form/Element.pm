@@ -17,8 +17,10 @@ the name of the javascript event handler, such as C<onclick>, with a
 set of arguments.
 
 The format of the arguments passed to C<onclick> (or any similar
-method) is a hash reference.  It takes a number of possible keys.  The
-most important is the mode of the fragment replacement, if any; it is
+method) is a hash reference or string Strings are inserted verbatim.
+
+Hash references can take a number of possible keys.  The most
+important is the mode of the fragment replacement, if any; it is
 specified by providing at most one of the following keys:
 
 =over
@@ -142,7 +144,8 @@ sub javascript {
         my @fragments;
         my @actions;
 
-        for my $hook (ref $value eq "ARRAY" ? @{$value} : ($value)) {
+        for my $hook (grep {ref $_ eq "HASH"} (ref $value eq "ARRAY" ? @{$value} : ($value))) {
+
             my %args;
 
             # Submit action
@@ -214,8 +217,12 @@ sub javascript {
             push @fragments, \%args;
         }
 
-        my $update = "update( ". Jifty::JSON::objToJson( {actions => \@actions, fragments => \@fragments }, {singlequote => 1}) ." )";
-        $response .= $self->javascript_preempt ? qq| $trigger="return $update"| : qq| $trigger="$update; return true;"|;
+        my $string = join ";", (grep {not ref $_} (ref $value eq "ARRAY" ? @{$value} : ($value)));
+        if (@fragments) {
+            my $update = "update( ". Jifty::JSON::objToJson( {actions => \@actions, fragments => \@fragments }, {singlequote => 1}) ." );";
+            $string .= $self->javascript_preempt ? "return $update" : "$update; return true;";
+        }
+        $response .= qq| $trigger="$string"|;
     }
     return $response;
 }
