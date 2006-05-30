@@ -283,6 +283,9 @@ It's really easy to get a I<basic> listing of entries and a little bit more
 complex to get a pretty AJAXified paged list.  Here's how to do both; you can
 decide which one works best for you.
 
+(If you cut and paste the code in the examples below, make sure it's 
+lined up in column 1, or it won't work.)
+
 =head4 The quick and dirty way
 
 Open a new file called F<index.html> in the F<web/templates> directory
@@ -304,8 +307,6 @@ look like this:
   </dl>
   </&>
 
-(If you cut and paste the code above, make sure it's lined up in column 1,
-or it won't work.)
 
 =head4 The complex way that gets you lots of cool toys
 
@@ -361,6 +362,13 @@ a file called F<share/web/templates/fragments/page_of_posts> containing:
 
 Now fire up your Jifty webserver again. Go create a post by browsing C</post>
 on your webserver.
+
+=head3 Hey, where'd that class come from?
+
+If you're paying attention, you may have wondered about C<MyWeblog::Model::PostCollection>,
+since there's no file called F<PostCollection.pm>. By default, Jifty uses 
+C<Jifty::ClassLoader> to auto-generate a bunch of classes for you. Of course,
+you can override these definitions if you like. See L<Jifty::ClassLoader> for more details.
 
 =head2 Navigation
 
