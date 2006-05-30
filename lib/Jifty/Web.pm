@@ -803,7 +803,7 @@ HTML-escapes the given string and returns it
 
 sub escape {
     my $self = shift;
-    return join '', map {Jifty::View::Mason::Handler::escape_utf8( \$_ ); $_} @_;
+    return join '', map {my $html = $_; Jifty::View::Mason::Handler::escape_utf8( \$html ); $html} @_;
 }
 
 =head3 escape_uri STRING
@@ -814,7 +814,7 @@ URI-escapes the given string and returns it
 
 sub escape_uri {
     my $self = shift;
-    return join '', map {Jifty::View::Mason::Handler::escape_uri( \$_ ); $_} @_;
+    return join '', map {my $uri = $_; Jifty::View::Mason::Handler::escape_uri( \$uri ); $uri} @_;
 }
 
 =head3 navigation
