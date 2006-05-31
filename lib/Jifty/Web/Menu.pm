@@ -217,7 +217,7 @@ sub render_as_hierarchical_menu_item {
     Jifty->web->out( qq{<li class="toplevel }
             . ( $self->active ? 'open active' : 'closed' ) . qq{">}
             . qq{<span class="title">} );
-    Jifty->web->out( $self->as_link() );
+    Jifty->web->out( $self->as_link );
     Jifty->web->out(qq{</span>});
     if (@kids) {
         Jifty->web->out(
@@ -245,7 +245,8 @@ sub render_as_hierarchical_menu_item {
 
 =head2 as_link
 
-Return this menu item as a C<Jifty::Web::Link>, either the one we were initialized with or a new one made from the C</label> and c</url>
+Return this menu item as a C<Jifty::Web::Link>, either the one we were
+initialized with or a new one made from the C</label> and c</url>
 
 If there's no C</url> and no C</link>, renders just the label.
 
@@ -253,11 +254,13 @@ If there's no C</url> and no C</link>, renders just the label.
 
 sub as_link {
     my $self = shift;
-    if ( $self->link ) {
-        return $self->link;
+    # Stringifying $self->link may return '' and output something, so
+    # we need to be careful to not stringify it more than once, and to
+    # check it for defined-ness, not truth.
+    if ( defined (my $str = $self->link) ) {
+        return $str;
     } elsif ( $self->url ) {
         return Jifty->web->link( label => _( $self->label ), url => $self->url );
-
     } else {
         return _( $self->label );
     }
