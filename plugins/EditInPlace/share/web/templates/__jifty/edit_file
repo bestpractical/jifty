@@ -1,6 +1,7 @@
 <%args>
-$path=> undef
+$path => undef
 $editor => undef
+$line => undef
 </%args>
 <%init>
 my $title = _("Editing file %1",$editor->argument_value('source_path'));

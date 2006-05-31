@@ -337,6 +337,19 @@ sub _form_widget {
     return $self->{_private_form_fields_hash}{$arg_name};
 }
 
+=head2 hidden ARGUMENT VALUE
+
+A shortcut for specifying a form field C<ARGUMENT> which should render
+as a hidden form field, with the default value C<VALUE>.
+
+=cut
+
+sub hidden {
+    my $self = shift;
+    my ($arg, $value, @other) = @_;
+    $self->form_field( $arg, render_as => 'hidden', default_value => $value, @other);
+}
+
 =head2 order [INTEGER]
 
 Gets or sets the order that the action will be run in.  This should be

@@ -287,9 +287,6 @@ sub handle_request {
 
     $self->redirect if $self->redirect_required;
     $self->request->do_mapping;
-
-    # This may be a request for fragments, not for a whole page
-    $self->serve_fragments if $self->request->fragments;
 }
 
 =head3 request [VALUE]
@@ -963,99 +960,6 @@ placed in the current region.
 sub qualified_region {
     my $self = shift;
     return join( "-", map { $_->name } @{ $self->{'region_stack'} || [] }, @_ );
-}
-
-=head3 serve_fragments
-
-If the request is for individuals fragments, and not a full page, then
-this method fetches the requested fragments and serves them up,
-returning an XML document.
-
-=cut
-
-sub serve_fragments {
-    my $self = shift;
-
-    my $output = "";
-    my $writer = XML::Writer->new( OUTPUT => \$output );
-    $writer->xmlDecl( "UTF-8", "yes" );
-    $writer->startTag("response");
-    for my $f ( $self->request->fragments ) {
-        # Set up the region stack
-        local Jifty->web->{'region_stack'} = [];
-        my @regions;
-        do {
-            push @regions, $f;
-        } while ($f = $f->parent);
-        
-        for $f (reverse @regions) {
-            my $new = $self->get_region( join '-', grep {$_} $self->qualified_region, $f->name );
-
-            # Arguments can be complex mapped hash values.  Get their
-            # real values by mapping.
-            my %defaults = %{$f->arguments || {}};
-            for (keys %defaults) {
-                my ($key, $value) = Jifty::Request::Mapper->map(destination => $_, source => $defaults{$_});
-                delete $defaults{$_};
-                $defaults{$key} = $value;
-            }
-
-            $new ||= Jifty::Web::PageRegion->new(
-                name           => $f->name,
-                path           => $f->path,
-                region_wrapper => $f->wrapper,
-                parent         => Jifty->web->current_region,
-                defaults       => \%defaults,
-            );
-            $new->enter;
-        }
-
-        # Stuff the rendered region into the XML
-        $writer->startTag( "fragment", id => Jifty->web->current_region->qualified_name );
-        $writer->cdata( Jifty->web->current_region->as_string );
-        $writer->endTag();
-
-        Jifty->web->current_region->exit while Jifty->web->current_region;
-    }
-
-    my %results = Jifty->web->response->results;
-    for (keys %results) {
-        $writer->startTag("result", moniker => $_, class => $results{$_}->action_class);
-        $writer->dataElement("success", $results{$_}->success);
-
-        $writer->dataElement("message", $results{$_}->message) if $results{$_}->message;
-        $writer->dataElement("error", $results{$_}->error) if $results{$_}->error;
-
-        my %warnings = $results{$_}->field_warnings;
-        my %errors   = $results{$_}->field_errors;
-        my %fields; $fields{$_}++ for keys(%warnings), keys(%errors);
-        for (sort keys %fields) {
-            next unless $warnings{$_} or $errors{$_};
-            $writer->startTag("field", name => $_);
-            $writer->dataElement("warning", $warnings{$_}) if $warnings{$_};
-            $writer->dataElement("error", $errors{$_}) if $errors{$_};
-            $writer->endTag();
-        }
-
-        $writer->endTag();
-    }
-
-    $writer->endTag();
-
-    # Spit out a correct content-type; we set this *here* instead of
-    # above because each of the subrequests attempts to set it to
-    # text/html -- so we have to override them after the fact.
-    $self->response->add_header("Content-Type" => 'text/xml; charset=utf-8');
-
-    # Print a header and the content, and then bail
-    my $apache = Jifty->handler->apache;
-    $apache->send_http_header();
-
-    # Wide characters at this point should be harmlessly treated as UTF-8 octets.
-    no warnings 'utf8';
-    print $output;
-
-    Jifty::Dispatcher::last_rule;
 }
 
 1;

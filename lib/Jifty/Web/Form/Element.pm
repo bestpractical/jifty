@@ -218,7 +218,7 @@ sub javascript {
         }
 
         my $string = join ";", (grep {not ref $_} (ref $value eq "ARRAY" ? @{$value} : ($value)));
-        if (@fragments) {
+        if (@fragments or @actions) {
             my $update = "update( ". Jifty::JSON::objToJson( {actions => \@actions, fragments => \@fragments }, {singlequote => 1}) ." );";
             $string .= $self->javascript_preempt ? "return $update" : "$update; return true;";
         }

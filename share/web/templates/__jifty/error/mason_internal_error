@@ -1,6 +1,6 @@
 <&| $wrapper, title => "Mason error" &>
 
-Error in <% $file %>, lines <% "@lines" %>:
+Error in <& .line, file => $file, line => "@lines" &>
 <pre><% $msg %></pre>
 
 <% Jifty->web->return( label => "Try again" ) %>
@@ -9,27 +9,36 @@ Error in <% $file %>, lines <% "@lines" %>:
 <ul>
 % for my $frame (@stack) {
 %   next if $frame->filename =~ m{/HTML/Mason/};
-%   if (-w $frame->filename) {
-%     my $path = $frame->filename;
+    <li><& .line, file => $frame->filename, line => $frame->line &></li>
+% }
+</ul>
+ 
+</&>
+
+<%def .line>
+<%args>
+$file
+$line
+</%args>
+%   if (-w $file) {
+%     my $path = $file;
 %     for (map {$_->[1]} @{Jifty->handler->mason->interp->comp_root}) {
 %       last if $path =~ s/^\Q$_\E//;
 %     }
-%     if ($path ne $frame->filename) {
-<li>Template <% Jifty->web->tangent( url =>"/__jifty/edit/mason_component$path",
-                            label => "$path line ".$frame->line,
-                            parameters => { line => $frame->line } ) %></li>
+%     if ($path ne $file) {
+template <% Jifty->web->tangent( url =>"/__jifty/edit/mason_component$path",
+                                 label => "$path line ".$line,
+                                 parameters => { line => $line } ) %>
 %     } else {
-<li><% Jifty->web->tangent( url =>"/__jifty/edit/library$path",
-                            label => "$path line ".$frame->line,
-                            parameters => { line => $frame->line } ) %></li>
+<% Jifty->web->tangent( url =>"/__jifty/edit/library$path",
+                        label => "$path line ".$line,
+                        parameters => { line => $line } ) %>
 %     }
 %   } else {
-<li><% $frame->filename %> line <% $frame->line %></li>
+<% $file %> line <% $line %>
 %   }
-% }
-</ul>
+</%def>
 
-</&>
 <%init>
 my $wrapper = "/_elements/wrapper";
 

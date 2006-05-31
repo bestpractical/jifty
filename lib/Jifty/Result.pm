@@ -19,7 +19,7 @@ use Jifty::Everything;
 
 use base qw/Jifty::Object Class::Accessor::Fast/;
 
-__PACKAGE__->mk_accessors(qw(failure action_class message error _content));
+__PACKAGE__->mk_accessors(qw(failure action_class message _content));
 
 
 =head2 new

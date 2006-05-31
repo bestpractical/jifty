@@ -393,7 +393,7 @@ function update() {
     var request = $H();
 
     // Set request base path
-    request['path'] = '/__jifty/empty';
+    request['path'] = '/__jifty/webservices/xml';
 
     // Build actions structure
     request['actions'] = {};
@@ -536,9 +536,9 @@ function update() {
                          key != null;
                          key = key.nextSibling) {
                         if (key.nodeName == 'message') {
-                            // alert(key.textContent);
+                            alert(key.textContent);
                         } else if (key.nodeName == 'error') {
-                            // alert('ERROR: '+key.textContent);
+                            alert('ERROR: '+key.textContent);
                         }
                     }
                 }
