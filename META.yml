@@ -39,7 +39,7 @@ requires:
   HTTP::Server::Simple::Recorder: 0
   Hash::Merge: 0
   Hook::LexWrap: 0
-  JSON::Syck: 0.12
+  JSON::Syck: 0.13
   Jifty::DBI: 0.21
   LWP::UserAgent: 0
   Locale::Maketext::Extract: 0.20
@@ -64,7 +64,7 @@ requires:
   WWW::Mechanize: 1.12
   XML::Writer: 0
   XML::XPath: 0
-  YAML::Syck: 0.44
+  YAML::Syck: 0.45
   perl: 5.8.3
   version: 0
 tests: t/*.t t/*/t/*.t
