@@ -128,7 +128,7 @@ Action.prototype = {
                                     // Possibilities for field.nodeName: it could be 'ignored', 'blank' or 'update'
                                     if (field.nodeName == 'update') {
                                         var field_name = field.getAttribute("name");
-                                        for (var form_number in document.forms) {
+                                        for (var form_number = 0 ; form_number < document.forms.length; form_number++) {
                                             if (document.forms[form_number].elements[field_name] == null)
                                                 continue;
                                             document.forms[form_number].elements[field_name].value = field.firstChild.data;
