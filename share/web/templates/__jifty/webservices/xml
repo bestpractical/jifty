@@ -60,9 +60,20 @@ for (keys %results) {
         $writer->endTag();
     }
 
+    # XXX TODO: Hack because we don't have a good way to serialize
+    # Jifty::DBI::Record's yet, which are technically circular data
+    # structures at some level (current_user of a
+    # current_user->user_object is itself)
+    my $content = $results{$_}->content;
+    ref $content->{$_}
+        and ( $content->{$_}->isa("Jifty::DBI::Record")
+           or $content->{$_}->isa("Jifty::DBI::Collection") )
+        and delete $content->{$_}
+        for keys %{$content};
+
     use XML::Simple;
-    $writer->raw(XML::Simple::XMLout($results{$_}->content, NoAttr => 1, RootName => "content", NoIndent => 1))
-      if keys %{$results{$_}->content};
+    $writer->raw(XML::Simple::XMLout($content, NoAttr => 1, RootName => "content", NoIndent => 1))
+      if keys %{$content};
 
     $writer->endTag();
 }
