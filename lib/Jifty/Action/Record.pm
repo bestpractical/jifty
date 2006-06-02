@@ -174,7 +174,8 @@ sub arguments {
       }
 
       # build up a validator sub if the column implements validation
-      if ( defined $column->validator && $column->validator ) {
+      # and we're not overriding it at the action level
+      if ( $column->validator and not $self->can("validate_$field")) {
         $info->{ajax_validates} = 1;
         $info->{validator} = sub {
           my $self  = shift;
@@ -187,7 +188,7 @@ sub arguments {
           else {
             unless ($message) {
               $self->log->error(
-                qq{_Schema validator for $field didn't explain why the value '$value' is invalid}
+                qq{Schema validator for $field didn't explain why the value '$value' is invalid}
               );
             }
             return (
