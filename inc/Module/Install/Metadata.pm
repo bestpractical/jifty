@@ -123,9 +123,9 @@ sub auto_provides {
 
     require Module::Build;
     my $build = Module::Build->new(
-        dist_name    => $self->{name},
-        dist_version => $self->{version},
-        license      => $self->{license},
+        dist_name    => $self->name,
+        dist_version => $self->version,
+        license      => $self->license,
     );
     $self->provides(%{ $build->find_dist_packages || {} });
 }
