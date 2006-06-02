@@ -666,9 +666,10 @@ Ajax.Request.prototype = Object.extend(new Ajax.Base(), {
 
     if (this.options.method == 'post') {
       var hasContentType = 0;
-      for (var i = 0; i < this.options.requestHeaders.length; i += 2) 
-        if (this.options.requestHeaders[i] == 'Content-Type')
-          hasContentType = 1;
+      if (this.options.requestHeaders)
+          for (var i = 0; i < this.options.requestHeaders.length; i += 2) 
+              if (this.options.requestHeaders[i] == 'Content-Type')
+                  hasContentType = 1;
       if (hasContentType == 0)
           requestHeaders.push('Content-Type', 'application/x-www-form-urlencoded');
 
