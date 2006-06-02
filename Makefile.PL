@@ -54,6 +54,7 @@ requires('UNIVERSAL::require');
 requires('URI');
 requires('WWW::Mechanize' => 1.12);
 requires('XML::Writer');
+requires('XML::Simple');
 requires('XML::XPath');
 requires('version');
 
