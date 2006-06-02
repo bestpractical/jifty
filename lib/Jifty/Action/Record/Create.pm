@@ -58,6 +58,9 @@ sub take_action {
 
     my %values;
     for (grep { defined $self->argument_value($_) } $self->argument_names) {
+        # Skip nonexistent fields
+        next unless $self->record->column($_);
+
         $values{$_} = $self->argument_value($_);
         if (ref $values{$_} eq "Fh") { # CGI.pm's "lightweight filehandle class"
             local $/;
