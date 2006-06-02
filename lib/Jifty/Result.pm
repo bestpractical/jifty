@@ -106,7 +106,7 @@ name to error.
 
 sub field_errors {
     my $self = shift;
-    return %{$self->{field_errors}};
+    return %{$self->{field_errors} || {}};
 }
 
 =head2 field_warning FIELD [WARNING]
@@ -132,7 +132,7 @@ name to warning.
 
 sub field_warnings {
     my $self = shift;
-    return %{$self->{field_warnings}};
+    return %{$self->{field_warnings} || {}};
 }
 
 =head2 content [KEY [, VALUE]]
