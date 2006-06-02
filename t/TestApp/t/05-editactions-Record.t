@@ -21,7 +21,7 @@ ok($system_user, "Found a system user");
 
 # Create a user
 my $o = TestApp::Model::User->new(current_user => $system_user);
-my ($id) = $o->create( name => 'edituser', email => 'someone@domain.com' );
+my ($id) = $o->create( name => 'edituser', email => 'someone@example.com' );
 ok($id, "User create returned success");
 
 my $server  = Jifty::Test->make_server;
@@ -32,13 +32,13 @@ my $URL     = $server->started_ok;
 my $mech    = Jifty::Test::WWW::Mechanize->new();
 
 # Test action to update
-$mech->get_ok("$URL/editform?J:A-updateuser=TestApp::Action::UpdateUser&J:A:F:F:F-id-updateuser=1&J:A:F-name-updateuser=edituser&J:A:F-email-updateuser=newemail", "Form submitted");
+$mech->get_ok($URL.'/editform?J:A-updateuser=TestApp::Action::UpdateUser&J:A:F:F:F-id-updateuser=1&J:A:F-name-updateuser=edituser&J:A:F-email-updateuser=newemail@example.com', "Form submitted");
 undef $o;
 $o = TestApp::Model::User->new(current_user => $system_user);
 $o->load($id);
 ok($id, "Load returned success");
 
-is($o->email, 'newemail', "Email was updated by form");
+is($o->email, 'newemail@example.com', "Email was updated by form");
 
 1;
 
