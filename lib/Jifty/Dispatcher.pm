@@ -953,7 +953,7 @@ The rules are:
 
 =item *
 
-A C<*> between two C</> characthers, or between a C</> and end of string,
+A C<*> between two C</> characters, or between a C</> and end of string,
 should at match one or more non-slash characters:
 
     /foo/*/bar
