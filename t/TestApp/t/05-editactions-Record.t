@@ -34,7 +34,7 @@ my $mech    = Jifty::Test::WWW::Mechanize->new();
 # Test action to update
 $mech->get_ok("$URL/editform?J:A-updateuser=TestApp::Action::UpdateUser&J:A:F:F:F-id-updateuser=1&J:A:F-name-updateuser=edituser&J:A:F-email-updateuser=newemail", "Form submitted");
 undef $o;
-my $o = TestApp::Model::User->new(current_user => $system_user);
+$o = TestApp::Model::User->new(current_user => $system_user);
 $o->load($id);
 ok($id, "Load returned success");
 
