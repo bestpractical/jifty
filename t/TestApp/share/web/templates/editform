@@ -1,0 +1,18 @@
+<%init>
+my $superuser = TestApp::CurrentUser->superuser;
+my $user = TestApp::Model::User->new( current_user => $superuser );
+$user->load('1');
+my $action = Jifty->web->new_action(
+    class => 'UpdateUser',
+    moniker => 'updateuser',
+    record => $user,
+);
+</%init>
+<&| /_elements/wrapper, title => "Test of simple form for editing" &>
+  Basic test of a simple form for editing.
+<% Jifty->web->form->start() %>
+<% $action->form_field('name') %>
+<% $action->form_field('email') %>
+<% Jifty->web->form->submit %>
+<% Jifty->web->form->end %>
+</&>
