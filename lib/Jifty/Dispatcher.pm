@@ -108,9 +108,9 @@ common C<$Dispatcher> object.
 
 By default, L<Jifty::Plugin> dispatcher rules are added in the order
 they are specified in the application's configuration file; that is,
-after all the plugin dispatchers have run in order, then tha
+after all the plugin dispatchers have run in order, then the
 application's dispatcher runs.  It is possible to specify rules which
-should be reordered with respect to this rule, however.  This us done
+should be reordered with respect to this rule, however.  This is done
 by using a variant on the C<before> and C<after> syntax:
 
     before plugin NAME =>
@@ -126,7 +126,7 @@ that is, given a C<before plugin qr/^Jifty::Plugin::Auth::/> and both
 a C<Jifty::Plugin::Auth::Basic> and a C<Jifty::Plugin::Auth::Complex>,
 the rules will be placed before the first.
 
-C<RULES> may wither be a single C<before>, C<on>, C<under>, or
+C<RULES> may either be a single C<before>, C<on>, C<under>, or
 C<after> rule to change the ordering of, or an array reference of
 rules to reorder.
 
@@ -243,7 +243,7 @@ Redirect to another URI.
 
 =head2 plugin
 
-See L</Plugins and rule odering>, above.
+See L</Plugins and rule ordering>, above.
 
 =cut
 
