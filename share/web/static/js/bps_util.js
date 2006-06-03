@@ -21,11 +21,11 @@ function createCalendarLink(input) {
     var e = $(input);
     if (e) {
         var link = document.createElement('a');
-        link.setAttribute('href', '#');
-        link.setAttribute('onclick', "openCalWindow('"+e.id+"'); return false;");
-        link.setAttribute('class', 'calendar-link');
+        link.setAttribute('href', "javascript:openCalWindow('"+e.id+"')");
         
-        var text = document.createTextNode('Calendar');
+        var text = document.createElement('img');
+        text.setAttribute('src', '/static/images/silk/calendar.png');
+        text.setAttribute('border', 0);
         link.appendChild(text);
         
         var space = document.createTextNode(' ');
