@@ -379,7 +379,7 @@ an empty string.
 sub render_label {
     my $self = shift;
     Jifty->web->out(
-qq!<label class="label @{[$self->classes]}" for="@{[$self->input_name ]}">@{[_($self->label) ]}</label>\n!
+qq!<label class="label @{[$self->classes]}" for="@{[$self->element_id ]}">@{[_($self->label) ]}</label>\n!
     );
 
     return '';
