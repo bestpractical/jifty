@@ -152,6 +152,12 @@ Action.prototype = {
             { parameters: this.serialize() }
         );
         hide_wait_message();
+    },
+
+    disable_input_fields: function() {
+	this.fields().each(function() {
+		arguments[0].disabled = true;
+	    });
     }
 };
 
@@ -389,8 +395,6 @@ function update() {
     show_wait_message();
     var named_args = arguments[0];
 
-    disable_fields_for_actions(named_args['actions']);
-    
     // The YAML/JSON data structure that will be sent
     var request = $H();
 
@@ -402,6 +406,7 @@ function update() {
     for (var i = 0; i < named_args['actions'].length; i++) {
         var moniker = named_args['actions'][i];
         var a = new Action(moniker);
+	a.disable_input_fields();
         if (a.register) {
             if (a.hasUpload())
                 return true;
@@ -609,24 +614,6 @@ function hide_wait_message (){
     if ($('jifty-wait-message'))
         new Effect.Fade('jifty-wait-message', {duration: 0.2});
 }
-
-// Walk all the inputs in the document, disabling any that are related
-// to the action we're performing
-function disable_fields_for_actions (){
-    var actions = arguments[0];
-    inputs = document.getElementsByTagName('input');
-    for(var j = 0; j < inputs.length; j++) {
-	var input = inputs[j];
-	for(var i = 0; i < actions.length; i++) {
-	    var moniker = actions[i];
-	    if(input.id.indexOf(moniker) >= 0) {
-		input.disabled = true;
-		break;
-	    }
-	}
-    }
-}
-
 
 Jifty.Autocompleter = Class.create();
 Object.extend(Object.extend(Jifty.Autocompleter.prototype, Ajax.Autocompleter.prototype), {
