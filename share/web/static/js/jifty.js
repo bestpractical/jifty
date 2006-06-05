@@ -69,7 +69,7 @@ Action.prototype = {
         return false;
     },
 
-    // Return the action as a data strcture suitible to be JSON'd
+    // Return the action as a data structure suitable to be JSON'd
     data_structure: function() {
         var a = {};
         a['moniker'] = this.moniker;
