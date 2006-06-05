@@ -614,13 +614,14 @@ function hide_wait_message (){
 // to the action we're performing
 function disable_fields_for_actions (){
     var actions = arguments[0];
-    for(var i = 0; i < actions.length; i++) {
-	var moniker = actions[i];
-	inputs = document.getElementsByTagName('input');
-	for(var j = 0; j < inputs.length; j++) {
-	    var input = inputs[j];
+    inputs = document.getElementsByTagName('input');
+    for(var j = 0; j < inputs.length; j++) {
+	var input = inputs[j];
+	for(var i = 0; i < actions.length; i++) {
+	    var moniker = actions[i];
 	    if(input.id.indexOf(moniker) >= 0) {
 		input.disabled = true;
+		break;
 	    }
 	}
     }
