@@ -213,6 +213,7 @@ sub arguments {
 
       my $canonicalize_method = "canonicalize_" . $field;
       if ( $self->record->can($canonicalize_method) ) {
+        $info->{'ajax_canonicalizes'} = 1;
         $info->{'canonicalizer'} ||= sub {
           my ( $self, $value ) = @_;
           return $self->record->$canonicalize_method($value);
@@ -221,6 +222,7 @@ sub arguments {
       elsif ( defined $column->render_as
         and $column->render_as eq "Date" )
       {
+        $info->{'ajax_canonicalizes'} = 1;
         $info->{'canonicalizer'} ||= sub {
           my ( $self, $value ) = @_;
           return _canonicalize_date( $self, $value );
