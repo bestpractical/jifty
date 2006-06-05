@@ -49,8 +49,9 @@ Jifty.ContextMenu = {
             var y = Jifty.Utils.findPosY( li ) + li.offsetHeight;
 
             ul.style.position = "absolute";
-            ul.style.left = x + "px";
-            ul.style.top = y + "px";
+            ul.style.left     = x + "px";
+            ul.style.top      = y + "px";
+            ul.style.width    = li.offsetWidth * 2 + "px";
         }
 
         Element.removeClassName(li, "closed");
