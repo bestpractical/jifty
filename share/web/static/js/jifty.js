@@ -156,6 +156,7 @@ Action.prototype = {
 
     disable_input_fields: function() {
 	this.fields().each(function() {
+		arguments[0].blur();
 		arguments[0].disabled = true;
 	    });
     }
@@ -406,7 +407,7 @@ function update() {
     for (var i = 0; i < named_args['actions'].length; i++) {
         var moniker = named_args['actions'][i];
         var a = new Action(moniker);
-	a.disable_input_fields();
+        a.disable_input_fields();
         if (a.register) {
             if (a.hasUpload())
                 return true;
@@ -614,6 +615,8 @@ function hide_wait_message (){
     if ($('jifty-wait-message'))
         new Effect.Fade('jifty-wait-message', {duration: 0.2});
 }
+
+
 
 Jifty.Autocompleter = Class.create();
 Object.extend(Object.extend(Jifty.Autocompleter.prototype, Ajax.Autocompleter.prototype), {
