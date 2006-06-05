@@ -56,6 +56,7 @@ ul.context_menu, ul.context_menu ul {
     border: 1px solid transparent;
     color: white;
     margin-left: 0.3em;
+    min-height: 1em;
 }
 
 .context_menu li.toplevel:hover .expand a {
