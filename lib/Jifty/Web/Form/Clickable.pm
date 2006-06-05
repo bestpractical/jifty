@@ -109,6 +109,11 @@ based on the presence of the L</submit> parameter.
 
 =item Anything from L<Jifty::Web::Form::Element>
 
+Note that this includes the C<onclick> parameter, which allows
+you to attach javascript to your Clickable object, but be careful
+that your Javascript looks like C<return someFunction();>, or you may
+get an unexpected error from your browser.
+
 =back
 
 =cut

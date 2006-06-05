@@ -111,6 +111,9 @@ use Jifty::JSON;
 =head2 handlers
 
 Currently, the only supported event handlers are C<onclick>.
+WARNING: if you use the onclick handler, make sure that your javascript
+is "return (function name);", or you may well get a very strange-looking
+error from your browser.
 
 =cut
 
