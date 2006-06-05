@@ -20,15 +20,15 @@ function updateParentField(field, value) {
 function createCalendarLink(input) {
     var e = $(input);
     if (e) {
-        var link = document.createElement('a');
-        link.setAttribute('href', "javascript:openCalWindow('"+e.id+"')");
+        var link = document.createElement("a");
+        link.setAttribute("href", "javascript:openCalWindow('"+e.id+"')");
         
-        var text = document.createElement('img');
-        text.setAttribute('src', '/static/images/silk/calendar.png');
-        text.setAttribute('border', 0);
-        link.appendChild(text);
+        var img = document.createElement("img");
+        img.setAttribute("src", "/static/images/silk/calendar.png");
+        img.setAttribute("border", 0);
+        link.appendChild(img);
         
-        var space = document.createTextNode(' ');
+        var space = document.createTextNode(" ");
         
         e.parentNode.insertBefore(link, e.nextSibling);
         e.parentNode.insertBefore(space, e.nextSibling);

@@ -3,6 +3,11 @@ JSAN.use("DOM.Events");
 if (typeof Jifty == "undefined") Jifty = { };
 
 Jifty.ContextMenu = {
+    behaviourRules: {
+        ".menu li.toplevel span.expand a": function(e) { e.innerHTML = ""; },
+        ".context_menu li.toplevel span.expand a": function(e) { e.innerHTML = ""; }
+    },
+
     currently_open:  "",
     prevent_stutter: "",
 
@@ -83,4 +88,5 @@ Jifty.ContextMenu = {
 };
 
 DOM.Events.addListener( window, "click", Jifty.ContextMenu.hideOpenMenu );
+Behaviour.register( Jifty.ContextMenu.behaviourRules );
 
