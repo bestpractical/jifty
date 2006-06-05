@@ -3,7 +3,7 @@ package Jifty::Web::Menu;
 use base qw/Class::Accessor::Fast/;
 use URI;
 
-__PACKAGE__->mk_accessors(qw(label parent sort_order link));
+__PACKAGE__->mk_accessors(qw(label parent sort_order link escape_label));
 
 =head2 new PARAMHASH
 
@@ -98,6 +98,7 @@ sub child {
                                                         sort_order => ($self->{children}{$key}{sort_order}
                                                                        || scalar values %{$self->{children}}),
                                                         label => $key,
+                                                        escape_label => 1,
                                                         @_
                                                        });
     # Activate it
@@ -260,7 +261,9 @@ sub as_link {
     if ( defined (my $str = $self->link) ) {
         return $str;
     } elsif ( $self->url ) {
-        return Jifty->web->link( label => _( $self->label ), url => $self->url );
+        return Jifty->web->link( label => _( $self->label ),
+                                 url   => $self->url,
+                                 escape_label => $self->escape_label );
     } else {
         return _( $self->label );
     }
