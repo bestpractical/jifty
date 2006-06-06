@@ -107,10 +107,11 @@ sub generate_checksum {
     # don't use Math::BigInt->new directly for simple computation,
     # because it insists exporting overload to us, which makes
     # devel::cover and devel::dprof very sad.
-    my $integer_digest = Math::BigInt::Calc->_from_hex("0x".substr($digest->hexdigest(),0,16));
-
-    # the scary version:
-    #my $integer_digest = Math::BigInt->new("0x". $digest->hexdigest() );
+    my $integer_digest = Math::BigInt::Calc->_str(
+        Math::BigInt::Calc->_from_hex(
+            substr( $digest->hexdigest(), 0, 16 )
+        )
+    );
 
     # koremutake it
     my $k = String::Koremutake->new;
