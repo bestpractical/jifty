@@ -3,7 +3,7 @@ use strict;
 
 package Jifty::LetMe;
 use Digest::MD5 ();
-use Math::BigInt ();
+use Math::BigInt::Calc;
 use String::Koremutake ();
 
 use base qw/Jifty::Object Class::Accessor::Fast/;
@@ -102,11 +102,13 @@ sub generate_checksum {
     my %args = %{$self->args};
     $digest->add( $_, $args{$_}) for sort keys %args;
     $digest->add( $self->until ) if ($self->until);
-    # only take the first 16 characters. we're rally just trying to 
-    # get something reasonably short, memorable and unguessable
-    my $integer_digest = Math::BigInt->new("0x".substr($digest->hexdigest(),0,16));
+    # only take the first 16 characters. we're rally just trying to
+    # get something reasonably short, memorable and unguessable. Also,
+    # don't use Math::BigInt->new directly for simple computation,
+    # because it insists exporting overload to us, which makes
+    # devel::cover and devel::dprof very sad.
+    my $integer_digest = Math::BigInt::Calc->_from_hex("0x".substr($digest->hexdigest(),0,16));
 
-    
     # the scary version:
     #my $integer_digest = Math::BigInt->new("0x". $digest->hexdigest() );
 
