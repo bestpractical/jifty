@@ -93,6 +93,11 @@ Overrides the L<Jifty::Action/arguments> method, to automatically
 provide a form field for every writable attribute of the underlying
 L</record>.
 
+This also creates built-in validation and autocompletion methods
+(validate_$fieldname and autocomplete_$fieldname) for action fields
+that are defined "validate" or "autocomplete". These methods can
+be overridden in any Action which inherits from this class.
+
 =cut
 
 sub arguments {
