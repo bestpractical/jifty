@@ -543,10 +543,11 @@ function update() {
                     for (var key = result.firstChild;
                          key != null;
                          key = key.nextSibling) {
+			show_action_result(result.getAttribute("moniker"),key);
                         if (key.nodeName == 'message') {
-                            // alert(key.textContent);
+			    //alert(key.textContent);
                         } else if (key.nodeName == 'error') {
-                            // alert('ERROR: '+key.textContent);
+			    //alert('ERROR: '+key.textContent);
                         }
                     }
                 }
@@ -616,7 +617,32 @@ function hide_wait_message (){
         new Effect.Fade('jifty-wait-message', {duration: 0.2});
 }
 
+function show_action_result() {
+    var popup = $('jifty-result-popup');
+    if(!popup) return;
 
+    var moniker = arguments[0];
+    var result = arguments[1];
+    var status = result.nodeName;
+    var text = result.textContent;
+    if(status != 'message' && status != 'error') return;
+
+    var node = document.createElement('div');
+    node.setAttribute('id', 'result-' + moniker);
+    node.setAttribute('class', 'result-' + status);
+    node.innerHTML = text;
+
+    if(popup.hasChildNodes()) {
+	popup.insertBefore(node, popup.firstChild);
+    } else {
+	popup.appendChild(node);
+    }
+    new Effect.SlideDown(node, {duration: 0.5});
+    
+    setTimeout(function () {
+	    new Effect.Fade(node, {duration: 4.0});
+	}, 2000);
+}
 
 Jifty.Autocompleter = Class.create();
 Object.extend(Object.extend(Jifty.Autocompleter.prototype, Ajax.Autocompleter.prototype), {
