@@ -298,14 +298,13 @@ sub _to_record {
     my $column = $self->column($column_name);
     my $classname = $column->refers_to();
 
-    return unless defined $value;
     return undef unless $classname;
     return unless $classname->isa( 'Jifty::Record' );
 
     # XXX TODO FIXME we need to figure out the right way to call new here
     # perhaps the handle should have an initiializer for records/collections
     my $object = $classname->new(current_user => $self->current_user);
-    $object->load_by_cols(( $column->by || 'id')  => $value);
+    $object->load_by_cols(( $column->by || 'id')  => $value) if ($value);
     return $object;
 }
 
