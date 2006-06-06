@@ -228,7 +228,7 @@ sub guess {
             Mailer     => 'Sendmail',
             MailerArgs => [],
             L10N       => {
-                PoDir => "%$app_name/share/po%",
+                PoDir => "share/po",
             },
             Plugins    => [],
             Web        => {
