@@ -8,6 +8,7 @@ use Jifty::Everything;
 use Jifty::Server;
 use File::Path ();
 
+use constant PIDFILE => 'var/jifty-server.pid';
 
 =head1 NAME
 
@@ -31,6 +32,8 @@ set there.  The default port is 8888.
 sub options {
     (
      'p|port=s' => 'port',
+     'start'    => 'start',
+     'stop'     => 'stop',
     )
 }
 
@@ -45,12 +48,29 @@ sub run {
     my $self = shift;
     Jifty->new();
 
+    if ($self->{stop}) {
+        open my $fh, '<', PIDFILE;
+        my $pid = <$fh>;
+        kill 'TERM', $pid;
+        return;
+    }
+
     # Purge stale mason cache data
     my $data_dir = Jifty->config->framework('Web')->{'DataDir'};
     if (-d $data_dir) {
         File::Path::rmtree(["$data_dir/cache", "$data_dir/obj"]);
     }
 
+    if ($self->{start}) {
+        if (fork()) {
+            return;
+        }
+    }
+    open my $fh, '>', PIDFILE or die $!;
+    print $fh $$;
+    close $fh;
+
     Jifty::Server->new(port => $self->{port})->run;
 }
+
 1;
