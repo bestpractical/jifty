@@ -633,15 +633,15 @@ function show_action_result() {
     node.innerHTML = text;
 
     if(popup.hasChildNodes()) {
-	popup.insertBefore(node, popup.firstChild);
+        popup.insertBefore(node, popup.firstChild);
     } else {
-	popup.appendChild(node);
+        popup.appendChild(node);
     }
     new Effect.SlideDown(node, {duration: 0.5});
     
     setTimeout(function () {
-	    new Effect.Fade(node, {duration: 4.0});
-	}, 2000);
+        new Effect.Fade(node, {duration: 5.0});
+    }, 2000);
 }
 
 Jifty.Autocompleter = Class.create();
