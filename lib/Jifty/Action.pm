@@ -162,7 +162,10 @@ fail), C<run> calls L</take_action>, and finally L</cleanup>.
 sub run {
     my $self = shift;
     $self->log->debug("Running action");
-    return unless $self->result->success;
+    unless ($self->result->success) {
+        $self->log->debug("Not taking action, as it doesn't validate");
+        return;
+    }
     $self->log->debug("Taking action");
     $self->take_action;
     $self->cleanup;
