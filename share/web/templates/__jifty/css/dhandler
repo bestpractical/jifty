@@ -1,0 +1,6 @@
+<%init>
+$r->content_type("text/css");
+Jifty->web->generate_css;
+Jifty->web->out( Jifty->web->cached_css );
+return;
+</%init>

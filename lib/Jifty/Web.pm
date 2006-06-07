@@ -14,12 +14,14 @@ Jifty::Web - Web framework for a Jifty application
 use Jifty::Everything;
 use CGI::Cookie;
 use XML::Writer;
+use CSS::Squish;
+use Digest::MD5 qw(md5_hex);
 use base qw/Class::Accessor::Fast Jifty::Object/;
 
 use vars qw/$SERIAL/;
 
 __PACKAGE__->mk_accessors(
-    qw(next_page request response session temporary_current_user)
+    qw(next_page request response session temporary_current_user cached_css cached_css_digest)
 );
 
 =head1 METHODS
@@ -974,8 +976,38 @@ Returns a C<< <link> >> tag for the compressed CSS
 =cut
 
 sub include_css {
-    Jifty->web->out('<link rel="stylesheet" type="text/css" href="/__jifty/styles.css" />');
+    my $self = shift;
+    
+    $self->generate_css;
+    
+    Jifty->web->out(
+        '<link rel="stylesheet" type="text/css" href="/__jifty/css/'
+        . $self->cached_css_digest . '.css" />'
+    );
+    
     return '';
+}
+
+=head3 generate_css
+
+Checks if the compressed CSS is generated, and if it isn't, generates
+and caches it.
+
+=cut
+
+sub generate_css {
+    my $self = shift;
+    
+    if (not $self->cached_css_digest) {
+        $self->cached_css(
+            CSS::Squish->concatenate(
+                Jifty->config->framework('Web')->{'StaticRoot'}
+                    . '/css/main.css'
+            )
+        );
+        
+        $self->cached_css_digest( md5_hex( $self->cached_css ) );
+    }
 }
 
 1;
