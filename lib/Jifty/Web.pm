@@ -332,6 +332,11 @@ action with a matching moniker, any arguments that are in that
 requested action but not in the C<PARAMHASH> list are set.  This
 implements "sticky fields".
 
+As a contrast to L<Jifty::Web::Form/add_action>, this does not add the
+action to the current form -- instead, the first form field to be
+rendered will automatically register the action in the current form
+field at that time.
+
 =cut
 
 sub new_action {

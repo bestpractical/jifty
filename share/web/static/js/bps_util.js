@@ -38,6 +38,20 @@ function createCalendarLink(input) {
     return false;
 }
 
+function buttonToLink(input) {
+    var e = $(input);
+    if (e) {
+        var link = document.createElement("a");
+        link.setAttribute("href","javascript:$('"+e.id+"').click()");
+        link.appendChild(document.createTextNode(e.getAttribute("value")));
+
+        Element.hide(e);
+        e.parentNode.insertBefore(link, e.nextSibling);
+        return true;
+    }
+    return false;
+}
+
 // onload handlers
 
 var onLoadStack     = new Array();

@@ -436,12 +436,16 @@ Returns nothing.
 sub button {
     my $self = shift;
     my %args = ( arguments => {},
-                 submit => $self,
+                 submit    => $self,
+                 register  => 0,
                  @_);
 
-    # Unless we've printed a moniker for the action, we embed the
-    # action registration into the button
-    unless ( Jifty->web->form->printed_actions->{ $self->moniker } ) {
+    if ($args{register}) {
+        # If they ask us to register the action, do so
+        Jifty->web->form->register_action( $self );
+        Jifty->web->form->print_action_registration($self->moniker);
+    } elsif ( not Jifty->web->form->printed_actions->{ $self->moniker } ) {
+        # Otherwise, if we're not registered yet, do it in the button
         $args{parameters}{ $self->register_name } = ref $self;
         $args{parameters}{ $self->double_fallback_form_field_name($_) }
             = $self->argument_value($_) || $self->arguments->{$_}->{'default_value'}

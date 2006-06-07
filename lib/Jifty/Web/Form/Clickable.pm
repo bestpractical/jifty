@@ -25,10 +25,10 @@ L<Jifty::Web::Form::Element/accessors>.
 
 sub accessors {
     shift->SUPER::accessors,
-        qw(url escape_label tooltip continuation call returns submit preserve_state button);
+        qw(url escape_label tooltip continuation call returns submit preserve_state render_as_button render_as_link);
 }
 __PACKAGE__->mk_accessors(
-    qw(url escape_label tooltip continuation call returns submit preserve_state button)
+    qw(url escape_label tooltip continuation call returns submit preserve_state render_as_button render_as_link)
 );
 
 =head2 new PARAMHASH
@@ -97,15 +97,21 @@ A hash reference of query parameters that go on the link or button.
 These will end up being submitted exactly like normal query
 parameters.
 
-=item button
+=item as_button
 
 By default, Jifty will attempt to make the clickable into a link
 rather than a button, if there are no actions to run on submit.
-Providing a true value for C<button> forces L<generate> to produce a
-L<Jifty::Web::Form::Clickable::InlineButton> instead of a
-L<Jifty::Web::Form::Link>.  Note that providing a false value will
-B<not> guarantee that you get a link, as a button may be necessary
-based on the presence of the L</submit> parameter.
+Providing a true value for C<as_button> forces L<generate> to produce
+a L<Jifty::Web::Form::Clickable::InlineButton> instead of a
+L<Jifty::Web::Form::Link>.
+
+=item as_link
+
+Attempt to rework a button into displaying as a link -- note that this
+only works in javascript browsers.  Supplying B<both> C<as_button> and
+C<as_link> will work, and not as perverse as it might sound at first
+-- it allows you to make any simple GET request into a POST request,
+while still appearing as a link (a GET request).
 
 =item Anything from L<Jifty::Web::Form::Element>
 
@@ -134,9 +140,12 @@ sub new {
         submit         => [],
         preserve_state => 0,
         parameters     => {},
-        button         => 0,
+        as_button      => 0,
+        as_link        => 0,
         @_,
     );
+    $args{render_as_button} = delete $args{as_button};
+    $args{render_as_link}   = delete $args{as_link};
 
     $self->{parameters} = {};
 
@@ -465,6 +474,7 @@ sub as_button {
             grep { defined $parameters{$_} } keys %parameters
     );
     $field->name( join '|', keys %{ $args{parameters} } );
+    $field->button_as_link($self->render_as_link);
 
     return $field;
 }
@@ -510,7 +520,7 @@ sub generate {
         }
     }
 
-    return ( ( not( $self->submit ) || @{ $self->submit } || $self->button )
+    return ( ( not( $self->submit ) || @{ $self->submit } || $self->render_as_button )
         ? $self->as_button(@_)
         : $self->as_link(@_) );
 }
