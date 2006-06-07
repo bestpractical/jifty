@@ -962,4 +962,15 @@ sub qualified_region {
     return join( "-", map { $_->name } @{ $self->{'region_stack'} || [] }, @_ );
 }
 
+=head3 include_css
+
+Returns a C<< <link> >> tag for the compressed CSS
+
+=cut
+
+sub include_css {
+    Jifty->web->out('<link rel="stylesheet" type="text/css" href="/__jifty/styles.css" />');
+    return '';
+}
+
 1;

@@ -1,0 +1,11 @@
+<%init>
+use CSS::Squish;
+
+$r->content_type("text/css");
+
+Jifty->web->out(
+    CSS::Squish->concatenate(
+        Jifty->config->framework('Web')->{StaticRoot} . "/css/main.css"
+    )
+);
+</%init>

@@ -6,7 +6,7 @@
   
   <title><% _($title) %></title>
   
-  <link rel="stylesheet" type="text/css" href="/static/css/main.css" media="all" />
+  <% Jifty->web->include_css %>
   <& javascript &> 
 </head>
 <%args>
