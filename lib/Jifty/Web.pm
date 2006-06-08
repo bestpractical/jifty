@@ -16,14 +16,16 @@ use CGI::Cookie;
 use XML::Writer;
 use CSS::Squish;
 use Digest::MD5 qw(md5_hex);
-use base qw/Class::Accessor::Fast Jifty::Object/;
+use base qw/Class::Accessor::Fast Class::Data::Inheritable Jifty::Object/;
 
 use vars qw/$SERIAL/;
 
 __PACKAGE__->mk_accessors(
-    qw(next_page request response session temporary_current_user
-       cached_css cached_css_digest cached_css_mtime)
+    qw(next_page request response session temporary_current_user)
 );
+
+__PACKAGE__->mk_classdata($_)
+    for qw(cached_css cached_css_digest cached_css_mtime);
 
 =head1 METHODS
 
@@ -982,10 +984,10 @@ Returns a C<< <link> >> tag for the compressed CSS
 =cut
 
 sub include_css {
-    my $self      = shift;
+    my $self = shift;
     
     if ( Jifty->config->framework('DevelMode') ) {
-        Jifty->web->out(
+        $self->out(
             '<link rel="stylesheet" type="text/css" '
             . 'href="/static/css/main.css" />'
         );
@@ -993,9 +995,9 @@ sub include_css {
     else {
         $self->generate_css;
     
-        Jifty->web->out(
+        $self->out(
             '<link rel="stylesheet" type="text/css" href="/__jifty/css/'
-            . $self->cached_css_digest . '.css" />'
+            . __PACKAGE__->cached_css_digest . '.css" />'
         );
     }
     
@@ -1012,7 +1014,7 @@ and caches it.
 sub generate_css {
     my $self = shift;
     
-    if (not defined $self->cached_css_digest
+    if (not defined __PACKAGE__->cached_css_digest
             or Jifty->config->framework('DevelMode'))
     {
         Jifty->log->debug("Generating CSS...");
@@ -1022,9 +1024,9 @@ sub generate_css {
                             . '/css/main.css'
                   );
         
-        $self->cached_css( $css );
-        $self->cached_css_digest( md5_hex( $css ) );
-        $self->cached_css_mtime( time );
+        __PACKAGE__->cached_css( $css );
+        __PACKAGE__->cached_css_digest( md5_hex( $css ) );
+        __PACKAGE__->cached_css_mtime( time );
     }
 }
 
