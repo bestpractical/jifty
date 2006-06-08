@@ -124,7 +124,21 @@ sub recording_on {
     my $class = shift;
     our @ISA;
     unshift @ISA, "HTTP::Server::Simple::Recorder" unless $class->isa('HTTP::Server::Simple::Recorder');
-} 
+}
+
+=head2 after_setup_listener
+
+If C<$ENV{JIFTY_SERVER_SIGREADY}> is set, send the signal to the
+parent when the server is ready for requests.
+
+=cut
+
+sub after_setup_listener {
+    my $self = shift;
+    my $sig = $ENV{JIFTY_SERVER_SIGREADY} or return;
+    kill $sig => getppid();
+}
+
 
 1;
 

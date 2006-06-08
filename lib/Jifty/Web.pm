@@ -558,6 +558,8 @@ sub _redirect {
 
     # Abort or last_rule out of here
     $self->mason->abort if $self->mason;
+    print ".\r\n" unless $self->mason;
+#    close STDOUT unless $self->mason;
     Jifty::Dispatcher::last_rule();
 
 }

@@ -98,18 +98,21 @@ sub test_config {
 
 =head2 make_server
 
-Creates a new L<Jifty::Server> which C<ISA>
-L<Test::HTTP::Server::Simple> and returns it.
+Creates a new L<Jifty::Server> which C<ISA> L<Jifty::TestServer> and
+returns it.
 
 =cut
 
 sub make_server {
     my $class = shift;
 
-    require Test::HTTP::Server::Simple;
-    unshift @Jifty::Server::ISA, 'Test::HTTP::Server::Simple';
+    # XXX: Jifty::TestServer is not a Jifty::Server, it is actually
+    # server controller that invokes bin/jifty server. kill the
+    # unshift here once we fix all the tests expecting it to be
+    # jifty::server.
+    require Jifty::TestServer;
+    unshift @Jifty::Server::ISA, 'Jifty::TestServer';
 
-    Log::Log4perl->get_logger("Jifty::Server")->less_logging(3);
     my $server = Jifty::Server->new;
 
     return $server;

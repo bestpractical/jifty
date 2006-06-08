@@ -31,9 +31,11 @@ set there.  The default port is 8888.
 
 sub options {
     (
-     'p|port=s' => 'port',
-     'start'    => 'start',
-     'stop'     => 'stop',
+     'p|port=s'   => 'port',
+     'stop'       => 'stop',
+     'sigready=s' => 'sigready',
+     'quiet'      => 'quiet',
+     'dbiprof'    => 'dbiprof',
     )
 }
 
@@ -44,6 +46,11 @@ you.
 
 =cut
 
+# XXX: if test::builder is not used, sometimes connection is not
+# properly closed, causing the client to wait for the content for a
+# 302 redirect, see t/06-signup.t, which timeouts after test 24.
+use Test::Builder ();
+
 sub run {
     my $self = shift;
     Jifty->new();
@@ -51,7 +58,7 @@ sub run {
     if ($self->{stop}) {
         open my $fh, '<', PIDFILE;
         my $pid = <$fh>;
-        kill 'TERM', $pid;
+        kill 'TERM' => $pid;
         return;
     }
 
@@ -61,14 +68,20 @@ sub run {
         File::Path::rmtree(["$data_dir/cache", "$data_dir/obj"]);
     }
 
-    if ($self->{start}) {
-        if (fork()) {
-            return;
-        }
-    }
+    $SIG{TERM} = sub { exit };
     open my $fh, '>', PIDFILE or die $!;
     print $fh $$;
     close $fh;
+
+    Jifty->new();
+
+    Jifty->handle->dbh->{Profile} = '6/DBI::ProfileDumper'
+        if $self->{dbiprof};
+
+    $ENV{JIFTY_SERVER_SIGREADY} ||= $self->{sigready}
+        if $self->{sigready};
+    Log::Log4perl->get_logger("Jifty::Server")->less_logging(3)
+        if $self->{quiet};
 
     Jifty::Server->new(port => $self->{port})->run;
 }
