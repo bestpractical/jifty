@@ -110,8 +110,16 @@ sub make_server {
     # server controller that invokes bin/jifty server. kill the
     # unshift here once we fix all the tests expecting it to be
     # jifty::server.
-    require Jifty::TestServer;
-    unshift @Jifty::Server::ISA, 'Jifty::TestServer';
+    if ($ENV{JIFTY_TESTSERVER_PROFILE} ||
+        $ENV{JIFTY_TESTSERVER_COVERAGE} ||
+        $ENV{JIFTY_TESTSERVER_DBIPROF}) {
+        require Jifty::TestServer;
+        unshift @Jifty::Server::ISA, 'Jifty::TestServer';
+    }
+    else {
+        require Test::HTTP::Server::Simple;
+        unshift @Jifty::Server::ISA, 'Test::HTTP::Server::Simple';
+    }
 
     my $server = Jifty::Server->new;
 

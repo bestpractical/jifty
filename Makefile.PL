@@ -46,6 +46,7 @@ requires('Params::Validate');
 requires('Pod::Simple'); #Pod::Simple::Text
 requires('String::Koremutake');
 requires('Test::Base' => 0.44);            # Test::Base::Filter
+requires('Test::HTTP::Server::Simple' => '0.02');
 requires('Test::HTML::Lint');
 requires('Test::More' => 0.62);
 requires('Test::Pod::Coverage');
