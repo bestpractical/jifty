@@ -999,7 +999,9 @@ and caches it.
 sub generate_css {
     my $self = shift;
     
-    if (not $self->cached_css_digest) {
+    if (not $self->cached_css_digest
+            or Jifty->config->framework('DevelMode'))
+    {
         $self->cached_css(
             CSS::Squish->concatenate(
                 Jifty->config->framework('Web')->{'StaticRoot'}
