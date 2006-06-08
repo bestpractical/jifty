@@ -51,6 +51,18 @@ Action.prototype = {
         return elements;
     },
 
+    buttons: function() {
+	var elements = new Array();
+	var possible = Form.getElements(this.form);
+	for(var i = 0; i < possible.length; i++) {
+	    actions = Form.Element.buttonActions(possible[i]);
+	    if(!actions || actions.indexOf(this.moniker) >= 0) {
+		elements.push(possible[i]);
+	    }
+	}
+	return elements;
+    },
+
     getField: function(name) {
         var elements = this.fields();
         for (var i = 0; i < elements.length; i++) {
@@ -167,10 +179,12 @@ Action.prototype = {
     },
 
     disable_input_fields: function() {
-	this.fields().each(function() {
-		arguments[0].blur();
-		arguments[0].disabled = true;
-	    });
+	var disable = function() {
+	    arguments[0].blur();
+	    arguments[0].disabled = true;
+	};
+	this.fields().each(disable);
+	this.buttons().each(disable);
     }
 };
 
@@ -272,8 +286,8 @@ Object.extend(Form.Element, {
             if (elt.nodeName == 'FORM') {
                 element.form = elt;
                 return elt;
-            }
-        }
+            } 
+       }
         return null;
     },
 
@@ -291,6 +305,16 @@ Object.extend(Form.Element, {
         }
         return extras;
     },
+
+    buttonActions: function(element) {
+        element = $(element);
+	var actions = Form.Element.buttonArguments(element)['J:ACTIONS'];
+	if(actions) {
+	    return actions.split(",");
+	} else {
+	    return new Array();
+	}
+    },  
 
     buttonFormElements: function(element) {
         element = $(element);
