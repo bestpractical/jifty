@@ -27,6 +27,22 @@ handlers.
 use base qw/Class::Accessor::Fast/;
 use Hook::LexWrap qw(wrap);
 use Module::Refresh ();
+
+BEGIN {
+    # Creating a new CGI object breaks FastCGI in all sorts of painful
+    # ways.  So wrap the call and preempt it if we already have one
+    use CGI ();
+    *CGI::__jifty_real_new = \&CGI::new;
+    
+    no warnings qw(redefine);
+    *CGI::new = sub {
+	return Jifty->handler->cgi if Jifty->handler->cgi;
+	CGI::__jifty_real_new(@_);	
+    }
+};
+
+
+
 __PACKAGE__->mk_accessors(qw(mason dispatcher static_handler cgi apache));
 
 =head2 new
@@ -41,13 +57,9 @@ sub new {
     bless $self, $class;
 
     $self->create_cache_directories();
-
-    # Creating a new CGI object breaks FastCGI in all sorts of painful
-    # ways.  So wrap the call and preempt it if we already have one
-    use CGI;
-    wrap 'CGI::new', pre => sub {
-        $_[-1] = Jifty->handler->cgi if Jifty->handler->cgi;
-    };
+#    wrap 'CGI::new', pre => sub {
+#        $_[-1] = Jifty->handler->cgi if Jifty->handler->cgi;
+#    };
 
     $self->dispatcher(
         Jifty->config->framework('ApplicationClass') . "::Dispatcher" );
