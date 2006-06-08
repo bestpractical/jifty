@@ -121,6 +121,7 @@ sub make_server {
         unshift @Jifty::Server::ISA, 'Test::HTTP::Server::Simple';
     }
 
+    Log::Log4perl->get_logger("Jifty::Server")->less_logging(3);
     my $server = Jifty::Server->new;
 
     return $server;
