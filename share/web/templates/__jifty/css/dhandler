@@ -1,6 +1,11 @@
 <%init>
 $r->content_type("text/css");
 Jifty->web->generate_css;
+
+use HTTP::Date qw();
+$r->header_out('Last-Modified'
+                    => HTTP::Date::time2str( Jifty->web->cached_css_mtime ));
+
 Jifty->web->out( Jifty->web->cached_css );
 return;
 </%init>
