@@ -560,8 +560,6 @@ sub _redirect {
 
     # Mason abort, or dispatcher abort out of here
     $self->mason->abort if $self->mason;
-    print ".\r\n" unless $self->mason;
-#    close STDOUT unless $self->mason;
     Jifty::Dispatcher::_abort;
 }
 
