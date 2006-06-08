@@ -331,6 +331,38 @@ Object.extend(Form.Element, {
             extras.push(e);
         }
         return extras;
+    },
+
+    buttonArguments: function(element) {
+        element = $(element);
+        if (!element || (element.nodeName != 'INPUT') || (element.getAttribute("type") != "submit"))
+            return $H();
+        var extras = $H();
+
+        // Split other arguments out, if we're on a button
+        var pairs = element.getAttribute("name").split("|");
+        for (var i = 0; i < pairs.length; i++) {
+            var bits = pairs[i].split('=',2);
+            extras[bits[0]] = bits[1];
+        }
+        return extras;
+    },
+
+    buttonFormElements: function(element) {
+        element = $(element);
+
+        var extras = $A();
+        var args = Form.Element.buttonArguments(element);
+        var keys = args.keys();
+        for (var i = 0; i < keys.length; i++) {
+            var e = document.createElement("input");
+            e.setAttribute("type", "hidden");
+            e.setAttribute("name", keys[i]);
+            e.setAttribute("value", args[keys[i]]);
+            e['virtualform'] = element.form;
+            extras.push(e);
+        }
+        return extras;
     }
 
 });
