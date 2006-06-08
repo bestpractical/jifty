@@ -180,7 +180,7 @@ sub javascript {
                     $self->log->debug("Can't find region ".$hook->{refresh});
                     @args{qw/mode path region/} = ('Replace', undef, $hook->{refresh});
                 }
-            } elsif ((exists $hook->{refresh_self} and Jifty->web->current_region) or ($hook->{args} and %{$hook->{args}})) {
+            } elsif ((exists $hook->{refresh_self} and Jifty->web->current_region) or (Jifty->web->current_region and $hook->{args} and %{$hook->{args}})) {
                 # If we just pass arguments, treat as a refresh_self
                 @args{qw/mode path region/} = ('Replace', Jifty->web->current_region->path, Jifty->web->current_region);
             } elsif (exists $hook->{delete}) {
