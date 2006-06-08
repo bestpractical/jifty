@@ -354,7 +354,13 @@ sub current_user {
     my $session = $self->session;
     return undef unless $session;
 
-    return $session->get('user');
+    my $id = $session->get('user_id');
+    my $object = (Jifty->config->framework('ApplicationClass')."::CurrentUser")->new();
+    my $user = $session->get('user_ref')->new( current_user => $object );
+    $user->load_by_cols( id => $id );
+    $object->user_object($user);
+
+    return $object;
 }
 
 1;
