@@ -159,14 +159,18 @@ sub current_user {
     my $self = shift;
     if (@_) {
         my $user = shift;
-         $self->session->set('user' => $user);
+        $self->session->set('user_id'  => $user->id);
+        $self->session->set('user_ref' => ref $user->user_object);
     }
     if (defined $self->temporary_current_user) {
         return $self->temporary_current_user;
-    } elsif ($self->session->get('user')) {
-        return $self->session->get('user');
-    }
-    else {
+    } elsif (my $id = $self->session->get('user_id')) {
+        my $object = (Jifty->config->framework('ApplicationClass')."::CurrentUser")->new();
+        my $user = $self->session->get('user_ref')->new( current_user => $object );
+        $user->load_by_cols( id => $id );
+        $object->user_object($user);
+        return $object;
+    } else {
         my $object = (Jifty->config->framework('ApplicationClass')."::CurrentUser")->new();
         $object->is_superuser(1) if Jifty->config->framework('AdminMode');
         return ($object);
