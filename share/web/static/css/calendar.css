@@ -9,10 +9,3 @@
     padding: 0 1em 0 1em;
     font-size: 1.5em;
 }
-
-.calendar-link {
-    padding-left: 20px;
-    background: url(/static/images/silk/calendar.png) no-repeat;
-    letter-spacing: -1000em;
-}
-

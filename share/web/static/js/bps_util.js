@@ -22,6 +22,7 @@ function createCalendarLink(input) {
     if (e) {
         var link = document.createElement("a");
         link.setAttribute("href", "javascript:openCalWindow('"+e.id+"')");
+        Element.addClassName(link, "calendar_link");
         
         var img = document.createElement("img");
         img.setAttribute("src", "/static/images/silk/calendar.png");
