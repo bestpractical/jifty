@@ -160,6 +160,36 @@ sub action_field_value {
     return $input->value;
 }
 
+sub send_action {
+    my $self = shift;
+    my $class = shift;
+    my %args = @_;
+
+
+    my $uri = $self->uri->clone;
+    $uri->path("__jifty/webservices/yaml");
+
+    my $request = HTTP::Request->new(
+        POST => $uri,
+        [ 'Content-Type' => 'text/x-yaml' ],
+        Jifty::YAML::Dump(
+            {   path => $uri->path,
+                actions => {
+                    action => {
+                        moniker => 'action',
+                        class   => $class,
+                        fields  => \%args
+                    }
+                }
+            }
+        )
+    );
+    my $result = $self->request( $request );
+    my $content = eval { Jifty::YAML::Load($result->content)->{action} } || undef;
+    $self->back;
+    return $content;
+}
+
 # When it sees something like
 # http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd as a DOCTYPE, this will make
 # it open static/dtd/xhtml1-strict.dtd instead -- great for offline hacking!
