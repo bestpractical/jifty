@@ -22,6 +22,14 @@
     no longer a stock Rico build.  See the comments at the top of the file 
     if you're interested.
 
+ r13677@zoq-fot-pik:  chmrr | 2006-06-08 00:04:18 -0400                                        * 'last_rule' now aborts only the current stage -- thus, last_rule                         
+ from a 'before' block will *NOT* prevent the RUN stage from happening!                       This is a *BACKWARDS-INCOMPATIBILE CHANGE*, but fixes the dispatcher                        
+ to agree with its docs                                                                      
+  * 'abort' is the correct call to skip straight to the cleanup block.                       
+  * This allows the edit in place plugin to 'claim' its path and                             
+ protect it from access control in the app's 'before' blocks                                                                                                                              
+
+
 
 0.60507 (7 May 2006)
 
