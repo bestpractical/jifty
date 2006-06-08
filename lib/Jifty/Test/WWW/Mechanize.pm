@@ -167,7 +167,7 @@ L<Jifty::Result> of the action.  C<CLASS> specifies the class of the
 action, and all parameters thereafter supply argument keys and values.
 
 The URI of the page is unchanged after this; this is accomplished by
-use of the "back button" after making the webservice request.
+using the "back button" after making the webservice request.
 
 =cut
 
