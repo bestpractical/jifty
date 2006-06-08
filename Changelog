@@ -7,6 +7,10 @@
   * The JS method document.getElementsBySelector() no longer exists.  Use 
     cssQuery() instead.
 
+  * Jifty::Record now returns empty objects for related objects that can't be 
+    loaded, rather than undef
+
+
 * The keybinding JS code is now a more proper library 
     (Jifty.KeyBindings) and less intrusive.  If you've overridden the 
     default /_elements/wrapper in your app, you'll want to make sure you get 

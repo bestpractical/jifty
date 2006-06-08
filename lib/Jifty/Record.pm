@@ -218,7 +218,6 @@ sub _set {
     my $self = shift;
 
     unless ($self->check_update_rights(@_)) {
-        Jifty->log->logcluck("Permission denied");
         return (0, _('Permission denied'));
     }
     $self->SUPER::_set(@_);
