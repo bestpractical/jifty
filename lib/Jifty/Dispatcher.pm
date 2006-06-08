@@ -1149,7 +1149,7 @@ sub import_plugins {
         @{ $self . "::RULES_$stage" } = @rules;
     }
     if (@deferred) {
-        warn "Leftover unmatched deferred rules: ".YAML::Dump(\@deferred);
+        warn "Leftover unmatched deferred rules: ".Jifty::YAML::Dump(\@deferred);
     }
 }
 

@@ -26,6 +26,10 @@ Don't show a wrapper for an inline button
 
 Don't show a label for an inline button
 
+=head2 render_hints
+
+Don't show hints for an inline button
+
 =cut
 
 
@@ -33,5 +37,6 @@ Don't show a label for an inline button
 sub render_wrapper_start { }
 sub render_wrapper_end {}
 sub render_label {}
+sub render_hints {}
 
 1;
