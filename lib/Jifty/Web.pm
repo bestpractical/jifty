@@ -159,8 +159,8 @@ sub current_user {
     my $self = shift;
     if (@_) {
         my $user = shift;
-        $self->session->set('user_id'  => $user->id);
-        $self->session->set('user_ref' => ref $user->user_object);
+        $self->session->set('user_id'  => $user ? $user->id : undef);
+        $self->session->set('user_ref' => $user ? ref $user->user_object : undef);
     }
     if (defined $self->temporary_current_user) {
         return $self->temporary_current_user;
@@ -1015,7 +1015,7 @@ sub generate_css {
     if (not defined $self->cached_css_digest
             or Jifty->config->framework('DevelMode'))
     {
-        Jifty->log->info("Generating CSS...");
+        Jifty->log->debug("Generating CSS...");
         
         my $css = CSS::Squish->concatenate(
                         Jifty->config->framework('Web')->{'StaticRoot'}
