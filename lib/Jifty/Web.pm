@@ -266,9 +266,11 @@ sub handle_request {
             $request_action->has_run(1);
 
             if ( my $err = $@ ) {
-                # poor man's exception propagation
-                # We need to get "LAST RULE" exceptions back up to the dispatcher
-                die $err if ( $err =~ /^LAST RULE/ );
+                # Poor man's exception propagation; we need to get
+                # "LAST RULE" and "ABORT" exceptions back up to the
+                # dispatcher.  This is specifically for redirects from
+                # actions
+                die $err if ( $err =~ /^(LAST RULE|ABORT)/ );
                 $self->log->fatal($err);
                 $action->result->error(
                     Jifty->config->framework("DevelMode")
@@ -556,12 +558,11 @@ sub _redirect {
     $apache->header_out( Status => 302 );
     $apache->send_http_header();
 
-    # Abort or last_rule out of here
+    # Mason abort, or dispatcher abort out of here
     $self->mason->abort if $self->mason;
     print ".\r\n" unless $self->mason;
 #    close STDOUT unless $self->mason;
-    Jifty::Dispatcher::last_rule();
-
+    Jifty::Dispatcher::_abort;
 }
 
 =head3 save_continuation

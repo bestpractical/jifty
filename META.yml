@@ -12,6 +12,7 @@ no_index:
     - DB
 requires: 
   App::CLI: 0.03
+  CSS::Squish: 0.01
   Cache::Cache: 0
   Calendar::Simple: 0
   Class::Accessor: 0

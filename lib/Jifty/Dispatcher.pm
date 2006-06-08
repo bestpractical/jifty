@@ -72,7 +72,7 @@ directory in a default Jifty application.  They're also the right way
 to enable L<Jifty::LetMe> actions.
 
 You can entirely stop processing with the C<redirect> and C<abort>
-directives.
+directives, though L</after> rules will still run.
 
 =item on
 
@@ -235,7 +235,7 @@ Break out from the current C<run> block and stop running rules in this stage.
 
 =head2 abort $code
 
-Abort the request.
+Abort the request; this skips straight to the cleanup stage.
 
 =head2 redirect $uri
 
@@ -447,16 +447,38 @@ sub handle_request {
     local $HTML::Mason::Commands::m = undef;
     # Mason introduces a DIE handler that generates a mason exception
     # which in turn generates a backtrace. That's fine when you only
-    # do it once per request. But it's really, really painful when you do it
-    # often, as is the case with fragments
+    # do it once per request. But it's really, really painful when you
+    # do it often, as is the case with fragments
     local $SIG{__DIE__} = 'DEFAULT';
 
     eval {
         $Dispatcher->_do_dispatch( Jifty->web->request->path);
     };
     if ( my $err = $@ ) {
-        $self->log->warn(ref($err) . " " ."'$err'") if ( $err !~ /^LAST RULE/);
+        $self->log->warn(ref($err) . " " ."'$err'") if ( $err !~ /^ABORT/ );
     }
+}
+
+=head2 _handle_stage NAME, EXTRA_RULES
+
+Handles the all rules in the stage named C<NAME>.  Additionally, any
+other arguments passed after the stage C<NAME> are added to the end of
+the rules for that stage.
+
+This is the unit which calling L</last_rule> skips to the end of.
+
+=cut
+
+sub _handle_stage {
+    my ($self, $stage, @rules) = @_;
+
+    eval { $self->_handle_rules( [ $self->rules($stage), @rules ] ); };
+    if ( my $err = $@ ) {
+        $self->log->warn( ref($err) . " " . "'$err'" )
+            if ( $err !~ /^(LAST RULE|ABORT)/ );
+        return $err =~ /^ABORT/ ? 0 : 1;
+    }
+    return 1;
 }
 
 =head2 _handle_rules RULESET
@@ -523,17 +545,7 @@ sub _handle_rule {
 no warnings 'exiting';
 
 sub next_rule { next RULE }
-sub last_rule { 
-    
-    # Mason introduces a DIE handler that generates a mason exception
-    # which in turn generates a backtrace. That's fine when you only
-    # do it once per request. But it's really, really painful when you do it
-    # often, as is the case with fragments
-   
-      local $SIG{__DIE__} = 'IGNORE';
-
-    die "LAST RULE"; 
-}
+sub last_rule { die "LAST RULE" }
 
 =head2 _do_under
 
@@ -669,7 +681,6 @@ sub _do_redirect {
     my ( $self, $path ) = @_;
     $self->log->debug("Redirecting to $path");
     Jifty->web->redirect($path);
-    last_rule;
 }
 
 =head2 _do_abort 
@@ -683,8 +694,10 @@ Don't display any page. just stop.
 sub _do_abort {
     my $self = shift;
     $self->log->debug("Aborting processing");
-    last_rule;
+    $self->_abort;
 }
+
+sub _abort { die "ABORT" }
 
 =head2 _do_show [PATH]
 
@@ -775,23 +788,21 @@ sub _do_dispatch {
 
     $self->log->debug("Dispatching request to ".$self->{path});
 
-    eval {
-        $self->_handle_rules( [ $self->rules('SETUP') ] );
-        HANDLE_WEB: { Jifty->web->handle_request(); }
-        $self->_handle_rules( [ $self->rules('RUN'), 'show' ] );
-    };
-    if ( my $err = $@ ) {
-        $self->log->warn(ref($err) . " " ."'$err'") if ( $err !~ /^LAST RULE/);
+    # Setup -- we we don't abort out of setup, then run the
+    # actions and then the RUN stage.
+    if ($self->_handle_stage('SETUP')) {
+        # Run actions
+        Jifty->web->handle_request();
+
+        # Run, and show the page
+        $self->_handle_stage('RUN' => 'show');
     }
 
-    eval {
-        $self->_handle_rules( [ $self->rules('CLEANUP') ] );
-    };
-    if ( my $err = $@ ) {
-        $self->log->warn(ref($err) . " " ."'$err'") if ( $err !~ /^LAST RULE/);
-    }
+    # Cleanup
+    $self->_handle_stage('CLEANUP');
 
-    last_rule;
+    # Out to the next dispatcher's cleanup
+    $self->_abort;
 }
 
 =head2 _match CONDITION
