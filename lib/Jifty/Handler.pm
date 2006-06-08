@@ -25,7 +25,6 @@ handlers.
 =cut
 
 use base qw/Class::Accessor::Fast/;
-use Hook::LexWrap qw(wrap);
 use Module::Refresh ();
 
 BEGIN {

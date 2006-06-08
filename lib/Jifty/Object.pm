@@ -6,6 +6,7 @@ package Jifty::Object;
 use Log::Log4perl;
 use HTML::Entities;
 use Carp;
+use Scalar::Util qw(refaddr);
 
 =head1 Jifty::Object
 
@@ -78,7 +79,7 @@ sub _get_current_user {
                 = caller( $depth++ );
             my $caller_self = $DB::args[0];
             next unless ( ref($caller_self) );    #skip class methods;
-            next if ( $caller_self eq $self );
+	    next if $caller_self->isa('Jifty::Date'); 
             next
                 unless ( $caller_self->can('current_user')
                 and $caller_self->current_user
