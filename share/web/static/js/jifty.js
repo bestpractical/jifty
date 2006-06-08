@@ -55,9 +55,15 @@ Action.prototype = {
 	var elements = new Array();
 	var possible = Form.getElements(this.form);
 	for(var i = 0; i < possible.length; i++) {
-	    actions = Form.Element.buttonActions(possible[i]);
-	    if(!actions || actions.indexOf(this.moniker) >= 0) {
-		elements.push(possible[i]);
+	    if(possible[i].nodeName == 'INPUT' && possible[i].getAttribute("type") == 'submit') {
+		actions = Form.Element.buttonActions(possible[i]);
+		//If the button has no actions explicitly associated
+		//with it, it's associated with all the actions in the
+		//form
+		if(   actions.length == 0
+		   || actions.indexOf(this.moniker) >= 0) {
+		    elements.push(possible[i]);
+		}
 	    }
 	}
 	return elements;
