@@ -79,6 +79,12 @@ framework will look for a site configuration file, specified in either
 the framework's C<SiteConfig> or the C<JIFTY_SITE_CONFIG> environment
 variable.
 
+After loading the site configuration file (if it exists), the
+framework will look for a test configuration file, specified in either
+the framework's C<TestConfig> or the C<JIFTY_TEST_CONFIG> environment
+variable.
+
+Values in the test configuration will clobber the site configuration.
 Values in the site configuration file clobber those in the vendor
 configuration file. Values in the vendor configuration file clobber
 those in the application configuration file.
@@ -132,6 +138,21 @@ sub load {
 
     $config = Hash::Merge::merge( $self->stash, $site );
     $self->stash($config);
+
+    my $test = $self->load_file(
+        Jifty::Util->absolute_path(
+            $self->framework('TestConfig') || $ENV{'JIFTY_TEST_CONFIG'}
+        )
+    );
+
+    $config = Hash::Merge::merge( $self->stash, $test );
+    $self->stash($config);
+
+
+
+
+
+
 
     # Merge guessed values in for anything we didn't explicitly define
     # Whatever's in the stash overrides anything we guess
