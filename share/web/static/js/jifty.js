@@ -716,7 +716,8 @@ function show_action_result() {
     if(status != 'message' && status != 'error') return;
 
     var node = document.createElement('div');
-    node.setAttribute('id', 'result-' + moniker);
+    var node_id = 'result-' + moniker;
+    node.setAttribute('id', node_id);
     node.setAttribute('class', 'result-' + status);
     node.innerHTML = text;
 
@@ -725,10 +726,9 @@ function show_action_result() {
     } else {
         popup.appendChild(node);
     }
-    new Effect.SlideDown(node, {duration: 0.5});
     
     setTimeout(function () {
-        new Effect.Fade(node, {duration: 5.0});
+	    new Effect.Fade(node, {duration: 5.0});
     }, 2000);
 }
 
