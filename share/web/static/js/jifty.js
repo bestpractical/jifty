@@ -640,9 +640,7 @@ function update() {
                 }
             }
         } finally {
-            // Re-apply the Behavior stuff
-            //Behaviour.apply();
-            // And make the wait message go away
+            // Make the wait message go away
             hide_wait_message();
         }
     };

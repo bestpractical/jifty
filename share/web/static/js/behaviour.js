@@ -55,4 +55,3 @@ var Behaviour = {
 }    
 
 DOM.Events.addListener( window, "load", function() { Behaviour.apply() } );
-
