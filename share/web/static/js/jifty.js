@@ -38,17 +38,20 @@ Action.prototype = {
 
     // Returns an Array of all fields in this Action
     fields: function() {
-        var elements = new Array;
-        var possible = Form.getElements(this.form);
-        // Also pull from extra query parameters
-        for (var i = 0; i < this.extras.length; i++)
-            possible.push(this.extras[i]);
+	if(!this.cached_fields) {
+	    var elements = new Array;
+	    var possible = Form.getElements(this.form);
+	    // Also pull from extra query parameters
+	    for (var i = 0; i < this.extras.length; i++)
+		possible.push(this.extras[i]);
 
-        for (var i = 0; i < possible.length; i++) {
-            if (Form.Element.getMoniker(possible[i]) == this.moniker)
-                elements.push(possible[i]);
-        }
-        return elements;
+	    for (var i = 0; i < possible.length; i++) {
+		if (Form.Element.getMoniker(possible[i]) == this.moniker)
+		    elements.push(possible[i]);
+	    }
+	    this.cached_fields = elements;
+	}
+        return this.cached_fields;
     },
 
     buttons: function() {
@@ -611,6 +614,7 @@ function update() {
                             }
                             // We need to give the browser some "settle" time before we eval scripts in the body
                             setTimeout((function() { this.evalScripts() }).bind(textContent), 10);
+			    Behaviour.apply(f['element']);
                         }
                     }
                 }
@@ -629,20 +633,15 @@ function update() {
                  result = result.nextSibling) {
                 if (result.nodeName == 'result') {
                     for (var key = result.firstChild;
-                         key != null;
-                         key = key.nextSibling) {
+			 key != null;
+			 key = key.nextSibling) {
 			show_action_result(result.getAttribute("moniker"),key);
-                        if (key.nodeName == 'message') {
-			    //alert(key.textContent);
-                        } else if (key.nodeName == 'error') {
-			    //alert('ERROR: '+key.textContent);
-                        }
                     }
                 }
             }
         } finally {
             // Re-apply the Behavior stuff
-            Behaviour.apply();
+            //Behaviour.apply();
             // And make the wait message go away
             hide_wait_message();
         }

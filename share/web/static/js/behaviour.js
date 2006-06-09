@@ -38,9 +38,12 @@ var Behaviour = {
     },
     
     apply: function() {
+	var root = arguments[0];
+	if(root) root = $(root);
+
         for (var h = 0; sheet = Behaviour.list[h]; h++) {
             for (var selector in sheet) {
-                var elements = cssQuery(selector);
+                var elements = cssQuery(selector, root);
                 
                 if ( !elements ) continue;
 
@@ -51,5 +54,5 @@ var Behaviour = {
     }
 }    
 
-DOM.Events.addListener( window, "load", Behaviour.apply );
+DOM.Events.addListener( window, "load", function() { Behaviour.apply() } );
 
