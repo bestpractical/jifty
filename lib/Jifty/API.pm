@@ -37,6 +37,7 @@ sub new {
             "Jifty::Action",
             map {ref($_)."::Action"} Jifty->plugins,
         ],
+        except   => qr/\.#/,
         sub_name => "_actions",
     );
 

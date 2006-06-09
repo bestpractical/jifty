@@ -116,6 +116,7 @@ sub prepare_model_classes {
     require Module::Pluggable;
     Module::Pluggable->import(
         require     => 1,
+        except      => qr/\.#/,
         search_path =>
             [ "Jifty::Model", $self->{'_application_class'} . "::Model" ],
         sub_name => 'models',

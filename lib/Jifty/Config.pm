@@ -20,8 +20,6 @@ use Log::Log4perl;
 use Hash::Merge;
 Hash::Merge::set_behavior('RIGHT_PRECEDENT');
 
-require Module::Pluggable;
-
 use File::Basename();
 use base qw/Class::Accessor::Fast/;
 

@@ -184,7 +184,8 @@ sub require {
         search_path =>
           [ map { $base . "::" . $_ } 'Model', 'Action', 'Notification' ],
         require => 1,
-        inner => 0
+        except  => qr/\.#/,
+        inner   => 0
     );
     $self->{models}{$_} = 1 for grep {/^($base)::Model::(.*)$/ and not /Collection$/} $self->plugins;
     for my $full (keys %{$self->{models}}) {

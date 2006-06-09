@@ -10,6 +10,7 @@ my @models;
 # names.
 Module::Pluggable->import(
     require     => 1,
+    except      => qr/\.#/,
     search_path => [  $ApplicationClass . "::Model" ],
     sub_name    => 'jifty_app_models',
 );

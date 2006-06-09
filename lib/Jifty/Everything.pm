@@ -73,7 +73,9 @@ use Jifty::Web::Form::Field ();
 use Jifty::Web::Menu ();
 
 use Module::Pluggable;
-Module::Pluggable->import(search_path => ['Jifty::Web::Form::Field'], require => 1);
+Module::Pluggable->import(search_path => ['Jifty::Web::Form::Field'],
+                          require     => 1,
+                          except      => qr/\.#/);
 __PACKAGE__->plugins;
 
 1;
