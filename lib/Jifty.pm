@@ -128,7 +128,6 @@ sub new {
         push @plugins, $class->new(%options);
     }
     __PACKAGE__->plugins(@plugins);
-
     __PACKAGE__->handler(Jifty::Handler->new());
     __PACKAGE__->api(Jifty::API->new());
 
