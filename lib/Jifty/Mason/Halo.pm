@@ -30,14 +30,16 @@ sub start_component_hook {
 
     return if $context->comp->path eq "/__jifty/halo";
 
-    my $DEPTH = $context->request->notes('_halo_depth') || 0;
-    my $STACK = $context->request->notes('_halo_stack')
-        || $context->request->notes( '_halo_stack' => [] );
-    my $INDEX_STACK = $context->request->notes('_halo_index_stack')
-        || $context->request->notes( '_halo_index_stack' => [] );
+    Jifty->handler->stash->{ '_halo_index_stack' } ||= [];
+
+    my $DEPTH = Jifty->handler->stash->{'_halo_depth'} || 0;
+    my $STACK = Jifty->handler->stash->{'_halo_stack'} ||= [];
+        
+    my $INDEX_STACK = Jifty->handler->stash->{'_halo_index_stack'};
+
     my $halo_base = Jifty->web->serial;
 
-    $context->request->notes('_halo_depth' => ++$DEPTH);
+    Jifty->handler->stash->{'_halo_depth'} = ++$DEPTH;
     if ($STACK->[-1]) {
         push @{$STACK->[-1]->{sql_statements}}, Jifty->handle->sql_statement_log;
         Jifty->handle->clear_sql_statement_log;
@@ -74,9 +76,9 @@ sub end_component_hook {
 
     return if $context->comp->path =~ "^/__jifty/halo";
 
-    my $STACK = $context->request->notes('_halo_stack');
-    my $INDEX_STACK = $context->request->notes('_halo_index_stack');
-    my $DEPTH = $context->request->notes('_halo_depth');
+    my $STACK = Jifty->handler->stash->{'_halo_stack'};
+    my $INDEX_STACK = Jifty->handler->stash->{'_halo_index_stack'};
+    my $DEPTH = Jifty->handler->stash->{'_halo_depth'};
 
     my $FRAME_ID = pop @$INDEX_STACK;
 
@@ -87,7 +89,7 @@ sub end_component_hook {
     Jifty->handle->clear_sql_statement_log;
 
 
-    $context->request->notes('_halo_depth' => $DEPTH-1 );
+    Jifty->handler->stash->{'_halo_depth'} = $DEPTH-1 ;
 
     # If 
     return if $self->_unrendered_component($context);
@@ -111,7 +113,7 @@ sub _unrendered_component {
     my $self    = shift;
     my $context = shift;
     if (   $context->comp->is_subcomp()
-        or not $context->request->notes('in_body'))
+        or not Jifty->handler->stash->{'in_body'})
     {
         return 1;
     } else {
@@ -131,7 +133,7 @@ the halo data and metadata.
 
 sub render_component_tree {
     my $self  = shift;
-    my @stack = @{ Jifty->web->mason->notes('_halo_stack') };
+    my @stack = @{ Jifty->handler->stash->{'_halo_stack'} };
 
     for (@stack) {
         $_->{'render_time'} = int((Time::HiRes::time - $_->{'start_time'}) * 1000)/1000

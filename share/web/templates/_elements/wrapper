@@ -18,7 +18,7 @@
 % Jifty::Mason::Halo->render_component_tree() if (Jifty->config->framework('DevelMode') );
 </body>
 </html>
-%$m->notes('in_body' => 0);
+% Jifty->handler->stash->{'in_body'} = 0;
 <%args>
 $title => ""
 </%args>
@@ -27,5 +27,5 @@ $title => ""
 $m->comp( 'header', title => $title);
 # now that we've printed out the header, we're inside the body, so it's safe to print
 # halo markers.
-$m->notes('in_body' => 1);
+Jifty->handler->stash->{'in_body'} = 1;
 </%init>

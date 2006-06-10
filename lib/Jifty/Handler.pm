@@ -177,6 +177,7 @@ sub handle_request {
     $self->apache( HTML::Mason::FakeApache->new( cgi => $self->cgi ) );
 
     # Build a new stash for the life of this request
+    warn "SEtting up a stash on $self";
     $self->stash({});
     local $HTML::Mason::Commands::JiftyWeb = Jifty::Web->new();
     Jifty->web->request( Jifty::Request->new()->fill( $self->cgi ) );
