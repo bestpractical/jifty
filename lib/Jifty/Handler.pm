@@ -42,7 +42,7 @@ BEGIN {
 
 
 
-__PACKAGE__->mk_accessors(qw(mason dispatcher static_handler cgi apache));
+__PACKAGE__->mk_accessors(qw(mason dispatcher static_handler cgi apache stash));
 
 =head2 new
 
@@ -176,6 +176,8 @@ sub handle_request {
     $self->cgi( $args{cgi} );
     $self->apache( HTML::Mason::FakeApache->new( cgi => $self->cgi ) );
 
+    # Build a new stash for the life of this request
+    $self->stash({});
     local $HTML::Mason::Commands::JiftyWeb = Jifty::Web->new();
     Jifty->web->request( Jifty::Request->new()->fill( $self->cgi ) );
 
@@ -213,6 +215,7 @@ sub cleanup_request {
     Jifty::Record->flush_cache if Jifty::Record->can('flush_cache');
     $self->cgi(undef);
     $self->apache(undef);
+    $self->stash(undef);
 }
 
 1;
