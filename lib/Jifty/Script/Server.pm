@@ -4,6 +4,19 @@ use strict;
 package Jifty::Script::Server;
 use base qw/App::CLI::Command/;
 
+# XXX: if test::builder is not used, sometimes connection is not
+# properly closed, causing the client to wait for the content for a
+# 302 redirect, see t/06-signup.t, which timeouts after test 24.
+# If we load this after we load the rest of Jifty, its die handler clobbers ours.
+# HATE.  And even worse, Test::Builder clobbers our global SIG{__DIE__} handler.
+# So we work around the work around. The real answer is to figure out how Test::Builder 
+# makes our test server not hang and do just that
+my $x;
+BEGIN {$x = $SIG{__DIE__}; }
+use Test::Builder ();
+BEGIN { $SIG{__DIE__} = $x;}
+
+
 use Jifty::Everything;
 use Jifty::Server;
 use File::Path ();
@@ -45,11 +58,6 @@ C<run> takes no arguments, but starts up a Jifty server process for
 you.
 
 =cut
-
-# XXX: if test::builder is not used, sometimes connection is not
-# properly closed, causing the client to wait for the content for a
-# 302 redirect, see t/06-signup.t, which timeouts after test 24.
-use Test::Builder ();
 
 sub run {
     my $self = shift;
