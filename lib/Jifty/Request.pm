@@ -3,7 +3,7 @@ use strict;
 
 package Jifty::Request;
 
-use base qw/Jifty::Object Class::Accessor::Fast Clone/;
+use base qw/Jifty::Object Class::Accessor::Fast/;
 __PACKAGE__->mk_accessors(qw(_top_request arguments just_validating path _continuation));
 
 use Jifty::JSON;

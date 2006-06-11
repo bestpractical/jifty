@@ -9,7 +9,6 @@ requires('Calendar::Simple');
 requires('Class::Accessor'); # Class::Accessor::Fast
 requires('Class::Container');
 requires('Class::Data::Inheritable');
-requires('Clone');
 requires('Compress::Zlib');
 requires('CSS::Squish' => 0.01 );
 requires('DBD::SQLite' => 1.11 );

@@ -37,7 +37,7 @@ L<Jifty::Web/handle_request>.
 =cut
 
 use Jifty::Everything;
-use Clone;
+use Storable 'dclone';
 
 use base qw/Class::Accessor::Fast/;
 
@@ -109,7 +109,7 @@ sub new {
 
     # We're cloning most of our attributes from a previous continuation
     if ($args{clone} and Jifty->web->session->get_continuation($args{clone})) {
-        $self = Clone::clone(Jifty->web->session->get_continuation($args{clone}));
+        $self = dclone(Jifty->web->session->get_continuation($args{clone}));
         for (grep {/^J:A/} keys %{$args{request}->arguments}) {
             $self->request->argument($_ => $args{request}->arguments->{$_});
         }
@@ -168,7 +168,7 @@ sub call {
           if $self->request->path =~ m{[^A-Za-z0-9\-_.!~*'()/?&;+]};
 
         # Clone our request
-        my $request = Clone::clone($self->request);
+        my $request = dclone($self->request);
         
         # Fill in return value(s) into correct part of $request
         $request->do_mapping;
@@ -178,7 +178,7 @@ sub call {
         # in.  For safety, monikers from the saved continuation
         # override those from the request prior to the call
         if (Jifty->web->response->results) {
-            $response = Clone::clone(Jifty->web->response);
+            $response = dclone(Jifty->web->response);
             my %results = $self->response->results;
             $response->result($_ => $results{$_}) for keys %results;
         }
@@ -204,7 +204,7 @@ sub call {
         my %results = $self->response->results;
         for (keys %results) {
             next if Jifty->web->response->result($_);
-            Jifty->web->response->result($_,Clone::clone($results{$_}));
+            Jifty->web->response->result($_,dclone($results{$_}));
         }
 
         # Run any code in the continuation
@@ -212,7 +212,7 @@ sub call {
           if $self->code;
 
         # Enter the request in the continuation, and handle it
-        Jifty->web->request(Clone::clone($self->request));
+        Jifty->web->request(dclone($self->request));
         Jifty->web->handle_request();
     }
 }
