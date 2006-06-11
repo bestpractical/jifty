@@ -4,8 +4,8 @@ if (typeof Jifty == "undefined") Jifty = { };
 
 Jifty.ContextMenu = {
     behaviourRules: {
-        ".menu li.toplevel span.expand a": function(e) { e.innerHTML = ""; },
-        ".context_menu li.toplevel span.expand a": function(e) { e.innerHTML = ""; }
+        "ul.menu li.toplevel span.expand a": function(e) { e.innerHTML = ""; },
+        "ul.context_menu li.toplevel span.expand a": function(e) { e.innerHTML = ""; }
     },
 
     currently_open:  "",
