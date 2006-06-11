@@ -5,7 +5,7 @@
 */
 
 // the following functions allow querying of the DOM using CSS selectors
-var $ID_ONLY = /^#(\w+)\s*(.+)$/;
+var $ID_ONLY = /^#(\w+)\s*(.*)$/;
 var cssQuery = function() {
 var version = "2.0.2";
 
@@ -20,11 +20,11 @@ try {
 	if(!$$from) {
 	    var $$bits = $selector.match($ID_ONLY);
 	    if($$bits) {
-		var $match = $(bits[1]);
+		var $match = document.getElementById($$bits[1]);
 		if(!$match || !$$bits[2].length) {
 		    return $match;
 		} else {
-		    return cssQuery($bits[2], $match);
+		    return cssQuery($$bits[2], $match);
 		}
 	    }
 	}
