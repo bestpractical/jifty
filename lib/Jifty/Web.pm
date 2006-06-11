@@ -406,7 +406,7 @@ sub new_action {
 
     my $action;
     # XXX TODO bullet proof
-    eval { $action = $class->new( %args, arguments => {%arguments} ); };
+    eval { $action = $class->new( %args, arguments => {%arguments}, current_user => $self->current_user ); };
     if ($@) {
         my $err = $@;
         $self->log->fatal($err);

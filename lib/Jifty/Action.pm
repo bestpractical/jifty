@@ -76,9 +76,14 @@ sub new {
         arguments  => {},
         sticky_on_success => 0,
         sticky_on_failure => 1,
+	current_user => undef,
         @_);
 
-    $self->_get_current_user;
+    if ($args{'current_user'}) {
+	$self->current_user($args{current_user});
+    } else {
+    	$self->_get_current_user();
+    }
 
     $self->moniker($args{'moniker'} || 'auto-'.Jifty->web->serial);
     $self->order($args{'order'});
