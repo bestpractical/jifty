@@ -1034,12 +1034,18 @@ sub generate_css {
     {
         Jifty->log->debug("Generating CSS...");
         
-        my $css = CSS::Squish->concatenate(
-                        Jifty->config->framework('Web')->{'StaticRoot'}
-                            . '/css/main.css'
-                  );
-        
-        __PACKAGE__->cached_css( $css );
+        my $css_dir = File::Spec->catdir(
+                           Jifty->config->framework('Web')->{'StaticRoot'},
+                           'css'
+                      );
+
+         my $css = CSS::Squish->concatenate(
+                      Jifty::Util->absolute_path(
+                          File::Spec->catpath( '', $css_dir, 'main.css' )
+                      )
+                   );
+
+         __PACKAGE__->cached_css( $css );
         __PACKAGE__->cached_css_digest( md5_hex( $css ) );
         __PACKAGE__->cached_css_mtime( time );
     }
