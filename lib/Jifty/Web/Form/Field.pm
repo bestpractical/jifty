@@ -41,7 +41,7 @@ aid in placing them in L<HTML::Mason> components.
 
 =cut
 
-use base qw/Jifty::Web::Form::Element Class::Accessor::Fast/;
+use base 'Jifty::Web::Form::Element';
 
 use Scalar::Util;
 use HTML::Entities;
@@ -56,23 +56,20 @@ Should only be called from C<< $action->arguments >>.
 
 sub new {
     my $class = shift;
-    my $self = bless {}, $class;
-
-    my %args = (
-        type          => 'text',
+    my $self = $class->SUPER::new(
+      { type          => 'text',
         class         => '',
         input_name    => '',
         default_value => '',
         sticky_value  => '',
-        render_mode   => 'update',
-        @_,
-    );
+        render_mode   => 'update' });
+    my $args = ref($_[0]) ? $_[0] : {@_};
 
     my $subclass;
-    if ($args{render_as}) {
-        $subclass = ucfirst($args{render_as});
-    } elsif ($args{'type'}) {
-        $subclass = ucfirst($args{'type'});
+    if ($args->{render_as}) {
+        $subclass = ucfirst($args->{render_as});
+    } elsif ($args->{'type'}) {
+        $subclass = ucfirst($args->{'type'});
     }
     if ($subclass) { 
         $subclass = 'Jifty::Web::Form::Field::' . $subclass unless $subclass =~ /::/;
@@ -80,7 +77,7 @@ sub new {
     }
 
     for my $field ( $self->accessors() ) {
-        $self->$field( $args{$field} ) if exists $args{$field};
+        $self->$field( $args->{$field} ) if exists $args->{$field};
     }
 
     # If they key and/or value imply that this argument is going to be
@@ -173,12 +170,12 @@ sub input_name {
 # Otherwise, we should ask our action, how to turn our "name"
 # into a form input name.
 
-    $self->_input_name(@_)
-      || (
-          $self->action
-        ? $self->action->form_field_name( $self->name )
-        : ''
-      );
+    my $ret = $self->_input_name(@_);
+    return $ret if $ret;
+
+    my $action = $self->action;
+    return $action ? $self->action->form_field_name( $self->name )
+                   : '';
 }
 
 

@@ -12,7 +12,7 @@ either a button or a link.
 
 =cut
 
-use base qw/Jifty::Web::Form::Element Class::Accessor::Fast/;
+use base 'Jifty::Web::Form::Element';
 
 =head2 accessors
 
@@ -423,6 +423,12 @@ sub complete_url {
     return $url;
 }
 
+sub _defined_accessor_values {
+    my $self = shift;
+    return { map { my $val = $self->$_; defined $val ? ($_ => $val) : () } 
+        $self->SUPER::accessors };
+}
+
 =head2 as_link
 
 Returns the clickable as a L<Jifty::Web::Form::Link>, if possible.
@@ -434,14 +440,12 @@ better determine if a link or a button is more appropriate.
 sub as_link {
     my $self = shift;
 
-    my %args;
-    $args{$_} = $self->$_
-        for grep { defined $self->$_ } $self->SUPER::accessors;
+    my $args = $self->_defined_accessor_values;
     my $link = Jifty::Web::Form::Link->new(
-        %args,
-        escape_label => $self->escape_label,
-        url          => $self->complete_url,
-        @_
+        { %$args,
+          escape_label => $self->escape_label,
+          url          => $self->complete_url,
+          @_ }
     );
     return $link;
 }
@@ -458,13 +462,11 @@ appropriate.
 sub as_button {
     my $self = shift;
 
-    my %args;
-    $args{$_} = $self->$_
-        for grep { defined $self->$_ } $self->SUPER::accessors;
+    my $args = $self->_defined_accessor_values;
     my $field = Jifty::Web::Form::Field->new(
-        %args,
-        type => 'InlineButton',
-        @_
+        { %$args,
+          type => 'InlineButton',
+          @_ }
     );
     my %parameters = $self->post_parameters;
 
@@ -473,7 +475,7 @@ sub as_button {
         map      { $_ . "=" . $parameters{$_} }
             grep { defined $parameters{$_} } keys %parameters
     );
-    $field->name( join '|', keys %{ $args{parameters} } );
+    $field->name( join '|', keys %{ $args->{parameters} } );
     $field->button_as_link($self->render_as_link);
 
     return $field;

@@ -15,7 +15,7 @@ generates L<Jifty::Web::Form::Link>s.
 
 =cut
 
-use base qw/Jifty::Web::Form::Element Class::Accessor::Fast/;
+use base 'Jifty::Web::Form::Element';
 
 # Since we don't inherit from Form::Field, we don't otherwise stringify
 use overload '""' => sub { shift->render};
@@ -65,20 +65,18 @@ Any parameter which L<Jifty::Web::Form::Element/new> can take.
 
 sub new {
     my $class = shift;
-    my $self  = bless {}, $class;
-
-    my %args = (
-        url          => $ENV{PATH_INFO},
+    my $self  = $class->SUPER::new(
+      { url          => $ENV{PATH_INFO},
         label        => "Click me!",
         tooltip      => undef,
         escape_label => 1,
         class        => '',
-        target       => '',
-        @_
+        target       => '' }
     );
+    my $args = ref($_[0]) ? $_[0] : {@_};
 
-    for my $field ( $self->accessors() ) {
-        $self->$field( $args{$field} ) if exists $args{$field};
+    for my $field ( keys %$args ) {
+        $self->$field( $args->{$field} );
     }
 
     return $self;
