@@ -1,0 +1,438 @@
+Java
+Integration
+Framework
+Toolkit
+Yes, I'm kidding
+----
+Just Fucking Do It.
+----
+45min talk to people:
+ - already web developers
+ - preferably /not/ existing framework users
+ - i.e. "Web 0.9b1" devs
+
+- Demo
+ - To show the Blog thing working upfront before Code
+ - the idea is to show the "polishedness" of vanilla jifty apps
+
+- Talk about each of the chunks of jifty
+- Model
+ - rec
+ - col
+ - clsld
+- Actions!
+ - 
+- View
+ - 
+----
+
+A few nifty things about jifty
+----
+A Blog
+Demo
+----
+# jifty app --name Blog
+
+Creating new application Blog
+Creating directory lib
+Creating directory lib/Blog
+Creating directory bin
+Creating directory etc
+Creating directory doc
+Creating directory log
+Creating directory var
+Creating directory var/mason
+Creating directory share
+Creating directory share/po
+Creating directory share/web
+Creating directory share/web/templates
+Creating directory share/web/static
+Creating directory lib/Blog/Model
+Creating directory lib/Blog/Action
+Creating directory t
+Creating configuration file Blog/etc/config.yml
+----
+
+Note: only three files
+
+bin/jifty
+etc/config.yml
+Makefile.PL
+
+----
+A blog has entries...
+----
+{{img src="new_entry.png" width="633" height="315"}}
+
+----
+# cd Blog
+----
+# jifty model --name Entry
+----
+vi {{#i|./lib/Blog/Model/Entry.pm}}
+----
+ package Blog::Model::Entry;
+ use base qw/Blog::Record/;
+----
+ package Blog::Model::Entry::Schema; # totally
+ use Jifty::DBI::Schema;             # redundant
+ 
+ column title =>
+      type is 'text',
+      default is 'Untitled';
+ 
+ column body =>
+      type is 'text',
+      render_as 'Textarea';
+----
+
+# jifty schema --setup
+
+INFO - Generating SQL for application Blog...
+INFO - Using Blog::Model::Entry
+INFO - Using Jifty::Model::Session
+INFO - Using Jifty::Model::Metadata
+INFO - Set up version v0.0.1, jifty version 0.605070
+
+----
+
+# jifty server
+
+----
+{{img src="welcome_pony.png" width="633" height="315"}}
+
+Screenshot: Welcome to your new Jifty application
+Click: Administration
+
+----
+{{img src="admin_console.png" width="633" height="315"}}
+
+Screenshot: Jifty Administrative Console
+Click: Entry
+
+----
+{{img src="admin_entry.png" width="633" height="315"}}
+Screenshot Manage records: Entry
+
+----
+{{img src="admin_add_entry.png" width="633" height="315"}}
+Screenshot Manage records: Create new Entry
+----
+{{#i|./lib/Blog/Dispatcher.pm}}
+----
+ package Blog::Dispatcher;
+ use Jifty::Dispatcher -base;
+ 
+ before '*' => run {
+    my $top = Jifty->web->nav;
+    $top->child('List Entries' => url => '/'); 
+    $top->child('New Entry'    => url => '/new_entry');
+ }
+----
+ on '/' => run {
+     my $entries = 
+        Blog::Model::EntryCollection->new();
+     $entries->unlimit();
+ 
+     set entries => $entries;
+ };
+---- 
+ on '/new_entry' => run {
+     set create => Jifty->web->new_action(
+         class => 'CreateEntry'
+     );
+ };
+----
+{{img src="blog.png" width="633" height="315"}}
+# Here it shows already the entry created from admin console
+----
+{{#i|./web/templates/index.html}}
+----
+ <%ARGS>
+ $entries # From the dispatcher
+ </%ARGS>
+ <&|/_elements/wrapper&>
+ % while (my $entry = $entries->next) {
+  <h2><% $entry->title %></h2>
+  <div class="body">
+    <% $entry->body %>
+  </div>
+ % }
+ </&>
+----
+{{img src="sorry.png" width="633" height="315"}}
+...clicking on "new entry" resulting in a helpful error page...
+----
+{{#i|./web/templates/new_entry}}
+----
+{{img src="new-entry.png" width="623" height="405"}}
+----
+ <%ARGS>
+ $create # From the dispatcher
+ </%ARGS>
+ <&|/_elements/wrapper, 
+    title => 'Create an article' &>
+ <% Jifty->web->form->start %>
+ % foreach my $arg ($create->argument_names) {
+ <% $create->form_field($arg) %>
+ % }
+ <% Jifty->web->form->submit( label => 'Save' ) %>
+ <% Jifty->web->form->end %>
+ </&>
+----
+ <%ARGS>
+ $create # From the dispatcher
+ </%ARGS>
+ <&|/_elements/wrapper, 
+    title => 'Create an article' &>
+ <&/_elements/form_action,
+    action => $create,
+    submit => 'Save' &>
+ </&>
+----
+{{img src="new-entry-filled.png" width="623" height="405"}}
+# Type in some stuff
+----
+{{img src="new-entry-created.png" width="623" height="405"}}
+# the result screen
+----
+  Your files:
+
+ lib/Blog/Model/Entry.pm
+ lib/Blog/Dispatcher.pm
+ web/templates/new_entry
+ web/templates/index.html
+----
+All Done!
+----
+It runs
+----
+Ship it
+----
+Oh wait.
+I'm from the US
+New law
+----
+...banning profanity.
+----
+We need to
+censor
+blogs.
+----
+No problem!
+----
+(Except the political one)
+----
+Back to the code!
+----
+We'll need to
+----
+Validate the text
+----
+(demo of validate)
+----
+# vi lib/Blog/Model/Entry.pm
+
+use Regexp::Common 'profanity_us';
+
+sub validate_body {
+    my $self = shift;
+    my $body = shift;
+    if ( $body =~ /$RE{profanity}/i) {
+        return $self->validation_error(
+            body => 'Would you speak like that in front of your mother? *cough*'
+        )
+    }
+    return $self->validation_ok('body');
+}
+----
+
+Demo of a validation error.
+
+----
+
+Not good enough.
+----
+
+It stops people from blogging.
+
+----
+
+Instead, we can
+clean it up directly
+----
+
+# vi lib/Blog/Model/Entry.pm
+
+
+sub canonicalize_body {
+    my $self = shift;
+    my $body = shift;
+    $body =~ s/$RE{profanity}/**expletives**/gi;
+    return $body;
+}
+
+----
+Screenshot of canonicalization
+(Ideally a screencast of ajax validation)
+----
+_now_ we
+ship it
+----
+The anatomy of a Jifty application
+----
+Schema (Model)
+----
+Jifty::DBI
+----
+DatabaseObjects
+----
+Pretty Syntax
+----
+Three object types
+----
+Handles
+----
+Database independence
+----
+- Postgres
+- SQLite
+- MySQL
+- Oracle
+----
+Records
+----
+Track individual rows
+----
+Cachable
+- Single process
+- Memcached
+----
+Collections
+----
+"SELECT main.* FROM ...."
+----
+- Joins
+- Paging
+- Cache records
+----
+Does the hard stuff
+----
+Does the boring stuff
+----
+SCHEMA
+----
+No more:
+- CREATE TABLE
+- ALTER TABLE
+- CREATE FOREIGN KEY
+----
+
+package Blog::Model::Comment::Schema;
+
+column entry => refers_to Blog::Model:Entry
+column author => refers_to Blog::Model::User;
+column body =>
+    label is 'Content',
+    type is 'text',
+    render as 'Textarea',
+    default is 'First Post!';
+----
+column title =>
+    label is 'Title',
+    since '0.02',
+    length is 40,
+    hints is '40 bytes max',
+    is mandatory;
+----
+
+
+Upgrading!
+
+# vi etc/config.yml (Set version to 0.02)
+
+
+# jifty server
+
+Show error message
+
+----
+
+(Bump the version)
+
+# jifty schema --setup 
+
+# jifty server
+
+----
+
+# ...and then even more schema magick...
+----
+column tags =>
+    since 0.03,
+    refers_to Blog::Model::TagCollection by 'entry';
+----
+column mood => 
+    since 0.04,
+    default is => 'happy',
+    valid_values are     
+        { display => 'Sad',   value => 'sad' },
+        { display => 'Happy', value => 'happy' };
+----
+column created =>
+    since 0.05,
+    is immutable,    
+    type is 'timestamp',
+    default is literal 'now()',
+    filters are 'Jifty::DBI::Filter::DateTime';
+
+----
+
+Upgrading!
+
+# vi etc/config.yml
+
+(Bump the version to 0.05)
+
+# jifty schema --setup 
+----
+ACTIONS (Controller)
+----
+Actions are just APIs to your app
+----
+(You might call them a facade over your code)
+----
+Actions define method calls
+----
+Actions takes typed arguments and returns results
+----
+Actions are Web Services
+----
+Actions are web services
+----
+Getting started with actions
+----
+Jifty provides three actions for each of your model classes:
+- Create
+- Update
+- Delete
+----
+Just extend (subclass) the defaults
+----
+If we had more time, we'd show you that every action is made of:
+
+- arguments
+- validate_arguments
+- take_action
+
+----
+DISPATCHER (Kernel)
+~ (See Audrey at OSCON!)
+----
+Templates and Fragments (View)
+----
+Building Applications
+----
+Dispatcher
+----
+Development Tools
