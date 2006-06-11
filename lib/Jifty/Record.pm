@@ -84,14 +84,15 @@ sub create {
 }
 
 
-=head2 primary_key
+=head2 id
 
-Returns the default primary key for record columns: 'id'.
+Returns the record id value.
 This routine short-circuits a much heavier call up through Jifty::DBI
 
 =cut
 
-sub primary_key {'id'}
+sub _primary_key { 'id' }
+sub id { $_[0]->{'values'}->{'id'} }
 
 
 =head2 load_or_create
