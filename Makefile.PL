@@ -50,7 +50,7 @@ requires('Test::HTTP::Server::Simple' => '0.02');
 requires('Test::HTML::Lint');
 requires('Test::More' => 0.62);
 requires('Test::Pod::Coverage');
-requires('Test::WWW::Mechanize');
+requires('Test::WWW::Mechanize' => 1.04);
 requires('UNIVERSAL::require');
 requires('URI');
 requires('WWW::Mechanize' => 1.12);
