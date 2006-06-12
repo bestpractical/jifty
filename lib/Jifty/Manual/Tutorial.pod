@@ -173,7 +173,7 @@ classes you generate.)
 
 As you might imagine by the fact that this tutorial application is named
 B<MyWeblog>, the example here is a simple weblog application.  Future
-tutorials, will add authentication, comments, and RSS and Atom feeds.
+tutorials will add authentication, comments, and RSS and Atom feeds.
 
 =head3 Posts
 

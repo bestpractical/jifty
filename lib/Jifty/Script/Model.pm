@@ -99,7 +99,7 @@ use Jifty::Test tests => 11;
 # Make sure we can load the model
 use_ok('@{[$appclass]}::Model::@{[$model]}');
 
-# Grab a system use
+# Grab a system user
 my \$system_user = @{[$appclass]}::CurrentUser->superuser;
 ok(\$system_user, "Found a system user");
 
