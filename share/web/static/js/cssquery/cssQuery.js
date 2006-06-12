@@ -22,7 +22,7 @@ try {
 	    if($$bits) {
 		var $match = document.getElementById($$bits[1]);
 		if(!$match || !$$bits[2].length) {
-		    return $match;
+		    return [$match];
 		} else {
 		    return cssQuery($$bits[2], $match);
 		}
