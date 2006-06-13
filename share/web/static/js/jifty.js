@@ -189,8 +189,10 @@ Action.prototype = {
 
     disable_input_fields: function() {
 	var disable = function() {
-	    arguments[0].blur();
-	    arguments[0].disabled = true;
+            try {
+                arguments[0].blur();
+                arguments[0].disabled = true;
+            } catch( e ) {}
 	};
 	this.fields().each(disable);
 	this.buttons().each(disable);
@@ -302,8 +304,13 @@ Object.extend(Form.Element, {
 
     buttonArguments: function(element) {
         element = $(element);
-        if (!element || (element.nodeName != 'INPUT') || (element.getAttribute("type") != "submit"))
+        if (!element)
             return $H();
+
+        if (((element.nodeName != 'INPUT') || (element.getAttribute("type") != "submit"))
+         && ((element.nodeName != 'A')     || (! element.getAttribute("name"))))
+            return $H();
+
         var extras = $H();
 
         // Split other arguments out, if we're on a button
@@ -336,7 +343,7 @@ Object.extend(Form.Element, {
             e.setAttribute("type", "hidden");
             e.setAttribute("name", keys[i]);
             e.setAttribute("value", args[keys[i]]);
-            e['virtualform'] = element.form;
+            e['virtualform'] = Form.Element.getForm(element);
             extras.push(e);
         }
         return extras;

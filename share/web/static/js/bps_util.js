@@ -43,11 +43,14 @@ function buttonToLink(input) {
     var e = $(input);
     if (e) {
         var link = document.createElement("a");
-        link.setAttribute("href","javascript:$('"+e.id+"').click()");
+        link.setAttribute("href","#");
+        link.setAttribute("onclick",e.getAttribute("onclick"));
+        link.setAttribute("name",e.getAttribute("name"));
+        link['virtualform'] = Form.Element.getForm(e);
         link.appendChild(document.createTextNode(e.getAttribute("value")));
 
-        Element.hide(e);
         e.parentNode.insertBefore(link, e.nextSibling);
+        e.parentNode.removeChild(e);
         return true;
     }
     return false;
