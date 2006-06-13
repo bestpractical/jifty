@@ -189,10 +189,8 @@ Action.prototype = {
 
     disable_input_fields: function() {
 	var disable = function() {
-            try {
-                arguments[0].blur();
-                arguments[0].disabled = true;
-            } catch( e ) {}
+            arguments[0].blur();
+            arguments[0].disabled = true;
 	};
 	this.fields().each(disable);
 	this.buttons().each(disable);
