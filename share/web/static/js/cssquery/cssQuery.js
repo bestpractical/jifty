@@ -5,7 +5,7 @@
 */
 
 // the following functions allow querying of the DOM using CSS selectors
-var $ID_ONLY = /^#(\w+)\s*(.*)$/;
+var $ID_ONLY = /^#([^\s>+~]+)\s*(.*)$/;
 var cssQuery = function() {
 var version = "2.0.2";
 
