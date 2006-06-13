@@ -1,0 +1,7 @@
+---
+framework:
+  Plugins:
+   - EmailErrors:
+       to: email-address@example.com
+       from: other-email@example.com
+       subject: Defaults to 'Jifty error'

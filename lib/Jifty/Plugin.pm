@@ -96,7 +96,7 @@ Returns the root of the template directory for this plugin
 sub template_root {
     my $self = shift;
     my $class = ref($self) || $self;
-    my $share = File::ShareDir::module_dir($class);
+    my $share = eval { File::ShareDir::module_dir($class) };
     return unless $share;
     return "$share/web/templates";
 }
@@ -110,7 +110,7 @@ Returns the root of the static directory for this plugin
 sub static_root {
     my $self = shift;
     my $class = ref($self) || $self;
-    my $share = File::ShareDir::module_dir($class);
+    my $share = eval { File::ShareDir::module_dir($class) };
     return unless $share;
     return "$share/web/static";
 }

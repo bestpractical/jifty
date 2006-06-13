@@ -110,6 +110,7 @@ use Jifty::Dispatcher -base;
 
 # Put any plugin-specific dispatcher rules here.
 
+1;
 EOT
 }
 
