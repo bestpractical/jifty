@@ -189,6 +189,7 @@ Action.prototype = {
 
     disable_input_fields: function() {
 	var disable = function() {
+            // Triggers https://bugzilla.mozilla.org/show_bug.cgi?id=236791
             arguments[0].blur();
             arguments[0].disabled = true;
 	};
