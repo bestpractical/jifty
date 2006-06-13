@@ -168,6 +168,7 @@ tabbox, tabpanels, tabpanel {
 }
 
 .subtitle {
+	display: none;
     font-family: "Kochi Gothic";
     color: yellow;
     text-align: center;
