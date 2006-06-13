@@ -180,13 +180,23 @@ sub arguments {
 
       # build up a validator sub if the column implements validation
       # and we're not overriding it at the action level
-      if ( $column->validator and not $self->can("validate_$field")) {
+      my $validate_method = "validate_" . $field;
+
+      if ( ($column->validator ||  $self->record->can($validate_method)) and not $self->can($validate_method)) {
+	warn "it has a validator or a $validate_method";
         $info->{ajax_validates} = 1;
         $info->{validator} = sub {
           my $self  = shift;
           my $value = shift;
-          my ( $is_valid, $message )
-            = &{ $column->validator }( $self->record, $value );
+	warn "Called for $value";
+          my ( $is_valid, $message );
+      	if ( $self->record->can($validate_method) ) {
+		warn "pciked it up";
+
+          ($is_valid, $message) =  $self->record->$validate_method($value);
+	 } else {
+          ( $is_valid, $message ) = &{ $column->validator }( $self->record, $value );
+	}
           if ($is_valid) {
             return $self->validation_ok($field);
           }
@@ -205,7 +215,6 @@ sub arguments {
           }
         };
       }
-
       my $autocomplete_method = "autocomplete_" . $field;
       if ( $self->record->can($autocomplete_method) ) {
         $info->{'autocompleter'} ||= sub {
