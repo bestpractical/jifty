@@ -498,10 +498,10 @@ function update() {
     for (var i = 0; i < named_args['actions'].length; i++) {
         var moniker = named_args['actions'][i];
         var a = new Action(moniker, button_args);
-        a.disable_input_fields();
         if (a.register) {
             if (a.hasUpload())
                 return true;
+            a.disable_input_fields();
             request['actions'][moniker] = a.data_structure();
         }
     }
