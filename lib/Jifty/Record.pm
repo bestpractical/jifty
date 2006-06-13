@@ -117,7 +117,7 @@ sub load_or_create {
 
 =head2 current_user_can RIGHT [, ATTRIBUTES]
 
-Should return true if the current user (C<$self->current_user>) is
+Should return true if the current user (C<< $self->current_user >>) is
 allowed to do I<RIGHT>.  Possible values for I<RIGHT> are:
 
 =over
@@ -243,7 +243,7 @@ sub _value {
 =head2 _collection_value METHOD
 
 A method ripped from the pages of Jifty::DBI::Record 
-so we could change the invocation method of hte collection generator to
+so we could change the invocation method of the collection generator to
 add a current_user argument.
 
 =cut

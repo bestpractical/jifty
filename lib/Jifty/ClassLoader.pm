@@ -16,8 +16,11 @@ models.
 =head2 new
 
 Returns a new ClassLoader object.  Doing this installs a hook into
-C<@INC> that allows L<Jifty::ClassLoader> to dynamically create needed
-classes if they do not exist already.
+C<@INC> that allows L<Jifty::ClassLoader> to dynamically create
+needed classes if they do not exist already.  This works because if
+use/require encounters a blessed reference in C<@INC>, it will
+invoke the INC method with the name of the module it is searching
+for on the reference.
 
 Takes one mandatory argument, C<base>, which should be the the
 application's base path; all of the classes under this will be
