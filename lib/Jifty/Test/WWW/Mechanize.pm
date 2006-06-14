@@ -10,6 +10,7 @@ use Test::HTML::Lint; # exports html_ok
 use HTTP::Cookies;
 use XML::XPath;
 use Hook::LexWrap;
+use List::Util qw(first);
 
 my $Test = Test::Builder->new;
 
@@ -49,7 +50,7 @@ sub moniker_for {
   for my $f ($self->forms) {
   INPUT: 
     for my $input ($f->inputs) {
-      if ($input->type eq "hidden" and $input->name =~ /^J:A-(.*)/ and $input->value eq $action) {
+      if ($input->type eq "hidden" and $input->name =~ /^J:A-(?:\d+-)?(.*)/ and $input->value eq $action) {
 
         my $moniker = $1;
 
@@ -131,7 +132,9 @@ sub action_form {
     my $i;
     for my $form ($self->forms) {
         $i++;
-        next unless $form->find_input("J:A-$moniker", "hidden");
+        next unless first {   $_->name =~ /J:A-(?:\d+-)?$moniker/
+                           && $_->type eq "hidden" }
+                        $form->inputs;
         next if grep {not $form->find_input("J:A:F-$_-$moniker")} @fields;
 
         $self->form_number($i); #select it, for $mech->submit etc
