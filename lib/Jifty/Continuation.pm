@@ -31,8 +31,8 @@ Continuations are run after any actions have run.  When a continuation
 is run, it restores the request that it has saved away into it, and
 pulls into that request the values any return values that were
 specified when it was created.  The continuations code block, if any,
-is then called, and then the filled-in request is then run
-L<Jifty::Web/handle_request>.
+is then called, and then the filled-in request is then passed to the
+L<Jifty::Dispatcher>.
 
 =cut
 
@@ -211,9 +211,12 @@ sub call {
         $self->code->(Jifty->web->request)
           if $self->code;
 
-        # Enter the request in the continuation, and handle it
+        # Enter the request in the continuation, and handle it.  This
+        # will possibly cause 'before' blocks to run more than once,
+        # but is slightly preferrable to them never running.
         Jifty->web->request(dclone($self->request));
-        Jifty->web->handle_request();
+        Jifty->handler->dispatcher->handle_request;
+        Jifty::Dispatcher::_abort;
     }
 }
 
