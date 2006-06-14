@@ -31,6 +31,9 @@ JSAN.use("DOM.Events");
 JSAN.use("Upgrade.Array.push");
 
 var Behaviour = {
+    searchTimes: {},
+    applyTimes: {},
+    elements: {},
     list: new Array(),
     
     register: function(sheet) {
@@ -40,17 +43,40 @@ var Behaviour = {
     apply: function() {
 	var root = arguments[0];
 	if(root) root = $(root);
+	var _applyStart = new Date();
 
         for (var h = 0; sheet = Behaviour.list[h]; h++) {
             for (var selector in sheet) {
+		var start = new Date();
                 var elements = cssQuery(selector, root);
+		var searchDone = new Date();
+		Behaviour.searchTimes[selector] = searchDone - start;
+		Behaviour.elements[selector] = elements;
                 
                 if ( !elements ) continue;
 
-                for (var i = 0; element = elements[i]; i++)
+                for (var i = 0; element = elements[i]; i++) {
                     sheet[selector](element);
+		}
+		Behaviour.applyTimes[selector] = new Date() - searchDone;
             }
         }
+	if(0) {
+	    document.write('<h2>Search times:</h2>');
+	    document.write('<pre>');
+	    for(var k in Behaviour.searchTimes) {
+		document.write(Behaviour.searchTimes[k] + '\t' + k + '<br />');
+	    }
+	    document.write('</pre>');
+	    
+	    document.write('<h2>Apply times:</h2>');
+	    document.write('<pre>');
+	    for(var k in Behaviour.applyTimes) {
+		document.write(Behaviour.applyTimes[k] + '\t' + k + '<br />');
+	    }
+	    document.write('</pre>');
+	}
+	//alert("Applied behaviours in " + (new Date() - _applyStart) + "ms");
     }
 }    
 

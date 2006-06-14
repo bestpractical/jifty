@@ -108,5 +108,4 @@ Jifty.KeyBindings = {
     }
 }
 
-Behaviour.register({ "div.keybindings": Jifty.KeyBindings.writeLegend });
-
+Behaviour.register({ "div#keybindings": Jifty.KeyBindings.writeLegend });

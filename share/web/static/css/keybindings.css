@@ -1,10 +1,10 @@
-div.keybindings {
+div#keybindings {
     color: #666666;
     margin-top: 2em;
 
 }
 
-div.keybindings:before {
+div#keybindings:before {
     content: "Hotkeys:";
 }
 
