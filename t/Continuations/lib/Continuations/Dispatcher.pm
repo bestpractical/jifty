@@ -13,6 +13,10 @@ on '/tutorial' => run {
     show '/index.html';
 };
 
+before '/index-help.html' => run {
+    Jifty->web->session->set(got_help => 1);
+};
+
 on '*' => show;
 
 1;

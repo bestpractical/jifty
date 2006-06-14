@@ -12,7 +12,7 @@ blocks
 
 BEGIN {chdir "t/Continuations"}
 use lib '../../lib';
-use Jifty::Test no_plan => 1;
+use Jifty::Test tests => 7;
 
 use_ok('Jifty::Test::WWW::Mechanize');
 
