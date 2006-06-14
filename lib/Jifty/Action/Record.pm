@@ -82,7 +82,6 @@ sub new {
         }
         $self->record->load_by_primary_keys(%given_pks) if %given_pks;
     }
-
     return $self;
 }
 
@@ -233,10 +232,6 @@ sub arguments {
         and $column->render_as eq "Date" )
       {
         $info->{'ajax_canonicalizes'} = 1;
-        $info->{'canonicalizer'} ||= sub {
-          my ( $self, $value ) = @_;
-          return _canonicalize_date( $self, $value );
-        };
       }
 
       # If we're hand-coding a render_as, hints or label, let's use it.
@@ -264,20 +259,6 @@ This defaults to only the writable fields of the object.
 sub possible_fields {
     my $self = shift;
     return $self->record->writable_attributes;
-}
-
-=head2 _canonicalize_date DATE
-
-Parses and returns the date using L<Time::ParseDate>.
-
-=cut
-
-sub _canonicalize_date {
-    my $self = shift;
-    my $val = shift;
-    return undef unless defined $val and $val =~ /\S/;
-    return undef unless my $obj = Jifty::DateTime->new_from_string($val);
-    return $obj->ymd;
 }
 
 =head2 take_action

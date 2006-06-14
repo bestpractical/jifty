@@ -643,6 +643,9 @@ subroutine reference that attribute points points to.
 If it doesn't have a B<canonicalizer> attribute, but the action has a
 C<canonicalize_I<ARGUMENT>> function, also invoke that function.
 
+If neither of those are true, by default canonicalize dates using
+_canonicalize_date
+
 =cut
 
 # XXX TODO: This is named with an underscore to prevent infinite
@@ -665,9 +668,27 @@ sub _canonicalize_argument {
         $value = $field_info->{canonicalizer}->( $self, $value );
     } elsif ( $self->can($default_method) ) {
         $value = $self->$default_method( $value );
+    } elsif (   defined( $field_info->{render_as} )
+             && lc( $field_info->{render_as} ) eq 'date') {
+        $value = $self->_canonicalize_date( $value );
     }
 
     $self->argument_value($field => $value);
+}
+
+
+=head2 _canonicalize_date DATE
+
+Parses and returns the date using L<Time::ParseDate>.
+
+=cut
+
+sub _canonicalize_date {
+    my $self = shift;
+    my $val = shift;
+    return undef unless defined $val and $val =~ /\S/;
+    return undef unless my $obj = Jifty::DateTime->new_from_string($val);
+    return $obj->ymd;
 }
 
 =head2 _validate_arguments
