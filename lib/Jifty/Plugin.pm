@@ -96,9 +96,12 @@ Returns the root of the template directory for this plugin
 sub template_root {
     my $self = shift;
     my $class = ref($self) || $self;
-    my $share = eval { File::ShareDir::module_dir($class) };
-    return unless $share;
-    return "$share/web/templates";
+    unless (exists $self->{share}) {
+        $self->{share} = undef;
+        eval { $self->{share} = File::ShareDir::module_dir($class) };
+    }
+    return unless $self->{share};
+    return $self->{share}."/web/templates";
 }
 
 =head2 static_root
@@ -110,9 +113,12 @@ Returns the root of the static directory for this plugin
 sub static_root {
     my $self = shift;
     my $class = ref($self) || $self;
-    my $share = eval { File::ShareDir::module_dir($class) };
-    return unless $share;
-    return "$share/web/static";
+    unless (exists $self->{share}) {
+        $self->{share} = undef;
+        eval { $self->{share} = File::ShareDir::module_dir($class) };
+    }
+    return unless $self->{share};
+    return $self->{share}."/web/static";
 }
 
 =head2 dispatcher
