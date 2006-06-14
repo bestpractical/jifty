@@ -61,7 +61,7 @@ files
 ----
 It runs!
 ----
-{{img src="npw.2006/jifty_app.png" width="552" height="364"}}
+{{img src="npw.2006/jifty_web_1.png" width="552" height="364"}}
 ----
 (Not a very
 good blog)
@@ -179,6 +179,9 @@ New law
 (We need to protect
 the children!)
 ----
+From the
+Internet
+----
 So, we need to
 censor blogs
 ----
@@ -196,8 +199,8 @@ Back to the code!
     my $self = shift;
     my $body = shift;
     if ( $body =~ /$RE{profanity}/i) {
-        return (0, 
-        'Would you speak like that in front of your mother? *cough*')
+        return
+         (0, 'Would you speak like that in front of your mother? *cough*')
     }
     return (1, "OK");
  }
@@ -238,8 +241,8 @@ ship it
  {{#i|Schema (Model)}}
  {{#i|Actions (Controller)}}
  {{#i|Dispatcher (Kernel) }}
- {{#i|ClassLoader (??)}}
- {{#i|Continuations (??)}}
+ {{#i|ClassLoader (Bootloader)}}
+ {{#i|Continuations (Job Control)}}
  {{#i|Templates and Fragments (View)}}
 ----
 {{#tag|Schema (Model)}}
@@ -305,11 +308,11 @@ Remember
 our blog?
 ----
 Time for
-0.02
+0.0.2
 ----
  package Blog::Model::Comment::Schema;
-
- column entry => refers_to Blog::Model:Entry
+ since '0.0.2';
+ column entry => refers_to Blog::Model:Entry;
  column author => refers_to Blog::Model::User;
  column body =>
     label is 'Content',
@@ -319,7 +322,6 @@ Time for
 ----
  column title =>
     label is 'Title',
-    since '0.02',
     length is 40,
     hints is '40 bytes max',
     is mandatory;
@@ -336,7 +338,7 @@ Jifty
 provides
 help
 ----
- # vi etc/config.yml (Set version to 0.02)
+ # vi etc/config.yml (Set version to 0.0.2)
 
  # jifty server
 
@@ -357,18 +359,18 @@ help
 
 ----
  column tags =>
-    since 0.03,
+    since '0.0.3',
     refers_to Blog::Model::TagCollection by 'entry';
 ----
  column mood => 
-    since 0.04,
+    since '0.0.4',
     default is => 'happy',
     valid_values are     
         { display => 'Sad',   value => 'sad' },
         { display => 'Happy', value => 'happy' };
 ----
  column created =>
-    since 0.05,
+    since '0.0.5',
     is immutable,    
     type is 'timestamp',
     default is literal 'now()',
@@ -380,7 +382,7 @@ upgrade
 ----
  # vi etc/config.yml
 
- (Bump the version to 0.05)
+ (Bump the version to 0.0.5)
 
  # jifty schema --setup 
 ----
@@ -443,11 +445,13 @@ we'd show you that
 every action is made of:
 ----
  sub arguments {}
+----
  sub validate_arguments {}
+----
  sub take_action {}
 ----
 {{#tag|Jifty::Dispatcher (Kernel)}}
-~ (See Audrey at OSCON!)
+(See Audrey at OSCON!)
 ----
 Simple
 ----
@@ -469,7 +473,7 @@ shows your pages
 After: 
 cleans your state
 ----
-{{#tag|Jifty::ClassLoader (??)}}
+{{#tag|Jifty::ClassLoader (Bootloader)}}
 ----
 I hate
 scaffolds
@@ -498,9 +502,11 @@ Blog::Record
 ----
 Blog::Collection
 ----
-Blog::Model::*Collection
+Blog::Model::EntryCollection
+Blog::Model::CommentCollection
 ----
-Blog::Action::{Create,Update,Delete}Model
+Blog::Action::{Create,Update,Delete}Entry
+Blog::Action::{Create,Update,Delete}Comment
 ----
 Blog::Bootstrap
 ----
@@ -510,7 +516,7 @@ Blog::Dispatcher
 ----
 Blog::CurrentUser
 ----
-{{#tag|Continuations (??)}}
+{{#tag|Continuations (Job Control)}}
 ----
 Continuations?
 In Perl?
@@ -518,8 +524,7 @@ In Perl?
 Isn't that
 impossible?
 ----
-I 
-don't 
+I don't 
 know
 ----
 Ours
@@ -536,9 +541,17 @@ the world
 ----
 App state...
 ----
+Your
 %ENV...
 ----
-Your DBI handle...
+Your 
+DBI handle...
+----
+Your
+log handle...
+----
+Phase of
+the moon
 ----
 Maybe we don't 
 need all that
@@ -571,7 +584,8 @@ GOSUB
 Welcome to
 civilization
 ----
-Back to our Blog
+Back to 
+our Blog
 ----
 {{#i|Blog::Dispatcher}}
 ----
@@ -587,14 +601,14 @@ Back to our Blog
  &lt;%init>
  my $action = Jifty->web->new_action(class => 'Login', moniker => 'loginbox' );
  &lt;/%init>
-  &lt;&amp;|/_elements/wrapper,
+ &lt;&amp;|/_elements/wrapper,
      title => 'Login' &amp;>
  &lt;h2>Login&lt;/h2>
- &lt;% Jifty->web->form->start() %>
- &lt;% $action->form_field('address') %>
- &lt;% $action->form_field('password') %>
- &lt;% Jifty->web->return( label => 'Login') %>
- &lt;% Jifty->web->form->end %>
+  &lt;% Jifty->web->form->start() %>
+    &lt;% $action->form_field('address') %>
+    &lt;% $action->form_field('password') %>
+    &lt;% Jifty->web->return( label => 'Login') %>
+  &lt;% Jifty->web->form->end %>
  &lt;/&amp;>
 
 ~ call => Jifty->web->request->continuation) %>
@@ -672,20 +686,28 @@ Standalone Server
 {{img src="npw.2006/makefile_pl.png" width="552" height="364"}}
 ----
 Halos
- - Mason Profiling
- - SQL Logging
- - SQL Profiling
- - View Introspection
- - Online Editing
 ----
-
-* HALO SCREENSHOT
+Mason Profiling
+----
+SQL Logging
+----
+SQL Profiling
+----
+View Introspection
+----
+Online Editing
+----
+{{img src="npw.2006/halo.png" width="428" height="391"}}
+----
+{{img src="npw.2006/halo2.png" width="468" height="665"}}
 ----
 Module::Refresh
 ----
 Magic Profiling
 ----
 Devel Mode
+----
+Online Docs
 ----
 {{img src="npw.2006/online_docs.png" width="800" height="622"}}
 ----
