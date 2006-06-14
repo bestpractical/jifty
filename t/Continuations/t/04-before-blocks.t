@@ -5,7 +5,8 @@ use strict;
 
 =head1 DESCRIPTION
 
-This is a template for your own tests. Copy it and modify it.
+Test the interactions between continuations and dispatcher BEFORE
+blocks
 
 =cut
 
@@ -19,9 +20,14 @@ my $server = Jifty::Test->make_server;
 my $URL = $server->started_ok;
 my $mech = Jifty::Test::WWW::Mechanize->new;
 
-$mech->get($URL . '/help');
-like($mech->uri, qr'index-help\.html', '/help redirected to /index-help.html');
-$mech->content_contains('getting help', 'before blocks got run properly');
+$mech->get($URL . '/tutorial');
+like($mech->uri, qr'index-help\.html', '/tutorial redirected to /index-help.html');
+$mech->follow_link_ok(text => 'Done');
+like($mech->uri, qr'/tutorial', 'Continuation call worked properly');
+$mech->content_contains('Congratulations', 'before blocks got run properly on continuation call');
+
+$mech->get($URL . '/tutorial');
+$mech->content_contains('Congratulations', 'before blocks got run properly');
 
 1;
 

@@ -2,12 +2,15 @@ package Continuations::Dispatcher;
 use Jifty::Dispatcher -base;
 
 
-before '/help' => run {
-    Jifty->web->tangent(url => '/index-help.html');
+before '/tutorial' => run {
+    unless (Jifty->web->session->get('got_help')) {
+        Jifty->web->tangent(url => '/index-help.html');
+    }
+    set been_helped => 1;
 }
 
-before '/index-help.html' => run {
-    set 'getting_help' => 1;
+on '/tutorial' => run {
+    show '/index.html';
 }
 
 on '*' => show;

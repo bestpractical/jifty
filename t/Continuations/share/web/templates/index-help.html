@@ -1,8 +1,2 @@
-<%args>
-$getting_help => undef
-</%args>
 Help about the index.  <% Jifty->web->return(label => "Done") %>
 <% Jifty->web->tangent(label => "Get help", url => "/help-help.html") %>
-% if($getting_help) {
-<p>You're getting help!</p>
-% }

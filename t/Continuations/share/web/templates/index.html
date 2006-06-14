@@ -1,3 +1,7 @@
+<%args>
+$been_helped => 0
+</%args>
+
 <% Jifty->web->form->start %>
 
 % my $action = Jifty->web->form->add_action( class => 'GetGrail', moniker => 'grail');
@@ -8,3 +12,7 @@
 <% Jifty->web->tangent(label => "Help as button", url => "/index-help.html", submit => $action) %>
 
 <% Jifty->web->form->end %>
+
+% if($been_helped) {
+<p>Congratulations on being helped.</p>
+% }
