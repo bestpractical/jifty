@@ -7,11 +7,11 @@ before '/tutorial' => run {
         Jifty->web->tangent(url => '/index-help.html');
     }
     set been_helped => 1;
-}
+};
 
 on '/tutorial' => run {
     show '/index.html';
-}
+};
 
 on '*' => show;
 
