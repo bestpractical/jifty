@@ -71,6 +71,8 @@ else {
 
 
 no_index package => 'DB';
+no_index package => 'inc';
+no_index directory => 'doc';
 
 version_from('lib/Jifty.pm');
 #&auto_bundle_deps();

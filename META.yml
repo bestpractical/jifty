@@ -6,10 +6,12 @@ license: Perl
 name: Jifty
 no_index: 
   directory: 
+    - doc
     - inc
     - t
   package: 
     - DB
+    - inc
 requires: 
   App::CLI: 0.03
   CSS::Squish: 0.01
@@ -70,4 +72,4 @@ requires:
   perl: 5.8.3
   version: 0
 tests: t/*.t t/*/t/*.t
-version: 0.60714
+version: 0.60615
