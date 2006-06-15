@@ -1,0 +1,13 @@
+<%ARGS>
+$create # From the dispatcher
+</%ARGS>
+<&|/_elements/wrapper,
+   title => 'Create an article' &>
+<% Jifty->web->form->start %> 
+% foreach my $arg ($create->argument_names) {
+<% $create->form_field($arg) %>
+% }
+<% Jifty->web->form->submit( label => 'Save' ) %>
+<% Jifty->web->form->end %>
+</&>
+

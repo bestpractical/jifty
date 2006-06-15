@@ -1,0 +1,12 @@
+<%ARGS>
+$entries # From the dispatcher
+</%ARGS>
+<&|/_elements/wrapper&>
+% while (my $entry = $entries->next) {
+  <h2><% $entry->title %></h2>
+  <div class="body">
+    <% $entry->body %>
+  </div>
+% }
+</&>
+
