@@ -4,7 +4,20 @@
 &#9832; Jifty
 ----
 Jesse Vincent
- 
+
+Best Practical 
+----
+We 
+Make 
+RT
+----
+We 
+Make
+SVK
+----
+We
+Make
+Jifty
 ----
  Java
   
@@ -38,6 +51,25 @@ Jesse Vincent
 ----
 Jifty
 ----
+Silver
+Bullet
+----
+Ok. I'm
+Lying
+----
+Tool
+----
+Web App
+Framework
+----
+Hides the
+Complexity
+----
+Jifty
+is
+JFDI
+----
+Lets you
 JFDI
 ----
 Let's 
@@ -61,7 +93,7 @@ files
 ----
 It runs!
 ----
-{{img src="npw.2006/jifty_web_1.png" width="552" height="364"}}
+{{img src="npw.2006/jifty_web_1.png" width="800" height="622"}}
 ----
 (Not a very
 good blog)
@@ -255,17 +287,19 @@ Jifty::DBI
 ----
 No more...
 ----
-CREATE FOREIGN KEY
-----
 CREATE TABLE
 ----
 ALTER TABLE
+----
+CREATE FOREIGN KEY
 ----
 {{#i|Object}}
 {{#i|Relational}}
 {{#i|Mapper}}
 ----
 No more...
+----
+SELECT
 ----
 INSERT
 ----
@@ -587,6 +621,9 @@ civilization
 Back to 
 our Blog
 ----
+Requiring
+Login
+----
 {{#i|Blog::Dispatcher}}
 ----
  ## Auth and login
@@ -613,6 +650,9 @@ our Blog
 
 ~ call => Jifty->web->request->continuation) %>
 ~ alexmv, do we need this in form->start?
+----
+Didn't show:
+{{#i|Blog::Action::Login}}
 ----
 {{#tag|Templates and Fragments (View)}}
 ----
@@ -687,7 +727,8 @@ Standalone Server
 ----
 Halos
 ----
-Mason Profiling
+Template 
+Profiling
 ----
 SQL Logging
 ----
@@ -701,7 +742,7 @@ Online Editing
 ----
 {{img src="npw.2006/halo2.png" width="468" height="665"}}
 ----
-Module::Refresh
+{{#i|Module::Refresh}}
 ----
 Magic Profiling
 ----
@@ -722,9 +763,9 @@ lightttpd)
 ----
 Memcached
 ----
-CSS::Squish
+{{#i|CSS::Squish}}
 ----
-JS::Crunch
+{{#i|JS::Crunch}}
 (Coming soon)
 ----
 Jifty::Web::Session
