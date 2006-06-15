@@ -11,6 +11,7 @@ use HTTP::Cookies;
 use XML::XPath;
 use Hook::LexWrap;
 use List::Util qw(first);
+use Carp;
 
 my $Test = Test::Builder->new;
 
@@ -302,7 +303,7 @@ sub follow_link_ok {
     # Remove reason from end if it's there
     pop @_ if @_ % 2;
 
-    warn("Couldn't find link") unless
+    carp("Couldn't find link") unless
       $self->follow_link(@_);
     # TODO XXX FIXME play with $Test::Builder::Level to get errors reported from
     # right place?
