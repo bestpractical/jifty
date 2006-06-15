@@ -187,24 +187,14 @@ sub arguments {
             # and we're not overriding it at the action level
             my $validate_method = "validate_" . $field;
 
-            if ((   $column->validator || $self->record->can($validate_method)
-                )
-                and not $self->can($validate_method)
-                )
-            {
+            if ( $column->validator and not $self->can($validate_method) ) {
                 $info->{ajax_validates} = 1;
                 $info->{validator} = sub {
                     my $self  = shift;
                     my $value = shift;
-                    my ( $is_valid, $message );
-                    if ( $self->record->can($validate_method) ) {
-                        ( $is_valid, $message )
-                            = $self->record->$validate_method($value);
-                    } else {
-                        ( $is_valid, $message )
-                            = &{ $column->validator }( $self->record,
-                            $value );
-                    }
+                    my ( $is_valid, $message )
+                        = &{ $column->validator }( $self->record, $value );
+
                     if ($is_valid) {
                         return $self->validation_ok($field);
                     } else {

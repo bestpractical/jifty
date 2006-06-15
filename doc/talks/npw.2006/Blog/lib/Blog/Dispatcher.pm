@@ -15,7 +15,8 @@
  };
  on '/new_entry' => run {
      set create => Jifty->web->new_action(
-         class => 'CreateEntry'
+         class => 'CreateEntry',
+         moniker => 'new_entry',
      );
  };
 
