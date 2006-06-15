@@ -1,33 +1,39 @@
-  * Removed the ActionBasePath and CurrentUserClass configuration
-    variables.  This breaks backwards compatibility.
+060615 (15 June 2006)
 
-  * If you've overridden /_elements/javascript in your app, you'll want to 
-    take a look at the new stock version to see what has changed.
+The following incompatible changes were made to Jifty. For a complete changelog,
+please see the "Changes" file.
 
-  * The JS method document.getElementsBySelector() no longer exists.  Use 
-    cssQuery() instead.
+ * Removed the ActionBasePath and CurrentUserClass configuration
+   variables.  This breaks backwards compatibility.
 
-  * Jifty::Record now returns empty objects for related objects that can't be 
-    loaded, rather than undef
+ * If you've overridden /_elements/javascript in your app, you'll want to 
+   take a look at the new stock version to see what has changed.
+
+ * The JS method document.getElementsBySelector() no longer exists.  Use 
+   cssQuery() instead.
+
+ * Jifty::Record now returns empty objects for related objects that can't be 
+   loaded, rather than undef
 
 
-* The keybinding JS code is now a more proper library 
-    (Jifty.KeyBindings) and less intrusive.  If you've overridden the 
-    default /_elements/wrapper in your app, you'll want to make sure you get 
-    rid of the keybinding javascript (see the stock wrapper).  Just include 
-    <& /_elements/keybindings &> wherever you want the keybindings for a 
-    page to appear.
+ * The keybinding JS code is now a more proper library 
+   (Jifty.KeyBindings) and less intrusive.  If you've overridden the 
+   default /_elements/wrapper in your app, you'll want to make sure you get 
+   rid of the keybinding javascript (see the stock wrapper).  Just include 
+   <& /_elements/keybindings &> wherever you want the keybindings for a 
+   page to appear.
 
-* This shouldn't be the cause of breakage, but the included rico.js is 
-    no longer a stock Rico build.  See the comments at the top of the file 
-    if you're interested.
+ * This shouldn't be the cause of breakage, but the included rico.js is 
+   no longer a stock Rico build.  See the comments at the top of the file 
+   if you're interested.
 
- r13677@zoq-fot-pik:  chmrr | 2006-06-08 00:04:18 -0400                                        * 'last_rule' now aborts only the current stage -- thus, last_rule                         
- from a 'before' block will *NOT* prevent the RUN stage from happening!                       This is a *BACKWARDS-INCOMPATIBILE CHANGE*, but fixes the dispatcher                        
- to agree with its docs                                                                      
-  * 'abort' is the correct call to skip straight to the cleanup block.                       
-  * This allows the edit in place plugin to 'claim' its path and                             
- protect it from access control in the app's 'before' blocks                                                                                                                              
+ * 'last_rule' now aborts only the current stage -- thus, last_rule                         
+   from a 'before' block will *NOT* prevent the RUN stage from happening!
+   This is a *BACKWARDS-INCOMPATIBILE CHANGE*, but fixes the dispatcher
+   to agree with its docs.
+ * 'abort' is the correct call to skip straight to the cleanup block.                       
+ * This allows the edit in place plugin to 'claim' its path and                             
+   protect it from access control in the app's 'before' blocks                                                                                                                              
 
 
 
