@@ -38,6 +38,7 @@ sub setup {
     Jifty::YAML::DumpFile($test_config, $class->test_config(Jifty::Config->new));
     # Invoking bin/jifty and friends will now have the test config ready.
     $ENV{'JIFTY_TEST_CONFIG'} ||= $test_config;
+    Jifty::Test->builder->{test_config} = $test_config;
     {
         # Cache::Memcached stores things. And doesn't let them
         # expire from the cache easily. This is fine in production,
@@ -203,6 +204,9 @@ END {
             Log::Log4perl->get_logger("SchemaTool")->more_logging(3);
         }
     }
+
+    # Unlink test file
+    undef $Test->{test_config} if $Test->{test_config};
 }
 
 1;
