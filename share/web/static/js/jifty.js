@@ -500,7 +500,7 @@ function update() {
     var button_args = Form.Element.buttonFormElements(trigger);
 
     // Build actions structure
-    request['actions'] = {};
+    request['actions'] = $H();
     for (var i = 0; i < named_args['actions'].length; i++) {
         var moniker = named_args['actions'][i];
         var a = new Action(moniker, button_args);
@@ -512,7 +512,7 @@ function update() {
         }
     }
 
-    request['fragments'] = {};
+    request['fragments'] = $H();
     // Build fragments structure
     for (var i = 0; i < named_args['fragments'].length; i++) {
         var f = named_args['fragments'][i];
@@ -583,7 +583,7 @@ function update() {
     }
 
     // And when we get the result back..
-    var onComplete = function(transport, object) {
+    var onSuccess = function(transport, object) {
         // In case there's no XML in the response, or what have you
         try {
             // Grab the XML response
@@ -645,14 +645,16 @@ function update() {
                     }
                 }
             }
-        } finally {
-            // Make the wait message go away
-            hide_wait_message();
+        } finally { }
+    };
+    var onFailure = function(transport, object) {
+        if (request['actions'].keys().length > 0) {
+            alert('No response from server!');
         }
     };
 
     // Build variable structure
-    request['variables'] = {};
+    request['variables'] = $H();
     var keys = current_args.keys();
     for (var i = 0; i < keys.length; i++) {
         var k = keys[i];
@@ -680,7 +682,10 @@ function update() {
 
     // Set up our options
     var options = { postBody: JSON.stringify(request),
-                    onComplete: onComplete,
+                    onSuccess: onSuccess,
+                    onException: onFailure,
+                    onFailure: onFailure,
+                    onComplete: function(){hide_wait_message()},
                     requestHeaders: ['Content-Type', 'text/x-json']
     };
 
@@ -749,10 +754,10 @@ Object.extend(Object.extend(Jifty.Autocompleter.prototype, Ajax.Autocompleter.pr
   getUpdatedChoices: function() {
       var request = { path: this.url, actions: {} };
 
-      var a = {};
+      var a = $H();
       a['moniker'] = 'autocomplete';
       a['class']   = 'Jifty::Action::Autocomplete';
-      a['fields']  = {};
+      a['fields']  = $H();
       a['fields']['moniker']  = this.action.moniker;
       a['fields']['argument'] = Form.Element.getField(this.field);
       request['actions']['autocomplete'] = a;
