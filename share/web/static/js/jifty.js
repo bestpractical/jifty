@@ -606,21 +606,39 @@ function update() {
                      response_fragment = response_fragment.nextSibling) {
                     if (response_fragment.nodeName == 'fragment') {
                         if (response_fragment.getAttribute("id") == f['region']) {
-                            var textContent;
-                            if (response_fragment.textContent) {
-                                textContent = response_fragment.textContent;
-                            } else {
-                                textContent = response_fragment.firstChild.nodeValue;
+                            // We found the right fragment
+                            var dom_fragment = fragments[f['region']];
+                            var new_dom_args = $H();
+
+                            for (var fragment_bit = response_fragment.firstChild;
+                                 fragment_bit != null;
+                                 fragment_bit = fragment_bit.nextSibling) {
+                                if (fragment_bit.nodeName == 'argument') {
+                                    // First, update the fragment's arguments
+                                    // with what the server actually used --
+                                    // this is needed in case there was
+                                    // argument mapping going on
+                                    new_dom_args[fragment_bit.getAttribute("name")] = fragment_bit.textContent;
+                                } else if (fragment_bit.nodeName == 'content') {
+                                    var textContent;
+                                    if (fragment_bit.textContent) {
+                                        textContent = fragment_bit.textContent;
+                                    } else {
+                                        textContent = fragment_bit.firstChild.nodeValue;
+                                    }
+
+                                    // Once we find it, do the insertion
+                                    if (insertion) {
+                                        new insertion(element, textContent.stripScripts());
+                                    } else {
+                                        Element.update(element, textContent.stripScripts());
+                                    }
+                                    // We need to give the browser some "settle" time before we eval scripts in the body
+                                    setTimeout((function() { this.evalScripts() }).bind(textContent), 10);
+                                    Behaviour.apply(f['element']);
+                                }
                             }
-                            // Once we find it, do the insertion
-                            if (insertion) {
-                                new insertion(element, textContent.stripScripts());
-                            } else {
-                                Element.update(element, textContent.stripScripts());
-                            }
-                            // We need to give the browser some "settle" time before we eval scripts in the body
-                            setTimeout((function() { this.evalScripts() }).bind(textContent), 10);
-			    Behaviour.apply(f['element']);
+                            dom_fragment.setArgs(new_dom_args);
                         }
                     }
                 }

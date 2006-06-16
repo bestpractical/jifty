@@ -35,7 +35,9 @@ for my $f ( Jifty->web->request->fragments ) {
 
     # Stuff the rendered region into the XML
     $writer->startTag( "fragment", id => Jifty->web->current_region->qualified_name );
-    $writer->cdata( Jifty->web->current_region->as_string );
+    my %args = %{ Jifty->web->current_region->arguments };
+    $writer->dataElement( "argument", $args{$_}, name => $_) for sort keys %args;
+    $writer->cdataElement( "content", Jifty->web->current_region->as_string );
     $writer->endTag();
 
     Jifty->web->current_region->exit while Jifty->web->current_region;
