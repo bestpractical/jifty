@@ -738,7 +738,12 @@ function show_action_result() {
     var moniker = arguments[0];
     var result = arguments[1];
     var status = result.nodeName;
-    var text = result.textContent;
+
+    /* This is a workaround for Safari, which does not support textContent */
+    var text = result.textContent
+                    ? result.textContent
+                    : result.firstChild.nodeValue;
+                    
     if(status != 'message' && status != 'error') return;
 
     var node = document.createElement('div');

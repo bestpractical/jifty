@@ -1,3 +1,6 @@
+<%args>
+$include => undef
+</%args>
 <%init>
 # XXX TODO: stick this into libs
 
@@ -13,10 +16,10 @@ my @libs = qw(
   /static/js/scriptaculous/effects.js
   /static/js/scriptaculous/controls.js
   /static/js/jifty.js
+  /static/js/jifty_utils.js
   /static/js/dom-drag.js
   /static/js/halo.js
   /static/js/combobox.js
-  /static/js/jifty_utils.js
   /static/js/key_bindings.js
   /static/js/context_menu.js
   /static/js/bps_util.js
@@ -24,6 +27,10 @@ my @libs = qw(
   /static/js/app.js
   /static/js/app_behaviour.js
 );
+
+if (defined $include and @$include) {
+    push @libs, @$include;
+}
 
 </%init>
    <script type="text/javascript" src="/static/js/jsan/JSAN.js"></script>
