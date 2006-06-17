@@ -1,0 +1,24 @@
+/* Autocomplete */
+
+.autocomplete {
+    border: 1px solid #666;
+    background: white;
+    z-index: 43;
+}
+
+.autocomplete ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.autocomplete li {
+    padding: 0.1em 0 0.1em 0.3em;
+    cursor: default;
+}
+
+.autocomplete .selected {
+    background: rgb(82, 134, 181);
+    color: white;
+}
+
