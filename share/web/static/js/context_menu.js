@@ -49,14 +49,25 @@ Jifty.ContextMenu = {
     
         var li = Jifty.ContextMenu.getParentListItem(ul);
 
-        if ( ul.style.position == "" ) {
-            var x = Jifty.Utils.findPosX( li );
-            var y = Jifty.Utils.findPosY( li ) + li.offsetHeight;
-
-            ul.style.position = "absolute";
-            ul.style.left     = x + "px";
-            ul.style.top      = y + "px";
-            ul.style.width    = li.offsetWidth * 2 + "px";
+        ul.style.position = "absolute";
+        ul.style.width    = li.offsetWidth * 2 + "px";
+        
+        /* Use position: relative based positioning for every browser
+           but IE, which needs to use absolute positioning */
+        if ( Jifty.Utils.isMSIE ) {
+            if ( ul.style.position == "" ) {
+                alert("This is IE!");
+                var x = Jifty.Utils.findPosX( li );
+                var y = Jifty.Utils.findPosY( li ) + li.offsetHeight;
+                
+                ul.style.left = x + "px";
+                ul.style.top  = y + "px";
+            }
+        }
+        else {
+            ul.style.left     = "-1px";
+            ul.style.top      = li.offsetHeight - 2 + "px";
+            li.style.position = "relative";
         }
 
         Element.removeClassName(li, "closed");

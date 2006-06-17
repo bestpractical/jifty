@@ -31,6 +31,15 @@ Jifty.Utils = {
         else if (obj.y)
             curtop += obj.y;
         return curtop;
-    }
+    },
+
+    isMSIE: false
 };
+
+/* This sets Jifty.Utils.isMSIE to true in IE
+    @cc_on@
+    if ( @_win32 )
+        Jifty.Utils.isMSIE = true;
+    @end@
+*/
 
