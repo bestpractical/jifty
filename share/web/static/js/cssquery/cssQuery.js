@@ -16,21 +16,28 @@ var version = "2.0.2";
 var $COMMA = /\s*,\s*/;
 var cssQuery = function($selector, $$from) {
 try {
+	var $match = [];
+	var $useCache = arguments.callee.caching && !$$from;
+	var $base = ($$from) ? ($$from.constructor == Array) ? $$from : [$$from] : [document];
 	//Optimization -- check for selectors beginning with '#id'
-	if(!$$from) {
+	if($base.length == 1) {
 	    var $$bits = $selector.match($ID_ONLY);
 	    if($$bits) {
-		var $match = document.getElementById($$bits[1]);
-		if(!$match || !$$bits[2].length) {
+		var $match;
+		if($base[0] == document) {
+		    $match = document.getElementById($$bits[1]);
+		} else {
+		    $match = getChildById($base[0], $$bits[1]);
+		}
+		if(!$match) {
+		    return [];
+		} else if(!$$bits[2].length) {
 		    return [$match];
 		} else {
 		    return cssQuery($$bits[2], $match);
 		}
 	    }
 	}
-	var $match = [];
-	var $useCache = arguments.callee.caching && !$$from;
-	var $base = ($$from) ? ($$from.constructor == Array) ? $$from : [$$from] : [document];
 	// process comma separated selectors
 	var $$selectors = parseSelector($selector).split($COMMA), i;
 	for (i = 0; i < $$selectors.length; i++) {
@@ -273,6 +280,22 @@ function _msie_selectById($results, $from, id) {
 	}
 	return $results;
 };
+
+function getChildById($from, $id) {
+    if(isMSIE) {
+	return _msie_selectById([], [$from], $id);
+    } else {
+	var $node = document.getElementById($id);
+	var $elt = $node;
+	while($elt) {
+	    if($elt == $from) {
+		return $node;
+	    }
+	    $elt = $elt.parentNode;
+	}
+	return null;
+    }
+}
 
 // for IE5.0
 if (![].push) Array.prototype.push = function() {
