@@ -352,10 +352,11 @@ Object.extend(Form.Element, {
 
 // Form elements should AJAX validate if the CSS says so
 Behaviour.register({
-    '.ajaxvalidation': function(elt) {
+    'input.ajaxvalidation, textarea.ajaxvalidation': function(elt) {
         elt.onblur = function () {
             Form.Element.validate(this);
-        } 
+        }
+	elt = null;	//Prevent IE from leaking memory
     },
     'input.date': function(e) {
         if ( !Element.hasClassName( e, 'has_calendar_link' ) ) {
