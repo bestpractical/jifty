@@ -1,4 +1,10 @@
 <%init>
+if ( $m->dhandler_arg !~ /^[0-9a-f]{32}\.css$/ ) {
+    # This doesn't look like a real request for squished CSS,
+    # so redirect to a more failsafe place
+    Jifty->web->redirect( "/static/css/" . $m->dhandler_arg );
+}
+
 Jifty->web->generate_css;
 
 use HTTP::Date ();
