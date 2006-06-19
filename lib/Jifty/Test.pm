@@ -8,6 +8,7 @@ use Jifty::Server;
 use Jifty::Script::Schema;
 use Email::LocalDelivery;
 use Email::Folder;
+use File::Path;
 
 =head2 import_extra
 
@@ -53,6 +54,9 @@ sub setup {
     }
     my $root = Jifty::Util->app_root;
     unshift @INC, "$root/lib" if ($root);
+
+    # Mason's disk caching sometimes causes false tests
+    rmtree(["$root/var/mason"], 0, 1);
 
     Jifty->new( no_handle => 1 );
 
