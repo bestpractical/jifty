@@ -619,12 +619,18 @@ function update() {
                                     // with what the server actually used --
                                     // this is needed in case there was
                                     // argument mapping going on
-                                    new_dom_args[fragment_bit.getAttribute("name")] = fragment_bit.textContent;
-                                } else if (fragment_bit.nodeName == 'content') {
-                                    var textContent;
+                                    var textContent = '';
                                     if (fragment_bit.textContent) {
                                         textContent = fragment_bit.textContent;
-                                    } else {
+                                    } else if (fragment_bit.firstChild) {
+                                        textContent = fragment_bit.firstChild.nodeValue;
+                                    }
+                                    new_dom_args[fragment_bit.getAttribute("name")] = textContent;
+                                } else if (fragment_bit.nodeName == 'content') {
+                                    var textContent = '';
+                                    if (fragment_bit.textContent) {
+                                        textContent = fragment_bit.textContent;
+                                    } else if (fragment_bit.firstChild) {
                                         textContent = fragment_bit.firstChild.nodeValue;
                                     }
 
@@ -667,9 +673,7 @@ function update() {
         } finally { }
     };
     var onFailure = function(transport, object) {
-        if (request['actions'].keys().length > 0) {
-            alert('No response from server!');
-        }
+        alert('No response from server!');
     };
 
     // Build variable structure
@@ -740,11 +744,21 @@ function show_action_result() {
     var result = arguments[1];
     var status = result.nodeName;
 
+    if (status == 'field') {
+        // If this is a field, it has kids which are <error> or <message> -- loop through them
+        for (var key = result.firstChild;
+             key != null;
+             key = key.nextSibling) {
+            show_action_result(moniker,key);
+        }
+        return;
+    }
+
     /* This is a workaround for Safari, which does not support textContent */
     var text = result.textContent
                     ? result.textContent
-                    : result.firstChild.nodeValue;
-                    
+                    : (result.firstChild ? result.firstChild.nodeValue : '');
+
     if(status != 'message' && status != 'error') return;
 
     var node = document.createElement('div');
