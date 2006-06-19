@@ -35,7 +35,7 @@ method to override if you wish to do custom setup work.
 sub setup {
     my $class = shift;
 
-    my $test_config = File::Temp->new;
+    my $test_config = File::Temp->new( UNLINK => 0 );
     Jifty::YAML::DumpFile($test_config, $class->test_config(Jifty::Config->new));
     # Invoking bin/jifty and friends will now have the test config ready.
     $ENV{'JIFTY_TEST_CONFIG'} ||= $test_config;
@@ -210,7 +210,7 @@ END {
     }
 
     # Unlink test file
-    undef $Test->{test_config} if $Test->{test_config};
+    unlink $Test->{test_config} if $Test->{test_config};
 }
 
 1;

@@ -142,15 +142,8 @@ sub load {
             $self->framework('TestConfig') || $ENV{'JIFTY_TEST_CONFIG'}
         )
     );
-
     $config = Hash::Merge::merge( $self->stash, $test );
     $self->stash($config);
-
-
-
-
-
-
 
     # Merge guessed values in for anything we didn't explicitly define
     # Whatever's in the stash overrides anything we guess
