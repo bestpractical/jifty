@@ -10,7 +10,7 @@ requires('Class::Accessor'); # Class::Accessor::Fast
 requires('Class::Container');
 requires('Class::Data::Inheritable');
 requires('Compress::Zlib');
-requires('CSS::Squish' => 0.01 );
+requires('CSS::Squish' => 0.04 );
 requires('DBD::SQLite' => 1.11 );
 requires('Data::Page');
 requires('DateTime');
