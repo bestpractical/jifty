@@ -57,7 +57,7 @@ pseudoClasses["lang"] = function($element, $code) {
 // -----------------------------------------------------------------------
 
 // constants
-AttributeSelector.NS_IE = /\\:/g;
+AttributeSelector.NS_IE = new RegExp("\\:","g");
 AttributeSelector.PREFIX = "@";
 // properties
 AttributeSelector.tests = {};
