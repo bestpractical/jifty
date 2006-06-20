@@ -169,6 +169,18 @@ sub run {
     $self->log->debug("Running action");
     unless ($self->result->success) {
         $self->log->debug("Not taking action, as it doesn't validate");
+
+		# dump field warnings and errors to debug log
+		foreach my $what (qw/warnings errors/) {
+			my $f = "field_" . $what;
+			my @r =
+				map {
+					$_ . ": " . $self->result->{$f}->{$_}
+				} grep { $self->result->{$f}->{$_} }
+					keys %{ $self->result->{$f} };
+			$self->log->debug("Action result $what:\n\t", join("\n\t", @r)) if (@r);
+		}
+
         return;
     }
     $self->log->debug("Taking action");
