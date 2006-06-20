@@ -18,14 +18,43 @@ use CSS::Squish;
 use Digest::MD5 qw(md5_hex);
 use base qw/Class::Accessor::Fast Class::Data::Inheritable Jifty::Object/;
 
-use vars qw/$SERIAL/;
+use vars qw/$SERIAL @JS_INCLUDES/;
 
 __PACKAGE__->mk_accessors(
     qw(next_page request response session temporary_current_user _current_user)
 );
 
 __PACKAGE__->mk_classdata($_)
-    for qw(cached_css cached_css_digest cached_css_mtime);
+    for qw(cached_css        cached_css_digest
+           cached_javascript cached_javascript_digest javascript_libs);
+
+__PACKAGE__->javascript_libs([qw(
+    jsan/JSAN.js
+    setup_jsan.js
+    jsan/Upgrade/Array/push.js
+    jsan/DOM/Events.js
+    json.js
+    prototype.js
+    cssquery/cssQuery.js
+    cssquery/cssQuery-level2.js
+    cssquery/cssQuery-level3.js
+    cssquery/cssQuery-standard.js
+    behaviour.js
+    scriptaculous/builder.js
+    scriptaculous/effects.js
+    scriptaculous/controls.js
+    jifty.js
+    jifty_utils.js
+    dom-drag.js
+    halo.js
+    combobox.js
+    key_bindings.js
+    context_menu.js
+    bps_util.js
+    rico.js
+    app.js
+    app_behaviour.js
+)]);
 
 =head1 METHODS
 
@@ -875,6 +904,169 @@ sub page_navigation {
     return $self->{page_navigation};
 }
 
+=head3 include_css
+
+Returns a C<< <link> >> tag for the compressed CSS
+
+=cut
+
+sub include_css {
+    my $self = shift;
+    
+    if ( Jifty->config->framework('DevelMode') ) {
+        $self->out(
+            '<link rel="stylesheet" type="text/css" '
+            . 'href="/static/css/main.css" />'
+        );
+    }
+    else {
+        $self->generate_css;
+    
+        $self->out(
+            '<link rel="stylesheet" type="text/css" href="/__jifty/css/'
+            . __PACKAGE__->cached_css_digest . '.css" />'
+        );
+    }
+    
+    return '';
+}
+
+=head3 generate_css
+
+Checks if the compressed CSS is generated, and if it isn't, generates
+and caches it.
+
+=cut
+
+sub generate_css {
+    my $self = shift;
+    
+    if (not defined __PACKAGE__->cached_css_digest
+            or Jifty->config->framework('DevelMode'))
+    {
+        Jifty->log->debug("Generating CSS...");
+        
+        my $app   = File::Spec->catdir(
+                        Jifty->config->framework('Web')->{'StaticRoot'},
+                        'css'
+                    );
+
+        my $jifty = File::Spec->catdir(
+                        Jifty->config->framework('Web')->{'DefaultStaticRoot'},
+                        'css'
+                    );
+
+        my $file = Jifty::Util->absolute_path(
+                        File::Spec->catpath( '', $app, 'main.css' )
+                   );
+
+        if ( not -e $file ) {
+            $file = Jifty::Util->absolute_path(
+                         File::Spec->catpath( '', $jifty, 'main.css' )
+                    );
+        }
+
+        CSS::Squish->roots( $jifty );
+        
+        my $css = CSS::Squish->concatenate( $file );
+
+        __PACKAGE__->cached_css( $css );
+        __PACKAGE__->cached_css_digest( md5_hex( $css ) );
+    }
+}
+
+=head3 include_javascript
+
+Returns a C<< <script> >> tag for the compressed Javascript.
+
+=cut
+
+sub include_javascript {
+    my $self  = shift;
+    
+    if ( Jifty->config->framework('DevelMode') ) {
+        for my $file ( @{ __PACKAGE__->javascript_libs } ) {
+            $self->out(
+                qq[<script type="text/javascript" src="/static/js/$file"></script>\n]
+            );
+        }
+    }
+    else {
+        $self->generate_javascript;
+    
+        $self->out(
+            qq[<script type="text/javascript" src="/__jifty/js/]
+            . __PACKAGE__->cached_javascript_digest . qq[.js"></script>]
+        );
+    }
+    
+    return '';
+}
+
+=head3 generate_javascript
+
+Checks if the compressed JS is generated, and if it isn't, generates
+and caches it.
+
+=cut
+
+sub generate_javascript {
+    my $self = shift;
+    
+    if (not defined __PACKAGE__->cached_javascript_digest
+            or Jifty->config->framework('DevelMode'))
+    {
+        Jifty->log->debug("Generating JS...");
+        
+        my @roots = (
+            File::Spec->catdir(
+                Jifty->config->framework('Web')->{'StaticRoot'},
+                'js'
+            ), 
+
+            File::Spec->catdir(
+                Jifty->config->framework('Web')->{'DefaultStaticRoot'},
+                'js'
+            ),
+        );
+        
+        my $js = "";
+
+        for my $file ( @{ __PACKAGE__->javascript_libs } ) {
+            my $include;
+        
+            for my $root (@roots) {
+                my @spec = File::Spec->splitpath( $root, 1 );
+                my $path = File::Spec->catpath( @spec[0,1], $file );
+                
+                if ( -e $path ) {
+                    $include = $path;
+                    last;
+                }
+            }
+
+            if ( defined $include ) {
+                my $fh;
+
+                if ( open $fh, '<', $include ) {
+                    $js .= "/* Including '$file' */\n\n";
+                    $js .= $_ while <$fh>;
+                    $js .= "\n/* End of '$file' */\n\n";
+                }
+                else {
+                    $js .= "\n/* Unable to open '$file': $! */\n";
+                }
+            }
+            else {
+                $js .= "\n/* Unable to find '$file' */\n";
+            }
+        }
+
+        __PACKAGE__->cached_javascript( $js );
+        __PACKAGE__->cached_javascript_digest( md5_hex( $js ) );
+    }
+}
+
 =head2 STATE VARIABLES
 
 =head3 get_variable NAME
@@ -990,72 +1182,6 @@ placed in the current region.
 sub qualified_region {
     my $self = shift;
     return join( "-", map { $_->name } @{ $self->{'region_stack'} || [] }, @_ );
-}
-
-=head3 include_css
-
-Returns a C<< <link> >> tag for the compressed CSS
-
-=cut
-
-sub include_css {
-    my $self = shift;
-    
-    if ( Jifty->config->framework('DevelMode') ) {
-        $self->out(
-            '<link rel="stylesheet" type="text/css" '
-            . 'href="/static/css/main.css" />'
-        );
-    }
-    else {
-        $self->generate_css;
-    
-        $self->out(
-            '<link rel="stylesheet" type="text/css" href="/__jifty/css/'
-            . __PACKAGE__->cached_css_digest . '.css" />'
-        );
-    }
-    
-    return '';
-}
-
-=head3 generate_css
-
-Checks if the compressed CSS is generated, and if it isn't, generates
-and caches it.
-
-=cut
-
-sub generate_css {
-    my $self = shift;
-    
-    if (not defined __PACKAGE__->cached_css_digest
-            or Jifty->config->framework('DevelMode'))
-    {
-        Jifty->log->debug("Generating CSS...");
-        
-        my $css_dir = File::Spec->catdir(
-                           Jifty->config->framework('Web')->{'StaticRoot'},
-                           'css'
-                      );
-
-        CSS::Squish->roots(
-            File::Spec->catdir(
-                Jifty->config->framework('Web')->{'DefaultStaticRoot'},
-                'css'
-            )
-        );
-        
-        my $css = CSS::Squish->concatenate(
-                     Jifty::Util->absolute_path(
-                         File::Spec->catpath( '', $css_dir, 'main.css' )
-                     )
-                  );
-
-        __PACKAGE__->cached_css( $css );
-        __PACKAGE__->cached_css_digest( md5_hex( $css ) );
-        __PACKAGE__->cached_css_mtime( time );
-    }
 }
 
 1;

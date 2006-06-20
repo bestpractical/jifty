@@ -70,7 +70,10 @@ use vars qw/$HANDLE $CONFIG $LOGGER $HANDLER $API @PLUGINS/;
 
 This class method instantiates a new C<Jifty> object. This object
 deals with configuration files, logging and database handles for the
-system.  Most of the time, the server will call this for you to set up
+system.  Before this method returns, it calls the application's C<start>
+method (i.e. C<MyApp->start>) to handle any application-specific startup.
+
+Most of the time, the server will call this for you to set up
 your C<Jifty> object.  If you are writing command-line programs that
 want to use your libraries (as opposed to web services) you will need
 to call this yourself.
@@ -131,12 +134,16 @@ sub new {
     __PACKAGE__->handler(Jifty::Handler->new());
     __PACKAGE__->api(Jifty::API->new());
 
+    # Let's get the database rocking and rolling
+    __PACKAGE__->setup_database_connection(%args);
 
-   # Let's get the database rocking and rolling
-   __PACKAGE__->setup_database_connection(%args);
-
-
-
+    # Call the application's start method to let it do anything
+    # application specific for startup
+    my $app = Jifty->config->framework('ApplicationClass');
+    
+    $app->start()
+        if $app->can('start');
+    
 }
 
 =head2 config

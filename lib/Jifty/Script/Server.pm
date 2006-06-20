@@ -81,8 +81,6 @@ sub run {
     print $fh $$;
     close $fh;
 
-    Jifty->new();
-
     Jifty->handle->dbh->{Profile} = '6/DBI::ProfileDumper'
         if $self->{dbiprof};
 

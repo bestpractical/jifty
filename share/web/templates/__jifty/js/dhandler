@@ -1,0 +1,25 @@
+<%init>
+if ( $m->dhandler_arg !~ /^[0-9a-f]{32}\.js$/ ) {
+    # This doesn't look like a real request for squished JS,
+    # so redirect to a more failsafe place
+    Jifty->web->redirect( "/static/js/" . $m->dhandler_arg );
+}
+
+Jifty->web->generate_javascript;
+
+use HTTP::Date ();
+
+if ( Jifty->handler->cgi->http('If-Modified-Since')
+        and $m->dhandler_arg eq Jifty->web->cached_javascript_digest . '.js' )
+{
+    Jifty->log->debug("Returning 304 for cached javascript");
+    $r->header_out( Status => 304 );
+    return;
+}
+
+$r->content_type("application/x-javascript");
+$r->header_out( 'Expires' => HTTP::Date::time2str(time + 31536000) );
+
+Jifty->web->out( Jifty->web->cached_javascript );
+return;
+</%init>

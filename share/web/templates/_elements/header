@@ -7,7 +7,7 @@
   <title><% _($title) %></title>
   
   <% Jifty->web->include_css %>
-  <& javascript &> 
+  <% Jifty->web->include_javascript %> 
 </head>
 <%args>
 $title => ""
