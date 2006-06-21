@@ -85,7 +85,12 @@ sub new {
     	$self->_get_current_user();
     }
 
-    $self->moniker($args{'moniker'} || 'auto-'.Jifty->web->serial);
+    if ($args{'moniker'}) {
+        $self->moniker($args{'moniker'});
+    } else {
+        $self->moniker('auto-'.Jifty->web->serial);
+        $self->log->debug("Generating moniker auto-".Jifty->web->serial);
+    }
     $self->order($args{'order'});
     $self->argument_values( { %{ $args{'arguments'} } } );
     $self->result(Jifty->web->response->result($self->moniker) || Jifty::Result->new);
