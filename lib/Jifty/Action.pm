@@ -76,13 +76,13 @@ sub new {
         arguments  => {},
         sticky_on_success => 0,
         sticky_on_failure => 1,
-	current_user => undef,
+        current_user => undef,
         @_);
 
     if ($args{'current_user'}) {
-	$self->current_user($args{current_user});
+        $self->current_user($args{current_user});
     } else {
-    	$self->_get_current_user();
+        $self->_get_current_user();
     }
 
     if ($args{'moniker'}) {
@@ -175,16 +175,16 @@ sub run {
     unless ($self->result->success) {
         $self->log->debug("Not taking action, as it doesn't validate");
 
-		# dump field warnings and errors to debug log
-		foreach my $what (qw/warnings errors/) {
-			my $f = "field_" . $what;
-			my @r =
-				map {
-					$_ . ": " . $self->result->{$f}->{$_}
-				} grep { $self->result->{$f}->{$_} }
-					keys %{ $self->result->{$f} };
-			$self->log->debug("Action result $what:\n\t", join("\n\t", @r)) if (@r);
-		}
+        # dump field warnings and errors to debug log
+        foreach my $what (qw/warnings errors/) {
+            my $f = "field_" . $what;
+            my @r =
+                map {
+                    $_ . ": " . $self->result->{$f}->{$_}
+                } grep { $self->result->{$f}->{$_} }
+                    keys %{ $self->result->{$f} };
+            $self->log->debug("Action result $what:\n\t", join("\n\t", @r)) if (@r);
+        }
 
         return;
     }
