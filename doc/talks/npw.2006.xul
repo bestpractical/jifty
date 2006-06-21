@@ -385,7 +385,7 @@ help
  # jifty schema --setup 
 
  Jifty version 0.605070 up to date.
- INFO - Gerating SQL to upgrade Blog v0.0.1 database to v0.0.2
+ INFO - Generating SQL to upgrade Blog v0.0.1 database to v0.0.2
  INFO - Upgraded to version v0.0.2
 
  # jifty server

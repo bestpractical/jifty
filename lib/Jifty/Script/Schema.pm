@@ -311,7 +311,7 @@ sub upgrade_tables {
         return;
     }
     $log->info(
-        "Gerating SQL to upgrade $baseclass $dbv database to $appv"
+        "Generating SQL to upgrade $baseclass $dbv database to $appv"
     );
 
     # Figure out what versions the upgrade knows about.
