@@ -64,6 +64,7 @@ sub new {
         Jifty->config->framework('ApplicationClass') . "::Dispatcher" );
     Jifty::Util->require( $self->dispatcher );
     $self->dispatcher->import_plugins;
+    $self->dispatcher->dump_rules;
 
     $self->mason( Jifty::View::Mason::Handler->new( $self->mason_config ) );
 
