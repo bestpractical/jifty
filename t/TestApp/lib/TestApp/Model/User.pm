@@ -10,6 +10,10 @@ column 'name' =>
 column 'email' =>
   type is 'text',
   is mandatory;
+column 'tasty' =>
+  type is 'boolean',
+  is immutable;
+
 
 package TestApp::Model::User;
 use base qw/TestApp::Record/;

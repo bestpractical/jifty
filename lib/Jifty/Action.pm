@@ -289,10 +289,15 @@ C<ARGUMENT>, returns C<undef>.
 sub form_field {
     my $self = shift;
     my $arg_name = shift;
-    $self->_form_widget( argument => $arg_name,
-                         render_mode => 'update',
-                         @_);
 
+    my $mode = (defined $self->arguments->{$arg_name}{'render_mode'}
+                    and $self->arguments->{$arg_name}{'render_mode'} eq 'read')
+                        ? 'read'
+                        : 'update';
+    
+    $self->_form_widget( argument => $arg_name,
+                         render_mode => $mode,
+                         @_);
 }
 
 

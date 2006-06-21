@@ -84,19 +84,6 @@ sub take_action {
     return 1;
 }
 
-=head2 possible_fields
-
-Returns all of the columns on the record class.  This is because,
-unlike L<Jifty::Action::Record::Update>, columns which are marked as
-'immutable' should still be able to be set at creation time.
-
-=cut
-
-sub possible_fields {
-    my $self = shift;
-    return map {$_->name} grep {$_->type ne "serial"} $self->record->columns;
-}
-
 =head2 report_success
 
 Sets the L<Jifty::Result/message> to default success message,

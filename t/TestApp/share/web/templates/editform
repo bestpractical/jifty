@@ -13,6 +13,7 @@ my $action = Jifty->web->new_action(
 <% Jifty->web->form->start() %>
 <% $action->form_field('name') %>
 <% $action->form_field('email') %>
+<% $action->form_field('tasty') %>
 <% Jifty->web->form->submit %>
 <% Jifty->web->form->end %>
 </&>

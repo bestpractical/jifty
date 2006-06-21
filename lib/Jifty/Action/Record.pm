@@ -255,13 +255,13 @@ sub arguments {
 =head2 possible_fields
 
 Returns the list of fields on the object that the action can update.
-This defaults to only the writable fields of the object.
+This defaults to all of the fields of the object.
 
 =cut
 
 sub possible_fields {
     my $self = shift;
-    return $self->record->writable_attributes;
+    return map {$_->name} grep {$_->type ne "serial"} $self->record->columns;
 }
 
 =head2 take_action

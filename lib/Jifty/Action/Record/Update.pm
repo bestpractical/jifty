@@ -33,6 +33,12 @@ sub arguments {
     my $self = shift;
     my $arguments = $self->SUPER::arguments(@_);
 
+    for my $column ( $self->record->columns ) {
+        if ( not $column->writable and $column->readable ) {
+            $arguments->{$column->name}{'render_mode'} = 'read';
+        }
+    }
+
     for my $pk (@{ $self->record->_primary_keys }) {
         $arguments->{$pk}{'constructor'} = 1;
         $arguments->{$pk}{'mandatory'} = 1;
