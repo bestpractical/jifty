@@ -12,7 +12,7 @@ my @options = @{$ref->{'completions'}||[]};
 %    if (!ref($item)) {
 <li><% $item %></li>
 %    } elsif (exists $item->{label}) {
-<li><span class="informal"><% $item->{label} %></span><span style="visibility: hidden"><% $item->{value} %></span></li>
+<li><span class="informal"><% $item->{label} %></span><span class="hidden_value"><% $item->{value} %></span></li>
 %    } else {
 <li><% $item->{value} %></li>
 %    }

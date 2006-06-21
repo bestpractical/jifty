@@ -22,3 +22,7 @@
     color: white;
 }
 
+.autocomplete .hidden_value {
+    display: none;
+}
+
