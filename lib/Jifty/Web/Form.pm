@@ -168,7 +168,11 @@ sub start {
     }
 
     for (keys %args) {
-        $self->$_($args{$_}) if $self->can($_);
+        if ( $self->can($_) ) {
+            $self->$_($args{$_});
+        } else {
+            $self->log->warn("Unknown parametar to Jifty->Web->Form->start: $_");
+        }
     }
 
     my $form_start = qq!<form method="post" action="$ENV{PATH_INFO}"!;
