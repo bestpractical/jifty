@@ -113,14 +113,30 @@ Action.prototype = {
         for (var i = 0; i < fields.length; i++) {
             var f = fields[i];
 
-            if ((Form.Element.getType(f) != "registration") && (Form.Element.getValue(f) != null)) {
+            if (   (Form.Element.getType(f) != "registration")
+		&& (Form.Element.getValue(f) != null)) {
                 if (! a['fields'][Form.Element.getField(f)])
                     a['fields'][Form.Element.getField(f)] = {};
-                a['fields'][Form.Element.getField(f)][Form.Element.getType(f)] = Form.Element.getValue(f);
+		var field = Form.Element.getField(f);
+		var type = Form.Element.getType(f);
+		    
+                a['fields'][field][type] = this._mergeValues(a['fields'][field][type],
+							     Form.Element.getValue(f));
             }
         }
 
         return a;
+    },
+
+    _mergeValues: function() {
+	var oldval = arguments[0];
+	var newval = arguments[1];
+	if(!oldval) return newval;
+	if(oldval.constructor != Array) {
+	    oldval = [oldval];
+	}
+	oldval.push(newval);
+	return oldval;
     },
 
     // Validate the action
