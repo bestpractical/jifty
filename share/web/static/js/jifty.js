@@ -774,8 +774,8 @@ function show_action_result() {
     }
     
     setTimeout(function () {
-	    new Effect.Fade(node, {duration: 5.0});
-    }, 2000);
+	    new Effect.Fade(node, {duration: 3.0});
+    }, 3500);
 }
 
 Jifty.Autocompleter = Class.create();
