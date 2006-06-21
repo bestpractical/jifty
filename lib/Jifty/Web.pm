@@ -563,7 +563,7 @@ sub redirect {
         $request->add_state_variable( key => $_, value => $self->{'state_variables'}->{$_} )
           for keys %{ $self->{'state_variables'} };
         for (@actions) {
-            $request->add_action(
+            my $new_action = $request->add_action(
                 moniker   => $_->moniker,
                 class     => $_->class,
                 order     => $_->order,
@@ -571,6 +571,10 @@ sub redirect {
                 has_run   => $_->has_run,
                 arguments => $_->arguments,
             );
+            # Clear out filehandles, which don't go thorugh continuations well
+            $new_action->arguments->{$_} = ''
+              for grep {ref $new_action->arguments->{$_} eq "Fh"}
+                keys %{$new_action->arguments};
         }
         $request->continuation($self->request->continuation);
         my $cont = Jifty::Continuation->new(
