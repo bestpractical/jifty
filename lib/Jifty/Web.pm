@@ -143,7 +143,7 @@ sub serial {
     # We don't use a lexical for the serial number, because then it
     # would be reset on module refresh
     $SERIAL ||= 0;
-    return join( "S", ++$SERIAL, $$ );    # Start at 1.
+    return join('', "S", ++$SERIAL, $$ );    # Start at 1.
 }
 
 =head2 SESSION MANAGEMENT

@@ -1,28 +1,29 @@
-<a href="#" id="render_info" onClick="Element.toggle('render_info_tree'); return false">Page info</a>
+<div><a href="#" id="render_info" onclick="Element.toggle('render_info_tree'); return false">Page info</a></div>
 <div style="display: none" id="render_info_tree">
-<ul>
 % foreach my $item (@stack) {
 %     if ( $item->{depth} > $depth ) {
 <ul>
 %     } elsif ( $item->{depth} < $depth ) {
 %         for ($item->{depth}+1 .. $depth) {
-</ul>
+</li></ul>
 %         }
+</li>
+%     } elsif ( $item->{depth} == $depth ) {
+</li>
 %     }
 
-<li><a href="#" class="halo_comp_info" onMouseOver="halo_over('<% $item->{id} %>')"
-                                       onMouseOut="halo_out('<% $item->{id} %>')"
-                                       onClick="halo_toggle('<% $item->{id} %>'); return false;">
+<li><a href="#" class="halo_comp_info" onmouseover="halo_over('<% $item->{id} %>')"
+                                       onmouseout="halo_out('<% $item->{id} %>')"
+                                       onclick="halo_toggle('<% $item->{id} %>'); return false;">
 <% $item->{'path'} %> - <% $item->{'render_time'} %></a> 
 % unless ($item->{subcomponent}) {
 <% Jifty->web->tangent( url =>"/__jifty/edit/mason_component/".$item->{'path'}, label => 'Edit') %>
 % }
-</li>
 % $depth = $item->{'depth'};
 % }
 
 % for (1 .. $depth) {
-</ul>
+</li></ul>
 % }
 </div>
 
@@ -49,7 +50,7 @@ for my $id (0..$#stack) {
     }
 }
 
-my $depth = 1;
+my $depth = 0;
 
 </%init>
 
@@ -58,7 +59,7 @@ my $depth = 1;
 <%def .frame>
 <div class="halo_actions" id="halo-<% $id %>-menu" style="display: none; top: 5px; left: 500px; min-width: 200px; width: 300px; z-index: 5;">
 <h1 id="halo-<% $id %>-title">
-  <span style="float: right;"><a href="#" onClick="halo_toggle('<% $id %>'); return false">[ X ]</a></span>
+  <span style="float: right;"><a href="#" onclick="halo_toggle('<% $id %>'); return false">[ X ]</a></span>
   <% $frame->{name} %>
 </h1>
 <div style="position: absolute; bottom: 3px; right: 3px"><span class="resize" title="Resize" id="halo-<% $id %>-resize"></span></div>
@@ -70,9 +71,9 @@ my $depth = 1;
 % if ($frame->{parent}) {
 <div class="section">Parent</div>
 <div class="body"><ul>
-<li><a href="#" class="halo_comp_info" onMouseOver="halo_over('<% $frame->{parent}{id} %>')"
-                                       onMouseOut="halo_out('<% $frame->{parent}{id} %>')"
-                                       onClick="halo_toggle('<% $frame->{parent}{id} %>'); return false;">
+<li><a href="#" class="halo_comp_info" onmouseover="halo_over('<% $frame->{parent}{id} %>')"
+                                       onmouseout="halo_out('<% $frame->{parent}{id} %>')"
+                                       onclick="halo_toggle('<% $frame->{parent}{id} %>'); return false;">
 <% $frame->{parent}{'path'} %> - <% $frame->{parent}{'render_time'} %></a></li>
 </ul></div>
 % }
@@ -80,9 +81,9 @@ my $depth = 1;
 <div class="section">Children</div>
 <div class="body"><ul>
 % for my $item (@{$frame->{kids}}) {
-<li><a href="#" class="halo_comp_info" onMouseOver="halo_over('<% $item->{id} %>')"
-                                       onMouseOut="halo_out('<% $item->{id} %>')"
-                                       onClick="halo_toggle('<% $item->{id} %>'); return false;">
+<li><a href="#" class="halo_comp_info" onmouseover="halo_over('<% $item->{id} %>')"
+                                       onmouseout="halo_out('<% $item->{id} %>')"
+                                       onclick="halo_toggle('<% $item->{id} %>'); return false;">
 <% $item->{'path'} %> - <% $item->{'render_time'} %></a></li>
 % }
 </ul>

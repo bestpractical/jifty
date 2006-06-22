@@ -222,7 +222,7 @@ sub render_as_hierarchical_menu_item {
     Jifty->web->out(qq{</span>});
     if (@kids) {
         Jifty->web->out(
-            qq{<span class="expand"><a href="#" onClick="Jifty.ContextMenu.hideshow('}
+            qq{<span class="expand"><a href="#" onclick="Jifty.ContextMenu.hideshow('}
                 . $id
                 . qq{'); return false;">+</a></span>}
                 . qq{<ul id="}

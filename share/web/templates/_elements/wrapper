@@ -14,6 +14,7 @@
   <% Jifty->web->render_messages %>
   <% $m->content |n%>
   <& /_elements/keybindings &>
+  </div>
   <div id="jifty-wait-message" style="display: none"><%_('Loading...')%></div>
 % Jifty::Mason::Halo->render_component_tree() if (Jifty->config->framework('DevelMode') );
 </body>
