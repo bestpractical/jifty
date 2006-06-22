@@ -172,7 +172,7 @@ sub start {
             $self->$_($args{$_});
         } else {
 			my (undef, $template, $line) = caller;
-            $self->log->warn(sprintf("Unknown parameter to Jifty->web->form->start: $_ in %s line %d", (caller)[1,2]));
+            $self->log->warn("Unknown parameter to Jifty->web->form->start: $_ in $template line $line");
         }
     }
 
