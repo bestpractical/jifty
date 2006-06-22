@@ -205,6 +205,44 @@ sub send_action {
     return $content;
 }
 
+=head2 request_fragment PATH ARGUMENT => VALUE, [ ... ]
+
+Makes a request for the fragment at PATH, using the webservices API,
+and returns the string of the result.
+
+=cut
+
+sub fragment_request {
+    my $self = shift;
+    my $path = shift;
+    my %args = @_;
+
+    my $uri = $self->uri->clone;
+    $uri->path("__jifty/webservices/xml");
+
+    my $request = HTTP::Request->new(
+        POST => $uri,
+        [ 'Content-Type' => 'text/x-yaml' ],
+        Jifty::YAML::Dump(
+            {   path => $uri->path,
+                fragments => {
+                    fragment => {
+                        name  => 'fragment',
+                        path  => $path,
+                        args  => \%args
+                    }
+                }
+            }
+        )
+    );
+    my $result = $self->request( $request );
+    use XML::Simple;
+    my $content = eval { XML::Simple::XMLin($result->content, SuppressEmpty => '')->{fragment}{content} } || '';
+    $self->back;
+    return $content;
+}
+
+
 # When it sees something like
 # http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd as a DOCTYPE, this will make
 # it open static/dtd/xhtml1-strict.dtd instead -- great for offline hacking!
