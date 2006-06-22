@@ -65,16 +65,9 @@ sub new {
         render_mode   => 'update' });
     my $args = ref($_[0]) ? $_[0] : {@_};
 
-    my $subclass;
-    if ($args->{render_as}) {
-        $subclass = ucfirst($args->{render_as});
-    } elsif ($args->{'type'}) {
-        $subclass = ucfirst($args->{'type'});
-    }
-    if ($subclass) { 
-        $subclass = 'Jifty::Web::Form::Field::' . $subclass unless $subclass =~ /::/;
-        bless $self, $subclass if Jifty::Util->require($subclass);
-    }
+    my $subclass = ucfirst($args->{render_as} || $args->{type} || 'text');
+    $subclass = 'Jifty::Web::Form::Field::' . $subclass unless $subclass =~ /::/;
+    bless $self, $subclass if Jifty::Util->require($subclass);
 
     for my $field ( $self->accessors() ) {
         $self->$field( $args->{$field} ) if exists $args->{$field};
