@@ -205,7 +205,7 @@ sub send_action {
     return $content;
 }
 
-=head2 request_fragment PATH ARGUMENT => VALUE, [ ... ]
+=head2 fragment_request PATH ARGUMENT => VALUE, [ ... ]
 
 Makes a request for the fragment at PATH, using the webservices API,
 and returns the string of the result.
