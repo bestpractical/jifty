@@ -49,5 +49,31 @@ if (!isMSIE) {
 		}
 		return $textContent;
 	};
+
+	
+	selectById = function($results, $from, id) {
+	    var $match, i;
+	    for(i = 0; i < $from.length; i++) {
+		var $match = _getChildById($from[i], id);
+		if($match) $results.push($match);
+	    }
+	    return $results;
+	}
+
+	function _getChildById($from, $id) {
+	    var $match = document.getElementById($id);
+	    if($from == document) {
+		return $match;
+	    }
+	    var $elt = $match;
+	    while($elt) {
+		if($elt == $from) {
+		    return $match;
+		}
+		$elt = $elt.parentNode;
+	    }
+	    return null;
+	}
+
 }
 }); // addModule

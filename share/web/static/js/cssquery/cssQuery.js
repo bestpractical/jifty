@@ -2,10 +2,12 @@
 	cssQuery, version 2.0.2 (2005-08-19)
 	Copyright: 2004-2005, Dean Edwards (http://dean.edwards.name/)
 	License: http://creativecommons.org/licenses/LGPL/2.1/
+
+	Modifed by Nelson Elhage <nelhage@bestpractical.com>
+	(2006-06-21) to optimize selection by ID on non-IE browsers
 */
 
 // the following functions allow querying of the DOM using CSS selectors
-var $ID_ONLY = /^#([^\s>+~]+)\s*(.*)$/;
 var cssQuery = function() {
 var version = "2.0.2";
 
@@ -19,34 +21,15 @@ try {
 	var $match = [];
 	var $useCache = arguments.callee.caching && !$$from;
 	var $base = ($$from) ? ($$from.constructor == Array) ? $$from : [$$from] : [document];
-	//Optimization -- check for selectors beginning with '#id'
-	if($base.length == 1) {
-	    var $$bits = $selector.match($ID_ONLY);
-	    if($$bits) {
-		var $match;
-		if($base[0] == document) {
-		    $match = document.getElementById($$bits[1]);
-		} else {
-		    $match = getChildById($base[0], $$bits[1]);
-		}
-		if(!$match) {
-		    return [];
-		} else if(!$$bits[2].length) {
-		    return [$match];
-		} else {
-		    return cssQuery($$bits[2], $match);
-		}
-	    }
-	}
 	// process comma separated selectors
 	var $$selectors = parseSelector($selector).split($COMMA), i;
 	for (i = 0; i < $$selectors.length; i++) {
 		// convert the selector to a stream
 		$selector = _toStream($$selectors[i]);
-		// faster chop if it starts with id (MSIE only)
-		if (isMSIE && $selector.slice(0, 3).join("") == " *#") {
+		// faster chop if it starts with id
+		if ($selector.slice(0, 3).join("") == " *#") {
 			$selector = $selector.slice(2);
-			$$from = _msie_selectById([], $base, $selector[1]);
+			$$from = selectById([], $base, $selector[1]);
 		} else $$from = $base;
 		// process the stream
 		var j = 0, $token, $filter, $arguments, $cacheSelector = "";
@@ -266,37 +249,6 @@ var getTextContent = function($element) {
 	return $element.innerText;
 };
 
-function _msie_selectById($results, $from, id) {
-	var $match, i, j;
-	for (i = 0; i < $from.length; i++) {
-		if ($match = $from[i].all.item(id)) {
-			if ($match.id == id) $results.push($match);
-			else if ($match.length != null) {
-				for (j = 0; j < $match.length; j++) {
-					if ($match[j].id == id) $results.push($match[j]);
-				}
-			}
-		}
-	}
-	return $results;
-};
-
-function getChildById($from, $id) {
-    if(isMSIE) {
-	return _msie_selectById([], [$from], $id);
-    } else {
-	var $node = document.getElementById($id);
-	var $elt = $node;
-	while($elt) {
-	    if($elt == $from) {
-		return $node;
-	    }
-	    $elt = $elt.parentNode;
-	}
-	return null;
-    }
-}
-
 // for IE5.0
 if (![].push) Array.prototype.push = function() {
 	for (var i = 0; i < arguments.length; i++) {
@@ -350,6 +302,21 @@ var parseSelector = function($selector) {
 	.replace($WHITESPACE, "$1")
 	// e.g. ".class1" --> "*.class1"
 	.replace($IMPLIED_ALL, "$1*$2");
+};
+
+var selectById = function($results, $from, id) {
+	var $match, i, j;
+	for (i = 0; i < $from.length; i++) {
+		if ($match = $from[i].all.item(id)) {
+			if ($match.id == id) $results.push($match);
+			else if ($match.length != null) {
+				for (j = 0; j < $match.length; j++) {
+					if ($match[j].id == id) $results.push($match[j]);
+				}
+			}
+		}
+	}
+	return $results;
 };
 
 var Quote = {
