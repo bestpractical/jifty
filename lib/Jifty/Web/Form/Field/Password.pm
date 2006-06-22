@@ -21,9 +21,7 @@ The default value of a password field should B<always> be empty.
 
 sub current_value {''}
 
-=head2 render_autocomplete
-
-Never render anything for autocompletion.
+=head2 other_widget_properties
 
 No browser-based form auto-completion in password fields ;)
 
@@ -31,7 +29,9 @@ Note: This has nothing to do with Jifty's Autocomplete mechanism.
 
 =cut
 
-sub render_autocomplete {''}
+sub other_widget_properties {
+    return q{autocomplete="off"};
+}
 
 =head2 render_value 
 

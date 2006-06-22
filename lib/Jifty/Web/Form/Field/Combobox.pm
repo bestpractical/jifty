@@ -23,7 +23,7 @@ my $field = <<"EOF";
        value="@{[ $self->current_value ]}" 
        type="text" 
        size="30"
-       /><span id="@{[ $self->element_id ]}_Button" 
+       autocomplete="off" /><span id="@{[ $self->element_id ]}_Button" 
        @{[ $self->_widget_class('combo-button')]}
         ></span></span><span style="display: none"></span><select 
         name="@{[ $self->input_name ]}" 
