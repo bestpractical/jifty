@@ -25,6 +25,10 @@ sub current_value {''}
 
 Never render anything for autocompletion.
 
+No browser-based form auto-completion in password fields ;)
+
+Note: This has nothing to do with Jifty's Autocomplete mechanism.
+
 =cut
 
 sub render_autocomplete {''}
