@@ -74,6 +74,7 @@ Autocompleter.Base.prototype = {
 
     Element.hide(this.update);
 
+    Event.observe(this.element, "focus", this.onFocus.bindAsEventListener(this));
     Event.observe(this.element, "blur", this.onBlur.bindAsEventListener(this));
     Event.observe(this.element, "keypress", this.onKeyPress.bindAsEventListener(this));
   },
@@ -174,7 +175,17 @@ Autocompleter.Base.prototype = {
     setTimeout(this.hide.bind(this), 250);
     this.hasFocus = false;
     this.active = false;     
-  }, 
+  },
+
+  onFocus: function(event) {
+    this.changed = true;
+    this.hasFocus = true;
+
+    if (this.observer)
+        clearTimeout(this.observer);
+    
+    this.onObserverEvent();
+  },
   
   render: function() {
     if(this.entryCount > 0) {

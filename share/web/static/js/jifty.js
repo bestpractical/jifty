@@ -801,8 +801,7 @@ Object.extend(Object.extend(Jifty.Autocompleter.prototype, Ajax.Autocompleter.pr
     this.action = Form.Element.getAction(this.field);
     this.url    = '/__jifty/autocomplete.xml';
 
-
-    this.baseInitialize(this.field, $(div));
+    this.baseInitialize(this.field, $(div), { minChars: "0" });
   },
 
   getUpdatedChoices: function() {
