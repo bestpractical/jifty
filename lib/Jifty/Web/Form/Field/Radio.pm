@@ -19,6 +19,22 @@ sub render_widget {
     }
 }
 
+=head2 render_label
+
+We need to output the label as a span instead since the labels are associated 
+with the individual options.
+
+=cut
+
+sub render_label {
+    my $self = shift;
+    Jifty->web->out(
+        qq!<span class="label @{[$self->classes]}">@{[_($self->label) ]}</span>\n!
+    );
+
+    return '';
+}
+
 =head2 render_option option
 
 Renders a radio widget
@@ -39,9 +55,9 @@ sub render_option {
     $field .= qq! value="@{[ $value ]}"!;
     $field .= $self->_widget_class;
 
-    $field .= qq! checked="1" !
+    $field .= qq! checked="checked" !
       if defined $self->current_value and $self->current_value eq $value;
-    $field .= qq!><label for="@{[ $id ]}"!;
+    $field .= qq! /><label for="@{[ $id ]}"!;
     $field .= $self->_widget_class;
     $field .= qq!>$display</label>\n!;
     Jifty->web->out($field);

@@ -14,7 +14,7 @@ div.form_field {
     float: left;
 }
 
-div.form_field label.label {
+div.form_field label.label, div.form_field span.label {
     float: left;
     width: 15%;
     text-align: right;

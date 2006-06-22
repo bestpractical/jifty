@@ -375,9 +375,15 @@ an empty string.
 
 sub render_label {
     my $self = shift;
-    Jifty->web->out(
+    if ( $self->render_mode eq 'update' ) {
+        Jifty->web->out(
 qq!<label class="label @{[$self->classes]}" for="@{[$self->element_id ]}">@{[_($self->label) ]}</label>\n!
-    );
+        );
+    } else {
+        Jifty->web->out(
+            qq!<span class="label @{[$self->classes]}">@{[_($self->label) ]}</span>\n!
+        );
+    }
 
     return '';
 }

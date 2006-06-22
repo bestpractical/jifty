@@ -55,7 +55,7 @@ sub render_value {
     $field .= qq! value="@{[$self->value ||1]}"!;
     $field .= $self->_widget_class;
     $field .= qq! checked="checked"! if ($self->checked or $self->current_value);
-    $field .= qq! disabled readonly!;
+    $field .= qq! disabled="disabled" readonly="readonly"!;
     $field .= qq! />\n!;
 
     Jifty->web->out($field);

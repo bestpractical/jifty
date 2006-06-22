@@ -5,13 +5,16 @@ $menu => undef
 # Default to the app menu
 $menu = Jifty->web->navigation if not defined $menu;
 </%init>
+% my @children = $menu->children;
+% if ( @children ) {
 <ul class="menu">
 <%perl>
 $m->comp( ".menu", item => $_ )
     for sort { $a->sort_order <=> $b->sort_order }
-             $menu->children;
+             @children;
 </%perl>
 </ul>
+% }
 
 <%def .menu>
   <%args>

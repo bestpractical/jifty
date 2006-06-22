@@ -406,11 +406,11 @@ is needed.
 
 sub register {
     my $self = shift;
-    Jifty->web->out( qq!<input type="hidden"! .
+    Jifty->web->out( qq!<div><input type="hidden"! .
                        qq! name="@{[$self->register_name]}"! .
                        qq! id="@{[$self->register_name]}"! .
                        qq! value="@{[ref($self)]}"! .
-                       qq! />\n! );
+                       qq! /></div>\n! );
 
 
 
@@ -418,6 +418,7 @@ sub register {
 
     while ( my ( $name, $info ) = each %args ) {
         next unless $info->{'constructor'};
+        Jifty->web->out( qq!<div>! );
         Jifty::Web::Form::Field->new(
             %$info,
             action        => $self,
@@ -426,6 +427,7 @@ sub register {
             default_value => ($self->argument_value($name) || $info->{'default_value'}),
             render_as     => 'Hidden'
         )->render();
+        Jifty->web->out( qq!</div>! );
     }
     return '';
 }

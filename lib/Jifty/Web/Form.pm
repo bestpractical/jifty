@@ -197,9 +197,9 @@ sub submit {
     my $self = shift;
 
     my $button = Jifty::Web::Form::Clickable->new(submit => undef, @_)->generate;
-    Jifty->web->out(qq{<span class="submit_button">});
+    Jifty->web->out(qq{<div class="submit_button">});
     $button->render_widget;
-    Jifty->web->out(qq{</span>});
+    Jifty->web->out(qq{</div>});
 
     return '';
 }
