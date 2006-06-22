@@ -408,12 +408,12 @@ sub render_widget {
 
 =head2 other_widget_properties
 
-If your widget subclass has other properties it wants to insert into the html of the main widget and you haven't subclassed render_widget,
+If your widget subclass has other properties it wants to insert into the html
+of the main widget and you haven't subclassed render_widget you can subclass
+this to do so.
 
-just stick them in your local sub render_widget.
-
-We use this for marking password fields as not-autocomplete
-
+Otherwise, if you have already subclassed render_widget, just stick them in
+your local sub render_widget.
 
 =cut
 

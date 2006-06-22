@@ -23,7 +23,7 @@ my $field = <<"EOF";
        value="@{[ $self->current_value ]}" 
        type="text" 
        size="30"
-       autocomplete="off" /><span id="@{[ $self->element_id ]}_Button" 
+       /><span id="@{[ $self->element_id ]}_Button" 
        @{[ $self->_widget_class('combo-button')]}
         ></span></span><span style="display: none"></span><select 
         name="@{[ $self->input_name ]}" 
@@ -60,5 +60,13 @@ EOF
         Jifty->web->out($field);
     '';
 }
+
+=head2 render_autocomplete
+
+Never render anything for autocomplete.
+
+=cut
+
+sub render_autocomplete {''}
 
 1;
