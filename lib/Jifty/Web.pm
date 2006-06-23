@@ -574,7 +574,7 @@ sub redirect {
             # Clear out filehandles, which don't go thorugh continuations well
             $new_action->arguments->{$_} = ''
               for grep {ref $new_action->arguments->{$_} eq "Fh"}
-                keys %{$new_action->arguments};
+                keys %{$new_action->arguments || {}};
         }
         $request->continuation($self->request->continuation);
         my $cont = Jifty::Continuation->new(
