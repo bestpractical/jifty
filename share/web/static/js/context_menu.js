@@ -56,7 +56,6 @@ Jifty.ContextMenu = {
            but IE, which needs to use absolute positioning */
         if ( Jifty.Utils.isMSIE ) {
             if ( ul.style.position == "" ) {
-                alert("This is IE!");
                 var x = Jifty.Utils.findPosX( li );
                 var y = Jifty.Utils.findPosY( li ) + li.offsetHeight;
                 
