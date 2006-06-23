@@ -56,7 +56,7 @@ sub new {
     my $lh         = $class->get_handle(@$lang);
     my $loc_method = sub {
         # Retain compatibility with people using "-e _" etc.
-        return *_ unless @_;
+        return \*_ unless @_;
         return undef unless (defined $_[0]);
         $lh->maketext(@_);
     };
