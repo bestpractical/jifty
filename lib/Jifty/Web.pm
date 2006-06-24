@@ -43,8 +43,10 @@ __PACKAGE__->javascript_libs([qw(
     scriptaculous/builder.js
     scriptaculous/effects.js
     scriptaculous/controls.js
+    formatDate.js
     jifty.js
     jifty_utils.js
+    calendar.js
     dom-drag.js
     halo.js
     combobox.js
@@ -52,6 +54,10 @@ __PACKAGE__->javascript_libs([qw(
     context_menu.js
     bps_util.js
     rico.js
+    yui/yahoo.js
+    yui/dom.js
+    yui/event.js
+    yui/calendar.js
     app.js
     app_behaviour.js
 )]);

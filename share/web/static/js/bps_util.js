@@ -5,11 +5,6 @@ function focusElementById(id) {
     if (e) e.focus();
 }
 
-function openCalWindow(field) {
-    var objWindow = window.open('/helpers/calendar.html?field='+field, 'Calendar', 'height=200,width=235,scrollbars=1');
-    objWindow.focus();
-}
-
 function updateParentField(field, value) {
     if (window.opener) {
         window.opener.document.getElementById(field).value = value;
@@ -17,26 +12,8 @@ function updateParentField(field, value) {
     }
 }
 
-function createCalendarLink(input) {
-    var e = $(input);
-    if (e) {
-        var link = document.createElement("a");
-        link.setAttribute("href", "javascript:openCalWindow('"+e.id+"')");
-        Element.addClassName(link, "calendar_link");
-        
-        var img = document.createElement("img");
-        img.setAttribute("src", "/static/images/silk/calendar.png");
-        img.setAttribute("border", 0);
-        link.appendChild(img);
-        
-        var space = document.createTextNode(" ");
-        
-        e.parentNode.insertBefore(link, e.nextSibling);
-        e.parentNode.insertBefore(space, e.nextSibling);
-        
-        return true;
-    }
-    return false;
+function createCalendarLink(id) {
+    return Jifty.Calendar.registerDateWidget( id );
 }
 
 function buttonToLink(input) {
