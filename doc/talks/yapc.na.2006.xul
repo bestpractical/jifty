@@ -51,14 +51,6 @@ Jifty
 ----
 Jifty
 ----
-Silver
-Bullet
-----
-Ok. I'm
-Lying
-----
-Tool
-----
 Web App
 Framework
 ----
@@ -66,8 +58,7 @@ Hides the
 Complexity
 ----
 Jifty
-is
-JFDI
+= JFDI
 ----
 Lets you
 JFDI
@@ -81,13 +72,13 @@ App
 Let's set
 it up
 ----
+{{img src="#" width="0" height="0"}}
 {{img src="npw.2006/jifty_app.png" width="552" height="364"}}
 ----
-Lots of
-directories
+Many
+Directories
 ---- 
-Three 
-files
+3 Files
 ---- 
 {{img src="npw.2006/jifty_3_files.png" width="552" height="364"}}
 ----
@@ -95,8 +86,8 @@ It runs!
 ----
 {{img src="npw.2006/jifty_web_1.png" width="800" height="622"}}
 ----
-(Not a very
-good blog)
+Not a
+good blog
 ----
 Good blogs 
 have entries
@@ -123,8 +114,7 @@ have entries
 ----
 Nice
 ----
-Not a
-weblog
+Not really a blog
 ----
 {{#i|./lib/Blog/Dispatcher.pm}}
 ----
@@ -138,10 +128,9 @@ weblog
  }
 ----
  on '/' => run {
-     my $entries = 
-        Blog::Model::EntryCollection->new();
-     $entries->unlimit();
- 
+     my $entries = Blog::Model::EntryCollection->new;
+     $entries->unlimit;
+   
      set entries => $entries;
  };
 ---- 
@@ -158,14 +147,15 @@ weblog
  &lt;%ARGS>
  $create # From the dispatcher
  &lt;/%ARGS>
- &lt;&amp;|/_elements/wrapper, 
-    title => 'Create an article' &amp;>
- &lt;% Jifty->web->form->start %>
- % foreach my $arg ($create->argument_names) {
- &lt;% $create->form_field($arg) %>
+  
+ &lt;&amp;|/_elements/wrapper, title => 'Create an article' &amp;>
+ % my $form = Jifty->web->form;
+ &lt;% $form->start %>
+ % for my $arg ($create->argument_names) {
+   &lt;% $create->form_field($arg) %>
  % }
- &lt;% Jifty->web->form->submit( label => 'Save' ) %>
- &lt;% Jifty->web->form->end %>
+ &lt;% $form->submit( label => 'Save' ) %>
+ &lt;% $form->end %>
  &lt;/&amp;>
 ----
 {{#i|./web/templates/index.html}}
@@ -175,6 +165,7 @@ weblog
  &lt;%ARGS>
  $entries # From the dispatcher
  &lt;/%ARGS>
+  
  &lt;&amp;|/_elements/wrapper&amp;>
  % while (my $entry = $entries->next) {
   &lt;h2>&lt;% $entry->title %>&lt;/h2>
@@ -184,10 +175,8 @@ weblog
  % }
  &lt;/&amp;>
 ----
-  Your files:
-
- lib/Blog/Model/Entry.pm
  lib/Blog/Dispatcher.pm
+ lib/Blog/Model/Entry.pm
  web/templates/new_entry
  web/templates/index.html
 ----
@@ -195,16 +184,11 @@ All Done!
 ----
 It runs
 ----
-Ship it
+Ship it!
 ----
 Oh wait
 ----
-(There's always 
-an "Oh wait")
-----
-I'm from the US
-----
-New law
+New US law
 ----
 ...banning profanity
 ----
@@ -214,12 +198,12 @@ the children!)
 From the
 Internet
 ----
-So, we need to
+Must
 censor blogs
 ----
 No problem!
 ----
-(Except the political one)
+(Except for the political one)
 ----
 Back to the code!
 ----
@@ -228,20 +212,21 @@ Back to the code!
  use Regexp::Common 'profanity_us';
 
  sub validate_body {
-    my $self = shift;
-    my $body = shift;
-    if ( $body =~ /$RE{profanity}/i) {
-        return
-         (0, 'Would you speak like that in front of your mother? *cough*')
+    my ($self, $body) = @_;
+
+    if ($body =~ /$RE{profanity}/i) {
+        return (
+            0, 'Would you speak like that in front of your mother? *cough*'
+        );
     }
-    return (1, "OK");
+
+    return 1;
  }
 ----
 {{img src="npw.2006/validate_entry.png" width="707" height="476"}}
 ----
 Not 
-good 
-enough
+good enough
 ----
 Stops people 
 from blogging
@@ -252,8 +237,8 @@ directly
  # vi lib/Blog/Model/Entry.pm
 
  sub canonicalize_body {
-    my $self = shift;
-    my $body = shift;
+    my ($self, $body) = @_;
+     
     $body =~ s/$RE{profanity}/**expletives**/gi;
     return $body;
  }
@@ -272,20 +257,21 @@ ship it
 ----
  {{#i|Schema (Model)}}
  {{#i|Actions (Controller)}}
+ {{#i|Fragments (View)}}
+----
  {{#i|Dispatcher (Kernel) }}
  {{#i|ClassLoader (Bootloader)}}
  {{#i|Continuations (Job Control)}}
- {{#i|Templates and Fragments (View)}}
 ----
 {{#tag|Schema (Model)}}
 ----
 Jifty::DBI
 ----
- {{#i|Data}}
- {{#i|Model}}
- {{#i|Management}}
+Data
+Schema
+Manager
 ----
-No more...
+{{#i|No more...}}
 ----
 CREATE TABLE
 ----
@@ -293,11 +279,11 @@ ALTER TABLE
 ----
 CREATE FOREIGN KEY
 ----
-{{#i|Object}}
-{{#i|Relational}}
-{{#i|Mapper}}
+Object
+Relational
+Mapper
 ----
-No more...
+{{#i|No more...}}
 ----
 SELECT
 ----
@@ -308,13 +294,13 @@ UPDATE
 DELETE
 ----
 Inside
-{{#i|Jifty::DBI}}
+Jifty::DBI
 ----
 Three object types
 ----
- - Handles
- - Records
- - Collections
+Handles
+Records
+Collections
 ----
 {{#i|Jifty::DBI::Handle}}
 ----
@@ -329,11 +315,8 @@ MySQL
 ----
 Oracle
 ----
-(Oracle's still a bit broken)
-----
 {{#i|Jifty::DBI::Record}}
 ----
-Records == 
 Database Rows
 ----
 {{#i|Declarative Syntax}}
@@ -369,8 +352,7 @@ upgrades
 sucked
 ----
 Jifty 
-provides
-help
+fixed it
 ----
  # vi etc/config.yml (Set version to 0.0.2)
 
@@ -441,9 +423,6 @@ Paging
 Actions are 
 APIs to your app
 ----
-(You might call them
-a facade over your code)
-----
 Actions define
 method calls
 ----
@@ -452,9 +431,6 @@ typed arguments
 ----
 Action return
  results
-----
-Actions are 
-Web Services
 ----
 Getting started 
 with actions
@@ -512,14 +488,13 @@ cleans your state
 I hate
 scaffolds
 ----
-They're 
-ugly
+Ugly
 ----
-They're
-redundant
+Redundant
 ----
-They're
-annoying
+Annoying
+----
+Redundant
 ----
 Why have
 {{#i|empty}}
@@ -555,23 +530,11 @@ Blog::CurrentUser
 Continuations?
 In Perl?
 ----
-Isn't that
-impossible?
-----
-I don't 
-know
-----
-Ours
-are
-fake
-----
-Well,
-kind of
-fake
-----
+Delimited
 Continuations
-serialize
-the world
+----
+Full Continuations
+serialize the world
 ----
 App state...
 ----
@@ -641,7 +604,7 @@ Login
  &lt;&amp;|/_elements/wrapper,
      title => 'Login' &amp;>
  &lt;h2>Login&lt;/h2>
-  &lt;% Jifty->web->form->start() %>
+  &lt;% Jifty->web->form->start %>
     &lt;% $action->form_field('address') %>
     &lt;% $action->form_field('password') %>
     &lt;% Jifty->web->return( label => 'Login') %>
@@ -658,7 +621,7 @@ Didn't show:
 ----
 Mason
 ----
-(TT Coming Soon?)
+(TT2 Coming Soon)
 ----
 Mason Provides
 "Components"
@@ -727,6 +690,8 @@ Standalone Server
 ----
 Halos
 ----
+{{img src="npw.2006/halo2.png" width="468" height="665"}}
+----
 Template 
 Profiling
 ----
@@ -734,13 +699,11 @@ SQL Logging
 ----
 SQL Profiling
 ----
+{{img src="npw.2006/halo.png" width="428" height="391"}}
+----
 View Introspection
 ----
 Online Editing
-----
-{{img src="npw.2006/halo.png" width="428" height="391"}}
-----
-{{img src="npw.2006/halo2.png" width="468" height="665"}}
 ----
 {{#i|Module::Refresh}}
 ----
