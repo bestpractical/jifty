@@ -7,6 +7,7 @@ requires('App::CLI' => 0.03 ); # App::CLI::Command::Help App::CLI::Command
 requires('Cache::Cache'); #Cache::FileCache
 requires('Calendar::Simple');
 requires('Class::Accessor'); # Class::Accessor::Fast
+requires('Class::Accessor::Named'); 
 requires('Class::Container');
 requires('Class::Data::Inheritable');
 requires('Compress::Zlib');

@@ -48,7 +48,7 @@ sub started_ok {
 
     my @extra;
     if (my $profile_file = $ENV{JIFTY_TESTSERVER_PROFILE}) {
-        push @extra, '-d:DProf';
+        push @extra, '-d:DProf', '-MClass::Accessor::Named';
         $ENV{"PERL_DPROF_OUT_FILE_NAME"} = $profile_file;
     }
     if (my $coverage = $ENV{JIFTY_TESTSERVER_COVERAGE}) {
