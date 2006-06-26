@@ -49,7 +49,7 @@ sub run {
         $self->create_all_tables();
     } elsif ( $self->{'setup_tables'} ) {
         $self->upgrade_jifty_tables();
-        $self->upgrade_appliction_tables();
+        $self->upgrade_application_tables();
     } else {
         print "Done.\n";
     }
@@ -270,13 +270,13 @@ sub upgrade_jifty_tables {
     Jifty::Model::Metadata->store( jifty_db_version => $appv );
 }
 
-=head2 upgrade_appliction_tables
+=head2 upgrade_application_tables
 
 Upgrade the application's tables.
 
 =cut
 
-sub upgrade_appliction_tables {
+sub upgrade_application_tables {
     my $self = shift;
     my $dbv = version->new( Jifty::Model::Metadata->load( 'application_db_version' ) );
     my $appv
