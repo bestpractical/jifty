@@ -76,7 +76,7 @@ sub _get_current_user {
             my ($package,   $filename, $line,       $subroutine, $hasargs,
                 $wantarray, $evaltext, $is_require, $hints,      $bitmask
                 )
-                = caller( $depth++ );
+                = CORE::caller( $depth++ );
             my $caller_self = $DB::args[0];
             next unless ( ref($caller_self) );    #skip class methods;
 	    next if $caller_self->isa('Jifty::Date'); 
