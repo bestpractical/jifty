@@ -266,7 +266,7 @@ sub upgrade_jifty_tables {
 
     my $appv = version->new( $Jifty::VERSION );
 
-    $self->upgrade_tables( "Jifty" => $dbv, $appv, "Jifty::Upgrade::Internal" );
+    return unless $self->upgrade_tables( "Jifty" => $dbv, $appv, "Jifty::Upgrade::Internal" );
     Jifty::Model::Metadata->store( jifty_db_version => $appv );
 }
 
@@ -282,7 +282,7 @@ sub upgrade_application_tables {
     my $appv
         = version->new( Jifty->config->framework('Database')->{'Version'} );
 
-    $self->upgrade_tables( $self->{_application_class} => $dbv, $appv );
+    return unless $self->upgrade_tables( $self->{_application_class} => $dbv, $appv );
     Jifty::Model::Metadata->store( application_db_version => $appv );
 }
 
@@ -315,9 +315,9 @@ sub upgrade_tables {
     );
 
     # Figure out what versions the upgrade knows about.
+    Jifty::Util->require($upgradeclass) or return;
     my %UPGRADES;
     eval {
-        Jifty::Util->require($upgradeclass);
         $UPGRADES{$_} = [ $upgradeclass->upgrade_to($_) ]
             for grep { $appv >= version->new($_) and $dbv < version->new($_) }
             $upgradeclass->versions();
@@ -418,6 +418,7 @@ sub upgrade_tables {
         $log->info("Upgraded to version $appv");
         Jifty->handle->commit;
     }
+    return 1;
 }
 
 
