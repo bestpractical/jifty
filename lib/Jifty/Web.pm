@@ -547,12 +547,18 @@ Redirect to the next page. If you pass this method a parameter, it
 redirects to that URL rather than B<next_page>.
 
 It creates a continuation of where you want to be, and then calls it.
+If you want to redirect to a parge with parameters, pass in a
+L<Jifty::Web::Form::Clickable> object.
 
 =cut
 
 sub redirect {
     my $self = shift;
     my $page = shift || $self->next_page;
+    $page = Jifty::Web::Form::Clickable->new( url => $page )
+      unless ref $page and $page->isa("Jifty::Web::Form::Clickable");
+    my %overrides = ( @_ );
+    $page->parameter($_ => $overrides{$_}) for keys %overrides;
 
     my @actions = Jifty->web->request->actions;
 
@@ -563,7 +569,6 @@ sub redirect {
         or @actions )
     {
         my $request = Jifty::Request->new();
-        $request->path($page);
         $request->add_state_variable( key => $_->key, value => $_->value )
           for $self->request->state_variables;
         $request->add_state_variable( key => $_, value => $self->{'state_variables'}->{$_} )
@@ -582,18 +587,19 @@ sub redirect {
               for grep {ref $new_action->arguments->{$_} eq "Fh"}
                 keys %{$new_action->arguments || {}};
         }
+        my %parameters = ($page->parameters);
+        $request->argument($_ => $parameters{$_}) for keys %parameters;
+        $request->path($page->url);
+
         $request->continuation($self->request->continuation);
         my $cont = Jifty::Continuation->new(
             request  => $request,
             response => $self->response,
             parent   => $self->request->continuation,
         );
-        if ($page =~ /\?/) {
-            $page .= "&";
-        } else {
-            $page .= "?";
-        }
-        $page .="J:CALL=" . $cont->id;
+        $page = $page->url."?J:CALL=" . $cont->id;
+    } else {
+        $page = $page->complete_url;
     }
     $self->_redirect($page);
 }
