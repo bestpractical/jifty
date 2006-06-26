@@ -557,6 +557,9 @@ sub redirect {
     my $page = shift || $self->next_page;
     $page = Jifty::Web::Form::Clickable->new( url => $page )
       unless ref $page and $page->isa("Jifty::Web::Form::Clickable");
+
+    warn "Don't include GET paramters in the redirect URL -- use a Jifty::Web::Form::Clickable instead.  See L<Jifty::Web/redirect>" if $page->url =~ /\?/;
+
     my %overrides = ( @_ );
     $page->parameter($_ => $overrides{$_}) for keys %overrides;
 
