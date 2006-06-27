@@ -45,7 +45,7 @@ use base 'Jifty::Web::Form::Element';
 
 use Scalar::Util;
 use HTML::Entities;
-use overload '""' => sub { shift->render};
+use overload '""' => sub { shift->render}, bool => sub { 1 };
 
 =head2 new
 

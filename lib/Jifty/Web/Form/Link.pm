@@ -18,7 +18,7 @@ generates L<Jifty::Web::Form::Link>s.
 use base 'Jifty::Web::Form::Element';
 
 # Since we don't inherit from Form::Field, we don't otherwise stringify
-use overload '""' => sub { shift->render};
+use overload '""' => sub { shift->render}, bool => sub { 1 };
 
 =head2 accessors
 
