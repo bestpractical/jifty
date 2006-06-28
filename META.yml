@@ -1,7 +1,7 @@
 build_requires: 
   ExtUtils::MakeMaker: 6.11
 distribution_type: module
-generated_by: Module::Install version 0.620
+generated_by: Module::Install version 0.630
 license: Perl
 name: Jifty
 no_index: 
@@ -18,6 +18,7 @@ requires:
   Cache::Cache: 0
   Calendar::Simple: 0
   Class::Accessor: 0
+  Class::Accessor::Named: 0
   Class::Container: 0
   Class::Data::Inheritable: 0
   Compress::Zlib: 0
