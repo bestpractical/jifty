@@ -205,9 +205,9 @@ You should see something like this:
   1;
 
 Now it's time to tell the model class about posts. Start by giving our post a
-C<body> and a C<title> and a C<category>. (In a future tutorial, the
-application will become fully folksonomy-compliant by upgrading that
-C<category> to a C<tags> table.)
+C<body> and a C<title>. (In a future tutorial, the application will become fully
+folksonomy-compliant by adding a C<category> and upgrading that C<category> to a
+C<tags> table.)
 
 Position your cursor right after:
 
