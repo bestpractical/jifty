@@ -19,8 +19,11 @@ Jifty::LetMe - A way to expose single-link URLs to your applications
 Create a new "LetMe" authentication object; it takes no parameters.
 It calls L</_init> to do any initialization.
 
-A LetMe is a way to provide a one-time-use URL to confirm someone's
-identity. For example, you can put a LetMe URL in an email to a new user,
+A LetMe is a way to provide a one-time-use URL for a particular purpose.
+All LetMe objects give you a way to validate someone's identity and to
+allow them a very small set of possible actions or page-access permissions.
+
+For example, you can put a LetMe URL in an email to a new user,
 so that when they click on the URL you know that their email address
 is valid.
 
