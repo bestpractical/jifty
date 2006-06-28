@@ -282,6 +282,22 @@ sub argument_value {
 }
 
 
+=head2 has_argument ARGUMENT
+
+Returns true if the action has been provided with an value for the
+given argument, including a default_value, and false if none was ever
+passed in.
+
+=cut
+
+sub has_argument {
+    my $self = shift;
+    my $arg = shift;
+
+    return exists $self->argument_values->{$arg};
+}
+
+
 =head2 form_field ARGUMENT
 
 Returns a L<Jifty::Web::Form::Field> object for this argument.  If
