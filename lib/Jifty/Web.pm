@@ -1115,6 +1115,8 @@ Behind the scenes, these variables get serialized into every link or
 form that is marked as 'state preserving'.  See
 L<Jifty::Web::Form::Clickable>.
 
+Passing C<undef> as a value will remove the variable
+
 =cut
 
 sub set_variable {
@@ -1122,7 +1124,11 @@ sub set_variable {
     my $name  = shift;
     my $value = shift;
 
-    $self->{'state_variables'}->{$name} = $value;
+    if (!defined($value)) {
+        delete $self->{'state_variables'}->{$name};
+    } else {
+        $self->{'state_variables'}->{$name} = $value;
+    }
 
 }
 
@@ -1142,6 +1148,18 @@ sub state_variables {
         for keys %{ $self->{'state_variables'} };
 
     return %vars;
+}
+
+=head3 clear_state_variables
+
+Remove all the state variables to be serialized for the next request.
+
+=cut
+
+sub clear_state_variables {
+    my $self = shift;
+
+    $self->{'state_variables'} = {};
 }
 
 =head2 REGIONS
