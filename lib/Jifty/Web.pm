@@ -16,6 +16,7 @@ use CGI::Cookie;
 use XML::Writer;
 use CSS::Squish;
 use Digest::MD5 qw(md5_hex);
+use Storable 'dclone';
 use base qw/Class::Accessor::Fast Class::Data::Inheritable Jifty::Object/;
 
 use vars qw/$SERIAL @JS_INCLUDES/;
@@ -757,8 +758,9 @@ sub tangent {
         $clickable->state_variable( $_ => $self->{'state_variables'}{$_} )
             for keys %{ $self->{'state_variables'} };
 
-        my $request = Jifty::Request->new(path => Jifty->web->request->path)
-          ->from_webform(%{Jifty->web->request->arguments}, $clickable->get_parameters);
+        my $request = dclone(Jifty->web->request);
+        my %clickable = $clickable->get_parameters;
+        $request->argument($_ => $clickable{$_}) for keys %clickable;
         local Jifty->web->{request} = $request;
         Jifty->web->handle_request();
     }
