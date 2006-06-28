@@ -72,7 +72,12 @@ sub new {
 
         # If the logger has been taken apart by global destruction,
         # don't try to use it to log warnings
-        $logger->warn(@_) if Log::Log4perl->initialized;
+        if (Log::Log4perl->initialized) {
+            # @_ often has read-only scalars, so we need to break
+            # the aliasing so we can remove trailing newlines
+            my @lines = map {"$_"} @_;
+            $logger->warn(map {chomp; $_} @lines);
+        }
     };
 
     return $self;
