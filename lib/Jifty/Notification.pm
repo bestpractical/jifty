@@ -4,12 +4,12 @@ use strict;
 package Jifty::Notification;
 
 use base qw/Jifty::Object Class::Accessor::Fast/;
-use Email::Send ();
-use Email::Simple ();
+use Email::Send            ();
+use Email::Simple          ();
 use Email::Simple::Creator ();
 
-__PACKAGE__->mk_accessors(qw/body preface footer subject from _recipients _to_list to/);
-
+__PACKAGE__->mk_accessors(
+    qw/body preface footer subject from _recipients _to_list to/);
 
 =head1 USAGE
 
@@ -38,28 +38,29 @@ Then it calls C<setup>.
 
 sub new {
     my $class = shift;
-    my $self = bless {}, $class;
+    my $self  = bless {}, $class;
 
     my %args = @_;
 
     # initialize message bits to avoid 'undef' warnings
     for (qw(body preface footer subject)) {
-            $self->$_('');
+        $self->$_('');
     }
-    $self->_recipients([]);
+    $self->_recipients( [] );
 
-    while (my ($arg, $value) = each %args) {
-	if ($self->can($arg)) {
-	    $self->$arg($value);
-	} else {
-	    $self->log->error((ref $self) . " called with invalid argument $arg");
-	} 
-    } 
+    while ( my ( $arg, $value ) = each %args ) {
+        if ( $self->can($arg) ) {
+            $self->$arg($value);
+        } else {
+            $self->log->error(
+                ( ref $self ) . " called with invalid argument $arg" );
+        }
+    }
 
     $self->setup;
 
     return $self;
-} 
+}
 
 =head2 setup
 
@@ -67,7 +68,7 @@ Your subclass should override this to set the various field values.
 
 =cut
 
-sub setup {}
+sub setup { }
 
 =head2 send_one_message
 
@@ -79,18 +80,19 @@ not being sent -- for example, the recipients list could be empty.
 =cut
 
 sub send_one_message {
-    my $self = shift;
+    my $self       = shift;
     my @recipients = $self->recipients;
-    my $to = join( ', ',
-      map { ( $_->can('email') ? $_->email : $_ ) } grep {$_} @recipients );
-     return unless ($to);
+    my $to         = join( ', ',
+        map { ( $_->can('email') ? $_->email : $_ ) } grep {$_} @recipients );
+    return unless ($to);
     my $message = Email::Simple->create(
-      header => [
-        From => $self->from || 'A Jifty Application <nobody>',
-        To => $to,
-        Subject => $self->subject || 'No subject',
-      ],
-      body => join( "\n", $self->preface, $self->body, $self->footer )
+        header => [
+            From    => $self->from    || 'A Jifty Application <nobody>',
+            To      => $to,
+            Subject => $self->subject || 'No subject',
+            $self->headers,
+        ],
+        body => join( "\n", $self->preface, $self->body, $self->footer )
     );
 
     my $method   = Jifty->config->framework('Mailer');
@@ -98,16 +100,29 @@ sub send_one_message {
     $args_ref = [] unless defined $args_ref;
 
     my $sender
-      = Email::Send->new( { mailer => $method, mailer_args => $args_ref } );
+        = Email::Send->new( { mailer => $method, mailer_args => $args_ref } );
 
     my $ret = $sender->send($message);
 
     unless ($ret) {
-      $self->log->error("Error sending mail: $ret");
+        $self->log->error("Error sending mail: $ret");
     }
 
     $ret;
-} 
+}
+
+=head2 headers
+
+Returns a list of additional headers to use when constructing the
+message; this defaults to the empty list; override it to add custom
+headers.
+
+=cut
+
+sub headers {
+    my $self = shift;
+    return ();
+}
 
 =head2 body [BODY]
 
@@ -130,10 +145,9 @@ list of strings (not a reference).
 
 sub recipients {
     my $self = shift;
-    $self->_recipients([@_]) if @_;
+    $self->_recipients( [@_] ) if @_;
     return @{ $self->_recipients };
-} 
-
+}
 
 =head2 email_from OBJECT
 
@@ -147,10 +161,10 @@ L</recipients>.
 sub email_from {
     my $self = shift;
     my ($obj) = @_;
-    if ($obj->can('email')) {
+    if ( $obj->can('email') ) {
         return $obj->email;
     } else {
-        die "No 'email' method on ".ref($obj) . "; override 'email_from'";
+        die "No 'email' method on " . ref($obj) . "; override 'email_from'";
     }
 }
 
@@ -167,9 +181,9 @@ sub to_list {
     my $self = shift;
     if (@_) {
         my %ids = ();
-        $ids{$self->to->id} = undef if $self->to;
-        $ids{$_->id} = $_ for @_;
-        $self->_to_list([grep defined, values %ids]);
+        $ids{ $self->to->id } = undef if $self->to;
+        $ids{ $_->id } = $_ for @_;
+        $self->_to_list( [ grep defined, values %ids ] );
     }
     return @{ $self->_to_list || [] };
 }
@@ -189,7 +203,7 @@ person, as well.
 sub send {
     my $self = shift;
 
-    for my $to ($self->to, $self->to_list) {
+    for my $to ( $self->to, $self->to_list ) {
         $self->to($to);
         $self->recipients($to);
         $self->send_one_message(@_);
@@ -213,8 +227,6 @@ Returns the message as a scalar.
 
 =cut
 
-
-
 =head2 footer
 
 Print a footer for the message. You want to override this to print a message.
@@ -223,7 +235,6 @@ Returns the message as a scalar.
 
 =cut
 
-
 =head2 magic_letme_token_for PATH
 
 Returns a L<Jifty::LetMe> token which allows the current user to access a path on the
@@ -231,17 +242,16 @@ site.
 
 =cut
 
-
 sub magic_letme_token_for {
     my $self = shift;
     my $path = shift;
     my %args = @_;
-    
+
     my $letme = Jifty::LetMe->new();
-    $letme->email($self->to->email);
+    $letme->email( $self->to->email );
     $letme->path($path);
-    $letme->args(\%args);
-    return ($letme->as_url);
+    $letme->args( \%args );
+    return ( $letme->as_url );
 }
 
 1;
