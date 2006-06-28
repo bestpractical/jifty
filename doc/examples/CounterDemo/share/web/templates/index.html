@@ -1,7 +1,7 @@
+<%args>
+$counter => 0
+</%args>
 <%init>
-my $counter = Jifty->web->request->argument('counter') || 0;
-
-
 my $request;
 
 $request = Jifty::Request->new( path => Jifty->web->request->path );
