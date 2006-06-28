@@ -79,10 +79,12 @@ validate.  This is the simplest level of L<validation|/validate>.
 
 =item moniker
 
-Every instance of a L<Jifty::Action> has a B<moniker>.  A moniker is an
-arbitrary-length nonempty string containing no semicolons.  Monikers need not
-be globally unique, but they must be unique within a single request.  Monikers
-have no semantic meaning.
+Every instance of a L<Jifty::Action> has a B<moniker>.  A moniker is
+an arbitrary-length nonempty string containing no semicolons.
+Monikers serve as identifiers for actions, to associate arguments with
+actions and to access specific actions "by name".  Monikers need not
+be globally unique, but they must be unique within a single request.
+Monikers have no semantic meaning. See L<Jifty::Action/monikers>
 
 =item region
 
