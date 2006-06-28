@@ -23,7 +23,7 @@ action as active; any non-active actions are ignored.  See L<Jifty::Request>.
 
 =item AJAX
 
-An acronym standing for B<Asynchronous XML And Javascript>.  Though technically
+An acronym standing for B<Asynchronous Javascript And XML>.  Though technically
 incorrect, it is the buzzword that describes doing asynchronous requests to the
 server while the user waits.  This can lead to very "dynamic" pages, as the
 browser does not need to refresh the entire page to update a small section of
@@ -32,7 +32,7 @@ L<Jifty::Web::PageRegion>.
 
 =item argument
 
-An B<argument> is a named parameter to an L</action>.  Jifty generally renderes
+An B<argument> is a named parameter to an L</action>.  Jifty generally renders
 these on the screen as L</form field>s.  See L<Jifty::Action>.
 
 =item canonicalize
