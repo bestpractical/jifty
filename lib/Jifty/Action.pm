@@ -139,9 +139,17 @@ requiring that the user enter a value for that field.
 See L<Jifty::Web::Form::Field> for the list of possible keys that each
 argument can have.
 
-In addition to the list there, you may use this additional key:
+In addition to the list there, you may use these additional keys:
 
 =over
+
+=item constructor
+
+A boolean which, if set, indicates that the argument B<must> be
+present in the C<arguments> passed to create the action, rather than
+being expected to be set later.
+
+Defaults to false.
 
 =item ajax_canonicalizes
 
@@ -166,6 +174,9 @@ This routine, unsurprisingly, actually runs the action.
 
 If the result of the action is currently a success (validation did not
 fail), C<run> calls L</take_action>, and finally L</cleanup>.
+
+If you're writing your own actions, you probably want to override
+C<take_action> instead.
 
 =cut
 
