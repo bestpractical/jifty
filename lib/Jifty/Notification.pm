@@ -90,10 +90,10 @@ sub send_one_message {
             From    => $self->from    || 'A Jifty Application <nobody>',
             To      => $to,
             Subject => $self->subject || 'No subject',
-            $self->headers,
         ],
         body => join( "\n", $self->preface, $self->body, $self->footer )
     );
+    $self->set_headers($message);
 
     my $method   = Jifty->config->framework('Mailer');
     my $args_ref = Jifty->config->framework('MailerArgs');
@@ -111,18 +111,16 @@ sub send_one_message {
     $ret;
 }
 
-=head2 headers
+=head2 set_headers MESSAGE
 
-Returns a list of additional headers to use when constructing the
-message; this defaults to the empty list; override it to add custom
-headers.
+Takes a L<Email::Simple> object C<MESSAGE>, and modifies it as
+necessary before sending it out.  As the method name implies, this is
+usually used to add or modify headers.  By default, does nothing; this
+method is meant to be overridden.
 
 =cut
 
-sub headers {
-    my $self = shift;
-    return ();
-}
+sub set_headers {}
 
 =head2 body [BODY]
 
