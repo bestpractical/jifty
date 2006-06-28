@@ -138,7 +138,7 @@ sub map {
 
     my @original = ($args{destination} => $args{source});
 
-    # In case the source is a harhref, we force ourselves to go the
+    # In case the source is a hashref, we force ourselves to go the
     # *other* direction first.
     ($args{destination}, $args{source}) = $class->query_parameters($args{destination} => $args{source});
 
