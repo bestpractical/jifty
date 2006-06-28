@@ -28,7 +28,8 @@ sub import_extra {
 
 Merges the L</test_config> into the default configuration, resets the
 database, and resets the fake "outgoing mail" folder.  This is the
-method to override if you wish to do custom setup work.
+method to override if you wish to do custom setup work, such as insert
+test data into your database.
 
 =cut
 
@@ -80,6 +81,18 @@ by appending a 'test', as well as setting the port to a random port
 between 10000 and 15000.
 
 It is passed the current configuration.
+
+You can override this to provide application-specific test
+configuation, e.g:
+
+    sub test_config {
+        my $class = shift;
+        my ($config) = @_;
+        my $hash = $class->SUPER::test_config($config);
+        $hash->{framework}{LogConfig} = "etc/log-test.conf"
+    
+        return $hash;
+    }
 
 =cut
 
