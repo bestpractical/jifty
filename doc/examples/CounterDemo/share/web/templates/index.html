@@ -1,22 +1,21 @@
 <%init>
-my $counter = Jifty->web->request->state_variable('counter');
-my $value = $counter ? $counter->value : 0;
+my $counter = Jifty->web->request->argument('counter') || 0;
 
 
 my $request;
 
 $request = Jifty::Request->new( path => Jifty->web->request->path );
-$request->add_state_variable( key => 'counter', value => $value + 1 );
+$request->argument( counter => $counter + 1 );
 my $up = Jifty::Continuation->new( request => $request );
 
 $request = Jifty::Request->new( path => Jifty->web->request->path );
-$request->add_state_variable( key => 'counter', value => $value - 1 );
+$request->argument( counter => $counter - 1 );
 my $down = Jifty::Continuation->new( request => $request );
 </%init>
 
 <&| /_elements/wrapper, title => "Continuations counter demo" &>
 
-<h1> The counter is: <% $value %></h1>
+<h1> The counter is: <% $counter %></h1>
 
 <% Jifty->web->link(call => $down, label => '--') %>
 <% Jifty->web->link(call => $up, label => '++') %>
