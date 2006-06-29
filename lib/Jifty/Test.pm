@@ -83,7 +83,7 @@ between 10000 and 15000.
 It is passed the current configuration.
 
 You can override this to provide application-specific test
-configuation, e.g:
+configuration, e.g:
 
     sub test_config {
         my $class = shift;
