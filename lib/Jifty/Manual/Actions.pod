@@ -268,7 +268,7 @@ you, you probably want a L<continuation|Jifty::Continuation>.
 
 =head3 monikers
 
-You probably noticed the C<<moniker => 'post_blog'>>. Every action you
+You probably noticed the C<< moniker => 'post_blog' >>. Every action you
 create in Jifty has an associated
 L<moniker|Jifty::Manual::Glossary>. A C<moniker> is simply a unique
 identifier for the action (unique per request, which in practice
