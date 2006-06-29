@@ -52,6 +52,11 @@ input.text, input.date, input.password, textarea, select {
     padding: 0.2em;
 }
 
+form input.ajaxautocompletes {
+    background: #fff url(/static/images/css/fieldbg-autocomplete.gif) repeat-x top left;
+    padding-left: 18px;
+}
+
 input.date {
     width: 10em;
 }

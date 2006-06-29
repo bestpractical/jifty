@@ -452,7 +452,11 @@ Returns the "class=" line for our widget. Optionally takes extra classes to appe
 
 sub _widget_class {
     my $self = shift;
-    my @classes = ('widget', $self->classes, ($self->ajax_validates ? ' ajaxvalidation' : ''),@_);
+    my @classes = ( 'widget',
+                    $self->classes,
+                    ( $self->ajax_validates ? ' ajaxvalidation' : '' ),
+                    ( $self->autocompleter  ? ' ajaxautocompletes' : '' ),
+                    @_ );
 
     return qq! class="!. join(' ',@classes).  qq!"!
 
