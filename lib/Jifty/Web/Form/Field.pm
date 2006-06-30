@@ -139,8 +139,6 @@ Gets or sets the value for the form field that was submitted in the last action.
 A boolean indicating that the argument B<must> be present when the
 user submits the form.
 
-=back
-
 =head2 ajax_validates [VALUE]
 
 A boolean value indicating if user input into an HTML form field for
@@ -149,14 +147,6 @@ via L<AJAX|Jifty::Manual::Glossary/AJAX> as the user fills out the
 form, instead of waiting until submit. Arguments will B<always> be
 validated before the action is run, whether or not they also
 C<ajax_validate>.
-
-=back
-
-=head2
-
-=back
-
-=cut
 
 =head2 id 
 
