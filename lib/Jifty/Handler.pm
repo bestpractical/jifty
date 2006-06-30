@@ -31,12 +31,17 @@ BEGIN {
     # Creating a new CGI object breaks FastCGI in all sorts of painful
     # ways.  So wrap the call and preempt it if we already have one
     use CGI ();
-    *CGI::__jifty_real_new = \&CGI::new;
-    
-    no warnings qw(redefine);
-    *CGI::new = sub {
-	return Jifty->handler->cgi if Jifty->handler->cgi;
-	CGI::__jifty_real_new(@_);	
+
+    # If this file ges reloaded using Module::Refresh, don't do this
+    # magic again, or we'll get infinite recursion
+    unless (CGI->can('__jifty_real_new')) {
+        *CGI::__jifty_real_new = \&CGI::new;
+
+        no warnings qw(redefine);
+        *CGI::new = sub {
+            return Jifty->handler->cgi if Jifty->handler->cgi;
+            CGI::__jifty_real_new(@_);	
+        }
     }
 };
 
