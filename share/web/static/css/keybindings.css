@@ -4,10 +4,6 @@ div#keybindings {
 
 }
 
-div#keybindings:before {
-    content: "Hotkeys:";
-}
-
 dl.keybindings .keybinding {
     display: inline;
 }
