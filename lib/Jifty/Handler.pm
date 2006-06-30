@@ -32,7 +32,7 @@ BEGIN {
     # ways.  So wrap the call and preempt it if we already have one
     use CGI ();
 
-    # If this file ges reloaded using Module::Refresh, don't do this
+    # If this file gets reloaded using Module::Refresh, don't do this
     # magic again, or we'll get infinite recursion
     unless (CGI->can('__jifty_real_new')) {
         *CGI::__jifty_real_new = \&CGI::new;
