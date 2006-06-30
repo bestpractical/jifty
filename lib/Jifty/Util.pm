@@ -197,7 +197,7 @@ sub require {
     if ($UNIVERSAL::require::ERROR) {
         my $error = $UNIVERSAL::require::ERROR;
         $error =~ s/ at .*?\n$//;
-        Jifty->log->warn(sprintf("$error at %s line %d\n", (caller)[1,2]));
+        Jifty->log->error(sprintf("$error at %s line %d\n", (caller)[1,2]));
         return 0;
     }
 

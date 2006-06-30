@@ -119,8 +119,8 @@ sub new {
     push @Jifty::Record::ISA, Jifty->config->framework('Database')->{'RecordBaseClass'};
 
     __PACKAGE__->logger( Jifty::Logger->new( $args{'logger_component'} ) );
-
-    my $base = Jifty->config->framework('ApplicationClass');
+    # Get a classloader set up
+    Jifty::ClassLoader->new(base => Jifty->config->framework('ApplicationClass'))->require;
 
     # Set up plugins
     my @plugins;
@@ -128,13 +128,8 @@ sub new {
         my $class = "Jifty::Plugin::".(keys %{$plugin})[0];
         my %options = %{ $plugin->{(keys %{$plugin})[0]} };
         Jifty::Util->require($class);
-        Jifty::ClassLoader->new(base => $class);
-        push @plugins, $class->new(base => $base, %options);
+        push @plugins, $class->new(%options);
     }
-
-    # Get a classloader set up
-    Jifty::ClassLoader->new(base => $base)->require;
-
     __PACKAGE__->plugins(@plugins);
     __PACKAGE__->handler(Jifty::Handler->new());
     __PACKAGE__->api(Jifty::API->new());
