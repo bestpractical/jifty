@@ -47,6 +47,7 @@ __PACKAGE__->javascript_libs([qw(
     formatDate.js
     jifty.js
     jifty_utils.js
+    jifty_smoothscroll.js
     calendar.js
     dom-drag.js
     halo.js

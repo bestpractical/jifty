@@ -35,7 +35,33 @@ Jifty.Utils = {
       return curtop;
     },
 
-    isMSIE: false
+    isMSIE: false,
+
+    findScreenHeight: function() {
+        if ( window.innerHeight ) {
+            return window.innerHeight;
+        }
+        else {
+            if ( document.documentElement.clientHeight ) {
+                return document.documentElement.clientHeight;
+            }
+            else {
+                if ( document.body.clientHeight ) {
+                    return document.body.clientHeight;
+                }
+            }
+        }
+    },
+
+    getScrollTop: function() {
+        if (document.body && document.body.scrollTop)
+            return document.body.scrollTop;
+        if (document.documentElement && document.documentElement.scrollTop)
+            return document.documentElement.scrollTop;
+        if (window.pageYOffset)
+            return window.pageYOffset;
+        return 0; 
+    }
 };
 
 /* This sets Jifty.Utils.isMSIE to true in IE
