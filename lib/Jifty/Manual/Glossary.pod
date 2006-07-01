@@ -13,7 +13,7 @@ We use words.  This is what they mean.
 An B<action> is a specifically designed RPC call that can do something to the
 system.  An action takes any number of L</argument>s, which it
 L</canonicalize>s, L</validate>s, and then uses to do something useful.  Each
-action has a L</result>.  See L<Jifty::Action>.
+action has a L</result>.  See L<Jifty::Action> and L<Jifty::Manual::Actions>.
 
 =item active
 
