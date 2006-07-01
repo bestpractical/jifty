@@ -307,9 +307,11 @@ L<Test::HTML::Lint>.
 sub get_html_ok {
     my $self = shift;
     $self->get(@_);
-    # TODO XXX FIXME play with $Test::Builder::Level to get errors reported from
-    # right place?
-    html_ok($self->content);
+    {
+        local $Test::Builder::Level = $Test::Builder::Level;
+        $Test::Builder::Level++;
+        html_ok($self->content);
+    }       
 } 
 
 =head2 submit_html_ok 
@@ -322,9 +324,11 @@ L<Test::HTML::Lint>.
 sub submit_html_ok {
     my $self = shift;
     $self->submit(@_);
-    # TODO XXX FIXME play with $Test::Builder::Level to get errors reported from
-    # right place?
-    html_ok($self->content);
+    {
+        local $Test::Builder::Level = $Test::Builder::Level;
+        $Test::Builder::Level++;
+        html_ok($self->content);
+    }
 } 
 
 =head2 follow_link_ok 
@@ -343,9 +347,11 @@ sub follow_link_ok {
 
     carp("Couldn't find link") unless
       $self->follow_link(@_);
-    # TODO XXX FIXME play with $Test::Builder::Level to get errors reported from
-    # right place?
-    html_ok($self->content);
+    {
+        local $Test::Builder::Level = $Test::Builder::Level;
+        $Test::Builder::Level++;
+        html_ok($self->content);
+    }
 } 
 
 =head2 session
