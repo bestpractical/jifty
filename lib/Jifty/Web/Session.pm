@@ -122,7 +122,9 @@ sub get {
 
 Sets the value C<VALUE> for C<KEY> for the session.  C<TYPE>, which
 defaults to "key", allows values to be set in other namespaces,
-including "metadata" and "continuation".
+including "metadata" and "continuation". C<VALUE> can be an arbitrary
+perl data structue -- C<Jifty::Web::Session> will serialize it for
+you.
 
 =cut
 
