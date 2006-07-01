@@ -100,8 +100,8 @@ C<new>.  Subclasses should extend this list.
 
 =cut
 
-sub accessors { shift->SUPER::accessors(), qw(name label input_name type sticky sticky_value default_value action mandatory ajax_validates autocompleter preamble hints render_mode length _element_id); }
-__PACKAGE__->mk_accessors(qw(name _label _input_name type sticky sticky_value default_value _action mandatory ajax_validates autocompleter preamble hints render_mode length _element_id));
+sub accessors { shift->SUPER::accessors(), qw(name label input_name type sticky sticky_value default_value action mandatory ajax_validates ajax_canonicalizes autocompleter preamble hints render_mode length _element_id); }
+__PACKAGE__->mk_accessors(qw(name _label _input_name type sticky sticky_value default_value _action mandatory ajax_validates ajax_canonicalizes autocompleter preamble hints render_mode length _element_id));
 
 =head2 name [VALUE]
 
@@ -147,6 +147,15 @@ via L<AJAX|Jifty::Manual::Glossary/AJAX> as the user fills out the
 form, instead of waiting until submit. Arguments will B<always> be
 validated before the action is run, whether or not they also
 C<ajax_validate>.
+
+=head2 ajax_canonicalizes [VALUE]
+
+A boolean value indicating if user input into an HTML form field for
+this argument should be L<canonicalized|Jifty::Manual::Glossary/canonicalize>
+via L<AJAX|Jifty::Manual::Glassary/AJAX> as the user fills out the
+form, instead of waiting until submit.  Arguments will B<always> be
+canonicalized before the action is run, whether or not they also
+C<ajax_canonicalize>
 
 =head2 id 
 
@@ -444,8 +453,9 @@ sub _widget_class {
     my $self = shift;
     my @classes = ( 'widget',
                     $self->classes,
-                    ( $self->ajax_validates ? ' ajaxvalidation' : '' ),
-                    ( $self->autocompleter  ? ' ajaxautocompletes' : '' ),
+                    ( $self->ajax_validates     ? ' ajaxvalidation' : '' ),
+                    ( $self->ajax_canonicalizes ? ' ajaxcanonicalization' : '' ),
+                    ( $self->autocompleter      ? ' ajaxautocompletes' : '' ),
                     @_ );
 
     return qq! class="!. join(' ',@classes).  qq!"!
