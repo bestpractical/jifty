@@ -34,6 +34,9 @@ specific actions in your own dispatcher, e.g.:
         Jifty->api->allow('ConfirmEmail') if $let_me->path eq 'confirm';
     };
 
+If a user tried to access a path under C<Jifty::LetMe->base_path> with
+an invalid LetMe, we redirect them to '/error/let_me/invalid_token'.
+
 =cut
 
 our $DISABLE_ACTIONS = 1;
