@@ -102,6 +102,18 @@ This also creates built-in validation and autocompletion methods
 that are defined "validate" or "autocomplete". These methods can
 be overridden in any Action which inherits from this class.
 
+Additionally, if our model class defines canonicalize_, validate_, or
+autocomplete_ FIELD, generate appropriate an appropriate
+canonicalizer, validator, or autocompleter that will call that method
+with the value to be validated, canonicalized, or autocompleted.
+
+C<validate_FIELD> should return a (success boolean, message) list.
+
+C<autocomplete_FIELD> should return a the same kind of list as
+L<Jifty::Action::_autocomplete_argument/Jifty::Action/_autocomplete_argument>
+
+C<canonicalized_FIELD> should return the canonicalized value.
+
 =cut
 
 sub arguments {
