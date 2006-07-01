@@ -379,7 +379,7 @@ sub continuation {
     return undef unless $session;
     
     my $id = shift;
-    ($id) = $self->uri =~ /J:C(?:ALL)?=([^&;]+)/ unless $id;
+    ($id) = $self->uri =~ /J:(?:C|CALL|RETURN)=([^&;]+)/ unless $id;
 
     return $session->get_continuation($id);
 }

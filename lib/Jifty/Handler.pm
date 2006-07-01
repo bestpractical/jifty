@@ -185,10 +185,10 @@ sub handle_request {
     # Build a new stash for the life of this request
     $self->stash({});
     local $HTML::Mason::Commands::JiftyWeb = Jifty::Web->new();
-    Jifty->web->request( Jifty::Request->new()->fill( $self->cgi ) );
 
-    Jifty->web->response( Jifty::Response->new );
     Jifty->web->setup_session;
+    Jifty->web->request( Jifty::Request->new()->fill( $self->cgi ) );
+    Jifty->web->response( Jifty::Response->new );
     Jifty->web->session->set_cookie;
     Jifty->api->reset;
     $_->new_request for Jifty->plugins;
@@ -199,6 +199,9 @@ sub handle_request {
     $sent_response
         = $self->static_handler->handle_request( Jifty->web->request->path )
         if ( Jifty->config->framework('Web')->{'ServeStaticFiles'} );
+
+    # Return from the continuation if need be
+    Jifty->web->request->return_from_continuation;
 
     $self->dispatcher->handle_request() unless ($sent_response);
 

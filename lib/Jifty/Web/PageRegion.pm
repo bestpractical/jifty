@@ -258,14 +258,10 @@ sub as_string {
             . qq|<div id="region-| . $self->qualified_name . qq|">|;
     }
 
-    # Merge in defaults
-    %arguments = ( %{ Jifty->web->request->arguments }, 
-                    region => $self, 
-                    %arguments );
-
     # Make a fake request and throw it at the dispatcher
-    my $subrequest = Jifty::Request->new;
-    $subrequest->from_webform(%arguments);
+    my $subrequest = Jifty->web->request->clone;
+    $subrequest->argument( region => $self );
+    $subrequest->argument( $_ => $arguments{$_}) for keys %arguments;
     $subrequest->path( $self->path );
     $subrequest->top_request( Jifty->web->request->top_request );
 
