@@ -216,7 +216,7 @@ sub as_url {
 By default, all "LetMe" actions live at URLs under '/let' inside your
 application.  Override this subroutine to change that.
 
-By default, it returns '/let'
+By default, it returns '/let/'
 
 =cut
 
