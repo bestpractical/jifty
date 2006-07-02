@@ -33,11 +33,11 @@ Each request contains several types of information:
 A request may contain one or more actions; these are represented as
 L<Jifty::Request::Action> objects. Each action request has a
 L<moniker|Jifty::Manual::Glossary/moniker>, a set of submitted
-L<arguments|Jifty::Manual::Glossary/arguments>, and an implementation class.
-By default, all actions that are submitted are run; it is possible to
-only mark a subset of the submitted actions as "active", and only the
-active actions will be run.  These will eventually become full-fledge
-L<Jifty::Action> objects.
+L<arguments|Jifty::Manual::Glossary/arguments>, and an implementation
+class.  By default, all actions that are submitted are run; it is
+possible to only mark a subset of the submitted actions as "active",
+and only the active actions will be run.  These will eventually become
+full-fledge L<Jifty::Action> objects.
 
 =item state variables
 
@@ -54,11 +54,11 @@ L<Jifty::Continuation>.
 
 =item (optional) fragments
 
-L<Fragments|Jifty::Manual::Glossary/fragments> are standalone bits of reusable
-code.  They are most commonly used in the context of AJAX, where
-fragments are the building blocks that can be updated independently.
-A request is either for a full page, or for multiple independent
-fragments.  See L<Jifty::Web::PageRegion>.
+L<Fragments|Jifty::Manual::Glossary/fragments> are standalone bits of
+reusable code.  They are most commonly used in the context of AJAX,
+where fragments are the building blocks that can be updated
+independently.  A request is either for a full page, or for multiple
+independent fragments.  See L<Jifty::Web::PageRegion>.
 
 =back
 
@@ -273,13 +273,17 @@ sub argument {
         my $value = shift;
         $self->arguments->{$key} = $value;
 
+        # Continuation type is ofetn undef, so give it a sane default
+        # so we can use eq without warnings
+        my $cont_type = $self->continuation_type || "";
+
         if ($key eq "J:VALIDATE") {
             $self->{validating} = $value;
-        } elsif ($key eq "J:C" and $self->continuation_type ne "return" and $self->continuation_type ne "call") {
+        } elsif ($key eq "J:C" and $cont_type ne "return" and $cont_type ne "call") {
             # J:C Doesn't take preference over J:CALL or J:RETURN
             $self->continuation_id($value);
             $self->continuation_type("parent");
-        } elsif ($key eq "J:CALL" and $self->continuation_type ne "return") {
+        } elsif ($key eq "J:CALL" and $cont_type ne "return") {
             # J:CALL doesn't take preference over J:RETURN
             $self->continuation_id($value);
             $self->continuation_type("call");
