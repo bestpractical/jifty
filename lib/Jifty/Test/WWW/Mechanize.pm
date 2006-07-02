@@ -132,6 +132,8 @@ sub action_form {
 
     my $i;
     for my $form ($self->forms) {
+        no warnings 'uninitialized';
+
         $i++;
         next unless first {   $_->name =~ /J:A-(?:\d+-)?$moniker/
                            && $_->type eq "hidden" }
