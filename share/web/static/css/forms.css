@@ -53,8 +53,8 @@ input.text, input.date, input.password, textarea, select {
 }
 
 form input.ajaxautocompletes {
-    background: #fff url(/static/images/css/fieldbg-autocomplete.gif) repeat-x top left;
-    padding-left: 18px;
+    background: #fff url(/static/images/css/fieldbg-autocomplete.gif) repeat-x top right;
+    padding-right: 18px;
 }
 
 input.date {
