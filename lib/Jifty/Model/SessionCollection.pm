@@ -4,6 +4,13 @@ use strict;
 package Jifty::Model::SessionCollection;
 
 use base qw/Jifty::Collection/;
+
+=head2 record_class
+
+This deals with collections of L<Jifty::Model::Session>s.
+
+=cut 
+
 sub record_class { 'Jifty::Model::Session' }
 
 
