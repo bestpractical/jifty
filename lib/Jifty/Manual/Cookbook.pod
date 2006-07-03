@@ -13,7 +13,7 @@ of Jifty use, and ones that work pretty well.
 
 =head2 Limit access to pages to logged-in users
 
-The best place to do this is probably in your application'
+The best place to do this is probably in your application's
 L<Dispatcher|Jifty::Dispatcher>. If, for example, you wanted to limit
 access to C</secret> to logged-in users, you could write:
 
