@@ -111,7 +111,7 @@ sub end_component_hook {
                 ]
             )
             )
-            if ( $frame->{'path'} and $frame->{'path'} !~ /^\/?__jifty/ );
+            if 0 and ( $frame->{'path'} and $frame->{'path'} !~ /^\/?__jifty/ );
     }
 
 }
