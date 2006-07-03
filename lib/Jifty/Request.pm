@@ -97,7 +97,12 @@ Return a copy of the request.
 
 sub clone {
     my $self = shift;
-    return dclone($self);
+    
+    # "Semi-shallow" clone
+    return bless({map {
+        my $val = $self->{$_};
+        $_ => (ref($val) ? { %$val } : $val);
+    } keys %$self}, ref($self));
 }
 
 =head2 fill
