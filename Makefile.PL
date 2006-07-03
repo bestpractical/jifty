@@ -29,7 +29,7 @@ requires('HTML::Mason' => 1.3101);           # HTML::Mason::Exceptions HTML::Mas
 requires('HTML::Mason::Plugin');
 requires('HTTP::Cookies');
 requires('HTTP::Date');
-requires('HTTP::Server::Simple' => '0.10');  # HTTP::Server::Simple::CGI
+requires('HTTP::Server::Simple' => '0.20');  # HTTP::Server::Simple::CGI
 requires('HTTP::Server::Simple::Recorder');
 requires('Hash::Merge');
 requires('Hook::LexWrap');
