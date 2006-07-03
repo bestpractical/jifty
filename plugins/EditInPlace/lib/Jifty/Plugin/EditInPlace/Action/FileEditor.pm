@@ -74,14 +74,15 @@ sub arguments {
     my $self = shift;
 
     {   file_type => {
+            label       => 'File type',
             default      => 'mason_component',
             render_as    => 'Select',
-            valid_values => [qw/mason_component library/],
+            valid_values => [{ value => 'mason_component', display => 'Template'} , {value => 'library', display => 'Library'}],
             constructor  => 1
         },
-        source_path      => { type => 'text', constructor => 1 },
+        source_path      => { type => 'text', constructor => 1, label => 'Path' },
         destination_path => { type => 'text', ajax_validates=> 1, label => 'Save as' },
-        content => { render_as => 'Textarea', cols => 80, rows => 25 },
+        content => { render_as => 'Textarea', cols => 80, rows => 25, label => 'Content' },
 
     }
 
@@ -160,6 +161,7 @@ Writes the C<content> out to the C<destination_path>.
 sub take_action {
     my $self = shift;
     my $dest  = $self->{'write_to'};
+
 
     # discard filename. we only want to make the directory ;)
     Jifty::Util->make_path( File::Basename::dirname( $dest ) );

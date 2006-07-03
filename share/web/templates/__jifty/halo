@@ -15,7 +15,7 @@
 <li><a href="#" class="halo_comp_info" onmouseover="halo_over('<% $item->{id} %>')"
                                        onmouseout="halo_out('<% $item->{id} %>')"
                                        onclick="halo_toggle('<% $item->{id} %>'); return false;">
-<% $item->{'path'} %> - <% $item->{'render_time'} %></a> 
+<% $item->{'name'} %> - <% $item->{'render_time'} %></a> 
 % unless ($item->{subcomponent}) {
 <% Jifty->web->tangent( url =>"/__jifty/edit/mason_component/".$item->{'path'}, label => 'Edit') %>
 % }

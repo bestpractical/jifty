@@ -28,7 +28,7 @@ sub start_component_hook {
     my $self    = shift;
     my $context = shift;
 
-    return if $context->comp->path eq "/__jifty/halo";
+    return if ($context->comp->path && $context->comp->path eq "/__jifty/halo");
 
     Jifty->handler->stash->{ '_halo_index_stack' } ||= [];
 
@@ -49,9 +49,9 @@ sub start_component_hook {
         id           => $halo_base,
         args         => [map { eval { defined $_ and fileno( $_ ) }  ? "*GLOB*" : $_} @{$context->args}],
         start_time   => Time::HiRes::time(),
-        path         => $context->comp->path,
+        path         => $context->comp->path || '',
         subcomponent => (  $context->comp->is_subcomp() ? 1:0),
-        name         => $context->comp->name,
+        name         => $context->comp->name || '(Unamed component)',
         proscribed   => ($self->_unrendered_component($context) ? 1 :0 ),
         depth        => $DEPTH
     };
@@ -74,7 +74,7 @@ sub end_component_hook {
     my $self    = shift;
     my $context = shift;
 
-    return if $context->comp->path =~ "^/__jifty/halo";
+    return if ($context->comp->path && $context->comp->path =~ "^/__jifty/halo");
 
     my $STACK = Jifty->handler->stash->{'_halo_stack'};
     my $INDEX_STACK = Jifty->handler->stash->{'_halo_index_stack'};
@@ -96,7 +96,23 @@ sub end_component_hook {
 
     # print out the div with our halo magic actions.
     # if we didn't render a beginning of the span, don't render an end
-    $context->request->out('</div>') unless ($frame->{'proscribed'});
+    unless ( $frame->{'proscribed'} ) {
+        my $comp_name = $frame->{'path'};
+        $context->request->out('</div>');
+        $context->request->out(
+            Jifty->web->link(
+                label   => _( 'Edit %1', $comp_name ),
+                class => 'inline_edit',
+                onclick => [
+                    {   element      => "#halo-" . $frame->{id},
+                        replace_with =>
+                            '/__jifty/edit_inline/mason_component/'.$comp_name
+                    }
+                ]
+            )
+            )
+            if ( $frame->{'path'} and $frame->{'path'} !~ /^\/?__jifty/ );
+    }
 
 }
 

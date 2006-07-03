@@ -1,0 +1,14 @@
+<%args>
+$path => undef
+$editor => undef
+$line => undef
+</%args>
+<% Jifty->web->form->start %>
+<%$editor->form_field('destination_path', render_as => 'hidden')%>
+<%$editor->form_field('content')->render_widget%>
+<% Jifty->web->form->submit(label => 'Save',         onclick => { submit       => $editor,
+                     replace_with => $path,
+                     },
+                     
+                     submit => $editor )%>
+<% Jifty->web->form->end %>
