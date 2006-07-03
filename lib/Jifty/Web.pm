@@ -342,7 +342,6 @@ sub handle_request {
             $self->request->do_mapping;
         }
     }
-    $self->session->set_cookie();
 
     # If there's a continuation call, don't do the rest of this
     return if $self->response->success and $self->request->call_continuation;
