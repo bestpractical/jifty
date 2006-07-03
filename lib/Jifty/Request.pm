@@ -468,6 +468,7 @@ sub continuation {
     $self->continuation_id(ref $_[0] ? $_[0]->id : $_[0])
       if @_;
 
+    return undef unless $self->continuation_id;
     return Jifty->web->session->get_continuation($self->continuation_id);
 }
 
