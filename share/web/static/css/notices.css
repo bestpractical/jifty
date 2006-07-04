@@ -1,0 +1,39 @@
+/* IE can't handle this nicely w/ AJAX validation */
+
+html>body .message {
+    background: url(/static/images/silk/information.png) no-repeat center left;
+    padding-left: 20px;
+}
+
+html>body .error {
+    background: url(/static/images/silk/error.png) no-repeat center left;
+    padding-left: 20px;
+}
+
+.error {
+    color: #a00000;
+}
+
+div#messages,  div#errors {
+     background-color: rgb(240,234,183);
+     border: 1px solid rgb(230,224,173);
+     margin-top: 10px;
+     margin-bottom: 10px;
+     padding: 5px 20px 5px 5px;
+     font-size: 1.2em;
+     position: relative;
+}
+
+#dismiss_messages,
+#dismiss_errors
+{
+    padding-left: 16px;
+    background: url(/static/images/silk/cancel.png) no-repeat;
+    position: absolute;
+    top: 1px;
+    right: 1px;
+    width: 0;
+    display: block;
+    text-indent: -9999em;
+}
+

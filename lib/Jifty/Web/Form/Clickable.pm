@@ -298,8 +298,11 @@ sub region_argument {
 
     my $name = ref $region ? $region->qualified_name : $region;
     my $defaults = Jifty->web->get_region($name);
+    my $default = $defaults ? $defaults->default_argument($argument) : undef;
 
-    if ( $defaults and $value eq $defaults->default_argument($argument) ) {
+    if (   ( not defined $default and not defined $value )
+        or ( defined $default and defined $value and $default eq $value ) )
+    {
         $self->state_variable( "region-$name.$argument" => undef, $value );
     } else {
         $self->state_variable( "region-$name.$argument" => $value );

@@ -4,10 +4,11 @@ use strict;
 package Jifty::Request;
 
 use base qw/Jifty::Object Class::Accessor::Fast/;
-__PACKAGE__->mk_accessors(qw(_top_request arguments just_validating path _continuation));
+__PACKAGE__->mk_accessors(qw(_top_request arguments just_validating path continuation_id continuation_type continuation_path));
 
 use Jifty::JSON;
 use Jifty::YAML;
+use Storable 'dclone';
 
 =head1 NAME
 
@@ -32,11 +33,11 @@ Each request contains several types of information:
 A request may contain one or more actions; these are represented as
 L<Jifty::Request::Action> objects. Each action request has a
 L<moniker|Jifty::Manual::Glossary/moniker>, a set of submitted
-L<arguments|Jifty::Manual::Glossary/arguments>, and an implementation class.
-By default, all actions that are submitted are run; it is possible to
-only mark a subset of the submitted actions as "active", and only the
-active actions will be run.  These will eventually become full-fledge
-L<Jifty::Action> objects.
+L<arguments|Jifty::Manual::Glossary/arguments>, and an implementation
+class.  By default, all actions that are submitted are run; it is
+possible to only mark a subset of the submitted actions as "active",
+and only the active actions will be run.  These will eventually become
+full-fledge L<Jifty::Action> objects.
 
 =item state variables
 
@@ -53,11 +54,11 @@ L<Jifty::Continuation>.
 
 =item (optional) fragments
 
-L<Fragments|Jifty::Manual::Glossary/fragments> are standalone bits of reusable
-code.  They are most commonly used in the context of AJAX, where
-fragments are the building blocks that can be updated independently.
-A request is either for a full page, or for multiple independent
-fragments.  See L<Jifty::Web::PageRegion>.
+L<Fragments|Jifty::Manual::Glossary/fragments> are standalone bits of
+reusable code.  They are most commonly used in the context of AJAX,
+where fragments are the building blocks that can be updated
+independently.  A request is either for a full page, or for multiple
+independent fragments.  See L<Jifty::Web::PageRegion>.
 
 =back
 
@@ -86,6 +87,22 @@ sub new {
     }
 
     return $self;
+}
+
+=head2 clone
+
+Return a copy of the request.
+
+=cut
+
+sub clone {
+    my $self = shift;
+    
+    # "Semi-shallow" clone
+    return bless({map {
+        my $val = $self->{$_};
+        $_ => (ref($val) ? { %$val } : $val);
+    } keys %$self}, ref($self));
 }
 
 =head2 fill
@@ -130,12 +147,18 @@ sub from_data_structure {
     my $self = shift;
     my $data = shift;
 
-    # TODO: continuations
-
     $self->path($data->{path});
+    $self->just_validating($data->{validating}) if $data->{validating};
+
+    if (ref $data->{continuation} eq "HASH") {
+        $self->continuation_id($data->{continuation}{id});
+        $self->continuation_type($data->{continuation}{type} || "parent");
+        $self->continuation_path($data->{continuation}{create});
+    }
 
     my %actions = %{$data->{actions} || {}};
     for my $a (values %actions) {
+        next unless ref $a eq "HASH";
         my %arguments;
         for my $arg (keys %{$a->{fields} || {}}) {
             if (ref $a->{fields}{$arg}) {
@@ -155,20 +178,21 @@ sub from_data_structure {
                          );
     }
 
-    my %variables = %{$data->{variables} || {}};
+    my %variables = ref $data->{variables} eq "HASH" ? %{$data->{variables}} : ();
     for my $v (keys %variables) {
         $self->add_state_variable(key => $v, value => $variables{$v});
     }
 
-    my %fragments = %{$data->{fragments} || {}};
+    my %fragments = ref $data->{fragments} eq "HASH" ? %{$data->{fragments}} : ();
     for my $f (values %fragments) {
+        next unless ref $f eq "HASH";
         my $current = $self->add_fragment(
             name      => $f->{name},
             path      => $f->{path},
             arguments => $f->{args},
             wrapper   => $f->{wrapper} || 0,
         );
-        while ($f = $f->{parent}) {
+        while (ref $f->{parent} eq "HASH" and $f = $f->{parent}) {
             $current = $current->parent(Jifty::Request::Fragment->new({
                 name => $f->{name},
                 path => $f->{path},
@@ -230,18 +254,11 @@ sub from_webform {
 
     my %args = (@_);
 
-    # We pull in the continuations first, because if we have a
-    # J:CLONE, we want the cloned values to be fallbacks
-    $self->_extract_continuations_from_webform(%args);
-
     # Pull in all of the arguments
-    # XXX ALEX: I think this breaks J:CLONE
     $self->arguments(\%args);
 
     # Extract actions and state variables
     $self->from_data_structure($self->webform_to_data_structure(%args));
-
-    $self->just_validating(1) if defined $args{'J:VALIDATE'} and length $args{'J:VALIDATE'};
 
     return $self;
 }
@@ -261,13 +278,37 @@ sub argument {
         my $value = shift;
         $self->arguments->{$key} = $value;
 
-        if ($key =~ /^J:A-(?:(\d+)-)?(.+)/s) {
-            $self->add_action(moniker => $2, class => $value, order => $1, arguments => {}, active => 1);
-        } elsif ($key =~ /^J:A:F-(\w+)-(.+)/s and $self->action($2)) {
-            $self->action($2)->argument($1 => $value);
-            $self->action($2)->modified(1);
+        # Continuation type is ofetn undef, so give it a sane default
+        # so we can use eq without warnings
+        my $cont_type = $self->continuation_type || "";
+
+        if ($key eq "J:VALIDATE") {
+            $self->{validating} = $value;
+        } elsif ($key eq "J:C" and $cont_type ne "return" and $cont_type ne "call") {
+            # J:C Doesn't take preference over J:CALL or J:RETURN
+            $self->continuation_id($value);
+            $self->continuation_type("parent");
+        } elsif ($key eq "J:CALL" and $cont_type ne "return") {
+            # J:CALL doesn't take preference over J:RETURN
+            $self->continuation_id($value);
+            $self->continuation_type("call");
+        } elsif ($key eq "J:RETURN") {
+            # J:RETURN trumps all
+            $self->continuation_id($value);
+            $self->continuation_type("return");
+        } elsif ($key eq "J:PATH") {
+            $self->continuation_path($value);
         } elsif ($key =~ /^J:V-(.*)/s) {
             $self->add_state_variable(key => $1, value => $value);
+        } elsif ($key =~ /^J:A-(?:(\d+)-)?(.+)/s) {
+            $self->add_action(moniker => $2, class => $value, order => $1, arguments => {}, active => 1);
+        } else {
+            # It's possibly a form field
+            my ($t, $a, $m) = $self->parse_form_field_name($key);
+            if ($t and $t eq "J:A:F" and $self->action($m)) {
+                $self->action($m)->argument($a => $value);
+                $self->action($m)->modified(1);
+            }
         }
     }
 
@@ -366,6 +407,17 @@ sub webform_to_data_structure {
     # Pass path through
     $data->{path} = $self->path;
 
+    $data->{validating} = $args{'J:VALIDATE'} if defined $args{'J:VALIDATE'} and length $args{'J:VALIDATE'};
+
+    # Continuations
+    if ($args{'J:C'} or $args{'J:CALL'} or $args{'J:RETURN'}) {
+        $data->{continuation}{id} = $args{'J:RETURN'} || $args{'J:CALL'} || $args{'J:C'};
+        $data->{continuation}{type} = "parent" if $args{'J:C'};
+        $data->{continuation}{type} = "call"   if $args{'J:CALL'};
+        $data->{continuation}{type} = "return" if $args{'J:RETURN'};
+    }
+    $data->{continuation}{create} = $args{'J:PATH'} if $args{'J:CREATE'};
+
     # Are we only setting some actions as active?
     my $active_actions;
     if (exists $args{'J:ACTIONS'}) {
@@ -380,7 +432,7 @@ sub webform_to_data_structure {
     # come before action arguments
     for my $key (sort keys %args) {
         my $value = $args{$key};
-        if( $key  =~ /^J:V-(.*)$/s ) {
+        if( $key  =~ /^J:V-(.*)/s ) {
             # It's a variable
             $data->{variables}{$1} = $value;
         } elsif ($key =~ /^J:A-(?:(\d+)-)?(.+)/s) {
@@ -402,34 +454,56 @@ sub webform_to_data_structure {
     return $data;
 }
 
-sub _extract_continuations_from_webform {
-    my $self = shift;
-    my %args = (@_);
+=head2 continuation_id [CONTINUATION_ID]
 
-    if ($args{'J:CLONE'} and Jifty->web->session->get_continuations($args{'J:CLONE'})) {
-        my %params = %{Jifty->web->session->get_continuations($args{'J:CLONE'})->request->arguments};
-        $self->argument($_ => $params{$_}) for keys %params;
-    }
-}
+Gets or sets the ID of the continuation associated with the request.
+
+=cut
 
 =head2 continuation [CONTINUATION]
 
-Gets or sets the continuation associated with the request.
+Returns the L<Jifty::Continuation> object associated with this
+request, if any.
 
 =cut
 
 sub continuation {
     my $self = shift;
 
-    $self->_continuation(@_) if @_;
-    return $self->_continuation if $self->_continuation;
+    $self->continuation_id(ref $_[0] ? $_[0]->id : $_[0])
+      if @_;
 
-    foreach my $continuation_id ($self->argument('J:C'), $self->argument('J:CALL') ) {
-        next unless $continuation_id;
-        return Jifty->web->session->get_continuation($continuation_id);
-    }
+    return undef unless $self->continuation_id;
+    return Jifty->web->session->get_continuation($self->continuation_id);
+}
 
-    return undef;
+=head3 save_continuation
+
+Saves the current request and response if we've been asked to.  If we
+save the continuation, we redirect to the next page -- the call to
+C<save_continuation> never returns.
+
+=cut
+
+sub save_continuation {
+    my $self = shift;
+    my $path;
+    return unless $path = $self->continuation_path;
+
+    # Clear out the create path so we don't ave the "create a
+    # continuation" into the continuation!
+    $self->continuation_path(undef);
+
+    my $c = Jifty::Continuation->new(
+        request  => $self,
+        response => Jifty->web->response,
+        parent   => $self->continuation,
+    );
+
+    # Set us up with the new continuation
+    Jifty->web->_redirect( Jifty::Web->url . $path
+                      . ( $path =~ /\?/ ? "&" : "?" ) . "J:C="
+                      . $c->id );
 }
 
 =head2 call_continuation
@@ -443,12 +517,23 @@ function will throw an exception to its enclosing dispatcher.
 
 sub call_continuation {
     my $self = shift;
-    my $cont = $self->arguments->{'J:CALL'};
-    return unless $cont and Jifty->web->session->get_continuation($cont);
-    $self->log->debug("Calling continuation $cont");
-    $self->continuation(Jifty->web->session->get_continuation($cont));
+    return if $self->is_subrequest;
+    return unless $self->continuation_type and $self->continuation_type eq "call" and $self->continuation;
+    $self->log->debug("Calling continuation ".$self->continuation->id);
     $self->continuation->call;
     return 1;
+}
+
+=head2 return_from_continuation
+
+=cut
+
+sub return_from_continuation {
+    my $self = shift;
+    return unless $self->continuation_type and $self->continuation_type eq "return" and $self->continuation;
+    return $self->continuation->call unless $self->continuation->return_path_matches;
+    $self->log->debug("Returning from continuation ".$self->continuation->id);
+    return $self->continuation->return;
 }
 
 =head2 path
@@ -578,7 +663,7 @@ sub add_action {
         order => undef,
         active => 1,
         arguments => undef,
-        has_run => undef,
+        has_run => 0,
         @_
     );
 
@@ -853,7 +938,7 @@ The primary source of Jifty requests through the website are CGI query
 parameters.  These are requests submitted using CGI GET or POST
 requests to your Jifty application.
 
-=head2 argument munging
+=head3 argument munging
 
 In addition to standard Mason argument munging, Jifty also takes
 arguments with a B<name> of
@@ -864,9 +949,9 @@ and an arbitrary value, and makes them appear as if they were actually
 separate arguments.  The purpose is to allow submit buttons to act as
 if they'd sent multiple values, without using JavaScript.
 
-=head2 actions
+=head3 actions
 
-=head3 registration
+=head4 registration
 
 For each action, the client sends a query argument whose name is
 C<J:A-I<moniker>> and whose value is the fully qualified class name of
@@ -874,7 +959,7 @@ the action's implementation class.  This is the action "registration."
 The registration may also take the form C<J:A-I<order>-I<moniker>>,
 which also sets the action's run order.
 
-=head3 arguments
+=head4 arguments
 
 The action's arguments are specified with query arguments of the form
 C<J:A:F-I<argumentname>-I<moniker>>.  To cope with checkboxes and the
@@ -883,19 +968,19 @@ levels of fallback, which are checked if the first doesn't exist:
 C<J:A:F:F-I<argumentname>-I<moniker>> and
 C<J:A:F:F:F-I<argumentname>-I<moniker>>.
 
-=head2 state variables
+=head3 state variables
 
 State variables are set via C<J:V-I<name>> being set to the value of
 the state parameter.
 
-=head2 continuations
+=head4 continuations
 
 The current continuation set by passing the parameter C<J:C>, which is
 set to the id of the continuation.  To create a new continuation, the
 parameter C<J:CREATE> is passed.  Calling a continuation is a ssimple
 as passing C<J:CALL> with the id of the continuation to call.
 
-=head2 request options
+=head3 request options
 
 The existence of C<J:VALIDATE> says that the request is only
 validating arguments.  C<J:ACTIONS> is set to a semicolon-separated
@@ -903,13 +988,12 @@ list of monikers; the actions with those monikers will be marked
 active, while all other actions are marked inactive.  In the absence
 of C<J:ACTIONS>, all actions are active.
 
-=head1 YAML POST Request Protocol
+=head2 YAML POST Request Protocol
 
-To be spec'd later
 
-=head1 JSON POST Request Protocol
+=head2 JSON POST Request Protocol
 
-To be spec'd later
+
 
 =cut
 

@@ -368,7 +368,7 @@ Object.extend(Form.Element, {
 
 // Form elements should AJAX validate if the CSS says so
 Behaviour.register({
-    'input.ajaxvalidation, textarea.ajaxvalidation': function(elt) {
+    'input.ajaxvalidation, textarea.ajaxvalidation, input.ajaxcanonicalization, textarea.ajaxcanonicalization': function(elt) {
         elt.onblur = function () {
             Form.Element.validate(this);
         }

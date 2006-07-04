@@ -79,13 +79,6 @@ empty L<Jifty::Response> object.
 An optional subroutine reference to evaluate when the continuation is
 called.
 
-=item clone
-
-There is a interface to support continuation "cloning," a process
-which is useful to creating multi-page wizards and the like.  However,
-this feature is still very much in flux; the documentation is waiting
-for the interface to settle down a bit before being written.
-
 =back
 
 =cut
@@ -99,7 +92,6 @@ sub new {
                 request  => Jifty::Request->new(),
                 response => Jifty::Response->new(),
                 code     => undef,
-                clone    => undef,
                 @_
                );
 
@@ -107,19 +99,9 @@ sub new {
     $args{parent} = $args{parent}->id
       if $args{parent} and ref $args{parent};
 
-    # We're cloning most of our attributes from a previous continuation
-    if ($args{clone} and Jifty->web->session->get_continuation($args{clone})) {
-        $self = dclone(Jifty->web->session->get_continuation($args{clone}));
-        for (grep {/^J:A/} keys %{$args{request}->arguments}) {
-            $self->request->argument($_ => $args{request}->arguments->{$_});
-        }
-        $self->response($args{response});
-    } else {
-        delete $args{clone};
-        # We're getting most of our properties from the arguments
-        for (keys %args) {
-            $self->$_($args{$_}) if $self->can($_);
-        }
+    # We're getting most of our properties from the arguments
+    for (keys %args) {
+        $self->$_($args{$_}) if $self->can($_);
     }
 
     # Generate a hopefully unique ID
@@ -133,21 +115,15 @@ sub new {
     return $self;
 }
 
-=head2 call
+=head2 return_path_matches
 
-Call the continuation; this is generally done during request
-processing, after an actions have been run.
-L<Jifty::Request::Mapper>-controlled values are filled into the stored
-request based on the current request and response.  If an values
-needed to be filled in, then *another* continuation is created, with
-the filled-in values included, and the browser is redirected there.
-This is to ensure that we end up at the correct request path, while
-keeping continuations immutable and maintaining all of the request
-state that we need.
+Returns true if the continuation matches the current request's path,
+and it would return to its caller in this context.  This can be used
+to ask "are we about to call a continuation?"
 
 =cut
 
-sub call {
+sub return_path_matches {
     my $self = shift;
     my $called_uri = $ENV{'REQUEST_URI'};
     my $request_path = $self->request->path;
@@ -159,65 +135,89 @@ sub call {
     $request_path =~ s{/+}{/}g; 
     $request_path = $escape while $request_path ne ($escape = URI::Escape::uri_unescape($request_path));
 
-    if (defined $request_path and 
-        ($called_uri !~ /^\Q$request_path\E[?&;]J:CALL=@{[$self->id]}/)) {
-        # If we needed to fix up the path (it contains invalid
-        # characters) then warn, because this may cause infinite
-        # redirects
-        Jifty->log->warn("Redirect to '@{[$self->request->path]}' contains unsafe characters")
-          if $self->request->path =~ m{[^A-Za-z0-9\-_.!~*'()/?&;+]};
+    return $called_uri =~ /^\Q$request_path\E[?&;]J:RETURN=@{[$self->id]}$/;
+}
 
-        # Clone our request
-        my $request = dclone($self->request);
-        
-        # Fill in return value(s) into correct part of $request
-        $request->do_mapping;
+=head2 call
 
-        my $response = $self->response;
-        # If the current response has results, we need to pull them
-        # in.  For safety, monikers from the saved continuation
-        # override those from the request prior to the call
-        if (Jifty->web->response->results) {
-            $response = dclone(Jifty->web->response);
-            my %results = $self->response->results;
-            $response->result($_ => $results{$_}) for keys %results;
-        }
-        
-        # Make a new continuation with that request
-        my $next = Jifty::Continuation->new(parent => $self->parent, 
-                                            request => $request,
-                                            response => $response,
-                                            code => $self->code,
-                                           );
-        $next->request->continuation(Jifty->web->session->get_continuation($next->parent))
-          if defined $next->parent;
+Call the continuation; this is generally done during request
+processing, after an actions have been run.
+L<Jifty::Request::Mapper>-controlled values are filled into the stored
+request based on the current request and response.  During the
+process, another continuation is created, with the filled-in results
+of the current actions included, and the browser is redirected to the
+proper path, with that continuation.
 
-        # Redirect to right page if we're not there already
-        Jifty->web->_redirect($next->request->path . "?J:CALL=" . $next->id);
-    } else {
-        # Pull state information out of the continuation and set it
-        # up; we use clone so that the continuation itself is
-        # immutable.  It is vaguely possible that there are results in
-        # the response already (set up by the dispatcher) so we place
-        # results from the continuation's response into the existing
-        # response only if it wouldn't clobber something.
+=cut
+
+sub call {
+    my $self = shift;
+
+    # If we needed to fix up the path (it contains invalid
+    # characters) then warn, because this may cause infinite
+    # redirects
+    Jifty->log->warn("Redirect to '@{[$self->request->path]}' contains unsafe characters")
+      if $self->request->path =~ m{[^A-Za-z0-9\-_.!~*'()/?&;+]};
+
+    # Clone our request
+    my $request = $self->request->clone;
+
+    # Fill in return value(s) into correct part of $request
+    $request->do_mapping;
+
+    my $response = $self->response;
+    # If the current response has results, we need to pull them
+    # in.  For safety, monikers from the saved continuation
+    # override those from the request prior to the call
+    if (Jifty->web->response->results) {
+        $response = dclone(Jifty->web->response);
         my %results = $self->response->results;
-        for (keys %results) {
-            next if Jifty->web->response->result($_);
-            Jifty->web->response->result($_,dclone($results{$_}));
-        }
-
-        # Run any code in the continuation
-        $self->code->(Jifty->web->request)
-          if $self->code;
-
-        # Enter the request in the continuation, and handle it.  This
-        # will possibly cause 'before' blocks to run more than once,
-        # but is slightly preferrable to them never running.
-        Jifty->web->request(dclone($self->request));
-        Jifty->handler->dispatcher->handle_request;
-        Jifty::Dispatcher::_abort;
+        $response->result($_ => $results{$_}) for keys %results;
     }
+
+    # Make a new continuation with that request
+    my $next = Jifty::Continuation->new(parent => $self->parent, 
+                                        request => $request,
+                                        response => $response,
+                                        code => $self->code,
+                                       );
+    $next->request->continuation(Jifty->web->session->get_continuation($next->parent))
+      if defined $next->parent;
+
+    # Redirect to right page if we're not there already
+    Jifty->web->_redirect($next->request->path . "?J:RETURN=" . $next->id);
+}
+
+=head2 return
+
+Returns from the continuation by pulling out the stored request, and
+setting that to be the active request.  This shouldn't need to be
+called by hand -- use L<Jifty::Request/return_from_continuation>,
+which ensures that all requirements are ment before it calls this.
+
+=cut
+
+sub return {
+    my $self = shift;
+
+    # Pull state information out of the continuation and set it
+    # up; we use clone so that the continuation itself is
+    # immutable.  It is vaguely possible that there are results in
+    # the response already (set up by the dispatcher) so we place
+    # results from the continuation's response into the existing
+    # response only if it wouldn't clobber something.
+    my %results = $self->response->results;
+    for (keys %results) {
+        next if Jifty->web->response->result($_);
+        Jifty->web->response->result($_,dclone($results{$_}));
+    }
+
+    # Run any code in the continuation
+    $self->code->(Jifty->web->request)
+      if $self->code;
+
+    # Set the current request to the one in the continuation
+    return Jifty->web->request($self->request->clone);
 }
 
 =head2 delete

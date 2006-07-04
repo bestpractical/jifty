@@ -132,6 +132,8 @@ sub action_form {
 
     my $i;
     for my $form ($self->forms) {
+        no warnings 'uninitialized';
+
         $i++;
         next unless first {   $_->name =~ /J:A-(?:\d+-)?$moniker/
                            && $_->type eq "hidden" }
@@ -307,9 +309,11 @@ L<Test::HTML::Lint>.
 sub get_html_ok {
     my $self = shift;
     $self->get(@_);
-    # TODO XXX FIXME play with $Test::Builder::Level to get errors reported from
-    # right place?
-    html_ok($self->content);
+    {
+        local $Test::Builder::Level = $Test::Builder::Level;
+        $Test::Builder::Level++;
+        html_ok($self->content);
+    }       
 } 
 
 =head2 submit_html_ok 
@@ -322,9 +326,11 @@ L<Test::HTML::Lint>.
 sub submit_html_ok {
     my $self = shift;
     $self->submit(@_);
-    # TODO XXX FIXME play with $Test::Builder::Level to get errors reported from
-    # right place?
-    html_ok($self->content);
+    {
+        local $Test::Builder::Level = $Test::Builder::Level;
+        $Test::Builder::Level++;
+        html_ok($self->content);
+    }
 } 
 
 =head2 follow_link_ok 
@@ -343,9 +349,11 @@ sub follow_link_ok {
 
     carp("Couldn't find link") unless
       $self->follow_link(@_);
-    # TODO XXX FIXME play with $Test::Builder::Level to get errors reported from
-    # right place?
-    html_ok($self->content);
+    {
+        local $Test::Builder::Level = $Test::Builder::Level;
+        $Test::Builder::Level++;
+        html_ok($self->content);
+    }
 } 
 
 =head2 session
@@ -379,7 +387,7 @@ sub continuation {
     return undef unless $session;
     
     my $id = shift;
-    ($id) = $self->uri =~ /J:C(?:ALL)?=([^&;]+)/ unless $id;
+    ($id) = $self->uri =~ /J:(?:C|CALL|RETURN)=([^&;]+)/ unless $id;
 
     return $session->get_continuation($id);
 }

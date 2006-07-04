@@ -46,6 +46,7 @@ __PACKAGE__->javascript_libs([qw(
     formatDate.js
     jifty.js
     jifty_utils.js
+    jifty_smoothscroll.js
     calendar.js
     dom-drag.js
     halo.js
@@ -255,13 +256,13 @@ passes all of these criteria, the action is fit to be run.
 
 Before they are run, however, the request has a chance to be
 interrupted and saved away into a continuation, to be resumed at some
-later point.  This is handled by L</save_continuation>.
+later point.  This is handled by L<Jifty::Request/save_continuation>.
 
 If the continuation isn't being saved, then C<handle_request> goes on
 to run all of the actions.  If all of the actions are successful, it
 looks to see if the request wished to call any continuations, possibly
 jumping back and re-running a request that was interrupted in the
-past.  This is handled by L</call_continuation>.
+past.  This is handled by L<Jifty::Request/call_continuation>.
 
 For more details about continuations, see L<Jifty::Continuation>.
 
@@ -297,7 +298,7 @@ sub handle_request {
 
         push @valid_actions, $request_action;
     }
-    $self->save_continuation;
+    $self->request->save_continuation;
 
     unless ( $self->request->just_validating ) {
         for my $request_action (@valid_actions) {
@@ -341,7 +342,6 @@ sub handle_request {
             $self->request->do_mapping;
         }
     }
-    $self->session->set_cookie();
 
     # If there's a continuation call, don't do the rest of this
     return if $self->response->success and $self->request->call_continuation;
@@ -565,11 +565,14 @@ sub redirect {
 
     my @actions = Jifty->web->request->actions;
 
-    if (   $self->response->results
+    # To submit a Jifty::Action::Redirect, we don't need to serialize a continuation,
+    # unlike any other kind of actions.
+    if (  (grep { not $_->action_class->isa('Jifty::Action::Redirect') }
+                values %{{ $self->response->results }})
         or $self->request->state_variables
         or $self->{'state_variables'}
         or $self->request->continuation
-        or @actions )
+        or grep { $_->active and not $_->class->isa('Jifty::Action::Redirect') } @actions )
     {
         my $request = Jifty::Request->new();
         $request->add_state_variable( key => $_->key, value => $_->value )
@@ -600,7 +603,7 @@ sub redirect {
             response => $self->response,
             parent   => $self->request->continuation,
         );
-        $page = $page->url."?J:CALL=" . $cont->id;
+        $page = $page->url."?J:RETURN=" . $cont->id;
     } else {
         $page = $page->complete_url;
     }
@@ -631,87 +634,6 @@ sub _redirect {
     # Mason abort, or dispatcher abort out of here
     $self->mason->abort if $self->mason;
     Jifty::Dispatcher::_abort;
-}
-
-=head3 save_continuation
-
-Saves the current request and response if we've been asked to.  If we
-save the continuation, we redirect to the next page -- the call to
-C<save_continuation> never returns.
-
-=cut
-
-sub save_continuation {
-    my $self = shift;
-
-    my %args = %{ $self->request->arguments };
-    my $clone = delete $self->request->arguments->{'J:CLONE'};
-    my $create = delete $self->request->arguments->{'J:CREATE'};
-    if ( $clone or $create ) {
-
-        # Saving a continuation
-        my $c = Jifty::Continuation->new(
-            request  => $self->request,
-            response => $self->response,
-            parent   => $self->request->continuation,
-            clone    => $clone,
-        );
-
-# XXX Only if we're cloning should we do the following check, I think??  Cloning isn't a stack push, so it works out
-        if ( $clone
-            and $self->request->just_validating
-            and $self->response->failure )
-        {
-
-# We don't get to redirect to the new page; redirect to the same page, new cont
-            $self->_redirect(
-                $self->request->path . "?J:C=" . $c->id );
-        } else {
-
-            # Set us up with the new continuation
-            $self->_redirect( Jifty::Web->url . $args{'J:PATH'}
-                    . ( $args{'J:PATH'} =~ /\?/ ? "&" : "?" ) . "J:C="
-                    . $c->id );
-        }
-
-    }
-}
-
-=head3 multipage START_URL, ARGUMENTS
-
-B<Note>: This API is very much not finalized.  Don't use it yet!
-
-Create a multipage action.  The first argument is the URL of the start
-of the multipage action -- the user will be redirected there if they
-try to enter the multipage action on any other page.  The rest of the
-arguments are passed to L<Jifty::Request/add_action> to create the
-multipage action.
-
-=cut
-
-sub multipage {
-    my $self = shift;
-    my ( $start, %args ) = @_;
-
-    my $request_action = Jifty->web->caller->action( $args{moniker} );
-
-    unless ($request_action) {
-        my $request = Jifty::Request->new();
-        $request->argument(
-            'J:CALL' => Jifty->web->request->continuation->id )
-            if Jifty->web->request->continuation;
-        $request->path("/");
-        $request->add_action(%args);
-        my $cont = Jifty::Continuation->new( request => $request );
-        Jifty->web->redirect( $start . "?J:C=" . $cont->id );
-    }
-
-    my $action = Jifty->web->new_action_from_request($request_action);
-    $action->result(
-        Jifty->web->request->continuation->response->result( $args{moniker} )
-        )
-        if Jifty->web->request->continuation->response;
-    return $action;
 }
 
 =head3 caller
@@ -757,10 +679,11 @@ sub tangent {
         $clickable->state_variable( $_ => $self->{'state_variables'}{$_} )
             for keys %{ $self->{'state_variables'} };
 
-        my $request = Jifty::Request->new(path => Jifty->web->request->path)
-          ->from_webform(%{Jifty->web->request->arguments}, $clickable->get_parameters);
+        my $request = Jifty->web->request->clone;
+        my %clickable = $clickable->get_parameters;
+        $request->argument($_ => $clickable{$_}) for keys %clickable;
         local Jifty->web->{request} = $request;
-        Jifty->web->handle_request();
+        Jifty->web->request->save_continuation;
     }
 }
 
@@ -840,6 +763,8 @@ sub render_messages {
 
         my $plural = $type . "s";
         $self->out(qq{<div id="$plural">});
+        $self->out(qq[<a id="dismiss_$plural" href="#"
+                         onclick="Effect.DropOut(this.parentNode); return false;">Dismiss</a>]);
         foreach my $moniker ( @monikers ) {
             if ( $results{$moniker}->$type() ) {
                 $self->out( qq{<div class="$type $moniker">}

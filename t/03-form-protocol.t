@@ -17,6 +17,7 @@ actions:
     moniker: mymoniker
     class: DoSomething
     active: 1
+    has_run: 0
     arguments:
         id: 23
         something: else
@@ -43,6 +44,7 @@ actions:
     moniker: mymoniker
     class: DoSomething
     active: 1
+    has_run: 0
     arguments:
         id: 23
         something: else
@@ -50,6 +52,7 @@ actions:
     moniker: second
     class: DoSomething
     active: 1
+    has_run: 0
     arguments:
         id: 42
         something: bla
@@ -79,6 +82,7 @@ actions:
     moniker: mymoniker
     class: DoSomething
     active: 1
+    has_run: 0
     arguments:
         id: 23
         something: else
@@ -86,6 +90,7 @@ actions:
     moniker: second
     class: DoThat
     active: 1
+    has_run: 0
     arguments:
         id: 42
         something: bla
@@ -114,6 +119,7 @@ actions:
     moniker: mymoniker
     class: DoSomething
     active: 1
+    has_run: 0
     arguments:
         id: 23
         something: else
@@ -142,6 +148,7 @@ actions:
     moniker: mymoniker
     class: DoSomething
     active: 0
+    has_run: 0
     arguments:
         id: 23
         something: else
@@ -149,6 +156,7 @@ actions:
     moniker: second
     class: DoThat
     active: 1
+    has_run: 0
     arguments:
         id: 42
         something: bla
@@ -177,6 +185,7 @@ actions:
     moniker: mymoniker
     class: DoSomething
     active: 1
+    has_run: 0
     arguments:
         id: 23
         something: else
@@ -184,6 +193,7 @@ actions:
     moniker: second
     class: DoThat
     active: 1
+    has_run: 0
     arguments:
         id: 42
         something: bla
@@ -215,6 +225,7 @@ actions:
     moniker: mymoniker
     class: DoSomething
     active: 1
+    has_run: 0
     arguments:
         id: 23
         something: else
@@ -222,6 +233,7 @@ actions:
     moniker: second
     class: DoThat
     active: 1
+    has_run: 0
     arguments:
         id: 42
         something: bla
@@ -253,6 +265,7 @@ actions:
     moniker: mymoniker
     class: DoSomething
     active: 1
+    has_run: 0
     arguments:
         id: 23
         something: else
@@ -260,6 +273,7 @@ actions:
     moniker: second
     class: DoThat
     active: 1
+    has_run: 0
     arguments:
         id: 42
         something: bla
@@ -286,6 +300,7 @@ actions:
     moniker: mymoniker
     class: DoSomething
     active: 1
+    has_run: 0
     arguments:
         id: 23
         something: else
@@ -311,6 +326,7 @@ actions:
     moniker: mymoniker
     class: DoSomething
     active: 1
+    has_run: 0
     arguments:
         id: 23
         something: else
@@ -335,6 +351,7 @@ actions:
     moniker: mymoniker
     class: DoSomething
     active: 1
+    has_run: 0
     arguments:
         id: 96
         something: else
@@ -362,6 +379,7 @@ actions:
     moniker: mymoniker
     class: DoSomething
     active: 1
+    has_run: 0
     arguments:
         id: 23
         something: else
@@ -369,6 +387,7 @@ actions:
     moniker: second
     class: DoThat
     active: 1
+    has_run: 0
     arguments:
         id: 42
         something: feepy
@@ -398,6 +417,7 @@ actions:
     moniker: mymoniker
     class: DoSomething
     active: 1
+    has_run: 0
     arguments:
         id: 123
         something: else
@@ -424,6 +444,7 @@ actions:
     moniker: mymoniker
     class: DoSomething
     active: 1
+    has_run: 0
     arguments:
         id: 123
         something: else
@@ -449,6 +470,7 @@ actions:
     moniker: mymoniker
     class: DoSomething
     active: 1
+    has_run: 0
     arguments:
         id: 456
         something: else
@@ -473,6 +495,7 @@ actions:
     moniker: mymoniker
     class: DoSomething
     active: 1
+    has_run: 0
     arguments:
         id: 789
         something: else
@@ -500,6 +523,7 @@ actions:
     moniker: mymoniker
     class: DoSomething
     active: 1
+    has_run: 0
     arguments:
         id: 23
         something: else
@@ -507,6 +531,7 @@ actions:
     moniker: second
     class: DoSomething
     active: 1
+    has_run: 0
     arguments:
         id: 42
         something: bla

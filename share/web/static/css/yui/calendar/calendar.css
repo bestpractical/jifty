@@ -109,7 +109,7 @@ td.calcell.calcellhover {
 
 /* Added to perform some correction for Opera 8.5
    hover redraw bug */
-table:hover {
+.calendar table:hover {
 	background-color:#FFF;
 }
 

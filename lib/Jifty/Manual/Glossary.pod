@@ -13,7 +13,7 @@ We use words.  This is what they mean.
 An B<action> is a specifically designed RPC call that can do something to the
 system.  An action takes any number of L</argument>s, which it
 L</canonicalize>s, L</validate>s, and then uses to do something useful.  Each
-action has a L</result>.  See L<Jifty::Action>.
+action has a L</result>.  See L<Jifty::Action> and L<Jifty::Manual::Actions>.
 
 =item active
 
@@ -67,10 +67,20 @@ L<Jifty::Web::Form::Field>.
 
 =item fragment
 
-A section of HTML contained in a L</region>.  Fragments are a kind of
-standalone Mason component which the browser can request individually.  Because
-of this, they can only take strings and scalars as arguments, not references or
-objects!
+A section of HTML (at present, a Mason component) contained in a L</region>.
+Fragments are a kind of standalone Mason component which the browser can request
+individually.  Because of this, they can only take strings and scalars as
+arguments, not references or objects!
+
+=item element
+
+A Mason component used by one or more other pages, which is not a whole page of
+itself. As opposed to L<fragments|/fragment> C<elements> are strictly internal,
+and never visible to the outside world by themselves. Elements typically live
+under a path beginning with or containing '/_elements'. This, and the whole idea
+of an element is strictly convention, but Jifty contains elements for things
+like page headers, menus, and showing keybindings out of the box to make your
+life easier.
 
 =item mandatory
 

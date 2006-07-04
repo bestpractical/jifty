@@ -99,3 +99,26 @@
     right:0.5em;
     bottom:0;
 }
+
+a.inline_edit {
+
+    display: block;
+    width: 0;
+    padding-left: 22px;
+    min-height: 20px;
+
+    background: no-repeat left center;
+    background: url(/static/images/silk/pencil.png) no-repeat 0 0;
+}
+
+a.inline_create {
+
+    display: block;
+    width: 0;
+    padding-left: 22px;
+    min-height: 20px;
+
+    background: no-repeat left center;
+    background: url(/static/images/silk/pencil_add.png) no-repeat 0 0;
+}
+

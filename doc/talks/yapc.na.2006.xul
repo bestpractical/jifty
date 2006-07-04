@@ -54,7 +54,7 @@ Jifty
 Web App
 Framework
 ----
-Hides the
+Encapsulates
 Complexity
 ----
 Jifty
@@ -68,6 +68,15 @@ JFDI
 ----
 Demo
 App
+----
+How about
+a weblog?
+----
+Glad you
+like it
+----
+This isn't 
+a live demo
 ----
 Let's set
 it up
@@ -188,9 +197,11 @@ Ship it!
 ----
 Oh wait
 ----
-New US law
+New corporate
+directive
 ----
-...banning profanity
+...banning 
+profanity
 ----
 (We need to protect
 the children!)
@@ -198,12 +209,13 @@ the children!)
 From the
 Internet
 ----
-Must
+Need to
 censor blogs
 ----
 No problem!
 ----
-(Except for the political one)
+(Except updating
+my resume)
 ----
 Back to the code!
 ----
@@ -430,10 +442,36 @@ Actions takes
 typed arguments 
 ----
 Action return
- results
+results
 ----
-Getting started 
-with actions
+Actions are not
+tied to URLs
+----
+Any action
+on any page
+----
+(Yes, we have 
+ACLs for Actions)
+----
+(But you want to
+ACL your Models,
+not your Actions)
+----
+Actions are
+generic RPC
+----
+Jifty provides
+a webform encoding
+----
+Jifty provides
+a YAML encoding
+----
+Jifty provides
+an XML encoding
+----
+(You get 
+web services
+for free)
 ----
 Jifty provides three 
 actions for each of 
@@ -452,16 +490,21 @@ the defaults
 ----
 If we had more time, 
 we'd show you that 
-every action is made of:
+actions do this:
 ----
- sub arguments {}
-----
- sub validate_arguments {}
-----
- sub take_action {}
+ # Render a template
+ for ($self->argument_names()) {
+    $self->form_field($_);
+ }
+ # User submits the form
+ $self->validate_arguments();
+ $self->take_action();
 ----
 {{#tag|Jifty::Dispatcher (Kernel)}}
 (See Audrey at OSCON!)
+----
+Encapsulates
+View Logic
 ----
 Simple
 ----
@@ -483,14 +526,22 @@ shows your pages
 After: 
 cleans your state
 ----
+If no rule matches
+forwards to templates
+----
 {{#tag|Jifty::ClassLoader (Bootloader)}}
 ----
 I hate
-scaffolds
+scaffolding    
+----
+I hate
+code generation
 ----
 Ugly
 ----
 Redundant
+----
+Breakable
 ----
 Annoying
 ----
@@ -505,23 +556,27 @@ Enter
 ----
 Autocreates
 ----
-Blog
+Blog                       
 ----
-Blog::Record
+Blog::Record                
 ----
-Blog::Collection
+Blog::Collection            
 ----
 Blog::Model::EntryCollection
 Blog::Model::CommentCollection
 ----
-Blog::Action::{Create,Update,Delete}Entry
-Blog::Action::{Create,Update,Delete}Comment
+Blog::Action::CreateEntry
+Blog::Action::UpdateEntry
+Blog::Action::DeleteEntry
+Blog::Action::CreateComment
+Blog::Action::UpdateComment
+Blog::Action::DeleteComment
 ----
-Blog::Bootstrap
+Blog::Bootstrap          
 ----
-Blog::Upgrade
+Blog::Upgrade             
 ----
-Blog::Dispatcher
+Blog::Dispatcher             
 ----
 Blog::CurrentUser
 ----
@@ -671,7 +726,7 @@ Instead of
 You write
 ----
  &lt;% Jifty->web->region(
-	name => "myweblog-posts",
+        name => "myweblog-posts",
         path => "/fragments/page_of_posts") 
  %>
 ----
@@ -715,6 +770,8 @@ Online Docs
 ----
 {{img src="npw.2006/online_docs.png" width="800" height="622"}}
 ----
+Plugins
+----
 {{#tag|DEPLOYMENT}}
 ----
 Run 
@@ -724,17 +781,20 @@ FastCGI
 (Apache or
 lightttpd)
 ----
-Memcached
+MemCached
 ----
-I18N
+Fast Static
+Content Server
 ----
 {{#i|CSS::Squish}}
 ----
-{{#i|JS::Crunch}}
-(Coming soon)
+(Same thing for 
+Javascript)
 ----
 Jifty::Web::Session
 (Designed for AJAX)
+----
+I18N
 ---- 
 {{#tag|THE FUTURE}}
 ----
@@ -743,6 +803,9 @@ UI Editor
 ----
 Even less
 code
+----
+Easier
+Install
 ----
 More
 docs
@@ -770,6 +833,8 @@ Getting started?
  #jifty on freenode.net
 ----
  jifty-devel@lists.jifty.org
+----
+Thanks!
 </html:textarea>
 <deck flex="1" id="deck">
 <vbox flex="1" onmousemove="Presentation.onMouseMoveOnCanvas(event);">

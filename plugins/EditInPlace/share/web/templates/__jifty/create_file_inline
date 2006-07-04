@@ -1,0 +1,12 @@
+<%attr>
+edit_inline => 0
+</%attr>
+<%args>
+$path => undef
+$line => undef
+</%args>
+<% Jifty->web->link(label => _("Create $path"), 
+                    onclick => { 
+                     replace_with => '/__jifty/edit_inline/mason_component/'.$path,
+                     },
+                     )%>
