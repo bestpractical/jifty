@@ -126,6 +126,7 @@ sub new {
         my $class = "Jifty::Plugin::".(keys %{$plugin})[0];
         my %options = %{ $plugin->{(keys %{$plugin})[0]} };
         Jifty::Util->require($class);
+        Jifty::ClassLoader->new(base => $class)->require;
         push @plugins, $class->new(%options);
     }
 

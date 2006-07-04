@@ -190,8 +190,7 @@ sub require {
         return 0;
     }
 
-    my $path =  join('/', split(/::/,$class)).".pm";
-    return 1 if $INC{$path};
+    return 1 if $self->already_required($class);
 
     my $retval = $class->require;
     if ($UNIVERSAL::require::ERROR) {
@@ -208,6 +207,12 @@ sub require {
     }
 
     return 1;
+}
+
+sub already_required {
+    my ($self, $class) = @_;
+    my $path =  join('/', split(/::/,$class)).".pm";
+    return ( $INC{$path} ? 1 : 0);
 }
 
 =head1 AUTHOR
