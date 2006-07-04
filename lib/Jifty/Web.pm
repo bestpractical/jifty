@@ -911,7 +911,7 @@ sub generate_css {
                     );
         }
 
-        CSS::Squish->roots( $jifty );
+        CSS::Squish->roots( $app, $jifty );
         
         my $css = CSS::Squish->concatenate( $file );
 

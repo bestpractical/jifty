@@ -11,7 +11,7 @@ requires('Class::Accessor::Named');
 requires('Class::Container');
 requires('Class::Data::Inheritable');
 requires('Compress::Zlib');
-requires('CSS::Squish' => 0.04 );
+requires('CSS::Squish' => 0.05 );
 requires('DBD::SQLite' => 1.11 );
 requires('Data::Page');
 requires('DateTime');
