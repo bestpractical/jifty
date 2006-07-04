@@ -923,6 +923,31 @@ sub generate_css {
 
 Returns a C<< <script> >> tag for the compressed Javascript.
 
+Your application specific javascript goes in
+F<share/web/static/js/app.js>.  This will be automagically included if
+it exists.
+
+If you want to add javascript behaviour to your page using CSS
+selectors then put your behaviour rules in
+F<share/web/static/js/app_behaviour.js> which will also be
+automagically included if it exists.  The C<behaviour.js> library is
+included by Jifty.  For more information on C<behaviour.js> see
+L<http://bennolan.com/behaviour/>.
+
+However if you want to include other javascript libraries you need to
+add them to the javascript_libs array of your application.  Do this in
+the C<start> sub of your main application class.  For example if your application is Foo then in L<lib/Foo.pm>
+
+ sub start {
+   Jifty->web->javascript_libs([
+ 			       @{ Jifty->web->javascript_libs },
+ 			       "yourJavascriptLib.js",
+ 			      ]);
+ }
+
+Jifty will look for javascript libraries under share/web/static/js/ by
+default.
+
 =cut
 
 sub include_javascript {
