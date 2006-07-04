@@ -737,7 +737,7 @@ sub _canonicalize_date {
     my $val = shift;
     return undef unless defined $val and $val =~ /\S/;
     return undef unless my $obj = Jifty::DateTime->new_from_string($val);
-    return $obj->ymd eq $val ? undef : $obj->ymd;
+    return $obj->ymd;
 }
 
 =head2 _validate_arguments
