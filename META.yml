@@ -39,7 +39,7 @@ requires:
   HTML::Mason::Plugin: 0
   HTTP::Cookies: 0
   HTTP::Date: 0
-  HTTP::Server::Simple: 0.10
+  HTTP::Server::Simple: 0.20
   HTTP::Server::Simple::Recorder: 0
   Hash::Merge: 0
   Hook::LexWrap: 0
