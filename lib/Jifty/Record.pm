@@ -62,9 +62,10 @@ sub create {
     }
 
     foreach my $key ( keys %attribs ) {
+        my $attr = $attribs{$key};
         my $method = "validate_$key";
-        next unless $self->can($method);
-        my ( $val, $msg ) = $self->$method( $attribs{$key} );
+        my $func = $self->can($method) or next;
+        my ( $val, $msg ) = $func->($self, $attr);
         unless ($val) {
             $self->log->error("There was a validation error for $key");
             return ( $val, $msg );
@@ -72,7 +73,7 @@ sub create {
 
         # remove blank values. We'd rather have nulls
         if ( exists $attribs{$key}
-            and ( not defined $attribs{$key} or (not ref $attribs{$key} and $attribs{$key} eq "" )) )
+            and ( not defined $attr or (not ref $attr and $attr eq "" )) )
         {
             delete $attribs{$key};
         }

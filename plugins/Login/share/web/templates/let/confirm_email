@@ -1,0 +1,7 @@
+<%init>
+Jifty->web->new_action(
+    moniker => 'confirm_email',
+    class   => 'ConfirmEmail',
+)->run;
+Jifty->web->redirect("/");
+</%init>

@@ -25,6 +25,11 @@ Jifty.Calendar = {
 
         Jifty.Calendar.hideOpenCalendar();
         
+        /* We need to delay Jifty's canonicalization until after we've
+           selected a value via the calendar */
+        input["_onblur"] = input.onblur;
+        input.onblur     = null;
+        
         if ( wrap ) {
             wrap.style.display = "block";
             Jifty.Calendar.openCalendar = wrapId;
@@ -69,6 +74,18 @@ Jifty.Calendar = {
     hideOpenCalendar: function() {
         if ( Jifty.Calendar.openCalendar ) {
             $( Jifty.Calendar.openCalendar ).style.display = "none";
+
+            /* Get the input's ID */
+            var inputId = Jifty.Calendar.openCalendar;
+                inputId = inputId.replace(/^cal_/, '');
+                inputId = inputId.replace(/_wrap$/, '');
+
+            var input = $( inputId );
+
+            /* Restore the original onblur */
+            input.onblur     = input["_onblur"];
+            input["_onblur"] = null;
+            
             Jifty.Calendar.openCalendar = "";
         }
     }
