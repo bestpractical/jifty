@@ -81,7 +81,6 @@ sub new {
         # a slight negative performance implications
         $self->record(
             $record_class->new( current_user => $self->current_user ) );
-        warn "Record is ".YAML::Dump($self->current_user);
         my %given_pks = ();
         for my $pk ( @{ $self->record->_primary_keys } ) {
             $given_pks{$pk} = $self->argument_value($pk)
