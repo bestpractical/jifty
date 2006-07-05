@@ -14,7 +14,7 @@ no_index:
     - inc
 requires: 
   App::CLI: 0.03
-  CSS::Squish: 0.04
+  CSS::Squish: 0.05
   Cache::Cache: 0
   Calendar::Simple: 0
   Class::Accessor: 0
