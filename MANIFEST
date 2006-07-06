@@ -129,6 +129,7 @@ lib/Jifty/Model/Session.pm
 lib/Jifty/Notification.pm
 lib/Jifty/Object.pm
 lib/Jifty/Plugin.pm
+lib/Jifty/Plugin/ClassLoader.pm
 lib/Jifty/Record.pm
 lib/Jifty/Request.pm
 lib/Jifty/Request/Mapper.pm
