@@ -407,6 +407,7 @@ sub new_action {
         class     => undef,
         moniker   => undef,
         arguments => {},
+        current_user => $self->current_user,
         @_
     );
 
@@ -441,7 +442,7 @@ sub new_action {
 
     my $action;
     # XXX TODO bullet proof
-    eval { $action = $class->new( %args, arguments => {%arguments}, current_user => $self->current_user ); };
+    eval { $action = $class->new( %args, arguments => {%arguments} ); };
     if ($@) {
         my $err = $@;
         $self->log->fatal($err);
