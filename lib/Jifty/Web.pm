@@ -765,7 +765,7 @@ sub render_messages {
         my $plural = $type . "s";
         $self->out(qq{<div id="$plural">});
         $self->out(qq[<a id="dismiss_$plural" href="#"
-                         onclick="Effect.DropOut(this.parentNode); return false;">Dismiss</a>]);
+                         onclick="Effect.DropOut(this.parentNode); return false;">]._('Dismiss').qq[</a>]);
         foreach my $moniker ( @monikers ) {
             if ( $results{$moniker}->$type() ) {
                 $self->out( qq{<div class="$type $moniker">}
