@@ -65,9 +65,9 @@ Jifty.Utils = {
 };
 
 /* This sets Jifty.Utils.isMSIE to true in IE
-    @cc_on@
-    if ( @_win32 )
+    @cc_on
+    @if ( @_win32 )
         Jifty.Utils.isMSIE = true;
-    @end@
+    @end
 */
 
