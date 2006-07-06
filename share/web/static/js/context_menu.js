@@ -30,16 +30,19 @@ Jifty.ContextMenu = {
     hide: function(id) {
         var ul = document.getElementById(id);
 
-        var li = Jifty.ContextMenu.getParentListItem(ul);
-        Element.removeClassName(li, "open");
-        Element.addClassName(li, "closed");
-                             
-        ul.style.display = "none";
+        if ( ul ) {
+            var li = Jifty.ContextMenu.getParentListItem(ul);
+            Element.removeClassName(li, "open");
+            Element.addClassName(li, "closed");
+            
+            ul.style.display = "none";
+        }
         Jifty.ContextMenu.currently_open = "";
     },
 
     show: function(id) {
         var ul = document.getElementById(id);
+        if ( !ul ) return;
         
         if (   Jifty.ContextMenu.currently_open
             && Jifty.ContextMenu.currently_open != ul.id )

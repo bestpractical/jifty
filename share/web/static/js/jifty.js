@@ -601,92 +601,95 @@ function update() {
 
     // And when we get the result back..
     var onSuccess = function(transport, object) {
-        // In case there's no XML in the response, or what have you
-        try {
-            // Grab the XML response
-            var response = transport.responseXML.documentElement;
+        // Grab the XML response
+        var response = transport.responseXML.documentElement;
 
-            // For each fragment we requested
-            for (var i = 0; i < named_args['fragments'].length; i++) {
-                var f = named_args['fragments'][i];
-                var element = f['element'];
+        // For each fragment we requested
+        for (var i = 0; i < named_args['fragments'].length; i++) {
+            var f = named_args['fragments'][i];
+            var element = f['element'];
 
-                // Change insertion mode if need be
-                var insertion = null;
-                if (f['mode'] && (f['mode'] != 'Replace')) {
-                    insertion = eval('Insertion.'+f['mode']);
-                }
+            // Change insertion mode if need be
+            var insertion = null;
+            if (f['mode'] && (f['mode'] != 'Replace')) {
+                insertion = eval('Insertion.'+f['mode']);
+            }
 
-                // Loop through the result looking for it
-                for (var response_fragment = response.firstChild;
-                     response_fragment != null;
-                     response_fragment = response_fragment.nextSibling) {
-                    if (response_fragment.nodeName == 'fragment') {
-                        if (response_fragment.getAttribute("id") == f['region']) {
-                            // We found the right fragment
-                            var dom_fragment = fragments[f['region']];
-                            var new_dom_args = $H();
+            // Loop through the result looking for it
+            for (var response_fragment = response.firstChild;
+                 response_fragment != null;
+                 response_fragment = response_fragment.nextSibling) {
+                if (response_fragment.nodeName == 'fragment') {
+                    if (response_fragment.getAttribute("id") == f['region']) {
+                        // We found the right fragment
+                        var dom_fragment = fragments[f['region']];
+                        var new_dom_args = $H();
 
-                            for (var fragment_bit = response_fragment.firstChild;
-                                 fragment_bit != null;
-                                 fragment_bit = fragment_bit.nextSibling) {
-                                if (fragment_bit.nodeName == 'argument') {
-                                    // First, update the fragment's arguments
-                                    // with what the server actually used --
-                                    // this is needed in case there was
-                                    // argument mapping going on
-                                    var textContent = '';
-                                    if (fragment_bit.textContent) {
-                                        textContent = fragment_bit.textContent;
-                                    } else if (fragment_bit.firstChild) {
-                                        textContent = fragment_bit.firstChild.nodeValue;
-                                    }
-                                    new_dom_args[fragment_bit.getAttribute("name")] = textContent;
-                                } else if (fragment_bit.nodeName == 'content') {
-                                    var textContent = '';
-                                    if (fragment_bit.textContent) {
-                                        textContent = fragment_bit.textContent;
-                                    } else if (fragment_bit.firstChild) {
-                                        textContent = fragment_bit.firstChild.nodeValue;
-                                    }
-
-                                    // Once we find it, do the insertion
-                                    if (insertion) {
-                                        new insertion(element, textContent.stripScripts());
-                                    } else {
-                                        Element.update(element, textContent.stripScripts());
-                                    }
-                                    // We need to give the browser some "settle" time before we eval scripts in the body
-                                    setTimeout((function() { this.evalScripts() }).bind(textContent), 10);
-                                    Behaviour.apply(f['element']);
+                        for (var fragment_bit = response_fragment.firstChild;
+                             fragment_bit != null;
+                             fragment_bit = fragment_bit.nextSibling) {
+                            if (fragment_bit.nodeName == 'argument') {
+                                // First, update the fragment's arguments
+                                // with what the server actually used --
+                                // this is needed in case there was
+                                // argument mapping going on
+                                var textContent = '';
+                                if (fragment_bit.textContent) {
+                                    textContent = fragment_bit.textContent;
+                                } else if (fragment_bit.firstChild) {
+                                    textContent = fragment_bit.firstChild.nodeValue;
                                 }
+                                new_dom_args[fragment_bit.getAttribute("name")] = textContent;
+                            } else if (fragment_bit.nodeName == 'content') {
+                                var textContent = '';
+                                if (fragment_bit.textContent) {
+                                    textContent = fragment_bit.textContent;
+                                } else if (fragment_bit.firstChild) {
+                                    textContent = fragment_bit.firstChild.nodeValue;
+                                }
+
+                                // Once we find it, do the insertion
+                                if (insertion) {
+                                    new insertion(element, textContent.stripScripts());
+                                } else {
+                                    Element.update(element, textContent.stripScripts());
+                                }
+                                // We need to give the browser some "settle" time before we eval scripts in the body
+                                setTimeout((function() { this.evalScripts() }).bind(textContent), 10);
+                                Behaviour.apply(f['element']);
                             }
-                            dom_fragment.setArgs(new_dom_args);
                         }
+                        dom_fragment.setArgs(new_dom_args);
                     }
                 }
+            }
 
-                // Also, set us up the effect
-                if (f['effect']) {
+            // Also, set us up the effect
+            if (f['effect']) {
+                try {
                     var effect = eval('Effect.'+f['effect']);
                     var effect_args  = f['effect_args'] || {};
-                    if (f['is_new'])
-                        Element.hide($('region-'+f['region']));
-                    (effect)($('region-'+f['region']), effect_args);
-                }
-            }
-            for (var result = response.firstChild;
-                 result != null;
-                 result = result.nextSibling) {
-                if (result.nodeName == 'result') {
-                    for (var key = result.firstChild;
-			 key != null;
-			 key = key.nextSibling) {
-			show_action_result(result.getAttribute("moniker"),key);
+                    if (effect) {
+                        if (f['is_new'])
+                            Element.hide($('region-'+f['region']));
+                        (effect)($('region-'+f['region']), effect_args);
                     }
+                } catch ( e ) {
+                    // Don't be sad if the effect doesn't exist
                 }
             }
-        } finally { }
+        }
+        for (var result = response.firstChild;
+             result != null;
+             result = result.nextSibling) {
+            if (result.nodeName == 'result') {
+                for (var key = result.firstChild;
+                     key != null;
+                     key = key.nextSibling) {
+                    show_action_result(result.getAttribute("moniker"),key);
+                }
+            }
+        }
     };
     var onFailure = function(transport, object) {
         alert('No response from server!');
