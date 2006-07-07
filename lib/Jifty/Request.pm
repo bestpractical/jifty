@@ -123,9 +123,9 @@ sub fill {
     # Check it for something appropriate
     if ($data) {
         if ($ct eq "text/x-json") {
-            return $self->from_data_structure(Jifty::JSON::jsonToObj($data));
+            return $self->from_data_structure(eval{Jifty::JSON::jsonToObj($data)});
         } elsif ($ct eq "text/x-yaml") {
-            return $self->from_data_structure(Jifty::YAML::Load($data));
+            return $self->from_data_structure(eval{Jifty::YAML::Load($data)});
         }
     }
 
@@ -147,7 +147,7 @@ sub from_data_structure {
     my $self = shift;
     my $data = shift;
 
-    $self->path($data->{path});
+    $self->path($data->{path} || "/");
     $self->just_validating($data->{validating}) if $data->{validating};
 
     if (ref $data->{continuation} eq "HASH") {
