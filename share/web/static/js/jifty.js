@@ -804,9 +804,20 @@ Object.extend(Object.extend(Jifty.Autocompleter.prototype, Ajax.Autocompleter.pr
     this.action = Form.Element.getAction(this.field);
     this.url    = '/__jifty/autocomplete.xml';
 
+    Event.observe(this.field, "focus", this.onFocus.bindAsEventListener(this));
     this.baseInitialize(this.field, $(div), { minChars: "0" });
   },
 
+  onFocus: function(event) {
+    this.changed  = true;
+    this.hasFocus = true;
+
+    if (this.observer)
+        clearTimeout(this.observer);
+    
+    this.onObserverEvent();
+  },
+  
   getUpdatedChoices: function() {
       var request = { path: this.url, actions: {} };
 
