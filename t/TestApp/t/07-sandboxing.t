@@ -4,7 +4,7 @@ use strict;
 
 BEGIN {chdir "t/TestApp"}
 use lib '../../lib';
-use Jifty::Test tests => 71;
+use Jifty::Test tests => 79;
 use Jifty::Test::WWW::Mechanize;
 use Net::HTTP;
 use URI;
@@ -41,6 +41,14 @@ isnt( $status, 200, "Didn't get a 200" );
 unlike( $body, qr/Jifty->web->navigation/, "Doesn't have the source" );
 
 ($status, $body) = bogus_request("/static/../templates/_elements/nav");
+isnt( $status, 200, "Didn't get a 200" );
+unlike( $body, qr/Jifty->web->navigation/, "Doesn't have the source" );
+
+($status, $body) = bogus_request("/static/css/../../templates/index.html");
+isnt( $status, 200, "Didn't get a 200" );
+unlike( $body, qr/Jifty->web->navigation/, "Doesn't have the source" );
+
+($status, $body) = bogus_request("/static/css/../../templates/_elements/nav");
 isnt( $status, 200, "Didn't get a 200" );
 unlike( $body, qr/Jifty->web->navigation/, "Doesn't have the source" );
 
