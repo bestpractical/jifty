@@ -194,7 +194,6 @@ sub handle_request {
     $_->new_request for Jifty->plugins;
 
     Jifty->log->debug( "Received request for " . Jifty->web->request->path );
-
     my $sent_response = 0;
     $sent_response
         = $self->static_handler->handle_request( Jifty->web->request->path )

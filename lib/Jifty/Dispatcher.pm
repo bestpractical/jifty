@@ -734,15 +734,26 @@ sub _do_show {
     # XXX TODO, we should search all component roots
 
     if ($path !~ m{/$}
-        and -d Jifty::Util->absolute_path( Jifty->config->framework('Web')->{'TemplateRoot'} . $path))
+        and -d Jifty::Util->absolute_path(
+            Jifty->config->framework('Web')->{'TemplateRoot'} . $path
+        )
+        )
     {
         $self->_do_show( $path . "/" );
     }
 
+    my $abs_template_path = Jifty::Util->absolute_path(
+        Jifty->config->framework('Web')->{'TemplateRoot'} . $path );
+    my $abs_root_path = Jifty::Util->absolute_path(
+        Jifty->config->framework('Web')->{'TemplateRoot'} );
 
-    # Set the request path
-    request->path($path);
-    $self->render_template(request->path);
+    if ( $abs_template_path !~ /^\Q$abs_root_path\E/ ) {
+        request->path('/__jifty/errors/500');
+    } else {
+        # Set the request path
+        request->path($path);
+    }
+    $self->render_template( request->path );
 
     last_rule;
 }

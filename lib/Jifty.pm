@@ -5,7 +5,7 @@ package Jifty;
 use encoding 'utf8';
 # Work around the fact that Time::Local caches thing on first require
 BEGIN { local $ENV{'TZ'} = "GMT";  require Time::Local;}
-$Jifty::VERSION = '0.60615';
+$Jifty::VERSION = '0.60706';
 
 =head1 NAME
 

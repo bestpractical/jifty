@@ -220,6 +220,7 @@ sub from_cgi {
 
     my $path = $cgi->path_info;
     $path =~ s/\?.*//;
+    $path = Jifty::Util->canonicalize_path($path);
     $self->path( $path );
 
     use HTML::Mason::Utils;
@@ -535,12 +536,6 @@ sub return_from_continuation {
     $self->log->debug("Returning from continuation ".$self->continuation->id);
     return $self->continuation->return;
 }
-
-=head2 path
-
-Returns the path that was requested
-
-=cut
 
 =head2 just_validating
 

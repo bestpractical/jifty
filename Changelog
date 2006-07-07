@@ -1,3 +1,20 @@
+060706
+  * SECURITY UPDATE: Previous versions of Jifty did not 
+  protect users against a class of remote data access vulnerability. If an
+  attacker knew the structure of your local filesystem and you were using 
+  the "standalone" webserver in production, the attacker could gain read
+  only access to local files. 
+  
+  We found this vulnerability on 6 July 2006 during an internal Security 
+  scan. We've added new tests to ensure that these and other similar
+  vulnerabilities don't recur.
+
+  We recommend that ALL users of Jifty UPGRADE to 0.60706 IMMEDIATELY.
+
+
+060616
+  * The last CPAN release was broken. No real changes.
+
 060615 (15 June 2006)
 
 The following incompatible changes were made to Jifty. For a complete changelog,

@@ -37,7 +37,7 @@ requires('Jifty::DBI' => '0.21' );            # Jifty::DBI::Collection Jifty::DB
 requires('Locale::Maketext::Extract' => '0.20');
 requires('Locale::Maketext::Lexicon' => '0.60');
 requires('Log::Log4perl');
-requires('LWP::UserAgent');
+requires('LWP::UserAgent'); # Net::HTTP
 requires('MIME::Types');
 requires('Module::CoreList');
 requires('Module::Install::Admin' => '0.50');

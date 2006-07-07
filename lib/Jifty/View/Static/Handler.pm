@@ -68,12 +68,10 @@ sub handle_request {
     my $path = shift;
 
     #if ( Jifty->handler->cgi->http('If-Modified-Since') and not Jifty->config->framework('DevelMode') ) { $self->respond_not_modified(); }
-
     my $local_path = $self->file_path($path);
     unless ($local_path) {
         return undef;
     }
-
     my $mime_type = $self->mime_type($local_path);
     
     if ( $self->client_accepts_gzipped_content and $mime_type =~ m!^(text/|application/x-javascript)! ) {
@@ -117,7 +115,13 @@ sub file_path {
     $file =~ s/^\/*?static//; 
 
     foreach my $path (@options) {
-        my $abspath = Jifty::Util->absolute_path( $path . "/" . $file );
+        my $abspath = Jifty::Util->absolute_path( File::Spec->catdir($path,$file ));
+        # If the user is trying to request something outside our static root, 
+        # decline the request
+        my $abs_base_path = Jifty::Util->absolute_path( $path );
+        unless ($abspath =~ /^\Q$abs_base_path\E/) {
+            return undef;
+        }
         # If the user is trying to request something outside our static root, 
         # decline the request
         my $abs_base_path = Jifty::Util->absolute_path( $path );
