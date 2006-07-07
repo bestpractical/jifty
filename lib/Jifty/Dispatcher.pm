@@ -739,6 +739,7 @@ sub _do_show {
         $self->_do_show( $path . "/" );
     }
 
+
     # Set the request path
     request->path($path);
     $self->render_template(request->path);
@@ -780,7 +781,8 @@ Once it's done with that, it runs all the cleanup rules defined with C<after>.
 sub _do_dispatch {
     my $self = shift;
 
-    $self->{path} = shift;
+    # Requests should always start with a leading /
+    $self->{path} = "/".shift;
     $self->{cwd}  = '';
 
     # Normalize the path.
