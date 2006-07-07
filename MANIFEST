@@ -381,4 +381,3 @@ t/TestApp/t/06-validation.t
 t/TestApp/t/07-sandboxing.t
 t/TestApp/t/config-Cachable
 t/TestApp/t/config-Record
-t/TestApp/testapp

@@ -1,3 +1,7 @@
+060707
+
+  * Minor build fixes
+
 060706
   * SECURITY UPDATE: Previous versions of Jifty did not 
   protect users against a class of remote data access vulnerability. If an
