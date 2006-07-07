@@ -120,7 +120,8 @@ sub file_path {
         my $abspath = Jifty::Util->absolute_path( $path . "/" . $file );
         # If the user is trying to request something outside our static root, 
         # decline the request
-        unless ($abspath =~ /^\Q$path\E/) {
+        my $abs_base_path = Jifty::Util->absolute_path( $path );
+        unless ($abspath =~ /^\Q$abs_base_path\E/) {
             return undef;
         }
         return $abspath if ( -f $abspath && -r $abspath );
