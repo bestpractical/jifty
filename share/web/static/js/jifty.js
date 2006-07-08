@@ -805,7 +805,28 @@ Object.extend(Object.extend(Jifty.Autocompleter.prototype, Ajax.Autocompleter.pr
     this.url    = '/__jifty/autocomplete.xml';
 
     Event.observe(this.field, "focus", this.onFocus.bindAsEventListener(this));
-    this.baseInitialize(this.field, $(div), { minChars: "0" });
+    this.baseInitialize(this.field, $(div), {
+        minChars: "0",
+        beforeShow: this.beforeShow,
+        beforeHide: this.beforeHide
+    });
+  },
+
+  beforeShow: function(obj) {
+    /* Prevents the race for canonicalization and updating
+       via autocomplete */
+    if ( obj.element.onblur ) {
+        obj.element._onblur = obj.element.onblur;
+        obj.element.onblur  = null;
+    }
+  },
+
+  beforeHide: function(obj) {
+    /* Restore onblur and config option */
+    if ( obj.element._onblur ) {
+        obj.element.onblur  = obj.element._onblur;
+        obj.element._onblur = null;
+    }
   },
 
   onFocus: function(event) {
