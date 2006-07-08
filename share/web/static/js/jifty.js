@@ -204,13 +204,19 @@ Action.prototype = {
     },
 
     disable_input_fields: function() {
-	var disable = function() {
+        var disable = function() {
             // Triggers https://bugzilla.mozilla.org/show_bug.cgi?id=236791
             arguments[0].blur();
             arguments[0].disabled = true;
-	};
-	this.fields().each(disable);
-	this.buttons().each(disable);
+        };
+        this.fields().each(disable);
+        this.buttons().each(disable);
+    },
+
+    enable_input_fields: function() {
+        var enable = function() { arguments[0].disabled = false; };
+        this.fields().each( enable );
+        this.buttons().each( enable );
     }
 };
 
@@ -692,7 +698,15 @@ function update() {
         }
     };
     var onFailure = function(transport, object) {
-        alert('No response from server!');
+        hide_wait_message_now();
+        
+        alert("Oops!  Looks like the server is down.\n\nTry again in a few minutes.");
+
+        var keys = request["actions"].keys();
+        for ( var i = 0; i < keys.length; i++ ) {
+            var a = new Action( request["actions"][ keys[i] ].moniker );
+            a.enable_input_fields();
+        }
     };
 
     // Build variable structure
@@ -753,6 +767,11 @@ function show_wait_message (){
 function hide_wait_message (){
     if ($('jifty-wait-message'))
         new Effect.Fade('jifty-wait-message', {duration: 0.2});
+}
+
+function hide_wait_message_now() {
+    if ($('jifty-wait-message'))
+        Element.hide('jifty-wait-message');
 }
 
 function show_action_result() {
