@@ -322,11 +322,9 @@ sub form_field {
     my $self = shift;
     my $arg_name = shift;
 
-    my $mode = (defined $self->arguments->{$arg_name}{'render_mode'}
-                    and $self->arguments->{$arg_name}{'render_mode'} eq 'read')
-                        ? 'read'
-                        : 'update';
-    
+    my $mode = $self->arguments->{$arg_name}{'render_mode'};
+    $mode = 'update' unless $mode && $mode eq 'read';
+
     $self->_form_widget( argument => $arg_name,
                          render_mode => $mode,
                          @_);

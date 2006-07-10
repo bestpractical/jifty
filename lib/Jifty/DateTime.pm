@@ -36,12 +36,13 @@ sub new {
     # we want to convert to the end-user's timezone.  This is
     # complicated by the fact that DateTime auto-appends
     $self->_get_current_user();
-    if (    $self->current_user->user_object
-        and $self->current_user->user_object->can('time_zone')
-        and $self->current_user->user_object->time_zone )
+    my $user_obj = $self->current_user->user_object;
+    if (    $user_obj
+        and $user_obj->can('time_zone')
+        and $user_obj->time_zone )
     {
         $self->set_time_zone("UTC");
-        $self->set_time_zone( $self->current_user->user_object->time_zone );
+        $self->set_time_zone( $user_obj->time_zone );
 
     }
     return $self;
