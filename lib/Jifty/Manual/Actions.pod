@@ -40,7 +40,9 @@ This, the simplest possible action is:
 
 (Instead of copying-and-pasting that, or typing it in, though, you
 could just run:
+
     jifty action --name DoNothing
+
 in your application's directory, and Jifty would create a skeleton for
 you. )
 
@@ -294,6 +296,16 @@ of changes to many records at once.
 
 (XXX TODO Note about C<constructor> arguments)
 
+=head1 ACTIONS AS WEB SERVICES
+
+Your actions are also automatically published as web services.
+Clients can POST requsets, usually using the YAML or JSON request
+format.  See C<bin/service> for a trivial generic webservice client.
+
+(XXX TODO More about webservices)
+
 =head1 SEE ALSO
 
 L<Jifty::Action>, L<Jifty::Manual::Tutorial>
+
+=cut
