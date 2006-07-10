@@ -47,6 +47,11 @@ The C<KEY> will take on the value of the content named C<STRING> from
 the result of the C<ACTION>.  C<ACTION> may either be a L<Jifty::Action>
 object, or a moniker thereof.
 
+=item C<< KEY => { request_argument => STRING } >>
+
+The C<KEY> will take on the value of the argument named C<STRING> from
+the request.
+
 =item C<< KEY => { argument => ACTION } >>
 
 The C<KEY> will take on the value of the argument named C<KEY> from
@@ -75,7 +80,11 @@ sub query_parameters {
         if (ref $parameters{$key} eq "HASH") {
             my %mapping = %{$parameters{$key}};
 
-            for (grep {/(result(_of)?|argument(_to)?)/} keys %mapping) {
+            if ($mapping{request_argument}) {
+                $return{"J:M-$key"} = join("`","A", $mapping{request_argument});
+            }
+
+            for (grep {/^(result(_of)?|argument(_to)?)$/} keys %mapping) {
                 my $action  = $mapping{$_};
                 my $moniker = ref $action ? $action->moniker : $action;
                 my $name = $mapping{name} || $key;

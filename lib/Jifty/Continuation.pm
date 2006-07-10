@@ -202,15 +202,8 @@ sub return {
 
     # Pull state information out of the continuation and set it
     # up; we use clone so that the continuation itself is
-    # immutable.  It is vaguely possible that there are results in
-    # the response already (set up by the dispatcher) so we place
-    # results from the continuation's response into the existing
-    # response only if it wouldn't clobber something.
-    my %results = $self->response->results;
-    for (keys %results) {
-        next if Jifty->web->response->result($_);
-        Jifty->web->response->result($_,dclone($results{$_}));
-    }
+    # immutable.
+    Jifty->web->response(dclone($self->response));
 
     # Run any code in the continuation
     $self->code->(Jifty->web->request)

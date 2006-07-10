@@ -977,8 +977,9 @@ the state parameter.
 
 The current continuation set by passing the parameter C<J:C>, which is
 set to the id of the continuation.  To create a new continuation, the
-parameter C<J:CREATE> is passed.  Calling a continuation is a ssimple
-as passing C<J:CALL> with the id of the continuation to call.
+parameter C<J:CREATE> is passed.  Calling a continuation is a simple
+as passing C<J:CALL> with the id of the continuation to call; this
+will redirect to the appropriate url, with L<J:RETURN> set.
 
 =head3 request options
 
