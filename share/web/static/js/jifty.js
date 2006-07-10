@@ -289,8 +289,6 @@ Object.extend(Form.Element, {
             return "value";
         } else if (/^J:A:F:F-/.test(element.name)) {
             return "fallback";
-        } else if (/^J:A:F:F:F-/.test(element.name)) {
-            return "doublefallback";
         } else {
             return null;
         }

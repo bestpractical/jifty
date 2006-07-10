@@ -446,7 +446,7 @@ sub register {
         Jifty::Web::Form::Field->new(
             %$info,
             action        => $self,
-            input_name    => $self->double_fallback_form_field_name($name),
+            input_name    => $self->fallback_form_field_name($name),
             sticky        => 0,
             default_value => ($self->argument_value($name) || $info->{'default_value'}),
             render_as     => 'Hidden'
@@ -500,7 +500,7 @@ sub button {
         # Otherwise, if we're not registered yet, do it in the button
         my $arguments = $self->arguments;
         $args{parameters}{ $self->register_name } = ref $self;
-        $args{parameters}{ $self->double_fallback_form_field_name($_) }
+        $args{parameters}{ $self->fallback_form_field_name($_) }
             = $self->argument_value($_) || $arguments->{$_}->{'default_value'}
             for grep { $arguments->{$_}{constructor} } keys %{ $arguments };
     }
@@ -589,25 +589,6 @@ sub fallback_form_field_name {
     my $self = shift;
     return $self->_prefix_field(shift, "J:A:F:F");
 }
-
-
-=head2 double_fallback_form_field_name ARGUMENT
-
-Turn one of this action's L<arguments|Jifty::Manual::Glossary/arguments> into
-a fully qualified "double fallback" name; takes the name of the field
-as an argument.
-
-This is specifically to support "constructor" hidden inputs, which
-need to be have even lower precedence than checkbox fallbacks.
-Probably we need a more flexible system, though.
-
-=cut
-
-sub double_fallback_form_field_name {
-    my $self = shift;
-    return $self->_prefix_field(shift, "J:A:F:F:F");
-}
-
 
 =head2 error_div_id ARGUMENT
 

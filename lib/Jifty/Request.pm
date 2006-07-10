@@ -162,6 +162,9 @@ sub from_data_structure {
         my %arguments;
         for my $arg (keys %{$a->{fields} || {}}) {
             if (ref $a->{fields}{$arg}) {
+                # Double-fallback exists for historical reasons only;
+                # Jifty applications after July 10th, 2006 should
+                # never generate them.
                 for my $type (qw/doublefallback fallback value/) {
                     $arguments{$arg} = $a->{fields}{$arg}{$type}
                       if exists $a->{fields}{$arg}{$type};
@@ -425,7 +428,10 @@ sub webform_to_data_structure {
         $active_actions->{$_} = 1 for split '!', $args{'J:ACTIONS'};
     } # else $active_actions stays undef
 
-    # Mapping from argument types to data structure names
+
+    # Mapping from argument types to data structure names;
+    # Double-fallback exists for historical reasons only; Jifty
+    # applications after July 10th, 2006 should never generate them.
     my %types = ("J:A:F:F:F" => "doublefallback", "J:A:F:F" => "fallback", "J:A:F" => "value");
 
     # The "sort" here is key; it ensures that action registrations
@@ -963,10 +969,9 @@ which also sets the action's run order.
 
 The action's arguments are specified with query arguments of the form
 C<J:A:F-I<argumentname>-I<moniker>>.  To cope with checkboxes and the
-like (which don't submit anything when left unchecked) we provide two
-levels of fallback, which are checked if the first doesn't exist:
-C<J:A:F:F-I<argumentname>-I<moniker>> and
-C<J:A:F:F:F-I<argumentname>-I<moniker>>.
+like (which don't submit anything when left unchecked) we provide a
+level of fallback, which is checked if the first doesn't exist:
+C<J:A:F:F-I<argumentname>-I<moniker>>.
 
 =head3 state variables
 

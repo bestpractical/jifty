@@ -31,7 +31,7 @@ my $URL     = $server->started_ok;
 my $mech    = Jifty::Test::WWW::Mechanize->new();
 
 # Test action to update
-$mech->get_ok($URL.'/editform?J:A-updateuser=TestApp::Action::UpdateUser&J:A:F:F:F-id-updateuser=1&J:A:F-name-updateuser=edituser&J:A:F-email-updateuser=newemail@example.com', "Form submitted");
+$mech->get_ok($URL.'/editform?J:A-updateuser=TestApp::Action::UpdateUser&J:A:F:F-id-updateuser=1&J:A:F-name-updateuser=edituser&J:A:F-email-updateuser=newemail@example.com', "Form submitted");
 undef $o;
 $o = TestApp::Model::User->new(current_user => $system_user);
 $o->flush_cache;
