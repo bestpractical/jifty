@@ -74,8 +74,10 @@ L<Jifty::Continuation> object or the C<id> of such.
 
 Passing this parameter implies the creation of a continuation when the
 link is clicked.  It takes an anonymous hash of return location to
-where the return value is pulled from.  See L<Jifty::Request::Mapper>
-for details.
+where the return value is pulled from -- that is, the same structure
+the C<parameters> method takes.
+
+See L<Jifty::Request::Mapper/query_parameters> for details.
 
 =item submit
 
