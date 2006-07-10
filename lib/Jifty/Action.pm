@@ -500,10 +500,11 @@ sub button {
         Jifty->web->form->print_action_registration($self->moniker);
     } elsif ( not Jifty->web->form->printed_actions->{ $self->moniker } ) {
         # Otherwise, if we're not registered yet, do it in the button
+        my $arguments = $self->arguments;
         $args{parameters}{ $self->register_name } = ref $self;
         $args{parameters}{ $self->double_fallback_form_field_name($_) }
-            = $self->argument_value($_) || $self->arguments->{$_}->{'default_value'}
-            for grep { $self->arguments->{$_}{constructor} } keys %{ $self->arguments };
+            = $self->argument_value($_) || $arguments->{$_}->{'default_value'}
+            for grep { $arguments->{$_}{constructor} } keys %{ $arguments };
     }
     $args{parameters}{$self->form_field_name($_)} = $args{arguments}{$_}
       for keys %{$args{arguments}};
