@@ -800,17 +800,28 @@ function show_action_result() {
     var node = document.createElement('div');
     var node_id = 'result-' + moniker;
     node.setAttribute('id', node_id);
-    node.setAttribute('class', 'result-' + status);
+    node.setAttribute('class', 'popup_notification result-' + status);
     node.innerHTML = text;
+        
+    var wrap1 = document.createElement("div");
+    wrap1.setAttribute("class", "dropshadow_wrap1");
+    var wrap2 = document.createElement("div");
+    wrap2.setAttribute("class", "dropshadow_wrap2");
+    var wrap3 = document.createElement("div");
+    wrap3.setAttribute("class", "dropshadow_wrap3");
+
+    wrap1.appendChild(wrap2);
+    wrap2.appendChild(wrap3);
+    wrap3.appendChild(node);
 
     if(popup.hasChildNodes()) {
-        popup.insertBefore(node, popup.firstChild);
+        popup.insertBefore(wrap1, popup.firstChild);
     } else {
-        popup.appendChild(node);
+        popup.appendChild(wrap1);
     }
     
     setTimeout(function () {
-	    new Effect.Fade(node, {duration: 3.0});
+	    new Effect.Fade(wrap1, {duration: 3.0});
     }, 3500);
 }
 
