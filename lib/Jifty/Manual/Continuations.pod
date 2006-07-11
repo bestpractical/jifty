@@ -16,10 +16,13 @@ Thus, continuations allow you to preserve context, and return to it
 later.  This is amazingly useful in web programming, which is limited
 to C<HTTP>, which is an inherently stateless protocol.  By passing
 around continuations, we can keep track of the context that got us to
-the current page.  While we can't construct continuations at the
-interpreter level -- because Perl doesn't support them -- we can
-implement them at the level of HTTP requests.  In technical terms,
-they are I<delimited continuations>.
+the current page.
+
+While we can't construct I<full continuations> at the interpreter level
+-- because Perl doesn't support them -- we can implement them at the
+level of HTTP requests.  In technical terms, because they capture the
+control stack up from the beginning of a user's session, they are
+called I<delimited continuations>.
 
 Continuations are more useful than session because sessions store
 information across browser windows; sessions may also break in the
@@ -41,12 +44,15 @@ L<Jifty::Web/tangent>, as follows:
                             label => "Go someplace") %>
 
 This will create a link, which, when clicked, will store the current
-request into a continuation, and jump to the url C</someplace>.  You
-can think of this as a form of C<gosub>.  In the C</someplace>
-template, you can display information, and possibly have the user
-navigate between multiple pages before returning to the previous page:
+request into a continuation, and jump to the url C</someplace>.  In the
+C</someplace> template, you can display information, and possibly have
+the user navigate between multiple pages before returning to the previous page:
 
     <% Jifty->web->return( label => "Back to whence you came" ) %>
+
+Because this C<return> does not carry a result value, you can think of
+it as a form of C<gosub>.  In comparison, ordinary hyperlinks are akin to
+C<goto> staements.
 
 Sometimes, it may be possible for the user to get to a location
 without having a continuation set.  In that case, clicking on the
@@ -67,7 +73,7 @@ URL -- just after all actions have been checked for validation but
 before any of them are run.  This means that the new request has
 access to the full validation state of its parent's actions.
 
-When a continuation is called, first checks that all actions in the
+When a continuation is called, it first checks that all actions in the
 request were successful; if any failed, then the continuation is
 B<not> called.  If the request's actions were all successful, it
 merges together the L<Jifty::Result>s of current L<Jifty::Response>
@@ -110,27 +116,33 @@ places.  For example:
 
 The first page renders the entry box for the first number; the second
 input is hidden because Jifty notices that it is based on a mapped
-value.  Pressing the button validates the action but does not complete
+value: i.e., its default is set to C<{request_argument => "number"}>
+instead of a plain scalar value.
+
+Pressing the button validates the action but does not complete
 running it.  At this point, the C<second_number> argument to the
 C<AddTwoNumbers> action has no real value -- however, it knows that it
 will, at the earliest possible opportunity, fill in its value from the
-"number" request parameter.  Jifty tangents to /pagetwo, where we
-enter and submit a "number" argument.  Control then returns to the
-original page, where the request mapper maps the "number" value into
-the C<second_number> argument of the C<AddTwoNumbers> action, which
-then runs.
+C<number> request parameter.
 
-More complex mappings are possible, including grabbing the results of
-or arguments to actions.  This would make it possible, for instance,
-to use an action on the second page to validate the number before
-returning.  This is slightly different from placing a validator on the
-C<AddTwoNumbers> action, as that validator only gets called after
+Jifty tangents to C</pagetwo>, where we enter and submit a C<number>
+argument.  Control then returns to the original page, where the request
+mapper maps the C<number> value into the C<second_number> argument of the
+C<AddTwoNumbers> action, which then runs because it has received all
+arguments it requires.
+
+Note that in the example above, the C<number> argument is a plain request 
+argument, not part of another action.  More complex mappings are possible,
+including grabbing the results of or arguments to actions.  This would make
+it possible, for instance, to use an action on the second page to validate the
+number before returning.  This is slightly different from placing a validator
+on the C<AddTwoNumbers> action, as that validator only gets called I<after>
 control has already returned to the first page.
 
 =head2 As dispatcher rules
 
 The L<Jifty::Web/tangent> function is context-aware -- if it is called
-in void context, it immediately saves the continuation and jumps to
+in void context, it immediately saves the continuation and redirects to
 the new url.  This is particularly useful, say, for authentication
 protection in C<before> blocks:
 
@@ -154,6 +166,12 @@ And in the C</login> template:
 This establishes a button, which, if the C<Login> action is
 successful, calls the stored continuation, or, lacking one, redirects
 to C</protected>.
+
+As currently impelented, these redirect-from-dispatcher tangents works
+exactly like like rendered-as-links tangents, in that when they return,
+I<all> rules in the dispatcher are still executed from the start.
+Therefore the C<unless> guard in the C<before '/protected'> rule above
+is neccessary to prevent recursion.
 
 =head1 GORY DETAILS
 
@@ -215,7 +233,7 @@ requests.  When the time comes to call the continuation, the C<CALL>
 operation is performed; this is usually triggered by the presence of
 the L<J:CALL> query parameter.  This causes the stored request to be
 query-mapped using L<Jifty::Request::Mapper>, but using the B<current>
-(not continuation!) request and response as the sources for mapping
+request and response (I<not> the continuation!) as the sources for mapping
 values.  Then, the result objects are merged, with results from the
 stored response taking precedence.  This new mapped request and new
 merged response are formed into a new continuation.
