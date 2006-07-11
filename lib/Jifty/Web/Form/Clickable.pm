@@ -494,9 +494,12 @@ parameters.
 
 =cut
 
+## XXX TODO: This code somewhat duplicates hook-handling logic in
+## Element.pm, in terms of handling shortcuts like
+## 'refresh_self'. Some of the logic should probably be unified.
+
 sub generate {
     my $self = shift;
-
     for my $trigger ( $self->handlers ) {
         my $value = $self->$trigger;
         next unless $value;
@@ -516,6 +519,7 @@ sub generate {
                 } 
                 # Toggle region if the toggle flag is set, and clicking wouldn't change path
                 if ($hook->{toggle} and $hook->{replace_with} eq $currently_shown) {
+                    warn "Toggling region @{[$hook->{region}]} to empty";
                     $self->region_fragment( $hook->{region}, "/__jifty/empty" );
 #                    Jifty->web->request->remove_state_variable('region-'.$region->qualified_name);
                 } else {
