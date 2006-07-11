@@ -821,7 +821,7 @@ function show_action_result() {
     }
     
     setTimeout(function () {
-	    new Effect.Fade(wrap1, {duration: 3.0});
+           new Effect.Fade(wrap1, {duration: 3.0});
     }, 3500);
 }
 
@@ -836,7 +836,8 @@ Object.extend(Object.extend(Jifty.Autocompleter.prototype, Ajax.Autocompleter.pr
     this.baseInitialize(this.field, $(div), {
         minChars: "0",
         beforeShow: this.beforeShow,
-        beforeHide: this.beforeHide
+        beforeHide: this.beforeHide,
+        frequency: 0.1,
     });
   },
 
