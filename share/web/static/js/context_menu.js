@@ -6,6 +6,7 @@ function prepExpandButton(e) {
     e.innerHTML   = "";
     e.onmousedown = function() { e.onfocus = e.blur };
     e.onmouseup   = function() { e.onfocus = window.clientInformation ? null : window.undefined };
+    e = null;	// Don't leak in IE
 }
 
 Jifty.ContextMenu = {
