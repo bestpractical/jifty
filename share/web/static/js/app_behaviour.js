@@ -1,29 +1,116 @@
 /*
- * Doc below taken from http://ripcord.co.nz/behaviour/
- *
-IMPORTANT: if you make DOM changes that mean that an element
-ought to gain or lose a behaviour, call Behaviour.apply()!
 
-(Actually, that *won't* make something lose a behaviour, so if that's necessary
-you'll need to have an empty "fallback".  I.E. If "div#foo a" should have a
-special onclick and other "a" shouldn't, then there ought to be an explicit "a"
-style that sets onclick to a trivial function, if DOM changes will ever happen.)
-(Also, with the current behaviour.js, the order of application of styles is
-undefined, so you can't really do cascading.  I've suggested to the author
-that he change it; if he doesn't, but we need it, it's an easy change to make
-the sheets arrays instead of Objects (hashes).  For now this can be dealt with
-by loading multiple sheets (register calls), though.)
-*/
+  This file is intended for you to add application-specific Javascript
+  behaviours. See http://bennolan.com/behaviour/ for an introduction
+  to the Behaviour library.
 
-/* Here's an example... */
+  Behaviour lets you apply javascript to elements of the DOM using CSS
+  selectors. A simple example:
+
+  var myrules = {
+      "h2.rounded": function(element) {
+  	Rico.Corner.round(element);
+      }
+  };
+          
+  Behaviour.register(myrules);
+
+  In general, you'll rarely if ever have to worry about calling
+  Behaviour.apply() yourself -- Jifty will take care of it on DOM load
+  and on any AJAX updates that it does.
 
 
-/*
-var myrules = {
-    "h2.rounded": function(element) {
-        Rico.Corner.round(element);
+  Some Notes About Writing Behaviours
+  ===================================
+
+  * Jifty's Behaviour.js uses the cssQuery[1] library to do our DOM
+    lookups by CSS selector. cssQuery is very powerful, but can be
+    slow as DOM size grows. For best performance, follow these
+    guidelines when writing behaviours, whenever possible:
+
+    * Prefer selectors that begin with '#id'. cssQuery will use
+      document.getElementByID to get the ID in question, meaning we
+      only have to search a small fragment of the DOM by hand
+
+    * Barring that, prefer selectors of the form 'element.class' over
+      simply '.class' selectors. This lets us filter for that element
+      specifically using DOM calls, again hugely reducing the amount
+      of DOM walking we have to do. 
+
+    [1] http://dean.edwards.name/my/cssQuery/
+
+
+  * Behaviour has something of a reputation for leaking memory. The
+    reason for this is a common idiom used in constructing
+    behaviours. Code like:
+
+    Behaviour.register({
+        'a.help': function(e) {
+            e.onclick = function() {
+        	openInHelpWindow(this);
+        	return false;
+            }
+        }
+    });
+
+    will leak memory in Internet Explorer, thanks to how IE handles
+    garbage collection (See the footnote for details). To avoid this,
+    you can use one of the following two idioms:
+
+    (a) declare the onclick function elsewhere:
+
+    function openHelpLink() {
+        openInHelpWindow(this);
+        return false;
     }
-};
-        
-Behaviour.register(myrules);
+    
+    Behaviour.register({
+        'a.help': function(e) {
+            e.onclick = openHelpLink;
+        }
+    });
+
+    (b) Set the element to 'null' at the end of the Behaviour function:
+
+    Behaviour.register({
+        'a.help': function(e) {
+            e.onclick = function() {
+        	openInHelpWindow(this);
+        	return false;
+            }
+	    e = null;
+        }
+    });
+
+
+    ** Footnote **
+
+    The reason that code leaks in IE is that Internet Explorer uses
+    reference counting to manage memory in its Javascript engine,
+    which means that circular references are never freed. When you
+    write this code:
+
+    Behaviour.register({
+        'a.help': function(e) {		// <-- FUNCTION A
+            e.onclick = function() {	// <-- FUNCTION B 
+        	openInHelpWindow(this);
+        	return false;
+            }
+        }
+    });
+
+    You are in fact creating a circular data structure because
+    function `B', when it is created, stores a reference to the
+    environment in which it was created, which includes the variable
+    `e'. `e', however, also references function `B' through its
+    `onclick' property, and this a circular chain of references is
+    created, which IE will never garbage collect.
+
+    Solution (a) addresses this by moving function `b' outside of the
+    scope where `e' is defined. Solution (b) addresses it by setting
+    `e' to null in the environment around `b', which means that that
+    environment no longer contains a reference to that DOM node, and
+    the loop no longer exists.
+
 */
+
