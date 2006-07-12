@@ -837,7 +837,7 @@ Object.extend(Object.extend(Jifty.Autocompleter.prototype, Ajax.Autocompleter.pr
         minChars: "0",
         beforeShow: this.beforeShow,
         beforeHide: this.beforeHide,
-        frequency: 0.1,
+        frequency: 0.1
     });
   },
 
