@@ -2,10 +2,16 @@ JSAN.use("DOM.Events");
 
 if (typeof Jifty == "undefined") Jifty = { };
 
+function prepExpandButton(e) {
+    e.innerHTML   = "";
+    e.onmousedown = function() { e.onfocus = e.blur };
+    e.onmouseup   = function() { e.onfocus = window.clientInformation ? null : window.undefined };
+}
+
 Jifty.ContextMenu = {
     behaviourRules: {
-        "ul.menu li.toplevel span.expand a": function(e) { e.innerHTML = ""; },
-        "ul.context_menu li.toplevel span.expand a": function(e) { e.innerHTML = ""; }
+        "ul.menu li.toplevel span.expand a": prepExpandButton,
+        "ul.context_menu li.toplevel span.expand a": prepExpandButton
     },
 
     currently_open:  "",
