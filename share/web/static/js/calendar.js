@@ -42,6 +42,7 @@ Jifty.Calendar = {
         wrap.style.position = "absolute";
         wrap.style.left     = Jifty.Utils.findRelativePosX( input ) + "px";
         wrap.style.top      = Jifty.Utils.findRelativePosY( input ) + input.offsetHeight + "px";
+        wrap.style.zIndex   = 40;
         
         input.parentNode.insertBefore( wrap, input.nextSibling );
 
