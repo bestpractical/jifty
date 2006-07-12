@@ -40,8 +40,8 @@ Jifty.Calendar = {
         wrap.setAttribute( "id", wrapId );
         
         wrap.style.position = "absolute";
-        wrap.style.left     = Jifty.Utils.findPosX( input );
-        wrap.style.top      = Jifty.Utils.findPosY( input ) + input.offsetHeight;
+        wrap.style.left     = Jifty.Utils.findRelativePosX( input ) + "px";
+        wrap.style.top      = Jifty.Utils.findRelativePosY( input ) + input.offsetHeight + "px";
         
         input.parentNode.insertBefore( wrap, input.nextSibling );
 
@@ -72,7 +72,7 @@ Jifty.Calendar = {
     openCalendar: "",
 
     hideOpenCalendar: function() {
-        if ( Jifty.Calendar.openCalendar ) {
+        if ( Jifty.Calendar.openCalendar && $( Jifty.Calendar.openCalendar ) ) {
             $( Jifty.Calendar.openCalendar ).style.display = "none";
 
             /* Get the input's ID */
