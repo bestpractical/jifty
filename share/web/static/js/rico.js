@@ -5,6 +5,13 @@
  * Replacing it with a stock Rico probably isn't a good idea unless you
  * repatch it or don't plan on using any of the corner rounding.
  *
+ *
+ * WARNING: The patched version of Rico.Corner.round is *extremely*
+ * slow on Mozilla/Firefox. Whenever possible, use the
+ * -moz-border-radius CSS property in Mozilla browsers, and
+ * conditionally only call it for any other browser, where its
+ * performance is far more acceptable.
+ *
  */
 
 /**
