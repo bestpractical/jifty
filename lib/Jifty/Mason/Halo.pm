@@ -56,7 +56,7 @@ sub start_component_hook {
         depth        => $DEPTH
     };
 
-    push @$INDEX_STACK, $#{@$STACK};
+    push @$INDEX_STACK, $#{$STACK};
     return if $self->_unrendered_component($context);
 
     $context->request->out(qq{<div id="halo-@{[$halo_base]}">});
