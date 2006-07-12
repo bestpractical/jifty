@@ -9,8 +9,9 @@ Continuations tests
 
 =cut
 
-BEGIN {chdir "t/Mapper"}
-use lib '../../lib';
+use lib 't/lib';
+use Jifty::SubTest;
+
 use Jifty::Test tests => 11;
 
 use_ok('Jifty::Test::WWW::Mechanize');

@@ -3,8 +3,9 @@
 use warnings;
 use strict;
 
-BEGIN {chdir "t/TestApp"}
-use lib '../../lib';
+use lib 't/lib';
+use Jifty::SubTest;
+
 use Jifty::Test tests => 11;
 
 use_ok('Jifty');

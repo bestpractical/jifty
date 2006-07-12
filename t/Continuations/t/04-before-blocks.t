@@ -10,8 +10,9 @@ blocks
 
 =cut
 
-BEGIN {chdir "t/Continuations"}
-use lib '../../lib';
+use lib 't/lib';
+use Jifty::SubTest;
+
 use Jifty::Test tests => 9;
 
 use_ok('Jifty::Test::WWW::Mechanize');

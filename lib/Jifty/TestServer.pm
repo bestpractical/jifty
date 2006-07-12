@@ -54,9 +54,9 @@ sub started_ok {
     if (my $coverage = $ENV{JIFTY_TESTSERVER_COVERAGE}) {
         push @extra, '-MDevel::Cover';
     }
-    # FIXME: put something here to ensure bin/jifty (even
-    # $findbin/../bin/jifty) exists
-    exec(@perl, @extra, 'bin/jifty', 'server', '--quiet',
+
+    exec(@perl, @extra, '-MJifty::Util', '-MJifty::Script',
+         '-e', 'Jifty::Script->dispatch', 'server', '--quiet',
          '--sigready', 'USR1',
          $ENV{JIFTY_TESTSERVER_DBIPROF} ? ('--dbiprof') : (),
          );

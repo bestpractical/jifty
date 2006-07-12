@@ -3,11 +3,10 @@
 use warnings;
 use strict;
 
-BEGIN {
-chdir "t/TestApp";
-$ENV{'JIFTY_CONFIG'} = 't/config-Cachable';
-}
-use lib '../../lib';
+use lib 't/lib';
+use Jifty::SubTest;
+BEGIN { $ENV{'JIFTY_CONFIG'} = 't/config-Cachable' }
+
 use Jifty::Test tests => 8;
 use Jifty::Test::WWW::Mechanize;
 

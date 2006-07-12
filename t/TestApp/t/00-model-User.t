@@ -8,10 +8,10 @@ A basic test harness for the User model.
 
 =cut
 
-BEGIN {chdir "t/TestApp"}
-use lib '../../lib';
-use Jifty::Test tests => 12;
+use lib 't/lib';
+use Jifty::SubTest;
 
+use Jifty::Test tests => 12;
 # Make sure we can load the model
 use_ok('TestApp::Model::User');
 

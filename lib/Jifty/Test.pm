@@ -54,7 +54,6 @@ sub setup {
         }
     }
     my $root = Jifty::Util->app_root;
-    unshift @INC, "$root/lib" if ($root);
 
     # Mason's disk caching sometimes causes false tests
     rmtree(["$root/var/mason"], 0, 1);

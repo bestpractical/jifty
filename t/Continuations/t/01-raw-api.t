@@ -9,7 +9,8 @@ Continuations tests
 
 =cut
 
-BEGIN {chdir "t/Continuations"}
+use lib 't/lib';
+use Jifty::SubTest;
 use lib '../lib';
 use Jifty::Test tests => 47;
 

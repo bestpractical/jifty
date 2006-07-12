@@ -2,8 +2,9 @@
 use warnings;
 use strict;
 
-BEGIN {chdir "t/TestApp"}
-use lib '../../lib';
+use lib 't/lib';
+use Jifty::SubTest;
+
 use Jifty::Test tests => 79;
 use Jifty::Test::WWW::Mechanize;
 use Net::HTTP;
