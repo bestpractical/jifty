@@ -4,8 +4,8 @@ if (typeof Jifty == "undefined") Jifty = { };
 
 function prepExpandButton(e) {
     e.innerHTML   = "";
-    e.onmousedown = function() { e.onfocus = e.blur };
-    e.onmouseup   = function() { e.onfocus = window.clientInformation ? null : window.undefined };
+    e.onmousedown = function() { this.onfocus = this.blur };
+    e.onmouseup   = function() { this.onfocus = window.clientInformation ? null : window.undefined };
     e = null;	// Don't leak in IE
 }
 
