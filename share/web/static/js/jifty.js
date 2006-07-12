@@ -588,7 +588,7 @@ function update() {
             fragments[name].path = null;
             continue;
         } else if (f['path'] == null) {
-            // If they didn't know tha path, fill it in now
+            // If they didn't know the path, fill it in now
             f['path'] == fragments[name].path;
         }
 

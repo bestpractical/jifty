@@ -9,7 +9,7 @@ Jifty::Web::PageRegion - Defines a page region
 
 =head1 DESCRIPTION
 
-Describes a region of the page which contains a mason fragment which
+Describes a region of the page which contains a Mason fragment which
 can be updated via AJAX or via query parameters.
 
 =cut
