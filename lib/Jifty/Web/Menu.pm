@@ -3,7 +3,7 @@ package Jifty::Web::Menu;
 use base qw/Class::Accessor::Fast/;
 use URI;
 
-__PACKAGE__->mk_accessors(qw(label parent sort_order link escape_label));
+__PACKAGE__->mk_accessors(qw(label parent sort_order link escape_label class));
 
 =head2 new PARAMHASH
 
@@ -43,6 +43,10 @@ Gets or set a Jifty::Web::Link object that represents this menu item. If
 you're looking to do complex ajaxy things with menus, this is likely
 the option you want.
 
+=head2 class [STRING]
+
+Gets or sets the CSS class the link should have in addition to the default
+classes.  This is only used if C<link> isn't specified.
 
 =head2 url
 
@@ -263,7 +267,8 @@ sub as_link {
     } elsif ( $self->url ) {
         return Jifty->web->link( label => _( $self->label ),
                                  url   => $self->url,
-                                 escape_label => $self->escape_label );
+                                 escape_label => $self->escape_label,
+                                 class => $self->class );
     } else {
         return _( $self->label );
     }
