@@ -738,8 +738,9 @@ sub return {
 
 =head3 render_messages [MONIKER]
 
-Outputs any messages that have been added, in a <div id="messages">
-tag.  Messages are added by calling L<Jifty::Result/message>.
+Outputs any messages that have been added, in <div id="messages"> and
+<div id="errors"> tags.  Messages are added by calling
+L<Jifty::Result/message>.
 
 If a moniker is specified, only messages for that moniker 
 are rendered.
@@ -747,36 +748,82 @@ are rendered.
 
 =cut
 
-# XXX TODO factor out error and message rendering as separate
-
 sub render_messages {
     my $self = shift;
     my $only_moniker = '';
     $only_moniker = shift if (@_);
+
+    $self->render_error_messages($only_moniker);
+    $self->render_success_messages($only_moniker);
+    
+    return '';
+}
+
+=head3 render_success_messages [MONIKER]
+
+Render success messages for the given moniker, or all of them if no
+moniker is given.
+
+=cut
+
+sub render_success_messages {
+    my $self = shift;
+    my $moniker = shift;
+
+    $self->_render_messages('message', $moniker);
+
+    return '';
+}
+
+=head3 render_error_messages [MONIKER]
+
+Render error messages for the given moniker, or all of them if no
+moniker is given.
+
+=cut
+
+sub render_error_messages {
+    my $self = shift;
+    my $moniker = shift;
+
+    $self->_render_messages('error', $moniker);
+
+    return '';
+}
+
+=head3 _render_messages TYPE [MONIKER]
+
+Output any messages of the given TYPE (either 'error' or 'message') in
+a <div id="TYPEs"> tag. If a moniker is given, only renders messages
+for that action. Internal helper for L</render_success_messages> and
+L</render_errors>.
+
+=cut
+
+sub _render_messages {
+    my $self = shift;
+    my $type = shift;
+    my $only_moniker = shift || '';
+
     my %results = $self->response->results;
 
-    return '' unless %results;
+    %results = ($only_moniker => $results{$only_moniker}) if $only_moniker;
 
-    my @monikers = ($only_moniker) || sort keys %results;
-
-    for my $type (qw(error message)) {
-        next unless grep { defined $results{$_}  and $results{$_}->$type() } @monikers;
-
-        my $plural = $type . "s";
-        $self->out(qq{<div id="$plural">});
-        $self->out(qq[<a id="dismiss_$plural" href="#"
+    return unless grep {$_->$type()} values %results;
+    
+    my $plural = $type . "s";
+    $self->out(qq{<div id="$plural">});
+    $self->out(qq[<a id="dismiss_$plural" href="#"
                          onclick="Effect.Fade(this.parentNode); return false;">]
-                   ._('Dismiss').qq[</a>]);
-        foreach my $moniker ( @monikers ) {
-            if ( $results{$moniker}->$type() ) {
-                $self->out( qq{<div class="$type $moniker">}
-                    . $results{$moniker}->$type()
-                    . qq{</div>} );
-            }
+               ._('Dismiss').qq[</a>]);
+    foreach my $moniker ( keys %results ) {
+        if ( $results{$moniker}->$type() ) {
+            $self->out( qq{<div class="$type $moniker">}
+                        . $results{$moniker}->$type()
+                        . qq{</div>} );
         }
-        $self->out(qq{</div>});
     }
-    return '';
+    $self->out(qq{</div>});
 }
 
 =head3 query_string KEY => VALUE [, KEY => VALUE [, ...]]
