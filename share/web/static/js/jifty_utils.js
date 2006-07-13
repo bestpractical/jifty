@@ -97,6 +97,17 @@ Jifty.Utils = {
         if (window.pageYOffset)
             return window.pageYOffset;
         return 0; 
+    },
+
+    scrollToShow: function(id) {
+        var ul        = $(id);
+        var y         = Jifty.Utils.findPosY( ul ) + ul.offsetHeight + 10;
+        var scrollTop = Jifty.Utils.getScrollTop();
+        var screen    = Jifty.Utils.findScreenHeight() + scrollTop;
+        var diff      = y - screen;
+        
+        if ( diff > 0 )
+             Jifty.SmoothScroll.scrollTo( scrollTop + diff );
     }
 };
 

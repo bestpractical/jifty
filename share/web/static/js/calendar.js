@@ -33,6 +33,7 @@ Jifty.Calendar = {
         if ( wrap ) {
             wrap.style.display = "block";
             Jifty.Calendar.openCalendar = wrapId;
+            Jifty.Utils.scrollToShow( wrapId );
             return;
         }
 
@@ -67,6 +68,7 @@ Jifty.Calendar = {
         cal.render();
         
         Jifty.Calendar.openCalendar = wrapId;
+        Jifty.Utils.scrollToShow( wrapId );
         /*Jifty.Calendar.preventStutter = wrapId;*/
     },
 
