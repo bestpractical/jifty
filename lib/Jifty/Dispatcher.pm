@@ -219,7 +219,7 @@ Deletes an argument we were passing to our template.
 =head2 show $component
 
 Display the presentation component.  If not specified, use the
-default page in call_next.
+request path as the default page.
 
 =head2 dispatch $path
 
