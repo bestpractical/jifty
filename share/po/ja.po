@@ -15,9 +15,17 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: share/web/templates/__jifty/halo:118
+#: lib/Jifty/Web.pm:572 lib/Jifty/Web.pm~:572
+msgid " $self->response->results "
+msgstr ""
+
+#: share/web/templates/__jifty/halo:119
 #. ($_->[3])
 msgid "%1 seconds"
+msgstr ""
+
+#: share/web/templates/__jifty/admin/index.html:49
+msgid "Actions"
 msgstr ""
 
 #: share/web/templates/_elements/wrapper:11
@@ -28,17 +36,38 @@ msgstr ""
 msgid "Alert"
 msgstr ""
 
+#: lib/Jifty/Action/Record/Create.pm:74 lib/Jifty/Action/Record/Create.pm~:74
+msgid "An error occurred.  Try again later"
+msgstr ""
+
 #: share/web/templates/helpers/calendar.html:4
 msgid "Close window"
 msgstr ""
 
-#: share/web/templates/__jifty/admin/index.html:33
+#: lib/Jifty/Action/Record/Create.pm:75 lib/Jifty/Action/Record/Create.pm~:75
+#. (ref($record)
+msgid "Create of %1 failed: %2"
+msgstr ""
+
+#: lib/Jifty/Action/Record/Create.pm:97 lib/Jifty/Action/Record/Create.pm~:97
+msgid "Created"
+msgstr ""
+
+#: share/web/templates/__jifty/admin/index.html:34
 msgid "Database Administration"
 msgstr ""
 
-#: share/web/templates/__jifty/edit_file:6
-#. ($editor->argument_value('source_path')
-msgid "Editing file %1"
+#: lib/Jifty/Action/Record/Delete.pm:75
+msgid "Deleted"
+msgstr ""
+
+#: lib/Jifty/Web.pm:769 lib/Jifty/Web.pm~:768
+msgid "Dismiss"
+msgstr ""
+
+#: lib/Jifty/Mason/Halo.pm:104
+#. ($comp_name)
+msgid "Edit %1"
 msgstr ""
 
 #: share/web/templates/dhandler:7
@@ -47,7 +76,7 @@ msgstr ""
 
 #: share/web/templates/_elements/sidebar:3
 #. (Jifty->web->current_user->user_object->name)
-msgid "Hiya, <span class=\\\"user\\\">%1</span>."
+msgid "Hiya, %1."
 msgstr ""
 
 #: share/web/templates/__jifty/online_docs/toc.html:6
@@ -58,11 +87,15 @@ msgstr ""
 msgid "Jifty Pod Online"
 msgstr ""
 
-#: share/web/templates/_elements/wrapper:20
+#: share/web/templates/_elements/wrapper:18
 msgid "Loading..."
 msgstr ""
 
-#: lib/Jifty/Web.pm:213
+#: share/web/templates/__jifty/admin/index.html:40
+msgid "Models"
+msgstr ""
+
+#: lib/Jifty/Web.pm:273 lib/Jifty/Web.pm~:273
 msgid "No request to handle"
 msgstr ""
 
@@ -70,19 +103,19 @@ msgstr ""
 msgid "Online Documentation"
 msgstr ""
 
-#: lib/Jifty/Record.pm:222 lib/Jifty/Record.pm:281 lib/Jifty/Record.pm:61
+#: lib/Jifty/Record.pm:223 lib/Jifty/Record.pm:282 lib/Jifty/Record.pm:61
 msgid "Permission denied"
 msgstr ""
 
-#: lib/Jifty/Record.pm:83
+#: lib/Jifty/Record.pm:84
 msgid "Record created"
 msgstr ""
 
-#: share/web/templates/__jifty/halo:110
+#: share/web/templates/__jifty/halo:111
 msgid "SQL Statements"
 msgstr ""
 
-#: share/web/templates/__jifty/online_docs/content.html:48
+#: share/web/templates/__jifty/online_docs/content.html:50
 msgid "Schema"
 msgstr ""
 
@@ -94,8 +127,12 @@ msgstr ""
 msgid "Table of Contents"
 msgstr ""
 
-#: share/web/templates/__jifty/admin/index.html:35
+#: share/web/templates/__jifty/admin/index.html:36
 msgid "This console lets you manage the records in your Jifty database. Below, you should see a list of all your database tables. Feel free to go through and add, delete or modify records."
+msgstr ""
+
+#: lib/Jifty/Action/Record/Update.pm:152
+msgid "Updated"
 msgstr ""
 
 #: share/web/templates/index.html:1
