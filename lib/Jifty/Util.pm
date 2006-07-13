@@ -47,7 +47,8 @@ sub absolute_path {
 =head2 canonicalize_path PATH
 
 Takes a "path" style /foo/bar/baz and returns a canonicalized (but not necessarily absolute)
-version of the path.
+version of the path.  Always use C</> as the separator, even on platforms which recognizes
+both C</> and C<\> as valid separators in PATH.
 
 =cut 
 
@@ -73,7 +74,7 @@ sub canonicalize_path {
     }
 
     
-    return File::Spec->catdir(@newpath);
+    return File::Spec::Unix->catdir(@newpath);
 
 
 }
