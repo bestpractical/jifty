@@ -66,10 +66,11 @@ for (keys %results) {
     # Jifty::DBI::Record's yet, which are technically circular data
     # structures at some level (current_user of a
     # current_user->user_object is itself)
+    use Scalar::Util qw(blessed);
     my $content = $results{$_}->content;
-    ref $content->{$_}
-        and ( ( UNIVERSAL::isa($content->{$_},"Jifty::DBI::Record"))
-	  or  ( UNIVERSAL::isa($content->{$_},"Jifty::DBI::Collection")) )
+    blessed $content->{$_}
+        and ( $content->{$_}->isa("Jifty::DBI::Record")
+           or $content->{$_}->isa("Jifty::DBI::Collection") )
         and delete $content->{$_}
         for keys %{$content};
 
