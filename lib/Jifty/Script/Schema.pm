@@ -267,7 +267,11 @@ sub upgrade_jifty_tables {
     my $appv = version->new( $Jifty::VERSION );
 
     return unless $self->upgrade_tables( "Jifty" => $dbv, $appv, "Jifty::Upgrade::Internal" );
-    Jifty::Model::Metadata->store( jifty_db_version => $appv );
+    if( $self->{print} ) {
+        warn "Need to upgrade jifty_db_version to $appv here!";
+    } else {
+        Jifty::Model::Metadata->store( jifty_db_version => $appv );
+    }
 }
 
 =head2 upgrade_application_tables
@@ -283,7 +287,11 @@ sub upgrade_application_tables {
         = version->new( Jifty->config->framework('Database')->{'Version'} );
 
     return unless $self->upgrade_tables( $self->{_application_class} => $dbv, $appv );
-    Jifty::Model::Metadata->store( application_db_version => $appv );
+    if( $self->{print} ) {
+        warn "Need to upgrade application_db_version to $appv here!";
+    } else {
+        Jifty::Model::Metadata->store( application_db_version => $appv );
+    }
 }
 
 =head2 upgrade_tables BASECLASS, FROM, TO, [UPGRADECLASS]
