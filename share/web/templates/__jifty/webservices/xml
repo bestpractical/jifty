@@ -68,8 +68,8 @@ for (keys %results) {
     # current_user->user_object is itself)
     my $content = $results{$_}->content;
     ref $content->{$_}
-        and ( $content->{$_}->isa("Jifty::DBI::Record")
-           or $content->{$_}->isa("Jifty::DBI::Collection") )
+        and ( ( UNIVERSAL::isa($content->{$_},"Jifty::DBI::Record"))
+	  or  ( UNIVERSAL::isa($content->{$_},"Jifty::DBI::Collection")) )
         and delete $content->{$_}
         for keys %{$content};
 
