@@ -84,7 +84,7 @@ Jifty.ContextMenu = {
         
         ul.style.display = "block";
         Jifty.ContextMenu.currently_open = ul.id;
-        Jifty.ContextMenu.scrollToShow( ul.id );
+        Jifty.Utils.scrollToShow( ul.id );
     },
 
     hideOpenMenu: function(event) {
@@ -105,17 +105,6 @@ Jifty.ContextMenu = {
         if (Jifty.ContextMenu.currently_open) {
             Jifty.ContextMenu.hide(Jifty.ContextMenu.currently_open);
         }
-    },
-
-    scrollToShow: function(id) {
-        var ul        = $(id);
-        var y         = Jifty.Utils.findPosY( ul ) + ul.offsetHeight + 10;
-        var scrollTop = Jifty.Utils.getScrollTop();
-        var screen    = Jifty.Utils.findScreenHeight() + scrollTop;
-        var diff      = y - screen;
-        
-        if ( diff > 0 )
-             Jifty.SmoothScroll.scrollTo( scrollTop + diff );
     }
 };
 

@@ -698,7 +698,7 @@ function update() {
     var onFailure = function(transport, object) {
         hide_wait_message_now();
         
-        alert("Oops!  Looks like the server is down.\n\nTry again in a few minutes.");
+        alert("Unable to connect to server.\n\nTry again in a few minutes.");
 
         var keys = request["actions"].keys();
         for ( var i = 0; i < keys.length; i++ ) {

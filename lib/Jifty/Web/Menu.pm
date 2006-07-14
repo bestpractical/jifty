@@ -105,23 +105,21 @@ sub child {
                                                         escape_label => 1,
                                                         @_
                                                        });
-    # Activate it
-    if (my $url = $self->{children}{$key}->url) {
-    # XXX TODO cleanup for mod_perl
-    my $base_path = Jifty->web->request->path;
-    chomp($base_path);
+        # Activate it
+        if (my $url = $self->{children}{$key}->url and Jifty->web->request) {
+            # XXX TODO cleanup for mod_perl
+            my $base_path = Jifty->web->request->path;
+            chomp($base_path);
         
-    $base_path =~ s/index\.html$//g;
-    $base_path =~ s/\/+$//g;
-    $url =~ s/\/+$//i;
-    if ($url eq $base_path) {
-        $self->{children}{$key}->active(1); 
+            $base_path =~ s/index\.html$//g;
+            $base_path =~ s/\/+$//g;
+            $url =~ s/\/+$//i;
+    
+            if ($url eq $base_path) {
+                $self->{children}{$key}->active(1); 
+            }
+	    }
     }
-	}
-
-}
-
-
 
     return $self->{children}{$key}
 }

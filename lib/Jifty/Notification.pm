@@ -43,9 +43,7 @@ sub new {
     my %args = @_;
 
     # initialize message bits to avoid 'undef' warnings
-    for (qw(body preface footer subject)) {
-        $self->$_('');
-    }
+    #for (qw(body preface footer subject)) { $self->$_(''); }
     $self->_recipients( [] );
 
     while ( my ( $arg, $value ) = each %args ) {
@@ -206,11 +204,12 @@ sub send {
 
     my $currentuser_object_class = Jifty->config->framework('ApplicationClass')."::CurrentUser";
     for my $to ( grep {defined} ($self->to, $self->to_list) ) {
+        if ($to->can('id')) {
         next if     $currentuser_object_class->can("nobody")
                 and $to->id == $currentuser_object_class->nobody->id;
                 
         next if $to->id == $currentuser_object_class->superuser->id;
-        
+        } 
         $self->to($to);
         $self->recipients($to);
         $self->send_one_message(@_);
