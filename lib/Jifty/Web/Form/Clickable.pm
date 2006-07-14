@@ -519,7 +519,6 @@ sub generate {
                 } 
                 # Toggle region if the toggle flag is set, and clicking wouldn't change path
                 if ($hook->{toggle} and $hook->{replace_with} eq $currently_shown) {
-                    warn "Toggling region @{[$hook->{region}]} to empty";
                     $self->region_fragment( $hook->{region}, "/__jifty/empty" );
 #                    Jifty->web->request->remove_state_variable('region-'.$region->qualified_name);
                 } else {
