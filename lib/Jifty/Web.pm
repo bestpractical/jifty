@@ -111,28 +111,22 @@ to specify the scheme.
 
 sub url {
     my $self = shift;
-    my %args = @_;
+    my %args = (scheme => undef,
+                @_);
 
     my $url  = Jifty->config->framework("Web")->{BaseURL};
     my $port = Jifty->config->framework("Web")->{Port};
+   
+    if ($args{'scheme'}) {
+        $self->log->error("Jifty->web->url no longer accepts a 'scheme' argument");
+    }
+    my $uri = URI->new($url);
     
-    my $scheme = 'http';
-    if ($url =~ /^(\w+)/) {
-        $scheme = $1;
-    }
-    $scheme = $args{scheme} if $args{scheme};
-
     if ($ENV{'HTTP_HOST'}) {
-        return $scheme ."://".$ENV{'HTTP_HOST'};
+        return $uri->scheme ."://".$ENV{'HTTP_HOST'};
     }
 
-    my $append_port = 0;
-    if (   ( $scheme  eq 'http' and $port != 80 )
-        or ( $scheme  eq'https' and $port != 443 ) ) {
-        $append_port = 1;
-    }
-    return( $url . ($append_port ? ":$port" : ""));
-
+    return $uri->canonical;
 }
 
 =head3 serial 
