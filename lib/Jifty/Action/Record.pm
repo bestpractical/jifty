@@ -119,7 +119,9 @@ C<canonicalized_FIELD> should return the canonicalized value.
 sub arguments {
     my $self = shift;
 
-    unless ( $self->_cached_arguments ) {
+    return $self->_cached_arguments if $self->_cached_arguments;
+
+
         my $field_info = {};
 
         my @fields = $self->possible_fields;
@@ -144,13 +146,16 @@ sub arguments {
                 $info->{default_value} = $current_value if $self->record->id;
             }
 
-            if ( defined $column->valid_values && $column->valid_values ) {
-                $info->{valid_values} = [ @{ $column->valid_values } ];
+	    ##################
+	    my $render_as = $column->render_as;
+	    $render_as = defined $render_as ? lc($render_as) : '';
+
+            if ( defined (my $valid_values = $column->valid_values)) {
+                $info->{valid_values} = [ @$valid_values ];
                 $info->{render_as}    = 'Select';
             } elsif ( defined $column->type && $column->type =~ /^bool/i ) {
                 $info->{render_as} = 'Checkbox';
-            } elsif ( defined $column->render_as
-                && $column->render_as =~ /^password$/i )
+            } elsif ( $render_as eq 'password' )
             {
                 my $same = sub {
                     my ( $self, $value ) = @_;
@@ -171,8 +176,7 @@ sub arguments {
                 };
             }
 
-            elsif ( defined $column->refers_to ) {
-                my $refers_to = $column->refers_to;
+            elsif ( defined (my $refers_to = $column->refers_to) ) {
                 if ( UNIVERSAL::isa( $refers_to, 'Jifty::Record' ) ) {
 
                     my $collection = Jifty::Collection->new(
@@ -194,6 +198,9 @@ sub arguments {
                     $info->{render_as} = 'Select';
                 }
             }
+
+	    #########
+
 
             # build up a validator sub if the column implements validation
             # and we're not overriding it at the action level
@@ -243,8 +250,7 @@ sub arguments {
                     my ( $self, $value ) = @_;
                     return $self->record->$canonicalize_method($value);
                 };
-            } elsif ( defined $column->render_as
-                and $column->render_as eq "Date" )
+            } elsif ( $render_as eq 'date')
             {
                 $info->{'ajax_canonicalizes'} = 1;
             }
@@ -252,15 +258,14 @@ sub arguments {
             # If we're hand-coding a render_as, hints or label, let's use it.
             for (qw(render_as label hints length mandatory sort_order)) {
 
-                if ( defined $column->$_ ) {
-                    $info->{$_} = $column->$_;
+                if ( defined (my $val = $column->$_) ) {
+                    $info->{$_} = $val;
                 }
             }
             $field_info->{$field} = $info;
         }
 
-        $self->_cached_arguments($field_info);
-    }
+    $self->_cached_arguments($field_info);
     return $self->_cached_arguments();
 }
 
