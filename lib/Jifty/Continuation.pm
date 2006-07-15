@@ -39,11 +39,12 @@ L<Jifty::Dispatcher>.
 use Jifty::Everything;
 use Storable 'dclone';
 
-use base qw/Class::Accessor::Fast/;
-
-__PACKAGE__->mk_accessors(qw(id parent
-                             request response code
-                             ));
+use Moose;
+has id          => qw( is rw isa Str );
+has parent      => qw( is rw isa Any ); # Jifty::Continuation | Str
+has request     => qw( is rw isa Jifty::Request );
+has response    => qw( is rw isa Jifty::Response );
+has code        => qw( is rw isa CodeRef );
 
 =head2 new PARAMHASH
 

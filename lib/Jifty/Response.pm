@@ -15,9 +15,11 @@ L<Jifty::Result> objects of each L<Jifty::Action> that ran.
 
 =cut
 
-use base qw/Jifty::Object Class::Accessor::Fast/;
+use base qw/Jifty::Object/;
 
-__PACKAGE__->mk_accessors(qw(error));
+use Moose;
+has error => qw( is rw isa Str );
+no Moose;
 
 =head2 new
 

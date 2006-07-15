@@ -3,8 +3,16 @@ use strict;
 
 package Jifty::Request;
 
-use base qw/Jifty::Object Class::Accessor::Fast/;
-__PACKAGE__->mk_accessors(qw(_top_request arguments just_validating path continuation_id continuation_type continuation_path));
+use base qw/Jifty::Object/;
+use Moose;
+has _top_request        => qw( is rw isa Jifty::Request );
+has arguments           => qw( is rw isa HashRef );
+has just_validating     => qw( is rw isa Bool );
+has path                => qw( is rw isa Str );
+has continuation_id     => qw( is rw isa Str );
+has continuation_type   => qw( is rw isa Str );
+has continuation_path   => qw( is rw isa Str );
+no Moose;
 
 use Jifty::JSON;
 use Jifty::YAML;

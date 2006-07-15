@@ -21,11 +21,11 @@ use Hash::Merge;
 Hash::Merge::set_behavior('RIGHT_PRECEDENT');
 
 use File::Basename();
-use base qw/Class::Accessor::Fast/;
-
 use vars qw/$CONFIG/;
 
-__PACKAGE__->mk_accessors(qw/stash/);
+use Moose;
+has stash => qw( is rw isa HashRef );
+no Moose;
 
 =head1 METHODS
 

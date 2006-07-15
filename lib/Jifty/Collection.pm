@@ -32,7 +32,7 @@ the C<pager> method to B<get> information related to paging.
 
 =cut
 
-use base qw/Jifty::Object Jifty::DBI::Collection Class::Accessor::Fast/;
+use base qw/Jifty::Object Jifty::DBI::Collection/;
 use Data::Page;
 
 =head1 MODEL
@@ -46,7 +46,9 @@ not to B<set> it; use C<set_page_info> to set paging information.
 
 =cut
 
-__PACKAGE__->mk_accessors(qw(pager));
+use Moose;
+has pager => qw( is rw isa Data::Page );
+no Moose;
 
 =head2 add_record
 

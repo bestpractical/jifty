@@ -6,9 +6,16 @@ use Digest::MD5 ();
 use Math::BigInt::Calc;
 use String::Koremutake ();
 
-use base qw/Jifty::Object Class::Accessor::Fast/;
+use base qw/Jifty::Object/;
 
-__PACKAGE__->mk_accessors ( qw/checksum_provided email path args until user/);
+use Moose;
+has checksum_provided   => qw( is rw isa Str );
+has email               => qw( is rw isa Str );
+has path                => qw( is rw isa Str );
+has args                => qw( is rw isa HashRef );
+has until               => qw( is rw isa Str );
+has user                => qw( is rw isa Object );
+no Moose;
 
 =head1 NAME
 

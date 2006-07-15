@@ -3,9 +3,13 @@ use strict;
 
 package Jifty::CurrentUser;
 
-use base qw/Jifty::Object Class::Accessor::Fast/;
+use base qw/Jifty::Object/;
 
-__PACKAGE__->mk_accessors(qw(is_superuser is_bootstrap_user user_object));
+use Moose;
+has is_superuser        => qw( is rw isa Bool );
+has is_bootstrap_user   => qw( is rw isa Bool );
+has user_object         => qw( is rw isa Object );
+no Moose;
 
 
 =head1 NAME

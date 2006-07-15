@@ -11,11 +11,13 @@ make up a Jifty application's API
 =cut
 
 use Jifty::Everything;
-use base qw/Class::Accessor::Fast Jifty::Object/;
+use base qw/Jifty::Object/;
 
 require Module::Pluggable;
 
-__PACKAGE__->mk_accessors(qw(action_limits));
+use Moose;
+has action_limits => qw( is rw isa ArrayRef );
+no Moose;
 
 =head1 METHODS
 

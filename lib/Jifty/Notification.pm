@@ -3,13 +3,21 @@ use strict;
 
 package Jifty::Notification;
 
-use base qw/Jifty::Object Class::Accessor::Fast/;
+use base qw/Jifty::Object/;
 use Email::Send            ();
 use Email::Simple          ();
 use Email::Simple::Creator ();
 
-__PACKAGE__->mk_accessors(
-    qw/body preface footer subject from _recipients _to_list to/);
+use Moose;
+has body        => qw( is rw isa Str );
+has preface     => qw( is rw isa Str );
+has footer      => qw( is rw isa Str );
+has subject     => qw( is rw isa Str );
+has from        => qw( is rw isa Str );
+has to          => qw( is rw isa Str );
+has _recipients => qw( is rw isa ArrayRef );
+has _to_list    => qw( is rw isa ArrayRef );
+no Moose;
 
 =head1 USAGE
 

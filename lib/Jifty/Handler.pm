@@ -24,7 +24,6 @@ handlers.
 
 =cut
 
-use base qw/Class::Accessor::Fast/;
 use Module::Refresh ();
 
 BEGIN {
@@ -47,7 +46,14 @@ BEGIN {
 
 
 
-__PACKAGE__->mk_accessors(qw(mason dispatcher static_handler cgi apache stash));
+use Moose;
+has mason           => qw( is rw isa Jifty::View::Mason::Handler );
+has dispatcher      => qw( is rw isa Any );
+has static_handler  => qw( is rw isa Jifty::View::Static::Handler );
+has cgi             => qw( is rw isa Object );
+has apache          => qw( is rw isa Object );
+has stash           => qw( is rw isa HashRef );
+no Moose;
 
 =head2 new
 
