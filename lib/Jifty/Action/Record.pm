@@ -21,8 +21,10 @@ method.
 =cut
 
 use base qw/Jifty::Action/;
-
-__PACKAGE__->mk_accessors(qw(record _cached_arguments));
+use Moose;
+has record              => qw( is rw isa Jifty::Record );
+has _cached_arguments   => qw( is rw isa HashRef );
+no Moose;
 
 =head1 METHODS
 

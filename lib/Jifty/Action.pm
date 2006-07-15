@@ -17,9 +17,15 @@ for how to return values from actions.
 =cut
 
 
-use base qw/Jifty::Object Class::Accessor::Fast/;
-
-__PACKAGE__->mk_accessors(qw(moniker argument_values order result sticky_on_success sticky_on_failure));
+use base qw/Jifty::Object/;
+use Moose;
+has moniker             => qw( is rw isa Str );
+has argument_values     => qw( is rw isa HashRef );
+has order               => qw( is rw isa Int );
+has result              => qw( is rw isa Jifty::Result );
+has sticky_on_success   => qw( is rw isa Bool );
+has sticky_on_failure   => qw( is rw isa Bool );
+no Moose;
 
 =head1 COMMON METHODS
 
