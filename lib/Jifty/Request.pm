@@ -914,8 +914,13 @@ A small package that encapsulates the bits of a state variable:
 =cut
 
 package Jifty::Request::Fragment;
-use base 'Class::Accessor::Fast';
-__PACKAGE__->mk_accessors( qw/name path wrapper arguments parent/ );
+use Moose;
+has name        => qw( is rw isa Str );
+has path        => qw( is rw isa Str );
+has wrapper     => qw( is rw isa Bool );    # XXX - bad name
+has arguments   => qw( is rw isa HashRef );
+has parent      => qw( is rw isa Any );
+no Moose;
 
 =head2 Jifty::Request::Fragment
 
