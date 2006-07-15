@@ -3,7 +3,6 @@ use strict;
 
 package Jifty::Object;
 
-use base qw(Class::Accessor::Fast); # compat only
 use Log::Log4perl;
 use HTML::Entities;
 use Carp;

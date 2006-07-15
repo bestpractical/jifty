@@ -4,6 +4,7 @@ use strict;
 package Jifty::Notification;
 
 use base qw/Jifty::Object/;
+use base qw(Class::Accessor::Fast); # compat only
 use Email::Send            ();
 use Email::Simple          ();
 use Email::Simple::Creator ();
