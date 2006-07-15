@@ -1,9 +1,14 @@
 package Jifty::Web::Menu;
 
-use base qw/Class::Accessor::Fast/;
 use URI;
 
-__PACKAGE__->mk_accessors(qw(label parent sort_order link escape_label class));
+use Moose;
+has label           => qw( is rw isa Str );
+has parent          => qw( is rw isa Jifty::Web::Menu );
+has sort_order      => qw( is rw isa Int );
+has link            => qw( is rw isa Jifty::Web::Link );
+has escape_label    => qw( is rw isa Bool );
+no Moose;
 
 =head2 new PARAMHASH
 

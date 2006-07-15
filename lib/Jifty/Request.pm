@@ -846,8 +846,15 @@ sub top_request {
 }
 
 package Jifty::Request::Action;
-use base 'Class::Accessor::Fast';
-__PACKAGE__->mk_accessors( qw/moniker arguments class order active modified has_run/);
+use Moose;
+has moniker     => qw( is rw isa Str );
+has arguments   => qw( is rw isa HashRef );
+has class       => qw( is rw isa Str ); # Class, actually
+has order       => qw( is rw isa Int );
+has active      => qw( is rw isa Bool );
+has modified    => qw( is rw isa Bool );
+has has_run     => qw( is rw isa Bool );
+no Moose;
 
 =head2 Jifty::Request::Action
 
@@ -891,8 +898,10 @@ sub delete {
 
 
 package Jifty::Request::StateVariable;
-use base 'Class::Accessor::Fast';
-__PACKAGE__->mk_accessors (qw/key value/);
+use Moose;
+has key     => qw( is rw isa Str );
+has value   => qw( is rw isa Str );
+no Moose;
 
 =head2 Jifty::Request::StateVariable
 

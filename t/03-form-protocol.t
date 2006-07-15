@@ -18,6 +18,8 @@ actions:
     class: DoSomething
     active: 1
     has_run: 0
+    order: ~
+    modified: ~
     arguments:
         id: 23
         something: else
@@ -45,6 +47,8 @@ actions:
     class: DoSomething
     active: 1
     has_run: 0
+    order: ~
+    modified: ~
     arguments:
         id: 23
         something: else
@@ -53,6 +57,8 @@ actions:
     class: DoSomething
     active: 1
     has_run: 0
+    order: ~
+    modified: ~
     arguments:
         id: 42
         something: bla
@@ -83,6 +89,8 @@ actions:
     class: DoSomething
     active: 1
     has_run: 0
+    order: ~
+    modified: ~
     arguments:
         id: 23
         something: else
@@ -91,6 +99,8 @@ actions:
     class: DoThat
     active: 1
     has_run: 0
+    order: ~
+    modified: ~
     arguments:
         id: 42
         something: bla
@@ -120,6 +130,8 @@ actions:
     class: DoSomething
     active: 1
     has_run: 0
+    order: ~
+    modified: ~
     arguments:
         id: 23
         something: else
@@ -149,6 +161,8 @@ actions:
     class: DoSomething
     active: 0
     has_run: 0
+    order: ~
+    modified: ~
     arguments:
         id: 23
         something: else
@@ -157,6 +171,8 @@ actions:
     class: DoThat
     active: 1
     has_run: 0
+    order: ~
+    modified: ~
     arguments:
         id: 42
         something: bla
@@ -186,6 +202,8 @@ actions:
     class: DoSomething
     active: 1
     has_run: 0
+    order: ~
+    modified: ~
     arguments:
         id: 23
         something: else
@@ -194,6 +212,8 @@ actions:
     class: DoThat
     active: 1
     has_run: 0
+    order: ~
+    modified: ~
     arguments:
         id: 42
         something: bla
@@ -226,6 +246,8 @@ actions:
     class: DoSomething
     active: 1
     has_run: 0
+    order: ~
+    modified: ~
     arguments:
         id: 23
         something: else
@@ -234,6 +256,8 @@ actions:
     class: DoThat
     active: 1
     has_run: 0
+    order: ~
+    modified: ~
     arguments:
         id: 42
         something: bla
@@ -266,6 +290,8 @@ actions:
     class: DoSomething
     active: 1
     has_run: 0
+    order: ~
+    modified: ~
     arguments:
         id: 23
         something: else
@@ -274,6 +300,8 @@ actions:
     class: DoThat
     active: 1
     has_run: 0
+    order: ~
+    modified: ~
     arguments:
         id: 42
         something: bla
@@ -301,6 +329,8 @@ actions:
     class: DoSomething
     active: 1
     has_run: 0
+    order: ~
+    modified: ~
     arguments:
         id: 23
         something: else
@@ -327,6 +357,8 @@ actions:
     class: DoSomething
     active: 1
     has_run: 0
+    order: ~
+    modified: ~
     arguments:
         id: 23
         something: else
@@ -352,6 +384,8 @@ actions:
     class: DoSomething
     active: 1
     has_run: 0
+    order: ~
+    modified: ~
     arguments:
         id: 96
         something: else
@@ -380,6 +414,8 @@ actions:
     class: DoSomething
     active: 1
     has_run: 0
+    order: ~
+    modified: ~
     arguments:
         id: 23
         something: else
@@ -388,6 +424,8 @@ actions:
     class: DoThat
     active: 1
     has_run: 0
+    order: ~
+    modified: ~
     arguments:
         id: 42
         something: feepy
@@ -420,6 +458,8 @@ actions:
     class: DoSomething
     active: 1
     has_run: 0
+    order: ~
+    modified: ~
     arguments:
         id: 23
         something: else
@@ -428,6 +468,8 @@ actions:
     class: DoSomething
     active: 1
     has_run: 0
+    order: ~
+    modified: ~
     arguments:
         id: 42
         something: bla

@@ -19,10 +19,14 @@ use Digest::MD5 qw(md5_hex);
 use base qw/Class::Accessor::Fast Class::Data::Inheritable Jifty::Object/;
 
 use vars qw/$SERIAL @JS_INCLUDES/;
-
-__PACKAGE__->mk_accessors(
-    qw(next_page request response session temporary_current_user _current_user)
-);
+use Moose;
+has next_page               => qw( is rw isa Str );
+has request                 => qw( is rw isa Jifty::Request );
+has response                => qw( is rw isa Jifty::Response );
+has session                 => qw( is rw isa Jifty::Web::Session );
+has temporary_current_user  => qw( is rw isa Object );
+has _current_user           => qw( is rw isa Object );
+no Moose;
 
 __PACKAGE__->mk_classdata($_)
     for qw(cached_css        cached_css_digest

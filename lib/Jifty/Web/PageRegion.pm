@@ -14,9 +14,15 @@ can be updated via AJAX or via query parameters.
 
 =cut
 
-use base qw/Jifty::Object Class::Accessor::Fast/;
-__PACKAGE__->mk_accessors(qw(name default_path default_arguments qualified_name parent region_wrapper));
-use Jifty::JSON;
+use base qw/Jifty::Object/;
+use Moose;
+has name                => qw( is rw isa Str );
+has default_path        => qw( is rw isa Str );
+has default_arguments   => qw( is rw isa HashRef );
+has qualified_name      => qw( is rw isa Str );
+has parent              => qw( is rw isa Jifty::Web::PageRegion );
+has region_wrapper      => qw( is rw isa Bool ); # XXX - bad name
+no Moose;
 
 =head2 new PARAMHASH
 

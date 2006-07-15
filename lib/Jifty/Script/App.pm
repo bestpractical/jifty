@@ -2,14 +2,18 @@ use warnings;
 use strict;
 
 package Jifty::Script::App;
-use base qw'App::CLI::Command Class::Accessor::Fast';
+use base qw/App::CLI::Command/;
 
 use File::Copy;
 use Jifty::Config;
 use Jifty::YAML;
 use File::Basename;
 
-__PACKAGE__->mk_accessors(qw/prefix dist_name mod_name/);
+use Moose;
+has prefix      => qw( is rw isa Str );
+has dist_name   => qw( is rw isa Str );
+has mod_name    => qw( is rw isa Str );
+no Moose;
 
 
 =head1 NAME

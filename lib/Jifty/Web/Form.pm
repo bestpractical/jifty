@@ -5,7 +5,13 @@ package Jifty::Web::Form;
 
 use base qw/Jifty::Object Class::Accessor::Fast/;
 
-__PACKAGE__->mk_accessors(qw(actions printed_actions name call is_open));
+use Moose;
+has actions         => qw( is rw isa Any );
+has printed_actions => qw( is rw isa Any );
+has name            => qw( is rw isa Str );
+has call            => qw( is rw isa Str );
+has is_open         => qw( is rw isa Bool );
+no Moose;
 
 =head2 new ARGS
 

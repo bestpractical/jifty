@@ -2,7 +2,7 @@ use warnings;
 use strict;
 
 package Jifty::Script::Po;
-use base qw'App::CLI::Command Class::Accessor::Fast';
+use base qw/App::CLI::Command/;
 
 use File::Copy;
 use Jifty::Config;
@@ -14,7 +14,9 @@ our $MIME = MIME::Types->new();
 our $LMExtract = Locale::Maketext::Extract->new;
 use constant USE_GETTEXT_STYLE => 1;
 
-__PACKAGE__->mk_accessors(qw/language/);
+use Moose;
+has language    => qw( is rw isa Str );
+no Moosep;
 
 
 =head1 NAME

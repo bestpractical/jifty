@@ -17,9 +17,14 @@ L<Jifty::Response> object.
 
 use Jifty::Everything;
 
-use base qw/Jifty::Object Class::Accessor::Fast/;
+use base qw/Jifty::Object/;
 
-__PACKAGE__->mk_accessors(qw(failure action_class message _content));
+use Moose;
+has failure         => qw( is rw isa Bool );
+has action_class    => qw( is rw isa Str ); # Class
+has message         => qw( is rw isa Str );
+has _content        => qw( is rw isa HashRef );
+no Moose;
 
 
 =head2 new
