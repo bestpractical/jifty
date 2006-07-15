@@ -4,7 +4,10 @@ use strict;
 package Jifty::Web::Form::Field::Button;
 
 use base qw/Jifty::Web::Form::Field/;
-__PACKAGE__->mk_accessors(qw/button_as_link/);
+
+use Moose;
+has button_as_link => qw( is rw isa Bool );
+no Moose;
 
 =head2 accessors
 
@@ -13,8 +16,6 @@ L<Jifty::Web::Form::Field>'s default accessors), which controls if the
 button is reworked in javascript to appear as a link.
 
 =cut
-
-sub accessors { shift->SUPER::accessors(), 'button_as_link' }
 
 =head2 render_widget
 

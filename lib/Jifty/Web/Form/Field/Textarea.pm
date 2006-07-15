@@ -5,7 +5,10 @@ package Jifty::Web::Form::Field::Textarea;
 
 use base qw/Jifty::Web::Form::Field/;
 
-__PACKAGE__->mk_accessors(qw(rows cols));
+use Moose;
+has rows    => qw( is rw isa Int );
+has cols    => qw( is rw isa Int );
+no Moose;
 
 =head2 accessors
 
@@ -13,8 +16,6 @@ Provide C<rows> and C<cols> accessors, in addition to
 L<Jifty::Web::Form::Field>'s default accessors.
 
 =cut
-
-sub accessors { shift->SUPER::accessors(), 'rows', 'cols' }
 
 =head2 render_widget
 

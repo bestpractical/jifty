@@ -1,28 +1,38 @@
-=begin properties
-
-constructor
-canonicalizer
-available_values
-ajax_validates
-autocompleter
-
-default_value
-valid_values
-validator
-render_as
-label
-hints
-length
-mandatory
-
-=end properties
-
-=cut
-
 use warnings;
 use strict;
  
 package Jifty::Web::Form::Field;
+use Moose;
+has name                => qw( is rw isa Str );
+has label               => qw( is rw isa Str lazy 1 default ) => sub {
+    my $self    = shift;
+    return $self->name;
+};
+has input_name          => qw( is rw isa Str lazy 1 default ) => sub {
+    my $self    = shift;
+    my $action  = $self->action;
+    return $action ? $self->action->form_field_name( $self->name )
+                   : '';
+};
+has type                => qw( is rw isa Str default text );
+has sticky              => qw( is rw isa Str );
+has sticky_value        => qw( is rw isa Any );
+has default_value       => qw( is rw isa Any );
+has action              => qw( is rw isa Any weak_ref 1 );
+has mandatory           => qw( is rw isa Str );
+has ajax_validates      => qw( is rw isa Str );
+has ajax_canonicalizes  => qw( is rw isa Str );
+has autocompleter       => qw( is rw isa CodeRef );
+has preamble            => qw( is rw isa Str );
+has hints               => qw( is rw isa Str );
+has render_mode         => qw( is rw isa Str default update );
+has length              => qw( is rw isa Str );
+has element_id          => qw( is rw isa Str lazy 1 default ) => sub {
+    my $self = shift;
+    return $self->input_name."-".Jifty->web->serial;
+};
+no Moose;
+
 
 =head1 NAME
 
@@ -47,31 +57,27 @@ use Scalar::Util;
 use HTML::Entities;
 use overload '""' => sub { shift->render}, bool => sub { 1 };
 
-=head2 new
+=head2 accessors
+
+Lists the accessors that are able to be called from within a call to
+C<new>.  Subclasses should extend this list.
+
+=cut
+
+=head2 BUILD
 
 Creates a new L<Jifty::Web::Form::Field> (possibly magically blessing into a subclass).
 Should only be called from C<< $action->arguments >>.
 
 =cut
 
-sub new {
-    my $class = shift;
-    my $self = $class->SUPER::new(
-      { type          => 'text',
-        class         => '',
-        input_name    => '',
-        default_value => '',
-        sticky_value  => '',
-        render_mode   => 'update' });
+sub BUILD {
+    my $self = shift;
     my $args = ref($_[0]) ? $_[0] : {@_};
 
     my $subclass = ucfirst($args->{render_as} || $args->{type} || 'text');
     $subclass = 'Jifty::Web::Form::Field::' . $subclass unless $subclass =~ /::/;
     bless $self, $subclass if Jifty::Util->require($subclass);
-
-    for my $field ( $self->accessors() ) {
-        $self->$field( $args->{$field} ) if exists $args->{$field};
-    }
 
     # If they key and/or value imply that this argument is going to be
     # a mapped argument, then do the mapping and mark the field as hidden.
@@ -92,16 +98,6 @@ sub new {
     return $self;
 }
 
-
-=head2 accessors
-
-Lists the accessors that are able to be called from within a call to
-C<new>.  Subclasses should extend this list.
-
-=cut
-
-sub accessors { shift->SUPER::accessors(), qw(name label input_name type sticky sticky_value default_value action mandatory ajax_validates ajax_canonicalizes autocompleter preamble hints render_mode length _element_id); }
-__PACKAGE__->mk_accessors(qw(name _label _input_name type sticky sticky_value default_value _action mandatory ajax_validates ajax_canonicalizes autocompleter preamble hints render_mode length _element_id));
 
 =head2 name [VALUE]
 
@@ -177,22 +173,6 @@ based on the moniker of the action and the name of the form.
 
 =cut
 
-sub input_name {
-    my $self = shift;
-
-# If we've been explicitly handed a name, we should run with it.
-# Otherwise, we should ask our action, how to turn our "name"
-# into a form input name.
-
-    my $ret = $self->_input_name(@_);
-    return $ret if $ret;
-
-    my $action = $self->action;
-    return $action ? $self->action->form_field_name( $self->name )
-                   : '';
-}
-
-
 =head2 fallback_name
 
 Return the form field's fallback name. This should be used to create a
@@ -226,14 +206,6 @@ object.
 
 =cut
 
-sub label {
-    my $self = shift;
-    my $val = $self->_label(@_);
-    defined $val ? $val :  $self->name;
-
-}
-
-
 =head2 element_id 
 
 Returns a unique C<id> attribute for this field based on the field name. This is
@@ -241,11 +213,6 @@ consistent for the life of the L<Jifty::Web::Form::Field> object but isn't predi
 
 =cut
 
-
-sub element_id {
-    my $self = shift;
-    return $self->_element_id || $self->_element_id( $self->input_name ."-".Jifty->web->serial); 
-}
 
 =head2 action [VALUE]
 
@@ -255,16 +222,6 @@ automatically if this C<Jifty::Action> was created via
 L<Jifty::Web::Form::Field/form_field>.
 
 =cut
-
-sub action {
-    my $self   = shift;
-    my $action = $self->_action(@_);
-
-    # If we're setting the action, we need to weaken
-    # the reference to not get caught in a loop
-    Scalar::Util::weaken( $self->{_action} ) if @_;
-    return $action;
-}
 
 =head2 current_value
 

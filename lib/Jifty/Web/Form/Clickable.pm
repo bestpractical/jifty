@@ -23,13 +23,18 @@ L<Jifty::Web::Form::Element/accessors>.
 
 =cut
 
-sub accessors {
-    shift->SUPER::accessors,
-        qw(url escape_label tooltip continuation call returns submit preserve_state render_as_button render_as_link);
-}
-__PACKAGE__->mk_accessors(
-    qw(url escape_label tooltip continuation call returns submit preserve_state render_as_button render_as_link)
-);
+use Moose;
+has url                 => qw( is rw isa Str );
+has escape_label        => qw( is rw isa Bool );
+has tooltip             => qw( is rw isa Str );
+has continuation        => qw( is rw isa Any ); # Jifty::Continuation | Str
+has call                => qw( is rw isa Any ); # Jifty::Continuation | Str
+has returns             => qw( is rw isa HashRef );
+has submit              => qw( is rw isa ArrayRef );
+has preserve_state      => qw( is rw isa Str );
+has render_as_button    => qw( is rw isa Str );
+has render_as_link      => qw( is rw isa Str );
+no Moose;
 
 =head2 new PARAMHASH
 
@@ -166,7 +171,8 @@ sub new {
         }
     }
 
-    for my $field ( $self->accessors() ) {
+    for my $attr ( $self->meta->compute_all_applicable_attributes ) {
+        my $field = $attr->name;
         $self->$field( $args{$field} ) if exists $args{$field};
     }
 
@@ -430,8 +436,13 @@ sub complete_url {
 
 sub _defined_accessor_values {
     my $self = shift;
-    return { map { my $val = $self->$_; defined $val ? ($_ => $val) : () } 
-        $self->SUPER::accessors };
+    my @superclasses = $self->meta->superclasses;
+    my @attrs = map { $_->meta->compute_all_applicable_attributes } @superclasses;
+    return { map {
+        my $name    = $_->name;
+        my $val     = $self->$name;
+        defined $val ? ($name => $val) : ()
+    } @attrs };
 }
 
 =head2 as_link

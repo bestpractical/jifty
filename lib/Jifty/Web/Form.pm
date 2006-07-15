@@ -3,7 +3,7 @@ use strict;
 
 package Jifty::Web::Form;
 
-use base qw/Jifty::Object Class::Accessor::Fast/;
+use base qw/Jifty::Object/;
 
 use Moose;
 has actions         => qw( is rw isa Any );

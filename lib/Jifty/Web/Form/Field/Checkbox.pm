@@ -4,7 +4,10 @@ use strict;
 package Jifty::Web::Form::Field::Checkbox;
 
 use base qw/Jifty::Web::Form::Field/;
-__PACKAGE__->mk_accessors(qw/checked value/);
+use Moose;
+has checked => qw( is rw isa Bool );
+has value   => qw( is rw isa Str );
+no Moose;
 
 =head2 accessors
 
@@ -13,8 +16,6 @@ L<Jifty::Web::Form::Field>'s default accessors.  C<value> defaults to
 "1".
 
 =cut
-
-sub accessors { shift->SUPER::accessors(), 'checked' , 'value' }
 
 =head2 render_widget
 

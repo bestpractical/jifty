@@ -16,7 +16,7 @@ use CGI::Cookie;
 use XML::Writer;
 use CSS::Squish;
 use Digest::MD5 qw(md5_hex);
-use base qw/Class::Accessor::Fast Class::Data::Inheritable Jifty::Object/;
+use base qw/Class::Data::Inheritable Jifty::Object/;
 
 use vars qw/$SERIAL @JS_INCLUDES/;
 use Moose;

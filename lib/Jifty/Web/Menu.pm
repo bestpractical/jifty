@@ -1,14 +1,14 @@
 package Jifty::Web::Menu;
 
-use URI;
-
 use Moose;
 has label           => qw( is rw isa Str );
-has parent          => qw( is rw isa Jifty::Web::Menu );
+has parent          => qw( is rw isa Jifty::Web::Menu weak_ref 1 );
 has sort_order      => qw( is rw isa Int );
-has link            => qw( is rw isa Jifty::Web::Link );
+has link            => qw( is rw isa Any ); # Jifty::Web::Link;
 has escape_label    => qw( is rw isa Bool );
 no Moose;
+
+use URI;
 
 =head2 new PARAMHASH
 
@@ -22,8 +22,7 @@ each option's use.
 sub new {
     my $package = shift;
     # Class::Accessor only wants a hashref;
-    $package->SUPER::new( ref($_[0]) eq 'HASH' ? @_ : {@_} );
-
+    $package->meta->new_object( ref($_[0]) eq 'HASH' ? %{$_[0]} : @_ );
 }
 
 

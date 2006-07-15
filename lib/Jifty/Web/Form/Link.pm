@@ -15,10 +15,17 @@ generates L<Jifty::Web::Form::Link>s.
 
 =cut
 
+use Moose;
+has url             => qw( is rw isa Str lazy 1 default ) => sub { $ENV{PATH_INFO} };
+has escape_label    => qw( is rw isa Bool default 1 );
+has tooltip         => qw( is rw isa Str );
+has target          => qw( is rw isa Str );
+no Moose;
+
 use base 'Jifty::Web::Form::Element';
 
 # Since we don't inherit from Form::Field, we don't otherwise stringify
-use overload '""' => sub { shift->render}, bool => sub { 1 };
+use overload '""' => sub { shift->render }, bool => sub { 1 };
 
 =head2 accessors
 
@@ -27,9 +34,6 @@ and mutators, in addition to those offered by
 L<Jifty::Web::Form::Element/accessors>.
 
 =cut
-
-sub accessors { shift->SUPER::accessors(), qw(url escape_label tooltip target); }
-__PACKAGE__->mk_accessors(qw(url escape_label tooltip target));
 
 =head2 new PARAMHASH
 
@@ -63,24 +67,6 @@ Any parameter which L<Jifty::Web::Form::Element/new> can take.
 
 =cut
 
-sub new {
-    my $class = shift;
-    my $self  = $class->SUPER::new(
-      { url          => $ENV{PATH_INFO},
-        label        => "Click me!",
-        tooltip      => undef,
-        escape_label => 1,
-        class        => '',
-        target       => '' }
-    );
-    my $args = ref($_[0]) ? $_[0] : {@_};
-
-    for my $field ( keys %$args ) {
-        $self->$field( $args->{$field} );
-    }
-
-    return $self;
-}
 
 =head2 url [URL]
 

@@ -105,8 +105,17 @@ can be used to change the duration of the effect, for instance.
 
 =cut
 
-use base qw/Jifty::Object Class::Accessor::Fast/;
+use base qw/Jifty::Object/;
 use Jifty::JSON;
+
+use Moose;
+has onclick     => qw( is rw isa Any );
+has class       => qw( is rw isa Str default ) => '';
+has key_binding => qw( is rw isa Str );
+has id          => qw( is rw isa Str );
+has label       => qw( is rw isa Str );
+has tooltip     => qw( is rw isa Str );
+no Moose;
 
 =head2 handlers
 
@@ -118,17 +127,6 @@ error from your browser.
 =cut
 
 sub handlers { qw(onclick); }
-
-=head2 accessors
-
-Any descendant of L<Jifty::Web::Form::Element> should be able to
-accept any of the event handlers (above) as one of the keys to its
-C<new> parameter hash.
-
-=cut
-
-sub accessors { shift->handlers, qw(class key_binding id label tooltip) }
-__PACKAGE__->mk_accessors(qw(onclick class key_binding id label tooltip));
 
 =head2 javascript
 
