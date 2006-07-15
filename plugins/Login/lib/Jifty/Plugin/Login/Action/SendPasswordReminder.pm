@@ -3,12 +3,12 @@ use strict;
 
 =head1 NAME
 
-Jifty::Plugin::Login::Action::SendLostPasswordConfirmation
+Jifty::Plugin::Login::Action::SendPasswordReminder
 
 =cut
 
-package Jifty::Plugin::Login::Action::SendLostPasswordConfirmation;
-use base qw/Jifty::Plugin::Login::Action Jifty::Action Jifty::Plugin::Login/;
+package Jifty::Plugin::Login::Action::SendPasswordReminder;
+use base qw/Jifty::Action Jifty::Plugin::Login/;
 
 __PACKAGE__->mk_accessors(qw(user_object));
 
@@ -16,7 +16,7 @@ use Jifty::Plugin::Login::Model::User;
 
 =head2 arguments
 
-The field for C<SendLostPasswordConfirmation> is:
+The field for C<SendLostPasswordReminder> is:
 
 =over 4
 
@@ -82,7 +82,7 @@ sub validate_address {
 
 =head2 take_action
 
-Send out a confirmation email giving a link to a password-reset form.
+Send out a Reminder email giving a link to a password-reset form.
 
 =cut
 
