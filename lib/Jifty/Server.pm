@@ -98,7 +98,7 @@ logging framework to record the server's startup
 
 sub print_banner {
     my $self = shift;
-    $self->log->info("You can connect to your server at ", Jifty::Web->url, "/");
+    $self->log->info("You can connect to your server at ", Jifty::Web->url);
 } 
 
 =head2 recorder_prefix
