@@ -6,6 +6,7 @@ requires(perl => '5.8.3');
 requires('App::CLI' => 0.03 ); # App::CLI::Command::Help App::CLI::Command
 requires('Cache::Cache'); #Cache::FileCache
 requires('Calendar::Simple');
+requires('Class::Accessor');
 requires('Class::Accessor::Named'); 
 requires('Class::Container');
 requires('Class::Data::Inheritable');
