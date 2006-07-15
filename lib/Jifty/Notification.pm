@@ -14,7 +14,7 @@ has preface     => qw( is rw isa Str );
 has footer      => qw( is rw isa Str );
 has subject     => qw( is rw isa Str );
 has from        => qw( is rw isa Str );
-has to          => qw( is rw isa Str );
+has to          => qw( is rw isa Any ); # Object to deliver to
 has _recipients => qw( is rw isa ArrayRef );
 has _to_list    => qw( is rw isa ArrayRef );
 no Moose;
