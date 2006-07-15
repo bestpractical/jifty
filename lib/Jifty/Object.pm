@@ -8,6 +8,11 @@ use HTML::Entities;
 use Carp;
 use Scalar::Util qw(refaddr);
 
+sub mk_accessor {
+    my $class = shift;
+    $class->meta->_process_attribute($_ => qw( is rw )) for @_;
+}
+
 =head1 Jifty::Object
 
 C<Jifty::Object> is the superclass of most of Jifty's objects.  It is

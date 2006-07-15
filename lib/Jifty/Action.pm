@@ -18,7 +18,6 @@ for how to return values from actions.
 
 
 use base qw/Jifty::Object/;
-use base qw(Class::Accessor::Fast); # compat only
 use Moose;
 has moniker             => qw( is rw isa Str );
 has argument_values     => qw( is rw isa HashRef );
