@@ -24,7 +24,7 @@ L<Jifty::Web::Form::Element/accessors>.
 =cut
 
 use Moose;
-has url                 => qw( is rw isa Str );
+has url                 => qw( is rw isa Any ); # Str | URI
 has escape_label        => qw( is rw isa Bool );
 has tooltip             => qw( is rw isa Str );
 has continuation        => qw( is rw isa Any ); # Jifty::Continuation | Str

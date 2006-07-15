@@ -18,7 +18,7 @@ L<Jifty::Result> objects of each L<Jifty::Action> that ran.
 use base qw/Jifty::Object/;
 
 use Moose;
-has error => qw( is rw isa Str );
+has error => qw( is rw isa Any ); # Str? XXX TODO
 no Moose;
 
 =head2 new
