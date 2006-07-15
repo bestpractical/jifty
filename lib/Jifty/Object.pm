@@ -8,7 +8,7 @@ use HTML::Entities;
 use Carp;
 use Scalar::Util qw(refaddr);
 
-sub mk_accessor {
+sub mk_accessors {
     my $class = shift;
     $class->meta->_process_attribute($_ => qw( is rw )) for @_;
 }
