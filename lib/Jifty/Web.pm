@@ -125,7 +125,8 @@ sub url {
         $self->log->error("Jifty->web->url no longer accepts a 'scheme' argument");
     }
     my $uri = URI->new($url);
-    
+    $uri->port($port);
+
     if ($ENV{'HTTP_HOST'}) {
         return $uri->scheme ."://".$ENV{'HTTP_HOST'};
     }

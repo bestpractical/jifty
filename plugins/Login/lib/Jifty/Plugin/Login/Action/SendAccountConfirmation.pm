@@ -3,18 +3,14 @@ use strict;
 
 =head1 NAME
 
-Jifty::Plugin::Login::Action::ResendConfirmation
+Jifty::Plugin::Login::Action::SendAccountConfirmation
 
 =cut
 
-package Jifty::Plugin::Login::Action::ResendConfirmation;
-use base qw/Jifty::Action/;
-my $LoginUser   = $Jifty::Plugin::Login::LoginUserClass;
-my $CurrentUser = $Jifty::Plugin::Login::CurrentUserClass;
+package Jifty::Plugin::Login::Action::SendAccountConfirmation;
+use base qw/Jifty::Action Jifty::Plugin::Login/;
 
 __PACKAGE__->mk_accessors(qw(user_object));
-
-use Jifty::Plugin::Login::Model::User;
 
 =head2 arguments
 
@@ -48,6 +44,8 @@ Create an empty user object to work with
 
 sub setup {
     my $self = shift;
+    my $LoginUser = $self->LoginUserClass();
+    my $CurrentUser = $self->CurrentUserClass();
 
     $self->user_object(
         $LoginUser->new( current_user => $CurrentUser->superuser ) );
@@ -62,6 +60,8 @@ Make sure their email address is an unconfirmed user.
 sub validate_address {
     my $self  = shift;
     my $email = shift;
+    my $LoginUser = $self->LoginUserClass();
+    my $CurrentUser = $self->CurrentUserClass();
 
     return $self->validation_error(
         address => "That doesn't look like an email address." )
