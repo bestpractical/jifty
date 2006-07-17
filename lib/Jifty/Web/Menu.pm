@@ -1,6 +1,9 @@
 package Jifty::Web::Menu;
 
 use Moose;
+has url             => qw( is rw isa Any ); # URI | Str
+has active          => qw( is rw isa Bool );
+has class           => qw( is rw isa Str );
 has label           => qw( is rw isa Str );
 has parent          => qw( is rw isa Jifty::Web::Menu weak_ref 1 );
 has sort_order      => qw( is rw isa Int );
