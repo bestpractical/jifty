@@ -17,7 +17,7 @@ for how to return values from actions.
 =cut
 
 
-use base qw/Jifty::Object/;
+use base qw/Jifty::Object Class::Data::Inheritable/;
 use Moose;
 has moniker             => qw( is rw isa Str );
 has argument_values     => qw( is rw isa HashRef );
@@ -26,6 +26,8 @@ has result              => qw( is rw isa Jifty::Result );
 has sticky_on_success   => qw( is rw isa Bool );
 has sticky_on_failure   => qw( is rw isa Bool );
 no Moose;
+
+__PACKAGE__->mk_classdata(qw/PARAMS/);
 
 =head1 COMMON METHODS
 
@@ -157,21 +159,13 @@ being expected to be set later.
 
 Defaults to false.
 
-=item ajax_canonicalizes
-
-This key takes a boolean value that determines if the value displayed in
-the form field is updated via AJAX with the result returned by this argument's
-L<canonicalize|Jifty::Manual::Glossary/canonicalize> function.
-
-Defaults to false.
-
 =back
 
 =cut
 
 sub arguments {
     my  $self= shift;
-    return {}
+    return($self->PARAMS || {});
 }
 
 =head2 run
