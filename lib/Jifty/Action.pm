@@ -371,12 +371,12 @@ sub _form_widget {
             # form_fields overrides stickiness of what the user last entered.
             $self->{_private_form_fields_hash}{$arg_name}
                 = Jifty::Web::Form::Field->new(
+                %$field_info,
                 action       => $self,
                 name         => $args{'argument'},
                 sticky       => $sticky,
                 sticky_value => $self->argument_value($args{'argument'}),
                 render_mode  => $args{'render_mode'},
-                %$field_info,
                 %args
                 );
 
@@ -783,7 +783,7 @@ sub _validate_argument {
         {
 
             return $self->validation_error(
-                $field => q{That doesn't look like a correct value} );
+                $field => _("That doesn't look like a correct value") );
         }
 
    # ... but still check through a validator function even if it's in the list

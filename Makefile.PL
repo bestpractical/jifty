@@ -45,6 +45,7 @@ requires('Module::Refresh' => '0.09');
 requires('Moose' => '0.11');
 requires('Params::Validate');
 requires('Pod::Simple'); #Pod::Simple::Text
+requires('Scalar::Defer');
 requires('String::Koremutake');
 requires('Test::Base' => 0.44);            # Test::Base::Filter
 requires('Test::HTTP::Server::Simple' => '0.02');

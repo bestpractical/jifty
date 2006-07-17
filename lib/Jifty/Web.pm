@@ -439,9 +439,10 @@ sub new_action {
     # isn't a "shouldn't happen"
     return unless Jifty::Util->require( $class );
 
+    local $@;
     my $action;
     # XXX TODO bullet proof
-    eval { $action = $class->new( %args, arguments => {%arguments} ); };
+    eval { $action = $class->new( %args, arguments => \%arguments ); };
     if ($@) {
         my $err = $@;
         $self->log->fatal($err);
