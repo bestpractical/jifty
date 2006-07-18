@@ -20,7 +20,12 @@ sub schema (&) {
     };
 
     Class::Data::Inheritable::mk_classdata($from => qw/PARAMS/);
-    $from->PARAMS( &declare($code) );
+    my @params = &declare($code);
+    my $count = 100; # arbitrary number
+    foreach my $param (@params) {
+        $param->sort_order($count++) if ref($param) and !defined($param->sort_order);
+    }
+    $from->PARAMS({ @params });
 
     no strict 'refs';
     push @{$from . '::ISA'}, 'Jifty::Action';

@@ -44,7 +44,7 @@ requires('Module::Install::Admin' => '0.50');
 requires('Module::Pluggable' => '2.95');
 requires('Module::Refresh' => '0.09');
 requires('Moose' => '0.11');
-requires('Object::Declare');
+requires('Object::Declare' => '0.05');
 requires('Params::Validate');
 requires('Pod::Simple'); #Pod::Simple::Text
 requires('Scalar::Defer');
