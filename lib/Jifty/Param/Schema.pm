@@ -12,6 +12,8 @@ our @EXPORT = qw( defer lazy param schema from );
 sub schema (&) {
     my $code = shift;
     my $from = caller;
+
+    no warnings 'redefine';
     local *_ = sub {
         my $args = \@_;
         defer { local *_; Jifty::I18N->new; _(@$args) };

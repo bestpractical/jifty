@@ -1,16 +1,14 @@
 package TestApp::Action::DoSomething;
 
-use base qw/Jifty::Action/;
+use Jifty::Param::Schema;
+use Jifty::Action schema {
 
-sub arguments {
-    return({
-        email => {
-            label => 'Email',
-            ajax_canonicalizes => 1,
-            ajax_validates => 1,
-        }
-    });
-}
+param email =>
+    label is 'Email',
+    is ajax_canonicalizes,
+    is ajax_validates;
+
+};
 
 sub canonicalize_email {
     my $self = shift;
