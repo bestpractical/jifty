@@ -20,6 +20,7 @@ requires('Email::LocalDelivery');
 requires('Email::Send' => '1.99_01'); # Email::Send::Jifty::Test
 requires('Email::Simple');
 requires('Email::Simple::Creator');
+requires('Exporter::Lite');
 requires('File::Find::Rule');
 requires('File::MMagic');
 requires('File::ShareDir');
@@ -43,6 +44,7 @@ requires('Module::Install::Admin' => '0.50');
 requires('Module::Pluggable' => '2.95');
 requires('Module::Refresh' => '0.09');
 requires('Moose' => '0.11');
+requires('Object::Declare');
 requires('Params::Validate');
 requires('Pod::Simple'); #Pod::Simple::Text
 requires('Scalar::Defer');
