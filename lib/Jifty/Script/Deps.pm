@@ -47,6 +47,8 @@ sub run {
     # First let's find out our dependencies.
     # I think we can cache the result in META.yml or something.
 
+    warn "===> Scanning for dependencies...\n";
+
     my @files   = _get_files_in(grep { -d } map { $_, "share/$_" } qw( lib html bin ));
     my $map     = scan_deps(
         files   => \@files,
@@ -60,13 +62,16 @@ sub run {
         next if $mod->{file} eq "$Config::Config{privlib}/$key";
         next if $mod->{file} eq "$Config::Config{archlib}/$key";
         push @mod, _name($key);
+
+        warn " - $mod[-1]\n";
     }
+
+    warn "===> Populating share/deps/...\n";
 
     mkdir "share";
     mkdir "share/deps";
 
-    my $pat = '^(' . join('|', @mod) . ')$';
-    warn $pat;
+    my $pat = '/^(?:' . join('|', map { quotemeta($_) } @mod) . ')$/';
 
     cpan_to_par(
         pattern => $pat,
