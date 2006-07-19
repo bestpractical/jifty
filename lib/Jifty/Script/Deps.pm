@@ -47,7 +47,7 @@ sub run {
     # First let's find out our dependencies.
     # I think we can cache the result in META.yml or something.
 
-    warn "===> Scanning for dependencies...\n";
+    warn "Scanning for dependencies...\n";
 
     my @files   = _get_files_in(grep { -d } map { $_, "share/$_" } qw( lib html bin ));
     my $map     = scan_deps(
@@ -63,10 +63,10 @@ sub run {
         next if $mod->{file} eq "$Config::Config{archlib}/$key";
         push @mod, _name($key);
 
-        warn " - $mod[-1]\n";
+        warn "* $mod[-1]\n";
     }
 
-    warn "===> Populating share/deps/...\n";
+    warn "Populating share/deps/...\n";
 
     mkdir "share";
     mkdir "share/deps";
@@ -77,7 +77,7 @@ sub run {
         pattern => $pat,
         out     => 'share/deps/',
         follow  => 1,
-        verbose => 1,
+        verbose => 0,
         test    => 0,
     );
 }
