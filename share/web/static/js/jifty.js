@@ -114,7 +114,8 @@ Action.prototype = {
             var f = fields[i];
 
             if (   (Form.Element.getType(f) != "registration")
-		&& (Form.Element.getValue(f) != null)) {
+		&& (Form.Element.getValue(f) != null)
+                && (!Jifty.Placeholder.hasPlaceholder(f))) {
                 if (! a['fields'][Form.Element.getField(f)])
                     a['fields'][Form.Element.getField(f)] = {};
 		var field = Form.Element.getField(f);
@@ -235,6 +236,13 @@ Object.extend(Form, {
         }
         
         return elements;
+    },
+
+    clearPlaceholders: function(element) {
+        var elements = Form.getElements(element);
+        for(var i = 0; i < elements.length; i++) {
+            Jifty.Placeholder.clearPlaceholder(elements[i]);
+        }
     }
 });
 
@@ -366,7 +374,7 @@ Object.extend(Form.Element, {
             extras.push(e);
         }
         return extras;
-    }
+    },
 
 });
 
@@ -907,6 +915,14 @@ Object.extend(Jifty.Placeholder.prototype, {
      Event.observe(element, 'focus', this.onFocus.bind(this));
      Event.observe(element, 'blur', this.onBlur.bind(this));
      this.onBlur();
+
+     var form = Form.Element.getForm(element);
+     
+     if(!form.hasPlaceholders) {
+         form.hasPlaceholders = true;
+         Event.observe(form, 'submit',
+                       function () { Form.clearPlaceholders(form); } );
+     }
   },
 
   onBlur: function() {
@@ -917,12 +933,24 @@ Object.extend(Jifty.Placeholder.prototype, {
   },
 
   onFocus: function() {
-      if(Element.hasClassName(this.element, 'placeholder')) {
-        this.element.value = '';
-        Element.removeClassName(this.element, 'placeholder');
-      }
+     Jifty.Placeholder.clearPlaceholder(this.element);
+  },
+
+});
+
+Object.extend(Jifty.Placeholder, {
+
+   hasPlaceholder: function(elt) {
+     return Element.hasClassName(elt, 'placeholder');
+  },
+            
+  clearPlaceholder: function(elt) {
+     if(Jifty.Placeholder.hasPlaceholder(elt)) {
+       elt.value = '';
+       Element.removeClassName(elt, 'placeholder');
+     }
   }
-	    
+
 });
 
 
