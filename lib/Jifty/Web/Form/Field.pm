@@ -12,6 +12,7 @@ validator
 render_as
 label
 hints
+placeholder
 length
 mandatory
 
@@ -100,8 +101,8 @@ C<new>.  Subclasses should extend this list.
 
 =cut
 
-sub accessors { shift->SUPER::accessors(), qw(name label input_name type sticky sticky_value default_value action mandatory ajax_validates ajax_canonicalizes autocompleter preamble hints render_mode length _element_id); }
-__PACKAGE__->mk_accessors(qw(name _label _input_name type sticky sticky_value default_value _action mandatory ajax_validates ajax_canonicalizes autocompleter preamble hints render_mode length _element_id));
+sub accessors { shift->SUPER::accessors(), qw(name label input_name type sticky sticky_value default_value action mandatory ajax_validates ajax_canonicalizes autocompleter preamble hints placeholder render_mode length _element_id); }
+__PACKAGE__->mk_accessors(qw(name _label _input_name type sticky sticky_value default_value _action mandatory ajax_validates ajax_canonicalizes autocompleter preamble hints placeholder render_mode length _element_id));
 
 =head2 name [VALUE]
 
@@ -309,6 +310,7 @@ sub render {
     if ($self->render_mode eq 'update') { 
         $self->render_widget();
         $self->render_autocomplete();
+        $self->render_placeholder();
         $self->render_key_binding();
         $self->render_hints();
         $self->render_errors();
@@ -502,6 +504,27 @@ qq!<div class="autocomplete" id="@{[$self->element_id]}-autocomplete" style="dis
 
     return '';
 
+}
+
+=head2 render_placeholder
+
+Renders the javascript necessary to insert a placeholder into this
+form field (greyed-out text that is written in using javascript, and
+vanishes when the user focuses the field). Returns an empty string.
+
+=cut
+
+sub render_placeholder {
+    my $self = shift;
+    return unless $self->placeholder;
+    my $placeholder = $self->placeholder;
+    $placeholder =~ s{(['\\])}{(\\$1)}g;
+    Jifty->web->out(
+qq!<script type="text/javascript">
+     new Jifty.Placeholder('@{[$self->element_id]}', '$placeholder');
+   </script>
+!
+        );
 }
 
 =head2 render_hints

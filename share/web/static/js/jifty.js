@@ -700,6 +700,8 @@ function update() {
         
         alert("Unable to connect to server.\n\nTry again in a few minutes.");
 
+	Jifty.failedRequest = transport;
+
         var keys = request["actions"].keys();
         for ( var i = 0; i < keys.length; i++ ) {
             var a = new Action( request["actions"][ keys[i] ].moniker );
@@ -892,6 +894,35 @@ Object.extend(Object.extend(Jifty.Autocompleter.prototype, Ajax.Autocompleter.pr
   }
 
 
+});
+
+Jifty.Placeholder = Class.create();
+Object.extend(Jifty.Placeholder.prototype, {
+  element: null,
+  text: null,
+
+  initialize: function(element, text) {
+     this.element = $(element);
+     this.text = text;
+     Event.observe(element, 'focus', this.onFocus.bind(this));
+     Event.observe(element, 'blur', this.onBlur.bind(this));
+     this.onBlur();
+  },
+
+  onBlur: function() {
+     if(this.element.value == '') {
+       this.element.value = this.text;
+       Element.addClassName(this.element, 'placeholder');
+     }
+  },
+
+  onFocus: function() {
+      if(Element.hasClassName(this.element, 'placeholder')) {
+        this.element.value = '';
+        Element.removeClassName(this.element, 'placeholder');
+      }
+  }
+	    
 });
 
 

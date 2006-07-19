@@ -139,3 +139,7 @@ div.subline {
 .selected {
     background: #dddddd;
 }
+
+input.placeholder {
+    color: #666;
+}
