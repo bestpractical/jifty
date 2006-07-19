@@ -38,7 +38,7 @@ a database as necessary and then creates or updates your models' schema.
 
 sub run {
     my $self = shift;
-
+    local     $ENV{'PERL_MM_USE_DEFAULT'} = 1;
     Jifty->new( no_handle => 1 );
 
     my $root = Jifty::Util->app_root;
