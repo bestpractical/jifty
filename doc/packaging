@@ -39,3 +39,40 @@ For any Jifty application:
 
     jifty install/uninstall
         * some sort of management. will also work on plugins
+
+
+
+# A dist blib builder
+
+# A dist blib packager (->zip with a makefile.pl - it works as a par and as a dist)
+
+# Package multiple dists as a single dist.
+
+# Pony: an automatic deps-writer that will design a list of deps for 
+the systemwide currently installed modules.
+
+
+# Must include shared libs (expat, svn, etc)
+
+# Some way to deal with systemwide shared libs, like Pg
+
+# an alien extractor that analyzes already-built XS libs (in either blib/ or sitelib)
+with platform-specific tools (ldd, xtools, etc) and pull in shared libraries, similar
+to how Alien::* currentl does it in a case-by-case basis.
+
+# A dist blib upgrader
+
+# A cpan workalike for jifty dists
+
+# An installation scheme for
+
+    {$INSTALL_DIR,$APP_DIR}/share/jifty/deps/{`archname`,noarch}
+
+
+# one blib/ directory for the tuple of
+    (dist, version, `arch` or "noarch" , perl version?)
+
+# an @INC populator     
+    pushes a glob for arch-independent  (rename this: blib-noarch/*
+    pushes a glob for per-arch libs  blib-`arch`/*
+
