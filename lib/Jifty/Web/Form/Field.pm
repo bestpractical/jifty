@@ -518,7 +518,10 @@ sub render_placeholder {
     my $self = shift;
     return unless $self->placeholder;
     my $placeholder = $self->placeholder;
-    $placeholder =~ s{(['\\])}{(\\$1)}g;
+    $placeholder =~ s{(['\\])}{\\$1}g;
+    $placeholder =~ s{\n}{\\n}g;
+    $placeholder =~ s{\r}{\\r}g;
+    warn "placeholder: $placeholder";
     Jifty->web->out(
 qq!<script type="text/javascript">
      new Jifty.Placeholder('@{[$self->element_id]}', '$placeholder');
