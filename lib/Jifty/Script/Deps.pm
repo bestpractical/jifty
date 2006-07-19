@@ -52,7 +52,7 @@ sub run {
     my @files   = _get_files_in(grep { -d } map { $_, "share/$_" } qw( lib html bin ));
     my $map     = scan_deps(
         files   => \@files,
-        recurse => 0,
+        recurse => 1,
     );
 
     my @mod;
