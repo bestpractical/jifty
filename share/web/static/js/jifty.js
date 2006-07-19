@@ -911,8 +911,8 @@ Object.extend(Jifty.Placeholder.prototype, {
 
   onBlur: function() {
      if(this.element.value == '') {
-       this.element.value = this.text;
        Element.addClassName(this.element, 'placeholder');
+       this.element.value = this.text;
      }
   },
 
