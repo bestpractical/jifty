@@ -374,7 +374,7 @@ Object.extend(Form.Element, {
             extras.push(e);
         }
         return extras;
-    },
+    }
 
 });
 
@@ -948,7 +948,7 @@ Object.extend(Jifty.Placeholder.prototype, {
 
   onFocus: function() {
      Jifty.Placeholder.clearPlaceholder(this.element);
-  },
+  }
 
 });
 
