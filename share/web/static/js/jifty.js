@@ -932,7 +932,7 @@ Object.extend(Jifty.Placeholder.prototype, {
 
      var form = Form.Element.getForm(element);
      
-     if(!form.hasPlaceholders) {
+     if(form && !form.hasPlaceholders) {
          form.hasPlaceholders = true;
          Event.observe(form, 'submit',
                        function () { Form.clearPlaceholders(form); } );
