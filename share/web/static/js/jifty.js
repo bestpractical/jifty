@@ -849,7 +849,8 @@ Object.extend(Object.extend(Jifty.Autocompleter.prototype, Ajax.Autocompleter.pr
         beforeHide: this.beforeHide,
         frequency: 0.1,
         onShow: this.onShow,
-        onHide: this.onHide
+	onHide: this.onHide,
+	afterUpdateElement: this.afterUpdate
     });
   },
 
@@ -890,6 +891,10 @@ Object.extend(Object.extend(Jifty.Autocompleter.prototype, Ajax.Autocompleter.pr
         clearTimeout(this.observer);
     
     this.onObserverEvent();
+  },
+
+  afterUpdate: function(field, selection) {
+     Form.Element.validate(field);
   },
   
   getUpdatedChoices: function() {
