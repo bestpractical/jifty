@@ -847,8 +847,22 @@ Object.extend(Object.extend(Jifty.Autocompleter.prototype, Ajax.Autocompleter.pr
         minChars: "0",
         beforeShow: this.beforeShow,
         beforeHide: this.beforeHide,
-        frequency: 0.1
+        frequency: 0.1,
+        onShow: this.onShow,
+        onHide: this.onHide
     });
+  },
+
+  onShow: function(element, update) {
+      if(!update.style.position || update.style.position=='absolute') {
+        update.style.position = 'absolute';
+        Position.clone(element, update, {setHeight: false, offsetTop: element.offsetHeight});
+      }
+      Element.show( update );
+  },
+
+  onHide: function(element, update) {
+      Element.hide( update );
   },
 
   beforeShow: function(obj) {
