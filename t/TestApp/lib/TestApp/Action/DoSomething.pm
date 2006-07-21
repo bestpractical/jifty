@@ -5,8 +5,8 @@ use Jifty::Action schema {
 
 param email =>
     label is 'Email',
-    is ajax_canonicalizes,
-    is ajax_validates;
+    ajax canonicalizes,
+    ajax validates;
 
 };
 

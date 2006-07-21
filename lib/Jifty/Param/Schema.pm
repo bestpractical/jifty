@@ -54,6 +54,19 @@ to use in the declarative syntax here.
 
 The C<param> function is not available outside the C<schema> block.
 
+=head1 ALIASES
+
+In addition to the labels provided by L<Jifty::Web::Form::Field> and
+L<Jifty::Param>, this module offers the following aliases:
+
+    ajax validates,             # ajax_validates is 1
+    ajax canonicalizes,         # ajax_canonicalizes is 1
+    order is -1,                # sort_order is -1
+    default is 0,               # default_value is 0
+    valid are qw( 1 2 3 ),      # valid_values are qw( 1 2 3 )
+    available are qw( 1 2 3 ),  # available_values are qw( 1 2 3 )
+    render as 'select',         # render_as is 'select'
+
 =head1 SEE ALSO
 
 L<Object::Declare>, L<Scalar::Defer>
@@ -69,9 +82,17 @@ use Object::Declare (
     mapping => {
         param => 'Jifty::Param',
     },
+    aliases => {
+        default     => 'default_value',
+        available   => 'available_values',
+        valid       => 'valid_values',
+        render      => 'render_as',
+        order       => 'sort_order',
+    },
     copula  => {
         is      => '',
         are     => '',
+        as      => '',
         ajax    => 'ajax_',
     }
 );

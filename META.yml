@@ -56,7 +56,7 @@ requires:
   Module::Pluggable: 2.95
   Module::Refresh: 0.09
   Module::ScanDeps: 0
-  Object::Declare: 0.12
+  Object::Declare: 0.13
   PAR::Dist::FromCPAN: 0
   Params::Validate: 0
   Pod::Simple: 0

@@ -5,7 +5,7 @@ use Jifty::Action schema {
 
 param 'name';
 param 'quest';
-param 'colour' => valid_values are ("Blue, I mean greeeeeen!", "Green");
+param 'colour' => valid are ("Blue, I mean greeeeeen!", "Green");
 
 };
 
