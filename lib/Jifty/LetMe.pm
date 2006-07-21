@@ -231,7 +231,7 @@ Jifty->web->url, L</base_path> and L</as_encoded_token>
 
 sub as_url {
     my $self = shift;
-    return Jifty->web->url . $self->base_path. $self->as_encoded_token;
+    return Jifty->web->url(path => $self->base_path . $self->as_encoded_token);
 
 }
 

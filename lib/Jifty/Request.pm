@@ -507,7 +507,7 @@ sub save_continuation {
     );
 
     # Set us up with the new continuation
-    Jifty->web->_redirect( Jifty::Web->url . $path
+    Jifty->web->_redirect( Jifty->web->url(path => $path)
                       . ( $path =~ /\?/ ? "&" : "?" ) . "J:C="
                       . $c->id );
 }

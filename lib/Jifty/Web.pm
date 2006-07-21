@@ -106,29 +106,43 @@ sub out {
 =head3 url
 
 Returns the root url of this Jifty application.  This is pulled from
-the configuration file.  Takes an optional named parameter C<scheme>
-to specify the scheme.
+the configuration file.  Takes an optional named path which will
+form the path part of the resulting URL.
 
 =cut
 
 sub url {
     my $self = shift;
     my %args = (scheme => undef,
+                path => undef,
                 @_);
 
-    my $url  = Jifty->config->framework("Web")->{BaseURL};
-    my $port = Jifty->config->framework("Web")->{Port};
-   
     if ($args{'scheme'}) {
         $self->log->error("Jifty->web->url no longer accepts a 'scheme' argument");
     }
-    my $uri = URI->new($url);
-    $uri->port($port);
-
+    
+    my $uri;
     if ($ENV{'HTTP_HOST'}) {
-        return $uri->scheme ."://".$ENV{'HTTP_HOST'};
+      my $host = $ENV{HTTP_HOST};
+      if ($host !~ m{^http://}) {
+        $host = 'http://' . $host;
+      }
+      $uri = URI->new($host);
+    } else {
+      my $url  = Jifty->config->framework("Web")->{BaseURL};
+      my $port = Jifty->config->framework("Web")->{Port};
+   
+      $uri = URI->new($url);
+      $uri->port($port);
     }
 
+    if (defined $args{path}) {
+      my $path = $args{path};
+      # strip off leading '/' because ->canonical provides one
+      $path =~ s{^/}{};
+      $uri->path($path);
+    }
+    
     return $uri->canonical;
 }
 
