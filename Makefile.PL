@@ -21,6 +21,7 @@ requires('Email::LocalDelivery');
 requires('Email::Send' => '1.99_01'); # Email::Send::Jifty::Test
 requires('Email::Simple');
 requires('Email::Simple::Creator');
+requires('Exporter::Lite');
 requires('File::Find::Rule');
 requires('File::MMagic');
 requires('File::ShareDir');
@@ -43,8 +44,12 @@ requires('Module::CoreList');
 requires('Module::Install::Admin' => '0.50');
 requires('Module::Pluggable' => '2.95');
 requires('Module::Refresh' => '0.09');
+requires('Module::ScanDeps');
+requires('Object::Declare' => '0.12');
+requires('PAR::Dist::FromCPAN');
 requires('Params::Validate');
 requires('Pod::Simple'); #Pod::Simple::Text
+requires('Scalar::Defer' => '0.06');
 requires('String::Koremutake');
 requires('Test::Base' => 0.44);            # Test::Base::Filter
 requires('Test::HTTP::Server::Simple' => '0.02');

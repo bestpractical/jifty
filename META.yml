@@ -31,6 +31,7 @@ requires:
   Email::Send: 1.99_01
   Email::Simple: 0
   Email::Simple::Creator: 0
+  Exporter::Lite: 0
   File::Find::Rule: 0
   File::MMagic: 0
   File::ShareDir: 0
@@ -43,7 +44,7 @@ requires:
   HTTP::Server::Simple::Recorder: 0
   Hash::Merge: 0
   Hook::LexWrap: 0
-  JSON::Syck: 0.13
+  JSON::Syck: 0.14
   Jifty::DBI: 0.21
   LWP::UserAgent: 0
   Locale::Maketext::Extract: 0.20
@@ -54,8 +55,12 @@ requires:
   Module::Install::Admin: 0.50
   Module::Pluggable: 2.95
   Module::Refresh: 0.09
+  Module::ScanDeps: 0
+  Object::Declare: 0.12
+  PAR::Dist::FromCPAN: 0
   Params::Validate: 0
   Pod::Simple: 0
+  Scalar::Defer: 0.06
   String::Koremutake: 0
   Test::Base: 0.44
   Test::HTML::Lint: 0
