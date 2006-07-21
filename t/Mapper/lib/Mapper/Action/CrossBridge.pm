@@ -3,9 +3,9 @@ package Mapper::Action::CrossBridge;
 use Jifty::Param::Schema;
 use Jifty::Action schema {
 
-param name      => default_value is 'something';
+param name      => default is 'something';
 param 'quest';
-param colour    => valid_values are ("Blue, I mean greeeeeen!", "Green");
+param colour    => valid are ("Blue, I mean greeeeeen!", "Green");
 
 };
 

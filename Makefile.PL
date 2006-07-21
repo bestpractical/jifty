@@ -43,11 +43,12 @@ requires('Module::CoreList');
 requires('Module::Install::Admin' => '0.50');
 requires('Module::Pluggable' => '2.95');
 requires('Module::Refresh' => '0.09');
-requires('Moose' => '0.11');
-requires('Object::Declare' => '0.05');
+requires('Module::ScanDeps');
+requires('Object::Declare' => '0.13');
+requires('PAR::Dist::FromCPAN');
 requires('Params::Validate');
 requires('Pod::Simple'); #Pod::Simple::Text
-requires('Scalar::Defer');
+requires('Scalar::Defer' => '0.06');
 requires('String::Koremutake');
 requires('Test::Base' => 0.44);            # Test::Base::Filter
 requires('Test::HTTP::Server::Simple' => '0.02');
