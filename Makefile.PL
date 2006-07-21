@@ -44,6 +44,7 @@ requires('Module::Install::Admin' => '0.50');
 requires('Module::Pluggable' => '2.95');
 requires('Module::Refresh' => '0.09');
 requires('Module::ScanDeps');
+requires('Moose');
 requires('Object::Declare' => '0.13');
 requires('PAR::Dist::FromCPAN');
 requires('Params::Validate');

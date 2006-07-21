@@ -28,7 +28,6 @@ has sticky_on_failure   => qw( is rw isa Bool );
 no Moose;
 
 __PACKAGE__->mk_classdata(qw/PARAMS/);
-__PACKAGE__->mk_classdata(qw/PARAMS/);
 
 =head1 COMMON METHODS
 
