@@ -62,6 +62,7 @@ __PACKAGE__->javascript_libs([qw(
     yui/calendar.js
     app.js
     app_behaviour.js
+    css_browser_selector.js                                 
 )]);
 
 =head1 METHODS
