@@ -114,7 +114,8 @@ Action.prototype = {
             var f = fields[i];
 
             if (   (Form.Element.getType(f) != "registration")
-		&& (Form.Element.getValue(f) != null)) {
+		&& (Form.Element.getValue(f) != null)
+                && (!Jifty.Placeholder.hasPlaceholder(f))) {
                 if (! a['fields'][Form.Element.getField(f)])
                     a['fields'][Form.Element.getField(f)] = {};
 		var field = Form.Element.getField(f);
@@ -235,6 +236,13 @@ Object.extend(Form, {
         }
         
         return elements;
+    },
+
+    clearPlaceholders: function(element) {
+        var elements = Form.getElements(element);
+        for(var i = 0; i < elements.length; i++) {
+            Jifty.Placeholder.clearPlaceholder(elements[i]);
+        }
     }
 });
 
@@ -700,6 +708,8 @@ function update() {
         
         alert("Unable to connect to server.\n\nTry again in a few minutes.");
 
+	Jifty.failedRequest = transport;
+
         var keys = request["actions"].keys();
         for ( var i = 0; i < keys.length; i++ ) {
             var a = new Action( request["actions"][ keys[i] ].moniker );
@@ -837,8 +847,23 @@ Object.extend(Object.extend(Jifty.Autocompleter.prototype, Ajax.Autocompleter.pr
         minChars: "0",
         beforeShow: this.beforeShow,
         beforeHide: this.beforeHide,
-        frequency: 0.1
+        frequency: 0.1,
+        onShow: this.onShow,
+	onHide: this.onHide,
+	afterUpdateElement: this.afterUpdate
     });
+  },
+
+  onShow: function(element, update) {
+      if(!update.style.position || update.style.position=='absolute') {
+        update.style.position = 'absolute';
+        Position.clone(element, update, {setHeight: false, offsetTop: element.offsetHeight});
+      }
+      Element.show( update );
+  },
+
+  onHide: function(element, update) {
+      Element.hide( update );
   },
 
   beforeShow: function(obj) {
@@ -867,6 +892,10 @@ Object.extend(Object.extend(Jifty.Autocompleter.prototype, Ajax.Autocompleter.pr
     
     this.onObserverEvent();
   },
+
+  afterUpdate: function(field, selection) {
+     Form.Element.validate(field);
+  },
   
   getUpdatedChoices: function() {
       var request = { path: this.url, actions: {} };
@@ -891,6 +920,55 @@ Object.extend(Object.extend(Jifty.Autocompleter.prototype, Ajax.Autocompleter.pr
                        );
   }
 
+
+});
+
+Jifty.Placeholder = Class.create();
+Object.extend(Jifty.Placeholder.prototype, {
+  element: null,
+  text: null,
+
+  initialize: function(element, text) {
+     this.element = $(element);
+     this.text = text;
+     Event.observe(element, 'focus', this.onFocus.bind(this));
+     Event.observe(element, 'blur', this.onBlur.bind(this));
+     this.onBlur();
+
+     var form = Form.Element.getForm(element);
+     
+     if(form && !form.hasPlaceholders) {
+         form.hasPlaceholders = true;
+         Event.observe(form, 'submit',
+                       function () { Form.clearPlaceholders(form); } );
+     }
+  },
+
+  onBlur: function() {
+     if(this.element.value == '') {
+       Element.addClassName(this.element, 'placeholder');
+       this.element.value = this.text;
+     }
+  },
+
+  onFocus: function() {
+     Jifty.Placeholder.clearPlaceholder(this.element);
+  }
+
+});
+
+Object.extend(Jifty.Placeholder, {
+
+   hasPlaceholder: function(elt) {
+     return Element.hasClassName(elt, 'placeholder');
+  },
+            
+  clearPlaceholder: function(elt) {
+     if(Jifty.Placeholder.hasPlaceholder(elt)) {
+       elt.value = '';
+       Element.removeClassName(elt, 'placeholder');
+     }
+  }
 
 });
 

@@ -27,6 +27,7 @@ has preamble            => qw( is rw isa Str );
 has hints               => qw( is rw isa Str );
 has render_mode         => qw( is rw isa Str default update );
 has length              => qw( is rw isa Str );
+has placeholder         => qw( is rw isa Str );
 has element_id          => qw( is rw isa Str lazy 1 default ) => sub {
     my $self = shift;
     return $self->input_name."-".Jifty->web->serial;
@@ -266,6 +267,7 @@ sub render {
     if ($self->render_mode eq 'update') { 
         $self->render_widget();
         $self->render_autocomplete();
+        $self->render_placeholder();
         $self->render_key_binding();
         $self->render_hints();
         $self->render_errors();
@@ -459,6 +461,29 @@ qq!<div class="autocomplete" id="@{[$self->element_id]}-autocomplete" style="dis
 
     return '';
 
+}
+
+=head2 render_placeholder
+
+Renders the javascript necessary to insert a placeholder into this
+form field (greyed-out text that is written in using javascript, and
+vanishes when the user focuses the field). Returns an empty string.
+
+=cut
+
+sub render_placeholder {
+    my $self = shift;
+    return unless $self->placeholder;
+    my $placeholder = $self->placeholder;
+    $placeholder =~ s{(['\\])}{\\$1}g;
+    $placeholder =~ s{\n}{\\n}g;
+    $placeholder =~ s{\r}{\\r}g;
+    Jifty->web->out(
+qq!<script type="text/javascript">
+     new Jifty.Placeholder('@{[$self->element_id]}', '$placeholder');
+   </script>
+!
+        );
 }
 
 =head2 render_hints

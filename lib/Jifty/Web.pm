@@ -66,6 +66,7 @@ __PACKAGE__->javascript_libs([qw(
     yui/calendar.js
     app.js
     app_behaviour.js
+    css_browser_selector.js                                 
 )]);
 
 =head1 METHODS
@@ -814,9 +815,14 @@ sub _render_messages {
     
     my $plural = $type . "s";
     $self->out(qq{<div id="$plural">});
-    $self->out(qq[<a id="dismiss_$plural" href="#"
-                         onclick="Effect.Fade(this.parentNode); return false;">]
-               ._('Dismiss').qq[</a>]);
+    
+    $self->out( qq[<a id="dismiss_$plural" href="#" title="]
+               .  _('Dismiss')
+               .qq[" onmousedown="this.onfocus=this.blur;" onmouseup="this.onfocus=window.clientInformation?null:window.undefined" ]
+               .qq[ onclick="Effect.Fade(this.parentNode); return false;">]
+               .  _('Dismiss')
+               .qq[</a>]);
+               
     foreach my $moniker ( keys %results ) {
         if ( $results{$moniker}->$type() ) {
             $self->out( qq{<div class="$type $moniker">}
