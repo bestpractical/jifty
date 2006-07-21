@@ -84,7 +84,7 @@ EOT
 
 
     my $testFile = <<"EOT";
-#!/usr/bin/perl
+#!/usr/bin/env perl
 use warnings;
 use strict;
 
