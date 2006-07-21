@@ -4,13 +4,14 @@ Jifty::Manual::Actions - Doing Stuff With Jifty
 
 =head1 DESCRIPTION
 
-C<Jifty::Action> abstracts around the idea of taking named inputs
-(L<"arguments"|Jifty::Manual::Glossary/argument>), doing something
-with them, and returning some result to the user. If this sounds
-incredibly general, that's because it is -- actions do nearly
-B<everything> in Jifty.
+C<Jifty::Action> abstracts around the idea of declaring named
+(L<"parameters"|Jifty::Manual::Glossary/parameter>) at compile time.
+At runtime, the action collects user input as
+(L<"arguments"|Jifty::Manual::Glossary/argument>), do something with them,
+and returning some result to the user.  If this sounds incredibly
+general, that's because it is -- actions do nearly B<everything> in Jifty.
 
-C<Jifty::Action> will also generate HTML for you for its arguments --
+C<Jifty::Action> will also generate HTML for you from its parameters --
 no more manually writing C<< <input> >> tags and extracting GET and
 POST arguments by hand and dispatching them where they belong --
 C<Jifty::Action>> does it all for you.
@@ -47,80 +48,76 @@ in your application's directory, and Jifty would create a skeleton for
 you. )
 
 However, if you want to actually do something with your actions, you
-need to define two things: their L<arguments|/arguments>, and a
+need to define two things: their L<parameters|/parameters>, and a
 L</take_action> method.
 
-=head2 arguments
+=head2 parameters
 
-Every C<Jifty::Action> subclass should define a C<sub arguments> that
-returns a hashref describing what arguments it takes. Supposing we
-were writing a an action to post a blog article, we might start out
-with arguments like thus:
+Every C<Jifty::Action> subclass should define a C<schema>, which contains
+some C<param> declarations that describes what arguments it takes.
+Supposing we were writing a an action to post a blog article, we might start
+out with parameters like thus:
 
+    use Jifty::Param::Schema;
+    use Jifty::Action schema {
 
-    sub arguments {
-        my $self = shift;
-        return { title    => {},
-                 category => {},
-                 body     => {} };
-    }
+    param 'title';
+    param 'category';
+    param 'body';
+
+    };
 
 However, we've only scratched the surface of the power the
-C<arguments> API offers. Arguments (can) have types, labels,
+C<param> API offers.  Parameters can have types, labels,
 validators, canonicalizers, and even more. To start with, lets add
 some types and labels:
 
-    sub arguments {
-        my $self = shift;
-        return {
-            title    => {
-                label     => "Title",
-                length    => 50,
-                mandatory => 1,
-            },
-            category => {
-                label     => "Category",
-                length    => 30,
-               },
-            body     => {
-                label     => "Entry",
-                render_as => 'Textarea',
-               }
-        };
-    }
+    use Jifty::Param::Schema;
+    use Jifty::Action schema {
+
+    param title =>
+        label is 'Title',
+        length is 50,
+        is mandatory;
+
+    param category => 
+        label is 'Category',
+        length is 30;
+
+    param body =>
+        label is 'Entry',
+        render as 'Textarea';
+
+    };
 
 Now, we can ask the action to render form fields, and it will know how
 to display them. But, we can do even better. Let's improve the look of
 that C<category> field, by making it a combobox (a combination
 dropdown/text field), with some default values available:
 
-   ...
-   category => {
-            label            => "Category",
-            render_as        => "Combobox",
-            available_values => ["Personal", "Work", "Blog"]
-        },
-   ...
+    # ...
+    param category => 
+        label is 'Category',
+        render as 'Combobox',
+        available are qw( Personal Work Block );
+    # ...
 
 But a static list is lame. What we really want is a C<Category> model,
 and to keep track of all the categories users have entered:
 
-    ...
-    my $categories = MyBlog::Model::CategoryCollection->new();
-    $categories->unlimit;
-
-    ...
-        category => {
-            label            => "Category",
-            render_as        => "Select",
-            available_values => [
-                {
-                    display_from => 'name',
-                    value_from   => 'name',
-                    collection   => $categories
-                }
-            ]
-        },
+    # ...
+    param categories => 
+        label is 'Category',
+        render as 'Select',
+        available are defer {
+            my $categories = MyBlog::Model::CategoryCollection->new;
+            $categories->unlimit;
+            [{
+                display_from => 'name',
+                value_from   => 'name',
+                collection   => $categories,
+            }];
+        }
     ...
 
 Now, Jifty will populate the combox with the result of calling C<name>
@@ -131,7 +128,8 @@ combobox, however, since a combobox displays the selected value in its
 text field.
 
 See L<Jifty::Action> and L<Jifty::Web::Form::Field> for more fields
-you can set in the returned C<arguments> hash.
+you can set in the C<param> declaration, and see L<Jifty::Param::Schema>
+for more about the syntax.
 
 =head3 validation
 
@@ -294,7 +292,7 @@ arguments into an array before filling them in to the action. This
 provides a way to do, e.g. a C<BulkEdit> action that applies some set
 of changes to many records at once.
 
-(XXX TODO Note about C<constructor> arguments)
+(XXX TODO Note about C<constructor> parameters)
 
 =head1 ACTIONS AS WEB SERVICES
 
