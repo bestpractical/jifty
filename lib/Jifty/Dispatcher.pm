@@ -722,24 +722,8 @@ sub _do_show {
     $path = "$self->{cwd}/$path" unless $path =~ m{^/};
 
     # When we're requesting a directory, go looking for the index.html
-    if ( $path =~ m{/$} and $self->template_exists( $path . "/index.html" ) )
-    {
-
+    if ( $self->template_exists( $path . "/index.html" ) ) {
         $path .= "/index.html";
-    }
-
-    # Redirect to directory (and then index) if they requested
-    # the directory itself
-
-    # XXX TODO, we should search all component roots
-
-    if ($path !~ m{/$}
-        and -d Jifty::Util->absolute_path(
-            Jifty->config->framework('Web')->{'TemplateRoot'} . $path
-        )
-        )
-    {
-        $self->_do_show( $path . "/" );
     }
 
     my $abs_template_path = Jifty::Util->absolute_path(
