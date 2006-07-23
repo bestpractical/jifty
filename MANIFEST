@@ -15,6 +15,8 @@ doc/examples/CounterDemo/etc/config.yml
 doc/examples/CounterDemo/Makefile.PL
 doc/examples/CounterDemo/share/web/templates/index.html
 doc/examples/CounterDemo/t/00-counter-test.t
+doc/jifty-dispatcher.graffle
+doc/jifty-dispatcher.svg
 doc/packaging
 doc/plugin-requirements
 doc/plugin-syntax
@@ -91,6 +93,7 @@ lib/Jifty/Action/Redirect.pm
 lib/Jifty/API.pm
 lib/Jifty/Bootstrap.pm
 lib/Jifty/ClassLoader.pm
+lib/Jifty/Client.pm
 lib/Jifty/Collection.pm
 lib/Jifty/Config.pm
 lib/Jifty/Continuation.pm
@@ -106,9 +109,11 @@ lib/Jifty/LetMe.pm
 lib/Jifty/Logger.pm
 lib/Jifty/Manual/AccessControl.pod
 lib/Jifty/Manual/Actions.pod
+lib/Jifty/Manual/Continuations.pod
 lib/Jifty/Manual/Cookbook.pod
 lib/Jifty/Manual/Glossary.pod
 lib/Jifty/Manual/ObjectModel.pod
+lib/Jifty/Manual/PageRegions.pm
 lib/Jifty/Manual/Tutorial.pod
 lib/Jifty/Manual/Tutorial_ja.pod
 lib/Jifty/Mason/Halo.pm
@@ -117,6 +122,8 @@ lib/Jifty/Model/Session.pm
 lib/Jifty/Model/SessionCollection.pm
 lib/Jifty/Notification.pm
 lib/Jifty/Object.pm
+lib/Jifty/Param.pm
+lib/Jifty/Param/Schema.pm
 lib/Jifty/Plugin.pm
 lib/Jifty/Plugin/ClassLoader.pm
 lib/Jifty/Record.pm
@@ -128,6 +135,7 @@ lib/Jifty/RightsFrom.pm
 lib/Jifty/Script.pm
 lib/Jifty/Script/Action.pm
 lib/Jifty/Script/App.pm
+lib/Jifty/Script/Deps.pm
 lib/Jifty/Script/FastCGI.pm
 lib/Jifty/Script/Help.pm
 lib/Jifty/Script/Model.pm
@@ -251,6 +259,7 @@ share/web/static/js/bps_util.js
 share/web/static/js/calendar.js
 share/web/static/js/combobox.js
 share/web/static/js/context_menu.js
+share/web/static/js/css_browser_selector.js
 share/web/static/js/cssquery/cssQuery-level2.js
 share/web/static/js/cssquery/cssQuery-level3.js
 share/web/static/js/cssquery/cssQuery-standard.js
@@ -330,6 +339,8 @@ t/03-form-protocol.t
 t/05-dispatcher.t
 t/06-forms.t
 t/07-limit-actions.t
+t/08-client.t
+t/09-url.t
 t/99-pod-coverage.t
 t/99-pod.t
 t/Continuations/bin/jifty
@@ -350,6 +361,7 @@ t/Continuations/t/02-api.t
 t/Continuations/t/03-gc.t
 t/Continuations/t/04-before-blocks.t
 t/Jifty.pm
+t/lib/Jifty/SubTest.pm
 t/Mapper/bin/jifty
 t/Mapper/lib/Mapper/Action/CrossBridge.pm
 t/Mapper/lib/Mapper/Action/GetGrail.pm
@@ -379,5 +391,6 @@ t/TestApp/t/05-editactions-Cachable.t
 t/TestApp/t/05-editactions-Record.t
 t/TestApp/t/06-validation.t
 t/TestApp/t/07-sandboxing.t
+t/TestApp/t/08-notifications.t
 t/TestApp/t/config-Cachable
 t/TestApp/t/config-Record

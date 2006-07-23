@@ -19,3 +19,4 @@ merge_bleadperl$
 .*.swp
 var/*
 t/*/var/*
+doc/talks/*
