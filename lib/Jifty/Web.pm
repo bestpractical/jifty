@@ -143,7 +143,7 @@ sub url {
       $uri->path($path);
     }
     
-    return $uri->canonical;
+    return $uri->canonical->as_string;
 }
 
 =head3 serial 
