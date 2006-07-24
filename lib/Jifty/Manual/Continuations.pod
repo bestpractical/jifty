@@ -147,8 +147,8 @@ the new url.  This is particularly useful, say, for authentication
 protection in C<before> blocks:
 
     before '/protected' => sub {
-        Jifty->web->tangent( url => '/login' )
-          unless Jifty->web->current_user->id;
+        # shorthand for: Jifty->web->tangent( url => '/login' )
+        tangent('/login') unless Jifty->web->current_user->id;
     };
 
 And in the C</login> template:
