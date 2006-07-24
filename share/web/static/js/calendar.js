@@ -8,7 +8,8 @@ Jifty.Calendar = {
         
         if ( !input ) return false;
 
-        DOM.Events.addListener( input, "click", Jifty.Calendar.toggleCalendar );
+        DOM.Events.addListener( input, "focus", Jifty.Calendar.toggleCalendar );
+        DOM.Events.addListener( input, "blur", Jifty.Calendar.doBlur );
         return true;
     },
 
@@ -91,6 +92,24 @@ Jifty.Calendar = {
             
             Jifty.Calendar.openCalendar = "";
         }
+    },
+
+    _doneBlurOnce: false,
+    _blurredCalendar: '',
+    doBlur: function(ev) {
+        if ( Jifty.Calendar.openCalendar && !Jifty.Calendar._doneBlurOnce ) {
+            Jifty.Calendar._doneBlurOnce    = true;
+            Jifty.Calendar._blurredCalendar = Jifty.Calendar.openCalendar;
+            setTimeout( Jifty.Calendar.doBlur, 200 );
+            return;
+        }
+        else if ( Jifty.Calendar._doneBlurOnce
+                  && Jifty.Calendar._blurredCalendar == Jifty.Calendar.openCalendar )
+        {
+            Jifty.Calendar.hideOpenCalendar();
+        }
+        Jifty.Calendar._doneBlurOnce    = false;
+        Jifty.Calendar._blurredCalendar = '';
     }
 };
 
