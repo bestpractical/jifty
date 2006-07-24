@@ -20,6 +20,20 @@ if ( Jifty->handler->cgi->http('If-Modified-Since')
 $r->content_type("application/x-javascript");
 $r->header_out( 'Expires' => HTTP::Date::time2str(time + 31536000) );
 
-Jifty->web->out( Jifty->web->cached_javascript );
+# XXX TODO: If we start caching the squished JS in a file somewhere, we
+# can have the static handler serve it, which would take care of gzipping
+# for us.
+use Compress::Zlib qw();
+
+if ( Jifty::View::Static::Handler->client_accepts_gzipped_content ) {
+    Jifty->log->debug("Sending gzipped squished JS");
+    $r->header_out( "Content-Encoding" => "gzip" );
+    binmode STDOUT;
+    print Compress::Zlib::memGzip( Jifty->web->cached_javascript );
+}
+else {
+    Jifty->log->debug("Sending squished JS");
+    print Jifty->web->cached_javascript;
+}
 return;
 </%init>
