@@ -262,7 +262,10 @@ sub setup_database_connection {
         or __PACKAGE__->config->framework('SkipDatabase')
         or not __PACKAGE__->config->framework('Database') )
     {
-        __PACKAGE__->handle( Jifty::Handle->new() );
+
+        my $handle_class = (Jifty->config->framework('ApplicationClass') . "::Handle");
+        Jifty::Util->require( $handle_class );
+        __PACKAGE__->handle( $handle_class->new );
         __PACKAGE__->handle->connect();
         __PACKAGE__->handle->check_schema_version();
     }
