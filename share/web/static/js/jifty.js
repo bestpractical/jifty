@@ -515,6 +515,10 @@ var current_args = $H();
 //     - 'mode' is one of 'Replace', or the name of a Prototype Insertion
 //     - 'effect' is the name of a Prototype Effect
 function update() {
+    // If we don't have XMLHttpRequest, bail and fallback on full-page
+    // loads
+    if(!Ajax.getTransport()) return true;
+    
     show_wait_message();
     var named_args = arguments[0];
     var trigger    = arguments[1];
