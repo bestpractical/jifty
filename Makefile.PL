@@ -10,6 +10,9 @@ requires('Class::Accessor'); # Class::Accessor::Fast
 requires('Class::Accessor::Named'); 
 requires('Class::Container');
 requires('Class::Data::Inheritable');
+requires('CGI::Cookie::Splitter');
+requires('Crypt::CBC');
+requires('Crypt::Rijndael');
 requires('Compress::Zlib');
 requires('CSS::Squish' => 0.05 );
 requires('DBD::SQLite' => 1.11 );
