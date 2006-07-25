@@ -90,15 +90,17 @@ sub load {
             : Jifty::Model::Session->new_session_id,
     }
 
-    # XXX - Cookie mangling detection
-    if (exists $cookies{"JIFTY_DAT_$session_id"}) {
+    my ($data) = grep {
+        $_->name eq "JIFTY_DAT_$session_id"
+    } $splitter->join(values %cookies);
+    if ($data) {
         local $@;
         eval {
             $self->_session(
                 Jifty::YAML::Load(
                     Compress::Zlib::uncompress(
                         $self->_cipher->decrypt(
-                            $cookies{"JIFTY_DAT_$session_id"}->value
+                            $data->value
                         )
                     )
                 )
