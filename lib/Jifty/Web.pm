@@ -147,7 +147,7 @@ sub url {
       $uri->path($path);
     }
     
-    return $uri->canonical;
+    return $uri->canonical->as_string;
 }
 
 =head3 serial 
@@ -731,12 +731,15 @@ sub link {
 
 =head3 return PARAMHASH
 
-Generates and renders a L<Jifty::Web::Form::Clickable> using the given
-I<PARAMHASH>, additionally defaults to calling the current
-continuation.
+If called in non-void context, creates and renders a
+L<Jifty::Web::Form::Clickable> using the given I<PARAMHASH>,
+additionally defaults to calling the current continuation.
 
 Takes an additional argument, C<to>, which can specify a default path
 to return to if there is no current continuation.
+
+In void context, does a redirect to the URL that the
+L<Jifty::Web::Form::Clickable> object generates.
 
 =cut
 
@@ -745,11 +748,22 @@ sub return {
     my %args = (@_);
     my $continuation = Jifty->web->request->continuation;
     if (not $continuation and $args{to}) {
-        $continuation = Jifty::Continuation->new(request => Jifty::Request->new(path => $args{to}));
+        $continuation = Jifty::Continuation->new(
+            request => Jifty::Request->new(path => $args{to})
+        );
     }
     delete $args{to};
 
-    $self->link( call => $continuation, %args );
+    my $clickable = Jifty::Web::Form::Clickable->new(
+        call => $continuation, %args
+    );
+
+    if ( defined wantarray ) {
+        return $clickable->generate;
+    }
+    else {
+        $self->redirect($clickable);
+    }
 }
 
 =head3 render_messages [MONIKER]

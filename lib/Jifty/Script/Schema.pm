@@ -453,6 +453,8 @@ sub manage_database_existence {
         if ( $self->{'print'} ) {
             print "DROP DATABASE $database;\n";
         } elsif ( $driver eq 'SQLite' ) {
+            # Win32 complains when you try to unlink open DB
+            $handle->disconnect if $^O eq 'MSWin32';
             unlink($database);
         } else {
             $handle->simple_query("DROP DATABASE $database");

@@ -1,3 +1,90 @@
+0.60722
+
+* Dispatcher fixes to deal with the better canonicalization we started doing in
+   0.60707
+* changed all instances of '/usr/bin/perl' to '/usr/bin/env perl'
+* added a path option to Jifty::Web->url
+* added url tests
+* Jifty::Manual::Actions -- update the worldview to reflect the
+  parameters/arguments concept split.
+* Introduce aliases.  See Jifty::Param::Schema for the table.
+* Declarative Jifty Parameters.
+* See Jifty::Param and Jifty::Param::Schema for the new syntax.
+* Also added dependencies for Jifty::Script::Deps and declarative parameters.
+* Also updated test applications to use declarative parameters. 
+* Adding the CSS browser selector trick from http://rafael.adm.br/css_browser_selector/ to Jifty
+* After autocomplete, trigger a validation.
+* Upping JSON::Syck version dependency. 0.14 fixes escaping in single-quoted strings.
+* Add a tooltip to the dismiss link and hide the dotted border
+* Trailing commas are not good for JS in Safari
+* Let's not blow up if we have placeholders on an input without a form
+* Don't fade autocomplete in and out, just show and hide it
+* Not submitting placeholder values when we submit forms or AJAX
+* Add the class before we set the text, so that it appears grayed-out, rather than appearing and *then* graying out
+* Support multi-line placeholders
+* textareas can have placeholders, too; Style them appropriately as well
+* Adding support for placeholders, grayed-out text in form fields that is written in with JS and vanishes on focus
+* Auto-accept cpan's wisdom about prompts (Jifty::Deps)
+* 0th sketch at "jifty deps"
+* packaging plan updates
+* J::Web::redirect can take a Clickable as arg, so make goto do that, instead of passing a URL with parameters, which doesn't work right
+* Proper port support on urls. Thanks to jpeacock.
+*  Resolve inconsistent filenames vs packages (Plugins)
+* Switched Jifty::Web::url to use uri.pm rather than "heuristics"
+* Let's not blow up if an action has a result that's an unblessed reference.
+* Don't upgrade the database versions with schema --print. I'm not sure
+  if there's a good way to persuade JDBI to give us the SQL to print, so
+  we're just spitting out a warning for now, but that's better than the
+  old behavior.
+* Stop notification from flipping out if you use a scalar as the To:
+* basic smoke test for jifty's notifications 
+* Only set active child on create if we have a request
+* More serious failure message, and don't imply that it's necessarily the server's fault.
+* update .po files
+* Jifty::Dispatcher - there's no call_next, remove it from POD, fnord.
+* Refactoring message rendering slightly
+* Fix Jifty-Win32 by having canonicalize_path always returning
+  /-separated paths, never \-separated paths.
+* Let classes be set on menu items
+* Adding a warning about our slow Rico.Corner.round
+* Documenting how to write sane Behaviours that don't leak memory (leak
+  less memory, probably) in IE and aren't dog-slow.
+* Fix JS memory leak in IE
+* Make jifty tests respect the current given @INC, so it doesn't
+  use lib when you are supposed to use blib during make test.
+* Make the subtest system less painful.
+* Use Jifty::Script to invoke test server, so it doesn't depend on
+  bin/jifty.
+* Fix a Safari display bug
+* Fix calendar positioning bug and make sure it works when the date field is within a relative or absolutely positioned element
+* Test file for Jifty::Client
+* First pass at a Jifty client module.
+*  English orthography fixes.
+* Trailing commas in Perl are good.  In Javascript, they aren't, and sometimes cause IE to barf (like this one).
+*  Hide focus border
+* Lowering the autocomplete delay
+* first-pass editorial run over Continuations.pod.
+* Sketchy sketchy handwavy descriptions of page region backend.
+  Ramblings totally not expected to be interpretable.
+* Wrap the popup notification div in dropshadow wrapper hooks
+* Mention webservices in Actions doc
+* Double fallback goes the way of the dodo
+* Continuation manual
+* Set up the output API for mapping of request parameters (input API
+  already existed)
+* Change method of getting results out of response on continuation RETURN
+* Fewer calls to ->arguments, though they might be cached already.
+* Not all CurrentUser classes may have a "nobody"
+* Jifty::Web::Form:Clickable - provide a bit more info on how to use
+  the "returns" field.
+* jifty-dispatcher.graffle that shows the dispatch chain.
+* Nicer "server down" message
+* Re-enable form inputs after failure
+* toggleable page region clickables weren't doing the right thing when used in non-ajax mode
+* Fix the validation and autocomplete race condition
+* Skip nobody and superuser when we do notifications
+
+
 060707
 
   * Minor build fixes

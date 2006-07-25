@@ -71,8 +71,8 @@ user access to private I<component> templates such as the F<_elements>
 directory in a default Jifty application.  They're also the right way
 to enable L<Jifty::LetMe> actions.
 
-You can entirely stop processing with the C<redirect> and C<abort>
-directives, though L</after> rules will still run.
+You can entirely stop processing with the C<redirect>, C<tangent> and
+C<abort> directives, though L</after> rules will still run.
 
 =item on
 
@@ -82,15 +82,15 @@ place to set up view-specific objects or load up values for your
 templates.
 
 Dispatcher directives are evaluated in order until we get to either a
-C<show>, C<redirect> or an C<abort>.
+C<show>, C<redirect>, C<tangent> or C<abort>.
 
 =item after
 
 L<after> rules let you clean up after rendering your page. Delete your
 cache files, write your transaction logs, whatever.
 
-At this point, it's too late to C<show>, C<redirect> or C<abort> page
-display.
+At this point, it's too late to C<show>, C<redirect>, C<tangent> or C<abort>
+page display.
 
 =back
 
@@ -241,6 +241,10 @@ Abort the request; this skips straight to the cleanup stage.
 
 Redirect to another URI.
 
+=head2 tangent $uri
+
+Take a continuation here, and tangent to another URI.
+
 =head2 plugin
 
 See L</Plugins and rule ordering>, above.
@@ -252,7 +256,7 @@ our @EXPORT = qw<
 
     before on after
 
-    show dispatch abort redirect
+    show dispatch abort redirect tangent
 
     GET POST PUT HEAD DELETE OPTIONS
 
@@ -278,6 +282,7 @@ sub run (&@)      { _ret @_ }    # execute a block of code
 sub show (;$@)    { _ret @_ }    # render a page
 sub dispatch ($@) { _ret @_ }    # run dispatch again with another URI
 sub redirect ($@) { _ret @_ }    # web redirect
+sub tangent ($@)  { _ret @_ }    # web tangent
 sub abort (;$@)   { _ret @_ }    # abort request
 sub default ($$@) { _ret @_ }    # set parameter if it's not yet set
 sub set ($$@)     { _ret @_ }    # set parameter
@@ -673,7 +678,7 @@ sub _do_run {
 
 This method is called by the dispatcher internally. You shouldn't need to.
 
-Redirect the user to the URL provded in the mandatory PATH argument.
+Redirect the user to the URL provided in the mandatory PATH argument.
 
 =cut
 
@@ -681,6 +686,21 @@ sub _do_redirect {
     my ( $self, $path ) = @_;
     $self->log->debug("Redirecting to $path");
     Jifty->web->redirect($path);
+}
+
+=head2 _do_tangent PATH
+
+This method is called by the dispatcher internally. You shouldn't need to.
+
+Take a tangent to the URL provided in the mandatory PATH argument.
+(See L<Jifty::Manual::Continuation> for more about tangents.)
+
+=cut
+
+sub _do_tangent {
+    my ( $self, $path ) = @_;
+    $self->log->debug("Taking a tangent to $path");
+    Jifty->web->tangent(url => $path);
 }
 
 =head2 _do_abort 
@@ -722,24 +742,8 @@ sub _do_show {
     $path = "$self->{cwd}/$path" unless $path =~ m{^/};
 
     # When we're requesting a directory, go looking for the index.html
-    if ( $path =~ m{/$} and $self->template_exists( $path . "/index.html" ) )
-    {
-
+    if ( $self->template_exists( $path . "/index.html" ) ) {
         $path .= "/index.html";
-    }
-
-    # Redirect to directory (and then index) if they requested
-    # the directory itself
-
-    # XXX TODO, we should search all component roots
-
-    if ($path !~ m{/$}
-        and -d Jifty::Util->absolute_path(
-            Jifty->config->framework('Web')->{'TemplateRoot'} . $path
-        )
-        )
-    {
-        $self->_do_show( $path . "/" );
     }
 
     my $abs_template_path = Jifty::Util->absolute_path(
@@ -995,6 +999,14 @@ All other C<*> can match zero or more non-slash characters:
 
 =item *
 
+Two stars (C<**>) can match zero or more characters, including slash:
+
+    /**/bar
+    /foo/**
+    **
+
+=item *
+
 Consecutive C<?> marks are captured together:
 
     /foo???bar      # One capture for ???
@@ -1021,6 +1033,10 @@ sub _compile_glob {
         \\ \*        # star
         (?= / | \z)  # lookahead for slash or end-of-string
     }{([^/]+)}gx;
+    $glob =~ s{
+        # Two stars can match zero or more characters, including slash.
+        \\ \* \\ \*
+    }{(.*)}gx;
     $glob =~ s{
         # All other stars can match zero or more non-slash character.
         \\ \*
