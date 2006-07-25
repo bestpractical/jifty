@@ -293,7 +293,7 @@ sub set_cookie {
 =head2 cookie_name
 
 Returns the current session's cookie_name -- it is the same for all
-users, but varies accorting to the port the server is running on.
+users, but varies according to the port the server is running on.
 
 =cut
 
