@@ -387,7 +387,7 @@ sub form {
 
 Creates a new action (an instance of a subclass of L<Jifty::Action>)
 
-C<CLASS> is L<qualified|Jifty::Util/qualify>, and an instance of that
+C<CLASS> is L<qualified|Jifty::API/qualify>, and an instance of that
 class is created, passing the C<Jifty::Web> object, the C<MONIKER>,
 and any other arguments that C<new_action> was supplied.
 
