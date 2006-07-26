@@ -15,6 +15,34 @@ We
 Make
 SVK
 ----
+We're
+Making
+Hiveminder
+----
+It's a 
+web app
+----
+So's RT
+----
+RT predates
+modern
+frameworks
+----
+We learned
+our lesson
+----
+Decided to use
+a framework!
+----
+Nothing worked
+like my head does.
+----
+WARNING:
+I may be 
+insane
+----
+So...
+----
 We
 Make
 Jifty
@@ -634,6 +662,9 @@ Login
      }
  };
 ----
+Won't show:
+{{#i|Blog::Action::Login}}
+----
 {{#i|share/web/templates/login}}
 ----
  &lt;%init>
@@ -648,12 +679,6 @@ Login
     &lt;% Jifty->web->return( label => 'Login') %>
   &lt;% Jifty->web->form->end %>
  &lt;/&amp;>
-
-~ call => Jifty->web->request->continuation) %>
-~ alexmv, do we need this in form->start?
-----
-Didn't show:
-{{#i|Blog::Action::Login}}
 ----
 {{#tag|Templates and Fragments (View)}}
 ----
@@ -733,6 +758,9 @@ Standalone Server
 ----
 Halos
 ----
+(Stolen from
+Seaside)
+----
 {{img src="npw.2006/halo2.png" width="468" height="665"}}
 ----
 Template 
@@ -742,11 +770,19 @@ SQL Logging
 ----
 SQL Profiling
 ----
-{{img src="npw.2006/halo.png" width="428" height="391"}}
+{{img src="npw.2006/halo2.png" width="468" height="665"}}
 ----
 View Introspection
 ----
 Online Editing
+----
+{{img src="npw.2006/halo.png" width="428" height="391"}}
+----
+(Seaside's are
+still cooler)
+----
+Go to Avi Bryant's
+Seaside talk
 ----
 {{#i|Module::Refresh}}
 ----
