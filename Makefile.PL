@@ -27,7 +27,7 @@ requires('Email::Simple::Creator');
 requires('Exporter::Lite');
 requires('File::Find::Rule');
 requires('File::MMagic');
-requires('File::ShareDir');
+requires('File::ShareDir' => '0.04');
 requires('HTML::Entities');
 requires('HTML::Mason' => 1.3101);           # HTML::Mason::Exceptions HTML::Mason::FakeApache HTML::Mason::MethodMaker HTML::Mason::Request HTML::Mason::Utils
 requires('HTML::Mason::Plugin');
