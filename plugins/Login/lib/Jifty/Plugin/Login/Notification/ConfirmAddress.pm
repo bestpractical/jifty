@@ -6,7 +6,7 @@ use base qw/Jifty::Notification Jifty::Plugin::Login/;
 
 =head1 NAME
 
-Hiveminder::Notification::ConfirmAddress
+Jifty::Plugin::Login::Notification::ConfirmAddress
 
 =head1 ARGUMENTS
 
