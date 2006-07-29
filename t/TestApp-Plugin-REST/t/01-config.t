@@ -2,6 +2,8 @@
 use strict;
 use warnings;
 
+use lib 'plugins/REST/lib';
+
 #use Jifty::Test tests => 3;
 use Jifty::Test tests => 1;
 
