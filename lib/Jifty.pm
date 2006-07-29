@@ -62,7 +62,7 @@ probably a better place to start.
 use base qw/Jifty::Object/;
 use Jifty::Everything;
 
-use vars qw/$HANDLE $CONFIG $LOGGER $HANDLER $API @PLUGINS/;
+use vars qw/$HANDLE $CONFIG $LOGGER $HANDLER $API $CLASS_LOADER @PLUGINS/;
 
 =head1 METHODS
 
@@ -106,10 +106,9 @@ sub new {
     );
 
     # Load the configuration. stash it in ->config
-    __PACKAGE__->config( Jifty::Config->new() );
+    Jifty->config( Jifty::Config->new() );
 
     Jifty::I18N->new(); # can't do this before we have the config set up
-
 
     # Now that we've loaded the configuration, we can remove the temporary 
     # Jifty::DBI::Record baseclass for records and insert our "real" baseclass,
@@ -118,7 +117,7 @@ sub new {
     Jifty::Util->require( Jifty->config->framework('Database')->{'RecordBaseClass'});
     push @Jifty::Record::ISA, Jifty->config->framework('Database')->{'RecordBaseClass'};
 
-    __PACKAGE__->logger( Jifty::Logger->new( $args{'logger_component'} ) );
+    Jifty->logger( Jifty::Logger->new( $args{'logger_component'} ) );
 
     # Set up plugins
     my @plugins;
@@ -131,14 +130,19 @@ sub new {
     }
 
     # Get a classloader set up
-    Jifty::ClassLoader->new(base => Jifty->config->framework('ApplicationClass'))->require;
+    my $class_loader = Jifty::ClassLoader->new(
+        base => Jifty->config->framework('ApplicationClass')
+    );
 
-    __PACKAGE__->plugins(@plugins);
-    __PACKAGE__->handler(Jifty::Handler->new());
-    __PACKAGE__->api(Jifty::API->new());
+    Jifty->class_loader($class_loader);
+    $class_loader->require;
+
+    Jifty->plugins(@plugins);
+    Jifty->handler(Jifty::Handler->new());
+    Jifty->api(Jifty::API->new());
 
     # Let's get the database rocking and rolling
-    __PACKAGE__->setup_database_connection(%args);
+    Jifty->setup_database_connection(%args);
 
     # Call the application's start method to let it do anything
     # application specific for startup
@@ -235,6 +239,19 @@ sub plugins {
     return @PLUGINS;
 }
 
+=head2 class_loader
+
+An accessor for the L<Jifty::ClassLoader> object that stores the loaded
+classes for the application.
+
+=cut
+
+sub class_loader {
+    my $class = shift;
+    $CLASS_LOADER = shift if (@_);
+    return $CLASS_LOADER;
+}
+
 =head2 setup_database_connection
 
 Set up our database connection. Optionally takes a param hash with a
@@ -259,15 +276,15 @@ sub setup_database_connection {
     my %args = (no_handle =>0,
                 @_);
     unless ( $args{'no_handle'}
-        or __PACKAGE__->config->framework('SkipDatabase')
-        or not __PACKAGE__->config->framework('Database') )
+        or Jifty->config->framework('SkipDatabase')
+        or not Jifty->config->framework('Database') )
     {
 
         my $handle_class = (Jifty->config->framework('ApplicationClass') . "::Handle");
         Jifty::Util->require( $handle_class );
-        __PACKAGE__->handle( $handle_class->new );
-        __PACKAGE__->handle->connect();
-        __PACKAGE__->handle->check_schema_version();
+        Jifty->handle( $handle_class->new );
+        Jifty->handle->connect();
+        Jifty->handle->check_schema_version();
     }
 }
 
