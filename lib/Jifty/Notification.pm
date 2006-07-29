@@ -7,7 +7,6 @@ use base qw/Jifty::Object Class::Accessor::Fast/;
 use Email::Send            ();
 use Email::Simple          ();
 use Email::Simple::Creator ();
-use Text::Autoformat;
 
 __PACKAGE__->mk_accessors(
     qw/body preface footer subject from _recipients _to_list to/);
@@ -93,8 +92,7 @@ sub send_one_message {
             To      => $to,
             Subject => $self->subject || 'No subject',
         ],
-        body => autoformat ( join( "\n", $self->preface, 
-				   $self->body, $self->footer ) )
+        body => join( "\n", $self->preface, $self->body, $self->footer )
     );
     $self->set_headers($message);
 
