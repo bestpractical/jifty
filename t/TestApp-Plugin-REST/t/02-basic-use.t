@@ -24,9 +24,12 @@ isa_ok($server, 'Jifty::Server');
 my $URL     = $server->started_ok;
 my $mech    = Jifty::Test::WWW::Mechanize->new();
 
-
 ok(1, "Loaded the test script");
 
+my $u1 = TestApp::Plugin::REST::Model::User->new(
+    current_user => TestApp::Plugin::REST::CurrentUser->superuser );
+$u1->create( name => 'jesse', email => 'audreyt@audreyt.org' );
+ok( $u1->id );
 
 # on GET    '/=/model'       => \&list_models;
 
@@ -51,11 +54,21 @@ is($mech->status,'404');
 
 
 $mech->get_ok('/=/model/User');
-my @keys =  @{get_content()};
+my %keys =  %{get_content()};
+
+is (keys %keys, 4, "The model has 4 keys");
+is ((sort keys %keys), qw/id name email tasty/);
 
 
 # on GET    '/=/model/*/*'   => \&list_model_items;
+$mech->get_ok('/=/model/user/id');
+my @rows = @{get_content()};
+is ($#rows,1);
+
+
 # on GET    '/=/model/*/*/*' => \&show_item;
+$mech->get_ok('/=/model/user/id/1');
+my %content = %{get_content()};
 # on PUT    '/=/model/*/*/*' => \&replace_item;
 # on DELETE '/=/model/*/*/*' => \&delete_item;
 # on GET    '/=/action'      => \&list_actions;
