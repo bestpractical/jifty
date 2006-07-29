@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-package Jifty::Plugin::REST;
+package Jifty::Plugin::REST::Dispatcher;
 use Jifty::Dispatcher -base;
 
 #before '/=/**' => run {
@@ -10,7 +10,7 @@ use Jifty::Dispatcher -base;
 #};
 
 before qr{^ (/=/ .*) \. (js|yml|perl|csv) $}x => run {
-    header(Accept => $2);
+    $ENV{HTTP_ACCEPT} = $2;
     dispatch $1;
 };
 
@@ -32,31 +32,39 @@ on GET    '/=/action/*'    => \&list_action_params;
 on POST   '/=/action/*'    => \&run_action;
 
 sub list_models {
+    die "hey list models";
 }
 
 sub list_model_keys {
+    die "hey list keys";
 }
 
 sub list_model_items {
+    die "hey list items";
 }
 
 sub show_item {
+    die "hey show items";
 }
 
 sub replace_item {
+    die "hey replace item";
 }
 
 sub delete_item {
+    die "hey delete item";
 }
 
 sub list_actions {
+    die "hey list actions";
 }
 
 sub list_action_params {
+    die "hey action params";
 }
 
 sub run_action {
+    die "run action";
 }
-
 
 1;
