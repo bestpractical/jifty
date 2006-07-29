@@ -9,6 +9,7 @@
 <h2><%_('Models')%></h2>
 <ul>
 % foreach my $model (Jifty->class_loader->models) {
+% next unless $model->isa('Jifty::Record');
 % next unless ($model =~ /^(?:.*)::(.*?)$/);
 % my $type = $1;
 <li><% Jifty->web->link( url => '/__jifty/admin/model/'.$type, label => $type)%>
