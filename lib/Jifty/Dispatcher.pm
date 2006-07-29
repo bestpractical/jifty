@@ -902,8 +902,8 @@ came in with that method.
 
 sub _match_method {
     my ( $self, $method ) = @_;
-    $self->log->debug("Matching URL ".$self->{cgi}->method." against ".$method);
-    lc( $self->{cgi}->method ) eq lc($method);
+    $self->log->debug("Matching URL $ENV{REQUEST_METHOD} against ".$method);
+    lc( $ENV{REQUEST_METHOD} ) eq lc($method);
 }
 
 sub _match_plugin {
