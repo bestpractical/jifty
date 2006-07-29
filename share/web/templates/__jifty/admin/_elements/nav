@@ -1,10 +1,9 @@
 <%init>
 
-# Set up application-specific parts
-my $ApplicationClass = Jifty->config->framework('ApplicationClass');
-
 my $nav = Jifty->web->navigation->child("Administration" => url => '/__jifty/admin/');
 foreach my $model (Jifty->class_loader->models) {
+    next unless $model->isa( 'Jifty::Record' );
+    next if $model =~ /::SUPER$/;
     next unless ($model =~ /^(?:.*)::(.*?)$/);
     my $type = $1;
     $nav->child($type   => url => '/__jifty/admin/model/'.$type);
