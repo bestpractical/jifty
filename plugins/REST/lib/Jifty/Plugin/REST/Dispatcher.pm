@@ -31,8 +31,13 @@ on GET    '/=/action'      => \&list_actions;
 on GET    '/=/action/*'    => \&list_action_params;
 on POST   '/=/action/*'    => \&run_action;
 
+sub list {
+    print YAML::Syck::Dump(\@_);
+    abort(200);
+}
+
 sub list_models {
-    die "hey list models";
+    list(Jifty->class_loader->models);
 }
 
 sub list_model_keys {
