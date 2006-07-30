@@ -881,6 +881,7 @@ HTML-escapes the given string and returns it
 =cut
 
 sub escape {
+    no warnings 'uninitialized';
     my $self = shift;
     return join '', map {my $html = $_; Jifty::View::Mason::Handler::escape_utf8( \$html ); $html} @_;
 }
@@ -892,6 +893,7 @@ URI-escapes the given string and returns it
 =cut
 
 sub escape_uri {
+    no warnings 'uninitialized';
     my $self = shift;
     return join '', map {my $uri = $_; Jifty::View::Mason::Handler::escape_uri( \$uri ); $uri} @_;
 }

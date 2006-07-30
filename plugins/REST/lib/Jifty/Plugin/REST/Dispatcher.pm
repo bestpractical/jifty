@@ -38,6 +38,8 @@ on POST   '/=/action/*'    => \&run_action;
 sub list { outs(\@_) }
 
 sub outs {
+    no warnings 'utf8';
+
     my $accept = ($ENV{HTTP_ACCEPT} || '');
     if ($accept =~ /ya?ml/i) {
         Jifty->handler->apache->header_out('Content-Type' => 'text/yaml; charset=UTF-8');
