@@ -52,12 +52,12 @@ sub outs {
     } @$prefix);
 
     if ($accept =~ /ya?ml/i) {
-        $apache->header_out('Content-Type' => 'text/yaml; charset=UTF-8');
+        $apache->header_out('Content-Type' => 'text/x-yaml; charset=UTF-8');
         $apache->send_http_header;
         print Jifty::YAML::Dump(@_);
     }
     elsif ($accept =~ /json/i) {
-        $apache->header_out('Content-Type' => 'text/json; charset=UTF-8');
+        $apache->header_out('Content-Type' => 'application/json; charset=UTF-8');
         $apache->send_http_header;
         print Jifty::JSON::objToJson( @_, { singlequote => 1 } );
     }
@@ -67,7 +67,7 @@ sub outs {
         print 'var $_ = ', Jifty::JSON::objToJson( @_, { singlequote => 1 } );
     }
     elsif ($accept =~ /perl/i) {
-        $apache->header_out('Content-Type' => 'application/perl; charset=UTF-8');
+        $apache->header_out('Content-Type' => 'application/x-perl; charset=UTF-8');
         $apache->send_http_header;
         print Data::Dumper::Dumper(@_);
     }
