@@ -14,7 +14,7 @@ use lib 'plugins/REST/lib';
 use lib 't/lib';
 use Jifty::SubTest;
 
-use Jifty::Test tests => 24;
+use Jifty::Test tests => 27;
 use Jifty::Test::WWW::Mechanize;
 
 my $server  = Jifty::Test->make_server;
@@ -28,7 +28,7 @@ ok(1, "Loaded the test script");
 
 my $u1 = TestApp::Plugin::REST::Model::User->new(
     current_user => TestApp::Plugin::REST::CurrentUser->superuser );
-$u1->create( name => 'jesse', email => 'audreyt@audreyt.org' );
+$u1->create( name => 'test', email => 'test@example.com' );
 ok( $u1->id );
 
 # on GET    '/=/model'       => \&list_models;
@@ -51,7 +51,6 @@ $mech->get_ok('/=/model/testapp.plugin.rest.model.user');
 is($mech->status,'200');
 
 {
-    local $TODO = 'proper error code';
     $mech->get('/=/model/Usery');
     is($mech->status,'404');
 }
@@ -73,6 +72,12 @@ is($#rows,0);
 # on GET    '/=/model/*/*/*' => \&show_item;
 $mech->get_ok('/=/model/user/id/1.yml');
 my %content = %{get_content()};
+is_deeply(\%content, { name => 'test', email => 'test@example.com', id => 1, tasty => undef });
+
+# on GET    '/=/model/*/*/*/*' => \&show_item_Field;
+$mech->get_ok('/=/model/user/id/1/email.yml');
+is(get_content(), 'test@example.com');
+
 # on PUT    '/=/model/*/*/*' => \&replace_item;
 # on DELETE '/=/model/*/*/*' => \&delete_item;
 # on GET    '/=/action'      => \&list_actions;
