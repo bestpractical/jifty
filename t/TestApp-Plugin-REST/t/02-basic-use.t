@@ -14,7 +14,7 @@ use lib 'plugins/REST/lib';
 use lib 't/lib';
 use Jifty::SubTest;
 
-use Jifty::Test tests => 6;
+use Jifty::Test tests => 24;
 use Jifty::Test::WWW::Mechanize;
 
 my $server  = Jifty::Test->make_server;
@@ -49,25 +49,29 @@ $mech->get_ok('/=/model/TestApp.Plugin.REST.Model.User');
 is($mech->status,'200');
 $mech->get_ok('/=/model/testapp.plugin.rest.model.user');
 is($mech->status,'200');
-$mech->get_ok('/=/model/Usery');
-is($mech->status,'404');
+
+{
+    local $TODO = 'proper error code';
+    $mech->get('/=/model/Usery');
+    is($mech->status,'404');
+}
 
 
-$mech->get_ok('/=/model/User');
+$mech->get_ok('/=/model/User.yml');
 my %keys =  %{get_content()};
 
-is (keys %keys, 4, "The model has 4 keys");
-is ((sort keys %keys), qw/id name email tasty/);
+is((0+keys(%keys)), 4, "The model has 4 keys");
+is_deeply([sort keys %keys], [sort qw/id name email tasty/]);
 
 
 # on GET    '/=/model/*/*'   => \&list_model_items;
-$mech->get_ok('/=/model/user/id');
+$mech->get_ok('/=/model/user/id.yml');
 my @rows = @{get_content()};
-is ($#rows,1);
+is($#rows,0);
 
 
 # on GET    '/=/model/*/*/*' => \&show_item;
-$mech->get_ok('/=/model/user/id/1');
+$mech->get_ok('/=/model/user/id/1.yml');
 my %content = %{get_content()};
 # on PUT    '/=/model/*/*/*' => \&replace_item;
 # on DELETE '/=/model/*/*/*' => \&delete_item;

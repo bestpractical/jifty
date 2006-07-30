@@ -26,32 +26,33 @@ before POST qr{^ (/=/ .*) ! (DELETE|PUT|GET|POST|OPTIONS|HEAD|TRACE|CONNECT) $}x
 on GET    '/=/model/*/*/*' => \&show_item;
 on GET    '/=/model/*/*'   => \&list_model_items;
 on GET    '/=/model/*'     => \&list_model_columns;
-on GET    '/=/model/'      => \&list_models;
+on GET    '/=/model'       => \&list_models;
 
 on PUT    '/=/model/*/*/*' => \&replace_item;
 on DELETE '/=/model/*/*/*' => \&delete_item;
 
 on GET    '/=/action/*'    => \&list_action_params;
-on GET    '/=/action/'     => \&list_actions;
+on GET    '/=/action'      => \&list_actions;
 on POST   '/=/action/*'    => \&run_action;
 
 sub list { outs(\@_) }
 
 sub outs {
-    if ($ENV{HTTP_ACCEPT} =~ /ya?ml/i) {
-        Jifty->handler->apache->header_out('text/yaml; charset=UTF-8');
+    my $accept = ($ENV{HTTP_ACCEPT} || '');
+    if ($accept =~ /ya?ml/i) {
+        Jifty->handler->apache->header_out('Content-Type' => 'text/yaml; charset=UTF-8');
         print Jifty::YAML::Dump(@_);
     }
-    elsif ($ENV{HTTP_ACCEPT} =~ /json/i) {
-        Jifty->handler->apache->header_out('text/json; charset=UTF-8');
+    elsif ($accept =~ /json/i) {
+        Jifty->handler->apache->header_out('Content-Type' => 'text/json; charset=UTF-8');
         print Jifty::JSON::objToJson( @_, { singlequote => 1 } );
     }
-    elsif ($ENV{HTTP_ACCEPT} =~ /j(?:ava)?s|ecmascript/i) {
-        Jifty->handler->apache->header_out('application/javascript; charset=UTF-8');
+    elsif ($accept =~ /j(?:ava)?s|ecmascript/i) {
+        Jifty->handler->apache->header_out('Content-Type' => 'application/javascript; charset=UTF-8');
         print 'var $_ = ', Jifty::JSON::objToJson( @_, { singlequote => 1 } );
     }
-    elsif ($ENV{HTTP_ACCEPT} =~ /perl/i) {
-        Jifty->handler->apache->header_out('application/perl; charset=UTF-8');
+    elsif ($accept =~ /perl/i) {
+        Jifty->handler->apache->header_out('Content-Type' => 'application/perl; charset=UTF-8');
         print Data::Dumper::Dumper(@_);
     }
     elsif (ref($_[0]) eq 'ARRAY') {
@@ -64,12 +65,26 @@ sub outs {
     else {
         print start_html(-encoding => 'UTF-8', -declare_xml => 1, -title => 'models'),
               dl(map {
-                    dt($_),
-                    dd($_[0]->{$_}),
+                    dt(a({-href => Jifty::Web->escape_uri($_).'/'}, Jifty::Web->escape($_))),
+                    dd(Jifty::Web->escape($_[0]->{$_})),
               } sort keys %{$_[0]}),
               end_html()
     }
     abort(200);
+}
+
+sub model {
+    my $model = shift;
+    return $model if $model->isa('Jifty::Record');
+
+    $model =~ s/\W+/\\W+/g;
+
+    foreach my $cls (Jifty->class_loader->models) {
+        return $cls if $cls =~ /$model$/i;
+    }
+
+    Jifty->handler->apache->header_out(Status => '404');
+    last_rule;
 }
 
 sub list_models {
@@ -78,13 +93,13 @@ sub list_models {
 
 sub list_model_columns {
     my ($model) = $1;
-    list(map { $_->name } $model->new->columns);
+    outs({ map { $_->name => '' } model($model)->new->columns });
 }
 
 sub list_model_items {
     # Normalize model name - fun!
     my ($model, $column) = ($1, $2);
-    my $col = $model->new->collection_class->new;
+    my $col = model($model)->new->collection_class->new;
     $col->unlimit;
     $col->columns($column);
     $col->order_by(column => $column);
@@ -94,7 +109,7 @@ sub list_model_items {
 
 sub show_item {
     my ($model, $column, $key) = ($1, $2, $3);
-    my $rec = $model->new;
+    my $rec = model($model)->new;
     $rec->load_by_cols( $column => $key );
     outs($rec->{values});
 }
