@@ -1166,16 +1166,17 @@ sub set_variable {
 =head3 state_variables
 
 Returns all of the state variables that have been set for the next
-request, as a hash; they have already been prefixed with C<J:V->
+request, as a hash;
+
+N.B. These are B<not> prefixed with C<J:V->, as they were in earlier
+versions of Jifty
 
 =cut
 
-# FIXME: it seems wrong to have an accessor that exposes the
-# representation, so to speak
 sub state_variables {
     my $self = shift;
     my %vars;
-    $vars{ "J:V-" . $_ } = $self->{'state_variables'}->{$_}
+    $vars{$_} = $self->{'state_variables'}->{$_}
         for keys %{ $self->{'state_variables'} };
 
     return %vars;
