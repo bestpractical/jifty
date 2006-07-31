@@ -66,6 +66,13 @@ Jifty.Calendar = {
             input.value = cal.getSelectedDates()[0].formatDate("Y-m-d");
             Jifty.Calendar.hideOpenCalendar();
         };
+
+        cal["_onChangePage"] = cal["onChangePage"];
+        cal["onChangePage"]  = function() {
+            Jifty.Calendar._blurredCalendar = null;
+            cal["_onChangePage"]();
+        };
+        
         cal.render();
         
         Jifty.Calendar.openCalendar = wrapId;
@@ -95,7 +102,7 @@ Jifty.Calendar = {
     },
 
     _doneBlurOnce: false,
-    _blurredCalendar: '',
+    _blurredCalendar: null,
     doBlur: function(ev) {
         if ( Jifty.Calendar.openCalendar && !Jifty.Calendar._doneBlurOnce ) {
             Jifty.Calendar._doneBlurOnce    = true;
@@ -109,7 +116,7 @@ Jifty.Calendar = {
             Jifty.Calendar.hideOpenCalendar();
         }
         Jifty.Calendar._doneBlurOnce    = false;
-        Jifty.Calendar._blurredCalendar = '';
+        Jifty.Calendar._blurredCalendar = null;
     }
 };
 

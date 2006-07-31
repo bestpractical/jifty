@@ -20,7 +20,15 @@ Returns a new, empty session.
 
 sub new {
     my $class = shift;
-    return bless {}, $class;
+
+    my $session_class = Jifty->config->framework('Web')->{'SessionClass'};
+    if ($session_class and $class ne $session_class) {
+        Jifty::Util->require( $session_class );
+        return $session_class->new(@_);
+    }
+    else {
+        return bless {}, $class;
+    }
 }
 
 =head2 id
@@ -48,9 +56,9 @@ sub load {
 
     unless ($session_id) {
         my %cookies    = CGI::Cookie->fetch();
-        my $cookiename = $self->cookie_name;
+        my $cookie_name = $self->cookie_name;
         $session_id
-            = $cookies{$cookiename} ? $cookies{$cookiename}->value() : undef;
+            = $cookies{$cookie_name} ? $cookies{$cookie_name}->value() : undef;
     }
 
     my $session = Jifty::Model::Session->new;
@@ -285,14 +293,14 @@ sub set_cookie {
 =head2 cookie_name
 
 Returns the current session's cookie_name -- it is the same for all
-users, but various accorting to the port the server is running on.
+users, but varies according to the port the server is running on.
 
 =cut
 
 sub cookie_name {
     my $self = shift;
-    my $cookiename = "JIFTY_SID_" . ( $ENV{'SERVER_PORT'} || 'NOPORT' );
-    return ($cookiename);
+    my $cookie_name = "JIFTY_SID_" . ( $ENV{'SERVER_PORT'} || 'NOPORT' );
+    return ($cookie_name);
 }
 
 =head2 expires [VALUE]

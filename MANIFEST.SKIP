@@ -20,3 +20,4 @@ merge_bleadperl$
 var/*
 t/*/var/*
 doc/talks/*
+^\.

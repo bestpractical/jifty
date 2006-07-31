@@ -1,7 +1,6 @@
 use inc::Module::Install 0.46;
 name('Jifty');
 license('Perl');
-# this is a dev version, CPAN.pm will not install by default
 requires(perl => '5.8.3');  
 requires('App::CLI' => 0.03 ); # App::CLI::Command::Help App::CLI::Command
 requires('Cache::Cache'); #Cache::FileCache
@@ -9,6 +8,9 @@ requires('Calendar::Simple');
 requires('Class::Accessor::Named'); 
 requires('Class::Container');
 requires('Class::Data::Inheritable');
+requires('CGI::Cookie::Splitter');
+requires('Crypt::CBC');
+requires('Crypt::Rijndael');
 requires('Compress::Zlib');
 requires('CSS::Squish' => 0.05 );
 requires('DBD::SQLite' => 1.11 );
@@ -23,7 +25,7 @@ requires('Email::Simple::Creator');
 requires('Exporter::Lite');
 requires('File::Find::Rule');
 requires('File::MMagic');
-requires('File::ShareDir');
+requires('File::ShareDir' => '0.04');
 requires('HTML::Entities');
 requires('HTML::Mason' => 1.3101);           # HTML::Mason::Exceptions HTML::Mason::FakeApache HTML::Mason::MethodMaker HTML::Mason::Request HTML::Mason::Utils
 requires('HTML::Mason::Plugin');

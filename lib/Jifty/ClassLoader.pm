@@ -194,13 +194,32 @@ sub require {
         except  => qr/\.#/,
         inner   => 0
     );
-    $self->{models}{$_} = 1 for grep {/^($base)::Model::(.*)$/ and not /Collection$/} $self->plugins;
-    for my $full (keys %{$self->{models}}) {
+    my %models;
+    $models{$_} = 1 for grep {/^($base)::Model::(.*)$/ and not /Collection$/} $self->plugins;
+    $self->models(sort keys %models);
+    for my $full ($self->models) {
         my($short) = $full =~ /::Model::(.*)/;
         Jifty::Util->require($full . "Collection");
         Jifty::Util->require($base . "::Action::" . $_ . $short)
             for qw/Create Update Delete/;
     }
+}
+
+=head2 models
+
+Accessor to the list of models this application has loaded.
+
+In scalar context, returns a mutable array reference; in list context,
+return the content of the array.
+
+=cut
+
+sub models {
+    my $self = shift;
+    if (@_) {
+        $self->{models} = ref($_[0]) ? $_[0] : \@_;
+    }
+    wantarray ? @{ $self->{models} ||= [] } : $self->{models};
 }
 
 1;

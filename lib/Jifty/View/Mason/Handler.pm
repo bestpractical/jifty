@@ -112,6 +112,7 @@ sub escape_utf8 {
     my $ref = shift;
     my $val = $$ref;
     use bytes;
+    no warnings 'uninitialized';
     $val =~ s/&/&#38;/g;
     $val =~ s/</&lt;/g;
     $val =~ s/>/&gt;/g;

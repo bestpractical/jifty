@@ -46,6 +46,17 @@ Finds the moniker of the first action of type I<ACTION> whose
 If there is only one action of type ACTION, be sure not to pass
 any more arguments to this method, or the method will return undef.
 
+NOTE that if you're using this in a series of different pages or forms, 
+you'll need to run it again for each new form:
+
+    $mech->fill_in_action_ok($mech->moniker_for('MyApp::Action::UpdateInfo'), 
+                             owner_id => 'someone');
+    $mech->submit_html_ok(value => 'Save');  
+
+    is($mech->action_field_value($mech->moniker_for("MyApp::Action::UpdateInfo"),
+			     'owner_id'), 
+       'someone',
+       "Owner was reassigned properly to owner 'someone'");
 
 =cut
 
@@ -418,5 +429,6 @@ sub current_user {
 
     return $object;
 }
+
 
 1;

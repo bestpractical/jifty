@@ -237,6 +237,8 @@ Break out from the current C<run> block and stop running rules in this stage.
 
 Abort the request; this skips straight to the cleanup stage.
 
+If C<$code> is specified, it's used as the HTTP status code.
+
 =head2 redirect $uri
 
 Redirect to another URI.
@@ -714,6 +716,16 @@ Don't display any page. just stop.
 sub _do_abort {
     my $self = shift;
     $self->log->debug("Aborting processing");
+    if (@_) {
+        # This is the status code
+        my $status = shift;
+        my $apache = Jifty->handler->apache;
+        $apache->header_out(Status => $status);
+        $apache->send_http_header;
+
+        require HTTP::Status;
+        print STDOUT $status, ' ' , HTTP::Status::status_message($status);
+    }
     $self->_abort;
 }
 
@@ -902,8 +914,8 @@ came in with that method.
 
 sub _match_method {
     my ( $self, $method ) = @_;
-    $self->log->debug("Matching URL ".$self->{cgi}->method." against ".$method);
-    lc( $self->{cgi}->method ) eq lc($method);
+    $self->log->debug("Matching URL $ENV{REQUEST_METHOD} against ".$method);
+    lc( $ENV{REQUEST_METHOD} ) eq lc($method);
 }
 
 sub _match_plugin {

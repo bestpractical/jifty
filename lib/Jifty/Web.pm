@@ -391,7 +391,7 @@ sub form {
 
 Creates a new action (an instance of a subclass of L<Jifty::Action>)
 
-C<CLASS> is L<qualified|Jifty::Util/qualify>, and an instance of that
+C<CLASS> is L<qualified|Jifty::API/qualify>, and an instance of that
 class is created, passing the C<Jifty::Web> object, the C<MONIKER>,
 and any other arguments that C<new_action> was supplied.
 
@@ -886,6 +886,7 @@ HTML-escapes the given string and returns it
 =cut
 
 sub escape {
+    no warnings 'uninitialized';
     my $self = shift;
     return join '', map {my $html = $_; Jifty::View::Mason::Handler::escape_utf8( \$html ); $html} @_;
 }
@@ -897,6 +898,7 @@ URI-escapes the given string and returns it
 =cut
 
 sub escape_uri {
+    no warnings 'uninitialized';
     my $self = shift;
     return join '', map {my $uri = $_; Jifty::View::Mason::Handler::escape_uri( \$uri ); $uri} @_;
 }

@@ -1,0 +1,67 @@
+#behaviour-profile-data {
+    width: 90%;
+    height: 90%;
+    position: absolute;
+    left: 5%;
+    top: 5%;
+    background-color: white;
+    border: 2px solid black;
+    overflow: scroll;
+}
+
+#behaviour-profile-data div.title {
+    font-size: 200%;
+    border-bottom: 2px solid black;
+}
+
+#behaviour-profile-data .section .title {
+   font-size: 150%;
+}
+
+#behaviour-profile-data .title .close {
+   font-size: 80%;
+   text-align: right;
+   text-decoration:none;
+   position: absolute:
+   right: 10px;
+   top: 10px;
+}
+
+#behaviour-profile-data .code code {
+    position: absolute;
+    background-color: lightgrey;
+    border: 1px solid black;
+    z-index: 100;
+    white-space: pre;
+    text-align: left;
+}
+
+#behaviour-profile-data table td.time {
+    text-align:center;
+}
+
+#behaviour-profile-data table td.selector {
+    text-align:right;
+}
+
+#behaviour-profile-data table tr,
+#behaviour-profile-data table td,
+#behaviour-profile-data table th {
+    text-align:center;
+    padding: 0px 5px;
+}
+
+#behaviour-profile-data table .time {
+    border-left: 1px solid black;
+}
+
+#behaviour-profile-data table .total {
+    border-right: 1px solid black;
+}
+
+
+#show-behaviour-profile {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+}

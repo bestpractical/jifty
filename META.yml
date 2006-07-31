@@ -14,6 +14,7 @@ no_index:
     - inc
 requires: 
   App::CLI: 0.03
+  CGI::Cookie::Splitter: 0
   CSS::Squish: 0.05
   Cache::Cache: 0
   Calendar::Simple: 0
@@ -22,6 +23,8 @@ requires:
   Class::Container: 0
   Class::Data::Inheritable: 0
   Compress::Zlib: 0
+  Crypt::CBC: 0
+  Crypt::Rijndael: 0
   DBD::SQLite: 1.11
   Data::Page: 0
   Date::Manip: 0

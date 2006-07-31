@@ -100,16 +100,19 @@ sub client_accepts_gzipped_content {
 
 =head2 file_path $path
 
-Returns the system path for C<$path>, inside the application's static root or, failing that, Jifty's static root.
-Returns undef if it can't find the file in either path.
+Returns the system path for C<$path>, searching inside the
+application's static root, loaded plugins' static roots, and finally
+Jifty's static root.  Returns undef if it can't find the file in any
+path.
 
 =cut
 
 sub file_path {
     my $self    = shift;
     my $file    = shift;
-    my @options = map {Jifty->config->framework('Web')->{$_}} (qw(StaticRoot DefaultStaticRoot));
+    my @options = (Jifty->config->framework('Web')->{StaticRoot});
     push @options, grep {$_} map {$_->static_root} Jifty->plugins;
+    push @options, (Jifty->config->framework('Web')->{DefaultStaticRoot});
 
     # Chomp a leading "/static" - should this be configurable?
     $file =~ s/^\/*?static//; 
