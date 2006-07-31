@@ -204,11 +204,13 @@ var Behaviour = {
 	link.href = '/css/behaviour-profile.css';
 	head.appendChild(link);
 
-	var open = this.createElement('a', null, '[Behaviour profile]');
+	var open = this.createElement('a', null, 'Behaviour profile');
 	open.id = 'show-behaviour-profile';
 	open.href ='#';
 	open.onclick = function() { Behaviour.toggleProfile() }
-	document.getElementsByTagName('body')[0].appendChild(open);
+	var div = this.createElement('div');
+	div.appendChild(open);
+	document.getElementsByTagName('body')[0].appendChild(div);
     },
 
     toggleProfile: function () {
