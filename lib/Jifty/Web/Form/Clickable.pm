@@ -173,13 +173,14 @@ sub new {
     # Anything doing fragment replacement needs to preserve the
     # current state as well
     if ( grep { $self->$_ } $self->handlers or $self->preserve_state ) {
-        for ( Jifty->web->request->state_variables ) {
-            if ( $_->key =~ /^region-(.*?)\.(.*)$/ ) {
-                $self->region_argument( $1, $2 => $_->value );
-            } elsif ( $_->key =~ /^region-(.*)$/ ) {
-                $self->region_fragment( $1, $_->value );
+        my %state_vars = Jifty->web->state_variables;
+        while ( my ($key,  $val) = each %state_vars ) {
+            if ( $key =~ /^region-(.*?)\.(.*)$/ ) {
+                $self->region_argument( $1, $2 => $val );
+            } elsif ( $key =~ /^region-(.*)$/ ) {
+                $self->region_fragment( $1, $val );
             } else {
-                $self->state_variable( $_->key => $_->value );
+                $self->state_variable( $key => $val );
             }
         }
     }

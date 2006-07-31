@@ -273,7 +273,7 @@ sub _preserve_state_variables {
     my %vars = Jifty->web->state_variables;
     for (keys %vars) {
         Jifty->web->out( qq{<input type="hidden" name="}
-                . $_
+                . 'J:V-' . $_
                 . qq{" value="}
                 . $vars{$_}
                 . qq{" />\n} );
