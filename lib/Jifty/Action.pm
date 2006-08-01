@@ -685,7 +685,7 @@ sub _canonicalize_argument {
 
 =head2 _canonicalize_date DATE
 
-Parses and returns the date using L<Time::ParseDate>.
+Parses and returns the date using L<Jifty::DateTime::new_from_string>.
 
 =cut
 
