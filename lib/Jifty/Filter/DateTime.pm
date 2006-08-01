@@ -13,10 +13,28 @@ objects on load. This has the side effect of setting their time zone
 based on the record's current user's preferred time zone, when
 available.
 
+This is intended to be combined with C<Jifty::DBI::Filter::Date> or
+C<Jifty::DBI::Filter::DateTime>, e.g.
+
+    column created =>
+      type is 'timestamp',
+      filters are qw( Jifty::Filter::DateTime Jifty::DBI::Filter::DateTime),
+      label is 'Created',
+      is immutable;
+
 =cut
 
 package Jifty::Filter::DateTime;
 use base qw(Jifty::DBI::Filter);
+
+
+=head2 decode
+
+If the value is a DateTime, replace it with a Jifty::DateTime
+representing the same time, setting the time zone in the process.
+
+=cut
+
 
 sub decode {
     my $self = shift;
