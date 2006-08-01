@@ -62,6 +62,13 @@ sub new_from_string {
     my $string = shift;
     my $now;
     {
+        # Date::Manip interprets days of the week (eg, ''monday'') as
+        # days within the *curent* week. Detect these and prepend
+        # ``next''
+        # XXX TODO: Find a real solution (better date-parsing library?)
+        if($string =~ /^\s* (?:monday|tuesday|wednesday|thursday|friday|saturday|sunday)$/xi) {
+            $string = "next $string";
+        }
         local $ENV{'TZ'} = "GMT";
         $now = Date::Manip::UnixDate( $string, "%o" );
     }
