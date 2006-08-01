@@ -26,12 +26,11 @@ sub decode {
 
     # XXX There has to be a better way to do this
     my %args;
-    for (qw(year month day hour minute second nanosecond)) {
+    for (qw(year month day hour minute second nanosecond formatter)) {
         $args{$_} = $$value_ref->$_;
     }
 
     my $dt = Jifty::DateTime->new(%args);
-    $dt->set_formatter($$value_ref->formatter);
 
     $$value_ref = $dt;
 }
