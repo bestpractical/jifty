@@ -1,0 +1,74 @@
+=head1 NAME
+
+Jifty::Manual::Upgrading
+
+=head2 DESCRIPTION
+
+Jifty provides a way for you to upgrade the database schema and data
+of your application between versions.  If all you are doing is adding
+new models or columns to existing models Jifty will do the upgrade
+almost automatically.  If more extensive changes are required you need
+to write some code to tell Jifty what to do.
+
+=head1 HOW TO
+
+=head2 New models and columns
+
+=head3 Adding a new model
+
+When adding a new model to your application you need to tell Jifty
+at which version of your application the model was created.  To do
+this add a since sub to your new model class.
+
+ sub since { 0.0.5 }
+
+=head3 Adding a new column to an existing model
+
+When you have a existing model and decide that you need to add another
+column to it you also need to tell Jifty about this.  This is done by
+using since as well, however the since goes into the column
+definition itself.  
+
+ column created_by => refers_to Wifty::Model::User, 
+		      since '0.0.20';
+
+
+=head2 data migration and schema changes
+
+If a file called C<Upgrade.pm> exists in your application it will be
+run by C<jifty schema --setup>.
+
+Upgrade.pm can be used to make any schema changes or to manipulate
+your applications data.
+
+At the very least your C<Upgrade.pm> should contain the following: 
+
+ package MyApp::Upgrade;
+
+ use base qw(Jifty::Upgrade);
+ use Jifty::Upgrade qw( since rename );
+
+ since '0.6.1' => sub {
+	....
+ };
+
+The C<since> function is where you do all the work.  Each C<since>
+will be run in version order until the application is up to date.
+
+
+=head3 Renaming a column
+
+To rename a column use C<rename> inside your C<since>.  You will also
+have to use the model class at the top of Upgrade.pm so Jifty can
+access it's schema definition.
+
+use MyApp::Model::User;
+
+since '0.61' => sub {
+  rename (table => 'MyApp::Model::User', 
+	  column => 'zip', 
+	  to => 'postcode'
+	 );
+};
+
+=head3 Migrating data
