@@ -5,7 +5,7 @@ package Jifty::Web::Form;
 
 use base qw/Jifty::Object Class::Accessor::Fast/;
 
-__PACKAGE__->mk_accessors(qw(actions printed_actions name call is_open));
+__PACKAGE__->mk_accessors(qw(actions printed_actions name call is_open disable_autocomplete));
 
 =head2 new ARGS
 
@@ -23,6 +23,11 @@ for testing.
 All buttons in this form will act as continuation calls for the given
 continuation id.
 
+=item disable_autocomplete
+
+Disable B<browser> autocomplete for this form.  Jifty autocomplete will still
+work.
+
 =back
 
 =cut
@@ -34,6 +39,7 @@ sub new {
     my %args = (
         name => undef,
         call => undef,
+        disable_autocomplete => undef,
         @_,
     );
 
@@ -64,12 +70,14 @@ sub _init {
     my $self = shift;
     my %args = (name => undef,
                 call => undef,
+                disable_autocomplete => undef,
                 @_);
 
     $self->actions( {} ) ;
     $self->printed_actions( {} ) ;
     $self->name($args{name});
     $self->call($args{call});
+    $self->disable_autocomplete($args{disable_autocomplete});
 }
 
 
@@ -178,6 +186,7 @@ sub start {
 
     my $form_start = qq!<form method="post" action="$ENV{PATH_INFO}"!;
     $form_start   .= qq! name="@{[ $self->name ]}"! if defined $self->name;
+    $form_start   .= qq! autocomplete="off"! if defined $self->disable_autocomplete;
     $form_start   .= qq! enctype="multipart/form-data" >\n!;
     Jifty->web->out($form_start);
     $self->is_open(1);
