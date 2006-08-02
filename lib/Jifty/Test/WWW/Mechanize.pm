@@ -6,7 +6,8 @@ use base qw/Test::WWW::Mechanize/;
 
 $ENV{'http_proxy'} = ''; # Otherwise Test::WWW::Mechanize tries to go through your HTTP proxy
 
-use Test::HTML::Lint; # exports html_ok
+use HTML::Lint;
+use Test::HTML::Lint qw();
 use HTTP::Cookies;
 use XML::XPath;
 use Hook::LexWrap;
@@ -14,6 +15,11 @@ use List::Util qw(first);
 use Carp;
 
 my $Test = Test::Builder->new;
+
+# XXX TODO: We're leaving out FLUFF errors because it complains about non-standard
+# attributes such as "autocomplete" on <form> elements.
+my $lint = HTML::Lint->new( only_types => [HTML::Lint::Error::STRUCTURE,
+                                           HTML::Lint::Error::HELPER] );
 
 =head1 NAME
 
@@ -329,9 +335,26 @@ sub get_html_ok {
     {
         local $Test::Builder::Level = $Test::Builder::Level;
         $Test::Builder::Level++;
-        html_ok($self->content);
+        Test::HTML::Lint::html_ok( $lint, $self->content );
     }       
-} 
+}
+
+=head2 html_ok [STRING]
+
+Tests the current C<content> using L<Test::HTML::Lint>.  If passed a string,
+tests against that instead of the current content.
+
+=cut 
+
+sub html_ok {
+    my $self    = shift;
+    my $content = shift || $self->content;
+    {
+        local $Test::Builder::Level = $Test::Builder::Level;
+        $Test::Builder::Level++;
+        Test::HTML::Lint::html_ok( $lint, $content );
+    }
+}
 
 =head2 submit_html_ok 
 
@@ -346,7 +369,7 @@ sub submit_html_ok {
     {
         local $Test::Builder::Level = $Test::Builder::Level;
         $Test::Builder::Level++;
-        html_ok($self->content);
+        Test::HTML::Lint::html_ok( $lint, $self->content );
     }
 } 
 
@@ -369,7 +392,7 @@ sub follow_link_ok {
     {
         local $Test::Builder::Level = $Test::Builder::Level;
         $Test::Builder::Level++;
-        html_ok($self->content);
+        Test::HTML::Lint::html_ok( $lint, $self->content );
     }
 } 
 
