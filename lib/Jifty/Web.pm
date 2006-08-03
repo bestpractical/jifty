@@ -22,7 +22,7 @@ use base qw/Class::Accessor::Fast Class::Data::Inheritable Jifty::Object/;
 use vars qw/$SERIAL @JS_INCLUDES/;
 
 __PACKAGE__->mk_accessors(
-    qw(next_page request response session temporary_current_user _current_user)
+    qw(next_page force_redirect request response session temporary_current_user _current_user)
 );
 
 __PACKAGE__->mk_classdata($_)
@@ -62,7 +62,7 @@ __PACKAGE__->javascript_libs([qw(
     yui/calendar.js
     app.js
     app_behaviour.js
-    css_browser_selector.js                                 
+    css_browser_selector.js
 )]);
 
 =head1 METHODS
@@ -528,23 +528,31 @@ sub succeeded_actions {
 Gets or sets the next page for the framework to show.  This is
 normally set during the C<take_action> method or a L<Jifty::Action>
 
+=head3 force_redirect [VALUE]
+
+Gets or sets whether we should force a redirect to C<next_page>, even
+if it's already the current page. You might set this, e.g. to force a
+redirect after a POSTed action.
+
 =head3 redirect_required
 
 Returns true if we need to redirect, now that we've processed all the
-actions.  The current logic just looks to see if a different
-L</next_page> has been set. We probably want to make it possible to
-force a redirect, even if we're redirecting back to the current page
+actions. We need a redirect if either C<next_page> is different from
+the current page, or C<force_redirect> has been set.
 
 =cut
 
 sub redirect_required {
     my $self = shift;
 
-    if ($self->next_page
+    return ( 1 ) if $self->force_redirect;
+
+    if (!$self->request->is_subrequest
+        and $self->next_page
         and ( ( $self->next_page ne $self->request->path )
-            or $self->request->state_variables
-            or $self->{'state_variables'} )
-        )
+              or $self->request->state_variables
+              or $self->{'state_variables'} )
+       )
     {
         return (1);
 
@@ -566,11 +574,11 @@ L<Jifty::Web::Form::Clickable> object.
 
 sub redirect {
     my $self = shift;
-    my $page = shift || $self->next_page;
+    my $page = shift || $self->next_page || $self->request->path;
     $page = Jifty::Web::Form::Clickable->new( url => $page )
       unless ref $page and $page->isa("Jifty::Web::Form::Clickable");
 
-    carp "Don't include GET paramters in the redirect URL -- use a Jifty::Web::Form::Clickable instead.  See L<Jifty::Web/redirect>" if $page->url =~ /\?/;
+    carp "Don't include GET parameters in the redirect URL -- use a Jifty::Web::Form::Clickable instead.  See L<Jifty::Web/redirect>" if $page->url =~ /\?/;
 
     my %overrides = ( @_ );
     $page->parameter($_ => $overrides{$_}) for keys %overrides;
