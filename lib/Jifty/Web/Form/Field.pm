@@ -46,7 +46,7 @@ use base 'Jifty::Web::Form::Element';
 
 use Scalar::Util;
 use HTML::Entities;
-use overload '""' => sub { shift->render}, bool => sub { 1 };
+use overload '""' => \&render, bool => sub { 1 };
 
 =head2 new
 
@@ -332,7 +332,8 @@ Renders a default CSS class for each part of our widget.
 
 sub classes {
     my $self = shift;
-    return join(' ', ($self->class||''), ($self->name ? "argument-".$self->name : ''));
+    my $name = $self->name;
+    return join(' ', ($self->class||''), ($name ? "argument-".$name : ''));
 }
 
 
