@@ -46,6 +46,9 @@ use base 'Jifty::Web::Form::Element';
 
 use Scalar::Util;
 use HTML::Entities;
+
+# We need the anonymous sub because otherwise the method of the base class is
+# always called, instead of the appropriate overridden method in a child class.
 use overload '""' => sub { shift->render }, bool => sub { 1 };
 
 =head2 new

@@ -17,7 +17,10 @@ generates L<Jifty::Web::Form::Link>s.
 
 use base 'Jifty::Web::Form::Element';
 
-# Since we don't inherit from Form::Field, we don't otherwise stringify
+# Since we don't inherit from Form::Field, we don't otherwise stringify.
+# We need the anonymous sub because otherwise the method of the base class is
+# always called, instead of the appropriate overridden method in a possible
+# child class.
 use overload '""' => sub { shift->render }, bool => sub { 1 };
 
 =head2 accessors
