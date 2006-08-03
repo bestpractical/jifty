@@ -191,7 +191,9 @@ sub send {
 
 =head2 messages
 
-Returns the messages in the test mailbox, as a list of L<Email::Simple> objects.
+Returns the messages in the test mailbox, as a list of
+L<Email::Simple> objects.  You may have to use a module like
+L<Email::MIME> to parse multi-part messages stored in the mailbox.
 
 =cut
 

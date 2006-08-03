@@ -20,9 +20,10 @@ requires('DateTime');
 requires('Date::Manip');
 requires('Email::Folder');
 requires('Email::LocalDelivery');
+requires('Email::MIME');
+requires('Email::MIME::Creator');
 requires('Email::Send' => '1.99_01'); # Email::Send::Jifty::Test
 requires('Email::Simple');
-requires('Email::Simple::Creator');
 requires('Exporter::Lite');
 requires('File::Find::Rule');
 requires('File::MMagic');

@@ -54,6 +54,7 @@ lib/Jifty/CurrentUser.pm
 lib/Jifty/DateTime.pm
 lib/Jifty/Dispatcher.pm
 lib/Jifty/Everything.pm
+lib/Jifty/Filter/DateTime.pm
 lib/Jifty/Handle.pm
 lib/Jifty/Handler.pm
 lib/Jifty/I18N.pm
@@ -69,6 +70,7 @@ lib/Jifty/Manual/ObjectModel.pod
 lib/Jifty/Manual/PageRegions.pm
 lib/Jifty/Manual/Tutorial.pod
 lib/Jifty/Manual/Tutorial_ja.pod
+lib/Jifty/Manual/Upgrading.pod
 lib/Jifty/Mason/Halo.pm
 lib/Jifty/Model/Metadata.pm
 lib/Jifty/Model/Session.pm
@@ -130,6 +132,7 @@ lib/Jifty/Web/PageRegion.pm
 lib/Jifty/Web/Session.pm
 lib/Jifty/Web/Session/ClientSide.pm
 lib/Jifty/YAML.pm
+log
 Makefile.PL
 MANIFEST			This list of files
 MANIFEST.SKIP
@@ -177,6 +180,9 @@ plugins/ProfileBehaviour/lib/Jifty/Plugin/ProfileBehaviour/Dispatcher.pm
 plugins/ProfileBehaviour/Makefile.PL
 plugins/ProfileBehaviour/share/web/static/css/behaviour-profile.css
 plugins/ProfileBehaviour/share/web/static/js/behaviour.js
+plugins/REST/lib/Jifty/Plugin/REST.pm
+plugins/REST/lib/Jifty/Plugin/REST/Dispatcher.pm
+plugins/REST/Makefile.PL
 README
 share/dtd/xhtml-lat1.ent
 share/dtd/xhtml-special.ent
@@ -207,6 +213,7 @@ share/web/static/images/silk/bullet_arrow_down.png
 share/web/static/images/silk/bullet_arrow_up.png
 share/web/static/images/silk/calendar.png
 share/web/static/images/silk/cancel.png
+share/web/static/images/silk/cancel_grey.png
 share/web/static/images/silk/error.png
 share/web/static/images/silk/information.png
 share/web/static/images/silk/pencil.png
@@ -324,11 +331,21 @@ t/lib/Jifty/SubTest.pm
 t/Mapper/bin/jifty
 t/Mapper/lib/Mapper/Action/CrossBridge.pm
 t/Mapper/lib/Mapper/Action/GetGrail.pm
+t/Mapper/mapper
 t/Mapper/share/web/templates/autohandler
 t/Mapper/share/web/templates/index.html
 t/Mapper/t/00-prototype.t
 t/Mapper/t/01-raw-api.t
 t/Mapper/t/02-api.t
+t/TestApp-Plugin-REST/bin/jifty
+t/TestApp-Plugin-REST/etc/config.yml
+t/TestApp-Plugin-REST/lib/TestApp/Plugin/REST/Action/DoSomething.pm
+t/TestApp-Plugin-REST/lib/TestApp/Plugin/REST/Dispatcher.pm
+t/TestApp-Plugin-REST/lib/TestApp/Plugin/REST/Model/User.pm
+t/TestApp-Plugin-REST/t/00-model-User.t
+t/TestApp-Plugin-REST/t/00-prototype.t
+t/TestApp-Plugin-REST/t/01-config.t
+t/TestApp-Plugin-REST/t/02-basic-use.t
 t/TestApp/bin/jifty
 t/TestApp/lib/TestApp/Action/DoSomething.pm
 t/TestApp/lib/TestApp/Dispatcher.pm

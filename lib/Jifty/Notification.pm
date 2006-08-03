@@ -5,8 +5,7 @@ package Jifty::Notification;
 
 use base qw/Jifty::Object Class::Accessor::Fast/;
 use Email::Send            ();
-use Email::Simple          ();
-use Email::Simple::Creator ();
+use Email::MIME::Creator;
 
 __PACKAGE__->mk_accessors(
     qw/body preface footer subject from _recipients _to_list to/);
@@ -86,13 +85,13 @@ sub send_one_message {
     my $to         = join( ', ',
         map { ( $_->can('email') ? $_->email : $_ ) } grep {$_} @recipients );
     return unless ($to);
-    my $message = Email::Simple->create(
+    my $message = Email::MIME->create(
         header => [
             From    => $self->from    || 'A Jifty Application <nobody>',
             To      => $to,
             Subject => $self->subject || 'No subject',
         ],
-        body => join( "\n", $self->preface, $self->body, $self->footer )
+        parts => $self->parts
     );
     $self->set_headers($message);
 
@@ -114,7 +113,7 @@ sub send_one_message {
 
 =head2 set_headers MESSAGE
 
-Takes a L<Email::Simple> object C<MESSAGE>, and modifies it as
+Takes a L<Email::MIME> object C<MESSAGE>, and modifies it as
 necessary before sending it out.  As the method name implies, this is
 usually used to add or modify headers.  By default, does nothing; this
 method is meant to be overridden.
@@ -239,6 +238,33 @@ Print a footer for the message. You want to override this to print a message.
 Returns the message as a scalar.
 
 =cut
+
+=head2 full_body
+
+The main, plain-text part of the message.  This is the preface,
+body, and footer joined by newlines.
+
+=cut
+
+sub full_body {
+  my $self = shift;
+  return join( "\n", $self->preface, $self->body, $self->footer );
+}
+
+=head2 parts
+
+The parts of the message.  You want to override this if you want to
+send multi-part mail.  By default, this method returns a single
+part consisting of the result of calling C<< $self->full_body >>.
+
+Returns the parts as an array reference.
+
+=cut
+
+sub parts {
+  my $self = shift;
+  return [$self->full_body];
+}
 
 =head2 magic_letme_token_for PATH
 
