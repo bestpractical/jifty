@@ -619,6 +619,19 @@ sub remove_state_variable {
     delete $self->{'state_variables'}{$key};
 }
 
+=head2 clear_state_variables
+
+Remove all the state variables.
+
+=cut
+
+sub clear_state_variables {
+    my $self = shift;
+
+    $self->{'state_variables'} = {};
+}
+
+
 =head2 actions
 
 Returns a list of the actions in the request, as
