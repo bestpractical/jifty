@@ -399,7 +399,7 @@ C<ORDER> defines the order in which the action is run, with lower
 numerical values running first.
 
 C<ARGUMENTS> are passed to the L<Jifty::Action/new> method.  In
-addition, if the current request (C<$self->request>) contains an
+addition, if the current request (C<< $self->request >>) contains an
 action with a matching moniker, any arguments that are in that
 requested action but not in the C<PARAMHASH> list are set.  This
 implements "sticky fields".
