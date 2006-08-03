@@ -17,7 +17,8 @@ use Carp;
 my $Test = Test::Builder->new;
 
 # XXX TODO: We're leaving out FLUFF errors because it complains about non-standard
-# attributes such as "autocomplete" on <form> elements.
+# attributes such as "autocomplete" on <form> elements.  There should be a better
+# way to fix this.
 my $lint = HTML::Lint->new( only_types => [HTML::Lint::Error::STRUCTURE,
                                            HTML::Lint::Error::HELPER] );
 
