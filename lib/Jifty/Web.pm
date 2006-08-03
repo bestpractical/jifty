@@ -696,9 +696,6 @@ sub tangent {
     if ( defined wantarray ) {
         return $clickable->generate;
     } else {
-        $clickable->state_variable( $_ => $self->{'state_variables'}{$_} )
-            for keys %{ $self->{'state_variables'} };
-
         my $request = Jifty->web->request->clone;
         my %clickable = $clickable->get_parameters;
         $request->argument($_ => $clickable{$_}) for keys %clickable;
