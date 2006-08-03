@@ -336,8 +336,8 @@ sub get_html_ok {
     {
         local $Test::Builder::Level = $Test::Builder::Level;
         $Test::Builder::Level++;
-        Test::HTML::Lint::html_ok( $lint, $self->content );
-    }       
+        Test::HTML::Lint::html_ok( $lint, $self->content, "html_ok for ".$self->uri );
+    }
 }
 
 =head2 html_ok [STRING]
