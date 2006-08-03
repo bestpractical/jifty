@@ -189,6 +189,12 @@ sub start {
     $form_start   .= qq! autocomplete="off"! if defined $self->disable_autocomplete;
     $form_start   .= qq! enctype="multipart/form-data" >\n!;
     Jifty->web->out($form_start);
+
+    # Write out state variables early, so that if a form gets
+    # submitted before the page finishes loading, the state vars don't
+    # get lost
+    $self->_preserve_state_variables();
+
     $self->is_open(1);
     '';
 }
@@ -230,7 +236,6 @@ sub end {
     Jifty->web->out( qq!<div class="hidden">\n! );
 
     $self->_print_registered_actions();
-    $self->_preserve_state_variables();
     $self->_preserve_continuations();
 
     Jifty->web->out( qq!</div>\n! );
