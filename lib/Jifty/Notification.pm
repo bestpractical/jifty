@@ -263,7 +263,13 @@ Returns the parts as an array reference.
 
 sub parts {
   my $self = shift;
-  return [$self->full_body];
+  return [
+    Email::MIME->create(
+      attributes => { charset => 'UTF-8' },
+      body       => $self->full_body
+    )
+  ];
+
 }
 
 =head2 magic_letme_token_for PATH
