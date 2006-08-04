@@ -90,9 +90,23 @@ sub load {
             : Jifty::Model::Session->new_session_id,
     }
 
-    my ($data) = grep {
-        $_->name eq "JIFTY_DAT_$session_id"
-    } $splitter->join(values %cookies);
+    my $data;
+
+    {
+        local $@;
+        eval {
+            ($data) = grep {
+                $_->name eq "JIFTY_DAT_$session_id"
+            } $splitter->join(values %cookies);
+        };
+
+        if ($@) {
+            # Reassembly of cookie failed -- start a new session
+            $session_id = Jifty::Model::Session->new_session_id;
+            warn $@;
+        }
+    }
+
     if ($data) {
         local $@;
         eval {
