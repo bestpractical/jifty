@@ -207,9 +207,13 @@ Action.prototype = {
 
     disable_input_fields: function() {
         var disable = function() {
-            // Triggers https://bugzilla.mozilla.org/show_bug.cgi?id=236791
-            arguments[0].blur();
-            arguments[0].disabled = true;
+	    var elt = arguments[0];
+	    // Disabling hidden elements seems to  make IE sad for some reason
+	    if(elt.type != 'hidden') {
+		// Triggers https://bugzilla.mozilla.org/show_bug.cgi?id=236791
+		elt.blur();
+		elt.disabled = true;
+	    }
         };
         this.fields().each(disable);
         this.buttons().each(disable);
@@ -564,7 +568,7 @@ function update() {
     // If we don't have XMLHttpRequest, bail and fallback on full-page
     // loads
     if(!Ajax.getTransport()) return true;
-    
+
     show_wait_message();
     var named_args = arguments[0];
     var trigger    = arguments[1];
