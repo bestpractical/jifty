@@ -375,9 +375,41 @@ Object.extend(Form.Element, {
             extras.push(e);
         }
         return extras;
+    },
+
+    /* Someday Jifty may have the concept of "default"
+       buttons.  For now, this clicks the first button that will
+       submit the action associated with the form element.
+     */
+    clickDefaultButton: function(element) {
+        var action = Form.Element.getAction( element );
+        if ( action ) {
+            var buttons = action.buttons();
+            for ( var i = 0; i < buttons.length; i++ ) {
+                var b = buttons[i];
+                if ( Form.Element.buttonActions( b ).indexOf( action.moniker ) >= 0 ) {
+                    window.console.log( "clicking!" );
+                    b.click();
+                    return true;
+                }
+            }
+        }
+        return false;
+    },
+
+    handleEnter: function(event) {
+        /* Trap "Enter" */
+        if (    event.keyCode == 13
+             && !event.metaKey && !event.altKey && !event.ctrlKey )
+        {
+            if ( Form.Element.clickDefaultButton( event.target ) )
+                event.preventDefault();
+        }
     }
 
 });
+
+JSAN.use("DOM.Events");
 
 // Form elements should AJAX validate if the CSS says so
 Behaviour.register({
@@ -397,6 +429,19 @@ Behaviour.register({
         if ( !Element.hasClassName( e, 'is_button_as_link' ) ) {
             buttonToLink(e);
             Element.addClassName( e, 'is_button_as_link' );
+        }
+    },
+    "input.date, input.text": function(e) {
+        /* XXX TODO: Figure out how to make our enter handler detect
+           when the autocomplete is active so we can use it on autocompleted
+           fields
+         */
+        if (   !Element.hasClassName( e, "jifty_enter_handler_attached" )
+            && !Element.hasClassName( e, "ajaxautocompletes" ) )
+        {
+            /* Do not use keydown as the event, it will not work as expected in Safari */
+            DOM.Events.addListener( e, "keypress", Form.Element.handleEnter );
+            Element.addClassName( e, "jifty_enter_handler_attached" );
         }
     }
 });
