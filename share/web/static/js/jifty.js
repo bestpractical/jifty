@@ -815,9 +815,9 @@ function show_action_result() {
     var node = document.createElement('div');
     var node_id = 'result-' + moniker;
     node.setAttribute('id', node_id);
-    node.setAttribute('class', 'popup_notification result-' + status);
+    node.className = "popup_notification result-" + status;
     node.innerHTML = text;
-        
+    
     var wrap1 = document.createElement("div");
     wrap1.setAttribute("class", "dropshadow_wrap1");
     var wrap2 = document.createElement("div");
@@ -828,7 +828,7 @@ function show_action_result() {
     wrap1.appendChild(wrap2);
     wrap2.appendChild(wrap3);
     wrap3.appendChild(node);
-
+    
     if(popup.hasChildNodes()) {
         popup.insertBefore(wrap1, popup.firstChild);
     } else {
