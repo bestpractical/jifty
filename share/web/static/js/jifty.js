@@ -392,7 +392,6 @@ Object.extend(Form.Element, {
             for ( var i = 0; i < buttons.length; i++ ) {
                 var b = buttons[i];
                 if ( Form.Element.buttonActions( b ).indexOf( action.moniker ) >= 0 ) {
-                    window.console.log( "clicking!" );
                     b.click();
                     return true;
                 }
