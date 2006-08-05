@@ -512,8 +512,10 @@ YAHOO.widget.Calendar_Core.prototype.init = function(id, containerId, monthyear,
 	if (monthyear)
 	{
 		var aMonthYear = monthyear.split(this.Locale.DATE_FIELD_DELIMITER);
-		month = parseInt(aMonthYear[this.Locale.MY_MONTH_POSITION-1]);
-		year = parseInt(aMonthYear[this.Locale.MY_YEAR_POSITION-1]);
+        /* The following two calls to parseInt had an explicit radix added
+           so dates with leading zeros aren't parsed as octal. */
+		month = parseInt(aMonthYear[this.Locale.MY_MONTH_POSITION-1], 10);
+		year = parseInt(aMonthYear[this.Locale.MY_YEAR_POSITION-1], 10);
 	} else {
 		month = this.today.getMonth()+1;
 		year = this.today.getFullYear();
