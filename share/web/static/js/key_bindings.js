@@ -76,7 +76,7 @@ Jifty.KeyBindings = {
         
         /* definition list */
         var dl = document.createElement("dl");
-        dl.setAttribute("class", "keybindings");
+        dl.className = "keybindings";
 
     
         /* terms of the list */
@@ -84,7 +84,7 @@ Jifty.KeyBindings = {
         for (var key in Jifty.KeyBindings.bindings) {
             if ( Jifty.KeyBindings.get(key)["label"] ) {
                 var div = document.createElement("div");
-                div.setAttribute("class", "keybinding");
+                div.className = "keybinding";
                 
                 var dt = document.createElement("dt");
                 dt.appendChild( document.createTextNode( key ) );
@@ -100,7 +100,7 @@ Jifty.KeyBindings = {
         
         if ( dl.hasChildNodes() ) {
             var label = document.createElement("div");
-            label.setAttribute("class", "keybindings_label");
+            label.className = "keybindings_label";
             label.appendChild( document.createTextNode("Hotkeys:") );
             
             e.appendChild( label );

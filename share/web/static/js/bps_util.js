@@ -23,7 +23,7 @@ function buttonToLink(input) {
         link.setAttribute("href","#");
         link.setAttribute("onclick",e.getAttribute("onclick"));
         link.setAttribute("name",e.getAttribute("name"));
-        link.setAttribute("class",e.getAttribute("class"));
+        link.className = e.className;
         link['virtualform'] = Form.Element.getForm(e);
         link.appendChild(document.createTextNode(e.getAttribute("value")));
 

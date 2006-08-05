@@ -867,11 +867,11 @@ function show_action_result() {
     node.innerHTML = text;
     
     var wrap1 = document.createElement("div");
-    wrap1.setAttribute("class", "dropshadow_wrap1");
+    wrap1.className = "dropshadow_wrap1";
     var wrap2 = document.createElement("div");
-    wrap2.setAttribute("class", "dropshadow_wrap2");
+    wrap2.className = "dropshadow_wrap2";
     var wrap3 = document.createElement("div");
-    wrap3.setAttribute("class", "dropshadow_wrap3");
+    wrap3.className = "dropshadow_wrap3";
 
     wrap1.appendChild(wrap2);
     wrap2.appendChild(wrap3);
