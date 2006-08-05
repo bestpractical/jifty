@@ -207,9 +207,13 @@ Action.prototype = {
 
     disable_input_fields: function() {
         var disable = function() {
-            // Triggers https://bugzilla.mozilla.org/show_bug.cgi?id=236791
-            arguments[0].blur();
-            arguments[0].disabled = true;
+	    var elt = arguments[0];
+	    // Disabling hidden elements seems to  make IE sad for some reason
+	    if(elt.type != 'hidden') {
+		// Triggers https://bugzilla.mozilla.org/show_bug.cgi?id=236791
+		elt.blur();
+		elt.disabled = true;
+	    }
         };
         this.fields().each(disable);
         this.buttons().each(disable);
@@ -375,9 +379,40 @@ Object.extend(Form.Element, {
             extras.push(e);
         }
         return extras;
+    },
+
+    /* Someday Jifty may have the concept of "default"
+       buttons.  For now, this clicks the first button that will
+       submit the action associated with the form element.
+     */
+    clickDefaultButton: function(element) {
+        var action = Form.Element.getAction( element );
+        if ( action ) {
+            var buttons = action.buttons();
+            for ( var i = 0; i < buttons.length; i++ ) {
+                var b = buttons[i];
+                if ( Form.Element.buttonActions( b ).indexOf( action.moniker ) >= 0 ) {
+                    b.click();
+                    return true;
+                }
+            }
+        }
+        return false;
+    },
+
+    handleEnter: function(event) {
+        /* Trap "Enter" */
+        if (    event.keyCode == 13
+             && !event.metaKey && !event.altKey && !event.ctrlKey )
+        {
+            if ( Form.Element.clickDefaultButton( event.target ) )
+                event.preventDefault();
+        }
     }
 
 });
+
+JSAN.use("DOM.Events");
 
 // Form elements should AJAX validate if the CSS says so
 Behaviour.register({
@@ -397,6 +432,19 @@ Behaviour.register({
         if ( !Element.hasClassName( e, 'is_button_as_link' ) ) {
             buttonToLink(e);
             Element.addClassName( e, 'is_button_as_link' );
+        }
+    },
+    "input.date, input.text": function(e) {
+        /* XXX TODO: Figure out how to make our enter handler detect
+           when the autocomplete is active so we can use it on autocompleted
+           fields
+         */
+        if (   !Element.hasClassName( e, "jifty_enter_handler_attached" )
+            && !Element.hasClassName( e, "ajaxautocompletes" ) )
+        {
+            /* Do not use keydown as the event, it will not work as expected in Safari */
+            DOM.Events.addListener( e, "keypress", Form.Element.handleEnter );
+            Element.addClassName( e, "jifty_enter_handler_attached" );
         }
     }
 });
@@ -519,7 +567,7 @@ function update() {
     // If we don't have XMLHttpRequest, bail and fallback on full-page
     // loads
     if(!Ajax.getTransport()) return true;
-    
+
     show_wait_message();
     var named_args = arguments[0];
     var trigger    = arguments[1];
@@ -815,9 +863,9 @@ function show_action_result() {
     var node = document.createElement('div');
     var node_id = 'result-' + moniker;
     node.setAttribute('id', node_id);
-    node.setAttribute('class', 'popup_notification result-' + status);
+    node.className = "popup_notification result-" + status;
     node.innerHTML = text;
-        
+    
     var wrap1 = document.createElement("div");
     wrap1.setAttribute("class", "dropshadow_wrap1");
     var wrap2 = document.createElement("div");
@@ -828,7 +876,7 @@ function show_action_result() {
     wrap1.appendChild(wrap2);
     wrap2.appendChild(wrap3);
     wrap3.appendChild(node);
-
+    
     if(popup.hasChildNodes()) {
         popup.insertBefore(wrap1, popup.firstChild);
     } else {

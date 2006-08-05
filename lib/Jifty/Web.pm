@@ -24,6 +24,7 @@ use Moose;
 has next_page               => qw( is rw isa Str );
 has request                 => qw( is rw isa Jifty::Request );
 has response                => qw( is rw isa Jifty::Response );
+has force_redirect          => qw( is rw isa Bool );
 has session                 => qw( is rw isa Jifty::Web::Session );
 has temporary_current_user  => qw( is rw isa Object );
 has _current_user           => qw( is rw isa Object );
@@ -66,7 +67,7 @@ __PACKAGE__->javascript_libs([qw(
     yui/calendar.js
     app.js
     app_behaviour.js
-    css_browser_selector.js                                 
+    css_browser_selector.js
 )]);
 
 =head1 METHODS
@@ -403,7 +404,7 @@ C<ORDER> defines the order in which the action is run, with lower
 numerical values running first.
 
 C<ARGUMENTS> are passed to the L<Jifty::Action/new> method.  In
-addition, if the current request (C<$self->request>) contains an
+addition, if the current request (C<< $self->request >>) contains an
 action with a matching moniker, any arguments that are in that
 requested action but not in the C<PARAMHASH> list are set.  This
 implements "sticky fields".
@@ -533,23 +534,31 @@ sub succeeded_actions {
 Gets or sets the next page for the framework to show.  This is
 normally set during the C<take_action> method or a L<Jifty::Action>
 
+=head3 force_redirect [VALUE]
+
+Gets or sets whether we should force a redirect to C<next_page>, even
+if it's already the current page. You might set this, e.g. to force a
+redirect after a POSTed action.
+
 =head3 redirect_required
 
 Returns true if we need to redirect, now that we've processed all the
-actions.  The current logic just looks to see if a different
-L</next_page> has been set. We probably want to make it possible to
-force a redirect, even if we're redirecting back to the current page
+actions. We need a redirect if either C<next_page> is different from
+the current page, or C<force_redirect> has been set.
 
 =cut
 
 sub redirect_required {
     my $self = shift;
 
-    if ($self->next_page
+    return ( 1 ) if $self->force_redirect;
+
+    if (!$self->request->is_subrequest
+        and $self->next_page
         and ( ( $self->next_page ne $self->request->path )
-            or $self->request->state_variables
-            or $self->{'state_variables'} )
-        )
+              or $self->request->state_variables
+              or $self->{'state_variables'} )
+       )
     {
         return (1);
 
@@ -571,11 +580,11 @@ L<Jifty::Web::Form::Clickable> object.
 
 sub redirect {
     my $self = shift;
-    my $page = shift || $self->next_page;
+    my $page = shift || $self->next_page || $self->request->path;
     $page = Jifty::Web::Form::Clickable->new( url => $page )
       unless ref $page and $page->isa("Jifty::Web::Form::Clickable");
 
-    carp "Don't include GET paramters in the redirect URL -- use a Jifty::Web::Form::Clickable instead.  See L<Jifty::Web/redirect>" if $page->url =~ /\?/;
+    carp "Don't include GET parameters in the redirect URL -- use a Jifty::Web::Form::Clickable instead.  See L<Jifty::Web/redirect>" if $page->url =~ /\?/;
 
     my %overrides = ( @_ );
     $page->parameter($_ => $overrides{$_}) for keys %overrides;
@@ -693,9 +702,6 @@ sub tangent {
     if ( defined wantarray ) {
         return $clickable->generate;
     } else {
-        $clickable->state_variable( $_ => $self->{'state_variables'}{$_} )
-            for keys %{ $self->{'state_variables'} };
-
         my $request = Jifty->web->request->clone;
         my %clickable = $clickable->get_parameters;
         $request->argument($_ => $clickable{$_}) for keys %clickable;
@@ -1171,16 +1177,17 @@ sub set_variable {
 =head3 state_variables
 
 Returns all of the state variables that have been set for the next
-request, as a hash; they have already been prefixed with C<J:V->
+request, as a hash;
+
+N.B. These are B<not> prefixed with C<J:V->, as they were in earlier
+versions of Jifty
 
 =cut
 
-# FIXME: it seems wrong to have an accessor that exposes the
-# representation, so to speak
 sub state_variables {
     my $self = shift;
     my %vars;
-    $vars{ "J:V-" . $_ } = $self->{'state_variables'}->{$_}
+    $vars{$_} = $self->{'state_variables'}->{$_}
         for keys %{ $self->{'state_variables'} };
 
     return %vars;

@@ -133,41 +133,47 @@ get an unexpected error from your browser.
 
 sub new {
     my $class = shift;
-    my $self  = bless {}, $class;
-
     my ($root) = $ENV{'REQUEST_URI'} =~ /([^\?]*)/;
 
-    my %args = (
-        url            => $root,
-        label          => 'Click me!',
-        tooltip        => '',
+    my $self = bless {
         class          => '',
+        label          => 'Click me!',
+        url            => $root,
         escape_label   => 1,
+        tooltip        => '',
         continuation   => Jifty->web->request->continuation,
         submit         => [],
         preserve_state => 0,
+    }, $class;
+
+    my %args = (
         parameters     => {},
         as_button      => 0,
         as_link        => 0,
         @_,
     );
+
     $args{render_as_button} = delete $args{as_button};
     $args{render_as_link}   = delete $args{as_link};
 
     $self->{parameters} = {};
 
-    for (qw/continuation call/) {
-        $args{$_} = $args{$_}->id if $args{$_} and ref $args{$_};
+    for my $field ( $self->accessors() ) {
+        $self->$field( $args{$field} ) if exists $args{$field};
     }
 
-    if ( $args{submit} ) {
-        $args{submit} = [ $args{submit} ] unless ref $args{submit} eq "ARRAY";
-        $args{submit}
-            = [ map { ref $_ ? $_->moniker : $_ } @{ $args{submit} } ];
+    for (qw/continuation call/) {
+        $self->{$_} = $self->{$_}->id if $self->{$_} and ref $self->{$_};
+    }
+
+    if ( $self->{submit} ) {
+        $self->{submit} = [ $self->{submit} ] unless ref $self->{submit} eq "ARRAY";
+        $self->{submit}
+            = [ map { ref $_ ? $_->moniker : $_ } @{ $self->{submit} } ];
 
         # If they have an onclick, add any and all submit actions to the onclick's submit list
-        if ($args{onclick}) {
-            $args{onclick} = [ (ref $args{onclick} eq "ARRAY" ? @{ $args{onclick} } : $args{onclick}), map { submit => $_ }, @{$args{submit}} ];
+        if ($self->{onclick}) {
+            $self->{onclick} = [ (ref $self->{onclick} eq "ARRAY" ? @{ $self->{onclick} } : $self->{onclick}), map { submit => $_ }, @{$self->{submit}} ];
         }
     }
 
@@ -179,13 +185,14 @@ sub new {
     # Anything doing fragment replacement needs to preserve the
     # current state as well
     if ( grep { $self->$_ } $self->handlers or $self->preserve_state ) {
-        for ( Jifty->web->request->state_variables ) {
-            if ( $_->key =~ /^region-(.*?)\.(.*)$/ ) {
-                $self->region_argument( $1, $2 => $_->value );
-            } elsif ( $_->key =~ /^region-(.*)$/ ) {
-                $self->region_fragment( $1, $_->value );
+        my %state_vars = Jifty->web->state_variables;
+        while ( my ($key,  $val) = each %state_vars ) {
+            if ( $key =~ /^region-(.*?)\.(.*)$/ ) {
+                $self->region_argument( $1, $2 => $val );
+            } elsif ( $key =~ /^region-(.*)$/ ) {
+                $self->region_fragment( $1, $val );
             } else {
-                $self->state_variable( $_->key => $_->value );
+                $self->state_variable( $key => $val );
             }
         }
     }

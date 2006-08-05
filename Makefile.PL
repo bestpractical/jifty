@@ -19,14 +19,16 @@ requires('DateTime');
 requires('Date::Manip');
 requires('Email::Folder');
 requires('Email::LocalDelivery');
+requires('Email::MIME');
+requires('Email::MIME::Creator');
 requires('Email::Send' => '1.99_01'); # Email::Send::Jifty::Test
 requires('Email::Simple');
-requires('Email::Simple::Creator');
 requires('Exporter::Lite');
 requires('File::Find::Rule');
 requires('File::MMagic');
 requires('File::ShareDir' => '0.04');
 requires('HTML::Entities');
+requires('HTML::Lint');
 requires('HTML::Mason' => 1.3101);           # HTML::Mason::Exceptions HTML::Mason::FakeApache HTML::Mason::MethodMaker HTML::Mason::Request HTML::Mason::Utils
 requires('HTML::Mason::Plugin');
 requires('HTTP::Cookies');

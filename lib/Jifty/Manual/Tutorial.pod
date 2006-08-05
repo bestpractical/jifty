@@ -389,7 +389,7 @@ You may want to start with the stock jifty template, in which case you
 only need to add the C<< $top->child( Post... >> part
 
   cat $(perl -MJifty::Util -e 'print Jifty::Util->share_root' \
-    )/share/web/templates/_elements/nav > share/web/templates/_elements/nav
+    )/web/templates/_elements/nav > share/web/templates/_elements/nav
 
 Otherwise, inside F<_elements>, open up a new file called C<nav> in your
 text editor and insert:

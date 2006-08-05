@@ -129,9 +129,9 @@ sub get {
     } else {
         unless ($self->{cache}) {
             my $settings = Jifty::Model::SessionCollection->new;
-            $settings->limit( column => 'session_id', value => $self->id );
-            $settings->limit( column => 'key_type',   value => 'continuation', operator => '!=', entry_aggregator => 'and' );
-            $settings->limit( column => 'key_type',   value => 'session', operator => '!=', entry_aggregator => 'and' );
+            $settings->limit( column => 'session_id', value => $self->id, case_sensitive => '1' );
+            $settings->limit( column => 'key_type',   value => 'continuation', operator => '!=', entry_aggregator => 'and', case_sensitive => '1' );
+            $settings->limit( column => 'key_type',   value => 'session', operator => '!=', entry_aggregator => 'and', case_sensitive => '1' );
             while (my $row = $settings->next) {
                 $self->{cache}{$row->key_type}{$row->data_key} = $row->value;
             }
@@ -254,8 +254,8 @@ sub continuations {
     return () unless $self->loaded;
 
     my $conts = Jifty::Model::SessionCollection->new;
-    $conts->limit( column => "key_type",   value => "continuation" );
-    $conts->limit( column => "session_id", value => $self->id );
+    $conts->limit( column => "key_type",   value => "continuation", case_sensitive => '1' );
+    $conts->limit( column => "session_id", value => $self->id, case_sensitive=> '1' );
 
     my %continuations;
     $continuations{ $_->key } = $_->value while $_ = $conts->next;

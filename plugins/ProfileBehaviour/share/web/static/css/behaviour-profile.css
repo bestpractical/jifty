@@ -1,7 +1,7 @@
 #behaviour-profile-data {
     width: 90%;
     height: 90%;
-    position: absolute;
+    position: fixed;
     left: 5%;
     top: 5%;
     background-color: white;
@@ -61,7 +61,7 @@
 
 
 #show-behaviour-profile {
-    position: absolute;
-    left: 0;
+    position: fixed;
+    left: 0.5em;
     bottom: 0;
 }

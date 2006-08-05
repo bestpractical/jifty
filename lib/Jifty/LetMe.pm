@@ -184,9 +184,9 @@ sub from_token {
     $self->path( shift @atoms );
     $self->checksum_provided( pop @atoms );
 
-    my %args = @atoms;
+    my %args = map {URI::Escape::uri_unescape($_)} @atoms;
     $self->until( delete $args{until} ) if $args{until};
-    
+
     $self->args(\%args);
 }
 
@@ -221,7 +221,7 @@ sub _generate_token {
     return join ('/', 
         $args{'email'},
         $self->path,
-        %{$self->args},
+        (map {URI::Escape::uri_escape($_)} %{$self->args}),
         (defined $self->until ? ( 'until', $self->until ) : () ), #?
         $self->generate_checksum  
         );

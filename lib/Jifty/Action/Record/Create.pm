@@ -32,8 +32,8 @@ sub arguments {
     
     my $args = $self->SUPER::arguments;
     for my $arg (keys %{$args}) {
-        next unless $self->record->column($arg);
-        $args->{$arg}{default_value} = $self->record->column($arg)->default
+        my $column = $self->record->column($arg) or next;
+        $args->{$arg}{default_value} = $column->default
           if not $args->{$arg}->{default_value};
     }
     return $args;

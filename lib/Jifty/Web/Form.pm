@@ -11,6 +11,7 @@ has printed_actions => qw( is rw isa Any );
 has name            => qw( is rw isa Str );
 has call            => qw( is rw isa Any ); # Str | Jifty::Continuation
 has is_open         => qw( is rw isa Bool );
+has disable_autocomplete => qw( is rw isa Bool );
 no Moose;
 
 =head2 new ARGS
@@ -29,6 +30,11 @@ for testing.
 All buttons in this form will act as continuation calls for the given
 continuation id.
 
+=item disable_autocomplete
+
+Disable B<browser> autocomplete for this form.  Jifty autocomplete will still
+work.
+
 =back
 
 =cut
@@ -40,6 +46,7 @@ sub new {
     my %args = (
         name => undef,
         call => undef,
+        disable_autocomplete => undef,
         @_,
     );
 
@@ -70,12 +77,14 @@ sub _init {
     my $self = shift;
     my %args = (name => undef,
                 call => undef,
+                disable_autocomplete => undef,
                 @_);
 
     $self->actions( {} ) ;
     $self->printed_actions( {} ) ;
     $self->name($args{name});
     $self->call($args{call});
+    $self->disable_autocomplete($args{disable_autocomplete});
 }
 
 
@@ -184,8 +193,15 @@ sub start {
 
     my $form_start = qq!<form method="post" action="$ENV{PATH_INFO}"!;
     $form_start   .= qq! name="@{[ $self->name ]}"! if defined $self->name;
+    $form_start   .= qq! autocomplete="off"! if defined $self->disable_autocomplete;
     $form_start   .= qq! enctype="multipart/form-data" >\n!;
     Jifty->web->out($form_start);
+
+    # Write out state variables early, so that if a form gets
+    # submitted before the page finishes loading, the state vars don't
+    # get lost
+    $self->_preserve_state_variables();
+
     $self->is_open(1);
     '';
 }
@@ -227,7 +243,6 @@ sub end {
     Jifty->web->out( qq!<div class="hidden">\n! );
 
     $self->_print_registered_actions();
-    $self->_preserve_state_variables();
     $self->_preserve_continuations();
 
     Jifty->web->out( qq!</div>\n! );
@@ -279,7 +294,7 @@ sub _preserve_state_variables {
     my %vars = Jifty->web->state_variables;
     for (keys %vars) {
         Jifty->web->out( qq{<input type="hidden" name="}
-                . $_
+                . 'J:V-' . $_
                 . qq{" value="}
                 . $vars{$_}
                 . qq{" />\n} );

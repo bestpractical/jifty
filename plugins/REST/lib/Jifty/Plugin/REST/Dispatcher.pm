@@ -1,5 +1,7 @@
 use strict;
 use warnings;
+no warnings 'utf8';
+no warnings 'once';
 
 package Jifty::Plugin::REST::Dispatcher;
 use CGI qw( start_html end_html ul li a dl dt dd );
@@ -7,11 +9,6 @@ use Jifty::Dispatcher -base;
 use Jifty::YAML ();
 use Jifty::JSON ();
 use Data::Dumper ();
-
-#before '/=/**' => run {
-#    authenticate_user();
-#    tangent('/login') unless Jifty->web->current_user->id;
-#};
 
 before qr{^ (/=/ .*) \. (js|json|yml|yaml|perl|pl) $}x => run {
     $ENV{HTTP_ACCEPT} = $2;
@@ -42,8 +39,6 @@ sub list {
 }
 
 sub outs {
-    no warnings 'utf8';
-
     my $prefix = shift;
     my $accept = ($ENV{HTTP_ACCEPT} || '');
     my $apache = Jifty->handler->apache;
@@ -112,14 +107,18 @@ sub html_dump {
     }
 }
 
-sub model {
-    my $model = shift;
-    return $model if $model->isa('Jifty::Record');
+sub action { resolve($_[0], 'Jifty::Action', Jifty->api->actions) }
+sub model  { resolve($_[0], 'Jifty::Record', Jifty->class_loader->models) }
 
-    $model =~ s/\W+/\\W+/g;
+sub resolve {
+    my $name = shift;
+    my $base = shift;
+    return $name if $name->isa($base);
 
-    foreach my $cls (Jifty->class_loader->models) {
-        return $cls if $cls =~ /$model$/i;
+    $name =~ s/\W+/\\W+/g;
+
+    foreach my $cls (@_) {
+        return $cls if $cls =~ /$name$/i;
     }
 
     abort(404);
@@ -180,15 +179,65 @@ sub delete_item {
 }
 
 sub list_actions {
-    die "hey list actions";
+    list(['action'], Jifty->api->actions);
 }
 
 sub list_action_params {
-    die "hey action params";
+    my ($action) = action($1) or abort(404);
+    Jifty::Util->require($action) or abort(404);
+    $action = $action->new or abort(404);
+
+    # XXX - Encapsulation?  Someone please think of the encapsulation!
+    no warnings 'redefine';
+    local *Jifty::Web::out = sub { shift; print @_ };
+    local *Jifty::Action::form_field_name = sub { shift; $_[0] };
+    local *Jifty::Action::register = sub { 1 };
+    local *Jifty::Web::Form::Field::Unrendered::render = \&Jifty::Web::Form::Field::render;
+
+    print start_html(-encoding => 'UTF-8', -declare_xml => 1, -title => ref($action));
+    Jifty->web->form->start;
+    for my $name ($action->argument_names) {
+        print $action->form_field($name);
+    }
+    Jifty->web->form->submit( label => 'POST' );
+    Jifty->web->form->end;
+    print end_html;
+    last_rule;
 }
 
 sub run_action {
-    die "run action";
+    my ($action) = action($1) or abort(404);
+    Jifty::Util->require($action) or abort(404);
+    $action = $action->new or abort(404);
+
+    # Jifty->api->is_allowed( $action ) or abort(403);
+
+    my $args = Jifty->web->request->arguments;
+    delete $args->{''};
+
+    $action->argument_values({ %$args });
+    $action->validate;
+
+    local $@;
+    eval { $action->run };
+
+    if ($@ or $action->result->failure) {
+        abort(500);
+    }
+
+    my $rec = $action->{record};
+    if ($rec and $rec->isa('Jifty::Record') and $rec->id) {
+        my $url    = Jifty->web->url(path => join '/', '=', map {
+            Jifty::Web->escape_uri($_)
+        } 'model', ref($rec), 'id', $rec->id);
+        Jifty->handler->apache->header_out('Location' => $url);
+    }
+
+    print start_html(-encoding => 'UTF-8', -declare_xml => 1, -title => 'models'),
+          ul(map { li(html_dump($_)) } $action->result->message, Jifty->web->response->messages),
+          end_html();
+
+    last_rule;
 }
 
 1;

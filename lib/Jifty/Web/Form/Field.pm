@@ -56,9 +56,12 @@ use base 'Jifty::Web::Form::Element';
 
 use Scalar::Util;
 use HTML::Entities;
-use overload '""' => sub { shift->render}, bool => sub { 1 };
 
-=head2 accessors
+# We need the anonymous sub because otherwise the method of the base class is
+# always called, instead of the appropriate overridden method in a child class.
+use overload '""' => sub { shift->render }, bool => sub { 1 };
+
+=head2 new
 
 Lists the accessors that are able to be called from within a call to
 C<new>.  Subclasses should extend this list.
@@ -289,7 +292,8 @@ Renders a default CSS class for each part of our widget.
 
 sub classes {
     my $self = shift;
-    return join(' ', ($self->class||''), ($self->name ? "argument-".$self->name : ''));
+    my $name = $self->name;
+    return join(' ', ($self->class||''), ($name ? "argument-".$name : ''));
 }
 
 

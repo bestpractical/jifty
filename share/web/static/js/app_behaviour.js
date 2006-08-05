@@ -82,6 +82,21 @@
         }
     });
 
+  * Jifty has recently gained built-in support for limited profiling
+    of Behaviours via the ProfileBehaviour plugin (in the Jifty svn
+    tree). After installing the module, add it to your config.yml,
+    using, e.g:
+
+      Plugins:
+        - ProfileBehaviour: {}
+
+    Once you do this, all pages in your application should have a
+    ``Behaviour profile'' link at the bottom left hand corner of the
+    screen. Click it to get a breakdown of how much time your
+    javascript is spending in which behaviours, and whether the time
+    is spent in looking up the CSS Selector you passed (cssQuery
+    time), or in applying the Behaviour function (function time).
+    
 
     ** Footnote **
 

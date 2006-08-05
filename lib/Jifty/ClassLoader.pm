@@ -222,4 +222,26 @@ sub models {
     wantarray ? @{ $self->{models} ||= [] } : $self->{models};
 }
 
+
+=head1 Writing your own classes
+
+If you require more functionality than is provided by the classes
+created by ClassLoader then you should create a class with the
+appropriate name and add your extra logic to it.
+
+For example you will almost certainly want to write your own
+dispatcher, so something like:
+
+ package MyApp::Dispatcher;
+ use Jifty::Dispatcher -base;
+
+If you want to add some application specific behaviour to a model's
+collection class, say for the User model, create F<UserCollection.pm>
+in your applications Model directory.
+
+ package MyApp::Model::UserCollection;
+ use base 'MyApp::Collection';
+
+=cut
+
 1;
