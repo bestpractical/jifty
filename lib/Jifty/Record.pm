@@ -63,6 +63,12 @@ sub create {
 
     foreach my $key ( keys %attribs ) {
         my $attr = $attribs{$key};
+        my $method = "canonicalize_$key";
+        my $func = $self->can($method) or next;
+        $attribs{$key} = $self->$func( $attr);
+    }
+    foreach my $key ( keys %attribs ) {
+        my $attr = $attribs{$key};
         my $method = "validate_$key";
         my $func = $self->can($method) or next;
         my ( $val, $msg ) = $func->($self, $attr);
