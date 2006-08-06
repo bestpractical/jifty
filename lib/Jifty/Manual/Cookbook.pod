@@ -11,6 +11,32 @@ of Jifty use, and ones that work pretty well.
 
 =head1 HOW DO I ...
 
+=head2 Emulate 'created_on' field like Rails ?
+
+In Rails, if you have a field named 'created_on', it's automatically
+set to the creation time of the record. How can I emulate this
+behaviour in Jifty ?
+
+The trick here is to use L<Scalar::Defer>. And declare your column
+like this:
+
+    column created_on =>
+        type is 'timestamp',
+        label is 'Created On',
+        default is defer { DateTime->now },
+        filters are 'Jifty::DBI::Filter::DateTime';
+
+This approach is not really accurate, if you render this field in a
+form, then the defer value is evaluated by the time of rendering,
+which might be way eariler then the creation of record. However, it is
+the easiest one. For more accurate approch, override model's
+C<before_create()> method:
+
+    sub before_create {
+        my ($self, $attr) = @_;
+        $attr->{'created_on'} = DateTime->now;
+    };
+
 =head2 Limit access to pages to logged-in users
 
 The best place to do this is probably in your application's
@@ -67,4 +93,16 @@ passed as arguments to top-level Mason components that list them in
 C<< <%args> >>. And don't worry about namespace conflicts with Jifty's
 auto-generated argument fields -- Jifty prefixes all its C<name>s with
 C<J:> so there won't be a problem.
+
+=head2 Perform database migration
+
+Edit etc/config.yaml and change Database->Version to a proper value
+(say, 0.0.2). Then run
+
+    jifty schema --setup
+
+Jifty would inspect current database and perform proper actions.
+You could give a C<--print> option to see the actual SQL statement:
+
+    jifty schema --setup --print
 
