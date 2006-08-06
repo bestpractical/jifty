@@ -106,7 +106,7 @@ sub new {
 =head2 arguments
 
 B<Note>: this API is now deprecated in favour of the declarative syntax
-offered by L<Jifty::Action::Schema>.
+offered by L<Jifty::Param::Schema>.
 
 This method, along with L</take_action>, is the most commonly
 overridden method.  It should return a hash which describes the
