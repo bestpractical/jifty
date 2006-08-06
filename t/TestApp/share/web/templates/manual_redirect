@@ -1,0 +1,13 @@
+<%init>
+my $action = Jifty->web->new_action(
+    class => 'Jifty::Action::Redirect',
+    moniker => 'go',
+);
+</%init>
+<&| /_elements/wrapper, title => "Test of simple form for editing" &>
+  Basic test of a simple form for editing.
+<% Jifty->web->form->start() %>
+<% $action->form_field('url') %>
+<% Jifty->web->form->submit %>
+<% Jifty->web->form->end %>
+</&>
