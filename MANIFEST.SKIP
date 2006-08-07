@@ -21,3 +21,4 @@ var/*
 t/*/var/*
 doc/talks/*
 ^\.
+/\._
