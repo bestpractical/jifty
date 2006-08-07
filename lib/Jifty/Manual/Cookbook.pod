@@ -11,6 +11,51 @@ of Jifty use, and ones that work pretty well.
 
 =head1 HOW DO I ...
 
+=head2 Add Atom/RSS Feeds ?
+
+You could generate atom/rss feeds for virtually any model in your application.
+For instance, suppose there's a "Post" model (like a blog post), you could use
+L<XML::Feed> to do this:
+
+    # In '/feed' template
+    <%args>
+    $type
+    </%args>
+    <%init>
+    use XML::Feed;
+    my $posts = MyApp::Model::PostCollection->new();
+    $posts->unlimit();
+    
+    my $feed = XML::Feed->new( $type );
+    $feed->title( Jifty->config->framework('ApplicationName') . " Feed" );
+    $feed->link( Jifty->web->url );
+    $feed->description( $feed->title );
+    
+    while( my $post = $posts->next ) {
+        my $feed_entry = XML::Feed::Entry->new($type);
+        $feed_entry->title($post->title);
+        $feed_entry->author($post->author->username);
+        $feed_entry->link( Jifty->web->url . "/posts/" . $post->id );
+        $feed_entry->issued( $post->created_on );
+        $feed_entry->summary( $post->body );
+        $feed->add_entry($feed_entry);
+    }
+    </%init>
+    <% $feed->as_xml |n%>
+
+And add this in C<MyApp/Dispatcher.pm> to make URI look prettier:
+
+    on qr{^/feed/(atom|rss|rss2)}, run {
+        set type => $1;
+        show('/feed');
+    };
+    
+And of course, you need to put these in your HTML header tempalte
+(conventionally that's C</_elements/header>):
+
+    <link rel="alternate" type="application/atom+xml" title="Atom" href="/feed/atom" />
+    <link rel="alternate" type="application/rss+xml" title="RSS" href="/feed/rss" />
+
 =head2 Emulate 'created_on' field like Rails ?
 
 In Rails, if you have a field named 'created_on', it's automatically
