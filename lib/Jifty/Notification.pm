@@ -91,6 +91,7 @@ sub send_one_message {
             To      => $to,
             Subject => $self->subject || 'No subject',
         ],
+        attributes => { charset => 'UTF-8' },
         parts => $self->parts
     );
     $self->set_headers($message);
