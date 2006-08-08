@@ -3,7 +3,7 @@ package Jifty::Web::Menu;
 use base qw/Class::Accessor::Fast/;
 use URI;
 
-__PACKAGE__->mk_accessors(qw(label parent sort_order link escape_label class));
+__PACKAGE__->mk_accessors(qw(label parent sort_order link target escape_label class));
 
 =head2 new PARAMHASH
 
@@ -42,6 +42,12 @@ the parent.  This defaults to adding onto the end.
 Gets or set a Jifty::Web::Link object that represents this menu item. If
 you're looking to do complex ajaxy things with menus, this is likely
 the option you want.
+
+=head2 target [STRING]
+
+Get or set the frame or pseudo-target for this link. something like L<_blank>
+
+=cut
 
 =head2 class [STRING]
 
@@ -266,6 +272,7 @@ sub as_link {
         return Jifty->web->link( label => _( $self->label ),
                                  url   => $self->url,
                                  escape_label => $self->escape_label,
+                                 target => $self->target,
                                  class => $self->class );
     } else {
         return _( $self->label );

@@ -25,10 +25,10 @@ L<Jifty::Web::Form::Element/accessors>.
 
 sub accessors {
     shift->SUPER::accessors,
-        qw(url escape_label tooltip continuation call returns submit preserve_state render_as_button render_as_link);
+        qw(url escape_label tooltip continuation call returns submit target preserve_state render_as_button render_as_link);
 }
 __PACKAGE__->mk_accessors(
-    qw(url escape_label tooltip continuation call returns submit preserve_state render_as_button render_as_link)
+    qw(url escape_label tooltip continuation call returns submit target preserve_state render_as_button render_as_link)
 );
 
 =head2 new PARAMHASH
@@ -114,6 +114,12 @@ only works in javascript browsers.  Supplying B<both> C<as_button> and
 C<as_link> will work, and not as perverse as it might sound at first
 -- it allows you to make any simple GET request into a POST request,
 while still appearing as a link (a GET request).
+
+=item target
+
+For things that start off as links, give them an html C<target> attribute.
+
+=cut
 
 =item Anything from L<Jifty::Web::Form::Element>
 
@@ -453,6 +459,7 @@ sub as_link {
         { %$args,
           escape_label => $self->escape_label,
           url          => $self->complete_url,
+          target       => $self->target,
           @_ }
     );
     return $link;
