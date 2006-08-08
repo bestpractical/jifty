@@ -68,12 +68,30 @@ for (keys %results) {
     # current_user->user_object is itself)
     use Scalar::Util qw(blessed);
     my $content = $results{$_}->content;
-    blessed $content->{$_}
-        and ( $content->{$_}->isa("Jifty::DBI::Record")
-           or $content->{$_}->isa("Jifty::DBI::Collection") )
-        and delete $content->{$_}
-        for keys %{$content};
 
+    sub stripkids {
+        my $top = shift;
+        if ( not ref $top ) { return $top }
+        elsif (
+            blessed($top)
+            and (  $top->isa("Jifty::DBI::Record")
+                or $top->isa("Jifty::DBI::Collection") )
+            )
+        {
+            return undef;
+        } elsif ( ref $top eq 'HASH' ) {
+            foreach my $item ( keys %$top ) {
+                $top->{$item} = stripkids( $top->{$item} );
+            }
+        } elsif ( ref $top eq 'ARRAY' ) {
+            for ( 0 .. $#{$top} ) {
+                $top->[$_] = stripkids( $top->[$_] );
+            }
+        }
+        return $top;
+    }
+
+    $content = stripkids($content);
     use XML::Simple;
     $writer->raw(XML::Simple::XMLout($content, NoAttr => 1, RootName => "content", NoIndent => 1))
       if keys %{$content};
