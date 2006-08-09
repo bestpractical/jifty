@@ -368,5 +368,7 @@ t/TestApp/t/05-editactions-Record.t
 t/TestApp/t/06-validation.t
 t/TestApp/t/07-sandboxing.t
 t/TestApp/t/08-notifications.t
+t/TestApp/t/09-redirect.t
+t/TestApp/t/10-compress.t
 t/TestApp/t/config-Cachable
 t/TestApp/t/config-Record

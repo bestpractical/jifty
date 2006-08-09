@@ -80,7 +80,8 @@ sub out_method {
 
     unless ($r->http_header_sent or not $m->auto_send_headers) {
 	my $want_gzip = 0;
-	if (Jifty->handler->cgi->http('Accept-Encoding') =~ /\bgzip\b/) {
+
+	if (Jifty::View::Static::Handler->client_accepts_gzipped_content) {
 	    ++$want_gzip;
 	    $r->header_out( "Content-Encoding" => "gzip" );
 	}
