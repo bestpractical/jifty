@@ -52,7 +52,7 @@ sub started_ok {
         $ENV{"PERL_DPROF_OUT_FILE_NAME"} = $profile_file;
     }
     if (my $coverage = $ENV{JIFTY_TESTSERVER_COVERAGE}) {
-        push @extra, '-MDevel::Cover';
+        push @extra, '-MDevel::Cover'.($coverage =~ m/,/ ? "=$coverage" : '');
     }
 
     exec(@perl, @extra, '-MJifty::Util', '-MJifty::Script',
