@@ -78,24 +78,20 @@ sub out_method {
     my $m = HTML::Mason::Request->instance;
     my $r = Jifty->handler->apache;
 
+    $r->content_type || $r->content_type('text/html; charset=utf-8'); # Set up a default
+
+    if ($r->content_type =~ /charset=([\w-]+)$/ ) {
+        my $enc = $1;
+	if (lc($enc) =~ /utf-?8/) {
+            binmode *STDOUT, ":utf8";
+	}
+	else {
+            binmode *STDOUT, ":encoding($enc)";
+	}
+    }
+
     unless ($r->http_header_sent or not $m->auto_send_headers) {
-	my $want_gzip = 0;
-
-	if (Jifty::View::Static::Handler->client_accepts_gzipped_content) {
-	    ++$want_gzip;
-	    $r->header_out( "Content-Encoding" => "gzip" );
-	}
-
-	my $enc_layer;
-	$r->content_type || $r->content_type('text/html; charset=utf-8'); # Set up a default
-	if ($r->content_type =~ /charset=([\w-]+)$/ ) {
-	    $enc_layer = lc($1) =~ /utf-?8/ ? ':utf8' : ":encoding($1)"; 
-	}
-
         $r->send_http_header();
-
-	binmode *STDOUT, ":gzip(lazy)" if $want_gzip;
-	binmode *STDOUT, $enc_layer if $enc_layer;
     }
 
     # We could perhaps install a new, faster out_method here that
