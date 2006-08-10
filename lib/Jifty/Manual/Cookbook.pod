@@ -110,6 +110,15 @@ Finally, you can also allow or deny specific actions in the
 dispatcher, to limit who is able to perform what actions -- see
 L<Jifty::API>.
 
+=head2 Run my Jifty app as fascgi in Apache/Lighttpd ?
+
+Jifty provides a really simple way to run the application as a fastcgi
+server. The complete instruction and example is in C<'jifty help
+fastcgi'> for both Apache server and Lighttpd server. (Please cd to
+your app dir before run this command.)
+
+You'll have to install C<CGI::Fast> and C<FCGI> module for this.
+
 =head2 Take actions based on data in URLs
 
 You can add actions to the request based on data in URLs, or anything
