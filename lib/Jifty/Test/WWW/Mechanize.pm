@@ -6,6 +6,7 @@ use base qw/Test::WWW::Mechanize/;
 
 $ENV{'http_proxy'} = ''; # Otherwise Test::WWW::Mechanize tries to go through your HTTP proxy
 
+use Jifty::YAML;
 use HTML::Lint;
 use Test::HTML::Lint qw();
 use HTTP::Cookies;

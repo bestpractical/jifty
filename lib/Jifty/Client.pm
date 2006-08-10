@@ -6,6 +6,7 @@ use base qw/WWW::Mechanize/;
 
 $ENV{'http_proxy'} = ''; # Otherwise WWW::Mechanize tries to go through your HTTP proxy
 
+use Jifty::YAML;
 use HTTP::Cookies;
 use XML::XPath;
 use Hook::LexWrap;

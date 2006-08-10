@@ -4,6 +4,7 @@ use strict;
 package Jifty::Test;
 use base qw/Test::More/;
 
+use Jifty::YAML;
 use Jifty::Server;
 use Jifty::Script::Schema;
 use Email::LocalDelivery;

@@ -2,6 +2,7 @@ package Jifty::Dispatcher;
 use strict;
 use warnings;
 use Exporter;
+use Jifty::YAML;
 use base qw/Exporter Jifty::Object/;
            
 
