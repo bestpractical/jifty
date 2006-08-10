@@ -6,7 +6,7 @@ use Cwd 'abs_path';
 use Test::Builder;
 my $Tester = Test::Builder->new;
 
-my $INC = [map { abs_path($_) } @INC ];
+my $INC = [grep { defined } map { abs_path($_) } @INC ];
 my @perl = ($^X, map { "-I$_" } @$INC);
 
 =head1 NAME
