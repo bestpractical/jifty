@@ -13,6 +13,13 @@ Jifty.Calendar = {
         return true;
     },
 
+    dateFormat: "Y-m-d",
+
+    Options: {
+        NAV_ARROW_LEFT: "/static/images/yui/us/tr/callt.gif",
+        NAV_ARROW_RIGHT: "/static/images/yui/us/tr/calrt.gif",
+    },
+
     toggleCalendar: function(ev) {
         var calId  = "cal_" + ev.target.id;
         var wrapId = calId + "_wrap";
@@ -50,8 +57,8 @@ Jifty.Calendar = {
 
         var cal;
         
-        if ( /^(\d{4})-(\d{2})-(\d{2})/.test(input.value) ) {
-            var bits = input.value.match(/^(\d{4})-(\d{2})-(\d{2})/);
+        if ( /^(\d{4})\W(\d{2})\W(\d{2})/.test(input.value) ) {
+            var bits = input.value.match(/^(\d{4})\W(\d{2})\W(\d{2})/);
             cal = new YAHOO.widget.Calendar( calId,
                                              wrapId,
                                              bits[2]+"/"+bits[1],
@@ -62,8 +69,15 @@ Jifty.Calendar = {
             cal = new YAHOO.widget.Calendar( calId, wrapId );
         }
         
+
+        cal["customConfig"] = function(){ 
+            for (i in Jifty.Calendar.Options) {
+                this.Options[i] = Jifty.Calendar.Options[i];
+            } 
+        };
+
         cal["onSelect"] = function() {
-            input.value = cal.getSelectedDates()[0].formatDate("Y-m-d");
+            input.value = cal.getSelectedDates()[0].formatDate(Jifty.Calendar.dateFormat);
             Jifty.Calendar.hideOpenCalendar();
         };
 
@@ -73,6 +87,7 @@ Jifty.Calendar = {
             cal["_onChangePage"]();
         };
         
+        cal.setupConfig();
         cal.render();
         
         Jifty.Calendar.openCalendar = wrapId;
