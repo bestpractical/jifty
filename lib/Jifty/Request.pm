@@ -231,9 +231,9 @@ sub from_cgi {
     # Either CGI.pm or HTML::Mason should really deal with this for us.
     for my $k (keys %args) {
         my $val = $args{$k};
-        if(ref($val)) {
+        if(ref($val) && ref($val) eq 'ARRAY') {
             $args{$k} = [map {Jifty::I18N->promote_encoding($_, $ENV{CONTENT_TYPE})} @$val];
-        } else {
+        } elsif(!ref($val)) {
             $args{$k} = Jifty::I18N->promote_encoding($val, $ENV{CONTENT_TYPE});
         }
     }
