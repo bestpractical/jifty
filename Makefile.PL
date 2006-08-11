@@ -53,6 +53,7 @@ requires('Module::ScanDeps');
 requires('Object::Declare' => '0.13');
 requires('PAR::Dist::FromCPAN');
 requires('Params::Validate');
+requires('PerlIO::gzip');
 requires('Pod::Simple'); #Pod::Simple::Text
 requires('Scalar::Defer' => '0.06');
 requires('String::Koremutake');
