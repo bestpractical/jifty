@@ -81,7 +81,7 @@ else {
     requires('JSON' => 0.01) unless can_use('JSON::Syck' => 0.14);
 }
 
-
+no_index directory => 't';
 no_index package => 'DB';
 no_index package => 'inc';
 no_index directory => 'doc';
