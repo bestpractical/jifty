@@ -228,6 +228,16 @@ sub from_cgi {
     use HTML::Mason::Utils;
     my %args = HTML::Mason::Utils::cgi_request_args( $cgi, $cgi->request_method );
 
+    # Either CGI.pm or HTML::Mason should really deal with this for us.
+    for my $k (keys %args) {
+        my $val = $args{$k};
+        if(ref($val)) {
+            $args{$k} = [map {Jifty::I18N->promote_encoding($_, $ENV{CONTENT_TYPE})} @$val];
+        } else {
+            $args{$k} = Jifty::I18N->promote_encoding($val, $ENV{CONTENT_TYPE});
+        }
+    }
+    
     my @splittable_names = grep /=|\|/, keys %args;
     for my $splittable (@splittable_names) {
         delete $args{$splittable};
@@ -279,6 +289,7 @@ sub argument {
     my $key = shift;
     if (@_) {
         my $value = shift;
+        
         $self->arguments->{$key} = $value;
 
         # Continuation type is ofetn undef, so give it a sane default
@@ -316,13 +327,6 @@ sub argument {
     }
 
     defined(my $val = $self->arguments->{$key}) or return undef;
-
-    if (ref $val eq 'ARRAY') {
-        Encode::_utf8_on($_) for @$val;
-    }
-    else {
-        Encode::_utf8_on($val);
-    }
 
     $val;
 }

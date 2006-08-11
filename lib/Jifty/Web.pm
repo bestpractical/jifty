@@ -422,6 +422,7 @@ sub new_action {
         @_
     );
 
+
     my %arguments = %{ $args{arguments} };
 
     if ( $args{'moniker'} ) {

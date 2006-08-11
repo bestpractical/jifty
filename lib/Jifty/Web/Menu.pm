@@ -255,7 +255,7 @@ sub render_as_hierarchical_menu_item {
 =head2 as_link
 
 Return this menu item as a C<Jifty::Web::Link>, either the one we were
-initialized with or a new one made from the C</label> and c</url>
+initialized with or a new one made from the C</label> and C</url>
 
 If there's no C</url> and no C</link>, renders just the label.
 

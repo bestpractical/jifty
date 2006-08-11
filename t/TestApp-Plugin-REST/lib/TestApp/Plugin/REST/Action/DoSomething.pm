@@ -1,10 +1,12 @@
-package Test::Plugin::REST::Action::DoSomething;
+package TestApp::Plugin::REST::Action::DoSomething;
 
 use Jifty::Param::Schema;
+use base qw/TestApp::Plugin::REST::Action/;
 use Jifty::Action schema {
 
 param email =>
     label is 'Email',
+    default is 'example@email.com',
     ajax canonicalizes,
     ajax validates;
 

@@ -14,7 +14,7 @@ use lib 'plugins/REST/lib';
 use lib 't/lib';
 use Jifty::SubTest;
 
-use Jifty::Test tests => 27;
+use Jifty::Test tests => 52;
 use Jifty::Test::WWW::Mechanize;
 
 my $server  = Jifty::Test->make_server;
@@ -80,12 +80,98 @@ is(get_content(), 'test@example.com');
 
 # on PUT    '/=/model/*/*/*' => \&replace_item;
 # on DELETE '/=/model/*/*/*' => \&delete_item;
+
+
 # on GET    '/=/action'      => \&list_actions;
+
+my @actions = qw(TestApp::Plugin::REST::Action::CreateUser
+                 TestApp::Plugin::REST::Action::UpdateUser
+                 TestApp::Plugin::REST::Action::DeleteUser
+                 TestApp::Plugin::REST::Action::DoSomething
+                 Jifty::Action::Autocomplete
+                 Jifty::Action::Redirect);
+
+$mech->get_ok('/=/action/');
+is($mech->status, 200);
+
+for (@actions) {
+    $mech->content_contains($_);
+}
+
+$mech->get_ok('/=/action.yml');
+my @got = @{get_content()};
+
+is(join(",",sort @actions), join(",", sort(@got)), "Got all the actions as YAML");
+
+
 # on GET    '/=/action/*'    => \&list_action_params;
+
+$mech->get_ok('/=/action/DoSomething');
+is($mech->status, 200);
+$mech->get_ok('/=/action/TestApp::Plugin::REST::Action::DoSomething');
+is($mech->status, 200);
+$mech->get_ok('/=/action/TestApp.Plugin.REST.Action.DoSomething');
+is($mech->status, 200);
+
+$mech->content_contains('email');
+$mech->content_contains('Email');
+$mech->content_contains('example@email.com');
+
+$mech->get_ok('/=/action/DoSomething.yml');
+is($mech->status, 200);
+
+
+my %args = %{get_content()};
+
+ok($args{email}, "Action has an email parameter");
+is($args{email}{label}, 'Email', 'email has the correct label');
+is($args{email}{default}, 'email@example.com', 'email has the correct default');
+
+
 # on POST   '/=/action/*'    => \&run_action;
 # 
 
+$mech->post( $URL . '/=/action/DoSomething', { email => 'good@email.com' } );
+
+$mech->content_contains('Something happened!');
+
+$mech->post( $URL . '/=/action/DoSomething', { email => 'bad@email.com' } );
+
+$mech->content_contains('Bad looking email');
+$mech->content_lacks('Something happened!');
+
+$mech->post( $URL . '/=/action/DoSomething', { email => 'warn@email.com' } );
+
+$mech->content_contains('Warning for email');
+$mech->content_contains('Something happened!');
+
+# Test YAML posts
+yaml_post( $URL . '/=/action/DoSomething.yml', { email => 'good@email.com' } );
+
+%content = %{get_content()};
+
+ok($content{success});
+is($content{message}, 'Something happened');
+
+yaml_post( $URL . '/=/action/DoSomething', { email => 'bad@email.com' } );
+
+%content = %{get_content()};
+
+ok(!$content{success});
+is($content{error}, 'Bad looking email');
+
+
 sub get_content { return Jifty::YAML::Load($mech->content)}
+sub yaml_post {
+    my $url = shift;
+    my $data = shift;
+    my $request = HTTP::Request->new('POST', $url);
+    $request->header('Content-Type', 'text/yaml');
+    $request->content(Jifty::YAML::Dump($data));
+
+    $mech->request($request);
+    
+}
 
 1;
 

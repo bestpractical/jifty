@@ -71,7 +71,7 @@ sub take_action {
 
     # Handle errors?
     unless ( $record->id ) {
-        $self->result->error(_("An error occurred.  Try again later"));
+        $self->result->error($msg || _("An error occurred.  Try again later"));
         $self->log->error(_("Create of %1 failed: %2", ref($record), $msg));
         return;
     }

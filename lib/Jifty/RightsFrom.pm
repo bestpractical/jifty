@@ -25,6 +25,10 @@ control decisions based on their
 task. L<Jifty::Record/current_user_can> uses this method to make an
 access control decision if it exists.
 
+Note that this means that you a model class can use Jifty::RightsFrom,
+and still have a custom C<current_user_can> method, and they will not
+interfere with each other.
+
 =cut
 
 package Jifty::RightsFrom;
@@ -81,7 +85,7 @@ sub export_curried_sub {
     );
     no strict 'refs';
     no warnings 'redefine';
-    local *{ $args{'as'} } = sub { \&{  $args{'sub_name'} }(shift @_, @{ $args{'args'} }, @_ ) };
+    local *{ $args{'as'} } = sub { &{ $args{'sub_name'} }(shift @_, @{ $args{'args'} }, @_ ) };
 
     local @{Jifty::RightsFrom::EXPORT_OK} = ($args{as});
     Jifty::RightsFrom->export_to_level( 2, $args{export_to}, $args{as} );
@@ -89,11 +93,11 @@ sub export_curried_sub {
 
 =head2 delegate_current_user_can
 
-Seeing and editing task transactions (as well as other activities) are
-based on your rights on the
-task the transactions are on.  Some finagling is necessary because, if
-this is a create call, this object does not have a C<task_id> yet, so
-we must rely on the value in the I<ATTRIBUTES> passed in.
+Make a decision about permissions based on checking permissions on the
+column of this record specified in the call to C<import>. C<create>,
+C<delete>, and C<update> rights all check for the C<update> right on
+the delegated object. On create, we look in the passed attributes for
+an argument with the name of that column.
 
 =cut
 
@@ -103,11 +107,13 @@ sub delegate_current_user_can {
     my $col_name    = shift;
     my $right       = shift;
     my %attribs     = @_;
+
     $right = 'update' if $right ne 'read';
     my $obj;
 
     my $column   = $self->column($col_name);
     my $obj_type = $column->refers_to();
+    
 
     # XXX TODO: this card is bloody hard to follow. it's my fault. --jesse
 
@@ -129,6 +135,7 @@ sub delegate_current_user_can {
     } else {
         return 0;
     }
+
     return $obj->current_user_can($right);
 }
 
