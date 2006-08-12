@@ -146,6 +146,7 @@ sub javascript {
 
         my @fragments;
         my @actions;
+        my $confirm;
 
         for my $hook (grep {ref $_ eq "HASH"} (ref $value eq "ARRAY" ? @{$value} : ($value))) {
 
@@ -199,6 +200,11 @@ sub javascript {
                 $args{region}  = $args{element} =~ /^#region-(\S+)/ ? "$1-".Jifty->web->serial : Jifty->web->serial;
             }
 
+            # Should we show a javascript confirm message?
+            if ($hook->{confirm}) {
+                $confirm = $hook->{confirm};
+            }
+
             # Toggle functionality
             $args{toggle} = 1 if $hook->{toggle};
 
@@ -228,6 +234,9 @@ sub javascript {
 
             my $update = "update( ". Jifty::JSON::objToJson( {actions => \@actions, fragments => \@fragments }, {singlequote => 1}) .", this );";
             $string .= $self->javascript_preempt ? "return $update" : "$update; return true;";
+            if ($confirm) {
+                $string = "if(!confirm(" . Jifty::JSON::objToJson($confirm, {singlequote => 1}) . ")) return false;" . $string;
+            }
         }
         $response .= qq| $trigger="$string"|;
     }
