@@ -67,14 +67,12 @@ sub run {
 use strict;
 use warnings;
 
-package @{[$appclass]}::Model::@{[$model]}::Schema;
+package @{[$appclass]}::Model::@{[$model]};
 use Jifty::DBI::Schema;
 
-# Your column definitions go here.  See L<Jifty::DBI::Schema> for
-# documentation about how to write column definitions.
+use @{[$appclass]}::Record schema {
 
-package @{[$appclass]}::Model::@{[$model]};
-use base qw/@{[$appclass]}::Record/;
+};
 
 # Your model-specific methods go here.
 
