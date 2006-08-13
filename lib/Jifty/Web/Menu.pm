@@ -66,7 +66,7 @@ sub url {
     my $self = shift;
     $self->{url} = shift if @_;
 
-    $self->{url} = URI->new_abs($self->{url}, $self->parent->url . "/")
+    $self->{url} = URI->new_abs($self->{url}, $self->parent->url . "/")->as_string
       if $self->parent and $self->parent->url;
 
     return $self->{url};
@@ -124,7 +124,7 @@ sub child {
             if ($url eq $base_path) {
                 $self->{children}{$key}->active(1); 
             }
-	    }
+        }
     }
 
     return $self->{children}{$key}
