@@ -49,4 +49,12 @@ after '/dispatch/*' => run {
     $after++;
 };
 
+on qr{/setuser/(.*)} => run {
+    my $name = $1;
+
+    my $current_user = TestApp::CurrentUser->new( name => $name );
+    Jifty->web->current_user( $current_user );
+    show '/index.html';
+};
+
 1;
