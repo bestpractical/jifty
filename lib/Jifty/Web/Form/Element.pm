@@ -163,7 +163,6 @@ sub javascript {
             # Should we show a javascript confirm message?
             if ($hook->{confirm}) {
                 $confirm = $hook->{confirm};
-                warn "Confirm: $confirm";
             }
 
             # Placement
