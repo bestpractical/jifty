@@ -210,9 +210,6 @@ sub current_user {
         my $currentuser_obj = shift;
         $self->session->set(
             'user_id' => $currentuser_obj ? $currentuser_obj->id : undef );
-        $self->session->set( 'user_ref' => $currentuser_obj
-            ? ref $currentuser_obj->user_object
-            : undef );
         $self->_current_user( $currentuser_obj || undef );
     }
 
@@ -224,11 +221,7 @@ sub current_user {
     } elsif ( my $id = $self->session->get('user_id') ) {
         my $object = (
             Jifty->config->framework('ApplicationClass') . "::CurrentUser" )
-            ->new();
-        my $user
-            = $self->session->get('user_ref')->new( current_user => $object );
-        $user->load_by_cols( id => $id );
-        $object->user_object($user);
+            ->new( id => $id );
         $self->_current_user($object);
         return $object;
     } else {
