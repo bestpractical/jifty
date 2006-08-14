@@ -40,28 +40,16 @@ sub new {
 
     $component = '' unless defined $component;
 
-    my $log_config
-        = Jifty::Util->absolute_path( Jifty->config->framework('LogConfig') );
+    # configure Log::Log4perl unless we've done it already
     if (not Log::Log4perl->initialized) {
-        if ( defined Jifty->config->framework('LogReload') ) {
-            Log::Log4perl->init_and_watch( $log_config,
-                Jifty->config->framework('LogReload') );
-        } elsif ( -f $log_config and -r $log_config ) {
-            Log::Log4perl->init($log_config);
-        } else {
-            my $log_level = Jifty->config->framework('LogLevel');
-            my %default = (
-                'log4perl.rootLogger'        => "$log_level,Screen",
-                '#log4perl.logger.SchemaTool' => "$log_level,Screen",
-                'log4perl.appender.Screen'   => 'Log::Log4perl::Appender::Screen',
-                'log4perl.appender.Screen.stderr' => 1,
-                'log4perl.appender.Screen.layout' =>
-                    'Log::Log4perl::Layout::SimpleLayout'
-            );
-            Log::Log4perl->init( \%default );
-        }
+       $class->_initialize_log4perl;
     }
+    
+    # create a log4perl object that answers to this component name
     my $logger = Log::Log4perl->get_logger($component);
+    
+    # whenever Perl wants to warn something out capture it with a signal
+    # handler and pass it to log4perl
     $SIG{__WARN__} = sub {
 
         # This caller_depth line tells Log4perl to report
@@ -81,6 +69,31 @@ sub new {
     };
 
     return $self;
+}
+
+sub _initialize_log4perl {
+    my $class = shift;
+  
+    my $log_config
+        = Jifty::Util->absolute_path( Jifty->config->framework('LogConfig') );
+
+    if ( defined Jifty->config->framework('LogReload') ) {
+        Log::Log4perl->init_and_watch( $log_config,
+            Jifty->config->framework('LogReload') );
+    } elsif ( -f $log_config and -r $log_config ) {
+        Log::Log4perl->init($log_config);
+    } else {
+        my $log_level = Jifty->config->framework('LogLevel');
+        my %default = (
+            'log4perl.rootLogger'        => "$log_level,Screen",
+            '#log4perl.logger.SchemaTool' => "$log_level,Screen",
+            'log4perl.appender.Screen'   => 'Log::Log4perl::Appender::Screen',
+            'log4perl.appender.Screen.stderr' => 1,
+            'log4perl.appender.Screen.layout' =>
+                'Log::Log4perl::Layout::SimpleLayout'
+        );
+        Log::Log4perl->init( \%default );
+  }
 }
 
 =head1 AUTHOR
