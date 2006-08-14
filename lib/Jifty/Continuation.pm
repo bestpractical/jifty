@@ -129,10 +129,13 @@ sub return_path_matches {
     my $request_path = $self->request->path;
 
     # XXX TODO: WE should be using URI canonicalization
+
     my $escape;
     $called_uri =~ s{/+}{/}g;
+    $called_uri = Encode::encode_utf8($called_uri);
     $called_uri = $escape while $called_uri ne ($escape = URI::Escape::uri_unescape($called_uri));
     $request_path =~ s{/+}{/}g; 
+    $request_path = Encode::encode_utf8($request_path);
     $request_path = $escape while $request_path ne ($escape = URI::Escape::uri_unescape($request_path));
 
     return $called_uri =~ /^\Q$request_path\E[?&;]J:RETURN=@{[$self->id]}$/;
