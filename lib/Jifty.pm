@@ -92,6 +92,12 @@ connect to a database.  Only use this if you're about to drop the
 database or do something extreme like that; most of Jifty expects the
 handle to exist.  Defaults to false.
 
+=item logger_component
+
+The name that Jifty::Logger will log under.  If you don't specify anything
+Jifty::Logger will log under the empty string.  See L<Jifty::Logger> for
+more infomation.
+
 =back
 
 =cut
