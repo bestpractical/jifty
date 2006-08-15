@@ -191,14 +191,15 @@ Open F<lib/MyWeblog/Model/Post.pm> in your favorite text editor.
 
 You should see something like this:
 
-  package MyWeblog::Model::Post::Schema;
-  use Jifty::DBI::Schema;
-
-  # Your column definitions go here.  See Jifty::DBI::Schema for
-  # documentation about how to write column definitions.
+  use strict;
+  use warnings;
 
   package MyWeblog::Model::Post;
-  use base qw/MyWeblog::Record/;
+  use Jifty::DBI::Schema;
+
+  use MyWeblog::Record schema {
+
+  };
 
   # Your model-specific methods go here.
 
@@ -211,8 +212,7 @@ C<tags> table.)
 
 Position your cursor right after:
 
-  # Your column definitions go here.  See L<Jifty::DBI::Schema> for
-  # documentation about how to write column definitions.
+  use MyWeblog::Record schema {
 
 Add the lines:
 
@@ -288,7 +288,7 @@ lined up in column 1, or it won't work.)
 
 =head4 The quick and dirty way
 
-Open a new file called F<index.html> in the F<web/templates> directory
+Open a new file called F<index.html> in the F<share/web/templates> directory
 in your text editor. (Your webserver will
 treat the URL C</index.html> as the I<default> page for your site).  Make it
 look like this:
