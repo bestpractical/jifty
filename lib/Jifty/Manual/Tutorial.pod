@@ -117,10 +117,10 @@ write your docs, put them in F<doc/>.
 Jifty uses L<Log::Log4perl> to configure its logging. By default, it
 dumps logs named F<server.log> and F<error.log> into the F<log> directory.
 
-=item web/templates
+=item share/web/templates
 
 Jifty uses L<HTML::Mason> as its primary templating system.  Put
-your application's templates into F<web/templates/>.  Out of the
+your application's templates into F<share/web/templates/>.  Out of the
 box, Jifty comes with an application I<skeleton> that it installs in
 F<share/web/templates/>.  This default application is
 a convenient way to get a basic application up and running quickly,
@@ -131,17 +131,18 @@ You can find where Perl stuck Jifty's default templates with:
 
   perl -MJifty::Util -e 'print Jifty::Util->share_root'
 
-=item web/static
+=item share/web/static
 
 Some nontrivial percentage of the I<stuff> your web application serves
 out doesn't need to (or I<shouldn't>) pass through your templating
 engine.
 
-Just drop your static files into F<web/static/> and Jifty will serve
+Just drop your static files into F<share/web/static/> and Jifty will serve
 them out if it can't find a template with the right name.
 
-Out of the box, Jifty comes with a CSS style, Javascript libraries and
-a Pony. Look in F</usr/local/share/jifty/web/static>.
+Out of the box, Jifty comes with a CSS style, Javascript libraries and a
+Pony. Look in F<share/web/static> in the Jifty distribution, or in the same
+place Jifty stuck its default templates.
 
 =item lib/MyWeblog
 
@@ -300,7 +301,7 @@ lined up in column 1, or it won't work.)
 
 =head4 The quick and dirty way
 
-Open a new file called F<index.html> in the F<web/templates> directory
+Open a new file called F<index.html> in the F<share/web/templates> directory
 in your text editor. (Your webserver will
 treat the URL C</index.html> as the I<default> page for your site).  Make it
 look like this:
