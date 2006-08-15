@@ -69,7 +69,7 @@ Change directory to some place it will be safe to create a new
 Jifty application. (Jifty will create a subdirectory for you).
 
   # jifty app --name MyWeblog
-  Can't guess application root from current path (/your/current/directory) or bin path (/usr/bin)
+  Can't guess application root from current path (/tmp) or bin path (/usr/bin)
   Creating new application MyWeblog
   Creating directory lib
   Creating directory lib/MyWeblog
@@ -77,9 +77,13 @@ Jifty application. (Jifty will create a subdirectory for you).
   Creating directory etc
   Creating directory doc
   Creating directory log
-  Creating directory web
-  Creating directory web/templates
-  Creating directory web/static
+  Creating directory var
+  Creating directory var/mason
+  Creating directory share
+  Creating directory share/po
+  Creating directory share/web
+  Creating directory share/web/templates
+  Creating directory share/web/static
   Creating directory lib/MyWeblog/Model
   Creating directory lib/MyWeblog/Action
   Creating directory t
@@ -167,6 +171,11 @@ Jifty starts off your application with a basic harness, but can't yet write
 all your tests for you. (It does, however, build simple tests for model
 classes you generate.)
 
+=item var
+
+Jifty stores cache files here while the server is running. You shouldn't ever
+have to touch this directory.
+
 =back
 
 =head2 Building your data model
@@ -193,17 +202,18 @@ You should see something like this:
 
   use strict;
   use warnings;
-
+  
   package MyWeblog::Model::Post;
   use Jifty::DBI::Schema;
-
+  
   use MyWeblog::Record schema {
-
+  
   };
-
+  
   # Your model-specific methods go here.
-
+  
   1;
+
 
 Now it's time to tell the model class about posts. Start by giving our post a
 C<body> and a C<title>. (In a future tutorial, the application will become fully
@@ -212,7 +222,8 @@ C<tags> table.)
 
 Position your cursor right after:
 
-  use MyWeblog::Record schema {
+  # Your column definitions go here.  See L<Jifty::DBI::Schema> for
+  # documentation about how to write column definitions.
 
 Add the lines:
 
@@ -240,7 +251,8 @@ for a bit more information).
   INFO - Using MyWeblog::Model::Post
   INFO - Using Jifty::Model::Session
   INFO - Using Jifty::Model::Metadata
-  INFO - Set up version v0.0.1, jifty version 0.605070
+  INFO - Using Jifty::Model::Schema
+  INFO - Set up version v0.0.1, jifty version 0.607280
 
 =head2 Starting the Jifty application server
 
@@ -288,7 +300,7 @@ lined up in column 1, or it won't work.)
 
 =head4 The quick and dirty way
 
-Open a new file called F<index.html> in the F<share/web/templates> directory
+Open a new file called F<index.html> in the F<web/templates> directory
 in your text editor. (Your webserver will
 treat the URL C</index.html> as the I<default> page for your site).  Make it
 look like this:
@@ -306,6 +318,8 @@ look like this:
   % }
   </dl>
   </&>
+
+(Make sure to remove that leading whitespace!)
 
 
 =head4 The complex way that gets you lots of cool toys
@@ -338,7 +352,7 @@ a file called F<share/web/templates/fragments/page_of_posts> containing:
   my $posts = MyWeblog::Model::PostCollection->new();
   $posts->unlimit();
   $posts->set_page_info( current_page => $page,
-                         per_page     => 25
+                         per_page     => 15
                        );
   $m->out("No items found.") if ($posts->pager->total_entries == 0);
 
@@ -361,7 +375,10 @@ a file called F<share/web/templates/fragments/page_of_posts> containing:
   % }
 
 Now fire up your Jifty webserver again. Go create a post by browsing C</post>
-on your webserver.
+on your webserver. Create more than 15 posts, and notice how Jifty gives you
+AJAX C<Next Page> and C<Previous Page> buttons for you. Turn off javascript or
+view the page in lynx, and notice how the AJAX automatically falls-back to page
+loads for you. All for free, thanks to Jifty!
 
 =head3 Hey, where'd that class come from?
 
