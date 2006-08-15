@@ -223,8 +223,7 @@ C<tags> table.)
 
 Position your cursor right after:
 
-  # Your column definitions go here.  See L<Jifty::DBI::Schema> for
-  # documentation about how to write column definitions.
+  use MyWeblog::Record schema {
 
 Add the lines:
 
