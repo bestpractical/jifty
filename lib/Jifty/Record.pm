@@ -246,6 +246,22 @@ sub _value {
     $value;
 }
 
+=head2 as_superuser
+
+Returns a copy of this object with the current_user set to the
+superuser. This is a convenient way to duck around ACLs if you have
+code that needs to for some reason or another.
+
+=cut
+
+sub as_superuser {
+    my $self = shift;
+
+    my $clone = $self->new(current_user => $self->current_user->superuser);
+    $clone->load($self->id);
+    return $clone;
+}
+
 
 =head2 _collection_value METHOD
 
