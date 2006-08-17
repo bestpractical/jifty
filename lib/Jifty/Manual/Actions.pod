@@ -120,7 +120,7 @@ and to keep track of all the categories users have entered:
         }
     ...
 
-Now, Jifty will populate the combox with the result of calling C<name>
+Now, Jifty will populate the combobox with the result of calling C<name>
 on each element on C<$categories>. Alternatively, if you set
 C<<value_from => 'id'>>, Jifty would automatically return the C<id> of
 the category, for easy database reference. We don't do this with the
