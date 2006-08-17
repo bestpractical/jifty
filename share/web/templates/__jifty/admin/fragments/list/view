@@ -21,6 +21,7 @@ my $update = Jifty->web->new_action(
 
     Jifty->web->link(
         label   => "Edit",
+        class   => "editlink",
         onclick => {
             replace_with => "/__jifty/admin/fragments/list/update",
             args         => { object_type => $object_type, id => $id }
@@ -29,3 +30,4 @@ my $update = Jifty->web->new_action(
         )
 %>
 </div>
+<hr />

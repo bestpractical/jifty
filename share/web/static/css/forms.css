@@ -101,6 +101,7 @@ div.inline div.form_field {
 }
 
 div.inline div.form_field label.label,
+div.inline div.form_field span,
 div.inline .hints,
 div.inline .error
 {
@@ -128,7 +129,11 @@ div.inline div.form_field label.label {
 
 .jifty_admin.item.inline {
      clear: both;
- }
+}
+
+.jifty_admin .editlink {
+    float: right;
+}
 
 div.subline {
     display: inline;

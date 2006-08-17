@@ -26,4 +26,14 @@ my $update = Jifty->web->new_action(
         ]
         ) %>
 
+    <% Jifty->web->link(
+        label     => "Cancel",
+          onclick => {
+            replace_with => '/__jifty/admin/fragments/list/view',
+            args         => { object_type => $object_type, id => $id }
+          },
+        as_button => 1
+    ) %>
+
 </div>
+<hr />
