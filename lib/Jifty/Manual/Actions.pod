@@ -14,7 +14,7 @@ general, that's because it is -- actions do nearly B<everything> in Jifty.
 C<Jifty::Action> will also generate HTML for you from its parameters --
 no more manually writing C<< <input> >> tags and extracting GET and
 POST arguments by hand and dispatching them where they belong --
-C<Jifty::Action>> does it all for you.
+C<Jifty::Action> does it all for you.
 
 =head2 WRITING ACTIONS
 
@@ -122,7 +122,7 @@ and to keep track of all the categories users have entered:
 
 Now, Jifty will populate the combox with the result of calling C<name>
 on each element on C<$categories>. Alternatively, if you set
-C<value_from => 'id'>, Jifty would automatically return the C<id> of
+C<<value_from => 'id'>>, Jifty would automatically return the C<id> of
 the category, for easy database reference. We don't do this with the
 combobox, however, since a combobox displays the selected value in its
 text field.
@@ -171,14 +171,14 @@ action is submitted, and only if its arguments
 L<validate|/validation>. 
 
 Inside C<sub take_action>, subclasses can access their arguments via
-C<$self->argument_value('foo')>. If you need to check whether you've
+C<< $self->argument_value('foo') >>. If you need to check whether you've
 been passed an argument or not (as opposed to being passed a true
-argument or not), use C<$self->has_argument('foo')>.
+argument or not), use C<< $self->has_argument('foo') >>.
 
 Once an action has done its thing, it needs to inform the caller
 whether or not it has succeeded, possibly with some status message. To
 this end, every C<Jifty::Action> has a C<Jifty::Result> associated
-with. C<Jifty::Result>> carries both a failure/sucess code, and a
+with. C<Jifty::Result> carries both a failure/sucess code, and a
 textual message describing the result of running the action.
 
 Thus, if your action failed for some reason, you would, in
@@ -276,7 +276,7 @@ typically means per HTML page). Since actions are constantly being
 serialized (over HTTP, or Javascript AJAX calls, and so on), and
 unpacked, we need a way refer to specific actions other than just
 object identity, e.g. to extract its arguments or results in the
-C<dispatcher|Jifty::Dispatcher>. Monikers give us that. Given a
+L<dispatcher|Jifty::Dispatcher>. Monikers give us that. Given a
 moniker, you can pull information about the associated action out of a
 L<request|Jifty::Request> or L<response|Jifty::Response>.
 
