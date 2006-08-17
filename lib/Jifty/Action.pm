@@ -797,7 +797,7 @@ contents of C<value> will be used for the label.
 If the field has an attribute named B<autocompleter>, call the
 subroutine reference B<autocompleter> points to.
 
-If the action doesn't have an explicit B<autocomplete> attribute, but
+If the field doesn't have an explicit B<autocompleter> attribute, but
 does have a C<autocomplete_I<ARGUMENT>> function, invoke that
 function.
 
