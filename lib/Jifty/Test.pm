@@ -170,7 +170,7 @@ Clears the mailbox.
 =cut
 
 sub setup_mailbox {
-    open my $f, ">", mailbox();
+    open my $f, ">:encoding(UTF-8)", mailbox();
     close $f;
 } 
 

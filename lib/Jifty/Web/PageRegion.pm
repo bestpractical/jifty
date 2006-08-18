@@ -191,13 +191,15 @@ sub enter {
 
     # Merge in the settings passed in via state variables
     for (Jifty->web->request->state_variables) {
-        if ($_->key =~ /^region-(.*?)\.(.*)/ and $1 eq $self->qualified_name and $_->value ne $self->default_argument($2)) {
-            $self->argument($2 => $_->value);
-            Jifty->web->set_variable("region-$1.$2" => $_->value);
+        my $key = $_->key;
+        my $value = $_->value || '';
+        if ($key =~ /^region-(.*?)\.(.*)/ and $1 eq $self->qualified_name and $value  ne $self->default_argument($2)) {
+            $self->argument($2 => $value);
+            Jifty->web->set_variable("region-$1.$2" => $value);
         }
-        if ($_->key =~ /^region-(.*?)$/ and $1 eq $self->qualified_name and $_->value ne $self->default_path) {
-            $self->path($_->value);
-            Jifty->web->set_variable("region-$1" => $_->value);
+        if ($key =~ /^region-(.*?)$/ and $1 eq $self->qualified_name and $value ne $self->default_path) {
+            $self->path($value);
+            Jifty->web->set_variable("region-$1" => $value);
         }
     }
 }

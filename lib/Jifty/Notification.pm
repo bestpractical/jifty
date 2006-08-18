@@ -249,7 +249,7 @@ body, and footer joined by newlines.
 
 sub full_body {
   my $self = shift;
-  return join( "\n", $self->preface, $self->body, $self->footer );
+  return join( "\n", grep { defined } $self->preface, $self->body, $self->footer );
 }
 
 =head2 parts
