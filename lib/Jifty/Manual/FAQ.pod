@@ -1,0 +1,26 @@
+=head1 NAME
+
+Jifty::Manual::FAQ - Frequently Answered Questions
+
+=head1 General
+
+=head2  I need to make a web based program, is jifty mature enough?
+
+We built hiveminder.com with it.
+
+=head2 What databases does Jifty support?
+
+Jifty uses Jifty::DBI as its ORM, which uses DBI to connect to the
+underlying database.  SQLite is the default, but Postgres, MySQL, and
+maybe others work great.
+
+=head2 Does Jifty run on Windows?
+
+Yes.  There have been some hiccups in the dependencies, but those are
+being resolved.
+
+=head2 Where is the subversion repository?
+
+  http://svn.jifty.org/svn/jifty.org/jifty/trunk
+
+=cut
