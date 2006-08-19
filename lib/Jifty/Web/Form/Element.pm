@@ -101,6 +101,14 @@ fragment.
 A hashref of arguments to pass to the effect when it is created.  These
 can be used to change the duration of the effect, for instance.
 
+=item confirm => STRING
+
+Prompt the user with a Javascript confirm dialog with the given text
+before carrying out the rest of the handlers. If the user cancels, do
+nothing, otherwise proceed as normal.
+
+TODO: This does not have a non-Javascript fallback method yet.
+
 =back
 
 =cut
