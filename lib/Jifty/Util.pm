@@ -17,7 +17,6 @@ use File::Spec;
 use File::Path;
 use File::ShareDir;
 use UNIVERSAL::require;
-use ExtUtils::MakeMaker ();
 use Cwd ();
 use Config;
 
