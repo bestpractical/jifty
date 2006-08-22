@@ -107,6 +107,6 @@ Jifty.ContextMenu = {
     }
 };
 
-DOM.Events.addListener( window, "click", Jifty.ContextMenu.hideOpenMenu );
+DOM.Events.addListener( document, "click", Jifty.ContextMenu.hideOpenMenu );
 Behaviour.register( Jifty.ContextMenu.behaviourRules );
 
