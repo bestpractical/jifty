@@ -2,6 +2,7 @@ package Jifty::Web::Menu;
 
 use base qw/Class::Accessor::Fast/;
 use URI;
+use Scalar::Util ();
 
 __PACKAGE__->mk_accessors(qw(label parent sort_order link target escape_label class));
 
@@ -111,6 +112,7 @@ sub child {
                                                         escape_label => 1,
                                                         @_
                                                        });
+        Scalar::Util::weaken($self->{children}{$key}{parent});
         # Activate it
         if (my $url = $self->{children}{$key}->url and Jifty->web->request) {
             # XXX TODO cleanup for mod_perl
