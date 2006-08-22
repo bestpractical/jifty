@@ -175,6 +175,10 @@ sub new {
         # If they have an onclick, add any and all submit actions to the onclick's submit list
         if ($self->{onclick}) {
             $self->{onclick} = [ (ref $self->{onclick} eq "ARRAY" ? @{ $self->{onclick} } : $self->{onclick}), map { submit => $_ }, @{$self->{submit}} ];
+            for (@{$self->{onclick}}) {
+                next unless ref $_;
+                $_->{submit} = $_->{submit}->moniker if ref $_->{submit};
+            }
         }
     }
 
