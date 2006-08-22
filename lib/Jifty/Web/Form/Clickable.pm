@@ -177,7 +177,7 @@ sub new {
             $self->{onclick} = [ (ref $self->{onclick} eq "ARRAY" ? @{ $self->{onclick} } : $self->{onclick}), map { submit => $_ }, @{$self->{submit}} ];
             for (@{$self->{onclick}}) {
                 next unless ref $_;
-                $_->{submit} = $_->{submit}->moniker if ref $_->{submit};
+                $_->{submit} = $_->{submit}->moniker if UNIVERSAL::isa($_->{submit}, 'Jifty::Action');
             }
         }
     }
