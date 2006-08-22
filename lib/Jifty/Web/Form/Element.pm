@@ -136,7 +136,27 @@ C<new> parameter hash.
 =cut
 
 sub accessors { shift->handlers, qw(class key_binding id label tooltip) }
-__PACKAGE__->mk_accessors(qw(onclick class key_binding id label tooltip));
+__PACKAGE__->mk_accessors(qw(_onclick class key_binding id label tooltip));
+
+=head2 onclick
+
+=cut
+
+sub onclick {
+    my $self = shift;
+    return $self->_onclick unless @_;
+
+    my ($arg) = @_;
+
+    if (ref($arg) eq 'ARRAY') {
+	for (@$arg) {
+	    $_->{submit} = $_->{submit}->moniker
+		if UNIVERSAL::can($_->{submit}, 'moniker');
+	}
+    }
+
+    $self->_onclick($arg);
+}
 
 =head2 javascript
 
