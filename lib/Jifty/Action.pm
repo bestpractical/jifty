@@ -7,12 +7,27 @@ package Jifty::Action;
 
 Jifty::Action - The ability to Do Things in the framework
 
+=head1 SYNOPSIS
+
+  package MyApp::Action::Foo;
+  use base qw/MyApp::Action Jifty::Action/;
+  
+  sub take_action {
+    ...
+  }
+  
+  1;
+
 =head1 DESCRIPTION
 
-C<Jifty::Action> is the meat of the L<Jifty> framework; it controls
-how form elements interact with the underlying model.  See also
-L<Jifty::Action::Record> for data-oriented actions, L<Jifty::Result>
-for how to return values from actions.
+C<Jifty::Action> is the superclass for all actions in Jifty.
+Action classes form the meat of the L<Jifty> framework; they
+control how form elements interact with the underlying model.
+
+See also L<Jifty::Action::Record> for data-oriented actions, 
+L<Jifty::Result> for how to return values from actions.
+
+See Jifty::Action::Schema;
 
 =cut
 
@@ -23,6 +38,8 @@ __PACKAGE__->mk_accessors(qw(moniker argument_values order result sticky_on_succ
 __PACKAGE__->mk_classdata(qw/PARAMS/);
 
 =head1 COMMON METHODS
+
+These common methods are designed to 
 
 =head2 new 
 
@@ -211,8 +228,7 @@ sub check_authorization { 1; }
 
 =head2 setup
 
-Whatever the action needs to do to set itself up, it can do it by
-overriding C<setup>.  C<setup> is expected to return a true value, or
+.  C<setup> is expected to return a true value, or
 L</run> will skip all other actions.
 
 By default, does nothing.

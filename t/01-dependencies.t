@@ -22,11 +22,18 @@ sub wanted {
     return if $File::Find::dir =~ m!/.svn($|/)!;
     return if $File::Find::name =~ /~$/;
     return if $File::Find::name =~ /\.pod$/;
+    
+    # read in the file from disk
     my $filename = $_;
     local $/;
     open(FILE, $filename) or return;
     my $data = <FILE>;
     close(FILE);
+
+    # strip pod, in a really idiotic way.  Good enough though
+    $data =~ s/^=head.+?(^=cut|\Z)//gms;
+
+    # look for use and use base statements
     $used{$1}{$filename}++ while $data =~ /^\s*use\s+([\w:]+)/gm;
     while ($data =~ m|^\s*use base qw.([\w\s:]+)|gm) {
         $used{$_}{$filename}++ for split ' ', $1;
