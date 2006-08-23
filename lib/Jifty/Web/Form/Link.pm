@@ -113,6 +113,7 @@ sub render {
     Jifty->web->out(qq( class="@{[$self->class]}"))   if $self->class;
     Jifty->web->out(qq( title="@{[$self->tooltip]}")) if $tooltip;
     Jifty->web->out(qq( target="@{[$self->target]}")) if $self->target;
+    Jifty->web->out(qq( accesskey="@{[$self->key_binding]}")) if $self->key_binding;
     Jifty->web->out(qq( href="@{[$self->url]}"));
     Jifty->web->out( $self->javascript() );
     Jifty->web->out(qq(>$label</a>));

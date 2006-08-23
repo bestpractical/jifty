@@ -31,6 +31,7 @@ sub render_widget {
         'name="' . $self->input_name . '" ',
         'value="' . _($self->label ). '"',
         'id="'. Jifty->web->serial . '"',
+        ($self->key_binding ? qq( accesskey="@{[$self->key_binding]}") : ''),
         $self->_widget_class('button', ($self->button_as_link ? ("button_as_link") : ())),
         $self->javascript,
         ' />',
