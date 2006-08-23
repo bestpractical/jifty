@@ -14,7 +14,7 @@ requires('Crypt::CBC');
 requires('Crypt::Rijndael');
 requires('Compress::Zlib');
 requires('CSS::Squish' => 0.05 );
-requires('DBD::SQLite' => 1.11 );
+#requires('DBD::SQLite' => 1.11 );
 requires('Data::Page');
 requires('DateTime');
 requires('Date::Manip');
@@ -52,21 +52,21 @@ requires('Module::Pluggable' => '2.95');
 requires('Module::Refresh' => '0.09');
 requires('Module::ScanDeps');
 requires('Object::Declare' => '0.13');
-requires('PAR::Dist::FromCPAN');
+#requires('PAR::Dist::FromCPAN');
 requires('Params::Validate');
 requires('PerlIO::gzip');
 requires('Pod::Simple'); #Pod::Simple::Text
 requires('Scalar::Defer' => '0.06');
 requires('String::Koremutake');
-requires('Test::Base' => 0.44);            # Test::Base::Filter
-requires('Test::HTTP::Server::Simple' => '0.02');
-requires('Test::HTML::Lint');
-requires('Test::More' => 0.62);
-requires('Test::Pod::Coverage');
-requires('Test::WWW::Mechanize' => 1.04);
+#requires('Test::Base' => 0.44);            # Test::Base::Filter
+#requires('Test::HTTP::Server::Simple' => '0.02');
+#requires('Test::HTML::Lint');
+#requires('Test::More' => 0.62);
+#requires('Test::Pod::Coverage');
+#requires('Test::WWW::Mechanize' => 1.04);
 requires('UNIVERSAL::require');
 requires('URI');
-requires('WWW::Mechanize' => 1.12);
+#requires('WWW::Mechanize' => 1.12);
 requires('XML::Writer');
 requires('XML::Simple');
 requires('XML::XPath');
@@ -81,6 +81,29 @@ else {
     requires('YAML' => 0.35) unless can_use('YAML::Syck' => 0.45);
     requires('JSON' => 0.01) unless can_use('JSON::Syck' => 0.14);
 }
+
+features(
+    'Development of a jifty application' => [
+        -default => 1,
+        recommends('DBD::SQLite' => 1.11 ),
+        recommends('Test::Base' => 0.44 ),            # Test::Base::Filter
+        recommends('Test::HTTP::Server::Simple' => '0.02' ),
+        recommends('Test::HTML::Lint'),
+        recommends('Test::More' => 0.62 ),
+        recommends('Test::Pod::Coverage'),
+        recommends('Test::WWW::Mechanize' => 1.04 ),
+        recommends('WWW::Mechanize' => 1.12 ),
+    ],
+    'Development of the jifty framework' => [
+        -default => 0,
+        recommends('DBD::SQLite'),
+    ],
+    'Experimental features' => [
+        -default => 0,
+        recommends('PAR::Dist::FromCPAN'),
+    ],
+);
+
 
 no_index directory => 't';
 no_index package => 'DB';
