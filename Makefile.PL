@@ -6,7 +6,6 @@ requires('App::CLI' => 0.03 ); # App::CLI::Command::Help App::CLI::Command
 requires('Cache::Cache'); #Cache::FileCache
 requires('Calendar::Simple');
 requires('Class::Accessor'); # Class::Accessor::Fast
-requires('Class::Accessor::Named'); 
 requires('Class::Container');
 requires('Class::Data::Inheritable');
 requires('CGI::Cookie::Splitter');
@@ -46,27 +45,15 @@ requires('Locale::Maketext::Lexicon' => '0.60');
 requires('Log::Log4perl');
 requires('LWP::UserAgent'); # Net::HTTP
 requires('MIME::Types');
-requires('Module::CoreList');
-requires('Module::Install::Admin' => '0.50');
 requires('Module::Pluggable' => '2.95');
-requires('Module::Refresh' => '0.09');
 requires('Module::ScanDeps');
 requires('Object::Declare' => '0.13');
-#requires('PAR::Dist::FromCPAN');
 requires('Params::Validate');
 requires('PerlIO::gzip');
-requires('Pod::Simple'); #Pod::Simple::Text
 requires('Scalar::Defer' => '0.06');
 requires('String::Koremutake');
-#requires('Test::Base' => 0.44);            # Test::Base::Filter
-#requires('Test::HTTP::Server::Simple' => '0.02');
-#requires('Test::HTML::Lint');
-#requires('Test::More' => 0.62);
-#requires('Test::Pod::Coverage');
-#requires('Test::WWW::Mechanize' => 1.04);
 requires('UNIVERSAL::require');
 requires('URI');
-#requires('WWW::Mechanize' => 1.12);
 requires('XML::Writer');
 requires('XML::Simple');
 requires('XML::XPath');
@@ -83,20 +70,33 @@ else {
 }
 
 features(
+    'Administrative Interface (web)' => [ 
+        -default => 1,
+       requires( 'Pod::Simple') # Pod::Simple::Text Pod::Simple::HTML
+   ],
     'Development of a jifty application' => [
         -default => 1,
         recommends('DBD::SQLite' => 1.11 ),
         recommends('Test::Base' => 0.44 ),            # Test::Base::Filter
+        recommends('Module::Install::Admin' => '0.50'),
         recommends('Test::HTTP::Server::Simple' => '0.02' ),
         recommends('Test::HTML::Lint'),
         recommends('Test::More' => 0.62 ),
         recommends('Test::Pod::Coverage'),
         recommends('Test::WWW::Mechanize' => 1.04 ),
         recommends('WWW::Mechanize' => 1.12 ),
+        recommends('Module::Refresh' => '0.09')
     ],
     'Development of the jifty framework' => [
         -default => 0,
-        recommends('DBD::SQLite'),
+        recommends('DBD::SQLite',
+    
+            'Class::Accessor::Named',
+            'Devel::Cover',
+            'Module::CoreList',
+            'Module::Install::Admin' => '0.50'
+    
+        ),
     ],
     'Experimental features' => [
         -default => 0,
