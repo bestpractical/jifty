@@ -22,13 +22,14 @@ sub wanted {
     return if $File::Find::dir =~ m!/.svn($|/)!;
     return if $File::Find::name =~ /~$/;
     return if $File::Find::name =~ /\.pod$/;
+    my $filename = $_;
     local $/;
-    open(FILE, $_) or return;
+    open(FILE, $filename) or return;
     my $data = <FILE>;
     close(FILE);
-    $used{$1}++ while $data =~ /^\s*use\s+([\w:]+)/gm;
+    $used{$1}{$filename}++ while $data =~ /^\s*use\s+([\w:]+)/gm;
     while ($data =~ m|^\s*use base qw.([\w\s:]+)|gm) {
-        $used{$_}++ for split ' ', $1;
+        $used{$_}{$filename}++ for split ' ', $1;
     }
 }
 
@@ -50,7 +51,8 @@ for (sort keys %used) {
     my $first_in = Module::CoreList->first_release($_);
     next if defined $first_in and $first_in <= 5.00803;
     next if /^(Jifty|Jifty::DBI|inc|t|TestApp|Application)(::|$)/;
-    ok(exists $required{$_}, "$_ in Makefile.PL");
+    ok(exists $required{$_}, "$_ in Makefile.PL")
+      or diag("used in ", join ", ", sort keys %{ $used{$_ } });
     delete $used{$_};
     delete $required{$_};
 }
