@@ -3,10 +3,7 @@ use strict;
 
 package Jifty::Object;
 
-use Log::Log4perl;
-use HTML::Entities;
-use Carp;
-use Scalar::Util qw(refaddr);
+use Log::Log4perl ();
 
 =head1 Jifty::Object
 
