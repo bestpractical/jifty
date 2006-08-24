@@ -89,15 +89,12 @@ features(
     ],
     'Development of the jifty framework' => [
         -default => 0,
-        recommends('DBD::SQLite',
-    
-            'Class::Accessor::Named',
-            'Devel::Cover',
-            'Module::CoreList',
-            'Module::Install::Admin' => '0.50'
-    
-        ),
-    ],
+        recommends('DBD::SQLite'),
+        recommends('Class::Accessor::Named'),
+        recommends('Devel::Cover'),
+        recommends('Module::CoreList'),
+        recommends('Module::Install::Admin' => '0.50')
+     ],
     'Experimental features' => [
         -default => 0,
         recommends('PAR::Dist::FromCPAN'),
