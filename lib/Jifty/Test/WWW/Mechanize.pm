@@ -88,6 +88,17 @@ sub moniker_for {
         return $1;
       }
     }
+    # if we've gotten to this point, there were no hidden fields with a moniker,
+    # possibly a form with only its continuation-marking hidden field.
+    # Fall back to a submit field with similar attributes.
+    for my $input ($f->inputs) {
+	if ($input->type eq "submit" and $input->name =~ /$action/
+	    and $input->name =~ /J:ACTIONS=([^|]+)|/ ) {
+	  $input->name =~ /J:ACTIONS=(\w+S\d+)|/;
+	  my $moniker = $1;
+	  return $moniker;
+      }
+    }
   }
   return undef;
 }
@@ -162,6 +173,22 @@ sub action_form {
         $i++;
         next unless first {   $_->name =~ /J:A-(?:\d+-)?$moniker/
                            && $_->type eq "hidden" }
+                        $form->inputs;
+        next if grep {not $form->find_input("J:A:F-$_-$moniker")} @fields;
+
+        $self->form_number($i); #select it, for $mech->submit etc
+        return $form;
+    } 
+
+    # A fallback for forms that don't have any named fields except their
+    # submit button. Could stand to be refactored.
+    $i = 0;
+    for my $form ($self->forms) {
+        no warnings 'uninitialized';
+
+        $i++;
+        next unless first {   $_->name =~ /J:A-(?:\d+-)?$moniker/
+                           && $_->type eq "submit" }
                         $form->inputs;
         next if grep {not $form->find_input("J:A:F-$_-$moniker")} @fields;
 
@@ -397,6 +424,7 @@ sub follow_link_ok {
         Test::HTML::Lint::html_ok( $lint, $self->content );
     }
 } 
+
 
 =head2 session
 
