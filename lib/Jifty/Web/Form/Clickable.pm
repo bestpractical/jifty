@@ -541,8 +541,7 @@ sub generate {
             if ( $hook->{submit} ) {
                 $self->{submit} ||= [];
                 $hook->{submit} = [ $hook->{submit} ] unless ref $hook->{submit} eq "ARRAY";
-                push @{ $self->{submit} },
-                    map { ref $_ ? $_->moniker : $_ } @{ $hook->{submit} };
+                push @{ $self->{submit} }, @{ $hook->{submit} };
             }
         }
     }

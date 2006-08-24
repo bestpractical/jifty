@@ -148,12 +148,15 @@ sub onclick {
 
     my ($arg) = @_;
 
-    if (ref($arg) eq 'ARRAY') {
-	for (@$arg) {
-	    $_->{submit} = $_->{submit}->moniker
-		if UNIVERSAL::can($_->{submit}, 'moniker');
-	}
+    # Normalize actions to monikers to prevent circular references,
+    # since Jifty::Action caches instances of Jifty::Web::Form::Clickable.
+    for my $hook ( ref($arg) eq 'ARRAY' ? @$arg : $arg ) {
+        next unless ref $hook eq 'HASH';
+        next unless $hook->{submit};
+        $hook->{submit} = [ $hook->{submit} ] unless ref $hook->{submit} eq "ARRAY";
+        $hook->{submit} = [ map { ref $_ ? $_->moniker : $_ } @{ $hook->{submit} } ];
     }
+
 
     $self->_onclick($arg);
 }
@@ -182,8 +185,7 @@ sub javascript {
 
             # Submit action
             if ( $hook->{submit} ) {
-                $hook->{submit} = [ $hook->{submit} ] unless ref $hook->{submit} eq "ARRAY";
-                push @actions, map { ref $_ ? $_->moniker : $_ } @{ $hook->{submit} };
+                push @actions, @{ $hook->{submit} };
             }
 
             $hook->{region} ||= Jifty->web->qualified_region;
