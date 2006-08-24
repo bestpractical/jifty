@@ -46,15 +46,18 @@ Description: Jifty perl libraries
 Package: libjifty-perl
 Section: perl
 Architecture: all
-Depends: ${perl:Depends}, libjifty-dbi-perl, libcache-cache-perl,
- libcalendar-simple-perl, libclass-accessor-named-perl,
+Depends: ${perl:Depends}, libjifty-dbi-perl, libapp-cli-perl
+ (>> 0.03), libcache-cache-perl, libcalendar-simple-perl,
+ libcgi-cookie-splitter-perl, libclass-accessor-named-perl,
  libclass-container-perl, libclass-data-inheritable-perl,
+ libcompress-zlib-perl, libcss-squish-perl (>> 0.05),
  libcrypt-cbc-perl, libdate-manip-perl, libfile-find-rule-perl,
  libfile-mmagic-perl, libfile-sharedir-perl, libhash-merge-perl,
  libhtml-lint-perl, libhtml-mason-perl (>> 1.31),
  libhttp-server-simple-perl (>> 0.20),
  libhttp-server-simple-recorder-perl, liblog-log4perl-perl,
- liblocale-maketext-lexicon-perl (>> 0.60), libemail-folder-perl,
+ liblocale-maketext-lexicon-perl (>> 0.60),
+ liblocale-maketext-simple-perl, libemail-folder-perl,
  libemail-localdelivery-perl, libemail-mime-perl,
  libemail-mime-creator-perl, libemail-send-perl, libmime-types-perl,
  libmodule-pluggable-perl (>> 2.95), libmodule-refresh-perl (>> 0.09),
