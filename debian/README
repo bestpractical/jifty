@@ -1,0 +1,17 @@
+This directory contains Debian packaging files for Jifty.
+
+There is a debian repository at:
+
+deb http://jifty.bunting.net.au/ ./
+
+Containing all my packages.  
+There are still some packages required from ubuntu edgy that are perl
+only modules.  Things should work with dapper with the addition of the
+perl modules from edgy.
+
+This is as yet hardly tested so don't be surprised if things break.
+
+Please let me know if they do and I'll try and fix them.
+
+Bart Bunting
+ 

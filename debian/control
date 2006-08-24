@@ -1,0 +1,96 @@
+Source: jifty
+Section: web
+Priority: optional
+Maintainer: Bart Bunting <bart@debian.org>
+Build-Depends-Indep: debhelper (>> 5), libmodule-corelist-perl,
+ libdevel-cover-perl, libmodule-scandeps-perl, libpod-simple-perl,
+ libtest-base-perl, libtest-www-mechanize-perl (>> 1.04),
+ libtest-pod-coverage-perl
+
+Package: jifty
+Section: perl
+Architecture: all
+Depends: ${perl:Depends}, libjifty-perl
+Description: Jifty perl libraries
+ Yet another web framework.
+ .
+ What's cool about Jifty? (Buzzwords)
+ .
+ DRY (Don't Repeat Yourself)
+        Jifty tries not to make you say things more than once.
+ .
+ Full-stack
+        Out of the proverbial box, Jifty comes with one way to do everything
+        you should need to do: One database mapper, one templating system,
+        one web services layer, one AJAX toolkit, one set of handlers for
+        standalone or FastCGI servers. We work hard to make all the bits
+        play well together, so you don't have to.
+ .
+ Continuations
+        With Jifty, it's easy to let the user go off and do something else,
+        like fill out a wizard, look something up in the help system or go
+        twiddle their preferences and come right back to where they were.
+ .
+ Form-based dispatch
+        This is one of the things that Jifty does that we've not seen
+        anywhere else. Jifty owns your form rendering and processing. This
+        means you never need to write form handling logic. All you say is "I
+        want an input for this argument here" and Jifty takes care of the
+        rest. (Even autocomplete and validation)
+ .
+ A Pony
+        Jifty is the only web application framework that comes with a pony.
+ .
+ This package provides Jifty scripts.
+
+Package: libjifty-perl
+Section: perl
+Architecture: all
+Depends: ${perl:Depends}, libjifty-dbi-perl, libcache-cache-perl,
+ libcalendar-simple-perl, libclass-accessor-named-perl,
+ libclass-container-perl, libclass-data-inheritable-perl,
+ libcrypt-cbc-perl, libdate-manip-perl, libfile-find-rule-perl,
+ libfile-mmagic-perl, libfile-sharedir-perl, libhash-merge-perl,
+ libhtml-lint-perl, libhtml-mason-perl (>> 1.31),
+ libhttp-server-simple-perl (>> 0.20),
+ libhttp-server-simple-recorder-perl, liblog-log4perl-perl,
+ liblocale-maketext-lexicon-perl (>> 0.60), libemail-folder-perl,
+ libemail-localdelivery-perl, libemail-mime-perl,
+ libemail-mime-creator-perl, libemail-send-perl, libmime-types-perl,
+ libmodule-pluggable-perl (>> 2.95), libmodule-refresh-perl (>> 0.09),
+ libobject-declare-perl, libscalar-defer-perl,
+ libstring-koremutake-perl, libspiffy-perl, libwww-mechanize-perl (>>
+ 1.12), libversion-perl, libxml-simple-perl, libxml-writer-perl,
+ libxml-xpath-perl, libyaml-syck-perl (>> 0.67),
+Description: Jifty perl libraries
+ Yet another web framework.
+ .
+ What's cool about Jifty? (Buzzwords)
+ .
+ DRY (Don't Repeat Yourself)
+        Jifty tries not to make you say things more than once.
+ .
+ Full-stack
+        Out of the proverbial box, Jifty comes with one way to do everything
+        you should need to do: One database mapper, one templating system,
+        one web services layer, one AJAX toolkit, one set of handlers for
+        standalone or FastCGI servers. We work hard to make all the bits
+        play well together, so you don't have to.
+ .
+ Continuations
+        With Jifty, it's easy to let the user go off and do something else,
+        like fill out a wizard, look something up in the help system or go
+        twiddle their preferences and come right back to where they were.
+ .
+ Form-based dispatch
+        This is one of the things that Jifty does that we've not seen
+        anywhere else. Jifty owns your form rendering and processing. This
+        means you never need to write form handling logic. All you say is "I
+        want an input for this argument here" and Jifty takes care of the
+        rest. (Even autocomplete and validation)
+ .
+ A Pony
+        Jifty is the only web application framework that comes with a pony.
+ .
+ This package provides the Jifty perl libraries.
+
