@@ -138,7 +138,8 @@ sub make_server {
     # jifty::server.
     if ($ENV{JIFTY_TESTSERVER_PROFILE} ||
         $ENV{JIFTY_TESTSERVER_COVERAGE} ||
-        $ENV{JIFTY_TESTSERVER_DBIPROF}) {
+        $ENV{JIFTY_TESTSERVER_DBIPROF} ||
+        $^O eq 'Win32') {
         require Jifty::TestServer;
         unshift @Jifty::Server::ISA, 'Jifty::TestServer';
     }
