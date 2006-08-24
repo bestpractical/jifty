@@ -1,0 +1,69 @@
+The Jifty::Web::Form::* classes are currently a bit of a mess. This is
+an effort to document their internals so they make some sense to
+whoever finally gets motivates to fix them (which may well be me).
+
+C<Jifty::Web::Form::Element> is the base of *every* class in the
+hierarchy. Virtually any widget that Jifty renders, be it a link,
+button, or form field, comes from some subclass of
+C<Jifty::Web::Form::Element>
+
+C<Element> itself deals essentially only with writing out javascript
+event handlers for widgets. Its <javascript> method walks the
+C<onclick> argument to all those buttons and links, building up a data
+structure that is eventually serialized using JSON and passed to
+jifty.js's C<update> function in an C<onclick=> wrapper.
+
+Form fields (usually created by C<form_field> calls on a
+C<Jifty::Action> are all subclasses of C<Jifty::Web::Form::Field>,
+(C<Jifty::Web::Form::Field::I<something>).
+
+C<Field> takes care of most of the work of rendering form fields. It
+renders the label, autocompletion, placeholders, hints, validation
+errors and warnings, and so on. Subclasses override methods as
+appropriate to add or alter details of the rendering. Note that
+subclasses need *not* concern themselves with making sure that the
+field is rendered as the correct kind of widget (field, select, etc.),
+assuming they represent a standard, single, HTML C<input> tag (as
+opposed to, say, C<Combobox>). That is dealt with by the C<type>
+magic:
+
+Whenever you create a C<Field>, it has a C<type>. Normally, this
+represents the C<type> property on the C<input> tag. In order to make
+the system extensible, however, it *also* indicates what perl class
+this widget will be. C<Jifty::Web::Form::Field::new> blesses the
+returned object into C<'Jifty::Web::Form::Field::' . ucfirst
+$type>. The stock rendering renders an input field with
+C<type="$type">, but subclasses can override C<render_widget> to
+render something else -- see C<Jifty::Web::Form::Field::Combobox> for
+an example of doing this.
+
+Simple links are instances of C<Jifty::Web::Form::Field::Link>. This
+class is fairly simple -- it merely renders as a HTML C<a> tag with
+the appropriate attributes.
+
+The only detail that remains is the non-javascript state-variable
+emulation of AJAX support on links and buttons. This is
+C<Jifty::Web::Form::Field::Clickable>'s job. C<Clickable> is also a
+C<Element>, which means it inherits the Javascript hooks. Its
+constructor builds up a list of state variables that need to be
+B<saved> from the previous request, while its C<generate> method walks
+the javascript hooks inherited from C<Element> and generates new state
+variables that will need to be sent by this button to simulate the
+AJAX effects given in the C<onclick>. If the clickable needs to submit
+actions, C<generate> creates it as a button, and otherwise it creates
+a link. It does this by creating a *new*
+C<Jifty::Web::Form::Field::Link> or C<Jifty::Web::Form::Field::Field>
+object, and serializing all the state variables it's built up onto
+that object appropriately (in the name, if it's a button, as GET
+parameters if it's a link).
+
+This final step, where a C<Clickable> (which is not renderable) clones
+itself into a different class that can be rendered, makes use of the
+C<accessors> method defined in C<Element>. Every subclass of
+C<Element> keeps a list of the accessors defined on that class
+(typically these are defined using C<Class::Accessor::Fast>, but not
+always). When C<Clickable> needs to clone itself, it walks the list
+C<($self->accessors)>, building up a hash of all the accessor
+key-value pairs on itself, and passes these to C<new> on C<Field> or
+C<Link>, which calls accessors on itself for every C<key => value>
+pair in its argument list.
