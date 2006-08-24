@@ -93,8 +93,8 @@ sub moniker_for {
     # Fall back to a submit field with similar attributes.
     for my $input ($f->inputs) {
 	if ($input->type eq "submit" and $input->name =~ /$action/
-	    and $input->name =~ /J:ACTIONS=([^|]+)|/ ) {
-	  $input->name =~ /J:ACTIONS=([^|]+)|/;
+	    and $input->name =~ /J:ACTIONS=([^|]+)\|/ ) {
+	  $input->name =~ /J:ACTIONS=([^|]+)\|/;
 	  my $moniker = $1;
 	  return $moniker;
       }
