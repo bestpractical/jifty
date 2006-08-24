@@ -94,7 +94,7 @@ sub moniker_for {
     for my $input ($f->inputs) {
 	if ($input->type eq "submit" and $input->name =~ /$action/
 	    and $input->name =~ /J:ACTIONS=([^|]+)|/ ) {
-	  $input->name =~ /J:ACTIONS=(\w+S\d+)|/;
+	  $input->name =~ /J:ACTIONS=([^|]+)|/;
 	  my $moniker = $1;
 	  return $moniker;
       }
