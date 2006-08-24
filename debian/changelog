@@ -1,3 +1,9 @@
+jifty (0.60728-3) unstable; urgency=low
+
+  * Missed some date dependencies
+
+ -- Bart Bunting <bart@ursys.com.au>  Fri, 25 Aug 2006 09:30:28 +1000
+
 jifty (0.60728-2) unstable; urgency=low
 
   * More dependencies, we're nearly there seems I missed some.
