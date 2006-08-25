@@ -2,11 +2,11 @@ package Jifty::TestServer;
 
 use strict;
 use warnings;
-use Cwd 'abs_path';
+use File::Spec;
 use Test::Builder;
 my $Tester = Test::Builder->new;
 
-my $INC = [grep { defined } map { abs_path($_) } @INC ];
+my $INC = [grep { defined } map { File::Spec->rel2abs($_) } @INC ];
 my @perl = ($^X, map { "-I$_" } @$INC);
 
 =head1 NAME
