@@ -513,11 +513,11 @@ sub generate {
     for my $trigger ( $self->handlers ) {
         my $value = $self->$trigger;
         next unless $value;
-        my @hooks = ref $value eq "ARRAY" ? @{$value} : ($value);
+        my @hooks = @{$value};
         for my $hook (@hooks) {
             next unless ref $hook eq "HASH";
             $hook->{region} ||= $hook->{refresh} || Jifty->web->qualified_region;
-            $hook->{args}   ||= {};
+
             my $region = ref $hook->{region} ? $hook->{region} : Jifty->web->get_region( $hook->{region} );
 
             if ($hook->{replace_with}) {
