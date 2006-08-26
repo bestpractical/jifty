@@ -583,13 +583,15 @@ function update() {
 
     // Build actions structure
     request['actions'] = $H();
-    for (var i = 0; i < named_args['actions'].length; i++) {
-        var moniker = named_args['actions'][i];
+    for (var moniker in named_args['actions']) {
+        var disable = named_args['actions'][moniker];
         var a = new Action(moniker, button_args);
         if (a.register) {
             if (a.hasUpload())
                 return true;
-            a.disable_input_fields();
+            if(disable) {
+                a.disable_input_fields();
+            }
             request['actions'][moniker] = a.data_structure();
         }
     }
@@ -721,7 +723,7 @@ function update() {
                                 }
                                 // We need to give the browser some "settle" time before we eval scripts in the body
                                 setTimeout((function() { this.evalScripts() }).bind(textContent), 10);
-                                Behaviour.apply(f['element']);
+                                Behaviour.apply(element);
                             }
                         }
                         dom_fragment.setArgs(new_dom_args);
@@ -758,7 +760,7 @@ function update() {
     };
     var onFailure = function(transport, object) {
         hide_wait_message_now();
-        
+
         alert("Unable to connect to server.\n\nTry again in a few minutes.");
 
         Jifty.failedRequest = transport;
