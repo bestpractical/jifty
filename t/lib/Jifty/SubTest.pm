@@ -1,9 +1,9 @@
 package Jifty::SubTest;
 
 use FindBin;
-use Cwd;
+use File::Spec;
 BEGIN {
-    @INC = grep { defined } map { ref($_) ? $_ : Cwd::abs_path($_) } @INC;
+    @INC = grep { defined } map { ref($_) ? $_ : File::Spec->rel2abs($_) } @INC;
     chdir "$FindBin::Bin/..";
 }
 
