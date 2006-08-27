@@ -10,18 +10,6 @@ limit what users can do with temporary credentials (LetMes, etc)
 
 =cut
 
-BEGIN {
-    #### XXX: I know this is foolish but right now Jifty on Win32 fails to 
-    #### unlink used test databases and the following tests fail saying
-    #### 'error creating a table... table already exists'. So, remove the
-    #### remnant first. And we should do it before none of the Jifty is there.
-
-    my $testdb = 'jiftyapptest';
-    if (-e $testdb) {
-        unlink $testdb or die $!;
-    }
-}
-
 use Jifty::Test tests => 21;
 
 use_ok('Jifty::API');
