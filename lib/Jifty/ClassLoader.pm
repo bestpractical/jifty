@@ -138,7 +138,7 @@ sub Jifty::ClassLoader::INC {
                 . "use base qw/@{[$base]}::Collection/;\n"
                 . "sub record_class { '@{[$base]}::Model::$1' }\n"
                 . "1;" );
-    } elsif ( $module =~ m!^(?:$base)::Action::(Create|Update|Delete)([^\.]+)$! ) {
+    } elsif ( $module =~ m!^(?:$base)::Action::(Create|Update|Delete|Search)([^\.]+)$! ) {
         my $modelclass = $base . "::Model::" . $2;
         Jifty::Util->require($modelclass);
 
@@ -201,7 +201,7 @@ sub require {
         my($short) = $full =~ /::Model::(.*)/;
         Jifty::Util->require($full . "Collection");
         Jifty::Util->require($base . "::Action::" . $_ . $short)
-            for qw/Create Update Delete/;
+            for qw/Create Update Delete Search/;
     }
 }
 

@@ -14,7 +14,7 @@ use lib 'plugins/REST/lib';
 use lib 't/lib';
 use Jifty::SubTest;
 
-use Jifty::Test tests => 60;
+use Jifty::Test tests => 61;
 use Jifty::Test::WWW::Mechanize;
 
 my $server  = Jifty::Test->make_server;
@@ -87,6 +87,7 @@ is(get_content(), 'test@example.com');
 my @actions = qw(TestApp::Plugin::REST::Action::CreateUser
                  TestApp::Plugin::REST::Action::UpdateUser
                  TestApp::Plugin::REST::Action::DeleteUser
+                 TestApp::Plugin::REST::Action::SearchUser
                  TestApp::Plugin::REST::Action::DoSomething
                  Jifty::Action::Autocomplete
                  Jifty::Action::Redirect);

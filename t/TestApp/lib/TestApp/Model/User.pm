@@ -1,5 +1,6 @@
 package TestApp::Model::User::Schema;
 use Jifty::DBI::Schema;
+use Scalar::Defer;
 
 # Your column definitions go here.  See L<Jifty::DBI::Schema> for
 # documentation about how to write column definitions.
@@ -13,6 +14,16 @@ column 'email' =>
 column 'tasty' =>
   type is 'boolean',
   is immutable;
+column 'password' =>
+  type is 'text',
+  render_as 'Password',
+  is mandatory,
+  default is '';
+column 'created_on' =>
+  type is 'datetime',
+  is immutable,
+  default is defer { DateTime->now },
+  filters are 'Jifty::DBI::Filter::DateTime';
 
 
 package TestApp::Model::User;
