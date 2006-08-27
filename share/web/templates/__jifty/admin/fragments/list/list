@@ -6,19 +6,49 @@ $item_path => "/__jifty/admin/fragments/list/view"
 </%args>
 <%init>
 my $collection_class =  Jifty->config->framework('ApplicationClass')."::Model::".$object_type."Collection";
-my $collection = $collection_class->new();
-$collection->unlimit();
-$collection->set_page_info( current_page => $page,
-                           per_page     => 25
-                          );
-if ($collection->pager->total_entries == 0) {
-    $m->out("No items found.");
+my $search = Jifty->web->response->result('search');
+my $collection;
+if(!$search) {
+    $collection = $collection_class->new();
+    $collection->unlimit();
+} else {
+    $collection = $search->content('search');
+    warn $collection->build_select_query;
 }
 
+$collection->set_page_info( current_page => $page,
+                            per_page     => 25
+                           );
 </%init>
+<%perl>    
+my $search_region = Jifty::Web::PageRegion->new(
+   name     => 'search',
+   path     => '/__jifty/empty',
+);
+</%perl>
+
+<% Jifty->web->link(
+    onclick => [{
+        region       => $search_region->qualified_name,
+        replace_with => '/__jifty/admin/fragments/list/search',
+        toggle       => 1,
+        args         => { object_type => $object_type }
+    },
+    ],
+    label => 'Toggle search'
+  )
+%>
+
+<% $search_region->render %>
+
 % if ($collection->pager->last_page > 1) {
     <span class="page-count">Page <% $page %> of <% $collection->pager->last_page %></span>   
 % }
+
+% if ($collection->pager->total_entries == 0) {
+  No items found
+% }
+
 <div class="list">
 <%perl>
 while ( my $item = $collection->next ) {
