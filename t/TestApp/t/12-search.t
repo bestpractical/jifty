@@ -42,7 +42,7 @@ ok($user->create(
 $user = TestApp::Model::User->new(current_user => TestApp::CurrentUser->superuser);
 
 ok($user->create(
-        name       => 'third_test',
+        name       => 'third_user',
         email      => 'test3@not.a.domain',
         password    => 'hahaha',
         created_on => '1999-12-31 23:59'
@@ -113,7 +113,7 @@ $result = $search->result->content('search');
 
 isa_ok($result, 'Jifty::Collection');
 is($result->count, 1);
-is($result->first->name, 'third_test');
+is($result->first->name, 'third_user');
 
 # An empty search should return everything
 $search->argument_values({});
@@ -125,12 +125,70 @@ isa_ok($result, 'Jifty::Collection');
 is($result->count, 3);
 
 # We ignore empty but defined fields
-
-$search->argument_values({email => "", name => 'third_test'});
+$search->argument_values({email => "", name => 'third_user'});
 $search->run;
 
 $result = $search->result->content('search');
 
 isa_ok($result, 'Jifty::Collection');
 is($result->count, 1);
-is($result->first->name, 'third_test');
+is($result->first->name, 'third_user');
+
+# Substring searching
+$search->argument_values({name_contains => 'test'});
+$search->run;
+
+$result = $search->result->content('search');
+
+isa_ok($result, 'Jifty::Collection');
+is($result->count, 2);
+is($result->items_array_ref->[0]->name, 'test1');
+is($result->items_array_ref->[1]->name, 'test2');
+
+# Negative substring
+$search->argument_values({name_lacks => 'test'});
+$search->run;
+
+$result = $search->result->content('search');
+
+isa_ok($result, 'Jifty::Collection');
+is($result->count, 1);
+is($result->first->name, 'third_user');
+
+# This is case insensitive substring
+$search->argument_values({name_contains => 'TEST'});
+$search->run;
+
+$result = $search->result->content('search');
+
+isa_ok($result, 'Jifty::Collection');
+is($result->count, 2);
+
+# It makes no sense to contain NULL, so ignore that:
+$search->argument_values({name_contains => undef});
+$search->run;
+
+$result = $search->result->content('search');
+
+isa_ok($result, 'Jifty::Collection');
+is($result->count, 3);
+
+# Datetime searching
+$search->argument_values({created_on_after => '2006-01-01'});
+$search->run;
+
+$result = $search->result->content('search');
+
+isa_ok($result, 'Jifty::Collection');
+is($result->count, 1);
+is($result->first->name, 'test1');
+
+# More datetime
+$search->argument_values({created_on_before => '2000-05-32 4:37PM'});
+$search->run;
+
+$result = $search->result->content('search');
+
+isa_ok($result, 'Jifty::Collection');
+is($result->count, 1);
+is($result->first->name, 'third_user');

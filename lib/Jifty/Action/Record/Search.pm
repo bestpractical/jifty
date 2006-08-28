@@ -25,6 +25,17 @@ Remove validators from arguments, as well as ``mandatory''
 restrictions. Remove any arguments that render as password fields, or
 refer to collections.
 
+Generate additional search arguments for each field based on the
+following criteria:
+
+=over 4
+
+=item C<text> or C<textarea> fields
+
+Create C<field>_contains and C<field>_lacks arguments.
+
+=back
+
 =cut
 
 sub arguments {
@@ -51,16 +62,27 @@ sub arguments {
         
         if(lc $info->{'render_as'} eq 'password') {
             delete $args->{$field};
+            next;
         } 
-        if($column && defined(my $refers_to = $column->refers_to)) {
+
+        warn "No column for: $field" unless($column);
+        
+        if(defined(my $refers_to = $column->refers_to)) {
             delete $args->{$field}
              if UNIVERSAL::isa($refers_to, 'Jifty::Collection');
         }
         # XXX TODO: What about booleans? Checkbox doesn't quite work,
         # since there are three choices: yes, no, either.
 
-        # XXX TODO: Create arguments for comparisons and substring
-        # matching
+        if($column->type =~ /^text/i) {
+            my $label = $info->{label} || $field;
+            $args->{"${field}_contains"} = {%$info, label => "$label contains"};
+            $args->{"${field}_lacks"} = {%$info, label => "$label lacks"};
+        } elsif($column->type =~ /(?:date|time)/) {
+            my $label = $info->{label} || $field;
+            $args->{"${field}_after"} = {%$info, label => "$label after"};
+            $args->{"${field}_before"} = {%$info, label => "$label before"};
+        }
     }
 
     return $self->_cached_arguments($args);
@@ -88,11 +110,44 @@ sub take_action {
 
     for my $field (grep {$self->has_argument($_)} $self->argument_names) {
         my $value = $self->argument_value($field);
+        
+        my $column = $self->record->column($field);
+        my $op = undef;
+        
+        if(!$column) {
+            # If we don't have a column, this is a comparison or
+            # substring search. Skip undef values for those, since
+            # NULL makes no sense.
+            next unless defined($value);
+            next if $value =~ /^\s*$/;
+
+            if($field =~ m{^(.*)_([[:alpha:]]+)$}) {
+                $field = $1;
+                $op = $2;
+                if($op eq 'contains') {
+                    $op = 'LIKE';
+                    $value = "%$value%";
+                } elsif($op eq 'lacks') {
+                    $op = 'NOT LIKE';
+                    $value = "%$value%";
+                } elsif($op eq 'after') {
+                    $op = '>';
+                } elsif($op eq 'before') {
+                    $op = '<';
+                }
+            } else {
+                next;
+            }
+        }
+        
         if(defined($value)) {
             next if $value =~ /^\s*$/;
             $collection->limit(
-                column => $field,
-                value  => $value
+                column   => $field,
+                value    => $value,
+                operator => $op || "=",
+                entry_aggregator => 'AND',
+                $op ? (case_sensitive => 0) : (),
                );
         } else {
             $collection->limit(
