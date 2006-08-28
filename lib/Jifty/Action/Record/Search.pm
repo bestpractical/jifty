@@ -30,9 +30,17 @@ following criteria:
 
 =over 4
 
-=item C<text> or C<textarea> fields
+=item C<text> or C<varchar> fields
 
 Create C<field>_contains and C<field>_lacks arguments.
+
+=item C<date>, or C<timestamp> fields
+
+Create C<field>_before and C<field>_after ar
+
+=item integer fields
+
+Generate C<field>_lt and C<field>_gt arguments
 
 =back
 
@@ -74,7 +82,7 @@ sub arguments {
         # XXX TODO: What about booleans? Checkbox doesn't quite work,
         # since there are three choices: yes, no, either.
 
-        if($column->type =~ /^text/i) {
+        if($column->type =~ /^(?:text|varchar)/i) {
             my $label = $info->{label} || $field;
             $args->{"${field}_contains"} = {%$info, label => "$label contains"};
             $args->{"${field}_lacks"} = {%$info, label => "$label lacks"};
@@ -82,6 +90,11 @@ sub arguments {
             my $label = $info->{label} || $field;
             $args->{"${field}_after"} = {%$info, label => "$label after"};
             $args->{"${field}_before"} = {%$info, label => "$label before"};
+        } elsif(    $column->type =~ /(?:int)/
+                && !$column->refers_to) {
+            my $label = $info->{label} || $field;
+            $args->{"${field}_gt"} = {%$info, label => "$label greater than"};
+            $args->{"${field}_lt"} = {%$info, label => "$label less than"};
         }
     }
 
@@ -130,9 +143,9 @@ sub take_action {
                 } elsif($op eq 'lacks') {
                     $op = 'NOT LIKE';
                     $value = "%$value%";
-                } elsif($op eq 'after') {
+                } elsif($op eq 'after' || $op eq 'gt') {
                     $op = '>';
-                } elsif($op eq 'before') {
+                } elsif($op eq 'before' || $op eq 'lt') {
                     $op = '<';
                 }
             } else {
