@@ -132,7 +132,6 @@ lib/Jifty/Web/PageRegion.pm
 lib/Jifty/Web/Session.pm
 lib/Jifty/Web/Session/ClientSide.pm
 lib/Jifty/YAML.pm
-log
 Makefile.PL
 MANIFEST			This list of files
 MANIFEST.SKIP
@@ -331,7 +330,6 @@ t/lib/Jifty/SubTest.pm
 t/Mapper/bin/jifty
 t/Mapper/lib/Mapper/Action/CrossBridge.pm
 t/Mapper/lib/Mapper/Action/GetGrail.pm
-t/Mapper/mapper
 t/Mapper/share/web/templates/autohandler
 t/Mapper/share/web/templates/index.html
 t/Mapper/t/00-prototype.t
