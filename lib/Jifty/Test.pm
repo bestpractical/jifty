@@ -11,6 +11,27 @@ use Email::LocalDelivery;
 use Email::Folder;
 use File::Path;
 
+
+=head1 NAME
+
+Jifty::Test - Jifty's test module
+
+=head1 SYNOPSIS
+
+    use Jifty::Test tests => 5;
+
+    ...all of Test::More's functionality...
+
+    ...any class methods defined below...
+
+=head1 DESCRIPTION
+
+Jifty::Test is a superset of Test::More.  It provides all of
+Test::More's functionality in addition to the class methods defined
+below.
+
+=head1 METHODS
+
 =head2 import_extra
 
 Called by L<Test::More>'s C<import> code when L<Jifty::Test> is first
