@@ -146,9 +146,14 @@ sub arguments {
                 $info->{default_value} = $current_value if $self->record->id;
             }
 
-	    ##################
-	    my $render_as = $column->render_as;
-	    $render_as = defined $render_as ? lc($render_as) : '';
+            # 
+            if($field =~ /^(.*)_id$/ && $self->record->column($1)) {
+                $column = $self->record->column($1);
+            }
+
+            ##################
+            my $render_as = $column->render_as;
+            $render_as = defined $render_as ? lc($render_as) : '';
 
             if ( defined (my $valid_values = $column->valid_values)) {
                 $info->{valid_values} = [ @$valid_values ];
@@ -291,7 +296,7 @@ Jifty::Action::Record::Create, ::Update, or ::Delete
 sub take_action {
     my $self = shift;
     $self->log->fatal(
-        "Use one of the Jifty::Action::Record subclasses, ::Create, ::Update or ::Delete"
+        "Use one of the Jifty::Action::Record subclasses, ::Create, ::Update or ::Delete or ::Search"
     );
 }
 
