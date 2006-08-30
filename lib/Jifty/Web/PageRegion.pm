@@ -268,7 +268,8 @@ sub as_string {
     $subrequest->top_request( Jifty->web->request->top_request );
 
     # Remove all of the actions
-    $subrequest->clear_actions;
+    $_->active(0) for ($subrequest->actions);
+    # $subrequest->clear_actions;
     local Jifty->web->{request} = $subrequest;
 
     # While we're inside this region, have Mason to tack its response

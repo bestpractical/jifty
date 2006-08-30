@@ -354,7 +354,7 @@ sub _form_widget {
         my $field_info = $self->arguments->{$args{'argument'}};
 
         my $sticky = 0;
-        $sticky = 1 if $self->sticky_on_failure and (!Jifty->web->response->result($self->moniker) or $self->result->failure);
+        $sticky = 1 if $self->sticky_on_failure and (Jifty->web->response->result($self->moniker) and $self->result->failure);
         $sticky = 1 if $self->sticky_on_success and (Jifty->web->response->result($self->moniker) and $self->result->success);
 
         # $sticky can be overrided per-parameter
