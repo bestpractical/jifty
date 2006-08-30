@@ -82,6 +82,9 @@ sub arguments {
         # XXX TODO: What about booleans? Checkbox doesn't quite work,
         # since there are three choices: yes, no, either.
 
+        # Magic _id refers_to columns
+        next if($field =~ /^(.*)_id$/ && $self->record->column($1));
+
         if($column->type =~ /^(?:text|varchar)/i) {
             my $label = $info->{label} || $field;
             $args->{"${field}_contains"} = {%$info, label => "$label contains"};
