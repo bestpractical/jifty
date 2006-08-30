@@ -2,8 +2,6 @@
 
 use strict;
 
-use File::Spec;
-
 use Jifty::Test tests => 7;
 
 my $tb = Jifty::Test->builder;
