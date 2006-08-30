@@ -836,15 +836,8 @@ sub _render_messages {
     return unless grep {$_->$type()} values %results;
     
     my $plural = $type . "s";
-    $self->out(qq{<div id="$plural">});
+    $self->out(qq{<div class="jifty results messages" id="$plural">});
     
-    $self->out( qq[<a id="dismiss_$plural" href="#" title="]
-               .  _('Dismiss')
-               .qq[" onmousedown="this.onfocus=this.blur;" onmouseup="this.onfocus=window.clientInformation?null:window.undefined" ]
-               .qq[ onclick="Effect.Fade(this.parentNode); return false;">]
-               .  _('Dismiss')
-               .qq[</a>]);
-               
     foreach my $moniker ( keys %results ) {
         if ( $results{$moniker}->$type() ) {
             $self->out( qq{<div class="$type $moniker">}

@@ -446,16 +446,19 @@ Behaviour.register({
             DOM.Events.addListener( e, "keypress", Form.Element.handleEnter );
             Element.addClassName( e, "jifty_enter_handler_attached" );
         }
+    },
+    "div.jifty, div.results, div.messages": function(e) {
+        if (   !Element.hasClassName( e, "jifty_enter_handler_attached" ) ) {
+            e.innerHTML= 
+              '<a  href="#" id="dismiss_'+e.id+'" title="Dismiss" onmousedown="this.onfocus=this.blur;" onmouseup="this.onfocus=window.clientInformation?null:window.undefined" onclick="Effect.Fade(this.parentNode); return false;">Dismiss</a>' + e.innerHTML;
+
+            Element.addClassName( e, "jifty_enter_handler_attached" );
+            }
     }
 });
 
 
-
-/* Regions */
-// Keep track of the fragments on the page
-var fragments = $H();
-
-var Region = Class.create();
+/* Regions */ // Keep track of the fragments on the page var fragments = $H(); var Region = Class.create();
 Region.prototype = {
     initialize: function(name, args, path, parent) {
         this.name = name;
