@@ -1,6 +1,7 @@
 AUTHORS
 bin/build_par
 bin/jifty
+bin/runcover
 bin/service
 bin/xgettext
 Changelog
@@ -65,9 +66,11 @@ lib/Jifty/Manual/AccessControl.pod
 lib/Jifty/Manual/Actions.pod
 lib/Jifty/Manual/Continuations.pod
 lib/Jifty/Manual/Cookbook.pod
+lib/Jifty/Manual/FAQ.pod
 lib/Jifty/Manual/Glossary.pod
 lib/Jifty/Manual/ObjectModel.pod
 lib/Jifty/Manual/PageRegions.pm
+lib/Jifty/Manual/Style.pod
 lib/Jifty/Manual/Tutorial.pod
 lib/Jifty/Manual/Tutorial_ja.pod
 lib/Jifty/Manual/Upgrading.pod
@@ -217,6 +220,9 @@ share/web/static/images/silk/error.png
 share/web/static/images/silk/information.png
 share/web/static/images/silk/pencil.png
 share/web/static/images/silk/pencil_add.png
+share/web/static/images/yui/us/my/bn/x_d.gif
+share/web/static/images/yui/us/tr/callt.gif
+share/web/static/images/yui/us/tr/calrt.gif
 share/web/static/js/app.js
 share/web/static/js/app_behaviour.js
 share/web/static/js/behaviour.js
@@ -301,6 +307,9 @@ t/01-dependencies.t
 t/01-version_checks.t
 t/02-connect.t
 t/03-form-protocol.t
+t/03-is_passing-no_plan.t
+t/03-is_passing.t
+t/03-test-mailbox.t
 t/05-dispatcher.t
 t/06-forms.t
 t/07-limit-actions.t
@@ -346,13 +355,16 @@ t/TestApp-Plugin-REST/t/01-config.t
 t/TestApp-Plugin-REST/t/02-basic-use.t
 t/TestApp/bin/jifty
 t/TestApp/lib/TestApp/Action/DoSomething.pm
+t/TestApp/lib/TestApp/CurrentUser.pm
 t/TestApp/lib/TestApp/Dispatcher.pm
 t/TestApp/lib/TestApp/Model/User.pm
 t/TestApp/share/web/static/images/pony.jpg
+t/TestApp/share/web/templates/currentuser
 t/TestApp/share/web/templates/dispatch/basic
 t/TestApp/share/web/templates/dispatch/basic-show
 t/TestApp/share/web/templates/editform
 t/TestApp/share/web/templates/index.html
+t/TestApp/share/web/templates/manual_redirect
 t/TestApp/share/web/templates/somedir/dhandler
 t/TestApp/t/00-model-User.t
 t/TestApp/t/00-prototype.t
@@ -368,5 +380,6 @@ t/TestApp/t/07-sandboxing.t
 t/TestApp/t/08-notifications.t
 t/TestApp/t/09-redirect.t
 t/TestApp/t/10-compress.t
+t/TestApp/t/11-current_user.t
 t/TestApp/t/config-Cachable
 t/TestApp/t/config-Record
