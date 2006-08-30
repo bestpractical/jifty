@@ -36,7 +36,11 @@ below.
 
     my $is_passing = Jifty::Test->is_passing;
 
-Check if all tests run so far have passed.
+Check if the test is currently in a passing state.
+
+* All tests run so far have passed
+* We have run at least one test
+* We have not run more than we planned (if we planned at all)
 
 =cut
 
@@ -45,15 +49,33 @@ sub is_passing {
 
     my $is_failing = 0;
     $is_failing ||= grep {not $_} $tb->summary;
-    $is_failing ||= $tb->expected_tests < $tb->current_test;
+    $is_failing ||= $tb->has_plan eq 'no_plan'
+                      ? 0
+                      : $tb->expected_tests < $tb->current_test;
 
     return !$is_failing;
 }
 
 
+=head2 is_done
+
+    my $is_done = Jifty::Test->is_done;
+
+Check if we have run all the tests we've planned.
+
+If the plan is 'no_plan' then is_done() will return true if at least
+one test has run.
+
+=cut
+
 sub is_done {
     my $tb = Jifty::Test->builder;
-    return $tb->expected_tests == $tb->current_test;
+    if( $tb->has_plan eq 'no_plan' ) {
+        return $tb->current_test > 0;
+    }
+    else {
+        return $tb->expected_tests == $tb->current_test;
+    }
 }
 
 
@@ -267,7 +289,54 @@ L<Email::MIME> to parse multi-part messages stored in the mailbox.
 
 sub messages {
     return Email::Folder->new(mailbox())->messages;
-} 
+}
+
+
+=head2 test_in_isolation
+
+  my $return = Jifty::Test->test_in_isolation( sub {
+      ...your testing code...
+  });
+
+For testing testing modules so you can run testing code (which perhaps
+fail) without effecting the outer test.
+
+Saves the state of Jifty::Test's Test::Builder object and redirects
+all output to dev null before running your testing code.  It then
+restores the Test::Builder object back to its original state.
+
+    # Test that fail() returns 0
+    ok !Jifty::Test->test_in_isolation sub {
+        return fail;
+    };
+
+=cut
+
+sub test_in_isolation {
+    my $class = shift;
+    my $code  = shift;
+
+    my $tb = Jifty::Test->builder;
+
+    my $output         = $tb->output;
+    my $failure_output = $tb->failure_output;
+    my $todo_output    = $tb->todo_output;
+    my $current_test   = $tb->current_test;
+
+    $tb->output( File::Spec->devnull );
+    $tb->failure_output( File::Spec->devnull );
+    $tb->todo_output( File::Spec->devnull );
+
+    my $result = $code->();
+
+    $tb->output($output);
+    $tb->failure_output($failure_output);
+    $tb->todo_output($todo_output);
+    $tb->current_test($current_test);
+
+    return $result;
+}
+
 
 END {
     my $Test = Jifty::Test->builder;
