@@ -171,9 +171,21 @@ Clears the mailbox.
 =cut
 
 sub setup_mailbox {
-    open my $f, ">:encoding(UTF-8)", mailbox();
+    my $class = shift;
+
+    open my $f, ">:encoding(UTF-8)", $class->mailbox;
     close $f;
-} 
+}
+
+=head2 teardown_mailbox
+
+Deletes the mailbox.
+
+=cut
+
+sub teardown_mailbox {
+    unlink mailbox();
+}
 
 =head2 is_available
 
@@ -220,7 +232,7 @@ END {
     # If all tests passed..
     unless ($Test->expected_tests != $Test->current_test or grep {not $_} $Test->summary) {
         # Clean up mailbox
-        unlink mailbox();
+        Jifty::Test->teardown_mailbox;
 
         # Remove testing db
         if (Jifty->handle) {
