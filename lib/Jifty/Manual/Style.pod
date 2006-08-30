@@ -1,0 +1,28 @@
+=head1 NAME
+
+Jifty::Manual::Style - Jifty coding style guide
+
+=head3 Private documentation
+
+When documenting a private method, or providing documentation which is
+not useful to the user of the module (and is presumably useful to the
+developer), wrap it in =begin/end private.  This way it does not show
+up in perldoc where a user would see it and yet is still available and
+well formatted (that is, not just a lump comment) when looking at the
+code.
+
+  =begin private
+
+  =head2 import_extra
+
+  Called by L<Test::More>'s C<import> code when L<Jifty::Test> is first
+  C<use>'d, it calls L</setup>, and asks Test::More to export its
+  symbols to the namespace that C<use>'d this one.
+
+  =end private
+
+  sub import_extra {
+        ...
+  }
+
+=cut
