@@ -32,6 +32,31 @@ below.
 
 =head1 METHODS
 
+=head2 is_passing
+
+    my $is_passing = Jifty::Test->is_passing;
+
+Check if all tests run so far have passed.
+
+=cut
+
+sub is_passing {
+    my $tb = Jifty::Test->builder;
+
+    my $is_failing = 0;
+    $is_failing ||= grep {not $_} $tb->summary;
+    $is_failing ||= $tb->expected_tests < $tb->current_test;
+
+    return !$is_failing;
+}
+
+
+sub is_done {
+    my $tb = Jifty::Test->builder;
+    return $tb->expected_tests == $tb->current_test;
+}
+
+
 =head2 import_extra
 
 Called by L<Test::More>'s C<import> code when L<Jifty::Test> is first
@@ -251,7 +276,7 @@ END {
     return if $Test->{Original_Pid} != $$;
 
     # If all tests passed..
-    unless ($Test->expected_tests != $Test->current_test or grep {not $_} $Test->summary) {
+    if (Jifty::Test->is_passing && Jifty::Test->is_done) {
         # Clean up mailbox
         Jifty::Test->teardown_mailbox;
 
