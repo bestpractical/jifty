@@ -147,9 +147,9 @@ sub arguments {
             }
 
             # 
-            if($field =~ /^(.*)_id$/ && $self->record->column($1)) {
-                $column = $self->record->column($1);
-            }
+            #  if($field =~ /^(.*)_id$/ && $self->record->column($1)) {
+            #    $column = $self->record->column($1);
+            #}
 
             ##################
             my $render_as = $column->render_as;
