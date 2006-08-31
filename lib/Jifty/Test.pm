@@ -113,7 +113,7 @@ sub setup {
     Jifty::YAML::DumpFile($test_config, $class->test_config(Jifty::Config->new));
     # Invoking bin/jifty and friends will now have the test config ready.
     $ENV{'JIFTY_TEST_CONFIG'} ||= $test_config;
-    Jifty::Test->builder->{test_config} = $test_config;
+    $class->builder->{test_config} = $test_config;
     {
         # Cache::Memcached stores things. And doesn't let them expire
         # from the cache easily. This is fine in production, but
@@ -296,6 +296,31 @@ sub messages {
 }
 
 
+=head2 test_file
+
+  my @files = Jifty::Test->test_file(@files);
+
+Register @files as having been created by the test.  They will be
+cleaned up at the end of the test run I<if and only if> the test
+passes.  Otherwise they will be left alone.
+
+It returns @files so you can do this:
+
+  my @files = Jifty::Test->test_file( Jifty::Util->absolute_path("t/foo") );
+
+=cut
+
+my @Test_Files_To_Cleanup;
+sub test_file {
+    my $class = shift;
+    my @files = @_;
+
+    push @Test_Files_To_Cleanup, @files;
+
+    return @files;
+}
+
+
 =head2 test_in_isolation
 
   my $return = Jifty::Test->test_in_isolation( sub {
@@ -342,7 +367,10 @@ sub test_in_isolation {
 }
 
 
-END {
+# Stick the END block in a method so we can test it.
+END { Jifty::Test->_ending }
+
+sub _ending {
     my $Test = Jifty::Test->builder;
     # Such a hack -- try to detect if this is a forked copy and don't
     # do cleanup in that case.
@@ -362,6 +390,9 @@ END {
             $schema->run;
             Log::Log4perl->get_logger("SchemaTool")->more_logging(3);
         }
+
+        # Unlink test files
+        unlink @Test_Files_To_Cleanup;
     }
 
     # Unlink test file
