@@ -60,7 +60,9 @@ sub new {
         # Retain compatibility with people using "-e _" etc.
         return \*_ unless @_;
         return undef unless (defined $_[0]);
-        $lh->maketext(@_);
+        # Sometimes Locale::Maketext fails to localize a string. Catastropically
+        # In that case just return the input
+        return eval { $lh->maketext(@_)} || join(' ',@_);
     };
 
     {
