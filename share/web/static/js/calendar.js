@@ -14,7 +14,8 @@ Jifty.Calendar = {
     },
 
     dateFormat: "Y-m-d",
-
+    dateRegex: /^(\d{4})\W(\d{2})\W(\d{2})/,
+    
     Options: {
         NAV_ARROW_LEFT: "/static/images/yui/us/tr/callt.gif",
         NAV_ARROW_RIGHT: "/static/images/yui/us/tr/calrt.gif"
@@ -30,21 +31,13 @@ Jifty.Calendar = {
             Jifty.Calendar.hideOpenCalendar();
             return;
         }
-
+        
         Jifty.Calendar.hideOpenCalendar();
         
         /* We need to delay Jifty's canonicalization until after we've
            selected a value via the calendar */
-        input["_onblur"] = input.onblur;
-        input.onblur     = null;
+        Form.Element.disableValidation(input);
         
-        if ( wrap ) {
-            wrap.style.display = "block";
-            Jifty.Calendar.openCalendar = wrapId;
-            Jifty.Utils.scrollToShow( wrapId );
-            return;
-        }
-
         wrap = document.createElement("div");
         wrap.setAttribute( "id", wrapId );
         
@@ -57,8 +50,8 @@ Jifty.Calendar = {
 
         var cal;
         
-        if ( /^(\d{4})\W(\d{2})\W(\d{2})/.test(input.value) ) {
-            var bits = input.value.match(/^(\d{4})\W(\d{2})\W(\d{2})/);
+        if (Jifty.Calendar.dateRegex.test(input.value) ) {
+            var bits = input.value.match(Jifty.Calendar.dateRegex);
             cal = new YAHOO.widget.Calendar( calId,
                                              wrapId,
                                              bits[2]+"/"+bits[1],
@@ -89,7 +82,7 @@ Jifty.Calendar = {
         
         cal.setupConfig();
         cal.render();
-        
+
         Jifty.Calendar.openCalendar = wrapId;
         Jifty.Utils.scrollToShow( wrapId );
         /*Jifty.Calendar.preventStutter = wrapId;*/
@@ -99,19 +92,19 @@ Jifty.Calendar = {
 
     hideOpenCalendar: function() {
         if ( Jifty.Calendar.openCalendar && $( Jifty.Calendar.openCalendar ) ) {
-            $( Jifty.Calendar.openCalendar ).style.display = "none";
 
             /* Get the input's ID */
             var inputId = Jifty.Calendar.openCalendar;
                 inputId = inputId.replace(/^cal_/, '');
                 inputId = inputId.replace(/_wrap$/, '');
 
+            Element.remove(Jifty.Calendar.openCalendar);
+
             var input = $( inputId );
 
-            /* Restore the original onblur */
-            input.onblur     = input["_onblur"];
-            input["_onblur"] = null;
-            
+            /* Reenable canonicalization */
+            Form.Element.enableValidation(input);
+
             Jifty.Calendar.openCalendar = "";
         }
     },

@@ -309,8 +309,21 @@ Object.extend(Form.Element, {
 
     // Validates the action this form element is part of
     validate: function (element) {
-        Form.Element.getAction(element).validate();
+            if(!Element.hasClassName(element, 'validation_disabled')) {
+                Form.Element.getAction(element).validate();
+            }
     },
+
+    // Temporarily disable validation
+            disableValidation: function(element) {
+            Element.addClassName(element, 'validation_disabled');
+        },
+
+            //Reenable validation            
+            enableValidation: function(element) {
+            Element.removeClassName(element, 'validation_disabled');
+        },
+
 
     // Look up the form that this element is part of -- this is sometimes
     // more complicated than you'd think because the form may not exist
