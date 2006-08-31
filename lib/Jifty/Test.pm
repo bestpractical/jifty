@@ -298,26 +298,26 @@ sub messages {
 
 =head2 test_file
 
-  my @files = Jifty::Test->test_file(@files);
+  my $files = Jifty::Test->test_file($file);
 
-Register @files as having been created by the test.  They will be
+Register $file as having been created by the test.  It will be
 cleaned up at the end of the test run I<if and only if> the test
-passes.  Otherwise they will be left alone.
+passes.  Otherwise it will be left alone.
 
-It returns @files so you can do this:
+It returns $file so you can do this:
 
-  my @files = Jifty::Test->test_file( Jifty::Util->absolute_path("t/foo") );
+  my $file = Jifty::Test->test_file( Jifty::Util->absolute_path("t/foo") );
 
 =cut
 
 my @Test_Files_To_Cleanup;
 sub test_file {
     my $class = shift;
-    my @files = @_;
+    my $file = shift;
 
-    push @Test_Files_To_Cleanup, @files;
+    push @Test_Files_To_Cleanup, $file;
 
-    return @files;
+    return $file;
 }
 
 
