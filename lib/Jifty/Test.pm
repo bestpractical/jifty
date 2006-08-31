@@ -79,11 +79,15 @@ sub is_done {
 }
 
 
+=begin private
+
 =head2 import_extra
 
 Called by L<Test::More>'s C<import> code when L<Jifty::Test> is first
 C<use>'d, it calls L</setup>, and asks Test::More to export its
 symbols to the namespace that C<use>'d this one.
+
+=end private
 
 =cut
 
