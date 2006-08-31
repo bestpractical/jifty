@@ -417,10 +417,9 @@ JSAN.use("DOM.Events");
 // Form elements should AJAX validate if the CSS says so
 Behaviour.register({
     'input.ajaxvalidation, textarea.ajaxvalidation, input.ajaxcanonicalization, textarea.ajaxcanonicalization': function(elt) {
-        elt.onblur = function () {
-            Form.Element.validate(this);
-        }
-        elt = null;        //Prevent IE from leaking memory
+        DOM.Events.addListener(elt, "blur", function () {
+                Form.Element.validate(elt);
+            });
     },
     'input.date': function(e) {
         if ( !Element.hasClassName( e, 'has_calendar_link' ) ) {
@@ -453,7 +452,7 @@ Behaviour.register({
               '<a  href="#" id="dismiss_'+e.id+'" title="Dismiss" onmousedown="this.onfocus=this.blur;" onmouseup="this.onfocus=window.clientInformation?null:window.undefined" onclick="Effect.Fade(this.parentNode); return false;">Dismiss</a>' + e.innerHTML;
 
             Element.addClassName( e, "jifty_enter_handler_attached" );
-            }
+        }
     }
 });
 
