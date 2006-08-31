@@ -458,7 +458,10 @@ Behaviour.register({
 });
 
 
-/* Regions */ // Keep track of the fragments on the page var fragments = $H(); var Region = Class.create();
+/* Regions */
+// Keep track of the fragments on the page
+var fragments = $H();
+var Region = Class.create();
 Region.prototype = {
     initialize: function(name, args, path, parent) {
         this.name = name;
