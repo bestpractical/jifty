@@ -25,4 +25,27 @@ code.
         ...
   }
 
+
+=head3 Test temp files
+
+Files created by tests should be declared as such using
+Jifty::Test->test_file() so they are cleaned up on a successful test
+run.
+
+
+=head3 Use Shell::Command
+
+Shell::Command has a number of functions which work like common shell file
+commands such as touch, cp and mv.  Use them instead of coding your own.
+
+For example, instead of this:
+
+    open my $file, ">foo";
+    close $file;
+
+Do this:
+
+    use Shell::Command;
+    touch $file;
+
 =cut
