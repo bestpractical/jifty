@@ -5,7 +5,7 @@ use warnings;
 
 use Shell::Command;
 
-use Jifty::Test tests => 10;
+use Jifty::Test 'no_plan';
 
 {
     my $tmpfile = "t/foo";
