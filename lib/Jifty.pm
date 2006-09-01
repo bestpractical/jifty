@@ -7,6 +7,13 @@ use encoding 'utf8';
 BEGIN { local $ENV{'TZ'} = "GMT";  require Time::Local;}
 $Jifty::VERSION = '0.60728';
 
+BEGIN {
+    if( $ENV{JIFTY_LAZY_LOAD} ) {
+        require Class::Autouse;
+        Class::Autouse->autouse_recursive( 'Jifty' );
+    }
+}
+
 =head1 NAME
 
 Jifty - an application framework

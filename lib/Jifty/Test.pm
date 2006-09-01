@@ -11,6 +11,7 @@ use Email::LocalDelivery;
 use Email::Folder;
 use File::Path;
 use File::Spec;
+use File::Temp;
 
 =head1 NAME
 
