@@ -2,6 +2,13 @@
 
 Jifty::Manual::Style - Jifty coding style guide
 
+
+=head3 Default style
+
+When in doubt, default to whatever Damian Conway's I<Perl Best
+Practices> says.
+
+
 =head3 Private documentation
 
 When documenting a private method, or providing documentation which is
@@ -35,8 +42,9 @@ run.
 
 =head3 Use Shell::Command
 
-Shell::Command has a number of functions which work like common shell file
-commands such as touch, cp and mv.  Use them instead of coding your own.
+Shell::Command has a number of functions which work like common shell
+file commands such as touch, cp and mv.  They are battle tested and
+cross-platform.  Use them instead of coding your own.
 
 For example, instead of this:
 
@@ -47,5 +55,18 @@ Do this:
 
     use Shell::Command;
     touch $file;
+
+
+=head3 Case insensitive matching
+
+To check if a string equals another string case insensitively, do this
+
+    lc $foo eq lc $bar;
+    lc $foo eq 'bar';
+
+not this:
+
+    $foo =~ /^\Q$bar\E/i;
+    $foo =~ /^bar$/i;
 
 =cut
