@@ -147,6 +147,32 @@ C<new> parameter hash.
 sub accessors { shift->handlers, qw(class key_binding id label tooltip) }
 __PACKAGE__->mk_accessors(qw(_onclick class key_binding id label tooltip));
 
+=head2 new PARAMHASH OVERRIDE
+
+Create a new C<Jifty::Web::Form::Element> object blessed with
+PARAMHASH, and set with accessors for the hash values in OVERRIDE.
+
+=cut
+
+sub new {
+    my ($class, $args, $override) = @_;
+    # force using accessor for onclick init
+    if (my $onclick = delete $args->{onclick}) {
+        $override->{onclick} = $onclick;
+    }
+
+    my $self = $class->SUPER::new($args);
+
+    if ($override) {
+        for my $field ( $self->accessors() ) {
+            # XXX: warn about unexpected ones
+            $self->$field( $override->{$field} ) if exists $override->{$field};
+        }
+    }
+
+    return $self;
+}
+
 =head2 onclick
 
 =cut

@@ -136,17 +136,6 @@ sub new {
     my $class = shift;
     my ($root) = $ENV{'REQUEST_URI'} =~ /([^\?]*)/;
 
-    my $self = bless {
-        class          => '',
-        label          => 'Click me!',
-        url            => $root,
-        escape_label   => 1,
-        tooltip        => '',
-        continuation   => Jifty->web->request->continuation,
-        submit         => [],
-        preserve_state => 0,
-    }, $class;
-
     my %args = (
         parameters     => {},
         as_button      => 0,
@@ -157,11 +146,17 @@ sub new {
     $args{render_as_button} = delete $args{as_button};
     $args{render_as_link}   = delete $args{as_link};
 
-    $self->{parameters} = {};
-
-    for my $field ( $self->accessors() ) {
-        $self->$field( $args{$field} ) if exists $args{$field};
-    }
+    my $self = $class->SUPER::new({
+        class          => '',
+        label          => 'Click me!',
+        url            => $root,
+        escape_label   => 1,
+        tooltip        => '',
+        continuation   => Jifty->web->request->continuation,
+        submit         => [],
+        preserve_state => 0,
+        parameters     => {},
+    }, \%args);
 
     for (qw/continuation call/) {
         $self->{$_} = $self->{$_}->id if $self->{$_} and ref $self->{$_};
@@ -171,11 +166,6 @@ sub new {
         $self->{submit} = [ $self->{submit} ] unless ref $self->{submit} eq "ARRAY";
         $self->{submit}
             = [ map { ref $_ ? $_->moniker : $_ } @{ $self->{submit} } ];
-
-        # If they have an onclick, add any and all submit actions to the onclick's submit list
-        if ($self->{onclick}) {
-            $self->{onclick} = [ (ref $self->{onclick} eq "ARRAY" ? @{ $self->{onclick} } : $self->{onclick}), map { submit => $_ }, @{$self->{submit}} ];
-        }
     }
 
     # Anything doing fragment replacement needs to preserve the

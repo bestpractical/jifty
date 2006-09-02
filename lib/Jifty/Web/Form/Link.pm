@@ -68,19 +68,14 @@ Any parameter which L<Jifty::Web::Form::Element/new> can take.
 
 sub new {
     my $class = shift;
+    my $args = ref($_[0]) ? $_[0] : {@_};
     my $self  = $class->SUPER::new(
       { url          => $ENV{PATH_INFO},
         label        => "Click me!",
         tooltip      => undef,
         escape_label => 1,
         class        => '',
-        target       => '' }
-    );
-    my $args = ref($_[0]) ? $_[0] : {@_};
-
-    for my $field ( keys %$args ) {
-        $self->$field( $args->{$field} );
-    }
+        target       => '' }, $args );
 
     return $self;
 }
