@@ -13,21 +13,22 @@ my $update = Jifty->web->new_action(
 );
 </%init>
 <div class="jifty_admin read item inline">
-% foreach my $argument ($update->argument_names) {
-<%$update->form_field($argument, render_mode => 'read')%>
-% }
-
+  
 <%
-
     Jifty->web->link(
         label   => "Edit",
         class   => "editlink",
         onclick => {
             replace_with => "/__jifty/admin/fragments/list/update",
             args         => { object_type => $object_type, id => $id }
-            }
-
+            },
         )
 %>
-</div>
+
+% foreach my $argument ($update->argument_names) {
+<%$update->form_field($argument, render_mode => 'read')%>
+% }
+
 <hr />
+</div>
+
