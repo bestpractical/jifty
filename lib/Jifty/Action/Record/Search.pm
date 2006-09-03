@@ -67,11 +67,11 @@ sub arguments {
             $valid_values = [$valid_values] unless ref($valid_values) eq 'ARRAY';
             unshift @$valid_values, "";
         }
-        
+
         if(lc $info->{'render_as'} eq 'password') {
             delete $args->{$field};
             next;
-        } 
+        }
 
         warn "No column for: $field" unless($column);
         
@@ -86,6 +86,7 @@ sub arguments {
         next if($field =~ /^(.*)_id$/ && $self->record->column($1));
 
         if($column->type =~ /^(?:text|varchar)/i) {
+            $info->{render_as} = 'text';
             my $label = $info->{label} || $field;
             $args->{"${field}_contains"} = {%$info, label => "$label contains"};
             $args->{"${field}_lacks"} = {%$info, label => "$label lacks"};

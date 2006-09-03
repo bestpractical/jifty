@@ -5,13 +5,11 @@ $object_type
 my $search = Jifty->web->new_action(
     class             => "Search".$object_type,
     moniker           => "search",
-    # XXX TODO This doesn't do what we want, because somehow we're not
-    # seeing the action in the request when we're rendered. I suspect
-    # weird fragment-ness.
     sticky_on_success => 1,
 );
 
 </%init>
+<div class="jifty_admin">
 % for my $arg ($search->argument_names) {
  <% $search->form_field($arg) %>
 % }
@@ -25,3 +23,4 @@ my $search = Jifty->web->new_action(
     }
   )
 %>
+</div>
