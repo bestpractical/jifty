@@ -26,7 +26,10 @@ my $update = Jifty->web->new_action(
 %>
 
 % foreach my $argument ($update->argument_names) {
-<%$update->form_field($argument, render_mode => 'read')%>
+% unless(   $argument =~ /_confirm$/
+%        && lc $update->arguments->{$argument}{render_as} eq 'password') {
+  <%$update->form_field($argument, render_mode => 'read')%>
+% }
 % }
 
 <hr />
