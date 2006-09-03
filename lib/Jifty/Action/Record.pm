@@ -201,6 +201,11 @@ sub arguments {
                     ];
 
                     $info->{render_as} = 'Select';
+                } else {
+                    # No need to generate arguments for
+                    # JDBI::Collections, as we can't do anything
+                    # useful with them yet, anyways.
+                    next;
                 }
             }
 
