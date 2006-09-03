@@ -160,3 +160,9 @@ You could give a C<--print> option to see the actual SQL statement:
 
     jifty schema --setup --print
 
+
+=head2 Use different table names than the ones Jifty automatically creates
+
+In YourApp::Record define a _guess_table_name sub that doesn't
+pluralises or pluralises differently.
+
