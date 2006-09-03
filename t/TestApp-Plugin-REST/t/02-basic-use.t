@@ -114,8 +114,11 @@ is($mech->status, 200);
 $mech->get_ok('/=/action/TestApp.Plugin.REST.Action.DoSomething');
 is($mech->status, 200);
 
+# Parameter name
 $mech->content_contains('email');
+# Parameter label
 $mech->content_contains('Email');
+# Default value
 $mech->content_contains('example@email.com');
 
 $mech->get_ok('/=/action/DoSomething.yml');
