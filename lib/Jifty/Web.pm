@@ -416,8 +416,6 @@ sub new_action {
     );
 
 
-    my %arguments = %{ $args{arguments} };
-
     if ( $args{'moniker'} ) {
         my $action_in_request = $self->request->action( $args{moniker} );
 
@@ -425,7 +423,7 @@ sub new_action {
     # from the request; we read from the request to implement "sticky fields".
     #
         if ( $action_in_request and $action_in_request->arguments ) {
-            %arguments = ( %{ $action_in_request->arguments }, %arguments );
+            $args{'request_arguments'} = $action_in_request->arguments;
         }
     }
 
@@ -447,7 +445,7 @@ sub new_action {
 
     my $action;
     # XXX TODO bullet proof
-    eval { $action = $class->new( %args, arguments => {%arguments} ); };
+    eval { $action = $class->new(%args) };
     if ($@) {
         my $err = $@;
         $self->log->fatal($err);
