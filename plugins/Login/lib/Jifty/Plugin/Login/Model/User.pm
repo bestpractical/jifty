@@ -83,7 +83,8 @@ sub current_user_can {
     my $self  = shift;
     my $right = shift;
     my %args  = (@_);
-    Carp::confess if ( $right eq 'read' and not $args{'column'} );
+    # This line breaks admin mode. I like admin mode.
+    #    Carp::confess if ( $right eq 'read' and not $args{'column'} );
     if (    $right eq 'read'
         and $self->id == $self->current_user->id )
     {
