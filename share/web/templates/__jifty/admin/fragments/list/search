@@ -23,4 +23,5 @@ my $search = Jifty->web->new_action(
     }
   )
 %>
+<hr />
 </div>
