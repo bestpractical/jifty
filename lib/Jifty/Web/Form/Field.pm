@@ -479,7 +479,8 @@ sub render_value {
     my $self  = shift;
     my $field = '<span';
     $field .= qq! class="@{[ $self->classes ]}"> !;
-    $field .= HTML::Entities::encode_entities(_($self->current_value)) if defined $self->current_value;
+    # XXX: force stringify the value because maketext is buggy with overloaded objects.
+    $field .= HTML::Entities::encode_entities(_("@{[$self->current_value]}")) if defined $self->current_value;
     $field .= qq!</span>\n!;
     Jifty->web->out($field);
     return '';
