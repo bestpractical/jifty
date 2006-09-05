@@ -47,7 +47,7 @@ precise).
 
 Creating a model has important side effects:
 
-=over 4
+=over 2
 
 =item * correctly type your data inside the data-store
 
@@ -55,8 +55,7 @@ Creating a model has important side effects:
 
 =item * tell Jifty the behaviour in terms of form display
 
-=item * allow to work with multiple records (referred to as
-Collections) without effort
+=item * allow to work with multiple records (referred to as Collections) without effort
 
 =back
 
@@ -78,9 +77,10 @@ A simple definition could look like this:
 The following BNF shows the full syntax supported (omitting
 non-terminals that are self explaining for perl-developers):
 
-    schema_definition ::= column_definition+ ';'
+    schema_definition ::= column_definition+
 
-    column_definition ::= 'column' string_columnname '=>' column_info [ ',' column_info ]+
+    column_definition ::= 'column' string_columnname '=>'
+                          column_info [ ',' column_info ]+ ';'
 
     column_info ::= 'type' 'is' string
        | 'label' 'is' string
@@ -134,7 +134,7 @@ edit or delete records in your database.
 
 =head2 The classes behind a model
 
-=over 4
+=over 2
 
 =item * MyApp::Model::Xxx
 
@@ -187,13 +187,117 @@ the underlying database.
 
 =back
 
-=head2 Working with a model's data
+=head2 Working with single records
 
-XXX - write more
+Working with single records means work with objects of classes like
+C<MyApp::Model::Xxx>. The typical creation and usage of a single
+record is:
+
+    # create an object to allow data access
+    my $object = new MyApp::Model::Xxx;
+
+    # either create a representation in the DB
+    $object->create(column=>'value', ...);
+
+    # or load the data from DB somehow
+    $object->load($id); # by a matching ID
+    $object->load_by_cols(column=>'value', other_column=>'secondvalue');
+
+    # try to load and if failed, create a record
+    $object->load_or_create(column=>'value');
+
+    # get the record's ID in the database
+    # results in 'undef' if record is not valid (usually means not found)
+    my $id = $object->id;
+
+    # delete the record from the database
+    $object->delete;
+
+To access data stored in different columns of a record you may use
+some of the automagically created methods on the object:
+
+    # read some column named 'colname'
+    my $value = $object->colname;
+
+    # write some value to a column named 'colname'
+    $object->set_colname($value);
+
+Especially, when writing to a record, you need not worry about how to
+write back the data to the database, the object will manage this step
+on its own.
+
+=head2 Working with multiple records
+
+Working with more than one record of the same object-class brings
+collections into the game. Usually, a collection you deal with is of a
+type that conforms to your model name, C<MyApp::Model::XxxCollection>
+and usually holds records of class C<MyApp::Model::Xxx>. You typically
+use a collection like this:
+
+    # create a collection object
+    my $collection = new MyApp::Model::XxxCollection;
+
+    # get all items of the model into the collection
+    $collection->unlimit;
+
+    # or restrict items to match some condition
+    $collection->limit(column=>'colname', operator=>'=', value=>42);
+
+    # bring the items into some sorting order
+    $collection->order_by(column=>'colname');
+
+    # if neccesarry, directly jump to some record from the set
+    $collection->goto_first_item;
+
+    $collection->goto_item(42);
+    
+    # iterate through the result set
+    while (my $record = $collection->next) {
+          # do something with $record
+    }
+
+    # directly access the first or last item
+    # be careful: this will set the current position also!
+    my $first = $collection->first;
+    my $last  = $collection->last;
+
+    # get back an array-ref containing all items
+    my $records = $collection->items_array_ref;
+
+see L<Jifty::DBI::Collection> about more ways or ordering and limiting
+collections.
 
 =head2 Action - Model relationship
 
-XXX - write more
+When writing templates you often simply access some record from a
+model and want to operate on this very record by modifying it or you
+might want to add a new record of some type. To do this, our faithful
+L<Jifty::ClassLoader> will create classes named
+C<MyApp::Action::CreateXxx>, C<MyApp::Action::UpdateXxx> or
+C<MyApp::Action::DeleteXxx> for you. This enables you to write a
+template to operate on a single record like this:
+
+    <%init>
+    my $id = some_value_obtained_somehow;
+    my $record = new MyApp::Model::Xxx;
+    $record->load($id);
+
+    my $action = Jifty->web->new_action(class   => 'UpdateXxx',
+                                        moniker => 'mymoniker',
+                                        record  => $record);
+    </%init>
+    ...
+    <% $action->form_field('colname') %>
+    ...
+    <% Jifty->web->link(label  => 'Update',
+                        submit => $action,
+                        ... ) %>
+
+The elegant thing around here is that you could write the class name
+of your action-class simply as C<UpdateXxx> instead of the full
+package name C<MyApp::Action::UpdateXxx> and there is no need to write
+a repeating update procedure for every record class that comes along.
+DRY - don't repeat yourself :-)
 
 =head1 SEE ALSO
 
