@@ -62,11 +62,14 @@ sub new {
         return undef unless (defined $_[0]);
 
         local $@;
-        my $result = eval { $lh->maketext(@_) };
+        # Force stringification to stop Locale::Maketext from choking on
+        # things like DateTime objects.
+        my @stringified_args = map {"$_"} @_;
+        my $result = eval { $lh->maketext(@stringified_args) };
         if ($@) {
             # Sometimes Locale::Maketext fails to localize a string and throws
             # an exception instead.  In that case, we just return the input.
-            return join(' ', @_);
+            return join(' ', @stringified_args);
         }
         return $result;
     };
