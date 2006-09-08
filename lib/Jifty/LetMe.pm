@@ -205,7 +205,7 @@ for passing in a URL
 
 sub as_encoded_token {
     my $self = shift;
-    $self->_generate_token( email => URI::Escape::uri_escape($self->email) );
+    $self->_generate_token( email => URI::Escape::uri_escape_utf8($self->email) );
 }
 
 sub _generate_token {
