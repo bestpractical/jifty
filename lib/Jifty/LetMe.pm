@@ -214,7 +214,7 @@ sub _generate_token {
     return join ('/', 
         $args{'email'},
         $self->path,
-        (map {URI::Escape::uri_escape($_)} %{$self->args}),
+        (map {URI::Escape::uri_escape_utf8($_)} %{$self->args}),
         (defined $self->until ? ( 'until', $self->until ) : () ), #?
         $self->generate_checksum  
         );
