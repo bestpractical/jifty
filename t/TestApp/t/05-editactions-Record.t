@@ -20,7 +20,7 @@ ok($system_user, "Found a system user");
 # Create a user
 my $o = TestApp::Model::User->new(current_user => $system_user);
 my ($id) = $o->create( name => 'edituser', email => 'someone@example.com',
-                       tasty => 1 );
+                       password => 'secret', tasty => 1 );
 ok($id, "User create returned success");
 is($o->tasty, 1, "User is tasty");
 

@@ -23,10 +23,12 @@ ok($system_user, "Found a system user");
 
 # Create two users
 my $o = TestApp::Model::User->new(current_user => $system_user);
-$o->create( name => 'A User', email => 'auser@example.com', tasty => 0 );
+$o->create( name => 'A User', email => 'auser@example.com', 
+            password => 'secret', tasty => 0 );
 ok($o->id, "New user has valid id set");
 ok(!$o->tasty, "User is not tasty");
-$o->create( name => 'Bob', email => 'bob@example.com', tasty => 1 );
+$o->create( name => 'Bob', email => 'bob@example.com', 
+            password => 'secret2', tasty => 1 );
 ok($o->id, "New user has valid id set");
 ok($o->tasty, "User is tasty");
 

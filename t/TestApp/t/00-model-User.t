@@ -21,14 +21,14 @@ ok($system_user, "Found a system user");
 
 # Try testing a create
 my $o = TestApp::Model::User->new(current_user => $system_user);
-my ($id) = $o->create( name => $$, email => $$ );
+my ($id) = $o->create( name => $$, email => $$, password => $$ );
 ok($id, "User create returned success");
 ok($o->id, "New User has valid id set");
 is($o->id, $id, "Create returned the right id");
 is($o->name, $$, "Created object has the right name");
 
 # And another
-$o->create( name => $$, email => $$ );
+$o->create( name => $$, email => $$, password => $$ );
 ok($o->id, "User create returned another value");
 isnt($o->id, $id, "And it is different from the previous one");
 

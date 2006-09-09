@@ -19,7 +19,8 @@ ok($system_user, "Found a system user");
 
 # Create a user
 my $o = TestApp::Model::User->new(current_user => $system_user);
-my ($id) = $o->create( name => 'edituser', email => 'someone@example.com' );
+my ($id) = $o->create( name => 'edituser', email => 'someone@example.com',
+                       password => 'secret');
 ok($id, "User create returned success");
 
 my $server  = Jifty::Test->make_server;
