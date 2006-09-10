@@ -57,7 +57,8 @@ sub take_action {
     my $record = $self->record;
 
     my %values;
-    for (grep { defined $self->argument_value($_) } $self->argument_names) {
+    # Virtual arguments aren't really ever backed by data structures. they're added by jifty for things like confirmations
+    for (grep { defined $self->argument_value($_) && !$self->arguments->{$_}->{virtual} } $self->argument_names) {
         $values{$_} = $self->argument_value($_);
         if (ref $values{$_} eq "Fh") { # CGI.pm's "lightweight filehandle class"
             local $/;
