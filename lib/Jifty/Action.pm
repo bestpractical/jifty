@@ -191,7 +191,7 @@ C<take_action> instead.
 
 sub run {
     my $self = shift;
-    $self->log->debug("Running action");
+    $self->log->debug("Running action ".ref($self) . " " .$self->moniker);
     unless ($self->result->success) {
         $self->log->debug("Not taking action, as it doesn't validate");
 

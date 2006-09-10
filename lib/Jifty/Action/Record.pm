@@ -63,8 +63,15 @@ sub new {
     );
     my $self = $class->SUPER::new(%args);
 
+
     my $record_class = $self->record_class;
     Jifty::Util->require($record_class);
+
+    if (ref $args{'record'} && !$args{'record'}->isa($record_class)) {
+        Carp::confess($args{'record'}." isn't a $record_class");
+    }
+
+
 
     # Set up record
     if ( ref $record_class ) {
