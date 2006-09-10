@@ -306,10 +306,22 @@ sub delete {
     $self->SUPER::delete(@_); 
 }
 
+=head2 _brief_description
+
+When displaying a list of records, Jifty can display a friendly value 
+rather than the column's unique id.  Out of the box, Jifty always
+tries to display the 'name' field from the record. You can override this
+method to return the name of a method on your record class which will
+return a nice short human readable description for this record.
+
+=cut
+
+sub _brief_description {'name'}
+
 =head2 _to_record
 
-This is the SB function that is called when you fetch a value which C<REFERENCES> a
-Record class.  The only change from the SB code is the arguments to C<new>.
+This is the Jifty::DBI function that is called when you fetch a value which C<REFERENCES> a
+Record class.  The only change from the Jifty::DBI code is the arguments to C<new>.
 
 =cut
 

@@ -22,11 +22,12 @@ sub render_widget {
         my $display = $opt->{'display'};
         my $value   = $opt->{'value'};
         $value = "" unless defined $value;
-        # TODO XXX FIXME worry about escape value, display?
         $field .= qq!<option value="$value"!;
         $field .= qq! selected="selected"!
             if defined $self->current_value and $self->current_value eq $value;
-        $field .= qq!>$display</option>\n!;
+        $field .= qq!>!;
+        $field .= HTML::Entities::encode_entities(_($display)) if defined $display;
+        $field .= qq!</option>\n!;
     } 
     $field .= qq!</select>\n!;
     Jifty->web->out($field);

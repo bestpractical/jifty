@@ -176,6 +176,7 @@ sub arguments {
 
                 $field_info->{ $field . "_confirm" } = {
                     render_as => 'Password',
+                    virtual => '1',
                     validator => $same,
                     mandatory => 0
                 };
@@ -190,11 +191,10 @@ sub arguments {
                     );
                     $collection->unlimit;
 
-                    # XXX This assumes a ->name and a ->id method
+                    my $method = $refers_to->_brief_description();
+
                     $info->{valid_values} = [
-                        {   display_from => $refers_to->can('name')
-                            ? "name"
-                            : "id",
+                        {   display_from => $refers_to->can($method) ? $method : "id",
                             value_from => 'id',
                             collection => $collection
                         }
