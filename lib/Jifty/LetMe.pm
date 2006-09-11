@@ -96,7 +96,7 @@ sub _generate_digest {
     $digest->add( $user->auth_token );
     $digest->add( $self->path );
     my %args = %{$self->args};
-    $digest->add( $_, $args{$_}) for sort keys %args;
+    $digest->add( Encode::encode_utf8($_), Encode::encode_utf8($args{$_})) for sort keys %args;
     $digest->add( $self->until ) if ($self->until);
     return $digest->hexdigest();
 }
@@ -164,7 +164,7 @@ into
       token => 'update_task/23'
       until => 20050101,
       checksum_provided => bekidrikufryvagygefuba
- 
+
 =cut
 
 sub from_token {
@@ -173,11 +173,11 @@ sub from_token {
 
     my @atoms = split('/',$token);
 
-    $self->email( URI::Escape::uri_unescape( shift @atoms ) );
+    $self->email( Jifty::I18N->maybe_decode_utf8(URI::Escape::uri_unescape( shift @atoms )) );
     $self->path( shift @atoms );
     $self->checksum_provided( pop @atoms );
 
-    my %args = map {URI::Escape::uri_unescape($_)} @atoms;
+    my %args = map { Jifty::I18N->maybe_decode_utf8(URI::Escape::uri_unescape($_)) } @atoms;
     $self->until( delete $args{until} ) if $args{until};
 
     $self->args(\%args);

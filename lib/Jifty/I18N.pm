@@ -127,7 +127,27 @@ sub promote_encoding {
     }
 
     return $string;
+}
 
+=head2 maybe_decode_utf8 STRING
+
+Attempt to decode STRING as UTF-8. If STRING is not valid UTF-8, or
+already contains wide characters, return it undecoded.
+
+N.B: In an ideal world, we wouldn't need this function, since we would
+know whether any given piece of input is UTF-8. However, the world is
+not ideal.
+
+=cut
+
+sub maybe_decode_utf8 {
+    my $class = shift;
+    my $string = shift;
+    eval {
+        $string =  Encode::decode_utf8($string);
+    };
+    Carp::carp "Couldn't decode UTF-8: $@" if $@;
+    return $string;
 }
 
 1;
