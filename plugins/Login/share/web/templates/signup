@@ -5,10 +5,9 @@ $next
 <&|/_elements/wrapper, title => 'Signup' &>
 <h2>Signup</h2>
 <% Jifty->web->form->start(call => $next, name => "signupbox") %>
-<% $action->form_field('email') %>
-<% $action->form_field('name') %>
-<% $action->form_field('password') %>
-<% $action->form_field('password_confirm') %>
+% foreach my $key ($action->argument_names) {
+<% $action->form_field($key) %>
+% }
 <% Jifty->web->form->submit(label => 'Signup', submit => $action) %>
 <% Jifty->web->form->end %>
 </&>
