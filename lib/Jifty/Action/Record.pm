@@ -185,6 +185,7 @@ sub arguments {
                     render_as => 'Password',
                     virtual => '1',
                     validator => $same,
+                    sort_order => ($column->sort_order +.01),
                     mandatory => 0
                 };
             }
