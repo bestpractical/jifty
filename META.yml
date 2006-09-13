@@ -30,6 +30,7 @@ recommends:
   WWW::Mechanize: 1.12
 requires: 
   App::CLI: 0.03
+  CGI: 3.19
   CGI::Cookie::Splitter: 0
   CSS::Squish: 0.05
   Cache::Cache: 0
@@ -66,7 +67,7 @@ requires:
   Hash::Merge: 0
   Hook::LexWrap: 0
   JSON::Syck: 0.14
-  Jifty::DBI: 0.21
+  Jifty::DBI: 0.25
   LWP::UserAgent: 0
   Locale::Maketext::Extract: 0.20
   Locale::Maketext::Lexicon: 0.60
@@ -90,4 +91,4 @@ requires:
   perl: 5.8.3
   version: 0
 tests: t/*.t t/*/t/*.t
-version: 0.60728
+version: 0.60912
