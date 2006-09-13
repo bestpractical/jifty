@@ -29,6 +29,24 @@ sub started_ok {
     my $text = shift;
     $text = 'started server' unless defined $text;
 
+    if ($^O eq 'MSWin32') {
+        # dirty hack until Test::Builder->skip_rest comes true
+
+        my $why = "live test doesn't work on Win32 at the moment";
+
+        $Tester->skip($why);
+
+        unless ($Tester->{No_Plan}) {
+            for (my $ct = $Tester->{Curr_Test};
+                    $ct < $Tester->{Expected_Tests};
+                    $ct++
+            ) {
+                $Tester->skip($why); # skip rest of the test
+            }
+        }
+        exit(0);
+    }
+
     if (my $pid = fork()) {
         # We are expecting a USR1 from the child Jifty::Server
         # after it's ready to listen.
