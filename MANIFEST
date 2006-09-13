@@ -5,6 +5,11 @@ bin/runcover
 bin/service
 bin/xgettext
 Changelog
+debian/changelog
+debian/compat
+debian/control
+debian/README
+debian/rules
 doc/ajax-upgraded-links
 doc/building_a_par
 doc/client_side_continuations
@@ -15,8 +20,10 @@ doc/examples/CounterDemo/etc/config.yml
 doc/examples/CounterDemo/Makefile.PL
 doc/examples/CounterDemo/share/web/templates/index.html
 doc/examples/CounterDemo/t/00-counter-test.t
+doc/jifty-action-record-search
 doc/jifty-dispatcher.graffle
 doc/jifty-dispatcher.svg
+doc/jifty-web-form-etc
 doc/packaging
 doc/plugin-requirements
 doc/plugin-syntax
@@ -42,6 +49,7 @@ lib/Jifty/Action/Autocomplete.pm
 lib/Jifty/Action/Record.pm
 lib/Jifty/Action/Record/Create.pm
 lib/Jifty/Action/Record/Delete.pm
+lib/Jifty/Action/Record/Search.pm
 lib/Jifty/Action/Record/Update.pm
 lib/Jifty/Action/Redirect.pm
 lib/Jifty/API.pm
@@ -68,6 +76,7 @@ lib/Jifty/Manual/Continuations.pod
 lib/Jifty/Manual/Cookbook.pod
 lib/Jifty/Manual/FAQ.pod
 lib/Jifty/Manual/Glossary.pod
+lib/Jifty/Manual/Models.pod
 lib/Jifty/Manual/ObjectModel.pod
 lib/Jifty/Manual/PageRegions.pm
 lib/Jifty/Manual/Style.pod
@@ -109,6 +118,8 @@ lib/Jifty/Upgrade.pm
 lib/Jifty/Upgrade/Internal.pm
 lib/Jifty/Util.pm
 lib/Jifty/View/Mason/Handler.pm
+lib/Jifty/View/Mason/Handler.pm.orig
+lib/Jifty/View/Mason/Handler.pm.rej
 lib/Jifty/View/Static/Handler.pm
 lib/Jifty/Web.pm
 lib/Jifty/Web/Form.pm
@@ -155,6 +166,15 @@ plugins/EmailErrors/share/web/templates/.file
 plugins/LetMe/lib/Jifty/Plugin/LetMe.pm
 plugins/LetMe/lib/Jifty/Plugin/LetMe/Dispatcher.pm
 plugins/LetMe/Makefile.PL
+plugins/Login/inc/Module/Install.pm
+plugins/Login/inc/Module/Install/Base.pm
+plugins/Login/inc/Module/Install/Can.pm
+plugins/Login/inc/Module/Install/Fetch.pm
+plugins/Login/inc/Module/Install/Makefile.pm
+plugins/Login/inc/Module/Install/Metadata.pm
+plugins/Login/inc/Module/Install/Share.pm
+plugins/Login/inc/Module/Install/Win32.pm
+plugins/Login/inc/Module/Install/WriteAll.pm
 plugins/Login/lib/Jifty/Plugin/Login.pm
 plugins/Login/lib/Jifty/Plugin/Login/Action/ConfirmEmail.pm
 plugins/Login/lib/Jifty/Plugin/Login/Action/Login.pm
@@ -170,6 +190,7 @@ plugins/Login/lib/Jifty/Plugin/Login/Model/User.pm
 plugins/Login/lib/Jifty/Plugin/Login/Notification/ConfirmAddress.pm
 plugins/Login/Makefile.PL
 plugins/Login/MANIFEST
+plugins/Login/META.yml
 plugins/Login/share/web/templates/let/confirm_email
 plugins/Login/share/web/templates/login
 plugins/Login/share/web/templates/logout
@@ -268,6 +289,7 @@ share/web/templates/__jifty/admin/action/dhandler
 share/web/templates/__jifty/admin/autohandler
 share/web/templates/__jifty/admin/fragments/list/list
 share/web/templates/__jifty/admin/fragments/list/new_item
+share/web/templates/__jifty/admin/fragments/list/search
 share/web/templates/__jifty/admin/fragments/list/update
 share/web/templates/__jifty/admin/fragments/list/view
 share/web/templates/__jifty/admin/index.html
@@ -310,11 +332,13 @@ t/03-form-protocol.t
 t/03-is_passing-no_plan.t
 t/03-is_passing.t
 t/03-test-mailbox.t
+t/04-test_file.t
 t/05-dispatcher.t
 t/06-forms.t
 t/07-limit-actions.t
 t/08-client.t
 t/09-url.t
+t/10-i18n.t
 t/99-pod-coverage.t
 t/99-pod.t
 t/Continuations/bin/jifty
@@ -381,5 +405,7 @@ t/TestApp/t/08-notifications.t
 t/TestApp/t/09-redirect.t
 t/TestApp/t/10-compress.t
 t/TestApp/t/11-current_user.t
+t/TestApp/t/12-search.t
 t/TestApp/t/config-Cachable
 t/TestApp/t/config-Record
+t/TestApp/t/regex_meta_in_path_info.t

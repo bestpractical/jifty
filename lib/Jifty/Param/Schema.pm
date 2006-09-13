@@ -23,7 +23,7 @@ Jifty::Param::Schema - Declare parameters of a Jifty action with ease.
     param remember =>
         type is 'checkbox',
         label is 'Remember me?',
-        hints is 'If you want, your browser can remember your login for you'
+        hints is 'If you want, your browser can remember your login for you',
         default is 0;
 
     };
