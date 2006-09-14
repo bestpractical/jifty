@@ -140,7 +140,7 @@ the object yet to be inspected.
 
 Called before any attribute is accessed on the object.
 
-=item edit
+=item update
 
 Called before any attribute is changed on the object.
 
