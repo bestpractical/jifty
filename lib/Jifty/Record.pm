@@ -144,7 +144,7 @@ Called before any attribute is accessed on the object.
 
 Called before any attribute is changed on the object.
 
-=item admin
+=item delete
 
 Called before the object is deleted.
 
