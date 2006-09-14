@@ -56,6 +56,28 @@ And of course, you need to put these in your HTML header tempalte
     <link rel="alternate" type="application/atom+xml" title="Atom" href="/feed/atom" />
     <link rel="alternate" type="application/rss+xml" title="RSS" href="/feed/rss" />
 
+=head2 Use date or time objects with the database?
+
+On your columns, specify either
+
+    filters are 'Jifty::DBI::Filter::DateTime'
+
+for a timestamp (date and time), or
+
+    filters are 'Jifty::DBI::Filter::Date'
+
+for just a date. Jifty will then automatically translate to and from
+DateTime objects for you when you access the column on your
+model. Additionally, if you add:
+
+    filters are qw(Jifty::Filter::DateTime Jifty::DBI::Filter::Date)
+
+Jifty will inspect the model's
+L<current_user|Jifty::Manual::AccessControl> for a C<time_zone>
+method, and, if it exists, set the retrieved DateTime object's time
+zone appropriately. All dates are stored in UTC in the database, to
+ensure consistency.
+
 =head2 Emulate 'created_on' field like Rails ?
 
 In Rails, if you have a field named 'created_on', it's automatically
