@@ -50,7 +50,7 @@ sub is_passing {
 
     my $is_failing = 0;
     $is_failing ||= grep {not $_} $tb->summary;
-    $is_failing ||= $tb->has_plan eq 'no_plan'
+    $is_failing ||= ($tb->has_plan || '') eq 'no_plan'
                       ? 0
                       : $tb->expected_tests < $tb->current_test;
 
@@ -71,7 +71,7 @@ one test has run.
 
 sub is_done {
     my $tb = Jifty::Test->builder;
-    if( $tb->has_plan eq 'no_plan' ) {
+    if( ($tb->has_plan || '') eq 'no_plan' ) {
         return $tb->current_test > 0;
     }
     else {
