@@ -59,7 +59,10 @@ sub new {
     my $loc_method = sub {
         # Retain compatibility with people using "-e _" etc.
         return \*_ unless @_;
-        return undef unless (defined $_[0]);
+
+        # When $_[0] is undef, return undef.  When it is '', return ''.
+        no warnings 'uninitialized';
+        return $_[0] unless (length $_[0]);
 
         local $@;
         # Force stringification to stop Locale::Maketext from choking on
