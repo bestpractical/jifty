@@ -208,8 +208,10 @@ sub run {
 
         return;
     }
-    $self->log->debug("Taking action");
-    $self->take_action;
+    $self->log->debug("Taking action ".ref($self) . " " .$self->moniker);
+    my $ret = $self->take_action;
+    $self->log->debug("Result: ".$ret);
+    
     $self->cleanup;
 }
 
