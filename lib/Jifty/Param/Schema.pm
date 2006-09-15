@@ -118,6 +118,12 @@ sub schema (&) {
     }
 
     if ($from->can('SUPER::PARAMS')) {
+
+#        21:07 <obra> audreyt: how hard would it be to let declarative action subclasses modify or add arguments
+#        21:08 <audreyt> obra: line 121 Jifty::Param::Schema
+#        21:09 <audreyt> obra: semantically, add a hook there would do
+#
+
         unshift @params, %{ $from->can('SUPER::PARAMS')->() || {} }
     }
 
