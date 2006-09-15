@@ -15,7 +15,7 @@ use_ok('Jifty');
 
 Jifty->new(no_handle => 1);
 
-is(Jifty->config->framework('Database')->{'Driver'}, 'Pg', "We set the driver to what's in the site config file");
+is(Jifty->config->framework('WhichConfigFile'), 'site', "We set the driver to what's in the site config file");
 
 
 1;
