@@ -138,7 +138,7 @@ sub setup {
     my $root = Jifty::Util->app_root;
 
     # Mason's disk caching sometimes causes false tests
-    rmtree(["$root/var/mason"], 0, 1);
+    rmtree([ File::Spec->canonpath("$root/var/mason") ], 0, 1);
 
     Jifty->new( no_handle => 1 );
 
