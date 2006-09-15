@@ -323,7 +323,7 @@ sub handle_request {
                 next unless $action->validate;
             }
 
-            $self->log->debug("Running action.");
+            $self->log->debug("Running action ".ref($action). " ".$action->moniker);
             eval { $action->run; };
             $request_action->has_run(1);
 
