@@ -40,6 +40,7 @@ Jifty.Calendar = {
         
         wrap = document.createElement("div");
         wrap.setAttribute( "id", wrapId );
+        wrap.setAttribute( "className", "select-free" );
         
         wrap.style.position = "absolute";
         wrap.style.left     = Jifty.Utils.findRelativePosX( input ) + "px";
@@ -86,6 +87,10 @@ Jifty.Calendar = {
         Jifty.Calendar.openCalendar = wrapId;
         Jifty.Utils.scrollToShow( wrapId );
         /*Jifty.Calendar.preventStutter = wrapId;*/
+        /* IE fix */
+        if ( navigator.userAgent.toLowerCase().indexOf("msie") >= 0 && navigator.appVersion.indexOf("MSIE 7") < 0 ) { 
+            wrap.appendChild(document.createElement("iframe"));
+        }
     },
 
     openCalendar: "",
