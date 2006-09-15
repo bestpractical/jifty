@@ -7,14 +7,13 @@ Jifty::RightsFrom
 
 =head1 SYNOPSIS
 
-  package Application::Model::Thing::Schema;
-  use Jifty::DBI::Schema;
+  package Application::Model::Thing;
   use Application::Model::Person;
 
-  column owner_id => refers_to Application::Model::Person;
+  use Application::Record schema {
+    column owner => refers_to Application::Model::Person;
+  }
 
-  package Application::Model::Thing;
-  use base qw( Application::Record );
   use Jifty::RightsFrom column => 'owner';
 
 =head1 DESCRIPTION
@@ -91,7 +90,7 @@ sub export_curried_sub {
     Jifty::RightsFrom->export_to_level( 2, $args{export_to}, $args{as} );
 }
 
-=head2 delegate_current_user_can
+=head2 delegate_current_user_can C<'column'>, C<$column_name>, C<$right_name>, C<@attributes>
 
 Make a decision about permissions based on checking permissions on the
 column of this record specified in the call to C<import>. C<create>,
