@@ -122,7 +122,7 @@ sub load_or_create {
 }
 
 
-=head2 current_user_can RIGHT [, ATTRIBUTES]
+=head2 current_user_can RIGHT [ATTRIBUTES]
 
 Should return true if the current user (C<< $self->current_user >>) is
 allowed to do I<RIGHT>.  Possible values for I<RIGHT> are:
@@ -132,17 +132,22 @@ allowed to do I<RIGHT>.  Possible values for I<RIGHT> are:
 =item create
 
 Called just before an object's C<create> method is called, as well as
-before parameter validation.  It is also passed the attributes that
+before parameter validation.  ATTRIBUTES is the attributes that
 the object is trying to be created with, as the attributes aren't on
 the object yet to be inspected.
 
 =item read
 
 Called before any attribute is accessed on the object.
+ATTRIBUTES is a hash with a single key C<column> and a single
+value, the name of the column being queried.
 
 =item update
 
 Called before any attribute is changed on the object.
+ATTRIBUTES is a hash of the arguments passed to _set.
+
+
 
 =item delete
 
@@ -196,7 +201,7 @@ sub check_create_rights { return shift->current_user_can('create', @_) }
 
 Internal helper to call L</current_user_can> with C<read>.
 
-Passed C<column> as a named parameter for the column the user is checking rights
+Passes C<column> as a named parameter for the column the user is checking rights
 on.
 
 =cut
