@@ -104,6 +104,7 @@ specify files.)
 sub load {
     my $self = shift;
 
+    $self->stash( Hash::Merge::merge( $self->_default_config_files, $self->stash ));
 
     my $file = $ENV{'JIFTY_CONFIG'} || Jifty::Util->app_root . '/etc/config.yml';
 
@@ -128,6 +129,7 @@ sub load {
     my $config = Hash::Merge::merge( $self->stash, $vendor );
     $self->stash($config);
 
+
     my $site = $self->load_file(
         Jifty::Util->absolute_path(
             $self->framework('SiteConfig') || $ENV{'JIFTY_SITE_CONFIG'}
@@ -148,7 +150,7 @@ sub load {
     # Merge guessed values in for anything we didn't explicitly define
     # Whatever's in the stash overrides anything we guess
     $self->stash( Hash::Merge::merge( $self->guess, $self->stash ));
-
+    
     # There are a couple things we want to guess that we don't want
     # getting stuck in a default config file for an app
     $self->stash( Hash::Merge::merge( $self->defaults, $self->stash));
@@ -191,6 +193,17 @@ sub _get {
     my $var     = shift;
 
     return  $self->stash->{$section}->{$var} 
+}
+
+
+sub _default_config_files {
+    my $self = shift;
+    my $config  = {
+        framework => {
+            SiteConfig => 'etc/site_config.yml'
+        }
+    };
+    return $self->_expand_relative_paths($config);
 }
 
 
@@ -284,7 +297,7 @@ sub defaults {
             Web => {
                 DefaultStaticRoot => Jifty::Util->share_root . '/web/static',
                 DefaultTemplateRoot => Jifty::Util->share_root . '/web/templates',
-            }
+            },
         }
     };
 
