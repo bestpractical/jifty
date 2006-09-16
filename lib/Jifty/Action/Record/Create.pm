@@ -67,13 +67,16 @@ sub take_action {
             $values{$_} = scalar <$fh>;
         }
     }
-
-    my ($id, $msg) = $record->create(%values);
-
+    my $id;
+    my $msg = $record->create(%values);
     # Handle errors?
+    if (ref($msg)) { # If it's a Class::ReturnValue
+        ($id,$msg) = $msg->as_array;
+    }
+
     unless ( $record->id ) {
+        $self->log->debug(_("Create of %1 failed: %2", ref($record), $msg));
         $self->result->error($msg || _("An error occurred.  Try again later"));
-        $self->log->error(_("Create of %1 failed: %2", ref($record), $msg));
         return;
     }
 
