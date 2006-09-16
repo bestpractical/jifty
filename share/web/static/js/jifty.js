@@ -585,6 +585,10 @@ function update() {
     // If we don't have XMLHttpRequest, bail and fallback on full-page
     // loads
     if(!Ajax.getTransport()) return true;
+    // XXX: prevent default behavior in IE
+    if(window.event) {
+        window.event.returnValue = false;
+    }
 
     show_wait_message();
     var named_args = arguments[0];
