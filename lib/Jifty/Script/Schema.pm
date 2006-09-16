@@ -8,6 +8,30 @@ use Pod::Usage;
 use version;
 use Jifty::DBI::SchemaGenerator;
 use Jifty::Config;
+use SQL::ReservedWords;
+
+Module::Pluggable->import(
+    require     => 1,
+    search_path => [ "SQL::ReservedWords"],
+    sub_name => '_sql_dialects',
+);  
+        
+            
+
+our %_SQL_RESERVED = ();
+our @_SQL_RESERVED_OVERRIDE = qw(value);
+foreach my $dialect ( 'SQL::ReservedWords', &_sql_dialects ) {
+    foreach my $word ( $dialect->words ) {
+        push @{ $_SQL_RESERVED{ lc($word) } }, $dialect->reserved_by($word);
+    }
+}
+
+# XXX TODO: QUESTIONABLE ENGINEERING DECISION
+# The SQL standard forbids columns named 'value', but just about everone on the planet 
+# actually supports it. Rather than going about scaremongering, we choose
+# not to warn people about columns named 'value'
+
+delete $_SQL_RESERVED{lc($_)} for (@_SQL_RESERVED_OVERRIDE);
 
 =head2 options
 
@@ -21,6 +45,7 @@ sub options {
         "setup"             => "setup_tables",
         "print|p"           => "print",
         "create-database|c" => "create_database",
+        "ignore-reserved-words" => "ignore_reserved",
         "drop-database"     => "drop_database",
         "help|?"            => "help",
         "man"               => "man"
@@ -207,7 +232,14 @@ sub create_all_tables {
         $log->info("Using $model");
         my $ret = $self->{'_schema_generator'}->add_model( $model->new );
         $ret or die "couldn't add model $model: " . $ret->error_message;
+        unless ($self->{'ignore_reserved'}) {
+                $self->_check_reserved($model);
+        }
+
+
     }
+     
+
 
     if ( $self->{'print'} ) {
         print $self->{'_schema_generator'}->create_table_sql_text;
@@ -481,6 +513,21 @@ sub manage_database_existence {
     # Otherwise, reinit our handle
     Jifty->handle( Jifty::Handle->new() );
     Jifty->handle->connect();
+}
+
+
+sub _check_reserved {
+    my $self  = shift;
+    my $model = shift;
+    my $log   = Log::Log4perl->get_logger("SchemaTool");
+    foreach my $col ( $model->columns ) {
+        if ( exists $_SQL_RESERVED{ lc( $col->name ) } ) {
+            $log->error( $model . ": "
+                    . $col->name
+                    . " is a reserved word in these SQL dialects: "
+                    . join( ', ', @{ $_SQL_RESERVED{ lc( $col->name ) } } ) );
+        }
+    }
 }
 
 1;

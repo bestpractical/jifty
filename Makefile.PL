@@ -54,6 +54,7 @@ requires('PerlIO::gzip');
 requires('Scalar::Defer' => '0.06');
 requires('Shell::Command');
 requires('String::Koremutake');
+requires('SQL::ReservedWords');
 requires('UNIVERSAL::require');
 requires('URI');
 requires('XML::Writer');
