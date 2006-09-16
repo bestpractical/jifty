@@ -89,7 +89,7 @@ sub send_one_message {
         header => [
             From    => $self->from    || 'A Jifty Application <nobody>',
             To      => $to,
-            Subject => $self->subject || 'No subject',
+            Subject => Encode::encode('MIME-Header', $self->subject || 'No subject'),
         ],
         attributes => { charset => 'UTF-8' },
         parts => $self->parts
