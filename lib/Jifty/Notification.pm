@@ -267,7 +267,7 @@ sub parts {
   return [
     Email::MIME->create(
       attributes => { charset => 'UTF-8' },
-      body       => $self->full_body
+      body       => Encode::encode_utf8($self->full_body),
     )
   ];
 
