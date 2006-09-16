@@ -86,8 +86,13 @@ sub create {
     }
 
     my $msg = $self->SUPER::create(%attribs);
-    $self->load_by_cols( id => $self->id ) if ($self->id);
-    return $msg;
+    if (ref($msg)  ) {
+        # It's a Class::ReturnValue
+        return $msg ;
+    }
+    my ($id, $status) = $msg;
+    $self->load_by_cols( id => $id ) if ($id);
+    return wantarray ? ($id, $status) : $id;
 }
 
 
