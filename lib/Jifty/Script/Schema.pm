@@ -232,7 +232,8 @@ sub create_all_tables {
         $log->info("Using $model");
         my $ret = $self->{'_schema_generator'}->add_model( $model->new );
         $ret or die "couldn't add model $model: " . $ret->error_message;
-        unless ($self->{'ignore_reserved'}) {
+        unless ($self->{'ignore_reserved'} or
+         !Jifty->config->framework('Database')->{'CheckSchema'} ) {
                 $self->_check_reserved($model);
         }
 

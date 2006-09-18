@@ -75,7 +75,7 @@ it will use the C<JIFTY_VENDOR_CONFIG> environment variable.
 After loading the vendor configuration file (if it exists), the
 framework will look for a site configuration file, specified in either
 the framework's C<SiteConfig> or the C<JIFTY_SITE_CONFIG> environment
-variable.
+variable. (Usually in C<etc/site_config.yml>.)
 
 After loading the site configuration file (if it exists), the
 framework will look for a test configuration file, specified in either
@@ -248,7 +248,8 @@ sub guess {
                 Password => "",
                 User     => "",
                 Version  => "0.0.1",
-                RecordBaseClass => 'Jifty::DBI::Record::Cachable'
+                RecordBaseClass => 'Jifty::DBI::Record::Cachable',
+                CheckSchema => '1'
             },
             Mailer     => 'Sendmail',
             MailerArgs => [],
