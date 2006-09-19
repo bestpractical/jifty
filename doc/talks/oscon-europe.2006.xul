@@ -1,0 +1,1044 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet href="chrome://global/skin/" type="text/css"?><?xml-stylesheet href="takahashi.css" type="text/css"?><page xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" id="presentation" xmlns:html="http:/www.w3.org/1999/xhtml" orient="vertical" onkeypress="Presentation.onKeyPress(event);">
+<html:textarea id="builtinCode" style="visibility: collapse">
+
+&#9832; Jifty
+----
+Jesse Vincent
+
+Best Practical 
+----
+We 
+Make 
+RT
+----
+We 
+Make
+SVK
+----
+We're
+Making
+Hiveminder
+----
+(hiveminder.com)
+----
+It's a 
+web app
+----
+So's RT
+----
+RT predates
+modern
+frameworks
+----
+We learned
+our lesson
+----
+We wanted to use
+a framework!
+----
+Nothing worked
+like my head does.
+----
+WARNING:
+I may be 
+crazy
+----
+So...
+----
+We
+Make
+Jifty
+----
+Web app
+Framework
+----
+Encapsulates
+Complexity
+----
+Jifty
+= JFDI
+----
+JFDI = 
+ Just Do It
+----
+Lets you
+JFDI
+----
+Let's 
+JFDI
+----
+A demo
+----
+How about
+a weblog?
+----
+Glad you
+like it
+----
+This isn't 
+a live demo
+----
+Let's set
+it up
+----
+{{img src="#" width="0" height="0"}}
+{{img src="npw.2006/jifty_app.png" width="552" height="364"}}
+----
+Many
+Directories
+---- 
+3 Files
+---- 
+{{img src="npw.2006/jifty_3_files.png" width="552" height="364"}}
+----
+It runs!
+----
+{{img src="npw.2006/jifty_web_1.png" width="800" height="622"}}
+----
+Not a
+good blog
+----
+Good blogs 
+have entries
+----
+{{img src="npw.2006/jifty_model.png" width="552" height="364"}}
+----
+{{img src="npw.2006/jifty_edit_model.png" width="552" height="364"}}
+----
+{{img src="npw.2006/jifty_schema_setup.png" width="552" height="364"}}
+----
+{{img src="npw.2006/jifty_server.png" width="552" height="364"}}
+----
+{{img src="npw.2006/jifty_web_1.png" width="800" height="622"}}
+----
+{{img src="npw.2006/jifty_web_dbadmin.png" width="800" height="622"}}
+----
+{{img src="npw.2006/jifty_web_crud_new.png" width="800" height="622"}}
+----
+{{img src="npw.2006/jifty_web_crud_edit.png" width="800" height="622"}}
+----
+{{img src="npw.2006/jifty_web_crud_create_2.png" width="800" height="622"}}
+----
+{{img src="npw.2006/jifty_web_crud_edited.png" width="800" height="622"}}
+----
+Nice
+----
+Not really a blog
+----
+{{#i|./lib/Blog/Dispatcher.pm}}
+(Dispatchers control view logic)
+----
+ package Blog::Dispatcher;
+ use Jifty::Dispatcher -base;
+ 
+ before '*' => run {
+    my $top = Jifty->web->navigation;
+    $top->child('List Entries' => url => '/'); 
+    $top->child('New Entry'    => url => '/new_entry');
+ }
+----
+ on '/' => run {
+     my $entries = Blog::Model::EntryCollection->new;
+     $entries->unlimit;
+   
+     set entries => $entries;
+ };
+---- 
+ on '/new_entry' => run {
+     set create => Jifty->web->new_action(
+         class => 'CreateEntry'
+     );
+ };
+----
+{{#i|./web/templates/new_entry}}
+(Create an blog post)
+----
+{{img src="npw.2006/new_entry.png" width="707" height="476"}}
+----
+ &lt;%ARGS>
+ $create # From the dispatcher
+ &lt;/%ARGS>
+  
+ &lt;&amp;|/_elements/wrapper, title => 'Create an article' &amp;>
+ % my $form = Jifty->web->form;
+ &lt;% $form->start %>
+ % for my $arg ($create->argument_names) {
+   &lt;% $create->form_field($arg) %>
+ % }
+ &lt;% $form->submit( label => 'Save' ) %>
+ &lt;% $form->end %>
+ &lt;/&amp;>
+----
+{{#i|./web/templates/index.html}}
+(Actually read your blog)
+----
+{{img src="npw.2006/blog.png" width="707" height="476"}}
+----
+ &lt;%ARGS>
+ $entries # From the dispatcher
+ &lt;/%ARGS>
+  
+ &lt;&amp;|/_elements/wrapper&amp;>
+ % while (my $entry = $entries->next) {
+  &lt;h2>&lt;% $entry->title %>&lt;/h2>
+  &lt;div class="body">
+    &lt;% $entry->body %>
+  &lt;/div>
+ % }
+ &lt;/&amp;>
+----
+ lib/Blog/Dispatcher.pm
+ lib/Blog/Model/Entry.pm
+ web/templates/new_entry
+ web/templates/index.html
+----
+All Done!
+----
+It runs
+----
+Ship it!
+----
+Oh wait
+----
+New
+law
+----
+...banning 
+profanity
+----
+(We need 
+to protect
+the children!)
+----
+From the
+Internet
+----
+Need to
+censor blogs
+----
+No problem!
+----
+(Does Europe need
+perl hackers?)
+----
+Back to the code!
+----
+ # vi lib/Blog/Model/Entry.pm
+
+ use Regexp::Common 'profanity_us';
+
+ sub validate_body {
+    my ($self, $body) = @_;
+
+    if ($body =~ /$RE{profanity}/i) {
+        return (
+            0, 'Would you speak like that in front of your mother? *cough*'
+        );
+    }
+
+    return 1;
+ }
+----
+{{img src="npw.2006/validate_entry.png" width="707" height="476"}}
+----
+Not 
+good enough
+----
+Stops people 
+from blogging
+----
+Clean it up 
+directly
+----
+ # vi lib/Blog/Model/Entry.pm
+
+ sub canonicalize_body {
+    my ($self, $body) = @_;
+     
+    $body =~ s/$RE{profanity}/**expletives**/gi;
+    return $body;
+ }
+
+----
+{{img src="npw.2006/canonicalize_entry.png" width="707" height="476"}}
+----
+(Autocompleters
+work the same)
+----
+{{#i|now}} we
+ship it
+----
+{{#tag|Anatomy of a}}
+{{#tag|Jifty app}}
+----
+ {{#i|Schema (Model)}}
+ {{#i|Actions (Controller)}}
+ {{#i|Fragments (View)}}
+----
+ {{#i|Dispatcher (Kernel) }}
+ {{#i|ClassLoader (Bootloader)}}
+ {{#i|Continuations (Job Control)}}
+----
+{{#tag|Schema (Model)}}
+----
+Jifty::DBI
+----
+Data
+Schema
+Manager
+----
+{{#i|No more...}}
+----
+CREATE TABLE
+----
+ALTER TABLE
+----
+CREATE FOREIGN KEY
+----
+Object
+Relational
+Mapper
+----
+{{#i|No more...}}
+----
+SELECT
+----
+INSERT
+----
+UPDATE
+----
+DELETE
+----
+Inside
+Jifty::DBI
+----
+Three object types
+----
+Handles
+Records
+Collections
+----
+{{#i|Jifty::DBI::Handle}}
+----
+Database 
+independence
+----
+SQLite
+----
+Postgres
+----
+MySQL
+----
+Oracle
+----
+(Oracle still needs a little bit of love)
+----
+{{#i|Jifty::DBI::Record}}
+----
+Database Rows
+----
+{{#i|Declarative Syntax}}
+----
+Remember
+our blog?
+----
+Time for
+0.0.2
+----
+ package Blog::Model::Comment::Schema;
+ since '0.0.2';
+ column entry => refers_to Blog::Model:Entry;
+ column author => refers_to Blog::Model::User;
+ column body =>
+    label is 'Content',
+    type is 'text',
+    render as 'Textarea',
+    default is 'First Post!';
+----
+ column title =>
+    label is 'Title',
+    length is 40,
+    hints is '40 bytes max',
+    is mandatory;
+----
+Database
+upgrades
+suck     
+----
+Database
+upgrades
+sucked
+----
+Jifty 
+fixed it
+----
+ # vi etc/config.yml (Set version to 0.0.2)
+
+ # jifty server
+
+ Application schema version in database (v0.0.1) doesn't match 
+ application schema version (0.0.2)
+ Please run `bin/jifty schema --setup` to upgrade the database.
+
+----
+
+ # jifty schema --setup 
+
+ Jifty version 0.605070 up to date.
+ INFO - Generating SQL to upgrade Blog v0.0.1 database to v0.0.2
+ INFO - Upgraded to version v0.0.2
+
+ # jifty server
+ INFO - You can connect to your server at http://localhost:8888/
+
+----
+ column tags =>
+    since '0.0.3',
+    refers_to Blog::Model::TagCollection by 'entry';
+----
+ column mood => 
+    since '0.0.4',
+    default is => 'happy',
+    valid_values are     
+        { display => 'Sad',   value => 'sad' },
+        { display => 'Happy', value => 'happy' };
+----
+ column created =>
+    since '0.0.5',
+    is immutable,    
+    type is 'timestamp',
+    default is literal 'now()',
+    filters are 'Jifty::DBI::Filter::DateTime';
+
+----
+Two-step
+upgrade
+----
+ # vi etc/config.yml
+
+ (Bump the version to 0.0.5)
+
+ # jifty schema --setup 
+----
+Jifty::DBI
+caches, too!
+----
+Single Process
+{{#i|Cache::Simple::TimedExpirey}}
+----
+Multi-Host
+{{#i|Cache::Memcached}}
+----
+{{#i|Jifty::DBI::Collection}}
+----
+Joins
+----
+Paging
+{{#i|Data::Page}}
+----
+{{#tag|Actions (Controller)}}
+----
+Actions are 
+APIs to your app
+----
+Actions are
+method calls
+----
+Actions takes 
+typed arguments 
+----
+Action return
+results
+----
+Actions are not
+tied to URLs
+----
+Any action
+on any page
+----
+Call actions
+with web forms
+----
+Sounds like...
+----
+RPC
+----
+(There's a good reason for that)
+----
+Actions are
+generic RPC
+----
+Jifty provides
+a webform encoding
+----
+Jifty provides
+a YAML encoding
+----
+Jifty provides
+an XML encoding
+----
+(You get 
+web services
+for free)
+----
+Jifty provides three
+actions for each of 
+your model classes
+----
+ - Create
+  (Blog::Action::CreateEntry)
+ - Update
+  (Blog::Action::UpdateEntry)
+ - Delete
+   (Blog::Action::DeleteEntry)
+----
+You can make
+your own, too
+----
+A trivial
+example
+----
+Ok, a stupid
+example
+----
+{{img src="npw.2006/hello_jesse.png" width="622" height="194"}}
+----
+ package Hello::Action::SayHi;
+ 
+ use Jifty::Param::Schema;
+ use Jifty::Action schema {
+     param name =>
+     label is 'Your name?',
+ };
+ ----
+ sub take_action {
+     my $self = shift;
+     $self->result->message(
+         "Hello, ".$self->argument_value('name'));
+ }
+----
+ &lt;%init>
+ my $action = Jifty->web->new_action(class=>'SayHi');
+ &lt;/%init>
+ &lt;&amp;| /_elements/wrapper &amp;>
+ &lt;% Jifty->web->form->start %>
+ &lt;% $action->form_field('name') %>
+ &lt;% Jifty->web->form->submit %>
+ &lt;% Jifty->web->form->end %>
+ &lt;/&amp;>
+----
+{{img src="npw.2006/hello.png" width="621" height="184"}}
+----
+{{img src="npw.2006/hello_jesse.png" width="622" height="194"}}
+----
+ curl 'http://localhost:8888/__jifty/webservices/yaml?\
+  J:A-1=SayHi&amp;J:A:F-name-1=Jesse'
+ ---
+ 1: !!perl/hash:Jifty::Result
+  _content: {}
+  action_class: Hello::Action::SayHi
+  failure: 0
+  field_errors:
+    name: ~
+  field_warnings:
+    name: ~
+  message: 'Hello, Jesse'
+----
+{{#tag|Jifty::Dispatcher (Kernel)}}
+----
+Encapsulates
+View Logic
+----
+Simple
+----
+Declarative
+----
+Three 
+stages
+----
+Before:
+sets up your state
+----
+On: 
+shows your pages
+----
+After: 
+cleans your state
+----
+If no rule matches
+forwards to templates
+----
+{{#tag|Jifty::ClassLoader (Bootloader)}}
+----
+I hate
+scaffolding
+----
+I hate
+code generation
+----
+Ugly
+----
+Redundant
+----
+Breakable
+----
+Annoying
+----
+Redundant
+----
+Why have
+{{#i|empty}}
+classes?
+----
+Enter
+{{#i|Jifty::ClassLoader}}
+----
+Autocreates
+----
+Blog                       
+----
+Blog::Record                
+----
+Blog::Collection            
+----
+Blog::Model::EntryCollection
+Blog::Model::CommentCollection
+----
+Blog::Action::CreateEntry
+Blog::Action::UpdateEntry
+Blog::Action::DeleteEntry
+Blog::Action::CreateComment
+Blog::Action::UpdateComment
+Blog::Action::DeleteComment
+----
+Blog::Bootstrap          
+----
+Blog::Upgrade             
+----
+Blog::Dispatcher             
+----
+Blog::CurrentUser
+----
+{{#tag|Continuations (Job Control)}}
+----
+Continuations?
+In Perl?
+----
+Delimited
+Continuations
+----
+Full Continuations
+serialize the world
+----
+App state...
+----
+Your
+%ENV...
+----
+Your 
+DBI handle...
+----
+Your
+log handle...
+----
+Phase of
+the moon
+----
+Maybe we don't 
+need all that
+----
+Jifty::Continuations
+serialize your app's
+request state
+----
+That's all
+you need
+----
+Why continuations?
+----
+They make your
+life better
+----
+The web is 
+built on
+----
+GOTO
+----
+Do you {{#i|like}}
+----
+GOTO?
+----
+Continuations 
+give you
+----
+GOSUB
+----
+Welcome to
+{{#i|civilisation}}
+----
+{{#i|(They give you other cool stuff too. But}}
+{{#i|I was a Russian major, Go find a Scheme hacker}}
+{{#i|to find out more about why continuations are}}
+{{#i|cooler than sliced bread. And why the rest}}
+{{#i|of the world has been living in ignorance for}}
+{{#i|for the last 20 years.)}}
+----
+{{#i|A brief tangent...}}
+----
+Back to 
+our Blog
+----
+Requiring
+Login
+----
+{{#i|Blog::Dispatcher}}
+----
+ ## Auth and login
+ before '*' => run {
+     if (not Jifty->web->current_user->id ) {
+        tangent '/login';
+     }
+ };
+----
+{{#i|Blog::Action::Login}}
+----
+ use Jifty::Param::Schema;
+ use Jifty::Action schema {
+    param
+        address => label is 'Email address',
+        is mandatory, ajax validates;
+    param
+        password => type is 'password',
+        label is 'Password', is mandatory;
+ };
+----
+ sub take_action {
+     my $self = shift;
+     if ( $self->validate_login ) {
+         $self->login_as_user( $self->user );
+         $self->success_message;
+         return 1;
+     }
+ 
+     $self->error_message();
+     return 0;
+ }
+
+----
+{{#i|share/web/templates/login}}
+----
+ &lt;%init>
+ my $action = Jifty->web->new_action(
+    class => 'Login', moniker => 'loginbox' );
+ &lt;/%init>
+ &lt;&amp;|/_elements/wrapper,
+     title => 'Login' &amp;>
+ &lt;h2>Login&lt;/h2>
+  &lt;% Jifty->web->form->start %>
+    &lt;% $action->form_field('address') %>
+    &lt;% $action->form_field('password') %>
+    &lt;% Jifty->web->return( label => 'Login') %>
+  &lt;% Jifty->web->form->end %>
+ &lt;/&amp;>
+----
+{{#tag|Templates and Fragments (View)}}
+----
+Mason
+----
+(TT2 Coming Soon)
+----
+(Declarative Coded Views
+Coming Soon)
+----
+Mason Provides
+"Components"
+----
+Server-side 
+inclusion
+----
+Not very 
+Web 2.0,
+is it?
+----
+Jifty has
+"fragments"
+----
+Just like
+components...
+----
+With a
+twist
+----
+Client side
+transclusion
+----
+(for AJAX/AHAH)
+----
+Server Side
+transclusion
+----
+(remember lynx?)
+----
+(or your phone)
+----
+Not much
+special
+setup
+----
+ &lt;% Jifty->web->region(
+   name => "myweblog-posts",
+   path => "/fragments/page_of_posts") 
+ %>
+----
+Rendered like
+an include
+----
+Marked up for
+AJAX loving
+----
+(and for regular
+HTML HREF action)
+----
+ Jifty->web->link( 
+  label => "Next", 
+  onclick => { 
+    args => { 
+      page => $collection->pager->next_page 
+      } 
+    } 
+  )
+----
+Then
+you're
+done
+----
+{{#tag|DEVELOPMENT}}
+{{#tag|TOOLS}}
+----
+Standalone Server
+{{#i|HTTP::Server::Simple}}
+----
+{{#i|Module::Install}}
+{{img src="npw.2006/makefile_pl.png" width="552" height="364"}}
+----
+Halos
+----
+(Stolen from
+Seaside)
+----
+{{img src="npw.2006/halo2.png" width="468" height="665"}}
+----
+Template 
+Profiling
+----
+SQL Logging
+----
+SQL Profiling
+----
+{{img src="npw.2006/halo2.png" width="468" height="665"}}
+----
+View Introspection
+----
+Online Editing
+----
+{{img src="npw.2006/halo.png" width="428" height="391"}}
+----
+(Seaside's are
+still cooler)
+----
+{{#i|Module::Refresh}}
+----
+Magic Profiling
+----
+Devel Mode
+----
+Online Docs
+----
+{{img src="npw.2006/online_docs.png" width="800" height="622"}}
+----
+Plugins
+----
+{{#tag|DEPLOYMENT}}
+----
+Run 
+fast
+----
+FastCGI
+(Apache or
+lightttpd)
+----
+MemCached
+----
+Fast Static
+Content Server
+----
+{{#i|CSS::Squish}}
+----
+(Same thing for 
+Javascript)
+----
+Jifty::Web::Session
+(Designed for AJAX)
+----
+I18N
+---- 
+{{#tag|THE FUTURE}}
+----
+Wiki-style
+UI Editor
+----
+{{#i|(We have a prototype now)}}
+----
+Even less
+code
+----
+Easier
+Install
+----
+More
+docs
+----
+Sample
+apps
+----
+{{#i|CommitBit was released to CPAN Yesterday}}
+{{#i|Wifty is in Jifty subversion}}
+----
+"Jifty in a Jiffy"
+movies and
+music videos
+----
+{{#tag|GET JIFTY}}
+----
+ cpan Jifty
+----
+ svn co
+   http://svn.jifty.org/svn/jifty.org
+----
+ http://jifty.org/
+----
+Getting started?
+----
+ perldoc Jifty::Manual::Tutorial
+----
+ #jifty on freenode.net
+----
+ jifty-devel@lists.jifty.org
+----
+Thanks!
+</html:textarea>
+<deck flex="1" id="deck">
+<vbox flex="1" onmousemove="Presentation.onMouseMoveOnCanvas(event);">
+<toolbox id="canvasToolbar">
+<toolbar>
+<toolbarbutton oncommand="Presentation.home()" label="|&lt;&lt;" observes="canBack"/>
+<toolbarbutton oncommand="Presentation.back()" label="&lt;" observes="canBack"/>
+<toolbarbutton oncommand="Presentation.forward()" label="&gt;" observes="canForward"/>
+<toolbarbutton oncommand="Presentation.end()" label="&gt;&gt;|" observes="canForward"/>
+<toolbarseparator/>
+<hbox align="center">
+<textbox id="current_page" size="4" oninput="if (this.value) Presentation.showPage(parseInt(this.value)-1);"/>
+<description value="/"/>
+<description id="max_page"/>
+</hbox>
+<toolbarseparator/>
+<vbox flex="2">
+<spacer flex="1"/>
+<scrollbar id="scroller" align="center" orient="horizontal" oncommand="Presentation.showPage(parseInt(event.target.getAttribute('curpos')));" onclick="Presentation.showPage(parseInt(event.target.getAttribute('curpos')));" onmousedown="Presentation.onScrollerDragStart();" onmousemove="Presentation.onScrollerDragMove();" onmouseup="Presentation.onScrollerDragDrop();"/>
+<spacer flex="1"/>
+</vbox>
+<toolbarseparator/>
+<spacer flex="1"/>
+<toolbarseparator/>
+<toolbarbutton id="toggleEva" label="Eva" type="checkbox" autoCheck="false" oncommand="Presentation.toggleEvaMode();"/>
+<toolbarseparator/>
+<toolbarbutton label="Edit" oncommand="Presentation.toggleEditMode();"/>
+<toolbarbutton oncommand="Presentation.reload();" label="Reload"/>
+</toolbar>
+</toolbox>
+<vbox flex="1" id="canvas" onclick="Presentation.onPresentationClick(event);">
+<spacer flex="1"/>
+<hbox flex="1">
+<spacer flex="1"/>
+<vbox id="content">
+</vbox>
+<spacer flex="1"/>
+</hbox>
+<spacer flex="1"/>
+</vbox>
+</vbox>
+<vbox flex="1" id="edit">
+<toolbox>
+<toolbar>
+<toolbarbutton label="New Page" oncommand="Presentation.addPage()"/>
+<spacer flex="1"/>
+<toolbarseparator/>
+<toolbarbutton label="View" oncommand="Presentation.toggleEditMode();"/>
+<toolbarbutton oncommand="Presentation.reload();" label="Reload"/>
+</toolbar>
+</toolbox>
+<textbox id="textField" flex="1" multiline="true" oninput="Presentation.onEdit()"/>
+<hbox collapsed="true">
+<iframe id="dataLoader" onload="if (window.Presentation) Presentation.onDataLoad();"/>
+</hbox>
+</vbox>
+</deck>
+<broadcasterset>
+<broadcaster id="canBack"/>
+<broadcaster id="canForward"/>
+</broadcasterset>
+<commandset>
+<command id="cmd_forward" oncommand="if (Presentation.isPresentationMode) Presentation.forward();"/>
+<command id="cmd_back" oncommand="if (Presentation.isPresentationMode) Presentation.back();"/>
+<command id="cmd_home" oncommand="if (Presentation.isPresentationMode) Presentation.home();"/>
+<command id="cmd_end" oncommand="if (Presentation.isPresentationMode) Presentation.end();"/>
+</commandset>
+<keyset>
+<key key=" "      command="cmd_forward"/>
+<key keycode="VK_ENTER"      command="cmd_forward"/>
+<key keycode="VK_RETURN"     command="cmd_forward"/>
+<key keycode="VK_PAGE_DOWN"  command="cmd_forward"/>
+<key keycode="VK_RIGHT"      command="cmd_forward"/>
+<key keycode="VK_DOWN"       command="cmd_forward"/>
+<!--key keycode="VK_BACK_SPACE" command="cmd_back"/-->
+<key keycode="VK_UP"    command="cmd_back"/>
+<key keycode="VK_PAGE_UP"    command="cmd_back"/>
+<!--
+<key keycode="VK_BACK_UP"    command="cmd_back"/>-->
+<!--
+<key keycode="VK_BACK_LEFT"  command="cmd_back"/>-->
+<key keycode="VK_HOME"       command="cmd_home"/>
+<!--
+<key keycode="VK_END"        command="cmd_end"/>-->
+<key key="n" modifiers="accel" oncommand="Presentation.addPage();"/>
+<key key="r" modifiers="accel" oncommand="window.location.reload();"/>
+<key key="e" modifiers="accel" oncommand="Presentation.toggleEditMode();"/>
+<key key="a" modifiers="accel" oncommand="Presentation.toggleEvaMode();"/>
+</keyset>
+<script src="takahashi.js" type="application/x-javascript" />
+</page>
+
+<!-- ***** BEGIN LICENSE BLOCK *****
+   - Version: MPL 1.1
+   -
+   - The contents of this file are subject to the Mozilla Public License Version
+   - 1.1 (the "License"); you may not use this file except in compliance with
+   - the License. You may obtain a copy of the License at
+   - http://www.mozilla.org/MPL/
+   -
+   - Software distributed under the License is distributed on an "AS IS" basis,
+   - WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+   - for the specific language governing rights and limitations under the
+   - License.
+   -
+   - The Original Code is the Takahashi-Method-based Presentation Tool in XUL.
+   -
+   - The Initial Developer of the Original Code is SHIMODA Hiroshi.
+   - Portions created by the Initial Developer are Copyright (C) 2005
+   - the Initial Developer. All Rights Reserved.
+   -
+   - Contributor(s): SHIMODA Hiroshi <piro@p.club.ne.jp>
+   -
+   - ***** END LICENSE BLOCK ***** -->
+
+
