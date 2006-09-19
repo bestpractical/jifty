@@ -1,7 +1,8 @@
 <div id="salutation">
 % if (Jifty->web->current_user->id and Jifty->web->current_user->user_object) {
 % my $u = Jifty->web->current_user->user_object;
-<%_('Hiya, %1.',$u->{$u->_brief_description})%>
+% my $method = $u->_brief_description;
+<%_('Hiya, %1.',$u->$method())%>
 % }  else {
 <%_(q{You're not currently signed in.})%>
 % }
