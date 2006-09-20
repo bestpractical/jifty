@@ -97,6 +97,9 @@
 .tag {
         color: #33f;
 }
+.warn {
+        color: #f00;
+}
 .att {
         color: #9999cc;
 }

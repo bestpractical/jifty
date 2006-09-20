@@ -39,7 +39,7 @@ a framework!
 Nothing worked
 like my head does.
 ----
-WARNING:
+{{#warn|WARNING:}}
 I may be 
 crazy
 ----
@@ -132,16 +132,19 @@ Not really a blog
  use Jifty::Dispatcher -base;
  
  before '*' => run {
-    my $top = Jifty->web->navigation;
-    $top->child('List Entries' => url => '/'); 
-    $top->child('New Entry'    => url => '/new_entry');
- }
+   my $top = Jifty->web->navigation;
+   $top->child(
+        'List Entries' => url => '/'); 
+   $top->child(
+        'New Entry'    => url => '/new_entry');
+ };
 ----
  on '/' => run {
-     my $entries = Blog::Model::EntryCollection->new;
-     $entries->unlimit;
+   my $entries = 
+      Blog::Model::EntryCollection->new;
+   $entries->unlimit;
    
-     set entries => $entries;
+   set entries => $entries;
  };
 ---- 
  on '/new_entry' => run {
@@ -158,8 +161,8 @@ Not really a blog
  &lt;%ARGS>
  $create # From the dispatcher
  &lt;/%ARGS>
-  
- &lt;&amp;|/_elements/wrapper, title => 'Create an article' &amp;>
+ &lt;&amp;|/_elements/wrapper, 
+    title => 'Create an article' &amp;>
  % my $form = Jifty->web->form;
  &lt;% $form->start %>
  % for my $arg ($create->argument_names) {
@@ -198,9 +201,13 @@ It runs
 ----
 Ship it!
 ----
-Oh wait
+Oh wait...
 ----
-New
+(There's always an 
+"oh wait",
+isn't there?)
+----
+New US
 law
 ----
 ...banning 
@@ -232,7 +239,8 @@ Back to the code!
 
     if ($body =~ /$RE{profanity}/i) {
         return (
-            0, 'Would you speak like that in front of your mother? *cough*'
+        0, 'Would you speak like that '.
+           'in front of your mother? *cough*'
         );
     }
 
@@ -376,39 +384,42 @@ fixed it
 
  # jifty server
 
- Application schema version in database (v0.0.1) doesn't match 
- application schema version (0.0.2)
- Please run `bin/jifty schema --setup` to upgrade the database.
+ Application schema version in database (v0.0.1) 
+ doesn't match application schema version (0.0.2)
+ Please run `bin/jifty schema --setup` to upgrade 
+ the database.
 
 ----
 
  # jifty schema --setup 
 
  Jifty version 0.605070 up to date.
- INFO - Generating SQL to upgrade Blog v0.0.1 database to v0.0.2
+ INFO - Generating SQL to upgrade Blog v0.0.1 
+ database to v0.0.2
  INFO - Upgraded to version v0.0.2
 
  # jifty server
- INFO - You can connect to your server at http://localhost:8888/
+ INFO - You can connect to your server 
+ at http://localhost:8888/
 
 ----
  column tags =>
-    since '0.0.3',
-    refers_to Blog::Model::TagCollection by 'entry';
+  since '0.0.3',
+  refers_to Blog::Model::TagCollection by 'entry';
 ----
  column mood => 
-    since '0.0.4',
-    default is => 'happy',
-    valid_values are     
-        { display => 'Sad',   value => 'sad' },
-        { display => 'Happy', value => 'happy' };
+  since '0.0.4',
+  default is => 'happy',
+  valid_values are     
+    { display => 'Sad',   value => 'sad' },
+    { display => 'Happy', value => 'happy' };
 ----
  column created =>
-    since '0.0.5',
-    is immutable,    
-    type is 'timestamp',
-    default is literal 'now()',
-    filters are 'Jifty::DBI::Filter::DateTime';
+   since '0.0.5',
+   is immutable,    
+   type is 'timestamp',
+   default is literal 'now()',
+   filters are 'Jifty::DBI::Filter::DateTime';
 
 ----
 Two-step
@@ -514,11 +525,13 @@ example
  sub take_action {
      my $self = shift;
      $self->result->message(
-         "Hello, ".$self->argument_value('name'));
+      "Hello, ".
+      $self->argument_value('name'));
  }
 ----
  &lt;%init>
- my $action = Jifty->web->new_action(class=>'SayHi');
+ my $action = 
+   Jifty->web->new_action(class=>'SayHi');
  &lt;/%init>
  &lt;&amp;| /_elements/wrapper &amp;>
  &lt;% Jifty->web->form->start %>
@@ -531,9 +544,11 @@ example
 ----
 {{img src="npw.2006/hello_jesse.png" width="622" height="194"}}
 ----
- curl 'http://localhost:8888/__jifty/webservices/yaml?\
-  J:A-1=SayHi&amp;J:A:F-name-1=Jesse'
- ---
+ curl \
+  http://localhost:8888/__jifty/webservices/yaml?\
+   J:A-1=SayHi&amp;\
+   J:A:F-name-1=Jesse
+----
  1: !!perl/hash:Jifty::Result
   _content: {}
   action_class: Hello::Action::SayHi
