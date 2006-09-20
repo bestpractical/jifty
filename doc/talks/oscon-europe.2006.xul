@@ -444,10 +444,10 @@ APIs to your app
 Actions are
 method calls
 ----
-Actions takes 
+Actions take
 typed arguments 
 ----
-Action return
+Actions return
 results
 ----
 Actions are not
@@ -565,7 +565,7 @@ shows your pages
 After: 
 cleans your state
 ----
-If no rule matches
+If no rule matches:
 forwards to templates
 ----
 {{#tag|Jifty::ClassLoader (Bootloader)}}
@@ -677,7 +677,7 @@ Welcome to
 {{#i|civilisation}}
 ----
 {{#i|(They give you other cool stuff too. But}}
-{{#i|I was a Russian major, Go find a Scheme hacker}}
+{{#i|I was a Russian major--Go find a Scheme hacker}}
 {{#i|to find out more about why continuations are}}
 {{#i|cooler than sliced bread. And why the rest}}
 {{#i|of the world has been living in ignorance for}}
