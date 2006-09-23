@@ -13,7 +13,96 @@ independently.
 
 =head1 USING PAGE REGIONS
 
-(XXX TODO Write about the glories of fragments)
+=head2 Constructing Page Regions
+
+From inside any template, a region may get constructed something like
+this:
+
+    <% Jifty->web->region( name     => 'regionname',
+                           path     => '/path/of/component',
+                           defaults => {argname => 'some value', ...},
+                         ) %>
+
+This call will pass all arguments to the C<new> constructor of
+L<Jifty::Web::PageRegion>. The most often used parameters are:
+
+=over
+
+=item name
+
+The mandatory region's name given here is used to embed the region's
+content into a C<< <div> >> Tag which is marked with a fully qualified
+name for that region. The qualified name represents the nesting
+structure of regions inside a page and is automatically build inside.
+
+=item path (optional)
+
+If a path is given, the component's rendered result under this path is
+embedded inside the region. If no path is given, C</__jifty/empty>
+will be used resulting in an empty region's inside.
+
+=item defaults (optional)
+
+Every argument given here (as a hash-ref) will be transported to the
+component that displays the region's inside. The values are accessable
+by building a C<< <%args> >> block in the component specifying the
+arguments.
+
+=back
+
+=head2 Using Page Regions
+
+Given a template with regions, any region can influence itself or any
+other region it knows about. Doing this is typically done with
+JavaScript handlers like C<onclick>. The examples below will
+demonstrate some typical scenarios:
+
+    %# replace this region with some other component
+    <% Jifty->web->link( label   => 'click me',
+                         onclick => {
+                             replace_with => '/new/path/component',
+                             args         => { argname => 'some value' },
+                                    },
+                       ) %>
+
+    %# insert a new region in front of a given region
+    %# use a HTML-entity as the link-text and a CSS class
+    <% Jifty->web->link( label        => '%#9997;',
+                         escape_label => 0,
+                         class        => 'blue_button',
+                         onclick => {
+                             region  => 'regionname',
+                             prepend => '/new/path/component',
+                             args    => { argname => 'some value' },
+                                    },
+                       ) %>
+
+    %# insert a new region after a given CSS selector inside $region
+    <% Jifty->web->link( label   => 'add something',
+                         onclick => {
+                             element => $region->parent->get_element('div.list'),
+                             append  => '/new/path/component',
+                             args    => { argname => 'some value' },
+                                    },
+                       ) %>
+
+    %# a Button to replace the current region with empty content
+    <% Jifty->web->link( label   => 'clear',
+                         onclick => {
+                             refresh_self => 1,
+                             toggle       => 1,
+                                    },
+                         as_button => 1,
+                       ) %>
+
+    %# a Button to delete some region with JavaScript confirmation alert
+    <% Jifty->web->link( label   => 'delete',
+                         onclick => {
+                             delete  => 'regionname',
+                             confirm => 'really delete this?',
+                                    },
+                         as_button => 1,
+                       ) %>
 
 =head1 GORY DETAILS
 
