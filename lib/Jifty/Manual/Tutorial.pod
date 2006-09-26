@@ -24,22 +24,20 @@ it directly depended on 60 packages from CPAN.  Most of these libraries
 are cross-platform pure-Perl packages and should run great out of the
 box on any platform you can get Perl onto.
 
-We've gone to lengths to make sure you don't spend your day downloading
-library after library by bundling everything we can inside the Jifty
-package.  With luck, all you'll need to install is a few tricky libraries
-that actually need to be compiled for your operating system. (Little
-things like Perl's database interface and the embedded SQLite that Jifty
-defaults to.)
+We've gone to lengths to make sure you don't spend your day
+downloading library after library by bundling everything we can inside
+the Jifty package.  The Jifty installer is capable of determining what
+modules your system needs, and downloading and installing them all in
+one go.  Don't worry, it will ask you first before it makes any changes.
 
-You can either grab a complete Jifty package from http://download.jifty.org/pub/jifty/
-or install from CPAN. If you get the I<slim> version from CPAN, you'll have
-to install Jifty's dependencies yourself. (Though we help out with that 
-where we can.)  If you want to get up and running quickly, grab the latest
-version from:
+On most systems you can Perl's bundled CPAN module to download
+and install Jifty:
 
-    http://download.jifty.org/pub/jifty/
+  # perl -MCPAN -e'install Jifty'       # Unix-like systems
+  # perl -MCPAN -e"install Jifty"       # Win32 systems
 
-Either way, the installation process is the same:
+If you've downloaded a C<.tar.gz> of Jifty, you can do a
+manual install:
 
   # tar xzvf jifty-<version>.tgz
   # cd jifty-<version>
