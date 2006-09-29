@@ -153,15 +153,14 @@ sub app_root {
         my @root = File::Spec->splitdir($_);
         while (@root) {
             my $try = File::Spec->catdir( @root, "bin", "jifty" );
-            if (    -e $try
-                # XXX: Just a quick hack
+            if (# XXX: Just a quick hack
                 # MSWin32's 'maybe_command' sees only file extension.
                 # Maybe we should check 'jifty.bat' instead on Win32,
                 # if it is (or would be) provided.
                 # Also, /usr/bin or /usr/local/bin should be taken from
                 # %Config{bin} or %Config{scriptdir} or something like that
                 # for portablility.
-                and ($^O eq 'MSWin32' or -x $try or MM->maybe_command($try))
+                (-x $try or (($^O =~ /(?:MSWin32|cygwin|os2)/) and MM->maybe_command($try)))
                 and $try ne File::Spec->catdir($Config{bin}, "jifty")
                 and $try ne File::Spec->catdir($Config{scriptdir}, "jifty") )
             {
