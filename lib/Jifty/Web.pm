@@ -337,7 +337,7 @@ sub handle_request {
                 $action->result->error(
                     Jifty->config->framework("DevelMode")
                     ? $err
-                    : "There was an error completing the request.  Please try again later."
+                    : _("There was an error completing the request.  Please try again later.")
                 );
             }
 
