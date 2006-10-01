@@ -104,8 +104,8 @@ C<new>.  Subclasses should extend this list.
 
 =cut
 
-sub accessors { shift->SUPER::accessors(), qw(name label input_name type sticky sticky_value default_value action mandatory ajax_validates ajax_canonicalizes autocompleter preamble hints placeholder render_mode length _element_id); }
-__PACKAGE__->mk_accessors(qw(name _label _input_name type sticky sticky_value default_value _action mandatory ajax_validates ajax_canonicalizes autocompleter preamble hints placeholder render_mode length _element_id));
+sub accessors { shift->SUPER::accessors(), qw(name label input_name type sticky sticky_value default_value action mandatory ajax_validates ajax_canonicalizes autocompleter preamble hints placeholder focus render_mode length _element_id); }
+__PACKAGE__->mk_accessors(qw(name _label _input_name type sticky sticky_value default_value _action mandatory ajax_validates ajax_canonicalizes autocompleter preamble hints placeholder focus render_mode length _element_id));
 
 =head2 name [VALUE]
 
@@ -129,7 +129,6 @@ Gets or sets the type of the HTML <input> field -- that is, 'text' or
 
 Sets this form field's "submit" key binding to VALUE. 
 
-
 =head2 default_value [VALUE]
 
 Gets or sets the default value for the form.
@@ -142,6 +141,10 @@ Gets or sets the value for the form field that was submitted in the last action.
 
 A boolean indicating that the argument B<must> be present when the
 user submits the form.
+
+=head2 focus [VALUE]
+
+If true, put focus on this form field when the page loads.
 
 =head2 ajax_validates [VALUE]
 
@@ -312,9 +315,8 @@ sub render {
     $self->render_label();
     if ($self->render_mode eq 'update') { 
         $self->render_widget();
-        $self->render_autocomplete();
-        $self->render_placeholder();
-        $self->render_key_binding();
+        $self->render_inline_javascript();
+        $self->render_autocomplete_div();
         $self->render_hints();
         $self->render_errors();
         $self->render_warnings();
@@ -325,6 +327,36 @@ sub render {
     return ('');
 }
 
+=head2 render_inline_javascript
+
+Render a <script> tag (if neceesary) containing any inline javascript
+that should follow this form field. This is used to add an
+autocompleter, placeholder, or keybinding to form fields where needed.
+
+=cut
+
+sub render_inline_javascript {
+    my $self = shift;
+
+    my $javascript;
+
+    $javascript = join(
+        "\n",
+        grep {$_} (
+            $self->autocomplete_javascript(),
+            $self->placeholder_javascript(),
+            $self->key_binding_javascript(),
+            $self->focus_javascript()
+        )
+    );
+    
+    if($javascript =~ /\S/) {
+        Jifty->web->out(qq{<script type="text/javascript"><!--
+    $javascript
+--></script>
+});
+    }
+}
 
 =head2 classes
 
@@ -488,50 +520,87 @@ sub render_value {
 
 
 
-=head2 render_autocomplete
+=head2 render_autocomplete_div
 
-Renders an empty div that /__jifty/autocomplete.xml can fill in. Also renders the tiny snippet
-of javascript to make that call if necessary.
-Returns an empty string.
+Renders an empty div that /__jifty/autocomplete.xml can fill
+in. Returns an empty string.
 
 =cut
 
-sub render_autocomplete { 
+sub render_autocomplete_div { 
     my $self = shift;
     return unless($self->autocompleter);
     Jifty->web->out(
-qq!<div class="autocomplete" id="@{[$self->element_id]}-autocomplete" style="display: none;"></div>\n
-        <script type="text/javascript">
-          new Jifty.Autocompleter('@{[$self->element_id]}','@{[$self->element_id]}-autocomplete')
-        </script>
-  !
-    );
+qq!<div class="autocomplete" id="@{[$self->element_id]}-autocomplete" style="display: none;"></div>!);
 
     return '';
-
 }
 
-=head2 render_placeholder
+=head2 render_autocomplete
 
-Renders the javascript necessary to insert a placeholder into this
-form field (greyed-out text that is written in using javascript, and
-vanishes when the user focuses the field). Returns an empty string.
+Renders the div tag and javascript necessary to do autocompletion for
+this form field. Deprecated internally in favor of
+L</render_autocomplete_div> and L</autocomplete_javascript>, but kept
+for backwards compatability since there exists external code that uses
+it.
 
 =cut
 
-sub render_placeholder {
+sub render_autocomplete {
+    my $self = shift;
+    return unless $self->autocompleter;
+    $self->render_autocomplete_div;
+    Jifty->web->out(qq{<script type="text/javascript"><!--
+    @{[$self->autocomplete_javascript]}
+--></script>});
+    return '';
+}
+
+
+
+=head2 autocomplete_javascript
+
+Returns renders the tiny snippet of javascript to make an autocomplete
+call, if necessary.
+
+=cut
+
+sub autocomplete_javascript {
+    my $self = shift;
+    return unless($self->autocompleter);
+    return qq{new Jifty.Autocompleter('@{[$self->element_id]}','@{[$self->element_id]}-autocomplete')};
+}
+
+=head2 placeholder_javascript
+
+Returns the javascript necessary to insert a placeholder into this
+form field (greyed-out text that is written in using javascript, and
+vanishes when the user focuses the field). 
+
+=cut
+
+sub placeholder_javascript {
     my $self = shift;
     return unless $self->placeholder;
     my $placeholder = $self->placeholder;
     $placeholder =~ s{(['\\])}{\\$1}g;
     $placeholder =~ s{\n}{\\n}g;
     $placeholder =~ s{\r}{\\r}g;
-    Jifty->web->out(
-qq!<script type="text/javascript">
-     new Jifty.Placeholder('@{[$self->element_id]}', '$placeholder');
-   </script>
-!
-        );
+    return qq{new Jifty.Placeholder('@{[$self->element_id]}', '$placeholder');};
+}
+
+=head2 focus_javascript
+
+Returns the javascript necessary to focus this form field on page
+load, if necessary.
+
+=cut
+
+sub focus_javascript {
+    my $self = shift;
+    if($self->focus) {
+        return qq{DOM.Events.addListener( window, "load", function(){document.getElementById("@{[$self->element_id]}").focus()})};
+    }
 }
 
 =head2 render_hints

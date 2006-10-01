@@ -347,23 +347,43 @@ Subclasses must override this to provide each element with a unique id.
 Sets the label of the element.  This will be used for the key binding
 legend, at very least.
 
+=head2 key_binding_javascript
+
+Returns the javascript fragment to add key binding for this input, if
+one exists.
+
+=cut
+
+sub key_binding_javascript {
+    my $self = shift;
+    my $key  = $self->key_binding;
+    if ($key) {
+        return "Jifty.KeyBindings.add(" . "'"
+                . uc($key) . "', "
+                . "'click', " . "'"
+                . $self->id . "'," . "'"
+                . $self->label . "'"
+                . ");";
+    }
+}
+
 =head2 render_key_binding
 
-Adds the key binding for this input, if one exists.
+Renders the javascript from L</key_binding_javscript> in a <script>
+tag, if needed.
 
 =cut
 
 sub render_key_binding {
     my $self = shift;
-    my $key  = $self->key_binding;
-    if ($key) {
-        Jifty->web->out( "<script><!--\nJifty.KeyBindings.add(" . "'"
-                . uc($key) . "', "
-                . "'click', " . "'"
-                . $self->id . "'," . "'"
-                . $self->label . "'"
-                . ");\n-->\n</script>\n" );
-    }
+    return unless $self->key_binding;
+    Jifty->web->out(
+        '<script type="text/javascript"><!--' .
+        "\n" .
+        $self->key_binding_javascript .
+        "\n" .
+        "--></script>");
+    return '';
 }
 
 1;
