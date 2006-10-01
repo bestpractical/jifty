@@ -160,7 +160,7 @@ sub app_root {
                 # Also, /usr/bin or /usr/local/bin should be taken from
                 # %Config{bin} or %Config{scriptdir} or something like that
                 # for portablility.
-                (-x $try or (($^O =~ /(?:MSWin32|cygwin|os2)/) and MM->maybe_command($try)))
+                (-e $try or (($^O =~ /(?:MSWin32|cygwin|os2)/) and MM->maybe_command($try)))
                 and $try ne File::Spec->catdir($Config{bin}, "jifty")
                 and $try ne File::Spec->catdir($Config{scriptdir}, "jifty") )
             {
