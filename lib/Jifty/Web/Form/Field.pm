@@ -315,8 +315,8 @@ sub render {
     $self->render_label();
     if ($self->render_mode eq 'update') { 
         $self->render_widget();
-        $self->render_inline_javascript();
         $self->render_autocomplete_div();
+        $self->render_inline_javascript();
         $self->render_hints();
         $self->render_errors();
         $self->render_warnings();
