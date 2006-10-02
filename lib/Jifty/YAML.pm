@@ -21,7 +21,11 @@ BEGIN {
 
     if ( eval { require YAML::Syck; YAML::Syck->VERSION(0.27) } ) {
         *Load     = *YAML::Syck::Load;
-        *Dump     = *YAML::Syck::Dump;
+
+        # XXX Force non-Syck Dump until we can figure out why
+        # YAML::Syck's dumps choke YAML.pm in some cases
+        require YAML;
+        *Dump     = *YAML::Dump;
 
         *LoadFile = *YAML::Syck::LoadFile;
         *DumpFile = *YAML::Syck::DumpFile;
