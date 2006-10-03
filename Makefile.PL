@@ -64,11 +64,11 @@ requires('version');
 
 if (can_cc()) {
     # Always require the Syck bindings if a C compiler is available
-    requires('YAML::Syck' => 0.45);
+    requires('YAML::Syck' => 0.71);
     requires('JSON::Syck' => 0.14);
 }
 else {
-    requires('YAML' => 0.35) unless can_use('YAML::Syck' => 0.45);
+    requires('YAML' => 0.35) unless can_use('YAML::Syck' => 0.71);
     requires('JSON' => 0.01) unless can_use('JSON::Syck' => 0.14);
 }
 
