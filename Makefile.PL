@@ -50,7 +50,6 @@ requires('Module::Pluggable' => '2.95');
 requires('Module::ScanDeps');
 requires('Object::Declare' => '0.13');
 requires('Params::Validate');
-requires('PerlIO::gzip');
 requires('Scalar::Defer' => '0.06');
 requires('Shell::Command');
 requires('String::Koremutake');
