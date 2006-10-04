@@ -2,7 +2,7 @@ package Jifty::Web::Session::ClientSide;
 
 =head1 NAME
 
-Jifty::Web::Session - Session handler for client-side sessions
+Jifty::Web::Session::ClientSide - Session handler for client-side sessions
 
 =head1 SYNOPSIS
 
