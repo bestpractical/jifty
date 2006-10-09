@@ -12,7 +12,7 @@ use base qw/Jifty::Plugin/;
     sub init {
 	my $self = shift;
 	my %args = @_;
-	my $appname = Jifty->config->framework('ApplicationName');
+	my $appname = Jifty->config->framework('ApplicationClass');
 	$CurrentUserClass = $args{CurrentUserClass}
 	    || "${appname}::CurrentUser";
 	$LoginUserClass = $args{LoginUserClass}
