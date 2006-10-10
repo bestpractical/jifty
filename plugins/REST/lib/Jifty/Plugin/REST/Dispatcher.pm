@@ -143,7 +143,7 @@ sub list_model_items {
 
     list(
         ['model', $model, $column],
-        map { $_->__value($column) } @{ $col->items_array_ref || [] }
+        map { $_->$column() } @{ $col->items_array_ref || [] }
     );
 }
 
