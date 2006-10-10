@@ -78,7 +78,7 @@ sub create {
         }
         }
         # remove blank values. We'd rather have nulls
-        if ( exists $attribs{$key} and ( not ref( $attr) and $attr eq '' )) {
+        if ( exists $attribs{$key} and (! defined $attr || ( not ref( $attr) and $attr eq '' ))) {
             delete $attribs{$key};
         }
     }
