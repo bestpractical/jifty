@@ -70,20 +70,19 @@ sub create {
     foreach my $key ( keys %attribs ) {
         my $attr = $attribs{$key};
         my $method = "validate_$key";
-        my $func = $self->can($method) or next;
+        if (my $func = $self->can($method)) {
         my ( $val, $msg ) = $func->($self, $attr);
         unless ($val) {
             $self->log->error("There was a validation error for $key");
             return ( $val, $msg );
         }
-
+        }
         # remove blank values. We'd rather have nulls
-        if ( exists $attribs{$key}
-            and ( not defined $attr or (not ref $attr and $attr eq "" )) )
-        {
+        if ( exists $attribs{$key} and ( not ref( $attr) and $attr eq '' )) {
             delete $attribs{$key};
         }
     }
+
 
     my $msg = $self->SUPER::create(%attribs);
     if (ref($msg)  ) {
