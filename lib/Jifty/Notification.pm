@@ -94,7 +94,8 @@ sub send_one_message {
         attributes => { charset => 'UTF-8' },
         parts => $self->parts
     );
-    $message->encoding_set('8bit');
+    $message->encoding_set('8bit')
+        if (scalar $message->parts == 1);
     $self->set_headers($message);
 
     my $method   = Jifty->config->framework('Mailer');
