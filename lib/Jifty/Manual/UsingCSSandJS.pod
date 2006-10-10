@@ -1,0 +1,176 @@
+=head1 NAME
+
+Jifty::Manual::UsingCSSandJS - Using CSS and JavaScript
+
+=head1 DESCRIPTION
+
+Jifty comes bundled with a series of separately developed JavaScript
+libraries as well as a set of CSS definitions that both allow Jifty to
+functionally and beautifully work out of the box. This document
+describes the mechanisms behind the scenes as well as some of the
+details inside the included files.
+
+=head1 BUILT-IN FEATURES
+
+Both, CSS and JavaScript (further abbreviated with "JS") files
+typically reside in the C<share/web/static> directory of Jifty,
+keeping separate C<css> and C<js> subdirectories for each of both sets
+of files. When using Jifty without any interference into these files,
+all of those files will get loaded from the Jifty-provided directory.
+
+In both cases, there are hooks for expansion by keeping empty but
+present files in the C<css> and C<js> directory. By simply creating
+and populating these files inside the C<share/web/static/css> and
+C<share/web/static/js> directories brings the predefined hooks to
+work.
+
+Also there is a big difference of the whole operation between an
+application running in C<DevelMode> or a productive application. In
+DevelMode, every single CSS and JS file will get included into every
+single template page being rendered. On the other hand, a productive
+application will merge all CSS and JS definition upon the first
+request and will only include one file each containing all CSS and JS
+definitions in a single request.
+
+=head1 USING AND EXPANDING CSS
+
+=head2 Assembly of CSS definitions
+
+When Jifty assembles all CSS definitions (which is internally done
+inside L<Jifty::Web> by the method C<include_css>, a single file,
+C<main.css> is included into the generated HTML code of the current
+page. This file consists of a series of C<@include> directives that
+reference every single CSS file to get used.
+
+=head2 Expansion of CSS definitions
+
+Jifty maintains two initially empty files, C<app-base.css> and
+C<app.css> that may get "overloaded" by simply providing these files
+in an application's C<share/web/static/css> directory.
+
+These two files will get included in different order, C<app-base.css>
+being the very first and C<app.css> getting included very late in the
+CSS construction process.
+
+This means that general definitions that should apply to all
+subsequently encountered styles could easily get done in
+C<app-base.css> whereas individual redefinitions, expansions or your
+application's own definitions could go into C<app.css>.
+
+=head2 Jifty's own definitions
+
+Jifty provides a series of definitions that are responsible for a good
+look without any modification. Please note that not all of the used
+CSS classes are already defined, but they will provide a hook for
+modification of the general look. Some of the styles are listed below.
+
+=over
+
+=item form_errors, error
+
+Error messages encountered during validation are displayed inside a
+C<< <div> >> tag of class C<form_errors> which initially is not yet
+defined. Every single error message is marked with a class C<error>.
+
+=item hints, warning, error
+
+These classes are used for displaying additional information for form
+fields.
+
+=item form_field, mandatory, argument-$name
+
+Every form field including its label is packed inside a C<< <div> >>
+tag with these classes (mandatory only given if the field is
+mandatory, of course), where C<$name> is the field's name.
+
+=item preamble
+
+This section is a C<< <span> >> tag filled with a form field's
+preamble content that could contain additional instructions for the
+user. The content may be set by the C<preamble> accessor method that
+is available for every C<Jifty::Web::Form::Field> and its successors.
+
+=item widget, button, button_as_link, combobox,
+combo-text, combo-button, combo-list, date, label, password
+submit_button, reset, text, hidden, ajaxvalidation,
+ajaxcanonicalization, ajaxautocompletes
+
+These class names are used depending on the type of widget getting
+rendered.
+
+=item autocomplete
+
+used for the autocomplete div.
+
+=item toplevel, menu, context_menu, submenu, title, expand
+
+These classes are used in navigation bars.
+
+=item jifty, results, messages
+
+These tree CSS classes are used to surround a message block displaying
+an action's messages after having run an action.
+
+=item message, error, $moniker
+
+Every single message that is displayed in an action's result box is
+marked with the message's type plus the action's moniker as a CSS
+class name.
+
+=back
+
+=head1 USING AND EXPANDING JAVASCRIPT
+
+Jifty comes bundled with a series of separately developed JavaScript
+libraries, like
+
+=over
+
+=item C<Prototype> L<http://prototype.conio.net>
+
+Prototype is a toolkit for providing AJAX support. This is a library,
+some others depend on.
+
+=item C<scriptaculous.js> L<http://script.aculo.us/>
+
+This library provides support for animation with effects, drag & drop,
+AJAX controls and DOM utilities.
+
+=item C<Rico> L<http://openrico.org>
+
+Rico also provides graphical effects.
+
+=item C<Json> L<http://json.org>
+
+Hereby, major support for encoding and decoding data into the JSON
+data format (similar to C<YAML>) is provided.
+
+=item C<behaviour.js> L<http://bennolan.com/behaviour/>
+
+With C<behaviour.js>, intelligent JavaScript handlers can be defined.
+
+=item C<cssQuery.js> L<http://dean.edwards.name/>
+
+This library adds support for querying the DOM using CSS selectors.
+
+=back
+
+=head2 Assembly of JS definitions
+
+Jifty maintains a complete list of JS files to include. This list may
+be retrieved or set by the accessor
+C<Jifty-E<gt>web-E<gt>javascript_libs>. There should, however, rarely
+arise a situation to do that, because Jifty already reserved two files
+that may get added to your application. C<app.css> which is initially
+empty can get all JS functions you need to define and
+C<app_behaviour.js> is intentionally reserved for defining behaviors
+for DOM objects using the C<behaviour.js> library.
+
+The assembly process of all JS definitions is done in L<Jifty::Web> by
+the method C<include_javascript>.
+
+=head1 SEE ALSO
+
+L<Jifty::Web>
+
+=cut
