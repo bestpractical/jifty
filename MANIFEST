@@ -29,6 +29,7 @@ doc/plugin-requirements
 doc/plugin-syntax
 doc/plugins-restated-assumptions
 etc/config.yml
+etc/site_config.yml
 inc/Module/AutoInstall.pm
 inc/Module/Install.pm
 inc/Module/Install/AutoInstall.pm
@@ -79,10 +80,12 @@ lib/Jifty/Manual/Glossary.pod
 lib/Jifty/Manual/Models.pod
 lib/Jifty/Manual/ObjectModel.pod
 lib/Jifty/Manual/PageRegions.pm
+lib/Jifty/Manual/RequestHandling.pod
 lib/Jifty/Manual/Style.pod
 lib/Jifty/Manual/Tutorial.pod
 lib/Jifty/Manual/Tutorial_ja.pod
 lib/Jifty/Manual/Upgrading.pod
+lib/Jifty/Manual/UsingCSSandJS.pod
 lib/Jifty/Mason/Halo.pm
 lib/Jifty/Model/Metadata.pm
 lib/Jifty/Model/Session.pm
@@ -118,8 +121,6 @@ lib/Jifty/Upgrade.pm
 lib/Jifty/Upgrade/Internal.pm
 lib/Jifty/Util.pm
 lib/Jifty/View/Mason/Handler.pm
-lib/Jifty/View/Mason/Handler.pm.orig
-lib/Jifty/View/Mason/Handler.pm.rej
 lib/Jifty/View/Static/Handler.pm
 lib/Jifty/Web.pm
 lib/Jifty/Web/Form.pm
@@ -150,10 +151,24 @@ Makefile.PL
 MANIFEST			This list of files
 MANIFEST.SKIP
 META.yml
+plugins/EditInPlace/inc/Module/AutoInstall.pm
+plugins/EditInPlace/inc/Module/Install.pm
+plugins/EditInPlace/inc/Module/Install/AutoInstall.pm
+plugins/EditInPlace/inc/Module/Install/Base.pm
+plugins/EditInPlace/inc/Module/Install/Can.pm
+plugins/EditInPlace/inc/Module/Install/Fetch.pm
+plugins/EditInPlace/inc/Module/Install/Include.pm
+plugins/EditInPlace/inc/Module/Install/Makefile.pm
+plugins/EditInPlace/inc/Module/Install/Makefile/Version.pm
+plugins/EditInPlace/inc/Module/Install/Metadata.pm
+plugins/EditInPlace/inc/Module/Install/Share.pm
+plugins/EditInPlace/inc/Module/Install/Win32.pm
+plugins/EditInPlace/inc/Module/Install/WriteAll.pm
 plugins/EditInPlace/lib/Jifty/Plugin/EditInPlace.pm
 plugins/EditInPlace/lib/Jifty/Plugin/EditInPlace/Action/FileEditor.pm
 plugins/EditInPlace/lib/Jifty/Plugin/EditInPlace/Dispatcher.pm
 plugins/EditInPlace/Makefile.PL
+plugins/EditInPlace/META.yml
 plugins/EditInPlace/share/web/templates/__jifty/create_file_inline
 plugins/EditInPlace/share/web/templates/__jifty/edit_file
 plugins/EditInPlace/share/web/templates/__jifty/edit_file_inline
@@ -339,6 +354,7 @@ t/07-limit-actions.t
 t/08-client.t
 t/09-url.t
 t/10-i18n.t
+t/11-config-files.t
 t/99-pod-coverage.t
 t/99-pod.t
 t/Continuations/bin/jifty

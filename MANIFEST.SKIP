@@ -24,3 +24,8 @@ doc/talks/*
 /\._
 t/mailbox$
 jiftyapptest$
+\.orig$
+\.rej$
+\.tmp$
+\.diff$
+blib

@@ -77,7 +77,6 @@ requires:
   Module::ScanDeps: 0
   Object::Declare: 0.13
   Params::Validate: 0
-  PerlIO::gzip: 0
   Pod::Simple: 0
   SQL::ReservedWords: 0
   Scalar::Defer: 0.06
@@ -88,7 +87,7 @@ requires:
   XML::Simple: 0
   XML::Writer: 0
   XML::XPath: 0
-  YAML::Syck: 0.45
+  YAML::Syck: 0.71
   perl: 5.8.3
   version: 0
 tests: t/*.t t/*/t/*.t
