@@ -516,6 +516,19 @@ sub manage_database_existence {
     Jifty->handle->connect();
 }
 
+sub __parenthesize {
+    if (not defined $_[0]) { return () }
+    if (@_ == 1)           { return $_[0] }
+    return "(" . (join ", ", @_) . ")";
+}
+
+sub _classify {
+    my %dbs;
+    # Guess names of databases + their versions by breaking on last space,
+    # e.g., "SQL Server 7" is ("SQL Server", "7"), not ("SQL", "Server 7").
+    push @{ $dbs{$_->[0]} }, $_->[1] for map { [ split /\s+(?!.*\s)/, $_, 2 ] } @_;
+    return map { join " ", $_, __parenthesize(@{ $dbs{$_} }) } sort keys %dbs;
+}
 
 sub _check_reserved {
     my $self  = shift;
@@ -526,7 +539,7 @@ sub _check_reserved {
             $log->error( $model . ": "
                     . $col->name
                     . " is a reserved word in these SQL dialects: "
-                    . join( ', ', @{ $_SQL_RESERVED{ lc( $col->name ) } } ) );
+                    . join( ', ', _classify(@{ $_SQL_RESERVED{ lc( $col->name ) } }) ) );
         }
     }
 }
