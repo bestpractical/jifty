@@ -21,7 +21,14 @@ BEGIN {
 
     if ( eval { require YAML::Syck; YAML::Syck->VERSION(0.71) } ) {
         *Load     = *YAML::Syck::Load;
-        *Dump     = *YAML::Syck::Dump;
+
+
+        require YAML;
+        # Use YAML::Dump for the moment since YAML.pm segfaults on
+        #  reading stupidly long (~20K characters) double-quoted
+        #  strings, and we need to produce YAML.pm-readable output.
+        *Dump     = *YAML::Dump;
+        #*Dump     = *YAML::Syck::Dump;
 
         *LoadFile = *YAML::Syck::LoadFile;
         *DumpFile = *YAML::Syck::DumpFile;
