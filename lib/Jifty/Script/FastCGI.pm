@@ -46,15 +46,37 @@ For B<lighttpd> (L<http://www.lighttpd.net/>), use this setting:
         )
     )
 
+=head2 options
+
+=cut
+
+sub options {
+    (
+        'requests=i' => 'maxrequests',
+        'gladitator' => 'gladiator'
+    );
+}
+
 =head2 run
 
 Creates a new FastCGI process.
 
 =cut
- 
-sub run {
-    Jifty->new();
 
+my $gladiator;
+
+BEGIN {
+    $gladiator = eval { require Devel::Gladiator; 1 };
+}
+
+sub run {
+    my $self = shift;
+    Jifty->new();
+    my $conf = Jifty->config->framework('Web')->{'FastCGI'} || {};
+    $self->{maxrequests} ||= $conf->{MaxRequests};
+    $self->{gladiator} ||= $conf->{Gladiator};
+
+    my $requests = 0;
     while ( my $cgi = CGI::Fast->new ) {
         # the whole point of fastcgi requires the env to get reset here..
         # So we must squash it again
@@ -66,6 +88,12 @@ sub run {
             $ENV{$_} = '' if (defined $ENV{$_} );
         }
         Jifty->handler->handle_request( cgi => $cgi );
+	if ($self->{maxrequests} && ++$requests >= $self->{maxrequests}) {
+	    if ($self->{gladiator} && $gladiator) {
+		Jifty->log->info( Devel::Gladiator::arena_table() );
+	    }
+	    exit 0;
+	}
     }
 }
 
