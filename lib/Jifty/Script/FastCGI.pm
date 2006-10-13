@@ -46,13 +46,20 @@ For B<lighttpd> (L<http://www.lighttpd.net/>), use this setting:
         )
     )
 
+If you have MaxRequests options under FastCGI in your config.yml, or
+commandline option C<--maxrequests=N> assigned, the fastcgi process
+will exit after serving N requests.  Additionally, if you have
+Gladiator options under FastCGI in your config.yml enabled, Jifty will
+log your memory usable summary when the child is exiting.  You will
+need to Install L<Devel::Gladiator> for this to be useful.
+
 =head2 options
 
 =cut
 
 sub options {
     (
-        'requests=i' => 'maxrequests',
+        'maxrequests=i' => 'maxrequests',
         'gladitator' => 'gladiator'
     );
 }
