@@ -936,7 +936,7 @@ sub _values_for_field {
                         display => ( $_->$disp() || '' ),
                         value   => ( $_->$val()  || '' )
                     }
-                } grep {$_->current_user_can("read")} @{ $v->{'collection'}->items_array_ref };
+                } grep {$_->check_read_rights} @{ $v->{'collection'}->items_array_ref };
 
             }
             else {

@@ -14,9 +14,8 @@ representation; that is, it is also a L<Jifty::DBI::Record> as well.
 
 =cut
 
-use base qw/Jifty::Object/;
-use base qw/Jifty::DBI::Record/;
-
+use base qw(Jifty::Object Jifty::DBI::Record Class::Accessor::Fast);
+__PACKAGE__->mk_accessors('_is_readable');
 
 sub _init {
     my $self = shift;
@@ -210,8 +209,11 @@ on.
 
 =cut
 
-sub check_read_rights { return shift->current_user_can('read', column => shift) }
-
+sub check_read_rights {
+    my $self = shift;
+    return (1) if $self->_is_readable;
+    return $self->current_user_can( 'read', column => shift );
+}
 
 =head2 check_update_rights
 
@@ -349,6 +351,8 @@ sub _to_record {
     # perhaps the handle should have an initiializer for records/collections
     my $object = $classname->new(current_user => $self->current_user);
     $object->load_by_cols(( $column->by || 'id')  => $value) if ($value);
+    # XXX: an attribute or hook to let model class declare implicit
+    # readable refers_to columns.  $object->_is_readable(1) if $column->blah;
     return $object;
 }
 
