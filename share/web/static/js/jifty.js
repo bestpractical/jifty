@@ -441,10 +441,7 @@ Behaviour.register({
         }
     },
     'input.button_as_link': function(e) {
-        if ( !Element.hasClassName( e, 'is_button_as_link' ) ) {
-            buttonToLink(e);
-            Element.addClassName( e, 'is_button_as_link' );
-        }
+        buttonToLink(e);
     },
     "input.date, input.text": function(e) {
         /* XXX TODO: Figure out how to make our enter handler detect
