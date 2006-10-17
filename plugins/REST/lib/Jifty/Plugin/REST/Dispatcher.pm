@@ -66,44 +66,59 @@ sub outs {
         $apache->send_http_header;
         print Data::Dumper::Dumper(@_);
     }
-    elsif (ref($_[0]) eq 'ARRAY') {
-        print start_html(-encoding => 'UTF-8', -declare_xml => 1, -title => 'models'),
-              ul(map {
-                li(a({-href => "$url/".Jifty::Web->escape_uri($_)}, Jifty::Web->escape($_)))
-              } @{$_[0]}),
-              end_html();
-    }
-    elsif (ref($_[0]) eq 'HASH') {
-        print start_html(-encoding => 'UTF-8', -declare_xml => 1, -title => 'models'),
-              dl(map {
-                  dt(a({-href => "$url/".Jifty::Web->escape_uri($_)}, Jifty::Web->escape($_))),
-                  dd(html_dump($_[0]->{$_})),
-              } sort keys %{$_[0]}),
-              end_html();
-    }
     else {
-        print start_html(-encoding => 'UTF-8', -declare_xml => 1, -title => 'models'),
-              Jifty::Web->escape($_[0]),
-              end_html();
+         
+        $apache->header_out('Content-Type' => 'text/html; charset=UTF-8');
+        $apache->send_http_header;
+        print render_as_html($prefix, $url, @_);
     }
 
     last_rule;
 }
 
-sub html_dump {
-    if (ref($_[0]) eq 'ARRAY') {
-        ul(map {
-            li(html_dump($_))
-        } @{$_[0]});
+sub render_as_html {
+    my $prefix = shift;
+    my $url = shift;
+    my $content = shift;
+    if (ref($content) eq 'ARRAY') {
+        return start_html(-encoding => 'UTF-8', -declare_xml => 1, -title => 'models'),
+              ul(map {
+                li(a({-href => "$url/".Jifty::Web->escape_uri($_)}, Jifty::Web->escape($_)))
+              } @{$content}),
+              end_html();
     }
-    elsif (ref($_[0]) eq 'HASH') {
-        dl(map {
-            dt(Jifty::Web->escape($_)),
-            dd(html_dump($_[0]->{$_})),
-        } sort keys %{$_[0]}),
+    elsif (ref($content) eq 'HASH') {
+        return start_html(-encoding => 'UTF-8', -declare_xml => 1, -title => 'models'),
+              dl(map {
+                  dt(a({-href => "$url/".Jifty::Web->escape_uri($_)}, Jifty::Web->escape($_))),
+                  dd(html_dump($content->{$_})),
+              } sort keys %{$content}),
+              end_html();
     }
     else {
-        Jifty::Web->escape($_[0]);
+        return start_html(-encoding => 'UTF-8', -declare_xml => 1, -title => 'models'),
+              Jifty::Web->escape($content),
+              end_html();
+    }
+}
+
+
+
+sub html_dump {
+    my $content = shift;
+    if (ref($content) eq 'ARRAY') {
+        ul(map {
+            li(html_dump($_))
+        } @{$content});
+    }
+    elsif (ref($content) eq 'HASH') {
+        dl(map {
+            dt(Jifty::Web->escape($_)),
+            dd(html_dump($content->{$_})),
+        } sort keys %{$content}),
+    }
+    else {
+        Jifty::Web->escape($content);
     }
 }
 
@@ -134,29 +149,25 @@ sub list_model_columns {
 }
 
 sub list_model_items {
+
     # Normalize model name - fun!
-    my ($model, $column) = (model($1), $2);
+    my ( $model, $column ) = ( model($1), $2 );
     my $col = $model->new->collection_class->new;
     $col->unlimit;
     $col->columns($column);
-    $col->order_by(column => $column);
+    $col->order_by( column => $column );
 
-    list(
-        ['model', $model, $column],
-        map { $_->$column() } @{ $col->items_array_ref || [] }
-    );
+    list( [ 'model', $model, $column ],
+        map { $_->$column() } @{ $col->items_array_ref || [] } );
 }
 
 sub show_item_field {
-    my ($model, $column, $key, $field) = (model($1), $2, $3, $4);
+    my ( $model, $column, $key, $field ) = ( model($1), $2, $3, $4 );
     my $rec = $model->new;
     $rec->load_by_cols( $column => $key );
-    $rec->id or abort(404);
-    exists $rec->{values}{$field} or abort(404);
-    outs(
-        ['model', $model, $column, $key, $field],
-        $rec->{values}{$field}
-    );
+    $rec->id          or abort(404);
+    $rec->can($field) or abort(404);
+    outs( [ 'model', $model, $column, $key, $field ], $rec->$field());
 }
 
 sub show_item {
@@ -164,10 +175,7 @@ sub show_item {
     my $rec = $model->new;
     $rec->load_by_cols( $column => $key );
     $rec->id or abort(404);
-    outs(
-        ['model', $model, $column, $key],
-        $rec->{values}
-    );
+    outs( ['model', $model, $column, $key], { map {$_ => $rec->$_()} map {$_->name} $rec->columns});
 }
 
 sub replace_item {
@@ -206,11 +214,11 @@ sub list_action_params {
 }
 
 sub run_action {
-    my ($action) = action($1) or abort(404);
-    Jifty::Util->require($action) or abort(404);
-    $action = $action->new or abort(404);
+    my ($action_name) = action($1) or abort(404);
+    Jifty::Util->require($action_name) or abort(404);
+    my $action = $action_name->new or abort(404);
 
-    # Jifty->api->is_allowed( $action ) or abort(403);
+    Jifty->api->is_allowed( $action ) or abort(403);
 
     my $args = Jifty->web->request->arguments;
     delete $args->{''};
@@ -232,10 +240,8 @@ sub run_action {
         } 'model', ref($rec), 'id', $rec->id);
         Jifty->handler->apache->header_out('Location' => $url);
     }
-
-    print start_html(-encoding => 'UTF-8', -declare_xml => 1, -title => 'models'),
-          ul(map { li(html_dump($_)) } $action->result->message, Jifty->web->response->messages),
-          end_html();
+    #outs(undef, [$action->result->message, Jifty->web->response->messages]);
+    print start_html(-encoding => 'UTF-8', -declare_xml => 1, -title => 'models'), ul(map { li(html_dump($_)) } $action->result->message, Jifty->web->response->messages), end_html();
 
     last_rule;
 }
