@@ -56,7 +56,7 @@ requires('String::Koremutake');
 requires('SQL::ReservedWords');
 requires('UNIVERSAL::require');
 requires('URI');
-requires('XML::Writer' = > '0.601');
+requires('XML::Writer' => '0.601');
 requires('XML::Simple');
 requires('XML::XPath');
 requires('version');

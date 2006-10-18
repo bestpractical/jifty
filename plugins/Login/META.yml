@@ -1,8 +1,8 @@
 build_requires: 
   ExtUtils::MakeMaker: 6.11
 distribution_type: module
-generated_by: Module::Install version 0.64
-license: Perl
+generated_by: Module::Install version 0.63
+license: unknown
 name: Jifty-Plugin-Login
 no_index: 
   directory: 
