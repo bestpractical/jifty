@@ -46,7 +46,7 @@ Gets or sets if the action succeeded or failed.
 
 =head2 success [BOOL]
 
-Gets or success if the action succeeded or failed -- this is an
+Gets or sets if the action succeeded or failed -- this is an
 alternate interface from C<failure> but has the same effect.
 
 =cut

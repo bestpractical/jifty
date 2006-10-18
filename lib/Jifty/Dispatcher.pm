@@ -122,7 +122,7 @@ by using a variant on the C<before> and C<after> syntax:
 
 C<NAME> may either be a string, which must match the plugin name
 exactly, or a regular expression, which is matched against the plugin
-name.  The rule will be placed at the first boundry that it matches --
+name.  The rule will be placed at the first boundary that it matches --
 that is, given a C<before plugin qr/^Jifty::Plugin::Auth::/> and both
 a C<Jifty::Plugin::Auth::Basic> and a C<Jifty::Plugin::Auth::Complex>,
 the rules will be placed before the first.
@@ -927,7 +927,7 @@ sub _match_plugin {
 
 =head2 _compile_condition CONDITION
 
-Takes a condition defined as a simple string ad return it as a regex
+Takes a condition defined as a simple string and return it as a regex
 condition.
 
 =cut
@@ -995,7 +995,7 @@ The rules are:
 =item *
 
 A C<*> between two C</> characters, or between a C</> and end of string,
-should at match one or more non-slash characters:
+should match one or more non-slash characters:
 
     /foo/*/bar
     /foo/*/

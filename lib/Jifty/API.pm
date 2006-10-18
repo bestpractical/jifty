@@ -120,7 +120,7 @@ sub deny {
 
 =head2 restrict POLARITY RESTRICTIONS
 
-Method that L</allow> and and L</deny> call internally; I<POLARITY> is
+Method that L</allow> and L</deny> call internally; I<POLARITY> is
 either C<allow> or C<deny>.  Allow and deny limits are evaluated in
 the order they're called.  The last limit that applies will be the one
 which takes effect.  Regexes are matched against the class; strings

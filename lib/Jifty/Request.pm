@@ -487,7 +487,7 @@ sub continuation {
     return Jifty->web->session->get_continuation($self->continuation_id);
 }
 
-=head3 save_continuation
+=head2 save_continuation
 
 Saves the current request and response if we've been asked to.  If we
 save the continuation, we redirect to the next page -- the call to

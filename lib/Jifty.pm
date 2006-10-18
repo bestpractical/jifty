@@ -71,7 +71,7 @@ use vars qw/$HANDLE $CONFIG $LOGGER $HANDLER $API $CLASS_LOADER @PLUGINS/;
 This class method instantiates a new C<Jifty> object. This object
 deals with configuration files, logging and database handles for the
 system.  Before this method returns, it calls the application's C<start>
-method (i.e. C<MyApp->start>) to handle any application-specific startup.
+method (i.e. C<MyApp-E<gt>start>) to handle any application-specific startup.
 
 Most of the time, the server will call this for you to set up
 your C<Jifty> object.  If you are writing command-line programs that

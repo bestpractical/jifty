@@ -74,7 +74,7 @@ the C<Mailer> and C<MailerArgs> configuration arguments.  Returns true
 if mail was actually sent.  Note errors are not the only cause of mail
 not being sent -- for example, the recipients list could be empty.
 
-    Be aware that if you haven't set C<recipients>, this will fail silently
+Be aware that if you haven't set C<recipients>, this will fail silently
 and return without doing anything useful.
 
 =cut

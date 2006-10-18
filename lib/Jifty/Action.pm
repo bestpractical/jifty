@@ -248,7 +248,7 @@ sub check_authorization { 1; }
 
 =head2 setup
 
-.  C<setup> is expected to return a true value, or
+C<setup> is expected to return a true value, or
 L</run> will skip all other actions.
 
 By default, does nothing.

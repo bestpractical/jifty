@@ -127,7 +127,7 @@ sub setup {
 
           use vars qw/$cache_key_prefix/;
 
-          $cache_key_prefix = "jifty-test-$$";
+          $cache_key_prefix = "jifty-test-" . $$;
         
           sub cache_key_prefix {
               $Jifty::Record::cache_key_prefix;
