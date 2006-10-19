@@ -102,6 +102,8 @@ sub arguments {
         }
     }
 
+    $args->{contains} = {type => 'text', label => 'Any field contains'};
+
     return $self->_cached_arguments($args);
 }
 
@@ -126,6 +128,7 @@ sub take_action {
     $collection->unlimit;
 
     for my $field (grep {$self->has_argument($_)} $self->argument_names) {
+        next if $field eq 'contains';
         my $value = $self->argument_value($field);
         
         my $column = $self->record->column($field);
@@ -172,6 +175,19 @@ sub take_action {
                 value    => 'NULL',
                 operator => 'IS'
                );
+        }
+    }
+
+    if($self->has_argument('contains')) {
+        my $any = $self->argument_value('contains');
+        for my $col ($self->record->columns) {
+            if($col->type =~ /(?:text|varchar)/) {
+                $collection->limit(column   => $col->name,
+                                   value    => "%$any%",
+                                   operator => 'LIKE',
+                                   entry_aggregator => 'OR',
+                                   subclause => 'contains');
+            }
         }
     }
 

@@ -43,7 +43,7 @@ $user = TestApp::Model::User->new(current_user => TestApp::CurrentUser->superuse
 
 ok($user->create(
         name       => 'third_user',
-        email      => 'test3@not.a.domain',
+        email      => 'test3@test2.com',
         password    => 'hahaha',
         created_on => '1999-12-31 23:59'
     ),
@@ -192,3 +192,23 @@ $result = $search->result->content('search');
 isa_ok($result, 'Jifty::Collection');
 is($result->count, 1);
 is($result->first->name, 'third_user');
+
+# Searching on any field
+$search->argument_values({contains => 'test2'});
+$search->run;
+
+$result = $search->result->content('search');
+
+isa_ok($result, 'Jifty::Collection');
+is($result->count, 2);
+is($result->items_array_ref->[0]->name, 'test2');
+is($result->items_array_ref->[1]->name, 'third_user');
+
+
+$search->argument_values({contains => 'test2', email_contains => 'localhost'});
+$search->run;
+
+$result = $search->result->content('search');
+
+isa_ok($result, 'Jifty::Collection');
+is($result->count, 0);
