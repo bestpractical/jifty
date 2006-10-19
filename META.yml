@@ -85,7 +85,7 @@ requires:
   UNIVERSAL::require: 0
   URI: 0
   XML::Simple: 0
-  XML::Writer: 0
+  XML::Writer: 0.601
   XML::XPath: 0
   YAML::Syck: 0.71
   perl: 5.8.3
