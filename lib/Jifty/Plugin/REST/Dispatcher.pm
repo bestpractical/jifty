@@ -41,9 +41,15 @@ sub outs {
     my $prefix = shift;
     my $accept = ($ENV{HTTP_ACCEPT} || '');
     my $apache = Jifty->handler->apache;
-    my $url    = Jifty->web->url(path => join '/', '=', map { 
-        Jifty::Web->escape_uri($_)
-    } @$prefix);
+    my @prefix;
+    my $url;
+
+    if($prefix) {
+        @prefix = map {s/::/./g; $_} @$prefix;
+        my $url    = Jifty->web->url(path => join '/', '=', map { 
+            Jifty::Web->escape_uri($_)
+          } @prefix);
+    }
 
     if ($accept =~ /ya?ml/i) {
         $apache->header_out('Content-Type' => 'text/x-yaml; charset=UTF-8');
@@ -68,11 +74,9 @@ sub outs {
     elsif ($accept =~  qr|^(text/)?xml$|i) {
         $apache->header_out('Content-Type' => 'text/xml; charset=UTF-8');
         $apache->send_http_header;
-        print  render_as_xml(@_);
-
+        print render_as_xml(@_);
     }
     else {
-         
         $apache->header_out('Content-Type' => 'text/html; charset=UTF-8');
         $apache->send_http_header;
         print render_as_html($prefix, $url, @_);
@@ -105,14 +109,18 @@ sub render_as_html {
     if (ref($content) eq 'ARRAY') {
         return start_html(-encoding => 'UTF-8', -declare_xml => 1, -title => 'models'),
               ul(map {
-                li(a({-href => "$url/".Jifty::Web->escape_uri($_)}, Jifty::Web->escape($_)))
+                  li($prefix ?
+                     a({-href => "$url/".Jifty::Web->escape_uri($_)}, Jifty::Web->escape($_))
+                     : Jifty::Web->escape($_) )
               } @{$content}),
               end_html();
     }
     elsif (ref($content) eq 'HASH') {
         return start_html(-encoding => 'UTF-8', -declare_xml => 1, -title => 'models'),
               dl(map {
-                  dt(a({-href => "$url/".Jifty::Web->escape_uri($_)}, Jifty::Web->escape($_))),
+                  dt($prefix ?
+                     a({-href => "$url/".Jifty::Web->escape_uri($_)}, Jifty::Web->escape($_))
+                     : Jifty::Web->escape($_)),
                   dd(html_dump($content->{$_})),
               } sort keys %{$content}),
               end_html();
@@ -162,7 +170,7 @@ sub resolve {
 }
 
 sub list_models {
-    list(['model'], Jifty->class_loader->models);
+    list(['model'], map {s/::/./g; $_ } Jifty->class_loader->models);
 }
 
 sub list_model_columns {
@@ -209,7 +217,7 @@ sub delete_item {
 }
 
 sub list_actions {
-    list(['action'], Jifty->api->actions);
+    list(['action'], map {s/::/./g; $_} Jifty->api->actions);
 }
 
 sub list_action_params {
@@ -251,19 +259,35 @@ sub run_action {
     local $@;
     eval { $action->run };
 
-    if ($@ or $action->result->failure) {
+    if ($@) {
         abort(500);
     }
 
     my $rec = $action->{record};
-    if ($rec and $rec->isa('Jifty::Record') and $rec->id) {
+    if ($action->result->success && $rec and $rec->isa('Jifty::Record') and $rec->id) {
         my $url    = Jifty->web->url(path => join '/', '=', map {
             Jifty::Web->escape_uri($_)
         } 'model', ref($rec), 'id', $rec->id);
         Jifty->handler->apache->header_out('Location' => $url);
     }
-    #outs(undef, [$action->result->message, Jifty->web->response->messages]);
-    print start_html(-encoding => 'UTF-8', -declare_xml => 1, -title => 'models'), ul(map { li(html_dump($_)) } $action->result->message, Jifty->web->response->messages), end_html();
+    
+    my $result = $action->result;
+
+    my $out = {};
+    $out->{success} = $result->success;
+    $out->{message} = $result->message;
+    $out->{error} = $result->error;
+    $out->{field_errors} = {$result->field_errors};
+    for (keys %{$out->{field_errors}}) {
+        delete $out->{field_errors}->{$_} unless $out->{field_errors}->{$_};
+    }
+    $out->{field_warnings} = {$result->field_warnings};
+    for (keys %{$out->{field_warnings}}) {
+        delete $out->{field_warnings}->{$_} unless $out->{field_warnings}->{$_};
+    }
+    $out->{content} = $result->content;
+    
+    outs(undef, $out);
 
     last_rule;
 }
