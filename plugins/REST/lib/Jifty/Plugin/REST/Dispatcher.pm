@@ -9,6 +9,7 @@ use Jifty::Dispatcher -base;
 use Jifty::YAML ();
 use Jifty::JSON ();
 use Data::Dumper ();
+use XML::Simple;
 
 before qr{^ (/=/ .*) \. (js|json|yml|yaml|perl|pl) $}x => run {
     $ENV{HTTP_ACCEPT} = $2;
@@ -66,6 +67,12 @@ sub outs {
         $apache->send_http_header;
         print Data::Dumper::Dumper(@_);
     }
+    elsif ($accept =~ /xml/i) {
+        $apache->header_out('Content-Type' => 'text/xml; charset=UTF-8');
+        $apache->send_http_header;
+        print  render_as_xml(@_);
+
+    }
     else {
          
         $apache->header_out('Content-Type' => 'text/html; charset=UTF-8');
@@ -75,6 +82,19 @@ sub outs {
 
     last_rule;
 }
+
+sub render_as_html {
+    my $content = shift;
+    if (ref($content) eq 'ARRAY') {
+        return XMLout({$content});
+    }
+    elsif (ref($content) eq 'HASH') {
+        return XMLout($content);
+    } else {
+        return XMLout({$content})
+    }
+}
+
 
 sub render_as_html {
     my $prefix = shift;
