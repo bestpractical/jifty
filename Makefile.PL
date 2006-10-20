@@ -47,7 +47,7 @@ requires('Log::Log4perl');
 requires('LWP::UserAgent'); # Net::HTTP
 requires('MIME::Types');
 requires('Module::Pluggable' => '2.95');
-requires('Module:::CoreList');
+requires('Module::CoreList');
 requires('Module::ScanDeps');
 requires('Object::Declare' => '0.13');
 requires('Params::Validate');
