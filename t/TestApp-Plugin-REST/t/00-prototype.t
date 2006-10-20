@@ -9,7 +9,6 @@ This is a template for your own tests. Copy it and modify it.
 
 =cut
 
-use lib 'plugins/REST/lib';
 use lib 't/lib';
 use Jifty::SubTest;
 

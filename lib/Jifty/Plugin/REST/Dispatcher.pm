@@ -1,7 +1,5 @@
 use strict;
 use warnings;
-no warnings 'utf8';
-no warnings 'once';
 
 package Jifty::Plugin::REST::Dispatcher;
 use CGI qw( start_html end_html ul li a dl dt dd );
@@ -11,7 +9,7 @@ use Jifty::JSON ();
 use Data::Dumper ();
 use XML::Simple;
 
-before qr{^ (/=/ .*) \. (js|json|yml|yaml|perl|pl) $}x => run {
+before qr{^ (/=/ .*) \. (js|json|yml|yaml|perl|xml|pl) $}x => run {
     $ENV{HTTP_ACCEPT} = $2;
     dispatch $1;
 };
@@ -67,7 +65,7 @@ sub outs {
         $apache->send_http_header;
         print Data::Dumper::Dumper(@_);
     }
-    elsif ($accept =~ /xml/i) {
+    elsif ($accept =~  qr|^(text/)?xml$|i) {
         $apache->header_out('Content-Type' => 'text/xml; charset=UTF-8');
         $apache->send_http_header;
         print  render_as_xml(@_);
@@ -83,15 +81,19 @@ sub outs {
     last_rule;
 }
 
-sub render_as_html {
+our $xml_config = { SuppressEmpty => '',
+                    NoAttr => 1 };
+
+sub render_as_xml {
     my $content = shift;
+
     if (ref($content) eq 'ARRAY') {
-        return XMLout({$content});
+        return XMLout({value => $content}, %$xml_config);
     }
     elsif (ref($content) eq 'HASH') {
-        return XMLout($content);
+        return XMLout($content, %$xml_config);
     } else {
-        return XMLout({$content})
+        return XMLout({$content}, %$xml_config)
     }
 }
 
@@ -165,7 +167,7 @@ sub list_models {
 
 sub list_model_columns {
     my ($model) = model($1);
-    outs(['model', $model], { map { $_->name => { %$_ } } $model->new->columns });
+    outs(['model', $model], { map { $_->name => { %$_ } } sort { $a->sort_order <=> $b->sort_order}  $model->new->columns });
 }
 
 sub list_model_items {

@@ -8,7 +8,6 @@ A basic test harness for the User model.
 
 =cut
 
-use lib 'plugins/REST/lib';
 
 use lib 't/lib';
 use Jifty::SubTest;
