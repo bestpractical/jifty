@@ -817,7 +817,7 @@ sub _validate_argument {
     if ( !defined $value || !length $value ) {
 
         if ( $field_info->{mandatory} ) {
-            return $self->validation_error( $field => "You need to fill in this field" );
+            return $self->validation_error( $field => _("You need to fill in this field") );
         }
     }
 
