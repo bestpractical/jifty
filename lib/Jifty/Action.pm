@@ -9,12 +9,21 @@ Jifty::Action - The ability to Do Things in the framework
 
 =head1 SYNOPSIS
 
-  package MyApp::Action::Foo;
-  use base qw/MyApp::Action Jifty::Action/;
+    package MyApp::Action::Foo;
+    use Jifty::Param::Schema;
+    use Jifty::Action schema {
+
+    param bar =>
+        type is 'checkbox',
+        label is 'Want Bar?',
+        hints is 'Bar is this cool thing that you really want.',
+        default is 0;
+
+    };
   
-  sub take_action {
-    ...
-  }
+    sub take_action {
+        ...
+    }
   
   1;
 
@@ -27,7 +36,7 @@ control how form elements interact with the underlying model.
 See also L<Jifty::Action::Record> for data-oriented actions, 
 L<Jifty::Result> for how to return values from actions.
 
-See Jifty::Action::Schema;
+See L<Jifty::Param::Schema> for more details.
 
 =cut
 
