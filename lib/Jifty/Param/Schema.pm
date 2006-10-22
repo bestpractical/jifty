@@ -6,7 +6,7 @@ Jifty::Param::Schema - Declare parameters of a Jifty action with ease.
 
 =head1 SYNOPSIS
 
-    package Wifty::Action::Login;
+    package MyApp::Action::Login;
     use Jifty::Param::Schema;
     use Jifty::Action schema {
 
