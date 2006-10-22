@@ -250,7 +250,7 @@ use a collection like this:
     $collection->goto_first_item;
 
     $collection->goto_item(42);
-    
+
     # iterate through the result set
     while (my $record = $collection->next) {
           # do something with $record
@@ -263,6 +263,40 @@ use a collection like this:
 
     # get back an array-ref containing all items
     my $records = $collection->items_array_ref;
+
+=head3 some options provided by C<limit>
+
+In order to construct more complex restrictions the C<limit> method
+may get called more than once, specifying one single condition with
+each call.
+
+Every use of C<limit> constructs either a I<clause> or a I<subclause>
+depending on the existence of the C<subclause> attribute when calling
+C<limit>. Every clause is built up by combining its subclauses (if
+any) using the C<entry_aggregator> operator (whose default is I<OR>)
+as a combining operator. Clauses are then I<AND>ed together to yield
+the final restriction that is finally used to retrieve the records in
+question.
+
+The C<operator> (whose default is '=') can be any legal SQL operator
+like C<=>, C<E<lt>=>, C<E<gt>=>, C<E<lt>E<gt>>, C<LIKE>, C<IS>, C<IS
+NOT> as well as some convenience operators that silently use C<LIKE>
+with properly set wildcards (C<MATCHES>, C<STARTSWITH> or
+C<ENDSWITH>).
+
+    # combining restrictions with "AND"
+    # note that "AND" is implicit here
+    $collection->limit(column=>'col1', value=>'...');
+    $collection->limit(column=>'col2', value=>'...');
+
+    # combining restrictions with "OR"
+    # note that the 'subclause' has the same value
+    $collection->limit(column=>'col1', value=>'...',
+                       entry_aggregator=>'OR', # is already default
+                       subclause=>'some_id');
+    $collection->limit(column=>'col2', value=>'...',
+                       entry_aggregator=>'OR', # is already default
+                       subclause=>'some_id');
 
 see L<Jifty::DBI::Collection> about more ways or ordering and limiting
 collections.
