@@ -105,6 +105,7 @@ features(
 );
 
 
+no_index directory => 'share';
 no_index directory => 't';
 no_index package => 'DB';
 no_index package => 'inc';
