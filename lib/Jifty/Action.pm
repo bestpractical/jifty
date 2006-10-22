@@ -132,8 +132,12 @@ sub new {
             push @stack, $pkg, $filename, $line;
         }
 
-        $self->moniker('auto-'.md5_hex("@stack"));
-        $self->log->debug("Generating auto-moniker from stack for $self");
+        # Increment the per-request moniker digest counter, for the case of looped action generation
+        my $digest = md5_hex("@stack");
+        my $serial = ++(Jifty->handler->stash->{monikers}{$digest});
+        my $moniker = "auto-$digest-$serial";
+        $self->moniker($moniker);
+        $self->log->debug("Generating moniker $moniker from stack for $self");
     }
     $self->order($args{'order'});
 
