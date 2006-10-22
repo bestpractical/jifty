@@ -172,9 +172,8 @@ sub arguments {
                 my $same = sub {
                     my ( $self, $value ) = @_;
                     if ( $value ne $self->argument_value($field) ) {
-                        return $self->validation_error( $field
-                                . '_confirm' =>
-                                "The passwords you typed didn't match each other."
+                        return $self->validation_error(
+                            ($field.'_confirm') => _("The passwords you typed didn't match each other")
                         );
                     } else {
                         return $self->validation_ok( $field . '_confirm' );
@@ -242,8 +241,7 @@ sub arguments {
                         }
                         return (
                             $self->validation_error(
-                                $field => $message
-                                    || q{That doesn't look right, but I don't know why}
+                                $field => ($message || _("That doesn't look right, but I don't know why"))
                             )
                         );
                     }
