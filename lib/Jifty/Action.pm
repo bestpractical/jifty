@@ -125,8 +125,15 @@ sub new {
     if ($args{'moniker'}) {
         $self->moniker($args{'moniker'});
     } else {
-        $self->moniker('auto-'.Jifty->web->serial);
-        $self->log->debug("Generating moniker auto-".Jifty->web->serial);
+        use Digest::MD5 qw(md5_hex);
+        my $frame = 1;
+        my @stack = ref($self);
+        while (my ($pkg, $filename, $line) = caller($frame++)) {
+            push @stack, $pkg, $filename, $line;
+        }
+
+        $self->moniker('auto-'.md5_hex("@stack"));
+        $self->log->debug("Generating auto-moniker from stack for $self");
     }
     $self->order($args{'order'});
 
