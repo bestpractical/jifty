@@ -416,17 +416,6 @@ sub new_action {
     );
 
 
-    if ( $args{'moniker'} ) {
-        my $action_in_request = $self->request->action( $args{moniker} );
-
-    # Fields explicitly passed to new_action take precedence over those passed
-    # from the request; we read from the request to implement "sticky fields".
-    #
-        if ( $action_in_request and $action_in_request->arguments ) {
-            $args{'request_arguments'} = $action_in_request->arguments;
-        }
-    }
-
     # "Untaint" -- the implementation class is provided by the client!)
     # Allows anything that a normal package name allows
     my $class = delete $args{class};
@@ -438,6 +427,17 @@ sub new_action {
 
     # Prepend the base path (probably "App::Action") unless it's there already
     $class = Jifty->api->qualify($class);
+
+    $args{moniker} ||= $class->generate_auto_moniker;
+
+    my $action_in_request = $self->request->action( $args{moniker} );
+
+    # Fields explicitly passed to new_action take precedence over those passed
+    # from the request; we read from the request to implement "sticky fields".
+    #
+    if ( $action_in_request and $action_in_request->arguments ) {
+        $args{'request_arguments'} = $action_in_request->arguments;
+    }
 
     # The implementation class is provided by the client, so this
     # isn't a "shouldn't happen"

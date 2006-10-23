@@ -104,6 +104,24 @@ L<Jifty::Request>. Internal use only.
 
 =cut
 
+sub generate_auto_moniker {
+    my $self = shift;
+
+    use Digest::MD5 qw(md5_hex);
+    my $frame = 1;
+    my @stack = (ref($self) || $self);
+    while (my ($pkg, $filename, $line) = caller($frame++)) {
+        push @stack, $pkg, $filename, $line;
+    }
+
+    # Increment the per-request moniker digest counter, for the case of looped action generation
+    my $digest = md5_hex("@stack");
+    my $serial = ++(Jifty->handler->stash->{monikers}{$digest});
+    my $moniker = "auto-$digest-$serial";
+    $self->log->debug("Generating moniker $moniker from stack for $self");
+    return $moniker;
+}
+
 sub new {
     my $class = shift;
     my $self = bless {}, $class;
@@ -125,19 +143,7 @@ sub new {
     if ($args{'moniker'}) {
         $self->moniker($args{'moniker'});
     } else {
-        use Digest::MD5 qw(md5_hex);
-        my $frame = 1;
-        my @stack = ref($self);
-        while (my ($pkg, $filename, $line) = caller($frame++)) {
-            push @stack, $pkg, $filename, $line;
-        }
-
-        # Increment the per-request moniker digest counter, for the case of looped action generation
-        my $digest = md5_hex("@stack");
-        my $serial = ++(Jifty->handler->stash->{monikers}{$digest});
-        my $moniker = "auto-$digest-$serial";
-        $self->moniker($moniker);
-        $self->log->debug("Generating moniker $moniker from stack for $self");
+        $self->moniker($self->generate_auto_moniker);
     }
     $self->order($args{'order'});
 
@@ -399,7 +405,7 @@ sub _form_widget {
 
         my $sticky = 0;
         # Check stickiness iff the values came from the request
-        if($self->values_from_request->{$field} && Jifty->web->response->result($self->moniker)) {
+        if(Jifty->web->response->result($self->moniker)) {
             $sticky = 1 if $self->sticky_on_failure and $self->result->failure;
             $sticky = 1 if $self->sticky_on_success and $self->result->success;
         }
