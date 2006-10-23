@@ -9,7 +9,7 @@ use Jifty::JSON ();
 use Data::Dumper ();
 use XML::Simple;
 
-before qr{^ (/=/ .*) \. (js|json|yml|yaml|perl|xml|pl) $}x => run {
+before qr{^ (/=/ .*) \. (js|json|yml|yaml|perl|pl) $}x => run {
     $ENV{HTTP_ACCEPT} = $2;
     dispatch $1;
 };
@@ -102,6 +102,37 @@ sub render_as_xml {
 }
 
 
+#sub render_as_html {
+#    my $prefix = shift;
+#    my $url = shift;
+#    my $content = shift;
+#    warn "my content is $content";
+#    if (ref($content) eq 'ARRAY') {
+#        return start_html(-encoding => 'UTF-8', -declare_xml => 1, -title => 'models'),
+#              ul(map {
+#                  li($prefix ?
+#                     a({-href => "$url/".Jifty::Web->escape_uri($_)}, Jifty::Web->escape($_))
+#                     : Jifty::Web->escape($_) )
+#                 } @{$content} || ''),
+#              end_html();
+#    }
+#    elsif (ref($content) eq 'HASH') {
+#        return start_html(-encoding => 'UTF-8', -declare_xml => 1, -title => 'models'),
+#              dl(map {
+#                  dt($prefix ?
+#                     a({-href => "$url/".Jifty::Web->escape_uri($_)}, Jifty::Web->escape($_))
+#                     : Jifty::Web->escape($_)),
+#                  dd(html_dump($content->{$_})),
+#              } sort keys %{$content} ),
+#              end_html();
+#    }
+#    else {
+#        return start_html(-encoding => 'UTF-8', -declare_xml => 1, -title => 'models'),
+#              Jifty::Web->escape($content),
+#              end_html();
+#    }
+#}
+#
 sub render_as_html {
     my $prefix = shift;
     my $url = shift;
@@ -152,6 +183,9 @@ sub html_dump {
     }
 }
 
+
+
+
 sub action { resolve($_[0], 'Jifty::Action', Jifty->api->actions) }
 sub model  { resolve($_[0], 'Jifty::Record', Jifty->class_loader->models) }
 
@@ -173,9 +207,38 @@ sub list_models {
     list(['model'], map {s/::/./g; $_ } Jifty->class_loader->models);
 }
 
+our @column_attrs = 
+qw(    name
+    type
+    default
+    validator
+    readable writable
+    length
+    mandatory
+    virtual
+    distinct
+    sort_order
+    refers_to by
+    alias_for_column
+    aliased_as
+    since until
+
+    label hints render_as
+    valid_values
+);
+
 sub list_model_columns {
     my ($model) = model($1);
-    outs(['model', $model], { map { $_->name => { %$_ } } sort { $a->sort_order <=> $b->sort_order}  $model->new->columns });
+
+    my %cols;
+    map {
+            my $col = $_;
+            $cols{$col->name} = { map { $_ => $col->$_() } @column_attrs} ;
+    } $model->new->columns;
+
+    outs(
+        [ 'model', $model ], \%cols
+    );
 }
 
 sub list_model_items {
@@ -205,7 +268,7 @@ sub show_item {
     my $rec = $model->new;
     $rec->load_by_cols( $column => $key );
     $rec->id or abort(404);
-    outs( ['model', $model, $column, $key], { map {$_ => $rec->$_()} map {$_->name} $rec->columns});
+    outs( ['model', $model, $column, $key],  { map {$_ => $rec->$_()} map {$_->name} $rec->columns});
 }
 
 sub replace_item {

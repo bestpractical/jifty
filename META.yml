@@ -6,6 +6,7 @@ license: Perl
 name: Jifty
 no_index: 
   directory: 
+    - share
     - t
     - doc
     - inc
@@ -73,7 +74,7 @@ requires:
   Locale::Maketext::Lexicon: 0.60
   Log::Log4perl: 0
   MIME::Types: 0
-  Module:::CoreList: 0
+  Module::CoreList: 0
   Module::Pluggable: 2.95
   Module::ScanDeps: 0
   Object::Declare: 0.13
