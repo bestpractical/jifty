@@ -104,24 +104,6 @@ L<Jifty::Request>. Internal use only.
 
 =cut
 
-sub generate_auto_moniker {
-    my $self = shift;
-
-    use Digest::MD5 qw(md5_hex);
-    my $frame = 1;
-    my @stack = (ref($self) || $self);
-    while (my ($pkg, $filename, $line) = caller($frame++)) {
-        push @stack, $pkg, $filename, $line;
-    }
-
-    # Increment the per-request moniker digest counter, for the case of looped action generation
-    my $digest = md5_hex("@stack");
-    my $serial = ++(Jifty->handler->stash->{monikers}{$digest});
-    my $moniker = "auto-$digest-$serial";
-    $self->log->debug("Generating moniker $moniker from stack for $self");
-    return $moniker;
-}
-
 sub new {
     my $class = shift;
     my $self = bless {}, $class;
@@ -163,6 +145,37 @@ sub new {
 
     return $self;
 }
+
+=head2 generate_auto_moniker 
+
+Construct an moniker for a new (or soon-to-be-constructed) action that did not have
+an explicit moniker specified.  The algorithm is simple: We snapshot the call stack,
+prefix it with the action class, and then append it with an per-request autoincrement
+counter in case the same class/stack is encountered twice, which can happen if the
+programmer placed a C<new_action> call inside a loop.
+
+The monikers generated this way is guaranteed to work across requests.
+
+=cut
+
+sub generate_auto_moniker {
+    my $self = shift;
+
+    use Digest::MD5 qw(md5_hex);
+    my $frame = 1;
+    my @stack = (ref($self) || $self);
+    while (my ($pkg, $filename, $line) = caller($frame++)) {
+        push @stack, $pkg, $filename, $line;
+    }
+
+    # Increment the per-request moniker digest counter, for the case of looped action generation
+    my $digest = md5_hex("@stack");
+    my $serial = ++(Jifty->handler->stash->{monikers}{$digest});
+    my $moniker = "auto-$digest-$serial";
+    $self->log->debug("Generating moniker $moniker from stack for $self");
+    return $moniker;
+}
+
 
 =head2 arguments
 
