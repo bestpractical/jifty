@@ -120,8 +120,7 @@ sub schema (&) {
     }
 
     if (my $super_params = $from->can('SUPER::PARAMS')) {
-        use Hash::Merge qw( merge );
-        $from->PARAMS(merge( $super_params->(), { @params } ));
+        $from->PARAMS(merge_params( $super_params->(), { @params } ));
     }
     else {
         $from->PARAMS({ @params });
@@ -130,6 +129,32 @@ sub schema (&) {
     no strict 'refs';
     push @{$from . '::ISA'}, 'Jifty::Action';
     return;
+}
+
+use Hash::Merge ();
+
+no warnings 'uninitialized';
+use constant MERGE_PARAM_BEHAVIOUR => {
+    SCALAR => {
+            SCALAR => sub { length($_[1]) ? $_[1] : $_[0] },
+            ARRAY  => sub { [ @{$_[1]} ] },
+            HASH   => sub { $_[1] } },
+    ARRAY => {
+            SCALAR => sub { length($_[1]) ? $_[1] : $_[0] },
+            ARRAY  => sub { [ @{$_[1]} ] },
+            HASH   => sub { $_[1] } },
+    HASH => {
+            SCALAR => sub { length($_[1]) ? $_[1] : $_[0] },
+            ARRAY  => sub { [ @{$_[1]} ] },
+            HASH   => sub { Hash::Merge::_merge_hashes( $_[0], $_[1] ) } }
+};
+
+sub merge_params {
+    my $prev_behaviour = Hash::Merge::get_behavior();
+    Hash::Merge::specify_behavior( MERGE_PARAM_BEHAVIOUR, "merge_params" );
+    my $rv = Hash::Merge::merge(@_);
+    Hash::Merge::set_behavior( $prev_behaviour );
+    return $rv;
 }
 
 1;

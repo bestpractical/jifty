@@ -282,8 +282,6 @@ sub arguments {
         }
 
     if ($self->can('PARAMS')) {
-        use Hash::Merge qw( merge );
-
         # User-defined declarative schema fields can override default ones here
         my $params = $self->PARAMS;
 
@@ -298,7 +296,8 @@ sub arguments {
             }
         }
 
-        $self->_cached_arguments(merge($field_info, $params));
+        use Jifty::Param::Schema ();
+        $self->_cached_arguments(Jifty::Param::Schema::merge_params($field_info, $params));
     }
     else {
         $self->_cached_arguments($field_info);
