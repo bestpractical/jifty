@@ -32,11 +32,11 @@ following criteria:
 
 =item C<text> or C<varchar> fields
 
-Create C<field>_contains and C<field>_lacks arguments.
+Create C<field>_contains and C<field>_lacks arguments
 
 =item C<date>, or C<timestamp> fields
 
-Create C<field>_before and C<field>_after ar
+Create C<field>_before and C<field>_after arguments
 
 =item integer fields
 
