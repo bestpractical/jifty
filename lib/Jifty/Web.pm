@@ -428,7 +428,8 @@ sub new_action {
     # Prepend the base path (probably "App::Action") unless it's there already
     $class = Jifty->api->qualify($class);
 
-    $args{moniker} ||= $class->generate_auto_moniker;
+    my $loaded = Jifty::Util->require( $class );
+    $args{moniker} ||= ($loaded ? $class : 'Jifty::Action')->_generate_moniker;
 
     my $action_in_request = $self->request->action( $args{moniker} );
 
@@ -441,7 +442,7 @@ sub new_action {
 
     # The implementation class is provided by the client, so this
     # isn't a "shouldn't happen"
-    return unless Jifty::Util->require( $class );
+    return unless $loaded;
 
     my $action;
     # XXX TODO bullet proof

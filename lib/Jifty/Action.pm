@@ -125,7 +125,7 @@ sub new {
     if ($args{'moniker'}) {
         $self->moniker($args{'moniker'});
     } else {
-        $self->moniker($self->generate_auto_moniker);
+        $self->moniker($self->_generate_moniker);
     }
     $self->order($args{'order'});
 
@@ -146,7 +146,7 @@ sub new {
     return $self;
 }
 
-=head2 generate_auto_moniker 
+=head2 _generate_moniker 
 
 Construct an moniker for a new (or soon-to-be-constructed) action that did not have
 an explicit moniker specified.  The algorithm is simple: We snapshot the call stack,
@@ -158,7 +158,7 @@ The monikers generated this way is guaranteed to work across requests.
 
 =cut
 
-sub generate_auto_moniker {
+sub _generate_moniker {
     my $self = shift;
 
     use Digest::MD5 qw(md5_hex);
