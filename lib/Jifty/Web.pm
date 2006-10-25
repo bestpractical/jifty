@@ -837,7 +837,7 @@ sub _render_messages {
     my $plural = $type . "s";
     $self->out(qq{<div class="jifty results messages" id="$plural">});
     
-    foreach my $moniker ( keys %results ) {
+    foreach my $moniker ( sort keys %results ) {
         if ( $results{$moniker}->$type() ) {
             $self->out( qq{<div class="$type $moniker">}
                         . $results{$moniker}->$type()
