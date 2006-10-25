@@ -12,7 +12,8 @@ use lib 't/lib';
 use lib 't/lib';
 use Jifty::SubTest;
 
-use Jifty::Test qw(no_plan);
+use Jifty::Test tests => 53;
+
 
 my $user = TestApp::Model::User->new(current_user => TestApp::CurrentUser->superuser);
 
@@ -155,6 +156,24 @@ isa_ok($result, 'Jifty::Collection');
 is($result->count, 1);
 is($result->first->name, 'third_user');
 
+
+
+# exact negative searching
+$search->argument_values({ name_not => 'third_user'});
+$search->run;
+
+$result = $search->result->content('search');
+
+isa_ok($result, 'Jifty::Collection');
+is($result->count, 2);
+ok($result->first->name =~ /test/, "it's a test user" );
+
+
+
+
+
+
+
 # This is case insensitive substring
 $search->argument_values({name_contains => 'TEST'});
 $search->run;
@@ -211,4 +230,4 @@ $search->run;
 $result = $search->result->content('search');
 
 isa_ok($result, 'Jifty::Collection');
-is($result->count, 0);
+is($result->count, 0, "found nothing");

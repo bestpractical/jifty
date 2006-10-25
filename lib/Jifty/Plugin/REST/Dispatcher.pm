@@ -1,7 +1,9 @@
-use strict;
+package Jifty::Plugin::REST::Dispatcher;
 use warnings;
 
-package Jifty::Plugin::REST::Dispatcher;
+
+
+
 use CGI qw( start_html end_html ul li a dl dt dd );
 use Jifty::Dispatcher -base;
 use Jifty::YAML ();
