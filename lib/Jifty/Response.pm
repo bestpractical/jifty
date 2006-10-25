@@ -95,7 +95,7 @@ Returns the aggregate messages of all of the L<Jifty::Result>s.
 sub messages {
     my $self = shift;
     my %results = $self->results;
-    return map {$_, $results{$_}->message} grep {defined $results{$_}->message and length $results{$_}->message} keys %results;
+    return map {$_, $results{$_}->message} grep {defined $results{$_}->message and length $results{$_}->message} sort keys %results;
 }
 
 =head2 error [MESSAGE]
