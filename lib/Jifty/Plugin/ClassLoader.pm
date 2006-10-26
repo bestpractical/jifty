@@ -179,7 +179,7 @@ sub require {
     Jifty::Util->require($base);
     Jifty::Util->require($base."::CurrentUser");
 
-    Module::Pluggable->import(
+    Jifty::Module::Pluggable->import(
         search_path =>
           [ map { $base . "::" . $_ } 'Model', 'Action', 'Notification' ],
         require => 1,

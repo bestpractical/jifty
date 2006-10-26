@@ -10,7 +10,7 @@ use Jifty::DBI::SchemaGenerator;
 use Jifty::Config;
 use SQL::ReservedWords;
 
-Module::Pluggable->import(
+Jifty::Module::Pluggable->import(
     require     => 1,
     search_path => [ "SQL::ReservedWords"],
     sub_name => '_sql_dialects',
@@ -138,8 +138,7 @@ sub prepare_model_classes {
 # This creates a sub "models" which when called, finds packages under
 # $self->{'_application_class'}::Model, requires them, and returns a list of their
 # names.
-    require Module::Pluggable;
-    Module::Pluggable->import(
+    Jifty::Module::Pluggable->import(
         require     => 1,
         except      => qr/\.#/,
         search_path =>

@@ -13,7 +13,6 @@ make up a Jifty application's API
 use Jifty::Everything;
 use base qw/Class::Accessor::Fast Jifty::Object/;
 
-require Module::Pluggable;
 
 __PACKAGE__->mk_accessors(qw(action_limits));
 
@@ -31,7 +30,7 @@ sub new {
 
     $self->reset;
 
-    Module::Pluggable->import(
+    Jifty::Module::Pluggable->import(
         search_path => [
             Jifty->config->framework('ApplicationClass') . "::Action",
             "Jifty::Action",
