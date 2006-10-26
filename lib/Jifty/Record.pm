@@ -257,6 +257,21 @@ sub _value {
     $value;
 }
 
+=head2 as_hash 
+
+Returns a version of this object's readable columns rendered as a hash of key => value pairs
+
+=cut
+
+sub as_hash {
+    my $self = shift;
+    my %values;
+     map {$values{$_} = $self->$_()} $self->readable_attributes  ;
+     return %values;
+}
+
+
+
 =head2 as_superuser
 
 Returns a copy of this object with the current_user set to the

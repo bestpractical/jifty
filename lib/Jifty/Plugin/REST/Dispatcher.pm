@@ -4,7 +4,7 @@ use warnings;
 
 
 
-use CGI qw( start_html end_html ul li a dl dt dd );
+use CGI qw( start_html end_html ol ul li a dl dt dd );
 use Jifty::Dispatcher -base;
 use Jifty::YAML ();
 use Jifty::JSON ();
@@ -48,10 +48,11 @@ sub outs {
 
     if($prefix) {
         @prefix = map {s/::/./g; $_} @$prefix;
-        my $url    = Jifty->web->url(path => join '/', '=', map { 
-            Jifty::Web->escape_uri($_)
-          } @prefix);
+         $url    = Jifty->web->url(path => join '/', '=',@prefix);
+    warn "my preifx is ".join(',',@prefix) .$url;     
     }
+
+
 
     if ($accept =~ /ya?ml/i) {
         $apache->header_out('Content-Type' => 'text/x-yaml; charset=UTF-8');
@@ -104,41 +105,11 @@ sub render_as_xml {
 }
 
 
-#sub render_as_html {
-#    my $prefix = shift;
-#    my $url = shift;
-#    my $content = shift;
-#    warn "my content is $content";
-#    if (ref($content) eq 'ARRAY') {
-#        return start_html(-encoding => 'UTF-8', -declare_xml => 1, -title => 'models'),
-#              ul(map {
-#                  li($prefix ?
-#                     a({-href => "$url/".Jifty::Web->escape_uri($_)}, Jifty::Web->escape($_))
-#                     : Jifty::Web->escape($_) )
-#                 } @{$content} || ''),
-#              end_html();
-#    }
-#    elsif (ref($content) eq 'HASH') {
-#        return start_html(-encoding => 'UTF-8', -declare_xml => 1, -title => 'models'),
-#              dl(map {
-#                  dt($prefix ?
-#                     a({-href => "$url/".Jifty::Web->escape_uri($_)}, Jifty::Web->escape($_))
-#                     : Jifty::Web->escape($_)),
-#                  dd(html_dump($content->{$_})),
-#              } sort keys %{$content} ),
-#              end_html();
-#    }
-#    else {
-#        return start_html(-encoding => 'UTF-8', -declare_xml => 1, -title => 'models'),
-#              Jifty::Web->escape($content),
-#              end_html();
-#    }
-#}
-#
 sub render_as_html {
     my $prefix = shift;
     my $url = shift;
     my $content = shift;
+    warn "REndering $prefix $url $content";
     if (ref($content) eq 'ARRAY') {
         return start_html(-encoding => 'UTF-8', -declare_xml => 1, -title => 'models'),
               ul(map {
@@ -179,6 +150,11 @@ sub html_dump {
             dt(Jifty::Web->escape($_)),
             dd(html_dump($content->{$_})),
         } sort keys %{$content}),
+    } elsif (ref($content) && $content->isa('Jifty::Collection')) {
+        return  ol( map { li( html_dump_record($_))  } @{$content->items_array_ref});
+        
+    } elsif (ref($content) && $content->isa('Jifty::Record')) {
+          return   html_dump_record($content);
     }
     else {
         Jifty::Web->escape($content);
@@ -186,7 +162,12 @@ sub html_dump {
 }
 
 
+sub html_dump_record {
+    my $item = shift;
+     my %hash = $item->as_hash;
 
+     return  dl( map {dt($_), dd($hash{$_}) } keys %hash )
+}
 
 sub action { resolve($_[0], 'Jifty::Action', Jifty->api->actions) }
 sub model  { resolve($_[0], 'Jifty::Record', Jifty->class_loader->models) }
@@ -307,6 +288,24 @@ sub list_action_params {
     print end_html;
     last_rule;
 }
+
+=head2 run_action 
+
+Expects $1 to be the name of an action we want to run.
+
+Runs the action, I<with the HTTP arguments as its arguments>. That is, it's not looking for Jifty-encoded (J:F) arguments.
+If you have an action called "MyApp::Action::Ping" that takes a parameter, C<ip>, this action will look for an HTTP 
+argument called C<ip>, (not J:F-myaction-ip).
+
+Returns the action's result.
+
+TODO, doc the format of the result.
+
+On an invalid action name, throws a C<404>.
+On a disallowed action mame, throws a C<403>. 
+On an internal error, throws a C<500>.
+
+=cut
 
 sub run_action {
     my ($action_name) = action($1) or abort(404);
