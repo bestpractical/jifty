@@ -203,7 +203,7 @@ person, as well.
 
 sub send {
     my $self = shift;
-    my $currentuser_object_class = Jifty->config->framework('ApplicationClass')."::CurrentUser";
+    my $currentuser_object_class = Jifty->app_class("CurrentUser");
     for my $to ( grep {defined} ($self->to, $self->to_list) ) {
         if ($to->can('id')) {
         next if     $currentuser_object_class->can("nobody")

@@ -99,6 +99,7 @@ Send a string to the browser. The default implementation uses Mason->out;
 =cut
 
 sub out {
+    Carp::cluck unless defined $_[0]->mason;
     shift->mason->out(@_);
 }
 
@@ -219,15 +220,11 @@ sub current_user {
         return $self->_current_user;
 
     } elsif ( my $id = $self->session->get('user_id') ) {
-        my $object = (
-            Jifty->config->framework('ApplicationClass') . "::CurrentUser" )
-            ->new( id => $id );
+        my $object = Jifty->app_class("CurrentUser")->new( id => $id );
         $self->_current_user($object);
         return $object;
     } else {
-        my $object = (
-            Jifty->config->framework('ApplicationClass') . "::CurrentUser" )
-            ->new();
+        my $object = Jifty->app_class("CurrentUser")->new;
         $object->is_superuser(1) if Jifty->config->framework('AdminMode');
         $self->_current_user($object);
         return ($object);

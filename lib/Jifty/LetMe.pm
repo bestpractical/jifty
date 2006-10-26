@@ -80,7 +80,7 @@ for the user who has the email address I<ADDRESS>.
 sub _user_from_email {
     my $self = shift;
     my $email = shift;
-    my $currentuser_object_class = Jifty->config->framework('ApplicationClass')."::CurrentUser";
+    my $currentuser_object_class = Jifty->app_class("CurrentUser");
     return $currentuser_object_class->new( email => $email );
 }
 

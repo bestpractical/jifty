@@ -1,7 +1,7 @@
 <%init>
 my $object_type = $m->dhandler_arg;
 
-my $collection_class =  Jifty->config->framework('ApplicationClass')."::Model::".$object_type."Collection";
+my $collection_class =  Jifty->app_class("Model", $object_type."Collection");
 my $records = $collection_class->new();
 $records->unlimit;
 </%init>

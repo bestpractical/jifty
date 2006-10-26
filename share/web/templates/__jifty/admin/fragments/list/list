@@ -5,7 +5,7 @@ $new_slot => 1
 $item_path => "/__jifty/admin/fragments/list/view"
 </%args>
 <%init>
-my $collection_class =  Jifty->config->framework('ApplicationClass')."::Model::".$object_type."Collection";
+my $collection_class = Jifty->app_class("Model", $object_type."Collection");
 my $search = Jifty->web->response->result('search');
 my $collection;
 if(!$search) {

@@ -137,7 +137,7 @@ sub new {
 
     # Get a classloader set up
     my $class_loader = Jifty::ClassLoader->new(
-        base => Jifty->config->framework('ApplicationClass')
+        base => Jifty->app_class,
     );
 
     Jifty->class_loader($class_loader);
@@ -152,7 +152,7 @@ sub new {
 
     # Call the application's start method to let it do anything
     # application specific for startup
-    my $app = Jifty->config->framework('ApplicationClass');
+    my $app = Jifty->app_class;
     
     $app->start()
         if $app->can('start');
@@ -222,6 +222,18 @@ sub api {
     return $API;
 }
 
+=head2 app_class(@names)
+
+Return Class in application space.  For example C<app_class('Model', 'Foo')>
+returns YourApp::Model::Foo.
+
+=cut
+
+sub app_class {
+    shift;
+    join('::', Jifty->config->framework('ApplicationClass'), @_);
+}
+
 =head2 web
 
 An accessor for the L<Jifty::Web> object that the web interface uses. 
@@ -286,7 +298,7 @@ sub setup_database_connection {
         or not Jifty->config->framework('Database') )
     {
 
-        my $handle_class = (Jifty->config->framework('ApplicationClass') . "::Handle");
+        my $handle_class = Jifty->app_class("Handle");
         Jifty::Util->require( $handle_class );
         Jifty->handle( $handle_class->new );
         Jifty->handle->connect();

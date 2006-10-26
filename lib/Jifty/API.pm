@@ -32,7 +32,7 @@ sub new {
 
     Jifty::Module::Pluggable->import(
         search_path => [
-            Jifty->config->framework('ApplicationClass') . "::Action",
+            Jifty->app_class("Action"),
             "Jifty::Action",
             map {ref($_)."::Action"} Jifty->plugins,
         ],
@@ -56,7 +56,7 @@ sub qualify {
     my $self   = shift;
     my $action = shift;
 
-    my $base_path = Jifty->config->framework('ApplicationClass') . "::Action";
+    my $base_path = Jifty->app_class("Action");
 
     return $action
         if $action =~ /^Jifty::/
@@ -78,7 +78,7 @@ sub reset {
     my $self = shift;
 
     # Set up defaults
-    my $app_actions = Jifty->config->framework('ApplicationClass') . "::Action";
+    my $app_actions = Jifty->app_class("Action");
 
     $self->action_limits(
         [   { deny => 1, restriction => qr/.*/ },

@@ -3,7 +3,7 @@ $object_type
 $region
 </%args>
 <%init>
-my $record_class =  Jifty->config->framework('ApplicationClass')."::Model::".$object_type;
+my $record_class = Jifty->app_class("Model", $object_type);
  my $create = Jifty->web->new_action(class => 'Create'.$object_type);
 </%init>
 <div class="jifty_admin create item inline">

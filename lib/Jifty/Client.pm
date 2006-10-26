@@ -334,7 +334,7 @@ sub current_user {
     return undef unless $session;
 
     my $id = $session->get('user_id');
-    my $object = (Jifty->config->framework('ApplicationClass')."::CurrentUser")->new();
+    my $object = Jifty->app_class("CurrentUser")->new();
     my $user = $session->get('user_ref')->new( current_user => $object );
     $user->load_by_cols( id => $id );
     $object->user_object($user);
