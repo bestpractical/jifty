@@ -18,7 +18,6 @@ BEGIN { $SIG{__DIE__} = $x;}
 
 
 use Jifty::Everything;
-use Jifty::Server;
 use File::Path ();
 
 use constant PIDFILE => 'var/jifty-server.pid';
@@ -72,6 +71,9 @@ sub run {
 
     # Purge stale mason cache data
     my $data_dir = Jifty->config->framework('Web')->{'DataDir'};
+    my $server_class = Jifty->config->framework('Web')->{'ServerClass'} || 'Jifty::Server';
+    Jifty::Util->require($server_class);
+
     if (-d $data_dir) {
         File::Path::rmtree(["$data_dir/cache", "$data_dir/obj"]);
     }
@@ -86,10 +88,10 @@ sub run {
 
     $ENV{JIFTY_SERVER_SIGREADY} ||= $self->{sigready}
         if $self->{sigready};
-    Log::Log4perl->get_logger("Jifty::Server")->less_logging(3)
+    Log::Log4perl->get_logger($server_class)->less_logging(3)
         if $self->{quiet};
 
-    Jifty::Server->new(port => $self->{port})->run;
+    $server_class->new(port => $self->{port})->run;
 }
 
 1;

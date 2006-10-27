@@ -70,7 +70,7 @@ sub new {
     Jifty::Util->require( $self->dispatcher );
     $self->dispatcher->import_plugins;
     $self->dispatcher->dump_rules;
-
+    
     $self->mason( Jifty::View::Mason::Handler->new( $self->mason_config ) );
 
     $self->static_handler(Jifty::View::Static::Handler->new());

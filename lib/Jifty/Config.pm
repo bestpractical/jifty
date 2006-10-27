@@ -241,6 +241,9 @@ sub guess {
             ApplicationClass => $app_class,
             ApplicationName  => $app_name,
             LogLevel         => 'INFO',
+            PubSub           => {
+                        Backend => 'Memcached',
+                    },
             Database         => {
                 Database =>  $db_name,
                 Driver   => "SQLite",

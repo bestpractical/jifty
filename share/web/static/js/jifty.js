@@ -207,13 +207,13 @@ Action.prototype = {
 
     disable_input_fields: function() {
         var disable = function() {
-	    var elt = arguments[0];
-	    // Disabling hidden elements seems to  make IE sad for some reason
-	    if(elt.type != 'hidden') {
-		// Triggers https://bugzilla.mozilla.org/show_bug.cgi?id=236791
-		elt.blur();
-		elt.disabled = true;
-	    }
+            var elt = arguments[0];
+            // Disabling hidden elements seems to  make IE sad for some reason
+            if(elt.type != 'hidden') {
+                // Triggers https://bugzilla.mozilla.org/show_bug.cgi?id=236791
+                elt.blur();
+                elt.disabled = true;
+            }
         };
         this.fields().each(disable);
         this.buttons().each(disable);
@@ -456,7 +456,7 @@ Behaviour.register({
             Element.addClassName( e, "jifty_enter_handler_attached" );
         }
     },
-    "#messages, #errors": function(e) {
+    ".messages": function(e) {
         if (   !Element.hasClassName( e, "jifty_enter_handler_attached" ) ) {
             e.innerHTML= 
               '<a  href="#" id="dismiss_'+e.id+'" title="Dismiss" onmousedown="this.onfocus=this.blur;" onmouseup="this.onfocus=window.clientInformation?null:window.undefined" onclick="Effect.Fade(this.parentNode); return false;">Dismiss</a>' + e.innerHTML;
@@ -569,6 +569,127 @@ Region.prototype = {
 // Keep track of the state variables.
 var current_args = $H();
 
+// Prepare element for use in update()
+//  - 'fragment' is a hash, see fragments in update()
+
+function prepare_element_for_update(f) {
+        var name = f['region'];
+
+        // Find where we are going to go
+        var element = $('region-' + f['region']);
+        if (f['element']) {
+            var possible = cssQuery(f['element']);
+            if (possible.length == 0)
+                element = null;
+            else
+                element = possible[0];
+        }
+        f['element'] = element;
+
+        // If we can't find out where we're going, bail
+        if (element == null)
+            return;
+
+        // If we're removing the element, do it now
+        // XXX TODO: Effects on this?
+        if (f['mode'] == "Delete") {
+            fragments[name] = null;
+            Element.remove(element);
+            return;
+        }
+
+        f['is_new'] = (fragments[name] ? false : true);
+        // If it's new, we need to create it so we can dump it
+        if (f['is_new']) {
+            // Find what region we're inside
+            f['parent'] = null;
+            if (f['mode'] && ((f['mode'] == "Before") || (f['mode'] == "After")))
+                element = element.parentNode;
+            while ((element != null) && (element.getAttribute) && (f['parent'] == null)) {
+                if (/^region-/.test(element.getAttribute("id")))
+                    f['parent'] = element.getAttribute("id").replace(/^region-/,"");
+                element = element.parentNode;
+            }
+
+            if (f['parent']) {
+                f['region'] = name = f['parent'] + '-' + name;
+            }
+
+            // Make the region (for now)
+            new Region(name, f['args'], f['path'], f['parent']);
+        } else if ((f['path'] != null) && f['toggle'] && (f['path'] == fragments[name].path)) {
+            // If they set the 'toggle' flag, and clicking wouldn't change the path
+            Element.update(element, '');
+            fragments[name].path = null;
+            return;
+        } else if (f['path'] == null) {
+            // If they didn't know the path, fill it in now
+            f['path'] == fragments[name].path;
+        }
+
+    return f;    
+}
+// applying updates from a fragment
+//   - fragment: the fragment from the server
+//   - f: fragment spec
+var apply_fragment_updates = function(fragment, f) {
+    // We found the right fragment
+    var dom_fragment = fragments[f['region']];
+    var new_dom_args = $H();
+    var element = f['element'];
+    for (var fragment_bit = fragment.firstChild;
+	 fragment_bit != null;
+	 fragment_bit = fragment_bit.nextSibling) {
+	if (fragment_bit.nodeName == 'argument') {
+	    // First, update the fragment's arguments
+	    // with what the server actually used --
+	    // this is needed in case there was
+	    // argument mapping going on
+	    var textContent = '';
+	    if (fragment_bit.textContent) {
+		textContent = fragment_bit.textContent;
+	    } else if (fragment_bit.firstChild) {
+		textContent = fragment_bit.firstChild.nodeValue;
+	    }
+	    new_dom_args[fragment_bit.getAttribute("name")] = textContent;
+	} else if (fragment_bit.nodeName.toLowerCase() == 'content') {
+	    var textContent = '';
+	    if (fragment_bit.textContent) {
+		textContent = fragment_bit.textContent;
+	    } else if (fragment_bit.firstChild) {
+		textContent = fragment_bit.firstChild.nodeValue;
+	    }
+                    
+	    // Once we find it, do the insertion
+	    if (f['mode'] && (f['mode'] != 'Replace')) {
+		var insertion = eval('Insertion.'+f['mode']);
+		new insertion(element, textContent.stripScripts());
+	    } else {
+		Element.update(element, textContent.stripScripts());
+	    }
+	    // We need to give the browser some "settle" time before we eval scripts in the body
+	    setTimeout((function() { this.evalScripts() }).bind(textContent), 10);
+	    Behaviour.apply(element);
+	}
+    }
+    dom_fragment.setArgs(new_dom_args);
+
+    // Also, set us up the effect
+    if (f['effect']) {
+	try {
+	    var effect = eval('Effect.'+f['effect']);
+	    var effect_args  = f['effect_args'] || {};
+	    if (effect) {
+		if (f['is_new'])
+		    Element.hide($('region-'+f['region']));
+		(effect)($('region-'+f['region']), effect_args);
+	    }
+	} catch ( e ) {
+	    // Don't be sad if the effect doesn't exist
+	}
+    }
+}
+
 // Update a region.  Takes a hash of named parameters, including:
 //  - 'actions' is an array of monikers to submit
 //  - 'fragments' is an array of hashes, which may have:
@@ -619,62 +740,10 @@ function update() {
     // Build fragments structure
     for (var i = 0; i < named_args['fragments'].length; i++) {
         var f = named_args['fragments'][i];
-
-        var name = f['region'];
-
-        // Find where we are going to go
-        var element = $('region-' + f['region']);
-        if (f['element']) {
-            var possible = cssQuery(f['element']);
-            if (possible.length == 0)
-                element = null;
-            else
-                element = possible[0];
-        }
-        f['element'] = element;
-
-        // If we can't find out where we're going, bail
-        if (element == null)
-            continue;
-
-        // If we're removing the element, do it now
-        // XXX TODO: Effects on this?
-        if (f['mode'] == "Delete") {
-            fragments[name] = null;
-            Element.remove(element);
-            continue;
-        }
-
-        f['is_new'] = (fragments[name] ? false : true);
-        // If it's new, we need to create it so we can dump it
-        if (f['is_new']) {
-            // Find what region we're inside
-            f['parent'] = null;
-            if (f['mode'] && ((f['mode'] == "Before") || (f['mode'] == "After")))
-                element = element.parentNode;
-            while ((element != null) && (element.getAttribute) && (f['parent'] == null)) {
-                if (/^region-/.test(element.getAttribute("id")))
-                    f['parent'] = element.getAttribute("id").replace(/^region-/,"");
-                element = element.parentNode;
-            }
-
-            if (f['parent']) {
-                f['region'] = name = f['parent'] + '-' + name;
-            }
-
-            // Make the region (for now)
-            new Region(name, f['args'], f['path'], f['parent']);
-        } else if ((f['path'] != null) && f['toggle'] && (f['path'] == fragments[name].path)) {
-            // If they set the 'toggle' flag, and clicking wouldn't change the path
-            Element.update(element, '');
-            fragments[name].path = null;
-            continue;
-        } else if (f['path'] == null) {
-            // If they didn't know the path, fill it in now
-            f['path'] == fragments[name].path;
-        }
-
+        f = prepare_element_for_update(f);
+        if (!f) continue;
         // Update with all new values
+        var name = f['region'];
         var fragment_request = fragments[name].data_structure(f['path'], f['args']);
 
         if (f['is_new'])
@@ -689,81 +758,23 @@ function update() {
     var onSuccess = function(transport, object) {
         // Grab the XML response
         var response = transport.responseXML.documentElement;
+        // Loop through the result looking for it
+        for (var response_fragment = response.firstChild;
+             response_fragment != null && response_fragment.nodeName == 'fragment';
+             response_fragment = response_fragment.nextSibling) {
 
-        // For each fragment we requested
-        for (var i = 0; i < named_args['fragments'].length; i++) {
-            var f = named_args['fragments'][i];
-            var element = f['element'];
-
-            // Change insertion mode if need be
-            var insertion = null;
-            if (f['mode'] && (f['mode'] != 'Replace')) {
-                insertion = eval('Insertion.'+f['mode']);
+            var f; 
+            for (var i = 0; i < named_args['fragments'].length; i++) {
+                f = named_args['fragments'][i];
+                if (response_fragment.getAttribute("id") == f['region'])
+                    break;
             }
+            if (response_fragment.getAttribute("id") != f['region'])
+                continue;
 
-            // Loop through the result looking for it
-            for (var response_fragment = response.firstChild;
-                 response_fragment != null;
-                 response_fragment = response_fragment.nextSibling) {
-                if (response_fragment.nodeName == 'fragment') {
-                    if (response_fragment.getAttribute("id") == f['region']) {
-                        // We found the right fragment
-                        var dom_fragment = fragments[f['region']];
-                        var new_dom_args = $H();
-
-                        for (var fragment_bit = response_fragment.firstChild;
-                             fragment_bit != null;
-                             fragment_bit = fragment_bit.nextSibling) {
-                            if (fragment_bit.nodeName == 'argument') {
-                                // First, update the fragment's arguments
-                                // with what the server actually used --
-                                // this is needed in case there was
-                                // argument mapping going on
-                                var textContent = '';
-                                if (fragment_bit.textContent) {
-                                    textContent = fragment_bit.textContent;
-                                } else if (fragment_bit.firstChild) {
-                                    textContent = fragment_bit.firstChild.nodeValue;
-                                }
-                                new_dom_args[fragment_bit.getAttribute("name")] = textContent;
-                            } else if (fragment_bit.nodeName == 'content') {
-                                var textContent = '';
-                                if (fragment_bit.textContent) {
-                                    textContent = fragment_bit.textContent;
-                                } else if (fragment_bit.firstChild) {
-                                    textContent = fragment_bit.firstChild.nodeValue;
-                                }
-
-                                // Once we find it, do the insertion
-                                if (insertion) {
-                                    new insertion(element, textContent.stripScripts());
-                                } else {
-                                    Element.update(element, textContent.stripScripts());
-                                }
-                                // We need to give the browser some "settle" time before we eval scripts in the body
-                                setTimeout((function() { this.evalScripts() }).bind(textContent), 10);
-                                Behaviour.apply(element);
-                            }
-                        }
-                        dom_fragment.setArgs(new_dom_args);
-                    }
-                }
-            }
-
-            // Also, set us up the effect
-            if (f['effect']) {
-                try {
-                    var effect = eval('Effect.'+f['effect']);
-                    var effect_args  = f['effect_args'] || {};
-                    if (effect) {
-                        if (f['is_new'])
-                            Element.hide($('region-'+f['region']));
-                        (effect)($('region-'+f['region']), effect_args);
-                    }
-                } catch ( e ) {
-                    // Don't be sad if the effect doesn't exist
-                }
-            }
+	    try {
+            apply_fragment_updates(response_fragment, f);
+	    }catch (e) { alert(e) }
         }
         for (var result = response.firstChild;
              result != null;

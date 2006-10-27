@@ -1,0 +1,43 @@
+<%init>
+
+$r->content_type("text/html");
+$r->send_http_header;
+
+my $writer = XML::Writer->new;
+$writer->xmlDecl( "UTF-8", "yes" );
+
+my $begin = <<'END';
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+ "http://www.w3.org/TR/2002/REC-xhtml1-20020801/DTD/xhtml1-strict.dtd">
+<html><head><title></title></head>
+END
+chomp $begin;
+my $whitespace = " " x (1024 - length $begin);
+$begin =~ s/<body>$/$whitespace<body>/s;
+
+
+$m->print($begin);
+$m->flush_buffer;
+
+$writer->startTag( "body" );
+
+my $id = Jifty->web->session->id;
+
+while (1) {
+    Jifty::Subs::Render->render(
+        $id,
+        sub {
+            my ( $mode, $name, $content ) = @_;
+            $writer->startTag( "pushfrag", mode => $mode );
+            $writer->startTag( "fragment", id   => $name );
+            $writer->dataElement( "content", $content );
+            $writer->endTag();
+            $writer->endTag();
+            } );
+
+    flush STDOUT;
+    sleep 1;
+}
+$writer->endTag();
+
+</%init>

@@ -2,10 +2,11 @@ use warnings;
 use strict;
 
 package Jifty;
+use IPC::PubSub;
 use encoding 'utf8';
 # Work around the fact that Time::Local caches thing on first require
 BEGIN { local $ENV{'TZ'} = "GMT";  require Time::Local;}
-$Jifty::VERSION = '0.60912';
+$Jifty::VERSION = '0.61025';
 
 =head1 NAME
 
@@ -62,7 +63,7 @@ probably a better place to start.
 use base qw/Jifty::Object/;
 use Jifty::Everything;
 
-use vars qw/$HANDLE $CONFIG $LOGGER $HANDLER $API $CLASS_LOADER @PLUGINS/;
+use vars qw/$HANDLE $CONFIG $LOGGER $HANDLER $API $CLASS_LOADER $PUB_SUB @PLUGINS/;
 
 =head1 METHODS
 
@@ -245,6 +246,51 @@ sub web {
     return $HTML::Mason::Commands::JiftyWeb;
 }
 
+=head2 subs
+
+An accessor for the L<Jifty::Subs> object that the subscription uses. 
+
+=cut
+
+sub subs {
+    return Jifty::Subs->new;
+}
+
+=head2 bus
+
+Returns an IPC::PubSub object for the current application.
+
+=cut
+
+sub bus {
+
+    unless ($PUB_SUB) {
+        my @args;
+
+        my $backend = Jifty->config->framework('PubSub')->{'Backend'};
+        if ( $backend eq 'Memcached' ) {
+            require IO::Socket::INET;
+
+            # If there's a running memcached on the default port. this should become configurable
+            if ( IO::Socket::INET->new('127.0.0.1:11211') ) {
+                @args = ( Jifty->app_instance_id );
+            } else {
+                $backend = 'JiftyDBI';
+            }
+        } 
+        
+        if ($backend eq 'JiftyDBI' ) {
+                @args    = (
+                    db_config    => Jifty->handle->{db_config},
+                    table_prefix => '_jifty_pubsub_',
+                );
+            }
+        $PUB_SUB = IPC::PubSub->new( $backend => @args );
+
+    }
+    return $PUB_SUB;
+}
+
 =head2 plugins
 
 Returns a list of L<Jifty::Plugin> objects for this Jifty application.
@@ -306,9 +352,28 @@ sub setup_database_connection {
     }
 }
 
+
+=head2 app_instance_id
+
+Returns a globally unique id for this instance of this jifty 
+application. This value is generated the first time it's accessed
+
+=cut
+
+sub app_instance_id {
+    my $self = shift;
+    my $app_instance_id = Jifty::Model::Metadata->load("application_instance_uuid");
+    unless ($app_instance_id) {
+        $app_instance_id = Data::UUID->new->create_str();
+        Jifty::Model::Metadata->store(application_instance_uuid => $app_instance_id );
+    }
+    return $app_instance_id;
+}
+
+
 =head1 LICENSE
 
-Jifty is Copyright 2005 Best Practical Solutions, LLC.
+Jifty is Copyright 2005-2006 Best Practical Solutions, LLC.
 Jifty is distributed under the same terms as Perl itself.
 
 =head1 SEE ALSO

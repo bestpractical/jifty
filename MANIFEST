@@ -45,6 +45,7 @@ inc/Module/Install/Win32.pm
 inc/Module/Install/WriteAll.pm
 lib/Email/Send/Jifty/Test.pm
 lib/Jifty.pm
+lib/Jifty/Subs.pm
 lib/Jifty/Action.pm
 lib/Jifty/Action/Autocomplete.pm
 lib/Jifty/Action/Record.pm

@@ -31,6 +31,7 @@ __PACKAGE__->mk_classdata($_)
 
 __PACKAGE__->javascript_libs([qw(
     jsan/JSAN.js
+    jsan/Push.js
     setup_jsan.js
     jsan/Upgrade/Array/push.js
     jsan/DOM/Events.js
@@ -47,6 +48,7 @@ __PACKAGE__->javascript_libs([qw(
     formatDate.js
     jifty.js
     jifty_utils.js
+    jifty_subs.js
     jifty_smoothscroll.js
     calendar.js
     dom-drag.js

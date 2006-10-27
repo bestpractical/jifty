@@ -73,6 +73,9 @@ use Jifty::Web::Form::Link ();
 use Jifty::Web::Form::Field ();
 use Jifty::Web::Menu ();
 
+use Jifty::Subs ();
+use Jifty::Subs::Render ();
+
 use Jifty::Module::Pluggable;
 Jifty::Module::Pluggable->import(search_path => ['Jifty::Web::Form::Field'],
                           require     => 1,

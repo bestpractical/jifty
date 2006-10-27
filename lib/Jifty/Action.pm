@@ -170,7 +170,9 @@ sub _generate_moniker {
 
     # Increment the per-request moniker digest counter, for the case of looped action generation
     my $digest = md5_hex("@stack");
-    my $serial = ++(Jifty->handler->stash->{monikers}{$digest});
+    # We should always have a stash. but if we don't, fake something up
+    # (some hiveminder tests create actions outside of a Jifty::Web)
+    my $serial = Jifty->handler->stash ? ++(Jifty->handler->stash->{monikers}{$digest}) : rand();
     my $moniker = "auto-$digest-$serial";
     $self->log->debug("Generating moniker $moniker from stack for $self");
     return $moniker;

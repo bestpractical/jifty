@@ -260,15 +260,35 @@ sub as_string {
             . qq|<div id="region-| . $self->qualified_name . qq|">|;
     }
 
+    $self->render_as_subrequest(\$result, \%arguments);
+    $result .= qq|</div>| if ( $self->region_wrapper );
+
+    return $result;
+}
+
+=head2 render_as_subrequest
+
+=cut
+
+sub render_as_subrequest {
+    my ($self, $out_method, $arguments, $enable_actions) = @_;
+
+    my $orig_out = Jifty->handler->mason->interp->out_method || \&Jifty::View::Mason::Handler::out_method;
+
+    Jifty->handler->mason->interp->out_method($out_method);
+
     # Make a fake request and throw it at the dispatcher
     my $subrequest = Jifty->web->request->clone;
     $subrequest->argument( region => $self );
-    $subrequest->argument( $_ => $arguments{$_}) for keys %arguments;
+    # XXX: use ->arguments?
+    $subrequest->argument( $_ => $arguments->{$_}) for keys %$arguments;
     $subrequest->path( $self->path );
     $subrequest->top_request( Jifty->web->request->top_request );
 
     # Remove all of the actions
-    $_->active(0) for ($subrequest->actions);
+    unless ($enable_actions) {
+	$_->active(0) for ($subrequest->actions);
+    }
     # $subrequest->clear_actions;
     local Jifty->web->{request} = $subrequest;
 
@@ -276,16 +296,13 @@ sub as_string {
     # onto a variable and not send headers when it does so
     #XXX TODO: There's gotta be a better way to localize it
     my $region_content = '';
-    Jifty->handler->mason->interp->out_method( \$region_content );
 
     # Call into the dispatcher
     Jifty->handler->dispatcher->handle_request;
-    $result .= $region_content;
-    $result .= qq|</div>| if ( $self->region_wrapper );
 
-    Jifty->handler->mason->interp->out_method( \&Jifty::View::Mason::Handler::out_method );
+    Jifty->handler->mason->interp->out_method($orig_out);
 
-    return $result;
+    return;
 }
 
 =head2 render

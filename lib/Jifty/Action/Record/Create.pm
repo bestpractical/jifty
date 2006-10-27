@@ -56,6 +56,9 @@ sub take_action {
     my $self   = shift;
     my $record = $self->record;
 
+    my $event_info = $self->_setup_event_before_action();
+    
+    
     my %values;
     # Virtual arguments aren't really ever backed by data structures. they're added by jifty for things like confirmations
     for (grep { defined $self->argument_value($_) && !$self->arguments->{$_}->{virtual} } $self->argument_names) {
@@ -74,18 +77,19 @@ sub take_action {
         ($id,$msg) = $msg->as_array;
     }
 
-    unless ( $record->id ) {
+    if (! $record->id ) {
         $self->log->debug(_("Create of %1 failed: %2", ref($record), $msg));
         $self->result->error($msg || _("An error occurred.  Try again later"));
-        return;
     }
 
- 
-    # Return the id that we created
-    $self->result->content(id => $self->record->id);
-    $self->report_success if  not $self->result->failure;
+    else { 
+        # Return the id that we created
+        $self->result->content(id => $self->record->id);
+        $self->report_success if  not $self->result->failure;
+    }
+    $self->_setup_event_after_action($event_info) ;
 
-    return 1;
+    return ($self->record->id);
 }
 
 =head2 report_success

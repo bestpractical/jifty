@@ -52,12 +52,13 @@ delete the row from the database.
 sub take_action {
     my $self = shift;
 
-    my ( $val, $msg ) = $self->record->delete;
-    $self->result->error($msg)
-      if not $val and $msg;
+    my $event_info = $self->_setup_event_before_action();
 
-    $self->report_success
-      if not $self->result->failure;
+    my ( $val, $msg ) = $self->record->delete;
+    $self->result->error($msg) if not $val and $msg;
+
+    $self->report_success if not $self->result->failure;
+    $self->_setup_event_after_action($event_info);
 
     return 1;
 }

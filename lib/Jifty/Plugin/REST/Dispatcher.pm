@@ -49,7 +49,6 @@ sub outs {
     if($prefix) {
         @prefix = map {s/::/./g; $_} @$prefix;
          $url    = Jifty->web->url(path => join '/', '=',@prefix);
-    warn "my preifx is ".join(',',@prefix) .$url;     
     }
 
 
@@ -109,7 +108,6 @@ sub render_as_html {
     my $prefix = shift;
     my $url = shift;
     my $content = shift;
-    warn "REndering $prefix $url $content";
     if (ref($content) eq 'ARRAY') {
         return start_html(-encoding => 'UTF-8', -declare_xml => 1, -title => 'models'),
               ul(map {
