@@ -9,6 +9,9 @@ use Jifty::Action schema {
 
 sub take_action {
     my $self = shift;
-    Chat::Event::Message->new( { message => $self->argument_value('message') } )->publish;
+    my $msg  = $self->argument_value('message');
+    $msg = "<$1> $msg" if $ENV{HTTP_USER_AGENT} =~ /([^\W\d]+)[\W\d]*$/;
+    Chat::Event::Message->new( { message => $msg } )->publish;
 }
+
 1;

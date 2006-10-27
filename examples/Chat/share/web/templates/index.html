@@ -1,6 +1,6 @@
 <&| /_elements/wrapper, title => "Jifty chat server", subtitle => "" &>
-<% Jifty::Web::PageRegion->new( name => "message", path => '/__jifty/empty',)->render %>
-<% Jifty::Web::PageRegion->new( name => "sender", path => '/fragments/sender',)->render %>
+<% Jifty::Web::PageRegion->new( name => "message", path => '/__jifty/empty' )->render %>
+<% Jifty::Web::PageRegion->new( name => "sender", path => '/fragments/sender' )->render %>
 </&>
 <%init>
 Jifty->subs->add(
