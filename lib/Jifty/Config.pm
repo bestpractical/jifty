@@ -242,7 +242,8 @@ sub guess {
             ApplicationName  => $app_name,
             LogLevel         => 'INFO',
             PubSub           => {
-                        Backend => 'Memcached',
+                Enable => undef,
+                Backend => 'Memcached',
                     },
             Database         => {
                 Database =>  $db_name,

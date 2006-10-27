@@ -67,6 +67,7 @@ requires:
   HTTP::Server::Simple::Recorder: 0
   Hash::Merge: 0
   Hook::LexWrap: 0
+  IPC::PubSub: 0.11
   JSON::Syck: 0.14
   Jifty::DBI: 0.25
   LWP::UserAgent: 0
@@ -93,4 +94,4 @@ requires:
   perl: 5.8.3
   version: 0
 tests: t/*.t t/*/t/*.t
-version: 0.60912
+version: 0.61025

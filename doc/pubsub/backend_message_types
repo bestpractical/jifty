@@ -1,0 +1,15 @@
+Payload Types:
+
+ClientAction --> Republisher
+    #subscription
+    - Add Subscription (IP)
+    - Remove Subscription (IP)
+
+Republisher --> ClientRender
+    #pong-$IP
+    - Pong (IP, IS_ALIVE)
+
+Server --> Republisher
+    #pong
+    - Pong (IP, IS_ALIVE)
+
