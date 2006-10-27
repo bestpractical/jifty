@@ -4,7 +4,8 @@ use strict;
 
 use Jifty::Param::Schema;
 use Jifty::Action schema {
-    param message => label is 'Say something witty:', type is 'text';
+    param message =>
+        label is 'Say something witty:';
 };
 
 sub take_action {
