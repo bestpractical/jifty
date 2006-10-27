@@ -24,13 +24,14 @@ A simple model to store just one line of text might look like this:
     use strict;
     use warnings;
 
-    package MyApp::Model::TextLine::Schema;
+    package MyApp::Model::TextLine;
     use Jifty::DBI::Schema;
 
-    column 'textline';
+    use MyApp::Record schema {
+        column 'textline';
+    };
 
-    package MyApp::Model::TextLine;
-    use base qw/MyApp::Record/;
+    # Your model-specific methods go here.
 
     1;
 
@@ -71,7 +72,7 @@ A simple definition could look like this:
     column name =>
         type is 'text',
         label is 'Name',
-        render_as 'Text',
+        render as 'Text',
         since '0.0.1';
 
 The following BNF shows the full syntax supported (omitting
@@ -85,6 +86,7 @@ non-terminals that are self explaining for perl-developers):
     column_info ::= 'type' 'is' string
        | 'label' 'is' string
        | 'render_as' string
+       | 'render' 'as' string
        | 'hints' 'is' string
        | 'refers_to' class_name 'by' string_columnname
        | 'default' 'is' string
@@ -103,9 +105,10 @@ non-terminals that are self explaining for perl-developers):
        | 'filters' 'are' string_classname
        | 'since' string_version_number
        | 'valid_values' 'are' array_of_valid_values
+       | 'valid' 'are' array_of_valid_values
        | 'hints' 'are' string
 
-    * 'is', 'by', 'on' and 'are' are fill-words that may get omitted.
+    * 'is', 'by', 'on', 'as' and 'are' are fill-words that may get omitted.
 
 For a full description of all parameter's meaning, look at
 L<Jifty::DBI::Schema>.
@@ -221,6 +224,9 @@ some of the automagically created methods on the object:
 
     # write some value to a column named 'colname'
     $object->set_colname($value);
+
+    # get all columns in a single hash (not a reference!)
+    my %record = $object->as_hash;
 
 Especially, when writing to a record, you need not worry about how to
 write back the data to the database, the object will manage this step
