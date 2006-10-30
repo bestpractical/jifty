@@ -42,7 +42,11 @@ the constructor.
 
 sub record_class {
     my $self = shift;
-    $self->log->fatal("Jifty::Action::Record must be subclassed to be used");
+    my $class = ref $self;
+    my $hint = $class eq __PACKAGE__ ? "" :
+        " (did you forget to override record_class in $class?)";
+    $self->log->fatal("Jifty::Action::Record must be subclassed to be used" .
+        $hint);
 }
 
 =head2 new PARAMHASH
