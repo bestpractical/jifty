@@ -178,7 +178,11 @@ sub handle_request {
         @_
     );
 
-    Module::Refresh->refresh if ( Jifty->config->framework('DevelMode') );
+    if ( Jifty->config->framework('DevelMode') ) {
+        Module::Refresh->refresh;
+        Jifty::I18N->refresh;
+    }
+
     $self->cgi( $args{cgi} );
     $self->apache( HTML::Mason::FakeApache->new( cgi => $self->cgi ) );
 

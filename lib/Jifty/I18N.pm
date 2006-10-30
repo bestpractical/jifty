@@ -21,7 +21,6 @@ your convenience.
 
 =cut
 
-
 =head2 new
 
 Set up Jifty's internationalization for your application.  This pulls
@@ -84,6 +83,30 @@ sub new {
     }
     return $self;
 }
+
+=head2 refresh
+
+Used by L<Jifty::Handler> in DevelMode to reload F<.po> files whenever they
+are modified on disk.
+
+=cut
+
+my $last_modified = '';
+sub refresh {
+    my $modified = join(
+        ',',
+        sort map { $_ => -M $_ } map { glob("$_/*.po") } (
+            Jifty->config->framework('L10N')->{'PoDir'},
+            Jifty->config->framework('L10N')->{'DefaultPoDir'}
+        )
+    );
+    if ($modified ne $last_modified) {
+        Jifty::I18N->new;
+        $last_modified = $modified;
+    }
+}
+
+
 
 =head2 promote_encoding STRING [CONTENT-TYPE]
 

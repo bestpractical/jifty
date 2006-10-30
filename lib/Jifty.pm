@@ -115,7 +115,7 @@ sub new {
     # Load the configuration. stash it in ->config
     Jifty->config( Jifty::Config->new() );
 
-    Jifty::I18N->new(); # can't do this before we have the config set up
+    Jifty::I18N->refresh(); # can't do this before we have the config set up
 
     # Now that we've loaded the configuration, we can remove the temporary 
     # Jifty::DBI::Record baseclass for records and insert our "real" baseclass,
