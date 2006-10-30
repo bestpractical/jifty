@@ -82,7 +82,7 @@ ensure consistency.
 
 In Rails, if you have a field named 'created_on', it's automatically
 set to the creation time of the record. How can I emulate this
-vbehaviour in Jifty ?
+behaviour in Jifty ?
 
 The trick here is to use L<Scalar::Defer>. And declare your column
 like this:
@@ -196,7 +196,7 @@ pluralises or pluralises differently.
 
 Asking user to input something in a form is really common in a web
 app. For some certain form fields you want them to have a certain
-normalized/canoncicalized form in database, and you could do an ajax
+normalized/canonicalized form in database, and you could do an ajax
 canonicalization in Jifty very easily. Lets say your User model need a
 canonicalized C<username> field to make sure those names are in
 lowercase.  All you have to do is to define a method named
