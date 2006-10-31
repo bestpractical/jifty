@@ -25,6 +25,9 @@ sub render {
     my ( $class, $id, $callback ) = @_;
     my $got;
 
+    # # of fragments sent
+    my $sent = 0;
+
     # Get the IPC::PubSub::Subscriber object and do one fetch of all new
     # events it subscribes to, and put those into $got.
     my $subs
@@ -43,6 +46,8 @@ sub render {
             # XXX - We don't yet use $timestamp here.
             my ( $timestamp, $msg ) = @$rv;
 
+
+
             # Channel name is always App::Event::Class-MD5QUERIES
             my $event_class = $channel;
             $event_class =~ s/-.*//;
@@ -51,6 +56,8 @@ sub render {
                 Jifty->log->error("Receiving unknown event $event_class from the Bus");
                 $event_class = Jifty->config->framework('ApplicationClass')."::Event";
             }
+
+            Jifty->log->debug("Rendering $channel event $msg");
 
             my $render_info = $render->{$channel};
             my $region      = Jifty::Web::PageRegion->new(
@@ -70,11 +77,11 @@ sub render {
                     $event_object->render_arguments,
                 }
             );
-            $callback->(
-                $render_info->{mode}, $region->qualified_name, $region_content
-            );
+            $callback->( $render_info->{mode}, $region->qualified_name, $region_content);
+            $sent++;
         }
     }
+    return ($sent);
 }
 
 1;

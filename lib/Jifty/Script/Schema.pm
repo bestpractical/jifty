@@ -224,10 +224,10 @@ sub create_all_tables {
        #   This *will* try to generate SQL for abstract base classes you might
        #   stick in $AC::Model::.
         next unless $model->isa( 'Jifty::Record' );
-        do { $log->info("Skipping $model"); next }
-            if ( $model->can( 'since' )
-            and ($model =~ /^Jifty::Model::/ ? $jiftyv : $appv) < $model->since );
-
+        if ( $model->can( 'since' ) and ($model =~ /^Jifty::Model::/ ? $jiftyv : $appv) < $model->since ) {
+            $log->info("Skipping $model"); 
+            next;
+        }
         $log->info("Using $model");
         my $ret = $self->{'_schema_generator'}->add_model( $model->new );
         $ret or die "couldn't add model $model: " . $ret->error_message;
