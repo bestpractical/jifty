@@ -3,6 +3,8 @@ framework:
   AdminMode: 1
   ApplicationClass: Ping
   ApplicationName: Ping
+  PubSub:
+    Enable: 1
   Database: 
     CheckSchema: 1
     Database: ping
