@@ -38,13 +38,13 @@ if (typeof Jifty == "undefined") Jifty = { };
     	var window_id = args.window_id; // XXX: not yet
     	var uri = args.uri;
     	if (!uri)
-    	    uri = "/=/subs_infinite_iframe?";
+    	    uri = "/=/subs?";
     	//var push = new HTTP.Push({ "uri": uri, interval : 100, "onPush" : onPushHandler});
     	
     	this.start = function() {
     	    //push.start();
 
-	    new Ajax.PeriodicalUpdater({},'/=/subs_infinite_iframe?forever=0',
+	    new Ajax.PeriodicalUpdater({},'/=/subs?forever=0',
 	    {
 	        'decay': 1, 'frequency': 0,
 	        'asynchronous':true, 
