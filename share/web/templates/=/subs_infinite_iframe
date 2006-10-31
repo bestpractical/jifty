@@ -1,3 +1,6 @@
+<%args>
+$forever => 1
+</%args>
 <%init>
 
 $r->content_type("text/html; charset=utf-8");
@@ -14,18 +17,38 @@ my $begin = <<'END';
 <html><head><title></title></head>
 END
 chomp $begin;
-my $whitespace = " " x (1024 - length $begin);
-$begin =~ s/<body>$/$whitespace<body>/s;
-
-
-$m->print($begin);
-$m->flush_buffer;
-
-$writer->startTag( "body" );
 
 my $id = Jifty->web->session->id;
 
-while (1) {
+if ($forever) {
+    my $whitespace = " " x ( 1024 - length $begin );
+    $begin =~ s/<body>$/$whitespace<body>/s;
+}
+
+$m->print($begin);
+$m->flush_buffer;
+$writer->startTag("body");
+
+if ($forever) {
+
+    while (1) {
+        write_subs_once($writer);
+        flush STDOUT;
+        sleep 1;
+    }
+
+}
+
+else {
+    write_subs_once($writer);
+    $writer->endTag();
+    return;
+}
+
+
+
+sub write_subs_once {
+    my $writer = shift;
     Jifty::Subs::Render->render(
         $id,
         sub {
@@ -36,10 +59,5 @@ while (1) {
             $writer->endTag();
             $writer->endTag();
             } );
-
-    flush STDOUT;
-    sleep 1;
 }
-$writer->endTag();
-
 </%init>
