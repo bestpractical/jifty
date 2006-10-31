@@ -494,6 +494,7 @@ sub _widget_class {
                     ( $self->ajax_validates     ? ' ajaxvalidation' : '' ),
                     ( $self->ajax_canonicalizes ? ' ajaxcanonicalization' : '' ),
                     ( $self->autocompleter      ? ' ajaxautocompletes' : '' ),
+                    ( $self->focus              ? ' focus' : ''),
                     @_ );
 
     return qq! class="!. join(' ',@classes).  qq!"!
@@ -598,7 +599,9 @@ load, if necessary.
 
 sub focus_javascript {
     my $self = shift;
+    return undef;
     if($self->focus) {
+        return qq{document.getElementById("@{[$self->element_id]}").focus()};
         return qq{DOM.Events.addListener( window, "load", function(){document.getElementById("@{[$self->element_id]}").focus()})};
     }
 }

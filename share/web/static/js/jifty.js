@@ -427,6 +427,17 @@ Object.extend(Form.Element, {
 
 JSAN.use("DOM.Events");
 
+
+// Form elements should focus if the CSS says so.
+Behaviour.register( { ".focus": function(e) {
+    /* Check to see if the element is already focused */
+    if ( !Element.hasClassName(e, "focused") ) {
+        e.focus();
+        Element.addClassName(e, "focused");
+    }
+    } });
+
+
 // Form elements should AJAX validate if the CSS says so
 Behaviour.register({
     'input.ajaxvalidation, textarea.ajaxvalidation, input.ajaxcanonicalization, textarea.ajaxcanonicalization': function(elt) {
