@@ -54,12 +54,7 @@ sub load {
     my $self       = shift;
     my $session_id = shift;
 
-    unless ($session_id) {
-        my %cookies    = CGI::Cookie->fetch();
-        my $cookie_name = $self->cookie_name;
-        $session_id
-            = $cookies{$cookie_name} ? $cookies{$cookie_name}->value() : undef;
-    }
+   $session_id ||= $self->_get_session_id_from_client();
 
     my $session = Jifty::Model::Session->new;
     $session->load_by_cols(
@@ -71,6 +66,14 @@ sub load {
     $session->create( key_type => "session" ) unless $session->id;
     $self->_session($session);
     $self->{cache} = undef;
+}
+
+sub _get_session_id_from_client {
+        my $self = shift;
+        my %cookies    = CGI::Cookie->fetch();
+        my $cookie_name = $self->cookie_name;
+        my $session_id
+            = $cookies{$cookie_name} ? $cookies{$cookie_name}->value() : undef;
 }
 
 =head2 unload
