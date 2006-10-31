@@ -3,6 +3,8 @@ framework:
   AdminMode: 1
   ApplicationClass: Clock
   ApplicationName: Clock
+  PubSub:
+    Enable: TRUE
   Database:
     CheckSchema: 1
     Database: clock
