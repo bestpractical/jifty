@@ -227,6 +227,26 @@ sub make_server {
     return $server;
 } 
 
+
+=head2 web
+
+Like calling C<<Jifty->web>>.
+
+C<<Jifty::Test->web>> does the necessary Jifty->web initialization for
+it to be usable in a test.
+
+=cut
+
+sub web {
+    my $class = shift;
+
+    Jifty->web->request(Jifty::Request->new)   unless Jifty->web->request;
+    Jifty->web->response(Jifty::Response->new) unless Jifty->web->response;
+
+    return Jifty->web;
+}
+
+
 =head2 mailbox
 
 A mailbox used for testing mail sending.
