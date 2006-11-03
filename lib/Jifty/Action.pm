@@ -76,7 +76,7 @@ Lower numbers occur before higher numbers.  Defaults to 0.
 =item arguments
 
 A hash reference of default values for the
-L<arguments|Jifty::Manual::Glossary/arguments> of the action.  Defaults to
+L<arguments|Jifty::Manual::Glossary/argument> of the action.  Defaults to
 none.
 
 =item sticky_on_failure
