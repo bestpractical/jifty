@@ -6,6 +6,7 @@ use base 'Locale::Maketext';
 use Locale::Maketext::Lexicon ();
 use Email::MIME::ContentType;
 use Encode::Guess qw(iso-8859-1);
+use File::ShareDir ':ALL';
 
 =head1 NAME
 
@@ -35,13 +36,18 @@ sub new {
     my $self  = {};
     bless $self, $class;
 
+    my @import = (
+        'Gettext',Jifty->config->framework('L10N')->{'PoDir'}. '/*.po',
+        'Gettext',Jifty->config->framework('L10N')->{'DefaultPoDir'}. '/*.po'
+        );
+
+    foreach my $plugin (Jifty->plugins) {
+        push @import, 'Gettext';
+        push @import, module_dir(ref($plugin)).'/po/*.po';
+    };
+
     Locale::Maketext::Lexicon->import(
-        {   '*' => [
-                Gettext => Jifty->config->framework('L10N')->{'PoDir'}
-                    . '/*.po',
-                Gettext => Jifty->config->framework('L10N')->{'DefaultPoDir'}
-                    . '/*.po',
-            ],
+        {   '*' => \@import,
             _decode => 1,
             _auto   => 1,
             _style  => 'gettext',

@@ -3,11 +3,11 @@ $action
 $next
 </%args>
 <&|/_elements/wrapper, title => 'Signup' &>
-<h2>Signup</h2>
+<h2><% _("Signup") %></h2>
 <% Jifty->web->form->start(call => $next, name => "signupbox") %>
 % foreach my $key ($action->argument_names) {
 <% $action->form_field($key) %>
 % }
-<% Jifty->web->form->submit(label => 'Signup', submit => $action) %>
+<% Jifty->web->form->submit(label => _('Signup'), submit => $action) %>
 <% Jifty->web->form->end %>
 </&>

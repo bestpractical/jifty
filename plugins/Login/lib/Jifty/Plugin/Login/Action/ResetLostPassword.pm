@@ -30,7 +30,7 @@ sub arguments {
             password_confirm => {
                 type   => 'password',
                 sticky => 0,
-                label  => 'type your password again'
+                label  => _('type your password again')
             },
         }
     );
@@ -51,7 +51,7 @@ sub take_action {
 
     unless ($u) {
         $self->result->error(
-"You don't exist. I'm not sure how this happened. Really, really sorry. Please email us!"
+_("You don't exist. I'm not sure how this happened. Really, really sorry. Please email us!")
         );
     }
 
@@ -65,18 +65,18 @@ sub take_action {
         and $pass eq $pass_c )
     {
         $self->result->error(
-"It looks like you didn't enter the same password into both boxes. Give it another shot?"
+_("It looks like you didn't enter the same password into both boxes. Give it another shot?")
         );
         return;
     }
 
     unless ( $u->set_password($pass) ) {
-        $self->result->error("There was an error setting your password.");
+        $self->result->error(_("There was an error setting your password."));
         return;
     }
 
     # Log in!
-    $self->result->message("Your password has been reset.  Welcome back.");
+    $self->result->message(_("Your password has been reset.  Welcome back."));
     Jifty->web->current_user( $CurrentUser->new( id => $u->id ) );
     return 1;
 

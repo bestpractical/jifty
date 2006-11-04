@@ -1,0 +1,144 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# AGOSTINI Yves <agostini@univ-metz.fr>, 2006.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2006-10-24 15:00+ZONE\n"
+"PO-Revision-Date: 2006-10-25 10:36+ZONE\n"
+"Last-Translator: AGOSTINI Yves <agostini@univ-metz.fr>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=ISO8859-1\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: lib/Jifty/Plugin/Login/Action/Signup.pm:110
+msgid ". We've sent a confirmation message to your email box."
+msgstr ". Un message de confirmation vous a été envoyé par mail."
+
+#: lib/Jifty/Plugin/Login/Action/ConfirmEmail.pm:52
+msgid ". Your email address has now been confirmed."
+msgstr ". Votre adresse mail a été vérifiée."
+
+#: lib/Jifty/Plugin/Login/Action/SendPasswordReminder.pm:94
+msgid "A link to reset your password has been sent to your email account."
+msgstr "Un lien web pour ré-initialiser votre mot de passe vous a été envoyé par mail."
+
+#: lib/Jifty/Plugin/Login/Action/SendAccountConfirmation.pm:94
+msgid "Confirmation resent."
+msgstr "Demande de confirmation transmise."
+
+#: share/web/templates/login:15
+msgid "Don't have an account?"
+msgstr "Vous n'avez pas de compte?"
+
+#: lib/Jifty/Plugin/Login/Action/Login.pm:23
+msgid "Email address"
+msgstr "Adresse mail"
+
+#: lib/Jifty/Plugin/Login/Action/Login.pm:37
+msgid "If you want, your browser can remember your login for you"
+msgstr "Si vous le désirez, votre navigateur peut mémoriser votre identification"
+
+#: lib/Jifty/Plugin/Login/Action/SendAccountConfirmation.pm:74 lib/Jifty/Plugin/Login/Action/SendPasswordReminder.pm:77
+msgid "It doesn't look like there's an account by that name."
+msgstr "Ce compte ne semble pas exister."
+
+#: lib/Jifty/Plugin/Login/Action/Signup.pm:69
+msgid "It looks like you already have an account. Perhaps you want to <a href=\"/login\">sign in</a> instead?"
+msgstr "Vous semblez déjà avoir un compte. Vous désirez peut-être plutôt vous <a href=\"/login\">identifier</a> ?"
+
+#: lib/Jifty/Plugin/Login/Action/ResetLostPassword.pm:68
+msgid "It looks like you didn't enter the same password into both boxes. Give it another shot?"
+msgstr "Les mots de passe semblent différents. Ré-essayer ?"
+
+#: lib/Jifty/Plugin/Login/Action/SendAccountConfirmation.pm:78
+msgid "It looks like you're already confirmed."
+msgstr "Votre identifiant a déjà été vérifié."
+
+#: share/web/templates/login:13 share/web/templates/login:8
+msgid "Login"
+msgstr "Identification"
+
+#: lib/Jifty/Plugin/Login/Action/Signup.pm:45
+msgid "Name"
+msgstr "Nom"
+
+#: lib/Jifty/Plugin/Login/Action/Login.pm:66
+msgid "No account has that email address."
+msgstr "Aucun compte n'a cette adresse mail."
+
+#: share/web/templates/logout:2
+msgid "Ok, you're now logged out. Have a good day."
+msgstr "Vous êtes déconnecté. Au revoir."
+
+#: lib/Jifty/Plugin/Login/Action/Login.pm:30
+msgid "Password"
+msgstr "Mot de passe"
+
+#: lib/Jifty/Plugin/Login/Action/Login.pm:35
+msgid "Remember me?"
+msgstr "S'en rappeller ?"
+
+#: share/web/templates/signup:11 share/web/templates/signup:6
+msgid "Signup"
+msgstr "S'enregistrer"
+
+#: lib/Jifty/Plugin/Login/Action/Signup.pm:102
+msgid "Something bad happened and we couldn't create your account.  Try again later. We're really, really sorry."
+msgstr "Votre compte ne peut actuellement être créé. Merci de réessayer ultérieurement."
+
+#: lib/Jifty/Plugin/Login/Action/Login.pm:60 lib/Jifty/Plugin/Login/Action/SendAccountConfirmation.pm:67 lib/Jifty/Plugin/Login/Action/SendPasswordReminder.pm:70 lib/Jifty/Plugin/Login/Action/Signup.pm:62
+msgid "That doesn't look like an email address."
+msgstr "Cela ne ressemble pas à une adresse mail."
+
+#: lib/Jifty/Plugin/Login/Action/ResetLostPassword.pm:74
+msgid "There was an error setting your password."
+msgstr "Erreur lors de la création de votre mot de passe."
+
+#: lib/Jifty/Plugin/Login/Action/Signup.pm:44
+msgid "Type that again?"
+msgstr "Confirmer"
+
+#: lib/Jifty/Plugin/Login/Action/Login.pm:101
+msgid "Welcome back, "
+msgstr "Bienvenue, "
+
+#: lib/Jifty/Plugin/Login/Action/Signup.pm:107 lib/Jifty/Plugin/Login/Notification/ConfirmAddress.pm:39
+msgid "Welcome to "
+msgstr "Bienvenue sur "
+
+#: lib/Jifty/Plugin/Login/Action/ResetLostPassword.pm:54
+msgid "You don't exist. I'm not sure how this happened. Really, really sorry. Please email us!"
+msgstr "Vous n'existez pas !!!"
+
+#: lib/Jifty/Plugin/Login/Action/ConfirmEmail.pm:42
+msgid "You have already confirmed your account."
+msgstr "Vous avez déjà confirmé votre compte."
+
+#: lib/Jifty/Plugin/Login/Action/Login.pm:96
+msgid "You haven't confirmed your account yet."
+msgstr "Vous n'avez pas encore confirmé votre compte."
+
+#: lib/Jifty/Plugin/Login/Action/Login.pm:90
+msgid "You may have mistyped your email address or password. Give it another shot?"
+msgstr "Erreur dans votre mail ou votre mot de passe. Ré-essayer?"
+
+#: share/web/templates/login:18
+msgid "You're already logged in."
+msgstr "Vous êtes déjà connecté."
+
+#: lib/Jifty/Plugin/Login/Action/ResetLostPassword.pm:79
+msgid "Your password has been reset.  Welcome back."
+msgstr "Votre mot de passe a été ré-initialisé. Bon retour."
+
+#: lib/Jifty/Plugin/Login/Action/SendAccountConfirmation.pm:31 lib/Jifty/Plugin/Login/Action/SendPasswordReminder.pm:33
+msgid "email address"
+msgstr "adresse mail"
+
+#: lib/Jifty/Plugin/Login/Action/ResetLostPassword.pm:33
+msgid "type your password again"
+msgstr "confirmez votre mot de passe"

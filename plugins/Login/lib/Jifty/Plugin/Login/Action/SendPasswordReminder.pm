@@ -10,6 +10,7 @@ Jifty::Plugin::Login::Action::SendPasswordReminder
 package Jifty::Plugin::Login::Action::SendPasswordReminder;
 use base qw/Jifty::Action Jifty::Plugin::Login/;
 
+
 __PACKAGE__->mk_accessors(qw(user_object));
 
 use Jifty::Plugin::Login::Model::User;
@@ -30,7 +31,7 @@ sub arguments {
     return (
         {
             address => {
-                label     => 'email address',
+                label     => _('email address'),
                 mandatory => 1,
             },
         }
@@ -67,14 +68,14 @@ sub validate_address {
     my $CurrentUser = $self->CurrentUserClass();
 
     return $self->validation_error(
-        address => "That doesn't look like an email address." )
+        address => _("That doesn't look like an email address.") )
       unless ( $email =~ /\S\@\S/ );
 
     $self->user_object(
         $LoginUser->new( current_user => $CurrentUser->superuser ) );
     $self->user_object->load_by_cols( email => $email );
     return $self->validation_error(
-        address => "It doesn't look like there's an account by that name." )
+        address => _("It doesn't look like there's an account by that name.") )
       unless ( $self->user_object->id );
 
     return $self->validation_ok('address');
@@ -91,7 +92,7 @@ sub take_action {
     Jifty::Plugin::Login::Notification::ConfirmLostPassword->new(
         to => $self->user_object )->send;
     return $self->result->message(
-        "A link to reset your password has been sent to your email account.");
+        _("A link to reset your password has been sent to your email account."));
 }
 
 1;

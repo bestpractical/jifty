@@ -36,7 +36,7 @@ sub setup {
     my $confirm_url = $letme->as_url;
     my $appname = Jifty->config->framework('ApplicationName');
 
-    $self->subject( "Welcome to $appname!" );
+    $self->subject( _("Welcome to ")."$appname!" );
     $self->from( Jifty->config->framework('AdminEmail') );
 
     $self->body(<<"END_BODY");

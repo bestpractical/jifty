@@ -41,7 +41,8 @@ sub arguments {
 
     for ( keys %$args ) { delete $args->{$_} unless ( $fields{$_} ); }
     $args->{'email'}{'ajax_validates'}   = 1;
-    $args->{'password_confirm'}{'label'} = "Type that again?";
+    $args->{'password_confirm'}{'label'} = _("Type that again?");
+    $args->{'name'}{'label'} = _("Name");
     return $args;
 }
 
@@ -58,14 +59,14 @@ sub validate_email {
     my $CurrentUser = $self->CurrentUserClass();
 
     return $self->validation_error(
-        email => "That doesn't look like an email address." )
+        email => _("That doesn't look like an email address.") )
       unless ( $email =~ /\S\@\S/ );
 
     my $u = $LoginUser->new( current_user => $CurrentUser->superuser );
     $u->load_by_cols( email => $email );
     if ( $u->id ) {
         return $self->validation_error( email =>
-'It looks like you already have an account. Perhaps you want to <a href="/login">sign in</a> instead?'
+_('It looks like you already have an account. Perhaps you want to <a href="/login">sign in</a> instead?')
         );
     }
 
@@ -98,15 +99,15 @@ sub take_action {
     # Handle errors?
     unless ( $record->id ) {
         $self->result->error(
-"Something bad happened and we couldn't create your account.  Try again later. We're really, really sorry."
+_("Something bad happened and we couldn't create your account.  Try again later. We're really, really sorry.")
         );
         return;
     }
 
-    $self->result->message( "Welcome to "
+    $self->result->message( _("Welcome to ")
           . Jifty->config->framework('ApplicationName') . ", "
           . $record->name
-          . ". We've sent a confirmation message to your email box." );
+          . _(". We've sent a confirmation message to your email box.") );
 
     return 1;
 }
