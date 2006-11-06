@@ -3,9 +3,6 @@
 # packages. It was created by Marc Brockschmidt <marc@dch-faq.de> for
 # the Debian Perl Group (http://pkg-perl.alioth.debian.org/) but may
 # be used freely wherever it is useful.
-#
-# It was later modified by Jason Kohles <email@jasonkohles.com>
-# http://www.jasonkohles.com/ to support Module::Build installed modules
 
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
@@ -20,17 +17,16 @@ ifndef PERL
 PERL = /usr/bin/perl
 endif
 
-#TMP     =$(CURDIR)/debian/$(PACKAGE)
-TMP     =$(CURDIR)/debian/libjifty-dbi-perl
+TMP     =$(CURDIR)/debian/$(PACKAGE)
 
 build: build-stamp
 build-stamp:
 	dh_testdir
 
 	# Add commands to compile the package here
-	$(PERL) Makefile.PL installdirs=vendor
-	$(MAKE)
-	$(MAKE) test
+	$(PERL) Makefile.PL INSTALLDIRS=vendor
+	$(MAKE) OPTIMIZE="-Wall -O2 -g"
+
 	touch build-stamp
 
 clean:
@@ -38,7 +34,8 @@ clean:
 	dh_testroot
 
 	# Add commands to clean up after the build process here
-	-$(MAKE) clean
+	-$(MAKE) distclean
+
 	dh_clean build-stamp install-stamp
 
 install: build install-stamp
@@ -48,8 +45,14 @@ install-stamp:
 	dh_clean -k
 
 	# Add commands to install the package into debian/$PACKAGE_NAME here
-	$(MAKE) install DESTDIR=$(CURDIR)/debian/libjifty-perl
-	find debian/libjifty-perl --name "*.svn*" | xargs rm -rf
+	$(MAKE) test
+	$(MAKE) install DESTDIR=$(TMP) PREFIX=/usr
+
+	# As this is a architecture independent package, we are not
+	# supposed to install stuff to /usr/lib. MakeMaker creates
+	# the dirs, we delete them from the deb:
+	rmdir --ignore-fail-on-non-empty --parents $(TMP)/usr/lib/perl5
+
 	touch install-stamp
 
 binary-arch:
@@ -61,8 +64,8 @@ binary-indep: build install
 #	dh_installcron
 #	dh_installmenu
 #	dh_installexamples
-	dh_installdocs README
-	dh_installchangelogs Changelog
+	dh_installdocs 
+	dh_installchangelogs 
 	dh_perl
 	dh_link
 	dh_strip

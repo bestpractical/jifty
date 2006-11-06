@@ -14,4 +14,13 @@ This is as yet hardly tested so don't be surprised if things break.
 Please let me know if they do and I'll try and fix them.
 
 Bart Bunting
- 
+
+And others packages from cpan 0.60912 here :
+ deb http://ftp.univ-metz.fr/debian sarge jifty
+
+with some plugins packages, update for sarge and ubuntu 6.06 LTS
+
+Yves Agostini
+
+We work on harmonizing and cleaning this ...
+

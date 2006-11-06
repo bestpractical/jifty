@@ -1,3 +1,17 @@
+jifty (0.60912-2) unstable; urgency=low
+
+  * Add missing dependencies, 
+  * Add fr.po 
+
+ -- AGOSTINI Yves <agostini@univ-metz.fr>  Wed, 25 Oct 2006 09:46:26 +0200
+
+jifty (0.60912-1) unstable; urgency=low
+
+  * Change version and clean dependencies on module-refresh-perl and
+    locale-maketext-lexicon for sarge
+
+ -- AGOSTINI Yves <agostini@univ-metz.fr>  Mon, 23 Oct 2006 10:55:17 +0200
+
 jifty (0.60728-3) unstable; urgency=low
 
   * Missed some date dependencies
