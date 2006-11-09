@@ -39,17 +39,16 @@ sub setup {
     $self->subject( _("Welcome to ")."$appname!" );
     $self->from( Jifty->config->framework('AdminEmail') );
 
-    $self->body(<<"END_BODY");
-
+    $self->body(_("
 You're getting this message because you (or somebody claiming to be you)
-signed up for $appname.
+signed up for %1.
 
-Before you can use $appname, we need to make sure that we got your email
+Before you can use %1, we need to make sure that we got your email
 address right.  Click on the link below to get started:
 
-$confirm_url
+%2
+",$appname,$confirm_url));
 
-END_BODY
 }
 
 1;

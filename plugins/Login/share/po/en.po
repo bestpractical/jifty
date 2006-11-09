@@ -15,6 +15,19 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#: lib/Jifty/Plugin/Login/Notification/ConfirmAddress.pm:42
+#. ($appname,$confirm_url)
+msgid ""
+"\n"
+"You're getting this message because you (or somebody claiming to be you)\n"
+"signed up for %1.\n"
+"\n"
+"Before you can use %1, we need to make sure that we got your email\n"
+"address right.  Click on the link below to get started:\n"
+"\n"
+"%2\n"
+msgstr ""
+
 #: lib/Jifty/Plugin/Login/Action/Signup.pm:110
 msgid ". We've sent a confirmation message to your email box."
 msgstr ""
