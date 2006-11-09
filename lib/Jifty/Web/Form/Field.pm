@@ -1,3 +1,25 @@
+=begin properties
+
+constructor
+canonicalizer
+available_values
+ajax_validates
+autocompleter
+
+default_value
+valid_values
+validator
+render_as
+label
+hints
+placeholder
+length
+mandatory
+
+=end properties
+
+=cut
+
 use warnings;
 use strict;
  
@@ -83,40 +105,26 @@ C<new>.  Subclasses should extend this list.
 =cut
 
 use constant ACCESSORS => qw(
-  ajax_canonicalizes
-  ajax_validates
-
-  constructor
-  canonicalizer
-  validator
-  autocompleter
-
-  available_values
-  default_value
-  valid_values
-
-  render_as
-  render_mode
-
   name
-  input_name
   label
-
+  input_name
   type
-
   sticky
   sticky_value
-
+  default_value
+  action
+  mandatory
+  ajax_validates
+  ajax_canonicalizes
+  autocompleter
+  preamble
   hints
   placeholder
-  length
-  mandatory
-  action
-  preamble
   focus
+  render_mode
+  length
   element_id
 );
-
 
 sub accessors { shift->SUPER::accessors(), ACCESSORS }
 __PACKAGE__->mk_accessors(ACCESSORS);
