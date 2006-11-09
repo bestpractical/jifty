@@ -750,6 +750,7 @@ sub _do_show {
     $path ||= $self->{path};
     $self->log->debug("Showing path $path");
 
+
     # If we've got a working directory (from an "under" rule) and we have
     # a relative path, prepend the working directory
     $path = "$self->{cwd}/$path" unless $path =~ m{^/};
@@ -759,10 +760,8 @@ sub _do_show {
         $path .= "/index.html";
     }
 
-    my $abs_template_path = Jifty::Util->absolute_path(
-        Jifty->config->framework('Web')->{'TemplateRoot'} . $path );
-    my $abs_root_path = Jifty::Util->absolute_path(
-        Jifty->config->framework('Web')->{'TemplateRoot'} );
+    my $abs_template_path = Jifty::Util->absolute_path( Jifty->config->framework('Web')->{'TemplateRoot'} . $path );
+    my $abs_root_path = Jifty::Util->absolute_path( Jifty->config->framework('Web')->{'TemplateRoot'} );
 
     if ( $abs_template_path !~ /^\Q$abs_root_path\E/ ) {
         request->path('/__jifty/errors/500');
@@ -1123,7 +1122,17 @@ sub render_template {
     my $template = shift;
 
     $self->log->debug( "Handling template " . $template );
-    eval { Jifty->handler->mason->handle_comp( $template ); };
+    eval { 
+        my( $class,$codetemplate) = Jifty->handler->declare_handler->resolve_template($template);
+        if ($class and $codetemplate) {
+            warn "Got $class, $template";
+            Jifty->handler->declare_handler->show($class => $codetemplate);
+        } else {
+            Jifty->handler->mason->handle_comp( $template ); 
+        }
+    
+    
+    };
     my $err = $@;
 
     # Handle parse errors

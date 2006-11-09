@@ -239,6 +239,7 @@ sub guess {
             AdminMode        => 1,
             DevelMode        => 1,
             ApplicationClass => $app_class,
+            TemplateClass    => $app_class."::View",
             ApplicationName  => $app_name,
             LogLevel         => 'INFO',
             PubSub           => {

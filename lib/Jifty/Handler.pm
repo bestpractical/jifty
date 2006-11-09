@@ -26,6 +26,7 @@ handlers.
 
 use base qw/Class::Accessor::Fast/;
 use Module::Refresh ();
+use Jifty::View::Declare::Handler ();
 
 BEGIN {
     # Creating a new CGI object breaks FastCGI in all sorts of painful
@@ -47,7 +48,7 @@ BEGIN {
 
 
 
-__PACKAGE__->mk_accessors(qw(mason dispatcher static_handler cgi apache stash));
+__PACKAGE__->mk_accessors(qw(mason dispatcher declare_handler static_handler cgi apache stash));
 
 =head2 new
 
@@ -70,7 +71,12 @@ sub new {
     Jifty::Util->require( $self->dispatcher );
     $self->dispatcher->import_plugins;
     $self->dispatcher->dump_rules;
-    
+   
+    $self->declare_handler(
+        Jifty::View::Declare::Handler->new(
+            { root_class => Jifty->config->framework('TemplateClass') }
+        )
+    );
     $self->mason( Jifty::View::Mason::Handler->new( $self->mason_config ) );
 
     $self->static_handler(Jifty::View::Static::Handler->new());

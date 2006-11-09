@@ -203,7 +203,7 @@ sub require {
     Jifty::Util->require($base."::CurrentUser");
     Jifty::Module::Pluggable->import(
         search_path =>
-          [ map { $base . "::" . $_ } 'Model', 'Action', 'Notification', 'Event' ],
+          [ map { $base . "::" . $_ } 'Model', 'Action', 'Notification', 'Event', 'View' ],
         require => 1,
         except  => qr/\.#/,
         inner   => 0
