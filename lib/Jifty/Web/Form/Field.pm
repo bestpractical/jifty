@@ -1,25 +1,3 @@
-=begin properties
-
-constructor
-canonicalizer
-available_values
-ajax_validates
-autocompleter
-
-default_value
-valid_values
-validator
-render_as
-label
-hints
-placeholder
-length
-mandatory
-
-=end properties
-
-=cut
-
 use warnings;
 use strict;
  
@@ -104,8 +82,44 @@ C<new>.  Subclasses should extend this list.
 
 =cut
 
-sub accessors { shift->SUPER::accessors(), qw(name label input_name type sticky sticky_value default_value action mandatory ajax_validates ajax_canonicalizes autocompleter preamble hints placeholder focus render_mode length _element_id); }
-__PACKAGE__->mk_accessors(qw(name _label _input_name type sticky sticky_value default_value _action mandatory ajax_validates ajax_canonicalizes autocompleter preamble hints placeholder focus render_mode length _element_id));
+use constant ACCESSORS => qw(
+  ajax_canonicalizes
+  ajax_validates
+
+  constructor
+  canonicalizer
+  validator
+  autocompleter
+
+  available_values
+  default_value
+  valid_values
+
+  render_as
+  render_mode
+
+  name
+  input_name
+  label
+
+  type
+
+  sticky
+  sticky_value
+
+  hints
+  placeholder
+  length
+  mandatory
+  action
+  preamble
+  focus
+  element_id
+);
+
+
+sub accessors { shift->SUPER::accessors(), ACCESSORS }
+__PACKAGE__->mk_accessors(ACCESSORS);
 
 =head2 name [VALUE]
 
@@ -191,7 +205,7 @@ sub input_name {
 # Otherwise, we should ask our action, how to turn our "name"
 # into a form input name.
 
-    my $ret = $self->_input_name(@_);
+    my $ret = $self->_input_name_accessor(@_);
     return $ret if $ret;
 
     my $action = $self->action;
@@ -235,7 +249,7 @@ object.
 
 sub label {
     my $self = shift;
-    my $val = $self->_label(@_);
+    my $val = $self->_label_accessor(@_);
     defined $val ? $val :  $self->name;
 
 }
@@ -251,7 +265,7 @@ consistent for the life of the L<Jifty::Web::Form::Field> object but isn't predi
 
 sub element_id {
     my $self = shift;
-    return $self->_element_id || $self->_element_id( $self->input_name ."-".Jifty->web->serial); 
+    return $self->_element_id_accessor || $self->_element_id_accessor( $self->input_name ."-".Jifty->web->serial);
 }
 
 =head2 action [VALUE]
@@ -265,11 +279,11 @@ L<Jifty::Web::Form::Field/form_field>.
 
 sub action {
     my $self   = shift;
-    my $action = $self->_action(@_);
+    my $action = $self->_action_accessor(@_);
 
     # If we're setting the action, we need to weaken
     # the reference to not get caught in a loop
-    Scalar::Util::weaken( $self->{_action} ) if @_;
+    Scalar::Util::weaken( $self->{action} ) if @_;
     return $action;
 }
 
