@@ -219,9 +219,6 @@ plugins/ProfileBehaviour/lib/Jifty/Plugin/ProfileBehaviour/Dispatcher.pm
 plugins/ProfileBehaviour/Makefile.PL
 plugins/ProfileBehaviour/share/web/static/css/behaviour-profile.css
 plugins/ProfileBehaviour/share/web/static/js/behaviour.js
-plugins/REST/lib/Jifty/Plugin/REST.pm
-plugins/REST/lib/Jifty/Plugin/REST/Dispatcher.pm
-plugins/REST/Makefile.PL
 README
 share/dtd/xhtml-lat1.ent
 share/dtd/xhtml-special.ent
