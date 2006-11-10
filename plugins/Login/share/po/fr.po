@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "POT-Creation-Date: 2006-10-24 15:00+ZONE\n"
-"PO-Revision-Date: 2006-11-09 14:35+ZONE\n"
+"PO-Revision-Date: 2006-11-10 10:47+ZONE\n"
 "Last-Translator: AGOSTINI Yves <agostini@univ-metz.fr>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -43,9 +43,17 @@ msgstr ". Une demande de confirmation vous a été envoyée par mail."
 msgid ". Your email address has now been confirmed."
 msgstr ". Votre adresse mail a été vérifiée."
 
-#: lib/Jifty/Plugin/Login/Action/SendPasswordReminder.pm:94
+#: lib/Jifty/Plugin/Login/Action/SendPasswordReminder.pm:95
 msgid "A link to reset your password has been sent to your email account."
 msgstr "Un lien web pour ré-initialiser votre mot de passe vous a été envoyé par mail."
+
+#: share/web/templates/chgpasswd:11
+msgid "Change"
+msgstr "Valider"
+
+#: share/web/templates/chgpasswd:6
+msgid "Change your password"
+msgstr "Changer votre mot de passe"
 
 #: lib/Jifty/Plugin/Login/Action/SendAccountConfirmation.pm:94
 msgid "Confirmation resent."
@@ -63,7 +71,7 @@ msgstr "Adresse mail"
 msgid "If you want, your browser can remember your login for you"
 msgstr "Si vous le désirez, votre navigateur peut mémoriser votre identification"
 
-#: lib/Jifty/Plugin/Login/Action/SendAccountConfirmation.pm:74 lib/Jifty/Plugin/Login/Action/SendPasswordReminder.pm:77
+#: lib/Jifty/Plugin/Login/Action/SendAccountConfirmation.pm:74 lib/Jifty/Plugin/Login/Action/SendPasswordReminder.pm:78
 msgid "It doesn't look like there's an account by that name."
 msgstr "Ce compte ne semble pas exister."
 
@@ -71,7 +79,7 @@ msgstr "Ce compte ne semble pas exister."
 msgid "It looks like you already have an account. Perhaps you want to <a href=\"/login\">sign in</a> instead?"
 msgstr "Vous semblez avoir déjà un compte. Vous désirez peut-être plutôt vous <a href=\"/login\">identifier</a> ?"
 
-#: lib/Jifty/Plugin/Login/Action/ResetLostPassword.pm:68
+#: lib/Jifty/Plugin/Login/Action/ChangePassword.pm:70 lib/Jifty/Plugin/Login/Action/ResetLostPassword.pm:68
 msgid "It looks like you didn't enter the same password into both boxes. Give it another shot?"
 msgstr "Les mots de passe semblent différents. Ré-essayer ?"
 
@@ -95,7 +103,7 @@ msgstr "Aucun compte n'a cette adresse mail."
 msgid "Ok, you're now logged out. Have a good day."
 msgstr "Vous êtes déconnecté. Au revoir."
 
-#: lib/Jifty/Plugin/Login/Action/Login.pm:30
+#: lib/Jifty/Plugin/Login/Action/ChangePassword.pm:30 lib/Jifty/Plugin/Login/Action/Login.pm:30
 msgid "Password"
 msgstr "Mot de passe"
 
@@ -111,11 +119,11 @@ msgstr "S'enregistrer"
 msgid "Something bad happened and we couldn't create your account.  Try again later. We're really, really sorry."
 msgstr "Votre compte ne peut pas actuellement être créé. Merci de ré-essayer ultérieurement."
 
-#: lib/Jifty/Plugin/Login/Action/Login.pm:60 lib/Jifty/Plugin/Login/Action/SendAccountConfirmation.pm:67 lib/Jifty/Plugin/Login/Action/SendPasswordReminder.pm:70 lib/Jifty/Plugin/Login/Action/Signup.pm:62
+#: lib/Jifty/Plugin/Login/Action/Login.pm:60 lib/Jifty/Plugin/Login/Action/SendAccountConfirmation.pm:67 lib/Jifty/Plugin/Login/Action/SendPasswordReminder.pm:71 lib/Jifty/Plugin/Login/Action/Signup.pm:62
 msgid "That doesn't look like an email address."
 msgstr "Cela ne ressemble pas à une adresse mail."
 
-#: lib/Jifty/Plugin/Login/Action/ResetLostPassword.pm:74
+#: lib/Jifty/Plugin/Login/Action/ChangePassword.pm:76 lib/Jifty/Plugin/Login/Action/ResetLostPassword.pm:74
 msgid "There was an error setting your password."
 msgstr "Erreur lors de la création de votre mot de passe."
 
@@ -131,7 +139,7 @@ msgstr "Bienvenue, "
 msgid "Welcome to "
 msgstr "Bienvenue sur "
 
-#: lib/Jifty/Plugin/Login/Action/ResetLostPassword.pm:54
+#: lib/Jifty/Plugin/Login/Action/ChangePassword.pm:56 lib/Jifty/Plugin/Login/Action/ResetLostPassword.pm:54
 msgid "You don't exist. I'm not sure how this happened. Really, really sorry. Please email us!"
 msgstr "Vous n'existez pas !!!"
 
@@ -151,14 +159,18 @@ msgstr "Erreur dans votre mail ou votre mot de passe. Ré-essayer ?"
 msgid "You're already logged in."
 msgstr "Vous êtes déjà connecté."
 
+#: lib/Jifty/Plugin/Login/Action/ChangePassword.pm:81
+msgid "Your password has been changed.  Welcome back."
+msgstr ""
+
 #: lib/Jifty/Plugin/Login/Action/ResetLostPassword.pm:79
 msgid "Your password has been reset.  Welcome back."
 msgstr "Votre mot de passe a été ré-initialisé. Bon retour."
 
-#: lib/Jifty/Plugin/Login/Action/SendAccountConfirmation.pm:31 lib/Jifty/Plugin/Login/Action/SendPasswordReminder.pm:33
+#: lib/Jifty/Plugin/Login/Action/SendAccountConfirmation.pm:31 lib/Jifty/Plugin/Login/Action/SendPasswordReminder.pm:34
 msgid "email address"
 msgstr "adresse mail"
 
-#: lib/Jifty/Plugin/Login/Action/ResetLostPassword.pm:33
+#: lib/Jifty/Plugin/Login/Action/ChangePassword.pm:35 lib/Jifty/Plugin/Login/Action/ResetLostPassword.pm:33
 msgid "type your password again"
 msgstr "confirmez votre mot de passe"
