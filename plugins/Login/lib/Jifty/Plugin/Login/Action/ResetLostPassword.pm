@@ -26,7 +26,11 @@ Note that it can get the first two from the confirm dhandler.
 sub arguments {
     return (
         {
-            password         => { type => 'password', sticky => 0 },
+            password         => { 
+                type => 'password', 
+                sticky => 0, 
+                label  => _('Password') 
+            },
             password_confirm => {
                 type   => 'password',
                 sticky => 0,
