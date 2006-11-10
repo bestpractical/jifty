@@ -129,20 +129,18 @@ sub prepare_model_classes {
     my $self = shift;
 
     # Set up application-specific parts
-    $self->{'_application_class'}
-        = Jifty->config->framework('ApplicationClass');
     $self->{'_schema_generator'}
         = Jifty::DBI::SchemaGenerator->new( Jifty->handle )
         or die "Can't make Jifty::DBI::SchemaGenerator";
 
 # This creates a sub "models" which when called, finds packages under
-# $self->{'_application_class'}::Model, requires them, and returns a list of their
+# the application's ::Model, requires them, and returns a list of their
 # names.
     Jifty::Module::Pluggable->import(
         require     => 1,
         except      => qr/\.#/,
         search_path =>
-            [ "Jifty::Model", $self->{'_application_class'} . "::Model" ],
+            [ "Jifty::Model", Jifty->app_class("Model") ],
         sub_name => 'models',
     );
 }
@@ -208,7 +206,7 @@ sub create_all_tables {
 
     my $log    = Log::Log4perl->get_logger("SchemaTool");
     $log->info(
-        "Generating SQL for application $self->{'_application_class'}...");
+        "Generating SQL for application @{[Jifty->app_class]}...");
 
     my $appv
         = version->new( Jifty->config->framework('Database')->{'Version'} );
@@ -261,7 +259,7 @@ sub create_all_tables {
 
         # Load initial data
         eval {
-            my $bootstrapper = $self->{'_application_class'} . "::Bootstrap";
+            my $bootstrapper = Jifty->app_class("Bootstrap");
             Jifty::Util->require($bootstrapper);
 
             $bootstrapper->run()
@@ -327,7 +325,7 @@ sub upgrade_application_tables {
     my $appv
         = version->new( Jifty->config->framework('Database')->{'Version'} );
 
-    return unless $self->upgrade_tables( $self->{_application_class} => $dbv, $appv );
+    return unless $self->upgrade_tables( Jifty->app_class, $dbv, $appv );
     if( $self->{print} ) {
         warn "Need to upgrade application_db_version to $appv here!";
     } else {

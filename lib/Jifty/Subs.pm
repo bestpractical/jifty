@@ -32,17 +32,13 @@ Jifty::Subs -
 sub add {
     my $class = shift;
     my $args = {@_};
-   unless (Jifty->config->framework('PubSub')->{'Enable'}) {
+    unless (Jifty->config->framework('PubSub')->{'Enable'}) {
         Jifty->log->error("PubSub disabled, but $class->add called");
-        return undef
+        return undef;
     }
 
     my $id          = ($args->{window_id} || Jifty->web->session->id);
-    my $event_class = join('::' =>
-        Jifty->config->framework("ApplicationClass"),
-        'Event',
-        $args->{class},
-    );
+    my $event_class = Jifty->app_class("Event", $args->{class});
 
     my $queries = $args->{queries} || [];
     my $channel = $event_class->encode_queries(@$queries);
@@ -86,9 +82,9 @@ sub add {
 sub cancel {
     my ($class, $channel_id) = @_;
 
-   unless (Jifty->config->framework('PubSub')->{'Enable'}) {
+    unless (Jifty->config->framework('PubSub')->{'Enable'}) {
         Jifty->log->error("PubSub disabled, but $class->add called");
-        return undef
+        return undef;
     }
 
     my ($channel, $id) = split(/!/, $channel_id, 2);
@@ -104,7 +100,7 @@ sub cancel {
 
     Jifty->bus->modify(
         "$id-render" => sub {
-            delete $_->{$channel}
+            delete $_->{$channel};
         }
     );
 
@@ -118,9 +114,9 @@ sub cancel {
 sub list {
     my $self = shift;
 
-   unless (Jifty->config->framework('PubSub')->{'Enable'}) {
+    unless (Jifty->config->framework('PubSub')->{'Enable'}) {
         Jifty->log->error("PubSub disabled, but $self->add called");
-        return undef
+        return undef;
     }
 
     my $id   = (shift || Jifty->web->session->id);
