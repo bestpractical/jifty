@@ -143,7 +143,7 @@ sub url {
       my $path = $args{path};
       # strip off leading '/' because ->canonical provides one
       $path =~ s{^/}{};
-      $uri->path($path);
+      $uri->path_query($path);
     }
     
     return $uri->canonical->as_string;
