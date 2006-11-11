@@ -20,10 +20,14 @@ lib/Jifty/Plugin/Login/CurrentUser.pm
 lib/Jifty/Plugin/Login/Dispatcher.pm
 lib/Jifty/Plugin/Login/Model/User.pm
 lib/Jifty/Plugin/Login/Notification/ConfirmAddress.pm
+lib/Jifty/Plugin/Login/Notification/ConfirmLostPassword.pm
 Makefile.PL
 MANIFEST			This list of files
 META.yml
 share/web/templates/let/confirm_email
+share/web/templates/let/reset_lost_password
+share/web/templates/chgpasswd
 share/web/templates/login
 share/web/templates/logout
+share/web/templates/passwordreminder
 share/web/templates/signup
