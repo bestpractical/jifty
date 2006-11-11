@@ -97,10 +97,23 @@ allows a user to sign up himself. As a default
 behavior a confirmation mail is sent out that has to get followed by
 the user.
 
-=item F</confirm_email>
+=item F</chgpasswd>
 
-is called in the mail and results in accepting
-the user.
+allows a user to change his password.
+
+=item F</passwordreminder>
+
+after entering his mail address, the user will receive a mail that
+contains a link to F</let/reset_lost_password>.
+
+=item F</let/confirm_email>
+
+is called in the mail and results in accepting the user.
+
+=item F</let/reset_lost_password>
+
+enabled by the passwordreminder template, this template allows a user
+to reenter a password for future use.
 
 =back
 
