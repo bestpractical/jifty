@@ -16,8 +16,7 @@ template foo => sub {
 };
 
 template content => sub {
-    form { outs 'woot'};
-
+    form {'woot'};
 };
 
 1;

@@ -49,25 +49,25 @@ would become
 sub resolve_template {
     my $self         = shift;
     my $templatename = shift;    # like /admin/ui/new
+    warn "Looking at $templatename";
 
     my @components = split( '/', $templatename );
     my $template   = pop @components;
+    warn "The tempalte is $template";
 
-    my $package
-        = $self->root_class;     # join('::',$self->root_class,@components);
-    warn "The user is looking for $package $template";
+    my $package =  join('::',$self->root_class,grep { $_ } @components);
+    warn "The package is $package";
+    Jifty::Util->require($package);
     unless ( $package->isa('Jifty::View::Declare::Templates') ) {
         $self->log->error( "$package (" . $self->root_class . " / $templatename) isn't a valid template package." );
-        return undef;
+        #return undef;
     }
-    warn "The package is $package -- $template";
-    unless ( $package->has_template($template) ) {
+    unless ( $package->can('has_template') &&  $package->has_template($template) ) {
         $self->log->error("$package has no template $template.");
         return undef;
 
     }
 
-    warn "Resolved $package -> $template";
     return ( $package, $template );
 
 }
