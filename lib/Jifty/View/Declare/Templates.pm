@@ -6,7 +6,7 @@ use base qw/Exporter/;
 use Template::Declare::Tags;
 
 use base qw/Template::Declare/;
-our @EXPORT = qw(form hyperlink tangent redirect new_action form_submit form_next_page request get);
+our @EXPORT = qw(form hyperlink tangent redirect new_action form_submit form_next_page request get param current_user);
 
 
 sub form (&){
@@ -16,26 +16,31 @@ sub form (&){
     Jifty->web->form->start;
     outs($code->());
     Jifty->web->form->end;
+    return ''
 }
 
 
 sub hyperlink(@) {
-    Jifty->web->link(@_);
+    outs (Jifty->web->link(@_));
+    return '';
 }
 
 sub tangent(@) {
-    Jifty->web->tangent(@_);
+    outs (Jifty->web->tangent(@_));
+    return '';
 }
 sub redirect(@) {
     Jifty->web->redirect(@_);
+    return ''
 }
 
 sub new_action(@){
-    Jifty->web->new_action(@_);
+    return Jifty->web->new_action(@_);
 }
 
 sub form_submit(@){
-    Jifty->web->form->submit(@_);
+    outs( Jifty->web->form->submit(@_));
+    '';
 }
 
 sub form_next_page(@){
@@ -46,8 +51,18 @@ sub request {
     Jifty->web->request;
 }
 
+sub current_user {
+    Jifty->web->current_user;
+}
+
 sub get {
     return map { request->argument($_) }  @_;
+}
+
+sub param {
+    my $action = shift;
+    outs($action->form_field(@_));
+    '';
 }
 
 1;
