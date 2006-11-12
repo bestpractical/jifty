@@ -127,10 +127,12 @@ sub url {
     my $uri;
     if ($ENV{'HTTP_HOST'}) {
       my $host = $ENV{HTTP_HOST};
-      if ($host !~ m{^http://}) {
-        $host = 'http://' . $host;
-      }
       $uri = URI->new($host);
+      if (! $uri->schema) {
+        my $envuri = URI->new($ENV{REQUEST_URI});
+        $self->log->warn("cannot deduce application scheme") unless $envuri->scheme;
+        $uri->scheme( $envuri->scheme );
+      }
     } else {
       my $url  = Jifty->config->framework("Web")->{BaseURL};
       my $port = Jifty->config->framework("Web")->{Port};
