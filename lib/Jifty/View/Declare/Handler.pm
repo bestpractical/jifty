@@ -15,7 +15,10 @@ sub show {
     my $self = shift;
     my $package = shift;
     my $template = shift;
-    warn "Showing $package $template";
+        no warnings qw/redefine/;
+        local *{Jifty::Web::out} = sub { shift; my $out = shift; Template::Declare::Tags::outs( $out);};
+    
+    local $Template::Declare::Tags::BUFFER;
     print STDOUT ($package->show($template));
     
 
@@ -44,25 +47,28 @@ would become
 
 
 sub resolve_template {
-    my $self = shift;
-    my $templatename = shift; # like /admin/ui/new
+    my $self         = shift;
+    my $templatename = shift;    # like /admin/ui/new
 
+    my @components = split( '/', $templatename );
+    my $template   = pop @components;
 
-    my @components = split('/',$templatename);
-    my $template = pop @components;
-
-
-    my $package = $self->root_class; # join('::',$self->root_class,@components);
-    warn "The user is looking for $package $template"; 
-    #unless ($package->isa('Jifty::View::Declare::Templates')) { $self->log->error("$package (".$self->root_class." / $templatename) isn't a valid template package."); return undef; }
-    unless ($package->has_template($template)) {
+    my $package
+        = $self->root_class;     # join('::',$self->root_class,@components);
+    warn "The user is looking for $package $template";
+    unless ( $package->isa('Jifty::View::Declare::Templates') ) {
+        $self->log->error( "$package (" . $self->root_class . " / $templatename) isn't a valid template package." );
+        return undef;
+    }
+    warn "The package is $package -- $template";
+    unless ( $package->has_template($template) ) {
         $self->log->error("$package has no template $template.");
         return undef;
 
     }
-    
+
     warn "Resolved $package -> $template";
-    return ($package, $template);
+    return ( $package, $template );
 
 }
 

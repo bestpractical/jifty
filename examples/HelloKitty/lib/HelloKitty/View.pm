@@ -1,8 +1,10 @@
-
+use warnings;
+use strict;
 
 package HelloKitty::View;
 use base qw/Jifty::View::Declare::Templates/;
 use Template::Declare::Tags;
+use Jifty::View::Declare::Templates;
 
 template foo => sub {
     html {
@@ -14,7 +16,7 @@ template foo => sub {
 };
 
 template content => sub {
-    outs 'woot';
+    form { outs 'woot'};
 
 };
 
