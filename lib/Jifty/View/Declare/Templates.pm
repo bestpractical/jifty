@@ -11,11 +11,9 @@ our @EXPORT = qw(form hyperlink tangent redirect new_action form_submit form_nex
 
 sub form (&){
     my $code = shift;
-
-
-    Jifty->web->form->start;
-    outs($code->());
-    Jifty->web->form->end;
+    outs(Jifty->web->form->start);
+    $code->();
+    outs(Jifty->web->form->end);
     return ''
 }
 
@@ -62,7 +60,7 @@ sub get {
 sub param {
     my $action = shift;
     outs($action->form_field(@_));
-    '';
+    return '';
 }
 
 1;

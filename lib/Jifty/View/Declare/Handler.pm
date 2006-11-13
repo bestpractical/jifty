@@ -17,11 +17,9 @@ sub show {
     my $template = shift;
         no warnings qw/redefine/;
         local *{Jifty::Web::out} = sub { shift; my $out = shift; Template::Declare::Tags::outs( $out);};
-    
-    local $Template::Declare::Tags::BUFFER;
-    print STDOUT ($package->show($template));
-    
-
+    local $Template::Declare::Tags::BUFFER = '';
+    print STDOUT $package->show($template);
+    return undef;
 }
 
 =head2 resolve_template template_path
