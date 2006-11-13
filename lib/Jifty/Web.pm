@@ -123,18 +123,34 @@ sub url {
     if ($args{'scheme'}) {
         $self->log->error("Jifty->web->url no longer accepts a 'scheme' argument");
     }
-    
-    my $from_env = sub {
-        my($env_str) = @_;
-        if (my $env_val = $ENV{$env_str}) {
-            my $env_uri = URI->new($env_val);
-            return unless $env_uri && $env_uri->can("schema");
-            return $env_uri->schema; # may still be undef
+
+    my $uri;
+
+    # Try to get a host out of the environment, useful in remote testing.
+    # The code is a little hairy because there's no guarantee these
+    # environment variables have all the information.
+    if (my $http_host_env = $ENV{HTTP_HOST}) {
+        # Explicit flag needed because URI->new("noscheme") is structurally
+        # different from URI->new("http://smth"). Clunky, but works.
+        my $dirty;
+        if ($http_host_env !~ m{^https?://}) {
+            $dirty++;
+            $http_host_env = "http://" . $http_host_env;
         }
-        return;
-    };
-            
-    my $uri = $from_env->("HTTP_HOST") || $from_env->("REQUEST_URI");
+        $uri = URI->new($http_host_env);
+        if ($dirty && (my $req_uri_env = $ENV{REQUEST_URI})) {
+            my $req_uri = URI->new($req_uri_env);
+            $uri->scheme($req_uri->scheme) if $req_uri->can('scheme');
+            $dirty = $uri->scheme;
+        }
+        # As a last resort, peek at the BaseURL configuration setting
+        # for the scheme, which is an often-missing part.
+        if ($dirty) {
+            my $config_uri = URI->new(
+                    Jifty->config->framework("Web")->{BaseURL});
+            $uri->scheme($config_uri->scheme);
+        }
+    }
 
     if (!$uri) {
       my $url  = Jifty->config->framework("Web")->{BaseURL};
