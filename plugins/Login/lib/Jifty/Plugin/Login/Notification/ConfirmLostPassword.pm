@@ -1,12 +1,12 @@
 use warnings;
 use strict;
 
-package Jifty::Plugin::Login::Notification::ConfirmAddress;
+package Jifty::Plugin::Login::Notification::ConfirmLostPassword;
 use base qw/Jifty::Notification Jifty::Plugin::Login/;
 
 =head1 NAME
 
-Jifty::Plugin::Login::Notification::ConfirmAddress
+Jifty::Plugin::Login::Notification::ConfirmLostPassword
 
 =head1 ARGUMENTS
 
@@ -25,26 +25,26 @@ sub setup {
     my $LoginUser = $self->LoginUserClass;
 
     unless ( UNIVERSAL::isa($self->to, $LoginUser) ){
-	$self->log->error((ref $self) . " called with invalid user argument");
-	return;
-    } 
-   
+    $self->log->error((ref $self) . " called with invalid user argument");
+    return;
+    }
 
     my $letme = Jifty::LetMe->new();
     $letme->email($self->to->email);
-    $letme->path('confirm_email'); 
+    $letme->path('reset_lost_password');
     my $confirm_url = $letme->as_url;
     my $appname = Jifty->config->framework('ApplicationName');
 
-    $self->subject( _("Welcome to ")."$appname!" );
+    $self->subject( _("Message from ")."$appname!" );
     $self->from( Jifty->config->framework('AdminEmail') );
 
     $self->body(_("
 You're getting this message because you (or somebody claiming to be you)
-signed up for %1.
+request to reset your password for %1.
 
-Before you can use %1, we need to make sure that we got your email
-address right.  Click on the link below to get started:
+If you don't want to reset your password just ignore this message.
+
+To reset your password, click on the link below:
 
 %2
 ",$appname,$confirm_url));
@@ -52,3 +52,4 @@ address right.  Click on the link below to get started:
 }
 
 1;
+

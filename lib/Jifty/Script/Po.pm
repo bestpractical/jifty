@@ -122,7 +122,7 @@ L<Locale::Maketext::Extract>.
 sub extract_messages {
     my $self = shift;
     # find all the .pm files in @INC
-    my @files = File::Find::Rule->file->in( 'share', 'lib', 'bin' );
+    my @files = File::Find::Rule->file->in( Jifty->config->framework('Web')->{'TemplateRoot'}, 'lib', 'bin' );
 
     my $logger =Log::Log4perl->get_logger("main");
     foreach my $file (@files) {

@@ -39,7 +39,7 @@ sub take_action {
 
     if ( $u->email_confirmed ) {
         $self->result->error(
-            email => "You have already confirmed your account." );
+            email => _("You have already confirmed your account.") );
         $self->result->success(1);    # but the action is still a success
     }
 
@@ -49,7 +49,7 @@ sub take_action {
     $self->result->message( "Welcome to "
           . Jifty->config->framework('ApplicationName') . ", "
           . $u->name
-          . ". Your email address has now been confirmed." );
+          . _(". Your email address has now been confirmed.") );
 
     # Actually do the login thing.
     Jifty->web->current_user( $CurrentUser->new( id => $u->id ) );

@@ -3,34 +3,32 @@ use strict;
 
 =head1 NAME
 
-Jifty::Plugin::Login::Action::ResetPassword - Confirm and reset a lost password
+Jifty::Plugin::Login::Action::ChangePassword - Change a password
 
 =head1 DESCRIPTION
 
-This is the action run by the link in a user's email to confirm that their email
-address is really theirs, when claiming that they lost their password.  
+This is the action run by /chgpasswd where logged user can change is password.
 
 
 =cut
 
-package Jifty::Plugin::Login::Action::ResetLostPassword;
+package Jifty::Plugin::Login::Action::ChangePassword;
 use base qw/Jifty::Action Jifty::Plugin::Login/;
 
 =head2 arguments
 
-ConfirmEmail has the following fields: address, code, password, and password_confirm.
-Note that it can get the first two from the confirm dhandler.
+ChangePassword has the following fields: password, and password_confirm.
 
 =cut
 
 sub arguments {
     return (
         {
-            password         => { 
-                type => 'password', 
-                sticky => 0, 
-                label  => _('Password') 
-            },
+            password         => {
+                type => 'password',
+                sticky => 0,
+                label  => _('Password')
+                },
             password_confirm => {
                 type   => 'password',
                 sticky => 0,
@@ -42,7 +40,7 @@ sub arguments {
 
 =head2 take_action
 
-Resets the password.
+Change the password.
 
 =cut
 
@@ -79,11 +77,11 @@ _("It looks like you didn't enter the same password into both boxes. Give it ano
         return;
     }
 
-    # Log in!
-    $self->result->message(_("Your password has been reset.  Welcome back."));
-    Jifty->web->current_user( $CurrentUser->new( id => $u->id ) );
+    # ok!
+    $self->result->message(_("Your password has been changed.  Welcome back."));
     return 1;
 
 }
 
 1;
+

@@ -23,14 +23,14 @@ Because Apache's FastCGI dispatcher can't pass commandline flags to your script,
 to call jifty a bit differently:
 
  AddHandler fastcgi-script fcgi
- DocumentRoot /path/to/your/jifty/app/web/templates
+ DocumentRoot /path/to/your/jifty/app/share/web/templates
  FastCgiServer /path/to/your/jifty/app/bin/jifty -initial-env JIFTY_COMMAND=fastcgi
  ScriptAlias /  /path/to/your/jifty/app/bin/jifty/
 
 For B<lighttpd> (L<http://www.lighttpd.net/>), use this setting:
 
  server.modules  = ( "mod_fastcgi" )
- server.document-root = "/path/to/your/jifty/app/web/templates"
+ server.document-root = "/path/to/your/jifty/app/share/web/templates"
  fastcgi.server = (
         "" => (
             "your_jifty_app" => (

@@ -19,7 +19,7 @@ use Jifty::Everything;
 
 use base qw/Jifty::Object Class::Accessor::Fast/;
 
-__PACKAGE__->mk_accessors(qw(failure action_class message _content));
+__PACKAGE__->mk_accessors(qw(failure action_class message content));
 
 
 =head2 new
@@ -35,7 +35,7 @@ sub new {
     my $self = bless {}, $class;
 
     $self->failure(0);
-    $self->_content({});
+    $self->_content_accessor({});
 
     return $self;
 }
@@ -146,11 +146,11 @@ of all of the C<KEY> and C<VALUE> pairs.
 sub content {
     my $self = shift;
 
-    return $self->_content unless @_;
+    return $self->_content_accessor unless @_;
 
     my $key = shift;
-    $self->_content->{$key} = shift if @_;
-    return $self->_content->{$key};
+    $self->_content_accessor->{$key} = shift if @_;
+    return $self->_content_accessor->{$key};
 }
 
 1;

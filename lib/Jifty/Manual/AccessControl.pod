@@ -2,7 +2,7 @@
 
 Jifty::Manual::AccessControl
 
-=head2 DESCRIPTION
+=head1 DESCRIPTION
 
 
 Out of the box Jifty-based applications have an ACL system.  The system 
@@ -28,5 +28,104 @@ questions on certain types of operation.  Say, you only want to let
 administrators update the C<paid_account> field. In that case, you'd override
 C<check_update_rights()> to look for the C<admin> right rather than the C<update> right, if the C<FIELD> is C<paid_account>.
 
+=head1 ENABLING ACCESS CONTROL USING THE LOGIN PLUGIN
+
+To painlessly enable the AccessControl subsystem, the
+C<Login> plugin may get enabled. This is done in the
+F<etc/config.yml> configuration file.
+
+    Plugins:
+      - Login: {}
+
+Then, create an C<App::Model::User> class that derives from
+C<Jifty::Plugin::Login::Model::User>, for example like that:
+
+    use strict;
+    use warnings;
+
+    package App::Model::User;
+    use base 'Jifty::Plugin::Login::Model::User';
+
+    # Your model-specific methods go here.
+
+    1;
+
+Next, create the table in your database using the F<jifty> executable
+like C<./bin/jifty schema --setup>.
+
+=head2 Expanding the Model
+
+The model that manages C<User> Records is not limited to the plugin's
+definition. It can be expanded by providing an additional schema
+definition. Every column here will be added to the plugin's
+columns. Simply add a schema definition block like the following:
+
+    use Jifty::DBI::Schema;
+    use App::Record schema {
+        column 'extra_column_name';
+
+        # more columns if necessary
+    };
+
+The full syntax for defining a schema can be found in
+L<Jifty::Manual::Models> or in L<Jifty::DBI::Schema>.
+
+Defining a method C<_init> in your C<App::CurrentUser> class gives you
+a chance to add more data to the C<CurrentUser> object. This method
+will automatically get called after the Plugin's C<_init> is done.
+
+=head2 Templates defined by the Login plugin
+
+To avoid the need for repetitive work, the Login plugin already
+defines a couple of usable templates:
+
+=over 4
+
+=item F</login>
+
+provides a login screen with a signup option. After
+successful login, the current Continuation is called. If no
+Continuation exists, the template sitting at the base URL (F</>) is called.
+
+=item F</logout>
+
+logs out the current user.
+
+=item F</signup>
+
+allows a user to sign up himself. As a default
+behavior a confirmation mail is sent out that has to get followed by
+the user.
+
+=item F</confirm_email>
+
+is called in the mail and results in accepting
+the user.
+
+=back
+
+=head2 Doing checks at other places in your code
+
+If you need to check more than Model-based record operations you will
+have to do some coding on your
+own. C<Jifty-E<gt>web-E<gt>current_user> provides a
+C<App::CurrentUser> object that can get queried about the current
+user. This object provides some convenience methods:
+
+=over 4
+
+=item C<username>
+
+returns the name of the current user or C<undef> if not logged in.
+
+=item C<id>
+
+returns the id of the current user or C<undef> if not logged in.
+
+=back
+
+=head1 SEE ALSO
+
+L<Jifty::CurrentUser>, L<Jifty::Record>, L<Jifty::RightsFrom>
 
 =cut

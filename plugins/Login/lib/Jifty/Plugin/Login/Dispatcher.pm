@@ -6,6 +6,37 @@ use Jifty::Dispatcher -base;
 
 # Put any plugin-specific dispatcher rules here.
 
+# Send a password reminder for a lost password
+on 'passwordreminder' => run {
+    redirect('/') if ( Jifty->web->current_user->id );
+    set 'action' =>
+        Jifty->web->new_action(
+        class => 'SendPasswordReminder',
+        moniker => 'password_reminder'
+    );
+
+    set 'next' => Jifty->web->request->continuation
+        || Jifty::Continuation->new(
+        request => Jifty::Request->new( path => "/" ) );
+
+};
+
+# Change a password
+on 'chgpasswd' => run {
+    redirect('/login') if (! Jifty->web->current_user->id );
+    set 'action' =>
+        Jifty->web->new_action(
+        class => 'ChangePassword',
+        moniker => 'chgpasswdbox'
+    );
+
+    set 'next' => Jifty->web->request->continuation
+        || Jifty::Continuation->new(
+        request => Jifty::Request->new( path => "/" ) );
+
+};
+
+
 # Sign up for an account
 on 'signup' => run {
     redirect('/') if ( Jifty->web->current_user->id );

@@ -52,12 +52,7 @@ ok($user->create(
 );
 
 
-# Set up Jifty so we can call J->w->new_action
-Jifty->new;
-Jifty->web->request(Jifty::Request->new);
-Jifty->web->response(Jifty::Response->new);
-
-my $search = Jifty->web->new_action(
+my $search = Jifty::Test->web->new_action(
     class        => 'SearchUser',
     moniker      => 'search',
     current_user => TestApp::CurrentUser->superuser,

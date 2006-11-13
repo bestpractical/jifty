@@ -76,7 +76,7 @@ Lower numbers occur before higher numbers.  Defaults to 0.
 =item arguments
 
 A hash reference of default values for the
-L<arguments|Jifty::Manual::Glossary/arguments> of the action.  Defaults to
+L<arguments|Jifty::Manual::Glossary/argument> of the action.  Defaults to
 none.
 
 =item sticky_on_failure
@@ -148,13 +148,13 @@ sub new {
 
 =head2 _generate_moniker 
 
-Construct an moniker for a new (or soon-to-be-constructed) action that did not have
+Construct a moniker for a new (or soon-to-be-constructed) action that did not have
 an explicit moniker specified.  The algorithm is simple: We snapshot the call stack,
 prefix it with the action class, and then append it with an per-request autoincrement
 counter in case the same class/stack is encountered twice, which can happen if the
 programmer placed a C<new_action> call inside a loop.
 
-The monikers generated this way is guaranteed to work across requests.
+Monikers generated this way are guaranteed to work across requests.
 
 =cut
 

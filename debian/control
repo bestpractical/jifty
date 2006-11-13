@@ -53,20 +53,21 @@ Depends: ${perl:Depends}, libjifty-dbi-perl, libapp-cli-perl
  libcompress-zlib-perl, libcss-squish-perl (>> 0.05),
  libcrypt-cbc-perl, libdatetime-format-builder-perl,
  libdatetime-format-iso8601-perl, libdate-manip-perl,
- libextutils-command-perl (>> 1.11), libfile-find-rule-perl,
- libfile-mmagic-perl, libfile-sharedir-perl, libhash-merge-perl,
- libhtml-lint-perl, libhtml-mason-perl (>> 1.31),
+ libfile-find-rule-perl, libfile-mmagic-perl, libfile-sharedir-perl,
+ libhash-merge-perl, libhtml-lint-perl, libhtml-mason-perl (>> 1.31),
  libhttp-server-simple-perl (>> 0.20),
  libhttp-server-simple-recorder-perl, liblog-log4perl-perl,
  liblocale-maketext-lexicon-perl (>> 0.60),
- liblocale-maketext-simple-perl, libemail-folder-perl,
+ liblocale-maketext-simple-perl (>> 0.18), libemail-folder-perl,
  libemail-localdelivery-perl, libemail-mime-perl,
  libemail-mime-creator-perl, libemail-send-perl, libmime-types-perl,
  libmodule-pluggable-perl (>> 2.95), libmodule-refresh-perl (>> 0.09),
  libobject-declare-perl, libscalar-defer-perl,
  libstring-koremutake-perl, libspiffy-perl, libwww-mechanize-perl (>>
  1.12), libversion-perl, libxml-simple-perl, libxml-writer-perl,
- libxml-xpath-perl, libyaml-perl, libyaml-syck-perl (>> 0.67),
+ libxml-xpath-perl, libyaml-perl, libyaml-syck-perl (>> 0.67), 
+ libhook-lexwrap-perl, libparams-util-perl,  libclass-inspector-perl, 
+ libemail-mime-contenttype-perl,
 Description: Jifty perl libraries
  Yet another web framework.
  .
