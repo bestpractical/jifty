@@ -124,16 +124,19 @@ sub url {
         $self->log->error("Jifty->web->url no longer accepts a 'scheme' argument");
     }
     
-    my $uri;
-    if ($ENV{'HTTP_HOST'}) {
-      my $host = $ENV{HTTP_HOST};
-      $uri = URI->new($host);
-      if (! $uri->schema) {
-        my $envuri = URI->new($ENV{REQUEST_URI});
-        $self->log->warn("cannot deduce application scheme") unless $envuri->scheme;
-        $uri->scheme( $envuri->scheme );
-      }
-    } else {
+    my $from_env = sub {
+        my($env_str) = @_;
+        if (my $env_val = $ENV{$env_str}) {
+            my $env_uri = URI->new($env_val);
+            return unless $env_uri && $env_uri->can("schema");
+            return $env_uri->schema; # may still be undef
+        }
+        return;
+    };
+            
+    my $uri = $from_env->("HTTP_HOST") || $from_env->("REQUEST_URI");
+
+    if (!$uri) {
       my $url  = Jifty->config->framework("Web")->{BaseURL};
       my $port = Jifty->config->framework("Web")->{Port};
    
