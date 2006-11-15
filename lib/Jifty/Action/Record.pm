@@ -1,7 +1,5 @@
 use warnings;
 use strict;
-use Date::Manip ();
-use UNIVERSAL::require;
 
 package Jifty::Action::Record;
 
