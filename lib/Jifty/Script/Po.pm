@@ -2,7 +2,7 @@ use warnings;
 use strict;
 
 package Jifty::Script::Po;
-use base qw'App::CLI::Command Class::Accessor::Fast';
+use base qw(App::CLI::Command Class::Accessor::Fast);
 
 use File::Copy;
 use Jifty::Config;

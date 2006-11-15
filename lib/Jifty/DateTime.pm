@@ -5,17 +5,17 @@ package Jifty::DateTime;
 
 =head1 NAME
 
-Jifty::DateTime - a DateTime subclass that knows about Jifty users 
+Jifty::DateTime - a DateTime subclass that knows about Jifty users
 
 =head1 DESCRIPTION
 
 Jifty natively stores timestamps in the database in GMT.  Dates are stored
-without timezone. This class loads and parses dates and sets them 
+without timezone. This class loads and parses dates and sets them
 into the proper timezone.
 
 =cut
 
-use base qw'Jifty::Object DateTime';
+use base qw(Jifty::Object DateTime);
 
 use Date::Manip ();
 
