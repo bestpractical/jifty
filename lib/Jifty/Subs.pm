@@ -29,6 +29,38 @@ Jifty::Subs -
 
 =cut
 
+=head2 add PARAMHASH
+
+Add a subscription for the current window or session.
+
+Takes the following parameters
+
+=over
+
+=item class
+
+What class of object shall we subscribe to notifications on
+
+=item queries
+
+An array of queries to match items of class C<class> against. The implementation of C<queries> is dependent on the type of object events are being recorded against
+
+=item mode
+
+How should the fragment sent to the client on matching events be rendered. Valid modes are C<Replace>, C<Bottom> and C<Top>
+
+=item region
+
+The moniker of the region that updates to this subscription should be rendered into
+
+=item render_with
+
+The path of the fragment used to render items matching this subscription
+
+=back
+
+=cut
+
 sub add {
     my $class = shift;
     my $args = {@_};
@@ -79,6 +111,12 @@ sub add {
     return "$channel!$id";
 }
 
+=head2 cancel CHANNEL_ID
+
+Cancels session or window's subscription to CHANNEL_ID
+
+=cut
+
 sub cancel {
     my ($class, $channel_id) = @_;
 
@@ -110,6 +148,13 @@ sub cancel {
         }
     );
 }
+
+=head2 list [window/sessionid]
+
+Returns a lost of channel ids this session or window is subscribed to.
+
+=cut
+
 
 sub list {
     my $self = shift;

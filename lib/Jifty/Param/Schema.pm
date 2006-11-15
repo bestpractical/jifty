@@ -149,6 +149,14 @@ use constant MERGE_PARAM_BEHAVIOUR => {
             HASH   => sub { Hash::Merge::_merge_hashes( $_[0], $_[1] ) } }
 };
 
+=head2 merge_params HASHREF HASHREF
+
+Takes two hashrefs. Merges them together and returns the merged hashref.
+
+BUG: This should either be a private routine or factored out into Jifty::Util
+
+=cut
+
 sub merge_params {
     my $prev_behaviour = Hash::Merge::get_behavior();
     Hash::Merge::specify_behavior( MERGE_PARAM_BEHAVIOUR, "merge_params" );
