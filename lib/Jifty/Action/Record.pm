@@ -122,7 +122,7 @@ with the value to be validated, canonicalized, or autocompleted.
 C<validate_FIELD> should return a (success boolean, message) list.
 
 C<autocomplete_FIELD> should return a the same kind of list as
-L<Jifty::Action::_autocomplete_argument/Jifty::Action/_autocomplete_argument>
+L<Jifty::Action::_autocomplete_argument|Jifty::Action/_autocomplete_argument>
 
 C<canonicalized_FIELD> should return the canonicalized value.
 
