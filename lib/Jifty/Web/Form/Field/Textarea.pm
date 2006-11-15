@@ -5,7 +5,6 @@ package Jifty::Web::Form::Field::Textarea;
 
 use base qw/Jifty::Web::Form::Field/;
 
-__PACKAGE__->mk_accessors(qw(rows cols));
 
 =head2 accessors
 
@@ -14,7 +13,9 @@ L<Jifty::Web::Form::Field>'s default accessors.
 
 =cut
 
-sub accessors { shift->SUPER::accessors(), 'rows', 'cols' }
+use constant ACCESSORS => qw(rows cols);
+sub accessors { shift->SUPER::accessors(), ACCESSORS }
+__PACKAGE__->mk_accessors(ACCESSORS);
 
 =head2 render_widget
 
