@@ -134,7 +134,7 @@ error from your browser.
 
 =cut
 
-use constant handlers => qw(_onclick);
+sub handlers { qw(onclick); }
 
 =head2 accessors
 
@@ -144,8 +144,8 @@ C<new> parameter hash.
 
 =cut
 
-use constant accessors => (__PACKAGE__->handlers, qw(class key_binding id label tooltip));
-__PACKAGE__->mk_accessors(__PACKAGE__->accessors);
+sub accessors { shift->handlers, qw(class key_binding id label tooltip) }
+__PACKAGE__->mk_accessors(qw(_onclick class key_binding id label tooltip));
 
 =head2 new PARAMHASH OVERRIDE
 
