@@ -134,7 +134,7 @@ error from your browser.
 
 =cut
 
-use constant handlers => qw(onclick);
+use constant handlers => qw(_onclick);
 
 =head2 accessors
 
@@ -179,7 +179,7 @@ sub new {
 
 sub onclick {
     my $self = shift;
-    return $self->_onclick_accessor unless @_;
+    return $self->_onclick unless @_;
 
     my ($arg) = @_;
 
@@ -213,7 +213,7 @@ sub onclick {
 
     }
 
-    $self->_onclick_accessor($arg);
+    $self->_onclick($arg);
 }
 
 =head2 javascript
