@@ -7,6 +7,7 @@ package Jifty::DateTime;
 
 Jifty::DateTime - a DateTime subclass that knows about Jifty users
 
+
 =head1 DESCRIPTION
 
 Jifty natively stores timestamps in the database in GMT.  Dates are stored
@@ -69,6 +70,11 @@ sub new_from_string {
     my $class  = shift;
     my $string = shift;
     my $now;
+
+    # Date::Manip does not play nice with string overloaded objects.
+    # Force stringification of any date object
+    $string .= "";
+
     {
         # Date::Manip interprets days of the week (eg, ''monday'') as
         # days within the *current* week. Detect these and prepend
