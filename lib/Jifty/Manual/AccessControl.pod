@@ -120,10 +120,9 @@ to reenter a password for future use.
 =head2 Doing checks at other places in your code
 
 If you need to check more than Model-based record operations you will
-have to do some coding on your
-own. C<Jifty-E<gt>web-E<gt>current_user> provides a
-C<App::CurrentUser> object that can get queried about the current
-user. This object provides some convenience methods:
+have to do some coding on your own. C<< Jifty->web->current_user >> provides a
+C<App::CurrentUser> object that can get queried about the current user.
+This object provides some convenience methods:
 
 =over 4
 
