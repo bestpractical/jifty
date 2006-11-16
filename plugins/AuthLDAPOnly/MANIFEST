@@ -1,0 +1,10 @@
+MANIFEST
+lib/Jifty/Plugin/AuthLDAPOnly.pm
+lib/Jifty/Plugin/AuthLDAPOnly/Action/LDAPLogin.pm
+lib/Jifty/Plugin/AuthLDAPOnly/Action/LDAPLogout.pm
+lib/Jifty/Plugin/AuthLDAPOnly/CurrentUser.pm
+lib/Jifty/Plugin/AuthLDAPOnly/Dispatcher.pm
+lib/Jifty/Plugin/AuthLDAPOnly/Model/LDAPUser.pm
+Makefile.PL
+share/web/templates/ldaplogin
+share/web/templates/ldaplogout
