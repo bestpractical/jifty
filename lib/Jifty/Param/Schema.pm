@@ -153,7 +153,13 @@ use constant MERGE_PARAM_BEHAVIOUR => {
 
 Takes two hashrefs. Merges them together and returns the merged hashref.
 
+    - Empty fields in subclasses don't override nonempty fields in superclass anymore.
+    - Arrays don't merge; e.g. if parent class's valid_values is [1,2,3,4], and
+      subclass's valid_values() is [1,2], they don't somehow become [1,2,3,4,1,2].
+
 BUG: This should either be a private routine or factored out into Jifty::Util
+
+
 
 =cut
 
