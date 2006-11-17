@@ -36,7 +36,10 @@ control how form elements interact with the underlying model.
 See also L<Jifty::Action::Record> for data-oriented actions, 
 L<Jifty::Result> for how to return values from actions.
 
-See L<Jifty::Param::Schema> for more details.
+See L<Jifty::Param::Schema> for more details on the declarative 
+syntax.
+
+See L<Jifty::Manual::Actions> for examples of using actions.
 
 =cut
 

@@ -153,13 +153,55 @@ C<< sub validate_<argument> >>, and it will be called as appropriate:
 You can also do validation in the model -- see
 L<Jifty::Action::Record> 
 
-Note that if, instead of failing, you want to automatically modify
+=head3 canonicalization
+
+If, instead of failing, you want to automatically modify
 invalid content to be valid, you want a
 L<canonicalizer|Jifty::Manual::Glossary/canonicalize>, not a
 validator.
 
-Additionally, if you set C<ajax_validates> or C<ajax_canonicalizes> to
-true for an argument, then Jifty will automatically validate or
+    use Regexp::Common 'profanity_us';
+
+    sub canonicalize_body {
+       my $self = shift;
+       my $body = shift;
+       $body =~ s/$RE{profanity}/**expletives**/gi;
+       return $body;
+    }
+
+A L<canonicalizer|Jifty::Manual::Glossary/canonicalize> can also 
+change other parts of the action.  This lets you update the display
+dynamically in an L<AJAX|Jifty::Manual::Glossary/ajax>-enabled browser
+based on what the user has entered.  For example, we can let a user
+use magic syntax to provide tags for their blog post by surrounding the 
+tags with square brackets.
+
+    use Jifty::Param::Schema;
+    use Jifty::Action schema {
+        param title =>
+            label is 'Title',
+            hints is "You can provide tags like this [tag1 tag2]",
+            ajax canonicalizes;
+
+        param tags =>
+            label is 'Tags';
+    };
+
+    sub canonicalize_title {
+        my $self = shift;
+        my $value = shift;
+
+        if ($value =~ s/\[(.*?)\]//) {
+            # this clobbers, may want to merge
+            $self->argument_value( tags => $1 );
+        }
+
+        return $value;
+    }
+
+
+If you set C<ajax validates> or C<ajax canonicalizes>
+for an argument, then Jifty will automatically validate or
 canonicalize it in an L<AJAX|Jifty::Manual::Glossary/ajax>-enabled
 browser when the user stops typing.
 
