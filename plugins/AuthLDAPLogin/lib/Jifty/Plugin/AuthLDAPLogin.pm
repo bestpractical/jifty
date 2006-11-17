@@ -3,24 +3,29 @@ use warnings;
 
 =head1 NAME
 
- Jifty::Plugin::AuthLDAPLogin
+Jifty::Plugin::AuthLDAPLogin
 
 =head1 DESCRIPTION
 
- MUST BE USED WITH LOGIN PLUGIN
+B<MUST BE USED WITH Login PLUGIN.>
+
+Add ldap users in L<Jifty::Plugin::Login::Model::User>. 
+Distinct id for ldap users is C<email> field with C<login@LDAP.user>
 
 =head1 CONFIG
 
- in etc/config.yml
+in etc/config.yml
 
   Plugins: 
     - Login: {}
     - AuthLDAPLogin: 
-       LDAPserver: ldap.univ.fr
-       LDAPbase: ou=people,dc=.....
-       LDAPuid: uid
-       LDAPemail: mailLocalAddress
+       LDAPhost: ldap.univ.fr           # ldap server
+       LDAPbase: ou=people,dc=.....     # base ldap
+       LDAPuid: uid                     # optional
 
+=head1 SEE ALSO
+
+L<Net::LDAP>
 
 =cut
 
@@ -43,15 +48,10 @@ use Net::LDAP;
         $AuthLDAPUserClass = $args{AuthLDAPUserClass}
             || "${appname}::Model::LDAPUser";
 
-	my ($conf);
-    	foreach (@{Jifty->config->framework('Plugins')}) {
-        	$conf = $_ if (defined $_->{'AuthLDAPLogin'});
-    	}
-    	$params{'Hostname'} = $conf->{'AuthLDAPLogin'}->{'LDAPserver'};
-    	$params{'base'} = $conf->{'AuthLDAPLogin'}->{'LDAPbase'};
-    	$params{'uid'} = $conf->{'AuthLDAPLogin'}->{'LDAPuid'};
-    	$params{'email'} = $conf->{'AuthLDAPLogin'}->{'LDAPemail'};
-    	$LDAP = Net::LDAP->new($params{Hostname},async=>1,onerror => 'undef',timeout => 3600, debug => 0);
+    	$params{'Hostname'} = $args{LDAPhost};
+    	$params{'base'} = $args{LDAPbase};
+    	$params{'uid'} = $args{LDAPuid} || "uid";
+    	$LDAP = Net::LDAP->new($params{Hostname},async=>1,onerror => 'undef', debug => 0);
     }
 
     sub CurrentLDAPUserClass {
@@ -74,9 +74,6 @@ use Net::LDAP;
         return $params{'uid'};
     }
 
-    sub email {
-        return $params{'email'};
-    }
 }
 
 1;

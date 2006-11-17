@@ -13,7 +13,7 @@ use base qw/Jifty::Action Jifty::Plugin::Login Jifty::Plugin::AuthLDAPLogin/;
 
 =head2 arguments
 
-Return the ticket form field
+Return the login form field
 
 =cut
 
@@ -37,10 +37,10 @@ sub arguments {
 
 }
 
-=head2 validate_ticket ST
+=head2 validate_name NAME
 
-for ajax_validates
-Makes sure that the ticket submitted is legal.
+For ajax_validates.
+Makes sure that the name submitted is a legal login.
 
 
 =cut
@@ -61,7 +61,7 @@ sub validate_name {
 
 =head2 take_action
 
-Actually check the user's password. If it's right, log them in.
+Bind on ldap to check the user's password. If it's right, log them in.
 Otherwise, throw an error.
 
 
@@ -73,6 +73,7 @@ sub take_action {
     my $dn = $self->uid().'='.$username.','.
         $self->base();
 
+    # Bind on ldap
     my $msg = $self->LDAP()->bind($dn ,'password' =>$self->argument_value('password'));
     
     unless (not $msg->code) {
@@ -82,19 +83,16 @@ sub take_action {
         return;
     }
 
-#    if ($error) {
-#      Jifty->log->info("CAS error: $ticket $username : $error");
-#      return;
-#    }
-      
     my $LDAPUser = $self->LoginUserClass();
     my $CurrentUser = $self->CurrentUserClass();
     my $u = $LDAPUser->new( current_user => $CurrentUser->superuser );
 
+    # Distinct id is login@LDAP.user
+    # Add user to User Login model
     $u->load_by_cols( email => $username.'@LDAP.user');
     my $id = $u->id;
     if (!$id) {
-    ($id) = $u->create(name => $username, email => $username.'@LDAP.user');
+        ($id) = $u->create(name => $username, email => $username.'@LDAP.user');
     }
 
     Jifty->log->debug("Login user id: $id"); 

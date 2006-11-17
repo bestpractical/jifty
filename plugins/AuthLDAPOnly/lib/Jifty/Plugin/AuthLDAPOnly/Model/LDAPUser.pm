@@ -59,7 +59,6 @@ sub current_user_can {
     }
     elsif ( $right eq 'update'
         and $self->id == $self->current_user->id
-#        and $args{'column'} ne 'email_confirmed' 
         )
     {
         return (1);

@@ -9,7 +9,6 @@ Jifty::Plugin::AuthLDAPOnly::Action::LDAPLogin
 
 package Jifty::Plugin::AuthLDAPOnly::Action::LDAPLogin;
 use base qw/Jifty::Action Jifty::Plugin::AuthLDAPOnly/;
-#use AuthCAS;
 
 
 =head2 arguments
@@ -38,10 +37,10 @@ sub arguments {
 
 }
 
-=head2 validate_ticket ST
+=head2 validate_name NAME
 
-for ajax_validates
-Makes sure that the ticket submitted is legal.
+For ajax_validates.
+Makes sure that the name submitted is a legal login.
 
 
 =cut
@@ -62,7 +61,7 @@ sub validate_name {
 
 =head2 take_action
 
-Actually check the user's password. If it's right, log them in.
+Bind on ldap to check the user's password. If it's right, log them in.
 Otherwise, throw an error.
 
 
@@ -73,6 +72,7 @@ sub take_action {
     my $dn = $self->uid().'='.$self->argument_value('name').','.
         $self->base();
 
+    # Bind on ldap
     my $msg = $self->LDAP()->bind($dn ,'password' =>$self->argument_value('password'));
     
     unless (not $msg->code) {
@@ -82,15 +82,11 @@ sub take_action {
         return;
     }
 
-#    if ($error) {
-#      Jifty->log->info("CAS error: $ticket $username : $error");
-#      return;
-#    }
-      
     my $LDAPUser = $self->AuthLDAPUserClass();
     my $CurrentUser = $self->CurrentLDAPUserClass();
     my $u = $LDAPUser->new( current_user => $CurrentUser->superuser );
 
+    # Add user to LDAPUser model
     $u->load_by_cols( name => $self->argument_value('name'));
     my $id = $u->id;
     if (!$id) { 

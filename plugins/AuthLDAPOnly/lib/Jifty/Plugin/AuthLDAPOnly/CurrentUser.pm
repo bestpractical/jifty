@@ -10,7 +10,7 @@ use base qw/Jifty::CurrentUser Jifty::Plugin::AuthLDAPOnly/;
 
 Instantiate a new current user object, loading the user by paramhash:
 
-   my $item = Jifty::Plugin::AuthLDAPOnly::Model::Item->new( Jifty::Plugin::AuthCASOnly::CurrentUser->new(name => 'user'));
+   my $item = Jifty::Plugin::AuthLDAPOnly::Model::Item->new( Jifty::Plugin::AuthCASOnly::CurrentUser->new(email => 'user@LDAP.user'));
 
 if you give the param 
     _bootstrap => 1
