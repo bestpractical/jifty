@@ -37,29 +37,16 @@ use Net::LDAP;
 # probably want to override L<Jifty::Plugin/init>.
 
 {
-    my ($CurrentLDAPUserClass, $AuthLDAPUserClass, $LDAP, %params);
+    my ($LDAP, %params);
 
     sub init {
         my $self = shift;
         my %args = @_;
-        my $appname = Jifty->config->framework('ApplicationName');
-        $CurrentLDAPUserClass = $args{CurrentUserClass}
-            || "${appname}::CurrentUser";
-        $AuthLDAPUserClass = $args{AuthLDAPUserClass}
-            || "${appname}::Model::LDAPUser";
 
     	$params{'Hostname'} = $args{LDAPhost};
     	$params{'base'} = $args{LDAPbase};
     	$params{'uid'} = $args{LDAPuid} || "uid";
     	$LDAP = Net::LDAP->new($params{Hostname},async=>1,onerror => 'undef', debug => 0);
-    }
-
-    sub CurrentLDAPUserClass {
-        return $CurrentLDAPUserClass;
-    }
-
-    sub AuthLDAPUserClass {
-        return $AuthLDAPUserClass;
     }
 
     sub LDAP {
