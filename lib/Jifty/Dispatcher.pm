@@ -1125,7 +1125,8 @@ sub render_template {
     eval { 
         my( $class,$codetemplate) = Jifty->handler->declare_handler->resolve_template($template);
         if ($class and $codetemplate) {
-            warn "Got $class, $template";
+            Jifty->log->debug( "Got $class, $template" );
+
             Jifty->handler->declare_handler->show($class => $codetemplate);
         } else {
             Jifty->handler->mason->handle_comp( $template ); 
