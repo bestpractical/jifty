@@ -274,9 +274,6 @@ sub render_as_subrequest {
     my ($self, $out_method, $arguments, $enable_actions) = @_;
 
     my $orig_out = Jifty->handler->mason->interp->out_method || \&Jifty::View::Mason::Handler::out_method;
-    # template-declare based regions are printing to stdout
-    open my $output_fh, '>', $out_method;
-    local *STDOUT = $output_fh;
 
     Jifty->handler->mason->interp->out_method($out_method);
 
@@ -299,6 +296,10 @@ sub render_as_subrequest {
     # onto a variable and not send headers when it does so
     #XXX TODO: There's gotta be a better way to localize it
     my $region_content = '';
+
+    # template-declare based regions are printing to stdout
+    open my $output_fh, '>>', $out_method;
+    local *STDOUT = $output_fh;
 
     # Call into the dispatcher
     Jifty->handler->dispatcher->handle_request;
