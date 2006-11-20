@@ -11,11 +11,6 @@ my $update = Jifty->web->new_action(
     moniker => "update-" . Jifty->web->serial,
     record  => $record
 );
-my $delete = Jifty->web->new_action(
-    class   => "Delete".$object_type,
-    moniker => "delete-" . Jifty->web->serial,
-    record  => $record
-);
 </%init>
 <div class="jifty_admin update item inline <%$object_type%>">
 <div class="editlink">
@@ -28,16 +23,6 @@ my $delete = Jifty->web->new_action(
           }
       ]
       ) %>
-  <% Jifty->web->link(
-      label   => _("Delete"),
-      onclick => [
-          { confirm => _("Confirm delete?") },
-          { submit => $delete },
-          {   replace_with => '/__jifty/admin/fragments/list/view',
-              args         => { object_type => $object_type, id => $id }
-          }
-      ]
-      ) %>  
 
   <% Jifty->web->link(
       label     => _("Cancel"),
@@ -50,7 +35,6 @@ my $delete = Jifty->web->new_action(
 
 </div>
 
-<%$delete->hidden('id',$id)%>
 % foreach my $argument ($update->argument_names) {
 <%$update->form_field($argument)%>
 %}

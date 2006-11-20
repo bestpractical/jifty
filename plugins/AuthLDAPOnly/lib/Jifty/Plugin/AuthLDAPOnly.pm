@@ -25,6 +25,8 @@ in etc/config.yml
 in your user model
   use base qw/Jifty::Plugin::AuthLDAPOnly::Model::LDAPUser/;
 
+in your application use /ldaplogin and /ldaplogout
+
 =head1 SEE ALSO
 
 L<Net::LDAP>

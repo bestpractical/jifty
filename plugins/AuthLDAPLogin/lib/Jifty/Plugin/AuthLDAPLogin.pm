@@ -12,6 +12,9 @@ B<MUST BE USED WITH Login PLUGIN.>
 Add ldap users in L<Jifty::Plugin::Login::Model::User>. 
 Distinct id for ldap users is C<email> field with C<login@LDAP.user>
 
+add /ldaplogin
+    /ldpalogout
+
 =head1 CONFIG
 
 in etc/config.yml

@@ -11,9 +11,27 @@ my $update = Jifty->web->new_action(
     moniker => "update-" . Jifty->web->serial,
     record  => $record
 );
+my $delete = Jifty->web->new_action(
+    class   => "Delete".$object_type,
+    moniker => "delete-" . Jifty->web->serial,
+    record  => $record
+);
+
 </%init>
 <div class="jifty_admin read item inline">
   
+<%
+    Jifty->web->form->submit(
+        class   => "editlink",
+        label   => "Delete",
+        submit => $delete,
+        onclick => { 
+         confirm => _("Confirm delete?"), 
+         delete =>  Jifty->web->current_region->qualified_name
+        },
+        )
+%> 
+
 <%
     Jifty->web->link(
         label   => "Edit",
@@ -22,9 +40,11 @@ my $update = Jifty->web->new_action(
             replace_with => "/__jifty/admin/fragments/list/update",
             args         => { object_type => $object_type, id => $id }
             },
+        as_button => 1
         )
 %>
 
+<% $delete->hidden('id',$id) %>
 % foreach my $argument ($update->argument_names) {
 % unless(   $argument =~ /_confirm$/
 %        && lc $update->arguments->{$argument}{render_as} eq 'password') {
