@@ -5,7 +5,7 @@ use strict;
 use lib 't/lib';
 use Jifty::SubTest;
 
-use Jifty::Test tests => 13;
+use Jifty::Test tests => 14;
 use Jifty::Test::WWW::Mechanize;
 
 my $server  = Jifty::Test->make_server;
@@ -40,4 +40,5 @@ $mech->get_ok("$URL/__jifty/validator.xml?J:A-dosomething=TestApp::Action::DoSom
     "Getting validator.xml output for a canonicalization");
 $mech->content_contains('<update name="J:A:F-email-dosomething">upper@email.com</update>',
     " ... canonicalizer returned all lower case (good)");
-
+$mech->content_contains('<canonicalization_note id="canonicalization_note-J:A:F-email-dosomething">Lowercased your email</canonicalization_note>',
+    " ... canonicalizer warned user");

@@ -174,7 +174,9 @@ change other parts of the action.  This lets you update the display
 dynamically in an L<AJAX|Jifty::Manual::Glossary/ajax>-enabled browser
 based on what the user has entered.  For example, we can let a user
 use magic syntax to provide tags for their blog post by surrounding the 
-tags with square brackets.
+tags with square brackets.  You can also let the user know you're
+doing something magical by using C<canonicalization_note> which 
+will display a message to the user.
 
     use Jifty::Param::Schema;
     use Jifty::Action schema {
@@ -194,6 +196,7 @@ tags with square brackets.
         if ($value =~ s/\[(.*?)\]//) {
             # this clobbers, may want to merge
             $self->argument_value( tags => $1 );
+            $self->canonicalization_note( title => 'Removed tags from your title' );
         }
 
         return $value;

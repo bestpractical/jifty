@@ -48,6 +48,13 @@ for my $ra ( Jifty->web->request->actions ) {
             or length $action->argument_value($arg) == 0 ) {
             $writer->emptyTag( "blank", name => $action->form_field_name($arg) );
         } else {
+            if ( $action->result->field_canonicalization_note($arg) ) {
+                $writer->dataElement(
+                    "canonicalization_note",
+                    $action->result->field_canonicalization_note($arg),
+                    id => $action->canonicalization_note_div_id($arg)
+                );
+            }
             $writer->dataElement(
                 "update",
                 $action->argument_value($arg),

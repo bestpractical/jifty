@@ -320,6 +320,7 @@ sub render {
         $self->render_hints();
         $self->render_errors();
         $self->render_warnings();
+        $self->render_canonicalization_notes();
     } elsif ($self->render_mode eq 'read'){ 
         $self->render_value();
     }
@@ -656,6 +657,24 @@ sub render_warnings {
 
     Jifty->web->out(
 qq!<span class="warning @{[$self->classes]}" id="@{[$self->action->warning_div_id($self->name)]}">@{[  $self->action->result->field_warning( $self->name ) || '']}</span>\n!
+    );
+    return '';
+}
+
+=head2 render_canonicalization_notes
+
+Outputs a <div> with any canonicalization notes for this action, even if there are
+none -- AJAX could fill it in.
+
+=cut
+
+sub render_canonicalization_notes {
+    my $self = shift;
+
+    return unless $self->action;
+
+    Jifty->web->out(
+qq!<span class="canonicalization_note @{[$self->classes]}" id="@{[$self->action->canonicalization_note_div_id($self->name)]}">@{[$self->action->result->field_canonicalization_note( $self->name ) || '']}</span>\n!
     );
     return '';
 }

@@ -176,7 +176,15 @@ Action.prototype = {
                                 }
                             } else if ((action.nodeName == 'canonicalizeaction') && (action.getAttribute("id") == id)) {
                                 for (var field = action.firstChild; field != null; field = field.nextSibling) {
-                                    // Possibilities for field.nodeName: it could be 'ignored', 'blank' or 'update'
+                                    // Possibilities for field.nodeName: it could be 'ignored', 'blank' , 'update', or 'info'
+                                    // info is a separate action from the update
+                                    if (field.nodeName == 'canonicalization_note')  {
+                                        var note_div= document.getElementById(field.getAttribute("id"));
+                                        if (note_div != null) {
+                                            note_div.innerHTML = field.firstChild.data;
+                                        }
+                                    }
+
                                     if (field.nodeName == 'update') {
                                         var field_name = field.getAttribute("name");
                                         for (var form_number = 0 ; form_number < document.forms.length; form_number++) {

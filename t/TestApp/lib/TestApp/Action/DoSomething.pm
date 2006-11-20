@@ -14,6 +14,7 @@ sub canonicalize_email {
     my $self = shift;
     my $address = shift;
     
+    $self->canonicalization_note(email => "Lowercased your email");
     return lc($address);
 }
 
