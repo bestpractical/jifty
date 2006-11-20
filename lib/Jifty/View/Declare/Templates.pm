@@ -6,7 +6,7 @@ use base qw/Exporter/;
 use Template::Declare::Tags;
 
 use base qw/Template::Declare/;
-our @EXPORT = qw(form hyperlink tangent redirect new_action form_submit form_next_page request get param current_user);
+our @EXPORT = qw(form hyperlink tangent redirect new_action form_submit form_next_page request get param current_user render_action);
 
 
 sub form (&){
@@ -34,6 +34,14 @@ sub redirect(@) {
 
 sub new_action(@){
     return Jifty->web->new_action(@_);
+}
+
+sub render_action(@){
+    my ($action, $fields, $field_args) = @_;
+    my @f = $fields && @$fields ? @$fields : $action->argument_names;
+    foreach my $argument (@f) {
+        outs($action->form_field($argument, %$field_args));
+    }
 }
 
 sub form_submit(@){
