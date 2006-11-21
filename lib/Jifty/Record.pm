@@ -295,6 +295,9 @@ sub _collection_value {
     return undef unless $classname;
     return unless $classname->isa( 'Jifty::DBI::Collection' );
 
+    if ( my $prefetched_collection = $self->_prefetched_collection($method_name)) {
+        return $prefetched_collection;
+    }
 
     my $coll = $classname->new( current_user => $self->current_user );
     if ($column->by and $self->id) { 
