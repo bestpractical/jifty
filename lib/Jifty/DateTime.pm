@@ -71,10 +71,6 @@ sub new_from_string {
     my $string = shift;
     my $now;
 
-    # Date::Manip does not play nice with string overloaded objects.
-    # Force stringification of any date object
-    $string .= "";
-
     {
         # Date::Manip interprets days of the week (eg, ''monday'') as
         # days within the *current* week. Detect these and prepend
