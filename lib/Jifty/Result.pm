@@ -19,7 +19,7 @@ use Jifty::Everything;
 
 use base qw/Jifty::Object Class::Accessor::Fast/;
 
-__PACKAGE__->mk_accessors(qw(failure action_class message content));
+__PACKAGE__->mk_accessors(qw(failure action_class message _content));
 
 
 =head2 new
@@ -35,7 +35,7 @@ sub new {
     my $self = bless {}, $class;
 
     $self->failure(0);
-    $self->_content_accessor({});
+    $self->_content({});
 
     return $self;
 }
@@ -135,6 +135,32 @@ sub field_warnings {
     return %{$self->{field_warnings} || {}};
 }
 
+=head2 field_canonicalization_note FIELD [NOTE]
+
+Gets or sets a canonicalization note for a specific field on the action.
+
+=cut
+
+sub field_canonicalization_note {
+    my $self = shift;
+    my $field = shift;
+
+    $self->{field_canonicalization_notes}{ $field } = shift if @_;
+    return $self->{field_canonicalization_notes}{ $field };
+}
+
+=head2 field_canonicalization_notes
+
+Returns a hash which maps L<argument|Jifty::Manual::Glossary/argument>
+name to canonicalization notes.
+
+=cut
+
+sub field_canonicalization_notes {
+    my $self = shift;
+    return %{$self->{field_canonicalization_notes} || {}};
+}
+
 =head2 content [KEY [, VALUE]]
 
 Gets or sets the content C<KEY>.  This is used when actions need to
@@ -146,11 +172,11 @@ of all of the C<KEY> and C<VALUE> pairs.
 sub content {
     my $self = shift;
 
-    return $self->_content_accessor unless @_;
+    return $self->_content unless @_;
 
     my $key = shift;
-    $self->_content_accessor->{$key} = shift if @_;
-    return $self->_content_accessor->{$key};
+    $self->_content->{$key} = shift if @_;
+    return $self->_content->{$key};
 }
 
 1;

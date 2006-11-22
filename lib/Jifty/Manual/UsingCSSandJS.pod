@@ -158,13 +158,22 @@ This library adds support for querying the DOM using CSS selectors.
 =head2 Assembly of JS definitions
 
 Jifty maintains a complete list of JS files to include. This list may
-be retrieved or set by the accessor
-C<Jifty-E<gt>web-E<gt>javascript_libs>. There should, however, rarely
-arise a situation to do that, because Jifty already reserved two files
-that may get added to your application. C<app.css> which is initially
-empty can get all JS functions you need to define and
-C<app_behaviour.js> is intentionally reserved for defining behaviors
-for DOM objects using the C<behaviour.js> library.
+be retrieved or set by the accessor C<< Jifty->web->javascript_libs >>.
+There should, However, rarely arise a situation to do that, because
+Jifty already reserved two files that may get added to your application:
+
+=over 4
+
+=item F<app.js>
+
+Initially empty; put all JS functions you need to define here.
+
+=item F<app_behaviour.js>
+
+Reserved for defining behaviors for DOM objects using the C<behaviour.js>
+library.
+
+=back
 
 The assembly process of all JS definitions is done in L<Jifty::Web> by
 the method C<include_javascript>.

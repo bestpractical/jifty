@@ -4,7 +4,7 @@ use strict;
 package Jifty::Request;
 
 use base qw/Jifty::Object Class::Accessor::Fast/;
-__PACKAGE__->mk_accessors(qw(top_request arguments just_validating path continuation_id continuation_type continuation_path));
+__PACKAGE__->mk_accessors(qw(_top_request arguments just_validating path continuation_id continuation_type continuation_path));
 
 use Jifty::JSON;
 use Jifty::YAML;
@@ -837,7 +837,7 @@ Returns true if this request is a subrequest.
 
 sub is_subrequest {
     my $self = shift;
-    return $self->_top_request_accessor ? 1 : undef;
+    return $self->_top_request ? 1 : undef;
 }
 
 =head2 top_request
@@ -850,8 +850,8 @@ originally.  Otherwise, returns itself;
 
 sub top_request {
     my $self = shift;
-    $self->_top_request_accessor(@_) if @_;
-    return $self->_top_request_accessor || $self;
+    $self->_top_request(@_) if @_;
+    return $self->_top_request || $self;
 }
 
 package Jifty::Request::Action;

@@ -1,0 +1,15 @@
+debian/changelog
+debian/compat
+debian/control
+debian/copyright
+debian/rules
+lib/Jifty/Plugin/AuthLDAPLogin.pm
+lib/Jifty/Plugin/AuthLDAPLogin/Action/LDAPLogin.pm
+lib/Jifty/Plugin/AuthLDAPLogin/Action/LDAPLogout.pm
+lib/Jifty/Plugin/AuthLDAPLogin/Dispatcher.pm
+Makefile.PL
+MANIFEST
+share/po/en.po
+share/po/fr.po
+share/web/templates/ldaplogin
+share/web/templates/ldaplogout

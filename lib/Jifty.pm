@@ -135,6 +135,12 @@ sub new {
         push @plugins, $class->new(%options);
     }
 
+    Jifty->plugins(@plugins);
+
+    # Now that we have the config set up and loaded plugins,
+    # load the localization files.
+    Jifty::I18N->refresh();
+    
     # Get a classloader set up
     my $class_loader = Jifty::ClassLoader->new(
         base => Jifty->app_class,
@@ -143,10 +149,6 @@ sub new {
     Jifty->class_loader($class_loader);
     $class_loader->require;
 
-    Jifty->plugins(@plugins);
-
-    Jifty::I18N->refresh(); # can't do this before we have the config set up and load plugins
-    
     Jifty->handler(Jifty::Handler->new());
     Jifty->api(Jifty::API->new());
 

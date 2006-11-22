@@ -42,8 +42,10 @@ sub new {
         );
 
     foreach my $plugin (Jifty->plugins) {
+        my $dir = eval { module_dir(ref($plugin)); };
+        next unless $dir;
         push @import, 'Gettext';
-        push @import, module_dir(ref($plugin)).'/po/*.po';
+        push @import, $dir . '/po/*.po';
     };
 
     Locale::Maketext::Lexicon->import(

@@ -145,7 +145,7 @@ C<new> parameter hash.
 =cut
 
 sub accessors { shift->handlers, qw(class key_binding id label tooltip) }
-__PACKAGE__->mk_accessors(qw(onclick class key_binding id label tooltip));
+__PACKAGE__->mk_accessors(qw(_onclick class key_binding id label tooltip));
 
 =head2 new PARAMHASH OVERRIDE
 
@@ -179,7 +179,7 @@ sub new {
 
 sub onclick {
     my $self = shift;
-    return $self->_onclick_accessor unless @_;
+    return $self->_onclick unless @_;
 
     my ($arg) = @_;
 
@@ -213,7 +213,7 @@ sub onclick {
 
     }
 
-    $self->_onclick_accessor($arg);
+    $self->_onclick($arg);
 }
 
 =head2 javascript

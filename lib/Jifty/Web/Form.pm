@@ -184,10 +184,10 @@ sub start {
         }
     }
 
-    my $form_start = qq!<form method="post" action="$ENV{PATH_INFO}"!;
-    $form_start   .= qq! name="@{[ $self->name ]}"! if defined $self->name;
-    $form_start   .= qq! autocomplete="off"! if defined $self->disable_autocomplete;
-    $form_start   .= qq! enctype="multipart/form-data" >\n!;
+    my $form_start = qq!<form method="post" action="!  . Jifty->web->escape( $ENV{PATH_INFO} ) . qq!"!;
+    $form_start .= qq! name="@{[ $self->name ]}"! if defined $self->name;
+    $form_start .= qq! autocomplete="off"!  if defined $self->disable_autocomplete;
+    $form_start .= qq! enctype="multipart/form-data" >\n!;
     Jifty->web->out($form_start);
 
     # Write out state variables early, so that if a form gets

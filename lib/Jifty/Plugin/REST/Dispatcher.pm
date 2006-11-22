@@ -5,6 +5,7 @@ use warnings;
 
 
 use CGI qw( start_html end_html ol ul li a dl dt dd );
+use Carp;
 use Jifty::Dispatcher -base;
 use Jifty::YAML ();
 use Jifty::JSON ();
@@ -34,10 +35,29 @@ on GET    '/=/action/*'    => \&list_action_params;
 on GET    '/=/action'      => \&list_actions;
 on POST   '/=/action/*'    => \&run_action;
 
+
+=head2 list PREFIX items
+
+Takes a URL prefix and a set of items to render. passes them on.
+
+=cut
+
+
+
 sub list {
     my $prefix = shift;
     outs($prefix, \@_)
 }
+
+
+
+=head2 outs PREFIX DATASTRUCTURE
+
+TAkes a url path prefix and a datastructure.  Depending on what content types the other side of the HTTP connection can accept,
+renders the content as yaml, json, javascript, perl, xml or html.
+
+=cut
+
 
 sub outs {
     my $prefix = shift;
@@ -90,6 +110,12 @@ sub outs {
 our $xml_config = { SuppressEmpty => '',
                     NoAttr => 1 };
 
+=head2 render_as_xml DATASTRUCTURE
+
+Attempts to render DATASTRUCTURE as simple, tag-based XML.
+
+=cut
+
 sub render_as_xml {
     my $content = shift;
 
@@ -103,6 +129,12 @@ sub render_as_xml {
     }
 }
 
+
+=head2 render_as_html PREFIX URL DATASTRUCTURE
+
+Attempts to render DATASTRUCTURE as simple semantic HTML suitable for humans to look at.
+
+=cut
 
 sub render_as_html {
     my $prefix = shift;
@@ -135,6 +167,12 @@ sub render_as_html {
 }
 
 
+=head2 html_dump DATASTRUCTURE
+
+Recursively render DATASTRUCTURE as some simple html dls and ols. 
+
+=cut
+
 
 sub html_dump {
     my $content = shift;
@@ -159,6 +197,12 @@ sub html_dump {
     }
 }
 
+=head2 html_dump_record Jifty::Record
+
+Returns a nice simple HTML definition list of the keys and values of a Jifty::Record object.
+
+=cut
+
 
 sub html_dump_record {
     my $item = shift;
@@ -167,10 +211,24 @@ sub html_dump_record {
      return  dl( map {dt($_), dd($hash{$_}) } keys %hash )
 }
 
-sub action { resolve($_[0], 'Jifty::Action', Jifty->api->actions) }
-sub model  { resolve($_[0], 'Jifty::Record', Jifty->class_loader->models) }
+=head2 action ACTION
 
-sub resolve {
+Canonicalizes ACTION into the form preferred by the code. (Cleans up casing, canonicalizing, etc. Returns 404 if it can't work its magic
+
+=cut
+
+
+sub action {  _resolve($_[0], 'Jifty::Action', Jifty->api->actions) }
+
+=head2 model MODEL
+
+Canonicalizes MODEL into the form preferred by the code. (Cleans up casing, canonicalizing, etc. Returns 404 if it can't work its magic
+
+=cut
+
+sub model  { _resolve($_[0], 'Jifty::Record', Jifty->class_loader->models) }
+
+sub _resolve {
     my $name = shift;
     my $base = shift;
     return $name if $name->isa($base);
@@ -183,6 +241,13 @@ sub resolve {
 
     abort(404);
 }
+
+
+=head2 list_models
+
+Sends the user a list of models in this application, with the names transformed from Perlish::Syntax to Everything.Else.Syntax
+
+=cut
 
 sub list_models {
     list(['model'], map {s/::/./g; $_ } Jifty->class_loader->models);
@@ -208,6 +273,14 @@ qw(    name
     valid_values
 );
 
+
+=head2 list_model_columns
+
+Sends the user a nice list of all columns in a given model class. Exactly which model is shoved into $1 by the dispatcher. This should probably be improved.
+
+
+=cut
+
 sub list_model_columns {
     my ($model) = model($1);
 
@@ -222,6 +295,13 @@ sub list_model_columns {
     );
 }
 
+=head2 list_model_items MODELCLASS COLUMNNAME
+
+Returns a list of items in MODELCLASS sorted by COLUMNNAME, with only COLUMNAME displayed.  (This should have some limiting thrown in)
+
+=cut
+
+
 sub list_model_items {
 
     # Normalize model name - fun!
@@ -235,6 +315,16 @@ sub list_model_items {
         map { $_->$column() } @{ $col->items_array_ref || [] } );
 }
 
+
+=head2 show_item_field $model, $column, $key, $field
+
+Loads up a model of type C<$model> which has a column C<$column> with a value C<$key>. Returns the value of C<$field> for that object. 
+Returns 404 if it doesn't exist.
+
+
+
+=cut
+
 sub show_item_field {
     my ( $model, $column, $key, $field ) = ( model($1), $2, $3, $4 );
     my $rec = $model->new;
@@ -244,6 +334,14 @@ sub show_item_field {
     outs( [ 'model', $model, $column, $key, $field ], $rec->$field());
 }
 
+=head2 show_item $model, $column, $key
+
+Loads up a model of type C<$model> which has a column C<$column> with a value C<$key>. Returns  all columns for the object
+
+Returns 404 if it doesn't exist.
+
+=cut
+
 sub show_item {
     my ($model, $column, $key) = (model($1), $2, $3);
     my $rec = $model->new;
@@ -252,17 +350,44 @@ sub show_item {
     outs( ['model', $model, $column, $key],  { map {$_ => $rec->$_()} map {$_->name} $rec->columns});
 }
 
+
+=head2 replace_item
+
+UNIMPLEMENTED
+
+=cut
+
 sub replace_item {
     die "hey replace item";
 }
+
+=head2 delete_item
+
+UNIMPLEMENTED
+
+=cut
 
 sub delete_item {
     die "hey delete item";
 }
 
+=head2 list_actions
+
+Returns a list of all actions allowed to the current user. (Canonicalizes Perl::Style to Everything.Else.Style).
+
+=cut
+
 sub list_actions {
     list(['action'], map {s/::/./g; $_} Jifty->api->actions);
 }
+
+=head2 list_action_params
+
+Takes a single parameter, $action, supplied by the dispatcher.
+
+Shows the user all possible parameters to the action, currently in the form of a form to run that action.
+
+=cut
 
 sub list_action_params {
     my ($action) = action($1) or abort(404);

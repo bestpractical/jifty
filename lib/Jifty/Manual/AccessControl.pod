@@ -97,20 +97,32 @@ allows a user to sign up himself. As a default
 behavior a confirmation mail is sent out that has to get followed by
 the user.
 
-=item F</confirm_email>
+=item F</chgpasswd>
 
-is called in the mail and results in accepting
-the user.
+allows a user to change his password.
+
+=item F</passwordreminder>
+
+after entering his mail address, the user will receive a mail that
+contains a link to F</let/reset_lost_password>.
+
+=item F</let/confirm_email>
+
+is called in the mail and results in accepting the user.
+
+=item F</let/reset_lost_password>
+
+enabled by the passwordreminder template, this template allows a user
+to reenter a password for future use.
 
 =back
 
 =head2 Doing checks at other places in your code
 
 If you need to check more than Model-based record operations you will
-have to do some coding on your
-own. C<Jifty-E<gt>web-E<gt>current_user> provides a
-C<App::CurrentUser> object that can get queried about the current
-user. This object provides some convenience methods:
+have to do some coding on your own. C<< Jifty->web->current_user >> provides a
+C<App::CurrentUser> object that can get queried about the current user.
+This object provides some convenience methods:
 
 =over 4
 

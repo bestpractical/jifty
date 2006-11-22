@@ -285,7 +285,7 @@ the final restriction that is finally used to retrieve the records in
 question.
 
 The C<operator> (whose default is '=') can be any legal SQL operator
-like C<=>, C<E<lt>=>, C<E<gt>=>, C<E<lt>E<gt>>, C<LIKE>, C<IS>, C<IS
+like C<=>, C<< <= >>, C<< >= >>, C<< != >>, C<LIKE>, C<IS>, C<IS
 NOT> as well as some convenience operators that silently use C<LIKE>
 with properly set wildcards (C<MATCHES>, C<STARTSWITH> or
 C<ENDSWITH>).

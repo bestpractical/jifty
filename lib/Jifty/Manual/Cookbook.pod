@@ -14,7 +14,7 @@ of Jifty use, and ones that work pretty well.
 =head2 Add Atom/RSS Feeds ?
 
 You could generate atom/rss feeds for virtually any model in your application.
-For instance, suppose there's a "Post" model (like a blog post), you could use
+For instance, suppose there's a "Post" model (like a blog entry), you could use
 L<XML::Feed> to do this:
 
     # In '/feed' template
@@ -219,7 +219,7 @@ when it is rendering form fields. If found, related javascript code is
 generated. You do not have to modify any code in your view. Jifty does
 it for you.
 
-The ajax canonicalization happenes when the input focus leaves that
+The ajax canonicalization happens when the input focus leaves that
 field. You would see the effect a bit latter that the value in the
 field is changed.
 

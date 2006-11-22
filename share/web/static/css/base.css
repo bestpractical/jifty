@@ -12,6 +12,10 @@ body.calpopup {
     color: #00a0a0;
 }
 
+.canonicalization_note {
+    color: #009966;
+}
+
 hr {
     clear: both;
 } 

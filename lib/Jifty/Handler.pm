@@ -66,8 +66,7 @@ sub new {
 #        $_[-1] = Jifty->handler->cgi if Jifty->handler->cgi;
 #    };
 
-    $self->dispatcher(
-        Jifty->config->framework('ApplicationClass') . "::Dispatcher" );
+    $self->dispatcher( Jifty->app_class( "Dispatcher" ) );
     Jifty::Util->require( $self->dispatcher );
     $self->dispatcher->import_plugins;
     $self->dispatcher->dump_rules;

@@ -27,7 +27,7 @@ my $field = <<"EOF";
        @{[ $self->_widget_class('combo-button')]}
         ></span></span><span style="display: none"></span><select 
         name="@{[ $self->input_name ]}" 
-        id="@{[ $self->_element_id_accessor ]}_List" 
+        id="@{[ $self->_element_id ]}_List" 
         @{[ $self->_widget_class('combo-list')]}
         onchange="ComboBox_SimpleAttach(this, this.form['@{[ $self->element_id ]}']); " 
         >

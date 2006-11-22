@@ -77,13 +77,10 @@ use warnings;
 package @{[$appclass]}::Action::@{[$action]};
 use base qw/@{[$appclass]}::Action Jifty::Action/;
 
-=head2 arguments
+use Jifty::Param::Schema;
+use Jifty::Action schema {
 
-=cut
-
-sub arguments {
-    # This should return an arrayref of arguments
-}
+};
 
 =head2 take_action
 
