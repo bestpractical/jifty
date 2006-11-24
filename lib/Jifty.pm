@@ -6,7 +6,7 @@ use IPC::PubSub;
 use encoding 'utf8';
 # Work around the fact that Time::Local caches thing on first require
 BEGIN { local $ENV{'TZ'} = "GMT";  require Time::Local;}
-$Jifty::VERSION = '0.61025';
+$Jifty::VERSION = '0.61123_01';
 
 =head1 NAME
 

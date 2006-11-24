@@ -69,7 +69,7 @@ requires:
   Hook::LexWrap: 0
   IPC::PubSub: 0.11
   JSON::Syck: 0.14
-  Jifty::DBI: 0.26
+  Jifty::DBI: 0.29
   LWP::UserAgent: 0
   Locale::Maketext::Extract: 0.20
   Locale::Maketext::Lexicon: 0.60
@@ -94,4 +94,4 @@ requires:
   perl: 5.8.3
   version: 0
 tests: t/*.t t/*/t/*.t
-version: 0.61025
+version: 0.61123_01
