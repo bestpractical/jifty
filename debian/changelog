@@ -1,3 +1,9 @@
+jifty (0.61123-1) unstable; urgency=low
+
+  * New cpan release 
+
+ -- AGOSTINI Yves <agostini@univ-metz.fr>  Wed, 24 Nov 2006 21:08:26 +0200
+
 jifty (0.60912-2) unstable; urgency=low
 
   * Add missing dependencies, 
