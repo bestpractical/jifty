@@ -81,6 +81,7 @@ sub update_catalogs {
     my @catalogs = File::Find::Rule->file->in(
         Jifty->config->framework('L10N')->{'PoDir'} );
     foreach my $catalog (@catalogs) {
+        next if $catalog =~ m{(^|/)\.svn/};
         $self->update_catalog( $catalog );
     }
     if ($self->{'language'}) { 
@@ -126,6 +127,7 @@ sub extract_messages {
 
     my $logger =Log::Log4perl->get_logger("main");
     foreach my $file (@files) {
+        next if $file =~ m{(^|/)\.svn/};
         next unless $self->_check_mime_type($file );
         $logger->info("Extracting messages from '$file'");
         $LMExtract->extract_file($file);
