@@ -70,6 +70,7 @@ sub _objToJson_syck {
     my ($obj, $args) = @_;
 
     local $JSON::Syck::SingleQuote = $args->{singlequote};
+    local $JSON::Syck::ImplicitUnicode = 1;
     JSON::Syck::Dump($obj);
 }
 
