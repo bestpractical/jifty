@@ -68,7 +68,7 @@ requires:
   Hash::Merge: 0
   Hook::LexWrap: 0
   IPC::PubSub: 0.11
-  JSON::Syck: 0.14
+  JSON::Syck: 0.15
   Jifty::DBI: 0.29
   LWP::UserAgent: 0
   Locale::Maketext::Extract: 0.20
@@ -77,6 +77,7 @@ requires:
   MIME::Types: 0
   Module::CoreList: 0
   Module::Pluggable: 2.95
+  Module::Refresh: 0
   Module::ScanDeps: 0
   Object::Declare: 0.13
   Params::Validate: 0
@@ -85,6 +86,7 @@ requires:
   Scalar::Defer: 0.06
   Shell::Command: 0
   String::Koremutake: 0
+  Test::Base: 0
   UNIVERSAL::require: 0
   URI: 0
   XML::Simple: 0

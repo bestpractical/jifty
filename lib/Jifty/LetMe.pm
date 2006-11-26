@@ -89,8 +89,8 @@ sub _generate_digest {
 
     # get user's generic secret
     my $user;
-    return undef unless ( $user = $self->_user_from_email($self->email) );
-    return undef unless ($user->auth_token);
+    return '' unless ( $user = $self->_user_from_email($self->email) );
+    return '' unless ($user->auth_token);
 
 
 
@@ -179,6 +179,9 @@ sub from_token {
     $self->email( Jifty::I18N->maybe_decode_utf8(URI::Escape::uri_unescape( shift @atoms )) );
     $self->path( shift @atoms );
     $self->checksum_provided( pop @atoms );
+
+    # If they don't even have the right number of items in the path, then we know that it's not valid
+    return undef unless (scalar @atoms % 2 == 0); 
 
     my %args = map { Jifty::I18N->maybe_decode_utf8(URI::Escape::uri_unescape($_)) } @atoms;
     $self->until( delete $args{until} ) if $args{until};
