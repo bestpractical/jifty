@@ -13,3 +13,4 @@ share/po/en.po
 share/po/fr.po
 share/web/templates/ldaplogin
 share/web/templates/ldaplogout
+t/00-load.t

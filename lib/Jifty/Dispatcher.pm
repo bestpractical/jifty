@@ -776,7 +776,7 @@ sub _do_show {
 
 sub _do_set {
     my ( $self, $key, $value ) = @_;
-    $self->log->debug("Setting argument $key to $value");
+    $self->log->debug("Setting argument $key to ".($value||''));
     request->argument($key, $value);
 }
 
@@ -788,7 +788,7 @@ sub _do_del {
 
 sub _do_default {
     my ( $self, $key, $value ) = @_;
-    $self->log->debug("Setting argument default $key to $value");
+    $self->log->debug("Setting argument default $key to ".($value||''));
     request->argument($key, $value)
         unless defined request->argument($key);
 }

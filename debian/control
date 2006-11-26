@@ -46,28 +46,36 @@ Description: Jifty perl libraries
 Package: libjifty-perl
 Section: perl
 Architecture: all
-Depends: ${perl:Depends}, libjifty-dbi-perl, libapp-cli-perl
- (>> 0.03), libcache-cache-perl, libcalendar-simple-perl,
- libcgi-cookie-splitter-perl, libclass-accessor-named-perl,
- libclass-container-perl, libclass-data-inheritable-perl,
- libcompress-zlib-perl, libcss-squish-perl (>> 0.05),
- libcrypt-cbc-perl, libdatetime-format-builder-perl,
- libdatetime-format-iso8601-perl, libdate-manip-perl,
- libfile-find-rule-perl, libfile-mmagic-perl, libfile-sharedir-perl,
- libhash-merge-perl, libhtml-lint-perl, libhtml-mason-perl (>> 1.31),
- libhttp-server-simple-perl (>> 0.20),
- libhttp-server-simple-recorder-perl, liblog-log4perl-perl,
- liblocale-maketext-lexicon-perl (>> 0.60),
- liblocale-maketext-simple-perl (>> 0.18), libemail-folder-perl,
+Depends: ${perl:Depends}, libapp-cli-perl (>> 0.03),
+ libcache-cache-perl, libcalendar-simple-perl,
+ libclass-accessor-perl, libclass-container-perl,
+ libclass-data-inheritable-perl,
+ libcgi-cookie-splitter-perl, libcrypt-cbc-perl,
+ libcrypt-rijndael-perl, libcompress-zlib-perl,
+ libcss-squish-perl (>> 0.05), libdata-page-perl,
+ libdatetime-perl, libdate-manip-perl, libemail-folder-perl,
  libemail-localdelivery-perl, libemail-mime-perl,
- libemail-mime-creator-perl, libemail-send-perl, libmime-types-perl,
- libmodule-pluggable-perl (>> 2.95), libmodule-refresh-perl (>> 0.09),
- libobject-declare-perl, libscalar-defer-perl,
- libstring-koremutake-perl, libspiffy-perl, libwww-mechanize-perl (>>
- 1.12), libversion-perl, libxml-simple-perl, libxml-writer-perl,
- libxml-xpath-perl, libyaml-perl, libyaml-syck-perl (>> 0.67), 
- libhook-lexwrap-perl, libparams-util-perl,  libclass-inspector-perl, 
- libemail-mime-contenttype-perl,
+ libemail-mime-creator-perl, libemail-mime-contenttype-perl,
+ libemail-send-perl (>> 1.99_01),
+ libemail-simple-perl, libemail-simple-creator-perl,
+ libexporter-lite-perl, libfile-find-rule-perl,
+ libfile-mmagic-perl, libfile-sharedir-perl (>> 0.04),
+ libhtml-lint-perl, libhtml-mason-perl (>> 1.3101),
+ libhttp-server-simple-perl (>> 0.20),
+ libhttp-server-simple-recorder-perl, libhash-merge-perl,
+ libhook-lexwrap-perl, libipc-pubsub-perl (>> 0.11),
+ liblocale-maketext-lexicon-perl (>>0.60), liblog-log4perl-perl,
+ libmime-types-perl,libmodule-pluggable-perl (>> 2.95),
+ libmodule-corelist-perl, libmodule-scandeps-perl,
+ libobject-declare-perl (>> 0.13), libparams-validate-perl,
+ libscalar-defer-perl (>> 0.06), libstring-koremutake-perl,
+ libsql-reservedwords-perl, libuniversal-require-perl,
+ liburi-perl, libxml-simple-perl, libxml-xpath-perl,
+ libversion-perl, libyaml-perl (>> 0.35), libyaml-syck-perl (>> 0.67)
+ libcgi-perl, libhtml-parser-perl, libwww-perl,
+ libjifty-dbi-perl (>> 0.29), libxml-writer-perl (>> 0.600)
+Recommends: libdbd-sqlite3-perl, libwww-mechanize-perl,
+ libmodule-refresh-perl (>> 0.09)
 Description: Jifty perl libraries
  Yet another web framework.
  .

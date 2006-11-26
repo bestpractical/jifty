@@ -98,9 +98,9 @@ sub take_action {
         # Grab the value
         my $value = $self->argument_value($field);
 
-        # Boolean and integer fields should be skipped if blank.
+        # Boolean and integer fields should be set to NULL if blank.
         # (This logic should be moved into SB or something.)
-        next
+        $value = undef
             if ( defined $column->type and ( $column->type =~ /^bool/i || $column->type =~ /^int/i )
             and defined $value and $value eq '' );
 
