@@ -90,6 +90,9 @@ sub _generate_digest {
     # get user's generic secret
     my $user;
     return undef unless ( $user = $self->_user_from_email($self->email) );
+    return undef unless ($user->auth_token);
+
+
 
     # build an md5sum of the email token and until and our secret
     my $digest = Digest::MD5->new();
