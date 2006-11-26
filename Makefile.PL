@@ -49,6 +49,7 @@ requires('LWP::UserAgent'); # Net::HTTP
 requires('MIME::Types');
 requires('Module::Pluggable' => '2.95');
 requires('Module::CoreList');
+requires('Module::Refresh');
 requires('Module::ScanDeps');
 requires('Object::Declare' => '0.13');
 requires('Params::Validate');
@@ -56,6 +57,7 @@ requires('Scalar::Defer' => '0.06');
 requires('Shell::Command');
 requires('String::Koremutake');
 requires('SQL::ReservedWords');
+requires('Test::Base');
 requires('UNIVERSAL::require');
 requires('URI');
 requires('XML::Writer' => '0.601');
@@ -66,11 +68,11 @@ requires('version');
 if (can_cc()) {
     # Always require the Syck bindings if a C compiler is available
     requires('YAML::Syck' => 0.71);
-    requires('JSON::Syck' => 0.14);
+    requires('JSON::Syck' => 0.15);
 }
 else {
     requires('YAML' => 0.35) unless can_use('YAML::Syck' => 0.71);
-    requires('JSON' => 0.01) unless can_use('JSON::Syck' => 0.14);
+    requires('JSON' => 0.01) unless can_use('JSON::Syck' => 0.15);
 }
 
 features(
