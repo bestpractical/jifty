@@ -8,7 +8,8 @@ use Template::Declare::Tags;
 use base qw/Template::Declare/;
 our @EXPORT = qw(form hyperlink tangent redirect new_action form_submit form_next_page request get param current_user render_action);
 
-
+{
+no warnings qw/redefine/;
 sub form (&){
     my $code = shift;
     outs(Jifty->web->form->start);
@@ -16,7 +17,7 @@ sub form (&){
     outs(Jifty->web->form->end);
     return ''
 }
-
+}
 
 sub hyperlink(@) {
     outs (Jifty->web->link(@_));

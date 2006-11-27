@@ -52,7 +52,7 @@ sub resolve_template {
     my $template   = pop @components;
 
     my $package =  join('::',$self->root_class,grep { $_ } @components);
-    Jifty::Util->require($package);
+     Jifty::Util->require($package) ;
     unless ( $package->isa('Jifty::View::Declare::Templates') ) {
         $self->log->error( "$package (" . $self->root_class . " / $templatename) isn't a valid template package." );
         return undef;
