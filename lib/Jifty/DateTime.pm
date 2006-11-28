@@ -79,7 +79,7 @@ sub new_from_string {
         if($string =~ /^\s* (?:monday|tuesday|wednesday|thursday|friday|saturday|sunday)$/xi) {
             $string = "next $string";
         }
-        local $ENV{'TZ'} = "GMT";
+        Date::Manip::Date_Init("TZ=GMT");
         $now = Date::Manip::UnixDate( $string, "%o" );
     }
     return undef unless $now;
