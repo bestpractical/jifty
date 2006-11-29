@@ -30,7 +30,7 @@ following criteria:
 
 =over 4
 
-=item C<text> or C<varchar> fields
+=item C<text>, C<char> or C<varchar> fields
 
 Create C<field>_contains and C<field>_lacks arguments
 
@@ -38,7 +38,7 @@ Create C<field>_contains and C<field>_lacks arguments
 
 Create C<field>_before and C<field>_after arguments
 
-=item integer fields
+=item C<integer>, C<float> or C<double> fields
 
 Generate C<field>_lt and C<field>_gt arguments
 
@@ -87,14 +87,15 @@ sub arguments {
 
         my $label = $info->{label} || $field;
         $args->{"${field}_not"} = {%$info, label => "$label is not"};
-        if($column->type =~ /^(?:text|varchar)/i) {
+        my $type = lc($column->type);
+        if($type =~ /(?:text|char)/) {
             $info->{render_as} = 'text';
             $args->{"${field}_contains"} = {%$info, label => "$label contains"};
             $args->{"${field}_lacks"} = {%$info, label => "$label lacks"};
-        } elsif($column->type =~ /(?:date|time)/) {
+        } elsif($type =~ /(?:date|time)/) {
             $args->{"${field}_after"} = {%$info, label => "$label after"};
             $args->{"${field}_before"} = {%$info, label => "$label before"};
-        } elsif(    $column->type =~ /(?:int)/
+        } elsif(    $type =~ /(?:int|float|double)/
                 && !$column->refers_to) {
             $args->{"${field}_gt"} = {%$info, label => "$label greater than"};
             $args->{"${field}_lt"} = {%$info, label => "$label less than"};
