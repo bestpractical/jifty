@@ -15,8 +15,13 @@ sub show {
     my $self = shift;
     my $package = shift;
     my $template = shift;
-        no warnings qw/redefine/;
-        local *{Jifty::Web::out} = sub { shift; my $out = shift; Template::Declare::Tags::outs( $out);};
+
+    no warnings qw/redefine/;
+    local *Jifty::Web::out = sub {
+        shift;  # Remove the $self in Jifty::Web->out
+        goto &Template::Declare::Tags::outs;
+    };
+
     local $Template::Declare::Tags::BUFFER = '';
     print STDOUT $package->show($template);
     return undef;
@@ -52,13 +57,19 @@ sub resolve_template {
     my $template   = pop @components;
 
     my $package =  join('::',$self->root_class,grep { $_ } @components);
-     Jifty::Util->require($package) ;
+    $package->require;
+
+    if ($UNIVERSAL::require::ERROR =~ /^Can't locate/) {
+        $self->log->debug($UNIVERSAL::require::ERROR);
+        return undef;
+    }
+
     unless ( $package->isa('Jifty::View::Declare::Templates') ) {
         $self->log->error( "$package (" . $self->root_class . " / $templatename) isn't a valid template package." );
         return undef;
     }
     unless ( $package->can('has_template') &&  $package->has_template($template) ) {
-        $self->log->error("$package has no template $template.");
+        $self->log->warn("$package has no template $template.");
         return undef;
 
     }
