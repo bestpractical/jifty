@@ -14,7 +14,7 @@ __PACKAGE__->mk_accessors(qw/root_class/);
 sub show {
     my $self = shift;
     my $package = shift;
-    my $template = shift;
+    my $code_template = shift;
 
     no warnings qw/redefine/;
     local *Jifty::Web::out = sub {
@@ -23,7 +23,7 @@ sub show {
     };
 
     local $Template::Declare::Tags::BUFFER = '';
-    print STDOUT $package->show($template);
+    print STDOUT $package->show($code_template);
     return undef;
 }
 
@@ -43,40 +43,49 @@ For example:
 
 would become 
 
-    Wifty::UI::admin::users, new
+    Wifty::View::admin::users, new
 
 
 =cut
 
 
 sub resolve_template {
-    my $self         = shift;
-    my $templatename = shift;    # like /admin/ui/new
+    my $self          = shift;
+    my $template_name = shift;    # like /admin/ui/new
 
-    my @components = split( '/', $templatename );
+    my @components = split( '/', $template_name );
     my $template   = pop @components;
+    my $package;
 
-    my $package =  join('::',$self->root_class,grep { $_ } @components);
-    $package->require;
+    REQUIRE_PACKAGE: {
+        $package = join('::', $self->root_class, grep { $_ } @components);
+        $package->require;
 
-    if ($UNIVERSAL::require::ERROR =~ /^Can't locate/) {
-        $self->log->debug($UNIVERSAL::require::ERROR);
-        return undef;
+        if ($UNIVERSAL::require::ERROR =~ /^Can't locate/) {
+            $self->log->debug($UNIVERSAL::require::ERROR);
+
+            # It's possible that /admin/ui/new is defined in admin, instead of admin::ui
+            if (@components) {
+                $template = pop(@components) . '/' . $template;
+                redo REQUIRE_PACKAGE;
+            }
+
+            return undef;
+        }
     }
 
     unless ( $package->isa('Jifty::View::Declare::Templates') ) {
-        $self->log->error( "$package (" . $self->root_class . " / $templatename) isn't a valid template package." );
+        $self->log->error( "$package (" . $self->root_class . " / $template_name) isn't a valid template package." );
         return undef;
     }
-    unless ( $package->can('has_template') &&  $package->has_template($template) ) {
+
+    if ( $package->can('has_template') and my $code_template = $package->has_template($template) ) {
+        return ( $package, $code_template );
+    }
+    else {
         $self->log->warn("$package has no template $template.");
         return undef;
-
     }
-
-    return ( $package, $template );
-
 }
 
 1;
-
