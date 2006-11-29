@@ -1,0 +1,151 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Audrey Tang <audreyt@audreyt.org>\n"
+"Language-Team: simplified Chinese\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. ($_->[3])
+#: share/web/templates/__jifty/halo:119
+msgid "%1 seconds"
+msgstr "%1 秒"
+
+#: share/web/templates/__jifty/admin/index.html:49
+msgid "Actions"
+msgstr "操作"
+
+#: share/web/templates/_elements/wrapper:11
+msgid "Administration mode is enabled."
+msgstr "系统管理模式开启中."
+
+#: share/web/templates/_elements/wrapper:11
+msgid "Alert"
+msgstr "请注意"
+
+#: lib/Jifty/Action/Record/Create.pm:74 lib/Jifty/Action/Record/Create.pm~:74
+msgid "An error occurred.  Try again later"
+msgstr "系统无法执行此项操作, 请稍后再试"
+
+#: share/web/templates/helpers/calendar.html:4
+msgid "Close window"
+msgstr "关闭窗口"
+
+#. (ref($record)
+#: lib/Jifty/Action/Record/Create.pm:75 lib/Jifty/Action/Record/Create.pm~:75
+msgid "Create of %1 failed: %2"
+msgstr "无法建立 %1: %2"
+
+#: lib/Jifty/Action/Record/Create.pm:97 lib/Jifty/Action/Record/Create.pm~:97
+msgid "Created"
+msgstr "成功建立项目."
+
+#: share/web/templates/__jifty/admin/index.html:34
+msgid "Database Administration"
+msgstr "数据瘤管理"
+
+#: lib/Jifty/Action/Record/Delete.pm:75
+msgid "Deleted"
+msgstr "成功删除项目."
+
+#: lib/Jifty/Web.pm:769 lib/Jifty/Web.pm~:768
+msgid "Dismiss"
+msgstr "关闭"
+
+#. ($comp_name)
+#: lib/Jifty/Mason/Halo.pm:104
+msgid "Edit %1"
+msgstr "编辑 %1"
+
+#: share/web/templates/dhandler:7
+msgid "Go back home..."
+msgstr "回首页..."
+
+#. (Jifty->web->current_user->user_object->name)
+#: share/web/templates/_elements/sidebar:3
+msgid "Hiya, %1."
+msgstr "%1 您好."
+
+#: share/web/templates/__jifty/online_docs/toc.html:6
+msgid "Jifty Developer Documentation Online"
+msgstr "Jifty 线上开发文件"
+
+#: share/web/templates/__jifty/online_docs/content.html:6
+msgid "Jifty Pod Online"
+msgstr "Jifty 线上 POD 文件"
+
+#: share/web/templates/_elements/wrapper:18
+msgid "Loading..."
+msgstr "请稍候..."
+
+#: share/web/templates/__jifty/admin/index.html:40
+msgid "Models"
+msgstr "模型"
+
+#: lib/Jifty/Web.pm:273 lib/Jifty/Web.pm~:273
+msgid "No request to handle"
+msgstr "没有可处理的要求"
+
+#: share/web/templates/__jifty/online_docs/index.html:5
+msgid "Online Documentation"
+msgstr "线上文件"
+
+#: lib/Jifty/Record.pm:223 lib/Jifty/Record.pm:282 lib/Jifty/Record.pm:61
+msgid "Permission denied"
+msgstr "权限不足."
+
+#: lib/Jifty/Record.pm:84
+msgid "Record created"
+msgstr "成功建立项目."
+
+#: share/web/templates/__jifty/halo:111
+msgid "SQL Statements"
+msgstr "SQL 陈述式"
+
+#: share/web/templates/__jifty/online_docs/content.html:50
+msgid "Schema"
+msgstr "纲要"
+
+#: share/web/templates/dhandler:1
+msgid "Something's not quite right"
+msgstr "系统错误"
+
+#: share/web/templates/__jifty/online_docs/index.html:16
+#: share/web/templates/__jifty/online_docs/index.html:18
+msgid "Table of Contents"
+msgstr "目录"
+
+#: share/web/templates/__jifty/admin/index.html:36
+msgid ""
+"This console lets you manage the records in your Jifty database. Below, you "
+"should see a list of all your database tables. Feel free to go through and "
+"add, delete or modify records."
+msgstr "您可利用此界面来管理数据库的内容. 请点选表格名称, 进行增删及编辑."
+
+#: lib/Jifty/Action/Record/Update.pm:152
+msgid "Updated"
+msgstr "成功更新项目."
+
+#: share/web/templates/index.html:1
+msgid "Welcome to your new Jifty application"
+msgstr "欢迎光临您崭新的 Jifty 应用程序"
+
+#: share/web/templates/dhandler:5
+msgid ""
+"You got to a page that we don't think exists.  Anyway, the software has "
+"logged this error. Sorry about this."
+msgstr "抱歉, 此页面不存在, 系统已留下纪录."
+
+#. ('http://hdl.loc.gov/loc.pnp/cph.3c13461')
+#: share/web/templates/index.html:3
+msgid "You said you wanted a pony. (Source %1)"
+msgstr "您可不正是想要一匹小马吗? (参见 %1)"
+
