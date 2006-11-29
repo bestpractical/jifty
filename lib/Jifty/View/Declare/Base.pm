@@ -8,30 +8,36 @@ use Scalar::Defer;
 use Template::Declare::Tags;
 use Jifty::View::Declare::Templates;
 
-our @EXPORT = (@Jifty::View::Declare::Templates::EXPORT, @Template::Declare::Tags::EXPORT, 'page');
+our @EXPORT = (
+    @Jifty::View::Declare::Templates::EXPORT,
+    @Template::Declare::Tags::EXPORT,
+    'page',
+);
 our $r = defer { Jifty->handler->apache };
 our $m = defer { Jifty->web->mason };
 
 {
-no warnings 'redefine';
-sub show {
-    # Handle relative path here!
-    my $path = shift;
-    $path =~ s{^/}{};
-    Jifty::View::Declare::Templates->can('show')->($path, @_);
-}
+    no warnings 'redefine';
+
+    sub show {
+
+        # Handle relative path here!
+        my $path = shift;
+        $path =~ s{^/}{};
+        Jifty::View::Declare::Templates->can('show')->( $path, @_ );
+    }
 }
 
 # template 'foo' => page { ... } 'title';
 sub page (&;$) {
     my $code = shift;
-    my $title = (@_ ? shift(@_) : 'Untitled');
+    my $title = ( @_ ? shift(@_) : 'Untitled' );
     sub {
         $r->content_type('text/html; charset=utf-8');
         show('/_elements/nav');
         with( title => _($title) ), wrapper($code);
     };
-};
+}
 
 template '_elements/nav' => sub {
     my $top = Jifty->web->navigation;
@@ -39,12 +45,12 @@ template '_elements/nav' => sub {
     if ( Jifty->config->framework('AdminMode') ) {
         $top->child(
             Administration =>
-                url          => "/__jifty/admin/",
+              url          => "/__jifty/admin/",
             sort_order => 998
         );
         $top->child(
             OnlineDocs =>
-                url      => "/__jifty/online_docs/",
+              url      => "/__jifty/online_docs/",
             label      => 'Online docs',
             sort_order => 999
         );
@@ -83,12 +89,12 @@ sub wrapper (&) {
             with( name => 'content' ), a {};
             if ( Jifty->config->framework('AdminMode') ) {
                 with( class => "warning admin_mode" ), div {
+                    outs( _('Alert') . ': ' );
                     outs(
-                        _('Alert') . ':'
-                          . Jifty->web->tangent(
-                            label => _( 'Administration mode is enabled.' ),
+                        Jifty->web->tangent(
+                            label => _('Administration mode is enabled.'),
                             url   => '/__jifty/admin/'
-                          )
+                        )
                     );
                   }
             }
@@ -109,15 +115,14 @@ sub wrapper (&) {
             }
           }
       }
-};
+}
 
 template '_elements/sidebar' => sub {
     with( id => "salutation" ), div {
         if (    Jifty->web->current_user->id
             and Jifty->web->current_user->user_object )
         {
-            my $u =
-                Jifty->web->current_user->user_object;
+            my $u      = Jifty->web->current_user->user_object;
             my $method = $u->_brief_description;
             _( 'Hiya, %1.', $u->$method() );
         }
@@ -126,12 +131,12 @@ template '_elements/sidebar' => sub {
         }
     };
     with( id => "navigation" ), div {
-        my $menu = Jifty->web->navigation;
+        my $menu     = Jifty->web->navigation;
         my @children = $menu->children;
         if (@children) {
             with( class => "menu" ), ul {
                 render_menu($_) for @children;
-            }
+              }
         }
     };
 };
@@ -146,14 +151,14 @@ sub render_menu {
 
     with(@params), li {
 
-        outs($item->as_link);
+        outs( $item->as_link );
 
         if (@kids) {
             with( class => "submenu" ), ul {
                 render_menu($_) for @kids;
-            }
+              }
         }
-    }
+      }
 }
 
 template '_elements/header' => sub {
@@ -163,15 +168,14 @@ template '_elements/header' => sub {
         with(
             'http-equiv' => "content-type",
             content      => "text/html; charset=utf-8"
-            ),
-            meta {};
-        with( name => 'robots', content => 'all' ),
-            meta {};
-        title  { _($title) };
+          ),
+          meta {};
+        with( name => 'robots', content => 'all' ), meta {};
+        title { _($title) };
 
         Jifty->web->include_css;
         Jifty->web->include_javascript;
-    }
+      }
 };
 
 template '__jifty/subs' => sub {
@@ -276,7 +280,7 @@ template '__jifty/admin/autohandler' => sub {
         redirect('/__jifty/error/permission_denied');
         return;
     }
-    show('/__jifty/admin/elements/nav');    # XXX TODO hm. should be in dispatcher.
+    show('/__jifty/admin/elements/nav'); # XXX TODO hm. should be in dispatcher.
 };
 
 template '__jifty/admin/fragments/list/list' => sub {
@@ -1731,7 +1735,9 @@ template 'index.html' => page {
             'You said you wanted a pony. (Source %1)',
             'http://hdl.loc.gov/loc.pnp/cph.3c13461'
         )
-    ), img {};
-} 'Welcome to your new Jifty application';
+      ),
+      img {};
+  }
+  'Welcome to your new Jifty application';
 
 1;
