@@ -552,7 +552,10 @@ sub render_errors {
 Create and render a button.  It functions nearly identically like
 L<Jifty::Web/link>, except it takes C<arguments> in addition to
 C<parameters>, and defaults to submitting this L<Jifty::Action>.
-Returns nothing.
+Returns nothing. 
+
+Recommended reading: L<Jifty::Web::Form::Element>, where most of 
+the cool options to button and other things of its ilk are documented.
 
 =cut
 
