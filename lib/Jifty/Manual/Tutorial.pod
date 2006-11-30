@@ -319,8 +319,8 @@ look like this:
   <&| /_elements/wrapper, title => Jifty->config->framework('ApplicationName') &>
   <dl>
   % while (my $post = $posts->next) {
-   <dt><%$post->title%></dt>
-   <dd><%$post->body%></dd>
+   <dt><% $post->title %></dt>
+   <dd><% $post->body %></dd>
   % }
   </dl>
   </&>
@@ -367,8 +367,8 @@ a file called F<share/web/templates/fragments/page_of_posts> containing:
   % }
   <dl class="list">
   % while (my $post = $posts->next) {
-   <dt><%$post->title%></dt>
-   <dd><%$post->body%></dd>
+   <dt><% $post->title %></dt>
+   <dd><% $post->body %></dd>
   % }
   </dl>
 
