@@ -244,8 +244,28 @@ the result, using $self->result->content, e.g:
     $self->result->content( id => $new_post->id);
 
 This information can be then used elsewhere to, for example,
-automatically redirect you to a view page for that new blog post. See
-L<Jifty::Request::Mapper> for some more information.
+automatically redirect you to a view page for that new blog post. The
+view page template may have the following piece of code in it:
+
+    <%args>
+    $id
+    </%args>
+    <%init>
+    my $result = Jifty->web->response->result('post');
+    $id = $result->content('id') if $result and !defined $id;
+    # load the record by $id and other stuff go here...
+   </%init>
+
+where C<'post'> is the moniker of your post page action. In fact, that's
+exactly how actions "return" values to other templates in your application.
+
+It should be mentioned that the response object is "per request". that is,
+it usually can't live across links. Therefore, when paging is added to your view
+page, for example, you need to either pass some data to the link as C<args>
+or explicitly tell Jifty to preserve states for you.
+
+See the source code of Jifty's Pony site and L<Jifty::Request::Mapper> for some 
+more information.
 
 =head2 USING ACTIONS
 
