@@ -258,8 +258,7 @@ view page template may have the following piece of code in it:
 
 where C<'post_blog'> is the moniker for your post page action object.
 In fact, that's exactly how actions "return" values to other templates 
-in your application. Note that the whole data passing process happens 
-completely on the server-side, so no serialization is required here.
+in your application.
 
 It should also be mentioned that the response object is "per request". That is,
 it usually can't live up to another user request. Therefore, when paging mechanism 
