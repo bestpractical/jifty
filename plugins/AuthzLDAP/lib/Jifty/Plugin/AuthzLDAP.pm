@@ -28,6 +28,32 @@ in etc/config.yml
 in application create a LDAPFilter model
         use base qw/Jifty::Plugin::AuthzLDAP::Model::LDAPFilter/;
 
+in LDAPFilter model create your filters, something like
+ name    |filter                         |is_group
+ is_admin|(!eduPersonAffiliation=STUDENT)|0
+ in_admin|cn=admin,ou=groups,dc=my.org   |1
+
+to protect access to /admin
+in "TestApp" application create a lib/TestApp/Dispatcher.pm 
+
+    use strict;
+    use warnings;
+
+    package TestApp::Dispatcher;
+    use Jifty::Dispatcher -base;
+
+    before '/admin/*' => run {
+       # Authentication
+       Jifty->web->tangent(url => '/login')
+            if (! Jifty->web->current_user->id);
+       # Authorization
+       my $user = Jifty->web->current_user->user_object->name;
+       Jifty->web->tangent(url => '/error/AccessDenied')
+            if (! Jifty::Plugin::AuthzLDAP->ldapvalidate($user,'is_admin') );
+    };
+
+    1
+
 =head1 SEE ALSO
 
 L<Net::LDAP>
@@ -131,7 +157,8 @@ sub ldapvalidate {
 
     # (?) allow use of writing filter in filtername
     # TODO: filtername must be cleanned
-    my $filter = ($record->filter)?$record->filter:$filtername;
+    # my $filter = ($record->filter)?$record->filter:$filtername;
+    my $filter = $record->filter;
 
     $user = $self->UID().'='.$user.','.$self->BASE();
     
