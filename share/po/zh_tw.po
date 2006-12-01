@@ -14,12 +14,51 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#. ($_->[3])
+#: lib/Jifty/Action/Record/Search.pm:96
+#. ($label)
+msgid "%1 after"
+msgstr "%1 晚於"
+
+#: lib/Jifty/Action/Record/Search.pm:97
+#. ($label)
+msgid "%1 before"
+msgstr "%1 早於"
+
+#: lib/Jifty/Action/Record/Search.pm:93
+#. ($label)
+msgid "%1 contains"
+msgstr "%1 包含"
+
+#: lib/Jifty/Action/Record/Search.pm:100
+#. ($label)
+msgid "%1 greater than"
+msgstr "%1 大於"
+
+#: lib/Jifty/Action/Record/Search.pm:89
+#. ($label)
+msgid "%1 is not"
+msgstr "%1 不等於"
+
+#: lib/Jifty/Action/Record/Search.pm:94
+#. ($label)
+msgid "%1 lacks"
+msgstr "%1 不包含"
+
+#: lib/Jifty/Action/Record/Search.pm:101
+#. ($label)
+msgid "%1 less than"
+msgstr "%1 小於"
+
 #: share/web/templates/__jifty/halo:119
+#. ($_->[3])
 msgid "%1 seconds"
 msgstr "%1 秒"
 
-#: share/web/templates/__jifty/admin/index.html:49
+#: lib/Jifty/Web/Form/Field.pm:517
+msgid "@{[$self->current_value]}"
+msgstr ""
+
+#: share/web/templates/__jifty/admin/index.html:19
 msgid "Actions"
 msgstr "操作"
 
@@ -31,37 +70,49 @@ msgstr "系統管理模式開啟中."
 msgid "Alert"
 msgstr "請注意"
 
-#: lib/Jifty/Action/Record/Create.pm:74 lib/Jifty/Action/Record/Create.pm~:74
+#: lib/Jifty/Action/Record/Create.pm:82
 msgid "An error occurred.  Try again later"
 msgstr "系統無法執行此項操作, 請稍後再試"
+
+#: lib/Jifty/Action/Record/Search.pm:105
+msgid "Any field contains"
+msgstr "任意欄位包含"
+
+#: share/web/templates/__jifty/admin/fragments/list/update:28
+msgid "Cancel"
+msgstr "取消"
 
 #: share/web/templates/helpers/calendar.html:4
 msgid "Close window"
 msgstr "關閉視窗"
 
+#: share/web/templates/__jifty/admin/fragments/list/view:29
+msgid "Confirm delete?"
+msgstr "確定要刪除?"
+
+#: lib/Jifty/Action/Record/Create.pm:81
 #. (ref($record)
-#: lib/Jifty/Action/Record/Create.pm:75 lib/Jifty/Action/Record/Create.pm~:75
 msgid "Create of %1 failed: %2"
 msgstr "無法建立 %1: %2"
 
-#: lib/Jifty/Action/Record/Create.pm:97 lib/Jifty/Action/Record/Create.pm~:97
+#: lib/Jifty/Action/Record/Create.pm:105
 msgid "Created"
 msgstr "成功建立項目."
 
-#: share/web/templates/__jifty/admin/index.html:34
+#: share/web/templates/__jifty/admin/index.html:3
 msgid "Database Administration"
 msgstr "資料瘤管理"
 
-#: lib/Jifty/Action/Record/Delete.pm:75
+#: lib/Jifty/Action/Record/Delete.pm:76
 msgid "Deleted"
 msgstr "成功刪除項目."
 
-#: lib/Jifty/Web.pm:769 lib/Jifty/Web.pm~:768
+#:
 msgid "Dismiss"
 msgstr "關閉"
 
-#. ($comp_name)
 #: lib/Jifty/Mason/Halo.pm:104
+#. ($comp_name)
 msgid "Edit %1"
 msgstr "編輯 %1"
 
@@ -69,8 +120,8 @@ msgstr "編輯 %1"
 msgid "Go back home..."
 msgstr "回首頁..."
 
-#. (Jifty->web->current_user->user_object->name)
-#: share/web/templates/_elements/sidebar:3
+#: share/web/templates/_elements/sidebar:5
+#. ($u->$method()
 msgid "Hiya, %1."
 msgstr "%1 您好."
 
@@ -86,11 +137,15 @@ msgstr "Jifty 線上 POD 文件"
 msgid "Loading..."
 msgstr "請稍候..."
 
-#: share/web/templates/__jifty/admin/index.html:40
+#: share/web/templates/__jifty/admin/index.html:9
 msgid "Models"
 msgstr "模型"
 
-#: lib/Jifty/Web.pm:273 lib/Jifty/Web.pm~:273
+#: lib/Jifty/Action/Record/Search.pm:106
+msgid "No field contains"
+msgstr "沒有欄位包含"
+
+#: lib/Jifty/Web.pm:297
 msgid "No request to handle"
 msgstr "沒有可處理的要求"
 
@@ -98,17 +153,21 @@ msgstr "沒有可處理的要求"
 msgid "Online Documentation"
 msgstr "線上文件"
 
-#: lib/Jifty/Record.pm:223 lib/Jifty/Record.pm:282 lib/Jifty/Record.pm:61
+#: lib/Jifty/Record.pm:240 lib/Jifty/Record.pm:319 lib/Jifty/Record.pm:60
 msgid "Permission denied"
 msgstr "權限不足."
 
-#: lib/Jifty/Record.pm:84
+#:
 msgid "Record created"
 msgstr "成功建立項目."
 
 #: share/web/templates/__jifty/halo:111
 msgid "SQL Statements"
 msgstr "SQL 陳述式"
+
+#: share/web/templates/__jifty/admin/fragments/list/update:18
+msgid "Save"
+msgstr "儲存"
 
 #: share/web/templates/__jifty/online_docs/content.html:50
 msgid "Schema"
@@ -118,19 +177,31 @@ msgstr "綱要"
 msgid "Something's not quite right"
 msgstr "系統錯誤"
 
-#: share/web/templates/__jifty/online_docs/index.html:16
-#: share/web/templates/__jifty/online_docs/index.html:18
+#: share/web/templates/__jifty/online_docs/index.html:16 share/web/templates/__jifty/online_docs/index.html:18
 msgid "Table of Contents"
 msgstr "目錄"
 
-#: share/web/templates/__jifty/admin/index.html:36
-msgid ""
-"This console lets you manage the records in your Jifty database. Below, you "
-"should see a list of all your database tables. Feel free to go through and "
-"add, delete or modify records."
+#: lib/Jifty/Action.pm:874
+msgid "That doesn't look like a correct value"
+msgstr "欄位格式錯誤."
+
+#: lib/Jifty/Action/Record.pm:247
+msgid "That doesn't look right, but I don't know why"
+msgstr "欄位內容錯誤."
+
+#: lib/Jifty/Action/Record.pm:179
+msgid "The passwords you typed didn't match each other"
+msgstr "兩組密碼不符合."
+
+#: lib/Jifty/Web.pm:360
+msgid "There was an error completing the request.  Please try again later."
+msgstr "系統執行錯誤, 請稍候再試."
+
+#: share/web/templates/__jifty/admin/index.html:5
+msgid "This console lets you manage the records in your Jifty database. Below, you should see a list of all your database tables. Feel free to go through and add, delete or modify records."
 msgstr "您可利用此界面來管理資料庫的內容. 請點選表格名稱, 進行增刪及編輯."
 
-#: lib/Jifty/Action/Record/Update.pm:152
+#: lib/Jifty/Action/Record/Update.pm:156
 msgid "Updated"
 msgstr "成功更新項目."
 
@@ -139,13 +210,14 @@ msgid "Welcome to your new Jifty application"
 msgstr "歡迎光臨您嶄新的 Jifty 應用程式"
 
 #: share/web/templates/dhandler:5
-msgid ""
-"You got to a page that we don't think exists.  Anyway, the software has "
-"logged this error. Sorry about this."
+msgid "You got to a page that we don't think exists.  Anyway, the software has logged this error. Sorry about this."
 msgstr "抱歉, 此頁面不存在, 系統已留下紀錄."
 
-#. ('http://hdl.loc.gov/loc.pnp/cph.3c13461')
+#: lib/Jifty/Action.pm:861
+msgid "You need to fill in this field"
+msgstr "此欄位不能留空."
+
 #: share/web/templates/index.html:3
+#. ('http://hdl.loc.gov/loc.pnp/cph.3c13461')
 msgid "You said you wanted a pony. (Source %1)"
 msgstr "您可不正是想要一匹小馬嗎? (參見 %1)"
-
