@@ -15,14 +15,49 @@ msgstr ""
 "Content-Type: text/plain; charset=ISO8859-15\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: lib/Jifty/Web.pm:583
-msgid " $self->response->results "
+#: lib/Jifty/Action/Record/Search.pm:96
+#. ($label)
+msgid "%1 after"
+msgstr ""
+
+#: lib/Jifty/Action/Record/Search.pm:97
+#. ($label)
+msgid "%1 before"
+msgstr ""
+
+#: lib/Jifty/Action/Record/Search.pm:93
+#. ($label)
+msgid "%1 contains"
+msgstr ""
+
+#: lib/Jifty/Action/Record/Search.pm:100
+#. ($label)
+msgid "%1 greater than"
+msgstr ""
+
+#: lib/Jifty/Action/Record/Search.pm:89
+#. ($label)
+msgid "%1 is not"
+msgstr ""
+
+#: lib/Jifty/Action/Record/Search.pm:94
+#. ($label)
+msgid "%1 lacks"
+msgstr ""
+
+#: lib/Jifty/Action/Record/Search.pm:101
+#. ($label)
+msgid "%1 less than"
 msgstr ""
 
 #: share/web/templates/__jifty/halo:119
 #. ($_->[3])
 msgid "%1 seconds"
 msgstr "%1 secondes"
+
+#: lib/Jifty/Web/Form/Field.pm:517
+msgid "@{[$self->current_value]}"
+msgstr ""
 
 #: share/web/templates/__jifty/admin/index.html:19
 msgid "Actions"
@@ -40,9 +75,21 @@ msgstr "Alerte"
 msgid "An error occurred.  Try again later"
 msgstr "Erreur. Ré-essayez plus tard"
 
+#: lib/Jifty/Action/Record/Search.pm:105
+msgid "Any field contains"
+msgstr ""
+
+#: share/web/templates/__jifty/admin/fragments/list/update:28
+msgid "Cancel"
+msgstr ""
+
 #: share/web/templates/helpers/calendar.html:4
 msgid "Close window"
 msgstr "Fermer la fenêtre"
+
+#: share/web/templates/__jifty/admin/fragments/list/view:29
+msgid "Confirm delete?"
+msgstr ""
 
 #: lib/Jifty/Action/Record/Create.pm:81
 #. (ref($record)
@@ -91,7 +138,11 @@ msgstr "Chargement..."
 msgid "Models"
 msgstr "Modèles"
 
-#: lib/Jifty/Web.pm:276
+#: lib/Jifty/Action/Record/Search.pm:106
+msgid "No field contains"
+msgstr ""
+
+#: lib/Jifty/Web.pm:297
 msgid "No request to handle"
 msgstr "Aucune requête à traiter"
 
@@ -99,7 +150,7 @@ msgstr "Aucune requête à traiter"
 msgid "Online Documentation"
 msgstr "Documentation en ligne"
 
-#: lib/Jifty/Record.pm:240 lib/Jifty/Record.pm:316 lib/Jifty/Record.pm:60
+#: lib/Jifty/Record.pm:240 lib/Jifty/Record.pm:319 lib/Jifty/Record.pm:60
 msgid "Permission denied"
 msgstr "Autorisation refusée"
 
@@ -109,6 +160,10 @@ msgstr "Enregistrement créé"
 
 #: share/web/templates/__jifty/halo:111
 msgid "SQL Statements"
+msgstr ""
+
+#: share/web/templates/__jifty/admin/fragments/list/update:18
+msgid "Save"
 msgstr ""
 
 #: share/web/templates/__jifty/online_docs/content.html:50
@@ -123,19 +178,19 @@ msgstr "Problème"
 msgid "Table of Contents"
 msgstr "Table des matières"
 
-#: lib/Jifty/Action.pm:854
+#: lib/Jifty/Action.pm:874
 msgid "That doesn't look like a correct value"
 msgstr "Valeur incorecte"
 
-#: lib/Jifty/Action/Record.pm:249
+#: lib/Jifty/Action/Record.pm:247
 msgid "That doesn't look right, but I don't know why"
 msgstr "Problème"
 
-#: lib/Jifty/Action/Record.pm:181
+#: lib/Jifty/Action/Record.pm:179
 msgid "The passwords you typed didn't match each other"
 msgstr "Les mots de passe tapés ne sont pas identiques"
 
-#: lib/Jifty/Web.pm:339
+#: lib/Jifty/Web.pm:360
 msgid "There was an error completing the request.  Please try again later."
 msgstr "Problème lors de l'exécution de cette requête. Ré-essayez plus tard."
 
@@ -155,7 +210,7 @@ msgstr "Bienvenue sur votre nouvelle application Jifty"
 msgid "You got to a page that we don't think exists.  Anyway, the software has logged this error. Sorry about this."
 msgstr "Cette page n'existe pas."
 
-#: lib/Jifty/Action.pm:841
+#: lib/Jifty/Action.pm:861
 msgid "You need to fill in this field"
 msgstr "Information obligatoire"
 
@@ -163,4 +218,3 @@ msgstr "Information obligatoire"
 #. ('http://hdl.loc.gov/loc.pnp/cph.3c13461')
 msgid "You said you wanted a pony. (Source %1)"
 msgstr ""
-

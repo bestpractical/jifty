@@ -86,24 +86,24 @@ sub arguments {
         next if($field =~ /^(.*)_id$/ && $self->record->column($1));
 
         my $label = $info->{label} || $field;
-        $args->{"${field}_not"} = {%$info, label => "$label is not"};
+        $args->{"${field}_not"} = { %$info, label => _("%1 is not", $label) };
         my $type = lc($column->type);
         if($type =~ /(?:text|char)/) {
             $info->{render_as} = 'text';
-            $args->{"${field}_contains"} = {%$info, label => "$label contains"};
-            $args->{"${field}_lacks"} = {%$info, label => "$label lacks"};
+            $args->{"${field}_contains"} = { %$info, label => _("%1 contains", $label) };
+            $args->{"${field}_lacks"} = { %$info, label => _("%1 lacks", $label) };
         } elsif($type =~ /(?:date|time)/) {
-            $args->{"${field}_after"} = {%$info, label => "$label after"};
-            $args->{"${field}_before"} = {%$info, label => "$label before"};
+            $args->{"${field}_after"} = { %$info, label => _("%1 after", $label) };
+            $args->{"${field}_before"} = { %$info, label => _("%1 before", $label) };
         } elsif(    $type =~ /(?:int|float|double)/
                 && !$column->refers_to) {
-            $args->{"${field}_gt"} = {%$info, label => "$label greater than"};
-            $args->{"${field}_lt"} = {%$info, label => "$label less than"};
+            $args->{"${field}_gt"} = { %$info, label => _("%1 greater than", $label) };
+            $args->{"${field}_lt"} = { %$info, label => _("%1 less than", $label) };
         }
     }
 
-    $args->{contains} = {type => 'text', label => 'Any field contains'};
-    $args->{lacks} = {type => 'text', label => 'No field contains'};
+    $args->{contains} = { type => 'text', label => _('Any field contains') };
+    $args->{lacks} = { type => 'text', label => _('No field contains') };
 
     return $self->_cached_arguments($args);
 }

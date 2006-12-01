@@ -601,7 +601,7 @@ sub redirect {
     # To submit a Jifty::Action::Redirect, we don't need to serialize a continuation,
     # unlike any other kind of actions.
     if (  (grep { not $_->action_class->isa('Jifty::Action::Redirect') }
-                values %{{ $self->response->results }})
+                values %{ { $self->response->results } })
         or $self->request->state_variables
         or $self->{'state_variables'}
         or $self->request->continuation
