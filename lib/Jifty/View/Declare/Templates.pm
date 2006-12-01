@@ -6,7 +6,7 @@ use base qw/Exporter/;
 use Template::Declare::Tags;
 
 use base qw/Template::Declare/;
-our @EXPORT = qw(form hyperlink tangent redirect new_action form_submit form_next_page request get param current_user render_action);
+our @EXPORT = qw(form hyperlink tangent redirect new_action form_submit form_next_page request get param current_user render_action render_region);
 
 {
 no warnings qw/redefine/;
@@ -35,6 +35,11 @@ sub redirect(@) {
 
 sub new_action(@){
     return Jifty->web->new_action(@_);
+}
+
+sub render_region(@){
+    unshift @_, 'name' if @_ % 2;
+    Jifty::Web::PageRegion->new(@_)->render;
 }
 
 sub render_action(@){
