@@ -6,7 +6,7 @@ use base qw/Exporter/;
 use Template::Declare::Tags;
 
 use base qw/Template::Declare/;
-our @EXPORT = qw(form hyperlink tangent redirect new_action form_submit form_next_page request get param current_user render_action render_region);
+our @EXPORT = qw(form hyperlink tangent redirect new_action form_submit form_next_page request get render_param current_user render_action render_region);
 
 {
 no warnings qw/redefine/;
@@ -71,7 +71,7 @@ sub get {
     return map { request->argument($_) }  @_;
 }
 
-sub param {
+sub render_param {
     my $action = shift;
     outs($action->form_field(@_));
     return '';

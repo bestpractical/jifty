@@ -283,7 +283,7 @@ template '__jifty/admin/action/dhandler' => sub {
         form {
 
             for ( $action->argument_names ) {
-                param( $action, $_ );
+                render_param( $action, $_ );
             }
 
             Jifty->web->form->submit( label => _("Run the action") );
@@ -414,7 +414,7 @@ template '__jifty/admin/fragments/list/new_item' => sub {
     my $create = new_action( class => 'Create' . $object_type );
     with( class => "jifty_admin create item inline" ), div {
         foreach my $argument ( $create->argument_names ) {
-            param( $create => $argument );
+            render_param( $create => $argument );
         }
     };
 
@@ -446,7 +446,7 @@ template '__jifty/admin/fragments/list/search' => sub {
 
     with( class => "jifty_admin" ), div {
         for my $arg ( $search->argument_names ) {
-            param( $search => $arg );
+            render_param( $search => $arg );
         }
 
         $search->button(
@@ -495,7 +495,7 @@ template '__jifty/admin/fragments/list/update' => sub {
         };
 
         foreach my $argument ( $update->argument_names ) {
-            param( $update => $argument );
+            render_param( $update => $argument );
         }
         hr {};
     };
@@ -543,7 +543,7 @@ template '__jifty/admin/fragments/list/view' => sub {
             unless ( $argument =~ /_confirm$/
                 && lc $update->arguments->{$argument}{render_as} eq 'password' )
             {
-                param( $update => $argument, render_mode => 'read' );
+                render_param( $update => $argument, render_mode => 'read' );
             }
         }
 
