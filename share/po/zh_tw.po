@@ -49,6 +49,11 @@ msgstr "%1 不包含"
 msgid "%1 less than"
 msgstr "%1 小於"
 
+#: share/web/templates/__jifty/error/mason_internal_error:30 share/web/templates/__jifty/error/mason_internal_error:34 share/web/templates/__jifty/error/mason_internal_error:38
+#. ($path, $line)
+msgid "%1 line %2"
+msgstr "%1 第 %2 列"
+
 #: share/web/templates/__jifty/halo:119
 #. ($_->[3])
 msgid "%1 seconds"
@@ -78,6 +83,19 @@ msgstr "系統無法執行此項操作, 請稍後再試"
 msgid "Any field contains"
 msgstr "任意欄位包含"
 
+#: share/web/templates/__jifty/admin/action/dhandler:25 share/web/templates/__jifty/admin/model/dhandler:20
+msgid "Back to the admin console"
+msgstr "回到管理界面"
+
+#: share/web/templates/__jifty/admin/index.html:29
+msgid "Back to the application"
+msgstr "回到應用程式"
+
+#: share/web/templates/helpers/calendar.html:4
+#. (_ &><body class="calpopup"><a href="#" onclick="window.close()
+msgid "Calendar"
+msgstr "日曆"
+
 #: share/web/templates/__jifty/admin/fragments/list/update:28
 msgid "Cancel"
 msgstr "取消"
@@ -89,6 +107,10 @@ msgstr "關閉視窗"
 #: share/web/templates/__jifty/admin/fragments/list/view:29
 msgid "Confirm delete?"
 msgstr "確定要刪除?"
+
+#: share/web/templates/__jifty/admin/fragments/list/new_item:17
+msgid "Create"
+msgstr "建立"
 
 #: lib/Jifty/Action/Record/Create.pm:81
 #. (ref($record)
@@ -103,6 +125,10 @@ msgstr "成功建立項目."
 msgid "Database Administration"
 msgstr "資料瘤管理"
 
+#: share/web/templates/__jifty/admin/fragments/list/view:26
+msgid "Delete"
+msgstr "刪除"
+
 #: lib/Jifty/Action/Record/Delete.pm:76
 msgid "Deleted"
 msgstr "成功刪除項目."
@@ -110,6 +136,10 @@ msgstr "成功刪除項目."
 #:
 msgid "Dismiss"
 msgstr "關閉"
+
+#: share/web/templates/__jifty/admin/fragments/list/view:37
+msgid "Edit"
+msgstr "編輯"
 
 #: lib/Jifty/Mason/Halo.pm:104
 #. ($comp_name)
@@ -137,9 +167,17 @@ msgstr "Jifty 線上 POD 文件"
 msgid "Loading..."
 msgstr "請稍候..."
 
+#: share/web/templates/__jifty/error/mason_internal_error:1
+msgid "Mason error"
+msgstr "Mason 系統錯誤"
+
 #: share/web/templates/__jifty/admin/index.html:9
 msgid "Models"
 msgstr "模型"
+
+#: share/web/templates/__jifty/admin/fragments/list/list:73
+msgid "Next Page"
+msgstr "下一頁"
 
 #: lib/Jifty/Action/Record/Search.pm:106
 msgid "No field contains"
@@ -153,13 +191,26 @@ msgstr "沒有可處理的要求"
 msgid "Online Documentation"
 msgstr "線上文件"
 
+#: share/web/templates/__jifty/admin/fragments/list/list:45
+#. ($page, $collection->pager->last_page)
+msgid "Page %1 of %2"
+msgstr "第 %1 頁, 共 %2 頁"
+
 #: lib/Jifty/Record.pm:240 lib/Jifty/Record.pm:319 lib/Jifty/Record.pm:60
 msgid "Permission denied"
 msgstr "權限不足."
 
+#: share/web/templates/__jifty/admin/fragments/list/list:68
+msgid "Previous Page"
+msgstr "上一頁"
+
 #:
 msgid "Record created"
 msgstr "成功建立項目."
+
+#: share/web/templates/__jifty/admin/action/dhandler:20
+msgid "Run the action"
+msgstr "執行動作"
 
 #: share/web/templates/__jifty/halo:111
 msgid "SQL Statements"
@@ -172,6 +223,10 @@ msgstr "儲存"
 #: share/web/templates/__jifty/online_docs/content.html:50
 msgid "Schema"
 msgstr "綱要"
+
+#: share/web/templates/__jifty/admin/fragments/list/search:18
+msgid "Search"
+msgstr "搜尋"
 
 #: share/web/templates/dhandler:1
 msgid "Something's not quite right"
@@ -200,6 +255,14 @@ msgstr "系統執行錯誤, 請稍候再試."
 #: share/web/templates/__jifty/admin/index.html:5
 msgid "This console lets you manage the records in your Jifty database. Below, you should see a list of all your database tables. Feel free to go through and add, delete or modify records."
 msgstr "您可利用此界面來管理資料庫的內容. 請點選表格名稱, 進行增刪及編輯."
+
+#: share/web/templates/__jifty/admin/fragments/list/list:38
+msgid "Toggle search"
+msgstr "切換搜尋畫面"
+
+#: share/web/templates/__jifty/error/mason_internal_error:6
+msgid "Try again"
+msgstr "再試一下"
 
 #: lib/Jifty/Action/Record/Update.pm:156
 msgid "Updated"

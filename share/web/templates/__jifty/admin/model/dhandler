@@ -17,6 +17,6 @@ $records->unlimit;
 <% Jifty->web->form->end %>
 
 <h2>Done?</h2>
-<% Jifty->web->link( url => "/__jifty/admin/", label => 'Back to the admin console') %>
+<% Jifty->web->link( url => "/__jifty/admin/", label => _('Back to the admin console')) %>
 
 </&>

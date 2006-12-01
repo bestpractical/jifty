@@ -35,14 +35,14 @@ my $search_region = Jifty::Web::PageRegion->new(
         args         => { object_type => $object_type }
     },
     ],
-    label => 'Toggle search'
+    label => _('Toggle search')
   )
 %>
 
 <% $search_region->render %>
 
 % if ($collection->pager->last_page > 1) {
-    <span class="page-count">Page <% $page %> of <% $collection->pager->last_page %></span>   
+    <span class="page-count"><%_('Page %1 of %2', $page, $collection->pager->last_page) %></span>   
 % }
 
 % if ($collection->pager->total_entries == 0) {
@@ -65,12 +65,12 @@ while ( my $item = $collection->next ) {
 <div class="paging">
 % if ($collection->pager->previous_page) {
 <span class="prev-page">
-  <% Jifty->web->link( label => "Previous Page", onclick => { args => { page => $collection->pager->previous_page } } ) %>
+  <% Jifty->web->link( label => _("Previous Page"), onclick => { args => { page => $collection->pager->previous_page } } ) %>
 </span>
 % }
 % if ($collection->pager->next_page) {
 <span class="next-page">
-  <% Jifty->web->link( label => "Next Page", onclick => { args => { page => $collection->pager->next_page } } ) %>
+  <% Jifty->web->link( label => _("Next Page"), onclick => { args => { page => $collection->pager->next_page } } ) %>
 </span>
 % }
 </div>

@@ -23,7 +23,7 @@ my $delete = Jifty->web->new_action(
 <%
     Jifty->web->form->submit(
         class   => "editlink",
-        label   => "Delete",
+        label   => _("Delete"),
         submit => $delete,
         onclick => { 
          confirm => _("Confirm delete?"), 
@@ -34,7 +34,7 @@ my $delete = Jifty->web->new_action(
 
 <%
     Jifty->web->link(
-        label   => "Edit",
+        label   => _("Edit"),
         class   => "editlink",
         onclick => {
             replace_with => "/__jifty/admin/fragments/list/update",

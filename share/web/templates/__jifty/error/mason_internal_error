@@ -1,9 +1,9 @@
-<&| $wrapper, title => "Mason error" &>
+<&| $wrapper, title => _("Mason error") &>
 
 Error in <& .line, file => $file, line => "@lines" &>
 <pre><% $msg %></pre>
 
-<% Jifty->web->return( label => "Try again" ) %>
+<% Jifty->web->return( label => _("Try again") ) %>
 
 <h2>Call stack</h2>
 <ul>
@@ -27,15 +27,15 @@ $line
 %     }
 %     if ($path ne $file) {
 template <% Jifty->web->tangent( url =>"/__jifty/edit/mason_component$path",
-                                 label => "$path line ".$line,
+                                 label => _("%1 line %2", $path, $line),
                                  parameters => { line => $line } ) %>
 %     } else {
 <% Jifty->web->tangent( url =>"/__jifty/edit/library$path",
-                        label => "$path line ".$line,
+                        label => _("%1 line %2", $path, $line),
                         parameters => { line => $line } ) %>
 %     }
 %   } else {
-<% $file %> line <% $line %>
+<%_("%1 line %2", $path, $line)%>
 %   }
 </%def>
 
