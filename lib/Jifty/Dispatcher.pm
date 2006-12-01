@@ -1096,7 +1096,6 @@ sub _compile_glob {
             )+
         ) \\ \}         # closing (not part of expression)
     }{'(?:'.join('|', split(/\\,/, $1)).')'}egx;
-    warn $glob;
     $glob;
 }
 
