@@ -15,7 +15,7 @@ my $search = Jifty->web->new_action(
 % }
 
 <% $search->button(
-    label   => 'Search!',
+    label   => _('Search'),
     onclick => {
         submit  => $search,
         refresh => Jifty->web->current_region->parent,

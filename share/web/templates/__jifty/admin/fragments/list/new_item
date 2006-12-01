@@ -14,7 +14,7 @@ my $record_class = Jifty->app_class("Model", $object_type);
 <%
 
 Jifty->web->form->submit(
-    label    => 'Create',
+    label    => _('Create'),
     onclick  => [
                  { submit => $create },
                  { refresh_self => 1 },
