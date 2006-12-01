@@ -39,7 +39,6 @@ sub arguments {
         password_confirm => 1,
     );
 
-    for ( keys %$args ) { delete $args->{$_} unless ( $fields{$_} ); }
     $args->{'email'}{'ajax_validates'}   = 1;
     $args->{'password_confirm'}{'label'} = _("Type that again?");
     $args->{'name'}{'label'} = _("Name");
