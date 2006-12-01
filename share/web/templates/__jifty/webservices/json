@@ -1,2 +1,2 @@
 % $r->content_type("text/x-json");
-<% Jifty::JSON::Dump({Jifty->web->response->results}) |n%>
+<% Jifty::JSON::objToJson({Jifty->web->response->results}) |n%>
