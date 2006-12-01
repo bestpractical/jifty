@@ -27,14 +27,13 @@ our $m = defer { Jifty->web->mason };
     }
 }
 
-# template 'foo' => page { ... } 'title';
-sub page (&;$) {
+# template 'foo' => page {{ title is 'Foo' } ... };
+sub page (&) {
     my $code = shift;
-    my $title = ( @_ ? shift(@_) : 'Untitled' );
     sub {
         $r->content_type('text/html; charset=utf-8');
         show('/_elements/nav');
-        with( title => _($title) ), wrapper($code);
+        wrapper($code);
     };
 }
 
@@ -60,29 +59,37 @@ template '_elements/nav' => sub {
 sub wrapper (&) {
     my $content_code = shift;
 
-    Jifty->handler->stash->{'in_body'} = 0;
     my ($title) = get_current_attr(qw(title));
 
-# First we set up the header.
-# now that we've printed out the header, we're inside the body, so it's safe to print
-# halo markers.
-    Jifty->handler->stash->{'in_body'} = 1;
-    outs(
+    print STDOUT (
 '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'
-    );
-    with( xmlns => "http://www.w3.org/1999/xhtml", 'xml:lang' => "en" ), html {
+          . '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">' );
+
+    my $done_header;
+    my $render_header = sub {
+        no warnings qw( uninitialized redefine once );
+
+        defined $title or return;
+        return if $done_header++;
+
+        local $Template::Declare::Tags::BUFFER = '';
 
         with( title => $title ), show('/_elements/header');
-
-        body {
-            with( id => "headers" ), div {
-                hyperlink(
-                    url   => "/",
-                    label => _( Jifty->config->framework('ApplicationName') )
-                );
-                with( class => "title" ), h1 { $title };
-              }
+        div {
+            { id is 'headers' }
+            hyperlink(
+                url   => "/",
+                label => _( Jifty->config->framework('ApplicationName') )
+            );
+            with( class => "title" ), h1 { $title };
         };
+
+        $done_header = $Template::Declare::Tags::BUFFER;
+
+        '';
+    };
+
+    body {
         show('/_elements/sidebar');
         with( id => "content" ), div {
             with( name => 'content' ), a {};
@@ -98,7 +105,23 @@ sub wrapper (&) {
                   }
             }
             Jifty->web->render_messages;
-            &$content_code;
+
+            {
+                no warnings qw( uninitialized redefine once );
+
+                local *is::title = sub {
+                    shift;
+                    $title = "@_";
+                    &$render_header;
+                };
+
+                &$content_code;
+                if ( !$done_header ) {
+                    $title = _("Untitled");
+                    &$render_header;
+                }
+            }
+
             show('/_elements/keybindings');
             with( id => "jifty-wait-message", style => "display: none" ),
               div { _('Loading...') };
@@ -112,8 +135,11 @@ sub wrapper (&) {
             {
                 script { outs('new Jifty.Subs({}).start();') };
             }
-          }
-      }
+        };
+        outs('</body></html>');
+      };
+
+    $Template::Declare::Tags::BUFFER = $done_header . $Template::Declare::Tags::BUFFER;
 }
 
 template '_elements/sidebar' => sub {
@@ -1648,19 +1674,17 @@ template '__jifty/webservices/yaml' => sub {
 };
 
 template '_elements/keybindings' => sub {
-    with( id => "keybindings" ), div {};
+    div { id is "keybindings" };
 };
 
 template 'index.html' => page {
-    with(
-        src => "/static/images/pony.jpg",
-        alt => _(
+    { title is 'Welcome to your new Jifty application' }
+    img {
+        src is "/static/images/pony.jpg", alt is _(
             'You said you wanted a pony. (Source %1)',
             'http://hdl.loc.gov/loc.pnp/cph.3c13461'
-        )
-      ),
-      img {};
-  }
-  'Welcome to your new Jifty application';
+        );
+    };
+};
 
 1;
