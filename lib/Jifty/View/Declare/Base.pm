@@ -49,7 +49,7 @@ template '_elements/nav' => sub {
         $top->child(
             OnlineDocs =>
               url      => "/__jifty/online_docs/",
-            label      => 'Online docs',
+            label      => _('Online docs'),
             sort_order => 999
         );
     }
@@ -347,7 +347,7 @@ template '__jifty/admin/fragments/list/list' => sub {
                 args         => { object_type => $object_type }
             },
         ],
-        label => 'Toggle search'
+        label => _('Toggle search')
     );
 
     $search_region->render;
@@ -377,7 +377,7 @@ template '__jifty/admin/fragments/list/list' => sub {
         if ( $collection->pager->previous_page ) {
             with( class => "prev-page" ), span {
                 hyperlink(
-                    label   => "Previous Page",
+                    label   => _("Previous Page"),
                     onclick =>
                       { args => { page => $collection->pager->previous_page } }
                 );
@@ -386,7 +386,7 @@ template '__jifty/admin/fragments/list/list' => sub {
         if ( $collection->pager->next_page ) {
             with( class => "next-page" ), span {
                 hyperlink(
-                    label   => "Next Page",
+                    label   => _("Next Page"),
                     onclick =>
                       { args => { page => $collection->pager->next_page } }
                 );
@@ -419,7 +419,7 @@ template '__jifty/admin/fragments/list/new_item' => sub {
     };
 
     Jifty->web->form->submit(
-        label   => 'Create',
+        label   => _('Create'),
         onclick => [
             { submit       => $create },
             { refresh_self => 1 },
@@ -450,7 +450,7 @@ template '__jifty/admin/fragments/list/search' => sub {
         }
 
         $search->button(
-            label   => 'Search!',
+            label   => _('Search'),
             onclick => {
                 submit  => $search,
                 refresh => Jifty->web->current_region->parent,
@@ -521,7 +521,7 @@ template '__jifty/admin/fragments/list/view' => sub {
 
         Jifty->web->form->submit(
             class   => "editlink",
-            label   => "Delete",
+            label   => _("Delete"),
             submit  => $delete,
             onclick => {
                 confirm => _("Confirm delete?"),
@@ -529,7 +529,7 @@ template '__jifty/admin/fragments/list/view' => sub {
             },
         );
         hyperlink(
-            label   => "Edit",
+            label   => _("Edit"),
             class   => "editlink",
             onclick => {
                 replace_with => "/__jifty/admin/fragments/list/update",
@@ -601,7 +601,7 @@ q{To disable this administrative console, add "framework: AdminMode: 0" to your 
         h2 { _('Done?') };
         Jifty->web->return(
             to    => "/",
-            label => 'Back to the application'
+            label => _('Back to the application')
         );
       }
 };
@@ -630,7 +630,7 @@ template '__jifty/admin/model/dhandler' => sub {
         h2 { _('Done?') };
         hyperlink(
             url   => "/__jifty/admin/",
-            label => 'Back to the admin console'
+            label => _('Back to the admin console')
         );
 
       }
@@ -732,7 +732,7 @@ template '__jifty/error/_elements/error_text' => sub {
     p {
         hyperlink(
             url   => "/",
-            label => 'Head on back home'
+            label => _('Head on back home')
         );
         _("for now, and try to forget that we let you down.");
     };
@@ -840,7 +840,7 @@ Alert: Jifty <% Jifty->web->tangent( label => 'administration mode' , url => '/
                               file => $file,
                               line => "@lines" & > <pre> < %$msg % > </pre>
 
-                              < %Jifty->web->return( label => "Try again" ) % >
+                              < %Jifty->web->return( label => _("Try again") ) % >
 
                               h2 { Call stack };
                             ul {
@@ -965,7 +965,7 @@ $line
                                             url =>
                                               "/__jifty/edit/mason_component/"
                                               . $item->{'path'},
-                                            label => 'Edit'
+                                            label => _('Edit')
                                         );
                                     }
                                     $depth = $item->{'depth'};
@@ -1073,7 +1073,7 @@ with ( class => "fixed"), span {<% $_->[1] %>}<br />
 with ( class => "section"), div {
  unless ($frame->{subcomponent}) {
 Jifty->web->tangent( url =>"/__jifty/edit/mason_component/".$frame->{' path
-                                          '}, label => ' Edit ');
+                                          '}, label => _('Edit'));
  } else {
 outs(' & nbsp;
                                         ');
