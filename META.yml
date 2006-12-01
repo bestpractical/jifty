@@ -42,6 +42,7 @@ requires:
   Compress::Zlib: 0
   Crypt::CBC: 0
   Crypt::Rijndael: 0
+  DBD::SQLite: 1.11
   Data::Page: 0
   Date::Manip: 0
   DateTime: 0

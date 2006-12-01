@@ -127,7 +127,8 @@ sub extract_messages {
 
     my $logger =Log::Log4perl->get_logger("main");
     foreach my $file (@files) {
-        next if $file =~ m{(^|/)\.svn/};
+        next if $file =~ m{(^|/)[\._]svn/};
+        next if $file =~ m{\~$};
         next unless $self->_check_mime_type($file );
         $logger->info("Extracting messages from '$file'");
         $LMExtract->extract_file($file);
