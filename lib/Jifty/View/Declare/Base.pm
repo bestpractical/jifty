@@ -10,8 +10,7 @@ use Jifty::View::Declare::Templates;
 
 our @EXPORT = (
     @Jifty::View::Declare::Templates::EXPORT,
-    @Template::Declare::Tags::EXPORT,
-    'page',
+    @Template::Declare::Tags::EXPORT, 'page',
 );
 our $r = defer { Jifty->handler->apache };
 our $m = defer { Jifty->web->mason };
@@ -1371,313 +1370,6 @@ a:focus { background: #99ff99; border: 1px black dotted }
                                           $n => '' $method => '' $Target =>
                                           '&method=content' < /%ARGS>
 }
-
-sub __jifty::validator.xml { 
-$r->content_type('text/xml;
-                                        charset = UTF- 8 ');
-
-my $output = "";
-use XML::Writer;
-my $writer = XML::Writer->new( OUTPUT => \$output );
-$writer->xmlDecl( "UTF-8", "yes" );
-$writer->startTag("validation");
-for my $ra ( Jifty->web->request->actions ) {
-    my $action = Jifty->web->new_action_from_request($ra);
-    $writer->startTag( "validationaction", id => $action->register_name );
-    for my $arg ( $action->argument_names ) {
-        if ( not $action->arguments->{$arg}->{ajax_validates} ) {
-            $writer->emptyTag( "ignored", id => $action->error_div_id($arg) );
-            $writer->emptyTag( "ignored", id => $action->warning_div_id($arg) );
-        } elsif ( not $action->arguments->{$arg}->{mandatory}
-		  and (not defined $action->argument_value($arg)
-                       or length $action->argument_value($arg) == 0 ) ) {
-            $writer->emptyTag( "blank", id => $action->error_div_id($arg) );
-            $writer->emptyTag( "blank", id => $action->warning_div_id($arg) );
-        } elsif ( $action->result->field_error($arg) ) {
-            $writer->dataElement(
-                "error",
-                $action->result->field_error($arg),
-                id => $action->error_div_id($arg)
-            );
-            $writer->emptyTag( "ok", id => $action->warning_div_id($arg) );
-        } elsif ( $action->result->field_warning($arg) ) {
-            $writer->dataElement(
-                "warning",
-                $action->result->field_warning($arg),
-                id => $action->warning_div_id($arg)
-            );
-            $writer->emptyTag( "ok", id => $action->error_div_id($arg) );
-        } else {
-            $writer->emptyTag( "ok", id => $action->error_div_id($arg) );
-            $writer->emptyTag( "ok", id => $action->warning_div_id($arg) );
-        }
-    }
-    $writer->endTag();
-    $writer->startTag( "canonicalizeaction", id => $action->register_name );
-    for my $arg ( $action->argument_names ) {
-        if ($ra->arguments->{$arg} eq $action->argument_value($arg) ) {
-            # if the value doesn' t change, it can be ignored .
-
-# canonicalizers can change other parts of the action, so we want to send all changes
-                                          $writer->emptyTag( "ignored",
-                                            name =>
-                                              $action->form_field_name($arg) );
-                                      }
-                                      elsif (
-                                        not
-                                        defined $action->argument_value($arg)
-                                        or length $action->argument_value($arg)
-                                        == 0 )
-                                    {
-                                        $writer->emptyTag( "blank",
-                                            name =>
-                                              $action->form_field_name($arg) );
-                                    }
-                                    else {
-                                        if (
-                                            $action->result
-                                            ->field_canonicalization_note(
-                                                $arg)
-                                          )
-                                        {
-                                            $writer->dataElement(
-                                                "canonicalization_note",
-                                                $action->result
-                                                  ->field_canonicalization_note(
-                                                    $arg),
-                                                id => $action
-                                                  ->canonicalization_note_div_id
-                                                  (
-                                                    $arg)
-                                            );
-                                        }
-                                        $writer->dataElement(
-                                            "update",
-                                            $action->argument_value($arg),
-                                            name =>
-                                              $action->form_field_name($arg)
-                                        );
-                                    }
-                                  }
-                                  $writer->endTag();
-                              }
-                              $writer->endTag();
-                              $m->out($output);
-                              $m->abort();
-                          }
-
-                          sub __jifty::webservices::xml {
-                            my $output = "";
-                            my $writer = XML::Writer->new(
-                                OUTPUT => \$output,
-                                UNSAFE => 1
-                            );
-                            $writer->xmlDecl( "UTF-8", "yes" );
-                            $writer->startTag("response");
-                            for my $f ( Jifty->web->request->fragments ) {
-
-                                # Set up the region stack
-                                local Jifty->web->{'region_stack'} = [];
-                                my @regions;
-                                do {
-                                    push @regions, $f;
-                                } while ( $f = $f->parent );
-
-                                for $f ( reverse @regions ) {
-                                    my $new = Jifty->web->get_region(
-                                        join '-',
-                                        grep { $_ }
-                                          Jifty->web->qualified_region,
-                                        $f->name
-                                    );
-
-                       # Arguments can be complex mapped hash values.  Get their
-                       # real values by mapping.
-                                    my %defaults = %{ $f->arguments || {} };
-                                    for ( keys %defaults ) {
-                                        my ( $key, $value ) =
-                                          Jifty::Request::Mapper->map(
-                                            destination => $_,
-                                            source      => $defaults{$_}
-                                          );
-                                        delete $defaults{$_};
-                                        $defaults{$key} = $value;
-                                    }
-
-                                    $new ||= Jifty::Web::PageRegion->new(
-                                        name           => $f->name,
-                                        path           => $f->path,
-                                        region_wrapper => $f->wrapper,
-                                        parent   => Jifty->web->current_region,
-                                        defaults => \%defaults,
-                                    );
-                                    $new->enter;
-                                }
-
-                                # Stuff the rendered region into the XML
-                                $writer->startTag( "fragment",
-                                    id =>
-                                      Jifty->web->current_region->qualified_name
-                                );
-                                my %args =
-                                  %{ Jifty->web->current_region->arguments };
-                                $writer->dataElement( "argument", $args{$_},
-                                    name => $_ )
-                                  for sort keys %args;
-                                $writer->cdataElement( "content",
-                                    Jifty->web->current_region->as_string );
-                                $writer->endTag();
-
-                                Jifty->web->current_region->exit
-                                  while Jifty->web->current_region;
-                            }
-
-                            my %results = Jifty->web->response->results;
-                            for ( keys %results ) {
-                                $writer->startTag(
-                                    "result",
-                                    moniker => $_,
-                                    class   => $results{$_}->action_class
-                                );
-                                $writer->dataElement( "success",
-                                    $results{$_}->success );
-
-                                $writer->dataElement( "message",
-                                    $results{$_}->message )
-                                  if $results{$_}->message;
-                                $writer->dataElement( "error",
-                                    $results{$_}->error )
-                                  if $results{$_}->error;
-
-                                my %warnings = $results{$_}->field_warnings;
-                                my %errors   = $results{$_}->field_errors;
-                                my %fields;
-                                $fields{$_}++
-                                  for keys(%warnings), keys(%errors);
-                                for ( sort keys %fields ) {
-                                    next unless $warnings{$_} or $errors{$_};
-                                    $writer->startTag( "field", name => $_ );
-                                    $writer->dataElement( "warning",
-                                        $warnings{$_} )
-                                      if $warnings{$_};
-                                    $writer->dataElement( "error", $errors{$_} )
-                                      if $errors{$_};
-                                    $writer->endTag();
-                                }
-
-                 # XXX TODO: Hack because we don't have a good way to serialize
-                 # Jifty::DBI::Record's yet, which are technically circular data
-                 # structures at some level (current_user of a
-                 # current_user->user_object is itself)
-                                use Scalar::Util qw(blessed);
-                                my $content = $results{$_}->content;
-
-                                sub stripkids {
-                                    my $top = shift;
-                                    if ( not ref $top ) { return $top }
-                                    elsif (
-                                        blessed($top)
-                                        and (  $top->isa("Jifty::DBI::Record")
-                                            or
-                                            $top->isa("Jifty::DBI::Collection")
-                                        )
-                                      )
-                                    {
-                                        return undef;
-                                    }
-                                    elsif ( ref $top eq 'HASH' ) {
-                                        foreach my $item ( keys %$top ) {
-                                            $top->{$item} =
-                                              stripkids( $top->{$item} );
-                                        }
-                                    }
-                                    elsif ( ref $top eq 'ARRAY' ) {
-                                        for ( 0 .. $#{$top} ) {
-                                            $top->[$_] =
-                                              stripkids( $top->[$_] );
-                                        }
-                                    }
-                                    return $top;
-                                }
-
-                                $content = stripkids($content);
-                                use XML::Simple;
-                                $writer->raw(
-                                    XML::Simple::XMLout(
-                                        $content,
-                                        NoAttr   => 1,
-                                        RootName => "content",
-                                        NoIndent => 1
-                                    )
-                                ) if keys %{$content};
-
-                                $writer->endTag();
-                            }
-
-                            $writer->endTag();
-                            $r->content_type('text/xml; charset=utf-8');
-                            outs($output);
-                        }
-
-                        sub __jifty::webservices::yaml {
-                            $r->content_type("text/x-yaml");
-                            outs(
-                                Jifty::YAML::Dump(
-                                    { Jifty->web->response->results }
-                                )
-                            );
-                        }
-
-
-                        sub _elements::keybindings {
-                            with( id => "keybindings" ), div {};
-                        }
-
-                        sub _elements::menu {
-                            my ($menu) = get(qw(menu));
-
-                            # Default to the app menu
-                            $menu ||= Jifty->web->navigation;
-                            my @children = $menu->children;
-                            if (@children) {
-                                with( class => "menu" ), ul {
-                                    show( ".menu", item => $_ );
-                                  }
-                            }
-
-                        }
-
-                        sub _elements::_menu {
-                            my ($item) = get(qw(item));
-                            my @kids = $item->children;
-                            my @params;
-                            if ( $item->active ) {
-                                push @params, class => "active";
-                            }
-
-                            with(@params), li {
-
-                                $item->as_link;
-
-                                if (@kids) {
-                                    with( class => "submenu" ), ul {
-                                        show( ".menu", item => $_ ) for @kids;
-                                      }
-                                }
-                              }
-
-                        }
-
-                        sub _elements::page_nav {
-                            if ( @{ Jifty->web->page_navigation->children } ) {
-                                with( class => "page_nav" ), div {
-                                    show( _elements::menu,
-                                        menu => Jifty->web->page_navigation );
-                                  }
-                            }
-                        }
-
-
                   }
 
                   sub autohandler {    # XXX TODO MOVE INTO DISPATCHER
@@ -1727,6 +1419,237 @@ for my $ra ( Jifty->web->request->actions ) {
 =end TODO
 
 =cut
+
+template '__jifty/validator.xml' => sub {
+    $r->content_type('text/xml; charset=UTF-8');
+    my $output = "";
+    use XML::Writer;
+    my $writer = XML::Writer->new( OUTPUT => \$output );
+    $writer->xmlDecl( "UTF-8", "yes" );
+    $writer->startTag("validation");
+    for my $ra ( Jifty->web->request->actions ) {
+        my $action = Jifty->web->new_action_from_request($ra);
+        $writer->startTag( "validationaction", id => $action->register_name );
+        for my $arg ( $action->argument_names ) {
+            if ( not $action->arguments->{$arg}->{ajax_validates} ) {
+                $writer->emptyTag( "ignored",
+                    id => $action->error_div_id($arg) );
+                $writer->emptyTag( "ignored",
+                    id => $action->warning_div_id($arg) );
+            }
+            elsif (
+                not $action->arguments->{$arg}->{mandatory}
+                and ( not defined $action->argument_value($arg)
+                    or length $action->argument_value($arg) == 0 )
+              )
+            {
+                $writer->emptyTag( "blank", id => $action->error_div_id($arg) );
+                $writer->emptyTag( "blank",
+                    id => $action->warning_div_id($arg) );
+            }
+            elsif ( $action->result->field_error($arg) ) {
+                $writer->dataElement(
+                    "error",
+                    $action->result->field_error($arg),
+                    id => $action->error_div_id($arg)
+                );
+                $writer->emptyTag( "ok", id => $action->warning_div_id($arg) );
+            }
+            elsif ( $action->result->field_warning($arg) ) {
+                $writer->dataElement(
+                    "warning",
+                    $action->result->field_warning($arg),
+                    id => $action->warning_div_id($arg)
+                );
+                $writer->emptyTag( "ok", id => $action->error_div_id($arg) );
+            }
+            else {
+                $writer->emptyTag( "ok", id => $action->error_div_id($arg) );
+                $writer->emptyTag( "ok", id => $action->warning_div_id($arg) );
+            }
+        }
+        $writer->endTag();
+        $writer->startTag( "canonicalizeaction", id => $action->register_name );
+        for my $arg ( $action->argument_names ) {
+            if ( $ra->arguments->{$arg} eq $action->argument_value($arg) ) {
+
+                # if the value doesn' t change, it can be ignored .
+
+# canonicalizers can change other parts of the action, so we want to send all changes
+                $writer->emptyTag( "ignored",
+                    name => $action->form_field_name($arg) );
+            }
+            elsif ( not defined $action->argument_value($arg)
+                or length $action->argument_value($arg) == 0 )
+            {
+                $writer->emptyTag( "blank",
+                    name => $action->form_field_name($arg) );
+            }
+            else {
+                if ( $action->result->field_canonicalization_note($arg) ) {
+                    $writer->dataElement(
+                        "canonicalization_note",
+                        $action->result->field_canonicalization_note($arg),
+                        id => $action->canonicalization_note_div_id($arg)
+                    );
+                }
+                $writer->dataElement(
+                    "update",
+                    $action->argument_value($arg),
+                    name => $action->form_field_name($arg)
+                );
+            }
+        }
+        $writer->endTag();
+    }
+    $writer->endTag();
+    $m->out($output);
+    $m->abort();
+};
+
+template '__jifty/webservices/xml' => sub {
+    my $output = "";
+    my $writer = XML::Writer->new(
+        OUTPUT => \$output,
+        UNSAFE => 1
+    );
+    $writer->xmlDecl( "UTF-8", "yes" );
+    $writer->startTag("response");
+    for my $f ( Jifty->web->request->fragments ) {
+
+        # Set up the region stack
+        local Jifty->web->{'region_stack'} = [];
+        my @regions;
+        do {
+            push @regions, $f;
+        } while ( $f = $f->parent );
+
+        for $f ( reverse @regions ) {
+            my $new =
+              Jifty->web->get_region( join '-',
+                grep { $_ } Jifty->web->qualified_region, $f->name );
+
+            # Arguments can be complex mapped hash values.  Get their
+            # real values by mapping.
+            my %defaults = %{ $f->arguments || {} };
+            for ( keys %defaults ) {
+                my ( $key, $value ) = Jifty::Request::Mapper->map(
+                    destination => $_,
+                    source      => $defaults{$_}
+                );
+                delete $defaults{$_};
+                $defaults{$key} = $value;
+            }
+
+            $new ||= Jifty::Web::PageRegion->new(
+                name           => $f->name,
+                path           => $f->path,
+                region_wrapper => $f->wrapper,
+                parent         => Jifty->web->current_region,
+                defaults       => \%defaults,
+            );
+            $new->enter;
+        }
+
+        # Stuff the rendered region into the XML
+        $writer->startTag( "fragment",
+            id => Jifty->web->current_region->qualified_name );
+        my %args = %{ Jifty->web->current_region->arguments };
+        $writer->dataElement( "argument", $args{$_}, name => $_ )
+          for sort keys %args;
+        $writer->cdataElement( "content",
+            Jifty->web->current_region->as_string );
+        $writer->endTag();
+
+        Jifty->web->current_region->exit while Jifty->web->current_region;
+    }
+
+    my %results = Jifty->web->response->results;
+    for ( keys %results ) {
+        $writer->startTag(
+            "result",
+            moniker => $_,
+            class   => $results{$_}->action_class
+        );
+        $writer->dataElement( "success", $results{$_}->success );
+
+        $writer->dataElement( "message", $results{$_}->message )
+          if $results{$_}->message;
+        $writer->dataElement( "error", $results{$_}->error )
+          if $results{$_}->error;
+
+        my %warnings = $results{$_}->field_warnings;
+        my %errors   = $results{$_}->field_errors;
+        my %fields;
+        $fields{$_}++ for keys(%warnings), keys(%errors);
+        for ( sort keys %fields ) {
+            next unless $warnings{$_} or $errors{$_};
+            $writer->startTag( "field", name => $_ );
+            $writer->dataElement( "warning", $warnings{$_} )
+              if $warnings{$_};
+            $writer->dataElement( "error", $errors{$_} )
+              if $errors{$_};
+            $writer->endTag();
+        }
+
+        # XXX TODO: Hack because we don't have a good way to serialize
+        # Jifty::DBI::Record's yet, which are technically circular data
+        # structures at some level (current_user of a
+        # current_user->user_object is itself)
+        use Scalar::Util qw(blessed);
+        my $content = $results{$_}->content;
+
+        sub stripkids {
+            my $top = shift;
+            if ( not ref $top ) { return $top }
+            elsif (
+                blessed($top)
+                and (  $top->isa("Jifty::DBI::Record")
+                    or $top->isa("Jifty::DBI::Collection") )
+              )
+            {
+                return undef;
+            }
+            elsif ( ref $top eq 'HASH' ) {
+                foreach my $item ( keys %$top ) {
+                    $top->{$item} = stripkids( $top->{$item} );
+                }
+            }
+            elsif ( ref $top eq 'ARRAY' ) {
+                for ( 0 .. $#{$top} ) {
+                    $top->[$_] = stripkids( $top->[$_] );
+                }
+            }
+            return $top;
+        }
+
+        $content = stripkids($content);
+        use XML::Simple;
+        $writer->raw(
+            XML::Simple::XMLout(
+                $content,
+                NoAttr   => 1,
+                RootName => "content",
+                NoIndent => 1
+            )
+        ) if keys %{$content};
+
+        $writer->endTag();
+    }
+
+    $writer->endTag();
+    $r->content_type('text/xml; charset=utf-8');
+    outs($output);
+};
+
+template '__jifty/webservices/yaml' => sub {
+    $r->content_type("text/x-yaml");
+    outs( Jifty::YAML::Dump( { Jifty->web->response->results } ) );
+};
+
+template '_elements/keybindings' => sub {
+    with( id => "keybindings" ), div {};
+};
 
 template 'index.html' => page {
     with(

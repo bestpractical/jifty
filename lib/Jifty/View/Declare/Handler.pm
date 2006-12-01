@@ -16,7 +16,7 @@ sub show {
     my $package = shift;
     my $code_template = shift;
 
-    no warnings qw/redefine/;
+    no warnings qw/redefine utf8/;
     local *Jifty::Web::out = sub {
         shift;  # Remove the $self in Jifty::Web->out
         goto &Template::Declare::Tags::outs;
