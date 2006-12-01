@@ -57,7 +57,7 @@ sub take_action {
 
     if (not $msg) {
         $self->result->error(
-            _('Access not allowed') );
+            _('Access denied.') );
         return;}
 
     return 1;

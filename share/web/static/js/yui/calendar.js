@@ -3,6 +3,15 @@ Copyright (c) 2006, Yahoo! Inc. All rights reserved.
 Code licensed under the BSD License:
 http://developer.yahoo.net/yui/license.txt
 version: 0.10.0
+
+WARNING THIS IS NOT A STOCK RELEASE.  IT HAS BEEN MODIFED FROM ITS ORIGINAL FORM:
+
+    
+            renderCellNotThisMonth:
+            THIS FUNCTION MODIFIED BY JESSE VINCENT on 2006-11-29 TO MAKE OUT OF MONTH DATES CLICKABLE
+            ALL RIGHTS DISCLAIMED.
+
+
 */
 /**
 * @class
@@ -556,7 +565,10 @@ YAHOO.widget.Calendar_Core.prototype.wireDefaultEvents = function() {
 		var d = cal.cellDates[index];
 		var date = new Date(d[0],d[1]-1,d[2]);
 		
-		if (! cal.isDateOOM(date) && ! YAHOO.util.Dom.hasClass(cell, cal.Style.CSS_CELL_RESTRICTED) && ! YAHOO.util.Dom.hasClass(cell, cal.Style.CSS_CELL_OOB)) {
+		/* if (! cal.isDateOOM(date) && ! YAHOO.util.Dom.hasClass(cell, cal.Style.CSS_CELL_RESTRICTED) && ! YAHOO.util.Dom.hasClass(cell, cal.Style.CSS_CELL_OOB)) { */
+        /* MODIFIED BY JESSE VINCENT ON 2006-11-29 TO ALLOW OOM DATES TO BE CLICKABLE*/
+
+		if ( ! YAHOO.util.Dom.hasClass(cell, cal.Style.CSS_CELL_RESTRICTED) && ! YAHOO.util.Dom.hasClass(cell, cal.Style.CSS_CELL_OOB)) {
 			if (cal.Options.MULTI_SELECT) {
 				var link = cell.getElementsByTagName("A")[0];
 				link.blur();
@@ -1369,8 +1381,20 @@ YAHOO.widget.Calendar_Core.prototype.renderCellStyleSelected = function(workingD
 * @type String
 */
 YAHOO.widget.Calendar_Core.prototype.renderCellNotThisMonth = function(workingDate, cell) {
+
+
+    /****   THIS FUNCTION MODIFIED BY JESSE VINCENT on 2006-11-29 TO MAKE OUT OF MONTH DATES CLICKABLE
+            ALL RIGHTS DISCLAIMED.
+     ****/
 	YAHOO.widget.Calendar_Core.addCssClass(cell, this.Style.CSS_CELL_OOM);
-	cell.innerHTML=workingDate.getDate();
+	cell.innerHTML = "";
+	var link = document.createElement("a");
+
+	link.href="javascript:void(null);";
+	link.name=this.id+"__"+workingDate.getFullYear()+"_"+(workingDate.getMonth()+1)+"_"+workingDate.getDate();
+
+	link.appendChild(document.createTextNode(this.buildDayLabel(workingDate)));
+	cell.appendChild(link);
 	return YAHOO.widget.Calendar_Core.STOP_RENDER;
 };
 

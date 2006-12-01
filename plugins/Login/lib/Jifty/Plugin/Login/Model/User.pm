@@ -21,11 +21,12 @@ column
 
 column
   email_confirmed => label is 'Email address confirmed?',
-  type is 'boolean';
+  type is 'boolean',
+  render_as 'Unrendered';
 
 column
   auth_token => type is 'text',
-  render_as 'Password';
+  render_as 'Unrendered';
 
 package Jifty::Plugin::Login::Model::User;
 use base qw/Jifty::Record/;

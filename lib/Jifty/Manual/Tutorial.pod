@@ -261,6 +261,11 @@ the online documentation browser, and the Pony.
   # ./bin/jifty server
   INFO - You can connect to your server at http://localhost:8888/
 
+Please always run this command at the root directory of your Jifty applications,
+or you'll be caught by a lot of errors.
+
+For many platforms, a simple "jifty server" command works too. :)
+
 =head2 Building a user interface
 
 The administrative web does give you everything you need to work with your
@@ -275,10 +280,10 @@ Create a page to post a new weblog entry:
 Open a new file called F<post> in your text editor. Make it look like this:
 
   <%init>
-  my $action = Jifty->web->new_action(class =>'CreatePost');
+  my $action = Jifty->web->new_action(class => 'CreatePost');
   </%init>
 
-  <&|/_elements/wrapper, title => "Post to your weblog" &>
+  <&| /_elements/wrapper, title => "Post to your weblog" &>
   <% Jifty->web->form->start() %>
   <% Jifty->web->form->next_page( url => '/') %>
   <% $action->form_field('title') %>
@@ -286,6 +291,9 @@ Open a new file called F<post> in your text editor. Make it look like this:
   <% Jifty->web->form->submit( label => 'Post' ) %>
   <% Jifty->web->form->end() %>
   </&>
+
+Yes, it's a template file in L<HTML::Mason> syntax. If you're not familiar with Mason,
+we recommend you to consult its online documentation for details.
 
 =head3 Viewing
 
@@ -308,17 +316,16 @@ look like this:
   $posts->unlimit();
   </%init>
 
-  <&|/_elements/wrapper, title => Jifty->config->framework('ApplicationName') &>
+  <&| /_elements/wrapper, title => Jifty->config->framework('ApplicationName') &>
   <dl>
   % while (my $post = $posts->next) {
-   <dt><%$post->title%></dt>
-   <dd><%$post->body%></dd>
+   <dt><% $post->title %></dt>
+   <dd><% $post->body %></dd>
   % }
   </dl>
   </&>
 
 (Make sure to remove that leading whitespace!)
-
 
 =head4 The complex way that gets you lots of cool toys
 
@@ -334,7 +341,7 @@ its own I<fragment> file.
 The complex way starts off about the same as the easy way.  Open a new file
 called F<share/web/templates/index.html> in your text editor.  Fill it with this:
 
-  <&|/_elements/wrapper, title => Jifty->config->framework('ApplicationName') &>
+  <&| /_elements/wrapper, title => Jifty->config->framework('ApplicationName') &>
 
   <% Jifty->web->region(name => "myweblog-posts",
                         path => "/fragments/page_of_posts") %>
@@ -360,8 +367,8 @@ a file called F<share/web/templates/fragments/page_of_posts> containing:
   % }
   <dl class="list">
   % while (my $post = $posts->next) {
-   <dt><%$post->title%></dt>
-   <dd><%$post->body%></dd>
+   <dt><% $post->title %></dt>
+   <dd><% $post->body %></dd>
   % }
   </dl>
 
@@ -481,6 +488,8 @@ Future tutorials include:
 =item * Web Services
 
 =item * Continuations in depth
+
+=item * Customized view (user-defined wrappers and css)
 
 =back
 
