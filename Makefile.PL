@@ -59,6 +59,8 @@ requires('String::Koremutake');
 requires('SQL::ReservedWords');
 requires('Template::Declare');
 requires('Test::Base');
+requires('Test::MockModule' => '0.05');
+requires('Test::MockObject' => '1.07');
 requires('UNIVERSAL::require');
 requires('URI');
 requires('XML::Writer' => '0.601');
