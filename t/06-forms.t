@@ -27,15 +27,15 @@ is ($field->type, 'text', "type defaults to text");
 {
     my $out; # buf to store mason outputs
 
-	# mock up an instance of Jifty::Result
-	my $result = Test::MockObject->new;
-	$result->set_series('field_error', 'error: invalid email address', '');
+    # mock up an instance of Jifty::Result
+    my $result = Test::MockObject->new;
+    $result->set_series('field_error', 'error: invalid email address', '');
     $result->set_series('field_warning', 'warning: password too short', '');
     $result->set_series('field_canonicalization_note', "I've changed it!", '');
 
     # mock up an instance of Jifty::Action
     my $action = Test::MockObject->new;
-	$action->set_always('result', $result);
+    $action->set_always('result', $result);
     $action->set_always('form_field_name', 'search_keys');
     $action->set_series('error_div_id', 'FOO-error', 'no-error');
     $action->set_series('warning_div_id', 'BAR-warning', 'no-warning');
