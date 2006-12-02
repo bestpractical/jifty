@@ -164,6 +164,10 @@ form, instead of waiting until submit.  Arguments will B<always> be
 canonicalized before the action is run, whether or not they also
 C<ajax_canonicalize>
 
+=head2 preamble [VALUE]
+
+Gets or sets the preamble located in front of the field.
+
 =head2 id 
 
 For the purposes of L<Jifty::Web::Form::Element>, the unique id of
@@ -412,7 +416,7 @@ Use this for sticking instructions right in front of a widget
 sub render_preamble {
     my $self = shift;
     Jifty->web->out(
-qq!<span class="preamble @{[$self->classes]}" >@{[_($self->preamble) || '' ]}</span>\n!
+qq!<span class="preamble @{[$self->classes]}">@{[_($self->preamble) || '' ]}</span>\n!
     );
 
     return '';
