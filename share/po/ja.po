@@ -15,37 +15,37 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: lib/Jifty/Action/Record/Search.pm:96
+#: lib/Jifty/Action/Record/Search.pm:106
 #. ($label)
 msgid "%1 after"
 msgstr ""
 
-#: lib/Jifty/Action/Record/Search.pm:97
+#: lib/Jifty/Action/Record/Search.pm:107
 #. ($label)
 msgid "%1 before"
 msgstr ""
 
-#: lib/Jifty/Action/Record/Search.pm:93
+#: lib/Jifty/Action/Record/Search.pm:103
 #. ($label)
 msgid "%1 contains"
 msgstr ""
 
-#: lib/Jifty/Action/Record/Search.pm:100
+#: lib/Jifty/Action/Record/Search.pm:110
 #. ($label)
 msgid "%1 greater than"
 msgstr ""
 
-#: lib/Jifty/Action/Record/Search.pm:89
+#: lib/Jifty/Action/Record/Search.pm:99
 #. ($label)
 msgid "%1 is not"
 msgstr ""
 
-#: lib/Jifty/Action/Record/Search.pm:94
+#: lib/Jifty/Action/Record/Search.pm:104
 #. ($label)
 msgid "%1 lacks"
 msgstr ""
 
-#: lib/Jifty/Action/Record/Search.pm:101
+#: lib/Jifty/Action/Record/Search.pm:111
 #. ($label)
 msgid "%1 less than"
 msgstr ""
@@ -58,6 +58,10 @@ msgstr ""
 #: share/web/templates/__jifty/halo:119
 #. ($_->[3])
 msgid "%1 seconds"
+msgstr ""
+
+#: lib/Jifty/Action/Record/Search.pm:73
+msgid "(any)"
 msgstr ""
 
 #: lib/Jifty/Web/Form/Field.pm:521
@@ -80,7 +84,7 @@ msgstr ""
 msgid "An error occurred.  Try again later"
 msgstr ""
 
-#: lib/Jifty/Action/Record/Search.pm:105
+#: lib/Jifty/Action/Record/Search.pm:115
 msgid "Any field contains"
 msgstr ""
 
@@ -176,7 +180,7 @@ msgstr ""
 msgid "Next Page"
 msgstr ""
 
-#: lib/Jifty/Action/Record/Search.pm:106
+#: lib/Jifty/Action/Record/Search.pm:116
 msgid "No field contains"
 msgstr ""
 

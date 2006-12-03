@@ -64,8 +64,18 @@ sub arguments {
 
         if($info->{valid_values}) {
             my $valid_values = $info->{valid_values};
-            $valid_values = [$valid_values] unless ref($valid_values) eq 'ARRAY';
-            unshift @$valid_values, "";
+
+            local $@;
+            $info->{valid_values} = $valid_values = (eval { [ @$valid_values ] } || [$valid_values]);
+
+            # For radio display, display an "any" label as empty choices looks weird
+            if (lc $info->{render_as} eq 'radio') {
+                unshift @$valid_values, { display => _("(any)"), value => '' };
+                $info->{default_value} ||= '';
+            }
+            else {
+                unshift @$valid_values, "";
+            }
         }
 
         if(lc $info->{'render_as'} eq 'password') {
