@@ -36,13 +36,14 @@ Create C<field>_contains and C<field>_lacks arguments
 
 =item C<date>, or C<timestamp> fields
 
-Create C<field>_before and C<field>_after arguments
+Create C<field>_before, C<field>_after, C<field>_since and
+C<field>_until arguments.
 
 =item C<integer>, C<float>, C<double>, C<decimal> or C<numeric> fields
 
-Generate C<field>_lt and C<field>_gt arguments, as well as a C<field>_dwim
-field that accepts a prefixed comparison operator in the search value,
-such as C<< >100 >> and C<< !100 >>.
+Generate C<field>_lt, C<field>_gt, C<field>_le and C<field>_ge arguments, as
+well as a C<field>_dwim field that accepts a prefixed comparison operator in
+the search value, such as C<< >100 >> and C<< !100 >>.
 
 =back
 
@@ -113,11 +114,15 @@ sub arguments {
         } elsif($type =~ /(?:date|time)/) {
             $args->{"${field}_after"} = { %$info, label => _("%1 after", $label) };
             $args->{"${field}_before"} = { %$info, label => _("%1 before", $label) };
+            $args->{"${field}_since"} = { %$info, label => _("%1 since", $label) };
+            $args->{"${field}_until"} = { %$info, label => _("%1 until", $label) };
         } elsif(    $type =~ /(?:int|float|double|decimal|numeric)/
                 && !$column->refers_to) {
             $args->{"${field}_gt"} = { %$info, label => _("%1 greater than", $label) };
             $args->{"${field}_lt"} = { %$info, label => _("%1 less than", $label) };
-            $args->{"${field}~"} = { %$info };
+            $args->{"${field}_ge"} = { %$info, label => _("%1 greater or equal to", $label) };
+            $args->{"${field}_le"} = { %$info, label => _("%1 less or equal to", $label) };
+            $args->{"${field}_dwim"} = { %$info };
         }
     }
 
@@ -176,6 +181,10 @@ sub take_action {
                     $op = '>';
                 } elsif($op eq 'before' || $op eq 'lt') {
                     $op = '<';
+                } elsif($op eq 'since' || $op eq 'ge') {
+                    $op = '>=';
+                } elsif($op eq 'until' || $op eq 'le') {
+                    $op = '<=';
                 } elsif($op eq 'dwim') {
                     $op = '=';
                     if (defined($value) and $value =~ s/^\s*([<>!=]{1,2})\s*//) {
