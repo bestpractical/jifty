@@ -38,9 +38,11 @@ Create C<field>_contains and C<field>_lacks arguments
 
 Create C<field>_before and C<field>_after arguments
 
-=item C<integer>, C<float> or C<double> fields
+=item C<integer>, C<float>, C<double>, C<decimal> or C<numeric> fields
 
-Generate C<field>_lt and C<field>_gt arguments
+Generate C<field>_lt and C<field>_gt arguments, as well as a C<field>_dwim
+field that accepts a prefixed comparison operator in the search value,
+such as C<< >100 >> and C<< !100 >>.
 
 =back
 
@@ -70,8 +72,14 @@ sub arguments {
 
             # For radio display, display an "any" label as empty choices looks weird
             if (lc $info->{render_as} eq 'radio') {
-                unshift @$valid_values, { display => _("(any)"), value => '' };
-                $info->{default_value} ||= '';
+                if (@$valid_values > 1) {
+                    unshift @$valid_values, { display => _("(any)"), value => '' };
+                    $info->{default_value} ||= '';
+                }
+                else {
+                    # We've got only one choice anyway...
+                    $info->{default_value} ||= $valid_values->[0];
+                }
             }
             else {
                 unshift @$valid_values, "";
@@ -105,10 +113,11 @@ sub arguments {
         } elsif($type =~ /(?:date|time)/) {
             $args->{"${field}_after"} = { %$info, label => _("%1 after", $label) };
             $args->{"${field}_before"} = { %$info, label => _("%1 before", $label) };
-        } elsif(    $type =~ /(?:int|float|double)/
+        } elsif(    $type =~ /(?:int|float|double|decimal|numeric)/
                 && !$column->refers_to) {
             $args->{"${field}_gt"} = { %$info, label => _("%1 greater than", $label) };
             $args->{"${field}_lt"} = { %$info, label => _("%1 less than", $label) };
+            $args->{"${field}~"} = { %$info };
         }
     }
 
@@ -145,14 +154,14 @@ sub take_action {
         my $column = $self->record->column($field);
         my $op = undef;
         
-        if(!$column) {
+        if (!$column) {
             # If we don't have a column, this is a comparison or
             # substring search. Skip undef values for those, since
             # NULL makes no sense.
             next unless defined($value);
             next if $value =~ /^\s*$/;
 
-            if($field =~ m{^(.*)_([[:alpha:]]+)$}) {
+            if ($field =~ m{^(.*)_([[:alpha:]]+)$}) {
                 $field = $1;
                 $op = $2;
                 if($op eq 'not') {
@@ -167,6 +176,13 @@ sub take_action {
                     $op = '>';
                 } elsif($op eq 'before' || $op eq 'lt') {
                     $op = '<';
+                } elsif($op eq 'dwim') {
+                    $op = '=';
+                    if (defined($value) and $value =~ s/^\s*([<>!=]{1,2})\s*//) {
+                        $op = $1;
+                        $op = '!=' if $op eq '!';
+                        $op = '=' if $op eq '==';
+                    }
                 }
             } else {
                 next;
