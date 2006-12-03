@@ -78,7 +78,7 @@ sub rename {
     die "Must provide a table to rename" unless $args{table};
 
     Jifty::Util->require($args{table});
-    $args{table} = $args{table}->table;
+    my $table_name = $args{table}->table;
 
     if ($args{column}) {
         my $driver = Jifty->config->framework('Database')->{'Driver'};
@@ -90,12 +90,41 @@ sub rename {
             # the original table, recreating it with the column
             # renamed, transferring the data back, and then dropping
             # the temporary table.  Painful enough for ya?
-            die "SQLite does not support renaming columns in tables.  We are sad!";
+            my ($schema) = Jifty->handle->fetch_result("SELECT sql FROM sqlite_master WHERE tbl_name = '$table_name' AND type = 'table'");
+            my $sth = Jifty->handle->simple_query("SELECT sql FROM sqlite_master WHERE tbl_name = '$table_name' AND type = 'index'");
+            my @indice;
+            while (my ($index) = $sth->fetchrow_array) {
+                $index =~ s/^(.*\(.*)\b\Q$args{column}\E\b/$1$args{to}/i;
+                push @indice, $index;
+            }
+
+            $schema =~ s/(.*create\s+table\s+)\S+(.*?\(\s*)//i;
+
+            my $new_table_name = join('_', $table_name, 'new' ,$$);
+            my $new_create_clause = "$1$new_table_name$2";
+
+            my @column_info = (split /,/, $schema);
+            my @column_names = map { /^\s*(\S+)/ ? $1 : () } @column_info;
+
+            s/^(\s*)\Q$args{column}\E/$1$args{to}/i for @column_info;
+
+            my $new_schema = $new_create_clause . join(',', @column_info);
+            my $copy_columns = join(', ', map {
+                (lc($_) eq lc($args{column})) ? "$_ AS $args{to}" : $_
+            } @column_names);
+
+            Jifty->handle->begin_transaction;
+            Jifty->handle->simple_query($new_schema);
+            Jifty->handle->simple_query("INSERT INTO $new_table_name SELECT $copy_columns FROM $table_name");
+            Jifty->handle->simple_query("DROP TABLE $table_name");
+            Jifty->handle->simple_query("ALTER TABLE $new_table_name RENAME TO $table_name");
+            Jifty->handle->simple_query($_) for @indice;
+            Jifty->handle->commit;
         } else {
-            Jifty->handle->simple_query("ALTER TABLE $args{table} RENAME $args{column} TO $args{to}");
+            Jifty->handle->simple_query("ALTER TABLE $table_name RENAME $args{column} TO $args{to}");
         }
     } else {
-        Jifty->handle->simple_query("ALTER TABLE $args{table} RENAME TO $args{to}");
+        Jifty->handle->simple_query("ALTER TABLE $table_name RENAME TO $args{to}");
     }
 }
 
