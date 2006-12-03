@@ -79,6 +79,9 @@ sub new_from_string {
         if($string =~ /^\s* (?:monday|tuesday|wednesday|thursday|friday|saturday|sunday)$/xi) {
             $string = "next $string";
         }
+        
+        # Why are we parsing this as GMT? This feels really wrong.  It will get the wrong answer
+        # if the current user is in another tz.
         Date::Manip::Date_Init("TZ=GMT");
         $now = Date::Manip::UnixDate( $string, "%o" );
     }
