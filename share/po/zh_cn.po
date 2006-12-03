@@ -14,6 +14,10 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#: lib/Jifty/Action/Record/Search.pm:125
+msgid "!=>< allowed"
+msgstr "可使用 !=>< 符号"
+
 #: lib/Jifty/Action/Record/Search.pm:115 lib/Jifty/z:26
 #. ($label)
 msgid "%1 after"
