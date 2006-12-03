@@ -56,6 +56,20 @@ template '_elements/nav' => sub {
     return ();
 };
 
+sub render_header {
+    my ($self, $title) = @_;
+    with( title => $title ), show('/_elements/header');
+    div {
+        { id is 'headers' }
+        hyperlink(
+            url   => "/",
+            label => _( Jifty->config->framework('ApplicationName') )
+        );
+        with( class => "title" ), h1 { $title };
+    };
+}
+
+
 sub wrapper (&) {
     my $content_code = shift;
 
@@ -74,15 +88,7 @@ sub wrapper (&) {
 
         local $Template::Declare::Tags::BUFFER = '';
 
-        with( title => $title ), show('/_elements/header');
-        div {
-            { id is 'headers' }
-            hyperlink(
-                url   => "/",
-                label => _( Jifty->config->framework('ApplicationName') )
-            );
-            with( class => "title" ), h1 { $title };
-        };
+        $self->render_header($title);
 
         $done_header = $Template::Declare::Tags::BUFFER;
 
@@ -137,9 +143,10 @@ sub wrapper (&) {
             }
         };
         outs('</body></html>');
-      };
+    };
 
-    $Template::Declare::Tags::BUFFER = $done_header . $Template::Declare::Tags::BUFFER;
+    $Template::Declare::Tags::BUFFER =
+      $done_header . $Template::Declare::Tags::BUFFER;
 }
 
 template '_elements/sidebar' => sub {
@@ -152,7 +159,7 @@ template '_elements/sidebar' => sub {
             _( 'Hiya, %1.', $u->$method() );
         }
         else {
-            _( "You're not currently signed in." );
+            _("You're not currently signed in.");
         }
     };
     with( id => "navigation" ), div {
@@ -160,13 +167,14 @@ template '_elements/sidebar' => sub {
         my @children = $menu->children;
         if (@children) {
             with( class => "menu" ), ul {
-                render_menu($_) for @children;
+                $self->render_menu($_) for @children;
               }
         }
     };
 };
 
 sub render_menu {
+    shift;
     my $item = shift;
     my @kids = $item->children;
     my @params;
@@ -180,7 +188,7 @@ sub render_menu {
 
         if (@kids) {
             with( class => "submenu" ), ul {
-                render_menu($_) for @kids;
+                $self->render_menu($_) for @kids;
               }
         }
       }
@@ -564,7 +572,9 @@ template '__jifty/admin/index' => sub {
         };
 
         p {
-            _('To disable this administrative console, add "AdminMode: 0" under the "framework:" settings in the config file (etc/config.yml).');
+            _(
+'To disable this administrative console, add "AdminMode: 0" under the "framework:" settings in the config file (etc/config.yml).'
+            );
         };
 
         h2 { _('Models') };
@@ -799,89 +809,6 @@ Alert: Jifty <% Jifty->web->tangent( label => 'administration mode' , url => '/
                               }
 
                           }
-
-                          sub __jifty::error::mason_internal_error {
-                            my $wrapper = "/_elements/wrapper";
-
-                            my $cont = Jifty->web->request->continuation;
-                            $wrapper = "/__jifty/error/_elements/wrapper"
-                              if $cont
-                              and $cont->request->path eq
-                              "/__jifty/error/mason_internal_error";
-
-                            # If we're not in devel, bail
-                            if (   not Jifty->config->framework("DevelMode")
-                                or not $cont )
-                            {
-                                $m->comp(
-                                    $wrapper,
-                                    content => sub {
-                                        $m->comp( "_elements/error_text",
-                                            error => "mason internal error" );
-                                    },
-                                    title => "Something went awry"
-                                );
-                                $m->abort;
-                            }
-
-                            my $e   = $cont->response->error;
-                            my $msg = $e->message;
-                            $msg =~ s/, <\S+> (line|chunk) \d+\././;
-
-                            my $info  = $e->analyze_error;
-                            my $file  = $info->{file};
-                            my @lines = @{ $info->{lines} };
-                            my @stack = @{ $info->{frames} };
-                            <&| $wrapper, title => "Mason error" & >
-
-                              Error in < &. line,
-                              file => $file,
-                              line => "@lines" & > <pre> < %$msg % > </pre>
-
-                              < %Jifty->web->return( label => _("Try again") ) % >
-
-                              h2 { Call stack };
-                            ul {
-                                %for my $frame (@stack){
-                                    %next
-                                      if $frame->filename =~ m{/HTML/Mason/};
-                                      li {
-                                        <& .line, file => $frame->filename,
-                                          line => $frame->line & >;
-                                      }
-                                      %}
-                                  }
-
-                                  < /&>
-
-<%def .line>
-my (
-$file
-$line
-) = get(qw());
-%   if (-w $file) {
-%     my $path = $file;
-%     for (map {$_->[1]} @{Jifty->handler->mason->interp->comp_root}) {
-%       last if $path =~ s/ ^ \Q $_\E //;
-                                %} % if ( $path ne $file ) {
-                                    template < %Jifty->web->tangent(
-                                        url =>
-                                          "/__jifty/edit/mason_component$path",
-                                        label      => "$path line " . $line,
-                                        parameters => { line => $line }
-                                      ) % > %} else {
-                                        <% Jifty-> web->tangent(
-                                            url => "/__jifty/edit/library$path",
-                                            label      => "$path line " . $line,
-                                            parameters => { line => $line }
-                                        ) % > %} %;
-                                    }
-                                    else {
-                                        <% $file %> line <% $line %> %;
-                                    }
-                                    </%def>
-
-                                }
 
                                 sub __jifty::halo {
                                     for my $id ( 0 .. $#stack ) {
@@ -1495,6 +1422,7 @@ template '__jifty/validator.xml' => sub {
         $writer->endTag();
         $writer->startTag( "canonicalizeaction", id => $action->register_name );
         for my $arg ( $action->argument_names ) {
+            no warnings 'uninitialized';
             if ( $ra->arguments->{$arg} eq $action->argument_value($arg) ) {
 
                 # if the value doesn' t change, it can be ignored .
@@ -1527,8 +1455,7 @@ template '__jifty/validator.xml' => sub {
         $writer->endTag();
     }
     $writer->endTag();
-    $m->out($output);
-    $m->abort();
+    outs($output);
 };
 
 template '__jifty/webservices/xml' => sub {
@@ -1683,6 +1610,95 @@ template 'index.html' => page {
             'http://hdl.loc.gov/loc.pnp/cph.3c13461'
         );
     };
+};
+
+template '__jifty/error/mason_internal_error' => page {
+    { title is _('Something went awry') }
+    my $cont = Jifty->web->request->continuation;
+    $cont->response->error;
+
+=begin TODO
+    
+    my $wrapper = "/_elements/wrapper";
+
+    my $cont = Jifty->web->request->continuation;
+    $wrapper = "/__jifty/error/_elements/wrapper"
+        if $cont and $cont->request->path eq "/__jifty/error/mason_internal_error";
+
+    # If we're not in devel, bail
+    if (   not Jifty->config->framework("DevelMode")
+        or not $cont )
+    {
+        $m->comp(
+            $wrapper,
+            content => sub {
+                $m->comp( "_elements/error_text",
+                    error => "mason internal error" );
+            },
+            title => "Something went awry"
+        );
+        $m->abort;
+    }
+
+    my $e   = $cont->response->error;
+    my $msg = $e->message;
+    $msg =~ s/, <\S+> (line|chunk) \d+\././;
+
+    my $info  = $e->analyze_error;
+    my $file  = $info->{file};
+    my @lines = @{ $info->{lines} };
+    my @stack = @{ $info->{frames} };
+<&| $wrapper, title => "Mason error" & >
+
+    Error in < &. line,
+    file => $file,
+    line => "@lines" & > <pre> < %$msg % > </pre>
+
+    < %Jifty->web->return( label => _("Try again") ) % >
+
+    h2 { Call stack };
+ul {
+    %for my $frame (@stack){
+        %next
+            if $frame->filename =~ m{/HTML/Mason/};
+            li {
+            <& .line, file => $frame->filename,
+                line => $frame->line & >;
+            }
+            %}
+        }
+
+        < /&>
+
+<%def .line>
+my (
+$file
+$line
+) = get(qw());
+%   if (-w $file) {
+%     my $path = $file;
+%     for (map {$_->[1]} @{Jifty->handler->mason->interp->comp_root}) {
+%       last if $path =~ s/ ^ \Q $_\E //;
+    %} % if ( $path ne $file ) {
+        template < %Jifty->web->tangent(
+            url =>
+                "/__jifty/edit/mason_component$path",
+            label      => "$path line " . $line,
+            parameters => { line => $line }
+            ) % > %} else {
+            <% Jifty-> web->tangent(
+                url => "/__jifty/edit/library$path",
+                label      => "$path line " . $line,
+                parameters => { line => $line }
+            ) % > %} %;
+        }
+        else {
+            <% $file %> line <% $line %> %;
+        }
+        </%def>
+
+=cut
+
 };
 
 1;
