@@ -70,8 +70,14 @@ sub arguments {
 
             # For radio display, display an "any" label as empty choices looks weird
             if (lc $info->{render_as} eq 'radio') {
-                unshift @$valid_values, { display => _("(any)"), value => '' };
-                $info->{default_value} ||= '';
+                if (@$valid_values > 1) {
+                    unshift @$valid_values, { display => _("(any)"), value => '' };
+                    $info->{default_value} ||= '';
+                }
+                else {
+                    # We've got only one choice anyway...
+                    $info->{default_value} ||= $valid_values->[0];
+                }
             }
             else {
                 unshift @$valid_values, "";
