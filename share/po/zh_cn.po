@@ -59,7 +59,7 @@ msgstr "%1 第 %2 列"
 msgid "%1 seconds"
 msgstr "%1 秒"
 
-#: lib/Jifty/Web/Form/Field.pm:517
+#: lib/Jifty/Web/Form/Field.pm:521
 msgid "@{[$self->current_value]}"
 msgstr ""
 
@@ -256,6 +256,10 @@ msgstr "系统执行错误, 请稍候再试."
 msgid "This console lets you manage the records in your Jifty database. Below, you should see a list of all your database tables. Feel free to go through and add, delete or modify records."
 msgstr "您可利用此界面来管理数据库的内容. 请点选表格名称, 进行增删及编辑."
 
+#: share/web/templates/__jifty/admin/index.html:7
+msgid "To disable this administrative console, add \"AdminMode: 0\" under the \"framework:\" settings in the config file (etc/config.yml)."
+msgstr ""
+
 #: share/web/templates/__jifty/admin/fragments/list/list:38
 msgid "Toggle search"
 msgstr "切换搜寻画面"
@@ -284,3 +288,7 @@ msgstr "此字段不能留空."
 #. ('http://hdl.loc.gov/loc.pnp/cph.3c13461')
 msgid "You said you wanted a pony. (Source %1)"
 msgstr "您可不正是想要一匹小马吗? (参见 %1)"
+
+#: share/web/templates/_elements/sidebar:7
+msgid "You're not currently signed in."
+msgstr ""
