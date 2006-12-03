@@ -10,7 +10,8 @@ use Jifty::View::Declare::Templates;
 
 our @EXPORT = (
     @Jifty::View::Declare::Templates::EXPORT,
-    @Template::Declare::Tags::EXPORT, 'page',
+    @Template::Declare::Tags::EXPORT,
+    qw( $r $m page ),
 );
 our $r = defer { Jifty->handler->apache };
 our $m = defer { Jifty->web->mason };
