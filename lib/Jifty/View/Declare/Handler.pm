@@ -23,7 +23,13 @@ sub show {
     };
 
     local $Template::Declare::Tags::BUFFER = '';
-    print STDOUT $package->show($code_template);
+
+    my $rv = $package->show($code_template);
+
+    # XXX - Kluge - Before $r->send_http_headers is fixed for real, escape all non-latin1 characters.
+    print STDOUT Encode::encode(latin1 => $rv, &Encode::FB_XMLCREF)
+        unless Jifty->handler->apache->http_header_sent;
+
     return undef;
 }
 
