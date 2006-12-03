@@ -2,7 +2,7 @@ package Jifty::View::Declare::Base;
 
 use strict;
 use warnings;
-use vars qw( $r $m );
+use vars qw( $r );
 use base qw/Jifty::View::Declare::Templates/;
 use Scalar::Defer;
 use Template::Declare::Tags;
@@ -11,17 +11,17 @@ use Jifty::View::Declare::Templates;
 our @EXPORT = (
     @Jifty::View::Declare::Templates::EXPORT,
     @Template::Declare::Tags::EXPORT,
-    qw( $r $m page ),
+    qw( $r page ),
 );
-our $r = defer { Jifty->handler->apache };
-our $m = defer { Jifty->web->mason };
+our $r;
 
 {
     no warnings 'redefine';
 
     sub show {
-
         # Handle relative path here!
+        $r = Jifty->handler->apache;
+
         my $path = shift;
         $path =~ s{^/}{};
         Jifty::View::Declare::Templates->can('show')->( $path, @_ );
@@ -59,6 +59,8 @@ template '_elements/nav' => sub {
 
 sub render_header {
     my ($self, $title) = @_;
+    outs('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'
+            . '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">' );
     with( title => $title ), show('/_elements/header');
     div {
         { id is 'headers' }
@@ -76,10 +78,6 @@ sub wrapper (&) {
 
     my ($title) = get_current_attr(qw(title));
 
-    print STDOUT (
-'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'
-          . '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">' );
-
     my $done_header;
     my $render_header = sub {
         no warnings qw( uninitialized redefine once );
@@ -92,6 +90,7 @@ sub wrapper (&) {
         $self->render_header($title);
 
         $done_header = $Template::Declare::Tags::BUFFER;
+
 
         '';
     };
@@ -235,8 +234,8 @@ END
         $begin =~ s/<body>$/$whitespace/s;
     }
 
-    $m->print($begin);
-    $m->flush_buffer;
+    outs($begin);
+    # $m->flush_buffer;
     $writer->startTag("body");
 
     while (1) {
@@ -279,7 +278,8 @@ template '__jifty/admin/_elements/nav' => sub {
 };
 
 template '__jifty/admin/action/dhandler' => sub {
-    my $action_class = Jifty->api->qualify( $m->dhandler_arg );
+    # XXX move to dispatcher
+    my $action_class = Jifty->api->qualify( die('$m->dhandler_arg') );
 
     my $action = new_action(
         class   => $action_class,
@@ -616,7 +616,8 @@ template '__jifty/admin/index' => sub {
 };
 
 template '__jifty/admin/model/dhandler' => sub {
-    my $object_type = $m->dhandler_arg;
+    # XXX move to dispatcher
+    my $object_type = die('$m->dhandler_arg');
 
     my $collection_class =
       Jifty->app_class( "Model", $object_type . "Collection" );
@@ -675,11 +676,12 @@ template '__jifty/autocomplete.xml' => sub {
 };
 
 template '__jifty/css/dhandler' => sub {
-    if ( $m->dhandler_arg !~ /^[0-9a-f]{32}\.css$/ ) {
+    # XXX move to dispatcher
+    if ( die('$m->dhandler_arg') !~ /^[0-9a-f]{32}\.css$/ ) {
 
         # This doesn't look like a real request for squished CSS,
         # so redirect to a more failsafe place
-        Jifty->web->redirect( "/static/css/" . $m->dhandler_arg );
+        Jifty->web->redirect( "/static/css/" . die('$m->dhandler_arg') );
     }
 
     Jifty->web->generate_css;
@@ -687,7 +689,7 @@ template '__jifty/css/dhandler' => sub {
     use HTTP::Date ();
 
     if ( Jifty->handler->cgi->http('If-Modified-Since')
-        and $m->dhandler_arg eq Jifty->web->cached_css_digest . '.css' )
+        and die('$m->dhandler_arg') eq Jifty->web->cached_css_digest . '.css' )
     {
         Jifty->log->debug("Returning 304 for cached css");
         $r->header_out( Status => 304 );
