@@ -152,7 +152,7 @@ template '_elements/sidebar' => sub {
             _( 'Hiya, %1.', $u->$method() );
         }
         else {
-            _(q{You're not currently signed in.});
+            _( "You're not currently signed in." );
         }
     };
     with( id => "navigation" ), div {
@@ -564,9 +564,7 @@ template '__jifty/admin/index' => sub {
         };
 
         p {
-            _(
-q{To disable this administrative console, add "framework: AdminMode: 0" to your application's configuration file.}
-            );
+            _('To disable this administrative console, add "AdminMode: 0" under the "framework:" settings in the config file (etc/config.yml).');
         };
 
         h2 { _('Models') };
@@ -1678,7 +1676,7 @@ template '_elements/keybindings' => sub {
 };
 
 template 'index.html' => page {
-    { title is 'Welcome to your new Jifty application' }
+    { title is _('Welcome to your new Jifty application') }
     img {
         src is "/static/images/pony.jpg", alt is _(
             'You said you wanted a pony. (Source %1)',
