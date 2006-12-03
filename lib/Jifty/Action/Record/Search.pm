@@ -122,7 +122,7 @@ sub arguments {
             $args->{"${field}_lt"} = { %$info, label => _("%1 less than", $label) };
             $args->{"${field}_ge"} = { %$info, label => _("%1 greater or equal to", $label) };
             $args->{"${field}_le"} = { %$info, label => _("%1 less or equal to", $label) };
-            $args->{"${field}_dwim"} = { %$info };
+            $args->{"${field}_dwim"} = { %$info, hints => _('!=>< allowed') };
         }
     }
 
