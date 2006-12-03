@@ -68,7 +68,12 @@ sub current_user {
 }
 
 sub get {
-    return map { request->argument($_) }  @_;
+    if (wantarray) {
+        map { request->argument($_) }  @_;
+    }
+    else {
+        request->argument($_[0]);
+    }
 }
 
 sub render_param {
