@@ -38,7 +38,7 @@ Create C<field>_contains and C<field>_lacks arguments
 
 Create C<field>_before and C<field>_after arguments
 
-=item C<integer>, C<float> or C<double> fields
+=item C<integer>, C<float>, C<double>, C<decimal> or C<numeric> fields
 
 Generate C<field>_lt and C<field>_gt arguments
 
@@ -105,7 +105,7 @@ sub arguments {
         } elsif($type =~ /(?:date|time)/) {
             $args->{"${field}_after"} = { %$info, label => _("%1 after", $label) };
             $args->{"${field}_before"} = { %$info, label => _("%1 before", $label) };
-        } elsif(    $type =~ /(?:int|float|double)/
+        } elsif(    $type =~ /(?:int|float|double|decimal|numeric)/
                 && !$column->refers_to) {
             $args->{"${field}_gt"} = { %$info, label => _("%1 greater than", $label) };
             $args->{"${field}_lt"} = { %$info, label => _("%1 less than", $label) };
