@@ -251,6 +251,7 @@ sub arguments {
                 };
             }
             my $autocomplete_method = "autocomplete_" . $field;
+
             if ( $self->record->can($autocomplete_method) ) {
                 $info->{'autocompleter'} ||= sub {
                     my ( $self, $value ) = @_;
@@ -259,6 +260,30 @@ sub arguments {
                         for grep { $_ ne $field } $self->possible_fields;
                     return $self->record->$autocomplete_method( $value,
                         %columns );
+                };
+            }
+            elsif ($column->autocompleted) {
+                # Auto-generated autocompleter
+                $info->{'autocompleter'} ||= sub {
+                    my ( $self, $value ) = @_;
+
+                    my $collection = Jifty::Collection->new(
+                        record_class => $self->record_class,
+                        current_user => $self->record->current_user
+                    );
+
+                    $collection->unlimit;
+                    $collection->rows_per_page(20);
+                    $collection->limit(column => $field, value => $value, operator => 'STARTSWITH') if length($value);
+                    $collection->columns('id', $field);
+                    $collection->order_by(column => $field);
+                    $collection->group_by(column => $field);
+
+                    my @choices;
+                    while (my $record = $collection->next) {
+                        push @choices, $record->$field;
+                    }
+                    return @choices;
                 };
             }
 
@@ -360,7 +385,6 @@ sub _setup_event_after_action {
     Jifty::Util->require($event_class);
     $event_class->new($event_info)->publish;
 }
-
 
 =head1 SEE ALSO
 
