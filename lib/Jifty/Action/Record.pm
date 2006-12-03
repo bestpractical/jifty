@@ -274,9 +274,9 @@ sub arguments {
 
                     $collection->unlimit;
                     $collection->rows_per_page(20);
-                    $collection->limit(column => $field, value => $value, operator => 'STARTSWITH') if length($value);
-                    $collection->limit(column => $field, value => 'NULL', operator => 'IS NOT');
-                    $collection->limit(column => $field, value => '', operator => '!=');
+                    $collection->limit(column => $field, value => $value, operator => 'STARTSWITH', entry_aggregator => 'AND') if length($value);
+                    $collection->limit(column => $field, value => 'NULL', operator => 'IS NOT', entry_aggregator => 'AND');
+                    $collection->limit(column => $field, value => '', operator => '!=', entry_aggregator => 'AND');
                     $collection->columns('id', $field);
                     $collection->order_by(column => $field);
                     $collection->group_by(column => $field);
