@@ -4,7 +4,7 @@
 % my $method = $u->_brief_description;
 <%_('Hiya, %1.',$u->$method())%>
 % }  else {
-<%_(q{You're not currently signed in.})%>
+<%_("You're not currently signed in.")%>
 % }
 </div>
 <div id="navigation">

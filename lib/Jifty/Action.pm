@@ -982,7 +982,8 @@ sub _values_for_field {
     my $type = shift;
 
     my $vv_orig = $self->arguments->{$field}{$type .'_values'};
-    return $vv_orig unless ref $vv_orig eq 'ARRAY';
+    # available are defer { } creates defered value which ref is 0
+    return $vv_orig unless ( ref $vv_orig eq 'ARRAY' || ref $vv_orig eq 0 );
 
     my $vv = [];
 

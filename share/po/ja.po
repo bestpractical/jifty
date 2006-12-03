@@ -60,7 +60,7 @@ msgstr ""
 msgid "%1 seconds"
 msgstr ""
 
-#: lib/Jifty/Web/Form/Field.pm:517
+#: lib/Jifty/Web/Form/Field.pm:521
 msgid "@{[$self->current_value]}"
 msgstr ""
 
@@ -249,6 +249,10 @@ msgstr ""
 msgid "This console lets you manage the records in your Jifty database. Below, you should see a list of all your database tables. Feel free to go through and add, delete or modify records."
 msgstr ""
 
+#: share/web/templates/__jifty/admin/index.html:7
+msgid "To disable this administrative console, add \"AdminMode: 0\" under the \"framework:\" settings in the config file (etc/config.yml)."
+msgstr ""
+
 #: share/web/templates/__jifty/admin/fragments/list/list:38
 msgid "Toggle search"
 msgstr ""
@@ -276,4 +280,8 @@ msgstr ""
 #: share/web/templates/index.html:3
 #. ('http://hdl.loc.gov/loc.pnp/cph.3c13461')
 msgid "You said you wanted a pony. (Source %1)"
+msgstr ""
+
+#: share/web/templates/_elements/sidebar:7
+msgid "You're not currently signed in."
 msgstr ""
