@@ -73,6 +73,7 @@ Jifty.Calendar = {
         cal["onSelect"] = function() {
             input.value = cal.getSelectedDates()[0].formatDate(Jifty.Calendar.dateFormat);
             Jifty.Calendar.hideOpenCalendar();
+            Form.Element.validate(input); // We can't trigger an onBlur, so canonicalize/validate manually
         };
 
         cal["_onChangePage"] = cal["onChangePage"];
