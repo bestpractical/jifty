@@ -14,37 +14,37 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: lib/Jifty/Action/Record/Search.pm:96
+#: lib/Jifty/Action/Record/Search.pm:106
 #. ($label)
 msgid "%1 after"
 msgstr "%1 晚於"
 
-#: lib/Jifty/Action/Record/Search.pm:97
+#: lib/Jifty/Action/Record/Search.pm:107
 #. ($label)
 msgid "%1 before"
 msgstr "%1 早於"
 
-#: lib/Jifty/Action/Record/Search.pm:93
+#: lib/Jifty/Action/Record/Search.pm:103
 #. ($label)
 msgid "%1 contains"
 msgstr "%1 包含"
 
-#: lib/Jifty/Action/Record/Search.pm:100
+#: lib/Jifty/Action/Record/Search.pm:110
 #. ($label)
 msgid "%1 greater than"
 msgstr "%1 大於"
 
-#: lib/Jifty/Action/Record/Search.pm:89
+#: lib/Jifty/Action/Record/Search.pm:99
 #. ($label)
 msgid "%1 is not"
 msgstr "%1 不等於"
 
-#: lib/Jifty/Action/Record/Search.pm:94
+#: lib/Jifty/Action/Record/Search.pm:104
 #. ($label)
 msgid "%1 lacks"
 msgstr "%1 不包含"
 
-#: lib/Jifty/Action/Record/Search.pm:101
+#: lib/Jifty/Action/Record/Search.pm:111
 #. ($label)
 msgid "%1 less than"
 msgstr "%1 小於"
@@ -58,6 +58,10 @@ msgstr "%1 第 %2 列"
 #. ($_->[3])
 msgid "%1 seconds"
 msgstr "%1 秒"
+
+#: lib/Jifty/Action/Record/Search.pm:73
+msgid "(any)"
+msgstr "(不限)"
 
 #: lib/Jifty/Web/Form/Field.pm:521
 msgid "@{[$self->current_value]}"
@@ -79,7 +83,7 @@ msgstr "請注意"
 msgid "An error occurred.  Try again later"
 msgstr "系統無法執行此項操作, 請稍後再試"
 
-#: lib/Jifty/Action/Record/Search.pm:105
+#: lib/Jifty/Action/Record/Search.pm:115
 msgid "Any field contains"
 msgstr "任意欄位包含"
 
@@ -179,7 +183,7 @@ msgstr "模型"
 msgid "Next Page"
 msgstr "下一頁"
 
-#: lib/Jifty/Action/Record/Search.pm:106
+#: lib/Jifty/Action/Record/Search.pm:116
 msgid "No field contains"
 msgstr "沒有欄位包含"
 
