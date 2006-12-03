@@ -58,17 +58,16 @@ will be run in version order until the application is up to date.
 
 =head3 Renaming a column
 
-To rename a column use C<rename> inside your C<since>.  You will also
-have to use the model class at the top of Upgrade.pm so Jifty can
-access it's schema definition.
+To rename a column, simply call C<rename> inside your C<since> code block:
 
-use MyApp::Model::User;
+    use MyApp::Model::User;
 
-since '0.61' => sub {
-  rename (table => 'MyApp::Model::User', 
-	  column => 'zip', 
-	  to => 'postcode'
-	 );
-};
+    since '0.6.1' => sub {
+        rename(
+            table   => 'MyApp::Model::User', 
+            column  => 'zip', 
+            to      => 'postcode'
+        );
+    };
 
 =head3 Migrating data
