@@ -1342,6 +1342,14 @@ YAHOO.widget.Calendar.prototype.setupConfig = function() {
 	*/
 	this.cfg.addProperty("MULTI_SELECT",	{ value:false, handler:this.configOptions, validator:this.cfg.checkBoolean } );
 
+    /**
+    * True if the Calendar should allow selection of out-of-month dates. False by default.
+    * @config OOM_SELECT
+    * @type Boolean
+    * @default false
+    */
+    this.cfg.addProperty("OOM_SELECT",      { value:false, handler:this.configOptions, validator:this.cfg.checkBoolean } );
+
 	/**
 	* The weekday the week begins on. Default is 0 (Sunday).
 	* @config START_WEEKDAY
@@ -1988,7 +1996,7 @@ YAHOO.widget.Calendar.prototype.renderBody = function(workingDate, html) {
 
 		weekClass = "w" + weekNum;
 
-		if (r !== 0 && this.isDateOOM(workingDate) && this.cfg.getProperty("HIDE_BLANK_WEEKS") === true) {
+		if (r !== 0 && (this.isDateOOM(workingDate) && !this.cfg.getProperty("OOM_SELECT")) && this.cfg.getProperty("HIDE_BLANK_WEEKS") === true) {
 			break;
 		} else {
 
@@ -2018,7 +2026,7 @@ YAHOO.widget.Calendar.prototype.renderBody = function(workingDate, html) {
 
 				this.cellDates[this.cellDates.length]=[workingDate.getFullYear(),workingDate.getMonth()+1,workingDate.getDate()]; // Add this date to cellDates
 
-				if (this.isDateOOM(workingDate)) {
+				if (this.isDateOOM(workingDate) && !this.cfg.getProperty("OOM_SELECT")) {
 					cellRenderers[cellRenderers.length]=cal.renderCellNotThisMonth;
 				} else {
 
@@ -3402,6 +3410,14 @@ YAHOO.widget.CalendarGroup.prototype.setupConfig = function() {
 	*/
 	this.cfg.addProperty("MULTI_SELECT",	{ value:false, handler:this.delegateConfig, validator:this.cfg.checkBoolean } );
 
+    /**
+    * True if the Calendar should allow selection of out-of-month dates. False by default.
+    * @config OOM_SELECT
+    * @type Boolean
+    * @default false
+    */
+    this.cfg.addProperty("OOM_SELECT",      { value:false, handler:this.delegateConfig, validator:this.cfg.checkBoolean } );
+
 	/**
 	* The weekday the week begins on. Default is 0 (Sunday).
 	* @config START_WEEKDAY
@@ -4236,7 +4252,4 @@ YAHOO.extend(YAHOO.widget.Calendar2up, YAHOO.widget.CalendarGroup);
 /**
 * @deprecated The old Calendar2up class is no longer necessary, since CalendarGroup renders in a 2up view by default.
 */
-YAHOO.widget.Cal2up = YAHOO.widget.Calendar2up;==== ORIGINAL VERSION share/web/static/js/yui/calendar.js 116520060367829
-YAHOO.widget.Calendar2up.prototype.renderFooter = function() {}
-
 YAHOO.widget.Cal2up = YAHOO.widget.Calendar2up;
