@@ -24,24 +24,24 @@ this add a since sub to your new model class.
 
 =head3 Adding a new column to an existing model
 
-When you have a existing model and decide that you need to add another
+When you have an existing model and decide that you need to add another
 column to it you also need to tell Jifty about this.  This is done by
-using since as well, however the since goes into the column
+using C<since> as well. However, the C<since> goes into the column
 definition itself.  
 
- column created_by => refers_to Wifty::Model::User, 
-		      since '0.0.20';
-
+ column created_by =>
+    refers_to Wifty::Model::User, 
+    since '0.0.20';
 
 =head2 data migration and schema changes
 
-If a file called C<Upgrade.pm> exists in your application it will be
+If a file called F<Upgrade.pm> exists in your application it will be
 run by C<jifty schema --setup>.
 
-Upgrade.pm can be used to make any schema changes or to manipulate
+F<Upgrade.pm> can be used to make any schema changes or to manipulate
 your applications data.
 
-At the very least your C<Upgrade.pm> should contain the following: 
+At the very least your F<Upgrade.pm> should contain the following:
 
  package MyApp::Upgrade;
 
@@ -49,12 +49,11 @@ At the very least your C<Upgrade.pm> should contain the following:
  use Jifty::Upgrade qw( since rename );
 
  since '0.6.1' => sub {
-	....
+    ....
  };
 
 The C<since> function is where you do all the work.  Each C<since>
 will be run in version order until the application is up to date.
-
 
 =head3 Renaming a column
 
