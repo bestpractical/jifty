@@ -58,8 +58,6 @@ requires('Shell::Command');
 requires('String::Koremutake');
 requires('SQL::ReservedWords');
 requires('Test::Base');
-requires('Test::MockModule' => '0.05');
-requires('Test::MockObject' => '1.07');
 requires('UNIVERSAL::require');
 requires('URI');
 requires('XML::Writer' => '0.601');
@@ -90,6 +88,8 @@ features(
         recommends('Test::HTTP::Server::Simple' => '0.02' ),
         recommends('Test::HTML::Lint'),
         recommends('Test::More' => 0.62 ),
+        recommends('Test::MockModule' => '0.05'),
+        recommends('Test::MockObject' => '1.07'),
         recommends('Test::Pod::Coverage'),
         recommends('Test::WWW::Mechanize' => 1.04 ),
         recommends('WWW::Mechanize' => 1.12 ),
