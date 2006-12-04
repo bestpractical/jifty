@@ -982,12 +982,12 @@ sub _values_for_field {
     my $type = shift;
 
     my $vv_orig = $self->arguments->{$field}{$type .'_values'};
-    # available are defer { } creates defered value which ref is 0
-    return $vv_orig unless ( ref $vv_orig eq 'ARRAY' || ref $vv_orig eq 0 );
+    local $@;
+    my @values = eval { @$vv_orig } or return $vv_orig;
 
     my $vv = [];
 
-    for my $v (@$vv_orig) {
+    for my $v (@values) {
         if ( ref $v eq 'HASH' ) {
             if ( $v->{'collection'} ) {
                 my $disp = $v->{'display_from'};

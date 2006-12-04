@@ -33,10 +33,10 @@ template <% Jifty->web->tangent( url =>"/__jifty/edit/mason_component$path",
 <% Jifty->web->tangent( url =>"/__jifty/edit/library$path",
                         label => _("%1 line %2", $path, $line),
                         parameters => { line => $line } ) %>
-%     }
 %   } else {
 <%_("%1 line %2", $path, $line)%>
 %   }
+% }
 </%def>
 
 <%init>

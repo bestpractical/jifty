@@ -13,12 +13,12 @@ Jifty.Calendar = {
         return true;
     },
 
-    dateFormat: "Y-m-d",
     dateRegex: /^(\d{4})\W(\d{2})\W(\d{2})/,
     
     Options: {
         NAV_ARROW_LEFT: "/static/images/yui/us/tr/callt.gif",
-        NAV_ARROW_RIGHT: "/static/images/yui/us/tr/calrt.gif"
+        NAV_ARROW_RIGHT: "/static/images/yui/us/tr/calrt.gif",
+        OOM_SELECT: true
     },
 
     toggleCalendar: function(ev) {
@@ -55,43 +55,39 @@ Jifty.Calendar = {
             var bits = input.value.match(Jifty.Calendar.dateRegex);
             cal = new YAHOO.widget.Calendar( calId,
                                              wrapId,
-                                             bits[2]+"/"+bits[1],
-                                             bits[2]+"/"+bits[3]+"/"+bits[1]
+                                             { pagedate: bits[2]+"/"+bits[1],
+                                               selected: bits[2]+"/"+bits[3]+"/"+bits[1] }
                                             );
         }
         else {
             cal = new YAHOO.widget.Calendar( calId, wrapId );
         }
         
-
-        cal["customConfig"] = function(){ 
-            for (i in Jifty.Calendar.Options) {
-                this.Options[i] = Jifty.Calendar.Options[i];
-            } 
-        };
-
-        cal["onSelect"] = function() {
-            input.value = cal.getSelectedDates()[0].formatDate(Jifty.Calendar.dateFormat);
-            Jifty.Calendar.hideOpenCalendar();
-            Form.Element.validate(input); // We can't trigger an onBlur, so canonicalize/validate manually
-        };
-
-        cal["_onChangePage"] = cal["onChangePage"];
-        cal["onChangePage"]  = function() {
-            Jifty.Calendar._blurredCalendar = null;
-            cal["_onChangePage"]();
-        };
+        cal.cfg.applyConfig( Jifty.Calendar.Options );
+        cal.cfg.fireQueue();
         
-        cal.setupConfig();
+        cal.selectEvent.subscribe( Jifty.Calendar.handleSelect, { event: ev, calendar: cal }, true );
+        cal.changePageEvent.subscribe( function() { Jifty.Calendar._blurredCalendar = null; }, null, false );
+        
         cal.render();
 
         Jifty.Calendar.openCalendar = wrapId;
         Jifty.Utils.scrollToShow( wrapId );
         /*Jifty.Calendar.preventStutter = wrapId;*/
-        /* IE fix */
-        if ( navigator.userAgent.toLowerCase().indexOf("msie") >= 0 && navigator.appVersion.indexOf("MSIE 7") < 0 ) { 
-            wrap.appendChild(document.createElement("iframe"));
-        }
+    },
+
+    handleSelect: function(type, args, obj) {
+        // args = [ [ [yyyy, mm, dd] ] ]
+        var year  = args[0][0][0],
+            month = args[0][0][1],
+            day   = args[0][0][2];
+
+        var input = obj.event.target;
+        
+        input.value = year + "-" + month + "-" + day;
+
+        Jifty.Calendar.hideOpenCalendar();
+        Form.Element.validate( input ); // We can't trigger an onBlur, so canonicalize/validate manually
     },
 
     openCalendar: "",

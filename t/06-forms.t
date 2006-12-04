@@ -1,8 +1,6 @@
 use warnings;
 use strict;
 use Jifty::Test tests => 24;
-use Test::MockObject;
-use Test::MockModule;
 
 use_ok ('Jifty::Web::Form::Field');
 
@@ -24,7 +22,14 @@ is($field->name, 'Jesse');
 is ($field->type, 'text', "type defaults to text");
 
 # Test render_XXX methods:
-{
+SKIP: {
+    eval {
+        require Test::MockObject;
+        require Test::MockModule;
+    };
+    skip "Test::MockObject and Test::MockModule required",
+        13 if $@;
+
     my $out; # buf to store mason outputs
 
     # mock up an instance of Jifty::Result
