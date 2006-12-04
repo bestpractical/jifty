@@ -25,6 +25,8 @@ recommends:
   Test::Base: 0.44
   Test::HTML::Lint: 0
   Test::HTTP::Server::Simple: 0.02
+  Test::MockModule: 0.05
+  Test::MockObject: 1.07
   Test::More: 0.62
   Test::Pod::Coverage: 0
   Test::WWW::Mechanize: 1.04
