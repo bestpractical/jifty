@@ -4236,4 +4236,7 @@ YAHOO.extend(YAHOO.widget.Calendar2up, YAHOO.widget.CalendarGroup);
 /**
 * @deprecated The old Calendar2up class is no longer necessary, since CalendarGroup renders in a 2up view by default.
 */
+YAHOO.widget.Cal2up = YAHOO.widget.Calendar2up;==== ORIGINAL VERSION share/web/static/js/yui/calendar.js 116520060367829
+YAHOO.widget.Calendar2up.prototype.renderFooter = function() {}
+
 YAHOO.widget.Cal2up = YAHOO.widget.Calendar2up;

@@ -17,7 +17,8 @@ Jifty.Calendar = {
     
     Options: {
         NAV_ARROW_LEFT: "/static/images/yui/us/tr/callt.gif",
-        NAV_ARROW_RIGHT: "/static/images/yui/us/tr/calrt.gif"
+        NAV_ARROW_RIGHT: "/static/images/yui/us/tr/calrt.gif",
+        OOM_SELECT: true
     },
 
     toggleCalendar: function(ev) {
