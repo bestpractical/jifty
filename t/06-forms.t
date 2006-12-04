@@ -27,7 +27,7 @@ SKIP: {
         require Test::MockObject;
         require Test::MockModule;
     };
-    skip "Test::MockObject or Test::MockModule required",
+    skip "Test::MockObject and Test::MockModule required",
         13 if $@;
 
     my $out; # buf to store mason outputs
