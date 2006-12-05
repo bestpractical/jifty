@@ -7,8 +7,8 @@ Jifty::Manual::Actions - Doing Stuff With Jifty
 C<Jifty::Action> abstracts around the idea of declaring named
 (L<"parameters"|Jifty::Manual::Glossary/parameter>) at compile time.
 At runtime, the action collects user input as
-(L<"arguments"|Jifty::Manual::Glossary/argument>), do something with them,
-and returning some result to the user.  If this sounds incredibly
+(L<"arguments"|Jifty::Manual::Glossary/argument>), does something with them,
+and returns some result to the user.  If this sounds incredibly
 general, that's because it is -- actions do nearly B<everything> in Jifty.
 
 C<Jifty::Action> will also generate HTML for you from its parameters --
@@ -16,7 +16,7 @@ no more manually writing C<< <input> >> tags and extracting GET and
 POST arguments by hand and dispatching them where they belong --
 C<Jifty::Action> does it all for you.
 
-=head2 WRITING ACTIONS
+=head1 WRITING ACTIONS
 
 Jifty provides some actions for you out of the box -- see
 L<Jifty::Manual::ObjectModel> and L<Jifty::Action::Record> for
@@ -26,10 +26,10 @@ is how you do it.
 
 Every action is a subclass of Jifty::Action, as well as typically
 I<AppName>::Action. Actions usually live in the I<AppName>::Action::
-namespace; While that's just convention, it will make your life easier
+namespace; while that's just a convention, it will make your life easier
 if you follow it.
 
-This, the simplest possible action is:
+This, the simplest possible action, is:
 
     use warnings;
     use strict;
@@ -55,7 +55,7 @@ L</take_action> method.
 
 Every C<Jifty::Action> subclass should define a C<schema>, which contains
 some C<param> declarations that describes what arguments it takes.
-Supposing we were writing a an action to post a blog article, we might start
+Supposing we were writing an action to post a blog article, we might start
 out with parameters like thus:
 
     use Jifty::Param::Schema;
@@ -69,7 +69,7 @@ out with parameters like thus:
 
 However, we've only scratched the surface of the power the
 C<param> API offers.  Parameters can have types, labels,
-validators, canonicalizers, and even more. To start with, lets add
+validators, canonicalizers, and even more. To start with, let's add
 some types and labels:
 
     use Jifty::Param::Schema;
@@ -121,8 +121,8 @@ and to keep track of all the categories users have entered:
     ...
 
 Now, Jifty will populate the combobox with the result of calling C<name>
-on each element on C<$categories>. Alternatively, if you set
-C<<value_from => 'id'>>, Jifty would automatically return the C<id> of
+on each element in C<$categories>. Alternatively, if you set
+C<< value_from => 'id' >>, Jifty would automatically return the C<id> of
 the category, for easy database reference. We don't do this with the
 combobox, however, since a combobox displays the selected value in its
 text field.
@@ -131,13 +131,13 @@ See L<Jifty::Action> and L<Jifty::Web::Form::Field> for more fields
 you can set in the C<param> declaration, and see L<Jifty::Param::Schema>
 for more about the syntax.
 
-=head3 validation
+=head2 validation
 
 C<Jifty::Action> can automatically validate arguments for you, as
 appropriate. If an argument has C<valid_values>, then C<Jifty::Action>
-will automatically verify that the given value matches one of
+will automatically verify if the given value matches one of
 them. However, you can also write your own validators. Just write a
-C<< sub validate_<argument> >>, and it will be called as appropriate:
+C<< sub validate_<parameter> >>, and it will be called as appropriate:
 
     use Regexp::Common 'profanity_us';
 
@@ -145,7 +145,9 @@ C<< sub validate_<argument> >>, and it will be called as appropriate:
        my $self = shift;
        my $body = shift;
        if ( $body =~ /$RE{profanity}/i) {
-           return $self->validation_error( body => 'Would you speak like that in front of your mother? *cough*');
+           return $self->validation_error(
+               body => 'Would you speak like that in front of your mother? *cough*'
+           );
        }
        return $self->validation_ok('body');
     }
@@ -153,7 +155,7 @@ C<< sub validate_<argument> >>, and it will be called as appropriate:
 You can also do validation in the model -- see
 L<Jifty::Action::Record> 
 
-=head3 canonicalization
+=head2 canonicalization
 
 If, instead of failing, you want to automatically modify
 invalid content to be valid, you want a
@@ -196,7 +198,9 @@ will display a message to the user.
         if ($value =~ s/\[(.*?)\]//) {
             # this clobbers, may want to merge
             $self->argument_value( tags => $1 );
-            $self->canonicalization_note( title => 'Removed tags from your title' );
+            $self->canonicalization_note(
+                title => 'Removed tags from your title'
+            );
         }
 
         return $value;
@@ -206,7 +210,8 @@ will display a message to the user.
 If you set C<ajax validates> or C<ajax canonicalizes>
 for an argument, then Jifty will automatically validate or
 canonicalize it in an L<AJAX|Jifty::Manual::Glossary/ajax>-enabled
-browser when the user stops typing.
+browser when the user stops typing and puts the focus out of
+the corresponding form field.
 
 =head2 take_action
 
@@ -220,7 +225,7 @@ C<< $self->argument_value('foo') >>. If you need to check whether you've
 been passed an argument or not (as opposed to being passed a true
 argument or not), use C<< $self->has_argument('foo') >>.
 
-Once an action has done its thing, it needs to inform the caller
+Once an action has done its task, it needs to inform the caller
 whether or not it has succeeded, possibly with some status message. To
 this end, every C<Jifty::Action> has a C<Jifty::Result> associated
 with. C<Jifty::Result> carries both a failure/sucess code, and a
@@ -237,7 +242,7 @@ If, however, the action completed successfully, you might write:
     $self->result->message('Posted to your blog');
 
 Actions will default to successful with an empty message if you don't
-do anything. Additionally, if you need to return more semantic
+do anything with the result object. Additionally, if you need to return more semantic
 information than a simple message, you can set arbitrary content on
 the result, using $self->result->content, e.g:
 
@@ -257,8 +262,14 @@ view page template may have the following piece of code in it:
    </%init>
 
 where C<'post_blog'> is the moniker for your post page action object.
-In fact, that's exactly how actions "return" values to other templates 
+In fact, that's exactly how actions "return" values to other components 
 in your application.
+
+Mutiple action "return values" are possible and arbitrary data structures
+can be passed too:
+
+    $self->result->content( keys   => $keys );
+    $self->result->content( result => $collection);
 
 It should also be mentioned that the response object is "per request". That is,
 it usually can't live up to another user request. Therefore, when paging mechanism 
@@ -268,7 +279,7 @@ to the link constructor or explicitly tell Jifty to preserve states for you.
 See L</monikers>, the Jifty Pony site's source, and L<Jifty::Request::Mapper> for some 
 more information.
 
-=head2 USING ACTIONS
+=head1 USING ACTIONS
 
 At their simplest, you can create and run actions yourself, e.g.:
 
@@ -281,11 +292,11 @@ At their simplest, you can create and run actions yourself, e.g.:
         }
     )->run;
 
-Note that Jifty->web->new_action, and all similar methods
+Note that C<< Jifty->web->new_action >>, and all similar methods
 (e.g. L<Jifty::Request::add_action|Jifty::Request/add_action>,
 L<Jifty::Web::Form::add_action|Jifty::Web::Form/new_action>), will
 automatically qualify the C<class> with either C<Jifty::Action::> or
-C<I<AppName>::Action::> as necessary (I told you putting actions in
+C<I<AppName>::Action::> as necessary (I've told you putting actions in
 I<AppName::Action::> would make your life easier!)
 
 In practice, you'll rarely provide actions with arguments
@@ -309,7 +320,7 @@ output a form where the user can fill in the action's arguments:
     </div>
       <% $create->form_field('body') %>
     <% Jifty->web->form->submit(label => "Post") %>
-    %# or <% Jifty->web->form->link(label => "Post", submit => # $create) %>
+    %# or <% Jifty->web->form->link(label => "Post", submit => $create) %>
     %# or <% $action->button(label => "Post"); %>
     <% Jifty->web->form->end %>
 
@@ -318,7 +329,7 @@ HTML C<< <input> >> tag that Jifty knows how to interpret to feed back
 to your action as an argument when the form is submitted. If you need
 to change the appearance of the field, Jifty outputs classes on the
 fields, as well as providing some semantic C<< <div> >>s you can style
-using CSS. (TODO: Document Jifty HTML classes and default CSS).
+using CSS. (See L<Jifty::Manual::UsingCSSandJS> for some more details.)
 
 See L<Jifty::Web::Form/submit>, L<Jifty::Web/link> and
 L<Jifty::Action/button> for details on the different ways to generate
@@ -326,13 +337,13 @@ a submit button.
 
 Additionally, instead of C<form_field>, you can use C<hidden> to
 generate a C<hidden> input, which will not be viewable or editable in
-a web browser. (Note that a knowledgeable user *can* still submit a
+a web browser. (Note that a knowledgeable user I<can> still submit a
 form with a different value for that hidden input; If this concerns
 you, make sure you have appropriate
 L<ACLs|Jifty::Manual::AccessControl> in place. If it still worries
-you, you probably want a L<continuation|Jifty::Continuation>.
+you, you probably want a L<continuation|Jifty::Continuation> here.)
 
-=head3 monikers
+=head2 monikers
 
 You probably noticed the C<< moniker => 'post_blog' >>. Every action you
 create in Jifty has an associated
@@ -342,7 +353,7 @@ typically means per HTML page). Since actions are constantly being
 serialized (over HTTP, or Javascript AJAX calls, and so on), and
 unpacked, we need a way refer to specific actions other than just
 object identity, e.g. to extract its arguments or results in the
-L<dispatcher|Jifty::Dispatcher>. Monikers give us that. Given a
+L<dispatcher|Jifty::Dispatcher> or a template. Monikers give us that. Given a
 moniker, you can pull information about the associated action out of a
 L<request|Jifty::Request> or L<response|Jifty::Response>.
 
@@ -350,7 +361,7 @@ If a moniker is unspecified, it will be autogenerated.
 
 (XXX TODO Note about action registration here)
 
-=head3 Argument Folding
+=head2 Argument Folding
 
 If you write out more than one C<form_field> for a given argument in
 the same form, and more than one is filled in, Jifty will C<fold> the
