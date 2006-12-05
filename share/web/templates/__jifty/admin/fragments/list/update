@@ -18,7 +18,7 @@ my $update = Jifty->web->new_action(
 <div class="jifty_admin update item inline <%$object_type%>">
 <div class="editlink">
   <% Jifty->web->link(
-      label   => _("Save"),
+      label   => _('Save'),
       onclick => [
           { submit => $update },
           {   replace_with => $list_path.'view',
@@ -28,7 +28,7 @@ my $update = Jifty->web->new_action(
       ) %>
 
   <% Jifty->web->link(
-      label     => _("Cancel"),
+      label     => _('Cancel'),
       onclick   => {
           replace_with => $list_path.'view',
           args         => { object_type => $object_type, id => $id, list_path => $list_path }

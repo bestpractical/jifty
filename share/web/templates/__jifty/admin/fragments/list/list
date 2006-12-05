@@ -9,7 +9,7 @@ And use it in a page like this :
                                     list_path => '/admin/fragments/list/',
                                     limit_field => 'domain',
                                     limit_val => $domain,
-                                    search_slot => 0
+                                    search_slot => 0,
                                     per_page => 5,
                                     render_submit => 1 }) %>
 
