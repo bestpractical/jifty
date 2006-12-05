@@ -15,12 +15,12 @@ independently.
 
 =head2 Constructing Page Regions
 
-From inside any template, a region may get constructed something like
+From inside any template, a region may get constructed via something like
 this:
 
     <% Jifty->web->region( name     => 'regionname',
                            path     => '/path/of/component',
-                           defaults => {argname => 'some value', ...},
+                           defaults => { argname => 'some value', ... },
                          ) %>
 
 This call will pass all arguments to the C<new> constructor of
@@ -34,6 +34,8 @@ The mandatory region's name given here is used to embed the region's
 content into a C<< <div> >> tag which is marked with a fully qualified
 name for that region. The qualified name represents the nesting
 structure of regions inside a page and is automatically built inside.
+The qualified name for a given L<Jifty::Web::PageRegion> object can
+be obtained by calling C<< Jifty->web->qualified_region >>.
 
 =item path (optional)
 
@@ -104,16 +106,26 @@ demonstrate some typical scenarios:
                          as_button => 1,
                        ) %>
 
+    %# refresh the parent region which holds the current one
+    <% $search->button(
+        label   => 'Search!',
+        onclick => {
+            submit  => $search_action,
+            refresh => Jifty->web->current_region->parent,
+            args    => { page => 1 }
+                   }
+      ) %>
+
 =head1 GORY DETAILS
 
 There is a bit of complication involved in making sure that the
-on-server Perl implementation of page regions, and, more importantly,
+server-side Perl implementation of page regions, and, more importantly,
 how they preserve state, interacts with the client-side JavaScript
 implementation.  What follows is an attempt to describe the process.
 
 Regions, when they are created, have a default path and a default set
 of arguments.  These are "defaults" because they can be overridden by
-the browser -- this is what enables the browser to say "and that
+the browser -- this is what enables the browser to say "...and that
 region has this other path, in reality."  The same is true for
 arguments; for example, a paging widget could have a default C<page>
 argument of 1, but could be actually being rendered with a C<page> of
@@ -123,7 +135,7 @@ These overrides are kept track of using state variables.  When a
 region is entered, it peers at the current state variables, and
 overrides the default path and arguments before rendering the region.
 
-When a L<Jifty::Web::Form::Clickable> with an C<onclick> is
+When a L<Jifty::Web::Form::Clickable> object with an C<onclick> is
 L<generated|Jifty::Web::Form::Clickable/generate>, it examines the
 C<onclick> and determines how to emulate it without JavaScript.  It
 determines which actions need to be run, as well as how to manipulate
@@ -136,11 +148,11 @@ When a region is output, it is output with a tiny "region wrapper",
 which serves two purposes: to inform the JavaScript of the existance
 of the page region and its default path and variables, and to create a
 unique C<< <div> >> for the fragment to reside in.  The browser reads
-the JavaScript and creates, on client-side, a model of the nested
+the JavaScript and creates, on the client-side, a model of the nested
 PageRegions.  This allows the JavaScript to model the state variable
 changes correctly.
 
-When the JavaScript Update function is called, it is passed a list of
+When the JavaScript C<Update> function is called, it is passed a list of
 fragments that needs to be updated, as well as a list of actions that
 need to be run.  As it does so, it builds up an up-to-date list of
 state variables, to more closely imitate the state of a non-javascript
