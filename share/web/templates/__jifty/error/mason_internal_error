@@ -20,8 +20,9 @@ Error in <& .line, file => $file, line => "@lines" &>
 $file
 $line
 </%args>
+%   my $path;
 %   if (-w $file) {
-%     my $path = $file;
+%     $path = $file;
 %     for (map {$_->[1]} @{Jifty->handler->mason->interp->comp_root}) {
 %       last if $path =~ s/^\Q$_\E//;
 %     }
