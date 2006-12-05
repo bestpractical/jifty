@@ -12,14 +12,14 @@ details inside the included files.
 
 =head1 BUILT-IN FEATURES
 
-Both, CSS and JavaScript (further abbreviated with "JS") files
+Both, CSS and JavaScript (further abbreviated as "JS") files
 typically reside in the C<share/web/static> directory of Jifty,
 keeping separate C<css> and C<js> subdirectories for each of both sets
 of files. When using Jifty without any interference into these files,
-all of those files will get loaded from the Jifty-provided directory.
+all of those files will get loaded from the Jifty-provided directories.
 
 In both cases, there are hooks for expansion by keeping empty but
-present files in the C<css> and C<js> directory. By simply creating
+present files in the C<css> and C<js> directories. By simply creating
 and populating these files inside the C<share/web/static/css> and
 C<share/web/static/js> directories brings the predefined hooks to
 work.
@@ -28,7 +28,7 @@ Also there is a big difference of the whole operation between an
 application running in C<DevelMode> or a productive application. In
 DevelMode, every single CSS and JS file will get included into every
 single template page being rendered. On the other hand, a productive
-application will merge all CSS and JS definition upon the first
+application will merge all CSS and JS definitions upon the first
 request and will only include one file each containing all CSS and JS
 definitions in a single request.
 
@@ -80,7 +80,7 @@ fields.
 =item form_field, mandatory, argument-$name
 
 Every form field including its label is packed inside a C<< <div> >>
-tag with these classes (mandatory only given if the field is
+tag with these classes (mandatory only if the field is
 mandatory, of course), where C<$name> is the field's name.
 
 =item preamble
@@ -108,7 +108,7 @@ These classes are used in navigation bars.
 
 =item jifty, results, messages
 
-These tree CSS classes are used to surround a message block displaying
+These three CSS classes are used to surround a message block displaying
 an action's messages after having run an action.
 
 =item message, error, $moniker
@@ -128,7 +128,7 @@ libraries, like
 
 =item C<Prototype> L<http://prototype.conio.net>
 
-Prototype is a toolkit for providing AJAX support. This is a library,
+Prototype is a toolkit for providing AJAX support. This is a library
 some others depend on.
 
 =item C<scriptaculous.js> L<http://script.aculo.us/>
@@ -160,7 +160,7 @@ This library adds support for querying the DOM using CSS selectors.
 Jifty maintains a complete list of JS files to include. This list may
 be retrieved or set by the accessor C<< Jifty->web->javascript_libs >>.
 There should, However, rarely arise a situation to do that, because
-Jifty already reserved two files that may get added to your application:
+Jifty has already reserved two files that may get added to your application:
 
 =over 4
 
