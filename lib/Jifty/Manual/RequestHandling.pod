@@ -1,15 +1,15 @@
 =head1 NAME
 
-Jifty::Manual::RequestHandling
+Jifty::Manual::RequestHandling - Jifty's request handling process
 
 =head1 DESCRIPTION
 
-This document outlines some of Jifty's inside in order to understand
+This document outlines some of Jifty's inside in order to help you to understand
 what happens during the request processing phase.
 
 =head1 THE HANDLER
 
-As soon as a http request (whatever the method might be like GET,
+As soon as a http request (whatever the method might be, like GET,
 POST, PUT, ...) arrives at Jifty's border, the request is forwarded to
 a handler. By default, C<< Jifty->handler >> points to a L<Jifty::Handler>
 object that is responsible for handling an incoming request. The
@@ -61,7 +61,7 @@ housed in a C<static> directory, this content is handled.
 
 Based on a cookie that is sent with every http response, the current
 user is assigned a unique session. The session is stored in a
-L<Jifty::Web::Session> object and can be accessed using with the
+L<Jifty::Web::Session> object and can be accessed using the
 C<< Jifty->web->session >> method.
 
 =item return from a continuation if requested
@@ -95,7 +95,7 @@ link or button is run in this stage.
 This stage is responsible for working through all rules marked by
 words like C<under>, C<on>, C<when> and so on. This is a point where
 based on the URI or parameters the template to get displayed may still
-be modified, data retrieved, additional actions run or the template's
+be modified, data get retrieved, additional actions run or the template's
 parameters get adjusted.
 
 =item show the page
@@ -112,7 +112,7 @@ word C<after>.
 =item cleanup several things
 
 Finally, the eventually modified session-record is flushed and some
-internally allocated structures deallocated.
+internally allocated structures get deallocated.
 
 =back
 
