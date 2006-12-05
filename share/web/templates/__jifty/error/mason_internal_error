@@ -25,17 +25,17 @@ $line
 %     for (map {$_->[1]} @{Jifty->handler->mason->interp->comp_root}) {
 %       last if $path =~ s/^\Q$_\E//;
 %     }
-%     if ($path ne $file) {
+%    if ($path ne $file) {
 template <% Jifty->web->tangent( url =>"/__jifty/edit/mason_component$path",
                                  label => _("%1 line %2", $path, $line),
                                  parameters => { line => $line } ) %>
-%     } else {
+%    } else {
 <% Jifty->web->tangent( url =>"/__jifty/edit/library$path",
                         label => _("%1 line %2", $path, $line),
                         parameters => { line => $line } ) %>
-%   } else {
-<%_("%1 line %2", $path, $line)%>
 %   }
+%  } else {
+<% _("%1 line %2", $file, $line) %>
 % }
 </%def>
 
