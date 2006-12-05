@@ -1,6 +1,9 @@
 <%args>
 $id => undef
 $object_type
+$mask_field => ""
+$mask_val => ""
+$list_path
 </%args>
 <%init>
 my $record_class = Jifty->app_class("Model", $object_type);
@@ -23,12 +26,12 @@ my $delete = Jifty->web->new_action(
 <%
     Jifty->web->form->submit(
         class   => "editlink",
-        label   => _("Delete"),
-        submit => $delete,
-        onclick => { 
-         confirm => _("Confirm delete?"), 
-         delete =>  Jifty->web->current_region->qualified_name
-        },
+        label   => "Delete",
+        onclick => [
+         { confirm => _("Confirm delete?")},
+         { submit => $delete },
+         { delete =>  Jifty->web->current_region->qualified_name }
+        ]
         )
 %> 
 
@@ -37,16 +40,17 @@ my $delete = Jifty->web->new_action(
         label   => _("Edit"),
         class   => "editlink",
         onclick => {
-            replace_with => "/__jifty/admin/fragments/list/update",
-            args         => { object_type => $object_type, id => $id }
+            replace_with => $list_path.'update',
+            args         => { object_type => $object_type, id => $id, list_path => $list_path,
+                            mask_field => $mask_field, mask_val => $mask_val }
             },
-        as_button => 1
+   #     as_button => 1
         )
 %>
 
 <% $delete->hidden('id',$id) %>
 % foreach my $argument ($update->argument_names) {
-% unless(   $argument =~ /_confirm$/
+% unless( $argument eq $mask_field ||  $argument =~ /_confirm$/
 %        && lc $update->arguments->{$argument}{render_as} eq 'password') {
   <%$update->form_field($argument, render_mode => 'read')%>
 % }

@@ -1,6 +1,9 @@
 <%args>
 $id => undef
 $object_type
+$mask_field => ""
+$mask_val => ""
+$list_path
 </%args>
 <%init>
 my $record_class = Jifty->app_class("Model", $object_type);
@@ -18,8 +21,8 @@ my $update = Jifty->web->new_action(
       label   => _("Save"),
       onclick => [
           { submit => $update },
-          {   replace_with => '/__jifty/admin/fragments/list/view',
-              args         => { object_type => $object_type, id => $id }
+          {   replace_with => $list_path.'view',
+              args         => { object_type => $object_type, id => $id, list_path => $list_path }
           }
       ]
       ) %>
@@ -27,16 +30,21 @@ my $update = Jifty->web->new_action(
   <% Jifty->web->link(
       label     => _("Cancel"),
       onclick   => {
-          replace_with => '/__jifty/admin/fragments/list/view',
-          args         => { object_type => $object_type, id => $id }
+          replace_with => $list_path.'view',
+          args         => { object_type => $object_type, id => $id, list_path => $list_path }
         },
       as_button => 1
   ) %>
 
 </div>
 
+% if ($mask_field) {
+<% $update->hidden($mask_field, $mask_val) %>
+% }
 % foreach my $argument ($update->argument_names) {
+%  if ( $argument ne $mask_field ) {
 <%$update->form_field($argument)%>
+%  }
 %}
 
 <hr />

@@ -1,0 +1,57 @@
+<%args>
+$object_type
+$mask_val => ""
+$mask_field => ""
+$list_path
+</%args>
+<%init>
+my $record_class = Jifty->app_class("Model", $object_type);
+my $record = $record_class->new();
+ my $update = Jifty->web->new_action(class => 'Update'.$object_type);
+</%init>
+<div class="jifty_admin">
+
+% foreach my $argument ($update->argument_names) {
+% unless( $argument eq $mask_field ||  $argument eq 'id' || $argument =~ /_confirm$/i
+%        && lc $update->arguments->{$argument}{render_as} eq 'password') {
+<%
+    Jifty->web->link(
+        label   => "[A]",
+        onclick => 
+            { 
+            replace_with => $list_path.'list' ,
+            args   => {
+                object_type => $object_type,
+                limit_val => $mask_val,
+                limit_field => $mask_field,
+                list_path => $list_path,
+                sort_by => $argument,
+                order => undef
+                },
+            },
+        #as_button => 1
+        )
+%>
+<%
+    Jifty->web->link(
+        label   => "[D]",
+        onclick => 
+            {
+            replace_with => $list_path.'list',
+            args   => {
+                object_type => $object_type,
+                limit_val => $mask_val,
+                limit_field => $mask_field,
+                list_path => $list_path,
+                sort_by => $argument,
+                order => 'D'
+                },
+            },
+        #as_button => 1
+        )
+%>
+ <%$argument%>
+% }
+% }
+<hr />
+</div>
