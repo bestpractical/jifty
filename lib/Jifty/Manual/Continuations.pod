@@ -10,7 +10,7 @@ at any given point.  More importantly, they allow you to return to
 that state at any later time, by calling the continuation with, and
 evaluation of that interpreter state will resume.  They're a concept
 that first arose in LISP, but has implementations these days in Ruby,
-Scheme, Haskell, Smalltalk, to name a few.
+Scheme, Haskell, Smalltalk (just to name a few).
 
 Thus, continuations allow you to preserve context, and return to it
 later.  This is amazingly useful in web programming, which is limited
@@ -116,7 +116,7 @@ places.  For example:
 
 The first page renders the entry box for the first number; the second
 input is hidden because Jifty notices that it is based on a mapped
-value: i.e., its default is set to C<{request_argument => "number"}>
+value: i.e., its default is set to C<< {request_argument => "number"} >>
 instead of a plain scalar value.
 
 Pressing the button validates the action but does not complete
@@ -168,7 +168,7 @@ successful, calls the stored continuation, or, lacking one, redirects
 to C</protected>.
 
 As currently impelented, these redirect-from-dispatcher tangents works
-exactly like like rendered-as-links tangents, in that when they return,
+exactly like rendered-as-links tangents, in that when they return,
 I<all> rules in the dispatcher are still executed from the start.
 Therefore the C<unless> guard in the C<before '/protected'> rule above
 is neccessary to prevent recursion.

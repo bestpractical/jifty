@@ -63,8 +63,8 @@ Creating a model has important side effects:
 To get all these things done, Jifty allows to describe the schema
 definition in a simply comprehendable but powerful syntax that looks
 more like written text than a programming language. The schema
-definition is made inside the I<MyApp::Model::XXX::Schema> package and
-for every single column to get created, starts with the word C<column>
+definition is made inside the C<MyApp::Model::XXX::Schema> package and
+every single column to get created starts with the word C<column>
 followed by the column's name.
 
 A simple definition could look like this:
@@ -76,7 +76,7 @@ A simple definition could look like this:
         since '0.0.1';
 
 The following BNF shows the full syntax supported (omitting
-non-terminals that are self explaining for perl-developers):
+non-terminals that are self-explanatory to perl-developers):
 
     schema_definition ::= column_definition+
 
@@ -128,12 +128,13 @@ this version number for every modified entry. After running
     jifty schema --setup
 
 your database structure will be in sync to your schema definition.
+See L<Jifty::Manual::Upgrading> for more information on model upgrading.
 
 =head2 Testing a model
 
 After having created a schema, you might use the B<ADMINISTRATION>
-Menu entry in Jifty's web view to browse through your models and add,
-edit or delete records in your database.
+Menu entry in Jifty's web view (i.e. the "pony") to browse through
+your models and add, edit or delete records in your database.
 
 =head2 The classes behind a model
 
@@ -141,12 +142,12 @@ edit or delete records in your database.
 
 =item * MyApp::Model::Xxx
 
-This is the model-class you created to access records of your desired
+This is the model-class you created to access individual records of your desired
 type. You will directly deal with objects of this class.
 
 =item * MyApp::Record
 
-All records of MyApp::Model::Xxx will have this class as their base
+All records of C<MyApp::Model::Xxx> will have this class as their base
 class. Usually, this class will be automatically created by
 L<Jifty::ClassLoader> for you. But, if you want to automatically
 enable all your records to do something, you will have a chance to do
@@ -154,13 +155,13 @@ so by manually creating this class.
 
 =item * L<Jifty::Record>
 
-This is the super-class of MyApp::Record. Inside this class, loading
+This is the super-class of C<MyApp::Record>. Inside this class, loading
 of records as well as the checking of user capabilities is done before
 going one level down to the database layer.
 
 =item * L<Jifty::DBI::Record>
 
-This is the lowest-level class that the database-stack provides. It
+This is the lowest-level class that the database stack provides. It
 directly deals with the underlying database.
 
 =item * App::Model::XxxCollection
@@ -168,8 +169,9 @@ directly deals with the underlying database.
 As the name applies, a collection is a set of typically more than one
 record. Every collection of this class conists of multiple
 C<App::Model::Xxx> objects that can get retrieved from your data-store
-without explicit SQL statements, ordered by any criteria you like and
-iterated sequentially or accessed at random order.
+without explicit SQL statements, ordered by any criteria you give,
+paged in the fashion you like,
+and iterated sequentially or accessed at random order.
 
 =item * App::Collection
 
@@ -185,14 +187,14 @@ capabilities on records it will keep track of.
 
 =item * L<Jifty::DBI::Collection>
 
-This is the low-level base class that directly manages the access to
+This is the lowest-level base class that directly manages the access to
 the underlying database.
 
 =back
 
-=head2 Working with single records
+=head2 Working with a single record
 
-Working with single records means work with objects of classes like
+Working with a single record means working with objects of classes like
 C<MyApp::Model::Xxx>. The typical creation and usage of a single
 record is:
 
@@ -200,17 +202,17 @@ record is:
     my $object = new MyApp::Model::Xxx;
 
     # either create a representation in the DB
-    $object->create(column=>'value', ...);
+    $object->create(column => 'value', ...);
 
     # or load the data from DB somehow
     $object->load($id); # by a matching ID
-    $object->load_by_cols(column=>'value', other_column=>'secondvalue');
+    $object->load_by_cols(column => 'value', other_column => 'secondvalue');
 
     # try to load and if failed, create a record
-    $object->load_or_create(column=>'value');
+    $object->load_or_create(column => 'value');
 
     # get the record's ID in the database
-    # results in 'undef' if record is not valid (usually means not found)
+    # results in 'undef' if record is not valid (which usually means not found)
     my $id = $object->id;
 
     # delete the record from the database
@@ -247,10 +249,10 @@ use a collection like this:
     $collection->unlimit;
 
     # or restrict items to match some condition
-    $collection->limit(column=>'colname', operator=>'=', value=>42);
+    $collection->limit(column => 'colname', operator => '=', value => 42);
 
     # bring the items into some sorting order
-    $collection->order_by(column=>'colname');
+    $collection->order_by(column => 'colname');
 
     # if neccesarry, directly jump to some record from the set
     $collection->goto_first_item;
@@ -270,7 +272,7 @@ use a collection like this:
     # get back an array-ref containing all items
     my $records = $collection->items_array_ref;
 
-=head3 some options provided by C<limit>
+=head3 Some options provided by C<limit>
 
 In order to construct more complex restrictions the C<limit> method
 may get called more than once, specifying one single condition with
@@ -292,19 +294,24 @@ C<ENDSWITH>).
 
     # combining restrictions with "AND"
     # note that "AND" is implicit here
-    $collection->limit(column=>'col1', value=>'...');
-    $collection->limit(column=>'col2', value=>'...');
+    $collection->limit(column => 'col1', value => '...');
+    $collection->limit(column => 'col2', value => '...');
 
     # combining restrictions with "OR"
     # note that the 'subclause' has the same value
-    $collection->limit(column=>'col1', value=>'...',
-                       entry_aggregator=>'OR', # is already default
-                       subclause=>'some_id');
-    $collection->limit(column=>'col2', value=>'...',
-                       entry_aggregator=>'OR', # is already default
-                       subclause=>'some_id');
+    $collection->limit(column => 'col1', value => '...',
+                       entry_aggregator => 'OR', # is already default
+                       subclause => 'some_id');
+    $collection->limit(column => 'col2', value => '...',
+                       entry_aggregator => 'OR', # is already default
+                       subclause => 'some_id');
 
-see L<Jifty::DBI::Collection> about more ways or ordering and limiting
+For debugging purposes, you might want to examine the SQL statement
+generated behind the scene:
+
+    warn $collection->build_select_query;
+
+See L<Jifty::DBI::Collection> about more ways or ordering and limiting
 collections.
 
 =head2 Action - Model relationship

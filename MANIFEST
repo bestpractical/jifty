@@ -120,7 +120,7 @@ lib/Jifty/Manual/FAQ.pod
 lib/Jifty/Manual/Glossary.pod
 lib/Jifty/Manual/Models.pod
 lib/Jifty/Manual/ObjectModel.pod
-lib/Jifty/Manual/PageRegions.pm
+lib/Jifty/Manual/PageRegions.pod
 lib/Jifty/Manual/RequestHandling.pod
 lib/Jifty/Manual/Style.pod
 lib/Jifty/Manual/Tutorial.pod

@@ -1,32 +1,38 @@
 =head1 NAME
 
-Jifty::Manual::AccessControl
+Jifty::Manual::AccessControl - Using Jifty's default ACL system
 
 =head1 DESCRIPTION
 
 
 Out of the box Jifty-based applications have an ACL system.  The system 
-automatically validates ACLs on Jifty::Record objects by calling the method
+automatically validates ACLs on L<Jifty::Record> objects by calling the method
 C<current_user_can> before any create, read, update, or delete operation.
 In all cases, the arguments passed to the CRUD operation are passed as 
-extra arguments to current_user_can.
+extra arguments to C<current_user_can>.
 
 On C<create()>, we reject the operation if C<current_user_can('create')>
 returns FALSE.
 
-On C<_value()> or C<I<somefieldname>>, we reject the operation  if C<current_user_can('read')> returns false.
+On C<_value()> or C<I<somefieldname>>, we reject the operation
+if C<current_user_can('read')> returns false.
 
-On C<_set()> or C<I<set_somefieldname>>, we reject the operation  if C<current_user_can('write')> returns false.
+On C<_set()> or C<I<set_somefieldname>>, we reject the operation
+if C<current_user_can('write')> returns false.
 
 
-On C<delete()>, we reject the operation  if C<current_user_can('delete')> returns false.
+On C<delete()>, we reject the operation  if C<current_user_can('delete')>
+returns false.
 
-Out of the box, C<current_user_can> returns 1. When you want to actually check ACLs, you'll need to override C<current_user_can()> in your C<Jifty::Record> subclass.
+Out of the box, C<current_user_can> returns 1. When you want to actually 
+check ACLs, you'll need to override C<current_user_can()> in your
+C<Jifty::Record> subclass.
 
 It's likely that at some point, you'll decide you want to ask other
-questions on certain types of operation.  Say, you only want to let
+questions on certain types of operations.  Say, you only want to let
 administrators update the C<paid_account> field. In that case, you'd override
-C<check_update_rights()> to look for the C<admin> right rather than the C<update> right, if the C<FIELD> is C<paid_account>.
+C<check_update_rights()> to look for the C<admin> right rather than the 
+C<update> right, if the C<FIELD> is C<paid_account>.
 
 =head1 ENABLING ACCESS CONTROL USING THE LOGIN PLUGIN
 
@@ -38,7 +44,7 @@ F<etc/config.yml> configuration file.
       - Login: {}
 
 Then, create an C<App::Model::User> class that derives from
-C<Jifty::Plugin::Login::Model::User>, for example like that:
+C<Jifty::Plugin::Login::Model::User>, for example:
 
     use strict;
     use warnings;
@@ -58,7 +64,7 @@ like C<./bin/jifty schema --setup>.
 The model that manages C<User> Records is not limited to the plugin's
 definition. It can be expanded by providing an additional schema
 definition. Every column here will be added to the plugin's
-columns. Simply add a schema definition block like the following:
+columns. Simply add a schema definition block like this:
 
     use Jifty::DBI::Schema;
     use App::Record schema {
@@ -74,9 +80,9 @@ Defining a method C<_init> in your C<App::CurrentUser> class gives you
 a chance to add more data to the C<CurrentUser> object. This method
 will automatically get called after the Plugin's C<_init> is done.
 
-=head2 Templates defined by the Login plugin
+=head2 Templates defined by the C<Login> plugin
 
-To avoid the need for repetitive work, the Login plugin already
+To avoid the need for repetitive work, the C<Login> plugin already
 defines a couple of usable templates:
 
 =over 4
@@ -84,8 +90,8 @@ defines a couple of usable templates:
 =item F</login>
 
 provides a login screen with a signup option. After
-successful login, the current Continuation is called. If no
-Continuation exists, the template sitting at the base URL (F</>) is called.
+successful login, the current continuation is called. If no
+continuation exists, the template sitting at the base URL (F</>) is called.
 
 =item F</logout>
 
@@ -93,17 +99,17 @@ logs out the current user.
 
 =item F</signup>
 
-allows a user to sign up himself. As a default
-behavior a confirmation mail is sent out that has to get followed by
+allows a user to sign up himself/herself. By default
+a confirmation mail is sent out that has to get followed by
 the user.
 
 =item F</chgpasswd>
 
-allows a user to change his password.
+allows a user to change his/her password.
 
 =item F</passwordreminder>
 
-after entering his mail address, the user will receive a mail that
+after entering his/her mail address, the user will receive a mail that
 contains a link to F</let/reset_lost_password>.
 
 =item F</let/confirm_email>

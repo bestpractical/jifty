@@ -1,25 +1,58 @@
+<%doc>
+
+You can copy this fragment directory to your app.
+And use it in a page like this :
+
+<% Jifty->web->region(name => "admin-subdomain",
+                      path => "/admin/fragments/list/list",
+                      defaults => { object_type => 'SubDomain',
+                                    list_path => '/admin/fragments/list/',
+                                    limit_field => 'domain',
+                                    limit_val => $domain,
+                                    search_slot => 0,
+                                    per_page => 5,
+                                    render_submit => 1 }) %>
+
+limit_field, limit_val allow add to your sql query 
+ ... WHERE $limit_field = $limit_val
+
+</%doc>
 <%args>
 $object_type
 $page => 1
 $new_slot => 1
+$search_slot => 1
 $item_path => "/__jifty/admin/fragments/list/view"
+$list_path => "/__jifty/admin/fragments/list/"
+$limit_field => ""
+$limit_val => ""
+$per_page => 25
+$sort_by => undef
+$order => undef
 </%args>
 <%init>
 my $collection_class = Jifty->app_class("Model", $object_type."Collection");
 my $search = Jifty->web->response->result('search');
-my $collection;
+my $collection = $collection_class->new();
+
 if(!$search) {
-    $collection = $collection_class->new();
-    $collection->unlimit();
+   if ( $limit_field && $limit_val ) {
+      $collection->limit(column => $limit_field, value => $limit_val);
+   } else {
+      $collection->unlimit();
+   }
+   $collection->order_by(column => $sort_by, order=>'ASC') if ($sort_by && !$order);
+   $collection->order_by(column => $sort_by, order=>'DESC') if ($sort_by && $order);
 } else {
     $collection = $search->content('search');
     warn $collection->build_select_query;
 }
 
 $collection->set_page_info( current_page => $page,
-                            per_page     => 25
+                            per_page     => $per_page
                            );
 </%init>
+% if ($search_slot) {
 <%perl>    
 my $search_region = Jifty::Web::PageRegion->new(
    name     => 'search',
@@ -30,7 +63,7 @@ my $search_region = Jifty::Web::PageRegion->new(
 <% Jifty->web->link(
     onclick => [{
         region       => $search_region->qualified_name,
-        replace_with => '/__jifty/admin/fragments/list/search',
+        replace_with => $list_path.'search',
         toggle       => 1,
         args         => { object_type => $object_type }
     },
@@ -40,6 +73,7 @@ my $search_region = Jifty::Web::PageRegion->new(
 %>
 
 <% $search_region->render %>
+% }
 
 % if ($collection->pager->last_page > 1) {
     <span class="page-count"><%_('Page %1 of %2', $page, $collection->pager->last_page) %></span>   
@@ -50,12 +84,15 @@ my $search_region = Jifty::Web::PageRegion->new(
 % }
 
 <div class="list">
+<& $list_path.'header', object_type => $object_type, list_path => $list_path, 
+    mask_field => $limit_field, mask_val => $limit_val &>
 <%perl>
 while ( my $item = $collection->next ) {
     Jifty->web->region(
         name     => 'item-' . $item->id,
         path     => $item_path,
-        defaults => { id => $item->id, object_type => $object_type }
+        defaults => { id => $item->id, object_type => $object_type, list_path => $list_path,
+                      mask_field => $limit_field , mask_val => $limit_val }
     );
 }
 
@@ -78,8 +115,9 @@ while ( my $item = $collection->next ) {
 % if ($new_slot) {
 <% Jifty->web->region(
         name => 'new_item',
-        path => "/__jifty/admin/fragments/list/new_item",
-        defaults => {   object_type => $object_type },
+        path => $list_path.'new_item',
+        defaults => {   object_type => $object_type, list_path => $list_path,
+                     mask_field => $limit_field , mask_val => $limit_val },
         ) %>
 
 % }
