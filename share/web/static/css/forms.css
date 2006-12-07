@@ -140,38 +140,56 @@ div.inline div.form_field label.label {
 }
 
 .jifty_admin_header a {
-    width: 13px;
-    color: white;
+    color: black;
     display: block;
+    font-size: 0.6em;
+    height: 100%;
+    text-decoration: none;
+    font-family : sans-serif;
 }
 
 .field {
     float: left;
-    margin: 0.15em;
+    margin: 0.15em 0.5em 0.15em 0.15em;
     font-weight: bold;
 }
 
 .down {
+    height : 1.5em;
     float: left;
-    background: url(/static/images/css/down.png) no-repeat left;
+    background: url(/static/images/css/bullet_arrow_down.png) no-repeat bottom center;
+    margin-right: 0.2em;
 }
 
 .down_select {
+    height : 1.5em;
     float: left;
-    background: url(/static/images/css/down.png) no-repeat left;
-    border-bottom: 2px solid black;
+    background: url(/static/images/css/bullet_arrow_down.png) no-repeat bottom center;
+    margin-right: 0.2em;
 }
 
+.down_select a {
+    font-weight: bold;
+    color: #900;
+}
+    
 .up {
+    height : 1.5em;
     float: left;
-    background: url(/static/images/css/up.png) no-repeat top left;
+    background: url(/static/images/css/bullet_arrow_up.png) no-repeat bottom center;
+    margin-right: 0.2em;
 } 
 
 .up_select {
+    height : 1.5em;
     float: left;
-    background: url(/static/images/css/up.png) no-repeat top left;
-    border-top: 2px solid black;
+    background: url(/static/images/css/bullet_arrow_up.png) no-repeat bottom center;
+    margin-right: 0.2em;
 } 
+
+.up_select a {
+    font-weight: bold;
+    color: #900;
 
 div.subline {
     display: inline;

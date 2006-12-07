@@ -19,7 +19,7 @@ my $record = $record_class->new();
 <span class="<% ($sort_by && !$order && $sort_by eq $argument)?'up_select':'up' %>">
 <%
     Jifty->web->link(
-        label   => ".",
+        label   => _("asc"),
         onclick => 
             { 
             replace_with => $list_path.'list' ,
@@ -38,7 +38,7 @@ my $record = $record_class->new();
 <span class="<% ($sort_by && $order && $sort_by eq $argument )?'down_select':'down' %>">
 <%
     Jifty->web->link(
-        label   => ",",
+        label   => _("desc"),
         onclick => 
             {
             replace_with => $list_path.'list',
