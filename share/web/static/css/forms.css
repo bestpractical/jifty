@@ -135,6 +135,44 @@ div.inline div.form_field label.label {
     float: right;
 }
 
+.jifty_admin_header {
+    display: inline;
+}
+
+.jifty_admin_header a {
+    width: 13px;
+    color: white;
+    display: block;
+}
+
+.field {
+    float: left;
+    margin: 0.15em;
+    font-weight: bold;
+}
+
+.down {
+    float: left;
+    background: url(/static/images/css/down.png) no-repeat left;
+}
+
+.down_select {
+    float: left;
+    background: url(/static/images/css/down.png) no-repeat left;
+    border-bottom: 2px solid black;
+}
+
+.up {
+    float: left;
+    background: url(/static/images/css/up.png) no-repeat top left;
+} 
+
+.up_select {
+    float: left;
+    background: url(/static/images/css/up.png) no-repeat top left;
+    border-top: 2px solid black;
+} 
+
 div.subline {
     display: inline;
     float: left;  

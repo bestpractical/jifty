@@ -135,7 +135,7 @@ msgstr "Fermer la fenêtre"
 
 #: share/web/templates/__jifty/admin/fragments/list/view:29
 msgid "Confirm delete?"
-msgstr "Confirmer l'effacment ?"
+msgstr "Confirmer l'effacement ?"
 
 #: share/web/templates/__jifty/admin/fragments/list/new_item:17
 msgid "Create"
@@ -206,7 +206,7 @@ msgstr "Page Suivante"
 
 #: lib/Jifty/Action/Record/Search.pm:130
 msgid "No field contains"
-msgstr "Aucun champ contient"
+msgstr "Aucun champs contient"
 
 #: lib/Jifty/Web.pm:297
 msgid "No request to handle"

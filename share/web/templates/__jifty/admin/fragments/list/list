@@ -9,7 +9,7 @@ And use it in a page like this :
                                     list_path => '/admin/fragments/list/',
                                     limit_field => 'domain',
                                     limit_val => $domain,
-                                    search_slot => 0,
+                                    search_slot => 0
                                     per_page => 5,
                                     render_submit => 1 }) %>
 
@@ -85,7 +85,7 @@ my $search_region = Jifty::Web::PageRegion->new(
 
 <div class="list">
 <& $list_path.'header', object_type => $object_type, list_path => $list_path, 
-    mask_field => $limit_field, mask_val => $limit_val &>
+    mask_field => $limit_field, mask_val => $limit_val, sort_by => $sort_by, order => $order &>
 <%perl>
 while ( my $item = $collection->next ) {
     Jifty->web->region(
