@@ -77,6 +77,9 @@ sub run {
     if (-d $data_dir) {
         File::Path::rmtree(["$data_dir/cache", "$data_dir/obj"]);
     }
+    else {
+        File::Path::mkpath([$data_dir]);
+    }
 
     $SIG{TERM} = sub { exit };
     open my $fh, '>', PIDFILE or die $!;
