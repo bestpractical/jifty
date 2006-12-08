@@ -673,7 +673,7 @@ template '__jifty/autocomplete.xml' => sub {
             }
         };
     };
-};
+} if 0; # XXX - $r->content_type broken
 
 template '__jifty/css/dhandler' => sub {
     # XXX move to dispatcher
