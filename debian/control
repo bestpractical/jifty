@@ -81,7 +81,8 @@ Recommends: libmodule-install-perl,
  libtest-pod-coverage-perl, libtest-www-mechanize-perl
  (>> 1.04), libwww-mechanize-perl (>> 1.12),
  libclass-accessor-named-perl, libdevel-cover-perl,
- libmodule-install-perl, libpar-dist-fromcpan-perl
+ libmodule-install-perl, libpar-dist-fromcpan-perl, libtest-mockobject-perl,
+ libtest-mockmodule-perl
 Description: Jifty perl libraries
  Yet another web framework.
  .
