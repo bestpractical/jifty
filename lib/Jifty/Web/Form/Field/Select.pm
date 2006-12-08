@@ -26,7 +26,7 @@ sub render_widget {
         $field .= qq! selected="selected"!
             if defined $self->current_value and $self->current_value eq $value;
         $field .= qq!>!;
-        $field .= HTML::Entities::encode_entities(_($display)) if defined $display;
+        $field .= Jifty->web->escape(_($display)) if defined $display;
         $field .= qq!</option>\n!;
     } 
     $field .= qq!</select>\n!;
@@ -53,7 +53,7 @@ sub render_value {
                         @{ $self->action->available_values($self->name) };
         $value = $value[0]->{display} if scalar @value;
     }
-    $field .= HTML::Entities::encode_entities(_($value)) if defined $value;
+    $field .= Jifty->web->escape(_($value)) if defined $value;
     $field .= qq!</span>\n!;
     Jifty->web->out($field);
     return '';

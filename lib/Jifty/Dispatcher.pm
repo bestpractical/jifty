@@ -1086,7 +1086,7 @@ sub _compile_glob {
     $glob =~ s{
         # Braces denote alternations
         \\ \{ (         # opening (not part of expression)
-            (?:             # one or more characters:
+            (?:             # zero or more characters:
                 \\ \\ \\ \} # ...escaped closing brace
             |
                 \\ [^\}]    # ...escaped (but not the closing brace)
@@ -1094,7 +1094,7 @@ sub _compile_glob {
                 [^\\]       # ...normal
             )+
         ) \\ \}         # closing (not part of expression)
-    }{'(?:'.join('|', split(/\\,/, $1)).')'}egx;
+    }{'(?:'.join('|', split(/\\,/, $1, -1)).')'}egx;
     $glob;
 }
 

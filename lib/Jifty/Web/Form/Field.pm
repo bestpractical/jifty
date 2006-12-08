@@ -460,7 +460,7 @@ sub render_widget {
     $field .= qq! type="@{[ $self->type ]}"!;
     $field .= qq! name="@{[ $self->input_name ]}"! if ($self->input_name);
     $field .= qq! id="@{[ $self->element_id ]}"!;
-    $field .= qq! value="@{[HTML::Entities::encode_entities($self->current_value)]}"! if defined $self->current_value;
+    $field .= qq! value="@{[Jifty->web->escape($self->current_value)]}"! if defined $self->current_value;
     $field .= $self->_widget_class; 
     $field .= qq! size="@{[ $self->length() ]}" maxlength="@{[ $self->length() ]}"! if ($self->length());
     $field .= " " .$self->other_widget_properties;
@@ -518,7 +518,7 @@ sub render_value {
     my $field = '<span';
     $field .= qq! class="@{[ $self->classes ]}"> !;
     # XXX: force stringify the value because maketext is buggy with overloaded objects.
-    $field .= HTML::Entities::encode_entities(_("@{[$self->current_value]}")) if defined $self->current_value;
+    $field .= Jifty->web->escape(_("@{[$self->current_value]}")) if defined $self->current_value;
     $field .= qq!</span>\n!;
     Jifty->web->out($field);
     return '';
