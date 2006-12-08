@@ -13,7 +13,7 @@ This is a template for your own tests. Copy it and modify it.
 use lib 't/lib';
 use Jifty::SubTest;
 
-use Jifty::Test tests => 66;
+use Jifty::Test tests => 70;
 use Jifty::Test::WWW::Mechanize;
 
 my $server  = Jifty::Test->make_server;
@@ -94,6 +94,10 @@ my @actions = qw(
                  TestApp.Plugin.REST.Action.DeleteUser
                  TestApp.Plugin.REST.Action.SearchUser
                  TestApp.Plugin.REST.Action.DoSomething
+                 TestApp.Plugin.REST.Action.Record.Create
+                 TestApp.Plugin.REST.Action.Record.Delete
+                 TestApp.Plugin.REST.Action.Record.Search
+                 TestApp.Plugin.REST.Action.Record.Update
                  Jifty.Action.Autocomplete
                  Jifty.Action.Redirect);
 
