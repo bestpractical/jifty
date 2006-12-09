@@ -7,14 +7,14 @@ Tests Jifty::Param::Schema
 
 =cut
 
-use Test::More tests => 15;
+use Test::More tests => 16;
 
 package Foo::Action::Bar;
 use Jifty::Param::Schema;
 use Jifty::Action schema {
 
 param keys =>
-    # length is 5,
+    length is 30,
     label is 'Search Keys',
     hints are 'Enter your search keys here!',
     default is 'blah blah blah';
@@ -37,6 +37,7 @@ my $args = Foo::Action::Bar->arguments;
 
 my $keys = $args->{keys};
 ok $keys, 'keys okay';
+is $keys->{length}, 30, 'length ok';
 is $keys->{label}, 'Search Keys', 'label ok';
 is $keys->{type}, 'text', 'type ok';
 is $keys->{hints}, 'Enter your search keys here!', 'hints okay';
