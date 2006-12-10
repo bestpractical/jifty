@@ -438,7 +438,7 @@ sub _form_widget {
               if exists $field_info->{'default_value'};
             $default_value = $self->argument_value($field)
               if $self->has_argument($field) && !$self->values_from_request->{$field};
-            
+
             $self->{_private_form_fields_hash}{$arg_name}
                 = Jifty::Web::Form::Field->new(
                 %$field_info,
@@ -451,7 +451,6 @@ sub _form_widget {
                 %args
                 );
 
-            
         }    # else $field remains undef
         else {
             Jifty->log->warn("$arg_name isn't a valid field for $self");
@@ -502,11 +501,11 @@ is needed.
 
 sub register {
     my $self = shift;
-    Jifty->web->out( qq!<input type="hidden"! .
+    Jifty->web->out( qq!<div><input type="hidden"! .
                        qq! name="@{[$self->register_name]}"! .
                        qq! id="@{[$self->register_name]}"! .
                        qq! value="@{[ref($self)]}"! .
-                       qq! />\n! );
+                       qq! /></div>\n! );
 
 
 
