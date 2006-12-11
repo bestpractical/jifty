@@ -82,7 +82,7 @@ See L<Jifty::Request::Mapper/query_parameters> for details.
 =item submit
 
 A list of actions to run when the object is clicked.  This may be an
-array refrence of a single element; each element may either be a
+array refrence or a single element; each element may either be a
 moniker or a L<Jifty::Action>.  An undefined value submits B<all>
 actions in the form, an empty list reference (the default) submits
 none.
@@ -226,8 +226,8 @@ for details.
 =head2 submit
 
 A list of actions to run when the object is clicked.  This may be an
-array refrence of a single element; each element may either be a
-moniker of a L<Jifty::Action>.  An undefined value submits B<all>
+array refrence or a single element; each element may either be a
+moniker or a L<Jifty::Action>.  An undefined value submits B<all>
 actions in the form, an empty list reference (the default) submits
 none.
 

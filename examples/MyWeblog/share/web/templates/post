@@ -1,0 +1,13 @@
+<%init>
+my $action = Jifty->web->new_action(class => 'CreatePost');
+</%init>
+
+<&| /_elements/wrapper, title => "Post to your weblog" &>
+<% Jifty->web->form->start() %>
+<% Jifty->web->form->next_page( url => '/') %>
+<% $action->form_field('title') %>
+<% $action->form_field('body') %>
+<% Jifty->web->form->submit( label => 'Post' ) %>
+<% Jifty->web->form->end() %>
+</&>
+

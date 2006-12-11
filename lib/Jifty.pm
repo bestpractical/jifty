@@ -2,11 +2,11 @@ use warnings;
 use strict;
 
 package Jifty;
-use IPC::PubSub;
+use IPC::PubSub 0.22;
 use encoding 'utf8';
 # Work around the fact that Time::Local caches thing on first require
 BEGIN { local $ENV{'TZ'} = "GMT";  require Time::Local;}
-$Jifty::VERSION = '0.61123_01';
+$Jifty::VERSION = '0.61210';
 
 =head1 NAME
 
@@ -368,6 +368,7 @@ sub app_instance_id {
     my $self = shift;
     my $app_instance_id = Jifty::Model::Metadata->load("application_instance_uuid");
     unless ($app_instance_id) {
+        require Data::UUID;
         $app_instance_id = Data::UUID->new->create_str();
         Jifty::Model::Metadata->store(application_instance_uuid => $app_instance_id );
     }

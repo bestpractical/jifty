@@ -1,0 +1,40 @@
+--- 
+framework: 
+  AdminMode: 1
+  ApplicationClass: MyWeblog
+  ApplicationName: MyWeblog
+  Database: 
+    CheckSchema: 1
+    Database: myweblog
+    Driver: SQLite
+    Host: localhost
+    Password: ''
+    RecordBaseClass: Jifty::DBI::Record::Cachable
+    User: ''
+    Version: 0.0.1
+  DevelMode: 1
+  L10N: 
+    PoDir: share/po
+  LogLevel: INFO
+  Mailer: Sendmail
+  MailerArgs: []
+
+  Plugins: []
+
+  PubSub: 
+    Backend: Memcached
+    Enable: ~
+  Web: 
+    BaseURL: http://localhost
+    DataDir: var/mason
+    Globals: []
+
+    MasonConfig: 
+      autoflush: 0
+      default_escape_flags: h
+      error_format: text
+      error_mode: fatal
+    Port: 8888
+    ServeStaticFiles: 1
+    StaticRoot: share/web/static
+    TemplateRoot: share/web/templates

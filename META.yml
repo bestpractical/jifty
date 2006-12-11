@@ -70,7 +70,7 @@ requires:
   HTTP::Server::Simple::Recorder: 0
   Hash::Merge: 0
   Hook::LexWrap: 0
-  IPC::PubSub: 0.11
+  IPC::PubSub: 0.22
   JSON::Syck: 0.15
   Jifty::DBI: 0.29
   LWP::UserAgent: 0
@@ -99,4 +99,4 @@ requires:
   perl: 5.8.3
   version: 0
 tests: t/*.t t/*/t/*.t
-version: 0.61123_01
+version: 0.61210

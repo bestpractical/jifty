@@ -43,4 +43,17 @@ since '0.60504' => sub {
     rename column => 'key', in => 'Jifty::Model::Metadata', to => 'data_key';
 };
 
+since '0.61210' => sub { 
+    Jifty::Util->require('IPC::PubSub');
+    IPC::PubSub->new(
+        JiftyDBI => (
+            db_config    => Jifty->handle->{db_config},
+            table_prefix => '_jifty_pubsub_',
+            db_init      => 0,
+        )
+    );
+
+    rename column => 'key', in => 'IPC::PubSub::Cache::JiftyDBI::Stash::Item', to => 'data_key';
+};
+
 1;
