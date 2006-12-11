@@ -157,7 +157,7 @@ msgstr "成功建立项目."
 
 #: share/web/templates/__jifty/admin/index.html:3
 msgid "Database Administration"
-msgstr "数据瘤管理"
+msgstr "数据库管理"
 
 #: share/web/templates/__jifty/admin/fragments/list/view:29
 msgid "Delete"
