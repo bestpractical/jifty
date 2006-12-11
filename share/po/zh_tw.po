@@ -157,7 +157,7 @@ msgstr "成功建立項目."
 
 #: share/web/templates/__jifty/admin/index.html:3
 msgid "Database Administration"
-msgstr "資料库管理"
+msgstr "資料庫管理"
 
 #: share/web/templates/__jifty/admin/fragments/list/view:29
 msgid "Delete"
