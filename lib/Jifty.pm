@@ -2,11 +2,11 @@ use warnings;
 use strict;
 
 package Jifty;
-use IPC::PubSub;
+use IPC::PubSub 0.22;
 use encoding 'utf8';
 # Work around the fact that Time::Local caches thing on first require
 BEGIN { local $ENV{'TZ'} = "GMT";  require Time::Local;}
-$Jifty::VERSION = '0.61123_01';
+$Jifty::VERSION = '0.61210';
 
 =head1 NAME
 
