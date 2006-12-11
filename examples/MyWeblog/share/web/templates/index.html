@@ -1,0 +1,10 @@
+<&| /_elements/wrapper, title => Jifty->config->framework('ApplicationName') &>
+  
+<% Jifty->web->region(name => "myweblog-posts",
+                      path => "/fragments/page_of_posts") %>
+</&>
+<%init>
+my $posts = MyWeblog::Model::PostCollection->new();
+$posts->unlimit();
+</%init>
+

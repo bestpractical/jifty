@@ -1,0 +1,30 @@
+<%args>
+$page => 1
+</%args>
+<%init>
+my $posts = MyWeblog::Model::PostCollection->new();
+$posts->unlimit();
+$posts->set_page_info( current_page => $page,
+                       per_page     => 15
+                     );
+$m->out("No items found.") if ($posts->pager->total_entries == 0);
+
+</%init>
+% if ($posts->pager->last_page > 1) {
+   Page <% $page %> of <% $posts->pager->last_page %>
+% }
+<dl class="list">
+% while (my $post = $posts->next) {
+ <dt><% $post->title %></dt>
+ <dd><% $post->body %></dd>
+% }
+</dl>
+
+% if ($posts->pager->previous_page) {
+  <% Jifty->web->link( label => "Previous Page", onclick => { args => { page => $posts->pager->previous_page } 
+} ) %>
+% }
+% if ($posts->pager->next_page) {
+  <% Jifty->web->link( label => "Next Page", onclick => { args => { page => $posts->pager->next_page } } ) %>
+% }
+
