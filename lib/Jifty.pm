@@ -368,6 +368,7 @@ sub app_instance_id {
     my $self = shift;
     my $app_instance_id = Jifty::Model::Metadata->load("application_instance_uuid");
     unless ($app_instance_id) {
+        require Data::UUID;
         $app_instance_id = Data::UUID->new->create_str();
         Jifty::Model::Metadata->store(application_instance_uuid => $app_instance_id );
     }
