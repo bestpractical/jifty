@@ -293,7 +293,9 @@ Open a new file called F<post> in your text editor. Make it look like this:
   </&>
 
 Yes, it's a template file in L<HTML::Mason> syntax. If you're not familiar with Mason,
-we recommend you to consult its online documentation for details.
+we recommend you to consult its online documentation for details. I<Mason templates 
+should start in the first column of the file. Particularly importantly, the C<E<lt>%initE<gt>>
+and C<E<lt>/%initE<gt>> blocks must be flush left.>
 
 =head3 Viewing
 
