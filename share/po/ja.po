@@ -19,12 +19,12 @@ msgstr ""
 msgid "!=>< allowed"
 msgstr ""
 
-#: lib/Jifty/Action/Record/Search.pm:115 lib/Jifty/z:26
+#: lib/Jifty/Action/Record/Search.pm:115
 #. ($label)
 msgid "%1 after"
 msgstr ""
 
-#: lib/Jifty/Action/Record/Search.pm:116 lib/Jifty/z:27
+#: lib/Jifty/Action/Record/Search.pm:116
 #. ($label)
 msgid "%1 before"
 msgstr ""
@@ -34,12 +34,17 @@ msgstr ""
 msgid "%1 contains"
 msgstr ""
 
-#: lib/Jifty/Action/Record/Search.pm:123 lib/Jifty/z:35
+#: share/web/templates/__jifty/admin/fragments/list/list:87
+#. ($collection-> count)
+msgid "%1 entries"
+msgstr ""
+
+#: lib/Jifty/Action/Record/Search.pm:123
 #. ($label)
 msgid "%1 greater or equal to"
 msgstr ""
 
-#: lib/Jifty/Action/Record/Search.pm:121 lib/Jifty/z:32
+#: lib/Jifty/Action/Record/Search.pm:121
 #. ($label)
 msgid "%1 greater than"
 msgstr ""
@@ -54,18 +59,19 @@ msgstr ""
 msgid "%1 lacks"
 msgstr ""
 
-#: lib/Jifty/Action/Record/Search.pm:124 lib/Jifty/z:36
+#: lib/Jifty/Action/Record/Search.pm:124
 #. ($label)
 msgid "%1 less or equal to"
 msgstr ""
 
-#: lib/Jifty/Action/Record/Search.pm:122 lib/Jifty/z:33
+#: lib/Jifty/Action/Record/Search.pm:122
 #. ($label)
 msgid "%1 less than"
 msgstr ""
 
-#: share/web/templates/__jifty/error/mason_internal_error:30 share/web/templates/__jifty/error/mason_internal_error:34 share/web/templates/__jifty/error/mason_internal_error:38
+#: share/web/templates/__jifty/error/mason_internal_error:31 share/web/templates/__jifty/error/mason_internal_error:35 share/web/templates/__jifty/error/mason_internal_error:39
 #. ($path, $line)
+#. ($file, $line)
 msgid "%1 line %2"
 msgstr ""
 
@@ -74,12 +80,12 @@ msgstr ""
 msgid "%1 seconds"
 msgstr ""
 
-#: lib/Jifty/Action/Record/Search.pm:117 lib/Jifty/z:28
+#: lib/Jifty/Action/Record/Search.pm:117
 #. ($label)
 msgid "%1 since"
 msgstr ""
 
-#: lib/Jifty/Action/Record/Search.pm:118 lib/Jifty/z:29
+#: lib/Jifty/Action/Record/Search.pm:118
 #. ($label)
 msgid "%1 until"
 msgstr ""
@@ -125,7 +131,7 @@ msgstr ""
 msgid "Calendar"
 msgstr ""
 
-#: share/web/templates/__jifty/admin/fragments/list/update:28
+#: share/web/templates/__jifty/admin/fragments/list/update:31
 msgid "Cancel"
 msgstr ""
 
@@ -133,11 +139,11 @@ msgstr ""
 msgid "Close window"
 msgstr ""
 
-#: share/web/templates/__jifty/admin/fragments/list/view:29
+#: share/web/templates/__jifty/admin/fragments/list/view:31
 msgid "Confirm delete?"
 msgstr ""
 
-#: share/web/templates/__jifty/admin/fragments/list/new_item:17
+#: share/web/templates/__jifty/admin/fragments/list/new_item:25
 msgid "Create"
 msgstr ""
 
@@ -154,7 +160,7 @@ msgstr ""
 msgid "Database Administration"
 msgstr ""
 
-#: share/web/templates/__jifty/admin/fragments/list/view:26
+#: share/web/templates/__jifty/admin/fragments/list/view:29
 msgid "Delete"
 msgstr ""
 
@@ -162,7 +168,7 @@ msgstr ""
 msgid "Deleted"
 msgstr ""
 
-#: share/web/templates/__jifty/admin/fragments/list/view:37
+#: share/web/templates/__jifty/admin/fragments/list/view:40
 msgid "Edit"
 msgstr ""
 
@@ -200,12 +206,16 @@ msgstr ""
 msgid "Models"
 msgstr ""
 
-#: share/web/templates/__jifty/admin/fragments/list/list:73
+#: share/web/templates/__jifty/admin/fragments/list/list:113
 msgid "Next Page"
 msgstr ""
 
 #: lib/Jifty/Action/Record/Search.pm:130
 msgid "No field contains"
+msgstr ""
+
+#: share/web/templates/__jifty/admin/fragments/list/list:85
+msgid "No items found"
 msgstr ""
 
 #: lib/Jifty/Web.pm:297
@@ -216,7 +226,7 @@ msgstr ""
 msgid "Online Documentation"
 msgstr ""
 
-#: share/web/templates/__jifty/admin/fragments/list/list:45
+#: share/web/templates/__jifty/admin/fragments/list/list:80
 #. ($page, $collection->pager->last_page)
 msgid "Page %1 of %2"
 msgstr ""
@@ -225,7 +235,7 @@ msgstr ""
 msgid "Permission denied"
 msgstr ""
 
-#: share/web/templates/__jifty/admin/fragments/list/list:68
+#: share/web/templates/__jifty/admin/fragments/list/list:108
 msgid "Previous Page"
 msgstr ""
 
@@ -237,7 +247,7 @@ msgstr ""
 msgid "SQL Statements"
 msgstr ""
 
-#: share/web/templates/__jifty/admin/fragments/list/update:18
+#: share/web/templates/__jifty/admin/fragments/list/update:21
 msgid "Save"
 msgstr ""
 
@@ -257,7 +267,7 @@ msgstr ""
 msgid "Table of Contents"
 msgstr ""
 
-#: lib/Jifty/Action.pm:874
+#: lib/Jifty/Action.pm:873
 msgid "That doesn't look like a correct value"
 msgstr ""
 
@@ -281,7 +291,7 @@ msgstr ""
 msgid "To disable this administrative console, add \"AdminMode: 0\" under the \"framework:\" settings in the config file (etc/config.yml)."
 msgstr ""
 
-#: share/web/templates/__jifty/admin/fragments/list/list:38
+#: share/web/templates/__jifty/admin/fragments/list/list:72
 msgid "Toggle search"
 msgstr ""
 
@@ -301,7 +311,7 @@ msgstr ""
 msgid "You got to a page that we don't think exists.  Anyway, the software has logged this error. Sorry about this."
 msgstr ""
 
-#: lib/Jifty/Action.pm:861
+#: lib/Jifty/Action.pm:860
 msgid "You need to fill in this field"
 msgstr ""
 
@@ -312,4 +322,12 @@ msgstr ""
 
 #: share/web/templates/_elements/sidebar:7
 msgid "You're not currently signed in."
+msgstr ""
+
+#: share/web/templates/__jifty/admin/fragments/list/header:22
+msgid "asc"
+msgstr ""
+
+#: share/web/templates/__jifty/admin/fragments/list/header:41
+msgid "desc"
 msgstr ""

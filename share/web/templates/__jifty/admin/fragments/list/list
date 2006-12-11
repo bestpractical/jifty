@@ -15,6 +15,7 @@ And use it in a page like this :
 
 limit_field, limit_val allow add to your sql query 
  ... WHERE $limit_field = $limit_val
+so you can make "sub views" on a table limited by limit_field / limit_val
 
 </%doc>
 <%args>
@@ -79,13 +80,15 @@ my $search_region = Jifty::Web::PageRegion->new(
     <span class="page-count"><%_('Page %1 of %2', $page, $collection->pager->last_page) %></span>   
 % }
 
+<div class="list">
 % if ($collection->pager->total_entries == 0) {
-  No items found
+ <% _('No items found') %>
+% } else {
+  <% _('%1 entries', $collection-> count) %> 
+  <& $list_path.'header', object_type => $object_type, list_path => $list_path, 
+    mask_field => $limit_field, mask_val => $limit_val, sort_by => $sort_by, order => $order &>
 % }
 
-<div class="list">
-<& $list_path.'header', object_type => $object_type, list_path => $list_path, 
-    mask_field => $limit_field, mask_val => $limit_val, sort_by => $sort_by, order => $order &>
 <%perl>
 while ( my $item = $collection->next ) {
     Jifty->web->region(
