@@ -138,7 +138,7 @@ sub _initialize_log4perl {
     } elsif ( -f $log_config and -r $log_config ) {
         Log::Log4perl->init($log_config);
     } else {
-        my $log_level = Jifty->config->framework('LogLevel');
+        my $log_level = uc Jifty->config->framework('LogLevel');
         my %default = (
             'log4perl.rootLogger'        => "$log_level,Screen",
             '#log4perl.logger.SchemaTool' => "$log_level,Screen",
