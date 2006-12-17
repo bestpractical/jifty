@@ -206,13 +206,18 @@ sub require {
     return unless ($base); 
     Jifty::Util->require($base);
     Jifty::Util->require($base."::CurrentUser");
+    eval { 
     Jifty::Module::Pluggable->import(
-        search_path =>
-          [ map { $base . "::" . $_ } 'Model', 'Action', 'Notification', 'Event', 'View' ],
+        search_path => [ $base,  map { $base . "::" . $_ } ('Model', 'Action', 'Notification', 'Event', 'View' )],
         require => 1,
         except  => qr/\.#/,
         inner   => 0
     );
+    };
+    
+    if ($@) {
+        warn "$@";
+    }
     my %models;
     $models{$_} = 1 for grep {/^($base)::Model::(.*)$/ and not /Collection$/} $self->plugins;
     $self->models(sort keys %models);
