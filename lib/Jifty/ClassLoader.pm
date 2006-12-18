@@ -160,6 +160,7 @@ sub Jifty::ClassLoader::INC {
                 . "1;" );
     } elsif ( $module =~ m!^(?:$base)::Action::(Create|Update|Delete|Search)([^\.]+)$! ) {
         my $modelclass = $base . "::Model::" . $2;
+
         Jifty::Util->require($modelclass);
 
         return undef unless eval { $modelclass->table };
@@ -184,6 +185,8 @@ containing that CODE.
 sub return_class {
     my $self = shift;
     my $content = shift;
+
+
     open my $fh, '<', \$content;
     return $fh;
 

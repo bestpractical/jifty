@@ -38,7 +38,7 @@ A simple model to store just one line of text might look like this:
 To create the database schema for a model inside an application you
 could simply run:
 
-    jifty schema --name TextLine
+    jifty model --name TextLine
 
 from inside your application's directory and Jifty will create exactly
 this class structure for you (minus the I<column> line, to be
@@ -278,9 +278,11 @@ In order to construct more complex restrictions the C<limit> method
 may get called more than once, specifying one single condition with
 each call.
 
-Every use of C<limit> constructs either a I<clause> or a I<subclause>
-depending on the existence of the C<subclause> attribute when calling
-C<limit>. Every clause is built up by combining its subclauses (if
+Every use of C<limit> constructs either a I<clause> or a I<subclause>.
+A subclause is built either if the C<subclause> attribute is used or a
+column is used repeatedly.
+
+Every clause is built up by combining its subclauses (if
 any) using the C<entry_aggregator> operator (whose default is I<OR>)
 as a combining operator. Clauses are then I<AND>ed together to yield
 the final restriction that is finally used to retrieve the records in
@@ -293,7 +295,7 @@ with properly set wildcards (C<MATCHES>, C<STARTSWITH> or
 C<ENDSWITH>).
 
     # combining restrictions with "AND"
-    # note that "AND" is implicit here
+    # note that "AND" is implicit here unless a column name is repeated
     $collection->limit(column => 'col1', value => '...');
     $collection->limit(column => 'col2', value => '...');
 

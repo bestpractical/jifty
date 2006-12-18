@@ -501,7 +501,7 @@ is needed.
 
 sub register {
     my $self = shift;
-    Jifty->web->out( qq!<div><input type="hidden"! .
+    Jifty->web->out( qq!<div class="hidden"><input type="hidden"! .
                        qq! name="@{[$self->register_name]}"! .
                        qq! id="@{[$self->register_name]}"! .
                        qq! value="@{[ref($self)]}"! .

@@ -282,6 +282,13 @@ Online Dokumentation und das Pony.
   # ./bin/jifty server
   INFO - You can connect to your server at http://localhost:8888/
 
+Starten Sie diese Kommandofolge immer im Hauptverzeichnis Ihrer Jifty
+Applikation, andernfalls werden etliche Fehlermeldungen die Folge
+sein.
+
+Auf den meisten Plattformen wird ein einfaches "jifty server" Kommando
+ebenfalls funktionieren. :)
+
 =head2 Erstellung der Benutzeroberfläche
 
 Die Administrations-Umgebung gibt Ihnen zwar alles, was Sie brauchen,
@@ -298,10 +305,10 @@ Erstellen Sie eine neue Datei namens F<post> in Ihrem Editor. Stellen
 Sie sicher, daß diese so aussieht:
 
   <%init>
-  my $action = Jifty->web->new_action(class =>'CreatePost');
+  my $action = Jifty->web->new_action(class => 'CreatePost');
   </%init>
 
-  <&|/_elements/wrapper, title => "Post Eintrag Erstellen" &>
+  <&| /_elements/wrapper, title => "Post Eintrag Erstellen" &>
   <% Jifty->web->form->start() %>
   <% Jifty->web->form->next_page( url => '/') %>
   <% $action->form_field('title') %>
@@ -309,6 +316,13 @@ Sie sicher, daß diese so aussieht:
   <% Jifty->web->form->submit( label => 'Post' ) %>
   <% Jifty->web->form->end() %>
   </&>
+
+Ja, dies ist eine Template Datei in L<HTML::Mason> Syntax. Wenn Sie
+noch nicht genug über Mason wissen, empfehlen wir dessen Online
+Dokumentation für mehr Details. I<Mason Templates> sollten jeweils in
+der ersten Spalte der Datei beginnen. Besonders wichtig sind die
+C<E<lt>%initE<gt>> und C<E<lt>/%initE<gt>> Blöcke, die unbedingt
+lingsbündig geschrieben werden müssen.
 
 =head3 Anzeige
 
@@ -333,11 +347,11 @@ annehmen.) Befüllen Sie die Datei wie folgt:
   $posts->unlimit();
   </%init>
 
-  <&|/_elements/wrapper, title => Jifty->config->framework('ApplicationName') &>
+  <&| /_elements/wrapper, title => Jifty->config->framework('ApplicationName') &>
   <dl>
   % while (my $post = $posts->next) {
-   <dt><%$post->title%></dt>
-   <dd><%$post->body%></dd>
+   <dt><% $post->title %></dt>
+   <dd><% $post->body %></dd>
   % }
   </dl>
   </&>
@@ -362,7 +376,7 @@ Weg. Erstellen Sie eine neue Datei mit dem Namen
 F<share/web/templates/index.html> in Ihrem Editor. Befüllen Sie die
 Datei mit:
 
-  <&|/_elements/wrapper, title => Jifty->config->framework('ApplicationName') &>
+  <&| /_elements/wrapper, title => Jifty->config->framework('ApplicationName') &>
 
   <% Jifty->web->region(name => "myweblog-posts",
                         path => "/fragments/page_of_posts") %>
@@ -390,8 +404,8 @@ Inhalt anlegen dürfen:
   % }
   <dl class="list">
   % while (my $post = $posts->next) {
-   <dt><%$post->title%></dt>
-   <dd><%$post->body%></dd>
+   <dt><% $post->title %></dt>
+   <dd><% $post->body %></dd>
   % }
   </dl>
 
@@ -527,6 +541,8 @@ Künftige Tutorials werden enthalten:
 =item * Web Services im Detail
 
 =item * Continuations (Fortsetzungen) und deren Einsatz
+
+=item * Anpassungen der Darstellung (Benutzerdefinierte Wrapper und CSS)
 
 =back
 

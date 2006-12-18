@@ -131,7 +131,6 @@ sub arguments {
 
     return $self->_cached_arguments if $self->_cached_arguments;
 
-
         my $field_info = {};
 
         my @fields = $self->possible_fields;

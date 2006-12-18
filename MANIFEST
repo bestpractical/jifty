@@ -450,6 +450,7 @@ t/08-client.t
 t/09-url.t
 t/10-i18n.t
 t/11-config-files.t
+t/12-param-schema.t
 t/99-pod-coverage.t
 t/99-pod.t
 t/Continuations/bin/jifty

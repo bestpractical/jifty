@@ -57,6 +57,7 @@ div#jifty-wait-message {
     top: 10px;
     right: 10px;
     z-index: 42;
+    float: right;
 }
 
 
