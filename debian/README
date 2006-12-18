@@ -2,25 +2,14 @@ This directory contains Debian packaging files for Jifty.
 
 There is a debian repository at:
 
-deb http://jifty.bunting.net.au/ ./
-
-Containing all my packages.  
-There are still some packages required from ubuntu edgy that are perl
-only modules.  Things should work with dapper with the addition of the
-perl modules from edgy.
-
-This is as yet hardly tested so don't be surprised if things break.
-
-Please let me know if they do and I'll try and fix them.
-
-Bart Bunting
-
-And others packages since cpan 0.60912 here :
  deb http://ftp.univ-metz.fr/debian sarge jifty
 
-with some plugins packages, update for sarge and ubuntu 6.06 LTS
+It contains jifty packages as well as some jifty plugins, updates for
+sarge and ubuntu 6.06 LTS
 
+Please let us know if there are any issues by sending mail to the
+jifty mailing list and we'll try and fix them.
+
+Bart Bunting
 Yves Agostini
-
-We work on harmonizing and cleaning this ...
 
