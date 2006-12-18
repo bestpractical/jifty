@@ -1,12 +1,12 @@
-<&|/_elements/wrapper, title => 'Jifty Administrative Console' &>
+<&| /_elements/wrapper, title => _('Jifty Administrative Console') &>
 
-<h1><%_('Database Administration')%></h1>
+<h1><% _('Database Administration') %></h1>
 
-<p><%_('This console lets you manage the records in your Jifty database. Below, you should see a list of all your database tables. Feel free to go through and add, delete or modify records.')%></p>
+<p><% _('This console lets you manage the records in your Jifty database. Below, you should see a list of all your database tables. Feel free to go through and add, delete or modify records.') %></p>
 
-<p><%_('To disable this administrative console, add "AdminMode: 0" under the "framework:" settings in the config file (etc/config.yml).')%></p>
+<p><% _('To disable this administrative console, add "AdminMode: 0" under the "framework:" settings in the config file (etc/config.yml).') %></p>
     
-<h2><%_('Models')%></h2>
+<h2><% _('Models') %></h2>
 <ul>
 % foreach my $model (Jifty->class_loader->models) {
 % next unless $model->isa('Jifty::Record');
@@ -16,7 +16,7 @@
 %}
 </ul>
 
-<h2><%_('Actions')%></h2>
+<h2><% _('Actions') %></h2>
 <ul>
 % foreach my $action (Jifty->api->actions) {
 % Jifty::Util->require($action);
@@ -25,7 +25,7 @@
 % }
 </ul>
 
-<h2>Done?</h2>
+<h2><% _('Done?') %></h2>
 <% Jifty->web->return( to => "/", label => _('Back to the application')) %>
 
 </&>
