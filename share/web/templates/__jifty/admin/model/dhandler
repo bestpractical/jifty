@@ -5,18 +5,19 @@ my $collection_class =  Jifty->app_class("Model", $object_type."Collection");
 my $records = $collection_class->new();
 $records->unlimit;
 </%init>
-<&|/_elements/wrapper &>
-<h1>Manage records: <%$object_type%></h1>
-<% Jifty->web->form->start %>
 
+<&| /_elements/wrapper, title => _("Manage $object_type records") &>
+
+<h1><% _('Manage records:') %> <%$object_type%></h1>
+
+<% Jifty->web->form->start %>
 <% Jifty->web->region(name => "admin-$object_type",
                       path => "/__jifty/admin/fragments/list/list", 
                       defaults => { object_type => $object_type , 
                                     render_submit => 1 }) %>
-
 <% Jifty->web->form->end %>
 
-<h2>Done?</h2>
+<h2> <% _('Done?') %> </h2>
 <% Jifty->web->link( url => "/__jifty/admin/", label => _('Back to the admin console')) %>
 
 </&>
