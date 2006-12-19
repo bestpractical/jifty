@@ -32,7 +32,7 @@ our $r;
 sub page (&) {
     my $code = shift;
     sub {
-        $r->content_type('text/html; charset=utf-8');
+        Jifty->handler->apache->content_type('text/html; charset=utf-8');
         show('/_elements/nav');
         wrapper($code);
     };
@@ -58,7 +58,7 @@ template '_elements/nav' => sub {
 };
 
 sub render_header {
-    my ($self, $title) = @_;
+    my ($title) = @_;
     outs('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'
             . '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">' );
     with( title => $title ), show('/_elements/header');
@@ -87,7 +87,7 @@ sub wrapper (&) {
 
         local $Template::Declare::Tags::BUFFER = '';
 
-        $self->render_header($title);
+        render_header($title);
 
         $done_header = $Template::Declare::Tags::BUFFER;
 
@@ -167,14 +167,13 @@ template '_elements/sidebar' => sub {
         my @children = $menu->children;
         if (@children) {
             with( class => "menu" ), ul {
-                $self->render_menu($_) for @children;
+                render_menu($_) for @children;
               }
         }
     };
 };
 
 sub render_menu {
-    shift;
     my $item = shift;
     my @kids = $item->children;
     my @params;
@@ -188,7 +187,7 @@ sub render_menu {
 
         if (@kids) {
             with( class => "submenu" ), ul {
-                $self->render_menu($_) for @kids;
+                render_menu($_) for @kids;
               }
         }
       }
@@ -196,7 +195,7 @@ sub render_menu {
 
 template '_elements/header' => sub {
     my ($title) = get_current_attr(qw(title));
-    $r->content_type('text/html; charset=utf-8');
+    Jifty->handler->apache->content_type('text/html; charset=utf-8');
     head {
         with(
             'http-equiv' => "content-type",
