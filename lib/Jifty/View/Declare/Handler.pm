@@ -25,7 +25,6 @@ sub new {
 
 sub show {
     my $self = shift;
-    my $package = shift;
     my $code_template = shift;
 
     no warnings qw/redefine utf8/;
@@ -36,7 +35,7 @@ sub show {
 
     local $Template::Declare::Tags::BUFFER = '';
 
-    my $rv = $package->show($code_template);
+    my $rv = Template::Declare::Tags::show($code_template);
 
     # XXX - Kluge - Before $r->send_http_headers is fixed for real, escape all non-latin1 characters.
     print STDOUT Encode::encode(latin1 => $rv, &Encode::FB_XMLCREF)
@@ -45,6 +44,6 @@ sub show {
     return undef;
 }
 
-sub resolve_template { return Template::Declare->resolve_template(@_);}
+sub resolve_template { my $pkg =shift;  return Template::Declare->resolve_template(@_);}
 
 1;

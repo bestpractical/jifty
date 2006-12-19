@@ -1131,9 +1131,9 @@ sub render_template {
     my $template = shift;
 
     eval { 
-        my( $class,$codetemplate) = Jifty->handler->declare_handler->resolve_template($template);
-        if ($class and $codetemplate) {
-            Jifty->handler->declare_handler->show($class => $codetemplate);
+        my( $val) = Jifty->handler->declare_handler->resolve_template($template);
+        if ($val) {
+            Jifty->handler->declare_handler->show($template);
         } else {
             Jifty->handler->mason->handle_comp( $template ); 
         }
