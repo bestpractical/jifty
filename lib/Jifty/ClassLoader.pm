@@ -211,11 +211,13 @@ sub require {
     Jifty::Util->require($base."::CurrentUser");
     eval { 
     Jifty::Module::Pluggable->import(
-        search_path => [ $base,  map { $base . "::" . $_ } ('Model', 'Action', 'Notification', 'Event', 'View' )],
+        # $base goes last so we pull in the view class AFTER the model classes
+        search_path => [map { $base . "::" . $_ } ('Model', 'Action', 'Notification', 'Event')],
         require => 1,
         except  => qr/\.#/,
         inner   => 0
     );
+    Jifty::Util->require($base."::View");
     };
     
     if ($@) {
