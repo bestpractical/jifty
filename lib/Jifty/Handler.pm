@@ -62,25 +62,29 @@ sub new {
     bless $self, $class;
 
     $self->create_cache_directories();
-#    wrap 'CGI::new', pre => sub {
-#        $_[-1] = Jifty->handler->cgi if Jifty->handler->cgi;
-#    };
 
     $self->dispatcher( Jifty->app_class( "Dispatcher" ) );
     Jifty::Util->require( $self->dispatcher );
     $self->dispatcher->import_plugins;
-    $self->dispatcher->dump_rules;
-   
-    $self->declare_handler(
-        Jifty::View::Declare::Handler->new(
-            { root_class => Jifty->config->framework('TemplateClass') }
-        )
-    );
-    $self->mason( Jifty::View::Mason::Handler->new( $self->mason_config ) );
-
-    $self->static_handler(Jifty::View::Static::Handler->new());
-
+ 
+    $self->setup_view_handlers();
     return $self;
+}
+
+=head2 setup_view_handlers
+
+Initialize all of our view handlers. 
+
+XXX TODO: this should take pluggable views
+
+=cut
+
+sub setup_view_handlers {
+    my $self = shift;
+
+    $self->declare_handler( Jifty::View::Declare::Handler->new( $self->templatedeclare_config));
+    $self->mason( Jifty::View::Mason::Handler->new( $self->mason_config ) );
+    $self->static_handler(Jifty::View::Static::Handler->new());
 }
 
 
@@ -127,7 +131,6 @@ sub mason_config {
         ],
         comp_root     => [ 
                           [application =>  Jifty::Util->absolute_path( Jifty->config->framework('Web')->{'TemplateRoot'} )],
-                          [jifty => Jifty->config->framework('Web')->{'DefaultTemplateRoot'}],
                          ],
         %{ Jifty->config->framework('Web')->{'MasonConfig'} },
     );
@@ -137,6 +140,7 @@ sub mason_config {
         next unless $comp_root;
         push @{ $config{comp_root} }, [ ref($plugin)."-".Jifty->web->serial => $comp_root ];
     }
+    push @{$config{comp_root}}, [jifty => Jifty->config->framework('Web')->{'DefaultTemplateRoot'}];
 
     # In developer mode, we want halos, refreshing and all that other good stuff. 
     if (Jifty->config->framework('DevelMode') ) {
@@ -144,8 +148,30 @@ sub mason_config {
         $config{static_source}    = 0;
         $config{use_object_files} = 0;
     }
-    return (%config);
+    return %config;
         
+}
+
+
+=head2 templatedeclare_config
+
+=cut
+
+sub templatedeclare_config {
+    my %config = (
+        roots => [ Jifty->config->framework('TemplateClass') ],
+        %{ Jifty->config->framework('Web')->{'TemplateDeclareConfig'} ||{}},
+    );
+
+    for my $plugin ( Jifty->plugins ) {
+        my $comp_root = $plugin->template_class;
+        next unless $comp_root;
+        push @{ $config{roots} }, $comp_root ;
+    }
+
+    push @{$config{roots}}, 'Jifty::View::Declare::Base';
+
+    return %config;
 }
 
 =head2 cgi

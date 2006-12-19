@@ -78,7 +78,7 @@ sub take_action {
     }
 
     if (! $record->id ) {
-        $self->log->debug(_("Create of %1 failed: %2", ref($record), $msg));
+        $self->log->warn(_("Create of %1 failed: %2", ref($record), $msg));
         $self->result->error($msg || _("An error occurred.  Try again later"));
     }
 

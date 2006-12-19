@@ -1130,12 +1130,9 @@ sub render_template {
     my $self = shift;
     my $template = shift;
 
-    $self->log->debug( "Handling template " . $template );
     eval { 
         my( $class,$codetemplate) = Jifty->handler->declare_handler->resolve_template($template);
         if ($class and $codetemplate) {
-            Jifty->log->debug( "Got $class, $template" );
-
             Jifty->handler->declare_handler->show($class => $codetemplate);
         } else {
             Jifty->handler->mason->handle_comp( $template ); 
@@ -1159,8 +1156,7 @@ sub render_template {
         warn "$err";
 
         # Redirect with a continuation
-        Jifty->web->_redirect(
-            "/__jifty/error/mason_internal_error?J:C=" . $c->id );
+        Jifty->web->_redirect( "/__jifty/error/mason_internal_error?J:C=" . $c->id );
     }
     elsif ($err) {
         die $err;

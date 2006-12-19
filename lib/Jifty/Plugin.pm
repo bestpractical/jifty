@@ -55,11 +55,8 @@ sub new {
     Jifty::Util->require($class->dispatcher);
 
     # Start a plugin classloader set up on behalf of the application
-    require Jifty::Plugin::ClassLoader;
-    Jifty::Plugin::ClassLoader->new(
-	base => Jifty->app_class,
-	plugin => $class,
-    )->require;
+    Jifty::Util->require('Jifty::Plugin::ClassLoader');
+    Jifty::Plugin::ClassLoader->new( base => Jifty->app_class, plugin => $class,)->require;
 
     # XXX TODO: Add .po path
 
@@ -96,7 +93,7 @@ sub new_request {
 
 =head2 template_root
 
-Returns the root of the template directory for this plugin
+Returns the root of the C<HTML::Mason> template directory for this plugin
 
 =cut
 
@@ -110,6 +107,20 @@ sub template_root {
     return unless $self->{share};
     return $self->{share}."/web/templates";
 }
+
+
+=head2 template_class
+
+Returns the Template::Declare view package for this plugin
+
+=cut
+
+sub template_class {
+    my $self = shift;
+    my $class = ref($self) || $self;
+    return $class.'::View';
+}
+
 
 =head2 static_root
 
