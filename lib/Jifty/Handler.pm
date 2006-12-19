@@ -159,7 +159,7 @@ sub mason_config {
 
 sub templatedeclare_config {
     my %config = (
-        roots => [ Jifty->config->framework('TemplateClass') ],
+        roots => [ 'Jifty::View::Declare::Base' ],
         %{ Jifty->config->framework('Web')->{'TemplateDeclareConfig'} ||{}},
     );
 
@@ -169,7 +169,7 @@ sub templatedeclare_config {
         push @{ $config{roots} }, $comp_root ;
     }
 
-    push @{$config{roots}}, 'Jifty::View::Declare::Base';
+    push @{$config{roots}}, Jifty->config->framework('TemplateClass');
 
     return %config;
 }
