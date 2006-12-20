@@ -239,7 +239,6 @@ sub require_views {
     my $base = $self->{base};
     # if we don't even have an application class, this trick will not work
     return unless ($base); 
-    Jifty::Util->require($base);
     Jifty::Util->require($base."::View");
 }
 
