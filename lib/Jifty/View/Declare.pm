@@ -11,8 +11,9 @@ use constant BaseClass => 'Jifty::View::Declare::Base';
     use Jifty::View::Declare -base;
 
     template 'index.html' => page {
+        { title is 'Some Title' }
         b { "The Index" };
-    } 'Some Title';
+    };
 
 =cut
 
