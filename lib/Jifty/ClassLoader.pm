@@ -217,7 +217,6 @@ sub require {
         except  => qr/\.#/,
         inner   => 0
     );
-    Jifty::Util->require($base."::View");
     };
     
     if ($@) {
@@ -232,6 +231,16 @@ sub require {
         Jifty::Util->require($base . "::Action::" . $_ . $short)
             for qw/Create Update Delete Search/;
     }
+}
+
+sub require_views {
+    my $self = shift;
+    
+    my $base = $self->{base};
+    # if we don't even have an application class, this trick will not work
+    return unless ($base); 
+    Jifty::Util->require($base);
+    Jifty::Util->require($base."::View");
 }
 
 =head2 models
