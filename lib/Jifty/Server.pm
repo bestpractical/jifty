@@ -44,6 +44,10 @@ sub new {
     $self->recording_on if $ENV{'JIFTY_RECORD'};
 
     use Hook::LexWrap;
+    wrap 'Jifty::View::Declare::Handler::send_http_header', pre => sub {
+        print STDOUT "HTTP/1.0 ".  (Jifty->handler->apache->{headers_out}->{'Status'} || '200 Jifty OK') .  "\n";
+    };
+
     wrap 'HTML::Mason::FakeApache::send_http_header', pre => sub {
         my $r = shift;
         my $status = $r->header_out('Status') || '200 Jifty OK';

@@ -45,6 +45,7 @@ use Jifty::LetMe ();
 use Jifty::Logger ();
 use Jifty::Handler ();
 use Jifty::View::Static::Handler ();
+use Jifty::View::Declare::Handler ();
 use Jifty::View::Mason::Handler ();
 
 use Jifty::Model::Metadata ();
