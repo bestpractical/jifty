@@ -52,8 +52,8 @@ Depends: ${perl:Depends},Depends: ${perl:Depends},perl (>> 5.8.3),
  libclass-container-perl, libclass-data-inheritable-perl,
  perl-modules, libcgi-cookie-splitter-perl,
  libcrypt-cbc-perl, libcrypt-rijndael-perl,
- libcompress-zlib-perl, libcss-squish-perl (>>
- 0.05), libdbd-sqlite3-perl, libdata-page-perl,
+ libcompress-zlib-perl, libcss-squish-perl (>> 0.05), 
+ libdbd-sqlite3-perl, libdata-page-perl,
  libdatetime-perl, libdate-manip-perl, libemail-folder-perl,
  libemail-localdelivery-perl, libemail-mime-perl,
  libemail-mime-creator-perl, libemail-mime-contenttype-perl,
@@ -61,11 +61,10 @@ Depends: ${perl:Depends},Depends: ${perl:Depends},perl (>> 5.8.3),
  libemail-simple-creator-perl, libexporter-lite-perl,
  libfile-find-rule-perl, libfile-mmagic-perl,
  libfile-sharedir-perl (>> 0.04), libhtml-parser-perl,
- libhtml-lint-perl, libhtml-mason-perl (>>
- 1.3101), libwww-perl, libhttp-server-simple-perl
- (>> 0.20), libhttp-server-simple-recorder-perl,
- libhash-merge-perl, libhook-lexwrap-perl,
- libipc-pubsub-perl (>> 0.11), libjifty-dbi-perl (>> 0.29),
+ libhtml-lint-perl, libhtml-mason-perl (>> 1.3101), 
+ libwww-perl, libhttp-server-simple-perl (>> 0.20), 
+ libhttp-server-simple-recorder-perl, libhash-merge-perl, libhook-lexwrap-perl,
+ libipc-pubsub-perl (>> 0.22), libjifty-dbi-perl (>> 0.29),
  liblocale-maketext-lexicon-perl, liblog-log4perl-perl,
  libmime-types-perl, libmodule-pluggable-perl (>> 2.95),
  libmodule-corelist-perl, libmodule-refresh-perl,
@@ -74,15 +73,17 @@ Depends: ${perl:Depends},Depends: ${perl:Depends},perl (>> 5.8.3),
  libstring-koremutake-perl, libsql-reservedwords-perl,
  libtest-base-perl, libuniversal-require-perl, liburi-perl,
  libxml-writer-perl (>> 0.601), libxml-simple-perl,
- libxml-xpath-perl, libversion-perl, libyaml-syck-perl (>>
- 0.71), libyaml-perl (>> 0.35), libjson-perl (>> 0.01),
- libpod-simple-perl
+ libxml-xpath-perl, libversion-perl, libyaml-syck-perl (>> 0.71), 
+ libyaml-perl (>> 0.35), libjson-perl (>> 0.01),
+ libpod-simple-perl, 
+ libsub-exporter-perl, libcache-memcached-perl liblog-dispatch-perl
 Recommends: libmodule-install-perl,
- libtest-pod-coverage-perl, libtest-www-mechanize-perl
- (>> 1.04), libwww-mechanize-perl (>> 1.12),
+ libtest-pod-coverage-perl, libtest-www-mechanize-perl (>> 1.04), libwww-mechanize-perl (>> 1.12),
  libclass-accessor-named-perl, libdevel-cover-perl,
  libmodule-install-perl, libpar-dist-fromcpan-perl, libtest-mockobject-perl,
- libtest-mockmodule-perl
+ libtest-mockmodule-perl,
+ libcgi-fast-perl, libapache-mod-fastcgi,
+ libjifty-plugin-editinplace-perl, libjifty-plugin-login-perl
 Description: Jifty perl libraries
  Yet another web framework.
  .
