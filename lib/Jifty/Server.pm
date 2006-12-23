@@ -36,6 +36,11 @@ Creates a new C<Jifty::Server> object.
 
 =cut
 
+sub _send_http_status {
+      print STDOUT "HTTP/1.0 ".  (Jifty->handler->apache->{headers_out}->{'Status'} || '200 Jifty OK') .  "\n";
+};
+
+
 sub new {
     my $class = shift;
     my $self  = {};
@@ -44,15 +49,8 @@ sub new {
     $self->recording_on if $ENV{'JIFTY_RECORD'};
 
     use Hook::LexWrap;
-    wrap 'Jifty::View::Declare::Handler::send_http_header', pre => sub {
-        print STDOUT "HTTP/1.0 ".  (Jifty->handler->apache->{headers_out}->{'Status'} || '200 Jifty OK') .  "\n";
-    };
-
-    wrap 'HTML::Mason::FakeApache::send_http_header', pre => sub {
-        my $r = shift;
-        my $status = $r->header_out('Status') || '200 Jifty OK';
-        print STDOUT "HTTP/1.0 $status\n";
-    };
+    wrap 'HTML::Mason::FakeApache::send_http_header', pre => \&_send_http_status;
+    
 
     return ($self);
 
