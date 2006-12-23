@@ -10,7 +10,7 @@ at any given point.  More importantly, they allow you to return to
 that state at any later time, by calling the continuation with, and
 evaluation of that interpreter state will resume.  They're a concept
 that first arose in LISP, but has implementations these days in Ruby,
-Scheme, Haskell, Smalltalk (just to name a few).
+Scheme, Haskell, Smalltalk, to name a few.
 
 Thus, continuations allow you to preserve context, and return to it
 later.  This is amazingly useful in web programming, which is limited
