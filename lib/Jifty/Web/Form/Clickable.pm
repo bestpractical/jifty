@@ -324,7 +324,7 @@ sub _map {
 
 =head2 parameters
 
-Returns the generic list of parameters attached to the link as a hash.
+Returns the generic list of HTTP form parameters attached to the link as a hash.
 Use of this is discouraged in favor or L</post_parameters> and
 L</get_parameters>.
 
