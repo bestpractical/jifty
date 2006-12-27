@@ -34,7 +34,7 @@ sub show {
         }
 
         local $Template::Declare::Tags::BUFFER = '';
-        goto &Template::Declare::Tags::outs;
+        goto &Template::Declare::Tags::outs_raw;
     };
     print STDOUT Template::Declare::Tags::show($code_template);
 

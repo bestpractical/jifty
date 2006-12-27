@@ -59,7 +59,7 @@ template '_elements/nav' => sub {
 
 sub render_header {
     my ($title) = @_;
-    outs('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'
+    outs_raw('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'
             . '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">' );
     with( title => $title ), show('/_elements/header');
     div {
@@ -102,7 +102,7 @@ sub wrapper (&) {
             if ( Jifty->config->framework('AdminMode') ) {
                 with( class => "warning admin_mode" ), div {
                     outs( _('Alert') . ': ' );
-                    outs(
+                    outs_raw(
                         Jifty->web->tangent(
                             label => _('Administration mode is enabled.'),
                             url   => '/__jifty/admin/'
@@ -142,7 +142,7 @@ sub wrapper (&) {
                 script { outs('new Jifty.Subs({}).start();') };
             }
         };
-        outs('</body></html>');
+        outs_raw('</body></html>');
     };
 
     $Template::Declare::Tags::BUFFER =
@@ -183,7 +183,7 @@ sub render_menu {
 
     with(@params), li {
 
-        outs( $item->as_link );
+        outs_raw( $item->as_link );
 
         if (@kids) {
             with( class => "submenu" ), ul {
@@ -233,8 +233,7 @@ END
         $begin =~ s/<body>$/$whitespace/s;
     }
 
-    outs($begin);
-    # $m->flush_buffer;
+    outs_raw($begin);
     $writer->startTag("body");
 
     while (1) {
@@ -849,7 +848,7 @@ Alert: Jifty <% Jifty->web->tangent( label => 'administration mode' , url => '/
                                     my $depth = 0;
 
                                     div {
-                                        outs(
+                                        outs_raw(
 '<a href="#" id="render_info" onclick="Element.toggle('
                                               render_info_tree
                                               '); return false">Page info</a>'
@@ -880,7 +879,7 @@ Alert: Jifty <% Jifty->web->tangent( label => 'administration mode' , url => '/
                                 }
 
                                 li {
-                                    outs(
+                                    outs_raw(
                                         '<a href="#" class="halo_comp_info" 
     onmouseover="halo_over(' < %$item->{id} % > ')"
     onmouseout="halo_out(' < %$item->{id} % > ')"
@@ -1002,7 +1001,7 @@ with ( class => "section"), div {
 Jifty->web->tangent( url =>"/__jifty/edit/mason_component/".$frame->{' path
                                           '}, label => _('Edit'));
  } else {
-outs(' & nbsp;
+outs_raw(' &nbsp;
                                         ');
 % }
 }
@@ -1457,7 +1456,7 @@ template '__jifty/validator.xml' => sub {
         $writer->endTag();
     }
     $writer->endTag();
-    outs($output);
+    outs_raw($output);
 };
 
 template '__jifty/webservices/xml' => sub {
@@ -1592,7 +1591,7 @@ template '__jifty/webservices/xml' => sub {
 
     $writer->endTag();
     $r->content_type('text/xml; charset=utf-8');
-    outs($output);
+    out_raws($output);
 };
 
 template '__jifty/webservices/yaml' => sub {
