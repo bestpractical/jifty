@@ -118,12 +118,11 @@ dumps logs named F<server.log> and F<error.log> into the F<log> directory.
 =item share/web/templates
 
 Jifty uses L<HTML::Mason> as its primary templating system.  Put
-your application's templates into F<share/web/templates/>.  Out of the
-box, Jifty comes with an application I<skeleton> that it installs in
-F<share/web/templates/>.  This default application is
-a convenient way to get a basic application up and running quickly,
-but probably needs some customization as you build a more advanced
-application.
+your application's templates into F<share/web/templates/>.  Out of
+the box, Jifty comes with an application I<skeleton> that it installs
+in F<share/web/templates/>.  This default application is a convenient
+way to get a basic application up and running quickly, but probably
+needs some customization as you build a more advanced application.
 
 You can find where Perl stuck Jifty's default templates with:
 
