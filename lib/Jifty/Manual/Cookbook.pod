@@ -50,7 +50,7 @@ And add this in F<MyApp/Dispatcher.pm> to make URI look prettier:
         show('/feed');
     };
     
-And of course, you need to put these in your HTML header tempalte
+And of course, you need to put these in your HTML header template
 (conventionally that's C</_elements/header>):
 
     <link rel="alternate" type="application/atom+xml" title="Atom" href="/feed/atom" />
