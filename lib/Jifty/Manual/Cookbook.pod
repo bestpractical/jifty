@@ -224,3 +224,36 @@ field. You would see the effect a bit later than the value in the
 field is changed.
 
 Of course, you can apply the same trick to your own Action classes.
+
+=head2 Get the "Edit" links to work in the "Page info" tool.
+
+If you click on "Page info", follow an "Edit" link for a fragment,
+and you get an error message saying something like
+
+	You got to a page that we don't think exists...
+
+then you need to ensure that the C<Jifty::Plugin::EditInPlace> has
+been installed correctly. It should be in the F<Jifty/Plugin> directory
+installed with the rest of the Jifty modules.
+
+	perl -MJifty::Util -e 'print Jifty::Util->jifty_root'
+
+will tell you where to look. If its not there you will need to install
+it manually. If you still have your build files from installing Jifty
+you can find the module in the F<plugins> directory.
+
+Once you have the modules in place, or if they were already present
+you simply need to enable the plugin in your project config file. Edit 
+F<etc/config.yml> and find the "Plugins:" section. It will probably look
+like this
+
+	  Plugins: []
+
+Change it to 
+
+	  Plugins: 
+	    - EditInPlace: {}
+
+Take care the indentation is significant. Use spaces, not tabs.
+Once you have done that you can restart your Jifty application and the
+edit links should now function correctly.
