@@ -35,20 +35,17 @@ doc/pubsub/system_architecture.png
 etc/config.yml
 etc/site_config.yml
 examples/Chat/bin/jifty
-examples/Chat/chat
 examples/Chat/etc/config.yml
 examples/Chat/lib/Chat/Action/Send.pm
 examples/Chat/lib/Chat/Event/Message.pm
 examples/Chat/lib/Chat/Server.pm
 examples/Chat/Makefile.PL
-examples/Chat/rwhat
 examples/Chat/share/web/templates/fragments/message
 examples/Chat/share/web/templates/fragments/sender
 examples/Chat/share/web/templates/index.html
 examples/Chat/t/00compile.t
 examples/Chat/t/01startup.t
 examples/Clock/bin/jifty
-examples/Clock/clock
 examples/Clock/clockserv.pl
 examples/Clock/etc/config.yml
 examples/Clock/lib/Clock/Event/Tick.pm
@@ -81,7 +78,6 @@ inc/Module/Install/Scripts.pm
 inc/Module/Install/Share.pm
 inc/Module/Install/Win32.pm
 inc/Module/Install/WriteAll.pm
-jifty_trunktest
 lib/Email/Send/Jifty/Test.pm
 lib/Jifty.pm
 lib/Jifty/Action.pm
@@ -491,7 +487,6 @@ t/TestApp-Plugin-REST/t/00-model-User.t
 t/TestApp-Plugin-REST/t/00-prototype.t
 t/TestApp-Plugin-REST/t/01-config.t
 t/TestApp-Plugin-REST/t/02-basic-use.t
-t/TestApp-Plugin-REST/testapp_plugin_rest
 t/TestApp/bin/jifty
 t/TestApp/lib/TestApp/Action/DoSomething.pm
 t/TestApp/lib/TestApp/CurrentUser.pm
@@ -525,4 +520,3 @@ t/TestApp/t/config-Cachable
 t/TestApp/t/config-Record
 t/TestApp/t/instance_id.t
 t/TestApp/t/regex_meta_in_path_info.t
-t/TestApp/testapp
