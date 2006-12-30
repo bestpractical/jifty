@@ -9,90 +9,90 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"Last-Translator: Kenichi Ishigaki <ishigaki@tcool.org>\n"
+"Language-Team: Japanese\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 #: lib/Jifty/Action/Record/Search.pm:125
 msgid "!=>< allowed"
-msgstr ""
+msgstr "! = > < は利用できません"
 
 #: lib/Jifty/Action/Record/Search.pm:115
 #. ($label)
 msgid "%1 after"
-msgstr ""
+msgstr "%1 より後"
 
 #: lib/Jifty/Action/Record/Search.pm:116
 #. ($label)
 msgid "%1 before"
-msgstr ""
+msgstr "%1 より前"
 
 #: lib/Jifty/Action/Record/Search.pm:112
 #. ($label)
 msgid "%1 contains"
-msgstr ""
+msgstr "%1 を含む"
 
 #: share/web/templates/__jifty/admin/fragments/list/list:87
 #. ($collection-> count)
 msgid "%1 entries"
-msgstr ""
+msgstr "%1 件"
 
 #: lib/Jifty/Action/Record/Search.pm:123
 #. ($label)
 msgid "%1 greater or equal to"
-msgstr ""
+msgstr "%1 と同じかそれ以上"
 
 #: lib/Jifty/Action/Record/Search.pm:121
 #. ($label)
 msgid "%1 greater than"
-msgstr ""
+msgstr "%1 より大きい"
 
 #: lib/Jifty/Action/Record/Search.pm:108
 #. ($label)
 msgid "%1 is not"
-msgstr ""
+msgstr "%1 以外"
 
 #: lib/Jifty/Action/Record/Search.pm:113
 #. ($label)
 msgid "%1 lacks"
-msgstr ""
+msgstr "%1 を含まない"
 
 #: lib/Jifty/Action/Record/Search.pm:124
 #. ($label)
 msgid "%1 less or equal to"
-msgstr ""
+msgstr "%1 と同じかそれ以下"
 
 #: lib/Jifty/Action/Record/Search.pm:122
 #. ($label)
 msgid "%1 less than"
-msgstr ""
+msgstr "%1 より小さい"
 
 #: share/web/templates/__jifty/error/mason_internal_error:31 share/web/templates/__jifty/error/mason_internal_error:35 share/web/templates/__jifty/error/mason_internal_error:39
 #. ($path, $line)
 #. ($file, $line)
 msgid "%1 line %2"
-msgstr ""
+msgstr "%1 %2行目"
 
 #: share/web/templates/__jifty/halo:119
 #. ($_->[3])
 msgid "%1 seconds"
-msgstr ""
+msgstr "%1 秒"
 
 #: lib/Jifty/Action/Record/Search.pm:117
 #. ($label)
 msgid "%1 since"
-msgstr ""
+msgstr "%1 と同じかそれ以降"
 
 #: lib/Jifty/Action/Record/Search.pm:118
 #. ($label)
 msgid "%1 until"
-msgstr ""
+msgstr "%1 と同じかそれ以前"
 
 #: lib/Jifty/Action/Record/Search.pm:77
 msgid "(any)"
-msgstr ""
+msgstr "（指定なし）"
 
 #: lib/Jifty/Web/Form/Field.pm:521
 msgid "@{[$self->current_value]}"
@@ -100,234 +100,234 @@ msgstr ""
 
 #: share/web/templates/__jifty/admin/index.html:19
 msgid "Actions"
-msgstr ""
+msgstr "操作"
 
 #: share/web/templates/_elements/wrapper:11
 msgid "Administration mode is enabled."
-msgstr ""
+msgstr "管理モードが有効になっています"
 
 #: share/web/templates/_elements/wrapper:11
 msgid "Alert"
-msgstr ""
+msgstr "注意"
 
 #: lib/Jifty/Action/Record/Create.pm:82
 msgid "An error occurred.  Try again later"
-msgstr ""
+msgstr "エラーが発生しました。しばらく待ってから再度試してみてください"
 
 #: lib/Jifty/Action/Record/Search.pm:129
 msgid "Any field contains"
-msgstr ""
+msgstr "検索したい文字列"
 
 #: share/web/templates/__jifty/admin/action/dhandler:25 share/web/templates/__jifty/admin/model/dhandler:20
 msgid "Back to the admin console"
-msgstr ""
+msgstr "管理画面に戻る"
 
 #: share/web/templates/__jifty/admin/index.html:29
 msgid "Back to the application"
-msgstr ""
+msgstr "アプリケーションに戻る"
 
 #: share/web/templates/helpers/calendar.html:4
 #. (_ &><body class="calpopup"><a href="#" onclick="window.close()
 msgid "Calendar"
-msgstr ""
+msgstr "カレンダー"
 
 #: share/web/templates/__jifty/admin/fragments/list/update:31
 msgid "Cancel"
-msgstr ""
+msgstr "キャンセル"
 
 #: share/web/templates/helpers/calendar.html:4
 msgid "Close window"
-msgstr ""
+msgstr "閉じる"
 
 #: share/web/templates/__jifty/admin/fragments/list/view:31
 msgid "Confirm delete?"
-msgstr ""
+msgstr "本当に削除しますか"
 
 #: share/web/templates/__jifty/admin/fragments/list/new_item:25
 msgid "Create"
-msgstr ""
+msgstr "作成"
 
 #: lib/Jifty/Action/Record/Create.pm:81
 #. (ref($record)
 msgid "Create of %1 failed: %2"
-msgstr ""
+msgstr "%1 の作成に失敗しました: %2"
 
 #: lib/Jifty/Action/Record/Create.pm:105
 msgid "Created"
-msgstr ""
+msgstr "作成しました"
 
 #: share/web/templates/__jifty/admin/index.html:3
 msgid "Database Administration"
-msgstr ""
+msgstr "データベース管理"
 
 #: share/web/templates/__jifty/admin/fragments/list/view:29
 msgid "Delete"
-msgstr ""
+msgstr "削除"
 
 #: lib/Jifty/Action/Record/Delete.pm:76
 msgid "Deleted"
-msgstr ""
+msgstr "削除しました"
 
 #: share/web/templates/__jifty/admin/fragments/list/view:40
 msgid "Edit"
-msgstr ""
+msgstr "編集"
 
 #: lib/Jifty/Mason/Halo.pm:104
 #. ($comp_name)
 msgid "Edit %1"
-msgstr ""
+msgstr "%1 を編集"
 
 #: share/web/templates/dhandler:7
 msgid "Go back home..."
-msgstr ""
+msgstr "ホームページに戻ります…"
 
 #: share/web/templates/_elements/sidebar:5
 #. ($u->$method()
 msgid "Hiya, %1."
-msgstr ""
+msgstr "%1 さん、こんにちは"
 
 #: share/web/templates/__jifty/online_docs/toc.html:6
 msgid "Jifty Developer Documentation Online"
-msgstr ""
+msgstr "開発者向けオンラインドキュメント"
 
 #: share/web/templates/__jifty/online_docs/content.html:6
 msgid "Jifty Pod Online"
-msgstr ""
+msgstr "オンラインドキュメント"
 
 #: share/web/templates/_elements/wrapper:18
 msgid "Loading..."
-msgstr ""
+msgstr "読込み中…"
 
 #: share/web/templates/__jifty/error/mason_internal_error:1
 msgid "Mason error"
-msgstr ""
+msgstr "Mason エラー"
 
 #: share/web/templates/__jifty/admin/index.html:9
 msgid "Models"
-msgstr ""
+msgstr "モデル"
 
 #: share/web/templates/__jifty/admin/fragments/list/list:113
 msgid "Next Page"
-msgstr ""
+msgstr "次のページ"
 
 #: lib/Jifty/Action/Record/Search.pm:130
 msgid "No field contains"
-msgstr ""
+msgstr "排除したい文字列"
 
 #: share/web/templates/__jifty/admin/fragments/list/list:85
 msgid "No items found"
-msgstr ""
+msgstr "見つかりませんでした"
 
 #: lib/Jifty/Web.pm:297
 msgid "No request to handle"
-msgstr ""
+msgstr "処理できるリクエストがありません"
 
 #: share/web/templates/__jifty/online_docs/index.html:5
 msgid "Online Documentation"
-msgstr ""
+msgstr "オンラインドキュメント"
 
 #: share/web/templates/__jifty/admin/fragments/list/list:80
 #. ($page, $collection->pager->last_page)
 msgid "Page %1 of %2"
-msgstr ""
+msgstr "%1 / %2 ページ"
 
 #: lib/Jifty/Record.pm:240 lib/Jifty/Record.pm:319 lib/Jifty/Record.pm:60
 msgid "Permission denied"
-msgstr ""
+msgstr "権限がありません"
 
 #: share/web/templates/__jifty/admin/fragments/list/list:108
 msgid "Previous Page"
-msgstr ""
+msgstr "前のページ"
 
 #: share/web/templates/__jifty/admin/action/dhandler:20
 msgid "Run the action"
-msgstr ""
+msgstr "実行"
 
 #: share/web/templates/__jifty/halo:111
 msgid "SQL Statements"
-msgstr ""
+msgstr "SQL文"
 
 #: share/web/templates/__jifty/admin/fragments/list/update:21
 msgid "Save"
-msgstr ""
+msgstr "保存"
 
 #: share/web/templates/__jifty/online_docs/content.html:50
 msgid "Schema"
-msgstr ""
+msgstr "スキーマ"
 
 #: share/web/templates/__jifty/admin/fragments/list/search:18
 msgid "Search"
-msgstr ""
+msgstr "検索"
 
 #: share/web/templates/dhandler:1
 msgid "Something's not quite right"
-msgstr ""
+msgstr "原因不明のエラーです"
 
 #: share/web/templates/__jifty/online_docs/index.html:16 share/web/templates/__jifty/online_docs/index.html:18
 msgid "Table of Contents"
-msgstr ""
+msgstr "目次"
 
 #: lib/Jifty/Action.pm:873
 msgid "That doesn't look like a correct value"
-msgstr ""
+msgstr "値が不適切なようです"
 
-#: lib/Jifty/Action/Record.pm:247
+#: lib/Jifty/Action/Record.pm:246
 msgid "That doesn't look right, but I don't know why"
-msgstr ""
+msgstr "原因不明のエラーです"
 
-#: lib/Jifty/Action/Record.pm:179
+#: lib/Jifty/Action/Record.pm:178
 msgid "The passwords you typed didn't match each other"
-msgstr ""
+msgstr "パスワードが一致しません"
 
 #: lib/Jifty/Web.pm:360
 msgid "There was an error completing the request.  Please try again later."
-msgstr ""
+msgstr "リクエストの処理中にエラーが発生しました。しばらく待ってから再度試してみてください"
 
 #: share/web/templates/__jifty/admin/index.html:5
 msgid "This console lets you manage the records in your Jifty database. Below, you should see a list of all your database tables. Feel free to go through and add, delete or modify records."
-msgstr ""
+msgstr "ここでは Jifty データベースのレコードを管理できます。下にデータベースの全テーブルが一覧されているはずですので、自由に表示・作成・削除・修正してください。"
 
 #: share/web/templates/__jifty/admin/index.html:7
 msgid "To disable this administrative console, add \"AdminMode: 0\" under the \"framework:\" settings in the config file (etc/config.yml)."
-msgstr ""
+msgstr "この管理画面を無効にするには、設定ファイル（etc/config.yml）の \"framework:\" の項目の下に \"AdminMode: 0\" を追加してください。"
 
 #: share/web/templates/__jifty/admin/fragments/list/list:72
 msgid "Toggle search"
-msgstr ""
+msgstr "検索の切り替え"
 
 #: share/web/templates/__jifty/error/mason_internal_error:6
 msgid "Try again"
-msgstr ""
+msgstr "再度試してみてください"
 
 #: lib/Jifty/Action/Record/Update.pm:156
 msgid "Updated"
-msgstr ""
+msgstr "更新しました"
 
 #: share/web/templates/index.html:1
 msgid "Welcome to your new Jifty application"
-msgstr ""
+msgstr "Jifty の新規アプリケーションです"
 
 #: share/web/templates/dhandler:5
 msgid "You got to a page that we don't think exists.  Anyway, the software has logged this error. Sorry about this."
-msgstr ""
+msgstr "このページは存在しません。エラーとして記録しておきました。ご不便をお詫びいたします"
 
 #: lib/Jifty/Action.pm:860
 msgid "You need to fill in this field"
-msgstr ""
+msgstr "必須項目です"
 
 #: share/web/templates/index.html:3
 #. ('http://hdl.loc.gov/loc.pnp/cph.3c13461')
 msgid "You said you wanted a pony. (Source %1)"
-msgstr ""
+msgstr "こんなのが欲しかったんでしょう？（出典：%1）"
 
 #: share/web/templates/_elements/sidebar:7
 msgid "You're not currently signed in."
-msgstr ""
+msgstr "ログインしていません"
 
 #: share/web/templates/__jifty/admin/fragments/list/header:22
 msgid "asc"
-msgstr ""
+msgstr "昇順"
 
 #: share/web/templates/__jifty/admin/fragments/list/header:41
 msgid "desc"
-msgstr ""
+msgstr "降順"

@@ -244,6 +244,24 @@ sub label {
 
 }
 
+=head2 hints [VALUE]
+
+Hints for the user to explain this field
+
+=cut
+
+sub hints {
+    my $self = shift;
+    return $self->_hints_accessor unless @_;
+
+    my $hint = shift;
+    # people sometimes say hints are "foo" rather than hints is "foo"
+    if (ref $hint eq 'ARRAY') {
+        $hint = shift @$hint;
+    }
+    return $self->_hints_accessor($hint);
+}
+
 
 =head2 element_id 
 

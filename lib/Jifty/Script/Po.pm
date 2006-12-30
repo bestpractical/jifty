@@ -80,14 +80,15 @@ sub update_catalogs {
     $self->extract_messages();
     my @catalogs = File::Find::Rule->file->in(
         Jifty->config->framework('L10N')->{'PoDir'} );
-    foreach my $catalog (@catalogs) {
-        next if $catalog =~ m{(^|/)\.svn/};
-        $self->update_catalog( $catalog );
-    }
     if ($self->{'language'}) { 
         $self->update_catalog( File::Spec->catfile( Jifty->config->framework('L10N')->{'PoDir'}, $self->{'language'} . ".po"));
     }
-
+    else {
+        foreach my $catalog (@catalogs) {
+            next if $catalog =~ m{(^|/)\.svn/};
+            $self->update_catalog( $catalog );
+        }
+    }
 }
 
 =head2 update_catalog FILENAME
