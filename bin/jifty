@@ -11,5 +11,5 @@ BEGIN {
 }
 
 use Jifty::Script;
-$SIG{INT} = $SIG{TERM} = sub { warn "Stopped\n"; exit; };
+local $SIG{INT} = sub { warn "Stopped\n"; exit; };
 Jifty::Script->dispatch();
