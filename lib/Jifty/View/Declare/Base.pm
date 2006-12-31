@@ -231,7 +231,7 @@ END
         $begin =~ s/<body>$/$whitespace/s;
     }
 
-    outs_raw($begin);
+    Jifty->web->out($begin);
     $writer->startTag("body");
 
     while (1) {
@@ -1454,7 +1454,7 @@ template '__jifty/validator.xml' => sub {
         $writer->endTag();
     }
     $writer->endTag();
-    outs_raw($output);
+    Jifty->web->out($output);
 };
 
 template '__jifty/webservices/xml' => sub {
