@@ -11,16 +11,14 @@ use Jifty::View::Declare::Templates;
 our @EXPORT = (
     @Jifty::View::Declare::Templates::EXPORT,
     @Template::Declare::Tags::EXPORT,
-    qw( $r page ),
+    qw( page ),
 );
-our $r;
 
 {
     no warnings 'redefine';
 
     sub show {
         # Handle relative path here!
-        $r = Jifty->handler->apache;
 
         my $path = shift;
         $path =~ s{^/}{};
@@ -213,10 +211,10 @@ template '_elements/header' => sub {
 template '__jifty/subs' => sub {
     my ($forever) = get(qw(forever)) || 1;
 
-    $r->content_type("text/html; charset=utf-8");
-    $r->headers_out->{'Pragma'}        = 'no-cache';
-    $r->headers_out->{'Cache-control'} = 'no-cache';
-    $r->send_http_header;
+    Jifty->handler->apache->content_type("text/html; charset=utf-8");
+    Jifty->handler->apache->headers_out->{'Pragma'}        = 'no-cache';
+    Jifty->handler->apache->headers_out->{'Cache-control'} = 'no-cache';
+    Jifty->handler->apache->send_http_header;
 
     my $writer = XML::Writer->new;
     $writer->xmlDecl( "UTF-8", "yes" );
@@ -649,7 +647,7 @@ template '__jifty/autocomplete.xml' => sub {
     # Note: the only point to this file is to set the content_type; the actual
     # behavior is accomplished inside the framework.  It will go away once we
     # have infrastructure for serving things of various content-types.
-    $r->content_type('text/xml; charset=UTF-8');
+    Jifty->handler->apache->content_type('text/xml; charset=UTF-8');
     my $ref = Jifty->web->response->result('autocomplete')->content;
     my @options = @{ $ref->{'completions'} || [] };
     body {
@@ -671,7 +669,7 @@ template '__jifty/autocomplete.xml' => sub {
             }
         };
     };
-} if 0; # XXX - $r->content_type broken
+};
 
 template '__jifty/css/dhandler' => sub {
     # XXX move to dispatcher
@@ -690,12 +688,12 @@ template '__jifty/css/dhandler' => sub {
         and die('$m->dhandler_arg') eq Jifty->web->cached_css_digest . '.css' )
     {
         Jifty->log->debug("Returning 304 for cached css");
-        $r->header_out( Status => 304 );
+        Jifty->handler->apache->header_out( Status => 304 );
         return;
     }
 
-    $r->content_type("text/css");
-    $r->header_out( 'Expires' => HTTP::Date::time2str( time + 31536000 ) );
+    Jifty->handler->apache->content_type("text/css");
+    Jifty->handler->apache->header_out( 'Expires' => HTTP::Date::time2str( time + 31536000 ) );
 
     # XXX TODO: If we start caching the squished CSS in a file somewhere, we
     # can have the static handler serve it, which would take care of gzipping
@@ -704,7 +702,7 @@ template '__jifty/css/dhandler' => sub {
 
     if ( Jifty::View::Static::Handler->client_accepts_gzipped_content ) {
         Jifty->log->debug("Sending gzipped squished CSS");
-        $r->header_out( "Content-Encoding" => "gzip" );
+        Jifty->handler->apache->header_out( "Content-Encoding" => "gzip" );
         binmode STDOUT;
         print Compress::Zlib::memGzip( Jifty->web->cached_css );
     }
@@ -804,7 +802,7 @@ Alert: Jifty <% Jifty->web->tangent( label => 'administration mode' , url => '/
                         }
 
                         sub __jifty::error::error . css {
-                            $r->content_type("text/css");
+                            Jifty->handler->apache->content_type("text/css");
                             h1 {
                               color: red;
                               }
@@ -1045,13 +1043,13 @@ sub __jifty::js::dhandler {
                                         Jifty->log->debug(
 "Returning 304 for cached javascript"
                                         );
-                                        $r->header_out( Status => 304 );
+                                        Jifty->handler->apache->header_out( Status => 304 );
                                         return;
                                     }
 
-                                    $r->content_type(
+                                    Jifty->handler->apache->content_type(
                                         "application/x-javascript");
-                                    $r->header_out(
+                                    Jifty->handler->apache->header_out(
                                         'Expires' => HTTP::Date::time2str(
                                             time + 31536000
                                         )
@@ -1067,7 +1065,7 @@ sub __jifty::js::dhandler {
                                     {
                                         Jifty->log->debug(
                                             "Sending gzipped squished JS");
-                                        $r->header_out(
+                                        Jifty->handler->apache->header_out(
                                             "Content-Encoding" => "gzip" );
                                         binmode STDOUT;
                                         print Compress::Zlib::memGzip(
@@ -1325,7 +1323,7 @@ a:focus { background: #99ff99; border: 1px black dotted }
                   }
 
                   sub autohandler {    # XXX TODO MOVE INTO DISPATCHER
-                    $r->content_type('text/html; charset=utf-8');
+                    Jifty->handler->apache->content_type('text/html; charset=utf-8');
 
                     if ( $m->base_comp->path =~ m|/_elements/| ) {
 
@@ -1338,7 +1336,7 @@ a:focus { background: #99ff99; border: 1px black dotted }
                 sub dhandler {
                     Jifty->log->error(
                         "404: user tried to get to " . $m->dhandler_arg );
-                    $r->header_out( Status => '404' );
+                    Jifty->handler->apache->header_out( Status => '404' );
                     with( title => _("Something's not quite right") ),
                       wrapper => {
 
@@ -1373,7 +1371,7 @@ a:focus { background: #99ff99; border: 1px black dotted }
 =cut
 
 template '__jifty/validator.xml' => sub {
-    $r->content_type('text/xml; charset=UTF-8');
+    Jifty->handler->apache->content_type('text/xml; charset=UTF-8');
     my $output = "";
     use XML::Writer;
     my $writer = XML::Writer->new( OUTPUT => \$output );
@@ -1590,12 +1588,12 @@ template '__jifty/webservices/xml' => sub {
     }
 
     $writer->endTag();
-    $r->content_type('text/xml; charset=utf-8');
+    Jifty->handler->apache->content_type('text/xml; charset=utf-8');
     out_raws($output);
 };
 
 template '__jifty/webservices/yaml' => sub {
-    $r->content_type("text/x-yaml");
+    Jifty->handler->apache->content_type("text/x-yaml");
     outs( Jifty::YAML::Dump( { Jifty->web->response->results } ) );
 };
 
