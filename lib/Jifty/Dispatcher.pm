@@ -765,12 +765,10 @@ sub _do_show {
     my $abs_root_path = Jifty::Util->absolute_path( Jifty->config->framework('Web')->{'TemplateRoot'} );
 
     if ( $abs_template_path !~ /^\Q$abs_root_path\E/ ) {
-        request->path('/__jifty/errors/500');
+        $self->render_template('/__jifty/errors/500');
     } else {
-        # Set the request path
-        request->path($path);
+        $self->render_template( $path);
     }
-    $self->render_template( request->path );
 
     last_rule;
 }
