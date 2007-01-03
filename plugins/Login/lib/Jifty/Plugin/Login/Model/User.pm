@@ -29,7 +29,7 @@ column
   render_as 'Unrendered';
 
 package Jifty::Plugin::Login::Model::User;
-use base qw/Jifty::Record/;
+use base qw/Jifty::Record Jifty::Plugin::Login/;
 
 sub create {
     my $self  = shift;
@@ -133,7 +133,8 @@ Identifies the correct record class for introspection
 =cut
 
 sub record_class {
-    return Jifty->app_class('Model','User');
+    my $self = shift;
+    return $self->LoginUserClass;
 
 }
 
