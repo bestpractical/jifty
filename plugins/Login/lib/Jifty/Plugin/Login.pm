@@ -42,10 +42,9 @@ use base qw/Jifty::Plugin/;
 	my $self = shift;
 	my %args = @_;
 	my $appname = Jifty->config->framework('ApplicationClass');
-	$CurrentUserClass = $args{CurrentUserClass}
-	    || "${appname}::CurrentUser";
 	$LoginUserClass = $args{LoginUserClass}
-	    || "${appname}::Model::User";
+	    || Jifty->app_class('Model','User');
+	$CurrentUserClass = Jifty->app_class('CurrentUser')
     }
 
     sub CurrentUserClass {

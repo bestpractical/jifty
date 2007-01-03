@@ -29,6 +29,7 @@ Nuke the current user object
 sub take_action {
     my $self = shift;
     Jifty->web->current_user(undef);
+    $self->result->message( _("Ok, you're logged out now. Have a good day.") );
     return 1;
 }
 

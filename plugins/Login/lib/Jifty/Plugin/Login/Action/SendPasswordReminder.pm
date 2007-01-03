@@ -47,12 +47,12 @@ Create an empty user object to work with
 
 sub setup {
     my $self = shift;
-    my $LoginUser = $self->LoginUserClass();
-    my $CurrentUser = $self->CurrentUserClass();
+    my $LoginUserClass = $self->LoginUserClass;
+    my $CurrentUser = $self->CurrentUserClass;
 
     # Make a blank user object
     $self->user_object(
-        $LoginUser->new( current_user => $CurrentUser->superuser ) );
+        $LoginUserClass->new( current_user => $CurrentUser->superuser ) );
 }
 
 =head2 validate_address
@@ -64,15 +64,15 @@ Make sure there's actually an account by that name.
 sub validate_address {
     my $self  = shift;
     my $email = shift;
-    my $LoginUser = $self->LoginUserClass();
-    my $CurrentUser = $self->CurrentUserClass();
+    my $LoginUserClass = $self->LoginUserClass;
+    my $CurrentUser = $self->CurrentUserClass;
 
     return $self->validation_error(
         address => _("That doesn't look like an email address.") )
       unless ( $email =~ /\S\@\S/ );
 
     $self->user_object(
-        $LoginUser->new( current_user => $CurrentUser->superuser ) );
+        $LoginUserClass->new( current_user => $CurrentUser->superuser ) );
     $self->user_object->load_by_cols( email => $email );
     return $self->validation_error(
         address => _("It doesn't look like there's an account by that name.") )

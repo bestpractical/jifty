@@ -22,9 +22,8 @@ Sets up the fields of the message.
 
 sub setup {
     my $self = shift;
-    my $LoginUser = $self->LoginUserClass;
 
-    unless ( UNIVERSAL::isa($self->to, $LoginUser) ){
+    unless ( UNIVERSAL::isa($self->to, $self->LoginUserClass) ){
 	$self->log->error((ref $self) . " called with invalid user argument");
 	return;
     } 

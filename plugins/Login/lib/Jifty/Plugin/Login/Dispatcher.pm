@@ -72,6 +72,10 @@ before 'logout' => run {
     );
 };
 
+on 'logout' => run {
+    redirect('/');
+}
+
 ## LetMes
 before qr'^/let/(.*)' => run {
     my $let_me = Jifty::LetMe->new();
