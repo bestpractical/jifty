@@ -74,7 +74,7 @@ before 'logout' => run {
 
 on 'logout' => run {
     redirect('/');
-}
+};
 
 ## LetMes
 before qr'^/let/(.*)' => run {
