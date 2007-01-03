@@ -16,6 +16,7 @@ requires('Compress::Zlib');
 requires('CSS::Squish' => 0.05 );
 requires('DBD::SQLite' => 1.11 );
 requires('Data::Page');
+requires('Data::UUID');
 requires('DateTime');
 requires('Date::Manip');
 requires('Email::Folder');

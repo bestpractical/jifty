@@ -3,6 +3,7 @@ use strict;
 
 package Jifty;
 use IPC::PubSub 0.22;
+use Data::UUID;
 use encoding 'utf8';
 # Work around the fact that Time::Local caches thing on first require
 BEGIN { local $ENV{'TZ'} = "GMT";  require Time::Local;}
