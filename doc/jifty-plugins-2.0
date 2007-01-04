@@ -7,7 +7,7 @@
 * The app always overrides plugins
 * Plugins are loaded and evaluated in order
 * Models should become mixins when appropriate
-  - But if the app doesn't define one, they can create classes/tables
+  - But if the app doesn't define one, they can create classes/tables #'
 
 
 The plugins we want in our ponyverse:
@@ -37,7 +37,7 @@ Where do identity plugins hook?
     * These are invalid
     * Other auth error ``I don't know''
   * bounce trips go through continuations
-* load_user_by_credentials
+* load_by_unique_id
 
 * ::Login
 * /login =>
@@ -45,7 +45,7 @@ Where do identity plugins hook?
    * for each, fields for login columns declared by the ::Identity::Foo plugin
   * submit button
 * Login action
-  * load_user_by_credentials
+  * load_by_unique_id
   * if the user doesn't exist, callback (to signup) or error
   * Passes credentials to the identity plugin's auth method
    * Identities that need confirmation error here if needed
@@ -72,3 +72,70 @@ Where do identity plugins hook?
 * hooks look kinda like Plagger
 * If there are multiple plugin models with no app model,
   they all get mixed into the null model
+
+
+----- Username/password plugin ------
+
+# Model (Jifty::Plugin::User::Identity::UsernamePassword::Model::User)
+
+column 'username' =>
+  type is 'text',
+  is unique;
+
+column 'password' =>
+  type is 'text',
+  render_as 'Password',
+  filters are qw(Jifty::DBI::Filter::SaltHash);
+
+sub password_is {
+    my $self = shift;
+    my $pass = shift;
+
+    return undef unless $self->_value('password');
+
+    my ($hash, $salt) = @{$self->_value('password')};
+
+    return 1 if ( $hash eq Digest::MD5::md5_hex($pass . $salt) );
+    return undef;
+
+}
+
+# ``exports''
+sub load_by_unique_id {
+    my $self = shift;
+    my %args = (username => undef, @_);
+    return $self->load_by_columns(username => $args{username});
+}
+
+sub validate_credentials {
+    my $self = shift;
+    my %args = (username => undef, @_);
+    return unless $self->id;
+    return $self->password_is($args{password});
+}
+
+# Jifty::Plugin::User::Identity::UsernamePassword::Action::Login
+
+param username =>
+  render_as 'Text';
+
+param password =>
+  render_as 'Password';
+
+
+
+# Login plugin Action::Login
+sub check_credentials {
+    my $self = shift;
+    my $userobj = MyApp::Model::User->new;
+    my $user;
+    foreach my $identity_type ($userobj->identity_plugins) {
+        if($userobj->($identity_type . "::load_by_unique_id")($self->argument_values)) {
+            if($userobj->($identity_type . "::validate_credentials")($self->argument_values)) {
+                ...
+            } else {
+                ...
+            }
+        }
+    }
+}
