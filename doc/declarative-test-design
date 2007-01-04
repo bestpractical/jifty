@@ -1,0 +1,105 @@
+# -*- mode: cperl -*-
+
+# A ``setup'' block indicates tests that must pass for any of the
+# remaining tests to continue.
+
+setup {
+    BTDT::Test->log_in;
+    expect_url(qr{/todo});
+    follow_link 'Groups';
+    expect_url(qr{/groups});
+    expect_content('alpha');
+
+    # These are custom local methods; not Test::WWW::Whatever ones.
+    make_and_verify_group($mech, name => 'my folks', desc => 'stuff');
+    make_and_verify_group($mech, name => 'blue pants', desc => 'some description');
+    make_and_verify_group_trimming($mech, name => '   leading and trailing spaces   ', desc => '  more spaces here  ');
+
+    make_and_verify_group($mech, name => 'other folks');
+}
+
+# Each ``test'' block is its own test. If anything fails, we abort the
+# current test block, and continue with the next one.
+
+test {
+    follow_link 'Groups';
+    follow_link 'New Group';
+    submit_action 'newgroup', { name => 'my folks' };
+
+    expect_url { not => qr{groups/\d+/members} };
+    expect_url qr{/groups/create};
+    find_input { value => "my folks" };
+    expect_content qr{Sorry, but someone else beat you to that name};
+};
+
+test {
+    follow_link 'my folks';
+    follow_link 'Members';
+
+    expect_url qr{/groups/\d+/members};
+    expect_content 'Manage group members';
+    expect_content 'my folks';
+    expect_content qr{Good Test *organizer}
+};
+
+test {
+    follow_link 'my folks';
+    follow_link 'My tasks';
+    follow_link 'Braindump';
+    expect_content 'See more syntax for braindump';
+
+    fill_action 'quickcreate', { text => 'Buy new computer [personal money]' };
+    click { button => 'Create' };
+
+    expect { content => 'Buy new computer' };
+    expect_content_not 'See more syntax for braindump';
+
+    follow_link 'my folks' => 'My tasks' => 'Braindump';
+    submit_action 'quickcreate',
+      { text => 'Buy new computer [personal money]' },
+      { button => 'Create' };
+
+    click 'Edit';
+
+    submit_action find_action('BTDT::Action::UpdateTask'),
+        { owner_id => 'otheruser@example.com' };
+}
+
+test {
+    new_session {
+        log_in 'otheruser@example.com', 'something';
+        click 'unaccepted';
+        page { content => 'Pay off Mafia' };
+        click 'Pay off Mafia';
+
+        # Manual submit_action
+        find_element { name => qr{J:A-(?:\d+)?accept} };
+        submit_form { 'J:A:F-accepted-accept' => 1 };
+
+        page { content       => 'Task accepted',
+               content_lacks => 'denied' };
+
+    };
+};
+
+# Various ways of specifying tests should only run under certain
+# platforms
+
+with ('javascript') => test {
+    
+};
+
+test {
+    browser 'iexplore';
+};
+
+test {
+    browser 'WWW::Mechanize';
+};
+
+test {
+    need_feature 'XMLHTTPRequest';
+};
+
+
+run_all;
