@@ -205,3 +205,11 @@ div.subline {
 input.placeholder, textarea.placeholder {
     color: #666;
 }
+
+form div.mandatory label {
+    color: #a00000;
+}
+
+form div.form_field.mandatory label:after {
+    content: " (*)";
+}
