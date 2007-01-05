@@ -854,11 +854,10 @@ sub _validate_argument {
 
     my $value = $self->argument_value($field);
 
-    if ( !defined $value || !length $value ) {
-
-        if ( $field_info->{mandatory} ) {
-            return $self->validation_error( $field => _("You need to fill in this field") );
-        }
+    if (    $field_info->{mandatory}
+        and $self->_is_argument_value_deleted($field) )
+    {
+        return $self->validation_error( $field => _("You need to fill in this field") );
     }
 
     # If we have a set of allowed values, let's check that out.
@@ -893,6 +892,31 @@ sub _validate_argument {
     else {
         return $self->validation_ok($field);
     }
+}
+
+sub _is_argument_value_deleted {
+    my $self  = shift;
+    my $field = shift;
+
+    my $value = $self->argument_value($field);
+
+    my $field_info = $self->arguments->{$field};
+    return unless $field_info;
+
+    my $default_value;
+    $default_value = $field_info->{'default_value'}
+      if exists $field_info->{'default_value'};
+    $default_value = $value
+      if $self->has_argument($field) && $value && !$self->values_from_request->{$field};
+
+    if ( not defined $value or not length $value ) {
+        if (   ( defined $default_value && $value ne $default_value )
+            || ( Jifty->web->request->path !~ m{^/__jifty/validator\.xml} ) )
+        {
+            return 1;
+        }
+    }
+    return 0;
 }
 
 =head2 _autocomplete_argument ARGUMENT
