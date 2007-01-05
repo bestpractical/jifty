@@ -118,7 +118,7 @@ sub _make_directories {
 
     foreach my $dir (@dirs) {
         $dir =~ s/__APP__/$lib_dir/;
-        print("Creating directory $dir\n");
+        print("Creating directory @{[$self->prefix]}/$dir\n");
         mkdir( $self->prefix."/$dir") or die "Can't create ". $self->prefix."/$dir: $!";
 
     }
