@@ -763,7 +763,7 @@ If neither of those are true, by default canonicalize dates using
 _canonicalize_date
 
 Note that it is possible that a canonicalizer will be called multiple
-times on the same field -- canonicalizera should be careful to do
+times on the same field -- canonicalizers should be careful to do
 nothing to already-canonicalized data.
 
 =cut
