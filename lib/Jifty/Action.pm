@@ -762,6 +762,10 @@ C<canonicalize_I<ARGUMENT>> function, also invoke that function.
 If neither of those are true, by default canonicalize dates using
 _canonicalize_date
 
+Note that it is possible that a canonicalizer will be called multiple
+times on the same field -- canonicalizera should be careful to do
+nothing to already-canonicalized data.
+
 =cut
 
 # XXX TODO: This is named with an underscore to prevent infinite
