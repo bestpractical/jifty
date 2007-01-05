@@ -296,7 +296,6 @@ plugins/Login/share/web/templates/chgpasswd
 plugins/Login/share/web/templates/let/confirm_email
 plugins/Login/share/web/templates/let/reset_lost_password
 plugins/Login/share/web/templates/login
-plugins/Login/share/web/templates/logout
 plugins/Login/share/web/templates/passwordreminder
 plugins/Login/share/web/templates/signup
 plugins/Nothing/lib/Jifty/Plugin/Nothing.pm

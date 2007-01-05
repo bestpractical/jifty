@@ -32,9 +32,9 @@ Set their confirmed status.
 
 sub take_action {
     my $self        = shift;
-    my $LoginUser   = $self->LoginUserClass();
-    my $CurrentUser = $self->CurrentUserClass();
-    my $u = $LoginUser->new( current_user => $CurrentUser->superuser );
+    my $LoginUserClass   = $self->LoginUserClass;
+    my $CurrentUser = $self->CurrentUserClass;
+    my $u = $LoginUserClass->new( current_user => $CurrentUser->superuser );
     $u->load_by_cols( email => Jifty->web->current_user->user_object->email );
 
     if ( $u->email_confirmed ) {

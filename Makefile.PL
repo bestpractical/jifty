@@ -16,6 +16,7 @@ requires('Compress::Zlib');
 requires('CSS::Squish' => 0.05 );
 requires('DBD::SQLite' => 1.11 );
 requires('Data::Page');
+requires('Data::UUID');
 requires('DateTime');
 requires('Date::Manip');
 requires('Email::Folder');
@@ -36,7 +37,7 @@ requires('HTML::Mason' => 1.3101);           # HTML::Mason::Exceptions HTML::Mas
 requires('HTML::Mason::Plugin');
 requires('HTTP::Cookies');
 requires('HTTP::Date');
-requires('HTTP::Server::Simple' => '0.20');  # HTTP::Server::Simple::CGI
+requires('HTTP::Server::Simple' => '0.26');  # HTTP::Server::Simple::CGI
 requires('HTTP::Server::Simple::Recorder');
 requires('Hash::Merge');
 requires('Hook::LexWrap');

@@ -37,7 +37,7 @@ Jifty->web->form->submit(
                  },
                 ]
     ) %>
-</div>
+
 <%doc>
 
 When you hit "save" and create a item, you want to put a fragment

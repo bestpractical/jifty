@@ -52,15 +52,15 @@ Makes sure that the email submitted is a legal email address and that there's a 
 sub validate_email {
     my $self  = shift;
     my $email = shift;
-    my $LoginUser = $self->LoginUserClass();
-    my $CurrentUser = $self->CurrentUserClass();
+    my $LoginUserClass = $self->LoginUserClass;
+    my $CurrentUser = $self->CurrentUserClass;
 
     unless ( $email =~ /\S\@\S/ ) {
         return $self->validation_error(
             email => _("That doesn't look like an email address.") );
     }
 
-    my $u = $LoginUser->new( current_user => $CurrentUser->superuser );
+    my $u = $LoginUserClass->new( current_user => $CurrentUser->superuser );
     $u->load_by_cols( email => $email );
     return $self->validation_error(
         email => _('No account has that email address.') )
@@ -79,7 +79,7 @@ Otherwise, throw an error.
 
 sub take_action {
     my $self = shift;
-    my $CurrentUser = $self->CurrentUserClass();
+    my $CurrentUser = Jifty->app_class('CurrentUser');
 
     my $user = $CurrentUser->new( email => $self->argument_value('email') );
 

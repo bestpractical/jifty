@@ -54,14 +54,14 @@ Make sure their email address looks sane
 sub validate_email {
     my $self  = shift;
     my $email = shift;
-    my $LoginUser = $self->LoginUserClass();
-    my $CurrentUser = $self->CurrentUserClass();
+    my $LoginUserClass = $self->LoginUserClass;
+    my $CurrentUser = $self->CurrentUserClass;
 
     return $self->validation_error(
         email => _("That doesn't look like an email address.") )
       unless ( $email =~ /\S\@\S/ );
 
-    my $u = $LoginUser->new( current_user => $CurrentUser->superuser );
+    my $u = $LoginUserClass->new( current_user => $CurrentUser->superuser );
     $u->load_by_cols( email => $email );
     if ( $u->id ) {
         return $self->validation_error( email =>
@@ -84,9 +84,9 @@ Makes sure that the user only specifies things we want them to.
 
 sub take_action {
     my $self   = shift;
-    my $LoginUser = $self->LoginUserClass();
-    my $CurrentUser = $self->CurrentUserClass();
-    my $record = $LoginUser->new( current_user => $CurrentUser->superuser );
+    my $LoginUserClass = $self->LoginUserClass;
+    my $CurrentUser = $self->CurrentUserClass;
+    my $record = $LoginUserClass->new( current_user => $CurrentUser->superuser );
 
     my %values;
     $values{$_} = $self->argument_value($_) for grep {
