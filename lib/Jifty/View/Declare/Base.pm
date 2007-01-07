@@ -161,35 +161,9 @@ template '_elements/sidebar' => sub {
         }
     };
     with( id => "navigation" ), div {
-        my $menu     = Jifty->web->navigation;
-        my @children = $menu->children;
-        if (@children) {
-            with( class => "menu" ), ul {
-                render_menu($_) for @children;
-              }
-        }
+        Jifty->web->navigation->render_as_menu;
     };
 };
-
-sub render_menu {
-    my $item = shift;
-    my @kids = $item->children;
-    my @params;
-    if ( $item->active ) {
-        push @params, class => "active";
-    }
-
-    with(@params), li {
-
-        outs_raw( $item->as_link );
-
-        if (@kids) {
-            with( class => "submenu" ), ul {
-                render_menu($_) for @kids;
-              }
-        }
-      }
-}
 
 template '_elements/header' => sub {
     my ($title) = get_current_attr(qw(title));
