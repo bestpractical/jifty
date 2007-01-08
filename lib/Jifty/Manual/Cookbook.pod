@@ -11,6 +11,52 @@ of Jifty use, and ones that work pretty well.
 
 =head1 HOW DO I ...
 
+=head2 Create an LDAP autocomplete field
+
+You need an action in your application. Then run
+
+  jifty action --name LdapSearch
+
+in C<lib/myApp/Action/LdapSearch.pm> add the C<search> field
+
+  use Jifty::Action schema {
+    param search =>
+        autocompleter is \&ldap_search;
+  }
+
+we need L<Net::LDAP> and an accessor to our LDAP value.
+
+  use Net::LDAP;
+
+  __PACKAGE__->mk_accessors(qw(LDAP));
+
+and we can write our C<ldap_search> fonction. 
+Search need at least 3 characters and return an array of C<DisplayName (login)>
+
+  sub ldap_search {
+    my $self = shift;
+    my $search = shift;
+    my @res;
+    if (length $search > 2) {
+         if (! $self->LDAP() ) {
+            $self->LDAP( Net::LDAP->new('ldap.myorg.org');
+            $self->LDAP()->bind( );
+        }
+
+        $self->LDAP()->search(
+          base    => 'ou=people,dc=myorg,dc=org',
+          filter => '(cn='.$filter.')',
+          attrs   =>  ['uid','cn','givenname','displayname'],
+          sizelimit => 10
+          );
+
+        foreach my $entr ( $result->sorted('cn') ) {
+            push @res, $entr->get_value('displayname').' ('.$entr->get_value('uid').')';
+        }
+    }
+    return @res;
+  }
+
 =head2 Add Atom/RSS Feeds ?
 
 You could generate atom/rss feeds for virtually any model in your application.
@@ -25,12 +71,12 @@ L<XML::Feed> to do this:
     use XML::Feed;
     my $posts = MyApp::Model::PostCollection->new();
     $posts->unlimit();
-    
+
     my $feed = XML::Feed->new( $type );
     $feed->title( Jifty->config->framework('ApplicationName') . " Feed" );
     $feed->link( Jifty->web->url );
     $feed->description( $feed->title );
-    
+
     while( my $post = $posts->next ) {
         my $feed_entry = XML::Feed::Entry->new($type);
         $feed_entry->title($post->title);
@@ -49,7 +95,7 @@ And add this in F<MyApp/Dispatcher.pm> to make URI look prettier:
         set type => $1;
         show('/feed');
     };
-    
+
 And of course, you need to put these in your HTML header template
 (conventionally that's C</_elements/header>):
 
