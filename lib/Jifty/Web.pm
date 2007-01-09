@@ -63,6 +63,7 @@ __PACKAGE__->javascript_libs([qw(
     yui/event.js
     yui/calendar.js
     yui/tabview.js
+    yui/container.js
     app.js
     app_behaviour.js
     css_browser_selector.js
