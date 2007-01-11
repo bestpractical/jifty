@@ -129,6 +129,11 @@ Gets or sets the type of the HTML <input> field -- that is, 'text' or
 
 Sets this form field's "submit" key binding to VALUE. 
 
+=head2 key_binding_label VALUE
+
+Sets this form field's key binding label to VALUE.  If none is specified
+the normal label is used.
+
 =head2 default_value [VALUE]
 
 Gets or sets the default value for the form.

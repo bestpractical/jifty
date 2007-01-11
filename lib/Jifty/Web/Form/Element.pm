@@ -144,8 +144,8 @@ C<new> parameter hash.
 
 =cut
 
-sub accessors { shift->handlers, qw(class key_binding id label tooltip) }
-__PACKAGE__->mk_accessors(qw(_onclick class key_binding id label tooltip));
+sub accessors { shift->handlers, qw(class key_binding key_binding_label id label tooltip) }
+__PACKAGE__->mk_accessors(qw(_onclick class key_binding key_binding_label id label tooltip));
 
 =head2 new PARAMHASH OVERRIDE
 
@@ -336,7 +336,12 @@ Sets the CSS class that the element will display as
 
 =head2 key_binding
 
-Sets the key binding associated with this elements
+Sets the key binding associated with this element
+
+=head2 key_binding_label
+
+Sets the key binding label associated with this element (if none is specified,
+the normal label is used instead)
 
 =head2 id
 
@@ -345,7 +350,7 @@ Subclasses must override this to provide each element with a unique id.
 =head2 label
 
 Sets the label of the element.  This will be used for the key binding
-legend, at very least.
+legend if key_binding_label is not set.
 
 =head2 key_binding_javascript
 
@@ -355,14 +360,17 @@ one exists.
 =cut
 
 sub key_binding_javascript {
-    my $self = shift;
-    my $key  = $self->key_binding;
+    my $self  = shift;
+    my $key   = $self->key_binding;
+    my $label = defined $self->key_binding_label
+                    ? $self->key_binding_label
+                    : $self->label;
     if ($key) {
         return "Jifty.KeyBindings.add("
                 . Jifty::JSON::objToJson( uc($key), { singlequote => 1 } ).","
                 . "'click', "
                 . Jifty::JSON::objToJson( $self->id, { singlequote => 1 } ).","
-                . Jifty::JSON::objToJson( $self->label, { singlequote => 1 } )
+                . Jifty::JSON::objToJson( $label, { singlequote => 1 } )
                 . ");";
     }
 }
