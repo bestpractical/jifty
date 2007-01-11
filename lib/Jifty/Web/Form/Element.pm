@@ -358,11 +358,11 @@ sub key_binding_javascript {
     my $self = shift;
     my $key  = $self->key_binding;
     if ($key) {
-        return "Jifty.KeyBindings.add(" . "'"
-                . uc($key) . "', "
-                . "'click', " . "'"
-                . $self->id . "'," . "'"
-                . $self->label . "'"
+        return "Jifty.KeyBindings.add("
+                . Jifty::JSON::objToJson( uc($key), { singlequote => 1 } ).","
+                . "'click', "
+                . Jifty::JSON::objToJson( $self->id, { singlequote => 1 } ).","
+                . Jifty::JSON::objToJson( $self->label, { singlequote => 1 } )
                 . ");";
     }
 }

@@ -71,6 +71,11 @@ sub handle_request {
 
     if ( my $since = Jifty->handler->cgi->http('If-Modified-Since') ) {
         my @file_info = stat($local_path);
+
+        # IE appends "; length=N" to If-Modified-Since headers and we need
+        # to get rid of it so str2time doesn't choke below
+        $since =~ s/;.+$//;
+
         return $self->send_not_modified
             unless $file_info[9] > HTTP::Date::str2time($since);
     }
