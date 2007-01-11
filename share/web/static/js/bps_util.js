@@ -16,18 +16,39 @@ function createCalendarLink(id) {
     return Jifty.Calendar.registerDateWidget( id );
 }
 
+JSAN.use("DOM.Events");
+
 function buttonToLink(e) {
     var link = document.createElement("a");
     link.setAttribute("href","#");
-    link.setAttribute("onclick",e.getAttribute("onclick"));
     link.setAttribute("name",e.getAttribute("name"));
+
+    var form = Form.Element.getForm(e);
+    var onclick = e.getAttribute("onclick");
+
+    /* Simple buttons that don't use any JS need us to create an onclick
+       for them that makes sure the original button's name gets passed
+       and the form submitted normally (without any Ajax-ness)
+    */
+    if ( !onclick ) {
+        DOM.Events.addListener( link, "click", function(ev) {
+            var a = ev.target;
+            var hidden = document.createElement("input");
+            hidden.setAttribute("type", "hidden");
+            hidden.setAttribute("name", a.getAttribute("name"));
+            a["virtualform"].appendChild( hidden );
+            a["virtualform"].submit();
+        });
+    }
+    link.setAttribute("onclick", onclick);
+
     link.className = e.className;
-    link['virtualform'] = Form.Element.getForm(e);
+    link["virtualform"] = form;
     link.appendChild(document.createTextNode(e.getAttribute("value")));
 
     e.parentNode.insertBefore(link, e.nextSibling);
     e.parentNode.removeChild(e);
-    return true;
+    return link;
 }
 
 // onload handlers
