@@ -1,0 +1,11 @@
+<%args>
+$ticket => ""
+</%args>
+<%init>
+Jifty->web->new_action(
+    moniker => 'casloginbox',
+    class   => 'CASLogin',
+    arguments => { ticket => $ticket }
+)->run;
+Jifty->web->redirect("/");
+</%init>
