@@ -77,12 +77,12 @@ some types and labels:
 
     param title =>
         label is 'Title',
-        length is 50,
+        max_length is 50,
         is mandatory;
 
     param category => 
         label is 'Category',
-        length is 30;
+        max_length is 30;
 
     param body =>
         label is 'Entry',

@@ -1,0 +1,14 @@
+<%init>
+my $action = Jifty->web->new_action(
+    class => 'DoSomethingElse',
+    moniker => 'dosomething',
+);
+</%init>
+<&| /_elements/wrapper, title => "Test of simple form for validation" &>
+  Basic test of a simple form for validation.
+<% Jifty->web->form->start() %>
+<% $action->form_field('foo') %>
+<% $action->form_field('bar') %>
+<% Jifty->web->form->submit %>
+<% Jifty->web->form->end %>
+</&>

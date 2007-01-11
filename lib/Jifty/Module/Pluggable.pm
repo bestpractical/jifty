@@ -8,8 +8,8 @@ Jifty::Module::Pluggable
 
 =head1 DESCRIPTION
 
-A custom subclass of Module::Pluggable to override the C<require> mechanism with one that better fits our
-own view of the world.
+A custom subclass of Module::Pluggable to override the C<require>
+mechanism with one that better fits our own view of the world.
 
 =head2 require
 
