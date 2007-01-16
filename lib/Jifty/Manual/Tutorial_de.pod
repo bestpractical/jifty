@@ -1,6 +1,6 @@
 =head1 NAME
 
-Jifty::Manual::Tutorial - Einführung in Jifty
+Jifty::Manual::Tutorial_de - Einführung in Jifty
 
 =head1 BESCHREIBUNG
 
