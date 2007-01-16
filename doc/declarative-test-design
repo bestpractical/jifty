@@ -103,3 +103,26 @@ test {
 
 
 run_all;
+
+
+# A syntax idea from jesse:
+
+flow "Check to see if the user can login" => test {
+    get '/';
+    element '//body' matches /You're not logged in/;
+
+    follow link 'Login';
+
+    my $login_form = element id 'login-form'
+
+    fill $login_form  =>  { 
+        email => 'jesse@fsck.com',
+        password => 'I hate you'
+    }
+
+    click button 'Login!';
+
+}
+
+
+

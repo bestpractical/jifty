@@ -73,6 +73,35 @@ Jifty.Utils = {
 
     isMSIE: false,
 
+    _browser: null,
+    browser: function() {
+        if ( Jifty.Utils._browser ) return Jifty.Utils._browser;
+
+        if ( Jifty.Utils.isMSIE ) {
+            Jifty.Utils._browser = "msie";
+            return "msie";
+        }
+
+        var browser = "unknown";
+        
+        if      ( Jifty.Utils._checkUAFor("konqueror"))   browser = "konqueror";
+        else if ( Jifty.Utils._checkUAFor("safari"))      browser = "safari";
+        else if ( Jifty.Utils._checkUAFor("omniweb"))     browser = "omniweb";
+        else if ( Jifty.Utils._checkUAFor("opera"))       browser = "opera";
+        else if ( Jifty.Utils._checkUAFor("webtv"))       browser = "webtv";
+        else if ( Jifty.Utils._checkUAFor("icab"))        browser = "icab";
+        else if ( Jifty.Utils._checkUAFor("msie"))        browser = "msie";
+        else if ( !Jifty.Utils._checkUAFor("compatible")) browser = "mozilla";
+        
+        Jifty.Utils._browser = browser;
+        return browser;
+    },
+
+    _ua: navigator.userAgent.toLowerCase(),
+    _checkUAFor: function(str) {
+        return Jifty.Utils._ua.indexOf( str ) + 1;
+    },
+
     findScreenHeight: function() {
         if ( window.innerHeight ) {
             return window.innerHeight;
