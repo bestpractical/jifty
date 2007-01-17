@@ -46,7 +46,7 @@ Description: Jifty perl libraries
 Package: libjifty-perl
 Section: perl
 Architecture: all
-Depends: ${perl:Depends},Depends: ${perl:Depends},perl (>> 5.8.3),
+Depends: ${perl:Depends}, perl (>> 5.8.3),
  libapp-cli-perl (>> 0.03), libcache-cache-perl,
  libcalendar-simple-perl, libclass-accessor-perl,
  libclass-container-perl, libclass-data-inheritable-perl,
@@ -73,10 +73,10 @@ Depends: ${perl:Depends},Depends: ${perl:Depends},perl (>> 5.8.3),
  libstring-koremutake-perl, libsql-reservedwords-perl,
  libtest-base-perl, libuniversal-require-perl, liburi-perl,
  libxml-writer-perl (>> 0.601), libxml-simple-perl,
- libxml-xpath-perl, libversion-perl, libyaml-syck-perl (>> 0.71), 
+ libxml-xpath-perl, libversion-perl, libyaml-syck-perl (>> 0.72), 
  libyaml-perl (>> 0.35), libjson-perl (>> 0.01),
  libpod-simple-perl, 
- libsub-exporter-perl, libcache-memcached-perl liblog-dispatch-perl
+ libsub-exporter-perl, libcache-memcached-perl, liblog-dispatch-perl
 Recommends: libmodule-install-perl,
  libtest-pod-coverage-perl, libtest-www-mechanize-perl (>> 1.04), libwww-mechanize-perl (>> 1.12),
  libclass-accessor-named-perl, libdevel-cover-perl,
