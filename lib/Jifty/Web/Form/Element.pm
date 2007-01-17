@@ -102,7 +102,7 @@ region that the region was given when it was last rendered.
 
 =item effect => STRING
 
-The Prototype visual effect to use when updating or creating the
+The Scriptaculous visual effect to use when updating or creating the
 fragment.
 
 =item effect_args => HASHREF
