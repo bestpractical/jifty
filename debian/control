@@ -50,7 +50,7 @@ Depends: ${perl:Depends},Depends: ${perl:Depends},perl (>> 5.8.3),
  libapp-cli-perl (>> 0.03), libcache-cache-perl,
  libcalendar-simple-perl, libclass-accessor-perl,
  libclass-container-perl, libclass-data-inheritable-perl,
- perl-modules, libcgi-cookie-splitter-perl,
+ perl-modules, libcgi-cookie-splitter-perl, libcgi-simple-perl
  libcrypt-cbc-perl, libcrypt-rijndael-perl,
  libcompress-zlib-perl, libcss-squish-perl (>> 0.05), 
  libdbd-sqlite3-perl, libdata-page-perl, libossp-uuid-perl,
