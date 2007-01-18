@@ -1,0 +1,4 @@
+<%args>
+$id
+</%args>
+<% Jifty->web->link(label => "Long $id", onclick => {replace_with => "/regions/short"}) %>
