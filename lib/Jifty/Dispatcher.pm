@@ -302,6 +302,8 @@ sub OPTIONS ($) { _qualify method => @_ }
 
 sub plugin ($) { return { plugin => @_ } }
 
+our $CURRENT_STAGE;
+
 =head2 import
 
 Jifty::Dispatcher is an L<Exporter>, that is, part of its role is to
@@ -480,6 +482,9 @@ This is the unit which calling L</last_rule> skips to the end of.
 
 sub _handle_stage {
     my ($self, $stage, @rules) = @_;
+
+    # Set the current stage so that rules can make smarter choices;
+    local $CURRENT_STAGE = $stage;
 
     eval { $self->_handle_rules( [ $self->rules($stage), @rules ] ); };
     if ( my $err = $@ ) {
@@ -749,6 +754,11 @@ sub _do_show {
     # Fix up the path
     $path = shift if (@_);
     $path ||= $self->{path};
+
+    unless ($CURRENT_STAGE eq 'RUN') {
+        die "You can't call a 'show' rule in a 'before' or 'after' block in the dispatcher.  Not showing path $path";
+    }
+
     $self->log->debug("Showing path $path");
 
     # If we've got a working directory (from an "under" rule) and we have
