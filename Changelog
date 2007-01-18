@@ -1,3 +1,7 @@
+Jifty 0.70117
+   Dependencies: 
+     * Bumped the minimum required version of Jifty::DBI to 0.30
+
 Jifty 0.70116
 
    New authors

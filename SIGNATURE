@@ -15,11 +15,11 @@ not run its Makefile.PL or Build.PL.
 Hash: SHA1
 
 SHA1 ef933bd94b1e449d781c19e74a92412f08e602c5 AUTHORS
-SHA1 046bbc463dbd822d5bc569539c61d62f21ae8120 Changelog
+SHA1 fc571a41cf0774f0099bd365a6e21607a2da0151 Changelog
 SHA1 8c31edaf5f07a1bae38d787bbdf2d79bb17d6f7c MANIFEST
 SHA1 d4adbf5948041cd460da5cb7ad21394a790e2022 MANIFEST.SKIP
-SHA1 bc809c923280f9f93f03f17cbe1fadecd40895ba META.yml
-SHA1 4e462de2abe86989f5a61fb61844357a4068c727 Makefile.PL
+SHA1 f7177c83690e1bac7930f31b96c991afb6adbc8b META.yml
+SHA1 767b1c8e6573516120842aabb2033fddab178d39 Makefile.PL
 SHA1 e395a2eabaf8faf8266dedc664c1eb52c6c589cf README
 SHA1 aaf8f7a1025fc97077072672f325e2a5f3c03a41 bin/build_par
 SHA1 f7f44f9a7337def0c97f981073e3ed970851d9ae bin/jifty
@@ -111,7 +111,7 @@ SHA1 fcae3a3bda09e6ba955c8746c2bdf582a23b8d56 inc/Module/Install/Share.pm
 SHA1 0c2118868ef82ac517eb6d9c3bd93e6eb9bbf83e inc/Module/Install/Win32.pm
 SHA1 e827d6d43771032fa3df35c0ad5e5698d0e54cda inc/Module/Install/WriteAll.pm
 SHA1 c17e8f3cf8ebe1eb4929fd2bd2fd530a9de1abd0 lib/Email/Send/Jifty/Test.pm
-SHA1 a9a7d52971d8574207ea7f8b97bec6c68d1dda98 lib/Jifty.pm
+SHA1 9380a1872911cf469d08049e4c76645eecef63f8 lib/Jifty.pm
 SHA1 f2db715c8a15d0c7c5c7cf30511dac6547f72fc5 lib/Jifty/API.pm
 SHA1 25ed41c1b89c6d39a8e6d027a9120b3e35785951 lib/Jifty/Action.pm
 SHA1 a6d9d87b4fa06cfab36f249a67946b45669dcee7 lib/Jifty/Action/Autocomplete.pm
@@ -604,7 +604,7 @@ SHA1 c8fb21f31b593627b38129ee9dd41eaf9c556ced t/lib/Jifty/SubTest.pm
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.3 (GNU/Linux)
 
-iD8DBQFFratjEi9d9xCOQEYRAvXaAJ4sgkmxWb8AB1kd1DMd55okQf6lzgCfdMef
-SIshV9yYxdnOdyyFx/8oF+Y=
-=avlb
+iD4DBQFFromfEi9d9xCOQEYRAjV1AJ9gxbyucs3vXDll+msp25TGsP4ZlwCUDDbz
+1ktLZJXD6wX2Hkn/232QNg==
+=ItK4
 -----END PGP SIGNATURE-----
