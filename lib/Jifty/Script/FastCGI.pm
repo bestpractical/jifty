@@ -50,6 +50,25 @@ If you have MaxRequests options under FastCGI in your config.yml, or
 commandline option C<--maxrequests=N> assigned, the fastcgi process
 will exit after serving N requests. 
 
+An alternative to Apache mod_fastcgi is to use mod_fcgid with mod_rewrite.
+If you use mod_fcgid and mod_rewrite, you can use this in your Apache
+configuration instead:
+
+ DocumentRoot /path/to/your/jifty/app/share/web/templates
+ ScriptAlias /cgi-bin /path/to/your/jifty/app/bin
+ DefaultInitEnv JIFTY_COMMAND fastcgi
+ <Directory /path/to/your/jifty/app/bin>
+     Options ExecCGI
+     SetHandler fcgid-script
+ </Directory>
+ <Directory /path/to/your/jifty/app/share/web/templates>
+     RewriteEngine on
+     RewriteRule ^$ index.html [QSA]
+     RewriteRule ^(.*)$ /cgi-bin/jifty/$1 [QSA,L]
+ </Directory>
+
+It may be possible to do this without using mod_rewrite.
+
 =head2 options
 
 =cut

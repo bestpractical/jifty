@@ -57,4 +57,10 @@ on qr{/setuser/(.*)} => run {
     show '/index.html';
 };
 
+
+
+before '/before_stage_show' => run { show '/index.html'; };
+on '/on_stage_show' => run { show '/index.html'; };
+after '/after_stage_show' => run { show '/index.html'; };
+
 1;

@@ -7,7 +7,7 @@ use Data::UUID;
 use encoding 'utf8';
 # Work around the fact that Time::Local caches thing on first require
 BEGIN { local $ENV{'TZ'} = "GMT";  require Time::Local;}
-$Jifty::VERSION = '0.61210';
+$Jifty::VERSION = '0.70117';
 
 =head1 NAME
 
