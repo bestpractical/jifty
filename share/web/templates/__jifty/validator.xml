@@ -13,9 +13,8 @@ for my $ra ( Jifty->web->request->actions ) {
         if ( not $action->arguments->{$arg}->{ajax_validates} ) {
             $writer->emptyTag( "ignored", id => $action->error_div_id($arg) );
             $writer->emptyTag( "ignored", id => $action->warning_div_id($arg) );
-        } elsif ( not $action->arguments->{$arg}->{mandatory}
-		  and (not defined $action->argument_value($arg)
-                       or length $action->argument_value($arg) == 0 ) ) {
+        } elsif ( not defined $action->argument_value($arg)
+                  or length $action->argument_value($arg) == 0 ) {
             $writer->emptyTag( "blank", id => $action->error_div_id($arg) );
             $writer->emptyTag( "blank", id => $action->warning_div_id($arg) );
         } elsif ( $action->result->field_error($arg) ) {

@@ -1043,8 +1043,10 @@ Object.extend(Jifty.Placeholder.prototype, {
      
      if(form && !form.hasPlaceholders) {
          form.hasPlaceholders = true;
-         Event.observe(form, 'submit',
-                       function () { Form.clearPlaceholders(form); } );
+         // We can't attach this event via DOM event methods because 
+         // we need to call form.submit() sometimes and still have a good
+         // way to call this event handler
+         form.onsubmit = function () { Form.clearPlaceholders(form); };
      }
   },
 
