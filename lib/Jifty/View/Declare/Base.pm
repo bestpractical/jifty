@@ -1361,11 +1361,8 @@ template '__jifty/validator.xml' => sub {
                 $writer->emptyTag( "ignored",
                     id => $action->warning_div_id($arg) );
             }
-            elsif (
-                not $action->arguments->{$arg}->{mandatory}
-                and ( not defined $action->argument_value($arg)
+            elsif ( not defined $action->argument_value($arg)
                     or length $action->argument_value($arg) == 0 )
-              )
             {
                 $writer->emptyTag( "blank", id => $action->error_div_id($arg) );
                 $writer->emptyTag( "blank",
