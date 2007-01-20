@@ -370,7 +370,7 @@ sub key_binding_javascript {
                 . Jifty::JSON::objToJson( uc($key), { singlequote => 1 } ).","
                 . "'click', "
                 . Jifty::JSON::objToJson( $self->id, { singlequote => 1 } ).","
-                . Jifty::JSON::objToJson( $label, { singlequote => 1 } )
+                . Jifty::JSON::objToJson( $label, { singlequote => 0 } )
                 . ");";
     }
 }
