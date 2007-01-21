@@ -21,6 +21,8 @@ method.
 
 use base qw/Jifty::Action/;
 
+use Scalar::Util qw/ blessed /;
+
 __PACKAGE__->mk_accessors(qw(record _cached_arguments));
 
 =head1 METHODS
@@ -150,7 +152,7 @@ sub arguments {
                 # If the current value is actually a pointer to
                 # another object, dereference it
                 $current_value = $current_value->id
-                    if ref($current_value)
+                    if blessed($current_value)
                     and $current_value->isa('Jifty::Record');
                 $info->{default_value} = $current_value if $self->record->id;
             }
