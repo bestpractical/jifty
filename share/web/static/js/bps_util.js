@@ -37,7 +37,8 @@ function buttonToLink(e) {
             hidden.setAttribute("type", "hidden");
             hidden.setAttribute("name", a.getAttribute("name"));
             a["virtualform"].appendChild( hidden );
-            a["virtualform"].onsubmit();
+            if ( a["virtualform"].onsubmit )
+                a["virtualform"].onsubmit();
             a["virtualform"].submit();
         });
     }

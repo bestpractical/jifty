@@ -104,8 +104,8 @@ C<new>.  Subclasses should extend this list.
 
 =cut
 
-sub accessors { shift->SUPER::accessors(), qw(name label input_name type sticky sticky_value default_value action mandatory ajax_validates ajax_canonicalizes autocompleter preamble hints placeholder focus render_mode length _element_id); }
-__PACKAGE__->mk_accessors(qw(name _label _input_name type sticky sticky_value default_value _action mandatory ajax_validates ajax_canonicalizes autocompleter preamble hints placeholder focus render_mode length _element_id));
+sub accessors { shift->SUPER::accessors(), qw(name label input_name type sticky sticky_value default_value action mandatory ajax_validates ajax_canonicalizes autocompleter preamble hints placeholder focus render_mode length _element_id disable_autocomplete); }
+__PACKAGE__->mk_accessors(qw(name _label _input_name type sticky sticky_value default_value _action mandatory ajax_validates ajax_canonicalizes autocompleter preamble hints placeholder focus render_mode length _element_id disable_autocomplete));
 
 =head2 name [VALUE]
 
@@ -168,6 +168,10 @@ via L<AJAX|Jifty::Manual::Glassary/AJAX> as the user fills out the
 form, instead of waiting until submit.  Arguments will B<always> be
 canonicalized before the action is run, whether or not they also
 C<ajax_canonicalize>
+
+=head2 disable_autocomplete [VALUE]
+
+Gets or sets whether to disable _browser_ autocomplete for this field.
 
 =head2 preamble [VALUE]
 
@@ -486,6 +490,7 @@ sub render_widget {
     $field .= qq! value="@{[Jifty->web->escape($self->current_value)]}"! if defined $self->current_value;
     $field .= $self->_widget_class; 
     $field .= qq! size="@{[ $self->length() ]}" maxlength="@{[ $self->length() ]}"! if ($self->length());
+    $field .= qq! autocomplete="off"! if defined $self->disable_autocomplete;
     $field .= " " .$self->other_widget_properties;
     $field .= qq!  />\n!;
     Jifty->web->out($field);
