@@ -11,7 +11,7 @@ Jifty::Web - Web framework for a Jifty application
 
 
 
-use Jifty::Everything;
+
 use CGI::Cookie;
 use XML::Writer;
 use CSS::Squish;

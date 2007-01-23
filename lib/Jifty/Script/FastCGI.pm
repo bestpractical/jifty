@@ -7,7 +7,7 @@ use base qw/App::CLI::Command/;
 
 use File::Basename;
 use CGI::Fast;
-use Jifty::Everything;
+
 
 =head1 NAME
 

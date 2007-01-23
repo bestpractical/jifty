@@ -18,7 +18,6 @@ into the proper timezone.
 
 use base qw(Jifty::Object DateTime);
 
-use Date::Manip ();
 
 =head2 new ARGS
 
@@ -82,6 +81,7 @@ sub new_from_string {
         
         # Why are we parsing this as GMT? This feels really wrong.  It will get the wrong answer
         # if the current user is in another tz.
+        require Date::Manip;
         Date::Manip::Date_Init("TZ=GMT");
         $now = Date::Manip::UnixDate( $string, "%o" );
     }

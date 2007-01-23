@@ -15,7 +15,7 @@ L<Jifty::Response> object.
 
 =cut
 
-use Jifty::Everything;
+
 
 use base qw/Jifty::Object Class::Accessor::Fast/;
 

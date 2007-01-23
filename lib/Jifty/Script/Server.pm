@@ -17,7 +17,7 @@ use Test::Builder ();
 BEGIN { $SIG{__DIE__} = $x;}
 
 
-use Jifty::Everything;
+
 use File::Path ();
 
 use constant PIDFILE => 'var/jifty-server.pid';

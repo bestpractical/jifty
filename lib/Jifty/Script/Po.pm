@@ -4,12 +4,12 @@ use strict;
 package Jifty::Script::Po;
 use base qw(App::CLI::Command Class::Accessor::Fast);
 
-use File::Copy;
-use Jifty::Config;
-use Jifty::YAML;
-use Locale::Maketext::Extract;
-use File::Find::Rule;
-use MIME::Types;
+use File::Copy ();
+use Jifty::Config ();
+use Jifty::YAML ();
+use Locale::Maketext::Extract ();
+use File::Find::Rule ();
+use MIME::Types ();
 our $MIME = MIME::Types->new();
 our $LMExtract = Locale::Maketext::Extract->new;
 use constant USE_GETTEXT_STYLE => 1;

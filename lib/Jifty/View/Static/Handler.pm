@@ -10,8 +10,7 @@ package Jifty::View::Static::Handler;
 
 use base qw/Jifty::Object/;
 
-our $mime  = MIME::Types->new();
-our $magic = File::MMagic->new();
+our ($MIME,$MAGIC);
 
 =head1 NAME
 
@@ -160,12 +159,11 @@ sub mime_type {
     return ($type_override{$1})
         if $local_path =~ /\.(.+)$/ and defined $type_override{$1};
 
-    my $mimeobj   = $mime->mimeTypeOf($local_path);
-    my $mime_type = (
-          $mimeobj
-        ? $mimeobj->type
-        : $magic->checktype_filename($local_path)
-    );
+    # Defer initialization to first use. (It's not actually cheap)
+    $MIME ||= MIME::Types->new();
+    $MAGIC ||= File::MMagic->new();
+    my $mimeobj   = $MIME->mimeTypeOf($local_path);
+    my $mime_type = ( $mimeobj ? $mimeobj->type : $MAGIC->checktype_filename($local_path));
 
     return ($mime_type);
 }
