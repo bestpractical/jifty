@@ -94,7 +94,7 @@ msgstr "%1 と同じかそれ以前"
 msgid "(any)"
 msgstr "（指定なし）"
 
-#: lib/Jifty/Web/Form/Field.pm:521
+#: lib/Jifty/Web/Form/Field.pm:549
 msgid "@{[$self->current_value]}"
 msgstr ""
 
@@ -118,7 +118,7 @@ msgstr "エラーが発生しました。しばらく待ってから再度試し
 msgid "Any field contains"
 msgstr "検索したい文字列"
 
-#: share/web/templates/__jifty/admin/action/dhandler:25 share/web/templates/__jifty/admin/model/dhandler:20
+#: share/web/templates/__jifty/admin/action/dhandler:25 share/web/templates/__jifty/admin/model/dhandler:21
 msgid "Back to the admin console"
 msgstr "管理画面に戻る"
 
@@ -168,6 +168,10 @@ msgstr "削除"
 msgid "Deleted"
 msgstr "削除しました"
 
+#: share/web/templates/__jifty/admin/index.html:28 share/web/templates/__jifty/admin/model/dhandler:20
+msgid "Done?"
+msgstr ""
+
 #: share/web/templates/__jifty/admin/fragments/list/view:40
 msgid "Edit"
 msgstr "編集"
@@ -186,6 +190,10 @@ msgstr "ホームページに戻ります…"
 msgid "Hiya, %1."
 msgstr "%1 さん、こんにちは"
 
+#: share/web/templates/__jifty/admin/index.html:1
+msgid "Jifty Administrative Console"
+msgstr ""
+
 #: share/web/templates/__jifty/online_docs/toc.html:6
 msgid "Jifty Developer Documentation Online"
 msgstr "開発者向けオンラインドキュメント"
@@ -197,6 +205,14 @@ msgstr "オンラインドキュメント"
 #: share/web/templates/_elements/wrapper:18
 msgid "Loading..."
 msgstr "読込み中…"
+
+#: share/web/templates/__jifty/admin/model/dhandler:9
+msgid "Manage $object_type records"
+msgstr ""
+
+#: share/web/templates/__jifty/admin/model/dhandler:11
+msgid "Manage records:"
+msgstr ""
 
 #: share/web/templates/__jifty/error/mason_internal_error:1
 msgid "Mason error"
@@ -218,7 +234,7 @@ msgstr "排除したい文字列"
 msgid "No items found"
 msgstr "見つかりませんでした"
 
-#: lib/Jifty/Web.pm:297
+#: lib/Jifty/Web.pm:299
 msgid "No request to handle"
 msgstr "処理できるリクエストがありません"
 
@@ -267,19 +283,19 @@ msgstr "原因不明のエラーです"
 msgid "Table of Contents"
 msgstr "目次"
 
-#: lib/Jifty/Action.pm:873
+#: lib/Jifty/Action.pm:876
 msgid "That doesn't look like a correct value"
 msgstr "値が不適切なようです"
 
-#: lib/Jifty/Action/Record.pm:246
+#: lib/Jifty/Action/Record.pm:248
 msgid "That doesn't look right, but I don't know why"
 msgstr "原因不明のエラーです"
 
-#: lib/Jifty/Action/Record.pm:178
+#: lib/Jifty/Action/Record.pm:180
 msgid "The passwords you typed didn't match each other"
 msgstr "パスワードが一致しません"
 
-#: lib/Jifty/Web.pm:360
+#: lib/Jifty/Web.pm:362
 msgid "There was an error completing the request.  Please try again later."
 msgstr "リクエストの処理中にエラーが発生しました。しばらく待ってから再度試してみてください"
 
@@ -311,7 +327,7 @@ msgstr "Jifty の新規アプリケーションです"
 msgid "You got to a page that we don't think exists.  Anyway, the software has logged this error. Sorry about this."
 msgstr "このページは存在しません。エラーとして記録しておきました。ご不便をお詫びいたします"
 
-#: lib/Jifty/Action.pm:860
+#: lib/Jifty/Action.pm:863
 msgid "You need to fill in this field"
 msgstr "必須項目です"
 

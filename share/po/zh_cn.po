@@ -93,7 +93,7 @@ msgstr "%1 至"
 msgid "(any)"
 msgstr "(不限)"
 
-#: lib/Jifty/Web/Form/Field.pm:521
+#: lib/Jifty/Web/Form/Field.pm:549
 msgid "@{[$self->current_value]}"
 msgstr ""
 
@@ -117,7 +117,7 @@ msgstr "系统无法执行此项操作, 请稍后再试"
 msgid "Any field contains"
 msgstr "任意字段包含"
 
-#: share/web/templates/__jifty/admin/action/dhandler:25 share/web/templates/__jifty/admin/model/dhandler:20
+#: share/web/templates/__jifty/admin/action/dhandler:25 share/web/templates/__jifty/admin/model/dhandler:21
 msgid "Back to the admin console"
 msgstr "回到管理界面"
 
@@ -171,6 +171,10 @@ msgstr "成功删除项目."
 msgid "Dismiss"
 msgstr "关闭"
 
+#: share/web/templates/__jifty/admin/index.html:28 share/web/templates/__jifty/admin/model/dhandler:20
+msgid "Done?"
+msgstr ""
+
 #: share/web/templates/__jifty/admin/fragments/list/view:40
 msgid "Edit"
 msgstr "编辑"
@@ -189,6 +193,10 @@ msgstr "回首页..."
 msgid "Hiya, %1."
 msgstr "%1 您好."
 
+#: share/web/templates/__jifty/admin/index.html:1
+msgid "Jifty Administrative Console"
+msgstr ""
+
 #: share/web/templates/__jifty/online_docs/toc.html:6
 msgid "Jifty Developer Documentation Online"
 msgstr "Jifty 线上开发文件"
@@ -200,6 +208,14 @@ msgstr "Jifty 线上 POD 文件"
 #: share/web/templates/_elements/wrapper:18
 msgid "Loading..."
 msgstr "请稍候..."
+
+#: share/web/templates/__jifty/admin/model/dhandler:9
+msgid "Manage $object_type records"
+msgstr ""
+
+#: share/web/templates/__jifty/admin/model/dhandler:11
+msgid "Manage records:"
+msgstr ""
 
 #: share/web/templates/__jifty/error/mason_internal_error:1
 msgid "Mason error"
@@ -221,7 +237,7 @@ msgstr "没有字段包含"
 msgid "No items found"
 msgstr ""
 
-#: lib/Jifty/Web.pm:297
+#: lib/Jifty/Web.pm:299
 msgid "No request to handle"
 msgstr "没有可处理的要求"
 
@@ -274,19 +290,19 @@ msgstr "系统错误"
 msgid "Table of Contents"
 msgstr "目录"
 
-#: lib/Jifty/Action.pm:873
+#: lib/Jifty/Action.pm:876
 msgid "That doesn't look like a correct value"
 msgstr "字段格式错误."
 
-#: lib/Jifty/Action/Record.pm:247
+#: lib/Jifty/Action/Record.pm:248
 msgid "That doesn't look right, but I don't know why"
 msgstr "字段内容错误."
 
-#: lib/Jifty/Action/Record.pm:179
+#: lib/Jifty/Action/Record.pm:180
 msgid "The passwords you typed didn't match each other"
 msgstr "两组口令不符合."
 
-#: lib/Jifty/Web.pm:360
+#: lib/Jifty/Web.pm:362
 msgid "There was an error completing the request.  Please try again later."
 msgstr "系统执行错误, 请稍候再试."
 
@@ -318,7 +334,7 @@ msgstr "欢迎光临您崭新的 Jifty 应用程序"
 msgid "You got to a page that we don't think exists.  Anyway, the software has logged this error. Sorry about this."
 msgstr "抱歉, 此页面不存在, 系统已留下纪录."
 
-#: lib/Jifty/Action.pm:860
+#: lib/Jifty/Action.pm:863
 msgid "You need to fill in this field"
 msgstr "此字段不能留空."
 

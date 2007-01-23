@@ -94,7 +94,7 @@ msgstr ""
 msgid "(any)"
 msgstr ""
 
-#: lib/Jifty/Web/Form/Field.pm:521
+#: lib/Jifty/Web/Form/Field.pm:549
 msgid "@{[$self->current_value]}"
 msgstr ""
 
@@ -118,7 +118,7 @@ msgstr ""
 msgid "Any field contains"
 msgstr ""
 
-#: share/web/templates/__jifty/admin/action/dhandler:25 share/web/templates/__jifty/admin/model/dhandler:20
+#: share/web/templates/__jifty/admin/action/dhandler:25 share/web/templates/__jifty/admin/model/dhandler:21
 msgid "Back to the admin console"
 msgstr ""
 
@@ -168,6 +168,10 @@ msgstr ""
 msgid "Deleted"
 msgstr ""
 
+#: share/web/templates/__jifty/admin/index.html:28 share/web/templates/__jifty/admin/model/dhandler:20
+msgid "Done?"
+msgstr ""
+
 #: share/web/templates/__jifty/admin/fragments/list/view:40
 msgid "Edit"
 msgstr ""
@@ -186,6 +190,10 @@ msgstr ""
 msgid "Hiya, %1."
 msgstr ""
 
+#: share/web/templates/__jifty/admin/index.html:1
+msgid "Jifty Administrative Console"
+msgstr ""
+
 #: share/web/templates/__jifty/online_docs/toc.html:6
 msgid "Jifty Developer Documentation Online"
 msgstr ""
@@ -196,6 +204,14 @@ msgstr ""
 
 #: share/web/templates/_elements/wrapper:18
 msgid "Loading..."
+msgstr ""
+
+#: share/web/templates/__jifty/admin/model/dhandler:9
+msgid "Manage $object_type records"
+msgstr ""
+
+#: share/web/templates/__jifty/admin/model/dhandler:11
+msgid "Manage records:"
 msgstr ""
 
 #: share/web/templates/__jifty/error/mason_internal_error:1
@@ -218,7 +234,7 @@ msgstr ""
 msgid "No items found"
 msgstr ""
 
-#: lib/Jifty/Web.pm:297
+#: lib/Jifty/Web.pm:299
 msgid "No request to handle"
 msgstr ""
 
@@ -267,19 +283,19 @@ msgstr ""
 msgid "Table of Contents"
 msgstr ""
 
-#: lib/Jifty/Action.pm:873
+#: lib/Jifty/Action.pm:876
 msgid "That doesn't look like a correct value"
 msgstr ""
 
-#: lib/Jifty/Action/Record.pm:247
+#: lib/Jifty/Action/Record.pm:248
 msgid "That doesn't look right, but I don't know why"
 msgstr ""
 
-#: lib/Jifty/Action/Record.pm:179
+#: lib/Jifty/Action/Record.pm:180
 msgid "The passwords you typed didn't match each other"
 msgstr ""
 
-#: lib/Jifty/Web.pm:360
+#: lib/Jifty/Web.pm:362
 msgid "There was an error completing the request.  Please try again later."
 msgstr ""
 
@@ -311,7 +327,7 @@ msgstr ""
 msgid "You got to a page that we don't think exists.  Anyway, the software has logged this error. Sorry about this."
 msgstr ""
 
-#: lib/Jifty/Action.pm:860
+#: lib/Jifty/Action.pm:863
 msgid "You need to fill in this field"
 msgstr ""
 
