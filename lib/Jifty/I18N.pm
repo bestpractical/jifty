@@ -7,7 +7,6 @@ use Locale::Maketext::Lexicon ();
 use Email::MIME::ContentType;
 use Encode::Guess qw(iso-8859-1);
 use File::ShareDir ':ALL';
-#use Smart::Comments;
 
 =head1 NAME
 
@@ -18,7 +17,7 @@ Jifty::I18N - Internationalization framework for Jifty
 =head2 C<_>
 
 This module exports the C<loc> method, which it inherits from
-L<Locale::Maketext>. Jifty aliases this method to C<_()> for 
+L<Locale::Maketext::Simple>. Jifty aliases this method to C<_()> for 
 your convenience.
 
 =cut
@@ -31,7 +30,6 @@ the wider world.
 
 =cut
 
-our ($LocaleHandle, $Lang);
 
 sub new {
     my $class = shift;
@@ -62,11 +60,10 @@ sub new {
 
     # Allow hard-coded languages in the config file
     my $lang = Jifty->config->framework('L10N')->{'Lang'};
-    $Lang = [defined $lang ? $lang : ()] unless ref($lang) eq 'ARRAY';
+    $lang = [defined $lang ? $lang : ()] unless ref($lang) eq 'ARRAY';
 
-    $class->update;
+    my $lh         = $class->get_handle(@$lang);
     my $loc_method = sub {
-        ### ref class: ref($LocaleHandle)
         # Retain compatibility with people using "-e _" etc.
         return \*_ unless @_;
 
@@ -74,16 +71,14 @@ sub new {
         no warnings 'uninitialized';
         return $_[0] unless (length $_[0]);
 
+        local $@;
         # Force stringification to stop Locale::Maketext from choking on
         # things like DateTime objects.
         my @stringified_args = map {"$_"} @_;
-        
-        local $@;
-        my $result = eval { $LocaleHandle->maketext(@stringified_args) };
+        my $result = eval { $lh->maketext(@stringified_args) };
         if ($@) {
             # Sometimes Locale::Maketext fails to localize a string and throws
             # an exception instead.  In that case, we just return the input.
-            ### got error: $@
             return join(' ', @stringified_args);
         }
         return $result;
@@ -106,7 +101,6 @@ are modified on disk.
 
 my $last_modified = '';
 sub refresh {
-    my $class = shift;
     my $modified = join(
         ',',
         sort map { $_ => -M $_ } map { glob("$_/*.po") } (
@@ -115,23 +109,12 @@ sub refresh {
         )
     );
     if ($modified ne $last_modified) {
-        $class->new;
+        Jifty::I18N->new;
         $last_modified = $modified;
-    } else {
-        $class->update;
     }
 }
 
-=head2 update
 
-Used by L<Jifty::Handler> to update the I18N handle per HTTP request.
-
-=cut
-
-sub update {
-    ### updating the Locale Handle...
-    $LocaleHandle = $_[0]->get_handle(@$Lang);
-}
 
 =head2 promote_encoding STRING [CONTENT-TYPE]
 

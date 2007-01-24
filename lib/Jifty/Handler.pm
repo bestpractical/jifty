@@ -180,9 +180,6 @@ sub handle_request {
     if ( Jifty->config->framework('DevelMode') ) {
         Module::Refresh->refresh;
         Jifty::I18N->refresh;
-    } else {
-        # We need to update I18N's locale handle per request:
-        Jifty::I18N->update;
     }
 
     $self->cgi( $args{cgi} );
