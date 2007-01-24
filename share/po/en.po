@@ -207,7 +207,8 @@ msgid "Loading..."
 msgstr ""
 
 #: share/web/templates/__jifty/admin/model/dhandler:9
-msgid "Manage $object_type records"
+#. ($object_type)
+msgid "Manage %1 records"
 msgstr ""
 
 #: share/web/templates/__jifty/admin/model/dhandler:11

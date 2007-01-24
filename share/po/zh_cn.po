@@ -195,7 +195,7 @@ msgstr "您好，%1。"
 
 #: share/web/templates/__jifty/admin/index.html:1
 msgid "Jifty Administrative Console"
-msgstr "Jifty 管理控制台"
+msgstr "Jifty 管理界面"
 
 #: share/web/templates/__jifty/online_docs/toc.html:6
 msgid "Jifty Developer Documentation Online"
@@ -210,8 +210,9 @@ msgid "Loading..."
 msgstr "正在加载..."
 
 #: share/web/templates/__jifty/admin/model/dhandler:9
-msgid "Manage $object_type records"
-msgstr "管理 $object_type 中的记录"
+#. ($object_type)
+msgid "Manage %1 records"
+msgstr "管理 %1 记录"
 
 #: share/web/templates/__jifty/admin/model/dhandler:11
 msgid "Manage records:"
