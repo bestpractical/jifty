@@ -12,7 +12,7 @@ msgstr ""
 "Last-Translator: AGOSTINI Yves <agostini@univ-metz.fr>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=ISO8859-15\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 #: lib/Jifty/Action/Record/Search.pm:125
