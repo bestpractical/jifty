@@ -71,7 +71,8 @@ sub new {
         return \*_ unless @_;
 
         # When $_[0] is undef, return undef.  When it is '', return ''.
-        return $_[0] if !defined $_[0] or $_[0] eq '';
+        no warnings 'uninitialized';
+        return $_[0] unless (length $_[0]);
 
         # Force stringification to stop Locale::Maketext from choking on
         # things like DateTime objects.
