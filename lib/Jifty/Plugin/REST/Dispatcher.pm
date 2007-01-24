@@ -331,7 +331,13 @@ sub show_item_field {
     $rec->load_by_cols( $column => $key );
     $rec->id          or abort(404);
     $rec->can($field) or abort(404);
-    outs( [ 'model', $model, $column, $key, $field ], $rec->$field());
+
+    abort(404) if not scalar grep { $_->name eq $field } $rec->columns;
+
+    # Force stringification
+    my $value = "@{[$rec->$field()]}";
+
+    outs( [ 'model', $model, $column, $key, $field ], $value );
 }
 
 =head2 show_item $model, $column, $key
