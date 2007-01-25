@@ -37,6 +37,12 @@ on POST   '/=/action/*'         => \&run_action;
 
 on GET    '/=/help'             => \&show_help;
 
+=head2 show_help
+
+Shows basic help about resources and formats available via this RESTian interface.
+
+=cut
+
 sub show_help {
     my $apache = Jifty->handler->apache;
 
