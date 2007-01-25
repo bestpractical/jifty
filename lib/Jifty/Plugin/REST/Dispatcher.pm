@@ -114,7 +114,14 @@ sub outs {
     else {
         $apache->header_out('Content-Type' => 'text/html; charset=UTF-8');
         $apache->send_http_header;
-        print render_as_html($prefix, $url, @_);
+        
+        # Special case showing particular actions to show an HTML form
+        if ( $prefix->[0] eq 'action' and scalar @$prefix == 2 ) {
+            show_action_form($1);
+        }
+        else {
+            print render_as_html($prefix, $url, @_);
+        }
     }
 
     last_rule;
@@ -430,19 +437,19 @@ sub list_action_params {
         }
     }
 
-    outs( undef, \%args );
+    outs( ['action', $class], \%args );
 }
 
-=head2 show_action_form
+=head2 show_action_form $ACTION_CLASS
 
-Takes a single parameter, $action, supplied by the dispatcher.
+Takes a single parameter, the class of an action.
 
 Shows the user an HTML form of the action's parameters to run that action.
 
 =cut
 
 sub show_action_form {
-    my ($action) = action($1) or abort(404);
+    my ($action) = action(shift) or abort(404);
     Jifty::Util->require($action) or abort(404);
     $action = $action->new or abort(404);
 
