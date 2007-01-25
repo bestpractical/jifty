@@ -31,7 +31,6 @@ on GET    '/=/model'         => \&list_models;
 on PUT    '/=/model/*/*/*' => \&replace_item;
 on DELETE '/=/model/*/*/*' => \&delete_item;
 
-on GET    '/=/action/form/*'    => \&show_action_form;
 on GET    '/=/action/*'         => \&list_action_params;
 on GET    '/=/action'           => \&list_actions;
 on POST   '/=/action/*'         => \&run_action;
@@ -271,7 +270,7 @@ Sends the user a list of models in this application, with the names transformed 
 =cut
 
 sub list_models {
-    list(['model'], map {s/::/./g; $_ } Jifty->class_loader->models);
+    list(['model'], map { s/::/./g; $_ } Jifty->class_loader->models);
 }
 
 our @column_attrs = 
