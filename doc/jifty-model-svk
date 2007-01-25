@@ -1,3 +1,53 @@
+=head1 name
+
+Jifty SVK Model docs
+
+=head1 SUMMARY
+
+
+
+=head1 IMPLEMENTATION
+
+=head2 Reading and writing from the data store
+
+- Upon each mount, read everything, expiry-keyed by revnum
+    - Build in-memory index for common accesses
+    - Encourage ->begin and ->commit to take advantage of svk txns
+    - Otherwise it's autocommit
+        - svn:author is $ApplicationClass-$ApplicationUser
+
+=head2 Implementation plan
+
+=head3 Functionality
+
+=over
+
+=item  create objects
+
+=item  read objects
+
+=item  find objects
+
+=item  update objects
+
+=item  delete objects
+
+=back
+
+
+=head3 API
+
+- First step is a memory-only, svn-compatible layout backend store
+    - Composed of alternate implementation of APIs of:
+        - Jifty::Record
+        - Jifty::Collection
+
+
+
+
+
+=head2 Data storage format (In SVN)
+
 - Subversion based object store, using headless YAML::Syck for now
     - Each object is a /UUID/ directory
         - Optionally encoded as /U/UUID/ or /U/UU/UUID/ etc
@@ -19,16 +69,9 @@
         - J::M::T and J::M::C (recursively defined) are always present in any data store
         - Consequently, jifty model --create must do a uuidgen when backending SVN.
 
-- Upon each mount, read everything, expiry-keyed by revnum
-    - Build in-memory index for common accesses
-    - Encourage ->begin and ->commit to take advantage of svk txns
-    - Otherwise it's autocommit
-        - svn:author is $ApplicationClass-$ApplicationUser
 
-- First step is a memory-only, svn-compatible layout backend store
-    - Composed of alternate implementation of APIs of:
-        - Jifty::Record
-        - Jifty::Collection
+=head3 Runtime storage format (in memory)
+
     - In-memory structure looks like this:
         {$type-uuid}
             [objects-sorted-by-timestamp]
@@ -42,6 +85,18 @@
     - Column/schema info is encoded in the store itself as {$type-uuid-of-Jifty::Model::Type}{*}
         - Introspect/modifiable as any regular model
 
+=head2 Limitations
+
+
+=head3 Runtime Typecasting
+
 my $uuid = $typed_record->id;   # concat of time and uuid
 # ...somebody retypes it and stores it...
 $typed_record->load_by_id($uuid); # oops
+
+=head3 Performance
+
+=head3 Search
+
+=head3 Scalability
+
