@@ -22,18 +22,61 @@ before POST qr{^ (/=/ .*) ! (DELETE|PUT|GET|POST|OPTIONS|HEAD|TRACE|CONNECT) $}x
     dispatch $1;
 };
 
-on GET    '/=/model/*/*/*/*' => \&show_item_field;
-on GET    '/=/model/*/*/*'   => \&show_item;
-on GET    '/=/model/*/*'     => \&list_model_items;
-on GET    '/=/model/*'       => \&list_model_columns;
-on GET    '/=/model'         => \&list_models;
+on GET    '/=/model/*/*/*/*'    => \&show_item_field;
+on GET    '/=/model/*/*/*'      => \&show_item;
+on GET    '/=/model/*/*'        => \&list_model_items;
+on GET    '/=/model/*'          => \&list_model_columns;
+on GET    '/=/model'            => \&list_models;
 
-on PUT    '/=/model/*/*/*' => \&replace_item;
-on DELETE '/=/model/*/*/*' => \&delete_item;
+on PUT    '/=/model/*/*/*'      => \&replace_item;
+on DELETE '/=/model/*/*/*'      => \&delete_item;
 
 on GET    '/=/action/*'         => \&list_action_params;
 on GET    '/=/action'           => \&list_actions;
 on POST   '/=/action/*'         => \&run_action;
+
+on GET    '/=/help'             => \&show_help;
+
+sub show_help {
+    my $apache = Jifty->handler->apache;
+
+    $apache->header_out('Content-Type' => 'text/plain; charset=UTF-8');
+    $apache->send_http_header;
+   
+    print qq{
+Accessing resources:
+
+on GET    /=/model                                  list models
+on GET    /=/model/<model>                          list model columns
+on GET    /=/model/<model>/<column>                 list model items
+on GET    /=/model/<model>/<column>/<key>           show item
+on GET    /=/model/<model>/<column>/<key>/<field>   show item field
+
+on PUT    /=/model/<model>/<column>/<key>           replace item -- UNIMPLEMENTED!
+on DELETE /=/model/<model>/<column>/<key>           delete item -- UNIMPLEMENTED!
+
+on GET    /=/action                                 list actions
+on GET    /=/action/<action>                        list action params
+on POST   /=/action/<action>                        run action
+
+Note that the PUT and DELETE methods on models are essentially available through
+Update<Model> and Delete<Model> actions.
+
+
+Resources are available in a variety of formats:
+
+    JSON, JS, YAML, XML, Perl, and HTML
+
+and may be requested in such formats by sending an appropriate HTTP Accept: header
+or appending one of the extensions to any resource:
+
+    .json, .js, .yaml, .xml, .pl
+
+HTML is output only if the Accept: header or an extension does not request a
+specific format.
+    };
+    last_rule;
+}
 
 
 =head2 stringify LIST
@@ -100,7 +143,7 @@ sub outs {
         $apache->send_http_header;
         print 'var $_ = ', Jifty::JSON::objToJson( @_, { singlequote => 1 } );
     }
-    elsif ($accept =~ /perl/i) {
+    elsif ($accept =~ qr{^(?:application/x-)?(?:perl|pl)$}i) {
         $apache->header_out('Content-Type' => 'application/x-perl; charset=UTF-8');
         $apache->send_http_header;
         print Data::Dumper::Dumper(@_);
