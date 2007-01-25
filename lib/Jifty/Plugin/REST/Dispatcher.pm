@@ -46,7 +46,7 @@ magical.
 
 sub stringify {
     no warnings 'uninitialized';
-    my @r = map { '' . $_ } @_;
+    my @r = map { defined $_ ? '' . $_ : undef } @_;
     return wantarray ? @r : pop @r;
 }
 
