@@ -1,0 +1,47 @@
+- Subversion based object store, using headless YAML::Syck for now
+    - Each object is a /UUID/ directory
+        - Optionally encoded as /U/UUID/ or /U/UU/UUID/ etc
+    - Each field is a /UUID/field_name file
+        - If it has a jifty:class then it's going to be blessed into that
+    - Type the object is encoded as the dirprop jifty:table
+        - It's blessed into the "class" name defined in the jifty-table repository
+    - Time of creation object is encoded as the dirprop jifty:created
+        - A simple floating number of Time::HiRes::time()
+    - The jifty:table themselves are but UUIDs of table-objects
+        - Also stored in the data store
+        - They are of the builtin table "Jifty::Model::Table"
+            - "class"   : [ "Perl::Land::Class" ]   # Record Class
+        - They are of the builtin table "Jifty::Model::Column"
+            - "table"   : the Table it's associated of
+            - "name"    : field name
+            - "type"    : jifty type-tag
+            - ...other column info...
+        - J::M::T and J::M::C (recursively defined) are always present in any data store
+        - Consequently, jifty model --create must do a uuidgen when backending SVN.
+
+- Upon each mount, read everything, expiry-keyed by revnum
+    - Build in-memory index for common accesses
+    - Encourage ->begin and ->commit to take advantage of svk txns
+    - Otherwise it's autocommit
+        - svn:author is $ApplicationClass-$ApplicationUser
+
+- First step is a memory-only, svn-compatible layout backend store
+    - Composed of alternate implementation of APIs of:
+        - Jifty::Record
+        - Jifty::Collection
+    - In-memory structure looks like this:
+        {$type-uuid}
+            [objects-sorted-by-timestamp]
+                - inside-out objects comprised of a single UUID as payload
+        {$object-uuid}
+            - real stuff, blessed hashes of
+                field       => value-or-object
+                '.'         => UUID
+                '.created'  => timestamp
+                '.table'    => table name
+    - Column/schema info is encoded in the store itself as {$type-uuid-of-Jifty::Model::Type}{*}
+        - Introspect/modifiable as any regular model
+
+my $uuid = $typed_record->id;   # concat of time and uuid
+# ...somebody retypes it and stores it...
+$typed_record->load_by_id($uuid); # oops
