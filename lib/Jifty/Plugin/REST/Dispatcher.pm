@@ -12,7 +12,7 @@ use Jifty::JSON ();
 use Data::Dumper ();
 use XML::Simple;
 
-before qr{^ (/=/ .*) \. (js|json|yml|yaml|perl|pl) $}x => run {
+before qr{^ (/=/ .*) \. (js|json|yml|yaml|perl|pl|xml) $}x => run {
     $ENV{HTTP_ACCEPT} = $2;
     dispatch $1;
 };
@@ -31,18 +31,31 @@ on GET    '/=/model'         => \&list_models;
 on PUT    '/=/model/*/*/*' => \&replace_item;
 on DELETE '/=/model/*/*/*' => \&delete_item;
 
-on GET    '/=/action/*'    => \&list_action_params;
-on GET    '/=/action'      => \&list_actions;
-on POST   '/=/action/*'    => \&run_action;
+on GET    '/=/action/form/*'    => \&show_action_form;
+on GET    '/=/action/*'         => \&list_action_params;
+on GET    '/=/action'           => \&list_actions;
+on POST   '/=/action/*'         => \&run_action;
 
+
+=head2 stringify LIST
+
+Takes a list of values and forces them into strings.  Right now all it does
+is concatenate them to an empty string, but future versions might be more
+magical.
+
+=cut
+
+sub stringify {
+    no warnings 'uninitialized';
+    my @r = map { '' . $_ } @_;
+    return wantarray ? @r : pop @r;
+}
 
 =head2 list PREFIX items
 
 Takes a URL prefix and a set of items to render. passes them on.
 
 =cut
-
-
 
 sub list {
     my $prefix = shift;
@@ -107,8 +120,9 @@ sub outs {
     last_rule;
 }
 
-our $xml_config = { SuppressEmpty => '',
-                    NoAttr => 1 };
+our $xml_config = { SuppressEmpty   => '',
+                    NoAttr          => 1,
+                    RootName        => 'data' };
 
 =head2 render_as_xml DATASTRUCTURE
 
@@ -125,7 +139,7 @@ sub render_as_xml {
     elsif (ref($content) eq 'HASH') {
         return XMLout($content, %$xml_config);
     } else {
-        return XMLout({$content}, %$xml_config)
+        return XMLout({value => $content}, %$xml_config)
     }
 }
 
@@ -254,22 +268,18 @@ sub list_models {
 }
 
 our @column_attrs = 
-qw(    name
+qw( name
     type
     default
-    validator
     readable writable
     length
     mandatory
-    virtual
     distinct
     sort_order
-    refers_to by
+    refers_to
     alias_for_column
     aliased_as
-    since until
-
-    label hints render_as
+    label hints
     valid_values
 );
 
@@ -285,14 +295,16 @@ sub list_model_columns {
     my ($model) = model($1);
 
     my %cols;
-    map {
-            my $col = $_;
-            $cols{$col->name} = { map { $_ => $col->$_() } @column_attrs} ;
-    } $model->new->columns;
+    for my $col ( $model->new->columns ) {
+        $cols{ $col->name } = { };
+        for ( @column_attrs ) {
+            my $val = $col->$_();
+            $cols{ $col->name }->{ $_ } = $val
+                if defined $val and length $val;
+        }
+    }
 
-    outs(
-        [ 'model', $model ], \%cols
-    );
+    outs( [ 'model', $model ], \%cols );
 }
 
 =head2 list_model_items MODELCLASS COLUMNNAME
@@ -303,16 +315,17 @@ Returns a list of items in MODELCLASS sorted by COLUMNNAME, with only COLUMNAME 
 
 
 sub list_model_items {
-
     # Normalize model name - fun!
     my ( $model, $column ) = ( model($1), $2 );
     my $col = $model->new->collection_class->new;
     $col->unlimit;
-    $col->columns($column);
+
+    # If we don't load the PK, we won't get data
+    $col->columns("id", $column);
     $col->order_by( column => $column );
 
     list( [ 'model', $model, $column ],
-        map { $_->$column() } @{ $col->items_array_ref || [] } );
+        map { stringify($_->$column()) } @{ $col->items_array_ref || [] } );
 }
 
 
@@ -320,8 +333,6 @@ sub list_model_items {
 
 Loads up a model of type C<$model> which has a column C<$column> with a value C<$key>. Returns the value of C<$field> for that object. 
 Returns 404 if it doesn't exist.
-
-
 
 =cut
 
@@ -332,12 +343,10 @@ sub show_item_field {
     $rec->id          or abort(404);
     $rec->can($field) or abort(404);
 
+    # Check that the field is actually a column (and not some other method)
     abort(404) if not scalar grep { $_->name eq $field } $rec->columns;
 
-    # Force stringification
-    my $value = "@{[$rec->$field()]}";
-
-    outs( [ 'model', $model, $column, $key, $field ], $value );
+    outs( [ 'model', $model, $column, $key, $field ], stringify($rec->$field()) );
 }
 
 =head2 show_item $model, $column, $key
@@ -353,7 +362,7 @@ sub show_item {
     my $rec = $model->new;
     $rec->load_by_cols( $column => $key );
     $rec->id or abort(404);
-    outs( ['model', $model, $column, $key],  { map {$_ => $rec->$_()} map {$_->name} $rec->columns});
+    outs( ['model', $model, $column, $key],  { map {$_ => stringify($rec->$_())} map {$_->name} $rec->columns});
 }
 
 
@@ -391,11 +400,48 @@ sub list_actions {
 
 Takes a single parameter, $action, supplied by the dispatcher.
 
-Shows the user all possible parameters to the action, currently in the form of a form to run that action.
+Shows the user all possible parameters to the action.
 
 =cut
 
+our @param_attrs = qw(
+    name
+    type
+    default_value
+    label
+    hints
+    mandatory
+    length
+);
+
 sub list_action_params {
+    my ($class) = action($1) or abort(404);
+    Jifty::Util->require($class) or abort(404);
+    my $action = $class->new or abort(404);
+
+    my $arguments = $action->arguments;
+    my %args;
+    for my $arg ( keys %$arguments ) {
+        $args{ $arg } = { };
+        for ( @param_attrs ) {
+            my $val = $arguments->{ $arg }{ $_ };
+            $args{ $arg }->{ $_ } = $val
+                if defined $val and length $val;
+        }
+    }
+
+    outs( undef, \%args );
+}
+
+=head2 show_action_form
+
+Takes a single parameter, $action, supplied by the dispatcher.
+
+Shows the user an HTML form of the action's parameters to run that action.
+
+=cut
+
+sub show_action_form {
     my ($action) = action($1) or abort(404);
     Jifty::Util->require($action) or abort(404);
     $action = $action->new or abort(404);
@@ -441,7 +487,7 @@ sub run_action {
     Jifty::Util->require($action_name) or abort(404);
     my $action = $action_name->new or abort(404);
 
-    Jifty->api->is_allowed( $action ) or abort(403);
+    Jifty->api->is_allowed( $action_name ) or abort(403);
 
     my $args = Jifty->web->request->arguments;
     delete $args->{''};
