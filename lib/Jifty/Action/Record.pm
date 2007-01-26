@@ -303,7 +303,7 @@ sub arguments {
             }
 
             # If we're hand-coding a render_as, hints or label, let's use it.
-            for (qw(render_as label hints length mandatory sort_order)) {
+            for (qw(render_as label hints max_length mandatory sort_order)) {
 
                 if ( defined (my $val = $column->$_) ) {
                     $info->{$_} = $val;

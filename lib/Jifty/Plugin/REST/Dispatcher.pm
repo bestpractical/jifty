@@ -327,7 +327,7 @@ qw( name
     type
     default
     readable writable
-    length
+    max_length
     mandatory
     distinct
     sort_order
