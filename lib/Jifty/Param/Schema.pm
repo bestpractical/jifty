@@ -88,7 +88,6 @@ use Object::Declare (
         valid       => 'valid_values',
         render      => 'render_as',
         order       => 'sort_order',
-        max_length  => 'length',
     },
     copula  => {
         is      => '',

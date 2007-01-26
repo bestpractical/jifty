@@ -13,7 +13,7 @@ render_as
 label
 hints
 placeholder
-length
+max_length
 mandatory
 
 =end properties
@@ -104,8 +104,8 @@ C<new>.  Subclasses should extend this list.
 
 =cut
 
-sub accessors { shift->SUPER::accessors(), qw(name label input_name type sticky sticky_value default_value action mandatory ajax_validates ajax_canonicalizes autocompleter preamble hints placeholder focus render_mode length _element_id disable_autocomplete); }
-__PACKAGE__->mk_accessors(qw(name _label _input_name type sticky sticky_value default_value _action mandatory ajax_validates ajax_canonicalizes autocompleter preamble hints placeholder focus render_mode length _element_id disable_autocomplete));
+sub accessors { shift->SUPER::accessors(), qw(name label input_name type sticky sticky_value default_value action mandatory ajax_validates ajax_canonicalizes autocompleter preamble hints placeholder focus render_mode max_length _element_id disable_autocomplete); }
+__PACKAGE__->mk_accessors(qw(name _label _input_name type sticky sticky_value default_value _action mandatory ajax_validates ajax_canonicalizes autocompleter preamble hints placeholder focus render_mode max_length _element_id disable_autocomplete));
 
 =head2 name [VALUE]
 
@@ -489,7 +489,7 @@ sub render_widget {
     $field .= qq! id="@{[ $self->element_id ]}"!;
     $field .= qq! value="@{[Jifty->web->escape($self->current_value)]}"! if defined $self->current_value;
     $field .= $self->_widget_class; 
-    $field .= qq! size="@{[ $self->length() ]}" maxlength="@{[ $self->length() ]}"! if ($self->length());
+    $field .= qq! size="@{[ $self->max_length() ]}" maxlength="@{[ $self->length() ]}"! if ($self->max_length());
     $field .= qq! autocomplete="off"! if defined $self->disable_autocomplete;
     $field .= " " .$self->other_widget_properties;
     $field .= qq!  />\n!;
@@ -710,5 +710,14 @@ qq!<span class="canonicalization_note @{[$self->classes]}" id="@{[$self->action-
     );
     return '';
 }
+
+
+# Deprecated API
+sub length {
+    my $self = shift;
+    Carp::carp("->length is deprecated; use ->max_length instead");
+    $self->max_length(@_);
+}
+
 
 1;
