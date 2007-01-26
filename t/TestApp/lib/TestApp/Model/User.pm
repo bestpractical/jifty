@@ -1,10 +1,13 @@
-package TestApp::Model::User::Schema;
+package TestApp::Model::User;
+use warnings;
+use strict;
+use base qw/TestApp::Record/;
 use Jifty::DBI::Schema;
 use Scalar::Defer;
 
 # Your column definitions go here.  See L<Jifty::DBI::Schema> for
 # documentation about how to write column definitions.
-
+use Jifty::Record schema  {
 column 'name' =>
   type is 'text',
   is mandatory;
@@ -24,10 +27,8 @@ column 'created_on' =>
   is immutable,
   default is defer { DateTime->now },
   filters are 'Jifty::DBI::Filter::DateTime';
+};
 
-
-package TestApp::Model::User;
-use base qw/TestApp::Record/;
 
 # Your model-specific methods go here.
 sub current_user_can {

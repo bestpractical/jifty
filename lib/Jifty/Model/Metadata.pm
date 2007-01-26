@@ -19,13 +19,15 @@ as versions of Jifty itself, for instance.
 
 =cut
 
-package Jifty::Model::Metadata::Schema;
+package Jifty::Model::Metadata;
+
 use Jifty::DBI::Schema;
+use Jifty::Record schema {
 
 column data_key => type is 'text';
 column value    => type is 'text';
+};
 
-package Jifty::Model::Metadata;
 use version;
 
 use base qw( Jifty::Record );
