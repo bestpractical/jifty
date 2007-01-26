@@ -1,6 +1,8 @@
-package Jifty::Plugin::Login::Model::User::Schema;
+package Jifty::Plugin::Login::Model::User;
+use base qw/Jifty::Record Jifty::Plugin::Login/;
 use Jifty::DBI::Schema;
 
+use Jifty::Record schema {
 column
   name => type is 'text',
   label is 'Name',
@@ -27,9 +29,8 @@ column
 column
   auth_token => type is 'text',
   render_as 'Unrendered';
+};
 
-package Jifty::Plugin::Login::Model::User;
-use base qw/Jifty::Record Jifty::Plugin::Login/;
 
 sub create {
     my $self  = shift;
