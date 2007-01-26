@@ -158,6 +158,8 @@ sub mason_config {
 =cut
 
 sub templatedeclare_config {
+    
+    use Jifty::View::Declare::CoreTemplates;
     my %config = (
         roots => [ 'Jifty::View::Declare::CoreTemplates' ],
         %{ Jifty->config->framework('Web')->{'TemplateDeclareConfig'} ||{}},
