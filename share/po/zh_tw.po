@@ -93,7 +93,7 @@ msgstr "%1 至"
 msgid "(any)"
 msgstr "(不限)"
 
-#: lib/Jifty/Web/Form/Field.pm:521
+#: lib/Jifty/Web/Form/Field.pm:549
 msgid "@{[$self->current_value]}"
 msgstr ""
 
@@ -117,7 +117,7 @@ msgstr "系統無法執行此項操作, 請稍後再試"
 msgid "Any field contains"
 msgstr "任意欄位包含"
 
-#: share/web/templates/__jifty/admin/action/dhandler:25 share/web/templates/__jifty/admin/model/dhandler:20
+#: share/web/templates/__jifty/admin/action/dhandler:25 share/web/templates/__jifty/admin/model/dhandler:21
 msgid "Back to the admin console"
 msgstr "回到管理界面"
 
@@ -171,6 +171,10 @@ msgstr "成功刪除項目."
 msgid "Dismiss"
 msgstr "關閉"
 
+#: share/web/templates/__jifty/admin/index.html:28 share/web/templates/__jifty/admin/model/dhandler:20
+msgid "Done?"
+msgstr "已完成？"
+
 #: share/web/templates/__jifty/admin/fragments/list/view:40
 msgid "Edit"
 msgstr "編輯"
@@ -189,6 +193,10 @@ msgstr "回首頁..."
 msgid "Hiya, %1."
 msgstr "%1 您好."
 
+#: share/web/templates/__jifty/admin/index.html:1
+msgid "Jifty Administrative Console"
+msgstr "Jifty 管理介面"
+
 #: share/web/templates/__jifty/online_docs/toc.html:6
 msgid "Jifty Developer Documentation Online"
 msgstr "Jifty 線上開發文件"
@@ -200,6 +208,15 @@ msgstr "Jifty 線上 POD 文件"
 #: share/web/templates/_elements/wrapper:18
 msgid "Loading..."
 msgstr "請稍候..."
+
+#: share/web/templates/__jifty/admin/model/dhandler:9
+#. ($object_type)
+msgid "Manage %1 records"
+msgstr "管理 %1 記錄"
+
+#: share/web/templates/__jifty/admin/model/dhandler:11
+msgid "Manage records:"
+msgstr "管理記錄："
 
 #: share/web/templates/__jifty/error/mason_internal_error:1
 msgid "Mason error"
@@ -219,9 +236,9 @@ msgstr "沒有欄位包含"
 
 #: share/web/templates/__jifty/admin/fragments/list/list:85
 msgid "No items found"
-msgstr ""
+msgstr "未找到記錄"
 
-#: lib/Jifty/Web.pm:297
+#: lib/Jifty/Web.pm:299
 msgid "No request to handle"
 msgstr "沒有可處理的要求"
 
@@ -274,19 +291,19 @@ msgstr "系統錯誤"
 msgid "Table of Contents"
 msgstr "目錄"
 
-#: lib/Jifty/Action.pm:873
+#: lib/Jifty/Action.pm:876
 msgid "That doesn't look like a correct value"
 msgstr "欄位格式錯誤."
 
-#: lib/Jifty/Action/Record.pm:247
+#: lib/Jifty/Action/Record.pm:248
 msgid "That doesn't look right, but I don't know why"
 msgstr "欄位內容錯誤."
 
-#: lib/Jifty/Action/Record.pm:179
+#: lib/Jifty/Action/Record.pm:180
 msgid "The passwords you typed didn't match each other"
 msgstr "兩組密碼不符合."
 
-#: lib/Jifty/Web.pm:360
+#: lib/Jifty/Web.pm:362
 msgid "There was an error completing the request.  Please try again later."
 msgstr "系統執行錯誤, 請稍候再試."
 
@@ -318,7 +335,7 @@ msgstr "歡迎光臨您嶄新的 Jifty 應用程式"
 msgid "You got to a page that we don't think exists.  Anyway, the software has logged this error. Sorry about this."
 msgstr "抱歉, 此頁面不存在, 系統已留下紀錄."
 
-#: lib/Jifty/Action.pm:860
+#: lib/Jifty/Action.pm:863
 msgid "You need to fill in this field"
 msgstr "此欄位不能留空."
 
@@ -333,8 +350,8 @@ msgstr "您目前尚未登入."
 
 #: share/web/templates/__jifty/admin/fragments/list/header:22
 msgid "asc"
-msgstr ""
+msgstr "昇冪"
 
 #: share/web/templates/__jifty/admin/fragments/list/header:41
 msgid "desc"
-msgstr ""
+msgstr "降冪"

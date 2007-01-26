@@ -12,16 +12,10 @@ Jifty::Util - Things that don't fit anywhere else
 
 =cut
 
-use Jifty;
-use File::Spec;
-use File::Path;
-use File::ShareDir;
-use UNIVERSAL::require;
-use ExtUtils::MakeMaker ();
+use Jifty ();
+use File::Spec ();
 use Cwd ();
-use Config;
 
-# Trivial memoization to ward off evil Cwd calls.
 use vars qw/%ABSOLUTE_PATH $JIFTY_ROOT $SHARE_ROOT $APP_ROOT/;
 
 
@@ -107,6 +101,8 @@ currently only used to store the common Mason components.
 sub share_root {
     my $self = shift;
 
+    
+    Jifty::Util->require('File::ShareDir');
     $SHARE_ROOT ||=  eval { File::Spec->rel2abs( File::ShareDir::module_dir('Jifty') )};
     if (not $SHARE_ROOT or not -d $SHARE_ROOT) {
         # XXX TODO: This is a bloody hack
@@ -141,14 +137,14 @@ sub app_root {
 
     push( @roots, Cwd::cwd() );
 
-    eval { require FindBin };
+    eval { Jifty::Util->require('FindBin') };
     if ( my $err = $@ ) {
-
         #warn $@;
     } else {
         push @roots, $FindBin::Bin;
     }
 
+    Jifty::Util->require('Config');
     for (@roots) {
         my @root = File::Spec->splitdir($_);
         while (@root) {
@@ -161,8 +157,8 @@ sub app_root {
                 # %Config{bin} or %Config{scriptdir} or something like that
                 # for portablility.
                 (-e $try or (($^O =~ /(?:MSWin32|cygwin|os2)/) and MM->maybe_command($try)))
-                and $try ne File::Spec->catdir($Config{bin}, "jifty")
-                and $try ne File::Spec->catdir($Config{scriptdir}, "jifty") )
+                and $try ne File::Spec->catdir($Config::Config{bin}, "jifty")
+                and $try ne File::Spec->catdir($Config::Config{scriptdir}, "jifty") )
             {
                 return $APP_ROOT = File::Spec->catdir(@root);
             }
@@ -207,6 +203,7 @@ sub make_path {
     my $self = shift;
     my $whole_path = shift;
     return 1 if (-d $whole_path);
+    Jifty::Util->require('File::Path');
     File::Path::mkpath([$whole_path]);
 }
 

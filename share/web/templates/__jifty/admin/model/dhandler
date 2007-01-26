@@ -6,7 +6,7 @@ my $records = $collection_class->new();
 $records->unlimit;
 </%init>
 
-<&| /_elements/wrapper, title => _("Manage $object_type records") &>
+<&| /_elements/wrapper, title => _("Manage %1 records", $object_type) &>
 
 <h1><% _('Manage records:') %> <%$object_type%></h1>
 

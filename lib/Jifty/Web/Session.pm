@@ -3,9 +3,9 @@ use strict;
 
 package Jifty::Web::Session;
 use base qw/Jifty::Object/;
-use CGI::Cookie;
-use DateTime;
-
+use CGI::Cookie ();
+use DateTime ();
+ 
 =head1 NAME
 
 Jifty::Web::Session - A Jifty session handler

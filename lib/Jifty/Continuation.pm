@@ -36,7 +36,7 @@ L<Jifty::Dispatcher>.
 
 =cut
 
-use Jifty::Everything;
+
 use Storable 'dclone';
 
 use base qw/Class::Accessor::Fast/;

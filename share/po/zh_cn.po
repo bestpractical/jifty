@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Audrey Tang <audreyt@audreyt.org>\n"
-"Language-Team: Traditional Chinese\n"
+"PO-Revision-Date: 2007-01-23 16:55+08\n"
+"Last-Translator: Agent Zhang <agentzh@gmail.com>\n"
+"Language-Team: Simplified Chinese\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -36,7 +36,7 @@ msgstr "%1 包含"
 #: share/web/templates/__jifty/admin/fragments/list/list:87
 #. ($collection-> count)
 msgid "%1 entries"
-msgstr ""
+msgstr "%1 条记录"
 
 #: lib/Jifty/Action/Record/Search.pm:123
 #. ($label)
@@ -72,7 +72,7 @@ msgstr "%1 小于"
 #. ($path, $line)
 #. ($file, $line)
 msgid "%1 line %2"
-msgstr "%1 第 %2 列"
+msgstr "%1 第 %2 行"
 
 #: share/web/templates/__jifty/halo:119
 #. ($_->[3])
@@ -91,9 +91,9 @@ msgstr "%1 至"
 
 #: lib/Jifty/Action/Record/Search.pm:77
 msgid "(any)"
-msgstr "(不限)"
+msgstr "(任意)"
 
-#: lib/Jifty/Web/Form/Field.pm:521
+#: lib/Jifty/Web/Form/Field.pm:549
 msgid "@{[$self->current_value]}"
 msgstr ""
 
@@ -117,7 +117,7 @@ msgstr "系统无法执行此项操作, 请稍后再试"
 msgid "Any field contains"
 msgstr "任意字段包含"
 
-#: share/web/templates/__jifty/admin/action/dhandler:25 share/web/templates/__jifty/admin/model/dhandler:20
+#: share/web/templates/__jifty/admin/action/dhandler:25 share/web/templates/__jifty/admin/model/dhandler:21
 msgid "Back to the admin console"
 msgstr "回到管理界面"
 
@@ -140,11 +140,11 @@ msgstr "关闭窗口"
 
 #: share/web/templates/__jifty/admin/fragments/list/view:31
 msgid "Confirm delete?"
-msgstr "确定要删除?"
+msgstr "确实要删除吗?"
 
 #: share/web/templates/__jifty/admin/fragments/list/new_item:25
 msgid "Create"
-msgstr "建立"
+msgstr "创建"
 
 #: lib/Jifty/Action/Record/Create.pm:81
 #. (ref($record)
@@ -171,6 +171,10 @@ msgstr "成功删除项目."
 msgid "Dismiss"
 msgstr "关闭"
 
+#: share/web/templates/__jifty/admin/index.html:28 share/web/templates/__jifty/admin/model/dhandler:20
+msgid "Done?"
+msgstr "已完成？"
+
 #: share/web/templates/__jifty/admin/fragments/list/view:40
 msgid "Edit"
 msgstr "编辑"
@@ -182,24 +186,37 @@ msgstr "编辑 %1"
 
 #: share/web/templates/dhandler:7
 msgid "Go back home..."
-msgstr "回首页..."
+msgstr "回到首页..."
 
 #: share/web/templates/_elements/sidebar:5
 #. ($u->$method()
 msgid "Hiya, %1."
-msgstr "%1 您好."
+msgstr "您好，%1。"
+
+#: share/web/templates/__jifty/admin/index.html:1
+msgid "Jifty Administrative Console"
+msgstr "Jifty 管理界面"
 
 #: share/web/templates/__jifty/online_docs/toc.html:6
 msgid "Jifty Developer Documentation Online"
-msgstr "Jifty 线上开发文件"
+msgstr "Jifty 在线开发文档"
 
 #: share/web/templates/__jifty/online_docs/content.html:6
 msgid "Jifty Pod Online"
-msgstr "Jifty 线上 POD 文件"
+msgstr "Jifty 在线 POD 文件"
 
 #: share/web/templates/_elements/wrapper:18
 msgid "Loading..."
-msgstr "请稍候..."
+msgstr "正在加载..."
+
+#: share/web/templates/__jifty/admin/model/dhandler:9
+#. ($object_type)
+msgid "Manage %1 records"
+msgstr "管理 %1 记录"
+
+#: share/web/templates/__jifty/admin/model/dhandler:11
+msgid "Manage records:"
+msgstr "管理记录："
 
 #: share/web/templates/__jifty/error/mason_internal_error:1
 msgid "Mason error"
@@ -219,11 +236,11 @@ msgstr "没有字段包含"
 
 #: share/web/templates/__jifty/admin/fragments/list/list:85
 msgid "No items found"
-msgstr ""
+msgstr "未找到记录"
 
-#: lib/Jifty/Web.pm:297
+#: lib/Jifty/Web.pm:299
 msgid "No request to handle"
-msgstr "没有可处理的要求"
+msgstr "没有可处理的请求"
 
 #: share/web/templates/__jifty/online_docs/index.html:5
 msgid "Online Documentation"
@@ -236,7 +253,7 @@ msgstr "第 %1 页, 共 %2 页"
 
 #: lib/Jifty/Record.pm:240 lib/Jifty/Record.pm:319 lib/Jifty/Record.pm:60
 msgid "Permission denied"
-msgstr "权限不足."
+msgstr "权限不足"
 
 #: share/web/templates/__jifty/admin/fragments/list/list:108
 msgid "Previous Page"
@@ -244,7 +261,7 @@ msgstr "上一页"
 
 #:
 msgid "Record created"
-msgstr "成功建立项目."
+msgstr "成功建立记录."
 
 #: share/web/templates/__jifty/admin/action/dhandler:20
 msgid "Run the action"
@@ -256,15 +273,15 @@ msgstr "SQL 陈述式"
 
 #: share/web/templates/__jifty/admin/fragments/list/update:21
 msgid "Save"
-msgstr "储存"
+msgstr "保存"
 
 #: share/web/templates/__jifty/online_docs/content.html:50
 msgid "Schema"
-msgstr "纲要"
+msgstr "模式"
 
 #: share/web/templates/__jifty/admin/fragments/list/search:18
 msgid "Search"
-msgstr "搜寻"
+msgstr "查找"
 
 #: share/web/templates/dhandler:1
 msgid "Something's not quite right"
@@ -274,19 +291,19 @@ msgstr "系统错误"
 msgid "Table of Contents"
 msgstr "目录"
 
-#: lib/Jifty/Action.pm:873
+#: lib/Jifty/Action.pm:876
 msgid "That doesn't look like a correct value"
 msgstr "字段格式错误."
 
-#: lib/Jifty/Action/Record.pm:247
+#: lib/Jifty/Action/Record.pm:248
 msgid "That doesn't look right, but I don't know why"
 msgstr "字段内容错误."
 
-#: lib/Jifty/Action/Record.pm:179
+#: lib/Jifty/Action/Record.pm:180
 msgid "The passwords you typed didn't match each other"
-msgstr "两组口令不符合."
+msgstr "两组口令不匹配."
 
-#: lib/Jifty/Web.pm:360
+#: lib/Jifty/Web.pm:362
 msgid "There was an error completing the request.  Please try again later."
 msgstr "系统执行错误, 请稍候再试."
 
@@ -296,7 +313,7 @@ msgstr "您可利用此界面来管理数据库的内容. 请点选表格名称,
 
 #: share/web/templates/__jifty/admin/index.html:7
 msgid "To disable this administrative console, add \"AdminMode: 0\" under the \"framework:\" settings in the config file (etc/config.yml)."
-msgstr "如欲停用管理界面, 请在设定档 (etc/config.yml) 的 \"framework:\" 设定内加上 \"AdminMode: 0\" 即可."
+msgstr "如果想停用管理界面, 请在配置文件 (etc/config.yml) 的 \"framework:\" 配置项内加上 \"AdminMode: 0\" 即可."
 
 #: share/web/templates/__jifty/admin/fragments/list/list:72
 msgid "Toggle search"
@@ -304,7 +321,7 @@ msgstr "切换搜寻画面"
 
 #: share/web/templates/__jifty/error/mason_internal_error:6
 msgid "Try again"
-msgstr "再试一下"
+msgstr "重试一下"
 
 #: lib/Jifty/Action/Record/Update.pm:156
 msgid "Updated"
@@ -312,15 +329,15 @@ msgstr "成功更新项目."
 
 #: share/web/templates/index.html:1
 msgid "Welcome to your new Jifty application"
-msgstr "欢迎光临您崭新的 Jifty 应用程序"
+msgstr "欢迎光临您的崭新的 Jifty 应用程序"
 
 #: share/web/templates/dhandler:5
 msgid "You got to a page that we don't think exists.  Anyway, the software has logged this error. Sorry about this."
 msgstr "抱歉, 此页面不存在, 系统已留下纪录."
 
-#: lib/Jifty/Action.pm:860
+#: lib/Jifty/Action.pm:863
 msgid "You need to fill in this field"
-msgstr "此字段不能留空."
+msgstr "此字段非空."
 
 #: share/web/templates/index.html:3
 #. ('http://hdl.loc.gov/loc.pnp/cph.3c13461')
@@ -329,12 +346,12 @@ msgstr "您可不正是想要一匹小马吗? (参见 %1)"
 
 #: share/web/templates/_elements/sidebar:7
 msgid "You're not currently signed in."
-msgstr "您目前尚未登入."
+msgstr "您目前尚未登录."
 
 #: share/web/templates/__jifty/admin/fragments/list/header:22
 msgid "asc"
-msgstr ""
+msgstr "升序"
 
 #: share/web/templates/__jifty/admin/fragments/list/header:41
 msgid "desc"
-msgstr ""
+msgstr "降序"

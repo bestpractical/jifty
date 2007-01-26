@@ -32,6 +32,7 @@ sub _init {
 
 =head2 create PARAMHASH
 
+C<create> can be called as either a class method or an object method.
 
 Takes an array of key-value pairs and inserts a new row into the database representing
 this object.
@@ -51,7 +52,14 @@ Override's L<Jifty::DBI::Record> in these ways:
 =cut 
 
 sub create {
-    my $self    = shift;
+    my $class    = shift;
+    my $self;
+    if (ref($class)) { 
+        ($self,$class) = ($class,undef);
+    } else {
+        $self = $class->new();
+    }
+
     my %attribs = @_;
 
     unless ( $self->check_create_rights(@_) ) {
@@ -73,7 +81,11 @@ sub create {
         my ( $val, $msg ) = $func->($self, $attr);
         unless ($val) {
             $self->log->error("There was a validation error for $key");
-            return ( $val, $msg );
+            if ($class) {
+                return($self);
+            } else {
+                return ( $val, $msg );
+            }
         }
         }
         # remove blank values. We'd rather have nulls
@@ -90,7 +102,11 @@ sub create {
     }
     my ($id, $status) = $msg;
     $self->load_by_cols( id => $id ) if ($id);
-    return wantarray ? ($id, $status) : $id;
+    if ($class) {
+        return $self;
+    } else {
+        return wantarray ? ($id, $status) : $id;
+    }
 }
 
 
@@ -107,13 +123,21 @@ sub id { $_[0]->{'values'}->{'id'} }
 
 =head2 load_or_create
 
-Attempts to load a record with the named parameters passed in.  If it
+C<load_or_create> can be called as either a class method or an object method.
+It attempts to load a record with the named parameters passed in.  If it
 can't do so, it creates a new record.
 
 =cut
 
 sub load_or_create {
-    my $self = shift;
+    my $class = shift;
+    my $self;
+    if (ref($class)) {
+       ($self,$class) = ($class,undef); 
+    } else {
+        $self = $class->new();
+    }
+
     my %args = (@_);
 
     my ( $id, $msg ) = $self->load_by_cols(%args);

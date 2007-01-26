@@ -30,7 +30,7 @@ column key_type => type is 'varchar(32)';
 package Jifty::Model::Session;
 
 use base qw( Jifty::Record );
-use DateTime;
+use DateTime ();
 
 =head2 table
 

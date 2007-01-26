@@ -4,7 +4,7 @@ use strict;
 package Jifty::Script::Action;
 use base qw/App::CLI::Command/;
 
-use Jifty::Everything;
+
 
 =head1 NAME
 
