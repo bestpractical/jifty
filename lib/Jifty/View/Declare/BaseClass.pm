@@ -11,7 +11,6 @@ use Jifty::View::Declare::Helpers;
 our @EXPORT = (
     @Jifty::View::Declare::Helpers::EXPORT,
     @Template::Declare::Tags::EXPORT,
-    qw( page ),
 );
 
 {
@@ -24,16 +23,6 @@ our @EXPORT = (
         $path =~ s{^/}{};
         Jifty::View::Declare::Helpers->can('show')->( $path, @_ );
     }
-}
-
-# template 'foo' => page {{ title is 'Foo' } ... };
-sub page (&) {
-    my $code = shift;
-    sub {
-        Jifty->handler->apache->content_type('text/html; charset=utf-8');
-        show('/_elements/nav');
-        wrapper($code);
-    };
 }
 
 1;
