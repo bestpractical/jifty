@@ -43,8 +43,60 @@ Jifty SVK Model docs
         - Jifty::Collection
 
 
+=head4 Jifty::Record
+
+Methods:
+
+=over
+
+=item create
+
+=item set
+
+=item value (get)
+
+=item delete
+
+=item 
 
 
+
+=back
+
+
+=head4 Jifty::Collection
+
+=over
+
+=item next
+
+=item items_array_ref
+
+=item unlimit
+
+=item search 
+
+This is a new API. It replaces Jifty::DBI::Record's "limit"
+
+
+My $tasks = MyApp::Model::TaskCollection->new();
+
+grep { $_->summary =~ 'foo'} grep { $_->owner 
+
+
+# Tasks with a summary matching 'patch' AND  with patches (computed)
+
+$tasks->with( summary => qr/patch/)->with( sub { $_->has_patches()  } ) 
+
+# Tasks with a summary matching 'patch' or with patches (computed)
+
+$tasks->in( $tasks->with(summary => qr/patch), $tasks->with(sub {$_->has_patches}))
+
+# Tasks with a summary that doesn't match 'patch' with patches
+$tasks->without( summary => qr/patch/)->with( sub { $_->has_patches()  } ) 
+
+
+=back
 
 =head2 Data storage format (In SVN)
 
