@@ -353,7 +353,7 @@ Time for
 ----
  column title =>
     label is 'Title',
-    length is 40,
+    max_length is 40,
     hints is '40 bytes max',
     is mandatory;
 ----
