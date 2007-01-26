@@ -1,9 +1,9 @@
 package Jifty::View::Declare;
-use Jifty::View::Declare::Base ();
+use Jifty::View::Declare::CoreTemplates ();
 
 use strict;
 use warnings;
-use constant BaseClass => 'Jifty::View::Declare::Base';
+use constant BaseClass => 'Jifty::View::Declare::CoreTemplates';
 
 =head1 SYNOPSIS
 

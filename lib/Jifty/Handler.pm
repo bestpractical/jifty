@@ -159,7 +159,7 @@ sub mason_config {
 
 sub templatedeclare_config {
     my %config = (
-        roots => [ 'Jifty::View::Declare::Base' ],
+        roots => [ 'Jifty::View::Declare::CoreTemplates' ],
         %{ Jifty->config->framework('Web')->{'TemplateDeclareConfig'} ||{}},
     );
 
