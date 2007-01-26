@@ -37,7 +37,7 @@ my $args = Foo::Action::Bar->arguments;
 
 my $keys = $args->{keys};
 ok $keys, 'keys okay';
-is $keys->{length}, 30, 'max_length ok';
+is $keys->{max_length}, 30, 'max_length ok';
 is $keys->{label}, 'Search Keys', 'label ok';
 is $keys->{type}, 'text', 'type ok';
 is $keys->{hints}, 'Enter your search keys here!', 'hints okay';
