@@ -1,6 +1,6 @@
 use warnings;
 use strict;
-package Jifty::View::Declare::Templates;
+package Jifty::View::Declare::Helpers;
 
 use base qw/Exporter/;
 use Template::Declare::Tags;

@@ -3,13 +3,13 @@ package Jifty::View::Declare::Base;
 use strict;
 use warnings;
 use vars qw( $r );
-use base qw/Jifty::View::Declare::Templates/;
+use base qw/Jifty::View::Declare::Helpers/;
 use Scalar::Defer;
 use Template::Declare::Tags;
-use Jifty::View::Declare::Templates;
+use Jifty::View::Declare::Helpers;
 
 our @EXPORT = (
-    @Jifty::View::Declare::Templates::EXPORT,
+    @Jifty::View::Declare::Helpers::EXPORT,
     @Template::Declare::Tags::EXPORT,
     qw( page ),
 );
@@ -22,7 +22,7 @@ our @EXPORT = (
 
         my $path = shift;
         $path =~ s{^/}{};
-        Jifty::View::Declare::Templates->can('show')->( $path, @_ );
+        Jifty::View::Declare::Helpers->can('show')->( $path, @_ );
     }
 }
 
