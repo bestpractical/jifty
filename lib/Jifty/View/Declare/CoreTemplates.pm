@@ -8,6 +8,15 @@ use Jifty::View::Declare -base;
 
 use Scalar::Defer;
 
+# template 'foo' => page {{ title is 'Foo' } ... };
+sub page (&) {
+    my $code = shift;
+    sub {
+        Jifty->handler->apache->content_type('text/html; charset=utf-8');
+        show('/_elements/nav');
+        wrapper($code);
+    };
+}
 
 template '_elements/nav' => sub {
     my $top = Jifty->web->navigation;
