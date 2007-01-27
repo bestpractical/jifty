@@ -30,6 +30,7 @@ the wider world.
 
 =cut
 
+my $DynamicLH;
 
 sub new {
     my $class = shift;
@@ -56,13 +57,14 @@ sub new {
         }
     );
 
-    $self->init;
-
     # Allow hard-coded languages in the config file
     my $lang = Jifty->config->framework('L10N')->{'Lang'};
     $lang = [defined $lang ? $lang : ()] unless ref($lang) eq 'ARRAY';
 
-    my $lh         = $class->get_handle(@$lang);
+    my $lh = $class->get_handle(@$lang);
+    $DynamicLH = \$lh unless @$lang; 
+    $self->init;
+
     my $loc_method = sub {
         # Retain compatibility with people using "-e _" etc.
         return \*_ unless @_;
@@ -90,6 +92,17 @@ sub new {
         *_ = $loc_method;
     }
     return $self;
+}
+
+=head2 get_language_handle
+
+Get the lanauge language for this request.
+
+=cut
+
+sub get_language_handle {
+    my $self = shift;
+    $$DynamicLH = $self->get_handle() if $DynamicLH;
 }
 
 =head2 refresh

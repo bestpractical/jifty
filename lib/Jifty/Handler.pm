@@ -182,6 +182,8 @@ sub handle_request {
         Jifty::I18N->refresh;
     }
 
+    Jifty::I18N->get_language_handle;
+
     $self->cgi( $args{cgi} );
     $self->apache( HTML::Mason::FakeApache->new( cgi => $self->cgi ) );
 
