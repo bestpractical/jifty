@@ -3,7 +3,7 @@
 use warnings;
 use strict;
 
-use Test::More tests => 1;
+use Test::More tests => 2;
 
 use DateTime;
 use Jifty::Everything;
@@ -14,7 +14,14 @@ Jifty->new( no_handle => 1 );
 my $lh = Jifty::I18N->new();
 
 
+
 # the localization method used to break DateTime object stringification
 is($dt,_($dt));
+
+# Substitution needs to work, even in the default locale
+
+my $base = "I have %1 concrete mixers";
+
+is(_($base,2), "I have 2 concrete mixers");
 
 
