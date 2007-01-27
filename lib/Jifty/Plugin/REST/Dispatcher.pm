@@ -448,9 +448,9 @@ sub _dispatch_to_action {
     $class =~ s/^[\w\.]+\.//;
 
     $ENV{REQUEST_METHOD} = 'POST';
-    if ( defined $rec->id ) {
-        Jifty->web->request->argument( 'id' => $rec->id );
-    }
+    Jifty->web->request->argument( $column => $key );
+    Jifty->web->request->argument( 'id' => $rec->id )
+        if defined $rec->id;
     
     # CGI.pm doesn't handle form encoded data in PUT requests (in fact,
     # it doesn't really handle PUT requests properly at all), so we have
