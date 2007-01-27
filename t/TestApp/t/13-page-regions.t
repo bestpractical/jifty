@@ -24,7 +24,7 @@ $mech->content_contains("Short $_")
 for my $i (1 .. 5) {
     ok($mech->find_link(text => "Short $i"), "Found link: Short $i");
     $mech->follow_link_ok(text => "Short $i");
-    $mech->content_contains(text => "Long $i");
+    $mech->content_contains("Long $i");
 }
 
 $mech->content_contains("Long $_")
