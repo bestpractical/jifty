@@ -134,19 +134,10 @@ $mech->content_contains('example@email.com');
 $mech->get_ok('/=/action/DoSomething.yml');
 is($mech->status, 200);
 
-TODO: {
-    local $TODO = "Waiting for YAML parameter lists for action";
-    my %args;
-
-    # Eval so this doesn't blow up if get_content doesn't return a hashref
-    eval {
-        %args = %{get_content()};
-    };
-
-    ok($args{email}, "Action has an email parameter");
-    is($args{email}{label}, 'Email', 'email has the correct label');
-    is($args{email}{default}, 'email@example.com', 'email has the correct default');
-}
+my %args = %{get_content()};
+ok($args{email}, "Action has an email parameter");
+is($args{email}{label}, 'Email', 'email has the correct label');
+is($args{email}{default_value}, 'example@email.com', 'email has the correct default');
 
 
 # on POST   '/=/action/*'    => \&run_action;
