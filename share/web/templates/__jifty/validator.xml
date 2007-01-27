@@ -39,7 +39,7 @@ for my $ra ( Jifty->web->request->actions ) {
     $writer->endTag();
     $writer->startTag( "canonicalizeaction", id => $action->register_name );
     for my $arg ( $action->argument_names ) {
-        if ($ra->arguments->{$arg} eq $action->argument_value($arg) ) {
+        if (($ra->arguments->{$arg} || "") eq ($action->argument_value($arg) || "")) {
             # if the value doesn't change, it can be ignored.
             # canonicalizers can change other parts of the action, so we want to send all changes
             $writer->emptyTag( "ignored", name => $action->form_field_name($arg) );
