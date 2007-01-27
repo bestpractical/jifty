@@ -14,6 +14,7 @@ Jifty::Util - Things that don't fit anywhere else
 
 use Jifty ();
 use File::Spec ();
+use ExtUtils::MM;
 use Cwd ();
 
 use vars qw/%ABSOLUTE_PATH $JIFTY_ROOT $SHARE_ROOT $APP_ROOT/;
@@ -156,10 +157,15 @@ sub app_root {
                 # Also, /usr/bin or /usr/local/bin should be taken from
                 # %Config{bin} or %Config{scriptdir} or something like that
                 # for portablility.
+                # Note that to compare files in Win32 we have to ignore the case
                 (-e $try or (($^O =~ /(?:MSWin32|cygwin|os2)/) and MM->maybe_command($try)))
-                and $try ne File::Spec->catdir($Config::Config{bin}, "jifty")
-                and $try ne File::Spec->catdir($Config::Config{scriptdir}, "jifty") )
+                and lc($try) ne lc(File::Spec->catdir($Config::Config{bin}, "jifty"))
+                and lc($try) ne lc(File::Spec->catdir($Config::Config{scriptdir}, "jifty")) )
             {
+                #warn "root: ", File::Spec->catdir(@root);
+                #warn "bin/jifty: ", File::Spec->catdir($Config::Config{bin}, "jifty");
+                #warn "scriptdir/jifty: ", File::Spec->catdir($Config::Config{scriptdir}, "jifty");
+                #warn "try: $try";
                 return $APP_ROOT = File::Spec->catdir(@root);
             }
             pop @root;
