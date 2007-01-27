@@ -26,4 +26,7 @@ See the URL /=/help in your Jifty app for more information about
 how to access the RESTian resources.
 
 =cut
+
+sub template_class { undef }
+
 1;
