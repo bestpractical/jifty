@@ -30,6 +30,7 @@ the wider world.
 
 =cut
 
+my $DynamicLH;
 
 sub new {
     my $class = shift;
@@ -42,6 +43,7 @@ sub new {
         );
 
     foreach my $plugin (Jifty->plugins) {
+        local $@;
         my $dir = eval { module_dir(ref($plugin)); };
         next unless $dir;
         push @import, 'Gettext';
@@ -56,13 +58,14 @@ sub new {
         }
     );
 
-    $self->init;
-
     # Allow hard-coded languages in the config file
     my $lang = Jifty->config->framework('L10N')->{'Lang'};
     $lang = [defined $lang ? $lang : ()] unless ref($lang) eq 'ARRAY';
 
-    my $lh         = $class->get_handle(@$lang);
+    my $lh = $class->get_handle(@$lang);
+    $DynamicLH = \$lh unless @$lang; 
+    $self->init;
+
     my $loc_method = sub {
         # Retain compatibility with people using "-e _" etc.
         return \*_ unless @_;
@@ -90,6 +93,17 @@ sub new {
         *_ = $loc_method;
     }
     return $self;
+}
+
+=head2 get_language_handle
+
+Get the lanauge language for this request.
+
+=cut
+
+sub get_language_handle {
+    my $self = shift;
+    $$DynamicLH = $self->get_handle() if $DynamicLH;
 }
 
 =head2 refresh
@@ -148,6 +162,7 @@ sub promote_encoding {
     } else {
         my $encoding = Encode::Guess->guess($string);
         if(!ref($encoding)) {
+            local $@;
             eval {
                 # Try utf8
                 $string = Encode::decode_utf8($string, 1);
@@ -177,11 +192,17 @@ not ideal.
 sub maybe_decode_utf8 {
     my $class = shift;
     my $string = shift;
+
+    local $@;
     eval {
         $string =  Encode::decode_utf8($string);
     };
     Carp::carp "Couldn't decode UTF-8: $@" if $@;
     return $string;
 }
+
+package Jifty::I18N::en;
+use base 'Locale::Maketext';
+our %Lexicon = ( _fallback => 1 );
 
 1;

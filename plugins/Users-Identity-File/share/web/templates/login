@@ -1,0 +1,20 @@
+<%args>
+$action => undef
+$next => undef
+</%args>
+<&|/_elements/wrapper, title => 'Login' &>
+
+% if (not Jifty->web->current_user->id) {
+<h2><% _('Login') %></h2>
+<% Jifty->web->form->start(call => $next, name => "fileloginbox") %>
+<% $action->form_field('login') %>
+<% $action->form_field('password') %>
+<div class="submit_button">
+<% Jifty->web->return(label => _('Login'), to => '/', submit => $action) %>
+</div>
+<% Jifty->web->form->end %>
+% }
+% else {
+<% _("You're already logged in.") %>
+% }
+</&>

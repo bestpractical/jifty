@@ -1,31 +1,34 @@
-package Jifty::Plugin::Login::Model::User;
-use base qw/Jifty::Record Jifty::Plugin::Login/;
+package Jifty::Plugin::Users::Model::User;
+use base qw/Jifty::Record Jifty::Plugin::Users/;
 use Jifty::DBI::Schema;
 
 use Jifty::Record schema {
 column
-  name => type is 'text',
+  display_name => type is 'text',
   label is 'Name',
-  is mandatory,
-  is distinct;
+  is mandatory;
 
 column
-  email => type is 'text',
-  label is 'Email address',
-  is mandatory,
-  is distinct;
+  realm => type is 'text',
+  label is 'Identity Plugin',
+  is mandatory;
 
 column
-  password =>,
-  type is 'text',
-  label is 'Password',
-  render_as 'password';
+  created_date => type is 'date';
 
 column
-  email_confirmed => label is 'Email address confirmed?',
-  type is 'boolean',
-  render_as 'Unrendered';
+  updated_date => type is 'date';
 
+column
+  created_by => type is 'text';
+
+column
+  updated_by => type is 'text';
+
+column
+  last_login => type is 'date';
+
+## ???
 column
   auth_token => type is 'text',
   render_as 'Unrendered';
@@ -36,13 +39,8 @@ sub create {
     my $self  = shift;
     my %args  = (@_);
     my (@ret) = $self->SUPER::create(%args);
-    my $confirmAddress = Jifty->app_class('Notification','ConfirmAddress');
-    Jifty::Util->require($confirmAddress);
-
-    if ( $self->id and not $self->email_confirmed ) {
-        $confirmAddress->new( to => $self )->send;
-    }
-    return (@ret);
+ # set  created_date and created_by
+	return (@ret);
 }
 
 =head2 password_is STRING
@@ -51,12 +49,12 @@ Returns true if and only if the current user's password matches STRING
 
 =cut
 
-sub password_is {
-    my $self   = shift;
-    my $string = shift;
-    return 1 if ( $self->_value('password') eq $string );
-    return 0;
-}
+#sub password_is {
+#    my $self   = shift;
+#    my $string = shift;
+#    return 1 if ( $self->_value('password') eq $string );
+#    return 0;
+#}
 
 =head2 password
 
@@ -92,13 +90,14 @@ sub current_user_can {
     {
         return 1;
     }
-    elsif ( $right eq 'read' and $args{'column'} eq 'name' ) {
+    elsif ( $right eq 'read' and $args{'column'} eq 'display_name' ) {
         return (1);
 
     }
     elsif ( $right eq 'update'
         and $self->id == $self->current_user->id
-        and $args{'column'} ne 'email_confirmed' )
+#        and $args{'column'} ne 'email_confirmed' 
+		)
     {
         return (1);
     }
@@ -135,7 +134,7 @@ Identifies the correct record class for introspection
 
 sub record_class {
     my $self = shift;
-    return $self->LoginUserClass;
+    return $self->UserClass;
 
 }
 

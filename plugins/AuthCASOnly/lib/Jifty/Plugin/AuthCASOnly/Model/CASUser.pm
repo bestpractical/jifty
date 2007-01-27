@@ -1,7 +1,9 @@
-package Jifty::Plugin::AuthCASOnly::Model::CASUser::Schema;
+package Jifty::Plugin::AuthCASOnly::Model::CASUser;
+use base qw/Jifty::Record/;
 use Jifty::DBI::Schema;
 use Scalar::Defer;
 
+use Jifty::Record schema {
 column
   name => type is 'text',
   label is 'Name',
@@ -13,10 +15,8 @@ column 'created_on' =>
   is immutable,
   default is defer { DateTime->now },
   filters are 'Jifty::DBI::Filter::DateTime';
+};
 
-
-package Jifty::Plugin::AuthCASOnly::Model::CASUser;
-use base qw/Jifty::Record/;
 
 sub create {
     my $self  = shift;

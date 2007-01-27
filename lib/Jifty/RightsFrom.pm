@@ -8,8 +8,7 @@ Jifty::RightsFrom
 =head1 SYNOPSIS
 
   package Application::Model::Thing;
-  use Application::Model::Person;
-
+  use Jifty::DBI::Schema;
   use Application::Record schema {
     column owner => refers_to Application::Model::Person;
   }

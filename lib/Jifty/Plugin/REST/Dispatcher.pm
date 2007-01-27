@@ -58,15 +58,12 @@ on GET    /=/model/<model>/<column>                 list model items
 on GET    /=/model/<model>/<column>/<key>           show item
 on GET    /=/model/<model>/<column>/<key>/<field>   show item field
 
-on PUT    /=/model/<model>/<column>/<key>           replace item -- UNIMPLEMENTED!
-on DELETE /=/model/<model>/<column>/<key>           delete item -- UNIMPLEMENTED!
+on PUT    /=/model/<model>/<column>/<key>           replace item
+on DELETE /=/model/<model>/<column>/<key>           delete item
 
 on GET    /=/action                                 list actions
 on GET    /=/action/<action>                        list action params
 on POST   /=/action/<action>                        run action
-
-Note that the PUT and DELETE methods on models are essentially available through
-Update<Model> and Delete<Model> actions.
 
 
 Resources are available in a variety of formats:
@@ -164,7 +161,10 @@ sub outs {
         $apache->send_http_header;
         
         # Special case showing particular actions to show an HTML form
-        if ( $prefix->[0] eq 'action' and scalar @$prefix == 2 ) {
+        if (    defined $prefix
+            and $prefix->[0] eq 'action'
+            and scalar @$prefix == 2 )
+        {
             show_action_form($1);
         }
         else {
@@ -423,22 +423,66 @@ sub show_item {
 
 =head2 replace_item
 
-UNIMPLEMENTED
+Implemented by redispatching to a CreateModel or UpdateModel action
 
 =cut
 
-sub replace_item {
-    die "hey replace item";
-}
+sub replace_item { _dispatch_to_action('Update') }
 
 =head2 delete_item
 
-UNIMPLEMENTED
+Implemented by redispatching to a DeleteModel action.
 
 =cut
 
-sub delete_item {
-    die "hey delete item";
+sub delete_item { _dispatch_to_action('Delete') }
+
+sub _dispatch_to_action {
+    my $prefix = shift;
+    my ($model, $class, $column, $key) = (model($1), $1, $2, $3);
+    my $rec = $model->new;
+    $rec->load_by_cols( $column => $key );
+
+    if ( not $rec->id ) {
+        abort(404)         if $prefix eq 'Delete';
+        $prefix = 'Create' if $prefix eq 'Update';
+    }
+
+    $class =~ s/^[\w\.]+\.//;
+
+    $ENV{REQUEST_METHOD} = 'POST';
+    Jifty->web->request->argument( $column => $key );
+    Jifty->web->request->argument( 'id' => $rec->id )
+        if defined $rec->id;
+    
+    # CGI.pm doesn't handle form encoded data in PUT requests (in fact,
+    # it doesn't really handle PUT requests properly at all), so we have
+    # to read the request body ourselves and have CGI.pm parse it
+    if (    $ENV{'CONTENT_TYPE'} =~ m|^application/x-www-form-urlencoded$|
+         or $ENV{'CONTENT_TYPE'} =~ m|^multipart/form-data$| )
+    {
+        my $cgi    = Jifty->handler->cgi;
+        my $length = defined $ENV{'CONTENT_LENGTH'} ? $ENV{'CONTENT_LENGTH'} : 0;
+        my $data;
+
+        $cgi->read_from_client( \$data, $length, 0 )
+            if $length > 0;
+
+        if ( defined $data ) {
+            my @params = $cgi->all_parameters;
+            $cgi->parse_params( $data );
+            push @params, $cgi->all_parameters;
+            
+            my %seen;
+            my @uniq = map { $seen{$_}++ == 0 ? $_ : () } @params;
+
+            # Add only the newly parsed arguments to the Jifty::Request
+            Jifty->web->request->argument( $_ => $cgi->param( $_ ) )
+                for @uniq;
+        }
+    }
+
+    dispatch '/=/action/' . action( $prefix . $class );
 }
 
 =head2 list_actions
@@ -540,14 +584,21 @@ On an internal error, throws a C<500>.
 sub run_action {
     my ($action_name) = action($1) or abort(404);
     Jifty::Util->require($action_name) or abort(404);
-    my $action = $action_name->new or abort(404);
-
-    Jifty->api->is_allowed( $action_name ) or abort(403);
-
+    
     my $args = Jifty->web->request->arguments;
     delete $args->{''};
 
-    $action->argument_values({ %$args });
+    my $action = $action_name->new( arguments => $args ) or abort(404);
+
+    Jifty->api->is_allowed( $action_name ) or abort(403);
+
+    my $params = $action->arguments;
+    for my $key ( keys %$params ) {
+        next if not exists $params->{ $key }{'default_value'};
+        next if $action->has_argument( $key );
+        $action->argument_value( $key => $params->{ $key }{'default_value'} );
+    }
+
     $action->validate;
 
     local $@;

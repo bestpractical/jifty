@@ -87,7 +87,6 @@ Jifty.Calendar = {
         input.value = year + "-" + month + "-" + day;
 
         Jifty.Calendar.hideOpenCalendar();
-        Form.Element.validate( input ); // We can't trigger an onBlur, so canonicalize/validate manually
     },
 
     openCalendar: "",
@@ -104,8 +103,9 @@ Jifty.Calendar = {
 
             var input = $( inputId );
 
-            /* Reenable canonicalization */
+            /* Reenable canonicalization, and do it */
             Form.Element.enableValidation(input);
+            Form.Element.validate(input);
 
             Jifty.Calendar.openCalendar = "";
         }
