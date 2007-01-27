@@ -43,6 +43,7 @@ sub new {
         );
 
     foreach my $plugin (Jifty->plugins) {
+        local $@;
         my $dir = eval { module_dir(ref($plugin)); };
         next unless $dir;
         push @import, 'Gettext';
@@ -161,6 +162,7 @@ sub promote_encoding {
     } else {
         my $encoding = Encode::Guess->guess($string);
         if(!ref($encoding)) {
+            local $@;
             eval {
                 # Try utf8
                 $string = Encode::decode_utf8($string, 1);
@@ -190,6 +192,8 @@ not ideal.
 sub maybe_decode_utf8 {
     my $class = shift;
     my $string = shift;
+
+    local $@;
     eval {
         $string =  Encode::decode_utf8($string);
     };
