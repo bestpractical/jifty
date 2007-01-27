@@ -154,6 +154,7 @@ sub mime_type {
         # chokes on ajax-fetched JS that has a type other than the one below
         # JSAN.js fetches JS via Ajax when it loads JSAN modules
         'js' => 'application/x-javascript',
+        'htc' => 'text/x-component',
     );
 
     return ($type_override{$1})

@@ -303,3 +303,21 @@ Change it to
 Take care the indentation is significant. Use spaces, not tabs.
 Once you have done that you can restart your Jifty application and the
 edit links should then function correctly.
+
+=head2 Use iepngfix.htc to add PNG support in IE5.5+
+
+Jifty has included iepngfix.htc by Angus Turnbull. The HTC file will
+automatically add PNG support to IMG elements and also supports any
+element with a "background-image" CSS property.
+
+If you want to use this fix, please include this one line in your CSS
+file, whit tag names to which you want the script applied:
+
+    img, div { behavior: url(/static/js/iepngfix.htc) }
+
+Alternatively, you can specify that this will apply to all tags like so:
+
+    * { behavior: url(/static/js/iepngfix.htc) }
+
+Check details from Angus himself. ( http://www.twinhelix.com/ )
+
