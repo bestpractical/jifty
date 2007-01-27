@@ -489,7 +489,7 @@ sub render_widget {
     $field .= qq! id="@{[ $self->element_id ]}"!;
     $field .= qq! value="@{[Jifty->web->escape($self->current_value)]}"! if defined $self->current_value;
     $field .= $self->_widget_class; 
-    $field .= qq! size="@{[ $self->max_length() ]}" maxlength="@{[ $self->length() ]}"! if ($self->max_length());
+    $field .= qq! size="@{[ $self->max_length() ]}" maxlength="@{[ $self->max_length() ]}"! if ($self->max_length());
     $field .= qq! autocomplete="off"! if defined $self->disable_autocomplete;
     $field .= " " .$self->other_widget_properties;
     $field .= qq!  />\n!;
@@ -712,9 +712,11 @@ qq!<span class="canonicalization_note @{[$self->classes]}" id="@{[$self->action-
 }
 
 
+=for private
+
 =head2 length
 
-Deprecated synonym to ->max_length().  Do not use; may go away soon.
+# Deprecated API
 
 =cut
 
