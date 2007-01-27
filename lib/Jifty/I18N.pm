@@ -201,4 +201,8 @@ sub maybe_decode_utf8 {
     return $string;
 }
 
+package Jifty::I18N::en;
+use base 'Locale::Maketext';
+our %Lexicon = ( _fallback => 1 );
+
 1;
