@@ -22,7 +22,7 @@ use base qw/Class::Accessor::Fast Class::Data::Inheritable Jifty::Object/;
 use vars qw/$SERIAL @JS_INCLUDES/;
 
 __PACKAGE__->mk_accessors(
-    qw(next_page force_redirect request response session temporary_current_user _current_user)
+    qw(next_page force_redirect request response session temporary_current_user _current_user _state_variables)
 );
 
 __PACKAGE__->mk_classdata($_)
@@ -81,6 +81,7 @@ sub new {
     my $class = shift;
     my $self = bless {region_stack => []}, $class;
     $self->session(Jifty::Web::Session->new());
+    $self->clear_state_variables;
     return ($self);
 }
 
@@ -566,7 +567,7 @@ sub redirect_required {
         and $self->next_page
         and ( ( $self->next_page ne $self->request->path )
               or $self->request->state_variables
-              or $self->{'state_variables'} )
+              or $self->state_variables )
        )
     {
         return (1);
@@ -605,15 +606,15 @@ sub redirect {
     if (  (grep { not $_->action_class->isa('Jifty::Action::Redirect') }
                 values %{ { $self->response->results } })
         or $self->request->state_variables
-        or $self->{'state_variables'}
+        or $self->state_variables
         or $self->request->continuation
         or grep { $_->active and not $_->class->isa('Jifty::Action::Redirect') } @actions )
     {
         my $request = Jifty::Request->new();
         $request->add_state_variable( key => $_->key, value => $_->value )
           for $self->request->state_variables;
-        $request->add_state_variable( key => $_, value => $self->{'state_variables'}->{$_} )
-          for keys %{ $self->{'state_variables'} };
+        $request->add_state_variable( key => $_, value => $self->_state_variables->{$_} )
+          for keys %{ $self->_state_variables };
         for (@actions) {
             my $new_action = $request->add_action(
                 moniker   => $_->moniker,
@@ -1169,9 +1170,9 @@ sub set_variable {
     my $value = shift;
 
     if (!defined($value)) {
-        delete $self->{'state_variables'}->{$name};
+        delete $self->_state_variables->{$name};
     } else {
-        $self->{'state_variables'}->{$name} = $value;
+        $self->_state_variables->{$name} = $value;
     }
 
 }
@@ -1188,11 +1189,7 @@ versions of Jifty
 
 sub state_variables {
     my $self = shift;
-    my %vars;
-    $vars{$_} = $self->{'state_variables'}->{$_}
-        for keys %{ $self->{'state_variables'} };
-
-    return %vars;
+    return %{ $self->_state_variables };
 }
 
 =head3 clear_state_variables
@@ -1204,7 +1201,7 @@ Remove all the state variables to be serialized for the next request.
 sub clear_state_variables {
     my $self = shift;
 
-    $self->{'state_variables'} = {};
+    $self->_state_variables({});
 }
 
 =head2 REGIONS
