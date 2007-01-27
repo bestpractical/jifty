@@ -158,7 +158,7 @@ sub mime_type {
     );
 
     return ($type_override{$1})
-        if $local_path =~ /\.(.+)$/ and defined $type_override{$1};
+        if $local_path =~ /^.*\.(.+?)$/ and defined $type_override{$1};
 
     # Defer initialization to first use. (It's not actually cheap)
     $MIME ||= MIME::Types->new();
