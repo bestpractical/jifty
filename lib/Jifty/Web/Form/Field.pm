@@ -718,8 +718,6 @@ qq!<span class="canonicalization_note @{[$self->classes]}" id="@{[$self->action-
 
 # Deprecated API
 
-=cut
-
 
 =cut
 
