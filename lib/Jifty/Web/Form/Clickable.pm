@@ -313,13 +313,15 @@ sub region_argument {
 
 # Query-map any complex structures
 sub _map {
-    my %args = @_;
-    for (keys %args) {
-        my ($key, $value) = Jifty::Request::Mapper->query_parameters($_ => $args{$_});
-        delete $args{$_};
-        $args{$key} = $value;
+    my %old_args = @_;
+    my %new_args;
+
+    while (my ($key, $val) = each %old_args) {
+        my ($new_key, $new_val) = Jifty::Request::Mapper->query_parameters($key => $val);
+        $new_args{$new_key} = $new_val;
     }
-    return %args;
+
+    return %new_args;
 }
 
 =head2 parameters
