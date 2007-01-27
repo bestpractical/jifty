@@ -589,6 +589,13 @@ sub run_action {
 
     Jifty->api->is_allowed( $action_name ) or abort(403);
 
+    my $params = $action->arguments;
+    for my $key ( keys %$params ) {
+        next if not exists $params->{ $key }{'default_value'};
+        next if $action->has_argument( $key );
+        $action->argument_value( $key => $params->{ $key }{'default_value'} );
+    }
+
     $action->validate;
 
     local $@;
