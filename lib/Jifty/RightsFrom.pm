@@ -111,7 +111,6 @@ sub delegate_current_user_can {
 
     my $column   = $self->column($col_name);
     my $obj_type = $column->refers_to();
-    
 
     # XXX TODO: this card is bloody hard to follow. it's my fault. --jesse
 

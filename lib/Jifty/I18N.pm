@@ -82,6 +82,7 @@ sub new {
         if ($@) {
             # Sometimes Locale::Maketext fails to localize a string and throws
             # an exception instead.  In that case, we just return the input.
+            warn "AIEEE";
             return join(' ', @stringified_args);
         }
         return $result;

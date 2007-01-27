@@ -73,7 +73,7 @@ requires:
   Hook::LexWrap: 0
   IPC::PubSub: 0.22
   JSON::Syck: 0.15
-  Jifty::DBI: 0.30
+  Jifty::DBI: 0.31
   LWP::UserAgent: 0
   Locale::Maketext::Extract: 0.20
   Locale::Maketext::Lexicon: 0.60
