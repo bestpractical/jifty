@@ -161,7 +161,10 @@ sub outs {
         $apache->send_http_header;
         
         # Special case showing particular actions to show an HTML form
-        if ( $prefix->[0] eq 'action' and scalar @$prefix == 2 ) {
+        if (    defined $prefix
+            and $prefix->[0] eq 'action'
+            and scalar @$prefix == 2 )
+        {
             show_action_form($1);
         }
         else {
