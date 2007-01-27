@@ -396,11 +396,11 @@ sub upgrade_tables {
                 next if $column->virtual;
 
                 # If they're old, drop them
-                if (    defined $column->until
-                    and $appv >= $column->until
-                    and $dbv < $column->until )
+                if ($column->can('till') and defined $column->till
+                    and $appv >= $column->till
+                    and $dbv < $column->till )
                 {
-                    push @{ $UPGRADES{ $column->until } },
+                    push @{ $UPGRADES{ $column->till } },
                         "ALTER TABLE "
                         . $model->table
                         . " DROP COLUMN "
