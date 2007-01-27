@@ -14,7 +14,6 @@ Jifty::Util - Things that don't fit anywhere else
 
 use Jifty ();
 use File::Spec ();
-use ExtUtils::MM;
 use Cwd ();
 
 use vars qw/%ABSOLUTE_PATH $JIFTY_ROOT $SHARE_ROOT $APP_ROOT/;
@@ -145,6 +144,7 @@ sub app_root {
         push @roots, $FindBin::Bin;
     }
 
+    Jifty::Util->require('ExtUtils::MM') if $^O =~ /(?:MSWin32|cygwin|os2)/;
     Jifty::Util->require('Config');
     for (@roots) {
         my @root = File::Spec->splitdir($_);
