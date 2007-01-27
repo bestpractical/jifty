@@ -203,6 +203,6 @@ sub maybe_decode_utf8 {
 
 package Jifty::I18N::en;
 use base 'Locale::Maketext';
-our %Lexicon = ( _fallback => 1 );
+our %Lexicon = ( _fallback => 1, _AUTO => 1 );
 
 1;
