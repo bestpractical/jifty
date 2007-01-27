@@ -720,6 +720,9 @@ qq!<span class="canonicalization_note @{[$self->classes]}" id="@{[$self->action-
 
 =cut
 
+
+=cut
+
 sub length {
     my $self = shift;
     Carp::carp("->length is deprecated; use ->max_length instead");
