@@ -5,7 +5,7 @@ use strict;
 use lib 't/lib';
 use Jifty::SubTest;
 
-use Jifty::Test tests => 16;
+use Jifty::Test tests => 20;
 use Jifty::Test::WWW::Mechanize;
 use Net::HTTP;
 use URI;
@@ -32,6 +32,10 @@ $res = $ua->get("$base/concrete.html");
 ok $res->is_success, "can access concrete";
 like $res->content, qr/2 concrete mixers/, 'en works for an unknown string';
 
+$res = $ua->get("$base/concrete2.html");
+ok $res->is_success, "can access concrete";
+like $res->content, qr/2 concrete mixers/, 'en works for an unknown string';
+
 $ua->default_header('Accept-Language' => "ja");
 $res = $ua->get("$base/__jifty/admin/");
 ok $res->is_success, "can access admin console";
@@ -40,6 +44,10 @@ like adjust($res->content), qr/モデル/, 'ja works';
 $res = $ua->get("$base/concrete.html");
 ok $res->is_success, "can access concrete";
 like $res->content, qr/2 concrete mixers/, 'ja works for an unknown string';
+
+$res = $ua->get("$base/concrete2.html");
+ok $res->is_success, "can access concrete";
+like $res->content, qr/2 concrete mixers/, 'en works for an unknown string';
 
 $ua->default_header('Accept-Language' => "fr");
 $res = $ua->get("$base/__jifty/admin/");
