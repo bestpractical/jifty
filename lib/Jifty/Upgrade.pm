@@ -84,7 +84,7 @@ sub rename {
 
     if ( $args{column} ) {
         my $driver = Jifty->config->framework('Database')->{'Driver'};
-        if ( $driver eq "SQLite" ) {
+        if ( $driver =~ /SQLite/ ) {
 
             # Convert columns
             my ($schema) = Jifty->handle->fetch_result("SELECT sql FROM sqlite_master WHERE tbl_name = '$table_name' AND type = 'table'");

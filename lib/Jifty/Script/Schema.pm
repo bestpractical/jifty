@@ -491,7 +491,7 @@ sub manage_database_existence {
     if ( $self->{'drop_database'} ) {
         if ( $self->{'print'} ) {
             print "DROP DATABASE $database;\n";
-        } elsif ( $driver eq 'SQLite' ) {
+        } elsif ( $driver =~ /SQLite/ ) {
             # Win32 complains when you try to unlink open DB
             $handle->disconnect if $^O eq 'MSWin32';
             unlink($database);
@@ -503,7 +503,7 @@ sub manage_database_existence {
     if ( $self->{'create_database'} ) {
         if ( $self->{'print'} ) {
             print "CREATE DATABASE $database;\n";
-        } elsif ( $driver ne 'SQLite' ) {
+        } elsif ( $driver !~ /SQLite/ ) {
             $handle->simple_query("CREATE DATABASE $database");
         }
     }
