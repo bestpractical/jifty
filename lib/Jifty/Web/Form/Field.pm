@@ -712,7 +712,12 @@ qq!<span class="canonicalization_note @{[$self->classes]}" id="@{[$self->action-
 }
 
 
-# Deprecated API
+=head2 length
+
+Deprecated synonym to ->max_length().  Do not use; may go away soon.
+
+=cut
+
 sub length {
     my $self = shift;
     Carp::carp("->length is deprecated; use ->max_length instead");
