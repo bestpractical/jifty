@@ -190,17 +190,19 @@ sub enter {
     push @{Jifty->web->{'region_stack'}}, $self;
 
     # Merge in the settings passed in via state variables
-    for (Jifty->web->request->state_variables) {
-        my $key = $_->key;
-        my $value = $_->value || '';
-        if ($key =~ /^region-(.*?)\.(.*)/ and $1 eq $self->qualified_name and $value  ne $self->default_argument($2)) {
+    for my $var (Jifty->web->request->state_variables) {
+        my $key = $var->key;
+        my $value = $var->value || '';
+
+        if ($key =~ /^region-(.*?)\.(.*)/ and $1 eq $self->qualified_name and $value ne $self->default_argument($2)) {
             $self->argument($2 => $value);
-            Jifty->web->set_variable("region-$1.$2" => $value);
         }
-        if ($key =~ /^region-(.*?)$/ and $1 eq $self->qualified_name and $value ne $self->default_path) {
+        if ($key =~ /^region-(.*)$/ and $1 eq $self->qualified_name and $value ne $self->default_path) {
             $self->path($value);
-            Jifty->web->set_variable("region-$1" => $value);
         }
+
+        # We should always inherit the state variables from the uplevel request.
+        Jifty->web->set_variable($key => $value);
     }
 }
 
