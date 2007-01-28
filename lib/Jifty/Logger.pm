@@ -70,6 +70,7 @@ file should be checked.
 =cut
 
 use Log::Log4perl;
+use Carp;
 
 use base qw/Jifty::Object/;
 
@@ -105,6 +106,7 @@ sub new {
     
     # whenever Perl wants to warn something out capture it with a signal
     # handler and pass it to log4perl
+    my $previous_warning_handler = $SIG{__WARN__};
     $SIG{__WARN__} = sub {
 
         # This caller_depth line tells Log4perl to report
@@ -120,6 +122,15 @@ sub new {
             # the aliasing so we can remove trailing newlines
             my @lines = map {"$_"} @_;
             $logger->warn(map {chomp; $_} @lines);
+        }
+        elsif ($previous_warning_handler) {
+            # Fallback to the old handler
+            goto &$previous_warning_handler;
+        }
+        else {
+            # Now handler - just carp about it for now
+            local $SIG{__WARN__};
+            carp(@_);
         }
     };
 
