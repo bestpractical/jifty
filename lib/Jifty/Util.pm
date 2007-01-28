@@ -263,6 +263,20 @@ sub already_required {
     return ( $INC{$path} ? 1 : 0);
 }
 
+=head2 generate_uuid
+
+Generate a new UUID using B<Data::UUID>.
+
+=cut
+
+my $Data_UUID_instance;
+sub generate_uuid {
+    ($Data_UUID_instance ||= do {
+        require Data::UUID;
+        Data::UUID->new;
+    })->create_str;
+}
+
 =head1 AUTHOR
 
 Various folks at Best Practical Solutions, LLC.
