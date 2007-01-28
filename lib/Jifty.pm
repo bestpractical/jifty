@@ -155,7 +155,7 @@ sub new {
 
     # Let's get the database rocking and rolling
     Jifty->setup_database_connection(%args);
-    Jifty->class_loader->require_classes_from_database() if (Jifty->handle());
+    Jifty->class_loader->require_classes_from_database() if (Jifty->handle() and not $args{'no_handle'});
 
     # Call the application's start method to let it do anything
     # application specific for startup
