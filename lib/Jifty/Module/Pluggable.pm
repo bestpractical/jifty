@@ -39,6 +39,7 @@ What we actually need to override is Module::Pluggable::Object::_require, which 
 
 
 use Module::Pluggable::Object;
+use UNIVERSAL::require;
 sub Module::Pluggable::Object::_require {
     my $self = shift;
     my $module = shift;
@@ -46,11 +47,9 @@ sub Module::Pluggable::Object::_require {
     # Module::Pluggable::Object::_require expects a true value (the error message) on failure
     # On success, it expects you to return undef.
 
-    if (!Jifty::Util->require($module) ) {
-        return $UNIVERSAL::require::ERROR;
-    } else {
-        return undef;
-    }
+    local $UNIVERSAL::require::ERROR = undef;
+    $module->require(); # We'd prefer to use Jifty::Util->require() here, but it spews crazy warnings
+     return $UNIVERSAL::require::ERROR;
 
 
 } 
