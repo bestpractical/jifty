@@ -204,6 +204,10 @@ sub require {
     return unless ($base); 
     Jifty::Util->require($base);
     Jifty::Util->require($base."::CurrentUser");
+
+    my %models;
+    
+
     Jifty::Module::Pluggable->import(
         search_path =>
           [ map { $base . "::" . $_ } 'Model', 'Action', 'Notification', 'Event' ],
@@ -211,14 +215,52 @@ sub require {
         except  => qr/\.#/,
         inner   => 0
     );
-    my %models;
     $models{$_} = 1 for grep {/^($base)::Model::(.*)$/ and not /Collection$/} $self->plugins;
     $self->models(sort keys %models);
     for my $full ($self->models) {
+        $self->_require_model_related_classes($full);
+    }
+        
+}
+
+sub _require_model_related_classes {
+    my $self = shift;
+    my $full = shift;
+    my $base = $self->{base};
         my($short) = $full =~ /::Model::(.*)/;
         Jifty::Util->require($full . "Collection");
         Jifty::Util->require($base . "::Action::" . $_ . $short)
             for qw/Create Update Delete Search/;
+
+}
+
+
+=head2 require_classes_from_database
+
+Jifty supports model classes that aren't files on disk but instead records
+in your database. It's a little bit mind bending, but basically, you can
+build an application entirely out of the database without ever writing a 
+line of code(*). 
+
+* As of early 2007, this forward looking statement is mostly a lie. But we're 
+working on it.
+
+This method finds all database-backed models and instantiates jifty classes for 
+them it returns a list of classnames of the models it created.
+
+=cut
+
+sub require_classes_from_database {
+    my $self = shift;
+    my @instantiated;
+
+    require Jifty::Model::ModelClassCollection;
+    require Jifty::Model::ModelClass;
+    my $models = Jifty::Model::ModelClassCollection->new(current_user => Jifty::CurrentUser->superuser);
+    $models->unlimit();
+    while (my $model = $models->next) {
+        $model->instantiate();
+        $self->_require_model_related_classes($model->qualified_class);
     }
 }
 
