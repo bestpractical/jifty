@@ -65,7 +65,7 @@ sub canonical_database_name {
     # legacy databases
     my $db = $db_config->{'Database'};
 
-    if ($db_config->{'Driver'} eq 'SQLite') {
+    if ($db_config->{'Driver'} =~ /SQLite/) {
         $db = Jifty::Util->absolute_path($db);
     } 
 

@@ -96,6 +96,53 @@ sub stringify {
     return wantarray ? @r : pop @r;
 }
 
+=head2 object_to_data OBJ
+
+Takes an object and converts the known types into simple data structures.
+
+Current known types:
+
+  Jifty::DBI::Collection
+  Jifty::DBI::Record
+
+=cut
+
+sub object_to_data {
+    my $obj = shift;
+    
+    my %types = (
+        'Jifty::DBI::Collection' => \&_collection_to_data,
+        'Jifty::DBI::Record'     => \&_record_to_data,
+    );
+
+    for my $type ( keys %types ) {
+        if ( UNIVERSAL::isa( $obj, $type ) ) {
+            return $types{$type}->( $obj );
+        }
+    }
+
+    warn "Unable to handle object of type ", ref $obj, ", attempting to stringify.\n";
+    return stringify( $obj );
+}
+
+sub _collection_to_data {
+    my $records = shift->items_array_ref;
+    return [ map { _record_to_data( $_ ) } @$records ];
+}
+
+sub _record_to_data {
+    my $record = shift;
+    # We could use ->as_hash but this method avoids transforming refers_to
+    # columns into JDBI objects
+    my %data   = map {
+                    $_ => (UNIVERSAL::isa( $record->column( $_ )->refers_to,
+                                           'Jifty::DBI::Collection' )
+                             ? undef
+                             : stringify( $record->_value( $_ ) ) )
+                 } $record->readable_attributes;
+    return \%data;
+}
+
 =head2 list PREFIX items
 
 Takes a URL prefix and a set of items to render. passes them on.
@@ -406,7 +453,7 @@ sub show_item_field {
 
 =head2 show_item $model, $column, $key
 
-Loads up a model of type C<$model> which has a column C<$column> with a value C<$key>. Returns  all columns for the object
+Loads up a model of type C<$model> which has a column C<$column> with a value C<$key>. Returns all columns for the object
 
 Returns 404 if it doesn't exist.
 
@@ -631,6 +678,10 @@ sub run_action {
         delete $out->{field_warnings}->{$_} unless $out->{field_warnings}->{$_};
     }
     $out->{content} = $result->content;
+
+    for my $key ( keys %{ $out->{content} } ) {
+        $out->{content}{$key} = object_to_data( $out->{content}{$key} );
+    }
     
     outs(undef, $out);
 

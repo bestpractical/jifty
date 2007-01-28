@@ -19,7 +19,7 @@ This provides a version of L<JSON/objToJson> which allows
 single-quoted string output.
 
 If the faster L<JSON::Syck> is available, it is preferred over the pure-perl
-L<JSON>, as it provides native support for single-quoted strings..
+L<JSON>, as it provides native support for single-quoted strings.
 
 =head1 METHODS
 
@@ -32,11 +32,13 @@ BEGIN {
     if (eval { require JSON::Syck; JSON::Syck->VERSION(0.05) }) {
         *jsonToObj = *_jsonToObj_syck;
         *objToJson = *_objToJson_syck;
+        $JSON::Syck::ImplicitUnicode = 1;
     }
     else {
         require JSON;
         *jsonToObj = *_jsonToObj_pp;
         *objToJson = *_objToJson_pp;
+        $JSON::UTF8 = 1;
     }
 }
 
