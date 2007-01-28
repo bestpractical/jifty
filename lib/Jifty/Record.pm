@@ -402,5 +402,88 @@ sub _cache_config {
     };
 }
 
+=head2 since
+ 
+By default, all models exist since C<undef>, the ur-time when the application was created. Please override it for your midel class.
+ 
+=cut
+ 
+
+
+=head2 printable_table_schema
+
+When called, this method will generate the SQL schema for the current version of this 
+class and return it as a scalar, suitable for printing or execution in your database's command line.
+
+=cut
+
+
+sub printable_table_schema {
+    my $class = shift;
+
+    my $schema_gen = $class->_make_schema();
+    return $schema_gen->create_table_sql_text;
+}
+
+=head2 create_table_in_db
+
+When called, this method will generate the SQL schema for the current version of this 
+class and insert it into the application's currently open database.
+
+=cut
+
+sub create_table_in_db {
+    my $class = shift;
+
+    my $schema_gen = $class->_make_schema();
+
+    # Run all CREATE commands
+    for my $statement ( $schema_gen->create_table_sql_statements ) {
+        my $ret = Jifty->handle->simple_query($statement);
+        $ret or die "error creating table $class: " . $ret->error_message;
+    }
+
+}
+
+sub _make_schema { 
+        my $class = shift;
+
+    my $schema_gen = Jifty::DBI::SchemaGenerator->new( Jifty->handle )
+        or die "Can't make Jifty::DBI::SchemaGenerator";
+    my $ret = $schema_gen->add_model( $class->new );
+    $ret or die "couldn't add model $class: " . $ret->error_message;
+
+        return $schema_gen;
+}
+
+=head2 add_column_sql column_name
+
+Returns the SQL statement neccessary to add C<column_name> to this class's representation in the database
+
+=cut
+
+sub add_column_sql {
+    my $self        = shift;
+    my $column_name = shift;
+
+    my $col        = $self->column($column_name);
+    my $definition = $self->_make_schema()->column_definition_sql($self->table => $col->name);
+    return "ALTER TABLE " . $self->table . " ADD COLUMN " . $definition;
+}
+
+=head2 drop_column_sql column_name
+
+Returns the SQL statement neccessary to remove C<column_name> from this class's representation in the database
+
+=cut
+
+sub drop_column_sql {
+    my $self        = shift;
+    my $column_name = shift;
+
+    my $col = $self->column($column_name);
+    return "ALTER TABLE " . $self->table . " DROP COLUMN " . $col->name;
+}
+
 1;
 
