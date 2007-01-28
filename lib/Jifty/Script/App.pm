@@ -92,9 +92,10 @@ sub _write_makefile {
     open(MAKEFILE, ">$prefix/Makefile.PL") or die "Can't write Makefile.PL: $!";
     print MAKEFILE <<"EOT";
 use inc::Module::Install;
-name('$mod_name');
-version('0.01');
-requires('Jifty' => '@{[$Jifty::VERSION]}');
+
+name        '$mod_name';
+version     '0.01';
+requires    'Jifty' => '@{[$Jifty::VERSION]}';
 
 WriteAll;
 EOT
