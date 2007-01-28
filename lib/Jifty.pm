@@ -7,7 +7,7 @@ use Data::UUID;
 use encoding 'utf8';
 # Work around the fact that Time::Local caches thing on first require
 BEGIN { local $ENV{'TZ'} = "GMT";  require Time::Local;}
-$Jifty::VERSION = '0.70117';
+$Jifty::VERSION = '0.70127';
 
 =head1 NAME
 
@@ -148,20 +148,20 @@ sub new {
     );
 
     Jifty->class_loader($class_loader);
-    $class_loader->require;
+    Jifty->class_loader->require;
 
     Jifty->handler(Jifty::Handler->new());
     Jifty->api(Jifty::API->new());
 
     # Let's get the database rocking and rolling
     Jifty->setup_database_connection(%args);
+    Jifty->class_loader->require_classes_from_database() if (Jifty->handle());
 
     # Call the application's start method to let it do anything
     # application specific for startup
     my $app = Jifty->app_class;
     
-    $app->start()
-        if $app->can('start');
+    $app->start() if $app->can('start');
     
 }
 
