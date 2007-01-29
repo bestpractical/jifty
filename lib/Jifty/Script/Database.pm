@@ -95,6 +95,50 @@ sub load_content {
 }
 
 
+sub upgrade_schema {
+    my $self           = shift;
+    my $new_tables     = shift;
+    my $columns        = shift;
+    my $current_tables = Jifty::Model::ModelClassCollection->new();
+    $current_tables->unlimit();
+    while ( my $table = $current_tables->next ) {
+        if ( $new_tables->{ $table->id } ) {
+
+            # we have the same table in the db and the dump
+            # let's sync its attributes from the dump then sync its columns
+            delete $new_tables->{ $table->id };
+        } else {
+
+            # we don't have the table anymore. That means we should delete it.
+            $table->delete();
+        }
+
+        # now we only have tables that were not yet in the database;
+        $self->_upgrade_create_new_tables( $new_tables => $columns );
+    }
+}
+
+
+sub _upgrade_create_new_tables {
+    my $self       = shift;
+    my $new_tables = shift;
+    my $columns    = shift;
+    foreach my $table ( values %$new_tables ) {
+        my $class = Jifty::Model::ModelClass->new();
+        my ( $val, $msg ) = $class->create( %{$table} );
+
+        # Now that we have a brand new model, let's find all its columns
+        my @cols = grep { $_->{model_class} = $table->{id} } values %$columns;
+        foreach my $col (@cols) {
+            my $col_obj = Jifty::Model::ModelClassColumn->new();
+            $col_obj->create(%$col);
+        }
+    }
+
+}
+
+
+
 sub dump {
     my $self = shift;
     my $content = {};

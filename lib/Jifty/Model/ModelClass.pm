@@ -20,13 +20,17 @@ the fly as they're required by the application.
 package Jifty::Model::ModelClass;
 use Jifty::Model::ModelClassColumnCollection; # we can drop this when we switch to Jifty::DBI's od branch
 use base qw( Jifty::Record );
+use Scalar::Defer;
+
 use Jifty::DBI::Schema;
 use Jifty::Record schema {
     column name => type is 'text';
     column description => type is 'text'; 
-    column since_version => type is 'text';
+    column uuid => type is 'text', is immutable;
     column included_columns => refers_to Jifty::Model::ModelClassColumnCollection by 'model_class';
 };
+
+
 
 =head2 table
 
@@ -55,7 +59,8 @@ After create, instantiate our new class and create its database schema.
 sub after_create {
     my $self = shift;
     my $idref = shift;
-    $self->load_by_cols(id=>$$idref);
+    $self->load_by_cols(id => $$idref);
+    $self->__set(column => 'uuid', value => Jifty::Util->generate_uuid) unless ($self->__value('uuid'));
     $self->instantiate();
     $self->qualified_class->create_table_in_db();
 

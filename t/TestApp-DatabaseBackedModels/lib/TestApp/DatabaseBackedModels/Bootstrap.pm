@@ -2,6 +2,7 @@ package TestApp::DatabaseBackedModels::Bootstrap;
 use warnings;
 use strict;
 use base 'Jifty::Bootstrap';
+
 sub run { 
 
     my $user = TestApp::DatabaseBackedModels::CurrentUser->new( _bootstrap => 1);

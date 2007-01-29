@@ -22,6 +22,7 @@ use base qw( Jifty::Record );
 
 use Jifty::DBI::Schema;
 use Jifty::Model::ModelClass;
+use Scalar::Defer;
 
 use Jifty::Record schema {
     column name => type is 'text';
@@ -36,7 +37,6 @@ use Jifty::Record schema {
     column canonicalizer => type is 'text'; # ditto
     column autocompleter => type is 'text'; # ditto
     column mandatory => type is 'boolean';
-    column since_version => type is 'text';
     column render_as => type is 'text'; # should actually be a reference to  a list
     column filters => type is 'text'; # should actually be a reference to  a list
     column description => type is 'text'; 
@@ -44,6 +44,7 @@ use Jifty::Record schema {
     column readable => type is 'boolean', default is 'true';
     column writable => type is 'boolean', default is 'true';
     column default_value => type is 'text';
+    column uuid => type is 'text', is immutable;
 };
 
 =head2 after_create
@@ -56,6 +57,8 @@ sub after_create {
     my $self = shift;
     my $idref = shift;
     $self->load_by_cols(id => $$idref);
+    $self->__set(column => 'uuid', value => Jifty::Util->generate_uuid) 
+        unless ($self->__value('uuid'));
     $self->model_class->add_column($self);
 
     my $ret = Jifty->handle->simple_query( $self->model_class->qualified_class->add_column_sql( $self->name ) );
