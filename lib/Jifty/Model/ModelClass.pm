@@ -26,7 +26,6 @@ use Jifty::DBI::Schema;
 use Jifty::Record schema {
     column name => type is 'text';
     column description => type is 'text'; 
-    column uuid => type is 'text', is immutable;
     column included_columns => refers_to Jifty::Model::ModelClassColumnCollection by 'model_class';
 };
 
@@ -60,7 +59,6 @@ sub after_create {
     my $self = shift;
     my $idref = shift;
     $self->load_by_cols(id => $$idref);
-    $self->__set(column => 'uuid', value => Jifty::Util->generate_uuid) unless ($self->__value('uuid'));
     $self->instantiate();
     $self->qualified_class->create_table_in_db();
 

@@ -102,7 +102,7 @@ sub upgrade_schema {
     my $current_tables = Jifty::Model::ModelClassCollection->new();
     $current_tables->unlimit();
     while ( my $table = $current_tables->next ) {
-        if ( my $new_table = delete $new_tables->{ $table->uuid } ) {
+        if ( my $new_table = delete $new_tables->{ $table->__uuid } ) {
 
             # we have the same table in the db and the dump
             # let's sync its attributes from the dump then sync its columns
@@ -116,17 +116,14 @@ sub upgrade_schema {
             my $current_columns = $table->included_columns;
             my $new_columns     = {};
             map {
-                delete
-                    $_->{id};   # the id is only important on the first system
-                $new_columns->{ $_->uuid } = $_
-                } grep {
-                $_->{model_class} = $table->{uuid}
-                } values %$columns;
+                delete $_->{id};   # the id is only important on the first system
+                $new_columns->{ $_->__uuid } = $_
+                } grep { $_->{model_class} = $table->{__uuid} } values %$columns;
 
             while ( my $column = $current_columns->next ) {
 
                 # First, update ones we know about
-                if ( my $new_column = delete $new_columns->{ $column->uuid } )
+                if ( my $new_column = delete $new_columns->{ $column->__uuid } )
                 {
                     foreach my $key ( keys %$new_column ) {
                         unless ( $column->$key() eq $new_column->{$key} ) {
@@ -171,7 +168,7 @@ sub _upgrade_create_new_tables {
         my ( $val, $msg ) = $class->create( %{$table} );
 
         # Now that we have a brand new model, let's find all its columns
-        my @cols = grep { $_->{model_class} = $table->{uuid} } values %$columns;
+        my @cols = grep { $_->{model_class} = $table->{__uuid} } values %$columns;
         foreach my $col (@cols) {
             delete $col->{id};
             Jifty::Model::ModelClassColumn->create(%$col);
@@ -201,7 +198,7 @@ sub dump {
                 # If it's a reference and we can get its uuid, do that
                 if ( UNIVERSAL::isa( $_->refers_to, 'Jifty::DBI::Record' ) ) {
                     my $obj = $item->_to_record( $_->name => $item->__value( $_->name ) );
-                    $value = $obj->__value('uuid') || $item->__value( $_->name );
+                    $value = $obj->id ? $obj->__uuid : $item->__value( $_->name );
 
                 } else {
 
@@ -210,8 +207,7 @@ sub dump {
                 next unless defined $value;
                 $ds->{ $_->name } = $value;
             }
-            $content->{$model}
-                ->{ ( $item->can('uuid') ? $item->uuid : $item->id ) } = $ds;
+            $content->{$model}->{  $item->__uuid } = $ds;
         }
 
 

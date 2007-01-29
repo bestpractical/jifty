@@ -44,7 +44,6 @@ use Jifty::Record schema {
     column readable => type is 'boolean', default is 'true';
     column writable => type is 'boolean', default is 'true';
     column default_value => type is 'text';
-    column uuid => type is 'text', is immutable;
 };
 
 =head2 after_create
@@ -57,8 +56,6 @@ sub after_create {
     my $self = shift;
     my $idref = shift;
     $self->load_by_cols(id => $$idref);
-    $self->__set(column => 'uuid', value => Jifty::Util->generate_uuid) 
-        unless ($self->__value('uuid'));
     $self->model_class->add_column($self);
 
     my $ret = Jifty->handle->simple_query( $self->model_class->qualified_class->add_column_sql( $self->name ) );
