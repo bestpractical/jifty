@@ -46,6 +46,11 @@ use Jifty::Record schema {
     column default_value => type is 'text';
 };
 
+=head2 after_create
+
+Upon creation of a metacolumn object, update the actual table to add an actual column.
+
+=cut
 
 sub after_create {
     my $self = shift;
