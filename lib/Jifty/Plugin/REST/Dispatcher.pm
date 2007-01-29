@@ -121,7 +121,7 @@ sub object_to_data {
         }
     }
 
-    warn "Unable to handle object of type ", ref $obj, ", attempting to stringify.\n";
+    # Attempt to stringify as last resort
     return stringify( $obj );
 }
 
