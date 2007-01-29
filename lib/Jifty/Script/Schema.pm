@@ -216,17 +216,11 @@ sub create_all_tables {
         my $bootstrapper = Jifty->app_class("Bootstrap");
         Jifty::Util->require($bootstrapper);
         $bootstrapper->run() if $bootstrapper->can('run');
-        my $virtual_classes = Jifty::Model::ModelClassCollection->new();
-        $virtual_classes->unlimit();
-        $virtual_classes->instantiate();
-        $self->create_tables_for_models(map {$_->qualified_class} @{$virtual_classes->items_array_ref});
 
     };
     die $@ if $@;
-
     # Commit it all
     Jifty->handle->commit;
-
     Jifty::Util->require('IPC::PubSub');
     IPC::PubSub->new(
         JiftyDBI => (

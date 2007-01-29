@@ -55,6 +55,7 @@ $col3->create(name => 'password',
 
 ok($col3->id, "Got column ".$col2->id);
 
+
 {
 my $object = TestApp::DatabaseBackedModels::Model::Object->new(current_user => $u);
 isa_ok($object, 'TestApp::DatabaseBackedModels::Model::Object');
@@ -87,6 +88,38 @@ is($object_clone->name, 'Thingy');
 
 
 }
+
+
+
+# upgrade tests
+#
+# test that our bootstrapped models exist
+#
+# add a column to a bootstrapped model class (widgets)
+# can our widget objects now see the new column?
+# does the widgets table have the new column?
+# is the table's default correct?
+# do live widget objects magically have the new default?
+#
+# remove a column
+# do live objects lose that column?
+# do freshly loaded objects lose that column
+# do the column methods for the objects fail on the fly?
+
+
+
+# create a new modelclass
+# it instantiates the class
+# it autocreates the table in the database
+
+# add a column to the table
+# it updates the table in the database
+# it updates the model class
+
+# delete the new modelclass
+# it deletes the table in the database
+# it deletes the model class from memory
+# existing objects are ????
 
 1;
 

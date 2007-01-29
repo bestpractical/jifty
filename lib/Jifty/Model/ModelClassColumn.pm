@@ -47,6 +47,15 @@ use Jifty::Record schema {
 };
 
 
+sub after_create {
+    my $self = shift;
+    my $idref = shift;
+    $self->load_by_cols(id => $$idref);
+    $self->model_class->add_column($self);
+
+    my $ret = Jifty->handle->simple_query( $self->model_class->qualified_class->add_column_sql( $self->name ) );
+    $ret or die "error updating a table: " . $ret->error_message;
+}
 
 =head2 table
 

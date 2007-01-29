@@ -45,6 +45,23 @@ The metadata table first appeared in Jifty version 0.70127
 sub since {'0.70127'}
 
 
+=head2 after_create
+
+After create, instantiate our new class and create its database schema.
+
+=cut
+
+
+sub after_create {
+    my $self = shift;
+    my $idref = shift;
+    $self->load_by_cols(id=>$$idref);
+    $self->instantiate();
+    $self->qualified_class->create_table_in_db();
+
+}
+
+
 =head2 qualified_class
 
 Returns the fully qualified class name of the model class described the current ModelClass object.
@@ -72,20 +89,21 @@ sub instantiate {
     $self->qualified_class->_init_columns();
     my $cols = $self->included_columns;
     while (my $col = $cols->next) {
-        my $column = Jifty::DBI::Column->new({ name => $col->name } );
-        $self->qualified_class->COLUMNS->{$col->name} = $column;
-        for (qw(readable writable hints indexed max_length render_as mandatory)) {
-            $column->$_( $col->$_());
-        }
-        $column->type($col->storage_type);
-
-
-        $self->qualified_class->_init_methods_for_column($column) 
+        $self->add_column($col);
     }
-
     return 1;
 }
 
+sub add_column {
+    my $self = shift;
+    my $col = shift;
+    my $column =$self->qualified_class->add_column($col->name);
+    for (qw(readable writable hints indexed max_length render_as mandatory)) {
+        $column->$_( $col->$_() );
+    }
+    $column->type( $col->storage_type );
+    $self->qualified_class->_init_methods_for_column($column);
+}
 
 
 sub _instantiate_stub_class {
