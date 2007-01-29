@@ -214,6 +214,66 @@ sub drop_database {
     }
 }
 
+=head2 insert
+
+Assign an UUID for each successfully inserted rows.
+
+=cut
+
+sub insert {
+    my $self  = shift;
+    my $table = shift;
+    my $rv = $self->SUPER::insert($table, @_);
+
+    if ($rv) {
+        # Generate a UUID on the sideband: $table - $rv - UUID.
+        my $uuid = Jifty::Util->generate_uuid;
+        $self->dbh->do(qq[ INSERT INTO _jifty_uuids VALUES (?, ?, ?) ], {}, $uuid, $table, $rv);
+    }
+
+    return $rv;
+}
+
+=head2 bootstrap_uuid_table 
+
+Create the side-band table that gives each record its own UUID.
+
+=cut
+
+sub bootstrap_uuid_table {
+    my $self = shift;
+
+    $self->simple_query(qq[
+        CREATE TABLE _jifty_uuids (
+            uuid        char(36),
+            row_table   varchar(255),
+            row_id      integer
+        )
+    ]);
+    $self->simple_query(qq[
+        CREATE UNIQUE INDEX JiftyUUID ON _jifty_uuids (uuid, row_table, row_id)
+    ]);
+    $self->simple_query(qq[
+        CREATE UNIQUE INDEX JiftyUUID_Row ON _jifty_uuids (row_table, row_id)
+    ]);
+    $self->simple_query(qq[
+        CREATE UNIQUE INDEX JiftyUUID_UUID ON _jifty_uuids (uuid)
+    ]);
+}
+
+=head2 lookup_uuid($table, $id)
+
+Look up the UUID for a given row.
+
+=cut
+
+sub lookup_uuid {
+    my ($self, $table, $id) = @_;
+    my ($uuid) = $self->fetch_result(qq[
+        SELECT uuid FROM _jifty_uuids WHERE row_table = ? AND row_id = ?
+    ], $table, $id);
+    return $uuid;
+}
 
 =head1 AUTHOR
 

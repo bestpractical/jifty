@@ -56,4 +56,13 @@ since '0.61210' => sub {
     rename column => 'key', in => 'IPC::PubSub::Cache::JiftyDBI::Stash::Item', to => 'data_key';
 };
 
+since '0.70129' => sub {
+    Jifty->handle->begin_transaction;
+    Jifty->handle->bootstrap_uuid_table;
+
+    # XXX - Generate UUID for _existing_ rows
+
+    Jifty->handle->commit;
+};
+
 1;

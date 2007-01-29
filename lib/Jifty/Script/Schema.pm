@@ -205,6 +205,9 @@ sub create_all_tables {
     # Start a transaction
     Jifty->handle->begin_transaction;
 
+    # Bootstrap the UUID table first
+    Jifty->handle->bootstrap_uuid_table;
+
     $self->create_tables_for_models (grep {$_->isa('Jifty::DBI::Record')}  __PACKAGE__->models );
 
     # Update the versions in the database
@@ -212,6 +215,7 @@ sub create_all_tables {
     Jifty::Model::Metadata->store( jifty_db_version       => $jiftyv );
 
     # Load initial data
+    local $@;
     eval {
         my $bootstrapper = Jifty->app_class("Bootstrap");
         Jifty::Util->require($bootstrapper);

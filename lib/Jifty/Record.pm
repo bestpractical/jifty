@@ -487,5 +487,18 @@ sub drop_column_sql {
     return "ALTER TABLE " . $self->table . " DROP COLUMN " . $col->name;
 }
 
+=head2 uuid
+
+Get the UUID of any given row.
+
+=cut
+
+sub uuid {
+    my $self = shift;
+    my $id = $self->id or return undef;
+    my $table = $self->table or return undef;
+    return $self->_handle->lookup_uuid($table, $id);
+}
+
 1;
 
