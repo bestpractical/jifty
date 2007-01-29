@@ -102,11 +102,11 @@ sub upgrade_schema {
     my $current_tables = Jifty::Model::ModelClassCollection->new();
     $current_tables->unlimit();
     while ( my $table = $current_tables->next ) {
-        if ( $new_tables->{ $table->id } ) {
+        if ( $new_tables->{ $table->uuid } ) {
 
             # we have the same table in the db and the dump
             # let's sync its attributes from the dump then sync its columns
-            delete $new_tables->{ $table->id };
+            delete $new_tables->{ $table->uuid };
         } else {
 
             # we don't have the table anymore. That means we should delete it.
@@ -124,12 +124,14 @@ sub _upgrade_create_new_tables {
     my $new_tables = shift;
     my $columns    = shift;
     foreach my $table ( values %$new_tables ) {
+        delete $table->{id};
         my $class = Jifty::Model::ModelClass->new();
         my ( $val, $msg ) = $class->create( %{$table} );
 
         # Now that we have a brand new model, let's find all its columns
-        my @cols = grep { $_->{model_class} = $table->{id} } values %$columns;
+        my @cols = grep { $_->{model_class} = $table->{uuid} } values %$columns;
         foreach my $col (@cols) {
+            delete $col->{id};
             my $col_obj = Jifty::Model::ModelClassColumn->new();
             $col_obj->create(%$col);
         }
@@ -149,17 +151,28 @@ sub dump {
         my $records = $collection->new;
         $records->unlimit();
 
-        foreach my $item(@{$records->items_array_ref}) {
+        foreach my $item ( @{ $records->items_array_ref } ) {
             my $ds = {};
-             for ($item->columns) {
-                 next if $_->virtual;
-                my $value = $item->__value($_->name);
+            for ( $item->columns ) {
+                next if $_->virtual;
+                my $value;
+
+                # If it's a reference and we can get its uuid, do that
+                if ( UNIVERSAL::isa( $_->refers_to, 'Jifty::DBI::Record' ) ) {
+                    my $obj = $item->_to_record( $_->name => $item->__value( $_->name ) );
+                    $value = $obj->__value('uuid') || $item->__value( $_->name );
+
+                } else {
+
+                    $value = $item->__value( $_->name );
+                }
                 next unless defined $value;
-                $ds->{$_->name} = $value;
-             }
-            $content->{$model}->{$item->id} = $ds;
+                $ds->{ $_->name } = $value;
+            }
+            $content->{$model}
+                ->{ ( $item->can('uuid') ? $item->uuid : $item->id ) } = $ds;
         }
-        
+
 
     }
     print Jifty::YAML::Dump($content)."\n";
