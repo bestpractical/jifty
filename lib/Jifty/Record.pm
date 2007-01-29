@@ -16,6 +16,8 @@ representation; that is, it is also a L<Jifty::DBI::Record> as well.
 
 use base qw(Jifty::Object Jifty::DBI::Record Class::Accessor::Fast);
 __PACKAGE__->mk_accessors('_is_readable');
+use Jifty::DBI::SchemaGenerator;
+
 
 sub _init {
     my $self = shift;
