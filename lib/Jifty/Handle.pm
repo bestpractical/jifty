@@ -223,12 +223,17 @@ Assign an UUID for each successfully inserted rows.
 sub insert {
     my $self  = shift;
     my $table = shift;
-    my $rv = $self->SUPER::insert($table, @_);
+    my %attrs = @_;
+    my $uuid  = delete($attrs{__uuid});
+
+    my $rv = $self->SUPER::insert($table, %attrs);
 
     if ($rv) {
         # Generate a UUID on the sideband: $table - $rv - UUID.
-        my $uuid = Jifty::Util->generate_uuid;
-        $self->dbh->do(qq[ INSERT INTO _jifty_uuids VALUES (?, ?, ?) ], {}, $uuid, $table, $rv);
+        $self->dbh->do(
+            qq[ INSERT INTO _jifty_uuids VALUES (?, ?, ?) ], {},
+            ($uuid || Jifty::Util->generate_uuid), $table, $rv
+        );
     }
 
     return $rv;
