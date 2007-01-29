@@ -1,4 +1,6 @@
 package Jifty::Module::Pluggable;
+use strict;
+use warnings;
 use base qw/Module::Pluggable/;
 
 =head1 NAME
@@ -30,13 +32,28 @@ make it easy to subclass so that people could ovveride how the require
 was done. 
 
 
+=head3  But Simon is lying...
+
+What we actually need to override is Module::Pluggable::Object::_require, which we do below.
+
+
 =cut
 
 
-sub require {
+use Module::Pluggable::Object;
+use UNIVERSAL::require;
+
+no warnings 'redefine';
+sub Module::Pluggable::Object::_require {
     my $self = shift;
     my $module = shift;
-    Jifty::Util->require($module);
-}
+
+    # Module::Pluggable::Object::_require expects a true value (the error message) on failure
+    # On success, it expects you to return undef.
+
+    local $UNIVERSAL::require::ERROR;
+    $module->require(); # We'd prefer to use Jifty::Util->require() here, but it spews crazy warnings
+    return $UNIVERSAL::require::ERROR;
+} 
 
 1;

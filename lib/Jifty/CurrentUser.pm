@@ -38,9 +38,11 @@ app-specific initialization routine.
 
 sub new {
     my $class = shift;
-    my $self = {};
+    my $self  = {};
     bless $self, $class;
-    $self->_init(@_);
+    my %args = (@_);
+    if ( delete $args{'_bootstrap'} ) { $self->is_bootstrap_user(1); }
+    $self->_init(%args);
     return $self;
 }
 
@@ -72,9 +74,7 @@ Example:
 	    my $self = shift;
 	    my %args = (@_);
 	
-	    if (delete $args{'_bootstrap'} ) {
-	        $self->is_bootstrap_user(1);
-	    } elsif (keys %args) {
+            if (keys %args) {
 	        $self->user_object(Wifty::Model::User->new(current_user => $self));
 	        $self->user_object->load_by_cols(%args);
 	    }

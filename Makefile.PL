@@ -48,7 +48,8 @@ requires('Locale::Maketext::Lexicon' => '0.60');
 requires('Log::Log4perl');
 requires('LWP::UserAgent'); # Net::HTTP
 requires('MIME::Types');
-requires('Module::Pluggable' => '3.1');
+requires('Module::Pluggable' => '3.1'); # Module::Pluggable::Object
+requires('Module::Pluggable::Object');
 requires('Module::CoreList');
 requires('Module::Refresh');
 requires('Module::ScanDeps');

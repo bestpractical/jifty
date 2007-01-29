@@ -233,6 +233,7 @@ sub guess {
     $app_class =~ s/-/::/g;
     my $db_name = lc $app_name;
     $db_name =~ s/-/_/g;
+    my $app_uuid = Jifty::Util->generate_uuid;
 
     my $guess = {
         framework => {
@@ -241,6 +242,7 @@ sub guess {
             ApplicationClass => $app_class,
             TemplateClass    => $app_class."::View",
             ApplicationName  => $app_name,
+            ApplicationUUID  => $app_uuid,
             LogLevel         => 'INFO',
             PubSub           => {
                 Enable => undef,
