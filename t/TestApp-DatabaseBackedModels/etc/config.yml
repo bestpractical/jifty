@@ -10,6 +10,7 @@ framework:
     Host: localhost
     Password: ''
     RecordBaseClass: Jifty::DBI::Record::Cachable
+    HandleClass: Jifty::Handle::SVK
     User: ''
     Version: 0.0.1
   DevelMode: 1

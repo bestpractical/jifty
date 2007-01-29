@@ -31,6 +31,13 @@ created, it will be a subclass of L<Jifty::DBI::Handle>.
 sub new {
     my $class = shift;
 
+    if (my $handle_class = Jifty->config->framework('Database')->{'HandleClass'}) {
+        if ($handle_class ne $class) {
+            Jifty::Util->require( $handle_class );
+            return $handle_class->new(@_);
+        }
+    }
+
     my $driver = Jifty->config->framework('Database')->{'Driver'};
     if ($driver eq 'Oracle') {
         $ENV{'NLS_LANG'} = "AMERICAN_AMERICA.AL32UTF8";
