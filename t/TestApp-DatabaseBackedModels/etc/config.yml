@@ -9,8 +9,7 @@ framework:
     Driver: SQLite
     Host: localhost
     Password: ''
-    RecordBaseClass: Jifty::DBI::Record::Cachable
-    HandleClass: Jifty::Handle::SVK
+    RecordBaseClass: Jifty::Record::Versioned
     User: ''
     Version: 0.0.1
   DevelMode: 1
