@@ -94,6 +94,12 @@ sub instantiate {
     return 1;
 }
 
+=head2 add_column
+
+Create an in-memory column definition for a column object.
+
+=cut
+
 sub add_column {
     my $self = shift;
     my $col = shift;
