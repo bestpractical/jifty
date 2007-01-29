@@ -215,9 +215,9 @@ sub require {
         except  => qr/\.#/,
         inner   => 0
     );
+    # That plugins is module::pluggable, not jdbi
     $models{$_} = 1 for grep {/^($base)::Model::(.*)$/ and not /Collection$/} $self->plugins;
-    $self->models(sort keys %models);
-    for my $full ($self->models) {
+    for my $full (sort keys %models) {
         $self->_require_model_related_classes($full);
     }
         
@@ -226,6 +226,8 @@ sub require {
 sub _require_model_related_classes {
     my $self = shift;
     my $full = shift;
+    push (@{$self->models}, $full); 
+
     my $base = $self->{base};
         my($short) = $full =~ /::Model::(.*)/;
         Jifty::Util->require($full . "Collection");
@@ -275,10 +277,11 @@ return the content of the array.
 
 sub models {
     my $self = shift;
+    $self->{models} ||= [];
     if (@_) {
         $self->{models} = ref($_[0]) ? $_[0] : \@_;
     }
-    wantarray ? @{ $self->{models} ||= [] } : $self->{models};
+    wantarray ? @{ $self->{models} } : $self->{models};
 }
 
 

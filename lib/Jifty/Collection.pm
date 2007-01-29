@@ -115,6 +115,7 @@ sub new_item {
     my $class =$self->record_class();
 
     # We do this as a performance optimization, so we don't need to do the stackwalking to find it
+    Jifty::Util->require($class);
     return $class->new(current_user => $self->current_user);
 }
 
