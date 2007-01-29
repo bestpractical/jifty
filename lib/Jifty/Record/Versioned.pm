@@ -26,7 +26,7 @@ sub __create {
     my $rv = $self->SUPER::__create(%attribs);
     if ($rv) {
         # Write to SQL!
-        print YAML::Syck::Dump(\%attribs);
+        # print YAML::Syck::Dump(\%attribs);
     }
     return $rv;
 }
