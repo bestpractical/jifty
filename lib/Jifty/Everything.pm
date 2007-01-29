@@ -51,10 +51,6 @@ use Jifty::Model::Metadata ();
 use Jifty::Model::Session ();
 use Jifty::Model::SessionCollection ();
 
-use Jifty::Model::ModelClass ();
-use Jifty::Model::ModelClassCollection ();
-use Jifty::Model::ModelClassColumn ();
-use Jifty::Model::ModelClassColumnCollection ();
 
 use Jifty::Request ();
 use Jifty::Request::Mapper ();
