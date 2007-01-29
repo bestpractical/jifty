@@ -70,6 +70,8 @@ use warnings;
 package @{[$appclass]}::Model::@{[$model]};
 use Jifty::DBI::Schema;
 
+use constant CLASS_UUID => '@{[Jifty::Util->generate_uuid]}';
+
 use @{[$appclass]}::Record schema {
 
 };
