@@ -102,14 +102,58 @@ sub upgrade_schema {
     my $current_tables = Jifty::Model::ModelClassCollection->new();
     $current_tables->unlimit();
     while ( my $table = $current_tables->next ) {
-        if ( $new_tables->{ $table->uuid } ) {
+        if ( my $new_table = $new_tables->{ $table->uuid } ) {
 
             # we have the same table in the db and the dump
             # let's sync its attributes from the dump then sync its columns
+            foreach my $key ( keys %$new_table ) {
+                unless ( $table->$key() eq $new_table->{$key} ) {
+                    my $method = "set_" . $key;
+                    $table->$method( $new_table->{$key} );
+                }
+            }
+
+            my $existing_cols = {};
+            map { $existing_cols->{ $_->uuid } = $_ }
+                @{ $table->included_columns };
+
+            # Now that we've taken care of that, let's sync up our columns.
+            foreach my $col ( grep { $_->{model_class} = $table->{uuid} }
+                values %$columns ) {
+                delete
+                    $col->{id}; # the id is only important on the first system
+
+                # if we already have such a column, update it.
+                if ( my $existing_col = $existing_cols->{ $col->{uuid} } ) {
+                    foreach my $key ( keys %$col ) {
+                        unless ( $existing_col->$key() eq $col->{$key} ) {
+                            my $method = "set_" . $key;
+                            $existing_col->$method( $col->{$key} );
+                        }
+                    }
+
+                    delete $existing_cols->{ $col->{uuid} };
+
+                }
+
+                #otherwise we need to add it
+                else {
+                    Jifty::Model::ModelClassColumn->create(%$col);
+                }
+            }
+
+            # now that we've added all the columns we care about and
+            # modded the ones we know, everything left is something to delete;
+
+            for ( values %$existing_cols ) {
+                $_->delete;
+            }
+
             delete $new_tables->{ $table->uuid };
         } else {
 
             # we don't have the table anymore. That means we should delete it.
+            # XXX TODO: this automatically deletes all the columns
             $table->delete();
         }
 
@@ -132,8 +176,7 @@ sub _upgrade_create_new_tables {
         my @cols = grep { $_->{model_class} = $table->{uuid} } values %$columns;
         foreach my $col (@cols) {
             delete $col->{id};
-            my $col_obj = Jifty::Model::ModelClassColumn->new();
-            $col_obj->create(%$col);
+            Jifty::Model::ModelClassColumn->create(%$col);
         }
     }
 
