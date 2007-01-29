@@ -120,9 +120,11 @@ sub new {
     # Now that we've loaded the configuration, we can remove the temporary 
     # Jifty::DBI::Record baseclass for records and insert our "real" baseclass,
     # which is likely Record::Cachable or Record::Memcached
-    pop @Jifty::Record::ISA;
-    Jifty::Util->require( Jifty->config->framework('Database')->{'RecordBaseClass'});
-    push @Jifty::Record::ISA, Jifty->config->framework('Database')->{'RecordBaseClass'};
+    @Jifty::Record::ISA = grep { $_ ne 'Jifty::DBI::Record' } @Jifty::Record::ISA;
+
+    my $record_base_class = Jifty->config->framework('Database')->{'RecordBaseClass'};
+    Jifty::Util->require( $record_base_class );
+    push @Jifty::Record::ISA, $record_base_class unless $record_base_class eq 'Jifty::Record';
 
     Jifty->logger( Jifty::Logger->new( $args{'logger_component'} ) );
 
