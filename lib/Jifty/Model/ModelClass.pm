@@ -24,9 +24,17 @@ use Scalar::Defer;
 
 use Jifty::DBI::Schema;
 use Jifty::Record schema {
-    column name => type is 'text';
-    column description => type is 'text'; 
-    column included_columns => refers_to Jifty::Model::ModelClassColumnCollection by 'model_class';
+    column name => 
+        type is 'text',
+        label is 'Model name',
+        is distinct,
+        is mandatory;
+    column description => 
+        type is 'text',
+        label is 'Description',
+        render_as 'Textarea'; 
+    column included_columns => 
+        refers_to Jifty::Model::ModelClassColumnCollection by 'model_class';
 };
 
 

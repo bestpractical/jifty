@@ -25,25 +25,123 @@ use Jifty::Model::ModelClass;
 use Scalar::Defer;
 
 use Jifty::Record schema {
-    column name => type is 'text';
-    column model_class => refers_to Jifty::Model::ModelClass;
-    column label => type is 'text';
-    column hints => type is 'text';
-    column storage_type => type is 'text'; # should be a ref to a list
-    column max_length => type is 'int';
-    column sort_order => type is 'int';
-    column validator => type is 'text'; # should be a ref to a list. or maybe take code
-    column valid_values => type is 'text'; # should be a ref to a list. or maybe take code
-    column canonicalizer => type is 'text'; # ditto
-    column autocompleter => type is 'text'; # ditto
-    column mandatory => type is 'boolean';
-    column render_as => type is 'text'; # should actually be a reference to  a list
-    column filters => type is 'text'; # should actually be a reference to  a list
-    column description => type is 'text'; 
-    column indexed  => type is 'boolean';
-    column readable => type is 'boolean', default is 'true';
-    column writable => type is 'boolean', default is 'true';
-    column default_value => type is 'text';
+    column name => 
+        type is 'text',
+        label is 'Column name',
+        is mandatory;
+
+    column model_class => 
+        refers_to Jifty::Model::ModelClass,
+        label is 'Model',
+        is mandatory;
+
+    column label => 
+        type is 'text',
+        label is 'Label';
+
+    column hints => 
+        type is 'text',
+        label is 'Hints',
+        hints is 'Additional hint to give with the label as to what kind of information is expected in this column.';
+
+    # FIXME should be a ref to a list of storage types
+    column storage_type => 
+        type is 'text',
+        label is 'type',
+        hints is 'The kind of data that is being stored. Use "text" if you are not sure.';
+
+    column max_length => 
+        type is 'int',
+        label is 'Max. length',
+        hints is 'If set, any text greater than this length will be cut off before saving to the database.';
+
+    column sort_order => 
+        type is 'int',
+        label is 'Sort order',
+        hints is 'The order this column should be listed in relationship to the other columns.';
+
+    # TODO How to handle code refs and such?
+    column validator => 
+        type is 'text',
+        label is 'Validator',
+        render_as 'Textarea';
+
+    # TODO How to handle code or list refs and such?
+    column valid_values => 
+        type is 'text',
+        label is 'Valid values',
+        render_as 'Textarea';
+
+    # TODO How to handle code refs and such?
+    column canonicalizer => 
+        type is 'text',
+        label is 'Canonicalizer',
+        render_as 'Textarea';
+
+    # TODO How to handle code refs and such?
+    column autocompleter => 
+        type is 'text',
+        label is 'Autocompleter',
+        render_as 'Textarea';
+
+    column mandatory => 
+        type is 'boolean',
+        label is 'Mandatory?',
+        hints is 'If checked, a value must be given in this column in every row.';
+
+    # FIXME should actually be a reference to  a list
+    column render_as => 
+        type is 'text',
+        label is 'Render as',
+        hints is 'The kind of widget to use to edit the information.';
+
+    # FIXME should actually be a reference to  a list
+    column filters => 
+        type is 'text',
+        label is 'Filters',
+        hints is 'A list of Jifty::DBI filters to modify the data before going into or coming out of the database.';
+        
+    column description => 
+        type is 'text',
+        label is 'Description',
+        render_as 'Textarea'; 
+
+    column indexed  => 
+        type is 'boolean',
+        label is 'Indexed?',
+        hints is 'Should the database index this column for faster searching.';
+
+    column readable => 
+        type is 'boolean', 
+        label is 'Readable?',
+        hints is 'Can the value of this column be read directly? For example, passwords should not normally be readable.',
+        default is 'true';
+
+    column writable => 
+        type is 'boolean', 
+        label is 'Writable?',
+        hints is 'Can the value of this column be changed after created?',
+        default is 'true';
+
+    column default_value => 
+        type is 'text',
+        label is 'Default value',
+        hints is 'What value should be set for this column if none is given?';
+
+    column distinct_value =>
+        type is 'boolean',
+        label is 'Distinct?',
+        hints is 'Dinstinct columns require a unique value in every row.';
+
+    # TODO Should be a list of models or collections
+    column refers_to =>
+        type is 'text',
+        label is 'Refers to';
+
+    # TODO Should pull a list of columns from the refesr_to record_class
+    column refer_to_by =>
+        type is 'text',
+        label is 'By';
 };
 
 =head2 after_create
