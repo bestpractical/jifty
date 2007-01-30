@@ -1,0 +1,356 @@
+=head1 NAME
+
+Jifty::Manual::Models - Managing your datastore
+
+=head1 DESCRIPTION
+
+The idea behing a model is to give the user a database-independent way
+of defining how the data looks alike and how different parts of the
+data relate to each other. In database terms, you might think of a
+schema definition.
+
+Besides the pure definition of a model, creation, updating and lookup
+of data is also possible in a comfortable way.
+
+=head2 Creating a model
+
+Every model consists of two classes: I<AppName>::Model::I<ModelName>
+and I<AppName>::Model::I<ModelName>::Schema. Behind the scenes, a
+class named I<AppName>::Model::I<ModelName>Collection is created by
+L<Jifty::ClassLoader>.
+
+A simple model to store just one line of text might look like this:
+
+    use strict;
+    use warnings;
+
+    package MyApp::Model::TextLine;
+    use Jifty::DBI::Schema;
+
+    use MyApp::Record schema {
+        column 'textline';
+    };
+
+    # Your model-specific methods go here.
+
+    1;
+
+To create the database schema for a model inside an application you
+could simply run:
+
+    jifty model --name TextLine
+
+from inside your application's directory and Jifty will create exactly
+this class structure for you (minus the I<column> line, to be
+precise).
+
+=head3 Schema definition language
+
+Creating a model has important side effects:
+
+=over 2
+
+=item * correctly type your data inside the data-store
+
+=item * let Jifty create (and update) your database schema for you
+
+=item * tell Jifty the behaviour in terms of form display
+
+=item * allow to work with multiple records (referred to as Collections) without effort
+
+=back
+
+To get all these things done, Jifty allows to describe the schema
+definition in a simply comprehendable but powerful syntax that looks
+more like written text than a programming language. The schema
+definition is made inside the C<MyApp::Model::XXX::Schema> package and
+every single column to get created starts with the word C<column>
+followed by the column's name.
+
+A simple definition could look like this:
+
+    column name =>
+        type is 'text',
+        label is 'Name',
+        render as 'Text',
+        since '0.0.1';
+
+The following BNF shows the full syntax supported (omitting
+non-terminals that are self-explanatory to perl-developers):
+
+    schema_definition ::= column_definition+
+
+    column_definition ::= 'column' string_columnname '=>'
+                          column_info [ ',' column_info ]+ ';'
+
+    column_info ::= 'type' 'is' string
+       | 'label' 'is' string
+       | 'render_as' string
+       | 'render' 'as' string
+       | 'hints' 'is' string
+       | 'refers_to' class_name 'by' string_columnname
+       | 'default' 'is' string
+       | 'literal' 'is' string
+       | 'validator' 'is' subroutine_reference
+       | 'immutable'
+       | 'unreadable'
+       | 'length' 'is' number
+       | 'mandatory'
+       | 'not_null'
+       | 'distinct'
+       | 'virtual'
+       | 'sort_order' 'is' number
+       | 'input_filters' 'are' string_classname
+       | 'output_filters' 'are' string_classname
+       | 'filters' 'are' string_classname
+       | 'since' string_version_number
+       | 'valid_values' 'are' array_of_valid_values
+       | 'valid' 'are' array_of_valid_values
+       | 'hints' 'are' string
+
+    * 'is', 'by', 'on', 'as' and 'are' are fill-words that may get omitted.
+
+For a full description of all parameter's meaning, look at
+L<Jifty::DBI::Schema>.
+
+=head3 Versioning
+
+Every time you run the jifty utility with C<schema> as an argument,
+Jifty will keep track on what it has done for you. To get that done,
+the version-number being stored in your application's config file
+C<etc/config.yml> under the key named C<framework/Database/Verson> is
+matched agains your schema definition.
+
+To force an update of your schema, simple create a new version number
+in your config file and modify your schema definition by using exactly
+this version number for every modified entry. After running
+
+    jifty schema --setup
+
+your database structure will be in sync to your schema definition.
+See L<Jifty::Manual::Upgrading> for more information on model upgrading.
+
+=head2 Testing a model
+
+After having created a schema, you might use the B<ADMINISTRATION>
+Menu entry in Jifty's web view (i.e. the "pony") to browse through
+your models and add, edit or delete records in your database.
+
+=head2 The classes behind a model
+
+=over 2
+
+=item * MyApp::Model::Xxx
+
+This is the model-class you created to access individual records of your desired
+type. You will directly deal with objects of this class.
+
+=item * MyApp::Record
+
+All records of C<MyApp::Model::Xxx> will have this class as their base
+class. Usually, this class will be automatically created by
+L<Jifty::ClassLoader> for you. But, if you want to automatically
+enable all your records to do something, you will have a chance to do
+so by manually creating this class.
+
+=item * L<Jifty::Record>
+
+This is the super-class of C<MyApp::Record>. Inside this class, loading
+of records as well as the checking of user capabilities is done before
+going one level down to the database layer.
+
+=item * L<Jifty::DBI::Record>
+
+This is the lowest-level class that the database stack provides. It
+directly deals with the underlying database.
+
+=item * App::Model::XxxCollection
+
+As the name applies, a collection is a set of typically more than one
+record. Every collection of this class conists of multiple
+C<App::Model::Xxx> objects that can get retrieved from your data-store
+without explicit SQL statements, ordered by any criteria you give,
+paged in the fashion you like,
+and iterated sequentially or accessed at random order.
+
+=item * App::Collection
+
+Every collection of your schemata will have this class as its
+base. Usually this class is autocreated by L<Jifty::ClassLoader>. If
+you intend to create new features for all of your collection this will
+be your chance to do.
+
+=item * L<Jifty::Collection>
+
+This is the base class of an C<App::Collection>, managing user
+capabilities on records it will keep track of.
+
+=item * L<Jifty::DBI::Collection>
+
+This is the lowest-level base class that directly manages the access to
+the underlying database.
+
+=back
+
+=head2 Working with a single record
+
+Working with a single record means working with objects of classes like
+C<MyApp::Model::Xxx>. The typical creation and usage of a single
+record is:
+
+    # create an object to allow data access
+    my $object = new MyApp::Model::Xxx;
+
+    # either create a representation in the DB
+    $object->create(column => 'value', ...);
+
+    # or load the data from DB somehow
+    $object->load($id); # by a matching ID
+    $object->load_by_cols(column => 'value', other_column => 'secondvalue');
+
+    # try to load and if failed, create a record
+    $object->load_or_create(column => 'value');
+
+    # get the record's ID in the database
+    # results in 'undef' if record is not valid (which usually means not found)
+    my $id = $object->id;
+
+    # delete the record from the database
+    $object->delete;
+
+To access data stored in different columns of a record you may use
+some of the automagically created methods on the object:
+
+    # read some column named 'colname'
+    my $value = $object->colname;
+
+    # write some value to a column named 'colname'
+    $object->set_colname($value);
+
+    # get all columns in a single hash (not a reference!)
+    my %record = $object->as_hash;
+
+Especially, when writing to a record, you need not worry about how to
+write back the data to the database, the object will manage this step
+on its own.
+
+=head2 Working with multiple records
+
+Working with more than one record of the same object-class brings
+collections into the game. Usually, a collection you deal with is of a
+type that conforms to your model name, C<MyApp::Model::XxxCollection>
+and usually holds records of class C<MyApp::Model::Xxx>. You typically
+use a collection like this:
+
+    # create a collection object
+    my $collection = new MyApp::Model::XxxCollection;
+
+    # get all items of the model into the collection
+    $collection->unlimit;
+
+    # or restrict items to match some condition
+    $collection->limit(column => 'colname', operator => '=', value => 42);
+
+    # bring the items into some sorting order
+    $collection->order_by(column => 'colname');
+
+    # if neccesarry, directly jump to some record from the set
+    $collection->goto_first_item;
+
+    $collection->goto_item(42);
+
+    # iterate through the result set
+    while (my $record = $collection->next) {
+          # do something with $record
+    }
+
+    # directly access the first or last item
+    # be careful: this will set the current position also!
+    my $first = $collection->first;
+    my $last  = $collection->last;
+
+    # get back an array-ref containing all items
+    my $records = $collection->items_array_ref;
+
+=head3 Some options provided by C<limit>
+
+In order to construct more complex restrictions the C<limit> method
+may get called more than once, specifying one single condition with
+each call.
+
+Every use of C<limit> constructs either a I<clause> or a I<subclause>.
+A subclause is built either if the C<subclause> attribute is used or a
+column is used repeatedly.
+
+Every clause is built up by combining its subclauses (if
+any) using the C<entry_aggregator> operator (whose default is I<OR>)
+as a combining operator. Clauses are then I<AND>ed together to yield
+the final restriction that is finally used to retrieve the records in
+question.
+
+The C<operator> (whose default is '=') can be any legal SQL operator
+like C<=>, C<< <= >>, C<< >= >>, C<< != >>, C<LIKE>, C<IS>, C<IS
+NOT> as well as some convenience operators that silently use C<LIKE>
+with properly set wildcards (C<MATCHES>, C<STARTSWITH> or
+C<ENDSWITH>).
+
+    # combining restrictions with "AND"
+    # note that "AND" is implicit here unless a column name is repeated
+    $collection->limit(column => 'col1', value => '...');
+    $collection->limit(column => 'col2', value => '...');
+
+    # combining restrictions with "OR"
+    # note that the 'subclause' has the same value
+    $collection->limit(column => 'col1', value => '...',
+                       entry_aggregator => 'OR', # is already default
+                       subclause => 'some_id');
+    $collection->limit(column => 'col2', value => '...',
+                       entry_aggregator => 'OR', # is already default
+                       subclause => 'some_id');
+
+For debugging purposes, you might want to examine the SQL statement
+generated behind the scene:
+
+    warn $collection->build_select_query;
+
+See L<Jifty::DBI::Collection> about more ways or ordering and limiting
+collections.
+
+=head2 Action - Model relationship
+
+When writing templates you often simply access some record from a
+model and want to operate on this very record by modifying it or you
+might want to add a new record of some type. To do this, our faithful
+L<Jifty::ClassLoader> will create classes named
+C<MyApp::Action::CreateXxx>, C<MyApp::Action::UpdateXxx> or
+C<MyApp::Action::DeleteXxx> for you. This enables you to write a
+template to operate on a single record like this:
+
+    <%init>
+    my $id = some_value_obtained_somehow;
+    my $record = new MyApp::Model::Xxx;
+    $record->load($id);
+
+    my $action = Jifty->web->new_action(class   => 'UpdateXxx',
+                                        moniker => 'mymoniker',
+                                        record  => $record);
+    </%init>
+    ...
+    <% $action->form_field('colname') %>
+    ...
+    <% Jifty->web->link(label  => 'Update',
+                        submit => $action,
+                        ... ) %>
+
+The elegant thing around here is that you could write the class name
+of your action-class simply as C<UpdateXxx> instead of the full
+package name C<MyApp::Action::UpdateXxx> and there is no need to write
+a repeating update procedure for every record class that comes along.
+DRY - don't repeat yourself :-)
+
+=head1 SEE ALSO
+
+L<Jifty::Record>, L<Jifty::DBI::Record>, L<Jifty::Collection>, L<Jifty::DBI::Collection>, L<Jifty::Manual::Actions>, L<Jifty::Manual::Tutorial>
+
+
+=cut

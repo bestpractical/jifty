@@ -15,7 +15,7 @@ L<Jifty::Response> object.
 
 =cut
 
-use Jifty::Everything;
+
 
 use base qw/Jifty::Object Class::Accessor::Fast/;
 
@@ -46,7 +46,7 @@ Gets or sets if the action succeeded or failed.
 
 =head2 success [BOOL]
 
-Gets or success if the action succeeded or failed -- this is an
+Gets or sets if the action succeeded or failed -- this is an
 alternate interface from C<failure> but has the same effect.
 
 =cut
@@ -133,6 +133,32 @@ name to warning.
 sub field_warnings {
     my $self = shift;
     return %{$self->{field_warnings} || {}};
+}
+
+=head2 field_canonicalization_note FIELD [NOTE]
+
+Gets or sets a canonicalization note for a specific field on the action.
+
+=cut
+
+sub field_canonicalization_note {
+    my $self = shift;
+    my $field = shift;
+
+    $self->{field_canonicalization_notes}{ $field } = shift if @_;
+    return $self->{field_canonicalization_notes}{ $field };
+}
+
+=head2 field_canonicalization_notes
+
+Returns a hash which maps L<argument|Jifty::Manual::Glossary/argument>
+name to canonicalization notes.
+
+=cut
+
+sub field_canonicalization_notes {
+    my $self = shift;
+    return %{$self->{field_canonicalization_notes} || {}};
 }
 
 =head2 content [KEY [, VALUE]]

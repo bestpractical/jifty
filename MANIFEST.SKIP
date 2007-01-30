@@ -19,3 +19,13 @@ merge_bleadperl$
 .*.swp
 var/*
 t/*/var/*
+doc/talks/*
+^\.
+/\._
+t/mailbox$
+jiftyapptest$
+\.orig$
+\.rej$
+\.tmp$
+\.diff$
+blib

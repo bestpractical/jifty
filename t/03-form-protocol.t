@@ -10,7 +10,7 @@ J:A:F-id-mymoniker: 23
 J:A:F-something-mymoniker: else
 J:ACTIONS: mymoniker
 --- request
-path: ~
+path: /
 state_variables: {}
 actions:
   mymoniker:
@@ -37,7 +37,7 @@ J:A:F-id-second: 42
 J:A:F-something-second: bla
 J:ACTIONS: mymoniker!second
 --- request
-path: ~
+path: /
 state_variables: {}
 actions:
   mymoniker:
@@ -75,7 +75,7 @@ J:A:F-id-second: 42
 J:A:F-something-second: bla
 J:ACTIONS: mymoniker!second
 --- request
-path: ~
+path: /
 state_variables: {}
 actions:
   mymoniker:
@@ -112,7 +112,7 @@ J:A:F-id-second: 42
 J:A:F-something-second: bla
 J:ACTIONS: mymoniker!second
 --- request
-path: ~
+path: /
 state_variables: {}
 actions:
   mymoniker:
@@ -141,7 +141,7 @@ J:A:F-id-second: 42
 J:A:F-something-second: bla
 J:ACTIONS: second
 --- request
-path: ~
+path: /
 state_variables: {}
 actions:
   mymoniker:
@@ -178,7 +178,7 @@ J:A-second: DoThat
 J:A:F-id-second: 42
 J:A:F-something-second: bla
 --- request
-path: ~
+path: /
 state_variables: {}
 actions:
   mymoniker:
@@ -218,7 +218,7 @@ J:A-second: DoThat
 J:A:F-id-second: 42
 J:A:F-something-second: bla
 --- request
-path: ~
+path: /
 state_variables: {}
 actions:
   mymoniker:
@@ -258,7 +258,7 @@ J:A-second: DoThat
 J:A:F-something-mymoniker: else
 J:A-mymoniker: DoSomething
 --- request
-path: ~
+path: /
 state_variables: {}
 actions:
   mymoniker:
@@ -293,7 +293,7 @@ J:A:F:F-id-mymoniker: 96
 J:A:F-something-mymoniker: else
 J:ACTIONS: mymoniker
 --- request
-path: ~
+path: /
 state_variables: {}
 actions:
   mymoniker:
@@ -319,7 +319,7 @@ J:A:F-id-mymoniker: 23
 J:A:F-something-mymoniker: else
 J:ACTIONS: mymoniker
 --- request
-path: ~
+path: /
 state_variables: {}
 actions:
   mymoniker:
@@ -344,7 +344,7 @@ J:A:F:F-id-mymoniker: 96
 J:A:F-something-mymoniker: else
 J:ACTIONS: mymoniker
 --- request
-path: ~
+path: /
 state_variables: {}
 actions:
   mymoniker:
@@ -372,7 +372,7 @@ J:A:F-id-second: 42
 J:A:F-something-second: feepy
 J:ACTIONS: mymoniker!second
 --- request
-path: ~
+path: /
 state_variables: {}
 actions:
   mymoniker:
@@ -401,110 +401,6 @@ arguments:
   J:A:F-something-second: feepy
   J:ACTIONS: mymoniker!second
 fragments: {}
-=== double fallbacks being ignored (with single fallback)
---- form
-J:A-mymoniker: DoSomething
-J:A:F:F:F-id-mymoniker: 789
-J:A:F:F-id-mymoniker: 456
-J:A:F-id-mymoniker: 123
-J:A:F-something-mymoniker: else
-J:ACTIONS: mymoniker
---- request
-path: ~
-state_variables: {}
-actions:
-  mymoniker:
-    moniker: mymoniker
-    class: DoSomething
-    active: 1
-    has_run: 0
-    arguments:
-        id: 123
-        something: else
-arguments:
-  J:A-mymoniker: DoSomething
-  J:A:F:F:F-id-mymoniker: 789
-  J:A:F:F-id-mymoniker: 456
-  J:A:F-id-mymoniker: 123
-  J:A:F-something-mymoniker: else
-  J:ACTIONS: mymoniker
-fragments: {}
-=== double fallbacks being ignored (without single fallback)
---- form
-J:A-mymoniker: DoSomething
-J:A:F:F:F-id-mymoniker: 789
-J:A:F-id-mymoniker: 123
-J:A:F-something-mymoniker: else
-J:ACTIONS: mymoniker
---- request
-path: ~
-state_variables: {}
-actions:
-  mymoniker:
-    moniker: mymoniker
-    class: DoSomething
-    active: 1
-    has_run: 0
-    arguments:
-        id: 123
-        something: else
-arguments:
-  J:A-mymoniker: DoSomething
-  J:A:F:F:F-id-mymoniker: 789
-  J:A:F-id-mymoniker: 123
-  J:A:F-something-mymoniker: else
-  J:ACTIONS: mymoniker
-fragments: {}
-=== double fallbacks being ignored (single fallback used)
---- form
-J:A-mymoniker: DoSomething
-J:A:F:F:F-id-mymoniker: 789
-J:A:F:F-id-mymoniker: 456
-J:A:F-something-mymoniker: else
-J:ACTIONS: mymoniker
---- request
-path: ~
-state_variables: {}
-actions:
-  mymoniker:
-    moniker: mymoniker
-    class: DoSomething
-    active: 1
-    has_run: 0
-    arguments:
-        id: 456
-        something: else
-arguments:
-  J:A-mymoniker: DoSomething
-  J:A:F:F:F-id-mymoniker: 789
-  J:A:F:F-id-mymoniker: 456
-  J:A:F-something-mymoniker: else
-  J:ACTIONS: mymoniker
-fragments: {}
-=== double fallbacks being used
---- form
-J:A-mymoniker: DoSomething
-J:A:F:F:F-id-mymoniker: 789
-J:A:F-something-mymoniker: else
-J:ACTIONS: mymoniker
---- request
-path: ~
-state_variables: {}
-actions:
-  mymoniker:
-    moniker: mymoniker
-    class: DoSomething
-    active: 1
-    has_run: 0
-    arguments:
-        id: 789
-        something: else
-arguments:
-  J:A-mymoniker: DoSomething
-  J:A:F:F:F-id-mymoniker: 789
-  J:A:F-something-mymoniker: else
-  J:ACTIONS: mymoniker
-fragments: {}
 === just validating
 ---- form
 J:A-mymoniker: DoSomething
@@ -516,7 +412,7 @@ J:A:F-id-second: 42
 J:A:F-something-second: bla
 J:ACTIONS: mymoniker;second
 --- request
-path: ~
+path: /
 state_variables: {}
 actions:
   mymoniker:

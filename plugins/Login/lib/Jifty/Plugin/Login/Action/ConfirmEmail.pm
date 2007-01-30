@@ -32,14 +32,14 @@ Set their confirmed status.
 
 sub take_action {
     my $self        = shift;
-    my $LoginUser   = $self->LoginUserClass();
-    my $CurrentUser = $self->CurrentUserClass();
-    my $u = $LoginUser->new( current_user => $CurrentUser->superuser );
+    my $LoginUserClass   = $self->LoginUserClass;
+    my $CurrentUser = $self->CurrentUserClass;
+    my $u = $LoginUserClass->new( current_user => $CurrentUser->superuser );
     $u->load_by_cols( email => Jifty->web->current_user->user_object->email );
 
     if ( $u->email_confirmed ) {
         $self->result->error(
-            email => "You have already confirmed your account." );
+            email => _("You have already confirmed your account.") );
         $self->result->success(1);    # but the action is still a success
     }
 
@@ -49,7 +49,7 @@ sub take_action {
     $self->result->message( "Welcome to "
           . Jifty->config->framework('ApplicationName') . ", "
           . $u->name
-          . ". Your email address has now been confirmed." );
+          . _(". Your email address has now been confirmed.") );
 
     # Actually do the login thing.
     Jifty->web->current_user( $CurrentUser->new( id => $u->id ) );

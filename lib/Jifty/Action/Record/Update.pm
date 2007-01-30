@@ -84,6 +84,8 @@ sub take_action {
     my $self = shift;
     my $changed = 0;
 
+    my $event_info = $self->_setup_event_before_action();
+
     for my $field ( $self->argument_names ) {
         # Skip values that weren't submitted
         next unless $self->has_argument($field);
@@ -96,9 +98,9 @@ sub take_action {
         # Grab the value
         my $value = $self->argument_value($field);
 
-        # Boolean and integer fields should be skipped if blank.
+        # Boolean and integer fields should be set to NULL if blank.
         # (This logic should be moved into SB or something.)
-        next
+        $value = undef
             if ( defined $column->type and ( $column->type =~ /^bool/i || $column->type =~ /^int/i )
             and defined $value and $value eq '' );
 
@@ -135,6 +137,8 @@ sub take_action {
 
     $self->report_success
       if $changed and not $self->result->failure;
+
+    $self->_setup_event_after_action($event_info);
 
     return 1;
 }

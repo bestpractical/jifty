@@ -19,14 +19,16 @@ BEGIN {
     no strict 'refs';
     no warnings 'once';
 
-    if ( eval { require YAML::Syck; YAML::Syck->VERSION(0.27) } ) {
+    if ( eval { require YAML::Syck; YAML::Syck->VERSION(0.71) } ) {
         *Load     = *YAML::Syck::Load;
 
-        # XXX Force non-Syck Dump until it can handle dumping circular
-        # references, which show up in halos while dumping component
-        # arguments
+
         require YAML;
+        # Use YAML::Dump for the moment since YAML.pm segfaults on
+        #  reading stupidly long (~20K characters) double-quoted
+        #  strings, and we need to produce YAML.pm-readable output.
         *Dump     = *YAML::Dump;
+        #*Dump     = *YAML::Syck::Dump;
 
         *LoadFile = *YAML::Syck::LoadFile;
         *DumpFile = *YAML::Syck::DumpFile;

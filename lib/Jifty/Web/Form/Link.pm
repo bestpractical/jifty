@@ -17,8 +17,11 @@ generates L<Jifty::Web::Form::Link>s.
 
 use base 'Jifty::Web::Form::Element';
 
-# Since we don't inherit from Form::Field, we don't otherwise stringify
-use overload '""' => sub { shift->render}, bool => sub { 1 };
+# Since we don't inherit from Form::Field, we don't otherwise stringify.
+# We need the anonymous sub because otherwise the method of the base class is
+# always called, instead of the appropriate overridden method in a possible
+# child class.
+use overload '""' => sub { shift->render }, bool => sub { 1 };
 
 =head2 accessors
 
@@ -65,19 +68,14 @@ Any parameter which L<Jifty::Web::Form::Element/new> can take.
 
 sub new {
     my $class = shift;
+    my $args = ref($_[0]) ? $_[0] : {@_};
     my $self  = $class->SUPER::new(
       { url          => $ENV{PATH_INFO},
         label        => "Click me!",
         tooltip      => undef,
         escape_label => 1,
         class        => '',
-        target       => '' }
-    );
-    my $args = ref($_[0]) ? $_[0] : {@_};
-
-    for my $field ( keys %$args ) {
-        $self->$field( $args->{$field} );
-    }
+        target       => '' }, $args );
 
     return $self;
 }
@@ -110,7 +108,8 @@ sub render {
     Jifty->web->out(qq( class="@{[$self->class]}"))   if $self->class;
     Jifty->web->out(qq( title="@{[$self->tooltip]}")) if $tooltip;
     Jifty->web->out(qq( target="@{[$self->target]}")) if $self->target;
-    Jifty->web->out(qq( href="@{[$self->url]}"));
+    Jifty->web->out(qq( accesskey="@{[$self->key_binding]}")) if $self->key_binding;
+    Jifty->web->out(qq( href="@{[Jifty->web->escape($self->url)]}"));
     Jifty->web->out( $self->javascript() );
     Jifty->web->out(qq(>$label</a>));
     $self->render_key_binding();

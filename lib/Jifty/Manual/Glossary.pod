@@ -11,9 +11,10 @@ We use words.  This is what they mean.
 =item action
 
 An B<action> is a specifically designed RPC call that can do something to the
-system.  An action takes any number of L</argument>s, which it
-L</canonicalize>s, L</validate>s, and then uses to do something useful.  Each
-action has a L</result>.  See L<Jifty::Action> and L<Jifty::Manual::Actions>.
+system, with any number of declared L</parameter>s.  At runtime, an action
+can take L</argument>s, which it L</canonicalize>s, L</validate>s, and then
+uses to do something useful.  Each action has a L</result>.  See
+L<Jifty::Action> and L<Jifty::Manual::Actions>.
 
 =item active
 
@@ -32,8 +33,8 @@ L<Jifty::Web::PageRegion>.
 
 =item argument
 
-An B<argument> is a named parameter to an L</action>.  Jifty generally renders
-these on the screen as L</form field>s.  See L<Jifty::Action>.
+An B<argument> is a user-supplied input to fill in a L</parameter> in an
+L</action>.  See L<Jifty::Action>.
 
 =item canonicalize
 
@@ -43,8 +44,8 @@ SQL-formatted date string.  See L<Jifty::Action>.
 
 =item constructor
 
-A property of an L</argument>; the action B<must> have a value submitted for
-this argument in order to be constructed.  This is different from
+A property of a L</parameter>; the action B<must> have an argument value for
+this paramater in order to be constructed.  This is different from
 L</mandatory>, in that the user can leave mandatory fields empty.  For
 instance, the C<id> of a L<Jifty::Action::Record::Update> is a constructor.
 See L<Jifty::Action>.
@@ -62,7 +63,7 @@ L<Jifty::Continuation>.
 =item form field
 
 A widget which the browser renders.  These are generally useful to ask the user
-for a value for a L</argument> to an L</action>.  See
+for a value for an L</argument> to an L</action>.  See
 L<Jifty::Web::Form::Field>.
 
 =item fragment
@@ -84,7 +85,7 @@ life easier.
 
 =item mandatory
 
-A property of an L</argument>; the user must enter a value for the action to
+A property of a L</parameter>; the user must enter a value for the action to
 validate.  This is the simplest level of L<validation|/validate>.
 
 =item moniker
@@ -95,6 +96,12 @@ Monikers serve as identifiers for actions, to associate arguments with
 actions and to access specific actions "by name".  Monikers need not
 be globally unique, but they must be unique within a single request.
 Monikers have no semantic meaning. See L<Jifty::Action/monikers>
+
+=item parameter
+
+A B<parameter> is a named parameter to an L</action>.  Jifty generally renders
+these on the screen as L</form field>s.  See L<Jifty::Param> and
+L<Jifty::Param::Schema>.
 
 =item region
 
@@ -129,7 +136,7 @@ failure, so the user can update the information and try again.
 
 =item validate
 
-To check that the provided value of a L</argument> is a possible value for it
+To check that the provided value of an L</argument> is a possible value for it
 to have.  See L<Jifty::Web::Form::Field>.
 
 =back

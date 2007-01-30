@@ -11,17 +11,18 @@ Jifty::Web - Web framework for a Jifty application
 
 
 
-use Jifty::Everything;
+
 use CGI::Cookie;
 use XML::Writer;
 use CSS::Squish;
 use Digest::MD5 qw(md5_hex);
+use Carp qw(carp);
 use base qw/Class::Accessor::Fast Class::Data::Inheritable Jifty::Object/;
 
 use vars qw/$SERIAL @JS_INCLUDES/;
 
 __PACKAGE__->mk_accessors(
-    qw(next_page request response session temporary_current_user _current_user)
+    qw(next_page force_redirect request response session temporary_current_user _current_user _state_variables)
 );
 
 __PACKAGE__->mk_classdata($_)
@@ -30,6 +31,7 @@ __PACKAGE__->mk_classdata($_)
 
 __PACKAGE__->javascript_libs([qw(
     jsan/JSAN.js
+    jsan/Push.js
     setup_jsan.js
     jsan/Upgrade/Array/push.js
     jsan/DOM/Events.js
@@ -46,6 +48,7 @@ __PACKAGE__->javascript_libs([qw(
     formatDate.js
     jifty.js
     jifty_utils.js
+    jifty_subs.js
     jifty_smoothscroll.js
     calendar.js
     dom-drag.js
@@ -59,8 +62,11 @@ __PACKAGE__->javascript_libs([qw(
     yui/dom.js
     yui/event.js
     yui/calendar.js
+    yui/tabview.js
+    yui/container.js
     app.js
     app_behaviour.js
+    css_browser_selector.js
 )]);
 
 =head1 METHODS
@@ -75,6 +81,7 @@ sub new {
     my $class = shift;
     my $self = bless {region_stack => []}, $class;
     $self->session(Jifty::Web::Session->new());
+    $self->clear_state_variables;
     return ($self);
 }
 
@@ -97,6 +104,7 @@ Send a string to the browser. The default implementation uses Mason->out;
 =cut
 
 sub out {
+    Carp::cluck unless defined $_[0]->mason;
     shift->mason->out(@_);
 }
 
@@ -104,35 +112,65 @@ sub out {
 =head3 url
 
 Returns the root url of this Jifty application.  This is pulled from
-the configuration file.  Takes an optional named parameter C<scheme>
-to specify the scheme.
+the configuration file.  Takes an optional named path which will
+form the path part of the resulting URL.
 
 =cut
 
 sub url {
     my $self = shift;
-    my %args = @_;
+    my %args = (scheme => undef,
+                path => undef,
+                @_);
 
-    my $url  = Jifty->config->framework("Web")->{BaseURL};
-    my $port = Jifty->config->framework("Web")->{Port};
+    if ($args{'scheme'}) {
+        $self->log->error("Jifty->web->url no longer accepts a 'scheme' argument");
+    }
+
+    my $uri;
+
+    # Try to get a host out of the environment, useful in remote testing.
+    # The code is a little hairy because there's no guarantee these
+    # environment variables have all the information.
+    if (my $http_host_env = $ENV{HTTP_HOST}) {
+        # Explicit flag needed because URI->new("noscheme") is structurally
+        # different from URI->new("http://smth"). Clunky, but works.
+        my $dirty;
+        if ($http_host_env !~ m{^https?://}) {
+            $dirty++;
+            $http_host_env = "http://" . $http_host_env;
+        }
+        $uri = URI->new($http_host_env);
+        if ($dirty && (my $req_uri_env = $ENV{REQUEST_URI})) {
+            my $req_uri = URI->new($req_uri_env);
+            $uri->scheme($req_uri->scheme) if $req_uri->can('scheme');
+            $dirty = $uri->scheme;
+        }
+        # As a last resort, peek at the BaseURL configuration setting
+        # for the scheme, which is an often-missing part.
+        if ($dirty) {
+            my $config_uri = URI->new(
+                    Jifty->config->framework("Web")->{BaseURL});
+            $uri->scheme($config_uri->scheme);
+        }
+    }
+
+    if (!$uri) {
+      my $url  = Jifty->config->framework("Web")->{BaseURL};
+      my $port = Jifty->config->framework("Web")->{Port};
+   
+      $uri = URI->new($url);
+      $uri->port($port);
+    }
+
+    if (defined $args{path}) {
+      my $path = $args{path};
+      # strip off leading '/' because ->canonical provides one
+      $path =~ s{^/}{};
+      $uri->path_query($path);
+    }
     
-    my $scheme = 'http';
-    if ($url =~ /^(\w+)/) {
-        $scheme = $1;
-    }
-    $scheme = $args{scheme} if $args{scheme};
-
-    if ($ENV{'HTTP_HOST'}) {
-        return $scheme ."://".$ENV{'HTTP_HOST'};
-    }
-
-    my $append_port = 0;
-    if (   ( $scheme  eq 'http' and $port != 80 )
-        or ( $scheme  eq'https' and $port != 443 ) ) {
-        $append_port = 1;
-    }
-    return( $url . ($append_port ? ":$port" : ""));
-
+    return $uri->canonical->as_string;
 }
 
 =head3 serial 
@@ -199,9 +237,6 @@ sub current_user {
         my $currentuser_obj = shift;
         $self->session->set(
             'user_id' => $currentuser_obj ? $currentuser_obj->id : undef );
-        $self->session->set( 'user_ref' => $currentuser_obj
-            ? ref $currentuser_obj->user_object
-            : undef );
         $self->_current_user( $currentuser_obj || undef );
     }
 
@@ -211,19 +246,11 @@ sub current_user {
         return $self->_current_user;
 
     } elsif ( my $id = $self->session->get('user_id') ) {
-        my $object = (
-            Jifty->config->framework('ApplicationClass') . "::CurrentUser" )
-            ->new();
-        my $user
-            = $self->session->get('user_ref')->new( current_user => $object );
-        $user->load_by_cols( id => $id );
-        $object->user_object($user);
+        my $object = Jifty->app_class("CurrentUser")->new( id => $id );
         $self->_current_user($object);
         return $object;
     } else {
-        my $object = (
-            Jifty->config->framework('ApplicationClass') . "::CurrentUser" )
-            ->new();
+        my $object = Jifty->app_class("CurrentUser")->new;
         $object->is_superuser(1) if Jifty->config->framework('AdminMode');
         $self->_current_user($object);
         return ($object);
@@ -319,7 +346,7 @@ sub handle_request {
                 next unless $action->validate;
             }
 
-            $self->log->debug("Running action.");
+            $self->log->debug("Running action ".ref($action). " ".$action->moniker);
             eval { $action->run; };
             $request_action->has_run(1);
 
@@ -333,7 +360,7 @@ sub handle_request {
                 $action->result->error(
                     Jifty->config->framework("DevelMode")
                     ? $err
-                    : "There was an error completing the request.  Please try again later."
+                    : _("There was an error completing the request.  Please try again later.")
                 );
             }
 
@@ -376,7 +403,7 @@ sub form {
 
 Creates a new action (an instance of a subclass of L<Jifty::Action>)
 
-C<CLASS> is L<qualified|Jifty::Util/qualify>, and an instance of that
+C<CLASS> is L<qualified|Jifty::API/qualify>, and an instance of that
 class is created, passing the C<Jifty::Web> object, the C<MONIKER>,
 and any other arguments that C<new_action> was supplied.
 
@@ -388,7 +415,7 @@ C<ORDER> defines the order in which the action is run, with lower
 numerical values running first.
 
 C<ARGUMENTS> are passed to the L<Jifty::Action/new> method.  In
-addition, if the current request (C<$self->request>) contains an
+addition, if the current request (C<< $self->request >>) contains an
 action with a matching moniker, any arguments that are in that
 requested action but not in the C<PARAMHASH> list are set.  This
 implements "sticky fields".
@@ -411,18 +438,6 @@ sub new_action {
         @_
     );
 
-    my %arguments = %{ $args{arguments} };
-
-    if ( $args{'moniker'} ) {
-        my $action_in_request = $self->request->action( $args{moniker} );
-
-    # Fields explicitly passed to new_action take precedence over those passed
-    # from the request; we read from the request to implement "sticky fields".
-    #
-        if ( $action_in_request and $action_in_request->arguments ) {
-            %arguments = ( %{ $action_in_request->arguments }, %arguments );
-        }
-    }
 
     # "Untaint" -- the implementation class is provided by the client!)
     # Allows anything that a normal package name allows
@@ -436,13 +451,25 @@ sub new_action {
     # Prepend the base path (probably "App::Action") unless it's there already
     $class = Jifty->api->qualify($class);
 
+    my $loaded = Jifty::Util->require( $class );
+    $args{moniker} ||= ($loaded ? $class : 'Jifty::Action')->_generate_moniker;
+
+    my $action_in_request = $self->request->action( $args{moniker} );
+
+    # Fields explicitly passed to new_action take precedence over those passed
+    # from the request; we read from the request to implement "sticky fields".
+    #
+    if ( $action_in_request and $action_in_request->arguments ) {
+        $args{'request_arguments'} = $action_in_request->arguments;
+    }
+
     # The implementation class is provided by the client, so this
     # isn't a "shouldn't happen"
-    return unless Jifty::Util->require( $class );
+    return unless $loaded;
 
     my $action;
     # XXX TODO bullet proof
-    eval { $action = $class->new( %args, arguments => {%arguments} ); };
+    eval { $action = $class->new(%args) };
     if ($@) {
         my $err = $@;
         $self->log->fatal($err);
@@ -517,23 +544,31 @@ sub succeeded_actions {
 Gets or sets the next page for the framework to show.  This is
 normally set during the C<take_action> method or a L<Jifty::Action>
 
+=head3 force_redirect [VALUE]
+
+Gets or sets whether we should force a redirect to C<next_page>, even
+if it's already the current page. You might set this, e.g. to force a
+redirect after a POSTed action.
+
 =head3 redirect_required
 
 Returns true if we need to redirect, now that we've processed all the
-actions.  The current logic just looks to see if a different
-L</next_page> has been set. We probably want to make it possible to
-force a redirect, even if we're redirecting back to the current page
+actions. We need a redirect if either C<next_page> is different from
+the current page, or C<force_redirect> has been set.
 
 =cut
 
 sub redirect_required {
     my $self = shift;
 
-    if ($self->next_page
+    return ( 1 ) if $self->force_redirect;
+
+    if (!$self->request->is_subrequest
+        and $self->next_page
         and ( ( $self->next_page ne $self->request->path )
-            or $self->request->state_variables
-            or $self->{'state_variables'} )
-        )
+              or $self->request->state_variables
+              or $self->state_variables )
+       )
     {
         return (1);
 
@@ -542,7 +577,7 @@ sub redirect_required {
     }
 }
 
-=head3 redirect [URL]
+=head3 redirect [TO]
 
 Redirect to the next page. If you pass this method a parameter, it
 redirects to that URL rather than B<next_page>.
@@ -555,11 +590,11 @@ L<Jifty::Web::Form::Clickable> object.
 
 sub redirect {
     my $self = shift;
-    my $page = shift || $self->next_page;
+    my $page = shift || $self->next_page || $self->request->path;
     $page = Jifty::Web::Form::Clickable->new( url => $page )
       unless ref $page and $page->isa("Jifty::Web::Form::Clickable");
 
-    warn "Don't include GET paramters in the redirect URL -- use a Jifty::Web::Form::Clickable instead.  See L<Jifty::Web/redirect>" if $page->url =~ /\?/;
+    carp "Don't include GET parameters in the redirect URL -- use a Jifty::Web::Form::Clickable instead.  See L<Jifty::Web/redirect>" if $page->url =~ /\?/;
 
     my %overrides = ( @_ );
     $page->parameter($_ => $overrides{$_}) for keys %overrides;
@@ -569,17 +604,17 @@ sub redirect {
     # To submit a Jifty::Action::Redirect, we don't need to serialize a continuation,
     # unlike any other kind of actions.
     if (  (grep { not $_->action_class->isa('Jifty::Action::Redirect') }
-                values %{{ $self->response->results }})
+                values %{ { $self->response->results } })
         or $self->request->state_variables
-        or $self->{'state_variables'}
+        or $self->state_variables
         or $self->request->continuation
         or grep { $_->active and not $_->class->isa('Jifty::Action::Redirect') } @actions )
     {
         my $request = Jifty::Request->new();
         $request->add_state_variable( key => $_->key, value => $_->value )
           for $self->request->state_variables;
-        $request->add_state_variable( key => $_, value => $self->{'state_variables'}->{$_} )
-          for keys %{ $self->{'state_variables'} };
+        $request->add_state_variable( key => $_, value => $self->_state_variables->{$_} )
+          for keys %{ $self->_state_variables };
         for (@actions) {
             my $new_action = $request->add_action(
                 moniker   => $_->moniker,
@@ -677,9 +712,6 @@ sub tangent {
     if ( defined wantarray ) {
         return $clickable->generate;
     } else {
-        $clickable->state_variable( $_ => $self->{'state_variables'}{$_} )
-            for keys %{ $self->{'state_variables'} };
-
         my $request = Jifty->web->request->clone;
         my %clickable = $clickable->get_parameters;
         $request->argument($_ => $clickable{$_}) for keys %clickable;
@@ -698,7 +730,7 @@ L<Jifty::Web::Form::Clickable> object generated by the I<PARAMHASH>.
 sub goto {
     my $self = shift;
     Jifty->web->redirect(
-        Jifty::Web::Form::Clickable->new(@_)->complete_url );
+        Jifty::Web::Form::Clickable->new(@_));
 }
 
 =head3 link PARAMHASH
@@ -715,12 +747,15 @@ sub link {
 
 =head3 return PARAMHASH
 
-Generates and renders a L<Jifty::Web::Form::Clickable> using the given
-I<PARAMHASH>, additionally defaults to calling the current
-continuation.
+If called in non-void context, creates and renders a
+L<Jifty::Web::Form::Clickable> using the given I<PARAMHASH>,
+additionally defaults to calling the current continuation.
 
 Takes an additional argument, C<to>, which can specify a default path
 to return to if there is no current continuation.
+
+In void context, does a redirect to the URL that the
+L<Jifty::Web::Form::Clickable> object generates.
 
 =cut
 
@@ -729,17 +764,29 @@ sub return {
     my %args = (@_);
     my $continuation = Jifty->web->request->continuation;
     if (not $continuation and $args{to}) {
-        $continuation = Jifty::Continuation->new(request => Jifty::Request->new(path => $args{to}));
+        $continuation = Jifty::Continuation->new(
+            request => Jifty::Request->new(path => $args{to})
+        );
     }
     delete $args{to};
 
-    $self->link( call => $continuation, %args );
+    my $clickable = Jifty::Web::Form::Clickable->new(
+        call => $continuation, %args
+    );
+
+    if ( defined wantarray ) {
+        return $clickable->generate;
+    }
+    else {
+        $self->redirect($clickable);
+    }
 }
 
 =head3 render_messages [MONIKER]
 
-Outputs any messages that have been added, in a <div id="messages">
-tag.  Messages are added by calling L<Jifty::Result/message>.
+Outputs any messages that have been added, in <div id="messages"> and
+<div id="errors"> tags.  Messages are added by calling
+L<Jifty::Result/message>.
 
 If a moniker is specified, only messages for that moniker 
 are rendered.
@@ -747,35 +794,80 @@ are rendered.
 
 =cut
 
-# XXX TODO factor out error and message rendering as separate
-
 sub render_messages {
     my $self = shift;
     my $only_moniker = '';
     $only_moniker = shift if (@_);
+
+    $self->render_error_messages($only_moniker);
+    $self->render_success_messages($only_moniker);
+
+    return '';
+}
+
+=head3 render_success_messages [MONIKER]
+
+Render success messages for the given moniker, or all of them if no
+moniker is given.
+
+=cut
+
+sub render_success_messages {
+    my $self = shift;
+    my $moniker = shift;
+
+    $self->_render_messages('message', $moniker);
+
+    return '';
+}
+
+=head3 render_error_messages [MONIKER]
+
+Render error messages for the given moniker, or all of them if no
+moniker is given.
+
+=cut
+
+sub render_error_messages {
+    my $self = shift;
+    my $moniker = shift;
+
+    $self->_render_messages('error', $moniker);
+
+    return '';
+}
+
+=head3 _render_messages TYPE [MONIKER]
+
+Output any messages of the given TYPE (either 'error' or 'message') in
+a <div id="TYPEs"> tag. If a moniker is given, only renders messages
+for that action. Internal helper for L</render_success_messages> and
+L</render_errors>.
+
+=cut
+
+sub _render_messages {
+    my $self = shift;
+    my $type = shift;
+    my $only_moniker = shift || '';
+
     my %results = $self->response->results;
 
-    return '' unless %results;
+    %results = ($only_moniker => $results{$only_moniker}) if $only_moniker;
 
-    my @monikers = ($only_moniker) || sort keys %results;
-
-    for my $type (qw(error message)) {
-        next unless grep { defined $results{$_}  and $results{$_}->$type() } @monikers;
-
-        my $plural = $type . "s";
-        $self->out(qq{<div id="$plural">});
-        $self->out(qq[<a id="dismiss_$plural" href="#"
-                         onclick="Effect.DropOut(this.parentNode); return false;">Dismiss</a>]);
-        foreach my $moniker ( @monikers ) {
-            if ( $results{$moniker}->$type() ) {
-                $self->out( qq{<div class="$type $moniker">}
-                    . $results{$moniker}->$type()
-                    . qq{</div>} );
-            }
+    return unless grep {$_->$type()} values %results;
+    
+    my $plural = $type . "s";
+    $self->out(qq{<div class="jifty results messages" id="$plural">});
+    
+    foreach my $moniker ( sort keys %results ) {
+        if ( $results{$moniker}->$type() ) {
+            $self->out( qq{<div class="$type $moniker">}
+                        . $results{$moniker}->$type()
+                        . qq{</div>} );
         }
-        $self->out(qq{</div>});
     }
-    return '';
+    $self->out(qq{</div>});
 }
 
 =head3 query_string KEY => VALUE [, KEY => VALUE [, ...]]
@@ -803,6 +895,7 @@ HTML-escapes the given string and returns it
 =cut
 
 sub escape {
+    no warnings 'uninitialized';
     my $self = shift;
     return join '', map {my $html = $_; Jifty::View::Mason::Handler::escape_utf8( \$html ); $html} @_;
 }
@@ -814,6 +907,7 @@ URI-escapes the given string and returns it
 =cut
 
 sub escape_uri {
+    no warnings 'uninitialized';
     my $self = shift;
     return join '', map {my $uri = $_; Jifty::View::Mason::Handler::escape_uri( \$uri ); $uri} @_;
 }
@@ -1076,9 +1170,9 @@ sub set_variable {
     my $value = shift;
 
     if (!defined($value)) {
-        delete $self->{'state_variables'}->{$name};
+        delete $self->_state_variables->{$name};
     } else {
-        $self->{'state_variables'}->{$name} = $value;
+        $self->_state_variables->{$name} = $value;
     }
 
 }
@@ -1086,19 +1180,16 @@ sub set_variable {
 =head3 state_variables
 
 Returns all of the state variables that have been set for the next
-request, as a hash; they have already been prefixed with C<J:V->
+request, as a hash;
+
+N.B. These are B<not> prefixed with C<J:V->, as they were in earlier
+versions of Jifty
 
 =cut
 
-# FIXME: it seems wrong to have an accessor that exposes the
-# representation, so to speak
 sub state_variables {
     my $self = shift;
-    my %vars;
-    $vars{ "J:V-" . $_ } = $self->{'state_variables'}->{$_}
-        for keys %{ $self->{'state_variables'} };
-
-    return %vars;
+    return %{ $self->_state_variables };
 }
 
 =head3 clear_state_variables
@@ -1110,7 +1201,7 @@ Remove all the state variables to be serialized for the next request.
 sub clear_state_variables {
     my $self = shift;
 
-    $self->{'state_variables'} = {};
+    $self->_state_variables({});
 }
 
 =head2 REGIONS

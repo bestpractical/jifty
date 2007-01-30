@@ -9,7 +9,7 @@ Jifty::Web::PageRegion - Defines a page region
 
 =head1 DESCRIPTION
 
-Describes a region of the page which contains a mason fragment which
+Describes a region of the page which contains a Mason fragment which
 can be updated via AJAX or via query parameters.
 
 =cut
@@ -190,15 +190,19 @@ sub enter {
     push @{Jifty->web->{'region_stack'}}, $self;
 
     # Merge in the settings passed in via state variables
-    for (Jifty->web->request->state_variables) {
-        if ($_->key =~ /^region-(.*?)\.(.*)/ and $1 eq $self->qualified_name and $_->value ne $self->default_argument($2)) {
-            $self->argument($2 => $_->value);
-            Jifty->web->set_variable("region-$1.$2" => $_->value);
+    for my $var (Jifty->web->request->state_variables) {
+        my $key = $var->key;
+        my $value = $var->value || '';
+
+        if ($key =~ /^region-(.*?)\.(.*)/ and $1 eq $self->qualified_name and $value ne $self->default_argument($2)) {
+            $self->argument($2 => $value);
         }
-        if ($_->key =~ /^region-(.*?)$/ and $1 eq $self->qualified_name and $_->value ne $self->default_path) {
-            $self->path($_->value);
-            Jifty->web->set_variable("region-$1" => $_->value);
+        if ($key =~ /^region-(.*)$/ and $1 eq $self->qualified_name and $value ne $self->default_path) {
+            $self->path($value);
         }
+
+        # We should always inherit the state variables from the uplevel request.
+        Jifty->web->set_variable($key => $value);
     }
 }
 
@@ -258,31 +262,49 @@ sub as_string {
             . qq|<div id="region-| . $self->qualified_name . qq|">|;
     }
 
+    $self->render_as_subrequest(\$result, \%arguments);
+    $result .= qq|</div>| if ( $self->region_wrapper );
+
+    return $result;
+}
+
+=head2 render_as_subrequest
+
+=cut
+
+sub render_as_subrequest {
+    my ($self, $out_method, $arguments, $enable_actions) = @_;
+
+    my $orig_out = Jifty->handler->mason->interp->out_method || \&Jifty::View::Mason::Handler::out_method;
+
+    Jifty->handler->mason->interp->out_method($out_method);
+
     # Make a fake request and throw it at the dispatcher
     my $subrequest = Jifty->web->request->clone;
     $subrequest->argument( region => $self );
-    $subrequest->argument( $_ => $arguments{$_}) for keys %arguments;
+    # XXX: use ->arguments?
+    $subrequest->argument( $_ => $arguments->{$_}) for keys %$arguments;
     $subrequest->path( $self->path );
     $subrequest->top_request( Jifty->web->request->top_request );
 
     # Remove all of the actions
-    $subrequest->clear_actions;
+    unless ($enable_actions) {
+	$_->active(0) for ($subrequest->actions);
+    }
+    # $subrequest->clear_actions;
     local Jifty->web->{request} = $subrequest;
 
     # While we're inside this region, have Mason to tack its response
     # onto a variable and not send headers when it does so
     #XXX TODO: There's gotta be a better way to localize it
     my $region_content = '';
-    Jifty->handler->mason->interp->out_method( \$region_content );
 
     # Call into the dispatcher
     Jifty->handler->dispatcher->handle_request;
-    $result .= $region_content;
-    $result .= qq|</div>| if ( $self->region_wrapper );
 
-    Jifty->handler->mason->interp->out_method( \&Jifty::View::Mason::Handler::out_method );
+    Jifty->handler->mason->interp->out_method($orig_out);
 
-    return $result;
+    return;
 }
 
 =head2 render

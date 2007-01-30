@@ -2,10 +2,16 @@ JSAN.use("DOM.Events");
 
 if (typeof Jifty == "undefined") Jifty = { };
 
+function prepExpandButton(e) {
+    e.onmousedown = function() { this.onfocus = this.blur };
+    e.onmouseup   = function() { this.onfocus = window.clientInformation ? null : window.undefined };
+    e = null;	// Don't leak in IE
+}
+
 Jifty.ContextMenu = {
     behaviourRules: {
-        "ul.menu li.toplevel span.expand a": function(e) { e.innerHTML = ""; },
-        "ul.context_menu li.toplevel span.expand a": function(e) { e.innerHTML = ""; }
+        "ul.menu li.toplevel span.expand a": prepExpandButton,
+        "ul.context_menu li.toplevel span.expand a": prepExpandButton
     },
 
     currently_open:  "",
@@ -77,7 +83,7 @@ Jifty.ContextMenu = {
         
         ul.style.display = "block";
         Jifty.ContextMenu.currently_open = ul.id;
-        Jifty.ContextMenu.scrollToShow( ul.id );
+        Jifty.Utils.scrollToShow( ul.id );
     },
 
     hideOpenMenu: function(event) {
@@ -98,20 +104,9 @@ Jifty.ContextMenu = {
         if (Jifty.ContextMenu.currently_open) {
             Jifty.ContextMenu.hide(Jifty.ContextMenu.currently_open);
         }
-    },
-
-    scrollToShow: function(id) {
-        var ul        = $(id);
-        var y         = Jifty.Utils.findPosY( ul ) + ul.offsetHeight + 10;
-        var scrollTop = Jifty.Utils.getScrollTop();
-        var screen    = Jifty.Utils.findScreenHeight() + scrollTop;
-        var diff      = y - screen;
-        
-        if ( diff > 0 )
-             Jifty.SmoothScroll.scrollTo( scrollTop + diff );
     }
 };
 
-DOM.Events.addListener( window, "click", Jifty.ContextMenu.hideOpenMenu );
+DOM.Events.addListener( document, "click", Jifty.ContextMenu.hideOpenMenu );
 Behaviour.register( Jifty.ContextMenu.behaviourRules );
 

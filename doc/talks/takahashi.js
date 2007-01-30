@@ -92,6 +92,13 @@ var Presentation = {
               line = '';
             }
 
+            if (line.match(/^#/)) {
+                continue;
+            }
+
+            if (line.match(/^\\#/)) {
+                line = line.substring(1);
+            }
 
             if (line.match(/^ /)) {
               code_listing = 1; 
@@ -422,7 +429,7 @@ var Presentation = {
                     }
                 }
     
-               this._data = content.split("----");
+               this._data = content.split(/^----/m);
         }
 
         return this._data;

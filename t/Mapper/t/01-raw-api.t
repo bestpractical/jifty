@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 use warnings;
 use strict;
@@ -9,8 +9,9 @@ Tests for request mapper
 
 =cut
 
-BEGIN {chdir "t/Mapper"}
-use lib '../../lib';
+use lib 't/lib';
+use Jifty::SubTest;
+
 use Jifty::Test tests => 32;
 use_ok('Jifty::Test::WWW::Mechanize');
 

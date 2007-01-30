@@ -12,6 +12,10 @@ body.calpopup {
     color: #00a0a0;
 }
 
+.canonicalization_note {
+    color: #009966;
+}
+
 hr {
     clear: both;
 } 
@@ -53,6 +57,7 @@ div#jifty-wait-message {
     top: 10px;
     right: 10px;
     z-index: 42;
+    float: right;
 }
 
 

@@ -1,0 +1,124 @@
+=head1 NAME
+
+Jifty::Manual::RequestHandling - Jifty's request handling process
+
+=head1 DESCRIPTION
+
+This document outlines some of Jifty's inside in order to help you to understand
+what happens during the request processing phase.
+
+=head1 THE HANDLER
+
+As soon as a http request (whatever the method might be, like GET,
+POST, PUT, ...) arrives at Jifty's border, the request is forwarded to
+a handler. By default, C<< Jifty->handler >> points to a L<Jifty::Handler>
+object that is responsible for handling an incoming request. The
+handler receives a L<CGI> object on which it operates.
+
+=head2 The major steps in the request handling process are:
+
+=over
+
+=item refresh eventually modified modules in develop mode
+
+This allows a perl developer to change perl modules being used in a
+Jifty application without the need to restart the server which would
+otherwise become necessary. This is never done on a live environment.
+
+=item build a stash
+
+The stash is a storage area that can be reached by simply accessing
+C<< Jifty->handler->stash->{some_key} >>. The stash will start fresh with
+every request and lives for the entire lifetime of a request. Using
+the stash, transporting data between otherwise unconnected modules
+will become possible.
+
+=item construct a request and response object
+
+Using the L<CGI> object, a L<Jifty::Request> object is constructed and
+its data is populated with the CGI's data. The request can be reached
+later using C<< Jifty->web->request >>. The request holds information
+about all actions involved, all page fragments, contains state
+variables and arguments (usually GET/POST parameters).
+
+Also, an empty L<Jifty::Response> object is constructed that contains
+one or more L<Jifty::Result> objects, each of which holds one
+L<Jifty::Action>'s result. The response object can be retrieved with
+the C<< Jifty->web->response >> method.
+
+=item setup plugins
+
+For every registered L<Jifty::Plugin>, some kind of per-request
+initialization is performed allowing the actions provided by each
+plugin to run.
+
+=item handle static content
+
+If the requested URI points to some existing static content being
+housed in a C<static> directory, this content is handled.
+
+=item setup the session
+
+Based on a cookie that is sent with every http response, the current
+user is assigned a unique session. The session is stored in a
+L<Jifty::Web::Session> object and can be accessed using the
+C<< Jifty->web->session >> method.
+
+=item return from a continuation if requested
+
+If there is an open continuation on the stack (e.g. from a
+C<< Jifty->web->tangent >> link) and the return has been requested
+(e.g. by a C<< Jifty->web->return >> link), the return will execute at
+this stage.
+
+=item handle dynamic request unless already served
+
+First, the user is given a cookie containing the session-id. Then, the
+request is forwarded to C<< Jifty->handler->dispatcher >>, a
+L<Jifty::Dispatcher> object to handle the request. The dispatcher
+works through the following steps:
+
+=over 4
+
+=item setup
+
+In this stage, all rules in the dispatcher that are marked with the
+word C<before> are run.
+
+=item run the actions involved
+
+Every L<Jifty::Action> that is registered in a form or involved in a
+link or button is run in this stage.
+
+=item run dispatching rules
+
+This stage is responsible for working through all rules marked by
+words like C<under>, C<on>, C<when> and so on. This is a point where
+based on the URI or parameters the template to get displayed may still
+be modified, data get retrieved, additional actions run or the template's
+parameters get adjusted.
+
+=item show the page
+
+Here, the template displaying the page is run.
+
+=item cleanup
+
+This final stage of the dispatcher will run all rules marked with the
+word C<after>.
+
+=back
+
+=item cleanup several things
+
+Finally, the eventually modified session-record is flushed and some
+internally allocated structures get deallocated.
+
+=back
+
+=head1 SEE ALSO
+
+L<Jifty::Handler>, L<Jifty::Dispatcher>, L<Jifty::Request>, L<Jifty::Response>
+
+=cut
+

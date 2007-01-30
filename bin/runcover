@@ -1,0 +1,4 @@
+#!/bin/sh
+# XXX: this should be in makefile target, but i have no idea about how to do that in M::I
+
+env JIFTY_TESTSERVER_COVERAGE=-db,`pwd`/cover_db HARNESS_PERL_SWITCHES=-MDevel::Cover make test

@@ -1,10 +1,11 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 use warnings;
 use strict;
 
-BEGIN {chdir "t/TestApp"}
-use lib '../../lib';
-use Jifty::Test tests => 13;
+use lib 't/lib';
+use Jifty::SubTest;
+
+use Jifty::Test tests => 22;
 use Jifty::Test::WWW::Mechanize;
 
 my $server  = Jifty::Test->make_server;
@@ -39,4 +40,23 @@ $mech->get_ok("$URL/__jifty/validator.xml?J:A-dosomething=TestApp::Action::DoSom
     "Getting validator.xml output for a canonicalization");
 $mech->content_contains('<update name="J:A:F-email-dosomething">upper@email.com</update>',
     " ... canonicalizer returned all lower case (good)");
+$mech->content_contains('<canonicalization_note id="canonicalization_note-J:A:F-email-dosomething">Lowercased your email</canonicalization_note>',
+    " ... canonicalizer warned user");
 
+$mech->get_ok("$URL/dosomethingelse");
+$mech->fill_in_action_ok('dosomething',
+    'foo' => 'something',
+    'bar' => '',
+);
+$mech->submit_html_ok();
+$mech->content_contains('<span class="error text  argument-bar" id="errors-J:A:F-bar-dosomething">You need to fill in this field</span>', 'got error for bar');
+$mech->content_contains('<span class="error text  argument-foo" id="errors-J:A:F-foo-dosomething"></span>', 'got no error for foo');
+
+$mech->get_ok("$URL/__jifty/validator.xml?J:A-dosomething=TestApp::Action::DoSomethingElse&J:A:F-foo-dosomething=&J:A:F-bar-dosomething=blam&J:VALIDATE=1&_=",
+    "Getting validator.xml output for a form entry");
+$mech->content_lacks('<error id="errors-J:A:F-bar-dosomething">', " ... validator didn't return error for bar");
+
+TODO: {
+local $TODO = "Not implemented in Jifty yet";
+$mech->content_contains('<error id="errors-J:A:F-foo-dosomething">You need to fill in this field</error>', " ... validator returned error for foo");
+};

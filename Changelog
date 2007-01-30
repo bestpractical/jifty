@@ -1,3 +1,768 @@
+Jifty 0.70117
+   Dependencies: 
+     * Bumped the minimum required version of Jifty::DBI to 0.30
+
+Jifty 0.70116
+
+   New authors
+     * Add yves in authors, for localisation, debian packaging -yves
+     * Added PJF to AUTHORS file. -pjf
+     * Added evdb as a new author -evdb
+     * agentz
+     * pmurias
+
+   PubSub (audreyt, clkao, jesse)
+     * Audrey, Jesse and CL hacked out a PubSub message bus and a
+       preliminary Comet implementation.
+     * Doc for how subscription stuff works. a bit of refactoring toward
+       a second transport
+     * Added sample apps and design docs from the PubSub/Comet hackathon
+     * upgrade schema to work on mysql -jesse
+
+   Database
+     * Initial support for prefetched collections. -jesse
+     * Added support for SQL::ReservedWords to the schema tool, to stop
+       me from building applications for Postgres on SQLite and hurting
+       myself later -jesse
+     * Add a CheckSchema option to the config file to govern the SQL
+       Schema keyword checking -jesse
+     * Classify databases failing an SQL::ReservedWords check for nicer
+       output -gaal
+     * Better debugging information when running actions -jesse
+
+   Documentation
+     * Updated tutorial to remove mention of the deprecated download
+       area. -pjf
+     * Provided extra tips on how to install Jifty using Perl's standard
+       CPAN module on both Unix-like and Win32 systems. -pjf
+     * Documented PageRegions usage -wolfgang
+     * Show an example of a canonicalizer (lifted from the jifty
+       presentations). -falcone
+     * Document the ability to frob other pieces of the action from a
+       canonicalizer -falcone
+     * Jifty::Manual::UsingCSSandJS - Fix the misspelled "app.css" to the
+       correct "app.js"; minor reformatting. -audreyt
+     * Jifty::Manual::Models - It mentions <> as the SQL inequality
+       operator, but all internal code uses != instead; change the doc to
+       match reality. -audreyt
+     * Jifty::Manual::Cookbook - Trivial typo. -audreyt
+     * Jifty::Manual::AccessControl, Jifty::Manual::RequestHandling -
+       Change C< objEmeth > to the more readable C<< obj->meth >> POD
+       syntax. -audreyt
+     * expanded AccessControl.pod to reflect changes in Login plugin
+       -wolfgang
+     * added a pod describing Jifty's request handling process -wolfgang
+     * added a german translation for Tutorial.pod -wolfgang
+     * Minor fixes to pod -evdb
+     * added explanations about Login Plugin to AccessControl.pod
+       -wolfgang
+     * updated Models.pod to reflect recent changes -wolfgang
+     * added a section on 'limit' to 'Models.pod' -wolfgang
+     * Supply documentation for all of the methods which had been missing
+       it -jesse
+     * Jifty::Param::Schema merge algorithm rescued from the obscurity of
+       commit logs. -jesse
+     * Corrected Jifty::Record::current_user_can: The right is 'update',
+       not 'edit' -jesse
+     * Jifty::Record::current_user_can: "admin" should have been "delete"
+       -jesse
+     * Added the time and date filters to the cookbook. -nelhage
+     * Improved docs for Jifty::RightsFrom -jesse
+     * Improved docs for Jifty::Record (Access control related
+       functionality) -jesse
+     * Added a documentation fileon CSS and JS -wolfgang
+     * Jifty::Param::Schema - Trivial doc fix to s/Wifty/MyApp/. -audreyt
+     * Jifty::Action - add documentation for the automatic moniker
+       generation algorithm. -audreyt
+     * Minor documentation updates -gaal
+     * Jifty::Script::FastCGI doc - it's share/web/ not web/ nowadays.
+       -audreyt
+     * Two simple POD typos, one spotted by Gaal Yahas. -audreyt
+     * Minor spelling corrections. -jpeacock
+     * Fixed a cookbook typo, and add some sentences describing an issue
+       when defer{} failed to dwim. -gugod
+     * A cookbook recipe to do ajax canonicalization. -gugod
+     * Jifty::Action POD: Copy-n-paste the synopsis from
+       Jifty::Param::Schema and correctly L<> there. -audreyt
+     * Tell people where the docs for Jifty::Action::button really live -jesse
+     * [Manual/Actions.pod] added more explanation for the "return values" of Actions
+       made the $id args optional in the sample code.
+       added internal links to L</monikers>.
+       a few additions to the explanation
+       a few cleanups in the sample code -agentz
+     * Manual/Cookbook.pod: typo fixes, code cleanup -agentz
+     * document Jifty::Web::Form::Field::preamble -agentz
+     * Jifty::Manual::(Upgrading|RequestHandling|AccessControl|UsingCSSandJS|Actions|Continuations) 
+       typo and wording fixes -agentz
+     * Jifty::Manual::PageRegions examples and cleanup -agentz
+     * Jifty::Manual::Models - mentioned the build_select_query method,
+       paging, and Jifty::Manual::Upgrading. -agentz
+     * Added a note about the fact that mason needs to be flush left to the
+       tutorial -jesse
+     * add full MyWeblog example -jesse
+     * limit handling corrected in Jifty::Manual::Models -wolfgang
+     * Cookbook typo fixed. thanks to tokuhirom -jesse
+     * Jifty::Manual::Cookbook - applied the "edit" link patch from Peter Wise. -agentz
+     * plugin and declarative test design docs -nelhage
+     * ldap autocomplete example -yves
+     * Tutorial_de retitled to not conflict with the english one. -jesse
+
+   Plugins
+     * First release for plugins AuthLDAPOnly and AuthLDAPLogin, all
+       comments are welcome -yves
+     * Login plugin : Add missing Notification::ConfirmLostPassword,
+       dispatcher for passwordreminder, let to reset lost password -yves
+     * Added an action to let the user change his/her password in the
+       login plugin -yves
+     * AuthLDAP plugins: minor doc and debian rules fix -yves
+     * You can now run actions and get back arbitrary data formats from
+       the REST dispatcher -nelhage
+     * REST dispatcher cleanups. -jesse
+     * First cut at XML webservices in the REST plugin -jesse
+     * The first bit of major refactoring of the REST plugin. -jesse
+     * we loves our ACLs, we do. The REST plugin was violating too much
+       encapsuplation -jesse
+     * Added Module::Install files for plugins EditInPlace and Login;
+       some of them were in the MANIFEST but not the repository, so we
+       were getting false warnings of missing files when running 'make
+       distclean'. -jpeacock
+     * Add license to Login plugin's Makefile.PL. NOTE: remember to
+       increment the plugin's $VERSION strings before releasing to CPAN
+       (else updates won't get installed). -jpeacock
+     * test and debian updates for the LDAP plugin -yves
+     * Usable AuthzLDAP Plugin, see man Jifty::Plugin::AuthzLDAP
+       while thinking on new more generic Jifty::Plugin::Authz::XYZ , 
+       Jifty::Plugin::Authentication:XYZ -yves
+     * Login: Don't delete arguments that you don't know about /a priori/.  
+       Don't display fields that shouldn't be displayed 
+       (using the Unrendered attribute). -jpeacock
+     * Duplicate code removed from the plugin classloader -jesse
+     * Better handling of autocreated modules from plugins.
+       Print debug statements when autogenerating packages. -jpeacock
+     * reworking of Login plugin -jpeacock
+     * Some CAS authentification plugins -yves
+
+   Internals
+     * Jifty.pm: Load I18N after plugins, but before the main
+       classloader, so the main classes has access to _(). - audreyt
+     * Removed support for Devel::Gladiator. It was very, very beta and
+       caused server processes to end up as zombies -jesse
+     * qw'' is just weird. Change all instances to qw(). -schwern
+     * Jifty::Action::Record 'use'd DateManip but never uses it. -schwern
+     * It also used UNIVERSAL::require but did all of its requires via
+       Jifty::Util. -schwern
+     * Yet another fix to the URI-from-env feature, fixes a failing test
+       (reported by alexmv++). -gaal
+     * Guessing request schemes from the environment is fragile, so make
+       the fallback on BaseURL more reliable. -gaal
+     * when inferring a scheme for the application, look at REQUEST_URI
+       instead of assuming http://. Fixes tangent() on non-http:// apps.
+       -gaal
+     * Use Jifty->app_class whenever possible -alexmv
+     * Code cleanups in Jifty/Subs.pm -alexmv
+     * Fix for when Jifty->web->url is called with query parameters
+       -alexmv
+     * Added a Module::Pluggable subclass to get our own (somewhat
+       improved) require behaviour -jesse
+     * We were not properly removing blank values on record create -jesse
+     * Better handling of current_user when used as a class method -jesse
+     * use ApplicationClass, not Application Name in the login plugin
+       -clkao
+     * Add _is_readable in Jifty::Record, which means the record should
+       bypass current_user_can in check_read_rights. -clkao
+     * Add results_are_readable argument to collection to mark records
+       with _is_readable. -clkao
+     * Minor refactoring to enable non-cookie based session storage
+       -jesse
+     * Use Jifty->app_class to construct app-space class names. -clkao
+     * Jifty::JSON - Turn on $ImplicitUnicode so unicode strings
+       can be reliably serialized into .js and back.
+       (This is crucial for e.g. JavaScript confirm hooks.) -audreyt
+     * avoid warnings in LetMe -jesse
+     * DateTime: DateManip can get confused if someone else calls Date_Init 
+       earlier in the process.  Tell it "no, really, GMT please" -falcone
+     * DateTime: we're always setting the timezone to the user's timezone, even if
+       new is explicitly called with a timezone.  This breaks DateTime->from_epoch
+       which wants data back in UTC -falcone
+     * provide json webservices -audreyt && pmurias
+     * Jifty::ClassLoader - Defining MyApp::Action::Record::* now works. -audreyt
+     * Jifty.pm: Before we call Data::UUID->new, be sure to load it. -audreyt
+     * Jifty::Param::Schema allows "hints are 'type stuff'" but our Model syntax
+       uses 'are' to build an arrayref, so "hints are 'type stuff'" in a model would
+       result in displaying ARRAY(0x123456).   -falcone
+     * implement if-modified-since for static view handler. -clkao
+     * Module::Pluggable does't include empty intermediate classes now -alexmv
+
+   Web UI
+     * Links and Form titles needed to be better escaped -jesse
+     * Add delete option in admin view (for Jamalle - private joke) -yves
+     * Jifty::Param - It's no longer a Jifty::Web::Form::Field subclass.
+       -audreyt
+     * Add the ability to send "notes" to users from your canonicalizer.
+       This is separate from the warning and error spans used by the
+       validator -falcone
+     * validator.xml - allow us to update action data just by changing
+       it. Without this you had to set ajax_canonicalizes on a field in
+       order to change it and have it propagated back. --falcone
+     * Some refactoring of form field rendering, and adding a focus =>
+       argument to form fields to focus them on page load. -nelhage
+     * Switch our implementation of autofocus to use behavior, rather
+       than a custom onload event -jesse
+     * Fix calendar div & IE select box problem -ishigaki
+     * Do a slightly more generic dereferencing on the user object's
+       friendly name in the sidebar -jesse
+     * Fixing autocomplete so we render the autocomplete div *before
+     * the javascript, so the JS can hook it. -nelhage
+     * Remove useless check in buttonToLink to get a javascript
+       performance boost. -hlb
+     * Make render_messages sort on result moniker as well. -audreyt
+     * Jifty::Response: Ensure consistent ordering from monikers.
+       -audreyt
+     * Hacked the yui calendar component to allow selection of out-of-month
+       dates -jesse
+     * Even more I18N+L10N, this time for admin crud pages and calendar.html -audreyt
+     * adjusted the output format of render_preamble by removing a redundant space. -agentz
+     * The "length" attribute Web::Form::Field now also means HTML "maxlength"
+       in addition to "size". -audreyt
+     * calendar.js - Fire off canonicalization/validation methods upon clicking a
+       date. -audreyt
+     * Update YUI to 0.12 and port local changes -trs
+     * Administration manage model : 
+       add sortable capabilities in header table
+       bug fix in delete item
+       begining of modularity
+       other cosmetic changes
+       silk icons, wai tags thanks to Jamalle -yves
+     * Jifty::Web::Form::Field and ::Select - Label display was rendered using
+       the latin1-biased escaping in HTML::Entities; switch to the proper UTF-8
+       escaping in Jifty->web->escape. -audreyt
+     * This helps passing xhtml validation.
+       <input> cannot be direclty under <form>, there should be a
+       block-level element in-between. -gugod
+     * made wait-message look consistent in both firefox and IE -agentz
+     * admin/model/dhandler: localization hooks added, page title added -agentz
+     * add yui/tabview and its assets -hlb
+     * Indicate mandatory fields visually -trs
+     * Only emit mandatory field warnings with Ajax when the field starts with
+       data. -trs
+     * Close <li>s we open in the admin interface -alexmv
+     * remove extra </div>s -gugod
+     * upgrade yui library & add yui/container.js -hlb
+     * Fix broken Jifty.Utils.isMSIE -trs
+     * Fix buttonToLink to deal with normal, non-ajaxy buttons that we want to turn
+       into links -trs
+     * Use Jifty::JSON::objToJson to properly escape JS values (in particular
+       single quotes in button labels were causing problems) -trs
+     * Add a key_binding_label attribute so that key binding labels can be set
+       independently of the normal label -trs
+
+   Jifty Actions
+     * Jifty::Action: Generate stable auto-monikers for actions based on
+       the caller stack. -audreyt
+     * Negative searching for Search actions -jesse
+     * Added an option to search the contents of any text field to jifty
+       search actions -nelhage
+     * Jifty::Action::Record: Allow the same for user-generated param vs
+       CRUD actions. -audreyt
+     * Jifty::Action - Autoincrement the per-request stash counter for
+       the case of looped action creation. -audreyt
+     * Fixed 'mandatory' validation misbehavior -- 'mandatory' now
+       handled correctly -wolftang
+     * Jifty::Param::Schema: Allow partial override of superclass's
+       PARAMS by simply declaring a sub "param" and fill them with the
+       fields you'd override. -audreyt
+     * Jifty::Web / Jifty::Action: Stickiness now works on autogenerated
+       monikers. -audreyt
+     * Modified Jifty::Action::Record::Update so that empty strings for integer and
+       boolean columns will be interpreted as NULLs. This may break apps that
+       assume that an empty value string will be a no-op. -jesse
+     * Jifty::Action::Record::Search - Consider "float" and "double" fields
+       as numeric for comparison.  Also consider "char" as textual. -audreyt
+     * Allow a canonicalization note to be set, even if you don't change the 
+       value of the action parameter - falcone
+     * L10N for Action::Record::Search -audreyt
+     * Jifty::Manual::Actions include example with available are defer { ... }
+       syntax which doesn't work because ref on variables deferred with Scalar::Defer
+       return 0 instead of ARRAY -dpavlin
+     * Add an "(any)" label to Action::Record::Search when render as radio. -audreyt
+     * Jifty::Action::Record - Support for "is autocompleted" annotation. -audreyt
+     * Jifty::Action::Record::Search - "numeric" and "decimal" fields are also
+       numeric. -audreyt
+     * Jifty::Action::Record - "is autocompleted" choices should not consider
+       null/empty fields. -audreyt
+     * Action::Record::Search - When there is just one choice, don't bother
+       displaying '(any)' for Radio. -audreyt
+     * Jifty::Action::Record::Search - First cut at a _dwim field for numeric
+       fields that supports > >= < <= == = != ! <> operators. -audreyt
+     * Jifty::Action::Record - Autocompletion now lists only the parts
+       that matches the user-input as prefix. -audreyt
+     * Jifty::Action::Record::Search - Add _before/_since for dates, as well as
+       the equivalent _ge and _le for numbers. -audreyt
+     * Jifty::Action::Record::Search - Add hints to _dwim. -audreyt
+     * Adding a note about canonicalizers being idempotent -nelhage
+     * add max_length alias to fix Object::Declare and Jifty::Param::Schema
+       not handling length properly -alexmv
+
+   bin/jifty
+     * Change Jifty::Util's probe of bin/jifty from -x to -r for poor
+       people on filesystems that does not have a executable bit. (The
+       maybe_command is still needed for the .bat case.) -audrety
+     * Fix the bin/jifty detection logick: The .bat extension exists for
+       MSWin32, cygwin and os2, so use MM->maybe_command for those three
+       platforms. -audreyt
+     * Also, the -e check is redundant after -x, and in Win32 we can use
+       bin/jifty.bat alone without bin/jifty, so make the check respect
+       that case. Reported by: Stephen@s-team -audreyt
+     * bin/jifty covered sigterm in a way that could cause zombie processes
+       under fastcgi -jesse
+     * Be explicit about the paths we're creating -alexmv
+     * Jifty::Script::Server - Remedy for the edge error case where var/
+       is missing, which used to cause mysterious error messages. -audreyt
+
+   Building apps
+     * Small error string change to suggest looking for missing use lines
+       in models where refer_to is used -bartb
+     * Ongoing work to pass through Class::ReturnValue errors all the way
+       from Jifty::DBI to the view layer -jesse
+     * create scaffolding actions with the new Jifty::Param::Schema
+       syntax --falcone
+     * Jifty::Manual::Upgrading - Remove the now-obsoleted claim that one has
+       to "use" model classes before renaming it. -audreyt
+     * Jifty::Upgrade - rename() now works with SQLite too, woot! -audreyt
+
+   Dependencies and installation
+     * Makefile.PL typo. Spotted by David Adler -jesse
+     * Files for debian packaging, now rather for actual cpan release
+       than for svn. -yves
+     * Update MANIFEST.SKIP and run 'make manifest' to ensure that new
+       files get added properly. -jpeacock
+     * Added a dependency on libextutils-command-perl to debian control
+       file -bartb
+     * Older DBI versions didn't provide the API we're using. (0.22 is
+       known bad) -jesse
+     * Remove PerlIO::gzip as a Jifty dependency. -audreyt
+     * Older XML::Writer versions failed tests. Dependency bumped -
+       Thanks to Jonathan Stowe -jesse
+     * Reverting to dumping using YAML.pm *again*, because YAML::Syck
+       generates XML that makes YAML segfault :/ -nelhage
+     * Fixed missing dependency on Module::CoreList -- Thanks to Henry
+       Baragar -jesse
+     * Makefile.PL - Add dependency on Test::Base and Module::Refresh.
+       Reported by: Andreas Koenig -audreyt
+     * Makefile.PL - Bump JSON::Syck dependency to 0.15 to handle
+       single quote + unicode strings. -audreyt
+     * SQLite is required to test properly -jesse
+     * debian packaging updates -yves
+     * Skip html files when looking for dependencies. This may cause us to
+       miss some modules used only from within mason, but it will stop falsely
+       detecting lines that start with the word "use" in docs. -jesse
+     * add Test::MockModule and Test::MockObject for J::W::F::F testing -agentz
+     * made Test::MockModule and Test::MockObject optional by
+       putting them into development dependency list -agentz
+     * Makefile.PL: remove Test::HTTP::Server::Simple dependency when $^O eq
+       'MSWin32' -ishigaki
+     * debian packages : add libtest-mockobject-perl libtest-mockmodule-perl in
+       recommands packages (for new snapshot on jiftysvn repository) -yves
+     * cleaned up debian readme -bartb
+     * Clean up MANIFEST (mostly sqlite files) -alexmv
+     * hlb++ reported that we really want HTTP::Server::Simple 0.26+,
+       not 0.20+, as 0.20 and 0.21's critical URI-path-processing
+       bug makes us non utf8 friendly. -audreyt
+     * Added Data::UUID to the Makefile.PL and made sure we use'd it in 
+       Jifty.pm -kevinr
+
+   Internationalization
+     * The ubiquitous "There was an error completing the request. Please
+       try again later.") error message should be localised. -audreyt
+     * We now default the location of the jifty siteconfig file -jesse
+     * For some reason, loc('') started spewing out PO metadata. This
+       seems to be b0rkeness on the Locale::Maketext layer, but for now
+       generalize the undef detection logic in Jifty::I18N to recognize
+       that case. -audreyt
+     * "You need to fill in this field" needs to be localized. -audreyt
+     * Stopped the internationalization system from exploding if a plugin
+       doesn't have a module_dir -alexmv
+     * The internationalization system now extracts messages from
+       TemplateRoot, not share. -clkao
+     * Plugin internationalization and french po files -yves
+     * Jifty::I18N: New ->refresh method so .po files are reloaded
+       properly when DevelMode is on. -audreyt
+     * Even more l10n on Jifty::Action::Record. -audreyt
+     * jifty po shouldn't check/update files under .svn directories -ishigaki
+     * zh_cn and zh_tw translations -audreyt
+     * "jifty po": Ignore _svn/ directories (Win32), as well as foo~ files. -audreyt
+     * L10N for the new Search action fields. -audreyt
+     * update fr.po -yves
+     * update zh_cn and zh_tw and use traditional characters in zh_tw -agentz
+     * update german J::Manual::Tutorial_de to match english version's 
+       changes -wolfgang
+     * Jifty::Script::Po: shouldn't update other catalogs if we specify target
+       language with -l -ishigaki
+
+   Testing
+     * Jifty::Test: canonpath-ed for Win32 -ishigaki
+     * make sure to skip 04memcached.t if you don't have Cache::Memcached
+       -ishigaki
+     * skip all the live tests (that call 'start_ok') on Win32 -ishigaki
+     * shut up warnings when tests have no plan (t/Continuations/03-gc.t)
+       -ishigaki
+     * Added Jifty::Test->web to allow using Jifty->web in tests without
+       a bunch of scaffolding.
+     * Converted search tests to using Jifty::Test->web -schwern
+     * Basic compile and startup tests for the Chat sample -schwern
+     * add tests for Jifty::Web::Form::Field's render methods -agentz
+     * adjusted t/06-forms.t to skip related tests when
+       these two modules are not installed. -agentz
+     * fix t/TestApp-Plugin-REST/t/02-basic-use.t because ClassLoader
+       creates 4 new actions -falcone
+     * add tests for Jifty::Param::Schema -agentz
+     * TODO tests attempting to test if we get ajax validation errors for
+       mandatory values after the sticky_value has been deleted -trs
+
+   Email notifications
+     * When sending email notifications, encode the message body -clkao
+     * MIME-encode notification subjects. -clkao
+     * Content-transfer-encoding needs to be 8bit. -clkao
+     * Don't set notification transfer_encoding to 8bit if it's actually
+       multipart. -clkao
+
+   Dispatcher
+     * avoid undef warnings in the Dispatcher -jesse
+     * Jifty::Dispatcher - Alternation in extended shell globbing syntax
+       now admits zero characters as well:
+       on 'foo{,.zip}'     # matches 'foo' and 'foo.zip' -audreyt
+     * Jifty::Dispatcher - NUMBER SIGN (#) now captures one or more digit
+       characters in the extended shellglob condition syntax.
+       Suggested by: Sebastian Riedel -audreyt
+
+Jifty 0.60912
+
+Testing
+
+ * force to use Jifty::TestServer on Win32, though both JTS and THSS doesn't work properly at the moment. 
+ * Give a description for get_html_ok so that you know what URLs fail/succeed in test output
+ * Small stylistic cleanup to t/01-dependencies
+ * Honour coverage options.
+ * make sure to remove remnant test db before we test (Jifty on Win32 fails to unlink them right now)
+ * Add Jifty::Test->test_in_isolation
+ * Document Jifty::Test->is_done.
+ * Added Jifty::Test->is_passing and is_done
+ * Basic SYNOPSIS for Jifty::Test as well as mentioning the Test::More passthrough.
+ * Add Jifty::Test->teardown_mailbox to mirror setup_mailbox
+ * use safer File::Spec->rel2abs for SubTest
+ * TestServer: use File::Spec->rel2abs; it's safer than Cwd::abs_path which croaks
+ * Jifty::Test->test_file() accepting and returning a list causes problems
+   because people will try to do:  my $file = Jifty::Test->test_file($file) and
+   it ain't gonna DWIM.
+ * Mention Shell::Command and Jifty::Test->temp_file in the style guide.
+ * Add Jifty::Test->test_file() to declare files created only for testing and
+   which should be cleaned up.
+ * Fixing tests when using JDBI::Record::Memcached and setting things in the database from test scripts
+ * Added explicit tests for Jifty::Action::Redirect
+ * Script for running client and server side combined code coverage.
+ * Give a description for get_html_ok so that you know what URLs fail/succeed in test output
+ * Ignore "fluff" errors in HTML validation since they cause non-W3C attributes like "autocomplete" to be warned about
+ * Add html_ok method for checking the mech's current content so tests can use it while we retain control over Test::HTML::Lint
+
+Models
+
+ * jifty model --name now uses the new schema {} sub.
+ * Made the display of a friendly string for picking a record from a list a lot more flexible. 
+ * canonicalization wasn't being properly run on models before validation
+ * Added Jifty::Filter::DateTime, a JDBI filter that promotes DateTime
+   objects to Jifty::DateTime objects on read, setting the time zone
+   appropriately.
+ * Added a concept of "virtual" arguments to actions. These won't be passed on to Record classes, even if they're sumbitted. We use this for Password confirmation arguments, so that we don't pass password_confirm on to the database, which is kinda useless (and breaks the db ;)
+ * Added a as_superuser method to Jifty::Record to make it easier for
+ * code to briefly dodge around ACLs when needed.
+
+
+Admin UI
+
+ * __jifty/admin: use ->models reflection to build the nav bar.
+ * Integer C<gt> or C<lt> searching.
+ * Added substring search and date comparison to J::A::R::Search
+ * Basic search in admin mode using Jifty::Action::Record::Search. Still buggy, especially UI-wise, but functional.
+ * Initial version of Jifty::Action::Record::Search. It only supports
+ * exact positive searches on fields at the moment.
+ * There's no point in rendering confirm fields for passwords when we're
+   viewing records in admin mode.
+ * Don't create _gt and _lt search fields for magic _id refers_to fields.
+ * Make the admin UI look slightly less crappy.
+ * Make admin mode DTRT with columns that end in _id and refer to another model.
+
+REST
+
+ * REST Dispatcher: model list reflection
+ * Basic placeholder for REST plugin tests
+ * REST Dispatcher skeleton that actually works
+* Jifty::Plugin::REST::Dispatcher - /=/action/ now works across HTML+HTTP.
+* J::P::REST::Dispatcher - all GET model URLs work, with 404s.
+* Jifty::Plugin::REST::Dispatcher - model fetch actually works!
+
+
+Actions
+
+ * No longer generating arguments on C<Jifty::Action::Record> for fields
+   that C<refer_to> C<Jifty::DBI::Collection>s, since we can't do
+   anything useful with them right now anyways.
+ * Get the _confirm items on passwords to respect sort ordering
+ * Debugging improvements to stop stupid developer mistakes like passing the wrong sort of object to a Jifty::Action::Record. 
+ * Now we do proper escaping of values in select-one lists.
+ * Canonicalise {onclick}{submit} using the accessor wrapper.
+ * Only call moniker when {onclick}{submit} isa Jifty::Action.
+
+Documentation
+
+ * Wolfgang Kinkeldei: added a pod on models 
+ * Patch from Todd Chapman to fix tutorial
+ * The beginnings of a Jifty code style guide.
+ * Jifty::Manual::Continuations: reflect tangent() in the manual.
+ * Developer documentation for the Jifty::Web::Form::Field::* hierarchy.
+ * Add "How do I Add Atom/RSS Feeds" to Cookbook.
+ * Add a recipe about running fastcgi server, which, in fact, only points
+   to 'jifty help fastcgi'.
+ * lib/Jifty/Manual/FAQ.pod - a start on an FAQ
+ * Standardizing on referring to share/web everywhere in the tutorial.
+ * Todd Chapman noticed a typo in the docs about autocompleters
+ * Tutorial patch from rindolf++
+ * documented logger_component argument
+ * Add a small bit of doc about creating your own classes that are normally created by J::ClassLoader
+ * A start at some docs on upgrading, needs reviewing and some more examples
+ 
+
+Perfomance and optimization
+
+ * Don't try to lowercase session information on postgres
+ * Don't bother with session when serving static files.
+ * Don't need ExtUtils::MakeMaker in Jifty::Util.  This is about 7% of total compile time loading jifty.
+ * Kill Jifty::Web::Menu circular references.
+ * Transform actions in {onclick}{submit} to their monikers, to avoid
+   circular references.
+
+Javascript and HTML
+
+ * Fix AJAX canonicalization of date fields
+ * Some browsers don't like trailing commas in JS arrays and hashes.
+ * You can now pass confirm => 'question?' to javascript hooks (i.e. onclick) and get a confirm dialog in the browser. This doesn't work without javascript yet.
+ * Use a local copy of the icons in our calendar widget, rather than the version that yahoo points to on akamai
+ * fix the unexpected behavior in context menu for IE users.
+ * Fix bug that didn't allow calendar months to be changed
+ * Show calendar widget on focus and hide it on blur
+ * If we don't have XMLHttpRequest, fall back on page loads
+ * More thorough normalization of the submit parameter to Javascript handlers
+ * Accesskey support added to buttons and links. It just uses the same keys as our javascript key bindings.
+ * A little more Element/Clickable refactoring, and implementing a
+   C<disable> option to onclick handlers that toggles whether or not to
+   disable form fields for an action.
+ * We now write out state variables at the start of forms, instead of at the end. 
+ * Moved "Dismiss" buttons on messages and errors into Behaviour, so they only show up in javascripty contexts where they'd be useful
+ * Added the ability to support target attributes in menu items and clickables
+ * IE doesn't support element.setAttribute("class", "foo"), so use element.className instead
+ * Explicitly specify a radix of 10 (decimal) for the parseInt calls used in Yahoo's calendar widget when parsing the date to initially display
+ * Don't attempt to disable hidden inputs, since this sometimes causes IE to die
+ * Use our own "enter" handler to select the button to click, since Safari sometimes gets it wrong with complex fields
+ * The setAttribute call doesn't work for "class" in IE
+ * Fixing the calendar widget to create a new calendar every time, so
+   that the calendar reflects any changes the user makes in the text
+   field.
+ * Support turning off autocomplete on a per-form basis.  We still need per-field, but that's for later.
+
+Distribution
+
+ * debian packaging files for jifty
+ * Removed duplicated share/web (it was copied to lib/auto/Jifty)
+ * CGI.pm 3.17 (and possibly earier) had a bug where regex metacharacters in
+   the PATH_INFO would cause it to puke.  We now depend on CGI 3.19 which fixed
+   that bug.
+ * Update Module::Install to 0.64.  The important thing here is it gets us
+   a fixed Module::AutoInstall which works when you run Makefile.PL from the
+   command line without CPANPLUS installed.
+ * Don't index the t directory
+ * add "use Jifty::YAML" before all uses.
+ * Moved some modules to feature sections in Makefile.PL, updated 01-dependencies.t to recognise recommends sections as well as requires
+ * Win32 requires File::ShareDir 0.04
+ * Removed Text::Autoformat dependency and usage.
+
+Dispatcher
+
+ * Dispatcher: Support tangent($url) as sugar for Jifty->web->tangent(url=>$url).
+ * Dispatcher: Allow "**" in glob pattern to mean anychar including slash.
+ * Dispatcher did not have a ->{cgi}, so ->method certainly could not
+   work.  Use the env variable for now.
+ * Jifty::Dispatcher: abort(404) now works as the doc promised.
+
+Internals
+
+ * Jifty->web->return in void context is now an immediate return.
+ * Jifty::ClassLoader - Make Jifty::Handle a CL'ed module as well,
+   so MyApp::Handle can implement scary magick of its own.
+ * Don't blow up when trying to check if action mixins are autogenerated
+ * Let's be better about not redirect-looping when calling continuations
+   to paths that contain multibyte characters. This solution is a hack,
+   but it's better than looping.
+ * Fix placeholders on browser forward/back
+ * Replace hard tabs with spaces for consistency
+ * Jifty::Web::state_variables no longer prefixes keys with J:V- before
+   returning them, and Clickables now serialize the *outgoing* state
+   vars, instead of the previous request's.
+ * When rendering a page region, mark actions as inactive, don't remove
+   them, so that their arguments are available inside fragments.
+ * If we receive an action's arguments, but it's not in J:ACTIONS, or
+   we don't run it for some other reason, don't consider it to have
+   failed for the purposes of stickiness.
+ * moniker_for and action_form now behave more cleanly with forms which
+   have no non-continuation fields other than their submit buttons.
+ * No longer lose if you do a Jifty::Action::Redirect to the same page
+   you're already on. Also, add the ability to force Web to redirect,
+   even if it's to the current page.
+ * Jifty.pm: Change all __PACKAGE__ to Jifty.
+ * Jifty::ClassLoader: provide ->models accessor to list the model classes.
+ * added Jifty::Request::clear_state_variables
+ * Form::Clickable: Don't mix self accessors and args.
+ * Refactor the constructors for Jifty::Web::Form::*, which takes initial
+   hash and values to be overridden with accessors.
+ 
+Internationalization
+
+ * LetMes' escaping should be utf8 aware
+ * Email addresses probably shouldn't ever be utf8, but using the utf8 escaper is more Right(tm)
+ * Properly UTF-safeing Jifty::LetMe
+ Sean E. Millichamp and clkao both pointed out that Locale::Maketext could choke on overloaded objects like DateTimes. This change makes sure that doesn't happen any more.
+ * Locale::Maketext doesn't always do the right thing with user-generated strings. So let's do that for it.
+ * Properly encode arguments when generating LetMe URLs.
+
+Email
+
+ * add UTF-8 charset to message body on notifications
+ * added infrastructure to do mime mails
+ * make Jifty notifications be UTF-8
+
+Plugins
+
+ * Jifty::Web::Session::ClientSide - Client-side sessions.
+ * Added a ProfileBehaviour plugin to aid profiling Javascript
+   Behaviours (see app_behaviour.js in the Jifty source for some more
+   information)
+ * Some Behaviour profiling UI fixes.
+ * Removing profiling code from behaviour.js
+ * Get the signup form in the login plugin to respect locally defined schema for the user class
+ * Added information about the environment to the EmailErrors plugin
+ * Making the Login plugin play nice with admin mode.
+ * Plugin static roots should take precendence over jifty's
+
+
+Win32
+
+ * Win32 complains when you try to unlink open DB
+0.60722
+
+* Dispatcher fixes to deal with the better canonicalization we started doing in
+   0.60707
+* changed all instances of '/usr/bin/perl' to '/usr/bin/env perl'
+* added a path option to Jifty::Web->url
+* added url tests
+* Jifty::Manual::Actions -- update the worldview to reflect the
+  parameters/arguments concept split.
+* Introduce aliases.  See Jifty::Param::Schema for the table.
+* Declarative Jifty Parameters.
+* See Jifty::Param and Jifty::Param::Schema for the new syntax.
+* Also added dependencies for Jifty::Script::Deps and declarative parameters.
+* Also updated test applications to use declarative parameters. 
+* Adding the CSS browser selector trick from http://rafael.adm.br/css_browser_selector/ to Jifty
+* After autocomplete, trigger a validation.
+* Upping JSON::Syck version dependency. 0.14 fixes escaping in single-quoted strings.
+* Add a tooltip to the dismiss link and hide the dotted border
+* Trailing commas are not good for JS in Safari
+* Let's not blow up if we have placeholders on an input without a form
+* Don't fade autocomplete in and out, just show and hide it
+* Not submitting placeholder values when we submit forms or AJAX
+* Add the class before we set the text, so that it appears grayed-out, rather than appearing and *then* graying out
+* Support multi-line placeholders
+* textareas can have placeholders, too; Style them appropriately as well
+* Adding support for placeholders, grayed-out text in form fields that is written in with JS and vanishes on focus
+* Auto-accept cpan's wisdom about prompts (Jifty::Deps)
+* 0th sketch at "jifty deps"
+* packaging plan updates
+* J::Web::redirect can take a Clickable as arg, so make goto do that, instead of passing a URL with parameters, which doesn't work right
+* Proper port support on urls. Thanks to jpeacock.
+*  Resolve inconsistent filenames vs packages (Plugins)
+* Switched Jifty::Web::url to use uri.pm rather than "heuristics"
+* Let's not blow up if an action has a result that's an unblessed reference.
+* Don't upgrade the database versions with schema --print. I'm not sure
+  if there's a good way to persuade JDBI to give us the SQL to print, so
+  we're just spitting out a warning for now, but that's better than the
+  old behavior.
+* Stop notification from flipping out if you use a scalar as the To:
+* basic smoke test for jifty's notifications 
+* Only set active child on create if we have a request
+* More serious failure message, and don't imply that it's necessarily the server's fault.
+* update .po files
+* Jifty::Dispatcher - there's no call_next, remove it from POD, fnord.
+* Refactoring message rendering slightly
+* Fix Jifty-Win32 by having canonicalize_path always returning
+  /-separated paths, never \-separated paths.
+* Let classes be set on menu items
+* Adding a warning about our slow Rico.Corner.round
+* Documenting how to write sane Behaviours that don't leak memory (leak
+  less memory, probably) in IE and aren't dog-slow.
+* Fix JS memory leak in IE
+* Make jifty tests respect the current given @INC, so it doesn't
+  use lib when you are supposed to use blib during make test.
+* Make the subtest system less painful.
+* Use Jifty::Script to invoke test server, so it doesn't depend on
+  bin/jifty.
+* Fix a Safari display bug
+* Fix calendar positioning bug and make sure it works when the date field is within a relative or absolutely positioned element
+* Test file for Jifty::Client
+* First pass at a Jifty client module.
+*  English orthography fixes.
+* Trailing commas in Perl are good.  In Javascript, they aren't, and sometimes cause IE to barf (like this one).
+*  Hide focus border
+* Lowering the autocomplete delay
+* first-pass editorial run over Continuations.pod.
+* Sketchy sketchy handwavy descriptions of page region backend.
+  Ramblings totally not expected to be interpretable.
+* Wrap the popup notification div in dropshadow wrapper hooks
+* Mention webservices in Actions doc
+* Double fallback goes the way of the dodo
+* Continuation manual
+* Set up the output API for mapping of request parameters (input API
+  already existed)
+* Change method of getting results out of response on continuation RETURN
+* Fewer calls to ->arguments, though they might be cached already.
+* Not all CurrentUser classes may have a "nobody"
+* Jifty::Web::Form:Clickable - provide a bit more info on how to use
+  the "returns" field.
+* jifty-dispatcher.graffle that shows the dispatch chain.
+* Nicer "server down" message
+* Re-enable form inputs after failure
+* toggleable page region clickables weren't doing the right thing when used in non-ajax mode
+* Fix the validation and autocomplete race condition
+* Skip nobody and superuser when we do notifications
+
+
+060707
+
+  * Minor build fixes
+
+060706
+  * SECURITY UPDATE: Previous versions of Jifty did not 
+  protect users against a class of remote data access vulnerability. If an
+  attacker knew the structure of your local filesystem and you were using 
+  the "standalone" webserver in production, the attacker could gain read
+  only access to local files. 
+  
+  We found this vulnerability on 6 July 2006 during an internal Security 
+  scan. We've added new tests to ensure that these and other similar
+  vulnerabilities don't recur.
+
+  We recommend that ALL users of Jifty UPGRADE to 0.60706 IMMEDIATELY.
+
+
+060616
+  * The last CPAN release was broken. No real changes.
+
 060615 (15 June 2006)
 
 The following incompatible changes were made to Jifty. For a complete changelog,

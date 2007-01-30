@@ -2,14 +2,14 @@ use warnings;
 use strict;
 
 package Jifty::Script::Po;
-use base qw'App::CLI::Command Class::Accessor::Fast';
+use base qw(App::CLI::Command Class::Accessor::Fast);
 
-use File::Copy;
-use Jifty::Config;
-use Jifty::YAML;
-use Locale::Maketext::Extract;
-use File::Find::Rule;
-use MIME::Types;
+use File::Copy ();
+use Jifty::Config ();
+use Jifty::YAML ();
+use Locale::Maketext::Extract ();
+use File::Find::Rule ();
+use MIME::Types ();
 our $MIME = MIME::Types->new();
 our $LMExtract = Locale::Maketext::Extract->new;
 use constant USE_GETTEXT_STYLE => 1;
@@ -80,13 +80,15 @@ sub update_catalogs {
     $self->extract_messages();
     my @catalogs = File::Find::Rule->file->in(
         Jifty->config->framework('L10N')->{'PoDir'} );
-    foreach my $catalog (@catalogs) {
-        $self->update_catalog( $catalog );
-    }
     if ($self->{'language'}) { 
         $self->update_catalog( File::Spec->catfile( Jifty->config->framework('L10N')->{'PoDir'}, $self->{'language'} . ".po"));
     }
-
+    else {
+        foreach my $catalog (@catalogs) {
+            next if $catalog =~ m{(^|/)\.svn/};
+            $self->update_catalog( $catalog );
+        }
+    }
 }
 
 =head2 update_catalog FILENAME
@@ -122,10 +124,12 @@ L<Locale::Maketext::Extract>.
 sub extract_messages {
     my $self = shift;
     # find all the .pm files in @INC
-    my @files = File::Find::Rule->file->in( 'share', 'lib', 'bin' );
+    my @files = File::Find::Rule->file->in( Jifty->config->framework('Web')->{'TemplateRoot'}, 'lib', 'bin' );
 
     my $logger =Log::Log4perl->get_logger("main");
     foreach my $file (@files) {
+        next if $file =~ m{(^|/)[\._]svn/};
+        next if $file =~ m{\~$};
         next unless $self->_check_mime_type($file );
         $logger->info("Extracting messages from '$file'");
         $LMExtract->extract_file($file);

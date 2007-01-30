@@ -13,10 +13,8 @@ address is really theirs, when claiming that they lost their password.
 
 =cut
 
-package Jifty::Plugin::Login::Action::ResetPassword;
-use base qw/Jifty::Action/;
-
-use Jifty::Plugin::Login::Model::User;
+package Jifty::Plugin::Login::Action::ResetLostPassword;
+use base qw/Jifty::Action Jifty::Plugin::Login/;
 
 =head2 arguments
 
@@ -28,11 +26,15 @@ Note that it can get the first two from the confirm dhandler.
 sub arguments {
     return (
         {
-            password         => { type => 'password', sticky => 0 },
+            password         => { 
+                type => 'password', 
+                sticky => 0, 
+                label  => _('Password') 
+            },
             password_confirm => {
                 type   => 'password',
                 sticky => 0,
-                label  => 'type your password again'
+                label  => _('type your password again')
             },
         }
     );
@@ -46,14 +48,14 @@ Resets the password.
 
 sub take_action {
     my $self        = shift;
-    my $LoginUser   = $Jifty::Plugin::Login::LoginUserClass;
-    my $CurrentUser = $Jifty::Plugin::Login::CurrentUserClass;
-    my $u = $LoginUser->new( current_user => $CurrentUser->superuser );
+    my $LoginUserClass = $self->LoginUserClass;
+    my $CurrentUser = $self->CurrentUserClass;
+    my $u = $LoginUserClass->new( current_user => $CurrentUser->superuser );
     $u->load_by_cols( email => Jifty->web->current_user->user_object->email );
 
     unless ($u) {
         $self->result->error(
-"You don't exist. I'm not sure how this happened. Really, really sorry. Please email us!"
+_("You don't exist. I'm not sure how this happened. Really, really sorry. Please email us!")
         );
     }
 
@@ -67,18 +69,18 @@ sub take_action {
         and $pass eq $pass_c )
     {
         $self->result->error(
-"It looks like you didn't enter the same password into both boxes. Give it another shot?"
+_("It looks like you didn't enter the same password into both boxes. Give it another shot?")
         );
         return;
     }
 
     unless ( $u->set_password($pass) ) {
-        $self->result->error("There was an error setting your password.");
+        $self->result->error(_("There was an error setting your password."));
         return;
     }
 
     # Log in!
-    $self->result->message("Your password has been reset.  Welcome back.");
+    $self->result->message(_("Your password has been reset.  Welcome back."));
     Jifty->web->current_user( $CurrentUser->new( id => $u->id ) );
     return 1;
 

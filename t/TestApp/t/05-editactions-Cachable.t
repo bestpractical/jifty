@@ -1,13 +1,12 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 use warnings;
 use strict;
 
-BEGIN {
-chdir "t/TestApp";
-$ENV{'JIFTY_CONFIG'} = 't/config-Cachable';
-}
-use lib '../../lib';
+use lib 't/lib';
+use Jifty::SubTest;
+BEGIN { $ENV{'JIFTY_CONFIG'} = 't/config-Cachable' }
+
 use Jifty::Test tests => 8;
 use Jifty::Test::WWW::Mechanize;
 
@@ -20,7 +19,8 @@ ok($system_user, "Found a system user");
 
 # Create a user
 my $o = TestApp::Model::User->new(current_user => $system_user);
-my ($id) = $o->create( name => 'edituser', email => 'someone@example.com' );
+my ($id) = $o->create( name => 'edituser', email => 'someone@example.com',
+                       password => 'secret');
 ok($id, "User create returned success");
 
 my $server  = Jifty::Test->make_server;
@@ -31,7 +31,7 @@ my $URL     = $server->started_ok;
 my $mech    = Jifty::Test::WWW::Mechanize->new();
 
 # Test action to update
-$mech->get_ok($URL.'/editform?J:A-updateuser=TestApp::Action::UpdateUser&J:A:F:F:F-id-updateuser=1&J:A:F-name-updateuser=edituser&J:A:F-email-updateuser=newemail@example.com', "Form submitted");
+$mech->get_ok($URL.'/editform?J:A-updateuser=TestApp::Action::UpdateUser&J:A:F:F-id-updateuser=1&J:A:F-name-updateuser=edituser&J:A:F-email-updateuser=newemail@example.com', "Form submitted");
 undef $o;
 $o = TestApp::Model::User->new(current_user => $system_user);
 $o->flush_cache;

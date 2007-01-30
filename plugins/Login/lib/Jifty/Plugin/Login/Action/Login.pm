@@ -20,21 +20,21 @@ sub arguments {
     return (
         {
             email => {
-                label          => 'Email address',
+                label          => _('Email address'),
                 mandatory      => 1,
                 ajax_validates => 1,
             },
 
             password => {
                 type      => 'password',
-                label     => 'Password',
+                label     => _('Password'),
                 mandatory => 1
             },
             remember => {
                 type  => 'checkbox',
-                label => 'Remember me?',
+                label => _('Remember me?'),
                 hints =>
-                  'If you want, your browser can remember your login for you',
+                  _('If you want, your browser can remember your login for you'),
                 default => 0,
             }
         }
@@ -52,18 +52,18 @@ Makes sure that the email submitted is a legal email address and that there's a 
 sub validate_email {
     my $self  = shift;
     my $email = shift;
-    my $LoginUser = $self->LoginUserClass();
-    my $CurrentUser = $self->CurrentUserClass();
+    my $LoginUserClass = $self->LoginUserClass;
+    my $CurrentUser = $self->CurrentUserClass;
 
     unless ( $email =~ /\S\@\S/ ) {
         return $self->validation_error(
-            email => "That doesn't look like an email address." );
+            email => _("That doesn't look like an email address.") );
     }
 
-    my $u = $LoginUser->new( current_user => $CurrentUser->superuser );
+    my $u = $LoginUserClass->new( current_user => $CurrentUser->superuser );
     $u->load_by_cols( email => $email );
     return $self->validation_error(
-        email => 'No account has that email address.' )
+        email => _('No account has that email address.') )
       unless ( $u->id );
 
     return $self->validation_ok('email');
@@ -79,7 +79,7 @@ Otherwise, throw an error.
 
 sub take_action {
     my $self = shift;
-    my $CurrentUser = $self->CurrentUserClass();
+    my $CurrentUser = Jifty->app_class('CurrentUser');
 
     my $user = $CurrentUser->new( email => $self->argument_value('email') );
 
@@ -87,18 +87,18 @@ sub take_action {
         && $user->password_is( $self->argument_value('password') ) )
     {
         $self->result->error(
- q{You may have mistyped your email address or password. Give it another shot?}
+ _('You may have mistyped your email address or password. Give it another shot?')
         );
         return;
     }
 
     unless ( $user->user_object->email_confirmed ) {
-        $self->result->error(q{You haven't confirmed your account yet.});
+        $self->result->error(_("You haven't confirmed your account yet."));
         return;
     }
 
     # Set up our login message
-    $self->result->message( "Welcome back, " . $user->user_object->name . "." );
+    $self->result->message( _("Welcome back, ") . $user->user_object->name . "." );
 
     # Actually do the signin thing.
     Jifty->web->current_user($user);

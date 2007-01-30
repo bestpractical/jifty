@@ -24,22 +24,20 @@ it directly depended on 60 packages from CPAN.  Most of these libraries
 are cross-platform pure-Perl packages and should run great out of the
 box on any platform you can get Perl onto.
 
-We've gone to lengths to make sure you don't spend your day downloading
-library after library by bundling everything we can inside the Jifty
-package.  With luck, all you'll need to install is a few tricky libraries
-that actually need to be compiled for your operating system. (Little
-things like Perl's database interface and the embedded SQLite that Jifty
-defaults to.)
+We've gone to lengths to make sure you don't spend your day
+downloading library after library by bundling everything we can inside
+the Jifty package.  The Jifty installer is capable of determining what
+modules your system needs, and downloading and installing them all in
+one go.  Don't worry, it will ask you first before it makes any changes.
 
-You can either grab a complete Jifty package from http://download.jifty.org/pub/jifty/
-or install from CPAN. If you get the I<slim> version from CPAN, you'll have
-to install Jifty's dependencies yourself. (Though we help out with that 
-where we can.)  If you want to get up and running quickly, grab the latest
-version from:
+On most systems you can Perl's bundled CPAN module to download
+and install Jifty:
 
-    http://download.jifty.org/pub/jifty/
+  # perl -MCPAN -e'install Jifty'       # Unix-like systems
+  # perl -MCPAN -e"install Jifty"       # Win32 systems
 
-Either way, the installation process is the same:
+If you've downloaded a C<.tar.gz> of Jifty, you can do a
+manual install:
 
   # tar xzvf jifty-<version>.tgz
   # cd jifty-<version>
@@ -69,7 +67,7 @@ Change directory to some place it will be safe to create a new
 Jifty application. (Jifty will create a subdirectory for you).
 
   # jifty app --name MyWeblog
-  Can't guess application root from current path (/your/current/directory) or bin path (/usr/bin)
+  Can't guess application root from current path (/tmp) or bin path (/usr/bin)
   Creating new application MyWeblog
   Creating directory lib
   Creating directory lib/MyWeblog
@@ -77,9 +75,13 @@ Jifty application. (Jifty will create a subdirectory for you).
   Creating directory etc
   Creating directory doc
   Creating directory log
-  Creating directory web
-  Creating directory web/templates
-  Creating directory web/static
+  Creating directory var
+  Creating directory var/mason
+  Creating directory share
+  Creating directory share/po
+  Creating directory share/web
+  Creating directory share/web/templates
+  Creating directory share/web/static
   Creating directory lib/MyWeblog/Model
   Creating directory lib/MyWeblog/Action
   Creating directory t
@@ -113,31 +115,31 @@ write your docs, put them in F<doc/>.
 Jifty uses L<Log::Log4perl> to configure its logging. By default, it
 dumps logs named F<server.log> and F<error.log> into the F<log> directory.
 
-=item web/templates
+=item share/web/templates
 
 Jifty uses L<HTML::Mason> as its primary templating system.  Put
-your application's templates into F<web/templates/>.  Out of the
-box, Jifty comes with an application I<skeleton> that it installs in
-F<share/web/templates/>.  This default application is
-a convenient way to get a basic application up and running quickly,
-but probably needs some customization as you build a more advanced
-application.
+your application's templates into F<share/web/templates/>.  Out of
+the box, Jifty comes with an application I<skeleton> that it installs
+in F<share/web/templates/>.  This default application is a convenient
+way to get a basic application up and running quickly, but probably
+needs some customization as you build a more advanced application.
 
 You can find where Perl stuck Jifty's default templates with:
 
   perl -MJifty::Util -e 'print Jifty::Util->share_root'
 
-=item web/static
+=item share/web/static
 
 Some nontrivial percentage of the I<stuff> your web application serves
 out doesn't need to (or I<shouldn't>) pass through your templating
 engine.
 
-Just drop your static files into F<web/static/> and Jifty will serve
+Just drop your static files into F<share/web/static/> and Jifty will serve
 them out if it can't find a template with the right name.
 
-Out of the box, Jifty comes with a CSS style, Javascript libraries and
-a Pony. Look in F</usr/local/share/jifty/web/static>.
+Out of the box, Jifty comes with a CSS style, Javascript libraries and a
+Pony. Look in F<share/web/static> in the Jifty distribution, or in the same
+place Jifty stuck its default templates.
 
 =item lib/MyWeblog
 
@@ -167,6 +169,11 @@ Jifty starts off your application with a basic harness, but can't yet write
 all your tests for you. (It does, however, build simple tests for model
 classes you generate.)
 
+=item var
+
+Jifty stores cache files here while the server is running. You shouldn't ever
+have to touch this directory.
+
 =back
 
 =head2 Building your data model
@@ -191,18 +198,20 @@ Open F<lib/MyWeblog/Model/Post.pm> in your favorite text editor.
 
 You should see something like this:
 
-  package MyWeblog::Model::Post::Schema;
-  use Jifty::DBI::Schema;
-
-  # Your column definitions go here.  See Jifty::DBI::Schema for
-  # documentation about how to write column definitions.
-
+  use strict;
+  use warnings;
+  
   package MyWeblog::Model::Post;
-  use base qw/MyWeblog::Record/;
-
+  use Jifty::DBI::Schema;
+  
+  use MyWeblog::Record schema {
+  
+  };
+  
   # Your model-specific methods go here.
-
+  
   1;
+
 
 Now it's time to tell the model class about posts. Start by giving our post a
 C<body> and a C<title>. (In a future tutorial, the application will become fully
@@ -211,8 +220,7 @@ C<tags> table.)
 
 Position your cursor right after:
 
-  # Your column definitions go here.  See L<Jifty::DBI::Schema> for
-  # documentation about how to write column definitions.
+  use MyWeblog::Record schema {
 
 Add the lines:
 
@@ -240,7 +248,8 @@ for a bit more information).
   INFO - Using MyWeblog::Model::Post
   INFO - Using Jifty::Model::Session
   INFO - Using Jifty::Model::Metadata
-  INFO - Set up version v0.0.1, jifty version 0.605070
+  INFO - Using Jifty::Model::Schema
+  INFO - Set up version v0.0.1, jifty version 0.607280
 
 =head2 Starting the Jifty application server
 
@@ -250,6 +259,11 @@ the online documentation browser, and the Pony.
 
   # ./bin/jifty server
   INFO - You can connect to your server at http://localhost:8888/
+
+Please always run this command at the root directory of your Jifty applications,
+or you'll be caught by a lot of errors.
+
+For many platforms, a simple "jifty server" command works too. :)
 
 =head2 Building a user interface
 
@@ -265,10 +279,10 @@ Create a page to post a new weblog entry:
 Open a new file called F<post> in your text editor. Make it look like this:
 
   <%init>
-  my $action = Jifty->web->new_action(class =>'CreatePost');
+  my $action = Jifty->web->new_action(class => 'CreatePost');
   </%init>
 
-  <&|/_elements/wrapper, title => "Post to your weblog" &>
+  <&| /_elements/wrapper, title => "Post to your weblog" &>
   <% Jifty->web->form->start() %>
   <% Jifty->web->form->next_page( url => '/') %>
   <% $action->form_field('title') %>
@@ -276,6 +290,11 @@ Open a new file called F<post> in your text editor. Make it look like this:
   <% Jifty->web->form->submit( label => 'Post' ) %>
   <% Jifty->web->form->end() %>
   </&>
+
+Yes, it's a template file in L<HTML::Mason> syntax. If you're not familiar with Mason,
+we recommend you to consult its online documentation for details. I<Mason templates 
+should start in the first column of the file. Particularly importantly, the C<E<lt>%initE<gt>>
+and C<E<lt>/%initE<gt>> blocks must be flush left.>
 
 =head3 Viewing
 
@@ -288,7 +307,7 @@ lined up in column 1, or it won't work.)
 
 =head4 The quick and dirty way
 
-Open a new file called F<index.html> in the F<web/templates> directory
+Open a new file called F<index.html> in the F<share/web/templates> directory
 in your text editor. (Your webserver will
 treat the URL C</index.html> as the I<default> page for your site).  Make it
 look like this:
@@ -298,15 +317,16 @@ look like this:
   $posts->unlimit();
   </%init>
 
-  <&|/_elements/wrapper, title => Jifty->config->framework('ApplicationName') &>
+  <&| /_elements/wrapper, title => Jifty->config->framework('ApplicationName') &>
   <dl>
   % while (my $post = $posts->next) {
-   <dt><%$post->title%></dt>
-   <dd><%$post->body%></dd>
+   <dt><% $post->title %></dt>
+   <dd><% $post->body %></dd>
   % }
   </dl>
   </&>
 
+(Make sure to remove that leading whitespace!)
 
 =head4 The complex way that gets you lots of cool toys
 
@@ -322,7 +342,7 @@ its own I<fragment> file.
 The complex way starts off about the same as the easy way.  Open a new file
 called F<share/web/templates/index.html> in your text editor.  Fill it with this:
 
-  <&|/_elements/wrapper, title => Jifty->config->framework('ApplicationName') &>
+  <&| /_elements/wrapper, title => Jifty->config->framework('ApplicationName') &>
 
   <% Jifty->web->region(name => "myweblog-posts",
                         path => "/fragments/page_of_posts") %>
@@ -338,7 +358,7 @@ a file called F<share/web/templates/fragments/page_of_posts> containing:
   my $posts = MyWeblog::Model::PostCollection->new();
   $posts->unlimit();
   $posts->set_page_info( current_page => $page,
-                         per_page     => 25
+                         per_page     => 15
                        );
   $m->out("No items found.") if ($posts->pager->total_entries == 0);
 
@@ -348,8 +368,8 @@ a file called F<share/web/templates/fragments/page_of_posts> containing:
   % }
   <dl class="list">
   % while (my $post = $posts->next) {
-   <dt><%$post->title%></dt>
-   <dd><%$post->body%></dd>
+   <dt><% $post->title %></dt>
+   <dd><% $post->body %></dd>
   % }
   </dl>
 
@@ -361,7 +381,10 @@ a file called F<share/web/templates/fragments/page_of_posts> containing:
   % }
 
 Now fire up your Jifty webserver again. Go create a post by browsing C</post>
-on your webserver.
+on your webserver. Create more than 15 posts, and notice how Jifty gives you
+AJAX C<Next Page> and C<Previous Page> buttons for you. Turn off javascript or
+view the page in lynx, and notice how the AJAX automatically falls-back to page
+loads for you. All for free, thanks to Jifty!
 
 =head3 Hey, where'd that class come from?
 
@@ -389,7 +412,7 @@ You may want to start with the stock jifty template, in which case you
 only need to add the C<< $top->child( Post... >> part
 
   cat $(perl -MJifty::Util -e 'print Jifty::Util->share_root' \
-    )/share/web/templates/_elements/nav > share/web/templates/_elements/nav
+    )/web/templates/_elements/nav > share/web/templates/_elements/nav
 
 Otherwise, inside F<_elements>, open up a new file called C<nav> in your
 text editor and insert:
@@ -466,6 +489,8 @@ Future tutorials include:
 =item * Web Services
 
 =item * Continuations in depth
+
+=item * Customized view (user-defined wrappers and css)
 
 =back
 

@@ -36,7 +36,7 @@ L<Jifty::Dispatcher>.
 
 =cut
 
-use Jifty::Everything;
+
 use Storable 'dclone';
 
 use base qw/Class::Accessor::Fast/;
@@ -129,10 +129,13 @@ sub return_path_matches {
     my $request_path = $self->request->path;
 
     # XXX TODO: WE should be using URI canonicalization
+
     my $escape;
     $called_uri =~ s{/+}{/}g;
+    $called_uri = Encode::encode_utf8($called_uri);
     $called_uri = $escape while $called_uri ne ($escape = URI::Escape::uri_unescape($called_uri));
     $request_path =~ s{/+}{/}g; 
+    $request_path = Encode::encode_utf8($request_path);
     $request_path = $escape while $request_path ne ($escape = URI::Escape::uri_unescape($request_path));
 
     return $called_uri =~ /^\Q$request_path\E[?&;]J:RETURN=@{[$self->id]}$/;
@@ -202,15 +205,8 @@ sub return {
 
     # Pull state information out of the continuation and set it
     # up; we use clone so that the continuation itself is
-    # immutable.  It is vaguely possible that there are results in
-    # the response already (set up by the dispatcher) so we place
-    # results from the continuation's response into the existing
-    # response only if it wouldn't clobber something.
-    my %results = $self->response->results;
-    for (keys %results) {
-        next if Jifty->web->response->result($_);
-        Jifty->web->response->result($_,dclone($results{$_}));
-    }
+    # immutable.
+    Jifty->web->response(dclone($self->response));
 
     # Run any code in the continuation
     $self->code->(Jifty->web->request)

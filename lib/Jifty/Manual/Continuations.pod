@@ -1,0 +1,250 @@
+=head1 NAME
+
+Jifty::Manual::Continuations - There And Back Again
+
+=head1 DESCRIPTION
+
+Continuations are a powerful concept in computer science -- in a
+nutshell, they allow you to store away the state of of the interpreter
+at any given point.  More importantly, they allow you to return to
+that state at any later time, by calling the continuation with, and
+evaluation of that interpreter state will resume.  They're a concept
+that first arose in LISP, but has implementations these days in Ruby,
+Scheme, Haskell, Smalltalk, to name a few.
+
+Thus, continuations allow you to preserve context, and return to it
+later.  This is amazingly useful in web programming, which is limited
+to C<HTTP>, which is an inherently stateless protocol.  By passing
+around continuations, we can keep track of the context that got us to
+the current page.
+
+While we can't construct I<full continuations> at the interpreter level
+-- because Perl doesn't support them -- we can implement them at the
+level of HTTP requests.  In technical terms, because they capture the
+control stack up from the beginning of a user's session, they are
+called I<delimited continuations>.
+
+Continuations are more useful than session because sessions store
+information across browser windows; sessions may also break in the
+presence of the back button, as the information displayed on the
+screen, and the information stored in the session may differ.  Since
+continuations are immutable, and a new one is produced every time a
+change is made, the information displayed in the browser cannot get
+out of sync with the information contained in any associated
+continuation.
+
+=head1 USING CONTINUATIONS
+
+=head2 As simple links in templates
+
+The simplest form of continuation use is in a template, using
+L<Jifty::Web/tangent>, as follows:
+
+    <% Jifty->web->tangent( url   => "/someplace",
+                            label => "Go someplace") %>
+
+This will create a link, which, when clicked, will store the current
+request into a continuation, and jump to the url C</someplace>.  In the
+C</someplace> template, you can display information, and possibly have
+the user navigate between multiple pages before returning to the previous page:
+
+    <% Jifty->web->return( label => "Back to whence you came" ) %>
+
+Because this C<return> does not carry a result value, you can think of
+it as a form of C<gosub>.  In comparison, ordinary hyperlinks are akin to
+C<goto> staements.
+
+Sometimes, it may be possible for the user to get to a location
+without having a continuation set.  In that case, clicking on the
+"Back to whence you came" link will appear to do nothing -- which may
+be slightly confusing to the user.  To remedy this, Jifty provides a
+way to specify a default location to return to:
+
+    <% Jifty->web->return( to => "/default", label => "Go back" ) %>
+
+=head2 Using return values
+
+All of the above examples generate links, which means that they don't
+interact at all with actions.  However, continuations can also be
+useful in creating complex multi-page actions.
+
+Continuations are saved -- and the browser is redirected to the new
+URL -- just after all actions have been checked for validation but
+before any of them are run.  This means that the new request has
+access to the full validation state of its parent's actions.
+
+When a continuation is called, it first checks that all actions in the
+request were successful; if any failed, then the continuation is
+B<not> called.  If the request's actions were all successful, it
+merges together the L<Jifty::Result>s of current L<Jifty::Response>
+with those in the L<Jifty::Response> stored in the continuation.  In
+doing so, parameters are mapped using L<Jifty::Request::Mapper>.  This
+makes it possible to return values from continuations into arbitrary
+places.  For example:
+
+    % my $action = Jifty->web->new_action(class => 'AddTwoNumbers');
+    <% Jifty->web->form->start %>
+    <% $action->form_field( 'first_number' ) %>
+    <% $action->form_field( 'second_number',
+           default_value => {
+               request_argument => "number",
+           }
+       ) %>
+    <% Jifty->web->tangent(
+            url    => '/pagetwo',
+            label  => 'Enter a second number',
+            submit => $action
+       ) %>
+    <% Jifty->web->form->end %>
+
+..and in C</pagetwo>:
+
+    <% Jifty->web->form->start %>
+    <input type="text" name="number" />
+    %# We use as_button to tell Jifty that we want a button, not a link
+    <% Jifty->web->return( label => 'Pick', as_button => 1 ) %>
+    <% Jifty->web->form->end %>
+
+..and assuming that C<AddTwoNumbers>'s C<take_action> resembles:
+
+    sub take_action {
+        my $self = shift;
+        my $one = $self->argument_value("first_number");
+        my $two = $self->argument_value("second_number");
+        $self->result->message("Got " . ($one + $two));
+    }
+
+The first page renders the entry box for the first number; the second
+input is hidden because Jifty notices that it is based on a mapped
+value: i.e., its default is set to C<< {request_argument => "number"} >>
+instead of a plain scalar value.
+
+Pressing the button validates the action but does not complete
+running it.  At this point, the C<second_number> argument to the
+C<AddTwoNumbers> action has no real value -- however, it knows that it
+will, at the earliest possible opportunity, fill in its value from the
+C<number> request parameter.
+
+Jifty tangents to C</pagetwo>, where we enter and submit a C<number>
+argument.  Control then returns to the original page, where the request
+mapper maps the C<number> value into the C<second_number> argument of the
+C<AddTwoNumbers> action, which then runs because it has received all
+arguments it requires.
+
+Note that in the example above, the C<number> argument is a plain request 
+argument, not part of another action.  More complex mappings are possible,
+including grabbing the results of or arguments to actions.  This would make
+it possible, for instance, to use an action on the second page to validate the
+number before returning.  This is slightly different from placing a validator
+on the C<AddTwoNumbers> action, as that validator only gets called I<after>
+control has already returned to the first page.
+
+=head2 As dispatcher rules
+
+The L<Jifty::Web/tangent> function is context-aware -- if it is called
+in void context, it immediately saves the continuation and redirects to
+the new url.  This is particularly useful, say, for authentication
+protection in C<before> blocks:
+
+    before '/protected' => sub {
+        # shorthand for: Jifty->web->tangent( url => '/login' )
+        tangent('/login') unless Jifty->web->current_user->id;
+    };
+
+And in the C</login> template:
+
+    % my $action = Jifty->web->new_action(class   => 'Login',
+    %                                     moniker => 'loginbox' );
+    <% Jifty->web->form->start %>
+    <% $action->form_field('username') %>
+    <% $action->form_field('password') %>
+    <% Jifty->web->return( to     => "/protected",
+                           label  => 'Login',
+                           submit =>  $action) %>
+    <% Jifty->web->form->end %>
+
+This establishes a button, which, if the C<Login> action is
+successful, calls the stored continuation, or, lacking one, redirects
+to C</protected>.
+
+As currently impelented, these redirect-from-dispatcher tangents works
+exactly like rendered-as-links tangents, in that when they return,
+I<all> rules in the dispatcher are still executed from the start.
+Therefore the C<unless> guard in the C<before '/protected'> rule above
+is neccessary to prevent recursion.
+
+=head1 GORY DETAILS
+
+Jifty's continuations are implemented in L<Jifty::Continuation>, which
+is very little more than a place to store a L<Jifty::Request> and its
+associated L<Jifty::Response>.
+
+The following diagram diagrams the stages of continuation handling,
+and their interaction with the dispatcher.  For clarity, the page
+region handling code is included, but page regions do not currently
+interact with continuation processing.
+
+                                /--------------\
+          +---------------------v-+            |
+          |........Request........|            |
+          +-|-------------------|-+            |
+            |                   |  RETURN  +---|---------------------+
+    /----\  |                   \----------> Replace request with    |
+    |  +-|--|-+ +==============+           | request in continuation |
+    |  |.v..v.---> SETUP rules |           +-------------------------+
+    |  |......| +==============+
+    |  |..D...|
+    |  |..I...| +~~~~~~~~~~~~~~~~~~~+      +-------------------------+
+    |  |..S...---> Validate actions |      | Store current request   |
+    |  |..P...| +~~~~~|~~~~~~~~~|~~~+ SAVE | and response, redirect  |
+    |  |..A...|       |         \----------> to new scope and URL    |
+    |  |..T...|       |                    +-------------------------+
+    |  |..C...| +~~~~~v~~~~~~~~~~~~~+
+    |  |..E...| |  Run actions      |      +-------------------------+
+    |  |..R...| +~~~~~~~~~~~~~~~|~~~+ CALL | Merge results into the  |
+    |  |......|                 \----------> continuation's results; |
+    |  |......|                            | redirect to return URL  |
+    |  |......| +==============+           +-------------------------+
+    |  |......---> RUN rules   |
+    |  |......| +=====|========+
+    |  |......|       |
+    |  |......|    +--v---------------+
+    |  |......|    | Show templates   |
+    |  |......|    +-------|----------+
+    |  |......|            |
+    |  |......|    +-------v----------+
+    |  |......|    | Show page region ---------------------\
+    |  |......|    +------------------+                    |
+    |  |......|                                            |
+    |  |......| +==============+                           |
+    |  |......---> AFTER rules |                           |
+    |  +------+ +==============+                           |
+    |                                                      |
+    \------------------------------------------------------/
+
+As shown in the diagram above, there are three different operations
+that continuations use.  The first is C<SAVE>, which is triggered by
+the query parameter L<J:CREATE>.  Continuations are saved after
+validating actions; the continuation itself is attached to the user's
+session object.
+
+The current saved continuation is automatically preserved across
+requests.  When the time comes to call the continuation, the C<CALL>
+operation is performed; this is usually triggered by the presence of
+the L<J:CALL> query parameter.  This causes the stored request to be
+query-mapped using L<Jifty::Request::Mapper>, but using the B<current>
+request and response (I<not> the continuation!) as the sources for mapping
+values.  Then, the result objects are merged, with results from the
+stored response taking precedence.  This new mapped request and new
+merged response are formed into a new continuation.
+
+In order to ensure that the browser's URL matches the URL of the
+request in the continuation, Jifty then does a redirect to the URL of
+the request stored in the continuation, starting the last continuation
+operation, the C<RETURN>.  When Jifty detects the C<RETURN> operation,
+most often by the presence of C<J:RETURN>, it loads the continuation
+and reads the stored request and response into the current request and
+response.
+
+=cut
+

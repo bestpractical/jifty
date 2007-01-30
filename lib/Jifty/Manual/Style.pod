@@ -1,0 +1,72 @@
+=head1 NAME
+
+Jifty::Manual::Style - Jifty coding style guide
+
+
+=head3 Default style
+
+When in doubt, default to whatever Damian Conway's I<Perl Best
+Practices> says.
+
+
+=head3 Private documentation
+
+When documenting a private method, or providing documentation which is
+not useful to the user of the module (and is presumably useful to the
+developer), wrap it in =begin/end private.  This way it does not show
+up in perldoc where a user would see it and yet is still available and
+well formatted (that is, not just a lump comment) when looking at the
+code.
+
+  =begin private
+
+  =head2 import_extra
+
+  Called by L<Test::More>'s C<import> code when L<Jifty::Test> is first
+  C<use>'d, it calls L</setup>, and asks Test::More to export its
+  symbols to the namespace that C<use>'d this one.
+
+  =end private
+
+  sub import_extra {
+        ...
+  }
+
+
+=head3 Test temp files
+
+Files created by tests should be declared as such using
+Jifty::Test->test_file() so they are cleaned up on a successful test
+run.
+
+
+=head3 Use Shell::Command
+
+Shell::Command has a number of functions which work like common shell
+file commands such as touch, cp and mv.  They are battle tested and
+cross-platform.  Use them instead of coding your own.
+
+For example, instead of this:
+
+    open my $file, ">foo";
+    close $file;
+
+Do this:
+
+    use Shell::Command;
+    touch $file;
+
+
+=head3 Case insensitive matching
+
+To check if a string equals another string case insensitively, do this
+
+    lc $foo eq lc $bar;
+    lc $foo eq 'bar';
+
+not this:
+
+    $foo =~ /^\Q$bar\E/i;
+    $foo =~ /^bar$/i;
+
+=cut

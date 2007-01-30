@@ -28,10 +28,10 @@ div#messages,  div#errors {
 #dismiss_errors
 {
     padding-left: 16px;
-    background: url(/static/images/silk/cancel.png) no-repeat;
+    background: url(/static/images/silk/cancel_grey.png) no-repeat;
     position: absolute;
-    top: 1px;
-    right: 1px;
+    top: 0.4em;
+    right: 2px;
     width: 0;
     display: block;
     text-indent: -9999em;

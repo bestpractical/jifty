@@ -10,10 +10,9 @@ make up a Jifty application's API
 
 =cut
 
-use Jifty::Everything;
+
 use base qw/Class::Accessor::Fast Jifty::Object/;
 
-require Module::Pluggable;
 
 __PACKAGE__->mk_accessors(qw(action_limits));
 
@@ -31,9 +30,9 @@ sub new {
 
     $self->reset;
 
-    Module::Pluggable->import(
+    Jifty::Module::Pluggable->import(
         search_path => [
-            Jifty->config->framework('ApplicationClass') . "::Action",
+            Jifty->app_class("Action"),
             "Jifty::Action",
             map {ref($_)."::Action"} Jifty->plugins,
         ],
@@ -57,7 +56,7 @@ sub qualify {
     my $self   = shift;
     my $action = shift;
 
-    my $base_path = Jifty->config->framework('ApplicationClass') . "::Action";
+    my $base_path = Jifty->app_class("Action");
 
     return $action
         if $action =~ /^Jifty::/
@@ -79,7 +78,7 @@ sub reset {
     my $self = shift;
 
     # Set up defaults
-    my $app_actions = Jifty->config->framework('ApplicationClass') . "::Action";
+    my $app_actions = Jifty->app_class("Action");
 
     $self->action_limits(
         [   { deny => 1, restriction => qr/.*/ },
@@ -120,7 +119,7 @@ sub deny {
 
 =head2 restrict POLARITY RESTRICTIONS
 
-Method that L</allow> and and L</deny> call internally; I<POLARITY> is
+Method that L</allow> and L</deny> call internally; I<POLARITY> is
 either C<allow> or C<deny>.  Allow and deny limits are evaluated in
 the order they're called.  The last limit that applies will be the one
 which takes effect.  Regexes are matched against the class; strings

@@ -74,12 +74,14 @@ Autocompleter.Base.prototype = {
 
     Element.hide(this.update);
 
-    Event.observe(this.element, "focus", this.onFocus.bindAsEventListener(this));
     Event.observe(this.element, "blur", this.onBlur.bindAsEventListener(this));
     Event.observe(this.element, "keypress", this.onKeyPress.bindAsEventListener(this));
   },
 
   show: function() {
+    /* Next line added by TRS, 07 July 2006 */
+    if ( this.options.beforeShow ) this.options.beforeShow(this);
+    
     if(Element.getStyle(this.update, 'display')=='none') this.options.onShow(this.element, this.update);
     if(!this.iefix && 
       (navigator.appVersion.indexOf('MSIE')>0) &&
@@ -102,6 +104,9 @@ Autocompleter.Base.prototype = {
   },
 
   hide: function() {
+    /* Next line added by TRS, 07 July 2006 */
+    if ( this.options.beforeHide ) this.options.beforeHide(this);
+    
     this.stopIndicator();
     if(Element.getStyle(this.update, 'display')!='none') this.options.onHide(this.element, this.update);
     if(this.iefix) Element.hide(this.iefix);
@@ -177,16 +182,6 @@ Autocompleter.Base.prototype = {
     this.active = false;     
   },
 
-  onFocus: function(event) {
-    this.changed = true;
-    this.hasFocus = true;
-
-    if (this.observer)
-        clearTimeout(this.observer);
-    
-    this.onObserverEvent();
-  },
-  
   render: function() {
     if(this.entryCount > 0) {
       for (var i = 0; i < this.entryCount; i++)

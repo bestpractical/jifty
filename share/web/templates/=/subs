@@ -1,0 +1,58 @@
+<%args>
+$forever => 1
+</%args>
+<%init>
+
+$r->content_type("text/html; charset=utf-8");
+$r->headers_out->{'Pragma'} = 'no-cache';
+$r->headers_out->{'Cache-control'} = 'no-cache';
+$r->send_http_header;
+
+my $writer = XML::Writer->new;
+$writer->xmlDecl( "UTF-8", "yes" );
+
+my $begin = <<'END';
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+ "http://www.w3.org/TR/2002/REC-xhtml1-20020801/DTD/xhtml1-strict.dtd">
+<html><head><title></title></head>
+END
+chomp $begin;
+
+
+if ($forever) {
+    my $whitespace = " " x ( 1024 - length $begin );
+    $begin =~ s/<body>$/$whitespace<body>/s;
+}
+
+$m->print($begin);
+$m->flush_buffer;
+$writer->startTag("body");
+
+
+    while (1) {
+        my $sent = write_subs_once($writer);
+        flush STDOUT;
+        last if ($sent && !$forever);
+        sleep 1;
+    }
+    $writer->endTag();
+    return;
+
+
+
+
+
+sub write_subs_once {
+    my $writer = shift;
+    Jifty::Subs::Render->render(
+        Jifty->web->session->id,
+        sub {
+            my ( $mode, $name, $content ) = @_;
+            $writer->startTag( "pushfrag", mode => $mode );
+            $writer->startTag( "fragment", id   => $name );
+            $writer->dataElement( "content", $content );
+            $writer->endTag();
+            $writer->endTag();
+            } );
+}
+</%init>

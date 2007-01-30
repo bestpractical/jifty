@@ -1,0 +1,15 @@
+This directory contains Debian packaging files for Jifty.
+
+There is a debian repository at:
+
+ deb http://debian.jifty.org/debian sarge jifty
+
+It contains jifty packages as well as some jifty plugins, updates for
+sarge and ubuntu 6.06 LTS
+
+Please let us know if there are any issues by sending mail to the
+jifty mailing list and we'll try and fix them.
+
+Bart Bunting
+Yves Agostini
+

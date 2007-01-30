@@ -2,11 +2,11 @@ package Jifty::TestServer;
 
 use strict;
 use warnings;
-use Cwd 'abs_path';
+use File::Spec;
 use Test::Builder;
 my $Tester = Test::Builder->new;
 
-my $INC = [map { abs_path($_) } @INC ];
+my $INC = [grep { defined } map { File::Spec->rel2abs($_) } @INC ];
 my @perl = ($^X, map { "-I$_" } @$INC);
 
 =head1 NAME
@@ -28,6 +28,24 @@ sub started_ok {
     my $self = shift;
     my $text = shift;
     $text = 'started server' unless defined $text;
+
+    if ($^O eq 'MSWin32') {
+        # dirty hack until Test::Builder->skip_rest comes true
+
+        my $why = "live test doesn't work on Win32 at the moment";
+
+        $Tester->skip($why);
+
+        unless ($Tester->{No_Plan}) {
+            for (my $ct = $Tester->{Curr_Test};
+                    $ct < $Tester->{Expected_Tests};
+                    $ct++
+            ) {
+                $Tester->skip($why); # skip rest of the test
+            }
+        }
+        exit(0);
+    }
 
     if (my $pid = fork()) {
         # We are expecting a USR1 from the child Jifty::Server
@@ -52,11 +70,11 @@ sub started_ok {
         $ENV{"PERL_DPROF_OUT_FILE_NAME"} = $profile_file;
     }
     if (my $coverage = $ENV{JIFTY_TESTSERVER_COVERAGE}) {
-        push @extra, '-MDevel::Cover';
+        push @extra, '-MDevel::Cover'.($coverage =~ m/,/ ? "=$coverage" : '');
     }
-    # FIXME: put something here to ensure bin/jifty (even
-    # $findbin/../bin/jifty) exists
-    exec(@perl, @extra, 'bin/jifty', 'server', '--quiet',
+
+    exec(@perl, @extra, '-MJifty::Util', '-MJifty::Script',
+         '-e', 'Jifty::Script->dispatch', 'server', '--quiet',
          '--sigready', 'USR1',
          $ENV{JIFTY_TESTSERVER_DBIPROF} ? ('--dbiprof') : (),
          );

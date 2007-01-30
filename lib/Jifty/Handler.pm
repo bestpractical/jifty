@@ -65,12 +65,11 @@ sub new {
 #        $_[-1] = Jifty->handler->cgi if Jifty->handler->cgi;
 #    };
 
-    $self->dispatcher(
-        Jifty->config->framework('ApplicationClass') . "::Dispatcher" );
+    $self->dispatcher( Jifty->app_class( "Dispatcher" ) );
     Jifty::Util->require( $self->dispatcher );
     $self->dispatcher->import_plugins;
     $self->dispatcher->dump_rules;
-
+    
     $self->mason( Jifty::View::Mason::Handler->new( $self->mason_config ) );
 
     $self->static_handler(Jifty::View::Static::Handler->new());
@@ -178,7 +177,13 @@ sub handle_request {
         @_
     );
 
-    Module::Refresh->refresh if ( Jifty->config->framework('DevelMode') );
+    if ( Jifty->config->framework('DevelMode') ) {
+        Module::Refresh->refresh;
+        Jifty::I18N->refresh;
+    }
+
+    Jifty::I18N->get_language_handle;
+
     $self->cgi( $args{cgi} );
     $self->apache( HTML::Mason::FakeApache->new( cgi => $self->cgi ) );
 
@@ -186,24 +191,26 @@ sub handle_request {
     $self->stash({});
     local $HTML::Mason::Commands::JiftyWeb = Jifty::Web->new();
 
-    Jifty->web->setup_session;
     Jifty->web->request( Jifty::Request->new()->fill( $self->cgi ) );
     Jifty->web->response( Jifty::Response->new );
-    Jifty->web->session->set_cookie;
     Jifty->api->reset;
     $_->new_request for Jifty->plugins;
 
     Jifty->log->debug( "Received request for " . Jifty->web->request->path );
-
     my $sent_response = 0;
     $sent_response
         = $self->static_handler->handle_request( Jifty->web->request->path )
         if ( Jifty->config->framework('Web')->{'ServeStaticFiles'} );
 
+    Jifty->web->setup_session unless $sent_response;
+
     # Return from the continuation if need be
     Jifty->web->request->return_from_continuation;
 
-    $self->dispatcher->handle_request() unless ($sent_response);
+    unless ($sent_response) {
+        Jifty->web->session->set_cookie;
+        $self->dispatcher->handle_request()
+    }
 
     $self->cleanup_request();
 

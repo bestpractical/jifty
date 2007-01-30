@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 use warnings;
 use strict;
@@ -9,8 +9,9 @@ This is a template for your own tests. Copy it and modify it.
 
 =cut
 
-BEGIN {chdir "t/TestApp"}
-use lib '../../lib';
+use lib 't/lib';
+use Jifty::SubTest;
+
 use Jifty::Test tests => 1;
 
 ok(1, "Loaded the test script");

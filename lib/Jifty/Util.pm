@@ -12,16 +12,10 @@ Jifty::Util - Things that don't fit anywhere else
 
 =cut
 
-use Jifty;
-use File::Spec;
-use File::Path;
-use File::ShareDir;
-use UNIVERSAL::require;
-use ExtUtils::MakeMaker ();
+use Jifty ();
+use File::Spec ();
 use Cwd ();
-use Config;
 
-# Trivial memoization to ward off evil Cwd calls.
 use vars qw/%ABSOLUTE_PATH $JIFTY_ROOT $SHARE_ROOT $APP_ROOT/;
 
 
@@ -37,9 +31,48 @@ sub absolute_path {
     my $self = shift;
     my $path = shift || '';
 
+
     return $ABSOLUTE_PATH{$path} if (exists $ABSOLUTE_PATH{$path});
+    $path = $self->canonicalize_path($path);
     return $ABSOLUTE_PATH{$path} = File::Spec->rel2abs($path , Jifty::Util->app_root);
 } 
+
+
+=head2 canonicalize_path PATH
+
+Takes a "path" style /foo/bar/baz and returns a canonicalized (but not necessarily absolute)
+version of the path.  Always use C</> as the separator, even on platforms which recognizes
+both C</> and C<\> as valid separators in PATH.
+
+=cut 
+
+sub canonicalize_path {
+    my $self = shift;
+    my $path = shift;
+
+    my @path = File::Spec->splitdir($path);
+
+    my @newpath;
+
+    for (@path)  {
+        # If we have an empty part and it's not the root, skip it.
+        if ( @newpath and ($_ =~ /^(?:\.|)$/)) {
+            next;
+        }
+        elsif( $_ ne '..')  {
+        push @newpath, $_ ;
+    } else {
+        pop @newpath;
+    }
+
+    }
+
+    
+    return File::Spec::Unix->catdir(@newpath);
+
+
+}
+
 
 =head2 jifty_root
 
@@ -68,6 +101,8 @@ currently only used to store the common Mason components.
 sub share_root {
     my $self = shift;
 
+    
+    Jifty::Util->require('File::ShareDir');
     $SHARE_ROOT ||=  eval { File::Spec->rel2abs( File::ShareDir::module_dir('Jifty') )};
     if (not $SHARE_ROOT or not -d $SHARE_ROOT) {
         # XXX TODO: This is a bloody hack
@@ -102,30 +137,35 @@ sub app_root {
 
     push( @roots, Cwd::cwd() );
 
-    eval { require FindBin };
+    eval { Jifty::Util->require('FindBin') };
     if ( my $err = $@ ) {
-
         #warn $@;
     } else {
         push @roots, $FindBin::Bin;
     }
 
+    Jifty::Util->require('ExtUtils::MM') if $^O =~ /(?:MSWin32|cygwin|os2)/;
+    Jifty::Util->require('Config');
     for (@roots) {
         my @root = File::Spec->splitdir($_);
         while (@root) {
             my $try = File::Spec->catdir( @root, "bin", "jifty" );
-            if (    -e $try
-                # XXX: Just a quick hack
+            if (# XXX: Just a quick hack
                 # MSWin32's 'maybe_command' sees only file extension.
                 # Maybe we should check 'jifty.bat' instead on Win32,
                 # if it is (or would be) provided.
                 # Also, /usr/bin or /usr/local/bin should be taken from
                 # %Config{bin} or %Config{scriptdir} or something like that
                 # for portablility.
-                and (-x $try or MM->maybe_command($try) or $^O eq 'MSWin32')
-                and $try ne File::Spec->catdir($Config{bin}, "jifty")
-                and $try ne File::Spec->catdir($Config{scriptdir}, "jifty") )
+                # Note that to compare files in Win32 we have to ignore the case
+                (-e $try or (($^O =~ /(?:MSWin32|cygwin|os2)/) and MM->maybe_command($try)))
+                and lc($try) ne lc(File::Spec->catdir($Config::Config{bin}, "jifty"))
+                and lc($try) ne lc(File::Spec->catdir($Config::Config{scriptdir}, "jifty")) )
             {
+                #warn "root: ", File::Spec->catdir(@root);
+                #warn "bin/jifty: ", File::Spec->catdir($Config::Config{bin}, "jifty");
+                #warn "scriptdir/jifty: ", File::Spec->catdir($Config::Config{scriptdir}, "jifty");
+                #warn "try: $try";
                 return $APP_ROOT = File::Spec->catdir(@root);
             }
             pop @root;
@@ -169,6 +209,7 @@ sub make_path {
     my $self = shift;
     my $whole_path = shift;
     return 1 if (-d $whole_path);
+    Jifty::Util->require('File::Path');
     File::Path::mkpath([$whole_path]);
 }
 
@@ -209,10 +250,31 @@ sub require {
     return 1;
 }
 
+=head2 already_required class
+
+Helper function to test whether a given class has already been require'd.
+
+=cut
+
+
 sub already_required {
     my ($self, $class) = @_;
     my $path =  join('/', split(/::/,$class)).".pm";
     return ( $INC{$path} ? 1 : 0);
+}
+
+=head2 generate_uuid
+
+Generate a new UUID using B<Data::UUID>.
+
+=cut
+
+my $Data_UUID_instance;
+sub generate_uuid {
+    ($Data_UUID_instance ||= do {
+        require Data::UUID;
+        Data::UUID->new;
+    })->create_str;
 }
 
 =head1 AUTHOR

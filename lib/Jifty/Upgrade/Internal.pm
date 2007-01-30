@@ -17,6 +17,17 @@ usefully.
 
 =cut
 
+since '0.61025' => sub {
+    Jifty::Util->require('IPC::PubSub');
+    IPC::PubSub->new(
+        JiftyDBI => (
+            db_config    => Jifty->handle->{db_config},
+            table_prefix => '_jifty_pubsub_',
+            db_init      => 1,
+        )
+    );
+};
+
 since '0.60427' => sub {
     my @v = Jifty->handle->fetch_result("SELECT major, minor, rev FROM _db_version");
     Jifty->handle->simple_query("DROP TABLE _db_version");
@@ -30,6 +41,19 @@ since '0.60504' => sub {
     return if ($INITIAL_VERSION == '0.60427');
     rename column => 'key', in => 'Jifty::Model::Session',  to => 'data_key';
     rename column => 'key', in => 'Jifty::Model::Metadata', to => 'data_key';
+};
+
+since '0.61210' => sub { 
+    Jifty::Util->require('IPC::PubSub');
+    IPC::PubSub->new(
+        JiftyDBI => (
+            db_config    => Jifty->handle->{db_config},
+            table_prefix => '_jifty_pubsub_',
+            db_init      => 0,
+        )
+    );
+
+    rename column => 'key', in => 'IPC::PubSub::Cache::JiftyDBI::Stash::Item', to => 'data_key';
 };
 
 1;

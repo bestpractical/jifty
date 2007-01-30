@@ -47,6 +47,7 @@ sub render_option {
     my $display = $opt->{'display'};
     my $value   = defined $opt->{'value'} ? $opt->{'value'} : '';
 
+    
     my $id = $self->element_id . "-" . $value;
     $id =~ s/\s+/_/;
     my $field = qq! <input type="radio" !;
@@ -60,6 +61,8 @@ sub render_option {
     $field .= qq! /><label for="@{[ $id ]}"!;
     $field .= $self->_widget_class;
     $field .= qq!>$display</label>\n!;
+    $field = qq{<span class="radiooption">$field</span>};
+
     Jifty->web->out($field);
     '';
 }

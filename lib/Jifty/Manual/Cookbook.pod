@@ -11,6 +11,148 @@ of Jifty use, and ones that work pretty well.
 
 =head1 HOW DO I ...
 
+=head2 Create an LDAP autocomplete field
+
+You need an action in your application. Then run
+
+  jifty action --name LdapSearch
+
+in C<lib/myApp/Action/LdapSearch.pm> add the C<search> field
+
+  use Jifty::Action schema {
+    param search =>
+        autocompleter is \&ldap_search;
+  }
+
+we need L<Net::LDAP> and an accessor to our LDAP value.
+
+  use Net::LDAP;
+
+  __PACKAGE__->mk_accessors(qw(LDAP));
+
+and we can write our C<ldap_search> fonction. 
+Search need at least 3 characters and return an array of C<DisplayName (login)>
+
+  sub ldap_search {
+    my $self = shift;
+    my $search = shift;
+    my @res;
+    if (length $search > 2) {
+         if (! $self->LDAP() ) {
+            $self->LDAP( Net::LDAP->new('ldap.myorg.org');
+            $self->LDAP()->bind( );
+        }
+
+        $self->LDAP()->search(
+          base    => 'ou=people,dc=myorg,dc=org',
+          filter => '(cn='.$filter.')',
+          attrs   =>  ['uid','cn','givenname','displayname'],
+          sizelimit => 10
+          );
+
+        foreach my $entr ( $result->sorted('cn') ) {
+            push @res, $entr->get_value('displayname').' ('.$entr->get_value('uid').')';
+        }
+    }
+    return @res;
+  }
+
+=head2 Add Atom/RSS Feeds ?
+
+You could generate atom/rss feeds for virtually any model in your application.
+For instance, suppose there's a "Post" model (like a blog entry), you could use
+L<XML::Feed> to do this:
+
+    # In '/feed' template
+    <%args>
+    $type
+    </%args>
+    <%init>
+    use XML::Feed;
+    my $posts = MyApp::Model::PostCollection->new();
+    $posts->unlimit();
+
+    my $feed = XML::Feed->new( $type );
+    $feed->title( Jifty->config->framework('ApplicationName') . " Feed" );
+    $feed->link( Jifty->web->url );
+    $feed->description( $feed->title );
+
+    while( my $post = $posts->next ) {
+        my $feed_entry = XML::Feed::Entry->new($type);
+        $feed_entry->title($post->title);
+        $feed_entry->author($post->author->username);
+        $feed_entry->link( Jifty->web->url . "/posts/" . $post->id );
+        $feed_entry->issued( $post->created_on );
+        $feed_entry->summary( $post->body );
+        $feed->add_entry( $feed_entry );
+    }
+    </%init>
+    <% $feed->as_xml |n %>
+
+And add this in F<MyApp/Dispatcher.pm> to make URI look prettier:
+
+    on qr{^/feed/(atom|rss|rss2)}, run {
+        set type => $1;
+        show('/feed');
+    };
+
+And of course, you need to put these in your HTML header template
+(conventionally that's C</_elements/header>):
+
+    <link rel="alternate" type="application/atom+xml" title="Atom" href="/feed/atom" />
+    <link rel="alternate" type="application/rss+xml" title="RSS" href="/feed/rss" />
+
+=head2 Use date or time objects with the database?
+
+On your columns, specify either
+
+    filters are 'Jifty::DBI::Filter::DateTime'
+
+for a timestamp (date and time), or
+
+    filters are 'Jifty::DBI::Filter::Date'
+
+for just a date. Jifty will then automatically translate to and from
+DateTime objects for you when you access the column on your
+model. Additionally, if you add:
+
+    filters are qw(Jifty::Filter::DateTime Jifty::DBI::Filter::Date)
+
+Jifty will inspect the model's
+L<current_user|Jifty::Manual::AccessControl> for a C<time_zone>
+method, and, if it exists, set the retrieved DateTime object's time
+zone appropriately. All dates are stored in UTC in the database, to
+ensure consistency.
+
+=head2 How do I emulate 'created_on' field like Rails ?
+
+In Rails, if you have a field named 'created_on', it's automatically
+set to the creation time of the record. How can I emulate this
+behaviour in Jifty ?
+
+The trick here is to use L<Scalar::Defer>. And declare your column
+like this:
+
+    column created_on =>
+        type is 'timestamp',
+        label is 'Created On',
+        default is defer { DateTime->now },
+        filters are 'Jifty::DBI::Filter::DateTime';
+
+This approach is not really accurate, if you render this field in a
+form, then the defer value is evaluated by the time of rendering,
+which might be way eariler then the creation of record. However, it is
+the easiest one.
+
+If you're using the newly recommeded C<JIfty::DBI::Record schema {}>
+to declare schemas, you might find this trick not working at the moment.
+Please override model's C<before_create> method instead:
+
+    sub before_create {
+        my ($self, $attr) = @_;
+        $attr->{'created_on'} = DateTime->now;
+    };
+
 =head2 Limit access to pages to logged-in users
 
 The best place to do this is probably in your application's
@@ -39,6 +181,15 @@ Finally, you can also allow or deny specific actions in the
 dispatcher, to limit who is able to perform what actions -- see
 L<Jifty::API>.
 
+=head2 Run my Jifty app as fascgi in Apache/Lighttpd ?
+
+Jifty provides a really simple way to run the application as a fastcgi
+server. The complete instructions and examples are in C<'jifty help
+fastcgi'> for both Apache servers and Lighttpd servers. (Please C<cd> to
+your app dir before running this command.)
+
+You'll have to install C<CGI::Fast> and C<FCGI> module for this.
+
 =head2 Take actions based on data in URLs
 
 You can add actions to the request based on data in URLs, or anything
@@ -49,13 +200,13 @@ redirect them to the home page. You could write:
 
     before '/logout' => {
         Jifty->web->request->add_action( class => 'Logout' );
-        Jifty->web->request->add_action(class     => 'Redirect',
-                                        arguments => { url => '/' });
+        Jifty->web->request->add_action( class     => 'Redirect',
+                                         arguments => { url => '/' });
     };
 
 =head2 Pass HTML form input directly to components
 
-Sometimes, you don't want to take an action based on input from HTML
+Sometimes you don't want to take an action based on input from HTML
 forms, but just want to change how the page is displayed, or do
 something similarly transient.
 
@@ -67,4 +218,106 @@ passed as arguments to top-level Mason components that list them in
 C<< <%args> >>. And don't worry about namespace conflicts with Jifty's
 auto-generated argument fields -- Jifty prefixes all its C<name>s with
 C<J:> so there won't be a problem.
+
+=head2 Perform database migration
+
+Edit etc/config.yaml and change Database->Version to a proper value
+(say, 0.0.2). Then run
+
+    jifty schema --setup
+
+Jifty would inspect the current database and perform proper actions.
+You could give a C<--print> option to see the actual SQL statements:
+
+    jifty schema --setup --print
+
+
+=head2 Use different table names than the ones Jifty automatically creates
+
+In YourApp::Record, define a C<_guess_table_name> sub that doesn't
+pluralise or pluralises differently.
+
+
+=head2 How do I perform ajax canonicalization on a given field ?
+
+Asking user to input something in a form is really common in a web
+app. For some certain form fields you want them to have a certain
+normalized/canonicalized form in the database, and you could do an ajax
+canonicalization in Jifty very easily. Let's say your User model needs a
+canonicalized C<username> field to make sure those names are in
+lowercase.  All you have to do is to define a method named
+C<canonicalize_username> in your Model class, like this:
+
+    package MyApp::Model::User;
+    use base qw(MyApp::Record);
+
+    sub canonicalize_username {
+        my $class = shift;
+        my $value = shift;
+        return lc($value);
+    }
+
+If the form is generated by a C<Jifty::Action::Record>-based action
+(all those autogenerated CRUD actions), then this is all you need to
+do. And that is probably 90% of the case.  C<Jifty::Action::Record>
+would check if there is a method named like C<canonicalize_fieldname>
+when it is rendering form fields. If found, related javascript code is
+generated. You do not have to modify any code in your view. Jifty does
+it for you.
+
+The ajax canonicalization happens when the input focus leaves that
+field. You would see the effect a bit later than the value in the
+field is changed.
+
+Of course, you can apply the same trick to your own Action classes.
+
+=head2 Get the "Edit" links to work in the "Page info" tool
+
+If you click on "Page info", follow an "Edit" link for a fragment,
+and you get an error message saying something like
+
+	You got to a page that we don't think exists...
+
+then you need to ensure that the C<Jifty::Plugin::EditInPlace> has
+been installed correctly. It should be in the F<Jifty/Plugin> directory
+installed with the rest of the Jifty modules.
+
+	perl -MJifty::Util -e 'print Jifty::Util->jifty_root'
+
+will tell you where to look. If it's not there you will need to install
+it manually. If you still have your build files from installing Jifty
+you can find the module in the F<plugins> directory.
+
+Once you have the modules in place, or if they were already present
+you simply need to enable the plugin in your project config file. Edit 
+F<etc/config.yml> and find the "Plugins:" section. It will probably look
+like this
+
+	  Plugins: []
+
+Change it to 
+
+	  Plugins: 
+	    - EditInPlace: {}
+
+Take care the indentation is significant. Use spaces, not tabs.
+Once you have done that you can restart your Jifty application and the
+edit links should then function correctly.
+
+=head2 Use iepngfix.htc to add PNG support in IE5.5+
+
+Jifty has included iepngfix.htc by Angus Turnbull. The HTC file will
+automatically add PNG support to IMG elements and also supports any
+element with a "background-image" CSS property.
+
+If you want to use this fix, please include this one line in your CSS
+file, whit tag names to which you want the script applied:
+
+    img, div { behavior: url(/static/js/iepngfix.htc) }
+
+Alternatively, you can specify that this will apply to all tags like so:
+
+    * { behavior: url(/static/js/iepngfix.htc) }
+
+Check details from Angus himself. ( http://www.twinhelix.com/ )
 

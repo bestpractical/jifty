@@ -44,9 +44,16 @@ object defaults to 10 entries per page.  You should use only use
 L<Data::Page>  methods on this object to B<get> information about paging,
 not to B<set> it; use C<set_page_info> to set paging information.
 
+=head2 results_are_readable
+
+If your results from the query is guaranteed to be readable by
+current_user, you can create the collection with
+C<results_are_readable => 1>.  This is cause check_read_rights to
+bypass normal current_user_can checks.
+
 =cut
 
-__PACKAGE__->mk_accessors(qw(pager));
+__PACKAGE__->mk_accessors(qw(pager results_are_readable));
 
 =head2 add_record
 
@@ -57,7 +64,12 @@ Only add records to the collection that we can read
 sub add_record {
     my $self = shift;
     my($record) = (@_);
-    $self->SUPER::add_record($record) if $record->current_user_can("read");
+
+    $record->_is_readable(1)
+        if $self->results_are_readable;
+
+    $self->SUPER::add_record($record)
+        if $self->results_are_readable || $record->check_read_rights;
 }
 
 sub _init {
@@ -66,11 +78,13 @@ sub _init {
     my %args = (
         record_class => undef,
         current_user => undef,
+        results_are_readable => undef,
         @_
     );
 
     $self->_get_current_user(%args);
     $self->record_class($args{record_class}) if defined $args{record_class};
+    $self->results_are_readable($args{results_are_readable});
     unless ($self->current_user) {
         Carp::confess("Collection created without a current user");
     }

@@ -14,9 +14,8 @@ representation; that is, it is also a L<Jifty::DBI::Record> as well.
 
 =cut
 
-use base qw/Jifty::Object/;
-use base qw/Jifty::DBI::Record/;
-
+use base qw(Jifty::Object Jifty::DBI::Record Class::Accessor::Fast);
+__PACKAGE__->mk_accessors('_is_readable');
 
 sub _init {
     my $self = shift;
@@ -33,6 +32,7 @@ sub _init {
 
 =head2 create PARAMHASH
 
+C<create> can be called as either a class method or an object method.
 
 Takes an array of key-value pairs and inserts a new row into the database representing
 this object.
@@ -52,7 +52,14 @@ Override's L<Jifty::DBI::Record> in these ways:
 =cut 
 
 sub create {
-    my $self    = shift;
+    my $class    = shift;
+    my $self;
+    if (ref($class)) { 
+        ($self,$class) = ($class,undef);
+    } else {
+        $self = $class->new();
+    }
+
     my %attribs = @_;
 
     unless ( $self->check_create_rights(@_) ) {
@@ -63,25 +70,43 @@ sub create {
 
     foreach my $key ( keys %attribs ) {
         my $attr = $attribs{$key};
-        my $method = "validate_$key";
+        my $method = "canonicalize_$key";
         my $func = $self->can($method) or next;
+        $attribs{$key} = $self->$func( $attr);
+    }
+    foreach my $key ( keys %attribs ) {
+        my $attr = $attribs{$key};
+        my $method = "validate_$key";
+        if (my $func = $self->can($method)) {
         my ( $val, $msg ) = $func->($self, $attr);
         unless ($val) {
             $self->log->error("There was a validation error for $key");
-            return ( $val, $msg );
+            if ($class) {
+                return($self);
+            } else {
+                return ( $val, $msg );
+            }
         }
-
+        }
         # remove blank values. We'd rather have nulls
-        if ( exists $attribs{$key}
-            and ( not defined $attr or (not ref $attr and $attr eq "" )) )
-        {
+        if ( exists $attribs{$key} and (! defined $attr || ( not ref( $attr) and $attr eq '' ))) {
             delete $attribs{$key};
         }
     }
 
-    my($id,$msg) = $self->SUPER::create(%attribs);
+
+    my $msg = $self->SUPER::create(%attribs);
+    if (ref($msg)  ) {
+        # It's a Class::ReturnValue
+        return $msg ;
+    }
+    my ($id, $status) = $msg;
     $self->load_by_cols( id => $id ) if ($id);
-    return wantarray ? ( $id, _("Record created") ) : $id;
+    if ($class) {
+        return $self;
+    } else {
+        return wantarray ? ($id, $status) : $id;
+    }
 }
 
 
@@ -98,13 +123,21 @@ sub id { $_[0]->{'values'}->{'id'} }
 
 =head2 load_or_create
 
-Attempts to load a record with the named parameters passed in.  If it
+C<load_or_create> can be called as either a class method or an object method.
+It attempts to load a record with the named parameters passed in.  If it
 can't do so, it creates a new record.
 
 =cut
 
 sub load_or_create {
-    my $self = shift;
+    my $class = shift;
+    my $self;
+    if (ref($class)) {
+       ($self,$class) = ($class,undef); 
+    } else {
+        $self = $class->new();
+    }
+
     my %args = (@_);
 
     my ( $id, $msg ) = $self->load_by_cols(%args);
@@ -116,7 +149,7 @@ sub load_or_create {
 }
 
 
-=head2 current_user_can RIGHT [, ATTRIBUTES]
+=head2 current_user_can RIGHT [ATTRIBUTES]
 
 Should return true if the current user (C<< $self->current_user >>) is
 allowed to do I<RIGHT>.  Possible values for I<RIGHT> are:
@@ -126,19 +159,24 @@ allowed to do I<RIGHT>.  Possible values for I<RIGHT> are:
 =item create
 
 Called just before an object's C<create> method is called, as well as
-before parameter validation.  It is also passed the attributes that
+before parameter validation.  ATTRIBUTES is the attributes that
 the object is trying to be created with, as the attributes aren't on
 the object yet to be inspected.
 
 =item read
 
 Called before any attribute is accessed on the object.
+ATTRIBUTES is a hash with a single key C<column> and a single
+value, the name of the column being queried.
 
-=item edit
+=item update
 
 Called before any attribute is changed on the object.
+ATTRIBUTES is a hash of the arguments passed to _set.
 
-=item admin
+
+
+=item delete
 
 Called before the object is deleted.
 
@@ -190,13 +228,16 @@ sub check_create_rights { return shift->current_user_can('create', @_) }
 
 Internal helper to call L</current_user_can> with C<read>.
 
-Passed C<column> as a named parameter for the column the user is checking rights
+Passes C<column> as a named parameter for the column the user is checking rights
 on.
 
 =cut
 
-sub check_read_rights { return shift->current_user_can('read', column => shift) }
-
+sub check_read_rights {
+    my $self = shift;
+    return (1) if $self->_is_readable;
+    return $self->current_user_can( 'read', column => shift );
+}
 
 =head2 check_update_rights
 
@@ -241,6 +282,23 @@ sub _value {
 }
 
 
+=head2 as_superuser
+
+Returns a copy of this object with the current_user set to the
+superuser. This is a convenient way to duck around ACLs if you have
+code that needs to for some reason or another.
+
+=cut
+
+sub as_superuser {
+    my $self = shift;
+
+    my $clone = $self->new(current_user => $self->current_user->superuser);
+    $clone->load($self->id);
+    return $clone;
+}
+
+
 =head2 _collection_value METHOD
 
 A method ripped from the pages of Jifty::DBI::Record 
@@ -261,6 +319,9 @@ sub _collection_value {
     return undef unless $classname;
     return unless $classname->isa( 'Jifty::DBI::Collection' );
 
+    if ( my $prefetched_collection = $self->_prefetched_collection($method_name)) {
+        return $prefetched_collection;
+    }
 
     my $coll = $classname->new( current_user => $self->current_user );
     if ($column->by and $self->id) { 
@@ -284,10 +345,22 @@ sub delete {
     $self->SUPER::delete(@_); 
 }
 
+=head2 _brief_description
+
+When displaying a list of records, Jifty can display a friendly value 
+rather than the column's unique id.  Out of the box, Jifty always
+tries to display the 'name' field from the record. You can override this
+method to return the name of a method on your record class which will
+return a nice short human readable description for this record.
+
+=cut
+
+sub _brief_description {'name'}
+
 =head2 _to_record
 
-This is the SB function that is called when you fetch a value which C<REFERENCES> a
-Record class.  The only change from the SB code is the arguments to C<new>.
+This is the Jifty::DBI function that is called when you fetch a value which C<REFERENCES> a
+Record class.  The only change from the Jifty::DBI code is the arguments to C<new>.
 
 =cut
 
@@ -306,6 +379,8 @@ sub _to_record {
     # perhaps the handle should have an initiializer for records/collections
     my $object = $classname->new(current_user => $self->current_user);
     $object->load_by_cols(( $column->by || 'id')  => $value) if ($value);
+    # XXX: an attribute or hook to let model class declare implicit
+    # readable refers_to columns.  $object->_is_readable(1) if $column->blah;
     return $object;
 }
 
@@ -325,6 +400,89 @@ sub _cache_config {
     {   'cache_p'       => 1,
         'cache_for_sec' => 60,
     };
+}
+
+=head2 since
+ 
+By default, all models exist since C<undef>, the ur-time when the application was created. Please override it for your midel class.
+ 
+=cut
+ 
+
+
+=head2 printable_table_schema
+
+When called, this method will generate the SQL schema for the current version of this 
+class and return it as a scalar, suitable for printing or execution in your database's command line.
+
+=cut
+
+
+sub printable_table_schema {
+    my $class = shift;
+
+    my $schema_gen = $class->_make_schema();
+    return $schema_gen->create_table_sql_text;
+}
+
+=head2 create_table_in_db
+
+When called, this method will generate the SQL schema for the current version of this 
+class and insert it into the application's currently open database.
+
+=cut
+
+sub create_table_in_db {
+    my $class = shift;
+
+    my $schema_gen = $class->_make_schema();
+
+    # Run all CREATE commands
+    for my $statement ( $schema_gen->create_table_sql_statements ) {
+        my $ret = Jifty->handle->simple_query($statement);
+        $ret or die "error creating table $class: " . $ret->error_message;
+    }
+
+}
+
+sub _make_schema { 
+        my $class = shift;
+
+    my $schema_gen = Jifty::DBI::SchemaGenerator->new( Jifty->handle )
+        or die "Can't make Jifty::DBI::SchemaGenerator";
+    my $ret = $schema_gen->add_model( $class->new );
+    $ret or die "couldn't add model $class: " . $ret->error_message;
+
+        return $schema_gen;
+}
+
+=head2 add_column_sql column_name
+
+Returns the SQL statement neccessary to add C<column_name> to this class's representation in the database
+
+=cut
+
+sub add_column_sql {
+    my $self        = shift;
+    my $column_name = shift;
+
+    my $col        = $self->column($column_name);
+    my $definition = $self->_make_schema()->column_definition_sql($self->table => $col->name);
+    return "ALTER TABLE " . $self->table . " ADD COLUMN " . $definition;
+}
+
+=head2 drop_column_sql column_name
+
+Returns the SQL statement neccessary to remove C<column_name> from this class's representation in the database
+
+=cut
+
+sub drop_column_sql {
+    my $self        = shift;
+    my $column_name = shift;
+
+    my $col = $self->column($column_name);
+    return "ALTER TABLE " . $self->table . " DROP COLUMN " . $col->name;
 }
 
 1;

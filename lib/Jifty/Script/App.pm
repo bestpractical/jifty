@@ -2,7 +2,7 @@ use warnings;
 use strict;
 
 package Jifty::Script::App;
-use base qw'App::CLI::Command Class::Accessor::Fast';
+use base qw(App::CLI::Command Class::Accessor::Fast);
 
 use File::Copy;
 use Jifty::Config;
@@ -92,9 +92,10 @@ sub _write_makefile {
     open(MAKEFILE, ">$prefix/Makefile.PL") or die "Can't write Makefile.PL: $!";
     print MAKEFILE <<"EOT";
 use inc::Module::Install;
-name('$mod_name');
-version('0.01');
-requires('Jifty' => '@{[$Jifty::VERSION]}');
+
+name        '$mod_name';
+version     '0.01';
+requires    'Jifty' => '@{[$Jifty::VERSION]}';
 
 WriteAll;
 EOT
@@ -118,7 +119,7 @@ sub _make_directories {
 
     foreach my $dir (@dirs) {
         $dir =~ s/__APP__/$lib_dir/;
-        print("Creating directory $dir\n");
+        print("Creating directory @{[$self->prefix]}/$dir\n");
         mkdir( $self->prefix."/$dir") or die "Can't create ". $self->prefix."/$dir: $!";
 
     }

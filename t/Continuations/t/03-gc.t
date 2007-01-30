@@ -1,11 +1,12 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 use warnings;
 use strict;
 
 # {{{ Setup
-BEGIN {chdir "t/Continuations"}
-use lib '../../lib';
+use lib 't/lib';
+use Jifty::SubTest;
+
 use Jifty::Test skip_all => "test file not done yet";
 
 #### garbage collection

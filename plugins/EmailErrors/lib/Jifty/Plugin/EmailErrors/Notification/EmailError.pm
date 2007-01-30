@@ -27,7 +27,22 @@ sub setup {
         next if $frame->filename =~ m{/HTML/Mason/};
         $body .= "  ".$frame->filename.", line ".$frame->line."\n";
     }
+
+    $body .= "\n\n";
+    $body .= $self->get_environment;
+    
     $self->body($body);
+}
+
+sub get_environment {
+    my $self = shift;
+    my $message = '';
+
+    $message = "Environment:\n\n";
+    $message   .= " $_: $ENV{$_}\n"
+      for sort grep {/^(HTTP|REMOTE|REQUEST)_/} keys %ENV;
+
+    return $message;
 }
 
 1;

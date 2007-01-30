@@ -1,14 +1,13 @@
 package Continuations::Action::CrossBridge;
 
-use base qw/Jifty::Action/;
+use Jifty::Param::Schema;
+use Jifty::Action schema {
 
-sub arguments {
-    {
-        name   => {},
-        quest  => {},
-        colour => {valid_values => ["Blue, I mean greeeeeen!", "Green"]},
-    }
-}
+param 'name';
+param 'quest';
+param 'colour' => valid are ("Blue, I mean greeeeeen!", "Green");
+
+};
 
 sub validate_quest {
     my $self = shift;

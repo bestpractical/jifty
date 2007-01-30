@@ -3,3 +3,4 @@
 
 framework:
   ApplicationName: JiftyApp
+  WhichConfigFile: main

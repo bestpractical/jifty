@@ -123,9 +123,9 @@ sub fill {
     # Check it for something appropriate
     if ($data) {
         if ($ct eq "text/x-json") {
-            return $self->from_data_structure(Jifty::JSON::jsonToObj($data));
+            return $self->from_data_structure(eval{Jifty::JSON::jsonToObj($data)});
         } elsif ($ct eq "text/x-yaml") {
-            return $self->from_data_structure(Jifty::YAML::Load($data));
+            return $self->from_data_structure(eval{Jifty::YAML::Load($data)});
         }
     }
 
@@ -147,7 +147,7 @@ sub from_data_structure {
     my $self = shift;
     my $data = shift;
 
-    $self->path($data->{path});
+    $self->path(Jifty::Util->canonicalize_path($data->{path} || "/"));
     $self->just_validating($data->{validating}) if $data->{validating};
 
     if (ref $data->{continuation} eq "HASH") {
@@ -162,6 +162,9 @@ sub from_data_structure {
         my %arguments;
         for my $arg (keys %{$a->{fields} || {}}) {
             if (ref $a->{fields}{$arg}) {
+                # Double-fallback exists for historical reasons only;
+                # Jifty applications after July 10th, 2006 should
+                # never generate them.
                 for my $type (qw/doublefallback fallback value/) {
                     $arguments{$arg} = $a->{fields}{$arg}{$type}
                       if exists $a->{fields}{$arg}{$type};
@@ -225,6 +228,16 @@ sub from_cgi {
     use HTML::Mason::Utils;
     my %args = HTML::Mason::Utils::cgi_request_args( $cgi, $cgi->request_method );
 
+    # Either CGI.pm or HTML::Mason should really deal with this for us.
+    for my $k (keys %args) {
+        my $val = $args{$k};
+        if(ref($val) && ref($val) eq 'ARRAY') {
+            $args{$k} = [map {Jifty::I18N->promote_encoding($_, $ENV{CONTENT_TYPE})} @$val];
+        } elsif(!ref($val)) {
+            $args{$k} = Jifty::I18N->promote_encoding($val, $ENV{CONTENT_TYPE});
+        }
+    }
+    
     my @splittable_names = grep /=|\|/, keys %args;
     for my $splittable (@splittable_names) {
         delete $args{$splittable};
@@ -276,6 +289,7 @@ sub argument {
     my $key = shift;
     if (@_) {
         my $value = shift;
+        
         $self->arguments->{$key} = $value;
 
         # Continuation type is ofetn undef, so give it a sane default
@@ -313,13 +327,6 @@ sub argument {
     }
 
     defined(my $val = $self->arguments->{$key}) or return undef;
-
-    if (ref $val eq 'ARRAY') {
-        Encode::_utf8_on($_) for @$val;
-    }
-    else {
-        Encode::_utf8_on($val);
-    }
 
     $val;
 }
@@ -425,7 +432,10 @@ sub webform_to_data_structure {
         $active_actions->{$_} = 1 for split '!', $args{'J:ACTIONS'};
     } # else $active_actions stays undef
 
-    # Mapping from argument types to data structure names
+
+    # Mapping from argument types to data structure names;
+    # Double-fallback exists for historical reasons only; Jifty
+    # applications after July 10th, 2006 should never generate them.
     my %types = ("J:A:F:F:F" => "doublefallback", "J:A:F:F" => "fallback", "J:A:F" => "value");
 
     # The "sort" here is key; it ensures that action registrations
@@ -477,7 +487,7 @@ sub continuation {
     return Jifty->web->session->get_continuation($self->continuation_id);
 }
 
-=head3 save_continuation
+=head2 save_continuation
 
 Saves the current request and response if we've been asked to.  If we
 save the continuation, we redirect to the next page -- the call to
@@ -501,7 +511,7 @@ sub save_continuation {
     );
 
     # Set us up with the new continuation
-    Jifty->web->_redirect( Jifty::Web->url . $path
+    Jifty->web->_redirect( Jifty->web->url(path => $path)
                       . ( $path =~ /\?/ ? "&" : "?" ) . "J:C="
                       . $c->id );
 }
@@ -612,6 +622,19 @@ sub remove_state_variable {
     my ($key) = @_;
     delete $self->{'state_variables'}{$key};
 }
+
+=head2 clear_state_variables
+
+Remove all the state variables.
+
+=cut
+
+sub clear_state_variables {
+    my $self = shift;
+
+    $self->{'state_variables'} = {};
+}
+
 
 =head2 actions
 
@@ -963,10 +986,9 @@ which also sets the action's run order.
 
 The action's arguments are specified with query arguments of the form
 C<J:A:F-I<argumentname>-I<moniker>>.  To cope with checkboxes and the
-like (which don't submit anything when left unchecked) we provide two
-levels of fallback, which are checked if the first doesn't exist:
-C<J:A:F:F-I<argumentname>-I<moniker>> and
-C<J:A:F:F:F-I<argumentname>-I<moniker>>.
+like (which don't submit anything when left unchecked) we provide a
+level of fallback, which is checked if the first doesn't exist:
+C<J:A:F:F-I<argumentname>-I<moniker>>.
 
 =head3 state variables
 
@@ -977,8 +999,9 @@ the state parameter.
 
 The current continuation set by passing the parameter C<J:C>, which is
 set to the id of the continuation.  To create a new continuation, the
-parameter C<J:CREATE> is passed.  Calling a continuation is a ssimple
-as passing C<J:CALL> with the id of the continuation to call.
+parameter C<J:CREATE> is passed.  Calling a continuation is a simple
+as passing C<J:CALL> with the id of the continuation to call; this
+will redirect to the appropriate url, with L<J:RETURN> set.
 
 =head3 request options
 

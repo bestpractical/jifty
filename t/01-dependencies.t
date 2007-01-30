@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 use warnings;
 use strict;
@@ -21,14 +21,22 @@ sub wanted {
     return unless -f $_;
     return if $File::Find::dir =~ m!/.svn($|/)!;
     return if $File::Find::name =~ /~$/;
-    return if $File::Find::name =~ /\.pod$/;
+    return if $File::Find::name =~ /\.(pod|html)$/;
+    
+    # read in the file from disk
+    my $filename = $_;
     local $/;
-    open(FILE, $_) or return;
+    open(FILE, $filename) or return;
     my $data = <FILE>;
     close(FILE);
-    $used{$1}++ while $data =~ /^\s*use\s+([\w:]+)/gm;
+
+    # strip pod, in a really idiotic way.  Good enough though
+    $data =~ s/^=head.+?(^=cut|\Z)//gms;
+
+    # look for use and use base statements
+    $used{$1}{$filename}++ while $data =~ /^\s*use\s+([\w:]+)/gm;
     while ($data =~ m|^\s*use base qw.([\w\s:]+)|gm) {
-        $used{$_}++ for split ' ', $1;
+        $used{$_}{$filename}++ for split ' ', $1;
     }
 }
 
@@ -38,7 +46,7 @@ my %required;
     ok(open(MAKEFILE,"Makefile.PL"), "Opened Makefile");
     my $data = <MAKEFILE>;
     close(FILE);
-    while ($data =~ /^\s*?requires\('([\w:]+)'(?:\s*=>\s*['"]?([\d\.]+)['"]?)?.*?(?:#(.*))?$/gm) {
+    while ($data =~ /^\s*?(?:requires|recommends)\('([\w:]+)'(?:\s*=>\s*['"]?([\d\.]+)['"]?)?.*?(?:#(.*))?$/gm) {
         $required{$1} = $2;
         if (defined $3 and length $3) {
             $required{$_} = undef for split ' ', $3;
@@ -50,7 +58,8 @@ for (sort keys %used) {
     my $first_in = Module::CoreList->first_release($_);
     next if defined $first_in and $first_in <= 5.00803;
     next if /^(Jifty|Jifty::DBI|inc|t|TestApp|Application)(::|$)/;
-    ok(exists $required{$_}, "$_ in Makefile.PL");
+    ok(exists $required{$_}, "$_ in Makefile.PL")
+      or diag("used in ", join ", ", sort keys %{ $used{$_ } });
     delete $used{$_};
     delete $required{$_};
 }

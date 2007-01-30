@@ -14,8 +14,9 @@ constant time, and also reducing the need for locking.
 
 =cut
 
-package Jifty::Model::Session::Schema;
+package Jifty::Model::Session;
 use Jifty::DBI::Schema;
+use Jifty::Record schema {
 
 column session_id => type is 'varchar(32)';
 column data_key => type is 'text';
@@ -26,11 +27,10 @@ column created => type is 'timestamp',
 column updated => type is 'timestamp',
   filters are 'Jifty::DBI::Filter::DateTime';
 column key_type => type is 'varchar(32)';
-
-package Jifty::Model::Session;
+};
 
 use base qw( Jifty::Record );
-use DateTime;
+use DateTime ();
 
 =head2 table
 
@@ -90,20 +90,14 @@ sub create {
     return $self->SUPER::create(%args);
 }
 
-=head2 set_value [VALUE]
+=head2 before_set_value [VALUE]
 
 Updates the C<updated> column, in addition to setting the value.
 
 =cut
 
-sub set_value {
-    my $self  = shift;
-    my $value = shift;
-
-    return undef unless $self->id;
-
-    $self->set_updated( DateTime->now );
-    $self->_set( column => 'value', value => $value );
+sub before_set_value {
+    shift->set_updated( DateTime->now );
 }
 
 1;

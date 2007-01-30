@@ -9,12 +9,68 @@ Jifty::Logger -- A master class for Jifty's logging framwork
 
 =head1 DESCRIPTION
 
-Uses C<Log::Log4perl> to log messages.  By default, logs all messages to
-the screen.
+Jifty uses the Log4perl module to log error messages. In Jifty
+programs there's two ways you can get something logged:
+
+Firstly, Jifty::Logger captures all standard warnings that Perl
+emmits.  So in addtion to everying output from perl via the 
+warnings pragmas, you can also log messages like so:
+
+    warn("The WHAM is overheating!");
+
+This doesn't give you much control however.  The second way
+allows you to specify the level that you want logging to
+occur at:
+
+    Jifty->log->debug("Checking the WHAM");
+    Jifty->log->info("Potential WHAM problem detected");
+    Jifty->log->warn("The WHAM is overheating");
+    Jifty->log->error("PANIC!");
+    Jifty->log->fatal("Someone call Eddie Murphy!");
+
+=head2 Configuring Log4perl
+
+Unless you specify otherwise in the configuration file, Jifty will
+supply a default Log4perl configuration.
+
+The default log configuration that logs all messages to the screen
+(i.e. to STDERR, be that directly to the terminal or to fastcgi's
+log file.)  It will log all messages of equal or higher priority
+to he LogLevel configuration option.
+
+    --- 
+    framework: 
+      LogLevel: DEBUG
+
+You can tell Jifty to use an entirely different Logging
+configuration by specifying the filename of a standard Log4perl
+config file in the LogConfig config option (see L<Log::Log4perl> for
+the format of this config file.)
+
+    --- 
+    framework: 
+      LogConfig: etc/log4perl.conf
+
+Note that specifying your own config file prevents the LogLevel
+config option from having any effect.
+
+You can tell Log4perl to check that file perodically for changes.
+This costs you a little in application performance, but allows
+you to change the logging level of a running application.  You
+need to set LogReload to the frequency, in seconds, that the
+file should be checked.
+
+    --- 
+    framework: 
+      LogConfig: etc/log4perl.conf
+      LogReload: 10
+
+(This is implemented with Log4perl's init_and_watch functionality)
 
 =cut
 
 use Log::Log4perl;
+use Carp;
 
 use base qw/Jifty::Object/;
 
@@ -40,28 +96,17 @@ sub new {
 
     $component = '' unless defined $component;
 
-    my $log_config
-        = Jifty::Util->absolute_path( Jifty->config->framework('LogConfig') );
+    # configure Log::Log4perl unless we've done it already
     if (not Log::Log4perl->initialized) {
-        if ( defined Jifty->config->framework('LogReload') ) {
-            Log::Log4perl->init_and_watch( $log_config,
-                Jifty->config->framework('LogReload') );
-        } elsif ( -f $log_config and -r $log_config ) {
-            Log::Log4perl->init($log_config);
-        } else {
-            my $log_level = Jifty->config->framework('LogLevel');
-            my %default = (
-                'log4perl.rootLogger'        => "$log_level,Screen",
-                '#log4perl.logger.SchemaTool' => "$log_level,Screen",
-                'log4perl.appender.Screen'   => 'Log::Log4perl::Appender::Screen',
-                'log4perl.appender.Screen.stderr' => 1,
-                'log4perl.appender.Screen.layout' =>
-                    'Log::Log4perl::Layout::SimpleLayout'
-            );
-            Log::Log4perl->init( \%default );
-        }
+       $class->_initialize_log4perl;
     }
+    
+    # create a log4perl object that answers to this component name
     my $logger = Log::Log4perl->get_logger($component);
+    
+    # whenever Perl wants to warn something out capture it with a signal
+    # handler and pass it to log4perl
+    my $previous_warning_handler = $SIG{__WARN__};
     $SIG{__WARN__} = sub {
 
         # This caller_depth line tells Log4perl to report
@@ -77,15 +122,52 @@ sub new {
             # the aliasing so we can remove trailing newlines
             my @lines = map {"$_"} @_;
             $logger->warn(map {chomp; $_} @lines);
+            carp (map {chomp; $_} @lines);
+        }
+        elsif ($previous_warning_handler) {
+            # Fallback to the old handler
+            goto &$previous_warning_handler;
+        }
+        else {
+            # Now handler - just carp about it for now
+            local $SIG{__WARN__};
+            carp(@_);
         }
     };
 
     return $self;
 }
 
+sub _initialize_log4perl {
+    my $class = shift;
+  
+    my $log_config
+        = Jifty::Util->absolute_path( Jifty->config->framework('LogConfig') );
+
+    if ( defined Jifty->config->framework('LogReload') ) {
+        Log::Log4perl->init_and_watch( $log_config,
+            Jifty->config->framework('LogReload') );
+    } elsif ( -f $log_config and -r $log_config ) {
+        Log::Log4perl->init($log_config);
+    } else {
+        my $log_level = uc Jifty->config->framework('LogLevel');
+        my %default = (
+            'log4perl.rootLogger'        => "$log_level,Screen",
+            '#log4perl.logger.SchemaTool' => "$log_level,Screen",
+            'log4perl.appender.Screen'   => 'Log::Log4perl::Appender::Screen',
+            'log4perl.appender.Screen.stderr' => 1,
+            'log4perl.appender.Screen.layout' =>
+                'Log::Log4perl::Layout::SimpleLayout'
+        );
+        Log::Log4perl->init( \%default );
+  }
+}
+
 =head1 AUTHOR
 
 Various folks at Best Practical Solutions, LLC.
+
+Mark Fowler <mark@twoshortplanks.com> fiddled a bit.
 
 =cut
 

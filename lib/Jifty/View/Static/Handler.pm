@@ -10,8 +10,7 @@ package Jifty::View::Static::Handler;
 
 use base qw/Jifty::Object/;
 
-our $mime  = MIME::Types->new();
-our $magic = File::MMagic->new();
+our ($MIME,$MAGIC);
 
 =head1 NAME
 
@@ -28,7 +27,7 @@ When fully operational, it will use an algorithm along the lines of the followin
     * How do we merge together the two static roots?
 * If static files go through Jifty::Handler
     * We need a flag to allow them to go through the dispatcher, too
-    * return "True" (304) for if-modified-since unless develmode.
+    * return "True" (304) for if-modified-since
     * if the browser accepts gzipped data,
         see if we have a cached gzipped copy
             if so, send it
@@ -67,19 +66,24 @@ sub handle_request {
     my $self = shift;
     my $path = shift;
 
-    #if ( Jifty->handler->cgi->http('If-Modified-Since') and not Jifty->config->framework('DevelMode') ) { $self->respond_not_modified(); }
+    my $local_path = $self->file_path($path) or return undef;
 
-    my $local_path = $self->file_path($path);
-    unless ($local_path) {
-        return undef;
+    if ( my $since = Jifty->handler->cgi->http('If-Modified-Since') ) {
+        my @file_info = stat($local_path);
+
+        # IE appends "; length=N" to If-Modified-Since headers and we need
+        # to get rid of it so str2time doesn't choke below
+        $since =~ s/;.+$//;
+
+        return $self->send_not_modified
+            unless $file_info[9] > HTTP::Date::str2time($since);
     }
-
     my $mime_type = $self->mime_type($local_path);
-    
+
     if ( $self->client_accepts_gzipped_content and $mime_type =~ m!^(text/|application/x-javascript)! ) {
         return $self->send_file($local_path, $mime_type, 'gzip');
     } else {
-        return  $self->send_file($local_path, $mime_type, 'uncompressed');
+        return $self->send_file($local_path, $mime_type, 'uncompressed');
     }
 
 }
@@ -102,22 +106,31 @@ sub client_accepts_gzipped_content {
 
 =head2 file_path $path
 
-Returns the system path for C<$path>, inside the application's static root or, failing that, Jifty's static root.
-Returns undef if it can't find the file in either path.
+Returns the system path for C<$path>, searching inside the
+application's static root, loaded plugins' static roots, and finally
+Jifty's static root.  Returns undef if it can't find the file in any
+path.
 
 =cut
 
 sub file_path {
     my $self    = shift;
     my $file    = shift;
-    my @options = map {Jifty->config->framework('Web')->{$_}} (qw(StaticRoot DefaultStaticRoot));
+    my @options = (Jifty->config->framework('Web')->{StaticRoot});
     push @options, grep {$_} map {$_->static_root} Jifty->plugins;
+    push @options, (Jifty->config->framework('Web')->{DefaultStaticRoot});
 
     # Chomp a leading "/static" - should this be configurable?
     $file =~ s/^\/*?static//; 
 
     foreach my $path (@options) {
-        my $abspath = Jifty::Util->absolute_path( $path . "/" . $file );
+        my $abspath = Jifty::Util->absolute_path( File::Spec->catdir($path,$file ));
+        # If the user is trying to request something outside our static root, 
+        # decline the request
+        my $abs_base_path = Jifty::Util->absolute_path( $path );
+        unless ($abspath =~ /^\Q$abs_base_path\E/) {
+            return undef;
+        }
         return $abspath if ( -f $abspath && -r $abspath );
     }
     return undef;
@@ -141,17 +154,17 @@ sub mime_type {
         # chokes on ajax-fetched JS that has a type other than the one below
         # JSAN.js fetches JS via Ajax when it loads JSAN modules
         'js' => 'application/x-javascript',
+        'htc' => 'text/x-component',
     );
 
     return ($type_override{$1})
-        if $local_path =~ /\.(.+)$/ and defined $type_override{$1};
+        if $local_path =~ /^.*\.(.+?)$/ and defined $type_override{$1};
 
-    my $mimeobj   = $mime->mimeTypeOf($local_path);
-    my $mime_type = (
-          $mimeobj
-        ? $mimeobj->type
-        : $magic->checktype_filename($local_path)
-    );
+    # Defer initialization to first use. (It's not actually cheap)
+    $MIME ||= MIME::Types->new();
+    $MAGIC ||= File::MMagic->new();
+    my $mimeobj   = $MIME->mimeTypeOf($local_path);
+    my $mime_type = ( $mimeobj ? $mimeobj->type : $MAGIC->checktype_filename($local_path));
 
     return ($mime_type);
 }
@@ -221,7 +234,9 @@ Sends a "304 Not modified" response to the browser, telling it to use a cached c
 
 sub send_not_modified {
     my $self = shift;
-    Jifty->handler->apache->header_out( Status => 304 );
+    my $apache = Jifty->handler->apache;
+    $apache->header_out( Status => 304 );
+    $apache->send_http_header();
     return 1;
 
 }

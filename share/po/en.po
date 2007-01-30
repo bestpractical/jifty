@@ -15,9 +15,91 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: share/web/templates/__jifty/halo:118
+#: lib/Jifty/Action/Record/Search.pm:125
+msgid "!=>< allowed"
+msgstr ""
+
+#: lib/Jifty/Action/Record/Search.pm:115
+#. ($label)
+msgid "%1 after"
+msgstr ""
+
+#: lib/Jifty/Action/Record/Search.pm:116
+#. ($label)
+msgid "%1 before"
+msgstr ""
+
+#: lib/Jifty/Action/Record/Search.pm:112
+#. ($label)
+msgid "%1 contains"
+msgstr ""
+
+#: share/web/templates/__jifty/admin/fragments/list/list:87
+#. ($collection-> count)
+msgid "%1 entries"
+msgstr ""
+
+#: lib/Jifty/Action/Record/Search.pm:123
+#. ($label)
+msgid "%1 greater or equal to"
+msgstr ""
+
+#: lib/Jifty/Action/Record/Search.pm:121
+#. ($label)
+msgid "%1 greater than"
+msgstr ""
+
+#: lib/Jifty/Action/Record/Search.pm:108
+#. ($label)
+msgid "%1 is not"
+msgstr ""
+
+#: lib/Jifty/Action/Record/Search.pm:113
+#. ($label)
+msgid "%1 lacks"
+msgstr ""
+
+#: lib/Jifty/Action/Record/Search.pm:124
+#. ($label)
+msgid "%1 less or equal to"
+msgstr ""
+
+#: lib/Jifty/Action/Record/Search.pm:122
+#. ($label)
+msgid "%1 less than"
+msgstr ""
+
+#: share/web/templates/__jifty/error/mason_internal_error:31 share/web/templates/__jifty/error/mason_internal_error:35 share/web/templates/__jifty/error/mason_internal_error:39
+#. ($path, $line)
+#. ($file, $line)
+msgid "%1 line %2"
+msgstr ""
+
+#: share/web/templates/__jifty/halo:119
 #. ($_->[3])
 msgid "%1 seconds"
+msgstr ""
+
+#: lib/Jifty/Action/Record/Search.pm:117
+#. ($label)
+msgid "%1 since"
+msgstr ""
+
+#: lib/Jifty/Action/Record/Search.pm:118
+#. ($label)
+msgid "%1 until"
+msgstr ""
+
+#: lib/Jifty/Action/Record/Search.pm:77
+msgid "(any)"
+msgstr ""
+
+#: lib/Jifty/Web/Form/Field.pm:549
+msgid "@{[$self->current_value]}"
+msgstr ""
+
+#: share/web/templates/__jifty/admin/index.html:19
+msgid "Actions"
 msgstr ""
 
 #: share/web/templates/_elements/wrapper:11
@@ -28,26 +110,88 @@ msgstr ""
 msgid "Alert"
 msgstr ""
 
+#: lib/Jifty/Action/Record/Create.pm:82
+msgid "An error occurred.  Try again later"
+msgstr ""
+
+#: lib/Jifty/Action/Record/Search.pm:129
+msgid "Any field contains"
+msgstr ""
+
+#: share/web/templates/__jifty/admin/action/dhandler:25 share/web/templates/__jifty/admin/model/dhandler:21
+msgid "Back to the admin console"
+msgstr ""
+
+#: share/web/templates/__jifty/admin/index.html:29
+msgid "Back to the application"
+msgstr ""
+
+#: share/web/templates/helpers/calendar.html:4
+#. (_ &><body class="calpopup"><a href="#" onclick="window.close()
+msgid "Calendar"
+msgstr ""
+
+#: share/web/templates/__jifty/admin/fragments/list/update:31
+msgid "Cancel"
+msgstr ""
+
 #: share/web/templates/helpers/calendar.html:4
 msgid "Close window"
 msgstr ""
 
-#: share/web/templates/__jifty/admin/index.html:33
+#: share/web/templates/__jifty/admin/fragments/list/view:31
+msgid "Confirm delete?"
+msgstr ""
+
+#: share/web/templates/__jifty/admin/fragments/list/new_item:25
+msgid "Create"
+msgstr ""
+
+#: lib/Jifty/Action/Record/Create.pm:81
+#. (ref($record)
+msgid "Create of %1 failed: %2"
+msgstr ""
+
+#: lib/Jifty/Action/Record/Create.pm:105
+msgid "Created"
+msgstr ""
+
+#: share/web/templates/__jifty/admin/index.html:3
 msgid "Database Administration"
 msgstr ""
 
-#: share/web/templates/__jifty/edit_file:6
-#. ($editor->argument_value('source_path')
-msgid "Editing file %1"
+#: share/web/templates/__jifty/admin/fragments/list/view:29
+msgid "Delete"
+msgstr ""
+
+#: lib/Jifty/Action/Record/Delete.pm:76
+msgid "Deleted"
+msgstr ""
+
+#: share/web/templates/__jifty/admin/index.html:28 share/web/templates/__jifty/admin/model/dhandler:20
+msgid "Done?"
+msgstr ""
+
+#: share/web/templates/__jifty/admin/fragments/list/view:40
+msgid "Edit"
+msgstr ""
+
+#: lib/Jifty/Mason/Halo.pm:104
+#. ($comp_name)
+msgid "Edit %1"
 msgstr ""
 
 #: share/web/templates/dhandler:7
 msgid "Go back home..."
 msgstr ""
 
-#: share/web/templates/_elements/sidebar:3
-#. (Jifty->web->current_user->user_object->name)
-msgid "Hiya, <span class=\"user\">%1</span>."
+#: share/web/templates/_elements/sidebar:5
+#. ($u->$method()
+msgid "Hiya, %1."
+msgstr ""
+
+#: share/web/templates/__jifty/admin/index.html:1
+msgid "Jifty Administrative Console"
 msgstr ""
 
 #: share/web/templates/__jifty/online_docs/toc.html:6
@@ -58,11 +202,40 @@ msgstr ""
 msgid "Jifty Pod Online"
 msgstr ""
 
-#: share/web/templates/_elements/wrapper:20
+#: share/web/templates/_elements/wrapper:18
 msgid "Loading..."
 msgstr ""
 
-#: lib/Jifty/Web.pm:213
+#: share/web/templates/__jifty/admin/model/dhandler:9
+#. ($object_type)
+msgid "Manage %1 records"
+msgstr ""
+
+#: share/web/templates/__jifty/admin/model/dhandler:11
+msgid "Manage records:"
+msgstr ""
+
+#: share/web/templates/__jifty/error/mason_internal_error:1
+msgid "Mason error"
+msgstr ""
+
+#: share/web/templates/__jifty/admin/index.html:9
+msgid "Models"
+msgstr ""
+
+#: share/web/templates/__jifty/admin/fragments/list/list:113
+msgid "Next Page"
+msgstr ""
+
+#: lib/Jifty/Action/Record/Search.pm:130
+msgid "No field contains"
+msgstr ""
+
+#: share/web/templates/__jifty/admin/fragments/list/list:85
+msgid "No items found"
+msgstr ""
+
+#: lib/Jifty/Web.pm:299
 msgid "No request to handle"
 msgstr ""
 
@@ -70,20 +243,37 @@ msgstr ""
 msgid "Online Documentation"
 msgstr ""
 
-#: lib/Jifty/Record.pm:222 lib/Jifty/Record.pm:281 lib/Jifty/Record.pm:61
+#: share/web/templates/__jifty/admin/fragments/list/list:80
+#. ($page, $collection->pager->last_page)
+msgid "Page %1 of %2"
+msgstr ""
+
+#: lib/Jifty/Record.pm:240 lib/Jifty/Record.pm:319 lib/Jifty/Record.pm:60
 msgid "Permission denied"
 msgstr ""
 
-#: lib/Jifty/Record.pm:83
-msgid "Record created"
+#: share/web/templates/__jifty/admin/fragments/list/list:108
+msgid "Previous Page"
 msgstr ""
 
-#: share/web/templates/__jifty/halo:110
+#: share/web/templates/__jifty/admin/action/dhandler:20
+msgid "Run the action"
+msgstr ""
+
+#: share/web/templates/__jifty/halo:111
 msgid "SQL Statements"
 msgstr ""
 
-#: share/web/templates/__jifty/online_docs/content.html:48
+#: share/web/templates/__jifty/admin/fragments/list/update:21
+msgid "Save"
+msgstr ""
+
+#: share/web/templates/__jifty/online_docs/content.html:50
 msgid "Schema"
+msgstr ""
+
+#: share/web/templates/__jifty/admin/fragments/list/search:18
+msgid "Search"
 msgstr ""
 
 #: share/web/templates/dhandler:1
@@ -94,8 +284,40 @@ msgstr ""
 msgid "Table of Contents"
 msgstr ""
 
-#: share/web/templates/__jifty/admin/index.html:35
+#: lib/Jifty/Action.pm:876
+msgid "That doesn't look like a correct value"
+msgstr ""
+
+#: lib/Jifty/Action/Record.pm:248
+msgid "That doesn't look right, but I don't know why"
+msgstr ""
+
+#: lib/Jifty/Action/Record.pm:180
+msgid "The passwords you typed didn't match each other"
+msgstr ""
+
+#: lib/Jifty/Web.pm:362
+msgid "There was an error completing the request.  Please try again later."
+msgstr ""
+
+#: share/web/templates/__jifty/admin/index.html:5
 msgid "This console lets you manage the records in your Jifty database. Below, you should see a list of all your database tables. Feel free to go through and add, delete or modify records."
+msgstr ""
+
+#: share/web/templates/__jifty/admin/index.html:7
+msgid "To disable this administrative console, add \"AdminMode: 0\" under the \"framework:\" settings in the config file (etc/config.yml)."
+msgstr ""
+
+#: share/web/templates/__jifty/admin/fragments/list/list:72
+msgid "Toggle search"
+msgstr ""
+
+#: share/web/templates/__jifty/error/mason_internal_error:6
+msgid "Try again"
+msgstr ""
+
+#: lib/Jifty/Action/Record/Update.pm:156
+msgid "Updated"
 msgstr ""
 
 #: share/web/templates/index.html:1
@@ -106,7 +328,23 @@ msgstr ""
 msgid "You got to a page that we don't think exists.  Anyway, the software has logged this error. Sorry about this."
 msgstr ""
 
+#: lib/Jifty/Action.pm:863
+msgid "You need to fill in this field"
+msgstr ""
+
 #: share/web/templates/index.html:3
 #. ('http://hdl.loc.gov/loc.pnp/cph.3c13461')
 msgid "You said you wanted a pony. (Source %1)"
+msgstr ""
+
+#: share/web/templates/_elements/sidebar:7
+msgid "You're not currently signed in."
+msgstr ""
+
+#: share/web/templates/__jifty/admin/fragments/list/header:22
+msgid "asc"
+msgstr ""
+
+#: share/web/templates/__jifty/admin/fragments/list/header:41
+msgid "desc"
 msgstr ""

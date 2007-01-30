@@ -32,8 +32,8 @@ sub arguments {
     
     my $args = $self->SUPER::arguments;
     for my $arg (keys %{$args}) {
-        next unless $self->record->column($arg);
-        $args->{$arg}{default_value} = $self->record->column($arg)->default
+        my $column = $self->record->column($arg) or next;
+        $args->{$arg}{default_value} = $column->default
           if not $args->{$arg}->{default_value};
     }
     return $args;
@@ -56,8 +56,12 @@ sub take_action {
     my $self   = shift;
     my $record = $self->record;
 
+    my $event_info = $self->_setup_event_before_action();
+    
+    
     my %values;
-    for (grep { defined $self->argument_value($_) } $self->argument_names) {
+    # Virtual arguments aren't really ever backed by data structures. they're added by jifty for things like confirmations
+    for (grep { defined $self->argument_value($_) && !$self->arguments->{$_}->{virtual} } $self->argument_names) {
         $values{$_} = $self->argument_value($_);
         if (ref $values{$_} eq "Fh") { # CGI.pm's "lightweight filehandle class"
             local $/;
@@ -66,22 +70,26 @@ sub take_action {
             $values{$_} = scalar <$fh>;
         }
     }
-
-    my ($id, $msg) = $record->create(%values);
-
+    my $id;
+    my $msg = $record->create(%values);
     # Handle errors?
-    unless ( $record->id ) {
-        $self->result->error("An error occurred.  Try again later");
-        $self->log->error("Create of ".ref($record)." failed: $msg");
-        return;
+    if (ref($msg)) { # If it's a Class::ReturnValue
+        ($id,$msg) = $msg->as_array;
     }
 
- 
-    # Return the id that we created
-    $self->result->content(id => $self->record->id);
-    $self->report_success if  not $self->result->failure;
+    if (! $record->id ) {
+        $self->log->debug(_("Create of %1 failed: %2", ref($record), $msg));
+        $self->result->error($msg || _("An error occurred.  Try again later"));
+    }
 
-    return 1;
+    else { 
+        # Return the id that we created
+        $self->result->content(id => $self->record->id);
+        $self->report_success if  not $self->result->failure;
+    }
+    $self->_setup_event_after_action($event_info) ;
+
+    return ($self->record->id);
 }
 
 =head2 report_success

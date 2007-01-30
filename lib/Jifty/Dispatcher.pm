@@ -2,6 +2,7 @@ package Jifty::Dispatcher;
 use strict;
 use warnings;
 use Exporter;
+use Jifty::YAML;
 use base qw/Exporter Jifty::Object/;
            
 
@@ -71,8 +72,8 @@ user access to private I<component> templates such as the F<_elements>
 directory in a default Jifty application.  They're also the right way
 to enable L<Jifty::LetMe> actions.
 
-You can entirely stop processing with the C<redirect> and C<abort>
-directives, though L</after> rules will still run.
+You can entirely stop processing with the C<redirect>, C<tangent> and
+C<abort> directives, though L</after> rules will still run.
 
 =item on
 
@@ -82,15 +83,15 @@ place to set up view-specific objects or load up values for your
 templates.
 
 Dispatcher directives are evaluated in order until we get to either a
-C<show>, C<redirect> or an C<abort>.
+C<show>, C<redirect>, C<tangent> or C<abort>.
 
 =item after
 
 L<after> rules let you clean up after rendering your page. Delete your
 cache files, write your transaction logs, whatever.
 
-At this point, it's too late to C<show>, C<redirect> or C<abort> page
-display.
+At this point, it's too late to C<show>, C<redirect>, C<tangent> or C<abort>
+page display.
 
 =back
 
@@ -121,7 +122,7 @@ by using a variant on the C<before> and C<after> syntax:
 
 C<NAME> may either be a string, which must match the plugin name
 exactly, or a regular expression, which is matched against the plugin
-name.  The rule will be placed at the first boundry that it matches --
+name.  The rule will be placed at the first boundary that it matches --
 that is, given a C<before plugin qr/^Jifty::Plugin::Auth::/> and both
 a C<Jifty::Plugin::Auth::Basic> and a C<Jifty::Plugin::Auth::Complex>,
 the rules will be placed before the first.
@@ -219,7 +220,7 @@ Deletes an argument we were passing to our template.
 =head2 show $component
 
 Display the presentation component.  If not specified, use the
-default page in call_next.
+request path as the default page.
 
 =head2 dispatch $path
 
@@ -237,9 +238,15 @@ Break out from the current C<run> block and stop running rules in this stage.
 
 Abort the request; this skips straight to the cleanup stage.
 
+If C<$code> is specified, it's used as the HTTP status code.
+
 =head2 redirect $uri
 
 Redirect to another URI.
+
+=head2 tangent $uri
+
+Take a continuation here, and tangent to another URI.
 
 =head2 plugin
 
@@ -252,7 +259,7 @@ our @EXPORT = qw<
 
     before on after
 
-    show dispatch abort redirect
+    show dispatch abort redirect tangent
 
     GET POST PUT HEAD DELETE OPTIONS
 
@@ -278,6 +285,7 @@ sub run (&@)      { _ret @_ }    # execute a block of code
 sub show (;$@)    { _ret @_ }    # render a page
 sub dispatch ($@) { _ret @_ }    # run dispatch again with another URI
 sub redirect ($@) { _ret @_ }    # web redirect
+sub tangent ($@)  { _ret @_ }    # web tangent
 sub abort (;$@)   { _ret @_ }    # abort request
 sub default ($$@) { _ret @_ }    # set parameter if it's not yet set
 sub set ($$@)     { _ret @_ }    # set parameter
@@ -293,6 +301,8 @@ sub DELETE ($)  { _qualify method => @_ }
 sub OPTIONS ($) { _qualify method => @_ }
 
 sub plugin ($) { return { plugin => @_ } }
+
+our $CURRENT_STAGE;
 
 =head2 import
 
@@ -444,6 +454,7 @@ sub handle_request {
 
     # XXX TODO: refactor this out somehow?
     # We don't want the previous mason request hanging aroudn once we start dispatching
+    no warnings 'once';
     local $HTML::Mason::Commands::m = undef;
     # Mason introduces a DIE handler that generates a mason exception
     # which in turn generates a backtrace. That's fine when you only
@@ -471,6 +482,9 @@ This is the unit which calling L</last_rule> skips to the end of.
 
 sub _handle_stage {
     my ($self, $stage, @rules) = @_;
+
+    # Set the current stage so that rules can make smarter choices;
+    local $CURRENT_STAGE = $stage;
 
     eval { $self->_handle_rules( [ $self->rules($stage), @rules ] ); };
     if ( my $err = $@ ) {
@@ -673,7 +687,7 @@ sub _do_run {
 
 This method is called by the dispatcher internally. You shouldn't need to.
 
-Redirect the user to the URL provded in the mandatory PATH argument.
+Redirect the user to the URL provided in the mandatory PATH argument.
 
 =cut
 
@@ -681,6 +695,21 @@ sub _do_redirect {
     my ( $self, $path ) = @_;
     $self->log->debug("Redirecting to $path");
     Jifty->web->redirect($path);
+}
+
+=head2 _do_tangent PATH
+
+This method is called by the dispatcher internally. You shouldn't need to.
+
+Take a tangent to the URL provided in the mandatory PATH argument.
+(See L<Jifty::Manual::Continuation> for more about tangents.)
+
+=cut
+
+sub _do_tangent {
+    my ( $self, $path ) = @_;
+    $self->log->debug("Taking a tangent to $path");
+    Jifty->web->tangent(url => $path);
 }
 
 =head2 _do_abort 
@@ -694,6 +723,16 @@ Don't display any page. just stop.
 sub _do_abort {
     my $self = shift;
     $self->log->debug("Aborting processing");
+    if (@_) {
+        # This is the status code
+        my $status = shift;
+        my $apache = Jifty->handler->apache;
+        $apache->header_out(Status => $status);
+        $apache->send_http_header;
+
+        require HTTP::Status;
+        print STDOUT $status, ' ' , HTTP::Status::status_message($status);
+    }
     $self->_abort;
 }
 
@@ -715,6 +754,11 @@ sub _do_show {
     # Fix up the path
     $path = shift if (@_);
     $path ||= $self->{path};
+
+    unless ($CURRENT_STAGE eq 'RUN') {
+        die "You can't call a 'show' rule in a 'before' or 'after' block in the dispatcher.  Not showing path $path";
+    }
+
     $self->log->debug("Showing path $path");
 
     # If we've got a working directory (from an "under" rule) and we have
@@ -722,33 +766,29 @@ sub _do_show {
     $path = "$self->{cwd}/$path" unless $path =~ m{^/};
 
     # When we're requesting a directory, go looking for the index.html
-    if ( $path =~ m{/$} and $self->template_exists( $path . "/index.html" ) )
-    {
-
+    if ( $self->template_exists( $path . "/index.html" ) ) {
         $path .= "/index.html";
     }
 
-    # Redirect to directory (and then index) if they requested
-    # the directory itself
+    my $abs_template_path = Jifty::Util->absolute_path(
+        Jifty->config->framework('Web')->{'TemplateRoot'} . $path );
+    my $abs_root_path = Jifty::Util->absolute_path(
+        Jifty->config->framework('Web')->{'TemplateRoot'} );
 
-    # XXX TODO, we should search all component roots
-
-    if ($path !~ m{/$}
-        and -d Jifty::Util->absolute_path( Jifty->config->framework('Web')->{'TemplateRoot'} . $path))
-    {
-        $self->_do_show( $path . "/" );
+    if ( $abs_template_path !~ /^\Q$abs_root_path\E/ ) {
+        request->path('/__jifty/errors/500');
+    } else {
+        # Set the request path
+        request->path($path);
     }
-
-    # Set the request path
-    request->path($path);
-    $self->render_template(request->path);
+    $self->render_template( request->path );
 
     last_rule;
 }
 
 sub _do_set {
     my ( $self, $key, $value ) = @_;
-    $self->log->debug("Setting argument $key to $value");
+    $self->log->debug("Setting argument $key to ".($value||''));
     request->argument($key, $value);
 }
 
@@ -760,7 +800,7 @@ sub _do_del {
 
 sub _do_default {
     my ( $self, $key, $value ) = @_;
-    $self->log->debug("Setting argument default $key to $value");
+    $self->log->debug("Setting argument default $key to ".($value||''));
     request->argument($key, $value)
         unless defined request->argument($key);
 }
@@ -780,7 +820,8 @@ Once it's done with that, it runs all the cleanup rules defined with C<after>.
 sub _do_dispatch {
     my $self = shift;
 
-    $self->{path} = shift;
+    # Requests should always start with a leading /
+    $self->{path} = "/".shift;
     $self->{cwd}  = '';
 
     # Normalize the path.
@@ -811,8 +852,8 @@ Returns the regular expression matched if the current request fits
 the condition defined by CONDITION. 
 
 C<CONDITION> can be a regular expression, a "simple string" with shell
-wildcard characters (C<*> and C<?>) to match against, or an arrayref or hashref
-of those. It should even be nestable.
+wildcard characters (C<*>, C<?>, C<#>, C<[]>, C<{}>) to match against,
+or an arrayref or hashref of those. It should even be nestable.
 
 Arrayref conditions represents alternatives: the match succeeds as soon
 as the first match is found.
@@ -885,8 +926,8 @@ came in with that method.
 
 sub _match_method {
     my ( $self, $method ) = @_;
-    $self->log->debug("Matching URL ".$self->{cgi}->method." against ".$method);
-    lc( $self->{cgi}->method ) eq lc($method);
+    $self->log->debug("Matching URL $ENV{REQUEST_METHOD} against ".$method);
+    lc( $ENV{REQUEST_METHOD} ) eq lc($method);
 }
 
 sub _match_plugin {
@@ -897,7 +938,7 @@ sub _match_plugin {
 
 =head2 _compile_condition CONDITION
 
-Takes a condition defined as a simple string ad return it as a regex
+Takes a condition defined as a simple string and return it as a regex
 condition.
 
 =cut
@@ -913,7 +954,7 @@ sub _compile_condition {
     $cond =~ s{(?:\\\/)+}{/}g;
     $cond =~ s{/$}{};
 
-    my $has_capture = ( $cond =~ / \\ [*?] /x);
+    my $has_capture = ( $cond =~ / \\ [*?#] /x);
     if ($has_capture or $cond =~ / \\ [[{] /x) {
         $cond = $self->_compile_glob($cond);
     }
@@ -954,9 +995,9 @@ sub _compile_condition {
 
 Private function.
 
-Turns a metaexpression containing C<*> and C<?> into a capturing regex pattern.
+Turns a metaexpression containing C<*>, C<?> and C<#> into a capturing regex pattern.
 
-Also supports the non-capturing C<[]> and C<{}> notation.
+Also supports the non-capturing C<[]>,and C<{}> notation.
 
 The rules are:
 
@@ -965,7 +1006,7 @@ The rules are:
 =item *
 
 A C<*> between two C</> characters, or between a C</> and end of string,
-should at match one or more non-slash characters:
+should match one or more non-slash characters:
 
     /foo/*/bar
     /foo/*/
@@ -982,10 +1023,22 @@ All other C<*> can match zero or more non-slash characters:
 
 =item *
 
+Two stars (C<**>) can match zero or more characters, including slash:
+
+    /**/bar
+    /foo/**
+    **
+
+=item *
+
 Consecutive C<?> marks are captured together:
 
     /foo???bar      # One capture for ???
     /foo??*         # Two captures, one for ?? and one for *
+
+=item *
+
+The C<#> character captures one or more digit characters.
 
 =item *
 
@@ -1009,9 +1062,17 @@ sub _compile_glob {
         (?= / | \z)  # lookahead for slash or end-of-string
     }{([^/]+)}gx;
     $glob =~ s{
+        # Two stars can match zero or more characters, including slash.
+        \\ \* \\ \*
+    }{(.*)}gx;
+    $glob =~ s{
         # All other stars can match zero or more non-slash character.
         \\ \*
     }{([^/]*)}gx;
+    $glob =~ s{
+        # The number-sign character matches one or more digits.
+        \\ \#
+    }{(\\d+)}gx;
     $glob =~ s{
         # Consecutive question marks are captured as one unit;
         # we do this by capturing them and then repeat the result pattern
@@ -1036,7 +1097,7 @@ sub _compile_glob {
     $glob =~ s{
         # Braces denote alternations
         \\ \{ (         # opening (not part of expression)
-            (?:             # one or more characters:
+            (?:             # zero or more characters:
                 \\ \\ \\ \} # ...escaped closing brace
             |
                 \\ [^\}]    # ...escaped (but not the closing brace)
@@ -1044,7 +1105,7 @@ sub _compile_glob {
                 [^\\]       # ...normal
             )+
         ) \\ \}         # closing (not part of expression)
-    }{'(?:'.join('|', split(/\\,/, $1)).')'}egx;
+    }{'(?:'.join('|', split(/\\,/, $1, -1)).')'}egx;
     $glob;
 }
 

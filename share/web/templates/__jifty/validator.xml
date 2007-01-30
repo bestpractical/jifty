@@ -14,7 +14,7 @@ for my $ra ( Jifty->web->request->actions ) {
             $writer->emptyTag( "ignored", id => $action->error_div_id($arg) );
             $writer->emptyTag( "ignored", id => $action->warning_div_id($arg) );
         } elsif ( not defined $action->argument_value($arg)
-            or length $action->argument_value($arg) == 0 ) {
+                  or length $action->argument_value($arg) == 0 ) {
             $writer->emptyTag( "blank", id => $action->error_div_id($arg) );
             $writer->emptyTag( "blank", id => $action->warning_div_id($arg) );
         } elsif ( $action->result->field_error($arg) ) {
@@ -39,7 +39,9 @@ for my $ra ( Jifty->web->request->actions ) {
     $writer->endTag();
     $writer->startTag( "canonicalizeaction", id => $action->register_name );
     for my $arg ( $action->argument_names ) {
-        if ( not $action->arguments->{$arg}->{ajax_canonicalizes} ) {
+        if (($ra->arguments->{$arg} || "") eq ($action->argument_value($arg) || "")) {
+            # if the value doesn't change, it can be ignored.
+            # canonicalizers can change other parts of the action, so we want to send all changes
             $writer->emptyTag( "ignored", name => $action->form_field_name($arg) );
         } elsif ( not defined $action->argument_value($arg)
             or length $action->argument_value($arg) == 0 ) {
@@ -49,6 +51,13 @@ for my $ra ( Jifty->web->request->actions ) {
                 "update",
                 $action->argument_value($arg),
                 name => $action->form_field_name($arg)
+            );
+        }
+        if ( $action->result->field_canonicalization_note($arg) ) {
+            $writer->dataElement(
+                "canonicalization_note",
+                $action->result->field_canonicalization_note($arg),
+                id => $action->canonicalization_note_div_id($arg)
             );
         }
     }

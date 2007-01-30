@@ -1,0 +1,10 @@
+% if ( Jifty->web->current_user->id ) {
+Current user is <% Jifty->web->current_user->user_object->name %>
+%     if ( Jifty->web->current_user->is_superuser ) {
+The current user is a superuser.
+%     } else {
+The current user is not a superuser.
+%     }
+% } else {
+No current user set.
+% }

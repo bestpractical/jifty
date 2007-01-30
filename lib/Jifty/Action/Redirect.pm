@@ -58,6 +58,7 @@ sub take_action {
     my $page = $self->argument_value('url');
 
     Jifty->web->next_page($page);
+    Jifty->web->force_redirect(1);
     return 1;
 }
 

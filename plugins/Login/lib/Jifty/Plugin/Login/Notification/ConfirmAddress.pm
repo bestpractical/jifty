@@ -6,7 +6,7 @@ use base qw/Jifty::Notification Jifty::Plugin::Login/;
 
 =head1 NAME
 
-Hiveminder::Notification::ConfirmAddress
+Jifty::Plugin::Login::Notification::ConfirmAddress
 
 =head1 ARGUMENTS
 
@@ -22,9 +22,8 @@ Sets up the fields of the message.
 
 sub setup {
     my $self = shift;
-    my $LoginUser = $self->LoginUserClass;
 
-    unless ( UNIVERSAL::isa($self->to, $LoginUser) ){
+    unless ( UNIVERSAL::isa($self->to, $self->LoginUserClass) ){
 	$self->log->error((ref $self) . " called with invalid user argument");
 	return;
     } 
@@ -36,20 +35,19 @@ sub setup {
     my $confirm_url = $letme->as_url;
     my $appname = Jifty->config->framework('ApplicationName');
 
-    $self->subject( "Welcome to $appname!" );
+    $self->subject( _("Welcome to ")."$appname!" );
     $self->from( Jifty->config->framework('AdminEmail') );
 
-    $self->body(<<"END_BODY");
-
+    $self->body(_("
 You're getting this message because you (or somebody claiming to be you)
-signed up for $appname.
+signed up for %1.
 
-Before you can use $appname, we need to make sure that we got your email
+Before you can use %1, we need to make sure that we got your email
 address right.  Click on the link below to get started:
 
-$confirm_url
+%2
+",$appname,$confirm_url));
 
-END_BODY
 }
 
 1;

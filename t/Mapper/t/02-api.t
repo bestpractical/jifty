@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 use warnings;
 use strict;
@@ -9,8 +9,9 @@ Continuations tests
 
 =cut
 
-BEGIN {chdir "t/Mapper"}
-use lib '../../lib';
+use lib 't/lib';
+use Jifty::SubTest;
+
 use Jifty::Test tests => 11;
 
 use_ok('Jifty::Test::WWW::Mechanize');
@@ -37,11 +38,8 @@ ok($mech->click_button(value => "Do both"));
 $mech->content_like(qr/got the grail/i, "Got the grail");
 $mech->content_like(qr/crossed the bridge/i, "And crossed the bridge");
 
-# And then, the same, but via deault_values on the form field
+# And then, the same, but via default_values on the form field
 $mech->form(3);
 ok($mech->click_button(value => "Do both"));
 $mech->content_like(qr/got the grail/i, "Got the grail");
 $mech->content_like(qr/crossed the bridge/i, "And crossed the bridge");
-
-1;
-

@@ -1,0 +1,50 @@
+jifty (0.70117-1) unstable; urgency=low
+
+  * New cpan release
+
+ -- AGOSTINI Yves <agostini@univ-metz.fr>  Thu, 18 Jan 2007 08:52:53 +0100
+
+jifty (0.70116-1) unstable; urgency=low
+
+  * New cpan release
+
+ -- AGOSTINI Yves <agostini@univ-metz.fr>  Wed, 17 Jan 2007 08:46:31 +0100
+
+jifty (0.61123-1) unstable; urgency=low
+
+  * New cpan release 
+
+ -- AGOSTINI Yves <agostini@univ-metz.fr>  Wed, 24 Nov 2006 21:08:26 +0200
+
+jifty (0.60912-2) unstable; urgency=low
+
+  * Add missing dependencies, 
+  * Add fr.po 
+
+ -- AGOSTINI Yves <agostini@univ-metz.fr>  Wed, 25 Oct 2006 09:46:26 +0200
+
+jifty (0.60912-1) unstable; urgency=low
+
+  * Change version and clean dependencies on module-refresh-perl and
+    locale-maketext-lexicon for sarge
+
+ -- AGOSTINI Yves <agostini@univ-metz.fr>  Mon, 23 Oct 2006 10:55:17 +0200
+
+jifty (0.60728-3) unstable; urgency=low
+
+  * Missed some date dependencies
+
+ -- Bart Bunting <bart@ursys.com.au>  Fri, 25 Aug 2006 09:30:28 +1000
+
+jifty (0.60728-2) unstable; urgency=low
+
+  * More dependencies, we're nearly there seems I missed some.
+
+ -- Bart Bunting <bart@bunting.net.au>  Fri, 25 Aug 2006 06:55:04 +1000
+
+jifty (0.60728-1) unstable; urgency=low
+
+  * Initial debianisation.
+
+ -- Bart Bunting <bart@ursys.com.au>  Tue, 22 Aug 2006 10:39:31 +1000
+

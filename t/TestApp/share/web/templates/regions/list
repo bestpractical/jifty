@@ -1,0 +1,7 @@
+% for my $i (1 .. 5) {
+<% Jifty->web->region(
+        name => 'item-' . $i,
+        path => '/regions/short',
+        defaults => {id => $i})
+   %>
+% }

@@ -1,0 +1,59 @@
+-*- mode: outline; outline-regexp: "\\s *\\*+" -*-
+
+Jifty::Action::Record::Search should take arguments and return a
+FooCollection as the q{search} field of its q{content}.
+
+It will generate arguments for each field, according to the SQL type
+of the field:
+
+* text
+ * I<field>, I<field>_not
+  * Do substring searching on the given field
+  * This is case sensitive.
+
+ * I<field_is>
+  * ? Does exact matching ?
+
+* time, date, or datetime
+ * T<field>_after, I<field>_before
+ * T<field> for exact matching?
+
+* int
+ * I<field>
+  * Exact matching
+
+ * I<field_gt>
+ * I<field_lt>
+  * Less than/greater than
+
+ * I<field_gte>
+ * I<field_lte>
+  * These are perhaps superfluous, but could be convenient.
+  * (I want auto-loaded arguments ...)
+
+* boolean
+ * I<field>
+  * Can be true, false, or undefined
+
+
+* refers_to an object
+ * I<field>
+ * I<field_not>
+ * Accept ids
+  * ? Generate valid_values for this ?
+
+* refers_to a collection
+ * Do nothing?
+ * I<field>_contains ?
+ * I<field>_lacks ?
+
+******* 
+
+* Validators and canonicalizers
+ * Never use validators
+ * Use canonicalizers on any "exact match" fields
+ * What's the right behaviour on substring/comparison match?
+
+* valid_values
+ * valid_values should remain valid_values for any exact match fields,
+ * become available_values otherwise

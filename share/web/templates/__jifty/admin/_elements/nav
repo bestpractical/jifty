@@ -1,35 +1,8 @@
 <%init>
 
-# Set up application-specific parts
-my $ApplicationClass = Jifty->config->framework('ApplicationClass');
-
-my @models;   
-
-# This creates a sub "jifty_app_models" which when called, finds packages under
-# $ApplicationClass::Model, requires them, and returns a list of their
-# names.
-Module::Pluggable->import(
-    require     => 1,
-    except      => qr/\.#/,
-    search_path => [  $ApplicationClass . "::Model" ],
-    sub_name    => 'jifty_app_models',
-);
-
-for my $model ( __PACKAGE__->jifty_app_models ) {
-
-    # We don't want to get the Collections, or models that have a
-    # 'since' that is after the current application version.
-
-    # TODO XXX FIXME:
-    #   This *will* try to generate SQL for abstract base classes you might
-    #   stick in $AC::Model::.
-    next unless $model->isa( 'Jifty::Record' );
-    next if $model =~ /::SUPER$/;
-    push @models, $model;
-}
-
 my $nav = Jifty->web->navigation->child("Administration" => url => '/__jifty/admin/');
-foreach my $model (@models) {
+foreach my $model (Jifty->class_loader->models) {
+    next unless $model->isa('Jifty::Record');
     next unless ($model =~ /^(?:.*)::(.*?)$/);
     my $type = $1;
     $nav->child($type   => url => '/__jifty/admin/model/'.$type);

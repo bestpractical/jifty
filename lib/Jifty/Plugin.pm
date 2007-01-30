@@ -57,7 +57,7 @@ sub new {
     # Start a plugin classloader set up on behalf of the application
     require Jifty::Plugin::ClassLoader;
     Jifty::Plugin::ClassLoader->new(
-	base => Jifty->config->framework('ApplicationClass'),
+	base => Jifty->app_class,
 	plugin => $class,
     )->require;
 

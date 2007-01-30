@@ -3,18 +3,14 @@ use strict;
 
 =head1 NAME
 
-Jifty::Plugin::Login::Action::ResendConfirmation
+Jifty::Plugin::Login::Action::SendAccountConfirmation
 
 =cut
 
-package Jifty::Plugin::Login::Action::ResendConfirmation;
-use base qw/Jifty::Action/;
-my $LoginUser   = $Jifty::Plugin::Login::LoginUserClass;
-my $CurrentUser = $Jifty::Plugin::Login::CurrentUserClass;
+package Jifty::Plugin::Login::Action::SendAccountConfirmation;
+use base qw/Jifty::Action Jifty::Plugin::Login/;
 
 __PACKAGE__->mk_accessors(qw(user_object));
-
-use Jifty::Plugin::Login::Model::User;
 
 =head2 arguments
 
@@ -32,7 +28,7 @@ sub arguments {
     return (
         {
             address => {
-                label         => 'email address',
+                label         => _('email address'),
                 mandatory     => 1,
                 default_value => "",
             },
@@ -48,9 +44,11 @@ Create an empty user object to work with
 
 sub setup {
     my $self = shift;
+    my $LoginUserClass = $self->LoginUserClass;
+    my $CurrentUser = $self->CurrentUserClass;
 
     $self->user_object(
-        $LoginUser->new( current_user => $CurrentUser->superuser ) );
+        $LoginUserClass->new( current_user => $CurrentUser->superuser ) );
 }
 
 =head2 validate_address
@@ -62,20 +60,22 @@ Make sure their email address is an unconfirmed user.
 sub validate_address {
     my $self  = shift;
     my $email = shift;
+    my $LoginUserClass = $self->LoginUserClass;
+    my $CurrentUser = $self->CurrentUserClass;
 
     return $self->validation_error(
-        address => "That doesn't look like an email address." )
+        address => _("That doesn't look like an email address.") )
       unless ( $email =~ /\S\@\S/ );
 
     $self->user_object(
-        $LoginUser->new( current_user => $CurrentUser->superuser ) );
+        $LoginUserClass->new( current_user => $CurrentUser->superuser ) );
     $self->user_object->load_by_cols( email => $email );
     return $self->validation_error(
-        address => "It doesn't look like there's an account by that name." )
+        address => _("It doesn't look like there's an account by that name.") )
       unless ( $self->user_object->id );
 
     return $self->validation_error(
-        address => "It looks like you're already confirmed." )
+        address => _("It looks like you're already confirmed.") )
       if ( $self->user_object->email_confirmed );
 
     return $self->validation_ok('address');
@@ -91,7 +91,7 @@ sub take_action {
     my $self = shift;
     Jifty::Plugin::Login::Notification::ConfirmAddress->new(
         to => $self->user_object )->send;
-    return $self->result->message("Confirmation resent.");
+    return $self->result->message(_("Confirmation resent."));
 }
 
 1;

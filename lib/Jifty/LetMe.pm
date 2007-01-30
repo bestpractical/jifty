@@ -80,7 +80,7 @@ for the user who has the email address I<ADDRESS>.
 sub _user_from_email {
     my $self = shift;
     my $email = shift;
-    my $currentuser_object_class = Jifty->config->framework('ApplicationClass')."::CurrentUser";
+    my $currentuser_object_class = Jifty->app_class("CurrentUser");
     return $currentuser_object_class->new( email => $email );
 }
 
@@ -89,14 +89,17 @@ sub _generate_digest {
 
     # get user's generic secret
     my $user;
-    return undef unless ( $user = $self->_user_from_email($self->email) );
+    return '' unless ( $user = $self->_user_from_email($self->email) );
+    return '' unless ($user->auth_token);
+
+
 
     # build an md5sum of the email token and until and our secret
     my $digest = Digest::MD5->new();
     $digest->add( $user->auth_token );
     $digest->add( $self->path );
     my %args = %{$self->args};
-    $digest->add( $_, $args{$_}) for sort keys %args;
+    $digest->add( Encode::encode_utf8($_), Encode::encode_utf8($args{$_})) for sort keys %args;
     $digest->add( $self->until ) if ($self->until);
     return $digest->hexdigest();
 }
@@ -164,7 +167,7 @@ into
       token => 'update_task/23'
       until => 20050101,
       checksum_provided => bekidrikufryvagygefuba
- 
+
 =cut
 
 sub from_token {
@@ -173,13 +176,16 @@ sub from_token {
 
     my @atoms = split('/',$token);
 
-    $self->email( URI::Escape::uri_unescape( shift @atoms ) );
+    $self->email( Jifty::I18N->maybe_decode_utf8(URI::Escape::uri_unescape( shift @atoms )) );
     $self->path( shift @atoms );
     $self->checksum_provided( pop @atoms );
 
-    my %args = @atoms;
+    # If they don't even have the right number of items in the path, then we know that it's not valid
+    return undef unless (scalar @atoms % 2 == 0); 
+
+    my %args = map { Jifty::I18N->maybe_decode_utf8(URI::Escape::uri_unescape($_)) } @atoms;
     $self->until( delete $args{until} ) if $args{until};
-    
+
     $self->args(\%args);
 }
 
@@ -205,7 +211,7 @@ for passing in a URL
 
 sub as_encoded_token {
     my $self = shift;
-    $self->_generate_token( email => URI::Escape::uri_escape($self->email) );
+    $self->_generate_token( email => URI::Escape::uri_escape_utf8($self->email) );
 }
 
 sub _generate_token {
@@ -214,7 +220,7 @@ sub _generate_token {
     return join ('/', 
         $args{'email'},
         $self->path,
-        %{$self->args},
+        (map {URI::Escape::uri_escape_utf8($_)} %{$self->args}),
         (defined $self->until ? ( 'until', $self->until ) : () ), #?
         $self->generate_checksum  
         );
@@ -231,7 +237,7 @@ Jifty->web->url, L</base_path> and L</as_encoded_token>
 
 sub as_url {
     my $self = shift;
-    return Jifty->web->url . $self->base_path. $self->as_encoded_token;
+    return Jifty->web->url(path => $self->base_path . $self->as_encoded_token);
 
 }
 

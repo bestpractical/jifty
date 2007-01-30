@@ -4,17 +4,91 @@ use strict;
 package Jifty::Test;
 use base qw/Test::More/;
 
+use Jifty::YAML;
 use Jifty::Server;
 use Jifty::Script::Schema;
 use Email::LocalDelivery;
 use Email::Folder;
 use File::Path;
+use File::Spec;
+use File::Temp;
+
+=head1 NAME
+
+Jifty::Test - Jifty's test module
+
+=head1 SYNOPSIS
+
+    use Jifty::Test tests => 5;
+
+    ...all of Test::More's functionality...
+
+    ...any class methods defined below...
+
+=head1 DESCRIPTION
+
+Jifty::Test is a superset of Test::More.  It provides all of
+Test::More's functionality in addition to the class methods defined
+below.
+
+=head1 METHODS
+
+=head2 is_passing
+
+    my $is_passing = Jifty::Test->is_passing;
+
+Check if the test is currently in a passing state.
+
+* All tests run so far have passed
+* We have run at least one test
+* We have not run more than we planned (if we planned at all)
+
+=cut
+
+sub is_passing {
+    my $tb = Jifty::Test->builder;
+
+    my $is_failing = 0;
+    $is_failing ||= grep {not $_} $tb->summary;
+    $is_failing ||= ($tb->has_plan || '') eq 'no_plan'
+                      ? 0
+                      : $tb->expected_tests < $tb->current_test;
+
+    return !$is_failing;
+}
+
+
+=head2 is_done
+
+    my $is_done = Jifty::Test->is_done;
+
+Check if we have run all the tests we've planned.
+
+If the plan is 'no_plan' then is_done() will return true if at least
+one test has run.
+
+=cut
+
+sub is_done {
+    my $tb = Jifty::Test->builder;
+    if( ($tb->has_plan || '') eq 'no_plan' ) {
+        return $tb->current_test > 0;
+    }
+    else {
+        return $tb->expected_tests == $tb->current_test;
+    }
+}
+
+
+=begin private
 
 =head2 import_extra
 
 Called by L<Test::More>'s C<import> code when L<Jifty::Test> is first
 C<use>'d, it calls L</setup>, and asks Test::More to export its
 symbols to the namespace that C<use>'d this one.
+
+=end private
 
 =cut
 
@@ -40,24 +114,31 @@ sub setup {
     Jifty::YAML::DumpFile($test_config, $class->test_config(Jifty::Config->new));
     # Invoking bin/jifty and friends will now have the test config ready.
     $ENV{'JIFTY_TEST_CONFIG'} ||= $test_config;
-    Jifty::Test->builder->{test_config} = $test_config;
+    $class->builder->{test_config} = $test_config;
     {
-        # Cache::Memcached stores things. And doesn't let them
-        # expire from the cache easily. This is fine in production,
-        # but during testing each test script needs its own namespace.
-        # we use the pid.
+        # Cache::Memcached stores things. And doesn't let them expire
+        # from the cache easily. This is fine in production, but
+        # during testing each test script needs its own namespace.  we
+        # use the pid of the current process, and save it so the keys
+        # stays the same when we fork
+      {
+          package Jifty::Record;
+          no warnings qw/redefine/;
 
-        no warnings qw/redefine/;
-    
-        sub Jifty::Record::cache_key_prefix {
-            'jifty-test-' . $$;
-        }
+          use vars qw/$cache_key_prefix/;
+
+          $cache_key_prefix = "jifty-test-" . $$;
+        
+          sub cache_key_prefix {
+              $Jifty::Record::cache_key_prefix;
+          }
+      }
+        
     }
     my $root = Jifty::Util->app_root;
-    unshift @INC, "$root/lib" if ($root);
 
     # Mason's disk caching sometimes causes false tests
-    rmtree(["$root/var/mason"], 0, 1);
+    rmtree([ File::Spec->canonpath("$root/var/mason") ], 0, 1);
 
     Jifty->new( no_handle => 1 );
 
@@ -130,7 +211,8 @@ sub make_server {
     # jifty::server.
     if ($ENV{JIFTY_TESTSERVER_PROFILE} ||
         $ENV{JIFTY_TESTSERVER_COVERAGE} ||
-        $ENV{JIFTY_TESTSERVER_DBIPROF}) {
+        $ENV{JIFTY_TESTSERVER_DBIPROF} ||
+        $^O eq 'MSWin32') {
         require Jifty::TestServer;
         unshift @Jifty::Server::ISA, 'Jifty::TestServer';
     }
@@ -144,6 +226,26 @@ sub make_server {
 
     return $server;
 } 
+
+
+=head2 web
+
+Like calling C<<Jifty->web>>.
+
+C<<Jifty::Test->web>> does the necessary Jifty->web initialization for
+it to be usable in a test.
+
+=cut
+
+sub web {
+    my $class = shift;
+
+    Jifty->web->request(Jifty::Request->new)   unless Jifty->web->request;
+    Jifty->web->response(Jifty::Response->new) unless Jifty->web->response;
+
+    return Jifty->web;
+}
+
 
 =head2 mailbox
 
@@ -162,9 +264,21 @@ Clears the mailbox.
 =cut
 
 sub setup_mailbox {
-    open my $f, ">", mailbox();
+    my $class = shift;
+
+    open my $f, ">:encoding(UTF-8)", $class->mailbox;
     close $f;
-} 
+}
+
+=head2 teardown_mailbox
+
+Deletes the mailbox.
+
+=cut
+
+sub teardown_mailbox {
+    unlink mailbox();
+}
 
 =head2 is_available
 
@@ -192,24 +306,101 @@ sub send {
 
 =head2 messages
 
-Returns the messages in the test mailbox, as a list of L<Email::Simple> objects.
+Returns the messages in the test mailbox, as a list of
+L<Email::Simple> objects.  You may have to use a module like
+L<Email::MIME> to parse multi-part messages stored in the mailbox.
 
 =cut
 
 sub messages {
     return Email::Folder->new(mailbox())->messages;
-} 
+}
 
-END {
+
+=head2 test_file
+
+  my $files = Jifty::Test->test_file($file);
+
+Register $file as having been created by the test.  It will be
+cleaned up at the end of the test run I<if and only if> the test
+passes.  Otherwise it will be left alone.
+
+It returns $file so you can do this:
+
+  my $file = Jifty::Test->test_file( Jifty::Util->absolute_path("t/foo") );
+
+=cut
+
+my @Test_Files_To_Cleanup;
+sub test_file {
+    my $class = shift;
+    my $file = shift;
+
+    push @Test_Files_To_Cleanup, $file;
+
+    return $file;
+}
+
+
+=head2 test_in_isolation
+
+  my $return = Jifty::Test->test_in_isolation( sub {
+      ...your testing code...
+  });
+
+For testing testing modules so you can run testing code (which perhaps
+fail) without effecting the outer test.
+
+Saves the state of Jifty::Test's Test::Builder object and redirects
+all output to dev null before running your testing code.  It then
+restores the Test::Builder object back to its original state.
+
+    # Test that fail() returns 0
+    ok !Jifty::Test->test_in_isolation sub {
+        return fail;
+    };
+
+=cut
+
+sub test_in_isolation {
+    my $class = shift;
+    my $code  = shift;
+
+    my $tb = Jifty::Test->builder;
+
+    my $output         = $tb->output;
+    my $failure_output = $tb->failure_output;
+    my $todo_output    = $tb->todo_output;
+    my $current_test   = $tb->current_test;
+
+    $tb->output( File::Spec->devnull );
+    $tb->failure_output( File::Spec->devnull );
+    $tb->todo_output( File::Spec->devnull );
+
+    my $result = $code->();
+
+    $tb->output($output);
+    $tb->failure_output($failure_output);
+    $tb->todo_output($todo_output);
+    $tb->current_test($current_test);
+
+    return $result;
+}
+
+
+# Stick the END block in a method so we can test it.
+END { Jifty::Test->_ending }
+
+sub _ending {
     my $Test = Jifty::Test->builder;
     # Such a hack -- try to detect if this is a forked copy and don't
     # do cleanup in that case.
     return if $Test->{Original_Pid} != $$;
 
     # If all tests passed..
-    unless ($Test->expected_tests != $Test->current_test or grep {not $_} $Test->summary) {
+    if (Jifty::Test->is_passing && Jifty::Test->is_done) {
         # Clean up mailbox
-        unlink mailbox();
+        Jifty::Test->teardown_mailbox;
 
         # Remove testing db
         if (Jifty->handle) {
@@ -220,6 +411,9 @@ END {
             $schema->run;
             Log::Log4perl->get_logger("SchemaTool")->more_logging(3);
         }
+
+        # Unlink test files
+        unlink @Test_Files_To_Cleanup;
     }
 
     # Unlink test file

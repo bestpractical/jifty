@@ -16,22 +16,41 @@ function createCalendarLink(id) {
     return Jifty.Calendar.registerDateWidget( id );
 }
 
-function buttonToLink(input) {
-    var e = $(input);
-    if (e) {
-        var link = document.createElement("a");
-        link.setAttribute("href","#");
-        link.setAttribute("onclick",e.getAttribute("onclick"));
-        link.setAttribute("name",e.getAttribute("name"));
-        link.setAttribute("class",e.getAttribute("class"));
-        link['virtualform'] = Form.Element.getForm(e);
-        link.appendChild(document.createTextNode(e.getAttribute("value")));
+JSAN.use("DOM.Events");
 
-        e.parentNode.insertBefore(link, e.nextSibling);
-        e.parentNode.removeChild(e);
-        return true;
+function buttonToLink(e) {
+    var link = document.createElement("a");
+    link.setAttribute("href","#");
+    link.setAttribute("name",e.getAttribute("name"));
+
+    var form = Form.Element.getForm(e);
+    var onclick = e.getAttribute("onclick");
+
+    /* Simple buttons that don't use any JS need us to create an onclick
+       for them that makes sure the original button's name gets passed
+       and the form submitted normally (without any Ajax-ness)
+    */
+    if ( !onclick ) {
+        DOM.Events.addListener( link, "click", function(ev) {
+            var a = ev.target;
+            var hidden = document.createElement("input");
+            hidden.setAttribute("type", "hidden");
+            hidden.setAttribute("name", a.getAttribute("name"));
+            a["virtualform"].appendChild( hidden );
+            if ( a["virtualform"].onsubmit )
+                a["virtualform"].onsubmit();
+            a["virtualform"].submit();
+        });
     }
-    return false;
+    link.setAttribute("onclick", onclick);
+
+    link.className = e.className;
+    link["virtualform"] = form;
+    link.appendChild(document.createTextNode(e.getAttribute("value")));
+
+    e.parentNode.insertBefore(link, e.nextSibling);
+    e.parentNode.removeChild(e);
+    return link;
 }
 
 // onload handlers
