@@ -1,0 +1,68 @@
+% if ($model_classes->pager->last_page > 1) {
+    <span class="page-count"><%_('Page %1 of %2', $page, $model_classes->pager->last_page) %></span>
+% }
+
+<div class="list">
+% if ($model_classes->pager->total_entries == 0) {
+    <% _('No items found') %>
+% } else {
+    <% _('%1 entries', $model_classes->count) %>
+% }
+
+<%perl>
+while (my $model_class = $model_classes->next) {
+    Jifty->web->region(
+        name     => 'model-' . $model_class->id,
+        path     => '/__jifty/builder/model/fragments/model/view',
+        defaults => { id => $model_class->id });
+}
+</%perl>
+</div>
+
+<div class="paging">
+% if ($model_classes->pager->previous_page) {
+<span class="prev-page">
+    <% Jifty->web->link(
+            label   => _('Previous Page'),
+            onclick => {
+                args => {
+                    page => $model_classes->pager->previous_page,
+                },
+            }) %>
+</span>
+% }
+% if ($model_classes->pager->next_page) {
+<span class="next-page">
+    <% Jifty->web->link(
+            label   => _('Next Page'),
+            onclick => {
+                args => {
+                    page => $model_classes->pager->next_page,
+                },
+            }) %>
+</span>
+% }
+</div>            
+
+<%perl>
+if ($new_slot) {
+    Jifty->web->region(
+        name => 'new-model-class',
+        path => '/__jifty/builder/model/fragments/model/new');
+}
+</%perl>
+
+<%args>
+$page => 1
+$per_page => 5
+$new_slot => 1
+</%args>
+<%init>
+my $model_classes = Jifty::Model::ModelClassCollection->new;
+$model_classes->unlimit;
+
+$model_classes->set_page_info(
+    current_page => $page,
+    per_page     => $per_page,
+);
+</%init>

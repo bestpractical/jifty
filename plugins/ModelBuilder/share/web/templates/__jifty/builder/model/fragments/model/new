@@ -1,0 +1,29 @@
+<div class="jifty_admin create item inline">
+<% $create->form_field('name') %>
+<% $create->form_field('description') %>
+</div>
+
+<% Jifty->web->form->submit(
+        label   => _('Create'),
+        onclick => [
+            { submit => $create },
+            { refresh_self => 1 },
+            {
+                element => $region->parent->get_element('div.list'),
+                append  => '/__jifty/builder/model/fragments/model/view',
+                args    => { 
+                    id => { result_of => $create, name => 'id' },
+                },
+            },
+        ],
+) %>
+
+<%args>
+$region
+</%args>
+<%init>
+my $create = Jifty->web->new_action( 
+    class   => 'Jifty::Action::CreateModelClass',
+    moniker => 'create-model-' . Jifty->web->serial,
+);
+</%init>

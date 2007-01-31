@@ -1,0 +1,81 @@
+% if ($collapsed) {
+<% Jifty->web->link(
+    label   => _('See columns'),
+    onclick => {
+        refresh_self => 1,
+        args         => {
+            collapsed => 0,
+        },
+    },
+) %>
+% } else {
+<h2>Columns</h2>
+
+% if ($model_columns->pager->last_page > 1) {
+    <span class="page-count"<%_('Page %1 of %2', $page, $model_columns->pager->total_pages) %></span>
+% }
+
+<div class="list">
+% if ($model_columns->pager->total_entries == 0) {
+    <% _('No columns found') %>
+% } else {
+    <% _('%1 columns', $model_columns->count) %>
+% }
+
+<%perl>
+while (my $model_column = $model_columns->next) {
+    Jifty->web->region(
+        name     => 'model-column-' . $model_column->id,
+        path     => '/__jifty/builder/model/fragments/column/view',
+        defaults => { id => $model_column->id });
+}
+</%perl>
+</div>
+
+<div class="paging">
+% if ($model_columns->pager->previous_page) {
+<span class="prev-page">
+    <% Jifty->web->link(
+        label   => _('Previous Page'),
+        onclick => {
+            args => {
+                page => $model_columns->pager->previous_page,
+            },
+        }
+    ) %>
+</span>
+% }
+% if ($model_columns->pager->next_page) {
+<span class="next-page">
+    <% Jifty->web->link(
+        label   => _('Next Page'),
+        onclick => {
+            args => {
+                page => $model_columns->pager->next_page,
+            },
+        },
+    ) %>
+</span>
+% }
+</div>
+% }
+
+<%perl>
+if ($new_slot && !$collapsed) {
+    Jifty->web->region(
+        name => 'new-model-column',
+        path => '/__jifty/builder/model/fragments/column/new');
+}
+</%perl>
+
+<%args>
+$model_class
+$page => 1
+$per_page => 25
+$collapsed => 1
+$new_slot => 1
+</%args>
+<%init>
+my $model_columns = Jifty::Model::ModelClassColumnCollection->new;
+$model_columns->limit( column => 'model_class', value => $model_class );
+</%init>

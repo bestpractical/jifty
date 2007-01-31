@@ -1,0 +1,13 @@
+<&|/_elements/wrapper, title => 'List of Models' &>
+
+<h1><% _('List of Models') %></h1>
+
+<% Jifty->web->form->start %>
+
+<% Jifty->web->region(
+        name => 'model-list',
+        path => '/__jifty/builder/model/fragments/model/list') %>
+
+<% Jifty->web->form->end %>
+
+</&>

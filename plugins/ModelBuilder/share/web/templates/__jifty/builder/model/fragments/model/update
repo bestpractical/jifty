@@ -1,0 +1,52 @@
+<div class="jifty_admin update item ModelClass">
+<div class="editlink">
+<% Jifty->web->link(
+    label   => _('Save'),
+    onclick => [
+        { submit => $update },
+        {
+            replace_with => '/__jifty/builder/model/fragments/model/view',
+            args         => { id => $id },
+        },
+    ],
+) %>
+<% Jifty->web->link(
+    label     => _('Cancel'),
+    onclick   => {
+        replace_with => '/__jifty/builder/model/fragments/model/view',
+        args         => { id => $id },
+    },
+    as_button => 1,
+) %>
+</div>
+
+<% $update->form_field('name') %>
+<% $update->form_field('description') %>
+
+<div class="master-detail">
+<% Jifty->web->region(
+    name     => 'model-columns-' . $model_class->id,
+    path     => '/__jifty/builder/model/fragments/column/list',
+    defaults => { 
+        model_class => $model_class->id,
+        collapsed   => $collapsed,
+    },
+) %>
+</div>
+
+</div>
+
+<%args>
+$id
+$collapsed => 1
+</%args>
+<%init>
+my $model_class = Jifty::Model::ModelClass->new;
+$model_class->load($id);
+
+my $update = Jifty->web->new_action(
+    class   => 'Jifty::Action::UpdateModelClass',
+    moniker => 'update-model-' . Jifty->web->serial,
+    record  => $model_class,
+);
+</%init>

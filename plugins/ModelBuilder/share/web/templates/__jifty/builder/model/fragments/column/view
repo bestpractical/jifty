@@ -1,0 +1,46 @@
+<div class="jifty_admin read item inline ModelClassColumn">
+<% Jifty->web->form->submit(
+    class   => 'editlink',
+    label   => _('Delete'),
+    onclick => [
+        { confirm => _('Confirm delete?') },
+        { submit  => $delete },
+        { delete  => Jifty->web->current_region->qualified_name },
+    ]
+) %>
+<% Jifty->web->link(
+    class   => 'editlink',
+    label   => _('Edit'),
+    onclick => {
+        replace_with => '/__jifty/builder/model/fragments/model/update',
+        args         => { id => $id },
+    }
+) %>
+
+<% $delete->hidden( id => $id ) %>
+
+<% $update->form_value('label') %>
+<% $update->form_value('storage_type') %>
+<hr/>
+</div>
+
+<%args>
+$id
+</%args>
+
+<%init>
+my $model_column = Jifty::Model::ModelClassColumn->new;
+$model_column->load($id);
+
+my $update = Jifty->web->new_action(
+    class   => 'Jifty::Action::UpdateModelClassColumn',
+    moniker => 'udpate-model-column-' . Jifty->web->serial,
+    record  => $model_column,
+);
+
+my $delete = Jifty->web->new_action(
+    class   => 'Jifty::Action::DeleteModelClassColumn',
+    moniker => 'delete-model-' . Jifty->web->serial,
+    record  => $model_column,
+);
+</%init>

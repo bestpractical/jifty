@@ -1,0 +1,47 @@
+%# XXX The order of these fields is open for debate. I picked an order that made
+%# sense to me, but isn't necessarily the best ordering. -- Sterling
+
+%# XXX Should these be broken into collapsible sections?
+<div class="jifty_admin create item">
+<% $create->form_field('name') %>
+<% $create->form_field('label') %>
+<% $create->form_field('storage_type') %>
+<% $create->form_field('default_value') %>
+<% $create->form_field('mandatory') %>
+<% $create->form_field('distinct_value') %>
+<% $create->form_field('hints') %>
+<% $create->form_field('description') %>
+
+<% $create->form_field('max_length') %>
+<% $create->form_field('render_as') %>
+<% $create->form_field('readable') %>
+<% $create->form_field('writable') %>
+<% $create->form_field('indexed') %>
+
+%# TODO Add the rest of the fields.
+</div>
+
+<% Jifty->web->form->submit(
+    label   => _('Create'),
+    onclick => [
+        { submit => $create },
+        { refresh_self => 1 },
+        {
+            element => $region->parent->get_element('div.list'),
+            append  => '/__jifty/builder/model/fragments/column/view',
+            args    => {
+                id => { result_of => $create, name => 'id' },
+            },
+        },
+    ],
+) %>
+
+<%args>
+$region
+</%args>
+<%init>
+my $create = Jifty->web->new_action(
+    class   => 'Jifty::Action::CreateModelClassColumn',
+    moniker => 'create-model-column-' . Jifty->web->serial,
+);
+</%init>
