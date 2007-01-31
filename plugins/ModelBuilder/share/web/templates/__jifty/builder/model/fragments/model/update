@@ -1,26 +1,42 @@
 <div class="jifty_admin update item ModelClass">
 <div class="editlink">
-<% Jifty->web->link(
-    label   => _('Save'),
-    onclick => [
-        { submit => $update },
-        {
+
+% if (Jifty->web->caller) {
+    <% Jifty->web->link(
+        label   => _('Save'),
+        onclick => [
+            { submit => $update },
+            { refresh_self => 1 },
+        ],
+    ) %>
+    <% Jifty->web->return(
+        label     => _('Done'),
+        submit    => [],
+        to        => '/__jifty/builder/model/list',
+    ) %>
+% } else {
+    <% Jifty->web->link(
+        label   => _('Save'),
+        onclick => [
+            { submit => $update },
+            {
+                replace_with => '/__jifty/builder/model/fragments/model/view',
+                args         => { id => $id },
+            },
+        ],
+    ) %>
+    <% Jifty->web->link(
+        label     => _('Cancel'),
+        onclick   => {
             replace_with => '/__jifty/builder/model/fragments/model/view',
             args         => { id => $id },
         },
-    ],
-) %>
-<% Jifty->web->link(
-    label     => _('Cancel'),
-    onclick   => {
-        replace_with => '/__jifty/builder/model/fragments/model/view',
-        args         => { id => $id },
-    },
-    as_button => 1,
-) %>
+        as_button => 1,
+    ) %>
+% }
 </div>
 
-<% $update->form_field('name') %>
+<% $update->form_value('name') %>
 <% $update->form_field('description') %>
 
 <div class="master-detail">

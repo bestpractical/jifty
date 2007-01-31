@@ -12,7 +12,7 @@
     class   => 'editlink',
     label   => _('Edit'),
     onclick => {
-        replace_with => '/__jifty/builder/model/fragments/model/update',
+        replace_with => '/__jifty/builder/model/fragments/column/update',
         args         => { id => $id },
     }
 ) %>

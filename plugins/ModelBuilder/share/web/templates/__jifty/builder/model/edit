@@ -1,0 +1,27 @@
+<&|/_elements/wrapper, title => _('Edit Model %1', $model_class->name) &>
+
+<h2><% _('Edit Model %1', $model_class->name) %></h2>
+
+<% Jifty->web->form->start %>
+<% Jifty->web->region(
+    name     => 'update-model-' . $model_class->id,
+    path     => '/__jifty/builder/model/fragments/model/update',
+    defaults => { 
+        id        => $model_class->id,
+        collapsed => 0,
+    },
+) %>
+<% Jifty->web->form->end %>
+
+<h2>Done?</h2>
+
+<% Jifty->web->return(
+    label => _('Go back'),
+    to    => '/__jifty/builder/model/list',
+) %>
+
+</&>
+
+<%args>
+$model_class
+</%args>

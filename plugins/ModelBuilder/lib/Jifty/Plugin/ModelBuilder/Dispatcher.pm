@@ -22,4 +22,34 @@ before '**' => run {
     }
 };
 
+under '__jifty/builder/model' => [
+
+    on '*' => run {
+        my $id = $1;
+
+        my $model_class = Jifty::Model::ModelClass->new;
+
+        if ($id =~ /^(\d+)$/) {
+            $model_class->load($id);
+        }
+
+        else {
+            $model_class->load_by_cols( name => $id );
+        }
+
+        if ($model_class->id) {
+            set model_class => $model_class;
+            show '/__jifty/builder/model/edit';
+        }
+
+        else {
+            warn "Could not load model for id or name: $id";
+        }
+    },
+
+    on '' => run {
+        show '/__jifty/builder/model/list';
+    },
+];
+
 1;

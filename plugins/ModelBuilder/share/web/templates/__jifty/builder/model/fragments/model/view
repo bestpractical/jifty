@@ -1,4 +1,4 @@
-<div class="jifty_admin read item ModelClass">
+<div class="jifty_admin read item inline ModelClass">
 <% Jifty->web->form->submit(
     class   => 'editlink',
     label   => _('Delete'),
@@ -8,18 +8,15 @@
         { delete  => Jifty->web->current_region->qualified_name },
     ],
 ) %>
-<% Jifty->web->link(
-    class   => 'editlink',
-    label   => _('Edit'),
-    onclick => {
-        replace_with => '/__jifty/builder/model/fragments/model/update',
-        args         => { id => $id },
-    },
+<% Jifty->web->tangent(
+    class => 'editlink',
+    label => _('Edit'),
+    url   => '/__jifty/builder/model/' . $model_class->name,
 ) %>
 <% Jifty->web->link(
-    class   => 'editlink',
-    label   => _('Records'),
-    url     => '/__jifty/admin/model/' . $model_class->name,
+    class => 'editlink',
+    label => _('Records'),
+    url   => '/__jifty/admin/model/' . $model_class->name,
 ) %>
 
 <% $delete->hidden( id => $id ) %>

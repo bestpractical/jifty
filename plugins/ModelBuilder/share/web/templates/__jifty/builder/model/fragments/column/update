@@ -1,30 +1,27 @@
-<div class="jifty_admin update item ModelClass">
+<div class="jifty_admin update item ModelClassColumn">
 <div class="editlink">
 <% Jifty->web->link(
     label   => _('Save'),
     onclick => [
         { submit => $update },
         {
-            replace_with => '/__jifty/builder/model/fragments/model/view',
+            replace_with => '/__jifty/builder/model/fragments/column/view',
             args         => { id => $id },
         },
     ],
 ) %>
 <% Jifty->web->link(
-    label     => _('Cancel'),
-    onlick    => {
-        replace_with => '/__jifty/builder/model/fragments/model/view',
+    label  => _('Cancel'),
+    onlick => {
+        replace_with => '/__jifty/builder/model/fragments/column/view',
         args         => { id => $id },
     },
-    as_button => 1,
 ) %>
 </div>
 
-<% $update->hidden( model_class => $model_class ) %>
-
 %# XXX See ./new for comments on field order.
 
-<% $update->form_field('name') %>
+<% $update->form_value('name') %>
 <% $update->form_field('label') %>
 <% $update->form_field('storage_type') %>
 <% $update->form_field('default_value') %>
@@ -46,7 +43,7 @@
 $id
 </%args>
 <%init>
-my $model_column = Jifty::Model::ModelClass->new;
+my $model_column = Jifty::Model::ModelClassColumn->new;
 $model_column->load($id);
 
 my $update = Jifty->web->new_action(
