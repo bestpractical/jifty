@@ -116,6 +116,8 @@ sub new {
     # Load the configuration. stash it in ->config
     Jifty->config( Jifty::Config->new() );
 
+    # Create the Jifty classloader
+    Jifty::ClassLoader->new( base => 'Jifty' );
 
     # Now that we've loaded the configuration, we can remove the temporary 
     # Jifty::DBI::Record baseclass for records and insert our "real" baseclass,
@@ -143,8 +145,8 @@ sub new {
     # Now that we have the config set up and loaded plugins,
     # load the localization files.
     Jifty::I18N->refresh();
-    
-    # Get a classloader set up
+
+    # Get the application classloader set up
     my $class_loader = Jifty::ClassLoader->new(
         base => Jifty->app_class,
     );
