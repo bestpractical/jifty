@@ -78,6 +78,7 @@ $page => 1
 $per_page => 25
 $collapsed => 1
 $new_slot => 1
+$region
 </%args>
 <%init>
 my $model_columns = Jifty::Model::ModelClassColumnCollection->new;

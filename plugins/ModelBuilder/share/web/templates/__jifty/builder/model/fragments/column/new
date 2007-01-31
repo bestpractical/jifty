@@ -7,7 +7,7 @@
 
 <% $create->form_field('name') %>
 <% $create->form_field('label') %>
-<% $create->form_field('storage_type') %>
+<% $create->form_field('storage_type', mandatory => 1) %>
 <% $create->form_field('default_value') %>
 <% $create->form_field('mandatory') %>
 <% $create->form_field('distinct_value') %>

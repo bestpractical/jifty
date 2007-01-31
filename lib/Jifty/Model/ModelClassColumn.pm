@@ -22,6 +22,7 @@ use base qw( Jifty::Record );
 
 use Jifty::DBI::Schema;
 use Jifty::Model::ModelClass;
+use Module::Pluggable search_path => [ 'Jifty::Web::Form::Field' ];
 use Scalar::Defer;
 
 use Jifty::Record schema {
@@ -48,7 +49,8 @@ use Jifty::Record schema {
     column storage_type => 
         type is 'text',
         label is 'Storage type',
-        hints is 'The kind of data that is being stored. Use "text" if you are not sure.';
+        hints is 'The kind of data that is being stored. Use "text" if you are not sure.',
+        is autocompleted;
 
     column max_length => 
         type is 'int',
@@ -93,7 +95,8 @@ use Jifty::Record schema {
     column render_as => 
         type is 'text',
         label is 'Render as',
-        hints is 'The kind of widget to use to edit the information.';
+        hints is 'The kind of widget to use to edit the information.',
+        is autocompleted;
 
     # FIXME should actually be a reference to  a list
     column filters => 
@@ -175,5 +178,52 @@ The metadata table first appeared in Jifty version 0.70127
 =cut
 
 sub since {'0.70127'}
+
+=head2 autocomplete_storage_type
+
+This attempts to discover the available column types from the DBI handle using C<type_info>.
+
+=cut
+
+# XXX Should this information be cached?
+sub autocomplete_storage_type {
+    my ($self, $string) = @_;
+    
+    # Generic defaults
+    # TODO These should be loaded from somewhere or a constant somewhere else?
+    # TODO Add more default choices.
+    my @choices = qw/
+        text
+        int
+        timestamp
+    /;
+
+    if (Jifty->handle && Jifty->handle->dbh) {
+        my @type_info = Jifty->handle->dbh->type_info;
+        if (@type_info) {
+            @choices = map { $_->{TYPE_NAME} } @type_info;
+        }
+    }
+
+    my $qstring = $string ? quotemeta $string : '.*';
+    my @matches = grep /$qstring/, @choices;
+
+    return @matches;
+}
+
+=head2 autocomplete_render_as
+
+Searches the list of Jifty form widgets to suggest options.
+
+=cut
+
+sub autocomplete_render_as {
+    my ($self, $string) = @_;
+
+    my $qstring = $string ? quotemeta $string : '.*';
+    my @widgets = grep /$qstring/, map { /(\w+)$/ } $self->plugins;
+
+    return @widgets;
+}
 
 1;

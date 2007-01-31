@@ -23,7 +23,7 @@
 
 <% $update->form_value('name') %>
 <% $update->form_field('label') %>
-<% $update->form_field('storage_type') %>
+<% $update->form_field('storage_type', mandatory => 1) %>
 <% $update->form_field('default_value') %>
 <% $update->form_field('mandatory') %>
 <% $update->form_field('distinct_value') %>
