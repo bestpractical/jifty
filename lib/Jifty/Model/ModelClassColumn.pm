@@ -47,7 +47,7 @@ use Jifty::Record schema {
     # FIXME should be a ref to a list of storage types
     column storage_type => 
         type is 'text',
-        label is 'type',
+        label is 'Storage type',
         hints is 'The kind of data that is being stored. Use "text" if you are not sure.';
 
     column max_length => 
