@@ -3,6 +3,8 @@
 
 %# XXX Should these be broken into collapsible sections?
 <div class="jifty_admin create item">
+<% $create->hidden( model_class => $model_class ) %>
+
 <% $create->form_field('name') %>
 <% $create->form_field('label') %>
 <% $create->form_field('storage_type') %>
@@ -37,6 +39,7 @@
 ) %>
 
 <%args>
+$model_class
 $region
 </%args>
 <%init>

@@ -4,9 +4,9 @@
 
 <div class="list">
 % if ($model_classes->pager->total_entries == 0) {
-    <% _('No items found') %>
+    <% _('No models found') %>
 % } else {
-    <% _('%1 entries', $model_classes->count) %>
+    <% _('%1 models', $model_classes->count) %>
 % }
 
 <%perl>

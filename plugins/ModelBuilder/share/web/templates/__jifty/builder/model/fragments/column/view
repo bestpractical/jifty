@@ -19,6 +19,7 @@
 
 <% $delete->hidden( id => $id ) %>
 
+<% $update->form_value('name') %>
 <% $update->form_value('label') %>
 <% $update->form_value('storage_type') %>
 <hr/>

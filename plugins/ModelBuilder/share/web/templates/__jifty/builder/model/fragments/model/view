@@ -1,19 +1,26 @@
 <div class="jifty_admin read item ModelClass">
 <% Jifty->web->form->submit(
-        class   => 'editlink',
-        label   => _('Delete'),
-        onclick => [
-            { confirm => _('Confirm delete?') },
-            { submit  => $delete },
-            { delete  => Jifty->web->current_region->qualified_name },
-        ]) %>
+    class   => 'editlink',
+    label   => _('Delete'),
+    onclick => [
+        { confirm => _('Confirm delete?') },
+        { submit  => $delete },
+        { delete  => Jifty->web->current_region->qualified_name },
+    ],
+) %>
 <% Jifty->web->link(
-        class   => 'editlink',
-        label   => _('Edit'),
-        onclick => {
-            replace_with => '/__jifty/builder/model/fragments/model/update',
-            args         => { id => $id },
-        }) %>
+    class   => 'editlink',
+    label   => _('Edit'),
+    onclick => {
+        replace_with => '/__jifty/builder/model/fragments/model/update',
+        args         => { id => $id },
+    },
+) %>
+<% Jifty->web->link(
+    class   => 'editlink',
+    label   => _('Records'),
+    url     => '/__jifty/admin/model/' . $model_class->name,
+) %>
 
 <% $delete->hidden( id => $id ) %>
 

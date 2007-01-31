@@ -63,8 +63,12 @@ while (my $model_column = $model_columns->next) {
 <%perl>
 if ($new_slot && !$collapsed) {
     Jifty->web->region(
-        name => 'new-model-column',
-        path => '/__jifty/builder/model/fragments/column/new');
+        name     => 'new-model-column',
+        path     => '/__jifty/builder/model/fragments/column/new',
+        defaults => {
+            model_class => $model_class,
+        },
+    );
 }
 </%perl>
 
@@ -78,4 +82,9 @@ $new_slot => 1
 <%init>
 my $model_columns = Jifty::Model::ModelClassColumnCollection->new;
 $model_columns->limit( column => 'model_class', value => $model_class );
+
+$model_columns->set_page_info(
+    current_page => $page,
+    per_page     => $per_page,
+);
 </%init>

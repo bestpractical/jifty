@@ -1,0 +1,57 @@
+<div class="jifty_admin update item ModelClass">
+<div class="editlink">
+<% Jifty->web->link(
+    label   => _('Save'),
+    onclick => [
+        { submit => $update },
+        {
+            replace_with => '/__jifty/builder/model/fragments/model/view',
+            args         => { id => $id },
+        },
+    ],
+) %>
+<% Jifty->web->link(
+    label     => _('Cancel'),
+    onlick    => {
+        replace_with => '/__jifty/builder/model/fragments/model/view',
+        args         => { id => $id },
+    },
+    as_button => 1,
+) %>
+</div>
+
+<% $update->hidden( model_class => $model_class ) %>
+
+%# XXX See ./new for comments on field order.
+
+<% $update->form_field('name') %>
+<% $update->form_field('label') %>
+<% $update->form_field('storage_type') %>
+<% $update->form_field('default_value') %>
+<% $update->form_field('mandatory') %>
+<% $update->form_field('distinct_value') %>
+<% $update->form_field('hints') %>
+<% $update->form_field('description') %>
+
+<% $update->form_field('max_length') %>
+<% $update->form_field('render_as') %>
+<% $update->form_field('readable') %>
+<% $update->form_field('writable') %>
+<% $update->form_field('indexed') %>
+
+%# TODO Add teh rest of the fields.
+</div>
+
+<%args>
+$id
+</%args>
+<%init>
+my $model_column = Jifty::Model::ModelClass->new;
+$model_column->load($id);
+
+my $update = Jifty->web->new_action(
+    class   => 'Jifty::Action::UpdateModelClassColumn',
+    moniker => 'update-model-column-' . Jifty->web->serial,
+    record  => $model_column,
+);
+</%init>
