@@ -118,6 +118,7 @@ sub add_column {
     for (qw(readable writable hints indexed max_length render_as mandatory)) {
         $column->$_( $col->$_() );
     }
+    $column->distinct( $col->distinct_value );
     $column->type( $col->storage_type );
     $self->qualified_class->_init_methods_for_column($column);
 }
