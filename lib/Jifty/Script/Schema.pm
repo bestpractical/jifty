@@ -546,6 +546,7 @@ Jifty::Script::Schema - Create SQL to update or create your Jifty app's tables
    --setup            Upgrade or install the database, creating it if need be
    --create-database  Only creates the database
    --drop-database    Drops the database
+   --ignore-reserved-words   Ignore any SQL reserved words in schema definition
 
    --help             brief help message
    --man              full documentation
@@ -579,6 +580,11 @@ may include CREATE TABLE or ALTER TABLE commands.  This option is
 assumed if the database does not exist, or the database version is not
 the same as the application's version.
 
+=item B<--ignore-reserved-words>
+
+Ignore any SQL reserved words used in table or column deffinitions, if
+this option is not used and a reserved word is found it will cause an error.
+
 =item B<--help>
 
 Print a brief help message and exits.
@@ -601,6 +607,13 @@ Jifty's database.
 correctly configured your Jifty database in
 I<ProjectRoot>C</etc/config.yml>, because the SQL generated may depend
 on the database type.)
+
+By default checks for SQL reserved words in your table names and
+column definitions, throwing an error if any are found.  
+
+If you want to permanently turn this behaviour off you can set
+CheckSchema to 0 in the database section of your applications config
+file.
 
 =head1 BUGS
 
