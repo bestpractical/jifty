@@ -3,7 +3,7 @@ package Jifty::View::Declare::BaseClass;
 use strict;
 use warnings;
 use vars qw( $r );
-use base qw/Jifty::View::Declare::Helpers/;
+use base qw/Exporter Jifty::View::Declare::Helpers/;
 use Scalar::Defer;
 use Template::Declare::Tags;
 use Jifty::View::Declare::Helpers;

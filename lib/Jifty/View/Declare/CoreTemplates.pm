@@ -65,11 +65,10 @@ sub wrapper (&) {
         defined $title or return;
         return if $done_header++;
 
-        local $Template::Declare::Tags::BUFFER = '';
-
+        Template::Declare->new_buffer_frame;
         render_header($title);
-
-        $done_header = $Template::Declare::Tags::BUFFER;
+        $done_header = Template::Declare->buffer->data;
+        Template::Declare->end_buffer_frame;
 
 
         '';
@@ -122,11 +121,9 @@ sub wrapper (&) {
                 script { outs('new Jifty.Subs({}).start();') };
             }
         };
-        outs_raw('</body></html>');
     };
 
-    $Template::Declare::Tags::BUFFER =
-      $done_header . $Template::Declare::Tags::BUFFER;
+        Template::Declare->buffer->data( $done_header . Template::Declare->buffer->data);
 }
 
 template '_elements/sidebar' => sub {
@@ -1542,7 +1539,7 @@ template '__jifty/webservices/xml' => sub {
 
     $writer->endTag();
     Jifty->handler->apache->content_type('text/xml; charset=utf-8');
-    out_raws($output);
+    Jifty->web->out($output);
 };
 
 template '__jifty/webservices/yaml' => sub {

@@ -277,7 +277,7 @@ sub render_as_subrequest {
 
     my $orig_out = Jifty->handler->mason->interp->out_method || \&Jifty::View::Mason::Handler::out_method;
 
-    Jifty->handler->mason->interp->out_method($out_method);
+    #   Jifty->handler->mason->interp->out_method($out_method);
 
     # Make a fake request and throw it at the dispatcher
     my $subrequest = Jifty->web->request->clone;

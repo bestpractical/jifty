@@ -33,6 +33,7 @@ $mech->content_like(qr/got the grail/, "Running the action produces the expected
 
 #### Create and call
 # Create a continuation
+diag($mech->content);
 ok($mech->find_link( text => "Get help" ), "'Get Help' link exists");
 $mech->follow_link_ok( text => "Get help" );
 

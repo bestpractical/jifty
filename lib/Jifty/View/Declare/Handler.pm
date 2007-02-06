@@ -29,7 +29,7 @@ sub show {
     no warnings qw/redefine utf8/;
     local *Jifty::Web::out = sub {
         shift;    # Turn the method into a function
-        unless ( Jifty->handler->apache->http_header_sent ) {
+        unless ( Jifty->handler->apache->http_header_sent ||Jifty->web->request->is_subrequest ) {
             Jifty->handler->apache->send_http_header();
         }
 
