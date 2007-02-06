@@ -168,4 +168,69 @@ information -- this is particularly key for dealing with parameters
 which were mapped by the request mapper.  Finally, it displays
 any messages and errors from actions.
 
+=head2 EXAMPLES
+
+=head3 Hidden information that shows after click on a link
+
+It's ofetn required to hide some extra information, a list of objects
+or something else under a link. User clicks on the link and the
+information you're hiding shows up instead of the link. Regions could
+help you to do this task very easy.
+
+First of all you'll need a region's component F<templates/additional_info>:
+
+    <%args>
+    $collapsed => 1
+    ... some other arguments required to show correct info ...
+    </%args>
+    % if ( $collapsed ) {
+    <% Jifty->web->link(
+        label   => _('text of the link'),
+        onclick => {
+            refresh_self => 1,
+            args         => { %ARGS, collapsed => 0 },
+        },
+    ) %>
+    % } else {
+    .... here we show our additional info ...
+    % }
+
+In this component we have one argument C<$collapsed> that controls either
+we show link or information. By default we prefer hidden state and in this
+case we show only the link with an C<onclick> action that refreshes the
+current region, however value of the argument is overriden.
+
+You can add any arguments you want to this component that may be required
+to show the additional information, for example an id of some object, but
+you should remeber to use this arguments during links generation.
+
+Next thing you should do is to add a region to some page:
+
+    ... and region:
+    <% Jifty->web->region(
+        name => 'block_name',
+        path => '/additional_info',
+        defaults => { ... some args required to show the info ... },
+    ) %>
+    ... other information on the page
+
+That's all. Things should just work.
+
+Smarty ones should mention that the link disappears after click, but may
+be you want show/hide functionality. This is very easy task when we know how
+to use links generation. In the component's else branch add:
+
+    % } else {
+    <% Jifty->web->link(
+        label   => _('text of the link that hides'),
+        onclick => {
+            refresh_self => 1,
+            args         => { %ARGS, collapsed => 1 },
+        },
+    ) %>
+    .... here we show our additional info ...
+    % }
+
+Wow! Works again. Enjoy.
+
 =cut
