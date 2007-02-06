@@ -80,38 +80,55 @@ sub new_edit {
     return $edit;
 }
 
-sub __create {
-    my ($self, %attribs) = @_;
-    my $uuid = ($attribs{__uuid} ||= Jifty::Util->generate_uuid);
-    my $rv = $self->SUPER::__create(%attribs);
-    if ($rv) {
-        # Write to SQL!
-        my $edit= $self->new_edit;
+sub _dump {
+    local $YAML::Syck::Headless = 1;
+    local $YAML::Syck::ImplicitTyping = 1;
+    local $YAML::Syck::ImplicitBinary = 1;
+    local $YAML::Syck::ImplicitUnicode = 1;
+    YAML::Syck::Dump($_[1]);
+}
 
-        local $YAML::Syck::Headless = 1;
-        local $YAML::Syck::ImplicitTyping = 1;
-        local $YAML::Syck::ImplicitBinary = 1;
-        local $YAML::Syck::ImplicitUnicode = 1;
+sub _edit {
+    my ($self, $code, $rv) = @_;
+    return $rv unless $rv;
 
-        foreach my $key (sort keys %attribs) {
-            next if $key eq '__uuid';
-            $edit->add_file("=/$uuid/$key");
-            $edit->modify_file("=/$uuid/$key", YAML::Syck::Dump($attribs{$key}));
-        }
+    my $edit = $self->new_edit;
+    $code->($edit);
+    $edit->close_edit;
 
-        $edit->close_edit;
-    }
     return $rv;
 }
 
+sub __create {
+    my ($self, %attribs) = @_;
+    my $uuid = ($attribs{__uuid} ||= Jifty::Util->generate_uuid);
+
+    $self->_edit(sub {
+        my $edit = shift;
+        foreach my $key (sort keys %attribs) {
+            next if $key eq '__uuid';
+            $edit->add_file("=/$uuid/$key");
+            $edit->modify_file("=/$uuid/$key", $self->_dump($attribs{$key}));
+        }
+    }, $self->SUPER::__create(%attribs));
+}
+
 sub __set {
-    my $self = shift;
-    return $self->SUPER::__set(@_);
+    my ($self, %attribs) = @_;
+    $self->_edit(sub {
+        my $edit = shift;
+        my $uuid = $self->__uuid or return;
+        $edit->modify_file("=/$uuid/$attribs{column}", $self->_dump($attribs{value}));
+    }, $self->SUPER::__set(%attribs));
 }
 
 sub __delete {
     my $self = shift;
-    return $self->SUPER::__set(@_);
+    $self->_edit(sub {
+        my $edit = shift;
+        my $uuid = $self->__uuid or return;
+        $edit->delete_entry("=/$uuid");
+    }, $self->SUPER::__delete(@_));
 }
 
 1;
