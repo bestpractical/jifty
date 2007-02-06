@@ -29,15 +29,13 @@ sub show {
     no warnings qw/redefine utf8/;
     local *Jifty::Web::out = sub {
         shift;    # Turn the method into a function
+        goto &Template::Declare::Tags::outs_raw;
+    };
+    my $content =Template::Declare::Tags::show($code_template);
         unless ( Jifty->handler->apache->http_header_sent ||Jifty->web->request->is_subrequest ) {
             Jifty->handler->apache->send_http_header();
         }
-
-        local $Template::Declare::Tags::BUFFER = '';
-        goto &Template::Declare::Tags::outs_raw;
-    };
-    print STDOUT Template::Declare::Tags::show($code_template);
-
+    print STDOUT $content;
     return undef;
 }
 

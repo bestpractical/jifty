@@ -1539,7 +1539,7 @@ template '__jifty/webservices/xml' => sub {
 
     $writer->endTag();
     Jifty->handler->apache->content_type('text/xml; charset=utf-8');
-    Jifty->web->out($output);
+    outs_raw($output);
 };
 
 template '__jifty/webservices/yaml' => sub {
