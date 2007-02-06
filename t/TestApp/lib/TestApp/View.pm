@@ -12,4 +12,9 @@ template 'concrete2.html' => sub  {
     }
 };
 
+
+template 'die.html' => sub {
+    die "this is an error";
+};
+
 1;

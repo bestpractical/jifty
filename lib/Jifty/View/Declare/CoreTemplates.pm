@@ -1564,32 +1564,16 @@ template 'index.html' => page {
 template '__jifty/error/mason_internal_error' => page {
     { title is _('Something went awry') }
     my $cont = Jifty->web->request->continuation;
-    $cont->response->error;
-
-=begin TODO
-    
-    my $wrapper = "/_elements/wrapper";
-
-    my $cont = Jifty->web->request->continuation;
-    $wrapper = "/__jifty/error/_elements/wrapper"
-        if $cont and $cont->request->path eq "/__jifty/error/mason_internal_error";
+    #my $wrapper = "/__jifty/error/_elements/wrapper" if $cont and $cont->request->path eq "/__jifty/error/mason_internal_error";
 
     # If we're not in devel, bail
-    if (   not Jifty->config->framework("DevelMode")
-        or not $cont )
-    {
-        $m->comp(
-            $wrapper,
-            content => sub {
-                $m->comp( "_elements/error_text",
-                    error => "mason internal error" );
-            },
-            title => "Something went awry"
-        );
-        $m->abort;
+    if ( not Jifty->config->framework("DevelMode") or not $cont ) {
+            show("_elements/error_text");
+    #    return;
     }
 
     my $e   = $cont->response->error;
+    if (ref($e)) {
     my $msg = $e->message;
     $msg =~ s/, <\S+> (line|chunk) \d+\././;
 
@@ -1597,57 +1581,54 @@ template '__jifty/error/mason_internal_error' => page {
     my $file  = $info->{file};
     my @lines = @{ $info->{lines} };
     my @stack = @{ $info->{frames} };
-<&| $wrapper, title => "Mason error" & >
 
-    Error in < &. line,
-    file => $file,
-    line => "@lines" & > <pre> < %$msg % > </pre>
+        outs('Error in ');
+        _error_line( $file, "@lines" );
+        pre {$msg};
 
-    < %Jifty->web->return( label => _("Try again") ) % >
+        Jifty->web->return( label => _("Try again") );
 
-    h2 { Call stack };
-ul {
-    %for my $frame (@stack){
-        %next
-            if $frame->filename =~ m{/HTML/Mason/};
+    h2 { 'Call stack' };
+    ul {
+        for my $frame (@stack) {
+            next if $frame->filename =~ m{/HTML/Mason/};
             li {
-            <& .line, file => $frame->filename,
-                line => $frame->line & >;
-            }
-            %}
+                _error_line( $frame->filename, $frame->line );
+                }
         }
+    }; 
+    } else {
+    pre {$e};
+    }
+};
 
-        < /&>
+sub _error_line {
 
-<%def .line>
-my (
-$file
-$line
-) = get(qw());
-%   if (-w $file) {
-%     my $path = $file;
-%     for (map {$_->[1]} @{Jifty->handler->mason->interp->comp_root}) {
-%       last if $path =~ s/ ^ \Q $_\E //;
-    %} % if ( $path ne $file ) {
-        template < %Jifty->web->tangent(
-            url =>
-                "/__jifty/edit/mason_component$path",
-            label      => "$path line " . $line,
-            parameters => { line => $line }
-            ) % > %} else {
-            <% Jifty-> web->tangent(
-                url => "/__jifty/edit/library$path",
+    my ( $file, $line ) = (@_);
+    if ( -w $file ) {
+        my $path = $file;
+        for ( map { $_->[1] } @{ Jifty->handler->mason->interp->comp_root } )
+        {
+            last if $path =~ s/ ^ \Q $_\E //;
+        }
+        if ( $path ne $file ) {
+            outs('template ');
+            tangent(
+                url        => "/__jifty/edit/mason_component$path",
                 label      => "$path line " . $line,
                 parameters => { line => $line }
-            ) % > %} %;
+            );
+        } else {
+            tangent(
+                url        => "/__jifty/edit/library$path",
+                label      => "$path line " . $line,
+                parameters => { line => $line }
+            );
         }
-        else {
-            <% $file %> line <% $line %> %;
-        }
-        </%def>
+    } else {
+        outs( '%1 line %2', $file, $line );
+    }
 
-=cut
-
-};
+}
 
 1;
