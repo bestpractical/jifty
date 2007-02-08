@@ -1440,7 +1440,11 @@ template '__jifty/webservices/xml' => sub {
     }
 
     $writer->endTag();
-    Jifty->handler->apache->content_type('text/xml; charset=utf-8');
+    Jifty->handler->apache->content_type('text/xml; charset=UTF-8');
+
+    # For some reason, this line is needed, lest we end up outputting ISO-8859-1 text
+    utf8::decode($output);
+
     outs_raw($output);
 };
 
