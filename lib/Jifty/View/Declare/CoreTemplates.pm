@@ -10,11 +10,12 @@ use Scalar::Defer;
 
 template '_elements/nav' => sub {
     my $top = Jifty->web->navigation;
-    $top->child( Home => url => "/", sort_order => 1 );
+    $top->child( Home => url => "/", sort_order => 1, label => _('Home') );
     if ( Jifty->config->framework('AdminMode') ) {
         $top->child(
             Administration =>
               url          => "/__jifty/admin/",
+            label      => _('Administration'),
             sort_order => 998
         );
         $top->child(
@@ -213,7 +214,7 @@ template '__jifty/admin/fragments/list/list' => sub {
 
     if ( $collection->pager->last_page > 1 ) {
         with( class => "page-count" ), span {
-            _( 'Page [_1] of [_2]', $page, $collection->pager->last_page );
+            _( 'Page %1 of %2', $page, $collection->pager->last_page );
           }
     }
 
@@ -361,7 +362,7 @@ template '__jifty/admin/fragments/list/update' => sub {
 };
 
 template '__jifty/admin/fragments/list/view' => sub {
-    my ( $id => undef $object_type ) = get(qw());
+    my ( $id, $object_type ) = get(qw( id object_type ));
     my $record_class = Jifty->app_class( "Model", $object_type );
     my $record = $record_class->new();
     $record->load($id);
