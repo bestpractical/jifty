@@ -94,13 +94,17 @@ msgstr "%1 と同じかそれ以前"
 msgid "(any)"
 msgstr "（指定なし）"
 
-#: lib/Jifty/Web/Form/Field.pm:549
+#: lib/Jifty/Web/Form/.Field.pm.swp:44 lib/Jifty/Web/Form/Field.pm:549
 msgid "@{[$self->current_value]}"
 msgstr ""
 
 #: share/web/templates/__jifty/admin/index.html:19
 msgid "Actions"
 msgstr "操作"
+
+#: share/web/templates/_elements/nav:5
+msgid "Administration"
+msgstr ""
 
 #: share/web/templates/_elements/wrapper:11
 msgid "Administration mode is enabled."
@@ -126,6 +130,10 @@ msgstr "管理画面に戻る"
 msgid "Back to the application"
 msgstr "アプリケーションに戻る"
 
+#: share/web/templates/__jifty/halo:117
+msgid "Bindings"
+msgstr ""
+
 #: share/web/templates/helpers/calendar.html:4
 #. (_ &><body class="calpopup"><a href="#" onclick="window.close()
 msgid "Calendar"
@@ -134,6 +142,10 @@ msgstr "カレンダー"
 #: share/web/templates/__jifty/admin/fragments/list/update:31
 msgid "Cancel"
 msgstr "キャンセル"
+
+#: share/web/templates/__jifty/halo:81
+msgid "Children"
+msgstr ""
 
 #: share/web/templates/helpers/calendar.html:4
 msgid "Close window"
@@ -172,7 +184,7 @@ msgstr "削除しました"
 msgid "Done?"
 msgstr ""
 
-#: share/web/templates/__jifty/admin/fragments/list/view:40
+#: share/web/templates/__jifty/admin/fragments/list/view:40 share/web/templates/__jifty/halo:20
 msgid "Edit"
 msgstr "編集"
 
@@ -189,6 +201,10 @@ msgstr "ホームページに戻ります…"
 #. ($u->$method()
 msgid "Hiya, %1."
 msgstr "%1 さん、こんにちは"
+
+#: share/web/templates/_elements/nav:3
+msgid "Home"
+msgstr ""
 
 #: share/web/templates/__jifty/admin/index.html:1
 msgid "Jifty Administrative Console"
@@ -235,7 +251,7 @@ msgstr "排除したい文字列"
 msgid "No items found"
 msgstr "見つかりませんでした"
 
-#: lib/Jifty/Web.pm:299
+#: lib/Jifty/Web.pm:300
 msgid "No request to handle"
 msgstr "処理できるリクエストがありません"
 
@@ -243,18 +259,35 @@ msgstr "処理できるリクエストがありません"
 msgid "Online Documentation"
 msgstr "オンラインドキュメント"
 
+#: share/web/templates/_elements/nav:6
+msgid "Online docs"
+msgstr ""
+
 #: share/web/templates/__jifty/admin/fragments/list/list:80
 #. ($page, $collection->pager->last_page)
 msgid "Page %1 of %2"
 msgstr "%1 / %2 ページ"
 
-#: lib/Jifty/Record.pm:240 lib/Jifty/Record.pm:319 lib/Jifty/Record.pm:60
+#: share/web/templates/__jifty/halo:1
+msgid "Page info"
+msgstr ""
+
+#: share/web/templates/__jifty/halo:72
+msgid "Parent"
+msgstr ""
+
+#: lib/Jifty/Record.pm:264 lib/Jifty/Record.pm:343 lib/Jifty/Record.pm:68
 msgid "Permission denied"
 msgstr "権限がありません"
 
 #: share/web/templates/__jifty/admin/fragments/list/list:108
 msgid "Previous Page"
 msgstr "前のページ"
+
+#: share/web/templates/__jifty/halo:69
+#. ($frame->{'render_time'})
+msgid "Rendered in %1s"
+msgstr ""
 
 #: share/web/templates/__jifty/admin/action/dhandler:20
 msgid "Run the action"
@@ -296,7 +329,7 @@ msgstr "原因不明のエラーです"
 msgid "The passwords you typed didn't match each other"
 msgstr "パスワードが一致しません"
 
-#: lib/Jifty/Web.pm:362
+#: lib/Jifty/Web.pm:363
 msgid "There was an error completing the request.  Please try again later."
 msgstr "リクエストの処理中にエラーが発生しました。しばらく待ってから再度試してみてください"
 
@@ -319,6 +352,10 @@ msgstr "再度試してみてください"
 #: lib/Jifty/Action/Record/Update.pm:156
 msgid "Updated"
 msgstr "更新しました"
+
+#: share/web/templates/__jifty/halo:93
+msgid "Variables"
+msgstr ""
 
 #: share/web/templates/index.html:1
 msgid "Welcome to your new Jifty application"
@@ -348,3 +385,11 @@ msgstr "昇順"
 #: share/web/templates/__jifty/admin/fragments/list/header:41
 msgid "desc"
 msgstr "降順"
+
+#: lib/Jifty/Manual/PageRegions.pod:188
+msgid "text of the link"
+msgstr ""
+
+#: lib/Jifty/Manual/PageRegions.pod:225
+msgid "text of the link that hides"
+msgstr ""

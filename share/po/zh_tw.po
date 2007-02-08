@@ -36,7 +36,7 @@ msgstr "%1 包含"
 #: share/web/templates/__jifty/admin/fragments/list/list:87
 #. ($collection-> count)
 msgid "%1 entries"
-msgstr ""
+msgstr "共 %1 筆"
 
 #: lib/Jifty/Action/Record/Search.pm:123
 #. ($label)
@@ -93,13 +93,17 @@ msgstr "%1 至"
 msgid "(any)"
 msgstr "(不限)"
 
-#: lib/Jifty/Web/Form/Field.pm:549
+#: lib/Jifty/Web/Form/.Field.pm.swp:44 lib/Jifty/Web/Form/Field.pm:549
 msgid "@{[$self->current_value]}"
 msgstr ""
 
 #: share/web/templates/__jifty/admin/index.html:19
 msgid "Actions"
 msgstr "操作"
+
+#: share/web/templates/_elements/nav:5
+msgid "Administration"
+msgstr "管理介面"
 
 #: share/web/templates/_elements/wrapper:11
 msgid "Administration mode is enabled."
@@ -119,11 +123,15 @@ msgstr "任意欄位包含"
 
 #: share/web/templates/__jifty/admin/action/dhandler:25 share/web/templates/__jifty/admin/model/dhandler:21
 msgid "Back to the admin console"
-msgstr "回到管理界面"
+msgstr "回到管理介面"
 
 #: share/web/templates/__jifty/admin/index.html:29
 msgid "Back to the application"
 msgstr "回到應用程式"
+
+#: share/web/templates/__jifty/halo:117
+msgid "Bindings"
+msgstr "快速鍵"
 
 #: share/web/templates/helpers/calendar.html:4
 #. (_ &><body class="calpopup"><a href="#" onclick="window.close()
@@ -134,13 +142,17 @@ msgstr "日曆"
 msgid "Cancel"
 msgstr "取消"
 
+#: share/web/templates/__jifty/halo:81
+msgid "Children"
+msgstr "子元件"
+
 #: share/web/templates/helpers/calendar.html:4
 msgid "Close window"
 msgstr "關閉視窗"
 
 #: share/web/templates/__jifty/admin/fragments/list/view:31
 msgid "Confirm delete?"
-msgstr "確定要刪除?"
+msgstr "是否確定刪除?"
 
 #: share/web/templates/__jifty/admin/fragments/list/new_item:25
 msgid "Create"
@@ -173,9 +185,9 @@ msgstr "關閉"
 
 #: share/web/templates/__jifty/admin/index.html:28 share/web/templates/__jifty/admin/model/dhandler:20
 msgid "Done?"
-msgstr "已完成？"
+msgstr "設定完畢?"
 
-#: share/web/templates/__jifty/admin/fragments/list/view:40
+#: share/web/templates/__jifty/admin/fragments/list/view:40 share/web/templates/__jifty/halo:20
 msgid "Edit"
 msgstr "編輯"
 
@@ -192,6 +204,10 @@ msgstr "回首頁..."
 #. ($u->$method()
 msgid "Hiya, %1."
 msgstr "%1 您好."
+
+#: share/web/templates/_elements/nav:3
+msgid "Home"
+msgstr "首頁"
 
 #: share/web/templates/__jifty/admin/index.html:1
 msgid "Jifty Administrative Console"
@@ -238,7 +254,7 @@ msgstr "沒有欄位包含"
 msgid "No items found"
 msgstr "未找到記錄"
 
-#: lib/Jifty/Web.pm:299
+#: lib/Jifty/Web.pm:300
 msgid "No request to handle"
 msgstr "沒有可處理的要求"
 
@@ -246,12 +262,24 @@ msgstr "沒有可處理的要求"
 msgid "Online Documentation"
 msgstr "線上文件"
 
+#: share/web/templates/_elements/nav:6
+msgid "Online docs"
+msgstr "線上文件"
+
 #: share/web/templates/__jifty/admin/fragments/list/list:80
 #. ($page, $collection->pager->last_page)
 msgid "Page %1 of %2"
 msgstr "第 %1 頁, 共 %2 頁"
 
-#: lib/Jifty/Record.pm:240 lib/Jifty/Record.pm:319 lib/Jifty/Record.pm:60
+#: share/web/templates/__jifty/halo:1
+msgid "Page info"
+msgstr "頁面資訊"
+
+#: share/web/templates/__jifty/halo:72
+msgid "Parent"
+msgstr "上層元件"
+
+#: lib/Jifty/Record.pm:264 lib/Jifty/Record.pm:343 lib/Jifty/Record.pm:68
 msgid "Permission denied"
 msgstr "權限不足."
 
@@ -262,6 +290,11 @@ msgstr "上一頁"
 #:
 msgid "Record created"
 msgstr "成功建立項目."
+
+#: share/web/templates/__jifty/halo:69
+#. ($frame->{'render_time'})
+msgid "Rendered in %1s"
+msgstr "頁面繪製時間: %1 秒"
 
 #: share/web/templates/__jifty/admin/action/dhandler:20
 msgid "Run the action"
@@ -303,17 +336,17 @@ msgstr "欄位內容錯誤."
 msgid "The passwords you typed didn't match each other"
 msgstr "兩組密碼不符合."
 
-#: lib/Jifty/Web.pm:362
+#: lib/Jifty/Web.pm:363
 msgid "There was an error completing the request.  Please try again later."
 msgstr "系統執行錯誤, 請稍候再試."
 
 #: share/web/templates/__jifty/admin/index.html:5
 msgid "This console lets you manage the records in your Jifty database. Below, you should see a list of all your database tables. Feel free to go through and add, delete or modify records."
-msgstr "您可利用此界面來管理資料庫的內容. 請點選表格名稱, 進行增刪及編輯."
+msgstr "您可利用此介面來管理資料庫的內容. 請點選表格名稱, 進行增刪及編輯."
 
 #: share/web/templates/__jifty/admin/index.html:7
 msgid "To disable this administrative console, add \"AdminMode: 0\" under the \"framework:\" settings in the config file (etc/config.yml)."
-msgstr "如欲停用管理界面, 請在設定檔 (etc/config.yml) 的 \"framework:\" 設定內加上 \"AdminMode: 0\" 即可."
+msgstr "如欲停用管理介面, 請在設定檔 (etc/config.yml) 的 \"framework:\" 設定內加上 \"AdminMode: 0\" 即可."
 
 #: share/web/templates/__jifty/admin/fragments/list/list:72
 msgid "Toggle search"
@@ -326,6 +359,10 @@ msgstr "再試一下"
 #: lib/Jifty/Action/Record/Update.pm:156
 msgid "Updated"
 msgstr "成功更新項目."
+
+#: share/web/templates/__jifty/halo:93
+msgid "Variables"
+msgstr "變數"
 
 #: share/web/templates/index.html:1
 msgid "Welcome to your new Jifty application"
@@ -355,3 +392,11 @@ msgstr "昇冪"
 #: share/web/templates/__jifty/admin/fragments/list/header:41
 msgid "desc"
 msgstr "降冪"
+
+#: lib/Jifty/Manual/PageRegions.pod:188
+msgid "text of the link"
+msgstr "連結文字"
+
+#: lib/Jifty/Manual/PageRegions.pod:225
+msgid "text of the link that hides"
+msgstr "隱藏連結文字"
