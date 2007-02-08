@@ -8,16 +8,6 @@ use Jifty::View::Declare -base;
 
 use Scalar::Defer;
 
-# template 'foo' => page {{ title is 'Foo' } ... };
-sub page (&) {
-    my $code = shift;
-    sub {
-        Jifty->handler->apache->content_type('text/html; charset=utf-8');
-        show('/_elements/nav');
-        wrapper($code);
-    };
-}
-
 template '_elements/nav' => sub {
     my $top = Jifty->web->navigation;
     $top->child( Home => url => "/", sort_order => 1 );
@@ -36,95 +26,6 @@ template '_elements/nav' => sub {
     }
     return ();
 };
-
-sub render_header {
-    my ($title) = @_;
-    outs_raw('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'
-            . '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">' );
-    with( title => $title ), show('/_elements/header');
-    div {
-        { id is 'headers' }
-        hyperlink(
-            url   => "/",
-            label => _( Jifty->config->framework('ApplicationName') )
-        );
-        with( class => "title" ), h1 { $title };
-    };
-}
-
-
-sub wrapper (&) {
-    my $content_code = shift;
-
-    my ($title) = get_current_attr(qw(title));
-
-    my $done_header;
-    my $render_header = sub {
-        no warnings qw( uninitialized redefine once );
-
-        defined $title or return;
-        return if $done_header++;
-
-        Template::Declare->new_buffer_frame;
-        render_header($title);
-        $done_header = Template::Declare->buffer->data;
-        Template::Declare->end_buffer_frame;
-
-
-        '';
-    };
-
-    body {
-        show('/_elements/sidebar');
-        with( id => "content" ), div {
-            with( name => 'content' ), a {};
-            if ( Jifty->config->framework('AdminMode') ) {
-                with( class => "warning admin_mode" ), div {
-                    outs( _('Alert') . ': ' );
-                    outs_raw(
-                        Jifty->web->tangent(
-                            label => _('Administration mode is enabled.'),
-                            url   => '/__jifty/admin/'
-                        )
-                    );
-                  }
-            }
-            Jifty->web->render_messages;
-
-            {
-                no warnings qw( uninitialized redefine once );
-
-                local *is::title = sub {
-                    shift;
-                    $title = "@_";
-                    &$render_header;
-                };
-
-                &$content_code;
-                if ( !$done_header ) {
-                    $title = _("Untitled");
-                    &$render_header;
-                }
-            }
-
-            show('/_elements/keybindings');
-            with( id => "jifty-wait-message", style => "display: none" ),
-              div { _('Loading...') };
-
-# Jifty::Mason::Halo->render_component_tree if ( Jifty->config->framework('DevelMode') );
-
-            # This is required for jifty server push.  If you maintain your own
-            # wrapper, make sure you have this as well.
-            if (   Jifty->config->framework('PubSub')->{'Enable'}
-                && Jifty::Subs->list )
-            {
-                script { outs('new Jifty.Subs({}).start();') };
-            }
-        };
-    };
-
-        Template::Declare->buffer->data( $done_header . Template::Declare->buffer->data);
-}
 
 template '_elements/sidebar' => sub {
     with( id => "salutation" ), div {
