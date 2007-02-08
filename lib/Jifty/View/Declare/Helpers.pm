@@ -105,7 +105,7 @@ sub page (&) {
 }
 
 
-sub wrapper (&) {
+sub wrapper ($) {
     my $content_code = shift;
 
     my ($title) = get_current_attr(qw(title));

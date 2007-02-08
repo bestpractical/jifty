@@ -138,7 +138,7 @@ template '__jifty/admin/action/dhandler' => sub {
     );
 
     $action->sticky_on_failure(1);
-    wrapper {
+    page {
 
         form {
 
@@ -412,8 +412,8 @@ template '__jifty/admin/fragments/list/view' => sub {
 
 };
 
-template '__jifty/admin/index' => sub {
-    with( title => 'Jifty Administrative Console' ), wrapper {
+template '__jifty/admin/index' => page {
+    title is 'Jifty Administrative Console' ;
 
         h1 { _('Database Administration') };
 
@@ -463,10 +463,9 @@ template '__jifty/admin/index' => sub {
             to    => "/",
             label => _('Back to the application')
         );
-      }
 };
 
-template '__jifty/admin/model/dhandler' => sub {
+template '__jifty/admin/model/dhandler' => page {
     # XXX move to dispatcher
     my $object_type = die('$m->dhandler_arg');
 
@@ -474,7 +473,6 @@ template '__jifty/admin/model/dhandler' => sub {
       Jifty->app_class( "Model", $object_type . "Collection" );
     my $records = $collection_class->new();
     $records->unlimit;
-    wrapper {
         h1 { _( 'Manage records: [_1]', $object_type ) };
         form {
             Jifty->web->region(
@@ -494,7 +492,6 @@ template '__jifty/admin/model/dhandler' => sub {
             label => _('Back to the admin console')
         );
 
-      }
 };
 
 template '__jifty/autocomplete.xml' => sub {
