@@ -122,7 +122,6 @@ sub new {
             # the aliasing so we can remove trailing newlines
             my @lines = map {"$_"} @_;
             $logger->warn(map {chomp; $_} @lines);
-            carp (map {chomp; $_} @lines);
         }
         elsif ($previous_warning_handler) {
             # Fallback to the old handler
