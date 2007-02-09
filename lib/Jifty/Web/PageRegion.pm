@@ -15,7 +15,7 @@ can be updated via AJAX or via query parameters.
 =cut
 
 use base qw/Jifty::Object Class::Accessor::Fast/;
-__PACKAGE__->mk_accessors(qw(name default_path default_arguments qualified_name parent region_wrapper));
+__PACKAGE__->mk_accessors(qw(name force_path force_arguments default_path default_arguments qualified_name parent region_wrapper));
 use Jifty::JSON;
 
 =head2 new PARAMHASH
@@ -40,6 +40,15 @@ C</__jifty/empty>, which, as its name implies, is empty.
 Specifies an optional set of parameter defaults.  These should all be
 simple scalars, as they might be passed across HTTP if AJAX is used.
 
+=item force_arguments (optional)
+
+Specifies an optional set of parameter values. They will override anything
+sent by the user or set via AJAX.
+
+=item force_path (optional)
+
+A fixed path to the fragment that this page region contains.  Overrides anything set by the user.
+
 =item parent (optional)
 
 The parent L<Jifty::Web::PageRegion> that this region is enclosed in.
@@ -49,6 +58,9 @@ The parent L<Jifty::Web::PageRegion> that this region is enclosed in.
 A boolean; whether or not the region, when rendered, will include the
 HTML region preamble that makes Javascript aware of its presence.
 Defaults to true.
+
+
+=item
 
 =back
 
@@ -63,6 +75,8 @@ sub new {
                 path => "/__jifty/empty",
                 defaults => {},
                 parent => undef,
+                force_arguments => {},
+                force_path => undef,
                 region_wrapper => 1,
                 @_
                );
@@ -84,6 +98,8 @@ sub new {
     $self->qualified_name(Jifty->web->qualified_region($self));
     $self->default_path($args{path});
     $self->default_arguments($args{defaults});
+    $self->force_arguments($args{force_arguments});
+    $self->force_path($args{force_path});
     $self->arguments({});
     $self->parent($args{parent} || Jifty->web->current_region);
     $self->region_wrapper($args{region_wrapper});
@@ -158,7 +174,7 @@ sub argument {
     my $self = shift;
     my $name = shift;
     $self->{arguments}{$name} = shift if @_;
-    return $self->{arguments}{$name} || $self->default_argument($name);
+    return $self->force_arguments->{$name}||$self->{arguments}{$name} || $self->default_argument($name);
 }
 
 =head2 arguments [HASHREF]
@@ -171,7 +187,7 @@ also include all default arguments.
 sub arguments {
     my $self = shift;
     $self->{arguments} = shift if @_;
-    return { %{$self->{default_arguments}}, %{$self->{arguments}}};
+    return { %{$self->{default_arguments}}, %{$self->{arguments}}, %{$self->force_arguments}};
 }
 
 =head2 enter
@@ -179,7 +195,7 @@ sub arguments {
 Enters the region; this sets the qualified name based on
 L<Jifty::Web/qualified_region>, and uses that to pull runtime values
 for the L</path> and L</argument>s from the
-L<Jifty::Request/state_variables>.
+L<Jifty::Request/state_variables> before overriding them with the "force" versions.
 
 =cut
 
@@ -204,6 +220,12 @@ sub enter {
         # We should always inherit the state variables from the uplevel request.
         Jifty->web->set_variable($key => $value);
     }
+
+    for my $argument (keys %{$self->force_arguments}) {
+            $self->argument($argument => $self->force_arguments->{$argument});
+    }
+
+    $self->path($self->force_path) if ($self->force_path);
 }
 
 =head2 exit 
