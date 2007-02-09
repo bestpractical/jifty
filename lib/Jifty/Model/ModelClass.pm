@@ -73,6 +73,14 @@ sub after_create {
 }
 
 
+sub delete {
+    my $self = shift;
+    # XXX TODO: remove all columns here.
+    $self->qualified_class->drop_table_in_db();
+    return $self->SUPER::delete(@_);
+}
+
+
 =head2 qualified_class
 
 Returns the fully qualified class name of the model class described the current ModelClass object.

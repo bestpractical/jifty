@@ -46,17 +46,20 @@ my %new_widgets = ( 'TestApp::DatabaseBackedModels::Model::Widget' => {
 }
 );
 
+
+
 $DATABASE->_load_data(\%new_widgets);
 my $widgets = TestApp::DatabaseBackedModels::Model::WidgetCollection->new();
 $widgets->unlimit();
 is ($widgets->count,3, "We've loaded our two new widgets");
 
-
-my %new_tables =  ( 'Jifty::Model::ModelClass' => 
-    {
-        'cb05ac8c-afa5-11db-b33d-6f303ef246eb' => { name => 'Customer', description => 'People who pay us' },
-        'cb05ae08-afa5-11db-b33e-bbf514ba3e02' => { name => 'Vendor', description => 'People we avoid paying'} 
-
+{
+my %new_tables = (
+    'Jifty::Model::ModelClass' => {
+        'cb05ac8c-afa5-11db-b33d-6f303ef246eb' =>
+            { name => 'Customer', description => 'People who pay us' },
+        'cb05ae08-afa5-11db-b33e-bbf514ba3e02' =>
+            { name => 'Vendor', description => 'People we avoid paying' }
     }
 );
 $DATABASE->_load_data(\%new_tables);
@@ -64,4 +67,37 @@ can_ok('TestApp::DatabaseBackedModels::Model::Customer', 'new');
 can_ok('TestApp::DatabaseBackedModels::Model::Customer', 'create');
 isa_ok(TestApp::DatabaseBackedModels::Model::Customer->new(), 'Jifty::DBI::Record');
 
+my $obj = TestApp::DatabaseBackedModels::Model::Customer->create();
+ok($obj->id, "Created a customer.");
+}
 
+
+{
+my %new_tables = (
+    'Jifty::Model::ModelClass' => {
+        'cb05ac8c-afa5-11db-b33d-6f303ef246eb' =>
+            { name => 'Customer', description => 'People who pay us' },
+        'cb05ae08-afa5-11db-b33e-bbf514ba3e02' =>
+            { name => 'Vendor', description => 'People we avoid paying' }
+    },
+    'Jifty::Model::ModelClassColumn' => {
+            'cb05ac8c-afa5-11db-b33d-6f303ef246ef' => 
+                { name => 'name', type => 'text', model_class => 'cb05ac8c-afa5-11db-b33d-6f303ef246eb', default_value => 'Cogswell Cogs' }
+    } 
+);
+$DATABASE->_load_data(\%new_tables);
+can_ok('TestApp::DatabaseBackedModels::Model::Customer', 'new');
+can_ok('TestApp::DatabaseBackedModels::Model::Customer', 'create');
+can_ok('TestApp::DatabaseBackedModels::Model::Customer', 'name');
+can_ok('TestApp::DatabaseBackedModels::Model::Customer', 'set_name');
+isa_ok(TestApp::DatabaseBackedModels::Model::Customer->new(), 'Jifty::DBI::Record');
+my $customers = TestApp::DatabaseBackedModels::Model::CustomerCollection->new;
+$customers->unlimit();
+is($customers->count(),1);
+is($customers->first->name, 'Cogswell Cogs');
+can_ok('TestApp::DatabaseBackedModels::Model::Vendor', 'new');
+can_ok('TestApp::DatabaseBackedModels::Model::Vendor', 'create');
+ok(!can('TestApp::DatabaseBackedModels::Model::Vendor', 'name'));
+
+
+}

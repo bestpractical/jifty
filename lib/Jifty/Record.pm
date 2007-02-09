@@ -447,6 +447,15 @@ sub create_table_in_db {
 
 }
 
+sub drop_table_in_db {
+    my $class = shift;
+
+    my $statement = "DROP TABLE ".$class->table;
+        my $ret = Jifty->handle->simple_query($statement);
+        $ret or die "error creating table $class: " . $ret->error_message;
+
+}
+
 sub _make_schema { 
         my $class = shift;
 

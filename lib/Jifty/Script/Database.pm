@@ -2,7 +2,7 @@ use warnings;
 use strict;
 
 package Jifty::Script::Database;
-use base qw/App::CLI::Command/;
+use base qw/Jifty::Script/;
 
 
 use File::Path ();
@@ -49,7 +49,14 @@ sub load {
     my $self = shift;
     my @content = <STDIN>;
     my $content = Jifty::YAML::Load(join('',@content));
-    print Jifty::YAML::Dump($content)."\n";
+    #print Jifty::YAML::Dump($content)."\n";
+
+    $self->_load_data($content);
+}
+
+sub _load_data {
+    my $self = shift;
+    my $content = shift;
 
     $self->_load_data($content);
 }
@@ -80,7 +87,7 @@ sub load_content_for_class {
     local $@;
     eval {Jifty::Util->require($class)};
 
-        if ($@)  { Jifty->logger->log->fatal(
+        if ($@)  { $self->log->fatal(
         "There's no locally defined class called $class. Without that, we can't insert records into it: $@"
         );
     }
@@ -96,9 +103,9 @@ sub load_content_for_class {
 
         my ( $val, $msg ) = $class->create( %{ $content->{$id} } );
         if ($val) {
-            Jifty->logger->log->info("Inserting $id into $class: $val");
+            $self->log->info("Inserting $id into $class: $val");
         } else {
-            Jifty->logger->log->fatal(
+            $self->log->fatal(
                 "Failed to insert $id into $class: $val");
 
         }
@@ -116,11 +123,14 @@ sub upgrade_schema {
     my $current_tables = Jifty::Model::ModelClassCollection->new();
     $current_tables->unlimit();
     while ( my $table = $current_tables->next ) {
+        $self->log->debug("Thinking about upgrading table ".$table->name . "(".$table->__uuid .")");
         if ( my $new_table = delete $new_tables->{ $table->__uuid } ) {
+            $self->log->debug("It has the same uuid as tne proposed replacement");
 
             # we have the same table in the db and the dump
             # let's sync its attributes from the dump then sync its columns
             foreach my $key ( keys %$new_table ) {
+                $self->log->debug("Considering updating table attribute $key");
                 unless ( $table->$key() eq $new_table->{$key} ) {
                     my $method = "set_" . $key;
                     $table->$method( $new_table->{$key} );
@@ -161,6 +171,7 @@ sub upgrade_schema {
             }
 
         } else {
+            $self->log->debug("The new datamodel doesn't have this table anymore. Deleting");
 
             # we don't have the table anymore. That means we should delete it.
             # XXX TODO: this automatically deletes all the columns
@@ -177,6 +188,7 @@ sub _upgrade_create_new_tables {
     my $new_tables = shift;
     my $columns    = shift;
     foreach my $table ( values %$new_tables ) {
+        $self->log->debug("Creating a new table: ".$table->{name});
         delete $table->{id};
         my $class = Jifty::Model::ModelClass->new();
         my ( $val, $msg ) = $class->create( %{$table} );
