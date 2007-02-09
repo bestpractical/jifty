@@ -94,12 +94,16 @@ msgstr ""
 msgid "(any)"
 msgstr ""
 
-#: lib/Jifty/Web/Form/Field.pm:549
+#: lib/Jifty/Web/Form/.Field.pm.swp:44 lib/Jifty/Web/Form/Field.pm:549
 msgid "@{[$self->current_value]}"
 msgstr ""
 
 #: share/web/templates/__jifty/admin/index.html:19
 msgid "Actions"
+msgstr ""
+
+#: share/web/templates/_elements/nav:5
+msgid "Administration"
 msgstr ""
 
 #: share/web/templates/_elements/wrapper:11
@@ -126,6 +130,10 @@ msgstr ""
 msgid "Back to the application"
 msgstr ""
 
+#: share/web/templates/__jifty/halo:117
+msgid "Bindings"
+msgstr ""
+
 #: share/web/templates/helpers/calendar.html:4
 #. (_ &><body class="calpopup"><a href="#" onclick="window.close()
 msgid "Calendar"
@@ -133,6 +141,10 @@ msgstr ""
 
 #: share/web/templates/__jifty/admin/fragments/list/update:31
 msgid "Cancel"
+msgstr ""
+
+#: share/web/templates/__jifty/halo:81
+msgid "Children"
 msgstr ""
 
 #: share/web/templates/helpers/calendar.html:4
@@ -172,7 +184,7 @@ msgstr ""
 msgid "Done?"
 msgstr ""
 
-#: share/web/templates/__jifty/admin/fragments/list/view:40
+#: share/web/templates/__jifty/admin/fragments/list/view:40 share/web/templates/__jifty/halo:20
 msgid "Edit"
 msgstr ""
 
@@ -188,6 +200,10 @@ msgstr ""
 #: share/web/templates/_elements/sidebar:5
 #. ($u->$method()
 msgid "Hiya, %1."
+msgstr ""
+
+#: share/web/templates/_elements/nav:3
+msgid "Home"
 msgstr ""
 
 #: share/web/templates/__jifty/admin/index.html:1
@@ -235,7 +251,7 @@ msgstr ""
 msgid "No items found"
 msgstr ""
 
-#: lib/Jifty/Web.pm:299
+#: lib/Jifty/Web.pm:300
 msgid "No request to handle"
 msgstr ""
 
@@ -243,17 +259,34 @@ msgstr ""
 msgid "Online Documentation"
 msgstr ""
 
+#: share/web/templates/_elements/nav:6
+msgid "Online docs"
+msgstr ""
+
 #: share/web/templates/__jifty/admin/fragments/list/list:80
 #. ($page, $collection->pager->last_page)
 msgid "Page %1 of %2"
 msgstr ""
 
-#: lib/Jifty/Record.pm:240 lib/Jifty/Record.pm:319 lib/Jifty/Record.pm:60
+#: share/web/templates/__jifty/halo:1
+msgid "Page info"
+msgstr ""
+
+#: share/web/templates/__jifty/halo:72
+msgid "Parent"
+msgstr ""
+
+#: lib/Jifty/Record.pm:264 lib/Jifty/Record.pm:343 lib/Jifty/Record.pm:68
 msgid "Permission denied"
 msgstr ""
 
 #: share/web/templates/__jifty/admin/fragments/list/list:108
 msgid "Previous Page"
+msgstr ""
+
+#: share/web/templates/__jifty/halo:69
+#. ($frame->{'render_time'})
+msgid "Rendered in %1s"
 msgstr ""
 
 #: share/web/templates/__jifty/admin/action/dhandler:20
@@ -296,7 +329,7 @@ msgstr ""
 msgid "The passwords you typed didn't match each other"
 msgstr ""
 
-#: lib/Jifty/Web.pm:362
+#: lib/Jifty/Web.pm:363
 msgid "There was an error completing the request.  Please try again later."
 msgstr ""
 
@@ -318,6 +351,10 @@ msgstr ""
 
 #: lib/Jifty/Action/Record/Update.pm:156
 msgid "Updated"
+msgstr ""
+
+#: share/web/templates/__jifty/halo:93
+msgid "Variables"
 msgstr ""
 
 #: share/web/templates/index.html:1
@@ -347,4 +384,12 @@ msgstr ""
 
 #: share/web/templates/__jifty/admin/fragments/list/header:41
 msgid "desc"
+msgstr ""
+
+#: lib/Jifty/Manual/PageRegions.pod:188
+msgid "text of the link"
+msgstr ""
+
+#: lib/Jifty/Manual/PageRegions.pod:225
+msgid "text of the link that hides"
 msgstr ""

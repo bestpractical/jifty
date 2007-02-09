@@ -19,13 +19,12 @@ When you're ready to move up to something that can handle the increasing load yo
 new world-changing application is generating, you'll need something a bit heavier-duty
 than the pure-perl Jifty standalone server.  C<FastCGI> is what you're looking for.
 
-Because Apache's FastCGI dispatcher can't pass commandline flags to your script, you'll need
-to call jifty a bit differently:
-
+ # These two lines are FastCGI-specific; skip them to run in vanilla CGI mode
  AddHandler fastcgi-script fcgi
+ FastCgiServer /path/to/your/jifty/app/bin/jifty
+
  DocumentRoot /path/to/your/jifty/app/share/web/templates
- FastCgiServer /path/to/your/jifty/app/bin/jifty -initial-env JIFTY_COMMAND=fastcgi
- ScriptAlias /  /path/to/your/jifty/app/bin/jifty/
+ ScriptAlias / /path/to/your/jifty/app/bin/jifty/
 
 For B<lighttpd> (L<http://www.lighttpd.net/>), use this setting:
 
