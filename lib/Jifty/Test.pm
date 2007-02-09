@@ -142,13 +142,11 @@ sub setup {
 
     Jifty->new( no_handle => 1 );
 
-    Log::Log4perl->get_logger("SchemaTool")->less_logging(3);
     my $schema = Jifty::Script::Schema->new;
     $schema->{drop_database} =
       $schema->{create_database} =
         $schema->{create_all_tables} = 1;
     $schema->run;
-    Log::Log4perl->get_logger("SchemaTool")->more_logging(3);
 
     Jifty->new();
     $class->setup_mailbox;
@@ -191,6 +189,7 @@ sub test_config {
             },
             Mailer => 'Jifty::Test',
             MailerArgs => [],
+            LogLevel => 'WARN'
         }
     };
 }
@@ -221,7 +220,6 @@ sub make_server {
         unshift @Jifty::Server::ISA, 'Test::HTTP::Server::Simple';
     }
 
-    Log::Log4perl->get_logger("Jifty::Server")->less_logging(3);
     my $server = Jifty::Server->new;
 
     return $server;
@@ -405,11 +403,9 @@ sub _ending {
         # Remove testing db
         if (Jifty->handle) {
             Jifty->handle->disconnect();
-            Log::Log4perl->get_logger("SchemaTool")->less_logging(3);
             my $schema = Jifty::Script::Schema->new;
             $schema->{drop_database} = 1;
             $schema->run;
-            Log::Log4perl->get_logger("SchemaTool")->more_logging(3);
         }
 
         # Unlink test files
