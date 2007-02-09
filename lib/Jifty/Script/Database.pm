@@ -50,27 +50,40 @@ sub load {
     my @content = <STDIN>;
     my $content = Jifty::YAML::Load(join('',@content));
     print Jifty::YAML::Dump($content)."\n";
+
+    $self->_load_data($content);
+}
+
+sub _load_data {
+    my $self = shift;
+    my $content = shift;
     Jifty->handle->begin_transaction();
     # First the core stuff
+    
+    $self->upgrade_schema($content->{'Jifty::Model::ModelClass'}, $content->{'Jifty::Model::ModelClassColumn'});
+    
     foreach my $class (grep { /^Jifty::Model/ } keys %$content) { 
         next if ($class =~ /^Jifty::Model::ModelClass(?:Column)?/); 
-        $self->load_content($class => $content->{$class});
+        $self->load_content_for_class($class => $content->{$class});
     }
     # Then the user stuff
     foreach my $class (grep {! /^Jifty::Model/ } keys %$content) { 
-        $self->load_content($class => $content->{$class});
+        $self->load_content_for_class($class => $content->{$class});
     }
+    Jifty->handle->commit;
 }
 
-sub load_content {
+sub load_content_for_class {
     my $self    = shift;
     my $class   = shift;
     my $content = shift;
-    Jifty::Util->require($class)
-        || Jifty->logger->log->fatal(
-        "There's no locally defined class called $class. Without that, we can't insert records into it"
-        );
+    local $@;
+    eval {Jifty::Util->require($class)};
 
+        if ($@)  { Jifty->logger->log->fatal(
+        "There's no locally defined class called $class. Without that, we can't insert records into it: $@"
+        );
+    }
     my $current_user = Jifty::CurrentUser->new( _bootstrap => 1 );
     foreach my $id ( sort keys %$content ) {
         my $obj = $class->new( current_user => $current_user );
@@ -99,6 +112,7 @@ sub upgrade_schema {
     my $self           = shift;
     my $new_tables     = shift;
     my $columns        = shift;
+
     my $current_tables = Jifty::Model::ModelClassCollection->new();
     $current_tables->unlimit();
     while ( my $table = $current_tables->next ) {
@@ -154,8 +168,8 @@ sub upgrade_schema {
         }
 
         # now we only have tables that were not yet in the database;
-        $self->_upgrade_create_new_tables( $new_tables => $columns );
     }
+        $self->_upgrade_create_new_tables( $new_tables => $columns );
 }
 
 sub _upgrade_create_new_tables {
@@ -166,11 +180,12 @@ sub _upgrade_create_new_tables {
         delete $table->{id};
         my $class = Jifty::Model::ModelClass->new();
         my ( $val, $msg ) = $class->create( %{$table} );
-
+        die $msg unless ($val) ;
         # Now that we have a brand new model, let's find all its columns
         my @cols = grep { $_->{model_class} = $table->{__uuid} } values %$columns;
         foreach my $col (@cols) {
             delete $col->{id};
+            $col->{model_class} = $class;
             Jifty::Model::ModelClassColumn->create(%$col);
         }
     }
@@ -181,7 +196,15 @@ sub _upgrade_create_new_tables {
 
 sub dump {
     my $self = shift;
-    my $content = {};
+    my $content = $self->_models_to_hash();
+    
+    print Jifty::YAML::Dump($content)."\n";
+    
+}
+
+sub _models_to_hash {
+        my $self = shift;
+        my $content = {};
  foreach my $model (Jifty->class_loader->models, qw(Jifty::Model::Metadata Jifty::Model::ModelClass Jifty::Model::ModelClassColumn)) {
         next unless $model->isa('Jifty::Record');
         my $collection = $model."Collection";
@@ -212,8 +235,7 @@ sub dump {
 
 
     }
-    print Jifty::YAML::Dump($content)."\n";
-    
+    return $content;
 }
 
 1;
