@@ -30,11 +30,10 @@ the Jifty package.  The Jifty installer is capable of determining what
 modules your system needs, and downloading and installing them all in
 one go.  Don't worry, it will ask you first before it makes any changes.
 
-On most systems you can Perl's bundled CPAN module to download
+On most systems you can use Perl's bundled CPAN module to download
 and install Jifty:
 
-  # perl -MCPAN -e'install Jifty'       # Unix-like systems
-  # perl -MCPAN -e"install Jifty"       # Win32 systems
+  # perl -MCPAN -e"install Jifty"
 
 If you've downloaded a C<.tar.gz> of Jifty, you can do a
 manual install:
@@ -55,9 +54,9 @@ L</GETTING HELP> below for info on how to join the list.)
 Once you have Jifty happily installed, you're ready to 
 create your first application. 
 
-Jifty is intentionally a bit minimalist. All you I<really>
-need to make an application go is a copy of the F<jifty> commandline
-tool (inside your new application's F<bin/> directory.  
+Jifty is intentionally a bit minimalist. All you I<really> need to make
+an application go is a copy of the F<jifty> commandline tool (inside
+your new application's F<bin/> directory.)
 
 Of course, it's often helpful to have a bit more structure around to
 help guide your work. Jifty comes with tools to build that structure for
@@ -240,7 +239,7 @@ Save your model class.
 
 Ok. It's time to initialize MyWeblog's database. By default, Jifty sets up your
 application with the SQLite database engine.  If you'd rather use PostgreSQL or
-MySQL, you need to add some content to F<etc/jifty.yml>. (See C<Jifty::Config>
+MySQL, you need to add some content to F<etc/jifty.yml>. (See L<Jifty::Config>
 for a bit more information).
 
   # jifty schema --setup
