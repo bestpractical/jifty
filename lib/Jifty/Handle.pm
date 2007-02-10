@@ -223,20 +223,32 @@ Assign an UUID for each successfully inserted rows.
 sub insert {
     my $self  = shift;
     my $table = shift;
-    my %attrs = @_;
-    my $uuid  = delete($attrs{__uuid});
+    my %args = (@_);
+    my $uuid  = delete($args{__uuid});
 
-    my $rv = $self->SUPER::insert($table, %attrs);
+    my $rv = $self->SUPER::insert($table, %args);
 
     if ($rv) {
-        # Generate a UUID on the sideband: $table - $rv - UUID.
-        $self->dbh->do(
-            qq[ INSERT INTO _jifty_uuids VALUES (?, ?, ?) ], {},
-            ($uuid || Jifty::Util->generate_uuid), $table, $rv
-        );
+        $self->_insert_uuid( table => $table, id => $rv, uuid => $uuid);
+
     }
 
     return $rv;
+}
+
+
+sub _insert_uuid {
+    my $self = shift;
+    my %args = (table => undef,
+                id => undef,
+                uuid => undef,
+                @_);
+        # Generate a UUID on the sideband: $table - $rv - UUID.
+        $self->dbh->do(
+            qq[ INSERT INTO _jifty_uuids VALUES (?, ?, ?) ], {},
+            ($args{uuid} || Jifty::Util->generate_uuid), $args{table}, $args{id}
+        );
+
 }
 
 =head2 bootstrap_uuid_table 
@@ -274,9 +286,7 @@ Look up the UUID for a given row.
 
 sub lookup_uuid {
     my ($self, $table, $id) = @_;
-    my ($uuid) = $self->fetch_result(qq[
-        SELECT uuid FROM _jifty_uuids WHERE row_table = ? AND row_id = ?
-    ], $table, $id);
+    my ($uuid) = $self->fetch_result(qq[ SELECT uuid FROM _jifty_uuids WHERE row_table = ? AND row_id = ?  ], $table, $id);
     return $uuid;
 }
 
