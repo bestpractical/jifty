@@ -254,6 +254,7 @@ sub guess {
                 Password => "",
                 User     => "",
                 Version  => "0.0.1",
+                RecordUUIDs => 'active',
                 RecordBaseClass => 'Jifty::DBI::Record::Cachable',
                 CheckSchema => '1'
             },

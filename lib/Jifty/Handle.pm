@@ -228,7 +228,7 @@ sub insert {
 
     my $rv = $self->SUPER::insert($table, %args);
 
-    if ($rv) {
+    if ($rv and ($uuid || Jifty->config->framework('Database')->{'RecordUUIDs'} !~ /^(?:lazy|off)/i) ) {
         $self->_insert_uuid( table => $table, id => $rv, uuid => $uuid);
 
     }
@@ -243,12 +243,13 @@ sub _insert_uuid {
                 id => undef,
                 uuid => undef,
                 @_);
+           my $uuid =  ($args{uuid} || Jifty::Util->generate_uuid);
         # Generate a UUID on the sideband: $table - $rv - UUID.
         $self->dbh->do(
             qq[ INSERT INTO _jifty_uuids VALUES (?, ?, ?) ], {},
-            ($args{uuid} || Jifty::Util->generate_uuid), $args{table}, $args{id}
+           $uuid , $args{table}, $args{id}
         );
-
+    return $uuid; 
 }
 
 =head2 bootstrap_uuid_table 
@@ -286,7 +287,11 @@ Look up the UUID for a given row.
 
 sub lookup_uuid {
     my ($self, $table, $id) = @_;
+    return undef unless ( Jifty->config->framework('Database')->{'RecordUUIDs'} ne 'off');
     my ($uuid) = $self->fetch_result(qq[ SELECT uuid FROM _jifty_uuids WHERE row_table = ? AND row_id = ?  ], $table, $id);
+    unless ($uuid) {
+        $uuid = $self->_insert_uuid( table => $table, id => $id);
+    }
     return $uuid;
 }
 
