@@ -498,7 +498,7 @@ sub drop_column_sql {
 
 =head2 __uuid
 
-Get the UUID of any given row.
+Gets the UUID of any given row.
 
 =cut
 
