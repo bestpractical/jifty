@@ -116,6 +116,9 @@ sub new {
     # Load the configuration. stash it in ->config
     Jifty->config( Jifty::Config->new() );
 
+    # Turn on logging as soon as we possibly can.
+    Jifty->logger( Jifty::Logger->new( $args{'logger_component'} ) );
+
     # Create the Jifty classloader
     Jifty::ClassLoader->new( base => 'Jifty' );
 
@@ -128,17 +131,8 @@ sub new {
     Jifty::Util->require( $record_base_class );
     push @Jifty::Record::ISA, $record_base_class unless $record_base_class eq 'Jifty::Record';
 
-    Jifty->logger( Jifty::Logger->new( $args{'logger_component'} ) );
-
     # Set up plugins
-    my @plugins;
-    for my $plugin (@{Jifty->config->framework('Plugins')}) {
-        my $class = "Jifty::Plugin::".(keys %{$plugin})[0];
-        my %options = %{ $plugin->{(keys %{$plugin})[0]} };
-        Jifty::Util->require($class);
-        Jifty::ClassLoader->new(base => $class)->require;
-        push @plugins, $class->new(%options);
-    }
+    my @plugins = Jifty->_load_plugins();
 
     Jifty->plugins(@plugins);
 
@@ -153,10 +147,8 @@ sub new {
 
     Jifty->class_loader($class_loader);
     Jifty->class_loader->require;
-
     Jifty->handler(Jifty::Handler->new());
     Jifty->api(Jifty::API->new());
-
     # Let's get the database rocking and rolling
     Jifty->setup_database_connection(%args);
     Jifty->class_loader->require_classes_from_database() if (Jifty->handle() and not $args{'no_handle'});
@@ -166,7 +158,6 @@ sub new {
     my $app = Jifty->app_class;
     
     $app->start() if $app->can('start');
-    
 }
 
 =head2 config
@@ -305,6 +296,18 @@ sub bus {
 Returns a list of L<Jifty::Plugin> objects for this Jifty application.
 
 =cut
+
+sub _load_plugins {
+    my @plugins;
+    for my $plugin (@{Jifty->config->framework('Plugins')}) {
+        my $class = "Jifty::Plugin::".(keys %{$plugin})[0];
+        my %options = %{ $plugin->{(keys %{$plugin})[0]} };
+        Jifty::Util->require($class);
+        Jifty::ClassLoader->new(base => $class)->require;
+        push @plugins, $class->new(%options);
+    }
+}
+
 
 sub plugins {
     my $class = shift;

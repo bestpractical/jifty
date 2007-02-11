@@ -4,7 +4,6 @@ use strict;
 use base 'Jifty::Bootstrap';
 
 sub run { 
-
     my $user = TestApp::DatabaseBackedModels::CurrentUser->new( _bootstrap => 1);
     my $modelclass = Jifty::Model::ModelClass->new(current_user => $user);
     $modelclass->create( name => 'Widget');

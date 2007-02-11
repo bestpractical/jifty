@@ -54,7 +54,7 @@ sub init_repos {
     $uri =~ s{^|\\}{/}g if ($^O eq 'MSWin32');
     $uri = "file://$uri";
 
-    print STDERR "*** Created Subversion Repository:\n    $uri\n\n";
+    $self->log->info( "*** Created Subversion Repository: $uri");
 
     $fs = $repos->fs;
 

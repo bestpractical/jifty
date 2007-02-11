@@ -141,13 +141,11 @@ sub setup {
     rmtree([ File::Spec->canonpath("$root/var/mason") ], 0, 1);
 
     Jifty->new( no_handle => 1 );
-
     my $schema = Jifty::Script::Schema->new;
     $schema->{drop_database} =
       $schema->{create_database} =
         $schema->{create_all_tables} = 1;
     $schema->run;
-
     Jifty->new();
     $class->setup_mailbox;
 }
