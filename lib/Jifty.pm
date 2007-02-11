@@ -306,6 +306,7 @@ sub _load_plugins {
         Jifty::ClassLoader->new(base => $class)->require;
         push @plugins, $class->new(%options);
     }
+    return @plugins;
 }
 
 
