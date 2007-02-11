@@ -73,6 +73,12 @@ sub after_create {
 }
 
 
+=head2 delete
+
+When deleting model classes from the metamodel tables, we also drop the table in the database.
+
+=cut
+
 sub delete {
     my $self = shift;
     # XXX TODO: remove all columns here.

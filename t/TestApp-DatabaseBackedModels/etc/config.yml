@@ -1,5 +1,5 @@
 --- 
-framework: 
+framework:
   AdminMode: 1
   ApplicationClass: TestApp::DatabaseBackedModels
   ApplicationName: TestApp-DatabaseBackedModels
@@ -9,7 +9,8 @@ framework:
     Driver: SQLite
     Host: localhost
     Password: ''
-    RecordBaseClass: Jifty::Record::Versioned
+    RecordBaseClass: Jifty::DBI::Record::Cachable
+    RecordUUIDs: active
     User: ''
     Version: 0.0.1
   DevelMode: 1

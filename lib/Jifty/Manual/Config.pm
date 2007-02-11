@@ -62,6 +62,7 @@ There are some toplevel configuration directives at the framework level and some
 =head4 Database
 
 =over
+
 =item                Database =>  $db_name,
 
 =item                Driver   => "SQLite",

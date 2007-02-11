@@ -30,6 +30,13 @@ use YAML::Syck 0.82;
 
 my ($repos, $fs, $uri);
 
+
+=head2  init_repos
+
+Create a new SVN repository for storing records.
+
+=cut
+
 sub init_repos {
     my $self = shift;
     return ($repos, $fs, $uri) if $repos;
@@ -60,6 +67,12 @@ sub init_repos {
 
     return ($repos, $fs, $uri) if $repos;
 }
+
+=head2 new_edit
+
+audreyt: DOC ME XXX TODO
+
+=cut
 
 sub new_edit {
     my $self = shift;

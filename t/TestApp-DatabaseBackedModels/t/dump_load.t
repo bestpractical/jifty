@@ -20,13 +20,11 @@ ok(1, "Loaded the test script");
 Jifty->new();
 use_ok('Jifty::Script::Database');
 can_ok('TestApp::DatabaseBackedModels::Model::Widget', 'new');
-
 my $DATABASE = Jifty::Script::Database->new();
 
 my $dumped_bootstrap = $DATABASE->_models_to_hash();
 
 my @keys = sort keys %$dumped_bootstrap;
-
 is_deeply(\@keys, [qw/Jifty::Model::Metadata 
                     Jifty::Model::ModelClass 
                     Jifty::Model::ModelClassColumn
@@ -35,6 +33,7 @@ is_deeply(\@keys, [qw/Jifty::Model::Metadata
 
 my $dumped_widgets = $dumped_bootstrap->{'TestApp::DatabaseBackedModels::Model::Widget'};
 is (scalar keys %$dumped_widgets, 1);
+diag('got widgets');
 my @values = values %$dumped_widgets;
 my $widget = shift @values;
 is ($widget->{'name'}, 'Weeble', "Dumped data is as expected");
@@ -65,6 +64,8 @@ my %new_tables = (
 $DATABASE->_load_data(\%new_tables);
 can_ok('TestApp::DatabaseBackedModels::Model::Customer', 'new');
 can_ok('TestApp::DatabaseBackedModels::Model::Customer', 'create');
+use_ok('TestApp::DatabaseBackedModels::Model::CustomerCollection');
+can_ok('TestApp::DatabaseBackedModels::Model::CustomerCollection', 'new');
 isa_ok(TestApp::DatabaseBackedModels::Model::Customer->new(), 'Jifty::DBI::Record');
 
 my $obj = TestApp::DatabaseBackedModels::Model::Customer->create();
@@ -86,6 +87,9 @@ my %new_tables = (
     } 
 );
 $DATABASE->_load_data(\%new_tables);
+can_ok('TestApp::DatabaseBackedModels::Model::Vendor', 'new');
+can_ok('TestApp::DatabaseBackedModels::Model::Vendor', 'create');
+ok(!TestApp::DatabaseBackedModels::Model::Vendor->can('name'));
 can_ok('TestApp::DatabaseBackedModels::Model::Customer', 'new');
 can_ok('TestApp::DatabaseBackedModels::Model::Customer', 'create');
 can_ok('TestApp::DatabaseBackedModels::Model::Customer', 'name');
@@ -95,9 +99,6 @@ my $customers = TestApp::DatabaseBackedModels::Model::CustomerCollection->new;
 $customers->unlimit();
 is($customers->count(),1);
 is($customers->first->name, 'Cogswell Cogs');
-can_ok('TestApp::DatabaseBackedModels::Model::Vendor', 'new');
-can_ok('TestApp::DatabaseBackedModels::Model::Vendor', 'create');
-ok(!can('TestApp::DatabaseBackedModels::Model::Vendor', 'name'));
 
 
 }

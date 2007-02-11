@@ -226,13 +226,14 @@ sub require {
 sub _require_model_related_classes {
     my $self = shift;
     my $full = shift;
-    push (@{$self->models}, $full); 
+    push( @{ $self->models }, $full );
 
     my $base = $self->{base};
-        my($short) = $full =~ /::Model::(.*)/;
-        Jifty::Util->require($full . "Collection");
-        Jifty::Util->require($base . "::Action::" . $_ . $short)
-            for qw/Create Update Delete Search/;
+
+    my ($short) = $full =~ /::Model::(.*)/;
+    Jifty::Util->require( $full . "Collection" );
+    Jifty::Util->require( $base . "::Action::" . $_ . $short )
+        for qw/Create Update Delete Search/;
 
 }
 

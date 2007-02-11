@@ -447,6 +447,15 @@ sub create_table_in_db {
 
 }
 
+=head2 drop_table_in_db
+
+When called, this method will drop the table that backs this model class from your 
+database. Generally, this operation can't be done and will result in data loss.
+Don't call it unless data loss is your objective.
+
+
+=cut
+
 sub drop_table_in_db {
     my $class = shift;
 

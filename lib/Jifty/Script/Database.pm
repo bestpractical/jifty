@@ -34,6 +34,8 @@ sub options {
 
 =head2 run
 
+Dump or load the current database.
+
 
 =cut
 
@@ -44,6 +46,14 @@ sub run {
     if ($self->{dump}) { $self->dump(); }
     elsif ($self->{load}) { $self->load(); }
 }
+
+
+=head2 load
+
+Reads a database dumpfile in YAML format on STDIN. Creates or updates your internal database as necessary.
+
+
+=cut
 
 sub load {
     my $self = shift;
@@ -74,6 +84,14 @@ sub _load_data {
     Jifty->handle->commit;
 }
 
+
+=head2 load_content_for_class CLASSNAME HASH
+
+Loads a hash of data into records of type CLASSNAME
+
+=cut
+
+
 sub load_content_for_class {
     my $self    = shift;
     my $class   = shift;
@@ -95,7 +113,7 @@ sub load_content_for_class {
             }
         }
 
-        my ( $val, $msg ) = $class->create( %{ $content->{$id} } );
+        my ( $val, $msg ) = $class->create( %{ $content->{$id} }, __uuid => $id );
         if ($val) {
             $self->log->info("Inserting $id into $class: $val");
         } else {
@@ -107,6 +125,13 @@ sub load_content_for_class {
     }
 
 }
+
+=head2 upgrade_schema tablehash columnhash
+
+Modify the current database's schema (virtual models and columns) to match that of the table hash and column hash.
+
+
+=cut
 
 
 sub upgrade_schema {
@@ -160,8 +185,8 @@ sub upgrade_schema {
                 # Third, add columns that are only in the dumpfile
             }
 
-            foreach my $col ( values %$new_columns ) {
-                Jifty::Model::ModelClassColumn->create(%$col);
+            foreach my $col ( keys %$new_columns ) {
+                Jifty::Model::ModelClassColumn->create($new_columns->{$col}, __uuid => $col);
             }
 
         } else {
@@ -181,11 +206,12 @@ sub _upgrade_create_new_tables {
     my $self       = shift;
     my $new_tables = shift;
     my $columns    = shift;
-    foreach my $table ( values %$new_tables ) {
+    foreach my $table_id ( keys %$new_tables ) {
+        my $table = $new_tables->{$table_id};
         $self->log->debug("Creating a new table: ".$table->{name});
         delete $table->{id};
         my $class = Jifty::Model::ModelClass->new();
-        my ( $val, $msg ) = $class->create( %{$table} );
+        my ( $val, $msg ) = $class->create( %{$table}, __uuid => $table_id );
         die $msg unless ($val) ;
         # Now that we have a brand new model, let's find all its columns
         my @cols = grep { $_->{model_class} = $table->{__uuid} } values %$columns;
@@ -198,20 +224,24 @@ sub _upgrade_create_new_tables {
 
 }
 
+=head2 dump
 
+Dump the current database state as a YAML hash to STDOUT
+
+=cut
 
 sub dump {
     my $self = shift;
     my $content = $self->_models_to_hash();
-    
     print Jifty::YAML::Dump($content)."\n";
-    
 }
 
 sub _models_to_hash {
         my $self = shift;
         my $content = {};
- foreach my $model (Jifty->class_loader->models, qw(Jifty::Model::Metadata Jifty::Model::ModelClass Jifty::Model::ModelClassColumn)) {
+        foreach my $model (Jifty->class_loader->models, qw(Jifty::Model::Metadata Jifty::Model::ModelClass Jifty::Model::ModelClassColumn)) {
+
+
         next unless $model->isa('Jifty::Record');
         my $collection = $model."Collection";
         Jifty::Util->require($collection);
