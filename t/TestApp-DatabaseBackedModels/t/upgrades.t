@@ -31,7 +31,7 @@ my $col = Jifty::Model::ModelClassColumn->new(current_user => $u);
 $col->create(name => 'name', 
             model_class => $model,
             storage_type => 'text',
-            label => 'Object name',
+            label_text => 'Object name',
             hints => q{What's it called, yo?});
 
 ok($col->id);
@@ -39,7 +39,7 @@ my $col2 = Jifty::Model::ModelClassColumn->new(current_user => $u);
 $col2->create(name => 'inventory', 
             model_class => $model,
             storage_type => 'int',
-            label => 'Volume on hand',
+            label_text => 'Volume on hand',
             hints => q{How many you gots?});
 
 ok($col2->id, "Got column ".$col2->id);

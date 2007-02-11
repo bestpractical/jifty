@@ -54,12 +54,6 @@ sub load {
     $self->_load_data($content);
 }
 
-sub _load_data {
-    my $self = shift;
-    my $content = shift;
-
-    $self->_load_data($content);
-}
 
 sub _load_data {
     my $self = shift;
