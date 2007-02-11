@@ -1,4 +1,4 @@
-<div><a href="#" id="render_info" onclick="Element.toggle('render_info_tree'); return false">Page info</a></div>
+<div><a href="#" id="render_info" onclick="Element.toggle('render_info_tree'); return false"><%_('Page info')%></a></div>
 <div style="display: none" id="render_info_tree">
 % foreach my $item (@stack) {
 %     if ( $item->{depth} > $depth ) {
@@ -17,7 +17,7 @@
                                        onclick="halo_toggle('<% $item->{id} %>'); return false;">
 <% $item->{'name'} %> - <% $item->{'render_time'} %></a> 
 % unless ($item->{subcomponent}) {
-<% Jifty->web->tangent( url =>"/__jifty/edit/mason_component/".$item->{'path'}, label => 'Edit') %>
+<% Jifty->web->tangent( url =>"/__jifty/edit/mason_component/".$item->{'path'}, label => _('Edit')) %>
 % }
 % $depth = $item->{'depth'};
 % }
@@ -66,10 +66,10 @@ my $depth = 0;
 
 <div class="body">
 <div class="path"><% $frame->{path} %></div>
-<div class="time">Rendered in <% $frame->{'render_time'} %>s</div>
+<div class="time"><%_('Rendered in %1s', $frame->{'render_time'})%></div>
 </div>
 % if ($frame->{parent}) {
-<div class="section">Parent</div>
+<div class="section"><%_('Parent')%></div>
 <div class="body"><ul>
 <li><a href="#" class="halo_comp_info" onmouseover="halo_over('<% $frame->{parent}{id} %>')"
                                        onmouseout="halo_out('<% $frame->{parent}{id} %>')"
@@ -78,7 +78,7 @@ my $depth = 0;
 </ul></div>
 % }
 % if (@{$frame->{kids}}) {
-<div class="section">Children</div>
+<div class="section"><%_('Children')%></div>
 <div class="body"><ul>
 % for my $item (@{$frame->{kids}}) {
 <li><a href="#" class="halo_comp_info" onmouseover="halo_over('<% $item->{id} %>')"
@@ -90,7 +90,7 @@ my $depth = 0;
 </div>
 % }
 % if (@args) {
-<div class="section">Variables</div>
+<div class="section"><%_('Variables')%></div>
 <div class="body"><ul class="fixed">
 % for my $e (@args) {
 <li><b><% $e->[0] %></b>:
@@ -114,7 +114,7 @@ my $depth = 0;
 <li>
 <span class="fixed"><% $_->[1] %></span><br />
 % if (@{$_->[2]}) {
-<b>Bindings:</b> <tt><% join(',', map {defined $_ ? ($_ =~ /[^[:space:][:graph:]]/ ? "*BLOB*" : $_ ) : "undef"} @{$_->[2]}) %></tt><br />
+<b><%_('Bindings')%>:</b> <tt><% join(',', map {defined $_ ? ($_ =~ /[^[:space:][:graph:]]/ ? "*BLOB*" : $_ ) : "undef"} @{$_->[2]}) %></tt><br />
 % }
 <i><% _('%1 seconds', $_->[3]) %></i>
 </li>
@@ -123,7 +123,7 @@ my $depth = 0;
 % }
 <div class="section">
 % unless ($frame->{subcomponent}) {
-<% Jifty->web->tangent( url =>"/__jifty/edit/mason_component/".$frame->{'path'}, label => 'Edit') %>
+<% Jifty->web->tangent( url =>"/__jifty/edit/mason_component/".$frame->{'path'}, label => _('Edit')) %>
 % } else {
 &nbsp;     
 % }
