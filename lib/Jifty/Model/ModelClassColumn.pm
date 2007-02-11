@@ -36,7 +36,7 @@ use Jifty::Record schema {
         label is 'Model',
         is mandatory;
 
-    column label => 
+    column label_text => 
         type is 'text',
         label is 'Label';
 
