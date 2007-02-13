@@ -35,6 +35,11 @@ sub _yullio_content {
     my ($width, $column_template) = map {get_current_attr($_)}
 	qw(width column_template);
     sub {
+	# XXX: T::D is propagating our with to deeper callstacks as we
+	# are not calling from "_tag"
+	with (),
+
+
 	div {
 	    { id is $width, class is $column_template }
 
