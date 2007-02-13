@@ -126,6 +126,23 @@ sub wrapper ($) {
         '';
     };
 
+
+    my $wrapped_content_code = sub {
+        no warnings qw( uninitialized redefine once );
+
+        local *is::title = sub {
+            shift;
+            $title = "@_";
+            &$render_header;
+        };
+
+        &$content_code;
+        if ( !$done_header ) {
+            $title = _("Untitled");
+            &$render_header;
+        }
+    };
+
     body {
         show('/_elements/sidebar');
         with( id => "content" ), div {
@@ -142,22 +159,7 @@ sub wrapper ($) {
                   }
             }
             Jifty->web->render_messages;
-
-            {
-                no warnings qw( uninitialized redefine once );
-
-                local *is::title = sub {
-                    shift;
-                    $title = "@_";
-                    &$render_header;
-                };
-
-                &$content_code;
-                if ( !$done_header ) {
-                    $title = _("Untitled");
-                    &$render_header;
-                }
-            }
+	    $wrapped_content_code->();
 
             show('/_elements/keybindings');
             with( id => "jifty-wait-message", style => "display: none" ),
@@ -175,7 +177,7 @@ sub wrapper ($) {
         };
     };
 
-        Template::Declare->buffer->data( $done_header . Template::Declare->buffer->data);
+    Template::Declare->buffer->data( $done_header . Template::Declare->buffer->data);
 }
 
 sub render_header {
