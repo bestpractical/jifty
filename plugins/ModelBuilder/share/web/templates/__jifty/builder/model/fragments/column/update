@@ -21,7 +21,7 @@
 
 %# XXX See ./new for comments on field order.
 
-<% $update->form_value('name') %>
+<% $update->form_field('name') %>
 <% $update->form_field('label') %>
 <% $update->form_field('storage_type', mandatory => 1) %>
 <% $update->form_field('default_value') %>

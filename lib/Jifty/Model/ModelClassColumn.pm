@@ -29,7 +29,8 @@ use Jifty::Record schema {
     column name => 
         type is 'text',
         label is 'Column name',
-        is mandatory;
+        is mandatory,
+        is immutable;
 
     column model_class => 
         refers_to Jifty::Model::ModelClass,

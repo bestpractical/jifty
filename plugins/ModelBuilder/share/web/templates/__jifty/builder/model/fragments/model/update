@@ -36,7 +36,7 @@
 % }
 </div>
 
-<% $update->form_value('name') %>
+<% $update->form_field('name') %>
 <% $update->form_field('description') %>
 
 <div class="master-detail">

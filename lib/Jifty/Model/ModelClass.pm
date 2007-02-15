@@ -28,7 +28,8 @@ use Jifty::Record schema {
         type is 'text',
         label is 'Model name',
         is distinct,
-        is mandatory;
+        is mandatory,
+        is immutable;
     column description => 
         type is 'text',
         label is 'Description',
