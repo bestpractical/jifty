@@ -13,6 +13,37 @@ $Jifty::VERSION = '0.70117';
 
 Jifty - an application framework
 
+=head1 SYNOPSIS
+
+ # Object containing lots of web related goodies...
+ my $web      = Jifty->web;
+ my $request  = Jifty->web->request;
+ my $response = Jifty->web->response;
+ my $link     = Jifty->web->link( label => _('W00t'), url => '/whatsit' );
+
+ # Retrieve information from your application's etc/config.yml file.
+ my $config   = Jifty->config;
+
+ # Retrieve the Jifty::DBI handle
+ my $handle   = Jifty->handle;
+
+ # Load an application class, very handy in plugins
+ my $class    = Jifty->app_class('Model', 'Foo');
+ my $foo      = $class->new;
+ $foo->create( frobnicate => 42 );
+
+ # Configure information related to your application's actions
+ my $api      = Jifty->api;
+
+ # Make parts of your page "subscribe" to information in a fragment
+ my $subs     = Jifty->subs;
+
+ # Share information via IPC::PubSub in your application
+ my $bus      = Jifty->bus;
+
+ # Retrieve general information about Mason
+ my $handler  = Jifty->handler;
+
 =head1 DESCRIPTION
 
 Yet another web framework.
@@ -184,6 +215,9 @@ sub config {
 
 An accessor for our L<Jifty::Logger> object for the application.
 
+You probably aren't interested in this. See L</log> for information on how to
+make log messages.
+
 =cut
 
 sub logger {
@@ -195,6 +229,9 @@ sub logger {
 =head2 handler
 
 An accessor for our L<Jifty::Handler> object.
+
+This is another method that you usually don't want to mess with too much.
+Most of the interesting web bits are handled by L</web>.
 
 =cut
 
@@ -386,7 +423,7 @@ Jifty is distributed under the same terms as Perl itself.
 
 =head1 SEE ALSO
 
-L<http://jifty.org>
+L<http://jifty.org>, L<Jifty::Manual::Tutorial>, L<Jifty::Everything>, L<Jifty::Config>, L<Jifty::Handle>, L<Jifty::Logger>, L<Jifty::Handler>, L<Jifty::Web>, L<Jifty::API>, L<Jifty::Subs>, L<IPC::PubSub>, L<Jifty::Plugin>, L<Jifty::ClassLoader>
 
 =head1 AUTHORS
 
