@@ -9,7 +9,7 @@ Jifty->web->generate_css;
 
 use HTTP::Date ();
 
-if ( Jifty->handler->cgi->http('If-Modified-Since')
+if ( ( Jifty->handler->cgi->http('If-Modified-Since') or Jifty->handler->cgi->http('If-None-Match') )
         and $m->dhandler_arg eq Jifty->web->cached_css_digest . '.css' )
 {
     Jifty->log->debug("Returning 304 for cached css");
@@ -19,6 +19,9 @@ if ( Jifty->handler->cgi->http('If-Modified-Since')
 
 $r->content_type("text/css");
 $r->header_out( 'Expires' => HTTP::Date::time2str(time + 31536000) );
+$r->header_out( 'Last-Modified' => HTTP::Date::time2str( Jifty->web->cached_css_time ) );
+$r->header_out( 'Age' => time - Jifty->web->cached_css_time );
+$r->header_out( 'Etag' => Jifty->web->cached_css_digest );
 
 # XXX TODO: If we start caching the squished CSS in a file somewhere, we
 # can have the static handler serve it, which would take care of gzipping
