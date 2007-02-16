@@ -419,6 +419,7 @@ sub _execute_upgrades {
 }
 
 sub _print_upgrades {
+    my $self     = shift;
     my %UPGRADES = (@_);
     for (
         map  { @{ $UPGRADES{$_} } }
