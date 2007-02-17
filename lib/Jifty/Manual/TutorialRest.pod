@@ -4,7 +4,7 @@ Jifty::Manual::TutorialRest - Web Services
 
 =head1 DESCRIPTION
 
-This builds on L<Jifty::Manual::TutorialRest>, so make sure you have a
+This builds on L<Jifty::Manual::Tutorial>, so make sure you have a
 running jifty that roughly resembles the step-by-step from there.
 
 =head1 SETUP
