@@ -148,6 +148,7 @@ sub setup {
       $schema->{create_database} =
         $schema->{create_all_tables} = 1;
     $schema->run;
+    Jifty->handle(undef); # get rid of the handle the schema tool created.
     Log::Log4perl->get_logger("SchemaTool")->more_logging(3);
 
     Jifty->new();
@@ -409,6 +410,7 @@ sub _ending {
             my $schema = Jifty::Script::Schema->new;
             $schema->{drop_database} = 1;
             $schema->run;
+            Jifty->handle(undef); # get rid of the handle the schema tool created.
             Log::Log4perl->get_logger("SchemaTool")->more_logging(3);
         }
 
