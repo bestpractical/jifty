@@ -36,7 +36,6 @@ sub new {
     return $exist[0] if @exist;
 
     my $self = bless {%args}, $class;
-    print "CREATE $self\n";
     push @INC, $self;
     return $self;
 }
@@ -300,6 +299,12 @@ to be removed.
 # We call this explictly in an END block in Jifty.pm, because
 # otherwise the DESTROY block gets called *after* there's already a
 # bogus entry in @INC
+
+# This bug manifests itself as warnings that look like this:
+
+# Use of uninitialized value in require at /tmp/7730 line 9 during global destruction.
+
+
 sub DESTROY {
     my $self = shift;
     @INC = grep {defined $_ and $_ ne $self} @INC;
