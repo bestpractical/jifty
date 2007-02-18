@@ -198,6 +198,13 @@ sub new {
     
 }
 
+# Explicitly destroy the classloader; if this happens during global
+# destruction, there's a period of time where there's a bogus entry in
+# @INC
+END {
+    Jifty->class_loader->DESTROY if Jifty->class_loader;
+}
+
 =head2 config
 
 An accessor for the L<Jifty::Config> object that stores the
