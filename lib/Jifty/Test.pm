@@ -400,6 +400,11 @@ sub _ending {
         # Clean up mailbox
         Jifty::Test->teardown_mailbox;
 
+        # Disconnect the PubSub bus, if need be; otherwise we may not
+        # be able to drop the testing database
+        Jifty->bus->disconnect
+          if Jifty->bus;
+
         # Remove testing db
         if (Jifty->handle) {
             Jifty->handle->disconnect();
