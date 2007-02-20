@@ -30,8 +30,12 @@ automatically loaded.
 
 sub new {
     my $class = shift;
-    my $self = bless {@_}, $class;
+    my %args = @_;
 
+    my @exist = grep {ref $_ eq $class and $_->{base} eq $args{base}} @INC;
+    return $exist[0] if @exist;
+
+    my $self = bless {%args}, $class;
     push @INC, $self;
     return $self;
 }
@@ -285,6 +289,30 @@ sub models {
     wantarray ? @{ $self->{models} } : $self->{models};
 }
 
+=head2 DESTROY
+
+When the ClassLoader gets garbage-collected, its entry in @INC needs
+to be removed.
+
+=cut
+
+# The entries in @INC end up having SvTYPE == SVt_RV, but SvRV(sv) ==
+# 0x0 and !SvROK(sv) (!?)  This may be something that perl should cope
+# with more cleanly.
+#
+# We call this explictly in an END block in Jifty.pm, because
+# otherwise the DESTROY block gets called *after* there's already a
+# bogus entry in @INC
+
+# This bug manifests itself as warnings that look like this:
+
+# Use of uninitialized value in require at /tmp/7730 line 9 during global destruction.
+
+
+sub DESTROY {
+    my $self = shift;
+    @INC = grep {defined $_ and $_ ne $self} @INC;
+}
 
 =head1 Writing your own classes
 

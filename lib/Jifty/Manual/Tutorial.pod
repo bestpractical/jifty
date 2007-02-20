@@ -487,6 +487,8 @@ Future tutorials include:
 
 =item * Web Services
 
+See L<Jifty::Manual::TutorialRest> for a quick overview.
+
 =item * Continuations in depth
 
 =item * Customized view (user-defined wrappers and css)

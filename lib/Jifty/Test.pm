@@ -141,11 +141,13 @@ sub setup {
     rmtree([ File::Spec->canonpath("$root/var/mason") ], 0, 1);
 
     Jifty->new( no_handle => 1 );
+
     my $schema = Jifty::Script::Schema->new;
     $schema->{drop_database} =
       $schema->{create_database} =
         $schema->{create_all_tables} = 1;
     $schema->run;
+
     Jifty->new();
     $class->setup_mailbox;
 }
@@ -397,6 +399,11 @@ sub _ending {
     if (Jifty::Test->is_passing && Jifty::Test->is_done) {
         # Clean up mailbox
         Jifty::Test->teardown_mailbox;
+
+        # Disconnect the PubSub bus, if need be; otherwise we may not
+        # be able to drop the testing database
+        Jifty->bus->disconnect
+          if Jifty->bus;
 
         # Remove testing db
         if (Jifty->handle) {

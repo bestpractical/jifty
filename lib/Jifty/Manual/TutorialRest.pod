@@ -1,0 +1,124 @@
+=head1 NAME
+
+Jifty::Manual::TutorialRest - Web Services
+
+=head1 DESCRIPTION
+
+This builds on L<Jifty::Manual::Tutorial>, so make sure you have a
+running jifty that roughly resembles the step-by-step from there.
+
+=head1 SETUP
+
+You must add this to your site_config.yml
+
+  framework:
+    Plugins:
+      - REST: {}
+
+See L<Jifty::Plugin::REST>.
+
+The commands assume that you have LWP installed with the GET alias.  If
+not, you'll need to use the longhand lwp-request -m GET, or curl, or
+your browser.
+
+=head1 help
+
+Make sure it is working:
+
+  $ GET http://localhost:8888/=/help
+
+  Accessing resources:
+  ...
+
+You should see some text describing the services, not html (that's
+longhand for 404.)  Check the config and restart the server.
+
+=head1 GET
+
+Just list the models.
+
+  $ GET http://localhost:8888/=/model.yml
+  ---
+  - MyWeblog.Model.Post
+
+List the Post schema.
+
+  $ GET http://localhost:8888/=/model/Post.yml
+  ---
+  body:
+    label: Content
+    name: body
+    readable: 1
+    sort_order: 1
+    type: text
+    writable: 1
+  id:
+    mandatory: 1
+    name: id
+    readable: 1
+    type: serial
+    writable: 0
+  title:
+    default: Untitled post
+    label: Title
+    name: title
+    readable: 1
+    sort_order: 0
+    type: text
+    writable: 1
+
+You did make some posts, right?
+
+  $ GET http://localhost:8888/=/model/Post/id.yml
+  ---
+  - 1
+  - 2
+
+Dump the data:
+
+  $ GET http://localhost:8888/=/model/Post/id/1.yml
+  ---
+  body: 'This is my post, the content of which is this, which is mine.'
+  id: 1
+  title: my first post
+
+  $ GET http://localhost:8888/=/model/Post/id/2.yml
+  ---
+  body: "Content of another post.  Got to go, the cat's on fire."
+  id: 2
+  title: post deux
+
+=head1 POST
+
+TODO not working
+
+Actually, it looks like it is not supposed to work this way.  Why not?
+
+  $ echo '---
+  body: "A post via web services"
+  id: 3
+  title: "posting from the command-line"
+  ' | lwp-request -m POST http://localhost:8888/=/model/Post.yml
+  POST http://localhost:8888/=/model/Post/id/3.yml --> 404 Not Found
+
+=head1 PUT
+
+TODO not working
+
+  $ echo '---
+  title: "posting from the cli"
+  ' | lwp-request -m PUT http://localhost:8888/=/model/Post/3.yml
+  500 Can't read entity body: Connection reset by peer
+
+=head1 DELETE
+
+  $  lwp-request -m DELETE http://localhost:8888/=/model/Post/id/3.yml
+  ---
+  content: {}
+  error: ~
+  field_errors: {}
+  field_warnings: {}
+  message: Deleted
+  success: 1
+
+=cut

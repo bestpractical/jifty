@@ -26,8 +26,8 @@ __PACKAGE__->mk_accessors(
 );
 
 __PACKAGE__->mk_classdata($_)
-    for qw(cached_css        cached_css_digest
-           cached_javascript cached_javascript_digest javascript_libs);
+    for qw(cached_css        cached_css_digest        cached_css_time
+           cached_javascript cached_javascript_digest cached_javascript_time javascript_libs);
 
 __PACKAGE__->javascript_libs([qw(
     jsan/JSAN.js
@@ -1011,6 +1011,7 @@ sub generate_css {
 
         __PACKAGE__->cached_css( $css );
         __PACKAGE__->cached_css_digest( md5_hex( $css ) );
+		__PACKAGE__->cached_css_time( time );
     }
 }
 
@@ -1132,6 +1133,7 @@ sub generate_javascript {
 
         __PACKAGE__->cached_javascript( $js );
         __PACKAGE__->cached_javascript_digest( md5_hex( $js ) );
+        __PACKAGE__->cached_javascript_time( time );
     }
 }
 
