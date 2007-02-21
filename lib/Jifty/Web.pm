@@ -401,24 +401,38 @@ sub form {
 
 =head3 new_action class => CLASS, moniker => MONIKER, order => ORDER, arguments => PARAMHASH
 
-Creates a new action (an instance of a subclass of L<Jifty::Action>)
+Creates a new action (an instance of a subclass of L<Jifty::Action>). The named arguments passed to this method are passed on to the C<new> method of the action named in C<CLASS>.
+
+=head3 Arguments
+
+=over
+
+=item class 
 
 C<CLASS> is L<qualified|Jifty::API/qualify>, and an instance of that
 class is created, passing the C<Jifty::Web> object, the C<MONIKER>,
 and any other arguments that C<new_action> was supplied.
 
+=item moniker
+
 C<MONIKER> is a unique designator of an action on a page.  The moniker
 is content-free and non-fattening, and may be auto-generated.  It is
 used to tie together arguments that relate to the same action.
 
+=item order
+
 C<ORDER> defines the order in which the action is run, with lower
 numerical values running first.
+
+=item arguments
 
 C<ARGUMENTS> are passed to the L<Jifty::Action/new> method.  In
 addition, if the current request (C<< $self->request >>) contains an
 action with a matching moniker, any arguments that are in that
 requested action but not in the C<PARAMHASH> list are set.  This
 implements "sticky fields".
+
+=back
 
 As a contrast to L<Jifty::Web::Form/add_action>, this does not add the
 action to the current form -- instead, the first form field to be
