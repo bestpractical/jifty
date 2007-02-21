@@ -3,7 +3,7 @@ use strict;
 
 =head1 NAME
 
-Jifty::Action::Autocomplete
+Jifty::Action::Autocomplete - An action for making autocompletion suggestions
 
 =head1 DESCRIPTION
 
@@ -70,6 +70,17 @@ sub take_action {
 
     return 1;
 }
+
+=head1 SEE ALSO
+
+L<Jifty::Action>
+
+=head1 LICENSE
+
+Jifty is Copyright 2005-2006 Best Practical Solutions, LLC.
+Jifty is distributed under the same terms as Perl itself.
+
+=cut
 
 1;
 
