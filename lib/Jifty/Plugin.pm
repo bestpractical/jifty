@@ -25,7 +25,7 @@ in the C<config.yml> file:
             the: constructor
 
 The dispatcher for a plugin should live in
-C<Jifty::Plugin::I<name>::Disptcher>; it is written like any other
+C<Jifty::Plugin::I<name>::Dispatcher>; it is written like any other
 L<Jifty::Dispatcher>.  Plugin dispatcher rules are checked before the
 application's rules; however, see L<Jifty::Dispatcher/Plugins and rule
 ordering> for how to manually specify exceptions to this.

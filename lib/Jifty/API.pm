@@ -8,6 +8,33 @@ package Jifty::API;
 Jifty::API - Manages and allow reflection on the Jifty::Actions that
 make up a Jifty application's API
 
+=head1 SYNOPSIS
+
+ # Find the full name of an action
+ my $class = Jifty->api->qualify('SomeAction');
+
+ # Logged users with an ID greater than 10 have restrictions
+ if (Jifty->web->current_user->id > 10) {
+     Jifty->api->deny('Foo');
+     Jifty->api->allow('FooBar');
+     Jifty->api->deny('FooBarDeleteTheWorld');
+ }
+
+ # Fetch the class names of all the allowed actions
+ my @actions = Jifty->api->actions;
+
+ # Check to see if an action is allowed
+ if (Jifty->api->is_allow('TrueFooBar')) {
+     # do something...
+ }
+
+ # Undo all allow/deny/restrict calls
+ Jifty->api->reset;
+
+=head1 DESCRIPTION
+
+You can fetch an instance of this class by calling L<Jifty/api> in your application. This object can be used to examine the actions available within your application and manage access to those actions.
+
 =cut
 
 
@@ -20,7 +47,9 @@ __PACKAGE__->mk_accessors(qw(action_limits));
 
 =head2 new
 
-Creates a new C<Jifty::API> object
+Creates a new C<Jifty::API> object.
+
+Don't use this, see L<Jifty/api> to access a reference to C<Jifty::API> in your application.
 
 =cut
 
@@ -47,8 +76,8 @@ sub new {
 
 Returns the fully qualified package name for the given provided
 action.  If the C<ACTIONNAME> starts with C<Jifty::> or
-C<ApplicationClass>::Action, simply returns the given name; otherwise,
-it prefixes it with the C<ApplicationClass>::Action.
+C<ApplicationClass::Action>, simply returns the given name; otherwise,
+it prefixes it with the C<ApplicationClass::Action>.
 
 =cut
 
@@ -221,5 +250,16 @@ sub actions {
     my $self = shift;
     return sort grep { $self->is_allowed($_) } $self->_actions;
 }
+
+=head1 SEE ALSO
+
+L<Jifty>, L<Jifty::Web>, L<Jifty::Action>
+
+=head1 LICENSE
+
+Jifty is Copyright 2005-2006 Best Practical Solutions, LLC. 
+Jifty is distributed under the same terms as Perl itself.
+
+=cut
 
 1;

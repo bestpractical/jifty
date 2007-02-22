@@ -28,6 +28,7 @@ on GET    '/=/model/*/*'        => \&list_model_items;
 on GET    '/=/model/*'          => \&list_model_columns;
 on GET    '/=/model'            => \&list_models;
 
+on POST   '/=/model/*'          => \&create_item;
 on PUT    '/=/model/*/*/*'      => \&replace_item;
 on DELETE '/=/model/*/*/*'      => \&delete_item;
 
@@ -58,7 +59,8 @@ on GET    /=/model/<model>/<column>                 list model items
 on GET    /=/model/<model>/<column>/<key>           show item
 on GET    /=/model/<model>/<column>/<key>/<field>   show item field
 
-on PUT    /=/model/<model>/<column>/<key>           replace item
+on POST   /=/model/<model>                          create item
+on PUT    /=/model/<model>/<column>/<key>           update item
 on DELETE /=/model/<model>/<column>/<key>           delete item
 
 on GET    /=/action                                 list actions
@@ -467,10 +469,17 @@ sub show_item {
     outs( ['model', $model, $column, $key],  { map {$_ => stringify($rec->$_())} map {$_->name} $rec->columns});
 }
 
+=head2 create_item
+
+Implemented by redispatching to a CreateModel action.
+
+=cut
+
+sub create_item { _dispatch_to_action('Create') }
 
 =head2 replace_item
 
-Implemented by redispatching to a CreateModel or UpdateModel action
+Implemented by redispatching to a CreateModel or UpdateModel action.
 
 =cut
 
@@ -488,7 +497,8 @@ sub _dispatch_to_action {
     my $prefix = shift;
     my ($model, $class, $column, $key) = (model($1), $1, $2, $3);
     my $rec = $model->new;
-    $rec->load_by_cols( $column => $key );
+    $rec->load_by_cols( $column => $key )
+        if defined $column and defined $key;
 
     if ( not $rec->id ) {
         abort(404)         if $prefix eq 'Delete';
@@ -497,16 +507,18 @@ sub _dispatch_to_action {
 
     $class =~ s/^[\w\.]+\.//;
 
-    $ENV{REQUEST_METHOD} = 'POST';
-    Jifty->web->request->argument( $column => $key );
-    Jifty->web->request->argument( 'id' => $rec->id )
-        if defined $rec->id;
+    if ( defined $column and defined $key ) {
+        Jifty->web->request->argument( $column => $key );
+        Jifty->web->request->argument( 'id' => $rec->id )
+            if defined $rec->id;
+    }
     
     # CGI.pm doesn't handle form encoded data in PUT requests (in fact,
     # it doesn't really handle PUT requests properly at all), so we have
     # to read the request body ourselves and have CGI.pm parse it
-    if (    $ENV{'CONTENT_TYPE'} =~ m|^application/x-www-form-urlencoded$|
-         or $ENV{'CONTENT_TYPE'} =~ m|^multipart/form-data$| )
+    if (    $ENV{'REQUEST_METHOD'} eq 'PUT'
+        and (   $ENV{'CONTENT_TYPE'} =~ m|^application/x-www-form-urlencoded$|
+              or $ENV{'CONTENT_TYPE'} =~ m|^multipart/form-data$| ) )
     {
         my $cgi    = Jifty->handler->cgi;
         my $length = defined $ENV{'CONTENT_LENGTH'} ? $ENV{'CONTENT_LENGTH'} : 0;
@@ -529,6 +541,7 @@ sub _dispatch_to_action {
         }
     }
 
+    $ENV{REQUEST_METHOD} = 'POST';
     dispatch '/=/action/' . action( $prefix . $class );
 }
 
