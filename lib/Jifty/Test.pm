@@ -403,7 +403,7 @@ sub _ending {
         # Disconnect the PubSub bus, if need be; otherwise we may not
         # be able to drop the testing database
         Jifty->bus->disconnect
-          if Jifty->bus;
+          if Jifty->config and Jifty->bus;
 
         # Remove testing db
         if (Jifty->handle) {
