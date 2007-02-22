@@ -11,8 +11,9 @@ Jifty::Action::Record -- An action tied to a record in the database.
 
 Represents a web-based action that is a create, update, or delete of a
 L<Jifty::Record> object.  This automatically populates the arguments
-method of L<Jifty::Action> so that you don't need to bother.  To
-actually use this class, you probably want to inherit from one of
+method of L<Jifty::Action> so that you don't need to bother.  
+
+To actually use this class, you probably want to inherit from one of
 L<Jifty::Action::Record::Create>, L<Jifty::Action::Record::Update>, or
 L<Jifty::Action::Record::Delete> and override the C<record_class>
 method.
@@ -392,7 +393,13 @@ sub _setup_event_after_action {
 =head1 SEE ALSO
 
 L<Jifty::Action>, L<Jifty::Record>, L<Jifty::DBI::Record>,
-L<Jifty::Action::Record::Create>, L<Jifty::Action::Record::Update>
+L<Jifty::Action::Record::Create>, L<Jifty::Action::Record::Update>,
+L<Jifty::Action::Reocrd::Delete>
+
+=head1 LICENSE
+
+Jifty is Copyright 2005-2006 Best Practical Solutions, LLC.
+Jifty is distributed under the same terms as Perl itself.
 
 =cut
 

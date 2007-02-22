@@ -10,17 +10,8 @@ make up a Jifty application's API
 
 =head1 SYNOPSIS
 
- # A nice way to run actions in your application
+ # Find the full name of an action
  my $class = Jifty->api->qualify('SomeAction');
- $class->require;
- $action = $class->new(
-     moniker  => 'my_action',
-     argument => {
-         foo => 1,
-         bar => 'baz',
-     },
- );
- $action->run;
 
  # Logged users with an ID greater than 10 have restrictions
  if (Jifty->web->current_user->id > 10) {

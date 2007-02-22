@@ -429,11 +429,6 @@ sub app_instance_id {
 }
 
 
-=head1 LICENSE
-
-Jifty is Copyright 2005-2006 Best Practical Solutions, LLC.
-Jifty is distributed under the same terms as Perl itself.
-
 =head1 SEE ALSO
 
 L<http://jifty.org>, L<Jifty::Manual::Tutorial>, L<Jifty::Everything>, L<Jifty::Config>, L<Jifty::Handle>, L<Jifty::Logger>, L<Jifty::Handler>, L<Jifty::Web>, L<Jifty::API>, L<Jifty::Subs>, L<IPC::PubSub>, L<Jifty::Plugin>, L<Jifty::ClassLoader>
@@ -441,6 +436,12 @@ L<http://jifty.org>, L<Jifty::Manual::Tutorial>, L<Jifty::Everything>, L<Jifty::
 =head1 AUTHORS
 
 Jesse Vincent, Alex Vandiver and David Glasser.
+
+=head1 LICENSE
+
+Jifty is Copyright 2005-2006 Best Practical Solutions, LLC.
+Jifty is distributed under the same terms as Perl itself.
+
 
 
 =cut
