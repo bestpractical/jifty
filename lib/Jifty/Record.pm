@@ -404,7 +404,7 @@ sub _cache_config {
 
 =head2 since
  
-By default, all models exist since C<undef>, the ur-time when the application was created. Please override it for your midel class.
+By default, all models exist since C<undef>, the ur-time when the application was created. Please override it for your model class.
  
 =cut
  
@@ -446,14 +446,14 @@ sub create_table_in_db {
 }
 
 sub _make_schema { 
-        my $class = shift;
+    my $class = shift;
 
     my $schema_gen = Jifty::DBI::SchemaGenerator->new( Jifty->handle )
         or die "Can't make Jifty::DBI::SchemaGenerator";
     my $ret = $schema_gen->add_model( $class->new );
     $ret or die "couldn't add model $class: " . $ret->error_message;
 
-        return $schema_gen;
+    return $schema_gen;
 }
 
 =head2 add_column_sql column_name
