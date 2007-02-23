@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" >
+<head>
+<title><% _($n || 'Jifty') %> - <%_('Jifty Developer Documentation Online')%></title>
+<style type="text/css"><!--
+a { text-decoration: none }
+a:hover { text-decoration: underline }
+a:focus { background: #99ff99; border: 1px black dotted }
+--></style>
+</head>
+<body style="background: #dddddd">
+<%PERL>
+my @found;
+File::Find::find(
+    { untaint => 1,
+      wanted => sub {
+        return unless /(\w+)\.(?:pm|pod)$/;
+        my $name = $File::Find::name;
+        $name =~ s/.*lib\b.//;
+        $name =~ s!\.(?:pm|pod)!!i;
+        $name =~ s!\W!::!g;
+        push @found, $name;
+    },follow => ($^O ne 'MSWin32') },
+    Jifty::Util->app_root ."/lib",
+);
+
+
+File::Find::find(
+    { untaint => 1,
+      wanted => sub {
+        return unless $File::Find::name =~ /^(?:.*?)(Jifty.*?\.(?:pm|pod))$/;
+        my $name = $1;
+        $name =~ s/.*lib\b.//;
+        $name =~ s!\.(?:pm|pod)!!i;
+        $name =~ s!\/!::!g;
+        push @found, $name;
+    },follow => ($^O ne 'MSWin32') },
+    Jifty::Util->jifty_root,
+);
+
+my $indent = 0;
+my $prev = '';
+foreach my $file (sort @found) {
+    my ($parent, $name) = ($1, $2) if $file =~ /(?:(.*)::)?(\w+)$/;
+    $parent = '' unless defined $parent;
+    if ($file =~ /^$prev\::(.*)/) {
+        my $foo = $1;
+        while ($foo =~ s/(\w+):://) {
+            $indent++;
+            $m->print(('&nbsp;&nbsp;&nbsp;' x $indent));
+            $m->print("$1<br />");
+        }
+        $indent++;
+    } elsif ($prev !~ /^$parent\::/) {
+        $indent = 0 unless length $parent;
+        while ($parent =~ s/(\w+)//) {
+            next if $prev =~ s/\b$1:://;
+            while ($prev =~ s/:://) {
+                $indent--;
+            }
+            $m->print(('&nbsp;&nbsp;&nbsp;' x $indent));
+            $m->print("$1<br />");
+            $indent++;
+        }
+    } elsif ($prev =~ /^$parent\::(.*::)/) {
+        my $foo = $1;
+        while ($foo =~ s/:://) {
+            $indent--;
+        }
+    }
+    $m->print( ( '&nbsp;&nbsp;&nbsp;' x $indent )
+      . '<a target="podcontent" href="content.html?n=' . $file . '">' . $name
+      . '</a><br />' ."\n" );
+    $prev = $file;
+}
+
+</%PERL>
+</body></html>
+<%INIT>
+require File::Basename;
+require File::Find;
+require File::Temp;
+require File::Spec;
+require Pod::Simple::HTML;
+</%INIT>
+<%ARGS>
+$n  => ''
+$method => ''
+$Target    => '&method=content'
+</%ARGS>
