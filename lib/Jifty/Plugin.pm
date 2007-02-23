@@ -91,6 +91,25 @@ sub new_request {
     Jifty->api->allow(qr/^\Q$class\E::Action/);
 }
 
+sub _calculate_share {
+    my $self = shift;
+    my $class = ref($self) || $self;
+    unless ( $self->{share} ) {
+        local $@; # We're just avoiding File::ShareDir's failure behaviour of dying
+        eval { $self->{share} = File::ShareDir::module_dir($class) };
+    }
+    unless ( $self->{share} ) {
+        local $@ ; # We're just avoiding File::ShareDir's failure behaviour of dying
+        eval { $self->{share} = File::ShareDir::module_dir('Jifty') };
+        if ( $self->{'share'} ) {
+            my $class_to_path = $class;
+            $class_to_path =~ s|::|/|g;
+            $self->{share} .= "/plugins/" . $class_to_path;
+        }
+    }
+}
+
+
 =head2 template_root
 
 Returns the root of the C<HTML::Mason> template directory for this plugin
@@ -99,11 +118,7 @@ Returns the root of the C<HTML::Mason> template directory for this plugin
 
 sub template_root {
     my $self = shift;
-    my $class = ref($self) || $self;
-    unless (exists $self->{share}) {
-        $self->{share} = undef;
-        eval { $self->{share} = File::ShareDir::module_dir($class) };
-    }
+    $self->_calculate_share();
     return unless $self->{share};
     return $self->{share}."/web/templates";
 }
@@ -130,11 +145,6 @@ Returns the root of the static directory for this plugin
 
 sub static_root {
     my $self = shift;
-    my $class = ref($self) || $self;
-    unless (exists $self->{share}) {
-        $self->{share} = undef;
-        eval { $self->{share} = File::ShareDir::module_dir($class) };
-    }
     return unless $self->{share};
     return $self->{share}."/web/static";
 }

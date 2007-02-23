@@ -263,7 +263,14 @@ sub guess {
             L10N       => {
                 PoDir => "share/po",
             },
-            Plugins    => [],
+            Plugins    => [
+            { REST => {},
+        },
+        {       Halo => {},},
+        {OnlineDocs => {},},
+        {        CompressedCSSandJS => {},},
+        {AdminUI => {},}
+            ],
             Web        => {
                 Port => '8888',
                 BaseURL => 'http://localhost',

@@ -137,7 +137,10 @@ sub mason_config {
 
     for my $plugin (Jifty->plugins) {
         my $comp_root = $plugin->template_root;
-        next unless $comp_root;
+        unless  ( $comp_root and -d $comp_root) {
+            Jifty->log->debug( "Plugin @{[ref($plugin)]} doesn't appear to have a valid mason template component root ($comp_root)");
+            next;
+        }
         push @{ $config{comp_root} }, [ ref($plugin)."-".Jifty->web->serial => $comp_root ];
     }
     push @{$config{comp_root}}, [jifty => Jifty->config->framework('Web')->{'DefaultTemplateRoot'}];
@@ -167,7 +170,10 @@ sub templatedeclare_config {
 
     for my $plugin ( Jifty->plugins ) {
         my $comp_root = $plugin->template_class;
-        next unless $comp_root;
+        unless (defined $comp_root and $comp_root->isa('Template::Declare') ){
+            Jifty->log->debug( "Plugin @{[ref($plugin)]} doesn't appear to have a ::View class that's a Template::Declare subclass");
+            next;
+        }
         push @{ $config{roots} }, $comp_root ;
     }
 
