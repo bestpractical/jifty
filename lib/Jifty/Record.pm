@@ -3,6 +3,8 @@ use strict;
 
 package Jifty::Record;
 
+use Jifty::Config;
+
 =head1 NAME
 
 Jifty::Record - Represents a Jifty object that lives in the database.
@@ -483,6 +485,49 @@ sub drop_column_sql {
 
     my $col = $self->column($column_name);
     return "ALTER TABLE " . $self->table . " DROP COLUMN " . $col->name;
+}
+
+=head2 schema_version
+
+This method is used by L<Jifty::DBI::Record> to determine which schema version is in use. It returns the current database version stored in the configuration.
+
+Jifty's notion of the schema version is currently broken into two:
+
+=over
+
+=item 1.
+
+The Jifty version is the first. In the case of models defined by Jifty itself, these use the version found in C<$Jifty::VERSION>.
+
+=item 2.
+
+Any model defined by your application use the database version declared in the configuration. In F<etc/config.yml>, this is lcoated at:
+
+  framework:
+    Database:
+      Version: 0.0.1
+
+=back
+
+A model is considered to be defined by Jifty if it the package name starts with "Jifty::". Otherwise, it is assumed to be an application model.
+
+=cut
+
+sub schema_version {
+    my $class = shift;
+    
+    # Return the Jifty schema version
+    if ($class =~ /^Jifty::Model::/) {
+        return $Jifty::VERSION;
+    }
+
+    # TODO need to consider Jifty plugin versions?
+
+    # Return the application schema version
+    else {
+        my $config = Jifty::Config->new;
+        return $config->framework('Database')->{'Version'};
+    }
 }
 
 1;

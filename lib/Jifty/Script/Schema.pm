@@ -372,13 +372,31 @@ sub upgrade_tables {
             for my $col  (grep {not $_->virtual} $model->columns ) {
 
                 # If they're old, drop them
-               if ( defined $col->till and $appv >= $col->till and $ $col->till > $dbv ) {
-                   push @{ $UPGRADES{ $col->till } }, $model->drop_column_sql($col->name);
+                if ( defined $col->till and $appv >= $col->till and $col->till > $dbv ) {
+                    push @{ $UPGRADES{ $col->till } }, sub {
+                        my $renamed = $upgradeclass->just_renamed || {};
+
+                        # skip it if this was dropped by a rename
+                        $model->drop_column_sql($col->name)
+                            unless defined $renamed
+                                ->{ $model->table }
+                                ->{'drop'}
+                                ->{ $col->name };
+                    };
                 }
 
                 # If they're new, add them
                 if ($model->can( 'since' ) and defined $col->since and $appv >= $col->since and $col->since >$dbv ) {
-                    unshift @{ $UPGRADES{ $col->since } }, $model->add_column_sql($col->name);
+                    unshift @{ $UPGRADES{ $col->since } }, sub {
+                        my $renamed = $upgradeclass->just_renamed || {};
+
+                        # skip it if this was added by a rename
+                        $model->add_column_sql($col->name)
+                            unless defined $renamed
+                                ->{ $model->table }
+                                ->{'add'}
+                                ->{ $col->name };
+                    };
                 }
             }
         }
