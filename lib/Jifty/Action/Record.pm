@@ -396,7 +396,7 @@ L<Jifty::Action>, L<Jifty::Record>, L<Jifty::DBI::Record>,
 L<Jifty::Action::Record::Create>, L<Jifty::Action::Record::Update>,
 L<Jifty::Action::Reocrd::Delete>
 
-=head1 LICENSE
+=head LICENSE
 
 Jifty is Copyright 2005-2006 Best Practical Solutions, LLC.
 Jifty is distributed under the same terms as Perl itself.
