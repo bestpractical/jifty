@@ -3,6 +3,8 @@ use strict;
 
 package Jifty::Record;
 
+use Jifty::Config;
+
 =head1 NAME
 
 Jifty::Record - Represents a Jifty object that lives in the database.
@@ -406,7 +408,7 @@ sub _cache_config {
 
 =head2 since
  
-By default, all models exist since C<undef>, the ur-time when the application was created. Please override it for your midel class.
+By default, all models exist since C<undef>, the ur-time when the application was created. Please override it for your model class.
  
 =cut
  
@@ -466,14 +468,14 @@ sub drop_table_in_db {
 }
 
 sub _make_schema { 
-        my $class = shift;
+    my $class = shift;
 
     my $schema_gen = Jifty::DBI::SchemaGenerator->new( Jifty->handle )
         or die "Can't make Jifty::DBI::SchemaGenerator";
     my $ret = $schema_gen->add_model( $class->new );
     $ret or die "couldn't add model $class: " . $ret->error_message;
 
-        return $schema_gen;
+    return $schema_gen;
 }
 
 =head2 add_column_sql column_name
@@ -516,6 +518,49 @@ sub __uuid {
     my $id = $self->id or return undef;
     my $table = $self->table or return undef;
     return $self->_handle->lookup_uuid($table, $id);
+}
+
+=head2 schema_version
+
+This method is used by L<Jifty::DBI::Record> to determine which schema version is in use. It returns the current database version stored in the configuration.
+
+Jifty's notion of the schema version is currently broken into two:
+
+=over
+
+=item 1.
+
+The Jifty version is the first. In the case of models defined by Jifty itself, these use the version found in C<$Jifty::VERSION>.
+
+=item 2.
+
+Any model defined by your application use the database version declared in the configuration. In F<etc/config.yml>, this is lcoated at:
+
+  framework:
+    Database:
+      Version: 0.0.1
+
+=back
+
+A model is considered to be defined by Jifty if it the package name starts with "Jifty::". Otherwise, it is assumed to be an application model.
+
+=cut
+
+sub schema_version {
+    my $class = shift;
+    
+    # Return the Jifty schema version
+    if ($class =~ /^Jifty::Model::/) {
+        return $Jifty::VERSION;
+    }
+
+    # TODO need to consider Jifty plugin versions?
+
+    # Return the application schema version
+    else {
+        my $config = Jifty::Config->new;
+        return $config->framework('Database')->{'Version'};
+    }
 }
 
 1;

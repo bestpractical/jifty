@@ -73,6 +73,9 @@ requires('version');
 if (can_cc()) {
     # Always require the Syck bindings if a C compiler is available
     requires('YAML::Syck' => 0.82);
+    requires('YAML' => 0.35); 	# Use YAML::Dump for the moment since YAML.pm segfaults on
+				# reading stupidly long (~20K characters) double-quoted
+				# strings, and we need to produce YAML.pm-readable output.
     requires('JSON::Syck' => 0.15);
 }
 else {

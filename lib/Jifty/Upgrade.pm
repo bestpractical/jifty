@@ -14,9 +14,11 @@ and data upgrades that happen.
 
 package Jifty::Upgrade;
 
-use base qw/Jifty::Object Exporter/;
+use base qw/Jifty::Object Exporter Class::Data::Inheritable/;
 use vars qw/%UPGRADES @EXPORT/;
 @EXPORT = qw/since rename/;
+
+__PACKAGE__->mk_classdata('just_renamed');
 
 =head2 since I<VERSION> I<SUB>
 
@@ -82,6 +84,9 @@ sub rename {
     Jifty::Util->require( $args{table} );
     my $table_name = $args{table}->table;
 
+    my $package = (caller)[0];
+    my $renamed = $package->just_renamed || {};
+
     if ( $args{column} ) {
         my $driver = Jifty->config->framework('Database')->{'Driver'};
         if ( $driver =~ /SQLite/ ) {
@@ -130,10 +135,21 @@ sub rename {
         else {
             Jifty->handle->simple_query("ALTER TABLE $table_name RENAME $args{column} TO $args{to}");
         }
+
+        # Mark this table column as renamed
+        $renamed->{ $table_name }{'drop'}{ $args{'column'} } = $args{'to'};
+        $renamed->{ $table_name }{'add' }{ $args{'to'    } } = $args{'column'};
     }
     else {
         Jifty->handle->simple_query("ALTER TABLE $table_name RENAME TO $args{to}");
+
+        # Mark this table as renamed
+        $renamed->{ $table_name }{'drop_table'} = $args{'to'};
+        $renamed->{ $args{'to'} }{'add_table' } = $table_name;
     }
+
+    # Remember renames so that adds/drops are canceled
+    $package->just_renamed($renamed);
 }
 
 1;
