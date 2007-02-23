@@ -138,7 +138,7 @@ sub mason_config {
     for my $plugin (Jifty->plugins) {
         my $comp_root = $plugin->template_root;
         unless  ( $comp_root and -d $comp_root) {
-            Jifty->log->debug( "Plugin @{[ref($plugin)]} doesn't appear to have a valid mason template component root ($comp_root)");
+            Jifty->log->debug( "Plugin @{[ref($plugin)]} doesn't appear to have a valid mason template component root (@{[$comp_root ||'']})");
             next;
         }
         push @{ $config{comp_root} }, [ ref($plugin)."-".Jifty->web->serial => $comp_root ];
