@@ -6,7 +6,7 @@
 <% $create->hidden( model_class => $model_class ) %>
 
 <% $create->form_field('name') %>
-<% $create->form_field('label') %>
+<% $create->form_field('label_text') %>
 <% $create->form_field('storage_type', mandatory => 1) %>
 <% $create->form_field('default_value') %>
 <% $create->form_field('mandatory') %>
