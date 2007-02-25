@@ -14,9 +14,14 @@ column 'name' =>
 column 'email' =>
   type is 'text',
   is mandatory;
+column 'really_tasty' =>
+  type is 'boolean',
+  is immutable,
+  since '0.0.2';
 column 'tasty' =>
   type is 'boolean',
-  is immutable;
+  is immutable,
+  till '0.0.2';
 column 'password' =>
   type is 'text',
   render_as 'Password',

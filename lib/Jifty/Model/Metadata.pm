@@ -14,7 +14,7 @@ Jifty::Model::Metadata - Tracks Jifty-related metadata
 
 Every Jifty application automatically inherits this table, which
 describes information about the Jifty database.  It uses this
-information to smartly upgrade between application versions, as well
+information to smartly upgrade between application schema versions, as well
 as versions of Jifty itself, for instance.
 
 =cut

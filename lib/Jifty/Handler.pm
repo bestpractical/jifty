@@ -145,6 +145,8 @@ sub mason_config {
     }
     push @{$config{comp_root}}, [jifty => Jifty->config->framework('Web')->{'DefaultTemplateRoot'}];
 
+    push @{ $config{comp_root} }, [jifty => Jifty->config->framework('Web')->{'DefaultTemplateRoot'}];
+
     # In developer mode, we want halos, refreshing and all that other good stuff. 
     if (Jifty->config->framework('DevelMode') ) {
         push @{$config{'plugins'}}, 'Jifty::Mason::Halo';

@@ -5,9 +5,14 @@ package Jifty;
 use IPC::PubSub 0.22;
 use Data::UUID;
 use encoding 'utf8';
-# Work around the fact that Time::Local caches thing on first require
-BEGIN { local $ENV{'TZ'} = "GMT";  require Time::Local;}
-$Jifty::VERSION = '0.70117';
+BEGIN { 
+    # Work around the fact that Time::Local caches TZ on first require
+    local $ENV{'TZ'} = "GMT";
+    require Time::Local;
+
+    # Declare early to make sure Jifty::Record::schema_version works
+    $Jifty::VERSION = '0.70117'; 
+}
 
 =head1 NAME
 

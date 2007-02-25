@@ -89,6 +89,7 @@ sub setup_environment {
     # Import Jifty
     Jifty::Util->require("Jifty");
     Jifty::Util->require("Jifty::Model::Metadata");
+    Jifty->new( no_handle        => 1, logger_component => 'SchemaTool',) unless (Jifty->config);
 }
 
 =head2 print_help
@@ -148,10 +149,7 @@ sub probe_database_existence {
 
     # Now try to connect.  We trap expected errors and deal with them.
     eval {
-        Jifty->new(
-            no_handle        => $no_handle,
-            logger_component => 'SchemaTool',
-        );
+        Jifty->setup_database_connection( no_handle        => $no_handle, logger_component => 'SchemaTool',);
     };
 
     if ( $@ =~ /doesn't match (application schema|running jifty) version/i ) {
@@ -353,7 +351,7 @@ sub upgrade_tables {
     eval {
         $UPGRADES{$_} = [ $upgradeclass->upgrade_to($_) ]
             for grep { $appv >= version->new($_) and $dbv < version->new($_) }
-            $upgradeclass->versions();
+                     $upgradeclass->versions();
     };
 
     for my $model_class ( grep {/^\Q$baseclass\E::Model::/} __PACKAGE__->models ) {
@@ -365,20 +363,38 @@ sub upgrade_tables {
         my $model = $model_class->new;
 
         # If this whole table is new Create it
-        if (defined $model->since and  $appv >= $model->since and $model->since >$dbv ) {
+        if ($model->can( 'since' ) and defined $model->since and  $appv >= $model->since and $model->since >$dbv ) {
             unshift @{ $UPGRADES{ $model->since } }, $model->printable_table_schema();
         } else {
             # Go through the columns
             for my $col  (grep {not $_->virtual} $model->columns ) {
 
                 # If they're old, drop them
-               if ( defined $col->till and $appv >= $col->till and $ $col->till > $dbv ) {
-                   push @{ $UPGRADES{ $col->till } }, $model->drop_column_sql($col->name);
+                if ( defined $col->till and $appv >= $col->till and $col->till > $dbv ) {
+                    push @{ $UPGRADES{ $col->till } }, sub {
+                        my $renamed = $upgradeclass->just_renamed || {};
+
+                        # skip it if this was dropped by a rename
+                        $model->drop_column_sql($col->name)
+                            unless defined $renamed
+                                ->{ $model->table }
+                                ->{'drop'}
+                                ->{ $col->name };
+                    };
                 }
 
                 # If they're new, add them
-                if (defined $col->since and $appv >= $col->since and $col->since >$dbv ) {
-                    unshift @{ $UPGRADES{ $col->since } }, $model->add_column_sql($col->name);
+                if ($model->can( 'since' ) and defined $col->since and $appv >= $col->since and $col->since >$dbv ) {
+                    unshift @{ $UPGRADES{ $col->since } }, sub {
+                        my $renamed = $upgradeclass->just_renamed || {};
+
+                        # skip it if this was added by a rename
+                        $model->add_column_sql($col->name)
+                            unless defined $renamed
+                                ->{ $model->table }
+                                ->{'add'}
+                                ->{ $col->name };
+                    };
                 }
             }
         }
@@ -388,9 +404,11 @@ sub upgrade_tables {
         $self->_print_upgrades(%UPGRADES);
 
     } else {
-       eval { $self->_execute_upgrades(%UPGRADES);
-        $log->info("Upgraded to version $appv");
-    }; die $@ if $@;
+        eval { 
+            $self->_execute_upgrades(%UPGRADES);
+            $log->info("Upgraded to version $appv");
+        }; 
+        die $@ if $@;
     }
     return 1;
 }
