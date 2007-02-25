@@ -89,6 +89,7 @@ sub setup_environment {
     # Import Jifty
     Jifty::Util->require("Jifty");
     Jifty::Util->require("Jifty::Model::Metadata");
+        Jifty->new( no_handle        => 1, logger_component => 'SchemaTool',) unless (Jifty->handle);
 }
 
 =head2 print_help
@@ -148,10 +149,7 @@ sub probe_database_existence {
 
     # Now try to connect.  We trap expected errors and deal with them.
     eval {
-        Jifty->new(
-            no_handle        => $no_handle,
-            logger_component => 'SchemaTool',
-        );
+        Jifty->setup_database_connection( no_handle        => $no_handle, logger_component => 'SchemaTool',);
     };
 
     if ( $@ =~ /doesn't match (application schema|running jifty) version/i ) {
