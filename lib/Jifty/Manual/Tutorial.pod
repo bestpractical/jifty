@@ -239,7 +239,7 @@ Save your model class.
 
 Ok. It's time to initialize MyWeblog's database. By default, Jifty sets up your
 application with the SQLite database engine.  If you'd rather use PostgreSQL or
-MySQL, you need to add some content to F<etc/jifty.yml>. (See L<Jifty::Config>
+MySQL, you need to add some content to F<etc/config.yml>. (See L<Jifty::Config>
 for a bit more information).
 
   # jifty schema --setup
