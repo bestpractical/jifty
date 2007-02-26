@@ -121,7 +121,6 @@ sub mason_config {
         ],
         comp_root     => [ 
                           [application =>  Jifty::Util->absolute_path( Jifty->config->framework('Web')->{'TemplateRoot'} )],
-                          [jifty => Jifty->config->framework('Web')->{'DefaultTemplateRoot'}],
                          ],
         %{ Jifty->config->framework('Web')->{'MasonConfig'} },
     );
@@ -131,6 +130,8 @@ sub mason_config {
         next unless $comp_root;
         push @{ $config{comp_root} }, [ ref($plugin)."-".Jifty->web->serial => $comp_root ];
     }
+
+    push @{ $config{comp_root} }, [jifty => Jifty->config->framework('Web')->{'DefaultTemplateRoot'}];
 
     # In developer mode, we want halos, refreshing and all that other good stuff. 
     if (Jifty->config->framework('DevelMode') ) {

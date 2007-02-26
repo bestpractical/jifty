@@ -207,6 +207,7 @@ sub send {
     for my $to ( grep {defined} ($self->to, $self->to_list) ) {
         if ($to->can('id')) {
         next if     $currentuser_object_class->can("nobody")
+                and $currentuser_object_class->nobody->id
                 and $to->id == $currentuser_object_class->nobody->id;
                 
         next if $to->id == $currentuser_object_class->superuser->id;
