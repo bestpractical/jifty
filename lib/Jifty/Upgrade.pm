@@ -102,7 +102,7 @@ sub rename {
             my @column_info = ( split /,/, $schema );
             my @column_names = map { /^\s*(\S+)/ ? $1 : () } @column_info;
 
-            s/^(\s*)\Q$args{column}\E/$1$args{to}/i for @column_info;
+            s/^(\s*)\b\Q$args{column}\E\b/$1$args{to}/i for @column_info;
 
             my $new_schema = $new_create_clause . join( ',', @column_info );
             my $copy_columns = join(
