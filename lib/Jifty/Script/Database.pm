@@ -10,12 +10,11 @@ use File::Path ();
 
 =head1 NAME
 
-Jifty::Script::Database 
+Jifty::Script::Database - script for loading/dumping data from Jifty
 
 =head1 DESCRIPTION
 
-When you're getting started with Jifty, this is the server you
-want. It's lightweight and easy to work with.
+This script performs database dumps/loads on the database. This is particularly useful if part of your schema is stored in the database.
 
 =head1 API
 
@@ -28,7 +27,8 @@ sub options {
     (
      'dump'       => 'dump',
      'load'       => 'load',
-     'replace'  => 'replace',
+     'replace'    => 'replace',
+     'as-perl'    => 'as_perl'
     )
 }
 
@@ -103,7 +103,7 @@ sub load_content_for_class {
         "There's no locally defined class called $class. Without that, we can't insert records into it: $@"
         );
     }
-    my $current_user = Jifty::CurrentUser->new( _bootstrap => 1 );
+    my $current_user = Jifty->app_class('CurrentUser')->new( _bootstrap => 1 );
     foreach my $id ( sort keys %$content ) {
         my $obj = $class->new( current_user => $current_user );
         if ( $self->{'replace'} ) {
@@ -233,7 +233,13 @@ Dump the current database state as a YAML hash to STDOUT
 sub dump {
     my $self = shift;
     my $content = $self->_models_to_hash();
-    print Jifty::YAML::Dump($content)."\n";
+
+    if ($self->{as_perl}) {
+        $self->dump_as_perl($content);
+    }
+    else {
+        print Jifty::YAML::Dump($content)."\n";
+    }
 }
 
 sub _models_to_hash {
@@ -241,11 +247,12 @@ sub _models_to_hash {
         my $content = {};
         foreach my $model (Jifty->class_loader->models, qw(Jifty::Model::Metadata Jifty::Model::ModelClass Jifty::Model::ModelClassColumn)) {
 
+        my $current_user = Jifty->app_class('CurrentUser')->new( _bootstrap => 1 );
 
         next unless $model->isa('Jifty::Record');
         my $collection = $model."Collection";
         Jifty::Util->require($collection);
-        my $records = $collection->new;
+        my $records = $collection->new( current_user => $current_user );
         $records->unlimit();
 
         foreach my $item ( @{ $records->items_array_ref } ) {
@@ -272,6 +279,37 @@ sub _models_to_hash {
 
     }
     return $content;
+}
+
+=head2 dump_as_perl
+
+Outputs the data into a Jifty-ized Perl format. This is great for building operations to fill a test database from one you've already built up.
+
+=cut
+
+sub dump_as_perl {
+    my ($self, $content) = @_;
+
+    print 'my $record;',"\n";
+    for my $model (keys %$content) {
+        print "\$record = $model\->new;\n\n";
+
+        my $records = $content->{$model};
+        for my $uuid (keys %$records) {
+            my $columns = $records->{$uuid};
+
+            print "\$record->create(\n";
+            print "    __uuid => '$uuid',\n";
+
+            for my $column (%$columns) {
+                if (defined $columns->{$column}) {
+                    print "    $column => '$columns->{$column}',\n";
+                }
+            }
+
+            print ");\n\n";
+        }
+    }
 }
 
 1;

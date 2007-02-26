@@ -60,7 +60,10 @@ since '0.70129' => sub {
     Jifty->handle->begin_transaction;
     Jifty->handle->bootstrap_uuid_table;
 
-    # XXX - Generate UUID for _existing_ rows
+    # Generate UUID for _existing_ rows
+    if (Jifty->config->framework('Database')->{'RecordUUIDs'} !~ /^(?:lazy|off)$/i) {
+        Jifty->handle->insert_uuids_for_existing_rows;
+    }
 
     Jifty->handle->commit;
 };

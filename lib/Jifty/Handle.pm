@@ -243,12 +243,15 @@ sub _insert_uuid {
                 id => undef,
                 uuid => undef,
                 @_);
-           my $uuid =  ($args{uuid} || Jifty::Util->generate_uuid);
-        # Generate a UUID on the sideband: $table - $rv - UUID.
-        $self->dbh->do(
-            qq[ INSERT INTO _jifty_uuids VALUES (?, ?, ?) ], {},
-           $uuid , $args{table}, $args{id}
-        );
+
+    my $uuid =  ($args{uuid} || Jifty::Util->generate_uuid);
+
+    # Generate a UUID on the sideband: $table - $rv - UUID.
+    $self->dbh->do(
+        qq[ INSERT INTO _jifty_uuids VALUES (?, ?, ?) ], {},
+        $uuid , $args{table}, $args{id}
+    );
+
     return $uuid; 
 }
 
@@ -279,6 +282,37 @@ sub bootstrap_uuid_table {
     ]);
 }
 
+=head2 insert_uuids_for_existing_rows 
+
+Called by the upgrade script to create UUIDs for existing rows. Could be called at any time to create UUIDs for any rows that don't already have them.
+
+=cut
+
+sub insert_uuids_for_existing_rows {
+    my $self = shift;
+
+    # Iterate over all models
+    for my $model (Jifty->class_loader->models) {
+        # If the model isn't a record, ignore it
+        next unless $model->isa('Jifty::Record');
+
+        # Load the collection for the model
+        my $collection = $model . 'Collection';
+        $collection->require;
+
+        # Create an unlimited instance of the collection
+        my $records = $collection->new;
+        $records->unlimit;
+
+        # Iterate over all the records in the collection
+        while (my $record = $records->next) {
+
+            # Lookup UUID will create one if it doesn't exist
+            my $uuid = $self->lookup_uuid($model->table, $record->id);
+        }
+    }    
+}
+
 =head2 lookup_uuid($table, $id)
 
 Look up the UUID for a given row.
@@ -287,11 +321,18 @@ Look up the UUID for a given row.
 
 sub lookup_uuid {
     my ($self, $table, $id) = @_;
+
+    # No UUIDs unless RecordUUIDs is turned on (lazy or active will do)
     return undef unless ( Jifty->config->framework('Database')->{'RecordUUIDs'} ne 'off');
+
+    # Look for an existing UUID first
     my ($uuid) = $self->fetch_result(qq[ SELECT uuid FROM _jifty_uuids WHERE row_table = ? AND row_id = ?  ], $table, $id);
+
+    # If none found, create it
     unless ($uuid) {
         $uuid = $self->_insert_uuid( table => $table, id => $id);
     }
+
     return $uuid;
 }
 
