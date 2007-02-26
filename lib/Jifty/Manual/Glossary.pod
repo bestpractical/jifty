@@ -1,6 +1,6 @@
 =head1 NAME
 
-Jifty::Manual::Glossary
+Jifty::Manual::Glossary - The Jifty dictionary
 
 =head1 GLOSSARY
 
@@ -42,6 +42,10 @@ To turn an L</argument> into a more standard form.  For instance, a
 canonicalizer could translate a user-typed date into a date object or a
 SQL-formatted date string.  See L<Jifty::Action>.
 
+=item collection
+
+A B</collection> is a class representing all or a subset of the records stored in the database regarding a particular L</model>. See L<Jifty::Collection>.
+
 =item constructor
 
 A property of a L</parameter>; the action B<must> have an argument value for
@@ -59,6 +63,10 @@ deferred L</request> that may pull L</argument>s and the like from the
 L</result>s of the current request.  Continuations can be arbitrarily nested,
 so they are often useful to keep track of tangents that the user went on.  See
 L<Jifty::Continuation>.
+
+=item database version
+
+The B<database version> is the L</schema version> last installed or updated in the application's database. In general, the database version will always match the schema version. The exception is when Jifty is updated to a new schema version, your application updates to a new schema version, or a plugin updates to a new schema version. When this happens, you must L</update> your database so that the database versions and schema versions match before running your application.
 
 =item form field
 
@@ -87,6 +95,10 @@ life easier.
 
 A property of a L</parameter>; the user must enter a value for the action to
 validate.  This is the simplest level of L<validation|/validate>.
+
+=item model
+
+Jifty uses L<Jifty::DBI> to store its data (though might use other storage tools at some later time). The B<model> defines the L</schema> and provides a package for creating, reading, updating, and deleting records stored in the database. The model is generally a subclass of L<Jifty::Record>. Access multiple items from a model is performed through a L</collection>.
 
 =item moniker
 
@@ -127,12 +139,44 @@ The answer to a L</action>, it contains information about if the action was a
 success or failure, and further detail about why or how.  It can also contain
 arbitrary "content".  See L<Jifty::Result>.
 
+=item schema
+
+The B<schema> for a L</model> represents the structure of the data stored in an individual item in that model's L</collection>. See L<Jifty::DBI::Schema>.
+
+=item schema version
+
+The B<schema version> is a number in L<version> object used to determine which L</database version> your application code is expecting to use. There are three places where the schema version is important: 
+
+=over
+
+=item 1.
+
+I<Jifty application version>. The Jifty application stores some details in the database.
+
+=item 2.
+
+I<Your database version>. Your application keeps a database version recorded in the configuration. See L<Jifty::Config>.
+
+=item 3.
+
+I<Plugin versions>. Each plugin has a version associated with it affecting whatever C</model>s it uses.
+
+=back 
+
+If any of these versions differs from their respective L</database version>s, then you need to run the L<Jifty::Script::Schema|schema setup script> to L</upgrade> to the latest schema version. 
+
+Contrast with L</database version>.
+
 =item sticky
 
 A property of L</form field>s.  If a field is "sticky," values that the user
 entered appear there again when the page is rendered again, avoiding making the
 user type them again.  Most L</action>s have form fields which are sticky on
 failure, so the user can update the information and try again.
+
+=item upgrade
+
+Generally, your Jifty application will change over time. Most of these changes will be simple changes to behavior or appearance. When changes are made to the L</schema> structure of your database, you may need to perform an B<upgrade>. An B<upgrade> is the process by which you rename columns, initialize data, or otherwise update information that needs to be updated when a change to the database needs to be made. See L<Jifty::Upgrade>, L<Jifty::Manual::Upgrading>, and L<Jifty::Script::Schema>.
 
 =item validate
 
