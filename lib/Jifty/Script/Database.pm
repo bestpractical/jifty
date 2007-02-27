@@ -18,8 +18,63 @@ This script performs database dumps/loads on the database. This is particularly 
 
 =head1 API
 
+=head2 actions
+
+This script may perform one of the following actions.
+
+=over
+
+=item --load
+
+This action loads a previously dumped database. It consumes the dumped file from standard input:
+
+  bin/jifty database --load < jifty-dump.yml
+
+Loads must be performed on YAML formatted data.
+
+=item --dump
+
+Dumping the database write out all of the data in your database to standard output:
+
+  bin/jifty database --dump > jifty-dump.yml 
+
+=back
+
 =head2 options
 
+These options may be used to modify how the actions operate.
+
+=over
+
+=item --replace
+
+This option only makes sense when C<--load> is used. It tells the script to replace any records your existing database that are also found in the serialized file.
+
+This replace is performed by each record's ID field.
+
+=item --format (YAML|Perl)
+
+This option only makes sense when C<--dump> is used. It tells the script which serialized format to dump the records into. If this option is not specified the YAML format is used. The available options are:
+
+=over
+
+=item YAML
+
+The file is dumped in YAML format in three levels:
+
+  Model:
+    UUID:
+      column: value
+
+At the top level, each model is named followed by a list of records to import keyed by their UUID. Under each UUID is the list of columns and values for those columns.
+
+=item Perl
+
+This format is mostly intended for debugging. The data is dumped into a Perl script that could be run to create the records in the database. This may be useful for testing or debugging your database. However, this format cannot be used by C<--load>, which provides a more robust mechanism for performing data import.
+
+=back
+
+=back
 
 =cut
 
@@ -28,7 +83,7 @@ sub options {
      'dump'       => 'dump',
      'load'       => 'load',
      'replace'    => 'replace',
-     'as-perl'    => 'as_perl'
+     'format=s'   => 'format',
     )
 }
 
@@ -45,6 +100,9 @@ sub run {
 
     if ($self->{dump}) { $self->dump(); }
     elsif ($self->{load}) { $self->load(); }
+    else {
+        print STDERR "You need to specify either --load or --dump\n";
+    }
 }
 
 
@@ -234,11 +292,16 @@ sub dump {
     my $self = shift;
     my $content = $self->_models_to_hash();
 
-    if ($self->{as_perl}) {
+    $self->{format} ||= 'yaml';
+
+    if ($self->{format} =~ /^perl$/i) {
         $self->dump_as_perl($content);
     }
-    else {
+    elsif ($self->{format} =~ /^yaml$/i) {
         print Jifty::YAML::Dump($content)."\n";
+    }
+    else {
+        print STDERR "Unknown --format option given.\n";
     }
 }
 
