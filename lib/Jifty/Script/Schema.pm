@@ -375,7 +375,7 @@ sub upgrade_tables {
                         my $renamed = $upgradeclass->just_renamed || {};
 
                         # skip it if this was dropped by a rename
-                        $model->drop_column_sql($col->name)
+                        _exec_sql($model->drop_column_sql($col->name))
                             unless defined $renamed
                                 ->{ $model->table }
                                 ->{'drop'}
@@ -384,12 +384,12 @@ sub upgrade_tables {
                 }
 
                 # If they're new, add them
-                if ($model->can( 'since' ) and defined $col->since and $appv >= $col->since and $col->since >$dbv ) {
+                if ($col->can( 'since' ) and defined $col->since and $appv >= $col->since and $col->since >$dbv ) {
                     unshift @{ $UPGRADES{ $col->since } }, sub {
                         my $renamed = $upgradeclass->just_renamed || {};
 
                         # skip it if this was added by a rename
-                        $model->add_column_sql($col->name)
+                        _exec_sql($model->add_column_sql($col->name))
                             unless defined $renamed
                                 ->{ $model->table }
                                 ->{'add'}
@@ -427,9 +427,7 @@ sub _execute_upgrades {
                 $log->info("Running upgrade script");
                 $thing->();
             } else {
-                my $ret = Jifty->handle->simple_query($thing);
-                $ret
-                    or die "error updating a table: " . $ret->error_message;
+                _exec_sql($thing);
             }
         }
     }
@@ -546,6 +544,13 @@ sub _check_reserved {
         }
     }
 }
+
+sub _exec_sql {
+    my $sql = shift;
+    my $ret = Jifty->handle->simple_query($sql);
+    $ret or die "error updating a table: " . $ret->error_message;
+}
+
 
 1;
 
