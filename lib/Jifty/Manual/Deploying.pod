@@ -40,15 +40,15 @@ Copy your application onto the production server.
 
 Adjust the configuration to suit your production environment.
 
-=item 3.
+=item 4.
 
 Deploy your production database.
 
-=item 4.
+=item 5.
 
 Configure your web server.
 
-=item 5.
+=item 6.
 
 Start using your production service.
 
@@ -250,7 +250,7 @@ After you've made some collection of updates to your Jifty application, you'll t
 
 This documentation assumes a "cold" upgrade with the application offline during the duration of the process. A future version of this document might also include instructions for performing a "hot" upgrade without taking the server offline.
 
-You can dot his with the following steps:
+You can do  his with the following steps:
 
 =over
 
