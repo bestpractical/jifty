@@ -500,7 +500,7 @@ sub _connect_to_db_for_management {
 
     # Everything but the template1 database is assumed
     my %connect_args;
-    $connect_args{'database'} = 'template1' if ( $driver =~ /^Pg/ );
+    $connect_args{'database'} = 'template1' if ( $driver eq 'Pg' );
     $connect_args{'database'} = ''          if ( $driver eq 'mysql' );
     $handle->connect(%connect_args);
     return $handle;
