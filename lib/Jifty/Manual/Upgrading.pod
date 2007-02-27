@@ -1,6 +1,6 @@
 =head1 NAME
 
-Jifty::Manual::Upgrading
+Jifty::Manual::Upgrading - How-to change your application database over time
 
 =head2 DESCRIPTION
 
@@ -10,15 +10,62 @@ new models or columns to existing models Jifty will do the upgrade
 almost automatically.  If more extensive changes are required you need
 to write some code to tell Jifty what to do.
 
+=head1 TERMINOLOGY
+
+Be sure you know the following terms before reading this document:
+
+=over
+
+=item *
+
+L<Jifty::Manual::Glossary/schema>
+
+=item *
+
+L<Jifty::Manual::Glossary/schema version>
+
+=item *
+
+L<Jifty::Manual::Glossary/database version>
+
+=back
+
 =head1 HOW TO
 
-=head2 New models and columns
+=head2 General Instructions
+
+For all of these actions, the the database version stored in your Jifty configuration is significant. See the value stored in F<etc/config.yml> at:
+
+  framework:
+    Database:
+      Version: 0.0.1
+
+Make all your code changes using the version number I<you are going to use>. Once you have finished updating your code and are ready to test, bump the version stored in F<etc/config.yml> to match the new version you are going to use.
+
+If you are writing tests as you go (shame on you if you aren't!), you should be able to run:
+
+  perl Makefile.PL
+  make
+  make test
+
+to test the latest version and check for problems.
+
+Once you are sure you've worked out the kinds, you may perform the actual upgrade by running:
+
+  bin/jifty schema --setup
+
+This will take care of the work of adding any new columns and models, dropping old columns, and running any upgrade scripts you have scheduled.
+
+=head2 Basic column and model operations
 
 =head3 Adding a new model
 
-When adding a new model to your application you need to tell Jifty
-at which version of your application the model was created.  To do
-this add a since sub to your new model class.
+Create your model just as you normally would:
+
+  bin/jifty model --name MyModel
+
+Then, you need to tell Jifty at which version of your application the model was
+created.  To do this add a since sub to your new model class.
 
  sub since { 0.0.5 }
 
@@ -33,7 +80,24 @@ definition itself.
     refers_to Wifty::Model::User, 
     since '0.0.20';
 
-=head2 data migration and schema changes
+=head3 Dropping a column from a model
+
+B<CAUTION:> Be aware that all the data that was stored in this column will be destroyed at upgrade if you follow this procedure.
+
+If you no longer need a particular column in your model, you can have it dropped by setting the C<till> property on your column definition.
+
+ column extra_info
+     type is 'text',
+     label is 'Extra info',
+     till '0.0.13';
+
+The version you use for C<till> is the version the drop is effective. In the example above, the C<extra_info> column will be available in version 0.0.12, but not in version 0.0.13.
+
+This column will be dropped from the schema at the next upgrade, I<which will destroy all data stored in that column.>
+
+=head3 TODO Dropping a model
+
+=head2 Data migration and schema changes
 
 If a file called F<Upgrade.pm> exists in your application it will be
 run by C<jifty schema --setup>.
@@ -57,16 +121,58 @@ will be run in version order until the application is up to date.
 
 =head3 Renaming a column
 
-To rename a column, simply call C<rename> inside your C<since> code block:
+To rename a column, you need to make sure that your schema and upgrade script both cooperate in the process. Your schema will record changes to your model API and the upgrade script will tell Jifty about the rename.
 
-    use MyApp::Model::User;
+The old column name needs to marked with C<till> to notify Jifty that the column name no longer exists. The new column name needs to marked with C<since> to notify Jifty that a column by the new name exists. 
 
-    since '0.6.1' => sub {
-        rename(
-            table   => 'MyApp::Model::User', 
-            column  => 'zip', 
-            to      => 'postcode'
-        );
-    };
+Here we are renaming C<zip> to C<postcode>:
+
+  column zip =>
+      type is 'text',
+      label is 'ZIP code',
+      till '0.6.1';
+
+  column postcode =>
+      type is 'text',
+      label is 'Postal code',
+      since '0.6.1';
+
+Notice that both C<since> and C<till> have the same version number set. This is the version number the change will take place.
+
+Before you upgrade, though, you must tell Jifty that a rename is happening here, which is done in your upgrade script:
+
+ use MyApp::Upgrade;
+
+ use base qw(Jifty::Upgrade);
+ use Jifty::Upgrade qw( since rename );
+
+ since '0.6.1' => sub {
+     rename(
+         table   => 'MyApp::Model::User', 
+         column  => 'zip', 
+         to      => 'postcode'
+     );
+ };
 
 =head3 Migrating data
+
+You can perform any action you want inside the C<since> blocks of your upgrade script. In the case of data migration, you might want to convert your data from one form to another.
+
+For example, let's say our users always gave us C<first_name> and C<last_name> before, but we've added a new column C<display_name> which will normally contain their name in "last, first" format, but could be customized per-account. We want to go ahead and initialize this new column during the upgrade. In your upgrade script, you could add:
+
+  since '0.2.4' => sub {
+      my $users = MyApp::Model::UserCollection->new;
+      $users->unlimit;
+
+      while (my $user = $users->next) {
+          $user->set_display_name(
+              join(', ', $user->last_name, $user->first_name)
+          );
+      }
+  };
+
+=head1 SEE ALSO
+
+L<Jifty::Upgrade>, L<Jifty::Script::Schema>, L<Jifty::Manual::Models>, L<Jifty::Manual::Tutorial>, L<Jifty::Manual::Glossary>
+
+=cut
