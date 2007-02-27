@@ -21,13 +21,20 @@ Jifty::Test - Jifty's test module
 
     use Jifty::Test tests => 5;
 
-    ...all of Test::More's functionality...
+    # ...all of Test::More's functionality...
+    my $model = MyApp::Model::MyModel->new;
+    $model->create();
+    ok($model->id, 'model works');
+    is($model->foo, 'some default', 'default works');
 
-    ...any class methods defined below...
+    # Startup an external server (see Jifty::TestServer)
+    my $server = Jifty::Test->make_server;
+    my $server_url = $server->started_ok;
+    # You're probably also interested in Jifty::Test::WWW::Mechanized
 
 =head1 DESCRIPTION
 
-Jifty::Test is a superset of Test::More.  It provides all of
+Jifty::Test is a superset of L<Test::More>.  It provides all of
 Test::More's functionality in addition to the class methods defined
 below.
 
@@ -39,9 +46,21 @@ below.
 
 Check if the test is currently in a passing state.
 
-* All tests run so far have passed
-* We have run at least one test
-* We have not run more than we planned (if we planned at all)
+=over
+
+=item * 
+
+All tests run so far have passed
+
+=item * 
+
+We have run at least one test
+
+=item * 
+
+We have not run more than we planned (if we planned at all)
+
+=back
 
 =cut
 
@@ -420,5 +439,11 @@ sub _ending {
     # Unlink test file
     unlink $Test->{test_config} if $Test->{test_config};
 }
+
+=head1 SEE ALSO
+
+L<Jifty::Test::WWW::Mechanized>, L<Jifty::TestServer>
+
+=cut
 
 1;
