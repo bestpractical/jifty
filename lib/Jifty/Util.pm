@@ -125,6 +125,9 @@ executable was found.
 It C<die>s if it can only find C</usr> or C</usr/local> which fit
 these criteria.
 
+If a C<JIFTY_APP_ROOT> environment variable is defined, it searches
+that path first.
+
 =cut
 
 sub app_root {
@@ -135,6 +138,7 @@ sub app_root {
     
     my @roots;
 
+    push @roots, $ENV{JIFTY_APP_ROOT} if $ENV{JIFTY_APP_ROOT};
     push( @roots, Cwd::cwd() );
 
     eval { Jifty::Util->require('FindBin') };

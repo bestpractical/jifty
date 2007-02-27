@@ -30,7 +30,7 @@ Jifty::Test - Jifty's test module
     # Startup an external server (see Jifty::TestServer)
     my $server = Jifty::Test->make_server;
     my $server_url = $server->started_ok;
-    # You're probably also interested in Jifty::Test::WWW::Mechanized
+    # You're probably also interested in Jifty::Test::WWW::Mechanize
 
 =head1 DESCRIPTION
 
@@ -442,7 +442,7 @@ sub _ending {
 
 =head1 SEE ALSO
 
-L<Jifty::Test::WWW::Mechanized>, L<Jifty::TestServer>
+L<Jifty::Test::WWW::Mechanize>, L<Jifty::TestServer>
 
 =cut
 
