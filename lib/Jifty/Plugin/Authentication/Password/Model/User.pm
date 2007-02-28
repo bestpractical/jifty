@@ -11,7 +11,7 @@ column auth_token =>
   render_as 'unrendered',
   type is 'varchar',
   default is '',
-  label is 'Athentication token',
+  label is 'Authentication token',
   since '0.2.34';
     
 
