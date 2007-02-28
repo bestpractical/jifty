@@ -7,6 +7,8 @@ use strict;
 A basic test harness for the User model.
 
 =cut
+use lib 't/lib';
+use Jifty::SubTest;
 
 use Jifty::Test tests => 10;
 
@@ -31,4 +33,4 @@ can_ok($o, 'name');
 is($o->name, 'jesse');
 ok(!$o->password, "Can't get the password");
 can_ok($o,'set_password');
-is($o->__value('password'), 'secret');
+ok($o->password_is( 'secret'));
