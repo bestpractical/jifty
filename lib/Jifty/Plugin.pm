@@ -118,7 +118,7 @@ Returns the root of the C<HTML::Mason> template directory for this plugin
 
 sub template_root {
     my $self = shift;
-    $self->_calculate_share();
+    $self->{share} || $self->_calculate_share();
     return unless $self->{share};
     return $self->{share}."/web/templates";
 }
@@ -145,6 +145,7 @@ Returns the root of the static directory for this plugin
 
 sub static_root {
     my $self = shift;
+    $self->{share} || $self->_calculate_share();
     return unless $self->{share};
     return $self->{share}."/web/static";
 }

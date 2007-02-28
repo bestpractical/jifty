@@ -1,0 +1,58 @@
+--- 
+framework: 
+  AdminMode: 1
+  ApplicationClass: TestApp::Plugin::PasswordAuth
+  ApplicationName: TestApp-Plugin-PasswordAuth
+  ApplicationUUID: E6B4180A-C68F-11DB-893B-FEFB1AECF28B
+  Database: 
+    CheckSchema: 1
+    Database: testapp_plugin_passwordauth
+    Driver: SQLite
+    Host: localhost
+    Password: ''
+    RecordBaseClass: Jifty::DBI::Record::Cachable
+    User: ''
+    Version: 0.0.1
+  DevelMode: 1
+  L10N: 
+    PoDir: share/po
+  LogLevel: INFO
+  Mailer: Sendmail
+  MailerArgs: []
+
+  Plugins: 
+    - User: {}
+    - Authentication::Password: {}
+    - 
+      REST: {}
+
+    - 
+      Halo: {}
+
+    - 
+      OnlineDocs: {}
+
+    - 
+      CompressedCSSandJS: {}
+
+    - 
+      AdminUI: {}
+
+  PubSub: 
+    Backend: Memcached
+    Enable: ~
+  TemplateClass: TestApp::Plugin::PasswordAuth::View
+  Web: 
+    BaseURL: http://localhost
+    DataDir: var/mason
+    Globals: []
+
+    MasonConfig: 
+      autoflush: 0
+      default_escape_flags: h
+      error_format: text
+      error_mode: fatal
+    Port: 8888
+    ServeStaticFiles: 1
+    StaticRoot: share/web/static
+    TemplateRoot: share/web/templates
