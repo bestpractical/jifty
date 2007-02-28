@@ -321,3 +321,30 @@ Alternatively, you can specify that this will apply to all tags like so:
 
 Check details from Angus himself. ( http://www.twinhelix.com/ )
 
+=head2 Create mutually dependent models
+
+Sometimes you need two tables that both depend upon each other. That is, you have model A that needs to have a column pointing to Model B and a column in Model B pointing back to model A. The solution is very straight forward, just make sure you setup the base class I<before> you load dependent model and this will just work. For example:
+
+  package ModelA;
+  use base qw/ MyApp::Record /;
+
+  # Note that "use base..." comes first
+  use ModelB;
+
+  use Jifty::DBI::Schema;
+  use MyApp::Record schema {
+    column b_record => refers_to ModelB;
+  };
+
+  package ModelB;
+  use base qw/ MyApp::Record /;
+
+  # Note that "use base..." comes first
+  use ModelA;
+
+  use Jifty::DBI::Schema;
+  use MyApp::Record schema {
+    column a_record => refers_to ModelA;
+  };
+
+Otherwise, everything should work as expected.
