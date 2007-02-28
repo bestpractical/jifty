@@ -273,6 +273,12 @@ sub require_classes_from_database {
     }
 }
 
+=head2 require_views
+
+Load up C<$appname::View>, the view class for the application.
+
+=cut
+
 sub require_views {
     my $self = shift;
     
