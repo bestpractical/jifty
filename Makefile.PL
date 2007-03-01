@@ -108,6 +108,10 @@ features(
         recommends('Module::CoreList'),
         recommends('Module::Install::Admin' => '0.50')
      ],
+    'Forking jifty server' => [
+        -default => 0,
+        recommends('Net::Server::Fork'),
+    ],
     'Experimental features' => [
         -default => 0,
         recommends('PAR::Dist::FromCPAN'),
