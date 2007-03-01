@@ -34,4 +34,4 @@ framework:
     ServeStaticFiles: 1
     StaticRoot: share/web/static
     TemplateRoot: share/web/templates
-    ServerClass: Clock::Server
+    ServerClass: Jifty::Server::Fork
