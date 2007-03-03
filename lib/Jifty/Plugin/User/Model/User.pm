@@ -9,7 +9,7 @@ use Jifty::DBI::Schema;
 
 Jifty::Plugin::User::Model::User
 
-=DESCRIPTION
+=head1 DESCRIPTION
 
 package MyApp::Model::User;
 

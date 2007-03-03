@@ -48,4 +48,3 @@ Render a C<Template::Declare> template.
 
 =cut
 
-=cut
