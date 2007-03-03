@@ -291,12 +291,11 @@ sub arguments {
                 };
             }
 
-            my $canonicalize_method = "canonicalize_" . $field;
-            if ( $self->record->can($canonicalize_method) ) {
+            if ( $self->record->has_canonicalizer_for_column($field) ) {
                 $info->{'ajax_canonicalizes'} = 1;
                 $info->{'canonicalizer'} ||= sub {
                     my ( $self, $value ) = @_;
-                    return $self->record->$canonicalize_method($value);
+                    return $self->record->run_canonicalization_for_column(column => $field, value => $value);
                 };
             } elsif ( $render_as eq 'date')
             {
