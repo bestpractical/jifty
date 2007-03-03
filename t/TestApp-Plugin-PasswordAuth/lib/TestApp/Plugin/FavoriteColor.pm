@@ -12,15 +12,26 @@ use Jifty::DBI::Record schema {
 
 sub register_triggers {
     my $self = shift;
-    $self->add_trigger(name => 'before_create', callback => \&before_create, abortable => 1);
+    $self->add_trigger(name => 'validate_color', callback => \&validate_color, abortable => 1);
+    $self->add_trigger(name => 'canonicalize_color', callback => \&canonicalize_color, abortable => 0);
 }
 
 
-
-sub before_create {
+sub canonicalize_color {
     my $self = shift;
-    my $args = shift;
-    return undef unless ($args->{'color'} eq 'yellow');
+    my $color = shift;
+
+    if ($color eq 'grey') {
+        return 'gray';
+    }
+    return $color;
+
+}
+
+sub validate_color {
+    my $self = shift;
+    my $arg = shift;
+    return undef unless ($arg eq 'gray');
     return 1;
 }
 

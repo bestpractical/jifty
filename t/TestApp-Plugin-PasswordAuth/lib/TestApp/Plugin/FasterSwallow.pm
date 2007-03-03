@@ -11,7 +11,6 @@ use Jifty::DBI::Record schema {
 
 sub register_triggers {
     my $self = shift;
-    warn "Adding a trigger for $self";
     $self->add_trigger(name => 'before_create', callback => \&before_create, abortable => 1);
 }
 
