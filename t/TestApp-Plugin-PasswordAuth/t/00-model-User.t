@@ -10,7 +10,7 @@ A basic test harness for the User model.
 use lib 't/lib';
 use Jifty::SubTest;
 
-use Jifty::Test tests => 10;
+use Jifty::Test tests => 14;
 
 # Make sure we can load the model
 use_ok('TestApp::Plugin::PasswordAuth::Model::User');
@@ -46,7 +46,7 @@ my $p = TestApp::Plugin::PasswordAuth::Model::User->new(current_user => $system_
                        color => 'blue',
                        swallow_type => 'african',
                        password => 'secret');
-ok(!$p, "Users can't be created with the wrong favorite color");
+ok(!$id, "Users can't be created with the wrong favorite color");
 
 my $q = TestApp::Plugin::PasswordAuth::Model::User->new(current_user => $system_user);
 ($id) = $p->create( name => 'jesse2',
@@ -54,4 +54,4 @@ my $q = TestApp::Plugin::PasswordAuth::Model::User->new(current_user => $system_
                        color => 'yellow',
                        swallow_type => 'european',
                        password => 'secret');
-ok(!$q, "Users can't be created if they don't know african swallow_types are faster");
+ok(!$id, "Users can't be created if they don't know african swallow_types are faster");
