@@ -84,7 +84,7 @@ features(
     'Administrative Interface (web)' => [ 
         -default => 1,
        requires( 'Pod::Simple') # Pod::Simple::Text Pod::Simple::HTML
-   ],
+    ],
     'Development of a jifty application' => [
         -default => 1,
         recommends('DBD::SQLite' => 1.11 ),
@@ -111,6 +111,10 @@ features(
     'Forking jifty server' => [
         -default => 0,
         recommends('Net::Server::Fork'),
+    ],
+    'Apache2/ModPerl2 handler' => [
+        -default => 0,
+        recommends('Apache2::Const'),
     ],
     'Experimental features' => [
         -default => 0,
