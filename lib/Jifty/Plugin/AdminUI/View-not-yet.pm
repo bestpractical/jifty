@@ -7,7 +7,15 @@ use Jifty::View::Declare -base;
 
 use Scalar::Defer;
 
-warn "here";
+=head1 NAME
+
+Jifty::Plugin::AdminUI::View
+
+=head1 DESCRIPTION
+
+Work In progress. Needs more factoring, tests, etc
+
+=cut
 
 template '__jifty/admin/_elements/nav' => sub {
     my $nav =
