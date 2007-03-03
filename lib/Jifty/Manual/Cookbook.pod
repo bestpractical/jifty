@@ -271,6 +271,13 @@ field is changed.
 
 Of course, you can apply the same trick to your own Action classes.
 
+You can use the canonicalization to change data in other fields.  For
+example you might want to update the postcode field when the suburb
+field is changed.
+
+	$self->argument_value( other_field => "new value" )
+
+
 =head2 Get the "Edit" links to work in the "Page info" tool
 
 If you click on "Page info", follow an "Edit" link for a fragment,
