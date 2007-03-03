@@ -1,8 +1,19 @@
+use warnings;
+use strict;
 
 package Jifty::Plugin::CompressedCSSandJS::Dispatcher;
 
-use warnings;
-use strict;
+=head1 NAME
+
+Jifty::Plugin::CompressedCSSandJS::Dispatcher
+
+=head1 DESCRIPTION
+
+Adds dispatcher rules for C</__jifty/js/*> and C</__jifty/css/*/>,
+which serve out compiled and compressed CSS and Javascript rules.
+
+=cut
+
 
 use Jifty::Dispatcher -base;
 

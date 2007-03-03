@@ -1139,7 +1139,7 @@ sub render_template {
     my $template = shift;
 
     eval { 
-        my( $val) = Jifty->handler->declare_handler->resolve_template($template);
+        my( $val) = Jifty->handler->declare_handler->template_exists($template);
         if ($val) {
             Jifty->handler->declare_handler->show($template);
         } else {
