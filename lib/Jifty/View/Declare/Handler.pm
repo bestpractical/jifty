@@ -28,6 +28,7 @@ sub new {
     my $class = shift;
     my $self = {};
     bless $self,$class;
+    warn "Initting T::D with ". YAML::Dump(\@_);
     Template::Declare->init(@_);
     return $self;
 }
@@ -63,6 +64,9 @@ Given a template name, returns true if the template is in any of our Template::D
 
 =cut
 
-sub template_exists { my $pkg =shift;  return Template::Declare->resolve_template(@_);}
+sub template_exists { my $pkg =shift;  
+warn "Checking for ".join(',',@_);
+
+return Template::Declare->resolve_template(@_);}
 
 1;

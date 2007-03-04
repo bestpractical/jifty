@@ -8,6 +8,15 @@ use Jifty::View::Declare -base;
 
 use Scalar::Defer;
 
+=head1 NAME
+
+Jifty::Plugin::ErrorTemplates::View;
+
+=head1 DESCRIPTION
+
+This class is a stub. It's not in use yet. It should be, but that would require mason libraries to be able to call Template::Declare libraries
+
+=cut
 
 
 template '__jifty/error/_elements/error_text' => sub {

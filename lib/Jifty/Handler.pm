@@ -172,6 +172,7 @@ sub templatedeclare_config {
 
     for my $plugin ( Jifty->plugins ) {
         my $comp_root = $plugin->template_class;
+        Jifty::Util->require($comp_root);
         unless (defined $comp_root and $comp_root->isa('Template::Declare') ){
             Jifty->log->debug( "Plugin @{[ref($plugin)]} doesn't appear to have a ::View class that's a Template::Declare subclass");
             next;

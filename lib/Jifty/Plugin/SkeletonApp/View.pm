@@ -1,4 +1,4 @@
-package Jifty::View::Declare::CoreTemplatesss;
+package Jifty::Plugin::SkeletonApp::View;
 
 use strict;
 use warnings;

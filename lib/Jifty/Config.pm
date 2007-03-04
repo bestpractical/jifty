@@ -267,6 +267,8 @@ sub guess {
             { REST => {},
         },
         {       Halo => {},},
+        {ErrorTemplates => {},},
+        {SkeletonApp => {},},
         {OnlineDocs => {},},
         {        CompressedCSSandJS => {},},
         {AdminUI => {},}

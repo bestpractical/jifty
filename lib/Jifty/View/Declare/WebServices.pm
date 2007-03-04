@@ -1,4 +1,4 @@
-package Jifty::View::Declare::CoreTemplates;
+package Jifty::View::Declare::CoreTemplatessss;
 
 use strict;
 use warnings;
