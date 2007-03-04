@@ -27,6 +27,4 @@ how to access the RESTian resources.
 
 =cut
 
-sub template_class { undef }
-
 1;
