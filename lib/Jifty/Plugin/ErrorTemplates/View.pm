@@ -52,34 +52,57 @@ template '__jifty/error/_elements/error_text' => sub {
                               in case the error in question is caused by the Jifty app's wrapper, for instance.
 =cut
 
-sub wrapper (&) {
-    my $code = shift;
-    html {
-        head {
-            title { _('Internal error') }
-            link { attr { rel => 'stylesheet', type => 'text/css', href => "/__jifty/error/error.css", media => 'all'}};
-        }
-        body {
-            div { attr { id => 'headers'};
-            h1 { 'Internal Error' };
-        div { attr { id => 'content'};
-                          a { attr { name => 'content'}};
- if (Jifty->config->framework('AdminMode') ) {
-     div { attr { class => "warning admin_mode" };
-        outs('Alert:' .  tangent( label => 'administration mode' , url => '/__jifty/admin/') .'is enabled.' ) }
- }
- Jifty->web->render_messages;
-    $code->();
-  }
-                              
-                          }
-                      }}
-                  }
+{
+    no warnings qw'redefine';
+
+    sub wrapper ($) {
+        my $code = shift;
+        html {
+            head {
+                title { _('Internal error') } link {
+                    attr {
+                        rel   => 'stylesheet',
+                        type  => 'text/css',
+                        href  => "/__jifty/error/error.css",
+                        media => 'all'
+                    }
+                };
+                }
+                body {
+                div {
+                    attr { id => 'headers' };
+                    h1  {'Internal Error'};
+                    div {
+                        attr { id => 'content' };
+                        a { attr { name => 'content' } };
+                        if ( Jifty->config->framework('AdminMode') ) {
+                            div {
+                                attr { class => "warning admin_mode" };
+                                outs(
+                                    'Alert:'
+                                        . tangent(
+                                        label => 'administration mode',
+                                        url   => '/__jifty/admin/'
+                                        )
+                                        . 'is enabled.'
+                                );
+                                }
+                        }
+                        Jifty->web->render_messages;
+                        $code->();
+                        }
+
+                    }
+                }
+            }
+    }
+}
+
 
 template '__jifty/error/dhandler' => sub {
     my $error = get('error');
                             Jifty->log->error( "Unhandled web error " . $error );
-                            wrapper {
+                            page {
                               title is 'Something went awry';
                               show('_elements/error_text', error => $error );
                         };
@@ -98,7 +121,7 @@ template '/errors/404' => sub {
     my $file = get('path');
     Jifty->log->error( "404: user tried to get to " . $file );
     Jifty->handler->apache->header_out( Status => '404' );
-    with( title => _("Something's not quite right") ), wrapper => {
+    with( title => _("Something's not quite right") ), page {
 
         with( id => "overview" ),
         div {

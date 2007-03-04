@@ -92,6 +92,16 @@ sub new_action(@) {
     return Jifty->web->new_action(@_);
 }
 
+
+=head2 render_region 
+
+A shortcut for Jifty::Web::PageRegion->new(@_)->render which does the
+Template::Declare magic necessary to not mix its output with your current
+page's.
+
+
+=cut
+
 sub render_region(@) {
     unshift @_, 'name' if @_ % 2;
     Template::Declare->new_buffer_frame;
@@ -100,6 +110,35 @@ sub render_region(@) {
     Template::Declare->end_buffer_frame;
     Jifty->web->out($content);
 }
+
+
+=head2 render_action $action_object, $fields, $args_to_pass_to_action
+
+Renders an action out of whole cloth.
+
+Arguments
+
+=over 
+
+=item $action_object
+
+A Jifty::Action object which has already been initialized
+
+=item $fields
+
+A reference to an array of fields that should be rendered when
+displaying this action. If left undefined, all of the 
+action's fields will be rendered.
+
+=item $args_to_pass_to_action
+
+A hashref of arguments that should be passed to $action->form_field for
+every field of this action.
+
+=back
+
+
+=cut
 
 sub render_action(@) {
     my ( $action, $fields, $field_args ) = @_;
@@ -152,6 +191,16 @@ sub current_user {
     Jifty->web->current_user;
 }
 
+=head2 get args
+
+Returns arguments as set in the dispatcher or with L</set> below.
+If called in scalar context, pulls the first item in C<args> and returns it.
+If called in list context, returns the values of all items in C<args>.
+
+
+
+=cut
+
 sub get {
     if (wantarray) {
         map { request->argument($_) } @_;
@@ -160,6 +209,15 @@ sub get {
     }
 }
 
+
+=head2 set key => val [ key => val ...]
+
+Sets arguments for later grabbing with L<get>.
+
+
+=cut
+
+
 sub set {
     while ( my ( $arg, $val ) = ( shift @_, shift @_ ) ) {
         request->argument( $arg => $val );
@@ -167,13 +225,29 @@ sub set {
 
 }
 
+=head2 render_param $action @args
+
+Takes an action and one or more arguments to pass to L<Jifty::Action->form_field>.
+
+=cut
+
 sub render_param {
     my $action = shift;
     outs_raw( $action->form_field(@_) );
     return '';
 }
 
-# template 'foo' => page {{ title is 'Foo' } ... };
+=head2 page 
+
+ template 'foo' => page {{ title is 'Foo' } ... };
+
+Renders an HTML page wrapped in L</wrapper>, after calling
+"/_elements/nav" and setting a content type. Generally, you shouldn't
+be using "/_elements/nav" but a Dispatcher rule instead.
+
+=cut
+
+
 sub page (&) {
     my $code = shift;
     sub {
@@ -182,6 +256,15 @@ sub page (&) {
         wrapper($code);
     };
 }
+
+
+=head2 wrapper $coderef
+
+Render a page. $coderef is a L<Template::Declare> coderef. 
+This badly wants to be redone.
+
+=cut
+
 
 sub wrapper ($) {
     my $content_code = shift;
@@ -256,6 +339,13 @@ sub wrapper ($) {
     Template::Declare->buffer->data(
         $done_header . Template::Declare->buffer->data );
 }
+
+
+=head2 render_header $title
+
+Renders an HTML "doctype", <head> and the first part of a page body. This bit isn't terribly well thought out and we're not happy with it.
+
+=cut
 
 sub render_header {
     my ($title) = @_;

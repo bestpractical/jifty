@@ -8,6 +8,18 @@ use Jifty::View::Declare -base;
 
 use Scalar::Defer;
 
+=head1 NAME
+
+Jifty::Plugin::SkeletonApp::View
+
+=head1 DESCRIPTION
+
+This somewhat-finished (But not quite) template library implements
+Jifty's "pony" Application. It could certainly use some refactoring. (And some of the menu stuff should get factored out into a dispatcher or the other plugins that implement it.
+
+
+=cut
+
 template '_elements/nav' => sub {
     my $top = Jifty->web->navigation;
     $top->child( Home => url => "/", sort_order => 1, label => _('Home') );

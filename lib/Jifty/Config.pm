@@ -268,7 +268,6 @@ sub guess {
         },
         {       Halo => {},},
         {ErrorTemplates => {},},
-        {SkeletonApp => {},},
         {OnlineDocs => {},},
         {        CompressedCSSandJS => {},},
         {AdminUI => {},}
