@@ -30,7 +30,7 @@ The fields for C<Signup> are:
 
 sub arguments {
     my $self = shift;
-    my $args = $self->SUPER::arguments;
+    my $args = $self->SUPER::arguments();
 
     my %fields = (
         name             => 1,
