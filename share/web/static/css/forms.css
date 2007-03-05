@@ -31,7 +31,7 @@ div.form-field .hints {
     color: #999999;
 }
 
-div.form-field .error, div.form-field .warning, div.form-field .canonicalization-note {
+div.form-field .error, div.form-field .warning, div.form-field .canonicalization_note {
     float: right;
     width: 88%;
     text-align: left;
