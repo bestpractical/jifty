@@ -500,8 +500,8 @@ sub _connect_to_db_for_management {
 
     # Everything but the template1 database is assumed
     my %connect_args;
-    $connect_args{'database'} = 'template1' if ( $driver eq 'Pg' );
-    $connect_args{'database'} = ''          if ( $driver eq 'mysql' );
+    $connect_args{'database'} = 'template1' if ( $handle->isa("Jifty::DBI::Handle::Pg") );
+    $connect_args{'database'} = ''          if ( $handle->isa("Jifty::DBI::Handle::mysql") );
     $handle->connect(%connect_args);
     return $handle;
 }
