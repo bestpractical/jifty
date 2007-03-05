@@ -161,7 +161,7 @@ sub probe_database_existence {
         # No version table.  Assume the DB is empty.
         $self->{create_all_tables} = 1;
     } elsif ( $@ =~ /database .*? does not exist/i
-        or $@ =~ /unknown database/ ) {
+        or $@ =~ /unknown database/i ) {
 
         # No database exists; we'll need to make one and fill it up
         $self->{create_database}   = 1;
