@@ -11,12 +11,12 @@ my $record_class = Jifty->app_class("Model", $object_type);
 my $record = $record_class->new();
  my $update = Jifty->web->new_action(class => 'Update'.$object_type);
 </%init>
-<div class="jifty_admin_header">
+<div class="jifty-admin-header">
 
 % foreach my $argument ($update->argument_names) {
 % unless( $argument eq $mask_field ||  $argument eq 'id' || $argument =~ /_confirm$/i
 %        && lc $update->arguments->{$argument}{render_as} eq 'password') {
-<span class="<% ($sort_by && !$order && $sort_by eq $argument)?'up_select':'up' %>">
+<span class="<% ($sort_by && !$order && $sort_by eq $argument)?'up-select':'up' %>">
 <%
     Jifty->web->link(
         label   => _("asc"),
@@ -35,7 +35,7 @@ my $record = $record_class->new();
         #as_button => 1
         )
 %></span>
-<span class="<% ($sort_by && $order && $sort_by eq $argument )?'down_select':'down' %>">
+<span class="<% ($sort_by && $order && $sort_by eq $argument )?'down-select':'down' %>">
 <%
     Jifty->web->link(
         label   => _("desc"),

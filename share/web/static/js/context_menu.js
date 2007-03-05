@@ -11,7 +11,7 @@ function prepExpandButton(e) {
 Jifty.ContextMenu = {
     behaviourRules: {
         "ul.menu li.toplevel span.expand a": prepExpandButton,
-        "ul.context_menu li.toplevel span.expand a": prepExpandButton
+        "ul.context-menu li.toplevel span.expand a": prepExpandButton
     },
 
     currently_open:  "",

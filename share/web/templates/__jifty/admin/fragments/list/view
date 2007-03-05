@@ -21,7 +21,7 @@ my $delete = Jifty->web->new_action(
 );
 
 </%init>
-<div class="jifty_admin read item inline">
+<div class="jifty-admin read item inline">
   
 <%
     Jifty->web->form->submit(

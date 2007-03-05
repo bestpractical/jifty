@@ -15,7 +15,7 @@ my $update = Jifty->web->new_action(
     record  => $record
 );
 </%init>
-<div class="jifty_admin update item inline <%$object_type%>">
+<div class="jifty-admin update item inline <%$object_type%>">
 <div class="editlink">
   <% Jifty->web->link(
       label   => _('Save'),

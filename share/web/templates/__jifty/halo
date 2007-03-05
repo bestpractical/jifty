@@ -1,5 +1,5 @@
-<div><a href="#" id="render_info" onclick="Element.toggle('render_info_tree'); return false"><%_('Page info')%></a></div>
-<div style="display: none" id="render_info_tree">
+<div><a href="#" id="jifty-render-info" onclick="Element.toggle('jifty-render-info-tree'); return false"><%_('Page info')%></a></div>
+<div style="display: none" id="jifty-render-info-tree">
 % foreach my $item (@stack) {
 %     if ( $item->{depth} > $depth ) {
 <ul>
@@ -12,7 +12,7 @@
 </li>
 %     }
 
-<li><a href="#" class="halo_comp_info" onmouseover="halo_over('<% $item->{id} %>')"
+<li><a href="#" class="halo-comp-info" onmouseover="halo_over('<% $item->{id} %>')"
                                        onmouseout="halo_out('<% $item->{id} %>')"
                                        onclick="halo_toggle('<% $item->{id} %>'); return false;">
 <% $item->{'name'} %> - <% $item->{'render_time'} %></a> 
@@ -57,7 +57,7 @@ my $depth = 0;
 
 
 <%def .frame>
-<div class="halo_actions" id="halo-<% $id %>-menu" style="display: none; top: 5px; left: 500px; min-width: 200px; width: 300px; z-index: 5;">
+<div class="halo-actions" id="halo-<% $id %>-menu" style="display: none; top: 5px; left: 500px; min-width: 200px; width: 300px; z-index: 5;">
 <h1 id="halo-<% $id %>-title">
   <span style="float: right;"><a href="#" onclick="halo_toggle('<% $id %>'); return false">[ X ]</a></span>
   <% $frame->{name} %>
@@ -71,7 +71,7 @@ my $depth = 0;
 % if ($frame->{parent}) {
 <div class="section"><%_('Parent')%></div>
 <div class="body"><ul>
-<li><a href="#" class="halo_comp_info" onmouseover="halo_over('<% $frame->{parent}{id} %>')"
+<li><a href="#" class="halo-comp-info" onmouseover="halo_over('<% $frame->{parent}{id} %>')"
                                        onmouseout="halo_out('<% $frame->{parent}{id} %>')"
                                        onclick="halo_toggle('<% $frame->{parent}{id} %>'); return false;">
 <% $frame->{parent}{'path'} %> - <% $frame->{parent}{'render_time'} %></a></li>
@@ -81,7 +81,7 @@ my $depth = 0;
 <div class="section"><%_('Children')%></div>
 <div class="body"><ul>
 % for my $item (@{$frame->{kids}}) {
-<li><a href="#" class="halo_comp_info" onmouseover="halo_over('<% $item->{id} %>')"
+<li><a href="#" class="halo-comp-info" onmouseover="halo_over('<% $item->{id} %>')"
                                        onmouseout="halo_out('<% $item->{id} %>')"
                                        onclick="halo_toggle('<% $item->{id} %>'); return false;">
 <% $item->{'path'} %> - <% $item->{'render_time'} %></a></li>
