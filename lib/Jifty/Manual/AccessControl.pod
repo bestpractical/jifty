@@ -70,15 +70,68 @@ columns. Simply add a schema definition block like this:
     use App::Record schema {
         column 'extra_column_name';
 
+        column 'group' =>
+               valid_values are qw/admin moderator user/,
+               default is 'user';
+
         # more columns if necessary
     };
 
 The full syntax for defining a schema can be found in
 L<Jifty::Manual::Models> or in L<Jifty::DBI::Schema>.
 
+If you want to manage an admin group, you must protect the group column 
+as only a superuser can change it.
+Then, you override C<current_user_can> in C<App::Model::User> 
+
+    sub current_user_can {
+        my $self = shift;
+        my $type = shift;
+        my %args = (@_);
+
+        return 0 
+            if ( $type eq 'update'
+                and !$self->current_user->is_superuser
+                and $args{'column'} eq 'group' ); 
+
+
+        return $self->SUPER::current_user_can($type, %args);
+    }
+
 Defining a method C<_init> in your C<App::CurrentUser> class gives you
 a chance to add more data to the C<CurrentUser> object. This method
 will automatically get called after the Plugin's C<_init> is done.
+
+    package App::CurrentUser;
+
+    use strict;
+    use warnings;
+
+    use base qw(Jifty::CurrentUser);
+
+    __PACKAGE__->mk_accessors(qw(group));
+
+    sub _init {
+        my $self = shift;
+        my %args = (@_);
+
+        if (delete $args{'_bootstrap'} ) {
+            $self->is_bootstrap_user(1);
+        } elsif (keys %args) {
+            $self->user_object(App::Model::User->new(current_user => $self));
+            $self->user_object->load_by_cols(%args);
+
+            if ( $self->user_object->group eq 'admin') {
+                $self->is_superuser(1);
+            };
+
+            $self->status($self->user_object->group);
+        };
+        $self->SUPER::_init(%args);
+    };
+
+With your C<App::CurrentUser>, users in group admin are superuser and you can 
+use C<< Jifty->web->current_user->group >> in your application.
 
 =head2 Templates defined by the C<Login> plugin
 

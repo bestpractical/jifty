@@ -153,6 +153,21 @@ Please override model's C<before_create> method instead:
         $attr->{'created_on'} = DateTime->now;
     };
 
+=head2 How do I emulate 'updated_on' ?
+
+If a lot of column could change, you can override C<_set> method:
+
+    sub _set {
+        my $self = shift;
+        my ($val, $msg) = $self->SUPER::_set(@_);
+
+        $self->SUPER::_set(column => 'changed_on', value => defer {DateTime->now});
+        $self->SUPER::_set(column => 'from', 
+            value => $ENV{REMOTE_HOST}. " / ". Jifty->web->current_user->user_object->name );
+
+        return ($val, $msg);
+    }
+
 =head2 Limit access to pages to logged-in users
 
 The best place to do this is probably in your application's
