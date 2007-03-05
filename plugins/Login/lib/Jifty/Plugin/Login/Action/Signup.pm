@@ -29,21 +29,32 @@ The fields for C<Signup> are:
 =cut
 
 sub arguments {
-    my $self = shift;
-    my $args = $self->SUPER::arguments();
-
-    my %fields = (
-        name             => 1,
-        email            => 1,
-        password         => 1,
-        password_confirm => 1,
+    return (
+        {
+            name => {
+                label  => _('Name'),
+                mandatory => 1
+                },
+            email => {
+                label  => _('Email address'),
+                ajax_validates => 1,
+                },
+            password         => {
+                type => 'password',
+                sticky => 0,
+                label  => _('Password'),
+                mandatory => 1
+                },
+            password_confirm => {
+                type   => 'password',
+                sticky => 0,
+                label  => _('Type that again?'),
+                mandatory => 1
+            },
+        }
     );
-
-    $args->{'email'}{'ajax_validates'}   = 1;
-    $args->{'password_confirm'}{'label'} = _("Type that again?");
-    $args->{'name'}{'label'} = _("Name");
-    return $args;
 }
+
 
 =head2 validate_email
 
