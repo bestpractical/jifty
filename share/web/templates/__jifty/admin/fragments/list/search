@@ -9,7 +9,7 @@ my $search = Jifty->web->new_action(
 );
 
 </%init>
-<div class="jifty-admin">
+<div class="jifty_admin">
 % for my $arg ($search->argument_names) {
  <% $search->form_field($arg) %>
 % }

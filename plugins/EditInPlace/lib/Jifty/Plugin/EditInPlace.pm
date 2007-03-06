@@ -20,7 +20,7 @@ sub fetch_comp {
                 comp_source => 
                     "
                        <span id=\"create-component-$comp_name\">
-<% Jifty->web->link(class => 'inline-create', label => 'Create $comp_name',  onclick => [ { element      => \"#create-component-$comp_name\", replace_with =>  '/__jifty/edit_inline/mason_component/$comp_name'  } ]) %>
+<% Jifty->web->link(class => 'inline_create', label => 'Create $comp_name',  onclick => [ { element      => \"#create-component-$comp_name\", replace_with =>  '/__jifty/edit_inline/mason_component/$comp_name'  } ]) %>
                        </span> 
                     ");
             

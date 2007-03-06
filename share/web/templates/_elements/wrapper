@@ -7,7 +7,7 @@
   <div id="content">
     <a name="content"></a>
 % if (Jifty->config->framework('AdminMode') ) {
-<div class="jifty-warning admin-mode">
+<div class="warning admin_mode">
 <%_('Alert')%>: <% Jifty->web->tangent( label => _('Administration mode is enabled.') , url => '/__jifty/admin/')%>
 </div>
 % }

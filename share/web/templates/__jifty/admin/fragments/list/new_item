@@ -12,7 +12,7 @@ my $create = Jifty->web->new_action(class => 'Create'.$object_type);
 % if ($mask_field) {
   <% $create->hidden($mask_field,$mask_val) %>
 % }
-<div class="jifty-admin create item inline">
+<div class="jifty_admin create item inline">
 % foreach my $argument ($create->argument_names) {
 %  if ( $argument ne $mask_field ) {
         <%$create->form_field($argument)%>

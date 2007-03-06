@@ -102,7 +102,7 @@ sub end_component_hook {
         $context->request->out(
             Jifty->web->link(
                 label   => _( 'Edit %1', $comp_name ),
-                class => 'inline-edit',
+                class => 'inline_edit',
                 onclick => [
                     {   element      => "#halo-" . $frame->{id},
                         replace_with =>

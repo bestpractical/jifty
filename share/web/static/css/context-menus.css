@@ -1,15 +1,15 @@
-ul.context-menu {
+ul.context_menu {
     clear: none;
     float: left;
 }
 
-ul.context-menu, ul.context-menu ul {
+ul.context_menu, ul.context_menu ul {
     list-style: none;
     margin-left: 0;
     padding-left: 0;
 }
 
-.context-menu li.toplevel {
+.context_menu li.toplevel {
     float: left;
     margin: 0 0.5em 0 0;
     padding: 0.2em;
@@ -21,15 +21,15 @@ ul.context-menu, ul.context-menu ul {
     color: #793300;
 }
 
-.context-menu li.toplevel ul li {
+.context_menu li.toplevel ul li {
     color: gray;
 }
 
-.context-menu li.toplevel .title {
+.context_menu li.toplevel .title {
     font-weight: bold;
 }
 
-.context-menu li.toplevel ul {
+.context_menu li.toplevel ul {
     font-size: 0.9em;
     display: none;
 
@@ -41,16 +41,16 @@ ul.context-menu, ul.context-menu ul {
     border-bottom: 1px solid grey;
 }
 
-.context-menu li.toplevel ul a {
+.context_menu li.toplevel ul a {
     width: 100%;
     display: block;
 }
 
-.context-menu .open span.expand a {
+.context_menu .open span.expand a {
     background-image: url(/static/images/silk/bullet_arrow_up.png);
 }
 
-.context-menu span.expand a {
+.context_menu span.expand a {
     background: url(/static/images/silk/bullet_arrow_down.png) no-repeat center center;
     padding-left: 16px;
     border: 1px solid transparent;
@@ -59,29 +59,29 @@ ul.context-menu, ul.context-menu ul {
     min-height: 1em;
 }
 
-.context-menu li.toplevel:hover .expand a {
+.context_menu li.toplevel:hover .expand a {
     border-top: 1px solid grey;
     border-left: 1px solid grey;
     border-right: 1px solid lightgrey;
     border-bottom: 1px solid lightgrey;
 }
 
-.context-menu li.open a {
+.context_menu li.open a {
     border-bottom-color: transparent;
 }
 
-.context-menu li.open, .context-menu li.closed:hover {
+.context_menu li.open, .context_menu li.closed:hover {
     border-top: 1px solid lightgrey;
     border-left: 1px solid lightgrey;
     border-right: 1px solid grey;
     border-bottom-color: transparent;
 }
 
-.context-menu li.closed:hover {
+.context_menu li.closed:hover {
     border-bottom-color: grey;
 }
 
-.context-menu li.toplevel span.expand a:active {
+.context_menu li.toplevel span.expand a:active {
     border-top: 1px solid white;
     border-left: 1px solid white;
     border-right: 1px solid grey;
@@ -92,11 +92,11 @@ ul.context-menu, ul.context-menu ul {
     left: 1px;
 }
 
-.context-menu li ul li {
+.context_menu li ul li {
     padding: 0.2em;
 }
 
-.context-menu li.open ul li:hover {
+.context_menu li.open ul li:hover {
     background: #eee;
 }
 

@@ -327,7 +327,7 @@ sub current_value {
 
 =head2 render
 
-Outputs this form element in a span with class C<form-field>.  This
+Outputs this form element in a span with class C<form_field>.  This
 outputs the label, the widget itself, any hints, any errors, and any
 warnings using L</render_label>, L</render_widget>, L</render_hints>,
 L</render_errors>, and L</render_warnings>, respectively.  Returns an
@@ -412,7 +412,7 @@ Output the start of div that wraps the form field
 
 sub render_wrapper_start {
     my $self = shift;
-    my @classes = qw(form-field);
+    my @classes = qw(form_field);
     if ($self->mandatory) { push @classes, 'mandatory' }
     if ($self->name)      { push @classes, 'argument-'.$self->name }
     Jifty->web->out('<div class="'.join(' ', @classes).'">' ."\n");

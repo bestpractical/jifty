@@ -92,7 +92,7 @@ is available for every C<Jifty::Web::Form::Field> and its successors.
 
 =item widget, button, button_as_link, combobox,
 combo-text, combo-button, combo-list, date, label, password
-jifty-submit-button, reset, text, hidden, ajaxvalidation,
+submit_button, reset, text, hidden, ajaxvalidation,
 ajaxcanonicalization, ajaxautocompletes
 
 These class names are used depending on the type of widget getting
@@ -102,7 +102,7 @@ rendered.
 
 used for the autocomplete div.
 
-=item toplevel, menu, context-menu, submenu, title, expand
+=item toplevel, menu, context_menu, submenu, title, expand
 
 These classes are used in navigation bars.
 

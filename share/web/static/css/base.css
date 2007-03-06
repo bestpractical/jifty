@@ -4,7 +4,7 @@ body {
 body.calpopup {
 }
 
-.jifty-error {
+.error {
     color: #a00000;
 }
 
@@ -20,11 +20,11 @@ hr {
     clear: both;
 } 
 
-.jifty-messages .jifty-message {
+.messages .message {
     display: block;
 }
 
-div#jifty-messages,  div#jifty-errors {
+div#messages,  div#errors {
      background-color: rgb(240,234,183);
      border: 1px solid rgb(230,224,173);
      margin-top: 10px;
@@ -62,7 +62,7 @@ div#jifty-wait-message {
 
 
 
-div.jifty-warning {
+div.warning {
  position: absolute;
  top: 0;
  left: 0;
@@ -74,7 +74,7 @@ div.jifty-warning {
  border-bottom: 1px solid #000;
 }
 
-div.jifty-warning a {
+div.warning a {
  color: white;
 
 }

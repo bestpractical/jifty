@@ -871,12 +871,12 @@ sub _render_messages {
 
     return unless grep {$_->$type()} values %results;
     
-    my $plural = "jifty-" . $type . "s";
-    $self->out(qq{<div class="jifty results jifty-messages" id="$plural">});
+    my $plural = $type . "s";
+    $self->out(qq{<div class="jifty results messages" id="$plural">});
     
     foreach my $moniker ( sort keys %results ) {
         if ( $results{$moniker}->$type() ) {
-            $self->out( qq{<div class="jifty-$type $moniker">}
+            $self->out( qq{<div class="$type $moniker">}
                         . $results{$moniker}->$type()
                         . qq{</div>} );
         }
