@@ -45,7 +45,7 @@ requires('IPC::PubSub' => '0.23' );
 requires('Jifty::DBI' => '0.31' );            # Jifty::DBI::Collection Jifty::DBI::Handle Jifty::DBI::Record::Cachable Jifty::DBI::SchemaGenerator
 requires('Locale::Maketext::Extract' => '0.20');
 requires('Locale::Maketext::Lexicon' => '0.60');
-requires('Log::Log4perl');
+requires('Log::Log4perl' => '1.04');
 requires('LWP::UserAgent'); # Net::HTTP
 requires('MIME::Types');
 requires('Module::Pluggable' => '3.1'); # Module::Pluggable::Object
