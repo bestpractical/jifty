@@ -3,6 +3,8 @@ use strict;
 
 package Jifty::Record;
 
+use Data::UUID;
+
 use Jifty::Config;
 
 =head1 NAME
@@ -47,6 +49,8 @@ Override's L<Jifty::DBI::Record> in these ways:
 
 =item Remove C<id> values unless they are truly numeric
 
+=item Convert UUIDs to the records they represent
+
 =item Automatically load by id after create
 
 =item actually stop creating the new record if a field fails to validate.
@@ -72,6 +76,37 @@ sub create {
         wantarray ? return ( 0, _('Permission denied') ) : return (0);
     }
 
+    # XXX sterling: using Data::UUID to identify UUIDs may be overkill
+    my $ug = Data::UUID->new;
+    foreach my $column_name ( keys %attribs ) {
+        my $column = $self->column($column_name);
+        if (    $column
+            and $column->readable
+            and $column->refers_to
+            and UNIVERSAL::isa( $column->refers_to, "Jifty::DBI::Record" )
+            and eval { $ug->from_string($attribs{$column_name}) }) {
+
+            # Load the record
+            my $record = Jifty->handle->lookup_record($attribs{$column_name});
+            
+            # Make sure the returned record is the right thing
+            if (UNIVERSAL::isa( $record, $column->refers_to )) {
+
+                # Set the attribute
+                $attribs{$column_name} = $record;
+            }
+
+            # XXX sterling: this should log something and quit
+            else {
+                $self->log->error("The UUID for $column_name was not found in the database.");
+                if ($class) {
+                    return($self);
+                } else {
+                    return (0, "UUID for $column_name was not found in the database.");
+                }
+            }
+        }
+    }    
     foreach my $key ( keys %attribs ) {
         my $attr = $attribs{$key};
         my $method = "canonicalize_$key";

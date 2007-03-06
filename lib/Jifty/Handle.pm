@@ -336,6 +336,43 @@ sub lookup_uuid {
     return $uuid;
 }
 
+=head2 lookup_record($uuid)
+
+Performs the reverse operation of the above. It returns an instance of the record represented by the given UUID. Returns C<undef> if no record matching the given UUID is found.
+
+=cut
+
+# XXX sterling: Is this really implemented in the best way? Particularly the
+# record class lookup?
+
+# XXX sterling: Should this return a Class::ReturnValue or something else?
+sub lookup_record {
+    my $self = shift;
+    my $uuid = shift;
+
+    # Lookup the table name and ID
+    my ($table, $id) = $self->fetch_result(qq[ SELECT row_table, row_id FROM _jifty_uuids WHERE uuid = ? ], $uuid);
+
+    return unless defined $table and defined $id;
+
+    # Find the record class for the table
+    my ($record_class) = grep { $_->table eq $table } 
+                              Jifty->class_loader->models;
+
+    return unless defined $record_class;
+    
+    # Only return a value when load succeeds
+    my $instance = $record_class->new;
+    if ($instance->load($id)) {
+        return $instance;
+    }
+
+    # Otherwise, return undef
+    else {
+        return;
+    }
+}
+
 =head1 AUTHOR
 
 Various folks at BestPractical Solutions, LLC.
