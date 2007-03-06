@@ -204,7 +204,7 @@ Render this menu with html markup as an inline dropdown menu.
 
 sub render_as_context_menu {
 	my $self = shift;
-    	Jifty->web->out( qq{<ul class="context_menu">});
+    	Jifty->web->out( qq{<ul class="context-menu">});
 	$self->render_as_hierarchical_menu_item();
 	Jifty->web->out(qq{</ul>});
 	'';

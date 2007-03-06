@@ -1,10 +1,10 @@
-.halo_actions {
+.halo-actions {
     position: fixed;
     border: 1px solid black;
     background: #ccc;
 }
 
-.halo_actions h1 {
+.halo-actions h1 {
     color: #fff;
     background-color: #600;
     border-bottom: 1px solid black;
@@ -14,11 +14,11 @@
     font-size: 120%;
 }
 
-.halo_actions h1 a { 
+.halo-actions h1 a { 
     color: #fff;
 }
 
-.halo_actions .resize {
+.halo-actions .resize {
     border: 5px solid #ccc;
     border-bottom-color: #000;
     border-right-color: #666;
@@ -31,7 +31,7 @@
     overflow: hidden;
 }
 
-.halo_actions .section {
+.halo-actions .section {
     color: #ccc;
     background-color: #300;
     border-top: 1px solid black;
@@ -40,46 +40,46 @@
     font-weight: bold;
 }
 
-.halo_actions .section a {
+.halo-actions .section a {
     text-align: center;
     color: #ccc;
 }
 
-.halo_actions .body {
+.halo-actions .body {
     font-size: 110%;
     margin:0;
     padding:0 1em;
 }
 
-.halo_actions .body ul {
+.halo-actions .body ul {
     margin:0;
     padding:0;
     margin-left: 1em;
 }
 
-.halo_actions .body .path {
+.halo-actions .body .path {
     font-family: monospace;
     font-size: 120%;
     text-align: center;
 }
 
-.halo_actions .body .time {
+.halo-actions .body .time {
     font-style: italic;
     text-align: center;
 }
 
-.halo_actions .body .fixed {
+.halo-actions .body .fixed {
     font-family: monospace;
 }
 
-.halo_button {
+.halo-button {
     color: yellow;
     position: absolute;
     z-index: 9999;
     font-size:2em;
 }
 
-#render_info_tree {
+#jifty-render-info-tree {
     position: fixed;
     background: white;
     border: 1px solid yellow;
@@ -89,18 +89,18 @@
     padding: 1em;
 }
 
-#render_info_tree ul {
+#jifty-render-info-tree ul {
     list-style: none;
     padding-left: 1em;
 }
 
-#render_info {
+#jifty-render-info {
     position: fixed;
     right:0.5em;
     bottom:0;
 }
 
-a.inline_edit {
+a.inline-edit {
 
     display: block;
     width: 0;
@@ -111,7 +111,7 @@ a.inline_edit {
     background: url(/static/images/silk/pencil.png) no-repeat 0 0;
 }
 
-a.inline_create {
+a.inline-create {
 
     display: block;
     width: 0;

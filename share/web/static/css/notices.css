@@ -1,20 +1,20 @@
 /* IE can't handle this nicely w/ AJAX validation */
 
-html>body .message {
+html>body .jifty-message {
     background: url(/static/images/silk/information.png) no-repeat center left;
     padding-left: 20px;
 }
 
-html>body .error {
+html>body .jifty-error {
     background: url(/static/images/silk/error.png) no-repeat center left;
     padding-left: 20px;
 }
 
-.error {
+.jifty-error {
     color: #a00000;
 }
 
-div#messages,  div#errors {
+div#jifty-messages,  div#jifty-errors {
      background-color: rgb(240,234,183);
      border: 1px solid rgb(230,224,173);
      margin-top: 10px;
@@ -24,8 +24,8 @@ div#messages,  div#errors {
      position: relative;
 }
 
-#dismiss_messages,
-#dismiss_errors
+#dismiss-jifty-messages,
+#dismiss-jifty-errors
 {
     padding-left: 16px;
     background: url(/static/images/silk/cancel_grey.png) no-repeat;
@@ -36,4 +36,3 @@ div#messages,  div#errors {
     display: block;
     text-indent: -9999em;
 }
-

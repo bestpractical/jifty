@@ -475,10 +475,10 @@ Behaviour.register({
             Element.addClassName( e, "jifty_enter_handler_attached" );
         }
     },
-    ".messages": function(e) {
+    ".jifty-messages": function(e) {
         if (   !Element.hasClassName( e, "jifty_enter_handler_attached" ) ) {
             e.innerHTML= 
-              '<a  href="#" id="dismiss_'+e.id+'" title="Dismiss" onmousedown="this.onfocus=this.blur;" onmouseup="this.onfocus=window.clientInformation?null:window.undefined" onclick="Effect.Fade(this.parentNode); return false;">Dismiss</a>' + e.innerHTML;
+              '<a  href="#" id="dismiss-'+e.id+'" title="Dismiss" onmousedown="this.onfocus=this.blur;" onmouseup="this.onfocus=window.clientInformation?null:window.undefined" onclick="Effect.Fade(this.parentNode); return false;">Dismiss</a>' + e.innerHTML;
 
             Element.addClassName( e, "jifty_enter_handler_attached" );
         }

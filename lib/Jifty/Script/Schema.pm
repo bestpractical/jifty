@@ -161,7 +161,7 @@ sub probe_database_existence {
         # No version table.  Assume the DB is empty.
         $self->{create_all_tables} = 1;
     } elsif ( $@ =~ /database .*? does not exist/i
-        or $@ =~ /unknown database/ ) {
+        or $@ =~ /unknown database/i ) {
 
         # No database exists; we'll need to make one and fill it up
         $self->{create_database}   = 1;
@@ -500,8 +500,8 @@ sub _connect_to_db_for_management {
 
     # Everything but the template1 database is assumed
     my %connect_args;
-    $connect_args{'database'} = 'template1' if ( $driver eq 'Pg' );
-    $connect_args{'database'} = ''          if ( $driver eq 'mysql' );
+    $connect_args{'database'} = 'template1' if ( $handle->isa("Jifty::DBI::Handle::Pg") );
+    $connect_args{'database'} = ''          if ( $handle->isa("Jifty::DBI::Handle::mysql") );
     $handle->connect(%connect_args);
     return $handle;
 }

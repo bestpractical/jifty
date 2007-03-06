@@ -4,7 +4,7 @@ div.form {
     margin: 0 auto;
 }
 
-div.form_field {
+div.form-field {
     clear: both;
     padding-top: 0.5em;
 }
@@ -14,7 +14,7 @@ div.form_field {
     float: left;
 }
 
-div.form_field label.label, div.form_field span.label {
+div.form-field label.label, div.form-field span.label {
     float: left;
     width: 15%;
     text-align: right;
@@ -22,7 +22,7 @@ div.form_field label.label, div.form_field span.label {
     padding: 0.2em 0.5em 0 0;
 }
 
-div.form_field .hints {
+div.form-field .hints {
     width: 83%;
     font-size: 80%;
     padding-top: 0.2em;
@@ -31,13 +31,13 @@ div.form_field .hints {
     color: #999999;
 }
 
-div.form_field .error, div.form_field .warning, div.form_field .canonicalization_note {
+div.form-field .error, div.form-field .warning, div.form-field .canonicalization_note {
     float: right;
     width: 88%;
     text-align: left;
 }
 
-div.form_field span.formw {
+div.form-field span.formw {
     float: right;
     width: 88%;
     text-align: left;
@@ -61,12 +61,12 @@ input.date {
     width: 10em;
 }
 
-.submit_button {
+.jifty-submit-button {
     display: block;
     clear: both;
 }
 
-.submit_button input {
+.jifty-submit-button input {
     clear: both;
     margin: 0.5em 0 0 16%;
 }
@@ -86,11 +86,11 @@ for forms.  Some of the rules aren't needed if previous behavior doesn't need to
 be overridden.  ".inline" is our inline form class.
 */
 
-div.inline .submit_button
+div.inline .submit-button
 {
 }
 
-div.inline div.form_field {
+div.inline div.form-field {
     float: left;
 
     /* to counter previous rules */
@@ -100,8 +100,8 @@ div.inline div.form_field {
     margin-right: 0.5em;
 }
 
-div.inline div.form_field label.label,
-div.inline div.form_field span,
+div.inline div.form-field label.label,
+div.inline div.form-field span,
 div.inline .hints,
 div.inline .error
 {
@@ -119,7 +119,7 @@ div.inline .hints {
 
 }
 
-div.inline div.form_field label.label {
+div.inline div.form-field label.label {
     /* aesthetic */
     padding-bottom: 0.1em;
 }
@@ -127,19 +127,19 @@ div.inline div.form_field label.label {
 
 /* So the admin ui is one row per line */
 
-.jifty_admin.item.inline {
+.jifty-admin.item.inline {
      clear: both;
 }
 
-.jifty_admin .editlink {
+.jifty-admin .editlink {
     float: right;
 }
 
-.jifty_admin_header {
+.jifty-admin-header {
     display: inline;
 }
 
-.jifty_admin_header a {
+.jifty-admin-header a {
     color: black;
     display: block;
     font-size: 0.6em;
@@ -161,14 +161,14 @@ div.inline div.form_field label.label {
     margin-right: 0.2em;
 }
 
-.down_select {
+.down-select {
     height : 1.5em;
     float: left;
     background: url(/static/images/css/bullet_arrow_down.png) no-repeat bottom center;
     margin-right: 0.2em;
 }
 
-.down_select a {
+.down-select a {
     font-weight: bold;
     color: #900;
 }
@@ -180,14 +180,14 @@ div.inline div.form_field label.label {
     margin-right: 0.2em;
 } 
 
-.up_select {
+.up-select {
     height : 1.5em;
     float: left;
     background: url(/static/images/css/bullet_arrow_up.png) no-repeat bottom center;
     margin-right: 0.2em;
 } 
 
-.up_select a {
+.up-select a {
     font-weight: bold;
     color: #900;
 }
