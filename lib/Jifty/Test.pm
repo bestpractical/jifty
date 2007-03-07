@@ -113,16 +113,44 @@ symbols to the namespace that C<use>'d this one.
 
 sub import_extra {
     my $class = shift;
-    $class->setup;
+    my $args  = shift;
+    $class->setup($args);
     Test::More->export_to_level(2);
 }
 
-=head2 setup
+=head2 setup ARGS
+
+This method is passed a single argument. This is a reference to the array of parameters passed in to the import statement.
 
 Merges the L</test_config> into the default configuration, resets the
-database, and resets the fake "outgoing mail" folder.  This is the
-method to override if you wish to do custom setup work, such as insert
-test data into your database.
+database, and resets the fake "outgoing mail" folder.  
+
+This is the method to override if you wish to do custom setup work, such as
+insert test data into your database.
+
+  package MyApp::Test;
+  use base qw/ Jifty::Test /;
+
+  sub setup {
+      my $self = shift;
+      my $args = shift;
+
+      # Make sure to call the super-class version
+      $self->SUPER::setup($args);
+
+      # Now that we have the database and such...
+      my %test_args = @$args;
+
+      if ($test_arg{something_special}) {
+          # do something special...
+      }
+  }
+
+And later in your tests, you may do the following:
+
+  use MyApp::Test tests => 14, something_special => 1;
+
+  # 14 tests with some special setup...
 
 =cut
 

@@ -10,7 +10,7 @@ $next => undef
 <% $action->form_field('email') %>
 <% $action->form_field('password') %>
 <% $action->form_field('remember') %>
-<div class="jifty-submit-button">
+<div class="submit_button">
 <% Jifty->web->return(label => _('Login'), to => '/', submit => $action) %>
 </div>
 <% Jifty->web->form->end %>
