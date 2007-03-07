@@ -106,6 +106,9 @@ sub schema (&) {
     my $from = caller;
 
     no warnings 'redefine';
+    
+    # See the perldoc for an explanation of why we're redefining
+    # the localization method _().
     local *_ = sub { my $args = \@_; defer { _(@$args) } };
 
     Class::Data::Inheritable::mk_classdata($from => qw/PARAMS/);

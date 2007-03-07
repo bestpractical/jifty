@@ -161,7 +161,7 @@ sub probe_database_existence {
         # No version table.  Assume the DB is empty.
         $self->{create_all_tables} = 1;
     } elsif ( $@ =~ /database .*? does not exist/i
-        or $@ =~ /unknown database/ ) {
+        or $@ =~ /unknown database/i ) {
 
         # No database exists; we'll need to make one and fill it up
         $self->{create_database}   = 1;
@@ -378,7 +378,7 @@ sub upgrade_tables {
                         my $renamed = $upgradeclass->just_renamed || {};
 
                         # skip it if this was dropped by a rename
-                        $model->drop_column_sql($col->name)
+                        _exec_sql($model->drop_column_sql($col->name))
                             unless defined $renamed
                                 ->{ $model->table }
                                 ->{'drop'}
@@ -387,12 +387,12 @@ sub upgrade_tables {
                 }
 
                 # If they're new, add them
-                if ($model->can( 'since' ) and defined $col->since and $appv >= $col->since and $col->since >$dbv ) {
+                if ($col->can( 'since' ) and defined $col->since and $appv >= $col->since and $col->since >$dbv ) {
                     unshift @{ $UPGRADES{ $col->since } }, sub {
                         my $renamed = $upgradeclass->just_renamed || {};
 
                         # skip it if this was added by a rename
-                        $model->add_column_sql($col->name)
+                        _exec_sql($model->add_column_sql($col->name))
                             unless defined $renamed
                                 ->{ $model->table }
                                 ->{'add'}
@@ -430,9 +430,7 @@ sub _execute_upgrades {
                 $log->info("Running upgrade script");
                 $thing->();
             } else {
-                my $ret = Jifty->handle->simple_query($thing);
-                $ret
-                    or die "error updating a table: " . $ret->error_message;
+                _exec_sql($thing);
             }
         }
     }
@@ -505,8 +503,8 @@ sub _connect_to_db_for_management {
 
     # Everything but the template1 database is assumed
     my %connect_args;
-    $connect_args{'database'} = 'template1' if ( $driver eq 'Pg' );
-    $connect_args{'database'} = ''          if ( $driver eq 'mysql' );
+    $connect_args{'database'} = 'template1' if ( $handle->isa("Jifty::DBI::Handle::Pg") );
+    $connect_args{'database'} = ''          if ( $handle->isa("Jifty::DBI::Handle::mysql") );
     $handle->connect(%connect_args);
     return $handle;
 }
@@ -549,6 +547,13 @@ sub _check_reserved {
         }
     }
 }
+
+sub _exec_sql {
+    my $sql = shift;
+    my $ret = Jifty->handle->simple_query($sql);
+    $ret or die "error updating a table: " . $ret->error_message;
+}
+
 
 1;
 

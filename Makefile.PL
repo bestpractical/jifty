@@ -45,7 +45,7 @@ requires('IPC::PubSub' => '0.23' );
 requires('Jifty::DBI' => '0.31' );            # Jifty::DBI::Collection Jifty::DBI::Handle Jifty::DBI::Record::Cachable Jifty::DBI::SchemaGenerator
 requires('Locale::Maketext::Extract' => '0.20');
 requires('Locale::Maketext::Lexicon' => '0.60');
-requires('Log::Log4perl');
+requires('Log::Log4perl' => '1.04');
 requires('LWP::UserAgent'); # Net::HTTP
 requires('MIME::Types');
 requires('Module::Pluggable' => '3.1'); # Module::Pluggable::Object
@@ -87,7 +87,7 @@ features(
     'Administrative Interface (web)' => [ 
         -default => 1,
        requires( 'Pod::Simple') # Pod::Simple::Text Pod::Simple::HTML
-   ],
+    ],
     'Development of a jifty application' => [
         -default => 1,
         recommends('DBD::SQLite' => 1.11 ),
@@ -111,6 +111,14 @@ features(
         recommends('Module::CoreList'),
         recommends('Module::Install::Admin' => '0.50')
      ],
+    'Forking jifty server' => [
+        -default => 0,
+        recommends('Net::Server::Fork'),
+    ],
+    'Apache2/ModPerl2 handler' => [
+        -default => 0,
+        recommends('Apache2::Const'),
+    ],
     'Experimental features' => [
         -default => 0,
         recommends('PAR::Dist::FromCPAN'),

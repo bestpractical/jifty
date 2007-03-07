@@ -153,6 +153,21 @@ Please override model's C<before_create> method instead:
         $attr->{'created_on'} = DateTime->now;
     };
 
+=head2 How do I emulate 'updated_on' ?
+
+If a lot of column could change, you can override C<_set> method:
+
+    sub _set {
+        my $self = shift;
+        my ($val, $msg) = $self->SUPER::_set(@_);
+
+        $self->SUPER::_set(column => 'changed_on', value => defer {DateTime->now});
+        $self->SUPER::_set(column => 'from', 
+            value => $ENV{REMOTE_HOST}. " / ". Jifty->web->current_user->user_object->name );
+
+        return ($val, $msg);
+    }
+
 =head2 Limit access to pages to logged-in users
 
 The best place to do this is probably in your application's
@@ -271,6 +286,13 @@ field is changed.
 
 Of course, you can apply the same trick to your own Action classes.
 
+You can use the canonicalization to change data in other fields.  For
+example you might want to update the postcode field when the suburb
+field is changed.
+
+	$self->argument_value( other_field => "new value" )
+
+
 =head2 Get the "Edit" links to work in the "Page info" tool
 
 If you click on "Page info", follow an "Edit" link for a fragment,
@@ -321,3 +343,30 @@ Alternatively, you can specify that this will apply to all tags like so:
 
 Check details from Angus himself. ( http://www.twinhelix.com/ )
 
+=head2 Create mutually dependent models
+
+Sometimes you need two tables that both depend upon each other. That is, you have model A that needs to have a column pointing to Model B and a column in Model B pointing back to model A. The solution is very straight forward, just make sure you setup the base class I<before> you load dependent model and this will just work. For example:
+
+  package ModelA;
+  use base qw/ MyApp::Record /;
+
+  # Note that "use base..." comes first
+  use ModelB;
+
+  use Jifty::DBI::Schema;
+  use MyApp::Record schema {
+    column b_record => refers_to ModelB;
+  };
+
+  package ModelB;
+  use base qw/ MyApp::Record /;
+
+  # Note that "use base..." comes first
+  use ModelA;
+
+  use Jifty::DBI::Schema;
+  use MyApp::Record schema {
+    column a_record => refers_to ModelA;
+  };
+
+Otherwise, everything should work as expected.

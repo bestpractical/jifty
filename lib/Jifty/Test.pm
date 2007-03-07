@@ -21,13 +21,20 @@ Jifty::Test - Jifty's test module
 
     use Jifty::Test tests => 5;
 
-    ...all of Test::More's functionality...
+    # ...all of Test::More's functionality...
+    my $model = MyApp::Model::MyModel->new;
+    $model->create();
+    ok($model->id, 'model works');
+    is($model->foo, 'some default', 'default works');
 
-    ...any class methods defined below...
+    # Startup an external server (see Jifty::TestServer)
+    my $server = Jifty::Test->make_server;
+    my $server_url = $server->started_ok;
+    # You're probably also interested in Jifty::Test::WWW::Mechanize
 
 =head1 DESCRIPTION
 
-Jifty::Test is a superset of Test::More.  It provides all of
+Jifty::Test is a superset of L<Test::More>.  It provides all of
 Test::More's functionality in addition to the class methods defined
 below.
 
@@ -39,9 +46,21 @@ below.
 
 Check if the test is currently in a passing state.
 
-* All tests run so far have passed
-* We have run at least one test
-* We have not run more than we planned (if we planned at all)
+=over
+
+=item * 
+
+All tests run so far have passed
+
+=item * 
+
+We have run at least one test
+
+=item * 
+
+We have not run more than we planned (if we planned at all)
+
+=back
 
 =cut
 
@@ -94,16 +113,44 @@ symbols to the namespace that C<use>'d this one.
 
 sub import_extra {
     my $class = shift;
-    $class->setup;
+    my $args  = shift;
+    $class->setup($args);
     Test::More->export_to_level(2);
 }
 
-=head2 setup
+=head2 setup ARGS
+
+This method is passed a single argument. This is a reference to the array of parameters passed in to the import statement.
 
 Merges the L</test_config> into the default configuration, resets the
-database, and resets the fake "outgoing mail" folder.  This is the
-method to override if you wish to do custom setup work, such as insert
-test data into your database.
+database, and resets the fake "outgoing mail" folder.  
+
+This is the method to override if you wish to do custom setup work, such as
+insert test data into your database.
+
+  package MyApp::Test;
+  use base qw/ Jifty::Test /;
+
+  sub setup {
+      my $self = shift;
+      my $args = shift;
+
+      # Make sure to call the super-class version
+      $self->SUPER::setup($args);
+
+      # Now that we have the database and such...
+      my %test_args = @$args;
+
+      if ($test_arg{something_special}) {
+          # do something special...
+      }
+  }
+
+And later in your tests, you may do the following:
+
+  use MyApp::Test tests => 14, something_special => 1;
+
+  # 14 tests with some special setup...
 
 =cut
 
@@ -420,5 +467,11 @@ sub _ending {
     # Unlink test file
     unlink $Test->{test_config} if $Test->{test_config};
 }
+
+=head1 SEE ALSO
+
+L<Jifty::Test::WWW::Mechanize>, L<Jifty::TestServer>
+
+=cut
 
 1;
