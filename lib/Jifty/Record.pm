@@ -60,10 +60,10 @@ Override's L<Jifty::DBI::Record> in these ways:
 =cut 
 
 sub create {
-    my $class    = shift;
+    my $class = shift;
     my $self;
-    if (ref($class)) { 
-        ($self,$class) = ($class,undef);
+    if ( ref($class) ) {
+        ( $self, $class ) = ( $class, undef );
     } else {
         $self = $class->new();
     }
@@ -108,46 +108,48 @@ sub create {
         }
     }    
     foreach my $key ( keys %attribs ) {
-        my $attr = $attribs{$key};
-        my $method = "canonicalize_$key";
-        my $func = $self->can($method) or next;
-        $attribs{$key} = $self->$func( $attr);
+        $attribs{$key} = $self->run_canonicalization_for_column(
+            column => $key,
+            value  => $attribs{$key}
+        );
     }
     foreach my $key ( keys %attribs ) {
         my $attr = $attribs{$key};
-        my $method = "validate_$key";
-        if (my $func = $self->can($method)) {
-        my ( $val, $msg ) = $func->($self, $attr);
-        unless ($val) {
+        my ( $val, $msg ) = $self->run_validation_for_column(
+            column => $key,
+            value  => $attribs{$key}
+        );
+        if ( not $val ) {
             $self->log->error("There was a validation error for $key");
             if ($class) {
-                return($self);
+                return ($self);
             } else {
                 return ( $val, $msg );
             }
         }
-        }
+
         # remove blank values. We'd rather have nulls
-        if ( exists $attribs{$key} and (! defined $attr || ( not ref( $attr) and $attr eq '' ))) {
+        if ( exists $attribs{$key}
+            and ( !defined $attr || ( not ref($attr) and $attr eq '' ) ) )
+        {
             delete $attribs{$key};
         }
     }
 
-
     my $msg = $self->SUPER::create(%attribs);
-    if (ref($msg)  ) {
+    if ( ref($msg) ) {
+
         # It's a Class::ReturnValue
-        return $msg ;
+        return $msg;
     }
-    my ($id, $status) = $msg;
+    my ( $id, $status ) = $msg;
     $self->load_by_cols( id => $id ) if ($id);
     if ($class) {
         return $self;
     } else {
-        return wantarray ? ($id, $status) : $id;
+        return wantarray ? ( $id, $status ) : $id;
     }
 }
-
 
 =head2 id
 
@@ -267,8 +269,7 @@ sub check_create_rights { return shift->current_user_can('create', @_) }
 
 Internal helper to call L</current_user_can> with C<read>.
 
-Passes C<column> as a named parameter for the column the user is checking rights
-on.
+Passes C<column> as a named parameter for the column the user is checking rights on.
 
 =cut
 

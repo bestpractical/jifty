@@ -62,6 +62,7 @@ requires('SQL::ReservedWords');
 requires('SVN::Fs');
 requires('SVN::Repos');
 requires('SVN::Simple::Edit');
+requires('Template::Declare');                # Template::Declare::Tags
 requires('Test::Base');
 requires('UNIVERSAL::require');
 requires('URI');

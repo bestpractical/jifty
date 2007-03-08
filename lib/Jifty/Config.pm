@@ -240,6 +240,7 @@ sub guess {
             AdminMode        => 1,
             DevelMode        => 1,
             ApplicationClass => $app_class,
+            TemplateClass    => $app_class."::View",
             ApplicationName  => $app_name,
             ApplicationUUID  => $app_uuid,
             LogLevel         => 'INFO',
@@ -263,7 +264,15 @@ sub guess {
             L10N       => {
                 PoDir => "share/po",
             },
-            Plugins    => [],
+            Plugins    => [
+            { REST => {},
+        },
+        {       Halo => {},},
+        {ErrorTemplates => {},},
+        {OnlineDocs => {},},
+        {        CompressedCSSandJS => {},},
+        {AdminUI => {},}
+            ],
             Web        => {
                 Port => '8888',
                 BaseURL => 'http://localhost',

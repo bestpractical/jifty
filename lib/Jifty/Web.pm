@@ -672,6 +672,7 @@ sub _redirect {
 
     # Clear out the mason output, if any
     $self->mason->clear_buffer if $self->mason;
+    Template::Declare->buffer->clear if(Template::Declare->buffer);
 
     my $apache = Jifty->handler->apache;
 

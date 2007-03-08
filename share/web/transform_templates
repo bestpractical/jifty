@@ -1,0 +1,9 @@
+#!/usr/bin/perl 
+
+use warnings;
+use strict;
+
+my $lines = (join('',<STDIN>));
+$lines =~ s/\<(\w*?) (?:class="(.*?)")? (?:id="(.*?)")?\>/with { class => $2, id => $3 }, $1 { /g;
+print $lines;
+

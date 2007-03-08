@@ -185,6 +185,9 @@ sub new {
     Jifty->class_loader->require;
     Jifty->handler(Jifty::Handler->new());
     Jifty->api(Jifty::API->new());
+    # We can only require view classes once we have our models and actions set.
+    $class_loader->require_views;
+
     # Let's get the database rocking and rolling
     Jifty->setup_database_connection(%args);
     Jifty->class_loader->require_classes_from_database() if (Jifty->handle() and not $args{'no_handle'});

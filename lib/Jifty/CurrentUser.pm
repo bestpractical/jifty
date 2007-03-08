@@ -34,6 +34,8 @@ if you want any sort of access control.
 Creates a new L<Jifty::CurrentUser> object.  Calls L<_init>, an
 app-specific initialization routine.
 
+If you call it with the C<_bootstrap> argument, Jifty will set the user up as a bootstrap user, who's usually allowed to do just about anything without any access control
+
 =cut
 
 sub new {

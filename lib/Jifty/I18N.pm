@@ -63,6 +63,7 @@ sub new {
     $lang = [defined $lang ? $lang : ()] unless ref($lang) eq 'ARRAY';
 
     my $lh = $class->get_handle(@$lang);
+
     $DynamicLH = \$lh unless @$lang; 
     $self->init;
 
@@ -80,6 +81,7 @@ sub new {
         my @stringified_args = map {"$_"} @_;
         my $result = eval { $lh->maketext(@stringified_args) };
         if ($@) {
+            warn $@;
             # Sometimes Locale::Maketext fails to localize a string and throws
             # an exception instead.  In that case, we just return the input.
             return join(' ', @stringified_args);
