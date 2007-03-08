@@ -379,7 +379,7 @@ sub post_parameters {
 
     # Add a redirect, if this isn't to the right page
     if ( $self->url ne $root and not $self->returns ) {
-        require Jifty::Action::Redirect;
+        Jifty::Util->require('Jifty::Action::Redirect');
         my $redirect = Jifty::Action::Redirect->new(
             arguments => { url => $self->url } );
         $parameters{ $redirect->register_name } = ref $redirect;
