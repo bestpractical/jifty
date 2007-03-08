@@ -55,11 +55,8 @@ sub new {
     Jifty::Util->require($class->dispatcher);
 
     # Start a plugin classloader set up on behalf of the application
-    require Jifty::Plugin::ClassLoader;
-    Jifty::Plugin::ClassLoader->new(
-	base => Jifty->app_class,
-	plugin => $class,
-    )->require;
+    Jifty::Util->require('Jifty::Plugin::ClassLoader');
+    Jifty::Plugin::ClassLoader->new( base => Jifty->app_class, plugin => $class,)->require;
 
     # XXX TODO: Add .po path
 
@@ -94,22 +91,51 @@ sub new_request {
     Jifty->api->allow(qr/^\Q$class\E::Action/);
 }
 
+sub _calculate_share {
+    my $self = shift;
+    my $class = ref($self) || $self;
+    unless ( $self->{share} ) {
+        local $@; # We're just avoiding File::ShareDir's failure behaviour of dying
+        eval { $self->{share} = File::ShareDir::module_dir($class) };
+    }
+    unless ( $self->{share} ) {
+        local $@ ; # We're just avoiding File::ShareDir's failure behaviour of dying
+        eval { $self->{share} = File::ShareDir::module_dir('Jifty') };
+        if ( $self->{'share'} ) {
+            my $class_to_path = $class;
+            $class_to_path =~ s|::|/|g;
+            $self->{share} .= "/plugins/" . $class_to_path;
+        }
+    }
+}
+
+
 =head2 template_root
 
-Returns the root of the template directory for this plugin
+Returns the root of the C<HTML::Mason> template directory for this plugin
 
 =cut
 
 sub template_root {
     my $self = shift;
-    my $class = ref($self) || $self;
-    unless (exists $self->{share}) {
-        $self->{share} = undef;
-        eval { $self->{share} = File::ShareDir::module_dir($class) };
-    }
+    $self->{share} ||= $self->_calculate_share();
     return unless $self->{share};
     return $self->{share}."/web/templates";
 }
+
+
+=head2 template_class
+
+Returns the Template::Declare view package for this plugin
+
+=cut
+
+sub template_class {
+    my $self = shift;
+    my $class = ref($self) || $self;
+    return $class.'::View';
+}
+
 
 =head2 static_root
 
@@ -119,11 +145,7 @@ Returns the root of the static directory for this plugin
 
 sub static_root {
     my $self = shift;
-    my $class = ref($self) || $self;
-    unless (exists $self->{share}) {
-        $self->{share} = undef;
-        eval { $self->{share} = File::ShareDir::module_dir($class) };
-    }
+    $self->{share} ||= $self->_calculate_share();
     return unless $self->{share};
     return $self->{share}."/web/static";
 }

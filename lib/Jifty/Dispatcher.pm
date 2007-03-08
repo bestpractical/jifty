@@ -761,6 +761,7 @@ sub _do_show {
 
     $self->log->debug("Showing path $path");
 
+
     # If we've got a working directory (from an "under" rule) and we have
     # a relative path, prepend the working directory
     $path = "$self->{cwd}/$path" unless $path =~ m{^/};
@@ -770,18 +771,14 @@ sub _do_show {
         $path .= "/index.html";
     }
 
-    my $abs_template_path = Jifty::Util->absolute_path(
-        Jifty->config->framework('Web')->{'TemplateRoot'} . $path );
-    my $abs_root_path = Jifty::Util->absolute_path(
-        Jifty->config->framework('Web')->{'TemplateRoot'} );
+    my $abs_template_path = Jifty::Util->absolute_path( Jifty->config->framework('Web')->{'TemplateRoot'} . $path );
+    my $abs_root_path = Jifty::Util->absolute_path( Jifty->config->framework('Web')->{'TemplateRoot'} );
 
     if ( $abs_template_path !~ /^\Q$abs_root_path\E/ ) {
-        request->path('/__jifty/errors/500');
+        $self->render_template('/__jifty/errors/500');
     } else {
-        # Set the request path
-        request->path($path);
+        $self->render_template( $path);
     }
-    $self->render_template( request->path );
 
     last_rule;
 }
@@ -1141,8 +1138,16 @@ sub render_template {
     my $self = shift;
     my $template = shift;
 
-    $self->log->debug( "Handling template " . $template );
-    eval { Jifty->handler->mason->handle_comp( $template ); };
+    eval { 
+        my( $val) = Jifty->handler->declare_handler->template_exists($template);
+        if ($val) {
+            Jifty->handler->declare_handler->show($template);
+        } else {
+            Jifty->handler->mason->handle_comp( $template ); 
+        }
+    
+    
+    };
     my $err = $@;
 
     # Handle parse errors
@@ -1159,8 +1164,7 @@ sub render_template {
         warn "$err";
 
         # Redirect with a continuation
-        Jifty->web->_redirect(
-            "/__jifty/error/mason_internal_error?J:C=" . $c->id );
+        Jifty->web->_redirect( "/__jifty/error/mason_internal_error?J:C=" . $c->id );
     }
     elsif ($err) {
         die $err;

@@ -292,7 +292,7 @@ sub argument {
         
         $self->arguments->{$key} = $value;
 
-        # Continuation type is ofetn undef, so give it a sane default
+        # Continuation type is often undef, so give it a sane default
         # so we can use eq without warnings
         my $cont_type = $self->continuation_type || "";
 

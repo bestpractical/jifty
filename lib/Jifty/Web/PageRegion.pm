@@ -321,6 +321,10 @@ sub render_as_subrequest {
     #XXX TODO: There's gotta be a better way to localize it
     my $region_content = '';
 
+    # template-declare based regions are printing to stdout
+    open my $output_fh, '>>', $out_method;
+    local *STDOUT = $output_fh;
+
     # Call into the dispatcher
     Jifty->handler->dispatcher->handle_request;
 

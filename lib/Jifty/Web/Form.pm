@@ -5,7 +5,7 @@ package Jifty::Web::Form;
 
 use base qw/Jifty::Object Class::Accessor::Fast/;
 
-__PACKAGE__->mk_accessors(qw(actions printed_actions name call is_open disable_autocomplete));
+__PACKAGE__->mk_accessors(qw(actions printed_actions name call is_open disable_autocomplete target submit_to));
 
 =head2 new ARGS
 
@@ -39,6 +39,8 @@ sub new {
     my %args = (
         name => undef,
         call => undef,
+        submit_to => undef,
+        target => undef,
         disable_autocomplete => undef,
         @_,
     );
@@ -70,6 +72,8 @@ sub _init {
     my $self = shift;
     my %args = (name => undef,
                 call => undef,
+                target => undef,
+                submit_to => undef,
                 disable_autocomplete => undef,
                 @_);
 
@@ -77,6 +81,8 @@ sub _init {
     $self->printed_actions( {} ) ;
     $self->name($args{name});
     $self->call($args{call});
+    $self->target($args{target});
+    $self->submit_to($args{'submit_to'});
     $self->disable_autocomplete($args{disable_autocomplete});
 }
 
@@ -184,8 +190,9 @@ sub start {
         }
     }
 
-    my $form_start = qq!<form method="post" action="!  . Jifty->web->escape( $ENV{PATH_INFO} ) . qq!"!;
+    my $form_start = qq!<form method="post" action="!  . Jifty->web->escape( $self->submit_to || $ENV{PATH_INFO}) . qq!"!;
     $form_start .= qq! name="@{[ $self->name ]}"! if defined $self->name;
+    $form_start .= qq! target="@{[ $self->target ]}"! if defined $self->target;
     $form_start .= qq! autocomplete="off"!  if defined $self->disable_autocomplete;
     $form_start .= qq! enctype="multipart/form-data" >\n!;
     Jifty->web->out($form_start);

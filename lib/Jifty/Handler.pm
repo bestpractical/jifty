@@ -26,6 +26,7 @@ handlers.
 
 use base qw/Class::Accessor::Fast/;
 use Module::Refresh ();
+use Jifty::View::Declare::Handler ();
 
 BEGIN {
     # Creating a new CGI object breaks FastCGI in all sorts of painful
@@ -47,7 +48,7 @@ BEGIN {
 
 
 
-__PACKAGE__->mk_accessors(qw(mason dispatcher static_handler cgi apache stash));
+__PACKAGE__->mk_accessors(qw(mason dispatcher declare_handler static_handler cgi apache stash));
 
 =head2 new
 
@@ -61,20 +62,29 @@ sub new {
     bless $self, $class;
 
     $self->create_cache_directories();
-#    wrap 'CGI::new', pre => sub {
-#        $_[-1] = Jifty->handler->cgi if Jifty->handler->cgi;
-#    };
 
     $self->dispatcher( Jifty->app_class( "Dispatcher" ) );
     Jifty::Util->require( $self->dispatcher );
     $self->dispatcher->import_plugins;
-    $self->dispatcher->dump_rules;
-    
-    $self->mason( Jifty::View::Mason::Handler->new( $self->mason_config ) );
-
-    $self->static_handler(Jifty::View::Static::Handler->new());
-
+ 
+    $self->setup_view_handlers();
     return $self;
+}
+
+=head2 setup_view_handlers
+
+Initialize all of our view handlers. 
+
+XXX TODO: this should take pluggable views
+
+=cut
+
+sub setup_view_handlers {
+    my $self = shift;
+
+    $self->declare_handler( Jifty::View::Declare::Handler->new( $self->templatedeclare_config));
+    $self->mason( Jifty::View::Mason::Handler->new( $self->mason_config ) );
+    $self->static_handler(Jifty::View::Static::Handler->new());
 }
 
 
@@ -127,9 +137,13 @@ sub mason_config {
 
     for my $plugin (Jifty->plugins) {
         my $comp_root = $plugin->template_root;
-        next unless $comp_root;
+        unless  ( $comp_root and -d $comp_root) {
+            Jifty->log->debug( "Plugin @{[ref($plugin)]} doesn't appear to have a valid mason template component root (@{[$comp_root ||'']})");
+            next;
+        }
         push @{ $config{comp_root} }, [ ref($plugin)."-".Jifty->web->serial => $comp_root ];
     }
+    push @{$config{comp_root}}, [jifty => Jifty->config->framework('Web')->{'DefaultTemplateRoot'}];
 
     push @{ $config{comp_root} }, [jifty => Jifty->config->framework('Web')->{'DefaultTemplateRoot'}];
 
@@ -139,8 +153,36 @@ sub mason_config {
         $config{static_source}    = 0;
         $config{use_object_files} = 0;
     }
-    return (%config);
+    return %config;
         
+}
+
+
+=head2 templatedeclare_config
+
+=cut
+
+sub templatedeclare_config {
+    
+    use Jifty::View::Declare::CoreTemplates;
+    my %config = (
+        roots => [ 'Jifty::View::Declare::CoreTemplates' ],
+        %{ Jifty->config->framework('Web')->{'TemplateDeclareConfig'} ||{}},
+    );
+
+    for my $plugin ( Jifty->plugins ) {
+        my $comp_root = $plugin->template_class;
+        Jifty::Util->require($comp_root);
+        unless (defined $comp_root and $comp_root->isa('Template::Declare') ){
+            Jifty->log->debug( "Plugin @{[ref($plugin)]} doesn't appear to have a ::View class that's a Template::Declare subclass");
+            next;
+        }
+        push @{ $config{roots} }, $comp_root ;
+    }
+
+    push @{$config{roots}}, Jifty->config->framework('TemplateClass');
+
+    return %config;
 }
 
 =head2 cgi
