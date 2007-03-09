@@ -1,3 +1,9 @@
+libjifty-plugin-authcasonly-perl (0-2) unstable; urgency=low
+
+  * use of Jifty::Record schema block
+
+ -- AGOSTINI Yves <agostini@univ-metz.fr>  Fri,  9 Mar 2007 15:12:27 +0100
+
 libjifty-plugin-authcasonly-perl (0-1) unstable; urgency=low
 
   * Initial Release.
