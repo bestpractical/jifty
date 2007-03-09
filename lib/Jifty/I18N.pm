@@ -12,13 +12,24 @@ use File::ShareDir ':ALL';
 
 Jifty::I18N - Internationalization framework for Jifty
 
+=head1 SYNOPSIS
+
+  # Whenever you need an internationalized string:
+  print _('Hello, %1!', 'World');
+
+In your Mason templates:
+
+  <% _('Hello, %1!', 'World') %>
+
 =head1 METHODS
 
 =head2 C<_>
 
-This module exports the C<loc> method, which it inherits from
-L<Locale::Maketext::Simple>. Jifty aliases this method to C<_()> for 
-your convenience.
+This module provides a method named C<_>, which allows you to quickly and easily include localized strings in your application. The first argument is the string to translated. If that string contains placeholders, the remaining arguments are used to replace the placeholders. The placeholders in the form of "%1" where the number is the number of the argument used to replace it:
+
+  _('Welcome %1 to the %2', 'Bob', 'World');
+
+This example would return the string "Welcome Bob to the World" if no translation is being performed.
 
 =cut
 
