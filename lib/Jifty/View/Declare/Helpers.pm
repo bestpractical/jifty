@@ -219,7 +219,7 @@ Sets arguments for later grabbing with L<get>.
 
 
 sub set {
-    while ( my ( $arg, $val ) = ( shift @_, shift @_ ) ) {
+    while ( my ( $arg, $val ) = splice(@_, 0, 2) ) {
         request->argument( $arg => $val );
     }
 
