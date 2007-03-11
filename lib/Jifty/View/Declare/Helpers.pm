@@ -104,6 +104,7 @@ page's.
 
 sub render_region(@) {
     unshift @_, 'name' if @_ % 2;
+    local $Template::Declare::Tags::self = undef;
     Template::Declare->new_buffer_frame;
     Jifty::Web::PageRegion->new(@_)->render;
     my $content = Template::Declare->buffer->data();
