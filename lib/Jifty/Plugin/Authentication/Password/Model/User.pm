@@ -46,7 +46,6 @@ sub password_is {
     my $pass = shift;
 
     return undef unless $self->_value('password');
-
     my ($hash, $salt) = @{$self->_value('password')};
 
     return 1 if ( $hash eq Digest::MD5::md5_hex($pass . $salt) );
