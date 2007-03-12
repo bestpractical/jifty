@@ -91,7 +91,8 @@ L<XML::Feed> to do this:
 
 And add this in F<MyApp/Dispatcher.pm> to make URI look prettier:
 
-    on qr{^/feed/(atom|rss|rss2)}, run {
+    # note the case of the feed types
+    on qr{^/feed/(Atom|RSS)}, run {
         set type => $1;
         show('/feed');
     };
