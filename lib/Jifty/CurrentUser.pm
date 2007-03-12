@@ -48,7 +48,18 @@ sub new {
     return $self;
 }
 
-sub _init { 1}
+
+sub _init {
+	    my $self = shift;
+	    my %args = (@_);
+	
+            if (keys %args) {
+	        $self->user_object(Jifty->app_class('Model', 'User')->new(current_user => $self));
+	        $self->user_object->load_by_cols(%args);
+	    }
+        return 1;
+}
+	
 
 =head2 superuser
 
@@ -70,7 +81,7 @@ This gets or sets your application's user object for the current
 user. Generally, you're expected to set and load it in the _init method
 in your L<Jifty::CurrentUser> subclass.
 
-Example:  
+If you do nothing, code similar to this will be called by _init.
 
 	sub _init {
 	    my $self = shift;
@@ -80,7 +91,6 @@ Example:
 	        $self->user_object(Wifty::Model::User->new(current_user => $self));
 	        $self->user_object->load_by_cols(%args);
 	    }
-	    $self->SUPER::_init(%args);
 	}
 	
 
