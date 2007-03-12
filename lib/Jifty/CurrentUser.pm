@@ -53,7 +53,8 @@ sub _init {
 	    my $self = shift;
 	    my %args = (@_);
 	
-            if (keys %args) {
+            if (keys %args and UNIVERSAL::can(Jifty->app_class('Model', 'User'), 'new')  ) {
+                
 	        $self->user_object(Jifty->app_class('Model', 'User')->new(current_user => $self));
 	        $self->user_object->load_by_cols(%args);
 	    }
