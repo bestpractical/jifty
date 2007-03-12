@@ -7,7 +7,7 @@ Jifty::Plugin::Authentication::PasswordAction::GeneratePasswordToken
 
 =cut
 
-package Jifty::Plugin::Authentication::PasswordAction::GeneratePasswordToken;
+package Jifty::Plugin::Authentication::Password::Action::GeneratePasswordToken;
 use base qw/Jifty::Action/;
 
 =head2 arguments
