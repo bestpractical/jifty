@@ -5,7 +5,7 @@ use strict;
 
 use base qw/Jifty::Object Class::Accessor/;
 use Template::Declare;
-
+use Encode ();
 
 __PACKAGE__->mk_accessors(qw/root_class/);
 
@@ -54,6 +54,7 @@ sub show {
             Jifty->handler->apache->send_http_header();
         }
     print STDOUT $content;
+    Encode::_utf8_on($content);
     return undef;
 }
 
