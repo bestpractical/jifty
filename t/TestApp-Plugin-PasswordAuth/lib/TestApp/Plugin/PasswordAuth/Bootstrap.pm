@@ -11,7 +11,7 @@ sub run {
     my $user = TestApp::Plugin::PasswordAuth::Model::User->new(
         current_user => $curuser );
     my ( $val, $msg ) = $user->create(
-        username     => 'gooduser@example.com',
+        email     => 'gooduser@example.com',
         color        => 'gray',
         swallow_type => 'african',
         password     => 'secret'

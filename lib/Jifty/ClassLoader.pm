@@ -180,13 +180,14 @@ sub Jifty::ClassLoader::INC {
 
     # This is if, not elsif because we might have $base::Action::Deleteblah 
     # that matches that last elsif clause but loses on the eval.
-    if ( $module =~ /^(?:$base)::Action::(.*)$/x and not grep {$_ eq $base} map {ref} Jifty->plugins ) {
-        my $action = $1;
+    if ( $module =~ /^(?:$base)::(Action|Notification)::(.*)$/x and not grep {$_ eq $base} map {ref} Jifty->plugins ) {
+        my $type = $1; 
+        my $item = $2;
         # If we don't have the action in our own app, let's try the plugins
         # the app has loaded.
         foreach my $plugin (map {ref} Jifty->plugins) {
             next if ($plugin eq $base);
-            my $class = $plugin."::Action::".$action;
+            my $class = $plugin."::".$type."::".$item;
             if (Jifty::Util->try_to_require($class) ) {
         return $self->return_class(
                   "package $module;\n"

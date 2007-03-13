@@ -15,12 +15,12 @@ use constant TOKEN_EXPIRE_TIME => 30;
 
 =head2 arguments
 
-Return the username and password form fields
+Return the email and password form fields
 
 =cut
 
 sub arguments { 
-    return( { username => { label => 'Username',
+    return( { email => { label => 'Email',
                            mandatory => 1,
                            ajax_validates => 1,
                             }  ,
@@ -46,24 +46,24 @@ sub arguments {
 
 }
 
-=head2 validate_username ADDRESS
+=head2 validate_email ADDRESS
 
-Makes sure that the username submitted is a legal username and that there's a user in the database with it.
+Makes sure that the email submitted is a legal email and that there's a user in the database with it.
 
 Overridden from Jifty::Action::Record.
 
 =cut
 
-sub validate_username {
+sub validate_email {
     my $self  = shift;
-    my $username = shift;
+    my $email = shift;
 
     my $u = Jifty->app_class('Model', 'User')->new(current_user => Jifty->app_class('CurrentUser')->superuser);
-    $u->load_by_cols( username => $username );
-    warn "Loaded $u with ".$username;
-    return $self->validation_error(username => 'We do not have an account that matches that username.') unless ($u->id);
+    $u->load_by_cols( email => $email );
+    warn "Loaded $u with ".$email;
+    return $self->validation_error(email => 'We do not have an account that matches that email.') unless ($u->id);
 
-    return $self->validation_ok('username');
+    return $self->validation_ok('email');
 }
 
 
@@ -134,7 +134,7 @@ sub take_action {
     my $self = shift;
     warn "1";
     my $user = Jifty->app_class('Model', 'User')->new(current_user => Jifty->app_class('CurrentUser')->superuser);
-    $user->load_by_cols( username => $self->argument_value('username') );
+    $user->load_by_cols( email => $self->argument_value('email') );
 
 
     my $password = $self->argument_value('password');
@@ -145,16 +145,13 @@ sub take_action {
     if ( $token ne '' ) {   # browser supports javascript, do password hashing
         unless ( $user->id && $user->hashed_password_is( $hashedpw, $token ) )
         {
-            $self->result->error(
-                'You may have mistyped your username or password. Give it another shot.'
-            );
+            $self->result->error( _('You may have mistyped your email or password. Give it another shot.'));
             return;
         }
         Jifty->web->session->set( login_token => '' );
     } else {                # no password hashing over the wire
         unless ( $user->id && $user->password_is($password) ) {
-            $self->result->error( 'You may have mistyped your username or password. Give it another shot.'
-            );
+            $self->result->error( _('You may have mistyped your email address or password. Give it another shot.'));
             return;
         }
     }

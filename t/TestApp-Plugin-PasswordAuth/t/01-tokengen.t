@@ -26,7 +26,7 @@ ok(1, "Loaded the test script");
 
 # {{{ Get token for logging in with a JS-based md5-hashed password
 my $service='/__jifty/webservices/yaml';
-my $service_request ="$URL$service?J:A-moniker=GeneratePasswordToken&J:A:F-username-moniker=gooduser\@example.com"; 
+my $service_request ="$URL$service?J:A-moniker=GeneratePasswordToken&J:A:F-email-moniker=gooduser\@example.com"; 
 $mech->get_ok($service_request, "Token-generating webservice $service_request exists");
 
 # XXX needs to be more precise in checking for the token, but this works
