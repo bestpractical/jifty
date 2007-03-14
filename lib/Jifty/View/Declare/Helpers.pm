@@ -2,15 +2,11 @@ use warnings;
 use strict;
 
 package Jifty::View::Declare::Helpers;
-
+use base qw/Template::Declare/;
 use base qw/Exporter/;
 use Template::Declare::Tags;
 
-use base qw/Template::Declare/;
-our @EXPORT = (
-    qw(form hyperlink tangent redirect new_action form_submit form_next_page page wrapper request get set render_param current_user render_action render_region ),
-    @Template::Declare::Tags::EXPORT
-);
+our @EXPORT = ( qw(form hyperlink tangent redirect new_action form_submit form_next_page page wrapper request get set render_param current_user render_action render_region), @Template::Declare::Tags::EXPORT);
 
 
 =head1 NAME
@@ -25,11 +21,6 @@ This library provides mixins to help build your application's user interface.
 
 
 
-=cut
-
-{
-    no warnings qw/redefine/;
-
 
 =head2 form CODE
 
@@ -39,6 +30,9 @@ Bug: you can't currently specify arguments to form->start.
 
 =cut
 
+
+{
+    no warnings qw/redefine/;
     sub form (&) {
         my $code = shift;
         outs_raw( Jifty->web->form->start );
@@ -248,15 +242,15 @@ be using "/_elements/nav" but a Dispatcher rule instead.
 
 =cut
 
-
 sub page (&) {
     my $code = shift;
     sub {
         Jifty->handler->apache->content_type('text/html; charset=utf-8');
-        show('/_elements/nav');
         wrapper($code);
     };
+
 }
+
 
 
 =head2 wrapper $coderef
@@ -266,81 +260,90 @@ This badly wants to be redone.
 
 =cut
 
-
 sub wrapper ($) {
     my $content_code = shift;
-
     my ($title) = get_current_attr(qw(title));
 
     my $done_header;
     my $render_header = sub {
         no warnings qw( uninitialized redefine once );
+        $title ||= Jifty->config('framework')->{'ApplicationName'};
 
-        defined $title or return;
+        #   defined $title or return;
         return if $done_header++;
-
         Template::Declare->new_buffer_frame;
+        outs_raw(
+        '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'
+            . '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">' );
         render_header($title);
         $done_header = Template::Declare->buffer->data;
         Template::Declare->end_buffer_frame;
-
-        '';
-    };
-
-    my $wrapped_content_code = sub {
-        no warnings qw( uninitialized redefine once );
-
-        local *is::title = sub {
-            shift;
-            $title = "@_";
-            &$render_header;
-        };
-
-        &$content_code;
-        if ( !$done_header ) {
-            $title = _("Untitled");
-            &$render_header;
-        }
+        return '';
     };
 
     body {
-        show('/_elements/sidebar');
-        with( id => "content" ), div {
-            with( name => 'content' ), a {};
-            if ( Jifty->config->framework('AdminMode') ) {
-                with( class => "warning admin_mode" ), div {
-                    outs( _('Alert') . ': ' );
-                    outs_raw(
-                        Jifty->web->tangent(
-                            label => _('Administration mode is enabled.'),
-                            url   => '/__jifty/admin/'
-                        )
-                    );
+        div {
+            div {
+            show 'salutation'; 
+            show 'menu'; 
+        };
+            div {
+                div {
+                    Jifty->web->render_messages;
+                    {
+                        no warnings qw( uninitialized redefine once );
+
+                        local *is::title = sub {
+                            shift;
+
+                            for (@_) {
+                                if ( ref($_) eq 'CODE' ) {
+                                    Template::Declare->new_buffer_frame;
+                                    $_->();
+                                    $title .= Template::Declare->buffer->data;
+                                    Template::Declare->end_buffer_frame;
+                                } else {
+                                    $title .= Jifty->web->escape($_);
+                                }
+                            }
+                            &$render_header;
+                            h1 { attr { class => 'title' }; outs_raw($title) };
+                        };
+
+                        &_render_pre_content_hook();
+                        Jifty->web->render_messages;
+                        &$content_code;
+                        &$render_header unless ($done_header);
+                        &_render_jifty_page_detritus();
+
+                }
+                };
+            };
+        };
+    };
+    outs_raw('</html>');
+    Template::Declare->buffer->data( $done_header . Template::Declare->buffer->data );
+}
+
+sub _render_pre_content_hook {
+                        if ( Jifty->config->framework('AdminMode') ) {
+                            with( class => "warning admin_mode" ), div {
+                                outs( _('Alert') . ': ' );
+                                outs_raw( Jifty->web->tangent( label => _( 'Administration mode is enabled.'), url => '/__jifty/admin/'));
+                                }
+                        }
                     }
-            }
-            Jifty->web->render_messages;
-            $wrapped_content_code->();
+sub _render_jifty_page_detritus {
 
-            show('/_elements/keybindings');
-            with( id => "jifty-wait-message", style => "display: none" ),
-                div { _('Loading...') };
-
-# Jifty::Mason::Halo->render_component_tree if ( Jifty->config->framework('DevelMode') );
+                        show('keybindings');
+                        with( id    => "jifty-wait-message", style => "display: none"), div { _('Loading...') };
 
            # This is required for jifty server push.  If you maintain your own
            # wrapper, make sure you have this as well.
-            if (   Jifty->config->framework('PubSub')->{'Enable'}
-                && Jifty::Subs->list )
-            {
-                script { outs('new Jifty.Subs({}).start();') };
-            }
-        };
-    };
-
-    Template::Declare->buffer->data(
-        $done_header . Template::Declare->buffer->data );
-}
-
+                        if (   Jifty->config->framework('PubSub')->{'Enable'} && Jifty::Subs->list ) {
+                            script { outs('new Jifty.Subs({}).start();') };
+                        }
+                    }
 
 =head2 render_header $title
 
@@ -348,20 +351,14 @@ Renders an HTML "doctype", <head> and the first part of a page body. This bit is
 
 =cut
 
-sub render_header {
-    my ($title) = @_;
-    outs_raw(
-        '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'
-            . '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">' );
-    with( title => $title ), show('/_elements/header');
-    div {
-        { id is 'headers' }
-        hyperlink(
-            url   => "/",
-            label => _( Jifty->config->framework('ApplicationName') )
-        );
-        with( class => "title" ), h1 {$title};
-    };
-}
+sub render_header { 
+    my $title = shift || '';
+    $title =~ s/<.*?>//g;    # remove html
+    HTML::Entities::decode_entities($title);
+    with( title => $title ), show('header');
+}               
+                    
+
+
 
 1;
