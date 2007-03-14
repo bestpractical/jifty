@@ -59,7 +59,7 @@ requires('Scalar::Defer' => '0.06');
 requires('Shell::Command');
 requires('String::Koremutake');
 requires('SQL::ReservedWords');
-requires('Template::Declare');                # Template::Declare::Tags
+requires('Template::Declare' => '0.06');                # Template::Declare::Tags
 requires('Test::Base');
 requires('UNIVERSAL::require');
 requires('URI');
