@@ -14,7 +14,7 @@ before 'logout' => run {
 # Make sure tangents work 
 # Before password reminders, login or signup, let's push the user off to the homepage if they're logged in
 
-on '*' =>  run {
+before '*' =>  run {
     if ( Jifty->web->current_user->id ) {
         logged_in_nav();
     } else {

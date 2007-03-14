@@ -60,7 +60,6 @@ sub validate_email {
 
     my $u = Jifty->app_class('Model', 'User')->new(current_user => Jifty->app_class('CurrentUser')->superuser);
     $u->load_by_cols( email => $email );
-    warn "Loaded $u with ".$email;
     return $self->validation_error(email => 'We do not have an account that matches that email.') unless ($u->id);
 
     return $self->validation_ok('email');
@@ -132,7 +131,6 @@ Otherwise, throw an error.
 
 sub take_action {
     my $self = shift;
-    warn "1";
     my $user = Jifty->app_class('Model', 'User')->new(current_user => Jifty->app_class('CurrentUser')->superuser);
     $user->load_by_cols( email => $self->argument_value('email') );
 

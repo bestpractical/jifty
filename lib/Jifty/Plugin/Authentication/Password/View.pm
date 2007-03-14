@@ -17,6 +17,15 @@ package Jifty::Plugin::Authentication::Password::View;
 use HTML::Entities ();
 use Jifty::View::Declare -base;
 
+{ no warnings 'redefine';
+sub page (&) {
+    no strict 'refs'; 
+    BEGIN {Jifty::Util->require(Jifty->app_class('View'))};
+    &{Jifty->app_class('View') . "::page"}(@_);
+}
+}
+
+
 template 'signup' => page {
     title is 'Signup';
     my ( $action, $next ) = get(qw(action next));
