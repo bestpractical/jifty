@@ -33,8 +33,8 @@ application's base path; and C<plugin> which is the plugin classname.
 sub new {
     my $class = shift;
     my %args = (@_);
-#    my @exist = grep {ref $_ eq $class and $_->{base} eq $args{base}} @INC;
-#     return $exist[0] if @exist;
+    my @exist = grep {ref $_ eq $class and $_->{base} eq $args{base}} @INC;
+     return $exist[0] if @exist;
 
 
     my $self = bless {%args}, $class;
