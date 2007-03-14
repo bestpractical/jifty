@@ -265,6 +265,7 @@ sub guess {
             },
             Plugins => [
                 { LetMe               => {}, },
+                { SkeletonApp            => {}, },
                 { REST               => {}, },
                 { Halo               => {}, },
                 { ErrorTemplates     => {}, },
