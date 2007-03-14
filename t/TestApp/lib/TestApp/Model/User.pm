@@ -10,6 +10,8 @@ use Scalar::Defer;
 use Jifty::Record schema  {
 column 'name' =>
   type is 'text',
+  label is _('Name'),
+  hints is _('I18N test'),
   is mandatory;
 column 'email' =>
   type is 'text',
