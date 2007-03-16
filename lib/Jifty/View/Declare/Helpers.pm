@@ -289,7 +289,6 @@ sub wrapper ($) {
         };
             div {
                 div {
-                    Jifty->web->render_messages;
                     {
                         no warnings qw( uninitialized redefine once );
 
@@ -309,6 +308,7 @@ sub wrapper ($) {
                             &$render_header;
                             h1 { attr { class => 'title' }; outs_raw($title) };
                         };
+                }
 
                         &_render_pre_content_hook();
                         Jifty->web->render_messages;
@@ -316,7 +316,6 @@ sub wrapper ($) {
                         &$render_header unless ($done_header);
                         &_render_jifty_page_detritus();
 
-                }
                 };
             };
         };
