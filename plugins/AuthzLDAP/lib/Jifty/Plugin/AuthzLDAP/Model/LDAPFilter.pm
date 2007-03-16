@@ -1,7 +1,8 @@
-package Jifty::Plugin::AuthzLDAP::Model::LDAPFilter::Schema;
+package Jifty::Plugin::AuthzLDAP::Model::LDAPFilter;
 use Jifty::DBI::Schema;
 use Scalar::Defer;
 
+use Jifty::Record schema {
 column
   name => type is 'text',
   label is 'Name',
@@ -22,10 +23,7 @@ column 'created_on' =>
   is immutable,
   default is defer { DateTime->now },
   filters are 'Jifty::DBI::Filter::DateTime';
-
-
-package Jifty::Plugin::AuthzLDAP::Model::LDAPFilter;
-use base qw/Jifty::Record/;
+};
 
 sub create {
     my $self  = shift;

@@ -1,9 +1,10 @@
-package Jifty::Plugin::AuthCASOnly::Model::CASUser;
+package Jifty::Plugin::AuthLDAPOnly::Model::User;
 use base qw/Jifty::Record/;
 use Jifty::DBI::Schema;
 use Scalar::Defer;
 
 use Jifty::Record schema {
+
 column
   name => type is 'text',
   label is 'Name',
@@ -15,6 +16,7 @@ column 'created_on' =>
   is immutable,
   default is defer { DateTime->now },
   filters are 'Jifty::DBI::Filter::DateTime';
+
 };
 
 
@@ -59,7 +61,6 @@ sub current_user_can {
     }
     elsif ( $right eq 'update'
         and $self->id == $self->current_user->id
-#        and $args{'column'} ne 'email_confirmed' 
         )
     {
         return (1);

@@ -9,7 +9,7 @@ lib/Jifty/Plugin/AuthCASOnly/Action/CASLogin.pm
 lib/Jifty/Plugin/AuthCASOnly/Action/CASLogout.pm
 lib/Jifty/Plugin/AuthCASOnly/CurrentUser.pm
 lib/Jifty/Plugin/AuthCASOnly/Dispatcher.pm
-lib/Jifty/Plugin/AuthCASOnly/Model/CASUser.pm
+lib/Jifty/Plugin/AuthCASOnly/Model/User.pm
 Makefile.PL
 MANIFEST			This list of files
 META.yml
