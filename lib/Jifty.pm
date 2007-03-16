@@ -287,11 +287,15 @@ sub api {
 Return Class in application space.  For example C<app_class('Model', 'Foo')>
 returns YourApp::Model::Foo.
 
+By the time you get it back, the class will have already been required
+
 =cut
 
 sub app_class {
     shift;
-    join('::', Jifty->config->framework('ApplicationClass'), @_);
+    my $val = join('::', Jifty->config->framework('ApplicationClass'), @_);
+    Jifty::Util->try_to_require($val);
+    return $val;
 }
 
 =head2 web
