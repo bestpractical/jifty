@@ -55,7 +55,7 @@ requires('Module::Refresh');
 requires('Module::ScanDeps');
 requires('Object::Declare' => '0.13');
 requires('Params::Validate');
-requires('Scalar::Defer' => '0.06');
+requires('Scalar::Defer' => '0.10');
 requires('Shell::Command');
 requires('String::Koremutake');
 requires('SQL::ReservedWords');
