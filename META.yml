@@ -93,7 +93,7 @@ requires:
   Scalar::Defer: 0.06
   Shell::Command: 0
   String::Koremutake: 0
-  Template::Declare: 0
+  Template::Declare: 0.06
   Test::Base: 0
   UNIVERSAL::require: 0
   URI: 0

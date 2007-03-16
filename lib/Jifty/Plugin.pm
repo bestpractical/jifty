@@ -54,10 +54,6 @@ sub new {
     Jifty::ClassLoader->new(base => $class)->require;
     Jifty::Util->require($class->dispatcher);
 
-    # Start a plugin classloader set up on behalf of the application
-    Jifty::Util->require('Jifty::Plugin::ClassLoader');
-    Jifty::Plugin::ClassLoader->new( base => Jifty->app_class, plugin => $class,)->require;
-
     # XXX TODO: Add .po path
 
     my $self = bless {} => $class;
