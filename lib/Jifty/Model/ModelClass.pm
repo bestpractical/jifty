@@ -34,6 +34,11 @@ use Jifty::Record schema {
         type is 'text',
         label is 'Description',
         render_as 'Textarea'; 
+    column super_classes =>
+        type is 'text',
+        label is 'Super classes',
+        hints is 'A space separated list of classes from which this model will inherit.';
+        validateor is \&validate_super_classes;
     column included_columns => 
         refers_to Jifty::Model::ModelClassColumnCollection by 'model_class';
 };
@@ -147,11 +152,12 @@ sub _instantiate_stub_class {
 
     my $uuid = $self->__uuid;
     my $base_class = Jifty->config->framework('ApplicationClass') . "::Record";
+    my $super_classes = ' '.$self->super_classes;
     my $class                 = << "EOF";
 use warnings;
 use strict;
 package $fully_qualified_class;
-use base qw'$base_class';
+use base qw'$base_class$super_classes';
 
 use constant CLASS_UUID => '$uuid';
 
@@ -167,6 +173,30 @@ EOF
     # At that point, the instantiation of db-backed classes should move into the classloader
     if ($@) { die $@; }
     $INC{$path} = '#autoloaded';
+}
+
+=head2 validate_super_classes
+
+Makes certain that the value is a list of space separated class names.
+
+=cut
+
+sub validate_super_classes {
+    my ($self, $value) = @_;
+
+    if ($value !~ /^\s+$/) {
+
+        $value =~ /^
+            \s* (?: \w+ ) (?: :: \w+ )*          # match the first
+            ( \s+ (?: \w+ ) (?: :: \w+ )* )* \s* # match the rest
+        $/x
+            or return $self->validation_error(
+                super_classes => 'This must be a space separated list of Perl class names.',
+            );
+
+    }
+
+    return $self->validation_ok('super_classes');
 }
 
 1;

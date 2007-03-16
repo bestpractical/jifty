@@ -12,10 +12,15 @@ This is a template for your own tests. Copy it and modify it.
 use lib 't/lib';
 use Jifty::SubTest;
 
-use Jifty::Test tests => 23;
+use Jifty::Test tests => 26;
 
 ok(1, "Loaded the test script");
 
+{
+    package Some::Test;
+    use Test::More;
+    sub test_method_inherited_ok { pass; }
+}
 
 my $u = Jifty::CurrentUser->new(_bootstrap => 1);
 {
@@ -24,7 +29,9 @@ my $result = $@;
 ok($result, "Failed to instantiate an 'object' model before running our tests");
 }
 my $model = Jifty::Model::ModelClass->new(current_user => $u);
-$model->create(name => 'Object', description =>'You know. like widgets');
+$model->create(name          => 'Object', 
+               description   => 'You know. like widgets',
+               super_classes => 'Some::Test');
 ok($model->id);
 
 my $col = Jifty::Model::ModelClassColumn->new(current_user => $u);
@@ -58,6 +65,9 @@ ok($col3->id, "Got column ".$col2->id);
 {
 my $object = TestApp::DatabaseBackedModels::Model::Object->new(current_user => $u);
 isa_ok($object, 'TestApp::DatabaseBackedModels::Model::Object');
+isa_ok($object, 'Some::Test');
+can_ok($object, 'test_method_inherited_ok');
+$object->test_method_inherited_ok;
 can_ok($object, 'id');
 can_ok($object, 'create');
 can_ok($object, 'name');
