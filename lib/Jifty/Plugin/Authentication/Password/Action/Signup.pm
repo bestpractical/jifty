@@ -11,7 +11,6 @@ package Jifty::Plugin::Authentication::Password::Action::Signup;
 our @ISA;
 {
     my $class = Jifty->app_class('Action', 'CreateUser');
-    Jifty::Util->require($class);
     push @ISA, $class;
 }
 

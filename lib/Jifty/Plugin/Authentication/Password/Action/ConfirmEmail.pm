@@ -43,6 +43,7 @@ sub take_action {
     if ( $u->email_confirmed ) {
         $self->result->error( email => _("You have already confirmed your account.") );
         $self->result->success(1);    # but the action is still a success
+        return 1;
     }
 
     my ($val,$msg)  = $u->set_email_confirmed('1')  ;
