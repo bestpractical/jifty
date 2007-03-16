@@ -135,12 +135,18 @@ sub add_column {
     my $self = shift;
     my $col = shift;
     my $column =$self->qualified_class->add_column($col->name);
-    for (qw(readable writable hints indexed max_length render_as mandatory)) {
+    for (qw(readable writable hints indexed max_length render_as mandatory sort_order)) {
         $column->$_( $col->$_() );
     }
+
+    $column->refers_to( $col->refers_to_class );
+    $column->by( $col->refers_to_by );
+
+    $column->default( $col->default_value );
     $column->distinct( $col->distinct_value );
     $column->type( $col->storage_type );
     $self->qualified_class->_init_methods_for_column($column);
+
 }
 
 

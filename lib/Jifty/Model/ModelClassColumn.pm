@@ -137,13 +137,13 @@ use Jifty::Record schema {
         label is 'Distinct?',
         hints is 'Dinstinct columns require a unique value in every row.';
 
-    # TODO Should be a list of models or collections
-    column refers_to =>
+    # TODO Valid values are the list of available models or collections
+    column refers_to_class =>
         type is 'text',
         label is 'Refers to';
 
     # TODO Should pull a list of columns from the refesr_to record_class
-    column refer_to_by =>
+    column refers_to_by =>
         type is 'text',
         label is 'By';
 };
