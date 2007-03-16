@@ -10,8 +10,8 @@ use TestApp::Plugin::PasswordAuth::Record schema {
 
 };
 
-#use TestApp::Plugin::FavoriteColor;
-#use TestApp::Plugin::FasterSwallow;
+use TestApp::Plugin::FavoriteColor;
+use TestApp::Plugin::FasterSwallow;
 use Jifty::Plugin::User::Mixin::Model::User;
 use Jifty::Plugin::Authentication::Password::Mixin::Model::User;
 
