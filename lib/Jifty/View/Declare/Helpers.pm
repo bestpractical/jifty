@@ -326,24 +326,32 @@ sub wrapper ($) {
 }
 
 sub _render_pre_content_hook {
-                        if ( Jifty->config->framework('AdminMode') ) {
-                            with( class => "warning admin_mode" ), div {
-                                outs( _('Alert') . ': ' );
-                                outs_raw( Jifty->web->tangent( label => _( 'Administration mode is enabled.'), url => '/__jifty/admin/'));
-                                }
-                        }
-                    }
+    if ( Jifty->config->framework('AdminMode') ) {
+        with( class => "warning admin_mode" ), div {
+            outs( _('Alert') . ': ' );
+            outs_raw(
+                Jifty->web->tangent(
+                    label => _('Administration mode is enabled.'),
+                    url   => '/__jifty/admin/'
+                )
+            );
+            }
+    }
+}
+
 sub _render_jifty_page_detritus {
 
-                        show('keybindings');
-                        with( id    => "jifty-wait-message", style => "display: none"), div { _('Loading...') };
+    show('keybindings');
+    with( id => "jifty-wait-message", style => "display: none" ),
+        div { _('Loading...') };
 
-           # This is required for jifty server push.  If you maintain your own
-           # wrapper, make sure you have this as well.
-                        if (   Jifty->config->framework('PubSub')->{'Enable'} && Jifty::Subs->list ) {
-                            script { outs('new Jifty.Subs({}).start();') };
-                        }
-                    }
+    # This is required for jifty server push.  If you maintain your own
+    # wrapper, make sure you have this as well.
+    if ( Jifty->config->framework('PubSub')->{'Enable'} && Jifty::Subs->list )
+    {
+        script { outs('new Jifty.Subs({}).start();') };
+    }
+}
 
 =head2 render_header $title
 
