@@ -159,12 +159,13 @@ sub _instantiate_stub_class {
     my $uuid = $self->__uuid;
     my $base_class = Jifty->config->framework('ApplicationClass') . "::Record";
     my $super_classes 
-        = defined $self->super_classes ? ' '.$self->super_classes : '';
+        = defined $self->super_classes ? $self->super_classes.' ' : '';
+
     my $class                 = << "EOF";
 use warnings;
 use strict;
 package $fully_qualified_class;
-use base qw'$base_class$super_classes';
+use base qw'$super_classes$base_class';
 
 use constant CLASS_UUID => '$uuid';
 
@@ -211,6 +212,23 @@ sub validate_super_classes {
     }
 
     return $ret->return_value;
+}
+
+=head2 current_user_can 
+
+All users can read, but only superuser can write. This needs to be better thought out.
+
+=cut
+
+sub current_user_can {
+    my $self = shift;
+    my $right = shift;
+
+    if ($right eq 'read') {
+        return 1;
+    }
+
+    return $self->SUPER::current_user_can($right, @_);
 }
 
 1;
