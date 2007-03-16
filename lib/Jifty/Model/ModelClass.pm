@@ -152,7 +152,8 @@ sub _instantiate_stub_class {
 
     my $uuid = $self->__uuid;
     my $base_class = Jifty->config->framework('ApplicationClass') . "::Record";
-    my $super_classes = ' '.$self->super_classes;
+    my $super_classes 
+        = defined $self->super_classes ? ' '.$self->super_classes : '';
     my $class                 = << "EOF";
 use warnings;
 use strict;
@@ -181,22 +182,29 @@ Makes certain that the value is a list of space separated class names.
 
 =cut
 
+my $list_of_packages = qr/^
+    \s* (?: \w+ ) (?: :: \w+ )*          # match the first
+    ( \s+ (?: \w+ ) (?: :: \w+ )* )* \s* # match the rest
+$/x;
+
 sub validate_super_classes {
     my ($self, $value) = @_;
+    my $ret = Class::ReturnValue->new;
 
-    if ($value !~ /^\s+$/) {
-
-        $value =~ /^
-            \s* (?: \w+ ) (?: :: \w+ )*          # match the first
-            ( \s+ (?: \w+ ) (?: :: \w+ )* )* \s* # match the rest
-        $/x
-            or return $self->validation_error(
-                super_classes => 'This must be a space separated list of Perl class names.',
-            );
-
+    if ($value =~ /^$/ || $value =~ $list_of_packages) {
+        $ret->as_array(1, 'OK');
     }
 
-    return $self->validation_ok('super_classes');
+    else {
+        $ret->as_array(0, 'This must be a space separated list of Perl class names.');
+        $ret->as_error(
+            errno        => 1,
+            do_backtrace => 0,
+            message      => 'This must be a space separated list of class names.',
+        );
+    }
+
+    return $ret->return_value;
 }
 
 1;
