@@ -65,7 +65,8 @@ returns undef.
 sub validated_current_user {
     my $self = shift;
     return undef unless ( $self->validate );
-    return $self->_user_from_email($self->email);
+    my $currentuser = Jifty->app_class("CurrentUser");
+    return Jifty->app_class('CurrentUser')->new( email => $self->email );
 
 }
 
@@ -81,7 +82,10 @@ sub _user_from_email {
     my $self = shift;
     my $email = shift;
     my $currentuser_object_class = Jifty->app_class("CurrentUser");
-    return $currentuser_object_class->new( email => $email );
+    my $u = $currentuser_object_class->new( email => $email )->user_object;
+    # we want to be able to get at their auth token.
+    $u->current_user(Jifty->app_class('CurrentUser')->superuser);
+    return $u;
 }
 
 sub _generate_digest {
@@ -217,14 +221,13 @@ sub as_encoded_token {
 sub _generate_token {
     my $self = shift;
     my %args = (email => undef, @_);
-    return join ('/', 
+    return  join ('/', 
         $args{'email'},
         $self->path,
         (map {URI::Escape::uri_escape_utf8($_)} %{$self->args}),
         (defined $self->until ? ( 'until', $self->until ) : () ), #?
         $self->generate_checksum  
         );
-
 }
 
 
