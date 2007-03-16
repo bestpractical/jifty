@@ -124,7 +124,7 @@ sub Jifty::ClassLoader::INC {
     }
     elsif ( $module =~ /^(?:$base)::(Record|Collection|Notification|
                                       Dispatcher|Bootstrap|Upgrade|
-                                      Handle|Event|Event::Model|
+                                      Handle|Event|Event::Model|Action|
                                       Action::Record::\w+)$/x ) {
         return $self->return_class(
                   "package $module;\n"
