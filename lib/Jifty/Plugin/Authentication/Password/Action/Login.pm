@@ -168,10 +168,17 @@ sub take_action {
     return 1;
 }
 
+=head2 login_message $user_object
+
+Returns the "hi, you're logged in message"
+
+=cut
+
+
 sub login_message {
     my $self = shift;
     my $user = shift;
-    return "Welcome back, " . $user->name . "." ;
+    return _("Welcome back, %1.", $user->name);
 }
 
 1;

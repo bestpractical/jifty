@@ -4,6 +4,16 @@ use warnings;
 package Jifty::Plugin::LetMe::Dispatcher;
 use Jifty::Dispatcher -base;
 
+=head1 NAME
+
+Jifty::Plugin::LetMe::Dispatcher
+
+=head1 DESCRIPTION
+
+All the dispatcher rules jifty needs to support L<Jifty::LetMe/>
+
+=cut
+
 ## LetMes
 before qr'^/let/(.*)' => run {
     my $let_me = Jifty::LetMe->new();

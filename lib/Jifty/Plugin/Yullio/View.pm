@@ -56,6 +56,13 @@ sub _yullio_content {
     };
 }
 
+=head2 yullio CODE CODE
+
+Clkao owes docs
+
+=cut
+
+
 sub yullio(&&) {
     my ($code1, $code2) = @_;
     _yullio_content($code1, $code2)->();
