@@ -6,11 +6,11 @@ use base qw/Jifty::Notification/;
 
 =head1 NAME
 
-Doxory::Notification::ConfirmEmail
+Jifty::Plugin::Authentication::Password::Notification::ConfirmEmail
 
 =head1 ARGUMENTS
 
-C<to>, a L<Doxory::Model::User> whose address we are confirming.
+C<to>, a L<$YOURAPP:Model::User> whose address we are confirming.
 
 =cut
 

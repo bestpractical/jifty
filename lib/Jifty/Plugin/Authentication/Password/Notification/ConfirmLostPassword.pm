@@ -6,7 +6,7 @@ use base qw/Jifty::Notification/;
 
 =head1 NAME
 
-Doxory::Notification::ConfirmLostPassword
+Jifty::Plugin::Authentication::Password::Notification::ConfirmLostPassword
 
 =head1 ARGUMENTS
 
