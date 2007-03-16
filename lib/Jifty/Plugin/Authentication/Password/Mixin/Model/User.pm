@@ -1,13 +1,13 @@
 use strict;
 use warnings;
 
-package Jifty::Plugin::Authentication::Password::Model::User;
+package Jifty::Plugin::Authentication::Password::Mixin::Model::User;
 use Jifty::DBI::Schema;
 use base 'Jifty::DBI::Record::Plugin';
 
 use Digest::MD5 qw'';
 
-our @EXPORT = qw(password_is);
+our @EXPORT = qw(password_is hashed_password_is regenerate_auth_token);
 
 use Jifty::Plugin::Authentication::Password::Record schema {
 
@@ -16,8 +16,7 @@ column auth_token =>
   render_as 'unrendered',
   type is 'varchar',
   default is '',
-  label is 'Authentication token',
-  since '0.2.34';
+  label is 'Authentication token';
     
 
 
@@ -33,6 +32,12 @@ column password =>
 
 };
 
+sub register_triggers {
+    my $self = shift;
+    $self->add_trigger(name => 'after_create', callback => \&after_create);
+    $self->add_trigger(name => 'after_set_password', callback => \&after_set_password);
+    $self->add_trigger(name => 'validate_password', callback => \&validate_password, abortable =>1);
+}
 
 
 =head2 password_is PASSWORD
@@ -89,7 +94,14 @@ sub validate_password {
 
 sub after_create {
     my $self = shift;
+    # We get a reference to the return value of insert
+    my $value = shift; return unless $$value; $self->load($$value);
     $self->regenerate_auth_token;
+    if ( $self->id and $self->email and not $self->email_confirmed ) {
+        Jifty->app_class('Notification','ConfirmEmail')->new( to => $self )->send;
+    } else {
+        warn  $self->id . " " .$self->email;
+    }
 
 
 }
@@ -118,7 +130,7 @@ sub regenerate_auth_token {
 
     $auth_token .= unpack('H2', chr(int rand(255))) for (1..16);
 
-    $self->set_auth_token($auth_token);
+    $self->__set(column => 'auth_token', value => $auth_token);
 }
 
 

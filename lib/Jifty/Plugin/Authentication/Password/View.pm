@@ -29,18 +29,9 @@ sub page (&) {
 template 'signup' => page {
     title is 'Signup';
     my ( $action, $next ) = get(qw(action next));
-
-    p {
-        outs(
-            _(  "If you have an OpenID, there's no need to signup (unless you want to, of course).  You can "
-            )
-        );
-        hyperlink( label => _("log in"), url => '/login' );
-        outs( _(" with it now!") );
-    };
-
     Jifty->web->form->start( call => $next );
-    render_param( $action => $_ ) for ( $action->argument_names );
+    render_param( $action => 'name' , focus => 1);
+    render_param( $action => $_ ) for ( grep {$_ ne 'name'} $action->argument_names );
     form_submit( label => _('Signup'), submit => $action );
     Jifty->web->form->end();
 };

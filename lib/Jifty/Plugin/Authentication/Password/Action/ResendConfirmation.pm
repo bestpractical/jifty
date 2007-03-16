@@ -19,7 +19,7 @@ The field for C<ResendConfirmation> is:
 
 =over 4
 
-=item address: the email address
+=item email: the email email
 
 =back
 
@@ -28,7 +28,7 @@ The field for C<ResendConfirmation> is:
 sub arguments {
     return (
         {
-            address => {
+            email => {
                 label     => 'Email address',
                 mandatory => 1,
                 default_value => "",
@@ -51,32 +51,32 @@ sub setup {
     $self->user_object(Jifty->app_class('Model','User')->new(current_user => Jifty->app_class('CurrentUser')->superuser));
 }
 
-=head2 validate_address
+=head2 validate_email
 
-Make sure their email address is an unconfirmed user.
+Make sure their email email is an unconfirmed user.
 
 =cut
 
-sub validate_address {
+sub validate_email {
     my $self  = shift;
     my $email = shift;
 
     unless ( $email =~ /\S\@\S/ ) {
-        return $self->validation_error(address => "Are you sure that's an email address?" );
+        return $self->validation_error(email => "Are you sure that's an email email?" );
     }
 
     $self->user_object(Jifty->app_class('Model','User')->new(current_user => Jifty->app_class('CurrentUser')->superuser));
     $self->user_object->load_by_cols( email => $email );
     unless ($self->user_object->id) {
-      return $self->validation_error(address => "It doesn't look like there's an account by that name.");
+      return $self->validation_error(email => "It doesn't look like there's an account by that name.");
     }
 
     if ($self->user_object->email_confirmed) {
-      return $self->validation_error(address => "It looks like you're already confirmed.");
+      return $self->validation_error(email => "It looks like you're already confirmed.");
 
     } 
 
-    return $self->validation_ok('address');
+    return $self->validation_ok('email');
 }
 
 =head2 take_action
@@ -89,7 +89,7 @@ sub take_action {
     my $self = shift;
     my $user = $self->user_object();
 
-    Jifty->app_class('Notification','ConfirmAddress')->new( to => $user )->send;
+    Jifty->app_class('Notification','ConfirmEmail')->new( to => $user )->send;
     
     $self->result->message("We've re-sent your confirmation.");
 

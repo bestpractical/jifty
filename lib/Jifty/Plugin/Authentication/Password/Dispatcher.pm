@@ -24,7 +24,11 @@ before '*' =>  run {
 
 };
 
-on qr/^(?:passwordreminder|signup|login)$/ => run {
+on qr/^(?:passwordreminder|signup)$/ => run {
+    redirect('/') if ( Jifty->web->current_user->id );
+    set 'next' => Jifty->web->request->continuation || Jifty::Continuation->new( request => Jifty::Request->new( path => "/login" ) );
+};
+on qr/^(?:login)$/ => run {
     redirect('/') if ( Jifty->web->current_user->id );
     set 'next' => Jifty->web->request->continuation || Jifty::Continuation->new( request => Jifty::Request->new( path => "/" ) );
 };

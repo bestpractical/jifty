@@ -1,42 +1,39 @@
 use strict;
 use warnings;
 
-package Jifty::Plugin::User::Model::User;
+package Jifty::Plugin::User::Mixin::Model::User;
 use Jifty::DBI::Schema;
 
 
 =head1 NAME
 
-Jifty::Plugin::User::Model::User
+Jifty::Plugin::User::Mixin::Model::User
 
 =head1 DESCRIPTION
 
-package MyApp::Model::User;
-
-use Jifty::DBI::Schema;
-
-use MyApp::Record schema { 
-
-    # column definitions
-
-};
-
-use Jifty::Plugin::User::Model::User; # Imports two columns: name and username
-
+ package MyApp::Model::User;
+ use Jifty::DBI::Schema;
+ use MyApp::Record schema { 
+     # column definitions
+ };
+ 
+ use Jifty::Plugin::User::Mixin::Model::User; # Imports two columns: name and email
+ 
 
 =cut
 
-
 use base 'Jifty::DBI::Record::Plugin';
 use Jifty::Plugin::User::Record schema {
-    column name => type is 'text', label is 'How should I display your name?';
+    column
+        name => type is 'text',
+        label is 'Nickname',
+        hints is 'How should I display your name to other users?';
     column
         email => type is 'text',
-        label is 'Email',
-        default is '', is immutable, is distinct;
+        label is 'Email address', default is '', is immutable, is distinct;
     column
         email_confirmed => label is 'Email address confirmed?',
-        type is 'boolean', render_as 'Unrendered', is immutable;
+        type is 'boolean', render_as 'Unrendered';
 
 };
 
@@ -63,7 +60,7 @@ sub set_email {
 
     unless ( $email eq $self->__value('email') ) {
         $self->__set( column => 'email_confirmed', value => '0' );
-        Jifty->app_class('Notification','ConfirmAddress')->new( to => $self )->send;
+        Jifty->app_class('Notification','ConfirmEmail')->new( to => $self )->send;
     }
 
     return (@ret);

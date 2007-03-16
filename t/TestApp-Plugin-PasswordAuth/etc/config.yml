@@ -17,8 +17,9 @@ framework:
   L10N: 
     PoDir: share/po
   LogLevel: DEBUG
-  Mailer: Sendmail
-  MailerArgs: []
+  Mailer: IO
+  MailerArgs:
+    - %log/mail.log%
 
   Plugins: 
     - User: {}

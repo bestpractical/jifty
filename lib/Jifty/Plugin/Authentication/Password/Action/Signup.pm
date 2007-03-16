@@ -8,8 +8,12 @@ Jifty::Plugin::Authentication::Password::Action::Signup
 =cut
 
 package Jifty::Plugin::Authentication::Password::Action::Signup;
-use Jifty::Plugin::Authentication::Password::Action::CreateUser;
-use base qw/Jifty::Plugin::Authentication::Password::Action::CreateUser/;
+our @ISA;
+{
+    my $class = Jifty->app_class('Action', 'CreateUser');
+    Jifty::Util->require($class);
+    push @ISA, $class;
+}
 
 =head2 arguments
 
@@ -30,7 +34,8 @@ The fields for C<Signup> are:
 
 sub arguments {
     my $self = shift;
-    my $args = $self->SUPER::arguments;
+    my $args = $self->SUPER::arguments();
+    
 
     my %fields = (
         name             => 1,
@@ -97,16 +102,16 @@ sub take_action {
         defined $self->record->column($_) and defined $self->argument_value($_)
     } $self->argument_names;
 
-    my ($id) = $record->create(%values);
+    my ($id, $msg) = $record->create(%values);
 
     # Handle errors?
     unless ( $record->id ) {
-        $self->result->error( _("Something bad happened and we couldn't create your account.").' '.  _("Try again later. We're really, really sorry.")
+        $self->result->error( _("Something bad happened and we couldn't create your account: %1", $msg).' '.  _("Try again later. We're really, really sorry.")
         );
         return;
     }
 
-    $self->result->message( _("Welcome to [_1], [_2].", Jifty->config->framework('ApplicationName'), $record->name)
+    $self->result->message( _("Welcome to %1, %2.", Jifty->config->framework('ApplicationName'), $record->name)
           . ' ' . _("We've sent a confirmation message to your email box.") );
 
     return 1;
