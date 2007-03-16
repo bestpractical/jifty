@@ -80,7 +80,7 @@ sub new {
 
     my $loc_method = sub {
         # Retain compatibility with people using "-e _" etc.
-        return \*_ unless @_;
+        return \*_ unless @_; # Needed for perl 5.8
 
         # When $_[0] is undef, return undef.  When it is '', return ''.
         no warnings 'uninitialized';
