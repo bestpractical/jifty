@@ -1,3 +1,2 @@
 framework:
-  LogLevel: ERROR
   WhichConfigFile: site
