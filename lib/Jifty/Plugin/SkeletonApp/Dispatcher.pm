@@ -38,6 +38,5 @@ on '*' => run {
     return ();
 };
 
-on '/' => run { show 'index.html' };
 
 1;
