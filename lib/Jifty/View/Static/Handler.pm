@@ -117,7 +117,7 @@ sub file_path {
     my $self    = shift;
     my $file    = shift;
     my @options = (Jifty->config->framework('Web')->{StaticRoot});
-    push @options, grep {$_} map {$_->static_root} Jifty->plugins;
+    push @options, grep { -d $_ && -r $_ } map {$_->static_root} Jifty->plugins;
     push @options, (Jifty->config->framework('Web')->{DefaultStaticRoot});
 
     # Chomp a leading "/static" - should this be configurable?

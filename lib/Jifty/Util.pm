@@ -222,7 +222,14 @@ Additionally, logs any failures at the C<error> log level.
 
 sub require {
     my $self = shift;
-    my $class = shift;
+    my $module = shift;
+    $self->_require( module => $module,  quiet => 0);
+}
+
+sub _require {
+    my $self = shift;
+    my %args = ( module => undef, quiet => undef, @_);
+    my $class = $args{'module'};
 
     # Quick hack to silence warnings.
     # Maybe some dependencies were lost.
@@ -233,11 +240,15 @@ sub require {
 
     return 1 if $self->already_required($class);
 
+    local $UNIVERSAL::require::ERROR = '';
     my $retval = $class->require;
     if ($UNIVERSAL::require::ERROR) {
         my $error = $UNIVERSAL::require::ERROR;
         $error =~ s/ at .*?\n$//;
-        Jifty->log->error(sprintf("$error at %s line %d\n", (caller)[1,2]));
+        
+        unless ($args{'quiet'} and $error =~ /^Can't locate/) {
+            Jifty->log->error(sprintf("$error at %s line %d\n", (caller(1))[1,2]));
+        }
         return 0;
     }
 
@@ -249,6 +260,20 @@ sub require {
 
     return 1;
 }
+
+=head2 try_to_require Module
+
+This method works just like L</require>, except that it surpresses the error message
+in cases where the module isn't found.
+
+=cut
+
+sub  try_to_require {
+    my $self = shift;
+    my $module = shift;
+    $self->_require( module => $module,  quiet => 1);
+}
+
 
 =head2 already_required class
 

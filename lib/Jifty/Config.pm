@@ -264,15 +264,16 @@ sub guess {
             L10N       => {
                 PoDir => "share/po",
             },
-            Plugins    => [
-            { REST => {},
-        },
-        {       Halo => {},},
-        {ErrorTemplates => {},},
-        {OnlineDocs => {},},
-        {        CompressedCSSandJS => {},},
-        {AdminUI => {},}
-            ],
+            Plugins => [
+            #  { LetMe               => {}, },
+                { SkeletonApp            => {}, },
+                { REST               => {}, },
+                { Halo               => {}, },
+                { ErrorTemplates     => {}, },
+                { OnlineDocs         => {}, },
+                { CompressedCSSandJS => {}, },
+                { AdminUI            => {}, }
+                ],
             Web        => {
                 Port => '8888',
                 BaseURL => 'http://localhost',

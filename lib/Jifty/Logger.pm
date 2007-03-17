@@ -186,18 +186,19 @@ sub _warning_action {
     my %pg_notices = ('DEBUG\d+' => 'debug',
                       'INFO'     => 'info',
                       'NOTICE'   => 'info',
+                      '.*ERROR.*database .* does not exist' => 'info',
+                      '.*couldn.t execute the query .DROP DATABASE.' => 'info',
                       'WARNING'  => 'warn',
                       'DBD::Pg.+ERROR'    => 'error',
                       'LOG'      => 'warn',
                       'FATAL'    => 'fatal',
                       'PANIC'    => 'fatal' );
-
+    
     foreach my $notice (keys %pg_notices) {
-        if ($warnings =~ /^$notice:/) {
+        if ($warnings =~ /^$notice/) {
             return $pg_notices{$notice};
-        }
+        } 
     }
-
     return 'warn';
 }
 

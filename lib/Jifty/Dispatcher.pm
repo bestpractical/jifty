@@ -766,8 +766,10 @@ sub _do_show {
     # a relative path, prepend the working directory
     $path = "$self->{cwd}/$path" unless $path =~ m{^/};
 
-    # When we're requesting a directory, go looking for the index.html
-    if ( $self->template_exists( $path . "/index.html" ) ) {
+    # When we're requesting a directory, go looking for the index.html if the 
+    # path given does not exist
+    if (  ! $self->template_exists( $path )
+         && $self->template_exists( $path . "/index.html" ) ) {
         $path .= "/index.html";
     }
 
@@ -923,7 +925,7 @@ came in with that method.
 
 sub _match_method {
     my ( $self, $method ) = @_;
-    $self->log->debug("Matching URL $ENV{REQUEST_METHOD} against ".$method);
+    #$self->log->debug("Matching URL $ENV{REQUEST_METHOD} against ".$method);
     lc( $ENV{REQUEST_METHOD} ) eq lc($method);
 }
 
@@ -1115,7 +1117,8 @@ sub _unescape {
 
 =head2 template_exists PATH
 
-Returns true if PATH is a valid template inside your template root.
+Returns true if PATH is a valid template inside your template root. This checks
+for both Template::Declare and HTML::Mason Templates.
 
 =cut
 
@@ -1123,13 +1126,16 @@ sub template_exists {
     my $self = shift;
     my $template = shift;
 
-    return  Jifty->handler->mason->interp->comp_exists( $template);
+    return Jifty->handler->declare_handler->template_exists($template)
+        || Jifty->handler->mason->interp->comp_exists( $template);
 }
 
 
 =head2 render_template PATH
 
-Use our templating system to render a template. If there's an error, do the right thing.
+Use our templating system to render a template. If there's an error, do the
+right thing. If the same 'PATH' is found in both Template::Declare and
+HTML::Mason templates then the T::D template is used.
 
 
 =cut
@@ -1267,12 +1273,11 @@ sub dump_rules {
     no strict 'refs';
     foreach my $stage ( qw/SETUP RUN CLEANUP/ ) {
 
-        my $log = '';
+        Jifty->log->debug( "Dispatcher rules in stage $stage:");
         foreach my $r ( @{ $self . '::RULES_' . $stage } ) {
-            $log .= _unroll_dumpable_rules( 0,$r );
+            Jifty->log->debug( _unroll_dumpable_rules( 0,$r ) );
         }
 
-        Jifty->log->debug( "Rules in stage $stage:\n", $log) if ($log);
     }
 };
 
@@ -1285,7 +1290,7 @@ C<RULE> and indentation level C<LEVEL>
 
 sub _unroll_dumpable_rules {
     my ($level, $rule) = @_;
-    my $log =
+    my $log = 
         # indentation
         ( "    " x $level ) .
         # op
@@ -1297,16 +1302,14 @@ sub _unroll_dumpable_rules {
             ref $rule->[1] eq 'HASH'  ? $rule->[1]->{method} . " '" . $rule->[1]->{""} ."'" :
             ref $rule->[1] eq 'CODE'  ? '{...}' :
                                         "'" . $rule->[1] . "'"
-        ) .
-        "\n";
+        );
 
     if (ref $rule->[2] eq 'ARRAY') {
         $level++;
         foreach my $sr ( @{ $rule->[2] } ) {
-            $log .= _unroll_dumpable_rules( $level, $sr );
+            $log .=   _unroll_dumpable_rules( $level, $sr );
         }
     }
-
     return $log;
 }
 

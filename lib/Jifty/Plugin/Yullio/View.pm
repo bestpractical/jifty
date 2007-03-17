@@ -1,4 +1,4 @@
-package Jifty::View::Declare::Yullio;
+package Jifty::Plugin::Yullio::View;
 use strict;
 use warnings;
 
@@ -11,11 +11,11 @@ our @EXPORT = qw(yullio);
 
 =head1 NAME
 
-Jifty::View::Declare::Yullio - Yullio layout bundles
+Jifty::Plugin::Yullio::View - Yullio layout bundles
 
 =head1 SYNOPSIS
 
-  use Jifty::View::Declare::Yullio
+  use Jifty::Plugin::Yullio::View;
   template 'index2.html' => page {
     with ( width => 'doc2', column_template => 'yui-t6' ),
     yullio
@@ -24,7 +24,7 @@ Jifty::View::Declare::Yullio - Yullio layout bundles
 
 =head1 DESCRIPTION
 
-C<Jifty::View::Declare::Yullio> provides an alternative C<page>
+C<Jifty::Plugin::Yullio::View> provides an alternative C<page>
 temlpate constructor that makes use of yui grid layouts.
 
 =cut
@@ -55,6 +55,13 @@ sub _yullio_content {
 		  } } }
     };
 }
+
+=head2 yullio CODE CODE
+
+Clkao owes docs
+
+=cut
+
 
 sub yullio(&&) {
     my ($code1, $code2) = @_;

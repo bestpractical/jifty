@@ -10,10 +10,10 @@ use TestApp::Plugin::PasswordAuth::Record schema {
 
 };
 
-use Jifty::Plugin::User::Model::User;
 use TestApp::Plugin::FavoriteColor;
 use TestApp::Plugin::FasterSwallow;
-use Jifty::Plugin::Authentication::Password::Model::User 'password_is';
+use Jifty::Plugin::User::Mixin::Model::User;
+use Jifty::Plugin::Authentication::Password::Mixin::Model::User;
 
 # Your model-specific methods go here.
 

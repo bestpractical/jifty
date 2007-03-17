@@ -55,7 +55,7 @@ requires('Module::Refresh');
 requires('Module::ScanDeps');
 requires('Object::Declare' => '0.13');
 requires('Params::Validate');
-requires('Scalar::Defer' => '0.06');
+requires('Scalar::Defer' => '0.10');
 requires('Shell::Command');
 requires('String::Koremutake');
 requires('SQL::ReservedWords');
@@ -63,6 +63,7 @@ requires('SVN::Fs');
 requires('SVN::Repos');
 requires('SVN::Simple::Edit');
 requires('Template::Declare');                # Template::Declare::Tags
+requires('Template::Declare' => '0.06');                # Template::Declare::Tags
 requires('Test::Base');
 requires('UNIVERSAL::require');
 requires('URI');

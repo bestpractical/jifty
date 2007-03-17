@@ -29,6 +29,11 @@ This library contains templates that Jifty can't function without:
 
 =cut
 
+=for later 
+
+These templates are still in masonland. we're doign something wrong with escaping in them
+
+
 template '__jifty/subs' => sub {
     my ($forever) = get(qw(forever)) || 1;
 
@@ -341,6 +346,6 @@ template '__jifty/webservices/yaml' => sub {
     outs( Jifty::YAML::Dump( { Jifty->web->response->results } ) );
 };
 
+=cut
 
-1;
 1;

@@ -15,12 +15,14 @@ no_index:
     - DB
     - inc
 recommends: 
+  Apache2::Const: 0
   Class::Accessor::Named: 0
   DBD::SQLite: 0
   Devel::Cover: 0
   Module::CoreList: 0
   Module::Install::Admin: 0.50
   Module::Refresh: 0.09
+  Net::Server::Fork: 0
   PAR::Dist::FromCPAN: 0
   Test::Base: 0.44
   Test::HTML::Lint: 0
@@ -71,16 +73,17 @@ requires:
   HTTP::Server::Simple::Recorder: 0
   Hash::Merge: 0
   Hook::LexWrap: 0
-  IPC::PubSub: 0.22
+  IPC::PubSub: 0.23
   JSON::Syck: 0.15
   Jifty::DBI: 0.31
   LWP::UserAgent: 0
   Locale::Maketext::Extract: 0.20
   Locale::Maketext::Lexicon: 0.60
-  Log::Log4perl: 0
+  Log::Log4perl: 1.04
   MIME::Types: 0
   Module::CoreList: 0
   Module::Pluggable: 3.1
+  Module::Pluggable::Object: 0
   Module::Refresh: 0
   Module::ScanDeps: 0
   Object::Declare: 0.13
@@ -90,12 +93,14 @@ requires:
   Scalar::Defer: 0.06
   Shell::Command: 0
   String::Koremutake: 0
+  Template::Declare: 0.06
   Test::Base: 0
   UNIVERSAL::require: 0
   URI: 0
   XML::Simple: 0
   XML::Writer: 0.601
   XML::XPath: 0
+  YAML: 0.35
   YAML::Syck: 0.71
   perl: 5.8.3
   version: 0

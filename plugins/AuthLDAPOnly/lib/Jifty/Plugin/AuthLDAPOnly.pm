@@ -50,7 +50,7 @@ use Net::LDAP;
         $CurrentLDAPUserClass = $args{CurrentUserClass}
             || "${appname}::CurrentUser";
         $AuthLDAPUserClass = $args{AuthLDAPUserClass}
-            || "${appname}::Model::LDAPUser";
+            || "${appname}::Model::User";
 
     	$params{'Hostname'} = $args{LDAPhost};
     	$params{'base'} = $args{LDAPbase};

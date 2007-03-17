@@ -84,12 +84,16 @@ sub send_one_message {
     my @recipients = $self->recipients;
     my $to         = join( ', ',
         map { ( $_->can('email') ? $_->email : $_ ) } grep {$_} @recipients );
+    $self->log->debug("Sending a ".ref($self)." to $to"); 
     return unless ($to);
+
+    my $appname = Jifty->config->framework('ApplicationName');
+
     my $message = Email::MIME->create(
         header => [
-            From    => $self->from    || 'A Jifty Application <nobody>',
+            From    => ($self->from    || _('%1 <%2>' , $appname, Jifty->config->framework('AdminEmail'))) ,
             To      => $to,
-            Subject => Encode::encode('MIME-Header', $self->subject || 'No subject'),
+            Subject => Encode::encode('MIME-Header', $self->subject || _("A notification from %1!",$appname )),
         ],
         attributes => { charset => 'UTF-8' },
         parts => $self->parts

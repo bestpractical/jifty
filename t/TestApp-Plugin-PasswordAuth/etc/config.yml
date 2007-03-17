@@ -16,9 +16,10 @@ framework:
   DevelMode: 1
   L10N: 
     PoDir: share/po
-  LogLevel: INFO
-  Mailer: Sendmail
-  MailerArgs: []
+  LogLevel: DEBUG
+  Mailer: IO
+  MailerArgs:
+    - %log/mail.log%
 
   Plugins: 
     - User: {}

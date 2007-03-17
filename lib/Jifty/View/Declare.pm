@@ -1,5 +1,5 @@
 package Jifty::View::Declare;
-use Jifty::View::Declare::BaseClass ();
+
 
 use strict;
 use warnings;
@@ -20,9 +20,9 @@ use constant BaseClass => 'Jifty::View::Declare::BaseClass';
 sub import {
     my ($class, $import) = @_;
     ($import and $import eq '-base') or return;
-
     no strict 'refs';
     my $pkg = caller;
+    Jifty::Util->require(BaseClass);
     push @{ $pkg . '::ISA' }, BaseClass;
 
     @_ = BaseClass;

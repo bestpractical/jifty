@@ -17,6 +17,7 @@ can be updated via AJAX or via query parameters.
 use base qw/Jifty::Object Class::Accessor::Fast/;
 __PACKAGE__->mk_accessors(qw(name force_path force_arguments default_path default_arguments qualified_name parent region_wrapper));
 use Jifty::JSON;
+use Encode ();
 
 =head2 new PARAMHASH
 
@@ -322,14 +323,18 @@ sub render_as_subrequest {
     my $region_content = '';
 
     # template-declare based regions are printing to stdout
-    open my $output_fh, '>>', $out_method;
+    my $td_out = '';
+    Encode::_utf8_on($td_out);
+    open my $output_fh, '>>:utf8', \$td_out;
     local *STDOUT = $output_fh;
 
+    local $main::DEBUG=1;
     # Call into the dispatcher
     Jifty->handler->dispatcher->handle_request;
 
     Jifty->handler->mason->interp->out_method($orig_out);
 
+    $$out_method .= $td_out if length($td_out);
     return;
 }
 

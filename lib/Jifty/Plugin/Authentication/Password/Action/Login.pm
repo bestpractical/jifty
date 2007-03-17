@@ -15,12 +15,12 @@ use constant TOKEN_EXPIRE_TIME => 30;
 
 =head2 arguments
 
-Return the username and password form fields
+Return the email and password form fields
 
 =cut
 
 sub arguments { 
-    return( { username => { label => 'Email username',
+    return( { email => { label => 'Email',
                            mandatory => 1,
                            ajax_validates => 1,
                             }  ,
@@ -46,23 +46,23 @@ sub arguments {
 
 }
 
-=head2 validate_username ADDRESS
+=head2 validate_email ADDRESS
 
-Makes sure that the username submitted is a legal username and that there's a user in the database with it.
+Makes sure that the email submitted is a legal email and that there's a user in the database with it.
 
 Overridden from Jifty::Action::Record.
 
 =cut
 
-sub validate_username {
+sub validate_email {
     my $self  = shift;
-    my $username = shift;
+    my $email = shift;
 
-    my $u = Jifty::Plugin::Authentication::Password::Model::User->new(current_user => Jifty::Plugin::Authentication::Password::CurrentUser->superuser);
-    $u->load_by_cols( username => $username );
-    return $self->validation_error(username => 'We do not have an account that matches that username.') unless ($u->id);
+    my $u = Jifty->app_class('Model', 'User')->new(current_user => Jifty->app_class('CurrentUser')->superuser);
+    $u->load_by_cols( email => $email );
+    return $self->validation_error(email => 'We do not have an account that matches that email.') unless ($u->id);
 
-    return $self->validation_ok('username');
+    return $self->validation_ok('email');
 }
 
 
@@ -131,36 +131,54 @@ Otherwise, throw an error.
 
 sub take_action {
     my $self = shift;
-    my $user = Jifty->app_class('CurrentUser')->new( username => $self->argument_value('username'));
+    my $user = Jifty->app_class('Model', 'User')->new(current_user => Jifty->app_class('CurrentUser')->superuser);
+    $user->load_by_cols( email => $self->argument_value('email') );
+
 
     my $password = $self->argument_value('password');
-    my $token = $self->argument_value('token') || '';
+    my $token    = $self->argument_value('token') || '';
     my $hashedpw = $self->argument_value('hashed_password');
 
-    if ($token ne '') {   # browser supports javascript, do password hashing
-	unless ( $user->id  && $user->hashed_password_is($hashedpw, $token)){
-	    $self->result->error( 'You may have mistyped your username or password. Give it another shot.' );
-	    return;
-	}
-        Jifty->web->session->set(login_token => '');
-    }
-    else {  # no password hashing over the wire
-	unless ( $user->id  && $user->password_is($password)){
-	    $self->result->error( 'You may have mistyped your username or password. Give it another shot.' );
-	    return;
-	}
-    }
 
+    if ( $token ne '' ) {   # browser supports javascript, do password hashing
+        unless ( $user->id && $user->hashed_password_is( $hashedpw, $token ) )
+        {
+            $self->result->error( _('You may have mistyped your email or password. Give it another shot.'));
+            return;
+        }
+        Jifty->web->session->set( login_token => '' );
+    } else {                # no password hashing over the wire
+        unless ( $user->id && $user->password_is($password) ) {
+            $self->result->error( _('You may have mistyped your email address or password. Give it another shot.'));
+            return;
+        }
+    }
+    unless ($user->email_confirmed) {
+                $self->result->error( q{You haven't confirmed your account yet.} );        return;
+                    }
 
     # Set up our login message
-    $self->result->message("Welcome back, " . $user->user_object->name . "." );
+    $self->result->message( $self->login_message($user));
 
     # Actually do the signin thing.
-    Jifty->web->current_user($user);
-    Jifty->web->session->expires($self->argument_value('remember') ? '+1y' : undef);
+    Jifty->web->current_user(Jifty->app_class('CurrentUser')->new( id => $user->id));
+    Jifty->web->session->expires( $self->argument_value('remember') ? '+1y' : undef );
     Jifty->web->session->set_cookie;
 
     return 1;
+}
+
+=head2 login_message $user_object
+
+Returns the "hi, you're logged in message"
+
+=cut
+
+
+sub login_message {
+    my $self = shift;
+    my $user = shift;
+    return _("Welcome back, %1.", $user->name);
 }
 
 1;

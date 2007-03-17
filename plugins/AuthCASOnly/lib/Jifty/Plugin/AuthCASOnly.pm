@@ -37,7 +37,7 @@ use AuthCAS;
         $CurrentCASUserClass = $args{CurrentUserClass}
             || "${appname}::CurrentUser";
         $AuthCASUserClass = $args{AuthCASUserClass}
-            || "${appname}::Model::CASUser";
+            || "${appname}::Model::User";
 
 	my ($conf, $cafile, $casserver);
     	foreach (@{Jifty->config->framework('Plugins')}) {

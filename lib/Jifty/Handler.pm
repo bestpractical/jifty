@@ -66,6 +66,7 @@ sub new {
     $self->dispatcher( Jifty->app_class( "Dispatcher" ) );
     Jifty::Util->require( $self->dispatcher );
     $self->dispatcher->import_plugins;
+    $self->dispatcher->dump_rules;
  
     $self->setup_view_handlers();
     return $self;
@@ -138,9 +139,9 @@ sub mason_config {
     for my $plugin (Jifty->plugins) {
         my $comp_root = $plugin->template_root;
         unless  ( $comp_root and -d $comp_root) {
-            Jifty->log->debug( "Plugin @{[ref($plugin)]} doesn't appear to have a valid mason template component root (@{[$comp_root ||'']})");
             next;
         }
+        Jifty->log->debug( "Plugin @{[ref($plugin)]} mason component root added: (@{[$comp_root ||'']})");
         push @{ $config{comp_root} }, [ ref($plugin)."-".Jifty->web->serial => $comp_root ];
     }
     push @{$config{comp_root}}, [jifty => Jifty->config->framework('Web')->{'DefaultTemplateRoot'}];
@@ -164,9 +165,7 @@ sub mason_config {
 
 sub templatedeclare_config {
     
-    use Jifty::View::Declare::CoreTemplates;
     my %config = (
-        roots => [ 'Jifty::View::Declare::CoreTemplates' ],
         %{ Jifty->config->framework('Web')->{'TemplateDeclareConfig'} ||{}},
     );
 
@@ -174,14 +173,14 @@ sub templatedeclare_config {
         my $comp_root = $plugin->template_class;
         Jifty::Util->require($comp_root);
         unless (defined $comp_root and $comp_root->isa('Template::Declare') ){
-            Jifty->log->debug( "Plugin @{[ref($plugin)]} doesn't appear to have a ::View class that's a Template::Declare subclass");
             next;
         }
+        Jifty->log->debug( "Plugin @{[ref($plugin)]}::View added as a Template::Declare root");
         push @{ $config{roots} }, $comp_root ;
     }
 
-    push @{$config{roots}}, Jifty->config->framework('TemplateClass');
-
+    push @{$config{roots}},  Jifty->config->framework('TemplateClass');
+        
     return %config;
 }
 

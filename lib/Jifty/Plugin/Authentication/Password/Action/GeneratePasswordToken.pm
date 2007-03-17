@@ -7,18 +7,18 @@ Jifty::Plugin::Authentication::PasswordAction::GeneratePasswordToken
 
 =cut
 
-package Jifty::Plugin::Authentication::PasswordAction::GeneratePasswordToken;
+package Jifty::Plugin::Authentication::Password::Action::GeneratePasswordToken;
 use base qw/Jifty::Action/;
 
 =head2 arguments
 
-We need the username of the user we're fetching a token for, so we can
+We need the email of the user we're fetching a token for, so we can
 return the salt.
 
 =cut
 
 sub arguments { 
-    return( { username => { mandatory => 1 } });
+    return( { email => { mandatory => 1 } });
 
 }
 
@@ -34,10 +34,10 @@ user's password salt in $self->result->content.
 sub take_action {
     my $self = shift;
 
-    my $username = $self->argument_value('username');
+    my $email = $self->argument_value('email');
     my $class = Jifty->app_class('Model','User');
     my $user = $class->new(current_user => Jifty::CurrentUser->superuser);
-    $user->load_by_cols(username => $username);
+    $user->load_by_cols(email => $email);
     unless($user->id) {
         $self->result->error('No such user');
     }

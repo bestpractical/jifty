@@ -2,6 +2,8 @@ use strict;
 use warnings;
 
 package Jifty::Plugin;
+use File::ShareDir 'module_dir';
+
 
 =head1 NAME
 
@@ -54,10 +56,6 @@ sub new {
     Jifty::ClassLoader->new(base => $class)->require;
     Jifty::Util->require($class->dispatcher);
 
-    # Start a plugin classloader set up on behalf of the application
-    Jifty::Util->require('Jifty::Plugin::ClassLoader');
-    Jifty::Plugin::ClassLoader->new( base => Jifty->app_class, plugin => $class,)->require;
-
     # XXX TODO: Add .po path
 
     my $self = bless {} => $class;
@@ -93,20 +91,22 @@ sub new_request {
 
 sub _calculate_share {
     my $self = shift;
-    my $class = ref($self) || $self;
+    my $class = ref($self);
     unless ( $self->{share} ) {
-        local $@; # We're just avoiding File::ShareDir's failure behaviour of dying
-        eval { $self->{share} = File::ShareDir::module_dir($class) };
+        local $@
+            ; # We're just avoiding File::ShareDir's failure behaviour of dying
+        eval { $self->{share} = module_dir($class) };
     }
     unless ( $self->{share} ) {
-        local $@ ; # We're just avoiding File::ShareDir's failure behaviour of dying
-        eval { $self->{share} = File::ShareDir::module_dir('Jifty') };
+        local $@; # We're just avoiding File::ShareDir's failure behaviour of dying
+        eval { $self->{share} = module_dir('Jifty') };
         if ( $self->{'share'} ) {
             my $class_to_path = $class;
             $class_to_path =~ s|::|/|g;
             $self->{share} .= "/plugins/" . $class_to_path;
         }
     }
+    return $self->{share};
 }
 
 
@@ -118,9 +118,9 @@ Returns the root of the C<HTML::Mason> template directory for this plugin
 
 sub template_root {
     my $self = shift;
-    $self->{share} ||= $self->_calculate_share();
-    return unless $self->{share};
-    return $self->{share}."/web/templates";
+    my $dir =  $self->_calculate_share();
+    return unless $dir;
+    return $dir."/web/templates";
 }
 
 
@@ -145,9 +145,9 @@ Returns the root of the static directory for this plugin
 
 sub static_root {
     my $self = shift;
-    $self->{share} ||= $self->_calculate_share();
-    return unless $self->{share};
-    return $self->{share}."/web/static";
+    my $dir =  $self->_calculate_share();
+    return unless $dir;
+    return $dir."/web/static";
 }
 
 =head2 dispatcher

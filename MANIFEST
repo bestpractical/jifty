@@ -38,11 +38,9 @@ doc/pubsub/system_architecture.png
 etc/config.yml
 etc/site_config.yml
 examples/Chat/bin/jifty
-examples/Chat/chat
 examples/Chat/etc/config.yml
 examples/Chat/lib/Chat/Action/Send.pm
 examples/Chat/lib/Chat/Event/Message.pm
-examples/Chat/lib/Chat/Server.pm
 examples/Chat/Makefile.PL
 examples/Chat/share/web/templates/fragments/message
 examples/Chat/share/web/templates/fragments/sender
@@ -53,7 +51,6 @@ examples/Clock/bin/jifty
 examples/Clock/clockserv.pl
 examples/Clock/etc/config.yml
 examples/Clock/lib/Clock/Event/Tick.pm
-examples/Clock/lib/Clock/Server.pm
 examples/Clock/Makefile.PL
 examples/Clock/share/web/templates/fragments/time
 examples/Clock/share/web/templates/index.html
@@ -77,7 +74,6 @@ examples/Ping/lib/Ping/Action/AddPing.pm
 examples/Ping/lib/Ping/Action/CancelPing.pm
 examples/Ping/lib/Ping/Event/Pong.pm
 examples/Ping/lib/Ping/PingServer.pm
-examples/Ping/lib/Ping/Server.pm
 examples/Ping/Makefile.PL
 examples/Ping/share/web/templates/fragments/pong
 examples/Ping/share/web/templates/index.html
@@ -163,10 +159,15 @@ lib/Jifty/Plugin/Authentication/Password/Model/User.pm
 lib/Jifty/Plugin/ClassLoader.pm
 lib/Jifty/Plugin/CompressedCSSandJS.pm
 lib/Jifty/Plugin/CompressedCSSandJS/Dispatcher.pm
+lib/Jifty/Plugin/ErrorTemplates.pm
+lib/Jifty/Plugin/ErrorTemplates/View.pm
 lib/Jifty/Plugin/Halo.pm
 lib/Jifty/Plugin/OnlineDocs.pm
 lib/Jifty/Plugin/REST.pm
 lib/Jifty/Plugin/REST/Dispatcher.pm
+lib/Jifty/Plugin/SkeletonApp.pm
+lib/Jifty/Plugin/SkeletonApp/Dispatcher.pm
+lib/Jifty/Plugin/SkeletonApp/View.pm
 lib/Jifty/Plugin/User.pm
 lib/Jifty/Plugin/User/Model/User.pm
 lib/Jifty/Plugin/Yullio/View.pm
@@ -185,11 +186,13 @@ lib/Jifty/Script/Env.pm
 lib/Jifty/Script/FastCGI.pm
 lib/Jifty/Script/Help.pm
 lib/Jifty/Script/Model.pm
+lib/Jifty/Script/ModPerl2.pm
 lib/Jifty/Script/Plugin.pm
 lib/Jifty/Script/Po.pm
 lib/Jifty/Script/Schema.pm
 lib/Jifty/Script/Server.pm
 lib/Jifty/Server.pm
+lib/Jifty/Server/Fork.pm
 lib/Jifty/Subs.pm
 lib/Jifty/Subs/Render.pm
 lib/Jifty/Test.pm
@@ -201,12 +204,8 @@ lib/Jifty/Util.pm
 lib/Jifty/View/Declare.pm
 lib/Jifty/View/Declare/BaseClass.pm
 lib/Jifty/View/Declare/CoreTemplates.pm
-lib/Jifty/View/Declare/ErrorHandlers.pm
 lib/Jifty/View/Declare/Handler.pm
 lib/Jifty/View/Declare/Helpers.pm
-lib/Jifty/View/Declare/Helpers.pm.tdy
-lib/Jifty/View/Declare/SkeletonApp.pm
-lib/Jifty/View/Declare/WebServices.pm
 lib/Jifty/View/Mason/Handler.pm
 lib/Jifty/View/Static/Handler.pm
 lib/Jifty/Web.pm
@@ -238,7 +237,6 @@ Makefile.PL
 MANIFEST			This list of files
 MANIFEST.SKIP
 META.yml
-my-diff-of-td-branch
 plugins/AuthCASLogin/debian/changelog
 plugins/AuthCASLogin/debian/compat
 plugins/AuthCASLogin/debian/control
@@ -268,7 +266,6 @@ plugins/AuthCASOnly/lib/Jifty/Plugin/AuthCASOnly/Dispatcher.pm
 plugins/AuthCASOnly/lib/Jifty/Plugin/AuthCASOnly/Model/CASUser.pm
 plugins/AuthCASOnly/Makefile.PL
 plugins/AuthCASOnly/MANIFEST
-plugins/AuthCASOnly/META.yml
 plugins/AuthCASOnly/share/web/templates/caslogin
 plugins/AuthCASOnly/share/web/templates/caslogout
 plugins/AuthCASOnly/t/00-load.t
@@ -395,16 +392,6 @@ plugins/ProfileBehaviour/lib/Jifty/Plugin/ProfileBehaviour/Dispatcher.pm
 plugins/ProfileBehaviour/Makefile.PL
 plugins/ProfileBehaviour/share/web/static/css/behaviour-profile.css
 plugins/ProfileBehaviour/share/web/static/js/behaviour.js
-plugins/Users-Identity-File/lib/Jifty/Plugin/Users/Identity/File.pm
-plugins/Users-Identity-File/lib/Jifty/Plugin/Users/Identity/File/Action/Login.pm
-plugins/Users-Identity-File/lib/Jifty/Plugin/Users/Identity/File/Dispatcher.pm
-plugins/Users-Identity-File/Makefile.PL
-plugins/Users-Identity-File/share/web/templates/login
-plugins/Users/lib/Jifty/Plugin/Users.pm
-plugins/Users/lib/Jifty/Plugin/Users/CurrentUser.pm
-plugins/Users/lib/Jifty/Plugin/Users/Dispatcher.pm
-plugins/Users/lib/Jifty/Plugin/Users/Model/User.pm
-plugins/Users/Makefile.PL
 README
 share/dtd/xhtml-lat1.ent
 share/dtd/xhtml-special.ent

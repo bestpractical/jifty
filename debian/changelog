@@ -1,3 +1,11 @@
+ -- AGOSTINI Yves <agostini@univ-metz.fr>  Fri, 16 Mar 2007 18:22:23 +0100
+
+jifty (0.70317-1) unstable; urgency=low
+
+  * merge with T::D branche
+
+ -- AGOSTINI Yves <agostini@univ-metz.fr>  Fri,  9 Mar 2007 15:36:49 +0100
+
 jifty (0.70117-1) unstable; urgency=low
 
   * New cpan release
