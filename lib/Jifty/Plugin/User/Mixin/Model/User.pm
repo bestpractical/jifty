@@ -93,6 +93,5 @@ sub validate_email {
 }
 
 
-
 1;
 

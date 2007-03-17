@@ -28,7 +28,7 @@ private template 'salutation' => sub {
         {
             my $u      = Jifty->web->current_user->user_object;
             my $method = $u->_brief_description;
-            _( 'Hiya, %1.', $u->$method() );
+            eval {_( 'Hiya, %1.', $u->$method() )};
         }
         else {
             _("You're not currently signed in.");

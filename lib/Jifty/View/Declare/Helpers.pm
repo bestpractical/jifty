@@ -6,7 +6,7 @@ use base qw/Template::Declare/;
 use base qw/Exporter/;
 use Template::Declare::Tags;
 
-our @EXPORT = ( qw(form hyperlink tangent redirect new_action form_submit form_next_page page wrapper request get set render_param current_user render_action render_region), @Template::Declare::Tags::EXPORT);
+our @EXPORT = ( qw(form hyperlink tangent redirect new_action form_submit form_return  form_next_page page wrapper request get set render_param current_user render_action render_region), @Template::Declare::Tags::EXPORT);
 
 
 =head1 NAME
@@ -143,6 +143,17 @@ sub render_action(@) {
     }
 }
 
+=head2 form_return
+
+Shortcut for L<Jifty::Web/return>.
+
+=cut
+
+sub form_return(@) {
+    outs_raw( Jifty->web->return(@_) );
+    '';
+}
+
 =head2 form_submit
 
 Shortcut for L<Jifty::Web::Form/submit>.
@@ -267,7 +278,7 @@ sub wrapper ($) {
     my $done_header;
     my $render_header = sub {
         no warnings qw( uninitialized redefine once );
-        $title ||= Jifty->config('framework')->{'ApplicationName'};
+        $title ||= Jifty->config->framework('ApplicationName');
 
         #   defined $title or return;
         return if $done_header++;
