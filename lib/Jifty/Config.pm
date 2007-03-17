@@ -264,7 +264,7 @@ sub guess {
                 PoDir => "share/po",
             },
             Plugins => [
-                { LetMe               => {}, },
+            #  { LetMe               => {}, },
                 { SkeletonApp            => {}, },
                 { REST               => {}, },
                 { Halo               => {}, },
