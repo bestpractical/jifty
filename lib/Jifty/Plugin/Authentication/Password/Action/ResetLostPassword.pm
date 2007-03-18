@@ -82,6 +82,7 @@ sub take_action {
         return;
     }
 
+    $u->set_email_confirmed('1');
     # Log in!
     $self->result->message(_("Your password has been reset.  Welcome back."));
     Jifty->web->current_user( $CurrentUser->new( id => $u->id ) );
