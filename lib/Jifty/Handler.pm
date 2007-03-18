@@ -66,8 +66,8 @@ sub new {
     $self->dispatcher( Jifty->app_class( "Dispatcher" ) );
     Jifty::Util->require( $self->dispatcher );
     $self->dispatcher->import_plugins;
-    $self->dispatcher->dump_rules;
- 
+	eval { Jifty::Plugin::DumpDispatcher->dump_rules };
+
     $self->setup_view_handlers();
     return $self;
 }
