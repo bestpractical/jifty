@@ -346,7 +346,6 @@ sub load_file {
 sub _expand_relative_paths {
     my $self  = shift;
     my $datum = shift;
-
     if ( ref $datum eq 'ARRAY' ) {
         return [ map { $self->_expand_relative_paths($_) } @$datum ];
     } elsif ( ref $datum eq 'HASH' ) {

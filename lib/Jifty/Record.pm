@@ -526,7 +526,7 @@ sub schema_version {
 
     # Return the application schema version
     else {
-        my $config = Jifty::Config->new;
+        my $config = Jifty->config();
         return $config->framework('Database')->{'Version'};
     }
 }
