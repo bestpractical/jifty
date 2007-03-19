@@ -28,12 +28,6 @@ on '*' => run {
             label      => _('Administration'),
             sort_order => 998
         );
-        $top->child(
-            OnlineDocs =>
-              url      => "/__jifty/online_docs/",
-            label      => _('Online docs'),
-            sort_order => 999
-        );
     }
     return ();
 };

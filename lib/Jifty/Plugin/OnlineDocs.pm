@@ -4,12 +4,6 @@ use warnings;
 package Jifty::Plugin::OnlineDocs;
 use base qw/Jifty::Plugin/;
 
-require File::Basename;
-require File::Find;
-require File::Temp;
-require File::Spec;
-require Pod::Simple::HTML;
-
 # Your plugin goes here.  If takes any configuration or arguments, you
 # probably want to override L<Jifty::Plugin/init>.
 
