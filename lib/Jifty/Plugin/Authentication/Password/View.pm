@@ -71,14 +71,15 @@ template login_widget => sub {
 };
 
 template 'let/reset_lost_password' => page {
+    my ( $next ) = get(qw(next));
     attr { title => 'Reset lost password' };
     my $action = Jifty->web->new_action( class => 'ResetLostPassword' );
 
     h2   { _('Reset lost password') };
-    form {
+    Jifty->web->form->start( call => $next );
         render_param( $action => $_ ) for ( $action->argument_names );
-        form_submit( label => _("New password") );
-    };
+        form_return( label => _("New password"), submit => $action );
+    Jifty->web->form->end();
 };
 
 template 'let/confirm_email' => sub {
@@ -87,6 +88,7 @@ template 'let/confirm_email' => sub {
 };
 
 template 'lost_password' => page {
+    my ( $next ) = get(qw(next));
     my $action = Jifty->web->new_action(
         moniker => 'password_reminder',
         class   => 'SendPasswordReminder',
@@ -94,15 +96,17 @@ template 'lost_password' => page {
 
     h2 { _('Send a link to reset your password') };
     outs( _(  "You lost your password. A link to reset it will be sent to the following email address:"));
-
-    form {
-        render_param( $action => $_ ) for ( $action->argument_names );
-        form_submit( label => _("Send") );
-        }
+    outs($next);
+    my $focused = 0;
+    Jifty->web->form->start( call => $next );
+        render_param( $action => $_, focus => $focused++ ? 0 : 1 ) for ( $action->argument_names );
+            form_return( label => _(q{Send}), submit => $action);
+    Jifty->web->form->end;
 
 };
 
 template 'passwordreminder' => page {
+    my $next = get('next');
     attr { title => 'Send Password Reminder' };
     my $action = Jifty->web->new_action(
         moniker => 'password_reminder',
@@ -111,10 +115,10 @@ template 'passwordreminder' => page {
     h2 { _('Send a password reminder') };
     p  { _(  "You lost your password. A reminder will be send to the following mail:") };
 
-    form {
+    Jifty->web->form->start( call => $next );
         render_param( $action => $_ ) for ( $action->argument_names );
-        form_submit( label => _("Send") );
-    };
+        form_return( label => _("Send"), submit => $action);
+    Jifty->web->form->end();
 };
 
 1;
