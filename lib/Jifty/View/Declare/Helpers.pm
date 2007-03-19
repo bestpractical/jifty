@@ -25,22 +25,24 @@ This library provides mixins to help build your application's user interface.
 =head2 form CODE
 
 Takes a subroutine reference or block of perl as its only argument and renders it as a Jifty C<form>. 
-Bug: you can't currently specify arguments to form->start.
 
 
 =cut
 
-
-{
+ {
     no warnings qw/redefine/;
     sub form (&) {
         my $code = shift;
-        outs_raw( Jifty->web->form->start );
-        $code->();
-        outs_raw( Jifty->web->form->end );
-        return '';
+
+        smart_tag_wrapper {
+          outs_raw( Jifty->web->form->start(@_) );
+          $code->();
+          outs_raw( Jifty->web->form->end );
+          return '';
+        };
     }
-}
+ }
+
 
 =head2 hyperlink 
 
