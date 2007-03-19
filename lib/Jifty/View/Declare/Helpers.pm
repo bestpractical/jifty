@@ -145,12 +145,12 @@ sub render_action(@) {
 
 =head2 form_return
 
-Shortcut for L<Jifty::Web/return>.
+Shortcut for L<Jifty::Web::Form/return>.
 
 =cut
 
 sub form_return(@) {
-    outs_raw( Jifty->web->return(@_) );
+    outs_raw( Jifty->web->form->return(@_) );
     '';
 }
 

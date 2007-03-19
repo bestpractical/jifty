@@ -776,7 +776,8 @@ L<Jifty::Web::Form::Clickable> object generates.
 
 sub return {
     my $self = shift;
-    my %args = (@_);
+    my %args = (to => undef,
+                @_);
     my $continuation = Jifty->web->request->continuation;
     if (not $continuation and $args{to}) {
         $continuation = Jifty::Continuation->new(
