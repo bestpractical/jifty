@@ -15,19 +15,11 @@ Load up the OnlineDocs tab when we're in Admin mode
 
 
 use Jifty::Dispatcher -base;
-
     
 
 on '*' => run {
-    my $top = Jifty->web->navigation;
-    $top->child( Home => url => "/", sort_order => 1, label => _('Home') );
     if ( Jifty->config->framework('AdminMode') ) {
-        require File::Basename;
-        require File::Find;
-        require File::Temp;
-        require File::Spec;
-        require Pod::Simple::HTML;
-
+        my $top = Jifty->web->navigation;
         $top->child(
             OnlineDocs =>
               url      => "/__jifty/online_docs/",
