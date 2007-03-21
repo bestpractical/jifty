@@ -387,29 +387,14 @@ sub html_ok {
 
 =head2 submit_html_ok 
 
-With no arguments, this method calls L<WWW::Mechanize/submit>. 
-
-  $mech->submit_html_ok();
-
-With arguments, it calls L<WWW::Mechanize/click_button> and passes all arguments to it.
-
-  $mech->submit_html_ok( value => 'Save' );
-
-In both cases, this call is followed by testing the HTML using
+Calls C<submit>, followed by testing the HTML using
 L<Test::HTML::Lint>.
 
 =cut
 
 sub submit_html_ok {
     my $self = shift;
-
-    if (@_) {
-        $self->click_button(@_);
-    }
-    else {
-        $self->submit;
-    }
-
+    $self->submit(@_);
     {
         local $Test::Builder::Level = $Test::Builder::Level;
         $Test::Builder::Level++;
