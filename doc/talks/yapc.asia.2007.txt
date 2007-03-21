@@ -1,0 +1,50 @@
+* What are Domain Specific Languages
+
+
+* Object::Declare
+    - Sample usage
+    - Explanation of the sample usage's meaning
+    - Comparison with traditional code 
+    - Why we like it
+    - Tricks we use to make it go
+        - Katamari Damacy Video
+        - Localized symbols
+        - copula
+
+    - Explanation of how it works
+* Template::Declare
+    - Sample usage
+    - Explanation of the sample usage's meaning
+    - Comparison with traditional code 
+    - Why we like it
+        - perlish
+        - refactorable
+        - templates with class (inheritance)
+        - readable
+        - can balance parens
+        - if it doesn't have matched tags, it doesn't compile
+
+    - Tricks we use to make it go
+    
+        - Our own method dispatch and inheritance tree
+        - $self hacking
+        - throwing insane things into the symbol table
+        - generating "tags" that take closures
+        - buffers
+    - Explanation of how it works
+
+
+* Test::WWW::Declare
+    - Sample usage
+    - Explanation of the sample usage's meaning
+    - Comparison with traditional code 
+    - Why we like it
+    - Tricks we use to make it go
+        - Prototypes
+        - eval
+        - custom test functions
+    - Explanation of how it works
+    
+
+
+* Other interesting usages of DSLs in Perl
