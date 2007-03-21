@@ -149,8 +149,6 @@ sub new {
         @_
     );
 
-    # Load the configuration. stash it in ->config
-    Jifty->config( Jifty::Config->new() );
 
 
     # Now that we've loaded the configuration, we can remove the temporary 
@@ -223,6 +221,7 @@ configuration for the Jifty application.
 sub config {
     my $class = shift;
     $CONFIG = shift if (@_);
+    $CONFIG ||= Jifty::Config->new();
     return $CONFIG;
 }
 
