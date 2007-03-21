@@ -341,7 +341,7 @@ sub bus {
             }
         } 
         
-        if ($backend eq 'JiftyDBI' ) {
+        if ($backend eq 'JiftyDBI' and Jifty->handle ) {
                 @args    = (
                     db_config    => Jifty->handle->{db_config},
                     table_prefix => '_jifty_pubsub_',
