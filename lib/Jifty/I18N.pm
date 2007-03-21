@@ -7,6 +7,7 @@ use Locale::Maketext::Lexicon ();
 use Email::MIME::ContentType;
 use Encode::Guess qw(iso-8859-1);
 use File::ShareDir ':ALL';
+use Jifty::Util;
 
 =head1 NAME
 
@@ -48,18 +49,7 @@ sub new {
     my $self  = {};
     bless $self, $class;
 
-    my @import = (
-        'Gettext',Jifty->config->framework('L10N')->{'PoDir'}. '/*.po',
-        'Gettext',Jifty->config->framework('L10N')->{'DefaultPoDir'}. '/*.po'
-        );
-
-    foreach my $plugin (Jifty->plugins) {
-        local $@;
-        my $dir = eval { module_dir(ref($plugin)); };
-        next unless $dir;
-        push @import, 'Gettext';
-        push @import, $dir . '/po/*.po';
-    };
+    my @import = map {( Gettext => $_ )} _get_file_patterns();
 
     Locale::Maketext::Lexicon->import(
         {   '*' => \@import,
@@ -108,6 +98,32 @@ sub new {
     return $self;
 }
 
+=head2 _get_file_patterns
+
+Get list of patterns for all PO files in the project.
+(Paths are gotten from the configuration variables and plugins).
+
+=cut
+
+sub _get_file_patterns {
+    my @ret;
+
+    push(@ret, Jifty->config->framework('L10N')->{'PoDir'});
+    push(@ret, Jifty->config->framework('L10N')->{'DefaultPoDir'});
+
+    # Convert relative paths to absolute ones
+    @ret = map { Jifty::Util->absolute_path($_) } @ret;
+
+    foreach my $plugin (Jifty->plugins) {
+        local $@;
+        my $dir = eval { module_dir(ref($plugin)); };
+        next unless $dir;
+        push @ret, $dir . '/po';
+    }
+
+    return ( map { $_ . '/*.po' } @ret );
+}
+
 =head2 get_language_handle
 
 Get the lanauge language for this request.
@@ -130,10 +146,7 @@ my $last_modified = '';
 sub refresh {
     my $modified = join(
         ',',
-        sort map { $_ => -M $_ } map { glob("$_/*.po") } (
-            Jifty->config->framework('L10N')->{'PoDir'},
-            Jifty->config->framework('L10N')->{'DefaultPoDir'}
-        )
+        sort map { $_ => -M $_ } map { glob($_) } _get_file_patterns()
     );
     if ($modified ne $last_modified) {
         Jifty::I18N->new;
