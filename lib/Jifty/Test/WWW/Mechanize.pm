@@ -478,7 +478,7 @@ sub current_user {
 
     return undef unless ($id);
 
-    my $object = (Jifty->config->framework('ApplicationClass')."::CurrentUser")->new(id => $id);
+    my $object = Jifty->app_class("CurrentUser")->new(id => $id);
     return $object;
 }
 
