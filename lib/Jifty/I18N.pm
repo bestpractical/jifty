@@ -6,7 +6,7 @@ use base 'Locale::Maketext';
 use Locale::Maketext::Lexicon ();
 use Email::MIME::ContentType;
 use Encode::Guess qw(iso-8859-1);
-use File::ShareDir ':ALL';
+use File::ShareDir 'module_dir';
 use Jifty::Util;
 
 =head1 NAME
@@ -115,10 +115,9 @@ sub _get_file_patterns {
     @ret = map { Jifty::Util->absolute_path($_) } @ret;
 
     foreach my $plugin (Jifty->plugins) {
-        local $@;
-        my $dir = eval { module_dir(ref($plugin)); };
-        next unless $dir;
-        push @ret, $dir . '/po';
+        my $dir = $plugin->po_root;
+        next unless ($dir and -d $dir and -r $dir );
+        push @ret, $dir ;
     }
 
     return ( map { $_ . '/*.po' } @ret );
@@ -142,15 +141,16 @@ are modified on disk.
 
 =cut
 
-my $last_modified = '';
+my $LAST_MODIFED = '';
 sub refresh {
     my $modified = join(
         ',',
+        #   sort map { $_ => -M $_ } map { glob("$_/*.po") } ( Jifty->config->framework('L10N')->{'PoDir'}, Jifty->config->framework('L10N')->{'DefaultPoDir'}
         sort map { $_ => -M $_ } map { glob($_) } _get_file_patterns()
     );
-    if ($modified ne $last_modified) {
+    if ($modified ne $LAST_MODIFED) {
         Jifty::I18N->new;
-        $last_modified = $modified;
+        $LAST_MODIFED = $modified;
     }
 }
 
