@@ -263,10 +263,10 @@ be using "/_elements/nav" but a Dispatcher rule instead.
 sub page (&) {
     my $code = shift;
     sub {
+        my $self = shift;
         Jifty->handler->apache->content_type('text/html; charset=utf-8');
-        wrapper($code);
+        wrapper(sub { $code->($self) });
     };
-
 }
 
 
