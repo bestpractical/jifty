@@ -28,8 +28,29 @@ my @tests = (
     {
         url  => "/base/list_rg",
         text => '/base/list=TestApp::View::base'.
-                in_region('view-0', '/base/view=TestApp::View::base').
-                in_region('view-1', '/base/view=TestApp::View::base')
+                in_region('view-0', '/base/view', '/base/view=TestApp::View::base').
+                in_region('view-1', '/base/view', '/base/view=TestApp::View::base')
+    },
+
+
+    # instance
+    {
+        url  => "/instance/list_s",
+        text => '/base/list=TestApp::View::instance'.
+		'/instance/view=TestApp::View::instance'.
+		'/instance/view=TestApp::View::instance'
+    },
+    {
+        url  => "/instance/list_ht",
+        text => '/base/list=TestApp::View::instance'.
+		'/instance/view=TestApp::View::instance'.
+		'/instance/view=TestApp::View::instance'
+    },
+    {
+        url  => "/instance/list_rg",
+        text => '/base/list=TestApp::View::instance'.
+                in_region('view-0', '/instance/view', '/instance/view=TestApp::View::instance').
+                in_region('view-1', '/instance/view', '/instance/view=TestApp::View::instance')
     },
 
 
@@ -37,8 +58,8 @@ my @tests = (
 
 sub in_region {
     qq|<script type="text/javascript">
-new Region('$_[0]',{},'/base/view',null);
-</script><div id="region-$_[0]">$_[1]</div>|;
+new Region('$_[0]',{},'$_[1]',null);
+</script><div id="region-$_[0]">$_[2]</div>|;
 }
 
 plan tests => 2 + scalar(@tests) * 2;
