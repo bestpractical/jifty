@@ -100,9 +100,14 @@ page's.
 
 sub render_region(@) {
     unshift @_, 'name' if @_ % 2;
+    my $args = {@_};
+    my $path = $args->{path};
+    if ($Template::Declare::Tags::self && $path !~ m|^/|) {
+	$args->{path} = $Template::Declare::Tags::self->path_for($path);
+    }
     local $Template::Declare::Tags::self = undef;
     Template::Declare->new_buffer_frame;
-    Jifty::Web::PageRegion->new(@_)->render;
+    Jifty::Web::PageRegion->new(%$args)->render;
     my $content = Template::Declare->buffer->data();
     Template::Declare->end_buffer_frame;
     Jifty->web->out($content);
