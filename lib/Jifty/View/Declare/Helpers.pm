@@ -305,7 +305,7 @@ sub wrapper ($) {
             show 'salutation'; 
             show 'menu'; 
         };
-            div {
+            div { attr { id is 'content'};
                 div {
                     {
                         no warnings qw( uninitialized redefine once );
