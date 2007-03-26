@@ -323,7 +323,9 @@ sub wrapper ($) {
                                 }
                             }
                             &$render_header;
-                            h1 { attr { class => 'title' }; outs_raw($title) };
+                            my $oldt = get('title'); set(title => $title);
+                            show 'heading_in_wrapper';
+                            set(title => $oldt);
                         };
 
                         &_render_pre_content_hook();

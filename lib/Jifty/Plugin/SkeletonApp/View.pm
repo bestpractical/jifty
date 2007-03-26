@@ -64,7 +64,9 @@ private template 'header' => sub {
 
 };
 
-
+private template 'heading_in_wrapper' => sub {
+    h1 { attr { class => 'title' }; outs_raw(get('title')) };
+};
 
 private template 'keybindings' => sub {
     div { id is "keybindings" };
