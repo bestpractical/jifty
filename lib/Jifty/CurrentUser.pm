@@ -41,7 +41,7 @@ If you call it with the C<_bootstrap> argument, Jifty will set the user up as a 
 sub new {
     my $class = shift;
     my $self  = {};
-    bless $self, $class;
+    bless $self, (ref $class || $class);
     my %args = (@_);
     if ( delete $args{'_bootstrap'} ) { $self->is_bootstrap_user(1); }
     $self->_init(%args);
