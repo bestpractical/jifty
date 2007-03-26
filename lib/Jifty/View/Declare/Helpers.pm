@@ -312,7 +312,6 @@ sub wrapper ($) {
 
                         local *is::title = sub {
                             shift;
-
                             for (@_) {
                                 if ( ref($_) eq 'CODE' ) {
                                     Template::Declare->new_buffer_frame;
@@ -326,13 +325,13 @@ sub wrapper ($) {
                             &$render_header;
                             h1 { attr { class => 'title' }; outs_raw($title) };
                         };
-                }
 
                         &_render_pre_content_hook();
                         Jifty->web->render_messages;
                         &$content_code;
                         &$render_header unless ($done_header);
                         &_render_jifty_page_detritus();
+                }
 
                 };
             };
