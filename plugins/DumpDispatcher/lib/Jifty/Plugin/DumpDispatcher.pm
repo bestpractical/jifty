@@ -4,12 +4,22 @@ use warnings;
 package Jifty::Plugin::DumpDispatcher;
 use base qw/Jifty::Plugin/;
 
-# Your plugin goes here.  If takes any configuration or arguments, you
-# probably want to override L<Jifty::Plugin/init>.
+=head1 NAME
+
+Jifty::Plugin::DumpDispatcher
+
+=head1 DESCRIPTION
+
+When activated in C<config.yml> with:
+
+  Plugins:
+    - DumpDispatcher: {}
+
+it will dump all dispatcher rules in debug log.
 
 =head2 dump_rules
 
-Dump all defined rules in debug log. It should be called by Jifty, after
+Dump all defined rules in debug log. It is called by Jifty, after
 C<< Jifty->dispatcher->import_plugins >> on startup.
 
 =cut
