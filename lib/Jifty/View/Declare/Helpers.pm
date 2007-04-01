@@ -51,9 +51,21 @@ Shortcut for L<Jifty::Web/link>.
 =cut
 
 sub hyperlink(@) {
-    outs_raw( Jifty->web->link(@_) );
-    return '';
+    _function_wrapper( link => @_);
 }
+
+sub _function_wrapper {
+    my $function = shift;
+    Template::Declare->new_buffer_frame;
+    my $once= Jifty->web->$function(@_)->render || '';
+    my $content = Template::Declare->buffer->data() ||'';
+    Template::Declare->end_buffer_frame;
+    outs_raw( $content.$once); 
+    return '';
+
+
+}
+
 
 =head2 tangent
 
@@ -63,8 +75,7 @@ Shortcut for L<Jifty::Web/tangent>.
 
 
 sub tangent(@) {
-    outs_raw( Jifty->web->tangent(@_) );
-    return '';
+    _function_wrapper( tangent => @_);
 }
 
 =head2 redirect
