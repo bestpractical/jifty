@@ -1,5 +1,162 @@
 * What are Domain Specific Languages
 
+* How did I get here?
+
+    - Airplane, then Subway
+
+    - All started at OSCON 2005
+    - DHH demonstrated Rails migrations
+    - Looked very sexy
+    - Was very jealous
+    - "You can't do this in any other language"
+    - Never tell that to a Perl Hacker
+
+    - Started sketching Jifty::DBI columns
+
+    - Started with searchbuilder
+    - It was a big hash
+    - It was a big mess
+    - It was ugly
+
+    - Spent about a month playing with syntaxes.
+
+
+---
+
+$x = Jifty::DBI::SchemaBuilder->new;
+$x->define_blablalb
+$x->bla bla
+
+
+---
+
+our db_table 'addresses';
+our field name => { has_type 'varchar'; has_default 'frank' };
+
+# (by the way, i'm pretty sure we don't get to do the sub-at-t-end thing
+#  either... I tried lots of hacky ways to get it working and failed.)
+
+# yeah, I think we're going to end up having a pseudo-sub that's really a hash behind the scenes 
+
+---
+{
+    my $s = Jifty::DBI::SG->import_functions;
+    
+    db_table bla bla bla;
+    field bla;
+    field bar;
+} # $s.DESTROY gets called and unimports db_table/field/...
+---
+
+my $schema = Jifty::DBI::RecordSchema->new;
+$schema->for_class(__PACKAGE__); #just riffing
+
+$schema->field name => { has_type 'varchar'; has_default 'Frank'}
+
+---
+BEGIN { @ISA = 'Jifty::DBI::Record' }
+use Jifty::DBI::Record; # but this sucks!
+
+use base qw/Jifty::DBI::Record/;
+
+__PACKAGE__->schema_version (0.0001) # or some other method that 
+# does two thing evilly.
+---
+
+# we could tie @ISA
+
+# I'm kidding
+---
+
+use base 'Jifty::DBI::Record';
+Jifty::DBI::Record->___from_code();
+
+db_table 'addresses';
+
+field {
+    called 'name'; # ? 
+---        
+        # but yeah, falls into the "works" category"
+           # and 
+           has_type 'string'
+        # is definitely better than
+           type => 'string'
+        # in your book?
+---
+       # how would you do: 
+        
+            refers_to_many RT::Tickets by 'owner';
+---
+    
+       # hmm. i thought about this before.  we can do like simon and
+           refers_to_many "RT::Tickets by owner";
+        # but I don't really like that.  parsing is lame.
+---
+        # I'm *pretty* sure that we can't get the line you've written to compile.
+---
+        # oh no, autrijus gave me the one line I needed.
+        
+        # don't forget that RT::Tickets is a class/package.
+        
+        # shit! it actually works!!!
+---
+    
+        # the idea is that it just returns a key, val pair. so it doesn't matter.
+    
+        # well, right, but refers_to_many is being called in RT::Tickets
+        # instead of in the current package.  but that's ok.
+---        
+        23:46 <obra> I've got a bad perl5 idea for you. Robert claims it's impossible
+23:47 <obra> I'm trying to make the syntax "refers_to_many 'BTDT::Model::Tasks' by 'owner';" valid perl5 syntax.
+---
+03:57 <autrijus> well, that may be true but you don't want that.
+03:57 <autrijus> refers_to_many BTDT::Model::Tasks by 'owner'
+03:57 <autrijus> is more readable and easily implemented.
+03:58 <autrijus> sub by ($) { by => @_ }
+03:58 <autrijus> done!
+03:58 <autrijus> stop thinking classes as strings :)
+---
+  # so, now we're just still on the 
+        
+        field foo => sub {}; issue
+        # let's see what the hash syntax looks like with my weird keys. 
+    
+--- 
+ field email => sub {
+ 
+    has_type 'varchar';
+    has_default 'Frank';
+};
+
+
+field phone => {
+    has_type 'varchar';
+};
+
+field employee_id => {
+    refers_to_a Sample::Employee;
+}
+---
+package Sample::Employee;
+
+use base qw/Jifty::DBI::Record/;
+
+__PACKAGE__->db_table 'employees';
+
+__PACKAGE__->field name => has_type 'varchar';
+
+__PACKAGE__->field dexterity =>  { has_type 'integer'};
+
+1;
+---
+    
+    - Do we have notes from these?
+
+
+
+
+    - Ended up with Jifty::DBI columns
+
 
 * Object::Declare
     - Sample usage
