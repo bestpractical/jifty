@@ -125,7 +125,7 @@ method, and, if it exists, set the retrieved DateTime object's time
 zone appropriately. All dates are stored in UTC in the database, to
 ensure consistency.
 
-=head2 How do I emulate 'created_on' field like Rails ?
+=head2 Emulate 'created_on' field like Rails ?
 
 In Rails, if you have a field named 'created_on', it's automatically
 set to the creation time of the record. How can I emulate this
@@ -154,7 +154,7 @@ Please override model's C<before_create> method instead:
         $attr->{'created_on'} = DateTime->now;
     };
 
-=head2 How do I emulate 'updated_on' ?
+=head2 Emulate 'updated_on' ?
 
 If a lot of column could change, you can override C<_set> method:
 
@@ -254,7 +254,7 @@ In YourApp::Record, define a C<_guess_table_name> sub that doesn't
 pluralise or pluralises differently.
 
 
-=head2 How do I perform ajax canonicalization on a given field ?
+=head2 Perform ajax canonicalization on a given field ?
 
 Asking user to input something in a form is really common in a web
 app. For some certain form fields you want them to have a certain
@@ -371,3 +371,20 @@ Sometimes you need two tables that both depend upon each other. That is, you hav
   };
 
 Otherwise, everything should work as expected.
+
+=head2 Reuse Jifty models and actions outside of a Jifty app
+
+    use lib '/path/to/MyApp/lib';
+
+    use Jifty::Everything;
+    BEGIN { Jifty->new; }
+    
+    use MyApp::Model::Foo;
+    use MyApp::Action::FrobFoo;
+
+From there you can use the model and action to access your data and run your
+actions like you normally would.
+
+If you've actually installed your app into C<@INC>, you can skip the
+C<use lib> line.
+
