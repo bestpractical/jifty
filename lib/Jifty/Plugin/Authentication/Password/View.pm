@@ -96,7 +96,6 @@ template 'lost_password' => page {
 
     h2 { _('Send a link to reset your password') };
     outs( _(  "You lost your password. A link to reset it will be sent to the following email address:"));
-    outs($next);
     my $focused = 0;
     Jifty->web->form->start( call => $next );
         render_param( $action => $_, focus => $focused++ ? 0 : 1 ) for ( $action->argument_names );
