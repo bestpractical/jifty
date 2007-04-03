@@ -1,0 +1,95 @@
+#!/usr/bin/perl
+
+use warnings;
+use strict;
+use Term::ANSIScreen qw/:color :cursor :screen :keyboard/;
+use Term::ReadKey;
+use Text::Autoformat;
+
+my $file = shift @ARGV;
+my $handle;
+open( $handle, "<$file" ) || die $!;
+
+my $datadata = join( '', <$handle> );
+
+my @slides  = split( /^----?\s*$/mi, $datadata );
+my $counter = 0;
+my $slides_played = {};
+	my $title;
+while ( $counter <= $#slides ) {
+    my $mode = 'text';
+    my ( $cols, $rows, undef, undef ) = GetTerminalSize();
+    my $slide = $slides[$counter];
+    my $console = Term::ANSIScreen->new;
+    $console->Cls;
+    $console->Cursor(1,1);
+    if ( $slide =~ s/^!\!\s*?(.*?)$//gm ) {
+        $title = $1;
+    }
+	if ($title) {
+        my $start = int ( ( $cols / 2 ) - ( length($title) / 2 ) );
+	$console->Cursor($start,0);
+	chomp $title;
+	print "$title\n";
+	}
+
+    if ($slide =~ s/#\s*`(.*?)`//m) {
+	#my $cmd = $1;
+	#if(!$slides_played->{$counter} && ($slides_played->{$counter} = fork() )) {
+	#`$cmd>/dev/null 2>/dev/null`;
+	#}
+    }
+    if ( $slide =~ s/#\s*mode.*?perl.*?$//gms ) {
+        $mode = 'perl';
+    }
+    if ( $mode eq 'text' and $slide ) {
+        $slide = autoformat $slide, { left => 1, right => ($cols), all => 1 };
+    }
+    elsif ($mode eq 'perl') {
+	my $tidycols = $cols - 2; # squeeze for display
+	open my $out , ">/tmp/output.$$" || die $!;
+	print $out $slide || die $!;
+	close $out || die $!;
+	$slide = ` cat /tmp/output.$$ | source-highlight -s perl -f esc`;
+	#$slide = ` cat /tmp/output.$$ | perltidy -q -l $tidycols| source-highlight -s perl -f esc`;
+    }
+ 
+    if ( $slide =~ /(\S+)\s*\n\s*(\S+)/m ) {
+	
+    	print $slide;
+    } else {
+	chomp $slide;
+	$slide =~ s/(?:\n|\r)//g;
+		my $left = int ( ( $cols / 2 ) - ( length($slide) / 2 ) ); 
+	if ($left < 0 ){
+		$left = 0;
+	}
+        $console->Cursor( 
+		$left,	
+		int($rows/2)-1, 
+
+);
+	print $slide."\n";
+    }
+
+
+    $console->Cursor( 0, ( $rows - 1 ) );
+    print "$counter/" . $#slides;
+    ReadMode 4;
+    my $key = ReadKey(0);
+    ReadMode 0;
+    if ( $key eq 'q' ) {
+        exit;
+    }
+    if ( $key =~ /^(?: |\n|n)/ ) {
+        $counter++;
+    } elsif ( $key eq 'r' ) {
+        next;
+    } else {
+        $counter--;
+        if ( $counter < 0 ) {
+            $counter = 0;
+        }
+    }
+}
+

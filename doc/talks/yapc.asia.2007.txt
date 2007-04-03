@@ -1,44 +1,88 @@
-* What are Domain Specific Languages
-
-* How did I get here?
-
-    - Airplane, then Subway
-
-    - All started at OSCON 2005
-    - DHH demonstrated Rails migrations
-    - Looked very sexy
-    - Was very jealous
-    - "You can't do this in any other language"
-    - Never tell that to a Perl Hacker
-
-    - Started sketching Jifty::DBI columns
-
-    - Started with searchbuilder
-    - It was a big hash
-    - It was a big mess
-    - It was ugly
-
-    - Spent about a month playing with syntaxes.
-
-
+!!Jesse Vincent - Best Practical
+Domain Specific Languages in Perl
 ---
-
+!!DSLs in Perl 
+DSLs are 'little languages' for specific programming tasks
+---
+DSLs are easier to read
+---
+DSLs are  more expressive
+---
+DSLs let you optimize your code for coding
+---
+Mostly, I'm going to talk about "Englishy" DSLs
+---
+Not all DSLs are Englishy
+---
+- Excel Macros
+- XML config files
+- XSL-T
+- GraphViz
+---
+...but I've been on an Englishy DSL kick
+---
+DSLs can be implemented in your 'host' language
+---
+(These get called "internal" DSLs)
+---
+DSLs can be implemented outside your 'host' langauge
+---
+(External DSLs)
+---
+Everything I'm going to talk about is Pure Perl (Internal)
+---
+The Ruby community is big on DSLs
+---
+You can make DSLs in Perl, too.
+---
+(but it does take more work in Perl)
+---
+!!How did I get here?
+- Airplane
+- Narita Express
+- Subway
+---
+- All started at OSCON 2005
+- DHH demonstrated Rails migrations
+- Looked very sexy
+- Was very jealous
+- "You can't do this in any other language"
+---
+Never say that to a Perl Hacker
+---
+!!Jifty::DBI::Schema - The design process
+- Started sketching Jifty::DBI columns
+- Started with DBIx::SearchBuilder
+- Columns were defined as a hash
+- Hashes are ugly
+---
+We spent about a month playing with syntax.
+---
+Our first goal was "feels right"
+---
+Our second goal was "we can implement this"
+---
+I'm going to show you some of our design process
+---
+(It's a mix of code and IRC)
+---
+#mode perl
 $x = Jifty::DBI::SchemaBuilder->new;
 $x->define_blablalb
 $x->bla bla
-
-
 ---
-
+#mode perl
 our db_table 'addresses';
-our field name => { has_type 'varchar'; has_default 'frank' };
-
-# (by the way, i'm pretty sure we don't get to do the sub-at-t-end thing
-#  either... I tried lots of hacky ways to get it working and failed.)
-
-# yeah, I think we're going to end up having a pseudo-sub that's really a hash behind the scenes 
-
+our field name => { 
+	has_type 'varchar'; 
+	has_default 'frank' 
+};
 ---
+<chmrr> (by the way, i'm pretty sure we don't get to do the sub-at-the-end thing either... I tried lots of hacky ways to get it working and failed.)
+
+<glasser> yeah, I think we're going to end up having a pseudo-sub that's really a hash behind the scenes 
+---
+#mode perl
 {
     my $s = Jifty::DBI::SG->import_functions;
     
@@ -47,27 +91,33 @@ our field name => { has_type 'varchar'; has_default 'frank' };
     field bar;
 } # $s.DESTROY gets called and unimports db_table/field/...
 ---
-
+(This was astonishingly close to what we do today.)
+---
+#mode perl
 my $schema = Jifty::DBI::RecordSchema->new;
-$schema->for_class(__PACKAGE__); #just riffing
+$schema->for_class(__PACKAGE__);
 
-$schema->field name => { has_type 'varchar'; has_default 'Frank'}
+$schema->field name => { 
+	has_type 'varchar'; 
+	has_default 'Frank'
+}
 
 ---
+#mode perl
+
 BEGIN { @ISA = 'Jifty::DBI::Record' }
 use Jifty::DBI::Record; # but this sucks!
 
 use base qw/Jifty::DBI::Record/;
 
-__PACKAGE__->schema_version (0.0001) # or some other method that 
-# does two thing evilly.
+__PACKAGE__->schema_version (0.0001) 
+# (or some other method that does two thing evily).
 ---
+<obra> we could tie @ISA
 
-# we could tie @ISA
-
-# I'm kidding
+<obra> ...I'm kidding
 ---
-
+#mode perl
 use base 'Jifty::DBI::Record';
 Jifty::DBI::Record->___from_code();
 
@@ -75,59 +125,67 @@ db_table 'addresses';
 
 field {
     called 'name'; # ? 
----        
-        # but yeah, falls into the "works" category"
-           # and 
-           has_type 'string'
-        # is definitely better than
-           type => 'string'
-        # in your book?
----
-       # how would you do: 
-        
-            refers_to_many RT::Tickets by 'owner';
----
-    
-       # hmm. i thought about this before.  we can do like simon and
-           refers_to_many "RT::Tickets by owner";
-        # but I don't really like that.  parsing is lame.
----
-        # I'm *pretty* sure that we can't get the line you've written to compile.
----
-        # oh no, autrijus gave me the one line I needed.
-        
-        # don't forget that RT::Tickets is a class/package.
-        
-        # shit! it actually works!!!
----
-    
-        # the idea is that it just returns a key, val pair. so it doesn't matter.
-    
-        # well, right, but refers_to_many is being called in RT::Tickets
-        # instead of in the current package.  but that's ok.
----        
-        23:46 <obra> I've got a bad perl5 idea for you. Robert claims it's impossible
-23:47 <obra> I'm trying to make the syntax "refers_to_many 'BTDT::Model::Tasks' by 'owner';" valid perl5 syntax.
----
-03:57 <autrijus> well, that may be true but you don't want that.
-03:57 <autrijus> refers_to_many BTDT::Model::Tasks by 'owner'
-03:57 <autrijus> is more readable and easily implemented.
-03:58 <autrijus> sub by ($) { by => @_ }
-03:58 <autrijus> done!
-03:58 <autrijus> stop thinking classes as strings :)
----
-  # so, now we're just still on the 
-        
-        field foo => sub {}; issue
-        # let's see what the hash syntax looks like with my weird keys. 
-    
+}
 --- 
+<glasser> is 
+	
+  "has_type 'string'" 
+
+definitely better than 
+
+  "type => 'string'"  
+
+in your book?
+---
+<obra> how would you do: 
+
+ refers_to_many RT::Tickets by 'owner';
+
+<Robrt> hmm. i thought about this before.  we can do like simon and
+
+ refers_to_many "RT::Tickets by owner";
+
+<Robrt> but I don't really like that.  parsing is lame.
+
+<Robrt> I'm *pretty* sure that we can't get the line you've written to compile.
+---
+<obra> I've got a bad perl5 idea for you. Robert claims it's impossible
+
+<obra> I'm trying to make the syntax "refers_to_many 'BTDT::Model::Tasks' by 'owner';" valid perl5 syntax.
+---
+<audreyt> well, that may be true but you don't want that.
+
+<audreyt> refers_to_many BTDT::Model::Tasks by 'owner'
+
+<audreyt> is more readable and easily implemented.
+
+<audreyt> sub by ($) { by => @_ }
+
+<audreyt> done!
+
+<audreyt> stop thinking classes as strings :)
+---
+<obra> shit! it actually works!
+---
+
+What we had left:
+        
+the field foo => sub {}; issue
+--- 
+#mode perl
+
+ # We wanted something that acted like this
+ # But without the ugly 'sub' keyword
  field email => sub {
  
     has_type 'varchar';
     has_default 'Frank';
 };
 
+---
+#mode perl
+# We cculd do this, but it used a hash
+# not a block
 
 field phone => {
     has_type 'varchar';
@@ -137,6 +195,10 @@ field employee_id => {
     refers_to_a Sample::Employee;
 }
 ---
+#mode perl
+
+# This is ugly and verbose
+
 package Sample::Employee;
 
 use base qw/Jifty::DBI::Record/;
@@ -147,61 +209,418 @@ __PACKAGE__->field name => has_type 'varchar';
 
 __PACKAGE__->field dexterity =>  { has_type 'integer'};
 
-1;
 ---
-    
-    - Do we have notes from these?
+!!In the end...
 
+We ended up with Jifty::DBI columns
+---
+#mode perl
 
+use Jifty::DBI::Record schema {
+column
+  auth_token => type is 'text',
+  render as 'Unrendered';
 
+column score => type is 'int',
+  is immutable,
+  default is '0',
+  label is 'Score',
+  since is '0.0.7';
 
-    - Ended up with Jifty::DBI columns
+column time_zone =>
+  label is 'Time zone',
+  since '0.0.12',
+  default is 'America/New_York',
+  valid are formatted_timezones();
+};
+---
+Implemented it twice
+---
+!!
+Take 1
+---
+!!Take 1:
+Jifty::DBI::Schema
+---
+Our first DSL in Perl
+---
+We beat the parser into submission using:
+- Clever function prototypes
+- Injection of functions
+---
+#mode perl
+score => type is 'int',
+  is immutable,
+  default is '0',
+  render as 'text',
+  label is 'Score',
+  since is '0.0.7';
+---
+Prototype hacking
+---
+#mode perl
+sub is ($) { return shift };
+sub as ($) { return shift };
+sub since ($) { }
+sub type ($) { }
+sub render ($) {}
+sub label ($) {}
+sub default ($) {}
+---
+#mode perl
 
+score => type is 'int',
+  is immutable,
+  default is '0',
+  render as 'text',
+  label is 'Score',
+  since is '0.0.7';
 
-* Object::Declare
-    - Sample usage
+# parses to:
+
+ type(is('int')), is('immutable'), default(is('0')), render(as('text')), label(is('Score')), since(is('0.0.7'));
+---
+TODO: function injection
+---
+!!Take 2:
+Object::Declare
+---
+#`mpg123  ~/katamari.mp3`
+Katamari for Code
+---
+#mode perl
+use Jifty::DBI::Record schema { 
+
+ column score => type is 'int',
+  is immutable,
+  render as 'text',
+  default is '0',
+  label is 'Score',
+  since is '0.0.7';
+};
+
+# parses as:
+
+'is'->type('int', 
+  'immutable'->is, 
+   'is'->default('0', 
+      'as'->render('text', 
+	'is'->label('Score', 
+	  'is'->since('0.0.7')))));
+---
+What actually happens at compile time:
+
+- The 'schema' function in our baseclass takes a code block
+- ...and returns a closure
+- Jifty::DBI::Record::import takes over:
+- it takes the closure
+- it installs some methods...
+- ...is::AUTOLOAD and UNIVERSAL::is and as::AUTOLOAD
+- it runs the closure
+- it removes its magic symbols
+
+---
+Template::Declare
+---
+!!Template::Declare
+Sample usage
+---
+#mode perl
+template '/pages/mypage.html' => sub {
+    html {
+        head {};
+        body {
+            h1 {'Hey, this is text'};
+            }
+        }
+};
+---
+But! 
+Content! Templates! 
+Design! Code!
+---
+OMGWTF!? THAT'S WRONG!
+---
+The person who told you it's wrong was lying to you.
+---
+We're perl hackers
+---
+Why are we putting a minilanguage in our templates?
+---
+This is not 1997
+---
+It's 2007.
+---
+People use CSS for design now.
+---
+Programmers still have to make templates
+---
+Templates run like CODE
+---
+Because they ARE code
+---
+Let's use our PROGRAMMING tools to work with them.
+---
+#mode perl
+!!Refactoring
+
+template 'mypage.html' => page {
+ h1 { 'Two choices' };
+ div { attr { class => 'item' };
+       h2 { 'Item 1'};
+  };
+ div { attr { class => 'item' };
+       h2 { 'Item 2'};
+  };
+}; 
+---
+!!Refactoring
+#mode perl
+
+template 'mypage.html' => page {
+ h1 { 'Two choices' };
+ for ("Item 1", "Item 2") { item($_); }
+};
+
+sub item {
+    my $content = shift;
+    return 
+	div { attr { class => 'item' };
+       	      h2 {$content};
+    };
+
+}
+---
+We can refactor templates!
+---
+Have you ever tried to refactor HTML?
+---
+Our HTML is magically valid.
+(Syntax errors are...Syntax Errors)
+---
+Inheritance
+---
+Mixins
+---
+Tricks we use
+---
+!!Stashing our templates
+#mode perl
+template '/foo/index.html' => sub {... };
+---
+'sub template' takes a name and a coderef.
+---
+But where do we put these?
+---
+We need a global stash.
+---
+It needs to be per package 
+(Don't want to mix things together)
+---
+Basically, we need a symbol table.
+---
+It's Perl.
+---
+We have THE symbol table.
+---
+But you can have characters in URLS you can't have in sub names. Oh no!
+---
+Actually, Perl doesn't care.
+---
+#mode perl
+    no strict 'refs';
+    *{ $class . '::' . $subname } = $coderef;}
+---
+That just works.
+---
+Even if your subroutine is named './\\foo!!<>'
+---
+But how do you call it?
+---
+# perldoc UNIVERSAL
+
+CLASS->can( METHOD )
+"can" checks if the object or class has a method called "METHOD".
+If it does then a reference to the sub is returned.
+---
+!!Closures
+Now, about that syntax.
+---
+HTML tags take blocks
+of content.
+---
+Our tag methods take 
+blocks. (Of perl)
+---
+#mode perl
+sub h1 (&;$) {
+  my $code = shift;
+  
+  ...
+
+  if (defined wantarray) {
+    return $closure_around_$code;
+  } else {
+    # Actually do our work and run $code
+  }
+}
+---
+!!Not everything is roses
+(Here's where it all goes wrong)
+---
+HTML Attributes
+---
+# mode perl
+# What we've got:
+
+div { 
+        attr { id => 'my-div'};
+    ...
+};
+
+# and
+
+with ( id => 'my-div'), div {
+...
+};
+---
+# mode perl
+# What I think I'd like:
+
+div ( id => 'my-div' ), { 
+... 
+}
+---
+So, what's the big problem?
+---
+Just change the prototype.
+---
+In Perl, the (&) in a prototype
+may ONLY come first. 
+---
+ORZ
+---
+Not covering:
+
+- Our own method dispatch and inheritance tree
+- $self hacking
+- buffers
+
+---
+Test::WWW::Declare
+---
+!!Test::WWW::Declare
+Web test scripts are UGLY
+---
+- Simple, declarative web testing
+- Easy to read
+- Easy to write
+- Looks more like what users do
+---
+#mode perl
+my $server=Jifty::Test->make_server;
+isa_ok($server, 'Jifty::Server');
+my $URL = $server->started_ok;
+my $mech = Jifty::Test::WWW::Mechanize->new;
+$mech->get_html_ok($URL);
+like($mech->uri, qr{splash}, 'Redirected to splash page');
+---
+The insides are great
+---
+The syntax ain't
+---
+We built on Test::More and WWW::Mechanize
+---
+#mode perl
+session "check logins" => run {
+    flow "basic connectivity" => check {
+        get 'http://fsck.com';
+        content should match qr{fsck.com};
+        click href qr{book};
+        content should match qr{RT Essentials}i;
+    };
+};
+---
+In early development
+---
+- Sample usage
     - Explanation of the sample usage's meaning
     - Comparison with traditional code 
     - Why we like it
-    - Tricks we use to make it go
-        - Katamari Damacy Video
-        - Localized symbols
-        - copula
+---
+- Tricks we use to make it go
+---
 
-    - Explanation of how it works
-* Template::Declare
-    - Sample usage
-    - Explanation of the sample usage's meaning
-    - Comparison with traditional code 
-    - Why we like it
-        - perlish
-        - refactorable
-        - templates with class (inheritance)
-        - readable
-        - can balance parens
-        - if it doesn't have matched tags, it doesn't compile
+session "check logins" => run {
+    flow "basic connectivity" => check {
+        get 'http://fsck.com';
+        content should match qr{fsck.com};
+        click href qr{book};
+        content should match qr{RT Essentials}i;
+   
 
-    - Tricks we use to make it go
-    
-        - Our own method dispatch and inheritance tree
-        - $self hacking
-        - throwing insane things into the symbol table
-        - generating "tags" that take closures
-        - buffers
-    - Explanation of how it works
+    };
+};
 
+---
+Why do we make this valid syntax?
+ content should match qr{RT Essentials}i;
+---
+Readability
+---
+Understandability
+---
+It feels English-y.
+---
 
-* Test::WWW::Declare
-    - Sample usage
-    - Explanation of the sample usage's meaning
-    - Comparison with traditional code 
-    - Why we like it
-    - Tricks we use to make it go
+content should match qr{RT Essentials}i;
+
+   vs
+
+ok($req->content =~ /RT Essentials/i);
+
+---
+
+How do we make this valid perl?
+ content should match qr{RT Essentials}i;
+---
+
         - Prototypes
-        - eval
-        - custom test functions
-    - Explanation of how it works
-    
+---
+sub match ($) {
+    return shift;
+}   
+---
+sub should ($) {
+    my $item = shift;
+    return $item;
+}
+---
+sub content ($) { 
+    my $regex = shift;
+    unless ( mech()->content =~ /$regex/ ) {
+        die "Content did not match $regex";
+    }
+}
+---
+ - eval, the  (&) prototype and  custom test functions
+---
+     check {
+        # do stuff that won't fail
+    };
+---
 
 
 * Other interesting usages of DSLs in Perl
+
+
+---
+Problems with DSLs
+---
+Debugging can get harder
+---
+Editors can get confused
+---
+Hackers can get confused
+---
+
