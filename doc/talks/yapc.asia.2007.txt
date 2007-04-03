@@ -50,7 +50,11 @@ You can make DSLs in Perl, too.
 ---
 Never say that to a Perl Hacker
 ---
+Jifty::DBI::Schema
+---
 !!Jifty::DBI::Schema - The design process
+Delarative Syntax for an Object Relational Mapper
+---
 - Started sketching Jifty::DBI columns
 - Started with DBIx::SearchBuilder
 - Columns were defined as a hash
@@ -347,6 +351,8 @@ What actually happens at compile time:
 Template::Declare
 ---
 !!Template::Declare
+A pure Perl Templating Language
+---
 What it looks like
 ---
 #mode perl
@@ -532,6 +538,9 @@ Can anybody help me?
 Test::WWW::Declare
 ---
 !!Test::WWW::Declare
+---
+A language for testing web applications
+---
 In early development
 ---
 It might change
