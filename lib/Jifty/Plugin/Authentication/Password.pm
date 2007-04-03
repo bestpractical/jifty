@@ -21,6 +21,14 @@ Right now, it's useless and should be ignored.
 
 =cut
 
+
+=head2 prereq_plugins
+
+This plugin depends on the C<User> and C<LetMe> plugins.
+
+=cut
+
+
 sub prereq_plugins {
     return ('User', 'LetMe');
 }
