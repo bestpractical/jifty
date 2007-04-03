@@ -239,6 +239,7 @@ sub guess {
         framework => {
             AdminMode        => 1,
             DevelMode        => 1,
+	    SkipAccessControl => 0,
             ApplicationClass => $app_class,
             TemplateClass    => $app_class."::View",
             ApplicationName  => $app_name,
