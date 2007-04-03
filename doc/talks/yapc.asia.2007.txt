@@ -1,7 +1,7 @@
 !!Jesse Vincent - Best Practical
 Domain Specific Languages in Perl
 ---
-!!DSLs in Perl 
+!!A bit about DSLs
 DSLs are 'little languages' for specific programming tasks
 ---
 DSLs are easier to read
@@ -249,6 +249,7 @@ We beat the parser into submission using:
 - Injection of functions
 ---
 #mode perl
+# The syntax we wanted
 score => type is 'int',
   is immutable,
   default is '0',
@@ -256,7 +257,18 @@ score => type is 'int',
   label is 'Score',
   since is '0.0.7';
 ---
-Prototype hacking
+#mode perl
+How it parsed
+'is'->type('int', 
+  'immutable'->is, 
+   'is'->default('0', 
+      'as'->render('text', 
+        'is'->label('Score', 
+          'is'->since('0.0.7')))));
+---
+How can we fix that?
+---
+Prototype hacking!
 ---
 #mode perl
 sub is ($) { return shift };
@@ -276,11 +288,18 @@ score => type is 'int',
   label is 'Score',
   since is '0.0.7';
 
-# parses to:
+# Now this parses like this:
 
- type(is('int')), is('immutable'), default(is('0')), render(as('text')), label(is('Score')), since(is('0.0.7'));
+ type(is('int')), 
+ is('immutable'), 
+ default(is('0')), 
+ render(as('text')), 
+ label(is('Score')), 
+ since(is('0.0.7'));
 ---
-TODO: function injection
+Downsides
+- Limited flexibility
+- Needs new functions for every attribute
 ---
 !!Take 2:
 Object::Declare
@@ -317,6 +336,7 @@ What actually happens at compile time:
 - it installs some methods...
 - ...is::AUTOLOAD and UNIVERSAL::is and as::AUTOLOAD
 - it runs the closure
+- it hands the result off to a method of your choice
 - it removes its magic symbols
 
 ---
@@ -384,9 +404,9 @@ template 'mypage.html' => page {
 
 sub item {
     my $content = shift;
-    return 
-	div { attr { class => 'item' };
-       	      h2 {$content};
+    div {
+        attr { class => 'item' };
+        h2 {$content};
     };
 
 }
@@ -397,12 +417,6 @@ Have you ever tried to refactor HTML?
 ---
 Our HTML is magically valid.
 (Syntax errors are...Syntax Errors)
----
-Inheritance
----
-Mixins
----
-Tricks we use
 ---
 !!Stashing our templates
 #mode perl
@@ -446,11 +460,11 @@ If it does then a reference to the sub is returned.
 !!Closures
 Now, about that syntax.
 ---
-HTML tags take blocks
-of content.
+HTML tags take blocks of content.
 ---
-Our tag methods take 
-blocks. (Of perl)
+Our tag methods take blocks of perl.
+---
+They return closures when you want them to
 ---
 #mode perl
 sub h1 (&;$) {
@@ -464,6 +478,14 @@ sub h1 (&;$) {
     # Actually do our work and run $code
   }
 }
+---
+We install methods for all the HTML tags
+---
+#mode perl
+use CGI ();
+install_tag($_) for ( @CGI::EXPORT_TAGS{
+		qw/:html2 :html3 :html4 :netscape :form/}
+);
 ---
 !!Not everything is roses
 (Here's where it all goes wrong)
@@ -500,17 +522,19 @@ may ONLY come first.
 ---
 ORZ
 ---
-Not covering:
-
-- Our own method dispatch and inheritance tree
-- $self hacking
-- buffers
-
+Can anybody help me?
 ---
+!!
 Test::WWW::Declare
 ---
 !!Test::WWW::Declare
+In early development
+---
+It might change
+---
 Web test scripts are UGLY
+---
+Test::WWW::Declare is PRETTY
 ---
 - Simple, declarative web testing
 - Easy to read
@@ -518,6 +542,8 @@ Web test scripts are UGLY
 - Looks more like what users do
 ---
 #mode perl
+# Test::WWW::Mechanize
+
 my $server=Jifty::Test->make_server;
 isa_ok($server, 'Jifty::Server');
 my $URL = $server->started_ok;
@@ -532,6 +558,28 @@ The syntax ain't
 We built on Test::More and WWW::Mechanize
 ---
 #mode perl
+
+# Test::WWW::Declare
+
+session "search" => run {
+    flow "google searches work" => check {
+        get 'http://google.com/ncr'; 
+        fill form 'f' => { q   => 'Squeamish ossifrage' };
+        click button 'Google Search';
+    }
+};
+---
+Regular tests keep running on failure
+---
+Makes no sense when a failure means you lose context
+---
+Every 'check' block aborts on failure
+---
+Abort means 'failing test'
+---
+Every named 'session' gets its own cookie jar and WWW::Mechanize
+---
+#mode perl
 session "check logins" => run {
     flow "basic connectivity" => check {
         get 'http://fsck.com';
@@ -541,61 +589,37 @@ session "check logins" => run {
     };
 };
 ---
-In early development
+What's the weird syntax?
 ---
-- Sample usage
-    - Explanation of the sample usage's meaning
-    - Comparison with traditional code 
-    - Why we like it
+# mode perl
+content should match qr{RT Essentials}i;
 ---
-- Tricks we use to make it go
----
-
-session "check logins" => run {
-    flow "basic connectivity" => check {
-        get 'http://fsck.com';
-        content should match qr{fsck.com};
-        click href qr{book};
-        content should match qr{RT Essentials}i;
-   
-
-    };
-};
-
----
-Why do we make this valid syntax?
- content should match qr{RT Essentials}i;
----
-Readability
----
-Understandability
----
-It feels English-y.
----
-
+#mode perl
 content should match qr{RT Essentials}i;
 
-   vs
+#   vs
 
 ok($req->content =~ /RT Essentials/i);
-
 ---
+# mode perl
+# How do we make this valid perl?
 
-How do we make this valid perl?
- content should match qr{RT Essentials}i;
+content should match qr{RT Essentials}i;
 ---
-
-        - Prototypes
+Prototypes
 ---
+#mode perl
 sub match ($) {
     return shift;
 }   
 ---
+#mode perl
 sub should ($) {
     my $item = shift;
     return $item;
 }
 ---
+#mode perl
 sub content ($) { 
     my $regex = shift;
     unless ( mech()->content =~ /$regex/ ) {
@@ -603,24 +627,18 @@ sub content ($) {
     }
 }
 ---
- - eval, the  (&) prototype and  custom test functions
+!!Conclusion
+Creating DSLs is lots of fun
 ---
-     check {
-        # do stuff that won't fail
-    };
+Creating DSLs can be a lot of work
 ---
-
-
-* Other interesting usages of DSLs in Perl
-
-
+Creating DSLs helps you learn Perl internals
 ---
-Problems with DSLs
+Creating DSLs helps find bugs in Perl
 ---
-Debugging can get harder
+DSLs can make coding more fun
 ---
-Editors can get confused
+Challenge: CPAN some Japanese DSLs
 ---
-Hackers can get confused
+Thanks
 ---
-

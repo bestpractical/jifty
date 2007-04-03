@@ -5,21 +5,16 @@ use strict;
 use Term::ANSIScreen qw/:color :cursor :screen :keyboard/;
 use Term::ReadKey;
 use Text::Autoformat;
+our @SLIDES;
 
-my $file = shift @ARGV;
-my $handle;
-open( $handle, "<$file" ) || die $!;
-
-my $datadata = join( '', <$handle> );
-
-my @slides  = split( /^----?\s*$/mi, $datadata );
+load_slides();
 my $counter = 0;
 my $slides_played = {};
 	my $title;
-while ( $counter <= $#slides ) {
+while ( $counter <= $#SLIDES ) {
     my $mode = 'text';
     my ( $cols, $rows, undef, undef ) = GetTerminalSize();
-    my $slide = $slides[$counter];
+    my $slide = $SLIDES[$counter];
     my $console = Term::ANSIScreen->new;
     $console->Cls;
     $console->Cursor(1,1);
@@ -34,10 +29,10 @@ while ( $counter <= $#slides ) {
 	}
 
     if ($slide =~ s/#\s*`(.*?)`//m) {
-	#my $cmd = $1;
-	#if(!$slides_played->{$counter} && ($slides_played->{$counter} = fork() )) {
-	#`$cmd>/dev/null 2>/dev/null`;
-	#}
+	my $cmd = $1;
+	if(!$slides_played->{$counter}) {
+	`$cmd>/dev/null 2>/dev/null &`;
+	$slides_played->{$counter}++}
     }
     if ( $slide =~ s/#\s*mode.*?perl.*?$//gms ) {
         $mode = 'perl';
@@ -55,7 +50,8 @@ while ( $counter <= $#slides ) {
     }
  
     if ( $slide =~ /(\S+)\s*\n\s*(\S+)/m ) {
-	
+	my $lines = scalar split(/\n/,$slide);
+	$console->Cursor(0, int(($rows/2)-($lines/2))-1);
     	print $slide;
     } else {
 	chomp $slide;
@@ -64,17 +60,13 @@ while ( $counter <= $#slides ) {
 	if ($left < 0 ){
 		$left = 0;
 	}
-        $console->Cursor( 
-		$left,	
-		int($rows/2)-1, 
-
-);
+        $console->Cursor( $left,	int($rows/2)-1, );
 	print $slide."\n";
     }
 
 
     $console->Cursor( 0, ( $rows - 1 ) );
-    print "$counter/" . $#slides;
+    print "$counter/" . $#SLIDES;
     ReadMode 4;
     my $key = ReadKey(0);
     ReadMode 0;
@@ -84,7 +76,9 @@ while ( $counter <= $#slides ) {
     if ( $key =~ /^(?: |\n|n)/ ) {
         $counter++;
     } elsif ( $key eq 'r' ) {
+	load_slides();
         next;
+
     } else {
         $counter--;
         if ( $counter < 0 ) {
@@ -93,3 +87,12 @@ while ( $counter <= $#slides ) {
     }
 }
 
+sub load_slides {
+my $file = $ARGV[0];
+my $handle;
+open( $handle, "<$file" ) || die $!;
+
+my $datadata = join( '', <$handle> );
+
+ @SLIDES  = split( /^----?\s*$/mi, $datadata );
+}
