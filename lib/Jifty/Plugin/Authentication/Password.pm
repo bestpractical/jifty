@@ -21,4 +21,8 @@ Right now, it's useless and should be ignored.
 
 =cut
 
+sub prereq_plugins {
+    return ('User', 'LetMe');
+}
+
 1;

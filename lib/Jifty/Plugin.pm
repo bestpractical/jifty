@@ -174,4 +174,14 @@ sub dispatcher {
     return $class."::Dispatcher";
 }
 
+=head2 prereq_plugins
+
+Returns an array of plugin module names that this plugin depends on.
+
+=cut
+
+sub prereq_plugins {
+    return ();
+}
+
 1;

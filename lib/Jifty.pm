@@ -164,12 +164,18 @@ sub new {
 
     # Set up plugins
     my @plugins;
-    for my $plugin (@{Jifty->config->framework('Plugins')}) {
+    my @plugins_to_load = @{Jifty->config->framework('Plugins')};
+    for (my $i = 0; my $plugin = $plugins_to_load[$i]; $i++) {
         my $class = "Jifty::Plugin::".(keys %{$plugin})[0];
         my %options = %{ $plugin->{(keys %{$plugin})[0]} };
         Jifty::Util->require($class);
         Jifty::ClassLoader->new(base => $class)->require;
-        push @plugins, $class->new(%options);
+        my $plugin_obj = $class->new(%options);
+        push @plugins, $plugin_obj;
+        foreach my $name ($plugin_obj->prereq_plugins) {
+            next if grep { $_ eq $name } @plugins_to_load;
+            push @plugins_to_load, {$name => {}};
+        }
     }
 
     Jifty->plugins(@plugins);
