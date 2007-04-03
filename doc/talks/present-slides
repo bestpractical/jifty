@@ -38,7 +38,7 @@ while ( $counter <= $#SLIDES ) {
         $mode = 'perl';
     }
     if ( $mode eq 'text' and $slide ) {
-        $slide = autoformat $slide, { left => 1, right => ($cols), all => 1 };
+        $slide = autoformat $slide, { left => 1, right => ($cols-3), all => 1 };
     }
     elsif ($mode eq 'perl') {
 	my $tidycols = $cols - 2; # squeeze for display

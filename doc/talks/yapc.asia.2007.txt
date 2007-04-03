@@ -117,6 +117,10 @@ __PACKAGE__->schema_version (0.0001)
 
 <obra> ...I'm kidding
 ---
+<obra> we could tie the symbol table
+
+<obra> ...It just doesn't work
+---
 #mode perl
 use base 'Jifty::DBI::Record';
 Jifty::DBI::Record->___from_code();
@@ -281,14 +285,7 @@ sub default ($) {}
 ---
 #mode perl
 
-score => type is 'int',
-  is immutable,
-  default is '0',
-  render as 'text',
-  label is 'Score',
-  since is '0.0.7';
-
-# Now this parses like this:
+# Now it parses like this:
 
  type(is('int')), 
  is('immutable'), 
@@ -317,7 +314,8 @@ use Jifty::DBI::Record schema {
   label is 'Score',
   since is '0.0.7';
 };
-
+---
+# mode perl
 # parses as:
 
 'is'->type('int', 
@@ -326,6 +324,12 @@ use Jifty::DBI::Record schema {
       'as'->render('text', 
 	'is'->label('Score', 
 	  'is'->since('0.0.7')))));
+---
+Why fight the parser?
+---
+Perl gives us all the rope we need
+---
+UNIVERSAL:: and ::AUTOLOAD
 ---
 What actually happens at compile time:
 
@@ -343,7 +347,7 @@ What actually happens at compile time:
 Template::Declare
 ---
 !!Template::Declare
-Sample usage
+What it looks like
 ---
 #mode perl
 template '/pages/mypage.html' => sub {
@@ -369,7 +373,7 @@ Why are we putting a minilanguage in our templates?
 ---
 This is not 1997
 ---
-It's 2007.
+It's 2007
 ---
 People use CSS for design now.
 ---
