@@ -226,7 +226,7 @@ sub render_as_hierarchical_menu_item {
     my @kids = $self->children;
     my $id   = Jifty->web->serial;
     Jifty->web->out( qq{<li class="toplevel }
-            . ( $self->active ? 'open active' : 'closed' ) . qq{">}
+            . ( $self->active ? 'active' : 'closed' ) . qq{">}
             . qq{<span class="title">} );
     Jifty->web->out( $self->as_link );
     Jifty->web->out(qq{</span>});
