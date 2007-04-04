@@ -18,7 +18,7 @@ while ( $counter <= $#SLIDES ) {
     my $console = Term::ANSIScreen->new;
     $console->Cls;
     $console->Cursor(1,1);
-    if ( $slide =~ s/^!\!\s*?(.*?)$//gm ) {
+    if ( $slide =~ s/^#\s*title\s*?(.*?)$//gm ) {
         $title = $1;
     }
 	if ($title) {
@@ -38,7 +38,7 @@ while ( $counter <= $#SLIDES ) {
         $mode = 'perl';
     }
     if ( $mode eq 'text' and $slide ) {
-        $slide = autoformat $slide, { left => 1, right => ($cols-3), all => 1 };
+        $slide = autoformat $slide, { left => 1, right => ($cols-1), all => 1 };
     }
     elsif ($mode eq 'perl') {
 	my $tidycols = $cols - 2; # squeeze for display

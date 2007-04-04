@@ -1,7 +1,7 @@
-!!Jesse Vincent - Best Practical
+#title Jesse Vincent - Best Practical
 Domain Specific Languages in Perl
 ---
-!!A bit about DSLs
+#title A bit about DSLs
 DSLs are 'little languages' for specific programming tasks
 ---
 DSLs are easier to read
@@ -14,10 +14,13 @@ Mostly, I'm going to talk about "Englishy" DSLs
 ---
 Not all DSLs are Englishy
 ---
-- Excel Macros
-- XML config files
-- XSL-T
-- GraphViz
+Excel Macros
+---
+XML config files
+---
+XSL-T
+---
+GraphViz
 ---
 ...but I've been on an Englishy DSL kick
 ---
@@ -33,32 +36,67 @@ Everything I'm going to talk about is Pure Perl (Internal)
 ---
 The Ruby community is big on DSLs
 ---
-You can make DSLs in Perl, too.
+You can make DSLs in Perl, too
 ---
 (but it does take more work in Perl)
 ---
-!!How did I get here?
-- Airplane
-- Narita Express
-- Subway
+#title How did I get here?
+Airplane
 ---
-- All started at OSCON 2005
-- DHH demonstrated Rails migrations
-- Looked very sexy
-- Was very jealous
-- "You can't do this in any other language"
+Narita Express
+---
+Subway
+---
+Ok, How'd I really get here?
+---
+All started at OSCON 2005
+---
+DHH demonstrated Rails migrations
+---
+Looked very sexy
+---
+Was very jealous
+---
+"You can't do this in any other language"
 ---
 Never say that to a Perl Hacker
 ---
+#title agenda
+We've made some DSLs
+---
+One for declaring database schema
+---
+(I thought Rails did more. But I never read the manual)
+---
+(It does a lot more than Rails migrations)
+---
+One for web templating
+---
+(Yes, another web templating system)
+---
+(Hopefully, this one will provide some closure)
+---
+(You'll see)
+---
+One for making web testing easier
+---
+(It's VERY beta)
+---
+(Perfect for Web 2.0)
+---
+#title
 Jifty::DBI::Schema
 ---
-!!Jifty::DBI::Schema - The design process
+#title Jifty::DBI::Schema - The design process
 Delarative Syntax for an Object Relational Mapper
 ---
-- Started sketching Jifty::DBI columns
-- Started with DBIx::SearchBuilder
-- Columns were defined as a hash
-- Hashes are ugly
+Started sketching Jifty::DBI columns
+---
+Started with DBIx::SearchBuilder
+---
+Columns were defined as a hash
+---
+Hashes are ugly
 ---
 We spent about a month playing with syntax.
 ---
@@ -218,7 +256,7 @@ __PACKAGE__->field name => has_type 'varchar';
 __PACKAGE__->field dexterity =>  { has_type 'integer'};
 
 ---
-!!In the end...
+#title In the end...
 
 We ended up with Jifty::DBI columns
 ---
@@ -244,10 +282,10 @@ column time_zone =>
 ---
 Implemented it twice
 ---
-!!
+#title 
 Take 1
 ---
-!!Take 1:
+#title Take 1:
 Jifty::DBI::Schema
 ---
 Our first DSL in Perl
@@ -258,6 +296,7 @@ We beat the parser into submission using:
 ---
 #mode perl
 # The syntax we wanted
+
 score => type is 'int',
   is immutable,
   default is '0',
@@ -266,7 +305,8 @@ score => type is 'int',
   since is '0.0.7';
 ---
 #mode perl
-How it parsed
+# perl -MO=Deparse parses that as:
+
 'is'->type('int', 
   'immutable'->is, 
    'is'->default('0', 
@@ -289,7 +329,7 @@ sub default ($) {}
 ---
 #mode perl
 
-# Now it parses like this:
+# Now, perl -MO=Deparse parses that as:
 
  type(is('int')), 
  is('immutable'), 
@@ -302,7 +342,7 @@ Downsides
 - Limited flexibility
 - Needs new functions for every attribute
 ---
-!!Take 2:
+#title Take 2:
 Object::Declare
 ---
 #`mpg123  ~/katamari.mp3`
@@ -320,7 +360,7 @@ use Jifty::DBI::Record schema {
 };
 ---
 # mode perl
-# parses as:
+# perl -MO=Deparse parses that as:
 
 'is'->type('int', 
   'immutable'->is, 
@@ -337,20 +377,33 @@ UNIVERSAL:: and ::AUTOLOAD
 ---
 What actually happens at compile time:
 
-- The 'schema' function in our baseclass takes a code block
-- ...and returns a closure
-- Jifty::DBI::Record::import takes over:
-- it takes the closure
-- it installs some methods...
-- ...is::AUTOLOAD and UNIVERSAL::is and as::AUTOLOAD
-- it runs the closure
-- it hands the result off to a method of your choice
-- it removes its magic symbols
-
 ---
+The 'schema' function in our baseclass takes a code block
+---
+...and returns a closure
+---
+Jifty::DBI::Record::import takes over:
+---
+it takes the closure
+---
+it installs some methods...
+---
+...is::AUTOLOAD and UNIVERSAL::is and as::AUTOLOAD
+---
+it runs the closure
+---
+it hands the result off to a method of your choice
+---
+it removes its magic symbols
+---
+...and then your program gets control back
+---
+That's Jifty::DBI::Schema.
+---
+#title
 Template::Declare
 ---
-!!Template::Declare
+#title Template::Declare
 A pure Perl Templating Language
 ---
 What it looks like
@@ -366,7 +419,9 @@ template '/pages/mypage.html' => sub {
 };
 ---
 But! 
+---
 Content! Templates! 
+---
 Design! Code!
 ---
 OMGWTF!? THAT'S WRONG!
@@ -375,7 +430,7 @@ The person who told you it's wrong was lying to you.
 ---
 We're perl hackers
 ---
-Why are we putting a minilanguage in our templates?
+Why are we writing our templates in another language?
 ---
 This is not 1997
 ---
@@ -389,10 +444,10 @@ Templates run like CODE
 ---
 Because they ARE code
 ---
-Let's use our PROGRAMMING tools to work with them.
+Let's use our CODING tools to work with them.
 ---
 #mode perl
-!!Refactoring
+#title Refactoring
 
 template 'mypage.html' => page {
  h1 { 'Two choices' };
@@ -404,7 +459,7 @@ template 'mypage.html' => page {
   };
 }; 
 ---
-!!Refactoring
+#title Refactoring
 #mode perl
 
 template 'mypage.html' => page {
@@ -428,11 +483,11 @@ Have you ever tried to refactor HTML?
 Our HTML is magically valid.
 (Syntax errors are...Syntax Errors)
 ---
-!!Stashing our templates
+#title Stashing our templates
 #mode perl
 template '/foo/index.html' => sub {... };
 ---
-'sub template' takes a name and a coderef.
+'sub template' takes a name and a coderef
 ---
 But where do we put these?
 ---
@@ -441,15 +496,15 @@ We need a global stash.
 It needs to be per package 
 (Don't want to mix things together)
 ---
-Basically, we need a symbol table.
+Basically, we need a symbol table
 ---
-It's Perl.
+It's Perl
 ---
-We have THE symbol table.
+We have THE symbol table
 ---
-But you can have characters in URLS you can't have in sub names. Oh no!
+But URLs can have characters that are illegal in sub names. :/
 ---
-Actually, Perl doesn't care.
+Actually, Perl doesn't care
 ---
 #mode perl
     no strict 'refs';
@@ -457,7 +512,7 @@ Actually, Perl doesn't care.
 ---
 That just works.
 ---
-Even if your subroutine is named './\\foo!!<>'
+Even if your sub is named './\\foo#title <>'
 ---
 But how do you call it?
 ---
@@ -467,7 +522,7 @@ CLASS->can( METHOD )
 "can" checks if the object or class has a method called "METHOD".
 If it does then a reference to the sub is returned.
 ---
-!!Closures
+#title Closures
 Now, about that syntax.
 ---
 HTML tags take blocks of content.
@@ -489,15 +544,19 @@ sub h1 (&;$) {
   }
 }
 ---
-We install methods for all the HTML tags
+We install methods for ever HTML tag
+---
+(Except 'tr'. Anybody know why?)
 ---
 #mode perl
 use CGI ();
-install_tag($_) for ( @CGI::EXPORT_TAGS{
-		qw/:html2 :html3 :html4 :netscape :form/}
+install_tag($_) 
+  for ( @CGI::EXPORT_TAGS{
+	qw/:html2 :html3 :html4 
+	   :netscape :form/}
 );
 ---
-!!Not everything is roses
+#title Not everything is roses
 (Here's where it all goes wrong)
 ---
 HTML Attributes
@@ -534,10 +593,12 @@ ORZ
 ---
 Can anybody help me?
 ---
-!!
+That's Template::Declare
+---
+#title 
 Test::WWW::Declare
 ---
-!!Test::WWW::Declare
+#title Test::WWW::Declare
 ---
 A language for testing web applications
 ---
@@ -549,10 +610,13 @@ Web test scripts are UGLY
 ---
 Test::WWW::Declare is PRETTY
 ---
-- Simple, declarative web testing
-- Easy to read
-- Easy to write
-- Looks more like what users do
+Simple, declarative web testing
+---
+Easy to read
+---
+Easy to write
+---
+Looks more like what users do
 ---
 #mode perl
 # Test::WWW::Mechanize
@@ -562,7 +626,8 @@ isa_ok($server, 'Jifty::Server');
 my $URL = $server->started_ok;
 my $mech = Jifty::Test::WWW::Mechanize->new;
 $mech->get_html_ok($URL);
-like($mech->uri, qr{splash}, 'Redirected to splash page');
+like($mech->uri, qr{splash}, 
+     'Redirected to splash page');
 ---
 The insides are great
 ---
@@ -577,7 +642,8 @@ We built on Test::More and WWW::Mechanize
 session "search" => run {
     flow "google searches work" => check {
         get 'http://google.com/ncr'; 
-        fill form 'f' => { q   => 'Squeamish ossifrage' };
+        fill form 'f' => { 
+		q   => 'Squeamish ossifrage' };
         click button 'Google Search';
     }
 };
@@ -590,7 +656,7 @@ Every 'check' block aborts on failure
 ---
 Abort means 'failing test'
 ---
-Every named 'session' gets its own cookie jar and WWW::Mechanize
+Every 'session' has a cookie jar and WWW::Mechanize
 ---
 #mode perl
 session "check logins" => run {
@@ -640,7 +706,9 @@ sub content ($) {
     }
 }
 ---
-!!Conclusion
+That's Test::WWW::Declare
+---
+#title Conclusion
 Creating DSLs is lots of fun
 ---
 Creating DSLs can be a lot of work
