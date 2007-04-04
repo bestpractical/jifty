@@ -11,10 +11,27 @@ load_slides();
 my $counter = 0;
 my $slides_played = {};
 	my $title;
+
+open(my $next_slide, ">/tmp/next_slide");
+select($next_slide);
+$| = 1;
+select(STDOUT);
 while ( $counter <= $#SLIDES ) {
     my $mode = 'text';
     my ( $cols, $rows, undef, undef ) = GetTerminalSize();
     my $slide = $SLIDES[$counter];
+
+    print $next_slide Term::ANSIScreen::cls;
+    print $next_slide locate(1,1);
+    print $next_slide colored("Time: ".scalar localtime  ."\n", 'blue');
+    print $next_slide colored("Back 1\n", 'red');
+    print $next_slide $SLIDES[$counter-1] ."\n\n";
+    print $next_slide colored("This slide, $counter/".$#SLIDES."\n", 'blue');
+    print $next_slide $SLIDES[$counter] ."\n\n";
+    print $next_slide colored("Next slide\n", 'red');
+    print $next_slide $SLIDES[$counter+1];
+    print $next_slide "\n";	
+
     my $console = Term::ANSIScreen->new;
     $console->Cls;
     $console->Cursor(1,1);

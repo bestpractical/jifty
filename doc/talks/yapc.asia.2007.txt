@@ -346,10 +346,10 @@ Downsides
 - Needs new functions for every attribute
 ---
 #title Take 2
+#`mpg123  ~/katamari.mp3`
 Object::Declare
 ---
 #title Take 2: Object::Declare
-#`mpg123  ~/katamari.mp3`
 Katamari for Code
 ---
 #mode perl
@@ -507,7 +507,7 @@ It's Perl
 ---
 We have THE symbol table
 ---
-But URLs can have characters that are illegal in sub names. :/
+But URLs have characters that are illegal in sub names. :/
 ---
 Actually, Perl doesn't care
 ---
@@ -605,7 +605,6 @@ That's Template::Declare
 Test::WWW::Declare
 ---
 #title Test::WWW::Declare
----
 A language for testing web applications
 ---
 In early development
