@@ -16,6 +16,9 @@ open(my $next_slide, ">/tmp/next_slide");
 select($next_slide);
 $| = 1;
 select(STDOUT);
+
+my $cmd = q{ osascript -e ' tell application "Terminal"' -e ' do script "tail -f /tmp/next_slide"' -e 'end tell' };
+system($cmd);
 while ( $counter <= $#SLIDES ) {
     my $mode = 'text';
     my ( $cols, $rows, undef, undef ) = GetTerminalSize();
@@ -23,7 +26,7 @@ while ( $counter <= $#SLIDES ) {
 
     print $next_slide Term::ANSIScreen::cls;
     print $next_slide locate(1,1);
-    print $next_slide colored("Time: ".scalar localtime  ."\n", 'blue');
+    print $next_slide colored("Time: ".scalar localtime()  ."\n", 'blue');
     print $next_slide colored("Back 1\n", 'red');
     print $next_slide $SLIDES[$counter-1] ."\n\n";
     print $next_slide colored("This slide, $counter/".$#SLIDES."\n", 'blue');
