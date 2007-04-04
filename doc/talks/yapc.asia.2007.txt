@@ -2,7 +2,7 @@
 Domain Specific Languages in Perl
 ---
 #title A bit about DSLs
-DSLs are 'little languages' for specific programming tasks
+DSLs are little languages for specific programming tasks
 ---
 DSLs are easier to read
 ---
@@ -61,7 +61,7 @@ Was very jealous
 ---
 Never say that to a Perl Hacker
 ---
-#title agenda
+#title Agenda
 We've made some DSLs
 ---
 One for declaring database schema
@@ -261,17 +261,13 @@ __PACKAGE__->field dexterity =>  { has_type 'integer'};
 We ended up with Jifty::DBI columns
 ---
 #mode perl
-
 use Jifty::DBI::Record schema {
-column
-  auth_token => type is 'text',
+column auth_token => type is 'text',
   render as 'Unrendered';
 
 column score => type is 'int',
   is immutable,
-  default is '0',
-  label is 'Score',
-  since is '0.0.7';
+  label is 'Score';
 
 column time_zone =>
   label is 'Time zone',
@@ -285,14 +281,21 @@ Implemented it twice
 #title 
 Take 1
 ---
-#title Take 1:
+#title Take 1
 Jifty::DBI::Schema
 ---
+#title Take 1: Jifty::DBI::Schema
 Our first DSL in Perl
 ---
-We beat the parser into submission using:
-- Clever function prototypes
-- Injection of functions
+We beat the parser into submission with a few tricks
+---
+Injection of functions
+---
+We saw that a moment ago
+---
+Clever function prototypes
+---
+Let's have a look at that
 ---
 #mode perl
 # The syntax we wanted
@@ -342,9 +345,10 @@ Downsides
 - Limited flexibility
 - Needs new functions for every attribute
 ---
-#title Take 2:
+#title Take 2
 Object::Declare
 ---
+#title Take 2: Object::Declare
 #`mpg123  ~/katamari.mp3`
 Katamari for Code
 ---
@@ -398,6 +402,7 @@ it removes its magic symbols
 ---
 ...and then your program gets control back
 ---
+#title Jifty::DBI::Schema - end
 That's Jifty::DBI::Schema.
 ---
 #title
@@ -593,6 +598,7 @@ ORZ
 ---
 Can anybody help me?
 ---
+#title Template::Declare - end
 That's Template::Declare
 ---
 #title 
@@ -706,6 +712,7 @@ sub content ($) {
     }
 }
 ---
+#title Test::WWW::Declare - end
 That's Test::WWW::Declare
 ---
 #title Conclusion

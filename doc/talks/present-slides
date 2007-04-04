@@ -75,6 +75,10 @@ while ( $counter <= $#SLIDES ) {
     }
     if ( $key =~ /^(?: |\n|n)/ ) {
         $counter++;
+    } elsif ( $key eq 'e' ) {
+	system("vim", $ARGV[0]);
+	load_slides();
+	next;
     } elsif ( $key eq 'r' ) {
 	load_slides();
         next;
