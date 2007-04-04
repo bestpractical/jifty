@@ -38,9 +38,10 @@ while ( $counter <= $#SLIDES ) {
         $mode = 'perl';
     }
     if ( $mode eq 'text' and $slide ) {
-        $slide = autoformat $slide, { left => 1, right => ($cols-1), all => 1 };
+        $slide = autoformat $slide, { left => 2, right => ($cols-1), all => 1 };
     }
     elsif ($mode eq 'perl') {
+	$slide =~ s/^/ /gsm;
 	my $tidycols = $cols - 2; # squeeze for display
 	open my $out , ">/tmp/output.$$" || die $!;
 	print $out $slide || die $!;
@@ -61,12 +62,12 @@ while ( $counter <= $#SLIDES ) {
 		$left = 0;
 	}
         $console->Cursor( $left,	int($rows/2)-1, );
-	print $slide."\n";
+	print  colored($slide." \n",'bold blue on white');
     }
 
 
     $console->Cursor( 0, ( $rows - 1 ) );
-    print "$counter/" . $#SLIDES;
+    print colored("$counter/" . $#SLIDES, "bold white");
     ReadMode 4;
     my $key = ReadKey(0);
     ReadMode 0;

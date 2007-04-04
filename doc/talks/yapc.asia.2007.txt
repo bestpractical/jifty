@@ -53,9 +53,9 @@ All started at OSCON 2005
 ---
 DHH demonstrated Rails migrations
 ---
-Looked very sexy
+they looked very sexy
 ---
-Was very jealous
+I was very jealous
 ---
 "You can't do this in any other language"
 ---
@@ -543,9 +543,9 @@ sub h1 (&;$) {
   ...
 
   if (defined wantarray) {
-    return $closure_around_$code;
+    return sub { ...closure around $code...};
   } else {
-    # Actually do our work and run $code
+    # Actually do our work, run $code and return the output
   }
 }
 ---
