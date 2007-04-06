@@ -14,6 +14,10 @@ Mostly, I'm going to talk about "Englishy" DSLs
 ---
 Not all DSLs are Englishy
 ---
+SQL
+---
+Regexes
+---
 Excel Macros
 ---
 XML config files
@@ -53,7 +57,7 @@ All started at OSCON 2005
 ---
 DHH demonstrated Rails migrations
 ---
-they looked very sexy
+They looked very sexy
 ---
 I was very jealous
 ---
@@ -433,7 +437,7 @@ OMGWTF!? THAT'S WRONG!
 ---
 The person who told you it's wrong was lying to you.
 ---
-We're perl hackers
+We're Perl hackers
 ---
 Why are we writing our templates in another language?
 ---
@@ -449,7 +453,7 @@ Templates run like CODE
 ---
 Because they ARE code
 ---
-Let's use our CODING tools to work with them.
+Let's use our CODING tools to work with them
 ---
 #mode perl
 #title Refactoring
@@ -485,7 +489,8 @@ We can refactor templates!
 ---
 Have you ever tried to refactor HTML?
 ---
-Our HTML is magically valid.
+Our HTML is magically valid
+---
 (Syntax errors are...Syntax Errors)
 ---
 #title Stashing our templates
