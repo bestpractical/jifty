@@ -1115,8 +1115,6 @@ sub _unescape {
     return $text;
 }
 
-sub _template_handlers { qw(declare_handler mason) }
-sub _fallback_template_handler { 'mason' }
 
 =head2 template_exists PATH
 
@@ -1129,7 +1127,7 @@ sub template_exists {
     my $self     = shift;
     my $template = shift;
 
-    foreach my $handler ( $self->_template_handlers) {
+    foreach my $handler ( Jifty->handler->_template_handlers) {
         if ( Jifty->handler->$handler->template_exists($template) ) {
             return 1;
         }
@@ -1152,14 +1150,14 @@ sub render_template {
     my $template = shift;
     my $showed = 0;
     eval { 
-    	foreach my $handler ( $self->_template_handlers ) {
+    	foreach my $handler (Jifty->handler->_template_handlers ) {
         if (Jifty->handler->$handler->template_exists($template) ) {
 	   $showed = 1;
             Jifty->handler->$handler->show($template);
 		last;
         	}
    	} 
-	if (not $showed and my $fallback_handler = $self->_fallback_template_handler) {
+	if (not $showed and my $fallback_handler = Jifty->handler->_fallback_template_handler) {
             Jifty->handler->$fallback_handler->show($template);
 	}
     

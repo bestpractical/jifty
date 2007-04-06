@@ -72,6 +72,9 @@ sub new {
     return $self;
 }
 
+sub _template_handlers { qw(declare_handler mason) }
+sub _fallback_template_handler { 'mason' }
+
 =head2 setup_view_handlers
 
 Initialize all of our view handlers. 
