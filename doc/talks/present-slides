@@ -59,19 +59,19 @@ while ( $counter <= $#SLIDES ) {
 	`$cmd>/dev/null 2>/dev/null &`;
 	$slides_played->{$counter}++}
     }
-    if ( $slide =~ s/#\s*mode.*?perl.*?$//gms ) {
-        $mode = 'perl';
+    if ( $slide =~ s/#\s*mode.*?(perl|ruby).*?$//gms ) {
+        $mode = $1;
     }
     if ( $mode eq 'text' and $slide ) {
         $slide = autoformat $slide, { left => 2, right => ($cols-1), all => 1 };
     }
-    elsif ($mode eq 'perl') {
+    elsif ($mode =~ /(?:perl|ruby)/) {
 	$slide =~ s/^/ /gsm;
 	my $tidycols = $cols - 2; # squeeze for display
 	open my $out , ">/tmp/output.$$" || die $!;
 	print $out $slide || die $!;
 	close $out || die $!;
-	$slide = ` cat /tmp/output.$$ | source-highlight -s perl -f esc`;
+	$slide = ` cat /tmp/output.$$ | source-highlight -s $mode -f esc`;
 	#$slide = ` cat /tmp/output.$$ | perltidy -q -l $tidycols| source-highlight -s perl -f esc`;
     }
  
@@ -94,7 +94,8 @@ while ( $counter <= $#SLIDES ) {
     $console->Cursor( 0, ( $rows - 1 ) );
     print colored("$counter/" . $#SLIDES, "bold white");
     if ($translation) {
-    	$console->Cursor( 10 , ( $rows - 1 ) );
+        my $start = int ( ( $cols / 2 ) - ( length($translation) / 2 ) );
+    	$console->Cursor( $start , ( $rows - 1 ) );
     	print colored($translation, "bold yellow on black");
    }
     ReadMode 4;

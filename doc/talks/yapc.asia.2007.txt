@@ -3,7 +3,6 @@ Domain Specific Languages in Perl
 ---
 #title A bit about DSLs
 DSLs are little languages for specific programming tasks
-# loc-ja This is a test
 ---
 DSLs are easier to read
 ---
@@ -221,10 +220,9 @@ in your book?
 ---
 <obra> shit! it actually works!
 ---
-
 What we had left:
-        
-the field foo => sub {}; issue
+---
+the "field foo => sub {};" issue
 --- 
 #mode perl
 
@@ -265,7 +263,6 @@ __PACKAGE__->field dexterity =>  { has_type 'integer'};
 
 ---
 #title In the end...
-
 We ended up with Jifty::DBI columns
 ---
 #mode perl
@@ -284,7 +281,7 @@ column time_zone =>
   valid are formatted_timezones();
 };
 ---
-Implemented it twice
+We implemented the DSL twice
 ---
 #title 
 Take 1
@@ -350,8 +347,10 @@ sub default ($) {}
  since(is('0.0.7'));
 ---
 Downsides
-- Limited flexibility
-- Needs new functions for every attribute
+---
+Limited flexibility
+---
+Needs new functions for every attribute
 ---
 #title Take 2
 #`mpg123  ~/katamari.mp3`
@@ -431,6 +430,22 @@ template '/pages/mypage.html' => sub {
         }
 };
 ---
+#mode perl
+template choices => page {
+    h1 { 'My Choices' }
+    dl {
+        my $choices = Doxory::Model::ChoiceCollection->new;
+        $choices->limit(
+            column => 'asked_by',
+            value  => Jifty->web->current_user->id,
+        );
+        while (my $c = $choices->next) {
+            dt { $c->name, ' (', $c->asked_by->name, ')' }
+            dd { b { $c->a } em { 'vs' } b { $c->b } }
+        }
+    }
+};
+---
 But! 
 ---
 Content! Templates! 
@@ -449,7 +464,7 @@ This is not 1997
 ---
 It's 2007
 ---
-People use CSS for design now.
+People use CSS for design now
 ---
 Programmers still have to make templates
 ---
@@ -505,7 +520,7 @@ template '/foo/index.html' => sub {... };
 ---
 But where do we put these?
 ---
-We need a global stash.
+We need a global stash
 ---
 It needs to be per package 
 (Don't want to mix things together)
@@ -521,8 +536,8 @@ But URLs have characters that are illegal in sub names. :/
 Actually, Perl doesn't care
 ---
 #mode perl
-    no strict 'refs';
-    *{ $class . '::' . $subname } = $coderef;}
+no strict 'refs';
+*{ $class . '::' . $subname } = $coderef;
 ---
 That just works.
 ---
@@ -530,8 +545,9 @@ Even if your sub is named './\\foo#title <>'
 ---
 But how do you call it?
 ---
+#mode perl
 # perldoc UNIVERSAL
-
+---
 CLASS->can( METHOD )
 "can" checks if the object or class has a method called "METHOD".
 If it does then a reference to the sub is returned.
@@ -539,11 +555,13 @@ If it does then a reference to the sub is returned.
 #title Closures
 Now, about that syntax.
 ---
-HTML tags take blocks of content.
+HTML tags take blocks of content
 ---
-Our tag methods take blocks of perl.
+Our tag methods take blocks of Perl
 ---
 They return closures when you want them to
+---
+They run and output their content when you want them to
 ---
 #mode perl
 sub h1 (&;$) {
@@ -555,10 +573,11 @@ sub h1 (&;$) {
     return sub { ...closure around $code...};
   } else {
     # Actually do our work, run $code and return the output
+    return $code->();
   }
 }
 ---
-We install methods for ever HTML tag
+We install methods for every HTML tag
 ---
 (Except 'tr'. Anybody know why?)
 ---
@@ -578,9 +597,8 @@ HTML Attributes
 # mode perl
 # What we've got:
 
-div { 
-        attr { id => 'my-div'};
-    ...
+div { attr { id => 'my-div'};
+      ...
 };
 
 # and
@@ -598,10 +616,9 @@ div ( id => 'my-div' ), {
 ---
 So, what's the big problem?
 ---
-Just change the prototype.
+Just change the prototype
 ---
-In Perl, the (&) in a prototype
-may ONLY come first. 
+In Perl, the (&) in a prototype MUST come first
 ---
 ORZ
 ---
