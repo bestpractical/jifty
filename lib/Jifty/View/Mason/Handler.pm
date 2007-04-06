@@ -139,13 +139,34 @@ sub escape_uri {
 }
 
 
-=head2 handle_comp COMPONENT
+=head2 template_exists COMPONENT
+
+A convenience method for $self->interp->comp_exists().  
+(Jifty uses this method as part of its standard Templating system API).
+
+=cut
+
+sub template_exists {
+	my $self = shift;
+	return $self->interp->comp_exists(@_);
+}
+
+
+=head2 show COMPONENT
 
 Takes a component path to render.  Deals with setting up a global
 L<HTML::Mason::FakeApache> and Request object, and calling the
 component.
 
+=head2 handle_comp
+
+A synonym for show
+
 =cut
+
+sub show {
+    shift->handle_comp(@_);
+}
 
 sub handle_comp {
     my ($self, $comp) = (shift, shift);

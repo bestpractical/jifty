@@ -1115,6 +1115,9 @@ sub _unescape {
     return $text;
 }
 
+sub _template_handlers { qw(declare_handler mason) }
+sub _fallback_template_handler { 'mason' }
+
 =head2 template_exists PATH
 
 Returns true if PATH is a valid template inside your template root. This checks
@@ -1123,11 +1126,15 @@ for both Template::Declare and HTML::Mason Templates.
 =cut
 
 sub template_exists {
-    my $self = shift;
+    my $self     = shift;
     my $template = shift;
 
-    return Jifty->handler->declare_handler->template_exists($template)
-        || Jifty->handler->mason->interp->comp_exists( $template);
+    foreach my $handler ( $self->_template_handlers) {
+        if ( Jifty->handler->$handler->template_exists($template) ) {
+            return 1;
+        }
+    }
+    return undef;
 }
 
 
@@ -1143,17 +1150,21 @@ HTML::Mason templates then the T::D template is used.
 sub render_template {
     my $self = shift;
     my $template = shift;
-
+    my $showed = 0;
     eval { 
-        my( $val) = Jifty->handler->declare_handler->template_exists($template);
-        if ($val) {
-            Jifty->handler->declare_handler->show($template);
-        } else {
-            Jifty->handler->mason->handle_comp( $template ); 
-        }
-    
+    	foreach my $handler ( $self->_template_handlers ) {
+        if (Jifty->handler->$handler->template_exists($template) ) {
+	   $showed = 1;
+            Jifty->handler->$handler->show($template);
+		last;
+        	}
+   	} 
+	if (not $showed and my $fallback_handler = $self->_fallback_template_handler) {
+            Jifty->handler->$fallback_handler->show($template);
+	}
     
     };
+
     my $err = $@;
 
     # Handle parse errors
