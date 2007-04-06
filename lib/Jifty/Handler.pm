@@ -83,8 +83,8 @@ XXX TODO: this should take pluggable views
 sub setup_view_handlers {
     my $self = shift;
 
-    $self->declare_handler( Jifty::View::Declare::Handler->new( $self->templatedeclare_config));
-    $self->mason( Jifty::View::Mason::Handler->new( $self->mason_config ) );
+    $self->declare_handler( Jifty::View::Declare::Handler->new());
+    $self->mason( Jifty::View::Mason::Handler->new());
     $self->static_handler(Jifty::View::Static::Handler->new());
 }
 
@@ -103,84 +103,6 @@ sub create_cache_directories {
     }
 }
 
-
-=head2 mason_config
-
-Returns our Mason config.  We use the component root specified in the
-C<Web/TemplateRoot> framework configuration variable (or C<html> by
-default).  Additionally, we set up a C<jifty> component root, as
-specified by the C<Web/DefaultTemplateRoot> configuration.  All
-interpolations are HTML-escaped by default, and we use the fatal error
-mode.
-
-=cut
-
-sub mason_config {
-    my %config = (
-        static_source => 1,
-        use_object_files => 1,
-        preprocess => sub {
-            # Force UTF-8 semantics on all our components by
-            # prepending this block to all components as Mason
-            # components defaults to parse the text as Latin-1
-            ${$_[0]} =~ s!^!<\%INIT>use utf8;</\%INIT>\n!;
-        },
-        data_dir =>  Jifty::Util->absolute_path( Jifty->config->framework('Web')->{'DataDir'} ),
-        allow_globals => [
-            qw[ $JiftyWeb ],
-            @{Jifty->config->framework('Web')->{'Globals'} || []},
-        ],
-        comp_root     => [ 
-                          [application =>  Jifty::Util->absolute_path( Jifty->config->framework('Web')->{'TemplateRoot'} )],
-                         ],
-        %{ Jifty->config->framework('Web')->{'MasonConfig'} },
-    );
-
-    for my $plugin (Jifty->plugins) {
-        my $comp_root = $plugin->template_root;
-        unless  ( $comp_root and -d $comp_root) {
-            next;
-        }
-        Jifty->log->debug( "Plugin @{[ref($plugin)]} mason component root added: (@{[$comp_root ||'']})");
-        push @{ $config{comp_root} }, [ ref($plugin)."-".Jifty->web->serial => $comp_root ];
-    }
-    push @{$config{comp_root}}, [jifty => Jifty->config->framework('Web')->{'DefaultTemplateRoot'}];
-
-    # In developer mode, we want halos, refreshing and all that other good stuff. 
-    if (Jifty->config->framework('DevelMode') ) {
-        push @{$config{'plugins'}}, 'Jifty::Mason::Halo';
-        $config{static_source}    = 0;
-        $config{use_object_files} = 0;
-    }
-    return %config;
-        
-}
-
-
-=head2 templatedeclare_config
-
-=cut
-
-sub templatedeclare_config {
-    
-    my %config = (
-        %{ Jifty->config->framework('Web')->{'TemplateDeclareConfig'} ||{}},
-    );
-
-    for my $plugin ( Jifty->plugins ) {
-        my $comp_root = $plugin->template_class;
-        Jifty::Util->require($comp_root);
-        unless (defined $comp_root and $comp_root->isa('Template::Declare') ){
-            next;
-        }
-        Jifty->log->debug( "Plugin @{[ref($plugin)]}::View added as a Template::Declare root");
-        push @{ $config{roots} }, $comp_root ;
-    }
-
-    push @{$config{roots}},  Jifty->config->framework('TemplateClass');
-        
-    return %config;
-}
 
 =head2 cgi
 

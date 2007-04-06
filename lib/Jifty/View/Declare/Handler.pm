@@ -28,10 +28,36 @@ sub new {
     my $class = shift;
     my $self = {};
     bless $self,$class;
-    Template::Declare->init(@_);
+   
+    Template::Declare->init(@_ || $self->config());
     return $self;
 }
 
+
+=head2 config
+
+=cut
+
+sub config {
+    
+    my %config = (
+        %{ Jifty->config->framework('Web')->{'TemplateDeclareConfig'} ||{}},
+    );
+
+    for my $plugin ( Jifty->plugins ) {
+        my $comp_root = $plugin->template_class;
+        Jifty::Util->require($comp_root);
+        unless (defined $comp_root and $comp_root->isa('Template::Declare') ){
+            next;
+        }
+        Jifty->log->debug( "Plugin @{[ref($plugin)]}::View added as a Template::Declare root");
+        push @{ $config{roots} }, $comp_root ;
+    }
+
+    push @{$config{roots}},  Jifty->config->framework('TemplateClass');
+        
+    return %config;
+}
 
 =head2 show TEMPLATENAME
 

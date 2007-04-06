@@ -54,7 +54,7 @@ respectively.
 sub new {
     my $package = shift;
 
-    my %p = @_;
+    my %p = @_ || $package->config;
     my $self = $package->SUPER::new( request_class => 'HTML::Mason::Request::Jifty',
                                      out_method => \&out_method,
                                      %p );
@@ -65,6 +65,57 @@ sub new {
     return $self;
 }
 
+
+=head2 config
+
+Returns our Mason config.  We use the component root specified in the
+C<Web/TemplateRoot> framework configuration variable (or C<html> by
+default).  Additionally, we set up a C<jifty> component root, as
+specified by the C<Web/DefaultTemplateRoot> configuration.  All
+interpolations are HTML-escaped by default, and we use the fatal error
+mode.
+
+=cut
+
+sub config {
+    my %config = (
+        static_source => 1,
+        use_object_files => 1,
+        preprocess => sub {
+            # Force UTF-8 semantics on all our components by
+            # prepending this block to all components as Mason
+            # components defaults to parse the text as Latin-1
+            ${$_[0]} =~ s!^!<\%INIT>use utf8;</\%INIT>\n!;
+        },
+        data_dir =>  Jifty::Util->absolute_path( Jifty->config->framework('Web')->{'DataDir'} ),
+        allow_globals => [
+            qw[ $JiftyWeb ],
+            @{Jifty->config->framework('Web')->{'Globals'} || []},
+        ],
+        comp_root     => [ 
+                          [application =>  Jifty::Util->absolute_path( Jifty->config->framework('Web')->{'TemplateRoot'} )],
+                         ],
+        %{ Jifty->config->framework('Web')->{'MasonConfig'} },
+    );
+
+    for my $plugin (Jifty->plugins) {
+        my $comp_root = $plugin->template_root;
+        unless  ( $comp_root and -d $comp_root) {
+            next;
+        }
+        Jifty->log->debug( "Plugin @{[ref($plugin)]} mason component root added: (@{[$comp_root ||'']})");
+        push @{ $config{comp_root} }, [ ref($plugin)."-".Jifty->web->serial => $comp_root ];
+    }
+    push @{$config{comp_root}}, [jifty => Jifty->config->framework('Web')->{'DefaultTemplateRoot'}];
+
+    # In developer mode, we want halos, refreshing and all that other good stuff. 
+    if (Jifty->config->framework('DevelMode') ) {
+        push @{$config{'plugins'}}, 'Jifty::Mason::Halo';
+        $config{static_source}    = 0;
+        $config{use_object_files} = 0;
+    }
+    return %config;
+}
 
 =head2 out_method
 
