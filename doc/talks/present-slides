@@ -20,6 +20,8 @@ select(STDOUT);
 my $cmd = q{ osascript -e ' tell application "Terminal"' -e ' do script "tail -f /tmp/next_slide"' -e 'end tell' };
 system($cmd);
 while ( $counter <= $#SLIDES ) {
+    my $translation = '';
+
     my $mode = 'text';
     my ( $cols, $rows, undef, undef ) = GetTerminalSize();
     my $slide = $SLIDES[$counter];
@@ -48,6 +50,9 @@ while ( $counter <= $#SLIDES ) {
 	print "$title\n";
 	}
 
+    if ($slide =~ s/#\s*loc-ja\s*(.*?)$//sm) {
+	$translation = $1;
+    }
     if ($slide =~ s/#\s*`(.*?)`//m) {
 	my $cmd = $1;
 	if(!$slides_played->{$counter}) {
@@ -88,6 +93,10 @@ while ( $counter <= $#SLIDES ) {
 
     $console->Cursor( 0, ( $rows - 1 ) );
     print colored("$counter/" . $#SLIDES, "bold white");
+    if ($translation) {
+    	$console->Cursor( 10 , ( $rows - 1 ) );
+    	print colored($translation, "bold yellow on black");
+   }
     ReadMode 4;
     my $key = ReadKey(0);
     ReadMode 0;

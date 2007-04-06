@@ -3,6 +3,7 @@ Domain Specific Languages in Perl
 ---
 #title A bit about DSLs
 DSLs are little languages for specific programming tasks
+# loc-ja This is a test
 ---
 DSLs are easier to read
 ---
@@ -44,6 +45,8 @@ You can make DSLs in Perl, too
 ---
 (but it does take more work in Perl)
 ---
+How did I get here?
+---
 #title How did I get here?
 Airplane
 ---
@@ -75,6 +78,7 @@ One for declaring database schema
 (It does a lot more than Rails migrations)
 ---
 One for web templating
+# loc-ja じゃあいったいどうして？！
 ---
 (Yes, another web templating system)
 ---
