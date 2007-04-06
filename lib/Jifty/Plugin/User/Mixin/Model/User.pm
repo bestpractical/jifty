@@ -33,7 +33,7 @@ use Jifty::Plugin::User::Record schema {
         label is 'Email address', default is '', is immutable, is distinct;
     column
         email_confirmed => label is 'Email address confirmed?',
-        type is 'boolean', render_as 'Unrendered';
+        type is 'boolean';
 
 };
 
