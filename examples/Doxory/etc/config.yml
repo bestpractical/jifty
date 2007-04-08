@@ -1,7 +1,7 @@
 --- 
 framework: 
   SkipAccessControl: 1
-  AdminMode: 0
+  AdminMode: 1
   ApplicationClass: Doxory
   ApplicationName: Doxory
   ApplicationUUID: 181049AC-E029-11DB-A5EB-227D19064FA1

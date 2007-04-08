@@ -9,7 +9,7 @@ before '*' => run {
         $top->child( 'Pick!'    => url => '/pick' );
         $top->child( 'Choices'  => url => '/choices' );
     }
-    elsif ($1 !~ /^login|^signup/) {
+    elsif ($1 !~ /^login|^signup|^__jifty/) {
         tangent 'login';
     }
 };
