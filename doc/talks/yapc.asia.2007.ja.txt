@@ -1,0 +1,934 @@
+#title Jesse Vincent - Best Practical
+Domain Specific Languages in Perl
+# loc-ja: PerlでDSL
+---
+#title A bit about DSLs
+# loc-ja: DSLってなに?
+DSLs are little languages for specific programming tasks
+# loc-ja: 決まった分野の仕事をさせるための専用ミニ言語
+---
+DSLs are easier to read
+# loc-ja: DSLにすると読みやすい
+---
+DSLs are  more expressive
+# loc-ja: 表現力も増す
+---
+DSLs let you optimize your code for coding
+# loc-ja: コーディングしやすいようにコードを最適化できる
+---
+Mostly, I'm going to talk about "Englishy" DSLs
+# loc-ja: 今日は「英語っぽく読めるようにする」DSLの話をするけど
+---
+Not all DSLs are Englishy
+# loc-ja: DSLだからって全部英語っぽくなっているわけじゃない
+---
+Excel Macros
+# loc-ja: Excelのマクロ
+---
+XML config files
+# loc-ja: XMLの設定ファイル
+---
+XSL-T
+---
+GraphViz
+---
+...but I've been on an Englishy DSL kick
+# loc-ja: ただ、自分はいま英語っぽく読めるようにするDSLにハマってる
+---
+DSLs can be implemented in your 'host' language
+# loc-ja: DSLは「ホスト」になる言語で実装することもできる
+---
+(These get called "internal" DSLs)
+# loc-ja: こういうのは「内部」DSLと呼ばれる
+---
+DSLs can be implemented outside your 'host' langauge
+# loc-ja: 「ホスト」言語以外のもので実装することもできる
+---
+(External DSLs)
+# loc-ja: こういうのは外部DSLだ
+---
+Everything I'm going to talk about is Pure Perl (Internal)
+# loc-ja: 今日話すのはPure Perlのもの（だから内部DSLだね）
+---
+The Ruby community is big on DSLs
+# loc-ja: DSLの大家といえばRubyのコミュニティだけど
+---
+You can make DSLs in Perl, too
+# loc-ja: PerlでDSLをつくることもできる
+---
+(but it does take more work in Perl)
+# loc-ja: Perlの方がちょっと手間がかかるけど
+---
+#title How did I get here?
+# loc-ja: ここに至るまでの道のり?
+Airplane
+# loc-ja: 飛行機
+---
+Narita Express
+# loc-ja: それから成田エクスプレス
+---
+Subway
+# loc-ja: それから地下鉄
+---
+Ok, How'd I really get here?
+# loc-ja: 冗談はさておき
+---
+All started at OSCON 2005
+# loc-ja: 発端はOSCON 2005だった
+---
+DHH demonstrated Rails migrations
+# loc-ja: DHHがRailsのマイグレーションのデモを見せてくれたんだけど
+---
+they looked very sexy
+# loc-ja: それが実にイカしていたわけだ
+---
+I was very jealous
+# loc-ja: むちゃくちゃうらやましかった。でも…
+---
+"You can't do this in any other language"
+# loc-ja: 「こんなことほかの言語じゃできないでしょ」
+---
+Never say that to a Perl Hacker
+# loc-ja: Perlハッカーにそんなことを言っちゃいけないよね
+---
+#title Agenda
+# loc-ja: アジェンダ
+We've made some DSLs
+# loc-ja: Best Practical社でもいくつかDSLをつくっている
+---
+One for declaring database schema
+# loc-ja: ひとつはデータベースのスキーマを宣言するためのもの
+---
+(I thought Rails did more. But I never read the manual)
+# loc-ja: Railsはもっといろいろしていたと思うけど、Railsのマニュアルなんて読んだことない
+---
+(It does a lot more than Rails migrations)
+# loc-ja: でも、Railsのマイグレーションよりははるかにいろんなことをしているよ
+---
+One for web templating
+# loc-ja: もうひとつはウェブテンプレート用
+---
+(Yes, another web templating system)
+# loc-ja: そう、またしても新しいウェブテンプレートシステムをつくったんだ
+---
+(Hopefully, this one will provide some closure)
+# loc-ja: できれば今度のはクロージャも使えるようにするつもり
+---
+(You'll see)
+# loc-ja: お楽しみに
+---
+One for making web testing easier
+# loc-ja: もうひとつはライブテストをもっと簡単にするためのもの
+---
+(It's VERY beta)
+# loc-ja: これはほんとにベータなんだけど
+---
+(Perfect for Web 2.0)
+# loc-ja: Web 2.0にはうってつけ
+---
+#title 
+Jifty::DBI::Schema
+---
+#title Jifty::DBI::Schema - The design process
+# loc-ja: Jifty::DBI::Schema ができるまで
+Delarative Syntax for an Object Relational Mapper
+# loc-ja: オブジェクトリレーショナルマッパ用の宣言指向なシンタックス
+---
+Started sketching Jifty::DBI columns
+# loc-ja: Jifty::DBIのカラムをどうするか、ざっと書いてみた
+---
+Started with DBIx::SearchBuilder
+# loc-ja: とりあえずDBIx::SearchBuilderで
+---
+Columns were defined as a hash
+# loc-ja: カラムの定義はハッシュ
+---
+Hashes are ugly
+# loc-ja: でも、ハッシュはダサい
+---
+We spent about a month playing with syntax.
+# loc-ja: 一ヶ月くらいシンタックスをいじっていたかな
+---
+Our first goal was "feels right"
+# loc-ja: 最初のゴールは「これなら悪くない」と思えるようにすること
+---
+Our second goal was "we can implement this"
+# loc-ja: 次のゴールは「これなら実装できる」というものにすること
+---
+I'm going to show you some of our design process
+# loc-ja: じゃあ、どうやってデザインしたか
+---
+(It's a mix of code and IRC)
+# loc-ja: コードとIRCを織りまぜて紹介します
+---
+#mode perl
+$x = Jifty::DBI::SchemaBuilder->new;
+$x->define_blablalb
+$x->bla bla
+---
+#mode perl
+our db_table 'addresses';
+our field name => { 
+	has_type 'varchar'; 
+	has_default 'frank' 
+};
+---
+<chmrr> (by the way, i'm pretty sure we don't get to do the sub-at-the-end thing either... I tried lots of hacky ways to get it working and failed.)
+# loc-ja: ところで「プロトタイプの最後にサブルーチンを入れる」ってできないよね…いろいろハックしてみたけどだめだった
+
+<glasser> yeah, I think we're going to end up having a pseudo-sub that's really a hash behind the scenes 
+# loc-ja: うん、結局疑似subを使うことになりそうだよ。実際にはハッシュなんだけどね
+---
+#mode perl
+{
+    my $s = Jifty::DBI::SG->import_functions;
+    
+    db_table bla bla bla;
+    field bla;
+    field bar;
+} # $s.DESTROY gets called and unimports db_table/field/...
+# loc-ja: ここで$s.DESTROYが呼ばれてdb_table/field/...とかをアンインポートする
+---
+(This was astonishingly close to what we do today.)
+# loc-ja: これはびっくりするほどいまの形に近い
+---
+#mode perl
+my $schema = Jifty::DBI::RecordSchema->new;
+$schema->for_class(__PACKAGE__);
+
+$schema->field name => { 
+	has_type 'varchar'; 
+	has_default 'Frank'
+}
+---
+#mode perl
+
+BEGIN { @ISA = 'Jifty::DBI::Record' }
+use Jifty::DBI::Record; # but this sucks!
+
+use base qw/Jifty::DBI::Record/;
+
+__PACKAGE__->schema_version (0.0001) 
+# (or some other method that does two thing evily).
+# loc-ja: この2つをうまいことしてくれる邪悪な方法はないかな
+---
+<obra> we could tie @ISA
+# loc-ja: @ISAをtieできたらいいんだけどな
+
+<obra> ...I'm kidding
+# loc-ja: …いや、冗談だって
+---
+<obra> we could tie the symbol table
+# loc-ja: シンボルテーブルをtieできたらいいんだけど
+
+<obra> ...It just doesn't work
+# loc-ja: …動かないね
+---
+#mode perl
+use base 'Jifty::DBI::Record';
+Jifty::DBI::Record->___from_code();
+
+db_table 'addresses';
+
+field {
+    called 'name'; # ? 
+}
+--- 
+<glasser> is 
+	
+  "has_type 'string'" 
+
+definitely better than 
+
+  "type => 'string'"  
+
+in your book?
+# loc-ja: "has_type 'string'" より "type => 'string'" の方がずっといいんじゃない?
+---
+<obra> how would you do: 
+# loc-ja: じゃあ、こんなのはどうする?
+
+ refers_to_many RT::Tickets by 'owner';
+
+<Robrt> hmm. i thought about this before.  we can do like simon and
+# loc-ja: 前に考えたことあるけど、simonのようにすればいいかな
+
+ refers_to_many "RT::Tickets by owner";
+
+<Robrt> but I don't really like that.  parsing is lame.
+# loc-ja: でも、あまりよくはないよね。パースなんてしたくない
+
+<Robrt> I'm *pretty* sure that we can't get the line you've written to compile.
+# loc-ja: でも、Jesseが書いたのは絶対にコンパイルできないんじゃないかと思うよ
+---
+<obra> I've got a bad perl5 idea for you. Robert claims it's impossible
+# loc-ja: 悪いことを思いついたんだ。Robertは絶対にできないって言ってるけど
+
+<obra> I'm trying to make the syntax "refers_to_many 'BTDT::Model::Tasks' by 'owner';" valid perl5 syntax.
+# loc-ja: 自分は "refers_to_many 'BTDT::Model::Tasks' by 'owner';" というのをperl5のシンタックスとして通るものにしようと思ってる
+---
+<audreyt> well, that may be true but you don't want that.
+# loc-ja: うーん、それでもいいけど、そんなことしなくてもいいよ
+
+<audreyt> refers_to_many BTDT::Model::Tasks by 'owner'
+
+<audreyt> is more readable and easily implemented.
+# loc-ja: の方が読みやすいし実装しやすいもの
+
+<audreyt> sub by ($) { by => @_ }
+
+<audreyt> done!
+# loc-ja: ほらできた!
+
+<audreyt> stop thinking classes as strings :)
+# loc-ja: クラスを文字列だなんて思わなければいい :)
+---
+<obra> shit! it actually works!
+# loc-ja: なんてこった! ほんとにできてる!
+---
+
+What we had left:
+# loc-ja: そうなると、残るは
+
+the field foo => sub {}; issue
+# loc-ja: field foo => sub {}; の問題か
+--- 
+#mode perl
+
+ # We wanted something that acted like this
+ # But without the ugly 'sub' keyword
+ field email => sub {
+ 
+    has_type 'varchar';
+    has_default 'Frank';
+};
+
+# loc-ja: みっともない'sub'なんてなしでこんな風に動くのがほしいね
+---
+#mode perl
+# We could do this, but it used a hash
+# not a block
+
+field phone => {
+    has_type 'varchar';
+};
+
+field employee_id => {
+    refers_to_a Sample::Employee;
+}
+# loc-ja: こんな風にしてもいいけど、ブロックじゃなくてハッシュになっちゃう
+---
+#mode perl
+
+# This is ugly and verbose
+
+package Sample::Employee;
+
+use base qw/Jifty::DBI::Record/;
+
+__PACKAGE__->db_table 'employees';
+
+__PACKAGE__->field name => has_type 'varchar';
+
+__PACKAGE__->field dexterity =>  { has_type 'integer'};
+
+# loc-ja: これだとみっともないし、くどいな
+---
+#title In the end...
+# loc-ja: 結局…
+
+We ended up with Jifty::DBI columns
+# loc-ja: Jifty::DBIのカラムはこんな風になった
+---
+#mode perl
+use Jifty::DBI::Record schema {
+column auth_token => type is 'text',
+  render as 'Unrendered';
+
+column score => type is 'int',
+  is immutable,
+  label is 'Score';
+
+column time_zone =>
+  label is 'Time zone',
+  since '0.0.12',
+  default is 'America/New_York',
+  valid are formatted_timezones();
+};
+---
+Implemented it twice
+# loc-ja: これ、実は2回実装している
+---
+#title 
+Take 1
+# loc-ja: 最初の実装はこう
+---
+#title Take 1
+# loc-ja: 最初の実装
+Jifty::DBI::Schema
+---
+#title Take 1: Jifty::DBI::Schema
+# loc-ja: 最初の実装: Jifty::DBI::Schema
+Our first DSL in Perl
+# loc-ja: Best Practical社がはじめてPerlで書いたDSL
+---
+We beat the parser into submission with a few tricks
+# loc-ja: パーサに言うことを聞かせるためにいくつかトリックを使ってる
+---
+Injection of functions
+# loc-ja: 関数の埋め込み
+---
+We saw that a moment ago
+# loc-ja: これはさっき見たよね
+---
+Clever function prototypes
+# loc-ja: 上手な関数プロトタイプ
+---
+Let's have a look at that
+# loc-ja: ちょっと説明しよう
+---
+#mode perl
+# The syntax we wanted
+
+score => type is 'int',
+  is immutable,
+  default is '0',
+  render as 'text',
+  label is 'Score',
+  since is '0.0.7';
+# loc-ja: こんなシンタックスにしたい
+---
+#mode perl
+# perl -MO=Deparse parses that as:
+
+'is'->type('int', 
+  'immutable'->is, 
+   'is'->default('0', 
+      'as'->render('text', 
+        'is'->label('Score', 
+          'is'->since('0.0.7')))));
+# loc-ja: perl -MO=Deparse をするとこんな風にパースされてしまう
+---
+How can we fix that?
+# loc-ja: どうすれば直せるだろう?
+---
+Prototype hacking!
+# loc-ja: プロトタイプをハックすればいい!
+---
+#mode perl
+sub is ($) { return shift };
+sub as ($) { return shift };
+sub since ($) { }
+sub type ($) { }
+sub render ($) {}
+sub label ($) {}
+sub default ($) {}
+---
+#mode perl
+
+# Now, perl -MO=Deparse parses that as:
+
+ type(is('int')), 
+ is('immutable'), 
+ default(is('0')), 
+ render(as('text')), 
+ label(is('Score')), 
+ since(is('0.0.7'));
+# loc-ja: これで perl -MO=Deparse はこんな風になる
+---
+Downsides
+# loc-ja: これの欠点
+- Limited flexibility
+# loc-ja: 柔軟性に欠ける
+- Needs new functions for every attribute
+# loc-ja: 属性をつくるたびに新しい関数が必要になる
+---
+#title Take 2
+# loc-ja: 2度目の実装
+#`mpg123  ~/katamari.mp3`
+Object::Declare
+---
+#title Take 2: Object::Declare
+# loc-ja: 2度目の実装: Object::Declare
+Katamari for Code
+# loc-ja: コードの塊
+---
+#mode perl
+use Jifty::DBI::Record schema { 
+
+ column score => type is 'int',
+  is immutable,
+  render as 'text',
+  default is '0',
+  label is 'Score',
+  since is '0.0.7';
+};
+---
+# mode perl
+# perl -MO=Deparse parses that as:
+
+'is'->type('int', 
+  'immutable'->is, 
+   'is'->default('0', 
+      'as'->render('text', 
+	'is'->label('Score', 
+	  'is'->since('0.0.7')))));
+# loc-ja: perl -MO=Deparse するとこんな風になる
+---
+Why fight the parser?
+# loc-ja: どうしてパーサなんて相手にしていたんだろう?
+---
+Perl gives us all the rope we need
+# loc-ja: Perlには必要な手が揃ってるじゃないか
+---
+UNIVERSAL:: and ::AUTOLOAD
+# loc-ja: UNIVERSAL:: と ::AUTOLOAD だ
+---
+What actually happens at compile time:
+
+# loc-ja: これをコンパイルすると、裏ではどんなことが起こるのか?
+---
+The 'schema' function in our baseclass takes a code block
+# loc-ja: ベースクラスの'schema'関数がコードブロックを受け取り
+---
+...and returns a closure
+# loc-ja: クロージャを返す
+---
+Jifty::DBI::Record::import takes over:
+# loc-ja: 続いてJifty::DBI::Record::importが
+---
+it takes the closure
+# loc-ja: そのクロージャを受け取り、
+---
+it installs some methods...
+# loc-ja: いくつかのメソッドをインストールして
+---
+...is::AUTOLOAD and UNIVERSAL::is and as::AUTOLOAD
+# loc-ja: is::AUTOLOAD とか UNIVERSAL::is とか as::AUTOLOAD とかね
+---
+it runs the closure
+# loc-ja: クロージャを実行して
+---
+it hands the result off to a method of your choice
+# loc-ja: 結果をお望みのメソッドに渡す
+---
+it removes its magic symbols
+# loc-ja: それからマジックシンボルを削除して
+---
+...and then your program gets control back
+# loc-ja: プログラムにコントロールを戻す
+---
+#title Jifty::DBI::Schema - end
+# loc-ja: Jifty::DBI::Schema - おしまい
+That's Jifty::DBI::Schema.
+# loc-ja: Jifty::DBI::Schema はこんな感じ
+---
+#title
+Template::Declare
+---
+#title Template::Declare
+A pure Perl Templating Language
+# loc-ja: pure Perlのテンプレート言語
+---
+What it looks like
+# loc-ja: こんなの
+---
+#mode perl
+template '/pages/mypage.html' => sub {
+    html {
+        head {};
+        body {
+            h1 {'Hey, this is text'};
+            }
+        }
+};
+---
+But! 
+# loc-ja: でもね!
+---
+Content! Templates! 
+# loc-ja: コンテンツ! テンプレート!
+---
+Design! Code!
+# loc-ja: デザイン! コード!
+---
+OMGWTF!? THAT'S WRONG!
+# loc-ja: なんだって!? 冗談じゃない!
+---
+The person who told you it's wrong was lying to you.
+# loc-ja: みなさんにこういうのはダメだなんて言った人は嘘つきです
+---
+We're perl hackers
+# loc-ja: 私たちはperlハッカーなんだから
+---
+Why are we writing our templates in another language?
+# loc-ja: どうしてほかの言語でテンプレートを書かなきゃいけないの?
+---
+This is not 1997
+# loc-ja: 1997年じゃないんだよ
+---
+It's 2007
+# loc-ja: 2007年なんだから
+---
+People use CSS for design now.
+# loc-ja: CSS使ってデザインしてるでしょ
+---
+Programmers still have to make templates
+# loc-ja: それでもプログラマはテンプレートをつくらないといけないけど
+---
+Templates run like CODE
+# loc-ja: テンプレートはコードのような働きをするもの
+---
+Because they ARE code
+# loc-ja: だって、実際コードだからね
+---
+Let's use our CODING tools to work with them.
+# loc-ja: それならコードを書くときに使う道具でなんとかしよう
+---
+#mode perl
+#title Refactoring
+# loc-ja: リファクタリング
+
+template 'mypage.html' => page {
+ h1 { 'Two choices' };
+ div { attr { class => 'item' };
+       h2 { 'Item 1'};
+  };
+ div { attr { class => 'item' };
+       h2 { 'Item 2'};
+  };
+}; 
+---
+#title Refactoring
+# loc-ja: リファクタリング
+#mode perl
+
+template 'mypage.html' => page {
+ h1 { 'Two choices' };
+ for ("Item 1", "Item 2") { item($_); }
+};
+
+sub item {
+    my $content = shift;
+    div {
+        attr { class => 'item' };
+        h2 {$content};
+    };
+
+}
+---
+We can refactor templates!
+# loc-ja: テンプレートのリファクタリングもできるよ!
+---
+Have you ever tried to refactor HTML?
+# loc-ja: HTMLのリファクタリングなんてしたことある?
+---
+Our HTML is magically valid.
+# loc-ja: うちのHTMLは魔法がかかっているからいつでも正しい
+(Syntax errors are...Syntax Errors)
+# loc-ja: シンタックスエラーは…シンタックスエラーになる
+---
+#title Stashing our templates
+# loc-ja: テンプレートをスタッシュに入れよう
+#mode perl
+template '/foo/index.html' => sub {... };
+---
+'sub template' takes a name and a coderef
+# loc-ja: 'sub template'はテンプレート名とコードリファレンスを取る
+---
+But where do we put these?
+# loc-ja: でも、これをどこに入れよう?
+---
+We need a global stash.
+# loc-ja: グローバルなスタッシュが要るね
+---
+It needs to be per package 
+# loc-ja: パッケージ単位でなくちゃいけない
+(Don't want to mix things together)
+# loc-ja: ごちゃまぜにはしたくないから
+---
+Basically, we need a symbol table
+# loc-ja: 基本的にはシンボルテーブルがあればいいわけだけれど
+---
+It's Perl
+# loc-ja: Perlなんだから
+---
+We have THE symbol table
+# loc-ja: シンボルテーブルそのものはある
+---
+But URLs have characters that are illegal in sub names. :/
+# loc-ja: ただ、URLには関数名としては不適切な文字が含まれているんだよね :/
+---
+Actually, Perl doesn't care
+# loc-ja: でも、実はこれ、Perlは気にしない
+---
+#mode perl
+    no strict 'refs';
+    *{ $class . '::' . $subname } = $coderef;}
+---
+That just works.
+# loc-ja: これで問題なく動いてしまう
+---
+Even if your sub is named './\\foo#title <>'
+# loc-ja: サブルーチンの名前が'./\\foo#title <>'だったとしてもだ
+---
+But how do you call it?
+# loc-ja: でも、そんなのどうやって呼び出せばいい?
+---
+# perldoc UNIVERSAL
+
+CLASS->can( METHOD )
+"can" checks if the object or class has a method called "METHOD".
+If it does then a reference to the sub is returned.
+# loc-ja: "can"はオブジェクトないしクラスが"METHOD"というメソッドを持っているかチェックして、持っている場合はそのサブルーチンへのリファレンスを返します
+---
+#title Closures
+# loc-ja: クロージャ
+Now, about that syntax.
+# loc-ja: 今度はそのシンタックスの話
+---
+HTML tags take blocks of content.
+# loc-ja: HTMLタグはコンテンツのブロックを取る
+---
+Our tag methods take blocks of perl.
+# loc-ja: うちのタグメソッドはperlのブロックを取る
+---
+They return closures when you want them to
+# loc-ja: そうしたければクロージャを返させることもできる
+---
+#mode perl
+sub h1 (&;$) {
+  my $code = shift;
+  
+  ...
+
+  if (defined wantarray) {
+    return sub { ...closure around $code...};
+  } else {
+    # Actually do our work, run $code and return the output
+  }
+}
+---
+We install methods for every HTML tag
+# loc-ja: うちのはあらゆるHTMLタグにメソッドをインストールする
+---
+(Except 'tr'. Anybody know why?)
+# loc-ja: 'tr' 以外ね。理由はわかる?
+---
+#mode perl
+use CGI ();
+install_tag($_) 
+  for ( @CGI::EXPORT_TAGS{
+	qw/:html2 :html3 :html4 
+	   :netscape :form/}
+);
+---
+#title Not everything is roses
+# loc-ja: すべてがバラ色というわけではない
+(Here's where it all goes wrong)
+# loc-ja: ここがみんなハマるところだ
+---
+HTML Attributes
+# loc-ja: HTMLアトリビュート
+---
+# mode perl
+# What we've got:
+
+div { 
+        attr { id => 'my-div'};
+    ...
+};
+
+# and
+
+with ( id => 'my-div'), div {
+...
+};
+# loc-ja: こんな風にはできていた
+---
+# mode perl
+# What I think I'd like:
+
+div ( id => 'my-div' ), { 
+... 
+}
+# loc-ja: こうしたいな
+---
+So, what's the big problem?
+# loc-ja: ここで大きな問題になったのは
+---
+Just change the prototype.
+# loc-ja: 単にプロトタイプを変えるだけだと
+---
+In Perl, the (&) in a prototype
+may ONLY come first. 
+# loc-ja: Perlの場合、プロトタイプの(&)は最初に「しか」置けないということだ
+---
+ORZ
+---
+Can anybody help me?
+# loc-ja: 誰か名案ない?
+---
+#title Template::Declare - end
+# loc-ja: Template::Declare - おしまい
+That's Template::Declare
+# loc-ja: Template::Declareについてはこの辺で
+---
+#title 
+Test::WWW::Declare
+---
+#title Test::WWW::Declare
+A language for testing web applications
+# loc-ja: ウェブアプリケーションのテスト用言語
+---
+In early development
+# loc-ja: 開発は始まったばかりなので
+---
+It might change
+# loc-ja: 内容は変わるかも
+---
+Web test scripts are UGLY
+# loc-ja: ウェブテストスクリプトってほんとに汚いよね
+---
+Test::WWW::Declare is PRETTY
+# loc-ja: Test::WWW::Declareはきれいだ
+---
+Simple, declarative web testing
+# loc-ja: シンプルな、宣言指向のウェブテスト
+---
+Easy to read
+# loc-ja: 読みやすい
+---
+Easy to write
+# loc-ja: 書きやすい
+---
+Looks more like what users do
+# loc-ja: ユーザがしている通りに見える
+---
+#mode perl
+# Test::WWW::Mechanize
+
+my $server=Jifty::Test->make_server;
+isa_ok($server, 'Jifty::Server');
+my $URL = $server->started_ok;
+my $mech = Jifty::Test::WWW::Mechanize->new;
+$mech->get_html_ok($URL);
+like($mech->uri, qr{splash}, 
+     'Redirected to splash page');
+---
+The insides are great
+# loc-ja: 中身はすごいよ
+---
+The syntax ain't
+# loc-ja: シンタックスはそうでもない
+---
+We built on Test::More and WWW::Mechanize
+# loc-ja: これ、Test::More と WWW::Mechanize が下敷きになっている
+---
+#mode perl
+
+# Test::WWW::Declare
+
+session "search" => run {
+    flow "google searches work" => check {
+        get 'http://google.com/ncr'; 
+        fill form 'f' => { 
+		q   => 'Squeamish ossifrage' };
+        click button 'Google Search';
+    }
+};
+---
+Regular tests keep running on failure
+# loc-ja: 通常のテストはテストがコケても走り続ける
+---
+Makes no sense when a failure means you lose context
+# loc-ja: でも、コケたときにコンテキストが失われるようなら意味がないので
+---
+Every 'check' block aborts on failure
+# loc-ja: 'check'ブロックがコケたらテストを中断する
+---
+Abort means 'failing test'
+# loc-ja: もっとも、中断したからって「テストがコケた」ということにはならない
+---
+Every 'session' has a cookie jar and WWW::Mechanize
+# loc-ja: 'session'にはかならずクッキージャーと WWW::Mechanize が含まれている
+---
+#mode perl
+session "check logins" => run {
+    flow "basic connectivity" => check {
+        get 'http://fsck.com';
+        content should match qr{fsck.com};
+        click href qr{book};
+        content should match qr{RT Essentials}i;
+    };
+};
+---
+What's the weird syntax?
+# loc-ja: なに、この妙なシンタックス?
+---
+# mode perl
+content should match qr{RT Essentials}i;
+---
+#mode perl
+content should match qr{RT Essentials}i;
+
+#   vs
+
+ok($req->content =~ /RT Essentials/i);
+---
+# mode perl
+# How do we make this valid perl?
+# loc-ja: どうすればこれを正しいperlスクリプトにできるだろう
+
+content should match qr{RT Essentials}i;
+---
+Prototypes
+# loc-ja: プロトタイプだ
+---
+#mode perl
+sub match ($) {
+    return shift;
+}   
+---
+#mode perl
+sub should ($) {
+    my $item = shift;
+    return $item;
+}
+---
+#mode perl
+sub content ($) { 
+    my $regex = shift;
+    unless ( mech()->content =~ /$regex/ ) {
+        die "Content did not match $regex";
+    }
+}
+---
+#title Test::WWW::Declare - end
+# loc-ja: Test::WWW::Declare - おしまい
+That's Test::WWW::Declare
+# loc-ja: Test::WWW::Declare はこの辺で
+---
+#title Conclusion
+# loc-ja: 結論
+Creating DSLs is lots of fun
+# loc-ja: DSLをつくるのはとってもおもしろい
+---
+Creating DSLs can be a lot of work
+# loc-ja: DSLをつくるのはとっても大変なこともあるけど
+---
+Creating DSLs helps you learn Perl internals
+# loc-ja: DSLをつくるとPerlの内部の勉強になる
+---
+Creating DSLs helps find bugs in Perl
+# loc-ja: DSLをつくるとPerlのバグが見つかったりもする
+---
+DSLs can make coding more fun
+# loc-ja: DSLはコーディングをもっと楽しくする
+---
+Challenge: CPAN some Japanese DSLs
+# loc-ja: 宿題: CPANに日本語のDSLをアップしてくださいね
+---
+Thanks
+# loc-ja: ご静聴ありがとう
+---
