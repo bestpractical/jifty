@@ -76,7 +76,7 @@ while ( $counter <= $#SLIDES ) {
     }
  
     if ( $slide =~ /(\S+)\s*\n\s*(\S+)/m ) {
-	my $lines = scalar split(/\n/,$slide);
+	my $lines = ($slide =~ tr/\n//);
 	$console->Cursor(0, int(($rows/2)-($lines/2))-1);
     	print $slide;
     } else {
