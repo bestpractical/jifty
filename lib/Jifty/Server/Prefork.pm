@@ -1,5 +1,5 @@
 package Jifty::Server::Prefork;
-use Net::Server::Prefork ();
+use Net::Server::PreFork ();
 use base 'Jifty::Server';
 
 =head1 NAME

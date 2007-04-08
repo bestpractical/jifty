@@ -113,6 +113,10 @@ features(
         -default => 0,
         recommends('Net::Server::Fork'),
     ],
+    'Pre-forking jifty server' => [
+        -default => 0,
+        recommends('Net::Server::PreFork'),
+    ],
     'Apache2/ModPerl2 handler' => [
         -default => 0,
         recommends('Apache2::Const'),
