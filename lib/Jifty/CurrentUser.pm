@@ -65,12 +65,13 @@ sub _init {
 =head2 superuser
 
 A convenience constructor that returns a new CurrentUser object that's
-marked as a superuser.
+marked as a superuser. Can be called either as a class or object method.
 
 =cut
 
 sub superuser {
     my $class = shift;
+    $class = ref( $class ) if ref $class;
     my $self = $class->new();
     $self->is_superuser(1);
     return $self;
