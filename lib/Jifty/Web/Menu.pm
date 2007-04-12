@@ -193,7 +193,6 @@ sub render_as_menu {
     '';
 }
 
-
 =head2 render_as_context_menu
 
 Render this menu with html markup as an inline dropdown menu.
@@ -252,6 +251,45 @@ sub render_as_hierarchical_menu_item {
     Jifty->web->out(qq{</li>});
     '';
 
+}
+
+=head2 render_as_yui_menubar
+
+Render menubar with YUI menu, suitable for an application's menu.
+It can support arbitary levels of submenu.
+
+=cut
+
+sub render_as_yui_menubar {
+    my $self = shift;
+    my $id   = Jifty->web->serial;
+    $self->_render_as_yui_menu_item("yuimenubar", $id);
+    Jifty->web->out(qq|<script type="text/javascript">\n|
+        . qq|YAHOO.util.Event.onContentReady("|.$id.qq|", function() {\n|
+        . qq|var menu = new YAHOO.widget.MenuBar("|.$id.qq|", { autosubmenudisplay:true, hidedelay:750, lazyload:true });\n|
+        . qq|menu.render();\n|
+        . qq|});</script>|
+        );
+    '';
+}
+
+sub _render_as_yui_menu_item {
+    my ($self, $class, $id) = @_;
+    my @kids = $self->children 
+        or return;
+    
+    Jifty->web->out(
+        qq{<div}
+        . ($id ? qq{ id="$id"} : "")
+        . qq{ class="$class"><div class="bd"><ul>}
+    );
+    for (@kids) {
+        Jifty->web->out( qq{<li class="${class}item">});
+        Jifty->web->out( $_->as_link );
+        $_->_render_as_yui_menu_item("yuimenu");
+        Jifty->web->out( qq{</li>});
+    }
+    Jifty->web->out(qq{</ul></div></div>});
 }
 
 =head2 as_link
