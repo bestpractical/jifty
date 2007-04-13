@@ -112,7 +112,7 @@ page's.
 sub render_region(@) {
     unshift @_, 'name' if @_ % 2;
     my $args = {@_};
-    my $path = $args->{path};
+    my $path = $args->{path} ||= '/__jifty/empty';
     if ($Template::Declare::Tags::self && $path !~ m|^/|) {
 	$args->{path} = $Template::Declare::Tags::self->path_for($path);
     }
