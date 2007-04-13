@@ -33,13 +33,13 @@ $mech->content_like(qr/got the grail/, "Running the action produces the expected
 # Feeding the first action into the second should cause both to run;
 # first, test via setting arguments during action creation (which sets
 # sticky values)
-$mech->form(2);
+$mech->form_number(2);
 ok($mech->click_button(value => "Do both"));
 $mech->content_like(qr/got the grail/i, "Got the grail");
 $mech->content_like(qr/crossed the bridge/i, "And crossed the bridge");
 
 # And then, the same, but via default_values on the form field
-$mech->form(3);
+$mech->form_number(3);
 ok($mech->click_button(value => "Do both"));
 $mech->content_like(qr/got the grail/i, "Got the grail");
 $mech->content_like(qr/crossed the bridge/i, "And crossed the bridge");
