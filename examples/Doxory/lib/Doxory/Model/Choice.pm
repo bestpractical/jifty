@@ -6,21 +6,21 @@ use Jifty::DBI::Schema;
 
 use Doxory::Record schema {
     column name =>
-        label is 'I need help deciding...',
+        label is _('I need help deciding...'),
         render as 'textarea';
 
     column a =>
-        label is 'On the one hand',
+        label is _('On the one hand'),
         render as 'textarea',
         is mandatory;
 
     column b =>
-        label is 'On the other hand',
+        label is _('On the other hand'),
         render as 'textarea',
         is mandatory;
 
     column asked_by =>
-        label is 'Asked by',
+        label is _('Asked by'),
         default is defer { Jifty->web->current_user->id },
         references Doxory::Model::User;
 };

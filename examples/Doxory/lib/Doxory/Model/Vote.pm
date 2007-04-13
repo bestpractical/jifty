@@ -15,7 +15,7 @@ use Doxory::Record schema {
         valid are qw( a b skip );
 
     column comments =>
-        label is 'Comments?',
+        label is _('Comments?'),
         render as 'textarea';
 };
 

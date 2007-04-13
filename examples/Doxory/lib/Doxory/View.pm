@@ -5,7 +5,7 @@ use warnings;
 use Jifty::View::Declare -base;
 
 template '/' => page {
-    h1 { 'Ask a question!' }
+    h1 { _('Ask a question!') }
     div { show 'new_choice' }
 };
 
@@ -13,7 +13,7 @@ private template new_choice => sub {
     form {
         my $action = new_action( class => 'CreateChoice' );
         render_action( $action => ['name', 'a', 'b'] );
-        form_submit( label => 'Ask the crowd!' );
+        form_submit( label => _('Ask the crowd!') );
     }
 };
 

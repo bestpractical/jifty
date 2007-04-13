@@ -6,10 +6,10 @@ use Jifty::Dispatcher -base;
 before '*' => run {
     if (Jifty->web->current_user->id) {
         my $top = Jifty->web->navigation;
-        $top->child( 'Pick!'    => url => '/pick' );
-        $top->child( 'Choices'  => url => '/choices' );
+        $top->child( _('Pick!')    => url => '/pick' );
+        $top->child( _('Choices')  => url => '/choices' );
     }
-    elsif ($1 !~ /^login|^signup|^__jifty/) {
+    elsif ($1 !~ /^login|^signup/) {
         tangent 'login';
     }
 };
