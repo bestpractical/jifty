@@ -27,7 +27,7 @@ sub page (&) {
 
 
 template 'signup' => page {
-    title is 'Signup';
+    title is _('Signup');
     my ( $action, $next ) = get(qw(action next));
     Jifty->web->form->start( call => $next );
     render_param( $action => 'name' , focus => 1);
@@ -37,7 +37,7 @@ template 'signup' => page {
 };
 
 template login => page {
-    { title is 'Login!' };
+    { title is _('Login!') };
     show('login_widget');
 };
 
@@ -49,10 +49,10 @@ template login_widget => sub {
         request => Jifty::Request->new( path => "/" ) );
     unless ( Jifty->web->current_user->id ) {
         p {
-            outs( _(        qq{No account yet? It's quick and easy.} ));
+            outs( _( "No account yet? It's quick and easy. " ));
             tangent( label => _("Sign up for an account!"), url   => '/signup');
         };
-        h3  { _(qq{Login with a password}) };
+        h3  { _('Login with a password') };
         div {
             attr { id => 'jifty-login' };
             Jifty->web->form->start( call => $next );
@@ -106,7 +106,7 @@ template 'lost_password' => page {
 
 template 'passwordreminder' => page {
     my $next = get('next');
-    attr { title => 'Send Password Reminder' };
+    attr { title => _('Send a password reminder') };
     my $action = Jifty->web->new_action(
         moniker => 'password_reminder',
         class   => 'SendPasswordReminder',

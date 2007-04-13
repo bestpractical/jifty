@@ -20,22 +20,22 @@ Return the email and password form fields
 =cut
 
 sub arguments { 
-    return( { email => { label => 'Email',
+    return( { email => { label => _('Email'),
                            mandatory => 1,
                            ajax_validates => 1,
                             }  ,
 
               password => { type => 'password',
-                            label => 'Password',
+                            label => _('Password'),
 			    # mandatory in some cases; see validate_password
                             mandatory => 0,
                         },
               hashed_password => { type => 'hidden',
-                            label => 'Hashed Password',
+                            label => _('Hashed Password'),
                         },
               remember => { type => 'checkbox',
-                            label => 'Remember me?',
-                            hints => 'Your browser can remember your login for you',
+                            label => _('Remember me?'),
+                            hints => _('Your browser can remember your login for you'),
                             default => 0,
                           },
 	      token => { type => 'hidden',
