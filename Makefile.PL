@@ -42,7 +42,7 @@ requires('HTTP::Server::Simple::Recorder');
 requires('Hash::Merge');
 requires('Hook::LexWrap');
 requires('IPC::PubSub' => '0.23' );
-requires('Jifty::DBI' => '0.31' );            # Jifty::DBI::Collection Jifty::DBI::Handle Jifty::DBI::Record::Cachable Jifty::DBI::SchemaGenerator
+requires('Jifty::DBI' => '0.40' );            # Jifty::DBI::Collection Jifty::DBI::Handle Jifty::DBI::Record::Cachable Jifty::DBI::SchemaGenerator
 requires('Locale::Maketext::Extract' => '0.20');
 requires('Locale::Maketext::Lexicon' => '0.60');
 requires('Log::Log4perl' => '1.04');
@@ -59,7 +59,7 @@ requires('Scalar::Defer' => '0.10');
 requires('Shell::Command');
 requires('String::Koremutake');
 requires('SQL::ReservedWords');
-requires('Template::Declare' => '0.06');                # Template::Declare::Tags
+requires('Template::Declare' => '0.07');                # Template::Declare::Tags
 requires('Test::Base');
 requires('Test::More' => 0.62 ),
 requires('Test::Pod::Coverage'),
