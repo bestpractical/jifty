@@ -1,0 +1,256 @@
+Asynchrony
+Synchrony
+Syncrony
+Syncron
+
+
+
+client-server sync is easy
+consistent distributed replication is ... harder
+
+how do we guarantee a coherent model of the world after sync?
+two possible models:
+
+    - undo local transactions and replay them in globally unique order
+        (This is the bayou model)
+
+    - calculate big deltas to bring local and remote into sync
+
+        svk pull -l, svk push -l
+
+    - replay remote transactions locally until we conflict or are exhausted
+      then batch until we resolve the conflict automatically or require
+      external intervention, then turn around and do the other side?
+            svk pull, svk push
+
+
+How do we deal with "on transaction" behaviour?
+    Some rules should apply only on "this" replica
+        - Send email when we get an update that matches
+    Some rules should apply only when a record is created or modified by a local update (isn't syncced)
+        - When we create a bug report, create a log entry
+    Some rules should apply only when a record is synced
+        - when we sync in a bug report, extract it's associated patches
+          to the local filesystem in ~/patches/to-apply
+
+Getting toward a consistent result:
+    
+    All bayou replicas move toward 'eventual consistency' using anti-entropy
+    syncs of deltas.
+    "  The Bayou system 
+       guarantees that all servers eventually receive all Writes via the 
+       pair-wise anti-entropy process and that two servers holding the 
+       same set of Writes will have the same data contents."
+
+    "  Two important features of the Bayou system design allows 
+       servers to achieve eventual consistency. First, Writes are per- 
+       formed in the same, well-defined order at all servers. Second, the 
+       conflict detection and merge procedures are deterministic so that 
+       servers resolve the same conflicts in the same manner."
+              
+Merge behaviour:
+
+    Bayou style:
+        'dependency checks' on write -- "Do any of the preconditions for 
+        my attempted write fail?
+        (BayouConflictsSOSPPreprint.pdf)
+        
+        on conflict, run a "merge program" - merge programs are application 
+            specific. bayou defines standard categories of merge programs
+            that developers can treat as templates
+
+        when unresolvable conflicts hit, punt it to the user.
+
+
+        
+    Svn-style:
+        textual merge is fine for simple property databases, but won't 
+        deal with "conflicting appointments"
+
+
+Access control:
+
+ * Authentication
+
+    All updates should be signed by an identity. 
+
+
+        Jesse resolves task 1:
+        "Task 1, status changed from open to resolved" - Signed by 0xAAAA (Jesse)
+
+    When propagating updates delivered to a replica by another identity, updates should carry their full pedigrees.
+       
+        Jesse syncs to clkao:
+        "Task 1, status changed from open to resolved" - Signed by 0xAAAA (Jesse)
+        Clkao syncs to audrey:
+        "Task 1, status changed from open to resolved" - Signed by 0xAAAA (Jesse)
+            - Propagated by 0xBBBB (Clkao) to 0xCCCC (Audreyt) at $TIME
+                Hm. $TIME can't be a timestamp. we don't trust timestamps.
+                Is there any reason to carry full pedigrees? It feels "right"
+                to know how updates get carried around.
+
+    When propagating lumped updates, we probably want to carry the components pedigrees. 
+
+
+    clkao understands all of this stuff a lot better than I do. I'm probably 80% wrong.
+
+
+ * Authorization
+
+    
+
+
+
+Defining characteristics of Bayou:
+	
+	(from eurosigops-96)
+	
+	• Clients can read from and write to any server. 
+	• Servers propagate writes among themselves via a pairwise anti-entropy protocol that permits incremental 
+	progress. 
+	• A new database replica, i.e. server, can be created from any existing replica. 
+	• New conflict detection and resolution procedures can be introduced at any time by clients and their applications. 
+
+
+Bayou propagation of updates:
+
+    a replica has a history of all changes. Changes are defined as 
+    'committed' or 'tentative'.  Tentative changes might get rolled back
+    on conflict....so there's a log of all updates. the database can get
+    rolled back and replayed based on new updates. the order of playback   
+    is globally consistent.
+    
+    we really don't want the distinction between tentative and committed.
+    this would mean that 'lightweight' clients can't be used as a vector 
+    to decrease interserver entropy....it also means that clients can't sync with each other. this is a showstopper.
+
+    sosp-97/AE.pdf describes the bayou anti-entropy replication protocol
+    including an explanationf how to deal with servers which have truncated
+    their write logs. The rollback and insert new transactions scheme 
+    described by AE.pdf sounds an awful lot like what Sam Vilain has been doing with splicing perl history, though presents additional challenges not present in a pure software version control system. the splice can introduce new data that needs to propagate forward.
+
+    While bayou servers are weakly connected, they appear to propagate
+    knowledge of all servers to all other servers.
+
+    In an internet-scale system, this feels like it would be a poor choice.
+
+
+Bayou's global ordering
+
+    The big thing about bayou that scares me is their single global order based on time syncronization.  How do we actually ensure that random clients are globally synced timewise. There's a protocol floating around in my head. I haven't thoguht it through enough to know if it works. And yes, this text buffer is too small to explain it adequately.
+
+
+Connecting to any server:
+    
+        Cool thing about Bayou:
+       Fluid transition between synchronous and asynchronous modes
+       of operations.  Multiple collaborators can connect to distinct
+       servers for typical asynchronous operation, or connect to
+       the same server for âtighterâ synchronous  operationn
+
+Partial Replication:
+
+    How do we deal with letting a client sync only part of the system?
+
+    None of the bayou papers dealt with it at all.
+
+
+"The Dangers of Replication and a Solution ", Microsoft, et al. (gray96danger.pdf)
+
+    Proposes a two-tier solution.  It loses because we don't get mobile to mobile sync 
+
+     mobile nodes maintain two copies of every record:
+        a local version and a best-known master.
+
+     online-connected servers are all closely timesynced and transactions are always applied in order.
+       I haven't read far enough into their paper yet, but I can presume that one server is the designated
+       Master and that in the case of disconnect between Master and other online-connected nodes, the Master
+       wins on any conflict that can't be resolved. but in general, updates are resolved actively.
+
+	"Certainly, there are replicated databases: bibles, phone books, 
+	check books, mail systems, name servers, and so on.  But up- 
+	dates to these databases are managed in interesting ways — 
+	typically in a lazy-master way. Further, updates are not record- 
+	value oriented; rather, updates are expressed as transactional 
+	transformations such as “Debit the account by $50” instead of 
+	“change account from $200 to $150”. "
+		
+	"The two-tier replication scheme begins by assuming there are 
+	two kinds of nodes: 
+	Mobile nodes are disconnected much of the time.  They store a 
+	replica of the database and may originate tentative trans- 
+	actions.  A mobile node may be the master of some data 
+	items. 
+	Base nodes are always connected.  They store a replica of the 
+	database.  Most items are mastered at base nodes. 
+	Replicated data items have two versions at mobile nodes: 
+	Master Version: The most recent value received from the ob- 
+	ject master.  The version at the object master is the master 
+	version, but disconnected or lazy replica nodes may have 
+	older versions. 
+	Tentative Version: The local object may be updated by tenta- 
+	tive transactions.  The most recent value due to local up- 
+	dates is maintained as a tentative value. 
+	Similarly, there are two kinds of transactions: 
+	Base Transaction: Base transactions work only on master 
+	data, and they produce new master data. They involve at 
+	most one connected-mobile node and may involve several 
+	base nodes. 
+	Tentative Transaction: Tentative transactions work on local 
+	tentative data.  They produce new tentative versions. 
+	They also produce a base transaction to be run at a later 
+	time on the base nodes. 
+	
+	
+	
+        
+
+More about authz:
+
+AKA: I CAST PKI. YOUR PROJECT FAILS
+
+
+    Authorization is performed using cryptographically signed assertions:
+
+        Every database has a base "trusted authorizers" property: the public keys of principals allowed to make assertions about it.
+
+        Every database has a list of signed authorization assertions:
+            $PRINCIPAL_KEY_ID has the right $RIGHTNAME for the database with UUID $UUID 
+    
+
+            $RIGHTNAME is one of:
+
+                manage_access (make authz assertions)
+                change_db_model (send cryptographically signed database schema update assertions)
+                create_records  (each of these four CRUD rights can optionally take a table name to check)
+                read_records    (bad idea: allow these signed assertions to include a code chunk used to decide applicability)
+                update_records
+                delete_records
+
+
+            We need to protect against Mallory, the malicious user, who will hang on to his authz assertion even after revocation. So, revocations of signed authz assertions should be kept and propagated like regular authz assertions. Servers must never discard revocations or Mallory's malicious transactions could later be reinjected. How do we handle Mallory's pre-revocation non-malicious transactions?  Presumably all pre-revocation transactions on the replica where the revocation was generated are 
+cryptographically signed by Audrey, the trusted authorizer generating the revocation certificate.
+
+            On every sync, every client should propagate its trust database to the peer. 
+
+        While a local user could modify the "trusted authorizers" property to allow an unauthorized user to commit transactions, 
+i       it would not compromise system integrity as this property would not change on upstream replicas and 
+        transactions from unauthorized users, as well as authz assertions by unknown masters would be discarded.
+        It should be possible for a trusted user (Tony) to sign existing transactions generated by his collaborator Ursula,
+         such that they could be passed to tony's upstream replica with a trusted authorizers list whcih does not include ursula
+
+
+Application behaviour:
+    
+    * Application-specific behaviours are side effects.
+    * Some side effects run when an update is replicated in
+    * Some side effects run when an update is created locally
+    * Some side effects run when an update first enters the system, regardless of whether it's locally created or replicated
+    * Some side effects only cause other database updates. These can _potentially_ be rolled back when the transaction
+      is created
+    * Some side effects perform an external action. These can never be rolled back. They cascade. Once a side effect has taken place, we're stuck with the transaction.
+
+
+
+
+
