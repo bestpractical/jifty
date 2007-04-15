@@ -61,6 +61,10 @@ requires('String::Koremutake');
 requires('SQL::ReservedWords');
 requires('Template::Declare' => '0.06');                # Template::Declare::Tags
 requires('Test::Base');
+requires('Test::More' => 0.62 ),
+requires('Test::Pod::Coverage'),
+requires('Test::WWW::Mechanize' => 1.04 ),
+requires('WWW::Mechanize' => 1.12 ),
 requires('UNIVERSAL::require');
 requires('URI');
 requires('XML::Writer' => '0.601');
@@ -93,12 +97,8 @@ features(
         recommends('Module::Install::Admin' => '0.50'),
         ($^O ne 'MSWin32' ? recommends('Test::HTTP::Server::Simple' => '0.02' ) : ()),
         recommends('Test::HTML::Lint'),
-        recommends('Test::More' => 0.62 ),
         recommends('Test::MockModule' => '0.05'),
         recommends('Test::MockObject' => '1.07'),
-        recommends('Test::Pod::Coverage'),
-        recommends('Test::WWW::Mechanize' => 1.04 ),
-        recommends('WWW::Mechanize' => 1.12 ),
         recommends('Module::Refresh' => '0.09')
     ],
     'Development of the jifty framework' => [
