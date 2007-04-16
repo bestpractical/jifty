@@ -128,7 +128,7 @@ features(
 );
 
 
-no_index( directory => qw< debian doc examples > );
+no_index( directory => qw< debian doc examples share > );
 no_index package => 'DB';
 
 version_from('lib/Jifty.pm');
