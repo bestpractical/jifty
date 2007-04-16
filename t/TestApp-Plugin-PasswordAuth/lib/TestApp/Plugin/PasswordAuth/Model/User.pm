@@ -20,5 +20,9 @@ use Jifty::Plugin::Authentication::Password::Mixin::Model::User;
 
 # Your model-specific methods go here.
 
+sub current_user_can {
+    return 1;
+};
+
 1;
 
