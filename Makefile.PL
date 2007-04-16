@@ -128,11 +128,8 @@ features(
 );
 
 
-no_index directory => 'share';
-no_index directory => 't';
+no_index( directory => qw< debian doc examples > );
 no_index package => 'DB';
-no_index package => 'inc';
-no_index directory => 'doc';
 
 version_from('lib/Jifty.pm');
 #&auto_bundle_deps();
