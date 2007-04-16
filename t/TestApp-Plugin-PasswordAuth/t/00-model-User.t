@@ -7,10 +7,11 @@ use strict;
 A basic test harness for the User model.
 
 =cut
+
 use lib 't/lib';
 use Jifty::SubTest;
 
-use Jifty::Test tests => 15;
+use Jifty::Test tests => 17;
 
 # Make sure we can load the model
 use_ok('TestApp::Plugin::PasswordAuth::Model::User');
@@ -38,6 +39,9 @@ can_ok($o,'set_password');
 ok($o->password_is( 'secret'));
 is($o->color, 'gray');
 is ($o->swallow_type, 'african');
+
+can_ok($o, 'mygroup');
+is ($o->mygroup, 'user', 'Default user is in group user');
 
 
 my $p = TestApp::Plugin::PasswordAuth::Model::User->new(current_user => $system_user);

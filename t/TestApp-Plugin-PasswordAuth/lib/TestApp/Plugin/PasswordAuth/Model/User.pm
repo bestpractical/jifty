@@ -7,6 +7,9 @@ use Jifty::DBI::Schema;
 # Mixins
 
 use TestApp::Plugin::PasswordAuth::Record schema {
+   column 'mygroup' =>
+             valid_values are qw/admin moderator user/,
+             default is 'user';
 
 };
 
