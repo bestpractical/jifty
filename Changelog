@@ -1,4 +1,6 @@
-Jifty 0.70415
+
+Jifty 0.70416
+ * New ExtJS plugin (For yahoo-ui ext)
  * zh-tw L10N for authen/passwd/user plugins.
  * WWW::Mechanize 1.22 removed the form method.  
    thanks to hdp for noticing/poking
