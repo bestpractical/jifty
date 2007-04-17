@@ -79,3 +79,5 @@ foreach my $test (@tests) {
 }
 
 };
+
+1;
