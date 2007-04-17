@@ -34,23 +34,32 @@ administrators update the C<paid_account> field. In that case, you'd override
 C<check_update_rights()> to look for the C<admin> right rather than the 
 C<update> right, if the C<FIELD> is C<paid_account>.
 
-=head1 ENABLING ACCESS CONTROL USING THE LOGIN PLUGIN
+=head1 ENABLING ACCESS CONTROL USING THE USER PLUGIN
 
-To painlessly enable the AccessControl subsystem, the
-C<Login> plugin may get enabled. This is done in the
-F<etc/config.yml> configuration file.
+To painlessly enable the AccessControl subsystem, a User plugin is available
+with an authentication plugin, the C<Authentication::Password> plugin may get 
+enabled. This is done in the F<etc/config.yml> configuration file.
 
     Plugins:
-      - Login: {}
+      - Authentication::Password: {}
 
-Then, create an C<App::Model::User> class that derives from
-C<Jifty::Plugin::Login::Model::User>, for example:
+Then, create an C<App::Model::User> class that will be override with
+C<Jifty::Plugin::User::Mixin::Model::User> and an authentication plugin 
+C<Jifty::Plugin::Authentication::Password::Mixin::Model::User>
+, for example:
 
     use strict;
     use warnings;
 
     package App::Model::User;
-    use base 'Jifty::Plugin::Login::Model::User';
+
+    use Jifty::DBI::Schema;
+
+    use App::Record schema {
+    };
+
+    use Jifty::Plugin::User::Mixin::Model::User;
+    use Jifty::Plugin::Authentication::Password::Mixin::Model::User;
 
     # Your model-specific methods go here.
 
@@ -70,7 +79,7 @@ columns. Simply add a schema definition block like this:
     use App::Record schema {
         column 'extra_column_name';
 
-        column 'group' =>
+        column 'mygroup' =>
                valid_values are qw/admin moderator user/,
                default is 'user';
 
@@ -92,10 +101,10 @@ Then, you override C<current_user_can> in C<App::Model::User>
         return 0 
             if ( $type eq 'update'
                 and !$self->current_user->is_superuser
-                and $args{'column'} eq 'group' ); 
+                and $args{'column'} eq 'mygroup' ); 
 
 
-        return $self->SUPER::current_user_can($type, %args);
+        return 1;
     }
 
 Defining a method C<_init> in your C<App::CurrentUser> class gives you
@@ -115,17 +124,15 @@ will automatically get called after the Plugin's C<_init> is done.
         my $self = shift;
         my %args = (@_);
 
-        if (delete $args{'_bootstrap'} ) {
-            $self->is_bootstrap_user(1);
-        } elsif (keys %args) {
+        if (keys %args) {
             $self->user_object(App::Model::User->new(current_user => $self));
             $self->user_object->load_by_cols(%args);
 
-            if ( $self->user_object->group eq 'admin') {
+            if ( $self->user_object->mygroup eq 'admin') {
                 $self->is_superuser(1);
             };
 
-            $self->status($self->user_object->group);
+            $self->group($self->user_object->mygroup);
         };
         $self->SUPER::_init(%args);
     };
@@ -133,9 +140,9 @@ will automatically get called after the Plugin's C<_init> is done.
 With your C<App::CurrentUser>, users in group admin are superuser and you can 
 use C<< Jifty->web->current_user->group >> in your application.
 
-=head2 Templates defined by the C<Login> plugin
+=head2 Templates defined by the C<Authentication::Password> plugin
 
-To avoid the need for repetitive work, the C<Login> plugin already
+To avoid the need for repetitive work, the C<Authentication::Password> plugin already
 defines a couple of usable templates:
 
 =over 4
@@ -155,10 +162,6 @@ logs out the current user.
 allows a user to sign up himself/herself. By default
 a confirmation mail is sent out that has to get followed by
 the user.
-
-=item F</chgpasswd>
-
-allows a user to change his/her password.
 
 =item F</passwordreminder>
 
