@@ -187,16 +187,30 @@ sub setup {
     # Mason's disk caching sometimes causes false tests
     rmtree([ File::Spec->canonpath("$root/var/mason") ], 0, 1);
 
+$class->setup_test_database;
+
+    $class->setup_mailbox;
+}
+
+=head2 setup_test_database
+
+Create the test database. This can be overloaded if you do your databases in a
+different way.
+
+=cut
+
+sub setup_test_database {
+    my $class = shift;
+
     Jifty->new( no_handle => 1 );
 
     my $schema = Jifty::Script::Schema->new;
-    $schema->{drop_database} =
-      $schema->{create_database} =
-        $schema->{create_all_tables} = 1;
+    $schema->{drop_database}     = 1;
+    $schema->{create_database}   = 1;
+    $schema->{create_all_tables} = 1;
     $schema->run;
 
     Jifty->new();
-    $class->setup_mailbox;
 }
 
 =head2 test_config
