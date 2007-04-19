@@ -95,12 +95,13 @@ If C<I<Application>::Model::I<Something>> is a valid model class, then
 it creates a subclass of L<Jifty::Collection> whose C<record_class> is
 C<I<Application>::Model::I<Something>>.
 
-=item I<Application>::Action::(Create or Update or Delete)I<Anything>
+=item I<Application>::Action::(Create or Update or Delete or Search)I<Anything>
 
-If C<I<Application>::Model::I<Something>> is a valid model class, then
-it creates a subclass of L<Jifty::Action::Record::Create>,
-L<Jifty::Action::Record::Update>, or L<Jifty::Action::Record::Delete>
-whose I<record_class> is C<I<Application>::Model::I<Something>>.
+If C<I<Application>::Model::I<Something>> is a valid model class, then it
+creates a subclass of L<Jifty::Action::Record::Create>,
+L<Jifty::Action::Record::Update>, L<Jifty::Action::Record::Delete> or
+L<Jifty::Action::Record::Search> whose I<record_class> is
+C<I<Application>::Model::I<Something>>.
 
 =back
 
