@@ -9,17 +9,9 @@ Jifty::Plugin::Authentication::Password::Action::Signup
 
 package Jifty::Plugin::Authentication::Password::Action::Signup;
 our @ISA;
-
-=head2 new 
-
-Make this action an App::Action::CreateUser at runtime
-
-=cut
-
-sub new {
+{
     my $class = Jifty->app_class('Action', 'CreateUser');
-    push @ISA, $class unless grep {$_ eq $class } @ISA;
-    return shift->new(@_);
+    push @ISA, $class;
 }
 
 =head2 arguments
