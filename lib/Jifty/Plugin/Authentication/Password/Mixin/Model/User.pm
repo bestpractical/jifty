@@ -128,7 +128,7 @@ sub regenerate_auth_token {
     my $self = shift;
     my $auth_token = '';
 
-    $auth_token .= unpack('H2', chr(int rand(255))) for (1..16);
+    $auth_token .= unpack('H2', chr(int rand(256))) for (1..16);
 
     $self->__set(column => 'auth_token', value => $auth_token);
 }
