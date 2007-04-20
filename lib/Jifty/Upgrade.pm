@@ -94,7 +94,7 @@ sub rename {
             # Convert columns
             my ($schema) = Jifty->handle->fetch_result("SELECT sql FROM sqlite_master WHERE tbl_name = '$table_name' AND type = 'table'");
 
-            $schema =~ s/(.*create\s+table\s+)\S+(.*?\(\s*)//i;
+            $schema =~ s/(.*create\s+table\s+)\S+(.*?\(\s*)//i or die "Cannot find 'CREATE TABLE' statement in schema for '$table_name': $schema";
 
             my $new_table_name    = join( '_', $table_name, 'new', $$ );
             my $new_create_clause = "$1$new_table_name$2";
