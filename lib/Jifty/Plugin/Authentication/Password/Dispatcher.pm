@@ -65,6 +65,9 @@ before qr|^/(?:login)$| => run {
     set 'next' => Jifty->web->request->continuation || Jifty::Continuation->new( request => Jifty::Request->new( path => "/" ) );
 };
 
+before qr|(?:reset_lost_password)| => run {
+    set 'next' => Jifty->web->request->continuation || Jifty::Continuation->new( request => Jifty::Request->new( path => "/" ) );
+};
 # Send a password reminder for a lost password
 
 =head2 on passwordreminder
