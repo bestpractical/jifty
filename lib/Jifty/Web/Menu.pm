@@ -284,7 +284,8 @@ sub _render_as_yui_menu_item {
         . qq{ class="$class"><div class="bd"><ul>}
     );
     for (@kids) {
-        Jifty->web->out( qq{<li class="${class}item">});
+        Jifty->web->out( qq{<li class="${class}item }
+        . ($_->active? 'active' : '') . qq{">});
         Jifty->web->out( $_->as_link );
         $_->_render_as_yui_menu_item("yuimenu");
         Jifty->web->out( qq{</li>});
