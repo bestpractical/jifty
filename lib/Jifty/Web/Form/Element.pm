@@ -309,11 +309,11 @@ sub javascript {
         my $string = join ";", (grep {not ref $_} (ref $value eq "ARRAY" ? @{$value} : ($value)));
         if (@fragments or %actions) {
 
-            my $update = "update( ". Jifty::JSON::objToJson( {actions => \%actions, fragments => \@fragments }, {singlequote => 1}) .", this );";
+            my $update = Jifty->web->escape("update( ". Jifty::JSON::objToJson( {actions => \%actions, fragments => \@fragments }, {singlequote => 1}) .", this );");
             $string .= $self->javascript_preempt ? "return $update" : "$update; return true;";
         }
         if ($confirm) {
-            $string = "if(!confirm(" . Jifty::JSON::objToJson($confirm, {singlequote => 1}) . ")) return false;" . $string;
+            $string = Jifty->web->escape("if(!confirm(" . Jifty::JSON::objToJson($confirm, {singlequote => 1}) . ")) { Event.stop(event); return false }") . $string;
         }
         $response .= qq| $trigger="$string"|;
     }
@@ -389,7 +389,7 @@ sub render_key_binding {
     Jifty->web->out(
         '<script type="text/javascript"><!--' .
         "\n" .
-        $self->key_binding_javascript .
+        Jifty->web->escape($self->key_binding_javascript).
         "\n" .
         "--></script>");
     return '';
