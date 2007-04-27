@@ -76,7 +76,6 @@ template 'let/reset_lost_password' => page {
     my $action = Jifty->web->new_action( class => 'ResetLostPassword' );
 
     Jifty->web->form->start( call => $next );
-    outs_raw($next);
         render_param( $action => $_ ) for ( $action->argument_names );
         form_return( label => _("New password"), submit => $action );
     Jifty->web->form->end();
