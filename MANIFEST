@@ -963,11 +963,14 @@ t/TestApp-Plugin-PasswordAuth/etc/config.yml
 t/TestApp-Plugin-PasswordAuth/lib/TestApp/Plugin/FasterSwallow.pm
 t/TestApp-Plugin-PasswordAuth/lib/TestApp/Plugin/FavoriteColor.pm
 t/TestApp-Plugin-PasswordAuth/lib/TestApp/Plugin/PasswordAuth/Bootstrap.pm
+t/TestApp-Plugin-PasswordAuth/lib/TestApp/Plugin/PasswordAuth/CurrentUser.pm
 t/TestApp-Plugin-PasswordAuth/lib/TestApp/Plugin/PasswordAuth/Dispatcher.pm
 t/TestApp-Plugin-PasswordAuth/lib/TestApp/Plugin/PasswordAuth/Model/User.pm
 t/TestApp-Plugin-PasswordAuth/Makefile.PL
 t/TestApp-Plugin-PasswordAuth/t/00-model-User.t
 t/TestApp-Plugin-PasswordAuth/t/01-tokengen.t
+t/TestApp-Plugin-PasswordAuth/t/11-current_user.t
+t/TestApp-Plugin-PasswordAuth/t/12-signup.t
 t/TestApp-Plugin-REST/bin/jifty
 t/TestApp-Plugin-REST/etc/config.yml
 t/TestApp-Plugin-REST/lib/TestApp/Plugin/REST/Action/DoSomething.pm

@@ -1,3 +1,24 @@
+Jifty 0.70422
+
+[Password Authentication plugin]
+
+* Better "password reset" behaviour  
+* added regression test for bug fix in Jifty::Plugin::Authentication::Password::Action::Signup
+* change manual for access control with user and authentication::password plugins
+* Revert the bogus warning silencing in 0.70416 as it kills Doxory example.  
+  (reported by semifor++)
+ 
+[Core]
+
+* More debugging info for broken letmes
+* Added duck typing to the Jifty::Handle constructor to prevent difficult 
+  to trace error messages when the driver name is mispelt or fails to load.
+* Jifty::Upgrade - Defensive programming against tables that did
+  not have "create table" in its schema for SQLite column renaming.
+* Jifty::Module::Pluggable - Silence the @ISA warnings. 
+* Doc updates for Jifty::ClassLoader -- David Good <dgood@willingminds.com>
+* Created a method that can be over-ridden for custom test database setup
+* debian stuff, fr.po update
 
 Jifty 0.70416
  * New ExtJS plugin (For yahoo-ui ext)

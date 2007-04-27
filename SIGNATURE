@@ -14,9 +14,9 @@ not run its Makefile.PL or Build.PL.
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-SHA1 ce845a63328d2beca5037d7e4c5f85e448ac30cb AUTHORS
-SHA1 8475e5958f8dedbb349027498a85d2c69a952e10 Changelog
-SHA1 155a4bc60d49b6a028bf53c17209dffbbd8f699b MANIFEST
+SHA1 7ce15e058bb6a72aa237ac58e0fbce934b2fef5c AUTHORS
+SHA1 876166ca6f2cf7bfa6a6137070beb1b55b4bc4ce Changelog
+SHA1 ed26a91a1edcc0aed0509bc7384b2d24cfd13d89 MANIFEST
 SHA1 d4adbf5948041cd460da5cb7ad21394a790e2022 MANIFEST.SKIP
 SHA1 85f15b04e047acd8c86edfca3f7760fa4c001584 META.yml
 SHA1 c11c8ba944d2d9410d04593112e7ab951648d4fd Makefile.PL
@@ -27,7 +27,7 @@ SHA1 bc5d0dc181bffe0694e5282c2d2336eaec5a06ff bin/runcover
 SHA1 9a91a81e3db1a12368153fed9e504aad492cd971 bin/service
 SHA1 543a2677f66d3c8ca671b790509b6c1721ac6270 bin/xgettext
 SHA1 1c042485ba8a21f0f124dd8ed412d43d3805430e debian/README
-SHA1 dfcbf0974ad02c0e64e82d7f9b2bec91278634f3 debian/changelog
+SHA1 dee0467ffdb9142223c49789a447ba5dd299c28d debian/changelog
 SHA1 5d9474c0309b7ca09a182d888f73b37a8fe1362c debian/compat
 SHA1 c9a13c7f88cc191d5167bbdeebf5e7abbd776b0b debian/control
 SHA1 8fc130ffa6d53c47d94eab1616887c511d54d61f debian/rules
@@ -138,7 +138,7 @@ SHA1 f763d4fe06ca0876fa047a719c2fcf110a92b1d0 inc/Module/Install/Share.pm
 SHA1 fe6780ea5cfd67c79140699fbd4f0fe262255d57 inc/Module/Install/Win32.pm
 SHA1 51d43bffcfd7ffdecb8c8e9f97f3896c31b2e1b2 inc/Module/Install/WriteAll.pm
 SHA1 c17e8f3cf8ebe1eb4929fd2bd2fd530a9de1abd0 lib/Email/Send/Jifty/Test.pm
-SHA1 5ec25871fb379024dbdaa0ed8b7147f18ffda8ac lib/Jifty.pm
+SHA1 0eb6271f949efa613d516c73cb672f7392c336b5 lib/Jifty.pm
 SHA1 337627c441c5639405a2d2cc751c63616d25c221 lib/Jifty/API.pm
 SHA1 7dc39eb45149bd3c9b7e1f19047657dbf84688df lib/Jifty/Action.pm
 SHA1 d73654ad2f7edc2f1661ab866b1db609d83806b3 lib/Jifty/Action/Autocomplete.pm
@@ -149,7 +149,7 @@ SHA1 1e400299405a06d3d09bb7548d97c52b850b7f43 lib/Jifty/Action/Record/Search.pm
 SHA1 821d06cdd92876efd01e08800eae46e52e13c2a6 lib/Jifty/Action/Record/Update.pm
 SHA1 ab7a0e0bae4cd1ecbda260b339a4116e65708a7f lib/Jifty/Action/Redirect.pm
 SHA1 0334c7ad4458bca073fa22372b4775937a0852e1 lib/Jifty/Bootstrap.pm
-SHA1 cfda40c105abc7f0e5df0ab05895173be4dce03c lib/Jifty/ClassLoader.pm
+SHA1 7a3849fb30ecb9bb7c0c382b7cc44b6216516de2 lib/Jifty/ClassLoader.pm
 SHA1 1009fa942a8cf3da853694f321d6f67d70613a79 lib/Jifty/Client.pm
 SHA1 a4e91b327848fe1c5b76e4ffaa926300e4c1ef2f lib/Jifty/Collection.pm
 SHA1 70ed11fa2fe5a196b5d5ee18e162e0f561dc7780 lib/Jifty/Config.pm
@@ -165,9 +165,9 @@ SHA1 45fa3790eb4737497dd728510cc92aa76017e350 lib/Jifty/Handle.pm
 SHA1 947e5aee7b981e19042f3343050a129600b88772 lib/Jifty/Handler.pm
 SHA1 c413c80506fe0a1da3154739249a9351982b1db2 lib/Jifty/I18N.pm
 SHA1 fe370e2c51ca0f20cb0bce133b8c9067c02a524a lib/Jifty/JSON.pm
-SHA1 2ba1cebdcb72532f12f28f59754d75adc5e54e01 lib/Jifty/LetMe.pm
+SHA1 93d009a7d9a25975786b9ded3dcd5fdac90c9389 lib/Jifty/LetMe.pm
 SHA1 1687a979438f24c95a6b857ab5305910108bfb49 lib/Jifty/Logger.pm
-SHA1 b03feba360a2fd7b7c9b8318a2680c62b0a42cdb lib/Jifty/Manual/AccessControl.pod
+SHA1 9a01a2e586aa5799fdc0f04c6240220d9dd953b9 lib/Jifty/Manual/AccessControl.pod
 SHA1 ef9ff36385a9f780ac0204bffb9425818d78b789 lib/Jifty/Manual/Actions.pod
 SHA1 d320630f6613f4aa1ec3b9537129fd9ca847fb61 lib/Jifty/Manual/Continuations.pod
 SHA1 99848cf166e90d9c0963a65d09a627ba11a3613e lib/Jifty/Manual/Cookbook.pod
@@ -189,7 +189,7 @@ SHA1 59ce74460e9c1fe8aa1114c2e874348583b76548 lib/Jifty/Mason/Halo.pm
 SHA1 c7a9988b0826f9c55af2415c7d314ff546193cee lib/Jifty/Model/Metadata.pm
 SHA1 4b89786af61d1490286bc02c4c3a8edb95aa0b60 lib/Jifty/Model/Session.pm
 SHA1 0efcdf22d66e521cf250c1398caf3aba93ed795d lib/Jifty/Model/SessionCollection.pm
-SHA1 95bf129e6c19868a63cf52f073bbe47db6d3f969 lib/Jifty/Module/Pluggable.pm
+SHA1 d15fc44fc8af2c4a7db3c2f08e1d69d6f397e734 lib/Jifty/Module/Pluggable.pm
 SHA1 f7c511c6b0c6ccfc3c5fdc0bf0a4e224d78a9c40 lib/Jifty/Notification.pm
 SHA1 7223070583b1b15f651db7a71b97e039e084aa4f lib/Jifty/Object.pm
 SHA1 c3fde2a862013cd6284637d79c751c3c2e360720 lib/Jifty/Param.pm
@@ -199,18 +199,18 @@ SHA1 328b724a1f266999eb1f12e60a7ac6fcc533d177 lib/Jifty/Plugin/AdminUI.pm
 SHA1 00354893bf1283e9cf1b52de5b41bdfb57a78811 lib/Jifty/Plugin/Authentication/Password.pm
 SHA1 9f078a684545d3a9c075d83812cffeca0a3b633e lib/Jifty/Plugin/Authentication/Password/Action/ConfirmEmail.pm
 SHA1 de9208f8911bc09594299b618a7ce05c71cac57e lib/Jifty/Plugin/Authentication/Password/Action/GeneratePasswordToken.pm
-SHA1 fe301993be96d5f1bcde396ee7e3826e6aeb4c32 lib/Jifty/Plugin/Authentication/Password/Action/Login.pm
+SHA1 2da111cb0154fe09287b9c8db251b5d8720d0379 lib/Jifty/Plugin/Authentication/Password/Action/Login.pm
 SHA1 3ccf33cfd732343cfeeda7f2acc1df7c7da721fe lib/Jifty/Plugin/Authentication/Password/Action/Logout.pm
 SHA1 074fe2fa59464a78b69558f2c20b39fe45a6e56e lib/Jifty/Plugin/Authentication/Password/Action/ResendConfirmation.pm
 SHA1 eb20b698db12db185f08e4d0e0a6c39dc2c1432f lib/Jifty/Plugin/Authentication/Password/Action/ResetLostPassword.pm
 SHA1 89d74967f85b631644d039393920646cfb772f2a lib/Jifty/Plugin/Authentication/Password/Action/SendAccountConfirmation.pm
 SHA1 28604b89817992c647042420090a59fee0fe06bd lib/Jifty/Plugin/Authentication/Password/Action/SendPasswordReminder.pm
-SHA1 96ea2fafc80417b27e9691bcf020103fdc7482b5 lib/Jifty/Plugin/Authentication/Password/Action/Signup.pm
-SHA1 1d30106db1d074278fd646c378cc155b8e97716f lib/Jifty/Plugin/Authentication/Password/Dispatcher.pm
-SHA1 4defcd42e3416040108a61bbd059ad9e51a88532 lib/Jifty/Plugin/Authentication/Password/Mixin/Model/User.pm
+SHA1 3d0b444280c3b0ae577e0ada5cb3fd2eb8803f9f lib/Jifty/Plugin/Authentication/Password/Action/Signup.pm
+SHA1 b0ccc1d001aeca18ad7466b531081805408b2010 lib/Jifty/Plugin/Authentication/Password/Dispatcher.pm
+SHA1 3191af60483a20faf1d624da37929e3310ced14c lib/Jifty/Plugin/Authentication/Password/Mixin/Model/User.pm
 SHA1 9711ece6f3637e972708c8bda313aaa57fd1b405 lib/Jifty/Plugin/Authentication/Password/Notification/ConfirmEmail.pm
 SHA1 f8e1724e5d0d3e490439f0ad761a96155ff1b5a4 lib/Jifty/Plugin/Authentication/Password/Notification/ConfirmLostPassword.pm
-SHA1 3b912f2b6f80d5431c9e263dc16f77c0b36ebeb6 lib/Jifty/Plugin/Authentication/Password/View.pm
+SHA1 91272a6c9926cdacbfc10afe8624a35868a8e8be lib/Jifty/Plugin/Authentication/Password/View.pm
 SHA1 da70c7fbcd78d7ae9bd53deb74a022d0eeea4a12 lib/Jifty/Plugin/ClassLoader.pm
 SHA1 25d4c8b9459c9c299fb181d41539475a854309f0 lib/Jifty/Plugin/CompressedCSSandJS.pm
 SHA1 3b6cb101e9e3465cefdb843fb9108cb126644284 lib/Jifty/Plugin/CompressedCSSandJS/Dispatcher.pm
@@ -255,7 +255,7 @@ SHA1 9a8c2f2cdc88fc00baaafaa72bc3413e086c0448 lib/Jifty/Server/Prefork.pm
 SHA1 e7453a3cda290e60d5432e60e53bec8b92a91772 lib/Jifty/Server/Prefork/NetServer.pm
 SHA1 4c51d2df15281788b74d080488b0c5959cd95a1a lib/Jifty/Subs.pm
 SHA1 b3d122eed10c4ac3cba561913a42220c2f5ee085 lib/Jifty/Subs/Render.pm
-SHA1 2dac24c8d464f0823c2847ce382a967f017fd637 lib/Jifty/Test.pm
+SHA1 e15bde68ba67b141ae1565be066f1e1f171f63ec lib/Jifty/Test.pm
 SHA1 0d6d53b5084bb89baea771d3e9d602a195255e37 lib/Jifty/Test/WWW/Mechanize.pm
 SHA1 47c5840fafd56473a0e1a9228f169d3813317c13 lib/Jifty/TestServer.pm
 SHA1 4614193951790ed53fc8682135cdb1b40d3fa975 lib/Jifty/Upgrade.pm
@@ -796,10 +796,10 @@ SHA1 7efa4f24d875a19035963c3955f2fc4e613b8cfe share/plugins/Jifty/Plugin/OnlineD
 SHA1 608c393b35a8884b4d32a4c855bbcc73478dc849 share/plugins/Jifty/Plugin/OnlineDocs/web/templates/__jifty/online_docs/content.html
 SHA1 58a4059cc383f792108986d2386a5e7edc81363f share/plugins/Jifty/Plugin/OnlineDocs/web/templates/__jifty/online_docs/index.html
 SHA1 37555dd5c3acfbaecfc28416e0fa21b0aa6e1d77 share/plugins/Jifty/Plugin/OnlineDocs/web/templates/__jifty/online_docs/toc.html
-SHA1 7c9254ebc9576276665394ce0394a1f22a98e702 share/po/en.po
-SHA1 be64ba2089eed8163afc23145fc13aca072eb740 share/po/fr.po
-SHA1 8e1828aa8acbe74346907e759d1d48c547140e0d share/po/ja.po
-SHA1 59df94d159ce45bc55d4fe47eae42ab30bc1ec41 share/po/zh_cn.po
+SHA1 0da91e5da11aa851363d08a8f9aeade85f72aeb7 share/po/en.po
+SHA1 63a333ff328933df4082e868ba9115b3c0fa24bd share/po/fr.po
+SHA1 88408a7350d0599fd4e7cd7f709fd918b55b6b27 share/po/ja.po
+SHA1 94151e35cbd50a82e09f33718dad3f15fdb0416f share/po/zh_cn.po
 SHA1 623dbb738a8db1e79de6127fc3af2c918d2c93e6 share/po/zh_tw.po
 SHA1 da39a3ee5e6b4b0d3255bfef95601890afd80709 share/web/static/css/app-base.css
 SHA1 da39a3ee5e6b4b0d3255bfef95601890afd80709 share/web/static/css/app.css
@@ -978,10 +978,13 @@ SHA1 2ad861771e8cc20e90a5820cb4d3d0837a4fc047 t/TestApp-Plugin-PasswordAuth/etc/
 SHA1 deb71812bd1042f4ac4260a7b67340ff5f6e5c4d t/TestApp-Plugin-PasswordAuth/lib/TestApp/Plugin/FasterSwallow.pm
 SHA1 f34586dcd0217789759de64af7720695c1d50a9a t/TestApp-Plugin-PasswordAuth/lib/TestApp/Plugin/FavoriteColor.pm
 SHA1 a83f69587be10ffe3191bc04ed94f2b817b54ce4 t/TestApp-Plugin-PasswordAuth/lib/TestApp/Plugin/PasswordAuth/Bootstrap.pm
-SHA1 54c886b94c444a3aaad3a593ab5bbf74b693c9ee t/TestApp-Plugin-PasswordAuth/lib/TestApp/Plugin/PasswordAuth/Dispatcher.pm
-SHA1 d2cc091e340ec51e11212f7f11c4fdb9f7fa23ff t/TestApp-Plugin-PasswordAuth/lib/TestApp/Plugin/PasswordAuth/Model/User.pm
-SHA1 bde1e56638abc9cb70b4f0de63eee14fea0ae766 t/TestApp-Plugin-PasswordAuth/t/00-model-User.t
+SHA1 9f38d7dd23e7568ec3979216f928a0ef7bdee0ed t/TestApp-Plugin-PasswordAuth/lib/TestApp/Plugin/PasswordAuth/CurrentUser.pm
+SHA1 62e2f19a611b7c87b3abcee1a4653c29caf7bc90 t/TestApp-Plugin-PasswordAuth/lib/TestApp/Plugin/PasswordAuth/Dispatcher.pm
+SHA1 eb74aab3f1577160a69f5d5073ec07da7fda041e t/TestApp-Plugin-PasswordAuth/lib/TestApp/Plugin/PasswordAuth/Model/User.pm
+SHA1 7513161b6944b864a0d06f74ce230907e2064cf7 t/TestApp-Plugin-PasswordAuth/t/00-model-User.t
 SHA1 cd358dc97050649f35034d8363590798a543799d t/TestApp-Plugin-PasswordAuth/t/01-tokengen.t
+SHA1 fda1f40fc6869572331ab18da6b57679b847d3f0 t/TestApp-Plugin-PasswordAuth/t/11-current_user.t
+SHA1 e39787081ffb2783de44db32157c6f3bf1631047 t/TestApp-Plugin-PasswordAuth/t/12-signup.t
 SHA1 a7dc1f376cac630ea28d2965e561469deb951cc7 t/TestApp-Plugin-REST/bin/jifty
 SHA1 4762d5e154fcbeb0b188a1ecb90c4997403c9d24 t/TestApp-Plugin-REST/etc/config.yml
 SHA1 61845f11966aadecf3bb885fcc5b33ef66e9637f t/TestApp-Plugin-REST/lib/TestApp/Plugin/REST/Action/DoSomething.pm
@@ -1050,7 +1053,7 @@ SHA1 c8fb21f31b593627b38129ee9dd41eaf9c556ced t/lib/Jifty/SubTest.pm
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.3 (Darwin)
 
-iD8DBQFGI9myEi9d9xCOQEYRAu5RAKCwtRgYvLnplDFqWLDWu8ZKAHa37ACgtZ7h
-ecsyXp1y9GhIan806U5GAB8=
-=wNRA
+iD8DBQFGLAX/Ei9d9xCOQEYRAnSsAKC6QQRZGQFzdh1RYF6eRAfYxjg1KQCfU8ih
+Lh9Xz380qhLKc6AxFRUaZkM=
+=RTdf
 -----END PGP SIGNATURE-----

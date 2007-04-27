@@ -11,7 +11,7 @@ BEGIN {
     require Time::Local;
 
     # Declare early to make sure Jifty::Record::schema_version works
-    $Jifty::VERSION = '0.70416';
+    $Jifty::VERSION = '0.70422';
 }
 
 =head1 NAME
