@@ -62,6 +62,10 @@ Handle a request for C<$path>. If we can't find a static file of that name, retu
 
 =cut
 
+sub show {
+    shift->handle_request(@_);
+}
+
 sub handle_request {
     my $self = shift;
     my $path = shift;
@@ -112,6 +116,10 @@ Jifty's static root.  Returns undef if it can't find the file in any
 path.
 
 =cut
+
+sub template_exists {
+    shift->file_path(@_);
+}
 
 sub file_path {
     my $self    = shift;

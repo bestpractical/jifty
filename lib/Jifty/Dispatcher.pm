@@ -1127,8 +1127,8 @@ sub template_exists {
     my $self     = shift;
     my $template = shift;
 
-    foreach my $handler ( Jifty->handler->_template_handlers) {
-        if ( Jifty->handler->$handler->template_exists($template) ) {
+    foreach my $handler ( Jifty->handler->template_handlers) {
+        if ( Jifty->handler->view($handler)->template_exists($template) ) {
             return 1;
         }
     }
@@ -1146,21 +1146,21 @@ HTML::Mason templates then the T::D template is used.
 =cut
 
 sub render_template {
-    my $self = shift;
+    my $self     = shift;
     my $template = shift;
-    my $showed = 0;
-    eval { 
-    	foreach my $handler (Jifty->handler->_template_handlers ) {
-        if (Jifty->handler->$handler->template_exists($template) ) {
-	   $showed = 1;
-            Jifty->handler->$handler->show($template);
-		last;
-        	}
-   	} 
-	if (not $showed and my $fallback_handler = Jifty->handler->_fallback_template_handler) {
-            Jifty->handler->$fallback_handler->show($template);
-	}
-    
+    my $showed   = 0;
+    eval {
+        foreach my $handler ( Jifty->handler->template_handlers ) {
+            if ( Jifty->handler->view($handler)->template_exists($template) ) {
+                $showed = 1;
+                Jifty->handler->view($handler)->show($template);
+                last;
+            }
+        }
+        if ( not $showed and my $fallback_handler = Jifty->handler->_fallback_template_handler ) {
+            $fallback_handler->show($template);
+        }
+
     };
 
     my $err = $@;
@@ -1180,8 +1180,7 @@ sub render_template {
 
         # Redirect with a continuation
         Jifty->web->_redirect( "/__jifty/error/mason_internal_error?J:C=" . $c->id );
-    }
-    elsif ($err) {
+    } elsif ($err) {
         die $err;
     }
 

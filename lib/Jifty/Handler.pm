@@ -48,7 +48,13 @@ BEGIN {
 
 
 
-__PACKAGE__->mk_accessors(qw(mason dispatcher declare_handler static_handler cgi apache stash));
+__PACKAGE__->mk_accessors(qw(dispatcher view_handlers  cgi apache stash));
+
+sub mason {
+    my $self = shift;
+    return $self->view_handlers()->{'Jifty::View::Mason::Handler'};
+}
+
 
 =head2 new
 
@@ -72,8 +78,8 @@ sub new {
     return $self;
 }
 
-sub _template_handlers { qw(declare_handler mason) }
-sub _fallback_template_handler { 'mason' }
+sub template_handlers { qw(Jifty::View::Static::Handler Jifty::View::Declare::Handler Jifty::View::Mason::Handler)}
+sub _fallback_template_handler { my $self = shift; return $self->mason; }
 
 =head2 setup_view_handlers
 
@@ -86,9 +92,19 @@ XXX TODO: this should take pluggable views
 sub setup_view_handlers {
     my $self = shift;
 
-    $self->declare_handler( Jifty::View::Declare::Handler->new());
-    $self->mason( Jifty::View::Mason::Handler->new());
-    $self->static_handler(Jifty::View::Static::Handler->new());
+    $self->view_handlers({});
+    foreach my $class ($self->template_handlers()) {
+        $self->view_handlers->{$class} =  $class->new();
+    }
+
+}
+
+sub view {
+    my $self = shift;
+    my $class = shift;
+
+    return $self->view_handlers->{$class};
+
 }
 
 
@@ -153,30 +169,22 @@ sub handle_request {
     $self->apache( HTML::Mason::FakeApache->new( cgi => $self->cgi ) );
 
     # Build a new stash for the life of this request
-    $self->stash({});
+    $self->stash( {} );
     local $HTML::Mason::Commands::JiftyWeb = Jifty::Web->new();
 
     Jifty->web->request( Jifty::Request->new()->fill( $self->cgi ) );
     Jifty->web->response( Jifty::Response->new );
     Jifty->api->reset;
-    $_->new_request for Jifty->plugins;
-
+    for ( Jifty->plugins ) {
+        $_->new_request;
+    }
     Jifty->log->debug( "Received request for " . Jifty->web->request->path );
-    my $sent_response = 0;
-    $sent_response
-        = $self->static_handler->handle_request( Jifty->web->request->path )
-        if ( Jifty->config->framework('Web')->{'ServeStaticFiles'} );
-
-    Jifty->web->setup_session unless $sent_response;
+    Jifty->web->setup_session;
 
     # Return from the continuation if need be
     Jifty->web->request->return_from_continuation;
-
-    unless ($sent_response) {
-        Jifty->web->session->set_cookie;
-        $self->dispatcher->handle_request()
-    }
-
+    Jifty->web->session->set_cookie;
+    $self->dispatcher->handle_request();
     $self->cleanup_request();
 
 }
