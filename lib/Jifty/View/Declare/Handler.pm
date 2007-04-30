@@ -5,7 +5,7 @@ use strict;
 
 use base qw/Jifty::Object Class::Accessor/;
 use Template::Declare;
-use Encode ();
+use utf8 ();
 
 __PACKAGE__->mk_accessors(qw/root_class/);
 
@@ -79,8 +79,8 @@ sub show {
         unless ( Jifty->handler->apache->http_header_sent ||Jifty->web->request->is_subrequest ) {
             Jifty->handler->apache->send_http_header();
         }
+    utf8::downgrade($content, 'FAILURE IS OK'); # Just before we go to stdout, we REALLY want to convert to octets.
     print STDOUT $content;
-    Encode::_utf8_on($content);
     return undef;
 }
 
