@@ -78,7 +78,7 @@ sub show {
         unless ( Jifty->handler->apache->http_header_sent ||Jifty->web->request->is_subrequest ) {
             Jifty->handler->apache->send_http_header();
         }
-    utf8::downgrade($content, 'FAILURE IS OK'); # Just before we go to stdout, we REALLY want to convert to octets.
+    utf8::downgrade($content, 1); # Just before we go to stdout, we REALLY want to convert to octets.
     print STDOUT $content;
     return undef;
 }
