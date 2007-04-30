@@ -111,6 +111,10 @@ fragment.
 A hashref of arguments to pass to the effect when it is created.  These
 can be used to change the duration of the effect, for instance.
 
+=item beforeclick => STRING
+
+String contains some Javascript code to be used before a click.
+
 =item confirm => STRING
 
 Prompt the user with a Javascript confirm dialog with the given text
@@ -234,6 +238,7 @@ sub javascript {
         my @fragments;
         my %actions;    # Maps actions => disable?
         my $confirm;
+        my $beforeclick;
 
         for my $hook (grep {ref $_ eq "HASH"} (@{$value})) {
 
@@ -252,6 +257,11 @@ sub javascript {
             # Should we show a javascript confirm message?
             if ($hook->{confirm}) {
                 $confirm = $hook->{confirm};
+            }
+
+            # Some code usable before onclick
+            if ($hook->{beforeclick}) {
+                $beforeclick = $hook->{beforeclick};
             }
 
             # Placement
@@ -314,6 +324,9 @@ sub javascript {
         }
         if ($confirm) {
             $string = Jifty->web->escape("if(!confirm(" . Jifty::JSON::objToJson($confirm, {singlequote => 1}) . ")) { Event.stop(event); return false }") . $string;
+        }
+        if ($beforeclick) {
+           $string = Jifty->web->escape($beforeclick) . $string;
         }
         $response .= qq| $trigger="$string"|;
     }
