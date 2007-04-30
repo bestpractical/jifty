@@ -201,7 +201,7 @@ sub default_app_name {
 =head2 make_path PATH
 
 When handed a directory, creates that directory, starting as far up the 
-chain as necessary. (This is what 'mkdir -p' does in your shell)
+chain as necessary. (This is what 'mkdir -p' does in your shell).
 
 =cut
 

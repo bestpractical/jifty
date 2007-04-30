@@ -48,11 +48,19 @@ BEGIN {
 
 
 
-__PACKAGE__->mk_accessors(qw(dispatcher view_handlers  cgi apache stash));
+__PACKAGE__->mk_accessors(qw(dispatcher _view_handlers  cgi apache stash));
+
+=head2 mason
+
+
+Returns the Jifty c<HTML::Mason> handler. While this "should" be just another template handler,
+we still rely on it for little bits of Jifty infrastructure. Patches welcome.
+
+=cut
 
 sub mason {
     my $self = shift;
-    return $self->view_handlers()->{'Jifty::View::Mason::Handler'};
+    return $self->view('Jifty::View::Mason::Handler');
 }
 
 
@@ -78,32 +86,57 @@ sub new {
     return $self;
 }
 
-sub template_handlers { qw(Jifty::View::Static::Handler Jifty::View::Declare::Handler Jifty::View::Mason::Handler)}
-sub _fallback_template_handler { my $self = shift; return $self->mason; }
+
+=head2 view_handlers
+
+Returns a list of modules implementing view for your Jifty application.
+
+XXX TODO: this should take pluggable views
+
+=cut
+
+
+sub view_handlers { qw(Jifty::View::Static::Handler Jifty::View::Declare::Handler Jifty::View::Mason::Handler)}
+
+
+=head2 fallback_view_handler
+
+Returns the object for our "last-resort" view handler. By default, this is the L<HTML::Mason> handler.
+
+=cut
+
+
+
+sub fallback_view_handler { my $self = shift; return $self->view('Jifty::View::Mason::Handler') }
 
 =head2 setup_view_handlers
 
 Initialize all of our view handlers. 
 
-XXX TODO: this should take pluggable views
 
 =cut
 
 sub setup_view_handlers {
     my $self = shift;
 
-    $self->view_handlers({});
-    foreach my $class ($self->template_handlers()) {
-        $self->view_handlers->{$class} =  $class->new();
+    $self->_view_handlers({});
+    foreach my $class ($self->view_handlers()) {
+        $self->_view_handlers->{$class} =  $class->new();
     }
 
 }
 
+=head2 view ClassName
+
+
+Returns the Jifty view handler for C<ClassName>.
+
+=cut
+
 sub view {
     my $self = shift;
     my $class = shift;
-
-    return $self->view_handlers->{$class};
+    return $self->_view_handlers->{$class};
 
 }
 

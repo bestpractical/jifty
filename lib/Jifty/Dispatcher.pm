@@ -1127,7 +1127,7 @@ sub template_exists {
     my $self     = shift;
     my $template = shift;
 
-    foreach my $handler ( Jifty->handler->template_handlers) {
+    foreach my $handler ( Jifty->handler->view_handlers) {
         if ( Jifty->handler->view($handler)->template_exists($template) ) {
             return 1;
         }
@@ -1150,14 +1150,14 @@ sub render_template {
     my $template = shift;
     my $showed   = 0;
     eval {
-        foreach my $handler ( Jifty->handler->template_handlers ) {
+        foreach my $handler ( Jifty->handler->view_handlers ) {
             if ( Jifty->handler->view($handler)->template_exists($template) ) {
                 $showed = 1;
                 Jifty->handler->view($handler)->show($template);
                 last;
             }
         }
-        if ( not $showed and my $fallback_handler = Jifty->handler->_fallback_template_handler ) {
+        if ( not $showed and my $fallback_handler = Jifty->handler->fallback_view_handler ) {
             $fallback_handler->show($template);
         }
 

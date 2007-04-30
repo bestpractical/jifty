@@ -55,12 +55,20 @@ sub new {
 }
 
 
-=head2 handle_request $path
+=head2 show $path
 
 Handle a request for C<$path>. If we can't find a static file of that name, return undef.
 
 
 =cut
+
+=head2 handle_request $path
+
+
+An alias for L</show>
+
+=cut
+
 
 sub show {
     shift->handle_request(@_);
@@ -114,6 +122,12 @@ Returns the system path for C<$path>, searching inside the
 application's static root, loaded plugins' static roots, and finally
 Jifty's static root.  Returns undef if it can't find the file in any
 path.
+
+=cut
+
+=head2 template_exists $path
+
+An alias for L</file_path>.
 
 =cut
 
