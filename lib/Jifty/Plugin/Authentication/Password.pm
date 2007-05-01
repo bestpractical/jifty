@@ -24,7 +24,7 @@ Right now, it's useless and should be ignored.
 
 =head2 prereq_plugins
 
-This plugin depends on the C<User> and C<LetMe> plugins.
+This plugin depends on the L<User|Jifty::Plugin::User> and L<LetMe|Jifty::Plugin::LetMe> plugins.
 
 =cut
 
