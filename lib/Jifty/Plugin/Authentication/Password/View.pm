@@ -27,12 +27,12 @@ sub page (&) {
 
 
 template 'signup' => page {
-    title is _('Signup');
+    title is _('Sign up');
     my ( $action, $next ) = get(qw(action next));
     Jifty->web->form->start( call => $next );
     render_param( $action => 'name' , focus => 1);
     render_param( $action => $_ ) for ( grep {$_ ne 'name'} $action->argument_names );
-    form_return( label => _('Signup'), submit => $action );
+    form_return( label => _('Sign up'), submit => $action );
     Jifty->web->form->end();
 };
 
