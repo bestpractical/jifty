@@ -149,7 +149,7 @@ sub take_action {
         Jifty->web->session->set( login_token => '' );
     } else {                # no password hashing over the wire
         unless ( $user->id && $user->password_is($password) ) {
-            $self->result->error( _('You may have mistyped your email address or password. Give it another shot.'));
+            $self->result->error( _('You may have mistyped your email or password. Give it another shot.'));
             return;
         }
     }
