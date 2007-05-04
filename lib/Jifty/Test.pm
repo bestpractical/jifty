@@ -202,6 +202,40 @@ different way.
 sub setup_test_database {
     my $class = shift;
 
+
+    if ($ENV{JIFTY_FAST_TEST}) {
+	local $SIG{__WARN__} = sub {};
+	eval { Jifty->new( no_version_check => 1 ); Jifty->handle->check_schema_version };
+	my $booted;
+	if (Jifty->handle && !$@) {
+	    my $baseclass = Jifty->app_class;
+	    my $schema = Jifty::Script::Schema->new;
+	    $schema->prepare_model_classes;
+	    for my $model_class ( grep {/^\Q$baseclass\E::Model::/} $schema->models ) {
+		# We don't want to get the Collections, for example.
+		next unless $model_class->isa('Jifty::DBI::Record');
+		Jifty->handle->simple_query('TRUNCATE '.$model_class->table );
+		Jifty->handle->simple_query('ALTER SEQUENCE '.$model_class->table.'_id_seq RESTART 1');
+	    }
+	    # Load initial data
+	    eval {
+		my $bootstrapper = Jifty->app_class("Bootstrap");
+		Jifty::Util->require($bootstrapper);
+		$bootstrapper->run() if $bootstrapper->can('run');
+	    };
+	    die $@ if $@;
+	    $booted = 1;
+	}
+	if (Jifty->handle) {
+	    Jifty->handle->disconnect;
+	    Jifty->handle(undef);
+	}
+	if ($booted) {
+            Jifty->new();
+	    return;
+	}
+    }
+
     Jifty->new( no_handle => 1 );
 
     my $schema = Jifty::Script::Schema->new;
@@ -467,7 +501,7 @@ sub _ending {
           if Jifty->config and Jifty->bus;
 
         # Remove testing db
-        if (Jifty->handle) {
+        if (Jifty->handle && !$ENV{JIFTY_FAST_TEST}) {
             Jifty->handle->disconnect();
             my $schema = Jifty::Script::Schema->new;
             $schema->{drop_database} = 1;

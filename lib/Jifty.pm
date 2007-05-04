@@ -416,7 +416,8 @@ sub setup_database_connection {
         Jifty::Util->require( $handle_class );
         Jifty->handle( $handle_class->new );
         Jifty->handle->connect();
-        Jifty->handle->check_schema_version();
+        Jifty->handle->check_schema_version()
+            unless $args{'no_version_check'};
     }
 }
 
