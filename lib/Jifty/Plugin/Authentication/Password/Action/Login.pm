@@ -83,7 +83,7 @@ sub validate_password {
 
 
     if ($token eq '') { # we have no token, validate in a standard way
-        if ($pw eq '') {
+        unless ( defined $pw && length $pw ) {
             return $self->validation_error(password => "Please fill in this field." );
         }
     } else { # we have a token, so we should have a hashed pw
