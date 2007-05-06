@@ -393,7 +393,7 @@ sub _setup_event_after_action {
 
 L<Jifty::Action>, L<Jifty::Record>, L<Jifty::DBI::Record>,
 L<Jifty::Action::Record::Create>, L<Jifty::Action::Record::Update>,
-L<Jifty::Action::Reocrd::Delete>
+L<Jifty::Action::Record::Delete>
 
 =head1 LICENSE
 
