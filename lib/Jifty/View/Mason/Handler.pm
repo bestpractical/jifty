@@ -184,9 +184,8 @@ Escapes URI component according to RFC2396
 
 sub escape_uri {
     my $ref = shift;
-    $$ref = Encode::encode_utf8($$ref);
+    use bytes;
     $$ref =~ s/([^a-zA-Z0-9_.!~*'()-])/uc sprintf("%%%02X", ord($1))/eg;
-    Encode::_utf8_on($$ref);
 }
 
 
