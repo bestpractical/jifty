@@ -142,7 +142,7 @@ msgstr "Режим администрирования активирован."
 
 #: lib/Jifty/View/Declare/Helpers.pm:360 share/web/templates/_elements/wrapper:11
 msgid "Alert"
-msgstr ""
+msgstr "Внимание"
 
 #: lib/Jifty/Action/Record/Create.pm:82
 msgid "An error occurred.  Try again later"
@@ -384,7 +384,7 @@ msgstr "Отправить напоминание пароля"
 
 #: lib/Jifty/Plugin/Authentication/Password/Dispatcher.pm:114
 msgid "Sign up"
-msgstr "Завести учетную запись"
+msgstr "Зарегистроваться"
 
 #: lib/Jifty/Plugin/Authentication/Password/View.pm:53
 msgid "Sign up for an account!"
