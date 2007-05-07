@@ -66,10 +66,10 @@ Render a template. Expects that the template and any jifty methods called intern
 =cut
 
 sub show {
-    my $self          = shift;
+    my $self     = shift;
     my $template = shift;
 
-    no warnings qw/redefine utf8/;
+    no warnings qw/redefine/;
     local *Jifty::Web::out = sub {
         shift;    # Turn the method into a function
         goto &Template::Declare::Tags::outs_raw;
