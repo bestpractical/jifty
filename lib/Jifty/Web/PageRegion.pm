@@ -320,7 +320,6 @@ sub render_as_subrequest {
     # While we're inside this region, have Mason to tack its response
     # onto a variable and not send headers when it does so
     #XXX TODO: There's gotta be a better way to localize it
-    my $region_content = '';
 
     # template-declare based regions are printing to stdout
     my $td_out = '';
