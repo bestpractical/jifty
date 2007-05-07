@@ -171,16 +171,20 @@ sub escape_utf8 {
     $$ref =~ s/'/&#39;/g;
 }
 
-
 =head2 escape_uri SCALARREF
 
-Escapes URI component according to RFC2396
+Escapes in-place URI component according to RFC2396. Takes a reference to
+perl string.
+
+*Note* that octets would be treated as latin1 encoded sequence and converted
+to UTF-8 encoding and then escaped. So this sub always provide UTF-8 escaped
+string. See also L<Encode> for more info about converting.
 
 =cut
 
 sub escape_uri {
     my $ref = shift;
-    use bytes;
+    $$ref = Encode::encode_utf8($$ref);
     $$ref =~ s/([^a-zA-Z0-9_.!~*'()-])/uc sprintf("%%%02X", ord($1))/eg;
 }
 
