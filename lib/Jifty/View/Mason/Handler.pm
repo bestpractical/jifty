@@ -131,17 +131,18 @@ sub out_method {
 
     $r->content_type || $r->content_type('text/html; charset=utf-8'); # Set up a default
 
-    if ($r->content_type =~ /charset=([\w-]+)$/ ) {
-        my $enc = $1;
-	if (lc($enc) =~ /utf-?8/) {
+    if ( my ($enc) = $r->content_type =~ /charset=([\w-]+)$/ ) {
+        if ( lc($enc) =~ /utf-?8/ ) {
             binmode *STDOUT, ":utf8";
-	}
-	else {
+        }
+        else {
             binmode *STDOUT, ":encoding($enc)";
-	}
+        }
+    } else {
+        binmode *STDOUT;
     }
 
-    unless ($r->http_header_sent or not $m->auto_send_headers) {
+    unless ( $r->http_header_sent or not $m->auto_send_headers ) {
         $r->send_http_header();
     }
 
