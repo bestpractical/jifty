@@ -74,11 +74,26 @@ sub show {
         shift;    # Turn the method into a function
         goto &Template::Declare::Tags::outs_raw;
     };
-    my $content =Template::Declare::Tags::show($template);
-        unless ( Jifty->handler->apache->http_header_sent ||Jifty->web->request->is_subrequest ) {
-            Jifty->handler->apache->send_http_header();
+    my $content = Template::Declare::Tags::show( $template );
+    return unless defined $content && length $content;
+
+    my $r = Jifty->handler->apache;
+    $r->content_type || $r->content_type('text/html; charset=utf-8'); # Set up a default
+    unless ( Jifty->handler->apache->http_header_sent || Jifty->web->request->is_subrequest ) {
+        Jifty->handler->apache->send_http_header;
+    }
+
+    if ( my ($enc) = $r->content_type =~ /charset=([\w-]+)$/ ) {
+        if ( lc($enc) =~ /utf-?8/) {
+            binmode *STDOUT, ":utf8" or die "couldn't set layers: $!";
         }
-    utf8::downgrade($content, 1); # Just before we go to stdout, we REALLY want to convert to octets.
+        else {
+            binmode *STDOUT, ":encoding($enc)" or die "couldn't set layers: $!";
+        }
+    } else {
+        binmode *STDOUT or die "couldn't set layers: $!";
+    }
+
     print STDOUT $content;
     return undef;
 }
