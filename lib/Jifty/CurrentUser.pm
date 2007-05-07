@@ -41,7 +41,7 @@ If you call it with the C<_bootstrap> argument, Jifty will set the user up as a 
 sub new {
     my $class = shift;
     my $self  = {};
-    bless $self, $class;
+    bless $self, (ref $class || $class);
     my %args = (@_);
     if ( delete $args{'_bootstrap'} ) { $self->is_bootstrap_user(1); }
     $self->_init(%args);
@@ -65,12 +65,13 @@ sub _init {
 =head2 superuser
 
 A convenience constructor that returns a new CurrentUser object that's
-marked as a superuser.
+marked as a superuser. Can be called either as a class or object method.
 
 =cut
 
 sub superuser {
     my $class = shift;
+    $class = ref( $class ) if ref $class;
     my $self = $class->new();
     $self->is_superuser(1);
     return $self;

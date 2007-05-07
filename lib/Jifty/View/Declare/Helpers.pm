@@ -6,7 +6,7 @@ use base qw/Template::Declare/;
 use base qw/Exporter/;
 use Template::Declare::Tags;
 
-our @EXPORT = ( qw(form hyperlink tangent redirect new_action form_submit form_next_page page wrapper request get set render_param current_user render_action render_region), @Template::Declare::Tags::EXPORT);
+our @EXPORT = ( qw(form hyperlink tangent redirect new_action form_submit form_return  form_next_page page wrapper request get set render_param current_user render_action render_region), @Template::Declare::Tags::EXPORT);
 
 
 =head1 NAME
@@ -25,22 +25,24 @@ This library provides mixins to help build your application's user interface.
 =head2 form CODE
 
 Takes a subroutine reference or block of perl as its only argument and renders it as a Jifty C<form>. 
-Bug: you can't currently specify arguments to form->start.
 
 
 =cut
 
-
-{
+ {
     no warnings qw/redefine/;
     sub form (&) {
         my $code = shift;
-        outs_raw( Jifty->web->form->start );
-        $code->();
-        outs_raw( Jifty->web->form->end );
-        return '';
+
+        smart_tag_wrapper {
+          outs_raw( Jifty->web->form->start(@_) );
+          $code->();
+          outs_raw( Jifty->web->form->end );
+          return '';
+        };
     }
-}
+ }
+
 
 =head2 hyperlink 
 
@@ -49,9 +51,21 @@ Shortcut for L<Jifty::Web/link>.
 =cut
 
 sub hyperlink(@) {
-    outs_raw( Jifty->web->link(@_) );
-    return '';
+    _function_wrapper( link => @_);
 }
+
+sub _function_wrapper {
+    my $function = shift;
+    Template::Declare->new_buffer_frame;
+    my $once= Jifty->web->$function(@_)->render || '';
+    my $content = Template::Declare->buffer->data() ||'';
+    Template::Declare->end_buffer_frame;
+    outs_raw( $content.$once); 
+    return '';
+
+
+}
+
 
 =head2 tangent
 
@@ -61,8 +75,7 @@ Shortcut for L<Jifty::Web/tangent>.
 
 
 sub tangent(@) {
-    outs_raw( Jifty->web->tangent(@_) );
-    return '';
+    _function_wrapper( tangent => @_);
 }
 
 =head2 redirect
@@ -98,9 +111,14 @@ page's.
 
 sub render_region(@) {
     unshift @_, 'name' if @_ % 2;
+    my $args = {@_};
+    my $path = $args->{path} ||= '/__jifty/empty';
+    if ($Template::Declare::Tags::self && $path !~ m|^/|) {
+	$args->{path} = $Template::Declare::Tags::self->path_for($path);
+    }
     local $Template::Declare::Tags::self = undef;
     Template::Declare->new_buffer_frame;
-    Jifty::Web::PageRegion->new(@_)->render;
+    Jifty::Web::PageRegion->new(%$args)->render;
     my $content = Template::Declare->buffer->data();
     Template::Declare->end_buffer_frame;
     Jifty->web->out($content);
@@ -141,6 +159,17 @@ sub render_action(@) {
     foreach my $argument (@f) {
         outs_raw( $action->form_field( $argument, %$field_args ) );
     }
+}
+
+=head2 form_return
+
+Shortcut for L<Jifty::Web::Form/return>.
+
+=cut
+
+sub form_return(@) {
+    outs_raw( Jifty->web->form->return(@_) );
+    '';
 }
 
 =head2 form_submit
@@ -245,10 +274,10 @@ be using "/_elements/nav" but a Dispatcher rule instead.
 sub page (&) {
     my $code = shift;
     sub {
+        my $self = shift;
         Jifty->handler->apache->content_type('text/html; charset=utf-8');
-        wrapper($code);
+        wrapper(sub { $code->($self) });
     };
-
 }
 
 
@@ -267,7 +296,7 @@ sub wrapper ($) {
     my $done_header;
     my $render_header = sub {
         no warnings qw( uninitialized redefine once );
-        $title ||= Jifty->config('framework')->{'ApplicationName'};
+        $title ||= Jifty->config->framework('ApplicationName');
 
         #   defined $title or return;
         return if $done_header++;
@@ -287,14 +316,13 @@ sub wrapper ($) {
             show 'salutation'; 
             show 'menu'; 
         };
-            div {
+            div { attr { id is 'content'};
                 div {
                     {
                         no warnings qw( uninitialized redefine once );
 
                         local *is::title = sub {
                             shift;
-
                             for (@_) {
                                 if ( ref($_) eq 'CODE' ) {
                                     Template::Declare->new_buffer_frame;
@@ -306,15 +334,17 @@ sub wrapper ($) {
                                 }
                             }
                             &$render_header;
-                            h1 { attr { class => 'title' }; outs_raw($title) };
+                            my $oldt = get('title'); set(title => $title);
+                            show 'heading_in_wrapper';
+                            set(title => $oldt);
                         };
-                }
 
                         &_render_pre_content_hook();
                         Jifty->web->render_messages;
                         &$content_code;
                         &$render_header unless ($done_header);
                         &_render_jifty_page_detritus();
+                }
 
                 };
             };

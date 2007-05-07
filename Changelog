@@ -1,3 +1,261 @@
+Jifty 0.70422
+
+[Password Authentication plugin]
+
+* Better "password reset" behaviour  
+* added regression test for bug fix in Jifty::Plugin::Authentication::Password::Action::Signup
+* change manual for access control with user and authentication::password plugins
+* Revert the bogus warning silencing in 0.70416 as it kills Doxory example.  
+  (reported by semifor++)
+ 
+[Core]
+
+* More debugging info for broken letmes
+* Added duck typing to the Jifty::Handle constructor to prevent difficult 
+  to trace error messages when the driver name is mispelt or fails to load.
+* Jifty::Upgrade - Defensive programming against tables that did
+  not have "create table" in its schema for SQLite column renaming.
+* Jifty::Module::Pluggable - Silence the @ISA warnings. 
+* Doc updates for Jifty::ClassLoader -- David Good <dgood@willingminds.com>
+* Created a method that can be over-ridden for custom test database setup
+* debian stuff, fr.po update
+
+Jifty 0.70416
+ * New ExtJS plugin (For yahoo-ui ext)
+ * zh-tw L10N for authen/passwd/user plugins.
+ * WWW::Mechanize 1.22 removed the form method.  
+   thanks to hdp for noticing/poking
+ * render_region should have default empty path.
+ * Jifty::Plugin::REST::Dispatcher - Gugod pointed out that we don't need to
+   stringify() the object-to-data output, because (esp for nested structures)
+   it's far more convenient to have the $accept-specific formatter (e.g.
+   YAML or JSON) to render it.
+ * Added render_as_yui_menubar in Menu.pm
+ * Upgraded YUI to 2.2.1
+ * NOTICE: if you are using yui tabview, 
+   please use tabview.css instead of tabs.css
+ * Added yui/element-beta.js and yui/menu.js in Web.pm
+ * Allow '->superuser' to be both an object and class method.
+ * added audreyt's Doxory demo app from doc/talks/yapcasia2007-doxory.pdf
+ *  Add doc and prefork dependency so the doc and dep tests pass
+ * Preforking server support for Jifty::Server
+ * Refactoring to support more template engines 
+ * fix "open" class in menu - active menu item doesn't imply current open item
+ * Jifty::Plugin - Authentication::Password now auto-loads LetMe and User.
+ * added a "SkipAccessControl" framework directive
+ * Doc: Add section on using models/actions outside of a Jifty app
+ * fix handling of multi-line data when encoded in JSON -- they should never 
+   wrap over multiple lines in generated output
+ * helpers improvements for T::D
+ * Make CurrentUser->new work as a method on an instance, so that 
+   as_superuser works.
+ * Added a 'None' session type for when your application doesn't need sessions
+ * Can't just check to see if the config exists to decide whether to 
+   initialze the Jifty object
+ * Make render_region resolve relative template in current context.
+ * We load the config on demand now, so it always exists. Test for 
+   classloader existence, instead of config existence, to tell whether or 
+   not we need to Jifty->new.
+ * Refactor the I18N plugin stuff to not fail tests.
+ * Make sure test coverage copes with new jifty->config 
+ * Better plugin I18N
+ * Plugin paths don't need to convert because File::ShareDir::module_dir
+   always returns an absolute path. I have added also modification checking
+   to the Jifty::I18N::refresh for plugin po files. -- Alexey Grebenschikov 
+ * Log::Log4perl::Appender::String (used in tests) was only added in 1.02; 
+   require at least that
+ * Switch Jifty->config to automatic instantiation
+ * Added a basic test stub for Jifty::Test::WWW::Mechanize. -sterling
+ * don't require a bunch of unused modules that don't trickle to the templates
+ * don't set the Home tab twice
+ * use Pod::Simple::HTML where we need it
+ * Administration and Online docs tabs are set in Jifty/Plugin/*/Dispatcher.pm
+ * When running coverage, don't use Class::Accessor::Named as it uses 
+   Hook::LexWrap
+ * don't load up PodSimple and other friends unless you've actually enabled 
+   AdminMode and brought OnlineDocs into the picture
+ * Modified submit_html_ok to make it behave like the documentation says it 
+   should.
+ * Don't create a new config object every time we look at the db version
+ * Added the ability to have a return button that looks like a submit button 
+   on a form.
+ * When you rest a lost password, email address is implicitly confirmed
+ * extracted dump_rules into DumpDispatcher plugin -dpavlin
+ * more quieting down of "couldn't drop that database that shouldn't have 
+   existed in the first place" warnings
+ * keep old LDAP and CAS plugins usable, 
+   THIS COULD BREAK APP MODELS NAME 
+   LDAPUser and CASUser models are now User -yves
+ * Autogenerate Package::Action when we need it
+ * Jifty: We now depend on Scalar::Defer 0.10 to not break the *_ 
+   localization.
+ * Jifty::DBI::Param::Schema - Mention how to use "defer".
+ * Remove legacy naming from the Auth::Password plugin #  nelhage++ 
+ * The plugin classloader is wrong. it's going away forever
+ * LetMes need to deal with user objects as superuser to get their tokens
+ * next major round of work on the login plugin. signup now works
+   slightly better debug logging from the jifty dispatcher
+ * Slightly better mail sending defaults
+ * When we use App::Class, actually require the module, to save the user some 
+   typing
+ * Changes to the dispatching to templates:
+ * only add '/index.html' to the path given if there is no template that can 
+   handle the given path.
+ * template_exists now checks for Template::Declare templates too
+ * tests that check that T::D templates are preferred over Mason templates.
+ * Set some svn:ignore properties so that generated files don't litter the 
+   tree
+ * Include the jifty skeleton app by default.
+ * make the 'hey! it's admin mode' bit not overwrite the menu
+ * TD fragments and unicode needed some massage.
+ * Next pass at a login/signup password auth plugin. Now supports login and 
+   logout and signup
+ * Jifty::CurrentUser now has a default "_init" behaviour.
+ * The password auth plugin now works
+ * Updated the 'feeds' section in J:M::Cookbook to not lie about the way 
+   XML::Feed actually works.  Arguably it /should/ work the way we described
+   ("your implementation is showing"), but fixing the docs was easier than 
+   submitting a patch to someone else's module.
+ * Now we can inherit actions from plugins
+ * fixed incorrect documentation of _ and added a SYNOPSIS
+ * "final" Mergedown of the Template-Declare branch of Jifty.
+  - New Template::Declare based templating system (optional)
+  - Significant work on plugins
+  - Significant refactoring
+  - Many jifty features extracted to 'mandatory' plugin applets. 
+    (These should be made optional or removable over time)
+ * Doc patch for how to do multiple "onclick" actions - jpollack@gmail.com
+ * Log::Log4perl::Appender::String (used in tests) was only added in
+    1.02; require at least that
+ * add doc to manage a superuser group
+ * add doc to emulate updated_on
+ * Add note to cookbook showing how to change other fields using ajax 
+   canonicalization
+ * Basic handler for running Jifty under mod_perl2.  Tested under Unbuntu
+   Feisty, with a default Apache2/MP2 install.  Requires a config change,
+   explained in the perldoc. -rodi
+ * examples/{Chat,Clock,Ping}/: Use Jifty::Server::Fork instead of
+   stub ::Server subclasses.
+ * Jifty::Server::Fork - New module to conveniently express
+   a forking builtin server.
+ * Plugin templates should override the core, but not application templates
+ * Since we use the schema tool to manage jifty's database, it's important 
+   that it be able to be called from running code (including a DESTROY block).   As it was, we were initializing (reinitializing) Jifty from within the 
+   DESTROY. That doesn't work so well.
+ * Better test for "jifty already initted"
+ * Fix adding columns during an upgrade.
+ * added a Deploying page to the manual based on the process I have found 
+   successful
+ * updated the upgrading manual and added a few extra glossary items
+ * DBD::pg passes postgres' warnings up, so try to convert their various
+   logging levels back to Log4Perl levels.
+   Completely heuristic, probably wants more guarding so it doesn't
+   reach out and bite someone.
+ * This quiets some of the most annoting warns revealed when I removed
+   the log-level downing in Script/Schema.pm
+ * Added support for schema_version() in records
+ * Updated the schema upgrade process to handle renames more nicely
+ * Added a simple test for upgrading
+ * YAML.pm is currently required even if YAML::Syck is present.
+   The Makefile now requires YAML even if you have a C compiler 
+   and are installing YAML::Syck.
+ * added a CUSTOMIZATION section to the Jifty::Action docs
+ * upping require for IPC::PubSub to 0.23 due to use of disconnect
+ * Disconnect PubSub before dropping the database
+ * Solve copious global destruction warnings
+ * send correct HTTP/1.1 headers for caching when running Jifty with 
+   DevelMode: 0
+ * Support POSTing to /=/model/Foo to create items without specifying a PK
+ * lib/Jifty/Manual/TutorialRest.pod - quick overview of REST plugin
+ * don't double warn.  Now that we stopped schema creation from suppressing 
+   warnings this *shouldn't* be necesary
+ * stop hiding messages/warns from the database during tests
+ * default to only showing WARN and higher when running tests 
+   (rather than our more normal INFO)
+ * Added the ability to force arguments and path when rengering a region. 
+   This lets developers force override something passed in via ajax or a 
+   "sticky" value from a previous request.
+ * Jifty::Script - Assume "jifty fastcgi" when we are running under cgi.
+ * I18N and zh-* L10N for menu and halo.
+ * fix JScript conditional compilation bug. Jifty.Utils.isMSIE works now.
+ * strict, warnings, and redefinition warning avoidance for 
+   J::Module::Pluggable.
+ * Alternate implementation of Module::Pluggable::Object's _require method to 
+   avoid a useless string eval.
+ * Actually carp from within our log warning handler, to not swallow critical 
+   debugging into
+ * Jifty::Logger - Properly respect previous $SIG{__WARN__} handler
+   if Log4Perl isn't yet initialized; that means we won't silently
+   discard compile-time errors from our model classes, though they
+   are still demoted as warnings.
+ * Refactored Jifty::Script::Schema to use extracted column, table and db 
+   manipulation routines
+ * Extract the "load model related classes" logic in the class loader to its 
+   own function
+ * A new method provides a tantalizing glimpse of jifty's forthcoming "load 
+   models from the database" support
+ * Added table and column schema generation methods to Jifty::Record, based on   an extraction of Jifty::Script::Schema
+ * Added "create db" and "drop db" methods to Jifty::Handle
+ * Added the 'bootstrap' option to vanilla Jifty::CurrentUser. Now there's one   fewer cases where you need a custom CurrentUser class
+ * Jifty::Util - Add a generate_uuid method and use it to generate 
+   ApplicationUUID.
+ * Jifty::Script::App - Make the generated Makefile.PL more canonical.
+ * Jifty::Util - only requires ExtUtils::MM at request.
+ * Jifty::Util - fixed the broken Win32 logic:
+  - use ExtUtils::MM before calling MM->maybe_command
+  - ignore the case of letters when comparing file names
+ * Change all tests for the literal Driver string "SQLite"
+   to a regex match to /SQLite/, in anticipation of fancy
+   drivers such as SVK::SQLite.
+ * enable UTF-8 flag awarness in JSON libraries to fix problem in validation
+   of values during creating a record via the admin interface when column has
+   valid values with unicode chars.
+ * include iepngfix 1.0
+ * add MIME type text/x-component for .htc file
+ * howto document for iepngfix
+ * Our fallback I18N handle needs to specify that it should autocreate keys 
+   if they're not found
+ * Jifty::I18N: Provide a default fallback lexicon class for "en"
+   so Locale::Maketext won't clobber our $@ stack.
+ * Jifty::I18N - Avoid naked eval{} that clobbers $@.
+ * Jifty::Web - Add private accessor for _state_variables to
+   avoid typo-prone ->{'state_variables'}.
+ * REST: Implementation for PUT and DELETE on model items
+ * Canonicalize/validate after typing and blurring, too
+ * Modernization of model declarations for compatibility with new 
+   Object::Declare based Jifty::DBI
+ * updating to  'max_length' name for the parameter formerly known as 'length'
+ * Jifty: Deprecate ->length in web form and param fields;
+    write ->max_length instead.
+ * Allow create, load_or_create and load_by_cols to be used as class methods.
+ * REST: Show an action HTML form when rendering /=/action/App.Action.Foo as 
+   HTML
+ * Fix running actions (checking for allowed-ness was done wrong)
+ * Cut down on a lot of the crap that we outputed and fix up structure
+ * Make it possible to request XML from the URL like the other data formats
+ * Show action params in any data format instead of just an HTML form
+ * Only allow method calls if the "field" is actually a column
+ * Force stringification so that we don't segfault trying to output blessed 
+   references and what not
+ * added the update method which reconstructs the locale
+   handle (used by Jifty::Handler::handle_request) [Jifty::I18N]
+ * &_(loc) now uses the global locale handle instead of
+   the one set up during Jifty::I18N->new().  [Jifty::I18N]
+ * Audrey's refresh method now always calls C<update>
+  either directly or indirectly (via C<new>) [Jifty::I18N]
+ * C<handle_request> now always calls
+  Jifty::I18N->update directly or indirectly
+  (via C<Jifty::I18N->refresh>) [Jifty::Handler]
+ * Misc minor startup-time performance improvements
+ * Only run onsubmit() if we have an onsubmit property
+ * Support for controlling browser-based autocomplete on form fields
+ * Fix how fake buttons submit forms -trs
+ * Gotta double-quote keybinding labels if they have embedded newlines.
+ * Warnings when a developer puts a "show" into a "before" or "after" 
+   dispatcher rule.
+ 
+
+
 Jifty 0.70117
    Dependencies: 
      * Bumped the minimum required version of Jifty::DBI to 0.30

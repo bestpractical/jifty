@@ -49,6 +49,11 @@ sub new {
     my $driver_class  = "Jifty::DBI::Handle::".  $driver;
     Jifty::Util->require($driver_class);
 
+    die "No such handle class as $driver_class. ",
+        "Check your spelling and check that your Jifty installation and ",
+        "related modules (especially Jifty::DBI) are up to date." 
+            unless $driver_class->can('isa');
+
     unshift @ISA, $driver_class;
     return $class->SUPER::new();
 }

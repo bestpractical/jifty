@@ -42,7 +42,7 @@ requires('HTTP::Server::Simple::Recorder');
 requires('Hash::Merge');
 requires('Hook::LexWrap');
 requires('IPC::PubSub' => '0.23' );
-requires('Jifty::DBI' => '0.31' );            # Jifty::DBI::Collection Jifty::DBI::Handle Jifty::DBI::Record::Cachable Jifty::DBI::SchemaGenerator
+requires('Jifty::DBI' => '0.40' );            # Jifty::DBI::Collection Jifty::DBI::Handle Jifty::DBI::Record::Cachable Jifty::DBI::SchemaGenerator
 requires('Locale::Maketext::Extract' => '0.20');
 requires('Locale::Maketext::Lexicon' => '0.60');
 requires('Log::Log4perl' => '1.04');
@@ -62,9 +62,12 @@ requires('SQL::ReservedWords');
 requires('SVN::Fs');
 requires('SVN::Repos');
 requires('SVN::Simple::Edit');
-requires('Template::Declare');                # Template::Declare::Tags
-requires('Template::Declare' => '0.06');                # Template::Declare::Tags
+requires('Template::Declare' => '0.07');                # Template::Declare::Tags
 requires('Test::Base');
+requires('Test::More' => 0.62 ),
+requires('Test::Pod::Coverage'),
+requires('Test::WWW::Mechanize' => 1.04 ),
+requires('WWW::Mechanize' => 1.12 ),
 requires('UNIVERSAL::require');
 requires('URI');
 requires('XML::Writer' => '0.601');
@@ -97,12 +100,8 @@ features(
         recommends('Module::Install::Admin' => '0.50'),
         ($^O ne 'MSWin32' ? recommends('Test::HTTP::Server::Simple' => '0.02' ) : ()),
         recommends('Test::HTML::Lint'),
-        recommends('Test::More' => 0.62 ),
         recommends('Test::MockModule' => '0.05'),
         recommends('Test::MockObject' => '1.07'),
-        recommends('Test::Pod::Coverage'),
-        recommends('Test::WWW::Mechanize' => 1.04 ),
-        recommends('WWW::Mechanize' => 1.12 ),
         recommends('Module::Refresh' => '0.09')
     ],
     'Development of the jifty framework' => [
@@ -117,6 +116,10 @@ features(
         -default => 0,
         recommends('Net::Server::Fork'),
     ],
+    'Pre-forking jifty server' => [
+        -default => 0,
+        recommends('Net::Server::PreFork'),
+    ],
     'Apache2/ModPerl2 handler' => [
         -default => 0,
         recommends('Apache2::Const'),
@@ -128,11 +131,8 @@ features(
 );
 
 
-no_index directory => 'share';
-no_index directory => 't';
+no_index( directory => qw< debian doc examples share plugins/*/t> );
 no_index package => 'DB';
-no_index package => 'inc';
-no_index directory => 'doc';
 
 version_from('lib/Jifty.pm');
 #&auto_bundle_deps();

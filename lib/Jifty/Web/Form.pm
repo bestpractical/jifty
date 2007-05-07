@@ -226,6 +226,26 @@ sub submit {
     return '';
 }
 
+=head2 return MESSAGE, [PARAMETERS]
+
+Renders a return button with the text MESSAGE on it (which will be
+HTML escaped).  Returns the empty string (for ease of use in
+interpolation).  Any extra PARAMETERS are passed to
+L<Jifty::Web::Form::Field::Button>'s constructor.
+
+=cut
+
+sub return {
+    my $self = shift;
+
+    my $button = Jifty->web->return(as_button => 1, @_);
+    Jifty->web->out(qq{<div class="submit_button">});
+    $button->render_widget;
+    Jifty->web->out(qq{</div>});
+
+    return '';
+}
+
 =head2 end
 
 Renders the closing form tag (including rendering errors for and

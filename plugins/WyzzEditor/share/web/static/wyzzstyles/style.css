@@ -1,0 +1,24 @@
+/* WYSIWYG EDITOR */
+
+/* Toolbar */
+.toolbar   { border: 1px solid #999999; height: 24px; background-color:#cccccc; }
+.wyzz_alleditor	{ display: block; border:1px #aaa solid; width:520px; background:#e0e0e0; padding:2px;position:relative;}
+.wyzz_alleditor div 	{ display:block;}
+
+/* Command Buttons */
+.cmdbutton     { width: 20px; height: 20px; border: 1px solid transparent; margin: 0px; padding: 0px; background: transparent; } 
+.closebutton { float:right; padding: 2px; }
+.buttonOver { width: 20px; height: 20px; border: 1px solid #999999; margin: 0px; padding: 0px;  }
+.separator { width: 2px; border-left: 1px solid #eeeeee; margin: 0px; padding: 0px; }
+
+/* others */
+.colorpicker, .colorbackpicker, .fontpicker, .headerpicker, .helpbox, .linkdialog	{ position:absolute; width: 216px; background:#eee; display:block; padding:0px; margin-top:0px; border:1px #555 solid;line-height:1.4}
+.specialpicker	{ position:absolute; width: 216px; background:#eee; display:block; padding-top:20px;padding-left:20px; margin-top:0px; border:1px #555 solid;line-height:1.4}
+.help {margin: 10px; font: 12px bold verdana,helvetica,arial,sans-serif black; text-align:center }
+.help h4 {font: 18px bold verdana,helvetica,arial,sans-serif black; padding-top:10px}
+.colorpicker a, .colorbackpicker a { border:1px #fff solid; height:10px; width:10px; font-size:0.01em; display:block;float:left; margin-right:0px;}
+.colorpicker a:hover, .colorbackpicker a:hover { border:1px #f00 solid;}
+.fontpicker a, .headerpicker a { color:#333;text-decoration:none;background:#eee;}
+.fontpicker a:hover, .headerpicker a:hover, .specialpicker a:hover { color: #666 }
+.specialpicker a { color:#333;font-family:arial;text-decoration:none;background:#eee;height:13px; width:12px;font-size:14px}
+.charbutton { width:12px;height:14px; }

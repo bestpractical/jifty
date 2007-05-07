@@ -21,4 +21,16 @@ Right now, it's useless and should be ignored.
 
 =cut
 
+
+=head2 prereq_plugins
+
+This plugin depends on the L<User|Jifty::Plugin::User> and L<LetMe|Jifty::Plugin::LetMe> plugins.
+
+=cut
+
+
+sub prereq_plugins {
+    return ('User', 'LetMe');
+}
+
 1;

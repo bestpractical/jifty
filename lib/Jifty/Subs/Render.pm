@@ -54,7 +54,7 @@ sub render {
 
             unless ( UNIVERSAL::can( $event_class => 'new' ) ) {
                 Jifty->log->error("Receiving unknown event $event_class from the Bus");
-                $event_class = Jifty->config->framework('ApplicationClass')."::Event";
+                $event_class = Jifty->app_class("Event");
             }
 
             Jifty->log->debug("Rendering $channel event $msg");

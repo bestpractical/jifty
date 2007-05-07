@@ -59,7 +59,7 @@ you'll need to run it again for each new form:
 
     $mech->fill_in_action_ok($mech->moniker_for('MyApp::Action::UpdateInfo'), 
                              owner_id => 'someone');
-    $mech->submit_html_ok(value => 'Save');  
+    $mech->submit_html_ok();  
 
     is($mech->action_field_value($mech->moniker_for("MyApp::Action::UpdateInfo"),
 			     'owner_id'), 
@@ -478,7 +478,7 @@ sub current_user {
 
     return undef unless ($id);
 
-    my $object = (Jifty->config->framework('ApplicationClass')."::CurrentUser")->new(id => $id);
+    my $object = Jifty->app_class("CurrentUser")->new(id => $id);
     return $object;
 }
 

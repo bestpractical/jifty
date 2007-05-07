@@ -1185,7 +1185,7 @@ To create an autocompletion field, you implement a method named C<autocomplete_F
           value    => '%$value%',
       );
 
-      return map { $_->name } @{ $foos->item_array_ref };
+      return map { $_->name } @{ $foos->items_array_ref };
   }
 
 In this example, the "foo" field is autocompleted from names matched from the C<MyApp::Model::Foo> table. The match, in this case, matches any substring found in the database. I could have matched any item that starts with the string, ends with the string, matches other fields than the one returned, etc. It's up to you to decide.
@@ -1195,7 +1195,7 @@ Note also that I have untainted the value coming in to make sure a malicious use
 If you need a more complicated solution, you can return the autocompletion values as a list of hash references containing the keys C<value> and (optionally) C<label>:
 
   return map { { value => $_->name, label => $_->label } }
-            @{ $foos->item_array_ref };
+            @{ $foos->items_array_ref };
 
 In this case, the labels will be shown to the client, but the selected value would be returned to your application.
 

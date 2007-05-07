@@ -320,21 +320,27 @@ sub render_as_subrequest {
     # While we're inside this region, have Mason to tack its response
     # onto a variable and not send headers when it does so
     #XXX TODO: There's gotta be a better way to localize it
-    my $region_content = '';
 
     # template-declare based regions are printing to stdout
     my $td_out = '';
-    Encode::_utf8_on($td_out);
-    open my $output_fh, '>>:utf8', \$td_out;
-    local *STDOUT = $output_fh;
+    {
+        open my $output_fh, '>>', \$td_out;
+        local *STDOUT = $output_fh;
 
-    local $main::DEBUG=1;
-    # Call into the dispatcher
-    Jifty->handler->dispatcher->handle_request;
+        local $main::DEBUG = 1;
+        # Call into the dispatcher
+        Jifty->handler->dispatcher->handle_request;
+    }
 
     Jifty->handler->mason->interp->out_method($orig_out);
 
-    $$out_method .= $td_out if length($td_out);
+    return unless length $td_out;
+
+    if ( my ($enc) = Jifty->handler->apache->content_type =~ /charset=([\w-]+)$/ ) {
+        $td_out = Encode::decode($enc, $td_out);
+    }
+    $$out_method .= $td_out;
+
     return;
 }
 

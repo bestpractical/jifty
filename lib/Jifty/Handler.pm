@@ -48,7 +48,21 @@ BEGIN {
 
 
 
-__PACKAGE__->mk_accessors(qw(mason dispatcher declare_handler static_handler cgi apache stash));
+__PACKAGE__->mk_accessors(qw(dispatcher _view_handlers  cgi apache stash));
+
+=head2 mason
+
+
+Returns the Jifty c<HTML::Mason> handler. While this "should" be just another template handler,
+we still rely on it for little bits of Jifty infrastructure. Patches welcome.
+
+=cut
+
+sub mason {
+    my $self = shift;
+    return $self->view('Jifty::View::Mason::Handler');
+}
+
 
 =head2 new
 
@@ -66,26 +80,64 @@ sub new {
     $self->dispatcher( Jifty->app_class( "Dispatcher" ) );
     Jifty::Util->require( $self->dispatcher );
     $self->dispatcher->import_plugins;
-    $self->dispatcher->dump_rules;
- 
+	eval { Jifty::Plugin::DumpDispatcher->dump_rules };
+
     $self->setup_view_handlers();
     return $self;
 }
+
+
+=head2 view_handlers
+
+Returns a list of modules implementing view for your Jifty application.
+
+XXX TODO: this should take pluggable views
+
+=cut
+
+
+sub view_handlers { qw(Jifty::View::Static::Handler Jifty::View::Declare::Handler Jifty::View::Mason::Handler)}
+
+
+=head2 fallback_view_handler
+
+Returns the object for our "last-resort" view handler. By default, this is the L<HTML::Mason> handler.
+
+=cut
+
+
+
+sub fallback_view_handler { my $self = shift; return $self->view('Jifty::View::Mason::Handler') }
 
 =head2 setup_view_handlers
 
 Initialize all of our view handlers. 
 
-XXX TODO: this should take pluggable views
 
 =cut
 
 sub setup_view_handlers {
     my $self = shift;
 
-    $self->declare_handler( Jifty::View::Declare::Handler->new( $self->templatedeclare_config));
-    $self->mason( Jifty::View::Mason::Handler->new( $self->mason_config ) );
-    $self->static_handler(Jifty::View::Static::Handler->new());
+    $self->_view_handlers({});
+    foreach my $class ($self->view_handlers()) {
+        $self->_view_handlers->{$class} =  $class->new();
+    }
+
+}
+
+=head2 view ClassName
+
+
+Returns the Jifty view handler for C<ClassName>.
+
+=cut
+
+sub view {
+    my $self = shift;
+    my $class = shift;
+    return $self->_view_handlers->{$class};
+
 }
 
 
@@ -103,86 +155,6 @@ sub create_cache_directories {
     }
 }
 
-
-=head2 mason_config
-
-Returns our Mason config.  We use the component root specified in the
-C<Web/TemplateRoot> framework configuration variable (or C<html> by
-default).  Additionally, we set up a C<jifty> component root, as
-specified by the C<Web/DefaultTemplateRoot> configuration.  All
-interpolations are HTML-escaped by default, and we use the fatal error
-mode.
-
-=cut
-
-sub mason_config {
-    my %config = (
-        static_source => 1,
-        use_object_files => 1,
-        preprocess => sub {
-            # Force UTF-8 semantics on all our components by
-            # prepending this block to all components as Mason
-            # components defaults to parse the text as Latin-1
-            ${$_[0]} =~ s!^!<\%INIT>use utf8;</\%INIT>\n!;
-        },
-        data_dir =>  Jifty::Util->absolute_path( Jifty->config->framework('Web')->{'DataDir'} ),
-        allow_globals => [
-            qw[ $JiftyWeb ],
-            @{Jifty->config->framework('Web')->{'Globals'} || []},
-        ],
-        comp_root     => [ 
-                          [application =>  Jifty::Util->absolute_path( Jifty->config->framework('Web')->{'TemplateRoot'} )],
-                         ],
-        %{ Jifty->config->framework('Web')->{'MasonConfig'} },
-    );
-
-    for my $plugin (Jifty->plugins) {
-        my $comp_root = $plugin->template_root;
-        unless  ( $comp_root and -d $comp_root) {
-            next;
-        }
-        Jifty->log->debug( "Plugin @{[ref($plugin)]} mason component root added: (@{[$comp_root ||'']})");
-        push @{ $config{comp_root} }, [ ref($plugin)."-".Jifty->web->serial => $comp_root ];
-    }
-    push @{$config{comp_root}}, [jifty => Jifty->config->framework('Web')->{'DefaultTemplateRoot'}];
-
-    push @{ $config{comp_root} }, [jifty => Jifty->config->framework('Web')->{'DefaultTemplateRoot'}];
-
-    # In developer mode, we want halos, refreshing and all that other good stuff. 
-    if (Jifty->config->framework('DevelMode') ) {
-        push @{$config{'plugins'}}, 'Jifty::Mason::Halo';
-        $config{static_source}    = 0;
-        $config{use_object_files} = 0;
-    }
-    return %config;
-        
-}
-
-
-=head2 templatedeclare_config
-
-=cut
-
-sub templatedeclare_config {
-    
-    my %config = (
-        %{ Jifty->config->framework('Web')->{'TemplateDeclareConfig'} ||{}},
-    );
-
-    for my $plugin ( Jifty->plugins ) {
-        my $comp_root = $plugin->template_class;
-        Jifty::Util->require($comp_root);
-        unless (defined $comp_root and $comp_root->isa('Template::Declare') ){
-            next;
-        }
-        Jifty->log->debug( "Plugin @{[ref($plugin)]}::View added as a Template::Declare root");
-        push @{ $config{roots} }, $comp_root ;
-    }
-
-    push @{$config{roots}},  Jifty->config->framework('TemplateClass');
-        
-    return %config;
-}
 
 =head2 cgi
 
@@ -230,30 +202,22 @@ sub handle_request {
     $self->apache( HTML::Mason::FakeApache->new( cgi => $self->cgi ) );
 
     # Build a new stash for the life of this request
-    $self->stash({});
+    $self->stash( {} );
     local $HTML::Mason::Commands::JiftyWeb = Jifty::Web->new();
 
     Jifty->web->request( Jifty::Request->new()->fill( $self->cgi ) );
     Jifty->web->response( Jifty::Response->new );
     Jifty->api->reset;
-    $_->new_request for Jifty->plugins;
-
+    for ( Jifty->plugins ) {
+        $_->new_request;
+    }
     Jifty->log->debug( "Received request for " . Jifty->web->request->path );
-    my $sent_response = 0;
-    $sent_response
-        = $self->static_handler->handle_request( Jifty->web->request->path )
-        if ( Jifty->config->framework('Web')->{'ServeStaticFiles'} );
-
-    Jifty->web->setup_session unless $sent_response;
+    Jifty->web->setup_session;
 
     # Return from the continuation if need be
     Jifty->web->request->return_from_continuation;
-
-    unless ($sent_response) {
-        Jifty->web->session->set_cookie;
-        $self->dispatcher->handle_request()
-    }
-
+    Jifty->web->session->set_cookie;
+    $self->dispatcher->handle_request();
     $self->cleanup_request();
 
 }

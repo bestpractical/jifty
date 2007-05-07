@@ -104,7 +104,7 @@ sub get_default_content {
     my $path = $self->argument_value('source_path');
     my $type = $self->argument_value('file_type');
     my $out = '';
-    my %cfg = Jifty->handler->mason_config;
+    my %cfg = Jifty->handler->mason->config;
     
     my($local_template_base, $qualified_path);
     if ($type eq "mason_component") {

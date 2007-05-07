@@ -33,6 +33,7 @@ foreach my $file (@options) {
 }
 my $body;
 my $schema;
+use Pod::Simple::HTML;
 my $converter = Pod::Simple::HTML->new();
 if($n !~ /^Jifty\//) {
     if ($total_body =~ /package (.*?)::Schema;(.*)package/ismx) {

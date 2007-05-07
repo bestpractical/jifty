@@ -1,0 +1,79 @@
+/**************** body and tag styles ****************/
+	body, p {
+	  margin-top: 0px;	  
+	  margin-bottom: 30px;
+          background-color: #fefefe; 
+          font-family: Verdana, Arial, Helvetica, sans-serif; 
+          color: #333333;
+          font-size: 13px;
+	  }
+
+	#container {
+	  width: 750px;
+	  margin: 0 auto;
+	  font-family: Verdana, Arial, Helvetica, sans-serif;
+	  font-size: 11px;
+	  line-height: 1.6em;
+	  color: #666666;
+	  background-color: #FFFFFF;
+	  }
+	  
+	#container2 {
+	  width: 746px;
+	  margin: 0 auto;
+	  font-family: Verdana, Arial, Helvetica, sans-serif;
+	  font-size: 11px;
+	  line-height: 1.6em;
+	  color: #666666;
+	  background-color: #FFFFFF;
+	  border-bottom: 2px solid #2763A5;
+	  }
+        
+	pre {
+	  font-family: "courier new", sans-serif;
+	  font-weight: normal;
+	  font-size: 12px;
+	  color: #6DA6E2;
+	  background-color: #FFFFFF;
+	  }        
+		
+	h1 {
+	  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+	  font-weight: normal;
+	  font-size: 32px;
+	  color: #6DA6E2;
+	  margin-bottom: 30px;
+	  background-color: #FFFFFF;
+	  }
+		
+	h2 {
+	  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+	  font-weight: normal;
+	  font-size: 28px;
+	  color: #6DA6E2;
+	  margin-bottom: 30px;
+	  background-color: #FFFFFF;
+	  }
+		
+        h3 {
+	  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+	  font-weight: normal;
+	  font-size: 24px;
+	  color: #6DA6E2;
+	  margin-bottom: 30px;
+	  background-color: #FFFFFF;
+	  }
+        
+	a {
+	  color: #6DA6E2;
+	  background-color: #FFFFFF;
+	  text-decoration: none;
+	  font-weight: bold;
+	  }
+
+	a:hover {
+	  background-color: #FFFFFF;
+	  color: inherit;
+	  font-weight: bold;
+	  text-decoration: underline;
+	  }

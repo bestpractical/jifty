@@ -11,7 +11,7 @@ BEGIN {
     require Time::Local;
 
     # Declare early to make sure Jifty::Record::schema_version works
-    $Jifty::VERSION = '0.70129';
+    $Jifty::VERSION = '0.70422';
 }
 
 =head1 NAME
@@ -149,8 +149,6 @@ sub new {
         @_
     );
 
-    # Load the configuration. stash it in ->config
-    Jifty->config( Jifty::Config->new() );
 
     # Turn on logging as soon as we possibly can.
     Jifty->logger( Jifty::Logger->new( $args{'logger_component'} ) );
@@ -216,6 +214,7 @@ configuration for the Jifty application.
 sub config {
     my $class = shift;
     $CONFIG = shift if (@_);
+    $CONFIG ||= Jifty::Config->new();
     return $CONFIG;
 }
 
@@ -335,7 +334,7 @@ sub bus {
             }
         } 
         
-        if ($backend eq 'JiftyDBI' ) {
+        if ($backend eq 'JiftyDBI' and Jifty->handle ) {
                 @args    = (
                     db_config    => Jifty->handle->{db_config},
                     table_prefix => '_jifty_pubsub_',
@@ -355,12 +354,18 @@ Returns a list of L<Jifty::Plugin> objects for this Jifty application.
 
 sub _load_plugins {
     my @plugins;
-    for my $plugin (@{Jifty->config->framework('Plugins')}) {
+    my @plugins_to_load = @{Jifty->config->framework('Plugins')};
+    for (my $i = 0; my $plugin = $plugins_to_load[$i]; $i++) {
         my $class = "Jifty::Plugin::".(keys %{$plugin})[0];
         my %options = %{ $plugin->{(keys %{$plugin})[0]} };
         Jifty::Util->require($class);
         Jifty::ClassLoader->new(base => $class)->require;
-        push @plugins, $class->new(%options);
+        my $plugin_obj = $class->new(%options);
+        push @plugins, $plugin_obj;
+        foreach my $name ($plugin_obj->prereq_plugins) {
+            next if grep { $_ eq $name } @plugins_to_load;
+            push @plugins_to_load, {$name => {}};
+        }
     }
     return @plugins;
 }
@@ -417,7 +422,8 @@ sub setup_database_connection {
         Jifty::Util->require( $handle_class );
         Jifty->handle( $handle_class->new );
         Jifty->handle->connect();
-        Jifty->handle->check_schema_version();
+        Jifty->handle->check_schema_version()
+            unless $args{'no_version_check'};
     }
 }
 

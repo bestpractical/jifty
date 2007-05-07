@@ -123,6 +123,18 @@ sub template_root {
     return $dir."/web/templates";
 }
 
+=head2 po_root
+
+Returns the plugin's message catalog directory. Returns undef if it doesn't exist.
+
+=cut
+
+sub po_root {
+    my $self = shift;
+    my $dir = $self->_calculate_share();
+    return unless $dir;
+    return $dir."/po";
+}
 
 =head2 template_class
 
@@ -160,6 +172,16 @@ sub dispatcher {
     my $self = shift;
     my $class = ref($self) || $self;
     return $class."::Dispatcher";
+}
+
+=head2 prereq_plugins
+
+Returns an array of plugin module names that this plugin depends on.
+
+=cut
+
+sub prereq_plugins {
+    return ();
 }
 
 1;

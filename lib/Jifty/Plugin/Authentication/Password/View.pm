@@ -27,17 +27,17 @@ sub page (&) {
 
 
 template 'signup' => page {
-    title is 'Signup';
+    title is _('Sign up');
     my ( $action, $next ) = get(qw(action next));
     Jifty->web->form->start( call => $next );
     render_param( $action => 'name' , focus => 1);
     render_param( $action => $_ ) for ( grep {$_ ne 'name'} $action->argument_names );
-    form_submit( label => _('Signup'), submit => $action );
+    form_return( label => _('Sign up'), submit => $action );
     Jifty->web->form->end();
 };
 
 template login => page {
-    { title is 'Login!' };
+    { title is _('Login!') };
     show('login_widget');
 };
 
@@ -49,16 +49,16 @@ template login_widget => sub {
         request => Jifty::Request->new( path => "/" ) );
     unless ( Jifty->web->current_user->id ) {
         p {
-            outs( _(        qq{No account yet? It's quick and easy.} ));
+            outs( _( "No account yet? It's quick and easy. " ));
             tangent( label => _("Sign up for an account!"), url   => '/signup');
         };
-        h3  { _(qq{Login with a password}) };
+        h3  { _('Login with a password') };
         div {
             attr { id => 'jifty-login' };
             Jifty->web->form->start( call => $next );
             render_param( $action, 'email', focus => 1 );
             render_param( $action, $_ ) for (qw(password remember));
-            form_submit( label => _(q{Login}), submit => $action );
+            form_return( label => _(q{Login}), submit => $action );
             hyperlink(
                 label => _("Lost your password?"),
                 url   => "/lost_password"
@@ -71,14 +71,14 @@ template login_widget => sub {
 };
 
 template 'let/reset_lost_password' => page {
-    attr { title => 'Reset lost password' };
+    my ( $next ) = get(qw(next));
+    title is 'Reset lost password' ;
     my $action = Jifty->web->new_action( class => 'ResetLostPassword' );
 
-    h2   { _('Reset lost password') };
-    form {
+    Jifty->web->form->start( call => $next );
         render_param( $action => $_ ) for ( $action->argument_names );
-        form_submit( label => _("New password") );
-    };
+        form_return( label => _("New password"), submit => $action );
+    Jifty->web->form->end();
 };
 
 template 'let/confirm_email' => sub {
@@ -87,23 +87,25 @@ template 'let/confirm_email' => sub {
 };
 
 template 'lost_password' => page {
+    my ( $next ) = get(qw(next));
     my $action = Jifty->web->new_action(
         moniker => 'password_reminder',
         class   => 'SendPasswordReminder',
     );
 
-    h2 { _('Send a link to reset your password') };
+    title is _('Send a link to reset your password');
     outs( _(  "You lost your password. A link to reset it will be sent to the following email address:"));
-
-    form {
-        render_param( $action => $_ ) for ( $action->argument_names );
-        form_submit( label => _("Send") );
-        }
+    my $focused = 0;
+    Jifty->web->form->start( call => $next );
+        render_param( $action => $_, focus => $focused++ ? 0 : 1 ) for ( $action->argument_names );
+            form_return( label => _(q{Send}), submit => $action);
+    Jifty->web->form->end;
 
 };
 
 template 'passwordreminder' => page {
-    attr { title => 'Send Password Reminder' };
+    my $next = get('next');
+     title is  _('Send a password reminder');
     my $action = Jifty->web->new_action(
         moniker => 'password_reminder',
         class   => 'SendPasswordReminder',
@@ -111,10 +113,10 @@ template 'passwordreminder' => page {
     h2 { _('Send a password reminder') };
     p  { _(  "You lost your password. A reminder will be send to the following mail:") };
 
-    form {
+    Jifty->web->form->start( call => $next );
         render_param( $action => $_ ) for ( $action->argument_names );
-        form_submit( label => _("Send") );
-    };
+        form_return( label => _("Send"), submit => $action);
+    Jifty->web->form->end();
 };
 
 1;

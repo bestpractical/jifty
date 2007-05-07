@@ -546,7 +546,7 @@ sub render_value {
     my $field = '<span';
     $field .= qq! class="@{[ $self->classes ]}"> !;
     # XXX: force stringify the value because maketext is buggy with overloaded objects.
-    $field .= Jifty->web->escape(_("@{[$self->current_value]}")) if defined $self->current_value;
+    $field .= Jifty->web->escape("@{[$self->current_value]}") if defined $self->current_value;
     $field .= qq!</span>\n!;
     Jifty->web->out($field);
     return '';

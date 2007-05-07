@@ -16,16 +16,16 @@ column auth_token =>
   render_as 'unrendered',
   type is 'varchar',
   default is '',
-  label is 'Authentication token';
+  label is _('Authentication token');
     
 
 
 column password =>
   is mandatory,
   is unreadable,
-  label is 'Password',
+  label is _('Password'),
   type is 'varchar',
-  hints is 'Your password should be at least six characters',
+  hints is _('Your password should be at least six characters'),
   render_as 'password',
   filters are 'Jifty::DBI::Filter::SaltHash';
 
@@ -85,7 +85,7 @@ sub validate_password {
     my $self      = shift;
     my $new_value = shift;
 
-    return ( 0, q{Passwords need to be at least six characters long} )
+    return ( 0, _('Passwords need to be at least six characters long') )
         if length($new_value) < 6;
 
     return 1;
@@ -128,7 +128,7 @@ sub regenerate_auth_token {
     my $self = shift;
     my $auth_token = '';
 
-    $auth_token .= unpack('H2', chr(int rand(255))) for (1..16);
+    $auth_token .= unpack('H2', chr(int rand(256))) for (1..16);
 
     $self->__set(column => 'auth_token', value => $auth_token);
 }

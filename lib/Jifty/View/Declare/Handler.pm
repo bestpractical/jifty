@@ -5,7 +5,6 @@ use strict;
 
 use base qw/Jifty::Object Class::Accessor/;
 use Template::Declare;
-use Encode ();
 
 __PACKAGE__->mk_accessors(qw/root_class/);
 
@@ -28,10 +27,36 @@ sub new {
     my $class = shift;
     my $self = {};
     bless $self,$class;
-    Template::Declare->init(@_);
+   
+    Template::Declare->init(@_ || $self->config());
     return $self;
 }
 
+
+=head2 config
+
+=cut
+
+sub config {
+    
+    my %config = (
+        %{ Jifty->config->framework('Web')->{'TemplateDeclareConfig'} ||{}},
+    );
+
+    for my $plugin ( Jifty->plugins ) {
+        my $comp_root = $plugin->template_class;
+        Jifty::Util->require($comp_root);
+        unless (defined $comp_root and $comp_root->isa('Template::Declare') ){
+            next;
+        }
+        Jifty->log->debug( "Plugin @{[ref($plugin)]}::View added as a Template::Declare root");
+        push @{ $config{roots} }, $comp_root ;
+    }
+
+    push @{$config{roots}},  Jifty->config->framework('TemplateClass');
+        
+    return %config;
+}
 
 =head2 show TEMPLATENAME
 
@@ -41,20 +66,35 @@ Render a template. Expects that the template and any jifty methods called intern
 =cut
 
 sub show {
-    my $self          = shift;
+    my $self     = shift;
     my $template = shift;
 
-    no warnings qw/redefine utf8/;
+    no warnings qw/redefine/;
     local *Jifty::Web::out = sub {
         shift;    # Turn the method into a function
         goto &Template::Declare::Tags::outs_raw;
     };
-    my $content =Template::Declare::Tags::show($template);
-        unless ( Jifty->handler->apache->http_header_sent ||Jifty->web->request->is_subrequest ) {
-            Jifty->handler->apache->send_http_header();
+    my $content = Template::Declare::Tags::show( $template );
+    return unless defined $content && length $content;
+
+    my $r = Jifty->handler->apache;
+    $r->content_type || $r->content_type('text/html; charset=utf-8'); # Set up a default
+    unless ( Jifty->handler->apache->http_header_sent || Jifty->web->request->is_subrequest ) {
+        Jifty->handler->apache->send_http_header;
+    }
+
+    if ( my ($enc) = $r->content_type =~ /charset=([\w-]+)$/ ) {
+        if ( lc($enc) =~ /utf-?8/) {
+            binmode *STDOUT, ":utf8" or die "couldn't set layers: $!";
         }
+        else {
+            binmode *STDOUT, ":encoding($enc)" or die "couldn't set layers: $!";
+        }
+    } else {
+        binmode *STDOUT or die "couldn't set layers: $!";
+    }
+
     print STDOUT $content;
-    Encode::_utf8_on($content);
     return undef;
 }
 

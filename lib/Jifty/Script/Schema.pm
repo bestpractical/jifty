@@ -89,7 +89,7 @@ sub setup_environment {
     # Import Jifty
     Jifty::Util->require("Jifty");
     Jifty::Util->require("Jifty::Model::Metadata");
-    Jifty->new( no_handle        => 1, logger_component => 'SchemaTool',) unless (Jifty->config);
+    Jifty->new( no_handle        => 1, logger_component => 'SchemaTool',) unless Jifty->class_loader;
 }
 
 =head2 print_help

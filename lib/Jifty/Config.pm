@@ -239,6 +239,7 @@ sub guess {
         framework => {
             AdminMode        => 1,
             DevelMode        => 1,
+	    SkipAccessControl => 0,
             ApplicationClass => $app_class,
             TemplateClass    => $app_class."::View",
             ApplicationName  => $app_name,
@@ -347,7 +348,6 @@ sub load_file {
 sub _expand_relative_paths {
     my $self  = shift;
     my $datum = shift;
-
     if ( ref $datum eq 'ARRAY' ) {
         return [ map { $self->_expand_relative_paths($_) } @$datum ];
     } elsif ( ref $datum eq 'HASH' ) {

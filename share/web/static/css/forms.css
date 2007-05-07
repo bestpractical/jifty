@@ -198,7 +198,7 @@ div.subline {
 }
 
 
-.selected {
+option.selected {
     background: #dddddd;
 }
 

@@ -123,8 +123,9 @@ sub object_to_data {
         }
     }
 
-    # Attempt to stringify as last resort
-    return stringify( $obj );
+    # As the last resort, return the object itself and expect the $accept-specific
+    # renderer to format the object as e.g. YAML or JSON data.
+    return $obj;
 }
 
 sub _collection_to_data {

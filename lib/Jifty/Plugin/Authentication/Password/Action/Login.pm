@@ -20,22 +20,22 @@ Return the email and password form fields
 =cut
 
 sub arguments { 
-    return( { email => { label => 'Email',
+    return( { email => { label => _('Email'),
                            mandatory => 1,
                            ajax_validates => 1,
                             }  ,
 
               password => { type => 'password',
-                            label => 'Password',
+                            label => _('Password'),
 			    # mandatory in some cases; see validate_password
                             mandatory => 0,
                         },
               hashed_password => { type => 'hidden',
-                            label => 'Hashed Password',
+                            label => _('Hashed Password'),
                         },
               remember => { type => 'checkbox',
-                            label => 'Remember me?',
-                            hints => 'Your browser can remember your login for you',
+                            label => _('Remember me?'),
+                            hints => _('Your browser can remember your login for you'),
                             default => 0,
                           },
 	      token => { type => 'hidden',
@@ -60,7 +60,7 @@ sub validate_email {
 
     my $u = Jifty->app_class('Model', 'User')->new(current_user => Jifty->app_class('CurrentUser')->superuser);
     $u->load_by_cols( email => $email );
-    return $self->validation_error(email => 'We do not have an account that matches that email.') unless ($u->id);
+    return $self->validation_error(email => _("It doesn't look like there's an account by that name.")) unless ($u->id);
 
     return $self->validation_ok('email');
 }
@@ -83,7 +83,7 @@ sub validate_password {
 
 
     if ($token eq '') { # we have no token, validate in a standard way
-        if ($pw eq '') {
+        unless ( defined $pw && length $pw ) {
             return $self->validation_error(password => "Please fill in this field." );
         }
     } else { # we have a token, so we should have a hashed pw
@@ -149,7 +149,7 @@ sub take_action {
         Jifty->web->session->set( login_token => '' );
     } else {                # no password hashing over the wire
         unless ( $user->id && $user->password_is($password) ) {
-            $self->result->error( _('You may have mistyped your email address or password. Give it another shot.'));
+            $self->result->error( _('You may have mistyped your email or password. Give it another shot.'));
             return;
         }
     }

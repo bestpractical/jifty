@@ -52,10 +52,9 @@ sub take_action {
         $self->result->error($msg); 
         return undef;
     }
-    else { warn $msg }
 
     # Set up our login message
-    $self->result->message( _("Welcome to %1, %2. " , Jifty->config->framework('ApplicationName') , $u->name) ." "
+    $self->result->message( _("Welcome to %1, %2." , Jifty->config->framework('ApplicationName') , $u->name) ." "
           . _(". Your email address has now been confirmed.") );
 
     # Actually do the login thing.

@@ -62,8 +62,10 @@ __PACKAGE__->javascript_libs([qw(
     yui/dom.js
     yui/event.js
     yui/calendar.js
+    yui/element-beta.js
     yui/tabview.js
     yui/container.js
+    yui/menu.js
     app.js
     app_behaviour.js
     css_browser_selector.js
@@ -776,7 +778,8 @@ L<Jifty::Web::Form::Clickable> object generates.
 
 sub return {
     my $self = shift;
-    my %args = (@_);
+    my %args = (to => undef,
+                @_);
     my $continuation = Jifty->web->request->continuation;
     if (not $continuation and $args{to}) {
         $continuation = Jifty::Continuation->new(

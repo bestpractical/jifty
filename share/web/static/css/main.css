@@ -10,4 +10,5 @@
 @import "app.css";
 @import "autocomplete.css";
 @import "yui/calendar/calendar.css";
+@import "yui/menu/menu.css";
 @import "notices.css";

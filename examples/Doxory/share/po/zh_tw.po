@@ -1,0 +1,55 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: lib/Doxory/View.pm:8
+msgid "Ask a question!"
+msgstr "我有問題!"
+
+#: lib/Doxory/View.pm:16
+msgid "Ask the crowd!"
+msgstr "聽聽鄉民怎麼說!"
+
+#: lib/Doxory/Model/Choice.pm:23
+msgid "Asked by"
+msgstr "提問人"
+
+#: lib/Doxory/Dispatcher.pm:10
+msgid "Choices"
+msgstr "開票紀錄"
+
+#: lib/Doxory/Model/Vote.pm:18
+msgid "Comments?"
+msgstr "有何指教?"
+
+#: lib/Doxory/Model/Choice.pm:9
+msgid "I need help deciding..."
+msgstr "幫幫我, 該怎麼辦..."
+
+#: lib/Doxory/Model/Choice.pm:13
+msgid "On the one hand"
+msgstr "我應該...?"
+
+#: lib/Doxory/Model/Choice.pm:18
+msgid "On the other hand"
+msgstr "或者...?"
+
+#: lib/Doxory/Dispatcher.pm:9
+msgid "Pick!"
+msgstr "投票!"
+
+msgid "Logout"
+msgstr "登出"

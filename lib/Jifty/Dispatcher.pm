@@ -1115,6 +1115,7 @@ sub _unescape {
     return $text;
 }
 
+
 =head2 template_exists PATH
 
 Returns true if PATH is a valid template inside your template root. This checks
@@ -1123,11 +1124,15 @@ for both Template::Declare and HTML::Mason Templates.
 =cut
 
 sub template_exists {
-    my $self = shift;
+    my $self     = shift;
     my $template = shift;
 
-    return Jifty->handler->declare_handler->template_exists($template)
-        || Jifty->handler->mason->interp->comp_exists( $template);
+    foreach my $handler ( Jifty->handler->view_handlers) {
+        if ( Jifty->handler->view($handler)->template_exists($template) ) {
+            return 1;
+        }
+    }
+    return undef;
 }
 
 
@@ -1141,19 +1146,23 @@ HTML::Mason templates then the T::D template is used.
 =cut
 
 sub render_template {
-    my $self = shift;
+    my $self     = shift;
     my $template = shift;
-
-    eval { 
-        my( $val) = Jifty->handler->declare_handler->template_exists($template);
-        if ($val) {
-            Jifty->handler->declare_handler->show($template);
-        } else {
-            Jifty->handler->mason->handle_comp( $template ); 
+    my $showed   = 0;
+    eval {
+        foreach my $handler ( Jifty->handler->view_handlers ) {
+            if ( Jifty->handler->view($handler)->template_exists($template) ) {
+                $showed = 1;
+                Jifty->handler->view($handler)->show($template);
+                last;
+            }
         }
-    
-    
+        if ( not $showed and my $fallback_handler = Jifty->handler->fallback_view_handler ) {
+            $fallback_handler->show($template);
+        }
+
     };
+
     my $err = $@;
 
     # Handle parse errors
@@ -1171,8 +1180,7 @@ sub render_template {
 
         # Redirect with a continuation
         Jifty->web->_redirect( "/__jifty/error/mason_internal_error?J:C=" . $c->id );
-    }
-    elsif ($err) {
+    } elsif ($err) {
         die $err;
     }
 
@@ -1259,58 +1267,6 @@ sub _match_deferred {
     @$deferred = grep {@{$_->[2]}} @$deferred;
 
     return @matches;
-}
-
-=head2 dump_rules
-
-Dump all defined rules in debug log. It will be called by Jifty on startup.
-
-=cut
-
-sub dump_rules {
-    my $self = shift;
-
-    no strict 'refs';
-    foreach my $stage ( qw/SETUP RUN CLEANUP/ ) {
-
-        Jifty->log->debug( "Dispatcher rules in stage $stage:");
-        foreach my $r ( @{ $self . '::RULES_' . $stage } ) {
-            Jifty->log->debug( _unroll_dumpable_rules( 0,$r ) );
-        }
-
-    }
-};
-
-=head2 _unroll_dumpable_rules LEVEL,RULE
-
-Walk all rules defined in dispatcher starting at rule
-C<RULE> and indentation level C<LEVEL>
-
-=cut
-
-sub _unroll_dumpable_rules {
-    my ($level, $rule) = @_;
-    my $log = 
-        # indentation
-        ( "    " x $level ) .
-        # op
-        ( $rule->[0] || "undef op" ) . ' ' .
-        # arguments
-        (
-            ! defined( $rule->[1] )   ? ""                                          :
-            ref $rule->[1] eq 'ARRAY' ? "'" . join("','", @{ $rule->[1] }) . "'" :
-            ref $rule->[1] eq 'HASH'  ? $rule->[1]->{method} . " '" . $rule->[1]->{""} ."'" :
-            ref $rule->[1] eq 'CODE'  ? '{...}' :
-                                        "'" . $rule->[1] . "'"
-        );
-
-    if (ref $rule->[2] eq 'ARRAY') {
-        $level++;
-        foreach my $sr ( @{ $rule->[2] } ) {
-            $log .=   _unroll_dumpable_rules( $level, $sr );
-        }
-    }
-    return $log;
 }
 
 1;

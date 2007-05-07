@@ -35,4 +35,17 @@ template '/path_test/td_only' => sub {
     outs('/path_test/td_only - T::D');
 };
 
+
+# for testing subclasses
+template 'entry.html' => sub {
+    my $self = shift;
+    outs("/entry.html=$self")
+};
+
+require TestApp::View::base;
+require TestApp::View::instance;
+import_templates TestApp::View::base under '/base';
+import_templates TestApp::View::instance under '/instance';
+
+
 1;

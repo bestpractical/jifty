@@ -234,6 +234,11 @@ routine.  Otherwise, it returns false.
 sub current_user_can {
     my $self  = shift;
     my $right = shift;
+    
+    if (Jifty->config->framework('SkipAccessControl')) {
+	return 1;	
+    }
+
 
     if (   $self->current_user->is_bootstrap_user
         or $self->current_user->is_superuser )
@@ -594,7 +599,7 @@ sub schema_version {
 
     # Return the application schema version
     else {
-        my $config = Jifty::Config->new;
+        my $config = Jifty->config();
         return $config->framework('Database')->{'Version'};
     }
 }

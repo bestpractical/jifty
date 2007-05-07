@@ -54,7 +54,7 @@ respectively.
 sub new {
     my $package = shift;
 
-    my %p = @_;
+    my %p = @_ || $package->config;
     my $self = $package->SUPER::new( request_class => 'HTML::Mason::Request::Jifty',
                                      out_method => \&out_method,
                                      %p );
@@ -65,6 +65,57 @@ sub new {
     return $self;
 }
 
+
+=head2 config
+
+Returns our Mason config.  We use the component root specified in the
+C<Web/TemplateRoot> framework configuration variable (or C<html> by
+default).  Additionally, we set up a C<jifty> component root, as
+specified by the C<Web/DefaultTemplateRoot> configuration.  All
+interpolations are HTML-escaped by default, and we use the fatal error
+mode.
+
+=cut
+
+sub config {
+    my %config = (
+        static_source => 1,
+        use_object_files => 1,
+        preprocess => sub {
+            # Force UTF-8 semantics on all our components by
+            # prepending this block to all components as Mason
+            # components defaults to parse the text as Latin-1
+            ${$_[0]} =~ s!^!<\%INIT>use utf8;</\%INIT>\n!;
+        },
+        data_dir =>  Jifty::Util->absolute_path( Jifty->config->framework('Web')->{'DataDir'} ),
+        allow_globals => [
+            qw[ $JiftyWeb ],
+            @{Jifty->config->framework('Web')->{'Globals'} || []},
+        ],
+        comp_root     => [ 
+                          [application =>  Jifty::Util->absolute_path( Jifty->config->framework('Web')->{'TemplateRoot'} )],
+                         ],
+        %{ Jifty->config->framework('Web')->{'MasonConfig'} },
+    );
+
+    for my $plugin (Jifty->plugins) {
+        my $comp_root = $plugin->template_root;
+        unless  ( $comp_root and -d $comp_root) {
+            next;
+        }
+        Jifty->log->debug( "Plugin @{[ref($plugin)]} mason component root added: (@{[$comp_root ||'']})");
+        push @{ $config{comp_root} }, [ ref($plugin)."-".Jifty->web->serial => $comp_root ];
+    }
+    push @{$config{comp_root}}, [jifty => Jifty->config->framework('Web')->{'DefaultTemplateRoot'}];
+
+    # In developer mode, we want halos, refreshing and all that other good stuff. 
+    if (Jifty->config->framework('DevelMode') ) {
+        push @{$config{'plugins'}}, 'Jifty::Mason::Halo';
+        $config{static_source}    = 0;
+        $config{use_object_files} = 0;
+    }
+    return %config;
+}
 
 =head2 out_method
 
@@ -80,17 +131,18 @@ sub out_method {
 
     $r->content_type || $r->content_type('text/html; charset=utf-8'); # Set up a default
 
-    if ($r->content_type =~ /charset=([\w-]+)$/ ) {
-        my $enc = $1;
-	if (lc($enc) =~ /utf-?8/) {
+    if ( my ($enc) = $r->content_type =~ /charset=([\w-]+)$/ ) {
+        if ( lc($enc) =~ /utf-?8/ ) {
             binmode *STDOUT, ":utf8";
-	}
-	else {
+        }
+        else {
             binmode *STDOUT, ":encoding($enc)";
-	}
+        }
+    } else {
+        binmode *STDOUT;
     }
 
-    unless ($r->http_header_sent or not $m->auto_send_headers) {
+    unless ( $r->http_header_sent or not $m->auto_send_headers ) {
         $r->send_http_header();
     }
 
@@ -110,24 +162,24 @@ Does a css-busting but minimalist escaping of whatever html you're passing in.
 
 sub escape_utf8 {
     my $ref = shift;
-    my $val = $$ref;
-    use bytes;
     no warnings 'uninitialized';
-    $val =~ s/&/&#38;/g;
-    $val =~ s/</&lt;/g;
-    $val =~ s/>/&gt;/g;
-    $val =~ s/\(/&#40;/g;
-    $val =~ s/\)/&#41;/g;
-    $val =~ s/"/&#34;/g;
-    $val =~ s/'/&#39;/g;
-    $$ref = $val;
-    Encode::_utf8_on($$ref);
+    $$ref =~ s/&/&#38;/g;
+    $$ref =~ s/</&lt;/g;
+    $$ref =~ s/>/&gt;/g;
+    $$ref =~ s/\(/&#40;/g;
+    $$ref =~ s/\)/&#41;/g;
+    $$ref =~ s/"/&#34;/g;
+    $$ref =~ s/'/&#39;/g;
 }
-
 
 =head2 escape_uri SCALARREF
 
-Escapes URI component according to RFC2396
+Escapes in-place URI component according to RFC2396. Takes a reference to
+perl string.
+
+*Note* that octets would be treated as latin1 encoded sequence and converted
+to UTF-8 encoding and then escaped. So this sub always provide UTF-8 escaped
+string. See also L<Encode> for more info about converting.
 
 =cut
 
@@ -135,17 +187,37 @@ sub escape_uri {
     my $ref = shift;
     $$ref = Encode::encode_utf8($$ref);
     $$ref =~ s/([^a-zA-Z0-9_.!~*'()-])/uc sprintf("%%%02X", ord($1))/eg;
-    Encode::_utf8_on($$ref);
 }
 
 
-=head2 handle_comp COMPONENT
+=head2 template_exists COMPONENT
+
+A convenience method for $self->interp->comp_exists().  
+(Jifty uses this method as part of its standard Templating system API).
+
+=cut
+
+sub template_exists {
+	my $self = shift;
+	return $self->interp->comp_exists(@_);
+}
+
+
+=head2 show COMPONENT
 
 Takes a component path to render.  Deals with setting up a global
 L<HTML::Mason::FakeApache> and Request object, and calling the
 component.
 
+=head2 handle_comp
+
+A synonym for show
+
 =cut
+
+sub show {
+    shift->handle_comp(@_);
+}
 
 sub handle_comp {
     my ($self, $comp) = (shift, shift);

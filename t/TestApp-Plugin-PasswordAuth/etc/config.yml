@@ -22,7 +22,6 @@ framework:
     - %log/mail.log%
 
   Plugins: 
-    - User: {}
     - Authentication::Password: {}
     - 
       REST: {}

@@ -97,7 +97,6 @@ sub _generate_digest {
     return '' unless ($user->auth_token);
 
 
-
     # build an md5sum of the email token and until and our secret
     my $digest = Digest::MD5->new();
     $digest->add( $user->auth_token );
@@ -273,18 +272,22 @@ sub validate {
     # email must exist
 
     unless ($self->_user_from_email($self->email)) {
+        Jifty->log->debug("Token validation failed - Invalid user");
         return undef;
     }
 
     unless ($self->path) {
+        Jifty->log->debug("Token validation failed - Invalid path");
         return undef;
     }
     unless ($self->checksum_provided) {
+        Jifty->log->debug("Token validation failed - Checksum not provided");
         return undef;
     }
 
 
     unless ($self->_correct_checksum_provided) {
+        Jifty->log->debug("Token validation failed - Checksum not correct");
         return undef;
     }
 
@@ -301,11 +304,13 @@ actually do much input checking. You want to call "validate"
 
 sub _correct_checksum_provided {
     my $self = shift;
+        Jifty->log->debug("LetMe checksum: ".$self->checksum_provided . " vs ". $self->generate_checksum );
     return undef
         unless ( $self->checksum_provided eq $self->generate_checksum )
         or
         ( $self->checksum_provided eq $self->generate_koremutake_checksum );
 
+    return 1;
 }
 
 1;

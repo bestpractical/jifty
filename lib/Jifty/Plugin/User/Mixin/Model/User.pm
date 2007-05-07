@@ -26,14 +26,14 @@ use base 'Jifty::DBI::Record::Plugin';
 use Jifty::Plugin::User::Record schema {
     column
         name => type is 'text',
-        label is 'Nickname',
-        hints is 'How should I display your name to other users?';
+        label is _('Nickname'),
+        hints is _('How should I display your name to other users?');
     column
         email => type is 'text',
-        label is 'Email address', default is '', is immutable, is distinct;
+        label is _('Email address'), default is '', is immutable, is distinct;
     column
-        email_confirmed => label is 'Email address confirmed?',
-        type is 'boolean', render_as 'Unrendered';
+        email_confirmed => label is _('Email address confirmed?'),
+        type is 'boolean';
 
 };
 
@@ -79,19 +79,18 @@ sub validate_email {
     my $self      = shift;
     my $new_email = shift;
     
-    return ( 0, "That $new_email doesn't look like an email address." )
+    return ( 0, _("That %1 doesn't look like an email address.", $new_email) )
         if $new_email !~ /\S\@\S/;
     
     my $temp_user = Jifty->app_class('Model','User')->new( current_user => Jifty->app_class('CurrentUser')->superuser );
     $temp_user->load_by_cols( 'email' => $new_email );
     
     # It's ok if *we* have the address we're looking for
-    return ( 0, q{It looks like somebody else is using that address. Is there a chance you have another account?} )
+    return ( 0, _('It looks like somebody else is using that address. Is there a chance you have another account?') )
         if $temp_user->id && ( !$self->id || $temp_user->id != $self->id );
     
     return 1;
 }
-
 
 
 1;

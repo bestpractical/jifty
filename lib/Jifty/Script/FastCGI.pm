@@ -21,7 +21,7 @@ than the pure-perl Jifty standalone server.  C<FastCGI> is what you're looking f
 
  # These two lines are FastCGI-specific; skip them to run in vanilla CGI mode
  AddHandler fastcgi-script fcgi
- FastCgiServer /path/to/your/jifty/app/bin/jifty
+ FastCgiServer /path/to/your/jifty/app/bin/jifty -initial-env JIFTY_COMMAND=fastcgi 
 
  DocumentRoot /path/to/your/jifty/app/share/web/templates
  ScriptAlias / /path/to/your/jifty/app/bin/jifty/

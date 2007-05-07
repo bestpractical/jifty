@@ -51,7 +51,7 @@ before '*' =>  run {
 
 =cut
 
-on qr/^(?:passwordreminder|signup)$/ => run {
+before qr'^/(?:passwordreminder|signup|lost_password)$' => run {
     redirect('/') if ( Jifty->web->current_user->id );
     set 'next' => Jifty->web->request->continuation || Jifty::Continuation->new( request => Jifty::Request->new( path => "/login" ) );
 };
@@ -60,18 +60,21 @@ on qr/^(?:passwordreminder|signup)$/ => run {
 
 =cut
 
-on qr/^(?:login)$/ => run {
+before qr|^/(?:login)$| => run {
     redirect('/') if ( Jifty->web->current_user->id );
     set 'next' => Jifty->web->request->continuation || Jifty::Continuation->new( request => Jifty::Request->new( path => "/" ) );
 };
 
+before qr|(?:reset_lost_password)| => run {
+    set 'next' => Jifty->web->request->continuation || Jifty::Continuation->new( request => Jifty::Request->new( path => "/" ) );
+};
 # Send a password reminder for a lost password
 
 =head2 on passwordreminder
 
 =cut
 
-on 'passwordreminder' => run {
+before 'passwordreminder' => run {
     set 'action' => Jifty->web->new_action( class => 'SendPasswordReminder', moniker => 'password_reminder');
 };
 
@@ -82,7 +85,7 @@ on 'passwordreminder' => run {
 
 =cut
 
-on 'signup' => run {
+before 'signup' => run {
     set 'action' => Jifty->web->new_action( class => 'Signup');
 
 };
@@ -93,7 +96,7 @@ Login
 
 =cut
 
-on 'login' => run {
+before 'login' => run {
     set 'action' => Jifty->web->new_action( class => 'Login');
 };
 
