@@ -47,5 +47,23 @@ require TestApp::View::instance;
 import_templates TestApp::View::base under '/base';
 import_templates TestApp::View::instance under '/instance';
 
+use Jifty::View::Declare::CRUD;
+
+foreach my $model  (Jifty->class_loader->models) {
+    my $bare_model;
+    if ($model =~ /^.*::(.*?)$/) {
+        $bare_model = $1;
+        warn "MY bare model was $bare_model";
+    }
+    alias Jifty::View::Declare::CRUD under '/crud/'.$bare_model,  { object_type => $bare_model, base_path => '/crud/'.$bare_model };
+
+}
+
+
+template userlist => page {
+    render_region( "users", path => '/crud/User/list');
+
+};
+
 
 1;
