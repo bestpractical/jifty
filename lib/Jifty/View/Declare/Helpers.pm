@@ -155,7 +155,8 @@ every field of this action.
 
 sub render_action(@) {
     my ( $action, $fields, $field_args ) = @_;
-    my @f = $fields && @$fields ? @$fields : $action->argument_names;
+   
+    my @f = ($fields && ref ($fields) eq 'ARRAY') ? @$fields : $action->argument_names;
     foreach my $argument (@f) {
         outs_raw( $action->form_field( $argument, %$field_args ) );
     }

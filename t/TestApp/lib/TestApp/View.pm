@@ -61,8 +61,9 @@ foreach my $model  (Jifty->class_loader->models) {
 
 
 template userlist => page {
+    form {
     render_region( "users", path => '/crud/User/list');
-
+    };
 };
 
 

@@ -1,5 +1,7 @@
-package Jifty::View::Declare::CRUD;
+use warnings;
 use strict;
+
+package Jifty::View::Declare::CRUD;
 use Jifty::View::Declare -base;
 
 sub object_type {
@@ -93,7 +95,7 @@ template 'update' => sub {
             );
         };
 
-        $self->render_action( $update );
+        render_action( $update );
         hr {};
     }
 };
@@ -202,7 +204,7 @@ template 'new_item' => sub {
     my $create = Jifty->web->new_action(class => 'Create'.$object_type);
 
     div {{ class is 'crud create item inline' };
-        $self->render_action( $create );
+        render_action( $create );
 
         outs(
             Jifty->web->form->submit(
