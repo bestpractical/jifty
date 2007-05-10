@@ -25,8 +25,27 @@ sub get_record {
 }
 
 template 'search' => sub {
+    my $self = shift;
+    my ( $object_type) = ($self->object_type);
+my $search = Jifty->web->new_action(
+    class             => "Search".$object_type,
+    moniker           => "search",
+    sticky_on_success => 1,
+);
 
- b{i{   'search goes here.'}};
+div { { class is "jifty_admin" } ;
+    render_action($search);
+
+ $search->button(
+    label   => _('Search'),
+    onclick => {
+        submit  => $search,
+        refresh => Jifty->web->current_region->parent,
+        args    => { page => 1}
+    }
+  );
+
+ }
 };
 
 template 'view' => sub {
@@ -102,8 +121,9 @@ template 'update' => sub {
 
 template 'list' => sub {
     my $self = shift;
-    my ( $object_type, $page, $new_slot_path, $item_path, $search_collection )
-        = ($self->object_type, get(qw(page new_slot_path item_path search_collection)));
+    my ( $object_type) = ($self->object_type);
+    
+    my( $page, $new_slot_path, $item_path, $search_collection )= get(qw(page new_slot_path item_path search_collection));
 
     $item_path ||= $self->fragment_for("view");
 
@@ -115,8 +135,7 @@ template 'list' => sub {
         $collection = $collection_class->new();
         $collection->unlimit();
     } else {
-	$collection = $search;
-#        $collection = $search->content('search');
+        $collection = $search->content('search');
     }
 
     $collection->set_page_info(
