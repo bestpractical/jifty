@@ -8,6 +8,11 @@ $writer->xmlDecl( "UTF-8", "yes" );
 $writer->startTag("validation");
 for my $ra ( Jifty->web->request->actions ) {
     my $action = Jifty->web->new_action_from_request($ra);
+    unless ($action ){
+        warn "Couldn't turn $ra into an action";
+        next;
+        
+    }
     $writer->startTag( "validationaction", id => $action->register_name );
     for my $arg ( $action->argument_names ) {
         if ( not $action->arguments->{$arg}->{ajax_validates} ) {
