@@ -53,7 +53,6 @@ foreach my $model  (Jifty->class_loader->models) {
     my $bare_model;
     if ($model =~ /^.*::(.*?)$/) {
         $bare_model = $1;
-        warn "MY bare model was $bare_model";
     }
     alias Jifty::View::Declare::CRUD under '/crud/'.$bare_model,  { object_type => $bare_model, base_path => '/crud/'.$bare_model };
 
