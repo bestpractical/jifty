@@ -102,6 +102,12 @@ sub stringify {
     return wantarray ? @r : pop @r;
 }
 
+=head2 reference_to_data
+
+provides a saner output format for models than MyApp::Model::Foo=HASH(0x1800568)
+
+=cut
+
 sub reference_to_data {
     my $obj = shift;
     my ($model) = map { s/::/./g; $_ } ref($obj);
