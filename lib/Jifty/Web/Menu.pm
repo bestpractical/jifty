@@ -197,9 +197,7 @@ sub render_as_menu {
 
 Render this menu with html markup as an inline dropdown menu.
 
-
 =cut
-
 
 sub render_as_context_menu {
 	my $self = shift;
@@ -247,6 +245,50 @@ sub render_as_hierarchical_menu_item {
             Jifty->web->out("</li>");
         }
         Jifty->web->out(qq{</ul>});
+    }
+    Jifty->web->out(qq{</li>});
+    '';
+
+}
+
+=head2 render_as_classical_menu
+
+Render this menu with html markup as old classical mason menu. 
+Currently renders one level of submenu, if it exists.
+
+=cut
+
+sub  render_as_classical_menu {
+	my $self = shift;
+    my @kids = $self->children;
+
+    Jifty->web->out( qq{<ul class="menu">});
+
+    for (@kids) {
+	    $_->_render_as_classical_menu_item();
+    }
+
+    Jifty->web->out(qq{</ul>});
+    '';
+}
+
+sub _render_as_classical_menu_item {
+    my $self = shift;
+    my %args = (
+        class => '',
+        @_
+    );
+    my @kids = $self->children;
+    Jifty->web->out( qq{<li} . ($self->active ? qq{ class="active"} : '' ) . qq{>} );
+    Jifty->web->out( $self->as_link );
+    if (@kids) {
+      Jifty->web->out( qq{<ul class="submenu">} );
+      for (@kids) {
+         Jifty->web->out( qq{<li} . ($_->active ? qq{ class="active"} : '' ) . qq{>} );
+         Jifty->web->out( $_->as_link );
+         Jifty->web->out("</li>");
+      }
+      Jifty->web->out(qq{</ul>});
     }
     Jifty->web->out(qq{</li>});
     '';
