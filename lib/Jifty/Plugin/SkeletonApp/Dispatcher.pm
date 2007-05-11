@@ -18,7 +18,7 @@ use Jifty::Dispatcher -base;
 
     
 
-on '*' => run {
+on '**' => run {
     my $top = Jifty->web->navigation;
     $top->child( Home => url => "/", sort_order => 1, label => _('Home') );
     if ( Jifty->config->framework('AdminMode') ) {
