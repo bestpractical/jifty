@@ -1,5 +1,7 @@
-package Jifty::Plugin::REST::Dispatcher;
 use warnings;
+use strict;
+
+package Jifty::Plugin::REST::Dispatcher;
 
 
 
