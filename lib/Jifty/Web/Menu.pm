@@ -70,7 +70,7 @@ sub url {
     $self->{url} = URI->new_abs($self->{url}, $self->parent->url . "/")->as_string
       if $self->parent and $self->parent->url;
 
-    $self->{url} =~s !///!/!;
+    $self->{url} =~ s!///!/! if $self->{url};
 
     return $self->{url};
 }
