@@ -11,7 +11,8 @@ sub object_type {
 
 sub fragment_for {
     my $self = shift;
-    return ($self->package_variable('base_path')|| '/crud')."/". shift;
+    my $fragment = shift;
+    return ($self->package_variable('fragment_for_'.$fragment)||$self->package_variable('base_path')|| '/crud')."/". $fragment;
 }
 
 sub get_record {
