@@ -5,15 +5,13 @@ package Jifty::Plugin::SiteNews::Mixin::Model::News;
 use Jifty::DBI::Schema;
 use base 'Jifty::DBI::Record::Plugin';
 
-our @EXPORT = qw();
+our @EXPORT = qw(current_user_can);
 
 use Jifty::Plugin::SiteNews::Record schema {
 
     my $user_class = Jifty->app_class('Model', 'User');
 
-column author_id =>
-  refers_to $user_class;
-  label is 'Author';
+#column author_id => refers_to $user_class; label is 'Author';
 column created   =>
   type is 'timestamp',
   filters are qw( Jifty::Filter::DateTime Jifty::DBI::Filter::DateTime),
@@ -52,6 +50,7 @@ sub current_user_can {
     my $self = shift;
     my $right = shift;
 
+    return 1;
     # Anyone can read
     return 1 if ($right eq "read");
     

@@ -12,7 +12,7 @@ sub object_type {
 sub fragment_for {
     my $self = shift;
     my $fragment = shift;
-    return ($self->package_variable('fragment_for_'.$fragment)||$self->package_variable('base_path')|| '/crud')."/". $fragment;
+    return $self->package_variable('fragment_for_'.$fragment)||($self->package_variable('base_path')|| '/crud')."/". $fragment;
 }
 
 sub get_record {
@@ -124,8 +124,9 @@ template 'list' => sub {
     my $self = shift;
     my ( $object_type) = ($self->object_type);
     
-    my( $page, $new_slot_path, $item_path, $search_collection )= get(qw(page new_slot_path item_path search_collection));
+    my( $page, $fragment_for_new_item, $item_path, $search_collection )= get(qw(page fragment_for_new_item item_path search_collection));
 
+    $fragment_for_new_item ||= $self->package_variable('fragment_for_new_item');
     $item_path ||= $self->fragment_for("view");
 
     my $collection_class
@@ -207,10 +208,10 @@ template 'list' => sub {
         }
     };
 
-    if ($new_slot_path) {
+    if ($fragment_for_new_item) {
         render_region(
                 name     => 'new_item',
-                path     => $new_slot_path,
+                path     => $fragment_for_new_item,
                 defaults => { object_type => $object_type },
         );
     }
@@ -218,6 +219,7 @@ template 'list' => sub {
 
 
 template 'new_item' => sub {
+    my $self = shift;
     my ( $object_type, $id ) = ($self->object_type, get('id'));
 
     my $record_class = Jifty->app_class("Model", $object_type);

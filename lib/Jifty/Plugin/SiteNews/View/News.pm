@@ -10,23 +10,44 @@ template 'index.html' => page {
 
     h1 { 'This is your site news'};
     form {
-        show('list');
+        show('/news/list');
     }
 
 };
 
 
+template 'view' => sub {
+    my $self = 'Jifty::View::Declare::CRUD';
+    my ( $object_type, $id ) = ( $self->object_type, get('id') );
+    my $update = new_action(
+        class => 'Update' . $object_type,
+        moniker => "update-" . Jifty->web->serial,
+        record  => $self->get_record( $id )
+    );
+
+    my $record = $self->get_record($id);
+
+    h1 { $record->title };
+    blockquote {$record->content};
+        hyperlink(
+                label   => "Edit",
+                class   => "editlink",
+                onclick => {
+                    replace_with => $self->fragment_for('update'),
+                    args         => { object_type => $object_type, id => $id }
+                },
+        );
 
 
-template '/edit' => page {
-    h1 {'foo'};
-    
 };
 
 
-alias Jifty::View::Declare::CRUD under '.', { object_type => 'News', base_path => '/news', 
-    fragment_for_list => '/news/list',
-    fragment_for_view => '/news/view'
+
+
+
+alias Jifty::View::Declare::CRUD under '/', { object_type => 'News', base_path => '/news', 
+    fragment_for_view => '/news/view',
+    fragment_for_new_item => '/news/new_item'
 
 };
 
