@@ -277,7 +277,12 @@ sub page (&) {
     sub {
         my $self = shift;
         Jifty->handler->apache->content_type('text/html; charset=utf-8');
+        if ( my $wrapper = Jifty->app_class('View')->can('wrapper') ) {
+            $wrapper->(sub { $code->($self)});
+        } else {
+
         wrapper(sub { $code->($self) });
+    }
     };
 }
 
