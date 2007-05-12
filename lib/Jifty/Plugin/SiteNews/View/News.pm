@@ -5,10 +5,14 @@ package Jifty::Plugin::SiteNews::View::News;
 use Jifty::View::Declare -base;
 use Jifty::View::Declare::CRUD;
 
+import_templates Jifty::View::Declare::CRUD under '/';
+
+sub object_type { 'News' }
+
+sub fragment_base_path {'/news'}
+
 template 'index.html' => page {
-
-
-    h1 { 'This is your site news'};
+    title is  'Site news' ;
     form {
         show('/news/list');
     }
@@ -17,7 +21,7 @@ template 'index.html' => page {
 
 
 template 'view' => sub {
-    my $self = 'Jifty::View::Declare::CRUD';
+    my $self = shift;
     my ( $object_type, $id ) = ( $self->object_type, get('id') );
     my $update = new_action(
         class => 'Update' . $object_type,
@@ -38,16 +42,6 @@ template 'view' => sub {
                 },
         );
 
-
-};
-
-
-
-
-
-alias Jifty::View::Declare::CRUD under '/', { object_type => 'News', base_path => '/news', 
-    fragment_for_view => '/news/view',
-    fragment_for_new_item => '/news/new_item'
 
 };
 
