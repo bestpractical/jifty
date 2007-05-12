@@ -159,6 +159,7 @@ sub take_action {
 
     # Set up our login message
     $self->result->message( $self->login_message($user));
+    $self->result->content( id => $user->id );
 
     # Actually do the signin thing.
     Jifty->web->current_user(Jifty->app_class('CurrentUser')->new( id => $user->id));
