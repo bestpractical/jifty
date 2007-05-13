@@ -83,18 +83,12 @@ sub show {
         Jifty->handler->apache->send_http_header;
     }
 
+    binmode *STDOUT;
     if ( my ($enc) = $r->content_type =~ /charset=([\w-]+)$/ ) {
-        if ( lc($enc) =~ /utf-?8/) {
-            binmode *STDOUT, ":utf8" or die "couldn't set layers: $!";
-        }
-        else {
-            binmode *STDOUT, ":encoding($enc)" or die "couldn't set layers: $!";
-        }
+        print STDOUT Encode::encode($enc, $content);
     } else {
-        binmode *STDOUT or die "couldn't set layers: $!";
+        print STDOUT $content;
     }
-
-    print STDOUT $content;
     return undef;
 }
 

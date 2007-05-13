@@ -388,3 +388,17 @@ actions like you normally would.
 If you've actually installed your app into C<@INC>, you can skip the
 C<use lib> line.
 
+=head2 Send out dynamically created binary data
+
+In a C<Template::Declare> view, do something like this:
+    
+    template 'image' => sub {
+        # ...
+        # create dynamic $image, for example using Chart::Clicker
+
+        Jifty->handler->apache->content_type('image/png');
+        Jifty->web->out($image);
+    };
+
+=for comment
+Document how to do this with Mason

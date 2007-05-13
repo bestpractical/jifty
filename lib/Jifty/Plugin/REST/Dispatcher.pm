@@ -1,5 +1,7 @@
-package Jifty::Plugin::REST::Dispatcher;
 use warnings;
+use strict;
+
+package Jifty::Plugin::REST::Dispatcher;
 
 
 
@@ -93,9 +95,25 @@ magical.
 =cut
 
 sub stringify {
+    # XXX: allow configuration to specify model fields that are to be
+    # expanded
     no warnings 'uninitialized';
-    my @r = map { defined $_ ? '' . $_ : undef } @_;
+    my @r = map { ref($_) && UNIVERSAL::isa($_, 'Jifty::Record')
+                             ? reference_to_data($_) :
+                  defined $_ ? '' . $_               : undef } @_;
     return wantarray ? @r : pop @r;
+}
+
+=head2 reference_to_data
+
+provides a saner output format for models than MyApp::Model::Foo=HASH(0x1800568)
+
+=cut
+
+sub reference_to_data {
+    my $obj = shift;
+    my ($model) = map { s/::/./g; $_ } ref($obj);
+    return { jifty_model_reference => 1, id => $obj->id, model => $model };
 }
 
 =head2 object_to_data OBJ
