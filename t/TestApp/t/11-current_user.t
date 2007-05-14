@@ -21,6 +21,9 @@ use_ok('TestApp::CurrentUser');
 my $system_user = TestApp::CurrentUser->superuser;
 ok($system_user, "Found a system user");
 
+# Make it so that all users have full access
+TestApp::Model::User->add_trigger( before_access => sub { 'allow' } );
+
 # Create two users
 my $o = TestApp::Model::User->new(current_user => $system_user);
 $o->create( name => 'A User', email => 'auser@example.com', 
