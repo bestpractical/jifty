@@ -402,3 +402,28 @@ In a C<Template::Declare> view, do something like this:
 
 =for comment
 Document how to do this with Mason
+
+=head2 Show login box on an action submit
+
+In app's dispatcher add the following:
+
+    before '*' => run {
+        # do nothing if user is logged in
+        return if Jifty->web->current_user->id;
+
+        # check all actions the request has. if at least one require login
+        # then save them in a continuation and redirect to the login page
+        tangent '/login' if
+            grep $_->can('require_login') && $_->require_login,
+            map $_->class, Jifty->web->request->actions;
+    };
+
+All you have to do now is to add C<sub require_login { return 1 }> into
+actions which need this functionality.
+
+Note that you can implement complex logic in the require_login method,
+but it's called as class method what set a lot of limitations. That
+would be really cool to have access to all data of the action in
+this method, so you are welcome to post a better solution.
+
+=cut
