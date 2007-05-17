@@ -375,7 +375,7 @@ sub upgrade_tables {
                         my $renamed = $upgradeclass->just_renamed || {};
 
                         # skip it if this was dropped by a rename
-                        _exec_sql($model->drop_column_sql($col->name))
+                        $model->drop_column_in_db($col->name)
                             unless defined $renamed
                                 ->{ $model->table }
                                 ->{'drop'}
@@ -389,7 +389,7 @@ sub upgrade_tables {
                         my $renamed = $upgradeclass->just_renamed || {};
 
                         # skip it if this was added by a rename
-                        _exec_sql($model->add_column_sql($col->name))
+                        $model->add_column_in_db($col->name)
                             unless defined $renamed
                                 ->{ $model->table }
                                 ->{'add'}
