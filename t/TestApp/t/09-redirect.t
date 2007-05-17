@@ -10,8 +10,8 @@ still get run.
 
 =cut
 
-BEGIN {chdir "t/TestApp"}
-use lib '../../lib';
+use lib 't/lib';
+use Jifty::SubTest;
 use Jifty::Test tests => 6;
 use Jifty::Test::WWW::Mechanize;
 
