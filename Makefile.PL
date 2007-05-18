@@ -125,6 +125,12 @@ features(
         -default => 0,
         recommends('PAR::Dist::FromCPAN'),
     ],
+    'OpenID Login Plugin' => [
+        -default => 0,
+        recommends('Net::OpenID::Consumer'),
+        recommends('Cache::FileCache'),
+        recommends('LWPx::ParanoidAgent'),
+    ],
 );
 
 
