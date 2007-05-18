@@ -241,11 +241,15 @@ sub _require {
     if ($UNIVERSAL::require::ERROR) {
         my $error = $UNIVERSAL::require::ERROR;
         $error =~ s/ at .*?\n$//;
-        
-        unless ($args{'quiet'} and $error =~ /^Can't locate/) {
-            Jifty->log->error(sprintf("$error at %s line %d\n", (caller(1))[1,2]));
+        if ($args{'quiet'} and $error =~ /^Can't locate/) {
+            return 0;
         }
-        return 0;
+        elsif ( $UNIVERSAL::require::ERROR !~ /^Can't locate/) {
+                die $UNIVERSAL::require::ERROR;
+        } else {
+            Jifty->log->error(sprintf("$error at %s line %d\n", (caller(1))[1,2]));
+            return 0;
+        }
     }
 
     # If people forget the '1;' line in the dispatcher, don't eit them
