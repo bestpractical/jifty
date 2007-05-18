@@ -1,0 +1,63 @@
+--- 
+framework: 
+  AdminMode: 1
+  ApplicationClass: TestApp::Plugin::News
+  ApplicationName: TestApp-Plugin-News
+  ApplicationUUID: 09757060-0564-11DC-AD52-CB2C768159CC
+  Database: 
+    CheckSchema: 1
+    Database: testapp_plugin_news
+    Driver: SQLite
+    Host: localhost
+    Password: ''
+    RecordBaseClass: Jifty::DBI::Record::Cachable
+    User: ''
+    Version: 0.0.1
+  DevelMode: 1
+  L10N: 
+    PoDir: share/po
+  LogLevel: INFO
+  Mailer: Sendmail
+  MailerArgs: []
+
+  Plugins: 
+    - 
+      SkeletonApp: {}
+
+    - 
+      REST: {}
+
+    - 
+      Halo: {}
+
+    - 
+      ErrorTemplates: {}
+
+    - 
+      OnlineDocs: {}
+
+    - 
+      CompressedCSSandJS: {}
+
+    - 
+      AdminUI: {}
+
+  PubSub: 
+    Backend: Memcached
+    Enable: ~
+  SkipAccessControl: 0
+  TemplateClass: TestApp::Plugin::News::View
+  Web: 
+    BaseURL: http://localhost
+    DataDir: var/mason
+    Globals: []
+
+    MasonConfig: 
+      autoflush: 0
+      default_escape_flags: h
+      error_format: text
+      error_mode: fatal
+    Port: 8888
+    ServeStaticFiles: 1
+    StaticRoot: share/web/static
+    TemplateRoot: share/web/templates

@@ -13,6 +13,8 @@ no_index:
     - debian
     - doc
     - examples
+    - share
+    - plugins/*/t
     - inc
     - t
   package: 
@@ -109,4 +111,4 @@ requires:
   perl: 5.8.3
   version: 0
 tests: t/*.t t/*/t/*.t
-version: 0.70415
+version: 0.70422
