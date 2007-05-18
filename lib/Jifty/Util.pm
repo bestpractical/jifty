@@ -162,10 +162,6 @@ sub app_root {
                 and lc($try) ne lc(File::Spec->catdir($Config::Config{bin}, "jifty"))
                 and lc($try) ne lc(File::Spec->catdir($Config::Config{scriptdir}, "jifty")) )
             {
-                #warn "root: ", File::Spec->catdir(@root);
-                #warn "bin/jifty: ", File::Spec->catdir($Config::Config{bin}, "jifty");
-                #warn "scriptdir/jifty: ", File::Spec->catdir($Config::Config{scriptdir}, "jifty");
-                #warn "try: $try";
                 return $APP_ROOT = File::Spec->catdir(@root);
             }
             pop @root;

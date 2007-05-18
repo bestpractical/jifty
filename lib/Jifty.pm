@@ -150,6 +150,8 @@ sub new {
     );
 
 
+    # Add the appliation's library path
+    push @INC, File::Spec->catdir(Jifty::Util->app_root, "lib");
 
     # Now that we've loaded the configuration, we can remove the temporary 
     # Jifty::DBI::Record baseclass for records and insert our "real" baseclass,
