@@ -29,7 +29,8 @@ use Jifty::Action schema {
         hints is 'For example: you.livejournal.com';
 
     param 'return_to' =>
-        default is '/openid/verify';
+        render as 'Hidden',
+        default is '/openid/verify_and_login';
 };
 
 =head2 take_action

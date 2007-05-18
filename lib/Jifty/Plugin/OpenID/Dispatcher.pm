@@ -8,6 +8,13 @@ before qr'^/(?:openid/link)' => run {
     tangent('/openid/login') unless (Jifty->web->current_user->id)
 };
 
+before qr'^/openid/login' => run {
+    set action => Jifty->web->new_action(
+        class   => 'AuthenticateOpenID',
+        moniker => 'authenticateopenid'
+    );
+};
+
 before qr'^/openid/verify' => run {
     Jifty->web->request->add_action(
         class   => 'VerifyOpenID',
