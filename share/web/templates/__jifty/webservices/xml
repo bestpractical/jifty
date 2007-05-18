@@ -3,6 +3,8 @@ my $output = "";
 my $writer = XML::Writer->new( OUTPUT => \$output, UNSAFE => 1 );
 $writer->xmlDecl( "UTF-8", "yes" );
 $writer->startTag("response");
+
+FRAGMENT:
 for my $f ( Jifty->web->request->fragments ) {
     # Set up the region stack
     local Jifty->web->{'region_stack'} = [];
@@ -30,6 +32,11 @@ for my $f ( Jifty->web->request->fragments ) {
             parent         => Jifty->web->current_region,
             defaults       => \%defaults,
         );
+
+        # It's possible that the pageregion creation could fail -- no
+        # name, for instance.  In that case, bail on this fragment.
+        next FRAGMENT unless $new;
+
         $new->enter;
     }
 
