@@ -137,16 +137,14 @@ template 'update' => sub {
 
 template 'list' => sub {
     my $self = shift;
-    my ($object_type) = ( $self->object_type );
+    my $object_type = $self->object_type ;
 
-    my ( $page, $fragment_for_new_item, $item_path, $search_collection )
-        = get(qw(page fragment_for_new_item item_path search_collection));
+    my ( $page, $search_collection ) = get(qw(page  search_collection));
 
-    $fragment_for_new_item ||= $self->fragment_for('new_item');
-    $item_path ||= $self->fragment_for("view");
+    my $fragment_for_new_item = get('fragment_for_new_item') || $self->fragment_for('new_item');
+    my $item_path = get( 'item_path') || $self->fragment_for("view");
 
-    my $collection_class
-        = Jifty->app_class( "Model", $object_type . "Collection" );
+    my $collection_class = Jifty->app_class( "Model", $object_type . "Collection" );
     my $search = $search_collection || Jifty->web->response->result('search');
     my $collection;
     if ( !$search ) {
@@ -156,14 +154,8 @@ template 'list' => sub {
         $collection = $search->content('search');
     }
 
-    $collection->set_page_info(
-        current_page => $page,
-        per_page     => 25
-    );
-    my $search_region = Jifty::Web::PageRegion->new(
-        name => 'search',
-        path => '/__jifty/empty',
-    );
+    $collection->set_page_info( current_page => $page, per_page     => 25);
+    my $search_region = Jifty::Web::PageRegion->new( name => 'search', path => '/__jifty/empty',);
 
     hyperlink(
         onclick => [
@@ -178,6 +170,7 @@ template 'list' => sub {
 
     outs( $search_region->render );
 
+
     if ( $collection->pager->last_page > 1 ) {
         span {
             { class is 'page-count' };
@@ -185,6 +178,7 @@ template 'list' => sub {
                 _( "Page %1 of %2", $page, $collection->pager->last_page ) );
             }
     }
+
 
     if ( $collection->pager->total_entries == 0 ) {
         outs( _("No items found") );
@@ -201,30 +195,23 @@ template 'list' => sub {
         }
     };
 
+
     div {
         { class is 'paging' };
         if ( $collection->pager->previous_page ) {
             span {
                 { class is 'prev-page' };
-                hyperlink(
-                    label   => "Previous Page",
-                    onclick => {
-                        args => { page => $collection->pager->previous_page }
-                    }
-                );
+                hyperlink( label   => "Previous Page", onclick => { args => { page => $collection->pager->previous_page } });
                 }
         }
         if ( $collection->pager->next_page ) {
             span {
                 { class is 'next-page' };
-                hyperlink(
-                    label   => "Next Page",
-                    onclick =>
-                        { args => { page => $collection->pager->next_page } }
-                );
+                hyperlink( label   => "Next Page", onclick => { args => { page => $collection->pager->next_page } });
                 }
         }
     };
+
 
     if ($fragment_for_new_item) {
         render_region(
@@ -234,6 +221,7 @@ template 'list' => sub {
         );
     }
 };
+
 
 
 template 'new_item' => sub {
@@ -253,8 +241,7 @@ template 'new_item' => sub {
                 onclick => [
                     { submit       => $create },
                     { refresh_self => 1 },
-                    {   element =>
-                            undef,  #$region->parent->get_element('div.list'),
+                    {   element => Jifty->web->current_region->parent->get_element('div.list'),
                         append => $self->fragment_for('view'),
                         args   => {
                             object_type => $object_type,
