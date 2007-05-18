@@ -14,7 +14,9 @@ sub fragment_base_path {'/news'}
 template 'index.html' => page {
     title is  'Site news' ;
     form {
-        show('/news/list');
+            render_region(
+                name     => 'newslist',
+                path     => '/news/list');
     }
 
 };

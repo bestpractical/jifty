@@ -7,7 +7,7 @@ use base 'Jifty::DBI::Record::Plugin';
 
 our @EXPORT = qw(current_user_can);
 
-use Jifty::Plugin::SiteNews::Record schema {
+use Jifty::Record schema {
 
     my $user_class = Jifty->app_class('Model', 'User');
 
