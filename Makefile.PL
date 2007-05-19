@@ -131,6 +131,10 @@ features(
         recommends('Cache::FileCache'),
         recommends('LWPx::ParanoidAgent'),
     ],
+    'Jifty console' => [
+        -default => 1,
+        recommands('Devel::ExtContext')
+    ],
 );
 
 
