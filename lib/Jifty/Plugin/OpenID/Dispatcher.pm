@@ -51,7 +51,7 @@ on 'openid/verify_and_login' => run {
 
         if ( $user->id ) {
             # Set up our login message
-            $result->message( _("Welcome back, ") . $user->user_object->name . "." );
+            $result->message( _("Welcome back, ") . $user->username . "." );
 
             # Actually do the signin thing.
             Jifty->web->current_user($user);
