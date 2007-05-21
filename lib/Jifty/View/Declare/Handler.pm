@@ -74,7 +74,7 @@ sub show {
         shift;    # Turn the method into a function
         goto &Template::Declare::Tags::outs_raw;
     };
-    my $content = Template::Declare::Tags::show( $template );
+    my $content = Template::Declare::Tags::show_page( $template );
     return unless defined $content && length $content;
 
     my $r = Jifty->handler->apache;

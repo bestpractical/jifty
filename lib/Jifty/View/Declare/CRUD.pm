@@ -196,6 +196,20 @@ template 'list' => sub {
     };
 
 
+    show ('./paging', $collection);
+
+    if ($fragment_for_new_item) {
+        render_region(
+            name     => 'new_item',
+            path     => $fragment_for_new_item,
+            defaults => { object_type => $object_type },
+        );
+    }
+};
+
+private template paging => sub {
+    my $self = shift;
+    my $collection = shift;
     div {
         { class is 'paging' };
         if ( $collection->pager->previous_page ) {
@@ -211,15 +225,6 @@ template 'list' => sub {
                 }
         }
     };
-
-
-    if ($fragment_for_new_item) {
-        render_region(
-            name     => 'new_item',
-            path     => $fragment_for_new_item,
-            defaults => { object_type => $object_type },
-        );
-    }
 };
 
 
