@@ -133,7 +133,7 @@ features(
     ],
     'Jifty console' => [
         -default => 1,
-        recommands('Devel::EvalContext')
+        recommends('Devel::EvalContext')
     ],
 );
 
