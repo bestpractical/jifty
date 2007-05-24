@@ -302,6 +302,7 @@ sub handle_request {
     die _( "No request to handle" ) unless Jifty->web->request;
 
     my @valid_actions;
+    my @denied_actions;
     for my $request_action ( $self->request->actions ) {
         $self->log->debug("Found action ".$request_action->class . " " . $request_action->moniker);
         next unless $request_action->active;
@@ -310,6 +311,7 @@ sub handle_request {
             $self->log->warn( "Attempt to call denied action '"
                     . $request_action->class
                     . "'" );
+            push @denied_actions, $request_action;
             next;
         }
 
@@ -369,6 +371,11 @@ sub handle_request {
             # Fill in the request with any results that that action
             # may have yielded.
             $self->request->do_mapping;
+        }
+        for my $request_action (@denied_actions) {
+            my $action = $self->new_action_from_request($request_action);
+            $action->deny("Access Denied for ".ref($action));
+            $self->response->result( $action->moniker => $action->result );
         }
     }
 
