@@ -21,12 +21,16 @@ no_index:
     - DB
 recommends: 
   Apache2::Const: 0
+  Cache::FileCache: 0
   Class::Accessor::Named: 0
   DBD::SQLite: 0
   Devel::Cover: 0
+  Devel::EvalContext: 0
+  LWPx::ParanoidAgent: 0
   Module::CoreList: 0
   Module::Install::Admin: 0.50
   Module::Refresh: 0.09
+  Net::OpenID::Consumer: 0
   Net::Server::Fork: 0
   Net::Server::PreFork: 0
   PAR::Dist::FromCPAN: 0
