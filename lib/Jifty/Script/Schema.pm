@@ -52,7 +52,6 @@ sub run {
     
     );
     $self->manage_database_existence();
-    $self->prepare_model_classes();
     if ( $self->{create_all_tables} ) {
         $self->create_all_tables();
     } elsif ( $self->{'setup_tables'} ) {
@@ -78,6 +77,20 @@ sub setup_environment {
     Jifty->new( no_handle        => 1, logger_component => 'SchemaTool',) unless Jifty->class_loader;
 }
 
+=head2 schema
+
+Returns a Jifty::Schema object.
+
+=cut
+
+sub schema {
+    my $self = shift;
+
+    $self->{'SCHEMA'} ||= Jifty::Schema->new();
+    return $self->{'SCHEMA'};
+}
+
+
 =head2 print_help
 
 Prints out help for the package using pod2usage.
@@ -96,27 +109,6 @@ sub print_help {
     pod2usage( -exitval => 1, -input => $docs ) if $self->{help};
     pod2usage( -exitval => 0, -verbose => 2, -input => $docs )
         if $self->{man};
-}
-
-=head2 prepare_model_classes
-
-Reads in our application class from the config file and finds all our app's models.
-
-=cut
-
-sub prepare_model_classes {
-
-    my $self = shift;
-
-    # This creates a sub "models" which when called, finds packages under
-    # the application's ::Model, requires them, and returns a list of their
-    # names.
-    Jifty::Module::Pluggable->import(
-        require     => 1,
-        except      => qr/\.#/,
-        search_path => [ "Jifty::Model", Jifty->app_class("Model") ],
-        sub_name    => 'models',
-    );
 }
 
 =head2 probe_database_existence
@@ -197,7 +189,7 @@ sub create_all_tables {
     # Start a transaction
     Jifty->handle->begin_transaction;
 
-    $self->create_tables_for_models (grep {$_->isa('Jifty::DBI::Record')}  __PACKAGE__->models );
+    $self->create_tables_for_models (grep {$_->isa('Jifty::DBI::Record')} $self->schema->models );
 
     # Update the versions in the database
     Jifty::Model::Metadata->store( application_db_version => $appv );
@@ -240,7 +232,6 @@ sub create_tables_for_models {
     my $appv = version->new( Jifty->config->framework('Database')->{'Version'} );
     my $jiftyv = version->new( $Jifty::VERSION  );
 
-    my $schema = Jifty::Schema->new();
 
     for my $model ( @models) {
 
@@ -253,7 +244,7 @@ sub create_tables_for_models {
         }
         $log->info("Using $model, as it appears to be new.");
 
-            $schema->_check_reserved($model)
+            $self->schema->_check_reserved($model)
         unless ( $self->{'ignore_reserved'}
             or !Jifty->config->framework('Database')->{'CheckSchema'} );
 
@@ -350,7 +341,7 @@ sub upgrade_tables {
                      $upgradeclass->versions();
     };
 
-    for my $model_class ( grep {/^\Q$baseclass\E::Model::/} __PACKAGE__->models ) {
+    for my $model_class ( grep {/^\Q$baseclass\E::Model::/} $self->schema->models ) {
 
         # We don't want to get the Collections, for example.
         next unless $model_class->isa('Jifty::DBI::Record');

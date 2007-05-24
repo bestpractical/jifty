@@ -32,8 +32,30 @@ sub new {
     my $class = shift;
     my $self = {};
     bless $self, $class;
+    $self->_init_model_list();
     return $self;
 
+}
+
+=head2 _init_model_list
+
+Reads in our application class from the config file and finds all our app's models.
+
+=cut
+
+sub _init_model_list {
+
+    my $self = shift;
+
+    # This creates a sub "models" which when called, finds packages under
+    # the application's ::Model, requires them, and returns a list of their
+    # names.
+    Jifty::Module::Pluggable->import(
+        require     => 1,
+        except      => qr/\.#/,
+        search_path => [ "Jifty::Model", Jifty->app_class("Model") ],
+        sub_name    => 'models',
+    );
 }
 
 
