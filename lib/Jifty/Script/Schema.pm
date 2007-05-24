@@ -218,7 +218,6 @@ sub create_tables_for_models {
 
 
     for my $model ( @models) {
-
        # TODO XXX FIXME:
        #   This *will* try to generate SQL for abstract base classes you might
        #   stick in $AC::Model::.
@@ -253,9 +252,7 @@ sub upgrade_jifty_tables {
         # Backwards combatibility -- it usd to be 'key' not 'data_key';
         eval {
             local $SIG{__WARN__} = sub { };
-            $dbv = Jifty->handle->fetch_result(
-                "SELECT value FROM _jifty_metadata WHERE key = 'jifty_db_version'"
-            );
+            $dbv = Jifty->handle->fetch_result( "SELECT value FROM _jifty_metadata WHERE key = 'jifty_db_version'");
         };
     }
 
@@ -347,10 +344,7 @@ sub upgrade_tables {
 
                         # skip it if this was dropped by a rename
                         $model->drop_column_in_db($col->name)
-                            unless defined $renamed
-                                ->{ $model->table }
-                                ->{'drop'}
-                                ->{ $col->name };
+                            unless defined $renamed->{ $model->table }->{'drop'}->{ $col->name };
                     };
                 }
 
@@ -361,10 +355,7 @@ sub upgrade_tables {
 
                         # skip it if this was added by a rename
                         $model->add_column_in_db($col->name)
-                            unless defined $renamed
-                                ->{ $model->table }
-                                ->{'add'}
-                                ->{ $col->name };
+                            unless defined $renamed->{ $model->table }->{'add'}->{ $col->name };
                     };
                 }
             }
@@ -440,32 +431,13 @@ sub manage_database_existence {
     my $handle = Jifty::Schema->connect_to_db_for_management();
 
     if ( $self->{print} ) {
-
-        if ( $self->{'drop_database'} ) {
-            $handle->drop_database('print');
-        }
-        if ( $self->{'create_database'} ) {
-            $handle->create_database('print');
-        }
-        return;
+         $handle->drop_database('print') if ( $self->{'drop_database'} ) ;
+        $handle->create_database('print') if ( $self->{'create_database'} ) ;
     } else {
-
-        if ( $self->{'drop_database'} ) {
-            $handle->drop_database('execute');
-        }
-
-        if ( $self->{'create_database'} ) {
-            $handle->create_database('execute');
-        }
-
+        $handle->drop_database('execute') if ( $self->{'drop_database'} ) ;
+        $handle->create_database('execute') if ( $self->{'create_database'} ) ;
         $handle->disconnect;
-
-        # If we drop and didn't re-create, then don't reconnect
-        if ( $self->{'drop_database'} and not $self->{'create_database'} ) {
-            return;
-        }
-
-        $self->_reinit_handle();
+        $self->_reinit_handle() if ($self->{'create_database'} ) ;
     }
 }
 
