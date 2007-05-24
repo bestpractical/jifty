@@ -62,30 +62,57 @@ sub _init_model_list {
 sub serialize_current_schema {
     my $self = shift;    
    
-    my @models = $self->model_classes;
+    my @models = grep {$_->isa('Jifty::Record') && $_->table }  $self->models;
     my $serialized_models = {};
     foreach my $model (@models) {
-        $serialized_models->{$model->_class_name} = $model->serialize_metadata;
+        $serialized_models->{$model} = $model->serialize_metadata;
     }
-
     return $serialized_models;
 
 }
 
 
+sub _store_current_schema {
+    my $self = shift;
+     Jifty::Model::Metadata->store( current_schema      => Jifty::YAML::Dump($self->serialize_current_schema ));
+}
+
+sub _load_stored_schema {
+    my $self = shift;
+     my $schema =  Jifty::YAML::Load(Jifty::Model::Metadata->load( 'current_schema'));
+    return $schema;
+}
 
 
-sub upgrade_schema {
+
+sub autoupgrade_schema {
     my $self = shift;
 
+    my ( $add_tables, $add_columns, $remove_tables, $remove_columns )
+        = $self->compute_schema_diffs( $self->_load_stored_schema, $self->serialize_current_schema);
+
+
+    # Run all "Rename" rules
+    $self->run_upgrade_rules('before_all_renames');
+    my $table_renames  = Jifty->upgrade->table_renames;
+    my $column_renames = Jifty->upgrade->column_renames;
+    $self->run_upgrade_rules('after_column_renames');
+
+    $self->_add_tables($add_tables);
+    $self->_add_columns($add_columns);
+    $self->_drop_tables($remove_tables);
+    $self->_drop_columns($remove_columns);
+
+}
+
+sub compute_schema_diffs{
+    my $self = shift;
 
     # load the database schema version
+    my $old_tables = shift;
 
     # hashref
-    my $old_tables = $self->current_db_schema;
-
-    # hashref
-    my $new_tables = $self->new_db_schema;
+    my $new_tables = shift;
 
     my $add_tables = {};
     my $remove_tables ={};
@@ -99,10 +126,12 @@ sub upgrade_schema {
             next;
         }
 
-        foreach my $column ( @{ $old_tables->{$table}->columns } ) {
+        foreach my $column_name ( keys %{ $old_tables->{$table}->{columns} } ) {
+                my $column = $old_tables->{$table}->{columns}->{$column_name};
+
 
      # if the column isn't in the new table as well, then mark it for deletion
-            unless ( $new_tables->{$table}->column($column) ) {
+            unless ( $new_tables->{$table}->{columns}->{$column_name} ) {
                 push @{ $remove_columns->{$table} }, $column;
             }
 
@@ -117,32 +146,21 @@ sub upgrade_schema {
             next;
         }
 
-        foreach my $column ( @{ $new_tables->{$table}->columns } ) {
+        foreach my $column_name ( keys %{$new_tables->{$table}->{columns}} ) {
+            my $column = $new_tables->{$table}->{columns}->{$column_name};
 
-     # if the column isn't in the old table as well, then mark it for addition
-            unless ( $old_tables->{$table}->column($column) ) {
+             # if the column isn't in the old table as well, then mark it for addition
+            unless ( $old_tables->{$table}->{columns}->{$column_name} ) {
                 push @{ $add_columns->{$table} }, $column;
             }
 
-        # XXX TODO: compare the column definitions and alter them if necessary
+            # XXX TODO: compare the column definitions and alter them if necessary
 
         }
     }
 
-    # Run all "Rename" rules
-    $self->run_upgrade_rules('before_all_renames');
-    my $table_renames  = Jifty->upgrade->table_renames;
-    my $column_renames = Jifty->upgrade->column_renames;
-    $self->run_upgrade_rules('after_column_renames');
-
-    $self->_add_tables($add_tables);
-    $self->_add_columns($add_columns);
-    $self->_drop_tables($remove_tables);
-    $self->_drop_columns($remove_columns);
-
-
-}
-
+    return ($add_tables, $add_columns, $remove_tables, $remove_columns );
+} 
 
 sub _add_tables {
     my $self = shift;
