@@ -11,6 +11,9 @@ sub object_type { 'News' }
 
 sub fragment_base_path {'/news'}
 
+
+template search_region => sub {''};
+
 template 'index.html' => page {
     title is  'Site news' ;
     form {
