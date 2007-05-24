@@ -43,14 +43,7 @@ sub run {
 
     $self->print_help();
     $self->setup_environment();
-    $self->probe_database_existence(
-    
-            create_database => $self->{create_database},
-            drop_database => $self->{drop_database},
-            setup_tables  => $self->{setup_tables},
-            create_all_tables => $self->{create_all_tables}
-    
-    );
+    $self->probe_database_existence();
     $self->manage_database_existence();
     if ( $self->{create_all_tables} ) {
         $self->create_all_tables();
@@ -119,17 +112,8 @@ Probes our database to see if it exists and is up to date.
 
 sub probe_database_existence {
     my $self = shift;
-
-    my %args = ( 
-            create_database => undef,
-            drop_database => undef,
-            setup_tables  => undef,
-            create_all_tables => undef,
-         @_
-    );
-
     my $no_handle = 0;
-    if ( $args{'create_database'} or $args{'drop_database'} ) {
+    if ( $self->{'create_database'} or $self->{'drop_database'} ) {
         $no_handle = 1;
     }
 
@@ -141,17 +125,17 @@ sub probe_database_existence {
     if ( $@ =~ /doesn't match (application schema|running jifty) version/i ) {
 
         # We found an out-of-date DB.  Upgrade it
-        $args{setup_tables} = 1;
+        $self->{setup_tables} = 1;
     } elsif ( $@ =~ /no version in the database/i ) {
 
         # No version table.  Assume the DB is empty.
-        $args{create_all_tables} = 1;
+        $self->{create_all_tables} = 1;
     } elsif ( $@ =~ /database .*? does not exist/i
         or $@ =~ /unknown database/i ) {
 
         # No database exists; we'll need to make one and fill it up
-        $args{create_database}   = 1;
-        $args{create_all_tables} = 1;
+        $self->{create_database}   = 1;
+        $self->{create_all_tables} = 1;
     } elsif ($@) {
 
         # Some other unexpected error; rethrow it
@@ -159,12 +143,12 @@ sub probe_database_existence {
     }
 
     # Setting up tables requires creating the DB if we just dropped it
-    $args{create_database} = 1
-        if $args{drop_database} and $args{setup_tables};
+    $self->{create_database} = 1
+        if $self->{drop_database} and $self->{setup_tables};
 
    # Setting up tables on a just-created DB is the same as setting them all up
-    $args{create_all_tables} = 1
-        if $args{create_database} and $args{setup_tables};
+    $self->{create_all_tables} = 1
+        if $self->{create_database} and $self->{setup_tables};
 
     # Give us some kind of handle if we don't have one by now
     Jifty->handle( Jifty::Handle->new() ) unless Jifty->handle;
