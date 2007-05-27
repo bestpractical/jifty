@@ -95,7 +95,7 @@ sub take_action {
 sub report_success {
     my $self = shift;
     # Your success message here
-    $self->result->message( _("Welcome, ") . Jifty->web->current_user->user_object->name . "." );
+    $self->result->message( _("Welcome, ") . Jifty->web->current_user->username . "." );
 }
 
 1;
