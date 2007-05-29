@@ -147,7 +147,7 @@ sub current_collection {
         $collection = $collection_class->new();
         $collection->unlimit();
     } else {
-        $collection = $search->content('search');
+        $collection = $search;
     }
 
     $collection->set_page_info( current_page => $page, per_page => 25 );
