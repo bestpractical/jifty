@@ -168,7 +168,7 @@ sub arguments {
             $render_as = defined $render_as ? lc($render_as) : '';
 
             if ( defined (my $valid_values = $column->valid_values)) {
-                $info->{valid_values} = [ @$valid_values ];
+                $info->{valid_values} = $valid_values;
                 $info->{render_as}    = 'Select';
             } elsif ( defined $column->type && $column->type =~ /^bool/i ) {
                 $info->{render_as} = 'Checkbox';
