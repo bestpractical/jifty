@@ -160,7 +160,7 @@ Return a string which identifies the user in some way.
 sub username {
     my $self = shift;
     return undef unless ($self->user_object);
-    return($self->user_object->username(@_));
+    return($self->user_object->brief_description(@_));
 }
 
 =head2 auth_token

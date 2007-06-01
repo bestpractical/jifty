@@ -454,6 +454,18 @@ sub delete {
     $self->SUPER::delete(@_); 
 }
 
+=head2 brief_description
+
+Display the friendly name of the record according to _brief_description.
+
+=cut
+
+sub brief_description {
+    my $self = shift;
+    my $method = $self->_brief_description;
+    return $self->$method;
+}
+
 =head2 _brief_description
 
 When displaying a list of records, Jifty can display a friendly value 
