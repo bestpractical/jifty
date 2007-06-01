@@ -85,7 +85,7 @@ sub validate_password {
     my $self      = shift;
     my $new_value = shift;
 
-    return 1 if $self->_has_alternative_auth();
+    return 1 if $self->has_alternative_auth();
 
     return ( 0, _('Passwords need to be at least six characters long') )
         if length($new_value) < 6;
