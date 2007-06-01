@@ -45,9 +45,7 @@ Create an empty user object to work with
 sub setup {
     my $self = shift;
     my $LoginUser   = Jifty->app_class('Model', 'User');
-        my $CurrentUser   = Jifty->app_class('CurrentUser');
-
-
+    my $CurrentUser = Jifty->app_class('CurrentUser');
 
     $self->user_object(
         $LoginUser->new( current_user => $CurrentUser->superuser ) );
@@ -63,9 +61,8 @@ sub validate_address {
     my $self  = shift;
     my $email = shift;
 
-    my $LoginUser   = "Jifty::Plugin::Authentication::Password::Model::User";
-        my $CurrentUser = "Jifty::Plugin::Authentication::Password::CurrentUser";
-
+    my $LoginUser   = Jifty->app_class('Model', 'User');
+    my $CurrentUser = Jifty->app_class('CurrentUser');
 
     return $self->validation_error(
         address => _("That doesn't look like an email address.") )
