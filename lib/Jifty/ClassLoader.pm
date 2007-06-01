@@ -163,7 +163,7 @@ sub Jifty::ClassLoader::INC {
                         (Create|Update|Delete|Search)([^\.]+)$/x ) {
         my $modelclass = $base . "::Model::" . $2;
 
-        Jifty::Util->require($modelclass);
+        Jifty::Util->_require( module => $modelclass, quiet => 1);
 
         local $@;
             eval { $modelclass->table } ;
