@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use Jifty::View::Declare -base;
 
-template 'login' => page {
+template 'openid/login' => page {
     { title is _ "Login with your OpenID" }
     my $action = get('action');
 
@@ -34,7 +34,7 @@ template 'login' => page {
     }
 };
 
-template 'create' => page {
+template 'openid/create' => page {
     title is 'Set your username';
     my ( $action, $next ) = get( 'action', 'next' );
 

@@ -21,7 +21,6 @@ column auth_token =>
 
 
 column password =>
-  is mandatory,
   is unreadable,
   label is _('Password'),
   type is 'varchar',
@@ -77,13 +76,16 @@ sub hashed_password_is {
 
 =head2 validate_password
 
-Makes sure that the password is six characters long or longer.
+Makes sure that the password is six characters long or longer, unless
+we have alternative means to authenticate.
 
 =cut
 
 sub validate_password {
     my $self      = shift;
     my $new_value = shift;
+
+    return 1 if $self->_has_alternative_auth();
 
     return ( 0, _('Passwords need to be at least six characters long') )
         if length($new_value) < 6;
@@ -102,9 +104,17 @@ sub after_create {
     } else {
         warn  $self->id . " " .$self->email;
     }
-
-
 }
+
+=head2 has_alternative_auth
+
+If your model supports other means of authentication, you should have
+this method return true, so the C<password> field can optionally be
+null and authentication with password is disabled in that case.
+
+=cut
+
+sub has_alternative_auth { }
 
 =head2 after_set_password
 
