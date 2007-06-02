@@ -11,17 +11,14 @@ use Jifty::Test::WWW::Mechanize;
 my @tests = (
     {
         url  => "/foo/list",
-        text => 'list!<span>1</span>
-<span>2</span>'.in_region('<span>3</span>'),
+        text => q|list!<span>1</span>
+<span>2</span><script type="text/javascript">
+new Region('special',{'id':3},'/foo/item',null);
+</script><div id="region-special">
+<span>3</span></div>|
     },
 
 );
-
-sub in_region {
-    qq|<script type="text/javascript">
-new Region('$_[0]',{},'$_[1]',null);
-</script><div id="region-$_[0]">$_[2]</div>|;
-}
 
 plan tests => 2 + scalar(@tests) * 2;
 
@@ -33,7 +30,7 @@ my $URL = $server->started_ok;
 my $mech = Jifty::Test::WWW::Mechanize->new;
 foreach my $test (@tests) {
     $mech->get_ok( $URL . $test->{url}, "get '$URL: /jifty/jifty/trunk/t/TestApp/t/15-template-subclass.t $test->{url}'" );
-
+#    diag $mech->content;
     $mech->content_like(qr{$test->{text}}, "found the test content");
 }
 
