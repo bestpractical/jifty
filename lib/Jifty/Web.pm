@@ -976,19 +976,18 @@ Returns a C<< <link> >> tag for the compressed CSS
 
 sub include_css {
     my $self = shift;
-    
-    if ( Jifty->config->framework('DevelMode') ) {
-        $self->out(
-            '<link rel="stylesheet" type="text/css" '
-            . 'href="/static/css/main.css" />'
-        );
-    }
-    else {
+    my $ccjs = $self->_ccjs;
+    if ( $ccjs && $ccjs->css_enabled ) {
         $self->generate_css;
-    
         $self->out(
             '<link rel="stylesheet" type="text/css" href="/__jifty/css/'
             . __PACKAGE__->cached_css_digest . '.css" />'
+        );
+    }
+    else {
+        $self->out(
+            '<link rel="stylesheet" type="text/css" '
+            . 'href="/static/css/main.css" />'
         );
     }
     
@@ -1004,7 +1003,7 @@ and caches it.
 
 sub generate_css {
     my $self = shift;
-    
+
     if (not defined __PACKAGE__->cached_css_digest
             or Jifty->config->framework('DevelMode'))
     {
@@ -1071,23 +1070,28 @@ default.
 
 =cut
 
+sub _ccjs {
+    my $self = shift;
+    my ($ccjs) = grep { $_->isa('Jifty::Plugin::CompressedCSSandJS') } Jifty->plugins;
+    return $ccjs;
+}
+
 sub include_javascript {
     my $self  = shift;
-    
-    if ( Jifty->config->framework('DevelMode') ) {
+    my $ccjs = $self->_ccjs;
+    if ( $ccjs && $ccjs->js_enabled ) {
+        $self->generate_javascript;
+        $self->out(
+            qq[<script type="text/javascript" src="/__jifty/js/]
+            . __PACKAGE__->cached_javascript_digest . qq[.js"></script>]
+        );
+    }
+    else {
         for my $file ( @{ __PACKAGE__->javascript_libs } ) {
             $self->out(
                 qq[<script type="text/javascript" src="/static/js/$file"></script>\n]
             );
         }
-    }
-    else {
-        $self->generate_javascript;
-    
-        $self->out(
-            qq[<script type="text/javascript" src="/__jifty/js/]
-            . __PACKAGE__->cached_javascript_digest . qq[.js"></script>]
-        );
     }
     
     return '';
