@@ -3,9 +3,11 @@ use strict;
 use warnings;
 use Jifty::DBI::Schema;
 use base 'Jifty::DBI::Record::Plugin';
-
+use URI;
 
 use Jifty::Plugin::OpenID::Record schema {
+
+our @EXPORT = qw(has_alternative_auth link_to_openid);
 
 column openid =>
   type is 'text',
@@ -18,8 +20,11 @@ column openid =>
 
 sub has_alternative_auth { 1 }
 
-
-use URI;
+sub register_triggers {
+    my $self = shift;
+    $self->add_trigger(name => 'validate_openid', callback => \&validate_openid, abortable => 1);
+    $self->add_trigger(name => 'canonicalize_openid', callback => \&canonicalize_openid);
+}
 
 sub validate_openid {
     my $self   = shift;
