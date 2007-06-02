@@ -93,7 +93,6 @@ sub run {
         if $self->{sigready};
     Log::Log4perl->get_logger($server_class)->less_logging(3)
         if $self->{quiet};
-
     $server_class->new(port => $self->{port})->run;
 }
 
