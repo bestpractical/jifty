@@ -65,5 +65,16 @@ template userlist => page {
     };
 };
 
+template '/foo/list' => sub {
+    outs('list!');
+    show('/foo/item', { id => 1 } );
+    show('/foo/item', { id => 2 } );
+    render_region('special', path => '/foo/item', arguments => { id => 2 } );
+};
+
+template '/foo/item' => sub {
+    my ($self, $args) = @_;
+    span { $args->{id} }
+};
 
 1;

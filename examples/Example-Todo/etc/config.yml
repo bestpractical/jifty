@@ -1,6 +1,9 @@
 --- 
+application:
+  OpenIDSecret: sekrit13
 framework: 
   AdminMode: 1
+  SkipAccessControl: 1
   ApplicationClass: Example::Todo
   ApplicationName: Example-Todo
   ApplicationUUID: 80DF397A-D999-11DB-B80A-9318EBB6763A
@@ -13,7 +16,7 @@ framework:
     RecordBaseClass: Jifty::DBI::Record::Cachable
     User: ''
     Version: 0.0.1
-  DevelMode: 1
+  DevelMode: 0
   L10N: 
     PoDir: share/po
   LogLevel: INFO
@@ -21,26 +24,16 @@ framework:
   MailerArgs: []
 
   Plugins: 
-    - 
-      SkeletonApp: {}
-
-    - 
-      REST: {}
-
-    - 
-      Halo: {}
-
-    - 
-      ErrorTemplates: {}
-
-    - 
-      OnlineDocs: {}
-
-    - 
-      CompressedCSSandJS: {}
-
-    - 
-      AdminUI: {}
+    - SkeletonApp: {}
+    - REST: {}
+    - ErrorTemplates: {}
+    - OnlineDocs: {}
+    - CompressedCSSandJS: {}
+    - AdminUI: {}
+    - LetMe: {}
+    - User: {}
+    - Authentication::Password: {}
+    - OpenID: {}
 
   PubSub: 
     Backend: Memcached
