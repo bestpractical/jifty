@@ -316,22 +316,9 @@ sub wrapper ($) {
         return '';
     };
 
-    my ($spa) = Jifty->find_plugin('Jifty::Plugin::SinglePage');
-    if( $spa && !Jifty->web->current_region) {
-	&$render_header unless ($done_header);
-	# XXX: move this to the plugin so it can be called from other
-	# view handlers
-	body {
-	    render_region($spa->region_name, path => Jifty->web->request->path);
-	}
 
+    my $show_page =  sub {
 
-	    outs_raw('</html>');
-	Template::Declare->buffer->data( $done_header . Template::Declare->buffer->data );
-	return;
-    }
-
-    body {
         div {
             div {
             show 'salutation'; 
@@ -371,9 +358,30 @@ sub wrapper ($) {
             };
         };
     };
-    outs_raw('</html>');
-    Template::Declare->buffer->data( $done_header . Template::Declare->buffer->data );
+
+    my ($spa) = Jifty->find_plugin('Jifty::Plugin::SinglePage');
+        
+    if( $spa) {
+        # If it's a single page app, we want to either render a wrapper and then get the region or render just the content
+        if ( !Jifty->web->current_region) {
+	        &$render_header unless ($done_header);
+	        body { render_region($spa->region_name, path => Jifty->web->request->path) }
+	        outs_raw('</html>');
+	        Template::Declare->buffer->data( $done_header . Template::Declare->buffer->data );
+        } else { $show_page->()}
+    }
+
+    else {
+	        &$render_header unless ($done_header);
+            body { $show_page->(); }
+        outs_raw('</html>');
+        Template::Declare->buffer->data( $done_header . Template::Declare->buffer->data );
+
+    }
+
 }
+
+
 
 sub _render_pre_content_hook {
     if ( Jifty->config->framework('AdminMode') ) {
