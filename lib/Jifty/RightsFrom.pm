@@ -23,7 +23,7 @@ control decisions based on their
 task. L<Jifty::Record/current_user_can> uses this method to make an
 access control decision if it exists.
 
-Note that this means that you a model class can use Jifty::RightsFrom,
+Note that this means that a model class can use Jifty::RightsFrom,
 and still have a custom C<current_user_can> method, and they will not
 interfere with each other.
 

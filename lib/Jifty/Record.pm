@@ -184,7 +184,7 @@ Called before the object is deleted.
 
 =back
 
-Models wishing to customize authorization checks should override this method. You you can do so like this:
+Models wishing to customize authorization checks should override this method. You can do so like this:
 
   sub current_user_can {
       my ($self, $right, %args) = @_;
@@ -595,7 +595,7 @@ sub _make_schema {
 
 =head2 add_column_sql column_name
 
-Returns the SQL statement neccessary to add C<column_name> to this class's representation in the database
+Returns the SQL statement necessary to add C<column_name> to this class's representation in the database
 
 =cut
 
@@ -624,7 +624,7 @@ sub add_column_in_db {
 
 =head2 drop_column_sql column_name
 
-Returns the SQL statement neccessary to remove C<column_name> from this class's representation in the database
+Returns the SQL statement necessary to remove C<column_name> from this class's representation in the database
 
 =cut
 
