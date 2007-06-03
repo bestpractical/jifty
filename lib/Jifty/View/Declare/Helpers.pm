@@ -316,6 +316,17 @@ sub wrapper ($) {
         return '';
     };
 
+    my ($spa) = Jifty->find_plugin('Jifty::Plugin::SinglePage');
+    if( $spa && !Jifty->web->current_region) {
+	&$render_header unless ($done_header);
+	body {
+	    render_region('__page', path => Jifty->web->request->path);
+	}
+	    outs_raw('</html>');
+	Template::Declare->buffer->data( $done_header . Template::Declare->buffer->data );
+	return;
+    }
+
     body {
         div {
             div {

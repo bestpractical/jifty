@@ -2,6 +2,7 @@ use warnings;
 use strict;
 
 package Jifty::Web::Form::Clickable;
+use Class::Trigger;
 
 =head1 NAME
 
@@ -142,6 +143,8 @@ sub new {
         as_link        => 0,
         @_,
     );
+
+    $class->call_trigger('before_new', \%args);
 
     $args{render_as_button} = delete $args{as_button};
     $args{render_as_link}   = delete $args{as_link};
