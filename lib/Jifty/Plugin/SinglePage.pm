@@ -34,9 +34,10 @@ sub _sp_link {
         my $onclick = $args->{onclick};
         if ( ref($onclick) eq 'HASH' ) {
             if ( $onclick->{region} && !ref( $onclick->{region} ) ) {
+		my $region = $self->region_name;
                 $onclick->{region}
-                    = $self->region_name . '-' . $onclick->{region}
-                    unless $onclick->{region} =~ m/^\Q$onclick->{region}\E-/;
+                    = $region . '-' . $onclick->{region}
+                    unless $onclick->{region} eq $region or $onclick->{region} =~ m/^\Q$region\E-/;
             }
         }
     }
