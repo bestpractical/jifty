@@ -12,7 +12,10 @@ sub init {
 sub _sp_link {
     my ($self, $args) = @_;
     if (my $url = delete $args->{'url'}) {
-	$args->{onclick}=  { region       => "__page", replace_with => $url };
+	# XXX mind the existing onclick
+	warn 'ooops got original onclick'. Dumper($args->{onclick}) if $args->{onclick};
+	$args->{onclick}=  { region       => "__page", replace_with => $url,
+			     args => delete $args->{parameters} };
     }
 }
 
