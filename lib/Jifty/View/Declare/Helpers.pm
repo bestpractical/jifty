@@ -315,6 +315,10 @@ sub wrapper ($) {
         Template::Declare->end_buffer_frame;
         return '';
     };
+    my $render_footer = sub {
+	outs_raw('</html>');
+	Template::Declare->buffer->data( $done_header . Template::Declare->buffer->data );
+    };
 
 
     my $show_page =  sub {
@@ -360,23 +364,26 @@ sub wrapper ($) {
     };
 
     my ($spa) = Jifty->find_plugin('Jifty::Plugin::SinglePage');
-        
-    if( $spa) {
-        # If it's a single page app, we want to either render a wrapper and then get the region or render just the content
-        if ( !Jifty->web->current_region) {
-	        &$render_header unless ($done_header);
-	        body { render_region($spa->region_name, path => Jifty->web->request->path) }
-	        outs_raw('</html>');
-	        Template::Declare->buffer->data( $done_header . Template::Declare->buffer->data );
-        } else { $show_page->()}
+
+    if ($spa) {
+	# If it's a single page app, we want to either render a
+	# wrapper and then get the region or render just the content
+        if ( !Jifty->web->current_region ) {
+            &$render_header unless ($done_header);
+            body {
+                render_region( $spa->region_name,
+                    path => Jifty->web->request->path );
+            };
+            &$render_footer;
+        } else {
+            ++$done_header;
+            $show_page->();
+        }
     }
-
     else {
-	        &$render_header unless ($done_header);
-            body { $show_page->(); }
-        outs_raw('</html>');
-        Template::Declare->buffer->data( $done_header . Template::Declare->buffer->data );
-
+	&$render_header unless ($done_header);
+	body { $show_page->(); };
+	&$render_footer;
     }
 
 }
