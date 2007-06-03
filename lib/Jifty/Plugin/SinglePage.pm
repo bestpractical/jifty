@@ -35,7 +35,8 @@ sub _sp_link {
         if ( ref($onclick) eq 'HASH' ) {
             if ( $onclick->{region} && !ref( $onclick->{region} ) ) {
                 $onclick->{region}
-                    = $self->region_name . '-' . $onclick->{region};
+                    = $self->region_name . '-' . $onclick->{region}
+                    unless $onclick->{region} =~ m/^__page-/;
             }
         }
     }
