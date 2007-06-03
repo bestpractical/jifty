@@ -308,7 +308,7 @@ sub wrapper ($) {
 	# wrapper and then get the region or render just the content
         if ( !Jifty->web->current_region ) {
 	    $page->render_header;
-            $page->render_body->(sub {
+            $page->render_body(sub {
                 render_region( $spa->region_name,
                     path => Jifty->web->request->path );
             });
