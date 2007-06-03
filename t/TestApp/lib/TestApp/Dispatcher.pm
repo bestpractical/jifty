@@ -63,4 +63,11 @@ before '/before_stage_show' => run { show '/index.html'; };
 on '/on_stage_show' => run { show '/index.html'; };
 after '/after_stage_show' => run { show '/index.html'; };
 
+
+
+before 'pre-redir-region' => run {
+    redirect('/post-redir-region');
+
+};
+
 1;

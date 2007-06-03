@@ -673,6 +673,15 @@ sub _redirect {
     my $self = shift;
     my ($page) = @_;
 
+
+    if ($self->current_region) { 
+        # If we're within a region stack, we don't really want to redirect. We want to redispatch.
+        $self->replace_current_region($page);        
+
+        Jifty::Dispatcher::_abort;
+        return;
+    }
+
     # $page can't lead with // or it assumes it's a URI scheme.
     $page =~ s{^/+}{/};
 
@@ -1263,6 +1272,22 @@ sub region {
     # Render it
     $region->render;
 }
+
+
+=head3 replace_current_region PATH
+
+Replaces the current region with a new region and renders it Returns undef if there's no current region
+
+=cut
+
+sub replace_current_region {
+    my $self = shift;
+    my $path = shift;
+    return undef unless (my $region = $self->current_region);
+    $region->path($path);
+    $region->render;
+}
+
 
 =head3 current_region
 
