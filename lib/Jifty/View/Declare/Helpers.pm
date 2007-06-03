@@ -319,9 +319,13 @@ sub wrapper ($) {
     my ($spa) = Jifty->find_plugin('Jifty::Plugin::SinglePage');
     if( $spa && !Jifty->web->current_region) {
 	&$render_header unless ($done_header);
+	# XXX: move this to the plugin so it can be called from other
+	# view handlers
 	body {
-	    render_region('__page', path => Jifty->web->request->path);
+	    render_region($spa->region_name, path => Jifty->web->request->path);
 	}
+
+
 	    outs_raw('</html>');
 	Template::Declare->buffer->data( $done_header . Template::Declare->buffer->data );
 	return;
