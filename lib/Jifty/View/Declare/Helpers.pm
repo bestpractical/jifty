@@ -304,8 +304,7 @@ sub wrapper ($) {
         no warnings qw( uninitialized redefine once );
         $title ||= Jifty->config->framework('ApplicationName');
 
-        #   defined $title or return;
-        return if $done_header++;
+        return if $done_header;
         Template::Declare->new_buffer_frame;
         outs_raw(
         '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'
