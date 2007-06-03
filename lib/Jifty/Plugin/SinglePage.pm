@@ -17,8 +17,10 @@ sub _sp_link {
     my $self = shift;
     return sub {
         my ( $clickable, $args ) = @_;
-	return if $args->{url} && $args->{url} =~ m/^#/;
-        if ( my $url = delete $args->{'url'} ) {
+        my $url = $args->{'url'};
+        if ( $url && $url !~ m/^#/ ) {
+            delete $args->{'url'};
+
             # XXX mind the existing onclick
             use Data::Dumper;
             warn 'ooops got original onclick' . Dumper( $args->{onclick} )
@@ -29,7 +31,14 @@ sub _sp_link {
                 args         => delete $args->{parameters}
             };
         }
+        my $onclick = $args->{onclick};
+        if ( ref($onclick) eq 'HASH' ) {
+            if ( $onclick->{region} && !ref( $onclick->{region} ) ) {
+                $onclick->{region}
+                    = $self->region_name . '-' . $onclick->{region};
+            }
         }
+    }
 }
 
 
