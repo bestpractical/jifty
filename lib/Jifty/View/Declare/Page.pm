@@ -32,6 +32,12 @@ sub new {
     return $self;
 }
 
+=head2 render_header $title
+
+Renders an HTML "doctype", <head> and the first part of a page body. This bit isn't terribly well thought out and we're not happy with it.
+
+=cut
+
 sub render_header {
     my $self = shift;
     return if $self->done_header;
@@ -40,7 +46,8 @@ sub render_header {
     outs_raw(
         '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'
       . '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">' );
-    Jifty::View::Declare::Helpers::render_header($self->_title || Jifty->config->framework('ApplicationName'));
+
+    $self->_render_header($self->_title || Jifty->config->framework('ApplicationName'));
 
     $self->done_header(Template::Declare->buffer->data);
     Template::Declare->end_buffer_frame;
@@ -65,7 +72,7 @@ sub render_page {
             attr { id is 'content' };
             div {
                 {
-                    no warnings qw( uninitialized redefine once );
+                    no warnings qw( redefine once );
 
                     local *is::title = $self->mk_title_handler();
                     $self->render_pre_content_hook();
@@ -83,18 +90,28 @@ sub render_page {
 }
 
 sub mk_title_handler {
-    my $self = shift; shift;
-    for (@_) {
-        if ( ref($_) eq 'CODE' ) {
-            Template::Declare->new_buffer_frame;
-            $_->();
-            $self->_title( $self->_title . Template::Declare->buffer->data );
-            Template::Declare->end_buffer_frame;
-        } else {
-            $self->_title( $self->_title . Jifty->web->escape($_) );
+    my $self = shift;
+    return sub {
+        shift;
+        for (@_) {
+	    no warnings qw( uninitialized );
+            if ( ref($_) eq 'CODE' ) {
+                Template::Declare->new_buffer_frame;
+                $_->();
+                $self->_title(
+                    $self->_title . Template::Declare->buffer->data );
+                Template::Declare->end_buffer_frame;
+            } else {
+                $self->_title( $self->_title . Jifty->web->escape($_) );
+            }
         }
-    }
-    $self->render_header;
+        $self->render_header;
+	$self->render_title();
+    };
+}
+
+sub render_title {
+    my $self = shift;
     my $oldt = get('title');
     set( title => $self->_title );
     show 'heading_in_wrapper';
@@ -136,5 +153,12 @@ sub render_jifty_page_detritus {
     }
 }
 
+sub _render_header { 
+    my $self = shift;
+    my $title = shift || '';
+    $title =~ s/<.*?>//g;    # remove html
+    HTML::Entities::decode_entities($title);
+    with( title => $title ), show('header');
+}
 
 1;

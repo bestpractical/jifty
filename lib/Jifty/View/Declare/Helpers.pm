@@ -315,30 +315,15 @@ sub wrapper ($) {
 	    $page->render_footer;
         } else {
 	    $page->done_header(1);
-	    $page->render_page;
+	    $page->render_page->();
         }
     }
     else {
-	$page->render_header;
 	$page->render_body( sub { $page->render_page->() });
 	$page->render_footer;
     }
 }
 
-
-=head2 render_header $title
-
-Renders an HTML "doctype", <head> and the first part of a page body. This bit isn't terribly well thought out and we're not happy with it.
-
-=cut
-
-sub render_header { 
-    my $title = shift || '';
-    $title =~ s/<.*?>//g;    # remove html
-    HTML::Entities::decode_entities($title);
-    with( title => $title ), show('header');
-}               
-                    
 
 
 
