@@ -296,71 +296,10 @@ This badly wants to be redone.
 =cut
 
 sub wrapper ($) {
-    my $content_code = shift;
-    my ($title) = get_current_attr(qw(title));
+    my $page_class = 'Jifty::View::Declare::Page';
+    Jifty::Util->require($page_class);
 
-    my $done_header;
-    my $render_header = sub {
-        no warnings qw( uninitialized redefine once );
-        $title ||= Jifty->config->framework('ApplicationName');
-
-        return if $done_header;
-        Template::Declare->new_buffer_frame;
-        outs_raw(
-        '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'
-            . '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">' );
-        render_header($title);
-        $done_header = Template::Declare->buffer->data;
-        Template::Declare->end_buffer_frame;
-        return '';
-    };
-    my $render_footer = sub {
-	outs_raw('</html>');
-	Template::Declare->buffer->data( $done_header . Template::Declare->buffer->data );
-    };
-
-
-    my $show_page =  sub {
-
-        div {
-            div {
-            show 'salutation'; 
-            show 'menu'; 
-        };
-            div { attr { id is 'content'};
-                div {
-                    {
-                        no warnings qw( uninitialized redefine once );
-
-                        local *is::title = sub {
-                            shift;
-                            for (@_) {
-                                if ( ref($_) eq 'CODE' ) {
-                                    Template::Declare->new_buffer_frame;
-                                    $_->();
-                                    $title .= Template::Declare->buffer->data;
-                                    Template::Declare->end_buffer_frame;
-                                } else {
-                                    $title .= Jifty->web->escape($_);
-                                }
-                            }
-                            &$render_header;
-                            my $oldt = get('title'); set(title => $title);
-                            show 'heading_in_wrapper';
-                            set(title => $oldt);
-                        };
-
-                        &_render_pre_content_hook();
-                        Jifty->web->render_messages;
-                        &$content_code;
-                        &$render_header unless ($done_header);
-                        &_render_jifty_page_detritus();
-                }
-
-                };
-            };
-        };
-    };
+    my $page = $page_class->new({ content_code => shift });
 
     my ($spa) = Jifty->find_plugin('Jifty::Plugin::SinglePage');
 
@@ -368,54 +307,24 @@ sub wrapper ($) {
 	# If it's a single page app, we want to either render a
 	# wrapper and then get the region or render just the content
         if ( !Jifty->web->current_region ) {
-            &$render_header unless ($done_header);
-            body {
+	    $page->render_header;
+            $page->render_body->(sub {
                 render_region( $spa->region_name,
                     path => Jifty->web->request->path );
-            };
-            &$render_footer;
+            });
+	    $page->render_footer;
         } else {
-            ++$done_header;
-            $show_page->();
+	    $page->done_header(1);
+	    $page->render_page;
         }
     }
     else {
-	&$render_header unless ($done_header);
-	body { $show_page->(); };
-	&$render_footer;
-    }
-
-}
-
-
-
-sub _render_pre_content_hook {
-    if ( Jifty->config->framework('AdminMode') ) {
-        with( class => "warning admin_mode" ), div {
-            outs( _('Alert') . ': ' );
-            outs_raw(
-                Jifty->web->tangent(
-                    label => _('Administration mode is enabled.'),
-                    url   => '/__jifty/admin/'
-                )
-            );
-            }
+	$page->render_header;
+	$page->render_body( sub { $page->render_page->() });
+	$page->render_footer;
     }
 }
 
-sub _render_jifty_page_detritus {
-
-    show('keybindings');
-    with( id => "jifty-wait-message", style => "display: none" ),
-        div { _('Loading...') };
-
-    # This is required for jifty server push.  If you maintain your own
-    # wrapper, make sure you have this as well.
-    if ( Jifty->config->framework('PubSub')->{'Enable'} && Jifty::Subs->list )
-    {
-        script { outs('new Jifty.Subs({}).start();') };
-    }
-}
 
 =head2 render_header $title
 
