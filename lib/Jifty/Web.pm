@@ -976,7 +976,7 @@ Returns a C<< <link> >> tag for the compressed CSS
 
 sub include_css {
     my $self = shift;
-    my $ccjs = $self->_ccjs;
+    my ($ccjs) = Jifty->find_plugin('Jifty::Plugin::CompressedCSSandJS');
     if ( $ccjs && $ccjs->css_enabled ) {
         $self->generate_css;
         $self->out(
@@ -1070,15 +1070,9 @@ default.
 
 =cut
 
-sub _ccjs {
-    my $self = shift;
-    my ($ccjs) = grep { $_->isa('Jifty::Plugin::CompressedCSSandJS') } Jifty->plugins;
-    return $ccjs;
-}
-
 sub include_javascript {
     my $self  = shift;
-    my $ccjs = $self->_ccjs;
+    my ($ccjs) = Jifty->find_plugin('Jifty::Plugin::CompressedCSSandJS');
     if ( $ccjs && $ccjs->js_enabled ) {
         $self->generate_javascript;
         $self->out(

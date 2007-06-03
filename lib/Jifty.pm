@@ -373,6 +373,18 @@ sub plugins {
     return @PLUGINS;
 }
 
+=head2 find_plugin
+
+Find plugins by name.
+
+=cut
+
+sub find_plugin {
+    my $self = shift;
+    my $name = shift;
+    return grep { $_->isa($name) } Jifty->plugins;
+}
+
 =head2 class_loader
 
 An accessor for the L<Jifty::ClassLoader> object that stores the loaded
