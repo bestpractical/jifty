@@ -8,7 +8,6 @@ use Template::Declare::Tags;
 
 our @EXPORT = ( qw(form hyperlink tangent redirect new_action form_submit form_return  form_next_page page wrapper request get set render_param current_user render_action render_region), @Template::Declare::Tags::EXPORT);
 
-
 =head1 NAME
 
 Jifty::View::Declare::Helpers
@@ -296,8 +295,11 @@ This badly wants to be redone.
 =cut
 
 sub wrapper ($) {
-    my $page_class = 'Jifty::View::Declare::Page';
-    Jifty::Util->require($page_class);
+    my $page_class = Jifty->app_class('View::Page');
+    $page_class = 'Jifty::View::Declare::Page'
+        unless Jifty::Util->_require( module => $page_class, quiet => 1 );
+    # XXX: fallback, this is ugly
+    Jifty::Util->require( $page_class );
 
     my $page = $page_class->new({ content_code => shift });
 
