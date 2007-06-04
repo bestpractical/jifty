@@ -106,8 +106,8 @@ Send a string to the browser. The default implementation uses Mason->out;
 =cut
 
 sub out {
-    Carp::cluck unless defined $_[0]->mason;
-    shift->mason->out(@_);
+    my $m = shift->mason;
+    $m ? $m->out(@_) : Jifty::View::out_method(@_);
 }
 
 
