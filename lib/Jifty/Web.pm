@@ -613,9 +613,19 @@ L<Jifty::Web::Form::Clickable> object.
 
 sub redirect {
     my $self = shift;
-    my $page = shift || $self->next_page || $self->request->path;
-    $page = Jifty::Web::Form::Clickable->new( url => $page )
-      unless ref $page and $page->isa("Jifty::Web::Form::Clickable");
+    my $redir_to = shift || $self->next_page || $self->request->path;
+
+    
+    my $page;
+
+    if ( ref $redir_to and $redir_to->isa("Jifty::Web::Form::Clickable")) {
+        $page = $redir_to;
+    } else {
+
+        $page = Jifty::Web::Form::Clickable->new();
+        #We set this after creation to ensure that plugins that massage clickables don't impact us
+        $page->url($redir_to );
+    }
 
     carp "Don't include GET parameters in the redirect URL -- use a Jifty::Web::Form::Clickable instead.  See L<Jifty::Web/redirect>" if $page->url =~ /\?/;
 
@@ -626,6 +636,10 @@ sub redirect {
 
     # To submit a Jifty::Action::Redirect, we don't need to serialize a continuation,
     # unlike any other kind of actions.
+    
+    
+    my $redirect_to_url = '' ;
+    
     if (  (grep { not $_->action_class->isa('Jifty::Action::Redirect') }
                 values %{ { $self->response->results } })
         or $self->request->state_variables
@@ -662,16 +676,17 @@ sub redirect {
             response => $self->response,
             parent   => $self->request->continuation,
         );
-        $page = $page->url."?J:RETURN=" . $cont->id;
+        $redirect_to_url = $page->url."?J:RETURN=" . $cont->id;
     } else {
-        $page = $page->complete_url;
+        $redirect_to_url = $page->complete_url;
     }
-    $self->_redirect($page);
+    $self->_redirect($redirect_to_url);
 }
 
 sub _redirect {
     my $self = shift;
     my ($page) = @_;
+
 
 
     if ($self->current_region) { 
@@ -694,7 +709,7 @@ sub _redirect {
 
     my $apache = Jifty->handler->apache;
 
-    $self->log->debug("Redirecting to $page");
+    $self->log->debug("Execing redirect to $page");
     # Headers..
     $apache->header_out( Location => $page );
     $apache->header_out( Status => 302 );
