@@ -13,7 +13,6 @@
 
 CodePress = function(obj) {
 	var self = document.createElement('iframe');
-
 	self.textarea = obj;
 	self.textarea.disabled = true;
 	self.textarea.style.overflow = 'hidden';
@@ -51,10 +50,10 @@ CodePress = function(obj) {
 	self.getLanguage = function() {
 		for (language in CodePress.languages) 
 			if(self.options.match('\\b'+language+'\\b')) 
-				return CodePress.languages[language];
+				return CodePress.languages[language] ? language : 'generic';
 		return 'generic';
 	}
-
+	
 	self.setOptions = function() {
 		if(self.options.match('autocomplete-off')) self.toggleAutoComplete();
 		if(self.options.match('readonly-on')) self.toggleReadOnly();
@@ -137,8 +136,6 @@ CodePress.beforeSubmit = function() {
 	for (instance in CodePress.instances)  {
 		//CodePress.instances[ instance ].toggleEditor();
 		var i = CodePress.instances[ instance ];
-		//alert( instance + ' -- ' + i );
-
 		i.textarea.value = i.getCode();
 		i.textarea.disabled = false;
 		i.style.display = 'none';
@@ -146,5 +143,6 @@ CodePress.beforeSubmit = function() {
 	}
 }
 
-if(window.attachEvent) window.attachEvent('onload',CodePress.run);
-else window.addEventListener('DOMContentLoaded',CodePress.run,false);
+//if(window.attachEvent) window.attachEvent('onload',CodePress.run);
+//else window.addEventListener('DOMContentLoaded',CodePress.run,false);
+DOM.Events.addListener(window, "load", CodePress.run);

@@ -27,7 +27,9 @@ use
 
   render_as 'Jifty::Plugin::CodePress::Textarea';
 
-In your View replace submit button with
+In your View do something like:
+
+
 
   Jifty->web->submit( 
 	label   => _("Save"), 
@@ -38,6 +40,8 @@ In your View replace submit button with
   );
 
 or if you are using L<Template::Declare>
+
+  render_param( $action => 'source', cols => 80, rows => 25, language => 'perl' );
 
   form_submit(
 	label => _("Save"),
@@ -64,7 +68,7 @@ aren't valid JavaScript function names.
 
 =head1 BUGS
 
-Use original CodePress onload event handler which might affect Jifty
+There seems to strange interaction between CodePress and Jifty fragments.
 
 =head1 SEE ALSO
 
