@@ -639,7 +639,7 @@ sub redirect {
     
     
     my $redirect_to_url = '' ;
-    
+
     if (  (grep { not $_->action_class->isa('Jifty::Action::Redirect') }
                 values %{ { $self->response->results } })
         or $self->request->state_variables
@@ -1299,7 +1299,7 @@ sub replace_current_region {
     my $self = shift;
     my $path = shift;
     return undef unless (my $region = $self->current_region);
-    $region->path($path);
+    $region->force_path($path);
     $region->render;
 }
 

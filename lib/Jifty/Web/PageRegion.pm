@@ -310,6 +310,13 @@ sub render_as_subrequest {
     $subrequest->path( $self->path );
     $subrequest->top_request( Jifty->web->request->top_request );
 
+    if ($self->path =~ m/\?/) {
+	# XXX: this only happens if we are redirect within region AND
+	# with continuation, which is already taken care of by the
+	# clone.
+	my ($path, $arg) = split(/\?/, $self->path, 2);
+	$subrequest->path( $path );
+    }
     # Remove all of the actions
     unless ($enable_actions) {
 	$_->active(0) for ($subrequest->actions);
