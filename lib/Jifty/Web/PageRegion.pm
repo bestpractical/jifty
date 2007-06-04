@@ -298,7 +298,7 @@ sub as_string {
 sub render_as_subrequest {
     my ($self, $out_method, $arguments, $enable_actions) = @_;
 
-    my $orig_out = Jifty->handler->mason->interp->out_method || \&Jifty::View::Mason::Handler::out_method;
+    my $orig_out = Jifty->handler->mason->interp->out_method || Jifty::View->can('out_method');
 
     Jifty->handler->mason->interp->out_method($out_method);
 
