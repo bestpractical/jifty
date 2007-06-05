@@ -16,6 +16,13 @@ into the proper timezone.
 
 =cut
 
+BEGIN {
+    require Params::Validate;
+    no warnings 'redefine';
+    local *Params::Validate::validate = sub { pop @_, return @_ };
+    require DateTime::Locale;
+}
+
 use base qw(Jifty::Object DateTime);
 
 
