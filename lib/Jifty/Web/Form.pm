@@ -217,19 +217,8 @@ L<Jifty::Web::Form::Field::Button>'s constructor.
 
 sub submit {
     my $self = shift;
-    my %args = ( submit => undef, @_ );
-    my ($spa) = Jifty->find_plugin('Jifty::Plugin::SinglePage');
-    if ($spa) {
-	# XXX: merge with _sp_link hook.
-	if ($args{onclick}) {
-	    Carp::cluck "already has onclick, fix me later";
-	}
-	else {
-	    my $submit = delete $args{submit} || [undef]; # something special for js to handle
-	    $args{onclick} = {submit => $submit, refresh_self => 1};
-	}
-    }
-    my $button = Jifty::Web::Form::Clickable->new(%args)->generate;
+
+    my $button = Jifty::Web::Form::Clickable->new(submit => undef, @_)->generate;
     Jifty->web->out(qq{<div class="submit_button">});
     $button->render_widget;
     Jifty->web->out(qq{</div>});
