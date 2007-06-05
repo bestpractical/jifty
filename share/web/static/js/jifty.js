@@ -740,6 +740,11 @@ function update() {
     // Grab extra arguments (from a button)
     var button_args = Form.Element.buttonFormElements(trigger);
 
+    // If the action hash is '':1, it's a special case for all actions
+    if (named_args['actions']['']) {
+        named_args['actions'] = {};
+        Form.getActions(Form.Element.getForm(trigger)).each(function(x){named_args['actions'][x.moniker] = 1 });
+    }
     // Build actions structure
     request['actions'] = $H();
     for (var moniker in named_args['actions']) {
