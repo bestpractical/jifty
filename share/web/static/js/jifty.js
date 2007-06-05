@@ -744,7 +744,9 @@ function update() {
     if (named_args['actions'] == null) {
         named_args['actions'] = {};
         // default to disable fields
-        Form.getActions(Form.Element.getForm(trigger)).map(function(x){named_args['actions'][x.moniker] = 1 });
+        var form = Form.Element.getForm(trigger);
+        if (form)
+            Form.getActions(form).map(function(x){named_args['actions'][x.moniker] = 1 });
     }
     // Build actions structure
     request['actions'] = $H();
