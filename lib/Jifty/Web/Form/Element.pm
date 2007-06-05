@@ -236,7 +236,7 @@ sub javascript {
         next unless $value;
 
         my @fragments;
-        my %actions;    # Maps actions => disable?
+        my $actions;    # Maps actions => disable?
         my $confirm;
         my $beforeclick;
 
@@ -246,10 +246,11 @@ sub javascript {
 
             # Submit action
             if ( $hook->{submit} ) {
+                %$actions = ();
                 my $disable = exists $hook->{disable} ? $hook->{disable} : 1;
                 # Normalize to 1/0 to pass to JS
                 $disable = $disable ? 1 : 0;
-                $actions{$_} = $disable for (@{ $hook->{submit} }); 
+                $actions->{$_} = $disable for (@{ $hook->{submit} }); 
             }
 
             $hook->{region} ||= Jifty->web->qualified_region;
@@ -317,9 +318,9 @@ sub javascript {
         }
 
         my $string = join ";", (grep {not ref $_} (ref $value eq "ARRAY" ? @{$value} : ($value)));
-        if (@fragments or %actions) {
+        if (@fragments or (!$actions || %$actions)) {
 
-            my $update = Jifty->web->escape("update( ". Jifty::JSON::objToJson( {actions => \%actions, fragments => \@fragments }, {singlequote => 1}) .", this );");
+            my $update = Jifty->web->escape("update( ". Jifty::JSON::objToJson( {actions => $actions, fragments => \@fragments }, {singlequote => 1}) .", this );");
             $string .= $self->javascript_preempt ? "return $update" : "$update; return true;";
         }
         if ($confirm) {

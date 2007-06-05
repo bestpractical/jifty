@@ -740,6 +740,12 @@ function update() {
     // Grab extra arguments (from a button)
     var button_args = Form.Element.buttonFormElements(trigger);
 
+    // If the action is null, take all actions
+    if (named_args['actions'] == null) {
+        named_args['actions'] = {};
+        // default to disable fields
+        Form.getActions(Form.Element.getForm(trigger)).map(function(x){named_args['actions'][x.moniker] = 1 });
+    }
     // Build actions structure
     request['actions'] = $H();
     for (var moniker in named_args['actions']) {
