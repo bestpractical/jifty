@@ -295,7 +295,10 @@ This badly wants to be redone.
 =cut
 
 sub wrapper ($) {
-    my $page_class = Jifty->app_class('View::Page');
+    my $app_class = get_current_attr('PageClass') || 'View::Page';
+    delete $Template::Declare::Tags::ATTRIBUTES{ 'PageClass' };
+
+    my $page_class = Jifty->app_class( $app_class );
     $page_class = 'Jifty::View::Declare::Page'
         unless Jifty::Util->_require( module => $page_class, quiet => 1 );
     # XXX: fallback, this is ugly
