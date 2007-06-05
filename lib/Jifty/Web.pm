@@ -689,10 +689,15 @@ sub _redirect {
 
 
 
-    if ($self->current_region) { 
-        # If we're within a region stack, we don't really want to redirect. We want to redispatch.
-        $self->replace_current_region($page);        
+    # It's an experimental feature to support redirect within a
+    # region.  It's currently enabled only for SPA.  We should make
+    # sure we understand what existing code is call this kind of replace.
+    my ($spa) = Jifty->find_plugin('Jifty::Plugin::SinglePage');
 
+    if ($spa && $self->current_region) { 
+        # If we're within a region stack, we don't really want to
+        # redirect. We want to redispatch.
+        $self->replace_current_region($page);
         Jifty::Dispatcher::_abort;
         return;
     }
