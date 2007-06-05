@@ -35,7 +35,7 @@ sub validate_openid {
     return ( 0, q{That doesn't look like an OpenID URL.} )
         if not defined $uri;
 
-    my $temp_user = Doxory::Model::User->new;
+    my $temp_user = Jifty->app_class("Model", "User")->new;
     $temp_user->load_by_cols( openid => $uri->canonical );
 
     # It's ok if *we* have the openid we're looking for
