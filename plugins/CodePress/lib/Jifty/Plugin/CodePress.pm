@@ -19,17 +19,13 @@ In etc/config.yml
   Plugins:
     - CodePress: {}
 
-In your Model instead of 
-
-  render_as 'teaxterea';
-
-use
-
-  render_as 'Jifty::Plugin::CodePress::Textarea';
-
 In your View do something like:
 
-
+  $action->form_field( 'source',
+	cols => 80, rows => 25,
+	language => 'perl',
+	render_as => 'Jifty::Plugin::CodePress::Textarea',
+  );
 
   Jifty->web->submit( 
 	label   => _("Save"), 
@@ -41,7 +37,12 @@ In your View do something like:
 
 or if you are using L<Template::Declare>
 
-  render_param( $action => 'source', cols => 80, rows => 25, language => 'perl' );
+  render_param(
+  	$action => 'source',
+	cols => 80, rows => 25,
+	language => 'perl',
+	render_as => 'Jifty::Plugin::CodePress::Textarea',
+  );
 
   form_submit(
 	label => _("Save"),
