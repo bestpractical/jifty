@@ -1085,14 +1085,16 @@ L<http://bennolan.com/behaviour/>.
 
 However if you want to include other javascript libraries you need to
 add them to the javascript_libs array of your application.  Do this in
-the C<start> sub of your main application class.  For example if your application is Foo then in L<lib/Foo.pm>
+the C<start> sub of your main application class.  For example if your
+application is Foo then in L<lib/Foo.pm>
 
  sub start {
-   Jifty->web->javascript_libs([
- 			       @{ Jifty->web->javascript_libs },
- 			       "yourJavascriptLib.js",
- 			      ]);
+     Jifty->web->add_javascript(qw( jslib1.js jslib2.js ) );
  }
+
+The L<add_javascript> method will append the files to javascript_libs.
+If you need a different order, you'll have to massage javascript_libs
+directly.
 
 Jifty will look for javascript libraries under share/web/static/js/ by
 default.
@@ -1187,6 +1189,20 @@ sub generate_javascript {
         __PACKAGE__->cached_javascript_digest( md5_hex( $js ) );
         __PACKAGE__->cached_javascript_time( time );
     }
+}
+
+=head3 add_javascript FILE1, FILE2, ...
+
+Pushes files onto C<Jifty->web->javascript_libs>
+
+=cut
+
+sub add_javascript {
+    my $self = shift;
+    Jifty->web->javascript_libs([
+        @{ Jifty->web->javascript_libs },
+        @_
+    ]);
 }
 
 =head2 STATE VARIABLES
