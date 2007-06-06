@@ -300,6 +300,8 @@ sub initial_config {
     my $self = shift;
     my $guess = $self->guess(@_);
     $guess->{'framework'}->{'ConfigFileVersion'} = 2;
+
+    # These are the plugins which new apps will get by default
             $guess->{'framework'}->{'Plugins'} = [
               { LetMe               => {}, },
                 { SkeletonApp            => {}, },
@@ -326,6 +328,8 @@ sub update_config {
     my $self = shift;
     my $config = shift;
     if ( $config->{'framework'}->{'ConfigFileVersion'} <2) {
+            # These are the plugins which old apps expect because their
+            # features used to be in the core.
             unshift (@{$config->{'framework'}->{'Plugins'}}, 
                 { SkeletonApp            => {}, },
                 { REST               => {}, },
