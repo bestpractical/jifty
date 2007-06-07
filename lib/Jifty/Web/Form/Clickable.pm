@@ -464,6 +464,9 @@ sub as_link {
 sub _continuation {
     # continuation info used by the update() call on client side
     my $self = shift;
+    if ($self->call) {
+	return { 'type' => 'call', id => $self->call };
+    }
     if ($self->returns) {
 	return { 'create' => $self->_orig_url };
     }
@@ -487,6 +490,7 @@ sub as_button {
     my $field = Jifty::Web::Form::Field->new(
         { %$args,
           type => 'InlineButton',
+          continuation => $self->_continuation,
           @_ }
     );
     my %parameters = $self->post_parameters;

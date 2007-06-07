@@ -530,8 +530,7 @@ sub call_continuation {
     return if $self->is_subrequest;
     return unless $self->continuation_type and $self->continuation_type eq "call" and $self->continuation;
     $self->log->debug("Calling continuation ".$self->continuation->id);
-    $self->continuation->call;
-    return 1;
+    return $self->continuation->call;
 }
 
 =head2 return_from_continuation

@@ -34,6 +34,9 @@ sub _sp_link {
 	    $args->{refresh_self} = 1;
 	    $args->{as_button} = 1;
 	}
+	if (my $form = delete $args->{_form}) {
+	    $args->{call} = $form->call;
+	}
         my $onclick = $args->{onclick};
         if ( ref($onclick) eq 'HASH' ) {
             if ( $onclick->{region} && !ref( $onclick->{region} ) ) {

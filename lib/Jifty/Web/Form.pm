@@ -217,8 +217,7 @@ L<Jifty::Web::Form::Field::Button>'s constructor.
 
 sub submit {
     my $self = shift;
-
-    my $button = Jifty::Web::Form::Clickable->new(submit => undef, @_)->generate;
+    my $button = Jifty::Web::Form::Clickable->new(submit => undef, _form => $self, @_)->generate;
     Jifty->web->out(qq{<div class="submit_button">});
     $button->render_widget;
     Jifty->web->out(qq{</div>});
