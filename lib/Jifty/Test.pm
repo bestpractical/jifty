@@ -245,7 +245,6 @@ sub setup_test_database {
     $schema->run;
 
     Jifty->new();
-    Jifty->handler->stash( {} );
 }
 
 =head2 test_config
