@@ -156,6 +156,7 @@ proper path, with that continuation.
 sub call {
     my $self = shift;
 
+    Jifty->log->debug("Redirect to @{[$self->request->path]} via continuation");
     # If we needed to fix up the path (it contains invalid
     # characters) then warn, because this may cause infinite
     # redirects

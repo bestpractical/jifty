@@ -329,6 +329,16 @@ sub handle_request {
 
         push @valid_actions, $request_action;
     }
+    if ($self->request->continuation_path && Jifty->web->request->argument('_webservice_redirect')) {
+	# for continuation - perform internal redirect under webservices
+	Jifty->web->request->add_fragment(
+            name      => '__page',
+            path      => $self->request->continuation_path,
+            arguments => {},
+            wrapper   => 0
+        );
+	return;
+    }
     $self->request->save_continuation;
 
     unless ( $self->request->just_validating ) {

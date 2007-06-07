@@ -19,14 +19,14 @@ sub _sp_link {
         my ( $clickable, $args ) = @_;
         my $url = $args->{'url'};
         if ( $url && $url !~ m/^#/ ) {
-            delete $args->{'url'};
+            $args->{'_orig_url'} = delete $args->{'url'};
             # XXX mind the existing onclick
             warn 'ooops got original onclick' . Dumper( $args->{onclick} )
                 if $args->{onclick};
             $args->{onclick} = {
                 region       => $self->region_name,
                 replace_with => $url,
-                args         => delete $args->{parameters}
+                args         => delete $args->{parameters},
             };
         }
 	elsif (exists $args->{submit}) {

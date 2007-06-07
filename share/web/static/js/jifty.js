@@ -719,7 +719,6 @@ var apply_fragment_updates = function(fragment, f) {
 //     - 'mode' is one of 'Replace', or the name of a Prototype Insertion
 //     - 'effect' is the name of a Prototype Effect
 function update() {
-    // If we don't have XMLHttpRequest, bail and fallback on full-page
     // loads
     if(!Ajax.getTransport()) return true;
     // XXX: prevent default behavior in IE
@@ -740,19 +739,21 @@ function update() {
     // Grab extra arguments (from a button)
     var button_args = Form.Element.buttonFormElements(trigger);
 
+    var form = Form.Element.getForm(trigger);
     // If the action is null, take all actions
     if (named_args['actions'] == null) {
         named_args['actions'] = {};
         // default to disable fields
-        var form = Form.Element.getForm(trigger);
         if (form)
             Form.getActions(form).map(function(x){
                 named_args['actions'][x.moniker] = 1;
             });
     }
+    var optional_fragments;
+    if (form && form['J:CALL']) 
+	optional_fragments = [ prepare_element_for_update({'mode':'Replace','args':{},'region':'__page','path': null}) ];
     // Build actions structure
     request['actions'] = $H();
-    var optional_fragments;
     for (var moniker in named_args['actions']) {
         var disable = named_args['actions'][moniker];
         var a = new Action(moniker, button_args);
@@ -845,6 +846,9 @@ function update() {
         var k = keys[i];
         request['variables']['region-'+k] = current_args[k];
     }
+
+    // Build continuation structure
+    request['continuation'] = named_args['continuation'];
 
     // Push any state variables which we set into the forms
     for (var i = 0; i < document.forms.length; i++) {

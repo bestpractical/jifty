@@ -149,8 +149,8 @@ C<new> parameter hash.
 
 =cut
 
-sub accessors { shift->handlers, qw(class key_binding key_binding_label id label tooltip) }
-__PACKAGE__->mk_accessors(qw(_onclick class key_binding key_binding_label id label tooltip));
+sub accessors { shift->handlers, qw(class key_binding key_binding_label id label tooltip continuation) }
+__PACKAGE__->mk_accessors(qw(_onclick class key_binding key_binding_label id label tooltip continuation));
 
 =head2 new PARAMHASH OVERRIDE
 
@@ -320,7 +320,7 @@ sub javascript {
         my $string = join ";", (grep {not ref $_} (ref $value eq "ARRAY" ? @{$value} : ($value)));
         if (@fragments or (!$actions || %$actions)) {
 
-            my $update = Jifty->web->escape("update( ". Jifty::JSON::objToJson( {actions => $actions, fragments => \@fragments }, {singlequote => 1}) .", this );");
+            my $update = Jifty->web->escape("update( ". Jifty::JSON::objToJson( {actions => $actions, fragments => \@fragments, continuation => $self->continuation }, {singlequote => 1}) .", this );");
             $string .= $self->javascript_preempt ? "return $update" : "$update; return true;";
         }
         if ($confirm) {
