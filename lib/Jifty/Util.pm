@@ -241,10 +241,10 @@ sub _require {
     if ($UNIVERSAL::require::ERROR) {
         my $error = $UNIVERSAL::require::ERROR;
         $error =~ s/ at .*?\n$//;
-        if ($args{'quiet'} and $error =~ /^Can't locate \Q$class\E/) {
+        if ($args{'quiet'} and $error =~ /^Can't locate/) {
             return 0;
         }
-        elsif ( $UNIVERSAL::require::ERROR !~ /^Can't locate \Q$class\E/) {
+        elsif ( $UNIVERSAL::require::ERROR !~ /^Can't locate/) {
             die $UNIVERSAL::require::ERROR;
         } else {
             Jifty->log->error(sprintf("$error at %s line %d\n", (caller(1))[1,2]));
