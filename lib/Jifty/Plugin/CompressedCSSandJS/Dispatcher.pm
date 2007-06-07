@@ -19,7 +19,6 @@ use Jifty::Dispatcher -base;
 
 on '/__jifty/js/*' => run {
     my $arg = $1;
-    warn "My arg is $arg";
     if ( $arg !~ /^[0-9a-f]{32}\.js$/ ) {
 
         # This doesn't look like a real request for squished JS,
