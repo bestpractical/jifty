@@ -70,4 +70,16 @@ before 'pre-redir-region' => run {
 
 };
 
+before '__jifty/webservices/*' => run {
+    my (@actions) = grep { $_->class eq 'Jifty::Action::Redirect' } values %{ Jifty->web->request->{'actions'} };
+    $_->active(0) for @actions;
+};
+
+on qr{(__jifty/webservices/.*)} => run {
+    use Data::Dumper;
+    for $act (@actions) {
+	warn Dumper($act);
+    }
+};
+
 1;

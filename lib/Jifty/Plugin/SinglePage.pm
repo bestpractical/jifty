@@ -20,9 +20,7 @@ sub _sp_link {
         my $url = $args->{'url'};
         if ( $url && $url !~ m/^#/ ) {
             delete $args->{'url'};
-
             # XXX mind the existing onclick
-            use Data::Dumper;
             warn 'ooops got original onclick' . Dumper( $args->{onclick} )
                 if $args->{onclick};
             $args->{onclick} = {
@@ -31,6 +29,11 @@ sub _sp_link {
                 args         => delete $args->{parameters}
             };
         }
+	elsif (exists $args->{submit}) {
+	    $args->{onclick} = { submit => delete $args->{submit} };
+	    $args->{refresh_self} = 1;
+	    $args->{as_button} = 1;
+	}
         my $onclick = $args->{onclick};
         if ( ref($onclick) eq 'HASH' ) {
             if ( $onclick->{region} && !ref( $onclick->{region} ) ) {

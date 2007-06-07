@@ -746,13 +746,21 @@ function update() {
         // default to disable fields
         var form = Form.Element.getForm(trigger);
         if (form)
-            Form.getActions(form).map(function(x){named_args['actions'][x.moniker] = 1 });
+            Form.getActions(form).map(function(x){
+                named_args['actions'][x.moniker] = 1;
+            });
     }
     // Build actions structure
     request['actions'] = $H();
+    var optional_fragments;
     for (var moniker in named_args['actions']) {
         var disable = named_args['actions'][moniker];
         var a = new Action(moniker, button_args);
+        // Special case for Redirect, allow optional, implicit __page
+        // from the response to be used.
+        if (a.actionClass == 'Jifty::Action::Redirect')
+            optional_fragments = [ prepare_element_for_update({'mode':'Replace','args':{},'region':'__page','path': a.fields().last().value}) ];
+
         if (a.register) {
             if (a.hasUpload())
                 return true;
@@ -786,13 +794,14 @@ function update() {
         // Grab the XML response
         var response = transport.responseXML.documentElement;
         // Loop through the result looking for it
+        var expected_fragments = optional_fragments ? optional_fragments : named_args['fragments'];
         for (var response_fragment = response.firstChild;
              response_fragment != null && response_fragment.nodeName == 'fragment';
              response_fragment = response_fragment.nextSibling) {
 
             var f; 
-            for (var i = 0; i < named_args['fragments'].length; i++) {
-                f = named_args['fragments'][i];
+            for (var i = 0; i < expected_fragments.length; i++) {
+                f = expected_fragments[i];
                 if (response_fragment.getAttribute("id") == f['region'])
                     break;
             }
