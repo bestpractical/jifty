@@ -158,7 +158,8 @@ sub call {
 
     Jifty->log->debug("Redirect to @{[$self->request->path]} via continuation");
     if (Jifty->web->request->argument('_webservice_redirect')) {
-	# for continuation - perform internal redirect under webservices
+	# for continuation - perform internal redirect under webservices.
+	Jifty->web->request->remove_state_variable('region-__page');
 	Jifty->web->request->add_fragment(
             name      => '__page',
             path      => $self->request->path,
