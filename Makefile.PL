@@ -49,7 +49,7 @@ requires('Locale::Maketext::Lexicon' => '0.60');
 requires('Log::Log4perl' => '1.04');
 requires('LWP::UserAgent'); # Net::HTTP
 requires('MIME::Types');
-requires('Module::Pluggable' => '3.1'); # Module::Pluggable::Object
+requires('Module::Pluggable' => '3.5'); # Module::Pluggable::Object
 requires('Module::Pluggable::Object');
 requires('Module::CoreList');
 requires('Module::Refresh');
