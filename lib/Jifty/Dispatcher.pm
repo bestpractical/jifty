@@ -736,7 +736,7 @@ sub _do_abort {
     $self->_abort;
 }
 
-sub _abort { die "ABORT" }
+sub _abort { Carp::croak "ABORT" }
 
 =head2 _do_show [PATH]
 

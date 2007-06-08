@@ -831,7 +831,6 @@ function update() {
              redirect != null;
              redirect = redirect.nextSibling) {
             if (redirect.nodeName == 'redirect') {
-                alert(redirect.getAttribute("url"));
                 document.location = redirect.getAttribute("url");
             }
         }
