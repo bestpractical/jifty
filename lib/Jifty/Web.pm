@@ -299,20 +299,76 @@ For more details about continuations, see L<Jifty::Continuation>.
 
 sub handle_request {
     my $self = shift;
-    die _( "No request to handle" ) unless Jifty->web->request;
+    die _("No request to handle") unless Jifty->web->request;
 
+    my ( $valid_actions, $denied_actions )
+        = $self->_validate_request_actions();
+
+    # In the case where we have a continuation and want to redirect
+    # {XXX TODO - should be refactored out to the SinglePageApp plugin
+
+    if ( $self->request->continuation_path && Jifty->web->request->argument('_webservice_redirect') ) {
+
+        # for continuation - perform internal redirect under webservices
+        Jifty->web->request->remove_state_variable('region-__page');
+        Jifty->web->request->add_fragment(
+            name      => '__page',
+            path      => $self->request->continuation_path,
+            arguments => {},
+            wrapper   => 0
+        );
+        return;
+    }
+
+    # }
+
+    $self->request->save_continuation;
+
+    unless ( $self->request->just_validating ) {
+        $self->_process_valid_actions($valid_actions);
+        $self->_process_denied_actions($denied_actions);
+    }
+
+    # If there's a continuation call, don't do the rest of this
+    return if $self->response->success and $self->request->call_continuation;
+
+    $self->redirect if $self->redirect_required;
+    $self->request->do_mapping;
+}
+
+sub _process_denied_actions {
+    my $self           = shift;
+    my $denied_actions = shift;
+
+    for my $request_action (@$denied_actions) {
+        my $action = $self->new_action_from_request($request_action);
+        $action->deny( "Access Denied for " . ref($action) );
+        $self->response->result( $action->moniker => $action->result );
+    }
+}
+
+sub _validate_request_actions {
+        my $self = shift;
+        
     my @valid_actions;
     my @denied_actions;
+
+
     for my $request_action ( $self->request->actions ) {
-        $self->log->debug("Found action ".$request_action->class . " " . $request_action->moniker);
+        $self->log->debug( "Found action "
+                . $request_action->class . " "
+                . $request_action->moniker );
         next unless $request_action->active;
         next if $request_action->has_run;
-        unless ( Jifty->api->is_allowed( $request_action->class ) ) {
-            $self->log->warn( "Attempt to call denied action '"
-                    . $request_action->class
-                    . "'" );
-            push @denied_actions, $request_action;
-            next;
+        unless ( $self->request->just_validating ) {
+            unless ( Jifty->api->is_allowed( $request_action->class ) ) {
+                $self->log->warn( "Attempt to call denied action '"
+                        . $request_action->class
+                        . "'" );
+                Carp::cluck;
+                push @denied_actions, $request_action;
+                next;
+            }
         }
 
         # Make sure we can instantiate the action
@@ -323,27 +379,21 @@ sub handle_request {
         # Try validating -- note that this is just the first pass; as
         # actions are run, they may fill in values which alter
         # validation of later actions
-        $self->log->debug("Validating action ".ref($action). " ".$action->moniker);
+        $self->log->debug( "Validating action " . ref($action) . " " . $action->moniker );
         $self->response->result( $action->moniker => $action->result );
         $action->validate;
 
         push @valid_actions, $request_action;
     }
-    if ($self->request->continuation_path && Jifty->web->request->argument('_webservice_redirect')) {
-	# for continuation - perform internal redirect under webservices
-	Jifty->web->request->remove_state_variable('region-__page');
-	Jifty->web->request->add_fragment(
-            name      => '__page',
-            path      => $self->request->continuation_path,
-            arguments => {},
-            wrapper   => 0
-        );
-	return;
-    }
-    $self->request->save_continuation;
+    
+    return (\@valid_actions, \@denied_actions);
 
-    unless ( $self->request->just_validating ) {
-        for my $request_action (@valid_actions) {
+}
+
+sub _process_valid_actions {
+    my  $self = shift;
+    my $valid_actions = shift;
+        for my $request_action (@$valid_actions) {
 
             # Pull the action out of the request (again, since
             # mappings may have affected parameters).  This
@@ -352,20 +402,26 @@ sub handle_request {
             # actions (Jifty::Request::Mapper)
             my $action = $self->new_action_from_request($request_action);
             next unless $action;
-            if ($request_action->modified) {
+            if ( $request_action->modified ) {
+
                 # If the request's action was changed, re-validate
-                $action->result(Jifty::Result->new);
-                $action->result->action_class(ref $action);
-                $self->response->result( $action->moniker => $action->result );
-                $self->log->debug("Re-validating action ".ref($action). " ".$action->moniker);
+                $action->result( Jifty::Result->new );
+                $action->result->action_class( ref $action );
+                $self->response->result(
+                    $action->moniker => $action->result );
+                $self->log->debug( "Re-validating action "
+                        . ref($action) . " "
+                        . $action->moniker );
                 next unless $action->validate;
             }
 
-            $self->log->debug("Running action ".ref($action). " ".$action->moniker);
+            $self->log->debug(
+                "Running action " . ref($action) . " " . $action->moniker );
             eval { $action->run; };
             $request_action->has_run(1);
 
             if ( my $err = $@ ) {
+
                 # Poor man's exception propagation; we need to get
                 # "LAST RULE" and "ABORT" exceptions back up to the
                 # dispatcher.  This is specifically for redirects from
@@ -375,7 +431,8 @@ sub handle_request {
                 $action->result->error(
                     Jifty->config->framework("DevelMode")
                     ? $err
-                    : _("There was an error completing the request.  Please try again later.")
+                    : _("There was an error completing the request.  Please try again later."
+                    )
                 );
             }
 
@@ -383,20 +440,8 @@ sub handle_request {
             # may have yielded.
             $self->request->do_mapping;
         }
-        for my $request_action (@denied_actions) {
-            my $action = $self->new_action_from_request($request_action);
-            $action->deny("Access Denied for ".ref($action));
-            $self->response->result( $action->moniker => $action->result );
-        }
+
     }
-
-    # If there's a continuation call, don't do the rest of this
-    return if $self->response->success and $self->request->call_continuation;
-
-    $self->redirect if $self->redirect_required;
-    $self->request->do_mapping;
-}
-
 =head3 request [VALUE]
 
 Gets or sets the current L<Jifty::Request> object.
