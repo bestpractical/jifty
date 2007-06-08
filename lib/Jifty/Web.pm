@@ -305,22 +305,11 @@ sub handle_request {
         = $self->_validate_request_actions();
 
     # In the case where we have a continuation and want to redirect
-    # {XXX TODO - should be refactored out to the SinglePageApp plugin
-
     if ( $self->request->continuation_path && Jifty->web->request->argument('_webservice_redirect') ) {
-
         # for continuation - perform internal redirect under webservices
-        Jifty->web->request->remove_state_variable('region-__page');
-        Jifty->web->request->add_fragment(
-            name      => '__page',
-            path      => $self->request->continuation_path,
-            arguments => {},
-            wrapper   => 0
-        );
+	$self->webservices_redirect($self->request->continuation_path);
         return;
     }
-
-    # }
 
     $self->request->save_continuation;
 
@@ -654,6 +643,27 @@ sub redirect_required {
     } else {
         return undef;
     }
+}
+
+=head3 webservices_redirect [TO]
+
+Handle redirection inside webservices call.  This is meant to be
+hooked by plugin that knows what to do with it.
+
+=cut
+
+sub webservices_redirect {
+    my ( $self, $to ) = @_;
+    # XXX: move to singlepage plugin
+    my ($spa) = Jifty->find_plugin('Jifty::Plugin::SinglePage') or return;
+
+    Jifty->web->request->remove_state_variable( 'region-'.$spa->region_name );
+    Jifty->web->request->add_fragment(
+        name      => $spa->region_name,
+        path      => $to,
+        arguments => {},
+        wrapper   => 0
+    );
 }
 
 =head3 redirect [TO]

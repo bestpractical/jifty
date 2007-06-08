@@ -16,19 +16,13 @@ before '__jifty/webservices/*' => run {
 
 on qr{(__jifty/webservices/.*)} => run {
     my $actions = get '_webservice_redirect';
-    Jifty->web->request->remove_state_variable('region-__page');
     for my $act (@$actions) {
-	if ($act =~ m{^https?://}) {
-	    set '_webservice_external_redirect' => $act;
-	}
-	else {
-	    Jifty->web->request->add_fragment(
-                name      => '__page',
-                path      => $act,
-                arguments => {},
-                wrapper   => 0
-            );
-	}
+        if ($act =~ m{^https?://}) {
+            set '_webservice_external_redirect' => $act;
+        }
+        else {
+            Jifty->web->webservices_redirect($act);
+        }
     }
     show $1;
 };
