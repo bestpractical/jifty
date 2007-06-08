@@ -26,10 +26,10 @@ L<Jifty::Web::Form::Element/accessors>.
 
 sub accessors {
     shift->SUPER::accessors,
-        qw(url escape_label tooltip continuation call returns submit target preserve_state render_as_button render_as_link _orig_url);
+        qw(url escape_label tooltip continuation call returns submit target preserve_state render_as_button render_as_link);
 }
 __PACKAGE__->mk_accessors(
-    qw(url escape_label tooltip continuation call returns submit target preserve_state render_as_button render_as_link _orig_url)
+    qw(url escape_label tooltip continuation call returns submit target preserve_state render_as_button render_as_link)
 );
 
 =head2 new PARAMHASH
@@ -468,7 +468,7 @@ sub _continuation {
 	return { 'type' => 'call', id => $self->call };
     }
     if ($self->returns) {
-	return { 'create' => $self->_orig_url };
+	return { 'create' => $self->url };
     }
 
     return {};

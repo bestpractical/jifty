@@ -617,7 +617,7 @@ Redirect to the next page. If you pass this method a parameter, it
 redirects to that URL rather than B<next_page>.
 
 It creates a continuation of where you want to be, and then calls it.
-If you want to redirect to a parge with parameters, pass in a
+If you want to redirect to a page with parameters, pass in a
 L<Jifty::Web::Form::Clickable> object.
 
 =cut
@@ -647,8 +647,7 @@ sub redirect {
 
     # To submit a Jifty::Action::Redirect, we don't need to serialize a continuation,
     # unlike any other kind of actions.
-    
-    
+
     my $redirect_to_url = '' ;
 
     if (  (grep { not $_->action_class->isa('Jifty::Action::Redirect') }

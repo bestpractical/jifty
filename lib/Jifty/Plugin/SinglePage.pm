@@ -25,19 +25,14 @@ sub _sp_link {
     return sub {
         my ( $clickable, $args ) = @_;
         my $url = $args->{'url'};
-        if ( $url && $url !~ m/^#/ ) {
-            $args->{'_orig_url'} = delete $args->{'url'};
+        if ( $url && $url !~ m/^#/ && $url !~ m{^https?://} ) {
             # XXX mind the existing onclick
-            warn 'ooops got original onclick' . Dumper( $args->{onclick} )
-                if $args->{onclick};
             $self->_push_onclick($args, {
                 region       => $self->region_name,
                 replace_with => $url,
                 args         => delete $args->{parameters}});
         }
         elsif (exists $args->{submit}) {
-	    use Data::Dumper;
-#	    warn Dumper($args);
 	    $self->_push_onclick($args, { refresh_self => 1, submit => delete $args->{submit} });
 	    $args->{as_button} = 1;
 	}
