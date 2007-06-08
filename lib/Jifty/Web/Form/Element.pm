@@ -236,7 +236,10 @@ sub javascript {
         next unless $value;
 
         my @fragments;
-        my $actions;    # Maps actions => disable?
+            # if $actions is undef, that means we're submitting _all_ actions in the clickable
+            # if $actions is defined but empty, that means we're submitting no actions
+            # if $actions is not empty, we're submitting those actions
+        my $actions = {};    # Maps actions => disable?
         my $confirm;
         my $beforeclick;
 
@@ -245,12 +248,14 @@ sub javascript {
             my %args;
 
             # Submit action
-            if ( $hook->{submit} ) {
-                %$actions = ();
-                my $disable = exists $hook->{disable} ? $hook->{disable} : 1;
+          
+            
+            if ( exists $hook->{submit} ) {
+                $actions = undef;
+                my $disable_form_on_click = exists $hook->{disable} ? $hook->{disable} : 1;
                 # Normalize to 1/0 to pass to JS
-                $disable = $disable ? 1 : 0;
-                $actions->{$_} = $disable for (@{ $hook->{submit} }); 
+                $disable_form_on_click = $disable_form_on_click ? 1 : 0;
+                $actions->{$_} = $disable_form_on_click for (@{ $hook->{submit} || [] }); 
             }
 
             $hook->{region} ||= Jifty->web->qualified_region;
