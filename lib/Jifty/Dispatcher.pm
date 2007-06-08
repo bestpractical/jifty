@@ -1167,6 +1167,7 @@ sub render_template {
     my $err = $@;
 
     # Handle parse errors
+    $self->log->fatal("view class error: $err") if $err;
     if ( $err and not eval { $err->isa('HTML::Mason::Exception::Abort') } ) {
         if ($template eq '/__jifty/error/mason_internal_error') {
             $self->log->debug("can't render internal_error: $err");

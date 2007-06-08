@@ -316,6 +316,10 @@ sub render_as_subrequest {
 	# clone.
 	my ($path, $arg) = split(/\?/, $self->path, 2);
 	$subrequest->path( $path );
+	my %args = (map { split /=/, $_ } split /&/, $arg);
+	if ($args{'J:C'}) {
+	    $subrequest->continuation($args{'J:C'});
+	}
     }
     # Remove all of the actions
     unless ($enable_actions) {
