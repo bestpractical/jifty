@@ -705,7 +705,10 @@ sub _redirect {
 
     if ($spa && $self->current_region) { 
         # If we're within a region stack, we don't really want to
-        # redirect. We want to redispatch.
+        # redirect. We want to redispatch.  Also reset the things
+        # applied on beofre.
+        local $self->{navigation} = undef;
+        local $self->{page_navigation} = undef;
         $self->replace_current_region($page);
         Jifty::Dispatcher::_abort;
         return;
