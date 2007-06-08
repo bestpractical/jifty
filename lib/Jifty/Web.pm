@@ -698,11 +698,8 @@ sub _redirect {
     my ($page) = @_;
 
     # It's an experimental feature to support redirect within a
-    # region.  It's currently enabled only for SPA.  We should make
-    # sure we understand what existing code is call this kind of replace.
-    my ($spa) = Jifty->find_plugin('Jifty::Plugin::SinglePage');
-
-    if ($spa && $self->current_region) { 
+    # region.
+    if ($self->current_region) { 
         # If we're within a region stack, we don't really want to
         # redirect. We want to redispatch.  Also reset the things
         # applied on beofre.
