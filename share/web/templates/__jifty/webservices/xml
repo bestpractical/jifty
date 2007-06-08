@@ -5,7 +5,9 @@ $writer->xmlDecl( "UTF-8", "yes" );
 $writer->startTag("response");
 
 if (my $ext = Jifty->web->request->argument('_webservice_external_redirect')) {
-    $writer->startTag("redirect", url => $ext);
+    $writer->startTag("redirect");
+    $writer->cdataElement(url=> $ext);
+
     $writer->endTag();
 }
 else {

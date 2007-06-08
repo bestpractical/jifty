@@ -832,7 +832,7 @@ function update() {
              redirect != null;
              redirect = redirect.nextSibling) {
             if (redirect.nodeName == 'redirect') {
-                document.location = redirect.getAttribute("url");
+                document.location =  redirect.firstChild.firstChild.nodeValue;
             }
         }
     };
