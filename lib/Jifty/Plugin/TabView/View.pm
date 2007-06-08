@@ -23,8 +23,9 @@ Jifty::Plugin::TabView::View - render tabview using yui tabs
   template 'foo' => sub { ... };
   template 'bar' => sub { ... };
 
-=head1 DESCRIPTION
+=head2 render_tabs
 
+Returns some Template::Declare with tabs rendered with the yui tabs
 If a tab ends in _tab, it means it should contain a stub region to be
 replaced by the corresponding fragment onclick to that tab.
 

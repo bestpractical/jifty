@@ -54,11 +54,23 @@ sub render_header {
     return '';
 };
 
+=head2 render_body $body_code
+
+Renders $body_code inside a body tag
+
+=cut
+
 sub render_body {
     my ($self, $body_code) = @_;
 
     body { $body_code->() };
 }
+
+=head2 render_page
+
+Renders the skeleton of the page
+
+=cut
 
 sub render_page {
     my $self = shift;
@@ -88,6 +100,12 @@ sub render_page {
         };
     };
 }
+
+=head2 mk_title_handler
+
+Returns a coderef that will make headers for each thing passed to it
+
+=cut
 
 sub mk_title_handler {
     my $self = shift;

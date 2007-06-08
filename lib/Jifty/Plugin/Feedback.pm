@@ -32,6 +32,12 @@ Add to your app's UI where you want the feedback box:
 
 __PACKAGE__->mk_accessors(qw(from to));
 
+=head2 init
+
+Initializes the Feedback object. Takes a paramhash with keys 'from' and 'to', which are email addresses.
+
+=cut
+
 sub init {
     my $self = shift;
     my %opt = @_;

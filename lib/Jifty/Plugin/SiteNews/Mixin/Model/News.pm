@@ -25,6 +25,11 @@ column content   =>
   render_as is 'Textarea';
 };
 
+=head2 create
+
+Create the News model. Takes a paramhash with keys author_id, created, title, and content.
+
+=cut
 
 sub create {
     my $self = shift;

@@ -26,7 +26,11 @@ foreach my $dialect ( 'SQL::ReservedWords', &_sql_dialects ) {
 
 delete $_SQL_RESERVED{ lc($_) } for (@_SQL_RESERVED_OVERRIDE);
 
+=head2 new
 
+Returns a new Jifty::Schema. Takes no arguments. Will automatically figure out and initialize the models defined in the app's source.
+
+=cut
 
 sub new {
     my $class = shift;
@@ -58,6 +62,11 @@ sub _init_model_list {
     );
 }
 
+=head2 serialize_current_schema
+
+Returns a serialization of the models in the app
+
+=cut
 
 sub serialize_current_schema {
     my $self = shift;    
@@ -73,7 +82,11 @@ sub serialize_current_schema {
 }
 
 
+=head2 upgrade_schema
 
+Looks at the current schemas as defined by the source and the database and updates the database by adding, dropping, and renaming columns.
+
+=cut
 
 sub upgrade_schema {
     my $self = shift;
@@ -269,7 +282,11 @@ sub __parenthesize_sql_variants {
     return "(" . ( join ", ", @_ ) . ")";
 }
 
+=head2 connect_to_db_for_management
 
+Returns a database handle suitable for direct manipulation.
+
+=cut
 
 sub connect_to_db_for_management {
     my $handle = Jifty::Handle->new();
