@@ -736,7 +736,7 @@ sub _do_abort {
     $self->_abort;
 }
 
-sub _abort { Carp::croak "ABORT" }
+sub _abort { die "ABORT" }
 
 =head2 _do_show [PATH]
 
@@ -925,7 +925,7 @@ came in with that method.
 
 sub _match_method {
     my ( $self, $method ) = @_;
-    #$self->log->debug("Matching URL $ENV{REQUEST_METHOD} against ".$method);
+    $self->log->debug("Matching URL $ENV{REQUEST_METHOD} against ".$method);
     lc( $ENV{REQUEST_METHOD} ) eq lc($method);
 }
 
