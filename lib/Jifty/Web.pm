@@ -698,8 +698,6 @@ sub _redirect {
     my $self = shift;
     my ($page) = @_;
 
-
-
     # It's an experimental feature to support redirect within a
     # region.  It's currently enabled only for SPA.  We should make
     # sure we understand what existing code is call this kind of replace.
@@ -713,6 +711,10 @@ sub _redirect {
         return;
     }
 
+    if (my $redir = Jifty->web->request->argument('_webservice_redirect')) {
+	push @$redir, $page;
+	return;
+    }
     # $page can't lead with // or it assumes it's a URI scheme.
     $page =~ s{^/+}{/};
 

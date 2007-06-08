@@ -827,6 +827,14 @@ function update() {
                 }
             }
         }
+        for (var redirect = response.firstChild;
+             redirect != null;
+             redirect = redirect.nextSibling) {
+            if (redirect.nodeName == 'redirect') {
+                alert(redirect.getAttribute("url"));
+                document.location = redirect.getAttribute("url");
+            }
+        }
     };
     var onFailure = function(transport, object) {
         hide_wait_message_now();
