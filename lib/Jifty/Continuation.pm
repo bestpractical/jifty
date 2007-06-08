@@ -156,6 +156,18 @@ proper path, with that continuation.
 sub call {
     my $self = shift;
 
+    Jifty->log->debug("Redirect to @{[$self->request->path]} via continuation");
+    if (Jifty->web->request->argument('_webservice_redirect')) {
+	# for continuation - perform internal redirect under webservices.
+	Jifty->web->request->remove_state_variable('region-__page');
+	Jifty->web->request->add_fragment(
+            name      => '__page',
+            path      => $self->request->path,
+            arguments => {},
+            wrapper   => 0
+        );
+	return;
+    }
     # If we needed to fix up the path (it contains invalid
     # characters) then warn, because this may cause infinite
     # redirects
@@ -189,6 +201,7 @@ sub call {
 
     # Redirect to right page if we're not there already
     Jifty->web->_redirect($next->request->path . "?J:RETURN=" . $next->id);
+    return 1;
 }
 
 =head2 return

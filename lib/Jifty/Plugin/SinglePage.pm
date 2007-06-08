@@ -13,34 +13,42 @@ sub init {
     $self->region_name($opt{region_name} || '__page');
 }
 
+sub _push_onclick {
+    my $self = shift;
+    my $args = shift;
+    $args->{onclick} = [ $args->{onclick} ] unless ref $args->{onclick} eq 'ARRAY';
+    push @{$args->{onclick}}, @_ if @_;
+}
+
 sub _sp_link {
     my $self = shift;
     return sub {
         my ( $clickable, $args ) = @_;
         my $url = $args->{'url'};
-        if ( $url && $url !~ m/^#/ ) {
-            delete $args->{'url'};
+        if ( $url && $url !~ m/^#/ && $url !~ m{^https?://} ) {
             # XXX mind the existing onclick
-            warn 'ooops got original onclick' . Dumper( $args->{onclick} )
-                if $args->{onclick};
-            $args->{onclick} = {
+            $self->_push_onclick($args, {
                 region       => $self->region_name,
                 replace_with => $url,
-                args         => delete $args->{parameters}
-            };
+                args         => delete $args->{parameters}});
         }
-	elsif (exists $args->{submit}) {
-	    $args->{onclick} = { submit => delete $args->{submit} };
-	    $args->{refresh_self} = 1;
+        elsif (exists $args->{submit}) {
+	    $self->_push_onclick($args, { refresh_self => 1, submit => delete $args->{submit} });
 	    $args->{as_button} = 1;
 	}
+        if (my $form = delete $args->{_form}) {
+	    $args->{call} = $form->call;
+	}
         my $onclick = $args->{onclick};
-        if ( ref($onclick) eq 'HASH' ) {
-            if ( $onclick->{region} && !ref( $onclick->{region} ) ) {
-		my $region = $self->region_name;
-                $onclick->{region}
-                    = $region . '-' . $onclick->{region}
-                    unless $onclick->{region} eq $region or $onclick->{region} =~ m/^\Q$region\E-/;
+        if ( $args->{onclick} ) {
+            $self->_push_onclick($args);    # make sure it's array
+            for my $onclick ( @{ $args->{onclick} } ) {
+                if ( $onclick->{region} && !ref( $onclick->{region} ) ) {
+                    my $region = $self->region_name;
+                    $onclick->{region} = $region . '-' . $onclick->{region}
+                        unless $onclick->{region} eq $region
+                        or $onclick->{region} =~ m/^\Q$region\E-/;
+                }
             }
         }
     }
