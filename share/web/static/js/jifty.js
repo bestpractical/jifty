@@ -122,7 +122,8 @@ Action.prototype = {
                 var field = Form.Element.getField(f);
                 var type = Form.Element.getType(f);
 
-                // XXX: fallback value being an array makes server upset
+                // XXX: fallback value being an array makes server
+                // upset, we don't think that should happen anyway
                 if (type == 'fallback' && a['fields'][field][type])
                     continue                    
                 a['fields'][field][type] = this._mergeValues(a['fields'][field][type],
