@@ -4,6 +4,8 @@ use warnings;
 package Jifty::Plugin::CodePress;
 use base qw/Jifty::Plugin/;
 
+our $VERSION = '0.02';
+
 =head1 NAME
 
 Jifty::Plugin::CodePress
