@@ -2,7 +2,7 @@
 build_requires: 
   ExtUtils::MakeMaker: 6.11
 distribution_type: module
-generated_by: Module::Install version 0.650
+generated_by: Module::Install version 0.670
 license: Perl
 meta-spec: 
   url: http://module-build.sourceforge.net/META-spec-v1.3.html
@@ -49,6 +49,7 @@ requires:
   Class::Accessor: 0
   Class::Container: 0
   Class::Data::Inheritable: 0
+  Class::Trigger: 0
   Compress::Zlib: 0
   Crypt::CBC: 0
   Crypt::Rijndael: 0
@@ -88,7 +89,7 @@ requires:
   Log::Log4perl: 1.04
   MIME::Types: 0
   Module::CoreList: 0
-  Module::Pluggable: 3.1
+  Module::Pluggable: 3.5
   Module::Pluggable::Object: 0
   Module::Refresh: 0
   Module::ScanDeps: 0
@@ -101,6 +102,7 @@ requires:
   String::Koremutake: 0
   Template::Declare: 0.07
   Test::Base: 0
+  Test::LongString: 0
   Test::More: 0.62
   Test::Pod::Coverage: 0
   Test::WWW::Mechanize: 1.04
