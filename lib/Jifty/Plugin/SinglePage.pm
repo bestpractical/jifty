@@ -43,6 +43,7 @@ sub _sp_link {
         if ( $args->{onclick} ) {
             $self->_push_onclick($args);    # make sure it's array
             for my $onclick ( @{ $args->{onclick} } ) {
+                next unless UNIVERSAL::isa($onclick, 'HASH');
                 if ( $onclick->{region} && !ref( $onclick->{region} ) ) {
                     my $region = $self->region_name;
                     $onclick->{region} = $region . '-' . $onclick->{region}
