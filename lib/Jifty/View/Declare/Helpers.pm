@@ -308,7 +308,8 @@ sub wrapper ($) {
 
     my ($spa) = Jifty->find_plugin('Jifty::Plugin::SinglePage');
 
-    if ($spa) {
+    # XXX: spa hooks should be moved to page handlers
+    if ($spa && $page->allow_single_page) {
 	# If it's a single page app, we want to either render a
 	# wrapper and then get the region or render just the content
         if ( !Jifty->web->current_region ) {

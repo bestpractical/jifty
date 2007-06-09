@@ -21,6 +21,7 @@ This library provides page wrappers
 use Jifty::View::Declare::Helpers;
 
 __PACKAGE__->mk_accessors(qw(content_code done_header _title));
+use constant allow_single_page => 1;
 
 sub new {
     my $class = shift;
