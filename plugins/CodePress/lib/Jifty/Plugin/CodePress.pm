@@ -27,14 +27,6 @@ In your View do something like:
 	render_as => 'Jifty::Plugin::CodePress::Textarea',
   );
 
-  Jifty->web->submit( 
-	label   => _("Save"), 
-    onclick => [
-      { beforeclick => "CodePress.beforeSubmit();" },
-      { args => .... }
-    ]
-  );
-
 or if you are using L<Template::Declare>
 
   render_param(
@@ -42,14 +34,6 @@ or if you are using L<Template::Declare>
 	cols => 80, rows => 25,
 	language => 'perl',
 	render_as => 'Jifty::Plugin::CodePress::Textarea',
-  );
-
-  form_submit(
-	label => _("Save"),
-	onclick => [
-		{ beforeclick => "CodePress.beforeSubmit();" },
-		{ args => .... },
-	],
   );
 
 =head1 VERSION
@@ -60,7 +44,10 @@ revision 219 with bunch of local changes to make it play nicer with Jifty.
 This involved some hard-coding of paths (because automatic path detection
 from CodePress doesn't work well with Jifty's expectation of JavaScript code
 in C</js/>), addition of C<CodePress.instances> object to track all
-instances and CodePress.beforeSubmit which prepare form for submission.
+instances and additional JavaScript event handling using C<DOM.Events>
+to remove requirement to call C<CodePress.beforeSubmit> from form submit
+(If you want you can still call it, and it will turn all CodePress editors
+back to textarea).
 
 This also side-stepped problem with original calling schematic which created
 functions with names from element ids. This was problematic with Jifty

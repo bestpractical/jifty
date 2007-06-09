@@ -35,6 +35,28 @@ CodePress = function(obj) {
 		self.style.position = 'static';
 		self.style.visibility = 'visible';
 		self.style.display = 'inline';
+
+		// where blur event is delivered?
+		var iframe = self;
+		if (self.contentDocument) {          // For NS6
+			iframe = self.contentDocument;
+		} else if (self.contentWindow) {     // For IE5.5 and IE6
+			//iframe = self.contentWindow.document;
+		} else if (self.document) {          // For IE5
+			iframe = self.document;
+		} else {
+			alert("can't find frame");
+		}
+
+		DOM.Events.addListener( iframe, 'blur', function () {
+			self.textarea.value = self.getCode();
+			self.textarea.disabled = false;
+			return self;
+		});
+		DOM.Events.addListener( iframe, 'focus', function () {
+			self.textarea.disabled = true;
+			return self;
+		});
 	}
 	
 	// obj can by a textarea id or a string (code)
@@ -43,8 +65,9 @@ CodePress = function(obj) {
 		if(!self.textarea.disabled) return;
 		self.language = language ? language : self.getLanguage();
 		self.src = '/static/codepress/codepress.html?language='+self.language+'&ts='+(new Date).getTime();
-		if(self.attachEvent) self.attachEvent('onload',self.initialize);
-		else self.addEventListener('load',self.initialize,false);
+		//if(self.attachEvent) self.attachEvent('onload',self.initialize);
+		//else self.addEventListener('load',self.initialize,false);
+		DOM.Events.addListener(self, 'load', self.initialize);
 	}
 
 	self.getLanguage = function() {
@@ -134,15 +157,15 @@ CodePress.run = function() {
 
 CodePress.beforeSubmit = function() {
 	for (instance in CodePress.instances)  {
-		//CodePress.instances[ instance ].toggleEditor();
-		var i = CodePress.instances[ instance ];
-		i.textarea.value = i.getCode();
-		i.textarea.disabled = false;
-		i.style.display = 'none';
-		i.textarea.style.display = 'inline';
+		// consider just Jifty fields
+		if ( instance.substr(0,5) == 'J:A:F' ) {
+			CodePress.instances[ instance ].toggleEditor();
+		}
 	}
 }
 
 //if(window.attachEvent) window.attachEvent('onload',CodePress.run);
 //else window.addEventListener('DOMContentLoaded',CodePress.run,false);
-DOM.Events.addListener(window, "load", CodePress.run);
+//DOM.Events.addListener(window, "load", CodePress.run);
+// Jifty-specific onLoad hook
+onLoadHook( 'CodePress.run();' );
