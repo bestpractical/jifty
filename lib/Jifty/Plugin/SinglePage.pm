@@ -16,7 +16,8 @@ sub init {
 sub _push_onclick {
     my $self = shift;
     my $args = shift;
-    $args->{onclick} = [ $args->{onclick} ] unless ref $args->{onclick} eq 'ARRAY';
+    $args->{onclick} = [ $args->{onclick} ? $args->{onclick} : () ]
+        unless ref $args->{onclick} eq 'ARRAY';
     push @{$args->{onclick}}, @_ if @_;
 }
 
