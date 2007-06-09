@@ -177,7 +177,7 @@ access to C</secret> to logged-in users, you could write:
 
     before qr'^/secret' => run {
         unless(Jifty->web->current_user->id) {
-            Jifty->web->tangent('/login');
+            Jifty->web->tangent(url => '/login');
         }
     };
 

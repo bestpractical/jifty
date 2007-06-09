@@ -824,6 +824,10 @@ Both of these versions preserve all state variables by default.
 sub tangent {
     my $self = shift;
 
+    if (@_ == 1  ) {
+        Jifty->log->error("Jifty::Web->tangent takes a paramhash. Perhaps you passed '".$_[0]."' , rather than 'url => ".$_[0]."'");
+        die; 
+    }
     my $clickable = Jifty::Web::Form::Clickable->new(
         returns        => { },
         preserve_state => 1,
