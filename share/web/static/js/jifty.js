@@ -690,9 +690,11 @@ var apply_fragment_updates = function(fragment, f) {
 	    } else {
 		Element.update(element, textContent.stripScripts());
 	    }
-	    // We need to give the browser some "settle" time before we eval scripts in the body
-	    setTimeout((function() { this.evalScripts() }).bind(textContent), 10);
-	    Behaviour.apply(element);
+	    // We need to give the browser some "settle" time before
+	    // we eval scripts in the body
+	    YAHOO.util.Event.onAvailable(element.id, function() {
+		    (function() { this.evalScripts() }).bind(textContent)();
+		    Behaviour.apply(element) });
 	}
     }
     dom_fragment.setArgs(new_dom_args);
