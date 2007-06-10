@@ -24,6 +24,10 @@ Jifty.KeyBindings = {
         DOM.Events.removeListener(Jifty.KeyBindings.listener);
     },
 
+    reset: function() {
+        Jifty.KeyBindings.bindings = new Array();
+    },
+
     doClick: function(e) {
         if (e.target.nodeType == 3) // defeat Safari bug
             e.target = e.target.parentNode;
