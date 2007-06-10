@@ -144,7 +144,7 @@ sub return_path_matches {
 =head2 call
 
 Call the continuation; this is generally done during request
-processing, after an actions have been run.
+processing, after actions have been run.
 L<Jifty::Request::Mapper>-controlled values are filled into the stored
 request based on the current request and response.  During the
 process, another continuation is created, with the filled-in results
