@@ -27,7 +27,7 @@ __PACKAGE__->mk_accessors(
 
 __PACKAGE__->mk_classdata($_)
     for qw(cached_css        cached_css_digest        cached_css_time
-           cached_javascript cached_javascript_digest cached_javascript_time javascript_libs);
+           javascript_libs);
 
 __PACKAGE__->javascript_libs([qw(
     jsan/JSAN.js
@@ -70,6 +70,8 @@ __PACKAGE__->javascript_libs([qw(
     app_behaviour.js
     css_browser_selector.js
 )]);
+
+use Jifty::DBI::Class::Trigger;
 
 =head1 METHODS
 
@@ -1174,92 +1176,16 @@ default.
 
 sub include_javascript {
     my $self  = shift;
-    my ($ccjs) = Jifty->find_plugin('Jifty::Plugin::CompressedCSSandJS');
-    if ( $ccjs && $ccjs->js_enabled ) {
-        $self->generate_javascript;
+
+    $self->call_trigger('include_javascript', @_) or return;
+
+    for my $file ( @{ __PACKAGE__->javascript_libs } ) {
         $self->out(
-            qq[<script type="text/javascript" src="/__jifty/js/]
-            . __PACKAGE__->cached_javascript_digest . qq[.js"></script>]
+            qq[<script type="text/javascript" src="/static/js/$file"></script>\n]
         );
     }
-    else {
-        for my $file ( @{ __PACKAGE__->javascript_libs } ) {
-            $self->out(
-                qq[<script type="text/javascript" src="/static/js/$file"></script>\n]
-            );
-        }
-    }
-    
+
     return '';
-}
-
-=head3 generate_javascript
-
-Checks if the compressed JS is generated, and if it isn't, generates
-and caches it.
-
-=cut
-
-sub generate_javascript {
-    my $self = shift;
-    
-    if (not defined __PACKAGE__->cached_javascript_digest
-            or Jifty->config->framework('DevelMode'))
-    {
-        Jifty->log->debug("Generating JS...");
-        
-        my @roots = (
-            Jifty::Util->absolute_path(
-                File::Spec->catdir(
-                    Jifty->config->framework('Web')->{'StaticRoot'},
-                    'js'
-                )
-            ),
-
-            Jifty::Util->absolute_path(
-                File::Spec->catdir(
-                    Jifty->config->framework('Web')->{'DefaultStaticRoot'},
-                    'js'
-                )
-            ),
-        );
-        
-        my $js = "";
-
-        for my $file ( @{ __PACKAGE__->javascript_libs } ) {
-            my $include;
-        
-            for my $root (@roots) {
-                my @spec = File::Spec->splitpath( $root, 1 );
-                my $path = File::Spec->catpath( @spec[0,1], $file );
-                
-                if ( -e $path ) {
-                    $include = $path;
-                    last;
-                }
-            }
-
-            if ( defined $include ) {
-                my $fh;
-
-                if ( open $fh, '<', $include ) {
-                    $js .= "/* Including '$file' */\n\n";
-                    $js .= $_ while <$fh>;
-                    $js .= "\n/* End of '$file' */\n\n";
-                }
-                else {
-                    $js .= "\n/* Unable to open '$file': $! */\n";
-                }
-            }
-            else {
-                $js .= "\n/* Unable to find '$file' */\n";
-            }
-        }
-
-        __PACKAGE__->cached_javascript( $js );
-        __PACKAGE__->cached_javascript_digest( md5_hex( $js ) );
-        __PACKAGE__->cached_javascript_time( time );
-    }
 }
 
 =head3 add_javascript FILE1, FILE2, ...
