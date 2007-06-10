@@ -1,10 +1,8 @@
 package Jifty::View::Declare::Page;
 use strict;
 use warnings;
-use base qw/Template::Declare/;
+use base qw/Template::Declare Class::Accessor::Fast/;
 use Template::Declare::Tags;
-
-use base 'Class::Accessor::Fast';
 
 =head1 NAME
 

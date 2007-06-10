@@ -17,8 +17,7 @@ creates a handy standalone web server for a lightweight Jifty application.
 =cut
 
 
-use base qw/HTTP::Server::Simple::CGI/;
-use base qw/Jifty::Object/;
+use base qw/HTTP::Server::Simple::CGI Jifty::Object/;
 use File::Spec;
 use Log::Log4perl;
 use HTTP::Server::Simple;

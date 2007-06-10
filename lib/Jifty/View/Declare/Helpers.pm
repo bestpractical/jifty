@@ -2,8 +2,7 @@ use warnings;
 use strict;
 
 package Jifty::View::Declare::Helpers;
-use base qw/Template::Declare/;
-use base qw/Exporter/;
+use base qw/Template::Declare Exporter/;
 use Template::Declare::Tags;
 
 our @EXPORT = ( qw(form hyperlink tangent redirect new_action form_submit form_return  form_next_page page wrapper request get set render_param current_user render_action render_region), @Template::Declare::Tags::EXPORT);
