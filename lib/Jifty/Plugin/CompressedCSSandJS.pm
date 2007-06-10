@@ -2,24 +2,48 @@ use strict;
 use warnings;
 
 package Jifty::Plugin::CompressedCSSandJS;
-use base qw/Jifty::Plugin Class::Accessor/;
+use base qw/Jifty::Plugin Class::Accessor::Fast/;
+
 use Digest::MD5 qw(md5_hex);
+use IPC::Run3 'run3';
+use IO::Handle ();
 
 =head1 NAME
 
 Jifty::Plugin::CompressedCSSandJS
 
+=head1 SYNOPSIS
+
+# In your jifty config.yml under the framework section:
+
+  Plugins:
+    - CompressedCSSandJS:
+        js: 1
+        css: 1
+        jsmin: /path/to/jsmin
+
 =head1 DESCRIPTION
 
-This plugin provides auto-compilation and on-wire compression of your application's CSS and Javascript. It is enabled by default.
+This plugin provides auto-compilation and on-wire compression of your
+application's CSS and Javascript. It is enabled by default, unless
+your C<ConfigFileVersion> is greater or equal than 2.
+
+It also supports js minifier, you will need to specify the full path.
+The jsmin can be obtained from
+L<http://www.crockford.com/javascript/jsmin.html>.
+
+Note that you will need to use C<ConfigFileVersion> 2 to be able to
+configure jsmin feature.
 
 =cut
 
-__PACKAGE__->mk_accessors(qw(css js cached_javascript cached_javascript_digest cached_javascript_time ));
+__PACKAGE__->mk_accessors(qw(css js jsmin cached_javascript cached_javascript_digest cached_javascript_time ));
 
 =head2 init
 
-Initializes the compression object. Takes a paramhash containing keys 'css' and 'js' which can be used to disable compression on files of that type.
+Initializes the compression object. Takes a paramhash containing keys
+'css' and 'js' which can be used to disable compression on files of
+that type.
 
 =cut
 
@@ -28,6 +52,7 @@ sub init {
     my %opt  = @_;
     $self->css( $opt{css} );
     $self->js( $opt{js} );
+    $self->jsmin( $opt{jsmin} );
 
     Jifty::Web->add_trigger(
         name      => 'include_javascript',
@@ -126,11 +151,38 @@ sub _generate_javascript {
                 $js .= "\n/* Unable to find '$file' */\n";
             }
         }
+        if ($self->jsmin) {
+            eval { $self->minify_js(\$js) };
+            Jifty->log->error("Unable to run jsmin: $@") if $@;
+        }
         $self->cached_javascript($js);
         $self->cached_javascript_digest( md5_hex($js) );
         $self->cached_javascript_time(time);
     }
 }
 
+sub minify_js {
+    my $self = shift;
+    my $input = shift;
+    my $output;
+
+    Jifty->log->debug("Minifying JS...");
+
+    # We need to reopen stdout temporarily, because in FCGI
+    # environment, stdout is tied to FCGI::Stream, and the child
+    # of the run3 wouldn't be able to reopen STDOUT properly.
+    my $stdout = IO::Handle->new;
+    $stdout->fdopen( 1, 'w' );
+    local *STDOUT = $stdout;
+
+    my $stderr = IO::Handle->new;
+    $stderr->fdopen( 2, 'w' );
+    local *STDERR = $stderr;
+
+    local $SIG{'CHLD'} = 'DEFAULT';
+    run3 [$self->jsmin], $input, \$output, undef;
+
+    $$input = $output;
+}
 
 1;
