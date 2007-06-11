@@ -27,14 +27,13 @@ sub _sp_link {
         my ( $clickable, $args ) = @_;
         my $url = $args->{'url'};
         if ( $url && $url !~ m/^#/ && $url !~ m{^https?://} ) {
-            # XXX mind the existing onclick
             $self->_push_onclick($args, {
                 region       => $self->region_name,
                 replace_with => $url,
-                args         => delete $args->{parameters}});
+                args         => $args->{parameters}});
         }
         elsif (exists $args->{submit}) {
-	    $self->_push_onclick($args, { refresh_self => 1, submit => delete $args->{submit} });
+	    $self->_push_onclick($args, { refresh_self => 1, submit => $args->{submit} });
 	    $args->{as_button} = 1;
 	}
         if (my $form = delete $args->{_form}) {
