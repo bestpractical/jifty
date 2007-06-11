@@ -1177,7 +1177,7 @@ default.
 sub include_javascript {
     my $self  = shift;
 
-    $self->call_trigger('include_javascript', @_) or return;
+    $self->call_trigger('include_javascript', @_) or return '';
 
     for my $file ( @{ __PACKAGE__->javascript_libs } ) {
         $self->out(

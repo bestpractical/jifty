@@ -56,8 +56,8 @@ sub init {
 
     Jifty::Web->add_trigger(
         name      => 'include_javascript',
-        callback  => => sub { $self->_include_javascript(@_) },
-        abortable => 1
+        callback  => sub { $self->_include_javascript(@_) },
+        abortable => 1,
     ) if $self->js_enabled;
 }
 
