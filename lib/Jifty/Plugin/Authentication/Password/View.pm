@@ -14,14 +14,13 @@ if you're running a traditional (0.610 or before) Jifty.
 =cut
 
 package Jifty::Plugin::Authentication::Password::View;
-use HTML::Entities ();
 use Jifty::View::Declare -base;
 
 { no warnings 'redefine';
 sub page (&) {
     no strict 'refs'; 
     BEGIN {Jifty::Util->require(Jifty->app_class('View'))};
-    &{Jifty->app_class('View') . "::page"}(@_);
+    Jifty->app_class('View')->can('page')->(@_);
 }
 }
 
