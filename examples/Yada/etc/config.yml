@@ -5,11 +5,11 @@ framework:
   AdminMode: 1
   SkipAccessControl: 1
   ApplicationClass: Yada
-  ApplicationName: Example-Todo
+  ApplicationName: Yada
   ApplicationUUID: 80DF397A-D999-11DB-B80A-9318EBB6763A
   Database: 
     CheckSchema: 1
-    Database: example_todo
+    Database: yada
     Driver: SQLite
     Host: localhost
     Password: ''

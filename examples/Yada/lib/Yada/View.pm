@@ -10,8 +10,9 @@ template 'index.html' => page {
     }
 };
 
-require Yada::View::Todo;
-alias Yada::View::Todo under '/todo';
-
+use Jifty::View::Declare::CRUD;
+for (qw/todo/) {
+    Jifty::View::Declare::CRUD->mount_view($_);
+}
 
 1;

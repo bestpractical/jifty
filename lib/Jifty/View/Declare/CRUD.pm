@@ -6,6 +6,21 @@ use Jifty::View::Declare -base;
 use base 'Exporter';
 our @EXPORT = qw(object_type fragment_for get_record current_collection);
 
+sub mount_view {
+    my ($class, $model, $vclass, $path) = @_;
+    my $caller = caller(0);
+    $model = ucfirst($model);
+    $vclass ||= $caller.'::'.$model;
+    $path ||= '/'.lc($model);
+
+    Jifty::Util->require($vclass);
+    eval qq{package $caller;
+            alias $vclass under '$path'; 1} or die $@;
+    no strict 'refs';
+    *{$vclass."::fragment_base_path"} = sub { "/$path" };
+    *{$vclass."::object_type"} = sub { $model };
+}
+
 sub object_type {
     my $self = shift;
     return $self->package_variable('object_type') || get('object_type');
