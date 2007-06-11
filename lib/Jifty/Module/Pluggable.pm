@@ -51,6 +51,8 @@ sub Module::Pluggable::Object::_require {
     # Module::Pluggable::Object::_require expects a true value (the error message) on failure
     # On success, it expects you to return undef.
 
+    return if $module =~/\.#/;
+
     local $UNIVERSAL::require::ERROR;
 
     no warnings; # This is lexical and turns off exactly one warning below -- "Can't locate package in @ISA".
