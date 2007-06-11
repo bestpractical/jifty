@@ -49,17 +49,20 @@ sub render_tabs {
 				  $tab =~ s/_tab$// ? 
 				  (onclick =>
 				  { region       => Jifty->web->current_region->qualified_name."-$tab-tab",
-				    replace_with => $self->fragment_for($tab),
+				    replace_with => $tab,#$self->fragment_for($tab),
 				    args => { map { $_ => get($_)} @$args },
 				  }) : ()
 				 ) }
 	       }
 	   };
 	  div { {class is 'yui-content' };
+      my $default_shown;
 		for (@tabs) {
 		    div { 
 			if (s/_tab$//) {
-			    render_region(name => $_.'-tab');
+			    render_region(name => $_.'-tab', 
+                          ($default_shown++)? () : ( path => $_, args =>  { map { $_ => get($_)} @$args })
+                          )
 			}
 			else {
 			    die "$self $_" unless $self->has_template($_);
