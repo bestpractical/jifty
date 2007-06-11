@@ -11,14 +11,14 @@ A basic test harness for the Todo model.
 use Jifty::Test tests => 11;
 
 # Make sure we can load the model
-use_ok('Example::Todo::Model::Todo');
+use_ok('Yada::Model::Todo');
 
 # Grab a system user
-my $system_user = Example::Todo::CurrentUser->superuser;
+my $system_user = Yada::CurrentUser->superuser;
 ok($system_user, "Found a system user");
 
 # Try testing a create
-my $o = Example::Todo::Model::Todo->new(current_user => $system_user);
+my $o = Yada::Model::Todo->new(current_user => $system_user);
 my ($id) = $o->create();
 ok($id, "Todo create returned success");
 ok($o->id, "New Todo has valid id set");
@@ -30,7 +30,7 @@ ok($o->id, "Todo create returned another value");
 isnt($o->id, $id, "And it is different from the previous one");
 
 # Searches in general
-my $collection =  Example::Todo::Model::TodoCollection->new(current_user => $system_user);
+my $collection =  Yada::Model::TodoCollection->new(current_user => $system_user);
 $collection->unlimit;
 is($collection->count, 2, "Finds two records");
 

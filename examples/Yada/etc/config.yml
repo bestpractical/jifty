@@ -4,7 +4,7 @@ application:
 framework: 
   AdminMode: 1
   SkipAccessControl: 1
-  ApplicationClass: Example::Todo
+  ApplicationClass: Yada
   ApplicationName: Example-Todo
   ApplicationUUID: 80DF397A-D999-11DB-B80A-9318EBB6763A
   Database: 
@@ -38,7 +38,7 @@ framework:
   PubSub: 
     Backend: Memcached
     Enable: ~
-  TemplateClass: Example::Todo::View
+  TemplateClass: Yada::View
   Web: 
     BaseURL: http://localhost
     DataDir: var/mason

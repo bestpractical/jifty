@@ -1,10 +1,10 @@
 use strict;
 use warnings;
 
-package Example::Todo::Model::Todo;
+package Yada::Model::Todo;
 use Jifty::DBI::Schema;
 
-use Example::Todo::Record schema {
+use Yada::Record schema {
 
     column done => type is 'bool';
     column description => type is 'text';
