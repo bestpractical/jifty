@@ -63,6 +63,13 @@ template 'search' => sub {
         }
 };
 
+sub display_columns {
+    my $self = shift;
+    my $action = shift;
+     return   grep { !( m/_confirm/ || lc $action->arguments->{$_}{render_as} eq 'password' ) } $action->argument_names;
+}
+
+
 template 'view' => sub {
     my $self = shift;
     my ( $object_type, $id ) = ( $self->object_type, get('id') );
@@ -74,6 +81,8 @@ template 'view' => sub {
 
     div {
         { class is 'crud read item inline' };
+        my @fields =$self->display_columns($update);
+        render_action( $update, \@fields, { render_mode => 'read' } );
         hyperlink(
             label   => "Edit",
             class   => "editlink",
@@ -83,11 +92,6 @@ template 'view' => sub {
             },
         );
 
-        my @fields = grep {
-            !( m/_confirm/
-                || lc $update->arguments->{$_}{render_as} eq 'password' )
-        } $update->argument_names;
-        render_action( $update, \@fields, { render_mode => 'read' } );
         hr {};
     };
 
@@ -109,6 +113,7 @@ template 'update' => sub {
     div {
         { class is "crud update item inline " . $object_type }
 
+        show('./edit_item', $update);
         div {
             { class is 'crud editlink' };
             hyperlink(
@@ -130,7 +135,6 @@ template 'update' => sub {
             );
         };
 
-        render_action($update);
         hr {};
         }
 };
@@ -143,11 +147,11 @@ sub current_collection {
     my $collection_class = Jifty->app_class( "Model", $self->object_type . "Collection" );
     my $search = $search_collection || Jifty->web->response->result('search');
     my $collection;
-    if ( !$search ) {
+    if ( $search ) {
+        $collection = $search;
+    } else {
         $collection = $collection_class->new();
         $collection->unlimit();
-    } else {
-        $collection = $search;
     }
 
     $collection->set_page_info( current_page => $page, per_page => 25 );
@@ -158,11 +162,11 @@ sub current_collection {
 template 'list' => sub {
     my $self = shift;
 
-    my ( $page, $search_collection ) = get(qw(page  search_collection));
+    my ( $page ) = get(qw(page ));
     my $fragment_for_new_item = get('fragment_for_new_item') || $self->fragment_for('new_item');
     my $item_path = get('item_path') || $self->fragment_for("view");
-
     my $collection =  $self->current_collection();
+
     show('./search_region');
     show( './paging_top',    $collection, $page );
     show( './list_items',    $collection, $item_path );
@@ -274,6 +278,14 @@ private template paging_bottom => sub {
     };
 };
 
+
+private template 'edit_item' => sub {
+    my $self = shift;
+    my $action = shift;
+    render_action($action, [$self->display_columns($action)]);
+};
+
+
 template 'new_item' => sub {
     my $self = shift;
     my ( $object_type, $id ) = ( $self->object_type, get('id') );
@@ -283,7 +295,7 @@ template 'new_item' => sub {
 
     div {
         { class is 'crud create item inline' };
-        render_action($create);
+        show('./edit_item', $create);
 
         outs(
             Jifty->web->form->submit(
