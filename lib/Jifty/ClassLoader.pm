@@ -179,10 +179,10 @@ sub Jifty::ClassLoader::INC {
 
     }
 
-    # This is if, not elsif because we might have $base::Action::Deleteblah 
+    # This is if, not elsif because we might have $base::Action::Deleteblah
     # that matches that last elsif clause but loses on the eval.
     if ( $module =~ /^(?:$base)::(Action|Notification)::(.*)$/x and not grep {$_ eq $base} map {ref} Jifty->plugins ) {
-        my $type = $1; 
+        my $type = $1;
         my $item = $2;
         # If we don't have the action in our own app, let's try the plugins
         # the app has loaded.
@@ -234,15 +234,15 @@ do not exist on disk.
 
 sub require {
     my $self = shift;
-    
+
     my $base = $self->{base};
     # if we don't even have an application class, this trick will not work
-    return unless ($base); 
+    return unless ($base);
     Jifty::Util->require($base);
     Jifty::Util->require($base."::CurrentUser");
 
     my %models;
-    
+
 
     Jifty::Module::Pluggable->import(
         # $base goes last so we pull in the view class AFTER the model classes
@@ -256,7 +256,7 @@ sub require {
     for my $full ($self->models) {
         $self->_require_model_related_classes($full);
     }
-        
+
 }
 
 sub _require_model_related_classes {
@@ -275,13 +275,13 @@ sub _require_model_related_classes {
 
 Jifty supports model classes that aren't files on disk but instead records
 in your database. It's a little bit mind bending, but basically, you can
-build an application entirely out of the database without ever writing a 
-line of code(*). 
+build an application entirely out of the database without ever writing a
+line of code(*).
 
-* As of early 2007, this forward looking statement is mostly a lie. But we're 
+* As of early 2007, this forward looking statement is mostly a lie. But we're
 working on it.
 
-This method finds all database-backed models and instantiates jifty classes for 
+This method finds all database-backed models and instantiates jifty classes for
 them it returns a list of classnames of the models it created.
 
 =cut
@@ -308,10 +308,10 @@ Load up C<$appname::View>, the view class for the application.
 
 sub require_views {
     my $self = shift;
-    
+
     my $base = $self->{base};
     # if we don't even have an application class, this trick will not work
-    return unless ($base); 
+    return unless ($base);
     Jifty::Util->require($base."::View");
 }
 
