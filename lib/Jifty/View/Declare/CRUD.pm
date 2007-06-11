@@ -6,6 +6,14 @@ use Jifty::View::Declare -base;
 use base 'Exporter';
 our @EXPORT = qw(object_type fragment_for get_record current_collection);
 
+# XXX: should register 'template type' handler, so the
+# client_cache_content & the TD sub here agrees with the arguments.
+use Attribute::Handlers;
+my %VIEW;
+sub CRUDView :ATTR(CODE,BEGIN) {
+    $VIEW{$_[2]}++;
+}
+
 sub mount_view {
     my ($class, $model, $vclass, $path) = @_;
     my $caller = caller(0);
@@ -19,6 +27,19 @@ sub mount_view {
     no strict 'refs';
     *{$vclass."::fragment_base_path"} = sub { "/$path" };
     *{$vclass."::object_type"} = sub { $model };
+}
+
+sub _dispatch_template {
+    my $class = shift;
+    my $code  = shift;
+    if ($VIEW{$code} && !UNIVERSAL::isa($_[0], 'Evil')) {
+	my ( $object_type, $id ) = ( $class->object_type, get('id') );
+	@_ = ($class, $class->get_record($id), @_);
+    }
+    else {
+	unshift @_, $class;
+    }
+    goto $code;
 }
 
 sub object_type {
@@ -84,26 +105,24 @@ sub display_columns {
      return   grep { !( m/_confirm/ || lc $action->arguments->{$_}{render_as} eq 'password' ) } $action->argument_names;
 }
 
-
-template 'view' => sub {
-    my $self = shift;
-    my ( $object_type, $id ) = ( $self->object_type, get('id') );
+template 'view' => sub :CRUDView {
+    my ($self, $record) = @_;
     my $update = new_action(
-        class   => 'Update' . $object_type,
+        class   => 'Update' . $self->object_type,
         moniker => "update-" . Jifty->web->serial,
-        record  => $self->get_record($id)
+        record  => $record,
     );
 
     div {
         { class is 'crud read item inline' };
-        my @fields =$self->display_columns($update);
+        my @fields = $self->display_columns($update);
         render_action( $update, \@fields, { render_mode => 'read' } );
         hyperlink(
             label   => "Edit",
             class   => "editlink",
             onclick => {
                 replace_with => $self->fragment_for('update'),
-                args         => { object_type => $object_type, id => $id }
+                args         => { id => $record->id }
             },
         );
 

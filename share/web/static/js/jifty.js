@@ -652,6 +652,26 @@ function prepare_element_for_update(f) {
 
     return f;    
 }
+
+var CACHE = {};
+
+var extract_cacheable = function(fragment, f) {
+    for (var fragment_bit = fragment.firstChild;
+         fragment_bit != null;
+         fragment_bit = fragment_bit.nextSibling) {
+        if (fragment_bit.nodeName == 'cacheable') {
+            var c_type = fragment_bit.getAttribute("type");
+            var textContent = '';
+            if (fragment_bit.textContent) {
+                textContent = fragment_bit.textContent;
+            } else if (fragment_bit.firstChild) {
+                textContent = fragment_bit.firstChild.nodeValue;
+            } 
+            CACHE[f['path']] = { 'type': c_type, 'content': textContent };
+        }
+    }
+}
+
 // applying updates from a fragment
 //   - fragment: the fragment from the server
 //   - f: fragment spec
@@ -659,6 +679,7 @@ var apply_fragment_updates = function(fragment, f) {
     // We found the right fragment
     var dom_fragment = fragments[f['region']];
     var new_dom_args = $H();
+
     var element = f['element'];
     for (var fragment_bit = fragment.firstChild;
 	 fragment_bit != null;
@@ -732,7 +753,6 @@ function update() {
         window.event.returnValue = false;
     }
 
-    show_wait_message();
     var named_args = arguments[0];
     var trigger    = arguments[1];
 
@@ -759,6 +779,7 @@ function update() {
     if (form && form['J:CALL']) 
 	optional_fragments = [ prepare_element_for_update({'mode':'Replace','args':{},'region':'__page','path': null}) ];
     // Build actions structure
+    var has_request = 0;
     request['actions'] = $H();
     for (var moniker in named_args['actions']) {
         var disable = named_args['actions'][moniker];
@@ -775,15 +796,47 @@ function update() {
                 a.disable_input_fields();
             }
             request['actions'][moniker] = a.data_structure();
+            ++has_request;
         }
+        
     }
 
     request['fragments'] = $H();
+    var update_from_cache = new Array;
+
     // Build fragments structure
     for (var i = 0; i < named_args['fragments'].length; i++) {
         var f = named_args['fragments'][i];
         f = prepare_element_for_update(f);
         if (!f) continue;
+
+        var cached = CACHE[f['path']];
+        if (cached && cached['type'] == 'static') {
+            var my_fragment = document.createElement('fragment');
+            var content_node = document.createElement('content');
+            content_node.textContent = cached['content'];
+            my_fragment.appendChild(content_node);
+            my_fragment.setAttribute('id', f['region']);
+
+            update_from_cache.push(function(){ apply_fragment_updates(my_fragment, f);
+ } );
+            continue;
+        }
+        else if (cached && cached['type'] == 'crudview') {
+	    try { // XXX: get model class etc as metadata in cache 
+		// XXX: kill dup code
+	    var Todo = new AsynapseRecord('todo');
+	    var record = Todo.find(f['args']['id']);
+            var my_fragment = document.createElement('fragment');
+            var content_node = document.createElement('content');
+            content_node.textContent = cached['content'].process(record);
+            my_fragment.appendChild(content_node);
+            my_fragment.setAttribute('id', f['region']);
+            update_from_cache.push(function(){ apply_fragment_updates(my_fragment, f); } );
+	    } catch (e) { alert(e) };
+	    continue;
+	}
+
         // Update with all new values
         var name = f['region'];
         var fragment_request = fragments[name].data_structure(f['path'], f['args']);
@@ -794,7 +847,16 @@ function update() {
 
         // Push it onto the request stack
         request['fragments'][name] = fragment_request;
+        ++has_request;
     }
+
+    if (!has_request) {
+        for (var i = 0; i < update_from_cache.length; i++)
+            update_from_cache[i]();
+        return false;
+    }
+
+    show_wait_message();
 
     // And when we get the result back..
     var onSuccess = function(transport, object) {
@@ -815,9 +877,13 @@ function update() {
             if (response_fragment.getAttribute("id") != f['region'])
                 continue;
 
-	    try {
-            apply_fragment_updates(response_fragment, f);
-	    }catch (e) { alert(e) }
+            for (var i = 0; i < update_from_cache.length; i++)
+                update_from_cache[i]();
+
+            try {
+                apply_fragment_updates(response_fragment, f);
+            }catch (e) { alert(e) }
+            extract_cacheable(response_fragment, f);
         }
         for (var result = response.firstChild;
              result != null;

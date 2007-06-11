@@ -384,4 +384,36 @@ sub get_element {
     return "#region-" . $self->qualified_name . ' ' . join(' ', @_);
 }
 
+sub client_cacheable {
+    my $self = shift;
+    return 'static' if $self->path eq '__jifty/empty';
+    return 'crudview' if $self->path eq '//todo/view';
+}
+
+sub client_cache_content {
+    my $self = shift;
+    my $code = Template::Declare->resolve_template($self->path);
+
+    local @Evil::ISA = ('Yada::Model::Todo');
+    local $HTML::Mason::Commands::m = undef;
+    local Jifty->handler->apache->{http_header_sent} = 1;
+
+    # dup from JV::Declare::Handler
+    no warnings qw/redefine/;
+    local *Jifty::Web::out = sub {
+        shift;    # Turn the method into a function
+        goto &Template::Declare::Tags::outs_raw;
+    };
+
+    return Template::Declare::Tags::show_page( $self->path, (bless {}, 'Evil') );
+}
+
+package Evil;
+
+sub id { return '${id}' }
+
+sub _value {
+    return '${'.$_[1].'}';
+}
+
 1;
