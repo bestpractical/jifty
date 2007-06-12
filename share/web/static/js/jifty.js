@@ -692,9 +692,10 @@ var apply_fragment_updates = function(fragment, f) {
 	    }
 	    // We need to give the browser some "settle" time before
 	    // we eval scripts in the body
-	    YAHOO.util.Event.onAvailable(element.id, function() {
-		    (function() { this.evalScripts() }).bind(textContent)();
-		    Behaviour.apply(element) });
+        YAHOO.util.Event.onAvailable(element.id, function() {
+            (function() { this.evalScripts() }).bind(textContent)();
+        });
+        Behaviour.apply(element);
 	}
     }
     dom_fragment.setArgs(new_dom_args);
