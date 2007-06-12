@@ -84,7 +84,7 @@ sub _user_from_email {
     my $currentuser_object_class = Jifty->app_class("CurrentUser");
     my $u = $currentuser_object_class->new( email => $email )->user_object;
     # we want to be able to get at their auth token.
-    $u->current_user(Jifty->app_class('CurrentUser')->superuser);
+    $u->current_user( $currentuser_object_class->superuser );
     return $u;
 }
 

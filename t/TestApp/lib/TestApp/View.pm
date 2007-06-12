@@ -44,8 +44,8 @@ template 'entry.html' => sub {
 
 require TestApp::View::base;
 require TestApp::View::instance;
-import_templates TestApp::View::base under '/base';
-import_templates TestApp::View::instance under '/instance';
+alias TestApp::View::base under '/base';
+alias TestApp::View::instance under '/instance';
 
 use Jifty::View::Declare::CRUD;
 
@@ -65,5 +65,42 @@ template userlist => page {
     };
 };
 
+template '/foo/list' => sub {
+    outs('list!');
+    show('/foo/item', { id => 1 } );
+    show('/foo/item', { id => 2 } );
+    render_region('special', path => '/foo/item', defaults => { id => 3 } );
+};
 
+template '/foo/item' => sub {
+    my ($self, $args) = @_;
+    span { $args->{id} }
+};
+
+
+template 'region-with-internal-redirect' => page {
+    
+    h1 { 'outer page'};
+
+    render_region('internal', path => '/pre-redir-region');
+    render_region('internal2', path => '/nonredir-region');
+    
+
+    h2 { 'still going'} ;
+};
+
+
+template 'nonredir-region' => sub {
+    h1 { 'other region'};
+};
+
+template 'pre-redir-region' => sub {
+    h1 { 'sorry. no.'};
+};
+
+
+template 'post-redir-region' => sub {
+
+    h1 { 'redirected ok'};
+};
 1;

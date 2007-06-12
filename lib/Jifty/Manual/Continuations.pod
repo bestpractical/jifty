@@ -171,7 +171,7 @@ As currently impelented, these redirect-from-dispatcher tangents works
 exactly like rendered-as-links tangents, in that when they return,
 I<all> rules in the dispatcher are still executed from the start.
 Therefore the C<unless> guard in the C<before '/protected'> rule above
-is neccessary to prevent recursion.
+is necessary to prevent recursion.
 
 =head1 GORY DETAILS
 

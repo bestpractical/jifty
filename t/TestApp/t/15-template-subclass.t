@@ -72,14 +72,8 @@ my $URL = $server->started_ok;
 my $mech = Jifty::Test::WWW::Mechanize->new;
 foreach my $test (@tests) {
     $mech->get_ok( $URL . $test->{url}, "get '$URL: /jifty/jifty/trunk/t/TestApp/t/15-template-subclass.t $test->{url}'" );
-    TODO: { 
 
-    local $TODO = " Template subclassing needs some love";
-    ok($mech->content =~ qr{$test->{text}}, "found the test content");
-    # $mech->content_contains breaks on multiline content
-    #$mech->content_contains( $test->{text}, "found content '$test->{text}'" );
-    };
-
+    $mech->content_contains( $test->{text}, "found content '$test->{text}'" );
 }
 
 1;

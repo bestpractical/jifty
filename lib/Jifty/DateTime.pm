@@ -16,6 +16,15 @@ into the proper timezone.
 
 =cut
 
+BEGIN {
+    # we spent about 30% of the time in validate during 'require
+    # DateTime::Locale' which isn't necessary at all
+    require Params::Validate;
+    no warnings 'redefine';
+    local *Params::Validate::validate = sub { pop @_, return @_ };
+    require DateTime::Locale;
+}
+
 use base qw(Jifty::Object DateTime);
 
 

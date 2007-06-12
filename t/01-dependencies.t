@@ -66,7 +66,7 @@ for (sort keys %used) {
 
 for (sort keys %required) {
     my $first_in = Module::CoreList->first_release($_, $required{$_});
-    fail("Required module $_ is already in core") if defined $first_in and $first_in <= 5.00803;
+    fail("Required module $_ (v. $required{$_}) is in core since $first_in") if defined $first_in and $first_in <= 5.008003;
 }
 
 1;

@@ -168,7 +168,7 @@ sub arguments {
             $render_as = defined $render_as ? lc($render_as) : '';
 
             if ( defined (my $valid_values = $column->valid_values)) {
-                $info->{valid_values} = [ @$valid_values ];
+                $info->{valid_values} = $valid_values;
                 $info->{render_as}    = 'Select';
             } elsif ( defined $column->type && $column->type =~ /^bool/i ) {
                 $info->{render_as} = 'Checkbox';
@@ -217,7 +217,13 @@ sub arguments {
                     # No need to generate arguments for
                     # JDBI::Collections, as we can't do anything
                     # useful with them yet, anyways.
-                    next;
+
+                    # However, if the column comes with a
+                    # "render_as", we can assume that the app
+                    # developer know what he/she is doing.
+                    # So we just render it as whatever specified.
+
+                    next unless $render_as;
                 }
             }
 

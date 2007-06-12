@@ -150,8 +150,8 @@ sub new {
     );
 
 
-    # Turn on logging as soon as we possibly can.
-    Jifty->logger( Jifty::Logger->new( $args{'logger_component'} ) );
+    # Add the appliation's library path
+    push @INC, File::Spec->catdir(Jifty::Util->app_root, "lib");
 
     # Create the Jifty classloader
     Jifty::ClassLoader->new( base => 'Jifty' );
@@ -375,6 +375,18 @@ sub plugins {
     my $class = shift;
     @PLUGINS = @_ if @_;
     return @PLUGINS;
+}
+
+=head2 find_plugin
+
+Find plugins by name.
+
+=cut
+
+sub find_plugin {
+    my $self = shift;
+    my $name = shift;
+    return grep { $_->isa($name) } Jifty->plugins;
 }
 
 =head2 class_loader

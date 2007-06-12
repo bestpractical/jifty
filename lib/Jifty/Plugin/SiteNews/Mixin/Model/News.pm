@@ -7,7 +7,7 @@ use base 'Jifty::DBI::Record::Plugin';
 
 our @EXPORT = qw(current_user_can);
 
-use Jifty::Plugin::SiteNews::Record schema {
+use Jifty::Record schema {
 
     my $user_class = Jifty->app_class('Model', 'User');
 
@@ -25,6 +25,11 @@ column content   =>
   render_as is 'Textarea';
 };
 
+=head2 create
+
+Create the News model. Takes a paramhash with keys author_id, created, title, and content.
+
+=cut
 
 sub create {
     my $self = shift;

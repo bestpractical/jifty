@@ -215,19 +215,93 @@ value, the name of the column being queried.
 Called before any attribute is changed on the object.
 ATTRIBUTES is a hash of the arguments passed to _set.
 
-
-
 =item delete
 
 Called before the object is deleted.
 
 =back
 
-The default implementation returns true if the current user is a
-superuser or a boostrap user.  If the user is looking to delegate the
-access control decision to another object (by creating a
-C<delegate_current_user_can> subroutine), it hands off to that
-routine.  Otherwise, it returns false.
+Models wishing to customize authorization checks should override this method. You can do so like this:
+
+  sub current_user_can {
+      my ($self, $right, %args) = @_;
+
+      # Make any custom checks that return 1 to allow or return 0 to deny...
+      
+      # Fallback upon the default implementation to handle the
+      # SkipAccessControl configuration setting, superuser, bootstrap,
+      # delegation, and the before_access hook
+      return $self->SUPER::current_user_can($right, %args);
+  }
+
+If you are sure you don't want your model to fallback using the default implementation, you can replace the last line with whatever fallback policy required.
+
+=head3 Authorization steps
+
+The default implementation proceeds as follows:
+
+=over
+
+=item 1.
+
+If the C<SkipAccessControl> setting is set to a true value in the framework configuration section of F<etc/config.yml>, C<current_user_can> always returns true.
+
+=item 2.
+
+The method first attempts to call the C<before_access> hooks to check for any
+allow or denial. See L</The before_access hook>.
+
+=item 3.
+
+Next, the default implementation returns true if the current user is a
+superuser or a boostrap user.  
+
+=item 4.
+
+Then, if the model can perform delegation, usually by using
+L<Jifty::RightsFrom>, the access control decision is deferred to another object
+(via the C<delegate_current_user_can>
+subroutine).  
+
+=item 5.
+
+Otherwise, it returns false.
+
+=back
+
+=head3 The before_access hook
+
+This implementation may make use of a trigger called C<before_access> to make the decision. A new handler can be added to the trigger point by calling C<add_handler>:
+
+  $record->add_trigger(
+      name => 'before_access',
+      code => \&before_access,
+      abortable => 1,
+  );
+
+The C<before_access> handler will be passed the same arguments that were used to call C<current_user_can>, including the current record object, the operation being checked, and any arguments being passed to the operation.
+
+The C<before_access> handler should return one of three strings: C<'deny'>, C<'allow'>, or C<'ignore'>. The C<current_user_can> implementation reacts as follows to these results:
+
+=over
+
+=item 1.
+
+If a handler is abortable and aborts by returning a false value (such as C<undef>), C<current_user_can> returns false.
+
+=item 2.
+
+If any handler returns 'deny', C<current_user_can> returns false.
+
+=item 3.
+
+If any handler returns 'allow' and no handler returns 'deny', C<current_user_can> returns true.
+
+=item 4.
+
+In all other cases, the results of the handlers are ignored and C<current_user_can> proceeds to check using superuser, bootstrap, and delegation.
+
+=back
 
 =cut
 
@@ -235,10 +309,37 @@ sub current_user_can {
     my $self  = shift;
     my $right = shift;
     
+    # Turn off access control for the whole application
     if (Jifty->config->framework('SkipAccessControl')) {
-	return 1;	
+	    return 1;	
     }
 
+    my $hook_status = $self->call_trigger( before_access => $right, @_ );
+
+    # If not aborted...
+    if (defined $hook_status) {
+
+        # Compile the handler results
+        my %results;
+        $results{ $_->[0] }++ for (@{ $self->last_trigger_results });
+
+        # Deny always takes precedent
+        if ($results{deny}) {
+            return 0;
+        }
+
+        # Then allow...
+        elsif ($results{allow}) {
+            return 1;
+        }
+       
+        # Otherwise, no instruction from the handlers, move along...
+    }
+
+    # Abort! Return false for safety
+    else {
+        return 0;
+    } 
 
     if (   $self->current_user->is_bootstrap_user
         or $self->current_user->is_superuser )
@@ -390,6 +491,18 @@ sub delete {
     $self->SUPER::delete(@_); 
 }
 
+=head2 brief_description
+
+Display the friendly name of the record according to _brief_description.
+
+=cut
+
+sub brief_description {
+    my $self = shift;
+    my $method = $self->_brief_description;
+    return $self->$method;
+}
+
 =head2 _brief_description
 
 When displaying a list of records, Jifty can display a friendly value 
@@ -490,22 +603,20 @@ sub create_table_in_db {
 
 }
 
-=head2 drop_table_in_db
+=head2 drop_table_in_db 
 
-When called, this method will drop the table that backs this model class from your 
-database. Generally, this operation can't be done and will result in data loss.
-Don't call it unless data loss is your objective.
+When called, this method will generate the SQL to remove this model's
+table in the database and execute it in the application's currently
+open database.  This method can destroy a lot of data. Be sure you
+know what you're doing.
 
 
 =cut
 
 sub drop_table_in_db {
-    my $class = shift;
-
-    my $statement = "DROP TABLE ".$class->table;
-        my $ret = Jifty->handle->simple_query($statement);
-        $ret or die "error creating table $class: " . $ret->error_message;
-
+    my $self = shift;
+    my $ret  = Jifty->handle->simple_query( 'DROP TABLE ' . $self->table );
+    $ret or die "error removing table $self: " . $ret->error_message;
 }
 
 sub _make_schema { 
@@ -521,7 +632,7 @@ sub _make_schema {
 
 =head2 add_column_sql column_name
 
-Returns the SQL statement neccessary to add C<column_name> to this class's representation in the database
+Returns the SQL statement necessary to add C<column_name> to this class's representation in the database
 
 =cut
 
@@ -534,9 +645,23 @@ sub add_column_sql {
     return "ALTER TABLE " . $self->table . " ADD COLUMN " . $definition;
 }
 
+
+=head2 add_column_in_db column_name
+
+Executes the SQL code generated by add_column_sql. Dies on failure.
+
+=cut
+
+sub add_column_in_db {
+    my $self = shift;
+        my $ret = Jifty->handle->simple_query($self->add_column_sql(@_));
+        $ret or die "error adding column ". $_[0] ." to  $self: " . $ret->error_message;
+
+}
+
 =head2 drop_column_sql column_name
 
-Returns the SQL statement neccessary to remove C<column_name> from this class's representation in the database
+Returns the SQL statement necessary to remove C<column_name> from this class's representation in the database
 
 =cut
 
@@ -559,6 +684,20 @@ sub __uuid {
     my $id = $self->id or return undef;
     my $table = $self->table or return undef;
     return $self->_handle->lookup_uuid($table, $id);
+}
+
+
+=head2 drop_column_in_db column_name
+
+Executes the SQL code generated by drop_column_sql. Dies on failure.
+
+=cut
+
+sub drop_column_in_db {
+    my $self = shift;
+        my $ret = Jifty->handle->simple_query($self->drop_column_sql(@_));
+        $ret or die "error dropping column ". $_[0] ." to  $self: " . $ret->error_message;
+
 }
 
 =head2 schema_version

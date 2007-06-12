@@ -162,10 +162,6 @@ sub app_root {
                 and lc($try) ne lc(File::Spec->catdir($Config::Config{bin}, "jifty"))
                 and lc($try) ne lc(File::Spec->catdir($Config::Config{scriptdir}, "jifty")) )
             {
-                #warn "root: ", File::Spec->catdir(@root);
-                #warn "bin/jifty: ", File::Spec->catdir($Config::Config{bin}, "jifty");
-                #warn "scriptdir/jifty: ", File::Spec->catdir($Config::Config{scriptdir}, "jifty");
-                #warn "try: $try";
                 return $APP_ROOT = File::Spec->catdir(@root);
             }
             pop @root;
@@ -245,11 +241,15 @@ sub _require {
     if ($UNIVERSAL::require::ERROR) {
         my $error = $UNIVERSAL::require::ERROR;
         $error =~ s/ at .*?\n$//;
-        
-        unless ($args{'quiet'} and $error =~ /^Can't locate/) {
-            Jifty->log->error(sprintf("$error at %s line %d\n", (caller(1))[1,2]));
+        if ($args{'quiet'} and $error =~ /^Can't locate/) {
+            return 0;
         }
-        return 0;
+        elsif ( $UNIVERSAL::require::ERROR !~ /^Can't locate/) {
+            die $UNIVERSAL::require::ERROR;
+        } else {
+            Jifty->log->error(sprintf("$error at %s line %d\n", (caller(1))[1,2]));
+            return 0;
+        }
     }
 
     # If people forget the '1;' line in the dispatcher, don't eit them

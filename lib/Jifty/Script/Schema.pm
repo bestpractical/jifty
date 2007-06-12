@@ -8,28 +8,7 @@ use Pod::Usage;
 use version;
 use Jifty::DBI::SchemaGenerator;
 use Jifty::Config;
-use SQL::ReservedWords;
-
-Jifty::Module::Pluggable->import(
-    require     => 1,
-    search_path => ["SQL::ReservedWords"],
-    sub_name    => '_sql_dialects',
-);
-
-our %_SQL_RESERVED          = ();
-our @_SQL_RESERVED_OVERRIDE = qw(value);
-foreach my $dialect ( 'SQL::ReservedWords', &_sql_dialects ) {
-    foreach my $word ( $dialect->words ) {
-        push @{ $_SQL_RESERVED{ lc($word) } }, $dialect->reserved_by($word);
-    }
-}
-
-# XXX TODO: QUESTIONABLE ENGINEERING DECISION
-# The SQL standard forbids columns named 'value', but just about everone on the planet
-# actually supports it. Rather than going about scaremongering, we choose
-# not to warn people about columns named 'value'
-
-delete $_SQL_RESERVED{ lc($_) } for (@_SQL_RESERVED_OVERRIDE);
+use Jifty::Schema;
 
 =head2 options
 
@@ -66,7 +45,6 @@ sub run {
     $self->setup_environment();
     $self->probe_database_existence();
     $self->manage_database_existence();
-    $self->prepare_model_classes();
     if ( $self->{create_all_tables} ) {
         $self->create_all_tables();
     } elsif ( $self->{'setup_tables'} ) {
@@ -92,6 +70,20 @@ sub setup_environment {
     Jifty->new( no_handle        => 1, logger_component => 'SchemaTool',) unless Jifty->class_loader;
 }
 
+=head2 schema
+
+Returns a Jifty::Schema object.
+
+=cut
+
+sub schema {
+    my $self = shift;
+
+    $self->{'SCHEMA'} ||= Jifty::Schema->new();
+    return $self->{'SCHEMA'};
+}
+
+
 =head2 print_help
 
 Prints out help for the package using pod2usage.
@@ -112,27 +104,6 @@ sub print_help {
         if $self->{man};
 }
 
-=head2 prepare_model_classes
-
-Reads in our application class from the config file and finds all our app's models.
-
-=cut
-
-sub prepare_model_classes {
-
-    my $self = shift;
-
-    # This creates a sub "models" which when called, finds packages under
-    # the application's ::Model, requires them, and returns a list of their
-    # names.
-    Jifty::Module::Pluggable->import(
-        require     => 1,
-        except      => qr/\.#/,
-        search_path => [ "Jifty::Model", Jifty->app_class("Model") ],
-        sub_name    => 'models',
-    );
-}
-
 =head2 probe_database_existence
 
 Probes our database to see if it exists and is up to date.
@@ -141,7 +112,6 @@ Probes our database to see if it exists and is up to date.
 
 sub probe_database_existence {
     my $self = shift;
-
     my $no_handle = 0;
     if ( $self->{'create_database'} or $self->{'drop_database'} ) {
         $no_handle = 1;
@@ -206,7 +176,7 @@ sub create_all_tables {
     # Bootstrap the UUID table first
     Jifty->handle->bootstrap_uuid_table;
 
-    $self->create_tables_for_models (grep {$_->isa('Jifty::DBI::Record')}  __PACKAGE__->models );
+    $self->create_tables_for_models (grep {$_->isa('Jifty::DBI::Record')} $self->schema->models );
 
     # Update the versions in the database
     Jifty::Model::Metadata->store( application_db_version => $appv );
@@ -249,8 +219,8 @@ sub create_tables_for_models {
     my $appv = version->new( Jifty->config->framework('Database')->{'Version'} );
     my $jiftyv = version->new( $Jifty::VERSION  );
 
-    for my $model ( @models) {
 
+    for my $model ( @models) {
        # TODO XXX FIXME:
        #   This *will* try to generate SQL for abstract base classes you might
        #   stick in $AC::Model::.
@@ -260,7 +230,7 @@ sub create_tables_for_models {
         }
         $log->info("Using $model, as it appears to be new.");
 
-            $self->_check_reserved($model)
+            $self->schema->_check_reserved($model)
         unless ( $self->{'ignore_reserved'}
             or !Jifty->config->framework('Database')->{'CheckSchema'} );
 
@@ -285,9 +255,7 @@ sub upgrade_jifty_tables {
         # Backwards combatibility -- it usd to be 'key' not 'data_key';
         eval {
             local $SIG{__WARN__} = sub { };
-            $dbv = Jifty->handle->fetch_result(
-                "SELECT value FROM _jifty_metadata WHERE key = 'jifty_db_version'"
-            );
+            $dbv = Jifty->handle->fetch_result( "SELECT value FROM _jifty_metadata WHERE key = 'jifty_db_version'");
         };
     }
 
@@ -357,7 +325,7 @@ sub upgrade_tables {
                      $upgradeclass->versions();
     };
 
-    for my $model_class ( grep {/^\Q$baseclass\E::Model::/} __PACKAGE__->models ) {
+    for my $model_class ( grep {/^\Q$baseclass\E::Model::/} $self->schema->models ) {
 
         # We don't want to get the Collections, for example.
         next unless $model_class->isa('Jifty::DBI::Record');
@@ -378,11 +346,8 @@ sub upgrade_tables {
                         my $renamed = $upgradeclass->just_renamed || {};
 
                         # skip it if this was dropped by a rename
-                        _exec_sql($model->drop_column_sql($col->name))
-                            unless defined $renamed
-                                ->{ $model->table }
-                                ->{'drop'}
-                                ->{ $col->name };
+                        $model->drop_column_in_db($col->name)
+                            unless defined $renamed->{ $model->table }->{'drop'}->{ $col->name };
                     };
                 }
 
@@ -392,11 +357,8 @@ sub upgrade_tables {
                         my $renamed = $upgradeclass->just_renamed || {};
 
                         # skip it if this was added by a rename
-                        _exec_sql($model->add_column_sql($col->name))
-                            unless defined $renamed
-                                ->{ $model->table }
-                                ->{'add'}
-                                ->{ $col->name };
+                        $model->add_column_in_db($col->name)
+                            unless defined $renamed->{ $model->table }->{'add'}->{ $col->name };
                     };
                 }
             }
@@ -469,44 +431,17 @@ user wants the old database deleted, does that too.
 sub manage_database_existence {
     my $self = shift;
 
-    my $handle = $self->_connect_to_db_for_management();
+    my $handle = Jifty::Schema->connect_to_db_for_management();
 
-        if ( $self->{'drop_database'} ) {
-        $handle->drop_database($self->{'print'} ? 'print' : 'execute');
-    }
-
-    if ( $self->{'create_database'} ) {
-        $handle->create_database($self->{'print'} ? 'print' : 'execute');
-    }
-
-    $handle->disconnect;
-
-    # If we drop and didn't re-create, then don't reconnect
-    if ( $self->{'drop_database'} and not $self->{'create_database'} ) {
-        return;
-    }
-
-    # Likewise if we didn't get a connection before, and we're just
-    # printing, the connect below will fail
-    elsif ( $self->{'print'}
-        and not( Jifty->handle and Jifty->handle->dbh->ping ) ) {
-        return;
+    if ( $self->{print} ) {
+         $handle->drop_database('print') if ( $self->{'drop_database'} ) ;
+        $handle->create_database('print') if ( $self->{'create_database'} ) ;
     } else {
-        $self->_reinit_handle();
+        $handle->drop_database('execute') if ( $self->{'drop_database'} ) ;
+        $handle->create_database('execute') if ( $self->{'create_database'} ) ;
+        $handle->disconnect;
+        $self->_reinit_handle() if ($self->{'create_database'} ) ;
     }
-}
-
-sub _connect_to_db_for_management {
-    my $handle = Jifty::Handle->new();
-
-    my $driver   = Jifty->config->framework('Database')->{'Driver'};
-
-    # Everything but the template1 database is assumed
-    my %connect_args;
-    $connect_args{'database'} = 'template1' if ( $handle->isa("Jifty::DBI::Handle::Pg") );
-    $connect_args{'database'} = ''          if ( $handle->isa("Jifty::DBI::Handle::mysql") );
-    $handle->connect(%connect_args);
-    return $handle;
 }
 
 sub _reinit_handle {
@@ -514,39 +449,6 @@ sub _reinit_handle {
     Jifty->handle->connect();
 }
 
-sub __parenthesize {
-    if ( not defined $_[0] ) { return () }
-    if ( @_ == 1 )           { return $_[0] }
-    return "(" . ( join ", ", @_ ) . ")";
-}
-
-sub _classify {
-    my %dbs;
-
-    # Guess names of databases + their versions by breaking on last space,
-    # e.g., "SQL Server 7" is ("SQL Server", "7"), not ("SQL", "Server 7").
-    push @{ $dbs{ $_->[0] } }, $_->[1]
-        for map { [ split /\s+(?!.*\s)/, $_, 2 ] } @_;
-    return
-        map { join " ", $_, __parenthesize( @{ $dbs{$_} } ) } sort keys %dbs;
-}
-
-sub _check_reserved {
-    my $self  = shift;
-    my $model = shift;
-    my $log   = Log::Log4perl->get_logger("SchemaTool");
-    foreach my $col ( $model->columns ) {
-        if ( exists $_SQL_RESERVED{ lc( $col->name ) } ) {
-            $log->error(
-                      $model . ": "
-                    . $col->name
-                    . " is a reserved word in these SQL dialects: "
-                    . join( ', ',
-                    _classify( @{ $_SQL_RESERVED{ lc( $col->name ) } } ) )
-            );
-        }
-    }
-}
 
 sub _exec_sql {
     my $sql = shift;

@@ -82,6 +82,12 @@ Jifty.Calendar = {
             month = args[0][0][1],
             day   = args[0][0][2];
 
+        if (month < 10)
+            month = "0" + month;
+
+        if (day < 10)
+            day = "0" + day;
+
         var input = obj.event.target;
         
         input.value = year + "-" + month + "-" + day;

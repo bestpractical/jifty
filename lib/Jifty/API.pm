@@ -24,7 +24,7 @@ make up a Jifty application's API
  my @actions = Jifty->api->actions;
 
  # Check to see if an action is allowed
- if (Jifty->api->is_allow('TrueFooBar')) {
+ if (Jifty->api->is_allowed('TrueFooBar')) {
      # do something...
  }
 
@@ -204,7 +204,7 @@ sub restrict {
 
 =head2 is_allowed CLASS
 
-Returns false if the I<CLASS> name (which is fully qualified if it is
+Returns true if the I<CLASS> name (which is fully qualified if it is
 not already) is allowed to be executed.  See L</restrict> above for
 the rules that the class name must pass.
 

@@ -1149,6 +1149,7 @@ sub render_template {
     my $self     = shift;
     my $template = shift;
     my $showed   = 0;
+#    local $@;
     eval {
         foreach my $handler ( Jifty->handler->view_handlers ) {
             if ( Jifty->handler->view($handler)->template_exists($template) ) {
@@ -1166,8 +1167,13 @@ sub render_template {
     my $err = $@;
 
     # Handle parse errors
+    $self->log->fatal("view class error: $err") if $err;
     if ( $err and not eval { $err->isa('HTML::Mason::Exception::Abort') } ) {
-
+        if ($template eq '/__jifty/error/mason_internal_error') {
+            $self->log->debug("can't render internal_error: $err");
+            $self->_abort;
+            return;
+        }
         # Save the request away, and redirect to an error page
         Jifty->web->response->error($err);
         my $c = Jifty::Continuation->new(
@@ -1175,8 +1181,6 @@ sub render_template {
             response => Jifty->web->response,
             parent   => Jifty->web->request->continuation,
         );
-
-        warn "$err";
 
         # Redirect with a continuation
         Jifty->web->_redirect( "/__jifty/error/mason_internal_error?J:C=" . $c->id );

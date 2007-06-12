@@ -155,6 +155,9 @@ sub load {
     # getting stuck in a default config file for an app
     $self->stash( Hash::Merge::merge( $self->defaults, $self->stash));
 
+    $self->stash($self->update_config($self->stash));
+
+
     # Finally, check for global postload hooks (these are used by the
     # test harness)
     $self->$Jifty::Config::postload()
@@ -265,16 +268,6 @@ sub guess {
             L10N       => {
                 PoDir => "share/po",
             },
-            Plugins => [
-            #  { LetMe               => {}, },
-                { SkeletonApp            => {}, },
-                { REST               => {}, },
-                { Halo               => {}, },
-                { ErrorTemplates     => {}, },
-                { OnlineDocs         => {}, },
-                { CompressedCSSandJS => {}, },
-                { AdminUI            => {}, }
-                ],
             Web        => {
                 Port => '8888',
                 BaseURL => 'http://localhost',
@@ -298,6 +291,62 @@ sub guess {
 }
 
 
+=head2 initial_config
+
+Returns a default guessed config for a new application
+
+=cut
+
+sub initial_config {
+    my $self = shift;
+    my $guess = $self->guess(@_);
+    $guess->{'framework'}->{'ConfigFileVersion'} = 2;
+
+    # These are the plugins which new apps will get by default
+            $guess->{'framework'}->{'Plugins'} = [
+              { LetMe               => {}, },
+                { SkeletonApp            => {}, },
+                { REST               => {}, },
+                { Halo               => {}, },
+                { ErrorTemplates     => {}, },
+                { OnlineDocs         => {}, },
+                { CompressedCSSandJS => {}, },
+                { AdminUI            => {}, }
+                ];
+    return $guess;
+}
+
+
+
+=head2 update_config  $CONFIG
+
+Takes an application's configuration as a hashref.  Right now, it just sets up
+plugins that match an older jifty version's defaults
+
+=cut
+
+sub update_config {
+    my $self = shift;
+    my $config = shift;
+    if ( $config->{'framework'}->{'ConfigFileVersion'} <2) {
+            # These are the plugins which old apps expect because their
+            # features used to be in the core.
+            unshift (@{$config->{'framework'}->{'Plugins'}}, 
+                { SkeletonApp            => {}, },
+                { REST               => {}, },
+                { Halo               => {}, },
+                { ErrorTemplates     => {}, },
+                { OnlineDocs         => {}, },
+                { CompressedCSSandJS => {}, },
+                { AdminUI            => {}, }
+            );
+    }
+
+    return $config;
+}
+
+
+
 =head2 defaults
 
 We have a couple default values that shouldn't be included in the
@@ -310,6 +359,7 @@ sub defaults {
     my $self = shift;
     return {
         framework => {
+            ConfigFileVersion => '1',
             L10N => {
                 DefaultPoDir => Jifty::Util->share_root . '/po',
             },

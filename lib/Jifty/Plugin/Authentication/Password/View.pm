@@ -14,14 +14,13 @@ if you're running a traditional (0.610 or before) Jifty.
 =cut
 
 package Jifty::Plugin::Authentication::Password::View;
-use HTML::Entities ();
 use Jifty::View::Declare -base;
 
 { no warnings 'redefine';
 sub page (&) {
     no strict 'refs'; 
     BEGIN {Jifty::Util->require(Jifty->app_class('View'))};
-    &{Jifty->app_class('View') . "::page"}(@_);
+    Jifty->app_class('View')->can('page')->(@_);
 }
 }
 
@@ -118,5 +117,36 @@ template 'passwordreminder' => page {
         form_return( label => _("Send"), submit => $action);
     Jifty->web->form->end();
 };
+
+template 'resend_confirmation' => page {
+    attr { title => "Resend Confirmation Email" };
+    my $resend = Jifty->web->new_action(
+        class   => 'ResendConfirmation',
+        moniker => 'resendconf'
+    );
+
+    if (    Jifty->web->current_user->id
+        and Jifty->web->current_user->user_object->email_confirmed )
+    {
+        Jifty->web->redirect('/');
+    } else {
+        div {
+            attr { id => 'overview' };
+            form {
+                Jifty->web->form->next_page( url => '/' );
+
+                p {
+                    _(  q{Fill in your address below, and we'll send out another confirmation email to you. }
+                    );
+                    render_param( $resend => 'email', focus => 1 );
+                    form_submit( label => 'Resend Confirmation' );
+                    }
+                }
+            }
+
+    }
+};
+
+
 
 1;

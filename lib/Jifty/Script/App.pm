@@ -147,7 +147,7 @@ sub _directories {
 sub _write_config {
     my $self = shift;
     my $cfg = Jifty::Config->new(load_config => 0);
-    my $default_config = $cfg->guess($self->dist_name);
+    my $default_config = $cfg->initial_config($self->dist_name);
     my $file = join("/",$self->prefix, 'etc','config.yml');
     print("Creating configuration file $file\n");
     Jifty::YAML::DumpFile($file => $default_config);

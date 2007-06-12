@@ -8,6 +8,7 @@ requires('Calendar::Simple');
 requires('Class::Accessor'); # Class::Accessor::Fast
 requires('Class::Container');
 requires('Class::Data::Inheritable');
+requires('Class::Trigger');
 requires('CGI' => '3.19');
 requires('CGI::Cookie::Splitter');
 requires('Crypt::CBC');
@@ -42,13 +43,14 @@ requires('HTTP::Server::Simple::Recorder');
 requires('Hash::Merge');
 requires('Hook::LexWrap');
 requires('IPC::PubSub' => '0.23' );
+requires('IPC::Run3');
 requires('Jifty::DBI' => '0.40' );            # Jifty::DBI::Collection Jifty::DBI::Handle Jifty::DBI::Record::Cachable Jifty::DBI::SchemaGenerator
 requires('Locale::Maketext::Extract' => '0.20');
 requires('Locale::Maketext::Lexicon' => '0.60');
 requires('Log::Log4perl' => '1.04');
 requires('LWP::UserAgent'); # Net::HTTP
 requires('MIME::Types');
-requires('Module::Pluggable' => '3.1'); # Module::Pluggable::Object
+requires('Module::Pluggable' => '3.5'); # Module::Pluggable::Object
 requires('Module::Pluggable::Object');
 requires('Module::CoreList');
 requires('Module::Refresh');
@@ -64,6 +66,7 @@ requires('SVN::Repos');
 requires('SVN::Simple::Edit');
 requires('Template::Declare' => '0.07');                # Template::Declare::Tags
 requires('Test::Base');
+requires('Test::LongString');
 requires('Test::More' => 0.62 ),
 requires('Test::Pod::Coverage'),
 requires('Test::WWW::Mechanize' => 1.04 ),
@@ -127,6 +130,16 @@ features(
     'Experimental features' => [
         -default => 0,
         recommends('PAR::Dist::FromCPAN'),
+    ],
+    'OpenID Login Plugin' => [
+        -default => 0,
+        recommends('Net::OpenID::Consumer'),
+        recommends('Cache::FileCache'),
+        recommends('LWPx::ParanoidAgent'),
+    ],
+    'Jifty console' => [
+        -default => 1,
+        recommends('Devel::EvalContext')
     ],
 );
 
