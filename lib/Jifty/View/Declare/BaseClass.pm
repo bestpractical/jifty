@@ -16,22 +16,24 @@ our @EXPORT = ( @Jifty::View::Declare::Helpers::EXPORT);
 sub use_mason_wrapper {
     my $class = shift;
     no strict 'refs';
+    no warnings 'redefine';
     *{ $class . '::wrapper' } = sub ($) {
         my $code = shift;
-	no warnings 'redefine';
+
         # so in td handler, we made jifty::web->out appends to td
-        # buffer, we need it back for here, because $code is actually
-        # called.  someday we need to finish fixing the output system
-        # that is in Jifty::View.
-        my $td_out = \&Jifty::Web::out;
+        # buffer, we need it back for here someday we need to finish
+        # fixing the output system that is in Jifty::View.
         local *Jifty::Web::out = sub { shift->mason->out(@_) };
 
-        Jifty->handler->fallback_view_handler->interp->autoflush(1);
-        local *HTML::Mason::Request::content
-            = sub { local *Jifty::Web::out = $td_out; $code; '' };
-        Jifty->web->request->arguments->{title} = 'YADA!';
+        local *HTML::Mason::Request::content = sub {
+            $code->();
+            my $content = Template::Declare->buffer->data;
+            Template::Declare->buffer->clear;
+            $content;
+        };
+
         Jifty->handler->fallback_view_handler->show('/_elements/wrapper');
-    }
+        }
 }
 
 =cut
