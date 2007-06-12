@@ -214,21 +214,4 @@ sub validate_super_classes {
     return $ret->return_value;
 }
 
-=head2 current_user_can 
-
-All users can read, but only superuser can write. This needs to be better thought out.
-
-=cut
-
-sub current_user_can {
-    my $self = shift;
-    my $right = shift;
-
-    if ($right eq 'read') {
-        return 1;
-    }
-
-    return $self->SUPER::current_user_can($right, @_);
-}
-
 1;
