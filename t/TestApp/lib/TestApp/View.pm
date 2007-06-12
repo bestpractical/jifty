@@ -44,8 +44,8 @@ template 'entry.html' => sub {
 
 require TestApp::View::base;
 require TestApp::View::instance;
-import_templates TestApp::View::base under '/base';
-import_templates TestApp::View::instance under '/instance';
+alias TestApp::View::base under '/base';
+alias TestApp::View::instance under '/instance';
 
 use Jifty::View::Declare::CRUD;
 
