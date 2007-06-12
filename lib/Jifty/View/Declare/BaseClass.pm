@@ -21,11 +21,14 @@ sub use_mason_wrapper {
         my $code = shift;
 
         # so in td handler, we made jifty::web->out appends to td
-        # buffer, we need it back for here someday we need to finish
-        # fixing the output system that is in Jifty::View.
+        # buffer, we need it back for here before we call $code.
+        # someday we need to finish fixing the output system that is
+        # in Jifty::View.
+        my $td_out = \&Jifty::Web::out;
         local *Jifty::Web::out = sub { shift->mason->out(@_) };
 
         local *HTML::Mason::Request::content = sub {
+            local *Jifty::Web::out = $td_out;
             $code->();
             my $content = Template::Declare->buffer->data;
             Template::Declare->buffer->clear;
@@ -33,7 +36,7 @@ sub use_mason_wrapper {
         };
 
         Jifty->handler->fallback_view_handler->show('/_elements/wrapper');
-        }
+    }
 }
 
 =cut
