@@ -221,7 +221,9 @@ sub from_cgi {
     my $self = shift;
     my ($cgi) = @_;
 
-    my $path = $cgi->path_info;
+    # always get the unescaped path for dispatcher, which is already
+    # the case for fastcgi, but not standalone.
+    my $path = URI::Escape::uri_unescape($cgi->path_info);
     $path =~ s/\?.*//;
     $self->path( $path );
 

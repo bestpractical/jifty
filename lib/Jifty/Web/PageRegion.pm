@@ -215,7 +215,7 @@ sub enter {
             $self->argument($2 => $value);
         }
         if ($key =~ /^region-(.*)$/ and $1 eq $self->qualified_name and $value ne $self->default_path) {
-            $self->path($value);
+            $self->path(URI::Escape::uri_unescape($value));
         }
 
         # We should always inherit the state variables from the uplevel request.

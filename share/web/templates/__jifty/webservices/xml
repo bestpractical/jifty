@@ -35,7 +35,7 @@ for my $f ( Jifty->web->request->fragments ) {
 
         $new ||= Jifty::Web::PageRegion->new(
             name           => $f->name,
-            path           => $f->path,
+            path           => URI::Escape::uri_unescape($f->path),
             region_wrapper => $f->wrapper,
             parent         => Jifty->web->current_region,
             defaults       => \%defaults,
