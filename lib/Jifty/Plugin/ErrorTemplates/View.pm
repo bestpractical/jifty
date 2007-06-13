@@ -55,7 +55,7 @@ template '__jifty/error/_elements/error_text' => sub {
 {
     no warnings qw'redefine';
 
-    sub wrapper ($) {
+    sub wrapper {
         my $code = shift;
         html {
             head {

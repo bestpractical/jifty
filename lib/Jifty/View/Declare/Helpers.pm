@@ -5,7 +5,7 @@ package Jifty::View::Declare::Helpers;
 use base qw/Template::Declare Exporter/;
 use Template::Declare::Tags;
 
-our @EXPORT = ( qw(form hyperlink tangent redirect new_action form_submit form_return  form_next_page page wrapper request get set render_param current_user render_action render_region), @Template::Declare::Tags::EXPORT);
+our @EXPORT = ( qw(form hyperlink tangent redirect new_action form_submit form_return form_next_page page content wrapper request get set render_param current_user render_action render_region), @Template::Declare::Tags::EXPORT);
 
 =head1 NAME
 
@@ -264,27 +264,44 @@ sub render_param {
 
  template 'foo' => page {{ title is 'Foo' } ... };
 
+  or
+
+ template 'foo' => page { title => 'Foo' } content { ... };
+
 Renders an HTML page wrapped in L</wrapper>, after calling
 "/_elements/nav" and setting a content type. Generally, you shouldn't
 be using "/_elements/nav" but a Dispatcher rule instead.
 
+If C<page/content> calling convention is used, the return value of the
+first sub will be passed into wrapper as the second argument as a
+hashref, as well as the last argument for the content sub.
+
 =cut
 
-sub page (&) {
-    my $code = shift;
+sub page (&;$) {
+    unshift @_, undef if $#_ == 0;
+    my ( $meta, $code ) = @_;
     sub {
         my $self = shift;
         Jifty->handler->apache->content_type('text/html; charset=utf-8');
-        if ( my $wrapper = Jifty->app_class('View')->can('wrapper') ) {
-            $wrapper->(sub { $code->($self)});
-        } else {
-
-        wrapper(sub { $code->($self) });
+        my $wrapper = Jifty->app_class('View')->can('wrapper') || \&wrapper;
+        my @metadata = $meta ? $meta->() : ();
+        my $metadata = $#metadata == 0 ? $metadata[0] : {@metadata};
+        local *is::title = sub { warn "Can't use 'title is' when mixing mason and TD" };
+        $wrapper->( sub { $code->( $self, $metadata ) }, $metadata );
     }
-    };
 }
 
+=head2 content
 
+Helper function for page { ... } content { ... }
+
+=cut
+
+sub content (&;$) {
+    # XXX: Check for only 1 arg
+    return $_[0];
+}
 
 =head2 wrapper $coderef
 
@@ -293,7 +310,7 @@ This badly wants to be redone.
 
 =cut
 
-sub wrapper ($) {
+sub wrapper {
     my $app_class = get_current_attr('PageClass') || 'View::Page';
     delete $Template::Declare::Tags::ATTRIBUTES{ 'PageClass' };
 
