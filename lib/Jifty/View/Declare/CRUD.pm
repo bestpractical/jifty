@@ -4,7 +4,7 @@ use strict;
 package Jifty::View::Declare::CRUD;
 use Jifty::View::Declare -base;
 use base 'Exporter';
-our @EXPORT = qw(object_type fragment_for get_record current_collection);
+our @EXPORT = qw(object_type fragment_for get_record current_collection display_columns);
 
 =head1 NAME
 
