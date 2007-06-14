@@ -217,7 +217,18 @@ L<Jifty::Web::Form::Field::Button>'s constructor.
 
 sub submit {
     my $self = shift;
-    my $button = Jifty::Web::Form::Clickable->new(submit => undef, _form => $self, @_)->generate;
+    my %args = (submit => undef,
+                _form => $self,
+                @_);
+
+    my @submit = ref($args{'submit'}) eq 'ARRAY' ? @{$args{'submit'}} : $args{'submit'};
+    if ($self->actions->{'next_page'} && $submit[0] && ! grep {$_->moniker eq 'next_page' } @submit)  {
+        push @submit, $self->actions->{'next_page'};
+        $args{'submit'} = \@submit;
+    }
+
+
+    my $button = Jifty::Web::Form::Clickable->new(%args)->generate;
     Jifty->web->out(qq{<div class="submit_button">});
     $button->render_widget;
     Jifty->web->out(qq{</div>});
