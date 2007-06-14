@@ -6,6 +6,18 @@ use Jifty::View::Declare -base;
 use base 'Exporter';
 our @EXPORT = qw(object_type fragment_for get_record current_collection);
 
+=head1 NAME
+
+Jifty::View::Declare::CRUD - Provides typical CRUD views to a model
+
+=head1 DESCRIPTION
+
+This class provides a set of views that may be used by a model to display Create/Read/Update/Delete views using the L<Template::Declare> templating langauge.
+
+=head1 METHODS
+
+=cut
+
 sub mount_view {
     my ($class, $model, $vclass, $path) = @_;
     my $caller = caller(0);
@@ -53,6 +65,14 @@ sub get_record {
     return $record;
 }
 
+=head1 TEMPLATES
+
+=head2 search
+
+The search view displays a search screen connected to the search action of the module. See L<Jifty::Action::Record::Search>.
+
+=cut
+
 template 'search' => sub {
     my $self          = shift;
     my ($object_type) = ( $self->object_type );
@@ -84,6 +104,11 @@ sub display_columns {
      return   grep { !( m/_confirm/ || lc $action->arguments->{$_}{render_as} eq 'password' ) } $action->argument_names;
 }
 
+=head2 view
+
+This template displays the data held by a single model record.
+
+=cut
 
 template 'view' => sub {
     my $self = shift;
@@ -111,6 +136,12 @@ template 'view' => sub {
     };
 
 };
+
+=head2 update
+
+The update template displays a form for editing the data held within a single model record. See L<Jifty::Action::Record::Update>.
+
+=cut
 
 template 'update' => sub {
     my $self = shift;
@@ -174,6 +205,12 @@ sub current_collection {
     return $collection;    
 }
 
+=head2 list
+
+The list template provides an interactive list for showing a list of records in the record collection, adding new records, deleting records, and updating records.
+
+=cut
+
 template 'list' => sub {
     my $self = shift;
 
@@ -212,6 +249,7 @@ private template 'search_region' => sub {
 
     outs( $search_region->render );
 };
+
 private template 'new_item_region' => sub {
     my $self        = shift;
     my $fragment_for_new_item = shift;
@@ -300,6 +338,11 @@ private template 'edit_item' => sub {
     render_action($action, [$self->display_columns($action)]);
 };
 
+=head1 new_item
+
+The new_item template provides a form for creating new model records. See L<Jifty::Action::Record::Create>.
+
+=cut
 
 template 'new_item' => sub {
     my $self = shift;
@@ -332,6 +375,17 @@ template 'new_item' => sub {
         );
         }
 };
+
+=head1 SEE ALSO
+
+L<Jifty::Action::Record::Create>, L<Jifty::Action::Record::Search>, L<Jifty::Action::Record::Update>, L<Jifty::Action::Record::Delete>, L<Template::Declare>, L<Jifty::View::Declare::Helpers>, L<Jifty::View::Declare>
+
+=head1 LICENSE
+
+Jifty is Copyright 2005-2007 Best Practical Solutions, LLC.
+Jifty is distributed under the same terms as Perl tiself.
+
+=cut
 
 1;
 

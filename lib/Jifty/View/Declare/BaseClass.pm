@@ -12,6 +12,21 @@ use Jifty::View::Declare::Helpers;
 
 our @EXPORT = ( @Jifty::View::Declare::Helpers::EXPORT);
 
+=head1 NAME
+
+Jifty::View::Declare::BaseClass - Base class for Template::Declare views
+
+=head1 DESCRIPTION
+
+This class provides a base class for your L<Template::Declare> derived view classes.
+
+=head1 METHODS
+
+=head2 use_mason_wrapper
+
+Call this function in your view class to use your mason wrapper for L<Template::Declare> templates.
+
+=cut
 
 sub use_mason_wrapper {
     my $class = shift;
@@ -39,33 +54,20 @@ sub use_mason_wrapper {
     }
 }
 
-=cut
-
-
-
-1;
-__DATA__
-
-=head1 NAME
-
-Jifty::View::Declare::BaseClass
-
-=head1 DESCRIPTION
-
-This class provides a baseclass for your C<Template::Declare> derived view classes.
-
-
-=head1 METHODS
-
-=head2 use_mason_wrapper
-
-Call this function in your viewclass to use your mason wrapper for TD templates.
-
 
 =head2 show templatename arguments
 
 Render a C<Template::Declare> template.
 
+=head1 SEE ALSO
+
+L<Template::Declare>, L<Jifty::View::Declare::Helpers>, L<Jifty::View::Declare>
+
+=head1 LICENSE
+
+Jifty is Copyright 2005-2007 Best Practical Solutions, LLC.
+Jifty is distributed under the same terms as Perl itself.
 
 =cut
 
+1;
