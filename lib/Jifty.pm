@@ -165,6 +165,8 @@ sub new {
     Jifty::Util->require( $record_base_class );
     push @Jifty::Record::ISA, $record_base_class unless $record_base_class eq 'Jifty::Record';
 
+    Jifty->logger( Jifty::Logger->new( $args{'logger_component'} ) );
+
     # Set up plugins
     my @plugins = Jifty->_load_plugins();
 
@@ -183,6 +185,7 @@ sub new {
     Jifty->class_loader->require;
     Jifty->handler(Jifty::Handler->new());
     Jifty->api(Jifty::API->new());
+
     # We can only require view classes once we have our models and actions set.
     $class_loader->require_views;
 
