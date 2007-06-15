@@ -2,6 +2,8 @@ package TestApp::View::instance;
 use Jifty::View::Declare -base;
 use base 'TestApp::View::base';
 
+sub base_path { '/instance' }
+
 template 'myview' => sub {
     
 };

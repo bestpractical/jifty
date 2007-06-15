@@ -3,8 +3,6 @@ use strict;
 
 package Jifty::View::Declare::CRUD;
 use Jifty::View::Declare -base;
-use base 'Exporter';
-our @EXPORT = qw(object_type fragment_for get_record current_collection);
 
 # XXX: should register 'template type' handler, so the
 # client_cache_content & the TD sub here agrees with the arguments.
@@ -13,6 +11,24 @@ my %VIEW;
 sub CRUDView :ATTR(CODE,BEGIN) {
     $VIEW{$_[2]}++;
 }
+
+
+=head1 NAME
+
+Jifty::View::Declare::CRUD - Provides typical CRUD views to a model
+
+=head1 DESCRIPTION
+
+This class provides a set of views that may be used by a model to display Create/Read/Update/Delete views using the L<Template::Declare> templating langauge.
+
+=head1 METHODS
+
+=cut
+
+
+=head2 mount_view MODELCASS VIEWCLASS /path
+
+=cut
 
 sub mount_view {
     my ($class, $model, $vclass, $path) = @_;
@@ -42,10 +58,20 @@ sub _dispatch_template {
     goto $code;
 }
 
+
+=head2 object_type
+
+=cut
+
 sub object_type {
     my $self = shift;
     return $self->package_variable('object_type') || get('object_type');
 }
+
+
+=head2 fragment_for
+
+=cut
 
 sub fragment_for {
     my $self     = shift;
@@ -59,12 +85,22 @@ sub fragment_for {
         || $self->fragment_base_path . "/" . $fragment;
 }
 
+=head2 fragment_base_path
+
+=cut
+
 sub fragment_base_path {
     my $self = shift;
     return $self->package_variable('base_path') || '/crud';
 }
 
-sub get_record {
+=head2 _get_record $id
+
+Given an $id, returns a record object for the CRUD view's model class.
+
+=cut
+
+sub _get_record {
     my ( $self, $id ) = @_;
 
     my $record_class = Jifty->app_class( "Model", $self->object_type );
@@ -73,6 +109,51 @@ sub get_record {
 
     return $record;
 }
+
+=head2 display_columns
+
+Returns a list of all the columns that this REST view should display
+
+=cut
+
+sub display_columns {
+    my $self = shift;
+    my $action = shift;
+     return   grep { !( m/_confirm/ || lc $action->arguments->{$_}{render_as} eq 'password' ) } $action->argument_names;
+}
+
+
+=head1 TEMPLATES
+
+
+=cut
+
+=head2 index.html
+
+
+=cut
+
+
+template 'index.html' => page {
+    my $self = shift;
+    title is $self->object_type;
+    form {
+            render_region(
+                name     => $self->object_type.'-list',
+                path     => $self->fragment_base_path.'/list');
+    }
+
+};
+
+ 
+
+
+
+=head2 search
+
+The search view displays a search screen connected to the search action of the module. See L<Jifty::Action::Record::Search>.
+
+=cut
 
 template 'search' => sub {
     my $self          = shift;
@@ -99,11 +180,11 @@ template 'search' => sub {
         }
 };
 
-sub display_columns {
-    my $self = shift;
-    my $action = shift;
-     return   grep { !( m/_confirm/ || lc $action->arguments->{$_}{render_as} eq 'password' ) } $action->argument_names;
-}
+=head2 view
+
+This template displays the data held by a single model record.
+
+=cut
 
 template 'view' => sub :CRUDView {
     my ($self, $record) = @_;
@@ -117,6 +198,19 @@ template 'view' => sub :CRUDView {
         { class is 'crud read item inline' };
         my @fields = $self->display_columns($update);
         render_action( $update, \@fields, { render_mode => 'read' } );
+
+        show ('./view_item_controls', $record, $update); 
+
+        hr {};
+    };
+
+};
+
+private template view_item_controls  => sub {
+
+        my $self = shift;
+        my $record = shift;
+        my $action = shift;
         hyperlink(
             label   => "Edit",
             class   => "editlink",
@@ -125,11 +219,15 @@ template 'view' => sub :CRUDView {
                 args         => { id => $record->id }
             },
         );
-
-        hr {};
     };
 
-};
+
+
+=head2 update
+
+The update template displays a form for editing the data held within a single model record. See L<Jifty::Action::Record::Update>.
+
+=cut
 
 template 'update' => sub {
     my $self = shift;
@@ -148,6 +246,27 @@ template 'update' => sub {
         { class is "crud update item inline " . $object_type }
 
         show('./edit_item', $update);
+        show('./edit_item_controls', $record, $update);
+
+        hr {};
+        }
+};
+
+
+
+=head2 edit_item_controls $record $action
+
+The controls we should be rendering in the 'edit' region for a given fragment
+
+=cut
+
+private template edit_item_controls => sub {
+    my $self = shift;
+    my $record = shift;
+    my $update = shift;
+
+    my $object_type = $self->object_type;
+    my $id = $record->id;
         div {
             { class is 'crud editlink' };
             hyperlink(
@@ -169,12 +288,32 @@ template 'update' => sub {
             );
         };
 
-        hr {};
-        }
+};
+
+=head2 list
+
+The list template provides an interactive list for showing a list of records in the record collection, adding new records, deleting records, and updating records.
+
+=cut
+
+template 'list' => sub {
+    my $self = shift;
+
+    my ( $page ) = get(qw(page ));
+    my $fragment_for_new_item = get('fragment_for_new_item') || $self->fragment_for('new_item');
+    my $item_path = get('item_path') || $self->fragment_for("view");
+    my $collection =  $self->_current_collection();
+
+    show('./search_region');
+    show( './paging_top',    $collection, $page );
+    show( './list_items',    $collection, $item_path );
+    show( './paging_bottom', $collection, $page );
+    show( './new_item_region', $fragment_for_new_item );
+
 };
 
 
-sub current_collection {
+sub _current_collection {
     my $self =shift; 
     my ( $page, $search_collection ) = get(qw(page  search_collection));
 
@@ -193,21 +332,12 @@ sub current_collection {
     return $collection;    
 }
 
-template 'list' => sub {
-    my $self = shift;
 
-    my ( $page ) = get(qw(page ));
-    my $fragment_for_new_item = get('fragment_for_new_item') || $self->fragment_for('new_item');
-    my $item_path = get('item_path') || $self->fragment_for("view");
-    my $collection =  $self->current_collection();
+=head2 search_region
 
-    show('./search_region');
-    show( './paging_top',    $collection, $page );
-    show( './list_items',    $collection, $item_path );
-    show( './paging_bottom', $collection, $page );
-    show( './new_item_region', $fragment_for_new_item );
+This I<private> template renders a region to show an expandable region for a search widget.
 
-};
+=cut
 
 private template 'search_region' => sub {
     my $self        = shift;
@@ -231,6 +361,14 @@ private template 'search_region' => sub {
 
     outs( $search_region->render );
 };
+
+=head2 new_item_region
+
+This I<private> template renders a region to show a the C<new_item> template.
+
+=cut
+
+
 private template 'new_item_region' => sub {
     my $self        = shift;
     my $fragment_for_new_item = shift;
@@ -244,6 +382,15 @@ private template 'new_item_region' => sub {
         );
     }
 };
+
+
+=head2 list_items $collection $item_path
+
+Renders a div of class list with a region per item.
+
+
+
+=cut
 
 private template 'list_items' => sub {
     my $self        = shift;
@@ -267,6 +414,14 @@ private template 'list_items' => sub {
 
 };
 
+
+=head2 paging_top $collection $page_number
+
+Paging for your list, rendered at the top of the list
+
+=cut
+
+
 private template 'paging_top' => sub {
     my $self       = shift;
     my $collection = shift;
@@ -281,6 +436,12 @@ private template 'paging_top' => sub {
     }
 
 };
+
+=head2 paging_bottom $collection $page_number
+
+Paging for your list, rendered at the bottom of the list
+
+=cut
 
 private template paging_bottom => sub {
     my $self       = shift;
@@ -313,12 +474,26 @@ private template paging_bottom => sub {
 };
 
 
+
+=head2 edit_item $action
+
+Renders the action $Action, handing it the array ref returned by L</display_columns>.
+
+=cut
+
+
+
 private template 'edit_item' => sub {
     my $self = shift;
     my $action = shift;
     render_action($action, [$self->display_columns($action)]);
 };
 
+=head1 new_item
+
+The new_item template provides a form for creating new model records. See L<Jifty::Action::Record::Create>.
+
+=cut
 
 template 'new_item' => sub {
     my $self = shift;
@@ -351,6 +526,17 @@ template 'new_item' => sub {
         );
         }
 };
+
+=head1 SEE ALSO
+
+L<Jifty::Action::Record::Create>, L<Jifty::Action::Record::Search>, L<Jifty::Action::Record::Update>, L<Jifty::Action::Record::Delete>, L<Template::Declare>, L<Jifty::View::Declare::Helpers>, L<Jifty::View::Declare>
+
+=head1 LICENSE
+
+Jifty is Copyright 2005-2007 Best Practical Solutions, LLC.
+Jifty is distributed under the same terms as Perl tiself.
+
+=cut
 
 1;
 
