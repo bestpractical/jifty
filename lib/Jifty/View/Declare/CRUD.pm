@@ -3,8 +3,7 @@ use strict;
 
 package Jifty::View::Declare::CRUD;
 use Jifty::View::Declare -base;
-use base 'Exporter';
-our @EXPORT = qw(object_type fragment_for get_record current_collection display_columns);
+
 
 =head1 NAME
 
@@ -65,7 +64,7 @@ sub fragment_for {
         || $self->fragment_base_path . "/" . $fragment;
 }
 
-=sub fragment_base_path
+=head2 fragment_base_path
 
 =cut
 
@@ -74,11 +73,13 @@ sub fragment_base_path {
     return $self->package_variable('base_path') || '/crud';
 }
 
-=sub get_record
+=head2 _get_record $id
+
+Given an $id, returns a record object for the CRUD view's model class.
 
 =cut
 
-sub get_record {
+sub _get_record {
     my ( $self, $id ) = @_;
 
     my $record_class = Jifty->app_class( "Model", $self->object_type );
@@ -102,6 +103,30 @@ sub display_columns {
 
 
 =head1 TEMPLATES
+
+
+=cut
+
+=head2 index.html
+
+
+=cut
+
+
+template 'index.html' => page {
+    my $self = shift;
+    title is $self->object_type;
+    form {
+            render_region(
+                name     => $self->object_type.'-list',
+                path     => $self->fragment_base_path.'/list');
+    }
+
+};
+
+ 
+
+
 
 =head2 search
 
@@ -144,29 +169,41 @@ This template displays the data held by a single model record.
 template 'view' => sub {
     my $self = shift;
     my ( $object_type, $id ) = ( $self->object_type, get('id') );
+      my $record =   $self->_get_record($id);
     my $update = new_action(
         class   => 'Update' . $object_type,
         moniker => "update-" . Jifty->web->serial,
-        record  => $self->get_record($id)
+        record  => $record 
     );
 
     div {
         { class is 'crud read item inline' };
         my @fields =$self->display_columns($update);
         render_action( $update, \@fields, { render_mode => 'read' } );
-        hyperlink(
-            label   => "Edit",
-            class   => "editlink",
-            onclick => {
-                replace_with => $self->fragment_for('update'),
-                args         => { object_type => $object_type, id => $id }
-            },
-        );
+
+        show ('./view_item_controls', $record, $update); 
 
         hr {};
     };
 
 };
+
+private template view_item_controls  => sub {
+
+        my $self = shift;
+        my $record = shift;
+        my $action = shift;
+        hyperlink(
+            label   => "Edit",
+            class   => "editlink",
+            onclick => {
+                replace_with => $self->fragment_for('update'),
+                args         => { object_type => $self->object_type, id => $record->id }
+            },
+        );
+    };
+
+
 
 =head2 update
 
@@ -191,6 +228,27 @@ template 'update' => sub {
         { class is "crud update item inline " . $object_type }
 
         show('./edit_item', $update);
+        show('./edit_item_controls', $record, $update);
+
+        hr {};
+        }
+};
+
+
+
+=head2 edit_item_controls $record $action
+
+The controls we should be rendering in the 'edit' region for a given fragment
+
+=cut
+
+private template edit_item_controls => sub {
+    my $self = shift;
+    my $record = shift;
+    my $update = shift;
+
+    my $object_type = $self->object_type;
+    my $id = $record->id;
         div {
             { class is 'crud editlink' };
             hyperlink(
@@ -212,12 +270,32 @@ template 'update' => sub {
             );
         };
 
-        hr {};
-        }
+};
+
+=head2 list
+
+The list template provides an interactive list for showing a list of records in the record collection, adding new records, deleting records, and updating records.
+
+=cut
+
+template 'list' => sub {
+    my $self = shift;
+
+    my ( $page ) = get(qw(page ));
+    my $fragment_for_new_item = get('fragment_for_new_item') || $self->fragment_for('new_item');
+    my $item_path = get('item_path') || $self->fragment_for("view");
+    my $collection =  $self->_current_collection();
+
+    show('./search_region');
+    show( './paging_top',    $collection, $page );
+    show( './list_items',    $collection, $item_path );
+    show( './paging_bottom', $collection, $page );
+    show( './new_item_region', $fragment_for_new_item );
+
 };
 
 
-sub current_collection {
+sub _current_collection {
     my $self =shift; 
     my ( $page, $search_collection ) = get(qw(page  search_collection));
 
@@ -235,28 +313,6 @@ sub current_collection {
 
     return $collection;    
 }
-
-=head2 list
-
-The list template provides an interactive list for showing a list of records in the record collection, adding new records, deleting records, and updating records.
-
-=cut
-
-template 'list' => sub {
-    my $self = shift;
-
-    my ( $page ) = get(qw(page ));
-    my $fragment_for_new_item = get('fragment_for_new_item') || $self->fragment_for('new_item');
-    my $item_path = get('item_path') || $self->fragment_for("view");
-    my $collection =  $self->current_collection();
-
-    show('./search_region');
-    show( './paging_top',    $collection, $page );
-    show( './list_items',    $collection, $item_path );
-    show( './paging_bottom', $collection, $page );
-    show( './new_item_region', $fragment_for_new_item );
-
-};
 
 
 =head2 search_region

@@ -17,7 +17,7 @@ package Jifty::Plugin::Authentication::Password::View;
 use Jifty::View::Declare -base;
 
 { no warnings 'redefine';
-sub page (&) {
+sub page (&;$) {
     no strict 'refs'; 
     BEGIN {Jifty::Util->require(Jifty->app_class('View'))};
     Jifty->app_class('View')->can('page')->(@_);
