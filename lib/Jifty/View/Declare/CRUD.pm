@@ -18,6 +18,11 @@ This class provides a set of views that may be used by a model to display Create
 
 =cut
 
+
+=head2 mount_view MODELCASS VIEWCLASS /path
+
+=cut
+
 sub mount_view {
     my ($class, $model, $vclass, $path) = @_;
     my $caller = caller(0);
@@ -33,10 +38,20 @@ sub mount_view {
     *{$vclass."::object_type"} = sub { $model };
 }
 
+
+=head2 object_type
+
+=cut
+
 sub object_type {
     my $self = shift;
     return $self->package_variable('object_type') || get('object_type');
 }
+
+
+=head2 fragment_for
+
+=cut
 
 sub fragment_for {
     my $self     = shift;
@@ -50,10 +65,18 @@ sub fragment_for {
         || $self->fragment_base_path . "/" . $fragment;
 }
 
+=sub fragment_base_path
+
+=cut
+
 sub fragment_base_path {
     my $self = shift;
     return $self->package_variable('base_path') || '/crud';
 }
+
+=sub get_record
+
+=cut
 
 sub get_record {
     my ( $self, $id ) = @_;
@@ -64,6 +87,19 @@ sub get_record {
 
     return $record;
 }
+
+=head2 display_columns
+
+Returns a list of all the columns that this REST view should display
+
+=cut
+
+sub display_columns {
+    my $self = shift;
+    my $action = shift;
+     return   grep { !( m/_confirm/ || lc $action->arguments->{$_}{render_as} eq 'password' ) } $action->argument_names;
+}
+
 
 =head1 TEMPLATES
 
@@ -98,11 +134,6 @@ template 'search' => sub {
         }
 };
 
-sub display_columns {
-    my $self = shift;
-    my $action = shift;
-     return   grep { !( m/_confirm/ || lc $action->arguments->{$_}{render_as} eq 'password' ) } $action->argument_names;
-}
 
 =head2 view
 
@@ -227,6 +258,13 @@ template 'list' => sub {
 
 };
 
+
+=head2 search_region
+
+This I<private> template renders a region to show an expandable region for a search widget.
+
+=cut
+
 private template 'search_region' => sub {
     my $self        = shift;
     my $object_type = $self->object_type;
@@ -250,6 +288,13 @@ private template 'search_region' => sub {
     outs( $search_region->render );
 };
 
+=head2 new_item_region
+
+This I<private> template renders a region to show a the C<new_item> template.
+
+=cut
+
+
 private template 'new_item_region' => sub {
     my $self        = shift;
     my $fragment_for_new_item = shift;
@@ -263,6 +308,15 @@ private template 'new_item_region' => sub {
         );
     }
 };
+
+
+=head2 list_items $collection $item_path
+
+Renders a div of class list with a region per item.
+
+
+
+=cut
 
 private template 'list_items' => sub {
     my $self        = shift;
@@ -286,6 +340,14 @@ private template 'list_items' => sub {
 
 };
 
+
+=head2 paging_top $collection $page_number
+
+Paging for your list, rendered at the top of the list
+
+=cut
+
+
 private template 'paging_top' => sub {
     my $self       = shift;
     my $collection = shift;
@@ -300,6 +362,12 @@ private template 'paging_top' => sub {
     }
 
 };
+
+=head2 paging_bottom $collection $page_number
+
+Paging for your list, rendered at the bottom of the list
+
+=cut
 
 private template paging_bottom => sub {
     my $self       = shift;
@@ -330,6 +398,15 @@ private template paging_bottom => sub {
         }
     };
 };
+
+
+
+=head2 edit_item $action
+
+Renders the action $Action, handing it the array ref returned by L</display_columns>.
+
+=cut
+
 
 
 private template 'edit_item' => sub {
