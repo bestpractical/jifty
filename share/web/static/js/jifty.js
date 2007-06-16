@@ -655,6 +655,46 @@ function prepare_element_for_update(f) {
 
 var CACHE = {};
 
+// FIXME: try not to pollute the namespace!
+var tags = ['div', 'h2', 'dl', 'dt', 'dd', 'span'];
+for (var i in tags) {
+    this[tags[i]] = _mk_tag_wrapper(tags[i]);
+}
+
+
+function _mk_tag_wrapper(name) {
+    return function() {
+	var buf = new Array;
+	var sp = this['attr'];
+	var attr = {};
+	this['attr'] = function(a) {
+	    var foo;
+	    a = a();
+	    while(foo = a.splice(0, 2)) {
+		if (foo.length == 0)
+		    break;
+		attr[foo[0]] = foo[1];
+	    }
+	};
+		
+	for (var i = 0; i < arguments.length; ++i) {
+	    buf.push(typeof(arguments[i]) == 'function' ? arguments[i]() : arguments[i]);
+	}
+	var _mk_attr = function() {
+	    var foo = ' ';
+	    for (var k in attr) {
+		if (k == 'extend') continue;
+		foo += k + '="' + attr[k] + '"';
+	    }
+	    return foo;
+	};
+	var first = buf.splice(0, 1);
+	return '<'+name+_mk_attr(attr)+'>' + first + '</'+name+'>' + buf.join('');
+    }
+};
+var _ = function(str) { return str };
+var attr = function() {};
+
 var extract_cacheable = function(fragment, f) {
     for (var fragment_bit = fragment.firstChild;
          fragment_bit != null;
@@ -667,10 +707,16 @@ var extract_cacheable = function(fragment, f) {
             } else if (fragment_bit.firstChild) {
                 textContent = fragment_bit.firstChild.nodeValue;
             } 
-            CACHE[f['path']] = { 'type': c_type, 'content': textContent };
+            var cache_func;
+	    try { cache_func = eval(textContent) }
+	    catch(e) { 
+		//		alert(e);
+		break; }
+	    alert("got cache content");
+            CACHE[f['path']] = { 'type': c_type, 'content': cache_func };
         }
     }
-}
+};
 
 // applying updates from a fragment
 //   - fragment: the fragment from the server
@@ -815,7 +861,7 @@ function update() {
         if (cached && cached['type'] == 'static') {
             var my_fragment = document.createElement('fragment');
             var content_node = document.createElement('content');
-            content_node.textContent = cached['content'];
+            content_node.textContent = cached['content']();
             my_fragment.appendChild(content_node);
             my_fragment.setAttribute('id', f['region']);
 
@@ -830,7 +876,7 @@ function update() {
 	    var record = Todo.find(f['args']['id']);
             var my_fragment = document.createElement('fragment');
             var content_node = document.createElement('content');
-            content_node.textContent = cached['content'].process(record);
+            content_node.textContent = cached['content'](record);
             my_fragment.appendChild(content_node);
             my_fragment.setAttribute('id', f['region']);
             update_from_cache.push(function(){ apply_fragment_updates(my_fragment, f); } );

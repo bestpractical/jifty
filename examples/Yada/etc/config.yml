@@ -2,6 +2,7 @@
 application:
   OpenIDSecret: sekrit13
 framework: 
+  ConfigFileVersion: 2
   AdminMode: 1
   SkipAccessControl: 1
   ApplicationClass: Yada
@@ -34,6 +35,7 @@ framework:
     - User: {}
     - Authentication::Password: {}
     - OpenID: {}
+    - SinglePage: {}
 
   PubSub: 
     Backend: Memcached

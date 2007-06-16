@@ -384,15 +384,34 @@ sub get_element {
     return "#region-" . $self->qualified_name . ' ' . join(' ', @_);
 }
 
+use PadWalker;
+use Jifty::View::Declare::Compile;
+
+sub _actual_td_code {
+    my $code = shift;
+
+    return PadWalker::closed_over($code)->{'$coderef'}
+	? ${ PadWalker::closed_over($code)->{'$coderef'} } : $code;
+}
+
 sub client_cacheable {
     my $self = shift;
-    return 'static' if $self->path eq '__jifty/empty';
     return 'crudview' if $self->path eq '//todo/view';
+
+    my $code = _actual_td_code(Template::Declare->resolve_template($self->path));
+
+    return 'static' if $Jifty::View::Declare::BaseClass::Static{$code};
+
+    return;
 }
 
 sub client_cache_content {
     my $self = shift;
-    my $code = Template::Declare->resolve_template($self->path);
+    my $code = _actual_td_code(Template::Declare->resolve_template($self->path));
+
+    if ($Jifty::View::Declare::BaseClass::Static{$code}) {
+	return 'function() '.Jifty::View::Declare::Compile->new->coderef2text($code);
+    }
 
     local @Evil::ISA = ('Yada::Model::Todo');
     local $HTML::Mason::Commands::m = undef;

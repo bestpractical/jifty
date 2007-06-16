@@ -6,7 +6,7 @@ use Jifty::View::Declare -base;
 template 'view_brief' => sub {
     my $self = shift;
     my ( $object_type, $id ) = ( $self->object_type, get('id') );
-    my $record = $self->get_record($id);
+    my $record = $self->_get_record($id);
 
     div { {class is "description" };
 	  outs($record->description);

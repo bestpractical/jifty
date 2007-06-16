@@ -54,6 +54,11 @@ sub use_mason_wrapper {
     }
 }
 
+use Attribute::Handlers;
+our %Static;
+sub Static :ATTR(CODE,BEGIN) {
+    $Static{$_[2]}++;
+}
 
 =head2 show templatename arguments
 
