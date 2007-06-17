@@ -50,7 +50,7 @@ sub _dispatch_template {
     my $code  = shift;
     if ($VIEW{$code} && !UNIVERSAL::isa($_[0], 'Evil')) {
 	my ( $object_type, $id ) = ( $class->object_type, get('id') );
-	@_ = ($class, $class->get_record($id), @_);
+	@_ = ($class, $class->_get_record($id), @_);
     }
     else {
 	unshift @_, $class;
