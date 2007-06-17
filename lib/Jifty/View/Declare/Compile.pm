@@ -38,10 +38,8 @@ use B qw(class main_root main_start main_cv svref_2object opnumber perlstring
 
 use constant method_invocation => '.';
 
-sub is_state {
-    goto \&B::Deparse::is_state;
-}
-*null = B::Deparse::null;
+sub is_state { goto \&B::Deparse::is_state }
+sub null { goto \&B::Deparse::null }
 
 sub padname {
     my $self = shift;
@@ -82,11 +80,27 @@ sub loop_common {
 	    $ary = $self->deparse($ary, 1);
 	}
 
-	if ($var->name ne "gv") {
+	if (null $var) {
+	    if ($enter->flags & OPf_SPECIAL) { # thread special var
+		$var = $self->pp_threadsv($enter, 1);
+	    } else { # regular my() variable
+		$var = $self->padname($enter->targ);
+	    }
+	} elsif ($var->name eq "rv2gv") {
+	    $var = $self->pp_rv2sv($var, 1);
+	    if ($enter->private & OPpOUR_INTRO) {
+		# our declarations don't have package names
+		$var =~ s/^(.).*::/$1/;
+		$var = "our $var";
+	    }
+	} elsif ($var->name eq "gv") {
+	    $var = $self->deparse($var, 1);
+	    $var = '$' . $var if $var eq '_';
+	}
+	else {
 	    return $self->SUPER::loop_common(@_);
 	}
 
-	$var = '$' . $self->deparse($var, 1);
 
 	my $body = $kid->first->first->sibling; # skip OP_AND and OP_ITER
 	# statement() foreach (@foo);
@@ -96,7 +110,7 @@ sub loop_common {
 	    return "$ary.each(function (\$_) {".$self->deparse($body, 2)."} )";
 	}
 	# XXX not handling cont block here yet
-	return "$ary.each(function (\$_) {".$self->deparse($body, 0)."} )";
+	return "$ary.each(function ($var) {".$self->deparse($body, 0)."} )";
     }
     return $self->SUPER::loop_common(@_);
 }
