@@ -60,6 +60,11 @@ sub Static :ATTR(CODE,BEGIN) {
     $Static{$_[2]}++;
 }
 
+our %Action;
+sub Action :ATTR(CODE,BEGIN) {
+    $Action{$_[2]}++;
+}
+
 =head2 show templatename arguments
 
 Render a C<Template::Declare> template.

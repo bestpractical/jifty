@@ -401,6 +401,7 @@ sub client_cacheable {
     my $code = _actual_td_code(Template::Declare->resolve_template($self->path));
 
     return 'static' if $Jifty::View::Declare::BaseClass::Static{$code};
+    return 'action' if $Jifty::View::Declare::BaseClass::Action{$code};
 
     return;
 }
@@ -410,6 +411,9 @@ sub client_cache_content {
     my $code = _actual_td_code(Template::Declare->resolve_template($self->path));
 
     if ($Jifty::View::Declare::BaseClass::Static{$code}) {
+	return 'function() '.Jifty::View::Declare::Compile->new->coderef2text($code);
+    }
+    if ($Jifty::View::Declare::BaseClass::Action{$code}) {
 	return 'function() '.Jifty::View::Declare::Compile->new->coderef2text($code);
     }
 

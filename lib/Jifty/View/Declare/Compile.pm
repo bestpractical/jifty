@@ -136,6 +136,16 @@ sub maybe_parens_func {
 
 }
 
+sub const {
+    my $self = shift;
+    my($sv, $cx) = @_;
+    if (class($sv) eq "NULL") {
+       return 'null';
+    }
+    return $self->SUPER::const(@_);
+}
+
+sub pp_undef { 'null' }
 
 sub _anoncode {
     my ($self, $text) = @_;

@@ -1,6 +1,20 @@
 /* An empty class so we can create things inside it */
 var Jifty = Class.create();
 
+Jifty.Web = Class.create();
+Jifty.Web.current_actions = new Array;
+Jifty.Web.new_action = function(foo, class_name, bar, moniker) {
+    var a;
+    Jifty.Web.current_actions.each(function(x) { if (x.moniker == moniker) a = x });
+    if (!a) throw "hate";
+    
+    return a;
+};
+
+Jifty.web = Jifty.Web;
+
+var render_param = function(a, field) { a.render_param(field) };
+
 /* Actions */
 var Action = Class.create();
 Action.prototype = {
@@ -235,10 +249,72 @@ Action.prototype = {
         var enable = function() { arguments[0].disabled = false; };
         this.fields().each( enable );
         this.buttons().each( enable );
+    },
+
+
+    /* client side logic extracted from Jifty::Action */
+    _action_spec: function() {
+	if (!this.s_a) {
+	    /* XXX: make REST client accessible */
+	    var Todo = new AsynapseRecord('todo');
+	    this.s_a = $H(Todo.eval_ajax_get('/=/action/Jifty.Plugin.Authentication.Password.Action.Signup.js'));
+	}
+	
+	return this.s_a
+    },
+    argument_names: function() {
+	return this._action_spec().keys();
+    },
+
+    render_param: function(field) {
+	var a_s = this._action_spec();
+	var type = 'text';
+	var f = new Action.Field(field, a_s[field]);
+	f.render();
     }
+
 };
 
+Action.Field = Class.create();
+Action.Field.prototype = {
+ initialize: function(name, args) {
+	this.name = name;
+	this.label = args.label;
+	this.mandatory = args.mandatory;
+    },
 
+ render: function() {
+	return this.render_wrapper(function() {
+		this.render_preamble();
+		this.render_label();
+		if (!this.render_mode) this.render_mode = 'update';
+		if (this.render_mode == 'update') { 
+		    this.render_widget();
+		    this.render_autocomplete_div();
+		    this.render_inline_javascript();
+		    this.render_hints();
+		    this.render_errors();
+		    this.render_warnings();
+		    this.render_canonicalization_notes();
+		} else if (this.render_mode == 'read'){ 
+		    this.render_value();
+		}
+	    });
+    },
+ render_wrapper: function () {
+	var classes = ['form_field'];
+	if (this.mandatory) classes.push('mandatory');
+	if (this.name) classes.push('argument-'+this.name);
+	return div(function() {
+		attr(function(){return ['class', classes.join(' ')]});
+		return arguments.each(function(x){x()});
+	    });
+    },
+ __noSuchMethod__: function(name) {
+	return '<!-- '+name+' not implemented yet -->';
+    }
+
+};
 
 /* Forms */
 Object.extend(Form, {
@@ -660,9 +736,13 @@ var tags = ['div', 'h2', 'dl', 'dt', 'dd', 'span'];
 for (var i in tags) {
     this[tags[i]] = _mk_tag_wrapper(tags[i]);
 }
+this['form'] = _mk_tag_wrapper('form', function(attr) {
+	return '<form method="post" enctype="multipart/form-data" >'; // XXX action: & friends
+    });
+var _ = function(str) { return str };
+var attr = function() {};
 
-
-function _mk_tag_wrapper(name) {
+function _mk_tag_wrapper(name, pre, post) {
     return function() {
 	var buf = new Array;
 	var sp = this['attr'];
@@ -689,11 +769,11 @@ function _mk_tag_wrapper(name) {
 	    return foo;
 	};
 	var first = buf.splice(0, 1);
-	return '<'+name+_mk_attr(attr)+'>' + first + '</'+name+'>' + buf.join('');
+	var _pre = pre ? pre(attr) : '<'+name+_mk_attr(attr)+'>';
+	var _post = post ? post(attr) : '</'+name+'>';
+	return _pre + first + _post + buf.join('');
     }
 };
-var _ = function(str) { return str };
-var attr = function() {};
 
 var extract_cacheable = function(fragment, f) {
     for (var fragment_bit = fragment.firstChild;
@@ -710,9 +790,9 @@ var extract_cacheable = function(fragment, f) {
             var cache_func;
 	    try { cache_func = eval(textContent) }
 	    catch(e) { 
-		//		alert(e);
+		alert(e);
+		alert(textContent);
 		break; }
-	    alert("got cache content");
             CACHE[f['path']] = { 'type': c_type, 'content': cache_func };
         }
     }
@@ -861,7 +941,12 @@ function update() {
         if (cached && cached['type'] == 'static') {
             var my_fragment = document.createElement('fragment');
             var content_node = document.createElement('content');
-            content_node.textContent = cached['content']();
+	    var cached_result;
+
+	    try { cached_result = cached['content']() }
+	    catch (e) { alert(e) }
+
+            content_node.textContent = cached_result;
             my_fragment.appendChild(content_node);
             my_fragment.setAttribute('id', f['region']);
 
@@ -869,6 +954,24 @@ function update() {
  } );
             continue;
         }
+	else if (cached && cached['type'] == 'action') {
+            var my_fragment = document.createElement('fragment');
+            var content_node = document.createElement('content');
+
+            my_fragment.appendChild(content_node);
+            my_fragment.setAttribute('id', f['region']);
+            update_from_cache.push(function(){
+		    var cached_result;
+		    Jifty.Web.current_actions = Form.getActions(form);
+		    try {
+			cached_result = cached['content'](form);
+		    }
+		    catch (e) { alert(e); throw e }
+		    content_node.textContent = cached_result;
+		    apply_fragment_updates(my_fragment, f);
+ } );
+            continue;
+	}
         else if (cached && cached['type'] == 'crudview') {
 	    try { // XXX: get model class etc as metadata in cache 
 		// XXX: kill dup code
@@ -924,14 +1027,15 @@ function update() {
             if (response_fragment.getAttribute("id") != f['region'])
                 continue;
 
-            for (var i = 0; i < update_from_cache.length; i++)
-                update_from_cache[i]();
 
             try {
                 apply_fragment_updates(response_fragment, f);
             }catch (e) { alert(e) }
             extract_cacheable(response_fragment, f);
         }
+
+	update_from_cache.each(function(x) { x() });
+
         for (var result = response.firstChild;
              result != null;
              result = result.nextSibling) {

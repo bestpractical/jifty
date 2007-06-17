@@ -54,13 +54,17 @@ template 'signup' => page {
     render_region(name => 'signup_widget', path => '_signup');
 };
 
-template '_signup' => sub {
-    my $action = Jifty->web->new_action( class => 'Signup');
+template '_signup' => sub :Action {
+    my $action = Jifty->web->new_action( class => 'Signup', moniker => 'signupnow');
     my $next = undef;
-    with ( call => $next ),
+#    with ( call => $next ),
     form {
-	render_param( $action => 'name' , focus => 1);
-	render_param( $action => $_ ) for ( grep {$_ ne 'name'} $action->argument_names );
+#	XXX: grep / focus not yet
+#	render_param( $action => 'name' , focus => 1);
+#	render_param( $action => $_ ) for ( grep {$_ ne 'name'} $action->argument_names );
+
+	render_param( $action => $_ ) for $action->argument_names;
+
 	form_return( label => _('Sign up'), submit => $action );
     }
 
