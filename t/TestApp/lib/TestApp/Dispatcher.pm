@@ -82,4 +82,16 @@ on qr{(__jifty/webservices/.*)} => run {
     }
 };
 
+on HTTPS '/dispatch/protocol' => run {
+    set content => 'HTTPS';
+};
+
+on HTTP '/dispatch/protocol' => run {
+    set content => 'NOT HTTPS';
+};
+
+on '/dispatch/protocol' => run {
+    set footer => 'normal';
+};
+
 1;
