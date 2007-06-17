@@ -161,6 +161,12 @@ sub _generate_javascript {
     }
 }
 
+=head2 minify_js \$js
+
+Runs the given JS through jsmin
+
+=cut
+
 sub minify_js {
     my $self = shift;
     my $input = shift;

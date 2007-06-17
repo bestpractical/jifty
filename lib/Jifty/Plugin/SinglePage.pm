@@ -6,6 +6,20 @@ use base qw/Jifty::Plugin Class::Accessor/;
 
 __PACKAGE__->mk_accessors(qw(region_name));
 
+=head1 NAME
+
+Jifty::Plugin::SinglePage
+
+=head1 DESCRIPTION
+
+Makes your normal Jifty app into a single-page app through clever use of regions
+
+=head2 init
+
+Registers a before_new trigger to modify links and sets up the special region
+
+=cut
+
 sub init {
     my $self = shift;
     Jifty::Web::Form::Clickable->add_trigger( before_new => _sp_link($self));
@@ -33,12 +47,12 @@ sub _sp_link {
                 args         => $args->{parameters}});
         }
         elsif (exists $args->{submit}) {
-	    $self->_push_onclick($args, { refresh_self => 1, submit => $args->{submit} });
-	    $args->{as_button} = 1;
-	}
+            $self->_push_onclick($args, { refresh_self => 1, submit => $args->{submit} });
+            $args->{as_button} = 1;
+        }
         if (my $form = delete $args->{_form}) {
-	    $args->{call} = $form->call;
-	}
+            $args->{call} = $form->call;
+        }
         my $onclick = $args->{onclick};
         if ( $args->{onclick} ) {
             $self->_push_onclick($args);    # make sure it's array

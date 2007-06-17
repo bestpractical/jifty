@@ -4,6 +4,15 @@ package Jifty::Plugin::Feedback::View;
 
 use Jifty::View::Declare -base;
 
+=head1 NAME
+
+Jifty::Plugin::Feedback::View
+
+=head1 DESCRIPTION
+
+Provides the feedback regions for L<Jifty::Plugin::Feedback>
+
+=cut
 
 template 'feedback/request_feedback' => sub {
     div {
