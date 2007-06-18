@@ -269,47 +269,71 @@ Action.prototype = {
     render_param: function(field) {
 	var a_s = this._action_spec();
 	var type = 'text';
-	var f = new Action.Field(field, a_s[field]);
-	f.render();
+	var f = new Action.Field(field, a_s[field], this);
+	return f.render();
     }
 
 };
 
 Action.Field = Class.create();
 Action.Field.prototype = {
- initialize: function(name, args) {
+ initialize: function(name, args, action) {
 	this.name = name;
 	this.label = args.label;
 	this.mandatory = args.mandatory;
+	this.action = action;
+	if (!this.render_mode) this.render_mode = 'update';
     },
 
  render: function() {
-	return this.render_wrapper(function() {
-		this.render_preamble();
-		this.render_label();
-		if (!this.render_mode) this.render_mode = 'update';
-		if (this.render_mode == 'update') { 
-		    this.render_widget();
-		    this.render_autocomplete_div();
-		    this.render_inline_javascript();
-		    this.render_hints();
-		    this.render_errors();
-		    this.render_warnings();
-		    this.render_canonicalization_notes();
-		} else if (this.render_mode == 'read'){ 
-		    this.render_value();
-		}
-	    });
+	if (this.render_mode == 'read')
+	    return this.render_wrapper
+		(this.render_preamble,
+		 this.render_label,
+		 this.render_value);
+	else
+	    return this.render_wrapper
+	    (this.render_preamble,
+	     this.render_label,
+	     this.render_widget,
+	     this.render_autocomplete_div,
+	     this.render_inline_javascript,
+	     this.render_hints,
+	     this.render_errors,
+	     this.render_warnings,
+	     this.render_canonicalization_notes);
     },
  render_wrapper: function () {
 	var classes = ['form_field'];
 	if (this.mandatory) classes.push('mandatory');
 	if (this.name) classes.push('argument-'+this.name);
+	var args = arguments;
+	var tthis = this;
 	return div(function() {
 		attr(function(){return ['class', classes.join(' ')]});
-		return arguments.each(function(x){x()});
+		var buf = new Array;
+		for (var i = 0; i < args.length; ++i) {
+		    buf.push(typeof(args[i]) == 'function' ? args[i].apply(tthis) : args[i]);
+		}
+		return buf.join('');
 	    });
     },
+    render_preamble: function() {
+	var tthis = this;
+	return span(function(){attr(function(){return ['class', "preamble"]});
+		return tthis.preamble });
+    },
+
+    render_label: function() {
+	var tthis = this;
+	if(this.render_mode == 'update')
+	    return label(function(){attr(function(){return['class', "label", 'for', tthis.element_id()]});
+		    return tthis.label });
+	else
+	    return span(function(){attr(function(){return['class', "label" ]});
+		    return tthis.label });
+    },
+ element_id: function() { /* not yet */ },
  __noSuchMethod__: function(name) {
 	return '<!-- '+name+' not implemented yet -->';
     }
@@ -732,7 +756,7 @@ function prepare_element_for_update(f) {
 var CACHE = {};
 
 // FIXME: try not to pollute the namespace!
-var tags = ['div', 'h2', 'dl', 'dt', 'dd', 'span'];
+var tags = ['div', 'h2', 'dl', 'dt', 'dd', 'span', 'label'];
 for (var i in tags) {
     this[tags[i]] = _mk_tag_wrapper(tags[i]);
 }
