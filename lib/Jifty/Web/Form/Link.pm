@@ -101,12 +101,12 @@ sub render {
 
     my $tooltip = $self->tooltip;
     $tooltip = Jifty->web->escape( $tooltip )
-        if ( $tooltip and $self->escape_label );
+        if ( defined $tooltip and $self->escape_label );
 
     Jifty->web->out(qq(<a));
     Jifty->web->out(qq( id="@{[$self->id]}"))         if $self->id;
     Jifty->web->out(qq( class="@{[$self->class]}"))   if $self->class;
-    Jifty->web->out(qq( title="@{[$self->tooltip]}")) if $tooltip;
+    Jifty->web->out(qq( title="@{[$tooltip]}"))       if defined $tooltip;
     Jifty->web->out(qq( target="@{[$self->target]}")) if $self->target;
     Jifty->web->out(qq( accesskey="@{[$self->key_binding]}")) if $self->key_binding;
     Jifty->web->out(qq( href="@{[Jifty->web->escape($self->url)]}"));
