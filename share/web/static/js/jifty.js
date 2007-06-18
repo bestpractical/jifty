@@ -23,7 +23,7 @@ var form_return  = function(foo, label, bar, submit) {
 		      'actions': action_hash,
 		      'fragments': [{'mode': 'Replace', 'args': {}, 'region':'__page_signup_widget', 'path': '_signup'}]})
     +', this)';
-    onclick = onclick.replace(/"/g, "'");
+    onclick = onclick.replace(/"/g, "'"); //"' # grr emacs!
     outs(
 	 div(function() {
 		 attr(function() { return ['class', 'submit_button'] });
@@ -40,11 +40,22 @@ var form_return  = function(foo, label, bar, submit) {
 
  };
 
+function register_action(a) {
+    outs(div(function() {
+		attr(function() { return ['class', 'hidden'] });
+		return input(function() { attr(function() {
+				return ['type', 'hidden',
+					'name', a.register_name(),
+					'id', a.register_name(),
+					'value', a.actionClass] }) } ) } ));
+    /* XXX: fallback values */
+}
 
 function apply_cached_for_action(code, actions) {
     Jifty.Web.current_actions = actions;
     this['out_buf'] = '';
     this['outs'] = function(text) { this.out_buf += text };
+    actions.each(register_action);
     var foo = code();
     return foo;
     alert(foo);
@@ -307,7 +318,8 @@ Action.prototype = {
 	var type = 'text';
 	var f = new ActionField(field, a_s[field], this);
 	return f.render();
-    }
+    },
+    register_name: function() { return this.register.id }
 
 };
 
@@ -378,7 +390,7 @@ ActionField.prototype = {
     },
  render_hints: function() {
 	var tthis = this;
-	span(function(){attr(function(){return ['class', "hints"]});
+	return span(function(){attr(function(){return ['class', "hints"]});
 		return tthis.hints });
     },
 
@@ -386,9 +398,8 @@ ActionField.prototype = {
 	if (!this.action) return '';
 	var tthis = this;
 	// XXX: post-request handler needs to extract field error messages
-	span(function(){attr(function(){return ['class', "error", 'id', 'errors-'+tthis.input_name()]});
+	return span(function(){attr(function(){return ['class', "error", 'id', 'errors-'+tthis.input_name()]});
 		return tthis.error });
-	return '';
     },
 
  render_widget: function () {
