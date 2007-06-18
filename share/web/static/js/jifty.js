@@ -11,10 +11,44 @@ Jifty.Web.new_action = function(foo, class_name, bar, moniker) {
     return a;
 };
 
-Jifty.web = Jifty.Web;
+Jifty.web = function() { return Jifty.Web };
 
-var render_param = function(a, field) { a.render_param(field) };
-var form_return  = function() { };
+var render_param = function(a, field) { outs(a.render_param(field)) };
+var form_return  = function(foo, label, bar, submit) {
+    var action_hash = {};
+    action_hash[submit.moniker] = 1;
+    var onclick = 'if(event.ctrlKey||event.metaKey||event.altKey||event.shiftKey) return true; return update('
+    + JSON.stringify({'continuation': {},
+		      'actions': action_hash,
+		      'fragments': [{'mode': 'Replace', 'args': {}, 'region':'__page_signup_widget', 'path': '_signup'}]})
+    +', this)';
+
+    outs(
+	 div(function() {
+		 attr(function() { return ['class', 'submit_button'] });
+		 return input(function() { attr(function()
+						{return ['type', 'submit',
+							 'onclick', onclick,
+							 'class', 'widget button',
+							 'id', 'S' + (++SERIAL + SERIAL_postfix),
+							 'value', label,
+							 'name', ''] })});
+		     }));
+
+	 //<div class="submit_button"><input type="submit" onclick="if(event.ctrlKey||event.metaKey||event.altKey||event.shiftKey) return true; return update( {'continuation':{},'actions':{'signupnow':1},'fragments':[{'mode':'Replace','args':{},'region':'__page-signup_widget','path':'_signup'}]}, this );" class="widget button" id="S12826795" value="註冊" name="J:V-region-__page-signup_widget=_signup|J:ACTIONS=signupnow"/> 
+
+ };
+
+
+function apply_cached_for_action(code, actions) {
+    Jifty.Web.current_actions = actions;
+    this['out_buf'] = '';
+    this['outs'] = function(text) { this.out_buf += text };
+    var foo = code();
+    return foo;
+    alert(foo);
+    throw 'not yet';
+}
 
 /* Actions */
 var Action = Class.create();
@@ -340,23 +374,39 @@ ActionField.prototype = {
  input_name: function() {
 	return ['J:A:F', this.name, this.action.moniker].join('-');
     },
+ render_hints: function() {
+	var tthis = this;
+	span(function(){attr(function(){return ['class', "hints"]});
+		return tthis.hints });
+    },
+
+ render_errors: function() {
+	if (!this.action) return '';
+	var tthis = this;
+	// XXX: post-request handler needs to extract field error messages
+	span(function(){attr(function(){return ['class', "error", 'id', 'errors-'+tthis.input_name()]});
+		return tthis.error });
+	return '';
+    },
+
  render_widget: function () {
 	var tthis = this;
 	return input(function(){
 		    attr(function(){
-			    var fields = ['type', this.type];
+			    var fields = ['type', tthis.type];
 			    if (tthis.input_name) fields.push('name', tthis.input_name());
 			    fields.push('id', tthis.element_id());
 			    if (tthis.current_value) fields.push('value', tthis.current_value);
 			    //$self->_widget_class; 
-			    if (this.max_length) fields.push('size', this.max_length, 'maxlength', this.max_length);
-			    if (this.disable_autocomplete) fields.push('autocomplete', "off");
+			    if (tthis.max_length) fields.push('size', tthis.max_length, 'maxlength', tthis.max_length);
+			    if (tthis.disable_autocomplete) fields.push('autocomplete', "off");
 			    //" " .$self->other_widget_properties;
 			    return fields;
 			})});
     },
 
- element_id: function() { return this.input_name() + '-S' + (++SERIAL + SERIAL_postfix) },
+ element_id: function() { if(!this._element_id) this._element_id = this.input_name() + '-S' + (++SERIAL + SERIAL_postfix);
+			  return this._element_id; },
  __noSuchMethod__: function(name) {
 	return '<!-- '+name+' not implemented yet -->';
     }
@@ -785,11 +835,11 @@ for (var i in tags) {
 }
 this['form'] = _mk_tag_wrapper('form', function(attr) {
 	return '<form method="post" enctype="multipart/form-data" >'; // XXX action: & friends
-    });
+    }, null, 1);
 var _ = function(str) { return str };
 var attr = function() {};
 
-function _mk_tag_wrapper(name, pre, post) {
+function _mk_tag_wrapper(name, pre, post, want_outbuf) {
     return function() {
 	var buf = new Array;
 	var sp = this['attr'];
@@ -803,7 +853,7 @@ function _mk_tag_wrapper(name, pre, post) {
 		attr[foo[0]] = foo[1];
 	    }
 	};
-		
+
 	for (var i = 0; i < arguments.length; ++i) {
 	    buf.push(typeof(arguments[i]) == 'function' ? arguments[i]() : arguments[i]);
 	}
@@ -818,6 +868,10 @@ function _mk_tag_wrapper(name, pre, post) {
 	var first = buf.splice(0, 1);
 	var _pre = pre ? pre(attr) : '<'+name+_mk_attr(attr)+'>';
 	var _post = post ? post(attr) : '</'+name+'>';
+	if (want_outbuf && this.out_buf) {
+	    first += this.out_buf;
+	    this.outbuf = '';
+	}
 	return _pre + first + _post + buf.join('');
     }
 };
@@ -1009,9 +1063,8 @@ function update() {
             my_fragment.setAttribute('id', f['region']);
             update_from_cache.push(function(){
 		    var cached_result;
-		    Jifty.Web.current_actions = Form.getActions(form);
 		    try {
-			cached_result = cached['content'](form);
+			cached_result = apply_cached_for_action(cached['content'], Form.getActions(form));
 		    }
 		    catch (e) { alert(e); throw e }
 		    content_node.textContent = cached_result;
