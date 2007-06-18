@@ -23,7 +23,7 @@ var form_return  = function(foo, label, bar, submit) {
 		      'actions': action_hash,
 		      'fragments': [{'mode': 'Replace', 'args': {}, 'region':'__page_signup_widget', 'path': '_signup'}]})
     +', this)';
-
+    onclick = onclick.replace(/"/g, "'");
     outs(
 	 div(function() {
 		 attr(function() { return ['class', 'submit_button'] });
