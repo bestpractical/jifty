@@ -14,6 +14,7 @@ Jifty.Web.new_action = function(foo, class_name, bar, moniker) {
 Jifty.web = Jifty.Web;
 
 var render_param = function(a, field) { a.render_param(field) };
+var form_return  = function() { };
 
 /* Actions */
 var Action = Class.create();
@@ -269,20 +270,23 @@ Action.prototype = {
     render_param: function(field) {
 	var a_s = this._action_spec();
 	var type = 'text';
-	var f = new Action.Field(field, a_s[field], this);
+	var f = new ActionField(field, a_s[field], this);
 	return f.render();
     }
 
 };
 
-Action.Field = Class.create();
-Action.Field.prototype = {
+var SERIAL_postfix = Math.ceil(10000*Math.random());
+var SERIAL = 0;
+ActionField = Class.create();
+ActionField.prototype = {
  initialize: function(name, args, action) {
 	this.name = name;
 	this.label = args.label;
 	this.mandatory = args.mandatory;
 	this.action = action;
 	if (!this.render_mode) this.render_mode = 'update';
+	this.type = 'text';
     },
 
  render: function() {
@@ -333,7 +337,26 @@ Action.Field.prototype = {
 	    return span(function(){attr(function(){return['class', "label" ]});
 		    return tthis.label });
     },
- element_id: function() { /* not yet */ },
+ input_name: function() {
+	return ['J:A:F', this.name, this.action.moniker].join('-');
+    },
+ render_widget: function () {
+	var tthis = this;
+	return input(function(){
+		    attr(function(){
+			    var fields = ['type', this.type];
+			    if (tthis.input_name) fields.push('name', tthis.input_name());
+			    fields.push('id', tthis.element_id());
+			    if (tthis.current_value) fields.push('value', tthis.current_value);
+			    //$self->_widget_class; 
+			    if (this.max_length) fields.push('size', this.max_length, 'maxlength', this.max_length);
+			    if (this.disable_autocomplete) fields.push('autocomplete', "off");
+			    //" " .$self->other_widget_properties;
+			    return fields;
+			})});
+    },
+
+ element_id: function() { return this.input_name() + '-S' + (++SERIAL + SERIAL_postfix) },
  __noSuchMethod__: function(name) {
 	return '<!-- '+name+' not implemented yet -->';
     }
@@ -756,7 +779,7 @@ function prepare_element_for_update(f) {
 var CACHE = {};
 
 // FIXME: try not to pollute the namespace!
-var tags = ['div', 'h2', 'dl', 'dt', 'dd', 'span', 'label'];
+var tags = ['div', 'h2', 'dl', 'dt', 'dd', 'span', 'label', 'input'];
 for (var i in tags) {
     this[tags[i]] = _mk_tag_wrapper(tags[i]);
 }
