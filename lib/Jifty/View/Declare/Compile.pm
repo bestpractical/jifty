@@ -38,6 +38,7 @@ use B qw(class main_root main_start main_cv svref_2object opnumber perlstring
 
 use constant method_invocation => '.';
 
+sub is_scope { goto \&B::Deparse::is_scope }
 sub is_state { goto \&B::Deparse::is_state }
 sub null { goto \&B::Deparse::null }
 
@@ -146,6 +147,29 @@ sub const {
 }
 
 sub pp_undef { 'null' }
+sub pp_sne { shift->binop(@_, "!=", 14) }
+sub pp_grepwhile { shift->mapop(@_, "grep") }
+
+sub mapop {
+    my $self = shift;
+    my($op, $cx, $name) = @_;
+    return $self->SUPER::mapop(@_) unless $name eq 'grep';
+    my($expr, @exprs);
+    my $kid = $op->first; # this is the (map|grep)start
+    $kid = $kid->first->sibling; # skip a pushmark
+    my $code = $kid->first; # skip a null
+    if (is_scope $code) {
+	$code = "{" . $self->deparse($code, 0) . "} ";
+    } else {
+	$code = $self->deparse($code, 24) . ", ";
+    }
+    $kid = $kid->sibling;
+    for (; !null($kid); $kid = $kid->sibling) {
+	$expr = $self->deparse($kid, 6);
+	push @exprs, $expr if defined $expr;
+    }
+    return "(".join(", ", @exprs).").select(function (\$_) $code)";
+}
 
 sub _anoncode {
     my ($self, $text) = @_;

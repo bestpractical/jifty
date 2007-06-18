@@ -1126,7 +1126,7 @@ sub lineseq {
 	$expr =~ s/;\n?\z//;
 	push @exprs, $expr;
     }
-    if (!$root && $ops[-1]->name ne 'return') {
+    if ($ops[-1]->name ne 'return' && (!$root || $root->next->name eq 'grepwhile')) {
 	$exprs[-1] = "return ($exprs[-1])";
     }
     my $body = join(";\n", grep {length} @exprs);
@@ -3034,9 +3034,6 @@ sub method {
     if (length $args) {
 	return $kid . "(" . $args . ")"; # parens mandatory
     } else {
-	warn "==> boo $kid";
-
-
 	return $kid.'()';
     }
 }

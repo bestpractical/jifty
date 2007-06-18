@@ -17,6 +17,7 @@ var render_param = function(a, field) { outs(a.render_param(field)) };
 var form_return  = function(foo, label, bar, submit) {
     var action_hash = {};
     action_hash[submit.moniker] = 1;
+    // XXX: fix the fabricated refresh-self
     var onclick = 'if(event.ctrlKey||event.metaKey||event.altKey||event.shiftKey) return true; return update('
     + JSON.stringify({'continuation': {},
 		      'actions': action_hash,
@@ -292,7 +293,7 @@ Action.prototype = {
 	if (!this.s_a) {
 	    /* XXX: make REST client accessible */
 	    var Todo = new AsynapseRecord('todo');
-	    this.s_a = $H(Todo.eval_ajax_get('/=/action/Jifty.Plugin.Authentication.Password.Action.Signup.js'));
+	    this.s_a = $H(Todo.eval_ajax_get('/=/action/'+this.actionClass+'.js'));
 	}
 	
 	return this.s_a
@@ -317,6 +318,7 @@ ActionField.prototype = {
  initialize: function(name, args, action) {
 	this.name = name;
 	this.label = args.label;
+	this.hints = args.hints;
 	this.mandatory = args.mandatory;
 	this.action = action;
 	if (!this.render_mode) this.render_mode = 'update';

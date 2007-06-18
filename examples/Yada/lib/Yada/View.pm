@@ -59,11 +59,8 @@ template '_signup' => sub :Action {
     my $next = undef;
 #    with ( call => $next ),
     form {
-#	XXX: grep / focus not yet
-#	render_param( $action => 'name' , focus => 1);
-#	render_param( $action => $_ ) for ( grep {$_ ne 'name'} $action->argument_names );
-
-	render_param( $action => $_ ) for $action->argument_names;
+	render_param( $action => 'name' , focus => 1);
+	render_param( $action => $_ ) for ( grep {$_ ne 'name'} $action->argument_names );
 
 	form_return( label => _('Sign up'), submit => $action );
     }
