@@ -10,7 +10,14 @@ use DateTime ();
 
 Jifty::Web::Session - A Jifty session handler
 
-=cut
+=head1 SYNOPSIS
+
+In your F<etc/config.yml> (optional):
+
+  framework:
+    Web:
+      # The default ($PORT is replaced by the port the app is running on)
+      SessionCookieName: JIFTY_SID_$PORT
 
 =head2 new
 
@@ -22,12 +29,13 @@ sub new {
     my $class = shift;
 
     my $session_class = Jifty->config->framework('Web')->{'SessionClass'};
+    my $cookie_name   = Jifty->config->framework('Web')->{'SessionCookieName'};
     if ($session_class and $class ne $session_class) {
         Jifty::Util->require( $session_class );
         return $session_class->new(@_);
     }
     else {
-        return bless {}, $class;
+        return bless { _cookie_name => $cookie_name }, $class;
     }
 }
 
@@ -302,7 +310,9 @@ users, but varies according to the port the server is running on.
 
 sub cookie_name {
     my $self = shift;
-    my $cookie_name = "JIFTY_SID_" . ( $ENV{'SERVER_PORT'} || 'NOPORT' );
+    my $cookie_name = $self->{'_cookie_name'};
+    my $port = ( $ENV{'SERVER_PORT'} || 'NOPORT' );
+    $cookie_name =~ s/\$PORT/$port/g;
     return ($cookie_name);
 }
 

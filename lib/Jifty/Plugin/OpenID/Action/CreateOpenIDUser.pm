@@ -10,6 +10,12 @@ Jifty::Plugin::OpenID::Action::CreateOpenIDUser
 package Jifty::Plugin::OpenID::Action::CreateOpenIDUser;
 use base qw/Jifty::Action::Record/;
 
+=head2 record_class 
+
+Returns the record class for this action
+
+=cut
+
 sub record_class {
     Jifty->app_class("Model", "User")
 }

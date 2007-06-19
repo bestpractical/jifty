@@ -8,7 +8,7 @@ Jifty::Plugin::Authentication::Password::Login::View
 
 =head1 DESCRIPTION
 
-This code is only useful on the new Jifty "Declarative tempaltes" branch. It shouldn't get in the way 
+This code is only useful on the new Jifty "Declarative templates" branch. It shouldn't get in the way 
 if you're running a traditional (0.610 or before) Jifty.
 
 =cut

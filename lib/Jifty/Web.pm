@@ -127,10 +127,6 @@ sub url {
                 path => undef,
                 @_);
 
-    if ($args{'scheme'}) {
-        $self->log->error("Jifty->web->url no longer accepts a 'scheme' argument");
-    }
-
     my $uri;
 
     # Try to get a host out of the environment, useful in remote testing.
@@ -165,6 +161,10 @@ sub url {
    
       $uri = URI->new($url);
       $uri->port($port);
+    }
+
+    if ( defined $args{'scheme'} ) {
+        $uri->scheme( $args{'scheme'} );
     }
 
     if (defined $args{path}) {
