@@ -37,8 +37,13 @@ use Jifty::Record schema {
     column super_classes =>
         type is 'text',
         label is 'Super classes',
-        hints is 'A space separated list of classes from which this model will inherit.';
-        validateor is \&validate_super_classes;
+        hints is 'A space separated list of classes from which this model will inherit.',
+        validator is \&validate_super_classes;
+    column mixin_classes =>
+        type is 'text',
+        label is 'Mixin classes',
+        hints is 'A space separated list of mixin classes to load into this object.',
+        validator is \&validate_super_classes;
     column included_columns => 
         refers_to Jifty::Model::ModelClassColumnCollection by 'model_class';
 };
@@ -160,12 +165,18 @@ sub _instantiate_stub_class {
     my $base_class = Jifty->config->framework('ApplicationClass') . "::Record";
     my $super_classes 
         = defined $self->super_classes ? $self->super_classes.' ' : '';
+    my $mixin_classes
+        = join "\n",
+          map  { "use $_;" }
+               defined $self->mixin_classes 
+                   ? split /\s+/, $self->mixin_classes : ();
 
     my $class                 = << "EOF";
 use warnings;
 use strict;
 package $fully_qualified_class;
 use base qw'$super_classes$base_class';
+$mixin_classes
 
 use constant CLASS_UUID => '$uuid';
 
