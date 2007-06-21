@@ -1,0 +1,54 @@
+=== share/web/static/js/yui/calendar.js
+==================================================================
+--- share/web/static/js/yui/calendar.js	(revision 24788)
++++ share/web/static/js/yui/calendar.js	(local)
+@@ -1,4 +1,8 @@
+ /*
++    This file has been PATCHED by trs to allow selecting of out of month dates.
++    Please do not update it without also applying the patch (oom_select.patch).
++*/
++/*
+ Copyright (c) 2007, Yahoo! Inc. All rights reserved.
+ Code licensed under the BSD License:
+ http://developer.yahoo.net/yui/license.txt
+@@ -903,6 +907,7 @@
+ 	MINDATE : {key:"mindate", value:null},
+ 	MAXDATE : {key:"maxdate", value:null},
+ 	MULTI_SELECT : {key:"multi_select",	value:false},
++	OOM_SELECT : {key:"oom_select",	value:false},
+ 	START_WEEKDAY : {key:"start_weekday", value:0},
+ 	SHOW_WEEKDAYS : {key:"show_weekdays", value:true},
+ 	SHOW_WEEK_HEADER : {key:"show_week_header", value:false},
+@@ -1505,6 +1510,14 @@
+ 	*/
+ 	this.cfg.addProperty(defCfg.MULTI_SELECT.key,	{ value:defCfg.MULTI_SELECT.value, handler:this.configOptions, validator:this.cfg.checkBoolean } );
+ 
++    /**
++    * True if the Calendar should allow selection of out-of-month dates. False by default.
++    * @config OOM_SELECT
++    * @type Boolean
++    * @default false
++    */
++    this.cfg.addProperty(defCfg.OOM_SELECT.key,      { value:defCfg.OOM_SELECT.value, handler:this.configOptions, validator:this.cfg.checkBoolean } );
++
+ 	/**
+ 	* The weekday the week begins on. Default is 0 (Sunday).
+ 	* @config START_WEEKDAY
+@@ -2176,7 +2189,7 @@
+ 		weekClass = weekPrefix + weekNum;
+ 
+ 		// Local OOM check for performance, since we already have pagedate
+-		if (r !== 0 && hideBlankWeeks === true && workingDate.getMonth() != useDate.getMonth()) {
++		if (r !== 0 && hideBlankWeeks === true && workingDate.getMonth() != useDate.getMonth() && !this.cfg.getProperty(defCfg.OOM_SELECT.key)) {
+ 			break;
+ 		} else {
+ 
+@@ -2203,7 +2216,7 @@
+ 				this.cellDates[this.cellDates.length] = workingArray; // Add this date to cellDates
+ 				
+ 				// Local OOM check for performance, since we already have pagedate
+-				if (workingDate.getMonth() != useDate.getMonth()) {
++				if (workingDate.getMonth() != useDate.getMonth() && !this.cfg.getProperty(defCfg.OOM_SELECT.key)) {
+ 					cellRenderers[cellRenderers.length]=cal.renderCellNotThisMonth;
+ 				} else {
+ 					YAHOO.util.Dom.addClass(cell, workingDayPrefix + workingDate.getDay());
