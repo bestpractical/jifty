@@ -4,8 +4,9 @@ use strict;
 package Jifty::CurrentUser;
 
 use base qw/Jifty::Object Class::Accessor::Fast/;
+use Scalar::Util qw();
 
-__PACKAGE__->mk_accessors(qw(is_superuser is_bootstrap_user user_object));
+__PACKAGE__->mk_accessors(qw(is_superuser is_bootstrap_user));
 
 
 =head1 NAME
@@ -97,6 +98,19 @@ If you do nothing, code similar to this will be called by _init.
 	
 
 =cut
+
+sub user_object {
+    my $self = shift;
+    return $self->{'user_object'} unless @_;
+
+    $self->{'user_object'} = shift;
+    # protect ourself from circular refereces
+    if ( $self->{'user_object'}{'_current_user'} == $self ) {
+        Scalar::Util::weaken( $self->{'user_object'}{'_current_user'} )
+            unless Scalar::Util::isweak( $self->{'user_object'}{'_current_user'} );
+    }
+    return $self->{'user_object'};
+}
 
 =head2 id
 
