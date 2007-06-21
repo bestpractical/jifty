@@ -25,8 +25,7 @@ sub page (&;$) {
 }
 
 
-template 'signup' => page {
-    title is _('Sign up');
+template 'signup' => page { title => _('Sign up') } content {
     my ( $action, $next ) = get(qw(action next));
     Jifty->web->form->start( call => $next );
     render_param( $action => 'name' , focus => 1);
@@ -35,8 +34,7 @@ template 'signup' => page {
     Jifty->web->form->end();
 };
 
-template login => page {
-    { title is _('Login!') };
+template login => page { title => _('Login!') } content {
     show('login_widget');
 };
 
@@ -69,9 +67,8 @@ template login_widget => sub {
     }
 };
 
-template 'let/reset_lost_password' => page {
+template 'let/reset_lost_password' => page { title => 'Reset lost password' } content {
     my ( $next ) = get(qw(next));
-    title is 'Reset lost password' ;
     my $action = Jifty->web->new_action( class => 'ResetLostPassword' );
 
     Jifty->web->form->start( call => $next );
@@ -85,14 +82,13 @@ template 'let/confirm_email' => sub {
     redirect("/");
 };
 
-template 'lost_password' => page {
+template 'lost_password' => page { title => 'Send a link to reset your password' } content {
     my ( $next ) = get(qw(next));
     my $action = Jifty->web->new_action(
         moniker => 'password_reminder',
         class   => 'SendPasswordReminder',
     );
 
-    title is _('Send a link to reset your password');
     outs( _(  "You lost your password. A link to reset it will be sent to the following email address:"));
     my $focused = 0;
     Jifty->web->form->start( call => $next );
@@ -102,9 +98,8 @@ template 'lost_password' => page {
 
 };
 
-template 'passwordreminder' => page {
+template 'passwordreminder' => page { title => 'Send a password reminder' } content {
     my $next = get('next');
-     title is  _('Send a password reminder');
     my $action = Jifty->web->new_action(
         moniker => 'password_reminder',
         class   => 'SendPasswordReminder',
@@ -118,8 +113,7 @@ template 'passwordreminder' => page {
     Jifty->web->form->end();
 };
 
-template 'resend_confirmation' => page {
-    attr { title => "Resend Confirmation Email" };
+template 'resend_confirmation' => page { title => 'Resend Confirmation Email' } content {
     my $resend = Jifty->web->new_action(
         class   => 'ResendConfirmation',
         moniker => 'resendconf'
