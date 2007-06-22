@@ -152,4 +152,12 @@ sub rename {
     $package->just_renamed($renamed);
 }
 
+
+
+=head1 SEE ALSO
+
+L<Jifty::Manual::Upgrading>
+
+=cut
+
 1;
