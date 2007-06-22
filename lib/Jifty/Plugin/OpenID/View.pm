@@ -15,7 +15,7 @@ The view class for L<Jifty::Plugin::OpenID>.  Provides login and create pages.
 
 template 'openid/login' => page {
     { title is _("Login with your OpenID") }
-    my $action = get('action');
+    my ($action, $next) = get('action', 'next');
 
     div {
         unless ( Jifty->web->current_user->id ) {
@@ -29,13 +29,13 @@ template 'openid/login' => page {
                         }
                     }
                 );
-                form {
-                    render_action($action);
-                    form_submit(
-                        label  => _("Go for it!"),
-                        submit => $action
-                    );
-                }
+                Jifty->web->form->start( call => $next );
+                render_action($action);
+                form_submit(
+                    label  => _("Go for it!"),
+                    submit => $action
+                );
+                Jifty->web->form->end;
             };
         }
         else {
