@@ -120,7 +120,7 @@ The C<value> of a query parameter
 
 =item request
 
-The L<Jifty::Request> object to pull action arguments from.  Defauts
+The L<Jifty::Request> object to pull action arguments from.  Defaults
 to the current request.
 
 =item response
