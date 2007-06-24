@@ -6,6 +6,7 @@ use Jifty::Action schema {
 param name      => default is 'something';
 param 'quest';
 param colour    => valid are ("Blue, I mean greeeeeen!", "Green");
+param 'castle';
 
 };
 
