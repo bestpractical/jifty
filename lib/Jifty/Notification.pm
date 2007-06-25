@@ -6,9 +6,10 @@ package Jifty::Notification;
 use base qw/Jifty::Object Class::Accessor::Fast/;
 use Email::Send            ();
 use Email::MIME::Creator;
+use Email::MIME::CreateHTML;
 
 __PACKAGE__->mk_accessors(
-    qw/body preface footer subject from _recipients _to_list to/);
+    qw/body html_body preface footer subject from _recipients _to_list to/);
 
 =head1 USAGE
 
@@ -89,14 +90,14 @@ sub send_one_message {
 
     my $appname = Jifty->config->framework('ApplicationName');
 
-    my $message = Email::MIME->create(
+    my $message = Email::MIME->create_html(
         header => [
             From    => ($self->from    || _('%1 <%2>' , $appname, Jifty->config->framework('AdminEmail'))) ,
             To      => $to,
             Subject => Encode::encode('MIME-Header', $self->subject || _("A notification from %1!",$appname )),
         ],
         attributes => { charset => 'UTF-8' },
-        parts => $self->parts
+        body => $self->full_body
     );
     $message->encoding_set('8bit')
         if (scalar $message->parts == 1);
