@@ -108,7 +108,7 @@ sub user_object {
     if ( $self->{'user_object'}{'_current_user'} == $self ) {
         Scalar::Util::weaken( $self->{'user_object'}{'_current_user'} )
             unless Scalar::Util::isweak( $self->{'user_object'}{'_current_user'} );
-        $self->{'user_object'}{'_resurect_current_user'} = 1;
+        $self->{'user_object'}{'_resurrect_current_user'} = 1;
     }
     return $self->{'user_object'};
 }
