@@ -36,8 +36,6 @@ use B qw(class main_root main_start main_cv svref_2object opnumber perlstring
 	 PMf_KEEP PMf_GLOBAL PMf_CONTINUE PMf_EVAL PMf_ONCE PMf_SKIPWHITE
 	 PMf_MULTILINE PMf_SINGLELINE PMf_FOLD PMf_EXTENDED);
 
-use constant method_invocation => '.';
-
 sub is_scope { goto \&B::Deparse::is_scope }
 sub is_state { goto \&B::Deparse::is_state }
 sub null { goto \&B::Deparse::null }
@@ -171,9 +169,10 @@ sub mapop {
     return "(".join(", ", @exprs).").select(function (\$_) $code)";
 }
 
-sub _anoncode {
-    my ($self, $text) = @_;
-    return "function ()" . $text;
+sub e_anoncode {
+    my ($self, $info) = @_;
+    my $text = $self->deparse_sub($info->{code});
+    return "function () " . $text;
 }
 
 sub pp_entersub {
@@ -182,6 +181,34 @@ sub pp_entersub {
     $ret =~ s/return\s*\((.*)\)/return [$1]/ if $ret =~ m/^attr/;
 
     return $ret;
+}
+
+sub e_method {
+    my ($self, $info) = @_;
+    my $obj = $info->{object};
+    if ($obj->name eq 'const') {
+        $obj = $self->const_sv($obj)->PV;
+    }
+    else {
+        $obj = $self->deparse($obj, 24);
+    }
+
+    my $meth = $info->{method};
+    $meth = $self->deparse($meth, 1) if $info->{variable_method};
+    my $args = join(", ", map { $self->deparse($_, 6) } @{$info->{args}} );
+    my $kid = $obj . "." . $meth;
+    return $kid . "(" . $args . ")"; # parens mandatory
+}
+
+sub walk_lineseq {
+    my ($self, $op, $kids, $callback) = @_;
+    my $xcallback = $callback;
+    if ((!$op || $op->next->name eq 'grepwhile') && $kids->[-1]->name ne 'return') {
+	$callback = sub { my ($expr, $index) = @_;
+			  $expr = "return ($expr)" if $index == $#{$kids};
+			  $xcallback->($expr, $index) };
+    }
+    $self->SUPER::walk_lineseq($op, $kids, $callback);
 }
 
 1;
