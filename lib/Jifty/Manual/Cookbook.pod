@@ -400,6 +400,62 @@ In a C<Template::Declare> view, do something like this:
         Jifty->web->out($image);
     };
 
+=head2 Create a many-to-many relationship
+
+You need to create two one-to-many relationships with a linking table as you normally would in pure SQL. First, create your linking table by running:
+
+  bin/jifty model --name LinkTable
+
+Modify the newly created C<MyApp::Model::LinkTable> class to add new columns linking back to either side of the table:
+
+  use MyApp::Record schema {
+      column left_table =>
+          refers_to MyApp::Model::LeftTable;
+      column right_table =>
+          refers_to MyApp::Model::RightTable;
+  };
+
+Then create links to the linking table in C<MyApp::Model::LeftTable>:
+
+  use MyApp::Record schema {
+      # other columns...
+      
+      column right_things =>
+          refers_to MyApp::Model::LinkTableCollection by 'left_table';
+  };
+
+Then create links to the linking table in C<MyApp::Model::RightTable>:
+
+  use MyApp::Record schema {
+      # other columns...
+      
+      column left_things =>
+          refers_to MyApp::Model::LinkTableCollection by 'right_table';
+  };
+
+Now, add your records. To create a relationship between a row the two tables:
+
+  my $left = MyApp::Model::LeftTable->new;
+  $left->load(1);
+
+  my $right = MyApp::Model::RightTable->new;
+  $right->laod(1);
+
+  my $link = MyApp::Model::LinkTable->new;
+  $link->create(
+      left_table  => $left,
+      right_table => $right,
+  );
+
+And to get all the "right things" from the left table, you need to make the extra hop in your loop:
+
+  my $links = $left->right_things;
+  while (my $link = $links->next) {
+      my $right = $link->right_table;
+  
+      # Do stuff with $right
+  }
+
 =for comment
 Document how to do this with Mason
 
