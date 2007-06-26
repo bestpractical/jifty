@@ -1,26 +1,3 @@
-# XXX: unfortunately this requires some patches to B::Deparse so it
-# won't work out of the box for you
-
-use B::Deparse;
-package B::Deparse;
-
-my $oldbinop;
-BEGIN {
-    $oldbinop = B::Deparse->can('binop');
-}
-
-# nothing yet
-sub binop {
-    my $self = shift;
-    my $ret = $oldbinop->($self, @_);
-    if ($_[2] eq '=') {
-    }
-    return $ret;
-
-}
-
-sub pp_leaveloop { shift->loop_common(@_, "") }
-
 package Jifty::View::Declare::Compile;
 use strict;
 use base 'B::Deparse';
@@ -35,7 +12,10 @@ use B qw(class main_root main_start main_cv svref_2object opnumber perlstring
          CVf_METHOD CVf_LOCKED CVf_LVALUE CVf_ASSERTION
 	 PMf_KEEP PMf_GLOBAL PMf_CONTINUE PMf_EVAL PMf_ONCE PMf_SKIPWHITE
 	 PMf_MULTILINE PMf_SINGLELINE PMf_FOLD PMf_EXTENDED);
-
+BEGIN {
+    die "You need a custom version of B::Deparse from http://svn.jifty.org/svn/jifty.org/B/"
+        unless B::Deparse->can('e_method')
+}
 sub is_scope { goto \&B::Deparse::is_scope }
 sub is_state { goto \&B::Deparse::is_state }
 sub null { goto \&B::Deparse::null }
