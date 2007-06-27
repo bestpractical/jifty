@@ -330,6 +330,8 @@ ActionField.prototype = {
 	this.label = args.label;
 	this.hints = args.hints;
 	this.mandatory = args.mandatory;
+	this.ajax_validates = args.ajax_validates;
+	this.current_value = action.data_structure().fields[name].value;
 	this.action = action;
 	if (!this.render_mode) this.render_mode = 'update';
 	this.type = 'text';
@@ -408,12 +410,19 @@ ActionField.prototype = {
 			    if (tthis.input_name) fields.push('name', tthis.input_name());
 			    fields.push('id', tthis.element_id());
 			    if (tthis.current_value) fields.push('value', tthis.current_value);
-			    //$self->_widget_class; 
+			    fields.push('class', tthis._widget_class().join(' '));
 			    if (tthis.max_length) fields.push('size', tthis.max_length, 'maxlength', tthis.max_length);
 			    if (tthis.disable_autocomplete) fields.push('autocomplete', "off");
 			    //" " .$self->other_widget_properties;
 			    return fields;
 			})});
+    },
+ _widget_class: function() {
+	var classes = ['form_field'];
+	if (this.mandatory)      classes.push('mandatory');
+	if (this.name)           classes.push('argument-'+this.name);
+	if (this.ajax_validates) classes.push('ajaxvalidation');
+	return classes;
     },
 
  element_id: function() { if(!this._element_id) this._element_id = this.input_name() + '-S' + (++SERIAL + SERIAL_postfix);
