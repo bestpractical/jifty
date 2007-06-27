@@ -23,7 +23,7 @@ var form_return  = function(foo, label, bar, submit) {
 		      'actions': action_hash,
 		      'fragments': [{'mode': 'Replace', 'args': {}, 'region':'__page_signup_widget', 'path': '_signup'}]})
     +', this)';
-    onclick = onclick.replace(/"/g, "'"); //"' # grr emacs!
+    onclick = onclick.replace(/"/g, "'"); //"' )# grr emacs!
     outs(
 	 div(function() {
 		 attr(function() { return ['class', 'submit_button'] });
@@ -36,9 +36,7 @@ var form_return  = function(foo, label, bar, submit) {
 							 'name', ''] })});
 		     }));
 
-	 //<div class="submit_button"><input type="submit" onclick="if(event.ctrlKey||event.metaKey||event.altKey||event.shiftKey) return true; return update( {'continuation':{},'actions':{'signupnow':1},'fragments':[{'mode':'Replace','args':{},'region':'__page-signup_widget','path':'_signup'}]}, this );" class="widget button" id="S12826795" value="註冊" name="J:V-region-__page-signup_widget=_signup|J:ACTIONS=signupnow"/> 
-
- };
+};
 
 function register_action(a) {
     outs(div(function() {
@@ -450,6 +448,7 @@ Object.extend(Form, {
 });
 
 
+var current_actions = $H();
 
 /* Fields */
 Object.extend(Form.Element, {
@@ -473,9 +472,10 @@ Object.extend(Form.Element, {
     // Takes an element or an element id
     getAction: function (element) {
         element = $(element);    
-
         var moniker = Form.Element.getMoniker(element);
-        return new Action(moniker);
+	if (!current_actions[moniker])
+	    current_actions[moniker] = new Action(moniker);
+	return current_actions[moniker];
     },
 
     // Returns the name of the field
@@ -1121,6 +1121,9 @@ function update() {
 
     show_wait_message();
 
+    // empty known action. XXX: we should only need to discard actions being submitted
+    var prev_actions = current_actions;
+    current_actions = $H();
     // And when we get the result back..
     var onSuccess = function(transport, object) {
         // Grab the XML response
