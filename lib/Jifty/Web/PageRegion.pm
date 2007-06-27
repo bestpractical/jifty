@@ -388,7 +388,7 @@ use PadWalker;
 use Jifty::View::Declare::Compile;
 
 sub _actual_td_code {
-    my $code = shift;
+    my $code = shift or return;
 
     return PadWalker::closed_over($code)->{'$coderef'}
 	? ${ PadWalker::closed_over($code)->{'$coderef'} } : $code;
@@ -397,7 +397,6 @@ sub _actual_td_code {
 sub client_cacheable {
     my $self = shift;
     return 'crudview' if $self->path eq '//todo/view';
-
     my $code = _actual_td_code(Template::Declare->resolve_template($self->path));
 
     return 'static' if $Jifty::View::Declare::BaseClass::Static{$code};
