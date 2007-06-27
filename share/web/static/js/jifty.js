@@ -332,6 +332,7 @@ ActionField.prototype = {
 	this.mandatory = args.mandatory;
 	this.ajax_validates = args.ajax_validates;
 	this.current_value = action.data_structure().fields[name].value;
+        this.error = action.result.field_error[name];
 	this.action = action;
 	if (!this.render_mode) this.render_mode = 'update';
 	this.type = 'text';
@@ -442,7 +443,7 @@ Object.extend(Form, {
 
         for (var i = 0; i < possible.length; i++) {
             if (Form.Element.getType(possible[i]) == "registration")
-                elements.push(new Action(Form.Element.getMoniker(possible[i])));
+                elements.push(Form.Element.getAction(possible[i]));
         }
         
         return elements;
@@ -1041,11 +1042,12 @@ function update() {
     for (var moniker in named_args['actions']) {
         var disable = named_args['actions'][moniker];
         var a = new Action(moniker, button_args);
+	current_actions[moniker] = a; // XXX: how do i make this bloody singleton?
         // Special case for Redirect, allow optional, implicit __page
         // from the response to be used.
         if (a.actionClass == 'Jifty::Action::Redirect')
             optional_fragments = [ prepare_element_for_update({'mode':'Replace','args':{},'region':'__page','path': a.fields().last().value}) ];
-
+        a.result = {}; a.result.field_error = {};
         if (a.register) {
             if (a.hasUpload())
                 return true;
@@ -1055,7 +1057,7 @@ function update() {
             request['actions'][moniker] = a.data_structure();
             ++has_request;
         }
-        
+
     }
 
     request['fragments'] = $H();
@@ -1137,13 +1139,31 @@ function update() {
 
     show_wait_message();
 
-    // empty known action. XXX: we should only need to discard actions being submitted
-    var prev_actions = current_actions;
-    current_actions = $H();
     // And when we get the result back..
     var onSuccess = function(transport, object) {
         // Grab the XML response
         var response = transport.responseXML.documentElement;
+
+	// Get action results
+	try {
+        walk_node(response,
+	{ result: function(result) {
+		var moniker = result.getAttribute("moniker");
+		walk_node(result,
+			  { field: function(field) {
+				  var error = field.getElementsByTagName('error')[0];
+				  if (error) {
+				      var text = error.textContent
+					  ? error.textContent
+					  : (error.firstChild ? error.firstChild.nodeValue : '');
+				      var action = current_actions[moniker];
+				      action.result.field_error[field.getAttribute("name")] = text;
+				      }
+			      }});
+	    }});
+	}catch(e) { alert(e) };
+	// empty known action. XXX: we should only need to discard actions being submitted
+
         // Loop through the result looking for it
         var expected_fragments = optional_fragments ? optional_fragments : named_args['fragments'];
         for (var response_fragment = response.firstChild;
@@ -1162,7 +1182,7 @@ function update() {
 
 	update_from_cache.each(function(x) { x() });
 
-        walk_node(response_fragment,
+        walk_node(response,
 	{ result: function(result) {
                 for (var key = result.firstChild;
                      key != null;
@@ -1173,6 +1193,7 @@ function update() {
 	  redirect: function(redirect) {
                 document.location =  redirect.firstChild.firstChild.nodeValue;
 	}});
+	current_actions = $H();
     };
     var onFailure = function(transport, object) {
         hide_wait_message_now();
