@@ -1134,15 +1134,9 @@ function update() {
              response_fragment != null && response_fragment.nodeName == 'fragment';
              response_fragment = response_fragment.nextSibling) {
 
-            var f; 
-            for (var i = 0; i < expected_fragments.length; i++) {
-                f = expected_fragments[i];
-                if (response_fragment.getAttribute("id") == f['region'])
-                    break;
-            }
-            if (response_fragment.getAttribute("id") != f['region'])
+            var exp_id = response_fragment.getAttribute("id");
+            if (!expected_fragments.find(function(f) { return exp_id == f['region'] }))
                 continue;
-
 
             try {
                 apply_fragment_updates(response_fragment, f);
