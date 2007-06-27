@@ -594,6 +594,7 @@ our @param_attrs = qw(
     label
     hints
     mandatory
+    ajax_validates
     length
 );
 
