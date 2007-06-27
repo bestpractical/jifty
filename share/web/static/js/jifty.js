@@ -889,11 +889,19 @@ function _mk_tag_wrapper(name, pre, post, want_outbuf) {
     }
 };
 
+var walk_node = function(node, table) {
+    for (var child = node.firstChild;
+         child != null;
+         child = child.nextSibling) {
+        var name = child.nodeName.toLowerCase();
+        if (table[name])
+	    table[name](child);
+    }
+}
+
 var extract_cacheable = function(fragment, f) {
-    for (var fragment_bit = fragment.firstChild;
-         fragment_bit != null;
-         fragment_bit = fragment_bit.nextSibling) {
-        if (fragment_bit.nodeName == 'cacheable') {
+    walk_node(fragment,
+    { cacheable: function(fragment_bit) {
             var c_type = fragment_bit.getAttribute("type");
             var textContent = '';
             if (fragment_bit.textContent) {
@@ -906,10 +914,10 @@ var extract_cacheable = function(fragment, f) {
 	    catch(e) { 
 		alert(e);
 		alert(textContent);
-		break; }
+	    }
             CACHE[f['path']] = { 'type': c_type, 'content': cache_func };
         }
-    }
+    });
 };
 
 // applying updates from a fragment
@@ -921,10 +929,8 @@ var apply_fragment_updates = function(fragment, f) {
     var new_dom_args = $H();
 
     var element = f['element'];
-    for (var fragment_bit = fragment.firstChild;
-	 fragment_bit != null;
-	 fragment_bit = fragment_bit.nextSibling) {
-	if (fragment_bit.nodeName == 'argument') {
+    walk_node(fragment,
+    { argument: function(fragment_bit) {
 	    // First, update the fragment's arguments
 	    // with what the server actually used --
 	    // this is needed in case there was
@@ -936,7 +942,8 @@ var apply_fragment_updates = function(fragment, f) {
 		textContent = fragment_bit.firstChild.nodeValue;
 	    }
 	    new_dom_args[fragment_bit.getAttribute("name")] = textContent;
-	} else if (fragment_bit.nodeName.toLowerCase() == 'content') {
+	},
+      content: function(fragment_bit) {
 	    var textContent = '';
 	    if (fragment_bit.textContent) {
 		textContent = fragment_bit.textContent;
@@ -958,7 +965,7 @@ var apply_fragment_updates = function(fragment, f) {
         });
         Behaviour.apply(element);
 	}
-    }
+    });
     dom_fragment.setArgs(new_dom_args);
 
     // Also, set us up the effect
@@ -1146,24 +1153,17 @@ function update() {
 
 	update_from_cache.each(function(x) { x() });
 
-        for (var result = response.firstChild;
-             result != null;
-             result = result.nextSibling) {
-            if (result.nodeName == 'result') {
+        walk_node(response_fragment,
+	{ result: function(result) {
                 for (var key = result.firstChild;
                      key != null;
                      key = key.nextSibling) {
                     show_action_result(result.getAttribute("moniker"),key);
                 }
-            }
-        }
-        for (var redirect = response.firstChild;
-             redirect != null;
-             redirect = redirect.nextSibling) {
-            if (redirect.nodeName == 'redirect') {
+            },
+	  redirect: function(redirect) {
                 document.location =  redirect.firstChild.firstChild.nodeValue;
-            }
-        }
+	}});
     };
     var onFailure = function(transport, object) {
         hide_wait_message_now();
