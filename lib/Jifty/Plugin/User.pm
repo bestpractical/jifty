@@ -4,18 +4,22 @@ use warnings;
 package Jifty::Plugin::User;
 use base qw/Jifty::Plugin/;
 
-# Your plugin goes here.  If takes any configuration or arguments, you
-# probably want to override L<Jifty::Plugin/init>.
-
 =head1 NAME
 
-Jifty::Plugin::User
+Jifty::Plugin::User - plugin for building user models
 
 =head1 DESCRIPTION
 
 This plugin provides a "user" mixin for your application's user model class.
 
-See L<Jifty::Plugin::User/> for more details.
+=head1 SEE ALSO
+
+L<Jifty::Plugin::User::Mixin::Model::User>, L<Jifty::Plugin::Authentication::Password>
+
+=head1 LICENSE
+
+Jifty is Copyright 2005-2007 Best Practical Solutions, LLC.
+Jifty is distributed under the same terms as Perl itself.
 
 =cut
 
