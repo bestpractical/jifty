@@ -21,7 +21,7 @@ var form_return  = function(foo, label, bar, submit) {
     var onclick = 'if(event.ctrlKey||event.metaKey||event.altKey||event.shiftKey) return true; return update('
     + JSON.stringify({'continuation': {},
 		      'actions': action_hash,
-		      'fragments': [{'mode': 'Replace', 'args': {}, 'region':'__page_signup_widget', 'path': '_signup'}]})
+		      'fragments': [{'mode': 'Replace', 'args': {}, 'region':'__page-signup_widget', 'path': '_signup'}]})
     +', this)';
     onclick = onclick.replace(/"/g, "'"); //"' )# grr emacs!
     outs(
@@ -33,7 +33,7 @@ var form_return  = function(foo, label, bar, submit) {
 							 'class', 'widget button',
 							 'id', 'S' + (++SERIAL + SERIAL_postfix),
 							 'value', label,
-							 'name', ''] })});
+							 'name', 'J:V-region-__page-signup_widget=_signup|J:ACTIONS=signupnow'] })});
 		     }));
 
 };
@@ -1145,7 +1145,6 @@ function update() {
         var response = transport.responseXML.documentElement;
 
 	// Get action results
-	try {
         walk_node(response,
 	{ result: function(result) {
 		var moniker = result.getAttribute("moniker");
@@ -1161,7 +1160,6 @@ function update() {
 				      }
 			      }});
 	    }});
-	}catch(e) { alert(e) };
 	// empty known action. XXX: we should only need to discard actions being submitted
 
         // Loop through the result looking for it
