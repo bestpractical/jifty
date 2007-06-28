@@ -50,7 +50,20 @@ Create a new static file handler. Likely, only the C<Jifty::Handler> needs to do
 =cut
 sub new {
     my $class = shift;
-    my $self = {};
+    
+    my @roots = (Jifty->config->framework('Web')->{StaticRoot});
+    for my $plugin ( Jifty->plugins ) {
+        my $root = $plugin->static_root;
+        if ( -d $root and -r $root ) {
+            push @roots, $root;
+            Jifty->log->debug( "Plugin @{[ref($plugin)]} static root added: (@{[$root ||'']})");
+        }
+    }
+    push @roots, (Jifty->config->framework('Web')->{DefaultStaticRoot});
+
+    my $self = {
+        roots => \@roots
+    };
     bless $self, $class;
 }
 
@@ -138,14 +151,11 @@ sub template_exists {
 sub file_path {
     my $self    = shift;
     my $file    = shift;
-    my @options = (Jifty->config->framework('Web')->{StaticRoot});
-    push @options, grep { -d $_ && -r $_ } map {$_->static_root} Jifty->plugins;
-    push @options, (Jifty->config->framework('Web')->{DefaultStaticRoot});
 
     # Chomp a leading "/static" - should this be configurable?
     $file =~ s/^\/*?static//; 
 
-    foreach my $path (@options) {
+    foreach my $path ( @{$self->{'roots'}} ) {
         my $abspath = Jifty::Util->absolute_path( File::Spec->catdir($path,$file ));
         # If the user is trying to request something outside our static root, 
         # decline the request

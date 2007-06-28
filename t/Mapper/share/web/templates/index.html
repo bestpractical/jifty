@@ -11,6 +11,7 @@
 % my $grail_1  = Jifty->web->form->add_action( class => 'GetGrail', order => 1 );
 % my $bridge_1 = Jifty->web->new_action( class => 'CrossBridge',    order => 2 );
 <% $bridge_1->form_field( 'quest',  default_value => { result_of => $grail_1, name => 'castle' } ) %>
+<% $bridge_1->form_field( 'castle', default_value => { result_of => $grail_1 } ) %>
 <% $bridge_1->form_field( 'colour', default_value => 'Green' ) %>
 <% Jifty->web->form->submit( label => 'Do both') %>
 <% Jifty->web->form->end %>

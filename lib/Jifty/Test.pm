@@ -158,9 +158,9 @@ sub setup {
     my $class = shift;
 
     my $test_config = File::Temp->new( UNLINK => 0 );
-    Jifty::YAML::DumpFile($test_config, $class->test_config(Jifty::Config->new));
+    Jifty::YAML::DumpFile("$test_config", $class->test_config(Jifty::Config->new));
     # Invoking bin/jifty and friends will now have the test config ready.
-    $ENV{'JIFTY_TEST_CONFIG'} ||= $test_config;
+    $ENV{'JIFTY_TEST_CONFIG'} ||= "$test_config";
     $class->builder->{test_config} = $test_config;
     {
         # Cache::Memcached stores things. And doesn't let them expire
@@ -187,7 +187,7 @@ sub setup {
     # Mason's disk caching sometimes causes false tests
     rmtree([ File::Spec->canonpath("$root/var/mason") ], 0, 1);
 
-$class->setup_test_database;
+    $class->setup_test_database;
 
     $class->setup_mailbox;
 }
