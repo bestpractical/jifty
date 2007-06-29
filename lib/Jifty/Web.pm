@@ -457,7 +457,9 @@ sub form {
 
 =head3 new_action class => CLASS, moniker => MONIKER, order => ORDER, arguments => PARAMHASH
 
-Creates a new action (an instance of a subclass of L<Jifty::Action>). The named arguments passed to this method are passed on to the C<new> method of the action named in C<CLASS>.
+Creates a new action (an instance of a subclass of
+L<Jifty::Action>). The named arguments passed to this method are
+passed on to the C<new> method of the action named in C<CLASS>.
 
 =head3 Arguments
 
@@ -522,17 +524,6 @@ sub new_action {
     $class = Jifty->api->qualify($class);
 
     my $loaded = Jifty::Util->require( $class );
-    $args{moniker} ||= ($loaded ? $class : 'Jifty::Action')->_generate_moniker;
-
-    my $action_in_request = $self->request->action( $args{moniker} );
-
-    # Fields explicitly passed to new_action take precedence over those passed
-    # from the request; we read from the request to implement "sticky fields".
-    #
-    if ( $action_in_request and $action_in_request->arguments ) {
-        $args{'request_arguments'} = $action_in_request->arguments;
-    }
-
     # The implementation class is provided by the client, so this
     # isn't a "shouldn't happen"
     return unless $loaded;
