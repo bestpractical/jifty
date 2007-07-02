@@ -411,6 +411,17 @@ sub lookup_record {
     my ($record_class) = grep { $_->table eq $table } 
                               Jifty->class_loader->models;
 
+    # If still not defined, check to see if this is ModelClass/ModelClassColumn
+    # XXX Should these be placed in Jifty->class_load->models? -- sterling
+    if (not defined $record_class) {
+        if ($table eq '_jifty_models') {
+            $record_class = 'Jifty::Model::ModelClass';
+        }
+        elsif ($table eq '_jifty_modelcolumns') {
+            $record_class = 'Jifty::Model::ModelClassColumn';
+        }
+    }
+
     return unless defined $record_class;
     
     # Only return a value when load succeeds
