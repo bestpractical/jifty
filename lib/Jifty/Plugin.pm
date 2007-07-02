@@ -98,8 +98,7 @@ sub _calculate_share {
         eval { $self->{share} = module_dir($class) };
     }
     unless ( $self->{share} ) {
-        local $@; # We're just avoiding File::ShareDir's failure behaviour of dying
-        eval { $self->{share} = module_dir('Jifty') };
+        $self->{share} = Jifty::Util->share_root;
         if ( $self->{'share'} ) {
             my $class_to_path = $class;
             $class_to_path =~ s|::|/|g;

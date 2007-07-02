@@ -326,7 +326,7 @@ sub javascript {
         if (@fragments or (!$actions || %$actions)) {
 
             my $update = Jifty->web->escape("update( ". Jifty::JSON::objToJson( {actions => $actions, fragments => \@fragments, continuation => $self->continuation }, {singlequote => 1}) .", this );");
-            $string .= 'if(event.ctrlKey) return true; ';
+            $string .= 'if(event.ctrlKey||event.metaKey||event.altKey||event.shiftKey) return true; ';
             $string .= $self->javascript_preempt ? "return $update" : "$update; return true;";
         }
         if ($confirm) {

@@ -127,10 +127,6 @@ sub url {
                 path => undef,
                 @_);
 
-    if ($args{'scheme'}) {
-        $self->log->error("Jifty->web->url no longer accepts a 'scheme' argument");
-    }
-
     my $uri;
 
     # Try to get a host out of the environment, useful in remote testing.
@@ -165,6 +161,10 @@ sub url {
    
       $uri = URI->new($url);
       $uri->port($port);
+    }
+
+    if ( defined $args{'scheme'} ) {
+        $uri->scheme( $args{'scheme'} );
     }
 
     if (defined $args{path}) {
@@ -457,7 +457,9 @@ sub form {
 
 =head3 new_action class => CLASS, moniker => MONIKER, order => ORDER, arguments => PARAMHASH
 
-Creates a new action (an instance of a subclass of L<Jifty::Action>). The named arguments passed to this method are passed on to the C<new> method of the action named in C<CLASS>.
+Creates a new action (an instance of a subclass of
+L<Jifty::Action>). The named arguments passed to this method are
+passed on to the C<new> method of the action named in C<CLASS>.
 
 =head3 Arguments
 
@@ -522,17 +524,6 @@ sub new_action {
     $class = Jifty->api->qualify($class);
 
     my $loaded = Jifty::Util->require( $class );
-    $args{moniker} ||= ($loaded ? $class : 'Jifty::Action')->_generate_moniker;
-
-    my $action_in_request = $self->request->action( $args{moniker} );
-
-    # Fields explicitly passed to new_action take precedence over those passed
-    # from the request; we read from the request to implement "sticky fields".
-    #
-    if ( $action_in_request and $action_in_request->arguments ) {
-        $args{'request_arguments'} = $action_in_request->arguments;
-    }
-
     # The implementation class is provided by the client, so this
     # isn't a "shouldn't happen"
     return unless $loaded;

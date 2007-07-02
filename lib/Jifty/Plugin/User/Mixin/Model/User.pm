@@ -7,9 +7,9 @@ use Jifty::DBI::Schema;
 
 =head1 NAME
 
-Jifty::Plugin::User::Mixin::Model::User
+Jifty::Plugin::User::Mixin::Model::User - user model base mixin
 
-=head1 DESCRIPTION
+=head1 SYNOPSIS
 
  package MyApp::Model::User;
  use Jifty::DBI::Schema;
@@ -18,8 +18,27 @@ Jifty::Plugin::User::Mixin::Model::User
  };
  
  use Jifty::Plugin::User::Mixin::Model::User; # Imports two columns: name and email
- 
 
+=head1 DESCRIPTION
+
+This mixin may be added to a model to give your user accounts a name and an email address. This module may be used as the basic building block for building account models in your application. It can be combined with mixins from an authentication plugin to create an object suitable for a given authentication mechanism.
+
+=head1 SCHEMA
+
+This mixin model adds the following columns to the model.
+
+=head2 name
+
+This is the username/nickname for the user of the account.
+
+=head2 email
+
+This is the email address of the account. It is intended as a bare minimum confirmation of identity and for communication of password resets and other account information.
+
+=head2 email_confirmed
+
+This is a flag indicating whether the user has confirmed ownership of the given email address.
+ 
 =cut
 
 use base 'Jifty::DBI::Record::Plugin';
@@ -37,9 +56,7 @@ use Jifty::Plugin::User::Record schema {
 
 };
 
-# Your model-specific methods go here.
-
-
+=head1 METHODS
 
 =head2 set_email ADDRESS
 
@@ -92,6 +109,16 @@ sub validate_email {
     return 1;
 }
 
+=head1 SEE ALSO
+
+L<Jifty::Plugin::Authentication::Password>, L<Jifty::Plugin::Authentication::Password::Mixin::Model::User>
+
+=head1 LICENSE
+
+Jifty is Copyright 2005-2007 Best Practical Solutions, LLC.
+Jifty is distributed under the same terms as Perl itself.
+
+=cut
 
 1;
 

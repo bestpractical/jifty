@@ -5,6 +5,10 @@ use strict;
 use warnings;
 use constant BaseClass => 'Jifty::View::Declare::BaseClass';
 
+=head1 NAME
+
+Jifty::View::Declare - Build views using Template::Declare
+
 =head1 SYNOPSIS
 
     package MyApp::View;
@@ -14,6 +18,19 @@ use constant BaseClass => 'Jifty::View::Declare::BaseClass';
         { title is 'Some Title' }
         b { "The Index" };
     };
+
+=head1 DESCRIPTION
+
+L<Template::Declare> is a templating system using a declarative syntax built on top of Perl. This provides a templating language built in a similar style to the dispatcher language in L<Jifty::Dispatcher>, the model language in L<Jifty::DBI::Schema>, and the action language in L<Jifty::Param::Schema>.
+
+To use this view system, you must declare a class named C<MyApp::View> (where I<MyApp> is the name of your Jifyt application). Use this library class to bring in all the details needed to make it work:
+
+  package MyApp::View;
+  use Jifty::View::Declare -base;
+
+  # Your code...
+
+For more details on how to write the individual templates, see L<Template::Declare> and also L<Jifty::View::Declare::Helpers> for Jifty specific details.
 
 =cut
 
@@ -28,5 +45,16 @@ sub import {
     @_ = BaseClass;
     goto &{BaseClass()->can('import')};
 }
+
+=head1 SEE ALSO 
+
+L<Jifty::View::Declare::Helpers>, L<Template::Declare>
+
+=head1 LICENSE
+
+Jifty is Copyright 2005-2007 Best Practical Solutions, LLC.
+Jifty is distrib uted under the same terms as Perl itself.
+
+=cut
 
 1;

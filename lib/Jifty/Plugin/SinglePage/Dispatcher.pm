@@ -3,6 +3,16 @@ use strict;
 use warnings;
 use Jifty::Dispatcher -base;
 
+=head1 NAME
+
+Jifty::Plugin::SinglePage::Dispatcher
+
+=head1 DESCRIPTION
+
+Dispatcher for L<Jifty::Plugin::SinglePage>
+
+=cut
+
 before '__jifty/webservices/*' => run {
     my (@actions) = grep { $_->class eq 'Jifty::Action::Redirect' } values %{ Jifty->web->request->{'actions'} };
     $_->active(0) for @actions;

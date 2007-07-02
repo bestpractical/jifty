@@ -63,7 +63,6 @@ on '/__jifty/js/*' => run {
 
 on '/__jifty/css/*' => run {
     my $arg = $1;
-    warn "My arg is $arg";
     if ( $arg !~ /^[0-9a-f]{32}\.css$/ ) {
 
         # This doesn't look like a real request for squished CSS,

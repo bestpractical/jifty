@@ -4,24 +4,21 @@ use warnings;
 package Jifty::Plugin::Authentication::Password::Dispatcher;
 use Jifty::Dispatcher -base;
 
-# Put any plugin-specific dispatcher rules here.
-
-
 =head1 NAME
 
-Jifty::Plugin::Authentication::Password::Dispatcher
+Jifty::Plugin::Authentication::Password::Dispatcher - password plugin dispatcher
 
 =head1 DESCRIPTION
 
 All the dispatcher rules jifty needs to support L<Jifty::Authentication::Password/>
 
-=cut
-
-
 =head1 RULES
 
-
 =head2 before logout
+
+Logout and return home.
+
+See L<Jifty::Plugin::Authentication::Password::Action::Logout>.
 
 =cut
 
@@ -35,6 +32,8 @@ before 'logout' => run {
 
 =head2 before *
 
+Setup the navigation menu for login or logout.
+
 =cut
 
 before '*' =>  run {
@@ -47,7 +46,11 @@ before '*' =>  run {
 
 };
 
-=head2 on qr/^(?:passwordreminder|signup)$/ 
+=head2 on qr/^(?:passwordreminder|signup|lost_password)$/ 
+
+Redirect to home if logged.
+
+Request a password reminder or signup for an account otherwise.
 
 =cut
 
@@ -58,6 +61,10 @@ before qr'^/(?:passwordreminder|signup|lost_password)$' => run {
 
 =head2 on login
 
+Redirect to home if logged.
+
+Show the login form otherwise.
+
 =cut
 
 before qr|^/(?:login)$| => run {
@@ -65,12 +72,22 @@ before qr|^/(?:login)$| => run {
     set 'next' => Jifty->web->request->continuation || Jifty::Continuation->new( request => Jifty::Request->new( path => "/" ) );
 };
 
+=head2 before reset_lost_password
+
+Request a password reset.
+
+=cut
+
 before qr|(?:reset_lost_password)| => run {
     set 'next' => Jifty->web->request->continuation || Jifty::Continuation->new( request => Jifty::Request->new( path => "/" ) );
 };
 # Send a password reminder for a lost password
 
-=head2 on passwordreminder
+=head2 before passwordreminder
+
+Request a new password reminder to be sent by email.
+
+See L<Jifty::Plugin::Authentication::Password::Action::SendPasswordReminder>.
 
 =cut
 
@@ -79,9 +96,11 @@ before 'passwordreminder' => run {
 };
 
 
-=head2 on signup
+=head2 before signup
 
-# Sign up for an account
+Sign up for an account.
+
+See L<Jifty::Plugin::Authentication::Password::Action::Signup>.
 
 =cut
 
@@ -90,9 +109,11 @@ before 'signup' => run {
 
 };
 
-=head2 on login
+=head2 before login
 
-Login
+Login to your account.
+
+See L<Jifty::Plugin::Authentication::Password::Action::Login>.
 
 =cut
 
@@ -101,6 +122,8 @@ before 'login' => run {
 };
 
 =head2 not_logged_in_nav
+
+Adds the login and signup links to the navigation menu.
 
 =cut
 
@@ -119,6 +142,8 @@ sub not_logged_in_nav {
 
 =head2 logged_in_nav
 
+Adds the logout link to the navigation menu.
+
 =cut
 
 sub logged_in_nav {
@@ -130,5 +155,15 @@ sub logged_in_nav {
 
 }
 
+=head1 SEE ALSO
+
+L<Jifty::Plugin::Authentication::Password>, L<Jifty::Plugin::Authentication::Password::View>
+
+=head1 COPYRIGHT
+
+Jifty is Copyright 2005-2007 Best Practical Solutions, LLC.
+Jifty is distributed under the same terms as Perl itself.
+
+=cut
 
 1;

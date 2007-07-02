@@ -366,6 +366,7 @@ sub defaults {
             Web => {
                 DefaultStaticRoot => Jifty::Util->share_root . '/web/static',
                 DefaultTemplateRoot => Jifty::Util->share_root . '/web/templates',
+                SessionCookieName => 'JIFTY_SID_$PORT',
             },
         }
     };

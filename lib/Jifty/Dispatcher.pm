@@ -160,7 +160,7 @@ method name of your dispatcher class, or a fully qualified subroutine name.
 All wildcards in the C<$match> string becomes capturing regex patterns.  You
 can also pass in an array reference of matches, or a regex pattern.
 
-The C<$match> string may be qualified with a HTTP method name, such as
+The C<$match> string may be qualified with a HTTP method name or protocol, such as
 
 =over
 
@@ -175,6 +175,10 @@ The C<$match> string may be qualified with a HTTP method name, such as
 =item DELETE
 
 =item HEAD
+
+=item HTTPS
+
+=item HTTP
 
 =back
 
@@ -263,6 +267,8 @@ our @EXPORT = qw<
 
     GET POST PUT HEAD DELETE OPTIONS
 
+    HTTPS HTTP
+
     plugin
 
     get next_rule last_rule
@@ -299,6 +305,9 @@ sub PUT ($)     { _qualify method => @_ }
 sub HEAD ($)    { _qualify method => @_ }
 sub DELETE ($)  { _qualify method => @_ }
 sub OPTIONS ($) { _qualify method => @_ }
+
+sub HTTPS ($)   { _qualify https  => @_ }
+sub HTTP ($)    { _qualify http   => @_ }
 
 sub plugin ($) { return { plugin => @_ } }
 
@@ -927,6 +936,30 @@ sub _match_method {
     my ( $self, $method ) = @_;
     #$self->log->debug("Matching URL $ENV{REQUEST_METHOD} against ".$method);
     lc( $ENV{REQUEST_METHOD} ) eq lc($method);
+}
+
+=head2 _match_https
+
+Returns true if the current request is under SSL.
+
+=cut
+
+sub _match_https {
+    my $self = shift;
+    $self->log->debug("Matching request against HTTPS");
+    return exists $ENV{HTTPS} ? 1 : 0;
+}
+
+=head2 _match_http
+
+Returns true if the current request is not under SSL.
+
+=cut
+
+sub _match_http {
+    my $self = shift;
+    $self->log->debug("Matching request against HTTP");
+    return exists $ENV{HTTPS} ? 0 : 1;
 }
 
 sub _match_plugin {

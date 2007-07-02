@@ -4,6 +4,16 @@ use warnings;
 package Jifty::Plugin::OpenID::Dispatcher;
 use Jifty::Dispatcher -base;
 
+=head1 NAME
+
+Jifty::Plugin::OpenID::Dispatcher
+
+=head1 DESCRIPTION
+
+Dispatcher for L<Jifty::Plugin::OpenID>.  Handles a lot of the work.
+
+=cut
+
 before qr'^/(?:openid/link)' => run {
     tangent('/openid/login') unless (Jifty->web->current_user->id)
 };

@@ -21,6 +21,12 @@ use Jifty::View::Declare::Helpers;
 __PACKAGE__->mk_accessors(qw(content_code done_header _title));
 use constant allow_single_page => 1;
 
+=head2 new
+
+Sets up a new page class
+
+=cut
+
 sub new {
     my $class = shift;
     my $self = $class->SUPER::new(@_);
@@ -127,6 +133,12 @@ sub mk_title_handler {
     };
 }
 
+=head2 render_title
+
+Renders the in-page title
+
+=cut
+
 sub render_title {
     my $self = shift;
     my $oldt = get('title');
@@ -135,12 +147,23 @@ sub render_title {
     set( title => $oldt );
 }
 
+=head2 render_footer
+
+Renders the page footer and prepends the header to the L<Template::Declare> buffer.
+
+=cut
+
 sub render_footer {
     my $self = shift;
     outs_raw('</html>');
     Template::Declare->buffer->data( $self->done_header . Template::Declare->buffer->data );
 }
 
+=head2 render_pre_content_hook
+
+Renders the AdminMode alert (if AdminMode is on)
+
+=cut
 
 sub render_pre_content_hook {
     if ( Jifty->config->framework('AdminMode') ) {
@@ -155,6 +178,12 @@ sub render_pre_content_hook {
             }
     }
 }
+
+=head2 render_jifty_page_detritus
+
+Renders the keybinding and PubSub javascript as well as the wait message
+
+=cut
 
 sub render_jifty_page_detritus {
 

@@ -183,13 +183,13 @@ sub show {
 }
 
 sub handle_comp {
-    my ($self, $comp) = (shift, shift);
+    my ($self, $comp, $args) = @_;
 
     # Set up the global
     my $r = Jifty->handler->apache;
     $self->interp->set_global('$r', $r);
 
-    my %args = $self->request_args($r);
+    my %args = $args ? %$args : $self->request_args($r);
 
     my @result;
     if (wantarray) {

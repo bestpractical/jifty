@@ -3,9 +3,19 @@ use strict;
 use warnings;
 use Jifty::View::Declare -base;
 
+=head1 NAME
+
+Jifty::Plugin::OpenID::View
+
+=head1 DESCRIPTION
+
+The view class for L<Jifty::Plugin::OpenID>.  Provides login and create pages.
+
+=cut
+
 template 'openid/login' => page {
-    { title is _ "Login with your OpenID" }
-    my $action = get('action');
+    { title is _("Login with your OpenID") }
+    my ($action, $next) = get('action', 'next');
 
     div {
         unless ( Jifty->web->current_user->id ) {
@@ -19,13 +29,13 @@ template 'openid/login' => page {
                         }
                     }
                 );
-                form {
-                    render_action($action);
-                    form_submit(
-                        label  => _("Go for it!"),
-                        submit => $action
-                    );
-                }
+                Jifty->web->form->start( call => $next );
+                render_action($action);
+                form_submit(
+                    label  => _("Go for it!"),
+                    submit => $action
+                );
+                Jifty->web->form->end;
             };
         }
         else {
