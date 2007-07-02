@@ -135,7 +135,7 @@ features(
         recommends('LWPx::ParanoidAgent'),
     ],
     'Jifty console' => [
-        -default => 1,
+        -default => 0,
         recommends('Devel::EvalContext')
     ],
 );
