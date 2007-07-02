@@ -225,6 +225,47 @@ sub drop_database {
     }
 }
 
+=head2 delete
+
+Delete UUIDs on successful delete.
+
+=cut
+
+sub delete {
+    my $self = shift;
+    my ($table, @pairs) = @_;
+
+    # XXX TODO FIXME This is expensive, but since an ID might be reused
+    # (especially on SQLite) and cause things to blow up, we have to do this.
+    my @bind = ();
+    my $where = 'WHERE ';
+    while (my $key = shift @pairs) {
+        $where .= $key . "=?" . " AND ";
+        push( @bind, shift(@pairs) );
+    }
+
+    $where =~ s/AND $//;
+    my $query_string = "SELECT id FROM " . $table . ' ' . $where;
+    my $sth = $self->simple_query($query_string, @bind);
+
+    my @delete_ids = ();
+    while (my ($id) = $sth->fetchrow_array) {
+        push @delete_ids, $id;
+    }
+
+    my $ret;
+    if ($ret = $self->SUPER::delete(@_)) {
+        for my $id (@delete_ids) {
+            $self->SUPER::delete('_jifty_uuids',
+                row_table => $table,
+                row_id    => $id,
+            );
+        }
+    }
+
+    return $ret;
+}
+
 =head2 insert
 
 Assign an UUID for each successfully inserted rows.

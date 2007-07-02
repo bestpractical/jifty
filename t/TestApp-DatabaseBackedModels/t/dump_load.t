@@ -45,6 +45,10 @@ my %new_widgets = ( 'TestApp::DatabaseBackedModels::Model::Widget' => {
 }
 );
 
+# Make sure we don't modify the schema, if these are missing, the whacked
+$new_widgets{'Jifty::Model::ModelClass'} = $dumped_bootstrap->{'Jifty::Model::ModelClass'};
+$new_widgets{'Jifty::Model::ModelClassColumn'} = $dumped_bootstrap->{'Jifty::Model::ModelClass'};
+
 
 
 $DATABASE->_load_data(\%new_widgets);

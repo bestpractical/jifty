@@ -202,7 +202,7 @@ sub upgrade_schema {
     while ( my $table = $current_tables->next ) {
         $self->log->debug("Thinking about upgrading table ".$table->name . "(".$table->__uuid .")");
         if ( my $new_table = delete $new_tables->{ $table->__uuid } ) {
-            $self->log->debug("It has the same uuid as tne proposed replacement");
+            $self->log->debug("It has the same uuid as the proposed replacement");
 
             # we have the same table in the db and the dump
             # let's sync its attributes from the dump then sync its columns
@@ -257,20 +257,23 @@ sub upgrade_schema {
 
         # now we only have tables that were not yet in the database;
     }
-        $self->_upgrade_create_new_tables( $new_tables => $columns );
+    $self->_upgrade_create_new_tables( $new_tables => $columns );
 }
 
 sub _upgrade_create_new_tables {
     my $self       = shift;
     my $new_tables = shift;
     my $columns    = shift;
+    use Data::Dumper;
+    Test::More::diag('_upgrade_create_new_table: '.Dumper($self, $new_tables, $columns));
     foreach my $table_id ( keys %$new_tables ) {
         my $table = $new_tables->{$table_id};
         $self->log->debug("Creating a new table: ".$table->{name});
         delete $table->{id};
         my $class = Jifty::Model::ModelClass->new();
         my ( $val, $msg ) = $class->create( %{$table}, __uuid => $table_id );
-        die $msg unless ($val) ;
+        Test::More::diag('CREATE: '.Dumper($val, $msg, $class, $table, $table_id));
+        die ($msg||'Unknown error during create.') unless ($val) ;
         # Now that we have a brand new model, let's find all its columns
         my @cols = grep { $_->{model_class} = $table->{__uuid} } values %$columns;
         foreach my $col (@cols) {
