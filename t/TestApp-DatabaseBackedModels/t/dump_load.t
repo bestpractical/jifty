@@ -12,7 +12,7 @@ This is a template for your own tests. Copy it and modify it.
 use lib 't/lib';
 use Jifty::SubTest;
 
-use Jifty::Test tests => 10;
+use Jifty::Test tests => 22;
 
 
 
@@ -45,6 +45,9 @@ my %new_widgets = ( 'TestApp::DatabaseBackedModels::Model::Widget' => {
 }
 );
 
+# Make sure we don't modify the schema, if these are missing, the whacked
+$new_widgets{'Jifty::Model::ModelClass'} = $dumped_bootstrap->{'Jifty::Model::ModelClass'};
+$new_widgets{'Jifty::Model::ModelClassColumn'} = $dumped_bootstrap->{'Jifty::Model::ModelClass'};
 
 
 $DATABASE->_load_data(\%new_widgets);

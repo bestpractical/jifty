@@ -202,7 +202,7 @@ sub upgrade_schema {
     while ( my $table = $current_tables->next ) {
         $self->log->debug("Thinking about upgrading table ".$table->name . "(".$table->__uuid .")");
         if ( my $new_table = delete $new_tables->{ $table->__uuid } ) {
-            $self->log->debug("It has the same uuid as tne proposed replacement");
+            $self->log->debug("It has the same UUID as the proposed replacement");
 
             # we have the same table in the db and the dump
             # let's sync its attributes from the dump then sync its columns
@@ -257,7 +257,7 @@ sub upgrade_schema {
 
         # now we only have tables that were not yet in the database;
     }
-        $self->_upgrade_create_new_tables( $new_tables => $columns );
+    $self->_upgrade_create_new_tables( $new_tables => $columns );
 }
 
 sub _upgrade_create_new_tables {
@@ -270,7 +270,7 @@ sub _upgrade_create_new_tables {
         delete $table->{id};
         my $class = Jifty::Model::ModelClass->new();
         my ( $val, $msg ) = $class->create( %{$table}, __uuid => $table_id );
-        die $msg unless ($val) ;
+        die ($msg||'Unknown error during create.') unless ($val) ;
         # Now that we have a brand new model, let's find all its columns
         my @cols = grep { $_->{model_class} = $table->{__uuid} } values %$columns;
         foreach my $col (@cols) {
