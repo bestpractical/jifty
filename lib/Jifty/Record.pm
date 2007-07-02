@@ -73,7 +73,6 @@ sub create {
     unless ( $self->check_create_rights(@_) ) {
         $self->log->error( $self->current_user->id . " tried to create a ",
             ref $self, " without permission" );
-        Test::More::diag(1);
         wantarray ? return ( 0, _('Permission denied') ) : return (0);
     }
 
@@ -101,10 +100,8 @@ sub create {
             else {
                 $self->log->error("The UUID for $column_name was not found in the database.");
                 if ($class) {
-        Test::More::diag(2);
                     return($self);
                 } else {
-        Test::More::diag(3);
                     return (0, "UUID for $column_name was not found in the database.");
                 }
             }
@@ -125,10 +122,8 @@ sub create {
         if ( not $val ) {
             $self->log->error("There was a validation error for $key");
             if ($class) {
-        Test::More::diag(4);
                 return ($self);
             } else {
-        Test::More::diag(5);
                 return ( $val, $msg );
             }
         }
@@ -145,17 +140,13 @@ sub create {
     if ( ref($msg) ) {
 
         # It's a Class::ReturnValue
-        Test::More::diag(6);
         return $msg;
     }
     my ( $id, $status ) = $msg;
     $self->load_by_cols( id => $id ) if ($id);
     if ($class) {
-        Test::More::diag(7);
         return $self;
     } else {
-        use Data::Dumper;
-        Test::More::diag("8 ".Dumper($msg));
         return wantarray ? ( $id, $status ) : $id;
     }
 }
