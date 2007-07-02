@@ -29,7 +29,7 @@ sub prereq_plugins {
 
 =head1 SEE ALSO
 
-L<Jifty::Plugin::User>, L<Jifty::Plugin::LetMe>, L<Jifty::Plugin::Authentication::Password::Mixin::Model::User>
+L<Jifty::Manual::AccessControl>, L<Jifty::Plugin::User>, L<Jifty::Plugin::LetMe>, L<Jifty::Plugin::Authentication::Password::Mixin::Model::User>
 
 =head1 LICENSE
 
