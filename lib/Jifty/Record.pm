@@ -96,7 +96,7 @@ sub create {
                 $attribs{$column_name} = $record;
             }
 
-            # XXX sterling: this should log something and quit
+            # log something and quit
             else {
                 $self->log->error("The UUID for $column_name was not found in the database.");
                 if ($class) {

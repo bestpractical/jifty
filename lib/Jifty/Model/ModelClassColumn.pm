@@ -161,6 +161,7 @@ sub after_create {
     $self->model_class->add_column($self);
     my $ret = Jifty->handle->simple_query( $self->model_class->qualified_class->add_column_sql( $self->name ) );
     $ret || $self->log->fatal( "error updating a table: " . $ret->error_message);
+    return 1;
 }
 
 =head2 table
