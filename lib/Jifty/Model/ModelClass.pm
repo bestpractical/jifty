@@ -80,7 +80,7 @@ sub after_create {
     $self->load_by_cols(id => $$idref);
     $self->instantiate();
     $self->qualified_class->create_table_in_db();
-
+    return 1;
 }
 
 
