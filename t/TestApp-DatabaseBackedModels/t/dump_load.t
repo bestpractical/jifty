@@ -12,7 +12,7 @@ This is a template for your own tests. Copy it and modify it.
 use lib 't/lib';
 use Jifty::SubTest;
 
-use Jifty::Test tests => 22;
+use Jifty::Test tests => 23;
 
 
 
@@ -33,7 +33,7 @@ is_deeply(\@keys, [qw/Jifty::Model::Metadata
 
 my $dumped_widgets = $dumped_bootstrap->{'TestApp::DatabaseBackedModels::Model::Widget'};
 is (scalar keys %$dumped_widgets, 1);
-diag('got widgets');
+#diag('got widgets');
 my @values = values %$dumped_widgets;
 my $widget = shift @values;
 is ($widget->{'name'}, 'Weeble', "Dumped data is as expected");
@@ -85,8 +85,8 @@ my %new_tables = (
             { name => 'Vendor', description => 'People we avoid paying' }
     },
     'Jifty::Model::ModelClassColumn' => {
-            'cb05ac8c-afa5-11db-b33d-6f303ef246ef' => 
-                { name => 'name', type => 'text', model_class => 'cb05ac8c-afa5-11db-b33d-6f303ef246eb', default_value => 'Cogswell Cogs' }
+        'd762a97e-2909-4d9a-930d-ccbcc5708aac' =>
+            { name => 'name', storage_type => 'text', model_class => 'Customer', default_value => 'Cogswell Cogs' }
     } 
 );
 $DATABASE->_load_data(\%new_tables);

@@ -216,10 +216,12 @@ sub upgrade_schema {
 
             my $current_columns = $table->included_columns;
             my $new_columns     = {};
-            map {
-                delete $_->{id};   # the id is only important on the first system
-                $new_columns->{ $_->__uuid } = $_
-                } grep { $_->{model_class} = $table->{__uuid} } values %$columns;
+            while (my ($uuid, $column) = each %$columns) {
+                next unless $column->{model_class} eq $table->name;
+                delete $column->{id}; # the id is only important on the first system
+                $column->{model_class} = $table->__uuid;
+                $new_columns->{ $uuid } = $column;
+            }
 
             while ( my $column = $current_columns->next ) {
 
@@ -244,7 +246,7 @@ sub upgrade_schema {
             }
 
             foreach my $col ( keys %$new_columns ) {
-                Jifty::Model::ModelClassColumn->create($new_columns->{$col}, __uuid => $col);
+                Jifty::Model::ModelClassColumn->create(%{ $new_columns->{$col} }, __uuid => $col);
             }
 
         } else {
