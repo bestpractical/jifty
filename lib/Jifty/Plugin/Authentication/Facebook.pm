@@ -10,6 +10,12 @@ use WWW::Facebook::API;
 
 Jifty::Plugin::Authentication::Facebook
 
+=head2 DESCRIPTION
+
+Provides standalone Facebook authentication for your Jifty application.
+It adds the columns C<facebook_name>, C<facebook_uid>, C<facebook_session>,
+and C<facebook_session_expires> to your User model.
+
 =head1 SYNOPSIS
 
 In your jifty config.yml under the C<framework> section:
@@ -19,14 +25,22 @@ In your jifty config.yml under the C<framework> section:
             api_key: xxx
             secret: xxx
 
-You may set any options which the C<new> method of
-L<WWW::Facebook::API> understands.
+You may set any options which the C<new> method of L<WWW::Facebook::API>
+understands.
 
-=head2 DESCRIPTION
+In your User model, you'll need to include the line
 
-Provides Facebook authentication for your Jifty application.
-It adds the columns C<facebook_name>, C<facebook_uid>, C<facebook_session>,
-and C<facebook_session_expires> to your C<User> model class.
+    use Jifty::Plugin::Authentication::Facebook::Mixin::Model::User;
+
+B<after> your schema definition (which may be empty).  You may also wish
+to include
+
+    sub _brief_description { 'facebook_name' }
+
+To use the user's Facebook name as their description.
+
+See L<Jifty::Plugin::Authentication::Facebook::View> for the provided templates
+and L<Jifty::Plugin::Authentication::Facebook::Dispatcher> for the URLs handled.
 
 =cut
 
@@ -61,6 +75,22 @@ sub api {
     }
 
     return $api;
+}
+
+=head2 get_login_url
+
+Gets the login URL, preserving continuations
+
+=cut
+
+sub get_login_url {
+    my $self = shift;
+    my $next = '/facebook/callback';
+ 
+    if ( Jifty->web->request->continuation ) {
+        $next .= '?J:C=' . Jifty->web->request->continuation->id;
+    }
+    return $self->api->get_login_url( next => $next );
 }
 
 1;

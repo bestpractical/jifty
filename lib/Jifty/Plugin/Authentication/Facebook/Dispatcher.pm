@@ -16,6 +16,8 @@ All the dispatcher rules jifty needs to support L<Jifty::Authentication::Faceboo
 
 =head2 before '/facebook/callback'
 
+Handles the login callback.  You probably don't need to worry about this.
+
 =cut
 
 before '/facebook/callback' => run {
@@ -34,7 +36,21 @@ before '/facebook/callback' => run {
     }
 };
 
+=head2 before '/facebook/force_login'
+
+Redirects user to the Facebook login page.  Useful if you want to skip
+prompting the user to login on your app.
+
+=cut
+
+before '/facebook/force_login' => run {
+    my ($plugin) = Jifty->find_plugin('Jifty::Plugin::Authentication::Facebook');
+    Jifty->web->_redirect( $plugin->get_login_url );
+};
+
 =head2 before '/facebook/logout'
+
+Directing a user here will log him out of the app and Facebook.
 
 =cut
 
