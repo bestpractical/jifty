@@ -93,4 +93,20 @@ sub get_login_url {
     return $self->api->get_login_url( next => $next );
 }
 
+=head2 get_link_url
+
+Gets the login URL used for linking, preserving continuations
+
+=cut
+
+sub get_link_url {
+    my $self = shift;
+    my $next = '/facebook/callback_link';
+ 
+    if ( Jifty->web->request->continuation ) {
+        $next .= '?J:C=' . Jifty->web->request->continuation->id;
+    }
+    return $self->api->get_login_url( next => $next );
+}
+
 1;

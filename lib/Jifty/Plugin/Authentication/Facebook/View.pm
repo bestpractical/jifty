@@ -14,8 +14,7 @@ Provides the Facebook login fragment for L<Jifty::Plugin::Authentication::Facebo
 
 =head2 /facebook/login
 
-Calling C<show> on this fragment will include the standard Facebook button
-used for web login.
+This fragment shows the standard Facebook button used for web login.
 
 =cut
 
@@ -28,5 +27,23 @@ template '/facebook/login' => sub {
         };
     };
 };
+
+=head2 /facebook/link
+
+This fragment shows the standard Facebook login button, prompting the user to
+link his account.
+
+=cut
+
+template '/facebook/link' => sub {
+    my ($plugin) = Jifty->find_plugin('Jifty::Plugin::Authentication::Facebook');
+    div {{ id is 'facebook_link' };
+        span { _("Login to Facebook now to link it with your current account!") };
+        a {{ href is $plugin->get_link_url };
+            img {{ src is 'http://static.ak.facebook.com/images/devsite/facebook_login.gif', border is '0' }};
+        };
+    };
+};
+
 
 1;

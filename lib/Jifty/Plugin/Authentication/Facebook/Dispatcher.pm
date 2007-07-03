@@ -20,10 +20,14 @@ Handles the login callback.  You probably don't need to worry about this.
 
 =cut
 
-before '/facebook/callback' => run {
+before qr'^/facebook/callback(_link)?' => run {
+    my $link    = $1 ? 1 : 0;
+    my $action  = $link ? 'LinkFacebookUser' : 'LoginFacebookUser';
+    my $moniker = $link ? 'facebooklink'     : 'facebooklogin';
+
     Jifty->web->request->add_action(
-        moniker   => 'facebooklogin',
-        class     => 'LoginFacebookUser',
+        moniker   => $moniker,
+        class     => $action,
         arguments => {
             auth_token => get('auth_token'),
         }
