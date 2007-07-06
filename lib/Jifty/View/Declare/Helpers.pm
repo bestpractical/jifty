@@ -9,7 +9,7 @@ our @EXPORT = ( qw(form hyperlink tangent redirect new_action form_submit form_r
 
 =head1 NAME
 
-Jifty::View::Declare::Helpers
+Jifty::View::Declare::Helpers - Additional subroutines for Jifty TD templates
 
 =head1 DESCRIPTION
 

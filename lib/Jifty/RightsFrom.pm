@@ -3,7 +3,7 @@ use strict;
 
 =head1 NAME
 
-Jifty::RightsFrom
+Jifty::RightsFrom - Delegate access control to a related object
 
 =head1 SYNOPSIS
 

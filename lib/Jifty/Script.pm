@@ -2,6 +2,12 @@ package Jifty::Script;
 use App::CLI;
 use base qw/App::CLI App::CLI::Command/;
 
+=head1 NAME
+
+Jifty::Script - Base class for all bin/jifty commands
+
+=head1 METHODS
+
 =head2 prepare
 
 C<prepare> figures out which command to run. If the user wants

@@ -9,7 +9,7 @@ use Scalar::Defer;
 
 =head1 NAME 
 
-Jifty::View::Declare::CoreTemplates
+Jifty::View::Declare::CoreTemplates - Templates Jifty can't function without
 
 =head1 DESCRIPTION
 

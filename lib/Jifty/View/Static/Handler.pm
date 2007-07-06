@@ -14,7 +14,7 @@ our ($MIME,$MAGIC);
 
 =head1 NAME
 
-Jifty::View::Static::Handler
+Jifty::View::Static::Handler - Jifty view handler for static files
 
 head1 DESCRIPTION
 

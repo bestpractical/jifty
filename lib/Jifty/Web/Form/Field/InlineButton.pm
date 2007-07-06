@@ -5,6 +5,11 @@ package Jifty::Web::Form::Field::InlineButton;
 
 use base qw/Jifty::Web::Form::Field::Button/;
 
+=head1 NAME
+
+Jifty::Web::Form::Field::InlineButton - Add buttons without a form
+
+=head1 METHODS
 
 =head2 render
 

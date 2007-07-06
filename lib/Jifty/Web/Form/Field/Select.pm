@@ -5,6 +5,12 @@ package Jifty::Web::Form::Field::Select;
 
 use base qw/Jifty::Web::Form::Field/;
 
+=head1 NAME
+
+Jifty::Web::Form::Field::Select - Add a list/popup menu control to your forms
+
+=head1 METHODS
+
 =head2 render_widget
 
 Renders the select widget.

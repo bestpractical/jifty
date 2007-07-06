@@ -10,6 +10,10 @@ use Email::MIME::Creator;
 __PACKAGE__->mk_accessors(
     qw/body preface footer subject from _recipients _to_list to/);
 
+=head1 NAME
+
+Jifty::Notification - Send emails from Jifty
+
 =head1 USAGE
 
 It is recommended that you subclass L<Jifty::Notification> and

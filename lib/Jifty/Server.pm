@@ -3,6 +3,10 @@ use strict;
 
 package Jifty::Server;
 
+=head1 NAME
+
+Jifty::Server - Stand-alone server implementation for Jifty
+
 =head1 SYNOPSIS
 
   use Jifty::Server;

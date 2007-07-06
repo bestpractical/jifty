@@ -5,7 +5,7 @@ use base qw/Module::Pluggable/;
 
 =head1 NAME
 
-Jifty::Module::Pluggable
+Jifty::Module::Pluggable - Jifty-specific helper for Module::Pluggable
 
 
 =head1 DESCRIPTION
