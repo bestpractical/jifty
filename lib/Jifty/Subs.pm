@@ -8,7 +8,7 @@ use constant new => __PACKAGE__;
 
 =head1 NAME
 
-Jifty::Subs - 
+Jifty::Subs - Configure subscriptions for the current window or session
 
 =head1 SYNOPSIS
 
@@ -27,7 +27,7 @@ Jifty::Subs -
 
 
 
-=cut
+=head1 METHODS
 
 =head2 add PARAMHASH
 

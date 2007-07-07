@@ -60,6 +60,7 @@ Return timezone if the current user has it
 sub current_user_has_timezone {
     my $self = shift;
     $self->_get_current_user();
+    return unless $self->current_user->can('user_object');
     my $user_obj = $self->current_user->user_object or return;
     my $f = $user_obj->can('time_zone') or return;
     return $f->($user_obj);

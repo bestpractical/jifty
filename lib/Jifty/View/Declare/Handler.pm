@@ -10,7 +10,7 @@ __PACKAGE__->mk_accessors(qw/root_class/);
 
 =head1 NAME
 
-Jifty::View::Declare::Handler
+Jifty::View::Declare::Handler - The Jifty view handler for Template::Declare
 
 =head1 METHODS
 

@@ -8,6 +8,8 @@ use base qw/Jifty::Web::Form::Field/;
 
 Jifty::Web::Form::Field::Text - Renders as a small text field
 
+=head1 METHODS
+
 =cut
 
 our $VERSION = 1;

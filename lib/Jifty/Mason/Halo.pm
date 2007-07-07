@@ -7,7 +7,7 @@ Jifty->handle->log_sql_statements(1);
 
 =head1 NAME
 
-Jifty::Mason::Halo
+Jifty::Mason::Halo - Class for drawing "halos" around page components
 
 =head1 DESCRIPTION
 

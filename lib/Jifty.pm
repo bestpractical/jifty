@@ -168,7 +168,30 @@ sub new {
     Jifty->logger( Jifty::Logger->new( $args{'logger_component'} ) );
 
     # Set up plugins
-    my @plugins = Jifty->_load_plugins();
+    my @plugins;
+    my @plugins_to_load = @{Jifty->config->framework('Plugins')};
+    my $app_plugin = Jifty->app_class('Plugin');
+    for (my $i = 0; my $plugin = $plugins_to_load[$i]; $i++) {
+        my $plugin_name = (keys %{$plugin})[0];
+        my $class;
+        if ($plugin_name =~ /^(?:Jifty::Plugin|$app_plugin)::/) {
+            # app-specific plugins use fully qualified names, Jifty plugins may
+            $class = $plugin_name; 
+        }
+        # otherwise, assume it's a short name, qualify it
+        else {
+            $class = "Jifty::Plugin::".$plugin_name;
+        }
+        my %options = %{ $plugin->{ $plugin_name } };
+        Jifty::Util->require($class);
+        Jifty::ClassLoader->new(base => $class)->require;
+        my $plugin_obj = $class->new(%options);
+        push @plugins, $plugin_obj;
+        foreach my $name ($plugin_obj->prereq_plugins) {
+            next if grep { $_ eq $name } @plugins_to_load;
+            push @plugins_to_load, {$name => {}};
+        }
+    }
 
     Jifty->plugins(@plugins);
 
@@ -354,25 +377,6 @@ sub bus {
 Returns a list of L<Jifty::Plugin> objects for this Jifty application.
 
 =cut
-
-sub _load_plugins {
-    my @plugins;
-    my @plugins_to_load = @{Jifty->config->framework('Plugins')};
-    for (my $i = 0; my $plugin = $plugins_to_load[$i]; $i++) {
-        my $class = "Jifty::Plugin::".(keys %{$plugin})[0];
-        my %options = %{ $plugin->{(keys %{$plugin})[0]} };
-        Jifty::Util->require($class);
-        Jifty::ClassLoader->new(base => $class)->require;
-        my $plugin_obj = $class->new(%options);
-        push @plugins, $plugin_obj;
-        foreach my $name ($plugin_obj->prereq_plugins) {
-            next if grep { $_ eq $name } @plugins_to_load;
-            push @plugins_to_load, {$name => {}};
-        }
-    }
-    return @plugins;
-}
-
 
 sub plugins {
     my $class = shift;

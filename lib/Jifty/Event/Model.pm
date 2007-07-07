@@ -9,7 +9,7 @@ use base qw/Jifty::Event/;
 
 =head1 NAME
 
-Jifty::Event::Model
+Jifty::Event::Model - Events representing changes to records
 
 =head1 DESCRIPTION
 

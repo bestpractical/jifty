@@ -284,8 +284,6 @@ sub set_cookie {
 
     my $cookie_name = $self->cookie_name;
     my %cookies     = CGI::Cookie->fetch();
-    my $session_id
-        = $cookies{$cookie_name} ? $cookies{$cookie_name}->value() : undef;
     my $cookie = new CGI::Cookie(
         -name    => $cookie_name,
         -value   => $self->id,

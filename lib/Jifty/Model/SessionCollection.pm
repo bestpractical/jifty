@@ -5,6 +5,12 @@ package Jifty::Model::SessionCollection;
 
 use base qw/Jifty::Collection/;
 
+=head1 NAME
+
+Jifty::Model::SessionCollection - Specialized handling of the session collection
+
+=head2 METHODS
+
 =head2 record_class
 
 This deals with collections of L<Jifty::Model::Session>s.
