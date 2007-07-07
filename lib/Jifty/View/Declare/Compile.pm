@@ -155,6 +155,16 @@ sub e_anoncode {
     return "function () " . $text;
 }
 
+sub e_anonhash {
+    my ($self, $info) = @_;
+    my @exprs = @{$info->{exprs}};
+    my @pairs;
+    while (my @p = splice(@exprs, 0, 2)) {
+	push @pairs, join(': ', map { $self->deparse($_, 6) } @p);
+    }
+    return '{' . join(", ", @pairs) . '}';
+}
+
 sub pp_entersub {
     my $self = shift;
     my $ret = $self->SUPER::pp_entersub(@_);

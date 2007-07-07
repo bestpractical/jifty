@@ -389,9 +389,8 @@ use Jifty::View::Declare::Compile;
 
 sub _actual_td_code {
     my $code = shift or return;
-
-    return PadWalker::closed_over($code)->{'$coderef'}
-	? ${ PadWalker::closed_over($code)->{'$coderef'} } : $code;
+    my $closed_over = PadWalker::closed_over($code)->{'$coderef'};
+    return $closed_over ? $$closed_over : $code;
 }
 
 sub client_cacheable {

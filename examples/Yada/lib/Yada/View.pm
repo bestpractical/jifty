@@ -11,22 +11,12 @@ template 'index.html' => page {
     my $self = shift;
     title { _('Yada!') };
 
-    hyperlink(label => 'clear',
-	      onclick => [{region => 'test_region',
-			   replace_with => '__jifty/empty',
-			  }]);
-
-    render_region(
-        name => 'test_region',
-        path => '/__jifty/empty'
-    );
+    render_region('test_region');
 
     hyperlink(label => 'FAQ',
 	      onclick => [{region => 'test_region',
 			   replace_with => '_faq',
 			  }]);
-
-
 
     form {
 	set(item_path => '/todo/view_brief');
@@ -46,6 +36,7 @@ template '_faq' => sub :Static {
                 }
 	    }
 	}
+	hyperlink(label => 'close', onclick => [{replace_with => '/__jifty/empty'}])
     }
 };
 

@@ -13,17 +13,40 @@ Jifty.Web.new_action = function(foo, class_name, bar, moniker) {
 
 Jifty.web = function() { return Jifty.Web };
 
+function _get_named_args(args) {
+}
+
+function _get_onclick(action_hash, name, args, path) {
+    var onclick = 'if(event.ctrlKey||event.metaKey||event.altKey||event.shiftKey) return true; return update('
+    + JSON.stringify({'continuation': {},
+		      'actions': action_hash,
+		      'fragments': [{'mode': 'Replace', 'args': args, 'region': name, 'path': path}]})
+    +', this)';
+    onclick = onclick.replace(/"/g, "'"); //"' )# grr emacs!
+	return onclick;
+}
+// XXX
+var hyperlink  = function(foo, label, bar, onclick) {
+    var current_region = Jifty.Web.current_region;
+    var onclick = _get_onclick({}, current_region.name, current_region.args, onclick[0].replace_with);
+    outs( a(function() { attr(function()
+			       {return ['onclick', onclick]});
+	    return label
+		}));
+}
+
 var render_param = function(a, field) { outs(a.render_param(field)) };
 var form_return  = function(foo, label, bar, submit) {
     var action_hash = {};
     action_hash[submit.moniker] = 1;
     // XXX: fix the fabricated refresh-self
-    var onclick = 'if(event.ctrlKey||event.metaKey||event.altKey||event.shiftKey) return true; return update('
-    + JSON.stringify({'continuation': {},
-		      'actions': action_hash,
-		      'fragments': [{'mode': 'Replace', 'args': {}, 'region':'__page-signup_widget', 'path': '_signup'}]})
-    +', this)';
-    onclick = onclick.replace(/"/g, "'"); //"' )# grr emacs!
+    // XXX: implicit onclick only for now
+
+    // $self->_push_onclick($args, { refresh_self => 1, submit => $args->{submit} });
+    // @args{qw/mode path region/} = ('Replace', Jifty->web->current_region->path, Jifty->web->current_region);
+
+    var current_region = Jifty.Web.current_region;
+    var onclick = _get_onclick(action_hash, current_region.name, current_region.args, current_region.path);
     outs(
 	 div(function() {
 		 attr(function() { return ['class', 'submit_button'] });
@@ -852,7 +875,7 @@ function prepare_element_for_update(f) {
 var CACHE = {};
 
 // FIXME: try not to pollute the namespace!
-var tags = ['div', 'h2', 'dl', 'dt', 'dd', 'span', 'label', 'input'];
+var tags = ['div', 'h2', 'dl', 'dt', 'dd', 'span', 'label', 'input', 'a'];
 for (var i in tags) {
     this[tags[i]] = _mk_tag_wrapper(tags[i]);
 }
@@ -893,7 +916,7 @@ function _mk_tag_wrapper(name, pre, post, want_outbuf) {
 	var _post = post ? post(attr) : '</'+name+'>';
 	if (want_outbuf && this.out_buf) {
 	    first += this.out_buf;
-	    this.outbuf = '';
+	    this.out_buf = '';
 	}
 	return _pre + first + _post + buf.join('');
     }
@@ -919,13 +942,14 @@ var extract_cacheable = function(fragment, f) {
             } else if (fragment_bit.firstChild) {
                 textContent = fragment_bit.firstChild.nodeValue;
             } 
-            var cache_func;
-	    try { cache_func = eval(textContent) }
+	    try {
+		var cache_func = eval(textContent);
+		CACHE[f['path']] = { 'type': c_type, 'content': cache_func };
+	    }
 	    catch(e) { 
 		alert(e);
 		alert(textContent);
 	    }
-            CACHE[f['path']] = { 'type': c_type, 'content': cache_func };
         }
     });
 };
@@ -1075,7 +1099,8 @@ function update() {
             var content_node = document.createElement('content');
 	    var cached_result;
 
-	    try { cached_result = cached['content']() }
+	    Jifty.Web.current_region = fragments[f['region']];
+	    try { cached_result = apply_cached_for_action(cached['content'], []) }
 	    catch (e) { alert(e) }
 
             content_node.textContent = cached_result;
@@ -1094,6 +1119,7 @@ function update() {
             my_fragment.setAttribute('id', f['region']);
             update_from_cache.push(function(){
 		    var cached_result;
+		    Jifty.Web.current_region = fragments[f['region']];
 		    try {
 			cached_result = apply_cached_for_action(cached['content'], Form.getActions(form));
 		    }
