@@ -164,5 +164,6 @@ L<Jifty::Plugin::Authentication::Password>, L<Jifty::Plugin::Authentication::Pas
 Jifty is Copyright 2005-2007 Best Practical Solutions, LLC.
 Jifty is distributed under the same terms as Perl itself.
 
+=cut
 
 1;

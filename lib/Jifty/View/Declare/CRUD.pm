@@ -19,7 +19,9 @@ Jifty::View::Declare::CRUD - Provides typical CRUD views to a model
 
 =head1 DESCRIPTION
 
-This class provides a set of views that may be used by a model to display Create/Read/Update/Delete views using the L<Template::Declare> templating langauge.
+This class provides a set of views that may be used by a model to
+display Create/Read/Update/Delete views using the L<Template::Declare>
+templating langauge.
 
 =head1 METHODS
 

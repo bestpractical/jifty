@@ -14,7 +14,7 @@ This plugin provides a "user" mixin for your application's user model class.
 
 =head1 SEE ALSO
 
-L<Jifty::Plugin::User::Mixin::Model::User>, L<Jifty::Plugin::Authentication::Password>
+L<Jifty::Manual::AccessControl>, L<Jifty::Plugin::User::Mixin::Model::User>, L<Jifty::Plugin::Authentication::Password>
 
 =head1 LICENSE
 

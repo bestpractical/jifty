@@ -7,6 +7,12 @@ use base qw/Jifty::Object Class::Accessor::Fast/;
 
 __PACKAGE__->mk_accessors(qw(actions printed_actions name call is_open disable_autocomplete target submit_to));
 
+=head1 NAME
+
+Jifty::Web::Form - Tools for rendering and dealing with HTML forms
+
+=head1 METHODS
+
 =head2 new ARGS
 
 Creates a new L<Jifty::Web::Form>.  Arguments:

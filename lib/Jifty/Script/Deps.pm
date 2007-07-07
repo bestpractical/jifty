@@ -12,6 +12,12 @@ use Pod::Usage;
 use version;
 use Jifty::Config;
 
+=head1 NAME
+
+Jifty::Script::Deps - Looks for module dependencies and attempts to install them from CPAN
+
+=head1 METHODS
+
 =head2 options
 
 Returns a hash of all the options this script takes. (See the usage message for details)

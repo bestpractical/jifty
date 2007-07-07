@@ -1,6 +1,6 @@
 =head1 NAME
 
-Jifty::Manual::Cookbook
+Jifty::Manual::Cookbook - Recipes for common tasks in Jifty
 
 =head1 DESCRIPTION
 
@@ -481,5 +481,82 @@ Note that you can implement complex logic in the require_login method,
 but it's called as class method what set a lot of limitations. That
 would be really cool to have access to all data of the action in
 this method, so you are welcome to post a better solution.
+
+=head2 Append a new region based upon the result of the last action using AJAX
+
+In the Administration Interface, you can create new items. You enter the information and then the newly created item is appended to the end of the list immediately without reloading the page. You can use this recipe to do something like this, or to modify the page however you need based upon the result of any server-side action.
+
+Render your action fields as you normally would. The key to the process is in the submit button. Here's how the L<Jifty::View::Declare::CRUD> does this, as of this writing:
+
+  Jifty->web->form->submit(
+      label   => 'Create',
+      onclick => [
+          { submit       => $create },
+          { refresh_self => 1 },
+          {   element =>
+                  Jifty->web->current_region->parent->get_element(
+                  'div.list'),
+              append => $self->fragment_for('view'),
+              args   => {
+                  object_type => $object_type,
+                  id => { result_of => $create, name => 'id' },
+              },
+          },
+      ]
+  );
+
+This could is embedded in a call to C<outs()> for use with L<Template::Declare> templating, but you could just as easily wrap the line above in C<< <% %> >> for use with Mason templates. The keys is each item in the list past to C<onclick>:
+
+  { submit => $create },
+
+This tells Jifty submit the form elements related to the action referenced by C<$create> only. Any other actions in the same form will be ignored.
+
+  { refresh_self => 1 },
+
+This tells the browser to refresh the current region (which will be the one containing the current submit button), so that the form can be reused. You could also modify this behavior to delete the region, if you wrote:
+
+  { delete => Jifty->web->current_region },
+
+The most complicated part is the most important:
+
+  {   element =>
+          Jifty->web->current_region->parent->get_element(
+          'div.list'),
+      append => $self->fragment_for('view'),
+      args   => {
+          object_type => $object_type,
+          id => { result_of => $create, name => 'id' },
+      },
+  },
+
+=over
+
+=item element
+
+The C<element> parameter tells the browser where to insert the new item. By using C<< Jifty->web->current_region->parent->get_element('div.list') >>, the new code will be appended to the first C<div> tag found with a C<list> class within the parent region. This assumes that you have added such an element to the parent region. 
+
+You could look up an arbitrary region using C<< Jifty->web->get_region('fully-qualified-region-name') >> if you don't want to use the parent of the current region.
+
+=item append
+
+The C<append> argument gives the path to the URL of the item to insert. By using C<append>, you are telling Jifty to add your new code to the end of the element given in C<element>. If you want to add it to the beginning, you can use C<prepend> instead.
+
+=item args
+
+Last, but not least, you need to send arguments to the URL related to the action being performed. These can be anything you need for the your template to render the required code. In this example, two arguments are passed: C<object_type> and C<id>. In the case of C<object_type> a known value is passed. In the case of C<id>, the result of the action is passed, which is the key to the whole deal:
+
+  id => { result_of => $create, name => 'id' },
+
+This line tells Jifty that you want to set the "id" paramter sent to the URL given in C<append>, to the "id" set when C<$create> is executed. That is, after running the action, Jifty will contact the URL and effectively perform:
+
+  set id => $create->result->content('id');
+
+It's a lot more complicated than that in actuality, but Jifty takes care of all the nasty details.
+
+=back
+
+If you want to use a custom action other than the built-in create and want to pass something back other than the "id", you just need to set the result into the appropriate key on the C<content> method of the L<Jifty::Result>.
+
+For more details on how you can customize this further, see L<Jifty::Manual::PageRegions>, L<Jifty::Web::Form::Element>, L<Jifty::Result>, L<Jifty::Action>, L<Jifty::Web::PageRegion>, L<Jifty::Web>, and L<Jifty::Request::Mapper>.
 
 =cut

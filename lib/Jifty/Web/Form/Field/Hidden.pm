@@ -5,6 +5,12 @@ package Jifty::Web::Form::Field::Hidden;
 
 use base qw/Jifty::Web::Form::Field/;
 
+=head1 NAME
+
+Jifty::Web::Form::Field::Hidden - Add hidden fields to your forms
+
+=head1 METHODS
+
 =head2 type
 
 The HTML input type is C<hidden>.

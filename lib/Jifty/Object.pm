@@ -5,7 +5,11 @@ package Jifty::Object;
 
 use Log::Log4perl ();
 
-=head1 Jifty::Object
+=head1 NAME
+
+Jifty::Object - Base class for most of Jifty's objects
+
+=head1 DESCRIPTION
 
 C<Jifty::Object> is the superclass of most of Jifty's objects.  It is
 used to provide convenient accessors to important global objects like
@@ -16,7 +20,7 @@ We ought to be able to mix-in C<Jifty::Object> with any other class;
 thus, we will not define C<new> or C<_init> in C<Jifty::Object>.  We
 do assume, however, that C<$self> is a blessed hash reference.
 
-=cut
+=head1 METHODS
 
 =head2 current_user [USER]
 

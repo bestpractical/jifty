@@ -14,7 +14,7 @@ This code is only useful on the new Jifty "Declarative templates" branch. It sho
 
 Is the above really true or need to said anymore? -- Sterling
 
-=end
+=end comment
 
 This provides the templates for the pages and forms used by the password authentication plugin.
 
@@ -162,7 +162,7 @@ See L<Jifty::Plugin::Authentication::Password::SendPasswordReminder>.
 
 What's the difference between lost_password and passwordreminder? -- Sterling
 
-=end
+=end comment
 
 =cut
 

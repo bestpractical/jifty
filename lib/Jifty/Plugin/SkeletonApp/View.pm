@@ -15,7 +15,9 @@ Jifty::Plugin::SkeletonApp::View
 =head1 DESCRIPTION
 
 This somewhat-finished (But not quite) template library implements
-Jifty's "pony" Application. It could certainly use some refactoring. (And some of the menu stuff should get factored out into a dispatcher or the other plugins that implement it.
+Jifty's "pony" Application. It could certainly use some
+refactoring. (And some of the menu stuff should get factored out into
+a dispatcher or the other plugins that implement it.
 
 
 =cut

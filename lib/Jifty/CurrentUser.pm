@@ -11,7 +11,7 @@ __PACKAGE__->mk_accessors(qw(is_superuser is_bootstrap_user));
 
 =head1 NAME
 
-Jifty::CurrentUser
+Jifty::CurrentUser - Base class and basic implementation of current user object
 
 =head1 DESCRIPTION
 

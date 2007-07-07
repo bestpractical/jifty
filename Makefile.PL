@@ -134,8 +134,12 @@ features(
         recommends('Cache::FileCache'),
         recommends('LWPx::ParanoidAgent'),
     ],
+    'Facebook Login Plugin' => [
+        -default => 0,
+        recommends('WWW::Facebook::API' => '0.3.6'),
+    ],
     'Jifty console' => [
-        -default => 1,
+        -default => 0,
         recommends('Devel::EvalContext')
     ],
 );

@@ -3,7 +3,7 @@ use strict;
 
 =head1 NAME
 
-Jifty::Upgrade
+Jifty::Upgrade - Superclass for schema/data upgrades to Jifty applicaitons
 
 =head1 DESCRIPTION
 
