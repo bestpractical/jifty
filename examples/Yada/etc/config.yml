@@ -41,6 +41,7 @@ framework:
     Backend: Memcached
     Enable: ~
   TemplateClass: Yada::View
+  ClientTemplate: 1
   Web: 
     BaseURL: http://localhost
     DataDir: var/mason

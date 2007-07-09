@@ -52,7 +52,7 @@ for my $f ( Jifty->web->request->fragments ) {
     $writer->startTag( "fragment", id => Jifty->web->current_region->qualified_name );
     my %args = %{ Jifty->web->current_region->arguments };
     $writer->dataElement( "argument", $args{$_}, name => $_) for sort keys %args;
-    if (Jifty->web->current_region->client_cacheable) {
+    if (Jifty->config->framework('ClientTemplate') && Jifty->web->current_region->client_cacheable) {
         $writer->cdataElement( "cacheable", Jifty->web->current_region->client_cache_content, type => Jifty->web->current_region->client_cacheable );
     }
     $writer->cdataElement( "content", Jifty->web->current_region->as_string );
