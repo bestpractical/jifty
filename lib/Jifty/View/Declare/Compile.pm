@@ -201,4 +201,10 @@ sub walk_lineseq {
     $self->SUPER::walk_lineseq($op, $kids, $callback);
 }
 
+sub compile_to_js {
+    my $class = shift;
+    my $code = shift;
+    return 'function() '.$class->new->coderef2text($code);
+}
+
 1;

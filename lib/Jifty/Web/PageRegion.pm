@@ -384,57 +384,30 @@ sub get_element {
     return "#region-" . $self->qualified_name . ' ' . join(' ', @_);
 }
 
-use PadWalker;
-use Jifty::View::Declare::Compile;
+my $can_compile = eval 'use Jifty::View::Declare::Compile; 1' ? 1 : 0;
 
-sub _actual_td_code {
-    my $code = shift or return;
-    my $closed_over = PadWalker::closed_over($code)->{'$coderef'};
-    return $closed_over ? $$closed_over : $code;
-}
+=head2 client_cacheable
+
+=cut
 
 sub client_cacheable {
     my $self = shift;
-    return 'crudview' if $self->path eq '//todo/view';
-    my $code = _actual_td_code(Template::Declare->resolve_template($self->path));
+    return unless $can_compile;
 
-    return 'static' if $Jifty::View::Declare::BaseClass::Static{$code};
-    return 'action' if $Jifty::View::Declare::BaseClass::Action{$code};
-
-    return;
+    return Jifty::View::Declare::BaseClass->client_cacheable($self->path);
 }
+
+=head2 client_cacheable
+
+=cut
 
 sub client_cache_content {
     my $self = shift;
-    my $code = _actual_td_code(Template::Declare->resolve_template($self->path));
+    return unless $can_compile;
 
-    if ($Jifty::View::Declare::BaseClass::Static{$code}) {
-	return 'function() '.Jifty::View::Declare::Compile->new->coderef2text($code);
-    }
-    if ($Jifty::View::Declare::BaseClass::Action{$code}) {
-	return 'function() '.Jifty::View::Declare::Compile->new->coderef2text($code);
-    }
-
-    local @Evil::ISA = ('Yada::Model::Todo');
-    local $HTML::Mason::Commands::m = undef;
-    local Jifty->handler->apache->{http_header_sent} = 1;
-
-    # dup from JV::Declare::Handler
-    no warnings qw/redefine/;
-    local *Jifty::Web::out = sub {
-        shift;    # Turn the method into a function
-        goto &Template::Declare::Tags::outs_raw;
-    };
-
-    return Template::Declare::Tags::show_page( $self->path, (bless {}, 'Evil') );
-}
-
-package Evil;
-
-sub id { return '${id}' }
-
-sub _value {
-    return '${'.$_[1].'}';
+    return Jifty::View::Declare::Compile->compile_to_js(
+        Jifty::View::Declare::BaseClass->_actual_td_code($self->path)
+    );
 }
 
 1;
