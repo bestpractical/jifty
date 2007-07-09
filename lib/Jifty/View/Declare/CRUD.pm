@@ -447,7 +447,7 @@ private template paging_bottom => sub {
             span {
                 { class is 'next-page' };
                 hyperlink(
-                    label   => _"Next Page"),
+                    label   => _("Next Page"),
                     onclick =>
                         { args => { page => $collection->pager->next_page } }
                 );
