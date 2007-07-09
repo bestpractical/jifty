@@ -30,7 +30,7 @@ var hyperlink  = function(foo, label, bar, onclick) {
     var current_region = Jifty.Web.current_region;
     var onclick = _get_onclick({}, current_region.name, current_region.args, onclick[0].replace_with);
     outs( a(function() { attr(function()
-			       {return ['onclick', onclick]});
+			      {return ['onclick', onclick, 'href', '#']});
 	    return label
 		}));
 }
@@ -900,6 +900,12 @@ function _mk_tag_wrapper(name, pre, post, want_outbuf) {
 	    }
 	};
 
+	var flushed = '';
+	if (this.out_buf) {
+	    flushed = this.out_buf;
+	    this.out_buf = '';
+	}
+
 	for (var i = 0; i < arguments.length; ++i) {
 	    buf.push(typeof(arguments[i]) == 'function' ? arguments[i]() : arguments[i]);
 	}
@@ -918,7 +924,7 @@ function _mk_tag_wrapper(name, pre, post, want_outbuf) {
 	    first += this.out_buf;
 	    this.out_buf = '';
 	}
-	return _pre + first + _post + buf.join('');
+	return flushed + _pre + first + _post + buf.join('');
     }
 };
 
