@@ -91,7 +91,7 @@ Renders value as a checkbox widget.
 =cut
 
 sub render_value {
-    $_->render_widget;
+    $_[0]->render_widget;
     return '';
 }
 
