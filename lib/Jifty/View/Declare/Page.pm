@@ -82,8 +82,8 @@ sub render_page {
 
     div {
         div {
-            show 'salutation';
-            show 'menu';
+            show '/salutation';
+            show '/menu';
         };
         div {
             attr { id is 'content' };
@@ -143,7 +143,7 @@ sub render_title {
     my $self = shift;
     my $oldt = get('title');
     set( title => $self->_title );
-    show 'heading_in_wrapper';
+    show '/heading_in_wrapper';
     set( title => $oldt );
 }
 
@@ -187,7 +187,7 @@ Renders the keybinding and PubSub javascript as well as the wait message
 
 sub render_jifty_page_detritus {
 
-    show('keybindings');
+    show('/keybindings');
     with( id => "jifty-wait-message", style => "display: none" ),
         div { _('Loading...') };
 
@@ -204,7 +204,7 @@ sub _render_header {
     my $title = shift || '';
     $title =~ s/<.*?>//g;    # remove html
     HTML::Entities::decode_entities($title);
-    with( title => $title ), show('header');
+    with( title => $title ), show('/header');
 }
 
 1;

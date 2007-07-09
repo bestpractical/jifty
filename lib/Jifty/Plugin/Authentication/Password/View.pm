@@ -55,14 +55,14 @@ Displays the login form.
 =cut
 
 template login => page { title => _('Login!') } content {
-    show('login_widget');
+    show('/login_widget');
 };
 
 =head2 login_widget
 
 A handy template for embedding the login form. Just include it in your templates via:
 
-  show('login_widget');
+  show('/login_widget');
 
 See L<Jifty::Plugin::Authentication::Password::Action::Login>.
 
