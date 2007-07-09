@@ -79,8 +79,10 @@ sub new {
 
     # If they key and/or value imply that this argument is going to be
     # a mapped argument, then do the mapping and mark the field as hidden.
+    # but ignore that if the field is a container in the model
     my ($key, $value) = Jifty::Request::Mapper->query_parameters($self->input_name, $self->current_value);
-    if ($key ne $self->input_name) {
+    warn "$key vs ".$self->input_name;
+    if ($key ne $self->input_name && !$self->action->arguments->{$self->name}{container}) {
         Jifty::Util->require('Jifty::Web::Form::Field::Hidden');
         bless $self, "Jifty::Web::Form::Field::Hidden";
         $self->input_name($key);
