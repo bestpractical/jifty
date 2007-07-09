@@ -27,7 +27,9 @@ __PACKAGE__->mk_accessors(
 
 __PACKAGE__->mk_classdata($_)
     for qw(cached_css        cached_css_digest        cached_css_time
-           javascript_libs);
+           javascript_libs   external_javascript_libs);
+
+__PACKAGE__->external_javascript_libs([]);
 
 __PACKAGE__->javascript_libs([qw(
     jsan/JSAN.js
@@ -1168,6 +1170,12 @@ default.
 sub include_javascript {
     my $self  = shift;
 
+    for my $url ( @{ __PACKAGE__->external_javascript_libs } ) {
+        $self->out(
+            qq[<script type="text/javascript" src="$url"></script>\n]
+        );
+    }
+
     # if there's no trigger, 0 is returned.  if aborted/handled, undef
     # is returned.
     defined $self->call_trigger('include_javascript', @_) or return '';
@@ -1191,6 +1199,20 @@ sub add_javascript {
     my $self = shift;
     Jifty->web->javascript_libs([
         @{ Jifty->web->javascript_libs },
+        @_
+    ]);
+}
+
+=head3 add_external_javascript URL1, URL2, ...
+
+Pushes urls onto C<Jifty->web->external_javascript_libs>
+
+=cut
+
+sub add_external_javascript {
+    my $self = shift;
+    Jifty->web->external_javascript_libs([
+        @{ Jifty->web->external_javascript_libs },
         @_
     ]);
 }
