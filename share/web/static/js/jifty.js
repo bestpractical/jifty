@@ -3,9 +3,10 @@ var Jifty = Class.create();
 
 Jifty.Web = Class.create();
 Jifty.Web.current_actions = new Array;
-Jifty.Web.new_action = function(foo, class_name, bar, moniker) {
+Jifty.Web.new_action = function() {
+    var args = _get_named_args(arguments);
     var a;
-    Jifty.Web.current_actions.each(function(x) { if (x.moniker == moniker) a = x });
+    Jifty.Web.current_actions.each(function(x) { if (x.moniker == args.moniker) a = x });
     if (!a) throw "hate";
     
     return a;
@@ -14,6 +15,12 @@ Jifty.Web.new_action = function(foo, class_name, bar, moniker) {
 Jifty.web = function() { return Jifty.Web };
 
 function _get_named_args(args) {
+    var result = {};
+    for (var i = 0; i < args.length; i+=2) {
+	result[args[i]] = args[i+1];
+    }
+    return result;
+
 }
 
 function _get_onclick(action_hash, name, args, path) {
@@ -26,19 +33,21 @@ function _get_onclick(action_hash, name, args, path) {
 	return onclick;
 }
 // XXX
-var hyperlink  = function(foo, label, bar, onclick) {
+var hyperlink  = function() {
+    var args = _get_named_args(arguments);
     var current_region = Jifty.Web.current_region;
-    var onclick = _get_onclick({}, current_region.name, current_region.args, onclick[0].replace_with);
+    var onclick = _get_onclick({}, current_region.name, current_region.args, args.onclick[0].replace_with);
     outs( a(function() { attr(function()
 			      {return ['onclick', onclick, 'href', '#']});
-	    return label
+	    return args.label
 		}));
 }
 
 var render_param = function(a, field) { outs(a.render_param(field)) };
-var form_return  = function(foo, label, bar, submit) {
+var form_return  = function() {
+    var args = _get_named_args(arguments);
     var action_hash = {};
-    action_hash[submit.moniker] = 1;
+    action_hash[args.submit.moniker] = 1;
     // XXX: fix the fabricated refresh-self
     // XXX: implicit onclick only for now
 
@@ -55,7 +64,7 @@ var form_return  = function(foo, label, bar, submit) {
 							 'onclick', onclick,
 							 'class', 'widget button',
 							 'id', 'S' + (++SERIAL + SERIAL_postfix),
-							 'value', label,
+							 'value', args.label,
 							 'name', 'J:V-region-__page-signup_widget=_signup|J:ACTIONS=signupnow'] })});
 		     }));
 
