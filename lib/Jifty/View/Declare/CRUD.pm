@@ -284,7 +284,6 @@ template 'list' => sub {
     my $self = shift;
 
     my ( $page ) = get(qw(page ));
-    my $fragment_for_new_item = get('fragment_for_new_item') || $self->fragment_for('new_item');
     my $item_path = get('item_path') || $self->fragment_for("view");
     my $collection =  $self->_current_collection();
 
@@ -292,7 +291,7 @@ template 'list' => sub {
     show( './paging_top',    $collection, $page );
     show( './list_items',    $collection, $item_path );
     show( './paging_bottom', $collection, $page );
-    show( './new_item_region', $fragment_for_new_item );
+    show( './new_item_region');
 
 };
 
@@ -355,7 +354,7 @@ This I<private> template renders a region to show a the C<new_item> template.
 
 private template 'new_item_region' => sub {
     my $self        = shift;
-    my $fragment_for_new_item = shift;
+    my $fragment_for_new_item = get('fragment_for_new_item') || $self->fragment_for('new_item');
     my $object_type = $self->object_type;
 
     if ($fragment_for_new_item) {
@@ -437,7 +436,7 @@ private template paging_bottom => sub {
             span {
                 { class is 'prev-page' };
                 hyperlink(
-                    label   => "Previous Page",
+                    label   => _("Previous Page"),
                     onclick => {
                         args => { page => $collection->pager->previous_page }
                     }
@@ -448,7 +447,7 @@ private template paging_bottom => sub {
             span {
                 { class is 'next-page' };
                 hyperlink(
-                    label   => "Next Page",
+                    label   => _"Next Page"),
                     onclick =>
                         { args => { page => $collection->pager->next_page } }
                 );
