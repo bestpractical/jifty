@@ -25,18 +25,19 @@ template 'index.html' => page {
 };
 
 template '_faq' => sub :Static {
+    hyperlink(label => 'close', onclick => [{replace_with => '/__jifty/empty'}]);
+
     div {
         attr { id => "faq" };
-        h2 { _('Using Doxory') }
+        h2 { _('Using Yada') }
         dl {
-            dt { 'What kinds of questions can I ask?'}
+            dt { 'Yada Yada Yada!'}
             dd {
                 span {
-                    'The best kinds of questions to ask are existential dilemmas.'
+                    'are we nearly there yet?'
                 }
 	    }
-	}
-	hyperlink(label => 'close', onclick => [{replace_with => '/__jifty/empty'}])
+	};
     }
 };
 
