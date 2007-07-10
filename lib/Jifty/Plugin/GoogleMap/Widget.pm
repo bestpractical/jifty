@@ -36,32 +36,10 @@ sub render_widget {
     my $use_default = defined $x ? 0 : 1;
     ($x, $y) = (-71.2, 42.4) if $use_default;
     my $zoom_level = $use_default ? 1 : 13;
-
-    Jifty->web->out(qq{<div @{[$self->_widget_class]} id="@{[$self->element_id]}" style="left: 200px; width: 250px; height: 250px"></div>});
+    my $element_id = $self->element_id;
+    Jifty->web->out(qq{<div @{[$self->_widget_class]} id="$element_id" style="left: 200px; width: 250px; height: 250px"></div>});
     Jifty->web->out(qq{<script type="text/javascript">
-(function() {
-if (GBrowserIsCompatible()) {
-         var map = new GMap2(document.getElementById("@{[$self->element_id]}"));
-         map.enableScrollWheelZoom();
-         map.addControl(new GSmallZoomControl());
-         map.addControl(new EditLocationControl());
-         map.setCenter(new GLatLng($y, $x), $zoom_level);
-         map._jifty_form_x = "$xid";
-         map._jifty_form_y = "$yid";
-         if (!$use_default) {// XXX should be compile time
-           map._jifty_location = new GMarker(new GLatLng($y, $x));
-           map.addOverlay(map._jifty_location);
-         }
-GEvent.addListener(map, "click", function(marker, point) {
-  if (!marker && map._jifty_edit_control.editing) {
-    map.removeOverlay(map._jifty_location);
-    map._jifty_location = new GMarker(point)
-    map.addOverlay(map._jifty_location);
-  }
-
-});
-      }
-})()
+Jifty.GMap.location_editor( \$("$element_id"), $x, $y, "$xid", "$yid", $zoom_level, $use_default);
 </script>
 });
 

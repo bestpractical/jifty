@@ -3,10 +3,33 @@
 if (GMap2) {
     //document.body.onunload = "GUnload()";
 
-function EditLocationControl() {
-}
-EditLocationControl.prototype = new GControl();
+if(!Jifty) Jifty = {};
+Jifty.GMap = function() {};
+Jifty.GMap.location_editor = function(element, x, y, xid, yid, zoom_level, no_marker) {
+    if (!GBrowserIsCompatible())
+	return;
 
+    var map = new GMap2(element);
+    map.enableScrollWheelZoom();
+    map.addControl(new GSmallZoomControl());
+    map.addControl(new EditLocationControl());
+    map.setCenter(new GLatLng(y, x), zoom_level);
+    map._jifty_form_x = xid;
+    map._jifty_form_y = yid;
+    if (!no_maker) {
+	map._jifty_location = new GMarker(new GLatLng(y, x));
+	map.addOverlay(map._jifty_location);
+    }
+    GEvent.addListener(map, "click", function(marker, point) {
+	if (!marker && map._jifty_edit_control.editing) {
+	    map.removeOverlay(map._jifty_location);
+	    map._jifty_location = new GMarker(point)
+	    map.addOverlay(map._jifty_location);
+	}});
+}
+
+function EditLocationControl() {}
+EditLocationControl.prototype = new GControl();
 
 EditLocationControl.prototype.initialize = function(map) {
   var container = document.createElement("div");
