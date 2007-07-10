@@ -15,6 +15,11 @@ EditLocationControl.prototype.initialize = function(map) {
   this.setButtonStyle_(EditDiv);
   container.appendChild(EditDiv);
   EditDiv.appendChild(document.createTextNode("Edit"));
+
+  var SearchDiv = document.createElement("div");
+  this.setButtonStyle_(SearchDiv);
+  SearchDiv.appendChild(document.createTextNode("Search"));
+
   var editctl = this;
   GEvent.addDomListener(EditDiv, "click", function() {
     if (editctl.editing) {
@@ -22,11 +27,27 @@ EditLocationControl.prototype.initialize = function(map) {
 	$(map._jifty_form_x).value = point.lng()
 	$(map._jifty_form_y).value = point.lat()
 	EditDiv.innerHTML = "Edit";
+	container.removeChild(container.lastChild);
+	editctl.editing = false;
     }
     else {
+        container.appendChild(SearchDiv);
 	EditDiv.innerHTML = "Done";
 	editctl.editing = true;
     }
+  });
+
+  GEvent.addDomListener(SearchDiv, "click", function() {
+	  var element = document.createElement('form');
+	  element._map = map;
+	  element.setAttribute('onsubmit','_handle_search(this._map, this.firstChild.value); return false;');
+	  var field= document.createElement('input');
+	  field.setAttribute('type', 'text');
+	  element.appendChild(field);
+	  var submit= document.createElement('input');
+	  submit.setAttribute('type', 'submit');
+	  element.appendChild(submit);
+	  map.openInfoWindow(map.getCenter(), element);
   });
 
   map.getContainer().appendChild(container);
@@ -35,6 +56,27 @@ EditLocationControl.prototype.initialize = function(map) {
   return container;
 }
 
+function _handle_search(map, address) {
+    var geocoder = new GClientGeocoder();
+    geocoder.getLocations(address,
+			  function (result) {
+			      if(result.Placemark) {
+				  if (result.Placemark.length == 1) {
+				      var point = result.Placemark[0].Point.coordinates;
+				      map.removeOverlay(map._jifty_location);
+				      map._jifty_location = new GMarker(new GLatLng(point[1], point[0]));
+				      map.addOverlay(map._jifty_location);
+				      map.setCenter(map._jifty_location.getPoint());
+				  }
+				  else {
+				      alert('not yet');
+				  }
+			      }
+			      else {
+				  alert('address not found');
+			      }
+			  });
+}
 
 EditLocationControl.prototype.getDefaultPosition = function() {
   return new GControlPosition(G_ANCHOR_BOTTOM_RIGHT, new GSize(7, 7));
