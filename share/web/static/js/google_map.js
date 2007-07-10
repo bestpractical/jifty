@@ -74,7 +74,6 @@ EditLocationControl.prototype.initialize = function(map) {
       submit.setAttribute('type', 'submit');
       element.appendChild(submit);
       map.openInfoWindow(map.getCenter(), element, { maxWidth: 100 } );
-      field.focus();
   });
 
   map.getContainer().appendChild(container);

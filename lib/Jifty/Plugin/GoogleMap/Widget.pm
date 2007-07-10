@@ -39,7 +39,7 @@ sub render_widget {
     my $zoom_level = $use_default ? 1 : 13;
     my $element_id = $self->element_id;
     Jifty->web->out(qq{<div class="googlemap-widget-wrapper" style="left: 200px; width: 250px; height: 250px"><div @{[$self->_widget_class]} id="$element_id" style="left: 200px; width: 250px; height: 250px"></div>});
-    Jifty->web->out(qq{<div class="googlemap-search-results" id="$element_id-result">FNORD</div></div>});
+    Jifty->web->out(qq{<div class="googlemap-search-results" id="$element_id-result"></div></div>});
     Jifty->web->out(qq{<script type="text/javascript">
 Jifty.GMap.location_editor( \$("$element_id"), $x, $y, "$xid", "$yid", $zoom_level, $use_default, $readonly);
 </script>
