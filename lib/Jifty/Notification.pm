@@ -87,18 +87,31 @@ sub send_one_message {
         map { ( $_->can('email') ? $_->email : $_ ) } grep {$_} @recipients );
     $self->log->debug("Sending a ".ref($self)." to $to"); 
     return unless ($to);
-
+    my $message = "";
     my $appname = Jifty->config->framework('ApplicationName');
-
-    my $message = Email::MIME->create_html(
-        header => [
-            From    => ($self->from    || _('%1 <%2>' , $appname, Jifty->config->framework('AdminEmail'))) ,
-            To      => $to,
-            Subject => Encode::encode('MIME-Header', $self->subject || _("A notification from %1!",$appname )),
-        ],
-        attributes => { charset => 'UTF-8' },
-        body => $self->full_body
-    );
+    if ($self->html_body) {
+      $message = Email::MIME->create_html(
+					     header => [
+							From    => ($self->from    || _('%1 <%2>' , $appname, Jifty->config->framework('AdminEmail'))) ,
+							To      => $to,
+							Subject => Encode::encode('MIME-Header', $self->subject || _("A notification from %1!",$appname )),
+						       ],
+					     attributes => { charset => 'UTF-8' },
+					     text_body => $self->full_body,
+					     body => $self->full_html
+					    );
+    } else {
+            $message = Email::MIME->create(
+					     header => [
+							From    => ($self->from    || _('%1 <%2>' , $appname, Jifty->config->framework('AdminEmail'))) ,
+							To      => $to,
+							Subject => Encode::encode('MIME-Header', $self->subject || _("A notification from %1!",$appname )),
+						       ],
+					     attributes => { charset => 'UTF-8' },
+					     
+					     body => $self->full_body
+					    );
+	  }
     $message->encoding_set('8bit')
         if (scalar $message->parts == 1);
     $self->set_headers($message);
@@ -258,6 +271,17 @@ body, and footer joined by newlines.
 sub full_body {
   my $self = shift;
   return join( "\n", grep { defined } $self->preface, $self->body, $self->footer );
+}
+
+=head2 full_html
+
+Same as full_body, but with HTML.
+
+=cut
+
+sub full_html {
+  my $self = shift;
+  return join( "\n", grep { defined } $self->preface, $self->html_body, $self->footer );
 }
 
 =head2 parts
