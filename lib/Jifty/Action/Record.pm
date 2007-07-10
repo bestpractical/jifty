@@ -352,7 +352,7 @@ This defaults to all of the fields of the object.
 
 sub possible_fields {
     my $self = shift;
-    return map { $_->name } grep { $_->type ne "serial" } $self->record->columns;
+    return map { $_->name } grep { $_->type && $_->type ne "serial" } $self->record->columns;
 }
 
 =head2 take_action
