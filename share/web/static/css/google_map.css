@@ -1,0 +1,15 @@
+/* XXX: move to Plugin::GoogleMap */
+
+div .googlemap-search-results {
+    background-color:white;
+    border-width: 2px;
+    border-color: black;
+    border-style:dashed;
+    display:none;
+    height:450px;
+    left:250px;
+    position:relative;
+    top:-300px;
+    width:250px;
+    z-index:10;
+}
