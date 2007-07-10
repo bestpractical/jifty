@@ -43,11 +43,12 @@ EditLocationControl.prototype.initialize = function(map) {
 	  element.setAttribute('onsubmit','_handle_search(this._map, this.firstChild.value); return false;');
 	  var field= document.createElement('input');
 	  field.setAttribute('type', 'text');
+	  field.style.width = '150px';
 	  element.appendChild(field);
 	  var submit= document.createElement('input');
 	  submit.setAttribute('type', 'submit');
 	  element.appendChild(submit);
-	  map.openInfoWindow(map.getCenter(), element);
+	  map.openInfoWindow(map.getCenter(), element, { maxWidth: 100 } );
   });
 
   map.getContainer().appendChild(container);
@@ -66,7 +67,8 @@ function _handle_search(map, address) {
 				      map.removeOverlay(map._jifty_location);
 				      map._jifty_location = new GMarker(new GLatLng(point[1], point[0]));
 				      map.addOverlay(map._jifty_location);
-				      map.setCenter(map._jifty_location.getPoint());
+				      map.closeInfoWindow();
+				      map.setCenter(map._jifty_location.getPoint(), 8+result.Placemark[0].AddressDetails.Accuracy);
 				  }
 				  else {
 				      alert('not yet');

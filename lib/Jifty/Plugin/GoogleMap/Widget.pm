@@ -37,7 +37,7 @@ sub render_widget {
     ($x, $y) = (-71.2, 42.4) if $use_default;
     my $zoom_level = $use_default ? 1 : 13;
 
-    Jifty->web->out(qq{<div @{[$self->_widget_class]} id="@{[$self->element_id]}" style="left: 200px; width: 200px; height: 200px"></div>});
+    Jifty->web->out(qq{<div @{[$self->_widget_class]} id="@{[$self->element_id]}" style="left: 200px; width: 250px; height: 250px"></div>});
     Jifty->web->out(qq{<script type="text/javascript">
 (function() {
 if (GBrowserIsCompatible()) {
