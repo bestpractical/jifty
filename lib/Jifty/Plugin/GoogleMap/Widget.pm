@@ -27,9 +27,10 @@ Renders form fields as googlemap widget.
 #use Template::Declare::Tags;
 
 sub render_widget {
-    my $self  = shift;
-
+    my $self = shift;
+    my $readonly = shift;
     my $action = $self->action;
+    $readonly = $readonly ? 1 : 0;
 
     my ($x, $y) = map { $action->form_field($self->name . "_$_")->current_value } qw( x y );
     my ($xid, $yid) = map { $action->form_field($self->name . "_$_")->element_id } qw( x y );
@@ -39,7 +40,7 @@ sub render_widget {
     my $element_id = $self->element_id;
     Jifty->web->out(qq{<div @{[$self->_widget_class]} id="$element_id" style="left: 200px; width: 250px; height: 250px"></div>});
     Jifty->web->out(qq{<script type="text/javascript">
-Jifty.GMap.location_editor( \$("$element_id"), $x, $y, "$xid", "$yid", $zoom_level, $use_default);
+Jifty.GMap.location_editor( \$("$element_id"), $x, $y, "$xid", "$yid", $zoom_level, $use_default, $readonly);
 </script>
 });
 
@@ -69,7 +70,7 @@ Renders value as a checkbox widget.
 =cut
 
 sub render_value {
-    $_[0]->render_widget;
+    $_[0]->render_widget('readonly');
     return '';
 }
 

@@ -5,18 +5,19 @@ if (GMap2) {
 
 if(!Jifty) Jifty = {};
 Jifty.GMap = function() {};
-Jifty.GMap.location_editor = function(element, x, y, xid, yid, zoom_level, no_marker) {
+Jifty.GMap.location_editor = function(element, x, y, xid, yid, zoom_level, no_marker, readonly) {
     if (!GBrowserIsCompatible())
 	return;
 
     var map = new GMap2(element);
     map.enableScrollWheelZoom();
     map.addControl(new GSmallZoomControl());
-    map.addControl(new EditLocationControl());
+    if(!readonly)
+	map.addControl(new EditLocationControl());
     map.setCenter(new GLatLng(y, x), zoom_level);
     map._jifty_form_x = xid;
     map._jifty_form_y = yid;
-    if (!no_maker) {
+    if (!no_marker) {
 	map._jifty_location = new GMarker(new GLatLng(y, x));
 	map.addOverlay(map._jifty_location);
     }
@@ -94,13 +95,17 @@ function _handle_search(map, address) {
 				      map.setCenter(map._jifty_location.getPoint(), 8+result.Placemark[0].AddressDetails.Accuracy);
 				  }
 				  else {
-				      alert('not yet');
+				      _handle_multiple_results(map, result);
 				  }
 			      }
 			      else {
 				  alert('address not found');
 			      }
 			  });
+}
+
+function _handle_multiple_results {
+
 }
 
 EditLocationControl.prototype.getDefaultPosition = function() {
