@@ -54,7 +54,7 @@ sub _geolocation {
     $column->container(1);
     for (qw(x y)) {
         Jifty::DBI::Schema::_init_column_for(
-            Jifty::DBI::Column->new({ type => 'double',
+            Jifty::DBI::Column->new({ type => 'double precision',
                                       name => $name."_$_",
                                       render_as => 'hidden',
                                       writable => $column->writable,
