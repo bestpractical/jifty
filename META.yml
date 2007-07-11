@@ -39,6 +39,7 @@ recommends:
   Test::HTTP::Server::Simple: 0.02
   Test::MockModule: 0.05
   Test::MockObject: 1.07
+  WWW::Facebook::API: 0.3.6
 requires: 
   App::CLI: 0.03
   CGI: 3.19
@@ -81,6 +82,7 @@ requires:
   Hash::Merge: 0
   Hook::LexWrap: 0
   IPC::PubSub: 0.23
+  IPC::Run3: 0
   JSON::Syck: 0.15
   Jifty::DBI: 0.40
   LWP::UserAgent: 0
@@ -100,7 +102,7 @@ requires:
   Scalar::Defer: 0.10
   Shell::Command: 0
   String::Koremutake: 0
-  Template::Declare: 0.07
+  Template::Declare: 0.21
   Test::Base: 0
   Test::LongString: 0
   Test::More: 0.62
