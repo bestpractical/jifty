@@ -19,18 +19,16 @@ Jifty::Plugin::GoogleMap
 
 # note that this is an api for http://localhost:8888/
 
+
+In your model class schema description, add the following:
+
+    column location => is GeoLocation;
+
+
 =head1 DESCRIPTION
 
-This plugin provides auto-compilation and on-wire compression of your
-application's CSS and Javascript. It is enabled by default, unless
-your C<ConfigFileVersion> is greater or equal than 2.
+This plugin provides a Google-map widget for Jifty, as well as a new GeoLocation column type.
 
-It also supports js minifier, you will need to specify the full path.
-The jsmin can be obtained from
-L<http://www.crockford.com/javascript/jsmin.html>.
-
-Note that you will need to use C<ConfigFileVersion> 2 to be able to
-configure jsmin feature.
 
 =cut
 
