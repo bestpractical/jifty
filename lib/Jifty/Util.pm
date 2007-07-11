@@ -94,7 +94,8 @@ sub jifty_root {
 =head2 share_root
 
 Returns the 'share' directory of the installed Jifty module.  This is
-currently only used to store the common Mason components.
+currently only used to store the common Mason components, CSS, and JS
+of Jifty and it's plugins.
 
 =cut
 
