@@ -140,7 +140,7 @@ sub add_column {
     my $self = shift;
     my $col = shift;
     my $column =$self->qualified_class->add_column($col->name);
-    for (qw(readable writable hints indexed max_length render_as mandatory sort_order)) {
+    for (qw(readable writable hints indexed max_length render_as mandatory sort_order virtual)) {
         $column->$_( $col->$_() );
     }
 

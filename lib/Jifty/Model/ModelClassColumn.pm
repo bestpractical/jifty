@@ -146,6 +146,12 @@ use Jifty::Record schema {
     column refers_to_by =>
         type is 'text',
         label is 'By';
+
+    column virtual =>
+        type is 'boolean',
+        label is 'Virtual?',
+        is mandatory,
+        default is 0;
 };
 
 =head2 after_create
