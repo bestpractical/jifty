@@ -48,8 +48,10 @@ sub render_tabs {
 			hyperlink(url => '#tab'.++$i, label => $tab,
 				  $tab =~ s/_tab$// ? 
 				  (onclick =>
-				  { region       => Jifty->web->current_region->qualified_name."-$tab-tab",
-				    replace_with => $tab,#$self->fragment_for($tab),
+				  { region       => Jifty->web->current_region
+				    ? Jifty->web->current_region->qualified_name."-$tab-tab"
+				    : "$tab-tab",
+				    replace_with => $self->fragment_for($tab), # XXX: should have higher level function handling mount point
 				    args => { map { $_ => get($_)} @$args },
 				  }) : ()
 				 ) }
