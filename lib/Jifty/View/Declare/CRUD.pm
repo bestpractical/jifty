@@ -191,19 +191,20 @@ template 'view' => sub {
 };
 
 private template view_item_controls  => sub {
+    my $self = shift;
+    my $record = shift;
 
-        my $self = shift;
-        my $record = shift;
-        my $action = shift;
-        hyperlink(
-            label   => "Edit",
+    if ($record->current_user_can('update')) {
+	hyperlink(
+            label   => _("Edit"),
             class   => "editlink",
             onclick => {
                 replace_with => $self->fragment_for('update'),
                 args         => { object_type => $self->object_type, id => $record->id }
             },
         );
-    };
+    }
+};
 
 
 
