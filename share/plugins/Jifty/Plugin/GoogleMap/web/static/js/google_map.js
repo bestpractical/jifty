@@ -3,7 +3,10 @@
 if (GMap2) {
     //document.body.onunload = "GUnload()";
 
-if(!Jifty) Jifty = {};
+if ( typeof Jifty == 'undefined' ) {
+    Jifty = {}
+}
+
 Jifty.GMap = function() {};
 Jifty.GMap.location_editor = function(element, x, y, xid, yid, zoom_level, no_marker, readonly) {
     if (!GBrowserIsCompatible())
@@ -30,6 +33,8 @@ Jifty.GMap.location_editor = function(element, x, y, xid, yid, zoom_level, no_ma
 	}});
 }
 
+// TODO: separate edit location control and location search control
+
 function EditLocationControl() {}
 EditLocationControl.prototype = new GControl();
 
@@ -38,13 +43,27 @@ EditLocationControl.prototype.initialize = function(map) {
 
   var EditDiv = document.createElement("div");
   this.setButtonStyle_(EditDiv);
-  container.appendChild(EditDiv);
   EditDiv.appendChild(document.createTextNode("Edit"));
+
+  var CancelDiv = document.createElement("div");
+  this.setButtonStyle_(CancelDiv);
+  CancelDiv.appendChild(document.createTextNode("Cancel"));
 
   var SearchDiv = document.createElement("div");
   this.setButtonStyle_(SearchDiv);
-  SearchDiv.appendChild(document.createTextNode("Search"));
+  SearchDiv.appendChild(document.createTextNode("Go to..."));
 
+  if(map._search_only) {
+    container.appendChild(SearchDiv);
+      map._search_result_callback = function(map, placemark) {
+	  var point = placemark.Point.coordinates;
+	  map.setCenter(new GLatLng(point[1], point[0]), 8+placemark.AddressDetails.Accuracy);
+      }
+  }
+  else {
+    container.appendChild(EditDiv);
+    map._search_result_callback = _mark_new_location;
+  }
   var editctl = this;
   GEvent.addDomListener(EditDiv, "click", function() {
     if (editctl.editing) {
@@ -53,13 +72,27 @@ EditLocationControl.prototype.initialize = function(map) {
 	$(map._jifty_form_y).value = point.lat()
 	EditDiv.innerHTML = "Edit";
 	container.removeChild(container.lastChild);
+	container.removeChild(container.lastChild);
 	editctl.editing = false;
     }
     else {
+	map._jifty_location_orig = map._jifty_location;
+        container.appendChild(CancelDiv);
         container.appendChild(SearchDiv);
 	EditDiv.innerHTML = "Done";
 	editctl.editing = true;
     }
+  });
+
+  GEvent.addDomListener(CancelDiv, "click", function() {
+      map.removeOverlay(map._jifty_location);
+      map._jifty_location = map._jifty_location_orig;
+      map.addOverlay(map._jifty_location);
+
+      container.removeChild(container.lastChild);
+      container.removeChild(container.lastChild);
+      EditDiv.innerHTML = "Edit";
+      editctl.editing = false;
   });
 
   GEvent.addDomListener(SearchDiv, "click", function() {
@@ -99,7 +132,7 @@ function _handle_search(map, address) {
        function (result) {
 	   if(result.Placemark) {
 	       if (result.Placemark.length == 1)
-		   _mark_new_location(map, result.Placemark[0]);
+		   map._search_result_callback(map, result.Placemark[0]);
 	       else
 		   _handle_multiple_results(map, result);
 	   }
@@ -128,7 +161,7 @@ function _handle_result_click(e, data) {
     e.style.display = 'none';
     var map = e._map; e._map = null; /* circular reference? */
     if (data)
-	_mark_new_location(map, data);
+	map._search_result_callback(map, data);
 }
 
 EditLocationControl.prototype.getDefaultPosition = function() {
