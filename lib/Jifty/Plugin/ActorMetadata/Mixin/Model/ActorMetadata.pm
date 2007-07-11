@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-package Jifty::Plugin::Asset::Mixin::Model::Asset;
+package Jifty::Plugin::ActorMetadata::Mixin::Model::ActorMetadata;
 use Jifty::DBI::Schema;
 use base 'Jifty::DBI::Record::Plugin';
 
@@ -9,7 +9,7 @@ our @EXPORT = qw(current_user_can);
 
 =head1 NAME
 
-Jifty::Plugin::Asset::Mixin::Model::Asset - Asset mixin
+Jifty::Plugin::ActorMetadata::Mixin::Model::ActorMetadata - ActorMetadata mixin
 
 =head1 SYNOPSIS
 
@@ -19,7 +19,7 @@ Jifty::Plugin::Asset::Mixin::Model::Asset - Asset mixin
       # custom column defrinitions
   };
 
-  use Jifty::Plugin::Asset::Mixin::Model::Asset; # created_by, created_on, updated_on
+  use Jifty::Plugin::ActorMetadata::Mixin::Model::ActorMetadata; # created_by, created_on, updated_on
 
 =head1 DESCRIPTION
 
