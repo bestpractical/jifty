@@ -36,10 +36,6 @@ __PACKAGE__->mk_accessors(qw(apikey));
 
 =head2 init
 
-Initializes the compression object. Takes a paramhash containing keys
-'css' and 'js' which can be used to disable compression on files of
-that type.
-
 =cut
 
 sub init {
@@ -48,6 +44,7 @@ sub init {
     $self->apikey( $opt{apikey} );
     Jifty->web->external_javascript_libs(["http://maps.google.com/maps?file=api&v=2&key=".$self->apikey]);
     Jifty->web->add_javascript(qw( google_map.js ) );
+    Jifty->web->add_css('google_map.css');
 }
 
 sub _geolocation {
