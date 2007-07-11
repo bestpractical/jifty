@@ -42,7 +42,7 @@ sub init {
     my $self = shift;
     my %opt  = @_;
     $self->apikey( $opt{apikey} );
-    Jifty->web->external_javascript_libs(["http://maps.google.com/maps?file=api&v=2&key=".$self->apikey]);
+    Jifty->web->add_external_javascript(["http://maps.google.com/maps?file=api&v=2&key=".$self->apikey]);
     Jifty->web->add_javascript(qw( google_map.js ) );
     Jifty->web->add_css('google_map.css');
 }
