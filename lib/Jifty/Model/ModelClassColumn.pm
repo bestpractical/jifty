@@ -165,8 +165,10 @@ sub after_create {
     my $idref = shift;
     $self->load_by_cols(id => $$idref);
     $self->model_class->add_column($self);
-    my $ret = Jifty->handle->simple_query( $self->model_class->qualified_class->add_column_sql( $self->name ) );
-    $ret || $self->log->fatal( "error updating a table: " . $ret->error_message);
+    unless ($self->virtual) {
+        my $ret = Jifty->handle->simple_query( $self->model_class->qualified_class->add_column_sql( $self->name ) );
+        $ret || $self->log->fatal( "error updating a table: " . $ret->error_message);
+    }
     return 1;
 }
 
