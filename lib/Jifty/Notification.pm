@@ -14,9 +14,9 @@ __PACKAGE__->mk_accessors(
 =head1 USAGE
 
 It is recommended that you subclass L<Jifty::Notification> and
-override C<body>, C<subject>, C<recipients>, and C<from> for each
-message.  (You may want a base class to provide C<from>, C<preface>
-and C<footer> for example.)  This lets you keep all of your
+override C<body>, C<html-body>, C<subject>, C<recipients>, and C<from>
+for each message.  (You may want a base class to provide C<from>,
+C<preface> and C<footer> for example.)  This lets you keep all of your
 notifications in the same place.
 
 However, if you really want to make a notification type in code
@@ -75,8 +75,13 @@ the C<Mailer> and C<MailerArgs> configuration arguments.  Returns true
 if mail was actually sent.  Note errors are not the only cause of mail
 not being sent -- for example, the recipients list could be empty.
 
-Be aware that if you haven't set C<recipients>, this will fail silently
-and return without doing anything useful.
+If you wish to send HTML mail, set C<html_body>.  If this is not set
+(for backwards compatibility) a plain-text email is sent.  If
+C<html_body> and C<body> are both set, a multipart mail is sent.  See
+L<Email::MIME::CreateHTML> for how this is done.
+
+Be aware that if you haven't set C<recipients>, this will fail
+silently and return without doing anything useful.
 
 =cut
 
