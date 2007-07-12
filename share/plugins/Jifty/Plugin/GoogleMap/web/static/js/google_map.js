@@ -96,15 +96,16 @@ EditLocationControl.prototype.initialize = function(map) {
   });
 
   GEvent.addDomListener(SearchDiv, "click", function() {
-      var element = document.createElement('form');
-      element._map = map;
-      element.setAttribute('onsubmit','_handle_search(this._map, this.firstChild.value); return false;');
+      var element = document.createElement('div');
       var field= document.createElement('input');
       field.setAttribute('type', 'text');
       field.style.width = '150px';
       element.appendChild(field);
       var submit= document.createElement('input');
-      submit.setAttribute('type', 'submit');
+      submit.id = 'blahblah';
+      submit.value = 'Query';
+      submit.setAttribute('type', 'button');
+      submit.onclick = function() { _handle_search(map, field.value) };
       element.appendChild(submit);
       map.openInfoWindow(map.getCenter(), element, { maxWidth: 100 } );
   });
@@ -144,7 +145,7 @@ function _handle_search(map, address) {
 }
 
 function _handle_multiple_results(map, result) {
-    var buf = '<a href="#" onclick="_handle_result_click(this, null); return false;">Close</a><ul>';
+    var buf = '<a href="#" onclick="_handle_result_click(this.parentNode, null); return false;">Close</a><ul>';
     for (var i = 0; i < result.Placemark.length; ++i) {
 	var data = result.Placemark[i];
 	buf += '<li><a href="#" onclick='+"'"+
