@@ -194,8 +194,8 @@ private template view_item_controls  => sub {
     my $self = shift;
     my $record = shift;
 
-    if ($record->current_user_can('update')) {
-	hyperlink(
+    if ( $record->current_user_can('update') ) {
+        hyperlink(
             label   => _("Edit"),
             class   => "editlink",
             onclick => {
@@ -252,6 +252,13 @@ private template edit_item_controls => sub {
 
     my $object_type = $self->object_type;
     my $id = $record->id;
+
+    my $delete = Jifty->web->form->add_action(
+        class   => 'Delete' . $object_type,
+        moniker => 'delete-' . Jifty->web->serial,
+        record  => $record
+    );
+
         div {
             { class is 'crud editlink' };
             hyperlink(
@@ -271,6 +278,16 @@ private template edit_item_controls => sub {
                 },
                 as_button => 1
             );
+            if ( $record->current_user_can('delete') ) {
+                $delete->button(
+                    label   => 'Delete',
+                    onclick => {
+                        submit => $delete,
+                        confirm => 'Really delete?',
+                        refresh => Jifty->web->current_region->parent,
+                    }
+                );
+            }
         };
 
 };
@@ -376,13 +393,15 @@ Renders a div of class list with a region per item.
 
 =cut
 
+private template 'no_items_found' => sub { outs(_("No items found.")) };
+
 private template 'list_items' => sub {
     my $self        = shift;
     my $collection  = shift;
     my $item_path   = shift;
     my $object_type = $self->object_type;
     if ( $collection->pager->total_entries == 0 ) {
-        outs( _("No items found") );
+        show('no_items_found');
     }
 
     div {
