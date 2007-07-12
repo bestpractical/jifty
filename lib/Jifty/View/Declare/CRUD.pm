@@ -276,7 +276,8 @@ private template edit_item_controls => sub {
                     replace_with => $self->fragment_for('view'),
                     args         => { object_type => $object_type, id => $id }
                 },
-                as_button => 1
+                as_button => 1,
+                class => 'cancel'
             );
             if ( $record->current_user_can('delete') ) {
                 $delete->button(
@@ -285,7 +286,8 @@ private template edit_item_controls => sub {
                         submit => $delete,
                         confirm => 'Really delete?',
                         refresh => Jifty->web->current_region->parent,
-                    }
+                    },
+                    class => 'delete'
                 );
             }
         };
