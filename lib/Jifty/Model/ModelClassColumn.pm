@@ -154,6 +154,35 @@ use Jifty::Record schema {
         default is 0;
 };
 
+=head2 before_create
+
+Before creating the column, make sure that columns get setup correctly.
+
+=cut
+
+sub before_create {
+    my $self = shift;
+    my $args = shift;
+
+    # Referals need special treatment
+    if (defined $args->{refers_to_class}) {
+
+        # Refer to a collection and your column is virtual
+        if ($args->{refers_to_class}->isa('Jifty::DBI::Collection')) {
+            $args->{virtual} = 1;
+        }
+
+        # Refer to a record and your column needs to be an int
+        elsif ($args->{refers_to_class}->isa('Jifty::DBI::Record')) {
+            $args->{storage_type} = 'int';
+        }
+
+        # XXX Can a column refer to something else? -- sterling
+    }
+
+    return 1;
+}
+
 =head2 after_create
 
 Upon creation of a metacolumn object, update the actual table to add an actual column.
