@@ -315,6 +315,7 @@ template 'list' => sub {
 
 };
 
+sub per_page { 25 }
 
 sub _current_collection {
     my $self =shift; 
@@ -330,7 +331,7 @@ sub _current_collection {
         $collection->unlimit();
     }
 
-    $collection->set_page_info( current_page => $page, per_page => 25 );
+    $collection->set_page_info( current_page => $page, per_page => $self->per_page );
 
     return $collection;    
 }
