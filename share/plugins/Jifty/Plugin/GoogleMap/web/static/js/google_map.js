@@ -100,6 +100,15 @@ EditLocationControl.prototype.initialize = function(map) {
       var field= document.createElement('input');
       field.setAttribute('type', 'text');
       field.style.width = '150px';
+      // port to yui event
+      field.onkeypress = function(e) {
+	  var event = e || window.event;
+	  if ((event.charCode || event.keyCode) == 13) {
+	      this.nextSibling.onclick();
+	      event.returnValue = false;
+	      return false;
+	  }
+      };
       element.appendChild(field);
       var submit= document.createElement('input');
       submit.id = 'blahblah';
