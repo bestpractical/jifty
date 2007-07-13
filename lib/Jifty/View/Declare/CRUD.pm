@@ -13,7 +13,7 @@ Jifty::View::Declare::CRUD - Provides typical CRUD views to a model
 
 This class provides a set of views that may be used by a model to
 display Create/Read/Update/Delete views using the L<Template::Declare>
-templating langauge.
+templating language.
 
 =head1 METHODS
 
@@ -540,7 +540,7 @@ L<Jifty::Action::Record::Create>, L<Jifty::Action::Record::Search>, L<Jifty::Act
 =head1 LICENSE
 
 Jifty is Copyright 2005-2007 Best Practical Solutions, LLC.
-Jifty is distributed under the same terms as Perl tiself.
+Jifty is distributed under the same terms as Perl itself.
 
 =cut
 
