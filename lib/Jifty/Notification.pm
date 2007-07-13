@@ -114,7 +114,7 @@ sub send_one_message {
 						       ],
 					     attributes => { charset => 'UTF-8' },
 					     
-					     body => $self->full_body
+					     parts => $self->parts
 					    );
 	  }
     $message->encoding_set('8bit')
