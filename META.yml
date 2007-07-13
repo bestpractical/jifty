@@ -63,6 +63,7 @@ requires:
   Email::LocalDelivery: 0
   Email::MIME: 0
   Email::MIME::ContentType: 0
+  Email::MIME::CreateHTML: 0
   Email::MIME::Creator: 0
   Email::Send: 1.99_01
   Email::Simple: 0
@@ -84,7 +85,7 @@ requires:
   IPC::PubSub: 0.23
   IPC::Run3: 0
   JSON::Syck: 0.15
-  Jifty::DBI: 0.40
+  Jifty::DBI: 0.42
   LWP::UserAgent: 0
   Locale::Maketext::Extract: 0.20
   Locale::Maketext::Lexicon: 0.60
@@ -104,6 +105,7 @@ requires:
   String::Koremutake: 0
   Template::Declare: 0.21
   Test::Base: 0
+  Test::Log4perl: 0
   Test::LongString: 0
   Test::More: 0.62
   Test::Pod::Coverage: 0
