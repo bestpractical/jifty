@@ -35,7 +35,6 @@ sub mount_view {
     eval qq{package $caller;
             alias $vclass under '$path'; 1} or die $@;
     no strict 'refs';
-    *{$vclass."::fragment_base_path"} = sub { "/$path" };
     *{$vclass."::object_type"} = sub { $model };
 }
 
@@ -72,7 +71,10 @@ sub fragment_for {
 
 sub fragment_base_path {
     my $self = shift;
-    return $self->package_variable('base_path') || '/crud';
+    my @parts = split('/', current_template());
+    pop @parts;
+    my $path = join('/', @parts);
+    return $path;
 }
 
 =head2 _get_record $id
@@ -320,9 +322,8 @@ sub per_page { 25 }
 sub _current_collection {
     my $self =shift; 
     my ( $page, $search_collection ) = get(qw(page  search_collection));
-
     my $collection_class = Jifty->app_class( "Model", $self->object_type . "Collection" );
-    my $search = $search_collection || Jifty->web->response->result('search');
+    my $search = $search_collection || Jifty->web->response->result('search') ? Jifty->web->response->result('search')->content('search') : undef;
     my $collection;
     if ( $search ) {
         $collection = $search;
