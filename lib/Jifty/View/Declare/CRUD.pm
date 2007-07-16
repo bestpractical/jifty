@@ -323,7 +323,7 @@ sub _current_collection {
     my $self =shift; 
     my ( $page, $search_collection ) = get(qw(page  search_collection));
     my $collection_class = Jifty->app_class( "Model", $self->object_type . "Collection" );
-    my $search = $search_collection || Jifty->web->response->result('search') ? Jifty->web->response->result('search')->content('search') : undef;
+    my $search = $search_collection || ( Jifty->web->response->result('search') ? Jifty->web->response->result('search')->content('search') : undef );
     my $collection;
     if ( $search ) {
         $collection = $search;
