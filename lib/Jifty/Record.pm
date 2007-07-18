@@ -189,6 +189,41 @@ sub load_or_create {
     return ($id,$msg);
 }
 
+=head2 _guess_table_name
+
+Guesses a table name based on the class's last part. In addition to the work performed in L<Jifty::DBI::Record>, this method also prefixes the table name with the plugin table prefix, if the model belongs to a plugin.
+
+=cut
+
+sub _guess_table_name {
+    my $self = shift;
+    my $table = $self->SUPER::_guess_table_name;
+
+    # Add plugin table prefix if a plugin model
+    my $class = ref($self) ? ref($self) : $self;
+    my $app_plugin_root = Jifty->app_class('Plugin');
+    if ($class =~ /^(?:Jifty::Plugin::|$app_plugin_root)/) {
+
+        # Guess the plugin class name
+        my $plugin_class = $class;
+        $plugin_class =~ s/::Model::(.*)$//;
+
+        # Try to load that plugin's configuration
+        my ($plugin) = grep { ref $_ eq $plugin_class } Jifty->plugins;
+
+        # Add the prefix if found
+        if (defined $plugin) {
+            $table = $plugin->table_prefix . $table;
+        }
+
+        # Uh oh. Warn, but try to keep going.
+        else {
+            warn "Model $class looks like a plugin model, but $plugin_class could not be found.";
+        }
+    }
+
+    return $table;
+}
 
 =head2 current_user_can RIGHT [ATTRIBUTES]
 

@@ -167,8 +167,8 @@ sub before_create {
     # Referals need special treatment
     if (defined $args->{refers_to_class}) {
 
-        # Refer to a collection and your column is virtual
-        if ($args->{refers_to_class}->isa('Jifty::DBI::Collection')) {
+        # If "by" is set, it's going to be a virtual column
+        if (defined $args->{refers_to_by} and $args->{refers_to_by}) {
             $args->{virtual} = 1;
         }
 

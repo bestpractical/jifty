@@ -44,4 +44,15 @@ sub render_value {
     '';
 }
 
+=head2 classes
+
+Add 'upload' to the rest of the classes
+
+=cut
+
+sub classes {
+    my $self = shift;
+    return join(' ', 'upload', ($self->SUPER::classes));
+}
+
 1;

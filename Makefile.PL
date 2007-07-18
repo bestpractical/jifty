@@ -25,6 +25,7 @@ requires('Email::LocalDelivery');
 requires('Email::MIME');
 requires('Email::MIME::Creator');
 requires('Email::MIME::ContentType');
+requires('Email::MIME::CreateHTML');
 requires('Email::Send' => '1.99_01'); # Email::Send::Jifty::Test
 requires('Email::Simple');
 requires('Email::Simple::Creator');
@@ -44,7 +45,7 @@ requires('Hash::Merge');
 requires('Hook::LexWrap');
 requires('IPC::PubSub' => '0.23' );
 requires('IPC::Run3');
-requires('Jifty::DBI' => '0.40' );            # Jifty::DBI::Collection Jifty::DBI::Handle Jifty::DBI::Record::Cachable Jifty::DBI::SchemaGenerator
+requires('Jifty::DBI' => '0.42' );            # Jifty::DBI::Collection Jifty::DBI::Handle Jifty::DBI::Record::Cachable Jifty::DBI::SchemaGenerator
 requires('Locale::Maketext::Extract' => '0.20');
 requires('Locale::Maketext::Lexicon' => '0.60');
 requires('Log::Log4perl' => '1.04');
@@ -68,6 +69,7 @@ requires('Template::Declare' => '0.07');                # Template::Declare::Tag
 requires('Template::Declare' => '0.21');                # Template::Declare::Tags
 requires('Test::Base');
 requires('Test::LongString');
+requires('Test::Log4perl');
 requires('Test::More' => 0.62 ),
 requires('Test::Pod::Coverage'),
 requires('Test::WWW::Mechanize' => 1.04 ),

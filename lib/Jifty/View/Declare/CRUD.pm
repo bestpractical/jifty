@@ -13,7 +13,7 @@ Jifty::View::Declare::CRUD - Provides typical CRUD views to a model
 
 This class provides a set of views that may be used by a model to
 display Create/Read/Update/Delete views using the L<Template::Declare>
-templating langauge.
+templating language.
 
 =head1 METHODS
 
@@ -35,7 +35,6 @@ sub mount_view {
     eval qq{package $caller;
             alias $vclass under '$path'; 1} or die $@;
     no strict 'refs';
-    *{$vclass."::fragment_base_path"} = sub { "/$path" };
     *{$vclass."::object_type"} = sub { $model };
 }
 
@@ -72,7 +71,10 @@ sub fragment_for {
 
 sub fragment_base_path {
     my $self = shift;
-    return $self->package_variable('base_path') || '/crud';
+    my @parts = split('/', current_template());
+    pop @parts;
+    my $path = join('/', @parts);
+    return $path;
 }
 
 =head2 _get_record $id
@@ -191,19 +193,20 @@ template 'view' => sub {
 };
 
 private template view_item_controls  => sub {
+    my $self = shift;
+    my $record = shift;
 
-        my $self = shift;
-        my $record = shift;
-        my $action = shift;
+    if ( $record->current_user_can('update') ) {
         hyperlink(
-            label   => "Edit",
+            label   => _("Edit"),
             class   => "editlink",
             onclick => {
                 replace_with => $self->fragment_for('update'),
                 args         => { object_type => $self->object_type, id => $record->id }
             },
         );
-    };
+    }
+};
 
 
 
@@ -251,6 +254,13 @@ private template edit_item_controls => sub {
 
     my $object_type = $self->object_type;
     my $id = $record->id;
+
+    my $delete = Jifty->web->form->add_action(
+        class   => 'Delete' . $object_type,
+        moniker => 'delete-' . Jifty->web->serial,
+        record  => $record
+    );
+
         div {
             { class is 'crud editlink' };
             hyperlink(
@@ -268,8 +278,20 @@ private template edit_item_controls => sub {
                     replace_with => $self->fragment_for('view'),
                     args         => { object_type => $object_type, id => $id }
                 },
-                as_button => 1
+                as_button => 1,
+                class => 'cancel'
             );
+            if ( $record->current_user_can('delete') ) {
+                $delete->button(
+                    label   => 'Delete',
+                    onclick => {
+                        submit => $delete,
+                        confirm => 'Really delete?',
+                        refresh => Jifty->web->current_region->parent,
+                    },
+                    class => 'delete'
+                );
+            }
         };
 
 };
@@ -284,7 +306,6 @@ template 'list' => sub {
     my $self = shift;
 
     my ( $page ) = get(qw(page ));
-    my $fragment_for_new_item = get('fragment_for_new_item') || $self->fragment_for('new_item');
     my $item_path = get('item_path') || $self->fragment_for("view");
     my $collection =  $self->_current_collection();
 
@@ -292,17 +313,17 @@ template 'list' => sub {
     show( './paging_top',    $collection, $page );
     show( './list_items',    $collection, $item_path );
     show( './paging_bottom', $collection, $page );
-    show( './new_item_region', $fragment_for_new_item );
+    show( './new_item_region');
 
 };
 
+sub per_page { 25 }
 
 sub _current_collection {
     my $self =shift; 
     my ( $page, $search_collection ) = get(qw(page  search_collection));
-
     my $collection_class = Jifty->app_class( "Model", $self->object_type . "Collection" );
-    my $search = $search_collection || Jifty->web->response->result('search');
+    my $search = $search_collection || ( Jifty->web->response->result('search') ? Jifty->web->response->result('search')->content('search') : undef );
     my $collection;
     if ( $search ) {
         $collection = $search;
@@ -311,7 +332,7 @@ sub _current_collection {
         $collection->unlimit();
     }
 
-    $collection->set_page_info( current_page => $page, per_page => 25 );
+    $collection->set_page_info( current_page => $page, per_page => $self->per_page );
 
     return $collection;    
 }
@@ -355,7 +376,7 @@ This I<private> template renders a region to show a the C<new_item> template.
 
 private template 'new_item_region' => sub {
     my $self        = shift;
-    my $fragment_for_new_item = shift;
+    my $fragment_for_new_item = get('fragment_for_new_item') || $self->fragment_for('new_item');
     my $object_type = $self->object_type;
 
     if ($fragment_for_new_item) {
@@ -376,13 +397,15 @@ Renders a div of class list with a region per item.
 
 =cut
 
+private template 'no_items_found' => sub { outs(_("No items found.")) };
+
 private template 'list_items' => sub {
     my $self        = shift;
     my $collection  = shift;
     my $item_path   = shift;
     my $object_type = $self->object_type;
     if ( $collection->pager->total_entries == 0 ) {
-        outs( _("No items found") );
+        show('no_items_found');
     }
 
     div {
@@ -437,7 +460,7 @@ private template paging_bottom => sub {
             span {
                 { class is 'prev-page' };
                 hyperlink(
-                    label   => "Previous Page",
+                    label   => _("Previous Page"),
                     onclick => {
                         args => { page => $collection->pager->previous_page }
                     }
@@ -448,7 +471,7 @@ private template paging_bottom => sub {
             span {
                 { class is 'next-page' };
                 hyperlink(
-                    label   => "Next Page",
+                    label   => _("Next Page"),
                     onclick =>
                         { args => { page => $collection->pager->next_page } }
                 );
@@ -518,7 +541,7 @@ L<Jifty::Action::Record::Create>, L<Jifty::Action::Record::Search>, L<Jifty::Act
 =head1 LICENSE
 
 Jifty is Copyright 2005-2007 Best Practical Solutions, LLC.
-Jifty is distributed under the same terms as Perl tiself.
+Jifty is distributed under the same terms as Perl itself.
 
 =cut
 

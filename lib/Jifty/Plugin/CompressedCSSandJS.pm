@@ -107,20 +107,8 @@ sub _generate_javascript {
         or Jifty->config->framework('DevelMode') ) {
         Jifty->log->debug("Generating JS...");
 
-        my @roots = (
-            Jifty::Util->absolute_path(
-                File::Spec->catdir(
-                    Jifty->config->framework('Web')->{'StaticRoot'}, 'js'
-                )
-            ),
-
-            Jifty::Util->absolute_path(
-                File::Spec->catdir(
-                    Jifty->config->framework('Web')->{'DefaultStaticRoot'},
-                    'js'
-                )
-            ),
-        );
+        my @roots = map { Jifty::Util->absolute_path( File::Spec->catdir( $_, 'js' ) ) }
+                        Jifty->handler->view('Jifty::View::Static::Handler')->roots;
 
         my $js = "";
 

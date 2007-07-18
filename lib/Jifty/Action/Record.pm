@@ -309,7 +309,7 @@ sub arguments {
             }
 
             # If we're hand-coding a render_as, hints or label, let's use it.
-            for (qw(render_as label hints max_length mandatory sort_order)) {
+            for (qw(render_as label hints max_length mandatory sort_order container)) {
 
                 if ( defined (my $val = $column->$_) ) {
                     $info->{$_} = $val;
@@ -352,7 +352,7 @@ This defaults to all of the fields of the object.
 
 sub possible_fields {
     my $self = shift;
-    return map { $_->name } grep { $_->type ne "serial" } $self->record->columns;
+    return map { $_->name } grep { $_->container || $_->type ne "serial" } $self->record->columns;
 }
 
 =head2 take_action

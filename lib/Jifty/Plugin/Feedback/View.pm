@@ -19,9 +19,8 @@ template 'feedback/request_feedback' => sub {
         attr { id => 'feedback_wrapper' };
 
         h3 { _('Send us feedback!') } p {
-            "Tell us what's good, what's bad, and what else you want "
-                . Jifty->config->framework('ApplicationName')
-                . " to do!";
+            _("Tell us what's good, what's bad, and what else you want %1 to do!",
+	      Jifty->config->framework('ApplicationName'));
         };
         render_region(
             'feedback',

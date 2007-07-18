@@ -155,9 +155,12 @@ sub _record_to_data {
     my $record = shift;
     # We could use ->as_hash but this method avoids transforming refers_to
     # columns into JDBI objects
+
+    # XXX: maybe just test ->virtual?
     my %data   = map {
                     $_ => (UNIVERSAL::isa( $record->column( $_ )->refers_to,
-                                           'Jifty::DBI::Collection' )
+                                           'Jifty::DBI::Collection' ) ||
+                           $record->column($_)->container
                              ? undef
                              : stringify( $record->_value( $_ ) ) )
                  } $record->readable_attributes;

@@ -50,6 +50,7 @@ sub run {
     } elsif ( $self->{'setup_tables'} ) {
         $self->upgrade_jifty_tables();
         $self->upgrade_application_tables();
+        $self->upgrade_plugin_tables();
     } else {
         print "Done.\n";
     }
@@ -182,6 +183,12 @@ sub create_all_tables {
     Jifty::Model::Metadata->store( application_db_version => $appv );
     Jifty::Model::Metadata->store( jifty_db_version       => $jiftyv );
 
+    # For each plugin, update the plugin version
+    for my $plugin (Jifty->plugins) {
+        my $pluginv = version->new( $plugin->version );
+        Jifty::Model::Metadata->store( (ref $plugin).'_db_version' => $pluginv );
+    }
+
     # Load initial data
     local $@;
     eval {
@@ -189,6 +196,11 @@ sub create_all_tables {
         Jifty::Util->require($bootstrapper);
         $bootstrapper->run() if $bootstrapper->can('run');
 
+        for my $plugin (Jifty->plugins) {
+            my $plugin_bootstrapper = $plugin->bootstrapper;
+            Jifty::Util->require($plugin_bootstrapper);
+            $plugin_bootstrapper->run() if $bootstrapper->can('run');
+        }
     };
     die $@ if $@;
     # Commit it all
@@ -219,20 +231,52 @@ sub create_tables_for_models {
     my $appv = version->new( Jifty->config->framework('Database')->{'Version'} );
     my $jiftyv = version->new( $Jifty::VERSION  );
 
+    my %pluginvs;
+    for my $plugin (Jifty->plugins) {
+        my $plugin_class = ref $plugin;
+        $pluginvs{ $plugin_class } = version->new( $plugin->version );
+    }
 
     for my $model ( @models) {
-       # TODO XXX FIXME:
-       #   This *will* try to generate SQL for abstract base classes you might
-       #   stick in $AC::Model::.
-        if ( $model->can( 'since' ) and ($model =~ /^Jifty::Model::/ ? $jiftyv : $appv) < $model->since ) {
-            $log->info( "Skipping $model, as it should already be in the database");
-            next;
+        # TODO XXX FIXME:
+        #   This *will* try to generate SQL for abstract base classes you might
+        #   stick in $AC::Model::.
+        if ($model->can('since')) {
+            my $app_class   = Jifty->app_class;
+            my $plugin_root = Jifty->app_class('Plugin');
+
+            my $installed_version = 0;
+
+            # Is it a Jifty core model?
+            if ($model =~ /^Jifty::Model::/) {
+                $installed_version = $jiftyv;
+            }
+
+            # Is it a Jifty or application plugin model?
+            elsif ($model =~ /^(?:Jifty::Plugin::|$plugin_root)/) {
+                my $plugin_class = $model;
+                $plugin_class =~ s/::Model::(.*)$//;
+
+                $installed_version = $pluginvs{ $plugin_class };
+            }
+
+            # Otherwise, an application model
+            else {
+                $installed_version = $appv;
+            }
+
+            if ($installed_version < $model->since) {
+                # XXX Is this message correct? 
+                $log->info("Skipping $model, as it should already be in the database");
+                next;
+            }
         }
+
         $log->info("Using $model, as it appears to be new.");
 
-            $self->schema->_check_reserved($model)
+        $self->schema->_check_reserved($model)
         unless ( $self->{'ignore_reserved'}
-            or !Jifty->config->framework('Database')->{'CheckSchema'} );
+                or !Jifty->config->framework('Database')->{'CheckSchema'} );
 
         if ( $self->{'print'} ) {
             print $model->printable_table_schema;
@@ -286,6 +330,29 @@ sub upgrade_application_tables {
         warn "Need to upgrade application_db_version to $appv here!";
     } else {
         Jifty::Model::Metadata->store( application_db_version => $appv );
+    }
+}
+
+=head2 upgrade_plugin_tables
+
+Upgrade the tables for each plugin.
+
+=cut
+
+sub upgrade_plugin_tables {
+    my $self   = shift;
+
+    for my $plugin (Jifty->plugins) {
+        my $plugin_class = ref $plugin;
+        my $dbv  = version->new( Jifty::Model::Metadata->load($plugin_class . '_version') || '0.0.1' );
+        my $appv = version->new( $plugin->version );
+
+        return unless $self->upgrade_tables( $plugin_class, $dbv, $appv, $plugin->upgrade_class );
+        if ( $self->{print} ) {
+            warn "Need to upgrade ${plugin_class}_db_version to $appv here!";
+        } else {
+            Jifty::Model::Metadata->store( $plugin_class . '_db_version' => $appv );
+        }
     }
 }
 

@@ -106,7 +106,7 @@ Returns the fully qualified class name of the model class described the current 
 
 sub qualified_class {
     my $self = shift;
-    my $fully_qualified_class = Jifty->config->framework('ApplicationClass')."::Model::".$self->name;
+    my $fully_qualified_class = Jifty->app_class('Model', $self->name);
     return $fully_qualified_class; 
 }
 

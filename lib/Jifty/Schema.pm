@@ -48,8 +48,10 @@ Reads in our application class from the config file and finds all our app's mode
 =cut
 
 sub _init_model_list {
-
     my $self = shift;
+
+    # Plugins can have models too
+    my @plugins = map { (ref $_).'::Model' } Jifty->plugins;
 
     # This creates a sub "models" which when called, finds packages under
     # the application's ::Model, requires them, and returns a list of their
@@ -57,7 +59,7 @@ sub _init_model_list {
     Jifty::Module::Pluggable->import(
         require     => 1,
         except      => qr/\.#/,
-        search_path => [ "Jifty::Model", Jifty->app_class("Model") ],
+        search_path => [ "Jifty::Model", Jifty->app_class("Model"), @plugins ],
         sub_name    => 'models',
     );
 }
