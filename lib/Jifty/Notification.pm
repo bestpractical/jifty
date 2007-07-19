@@ -7,6 +7,7 @@ use base qw/Jifty::Object Class::Accessor::Fast/;
 use Email::Send            ();
 use Email::MIME::Creator;
 use Email::MIME::CreateHTML;
+use Email::MIME::Modifier;
 
 __PACKAGE__->mk_accessors(
     qw/body html_body preface footer subject from _recipients _to_list to/);
@@ -98,6 +99,9 @@ sub send_one_message {
     return unless ($to);
     my $message = "";
     my $appname = Jifty->config->framework('ApplicationName');
+
+    my %attrs = ( charset => 'UTF-8' );
+
     if ($self->html_body) {
       $message = Email::MIME->create_html(
 					     header => [
@@ -105,12 +109,16 @@ sub send_one_message {
 							To      => $to,
 							Subject => Encode::encode('MIME-Header', $self->subject || _("A notification from %1!",$appname )),
 						       ],
-					     attributes => { charset => 'UTF-8' },
+					     attributes => \%attrs,
+                         text_body_attributes => \%attrs,
+                         body_attributes => \%attrs,
 					     text_body => $self->full_body,
 					     body => $self->full_html,
                          embed => 0,
                          inline_css => 0
 					    );
+        # Since the containing messsage will still be us-ascii otherwise
+        $message->charset_set( $attrs{'charset'} );
     } else {
             $message = Email::MIME->create(
 					     header => [
@@ -118,7 +126,7 @@ sub send_one_message {
 							To      => $to,
 							Subject => Encode::encode('MIME-Header', $self->subject || _("A notification from %1!",$appname )),
 						       ],
-					     attributes => { charset => 'UTF-8' },
+					     attributes => \%attrs,
 					     
 					     parts => $self->parts
 					    );
