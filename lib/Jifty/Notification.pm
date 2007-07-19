@@ -107,7 +107,9 @@ sub send_one_message {
 						       ],
 					     attributes => { charset => 'UTF-8' },
 					     text_body => $self->full_body,
-					     body => $self->full_html
+					     body => $self->full_html,
+                         embed => 0,
+                         inline_css => 0
 					    );
     } else {
             $message = Email::MIME->create(
