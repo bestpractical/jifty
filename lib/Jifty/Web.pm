@@ -50,6 +50,7 @@ __PACKAGE__->javascript_libs([qw(
     scriptaculous/effects.js
     scriptaculous/controls.js
     formatDate.js
+    template_declare.js
     jifty.js
     jifty_utils.js
     jifty_subs.js
