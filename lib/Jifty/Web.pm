@@ -26,8 +26,12 @@ __PACKAGE__->mk_accessors(
 );
 
 __PACKAGE__->mk_classdata($_)
-    for qw(cached_css        cached_css_digest        cached_css_time
-           javascript_libs);
+    for qw(cached_css cached_css_digest cached_css_time
+           css_files  javascript_libs   external_javascript_libs);
+
+__PACKAGE__->css_files([qw( main.css )]);
+
+__PACKAGE__->external_javascript_libs([]);
 
 __PACKAGE__->javascript_libs([qw(
     jsan/JSAN.js
@@ -1088,6 +1092,20 @@ sub include_css {
     return '';
 }
 
+=head3 add_css FILE1, FILE2, ...
+
+Pushes files onto C<Jifty->web->css_files>
+
+=cut
+
+sub add_css {
+    my $self = shift;
+    Jifty->web->css_files([
+        @{ Jifty->web->css_files },
+        @_
+    ]);
+}
+
 =head3 generate_css
 
 Checks if the compressed CSS is generated, and if it isn't, generates
@@ -1103,29 +1121,15 @@ sub generate_css {
     {
         Jifty->log->debug("Generating CSS...");
         
-        my $app   = File::Spec->catdir(
-                        Jifty->config->framework('Web')->{'StaticRoot'},
-                        'css'
-                    );
+        my @roots = map { Jifty::Util->absolute_path( File::Spec->catdir( $_, 'css' ) ) }
+                        Jifty->handler->view('Jifty::View::Static::Handler')->roots;
 
-        my $jifty = File::Spec->catdir(
-                        Jifty->config->framework('Web')->{'DefaultStaticRoot'},
-                        'css'
-                    );
-
-        my $file = Jifty::Util->absolute_path(
-                        File::Spec->catpath( '', $app, 'main.css' )
-                   );
-
-        if ( not -e $file ) {
-            $file = Jifty::Util->absolute_path(
-                         File::Spec->catpath( '', $jifty, 'main.css' )
-                    );
-        }
-
-        CSS::Squish->roots( Jifty::Util->absolute_path( $app ), $jifty );
+        CSS::Squish->roots( @roots );
         
-        my $css = CSS::Squish->concatenate( $file );
+        my $css = CSS::Squish->concatenate(
+            map { CSS::Squish->_resolve_file( $_, @roots ) }
+                @{ $self->css_files }
+        );
 
         __PACKAGE__->cached_css( $css );
         __PACKAGE__->cached_css_digest( md5_hex( $css ) );
@@ -1162,12 +1166,18 @@ If you need a different order, you'll have to massage javascript_libs
 directly.
 
 Jifty will look for javascript libraries under share/web/static/js/ by
-default.
+default as well as any plugin static roots.
 
 =cut
 
 sub include_javascript {
     my $self  = shift;
+
+    for my $url ( @{ __PACKAGE__->external_javascript_libs } ) {
+        $self->out(
+            qq[<script type="text/javascript" src="$url"></script>\n]
+        );
+    }
 
     # if there's no trigger, 0 is returned.  if aborted/handled, undef
     # is returned.
@@ -1192,6 +1202,20 @@ sub add_javascript {
     my $self = shift;
     Jifty->web->javascript_libs([
         @{ Jifty->web->javascript_libs },
+        @_
+    ]);
+}
+
+=head3 add_external_javascript URL1, URL2, ...
+
+Pushes urls onto C<Jifty->web->external_javascript_libs>
+
+=cut
+
+sub add_external_javascript {
+    my $self = shift;
+    Jifty->web->external_javascript_libs([
+        @{ Jifty->web->external_javascript_libs },
         @_
     ]);
 }

@@ -25,6 +25,7 @@ requires('Email::LocalDelivery');
 requires('Email::MIME');
 requires('Email::MIME::Creator');
 requires('Email::MIME::ContentType');
+requires('Email::MIME::CreateHTML');
 requires('Email::Send' => '1.99_01'); # Email::Send::Jifty::Test
 requires('Email::Simple');
 requires('Email::Simple::Creator');
@@ -65,6 +66,7 @@ requires('SQL::ReservedWords');
 requires('Template::Declare' => '0.21');                # Template::Declare::Tags
 requires('Test::Base');
 requires('Test::LongString');
+requires('Test::Log4perl');
 requires('Test::More' => 0.62 ),
 requires('Test::Pod::Coverage'),
 requires('Test::WWW::Mechanize' => 1.04 ),

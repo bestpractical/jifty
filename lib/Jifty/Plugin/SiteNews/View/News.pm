@@ -25,15 +25,6 @@ News
 
 sub object_type { 'News' }
 
-=head2 fragment_base_path
-
-/news
-
-=cut
-
-sub fragment_base_path {'/news'}
-
-
 template search_region => sub {''};
 
 template 'index.html' => page {
@@ -41,7 +32,7 @@ template 'index.html' => page {
     form {
             render_region(
                 name     => 'newslist',
-                path     => '/news/list');
+                path     => 'list');
     }
 
 };

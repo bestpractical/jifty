@@ -86,7 +86,7 @@ sub autoload {
             # delegate back to parent dirs
             goto &$code unless $cwd eq $pwd;
         }
-        $$sym =~ /([^:]+)$/ or Carp::confess "Cannot autoload $who - $sym";
+        $$sym =~ /([^:]+)$/ or die "Cannot autoload $who - $sym";
         unshift @_, ($self, $1);
         goto &{$self->can('call')} unless uc($1) eq $1;
     };

@@ -85,13 +85,13 @@ sub qualify {
     my $self   = shift;
     my $action = shift;
 
-    my $base_path = Jifty->app_class("Action");
+    my $base_path = Jifty->app_class;
 
     return $action
-        if $action =~ /^Jifty::/
-        or $action =~ /^\Q$base_path\E/;
+        if ($action =~ /^Jifty::/
+        or $action =~ /^\Q$base_path\E::/);
 
-    return $base_path . "::" . $action;
+    return $base_path . "::Action::" . $action;
 }
 
 =head2 reset
