@@ -14,7 +14,7 @@ and data upgrades that happen.
 
 package Jifty::Upgrade;
 
-use base qw/Jifty::Object Exporter Class::Data::Inheritable/;
+use base qw/Jifty::Object Exporter Class::Data::Inheritable Jifty::DBI::Class::Trigger/;
 use vars qw/%UPGRADES @EXPORT/;
 @EXPORT = qw/since rename/;
 

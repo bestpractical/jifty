@@ -83,13 +83,13 @@ sub serialize_current_schema {
 }
 
 
-sub _store_current_schema {
+sub store_current_schema {
     my $self = shift;
      Jifty::Model::Metadata->store( current_schema      => Jifty::YAML::Dump($self->serialize_current_schema ));
+} 
 
 
-
-sub _load_stored_schema {
+sub load_stored_schema {
     my $self = shift;
      my $schema =  Jifty::YAML::Load(Jifty::Model::Metadata->load( 'current_schema'));
     return $schema;
@@ -106,24 +106,23 @@ Looks at the current schemas as defined by the source and the database and updat
 sub autoupgrade_schema {
     my $self = shift;
 
-    my ( $add_tables, $add_columns, $remove_tables, $remove_columns )
-        = $self->compute_schema_diffs( $self->_load_stored_schema, $self->serialize_current_schema);
-
+    my ( $add_tables, $add_columns, $remove_tables, $remove_columns, $column_deltas )
+        = $self->compute_schema_diffs( $self->load_stored_schema, $self->serialize_current_schema);
 
     # Run all "Rename" rules
     $self->run_upgrade_rules('before_all_renames');
-    my $table_renames  = Jifty->upgrade->table_renames;
-    my $column_renames = Jifty->upgrade->column_renames;
+    #my $table_renames  = Jifty->upgrade->table_renames;
+    #my $column_renames = Jifty->upgrade->column_renames;
     $self->run_upgrade_rules('after_column_renames');
 
     $self->_add_tables($add_tables);
     $self->_add_columns($add_columns);
     $self->_drop_tables($remove_tables);
     $self->_drop_columns($remove_columns);
-
+    $self->store_current_schema;
 }
 
-sub compute_schema_diffs{
+sub compute_schema_diffs {
     my $self = shift;
 
     # load the database schema version
@@ -131,6 +130,7 @@ sub compute_schema_diffs{
 
     # hashref
     my $new_tables = shift;
+
     my ($remove_tables,$remove_columns) = $self->_columns_and_tables_removed_between($old_tables => $new_tables);
     my ($add_tables,$add_columns) = $self->_columns_and_tables_removed_between($new_tables => $old_tables);
     my $column_deltas = $self->_column_changes_between($old_tables => $new_tables);
@@ -144,7 +144,7 @@ sub _column_changes_between {
     my $from_tables = shift;
     my $to_tables   = shift;
     
-    my $col_changes;
+    my $col_changes = ();
 
     # diff the current schema version and the database schema version
     foreach my $table ( keys %$from_tables ) {
@@ -215,9 +215,9 @@ sub _add_tables {
 
     # add all new tables
     $self->run_upgrade_rules('before_table_adds');
-    foreach my $table ( values %$add_tables ) {
+    foreach my $table ( keys %$add_tables ) {
         $self->run_upgrade_rules( 'before_add_table_' . $table );
-        $add_tables->{$table}->create_table_in_db();
+        $table->new->create_table_in_db();
         $self->run_upgrade_rules( 'after_add_table_' . $table );
     }
     $self->run_upgrade_rules('after_table_adds');
@@ -227,15 +227,14 @@ sub _add_tables {
 sub _add_columns {
     my $self = shift;
     my $add_columns = shift;
-
     $self->run_upgrade_rules('before_column_adds');
-    foreach my $table ( values %$add_columns ) {
+    foreach my $table ( keys %$add_columns ) {
             $self->run_upgrade_rules( 'before_add_columns_to_table_' . $table );
-        my @cols = @{ $add_columns->{$table} };
+        my @cols = @{ $add_columns->{$table} ||[]};
         foreach my $col (@cols) {
-            $self->run_upgrade_rules( 'before_add_column_' . $col->name . '_to_table_' . $table );
-            $add_columns->{$table}->add_column_in_db($col);
-            $self->run_upgrade_rules( 'after_add_column_' . $col->name . '_to_table_' . $table );
+            $self->run_upgrade_rules( 'before_add_column_' . $col->{name} . '_to_table_' . $table );
+            $table->new->add_column_in_db($col->{name});
+            $self->run_upgrade_rules( 'after_add_column_' . $col->{name} . '_to_table_' . $table );
         }
             $self->run_upgrade_rules( 'after_add_columns_to_table_' . $table );
     }
@@ -253,10 +252,10 @@ sub _drop_tables {
 
     $self->run_upgrade_rules('before_drop_tables');
 
-    foreach my $table ( values %$remove_tables ) {
-        $self->run_upgrade_rules( 'before_drop_table_' . $table );
-        $remove_tables->{$table}->drop_table_in_db();
-        $self->run_upgrade_rules( 'after_drop_table_' . $table );
+    foreach my $class ( keys %$remove_tables ) {
+        $self->run_upgrade_rules( 'before_drop_table_' . $class );
+        Jifty->app_class('Record')->new->drop_table_in_db($remove_tables->{$class}->{table});
+        $self->run_upgrade_rules( 'after_drop_table_' . $class );
     }
     $self->run_upgrade_rules('after_drop_tables');
 
@@ -268,13 +267,13 @@ sub _drop_columns {
 
     $self->run_upgrade_rules('before_drop_columns');
 
-    foreach my $table ( values %$remove_columns ) {
+    foreach my $table ( keys %$remove_columns ) {
             $self->run_upgrade_rules( 'before_drop_columns_from_' . $table );
-        my @cols = @{ $remove_columns->{$table} };
+        my @cols = @{ $remove_columns->{$table} ||[] };
         foreach my $col (@cols) {
-            $self->run_upgrade_rules( 'before_drop_column' . $col->name . '_from_' . $table );
-            $remove_columns->{$table}->drop_column_in_db($col);
-            $self->run_upgrade_rules( 'after_drop_column_' . $col->name . '_from_' . $table );
+            $self->run_upgrade_rules( 'before_drop_column' . $col->{'name'} . '_from_' . $table );
+            $table->new->drop_column_in_db($col->{name});
+            $self->run_upgrade_rules( 'after_drop_column_' . $col->{'name'} . '_from_' . $table );
         }
             $self->run_upgrade_rules( 'after_drop_columns_from_' . $table );
     }

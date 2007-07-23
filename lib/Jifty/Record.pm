@@ -2,7 +2,7 @@ use warnings;
 use strict;
 
 package Jifty::Record;
-
+use Jifty::DBI::SchemaGenerator;
 use Jifty::Config;
 
 =head1 NAME
@@ -601,19 +601,20 @@ sub create_table_in_db {
 
 }
 
-=head2 drop_table_in_db 
+=head2 drop_table_in_db [TABLENAME]
 
 When called, this method will generate the SQL to remove this model's
 table in the database and execute it in the application's currently
 open database.  This method can destroy a lot of data. Be sure you
-know what you're doing.
+know what you're doing. It takes an optional table name.
 
 
 =cut
 
 sub drop_table_in_db {
     my $self = shift;
-    my $ret  = Jifty->handle->simple_query( 'DROP TABLE ' . $self->table );
+    my $table = shift || $self->table;
+    my $ret  = Jifty->handle->simple_query( 'DROP TABLE ' . $table );
     $ret or die "error removing table $self: " . $ret->error_message;
 }
 
@@ -668,7 +669,8 @@ sub drop_column_sql {
     my $column_name = shift;
 
     my $col = $self->column($column_name);
-    return "ALTER TABLE " . $self->table . " DROP COLUMN " . $col->name;
+    my $name = $col? $col->name : $column_name;
+    return "ALTER TABLE " . $self->table . " DROP COLUMN " . $name;
 }
 
 

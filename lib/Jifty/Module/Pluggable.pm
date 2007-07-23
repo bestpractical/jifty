@@ -1,7 +1,10 @@
-package Jifty::Module::Pluggable;
 use strict;
 use warnings;
+
+package Jifty::Module::Pluggable;
 use base qw/Module::Pluggable/;
+
+our $VERSION = '0.01';
 
 =head1 NAME
 

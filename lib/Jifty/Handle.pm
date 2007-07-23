@@ -114,46 +114,39 @@ then error out.
 =cut
 
 sub check_schema_version {
+    my $self = shift;
     require Jifty::Model::Metadata;
 
     # Application db version check
-    {
-        my $dbv  = Jifty::Model::Metadata->load("application_db_version");
-        my $appv = Jifty->config->framework('Database')->{'Version'};
 
-        if ( not defined $dbv ) {
-            # First layer of backwards compatibility -- it used to be in _db_version
-            my @v;
-            eval {
-                local $SIG{__WARN__} = sub { };
-                @v = Jifty->handle->fetch_result(
-                    "SELECT major, minor, rev FROM _db_version");
-            };
-            $dbv = join( ".", @v ) if @v == 3;
-        }
-        if ( not defined $dbv ) {
-            # It was also called the 'key' column, not the data_key column
-            eval {
-                local $SIG{__WARN__} = sub { };
-                $dbv = Jifty->handle->fetch_result(
-                    "SELECT value FROM _jifty_metadata WHERE key = 'application_db_version'");
-            } or undef($dbv);
-        }
+    $self->_check_app_version_in_db(); 
+    $self->_check_jifty_version_in_db();
 
-        die
-            "Application schema has no version in the database; perhaps you need to run this:\n"
-            . "\t bin/jifty schema --setup\n"
-            unless defined $dbv;
+    # If there isn't a jifty version, the user needs to init their db
 
-        die
-            "Application schema version in database ($dbv) doesn't match application schema version ($appv)\n"
-            . "Please run `bin/jifty schema --setup` to upgrade the database.\n"
-            unless version->new($appv) == version->new($dbv);
+    # If there isn't an application schema, then we know we came from a pre-versioned time.
+    #   The user needs to run jifty schema --setup to update the database to the last numbered version they have
+    #       That will write out an application schema.
+    #
+    # If there IS an application schema in the database, we can skip the stupid "run your own upgrade" bit and just call 
+    #   autoupgrade
+    require Jifty::Schema; # Require it now. we want lazy-load here 
+    my $appschema = Jifty::Schema->new();
+    unless ($appschema->load_stored_schema) {
+        die "It looks like you haven't used this application since Jifty introduced automatic upgrades. Just this once, you'll need to run\n".
+        "   jifty schema --setup\n".
+        "to load your application's current schema definition into the database.\n"
     }
+    $appschema->autoupgrade_schema();
 
-    # Jifty db version check
-    {
+  
 
+
+
+}
+
+sub _check_jifty_version_in_db {
+    my $self =shift;
         # If we got here, the application had a version (somehow) so
         # this is an upgrade.  If $dbv is undef, it's because it's
         # from before when the _jifty_metadata table existed.
@@ -167,8 +160,39 @@ sub check_schema_version {
             unless $appv == $dbv;
     }
 
-}
 
+sub _check_app_version_in_db {
+        my $self = shift;
+        my $dbv  = Jifty::Model::Metadata->load("application_db_version");
+        my $appv = Jifty->config->framework('Database')->{'Version'};
+
+        if ( not defined $dbv ) {
+            # First layer of backwards compatibility -- it used to be in _db_version
+            my @v;
+            eval {
+                local $SIG{__WARN__} = sub { };
+                @v = Jifty->handle->fetch_result( "SELECT major, minor, rev FROM _db_version");
+            };
+            $dbv = join( ".", @v ) if @v == 3;
+        }
+        if ( not defined $dbv ) {
+            # It was also called the 'key' column, not the data_key column
+            eval {
+                local $SIG{__WARN__} = sub { };
+                $dbv = Jifty->handle->fetch_result( "SELECT value FROM _jifty_metadata WHERE key = 'application_db_version'");
+            } or undef($dbv);
+        }
+
+        die
+            "Application schema has no version in the database; perhaps you need to run this:\n"
+            . "\t bin/jifty schema --setup\n"
+            unless defined $dbv;
+
+        die
+            "Application schema version in database ($dbv) doesn't match application schema version ($appv)\n"
+            . "Please run `bin/jifty schema --setup` to upgrade the database.\n"
+            unless version->new($appv) == version->new($dbv);
+    }
 
 =head2 create_database MODE
 
@@ -221,7 +245,7 @@ sub drop_database {
 
 =head1 AUTHOR
 
-Various folks at BestPractical Solutions, LLC.
+Various folks at Best Practical Solutions, LLC.
 
 =cut
 

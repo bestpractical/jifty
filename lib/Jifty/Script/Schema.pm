@@ -47,10 +47,15 @@ sub run {
     $self->manage_database_existence();
     if ( $self->{create_all_tables} ) {
         $self->create_all_tables();
+         { local $SIG{__WARN__} = sub {};  # horrible evil hack to avoid idiotic warnings on sqlite init
+            Jifty::Schema->new()->store_current_schema()
+     };
     } elsif ( $self->{'setup_tables'} ) {
         $self->upgrade_jifty_tables();
         $self->upgrade_application_tables();
         $self->upgrade_plugin_tables();
+        Jifty::Schema->new()->store_current_schema();
+
     } else {
         print "Done.\n";
     }

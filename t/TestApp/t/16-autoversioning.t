@@ -24,8 +24,8 @@ can_ok($schema, 'models');
 can_ok($schema, 'serialize_current_schema');
 
 my $serialized = $schema->serialize_current_schema;
-ok($schema->_store_current_schema);;
-my $stored = $schema->_load_stored_schema();
+ok($schema->store_current_schema);;
+my $stored = $schema->load_stored_schema();
 is_deeply($stored,$serialized);
 {
     my ( $add_tables, $add_columns, $remove_tables, $remove_columns )

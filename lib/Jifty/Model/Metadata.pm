@@ -83,8 +83,7 @@ value if it existed.
 
 sub store {
     my $self = shift;
-    $self = $self->new( current_user => Jifty::CurrentUser->superuser )
-        unless ref $self;
+    $self = $self->new( current_user => Jifty::CurrentUser->superuser ) unless ref $self;
 
     my ( $key, $value ) = @_;
     $self->load_by_cols( data_key => $key );
