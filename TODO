@@ -1,0 +1,9 @@
+* add support for dropping columns on sqlite
+* make drop only mark things for deletion, rather than drop them immediately
+* when adding back after a drop, rescue them from the droplist, rather than creating anew
+* add a dropping action to the schema tool that REALLY drops things
+* add support for renames
+* add support for changing column types
+* tests. lots of tests
+* proper logging of database changes
+* run all our ddl changes in a transaction
