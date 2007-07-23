@@ -113,54 +113,82 @@ sub compute_schema_diffs{
 
     # hashref
     my $new_tables = shift;
+    my ($remove_tables,$remove_columns) = $self->_columns_and_tables_removed_between($old_tables => $new_tables);
+    my ($add_tables,$add_columns) = $self->_columns_and_tables_removed_between($new_tables => $old_tables);
+    my $column_deltas = $self->_column_changes_between($old_tables => $new_tables);
 
-    my $add_tables = {};
-    my $remove_tables ={};
-    my $add_columns = {};
-    my $remove_columns = {};
+    return ($add_tables, $add_columns, $remove_tables, $remove_columns, $column_deltas );
+} 
+
+
+sub _column_changes_between {
+    my $self        = shift;
+    my $from_tables = shift;
+    my $to_tables   = shift;
+    
+    my $col_changes;
 
     # diff the current schema version and the database schema version
-    foreach my $table ( keys %$old_tables ) {
-        unless ( $new_tables->{$table} ) {
-            $remove_tables->{$table} = $old_tables->{$table};
+    foreach my $table ( keys %$from_tables ) {
+
+        # Skip tables which aren't in both versions
+        next unless ( $to_tables->{$table} );
+
+        foreach my $column_name ( keys %{ $from_tables->{$table}->{columns} } ) {
+            # if the column isn't in the to table as well, then skip it
+            next unless ( $to_tables->{$table}->{columns}->{$column_name} );
+
+            my $new_col = $to_tables->{$table}->{columns}->{$column_name};
+            my $old_col = $from_tables->{$table}->{columns}->{$column_name};
+
+
+            # If the storage type has changed, record that
+            if ($new_col->{type} ne $old_col->{type}) {
+                push @{$col_changes->{type}}, { table => $table, old_type => $old_col->{type}, new_type => $new_col->{type}};
+            }
+            # If the default has changed record that 
+            { no warnings 'uninitialized'; # undefined for defaults is actually different than the empty string. And we _care_ about the undef.
+            if ($new_col->{default} ne $old_col->{default}) {
+                push @{$col_changes->{default}}, { table => $table, old_default => $old_col->{default}, new_default => $new_col->{default}};
+            }
+        }
+
+        }
+    }
+    return ( $col_changes);
+}
+
+
+sub  _columns_and_tables_removed_between {
+    my $self = shift;
+    my $from_tables = shift;
+    my $to_tables = shift;
+
+    
+    my $missing_tables = {};
+    my $missing_columns = {};
+
+    # diff the current schema version and the database schema version
+    foreach my $table ( keys %$from_tables ) {
+        unless ( $to_tables->{$table} ) {
+            $missing_tables->{$table} = $from_tables->{$table};
             next;
         }
 
-        foreach my $column_name ( keys %{ $old_tables->{$table}->{columns} } ) {
-                my $column = $old_tables->{$table}->{columns}->{$column_name};
+        foreach my $column_name ( keys %{ $from_tables->{$table}->{columns} } ) {
+                my $column = $from_tables->{$table}->{columns}->{$column_name};
 
 
-     # if the column isn't in the new table as well, then mark it for deletion
-            unless ( $new_tables->{$table}->{columns}->{$column_name} ) {
-                push @{ $remove_columns->{$table} }, $column;
+     # if the column isn't in the to table as well, then mark it for deletion
+            unless ( $to_tables->{$table}->{columns}->{$column_name} ) {
+                push @{ $missing_columns->{$table} }, $column;
             }
-
-        # XXX TODO: compare the column definitions and alter them if necessary
 
         }
     }
 
-    foreach my $table ( keys %$new_tables ) {
-        unless ( $old_tables->{$table} ) {
-            $add_tables->{$table} = $new_tables->{$table};
-            next;
-        }
-
-        foreach my $column_name ( keys %{$new_tables->{$table}->{columns}} ) {
-            my $column = $new_tables->{$table}->{columns}->{$column_name};
-
-             # if the column isn't in the old table as well, then mark it for addition
-            unless ( $old_tables->{$table}->{columns}->{$column_name} ) {
-                push @{ $add_columns->{$table} }, $column;
-            }
-
-            # XXX TODO: compare the column definitions and alter them if necessary
-
-        }
-    }
-
-    return ($add_tables, $add_columns, $remove_tables, $remove_columns );
-} 
+    return ( $missing_tables, $missing_columns);
+}
 
 sub _add_tables {
     my $self = shift;
