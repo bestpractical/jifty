@@ -7,6 +7,12 @@ use base qw/Jifty::Object Class::Accessor::Fast/;
 
 __PACKAGE__->mk_accessors(qw(actions printed_actions name call is_open disable_autocomplete target submit_to));
 
+=head1 NAME
+
+Jifty::Web::Form - Tools for rendering and dealing with HTML forms
+
+=head1 METHODS
+
 =head2 new ARGS
 
 Creates a new L<Jifty::Web::Form>.  Arguments:
@@ -217,8 +223,18 @@ L<Jifty::Web::Form::Field::Button>'s constructor.
 
 sub submit {
     my $self = shift;
+    my %args = (submit => undef,
+                _form => $self,
+                @_);
 
-    my $button = Jifty::Web::Form::Clickable->new(submit => undef, @_)->generate;
+    my @submit = ref($args{'submit'}) eq 'ARRAY' ? @{$args{'submit'}} : $args{'submit'};
+    if ($self->actions->{'next_page'} && $submit[0] && ! grep {$_->moniker eq 'next_page' } @submit)  {
+        push @submit, $self->actions->{'next_page'};
+        $args{'submit'} = \@submit;
+    }
+
+
+    my $button = Jifty::Web::Form::Clickable->new(%args)->generate;
     Jifty->web->out(qq{<div class="submit_button">});
     $button->render_widget;
     Jifty->web->out(qq{</div>});

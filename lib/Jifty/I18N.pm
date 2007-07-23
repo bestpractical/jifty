@@ -44,12 +44,20 @@ the wider world.
 
 my $DynamicLH;
 
+our $loaded;
+
 sub new {
     my $class = shift;
     my $self  = {};
     bless $self, $class;
 
+    # XXX: this requires a full review, LML->get_handle is calling new
+    # on I18N::lang each time, but we really shouldn't need to rerun
+    # the import here.
+    return $self if $loaded;
+
     my @import = map {( Gettext => $_ )} _get_file_patterns();
+    ++$loaded;
 
     Locale::Maketext::Lexicon->import(
         {   '*' => \@import,

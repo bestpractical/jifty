@@ -436,7 +436,10 @@ this Mechanize object.
 sub session {
     my $self = shift;
 
-    return undef unless $self->cookie_jar->as_string =~ /JIFTY_SID_\d+=([^;]+)/;
+    my $cookie = Jifty->config->framework('Web')->{'SessionCookieName'};
+    $cookie =~ s/\$PORT/(?:\\d+|NOPORT)/g;
+
+    return undef unless $self->cookie_jar->as_string =~ /$cookie=([^;]+)/;
 
     my $session = Jifty::Web::Session->new;
     $session->load($1);

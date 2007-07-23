@@ -7,7 +7,41 @@ use base 'Jifty::DBI::Record::Plugin';
 
 use Digest::MD5 qw'';
 
-our @EXPORT = qw(password_is hashed_password_is regenerate_auth_token);
+our @EXPORT = qw(password_is hashed_password_is regenerate_auth_token has_alternative_auth);
+
+=head1 NAME
+
+Jifty::Plugin::Authentication::Password::Mixin::Model::User - password plugin user mixin model
+
+=head1 SYNOPSIS
+
+  package MyApp::Model::User;
+  use Jifty::DBI::Schema;
+  use MyApp::Record schema {
+      # custom column defrinitions
+  };
+
+  use Jifty::Plugin::User::Mixin::Model::User; # name, email, email_confirmed
+  use Jifty::Plugin::Authentication::Password::Mixin::Model::User;
+  # ^^ password, auth_token
+
+=head1 DESCRIPTION
+
+This mixin model is added to the application's account model for use with the password authentication plugin. This mixin should be used in combination with L<Jifty::Plugin::User::Mixin::Model::User>.
+
+=head1 SCHEMA
+
+This mixin adds the following columns to the model schema:
+
+=head2 auth_token
+
+This is a unique identifier used when confirming a user's email account and recovering a lost password.
+
+=head2 password
+
+This is the user's password. It will be stored in the database after being processed through L<Digest::MD5>, so the password cannot be directly recovered from the database.
+
+=cut
 
 use Jifty::Plugin::Authentication::Password::Record schema {
 
@@ -21,7 +55,6 @@ column auth_token =>
 
 
 column password =>
-  is mandatory,
   is unreadable,
   label is _('Password'),
   type is 'varchar',
@@ -31,6 +64,14 @@ column password =>
 
 
 };
+
+=head1 METHODS
+
+=head2 register_triggers
+
+Adds the triggers to the model this mixin is added to.
+
+=cut
 
 sub register_triggers {
     my $self = shift;
@@ -61,7 +102,9 @@ sub password_is {
 =head2 hashed_password_is HASH TOKEN
 
 Check if the given I<HASH> is the result of hashing our (already
-salted and hashed) password with I<TOKEN>
+salted and hashed) password with I<TOKEN>.
+
+This can be used in cases where the pre-hashed password is sent during login as an additional security precaution (such as could be done via Javascript).
 
 =cut
 
@@ -77,7 +120,8 @@ sub hashed_password_is {
 
 =head2 validate_password
 
-Makes sure that the password is six characters long or longer.
+Makes sure that the password is six characters long or longer, unless
+we have alternative means to authenticate.
 
 =cut
 
@@ -85,11 +129,21 @@ sub validate_password {
     my $self      = shift;
     my $new_value = shift;
 
+    return 1 if $self->has_alternative_auth();
+
     return ( 0, _('Passwords need to be at least six characters long') )
         if length($new_value) < 6;
 
     return 1;
 }
+
+=head2 after_create
+
+This trigger is added to the account model. It automatically sends a notification email to the user for password confirmation.
+
+See L<Jifty::Plugin::Authentication::Password::Notification::ConfirmEmail>.
+
+=cut
 
 
 sub after_create {
@@ -102,9 +156,17 @@ sub after_create {
     } else {
         warn  $self->id . " " .$self->email;
     }
-
-
 }
+
+=head2 has_alternative_auth
+
+If your model supports other means of authentication, you should have
+this method return true, so the C<password> field can optionally be
+null and authentication with password is disabled in that case.
+
+=cut
+
+sub has_alternative_auth { }
 
 =head2 after_set_password
 
@@ -133,7 +195,16 @@ sub regenerate_auth_token {
     $self->__set(column => 'auth_token', value => $auth_token);
 }
 
+=head1 SEE ALSO
 
+L<Jifty::Plugin::Authentication::Password>, L<Jifty::Plugin::User::Mixin::Model>
+
+=head1 LICENSE
+
+Jifty is Copyright 2005-2007 Best Practical Solutions, LLC.
+Jifty is distributed under the same terms as Perl itself.
+
+=cut
 
 1;
 

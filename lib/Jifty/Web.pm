@@ -26,8 +26,12 @@ __PACKAGE__->mk_accessors(
 );
 
 __PACKAGE__->mk_classdata($_)
-    for qw(cached_css        cached_css_digest        cached_css_time
-           cached_javascript cached_javascript_digest cached_javascript_time javascript_libs);
+    for qw(cached_css cached_css_digest cached_css_time
+           css_files  javascript_libs   external_javascript_libs);
+
+__PACKAGE__->css_files([qw( main.css )]);
+
+__PACKAGE__->external_javascript_libs([]);
 
 __PACKAGE__->javascript_libs([qw(
     jsan/JSAN.js
@@ -71,6 +75,8 @@ __PACKAGE__->javascript_libs([qw(
     css_browser_selector.js
 )]);
 
+use Jifty::DBI::Class::Trigger;
+
 =head1 METHODS
 
 =head3 new
@@ -106,8 +112,8 @@ Send a string to the browser. The default implementation uses Mason->out;
 =cut
 
 sub out {
-    Carp::cluck unless defined $_[0]->mason;
-    shift->mason->out(@_);
+    my $m = shift->mason;
+    $m ? $m->out(@_) : Jifty::View::out_method(@_);
 }
 
 
@@ -124,10 +130,6 @@ sub url {
     my %args = (scheme => undef,
                 path => undef,
                 @_);
-
-    if ($args{'scheme'}) {
-        $self->log->error("Jifty->web->url no longer accepts a 'scheme' argument");
-    }
 
     my $uri;
 
@@ -163,6 +165,10 @@ sub url {
    
       $uri = URI->new($url);
       $uri->port($port);
+    }
+
+    if ( defined $args{'scheme'} ) {
+        $uri->scheme( $args{'scheme'} );
     }
 
     if (defined $args{path}) {
@@ -299,18 +305,65 @@ For more details about continuations, see L<Jifty::Continuation>.
 
 sub handle_request {
     my $self = shift;
-    die _( "No request to handle" ) unless Jifty->web->request;
+    die _("No request to handle") unless Jifty->web->request;
 
+    my ( $valid_actions, $denied_actions )
+        = $self->_validate_request_actions();
+
+    # In the case where we have a continuation and want to redirect
+    if ( $self->request->continuation_path && Jifty->web->request->argument('_webservice_redirect') ) {
+        # for continuation - perform internal redirect under webservices
+	$self->webservices_redirect($self->request->continuation_path);
+        return;
+    }
+
+    $self->request->save_continuation;
+
+    unless ( $self->request->just_validating ) {
+        $self->_process_valid_actions($valid_actions);
+        $self->_process_denied_actions($denied_actions);
+    }
+
+    # If there's a continuation call, don't do the rest of this
+    return if $self->response->success and $self->request->call_continuation;
+
+    $self->redirect if $self->redirect_required;
+    $self->request->do_mapping;
+}
+
+sub _process_denied_actions {
+    my $self           = shift;
+    my $denied_actions = shift;
+
+    for my $request_action (@$denied_actions) {
+        my $action = $self->new_action_from_request($request_action);
+        $action->deny( "Access Denied for " . ref($action) );
+        $self->response->result( $action->moniker => $action->result );
+    }
+}
+
+sub _validate_request_actions {
+        my $self = shift;
+        
     my @valid_actions;
+    my @denied_actions;
+
+
     for my $request_action ( $self->request->actions ) {
-        $self->log->debug("Found action ".$request_action->class . " " . $request_action->moniker);
+        $self->log->debug( "Found action "
+                . $request_action->class . " "
+                . $request_action->moniker );
         next unless $request_action->active;
         next if $request_action->has_run;
-        unless ( Jifty->api->is_allowed( $request_action->class ) ) {
-            $self->log->warn( "Attempt to call denied action '"
-                    . $request_action->class
-                    . "'" );
-            next;
+        unless ( $self->request->just_validating ) {
+            unless ( Jifty->api->is_allowed( $request_action->class ) ) {
+                $self->log->warn( "Attempt to call denied action '"
+                        . $request_action->class
+                        . "'" );
+                Carp::cluck;
+                push @denied_actions, $request_action;
+                next;
+            }
         }
 
         # Make sure we can instantiate the action
@@ -321,16 +374,21 @@ sub handle_request {
         # Try validating -- note that this is just the first pass; as
         # actions are run, they may fill in values which alter
         # validation of later actions
-        $self->log->debug("Validating action ".ref($action). " ".$action->moniker);
+        $self->log->debug( "Validating action " . ref($action) . " " . $action->moniker );
         $self->response->result( $action->moniker => $action->result );
         $action->validate;
 
         push @valid_actions, $request_action;
     }
-    $self->request->save_continuation;
+    
+    return (\@valid_actions, \@denied_actions);
 
-    unless ( $self->request->just_validating ) {
-        for my $request_action (@valid_actions) {
+}
+
+sub _process_valid_actions {
+    my  $self = shift;
+    my $valid_actions = shift;
+        for my $request_action (@$valid_actions) {
 
             # Pull the action out of the request (again, since
             # mappings may have affected parameters).  This
@@ -339,20 +397,26 @@ sub handle_request {
             # actions (Jifty::Request::Mapper)
             my $action = $self->new_action_from_request($request_action);
             next unless $action;
-            if ($request_action->modified) {
+            if ( $request_action->modified ) {
+
                 # If the request's action was changed, re-validate
-                $action->result(Jifty::Result->new);
-                $action->result->action_class(ref $action);
-                $self->response->result( $action->moniker => $action->result );
-                $self->log->debug("Re-validating action ".ref($action). " ".$action->moniker);
+                $action->result( Jifty::Result->new );
+                $action->result->action_class( ref $action );
+                $self->response->result(
+                    $action->moniker => $action->result );
+                $self->log->debug( "Re-validating action "
+                        . ref($action) . " "
+                        . $action->moniker );
                 next unless $action->validate;
             }
 
-            $self->log->debug("Running action ".ref($action). " ".$action->moniker);
+            $self->log->debug(
+                "Running action " . ref($action) . " " . $action->moniker );
             eval { $action->run; };
             $request_action->has_run(1);
 
             if ( my $err = $@ ) {
+
                 # Poor man's exception propagation; we need to get
                 # "LAST RULE" and "ABORT" exceptions back up to the
                 # dispatcher.  This is specifically for redirects from
@@ -362,7 +426,8 @@ sub handle_request {
                 $action->result->error(
                     Jifty->config->framework("DevelMode")
                     ? $err
-                    : _("There was an error completing the request.  Please try again later.")
+                    : _("There was an error completing the request.  Please try again later."
+                    )
                 );
             }
 
@@ -370,15 +435,8 @@ sub handle_request {
             # may have yielded.
             $self->request->do_mapping;
         }
+
     }
-
-    # If there's a continuation call, don't do the rest of this
-    return if $self->response->success and $self->request->call_continuation;
-
-    $self->redirect if $self->redirect_required;
-    $self->request->do_mapping;
-}
-
 =head3 request [VALUE]
 
 Gets or sets the current L<Jifty::Request> object.
@@ -403,7 +461,9 @@ sub form {
 
 =head3 new_action class => CLASS, moniker => MONIKER, order => ORDER, arguments => PARAMHASH
 
-Creates a new action (an instance of a subclass of L<Jifty::Action>). The named arguments passed to this method are passed on to the C<new> method of the action named in C<CLASS>.
+Creates a new action (an instance of a subclass of
+L<Jifty::Action>). The named arguments passed to this method are
+passed on to the C<new> method of the action named in C<CLASS>.
 
 =head3 Arguments
 
@@ -468,17 +528,6 @@ sub new_action {
     $class = Jifty->api->qualify($class);
 
     my $loaded = Jifty::Util->require( $class );
-    $args{moniker} ||= ($loaded ? $class : 'Jifty::Action')->_generate_moniker;
-
-    my $action_in_request = $self->request->action( $args{moniker} );
-
-    # Fields explicitly passed to new_action take precedence over those passed
-    # from the request; we read from the request to implement "sticky fields".
-    #
-    if ( $action_in_request and $action_in_request->arguments ) {
-        $args{'request_arguments'} = $action_in_request->arguments;
-    }
-
     # The implementation class is provided by the client, so this
     # isn't a "shouldn't happen"
     return unless $loaded;
@@ -593,22 +642,53 @@ sub redirect_required {
     }
 }
 
+=head3 webservices_redirect [TO]
+
+Handle redirection inside webservices call.  This is meant to be
+hooked by plugin that knows what to do with it.
+
+=cut
+
+sub webservices_redirect {
+    my ( $self, $to ) = @_;
+    # XXX: move to singlepage plugin
+    my ($spa) = Jifty->find_plugin('Jifty::Plugin::SinglePage') or return;
+
+    Jifty->web->request->remove_state_variable( 'region-'.$spa->region_name );
+    Jifty->web->request->add_fragment(
+        name      => $spa->region_name,
+        path      => $to,
+        arguments => {},
+        wrapper   => 0
+    );
+}
+
 =head3 redirect [TO]
 
 Redirect to the next page. If you pass this method a parameter, it
 redirects to that URL rather than B<next_page>.
 
 It creates a continuation of where you want to be, and then calls it.
-If you want to redirect to a parge with parameters, pass in a
+If you want to redirect to a page with parameters, pass in a
 L<Jifty::Web::Form::Clickable> object.
 
 =cut
 
 sub redirect {
     my $self = shift;
-    my $page = shift || $self->next_page || $self->request->path;
-    $page = Jifty::Web::Form::Clickable->new( url => $page )
-      unless ref $page and $page->isa("Jifty::Web::Form::Clickable");
+    my $redir_to = shift || $self->next_page || $self->request->path;
+
+    
+    my $page;
+
+    if ( ref $redir_to and $redir_to->isa("Jifty::Web::Form::Clickable")) {
+        $page = $redir_to;
+    } else {
+
+        $page = Jifty::Web::Form::Clickable->new();
+        #We set this after creation to ensure that plugins that massage clickables don't impact us
+        $page->url($redir_to );
+    }
 
     carp "Don't include GET parameters in the redirect URL -- use a Jifty::Web::Form::Clickable instead.  See L<Jifty::Web/redirect>" if $page->url =~ /\?/;
 
@@ -619,6 +699,9 @@ sub redirect {
 
     # To submit a Jifty::Action::Redirect, we don't need to serialize a continuation,
     # unlike any other kind of actions.
+
+    my $redirect_to_url = '' ;
+
     if (  (grep { not $_->action_class->isa('Jifty::Action::Redirect') }
                 values %{ { $self->response->results } })
         or $self->request->state_variables
@@ -655,17 +738,34 @@ sub redirect {
             response => $self->response,
             parent   => $self->request->continuation,
         );
-        $page = $page->url."?J:RETURN=" . $cont->id;
+        $redirect_to_url = $page->url."?J:RETURN=" . $cont->id;
     } else {
-        $page = $page->complete_url;
+        $redirect_to_url = $page->complete_url;
     }
-    $self->_redirect($page);
+    $self->_redirect($redirect_to_url);
 }
 
 sub _redirect {
     my $self = shift;
     my ($page) = @_;
 
+    # It's an experimental feature to support redirect within a
+    # region.
+    if ($self->current_region) { 
+        # If we're within a region stack, we don't really want to
+        # redirect. We want to redispatch.  Also reset the things
+        # applied on beofre.
+        local $self->{navigation} = undef;
+        local $self->{page_navigation} = undef;
+        $self->replace_current_region($page);
+        Jifty::Dispatcher::_abort;
+        return;
+    }
+
+    if (my $redir = Jifty->web->request->argument('_webservice_redirect')) {
+	push @$redir, $page;
+	return;
+    }
     # $page can't lead with // or it assumes it's a URI scheme.
     $page =~ s{^/+}{/};
 
@@ -678,7 +778,7 @@ sub _redirect {
 
     my $apache = Jifty->handler->apache;
 
-    $self->log->debug("Redirecting to $page");
+    $self->log->debug("Execing redirect to $page");
     # Headers..
     $apache->header_out( Location => $page );
     $apache->header_out( Status => 302 );
@@ -721,6 +821,10 @@ Both of these versions preserve all state variables by default.
 sub tangent {
     my $self = shift;
 
+    if (@_ == 1  ) {
+        Jifty->log->error("Jifty::Web->tangent takes a paramhash. Perhaps you passed '".$_[0]."' , rather than 'url => ".$_[0]."'");
+        die; 
+    }
     my $clickable = Jifty::Web::Form::Clickable->new(
         returns        => { },
         preserve_state => 1,
@@ -969,23 +1073,36 @@ Returns a C<< <link> >> tag for the compressed CSS
 
 sub include_css {
     my $self = shift;
-    
-    if ( Jifty->config->framework('DevelMode') ) {
-        $self->out(
-            '<link rel="stylesheet" type="text/css" '
-            . 'href="/static/css/main.css" />'
-        );
-    }
-    else {
+    my ($ccjs) = Jifty->find_plugin('Jifty::Plugin::CompressedCSSandJS');
+    if ( $ccjs && $ccjs->css_enabled ) {
         $self->generate_css;
-    
         $self->out(
             '<link rel="stylesheet" type="text/css" href="/__jifty/css/'
             . __PACKAGE__->cached_css_digest . '.css" />'
         );
     }
+    else {
+        $self->out(
+            '<link rel="stylesheet" type="text/css" '
+            . 'href="/static/css/main.css" />'
+        );
+    }
     
     return '';
+}
+
+=head3 add_css FILE1, FILE2, ...
+
+Pushes files onto C<Jifty->web->css_files>
+
+=cut
+
+sub add_css {
+    my $self = shift;
+    Jifty->web->css_files([
+        @{ Jifty->web->css_files },
+        @_
+    ]);
 }
 
 =head3 generate_css
@@ -997,35 +1114,21 @@ and caches it.
 
 sub generate_css {
     my $self = shift;
-    
+
     if (not defined __PACKAGE__->cached_css_digest
             or Jifty->config->framework('DevelMode'))
     {
         Jifty->log->debug("Generating CSS...");
         
-        my $app   = File::Spec->catdir(
-                        Jifty->config->framework('Web')->{'StaticRoot'},
-                        'css'
-                    );
+        my @roots = map { Jifty::Util->absolute_path( File::Spec->catdir( $_, 'css' ) ) }
+                        Jifty->handler->view('Jifty::View::Static::Handler')->roots;
 
-        my $jifty = File::Spec->catdir(
-                        Jifty->config->framework('Web')->{'DefaultStaticRoot'},
-                        'css'
-                    );
-
-        my $file = Jifty::Util->absolute_path(
-                        File::Spec->catpath( '', $app, 'main.css' )
-                   );
-
-        if ( not -e $file ) {
-            $file = Jifty::Util->absolute_path(
-                         File::Spec->catpath( '', $jifty, 'main.css' )
-                    );
-        }
-
-        CSS::Squish->roots( Jifty::Util->absolute_path( $app ), $jifty );
+        CSS::Squish->roots( @roots );
         
-        my $css = CSS::Squish->concatenate( $file );
+        my $css = CSS::Squish->concatenate(
+            map { CSS::Squish->_resolve_file( $_, @roots ) }
+                @{ $self->css_files }
+        );
 
         __PACKAGE__->cached_css( $css );
         __PACKAGE__->cached_css_digest( md5_hex( $css ) );
@@ -1050,109 +1153,70 @@ L<http://bennolan.com/behaviour/>.
 
 However if you want to include other javascript libraries you need to
 add them to the javascript_libs array of your application.  Do this in
-the C<start> sub of your main application class.  For example if your application is Foo then in L<lib/Foo.pm>
+the C<start> sub of your main application class.  For example if your
+application is Foo then in L<lib/Foo.pm>
 
  sub start {
-   Jifty->web->javascript_libs([
- 			       @{ Jifty->web->javascript_libs },
- 			       "yourJavascriptLib.js",
- 			      ]);
+     Jifty->web->add_javascript(qw( jslib1.js jslib2.js ) );
  }
 
+The L<add_javascript> method will append the files to javascript_libs.
+If you need a different order, you'll have to massage javascript_libs
+directly.
+
 Jifty will look for javascript libraries under share/web/static/js/ by
-default.
+default as well as any plugin static roots.
 
 =cut
 
 sub include_javascript {
     my $self  = shift;
-    
-    if ( Jifty->config->framework('DevelMode') ) {
-        for my $file ( @{ __PACKAGE__->javascript_libs } ) {
-            $self->out(
-                qq[<script type="text/javascript" src="/static/js/$file"></script>\n]
-            );
-        }
-    }
-    else {
-        $self->generate_javascript;
-    
+
+    for my $url ( @{ __PACKAGE__->external_javascript_libs } ) {
         $self->out(
-            qq[<script type="text/javascript" src="/__jifty/js/]
-            . __PACKAGE__->cached_javascript_digest . qq[.js"></script>]
+            qq[<script type="text/javascript" src="$url"></script>\n]
         );
     }
-    
+
+    # if there's no trigger, 0 is returned.  if aborted/handled, undef
+    # is returned.
+    defined $self->call_trigger('include_javascript', @_) or return '';
+
+    for my $file ( @{ __PACKAGE__->javascript_libs } ) {
+        $self->out(
+            qq[<script type="text/javascript" src="/static/js/$file"></script>\n]
+        );
+    }
+
     return '';
 }
 
-=head3 generate_javascript
+=head3 add_javascript FILE1, FILE2, ...
 
-Checks if the compressed JS is generated, and if it isn't, generates
-and caches it.
+Pushes files onto C<Jifty->web->javascript_libs>
 
 =cut
 
-sub generate_javascript {
+sub add_javascript {
     my $self = shift;
-    
-    if (not defined __PACKAGE__->cached_javascript_digest
-            or Jifty->config->framework('DevelMode'))
-    {
-        Jifty->log->debug("Generating JS...");
-        
-        my @roots = (
-            Jifty::Util->absolute_path(
-                File::Spec->catdir(
-                    Jifty->config->framework('Web')->{'StaticRoot'},
-                    'js'
-                )
-            ),
+    Jifty->web->javascript_libs([
+        @{ Jifty->web->javascript_libs },
+        @_
+    ]);
+}
 
-            Jifty::Util->absolute_path(
-                File::Spec->catdir(
-                    Jifty->config->framework('Web')->{'DefaultStaticRoot'},
-                    'js'
-                )
-            ),
-        );
-        
-        my $js = "";
+=head3 add_external_javascript URL1, URL2, ...
 
-        for my $file ( @{ __PACKAGE__->javascript_libs } ) {
-            my $include;
-        
-            for my $root (@roots) {
-                my @spec = File::Spec->splitpath( $root, 1 );
-                my $path = File::Spec->catpath( @spec[0,1], $file );
-                
-                if ( -e $path ) {
-                    $include = $path;
-                    last;
-                }
-            }
+Pushes urls onto C<Jifty->web->external_javascript_libs>
 
-            if ( defined $include ) {
-                my $fh;
+=cut
 
-                if ( open $fh, '<', $include ) {
-                    $js .= "/* Including '$file' */\n\n";
-                    $js .= $_ while <$fh>;
-                    $js .= "\n/* End of '$file' */\n\n";
-                }
-                else {
-                    $js .= "\n/* Unable to open '$file': $! */\n";
-                }
-            }
-            else {
-                $js .= "\n/* Unable to find '$file' */\n";
-            }
-        }
-
-        __PACKAGE__->cached_javascript( $js );
-        __PACKAGE__->cached_javascript_digest( md5_hex( $js ) );
-        __PACKAGE__->cached_javascript_time( time );
-    }
+sub add_external_javascript {
+    my $self = shift;
+    Jifty->web->external_javascript_libs([
+        @{ Jifty->web->external_javascript_libs },
+        @_
+    ]);
 }
 
 =head2 STATE VARIABLES
@@ -1258,6 +1322,22 @@ sub region {
     # Render it
     $region->render;
 }
+
+
+=head3 replace_current_region PATH
+
+Replaces the current region with a new region and renders it Returns undef if there's no current region
+
+=cut
+
+sub replace_current_region {
+    my $self = shift;
+    my $path = shift;
+    return undef unless (my $region = $self->current_region);
+    $region->force_path($path);
+    $region->render;
+}
+
 
 =head3 current_region
 

@@ -1,0 +1,55 @@
+--- 
+application:
+  OpenIDSecret: sekrit13
+framework: 
+  AdminMode: 1
+  SkipAccessControl: 1
+  ApplicationClass: Yada
+  ApplicationName: Yada
+  ApplicationUUID: 80DF397A-D999-11DB-B80A-9318EBB6763A
+  Database: 
+    CheckSchema: 1
+    Database: yada
+    Driver: SQLite
+    Host: localhost
+    Password: ''
+    RecordBaseClass: Jifty::DBI::Record::Cachable
+    User: ''
+    Version: 0.0.1
+  DevelMode: 0
+  L10N: 
+    PoDir: share/po
+  LogLevel: INFO
+  Mailer: Sendmail
+  MailerArgs: []
+
+  Plugins: 
+    - SkeletonApp: {}
+    - REST: {}
+    - ErrorTemplates: {}
+    - OnlineDocs: {}
+    - CompressedCSSandJS: {}
+    - AdminUI: {}
+    - LetMe: {}
+    - User: {}
+    - Authentication::Password: {}
+    - OpenID: {}
+
+  PubSub: 
+    Backend: Memcached
+    Enable: ~
+  TemplateClass: Yada::View
+  Web: 
+    BaseURL: http://localhost
+    DataDir: var/mason
+    Globals: []
+
+    MasonConfig: 
+      autoflush: 0
+      default_escape_flags: h
+      error_format: text
+      error_mode: fatal
+    Port: 8888
+    ServeStaticFiles: 1
+    StaticRoot: share/web/static
+    TemplateRoot: share/web/templates

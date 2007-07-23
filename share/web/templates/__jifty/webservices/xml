@@ -4,6 +4,14 @@ my $writer = XML::Writer->new( OUTPUT => \$output, UNSAFE => 1 );
 $writer->xmlDecl( "UTF-8", "yes" );
 $writer->startTag("response");
 
+if (my $ext = Jifty->web->request->argument('_webservice_external_redirect')) {
+    $writer->startTag("redirect");
+    $writer->cdataElement(url=> $ext);
+
+    $writer->endTag();
+}
+else {
+
 FRAGMENT:
 for my $f ( Jifty->web->request->fragments ) {
     # Set up the region stack
@@ -27,7 +35,7 @@ for my $f ( Jifty->web->request->fragments ) {
 
         $new ||= Jifty::Web::PageRegion->new(
             name           => $f->name,
-            path           => $f->path,
+            path           => URI::Escape::uri_unescape($f->path),
             region_wrapper => $f->wrapper,
             parent         => Jifty->web->current_region,
             defaults       => \%defaults,
@@ -48,6 +56,8 @@ for my $f ( Jifty->web->request->fragments ) {
     $writer->endTag();
 
     Jifty->web->current_region->exit while Jifty->web->current_region;
+}
+
 }
 
 my %results = Jifty->web->response->results;

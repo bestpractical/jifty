@@ -26,7 +26,11 @@ foreach my $dialect ( 'SQL::ReservedWords', &_sql_dialects ) {
 
 delete $_SQL_RESERVED{ lc($_) } for (@_SQL_RESERVED_OVERRIDE);
 
+=head2 new
 
+Returns a new Jifty::Schema. Takes no arguments. Will automatically figure out and initialize the models defined in the app's source.
+
+=cut
 
 sub new {
     my $class = shift;
@@ -44,8 +48,10 @@ Reads in our application class from the config file and finds all our app's mode
 =cut
 
 sub _init_model_list {
-
     my $self = shift;
+
+    # Plugins can have models too
+    my @plugins = map { (ref $_).'::Model' } Jifty->plugins;
 
     # This creates a sub "models" which when called, finds packages under
     # the application's ::Model, requires them, and returns a list of their
@@ -53,11 +59,16 @@ sub _init_model_list {
     Jifty::Module::Pluggable->import(
         require     => 1,
         except      => qr/\.#/,
-        search_path => [ "Jifty::Model", Jifty->app_class("Model") ],
+        search_path => [ "Jifty::Model", Jifty->app_class("Model"), @plugins ],
         sub_name    => 'models',
     );
 }
 
+=head2 serialize_current_schema
+
+Returns a serialization of the models in the app
+
+=cut
 
 sub serialize_current_schema {
     my $self = shift;    
@@ -75,7 +86,8 @@ sub serialize_current_schema {
 sub _store_current_schema {
     my $self = shift;
      Jifty::Model::Metadata->store( current_schema      => Jifty::YAML::Dump($self->serialize_current_schema ));
-}
+
+
 
 sub _load_stored_schema {
     my $self = shift;
@@ -84,6 +96,12 @@ sub _load_stored_schema {
 }
 
 
+
+=head2 autoupgrade_schema
+
+Looks at the current schemas as defined by the source and the database and updates the database by adding, dropping, and renaming columns.
+
+=cut
 
 sub autoupgrade_schema {
     my $self = shift;
@@ -315,7 +333,11 @@ sub __parenthesize_sql_variants {
     return "(" . ( join ", ", @_ ) . ")";
 }
 
+=head2 connect_to_db_for_management
 
+Returns a database handle suitable for direct manipulation.
+
+=cut
 
 sub connect_to_db_for_management {
     my $handle = Jifty::Handle->new();

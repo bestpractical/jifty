@@ -9,7 +9,7 @@ __PACKAGE__->mk_accessors(qw/button_as_link/);
 
 =head1 NAME
 
-Jifty::Web::Form::Field::Button
+Jifty::Web::Form::Field::Button - Add buttons to your forms
 
 =cut
 

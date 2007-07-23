@@ -4,7 +4,7 @@ use warnings;
 
 =head1 NAME
 
-Jifty::Subs::Render - 
+Jifty::Subs::Render - Helper for subscriptions rendering
 
 =head1 SYNOPSIS
 

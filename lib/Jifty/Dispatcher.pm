@@ -160,7 +160,7 @@ method name of your dispatcher class, or a fully qualified subroutine name.
 All wildcards in the C<$match> string becomes capturing regex patterns.  You
 can also pass in an array reference of matches, or a regex pattern.
 
-The C<$match> string may be qualified with a HTTP method name, such as
+The C<$match> string may be qualified with a HTTP method name or protocol, such as
 
 =over
 
@@ -175,6 +175,10 @@ The C<$match> string may be qualified with a HTTP method name, such as
 =item DELETE
 
 =item HEAD
+
+=item HTTPS
+
+=item HTTP
 
 =back
 
@@ -263,6 +267,8 @@ our @EXPORT = qw<
 
     GET POST PUT HEAD DELETE OPTIONS
 
+    HTTPS HTTP
+
     plugin
 
     get next_rule last_rule
@@ -299,6 +305,9 @@ sub PUT ($)     { _qualify method => @_ }
 sub HEAD ($)    { _qualify method => @_ }
 sub DELETE ($)  { _qualify method => @_ }
 sub OPTIONS ($) { _qualify method => @_ }
+
+sub HTTPS ($)   { _qualify https  => @_ }
+sub HTTP ($)    { _qualify http   => @_ }
 
 sub plugin ($) { return { plugin => @_ } }
 
@@ -929,6 +938,30 @@ sub _match_method {
     lc( $ENV{REQUEST_METHOD} ) eq lc($method);
 }
 
+=head2 _match_https
+
+Returns true if the current request is under SSL.
+
+=cut
+
+sub _match_https {
+    my $self = shift;
+    $self->log->debug("Matching request against HTTPS");
+    return exists $ENV{HTTPS} ? 1 : 0;
+}
+
+=head2 _match_http
+
+Returns true if the current request is not under SSL.
+
+=cut
+
+sub _match_http {
+    my $self = shift;
+    $self->log->debug("Matching request against HTTP");
+    return exists $ENV{HTTPS} ? 0 : 1;
+}
+
 sub _match_plugin {
     my ( $self, $plugin ) = @_;
     warn "Deferred check shouldn't happen";
@@ -1149,6 +1182,7 @@ sub render_template {
     my $self     = shift;
     my $template = shift;
     my $showed   = 0;
+#    local $@;
     eval {
         foreach my $handler ( Jifty->handler->view_handlers ) {
             if ( Jifty->handler->view($handler)->template_exists($template) ) {
@@ -1166,8 +1200,13 @@ sub render_template {
     my $err = $@;
 
     # Handle parse errors
+    $self->log->fatal("view class error: $err") if $err;
     if ( $err and not eval { $err->isa('HTML::Mason::Exception::Abort') } ) {
-
+        if ($template eq '/__jifty/error/mason_internal_error') {
+            $self->log->debug("can't render internal_error: $err");
+            $self->_abort;
+            return;
+        }
         # Save the request away, and redirect to an error page
         Jifty->web->response->error($err);
         my $c = Jifty::Continuation->new(
@@ -1175,8 +1214,6 @@ sub render_template {
             response => Jifty->web->response,
             parent   => Jifty->web->request->continuation,
         );
-
-        warn "$err";
 
         # Redirect with a continuation
         Jifty->web->_redirect( "/__jifty/error/mason_internal_error?J:C=" . $c->id );

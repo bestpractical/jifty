@@ -12,7 +12,7 @@ Continuations tests
 use lib 't/lib';
 use Jifty::SubTest;
 
-use Jifty::Test tests => 11;
+use Jifty::Test tests => 13;
 
 use_ok('Jifty::Test::WWW::Mechanize');
 
@@ -37,6 +37,11 @@ $mech->form_number(2);
 ok($mech->click_button(value => "Do both"));
 $mech->content_like(qr/got the grail/i, "Got the grail");
 $mech->content_like(qr/crossed the bridge/i, "And crossed the bridge");
+
+# Tests for proper generation of default "name" parameter to
+# argument_of and result_to
+$mech->content_unlike(qr/R`[^']+`J:A:F/, "Doesn't have full argument name");
+$mech->content_like(qr/J:A:F-castle-(\S+): Aaaaaargh/, "Has the right value name");
 
 # And then, the same, but via default_values on the form field
 $mech->form_number(3);

@@ -3,7 +3,7 @@ use strict;
 
 =head1 NAME
 
-Jifty::Action::Record::Search
+Jifty::Action::Record::Search - Automagic search action
 
 =head1 DESCRIPTION
 

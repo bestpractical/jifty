@@ -149,8 +149,8 @@ C<new> parameter hash.
 
 =cut
 
-sub accessors { shift->handlers, qw(class key_binding key_binding_label id label tooltip) }
-__PACKAGE__->mk_accessors(qw(_onclick class key_binding key_binding_label id label tooltip));
+sub accessors { shift->handlers, qw(class key_binding key_binding_label id label tooltip continuation) }
+__PACKAGE__->mk_accessors(qw(_onclick class key_binding key_binding_label id label tooltip continuation));
 
 =head2 new PARAMHASH OVERRIDE
 
@@ -236,7 +236,10 @@ sub javascript {
         next unless $value;
 
         my @fragments;
-        my %actions;    # Maps actions => disable?
+            # if $actions is undef, that means we're submitting _all_ actions in the clickable
+            # if $actions is defined but empty, that means we're submitting no actions
+            # if $actions is not empty, we're submitting those actions
+        my $actions = {};    # Maps actions => disable?
         my $confirm;
         my $beforeclick;
 
@@ -245,11 +248,14 @@ sub javascript {
             my %args;
 
             # Submit action
-            if ( $hook->{submit} ) {
-                my $disable = exists $hook->{disable} ? $hook->{disable} : 1;
+          
+            
+            if ( exists $hook->{submit} ) {
+                $actions = undef;
+                my $disable_form_on_click = exists $hook->{disable} ? $hook->{disable} : 1;
                 # Normalize to 1/0 to pass to JS
-                $disable = $disable ? 1 : 0;
-                $actions{$_} = $disable for (@{ $hook->{submit} }); 
+                $disable_form_on_click = $disable_form_on_click ? 1 : 0;
+                $actions->{$_} = $disable_form_on_click for (@{ $hook->{submit} || [] }); 
             }
 
             $hook->{region} ||= Jifty->web->qualified_region;
@@ -317,9 +323,10 @@ sub javascript {
         }
 
         my $string = join ";", (grep {not ref $_} (ref $value eq "ARRAY" ? @{$value} : ($value)));
-        if (@fragments or %actions) {
+        if (@fragments or (!$actions || %$actions)) {
 
-            my $update = Jifty->web->escape("update( ". Jifty::JSON::objToJson( {actions => \%actions, fragments => \@fragments }, {singlequote => 1}) .", this );");
+            my $update = Jifty->web->escape("update( ". Jifty::JSON::objToJson( {actions => $actions, fragments => \@fragments, continuation => $self->continuation }, {singlequote => 1}) .", this );");
+            $string .= 'if(event.ctrlKey||event.metaKey||event.altKey||event.shiftKey) return true; ';
             $string .= $self->javascript_preempt ? "return $update" : "$update; return true;";
         }
         if ($confirm) {

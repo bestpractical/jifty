@@ -215,7 +215,7 @@ sub enter {
             $self->argument($2 => $value);
         }
         if ($key =~ /^region-(.*)$/ and $1 eq $self->qualified_name and $value ne $self->default_path) {
-            $self->path($value);
+            $self->path(URI::Escape::uri_unescape($value));
         }
 
         # We should always inherit the state variables from the uplevel request.
@@ -298,7 +298,7 @@ sub as_string {
 sub render_as_subrequest {
     my ($self, $out_method, $arguments, $enable_actions) = @_;
 
-    my $orig_out = Jifty->handler->mason->interp->out_method || \&Jifty::View::Mason::Handler::out_method;
+    my $orig_out = Jifty->handler->mason->interp->out_method || Jifty::View->can('out_method');
 
     Jifty->handler->mason->interp->out_method($out_method);
 
@@ -310,6 +310,17 @@ sub render_as_subrequest {
     $subrequest->path( $self->path );
     $subrequest->top_request( Jifty->web->request->top_request );
 
+    if ($self->path =~ m/\?/) {
+	# XXX: this only happens if we are redirect within region AND
+	# with continuation, which is already taken care of by the
+	# clone.
+	my ($path, $arg) = split(/\?/, $self->path, 2);
+	$subrequest->path( $path );
+	my %args = (map { split /=/, $_ } split /&/, $arg);
+	if ($args{'J:C'}) {
+	    $subrequest->continuation($args{'J:C'});
+	}
+    }
     # Remove all of the actions
     unless ($enable_actions) {
 	$_->active(0) for ($subrequest->actions);

@@ -2,16 +2,14 @@ use warnings;
 use strict;
 
 package Jifty::View::Declare::Helpers;
-use base qw/Template::Declare/;
-use base qw/Exporter/;
+use base qw/Template::Declare Exporter/;
 use Template::Declare::Tags;
 
-our @EXPORT = ( qw(form hyperlink tangent redirect new_action form_submit form_return  form_next_page page wrapper request get set render_param current_user render_action render_region), @Template::Declare::Tags::EXPORT);
-
+our @EXPORT = ( qw(form hyperlink tangent redirect new_action form_submit form_return form_next_page page content wrapper request get set render_param current_user render_action render_region), @Template::Declare::Tags::EXPORT);
 
 =head1 NAME
 
-Jifty::View::Declare::Helpers
+Jifty::View::Declare::Helpers - Additional subroutines for Jifty TD templates
 
 =head1 DESCRIPTION
 
@@ -266,27 +264,44 @@ sub render_param {
 
  template 'foo' => page {{ title is 'Foo' } ... };
 
+  or
+
+ template 'foo' => page { title => 'Foo' } content { ... };
+
 Renders an HTML page wrapped in L</wrapper>, after calling
 "/_elements/nav" and setting a content type. Generally, you shouldn't
 be using "/_elements/nav" but a Dispatcher rule instead.
 
+If C<page/content> calling convention is used, the return value of the
+first sub will be passed into wrapper as the second argument as a
+hashref, as well as the last argument for the content sub.
+
 =cut
 
-sub page (&) {
-    my $code = shift;
+sub page (&;$) {
+    unshift @_, undef if $#_ == 0;
+    my ( $meta, $code ) = @_;
     sub {
         my $self = shift;
         Jifty->handler->apache->content_type('text/html; charset=utf-8');
-        if ( my $wrapper = Jifty->app_class('View')->can('wrapper') ) {
-            $wrapper->(sub { $code->($self)});
-        } else {
-
-        wrapper(sub { $code->($self) });
+        my $wrapper = Jifty->app_class('View')->can('wrapper') || \&wrapper;
+        my @metadata = $meta ? $meta->() : ();
+        my $metadata = $#metadata == 0 ? $metadata[0] : {@metadata};
+        local *is::title = sub { warn "Can't use 'title is' when mixing mason and TD" };
+        $wrapper->( sub { $code->( $self, $metadata ) }, $metadata );
     }
-    };
 }
 
+=head2 content
 
+Helper function for page { ... } content { ... }
+
+=cut
+
+sub content (&;$) {
+    # XXX: Check for only 1 arg
+    return $_[0];
+}
 
 =head2 wrapper $coderef
 
@@ -295,112 +310,42 @@ This badly wants to be redone.
 
 =cut
 
-sub wrapper ($) {
-    my $content_code = shift;
-    my ($title) = get_current_attr(qw(title));
+sub wrapper {
+    my $app_class = get_current_attr('PageClass') || 'View::Page';
+    delete $Template::Declare::Tags::ATTRIBUTES{ 'PageClass' };
 
-    my $done_header;
-    my $render_header = sub {
-        no warnings qw( uninitialized redefine once );
-        $title ||= Jifty->config->framework('ApplicationName');
+    my $page_class = Jifty->app_class( $app_class );
+    $page_class = 'Jifty::View::Declare::Page'
+        unless Jifty::Util->_require( module => $page_class, quiet => 1 );
+    # XXX: fallback, this is ugly
+    Jifty::Util->require( $page_class );
 
-        #   defined $title or return;
-        return if $done_header++;
-        Template::Declare->new_buffer_frame;
-        outs_raw(
-        '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'
-            . '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">' );
-        render_header($title);
-        $done_header = Template::Declare->buffer->data;
-        Template::Declare->end_buffer_frame;
-        return '';
-    };
+    my $page = $page_class->new({ content_code => shift });
 
-    body {
-        div {
-            div {
-            show 'salutation'; 
-            show 'menu'; 
-        };
-            div { attr { id is 'content'};
-                div {
-                    {
-                        no warnings qw( uninitialized redefine once );
+    my ($spa) = Jifty->find_plugin('Jifty::Plugin::SinglePage');
 
-                        local *is::title = sub {
-                            shift;
-                            for (@_) {
-                                if ( ref($_) eq 'CODE' ) {
-                                    Template::Declare->new_buffer_frame;
-                                    $_->();
-                                    $title .= Template::Declare->buffer->data;
-                                    Template::Declare->end_buffer_frame;
-                                } else {
-                                    $title .= Jifty->web->escape($_);
-                                }
-                            }
-                            &$render_header;
-                            my $oldt = get('title'); set(title => $title);
-                            show 'heading_in_wrapper';
-                            set(title => $oldt);
-                        };
-
-                        &_render_pre_content_hook();
-                        Jifty->web->render_messages;
-                        &$content_code;
-                        &$render_header unless ($done_header);
-                        &_render_jifty_page_detritus();
-                }
-
-                };
-            };
-        };
-    };
-    outs_raw('</html>');
-    Template::Declare->buffer->data( $done_header . Template::Declare->buffer->data );
-}
-
-sub _render_pre_content_hook {
-    if ( Jifty->config->framework('AdminMode') ) {
-        with( class => "warning admin_mode" ), div {
-            outs( _('Alert') . ': ' );
-            outs_raw(
-                Jifty->web->tangent(
-                    label => _('Administration mode is enabled.'),
-                    url   => '/__jifty/admin/'
-                )
-            );
-            }
+    # XXX: spa hooks should be moved to page handlers
+    if ($spa && $page->allow_single_page) {
+	# If it's a single page app, we want to either render a
+	# wrapper and then get the region or render just the content
+        if ( !Jifty->web->current_region ) {
+	    $page->render_header;
+            $page->render_body(sub {
+                render_region( $spa->region_name,
+                    path => Jifty->web->request->path );
+            });
+	    $page->render_footer;
+        } else {
+	    $page->done_header(1);
+	    $page->render_page->();
+        }
+    }
+    else {
+	$page->render_body( sub { $page->render_page->() });
+	$page->render_footer;
     }
 }
 
-sub _render_jifty_page_detritus {
-
-    show('keybindings');
-    with( id => "jifty-wait-message", style => "display: none" ),
-        div { _('Loading...') };
-
-    # This is required for jifty server push.  If you maintain your own
-    # wrapper, make sure you have this as well.
-    if ( Jifty->config->framework('PubSub')->{'Enable'} && Jifty::Subs->list )
-    {
-        script { outs('new Jifty.Subs({}).start();') };
-    }
-}
-
-=head2 render_header $title
-
-Renders an HTML "doctype", <head> and the first part of a page body. This bit isn't terribly well thought out and we're not happy with it.
-
-=cut
-
-sub render_header { 
-    my $title = shift || '';
-    $title =~ s/<.*?>//g;    # remove html
-    HTML::Entities::decode_entities($title);
-    with( title => $title ), show('header');
-}               
-                    
 
 
 

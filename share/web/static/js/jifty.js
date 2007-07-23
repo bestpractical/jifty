@@ -121,7 +121,11 @@ Action.prototype = {
                     a['fields'][Form.Element.getField(f)] = {};
                 var field = Form.Element.getField(f);
                 var type = Form.Element.getType(f);
-                    
+
+                // XXX: fallback value being an array makes server
+                // upset, we don't think that should happen anyway
+                if (type == 'fallback' && a['fields'][field][type])
+                    continue                    
                 a['fields'][field][type] = this._mergeValues(a['fields'][field][type],
                                                              Form.Element.getValue(f));
             }
@@ -686,9 +690,12 @@ var apply_fragment_updates = function(fragment, f) {
 	    } else {
 		Element.update(element, textContent.stripScripts());
 	    }
-	    // We need to give the browser some "settle" time before we eval scripts in the body
-	    setTimeout((function() { this.evalScripts() }).bind(textContent), 10);
-	    Behaviour.apply(element);
+	    // We need to give the browser some "settle" time before
+	    // we eval scripts in the body
+        YAHOO.util.Event.onAvailable(element.id, function() {
+            (function() { this.evalScripts() }).bind(textContent)();
+        });
+        Behaviour.apply(element);
 	}
     }
     dom_fragment.setArgs(new_dom_args);
@@ -719,7 +726,6 @@ var apply_fragment_updates = function(fragment, f) {
 //     - 'mode' is one of 'Replace', or the name of a Prototype Insertion
 //     - 'effect' is the name of a Prototype Effect
 function update() {
-    // If we don't have XMLHttpRequest, bail and fallback on full-page
     // loads
     if(!Ajax.getTransport()) return true;
     // XXX: prevent default behavior in IE
@@ -740,11 +746,29 @@ function update() {
     // Grab extra arguments (from a button)
     var button_args = Form.Element.buttonFormElements(trigger);
 
+    var form = Form.Element.getForm(trigger);
+    // If the action is null, take all actions
+    if (named_args['actions'] == null) {
+        named_args['actions'] = {};
+        // default to disable fields
+        if (form)
+            Form.getActions(form).map(function(x){
+                named_args['actions'][x.moniker] = 1;
+            });
+    }
+    var optional_fragments;
+    if (form && form['J:CALL']) 
+	optional_fragments = [ prepare_element_for_update({'mode':'Replace','args':{},'region':'__page','path': null}) ];
     // Build actions structure
     request['actions'] = $H();
     for (var moniker in named_args['actions']) {
         var disable = named_args['actions'][moniker];
         var a = new Action(moniker, button_args);
+        // Special case for Redirect, allow optional, implicit __page
+        // from the response to be used.
+        if (a.actionClass == 'Jifty::Action::Redirect')
+            optional_fragments = [ prepare_element_for_update({'mode':'Replace','args':{},'region':'__page','path': a.fields().last().value}) ];
+
         if (a.register) {
             if (a.hasUpload())
                 return true;
@@ -778,13 +802,14 @@ function update() {
         // Grab the XML response
         var response = transport.responseXML.documentElement;
         // Loop through the result looking for it
+        var expected_fragments = optional_fragments ? optional_fragments : named_args['fragments'];
         for (var response_fragment = response.firstChild;
              response_fragment != null && response_fragment.nodeName == 'fragment';
              response_fragment = response_fragment.nextSibling) {
 
             var f; 
-            for (var i = 0; i < named_args['fragments'].length; i++) {
-                f = named_args['fragments'][i];
+            for (var i = 0; i < expected_fragments.length; i++) {
+                f = expected_fragments[i];
                 if (response_fragment.getAttribute("id") == f['region'])
                     break;
             }
@@ -804,6 +829,13 @@ function update() {
                      key = key.nextSibling) {
                     show_action_result(result.getAttribute("moniker"),key);
                 }
+            }
+        }
+        for (var redirect = response.firstChild;
+             redirect != null;
+             redirect = redirect.nextSibling) {
+            if (redirect.nodeName == 'redirect') {
+                document.location =  redirect.firstChild.firstChild.nodeValue;
             }
         }
     };
@@ -828,6 +860,9 @@ function update() {
         var k = keys[i];
         request['variables']['region-'+k] = current_args[k];
     }
+
+    // Build continuation structure
+    request['continuation'] = named_args['continuation'];
 
     // Push any state variables which we set into the forms
     for (var i = 0; i < document.forms.length; i++) {

@@ -4,13 +4,14 @@ use strict;
 package Jifty::CurrentUser;
 
 use base qw/Jifty::Object Class::Accessor::Fast/;
+use Scalar::Util qw();
 
-__PACKAGE__->mk_accessors(qw(is_superuser is_bootstrap_user user_object));
+__PACKAGE__->mk_accessors(qw(is_superuser is_bootstrap_user));
 
 
 =head1 NAME
 
-Jifty::CurrentUser
+Jifty::CurrentUser - Base class and basic implementation of current user object
 
 =head1 DESCRIPTION
 
@@ -98,6 +99,20 @@ If you do nothing, code similar to this will be called by _init.
 
 =cut
 
+sub user_object {
+    my $self = shift;
+    return $self->{'user_object'} unless @_;
+
+    $self->{'user_object'} = shift;
+    # protect ourself from circular refereces
+    if ( $self->{'user_object'}{'_current_user'} == $self ) {
+        Scalar::Util::weaken( $self->{'user_object'}{'_current_user'} )
+            unless Scalar::Util::isweak( $self->{'user_object'}{'_current_user'} );
+        $self->{'user_object'}{'_resurrect_current_user'} = 1;
+    }
+    return $self->{'user_object'};
+}
+
 =head2 id
 
 Returns C<0> if we don't have a L<user_object>.  When we I<do> have a
@@ -160,7 +175,7 @@ Return a string which identifies the user in some way.
 sub username {
     my $self = shift;
     return undef unless ($self->user_object);
-    return($self->user_object->username(@_));
+    return($self->user_object->brief_description(@_));
 }
 
 =head2 auth_token

@@ -6,16 +6,22 @@ package Jifty::Notification;
 use base qw/Jifty::Object Class::Accessor::Fast/;
 use Email::Send            ();
 use Email::MIME::Creator;
+use Email::MIME::CreateHTML;
+use Email::MIME::Modifier;
 
 __PACKAGE__->mk_accessors(
-    qw/body preface footer subject from _recipients _to_list to/);
+    qw/body html_body preface footer subject from _recipients _to_list to/);
+
+=head1 NAME
+
+Jifty::Notification - Send emails from Jifty
 
 =head1 USAGE
 
 It is recommended that you subclass L<Jifty::Notification> and
-override C<body>, C<subject>, C<recipients>, and C<from> for each
-message.  (You may want a base class to provide C<from>, C<preface>
-and C<footer> for example.)  This lets you keep all of your
+override C<body>, C<html-body>, C<subject>, C<recipients>, and C<from>
+for each message.  (You may want a base class to provide C<from>,
+C<preface> and C<footer> for example.)  This lets you keep all of your
 notifications in the same place.
 
 However, if you really want to make a notification type in code
@@ -74,8 +80,13 @@ the C<Mailer> and C<MailerArgs> configuration arguments.  Returns true
 if mail was actually sent.  Note errors are not the only cause of mail
 not being sent -- for example, the recipients list could be empty.
 
-Be aware that if you haven't set C<recipients>, this will fail silently
-and return without doing anything useful.
+If you wish to send HTML mail, set C<html_body>.  If this is not set
+(for backwards compatibility) a plain-text email is sent.  If
+C<html_body> and C<body> are both set, a multipart mail is sent.  See
+L<Email::MIME::CreateHTML> for how this is done.
+
+Be aware that if you haven't set C<recipients>, this will fail
+silently and return without doing anything useful.
 
 =cut
 
@@ -86,18 +97,40 @@ sub send_one_message {
         map { ( $_->can('email') ? $_->email : $_ ) } grep {$_} @recipients );
     $self->log->debug("Sending a ".ref($self)." to $to"); 
     return unless ($to);
-
+    my $message = "";
     my $appname = Jifty->config->framework('ApplicationName');
 
-    my $message = Email::MIME->create(
-        header => [
-            From    => ($self->from    || _('%1 <%2>' , $appname, Jifty->config->framework('AdminEmail'))) ,
-            To      => $to,
-            Subject => Encode::encode('MIME-Header', $self->subject || _("A notification from %1!",$appname )),
-        ],
-        attributes => { charset => 'UTF-8' },
-        parts => $self->parts
-    );
+    my %attrs = ( charset => 'UTF-8' );
+
+    if ($self->html_body) {
+      $message = Email::MIME->create_html(
+					     header => [
+							From    => ($self->from    || _('%1 <%2>' , $appname, Jifty->config->framework('AdminEmail'))) ,
+							To      => $to,
+							Subject => Encode::encode('MIME-Header', $self->subject || _("A notification from %1!",$appname )),
+						       ],
+					     attributes => \%attrs,
+                         text_body_attributes => \%attrs,
+                         body_attributes => \%attrs,
+					     text_body => Encode::encode_utf8($self->full_body),
+					     body => Encode::encode_utf8($self->full_html),
+                         embed => 0,
+                         inline_css => 0
+					    );
+        # Since the containing messsage will still be us-ascii otherwise
+        $message->charset_set( $attrs{'charset'} );
+    } else {
+            $message = Email::MIME->create(
+					     header => [
+							From    => ($self->from    || _('%1 <%2>' , $appname, Jifty->config->framework('AdminEmail'))) ,
+							To      => $to,
+							Subject => Encode::encode('MIME-Header', $self->subject || _("A notification from %1!",$appname )),
+						       ],
+					     attributes => \%attrs,
+					     
+					     parts => $self->parts
+					    );
+	  }
     $message->encoding_set('8bit')
         if (scalar $message->parts == 1);
     $self->set_headers($message);
@@ -257,6 +290,17 @@ body, and footer joined by newlines.
 sub full_body {
   my $self = shift;
   return join( "\n", grep { defined } $self->preface, $self->body, $self->footer );
+}
+
+=head2 full_html
+
+Same as full_body, but with HTML.
+
+=cut
+
+sub full_html {
+  my $self = shift;
+  return join( "\n", grep { defined } $self->preface, $self->html_body, $self->footer );
 }
 
 =head2 parts

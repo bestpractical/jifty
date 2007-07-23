@@ -144,7 +144,7 @@ sub return_path_matches {
 =head2 call
 
 Call the continuation; this is generally done during request
-processing, after an actions have been run.
+processing, after actions have been run.
 L<Jifty::Request::Mapper>-controlled values are filled into the stored
 request based on the current request and response.  During the
 process, another continuation is created, with the filled-in results
@@ -156,6 +156,12 @@ proper path, with that continuation.
 sub call {
     my $self = shift;
 
+    Jifty->log->debug("Redirect to @{[$self->request->path]} via continuation");
+    if (Jifty->web->request->argument('_webservice_redirect')) {
+	# for continuation - perform internal redirect under webservices.
+        Jifty->web->webservices_redirect($self->request->path);
+	return;
+    }
     # If we needed to fix up the path (it contains invalid
     # characters) then warn, because this may cause infinite
     # redirects
@@ -189,6 +195,7 @@ sub call {
 
     # Redirect to right page if we're not there already
     Jifty->web->_redirect($next->request->path . "?J:RETURN=" . $next->id);
+    return 1;
 }
 
 =head2 return

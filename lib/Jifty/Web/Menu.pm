@@ -6,6 +6,12 @@ use Scalar::Util ();
 
 __PACKAGE__->mk_accessors(qw(label parent sort_order link target escape_label class));
 
+=head1 NAME
+
+Jifty::Web::Menu - Handle the API for menu navigation
+
+=head1 METHODS
+
 =head2 new PARAMHASH
 
 Creates a new L<Jifty::Web::Menu> object.  Possible keys in the

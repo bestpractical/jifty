@@ -7,6 +7,12 @@ use base qw/Jifty::Web::Form::Field/;
 
 __PACKAGE__->mk_accessors(qw(rows cols));
 
+=head1 NAME
+
+Jifty::Web::Form::Field::Textarea - Add a multiline text field to your forms
+
+=head1 METHODS
+
 =head2 accessors
 
 Provide C<rows> and C<cols> accessors, in addition to

@@ -4,30 +4,42 @@ use strict;
 
 =head1 NAME
 
-Jifty::Plugin::Authentication::Password::Login::View
+Jifty::Plugin::Authentication::Password::View - views for password plugin
 
 =head1 DESCRIPTION
 
-This code is only useful on the new Jifty "Declarative tempaltes" branch. It shouldn't get in the way 
-if you're running a traditional (0.610 or before) Jifty.
+This code is only useful on the new Jifty "Declarative templates" branch. It shouldn't get in the way if you're running a traditional (0.610 or before) Jifty.
+
+=begin comment
+
+Is the above really true or need to said anymore? -- Sterling
+
+=end comment
+
+This provides the templates for the pages and forms used by the password authentication plugin.
 
 =cut
 
 package Jifty::Plugin::Authentication::Password::View;
-use HTML::Entities ();
 use Jifty::View::Declare -base;
 
 { no warnings 'redefine';
-sub page (&) {
+sub page (&;$) {
     no strict 'refs'; 
     BEGIN {Jifty::Util->require(Jifty->app_class('View'))};
-    &{Jifty->app_class('View') . "::page"}(@_);
+    Jifty->app_class('View')->can('page')->(@_);
 }
 }
 
+=head1 TEMPLATES
 
-template 'signup' => page {
-    title is _('Sign up');
+=head2 signup
+
+Displays a sign-up form.
+
+=cut
+
+template 'signup' => page { title => _('Sign up') } content {
     my ( $action, $next ) = get(qw(action next));
     Jifty->web->form->start( call => $next );
     render_param( $action => 'name' , focus => 1);
@@ -36,10 +48,25 @@ template 'signup' => page {
     Jifty->web->form->end();
 };
 
-template login => page {
-    { title is _('Login!') };
-    show('login_widget');
+=head2 login
+
+Displays the login form.
+
+=cut
+
+template login => page { title => _('Login!') } content {
+    show('/login_widget');
 };
+
+=head2 login_widget
+
+A handy template for embedding the login form. Just include it in your templates via:
+
+  show('/login_widget');
+
+See L<Jifty::Plugin::Authentication::Password::Action::Login>.
+
+=cut
 
 template login_widget => sub {
 
@@ -70,9 +97,16 @@ template login_widget => sub {
     }
 };
 
-template 'let/reset_lost_password' => page {
+=head2 let/reset_lost_password
+
+After requesting a password reset and clicking on the link sent by email, this receives that click and provides the form for resetting the password.
+
+See L<Jifty::Plugin::Authentication::Action::ResetLostPassword>.
+
+=cut
+
+template 'let/reset_lost_password' => page { title => 'Reset lost password' } content {
     my ( $next ) = get(qw(next));
-    title is 'Reset lost password' ;
     my $action = Jifty->web->new_action( class => 'ResetLostPassword' );
 
     Jifty->web->form->start( call => $next );
@@ -81,19 +115,34 @@ template 'let/reset_lost_password' => page {
     Jifty->web->form->end();
 };
 
+=head2 let/confirm_email
+
+Handles the work of confirming an email address for a new account.
+
+See L<Jifty::Plugin::Authenticaiton::Password::View>.
+
+=cut
+
 template 'let/confirm_email' => sub {
     new_action( class => 'ConfirmEmail' )->run;
     redirect("/");
 };
 
-template 'lost_password' => page {
+=head2 lost_password
+
+Starts the process of sending a link to reset a lost password by email.
+
+See L<Jifty::Plugin::Authentication::Password::SendPasswordReminder>.
+
+=cut
+
+template 'lost_password' => page { title => 'Send a link to reset your password' } content {
     my ( $next ) = get(qw(next));
     my $action = Jifty->web->new_action(
         moniker => 'password_reminder',
         class   => 'SendPasswordReminder',
     );
 
-    title is _('Send a link to reset your password');
     outs( _(  "You lost your password. A link to reset it will be sent to the following email address:"));
     my $focused = 0;
     Jifty->web->form->start( call => $next );
@@ -103,9 +152,22 @@ template 'lost_password' => page {
 
 };
 
-template 'passwordreminder' => page {
+=head2 passwordreminder
+
+Starts the process of sending a link to reset a lost password by email.
+
+See L<Jifty::Plugin::Authentication::Password::SendPasswordReminder>.
+
+=begin comment
+
+What's the difference between lost_password and passwordreminder? -- Sterling
+
+=end comment
+
+=cut
+
+template 'passwordreminder' => page { title => 'Send a password reminder' } content {
     my $next = get('next');
-     title is  _('Send a password reminder');
     my $action = Jifty->web->new_action(
         moniker => 'password_reminder',
         class   => 'SendPasswordReminder',
@@ -118,5 +180,53 @@ template 'passwordreminder' => page {
         form_return( label => _("Send"), submit => $action);
     Jifty->web->form->end();
 };
+
+=head2 resend_confirmation
+
+Request a new email confirmation message be sent to your email account.
+
+See L<Jifty::Plugin::Authentication::Password::Action::ResendConfirmation>.
+
+=cut
+
+template 'resend_confirmation' => page { title => 'Resend Confirmation Email' } content {
+    my $resend = Jifty->web->new_action(
+        class   => 'ResendConfirmation',
+        moniker => 'resendconf'
+    );
+
+    if (    Jifty->web->current_user->id
+        and Jifty->web->current_user->user_object->email_confirmed )
+    {
+        Jifty->web->redirect('/');
+    } else {
+        div {
+            attr { id => 'overview' };
+            form {
+                Jifty->web->form->next_page( url => '/' );
+
+                p {
+                    _(  q{Fill in your address below, and we'll send out another confirmation email to you. }
+                    );
+                    render_param( $resend => 'email', focus => 1 );
+                    form_submit( label => 'Resend Confirmation' );
+                    }
+                }
+            }
+
+    }
+};
+
+=head1 SEE ALSO
+
+L<Jifty::Plugin::Authentication::Password>, L<Jifty::Plugin::Authentication::Password::Dispatcher>
+
+=head1 LICENSE
+
+Jifty is Copyright 2005-2007 Best Practical Solutions, LLC.
+Jifty is distributed under the same terms as Perl itself.
+
+=cut
+
 
 1;

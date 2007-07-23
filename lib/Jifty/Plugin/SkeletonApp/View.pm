@@ -15,7 +15,9 @@ Jifty::Plugin::SkeletonApp::View
 =head1 DESCRIPTION
 
 This somewhat-finished (But not quite) template library implements
-Jifty's "pony" Application. It could certainly use some refactoring. (And some of the menu stuff should get factored out into a dispatcher or the other plugins that implement it.
+Jifty's "pony" Application. It could certainly use some
+refactoring. (And some of the menu stuff should get factored out into
+a dispatcher or the other plugins that implement it.
 
 
 =cut
@@ -26,9 +28,7 @@ private template 'salutation' => sub {
         if (    Jifty->web->current_user->id
             and Jifty->web->current_user->user_object )
         {
-            my $u      = Jifty->web->current_user->user_object;
-            my $method = $u->_brief_description;
-            eval {_( 'Hiya, %1.', $u->$method() )};
+            _( 'Hiya, %1.', Jifty->web->current_user->username );
         }
         else {
             _("You're not currently signed in.");
@@ -69,7 +69,8 @@ private template 'heading_in_wrapper' => sub {
 };
 
 private template 'keybindings' => sub {
-    div { id is "keybindings" };
+    div { id is "keybindings";
+      outs_raw('<script type="text/javascript"><!-- Jifty.KeyBindings.reset() --></script>') };
 };
 
 #template 'index.html' => page { { title is _('Welcome to your new Jifty application') } img { src is "/static/images/pony.jpg", alt is _( 'You said you wanted a pony. (Source %1)', 'http://hdl.loc.gov/loc.pnp/cph.3c13461'); }; };

@@ -87,7 +87,11 @@ sub query_parameters {
             for (grep {/^(result(_of)?|argument(_to)?)$/} keys %mapping) {
                 my $action  = $mapping{$_};
                 my $moniker = ref $action ? $action->moniker : $action;
-                my $name = $mapping{name} || $key;
+                # If $key is for an argument of an action, we want to
+                # extract only the argument's name, and not just use
+                # the whole encoded J:A:F-... string.
+                my (undef, $a, undef) = Jifty::Request->parse_form_field_name($key);
+                my $name = $mapping{name} || $a || $key;
 
                 my $type = ($_ =~ /result/) ? "R" : "A";
 
@@ -120,7 +124,7 @@ The C<value> of a query parameter
 
 =item request
 
-The L<Jifty::Request> object to pull action arguments from.  Defauts
+The L<Jifty::Request> object to pull action arguments from.  Defaults
 to the current request.
 
 =item response

@@ -98,8 +98,7 @@ sub _calculate_share {
         eval { $self->{share} = module_dir($class) };
     }
     unless ( $self->{share} ) {
-        local $@; # We're just avoiding File::ShareDir's failure behaviour of dying
-        eval { $self->{share} = module_dir('Jifty') };
+        $self->{share} = Jifty::Util->share_root;
         if ( $self->{'share'} ) {
             my $class_to_path = $class;
             $class_to_path =~ s|::|/|g;
@@ -182,6 +181,58 @@ Returns an array of plugin module names that this plugin depends on.
 
 sub prereq_plugins {
     return ();
+}
+
+=head2 version
+
+Returns the database version of the plugin. Needs to be bumped any time the database schema needs to be updated. Plugins that do not directly define any models don't need to worry about this.
+
+=cut
+
+sub version {
+    return '0.0.1';
+}
+
+=head2 bootstrapper
+
+Returns the name of the class that can be used to bootstrap the database models. This normally returns the plugin's class name with C<::Bootstrap> added to the end. Plugin bootstrappers can be built in exactly the same way as application bootstraps.
+
+See L<Jifty::Bootstrap>.
+
+=cut
+
+sub bootstrapper {
+    my $self = shift;
+    my $class = ref $self;
+    return $class . '::Bootstrap';
+}
+
+=head2 upgrade_class
+
+Returns the name of the class that can be used to upgrade the database models and schema (such as adding new data, fixing default values, and renaming columns). This normally returns the plugin's class name with C<::Upgrade> added to the end. Plugin upgraders can be built in exactly the same was as application upgrade classes.
+
+See L<Jifty::Upgrade>.
+
+=cut
+
+sub upgrade_class {
+    my $self = shift;
+    my $class = ref $self;
+    return $class . '::Upgrade';
+}
+
+=head2 table_prefix
+
+Returns a prefix that will be placed in the front of all table names for plugin models. Be default, the plugin name is converted to an identifier based upon the class name.
+
+=cut
+
+sub table_prefix {
+    my $self = shift;
+    my $class = ref $self;
+    $class =~ s/\W+/_/g;
+    $class .= '_';
+    return lc $class;
 }
 
 1;

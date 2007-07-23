@@ -2,7 +2,7 @@
 build_requires: 
   ExtUtils::MakeMaker: 6.11
 distribution_type: module
-generated_by: Module::Install version 0.650
+generated_by: Module::Install version 0.670
 license: Perl
 meta-spec: 
   url: http://module-build.sourceforge.net/META-spec-v1.3.html
@@ -39,6 +39,7 @@ recommends:
   Test::HTTP::Server::Simple: 0.02
   Test::MockModule: 0.05
   Test::MockObject: 1.07
+  WWW::Facebook::API: 0.3.6
 requires: 
   App::CLI: 0.03
   CGI: 3.19
@@ -49,6 +50,7 @@ requires:
   Class::Accessor: 0
   Class::Container: 0
   Class::Data::Inheritable: 0
+  Class::Trigger: 0
   Compress::Zlib: 0
   Crypt::CBC: 0
   Crypt::Rijndael: 0
@@ -61,6 +63,7 @@ requires:
   Email::LocalDelivery: 0
   Email::MIME: 0
   Email::MIME::ContentType: 0
+  Email::MIME::CreateHTML: 0
   Email::MIME::Creator: 0
   Email::Send: 1.99_01
   Email::Simple: 0
@@ -80,15 +83,16 @@ requires:
   Hash::Merge: 0
   Hook::LexWrap: 0
   IPC::PubSub: 0.23
+  IPC::Run3: 0
   JSON::Syck: 0.15
-  Jifty::DBI: 0.40
+  Jifty::DBI: 0.42
   LWP::UserAgent: 0
   Locale::Maketext::Extract: 0.20
   Locale::Maketext::Lexicon: 0.60
   Log::Log4perl: 1.04
   MIME::Types: 0
   Module::CoreList: 0
-  Module::Pluggable: 3.1
+  Module::Pluggable: 3.5
   Module::Pluggable::Object: 0
   Module::Refresh: 0
   Module::ScanDeps: 0
@@ -99,8 +103,10 @@ requires:
   Scalar::Defer: 0.10
   Shell::Command: 0
   String::Koremutake: 0
-  Template::Declare: 0.07
+  Template::Declare: 0.21
   Test::Base: 0
+  Test::Log4perl: 0
+  Test::LongString: 0
   Test::More: 0.62
   Test::Pod::Coverage: 0
   Test::WWW::Mechanize: 1.04

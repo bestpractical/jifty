@@ -221,7 +221,9 @@ sub from_cgi {
     my $self = shift;
     my ($cgi) = @_;
 
-    my $path = $cgi->path_info;
+    # always get the unescaped path for dispatcher, which is already
+    # the case for fastcgi, but not standalone.
+    my $path = URI::Escape::uri_unescape($cgi->path_info);
     $path =~ s/\?.*//;
     $self->path( $path );
 
@@ -511,7 +513,8 @@ sub save_continuation {
     );
 
     # Set us up with the new continuation
-    Jifty->web->_redirect( Jifty->web->url(path => $path)
+    Jifty->web->_redirect( 
+                        $path
                       . ( $path =~ /\?/ ? "&" : "?" ) . "J:C="
                       . $c->id );
 }
@@ -530,8 +533,7 @@ sub call_continuation {
     return if $self->is_subrequest;
     return unless $self->continuation_type and $self->continuation_type eq "call" and $self->continuation;
     $self->log->debug("Calling continuation ".$self->continuation->id);
-    $self->continuation->call;
-    return 1;
+    return $self->continuation->call;
 }
 
 =head2 return_from_continuation

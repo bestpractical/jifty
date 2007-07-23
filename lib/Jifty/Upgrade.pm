@@ -3,7 +3,7 @@ use strict;
 
 =head1 NAME
 
-Jifty::Upgrade
+Jifty::Upgrade - Superclass for schema/data upgrades to Jifty applicaitons
 
 =head1 DESCRIPTION
 
@@ -151,5 +151,13 @@ sub rename {
     # Remember renames so that adds/drops are canceled
     $package->just_renamed($renamed);
 }
+
+
+
+=head1 SEE ALSO
+
+L<Jifty::Manual::Upgrading>
+
+=cut
 
 1;

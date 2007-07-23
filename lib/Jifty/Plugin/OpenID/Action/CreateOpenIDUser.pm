@@ -10,6 +10,12 @@ Jifty::Plugin::OpenID::Action::CreateOpenIDUser
 package Jifty::Plugin::OpenID::Action::CreateOpenIDUser;
 use base qw/Jifty::Action::Record/;
 
+=head2 record_class 
+
+Returns the record class for this action
+
+=cut
+
 sub record_class {
     Jifty->app_class("Model", "User")
 }
@@ -95,7 +101,7 @@ sub take_action {
 sub report_success {
     my $self = shift;
     # Your success message here
-    $self->result->message( _("Welcome, ") . Jifty->web->current_user->user_object->name . "." );
+    $self->result->message( _("Welcome, ") . Jifty->web->current_user->username . "." );
 }
 
 1;

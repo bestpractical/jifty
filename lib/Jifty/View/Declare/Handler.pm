@@ -10,7 +10,7 @@ __PACKAGE__->mk_accessors(qw/root_class/);
 
 =head1 NAME
 
-Jifty::View::Declare::Handler
+Jifty::View::Declare::Handler - The Jifty view handler for Template::Declare
 
 =head1 METHODS
 
@@ -74,7 +74,8 @@ sub show {
         shift;    # Turn the method into a function
         goto &Template::Declare::Tags::outs_raw;
     };
-    my $content = Template::Declare::Tags::show_page( $template );
+    
+    my $content = Template::Declare::Tags::show_page( $template, Jifty->web->request->arguments );
     return unless defined $content && length $content;
 
     my $r = Jifty->handler->apache;

@@ -16,6 +16,15 @@ into the proper timezone.
 
 =cut
 
+BEGIN {
+    # we spent about 30% of the time in validate during 'require
+    # DateTime::Locale' which isn't necessary at all
+    require Params::Validate;
+    no warnings 'redefine';
+    local *Params::Validate::validate = sub { pop @_, return @_ };
+    require DateTime::Locale;
+}
+
 use base qw(Jifty::Object DateTime);
 
 
@@ -51,6 +60,7 @@ Return timezone if the current user has it
 sub current_user_has_timezone {
     my $self = shift;
     $self->_get_current_user();
+    return unless $self->current_user->can('user_object');
     my $user_obj = $self->current_user->user_object or return;
     my $f = $user_obj->can('time_zone') or return;
     return $f->($user_obj);

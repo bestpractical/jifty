@@ -5,12 +5,25 @@ package Jifty::Plugin::SiteNews::View::News;
 use Jifty::View::Declare -base;
 use Jifty::View::Declare::CRUD;
 
+=head1 NAME
+
+Jifty::Plugin::SiteNews::View::News
+
+=head1 DESCRIPTION
+
+The /news pages for L<Jifty::Plugin::SiteNews>
+
+=cut
+
 import_templates Jifty::View::Declare::CRUD under '/';
 
+=head2 object_type
+
+News
+
+=cut
+
 sub object_type { 'News' }
-
-sub fragment_base_path {'/news'}
-
 
 template search_region => sub {''};
 
@@ -19,7 +32,7 @@ template 'index.html' => page {
     form {
             render_region(
                 name     => 'newslist',
-                path     => '/news/list');
+                path     => 'list');
     }
 
 };

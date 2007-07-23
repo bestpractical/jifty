@@ -9,7 +9,7 @@ use vars qw/%PUBLISHER/;
 
 =head1 NAME
 
-Jifty::Event
+Jifty::Event - Event objects for publish/subscribe communication
 
 =head1 DESCRIPTION
 

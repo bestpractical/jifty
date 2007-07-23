@@ -63,4 +63,35 @@ before '/before_stage_show' => run { show '/index.html'; };
 on '/on_stage_show' => run { show '/index.html'; };
 after '/after_stage_show' => run { show '/index.html'; };
 
+
+
+before 'pre-redir-region' => run {
+    redirect('/post-redir-region');
+
+};
+
+before '__jifty/webservices/*' => run {
+    my (@actions) = grep { $_->class eq 'Jifty::Action::Redirect' } values %{ Jifty->web->request->{'actions'} };
+    $_->active(0) for @actions;
+};
+
+on qr{(__jifty/webservices/.*)} => run {
+    use Data::Dumper;
+    for $act (@actions) {
+	warn Dumper($act);
+    }
+};
+
+on HTTPS '/dispatch/protocol' => run {
+    set content => 'HTTPS';
+};
+
+on HTTP '/dispatch/protocol' => run {
+    set content => 'NOT HTTPS';
+};
+
+on '/dispatch/protocol' => run {
+    set footer => 'normal';
+};
+
 1;

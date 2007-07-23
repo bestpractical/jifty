@@ -24,7 +24,7 @@ make up a Jifty application's API
  my @actions = Jifty->api->actions;
 
  # Check to see if an action is allowed
- if (Jifty->api->is_allow('TrueFooBar')) {
+ if (Jifty->api->is_allowed('TrueFooBar')) {
      # do something...
  }
 
@@ -85,13 +85,13 @@ sub qualify {
     my $self   = shift;
     my $action = shift;
 
-    my $base_path = Jifty->app_class("Action");
+    my $base_path = Jifty->app_class;
 
     return $action
-        if $action =~ /^Jifty::/
-        or $action =~ /^\Q$base_path\E/;
+        if ($action =~ /^Jifty::/
+        or $action =~ /^\Q$base_path\E::/);
 
-    return $base_path . "::" . $action;
+    return $base_path . "::Action::" . $action;
 }
 
 =head2 reset
@@ -204,7 +204,7 @@ sub restrict {
 
 =head2 is_allowed CLASS
 
-Returns false if the I<CLASS> name (which is fully qualified if it is
+Returns true if the I<CLASS> name (which is fully qualified if it is
 not already) is allowed to be executed.  See L</restrict> above for
 the rules that the class name must pass.
 

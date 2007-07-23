@@ -93,7 +93,7 @@ use warnings;
 package $mod_name;
 use base qw/Jifty::Plugin/;
 
-# Your plugin goes here.  If takes any configuration or arguments, you
+# Your plugin goes here.  If it takes any configuration or arguments, you
 # probably want to override L<Jifty::Plugin/init>.
 
 1;

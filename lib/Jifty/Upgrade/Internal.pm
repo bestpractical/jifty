@@ -9,6 +9,12 @@ use Jifty::Model::Metadata;
 # XXX TODO: there's probably a cleaner way to cope than "INITIAL_VERSION", perhaps using ->VERSIONS
 our $INITIAL_VERSION;
 
+=head1 NAME
+
+Jifty::Upgrade::Internal - Upgrades to Jifty-specific schemas and data
+
+=head1 UPGRADES
+
 =head2 Version 0.60427
 
 Version metadata, previously stored in _db_version, get migrated to
