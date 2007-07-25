@@ -335,6 +335,13 @@ template 'list' => sub {
 
 };
 
+=head2 per_page
+
+This routine returns how many items should be shown on each page of a listing.
+The default is 25.
+
+=cut
+
 sub per_page { 25 }
 
 sub _current_collection {

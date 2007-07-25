@@ -1157,7 +1157,8 @@ function update() {
              response_fragment = response_fragment.nextSibling) {
 
             var exp_id = response_fragment.getAttribute("id");
-            if (!expected_fragments.find(function(f) { return exp_id == f['region'] }))
+            var f = expected_fragments.find(function(f) { return exp_id == f['region'] });
+            if (!f)
                 continue;
 
             try {
