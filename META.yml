@@ -65,6 +65,7 @@ requires:
   Email::MIME::ContentType: 0
   Email::MIME::CreateHTML: 0
   Email::MIME::Creator: 0
+  Email::MIME::Modifier: 0
   Email::Send: 1.99_01
   Email::Simple: 0
   Email::Simple::Creator: 0
@@ -97,6 +98,7 @@ requires:
   Module::Refresh: 0
   Module::ScanDeps: 0
   Object::Declare: 0.13
+  PadWalker: 0
   Params::Validate: 0
   Pod::Simple: 0
   SQL::ReservedWords: 0

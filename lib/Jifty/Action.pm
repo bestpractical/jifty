@@ -119,6 +119,26 @@ sub new {
         $self->_get_current_user();
     }
 
+
+    if ( $args{'moniker'} ) {
+        if ( $args{'moniker'} =~ /[\;]/ ) {
+            $args{'moniker'} =~ s/[\;]/_/g;
+            $self->log->warn(
+                "Moniker @{[$args{'moniker'}]} contains invalid characters. It should not contain any ';' characters. "
+                    . "It has been autocorrected, but you should correct your code"
+            );
+        }
+        if ( $args{'moniker'} =~ /^\d/ ) {
+            $args{'moniker'} = "fixup-" . $args{'moniker'};
+            $self->log->warn(
+                "Moniker @{[$args{'moniker'}]} contains invalid characters. It can not begin with a digit. "
+                    . "It has been autocorrected, but you should correct your code"
+            );
+
+        }
+    }
+
+
     $self->moniker($args{'moniker'} || $self->_generate_moniker);
     $self->order($args{'order'});
 
