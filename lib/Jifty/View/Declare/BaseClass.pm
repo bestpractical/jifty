@@ -4,7 +4,6 @@ use strict;
 use warnings;
 use base qw/Exporter Jifty::View::Declare::Helpers/;
 use Scalar::Defer;
-use Template::Declare::Tags;
 use PadWalker;
 
 use Jifty::View::Declare::Helpers;
