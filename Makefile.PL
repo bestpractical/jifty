@@ -144,7 +144,11 @@ features(
     ],
     'Jifty console' => [
         -default => 0,
-        recommends('Devel::EvalContext')
+        recommends('Devel::EvalContext'),
+    ],
+    'Chart Plugin' => [
+        -default => 0,
+        recommends('Chart::Base'),
     ],
 );
 
