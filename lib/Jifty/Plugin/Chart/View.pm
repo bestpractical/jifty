@@ -4,8 +4,6 @@ use warnings;
 package Jifty::Plugin::Chart::View;
 use Jifty::View::Declare -base;
 
-use IO::String;
-
 =head1 NAME
 
 Jifty::Plugin::Chart::View - Views for the renderers built into the Chart plugin
@@ -24,21 +22,22 @@ template 'chart' => sub {
     # Load the arguments
     my $args = get 'args';
 
-    # Use the "type" to determine which class to use
-    my $class = 'Chart::' . $args->{type};
-
-    # Load that class or die if it does not exist
-    eval "use $class";
-    die $@ if $@;
 
     # Set the output type to the PNG file type
     Jifty->handler->apache->content_type('image/png');
 
     # Render the chart and output the PNG file generated
-    my $fh = IO::String->new;
-    my $chart = $class->new( $args->{width}, $args->{height} );
-    $chart->png($fh, $args->{data});
-    outs_raw( ${ $fh->string_ref } )
+    eval {
+        my $chart = $args->{class}->new( $args->{width}, $args->{height} );
+        # XXX scalar_png() is undocumented!!! Might bad to rely upon.
+        outs_raw($chart->scalar_png($args->{data}));
+    };
+
+    # Should have thrown an error if bad stuff happened, handle that
+    if ($@) {
+        Jifty->log->error("Failed to render chart: $@");
+        die $@;
+    }
 };
 
 =head1 SEE ALSO

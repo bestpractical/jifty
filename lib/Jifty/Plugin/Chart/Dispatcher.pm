@@ -19,13 +19,26 @@ Grabs the chart configuration stored in the key indicated in C<$1> and unpacks i
 =cut
 
 on 'chart/*' => run {
+    # Create a session ID to lookup the chart configuration
     my $session_id = 'chart_' . $1;
 
+    # Unpack the data and then clear it from the session
     my $args = Jifty::YAML::Load( Jifty->web->session->get( $session_id ) );
     Jifty->web->session->remove( $session_id );
 
+    # No data? Act like a 404
     last_rule unless defined $args;
 
+    # Use the "type" to determine which class to use
+    my $class = 'Chart::' . $args->{type};
+
+    # Load that class or die if it does not exist
+    $class->require;
+
+    # Remember the class name for the view
+    $args->{class} = $class;
+
+    # Send them on to chart the chart
     set 'args' => $args;
     show 'chart';
 };
@@ -36,7 +49,7 @@ L<Jifty::Plugin::Chart::View>
 
 =head1 AUTHOR
 
-Andrew Sterling Hanenkamp E<< <andrew.hanenkamp@boomer.com> >>
+Andrew Sterling Hanenkamp C<< <andrew.hanenkamp@boomer.com> >>
 
 =head1 COPYRIGHT AND LICENSE
 
