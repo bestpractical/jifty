@@ -149,6 +149,7 @@ features(
     'Chart Plugin' => [
         -default => 0,
         recommends('Chart::Base'),
+        recommends('Image::Info'), # for testing
     ],
 );
 
