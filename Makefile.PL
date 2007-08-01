@@ -146,9 +146,10 @@ features(
         -default => 0,
         recommends('Devel::EvalContext'),
     ],
-    'Chart Plugin' => [
+    'Chart Plugin (none of these must be installed for Charts to work)' => [
         -default => 0,
         recommends('Chart::Base'),
+        recommends('GD::Graph'),
         recommends('Image::Info'), # for testing
     ],
 );
