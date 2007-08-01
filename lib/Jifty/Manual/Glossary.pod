@@ -102,12 +102,14 @@ Jifty uses L<Jifty::DBI> to store its data (though might use other storage tools
 
 =item moniker
 
-Every instance of a L<Jifty::Action> has a B<moniker>.  A moniker is
-an arbitrary-length nonempty string containing no semicolons.
-Monikers serve as identifiers for actions, to associate arguments with
-actions and to access specific actions "by name".  Monikers need not
-be globally unique, but they must be unique within a single request.
+Every instance of a L<Jifty::Action> has a B<moniker>.  Monikers
+serve as identifiers for actions, to associate arguments with actions
+and to access specific actions "by name".  Monikers need not be
+globally unique, but they must be unique within a single request.
 Monikers have no semantic meaning. See L<Jifty::Action/monikers>
+
+A moniker is an arbitrary-length nonempty string containing no
+semicolons. It may not begin with a digit.
 
 =item parameter
 

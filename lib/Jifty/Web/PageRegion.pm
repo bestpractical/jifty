@@ -384,4 +384,30 @@ sub get_element {
     return "#region-" . $self->qualified_name . ' ' . join(' ', @_);
 }
 
+my $can_compile = eval 'use Jifty::View::Declare::Compile; 1' ? 1 : 0;
+
+=head2 client_cacheable
+
+=cut
+
+sub client_cacheable {
+    my $self = shift;
+    return unless $can_compile;
+
+    return Jifty::View::Declare::BaseClass->client_cacheable($self->path);
+}
+
+=head2 client_cacheable
+
+=cut
+
+sub client_cache_content {
+    my $self = shift;
+    return unless $can_compile;
+
+    return Jifty::View::Declare::Compile->compile_to_js(
+        Jifty::View::Declare::BaseClass->_actual_td_code($self->path)
+    );
+}
+
 1;

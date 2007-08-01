@@ -76,6 +76,44 @@ sub load {
     $self->{cache} = undef;
 }
 
+=head2 load_by_kv key => value OR key, default, callback
+
+Load up the current session from the given (key, value) pair. If no matching
+session could be found, it will create a new session with the key, value set.
+Be sure that what you're loading by is unique. If you're loading a session
+based on, say, a timestamp, then you're asking for trouble.
+
+The second form is used when you have a complex value. Each value for the
+given key is passed to the callback. The callback should return true if
+there's a match. The default value is used to create a new entry when no
+value was chosen.
+
+=cut
+
+sub load_by_kv {
+    my $self = shift;
+    my $k = shift;
+    my $v = shift;
+    my $callback = shift || sub { $_[0] eq $v };
+    my $session_id;
+
+    # tried doing this with load_by_cols but it never returned any rows
+    my $sessions = Jifty::Model::SessionCollection->new;
+    $sessions->limit(column => 'key_type', value => 'key');
+    $sessions->limit(column => 'data_key', value => $k );
+
+    while (my $row = $sessions->next) {
+        my $match = $callback->($row->value);
+        if ($match) {
+            $session_id = $row->session_id;
+            last;
+        }
+    }
+
+    $self->load($session_id);
+    $self->set($k => $v) if !$session_id;
+}
+
 sub _get_session_id_from_client {
         my $self = shift;
         my %cookies    = CGI::Cookie->fetch();

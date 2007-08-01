@@ -7,12 +7,12 @@ use lib 't/lib';
 use Jifty::SubTest;
 BEGIN { $ENV{'JIFTY_CONFIG'} = 't/config-Record' }
 
-use Jifty::Test tests => 10;
+use Jifty::Test tests => 11;
 use Jifty::Test::WWW::Mechanize;
-
 # Make sure we can load the model
 use_ok('TestApp::Model::User');
 
+Jifty->new();
 # Grab a system use
 my $system_user = TestApp::CurrentUser->superuser;
 ok($system_user, "Found a system user");
@@ -38,8 +38,9 @@ $o = TestApp::Model::User->new(current_user => $system_user);
 $o->load($id);
 ok($id, "Load returned success");
 
+
 is($o->email, 'newemail@example.com', "Email was updated by form");
 is($o->tasty, 1, "User is still tasty (was not updated since immutable)");
-
+ok($o->uuid,  "The user has a uuid ". $o->uuid);
 1;
 

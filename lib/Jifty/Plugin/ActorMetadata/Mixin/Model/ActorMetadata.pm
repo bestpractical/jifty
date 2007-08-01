@@ -84,6 +84,12 @@ sub register_triggers {
     $self->add_trigger(name => 'before_create', callback => \&before_create);
 }
 
+=head2 before_create
+
+Sets C<created_by>, C<created_on>, C<updated_on> based on the current user and time.
+
+=cut
+
 sub before_create {
     my $self = shift;
     my $args = shift;
@@ -94,7 +100,15 @@ sub before_create {
     return 1;
 }
 
+=head2 current_user_can
+
+Rejects creation unless there's a current_user. 
+Rejects update or deletion unless the current_user is the creator.  (Jesse says: this feels like wrong logic for this mixin)
+
+=cut
+
 # XXX: Move this to an abortable trigger
+
 sub current_user_can {
     my $self = shift;
     my $action = shift;
