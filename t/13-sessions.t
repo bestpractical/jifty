@@ -7,7 +7,7 @@ Tests Jifty::Web::Session
 
 =cut
 
-use Jifty::Test tests => 31;
+use Jifty::Test tests => 18;
 
 my ($first_id, $second_id, $third_id);
 
@@ -61,38 +61,5 @@ my ($first_id, $second_id, $third_id);
 
     is($session->get('hello'), 'world');
     is($session->get('number'), '1st', "even though the two sessions have some overlapping keys, the one that matters doesn't overlap");
-}
-
-# the three-arg form
-
-{
-    my $session = Jifty::Web::Session->new();
-    $session->load_by_kv('user', 'first', sub { $_[0] =~ /^f/ } );
-    ok($session->id, "got a session");
-    is($session->id, $first_id, "first session again");
-    is($session->get('number'), '1st');
-}
-
-{
-    my $session = Jifty::Web::Session->new();
-    $session->load_by_kv('user', 'third', sub { $_[0] =~ /\b(thi|3)rd\b/ } );
-    ok($session->id, "got a session");
-    $third_id = $session->id;
-
-    isnt($session->id, $first_id,  "not first session");
-    isnt($session->id, $second_id, "not second session");
-    is($session->get('number'), undef);
-    $session->set(number => '3rd');
-    is($session->get('number'), '3rd');
-}
-
-{
-    my $session = Jifty::Web::Session->new();
-    $session->load_by_kv('user', 'third', sub { $_[0] =~ /\b(thi|3)rd\b/ } );
-    ok($session->id, "got a session");
-    isnt($session->id, $first_id,  "not first session");
-    isnt($session->id, $second_id, "not second session");
-    is($session->id,   $third_id, "third session again");
-    is($session->get('number'), '3rd');
 }
 
