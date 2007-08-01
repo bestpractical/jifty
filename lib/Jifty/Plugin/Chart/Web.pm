@@ -101,8 +101,13 @@ sub chart {
         @_,
     );
 
+    # Turn any subs into values returned
+    for my $key (keys %args) {
+        $args{$key} = $args{$key}->(\%args) if ref $args{$key} eq 'CODE';
+    }
+
     # Call the rendering plugin's render method
-    return $plugin->render(@_);
+    return $plugin->render(%args);
 }
 
 =head1 SEE ALSO
