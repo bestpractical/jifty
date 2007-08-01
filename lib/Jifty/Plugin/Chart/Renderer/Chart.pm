@@ -26,11 +26,6 @@ sub render {
     my $self = shift;
     my %args = @_;
 
-    # Turn any subs into values returned
-    for my $key (keys %args) {
-        $args{$key} = $args{$key}->(\%args) if ref $args{$key} eq 'CODE';
-    }
-
     # Make sure the type is ready to be used as a class name
     $args{type} = ucfirst lc $args{type};
 
@@ -40,7 +35,7 @@ sub render {
     Jifty->web->session->set( $session_id => Jifty::YAML::Dump(\%args) );
 
     # Output the <img> tag and include the chart's configuration key
-    Jifty->web->out(qq{<img src="/chart/$chart_id" width="$args{width}" height="$args{height}"/>});
+    Jifty->web->out(qq{<img src="/chart/chart/$chart_id" width="$args{width}" height="$args{height}"/>});
 
     # Make sure we don't return anything that will get output
     return;
