@@ -107,7 +107,7 @@ sub chart {
     }
 
     # Call the rendering plugin's render method
-    return $plugin->render(%args);
+    return $plugin->renderer->render(%args);
 }
 
 =head1 SEE ALSO

@@ -6,6 +6,8 @@ use base qw/ Jifty::Plugin Class::Accessor::Fast /;
 
 use Jifty::Plugin::Chart::Web;
 
+__PACKAGE__->mk_accessors(qw/ renderer /);
+
 =head1 NAME
 
 Jifty::Plugin::Chart - A charting API for Jifty
@@ -54,9 +56,13 @@ Here is an example configuration for F<config.yml>:
     - Chart:
         renderer: Jifty::Plugin::Chart::Renderer::Chart
 
-=cut
+=head1 METHODS
 
-__PACKAGE__->mk_accessors(qw/ renderer /);
+=head2 init
+
+Adds the L<Jifty::Plugin::Chart::Web/chart> method to L<Jifty::Web>.
+
+=cut
 
 sub init {
     my $self = shift;
@@ -70,11 +76,6 @@ sub init {
     $self->renderer( $args{renderer} );
 
     push @Jifty::Web::ISA, 'Jifty::Plugin::Chart::Web';
-}
-
-sub render {
-    my $self = shift;
-    $self->renderer->render(@_);
 }
 
 =head1 SEE ALSO
