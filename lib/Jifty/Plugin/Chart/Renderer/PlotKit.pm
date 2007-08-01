@@ -79,13 +79,15 @@ sub _transform_data {
     my $labels = shift @{ $args->{data} };
 
     for ( my $i = 0; $i < @$labels; $i++ ) {
-        push @{$args->{options}{xTicks}}, { v => $i, label => $labels->[$i] };
+        push @{$args->{options}{xTicks}}, { v => $i, label => $labels->[$i] }
+            if defined $labels->[$i];
     }
     
     for my $dataset ( @{ $args->{data} } ) {
         my @ds;
         for ( my $i = 0; $i < @$dataset; $i++ ) {
-            push @ds, [ $i, $dataset->[$i] ];
+            # PlotKit can't deal with undefined values
+            push @ds, [ $i, defined $dataset->[$i] ? $dataset->[$i] : '0' ];
         }
         push @data, \@ds;
     }
@@ -103,7 +105,7 @@ Thomas Sibley
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2007 Boomer Consulting, Inc.
+Copyright 2007 Best Practical Solutions, LLC
 
 This is free software and may be modified and distributed under the same terms as Perl itself.
 

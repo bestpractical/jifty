@@ -64,7 +64,7 @@ on 'chart/gd_graph/*' => run {
     my $class = 'GD::Graph::' . $args->{type};
 
     # Load that class or die if it does not exist
-    #$class->require;
+    $class->require;
 
     # Remember the class name for the view
     $args->{class} = $class;
