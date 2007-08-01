@@ -54,7 +54,7 @@ Here is an example configuration for F<config.yml>:
 
   Plugins:
     - Chart:
-        renderer: Jifty::Plugin::Chart::Renderer::Chart
+        renderer: Chart
 
 =head1 METHODS
 
@@ -67,13 +67,26 @@ Adds the L<Jifty::Plugin::Chart::Web/chart> method to L<Jifty::Web>.
 sub init {
     my $self = shift;
     my %args = (
-        renderer => __PACKAGE__.'::Renderer::Chart',
+        renderer => 'Chart',
         @_,
     );
+
+    if ( $args{renderer} !~ /::/ ) {
+        $args{renderer} = __PACKAGE__.'::Renderer::'.$args{renderer};
+    }
 
     eval "use $args{renderer}";
     warn $@ if $@;
     $self->renderer( $args{renderer} );
+
+    if ( $self->renderer =~ 'PlotKit' ) {
+        # XXX TODO: Why does MochiKit need to be loaded before everything else?
+        Jifty->web->javascript_libs([
+            'MochiKit/MochiKit.js',
+            @{ Jifty->web->javascript_libs },
+            'PlotKit/PlotKit_Packed.js'
+        ]);
+    }
 
     push @Jifty::Web::ISA, 'Jifty::Plugin::Chart::Web';
 }
