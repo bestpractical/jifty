@@ -7,9 +7,9 @@ Tests Jifty::Web::Session
 
 =cut
 
-use Jifty::Test tests => 18;
+use Jifty::Test tests => 25;
 
-my ($first_id, $second_id, $third_id);
+my ($first_id, $third_id);
 
 {
     my $session = Jifty::Web::Session->new();
@@ -44,7 +44,6 @@ my ($first_id, $second_id, $third_id);
     $session->load_by_kv(user => 'second');
     ok($session->id, "got a session");
     isnt($session->id, $first_id, "NOT same session as before");
-    $second_id = $session->id;
 
     is($session->get('hello'),  undef, "different value gives different session");
     is($session->get('number'), undef, "different value gives different session");
@@ -61,5 +60,32 @@ my ($first_id, $second_id, $third_id);
 
     is($session->get('hello'), 'world');
     is($session->get('number'), '1st', "even though the two sessions have some overlapping keys, the one that matters doesn't overlap");
+}
+
+# test null char
+{
+    my $session = Jifty::Web::Session->new();
+    $session->load_by_kv(user => "first\0sneaky!");
+    ok($session->id, "got a session");
+    isnt($session->id, $first_id, "'first\\0sneaky!' different from 'first'");
+    is($session->get('hello'), undef, "first\\0sneaky has no session data yet");
+}
+
+{
+    my $session = Jifty::Web::Session->new();
+    $session->load_by_kv(user => "\0third");
+    ok($session->id, "got a session");
+    $third_id = $session->id;
+
+    $session->set(a => 'apple');
+}
+
+{
+    my $session = Jifty::Web::Session->new();
+    $session->load_by_kv(user => "\0third");
+    ok($session->id, "got a session");
+    is($session->id, $third_id, "same session as before");
+
+    is($session->get('a'), 'apple', "'set', destroy, 'get' works");
 }
 
