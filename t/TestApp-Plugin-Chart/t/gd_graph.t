@@ -12,18 +12,18 @@ use Jifty::SubTest;
 use Jifty::Test;
 use Jifty::Test::WWW::Mechanize;
 
-eval "use Chart::Pie";
+eval "use GD::Graph::pie";
 if ($@) {
-    plan skip_all => 'Chart is not installed.';
+    plan skip_all => 'GD::Graph is not installed.';
 }
 else {
     plan tests => 9;
 }
 
-use Jifty::Plugin::Chart::Renderer::Chart;
+use Jifty::Plugin::Chart::Renderer::GD::Graph;
 
 (Jifty->find_plugin('Jifty::Plugin::Chart'))[0]
-    ->renderer('Jifty::Plugin::Chart::Renderer::Chart');
+    ->renderer('Jifty::Plugin::Chart::Renderer::GD::Graph');
 
 my $server = Jifty::Test->make_server;
 ok($server, 'got a server');
@@ -33,7 +33,7 @@ my $url = $server->started_ok;
 my $mech = Jifty::Test::WWW::Mechanize->new;
 
 $mech->get_ok($url . '/graphit', 'try getting /graphit');
-my $img_match = qr{<img src="(/chart/chart/S\d+)" width="400" height="300"/>};
+my $img_match = qr{<img src="(/chart/gd_graph/S\d+)" width="400" height="300"/>};
 $mech->content_like($img_match, 'has an img tag');
 my ($chart_path) = $mech->content =~ $img_match;
 
