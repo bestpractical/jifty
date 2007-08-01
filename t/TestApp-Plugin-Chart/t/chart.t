@@ -4,6 +4,10 @@ use warnings;
 
 use lib 't/lib';
 
+# XXX FIXME This is here to prevent a segfault on my machine during testing.
+#   -- sterling
+use GD;
+
 use Jifty::SubTest;
 use Jifty::Test tests => 9;
 use Jifty::Test::WWW::Mechanize;
@@ -16,12 +20,9 @@ my $url = $server->started_ok;
 my $mech = Jifty::Test::WWW::Mechanize->new;
 
 $mech->get_ok($url . '/graphit', 'try getting /graphit');
-my $img_match = qr{<img src="(/chart/S\d+)" width="400" height="300"/>};
+my $img_match = qr{<img src="(/chart/\w+/S\d+)" width="400" height="300"/>};
 $mech->content_like($img_match, 'has an img tag');
 my ($chart_path) = $mech->content =~ $img_match;
-
-TODO: {
-local $TODO = "Always fail because eval 'use Chart::*' breaks file handles?";
 
 $mech->get_ok($url . $chart_path, 'try getting ' . $chart_path);
 
@@ -42,4 +43,3 @@ SKIP: {
     is($info->{height}, 300, 'it is 300 pixels tall');
 };
 
-};
