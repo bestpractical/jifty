@@ -20,6 +20,12 @@ In F<config.yml>:
 
 This is a chart renderer that uses L<GD::Graph> to build charts.
 
+=head1 METHODS
+
+=head2 render
+
+Renders an IMG tag referring to the L<GD::Graph> image view.
+
 =cut
 
 sub render {
