@@ -84,7 +84,7 @@ L<Jifty::Plugin>, L<Jifty::Web>, L<Jifty::Plugin::Chart::Renderer>, L<Jifty::Plu
 
 =head1 AUTHOR
 
-Andrew Sterling Hanenkamp E<< <andrew.hanenkamp@boomer.com> >>
+Andrew Sterling Hanenkamp C<< <andrew.hanenkamp@boomer.com> >>
 
 =head1 COPYRIGHT AND LICENSE
 
