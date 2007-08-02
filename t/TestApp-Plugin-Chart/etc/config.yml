@@ -1,0 +1,54 @@
+--- 
+framework: 
+  AdminMode: 1
+  ApplicationClass: TestApp::Plugin::Chart
+  ApplicationName: TestApp-Plugin-Chart
+  ApplicationUUID: D16D885C-3E10-11DC-ABE9-A583E6FF98E1
+  ConfigFileVersion: 2
+  Database: 
+    CheckSchema: 1
+    Database: testapp_plugin_chart
+    Driver: SQLite
+    Host: localhost
+    Password: ''
+    RecordBaseClass: Jifty::DBI::Record::Cachable
+    RecordUUIDs: active
+    User: ''
+    Version: 0.0.1
+  DevelMode: 1
+  L10N: 
+    PoDir: share/po
+  LogLevel: INFO
+  Mailer: Sendmail
+  MailerArgs: []
+
+  Plugins: 
+    - LetMe: {}
+    - SkeletonApp: {}
+    - REST: {}
+    - Halo: {}
+    - ErrorTemplates: {}
+    - OnlineDocs: {}
+    - CompressedCSSandJS: {}
+    - AdminUI: {}
+    - Chart: {}
+
+  PubSub: 
+    Backend: Memcached
+    Enable: ~
+  SkipAccessControl: 0
+  TemplateClass: TestApp::Plugin::Chart::View
+  Web: 
+    BaseURL: http://localhost
+    DataDir: var/mason
+    Globals: []
+
+    MasonConfig: 
+      autoflush: 0
+      default_escape_flags: h
+      error_format: text
+      error_mode: fatal
+    Port: 8888
+    ServeStaticFiles: 1
+    StaticRoot: share/web/static
+    TemplateRoot: share/web/templates

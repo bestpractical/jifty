@@ -5,6 +5,7 @@ package Jifty::Web::Session;
 use base qw/Jifty::Object/;
 use CGI::Cookie ();
 use DateTime ();
+use Storable ();
  
 =head1 NAME
 
@@ -74,6 +75,41 @@ sub load {
     $session->create( key_type => "session" ) unless $session->id;
     $self->_session($session);
     $self->{cache} = undef;
+}
+
+=head2 load_by_kv key => value 
+
+Load up the current session from the given (key, value) pair. If no matching
+session could be found, it will create a new session with the key, value set.
+Be sure that what you're loading by is unique. If you're loading a session
+based on, say, a timestamp, then you're asking for trouble.
+
+=cut
+
+sub load_by_kv {
+    my $self = shift;
+    my $k    = shift;
+    my $v    = shift;
+    my $session_id;
+
+    # tried doing this with load_by_cols but it never returned any rows
+    my $sessions = Jifty::Model::SessionCollection->new;
+    $sessions->limit( column => 'key_type', value => 'key' );
+    $sessions->limit( column => 'data_key', value => $k );
+
+    # XXX TODO: we store this data in a storable. so we now want to match on the storable version
+    # It would be so nice if Jifty::DBI could do this for us.
+    $Storable::Deparse = 1;
+    my $value = Storable::nfreeze(\$v);
+
+    $sessions->limit( column => 'value' => value => $value );
+
+    while ( my $row = $sessions->next ) {
+        $session_id = $row->session_id;
+        last;
+    }
+    $self->load($session_id);
+    $self->set( $k => $v ) if !$session_id;
 }
 
 sub _get_session_id_from_client {

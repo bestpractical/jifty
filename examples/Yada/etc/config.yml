@@ -2,6 +2,7 @@
 application:
   OpenIDSecret: sekrit13
 framework: 
+  ConfigFileVersion: 2
   AdminMode: 1
   SkipAccessControl: 1
   ApplicationClass: Yada
@@ -16,7 +17,7 @@ framework:
     RecordBaseClass: Jifty::DBI::Record::Cachable
     User: ''
     Version: 0.0.1
-  DevelMode: 0
+  DevelMode: 1
   L10N: 
     PoDir: share/po
   LogLevel: INFO
@@ -34,11 +35,13 @@ framework:
     - User: {}
     - Authentication::Password: {}
     - OpenID: {}
+    - SinglePage: {}
 
   PubSub: 
     Backend: Memcached
     Enable: ~
   TemplateClass: Yada::View
+  ClientTemplate: 1
   Web: 
     BaseURL: http://localhost
     DataDir: var/mason

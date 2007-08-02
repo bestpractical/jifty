@@ -58,6 +58,7 @@ requires('Module::CoreList');
 requires('Module::Refresh');
 requires('Module::ScanDeps');
 requires('Object::Declare' => '0.13');
+requires('PadWalker');
 requires('Params::Validate');
 requires('Scalar::Defer' => '0.10');
 requires('Shell::Command');
@@ -143,7 +144,13 @@ features(
     ],
     'Jifty console' => [
         -default => 0,
-        recommends('Devel::EvalContext')
+        recommends('Devel::EvalContext'),
+    ],
+    'Chart Plugin (none of these must be installed for Charts to work)' => [
+        -default => 0,
+        recommends('Chart::Base'),
+        recommends('GD::Graph'),
+        recommends('Image::Info'), # for testing
     ],
 );
 

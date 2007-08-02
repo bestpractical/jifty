@@ -2,10 +2,10 @@ use warnings;
 use strict;
 
 package Jifty::View::Declare::Helpers;
-use base qw/Template::Declare Exporter/;
 use Template::Declare::Tags;
+use base qw/Template::Declare Exporter/;
 
-our @EXPORT = ( qw(form hyperlink tangent redirect new_action form_submit form_return form_next_page page content wrapper request get set render_param current_user render_action render_region), @Template::Declare::Tags::EXPORT);
+our @EXPORT = ( qw(hyperlink tangent redirect new_action form_submit form_return form_next_page page content wrapper request get set render_param current_user render_action render_region), @Template::Declare::Tags::EXPORT);
 
 =head1 NAME
 
@@ -29,7 +29,7 @@ Takes a subroutine reference or block of perl as its only argument and renders i
 
  {
     no warnings qw/redefine/;
-    sub form (&) {
+    sub form (&;$) {
         my $code = shift;
 
         smart_tag_wrapper {

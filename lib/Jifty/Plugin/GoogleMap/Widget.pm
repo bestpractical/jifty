@@ -14,6 +14,13 @@ Jifty::Plugin::GoogleMap::Widget - google map widget for geolocation display and
 
 =cut
 
+=head2 accessors
+
+Returns this class's Clas::Accessor based accessors
+
+=cut
+
+
 sub accessors { shift->SUPER::accessors() };
 
 =head2 render_widget

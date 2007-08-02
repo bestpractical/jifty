@@ -4,6 +4,14 @@ use strict;
 package Jifty::View::Declare::CRUD;
 use Jifty::View::Declare -base;
 
+# XXX: should register 'template type' handler, so the
+# client_cache_content & the TD sub here agrees with the arguments.
+use Attribute::Handlers;
+my %VIEW;
+sub CRUDView :ATTR(CODE,BEGIN) {
+    $VIEW{$_[2]}++;
+}
+
 
 =head1 NAME
 
@@ -36,6 +44,19 @@ sub mount_view {
             alias $vclass under '$path'; 1} or die $@;
     no strict 'refs';
     *{$vclass."::object_type"} = sub { $model };
+}
+
+sub _dispatch_template {
+    my $class = shift;
+    my $code  = shift;
+    if ($VIEW{$code} && !UNIVERSAL::isa($_[0], 'Evil')) {
+	my ( $object_type, $id ) = ( $class->object_type, get('id') );
+	@_ = ($class, $class->_get_record($id), @_);
+    }
+    else {
+	unshift @_, $class;
+    }
+    goto $code;
 }
 
 
@@ -163,26 +184,23 @@ template 'search' => sub {
         }
 };
 
-
 =head2 view
 
 This template displays the data held by a single model record.
 
 =cut
 
-template 'view' => sub {
-    my $self = shift;
-    my ( $object_type, $id ) = ( $self->object_type, get('id') );
-      my $record =   $self->_get_record($id);
+template 'view' => sub :CRUDView {
+    my ($self, $record) = @_;
     my $update = new_action(
-        class   => 'Update' . $object_type,
+        class   => 'Update' . $self->object_type,
         moniker => "update-" . Jifty->web->serial,
-        record  => $record 
+        record  => $record,
     );
 
     div {
         { class is 'crud read item inline' };
-        my @fields =$self->display_columns($update);
+        my @fields = $self->display_columns($update);
         render_action( $update, \@fields, { render_mode => 'read' } );
 
         show ('./view_item_controls', $record, $update); 
@@ -202,7 +220,7 @@ private template view_item_controls  => sub {
             class   => "editlink",
             onclick => {
                 replace_with => $self->fragment_for('update'),
-                args         => { object_type => $self->object_type, id => $record->id }
+                args         => { id => $record->id }
             },
         );
     }
@@ -316,6 +334,13 @@ template 'list' => sub {
     show( './new_item_region');
 
 };
+
+=head2 per_page
+
+This routine returns how many items should be shown on each page of a listing.
+The default is 25.
+
+=cut
 
 sub per_page { 25 }
 

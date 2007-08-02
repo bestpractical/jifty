@@ -42,7 +42,7 @@ private template 'menu' => sub {
         Jifty->web->navigation->render_as_menu; };
 };
 
-template '__jifty/empty' => sub {
+template '__jifty/empty' => sub :Static {
         '';
 };
 
