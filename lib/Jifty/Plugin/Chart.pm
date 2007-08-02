@@ -80,12 +80,14 @@ sub init {
     $self->renderer( $args{renderer} );
 
     if ( $self->renderer =~ 'PlotKit' ) {
-        # XXX TODO: Why does MochiKit need to be loaded before everything else?
-        Jifty->web->javascript_libs([
-            'MochiKit/MochiKit.js',
-            @{ Jifty->web->javascript_libs },
-            'PlotKit/PlotKit_Packed.js'
-        ]);
+        Jifty->web->add_external_javascript(qw(
+            /static/js/mochikit.noexport.js
+            /static/js/MochiKit/MochiKit.js
+        ));
+        Jifty->web->add_javascript(qw(
+            PlotKit/excanvas.js
+            PlotKit/PlotKit_Packed-20060807-custom.js
+        ));
     }
 
     push @Jifty::Web::ISA, 'Jifty::Plugin::Chart::Web';
