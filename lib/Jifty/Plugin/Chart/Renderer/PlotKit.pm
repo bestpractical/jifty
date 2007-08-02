@@ -87,7 +87,11 @@ sub _transform_data {
         my @ds;
         for ( my $i = 0; $i < @$dataset; $i++ ) {
             # PlotKit can't deal with undefined values
-            push @ds, [ $i, defined $dataset->[$i] ? $dataset->[$i] : '0' ];
+            if ( not ref $dataset->[$i] ) {
+                push @ds, [ $i, defined $dataset->[$i] ? $dataset->[$i] : '0' ];
+            } else {
+                push @ds, $dataset->[$i];
+            }
         }
         push @data, \@ds;
     }
