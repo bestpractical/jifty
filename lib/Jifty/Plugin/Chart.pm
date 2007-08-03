@@ -90,6 +90,10 @@ sub init {
         ));
     }
 
+    else {
+        Jifty->web->add_javascript('chart_img_behaviour.js');
+    }
+
     push @Jifty::Web::ISA, 'Jifty::Plugin::Chart::Web';
 }
 

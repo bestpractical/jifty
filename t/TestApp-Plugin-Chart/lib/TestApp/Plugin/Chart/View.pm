@@ -7,8 +7,8 @@ use Jifty::View::Declare -base;
 template '/graphit' => page {
     Jifty->web->chart(
         type   => 'Pie',
-        width  => 400,
-        height => 300,
+        width  => '100%',
+        height => 500,
         data   => sub {
             [
                 [ 2004, 2005, 2006, 2007 ],

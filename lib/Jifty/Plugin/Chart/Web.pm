@@ -3,6 +3,8 @@ use warnings;
 
 package Jifty::Plugin::Chart::Web;
 
+use Scalar::Util qw/ looks_like_number /;
+
 =head1 NAME
 
 Jifty::Plugin::Chart::Web - Base class to add to Jifty::Web's ISA
@@ -55,11 +57,15 @@ A bar chart turned sideways.
 
 =item width
 
-The width, in pixels, the chart should take on the page. Defaults to 400.
+This is the width the chart should take when rendered. This may be a number, indicating the width in pixels. It may also be any value that would be appropriate for the C<width> CSS property.
+
+Defaults to C<undef>, which indicates that the chart will take on whatever size the box it is in will be. See L</CSS FOR CHARTS>.
 
 =item height
 
-The height, in pixels, the chart should take on the page. Defaults to 300.
+This is the height the chart should take when rendered. This may be a number, indicating the height in pixels. It may also be any value that would be appropriate for the C<height> CSS property.
+
+Defaults to C<undef>, which indicates that the chart will take on whatever size the box it is in will be. See L</CSS FOR CHARTS>.
 
 =item data
 
@@ -67,20 +73,25 @@ An array of arrays containing the data. The first array in the parent array is a
 
 Defaults to no data (i.e., it must be given if anything useful is to happen).
 
+=item class
+
+This allows you to associated an additional class or classes to the element containing the chart. This can be a string containing on or more class names separated by spaces or an array of class names.
+
 =back
 
 Here's an example:
 
   <% Jifty->web->chart(
       type   => 'Pie',
-      width  => 400,
-      height => 300,
+      width  => '100%',
+      height => '300px',
       data   => sub {
           [
               [ 2004, 2005, 2006, 2007 ],
               [ 26, 37, 12, 42 ]
           ];
       },
+      class => 'visualizeronimicon',
   ) %>
 
 Be sure to output anything returned by the method (unless it returns undef).
@@ -94,12 +105,25 @@ sub chart {
     # TODO It might be a good idea to make this config.yml-able
     # Setup the defaults
     my %args = (
-        type   => 'points',
-        width  => 400,
-        height => 300,
-        data   => [],
+        type       => 'points',
+        width      => undef,
+        height     => undef,
+        data       => [],
+        class      => [],
         @_,
     );
+
+    # canonicalize the width/height
+    $args{width}  .= 'px' if looks_like_number($args{width});
+    $args{height} .= 'px' if looks_like_number($args{height});
+
+    # canonicalize the class argument
+    if (not ref $args{class}) {
+        $args{class} = defined $args{class} ? [ $args{class} ] : [];
+    }
+
+    # Add the chart class, which is always present
+    push @{ $args{class} }, 'chart';
 
     # Turn any subs into values returned
     for my $key (keys %args) {
@@ -109,6 +133,18 @@ sub chart {
     # Call the rendering plugin's render method
     return $plugin->renderer->render(%args);
 }
+
+=head1 CSS FOR CHARTS
+
+The chart API allows you to build the charts without explicit pixel widths and heights. In fact, you can not specify C<width> and C<height> and perform the styling in your regular CSS stylesheets by using the "chart" class associated with every chart or by using custom classes with the C<class> argument.
+
+See your renderer class documentation for further details.
+
+=head1 JAVASCRIPT FOR CHARTS
+
+Charts typically require JavaScript to render properly. If the client does not have JavaScript available, the chart may not work or could look very bad. 
+
+If you are using one of the image based renderers like L<Jifty::Plugin::Chart::Renderer::Chart>, it is recommended that you stick with pixel widths if you expect clients with limited or no JavaScript support. 
 
 =head1 SEE ALSO
 
