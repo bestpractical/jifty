@@ -260,11 +260,13 @@ Action.prototype = {
                                     if (field.nodeName == 'error' || field.nodeName == 'warning') {
                                         var err_div = document.getElementById(field.getAttribute("id"));
                                         if (err_div != null) {
+                                            Element.show(err_div);
                                             err_div.innerHTML = field.firstChild.data;
                                         }
                                     } else if (field.nodeName == 'ok') {
                                         var err_div = document.getElementById(field.getAttribute("id"));
                                         if (err_div != null) {
+                                            Element.hide(err_div);
                                             err_div.innerHTML = '';
                                         }
                                     }
@@ -276,6 +278,7 @@ Action.prototype = {
                                     if (field.nodeName == 'canonicalization_note')  {
                                         var note_div= document.getElementById(field.getAttribute("id"));
                                         if (note_div != null) {
+                                            Element.show(note_div);
                                             note_div.innerHTML = field.firstChild.data;
                                         }
                                     }
@@ -714,6 +717,9 @@ Behaviour.register({
 
             Element.addClassName( e, "jifty_enter_handler_attached" );
         }
+    },
+    '.form_field .error, .form_field .warning, .form_field .canonicalization_note': function(e) {
+        Element.hide(e);
     }
 });
 

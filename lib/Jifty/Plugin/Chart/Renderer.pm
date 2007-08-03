@@ -20,15 +20,15 @@ In F<lib/MyApp/Renderer.pm>:
   package MyApp::Renderer;
   use base qw/ Jifty::Plugin::Chart::Renderer /;
 
+  sub init {
+      my $self = shift;
+
+      # Handle any required initialization, like required CSS, JS, etc.
+  }
+
   sub render {
       my $self = shift;
-      my %args = (
-          type   => 'points',
-          width  => 400,
-          height => 300,
-          data   => [],
-          @_,
-      );
+      my %args = @_;
 
       # Output your chart
       Jifty->web->out( #{ Output your chart here... } );
@@ -41,6 +41,29 @@ In F<lib/MyApp/Renderer.pm>:
 
 Your renderer implementation must subclass this package and implement the following methods:
 
+=head2 new
+
+This is the constructor. Don't override this directly. Instead implement L</init>.
+
+=cut
+
+sub new {
+    my $class = shift;
+    my $self = bless {}, $class;
+    $self->init;
+    return $self;
+}
+
+=head2 init
+
+  $renderer->init();
+
+This is called by C<new> immediately after constructing the object. Subclasses should implement this method to do any required initialization such as letting Jifty know about required CSS files, JS files, etc.
+
+=cut
+
+sub init {}
+
 =head2 render
 
   Jifty->web->out($renderer->render(%args));
@@ -48,6 +71,10 @@ Your renderer implementation must subclass this package and implement the follow
 See L<Jifty::Plugin::Chart::Web> for the arguments. It must (at least) accept the arguments given to the L<Jifty::Plugin::Chart::Web/chart> method.
 
 The C<render> method may either return it's output or print it out using L<Jifty::Web::out>.
+
+=cut
+
+sub render {}
 
 =head1 SEE ALSO
 

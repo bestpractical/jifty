@@ -5,8 +5,9 @@ package Jifty::Plugin::Chart;
 use base qw/ Jifty::Plugin Class::Accessor::Fast /;
 
 use Jifty::Plugin::Chart::Web;
+use Scalar::Util qw/ blessed /;
 
-__PACKAGE__->mk_accessors(qw/ renderer /);
+__PACKAGE__->mk_accessors(qw/ renderer renderers /);
 
 =head1 NAME
 
@@ -71,24 +72,52 @@ sub init {
         @_,
     );
 
-    if ( $args{renderer} !~ /::/ ) {
-        $args{renderer} = __PACKAGE__.'::Renderer::'.$args{renderer};
-    }
+    # Create the empty renderers list
+    $self->renderers({});
 
-    eval "use $args{renderer}";
-    warn $@ if $@;
-    $self->renderer( $args{renderer} );
-
-    if ( $self->renderer =~ 'PlotKit' ) {
-        # XXX TODO: Why does MochiKit need to be loaded before everything else?
-        Jifty->web->javascript_libs([
-            'MochiKit/MochiKit.js',
-            @{ Jifty->web->javascript_libs },
-            'PlotKit/PlotKit_Packed.js'
-        ]);
-    }
+    # Load the default renderer
+    $self->renderer( $self->init_renderer($args{renderer}) );
 
     push @Jifty::Web::ISA, 'Jifty::Plugin::Chart::Web';
+}
+
+=head2 init_renderer
+
+  my $renderer = $chart_plugin->init_renderer($renderer_class)
+
+This is a helper method that is used by the API to initialize the renderer class. This is handled automatically so you probably shouldn't use this.
+
+=cut
+
+sub init_renderer {
+    my ($self, $renderer_class) = @_;
+
+    # If it's already an object, just return that
+    if ( blessed($renderer_class)
+            and $renderer_class->isa(__PACKAGE__.'::Renderer') ) {
+        return $renderer_class;
+    }
+
+    # Prepend Jifty::Plugin::Chart::Renderer:: if we think we need to
+    if ( $renderer_class !~ /::/ ) {
+        $renderer_class = __PACKAGE__.'::Renderer::'.$renderer_class;
+    }
+
+    # Check to see if we already loaded this one
+    my $renderer = $self->renderers->{ $renderer_class };
+    return $renderer if defined $renderer;
+
+    # Tell perl to load the class
+    $renderer_class->require;
+
+    # Initialize the renderer
+    $renderer = $renderer_class->new;
+
+    # Remember it
+    $self->renderers->{ $renderer_class } = $renderer;
+
+    # Return it!
+    return $renderer;
 }
 
 =head1 SEE ALSO

@@ -22,6 +22,16 @@ This is a chart renderer that uses L<GD::Graph> to build charts.
 
 =head1 METHODS
 
+=head2 init
+
+Adds the F<chart_img_behaviour.js> script to those loaded.
+
+=cut
+
+sub init {
+    Jifty->web->add_javascript('chart_img_behaviour.js');
+}
+
 =head2 render
 
 Renders an IMG tag referring to the L<GD::Graph> image view.
@@ -40,8 +50,21 @@ sub render {
     my $session_id = 'chart_' . $chart_id;
     Jifty->web->session->set( $session_id => Jifty::YAML::Dump(\%args) );
 
+    # Build up the chart tag
+    my $img;
+    $img  = qq{<img};
+    $img .= qq{ src="/chart/gd_graph/$chart_id"};
+    $img .= qq{ class="@{[ join ' ', @{ $args{class} } ]}"};
+
+    my @styles;
+    push @styles, "width:$args{width}"   if defined $args{width};
+    push @styles, "height:$args{height}" if defined $args{height};
+
+    $img .= qq{ style="@{[ join ';', @styles ]}"} if @styles;
+    $img .= qq{/>};
+
     # Output the <img> tag and include the chart's configuration key
-    Jifty->web->out(qq{<img src="/chart/gd_graph/$chart_id" width="$args{width}" height="$args{height}"/>});
+    Jifty->web->out($img);
 
     # Make sure we don't return anything that will get output
     return;

@@ -33,7 +33,7 @@ my $url = $server->started_ok;
 my $mech = Jifty::Test::WWW::Mechanize->new;
 
 $mech->get_ok($url . '/graphit', 'try getting /graphit');
-my $img_match = qr{<img src="(/chart/gd_graph/S\d+)" width="400" height="300"/>};
+my $img_match = qr{<img src="(/chart/gd_graph/S\d+)" };
 $mech->content_like($img_match, 'has an img tag');
 my ($chart_path) = $mech->content =~ $img_match;
 
@@ -53,6 +53,6 @@ SKIP: {
 
     is($info->{file_ext}, 'png', 'it is a png file');
     is($info->{width}, 400, 'it is 400 pixels wide');
-    is($info->{height}, 300, 'it is 300 pixels tall');
+    is($info->{height}, 500, 'it is 500 pixels tall');
 };
 
