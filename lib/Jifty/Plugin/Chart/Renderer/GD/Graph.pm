@@ -22,6 +22,16 @@ This is a chart renderer that uses L<GD::Graph> to build charts.
 
 =head1 METHODS
 
+=head2 init
+
+Adds the F<chart_img_behaviour.js> script to those loaded.
+
+=cut
+
+sub init {
+    Jifty->web->add_javascript('chart_img_behaviour.js');
+}
+
 =head2 render
 
 Renders an IMG tag referring to the L<GD::Graph> image view.

@@ -16,6 +16,16 @@ This is the default chart renderer used by the L<Jifty::Plugin::Chart> plugin. I
 
 =head1 METHODS
 
+=head2 init
+
+Adds the F<chart_img_behaviour.js> script to those loaded.
+
+=cut
+
+sub init {
+    Jifty->web->add_javascript('chart_img_behaviour.js');
+}
+
 =head2 render
 
 Implemented the L<Jifty::Plugin::Chart::Renderer/render> method interface.

@@ -77,6 +77,10 @@ Defaults to no data (i.e., it must be given if anything useful is to happen).
 
 This allows you to associated an additional class or classes to the element containing the chart. This can be a string containing on or more class names separated by spaces or an array of class names.
 
+=item renderer
+
+This allows you to use a different renderer than the one configured in F<config.yml>. Give the renderer as a class name, which will be initialized for you.
+
 =back
 
 Here's an example:
@@ -105,13 +109,17 @@ sub chart {
     # TODO It might be a good idea to make this config.yml-able
     # Setup the defaults
     my %args = (
-        type       => 'points',
-        width      => undef,
-        height     => undef,
-        data       => [],
-        class      => [],
+        renderer => $plugin->renderer,
+        type     => 'points',
+        width    => undef,
+        height   => undef,
+        data     => [],
+        class    => [],
         @_,
     );
+
+    # load the renderer
+    $args{renderer} = $plugin->init_renderer($args{renderer});
 
     # canonicalize the width/height
     $args{width}  .= 'px' if looks_like_number($args{width});
@@ -130,8 +138,8 @@ sub chart {
         $args{$key} = $args{$key}->(\%args) if ref $args{$key} eq 'CODE';
     }
 
-    # Call the rendering plugin's render method
-    return $plugin->renderer->render(%args);
+    # Call the rendering class' render method
+    return $args{renderer}->render(%args);
 }
 
 =head1 CSS FOR CHARTS

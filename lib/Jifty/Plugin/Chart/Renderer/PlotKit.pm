@@ -16,6 +16,23 @@ This is an alternate chart renderer used by the L<Jifty::Plugin::Chart> plugin. 
 
 =head1 METHODS
 
+=head2 init
+
+Adds the various JavaScript files required to use PlotKit.
+
+=cut
+
+sub init {
+    Jifty->web->add_external_javascript(qw(
+        /static/js/mochikit.noexport.js
+        /static/js/MochiKit/MochiKit.js
+    ));
+    Jifty->web->add_javascript(qw(
+        PlotKit/excanvas.js
+        PlotKit/PlotKit_Packed-20060807-custom.js
+    ));
+}
+
 =head2 render
 
 Implemented the L<Jifty::Plugin::Chart::Renderer/render> method interface.
