@@ -108,7 +108,8 @@ sub init_renderer {
     return $renderer if defined $renderer;
 
     # Tell perl to load the class
-    $renderer_class->require;
+    $renderer_class->require
+        or warn $@;
 
     # Initialize the renderer
     $renderer = $renderer_class->new;
