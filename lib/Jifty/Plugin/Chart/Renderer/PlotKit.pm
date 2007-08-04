@@ -43,11 +43,7 @@ sub render {
     my $self = shift;
     my %args = ( options => {}, @_ );
 
-    # Turn any subs into values returned
-    for my $key (keys %args) {
-        $args{$key} = $args{$key}->(\%args) if ref $args{$key} eq 'CODE';
-    }
-
+    # translations from generic type to PlotKit types
     my %types = (
         lines          => { type => 'line' },
         bars           => { type => 'bar', barOrientation => 'vertical' },
@@ -63,6 +59,7 @@ sub render {
     $args{type} = delete $options->{type};
     $args{options}{$_} = $options->{$_} foreach keys %$options;
 
+    # Bad stuff, not a supported type
     if ( not defined $args{type} ) {
         Jifty->log->warn("Unsupported chart type: $orig_type!");
         return;

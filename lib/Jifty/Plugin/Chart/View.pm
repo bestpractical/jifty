@@ -28,6 +28,7 @@ template 'chart/chart' => sub {
     # Render the chart and output the PNG file generated
     eval {
         my $chart = $args->{class}->new( $args->{width}, $args->{height} );
+        $chart->set(%{ $args->{options} }) if $args->{options};
         # XXX scalar_png() is undocumented!!! Might bad to rely upon.
         outs_raw($chart->scalar_png($args->{data}));
     };
@@ -57,6 +58,7 @@ template 'chart/gd_graph' => sub {
     # Render the chart and output the PNG file generated
     eval {
         my $graph = $args->{class}->new( $args->{width}, $args->{height} );
+        $graph->set(%{ $args->{options} }) if $args->{options};
         my $gd    = $graph->plot($args->{data})
             or die $graph->error;
         outs_raw($gd->png);
