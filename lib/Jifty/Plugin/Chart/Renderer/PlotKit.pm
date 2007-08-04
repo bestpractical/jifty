@@ -74,8 +74,15 @@ sub render {
     my $chart_id   = 'chart_' . Jifty->web->serial;
 
     # Output the <canvas> tag and include the chart's JS
+    my $div;
+    $div  = qq{<div id="$chart_id"};
+    $div .= qq{ class="@{[ join ' ', @{ $args{class} } ]}"};
+    $div .= qq{ height="$args{height}"} if $args{height};
+    $div .= qq{ width="$args{width}"}   if $args{width};
+    $div .= qq{></div>};
+
     Jifty->web->out(<<"    END_OF_HTML");
-<div id="$chart_id" height="$args{height}" width="$args{width}"></div>
+$div
 
 <script type="text/javascript">
 var plot = function() {
