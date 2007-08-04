@@ -55,13 +55,16 @@ sub render {
         horizontalbars => { type => 'bar', orientation => 'horizontal' },
     );
 
+    # save it for error reporting
+    my $orig_type = $args{type};
+
     # Make sure the type is ready to be used
     my $options = $types{ $args{type} } || {};
-    $args{type} = delete $options{type};
-    $args{options}{$_} = $options{$_} foreach keys %$options;
+    $args{type} = delete $types{type};
+    $args{options}{$_} = $types{$_} foreach keys %types;
 
     if ( not defined $args{type} ) {
-        Jifty->log->warn("Unsupported chart type: $args{type}!");
+        Jifty->log->warn("Unsupported chart type: $orig_type!");
         return;
     }
 
