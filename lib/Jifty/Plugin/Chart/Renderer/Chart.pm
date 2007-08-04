@@ -36,8 +36,25 @@ sub render {
     my $self = shift;
     my %args = @_;
 
-    # Make sure the type is ready to be used as a class name
-    $args{type} = ucfirst lc $args{type};
+    # Conversion from generic types to Chart types
+    my %types = (
+        'bars'           => 'Bars',
+        'composite'      => 'Composite', # non-standard
+        'direction'      => 'Direction', # non-standard
+        'errorbars'      => 'ErrorBars', # non-standard
+        'horizontalbars' => 'HorizontalBars',
+        'lines'          => 'Lines',
+        'linespoints'    => 'LinesPoints',
+        'mountain'       => 'Mountain',  # non-standard
+        'pareto'         => 'Pareto',    # non-standard
+        'pie'            => 'Pie',
+        'points'         => 'Points',
+        'split'          => 'Split',     # non-standard
+        'stackedbars'    => 'StackedBars',
+    );
+
+    # Make sure the type is ready to be used as a Chart class name
+    $args{type} = $types{ $args{type} } || undef;
 
     # Save the data for retrieval from the session later
     my $chart_id   = Jifty->web->serial;

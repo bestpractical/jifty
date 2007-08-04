@@ -25,33 +25,37 @@ The arguments passed in C<%args> may include:
 
 =item type
 
-This will be one of the following scalar values indicating the kind of chart:
+This will be one of the following scalar values indicating the kind of chart. A given renderer may not support every type listed here. A renderer might support others in addition to these, but if it supports these it should use these names.
 
 =over
 
-=item Points
+=item points
 
 This is the default value. A scatter plot with each dataset represented using differnet dot styles.
 
-=item Lines
+=item lines
 
 A line plot with each dataset presented as separate line.
 
-=item Bars
+=item bars
 
 A bar chart with each dataset set side-by-side.
 
-=item StackedBars
+=item stackedbars
 
 A bar chart with each dataset stacked on top of each other.
 
-=item Pie
+=item pie
 
 A pie chart with a single dataset representing the values for different pieces of the pie.
 
-=item HorizontalBars
+=item horizontalbars
 
 A bar chart turned sideways.
+
+=item area
+
+An area chart uses lines to represent each dataset, but the lines are stacked on top of each other with filled areas underneath.
 
 =back
 
@@ -80,6 +84,10 @@ This allows you to associated an additional class or classes to the element cont
 =item renderer
 
 This allows you to use a different renderer than the one configured in F<config.yml>. Give the renderer as a class name, which will be initialized for you.
+
+=item options
+
+This is a hash containing additional options to pass to the renderer and are renderer specific. This may include anything that is not otherwise set by one of the other options above.
 
 =back
 
@@ -124,6 +132,9 @@ sub chart {
     # canonicalize the width/height
     $args{width}  .= 'px' if looks_like_number($args{width});
     $args{height} .= 'px' if looks_like_number($args{height});
+
+    # canonicalize the type argument (always lowercase)
+    $args{type} = lc $args{type};
 
     # canonicalize the class argument
     if (not ref $args{class}) {

@@ -42,8 +42,20 @@ sub render {
     my $self = shift;
     my %args = @_;
 
-    # Convert the type to lowercase
-    $args{type} = lc $args{type};
+    # GD::Graph types from generic types
+    my %types = (
+        lines          => 'lines',
+        bars           => 'bars',
+        horizontalbars => 'hbars',
+        points         => 'points',
+        linespoints    => 'linespoints', # non-standart
+        area           => 'area',
+        pie            => 'pie',
+        mixed          => 'mixed', # non-standard
+    );
+
+    # Convert the generic type to a GD::Graph type
+    $args{type} = $types{ $args{type} } || undef;
 
     # Save the data for retrieval from the session later
     my $chart_id   = Jifty->web->serial;

@@ -49,13 +49,16 @@ sub render {
     }
 
     my %types = (
-        Lines   => 'line',
-        Bars    => 'bar',
-        Pie     => 'pie',
+        lines          => { type => 'line' },
+        bars           => { type => 'bar', orientation => 'vertical' },
+        pie            => { type => 'pie' },
+        horizontalbars => { type => 'bar', orientation => 'horizontal' },
     );
 
     # Make sure the type is ready to be used
-    $args{type} = $types{ ucfirst lc $args{type} } || undef;
+    my $options = $types{ $args{type} } || {};
+    $args{type} = delete $options{type};
+    $args{options}{$_} = $options{$_} foreach keys %$options;
 
     if ( not defined $args{type} ) {
         Jifty->log->warn("Unsupported chart type: $args{type}!");
