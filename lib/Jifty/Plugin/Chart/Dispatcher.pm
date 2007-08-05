@@ -42,6 +42,10 @@ on 'chart/chart/*' => run {
     ($args->{width}  =~ s/px$//) or ($args->{width}  = 400);
     ($args->{height} =~ s/px$//) or ($args->{height} = 300);
 
+    # No zeroes! Ba Ba Blacksheep.
+    $args->{width}  ||= 400;
+    $args->{height} ||= 300;
+
     # Use the "type" to determine which class to use
     my $class = 'Chart::' . $args->{type};
 
@@ -85,6 +89,10 @@ on 'chart/gd_graph/*' => run {
     # Remove 'px' from width/height and set to 400/300 if not in pixels
     ($args->{width}  =~ s/px$//) or ($args->{width}  = 400);
     ($args->{height} =~ s/px$//) or ($args->{height} = 300);
+
+    # No zeroes! Ba Ba Blacksheep.
+    $args->{width}  ||= 400;
+    $args->{height} ||= 300;
 
     # Use the "type" to determine which class to use
     my $class = 'GD::Graph::' . $args->{type};
