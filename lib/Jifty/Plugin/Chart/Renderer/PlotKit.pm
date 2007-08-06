@@ -90,7 +90,7 @@ var plot = function() {
         @{[Jifty::JSON::objToJson( $args{data} )]}
     );
 };
-YAHOO.util.Event.addListener( window, "load", plot );
+YAHOO.util.Event.onAvailable( "$chart_id", plot );
 </script>
     END_OF_HTML
 
