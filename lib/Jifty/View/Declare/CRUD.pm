@@ -191,7 +191,9 @@ This template displays the data held by a single model record.
 =cut
 
 template 'view' => sub :CRUDView {
-    my ($self, $record) = @_;
+    my $self   = shift;
+    my $record = $self->_get_record( get('id') );
+
     my $update = new_action(
         class   => 'Update' . $self->object_type,
         moniker => "update-" . Jifty->web->serial,
