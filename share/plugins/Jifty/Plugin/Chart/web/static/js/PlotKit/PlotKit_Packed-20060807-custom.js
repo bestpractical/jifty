@@ -590,7 +590,7 @@ var sum=MochiKit.Iter.sum;
 var _118=MochiKit.Base.itemgetter;
 var _119=_116(this.datasets).length;
 var _120=_116(this.datasets)[0][1];
-var _121=sum(map(_118(1),_120));
+var _121=sum(PlotKit.Base.map(_118(1),_120));
 this.slices=new Array();
 var _122=0;
 for(var i=0;i<_120.length;i++){
@@ -680,7 +680,7 @@ this._evaluateLineTicks();
 var _142=function(tick){
 return [tick[0]+(this.minxdelta*this.xscale)/2,tick[1]];
 };
-this.xticks=MochiKit.Base.map(MochiKit.Base.bind(_142,this),this.xticks);
+this.xticks=PlotKit.Base.map(MochiKit.Base.bind(_142,this),this.xticks);
 if(this.options.barOrientation=="horizontal"){
 var _143=this.xticks;
 this.xticks=this.yticks;
@@ -688,7 +688,7 @@ this.yticks=_143;
 var _144=function(tick){
 return [1-tick[0],tick[1]];
 };
-this.xticks=MochiKit.Base.map(_144,this.xticks);
+this.xticks=PlotKit.Base.map(_144,this.xticks);
 }
 };
 PlotKit.Layout.prototype._evaluatePieTicks=function(){
