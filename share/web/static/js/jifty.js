@@ -719,7 +719,7 @@ Behaviour.register({
         }
     },
     '.form_field .error, .form_field .warning, .form_field .canonicalization_note': function(e) {
-        Element.hide(e);
+        if ( e.innerHTML == "" ) Element.hide(e);
     }
 });
 
