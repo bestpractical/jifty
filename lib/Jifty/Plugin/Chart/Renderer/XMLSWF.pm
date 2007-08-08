@@ -66,6 +66,10 @@ sub render {
     # Make sure the type is ready to be used
     $args{type} = $types{ $args{type} } || undef;
 
+    # Kill the "px" unit
+    $args{width} =~ s/px$//;
+    $args{height} =~ s/px$//;
+
     # Save the data for retrieval from the session later
     my $chart_id   = Jifty->web->serial;
     my $session_id = 'chart_' . $chart_id;

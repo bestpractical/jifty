@@ -151,6 +151,7 @@ features(
         recommends('Chart::Base'),
         recommends('GD'),          # for a testing hack
         recommends('GD::Graph'),
+        recommends('XML::Simple'),
         recommends('Image::Info'), # for testing
     ],
 );

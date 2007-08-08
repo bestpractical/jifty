@@ -65,6 +65,10 @@ sub render {
         return;
     }
 
+    # Kill the "px" unit
+    $args{width} =~ s/px$//;
+    $args{height} =~ s/px$//;
+
     $self->_transform_data( \%args );
 
     # Save the data for retrieval from the session later
