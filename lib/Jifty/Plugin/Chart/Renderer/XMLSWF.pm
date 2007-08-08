@@ -48,7 +48,6 @@ sub render {
     my $self = shift;
     my %args = (
         bgcolor => '#ffffff',
-        align   => 'left',
         wmode   => 'transparent',
         @_
     );
@@ -94,7 +93,6 @@ sub render {
             width           => $args{width},
             height          => $args{height},
             name            => $session_id,
-            align           => $args{align},
             wmode           => $args{wmode},
             type            => 'application/x-shockwave-flash',
             swLiveConnect   => 'true',
@@ -107,7 +105,6 @@ sub render {
             height      => $args{height},
             id          => $session_id,
             class       => join( ' ', @{$args{class}} ),
-            align       => $args{align},
         },
         params  => {
             movie   => $src,
