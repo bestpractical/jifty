@@ -50,7 +50,7 @@ This is the constructor. Don't override this directly. Instead implement L</init
 sub new {
     my $class = shift;
     my $self = bless {}, $class;
-    $self->init;
+    $self->init( @_ );
     return $self;
 }
 
@@ -58,7 +58,7 @@ sub new {
 
   $renderer->init();
 
-This is called by C<new> immediately after constructing the object. Subclasses should implement this method to do any required initialization such as letting Jifty know about required CSS files, JS files, etc.
+This is called by C<new> immediately after constructing the object.  It is passed a param hash from the config file.  Subclasses should implement this method to do any required initialization such as letting Jifty know about required CSS files, JS files, etc.
 
 =cut
 

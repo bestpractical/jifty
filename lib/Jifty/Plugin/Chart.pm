@@ -76,7 +76,7 @@ sub init {
     $self->renderers({});
 
     # Load the default renderer
-    $self->renderer( $self->init_renderer($args{renderer}) );
+    $self->renderer( $self->init_renderer( $args{renderer}, %args ) );
 
     push @Jifty::Web::ISA, 'Jifty::Plugin::Chart::Web';
 }
@@ -90,7 +90,7 @@ This is a helper method that is used by the API to initialize the renderer class
 =cut
 
 sub init_renderer {
-    my ($self, $renderer_class) = @_;
+    my ( $self, $renderer_class ) = ( shift, shift );
 
     # If it's already an object, just return that
     if ( blessed($renderer_class)
@@ -112,7 +112,7 @@ sub init_renderer {
         or warn $@;
 
     # Initialize the renderer
-    $renderer = $renderer_class->new;
+    $renderer = $renderer_class->new( @_ );
 
     # Remember it
     $self->renderers->{ $renderer_class } = $renderer;
