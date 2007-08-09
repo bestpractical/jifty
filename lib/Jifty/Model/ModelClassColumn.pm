@@ -119,13 +119,13 @@ use Jifty::Record schema {
         type is 'boolean', 
         label is 'Readable?',
         hints is 'Can the value of this column be read directly? For example, passwords should not normally be readable.',
-        default is 'true';
+        default is 1;
 
     column writable => 
         type is 'boolean', 
         label is 'Writable?',
         hints is 'Can the value of this column be changed after created?',
-        default is 'true';
+        default is 1;
 
     column default_value => 
         type is 'text',
