@@ -26,8 +26,8 @@ Behaviour.register({
         query['width']  = dim.width + 'px';
         query['height'] = dim.height + 'px';
 
-        url = path + '?' + query.toQueryString();
+        url = path + '?' + $H(query).toQueryString();
 
         e.src = url;
-    },
+    }
 });

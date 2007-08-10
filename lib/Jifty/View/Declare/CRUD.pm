@@ -432,7 +432,7 @@ private template 'list_items' => sub {
     my $item_path   = shift;
     my $object_type = $self->object_type;
     if ( $collection->pager->total_entries == 0 ) {
-        show('no_items_found');
+        show('./no_items_found');
     }
 
     div {

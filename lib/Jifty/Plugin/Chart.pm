@@ -7,7 +7,7 @@ use base qw/ Jifty::Plugin Class::Accessor::Fast /;
 use Jifty::Plugin::Chart::Web;
 use Scalar::Util qw/ blessed /;
 
-__PACKAGE__->mk_accessors(qw/ renderer renderers /);
+__PACKAGE__->mk_accessors(qw/ renderer renderers plugin_args /);
 
 =head1 NAME
 
@@ -49,13 +49,29 @@ This method is described in L<Jifty::Plugin::Chart::Web> and an example is shown
 
 =head1 CONFIGURATION
 
-The plugin takes a single configuration option called C<renderer>. This may be set to a chart renderer class, which is just an implementation of L<Jifty::Plugin::Chart::Renderer>. The default, L<Jifty::Plugin::Chart::Renderer::Chart>, uses L<Chart> to render charts as PNG files which are then included in your pages for you.
-
 Here is an example configuration for F<config.yml>:
 
   Plugins:
     - Chart:
-        renderer: Chart
+        DefaultRenderer: PlotKit
+        PreloadRenderers:
+         - XMLSWF
+         - SimpleBars
+         - App::Renderer::Custom
+
+The available options are:
+
+=over
+
+=item DefaultRenderer
+
+This is the name of the class to use as the default renderer. L<Jifty::Plugin::Chart::Renderer::Chart> is the current default, but that could change in the future. It's recommended that you set this to your preference.
+
+=item PreloadRenderers
+
+This is a list of other render classes to load during initialization. If they are not loaded during initialization some renderers may not work correctly the first time they are run because they are not able to inform Jifty of the CSS or JS files they need before that part of the page is already rendered. If you use the "renderer" option of L<Jifty::Plugin::Chart::Web/chart>, then you should make sure any value you use is set here in the configuration to make sure it works properly.
+
+=back
 
 =head1 METHODS
 
@@ -68,15 +84,35 @@ Adds the L<Jifty::Plugin::Chart::Web/chart> method to L<Jifty::Web>.
 sub init {
     my $self = shift;
     my %args = (
-        renderer => 'Chart',
+        DefaultRenderer => 'Chart',
         @_,
     );
+
+    # Save the arguments for use in init_renderer() later
+    $self->plugin_args( \%args );
+
+    # Deprecating the old form
+    if (defined $args{renderer}) {
+        warn 'DEPRECATED: renderer argument to Chart plugin is deprecated.'
+            .' Use DefaultRenderer instead.';
+        $args{DefaultRenderer} = delete $args{renderer};
+    }
 
     # Create the empty renderers list
     $self->renderers({});
 
+    # Pre-load any renderers they plan to use
+    if (defined $args{PreloadRenderers}) {
+        $args{PreloadRenderers} = [ $args{PreloadRenderers} ]
+            unless ref $args{PreloadRenderers};
+
+        for my $renderer (@{ $args{PreloadRenderers} }) {
+            $self->init_renderer( $renderer );
+        }
+    }
+
     # Load the default renderer
-    $self->renderer( $self->init_renderer( $args{renderer}, %args ) );
+    $self->renderer( $self->init_renderer( $args{DefaultRenderer}, %args ) );
 
     push @Jifty::Web::ISA, 'Jifty::Plugin::Chart::Web';
 }
@@ -112,7 +148,7 @@ sub init_renderer {
         or warn $@;
 
     # Initialize the renderer
-    $renderer = $renderer_class->new( @_ );
+    $renderer = $renderer_class->new( %{ $self->plugin_args } );
 
     # Remember it
     $self->renderers->{ $renderer_class } = $renderer;
