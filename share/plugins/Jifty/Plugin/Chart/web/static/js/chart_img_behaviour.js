@@ -29,5 +29,5 @@ Behaviour.register({
         url = path + '?' + query.toQueryString();
 
         e.src = url;
-    },
+    }
 });
