@@ -22,8 +22,10 @@ else {
 
 use Jifty::Plugin::Chart::Renderer::Chart;
 
-(Jifty->find_plugin('Jifty::Plugin::Chart'))[0]
-    ->renderer('Jifty::Plugin::Chart::Renderer::Chart');
+my $chart_plugin = (Jifty->find_plugin('Jifty::Plugin::Chart'))[0];
+$chart_plugin->renderer(
+    $chart_plugin->init_renderer('Jifty::Plugin::Chart::Renderer::Chart')
+);
 
 my $server = Jifty::Test->make_server;
 ok($server, 'got a server');
