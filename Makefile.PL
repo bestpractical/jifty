@@ -169,7 +169,7 @@ install_script('bin/jifty');
 install_share;
 
 # Test all of our sub-dist tests too
-tests('t/*.t t/*/t/*.t');
+tests('t/*.t t/*/*.t t/*/*/*.t t/*/*/*/*.t');
 
 WriteAll;
 
