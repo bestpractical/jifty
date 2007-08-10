@@ -196,7 +196,10 @@ sub arguments {
 
             elsif ( defined (my $refers_to = $column->refers_to) ) {
                 if ( UNIVERSAL::isa( $refers_to, 'Jifty::Record' ) ) {
+                    $info->{render_as} = $render_as || 'Select';
+                }
 
+                if ( $info->{render_as} eq 'Select' ) {
                     my $collection = Jifty::Collection->new(
                         record_class => $refers_to,
                         current_user => $self->record->current_user
@@ -205,14 +208,13 @@ sub arguments {
 
                     my $method = $refers_to->_brief_description();
 
+                    # FIXME: we should get value_from with the actualy refered by key
                     $info->{valid_values} = [
                         {   display_from => $refers_to->can($method) ? $method : "id",
                             value_from => 'id',
                             collection => $collection
                         }
                     ];
-
-                    $info->{render_as} = 'Select';
                 } else {
                     # No need to generate arguments for
                     # JDBI::Collections, as we can't do anything
