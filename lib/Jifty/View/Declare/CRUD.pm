@@ -430,11 +430,13 @@ private template 'list_items' => sub {
     my $self        = shift;
     my $collection  = shift;
     my $item_path   = shift;
+    my $callback    = shift;
     my $object_type = $self->object_type;
     if ( $collection->pager->total_entries == 0 ) {
         show('./no_items_found');
     }
 
+    my $i = 0;
     div {
         { class is 'list' };
         while ( my $item = $collection->next ) {
@@ -443,6 +445,7 @@ private template 'list_items' => sub {
                 path     => $item_path,
                 defaults => { id => $item->id, object_type => $object_type }
             );
+            $callback->(++$i) if $callback;
         }
     };
 

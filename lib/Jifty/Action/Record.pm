@@ -199,7 +199,7 @@ sub arguments {
                     $info->{render_as} = $render_as || 'Select';
                 }
 
-                if ( $info->{render_as} eq 'Select' ) {
+                if ( UNIVERSAL::isa( $refers_to, 'Jifty::Record' ) && $info->{render_as} eq 'Select' ) {
                     my $collection = Jifty::Collection->new(
                         record_class => $refers_to,
                         current_user => $self->record->current_user

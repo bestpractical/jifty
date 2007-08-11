@@ -111,7 +111,6 @@ EditLocationControl.prototype.initialize = function(map) {
       };
       element.appendChild(field);
       var submit= document.createElement('input');
-      submit.id = 'blahblah';
       submit.value = 'Query';
       submit.setAttribute('type', 'button');
       submit.onclick = function() { _handle_search(map, field.value) };
