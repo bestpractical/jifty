@@ -11,7 +11,7 @@ our @EXPORT = (
     wrapper request get set render_param current_user
     render_action render_region),
     @Template::Declare::Tags::EXPORT,
-    @Template::Declare::Tags::TagSubs
+    @Template::Declare::Tags::TagSubs,
 );
 
 =head1 NAME
