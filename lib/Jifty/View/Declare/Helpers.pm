@@ -2,10 +2,17 @@ use warnings;
 use strict;
 
 package Jifty::View::Declare::Helpers;
-use Template::Declare::Tags;
+use Template::Declare::Tags 'HTML';
 use base qw/Template::Declare Exporter/;
 
-our @EXPORT = ( qw(hyperlink tangent redirect new_action form_submit form_return form_next_page page content wrapper request get set render_param current_user render_action render_region), @Template::Declare::Tags::EXPORT);
+our @EXPORT = (
+    qw(hyperlink tangent redirect new_action
+    form_submit form_return form_next_page page content
+    wrapper request get set render_param current_user
+    render_action render_region),
+    @Template::Declare::Tags::EXPORT,
+    @Template::Declare::Tags::TagSubs
+);
 
 =head1 NAME
 
