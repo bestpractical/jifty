@@ -2,7 +2,7 @@ use warnings;
 use strict;
 
 package Jifty::View::Declare::Helpers;
-use Template::Declare::Tags 'HTML';
+use Template::Declare::Tags;
 use base qw/Template::Declare Exporter/;
 
 our @EXPORT = (
