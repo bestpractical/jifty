@@ -59,12 +59,15 @@ L<argument> in question.
 sub take_action {
     my $self = shift;
 
+    # Load the arguments
     my $moniker = $self->argument_value('moniker');
     my $argument = $self->argument_value('argument');
 
+    # Load the action associated with the moniker
     my $request_action = Jifty->web->request->action($moniker);
     my $action = Jifty->web->new_action_from_request($request_action);
 
+    # Call the autocompleter for that action and argument and set the result
     my @completions = $action->_autocomplete_argument($argument);
     $self->result->content->{completions} = \@completions;
 

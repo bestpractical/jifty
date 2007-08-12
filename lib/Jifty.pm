@@ -143,12 +143,12 @@ more infomation.
 sub new {
     my $ignored_class = shift;
 
+    # Setup the defaults
     my %args = (
         no_handle        => 0,
         logger_component => undef,
         @_
     );
-
 
     # Add the appliation's library path
     push @INC, File::Spec->catdir(Jifty::Util->app_root, "lib");
@@ -158,10 +158,12 @@ sub new {
     # which is likely Record::Cachable or Record::Memcached
     @Jifty::Record::ISA = grep { $_ ne 'Jifty::DBI::Record' } @Jifty::Record::ISA;
 
+    # Configure the base class used by Jifty models
     my $record_base_class = Jifty->config->framework('Database')->{'RecordBaseClass'};
     Jifty::Util->require( $record_base_class );
     push @Jifty::Record::ISA, $record_base_class unless $record_base_class eq 'Jifty::Record';
 
+    # Logger turn on
     Jifty->logger( Jifty::Logger->new( $args{'logger_component'} ) );
 
     # Set up plugins
@@ -169,19 +171,30 @@ sub new {
     my @plugins_to_load = @{Jifty->config->framework('Plugins')};
     my $app_plugin = Jifty->app_class('Plugin');
     for (my $i = 0; my $plugin = $plugins_to_load[$i]; $i++) {
+
+        # Prepare to learn the plugin class name
         my $plugin_name = (keys %{$plugin})[0];
         my $class;
+
+        # Is the plugin name a fully-qualified class name?
         if ($plugin_name =~ /^(?:Jifty::Plugin|$app_plugin)::/) {
             # app-specific plugins use fully qualified names, Jifty plugins may
             $class = $plugin_name; 
         }
+
         # otherwise, assume it's a short name, qualify it
         else {
             $class = "Jifty::Plugin::".$plugin_name;
         }
+
+        # Load the plugin options
         my %options = %{ $plugin->{ $plugin_name } };
+
+        # Load the plugin code
         Jifty::Util->require($class);
         Jifty::ClassLoader->new(base => $class)->require;
+
+        # Initialize the plugin and mark the prerequisites for loading too
         my $plugin_obj = $class->new(%options);
         push @plugins, $plugin_obj;
         foreach my $name ($plugin_obj->prereq_plugins) {
@@ -190,6 +203,7 @@ sub new {
         }
     }
 
+    # All plugins loaded, save them for later reference
     Jifty->plugins(@plugins);
 
     # Now that we have the config set up and loaded plugins,
@@ -201,9 +215,11 @@ sub new {
         base => Jifty->app_class,
     );
 
+    # Save the class loader for later reference
     Jifty->class_loader($class_loader);
     $class_loader->require;
 
+    # Configure the request handler and action API handler
     Jifty->handler(Jifty::Handler->new());
     Jifty->api(Jifty::API->new());
 
@@ -217,9 +233,9 @@ sub new {
     # application specific for startup
     my $app = Jifty->app_class;
     
+    # Run the App::start() method if it exists for app-specific initialization
     $app->start()
         if $app->can('start');
-    
 }
 
 # Explicitly destroy the classloader; if this happens during global
@@ -431,15 +447,20 @@ sub setup_database_connection {
     my $self = shift;
     my %args = (no_handle =>0,
                 @_);
+
+    # Don't setup the database connection if we're told not to
     unless ( $args{'no_handle'}
         or Jifty->config->framework('SkipDatabase')
         or not Jifty->config->framework('Database') )
     {
 
+        # Load the app's database handle and connect
         my $handle_class = Jifty->app_class("Handle");
         Jifty::Util->require( $handle_class );
         Jifty->handle( $handle_class->new );
         Jifty->handle->connect();
+
+        # Make sure the app version matches the database version
         Jifty->handle->check_schema_version()
             unless $args{'no_version_check'};
     }
