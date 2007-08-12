@@ -12,33 +12,63 @@ sub CRUDView :ATTR(CODE,BEGIN) {
     $VIEW{$_[2]}++;
 }
 
-
 =head1 NAME
 
 Jifty::View::Declare::CRUD - Provides typical CRUD views to a model
 
+=head1 SYNOPSIS
+
+  package App::View;
+  use Jifty::View::Declare -base;
+
+  use Jifty::View::Declare::CRUD;
+  Jifty::View::Declare::CRUD->mount_view('User');
+  Jifty::View::Declare::CRUD->mount_view('Category', 'App::View::Tag', '/tag');
+
 =head1 DESCRIPTION
 
-This class provides a set of views that may be used by a model to
-display Create/Read/Update/Delete views using the L<Template::Declare>
-templating language.
+This class provides a set of views that may be used by a model to display
+Create/Read/Update/Delete views using the L<Template::Declare> templating
+language.
+
+Basically, you can use this class to do most (and maybe all) of the work you need to manipulate and view your records.
 
 =head1 METHODS
 
-=cut
-
-
 =head2 mount_view MODELCASS VIEWCLASS /path
+
+Call this method in your appliation's view class to add the CRUD views you're looking for. Only the first argument is required.
+
+Arguments:
+
+=over
+
+=item MODELCLASS
+
+This is the name of the model that you want to generate the CRUD views for. This is the only required parameter. Leave off the parts of the class name prior to and including the "Model" part. (I.e., C<App::Model::User> should be passed as just C<User>).
+
+=item VIEWCLASS
+
+This is the name of the class that will be generated to hold the CRUD views of your model. If not given, it will be set to: C<App::View::I<MODELCLASS>>. If given, it should be the full name of the view class.
+
+=item /path
+
+This is the path where you can reach the CRUD views for this model in your browser. If not given, this will be set to the model class name in lowercase letters. (I.e., C<User> would be found at C</user> if not passed explicitly).
+
+=back
 
 =cut
 
 sub mount_view {
     my ($class, $model, $vclass, $path) = @_;
     my $caller = caller(0);
+
+    # Sanitize the arguments
     $model = ucfirst($model);
     $vclass ||= $caller.'::'.$model;
     $path ||= '/'.lc($model);
 
+    # Load the view class, alias it, and define its object_type method
     Jifty::Util->require($vclass);
     eval qq{package $caller;
             alias $vclass under '$path'; 1} or die $@;
@@ -46,6 +76,10 @@ sub mount_view {
     *{$vclass."::object_type"} = sub { $model };
 }
 
+# XXX TODO FIXME This is related to the trimclient branch and performs some
+# magic related to that or that was once related to that. This is also related
+# to the CRUDView attribute above. This is a little unfinished, but I'll leave
+# it up to clkao to figure out what needs to happen here.
 sub _dispatch_template {
     my $class = shift;
     my $code  = shift;
@@ -59,8 +93,9 @@ sub _dispatch_template {
     goto $code;
 }
 
-
 =head2 object_type
+
+This method returns the type of object this CRUD view has been generated for. This is normally the model class parameter that was passed to L</mount_view>.
 
 =cut
 
@@ -69,8 +104,15 @@ sub object_type {
     return $self->package_variable('object_type') || get('object_type');
 }
 
-
 =head2 fragment_for
+
+This is a helper that returns the path to a given fragment. The only argument is the name of the fragment. It returns a absolute base path to the fragment page.
+
+This will attempt to lookup a method named C<fragment_for_I<FRAGMENT>>, where I<FRAGMENT> is the argument passed. If that method exists, it's result is used as the returned path.
+
+Otherwise, the L</fragment_base_path> is joined to the passed fragment name to create the return value.
+
+If you really want to mess with this, you may need to read the source code of this class.
 
 =cut
 
@@ -78,23 +120,37 @@ sub fragment_for {
     my $self     = shift;
     my $fragment = shift;
 
+    # Check for fragment_for_$fragment and use that if it exists
     if ( my $coderef = $self->can( 'fragment_for_' . $fragment ) ) {
         return $coderef->($self);
     }
 
+    # Otherwise return the fragment_base_path/$fragment
     return $self->package_variable( 'fragment_for_' . $fragment )
         || $self->fragment_base_path . "/" . $fragment;
 }
 
 =head2 fragment_base_path
 
+This is a helper for L</fragment_for>. It looks up the current template using L<Template::Declare::Tags/current_template>, finds it's parent path and then returns that.
+
+If you really want to mess with this, you may need to read the source code of this class.
+
 =cut
 
 sub fragment_base_path {
     my $self = shift;
+
+    # Rip it apart
     my @parts = split('/', current_template());
+
+    # Remove the last element
     pop @parts;
+
+    # Put it back together again
     my $path = join('/', @parts);
+
+    # And serve
     return $path;
 }
 
@@ -107,6 +163,7 @@ Given an $id, returns a record object for the CRUD view's model class.
 sub _get_record {
     my ( $self, $id ) = @_;
 
+    # Load the model, create an empty object, load the object by ID
     my $record_class = Jifty->app_class( "Model", $self->object_type );
     my $record = $record_class->new();
     $record->load($id);
@@ -126,36 +183,30 @@ sub display_columns {
      return   grep { !( m/_confirm/ || lc $action->arguments->{$_}{render_as} eq 'password' ) } $action->argument_names;
 }
 
-
 =head1 TEMPLATES
-
-
-=cut
 
 =head2 index.html
 
+Contains the master form and page region containing the list of items. This is mainly a wrapper for the L</list> fragment.
 
 =cut
-
 
 template 'index.html' => page {
     my $self = shift;
     title is $self->object_type;
     form {
-            render_region(
-                name     => $self->object_type.'-list',
-                path     => $self->fragment_base_path.'/list');
+        render_region(
+            name     => $self->object_type.'-list',
+            path     => $self->fragment_base_path.'/list');
     }
 
 };
 
- 
-
-
-
 =head2 search
 
-The search view displays a search screen connected to the search action of the module. See L<Jifty::Action::Record::Search>.
+The search fragment displays a search screen connected to the search action of the module. 
+
+See L<Jifty::Action::Record::Search>.
 
 =cut
 
@@ -181,12 +232,12 @@ template 'search' => sub {
             }
         );
 
-        }
+    }
 };
 
 =head2 view
 
-This template displays the data held by a single model record.
+This fragment displays the data held by a single model record.
 
 =cut
 
@@ -212,6 +263,12 @@ template 'view' => sub :CRUDView {
 
 };
 
+=head2 private template view_item_controls
+
+Used by the view fragment to show the edit link for each record.
+
+=cut
+
 private template view_item_controls  => sub {
     my $self = shift;
     my $record = shift;
@@ -228,11 +285,11 @@ private template view_item_controls  => sub {
     }
 };
 
-
-
 =head2 update
 
-The update template displays a form for editing the data held within a single model record. See L<Jifty::Action::Record::Update>.
+The update fragment displays a form for editing the data held within a single model record. 
+
+See L<Jifty::Action::Record::Update>.
 
 =cut
 
@@ -256,10 +313,8 @@ template 'update' => sub {
         show('./edit_item_controls', $record, $update);
 
         hr {};
-        }
+    }
 };
-
-
 
 =head2 edit_item_controls $record $action
 
@@ -346,8 +401,11 @@ The default is 25.
 
 sub per_page { 25 }
 
+# This method just does a whole lot of sanitizing to try and get a valid
+# collection out the other end based upon either the current search or an
+# unlimited collection if there is no current search.
 sub _current_collection {
-    my $self =shift; 
+    my $self = shift; 
     my ( $page, $search_collection ) = get(qw(page  search_collection));
     my $collection_class = Jifty->app_class( "Model", $self->object_type . "Collection" );
     my $search = $search_collection || ( Jifty->web->response->result('search') ? Jifty->web->response->result('search')->content('search') : undef );
@@ -400,7 +458,6 @@ This I<private> template renders a region to show a the C<new_item> template.
 
 =cut
 
-
 private template 'new_item_region' => sub {
     my $self        = shift;
     my $fragment_for_new_item = get('fragment_for_new_item') || $self->fragment_for('new_item');
@@ -415,16 +472,19 @@ private template 'new_item_region' => sub {
     }
 };
 
+=head2 no_items_found
+
+Prints "No items found."
+
+=cut
+
+private template 'no_items_found' => sub { outs(_("No items found.")) };
 
 =head2 list_items $collection $item_path
 
 Renders a div of class list with a region per item.
 
-
-
 =cut
-
-private template 'no_items_found' => sub { outs(_("No items found.")) };
 
 private template 'list_items' => sub {
     my $self        = shift;
@@ -451,13 +511,11 @@ private template 'list_items' => sub {
 
 };
 
-
 =head2 paging_top $collection $page_number
 
 Paging for your list, rendered at the top of the list
 
 =cut
-
 
 private template 'paging_top' => sub {
     my $self       = shift;
@@ -510,15 +568,11 @@ private template paging_bottom => sub {
     };
 };
 
-
-
 =head2 edit_item $action
 
 Renders the action $Action, handing it the array ref returned by L</display_columns>.
 
 =cut
-
-
 
 private template 'edit_item' => sub {
     my $self = shift;
@@ -561,7 +615,7 @@ template 'new_item' => sub {
                 ]
             )
         );
-        }
+    }
 };
 
 =head1 SEE ALSO
