@@ -35,6 +35,12 @@ Basically, you can use this class to do most (and maybe all) of the work you nee
 
 =head1 METHODS
 
+=begin pod_coverage
+
+=head2 CRUDView
+
+=end
+
 =head2 mount_view MODELCASS VIEWCLASS /path
 
 Call this method in your appliation's view class to add the CRUD views you're looking for. Only the first argument is required.
