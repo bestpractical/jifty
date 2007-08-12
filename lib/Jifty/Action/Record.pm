@@ -228,13 +228,12 @@ sub arguments {
             }
 
             # If it's a select box, setup the available values
-            if ( $info->{render_as} eq 'Select' ) {
+            if ( UNIVERSAL::isa( $refers_to, 'Jifty::Record' ) && $info->{render_as} eq 'Select' ) {
 
                 # Get an unlimited collection
                 my $collection = Jifty::Collection->new(
                     record_class => $refers_to,
                     current_user => $self->record->current_user
-                );
                 $collection->unlimit;
 
                 # Fetch the _brief_description() method
