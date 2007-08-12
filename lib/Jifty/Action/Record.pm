@@ -233,7 +233,8 @@ sub arguments {
                 # Get an unlimited collection
                 my $collection = Jifty::Collection->new(
                     record_class => $refers_to,
-                    current_user => $self->record->current_user
+                    current_user => $self->record->current_user,
+                );
                 $collection->unlimit;
 
                 # Fetch the _brief_description() method
