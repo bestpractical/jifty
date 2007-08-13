@@ -267,7 +267,7 @@ sub render_param {
     return '';
 }
 
-=head2 page 
+=head2 page
 
  template 'foo' => page {{ title is 'Foo' } ... };
 
