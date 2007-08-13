@@ -64,7 +64,7 @@ requires('Scalar::Defer' => '0.10');
 requires('Shell::Command');
 requires('String::Koremutake');
 requires('SQL::ReservedWords');
-requires('Template::Declare' => '0.21');                # Template::Declare::Tags
+requires('Template::Declare' => '0.26');                # Template::Declare::Tags
 requires('Test::Base');
 requires('Test::LongString');
 requires('Test::Log4perl');
