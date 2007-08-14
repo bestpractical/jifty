@@ -25,4 +25,21 @@ sub classes {
     return join(' ', 'text', ($self->SUPER::classes));
 }
 
+
+=head2 handler_allowed HANDLER_NAME
+
+Returns 1 if the handler (e.g. onclick) is allowed.  Undef otherwise.
+
+=cut
+
+sub handler_allowed {
+    my $self = shift;
+    my ($handler) = @_;
+
+    return $self->SUPER::handler_allowed($handler) ||
+           {onselect => 1}->{$handler};
+
+}
+
+
 1;

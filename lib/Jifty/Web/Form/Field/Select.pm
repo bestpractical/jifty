@@ -23,6 +23,7 @@ sub render_widget {
     $field .= qq! name="@{[ $self->input_name ]}"!;
     $field .= qq! id="@{[ $self->element_id ]}"!;
     $field .= $self->_widget_class;
+    $field .= $self->javascript;
     $field .= qq!      >\n!;
     for my $opt (@{ $self->action->available_values($self->name) }) {
         my $display = $opt->{'display'};

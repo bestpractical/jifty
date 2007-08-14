@@ -37,11 +37,28 @@ sub render_widget {
     $field .= qq! rows="@{[$self->rows || 5 ]}"!;
     $field .= qq! cols="@{[$self->cols || 60]}"!;
     $field .= $self->_widget_class;
+    $field .= $self->javascript;
     $field .= qq! >!;
     $field .= Jifty->web->escape($self->current_value) if $self->current_value;
     $field .= qq!</textarea>\n!;
     Jifty->web->out($field);
     '';
 }
+
+=head2 handler_allowed HANDLER_NAME
+
+Returns 1 if the handler (e.g. onclick) is allowed.  Undef otherwise.
+
+=cut
+
+sub handler_allowed {
+    my $self = shift;
+    my ($handler) = @_;
+
+    return $self->SUPER::handler_allowed($handler) ||
+           {onselect => 1}->{$handler};
+
+}
+
 
 1;

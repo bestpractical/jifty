@@ -64,6 +64,7 @@ sub render_option {
 
     $field .= qq! checked="checked" !
       if defined $self->current_value and $self->current_value eq $value;
+    $field .= $self->javascript;
     $field .= qq! /><label for="@{[ $id ]}"!;
     $field .= $self->_widget_class;
     $field .= qq!>$display</label>\n!;
@@ -72,5 +73,6 @@ sub render_option {
     Jifty->web->out($field);
     '';
 }
+
 
 1;
