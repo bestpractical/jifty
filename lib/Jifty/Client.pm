@@ -13,10 +13,9 @@ use Hook::LexWrap;
 use List::Util qw(first);
 use Carp;
 
-
 =head1 NAME
 
-Jifty::Client --- Subclass of L<WWW::Mechanize> with extra Jifty features
+Jifty::Client - Subclass of L<WWW::Mechanize> with extra Jifty features
 
 =head1 DESCRIPTION
 
@@ -54,18 +53,25 @@ sub moniker_for {
   my $action = Jifty->api->qualify(shift);
   my %args = @_;
 
+  # Search through all the inputs of all the forms
   for my $f ($self->forms) {
   INPUT: 
     for my $input ($f->inputs) {
+
+      # Look for the matching action
       if ($input->type eq "hidden" and $input->name =~ /^J:A-(?:\d+-)?(.*)/ and $input->value eq $action) {
 
+        # We have a potential moniker
         my $moniker = $1;
 
+        # Make sure that this action actually has the field values we're
+        # looking for, if not keep looking
         for my $id (keys %args) {
           my $idfield = $f->find_input("J:A:F:F-$id-$moniker");
           next INPUT unless $idfield and $idfield->value eq $args{$id};
         }
 
+        # It does! Return it...
         return $1;
       }
     }
@@ -87,9 +93,11 @@ sub fill_in_action {
     my $moniker = shift;
     my %args = @_;
 
+    # Load the form object containing the given moniker or quit
     my $action_form = $self->action_form($moniker, keys %args);
     return unless $action_form;
 
+    # For each field name given, set the field's value
     for my $arg (keys %args) {
         my $input = $action_form->find_input("J:A:F-$arg-$moniker");
         unless ($input) {
@@ -98,6 +106,7 @@ sub fill_in_action {
         $input->value($args{$arg});
     } 
 
+    # Return the form in case they want to do soemthing with it
     return $action_form;
 }
 
@@ -116,14 +125,18 @@ sub action_form {
     my @fields = @_;
     Carp::confess("No moniker") unless $moniker;
 
+    # Go through all the forms looking for the moniker
     my $i;
     for my $form ($self->forms) {
         no warnings 'uninitialized';
 
+        # Keep looking unless the right kind of input is found
         $i++;
         next unless first {   $_->name =~ /J:A-(?:\d+-)?$moniker/
                            && $_->type eq "hidden" }
                         $form->inputs;
+
+        # Keep looking if the suggested field's don't match up
         next if grep {not $form->find_input("J:A:F-$_-$moniker")} @fields;
 
         $self->form_number($i); #select it, for $mech->submit etc
@@ -144,9 +157,11 @@ sub action_field_value {
     my $moniker = shift;
     my $field = shift;
 
+    # Find the form containing the moniker requested
     my $action_form = $self->action_form($moniker, $field);
     return unless $action_form;
     
+    # Find the input containing the field requested and fetch the value
     my $input = $action_form->find_input("J:A:F-$field-$moniker");
     return unless $input;
     return $input->value;
@@ -168,10 +183,11 @@ sub send_action {
     my $class = shift;
     my %args = @_;
 
-
+    # Setup the URL of the request we're about to make
     my $uri = $self->uri->clone;
     $uri->path("__jifty/webservices/yaml");
 
+    # Setup the action request we're going to send
     my $request = HTTP::Request->new(
         POST => $uri,
         [ 'Content-Type' => 'text/x-yaml' ],
@@ -187,6 +203,8 @@ sub send_action {
             }
         )
     );
+
+    # Fire off the request, evaluate the result, and return it
     my $result = $self->request( $request );
     my $content = eval { Jifty::YAML::Load($result->content)->{action} } || undef;
     $self->back;
@@ -205,9 +223,11 @@ sub fragment_request {
     my $path = shift;
     my %args = @_;
 
+    # Setup the URL we're going to use
     my $uri = $self->uri->clone;
     $uri->path("__jifty/webservices/xml");
 
+    # Setup the request we're going to use
     my $request = HTTP::Request->new(
         POST => $uri,
         [ 'Content-Type' => 'text/x-yaml' ],
@@ -223,6 +243,8 @@ sub fragment_request {
             }
         )
     );
+
+    # Fire the request, evaluate the result, and return it
     my $result = $self->request( $request );
     use XML::Simple;
     my $content = eval { XML::Simple::XMLin($result->content, SuppressEmpty => '')->{fragment}{content} } || '';
@@ -263,10 +285,11 @@ sub field_error_text {
     my $moniker = shift;
     my $field = shift;
 
+    # Setup the XPath processor and the ID we're looking for
     my $xp = XML::XPath->new( xml => $self->content );
-
     my $id = "errors-J:A:F-$field-$moniker";
 
+    # Search for the span containing that error
     my $nodeset = $xp->findnodes(qq{//span[\@id = "$id"]});
     return unless $nodeset->size == 1;
     
@@ -295,8 +318,10 @@ this Mechanize object.
 sub session {
     my $self = shift;
 
+    # We don't have a session!
     return undef unless $self->cookie_jar->as_string =~ /JIFTY_SID_\d+=([^;]+)/;
 
+    # Load the data stored in the session cookie
     my $session = Jifty::Web::Session->new;
     $session->load($1);
     return $session;
@@ -312,12 +337,15 @@ given an ID, returns the continuation with that ID.
 sub continuation {
     my $self = shift;
 
+    # If we don't have a session, we don't have a continuation
     my $session = $self->session;
     return undef unless $session;
     
+    # Look for the continuation info in the URL
     my $id = shift;
     ($id) = $self->uri =~ /J:(?:C|CALL|RETURN)=([^&;]+)/ unless $id;
 
+    # Return information about the continuation
     return $session->get_continuation($id);
 }
 
@@ -330,9 +358,11 @@ Returns the L<Jifty::CurrentUser> object or descendant, if any.
 sub current_user {
     my $self = shift;
 
+    # We don't have a current user if we don't have a session
     my $session = $self->session;
     return undef unless $session;
 
+    # Fetch information about user from the session
     my $id = $session->get('user_id');
     my $object = Jifty->app_class("CurrentUser")->new();
     my $user = $session->get('user_ref')->new( current_user => $object );
@@ -341,5 +371,16 @@ sub current_user {
 
     return $object;
 }
+
+=head1 SEE ALSO
+
+L<Jifty::Test::WWW::Mechanize>
+
+=head1 LICENSE
+
+Jifty is Copyright 2005-2007 Best Practical Solutions, LLC.
+Jifty is distributed under the same terms as Perl itself.
+
+=cut
 
 1;
