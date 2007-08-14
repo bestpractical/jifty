@@ -3,6 +3,9 @@ use strict;
 
 package Jifty::Collection;
 
+use base qw/Jifty::Object Jifty::DBI::Collection Class::Accessor::Fast/;
+use Data::Page;
+
 =head1 NAME
 
 Jifty::Collection - Collection of Jifty::Record objects
@@ -30,11 +33,6 @@ to B<set> the number of records per page and first record on the
 current page, and you should use the L<Data::Page> object returned by
 the C<pager> method to B<get> information related to paging.
 
-=cut
-
-use base qw/Jifty::Object Jifty::DBI::Collection Class::Accessor::Fast/;
-use Data::Page;
-
 =head1 MODEL
 
 =head2 pager
@@ -57,7 +55,9 @@ __PACKAGE__->mk_accessors(qw(pager results_are_readable));
 
 =head2 add_record
 
-Only add records to the collection that we can read
+If L</results_are_readable> is false, only add records to the collection that
+we can read (by checking L<Jifty::Record/check_read_rights>). Otherwise, make
+sure all records added are readable.
 
 =cut
 
@@ -65,16 +65,25 @@ sub add_record {
     my $self = shift;
     my($record) = (@_);
 
+    # If results_are_readable is set, guarantee that they are
     $record->_is_readable(1)
         if $self->results_are_readable;
 
+    # Only add a record if results_are_readable or the user has read rights
     $self->SUPER::add_record($record)
         if $self->results_are_readable || $record->check_read_rights;
 }
 
+# Overrides the _init method of Jifty::DBI::Collection and is called by new.
+# This does the following:
+#
+#  - Sets up the current user
+#  - Sets up the record class, if given as an argument
+#  - Sets up results_are_readable, if given as an argument
+#  - Sets up the table used for storage
+#
 sub _init {
     my $self = shift;
-
     my %args = (
         record_class => undef,
         current_user => undef,
@@ -82,12 +91,17 @@ sub _init {
         @_
     );
 
+    # Setup the current user, record class, results_are_readable
     $self->_get_current_user(%args);
     $self->record_class($args{record_class}) if defined $args{record_class};
     $self->results_are_readable($args{results_are_readable});
+
+    # Bad stuff, we really need one of these
     unless ($self->current_user) {
         Carp::confess("Collection created without a current user");
     }
+
+    # Setup the table and call the super-implementation
     $self->table($self->new_item->table());
     $self->SUPER::_init(%args);
 }
@@ -118,5 +132,16 @@ sub new_item {
     Jifty::Util->require($class);
     return $class->new(current_user => $self->current_user);
 }
+
+=head1 SEE ALSO
+
+L<Jifty::DBI::Collection>, L<Jifty::Object>, L<Jifty::Record>
+
+=head1 LICENSE
+
+Jifty is Copyright 2005-2007 Best Practical Solutions, LLC.
+Jifty is distributed under the same terms as Perl itself.
+
+=cut
 
 1;

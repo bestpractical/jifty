@@ -33,12 +33,14 @@ sub arguments {
     my $self = shift;
     my $arguments = $self->SUPER::arguments(@_);
 
+    # Mark read-only columns for read-only display
     for my $column ( $self->record->columns ) {
         if ( not $column->writable and $column->readable ) {
             $arguments->{$column->name}{'render_mode'} = 'read';
         }
     }
 
+    # Add the primary keys to constructors and make them mandatory
     for my $pk (@{ $self->record->_primary_keys }) {
         $arguments->{$pk}{'constructor'} = 1;
         $arguments->{$pk}{'mandatory'} = 1;
@@ -64,6 +66,7 @@ However, constructor arguments are still required.
 sub _validate_arguments {
     my $self = shift;
 
+    # Only validate the arguments given
     $self->_validate_argument($_) for grep {
         $self->has_argument($_)
             or $self->arguments->{$_}->{constructor}
@@ -84,12 +87,16 @@ sub take_action {
     my $self = shift;
     my $changed = 0;
 
+    # Prepare the event for later publishing
     my $event_info = $self->_setup_event_before_action();
 
+    # Iterate through all the possible arguments
     for my $field ( $self->argument_names ) {
+
         # Skip values that weren't submitted
         next unless $self->has_argument($field);
 
+        # Load the column object for the field
         my $column = $self->record->column($field);
 
         # Skip nonexistent fields
@@ -108,6 +115,7 @@ sub take_action {
         next if lc $self->arguments->{$field}{render_as} eq "upload"
           and (not defined $value or not ref $value);
 
+        # Handle file uploads
         if (ref $value eq "Fh") { # CGI.pm's "lightweight filehandle class"
             local $/;
             binmode $value;
@@ -127,17 +135,21 @@ sub take_action {
         next if (  (not defined $old or not length $old)
                     and ( not defined $value or not length $value ));
 
+        # Calculate the name of the setter and set; asplode on failure
         my $setter = "set_$field";
         my ( $val, $msg ) = $self->record->$setter( $value );
         $self->result->field_error($field, $msg)
           if not $val and $msg;
 
+        # Remember that we changed something (if we did)
         $changed = 1 if $val;
     }
 
+    # Report success if there's a change and no error, otherwise say nah-thing
     $self->report_success
       if $changed and not $self->result->failure;
 
+    # Publish the update event
     $self->_setup_event_after_action($event_info);
 
     return 1;
@@ -155,5 +167,16 @@ sub report_success {
     my $self = shift;
     $self->result->message(_("Updated"))
 }
+
+=head1 SEE ALSO
+
+L<Jifty::Action::Record>, L<Jifty::Record>
+
+=head1 LICENSE
+
+Jifty is Copyright 2005-2007 Best Practical Solutions, LLC.
+Jifty is distributed under the same terms as Perl itself.
+
+=cut
 
 1;

@@ -388,6 +388,8 @@ my $can_compile = eval 'use Jifty::View::Declare::Compile; 1' ? 1 : 0;
 
 =head2 client_cacheable
 
+Returns the client cacheable state of the regions path. Returns false if the template has not been marked as client cacheable. Otherwise it returns the string "static" or "action" based uon the cacheable attribute set on the template.
+
 =cut
 
 sub client_cacheable {
@@ -397,7 +399,9 @@ sub client_cacheable {
     return Jifty::View::Declare::BaseClass->client_cacheable($self->path);
 }
 
-=head2 client_cacheable
+=head2 client_cache_content
+
+Returns the template as JavaScript code.
 
 =cut
 

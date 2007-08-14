@@ -24,4 +24,16 @@ sub render {
     '';
 }
 
+
+=head2 handler_allowed HANDLER_NAME
+
+Returns 1 if the handler (e.g. onclick) is allowed.  Undef otherwise.
+
+=cut
+
+sub handler_allowed {
+    undef;
+}
+
+
 1;

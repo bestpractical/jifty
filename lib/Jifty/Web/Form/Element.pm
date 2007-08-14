@@ -13,8 +13,8 @@ Describes any HTML element that might live in a form, and thus might
 have javascript on it.
 
 Handlers are placed on L<Jifty::Web::Form::Element> objects by calling
-the name of the javascript event handler, such as C<onclick>, with a
-set of arguments.
+the name of the javascript event handler, such as C<onclick> or C<onchange>, 
+with a set of arguments.
 
 The format of the arguments passed to C<onclick> (or any similar
 method) is a string, a hash reference, or a reference to an array of
@@ -132,14 +132,25 @@ use Jifty::JSON;
 
 =head2 handlers
 
-Currently, the only supported event handlers are C<onclick>.
+The following handlers are supported:
+
+onclick onchange ondblclick onmousedown onmouseup onmouseover 
+onmousemove onmouseout onfocus onblur onkeypress onkeydown 
+onkeyup onselect
+
+NOTE: onload, onunload, onsubmit and onreset are not yet supported
+
 WARNING: if you use the onclick handler, make sure that your javascript
 is "return (function name);", or you may well get a very strange-looking
 error from your browser.
 
 =cut
 
-sub handlers { qw(onclick); }
+sub handlers { qw(onclick onchange ondblclick onmousedown onmouseup onmouseover 
+                  onmousemove onmouseout onfocus onblur onkeypress onkeydown 
+                  onkeyup onselect) }
+
+
 
 =head2 accessors
 
@@ -150,7 +161,10 @@ C<new> parameter hash.
 =cut
 
 sub accessors { shift->handlers, qw(class key_binding key_binding_label id label tooltip continuation) }
-__PACKAGE__->mk_accessors(qw(_onclick class key_binding key_binding_label id label tooltip continuation));
+__PACKAGE__->mk_accessors(qw(_onclick _onchange _ondblclick _onmousedown _onmouseup _onmouseover 
+                             _onmousemove _onmouseout _onfocus _onblur _onkeypress _onkeydown 
+                             _onkeyup _onselect
+                             class key_binding key_binding_label id label tooltip continuation));
 
 =head2 new PARAMHASH OVERRIDE
 
@@ -162,8 +176,10 @@ PARAMHASH, and set with accessors for the hash values in OVERRIDE.
 sub new {
     my ($class, $args, $override) = @_;
     # force using accessor for onclick init
-    if (my $onclick = delete $args->{onclick}) {
-        $override->{onclick} = $onclick;
+    for my $trigger ( __PACKAGE__->handlers() ) {
+      if (my $triggerArgs = delete $args->{$trigger}) {
+        $override->{$trigger} = $triggerArgs;
+      }
     }
 
     my $self = $class->SUPER::new($args);
@@ -178,13 +194,195 @@ sub new {
     return $self;
 }
 
+
+ 
 =head2 onclick
+
+The onclick event occurs when the pointing device button is clicked 
+over an element. This attribute may be used with most elements.
 
 =cut
 
 sub onclick {
     my $self = shift;
-    return $self->_onclick unless @_;
+    $self->_onclick($self->_handler_setup('_onclick', @_));
+}
+
+=head2 onchange
+
+The onchange event occurs when a control loses the input focus 
+and its value has been modified since gaining focus. This handler 
+can be used with all form elements.
+
+=cut
+
+sub onchange {
+    my $self = shift;
+    $self->_onchange($self->_handler_setup('_onchange', @_));
+}
+
+
+
+=head2 ondblclick
+
+The ondblclick event occurs when the pointing device button is 
+double clicked over an element.  This handler 
+can be used with all form elements.
+
+=cut
+
+sub ondblclick {
+    my $self = shift;
+    $self->_ondblclick($self->_handler_setup('_ondblclick', @_));
+}
+
+=head2 onmousedown
+
+The onmousedown event occurs when the pointing device button is 
+pressed over an element.  This handler 
+can be used with all form elements.
+
+=cut
+
+sub onmousedown {
+    my $self = shift;
+    $self->_onmousedown($self->_handler_setup('_onmousedown', @_));
+}
+
+=head2 onmouseup
+
+The onmouseup event occurs when the pointing device button is released 
+over an element.  This handler can be used with all form elements.
+
+=cut
+
+sub onmouseup {
+    my $self = shift;
+    $self->_onmouseup($self->_handler_setup('_onmouseup', @_));
+}
+
+=head2 onmouseover
+
+The onmouseover event occurs when the pointing device is moved onto an 
+element.  This handler can be used with all form elements.
+
+=cut
+
+sub onmouseover {
+    my $self = shift;
+    $self->_onmouseover($self->_handler_setup('_onmouseover', @_));
+}
+
+=head2 onmousemove
+
+The onmousemove event occurs when the pointing device is moved while it 
+is over an element.  This handler can be used with all form elements.
+
+=cut
+
+sub onmousemove {
+    my $self = shift;
+    $self->_onmousemove($self->_handler_setup('_onmousemove', @_));
+}
+
+=head2 onmouseout
+
+The onmouseout event occurs when the pointing device is moved away from 
+an element.  This handler can be used with all form elements.
+
+=cut
+
+sub onmouseout {
+    my $self = shift;
+    $self->_onmouseout($self->_handler_setup('_onmouseout', @_));
+}
+
+=head2 onfocus
+
+The onfocus event occurs when an element receives focus either by the 
+pointing device or by tabbing navigation.  This handler 
+can be used with all form elements.
+
+=cut
+
+sub onfocus {
+    my $self = shift;
+    $self->_onfocus($self->_handler_setup('_onfocus', @_));
+}
+
+=head2 onblur
+
+The onblur event occurs when an element loses focus either by the pointing 
+device or by tabbing navigation.  This handler can be used with all 
+form elements.
+
+=cut
+
+sub onblur {
+    my $self = shift;
+    $self->_onblur($self->_handler_setup('_onblur', @_));
+}
+
+=head2 onkeypress
+
+The onkeypress event occurs when a key is pressed and released over an 
+element.  This handler can be used with all form elements.
+
+=cut
+
+sub onkeypress {
+    my $self = shift;
+    $self->_onkeypress($self->_handler_setup('_onkeypress', @_));
+}
+
+=head2 onkeydown
+
+The onkeydown event occurs when a key is pressed down over an element. 
+This handler can be used with all form elements.
+
+=cut
+
+sub onkeydown {
+    my $self = shift;
+    $self->_onkeydown($self->_handler_setup('_onkeydown', @_));
+}
+
+=head2 onkeyup
+
+The onkeyup event occurs when a key is released over an element. 
+This handler can be used with all form elements.
+=cut
+
+sub onkeyup {
+    my $self = shift;
+    $self->_onkeyup($self->_handler_setup('_onkeyup', @_));
+}
+
+=head2 onselect
+
+The onselect event occurs when a user selects some text in a text field. 
+This attribute may be used with the text and textarea fields.
+
+=cut
+
+sub onselect {
+    my $self = shift;
+    $self->_onselect($self->_handler_setup('_onselect', @_));
+}
+
+
+
+=head2 _handler_setup
+
+This method is used by all handlers to normalize all arguments.
+
+=cut
+
+sub _handler_setup {
+    my $self = shift;
+    my $trigger = shift;
+
+    return $self->$trigger unless @_;
 
     my ($arg) = @_;
 
@@ -218,7 +416,8 @@ sub onclick {
 
     }
 
-    $self->_onclick($arg);
+    return $arg;
+
 }
 
 =head2 javascript
@@ -226,11 +425,12 @@ sub onclick {
 Returns the javascript necessary to make the events happen.
 
 =cut
-
 sub javascript {
     my $self = shift;
 
     my $response = "";
+
+  HANDLER:
     for my $trigger ( $self->handlers ) {
         my $value = $self->$trigger;
         next unless $value;
@@ -244,6 +444,13 @@ sub javascript {
         my $beforeclick;
 
         for my $hook (grep {ref $_ eq "HASH"} (@{$value})) {
+
+            if (!($self->handler_allowed($trigger))) {
+                Jifty->log->error("Handler '$trigger' is not supported for field '" . 
+                                  $self->label . 
+                                  "' with class " . ref $self);
+                next HANDLER;
+            }
 
             my %args;
 
@@ -326,7 +533,7 @@ sub javascript {
         if (@fragments or (!$actions || %$actions)) {
 
             my $update = Jifty->web->escape("update( ". Jifty::JSON::objToJson( {actions => $actions, fragments => \@fragments, continuation => $self->continuation }, {singlequote => 1}) .", this );");
-            $string .= 'if(event.ctrlKey||event.metaKey||event.altKey||event.shiftKey) return true; ';
+            $string .= 'if(event.ctrlKey||event.metaKey||event.altKey||event.shiftKey) return true; ' if ($trigger eq 'onclick');
             $string .= $self->javascript_preempt ? "return $update" : "$update; return true;";
         }
         if ($confirm) {
@@ -414,5 +621,43 @@ sub render_key_binding {
         "--></script>");
     return '';
 }
+
+
+=head2 handler_allowed HANDLER_NAME
+
+Returns 1 if the handler (e.g. onclick) is allowed.  Undef otherwise.
+
+The set defined here represents the typical handlers that are 
+permitted.  Derived classes should override if they stray from the norm.
+
+By default we allow:
+
+onchange onclick ondblclick onmousedown onmouseup onmouseover onmousemove 
+onmouseout onfocus onblur onkeypress onkeydown onkeyup
+
+=cut
+
+sub handler_allowed {
+    my $self = shift;
+    my ($handler) = @_;
+
+    return {onchange => 1, 
+            onclick => 1, 
+            ondblclick => 1, 
+            onmousedown => 1,
+            onmouseup => 1,
+            onmouseover => 1,
+            onmousemove => 1,
+            onmouseout => 1,
+            onfocus => 1,
+            onblur => 1,
+            onkeypress => 1,
+            onkeydown => 1,
+            onkeyup => 1
+           }->{$handler};
+
+}
+ 
+
 
 1;

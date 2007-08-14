@@ -12,13 +12,59 @@ use B qw(class main_root main_start main_cv svref_2object opnumber perlstring
          CVf_METHOD CVf_LOCKED CVf_LVALUE CVf_ASSERTION
 	 PMf_KEEP PMf_GLOBAL PMf_CONTINUE PMf_EVAL PMf_ONCE PMf_SKIPWHITE
 	 PMf_MULTILINE PMf_SINGLELINE PMf_FOLD PMf_EXTENDED);
+
 BEGIN {
     die "You need a custom version of B::Deparse from http://svn.jifty.org/svn/jifty.org/B/"
         unless B::Deparse->can('e_method')
 }
+
+=head1 NAME
+
+Jifty::View::Declare::Compile - Compile Jifty templates into JavaScript
+
+=head1 DESCRIPTION
+
+B<EXPERIMENTAL:> This code is currently under development and experimental. You will need to get the version of the L<B::Deparse> package from the Subversion repository at:
+
+  http://svn.jifty.org/svn/jifty.org/B/
+
+in order to use this class.
+
+This is a subclass of L<B::Deparse> that compiles Perl into JavaScript with the intention of allowing Jifty applications to render L<Template::Declare> templates on the client.
+
+This class does the dirty work of translating a Perl code reference in JavaScript. 
+
+See L<Jifty::Web::PageRegion/client_cache_content>.
+
+=head1 METHODS
+
+=head2 is_scope
+
+See L<B::Deparse>.
+
+=cut
+
 sub is_scope { goto \&B::Deparse::is_scope }
+
+=head2 is_state
+
+See L<B::Deparse>
+
+=cut
+
 sub is_state { goto \&B::Deparse::is_state }
+
+=head2 null
+
+See L<B::Deparse>
+
+=cut
+
 sub null { goto \&B::Deparse::null }
+
+=head2 padname
+
+=cut
 
 sub padname {
     my $self = shift;
@@ -32,12 +78,20 @@ our %TAGS = (
         map {@{$_||[]}} @CGI::EXPORT_TAGS{qw/:html2 :html3 :html4 :netscape :form/}
 );
 
+=head2 deparse
+
+=cut
+
 sub deparse {
     my $self = shift;
     my $ret = $self->SUPER::deparse(@_);
     return '' if $ret =~ m/use (strict|warnings)/;
     return $ret;
 }
+
+=head2 loop_common
+
+=cut
 
 sub loop_common {
     my $self = shift;
@@ -94,6 +148,10 @@ sub loop_common {
     return $self->SUPER::loop_common(@_);
 }
 
+=head2 maybe_my
+
+=cut
+
 sub maybe_my {
     my $self = shift;
     my($op, $cx, $text) = @_;
@@ -108,12 +166,20 @@ sub maybe_my {
     }
 }
 
+=head2 maybe_parens_func
+
+=cut
+
 sub maybe_parens_func {
     my $self = shift;
     my($func, $text, $cx, $prec) = @_;
     return "$func($text)";
 
 }
+
+=head2 const
+
+=cut
 
 sub const {
     my $self = shift;
@@ -124,9 +190,27 @@ sub const {
     return $self->SUPER::const(@_);
 }
 
+=head2 pp_undef
+
+=cut
+
 sub pp_undef { 'null' }
+
+=head2 pp_sne
+
+=cut
+
 sub pp_sne { shift->binop(@_, "!=", 14) }
+
+=head2 pp_grepwhile
+
+=cut
+
 sub pp_grepwhile { shift->mapop(@_, "grep") }
+
+=head2 mapop
+
+=cut
 
 sub mapop {
     my $self = shift;
@@ -149,11 +233,19 @@ sub mapop {
     return "(".join(", ", @exprs).").select(function (\$_) $code)";
 }
 
+=head2 e_anoncode
+
+=cut
+
 sub e_anoncode {
     my ($self, $info) = @_;
     my $text = $self->deparse_sub($info->{code});
     return "function () " . $text;
 }
+
+=head2 e_anonhash
+
+=cut
 
 sub e_anonhash {
     my ($self, $info) = @_;
@@ -165,6 +257,10 @@ sub e_anonhash {
     return '{' . join(", ", @pairs) . '}';
 }
 
+=head2 pp_entersub
+
+=cut
+
 sub pp_entersub {
     my $self = shift;
     my $ret = $self->SUPER::pp_entersub(@_);
@@ -172,6 +268,10 @@ sub pp_entersub {
 
     return $ret;
 }
+
+=head2 e_method
+
+=cut
 
 sub e_method {
     my ($self, $info) = @_;
@@ -190,6 +290,10 @@ sub e_method {
     return $kid . "(" . $args . ")"; # parens mandatory
 }
 
+=head2 walk_linesq
+
+=cut
+
 sub walk_lineseq {
     my ($self, $op, $kids, $callback) = @_;
     my $xcallback = $callback;
@@ -201,10 +305,20 @@ sub walk_lineseq {
     $self->SUPER::walk_lineseq($op, $kids, $callback);
 }
 
+=head2 compile_to_js
+
+=cut
+
 sub compile_to_js {
     my $class = shift;
     my $code = shift;
     return 'function() '.$class->new->coderef2text($code);
 }
+
+=head1 SEE ALSO
+
+L<B::Deparse>, L<Jifty::Web::PageRegion/client_cache_content>
+
+=cut
 
 1;

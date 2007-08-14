@@ -493,10 +493,13 @@ sub render_widget {
     $field .= qq! size="@{[ $self->max_length() ]}" maxlength="@{[ $self->max_length() ]}"! if ($self->max_length());
     $field .= qq! autocomplete="off"! if defined $self->disable_autocomplete;
     $field .= " " .$self->other_widget_properties;
+    $field .= $self->javascript;
     $field .= qq!  />\n!;
     Jifty->web->out($field);
     return '';
 }
+
+
 
 =head2 other_widget_properties
 

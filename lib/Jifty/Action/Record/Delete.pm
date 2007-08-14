@@ -33,6 +33,7 @@ sub arguments {
     my $self = shift;
     my $arguments = {};
 
+    # Mark the primary key for use in the constructor and not rendered
     for my $pk (@{ $self->record->_primary_keys }) {
         $arguments->{$pk}{'constructor'} = 1;
         # XXX TODO IS THERE A BETTER WAY TO NOT RENDER AN ITEM IN arguments
@@ -52,12 +53,17 @@ delete the row from the database.
 sub take_action {
     my $self = shift;
 
+    # Setup the event info for later publishing
     my $event_info = $self->_setup_event_before_action();
 
+    # Delete the record and return an error if delete fails
     my ( $val, $msg ) = $self->record->delete;
     $self->result->error($msg) if not $val and $msg;
 
+    # Otherwise, we seem to have succeeded, report that
     $self->report_success if not $self->result->failure;
+
+    # Publish the event
     $self->_setup_event_after_action($event_info);
 
     return 1;
@@ -75,5 +81,16 @@ sub report_success {
     my $self = shift;
     $self->result->message(_("Deleted"))
 }
+
+=head1 SEE ALSO
+
+L<Jifty::Action::Record>, L<Jifty::Record>
+
+=head1 LICENSE
+
+Jifty is Copyright 2005-2007 Best Practical Solutions, LLC.
+Jifty is distributed under the same terms as Perl itself.
+
+=cut
 
 1;

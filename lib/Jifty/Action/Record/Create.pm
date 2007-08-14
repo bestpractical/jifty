@@ -30,6 +30,7 @@ the column is in the model
 sub arguments {
     my $self = shift;
     
+    # Add default values to the arguments configured by Jifty::Action::Record
     my $args = $self->SUPER::arguments;
     for my $arg (keys %{$args}) {
         my $column = $self->record->column($arg) or next;
@@ -56,13 +57,18 @@ sub take_action {
     my $self   = shift;
     my $record = $self->record;
 
+    # Build the event to be fired later
     my $event_info = $self->_setup_event_before_action();
     
-    
     my %values;
-    # Virtual arguments aren't really ever backed by data structures. they're added by jifty for things like confirmations
+
+    # Iterate through all that are set, except for the virtual ones
     for (grep { defined $self->argument_value($_) && !$self->arguments->{$_}->{virtual} } $self->argument_names) {
+
+        # Prepare the hash to pass to create for each argument
         $values{$_} = $self->argument_value($_);
+
+        # Handle file uploads
         if (ref $values{$_} eq "Fh") { # CGI.pm's "lightweight filehandle class"
             local $/;
             my $fh = $values{$_};
@@ -70,24 +76,31 @@ sub take_action {
             $values{$_} = scalar <$fh>;
         }
     }
+
+    # Attempt creating the record
     my $id;
     my $msg = $record->create(%values);
-    # Handle errors?
-    if (ref($msg)) { # If it's a Class::ReturnValue
+
+    # Convert Class::ReturnValue to an id and message
+    if (ref($msg)) {
         ($id,$msg) = $msg->as_array;
     }
 
+    # If ID is 0/undef, the record didn't create, so we fail
     if (! $record->id ) {
         $self->log->warn(_("Create of %1 failed: %2", ref($record), $msg));
         $self->result->error($msg || _("An error occurred.  Try again later"));
     }
 
+    # No errors! Report success
     else { 
         # Return the id that we created
         $self->result->content(id => $self->record->id);
         $self->report_success if  not $self->result->failure;
     }
-    $self->_setup_event_after_action($event_info) ;
+
+    # Publish the event, noting success or failure
+    $self->_setup_event_after_action($event_info);
 
     return ($self->record->id);
 }
@@ -105,5 +118,15 @@ sub report_success {
     $self->result->message(_("Created"))
 }
 
+=head1 SEE ALSO
+
+L<Jifty::Action::Record>, L<Jifty::Record>
+
+=head1 LICENSE
+
+Jifty is Copyright 2005-2007 Best Practical Solutions, LLC.
+Jifty is distributed under the same terms as Perl itself.
+
+=cut
 
 1;

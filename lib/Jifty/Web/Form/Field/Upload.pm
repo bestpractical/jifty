@@ -28,10 +28,40 @@ sub render_widget {
     my $self  = shift;
     my $field = qq!<input type="file" name="@{[ $self->input_name ]}" !;
     $field .= $self->_widget_class();
-        $field .= qq!/>!;
+    $field .= $self->javascript;
+    $field .= qq!/>!;
     Jifty->web->out($field);
     '';
 }
+
+
+=head2 handler_allowed HANDLER_NAME
+
+Returns 1 if the handler (e.g. onclick) is allowed.  Undef otherwise.
+
+=cut
+
+sub handler_allowed {
+    my $self = shift;
+    my ($handler) = @_;
+
+    return {onchange => 1, 
+            onclick => 1, 
+            ondblclick => 1, 
+            onmousedown => 1,
+            onmouseup => 1,
+            onmouseover => 1,
+            onmousemove => 1,
+            onmouseout => 1,
+            onfocus => 1,
+            onblur => 1,
+            onkeypress => 1,
+            onkeydown => 1,
+            onkeyup => 1
+           }->{$handler};
+
+}
+
 
 =head2 render_value
 

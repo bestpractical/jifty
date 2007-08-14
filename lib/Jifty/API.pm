@@ -57,8 +57,10 @@ sub new {
     my $class = shift;
     my $self  = bless {}, $class;
 
+    # Setup the basic allow/deny rules
     $self->reset;
 
+    # Find all the actions for the API reference (available at _actions)
     Jifty::Module::Pluggable->import(
         search_path => [
             Jifty->app_class("Action"),
@@ -85,12 +87,15 @@ sub qualify {
     my $self   = shift;
     my $action = shift;
 
+    # Get the application class name
     my $base_path = Jifty->app_class;
 
+    # Return the class now if it's already fully qualified
     return $action
         if ($action =~ /^Jifty::/
         or $action =~ /^\Q$base_path\E::/);
 
+    # Otherwise qualify it
     return $base_path . "::Action::" . $action;
 }
 
@@ -109,6 +114,7 @@ sub reset {
     # Set up defaults
     my $app_actions = Jifty->app_class("Action");
 
+    # These are the default action limits
     $self->action_limits(
         [   { deny => 1, restriction => qr/.*/ },
             {   allow       => 1,
@@ -180,6 +186,7 @@ sub restrict {
     my $polarity     = shift;
     my @restrictions = @_;
 
+    # Check the sanity of the polarity
     die "Polarity must be 'allow' or 'deny'"
         unless $polarity eq "allow"
         or $polarity     eq "deny";
