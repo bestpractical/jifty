@@ -64,6 +64,7 @@ requires('Scalar::Defer' => '0.10');
 requires('Shell::Command');
 requires('String::Koremutake');
 requires('SQL::ReservedWords');
+requires('SVN::Fs');
 requires('SVN::Repos');
 requires('SVN::Simple::Edit');
 requires('Template::Declare' => '0.07');                # Template::Declare::Tags
