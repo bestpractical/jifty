@@ -39,7 +39,7 @@ Basically, you can use this class to do most (and maybe all) of the work you nee
 
 =head2 CRUDView
 
-=end
+=end pod_coverage
 
 =head2 mount_view MODELCASS VIEWCLASS /path
 
