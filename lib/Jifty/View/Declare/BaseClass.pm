@@ -33,7 +33,7 @@ sub use_mason_wrapper {
     no warnings 'redefine';
     *{ $class . '::wrapper' } = sub {
         my $code = shift;
-        my $args = shift;
+        my $args = shift || {};
         # so in td handler, we made jifty::web->out appends to td
         # buffer, we need it back for here before we call $code.
         # someday we need to finish fixing the output system that is

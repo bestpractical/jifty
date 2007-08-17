@@ -4,6 +4,8 @@ use strict;
 
 use Jifty::View::Declare -base;
 
+__PACKAGE__->use_mason_wrapper;
+
 template 'concrete2.html' => sub {
     html {
         body {
@@ -103,4 +105,9 @@ template 'post-redir-region' => sub {
 
     h1 { 'redirected ok'};
 };
+
+template 'use_mason_wrapper' => page {
+    h1 { 'In a Mason Wrapper?' };
+};
+
 1;

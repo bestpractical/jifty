@@ -189,6 +189,10 @@ sub handle_comp {
     my $r = Jifty->handler->apache;
     $self->interp->set_global('$r', $r);
 
+    # XXX FIXME This is a kludge to get use_mason_wrapper to work
+    $self->interp->set_global('$jifty_internal_request', 0);
+    $self->interp->set_global('$jifty_internal_request', 1) if defined $args;
+
     my %args = $args ? %$args : $self->request_args($r);
 
     my @result;
