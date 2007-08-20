@@ -12,14 +12,18 @@ Jifty::Plugin::UUID::Widget -
 
 =head1 METHODS
 
+=head2 accessors
+
+Overrides L<Jifty::Web::Form::Field/accessors>.
 
 =cut
 
+# TODO FIXME XXX Is this really necessary?
 sub accessors { shift->SUPER::accessors() };
 
 =head2 render_widget
 
-Renders form fields as a uuid;
+Renders form fields as a UUID.
 
 =cut
 
@@ -29,7 +33,7 @@ sub render_widget {
     my $action   = $self->action;
     my $readonly = 1;
     
-        my $name = $self->name;
+    my $name = $self->name;
     if ( $action->record->$name() ) {
         Jifty->web->out(  $action->record->$name() );
     } else { 
@@ -39,5 +43,19 @@ sub render_widget {
     '';
 }
 
+=head1 SEE ALSO
+
+L<Jifty::Plugin::UUID>, L<Jifty::Web::Form::Field>
+
+=head1 AUTHOR
+
+Jesse Vincent
+
+=head1 LICENSE
+
+Jifty is Copyright 2005-2007 Best Practical Solutions, LLC.
+Jifty is distributed under the same terms as Perl itself.
+
+=cut
 
 1;
