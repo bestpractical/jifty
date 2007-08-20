@@ -92,6 +92,20 @@ sub client_cacheable {
 
 Render a C<Template::Declare> template.
 
+=head1 ATTRIBUTES
+
+=head2 Static
+
+TODO Document this...
+
+This is part of the client-caching system being developed for Perl to allow you to translate templates into JavaScript running on the client.
+
+=head2 Action
+
+TODO Document this...
+
+This is part of the client-caching system being developed for Perl to allow you to translate templates into JavaScript running on the client.
+
 =head1 SEE ALSO
 
 L<Template::Declare>, L<Jifty::View::Declare::Helpers>, L<Jifty::View::Declare>
