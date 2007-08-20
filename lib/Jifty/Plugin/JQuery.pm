@@ -31,6 +31,12 @@ You may want to use this idiom from the jQuery documentation if you still want t
      $("div").hide();
   }(jQuery);
 
+=head1 METHODS
+
+=head2 init
+
+This initializes the plugin, which simply includes the JavaScript necessary to load jQuery and then disable the jQuery implementation of C<$()>.
+  
 =cut
 
 sub init {
