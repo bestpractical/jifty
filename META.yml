@@ -22,10 +22,14 @@ no_index:
 recommends: 
   Apache2::Const: 0
   Cache::FileCache: 0
+  Chart::Base: 0
   Class::Accessor::Named: 0
   DBD::SQLite: 0
   Devel::Cover: 0
   Devel::EvalContext: 0
+  GD: 0
+  GD::Graph: 0
+  Image::Info: 0
   LWPx::ParanoidAgent: 0
   Module::CoreList: 0
   Module::Install::Admin: 0.50
@@ -40,6 +44,7 @@ recommends:
   Test::MockModule: 0.05
   Test::MockObject: 1.07
   WWW::Facebook::API: 0.3.6
+  XML::Simple: 0
 requires: 
   App::CLI: 0.03
   CGI: 3.19
@@ -105,7 +110,7 @@ requires:
   Scalar::Defer: 0.10
   Shell::Command: 0
   String::Koremutake: 0
-  Template::Declare: 0.21
+  Template::Declare: 0.26
   Test::Base: 0
   Test::Log4perl: 0
   Test::LongString: 0
@@ -122,5 +127,5 @@ requires:
   YAML::Syck: 0.71
   perl: 5.8.3
   version: 0
-tests: t/*.t t/*/t/*.t
+tests: t/*.t t/*/*.t t/*/*/*.t t/*/*/*/*.t
 version: 0.70422
