@@ -1,3 +1,9 @@
+jifty (0.70820-1) unstable; urgency=low
+
+  * svn snaphsot
+
+ -- AGOSTINI Yves <agostini@univ-metz.fr>  Tue, 21 Aug 2007 11:17:06 +0200
+
 jifty (0.70416-1) unstable; urgency=low
 
   * New cpan release
