@@ -345,7 +345,7 @@ private template edit_item_controls => sub {
         div {
             { class is 'crud editlink' };
             hyperlink(
-                label   => "Save",
+                label   => _("Save"),
                 onclick => [
                     { submit => $update },
                     {   replace_with => $self->fragment_for('view'),
@@ -354,7 +354,7 @@ private template edit_item_controls => sub {
                 ]
             );
             hyperlink(
-                label   => "Cancel",
+                label   => _("Cancel"),
                 onclick => {
                     replace_with => $self->fragment_for('view'),
                     args         => { object_type => $object_type, id => $id }
@@ -364,10 +364,10 @@ private template edit_item_controls => sub {
             );
             if ( $record->current_user_can('delete') ) {
                 $delete->button(
-                    label   => 'Delete',
+                    label   => _('Delete'),
                     onclick => {
                         submit => $delete,
-                        confirm => 'Really delete?',
+                        confirm => _('Really delete?'),
                         refresh => Jifty->web->current_region->parent,
                     },
                     class => 'delete'
@@ -452,7 +452,7 @@ private template 'search_region' => sub {
                 args         => { object_type => $object_type }
             },
         ],
-        label => 'Toggle search'
+        label => _('Toggle search'),
     );
 
     outs( $search_region->render );
@@ -605,7 +605,7 @@ template 'new_item' => sub {
 
         outs(
             Jifty->web->form->submit(
-                label   => 'Create',
+                label   => _('Create'),
                 onclick => [
                     { submit       => $create },
                     { refresh_self => 1 },
