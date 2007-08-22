@@ -105,4 +105,34 @@ sub new_from_string {
     return $self;
 }
 
+=head2 friendly_date
+
+Returns the date given by this C<Jifty::DateTime> object. It will display "today"
+for today, "tomorrow" for tomorrow, or "yesterday" for yesterday. Any other date
+will be displayed in ymd format.
+
+=cut
+
+sub friendly_date {
+    my $self = shift;
+    my $ymd = $self->ymd;
+
+    my $rel = DateTime->now(time_zone => $self->time_zone);
+    if ($ymd eq $rel->ymd) {
+        return "today";
+    }
+    
+    $rel->subtract(days => 1);
+    if ($ymd eq $rel->ymd) {
+        return "yesterday";
+    }
+    
+    $rel->add(days => 2);
+    if ($ymd eq $rel->ymd) {
+        return "tomorrow";
+    }
+    
+    return $ymd;
+}
+
 1;
