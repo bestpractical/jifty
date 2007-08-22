@@ -47,6 +47,8 @@ use IPC::Run3;
 eval 'use Jifty::View::Declare::Compile; 1'
     or plan skip_all => "Can't load Jifty::View::Declare::Compile";
 
+plan skip_all => "require new B::Deparse" unless B::Deparse->can('e_method');
+
 my $jsbin = can_run('js')
     or plan skip_all => "Can't find spidermonkey js binary";
 
@@ -66,6 +68,7 @@ is_compatible('_faq2');
 sub is_compatible {
     my $template = shift;
     my $js = js_output( js_code( Foo->can($template) ) );
+    diag js_code( Foo->can($template) );
     my $td = Template::Declare->show($template);
     $js =~ s/\s*//g;
     $td =~ s/\s*//g;
