@@ -6,19 +6,18 @@ use lib 't/lib';
 
 # XXX FIXME This is here to prevent a segfault on my machine during testing.
 #   -- sterling
-use GD;
-
-use Jifty::SubTest;
-use Jifty::Test;
-use Jifty::Test::WWW::Mechanize;
-
-eval "use GD::Graph::pie";
+use Test::More;
+eval "use GD; use GD::Graph::pie; 1";
 if ($@) {
     plan skip_all => 'GD::Graph is not installed.';
 }
 else {
     plan tests => 9;
 }
+
+use Jifty::SubTest;
+use Jifty::Test;
+use Jifty::Test::WWW::Mechanize;
 
 use Jifty::Plugin::Chart::Renderer::GD::Graph;
 
