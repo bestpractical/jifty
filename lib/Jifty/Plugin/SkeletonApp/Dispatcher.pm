@@ -20,7 +20,12 @@ use Jifty::Dispatcher -base;
 
 on '**' => run {
     my $top = Jifty->web->navigation;
-    $top->child( Home => url => "/", sort_order => 1, label => _('Home') );
+
+    # Do not override the 'Home' menu item if the app had set it already
+    unless ( $top->child('Home') ) {
+        $top->child( Home => url => "/", sort_order => 1, label => _('Home') );
+    }
+
     if ( Jifty->config->framework('AdminMode') ) {
         $top->child(
             Administration =>
