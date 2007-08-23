@@ -71,7 +71,7 @@ requires('Test::Log4perl');
 requires('Test::More' => 0.62 ),
 requires('Test::Pod::Coverage'),
 requires('Test::WWW::Mechanize' => 1.04 ),
-requires('WWW::Mechanize' => 1.12 ),
+requires('WWW::Mechanize' => 1.30 ),
 requires('UNIVERSAL::require');
 requires('URI');
 requires('XML::Writer' => '0.601');
