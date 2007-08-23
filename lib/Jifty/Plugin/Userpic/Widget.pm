@@ -14,8 +14,6 @@ Jifty::Plugin::Userpic::Widget - google map widget for geolocation display and e
 
 =cut
 
-sub accessors { shift->SUPER::accessors() };
-
 =head2 render_widget
 
 Renders form fields as googlemap widget.

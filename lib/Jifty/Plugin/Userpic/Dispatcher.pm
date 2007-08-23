@@ -1,6 +1,30 @@
+use warnings;
+use strict;
+
 package Jifty::Plugin::Userpic::Dispatcher;
 
+
+=head1 NAME
+
+Jifty::Plugin::Userpic::Dispatcher
+
+=head1 DESCRIPTION
+
+The dispatcher for the Jifty Userpic plugin
+
+=cut
+
 use Jifty::Dispatcher -base;
+
+
+=head1 RULES
+
+=head2 on /=/plugin/userpic/*/#/*
+
+When we're asked for a userpic for /recordclass/id/fieldname,  set it up and call /userpic/image.
+
+=cut
+
 
 on '/=/plugin/userpic/*/#/*' => run {
     my $class = $1;

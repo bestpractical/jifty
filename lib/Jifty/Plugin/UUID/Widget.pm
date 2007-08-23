@@ -18,9 +18,6 @@ Overrides L<Jifty::Web::Form::Field/accessors>.
 
 =cut
 
-# TODO FIXME XXX Is this really necessary?
-sub accessors { shift->SUPER::accessors() };
-
 =head2 render_widget
 
 Renders form fields as a UUID.

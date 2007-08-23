@@ -63,13 +63,23 @@ sub _actual_td_code {
 
 use Attribute::Handlers;
 my (%Static, %Action);
-sub Static :ATTR(CODE,BEGIN) {
-    $Static{$_[2]}++;
-}
 
-sub Action :ATTR(CODE,BEGIN) {
-    $Action{$_[2]}++;
-}
+=head2 Static
+
+This function allows a developer to mark a Template::Declare template as static (unchanging), so that the compiled version can be cached on the client side and inserted with javascript
+
+=cut
+
+sub Static :ATTR(CODE,BEGIN) { $Static{$_[2]}++; }
+
+=head2 Action
+
+This function allows a developer to mark a Template::Declare template as an action. clkao owes documentation as to the meaning of this and when it would be acceptable to use it.
+
+=cut
+
+
+sub Action :ATTR(CODE,BEGIN) { $Action{$_[2]}++; }
 
 =head2 client_cacheable
 
