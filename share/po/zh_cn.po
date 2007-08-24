@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"PO-Revision-Date: 2007-01-23 16:55+08\n"
-"Last-Translator: Agent Zhang <agentzh@gmail.com>\n"
+"PO-Revision-Date: 2007-08-24 10:33+08\n"
+"Last-Translator: sunnavy <sunnavy@gmail.com>\n"
 "Language-Team: Simplified Chinese\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -338,19 +338,19 @@ msgstr "该账号不存在."
 
 #: lib/Jifty/Plugin/User/Mixin/Model/User.pm:89
 msgid "It looks like somebody else is using that address. Is there a chance you have another account?"
-msgstr ""
+msgstr "已经有人使用了这个地址，会不会是因为您还有另外一个账号？"
 
 #: lib/Jifty/Plugin/Authentication/Password/Action/Signup.pm:75
 msgid "It looks like you already have an account. Perhaps you want to <a href=\"/login\">log in</a> instead?"
-msgstr ""
+msgstr "您已经有了一个账号了，或许您是想<a href=\"/login\">登录</a>？"
 
 #: lib/Jifty/Plugin/Authentication/Password/Action/ResetLostPassword.pm:75
 msgid "It looks like you didn't enter the same password into both boxes. Give it another shot?"
-msgstr ""
+msgstr "两次输入的密码不同. 再试一次？"
 
 #: lib/Jifty/Plugin/Authentication/Password/Action/SendAccountConfirmation.pm:82
 msgid "It looks like you're already confirmed."
-msgstr ""
+msgstr "您已经确认过了."
 
 #:
 msgid "Jifty Administrative Console"
@@ -546,11 +546,11 @@ msgstr "注册"
 #: lib/Jifty/Plugin/Authentication/Password/Action/Signup.pm:108
 #. ($msg)
 msgid "Something bad happened and we couldn't create your account: %1"
-msgstr ""
+msgstr "出了一点问题，我们不能创建您的账号: %1"
 
 #: lib/Jifty/Plugin/ErrorTemplates/View.pm:149
 msgid "Something went awry"
-msgstr ""
+msgstr "出了一点岔子"
 
 #: lib/Jifty/Plugin/ErrorTemplates/View.pm:124 share/web/templates/dhandler:1
 msgid "Something's not quite right"
@@ -684,11 +684,11 @@ msgstr "您已经确认过该账号了."
 
 #: lib/Jifty/Plugin/Authentication/Password/View.pm:98
 msgid "You lost your password. A link to reset it will be sent to the following email address:"
-msgstr ""
+msgstr "您忘记了密码. 重置密码的链接将被发送到以下的电子信箱中:"
 
 #: lib/Jifty/Plugin/Authentication/Password/View.pm:115
 msgid "You lost your password. A reminder will be send to the following mail:"
-msgstr ""
+msgstr "您忘记了密码. 密码提醒将被发送到以下的电子信箱中:"
 
 #: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:152
 msgid "You may have mistyped your email address or password. Give it another shot."
