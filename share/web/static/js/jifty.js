@@ -1489,3 +1489,15 @@ if( !Object.prototype.hasOwnProperty ) {
         return true;
     }
 }
+
+function _sp_submit_form(elt, event, submit_to) {
+    var form = Form.Element.getForm(elt);
+    var elements = Form.getElements(form);
+
+    var args = {};
+    for (var i = 0; i < elements.length; i++)
+	args[elements[i].name] = $F(elements[i]);
+
+    if(event.ctrlKey||event.metaKey||event.altKey||event.shiftKey) return true;
+    return update( {'continuation':{},'actions':null,'fragments':[{'mode':'Replace','args':args,'region':'__page','path': submit_to}]}, elt );
+}
