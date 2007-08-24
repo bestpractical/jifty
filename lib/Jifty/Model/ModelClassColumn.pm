@@ -196,8 +196,34 @@ sub after_create {
     $self->model_class->add_column($self);
     unless ($self->virtual) {
         my $ret = Jifty->handle->simple_query( $self->model_class->qualified_class->add_column_sql( $self->name ) );
+        for my $mixin ($self->RECORD_MIXINS) {
+            if (my $triggers_for_column 
+                    = $self->can('register_triggers_for_column')) {
+                $triggers_for_column->($self, $self->name);
+            }
+        }
         $ret || $self->log->fatal( "error updating a table: " . $ret->error_message);
     }
+    return 1;
+}
+
+=head2 after_delete
+
+Cleans up triggers for a column. This way if a column of a given name is deleted and another column of the same name is created, the old triggers won't be overlaid on the new ones.
+
+=cut
+
+sub after_delete {
+    my $self = shift;
+    my $ret = shift;
+
+    if ($$ret) {
+        my $name = $self->name;
+
+        delete $self->{__triggers}{'before_set_'.$name};
+        delete $self->{__triggers}{'after_set_'.$name};
+    }
+
     return 1;
 }
 
