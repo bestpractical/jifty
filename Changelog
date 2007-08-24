@@ -1,3 +1,932 @@
+Jifty 0.70824
+
+INSTALL
+=======
+
+ * WWW::Mechanize versions before 1.30 had broken gzip behaviour which broke
+   tests - jesse
+
+ * properly skip client side td test if new B is not found. - clkao
+
+ * GD is not mandatory requirement. Skip chart test if not found. - clkao
+
+ * require Class::Trigger 0.12 for abortable triggers used by css/js
+   compression plugin. - clkao
+
+ * debian packaging - yves
+
+ * Makefile.PL - Jifty now depends on TD 0.26 - agentz
+
+ * r1254@agentz-office: agentz | 2007-08-10 17:08:14 +0800 Makefile.PL - do
+   NOT skip any tests under t/ unintentionally ;) - agentz
+
+ * Updated the module recommendations for the Chart plugin. - sterling
+
+ * Adding Image::Info dependency used during testing of Jifty::Plugin::Chart
+   - sterling
+
+ * add missing Test::Log4perl dep and update the Jifty::DBI requirement -
+   falcone
+
+ * Changing the Jifty console requirement back to default => 0. - sterling
+
+ * debian dependancies
+* T::D 0.21 needed to pass tests - yves
+
+ * add IPC::Run3 to dependency. - clkao
+
+ * Update dep to include version of Module::Pluggable that is patched so that
+   compile errors are caught - trs
+
+ * Add dependency on Class::Trigger - alexmv
+
+ * here sunnavy comes, ;-) - sunnavy
+
+ * typo in recommends - falcone
+
+ * Add myself to AUTHORS - andk
+
+ * Better diagnostic messages in the dependency checking script. Thanks to
+   Andreas Koenig - jesse
+
+ * don't index plugins' test directories - jesse
+
+
+TESTING
+=======
+
+ * Add failing tests for load_by_kv with chr(0) - sartak
+
+ * clean up load_by_kv - jesse
+
+ * The warnings come from the server code after the fork. Test::Log4Perl isn't
+   going to catch them. - jesse
+
+ - Fix our test mech to not choke on non-default cookie names
+ - Clean up page headers
+ - Remove unecessary var - trs
+
+ * Fix the template subclassing tests. - clkao
+
+ * Helper method for mounting crud view. - clkao
+
+ * Add a little pod coverage - sartak
+
+ * Make sure there's always a stash during testing since we don't always go
+   through the web - sartak
+
+ * Pass defaults to render_region in test. - clkao
+
+ * the actual templates for the 16- test.t/TestApp - clkao
+
+ * failing tests for region and show inconsistency. - clkao
+
+ * make a chdir conform to the rest of the test suite and use Jifty::SubTest
+   chdir noticed by Andreas Koenig during his cleanups - falcone
+
+ * add tests for UTF-8 related things - ruz
+
+ * a failing test about utf8 when using T::D - yves
+
+*                 we need bytes in escape_uri then 'use bytes'
+* resulting string is always valid ascii string,
+  so we shouldn't forcibly set utf flag - ruz
+
+ * fast test support: truncate tables rather than recreating database when
+   JIFTY_FAST_TEST is specified. - clkao
+
+VIEW
+====
+
+ * update tabview plugin to use new relative path syntax for td show(). -
+   clkao
+
+ * don't use pager to determine items as list_items might be called directly
+   and no pager has been set on the collection. - clkao
+
+ * Jifty::Plugin::SkeletonApp::Dispatcher - Do not override the 'Home' menu
+   item if the app had set it already. - audreyt
+
+ * Jifty::View::Declare::CRUD - I18N. - audreyt
+
+ * Fixed a problem where some disabled elements weren't re-enabled after a
+   submission when the disabled elements were outside of the fragment being
+   refreshed. - efunneko
+
+ * Added a new helper, new_record_action(), that wraps new_action() with
+   additional help creating Create, Update, Delete, and Search actions for
+   models. - sterling
+
+ * Fixes to use_mason_wrapper():
+  * Added a test to make sure use_mason_wrapper() works.
+  * Added $jifty_internal_request to note whether a Mason request is internal or not.
+  * Altered the autohandler to use $jifty_internal_request when blocking access to /_elements/
+  * Fixed error handling in the autohandler to redirect to /__jifty/error/requested_private_component rather than /errors/requested_private_component - sterling
+
+ * Give the browser (particularly Safari) some more "settle time" - trs
+
+ * Added support for more javascript triggers for most form elements: onclick
+   onchange ondblclick onmousedown onmouseup onmouseover onmousemove
+   onmouseout onfocus onblur onkeypress onkeydown onkeyup onselect - efunneko
+
+ * Fix to a JavaScript bug performing the rerendering of IMG graphs. -
+   sterling
+
+ * Without the conditional we'll hide errors as soon as we display them - trs
+
+ * Add explicit hide/show for the error, warning, and canonicalization note
+   divs. This solves some long time ugliness on IE. However, it is not perfect
+   as I am still getting some rendering issues on IE. Does not seem to break
+   anything on FF. - sterling
+
+ * Fix a fragment update regression caused by the trimclient merge. - clkao
+
+*              Make enter key submit in the address search popup.
+* Fix the close link in ambigious address popup. - clkao
+
+ * Add some classes - trs
+
+ - CRUD view: Minor refactoring for easy wording change
+ - Provide the D in CRUD - trs
+
+ * CRUD: Don't bother showing edit link if current user can't - clkao
+
+ - Plugin CSS and JS (which should be put in
+   share/plugin/Jifty/Plugin/Foo/web/static/{css,js}) is now compressed by
+   CCJS
+ - CCJS can compress more than just main.css by calling Jifty->web->add_css("file.css") - trs
+
+ * in REST record_to_data, skip container columns. - clkao
+
+ * r60264@102: jesse | 2007-07-08 21:52:09 -0700
+  * Template::Declare behaviour change for "show 'foo'" to now show foo at the current template depth. - jesse
+
+ * r24794@zot: tom | 2007-06-21 02:46:02 -0400 Restore and update the OOM
+   patch to the YUI calendar - trs
+
+ * Convert to using the form of declaring titles that works when using the
+   mason wrapper with TD - trs
+
+ * CRUD plugin cleanup and refactoring - jesse
+
+ * CRUD View: Also export display_columns so it's not required to
+   override it - trs
+
+*       New Template::Declare page syntax for additional code block run
+         before wrapper, and have the returned value passed to wrapper:
+
+template foo => 
+  page { title => 'this is title', other => 'foo' }
+  content {
+    h1 { 'blah }
+  }; - clkao
+
+ * Fix jifty->web->out from without td used with mason wrapper. - clkao
+
+ * try not to interfere when a user clicks on a link with a modifier key
+   pressed - jesse
+
+ * YourApp::View->use_mason_wrapper now lets your write page {} in TD but uses
+   your mason wrapper. - clkao
+
+ * Do not call update() when ctrl-clicked - clkao
+
+ * Fix javascript emission when CompressedCSSandJS plugin is not loaded
+   noticed by dpavlin++. - clkao
+
+ * Refactor the CRUD view to make it easier to customize the output - jesse
+
+ * when rendering the keybindings div, reset Jifty.KeyBindings. Ideally we
+   might want to keep the state with the div so it resets itself when
+   replaced. - clkao
+
+ * For post fragment update script evaluation, use YUI OnAvailable rather than
+   hardcoded setTimeout. - clkao
+
+ * switch url from an attribute to a child node for ajax redirects. (The old
+   behaviour didn't work in safari) - jesse
+
+ * add_javascript method to simplify adding JS libs and updated doc - trs
+
+ * Fix update() called from non-form. - clkao
+
+ * Implement "submit => undef" in onclick hook where it should submit all
+   actions. - clkao
+
+ * Let the code calling the wrapper specify a page class to use to support
+   multiple page types - trs
+
+ * Make redirect inside region work. - clkao
+
+ * Make Jifty->web->out work during the dispatch rule stage. - clkao
+
+ * Optionally use app's View::Page class for wrapper. - clkao
+
+ * refactor the TD wrapper into a class. - clkao
+
+ * Abstract render_footer.
+* Header is always considered done when sending out nontoplevel wrapper in spa. - clkao
+
+ * r57907@pinglin: jesse | 2007-06-03 16:59:42 -0400
+  * The SPA templates no longer include css and js twice - jesse
+
+ * Template::DEeclare now gets a hashref of all the arguments set() in the
+   dispatcher. - jesse
+
+ * Fix search collection for CRUD. - clkao
+
+ * Better factored CRUD library, ready for local overriding - jesse
+
+ * Calendar: Our default canonicalizer is yyyy-mm-dd, while the calendar
+   generates single-character months and dates sometimes. Standardize on the
+   two-digit form. - alexmv
+
+ * CRUD view and a working example (sitenews) - jesse
+
+ * Always use an application's 'wrapper' in preference to the Jifty default
+  - jesse
+
+ * clean url for submenu - yves
+
+ * add a render_as_classical_menu to have the same menu with T::D view than
+   older mason _elements/nav. - yves
+
+ * Stop a certain class of validator error that causes an infinite loop in
+   IE - jesse
+
+ * CRUD builder search works
+  - jesse
+
+ * Jifty::View::Declare::CRUD lifted from BabelBee
+  - jesse
+
+ * add the ability to have some code before a javascript click : onclick => [
+   { beforeclick => "<somecode>;" }, { args => ... - yves
+
+ * More refactoring in support of adding new view handlers. - jesse
+
+U-PUBSUB
+========
+
+ * Jifty.Subs needs outs_raw. - clkao
+
+DOC
+===
+
+ * Minor pod additions. removing unneeded wrappers - jesse
+
+ * Adding documentation for Action and Static attributes to resolve POD
+   coverage test failures. - sterling
+
+ * Adding tangent and return to the glossary. - sterling
+
+ * Updating Pod and source comments for Jifty::Config. Performed some Perl
+   tidying and added a new section describing why Jifty uses three levels of
+   configuration files (may need additional editting). - sterling
+
+ * Cleaning up the Pod and adding a few code comments to Jifty::Collection.
+   - sterling
+
+ * Added myself to AUTHORS - efunneko
+
+ * Updating Pod and adding code comments to Jifty::Client. - sterling
+
+ * Major Pod improvement to the class loader, many more helpful code comments,
+   and some tidying for the class loader. Phew. - sterling
+
+ * Cleaning up the Pod for Jifty::Bootstrap - sterling
+
+ * Improved code comments and minor perl tidy. - sterling
+
+ * Added more POD to fix coverage issues and added a description to the
+   client_cacheable and client_cache_content methods of PageRegion. - sterling
+
+ * Additional fix to POD coverage for the CRUDView attribute. - sterling
+
+ * Fixing POD issues in CRUD, adding some code comments, and minor perl
+   tidying. - sterling
+
+ * Fixing error that occurred during previous push. - sterling
+
+ * Improving some of the Pod, code comments, and minor perl tidying. -
+   sterling
+
+ * Improved code comments and minor perl tidy. - sterling
+
+ * Added more POD to fix coverage issues and added a description to the
+   client_cacheable and client_cache_content methods of PageRegion. - sterling
+
+ * Additional fix to POD coverage for the CRUDView attribute. - sterling
+
+ * Fixing POD issues in CRUD, adding some code comments, and minor perl
+   tidying. - sterling
+
+ * Improving some of the Pod, code comments, and minor perl tidying. -
+   sterling
+
+ * add myself to AUTHORS :) - sartak
+
+ * added some pod to help make pod tests pass - jesse
+
+ * Added a recipe for using "result_of" to fetch information about actions for
+   use in appends. - sterling
+
+ * Added NAME sections and short descriptions for the CPAN module summary.
+   - sterling
+
+ * Adding documentation to Jifty::Plugin::Debug to fix POD coverage failures.
+   - sterling
+
+ * Added an additional see also to Jifty::Manual::AccessControl to the User
+   and Authentication::Password plugins. - sterling
+
+ * The true return value of the module needs to not be part of the POD
+  * Fix a POD nitpick - alexmv
+
+ * word-wrapping some POD - nelhage
+
+ * Fleshing out and cleaning up the documentation for
+   Jifty::Plugin::Authentication::Password. - sterling
+
+ * Fleshing out and cleaning up the documentation for Jifty::Plugin::User.
+   - sterling
+
+ * Added a many-to-many relationship recipe to the cookbook. - sterling
+
+ * added see also section to Jifty::Upgrade - bartb
+
+ * Now with more POD! (and passing POD tests) - trs
+
+ * Extracting talks from the jifty dist - jesse
+
+*              r58374@pinglin: jesse | 2007-06-14 20:17:33 -0400
+  * Full doc for the existing CRUD templates - jesse
+
+ * Cleaning up and improving some of the view documentation. - sterling
+
+ * Yada Sample application: Example::Todo is too hard to type. Yada! - clkao
+
+ * The cookbook was wrong about the auth recipe - jesse
+
+ * More comment about the JAFF handling special case from update(). - clkao
+
+ * Clarifying comments about the plugins lists - trs
+
+ * document why the validate hack exists. - clkao
+
+ * exceedingly minor POD fixes. - diakopter
+
+ * fix some pod bugs in Jifty/API.pm - sunnavy
+
+ * update zh_cn.po - sunnavy
+
+ * documentation fix that seems to have been forgotten when length was renamed
+   max_length - andk
+
+ * add 'Login on demand' section to Cookbook - ruz
+
+ * Added section on dynamically created binary content in the cookbook - alech
+
+ * add docs to pass the pod-coverage tests - falcone
+
+ * small update to ru.po - ruz
+
+ * add docs to escape_uri
+* fix it in the way need it to work, it's escape_uri_utf8. there is no
+  way to escape binary and text scalars in one sub, we need the latter. - ruz
+
+ * ru.po - ruz
+
+ * linked POD++ - ruz
+
+PLUGINS
+=======
+ * Plugins may now have regular models. These are deployed after
+  the schema is setup after adding the plugin to installation. 
+  Plugins can bootstrap and upgrade their schema with their own 
+  version numbers just like applications (though with slightly 
+  different details). - sterling
+
+
+ * Adding a plugin for using the jQuery Javascript library with Jifty.
+   - sterling
+
+ * Fixing the chart plugin tests to match up with changes that have happened
+   to the API since they were written. - sterling
+
+ * Chart plugin configuration updates:
+  * Deprecating the renderer option.
+  * Adding the DefaultRenderer option to replace renderer.
+  * Adding the PreloadRenderers option to allow additional renderers to be preloaded.
+  * Updated the documentation.
+  * Made sure that the configuration is always passed to the renderer constructor, even if they are loaded late. - sterling
+
+ * Chart Plugin: Removing extra comma from JavaScript list. - sterling
+
+ * Chart Plugin: Whoops. Forgot to check in the actual XML SWF library. This
+   is version 4.6. - trs
+
+ - Chart Plugin: Treat the width and height appropriately
+ - Chart Plugin:  Add the XML::Simple dep - trs
+
+ * Bunch of updates to the chart plugin
+ 
+     - Refactored dispatcher
+     - Added XML SWF renderer
+     - Renderers are now passed the configuration hash when init'd
+  - trs
+
+ * Chart Plugin: Use PlotKit.Base.map explicitly - trs
+
+ * Chart Plugin: Render onAvailable instead of on window load so that we work
+   in regions - trs
+
+ * Chart Plugin: Make sure we do not attempt to render 0 pixel values no
+   matter what.
+  - sterling
+
+ * Chart Plugin: Adding the SimpleBars renderer as a decent, dead-simple HTML-
+   based renderer for HorizontalBars and a prototype for using tables for client-
+   side chart configuration. - sterling
+
+ * Chart Plugin: Removed some redundant code from the PlotKit renderer and
+   added support for options to the GD::Graph and Chart renderers.
+  - sterling
+
+ * Chart Plugin: Improved the way the DIV tag is generated for PlotKit.
+  - sterling
+
+ * Chart Plugin: Added better error handling on renderer require.
+  - sterling
+
+ * Chart Plugin: Standardizing the chart types across the three current
+   renderers. - sterling
+
+ * Chart Plugin: Updated the behaviour script used by IMG chart renderers to
+   make it more URI aware. - sterling
+
+ * Chart Plugin: Fix failing dependency test because Chart uses GD to fix
+   testing. - sterling
+
+ * Chart Plugin: Added a renderer parameter to the chart() method and add per-
+   renderer initialization. - sterling
+
+ * Chart Plugin: Making the IMG-based chart renderers capable of handling CSS
+   styling with some added behaviour. - sterling
+
+ * Chart Plugin: Don't mess with the data structure if it's already what
+   plotkit expects - trs
+
+ * Chart Plugin: *Very* custom packed PlotKit (from svn) that no longer
+   depends on MochiKit exporting functions into the global namespace. Still
+   need to solve the issue of why MochiKit blows up when included in our
+   honkin' JS file... - trs
+
+ * Chart Plugin: Uncomment neccessary require. Make sure to handle undefined
+   stuff - trs
+
+ * Basic PlotKit renderer for Chart plugin - trs
+
+ * Made the chart plugin test smarter and added one for the GD::Graph
+   renderer. - sterling
+
+ * Fixed an eensy POD bug. - sterling
+
+ * Fixed POD coverage issue. - sterling
+
+ * Updated POD and removed an unnecessary extra subroutine call. - sterling
+
+ * Added a renderer for GD::Graph - sterling
+
+ * Moved the chart/* dispatch to chart/chart/* to make room for alternate
+   charting mechanisms. - sterling
+
+ * Fixed the way arguments are passed to the render() method in
+   Jifty::Plugin::Chart::Web. - sterling
+
+ * Added a hack to chart.t (forcing an early load of GD) to avoid the
+   segfault that was causing it to fail. Removed the TODO block from the
+   test. - sterling
+
+ * Regarding Jifty::Plugin::Chart: Added better comments. Fixed some
+   error handling. Switched to using scalar_png(). Switched to using -
+   >require rather than an eval to load Chart classes. Eliminated the
+   need for IO::String. Moved some processing out of View and into
+   Dispatcher. - sterling
+
+ * Adding a test suite for Jifty::Plugin::Chart, but it is having weird
+   troubles loading Chart::* because that seems to disconnect the server
+   output or something. - sterling
+
+ * Added the Chart::Base recommendation for the Chart plugin. - sterling
+
+ * Added documentation to the experimental Chart plugin. - sterling
+
+ * Adding a plugin for rendering charts of data. - sterling
+
+ * Updated tabview plugin to work when it's not already inside a region
+  - jesse
+
+ * Fix IE issues with search div. - clkao
+
+ * i18n for feedback plugin. - clkao
+
+ * Incredibly naive "image column" userpic plugin.  - jesse
+
+ * ActorMetadata plugin: Asset renamed to ActorMetadata
+  - jesse
+
+ * First cut of GoogleMap plugin. - clkao
+
+ * Facebook plugin: Provide a way to link existing users with a Facebook
+   account - trs
+
+ * Facebook plugin: More pod, forceable login - trs
+
+ * Basic Facebook auth plugin - trs
+
+ * OpenID Plugin: Add a "next" parameter so one can specify the next page to
+   go after openid login. - gugod
+
+ * debug plugin for logging dispatched rules and current user. - clkao
+
+ * Password Auth: Plugin view class should respect app page. - clkao
+
+ * Got the tabview plugin working with non-CRUD code.
+ * got the tabview plugin preloading the first tab, even if it's marked as a region rather than a static tab - jesse
+
+ * Single Page App: Unbreak nojs form submitting when SPA is enabled. - clkao
+
+ * CompressedCSSandJS: support optional javascript minifier. - clkao
+
+ * Move the javascript concatenating logic from Jifty::Web to the
+   plugin. - clkao
+
+ * CodePress plugin: bump version to 0.02, remove requirement to modify
+   submit form button (and in process break next_page after it, because it
+   turns normal form submit into Ajax form submit which doesn't handle
+   redirects very well -- because it usually redirects to page which isn't
+   valid XML) - dpavlin
+
+ * Added a 'feedback' plugin
+  - jesse
+
+ * In SinglePage mode, allow Action::Redirect to happen within webservice and
+   have the client js accepts it. - clkao
+
+ * CodePress plugin; add language accessor to select syntax highlight language
+   (instead of default generic), example of usage, replace onload with
+   DOM.Events - dpavlin
+
+ * CodePress plugin for web-based source code editor with syntax
+   highlighting - dpavlin
+
+ * Make SinglePage plugin configurable. - clkao
+
+ * First draft of SinglePage plugin. - clkao
+
+ * Make CompressCSSandJS optional.
+* always refresh css & js if in devel mode. - clkao
+
+ * OpenId Plugin: Fix has_alternative_auth. - clkao
+
+ * Authentication::Password plugin: The (unused) resend_confirmation template
+   was missing. - clkao
+
+ * User model mixin for OpenID plugin.
+* Make Authenticate::Password aware that there can be alternative
+  authentication systems.
+* Make OpenID plugin work even when Authenticate::Password is
+  enabled. - clkao
+
+ * OpenID Plugin: The minimum required OpenID View for your app to
+   mixin. - gugod
+
+ * TabView plugin. - clkao
+
+ * Site news plugin - jesse
+
+ * A Jifty console to provide quick diagnostic shell for debugging or
+   maintaining purpose.
+
+Yes, it's learnt from RoR, and it's good to have it when developing
+applications, or when you just start learning Jifty. - gugod
+
+ * This is the OpenID plugin code. Setting up your app to use OpenID isn't as
+   easy as we thought it to be. Will need a receipe to teach people how to
+   cook it. - gugod
+
+ * Login plugin: return id of the user from action - ruz
+
+ * REST dispatcher: always use warnings and strict. - jesse
+
+ * REST plugin: render referencing fields in a saner fashion. - clkao
+
+ * plugin to add a wiki toolbar to textarea - yves
+
+ * plugin to use Wyzz online wyziwig editor to render textaera for test and
+   comments - yves
+
+CORE
+====
+
+ * Remove cargo-culting changing of $0 from Jifty::SubTest. It doesn't affect
+   test output but does break things - jesse
+
+ * respect initial PATH in env under fastcgi. - clkao
+
+ * Add friendly_date method to Jifty::DateTime which special-cases
+   yesterday/today/tomorrow - sartak
+
+ * Jifty::View::Declare - Work around Perl 5.9.5 bug by avoid punning the
+   constant name BaseClass with the subclass name ::BaseClass. - audreyt
+
+ * todo-ify failing tests in t/13-sessions.t - sartak
+
+ * In action argument creation from model, do not assume refers_to always want
+   a select based on id which we might not be referring to. Allow user to
+   override render_as for refers_to columns. - clkao
+
+ * Correct a crud component path. - clkao
+
+ * Fix view CRUD template's method of getting the record - trs
+
+ * First cut of a UUID column plugin, with a basic test in the user
+   model - jesse
+
+ * Add a load_by_kv to Jifty::Web::Session - sartak
+
+ * Resolve import conflicts now that T::D and J::V::D::Helpers have a thingy
+   with the same name - jesse
+
+ * Moniker bulletproofing. Suggested by Mikko Lapasti - jesse
+
+ * Push milestone 1 of trimclient to trunk. - clkao
+
+ * Now make sure it's actually UTF-8 - trs
+
+ * Make sure we get UTF-8 - trs
+
+ * Fixing API qualification to make it possible to access actions associated
+   with plugins via ->new_class. - sterling
+
+ * Don't mess with the HTML by default. This should likely become configurable
+   in the future. - trs
+
+ * Cleaned up the class loader a bit to make all the auto-generated methods
+   use the same name, remove an unnecessary elsif, and add a few more
+   comments. - sterling
+
+ * Need parens - trs
+
+ * Fixed CRUD view to no longer require you to specify a base_path for the
+   plugin's view. It was redundant and we could intuit it. - jesse
+
+ * Refactor CRUD view to be more subclassable - Extract out per_page - trs
+
+ * type can be empty for container columns. - clkao
+
+ * support external javascripts. - clkao
+
+ * Added support for application-specific plugins (i.e., App::Plugin::XXX) and
+   plugins named using the fully-qualified Jifty::Plugin::XXX name. - sterling
+
+ * check if current_user->can('user_object') when tring to figure out
+   timezone - dpavlin
+
+ * Altered the ClassLoader to create Collections for models deeper under the
+   model namespace,like "App::Model::Foo::Bar". These is consistent with the
+   handling for actions and other components already in place. - sterling
+
+ * Move pulling action defaults from action in request into the action's new,
+   instead of a "private" argument.
+  * Remove an extra place where we default the moniker to
+    _generate_moniker
+  * A bunch of POD (re)wrapping. - alexmv
+
+ * Recent YAML::Syck's get confused by trying to be too smart with
+   $test_config, which is a filehandle which *also* stringifies to the path.
+   Force stringification to get consistent (working) results. - alexmv
+
+*       No matter what _resurect_current_user is intended for, it ought
+          to be spelled _resurrect_current_user instead. :-) - audreyt
+
+ * Mapper edge case failure (when no 'name' was given) - alexmv
+
+ * add {_resurect_current_user} field into user module - ruz
+
+ * protect ourself from circular references between User and CurrentUser
+
+we do it in user_object, so solution is generic should work in any case, but
+only if people use the method to set user_object and user model uses _current_user
+key to store reference to the CurrentUser - ruz
+
+ * Use Jifty::Util->share_root for finding plugin share roots so that if Jifty
+   isn't installed it still DTRT
+ * Only calculate static roots once and report on plugins adding roots (like the mason handler does) - trs
+
+ * Allow app changeable cookie names - trs
+
+ * Web::Form::Link - When escape_label was set, the tooltip property was (very
+   sillily!) first escaped, then discarded away, displaying the unescaped text
+   instead. It now escapes properly.
+* Also make tooltips with value '0' display properly. - audreyt
+
+ * Allow scheme to be specified for Jifty->web->url. This functionality was
+   taken out during the move from "heuristics" to URI.pm, but for a non-
+   apparent reason. - trs
+
+ * HTTPS and HTTP adjectives for dispatcher rules - trs
+
+ * Jifty->web->form->next_page got dropped when you submit only a specific
+   action with Jifty->web->form->submit. This commit autoadds next_page if you
+   submit only a subset of actions. - jesse
+
+ * _redirect expects a local path, not a fully formed URL. (This only actually
+   broke internal redirects) - jesse
+
+ * Always give the dispatcher unescaped path like fastcgi does, from
+   standalone, webservice, and region entrance. - clkao
+
+ * work around annoying Module::Pluggable bug - sky
+
+ * Make multiple use base lines into one for readability. - clkao
+
+ * Admin UI: Don't trip over classes we can't require - jesse
+
+ * Quiet a dispatcher warning - jesse
+
+ * misc webservices_redirect cleanup. - clkao
+
+ * Refactor handle_request to extract out methods
+  * Only warn about denied actions on validate if they're also actions we want to run
+  - jesse
+
+ * Back out a Croak back to a die. (We're using it for exception handling, not
+   to-user reporting) - jesse
+
+ * Merge from fragcont branch to include minimum support of continuation in
+   webservices requests to make SinglePageApp plugin work. - clkao
+
+ * Only squelch "can't locate" errors relating to the class we're trying to
+   require. If it's something else, it's likely a module use'd by the module
+   we're requiring. - trs
+
+ * correct en.po charset. - clkao
+
+ * Only call LML->import once ever. - clkao
+
+ * Kill 5% of startup time by not validating during DateTime::Locale. - clkao
+
+ * Disable in-region redirect unless SPA is enabled. - clkao
+
+ * Move methods unrelated to mason to Jifty::View. - clkao
+
+ * Added support for "redirects" on fragment calls (which really just do an
+   internal replace) - jesse
+
+ * Really fix the region rewriting logic. - clkao
+
+ * new Jifty->find_plugin method. - clkao
+
+ * add a config file version, so we can change old defaults.
+  - jesse
+
+ * Correct app_class usage. - clkao
+
+ * CurrentUser->username now uses brief_description on user_object. - clkao
+
+ * In ClassLoader, be quiet when we are just trying to see if a module
+   exists. - clkao
+
+ * When we convert a model into an action, don't deref and then reref the
+   array of possible valid values. We lose any attempt at possible magic that
+   we might have. - jesse
+
+ * A move to hand on the rendering of JDBI::Collection columns to app
+   developers.
+    
+    We used to just ignore the rendering of any columns that refers to
+    a JDBI::Collection, because there's no trivial way to do so. 
+    
+    However, if the column comes with a "render_as", we can assume that
+    the app developer know what he/she is doing.  So we just render it
+    as whatever specified.
+    
+    One scenario is that a collection of tags is rendered as a normal
+    text input field, and develoeprs create tags records in their Tag
+    model in before_create() method. With ajax canonicalize_tags this
+    could be a simple and smart interface, and not difficult to implement
+    at all.
+    
+    I'm sure that it'll open the chance to let developers write their
+    own collection rendering modules like I did before. If we keep
+    being ignoring, this won't even happend. - gugod
+    
+ * add data to the result indicating which requested actions were denied and
+   mark them failed. Options for a better denied message coming soon - falcone
+
+ * Extract the model list from Script::Schema to Schema - jesse
+
+ * Incremental extraction of schema management from
+   Jifty::Script::Schema - jesse
+
+ * Cause more compiliation failures to actually stop the app from running
+  - jesse
+
+ * Cause more compiliation failures to actually stop the app from running
+  - jesse
+
+ * Cope better with malformed fragment requests - alexmv
+
+ * Push app_root/lib onto @INC when we create a new Jifty object - alexmv
+
+ * Moved the commands for add/drop column to Jifty::Record (they should move
+   to JDBI eventually)
+ * Added a drop_table to Jifty::Record
+  - jesse
+
+ * Added the before_access trigger and a simple test for it. Also updated
+   TestApp and the current_user test to make them compatible with the new
+   before_access test. - sterling
+
+ * '*' matches only a single level in the dispatcher. '**' matches all level.s
+   We want to run the "Home" rule at all dispatcher levels.
+ 
+  - jesse
+
+ * Make compile errors in autorequired modules fatal - jesse
+
+ * FCGI.pm ties our streams and its implementation doesn't have support for
+   setting IO layers with binmode, but we can do the same using
+   Encode::encode. We just turn on raw mode on STDOUT and convert to octets
+   ourself using Encode.pm and charset definition from the content type
+   field. - ruz
+
+ * Extensive UTF8 improvement: to sanity through insanity
+
+* control mode of output handles, if content type has charset defined
+    then we set :encoding(<charset>) output layer (or :utf8), otherwise
+    binary
+  * regions are special as we print out them into STDOUT, but sometimes
+    need them as a string. We localize STDOUT and get data, however because
+    of the above canonicalization we get octets or binary, so we check
+    again the current content type. If the type contains charset definition
+    then we decode octets back into perl string(in terms of perl unicode support),
+    otherwise we leave things as is.
+  
+  jifty is sane when apps' developers are sane
+  * never use 'bytes' pragma
+  * avoid using 'encoding' pragma
+  * use perl strings in jifty
+  ** when you get a text data from external sources then Encode::decode it
+  * set output encoding with $r->content_type('type/subtype; charset=XXX')
+  ** by default it's UTF-8
+  ** you can use cp1251 (or other) and things should work, user will get
+     data in cp1251 and browser should display it right
+  ** don't Encode::encode things before output
+  
+  everybody have own critirea of sanity
+  * if you think that something is wrong then add tests to jifty 
+  
+     - ruz
+
+ * we shouldn't silence utf8 warnings - ruz
+
+ * utf8::downgrade converts to octets only if string had been upgraded, what
+   is not always true for 'perl strings' - ruz
+
+ * escape_utf8
+  * don't use bytes just escape things doesn't matter if it's
+    flagged string or not, perl must do the right thing.
+  * don't localize ref, use it directly, afaik smaller
+    memory footprint - ruz
+  
+ * utf8::downgrade doesn't like strings as FAIL_OK, only integers, 1 is not
+   that cool as 'FAILURE IS OK', but works - ruz
+
+ * initial environment that makes fastcgi work got deleted - jesse
+
+*      This module is for rendering a collection of input fields at once
+        as a single widget. The major goal is to let developer say like:
+   
+     column bars =>
+       refers_to "My::Model::BarCollection",
+       render as "Collection"
+       availables are defer {
+           retrieve_some_bars()
+       };
+   
+   in their model class, and it'll just display a nice form to input
+   the value for a list of available bars. - gugod
+   
+
+ * fixed Jifty::View::Declare::Helpers since we now install tag subs directly
+   to the target package instead of using @EXPORT. We now makes use of
+   T::D::Tags's @TagSubs struct - agentz
+
+
+
 Jifty 0.70422
 
 [Password Authentication plugin]

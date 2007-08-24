@@ -55,7 +55,7 @@ requires:
   Class::Accessor: 0
   Class::Container: 0
   Class::Data::Inheritable: 0
-  Class::Trigger: 0
+  Class::Trigger: 0.12
   Compress::Zlib: 0
   Crypt::CBC: 0
   Crypt::Rijndael: 0
@@ -119,7 +119,7 @@ requires:
   Test::WWW::Mechanize: 1.04
   UNIVERSAL::require: 0
   URI: 0
-  WWW::Mechanize: 1.12
+  WWW::Mechanize: 1.3
   XML::Simple: 0
   XML::Writer: 0.601
   XML::XPath: 0
@@ -128,4 +128,4 @@ requires:
   perl: 5.8.3
   version: 0
 tests: t/*.t t/*/*.t t/*/*/*.t t/*/*/*/*.t
-version: 0.70422
+version: 0.70824

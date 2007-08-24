@@ -179,6 +179,7 @@ sub format_entry {
         $msg =~ s/^[\s\*]*/ * /;
     }
 
+        $msg =~  s/\n+$//g;
      $msg .= " - ".$entry->{'author'}."\n";
 
 
