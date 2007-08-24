@@ -196,7 +196,7 @@ sub after_create {
     $self->model_class->add_column($self);
     unless ($self->virtual) {
         my $ret = Jifty->handle->simple_query( $self->model_class->qualified_class->add_column_sql( $self->name ) );
-        for my $mixin ($self->RECORD_MIXINS) {
+        for my $mixin (@{ $self->RECORD_MIXINS || [] }) {
             if (my $triggers_for_column 
                     = $self->can('register_triggers_for_column')) {
                 $triggers_for_column->($self, $self->name);
