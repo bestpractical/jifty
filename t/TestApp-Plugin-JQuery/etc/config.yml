@@ -7,7 +7,7 @@ framework:
   ConfigFileVersion: 2
   Database: 
     CheckSchema: 1
-    Database: testapp::plugin::jquery
+    Database: testapp_plugin_jquery
     Driver: SQLite
     Host: localhost
     Password: ''
