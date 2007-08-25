@@ -46,9 +46,8 @@ sub _sp_link {
                 replace_with => $url,
                 args         => $args->{parameters}});
         }
-        elsif (exists $args->{submit}) {
-	    if (!defined $args->{submit} && $args->{_form} &&
-		!keys %{$args->{_form}{actions}} && $args->{_form}{submit_to}) {
+        elsif (exists $args->{submit} && !$args->{onclick}) {
+	    if ($args->{_form} && $args->{_form}{submit_to}) {
 		my $to = $args->{_form}{submit_to};
 		$self->_push_onclick($args, { beforeclick => qq{return _sp_submit_form(this, event, "$to");} });
 	    }
