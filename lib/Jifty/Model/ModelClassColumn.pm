@@ -195,11 +195,13 @@ sub after_create {
     $self->load_by_cols(id => $$idref);
     $self->model_class->add_column($self);
     unless ($self->virtual) {
-        my $ret = Jifty->handle->simple_query( $self->model_class->qualified_class->add_column_sql( $self->name ) );
-        for my $mixin (@{ $self->RECORD_MIXINS || [] }) {
+        my $class = $self->model_class->qualified_class;
+        my $ret = Jifty->handle->simple_query( $class->add_column_sql( $self->name ) );
+        my $mixins = $class->RECORD_MIXINS || [];
+        for my $mixin (@$mixins) {
             if (my $triggers_for_column 
-                    = $self->can('register_triggers_for_column')) {
-                $triggers_for_column->($self, $self->name);
+                    = $mixin->can('register_triggers_for_column')) {
+                $triggers_for_column->($class, $self->name);
             }
         }
         $ret || $self->log->fatal( "error updating a table: " . $ret->error_message);
