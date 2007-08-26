@@ -49,14 +49,16 @@ sub render_tabs {
 	var myTabs = new YAHOO.widget.TabView("$divname");
 	</script>'  );
 
-    @tabs = map { return $_ if ref($_);
-		  my $path = $_;
-		  my $defer = $path =~ s/_tab$//;
-		  { path => $path,
-		    name => $path,
-		    defer => $defer,
-		    label => $path };
-	      } @tabs;
+    @tabs = map { ref($_) ? $_
+		      : do {
+			  my $path = $_;
+			  my $defer = $path =~ s/_tab$//;
+			  { path => $path,
+			    defer => $defer };
+			  }
+		  } @tabs;
+
+    $_->{name} ||= $_->{path}, $_->{label} ||= $_->{path} for @tabs;
 
     div { { id is $divname, class is 'yui-navset'}
 	  ul { { class is 'yui-nav'};
