@@ -14,10 +14,6 @@ might have been expecting some sort of answer.  It allows one to
 re-visit that context later by providing the continuation again.
 Continuations are stored on the user's session.
 
-A common use of a continuation is to perform a tangent/return in Jifty. For example, if you visit a page that you must be logged in to see, a Jifty application could present a link labeled "Click here to login." That link would be a "L<Jifty::Manual::Glossary/tangent>," which creates a continuation as part of the process of taking you to the login page. After you login, the application may perform a "L<Jifty::Manual::Glossary/return>," which calls the continuation stored by the tangent and returns you to the original page, but this time you are logged in. 
-
-Almost any time you need to save the state for later recall, continuations can come in handy.
-
 Continuations store a L<Jifty::Request> object and the
 L<Jifty::Response> object for the request.  They can also store
 arbitrary code to be run when the continuation is called.
@@ -91,7 +87,6 @@ sub new {
     my $class = shift;
     my $self = bless { }, $class;
 
-    # Setup some nice defaults
     my %args = (
                 parent   => Jifty->web->request->continuation,
                 request  => Jifty::Request->new(),
@@ -148,12 +143,13 @@ sub return_path_matches {
 
 =head2 call
 
-Call the continuation; this is generally done during request processing, after
-actions have been run.  L<Jifty::Request::Mapper>-controlled values are filled
-into the stored request based on the current request and response.  During the
-process, another continuation is created, with the filled-in results of the
-current actions included, and the browser is redirected to the proper path,
-with that continuation.
+Call the continuation; this is generally done during request
+processing, after actions have been run.
+L<Jifty::Request::Mapper>-controlled values are filled into the stored
+request based on the current request and response.  During the
+process, another continuation is created, with the filled-in results
+of the current actions included, and the browser is redirected to the
+proper path, with that continuation.
 
 =cut
 
@@ -161,13 +157,11 @@ sub call {
     my $self = shift;
 
     Jifty->log->debug("Redirect to @{[$self->request->path]} via continuation");
-
-    # web services should do an internal redirect rather than an HTTP redirect
     if (Jifty->web->request->argument('_webservice_redirect')) {
+	# for continuation - perform internal redirect under webservices.
         Jifty->web->webservices_redirect($self->request->path);
-        return;
+	return;
     }
-
     # If we needed to fix up the path (it contains invalid
     # characters) then warn, because this may cause infinite
     # redirects
