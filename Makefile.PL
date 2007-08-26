@@ -67,7 +67,6 @@ requires('SQL::ReservedWords');
 requires('Template::Declare' => '0.26');                # Template::Declare::Tags
 requires('Test::Base');
 requires('Test::LongString');
-requires('Test::Log4perl');
 requires('Test::More' => 0.62 ),
 requires('Test::Pod::Coverage'),
 requires('Test::WWW::Mechanize' => 1.04 ),
