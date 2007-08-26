@@ -19,6 +19,12 @@ Jifty::Plugin::TabView::View - render tabview using yui tabs
   template 'index.html' => page {
      my $self = shift;
      $self->render_tabs('foo', [qw(id)], qw( foo bar_tab ) );
+
+     # more flexible tabs
+     $self->render_tabs('foo', [qw(id)],
+                        { label => 'This is foo 1', path => 'foo', name => 'foo 1', args => { id => 1}},
+                        { label => 'This is foo 2', path => 'foo', name => 'foo 2', args => { id => 2}});
+
   };
   template 'foo' => sub { ... };
   template 'bar' => sub { ... };
@@ -43,35 +49,42 @@ sub render_tabs {
 	var myTabs = new YAHOO.widget.TabView("$divname");
 	</script>'  );
 
+    @tabs = map { return $_ if ref($_);
+		  my $path = $_;
+		  my $defer = $path =~ s/_tab$//;
+		  { path => $path,
+		    name => $path,
+		    defer => $defer,
+		    label => $path };
+	      } @tabs;
 
     div { { id is $divname, class is 'yui-navset'}
 	  ul { { class is 'yui-nav'};
 	       my $i = 0;
-	       for (@tabs) {
-		   my $tab = $_;
+	       for my $tab (@tabs) {
 		   li { { class is 'selected' unless $i };
-			hyperlink(url => '#tab'.++$i, label => $tab,
-				  $tab =~ s/_tab$// ? 
+			hyperlink(url => '#tab'.++$i, label => $tab->{label},
+				  $tab->{defer} ?
 				  (onclick =>
-				  { region       => Jifty->web->current_region ? Jifty->web->current_region->qualified_name."-$tab-tab" : "$tab-tab",
-				    replace_with => _tab_path($self, $tab), # XXX: should have higher level function handling mount point
-				    args => { map { $_ => get($_)} @$args },
+				  { region       => Jifty->web->current_region ? Jifty->web->current_region->qualified_name."-$tab->{name}-tab" : "$tab->{path}-tab",
+				    replace_with => _tab_path($self, $tab->{path}), # XXX: should have higher level function handling mount point
+				    args => { (map { $_ => get($_)} @$args ), %{$tab->{args} || {}} },
 				  }) : ()
 				 ) }
 	       }
 	   };
 	  div { {class is 'yui-content' };
 		my $default_shown;
-		for (@tabs) {
-		    div { 
-			if (s/_tab$//) {
-			    render_region(name => $_.'-tab', 
-                          ($default_shown++)? () : ( path => _tab_path($self, $_),
-						     args =>  { map { $_ => get($_)} @$args })
+		for my $tab (@tabs) {
+		    div {
+			if ($tab->{defer}) {
+			    render_region(name => $tab->{name}.'-tab',
+                          ($default_shown++)? () : ( path => _tab_path($self, $tab->{path}),
+						     force_arguments => { ( map { $_ => get($_)} @$args ), %{$tab->{args} || {}} } )
                           )
 			}
 			else {
-			    show( _tab_path($self,$_) );
+			    show( _tab_path($self, $tab->{path}) );
 			}
 		    }
 		}
