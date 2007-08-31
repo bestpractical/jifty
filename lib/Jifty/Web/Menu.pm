@@ -112,14 +112,16 @@ the end of the list, if it is a new C<KEY>.
 sub child {
     my $self = shift;
     my $key = shift;
+    my $proto = ref $self || $self;
+
     if (@_) {
-        $self->{children}{$key} = Jifty::Web::Menu->new({parent => $self,
-                                                        sort_order => ($self->{children}{$key}{sort_order}
-                                                                       || scalar values %{$self->{children}}),
-                                                        label => $key,
-                                                        escape_label => 1,
-                                                        @_
-                                                       });
+        $self->{children}{$key} = $proto->new({parent => $self,
+                                               sort_order => ($self->{children}{$key}{sort_order}
+                                                          || scalar values %{$self->{children}}),
+                                               label => $key,
+                                               escape_label => 1,
+                                               @_
+                                             });
         Scalar::Util::weaken($self->{children}{$key}{parent});
         # Activate it
         if (my $url = $self->{children}{$key}->url and Jifty->web->request) {
