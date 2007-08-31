@@ -30,9 +30,10 @@ use base qw(Jifty::Object DateTime);
 
 =head2 new ARGS
 
-See L<DateTime/new>.  After calling that method, set this object's
+See L<DateTime/new>. If we get what appears to be a date, then we
+keep this in the floating datetime. Otherwise, set this object's
 timezone to the current user's time zone, if the current user has a
-method called C<time_zone>.
+method called C<time_zone>.  
 
 =cut
 
@@ -41,13 +42,19 @@ sub new {
     my %args  = (@_);
     my $self  = $class->SUPER::new(%args);
 
-    # Unless the user has explicitly said they want a floating time,
-    # we want to convert to the end-user's timezone.  This is
-    # complicated by the fact that DateTime auto-appends
-    if (!$args{time_zone} and my $tz = $self->current_user_has_timezone) {
-        $self->set_time_zone("UTC");
-        $self->set_time_zone( $tz );
+    if ($self->hour || $self->minute || $self->second) {
+        # Unless the user has explicitly said they want a floating time,
+        # we want to convert to the end-user's timezone.  This is
+        # complicated by the fact that DateTime auto-appends
+        if (!$args{time_zone} and my $tz = $self->current_user_has_timezone) {
+            $self->set_time_zone("UTC");
+            $self->set_time_zone( $tz );
+        }
     }
+    else {
+        $self->set_time_zone("floating");
+    }
+
     return $self;
 }
 
