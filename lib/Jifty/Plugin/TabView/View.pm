@@ -87,6 +87,7 @@ sub render_tabs {
 			}
 			else {
 			    show( _tab_path($self, $tab->{path}) );
+			    $default_shown++;
 			}
 		    }
 		}
