@@ -3,7 +3,8 @@ use warnings;
 
 package Jifty::Plugin;
 use File::ShareDir 'module_dir';
-
+use base 'Class::Accessor::Fast';
+__PACKAGE__->mk_accessors('_pre_init');
 
 =head1 NAME
 
@@ -92,6 +93,7 @@ sub new_request {
 sub _calculate_share {
     my $self = shift;
     my $class = ref($self);
+
     unless ( $self->{share} ) {
         local $@
             ; # We're just avoiding File::ShareDir's failure behaviour of dying

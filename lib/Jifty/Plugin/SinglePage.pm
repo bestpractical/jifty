@@ -2,7 +2,7 @@ use strict;
 use warnings;
 
 package Jifty::Plugin::SinglePage;
-use base qw/Jifty::Plugin Class::Accessor/;
+use base 'Jifty::Plugin';
 
 __PACKAGE__->mk_accessors(qw(region_name));
 
@@ -22,6 +22,8 @@ Registers a before_new trigger to modify links and sets up the special region
 
 sub init {
     my $self = shift;
+    return if $self->_pre_init;
+
     Jifty::Web::Form::Clickable->add_trigger( before_new => _sp_link($self));
     my %opt = @_;
     $self->region_name($opt{region_name} || '__page');

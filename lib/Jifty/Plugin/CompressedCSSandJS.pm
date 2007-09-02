@@ -2,7 +2,7 @@ use strict;
 use warnings;
 
 package Jifty::Plugin::CompressedCSSandJS;
-use base qw/Jifty::Plugin Class::Accessor::Fast/;
+use base 'Jifty::Plugin';
 
 use Digest::MD5 qw(md5_hex);
 use IPC::Run3 'run3';
@@ -49,6 +49,8 @@ that type.
 
 sub init {
     my $self = shift;
+    return if $self->_pre_init;
+
     my %opt  = @_;
     $self->css( $opt{css} );
     $self->js( $opt{js} );
