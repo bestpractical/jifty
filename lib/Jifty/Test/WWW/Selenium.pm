@@ -63,7 +63,7 @@ sub rc_ok {
 
     $SIG{CHLD} = \&_REAPER;
 
-    my $try = 3;
+    my $try = 5;
     my $sel;
     while ($try--) {
 	$sel = eval { Test::WWW::Selenium->new( %args, auto_stop => 0 ) };
