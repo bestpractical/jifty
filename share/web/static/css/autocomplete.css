@@ -22,6 +22,7 @@
     color: white;
 }
 
+div.inline .autocomplete .hidden_value,
 .autocomplete .hidden_value {
     display: none;
 }
