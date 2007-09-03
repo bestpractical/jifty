@@ -181,10 +181,12 @@ sub Jifty::ClassLoader::INC {
     # Autogenerate the Collection class for a Model
     elsif ( $module =~ /^(?:$base)::Model::([^\.]+)Collection$/ ) {
         my $modelclass = $base .'::Model::'. $1;
-        unless ( $modelclass->isa('Jifty::Record') ) {
-            warn "There is no model for $module";
+        Jifty::Util->require($modelclass);
+        unless ( eval { $modelclass->isa('Jifty::Record') } ) {
+            warn "There is no model for collection $module";
             return undef;
         }
+
         return $self->return_class(
                   "package $module;\n"
                 . "use base qw/@{[$base]}::Collection/;\n"
