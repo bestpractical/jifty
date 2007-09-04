@@ -74,7 +74,7 @@ __PACKAGE__->javascript_libs([qw(
     css_browser_selector.js
 )]);
 
-use Jifty::DBI::Class::Trigger;
+use Class::Trigger;
 
 =head1 METHODS
 
