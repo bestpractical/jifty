@@ -74,7 +74,7 @@ requires('Test::WWW::Mechanize' => 1.04 ),
 requires('Test::WWW::Selenium'),
 requires('WWW::Mechanize' => 1.30 ),
 requires('UNIVERSAL::require');
-requires('URI');
+requires('URI' => 1.31);
 requires('XML::Writer' => '0.601');
 requires('XML::Simple');
 requires('XML::XPath');
