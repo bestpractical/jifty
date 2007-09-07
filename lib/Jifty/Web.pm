@@ -697,6 +697,8 @@ sub webservices_redirect {
     # XXX: move to singlepage plugin
     my ($spa) = Jifty->find_plugin('Jifty::Plugin::SinglePage') or return;
 
+    return if $self->failed_actions;
+
     Jifty->web->request->remove_state_variable( 'region-'.$spa->region_name );
     Jifty->web->request->add_fragment(
         name      => $spa->region_name,
