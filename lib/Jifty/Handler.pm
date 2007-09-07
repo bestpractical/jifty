@@ -191,6 +191,10 @@ sub handle_request {
         @_
     );
 
+    # Build a new stash for the life of this request
+    $self->stash( {} );
+    local $Jifty::WEB = Jifty::Web->new();
+
     if ( Jifty->config->framework('DevelMode') ) {
         Module::Refresh->refresh;
         Jifty::I18N->refresh;
@@ -200,10 +204,6 @@ sub handle_request {
 
     $self->cgi( $args{cgi} );
     $self->apache( HTML::Mason::FakeApache->new( cgi => $self->cgi ) );
-
-    # Build a new stash for the life of this request
-    $self->stash( {} );
-    local $HTML::Mason::Commands::JiftyWeb = Jifty::Web->new();
 
     Jifty->web->request( Jifty::Request->new()->fill( $self->cgi ) );
     Jifty->web->response( Jifty::Response->new );

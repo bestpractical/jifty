@@ -100,7 +100,7 @@ probably a better place to start.
 use base qw/Jifty::Object/;
 use Jifty::Everything;
 
-use vars qw/$HANDLE $CONFIG $LOGGER $HANDLER $API $CLASS_LOADER $PUB_SUB @PLUGINS/;
+use vars qw/$HANDLE $CONFIG $LOGGER $HANDLER $API $CLASS_LOADER $PUB_SUB $WEB @PLUGINS/;
 
 =head1 METHODS
 
@@ -340,8 +340,7 @@ An accessor for the L<Jifty::Web> object that the web interface uses.
 =cut
 
 sub web {
-    $HTML::Mason::Commands::JiftyWeb ||= Jifty::Web->new();
-    return $HTML::Mason::Commands::JiftyWeb;
+    return $Jifty::WEB ||= Jifty::Web->new();
 }
 
 =head2 subs
