@@ -5,7 +5,7 @@ package Jifty::Plugin::ActorMetadata::Mixin::Model::ActorMetadata;
 use Jifty::DBI::Schema;
 use base 'Jifty::DBI::Record::Plugin';
 
-our @EXPORT = qw(current_user_can);
+our @EXPORT = qw(current_user_can current_user_is_owner);
 
 =head1 NAME
 
@@ -119,10 +119,25 @@ sub current_user_can {
     }
 
     if ($action eq 'update' or $action eq 'delete') {
-        return undef unless ($self->current_user and $self->current_user->id eq $self->created_by->id);
+        return undef unless $self->current_user_is_owner;
     }
 
     return 1;
+}
+
+=head2 current_user_is_owner
+
+=cut
+
+sub current_user_is_owner {
+    my $self = shift;
+
+    my $created_by = $self->__value('created_by');
+    return unless $self->current_user && $created_by;
+
+    return unless $self->current_user->id;
+
+    return $self->current_user->id == $created_by;
 }
 
 1;
