@@ -493,16 +493,13 @@ sub as_button {
           continuation => $self->_continuation,
           @_ }
     );
-    my %parameters = $self->preserve_state ? $self->post_parameters : ();
+    my %parameters = $self->post_parameters;
 
     $field->input_name(
         join "|",
         map      { $_ . "=" . $parameters{$_} }
             grep { defined $parameters{$_} } keys %parameters
     );
-
-    $field->input_name( Jifty->web->serial ) unless $field->input_name;
-
     $field->name( join '|', keys %{ $args->{parameters} } );
     $field->button_as_link($self->render_as_link);
 
