@@ -57,6 +57,8 @@ sub _sp_link {
 		$self->_push_onclick($args, { refresh_self => 1, submit => $args->{submit} });
 	    }
             $args->{as_button} = 1;
+            $args->{preserve_state} = 0
+                unless exists $args->{preserve_state};
         }
         if (my $form = delete $args->{_form}) {
             $args->{call} = $form->call;
