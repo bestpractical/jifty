@@ -124,7 +124,11 @@ sub friendly_date {
     my $self = shift;
     my $ymd = $self->ymd;
 
-    my $rel = DateTime->now(time_zone => $self->time_zone);
+    my $tz = $self->current_user_has_timezone || $self->time_zone;
+
+    my $rel = Jifty::DateTime->now();
+    $rel->set_time_zone( $tz );
+
     if ($ymd eq $rel->ymd) {
         return "today";
     }
