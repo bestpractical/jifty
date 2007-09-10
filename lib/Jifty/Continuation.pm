@@ -9,10 +9,27 @@ Jifty::Continuation - Allows for basic continuation-based programming
 
 =head1 DESCRIPTION
 
-C<Jifty::Continuation> wraps up the information about a context that
-might have been expecting some sort of answer.  It allows one to
-re-visit that context later by providing the continuation again.
-Continuations are stored on the user's session.
+In programming, a continuation is a construct that allows you to freeze the current state of a program and then recover that state later by calling the continuation. For example, you could save a continuation when throwing an exception to save the state, an exception handler could resolve the problem that caused the exception, and then call the continuation to resume execution at the point where the exception was thrown now that the problem has been solved.
+
+In Jifty, continuations are used to save the state of a request (and sometimes the response). Continuations can be used in situations such as these:
+
+=over
+
+=item 1.
+
+A user visits a page that requires login to view. The dispatcher saves a continuation and then sends the user off to the login page. Once the user logs in successfully, the login action can call the continuation to return the user back to the original page.
+
+=item 2. 
+
+A blogging application might have a "Edit" link on each post to allow the editor to jump to the change page. If this link includes a saved continuation, then the "Save" button could trigger that continuation to be called to return the user back to the original page where they clicked "Edit". This way, it could return the user to the view page, or a list page, or an administrative view depending on which page the user started the edit process from.
+
+=item 3.
+
+If you have a wizard for editing some information in your application, but entering some data may require jumping to another page you can save a continuation to allow the user to return after editing. If that page also requires a jump to yet another page, you can save another continuation. Since continuations save a stack of previous continuations, you can return twice to get back to the wizard.
+
+=back
+
+C<Jifty::Continuation> handles the details of saving this information for later recovery. When a continuation is saved, the current request and response are saved to the database in the current user's session. When a continuation is called, the current request and response become those that were saved in the continuation. A continuation can be called at any point in the same session.
 
 Continuations store a L<Jifty::Request> object and the
 L<Jifty::Response> object for the request.  They can also store
@@ -158,15 +175,16 @@ sub call {
 
     Jifty->log->debug("Redirect to @{[$self->request->path]} via continuation");
     if (Jifty->web->request->argument('_webservice_redirect')) {
-	# for continuation - perform internal redirect under webservices.
+        # for continuation - perform internal redirect under webservices.
         Jifty->web->webservices_redirect($self->request->path);
-	return;
+        return;
     }
+
     # If we needed to fix up the path (it contains invalid
     # characters) then warn, because this may cause infinite
     # redirects
     Jifty->log->warn("Redirect to '@{[$self->request->path]}' contains unsafe characters")
-      if $self->request->path =~ m{[^A-Za-z0-9\-_.!~*'()/?&;+]};
+        if $self->request->path =~ m{[^A-Za-z0-9\-_.!~*'()/?&;+]};
 
     # Clone our request
     my $request = $self->request->clone;
@@ -175,6 +193,7 @@ sub call {
     $request->do_mapping;
 
     my $response = $self->response;
+
     # If the current response has results, we need to pull them
     # in.  For safety, monikers from the saved continuation
     # override those from the request prior to the call
@@ -191,7 +210,7 @@ sub call {
                                         code => $self->code,
                                        );
     $next->request->continuation(Jifty->web->session->get_continuation($next->parent))
-      if defined $next->parent;
+        if defined $next->parent;
 
     # Redirect to right page if we're not there already
     Jifty->web->_redirect($next->request->path . "?J:RETURN=" . $next->id);
@@ -240,5 +259,16 @@ sub delete {
     Jifty->web->session->remove_continuation($self->id);
 
 }
+
+=head1 SEE ALSO
+
+L<Jifty::Manual::Continuations>
+
+=head1 LICENSE
+
+Jifty is Copyright 2005-2007 Best Practical Solutions, LLC.
+Jifty is distributed under the same terms as Perl itself.
+
+=cut
 
 1;
