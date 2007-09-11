@@ -125,21 +125,19 @@ sub friendly_date {
     my $ymd = $self->ymd;
 
     my $tz = $self->current_user_has_timezone || $self->time_zone;
-
-    my $rel = Jifty::DateTime->now();
-    $rel->set_time_zone( $tz );
+    my $rel = DateTime->now( time_zone => $tz );
 
     if ($ymd eq $rel->ymd) {
         return "today";
     }
     
-    $rel->subtract(days => 1);
-    if ($ymd eq $rel->ymd) {
+    my $yesterday = $rel->clone->subtract(days => 1);
+    if ($ymd eq $yesterday->ymd) {
         return "yesterday";
     }
     
-    $rel->add(days => 2);
-    if ($ymd eq $rel->ymd) {
+    my $tomorrow = $rel->clone->add(days => 1);
+    if ($ymd eq $tomorrow->ymd) {
         return "tomorrow";
     }
     
