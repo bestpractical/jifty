@@ -108,7 +108,10 @@ sub mount_view {
 
     # Override object_type
     no strict 'refs';
-    *{$vclass."::object_type"} = sub { $model };
+    my $object_type = $vclass."::object_type";
+
+    # Avoid the override if object_type() is already defined
+    *{$object_type} = sub { $model } unless defined *{$object_type};
 }
 
 # XXX TODO FIXME This is related to the trimclient branch and performs some
