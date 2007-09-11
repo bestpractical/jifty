@@ -117,8 +117,9 @@ requires:
   Test::More: 0.62
   Test::Pod::Coverage: 0
   Test::WWW::Mechanize: 1.04
+  Test::WWW::Selenium: 0
   UNIVERSAL::require: 0
-  URI: 0
+  URI: 1.31
   WWW::Mechanize: 1.3
   XML::Simple: 0
   XML::Writer: 0.601

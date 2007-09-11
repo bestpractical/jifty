@@ -23,7 +23,7 @@ Jifty::Plugin::TabView::View - render tabview using yui tabs
      # more flexible tabs
      $self->render_tabs('foo', [qw(id)],
                         { label => 'This is foo 1', path => 'foo', name => 'foo 1', args => { id => 1}},
-                        { label => 'This is foo 2', path => 'foo', name => 'foo 2', args => { id => 2}});
+                        { label => 'This is foo 2', path => 'foo', name => 'foo 2', defer => 1,  args => { id => 2}});
 
   };
   template 'foo' => sub { ... };
@@ -39,7 +39,11 @@ replaced by the corresponding fragment onclick to that tab.
 
 sub _tab_path {
     my ($self, $name) = @_;
-    $self->can('fragment_for') ? $self->fragment_for($name) : "./$name";
+   
+    # If the path is already relative or absolute, don't force-relativeize it
+    my $qualified_path = ($name =~ qr|\.?/|) ? $name : "./$name";
+
+    $self->can('fragment_for') ? $self->fragment_for($name) : $qualified_path;
 }
 
 sub render_tabs {
