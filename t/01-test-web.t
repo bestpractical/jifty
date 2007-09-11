@@ -36,39 +36,3 @@ Jifty->web->response(Jifty::Response::Subclass->new);
 $web = Jifty::Test->web;
 isa_ok( $web->request,  "Jifty::Request::Subclass"  );
 isa_ok( $web->response, "Jifty::Response::Subclass" );
-
-# Testing new_record_action()
-{
-    no warnings 'redefine'; 
-
-    # Create a mock new_action()
-    $orig_new_action = \&Jifty::Web::new_action;
-    *Jifty::Web::new_action = sub {
-        is($args{class}, $args{expected});
-    };
-
-    Jifty->web->new_record_action(
-        model         => 'Jifty::Model::ModelClass',
-        expected      => 'Jifty::Action::UpdateModelClass',
-    );
-
-    Jifty->web->new_record_action(
-        model         => 'Jifty::Model::ModelClass',
-        record_action => 'Delete',
-        expected      => 'Jifty::Action::DeleteModelClass',
-    );
-
-    Jifty->web->new_record_action(
-        model         => 'TestApp::Model::Employee',
-        expected      => 'TestApp::Action::UpdateEmployee',
-    );
-
-    Jifty->web->new_record_action(
-        model         => 'TestApp::Model::Employee',
-        record_action => 'Search',
-        expected      => 'TestApp::Action::SearchEmployee',
-    );
-
-    # Restore the original
-    *Jifty::Web::new_action = $orig_new_action;
-}
