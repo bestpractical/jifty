@@ -11,7 +11,7 @@ A basic test harness for the User model.
 use lib 't/lib';
 use Jifty::SubTest;
 
-use Jifty::Test tests => 19;
+use Jifty::Test tests => 24;
 Jifty::Test->web; # initialize for use with the as_*_action tests
 # Make sure we can load the model
 use_ok('TestApp::Model::User');
@@ -29,16 +29,20 @@ is($o->id, $id, "Create returned the right id");
 is($o->name, $$, "Created object has the right name");
 
 # Test the as_foo_action methods
-my $action = $o->as_create_action;
+my $action = $o->as_create_action( moniker => 'test1' );
 isa_ok($action, 'TestApp::Action::CreateUser');
-$action = $o->as_update_action;
+is($action->moniker, 'test1', 'create action moniker is test1');
+$action = $o->as_update_action( moniker => 'test2' );
 isa_ok($action, 'TestApp::Action::UpdateUser');
 is($action->record->id, $o->id, 'update action ID is correct');
-$action = $o->as_delete_action;
+is($action->moniker, 'test2', 'update action moniker is test2');
+$action = $o->as_delete_action( moniker => 'test3' );
 isa_ok($action, 'TestApp::Action::DeleteUser');
 is($action->record->id, $o->id, 'delete action ID is correct');
-$action = $o->as_search_action;
+is($action->moniker, 'test3', 'delete action moniker is test3');
+$action = $o->as_search_action( moniker => 'test4' );
 isa_ok($action, 'TestApp::Action::SearchUser');
+is($action->moniker, 'test4', 'search action moniker is test4');
 
 # And another
 $o->create( name => $$, email => $$, password => $$ );
@@ -51,8 +55,9 @@ $collection->unlimit;
 is($collection->count, 2, "Finds two records");
 
 # Check the as_search_action method
-$action = $collection->as_search_action;
+$action = $collection->as_search_action( moniker => 'test5' );
 isa_ok($action, 'TestApp::Action::SearchUser');
+is($action->moniker, 'test5', 'search action moniker is test5');
 
 # Searches in specific
 $collection->limit(column => 'id', value => $o->id);

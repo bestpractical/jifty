@@ -153,9 +153,11 @@ sub load_or_create {
 }
 
 
-=head2 as_create_action
+=head2 as_create_action PARAMHASH
 
 Returns the L<Jifty::Action::Record::Create> action for this model class.
+
+The PARAMHASH allows you to add additional parameters to pass to L<Jifty::Web/new_action>.
 
 =cut
 
@@ -170,12 +172,14 @@ sub _action_from_record {
 sub as_create_action {
     my $self = shift;
     my $action_class = $self->_action_from_record('Create');
-    return Jifty->web->new_action( class => $action_class );
+    return Jifty->web->new_action( class => $action_class, @_ );
 }
 
-=head2 as_update_action
+=head2 as_update_action PARAMHASH
 
 Returns the L<Jifty::Action::Record::Update> action for this model class. The current record is passed to the constructor.
+
+The PARAMHASH allows you to add additional parameters to pass to L<Jifty::Web/new_action>.
 
 =cut
 
@@ -185,12 +189,15 @@ sub as_update_action {
     return Jifty->web->new_action( 
         class  => $action_class,
         record => $self,
+        @_,
     );
 }
 
-=head2 as_delete_action
+=head2 as_delete_action PARAMHASH
 
 Returns the L<Jifty::Action::Record::Delete> action for this model class. The current record is passed to the constructor.
+
+The PARAMHASH allows you to add additional parameters to pass to L<Jifty::Web/new_action>.
 
 =cut
 
@@ -200,12 +207,15 @@ sub as_delete_action {
     return Jifty->web->new_action(
         class  => $action_class,
         record => $self,
+        @_,
     );
 }
 
-=head2 as_search_action
+=head2 as_search_action PARAMHASH
 
 Returns the L<Jifty::Action::Record::Search> action for this model class.
+
+The PARAMHASH allows you to add additional parameters to pass to L<Jifty::Web/new_action>.
 
 =cut
 
@@ -214,6 +224,7 @@ sub as_search_action {
     my $action_class = $self->_action_from_record('Search');
     return Jifty->web->new_action(
         class  => $action_class,
+        @_,
     );
 }
 
