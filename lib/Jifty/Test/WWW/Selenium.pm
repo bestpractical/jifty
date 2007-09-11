@@ -25,6 +25,8 @@ associated with your jifty application to test.  In addition, it
 starts selenium remote control for you, unless SELENIUM_RC_SERVER is
 specified when the test is run.
 
+=head2 rc_ok
+
 When the selenium rc server is started by
 L<Jifty::Test::WWW::Selenium>, the browser's language is default to
 en_US, unless you pass C<lang> param to rc_ok.
