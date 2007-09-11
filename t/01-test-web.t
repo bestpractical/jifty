@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-use Jifty::Test tests => 9;
+use Jifty::Test tests => 5;
 
 my $web = Jifty::Test->web;
 isa_ok( $web->request,  "Jifty::Request"  );
