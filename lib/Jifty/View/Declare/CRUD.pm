@@ -18,12 +18,39 @@ Jifty::View::Declare::CRUD - Provides typical CRUD views to a model
 
 =head1 SYNOPSIS
 
+  package App::View::User;
+  use Jifty::View::Declare -base;
+  use base qw/ Jifty::View::Declare::CRUD /;
+
+  template 'view' => sub {
+      # customize the view
+  };
+
+  1;
+
+  package App::View::Tag;
+  use Jifty::View::Declare -base;
+  use base qw/ Jifty::View::Declare::CRUD /;
+
+  template 'view' => sub {
+      # customize the view
+  };
+
+  1;
+
   package App::View;
   use Jifty::View::Declare -base;
 
   use Jifty::View::Declare::CRUD;
+
+  # If you have customizations, this is a good way...
   Jifty::View::Declare::CRUD->mount_view('User');
   Jifty::View::Declare::CRUD->mount_view('Category', 'App::View::Tag', '/tag');
+
+  # Another way to do the above, good for quick and dirty
+  alias Jifty::View::Declare::CRUD under '/admin/blog', {
+      object_type => 'BlogPost',
+  };
 
 =head1 DESCRIPTION
 
