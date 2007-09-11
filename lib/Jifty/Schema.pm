@@ -299,7 +299,15 @@ sub connect_to_db_for_management {
     my %connect_args;
     $connect_args{'database'} = 'template1' if ( $handle->isa("Jifty::DBI::Handle::Pg") );
     $connect_args{'database'} = ''          if ( $handle->isa("Jifty::DBI::Handle::mysql") );
+       for(1..50) {
+		my $counter = $_;
+    eval { 
     $handle->connect(%connect_args);
+    };
+    my $err = $@;
+	    last if( !$err || $err =~ /does not exist/i);
+	sleep 1;
+        }
     return $handle;
 }
 
