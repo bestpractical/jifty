@@ -8,7 +8,6 @@ use Scalar::Util qw();
 
 __PACKAGE__->mk_accessors(qw(is_superuser is_bootstrap_user));
 
-
 =head1 NAME
 
 Jifty::CurrentUser - Base class and basic implementation of current user object
@@ -28,8 +27,6 @@ user-based access control
 It's generally expected that your application will override this class
 if you want any sort of access control.
 
-=cut
-
 =head2 new
 
 Creates a new L<Jifty::CurrentUser> object.  Calls L<_init>, an
@@ -44,24 +41,49 @@ sub new {
     my $self  = {};
     bless $self, (ref $class || $class);
     my %args = (@_);
+
+    # Make this user a bootstrap user if in bootstrap mode
     if ( delete $args{'_bootstrap'} ) { $self->is_bootstrap_user(1); }
+
+    # Call _init for app-specific initialization
     $self->_init(%args);
+
     return $self;
 }
 
+=head2 _init
 
-sub _init {
+Applications should override this method to provide any application-specific user loading code. The built-in
+
+If you do nothing, code similar to this will be called by _init.
+
+	sub _init {
 	    my $self = shift;
 	    my %args = (@_);
 	
-            if (keys %args and UNIVERSAL::can(Jifty->app_class('Model', 'User'), 'new')  ) {
-                
+        if (keys %args and UNIVERSAL::can(Jifty->app_class('Model', 'User'), 'new')) {
 	        $self->user_object(Jifty->app_class('Model', 'User')->new(current_user => $self));
 	        $self->user_object->load_by_cols(%args);
 	    }
         return 1;
-}
+	}
+
+That is, it will attempt to load the columns given in the model named C<App::Model::User> (where I<App> is the name of your application class). If your notion of a user object isn't a typical Jifty model or named something else, you will definitely need to override this method. If you need to perform any additional initialization for user objects, you may want to override this as well.
 	
+=cut
+
+sub _init {
+    my $self = shift;
+    my %args = (@_);
+
+    # Duck-typing to check to for a user class
+    if (keys %args and UNIVERSAL::can(Jifty->app_class('Model', 'User'), 'new')  ) {
+        $self->user_object(Jifty->app_class('Model', 'User')->new(current_user => $self));
+        $self->user_object->load_by_cols(%args);
+    }
+
+    return 1;
+}
 
 =head2 superuser
 
@@ -73,7 +95,11 @@ marked as a superuser. Can be called either as a class or object method.
 sub superuser {
     my $class = shift;
     $class = ref( $class ) if ref $class;
+
+    # Create the current user object
     my $self = $class->new();
+
+    # Make it superuser and send it out
     $self->is_superuser(1);
     return $self;
 }
@@ -81,35 +107,23 @@ sub superuser {
 =head2 user_object 
 
 This gets or sets your application's user object for the current
-user. Generally, you're expected to set and load it in the _init method
+user. Generally, you're expected to set and load it in the L</_init> method
 in your L<Jifty::CurrentUser> subclass.
-
-If you do nothing, code similar to this will be called by _init.
-
-	sub _init {
-	    my $self = shift;
-	    my %args = (@_);
-	
-            if (keys %args) {
-	        $self->user_object(Wifty::Model::User->new(current_user => $self));
-	        $self->user_object->load_by_cols(%args);
-	    }
-	}
-	
 
 =cut
 
 sub user_object {
     my $self = shift;
     return $self->{'user_object'} unless @_;
-
     $self->{'user_object'} = shift;
-    # protect ourself from circular refereces
+
+    # protect ourself from circular refereces to prevent memory leaks
     if ( $self->{'user_object'}{'_current_user'} == $self ) {
         Scalar::Util::weaken( $self->{'user_object'}{'_current_user'} )
             unless Scalar::Util::isweak( $self->{'user_object'}{'_current_user'} );
         $self->{'user_object'}{'_resurrect_current_user'} = 1;
     }
+
     return $self->{'user_object'};
 }
 
@@ -122,9 +136,14 @@ user_object, return that user's id.
 
 sub id {
     my $self = shift;
+
+    # Make sure we have a user object before trying to ID it
     if ($self->user_object) {
         return ($self->user_object->id());
-    } else {
+    } 
+    
+    # No user object, return a null ID
+    else {
         return '0';
     }
 
@@ -137,7 +156,7 @@ returns the user who's doing things, in the form of a
 L<Jifty::CurrentUser> object a subclass thereof.  For the somewhat
 obvious reason that you can't actually lift yourself up by tugging on
 your own bootstraps, a L<Jifty::CurrentUser> object return I<itself>
-rather than another C<Jifty::CurrentUser object>
+rather than another C<Jifty::CurrentUser> object.
 
 =cut
 
@@ -225,7 +244,6 @@ checked.  You probably never need to do anything with bootstrap users.
 
 =cut
 
-
 =head2 current_user_can ACTION
 
 For a current user object, the current user can always C<read>, but
@@ -233,12 +251,23 @@ never write or do anything else.
 
 =cut
 
-
+# XXX Is this actually used?
 sub current_user_can {
     my $self = shift;
     my $action = shift;
     return (1) if $action eq 'read';
     return (0);
 }
+
+=head1 SEE ALSO
+
+L<Jifty::Object>, L<Jifty::Plugin::User>
+
+=head1 LICENSE
+
+Jifty is Copyright 2005-2007 Best Practical Solutions, LLC.
+Jifty is distributed under the same terms as Perl itself.
+
+=cut
 
 1;
