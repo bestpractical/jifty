@@ -2,9 +2,8 @@ use warnings;
 use strict;
 
 package HelloKitty::View;
-use base qw/Jifty::View::Declare::Templates/;
+use Jifty::View::Declare -base;
 use Template::Declare::Tags;
-use Jifty::View::Declare::Templates;
 
 template foo => sub {
     html {

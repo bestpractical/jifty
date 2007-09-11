@@ -189,6 +189,82 @@ sub load_or_create {
     return ($id,$msg);
 }
 
+
+=head2 as_create_action PARAMHASH
+
+Returns the L<Jifty::Action::Record::Create> action for this model class.
+
+The PARAMHASH allows you to add additional parameters to pass to L<Jifty::Web/new_action>.
+
+=cut
+
+sub _action_from_record {
+    my $self = shift;
+    my $verb = shift;
+    my $class = ref $self || $self;
+    $class =~ s/::Model::/::Action::$verb/;
+    return $class;
+}
+
+sub as_create_action {
+    my $self = shift;
+    my $action_class = $self->_action_from_record('Create');
+    return Jifty->web->new_action( class => $action_class, @_ );
+}
+
+=head2 as_update_action PARAMHASH
+
+Returns the L<Jifty::Action::Record::Update> action for this model class. The current record is passed to the constructor.
+
+The PARAMHASH allows you to add additional parameters to pass to L<Jifty::Web/new_action>.
+
+=cut
+
+sub as_update_action {
+    my $self = shift;
+    my $action_class = $self->_action_from_record('Update');
+    return Jifty->web->new_action( 
+        class  => $action_class,
+        record => $self,
+        @_,
+    );
+}
+
+=head2 as_delete_action PARAMHASH
+
+Returns the L<Jifty::Action::Record::Delete> action for this model class. The current record is passed to the constructor.
+
+The PARAMHASH allows you to add additional parameters to pass to L<Jifty::Web/new_action>.
+
+=cut
+
+sub as_delete_action {
+    my $self = shift;
+    my $action_class = $self->_action_from_record('Delete');
+    return Jifty->web->new_action(
+        class  => $action_class,
+        record => $self,
+        @_,
+    );
+}
+
+=head2 as_search_action PARAMHASH
+
+Returns the L<Jifty::Action::Record::Search> action for this model class.
+
+The PARAMHASH allows you to add additional parameters to pass to L<Jifty::Web/new_action>.
+
+=cut
+
+sub as_search_action {
+    my $self = shift;
+    my $action_class = $self->_action_from_record('Search');
+    return Jifty->web->new_action(
+        class  => $action_class,
+        @_,
+    );
+}
+
 =head2 _guess_table_name
 
 Guesses a table name based on the class's last part. In addition to the work performed in L<Jifty::DBI::Record>, this method also prefixes the table name with the plugin table prefix, if the model belongs to a plugin.

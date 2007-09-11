@@ -3,7 +3,7 @@ package Jifty::View::Declare;
 
 use strict;
 use warnings;
-use constant BaseClass => 'Jifty::View::Declare::BaseClass';
+use constant BaseClassName => 'Jifty::View::Declare::BaseClass';
 
 =head1 NAME
 
@@ -39,11 +39,11 @@ sub import {
     ($import and $import eq '-base') or return;
     no strict 'refs';
     my $pkg = caller;
-    Jifty::Util->require(BaseClass);
-    push @{ $pkg . '::ISA' }, BaseClass;
+    Jifty::Util->require(BaseClassName);
+    push @{ $pkg . '::ISA' }, BaseClassName;
 
-    @_ = BaseClass;
-    goto &{BaseClass()->can('import')};
+    @_ = BaseClassName;
+    goto &{BaseClassName()->can('import')};
 }
 
 =head1 SEE ALSO 

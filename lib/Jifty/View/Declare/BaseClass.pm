@@ -33,7 +33,7 @@ sub use_mason_wrapper {
     no warnings 'redefine';
     *{ $class . '::wrapper' } = sub {
         my $code = shift;
-        my $args = shift;
+        my $args = shift || {};
         # so in td handler, we made jifty::web->out appends to td
         # buffer, we need it back for here before we call $code.
         # someday we need to finish fixing the output system that is
@@ -63,13 +63,23 @@ sub _actual_td_code {
 
 use Attribute::Handlers;
 my (%Static, %Action);
-sub Static :ATTR(CODE,BEGIN) {
-    $Static{$_[2]}++;
-}
 
-sub Action :ATTR(CODE,BEGIN) {
-    $Action{$_[2]}++;
-}
+=head2 Static
+
+This function allows a developer to mark a Template::Declare template as static (unchanging), so that the compiled version can be cached on the client side and inserted with javascript
+
+=cut
+
+sub Static :ATTR(CODE,BEGIN) { $Static{$_[2]}++; }
+
+=head2 Action
+
+This function allows a developer to mark a Template::Declare template as an action. clkao owes documentation as to the meaning of this and when it would be acceptable to use it.
+
+=cut
+
+
+sub Action :ATTR(CODE,BEGIN) { $Action{$_[2]}++; }
 
 =head2 client_cacheable
 
@@ -91,6 +101,20 @@ sub client_cacheable {
 =head2 show templatename arguments
 
 Render a C<Template::Declare> template.
+
+=head1 ATTRIBUTES
+
+=head2 Static
+
+TODO Document this...
+
+This is part of the client-caching system being developed for Perl to allow you to translate templates into JavaScript running on the client.
+
+=head2 Action
+
+TODO Document this...
+
+This is part of the client-caching system being developed for Perl to allow you to translate templates into JavaScript running on the client.
 
 =head1 SEE ALSO
 

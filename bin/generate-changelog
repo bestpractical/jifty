@@ -1,0 +1,194 @@
+#perl -MFile::Slurp -MXML::Simple -MData::Dumper -e'print scalar Dumper ( XMLin( read_file(shift @ARGV).""))' 
+
+use warnings;
+use strict;
+use Term::ANSIScreen;
+use Text::Autoformat;
+use YAML;
+use File::Slurp;
+use XML::Simple;
+use Term::ReadKey;
+use Data::Dumper;
+         use File::Temp qw/ tempfile tempdir /;
+my @tags = qw(doc install core plugin security view t-discard backward-compatiblity-problem u-pubsub r-crud e-testing);
+
+my %tags = map { substr($_,0,1) => $_ } @tags;
+my $mode = shift @ARGV;
+my ($source,$dest);
+if ($mode eq '--generate') {
+     $source = shift @ARGV;
+     $dest = shift @ARGV;
+
+}
+elsif ($mode eq '--edit') {
+     $source = shift @ARGV;
+     $dest = shift @ARGV;
+
+}
+
+unless ($source && -f $source && $dest) { die "$0 --generate SOURCEFILE DESTFILE\n or \n$0 --edit SOURCEFILE DESTFILE" }
+
+
+my $data = XMLin(read_file($source)."");
+
+
+if ($mode eq '--edit') {
+
+foreach my $entry (@{$data->{'logentry'}}) {
+   my %entries; 
+    foreach my $entry (@{$data->{'logentry'}}) {
+        push @{$entries{$entry->{section}||'uncategorized'}}, $entry;
+    }
+    foreach my $key ( keys %entries) {
+        foreach my $entry (@{$entries{$key}}){ 
+    act_on($entry);
+    }
+    }
+}
+
+    do_quit();
+} elsif ($mode eq '--generate') {
+   my %entries; 
+    foreach my $entry (@{$data->{'logentry'}}) {
+        push @{$entries{$entry->{section}||'uncategorized'}}, $entry;
+    }
+
+    foreach my $key ( keys %entries) {
+    my $title = $key;
+    $title =~ s/^\w\-//;
+        print uc($key)."\n";
+        print "=" x length($key) ;
+        print "\n\n";
+
+        foreach my $entry (@{$entries{$key}}){ 
+
+        format_entry($entry) ;
+        print "\n";
+        }
+    }
+
+}
+
+sub act_on {
+    my $entry = shift;
+
+    my $console = Term::ANSIScreen->new;
+    while (1) {
+    my $command = '';
+    while (!$command) {
+        $console->Cls;
+            $console->Cursor(1,1);
+
+
+        if (!$entry->{'edited_msg'} && ref($entry->{msg})) { $entry->{'edited_msg'} = Dumper($entry->{'msg'}); }
+        format_entry ($entry => 1);
+    
+    
+        my $in = getchar();
+
+
+        if ($in eq 's') {
+            return;
+        } 
+        elsif ($in eq 'c') { $command = 'chomp'; }
+        elsif ($in eq 'e') { $command = 'edit'; }
+        elsif ($in eq 'q') { $command = 'quit'; }
+        elsif ($in eq 't') { $command = 'tag' }
+        elsif ($in eq ' ') {
+            return
+        }
+    }
+    if ($command eq 'tag') {
+        tag($entry);
+    }
+    elsif ( $command eq 'write' ) {
+        warn "Writing";
+    } elsif ( $command eq 'chomp' ) {
+        my $msg = ( $entry->{'edited_msg'} || $entry->{'msg'} );
+        my @lines = split( "\n", $msg );
+        shift @lines;
+        $entry->{'edited_msg'} = join( "\n", @lines );
+    } elsif ( $command eq 'edit' ) {
+        warn "Chomping";
+        my ( $fh, $filename ) = tempfile();
+        print $fh ( $entry->{'edited_msg'} || $entry->{'msg'} ) || die $!;
+        close $fh;
+        system( ( $ENV{EDITOR} || 'vi' ), $filename );
+        $entry->{'edited_msg'} = read_file($filename);
+    } elsif ($command eq 'quit') {
+
+        do_quit();
+    }
+
+    }
+
+}
+
+sub tag {
+    my $entry = shift;
+    my $tag;
+    print "Valid tags are: " . join( ', ', @tags ) . "\n";
+    while ( !$tag ) {
+        my $key = getchar();
+        return if ( $key eq  ' ' );
+        print "You picked " . $key . "\n";
+        if ( $tags{$key} ) {
+            $tag = $tags{$key};
+            print "You tagged it $tag\n";
+        } else {
+            print "NO. THAT IS NOT A VALID TAG\n";
+
+        }
+    }
+    $entry->{section} = $tag;
+
+}
+
+sub do_quit {
+my $out;
+    open( $out, ">$dest" );
+
+    print $out XMLout($data,  NoAttr => 1 );
+    close($out);
+    exit;
+
+}
+
+sub getchar {
+
+    ReadMode 4;
+        my $key = ReadKey(0);
+            ReadMode 0;
+
+    return $key
+            }
+
+
+sub format_entry {
+    my $entry = shift;
+    my $verbose = shift ||0; 
+        if  ($verbose ) {
+      print "r".$entry->{revision}." - ";
+      print $entry->{'section'} || "UNCATEGORIZED - HIT 't'";   
+      print "\n".("="x60)."\n";
+      }
+
+     my $msg = ( $entry->{'edited_msg'} || $entry->{'msg'});
+
+    if ($msg =~ /^[\s\*]*\w/) {
+        $msg =~ s/^[\s\*]*/ * /;
+    }
+
+        $msg =~  s/\n+$//g;
+     $msg .= " - ".$entry->{'author'}."\n";
+
+
+     $msg =   autoformat ($msg,  { left=>0, right=>78 });
+        $msg =~  s/\n+$//g;
+      print $msg."\n";
+        if  ($verbose ) {
+
+        print YAML::Dump( $entry->{'paths'});
+        print "\n";
+    }
+}

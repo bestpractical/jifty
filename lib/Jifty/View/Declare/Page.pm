@@ -17,7 +17,7 @@ This library provides page wrappers
 
 use Jifty::View::Declare::Helpers;
 
-__PACKAGE__->mk_accessors(qw(content_code done_header _title));
+__PACKAGE__->mk_accessors(qw(content_code done_header _title _meta));
 use constant allow_single_page => 1;
 
 =head2 new
@@ -32,6 +32,9 @@ sub new {
 
     my ($title) = get_current_attr(qw(title));
     $self->_title($title);
+
+    $self->_title($self->_meta->{title})
+	if $self->_meta && $self->_meta->{title};
 
     return $self;
 }
@@ -194,7 +197,7 @@ sub render_jifty_page_detritus {
     # wrapper, make sure you have this as well.
     if ( Jifty->config->framework('PubSub')->{'Enable'} && Jifty::Subs->list )
     {
-        script { outs('new Jifty.Subs({}).start();') };
+        script { outs_raw('new Jifty.Subs({}).start();') };
     }
 }
 

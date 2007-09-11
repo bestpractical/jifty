@@ -27,7 +27,7 @@ use Data::UUID;
 use Scalar::Defer;
 my $UUID_GEN = Data::UUID->new();
 
-my $UUID = lazy { $UUID_GEN->create_str() } ;
+my $UUID = defer { $UUID_GEN->create_str() } ;
 sub _uuid {
     my ($column, $from) = @_;
     $column->readable(1);

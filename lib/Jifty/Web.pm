@@ -9,13 +9,11 @@ Jifty::Web - Web framework for a Jifty application
 
 =cut
 
-
-
-
 use CGI::Cookie;
 use XML::Writer;
 use CSS::Squish;
 use Digest::MD5 qw(md5_hex);
+use Scalar::Util qw(blessed);
 use Carp qw(carp);
 use base qw/Class::Accessor::Fast Class::Data::Inheritable Jifty::Object/;
 
@@ -76,7 +74,7 @@ __PACKAGE__->javascript_libs([qw(
     css_browser_selector.js
 )]);
 
-use Jifty::DBI::Class::Trigger;
+use Class::Trigger;
 
 =head1 METHODS
 
@@ -654,6 +652,8 @@ sub webservices_redirect {
     my ( $self, $to ) = @_;
     # XXX: move to singlepage plugin
     my ($spa) = Jifty->find_plugin('Jifty::Plugin::SinglePage') or return;
+
+    return if $self->failed_actions;
 
     Jifty->web->request->remove_state_variable( 'region-'.$spa->region_name );
     Jifty->web->request->add_fragment(

@@ -40,7 +40,7 @@ sub arguments {
 
 =head2 take_action
 
-Send some mail to the hiveminders describing the issue.
+Send a mail to the feedback recipient describing the issue.
 
 =cut
 

@@ -8,7 +8,7 @@ requires('Calendar::Simple');
 requires('Class::Accessor'); # Class::Accessor::Fast
 requires('Class::Container');
 requires('Class::Data::Inheritable');
-requires('Class::Trigger');
+requires('Class::Trigger' => '0.12');
 requires('CGI' => '3.19');
 requires('CGI::Cookie::Splitter');
 requires('Crypt::CBC');
@@ -70,14 +70,15 @@ requires('SVN::Simple::Edit');
 requires('Template::Declare' => '0.07');                # Template::Declare::Tags
 requires('Template::Declare' => '0.26');                # Template::Declare::Tags
 requires('Test::Base');
-requires('Test::LongString');
 requires('Test::Log4perl');
+requires('Test::LongString');
 requires('Test::More' => 0.62 ),
 requires('Test::Pod::Coverage'),
 requires('Test::WWW::Mechanize' => 1.04 ),
-requires('WWW::Mechanize' => 1.12 ),
+requires('Test::WWW::Selenium'),
+requires('WWW::Mechanize' => 1.30 ),
 requires('UNIVERSAL::require');
-requires('URI');
+requires('URI' => 1.31);
 requires('XML::Writer' => '0.601');
 requires('XML::Simple');
 requires('XML::XPath');

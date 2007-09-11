@@ -2,7 +2,7 @@ use strict;
 use warnings;
 
 package Jifty::Plugin::SinglePage;
-use base qw/Jifty::Plugin Class::Accessor/;
+use base 'Jifty::Plugin';
 
 __PACKAGE__->mk_accessors(qw(region_name));
 
@@ -22,6 +22,8 @@ Registers a before_new trigger to modify links and sets up the special region
 
 sub init {
     my $self = shift;
+    return if $self->_pre_init;
+
     Jifty::Web::Form::Clickable->add_trigger( before_new => _sp_link($self));
     my %opt = @_;
     $self->region_name($opt{region_name} || '__page');
@@ -40,14 +42,20 @@ sub _sp_link {
     return sub {
         my ( $clickable, $args ) = @_;
         my $url = $args->{'url'};
-        if ( $url && $url !~ m/^#/ && $url !~ m{^https?://} ) {
+        if ( $url && $url !~ m/^#/ && $url !~ m{^https?://} && $url !~ m{^javascript:} ) {
             $self->_push_onclick($args, {
                 region       => $self->region_name,
                 replace_with => $url,
                 args         => $args->{parameters}});
         }
-        elsif (exists $args->{submit}) {
-            $self->_push_onclick($args, { refresh_self => 1, submit => $args->{submit} });
+        elsif (exists $args->{submit} && !$args->{onclick}) {
+	    if ($args->{_form} && $args->{_form}{submit_to}) {
+		my $to = $args->{_form}{submit_to};
+		$self->_push_onclick($args, { beforeclick => qq{return _sp_submit_form(this, event, "$to");} });
+	    }
+	    else {
+		$self->_push_onclick($args, { refresh_self => 1, submit => $args->{submit} });
+	    }
             $args->{as_button} = 1;
         }
         if (my $form = delete $args->{_form}) {

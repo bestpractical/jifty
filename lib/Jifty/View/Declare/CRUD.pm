@@ -78,6 +78,8 @@ sub mount_view {
     Jifty::Util->require($vclass);
     eval qq{package $caller;
             alias $vclass under '$path'; 1} or die $@;
+
+    # Override object_type
     no strict 'refs';
     *{$vclass."::object_type"} = sub { $model };
 }
@@ -108,6 +110,40 @@ This method returns the type of object this CRUD view has been generated for. Th
 sub object_type {
     my $self = shift;
     return $self->package_variable('object_type') || get('object_type');
+}
+
+=head2 record_class
+
+This is the full name of the model class these CRUD views are for. The default implementation returns:
+
+  Jifty->app_class('Model', $self->object_type);
+
+You will want to override this if (in addition to L</object_type>) if you want to provide CRUD views in a plugin, or from an external model class, or for one of the Jifty built-in models.
+
+=cut
+
+# NB: We don't just create the record class here and return it. Why? Because
+# the mount_view() method is generally called very early in the Jifty
+# lifecycle. As such, Jifty->app_class() might not work yet since it requires
+# the Jifty singleton to be built and the configuration to be loaded. So, this
+# implementation caches teh record class after the first calculation, which
+# should happen during the request dispatch process, which always happens after
+# Jifty is completely initialized.
+sub record_class {
+    my $self = shift;
+
+    # If object_type is set via set, don't cache
+    if (!$self->package_variable('object_type') && get('object_type')) {
+        return Jifty->app_class('Model', $self->object_type);
+    }
+
+    # Otherwise, assume object_type is permanent
+    else {
+        return ($self->package_variable('record_class') 
+            or ($self->package_variable( record_class =>
+                    Jifty->app_class('Model', $self->object_type))));
+    }
+
 }
 
 =head2 fragment_for
@@ -170,7 +206,7 @@ sub _get_record {
     my ( $self, $id ) = @_;
 
     # Load the model, create an empty object, load the object by ID
-    my $record_class = Jifty->app_class( "Model", $self->object_type );
+    my $record_class = $self->record_class;
     my $record = $record_class->new();
     $record->load($id);
 
@@ -219,9 +255,8 @@ See L<Jifty::Action::Record::Search>.
 template 'search' => sub {
     my $self          = shift;
     my ($object_type) = ( $self->object_type );
-    my $search        = Jifty->web->new_action(
-        class             => "Search" . $object_type,
-        moniker           => "search",
+    my $search        = $self->record_class->as_search_action(
+        moniker           => 'search',
         sticky_on_success => 1,
     );
 
@@ -251,10 +286,8 @@ template 'view' => sub :CRUDView {
     my $self   = shift;
     my $record = $self->_get_record( get('id') );
 
-    my $update = new_action(
-        class   => 'Update' . $self->object_type,
+    my $update = $record->as_update_action(
         moniker => "update-" . Jifty->web->serial,
-        record  => $record,
     );
 
     div {
@@ -303,13 +336,11 @@ template 'update' => sub {
     my $self = shift;
     my ( $object_type, $id ) = ( $self->object_type, get('id') );
 
-    my $record_class = Jifty->app_class( "Model", $object_type );
+    my $record_class = $self->record_class;
     my $record = $record_class->new();
     $record->load($id);
-    my $update = new_action(
-        class   => "Update" . $object_type,
+    my $update = $record->as_update_action(
         moniker => "update-" . Jifty->web->serial,
-        record  => $record
     );
 
     div {
@@ -336,16 +367,15 @@ private template edit_item_controls => sub {
     my $object_type = $self->object_type;
     my $id = $record->id;
 
-    my $delete = Jifty->web->form->add_action(
-        class   => 'Delete' . $object_type,
+    my $delete = $record->as_delete_action(
         moniker => 'delete-' . Jifty->web->serial,
-        record  => $record
     );
+    Jifty->web->form->register_action($delete);
 
         div {
             { class is 'crud editlink' };
             hyperlink(
-                label   => "Save",
+                label   => _("Save"),
                 onclick => [
                     { submit => $update },
                     {   replace_with => $self->fragment_for('view'),
@@ -354,7 +384,7 @@ private template edit_item_controls => sub {
                 ]
             );
             hyperlink(
-                label   => "Cancel",
+                label   => _("Cancel"),
                 onclick => {
                     replace_with => $self->fragment_for('view'),
                     args         => { object_type => $object_type, id => $id }
@@ -364,10 +394,10 @@ private template edit_item_controls => sub {
             );
             if ( $record->current_user_can('delete') ) {
                 $delete->button(
-                    label   => 'Delete',
+                    label   => _('Delete'),
                     onclick => {
                         submit => $delete,
-                        confirm => 'Really delete?',
+                        confirm => _('Really delete?'),
                         refresh => Jifty->web->current_region->parent,
                     },
                     class => 'delete'
@@ -413,7 +443,7 @@ sub per_page { 25 }
 sub _current_collection {
     my $self = shift; 
     my ( $page, $search_collection ) = get(qw(page  search_collection));
-    my $collection_class = Jifty->app_class( "Model", $self->object_type . "Collection" );
+    my $collection_class = $self->record_class->collection_class;
     my $search = $search_collection || ( Jifty->web->response->result('search') ? Jifty->web->response->result('search')->content('search') : undef );
     my $collection;
     if ( $search ) {
@@ -452,7 +482,7 @@ private template 'search_region' => sub {
                 args         => { object_type => $object_type }
             },
         ],
-        label => 'Toggle search'
+        label => _('Toggle search'),
     );
 
     outs( $search_region->render );
@@ -498,7 +528,7 @@ private template 'list_items' => sub {
     my $item_path   = shift;
     my $callback    = shift;
     my $object_type = $self->object_type;
-    if ( $collection->pager->total_entries == 0 ) {
+    if ( $collection->count == 0 ) {
         show('./no_items_found');
     }
 
@@ -596,8 +626,8 @@ template 'new_item' => sub {
     my $self = shift;
     my ( $object_type, $id ) = ( $self->object_type, get('id') );
 
-    my $record_class = Jifty->app_class( "Model", $object_type );
-    my $create = Jifty->web->new_action( class => 'Create' . $object_type );
+    my $record_class = $self->record_class;
+    my $create = $record_class->as_create_action;
 
     div {
         { class is 'crud create item inline' };
@@ -605,7 +635,7 @@ template 'new_item' => sub {
 
         outs(
             Jifty->web->form->submit(
-                label   => 'Create',
+                label   => _('Create'),
                 onclick => [
                     { submit       => $create },
                     { refresh_self => 1 },

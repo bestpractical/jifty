@@ -11,7 +11,8 @@ our @EXPORT = (
     wrapper request get set render_param current_user
     render_action render_region),
     @Template::Declare::Tags::EXPORT,
-    @Template::Declare::Tags::TagSubs,
+    @Template::Declare::Tags::TagSubs,  # Backward compatibility only
+    @Template::Declare::Tags::TAG_SUB_LIST,
 );
 
 =head1 NAME
@@ -327,7 +328,9 @@ sub wrapper {
     # XXX: fallback, this is ugly
     Jifty::Util->require( $page_class );
 
-    my $page = $page_class->new({ content_code => shift });
+    my $content_code = shift;
+    my $meta = shift;
+    my $page = $page_class->new({ content_code => $content_code, _meta => $meta });
 
     my ($spa) = Jifty->find_plugin('Jifty::Plugin::SinglePage');
 

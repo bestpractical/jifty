@@ -236,7 +236,7 @@ sub setup_test_database {
 	}
     }
 
-    Jifty->new( no_handle => 1 );
+    Jifty->new( no_handle => 1, pre_init => 1 );
 
     my $schema = Jifty::Script::Schema->new;
     $schema->{drop_database}     = 1;
@@ -277,16 +277,26 @@ sub test_config {
     return {
         framework => {
             Database => {
-                Database => $config->framework('Database')->{Database} . "test",
+                Database => $config->framework('Database')->{Database} . $class->_testfile_to_dbname(),
             },
             Web => {
                 Port => int(rand(5000) + 10000),
+                DataDir => File::Temp::tempdir('masonXXXXXXXXXX')
             },
             Mailer => 'Jifty::Test',
             MailerArgs => [],
             LogLevel => 'WARN'
         }
     };
+}
+
+
+sub _testfile_to_dbname {
+    my $dbname = lc($0);
+    $dbname =~ s/\.t$//;
+    $dbname =~ s/[-_\.\/\\]//g;
+    $dbname = substr($dbname,-32,32);	
+    return $dbname;
 }
 
 =head2 make_server

@@ -11,7 +11,7 @@ Basic tests for CurrentUser.
 use lib 't/lib';
 use Jifty::SubTest;
 
-use Jifty::Test tests => 19;
+use Jifty::Test tests => 23;
 use Jifty::Test::WWW::Mechanize;
 
 use_ok('TestApp::Model::User');
@@ -35,12 +35,20 @@ $o->create( name => 'Bob', email => 'bob@example.com',
 ok($o->id, "New user has valid id set");
 ok($o->tasty, "User is tasty");
 
+is($o->email, 'bob@example.com', 'email initially set correctly');
+$o->set_email('bob+jifty@example.com');
+is($o->email, 'bob+jifty@example.com', 'email updated correctly');
+
 # Create a CurrentUser
 my $bob = TestApp::CurrentUser->new( name => 'Bob' );
 ok($bob->id, "CurrentUser has a valid id set");
 is($bob->id, $o->id, "The ids match");
 ok($bob->user_object->tasty, "The CurrentUser is tasty");
 ok($bob->is_superuser, "CurrentUser is a superuser");
+
+is($bob->user_object->email, 'bob+jifty@example.com', 'email from before');
+$bob->user_object->set_email('bob+test@example.com');
+is($bob->user_object->email, 'bob+test@example.com', 'email updated correctly');
 
 my $server = Jifty::Test->make_server;
 isa_ok($server, 'Jifty::Server');

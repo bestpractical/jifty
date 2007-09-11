@@ -141,6 +141,10 @@ The answer to a L</action>, it contains information about if the action was a
 success or failure, and further detail about why or how.  It can also contain
 arbitrary "content".  See L<Jifty::Result>.
 
+=item return
+
+After performing a L</tangent> a user may perform a L</return> to invoke the L</continuation> created by the original tangent.
+
 =item schema
 
 The B<schema> for a L</model> represents the structure of the data stored in an individual item in that model's L</collection>. See L<Jifty::DBI::Schema>.
@@ -175,6 +179,10 @@ A property of L</form field>s.  If a field is "sticky," values that the user
 entered appear there again when the page is rendered again, avoiding making the
 user type them again.  Most L</action>s have form fields which are sticky on
 failure, so the user can update the information and try again.
+
+=item tangent
+
+A tangent is a link or redirect that causes Jifty to save the current state into a L</continuation> for a later L</return>. This operation is handy for situations when you want to jump to another page or form, but return to this page when the user is done with the "tangent" page. Because of the use of continuations, this can be especially handy because a user could go on multiple tangents and eventually return to the start.
 
 =item upgrade
 

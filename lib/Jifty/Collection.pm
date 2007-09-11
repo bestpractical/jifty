@@ -53,6 +53,19 @@ bypass normal current_user_can checks.
 
 __PACKAGE__->mk_accessors(qw(pager results_are_readable));
 
+=head2 as_search_action PARAMHASH
+
+Returns the L<Jifty::Action::Record::Search> action for the model associated with this collection.
+
+The PARAMHASH allows you to add additional parameters to pass to L<Jifty::Web/new_action>.
+
+=cut
+
+sub as_search_action {
+    my $self = shift;
+    return $self->record_class->as_search_action(@_);
+}
+
 =head2 add_record
 
 If L</results_are_readable> is false, only add records to the collection that

@@ -311,7 +311,7 @@ Action.prototype = {
         hide_wait_message();
     },
 
-    disable_input_fields: function() {
+    disable_input_fields: function(disabled_elements) {
         var disable = function() {
             var elt = arguments[0];
             // Disabling hidden elements seems to  make IE sad for some reason
@@ -319,6 +319,7 @@ Action.prototype = {
                 // Triggers https://bugzilla.mozilla.org/show_bug.cgi?id=236791
                 elt.blur();
                 elt.disabled = true;
+                disabled_elements.push(elt);
             }
         };
         this.fields().each(disable);
@@ -1009,6 +1010,9 @@ function update() {
     // The YAML/JSON data structure that will be sent
     var request = $H();
 
+    // Keep track of disabled elements
+    var disabled_elements = $A();
+
     // Set request base path
     request['path'] = '/__jifty/webservices/xml';
 
@@ -1044,7 +1048,7 @@ function update() {
             if (a.hasUpload())
                 return true;
             if(disable) {
-                a.disable_input_fields();
+                a.disable_input_fields(disabled_elements);
             }
             request['actions'][moniker] = a.data_structure();
             ++has_request;
@@ -1154,6 +1158,11 @@ function update() {
 				      }
 			      }});
 	    }});
+
+        for ( var i = 0; i < disabled_elements.length; i++ ) {
+            disabled_elements[i].disabled = false;
+        }
+
 	// empty known action. XXX: we should only need to discard actions being submitted
 
         // Loop through the result looking for it
@@ -1195,10 +1204,8 @@ function update() {
 
         Jifty.failedRequest = transport;
 
-        var keys = request["actions"].keys();
-        for ( var i = 0; i < keys.length; i++ ) {
-            var a = new Action( request["actions"][ keys[i] ].moniker );
-            a.enable_input_fields();
+        for ( var i = 0; i < disabled_elements.length; i++ ) {
+            disabled_elements[i].disabled = false;
         }
     };
 
@@ -1481,4 +1488,16 @@ if( !Object.prototype.hasOwnProperty ) {
         } catch( e ) {}
         return true;
     }
+}
+
+function _sp_submit_form(elt, event, submit_to) {
+    var form = Form.Element.getForm(elt);
+    var elements = Form.getElements(form);
+
+    var args = {};
+    for (var i = 0; i < elements.length; i++)
+	args[elements[i].name] = $F(elements[i]);
+
+    if(event.ctrlKey||event.metaKey||event.altKey||event.shiftKey) return true;
+    return update( {'continuation':{},'actions':null,'fragments':[{'mode':'Replace','args':args,'region':'__page','path': submit_to}]}, elt );
 }
