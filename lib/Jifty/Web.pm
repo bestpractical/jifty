@@ -564,50 +564,6 @@ sub new_action_from_request {
     );
 }
 
-=head3 new_record_action model => MODELCLASS, record_action => RECORD_ACTION, PARAMHASH
-
-This takes all the same arguments as L</new_action>, except that you specify the C<model> and C<record_action> rather than the C<class>. This helps you create a record action.
-
-You must give the C<model> argument, which may either be an instance of the model or the class name. 
-
-The C<record_action> is optional and defaults to 'Update' if not given. It can be set to 'Create', 'Update', 'Delete', or 'Search'.
-
-For example:
-
-  my $record = MyApp::Model::Employee->new;
-  $record->load(14);
-
-  my $action = Jifty->web->new_record_action(
-      model         => $record,
-      record_action => 'Delete',
-      record        => $record,
-  );
-
-  # $action is now an instance of MyApp::Model::DeleteEmployee
-
-=cut
-
-sub new_record_action {
-    my $self = shift;
-    my %args = (
-        model         => undef,
-        record_action => 'Update',
-        @_
-    );
-
-    # Get the name of the model class and action
-    my $model         = delete $args{model};
-    my $action_class  = blessed $model || $model;
-    my $record_action = delete $args{record_action};
-
-    # Convert it to the action
-    $action_class =~ s/::Model::/::Action::$record_action/;
-
-    # Add it to the arguments and call new_action()
-    $args{class} = $action_class;
-    return $self->new_action( %args );
-}
-
 =head3 failed_actions
 
 Returns an array of L<Jifty::Action> objects, one for each

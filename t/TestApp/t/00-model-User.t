@@ -11,7 +11,8 @@ A basic test harness for the User model.
 use lib 't/lib';
 use Jifty::SubTest;
 
-use Jifty::Test tests => 12;
+use Jifty::Test tests => 19;
+Jifty::Test->web; # initialize for use with the as_*_action tests
 # Make sure we can load the model
 use_ok('TestApp::Model::User');
 
@@ -27,6 +28,18 @@ ok($o->id, "New User has valid id set");
 is($o->id, $id, "Create returned the right id");
 is($o->name, $$, "Created object has the right name");
 
+# Test the as_foo_action methods
+my $action = $o->as_create_action;
+isa_ok($action, 'TestApp::Action::CreateUser');
+$action = $o->as_update_action;
+isa_ok($action, 'TestApp::Action::UpdateUser');
+is($action->record->id, $o->id, 'update action ID is correct');
+$action = $o->as_delete_action;
+isa_ok($action, 'TestApp::Action::DeleteUser');
+is($action->record->id, $o->id, 'delete action ID is correct');
+$action = $o->as_search_action;
+isa_ok($action, 'TestApp::Action::SearchUser');
+
 # And another
 $o->create( name => $$, email => $$, password => $$ );
 ok($o->id, "User create returned another value");
@@ -36,6 +49,10 @@ isnt($o->id, $id, "And it is different from the previous one");
 my $collection =  TestApp::Model::UserCollection->new(current_user => $system_user);
 $collection->unlimit;
 is($collection->count, 2, "Finds two records");
+
+# Check the as_search_action method
+$action = $collection->as_search_action;
+isa_ok($action, 'TestApp::Action::SearchUser');
 
 # Searches in specific
 $collection->limit(column => 'id', value => $o->id);
