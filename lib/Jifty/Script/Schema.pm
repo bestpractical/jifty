@@ -345,7 +345,7 @@ sub upgrade_plugin_tables {
         my $dbv  = version->new( Jifty::Model::Metadata->load($plugin_class . '_version') || '0.0.1' );
         my $appv = version->new( $plugin->version );
 
-        return unless $self->upgrade_tables( $plugin_class, $dbv, $appv, $plugin->upgrade_class );
+        next unless $self->upgrade_tables( $plugin_class, $dbv, $appv, $plugin->upgrade_class );
         if ( $self->{print} ) {
             warn "Need to upgrade ${plugin_class}_db_version to $appv here!";
         } else {
