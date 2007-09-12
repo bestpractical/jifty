@@ -18,7 +18,6 @@ the fly as they're required by the application.
 =cut
 
 package Jifty::Model::ModelClass;
-use Jifty::Model::ModelClassColumnCollection; # we can drop this when we switch to Jifty::DBI's od branch
 use base qw( Jifty::Record );
 use Scalar::Defer;
 
