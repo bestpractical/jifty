@@ -143,6 +143,8 @@ sub add_column {
         $column->$_( $col->$_() );
     }
 
+    $column->label( $col->label_text );
+
     $column->refers_to( $col->refers_to_class );
     $column->by( $col->refers_to_by );
 
