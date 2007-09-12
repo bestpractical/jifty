@@ -342,7 +342,7 @@ sub upgrade_plugin_tables {
 
     for my $plugin (Jifty->plugins) {
         my $plugin_class = ref $plugin;
-        my $dbv  = version->new( Jifty::Model::Metadata->load($plugin_class . '_version') );
+        my $dbv  = version->new( Jifty::Model::Metadata->load($plugin_class . '_version') || '0.0.0' );
         my $appv = version->new( $plugin->version );
 
         next unless $self->upgrade_tables( $plugin_class, $dbv, $appv, $plugin->upgrade_class );
