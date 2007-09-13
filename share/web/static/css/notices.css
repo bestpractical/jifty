@@ -37,3 +37,24 @@ div#messages,  div#errors {
     text-indent: -9999em;
 }
 
+#jifty-result-popup {
+    bottom: 0.6em;
+    position: fixed;
+    right: 0;
+    width: 180px;
+    z-index: 43;
+}
+
+#jifty-result-popup .popup_notification {
+     background: #A9B7FF url(/static/images/silk/information.png) no-repeat scroll 5px center;
+     border: 1px solid #004E75;
+     overflow: hidden;
+     padding: 0.5em 0.5em 0.5em 27px;
+}
+
+#jifty-result-popup .result-error {
+    background: #FFA8A8 url(/static/images/silk/error.png) no-repeat scroll 5px center;
+    border: 1px solid #B71111;
+    color: #B71111;
+}
+

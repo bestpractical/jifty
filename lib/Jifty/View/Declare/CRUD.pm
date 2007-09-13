@@ -18,12 +18,39 @@ Jifty::View::Declare::CRUD - Provides typical CRUD views to a model
 
 =head1 SYNOPSIS
 
+  package App::View::User;
+  use Jifty::View::Declare -base;
+  use base qw/ Jifty::View::Declare::CRUD /;
+
+  template 'view' => sub {
+      # customize the view
+  };
+
+  1;
+
+  package App::View::Tag;
+  use Jifty::View::Declare -base;
+  use base qw/ Jifty::View::Declare::CRUD /;
+
+  template 'view' => sub {
+      # customize the view
+  };
+
+  1;
+
   package App::View;
   use Jifty::View::Declare -base;
 
   use Jifty::View::Declare::CRUD;
+
+  # If you have customizations, this is a good way...
   Jifty::View::Declare::CRUD->mount_view('User');
   Jifty::View::Declare::CRUD->mount_view('Category', 'App::View::Tag', '/tag');
+
+  # Another way to do the above, good for quick and dirty
+  alias Jifty::View::Declare::CRUD under '/admin/blog', {
+      object_type => 'BlogPost',
+  };
 
 =head1 DESCRIPTION
 
@@ -81,7 +108,10 @@ sub mount_view {
 
     # Override object_type
     no strict 'refs';
-    *{$vclass."::object_type"} = sub { $model };
+    my $object_type = $vclass."::object_type";
+
+    # Avoid the override if object_type() is already defined
+    *{$object_type} = sub { $model } unless defined *{$object_type};
 }
 
 # XXX TODO FIXME This is related to the trimclient branch and performs some
