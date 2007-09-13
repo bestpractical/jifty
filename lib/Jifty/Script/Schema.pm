@@ -199,7 +199,7 @@ sub create_all_tables {
         for my $plugin (Jifty->plugins) {
             my $plugin_bootstrapper = $plugin->bootstrapper;
             Jifty::Util->require($plugin_bootstrapper);
-            $plugin_bootstrapper->run() if $bootstrapper->can('run');
+            $plugin_bootstrapper->run() if $plugin_bootstrapper->can('run');
         }
     };
     die $@ if $@;
@@ -344,14 +344,50 @@ sub upgrade_plugin_tables {
 
     for my $plugin (Jifty->plugins) {
         my $plugin_class = ref $plugin;
-        my $dbv  = version->new( Jifty::Model::Metadata->load($plugin_class . '_version') || '0.0.0' );
+
+        my $dbv  = Jifty::Model::Metadata->load($plugin_class . '_db_version');
         my $appv = version->new( $plugin->version );
 
-        next unless $self->upgrade_tables( $plugin_class, $dbv, $appv, $plugin->upgrade_class );
-        if ( $self->{print} ) {
-            warn "Need to upgrade ${plugin_class}_db_version to $appv here!";
-        } else {
-            Jifty::Model::Metadata->store( $plugin_class . '_db_version' => $appv );
+        # Upgrade this plugin from dbv -> appv
+        if (defined $dbv) {
+            $dbv = version->new( $dbv );
+
+            next unless $self->upgrade_tables( $plugin_class, $dbv, $appv, $plugin->upgrade_class );
+            if ( $self->{print} ) {
+                warn "Need to upgrade ${plugin_class}_db_version to $appv here!";
+            } else {
+                Jifty::Model::Metadata->store( $plugin_class . '_db_version' => $appv );
+            }
+        }
+
+        # Install this plugin
+        else {
+            my $log = Log::Log4perl->get_logger("SchemaTool");
+            $log->info("Generating SQL to set up $plugin_class...");
+            Jifty->handle->begin_transaction;
+
+            # Create the tables
+            $self->create_tables_for_models(
+                grep { $_->isa('Jifty::DBI::Record') and /^\Q$plugin_class\E::Model::/ }
+                     $self->schema->models);
+            
+            # Save the plugin version to the database
+            Jifty::Model::Metadata->store( $plugin_class . '_db_version' => $appv )
+                unless $self->{print};
+
+            # Run the bootstrapper for initial data
+            unless ($self->{print}) {
+                eval {
+                    my $bootstrapper = $plugin->bootstrapper;
+                    Jifty::Util->require($bootstrapper);
+                    $bootstrapper->run if $bootstrapper->can('run');
+                };
+                die $@ if $@;
+            }
+                
+            # Save them records
+            Jifty->handle->commit;
+            $log->info("Set up $plugin_class version $appv");
         }
     }
 }

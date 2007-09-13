@@ -192,7 +192,7 @@ sub render_jifty_page_detritus {
     show('/keybindings');
     with( id => "jifty-wait-message", style => "display: none" ),
         div { _('Loading...') };
-    with( id => "jifty-result-popup", style => "display: none" ),
+    with( id => "jifty-result-popup" ),
         div { };
 
     # This is required for jifty server push.  If you maintain your own
