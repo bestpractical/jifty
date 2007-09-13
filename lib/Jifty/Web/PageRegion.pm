@@ -330,7 +330,6 @@ sub render_as_subrequest {
     local Jifty->web->{request} = $subrequest;
     if ($args{'J:RETURN'}) {
 	my $top = Jifty->web->request->top_request;
-	warn "===> $top";
 	my $cont = Jifty->web->session->get_continuation($args{'J:RETURN'});
 	$cont->return;
 	# need to set this as subrequest again as it's clobbered by the return
