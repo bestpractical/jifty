@@ -409,7 +409,9 @@ Find plugins by name.
 sub find_plugin {
     my $self = shift;
     my $name = shift;
-    return grep { $_->isa($name) } Jifty->plugins;
+
+    my @plugins = grep { $_->isa($name) } Jifty->plugins;
+    return wantarray ? @plugins : $plugins[0];
 }
 
 =head2 class_loader
