@@ -162,18 +162,15 @@ sub friendly_date {
     my $tz = $self->current_user_has_timezone || $self->time_zone;
     my $rel = DateTime->now( time_zone => $tz );
 
-    # Is it today?
     if ($ymd eq $rel->ymd) {
         return "today";
     }
     
-    # Is it yesterday?
     my $yesterday = $rel->clone->subtract(days => 1);
     if ($ymd eq $yesterday->ymd) {
         return "yesterday";
     }
     
-    # Is it tomorrow?
     my $tomorrow = $rel->clone->add(days => 1);
     if ($ymd eq $tomorrow->ymd) {
         return "tomorrow";
