@@ -826,6 +826,20 @@ Region.prototype = {
     }
 };
 
+// Faster than innerHTML
+function replaceHtml(el, html) {
+	var oldEl = (typeof el === "string" ? document.getElementById(el) : el);
+	/*@cc_on // Pure innerHTML is slightly faster in IE
+		oldEl.innerHTML = html;
+		return oldEl;
+	@*/
+	var newEl = oldEl.cloneNode(false);
+	newEl.innerHTML = html;
+	oldEl.parentNode.replaceChild(newEl, oldEl);
+	/* Since we just removed the old element from the DOM, return a reference
+	to the new element, which can be used to restore variable references. */
+	return newEl;
+};
 
 // Keep track of the state variables.
 var current_args = $H();
@@ -962,7 +976,7 @@ var apply_fragment_updates = function(fragment, f) {
 		var insertion = eval('Insertion.'+f['mode']);
 		new insertion(element, textContent.stripScripts());
 	    } else {
-		Element.update(element, textContent.stripScripts());
+		replaceHtml(element, textContent.stripScripts());
 	    }
 	    // We need to give the browser some "settle" time before
 	    // we eval scripts in the body
