@@ -19,12 +19,15 @@ Renders the select widget.
 
 sub render_widget {
     my $self  = shift;
+    my $title = $self->title ? qq! title="@{[ $self->title ]}"!
+                             : qq! !;
 
 my $field = <<"EOF";
 <nobr>
 <span id="@{[ $self->element_id ]}_Container" class="combobox">
 <input name="@{[ $self->fallback_name ]}" 
        id="@{[ $self->element_id ]}" 
+       $title
        @{[ $self->_widget_class('combo-text')]}
        value="@{[ $self->current_value ]}" 
        type="text" 

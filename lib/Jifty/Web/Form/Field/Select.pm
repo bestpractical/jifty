@@ -22,6 +22,7 @@ sub render_widget {
     my $field = qq! <select !;
     $field .= qq! name="@{[ $self->input_name ]}"!;
     $field .= qq! id="@{[ $self->element_id ]}"!;
+    $field .= qq! id="@{[ $self->title ]}"! if ($self->title);
     $field .= $self->_widget_class;
     $field .= $self->javascript;
     $field .= qq!      >\n!;

@@ -59,6 +59,7 @@ sub render_option {
     my $field = qq! <input type="radio" !;
     $field .= qq! name="@{[ $self->input_name ]}"!;
     $field .= qq! id="@{[ $id ]}"!;
+    $field .= qq! title="@{[ $self->title ]}"! if ($self->title);
     $field .= qq! value="@{[ $value ]}"!;
     $field .= $self->_widget_class;
 

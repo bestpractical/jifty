@@ -43,6 +43,7 @@ sub render_widget {
         'type="submit"',
         'name="' . $self->input_name . '" ',
         'value="' . Jifty->web->escape(_($self->label )). '"',
+        ($self->title ? qq( title="@{[$self->title]}") : ''),
         'id="'. Jifty->web->serial . '"',
         ($self->key_binding ? qq( accesskey="@{[$self->key_binding]}") : ''),
         $self->_widget_class('button', ($self->button_as_link ? ("button_as_link") : ())),
