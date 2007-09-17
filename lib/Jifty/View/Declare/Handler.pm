@@ -3,7 +3,7 @@ package Jifty::View::Declare::Handler;
 use warnings;
 use strict;
 
-use base qw/Jifty::Object Class::Accessor/;
+use base qw/Jifty::Object Class::Accessor::Fast/;
 use Template::Declare;
 
 __PACKAGE__->mk_accessors(qw/root_class/);

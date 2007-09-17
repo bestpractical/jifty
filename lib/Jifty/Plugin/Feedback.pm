@@ -2,7 +2,7 @@ use strict;
 use warnings;
 
 package Jifty::Plugin::Feedback;
-use base qw/Jifty::Plugin Class::Accessor/;
+use base qw/Jifty::Plugin Class::Accessor::Fast/;
 
 # Your plugin goes here.  If takes any configuration or arguments, you
 # probably want to override L<Jifty::Plugin/init>.

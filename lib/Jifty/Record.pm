@@ -16,7 +16,8 @@ representation; that is, it is also a L<Jifty::DBI::Record> as well.
 
 =cut
 
-use base qw(Jifty::Object Jifty::DBI::Record Class::Accessor::Fast);
+use base qw( Jifty::Object Jifty::DBI::Record);
+
 __PACKAGE__->mk_accessors('_is_readable');
 
 sub _init {
