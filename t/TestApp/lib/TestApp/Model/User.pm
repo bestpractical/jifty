@@ -40,5 +40,15 @@ column 'uuid' => is UUID;
 
 # Your model-specific methods go here.
 
+sub current_time
+{
+    Jifty::DateTime->now();
+}
+
+sub time_zone
+{
+    'America/Anchorage'
+}
+
 1;
 

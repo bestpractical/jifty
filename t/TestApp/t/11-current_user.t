@@ -11,7 +11,7 @@ Basic tests for CurrentUser.
 use lib 't/lib';
 use Jifty::SubTest;
 
-use Jifty::Test tests => 23;
+use Jifty::Test tests => 27;
 use Jifty::Test::WWW::Mechanize;
 
 use_ok('TestApp::Model::User');
@@ -34,6 +34,8 @@ $o->create( name => 'Bob', email => 'bob@example.com',
             password => 'secret2', tasty => 1 );
 ok($o->id, "New user has valid id set");
 ok($o->tasty, "User is tasty");
+like($o->created_on->time_zone, qr/Floating/, "User's created_on date is in the floating timezone");
+like($o->current_time->time_zone, qr/UTC/, "Jifty::DateTime::now defaults to UTC (superuser has no user_object)");
 
 is($o->email, 'bob@example.com', 'email initially set correctly');
 $o->set_email('bob+jifty@example.com');
@@ -49,6 +51,8 @@ ok($bob->is_superuser, "CurrentUser is a superuser");
 is($bob->user_object->email, 'bob+jifty@example.com', 'email from before');
 $bob->user_object->set_email('bob+test@example.com');
 is($bob->user_object->email, 'bob+test@example.com', 'email updated correctly');
+like($bob->user_object->created_on->time_zone, qr/Floating/, "User's created_on date is in the floating timezone");
+like($bob->user_object->current_time->time_zone, qr{America::Anchorage}, "Jifty::DateTime::now correctly peers into current_user->user_object->time_zone");
 
 my $server = Jifty::Test->make_server;
 isa_ok($server, 'Jifty::Server');
