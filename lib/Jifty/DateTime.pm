@@ -57,15 +57,19 @@ sub new {
 
     # XXX What if they really mean midnight offset by time zone?
 
+    #     this behavior is (sadly!) consistent with
+    #     DateTime->truncate(to => 'day') and Jifty::DateTime::new_from_string
+    #     suggestions for improvement are very welcome
+
     # Do not bother with time zones unless time is used, we assume that
     # 00:00:00 implies that no time is used
     if ($self->hour || $self->minute || $self->second) {
 
         # Unless the user has explicitly said they want a floating time,
-        # we want to convert to the end-user's timezone.  This is
-        # complicated by the fact that DateTime auto-appends
+        # we want to convert to the end-user's timezone. If we ignore
+        # $args{time_zone}, then DateTime::from_epoch will get very confused
         if (!$args{time_zone} and my $tz = $self->current_user_has_timezone) {
-            $self->set_time_zone("UTC");
+            $self->set_time_zone("UTC"); # XXX: why are we doing this?
             $self->set_time_zone( $tz );
         }
     }
@@ -74,6 +78,30 @@ sub new {
     else {
         $self->set_time_zone("floating");
     }
+
+    return $self;
+}
+
+=head2 now ARGS
+
+See L<DateTime/now>. If a time_zone argument is passed in, then this method
+is effectively a no-op.
+
+OTHERWISE this will always set this object's timezone to the current user's
+timezone (or UTC if that's not available). Without this, DateTime's C<now> will
+set the timezone to UTC always (by passing C<< time_zone => 'UTC' >> to
+C<Jifty::DateTime::new>. We want Jifty::DateTime to always reflect the current
+user's timezone (unless otherwise requested, of course).
+
+=cut
+
+sub now {
+    my $class = shift;
+    my %args  = @_;
+    my $self  = $class->SUPER::now(%args);
+
+    $self->set_time_zone($self->current_user_has_timezone || 'UTC')
+        unless $args{time_zone};
 
     return $self;
 }
