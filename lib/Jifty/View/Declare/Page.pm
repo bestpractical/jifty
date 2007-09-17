@@ -188,7 +188,7 @@ Renders the keybinding and PubSub javascript as well as the wait message
 =cut
 
 sub render_jifty_page_detritus {
-
+    show('/app_page_footer') if Template::Declare->resolve_template('/app_page_footer' => 1); # the 1 is 'show_private'
     show('/keybindings');
     with( id => "jifty-wait-message", style => "display: none" ),
         div { _('Loading...') };
