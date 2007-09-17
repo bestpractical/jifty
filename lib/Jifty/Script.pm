@@ -24,8 +24,7 @@ C<fastcgi> command.  If all fails, shows the help.
 sub prepare {
     my $self = shift;
     if ($ARGV[0] =~ /--?h(elp?)/i) {
-        shift @ARGV; #discard the --help
-        unshift @ARGV, 'help';
+        $ARGV[0] = 'help';
     }
     elsif (!@ARGV) {
         if ( my $cmd = $ENV{'JIFTY_COMMAND'} ) {

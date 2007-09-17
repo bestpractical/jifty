@@ -11,7 +11,7 @@ Jifty::Everything - Load all of the important Jifty modules at once.
 
 use Cwd ();
 BEGIN {
-    # Cwd::cwd() insists doing `pwd`, which is a few hundres of shell
+    # Cwd::cwd() insists doing `pwd`, which is a few hundreds of shell
     # outs just in the BEGIN time for Module::Pluggable to load things.
     if ($^O ne 'MSWin32') {
         require POSIX;
