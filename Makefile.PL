@@ -107,7 +107,8 @@ features(
         recommends('Test::HTML::Lint'),
         recommends('Test::MockModule' => '0.05'),
         recommends('Test::MockObject' => '1.07'),
-        recommends('Module::Refresh' => '0.09')
+        recommends('Module::Refresh' => '0.09'),
+        recommends('Devel::Events' => '0.02'),
     ],
     'Development of the jifty framework' => [
         -default => 0,

@@ -30,17 +30,17 @@ template 'leaks/all' => sub {
                     th { "URL" }
                 };
 
-                my $id = 0;
                 for (@Jifty::Plugin::LeakDetector::requests)
                 {
                     row {
-                        cell { a { attr { href => "leaks/$id" } $id } }
+                        cell { a { attr { href => "leaks/$_->{id}" }
+                                   $_->{id} } }
+
                         cell { $_->{leaks} }
                         cell { $_->{size} }
                         cell { $_->{time} }
                         cell { $_->{url} }
                     };
-                    ++$id;
                 }
             }
         }
@@ -49,16 +49,15 @@ template 'leaks/all' => sub {
 
 template 'leaks/one' => sub {
     my $leak = get 'leak';
-    my $id = get 'leakid';
 
     html {
         body {
-            h1 { "Leaks from Request $id" }
+            h1 { "Leaks from Request $leak->{id}" }
             ul {
                 li { "URL: $leak->{url}" }
                 li { "Time: $leak->{time}" }
                 li { "Objects leaked: $leak->{leaks}" }
-                li { "Total memory leaked: $leak->{size}" }
+                li { "Total memory leaked: $leak->{size} bytes" }
             }
             p { a { attr { href => "/leaks" } "Table of Contents" } }
             hr {}

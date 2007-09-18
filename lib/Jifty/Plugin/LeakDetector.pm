@@ -54,6 +54,7 @@ sub after_request
     my $size = total_size([ keys %$leaked ]) - $empty_array;
 
     push @requests, {
+        id => 1 + @requests,
         url => $cgi->url(-absolute=>1,-path_info=>1),
         size => $size,
         objects => Dumper($leaked),
@@ -82,10 +83,6 @@ Add the following to your site_config.yml
      - LeakDetector: {}
 
 This makes the following URLs available:
-
-View any URL of your app and catch any leaked objects
-
-    http://your.app/leak/user/12
 
 View the top-level leak report (how much each request has leaked)
 

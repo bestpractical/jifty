@@ -11,10 +11,10 @@ on 'leaks' => run {
 
 # http://your.app/leaks/xxx -- display leak report for request ID xxx
 on 'leaks/#' => run {
-    my $leak = $Jifty::Plugin::LeakDetector::requests[$1]
+    abort(404) if $1 < 1;
+    my $leak = $Jifty::Plugin::LeakDetector::requests[$1 - 1]
         or abort(404);
     set leak => $leak;
-    set leakid => $1;
     show "leaks/one";
 };
 
