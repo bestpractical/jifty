@@ -51,6 +51,7 @@ sub render_option {
     $id =~ s/\s+/_/;
     my $field = qq! <input type="text" !;
     $field .= qq! name="@{[ $self->input_name ]}"!;
+    $field .= qq! title="@{[ $self->title ]}"! if ($self->title);
     $field .= qq! id="@{[ $id ]}"!;
     $field .= qq! value="0"!;
     $field .= $self->_widget_class;

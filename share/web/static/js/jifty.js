@@ -600,6 +600,9 @@ Object.extend(Form.Element, {
          && ((element.nodeName != 'A')     || (! element.getAttribute("name"))))
             return $H();
 
+        if (element.getAttribute("name").length == 0)
+            return $H();
+
         var extras = $H();
 
         // Split other arguments out, if we're on a button
@@ -1494,10 +1497,38 @@ function _sp_submit_form(elt, event, submit_to) {
     var form = Form.Element.getForm(elt);
     var elements = Form.getElements(form);
 
-    var args = {};
-    for (var i = 0; i < elements.length; i++)
-	args[elements[i].name] = $F(elements[i]);
+    // Three things need to get merged -- hidden defaults, defaults
+    // from buttons, and form values.  Hence, we build up three lists
+    // and then merge them.
+    var hiddens = $H();
+    var buttons = $H();
+    var inputs = $H()
+    for (var i = 0; i < elements.length; i++) {
+        var e = elements[i];
+        var parsed = e.getAttribute("name").match(/^J:V-region-__page\.(.*)/);
+        var extras = Form.Element.buttonArguments(e);
+        if (extras.keys().length > 0) {
+            // Button with values
+            for (var j = 0; j < extras.keys().length; j++) {
+                // Might also have J:V mappings on it
+                parsed = extras.keys()[j].match(/^J:V-region-__page\.(.*)/);
+                if ((parsed != null) && (parsed.length == 2)) {
+                    buttons[parsed[1]] = extras.values()[j];
+                } else if (extras.keys()[j].length > 0) {
+                    inputs[extras.keys()[j]] = extras.values()[j];
+                }
+                
+            }
+        } else if ((parsed != null) && (parsed.length == 2)) {
+            // Hidden default
+            hiddens[parsed[1]] = $F(e);
+        } else if (e.name.length > 0) {
+            // Straight up values
+            inputs[e.name] = $F(e);
+        }
+    }
 
+    var args = hiddens.merge(buttons.merge(inputs));
     if(event.ctrlKey||event.metaKey||event.altKey||event.shiftKey) return true;
     return update( {'continuation':{},'actions':null,'fragments':[{'mode':'Replace','args':args,'region':'__page','path': submit_to}]}, elt );
 }

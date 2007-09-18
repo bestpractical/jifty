@@ -74,7 +74,6 @@ sub load {
 
     $session->create( key_type => "session" ) unless $session->id;
     $self->_session($session);
-    $self->{cache} = undef;
 }
 
 =head2 load_by_kv key => value 
@@ -165,7 +164,7 @@ sub get {
 
     return undef unless $self->loaded;
 
-    if ($key_type eq "continuation" or $key_type eq "session") {
+
         my $setting = Jifty::Model::Session->new;
         $setting->load_by_cols(
             session_id => $self->id,
@@ -173,19 +172,6 @@ sub get {
             data_key   => $key
         );
         return $setting->value;
-    } else {
-        unless ($self->{cache}) {
-            my $settings = Jifty::Model::SessionCollection->new;
-            $settings->limit( column => 'session_id', value => $self->id, case_sensitive => '1' );
-            $settings->limit( column => 'key_type',   value => 'continuation', operator => '!=', entry_aggregator => 'and', case_sensitive => '1' );
-            $settings->limit( column => 'key_type',   value => 'session', operator => '!=', entry_aggregator => 'and', case_sensitive => '1' );
-            while (my $row = $settings->next) {
-                $self->{cache}{$row->key_type}{$row->data_key} = $row->value;
-            }
-        }
-
-        return $self->{cache}{$key_type}{$key};
-    }
 
 }
 
@@ -225,8 +211,6 @@ sub set {
         );
     }
 
-    $self->{cache}{$key_type}{$key} = $value
-      if $self->{cache};
 
 }
 

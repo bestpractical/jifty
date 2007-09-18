@@ -237,18 +237,19 @@ sub _require {
 
     return 1 if $self->already_required($class);
 
-    local $UNIVERSAL::require::ERROR = '';
-    my $retval = $class->require;
-    if ($UNIVERSAL::require::ERROR) {
-        my $error = $UNIVERSAL::require::ERROR;
-        $error =~ s/ at .*?\n$//;
-        if ($args{'quiet'} and $error =~ /^Can't locate/) {
+    my $pkg = $class .".pm";
+    $pkg =~ s/::/\//g;
+    my $retval = eval  {CORE::require "$pkg"} ;
+    my $error = $@;
+    if (my $message = $error) { 
+        $message =~ s/ at .*?\n$//;
+        if ($args{'quiet'} and $message =~ /^Can't locate/) {
             return 0;
         }
-        elsif ( $UNIVERSAL::require::ERROR !~ /^Can't locate/) {
-            die $UNIVERSAL::require::ERROR;
+        elsif ( $error !~ /^Can't locate/) {
+            die $error;
         } else {
-            Jifty->log->error(sprintf("$error at %s line %d\n", (caller(1))[1,2]));
+            Jifty->log->error(sprintf("$message at %s line %d\n", (caller(1))[1,2]));
             return 0;
         }
     }

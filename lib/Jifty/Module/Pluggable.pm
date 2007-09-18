@@ -52,18 +52,9 @@ sub Module::Pluggable::Object::_require {
     # On success, it expects you to return undef.
 
     return if $module =~/\.#/;
-
-    local $UNIVERSAL::require::ERROR;
-
-    no warnings; # This is lexical and turns off exactly one warning below -- "Can't locate package in @ISA".
-                 # (for some reason, "no warnings 'syntax'" does not work as advertised here.)
-                 # Note that it does _not_ turn off warnings triggered in the $module itself.
-    if ((not $module->require()) &&  ( $UNIVERSAL::require::ERROR !~ /^Can't locate/)) {
-        die $UNIVERSAL::require::ERROR;
-    }
-         # We'd prefer to use Jifty::Util->require() here, but it spews crazy warnings
-
-    return $UNIVERSAL::require::ERROR;
+    eval { Jifty::Util->require($module); };
+    my $err = $@;
+    return $err;
 }
 
 1;

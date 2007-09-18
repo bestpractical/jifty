@@ -330,7 +330,7 @@ sub require {
     
     # Construct the list of models for the application for later reference
     my %models;
-    $models{$_} = 1 for grep {/^($base)::Model::(.*)$/ and not /Collection$/} $self->plugins;
+    $models{$_} = 1 for grep {/^($base)::Model::(.*)$/ and not /Collection(?:$||\:\:)/} $self->plugins;
     $self->models(sort keys %models);
 
     # Load all those models and model-related actions, notifications, and events
@@ -350,9 +350,9 @@ sub _require_model_related_classes {
     push( @$models, $full ) unless grep { $_ eq $full } @$models;
 
     my $base = $self->{base};
-    my ($short) = $full =~ /::Model::(.*)/;
-    Jifty::Util->require( $full . "Collection" );
-    Jifty::Util->require( $base . "::Action::" . $_ . $short )
+    my($short) = $full =~ /::Model::(\w*)/;
+    Jifty::Util->require($full . "Collection");
+    Jifty::Util->require($base . "::Action::" . $_ . $short)
         for qw/Create Update Delete Search/;
 
 }

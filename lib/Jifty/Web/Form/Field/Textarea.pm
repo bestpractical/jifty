@@ -34,6 +34,7 @@ sub render_widget {
     $field .= qq!<textarea!;
     $field .= qq! name="@{[ $self->input_name ]}"!;
     $field .= qq! id="@{[ $self->element_id ]}"!;
+    $field .= qq! title="@{[ $self->title ]}"! if ($self->title);
     $field .= qq! rows="@{[$self->rows || 5 ]}"!;
     $field .= qq! cols="@{[$self->cols || 60]}"!;
     $field .= $self->_widget_class;

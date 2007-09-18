@@ -34,6 +34,7 @@ sub render_widget {
 
     $field .= qq!<input!;
     $field .= qq! type="checkbox"!;
+    $field .= qq! title="@{[ $self->title ]}"! if ($self->title);
     $field .= qq! name="@{[ $self->input_name ]}"!;
     $field .= qq! id="@{[ $self->element_id ]}"!;
     $field .= qq! value="@{[$self->value ||1]}"!;
@@ -57,6 +58,7 @@ sub render_value {
     my $self  = shift;
     my $field .= qq!<input type="checkbox"!;
     $field .= qq! name="@{[ $self->input_name ]}"!;
+    $field .= qq! title="@{[ $self->title ]}"! if ($self->title);
     $field .= qq! id="@{[ $self->element_id ]}"!;
     $field .= qq! value="@{[$self->value ||1]}"!;
     $field .= $self->_widget_class;

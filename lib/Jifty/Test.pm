@@ -281,7 +281,7 @@ sub test_config {
             },
             Web => {
                 Port => int(rand(5000) + 10000),
-                DataDir => File::Temp::tempdir('masonXXXXXXXXXX')
+                DataDir => File::Temp::tempdir('masonXXXXXXXXXX', CLEANUP => 1)
             },
             Mailer => 'Jifty::Test',
             MailerArgs => [],
@@ -521,6 +521,9 @@ sub _ending {
         # Unlink test files
         unlink @Test_Files_To_Cleanup;
     }
+
+    # Cleanup the tempdirs
+    File::Temp::cleanup();
 
     # Unlink test file
     unlink $Test->{test_config} if $Test->{test_config};

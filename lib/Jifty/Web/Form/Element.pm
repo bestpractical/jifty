@@ -160,11 +160,11 @@ C<new> parameter hash.
 
 =cut
 
-sub accessors { shift->handlers, qw(class key_binding key_binding_label id label tooltip continuation) }
+sub accessors { shift->handlers, qw(class title key_binding key_binding_label id label tooltip continuation) }
 __PACKAGE__->mk_accessors(qw(_onclick _onchange _ondblclick _onmousedown _onmouseup _onmouseover 
                              _onmousemove _onmouseout _onfocus _onblur _onkeypress _onkeydown 
                              _onkeyup _onselect
-                             class key_binding key_binding_label id label tooltip continuation));
+                             class title key_binding key_binding_label id label tooltip continuation));
 
 =head2 new PARAMHASH OVERRIDE
 
@@ -561,6 +561,10 @@ sub javascript_preempt { return 1 };
 =head2 class
 
 Sets the CSS class that the element will display as
+
+=head2 title
+
+Sets the title that the element will display, e.g. for tooltips
 
 =head2 key_binding
 

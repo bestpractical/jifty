@@ -24,6 +24,7 @@ sub render_widget {
         '<input',
         'type="reset"',
         'name="' . $self->input_name . '" ',
+        ($self->title ? 'title="'.$self->title.'" ' : ''),
         'value="' . _($self->label ). '"',
         $self->_widget_class('button', 'reset'),
         $self->javascript,
