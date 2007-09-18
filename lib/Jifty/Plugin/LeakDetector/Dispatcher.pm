@@ -6,7 +6,14 @@ use Jifty::Dispatcher -base;
 
 # http://your.app/leaks -- display full leak report
 on 'leaks' => run {
-        show "leaks/all";
+    set 'skip_zero' => 1;
+    show "leaks/all";
+};
+
+# http://your.app/leaks/all -- full leak report with non-leaked requests
+on 'leaks/all' => run {
+    set 'skip_zero' => 0;
+    show "leaks/all";
 };
 
 # http://your.app/leaks/xxx -- display leak report for request ID xxx

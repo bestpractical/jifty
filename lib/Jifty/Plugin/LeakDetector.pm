@@ -88,9 +88,19 @@ View the top-level leak report (how much each request has leaked)
 
     http://your.app/leaks
 
+View the top-level leak report, including zero-leak requests
+
+    http://your.app/leaks/all
+
 View an individual request's detailed leak report (which objects were leaked)
 
     http://your.app/leaks/3
+
+=head1 WARNING
+
+If you use this in production, be sure to block off 'leaks' from
+non-administrators. The full Data::Dumper output of the objects
+leaked is available, which may of course contain sensitive information.
 
 =cut
 

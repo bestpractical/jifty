@@ -19,8 +19,23 @@ This will output a PNG file unless there is an error building the chart.
 =cut
 
 template 'leaks/all' => sub {
+    my $skip_zero = get 'skip_zero';
+
     html {
         body {
+            h1 { "Leaked Objects" }
+            p {
+                if ($skip_zero) {
+                    a { attr { href => "/leaks/all" }
+                        "Show zero-leak requests" }
+                }
+                else {
+                    a { attr { href => "/leaks" }
+                        "Hide zero-leak requests" }
+                }
+            }
+            hr {}
+
             table {
                 row {
                     th { "ID" }
@@ -32,6 +47,8 @@ template 'leaks/all' => sub {
 
                 for (@Jifty::Plugin::LeakDetector::requests)
                 {
+                    next if $_->{leaks} == 0 && $skip_zero;
+
                     row {
                         cell { a { attr { href => "leaks/$_->{id}" }
                                    $_->{id} } }
