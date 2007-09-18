@@ -48,10 +48,10 @@ sub after_request
     $self->generator->disable();
 
     my $leaked = $self->tracker->live_objects;
-    my $leaks = keys %$leaked;
+    my @leaks = keys %$leaked;
 
     # XXX: Devel::Size seems to segfault Jifty at END time
-    my $size = total_size([ keys %$leaked ]) - $empty_array;
+    my $size = total_size([ @leaks ]) - $empty_array;
 
     push @requests, {
         id => 1 + @requests,
@@ -59,7 +59,7 @@ sub after_request
         size => $size,
         objects => Dumper($leaked),
         time => scalar gmtime,
-        leaks => $leaks,
+        leaks => \@leaks,
     };
 
     $self->generator(undef);

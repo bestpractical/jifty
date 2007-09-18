@@ -3,6 +3,7 @@ use warnings;
 
 package Jifty::Plugin::LeakDetector::View;
 use Jifty::View::Declare -base;
+use Scalar::Util 'blessed';
 
 =head1 NAME
 
@@ -47,13 +48,13 @@ template 'leaks/all' => sub {
 
                 for (@Jifty::Plugin::LeakDetector::requests)
                 {
-                    next if $_->{leaks} == 0 && $skip_zero;
+                    next if $skip_zero && @{$_->{leaks}} == 0;
 
                     row {
                         cell { a { attr { href => "leaks/$_->{id}" }
                                    $_->{id} } }
 
-                        cell { $_->{leaks} }
+                        cell { scalar @{$_->{leaks}} }
                         cell { $_->{size} }
                         cell { $_->{time} }
                         cell { $_->{url} }
@@ -73,10 +74,19 @@ template 'leaks/one' => sub {
             ul {
                 li { "URL: $leak->{url}" }
                 li { "Time: $leak->{time}" }
-                li { "Objects leaked: $leak->{leaks}" }
+                li { "Objects leaked: " . scalar(@{$leak->{leaks}}) }
                 li { "Total memory leaked: $leak->{size} bytes" }
             }
             p { a { attr { href => "/leaks" } "Table of Contents" } }
+            hr {}
+            h2 { "Object types leaked:" }
+            ul {
+                my %seen;
+                for (map { blessed $_ } @{ $leak->{leaks} }) {
+                    next if $seen{$_}++;
+                    li { $_ }
+                }
+            }
             hr {}
             pre { $leak->{objects} }
         }
