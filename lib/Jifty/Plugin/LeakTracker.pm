@@ -15,6 +15,11 @@ our @requests;
 
 my $empty_array = total_size([]);
 
+=head2 init
+
+init installs the triggers needed around each HTTP request
+=cut
+
 sub init {
     my $self = shift;
     return if $self->_pre_init;
@@ -28,6 +33,13 @@ sub init {
     );
 }
 
+=head2 before_request
+
+This trigger sets up Devel::Events to instrument bless and free so it can keep
+track of all the objects created and destroyed in this request
+
+=cut
+
 sub before_request
 {
     my $self = shift;
@@ -38,6 +50,14 @@ sub before_request
 
     $self->generator->enable();
 }
+
+=head2 after_request
+
+This extracts all the data gathered by Devel::Events and puts it into the
+global C<@Jifty::Plugin::LeakTracker::requests> so the LeakTracker dispatcher
+and views can query it to make nice reports
+
+=cut
 
 sub after_request
 {
