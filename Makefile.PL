@@ -108,7 +108,6 @@ features(
         recommends('Test::MockModule' => '0.05'),
         recommends('Test::MockObject' => '1.07'),
         recommends('Module::Refresh' => '0.09'),
-        recommends('Devel::Events' => '0.02'),
     ],
     'Development of the jifty framework' => [
         -default => 0,
@@ -155,6 +154,12 @@ features(
         recommends('GD::Graph'),
         recommends('XML::Simple'),
         recommends('Image::Info'), # for testing
+    ],
+    'Memory Leak Plugin' => [
+        -default => 0,
+        recommends('Devel::Events' => '0.02'),
+        recommends('Devel::Events::Handler::ObjectTracker'),
+        recommends('Devel::Size'),
     ],
 );
 
