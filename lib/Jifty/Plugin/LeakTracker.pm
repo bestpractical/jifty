@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-package Jifty::Plugin::LeakDetector;
+package Jifty::Plugin::LeakTracker;
 use base qw/Jifty::Plugin Class::Data::Inheritable/;
 use Data::Dumper;
 use Devel::Events::Handler::ObjectTracker;
@@ -68,7 +68,7 @@ sub after_request
 
 =head1 NAME
 
-Jifty::Plugin::LeakDetector
+Jifty::Plugin::LeakTracker
 
 =head1 DESCRIPTION
 
@@ -80,7 +80,7 @@ Add the following to your site_config.yml
 
  framework:
    Plugins:
-     - LeakDetector: {}
+     - LeakTracker: {}
 
 This makes the following URLs available:
 
@@ -101,6 +101,16 @@ View an individual request's detailed leak report (which objects were leaked)
 If you use this in production, be sure to block off 'leaks' from
 non-administrators. The full Data::Dumper output of the objects
 leaked is available, which may of course contain sensitive information.
+
+=head1 SEE ALSO
+
+L<Jifty::Plugin::LeakTracker::View>, L<Jifty::Plugin::LeakTracker::Dispatcher>
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2007 Best Practical Solutions
+
+This is free software and may be modified and distributed under the same terms as Perl itself.
 
 =cut
 
