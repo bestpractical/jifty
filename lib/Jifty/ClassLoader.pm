@@ -2,6 +2,24 @@ use warnings;
 use strict;
 
 package Jifty::ClassLoader;
+use Jifty;
+use Jifty::Module::Pluggable;
+
+our %DISCOVERED_CLASSES;
+
+sub _discover_classes {
+    my $class =shift;
+    my $app_class = shift;
+Jifty::Module::Pluggable->import(
+        search_path => [ 'Jifty',$app_class],
+        require => 0,
+        except  => qr/\.#/,
+        inner   => 0
+);
+    
+ %DISCOVERED_CLASSES = map { $_ => 1 } __PACKAGE__->plugins();
+}
+
 
 =head1 NAME
 
@@ -320,17 +338,16 @@ sub require {
 
     # Use Module::Pluggable to help locate our models, actions, notifications,
     # and events
-    Jifty::Module::Pluggable->import(
-        # $base goes last so we pull in the view class AFTER the model classes
-        search_path => [map { $base . "::" . $_ } ('Model', 'Action', 'Notification', 'Event')],
-        require => 1,
-        except  => qr/\.#/,
-        inner   => 0
-    );
+    
+   foreach my $found (keys %DISCOVERED_CLASSES) {
+        next unless ($found =~ /${base}::(?:Model|Action|Notification|Event)/);
+        Jifty::Util->require($found);
+   }
+
     
     # Construct the list of models for the application for later reference
     my %models;
-    $models{$_} = 1 for grep {/^($base)::Model::(.*)$/ and not /Collection(?:$||\:\:)/} $self->plugins;
+    $models{$_} = 1 for grep {/^($base)::Model::(.*)$/ and not /Collection(?:$||\:\:)/} keys %DISCOVERED_CLASSES;
     $self->models(sort keys %models);
 
     # Load all those models and model-related actions, notifications, and events

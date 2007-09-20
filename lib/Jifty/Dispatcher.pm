@@ -422,6 +422,7 @@ sub rules {
     my $stage = shift;
     my $pkg   = ref($self) || $self;
     no strict 'refs';
+    no warnings 'once';
     @{ $pkg . '::RULES_' . $stage };
 }
 

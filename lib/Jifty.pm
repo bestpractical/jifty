@@ -167,6 +167,9 @@ sub new {
     # Logger turn on
     Jifty->logger( Jifty::Logger->new( $args{'logger_component'} ) );
 
+
+    Jifty::ClassLoader->_discover_classes(Jifty->app_class());
+
     # Set up plugins
     my @plugins;
     my @plugins_to_load = @{Jifty->config->framework('Plugins')};
