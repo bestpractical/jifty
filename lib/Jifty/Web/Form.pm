@@ -5,7 +5,7 @@ package Jifty::Web::Form;
 
 use base qw/Jifty::Object Class::Accessor::Fast/;
 
-__PACKAGE__->mk_accessors(qw(actions printed_actions name call is_open disable_autocomplete target submit_to));
+__PACKAGE__->mk_accessors(qw(actions printed_actions name call is_open disable_autocomplete target submit_to onsubmit));
 
 =head1 NAME
 
@@ -200,6 +200,7 @@ sub start {
     $form_start .= qq! name="@{[ $self->name ]}"! if defined $self->name;
     $form_start .= qq! target="@{[ $self->target ]}"! if defined $self->target;
     $form_start .= qq! autocomplete="off"!  if defined $self->disable_autocomplete;
+    $form_start .= qq! onsubmit="! .Jifty->web->escape( $self->onsubmit ). qq!"!  if defined $self->onsubmit;
     $form_start .= qq! enctype="multipart/form-data" >\n!;
     Jifty->web->out($form_start);
 
