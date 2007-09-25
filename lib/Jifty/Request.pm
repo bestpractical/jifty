@@ -146,48 +146,57 @@ Returns itself.
 sub from_data_structure {
     my $self = shift;
     my $data = shift;
+    $self->path( Jifty::Util->canonicalize_path( $data->{path} || "/" ) );
+    $self->just_validating( $data->{validating} ) if $data->{validating};
 
-    $self->path(Jifty::Util->canonicalize_path($data->{path} || "/"));
-    $self->just_validating($data->{validating}) if $data->{validating};
-
-    if (ref $data->{continuation} eq "HASH") {
-        $self->continuation_id($data->{continuation}{id});
-        $self->continuation_type($data->{continuation}{type} || "parent");
-        $self->continuation_path($data->{continuation}{create});
+    if ( ref $data->{continuation} eq "HASH" ) {
+        $self->continuation_id( $data->{continuation}{id} );
+        $self->continuation_type( $data->{continuation}{type} || "parent" );
+        $self->continuation_path( $data->{continuation}{create} );
     }
 
-    my %actions = %{$data->{actions} || {}};
-    for my $a (values %actions) {
+    my %actions = %{ $data->{actions} || {} };
+    for my $moniker ( keys %actions ) {
+        my $a = $actions{$moniker};
         next unless ref $a eq "HASH";
         my %arguments;
-        for my $arg (keys %{$a->{fields} || {}}) {
-            if (ref $a->{fields}{$arg}) {
-                # Double-fallback exists for historical reasons only;
-                # Jifty applications after July 10th, 2006 should
-                # never generate them.
-                for my $type (qw/doublefallback fallback value/) {
-                    $arguments{$arg} = $a->{fields}{$arg}{$type}
-                      if exists $a->{fields}{$arg}{$type};
+        if ( exists $a->{fields} ) {
+            for my $arg ( keys %{ $a->{fields} || {} } ) {
+                if ( ref $a->{fields}{$arg} ) {
+
+                    # Double-fallback exists for historical reasons only;
+                    # Jifty applications after July 10th, 2006 should
+                    # never generate them.
+                    for my $type (qw/doublefallback fallback value/) {
+                        $arguments{$arg} = $a->{fields}{$arg}{$type}
+                            if exists $a->{fields}{$arg}{$type};
+                    }
+                } else {
+                    $arguments{$arg} = $a->{fields}{$arg};
                 }
-            } else {
-                $arguments{$arg} = $a->{fields}{$arg};
             }
+        } elsif ( exists $a->{params} ) {
+            %arguments = %{$a->{params}};
         }
-        $self->add_action(moniker   => $a->{moniker},
-                          class     => $a->{class},
-                          order     => $a->{order},
-                          active    => exists $a->{active} ? $a->{active} : 1,
-                          arguments => \%arguments,
-                         );
+
+        $self->add_action(
+            moniker => $a->{moniker} || $moniker,
+            class   => $a->{class},
+            order   => $a->{order},
+            active => exists $a->{active} ? $a->{active} : 1,
+            arguments => \%arguments,
+        );
     }
 
-    my %variables = ref $data->{variables} eq "HASH" ? %{$data->{variables}} : ();
-    for my $v (keys %variables) {
-        $self->add_state_variable(key => $v, value => $variables{$v});
+    my %variables
+        = ref $data->{variables} eq "HASH" ? %{ $data->{variables} } : ();
+    for my $v ( keys %variables ) {
+        $self->add_state_variable( key => $v, value => $variables{$v} );
     }
 
-    my %fragments = ref $data->{fragments} eq "HASH" ? %{$data->{fragments}} : ();
-    for my $f (values %fragments) {
+    my %fragments
+        = ref $data->{fragments} eq "HASH" ? %{ $data->{fragments} } : ();
+    for my $f ( values %fragments ) {
         next unless ref $f eq "HASH";
         my $current = $self->add_fragment(
             name      => $f->{name},
@@ -195,12 +204,15 @@ sub from_data_structure {
             arguments => $f->{args},
             wrapper   => $f->{wrapper} || 0,
         );
-        while (ref $f->{parent} eq "HASH" and $f = $f->{parent}) {
-            $current = $current->parent(Jifty::Request::Fragment->new({
-                name => $f->{name},
-                path => $f->{path},
-                arguments => $f->{args},
-            }));
+        while ( ref $f->{parent} eq "HASH" and $f = $f->{parent} ) {
+            $current = $current->parent(
+                Jifty::Request::Fragment->new(
+                    {   name      => $f->{name},
+                        path      => $f->{path},
+                        arguments => $f->{args},
+                    }
+                )
+            );
         }
     }
 
