@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-package Jifty::Plugin::LeakTracker;
+package Jifty::Plugin::LeakDetector;
 use base qw/Jifty::Plugin Class::Data::Inheritable/;
 use Data::Dumper;
 use Devel::Events::Handler::ObjectTracker;
@@ -14,11 +14,6 @@ __PACKAGE__->mk_accessors(qw(tracker generator));
 our @requests;
 
 my $empty_array = total_size([]);
-
-=head2 init
-
-init installs the triggers needed around each HTTP request
-=cut
 
 sub init {
     my $self = shift;
@@ -33,13 +28,6 @@ sub init {
     );
 }
 
-=head2 before_request
-
-This trigger sets up Devel::Events to instrument bless and free so it can keep
-track of all the objects created and destroyed in this request
-
-=cut
-
 sub before_request
 {
     my $self = shift;
@@ -50,14 +38,6 @@ sub before_request
 
     $self->generator->enable();
 }
-
-=head2 after_request
-
-This extracts all the data gathered by Devel::Events and puts it into the
-global C<@Jifty::Plugin::LeakTracker::requests> so the LeakTracker dispatcher
-and views can query it to make nice reports
-
-=cut
 
 sub after_request
 {
@@ -88,7 +68,7 @@ sub after_request
 
 =head1 NAME
 
-Jifty::Plugin::LeakTracker
+Jifty::Plugin::LeakDetector
 
 =head1 DESCRIPTION
 
@@ -100,7 +80,7 @@ Add the following to your site_config.yml
 
  framework:
    Plugins:
-     - LeakTracker: {}
+     - LeakDetector: {}
 
 This makes the following URLs available:
 
@@ -121,16 +101,6 @@ View an individual request's detailed leak report (which objects were leaked)
 If you use this in production, be sure to block off 'leaks' from
 non-administrators. The full Data::Dumper output of the objects
 leaked is available, which may of course contain sensitive information.
-
-=head1 SEE ALSO
-
-L<Jifty::Plugin::LeakTracker::View>, L<Jifty::Plugin::LeakTracker::Dispatcher>
-
-=head1 COPYRIGHT AND LICENSE
-
-Copyright 2007 Best Practical Solutions
-
-This is free software and may be modified and distributed under the same terms as Perl itself.
 
 =cut
 
