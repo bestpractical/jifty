@@ -1,13 +1,13 @@
 use strict;
 use warnings;
 
-package Jifty::Plugin::LeakDetector::View;
+package Jifty::Plugin::LeakTracker::View;
 use Jifty::View::Declare -base;
 use Scalar::Util 'blessed';
 
 =head1 NAME
 
-Jifty::Plugin::LeakDetector::View - Views for memory leak detection
+Jifty::Plugin::LeakTracker::View - Views for memory leak detection
 
 =head1 TEMPLATES
 
@@ -46,7 +46,7 @@ template 'leaks/all' => sub {
                     th { "URL" }
                 };
 
-                for (@Jifty::Plugin::LeakDetector::requests)
+                for (@Jifty::Plugin::LeakTracker::requests)
                 {
                     next if $skip_zero && @{$_->{leaks}} == 0;
 
@@ -95,7 +95,7 @@ template 'leaks/one' => sub {
 
 =head1 SEE ALSO
 
-L<Jifty::Plugin::LeakDetector::Dispatcher>
+L<Jifty::Plugin::LeakTracker>, L<Jifty::Plugin::LeakTracker::Dispatcher>
 
 =head1 COPYRIGHT AND LICENSE
 
