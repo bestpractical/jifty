@@ -13,7 +13,7 @@ use Jifty::Test::WWW::Declare tests => 2;
 
 session user => run {
     flow "region with internal redirects" => check {
-        get "$URL/region-with-internal-redirect";
+        get "region-with-internal-redirect";
         content should match qr/redirected ok/;
         content should match qr/other region/;
         content should match qr/still going/;
