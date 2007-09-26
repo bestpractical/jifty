@@ -70,6 +70,7 @@ requires('Test::Log4perl');
 requires('Test::LongString');
 requires('Test::More' => 0.62 ),
 requires('Test::Pod::Coverage'),
+requires('Test::WWW::Declare'),
 requires('Test::WWW::Mechanize' => 1.04 ),
 requires('Test::WWW::Selenium'),
 requires('WWW::Mechanize' => 1.30 ),
