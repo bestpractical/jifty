@@ -146,14 +146,19 @@ Returns itself.
 sub from_data_structure {
     my $self = shift;
     my $data = shift;
-    my $cgi = shift;
+    my $cgi;
+    $cgi = shift if (@_);
 
     my $path = $data->{'path'};
     
-    unless ($path) {
+    if ($cgi && ! $path) {
         $path = URI::Escape::uri_unescape($cgi->path_info);
         $path =~ s/\?.*//;
     };
+
+    if (!$path) {
+        $path = '/';
+    }
 
     $self->path( Jifty::Util->canonicalize_path( $path));
     $self->just_validating( $data->{validating} ) if $data->{validating};
