@@ -243,10 +243,10 @@ sub _require {
     my $error = $@;
     if (my $message = $error) { 
         $message =~ s/ at .*?\n$//;
-        if ($args{'quiet'} and $message =~ /^Can't locate/) {
+        if ($args{'quiet'} and $message =~ /^Can't locate $pkg/) {
             return 0;
         }
-        elsif ( $error !~ /^Can't locate/) {
+        elsif ( $error !~ /^Can't locate $pkg/) {
             die $error;
         } else {
             Jifty->log->error(sprintf("$message at %s line %d\n", (caller(1))[1,2]));
