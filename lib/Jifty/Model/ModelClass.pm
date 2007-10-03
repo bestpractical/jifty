@@ -47,7 +47,7 @@ use Jifty::Record schema {
         refers_to Jifty::Model::ModelClassColumnCollection by 'model_class';
 };
 
-
+use Hash::Merge ();
 
 =head2 table
 
@@ -139,6 +139,22 @@ sub add_column {
     my $self = shift;
     my $col = shift;
     my $column =$self->qualified_class->add_column($col->name);
+
+    if ($col->type_handler) {
+        my $name = $col->name;
+        my $typehandler = $col->type_handler;
+
+        # TODO XXX FIXME There has got to be a better way. Someone who knows
+        # the guts of Jifty::DBI::Schema and Object::Declare can probably clean
+        # this up.
+
+        package Jifty::DBI::Schema;
+        my $type_handler_column 
+            = &declare(sub { column $name => is $typehandler })->{$name};
+        $column = Hash::Merge::merge($column, $type_handler_column);
+        $column = bless $column, 'Jifty::DBI::Column';
+    }
+
     for (qw(readable writable hints indexed max_length render_as mandatory sort_order virtual)) {
         $column->$_( $col->$_() );
     }
@@ -151,8 +167,12 @@ sub add_column {
     $column->default( $col->default_value );
     $column->distinct( $col->distinct_value );
     $column->type( $col->storage_type );
-    $self->qualified_class->_init_methods_for_column($column);
 
+    if (my $handler = $column->attributes->{'_init_handler'}) {
+        $handler->($column, $self->qualified_class);
+    }
+
+    $self->qualified_class->_init_methods_for_column($column);
 }
 
 

@@ -152,6 +152,13 @@ use Jifty::Record schema {
         label is 'Virtual?',
         is mandatory,
         default is 0;
+
+    # Allows you to specify a special type handler, normally given in
+    # traditional schema declarations like "is GeoLocation"
+    column type_handler =>
+        type is 'text',
+        label is 'Type handler',
+        ;
 };
 
 =head2 before_create
