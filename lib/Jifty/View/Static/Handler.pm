@@ -250,10 +250,10 @@ sub send_file {
         $apache->send_http_header();
 
         if ($compression eq 'gzip') {
-        undef $/;
-        binmode STDOUT;
-        # XXX TODO: Cache this
-        print STDOUT Compress::Zlib::memGzip(<$fh>);
+            local $/;
+            binmode STDOUT;
+            # XXX TODO: Cache this
+            print STDOUT Compress::Zlib::memGzip(<$fh>);
         } else{
             $apache->send_fd($fh);
         }

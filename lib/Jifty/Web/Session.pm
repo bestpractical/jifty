@@ -285,8 +285,8 @@ sub continuations {
     return () unless $self->loaded;
 
     my $conts = Jifty::Model::SessionCollection->new;
-    $conts->limit( column => "key_type",   value => "continuation", case_sensitive => '1' );
-    $conts->limit( column => "session_id", value => $self->id, case_sensitive=> '1' );
+    $conts->limit( column => "key_type",   value => "continuation" );
+    $conts->limit( column => "session_id", value => $self->id );
 
     my %continuations;
     $continuations{ $_->key } = $_->value while $_ = $conts->next;

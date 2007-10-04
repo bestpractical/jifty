@@ -100,13 +100,11 @@ sub fill_in_action {
     # For each field name given, set the field's value
     for my $arg (keys %args) {
         my $input = $action_form->find_input("J:A:F-$arg-$moniker");
-        unless ($input) {
-            return;
-        } 
+        return unless $input;
         $input->value($args{$arg});
     } 
 
-    # Return the form in case they want to do soemthing with it
+    # Return the form in case they want to do something with it
     return $action_form;
 }
 
@@ -276,7 +274,7 @@ wrap 'XML::Parser::lwp_ext_ent_cleanup', pre => sub {
 
 Finds the error span on the current page for the name FIELD in the
 action MONIKER, and returns the text (tags stripped) from it.  (If the
-field can't be found.
+field can't be found, return undef).
 
 =cut
 

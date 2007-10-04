@@ -1,0 +1,55 @@
+--- 
+framework: 
+  AdminMode: 1
+  ApplicationClass: TestApp::Plugin::CompressedCSSandJS
+  ApplicationName: TestApp::Plugin::CompressedCSSandJS
+  ApplicationUUID: DC3B58E4-4F3C-11DC-9ECB-E5DB6F105773
+  ConfigFileVersion: 2
+  Database: 
+    CheckSchema: 1
+    Database: testapp_plugin_singlepage
+    Driver: SQLite
+    Host: localhost
+    Password: ''
+    RecordBaseClass: Jifty::DBI::Record::Cachable
+    RecordUUIDs: active
+    User: ''
+    Version: 0.0.1
+  DevelMode: 1
+  L10N: 
+    PoDir: share/po
+  LogLevel: DEBUG
+  Mailer: Sendmail
+  MailerArgs: []
+
+  Plugins: 
+    - LetMe: {}
+    - SkeletonApp: {}
+    - REST: {}
+    - Halo: {}
+    - ErrorTemplates: {}
+    - OnlineDocs: {}
+    - CompressedCSSandJS: {}
+    - AdminUI: {}
+    - User: {}
+    - CompressedCSSandJS: {}
+
+  PubSub: 
+    Backend: Memcached
+    Enable: ~
+  SkipAccessControl: 0
+  TemplateClass: TestApp::Plugin::CompressedCSSandJS::View
+  Web: 
+    BaseURL: http://localhost
+    DataDir: var/mason
+    Globals: []
+
+    MasonConfig: 
+      autoflush: 0
+      default_escape_flags: h
+      error_format: text
+      error_mode: fatal
+    Port: 8888
+    ServeStaticFiles: 1
+    StaticRoot: share/web/static
+    TemplateRoot: share/web/templates

@@ -44,9 +44,9 @@ not to B<set> it; use C<set_page_info> to set paging information.
 
 =head2 results_are_readable
 
-If your results from the query is guaranteed to be readable by
+If your results from the query are guaranteed to be readable by
 current_user, you can create the collection with
-C<results_are_readable => 1>.  This is cause check_read_rights to
+C<results_are_readable => 1>.  This causes check_read_rights to
 bypass normal current_user_can checks.
 
 =cut

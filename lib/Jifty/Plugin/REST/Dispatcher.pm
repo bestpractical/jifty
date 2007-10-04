@@ -21,6 +21,7 @@ before qr{^ (/=/ .*) \. (js|json|yml|yaml|perl|pl|xml) $}x => run {
 
 before POST qr{^ (/=/ .*) ! (DELETE|PUT|GET|POST|OPTIONS|HEAD|TRACE|CONNECT) $}x => run {
     $ENV{REQUEST_METHOD} = $2;
+    $ENV{REST_REWROTE_METHOD} = 1;
     dispatch $1;
 };
 
@@ -166,6 +167,34 @@ sub _record_to_data {
                  } $record->readable_attributes;
     return \%data;
 }
+
+=head2 recurse_object_to_data REF
+
+Takes a reference, and calls C<object_to_data> on it if that is
+meaningful.  If it is an arrayref, or recurses on each element.  If it
+is a hashref, recurses on each value.  Returns the new datastructure.
+
+=cut
+
+sub recurse_object_to_data {
+    my $o = shift;
+    return $o unless ref $o;
+
+    my $updated = object_to_data($o);
+    if ($o ne $updated) {
+        return $updated;
+    } elsif (ref $o eq "ARRAY") {
+        my @a = map {recurse_object_to_data($_)} @{$o};
+        return \@a;
+    } elsif (ref $o eq "HASH") {
+        my %h;
+        $h{$_} = recurse_object_to_data($o->{$_}) for keys %{$o};
+        return \%h;
+    } else {
+        return $o;
+    }
+}
+
 
 =head2 list PREFIX items
 
@@ -719,11 +748,7 @@ sub run_action {
     for (keys %{$out->{field_warnings}}) {
         delete $out->{field_warnings}->{$_} unless $out->{field_warnings}->{$_};
     }
-    $out->{content} = $result->content;
-
-    for my $key ( keys %{ $out->{content} } ) {
-        $out->{content}{$key} = object_to_data( $out->{content}{$key} );
-    }
+    $out->{content} = recurse_object_to_data($result->content);
     
     outs(undef, $out);
 

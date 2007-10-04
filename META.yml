@@ -27,6 +27,10 @@ recommends:
   DBD::SQLite: 0
   Devel::Cover: 0
   Devel::EvalContext: 0
+  Devel::Events: 0.02
+  Devel::Events::Generator::Objects: 0
+  Devel::Events::Handler::ObjectTracker: 0
+  Devel::Size: 0
   GD: 0
   GD::Graph: 0
   Image::Info: 0

@@ -323,13 +323,16 @@ sub require {
     Jifty::Module::Pluggable->import(
         # $base goes last so we pull in the view class AFTER the model classes
         search_path => [map { $base . "::" . $_ } ('Model', 'Action', 'Notification', 'Event')],
-        require => 1,
+        require => 0,
         except  => qr/\.#/,
         inner   => 0
     );
     
     # Construct the list of models for the application for later reference
     my %models;
+    for ($self->plugins) {
+        Jifty::Util->require($_);  
+    }
     $models{$_} = 1 for grep {/^($base)::Model::(.*)$/ and not /Collection(?:$||\:\:)/} $self->plugins;
     $self->models(sort keys %models);
 

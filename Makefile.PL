@@ -9,6 +9,7 @@ requires('Class::Accessor'); # Class::Accessor::Fast
 requires('Class::Container');
 requires('Class::Data::Inheritable');
 requires('Class::Trigger' => '0.12');
+requires('Clone' => '0.27');
 requires('CGI' => '3.19');
 requires('CGI::Cookie::Splitter');
 requires('Crypt::CBC');
@@ -46,7 +47,7 @@ requires('Hash::Merge');
 requires('Hook::LexWrap');
 requires('IPC::PubSub' => '0.23' );
 requires('IPC::Run3');
-requires('Jifty::DBI' => '0.42' );            # Jifty::DBI::Collection Jifty::DBI::Handle Jifty::DBI::Record::Cachable Jifty::DBI::SchemaGenerator
+requires('Jifty::DBI' => '0.44' );            # Jifty::DBI::Collection Jifty::DBI::Handle Jifty::DBI::Record::Cachable Jifty::DBI::SchemaGenerator
 requires('Locale::Maketext::Extract' => '0.20');
 requires('Locale::Maketext::Lexicon' => '0.60');
 requires('Log::Log4perl' => '1.04');
@@ -74,6 +75,7 @@ requires('Test::Log4perl');
 requires('Test::LongString');
 requires('Test::More' => 0.62 ),
 requires('Test::Pod::Coverage'),
+requires('Test::WWW::Declare'),
 requires('Test::WWW::Mechanize' => 1.04 ),
 requires('Test::WWW::Selenium'),
 requires('WWW::Mechanize' => 1.30 ),
@@ -111,7 +113,7 @@ features(
         recommends('Test::HTML::Lint'),
         recommends('Test::MockModule' => '0.05'),
         recommends('Test::MockObject' => '1.07'),
-        recommends('Module::Refresh' => '0.09')
+        recommends('Module::Refresh' => '0.09'),
     ],
     'Development of the jifty framework' => [
         -default => 0,
@@ -158,6 +160,13 @@ features(
         recommends('GD::Graph'),
         recommends('XML::Simple'),
         recommends('Image::Info'), # for testing
+    ],
+    'Memory Leak Plugin' => [
+        -default => 0,
+        recommends('Devel::Events' => '0.02'),
+        recommends('Devel::Events::Handler::ObjectTracker'),
+        recommends('Devel::Events::Generator::Objects'),
+        recommends('Devel::Size'),
     ],
 );
 

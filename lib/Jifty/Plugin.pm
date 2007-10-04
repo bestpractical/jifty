@@ -55,7 +55,6 @@ sub new {
     my $self = $class->SUPER::new( { @_ });
 
     # Get a classloader set up
-    Jifty::ClassLoader->new(base => $class)->require;
     Jifty::Util->require($class->dispatcher);
 
     # XXX TODO: Add .po path

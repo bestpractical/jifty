@@ -18,15 +18,15 @@ package Jifty::Model::Session;
 use Jifty::DBI::Schema;
 use Jifty::Record schema {
 
-column session_id => type is 'varchar(32)';
-column data_key => type is 'text';
+column session_id => type is 'varchar(32)', is case_sensitive, is indexed;
+column data_key => type is 'text', is case_sensitive;
 column value => type is 'blob',
   filters are 'Jifty::DBI::Filter::Storable';
 column created => type is 'timestamp',
   filters are 'Jifty::DBI::Filter::DateTime';
 column updated => type is 'timestamp',
   filters are 'Jifty::DBI::Filter::DateTime';
-column key_type => type is 'varchar(32)';
+column key_type => type is 'varchar(32)', is case_sensitive;
 };
 
 use base qw( Jifty::Record );

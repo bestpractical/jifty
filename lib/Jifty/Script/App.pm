@@ -52,7 +52,7 @@ sub run {
 
     # Turn my-app-name into My::App::Name.
 
-    $self->mod_name (join ("::", map { ucfirst } split (/\-/, $self->prefix)));
+    $self->mod_name (join ("::", split (/\-/, $self->prefix)));
     my $dist = $self->mod_name;
     $self->dist_name($self->prefix);
 

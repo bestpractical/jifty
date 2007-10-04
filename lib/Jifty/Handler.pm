@@ -27,6 +27,7 @@ handlers.
 use base qw/Class::Accessor::Fast/;
 use Module::Refresh ();
 use Jifty::View::Declare::Handler ();
+use Class::Trigger;
 
 BEGIN {
     # Creating a new CGI object breaks FastCGI in all sorts of painful
@@ -191,35 +192,44 @@ sub handle_request {
         @_
     );
 
-    # Build a new stash for the life of this request
-    $self->stash( {} );
-    local $Jifty::WEB = Jifty::Web->new();
+    $self->call_trigger('before_request', $args{cgi});
 
-    if ( Jifty->config->framework('DevelMode') ) {
-        Module::Refresh->refresh;
-        Jifty::I18N->refresh;
+    # this is scoped deeper because we want to make sure everything is cleaned
+    # up for the LeakDetector plugin. I tried putting the triggers in the
+    # method (Jifty::Server::handle_request) that calls this, but Jifty::Server
+    # isn't being loaded in time
+    {
+        # Build a new stash for the life of this request
+        $self->stash( {} );
+        local $Jifty::WEB = Jifty::Web->new();
+
+        if ( Jifty->config->framework('DevelMode') ) {
+            Module::Refresh->refresh;
+            Jifty::I18N->refresh;
+        }
+
+        Jifty::I18N->get_language_handle;
+
+        $self->cgi( $args{cgi} );
+        $self->apache( HTML::Mason::FakeApache->new( cgi => $self->cgi ) );
+
+        Jifty->web->request( Jifty::Request->new()->fill( $self->cgi ) );
+        Jifty->web->response( Jifty::Response->new );
+        Jifty->api->reset;
+        for ( Jifty->plugins ) {
+            $_->new_request;
+        }
+        Jifty->log->debug( "Received request for " . Jifty->web->request->path );
+        Jifty->web->setup_session;
+
+        # Return from the continuation if need be
+        Jifty->web->request->return_from_continuation;
+        Jifty->web->session->set_cookie;
+        $self->dispatcher->handle_request();
+        $self->cleanup_request();
     }
 
-    Jifty::I18N->get_language_handle;
-
-    $self->cgi( $args{cgi} );
-    $self->apache( HTML::Mason::FakeApache->new( cgi => $self->cgi ) );
-
-    Jifty->web->request( Jifty::Request->new()->fill( $self->cgi ) );
-    Jifty->web->response( Jifty::Response->new );
-    Jifty->api->reset;
-    for ( Jifty->plugins ) {
-        $_->new_request;
-    }
-    Jifty->log->debug( "Received request for " . Jifty->web->request->path );
-    Jifty->web->setup_session;
-
-    # Return from the continuation if need be
-    Jifty->web->request->return_from_continuation;
-    Jifty->web->session->set_cookie;
-    $self->dispatcher->handle_request();
-    $self->cleanup_request();
-
+    $self->call_trigger('after_request', $args{cgi});
 }
 
 =head2 cleanup_request
