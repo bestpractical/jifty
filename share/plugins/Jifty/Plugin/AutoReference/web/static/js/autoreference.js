@@ -34,5 +34,32 @@ Object.extend(Object.extend(Jifty.Plugin.AutoReference.prototype, Jifty.Autocomp
     afterUpdate: function(field, selection) {
         
         Form.Element.validate(this.hiddenField);
+    },
+
+    getUpdatedChoices: function() {
+        var request = { path: this.url, actions: {} };
+
+        var a = $H();
+        a['moniker'] = 'autocomplete';
+        a['class']   = 'Jifty::Action::Autocomplete';
+        a['fields']  = $H();
+        a['fields']['moniker']  = this.action.moniker;
+        a['fields']['argument'] = Form.Element.getField(this.field);
+        request['actions']['autocomplete'] = a;
+        request['actions'][this.action.moniker] = this.action.data_structure();
+        request['actions'][this.action.moniker]['active']  = 0;
+
+        // Fix up the field to use the real field instead of the hidden one
+        request['actions'][this.action.moniker]['fields'][a['fields']['argument']]['value'] = this.field.value;
+
+        var options = { postBody: JSON.stringify(request),
+            onComplete: this.onComplete.bind(this),
+            requestHeaders: ['Content-Type', 'text/x-json']
+        };
+
+        new Ajax.Request(this.url,
+                options
+                );
     }
+
 });
