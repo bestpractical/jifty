@@ -37,10 +37,6 @@ sub init {
     Jifty->web->add_javascript(qw/ autoreference.js /);
 }
 
-sub static_root {
-    return Jifty::Util->app_root.'/share/plugins/Jifty/Plugin/AutoReference/web/static';
-}
-
 sub _auto_reference_autocompleter {
     my ($column, $from) = @_;
 
