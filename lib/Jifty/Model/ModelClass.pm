@@ -151,8 +151,7 @@ sub add_column {
         package Jifty::DBI::Schema;
         my $type_handler_column 
             = &declare(sub { column $name => is $typehandler })->{$name};
-        $column = Hash::Merge::merge($column, $type_handler_column);
-        $column = bless $column, 'Jifty::DBI::Column';
+        %$column = %{ Hash::Merge::merge($column, $type_handler_column) };
     }
 
     for (qw(readable writable hints indexed max_length render_as mandatory sort_order virtual)) {
