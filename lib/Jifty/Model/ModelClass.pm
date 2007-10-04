@@ -156,17 +156,17 @@ sub add_column {
     }
 
     for (qw(readable writable hints indexed max_length render_as mandatory sort_order virtual)) {
-        $column->$_( $col->$_() );
+        $column->$_( $col->$_() ) if $col->$_();
     }
 
-    $column->label( $col->label_text );
+    $column->label( $col->label_text ) if $col->label_text;
 
-    $column->refers_to( $col->refers_to_class );
-    $column->by( $col->refers_to_by );
+    $column->refers_to( $col->refers_to_class ) if $col->refers_to_class;
+    $column->by( $col->refers_to_by ) if $col->refers_to_by;
 
     $column->default( $col->default_value );
-    $column->distinct( $col->distinct_value );
-    $column->type( $col->storage_type );
+    $column->distinct( $col->distinct_value ) if $col->distinct_value;
+    $column->type( $col->storage_type ) if $col->storage_type;
 
     if (my $handler = $column->attributes->{'_init_handler'}) {
         $handler->($column, $self->qualified_class);
