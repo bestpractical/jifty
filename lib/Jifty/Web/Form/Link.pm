@@ -86,44 +86,6 @@ Gets or sets the URL that the link links to.
 
 =cut
 
-=head2 as_string
-
-Returns the string of the link, including any necessary javascript.
-
-=cut
-
-sub as_string {
-    my $self = shift;
-    my $label = $self->label;
-    $label = Jifty->web->escape( $label )
-        if ( $self->escape_label );
-
-    my $tooltip = $self->tooltip;
-    $tooltip = Jifty->web->escape( $tooltip )
-        if ( defined $tooltip and $self->escape_label );
-
-    my $output = '';
-
-    $output .= (qq(<a));
-    $output .= (qq( id="@{[$self->id]}"))         if $self->id;
-    $output .= (qq( class="@{[$self->class]}"))   if $self->class;
-    $output .= (qq( title="@{[$tooltip]}"))       if defined $tooltip;
-    $output .= (qq( target="@{[$self->target]}")) if $self->target;
-    $output .= (qq( accesskey="@{[$self->key_binding]}")) if $self->key_binding;
-    $output .= (qq( href="@{[Jifty->web->escape($self->url)]}"));
-    $output .= ( $self->javascript() );
-    $output .= (qq(>$label</a>));
-
-    $output .= (
-        '<script type="text/javascript"><!--' .
-        "\n" .
-        Jifty->web->escape($self->key_binding_javascript).
-        "\n" .
-        "--></script>") if $self->key_binding;
-
-    return $output;
-}
-
 =head2 render
 
 Render the string of the link, including any necessary javascript.
@@ -133,7 +95,25 @@ Render the string of the link, including any necessary javascript.
 sub render {
     my $self = shift;
 
-    Jifty->web->out($self->as_string);
+    my $label = $self->label;
+    $label = Jifty->web->escape( $label )
+        if ( $self->escape_label );
+
+    my $tooltip = $self->tooltip;
+    $tooltip = Jifty->web->escape( $tooltip )
+        if ( defined $tooltip and $self->escape_label );
+
+    Jifty->web->out(qq(<a));
+    Jifty->web->out(qq( id="@{[$self->id]}"))         if $self->id;
+    Jifty->web->out(qq( class="@{[$self->class]}"))   if $self->class;
+    Jifty->web->out(qq( title="@{[$tooltip]}"))       if defined $tooltip;
+    Jifty->web->out(qq( target="@{[$self->target]}")) if $self->target;
+    Jifty->web->out(qq( accesskey="@{[$self->key_binding]}")) if $self->key_binding;
+    Jifty->web->out(qq( href="@{[Jifty->web->escape($self->url)]}"));
+    Jifty->web->out( $self->javascript() );
+    Jifty->web->out(qq(>$label</a>));
+    $self->render_key_binding();
+
     return ('');
 }
 

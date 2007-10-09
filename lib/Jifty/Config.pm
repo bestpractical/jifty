@@ -16,7 +16,7 @@ Jifty::Config - the configuration handler for Jifty
 
 This class is automatically loaded during Jifty startup. It contains the configuration information loaded from the F<config.yml> file (generally stored in the F<etc> directory of your application, but see L</load> for the details). This configuration file is stored in L<YAML> format.
 
-This configuration file contains two major sections named "C<framework>" and "C<application>". The framework section contains Jifty-specific configuration options and the application section contains whatever configuration options you want to use with your application. (I.e., if there's any configuration information your application needs to know at startup, this is a good place to put it.)
+This configuration file contains two major sections named "C<framework>" and "C<application>". The framework section contains Jifty-specific configuration options and the application section contains whatever configuration options you want to use with your application. (I.e., if there's any configuration information your application needs to know at startup, this is a good place top put it.)
 
 =cut
 

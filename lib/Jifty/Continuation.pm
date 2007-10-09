@@ -41,7 +41,7 @@ that is one higher in the stack.
 
 Continuations are generally created just before their request would
 take effect, activated by the presence of certain query parameters.
-The rest of the request is saved, its execution is to be continued at a
+The rest of the request is saved, its execution to be continued at a
 later time.
 
 Continuations are run after any actions have run.  When a continuation
