@@ -13,6 +13,7 @@ use File::Path;
 use File::Spec;
 use File::Temp;
 use Hash::Merge;
+use Cwd 'abs_path';
 
 =head1 NAME
 
@@ -256,11 +257,11 @@ C</home/bob/MyApp/t/user/12-delete.t>. The files that will be loaded are:
 
 =over 4
 
-=item C</home/bob/MyApp/t/user/12-delete.t-config.yaml>
+=item C</home/bob/MyApp/t/user/12-delete.t-config.yml>
 
-=item C</home/bob/MyApp/t/user/test_config.yaml>
+=item C</home/bob/MyApp/t/user/test_config.yml>
 
-=item C</home/bob/MyApp/t/test_config.yaml>
+=item C</home/bob/MyApp/t/test_config.yml>
 
 =back
 
@@ -275,35 +276,46 @@ The options are returned in a single hashref.
 sub load_test_configs {
     my $class = shift;
     my ($test_config_file) = @_;
-    my $test_options = {};
 
+    # get the initial test config file, which is the input . "-config.yml"
     $test_config_file = $0 if !defined($test_config_file);
-    $test_config_file .= "-config.yaml";
+    $test_config_file .= "-config.yml";
+    $test_config_file = File::Spec->rel2abs($test_config_file);
 
-    Hash::Merge::set_behavior('RIGHT_PRECEDENT');
+    my $test_options = _read_and_merge_config_file($test_config_file, {});
+
+    # get the directory of the input, so we can recurse upwards
+    my ($volume, $directories) = File::Spec->splitpath($test_config_file);
+    my $directory = File::Spec->catdir($volume, $directories);
 
     my $depth = $ENV{JIFTY_TEST_DEPTH} || 30;
 
     for (1 .. $depth)
     {
-        my $file_options = Jifty::Config->load_file($test_config_file);
-
-        # merge the new options into what we have so far
-        $test_options = Hash::Merge::merge($file_options, $test_options);
+        my $file = File::Spec->catfile($directory, "test_config.yml");
+        $test_options = _read_and_merge_config_file($file, $test_options);
 
         # are we at the app root? if so, then we can stop moving up
-        my $parent = File::Spec->parent($test_config_file);
+        $directory = abs_path(File::Spec->catdir($directory, File::Spec->updir($directory)));
         return $test_options
-            if Jifty::Util->is_app_root($parent);
-
-        # set up the next iteration (this would be at the top, but we special
-        # case the first iteration)
-        $test_config_file = File::Spec->catfile($parent, "test_config.yaml");
+            if Jifty::Util->is_app_root($directory);
     }
 
     Jifty->log->fatal("Stopping looking for test config files after recursing upwards $depth times. Either you have a nonstandard layout or an incredibly deep test hierarchy. If you really do have an incredibly deep test hierarchy, you can set the environment variable JIFTY_TEST_DEPTH to a larger value.");
 
     return $test_options;
+}
+
+sub _read_and_merge_config_file {
+    my $file = shift;
+    my $config = shift;
+
+    my $file_options = Jifty::Config->load_file($file);
+
+    Hash::Merge::set_behavior('RIGHT_PRECEDENT');
+
+    # merge the new options into what we have so far
+    return Hash::Merge::merge($file_options, $config);
 }
 
 =head2 test_config
