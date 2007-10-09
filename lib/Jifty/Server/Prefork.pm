@@ -18,7 +18,7 @@ In your F<etc/config.yml>:
 
 =head2 net_server
 
-This module depends on the L<Net::Server::Prefork> module, which is part of
+This module depends on the L<Net::Server::PreFork> module, which is part of
 the L<Net::Server> CPAN distribution.
 
 =cut
