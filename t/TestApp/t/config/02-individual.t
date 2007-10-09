@@ -2,9 +2,14 @@
 use strict;
 use warnings;
 
+use lib 't/lib';
+use Jifty::SubTest;
+
 use Jifty::Test;
 
 my %option_from_file = (
+    EtcConfig         => 'etc/config.yml',
+    EtcSiteConfig     => 'etc/site_config.yml',
     TTestConfig       => 't/test_config.yml',
     TConfigTestConfig => 't/config/test_config.yml',
     IndividualFile    => 't/config/02-individual.t-config.tml ',
@@ -18,6 +23,4 @@ is(Jifty->config->app('ThisConfigFile'), 't/config/02-individual.t-config.yml', 
 while (my ($option, $file) = each %option_from_file) {
     is(Jifty->config->app($option), '1', "options from $file loaded");
 }
-
-1;
 

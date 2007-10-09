@@ -1,0 +1,5 @@
+---
+application:
+    ThisConfigFile: etc/site_config.yml
+    EtcSiteConfig: 1
+

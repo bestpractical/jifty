@@ -96,6 +96,9 @@ framework will look for a test configuration file, specified in either
 the framework's C<TestConfig> or the C<JIFTY_TEST_CONFIG> environment
 variable.
 
+Note that the test config may be drawn from several files if you use
+L<Jifty::Test>. See the documentation of L<Jifty::Test::load_test_configs>.
+
 Values in the test configuration will clobber the site configuration.
 Values in the site configuration file clobber those in the vendor
 configuration file. Values in the vendor configuration file clobber

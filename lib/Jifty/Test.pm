@@ -277,10 +277,14 @@ sub load_test_configs {
     my $class = shift;
     my ($test_config_file) = @_;
 
+    # Jifty::SubTest uses chdir which screws up $0, so to be nice it also makes
+    # available the cwd was before it uses chdir.
+    my $cwd = $Jifty::SubTest::OrigCwd;
+
     # get the initial test config file, which is the input . "-config.yml"
     $test_config_file = $0 if !defined($test_config_file);
     $test_config_file .= "-config.yml";
-    $test_config_file = File::Spec->rel2abs($test_config_file);
+    $test_config_file = File::Spec->rel2abs($test_config_file, $cwd);
 
     my $test_options = _read_and_merge_config_file($test_config_file, {});
 
