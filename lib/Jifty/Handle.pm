@@ -215,7 +215,7 @@ sub drop_database {
         unlink($database);
     } else {
         local $SIG{__WARN__} =
-          sub { print STDERR $_[0] unless $_[0] =~ /exist|couldn't execute/i };
+          sub { warn $_[0] unless $_[0] =~ /exist|couldn't execute/i };
         $self->simple_query("DROP DATABASE $database");
     }
 }
