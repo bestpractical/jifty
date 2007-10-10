@@ -214,7 +214,8 @@ sub drop_database {
         $self->disconnect if $^O eq 'MSWin32';
         unlink($database);
     } else {
-        local $SIG{__WARN__} = sub {print $_[0] unless $_[0] =~ /exist/i};
+        local $SIG{__WARN__} =
+          sub { print STDERR $_[0] unless $_[0] =~ /exist|couldn't execute/i };
         $self->simple_query("DROP DATABASE $database");
     }
 }
