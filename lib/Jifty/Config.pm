@@ -149,6 +149,9 @@ sub load {
     # Load the site configuration file
     my $site = $self->load_file(
         Jifty::Util->absolute_path(
+            # Note: $ENV{'JIFTY_SITE_CONFIG'} is already considered
+            #       in ->_default_config_files(), but we || here again
+            #       in case someone overrided _default_config_files().
             $self->framework('SiteConfig') || $ENV{'JIFTY_SITE_CONFIG'}
         )
     );
@@ -225,7 +228,9 @@ sub _default_config_files {
     my $self = shift;
     my $config  = {
         framework => {
-            SiteConfig => 'etc/site_config.yml'
+            SiteConfig => (
+                $ENV{JIFTY_SITE_CONFIG} || 'etc/site_config.yml'
+            )
         }
     };
     return $self->_expand_relative_paths($config);
