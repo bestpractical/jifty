@@ -100,7 +100,7 @@ sub act_on {
 
 
         if (!$entry->{'edited_msg'} && ref($entry->{msg})) { $entry->{'edited_msg'} = Dumper($entry->{'msg'}); }
-        print format_entry ($entry => 1);
+        print format_entry($entry => 1);
     
     
         my $in = getchar();
