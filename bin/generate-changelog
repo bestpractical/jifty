@@ -53,19 +53,23 @@ foreach my $entry (@{$data->{'logentry'}}) {
         push @{$entries{$entry->{section}||'uncategorized'}}, $entry;
     }
 
+    open (my $fh, ">$dest") or die "Can't open $dest for writing";
+
     foreach my $key ( keys %entries) {
     my $title = $key;
     $title =~ s/^\w\-//;
-        print uc($key)."\n";
-        print "=" x length($key) ;
-        print "\n\n";
+        print $fh uc($key)."\n";
+        print $fh "=" x length($key) ;
+        print $fh "\n\n";
 
         foreach my $entry (@{$entries{$key}}){ 
 
-        format_entry($entry) ;
-        print "\n";
+        print $fh format_entry($entry) ;
+        print $fh "\n";
         }
     }
+
+    close $fh;
 
 }
 
@@ -81,7 +85,7 @@ sub act_on {
 
 
         if (!$entry->{'edited_msg'} && ref($entry->{msg})) { $entry->{'edited_msg'} = Dumper($entry->{'msg'}); }
-        format_entry ($entry => 1);
+        print format_entry ($entry => 1);
     
     
         my $in = getchar();
@@ -167,28 +171,29 @@ sub getchar {
 sub format_entry {
     my $entry = shift;
     my $verbose = shift ||0; 
-        if  ($verbose ) {
-      print "r".$entry->{revision}." - ";
-      print $entry->{'section'} || "UNCATEGORIZED - HIT 't'";   
-      print "\n".("="x60)."\n";
-      }
+    my $text = '';
+    if  ($verbose ) {
+        $text .= "r".$entry->{revision}." - ";
+        $text .= $entry->{'section'} || "UNCATEGORIZED - HIT 't'";   
+        $text .= "\n".("="x60)."\n";
+    }
 
-     my $msg = ( $entry->{'edited_msg'} || $entry->{'msg'});
+    my $msg = ( $entry->{'edited_msg'} || $entry->{'msg'});
 
     if ($msg =~ /^[\s\*]*\w/) {
         $msg =~ s/^[\s\*]*/ * /;
     }
 
-        $msg =~  s/\n+$//g;
-     $msg .= " - ".$entry->{'author'}."\n";
+    $msg =~  s/\n+$//g;
+    $msg .= " - ".$entry->{'author'}."\n";
 
 
      $msg =   autoformat ($msg,  { left=>0, right=>78 });
-        $msg =~  s/\n+$//g;
-      print $msg."\n";
-        if  ($verbose ) {
-
-        print YAML::Dump( $entry->{'paths'});
-        print "\n";
-    }
+     $msg =~  s/\n+$//g;
+     $text .= $msg."\n";
+     if  ($verbose ) {
+         $text .= YAML::Dump( $entry->{'paths'});
+         $text .= "\n";
+     }
+     return $text;
 }
