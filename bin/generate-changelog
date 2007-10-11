@@ -8,6 +8,11 @@
 # svn log --limit=100 --xml >> changelog.xml
 # generate-changelog --edit changelog.xml changelog.interim.xml
 # generate-changelog --generate changelog.interim.xml Changelog
+#
+# if you wish to do iterative editing, you can do
+# cp changelog.xml changelog.xml.orig
+# mv changelog.interim.xml changelog.xml
+# generate-changelog --edit changelog.xml changelog.interim.xml
 
 use warnings;
 use strict;
