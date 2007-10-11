@@ -70,6 +70,7 @@ foreach my $entry (@{$data->{'logentry'}}) {
     open (my $fh, ">$dest") or die "Can't open $dest for writing";
 
     foreach my $key ( keys %entries) {
+        next if $key eq 'exclude';
     my $title = $key;
     $title =~ s/^\w\-//;
         print $fh uc($key)."\n";
@@ -112,6 +113,7 @@ sub act_on {
         elsif ($in eq 'e') { $command = 'edit'; }
         elsif ($in eq 'q') { $command = 'quit'; }
         elsif ($in eq 't') { $command = 'tag' }
+        elsif ($in eq 'x') { $command = 'exclude' }
         elsif ($in eq ' ') {
             return
         }
@@ -134,8 +136,9 @@ sub act_on {
         system( ( $ENV{EDITOR} || 'vi' ), $filename );
         $entry->{'edited_msg'} = read_file($filename);
     } elsif ($command eq 'quit') {
-
         do_quit();
+    } elsif ($command eq 'exclude') {
+        $entry->{section} = 'exclude';
     }
 
     }
