@@ -184,9 +184,10 @@ sub create_database {
     my $mode = shift || 'execute';
     my $database = $self->canonical_database_name;
     my $driver   = Jifty->config->framework('Database')->{'Driver'};
-    my $query = "CREATE DATABASE $database;\n";
+    my $query = "CREATE DATABASE $database";
+    $query .= " TEMPLATE template0" if $driver =~ /Pg/;
     if ( $mode eq 'print') {
-        print $query;
+        print "$query;\n";
     } elsif ( $driver !~ /SQLite/ ) {
         $self->simple_query($query);
     }
