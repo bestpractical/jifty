@@ -70,7 +70,6 @@ foreach my $entry (@{$data->{'logentry'}}) {
     open (my $fh, ">$dest") or die "Can't open $dest for writing";
 
     foreach my $key ( keys %entries) {
-        next if $key eq 'exclude';
     my $title = $key;
     $title =~ s/^\w\-//;
         print $fh uc($key)."\n";
@@ -138,7 +137,7 @@ sub act_on {
     } elsif ($command eq 'quit') {
         do_quit();
     } elsif ($command eq 'exclude') {
-        $entry->{section} = 'exclude';
+        $entry->{section} = 't-discard';
     }
 
     }
