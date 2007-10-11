@@ -1,4 +1,13 @@
 #perl -MFile::Slurp -MXML::Simple -MData::Dumper -e'print scalar Dumper ( XMLin( read_file(shift @ARGV).""))' 
+# Usage
+# --edit expects the output of svn log --xml as the first argument, and an intermediate
+#        file where we will be storing munged up xml that trags your tags and edits
+# --generate expects the intermediate file as the first argument and a plaintext
+#            changelog file as the second argument.  This changelog file is clobbered
+#
+# svn log --limit=100 --xml >> changelog.xml
+# generate-changelog --edit changelog.xml changelog.interim.xml
+# generate-changelog --generate changelog.interim.xml Changelog
 
 use warnings;
 use strict;
