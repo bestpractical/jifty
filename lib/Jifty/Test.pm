@@ -439,7 +439,7 @@ A mailbox used for testing mail sending.
 =cut
 
 sub mailbox {
-    return Jifty::Util->absolute_path("t/mailbox");
+    return Jifty::Util->absolute_path("t/mailbox_" . _testfile_to_dbname());
 }
 
 =head2 setup_mailbox
