@@ -48,17 +48,29 @@ my $data = XMLin(read_file($source)."");
 
 if ($mode eq '--edit') {
 
-foreach my $entry (@{$data->{'logentry'}}) {
-   my %entries; 
+    my $count;
+    my $total;
+    my %entries; 
     foreach my $entry (@{$data->{'logentry'}}) {
+        $total++;
         push @{$entries{$entry->{section}||'uncategorized'}}, $entry;
     }
+# iterate over the uncategorized ones first
+    my $uncat_total = @{$entries{uncategorized}};
+    foreach my $entry (@{$entries{uncategorized}}){ 
+        $count++;
+        act_on($entry, $count, $uncat_total);
+    }
+# all of them in case you want to frob stuff
+    print "All uncategorized changes complete, now iterating the full set\nHit any key to continue\n";
+    getchar();
+    $count = 0;
     foreach my $key ( keys %entries) {
         foreach my $entry (@{$entries{$key}}){ 
-    act_on($entry);
+            $count++;
+            act_on($entry, $count, $total);
+        }
     }
-    }
-}
 
     do_quit();
 } elsif ($mode eq '--generate') {
@@ -89,6 +101,8 @@ foreach my $entry (@{$data->{'logentry'}}) {
 
 sub act_on {
     my $entry = shift;
+    my $count = shift;
+    my $total = shift;
 
     my $console = Term::ANSIScreen->new;
     while (1) {
@@ -99,6 +113,7 @@ sub act_on {
 
 
         if (!$entry->{'edited_msg'} && ref($entry->{msg})) { $entry->{'edited_msg'} = Dumper($entry->{'msg'}); }
+        print "change $count / $total\n";
         print format_entry($entry => 1);
     
     
@@ -177,11 +192,11 @@ my $out;
 sub getchar {
 
     ReadMode 4;
-        my $key = ReadKey(0);
-            ReadMode 0;
+    my $key = ReadKey(0);
+    ReadMode 0;
 
     return $key
-            }
+}
 
 
 sub format_entry {
