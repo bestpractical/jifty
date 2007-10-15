@@ -1073,12 +1073,13 @@ Returns a C<< <link> >> tag for the compressed CSS
 =cut
 
 sub include_css {
+    # XXX: move to CompressCSSandJS plugin
     my $self = shift;
     my ($ccjs) = Jifty->find_plugin('Jifty::Plugin::CompressedCSSandJS');
     if ( $ccjs && $ccjs->css_enabled ) {
         $self->generate_css;
         $self->out(
-            '<link rel="stylesheet" type="text/css" href="/__jifty/css/'
+            qq{<link rel="stylesheet" type="text/css" href="@{[ $ccjs->cdn ]}/__jifty/css/}
             . __PACKAGE__->cached_css_digest . '.css" />'
         );
     }

@@ -21,6 +21,7 @@ Jifty::Plugin::CompressedCSSandJS
         js: 1
         css: 1
         jsmin: /path/to/jsmin
+        cdn: 'http://yourcdn.for.static.prefix/'
 
 =head1 DESCRIPTION
 
@@ -37,7 +38,7 @@ configure jsmin feature.
 
 =cut
 
-__PACKAGE__->mk_accessors(qw(css js jsmin cached_javascript cached_javascript_digest cached_javascript_time ));
+__PACKAGE__->mk_accessors(qw(css js jsmin cached_javascript cached_javascript_digest cached_javascript_time cdn ));
 
 =head2 init
 
@@ -55,6 +56,7 @@ sub init {
     $self->css( $opt{css} );
     $self->js( $opt{js} );
     $self->jsmin( $opt{jsmin} );
+    $self->cdn( $opt{cdn} || '');
 
     Jifty::Web->add_trigger(
         name      => 'include_javascript',
@@ -89,7 +91,7 @@ sub _include_javascript {
     my $self = shift;
 
     $self->_generate_javascript;
-    Jifty->web->out( qq[<script type="text/javascript" src="/__jifty/js/]
+    Jifty->web->out( qq[<script type="text/javascript" src="@{[ $self->cdn ]}/__jifty/js/]
             . $self->cached_javascript_digest
             . qq[.js"></script>] );
     return 0;
