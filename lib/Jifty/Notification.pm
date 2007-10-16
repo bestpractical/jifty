@@ -94,7 +94,7 @@ sub send_one_message {
     my $self       = shift;
     my @recipients = $self->recipients;
     my $to         = join( ', ',
-        map { ( $_->can('email') ? $_->email : $_ ) } grep {$_} @recipients );
+        map { ( ref $_ && $_->can('email') ? $_->email : $_ ) } grep {$_} @recipients );
     $self->log->debug("Sending a ".ref($self)." to $to"); 
     return unless ($to);
     my $message = "";
