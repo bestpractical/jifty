@@ -992,6 +992,8 @@ var apply_fragment_updates = function(fragment, f) {
 
 // Update a region.  Takes a hash of named parameters, including:
 //  - 'actions' is an array of monikers to submit
+//  - 'action_arguments' is an array of hashes of arguments which should override any arguments coming from form fields
+//        the hash keys for 'action_arguments' are the values of the 'actions' array
 //  - 'fragments' is an array of hashes, which may have:
 //     - 'region' is the name of the region to update
 //     - 'args' is a hash of arguments to override
@@ -1041,7 +1043,7 @@ function update() {
     for (var moniker in named_args['actions']) {
         var disable = named_args['actions'][moniker];
         var a = new Action(moniker, button_args);
-	current_actions[moniker] = a; // XXX: how do i make this bloody singleton?
+	    current_actions[moniker] = a; // XXX: how do i make this bloody singleton?
         // Special case for Redirect, allow optional, implicit __page
         // from the response to be used.
         if (a.actionClass == 'Jifty::Action::Redirect')

@@ -6,6 +6,26 @@ use Jifty::View::Declare -base;
 
 __PACKAGE__->use_mason_wrapper;
 
+template 'say_hi' => page {
+    my $a = Jifty->web->new_action( class => 'SayHi' );
+    form {
+
+        #render_param($a => 'name');
+        render_param( $a => 'greeting' );
+        Jifty->web->form->submit(
+            label   => _('Create'),
+            onclick => [
+                {   submit => {
+                        action    => $a,
+                        arguments => { name => 'dave' }
+                    }
+                }
+            ]
+        );
+
+    };
+};
+
 template 'concrete2.html' => sub {
     html {
         body {
@@ -109,5 +129,8 @@ template 'post-redir-region' => sub {
 template 'use_mason_wrapper' => page {
     h1 { 'In a Mason Wrapper?' };
 };
+
+
+
 
 1;
