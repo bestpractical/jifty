@@ -211,9 +211,7 @@ sub setup_test_database {
 	my $booted;
 	if (Jifty->handle && !$@) {
 	    my $baseclass = Jifty->app_class;
-	    my $schema = Jifty::Script::Schema->new;
-	    $schema->prepare_model_classes;
-	    for my $model_class ( grep {/^\Q$baseclass\E::Model::/} $schema->models ) {
+	    for my $model_class ( grep {/^\Q$baseclass\E::Model::/} Jifty::Schema->new->models ) {
 		# We don't want to get the Collections, for example.
 		next unless $model_class->isa('Jifty::DBI::Record');
 		Jifty->handle->simple_query('TRUNCATE '.$model_class->table );
@@ -240,8 +238,7 @@ sub setup_test_database {
 
     Jifty->new( no_handle => 1, pre_init => 1 );
 
-    my $schema = Jifty::Script::Schema->new;
-    $schema->{drop_database}     = 1;
+    my $schema = Jifty::Script::Schema->new; $schema->{drop_database}     = 1;
     $schema->{create_database}   = 1;
     $schema->{create_all_tables} = 1;
     $schema->run;
@@ -374,11 +371,16 @@ sub test_config {
 
 
 sub _testfile_to_dbname {
+    if ($ENV{JIFTY_FAST_TEST}) {
+        return 'fasttest';
+    }
+    else {
     my $dbname = lc($0);
     $dbname =~ s/\.t$//;
     $dbname =~ s/[-_\.\/\\]//g;
     $dbname = substr($dbname,-32,32);	
     return $dbname;
+    } 
 }
 
 =head2 make_server
