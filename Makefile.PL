@@ -165,6 +165,12 @@ features(
         recommends('Devel::Events::Generator::Objects'),
         recommends('Devel::Size'),
     ],
+    'OAuth Plugin' => [
+        -default => 0,
+        recommends('Net::OAuth::Request'),
+        recommends('Crypt::OpenSSL::RSA'),
+        recommends('Digest::HMAC_SHA1'),
+    ],
 );
 
 

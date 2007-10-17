@@ -3,7 +3,7 @@ package Jifty::Plugin::OAuth::Model::RequestToken;
 use strict;
 use warnings;
 
-use base qw( Jifty::Record );
+use base qw( Jifty::Plugin::OAuth::Token Jifty::Record );
 
 # kludge 1: you cannot call Jifty->app_class within schema {}
 my $app_user;
@@ -25,34 +25,39 @@ use Jifty::Record schema {
         type is 'integer';
         #refers_to $app_user;
 
+    column consumer =>
+        refers_to Jifty::Plugin::OAuth::Model::Consumer;
+
     column used =>
         type is 'boolean',
         default is 'f';
 
-};
+    column token =>
+        type is 'varchar';
 
-sub before_create {
-    my ($self, $attr) = @_;
-    $attr{valid_until} ||= DateTime->now->add(hours => 1);
-}
+    column token_secret =>
+        type is 'varchar';
+
+    # we use these to make sure we aren't being hit with a replay attack
+    column timestamp =>
+        type is 'integer';
+
+    column nonce =>
+        type is 'varchar';
+};
 
 sub set_authorized {
     my $self = shift;
     $self->set_authorized_by(Jifty->web->current_user->id);
 }
 
-sub trade_for_access_token {
+sub can_trade_for_access_token {
     my $self = shift;
-    return undef if !$self->authorized;
-    return undef if !$self->authorized_by;
-    return undef if $self->used;
-    return undef if $self->valid_until < DateTime->now;
-
-    my $access_token = Jifty::Plugin::OAuth::Model::AccessToken->new(current_user => Jifty::CurrentUser->superuser);
-    my ($ok, $msg) = $access_token->create(user => $self->authorized_by);
-
-    return undef if !$ok;
-    return $access_token;
+    return 0 if !$self->authorized;
+    return 0 if !$self->authorized_by;
+    return 0 if $self->used;
+    return 0 if $self->valid_until < DateTime->now;
+    return 1;
 }
 
 1;
