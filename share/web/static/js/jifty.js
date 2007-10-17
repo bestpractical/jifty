@@ -17,7 +17,7 @@ Jifty.web = function() { return Jifty.Web };
 function _get_named_args(args) {
     var result = {};
     for (var i = 0; i < args.length; i+=2) {
-	result[args[i]] = args[i+1];
+        result[args[i]] = args[i+1];
     }
     return result;
 
@@ -26,11 +26,11 @@ function _get_named_args(args) {
 function _get_onclick(action_hash, name, args, path) {
     var onclick = 'if(event.ctrlKey||event.metaKey||event.altKey||event.shiftKey) return true; return update('
     + JSON.stringify({'continuation': {},
-		      'actions': action_hash,
-		      'fragments': [{'mode': 'Replace', 'args': args, 'region': name, 'path': path}]})
+                      'actions': action_hash,
+                      'fragments': [{'mode': 'Replace', 'args': args, 'region': name, 'path': path}]})
     +', this)';
     onclick = onclick.replace(/"/g, "'"); //"' )# grr emacs!
-	return onclick;
+        return onclick;
 }
 // XXX
 var hyperlink  = function() {
@@ -38,9 +38,9 @@ var hyperlink  = function() {
     var current_region = Jifty.Web.current_region;
     var onclick = _get_onclick({}, current_region.name, current_region.args, args.onclick[0].replace_with);
     outs( a(function() { attr(function()
-			      {return ['onclick', onclick, 'href', '#']});
-	    return args.label
-		}));
+                              {return ['onclick', onclick, 'href', '#']});
+            return args.label
+                }));
 }
 
 var render_param = function(a, field) { outs(a.render_param(field)) };
@@ -57,27 +57,27 @@ var form_return  = function() {
     var current_region = Jifty.Web.current_region;
     var onclick = _get_onclick(action_hash, current_region.name, current_region.args, current_region.path);
     outs(
-	 div(function() {
-		 attr(function() { return ['class', 'submit_button'] });
-		 return input(function() { attr(function()
-						{return ['type', 'submit',
-							 'onclick', onclick,
-							 'class', 'widget button',
-							 'id', 'S' + (++SERIAL + SERIAL_postfix),
-							 'value', args.label,
-							 'name', 'J:V-region-__page-signup_widget=_signup|J:ACTIONS=signupnow'] })});
-		     }));
+         div(function() {
+                 attr(function() { return ['class', 'submit_button'] });
+                 return input(function() { attr(function()
+                                                {return ['type', 'submit',
+                                                         'onclick', onclick,
+                                                         'class', 'widget button',
+                                                         'id', 'S' + (++SERIAL + SERIAL_postfix),
+                                                         'value', args.label,
+                                                         'name', 'J:V-region-__page-signup_widget=_signup|J:ACTIONS=signupnow'] })});
+                     }));
 
 };
 
 function register_action(a) {
     outs(div(function() {
-		attr(function() { return ['class', 'hidden'] });
-		return input(function() { attr(function() {
-				return ['type', 'hidden',
-					'name', a.register_name(),
-					'id', a.register_name(),
-					'value', a.actionClass] }) } ) } ));
+                attr(function() { return ['class', 'hidden'] });
+                return input(function() { attr(function() {
+                                return ['type', 'hidden',
+                                        'name', a.register_name(),
+                                        'id', a.register_name(),
+                                        'value', a.actionClass] }) } ) } ));
     /* XXX: fallback values */
 }
 
@@ -335,23 +335,23 @@ Action.prototype = {
 
     /* client side logic extracted from Jifty::Action */
     _action_spec: function() {
-	if (!this.s_a) {
-	    /* XXX: make REST client accessible */
-	    var Todo = new AsynapseRecord('todo');
-	    this.s_a = $H(Todo.eval_ajax_get('/=/action/'+this.actionClass+'.js'));
-	}
-	
-	return this.s_a
+        if (!this.s_a) {
+            /* XXX: make REST client accessible */
+            var Todo = new AsynapseRecord('todo');
+            this.s_a = $H(Todo.eval_ajax_get('/=/action/'+this.actionClass+'.js'));
+        }
+        
+        return this.s_a
     },
     argument_names: function() {
-	return this._action_spec().keys();
+        return this._action_spec().keys();
     },
 
     render_param: function(field) {
-	var a_s = this._action_spec();
-	var type = 'text';
-	var f = new ActionField(field, a_s[field], this);
-	return f.render();
+        var a_s = this._action_spec();
+        var type = 'text';
+        var f = new ActionField(field, a_s[field], this);
+        return f.render();
     },
     register_name: function() { return this.register.id }
 
@@ -362,110 +362,110 @@ var SERIAL = 0;
 ActionField = Class.create();
 ActionField.prototype = {
  initialize: function(name, args, action) {
-	this.name = name;
-	this.label = args.label;
-	this.hints = args.hints;
-	this.mandatory = args.mandatory;
-	this.ajax_validates = args.ajax_validates;
-	this.current_value = action.data_structure().fields[name].value;
+        this.name = name;
+        this.label = args.label;
+        this.hints = args.hints;
+        this.mandatory = args.mandatory;
+        this.ajax_validates = args.ajax_validates;
+        this.current_value = action.data_structure().fields[name].value;
         this.error = action.result.field_error[name];
-	this.action = action;
-	if (!this.render_mode) this.render_mode = 'update';
-	this.type = 'text';
+        this.action = action;
+        if (!this.render_mode) this.render_mode = 'update';
+        this.type = 'text';
     },
 
  render: function() {
-	if (this.render_mode == 'read')
-	    return this.render_wrapper
-		(this.render_preamble,
-		 this.render_label,
-		 this.render_value);
-	else
-	    return this.render_wrapper
-	    (this.render_preamble,
-	     this.render_label,
-	     this.render_widget,
-	     this.render_autocomplete_div,
-	     this.render_inline_javascript,
-	     this.render_hints,
-	     this.render_errors,
-	     this.render_warnings,
-	     this.render_canonicalization_notes);
+        if (this.render_mode == 'read')
+            return this.render_wrapper
+                (this.render_preamble,
+                 this.render_label,
+                 this.render_value);
+        else
+            return this.render_wrapper
+            (this.render_preamble,
+             this.render_label,
+             this.render_widget,
+             this.render_autocomplete_div,
+             this.render_inline_javascript,
+             this.render_hints,
+             this.render_errors,
+             this.render_warnings,
+             this.render_canonicalization_notes);
     },
  render_wrapper: function () {
-	var classes = ['form_field'];
-	if (this.mandatory) classes.push('mandatory');
-	if (this.name) classes.push('argument-'+this.name);
-	var args = arguments;
-	var tthis = this;
-	return div(function() {
-		attr(function(){return ['class', classes.join(' ')]});
-		var buf = new Array;
-		for (var i = 0; i < args.length; ++i) {
-		    buf.push(typeof(args[i]) == 'function' ? args[i].apply(tthis) : args[i]);
-		}
-		return buf.join('');
-	    });
+        var classes = ['form_field'];
+        if (this.mandatory) classes.push('mandatory');
+        if (this.name) classes.push('argument-'+this.name);
+        var args = arguments;
+        var tthis = this;
+        return div(function() {
+                attr(function(){return ['class', classes.join(' ')]});
+                var buf = new Array;
+                for (var i = 0; i < args.length; ++i) {
+                    buf.push(typeof(args[i]) == 'function' ? args[i].apply(tthis) : args[i]);
+                }
+                return buf.join('');
+            });
     },
     render_preamble: function() {
-	var tthis = this;
-	return span(function(){attr(function(){return ['class', "preamble"]});
-		return tthis.preamble });
+        var tthis = this;
+        return span(function(){attr(function(){return ['class', "preamble"]});
+                return tthis.preamble });
     },
 
     render_label: function() {
-	var tthis = this;
-	if(this.render_mode == 'update')
-	    return label(function(){attr(function(){return['class', "label", 'for', tthis.element_id()]});
-		    return tthis.label });
-	else
-	    return span(function(){attr(function(){return['class', "label" ]});
-		    return tthis.label });
+        var tthis = this;
+        if(this.render_mode == 'update')
+            return label(function(){attr(function(){return['class', "label", 'for', tthis.element_id()]});
+                    return tthis.label });
+        else
+            return span(function(){attr(function(){return['class', "label" ]});
+                    return tthis.label });
     },
  input_name: function() {
-	return ['J:A:F', this.name, this.action.moniker].join('-');
+        return ['J:A:F', this.name, this.action.moniker].join('-');
     },
  render_hints: function() {
-	var tthis = this;
-	return span(function(){attr(function(){return ['class', "hints"]});
-		return tthis.hints });
+        var tthis = this;
+        return span(function(){attr(function(){return ['class', "hints"]});
+                return tthis.hints });
     },
 
  render_errors: function() {
-	if (!this.action) return '';
-	var tthis = this;
-	// XXX: post-request handler needs to extract field error messages
-	return span(function(){attr(function(){return ['class', "error", 'id', 'errors-'+tthis.input_name()]});
-		return tthis.error });
+        if (!this.action) return '';
+        var tthis = this;
+        // XXX: post-request handler needs to extract field error messages
+        return span(function(){attr(function(){return ['class', "error", 'id', 'errors-'+tthis.input_name()]});
+                return tthis.error });
     },
 
  render_widget: function () {
-	var tthis = this;
-	return input(function(){
-		    attr(function(){
-			    var fields = ['type', tthis.type];
-			    if (tthis.input_name) fields.push('name', tthis.input_name());
-			    fields.push('id', tthis.element_id());
-			    if (tthis.current_value) fields.push('value', tthis.current_value);
-			    fields.push('class', tthis._widget_class().join(' '));
-			    if (tthis.max_length) fields.push('size', tthis.max_length, 'maxlength', tthis.max_length);
-			    if (tthis.disable_autocomplete) fields.push('autocomplete', "off");
-			    //" " .$self->other_widget_properties;
-			    return fields;
-			})});
+        var tthis = this;
+        return input(function(){
+                    attr(function(){
+                            var fields = ['type', tthis.type];
+                            if (tthis.input_name) fields.push('name', tthis.input_name());
+                            fields.push('id', tthis.element_id());
+                            if (tthis.current_value) fields.push('value', tthis.current_value);
+                            fields.push('class', tthis._widget_class().join(' '));
+                            if (tthis.max_length) fields.push('size', tthis.max_length, 'maxlength', tthis.max_length);
+                            if (tthis.disable_autocomplete) fields.push('autocomplete', "off");
+                            //" " .$self->other_widget_properties;
+                            return fields;
+                        })});
     },
  _widget_class: function() {
-	var classes = ['form_field'];
-	if (this.mandatory)      classes.push('mandatory');
-	if (this.name)           classes.push('argument-'+this.name);
-	if (this.ajax_validates) classes.push('ajaxvalidation');
-	return classes;
+        var classes = ['form_field'];
+        if (this.mandatory)      classes.push('mandatory');
+        if (this.name)           classes.push('argument-'+this.name);
+        if (this.ajax_validates) classes.push('ajaxvalidation');
+        return classes;
     },
 
  element_id: function() { if(!this._element_id) this._element_id = this.input_name() + '-S' + (++SERIAL + SERIAL_postfix);
-			  return this._element_id; },
+                          return this._element_id; },
  __noSuchMethod__: function(name) {
-	return '<!-- '+name+' not implemented yet -->';
+        return '<!-- '+name+' not implemented yet -->';
     }
 
 };
@@ -519,9 +519,9 @@ Object.extend(Form.Element, {
     getAction: function (element) {
         element = $(element);    
         var moniker = Form.Element.getMoniker(element);
-	if (!current_actions[moniker])
-	    current_actions[moniker] = new Action(moniker);
-	return current_actions[moniker];
+        if (!current_actions[moniker])
+            current_actions[moniker] = new Action(moniker);
+        return current_actions[moniker];
     },
 
     // Returns the name of the field
@@ -900,7 +900,7 @@ var walk_node = function(node, table) {
          child = child.nextSibling) {
         var name = child.nodeName.toLowerCase();
         if (table[name])
-	    table[name](child);
+            table[name](child);
     }
 }
 
@@ -914,14 +914,14 @@ var extract_cacheable = function(fragment, f) {
             } else if (fragment_bit.firstChild) {
                 textContent = fragment_bit.firstChild.nodeValue;
             } 
-	    try {
-		var cache_func = eval(textContent);
-		CACHE[f['path']] = { 'type': c_type, 'content': cache_func };
-	    }
-	    catch(e) { 
-		alert(e);
-		alert(textContent);
-	    }
+            try {
+                var cache_func = eval(textContent);
+                CACHE[f['path']] = { 'type': c_type, 'content': cache_func };
+            }
+            catch(e) { 
+                alert(e);
+                alert(textContent);
+            }
         }
     });
 };
@@ -937,56 +937,56 @@ var apply_fragment_updates = function(fragment, f) {
     var element = f['element'];
     walk_node(fragment,
     { argument: function(fragment_bit) {
-	    // First, update the fragment's arguments
-	    // with what the server actually used --
-	    // this is needed in case there was
-	    // argument mapping going on
-	    var textContent = '';
-	    if (fragment_bit.textContent) {
-		textContent = fragment_bit.textContent;
-	    } else if (fragment_bit.firstChild) {
-		textContent = fragment_bit.firstChild.nodeValue;
-	    }
-	    new_dom_args[fragment_bit.getAttribute("name")] = textContent;
-	},
+            // First, update the fragment's arguments
+            // with what the server actually used --
+            // this is needed in case there was
+            // argument mapping going on
+            var textContent = '';
+            if (fragment_bit.textContent) {
+                textContent = fragment_bit.textContent;
+            } else if (fragment_bit.firstChild) {
+                textContent = fragment_bit.firstChild.nodeValue;
+            }
+            new_dom_args[fragment_bit.getAttribute("name")] = textContent;
+        },
       content: function(fragment_bit) {
-	    var textContent = '';
-	    if (fragment_bit.textContent) {
-		textContent = fragment_bit.textContent;
-	    } else if (fragment_bit.firstChild) {
-		textContent = fragment_bit.firstChild.nodeValue;
-	    }
+            var textContent = '';
+            if (fragment_bit.textContent) {
+                textContent = fragment_bit.textContent;
+            } else if (fragment_bit.firstChild) {
+                textContent = fragment_bit.firstChild.nodeValue;
+            }
                     
-	    // Once we find it, do the insertion
-	    if (f['mode'] && (f['mode'] != 'Replace')) {
-		var insertion = eval('Insertion.'+f['mode']);
-		new insertion(element, textContent.stripScripts());
-	    } else {
-		Element.update(element, textContent.stripScripts());
-	    }
-	    // We need to give the browser some "settle" time before
-	    // we eval scripts in the body
+            // Once we find it, do the insertion
+            if (f['mode'] && (f['mode'] != 'Replace')) {
+                var insertion = eval('Insertion.'+f['mode']);
+                new insertion(element, textContent.stripScripts());
+            } else {
+                Element.update(element, textContent.stripScripts());
+            }
+            // We need to give the browser some "settle" time before
+            // we eval scripts in the body
         YAHOO.util.Event.onAvailable(element.id, function() {
             (function() { this.evalScripts() }).bind(textContent)();
         });
         Behaviour.apply(element);
-	}
+        }
     });
     dom_fragment.setArgs(new_dom_args);
 
     // Also, set us up the effect
     if (f['effect']) {
-	try {
-	    var effect = eval('Effect.'+f['effect']);
-	    var effect_args  = f['effect_args'] || {};
-	    if (effect) {
-		if (f['is_new'])
-		    Element.hide($('region-'+f['region']));
-		(effect)($('region-'+f['region']), effect_args);
-	    }
-	} catch ( e ) {
-	    // Don't be sad if the effect doesn't exist
-	}
+        try {
+            var effect = eval('Effect.'+f['effect']);
+            var effect_args  = f['effect_args'] || {};
+            if (effect) {
+                if (f['is_new'])
+                    Element.hide($('region-'+f['region']));
+                (effect)($('region-'+f['region']), effect_args);
+            }
+        } catch ( e ) {
+            // Don't be sad if the effect doesn't exist
+        }
     }
 }
 
@@ -1036,14 +1036,14 @@ function update() {
     }
     var optional_fragments;
     if (form && form['J:CALL']) 
-	optional_fragments = [ prepare_element_for_update({'mode':'Replace','args':{},'region':'__page','path': null}) ];
+        optional_fragments = [ prepare_element_for_update({'mode':'Replace','args':{},'region':'__page','path': null}) ];
     // Build actions structure
     var has_request = 0;
     request['actions'] = $H();
     for (var moniker in named_args['actions']) {
         var disable = named_args['actions'][moniker];
         var a = new Action(moniker, button_args);
-	    current_actions[moniker] = a; // XXX: how do i make this bloody singleton?
+            current_actions[moniker] = a; // XXX: how do i make this bloody singleton?
         // Special case for Redirect, allow optional, implicit __page
         // from the response to be used.
         if (a.actionClass == 'Jifty::Action::Redirect')
@@ -1056,16 +1056,16 @@ function update() {
                 a.disable_input_fields(disabled_elements);
             }
             var param = a.data_structure();
-	    var fields = param.fields;
+            var fields = param.fields;
             var override = named_args['action_arguments'][param.moniker] || {};
-	    for (var argname in override) {
-		if (fields[argname]) {
-		    fields[argname].value = override[argname];
-		}
-		else {
-		    fields[argname] = { value: override[argname] };
-		}
-	    }
+            for (var argname in override) {
+                if (fields[argname]) {
+                    fields[argname].value = override[argname];
+                }
+                else {
+                    fields[argname] = { value: override[argname] };
+                }
+            }
             request['actions'][moniker] = param;
             ++has_request;
         }
@@ -1085,11 +1085,11 @@ function update() {
         if (cached && cached['type'] == 'static') {
             var my_fragment = document.createElement('fragment');
             var content_node = document.createElement('content');
-	    var cached_result;
+            var cached_result;
 
-	    Jifty.Web.current_region = fragments[f['region']];
-	    try { cached_result = apply_cached_for_action(cached['content'], []) }
-	    catch (e) { alert(e) }
+            Jifty.Web.current_region = fragments[f['region']];
+            try { cached_result = apply_cached_for_action(cached['content'], []) }
+            catch (e) { alert(e) }
 
             content_node.textContent = cached_result;
             my_fragment.appendChild(content_node);
@@ -1099,38 +1099,38 @@ function update() {
  } );
             continue;
         }
-	else if (cached && cached['type'] == 'action') {
+        else if (cached && cached['type'] == 'action') {
             var my_fragment = document.createElement('fragment');
             var content_node = document.createElement('content');
 
             my_fragment.appendChild(content_node);
             my_fragment.setAttribute('id', f['region']);
             update_from_cache.push(function(){
-		    var cached_result;
-		    Jifty.Web.current_region = fragments[f['region']];
-		    try {
-			cached_result = apply_cached_for_action(cached['content'], Form.getActions(form));
-		    }
-		    catch (e) { alert(e); throw e }
-		    content_node.textContent = cached_result;
-		    apply_fragment_updates(my_fragment, f);
+                    var cached_result;
+                    Jifty.Web.current_region = fragments[f['region']];
+                    try {
+                        cached_result = apply_cached_for_action(cached['content'], Form.getActions(form));
+                    }
+                    catch (e) { alert(e); throw e }
+                    content_node.textContent = cached_result;
+                    apply_fragment_updates(my_fragment, f);
  } );
             continue;
-	}
+        }
         else if (cached && cached['type'] == 'crudview') {
-	    try { // XXX: get model class etc as metadata in cache 
-		// XXX: kill dup code
-	    var Todo = new AsynapseRecord('todo');
-	    var record = Todo.find(f['args']['id']);
+            try { // XXX: get model class etc as metadata in cache 
+                // XXX: kill dup code
+            var Todo = new AsynapseRecord('todo');
+            var record = Todo.find(f['args']['id']);
             var my_fragment = document.createElement('fragment');
             var content_node = document.createElement('content');
             content_node.textContent = cached['content'](record);
             my_fragment.appendChild(content_node);
             my_fragment.setAttribute('id', f['region']);
             update_from_cache.push(function(){ apply_fragment_updates(my_fragment, f); } );
-	    } catch (e) { alert(e) };
-	    continue;
-	}
+            } catch (e) { alert(e) };
+            continue;
+        }
 
         // Update with all new values
         var name = f['region'];
@@ -1158,28 +1158,28 @@ function update() {
         // Grab the XML response
         var response = transport.responseXML.documentElement;
 
-	// Get action results
+        // Get action results
         walk_node(response,
-	{ result: function(result) {
-		var moniker = result.getAttribute("moniker");
-		walk_node(result,
-			  { field: function(field) {
-				  var error = field.getElementsByTagName('error')[0];
-				  if (error) {
-				      var text = error.textContent
-					  ? error.textContent
-					  : (error.firstChild ? error.firstChild.nodeValue : '');
-				      var action = current_actions[moniker];
-				      action.result.field_error[field.getAttribute("name")] = text;
-				      }
-			      }});
-	    }});
+        { result: function(result) {
+                var moniker = result.getAttribute("moniker");
+                walk_node(result,
+                          { field: function(field) {
+                                  var error = field.getElementsByTagName('error')[0];
+                                  if (error) {
+                                      var text = error.textContent
+                                          ? error.textContent
+                                          : (error.firstChild ? error.firstChild.nodeValue : '');
+                                      var action = current_actions[moniker];
+                                      action.result.field_error[field.getAttribute("name")] = text;
+                                      }
+                              }});
+            }});
 
         for ( var i = 0; i < disabled_elements.length; i++ ) {
             disabled_elements[i].disabled = false;
         }
 
-	// empty known action. XXX: we should only need to discard actions being submitted
+        // empty known action. XXX: we should only need to discard actions being submitted
 
         // Loop through the result looking for it
         var expected_fragments = optional_fragments ? optional_fragments : named_args['fragments'];
@@ -1198,20 +1198,20 @@ function update() {
             extract_cacheable(response_fragment, f);
         }
 
-	update_from_cache.each(function(x) { x() });
+        update_from_cache.each(function(x) { x() });
 
         walk_node(response,
-	{ result: function(result) {
+        { result: function(result) {
                 for (var key = result.firstChild;
                      key != null;
                      key = key.nextSibling) {
                     show_action_result(result.getAttribute("moniker"),key);
                 }
             },
-	  redirect: function(redirect) {
+          redirect: function(redirect) {
                 document.location =  redirect.firstChild.firstChild.nodeValue;
-	}});
-	current_actions = $H();
+        }});
+        current_actions = $H();
     };
     var onFailure = function(transport, object) {
         hide_wait_message_now();
