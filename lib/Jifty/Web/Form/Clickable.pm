@@ -3,6 +3,7 @@ use strict;
 
 package Jifty::Web::Form::Clickable;
 use Class::Trigger;
+use Scalar::Util qw/blessed/;
 
 =head1 NAME
 
@@ -84,9 +85,26 @@ See L<Jifty::Request::Mapper/query_parameters> for details.
 
 A list of actions to run when the object is clicked.  This may be an
 array refrence or a single element; each element may either be a
-moniker or a L<Jifty::Action>.  An undefined value submits B<all>
-actions in the form, an empty list reference (the default) submits
-none.
+moniker or, a L<Jifty::Action> or a hashref with the keys 'action' and 'arguments'. 
+An undefined value submits B<all> actions in the form, an empty list 
+reference (the default) submits none.
+
+In the most complex case, you have something like this:
+
+    submit => [
+                  {   action    => $my_action,
+                      arguments => {
+                          name => 'Default McName',
+                          age  => '23'
+                      },
+                  },
+                  $my_other_action,
+                  'some-other-action-moniker'
+              ]
+
+If you specify arguments in the submit block for a button, they will override 
+any values from form fileds submitted by the user.
+
 
 =item preserve_state
 
@@ -166,10 +184,34 @@ sub new {
     }
 
     if ( $self->{submit} ) {
-        $self->{submit} = [ $self->{submit} ] unless ref $self->{submit} eq "ARRAY";
-        $self->{submit}
-            = [ map { ref $_ ? $_->moniker : $_ } @{ $self->{submit} } ];
+        $self->{submit} = [ $self->{submit} ]
+            unless ref $self->{submit} eq "ARRAY";
+
+        my @submit_temp = ();
+        foreach my $submit ( @{ $self->{submit} } ) {
+
+       # If we have been handed an action moniker to submit, just submit that.
+            if ( !ref($submit) ) { push @submit_temp, $submit }
+
+            # We've been handed a Jifty::Action to submit
+            elsif ( blessed($submit) ) { push @submit_temp, $submit->moniker }
+
+          # We've been handed a hashref which contains an action and arguments
+            else {
+
+           # Add whatever additional arguments they've requested to the button
+                $args{parameters}{ $submit->{'action'}->form_field_name($_) }
+                    = $submit->{arguments}{$_}
+                    for keys %{ $submit->{arguments} };
+
+                # Add the action's moniker to the submit
+                push @submit_temp, $submit->{'action'}->moniker;
+            }
+        }
+
+        @{ $self->{submit} } = @submit_temp;
     }
+
 
     # Anything doing fragment replacement needs to preserve the
     # current state as well
