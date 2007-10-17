@@ -992,7 +992,7 @@ var apply_fragment_updates = function(fragment, f) {
 
 // Update a region.  Takes a hash of named parameters, including:
 //  - 'actions' is an array of monikers to submit
-//  - 'action_arguments' is an array of hashes of arguments which should override any arguments coming from form fields
+//  - 'action_arguments' is a hash of action monikers to hashes of arguments which should override any arguments coming from form fields
 //        the hash keys for 'action_arguments' are the values of the 'actions' array
 //  - 'fragments' is an array of hashes, which may have:
 //     - 'region' is the name of the region to update
@@ -1055,7 +1055,18 @@ function update() {
             if(disable) {
                 a.disable_input_fields(disabled_elements);
             }
-            request['actions'][moniker] = a.data_structure();
+            var param = a.data_structure();
+	    var fields = param.fields;
+            var override = named_args['action_arguments'][param.moniker] || {};
+	    for (var argname in override) {
+		if (fields[argname]) {
+		    fields[argname].value = override[argname];
+		}
+		else {
+		    fields[argname] = { value: override[argname] };
+		}
+	    }
+            request['actions'][moniker] = param;
             ++has_request;
         }
 
