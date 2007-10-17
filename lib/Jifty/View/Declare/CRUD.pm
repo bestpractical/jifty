@@ -323,10 +323,12 @@ template 'view' => sub :CRUDView {
     div {
         { class is 'crud read item inline' };
         my @fields = $self->display_columns($update);
-        render_action( $update, \@fields, { render_mode => 'read' } );
-
+        foreach my $field (@fields) {
+            div { { class is 'view-argument-'.$field};
+            render_param( $update => $field,  render_mode => 'read'  );
+            }; 
+        }
         show ('./view_item_controls', $record, $update); 
-
         hr {};
     };
 
@@ -449,13 +451,14 @@ template 'list' => sub {
     my ( $page ) = get(qw(page ));
     my $item_path = get('item_path') || $self->fragment_for("view");
     my $collection =  $self->_current_collection();
+    div { {class is 'crud-'.$self->object_type}; 
 
     show('./search_region');
     show( './paging_top',    $collection, $page );
     show( './list_items',    $collection, $item_path );
     show( './paging_bottom', $collection, $page );
     show( './new_item_region');
-
+    };
 };
 
 =head2 per_page
@@ -643,7 +646,11 @@ Renders the action $Action, handing it the array ref returned by L</display_colu
 private template 'edit_item' => sub {
     my $self = shift;
     my $action = shift;
-    render_action($action, [$self->display_columns($action)]);
+   foreach my $field ($self->display_columns($action)) {
+            div { { class is 'update-argument-'.$field}
+    render_param($action, $field) ;
+        }
+   }
 };
 
 =head1 new_item
