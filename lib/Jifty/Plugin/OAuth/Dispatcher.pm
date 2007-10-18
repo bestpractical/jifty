@@ -12,6 +12,13 @@ before POST '/oauth/request_token' => \&request_token;
 before GET  '/oauth/authorize'     => \&authorize;
 before POST '/oauth/access_token'  => \&access_token;
 
+# helper function to abort with a debug message
+sub abortmsg {
+    my ($code, $msg) = @_;
+    Jifty->log->error($msg) if defined($msg);
+    abort($code || 400);
+}
+
 # a consumer wants a request token
 sub request_token {
     my @params = qw/consumer_key signature_method signature
@@ -30,10 +37,10 @@ sub request_token {
         map { $_ => $oauth_params{$_} } @params
     ) };
 
-    abort(400) if $@ || !defined($request);
+    abortmsg(400, "Unable to create RequestTokenRequest: $@") if $@ || !defined($request);
 
     # make sure the signature matches the rest of what the consumer gave us
-    abort(401) unless $request->verify;
+    abortmsg(401, "Invalid signature.") unless $request->verify;
 
     # ok, everything checks out. send them back a request token
     # at this point, the only things that could go wrong are:
@@ -44,11 +51,12 @@ sub request_token {
 
     my $token = Jifty::Plugin::OAuth::Model::RequestToken->new(current_user => Jifty::CurrentUser->superuser);
 
-    my ($ok) = eval {
-        $token->create(map { $_ => $oauth_params{$_} } qw/timestamp nonce/);
+    my ($ok, $msg) = eval {
+        $token->create(nonce => $oauth_params{nonce}, time_stamp => $oauth_params{timestamp});
     };
 
-    abort(401) if $@ || !defined($token) || !$ok;
+    abortmsg(401, "Unable to create a Request Token: " . $@ || $msg)
+        if $@ || !defined($token) || !$ok;
 
     # XXX: actually send the token
 }
@@ -86,8 +94,11 @@ sub access_token {
     # is the request token they're using still valid?
     my $request_token = Jifty::Plugin::OAuth::Model::RequestToken->new(current_user => Jifty::CurrentUser->superuser);
     $request_token->load_by_cols(consumer => $consumer, token => $oauth_params{token});
-    abort(401) unless $request_token->id;
-    abort(401) unless $request_token->can_trade_for_access_token;
+
+    abortmsg(401, "No token found for consumer ".$consumer->name." with key $oauth_params{token}") unless $request_token->id;
+
+    my ($ok, $msg) = $request_token->can_trade_for_access_token;
+    abortmsg(401, "Cannot trade request token for access token: $msg") if !$ok;
 
     # Net::OAuth::Request will die hard if it doesn't get everything it wants
     my $request = eval { Net::OAuth::AccessTokenRequest->new(
@@ -99,20 +110,22 @@ sub access_token {
         map { $_ => $oauth_params{$_} } @params
     ) };
 
-    abort(400) if $@ || !defined($request);
+    abortmsg(400, "Unable to create AccessTokenRequest: $@") if $@ || !defined($request);
 
     # make sure the signature matches the rest of what the consumer gave us
-    abort(401) unless $request->verify;
+    abortmsg(401, "Invalid signature.") unless $request->verify;
 
     my $token = Jifty::Plugin::OAuth::Model::AccessToken->new(current_user => Jifty::CurrentUser->superuser);
 
-    my ($ok) = eval {
+    ($ok, $msg) = eval {
         $token->create(consumer => $consumer,
                        auth_as => $request_token->authorized_by,
-                       map { $_ => $oauth_params{$_} } qw/timestamp nonce/);
+                       time_stamp => $oauth_params{timestamp},
+                       nonce => $oauth_params{nonce});
     };
 
-    abort(401) if $@ || !defined($token) || !$ok;
+    abortmsg(401, "Unable to create an Access Token: " . $@ || $msg)
+        if $@ || !defined($token) || !$ok;
 
     # XXX: actually send the token
 }
@@ -121,14 +134,15 @@ sub get_consumer {
     my $key = shift;
     my $consumer = Jifty::Plugin::OAuth::Model::Consumer->new(current_user => Jifty::CurrentUser->superuser);
     $consumer->load_by_cols(consumer_key => $key);
-    abort(401) if !$consumer->id;
+    abortmsg(401, "No known consumer with key $key") if !$consumer->id;
     return $consumer;
 }
 
 my %valid_signature_methods = map { $_ => 1 } qw/PLAINTEXT HMAC-SHA1 RSA-SHA1/;
 sub validate_signature_method {
     my $method = shift;
-    abort(400) unless $valid_signature_methods{$method};
+    return if $valid_signature_methods{$method};
+    abortmsg(400, "Unsupported signature method requested: $method");
 }
 
 sub get_parameters {
@@ -137,17 +151,17 @@ sub get_parameters {
     # XXX: Check Authorization header
     # XXX: Check WWW-Authenticate header
 
-    %p = ((map {
-        my $v = Jifty->handler->apache->header_in("oauth_$_");
-        defined $v ? ($_ => $v) : ()
-    } @_), %p);
-
-    # XXX: Check query string
+    my %params = Jifty->handler->apache->params();
+    use Data::Dumper; warn Dumper \%params;
+    @p{@_} = @params{map {"oauth_$_"} @_};
 
     $p{version} ||= '1.0';
 
     unless (get 'no_abort') {
-        #abort(400) if grep { !defined($p{$_}) } @_
+        for (@_) {
+            abortmsg(400, "Undefined required parameter: $_")
+                if !defined($p{$_});
+        }
     }
 
     return %p;

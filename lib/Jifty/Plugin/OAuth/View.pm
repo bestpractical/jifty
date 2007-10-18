@@ -4,6 +4,9 @@ use warnings;
 
 use Jifty::View::Declare -base;
 
+template 'oauth/request_token' => page { p { "This page is probably not for you!" } };
+template 'oauth/access_token' => page { p { "This page is probably not for you!" } };
+
 template 'oauth' => page {
     p {
         b { a { attr { href => "http://oauth.net/" } "OAuth" } };

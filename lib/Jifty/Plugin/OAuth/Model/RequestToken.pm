@@ -39,7 +39,7 @@ use Jifty::Record schema {
         type is 'varchar';
 
     # we use these to make sure we aren't being hit with a replay attack
-    column timestamp =>
+    column time_stamp =>
         type is 'integer';
 
     column nonce =>
@@ -53,11 +53,20 @@ sub after_set_authorized {
 
 sub can_trade_for_access_token {
     my $self = shift;
-    return 0 if !$self->authorized;
-    return 0 if !$self->authorized_by;
-    return 0 if $self->used;
-    return 0 if $self->valid_until < DateTime->now;
-    return 1;
+
+    return (0, "Request token is not authorized")
+        if !$self->authorized;
+
+    return (0, "Request token does not have an authorizing user")
+        if !$self->authorized_by;
+
+    return (0, "Request token already used")
+        if $self->used;
+
+    return (0, "Request token expired")
+        if $self->valid_until < DateTime->now;
+
+    return (1, "Request token valid");
 }
 
 1;

@@ -14,7 +14,7 @@ sub before_create {
 
     # check if we're seeing a replay attack
     my $token = $self->new(current_user => Jifty::CurrentUser->superuser);
-    $token->load_by_cols(nonce => $attr->{nonce}, timestamp => $attr->{nonce});
+    $token->load_by_cols(nonce => $attr->{nonce}, time_stamp => $attr->{time_stamp});
     return if $token->id;
 
     # attempt 20 times to create a unique token string
