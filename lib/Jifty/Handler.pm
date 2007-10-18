@@ -219,7 +219,7 @@ sub handle_request {
         for ( Jifty->plugins ) {
             $_->new_request;
         }
-        Jifty->log->debug( "Received request for " . Jifty->web->request->path );
+        Jifty->log->debug( "Received " . $self->apache->method . " request for " . Jifty->web->request->path );
         Jifty->web->setup_session;
 
         # Return from the continuation if need be
