@@ -21,15 +21,15 @@ template 'oauth' => page {
     dl {
         dt {
             outs "Request a Request Token";
-            dd { Jifty->web->url(path => $Jifty::Plugin::OAuth::CONFIG{request_token}) }
+            dd { Jifty->web->url(path => '/oauth/request_token') }
         }
         dt {
             outs "Obtain user authorization for a Request Token";
-            dd { Jifty->web->url(path => $Jifty::Plugin::OAuth::CONFIG{authorize}) }
+            dd { Jifty->web->url(path => '/oauth/authorize') }
         }
         dt {
             outs "Exchange a Request Token for an Access Token";
-            dd { Jifty->web->url(path => $Jifty::Plugin::OAuth::CONFIG{access_token}) }
+            dd { Jifty->web->url(path => '/oauth/access_token') }
         }
     }
 
@@ -63,7 +63,7 @@ content {
         class   => 'AuthorizeRequestToken',
     );
 
-    Jifty->web->form->start( call => get('next') );
+    Jifty->web->form->start( call => get 'next' );
 
     # if the site put the token in the request, then use it
     # otherwise, prompt the user for it
@@ -76,15 +76,15 @@ content {
         $authorize->form_field('token')->render;
     }
 
-    $authorize->button(
+    outs_raw($authorize->button(
         label => 'Allow',
         arguments => { %args, authorize => 'allow' },
-    );
+    ));
 
-    $authorize->button(
+    outs_raw($authorize->button(
         label => 'Deny',
         arguments => { %args, authorize => 'deny' },
-    );
+    ));
 
     Jifty->web->form->end();
 };

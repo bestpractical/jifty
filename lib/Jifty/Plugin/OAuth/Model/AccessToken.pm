@@ -13,7 +13,7 @@ use Jifty::DBI::Schema;
 use Jifty::Record schema {
 
     # kludge 2: this kind of plugin cannot yet casually refer_to app models
-    column user =>
+    column auth_as =>
         type is 'integer';
         #refers_to $app_user;
 

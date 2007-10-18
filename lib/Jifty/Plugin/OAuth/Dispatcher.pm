@@ -8,9 +8,9 @@ use Net::OAuth::RequestTokenRequest;
 use Net::OAuth::AccessTokenRequest;
 use Net::OAuth::ProtectedResourceRequest;
 
-before POST $Jifty::Plugin::OAuth::CONFIG{request_token} => \&request_token;
-before GET  $Jifty::Plugin::OAuth::CONFIG{authorize}     => \&authorize;
-before POST $Jifty::Plugin::OAuth::CONFIG{access_token}  => \&access_token;
+before POST '/oauth/request_token' => \&request_token;
+before GET  '/oauth/authorize'     => \&authorize;
+before POST '/oauth/access_token'  => \&access_token;
 
 # a consumer wants a request token
 sub request_token {
@@ -23,7 +23,7 @@ sub request_token {
 
     # Net::OAuth::Request will die hard if it doesn't get everything it wants
     my $request = eval { Net::OAuth::RequestTokenRequest->new(
-        request_url     => Jifty->web->url(path => $Jifty::Plugin::OAuth::CONFIG{request_token}),
+        request_url     => Jifty->web->url(path => '/oauth/request_token'),
         request_method  => Jifty->handler->apache->method(),
         consumer_secret => $consumer->secret,
 
@@ -61,6 +61,7 @@ sub authorize {
     my %oauth_params = get_parameters(@params);
 
     set next => $oauth_params{callback};
+    set consumer => 'Some application';
 
     if ($oauth_params{token}) {
         my $request_token = Jifty::Plugin::OAuth::Model::RequestToken->new(current_user => Jifty::CurrentUser->superuser);
@@ -71,8 +72,6 @@ sub authorize {
             set token    => $oauth_params{token};
         }
     }
-
-    default consumer => 'Some application';
 }
 
 # the consumer is trying to trade a request token for an access token
@@ -92,7 +91,7 @@ sub access_token {
 
     # Net::OAuth::Request will die hard if it doesn't get everything it wants
     my $request = eval { Net::OAuth::AccessTokenRequest->new(
-        request_url     => Jifty->web->url(path => $Jifty::Plugin::OAuth::CONFIG{access_token}),
+        request_url     => Jifty->web->url(path => '/oauth/access_token'),
         request_method  => Jifty->handler->apache->method(),
         consumer_secret => $consumer->secret,
         token_secret    => $request_token->secret,
@@ -109,7 +108,7 @@ sub access_token {
 
     my ($ok) = eval {
         $token->create(consumer => $consumer,
-                       user => $request_token->authorized_by,
+                       auth_as => $request_token->authorized_by,
                        map { $_ => $oauth_params{$_} } qw/timestamp nonce/);
     };
 
@@ -121,7 +120,7 @@ sub access_token {
 sub get_consumer {
     my $key = shift;
     my $consumer = Jifty::Plugin::OAuth::Model::Consumer->new(current_user => Jifty::CurrentUser->superuser);
-    $consumer->load_by_cols(key => $key);
+    $consumer->load_by_cols(consumer_key => $key);
     abort(401) if !$consumer->id;
     return $consumer;
 }
@@ -148,7 +147,7 @@ sub get_parameters {
     $p{version} ||= '1.0';
 
     unless (get 'no_abort') {
-        abort(400) if grep { !defined($p{$_}) } @_
+        #abort(400) if grep { !defined($p{$_}) } @_
     }
 
     return %p;

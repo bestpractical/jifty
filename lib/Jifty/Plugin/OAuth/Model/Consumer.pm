@@ -9,7 +9,7 @@ use Jifty::DBI::Schema;
 use Jifty::Record schema {
 
     # the unique key that identifies a consumer
-    column key =>
+    column consumer_key =>
         type is 'varchar',
         is distinct,
         is required;

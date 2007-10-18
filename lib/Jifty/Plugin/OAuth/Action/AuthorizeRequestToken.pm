@@ -15,7 +15,8 @@ use Jifty::Action schema {
     param 'token',
         render as 'text',
         max_length is 30,
-        hints are 'The site you just came from should have provided it';
+        hints are 'The site you just came from should have provided it',
+        ajax validates;
 
     param 'authorize',
         valid_values are qw(allow deny);
@@ -55,7 +56,7 @@ sub take_action {
     my $token = Jifty::Plugin::OAuth::Model::RequestToken->new(current_user => Jifty::CurrentUser->superuser);
     $token->load_by_cols(
         token => $self->argument_value('token'),
-        user => Jifty->web->current_user->id
+        auth_as => Jifty->web->current_user->id
     );
 
     if ($self->argument_value('authorize') eq 'allow') {
