@@ -28,4 +28,36 @@ Add the following to your site_config.yml
 
 =cut
 
+=head2 init
+
+Provides defaults for the three URLs that OAuth needs:
+
+=over 4
+
+=item request_token: Request a RequestToken
+
+/oauth/request_token
+
+=item authorize: Authorize a RequestToken
+
+/oauth/authorize
+
+=item access_token: Exchange a RequestToken for an Accesstoken
+
+/oauth/access_token
+
+=cut
+
+our %CONFIG;
+
+sub init {
+    my $self = shift;
+    %CONFIG = (
+        request_token => '/oauth/request_token',
+        authorize     => '/oauth/authorize',
+        access_token  => '/oauth/access_token',
+        @_
+    );
+}
+
 1;

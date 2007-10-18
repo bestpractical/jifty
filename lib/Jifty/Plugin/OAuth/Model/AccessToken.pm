@@ -21,7 +21,7 @@ use Jifty::Record schema {
         type is 'timestamp',
         filters are 'Jifty::DBI::Filter::DateTime';
 
-    column token_secret =>
+    column secret =>
         type is 'varchar';
 
     column consumer =>

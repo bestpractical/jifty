@@ -35,7 +35,7 @@ use Jifty::Record schema {
     column token =>
         type is 'varchar';
 
-    column token_secret =>
+    column secret =>
         type is 'varchar';
 
     # we use these to make sure we aren't being hit with a replay attack
@@ -46,7 +46,7 @@ use Jifty::Record schema {
         type is 'varchar';
 };
 
-sub set_authorized {
+sub after_set_authorized {
     my $self = shift;
     $self->set_authorized_by(Jifty->web->current_user->id);
 }

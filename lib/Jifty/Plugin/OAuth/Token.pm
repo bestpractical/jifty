@@ -28,7 +28,7 @@ sub before_create {
     return if !defined($attr->{token});
 
     # generate a secret. need not be unique, just hard to guess
-    $attr->{token_secret} = generate_token();
+    $attr->{secret} = generate_token();
 
     # default the lifetime of this token to 1 hour
     $attr->{valid_until} ||= DateTime->now->add(hours => 1);
