@@ -42,14 +42,6 @@ use Jifty::Record schema {
         type is 'varchar',
         is required;
 
-    # we use these to make sure we aren't being hit with a replay attack
-    column time_stamp =>
-        type is 'integer',
-        is required;
-
-    column nonce =>
-        type is 'varchar',
-        is required;
 };
 
 sub after_set_authorized {

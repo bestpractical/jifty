@@ -8,7 +8,7 @@ use Jifty::SubTest;
 use TestApp::Plugin::OAuth::Test;
 
 if (eval { require Net::OAuth::Request; 1 }) {
-    plan tests => 50;
+    plan tests => 56;
 }
 else {
     plan skip_all => "Net::OAuth isn't installed";
@@ -74,6 +74,29 @@ response_is(
     oauth_signature_method => 'RSA-SHA1',
 );
 # }}}
+# same timestamp, different nonce {{{
+--$timestamp;
+response_is(
+    code                   => 200,
+    testname               => "200 - RSA-SHA1 signature",
+    consumer_secret        => 'bar',
+    oauth_consumer_key     => 'foo',
+    oauth_nonce            => 'kjfh',
+    signature_key          => $seckey,
+    oauth_signature_method => 'RSA-SHA1',
+);
+# }}}
+# same nonce, different timestamp {{{
+response_is(
+    code                   => 200,
+    testname               => "200 - RSA-SHA1 signature",
+    consumer_secret        => 'bar',
+    oauth_consumer_key     => 'foo',
+    oauth_nonce            => 'kjfh',
+    signature_key          => $seckey,
+    oauth_signature_method => 'RSA-SHA1',
+);
+# }}}}
 
 # get a request token as an RSA-less consumer (PLAINTEXT) {{{
 

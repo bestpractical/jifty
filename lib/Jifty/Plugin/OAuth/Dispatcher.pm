@@ -28,6 +28,8 @@ sub request_token {
     my %oauth_params  = get_parameters(@params);
     my $consumer      = get_consumer($oauth_params{consumer_key});
     my $signature_key = get_signature_key($oauth_params{signature_method}, $consumer);
+    my ($ok, $msg) = $consumer->is_valid_request(@oauth_params{qw/timestamp nonce/});
+    abortmsg(401, $msg) if !$ok;
 
     # Net::OAuth::Request will die hard if it doesn't get everything it wants
     my $request = eval { Net::OAuth::RequestTokenRequest->new(
@@ -53,13 +55,14 @@ sub request_token {
 
     my $token = Jifty::Plugin::OAuth::Model::RequestToken->new(current_user => Jifty::CurrentUser->superuser);
 
-    my ($ok, $msg) = eval {
-        $token->create(nonce => $oauth_params{nonce}, time_stamp => $oauth_params{timestamp}, consumer => $consumer);
+    ($ok, $msg) = eval {
+        $token->create(consumer => $consumer);
     };
 
     abortmsg(401, "Unable to create a Request Token: " . $@ || $msg)
         if $@ || !$ok;
 
+    $consumer->made_request(@oauth_params{qw/timestamp nonce/});
     set oauth_response => {
         oauth_token        => $token->token,
         oauth_token_secret => $token->secret
@@ -96,6 +99,8 @@ sub access_token {
     my %oauth_params  = get_parameters(@params);
     my $consumer      = get_consumer($oauth_params{consumer_key});
     my $signature_key = get_signature_key($oauth_params{signature_method}, $consumer);
+    my ($ok, $msg) = $consumer->is_valid_request(@oauth_params{qw/timestamp nonce/});
+    abortmsg(401, $msg) if !$ok;
 
     # is the request token they're using still valid?
     my $request_token = Jifty::Plugin::OAuth::Model::RequestToken->new(current_user => Jifty::CurrentUser->superuser);
@@ -126,14 +131,13 @@ sub access_token {
 
     ($ok, $msg) = eval {
         $token->create(consumer => $consumer,
-                       auth_as => $request_token->authorized_by,
-                       time_stamp => $oauth_params{timestamp},
-                       nonce => $oauth_params{nonce});
+                       auth_as  => $request_token->authorized_by);
     };
 
     abortmsg(401, "Unable to create an Access Token: " . $@ || $msg)
         if $@ || !defined($token) || !$ok;
 
+    $consumer->made_request(@oauth_params{qw/timestamp nonce/});
     set oauth_response => {
         oauth_token        => $token->token,
         oauth_token_secret => $token->secret

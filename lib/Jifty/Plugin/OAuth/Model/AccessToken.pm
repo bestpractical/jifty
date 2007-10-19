@@ -27,12 +27,6 @@ use Jifty::Record schema {
     column consumer =>
         refers_to Jifty::Plugin::OAuth::Model::Consumer;
 
-    # we use these to make sure we aren't being hit with a replay attack
-    column time_stamp =>
-        type is 'integer';
-
-    column nonce =>
-        type is 'varchar';
 };
 
 1;
