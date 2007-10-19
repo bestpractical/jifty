@@ -5,7 +5,7 @@ use strict;
 use lib 't/lib';
 use Jifty::SubTest;
 
-use TestApp::Plugin::OAuth::Test tests => 24;
+use TestApp::Plugin::OAuth::Test tests => 50;
 use Jifty::Test::WWW::Mechanize;
 
 my $server  = Jifty::Test->make_server;

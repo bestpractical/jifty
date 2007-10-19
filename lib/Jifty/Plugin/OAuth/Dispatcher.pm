@@ -9,9 +9,9 @@ use Net::OAuth::AccessTokenRequest;
 use Net::OAuth::ProtectedResourceRequest;
 use Crypt::OpenSSL::RSA;
 
-before POST '/oauth/request_token' => \&request_token;
+on     POST '/oauth/request_token' => \&request_token;
 before GET  '/oauth/authorize'     => \&authorize;
-before POST '/oauth/access_token'  => \&access_token;
+on     POST '/oauth/access_token'  => \&access_token;
 
 # helper function to abort with a debug message
 sub abortmsg {
@@ -60,7 +60,11 @@ sub request_token {
     abortmsg(401, "Unable to create a Request Token: " . $@ || $msg)
         if $@ || !$ok;
 
-    # XXX: actually send the token
+    set oauth_response => {
+        oauth_token        => $token->token,
+        oauth_token_secret => $token->secret
+    };
+    show 'oauth/response';
     abortmsg(200, 'Correctly issued a Request Token');
 }
 
@@ -131,7 +135,11 @@ sub access_token {
     abortmsg(401, "Unable to create an Access Token: " . $@ || $msg)
         if $@ || !defined($token) || !$ok;
 
-    # XXX: actually send the token
+    set oauth_response => {
+        oauth_token        => $token->token,
+        oauth_token_secret => $token->secret
+    };
+    show 'oauth/response';
     abortmsg(200, 'Correctly issued an Access Token');
 }
 

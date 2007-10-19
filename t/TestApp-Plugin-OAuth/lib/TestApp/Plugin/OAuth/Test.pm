@@ -8,7 +8,7 @@ use MIME::Base64;
 use Crypt::OpenSSL::RSA;
 use Digest::HMAC_SHA1 'hmac_sha1';
 
-our @EXPORT = qw($timestamp $url $mech $pubkey $seckey response_is sign);
+our @EXPORT = qw($timestamp $url $mech $pubkey $seckey response_is sign get_latest_token);
 
 sub setup {
     my $class = shift;
@@ -65,6 +65,14 @@ sub response_is {
 
     local $Test::Builder::Level = $Test::Builder::Level + 1;
     main::is($r->code, $code, $testname);
+
+    my $token = get_latest_token();
+    if ($code == 200) {
+        main::ok($token, "Successfully loaded a token object with token ".$token->token.".");
+    }
+    else {
+        main::ok(!$token, "Did not get a token");
+    }
 }
 
 sub sign {
@@ -129,6 +137,44 @@ sub slurp {
     my $contents = scalar <>
         or die "Unable to slurp $file";
     return $contents;
+}
+
+sub get_latest_token {
+    my $content = $mech->content;
+
+    $content =~ s/\boauth_token=(\w+)//
+        or return;
+    my $token = $1;
+
+    $content =~ s/\boauth_token_secret=(\w+)//
+        or return;
+    my $secret = $1;
+
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
+    main::is($content, '&', "the output was exactly oauth_token=...&oauth_secret=...");
+
+    my $package = 'Jifty::Plugin::OAuth::Model::';
+
+    if ($mech->uri =~ /request_token/) {
+        $package .= 'RequestToken';
+    }
+    elsif ($mech->uri =~ /request_token/) {
+        $package .= 'AccessToken';
+    }
+    else {
+        Jifty->log->error("Called get_latest_token, but I cannot grok the URI " . $mech->uri);
+        return;
+    }
+
+    my $token_obj = $package->new(current_user => Jifty::CurrentUser->superuser);
+    $token_obj->load_by_cols(token => $token);
+
+    if (!$token_obj->id) {
+        Jifty->log->error("Could not find a $package with token $token");
+        return;
+    }
+
+    return $token_obj;
 }
 
 1;

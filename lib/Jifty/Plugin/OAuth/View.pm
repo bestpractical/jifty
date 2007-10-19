@@ -4,6 +4,17 @@ use warnings;
 
 use Jifty::View::Declare -base;
 
+template 'oauth/response' => sub {
+    my $params = get 'oauth_response';
+    if (ref($params) eq 'HASH') {
+        outs_raw join '&',
+                 map { sprintf '%s=%s',
+                       map { Jifty->web->escape_uri($_) }
+                       $_, $params->{$_}
+                 } keys %$params;
+    }
+};
+
 template 'oauth' => page {
     p {
         b { a { attr { href => "http://oauth.net/" } "OAuth" } };
