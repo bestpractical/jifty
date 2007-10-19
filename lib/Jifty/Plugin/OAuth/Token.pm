@@ -15,13 +15,17 @@ sub before_create {
 
     # check if we're seeing a replay attack
     my $token = $self->new(current_user => Jifty::CurrentUser->superuser);
-    $token->load_by_cols(nonce => $attr->{nonce}, time_stamp => $attr->{time_stamp});
+    $token->load_by_cols(nonce => $attr->{nonce}, time_stamp => $attr->{time_stamp}, consumer => $attr->{consumer});
     if ($token->id) {
-        use Data::Dumper;
-        Jifty->log->warn(Dumper $token);
-        Jifty->log->warn(Dumper $self);
-        Jifty->log->warn("Duplicate nonce ($attr->{nonce}) and timestamp ($attr->{time_stamp}) from " . $token->id . " (self is " . $self->id . "). Possibly a replay attack.");
-        return;
+        die "Duplicate nonce ($attr->{nonce}) and timestamp ($attr->{time_stamp}) from consumer ".$attr->{consumer}->name.". Possibly a replay attack.";
+    }
+
+    # check to see if the timestamp for this consumer is larger than any previous
+    my $tokens = (blessed($self).'Collection')->new(current_user => Jifty::CurrentUser->superuser);
+    $tokens->limit(column => 'consumer', value => $attr->{consumer});
+    $tokens->limit(column => 'time_stamp', value => $attr->{time_stamp}, operator => '>');
+    if ($tokens->count) {
+        die "Got a timestamp from consumer ".$attr->{consumer}->name." that was smaller than ".$tokens->count." previous timestamps.";
     }
 
     # attempt 20 times to create a unique token string
@@ -33,7 +37,7 @@ sub before_create {
         delete $attr->{token};
     }
     if (!defined $attr->{token}) {
-        Jifty->log->warn("Failed 20 times to create a unique token. Giving up.");
+        die "Failed 20 times to create a unique token. Giving up.";
         return;
     }
 

@@ -14,7 +14,8 @@ use Jifty::Record schema {
 
     column valid_until =>
         type is 'timestamp',
-        filters are 'Jifty::DBI::Filter::DateTime';
+        filters are 'Jifty::DBI::Filter::DateTime',
+        is required;
 
     column authorized =>
         type is 'boolean',
@@ -26,24 +27,29 @@ use Jifty::Record schema {
         #refers_to $app_user;
 
     column consumer =>
-        refers_to Jifty::Plugin::OAuth::Model::Consumer;
+        refers_to Jifty::Plugin::OAuth::Model::Consumer,
+        is required;
 
     column used =>
         type is 'boolean',
         default is 'f';
 
     column token =>
-        type is 'varchar';
+        type is 'varchar',
+        is required;
 
     column secret =>
-        type is 'varchar';
+        type is 'varchar',
+        is required;
 
     # we use these to make sure we aren't being hit with a replay attack
     column time_stamp =>
-        type is 'integer';
+        type is 'integer',
+        is required;
 
     column nonce =>
-        type is 'varchar';
+        type is 'varchar',
+        is required;
 };
 
 sub after_set_authorized {

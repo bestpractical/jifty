@@ -7,6 +7,7 @@ use Jifty::Dispatcher -base;
 use Net::OAuth::RequestTokenRequest;
 use Net::OAuth::AccessTokenRequest;
 use Net::OAuth::ProtectedResourceRequest;
+use Crypt::OpenSSL::RSA;
 
 before POST '/oauth/request_token' => \&request_token;
 before GET  '/oauth/authorize'     => \&authorize;
@@ -41,7 +42,7 @@ sub request_token {
     abortmsg(400, "Unable to create RequestTokenRequest: $@") if $@ || !defined($request);
 
     # make sure the signature matches the rest of what the consumer gave us
-    abortmsg(401, "Invalid signature.") unless $request->verify;
+    abortmsg(401, "Invalid signature (type: $oauth_params{signature_method}).") unless $request->verify;
 
     # ok, everything checks out. send them back a request token
     # at this point, the only things that could go wrong are:
@@ -53,14 +54,14 @@ sub request_token {
     my $token = Jifty::Plugin::OAuth::Model::RequestToken->new(current_user => Jifty::CurrentUser->superuser);
 
     my ($ok, $msg) = eval {
-        $token->create(nonce => $oauth_params{nonce}, time_stamp => $oauth_params{timestamp});
+        $token->create(nonce => $oauth_params{nonce}, time_stamp => $oauth_params{timestamp}, consumer => $consumer);
     };
 
     abortmsg(401, "Unable to create a Request Token: " . $@ || $msg)
         if $@ || !$ok;
 
     # XXX: actually send the token
-    abort(200);
+    abortmsg(200, 'Correctly issued a Request Token');
 }
 
 # the user is authorizing (or denying) a consumer's request token
@@ -116,7 +117,7 @@ sub access_token {
     abortmsg(400, "Unable to create AccessTokenRequest: $@") if $@ || !defined($request);
 
     # make sure the signature matches the rest of what the consumer gave us
-    abortmsg(401, "Invalid signature.") unless $request->verify;
+    abortmsg(401, "Invalid signature (type: $oauth_params{signature_method}).") unless $request->verify;
 
     my $token = Jifty::Plugin::OAuth::Model::AccessToken->new(current_user => Jifty::CurrentUser->superuser);
 
@@ -131,6 +132,7 @@ sub access_token {
         if $@ || !defined($token) || !$ok;
 
     # XXX: actually send the token
+    abortmsg(200, 'Correctly issued an Access Token');
 }
 
 sub get_consumer {
@@ -162,6 +164,10 @@ sub get_consumer {
         abortmsg(400, "Consumer does not have necessary field $field required for signature method $method")
             unless defined $key;
 
+        if ($method eq 'RSA-SHA1') {
+            $key = Crypt::OpenSSL::RSA->new_public_key($key);
+        }
+
         return $key;
     }
 }
@@ -174,16 +180,27 @@ sub get_parameters {
 
     my %params = Jifty->handler->apache->params();
     for (@_) {
-        $p{$_} = $params{"oauth_$_"}
+        $p{$_} = delete $params{"oauth_$_"}
             if !defined $p{$_};
     }
 
     $p{version} ||= '1.0';
 
     unless (get 'no_abort') {
+        # check to see if there are any unsupported parameters
+        while (my ($key, undef) = each %params) {
+            abortmsg(400, "Unsupported parameter: $key")
+                if $key =~ /^oauth_/;
+        }
+
+        # check to see if we're missing anything
         for (@_) {
             abortmsg(400, "Undefined required parameter: $_")
                 if !defined($p{$_});
+        }
+
+        if ($p{timestamp} && $p{timestamp} !~ /^\d+$/) {
+            abortmsg(400, "Malformed timestamp. Expected positive integer, got $p{timestamp}");
         }
     }
 

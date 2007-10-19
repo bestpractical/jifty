@@ -5,179 +5,16 @@ use strict;
 use lib 't/lib';
 use Jifty::SubTest;
 
-use Jifty::Test tests => 16;
+use TestApp::Plugin::OAuth::Test tests => 24;
 use Jifty::Test::WWW::Mechanize;
-
-use MIME::Base64;
-use Crypt::OpenSSL::RSA;
-use Digest::HMAC_SHA1 'hmac_sha1';
 
 my $server  = Jifty::Test->make_server;
 isa_ok($server, 'Jifty::Server');
 my $URL     = $server->started_ok;
-my $mech    = Jifty::Test::WWW::Mechanize->new();
-our $url     = $URL . '/oauth/request_token';
+$mech    = Jifty::Test::WWW::Mechanize->new();
+$url     = $URL . '/oauth/request_token';
 
-# helper functions {{{
-my $timestamp = 0;
-sub response_is {
-    ++$timestamp;
-
-    my %params = (
-        oauth_timestamp        => $timestamp,
-        oauth_nonce            => scalar(reverse $timestamp),
-        oauth_signature_method => 'HMAC-SHA1',
-        oauth_version          => '1.0',
-
-        code                   => 400,
-        testname               => "",
-        method                 => 'POST',
-        token_secret           => '',
-        @_,
-    );
-
-    my $code            = delete $params{code};
-    my $testname        = delete $params{testname} || "Response was $code";
-    my $method          = delete $params{method};
-    my $token_secret    = delete $params{token_secret};
-    my $consumer_secret = delete $params{consumer_secret}
-        or die "consumer_secret not passed to response_is!";
-
-    $params{oauth_signature} ||= sign($method, $token_secret, $consumer_secret, %params);
-
-    my $r;
-
-    if ($method eq 'POST') {
-        $r = $mech->post($url, [%params]);
-    }
-    else {
-        my $query = join '&',
-                    map { "$_=" . Jifty->web->escape_uri($params{$_}||'') }
-                    keys %params;
-        $r = $mech->get("$url?$query");
-    }
-
-    is($r->code, $code, $testname);
-}
-
-sub sign {
-    my ($method, $token_secret, $consumer_secret, %params) = @_;
-
-    local $url = delete $params{url} || $url;
-
-    my $key = delete $params{signature_key};
-
-    if ($params{oauth_signature_method} eq 'PLAINTEXT') {
-        my $signature = join '&',
-                        map { Jifty->web->escape_uri($_||'') }
-                            $consumer_secret,
-                            $token_secret;
-        return $signature;
-    }
-
-    my $normalized_request_parameters
-        = join '&',
-          map { "$_=" . Jifty->web->escape_uri($params{$_}||'') }
-          sort keys %params;
-
-    my $signature_base_string
-        = join '&',
-          map { Jifty->web->escape_uri($_||'') }
-              uc($method),
-              $url,
-              $normalized_request_parameters,
-              $consumer_secret,
-              $token_secret;
-
-    my $signature;
-
-    if ($params{oauth_signature_method} eq 'RSA-SHA1') {
-        my $pubkey = Crypt::OpenSSL::RSA->new_private_key($key);
-        $signature = encode_base64($pubkey->sign($signature_base_string));
-    }
-    elsif ($params{oauth_signature_method} eq 'HMAC-SHA1') {
-        my $key = join '&',
-          map { Jifty->web->escape_uri($_||'') }
-              $consumer_secret,
-              $token_secret;
-        my $hmac = Digest::HMAC_SHA1->new($key);
-        $hmac->add($signature_base_string);
-        $signature = $hmac->b64digest;
-    }
-
-    return ($signature, $signature_base_string, $normalized_request_parameters)
-        if wantarray;
-    return $signature;
-
-}
-# }}}
-# load the RSA keys {{{
-sub slurp {
-    my $file = shift;
-    local $/;
-    local @ARGV = $file;
-    my $contents = scalar <>
-        or die "Unable to slurp $file";
-    return $contents;
-}
-
-my $pubkey = slurp 't/id_rsa.pub';
-my $seckey = slurp 't/id_rsa';
-# }}}
-# testing the local sign function {{{
-# PLAINTEXT {{{
-is(sign('POST', 'jjd999tj88uiths3', 'djr9rjt0jd78jf88',
-        oauth_signature_method => 'PLAINTEXT'),
-    'djr9rjt0jd78jf88&jjd999tj88uiths3', 'PLAINTEXT example 1 works');
-is(sign('POST', 'jjd99$tj88uiths3', 'djr9rjt0jd78jf88',
-        oauth_signature_method => 'PLAINTEXT'),
-    'djr9rjt0jd78jf88&jjd99%24tj88uiths3', 'PLAINTEXT example 2 works');
-is(sign('POST', undef, 'djr9rjt0jd78jf88',
-        oauth_signature_method => 'PLAINTEXT'),
-    'djr9rjt0jd78jf88&', 'PLAINTEXT example 2 works');
-# }}}
-# HMAC-SHA1 {{{
-my ($sig, $sbs, $nrp) = sign(
-    'GET',
-    'pfkkdhi9sl3r4s00',
-    'kd94hf93k423kf44',
-    url => 'http://photos.example.net/photos',
-    oauth_consumer_key => 'dpf43f3p2l4k3l03',
-    oauth_signature_method => 'HMAC-SHA1',
-    oauth_timestamp => '1191242096',
-    oauth_nonce => 'kllo9940pd9333jh',
-    oauth_token => 'nnch734d00sl2jdk',
-    file => 'vacation.jpg',
-    size => 'original',
-    oauth_version => '1.0');
-
-is($nrp, 'file=vacation.jpg&oauth_consumer_key=dpf43f3p2l4k3l03&oauth_nonce=kllo9940pd9333jh&oauth_signature_method=HMAC-SHA1&oauth_timestamp=1191242096&oauth_token=nnch734d00sl2jdk&oauth_version=1.0&size=original', 'HMAC-SHA1 normalized request paramaters correct');
-is($sbs, 'GET&http%3A%2F%2Fphotos.example.net%2Fphotos&file%3Dvacation.jpg%26oauth_consumer_key%3Ddpf43f3p2l4k3l03%26oauth_nonce%3Dkllo9940pd9333jh%26oauth_signature_method%3DHMAC-SHA1%26oauth_timestamp%3D1191242096%26oauth_token%3Dnnch734d00sl2jdk%26oauth_version%3D1.0%26size%3Doriginal&kd94hf93k423kf44&pfkkdhi9sl3r4s00', 'HMAC-SHA1 signature-base-string correct');
-is($sig, 'Gcg/323lvAsQ707p+y41y14qWfY', 'HMAC-SHA1 signature correct');
-# }}}
-# RSA-SHA1 {{{
-($sig, $sbs, $nrp) = sign(
-    'GET',
-    'pfkkdhi9sl3r4s00',
-    'kd94hf93k423kf44',
-    url => 'http://photos.example.net/photos',
-    signature_key => $seckey,
-    oauth_consumer_key => 'dpf43f3p2l4k3l03',
-    oauth_signature_method => 'RSA-SHA1',
-    oauth_timestamp => '1191242096',
-    oauth_nonce => 'kllo9940pd9333jh',
-    oauth_token => 'nnch734d00sl2jdk',
-    file => 'vacation.jpg',
-    size => 'original',
-    oauth_version => '1.0');
-
-is($nrp, 'file=vacation.jpg&oauth_consumer_key=dpf43f3p2l4k3l03&oauth_nonce=kllo9940pd9333jh&oauth_signature_method=RSA-SHA1&oauth_timestamp=1191242096&oauth_token=nnch734d00sl2jdk&oauth_version=1.0&size=original', 'RSA-SHA1 normalized request paramaters correct');
-is($sbs, 'GET&http%3A%2F%2Fphotos.example.net%2Fphotos&file%3Dvacation.jpg%26oauth_consumer_key%3Ddpf43f3p2l4k3l03%26oauth_nonce%3Dkllo9940pd9333jh%26oauth_signature_method%3DRSA-SHA1%26oauth_timestamp%3D1191242096%26oauth_token%3Dnnch734d00sl2jdk%26oauth_version%3D1.0%26size%3Doriginal&kd94hf93k423kf44&pfkkdhi9sl3r4s00', 'RSA-SHA1 signature-base-string correct');
-$sig =~ s/\s+//g;
-is($sig, 'oSjbUzMjD4E+LeHMaYzYx1KyULDwuR6V9oeNgTLoO9m90iJh4d01J/8SzvHKT8N0y2vs1o8s72z19Eicj6l+mEmH5Rp0cwWOE9UdvC+JdFSIA1bmlwVPCFL7jDQqRSBJsXEiT44T5j9P+Dh5Z5WUjEgCExQyNP38Z3nMnYYOCRM=', 'RSA-SHA1 signature correct');
-# }}}
-# }}}
-# get a request token as a known consumer {{{
+# create some consumers {{{
 my $consumer = Jifty::Plugin::OAuth::Model::Consumer->new(current_user => Jifty::CurrentUser->superuser);
 my ($ok, $msg) = $consumer->create(
     consumer_key => 'foo',
@@ -188,23 +25,99 @@ my ($ok, $msg) = $consumer->create(
 );
 ok($ok, $msg);
 
+my $rsaless = Jifty::Plugin::OAuth::Model::Consumer->new(current_user => Jifty::CurrentUser->superuser);
+($ok, $msg) = $rsaless->create(
+    consumer_key => 'foo2',
+    secret       => 'bar2',
+    name         => 'Backwater.org',
+    url          => 'http://backwater.org',
+);
+ok($ok, $msg);
+# }}}
+
+# success modes
+
+# get a request token as a known consumer (PLAINTEXT) {{{
 response_is(
     code                   => 200,
+    testname               => "200 - plaintext signature",
     consumer_secret        => 'bar',
     oauth_consumer_key     => 'foo',
     oauth_signature_method => 'PLAINTEXT',
 );
 # }}}
+# get a request token as a known consumer (HMAC-SHA1) {{{
+$timestamp = 100; # set timestamp to test different consumers' timestamps
+response_is(
+    code                   => 200,
+    testname               => "200 - HMAC-SHA1 signature",
+    consumer_secret        => 'bar',
+    oauth_consumer_key     => 'foo',
+    oauth_signature_method => 'HMAC-SHA1',
+);
+# }}}
+# get a request token as a known consumer (RSA-SHA1) {{{
+response_is(
+    code                   => 200,
+    testname               => "200 - RSA-SHA1 signature",
+    consumer_secret        => 'bar',
+    oauth_consumer_key     => 'foo',
+    signature_key          => $seckey,
+    oauth_signature_method => 'RSA-SHA1',
+);
+# }}}
+
+# get a request token as an RSA-less consumer (PLAINTEXT) {{{
+
+# consumer 1 has a timestamp of about 101 now. if this gives a timestamp error,
+# then timestamps must be globally increasing, which is wrong. they must only
+# be increasing per consumer
+$timestamp = 50;
+
+response_is(
+    code                   => 200,
+    testname               => "200 - plaintext signature",
+    consumer_secret        => 'bar2',
+    oauth_consumer_key     => 'foo2',
+    oauth_signature_method => 'PLAINTEXT',
+);
+# }}}
+# get a request token as an RSA-less consumer (HMAC-SHA1) {{{
+response_is(
+    code                   => 200,
+    testname               => "200 - HMAC-SHA1 signature",
+    consumer_secret        => 'bar2',
+    oauth_consumer_key     => 'foo2',
+    oauth_signature_method => 'HMAC-SHA1',
+);
+# }}}
+
+# failure modes
+
+# request a request token as an RSA-less consumer (RSA-SHA1) {{{
+response_is(
+    code                   => 400,
+    testname               => "400 - RSA-SHA1 signature, without registering RSA key!",
+    consumer_secret        => 'bar2',
+    oauth_consumer_key     => 'foo2',
+    signature_key          => $seckey,
+    oauth_signature_method => 'RSA-SHA1',
+);
+# }}}
 # unknown consumer {{{
+# we're back to the first consumer, so we need a locally larger timestamp
+$timestamp = 200;
 response_is(
     code                   => 401,
+    testname               => "401 - unknown consumer",
     consumer_secret        => 'zzz',
     oauth_consumer_key     => 'whoami',
 );
 # }}}
-# wrong secret {{{
+# wrong consumer secret {{{
 response_is (
     code                   => 401,
+    testname               => "401 - wrong consumer secret",
     consumer_secret        => 'not bar!',
     oauth_consumer_key     => 'foo',
 );
@@ -212,23 +125,122 @@ response_is (
 # wrong signature {{{
 response_is(
     code                   => 401,
+    testname               => "401 - wrong signature",
+    consumer_secret        => 'bar',
+    oauth_consumer_key     => 'foo',
+    oauth_signature        => 'hello ^____^',
+);
+# }}}
+# duplicate timestamp and nonce {{{
+response_is(
+    code                   => 401,
+    testname               => "401 - duplicate timestamp and nonce",
+    consumer_secret        => 'bar',
+    oauth_consumer_key     => 'foo',
+    oauth_timestamp        => 1,
+    oauth_nonce            => 1,
+    oauth_signature_method => 'PLAINTEXT',
+);
+# }}}
+# unknown signature method {{{
+response_is(
+    code                   => 400,
+    testname               => "400 - unknown signature method",
+    consumer_secret        => 'bar',
+    oauth_consumer_key     => 'foo',
+    oauth_signature_method => 'Peaches. Peaches FOR YOU',
+);
+# }}}
+# missing parameters {{{
+# oauth_consumer_key {{{
+response_is(
+    code                   => 400,
+    testname               => "400 - missing parameter oauth_consumer_key",
+    consumer_secret        => 'bar',
+    oauth_signature_method => 'PLAINTEXT',
+);
+# }}}
+# oauth_nonce {{{
+response_is(
+    code                   => 400,
+    testname               => "400 - missing parameter oauth_nonce",
+    consumer_secret        => 'bar',
+    oauth_consumer_key     => 'foo',
+    oauth_nonce            => undef,
+    oauth_signature_method => 'PLAINTEXT',
+);
+# }}}
+# oauth_timestamp {{{
+response_is(
+    code                   => 400,
+    testname               => "400 - missing parameter oauth_timestamp",
+    consumer_secret        => 'bar',
+    oauth_consumer_key     => 'foo',
+    oauth_timestamp        => undef,
+    oauth_signature_method => 'PLAINTEXT',
+);
+# }}}
+# oauth_signature_method {{{
+response_is(
+    code                   => 400,
+    testname               => "400 - missing parameter oauth_signature_method",
+    consumer_secret        => 'bar',
+    oauth_consumer_key     => 'foo',
+    oauth_signature_method => undef,
+    _signature_method       => 'PLAINTEXT', # so we get a real signature
+);
+# }}}
+# }}}
+# unsupported parameter {{{
+response_is(
+    code                   => 400,
+    testname               => "400 - unsupported parameter oauth_candy",
+    consumer_secret        => 'bar',
+    oauth_consumer_key     => 'foo',
+    oauth_signature_method => 'PLAINTEXT',
+    oauth_candy            => 'yummy',
+);
+# }}}
+# invalid timestamp (noninteger) {{{
+response_is(
+    code                   => 400,
+    testname               => "400 - malformed timestamp (noninteger)",
+    consumer_secret        => 'bar',
+    oauth_consumer_key     => 'foo',
+    oauth_signature_method => 'PLAINTEXT',
+    oauth_timestamp        => 'half past nine',
+);
+# }}}
+# invalid timestamp (smaller than previous request) {{{
+$timestamp = 1000;
+# first make a good request with a large timestamp {{{
+response_is(
+    code                   => 200,
+    testname               => "200 - setting up a future test",
     consumer_secret        => 'bar',
     oauth_consumer_key     => 'foo',
 );
 # }}}
-# duplicate timestamp and nonce {{{
+$timestamp = 500;
+# then a new request with a smaller timestamp {{{
+response_is(
+    code                   => 401,
+    testname               => "401 - timestamp smaller than a previous timestamp",
+    consumer_secret        => 'bar',
+    oauth_consumer_key     => 'foo',
+    oauth_signature_method => 'PLAINTEXT',
+);
 # }}}
-# unknown signature method {{{
-# }}}
-# missing parameters {{{
-# }}}
-# unsupported parameter {{{
-# }}}
-# invalid timestamp (noninteger) {{{
-
-# }}}
-# invalid timestamp (smaller than previous request) {{{
+$timestamp = 2000;
 # }}}
 # GET not POST {{{
+response_is(
+    code                   => 404,
+    testname               => "404 - GET not supported for request_token",
+    consumer_secret        => 'bar',
+    oauth_consumer_key     => 'foo',
+    oauth_signature_method => 'PLAINTEXT',
+    method                 => 'GET',
+);
 # }}}
 
