@@ -71,6 +71,26 @@ sub new {
     my $lang = Jifty->config->framework('L10N')->{'Lang'};
     $lang = [defined $lang ? $lang : ()] unless ref($lang) eq 'ARRAY';
 
+    # Allow hard-coded allowed-languages in the config file
+    my $allowed_lang = Jifty->config->framework('L10N')->{'AllowedLang'};
+    $allowed_lang = [defined $allowed_lang ? $allowed_lang : ()] unless ref($allowed_lang) eq 'ARRAY';
+
+    if (@$allowed_lang) {
+        my $allowed_regex = join '|', map {
+            my $it = $_;
+            $it =~ tr<-A-Z><_a-z>; # lc, and turn - to _
+            $it =~ tr<_a-z0-9><>cd;  # remove all but a-z0-9_
+            $it;
+        } @$allowed_lang;
+
+        foreach my $sym (sort keys %Jifty::I18N::) {
+            $sym =~ /^(\w+)::/ or next;
+            # "AllowedLang: zh" should let both zh_tw and zh_cn survive,
+            # so we just check ^ but not $.
+            $1 =~ /^$allowed_regex/ or delete $Jifty::I18N::{$sym};
+        }
+    }
+
     my $lh = $class->get_handle(@$lang);
 
     $DynamicLH = \$lh unless @$lang; 
