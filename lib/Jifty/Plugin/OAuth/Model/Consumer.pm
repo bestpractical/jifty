@@ -44,6 +44,14 @@ use Jifty::Record schema {
         filters are 'Jifty::DBI::Filter::Storable';
 };
 
+=head2 table
+
+Consumers are stored in the table C<oauth_consumers>.
+
+=cut
+
+sub table {'oauth_consumers'}
+
 sub before_set_last_timestamp {
     my $self = shift;
     my $new_ts = shift;

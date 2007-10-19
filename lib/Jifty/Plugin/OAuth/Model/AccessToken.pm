@@ -29,5 +29,13 @@ use Jifty::Record schema {
 
 };
 
+=head2 table
+
+AccessTokens are stored in the table C<oauth_access_tokens>.
+
+=cut
+
+sub table {'oauth_access_tokens'}
+
 1;
 

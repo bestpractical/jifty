@@ -24,6 +24,7 @@ sub abortmsg {
 sub request_token {
     my @params = qw/consumer_key signature_method signature
                     timestamp nonce version/;
+    set no_abort => 0;
 
     my %oauth_params  = get_parameters(@params);
     my $consumer      = get_consumer($oauth_params{consumer_key});
@@ -79,10 +80,11 @@ sub authorize {
 
     set next => $oauth_params{callback};
     set consumer => 'Some application';
+    del 'token';
 
     if ($oauth_params{token}) {
         my $request_token = Jifty::Plugin::OAuth::Model::RequestToken->new(current_user => Jifty::CurrentUser->superuser);
-        $request_token->load_by_cols(token => $oauth_params{token});
+        $request_token->load_by_cols(token => $oauth_params{token}, authorized => 'f');
 
         if ($request_token->id) {
             set consumer => $request_token->consumer;
@@ -95,6 +97,7 @@ sub authorize {
 sub access_token {
     my @params = qw/consumer_key signature_method signature
                     timestamp nonce token version/;
+    set no_abort => 0;
 
     my %oauth_params  = get_parameters(@params);
     my $consumer      = get_consumer($oauth_params{consumer_key});
@@ -108,7 +111,7 @@ sub access_token {
 
     abortmsg(401, "No token found for consumer ".$consumer->name." with key $oauth_params{token}") unless $request_token->id;
 
-    my ($ok, $msg) = $request_token->can_trade_for_access_token;
+    ($ok, $msg) = $request_token->can_trade_for_access_token;
     abortmsg(401, "Cannot trade request token for access token: $msg") if !$ok;
 
     # Net::OAuth::Request will die hard if it doesn't get everything it wants

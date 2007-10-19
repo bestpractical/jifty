@@ -56,7 +56,6 @@ sub take_action {
     my $token = Jifty::Plugin::OAuth::Model::RequestToken->new(current_user => Jifty::CurrentUser->superuser);
     $token->load_by_cols(
         token => $self->argument_value('token'),
-        auth_as => Jifty->web->current_user->id
     );
 
     if ($self->argument_value('authorize') eq 'allow') {

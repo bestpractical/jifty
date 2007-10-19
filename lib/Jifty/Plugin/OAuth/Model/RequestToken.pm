@@ -44,6 +44,14 @@ use Jifty::Record schema {
 
 };
 
+=head2 table
+
+RequestTokens are stored in the table C<oauth_request_tokens>.
+
+=cut
+
+sub table {'oauth_request_tokens'}
+
 sub after_set_authorized {
     my $self = shift;
     $self->set_authorized_by(Jifty->web->current_user->id);

@@ -113,14 +113,14 @@ private template 'oauth/help' => sub {
 };
 
 private template 'oauth/consumer' => sub {
-    my $consumer = get 'consumer' || 'Some application';
+    my $consumer = (get 'consumer') || 'Some application';
 
     span {
         outs ref($consumer) ? $consumer->name : $consumer;
         if (ref($consumer) && $consumer->url) {
-            outs ' (';
-            a { attr { $consumer->url } $consumer->url };
-            outs ')';
+            outs ' <';
+            a { attr { href => $consumer->url } $consumer->url };
+            outs ' >';
         }
     }
 };
