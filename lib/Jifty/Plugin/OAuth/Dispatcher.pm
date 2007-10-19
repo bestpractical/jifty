@@ -65,7 +65,6 @@ sub request_token {
         oauth_token_secret => $token->secret
     };
     show 'oauth/response';
-    abortmsg(200, 'Correctly issued a Request Token');
 }
 
 # the user is authorizing (or denying) a consumer's request token
@@ -140,7 +139,6 @@ sub access_token {
         oauth_token_secret => $token->secret
     };
     show 'oauth/response';
-    abortmsg(200, 'Correctly issued an Access Token');
 }
 
 sub get_consumer {

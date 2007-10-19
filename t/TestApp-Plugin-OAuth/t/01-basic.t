@@ -5,7 +5,15 @@ use strict;
 use lib 't/lib';
 use Jifty::SubTest;
 
-use Jifty::Test tests => 9;
+use Jifty::Test;
+
+if (eval { require Net::OAuth::Request; 1 }) {
+    plan tests => 9;
+}
+else {
+    plan skip_all => "Net::OAuth isn't installed";
+}
+
 use Jifty::Test::WWW::Mechanize;
 
 my $server  = Jifty::Test->make_server;

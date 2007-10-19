@@ -5,7 +5,14 @@ use strict;
 use lib 't/lib';
 use Jifty::SubTest;
 
-use TestApp::Plugin::OAuth::Test tests => 9;
+use TestApp::Plugin::OAuth::Test;
+
+if (eval { require Net::OAuth::Request; 1 }) {
+    plan tests => 9;
+}
+else {
+    plan skip_all => "Net::OAuth isn't installed";
+}
 
 # sign PLAINTEXT {{{
 is(sign('POST', 'jjd999tj88uiths3', 'djr9rjt0jd78jf88',
