@@ -138,8 +138,10 @@ Get the lanauge language for this request.
 =cut
 
 sub get_language_handle {
+    # XXX: subrequest should not need to get_handle again.
     my $self = shift;
-    $$DynamicLH = $self->get_handle() if $DynamicLH;
+    my $lang = Jifty->web->session->get('jifty_lang');
+    $$DynamicLH = $self->get_handle($lang ? $lang : ()) if $DynamicLH;
 }
 
 =head2 refresh

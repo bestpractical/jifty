@@ -37,5 +37,10 @@ on '**' => run {
     return ();
 };
 
+before '**' => run {
+    if (my $lang = Jifty->web->request->arguments->{_jifty_lang}) {
+        Jifty->web->session->set(jifty_lang => $lang);
+    }
+};
 
 1;
