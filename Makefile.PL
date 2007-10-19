@@ -170,6 +170,7 @@ features(
         recommends('Net::OAuth::Request'),
         recommends('Crypt::OpenSSL::RSA'),
         recommends('Digest::HMAC_SHA1'),
+        recommends('MIME::Base64'),
     ],
 );
 

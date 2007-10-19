@@ -29,6 +29,10 @@ use Jifty::Record schema {
     column url =>
         type is 'varchar';
 
+    column rsa_key =>
+        type is 'varchar',
+        hints are 'This is only necessary if you want to support RSA-SHA1 signatures';
+
 };
 
 1;

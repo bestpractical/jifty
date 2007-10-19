@@ -14,7 +14,7 @@ template 'oauth' => page {
     }
 
     p {
-        "This application supports OAuth. If you'd like to access the private resources of users of this site, you must first establish a Consumer Key and Consumer Secret with us. You can do so by contacting " . (Jifty->config->framework('AdminEmail')||'us') . ".";
+        "This application supports OAuth. If you'd like to access the private resources of users of this site, you must first establish a Consumer Key, Consumer Secret, and, if applicable, RSA public key with us. You can do so by contacting " . (Jifty->config->framework('AdminEmail')||'us') . ".";
     }
 
     p {

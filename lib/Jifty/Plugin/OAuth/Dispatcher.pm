@@ -15,7 +15,7 @@ before POST '/oauth/access_token'  => \&access_token;
 # helper function to abort with a debug message
 sub abortmsg {
     my ($code, $msg) = @_;
-    Jifty->log->error($msg) if defined($msg);
+    Jifty->log->debug($msg) if defined($msg);
     abort($code || 400);
 }
 
@@ -24,15 +24,16 @@ sub request_token {
     my @params = qw/consumer_key signature_method signature
                     timestamp nonce version/;
 
-    my %oauth_params = get_parameters(@params);
-    validate_signature_method($oauth_params{signature_method});
-    my $consumer = get_consumer($oauth_params{consumer_key});
+    my %oauth_params  = get_parameters(@params);
+    my $consumer      = get_consumer($oauth_params{consumer_key});
+    my $signature_key = get_signature_key($oauth_params{signature_method}, $consumer);
 
     # Net::OAuth::Request will die hard if it doesn't get everything it wants
     my $request = eval { Net::OAuth::RequestTokenRequest->new(
         request_url     => Jifty->web->url(path => '/oauth/request_token'),
         request_method  => Jifty->handler->apache->method(),
         consumer_secret => $consumer->secret,
+        signature_key   => $signature_key,
 
         map { $_ => $oauth_params{$_} } @params
     ) };
@@ -56,9 +57,10 @@ sub request_token {
     };
 
     abortmsg(401, "Unable to create a Request Token: " . $@ || $msg)
-        if $@ || !defined($token) || !$ok;
+        if $@ || !$ok;
 
     # XXX: actually send the token
+    abort(200);
 }
 
 # the user is authorizing (or denying) a consumer's request token
@@ -87,9 +89,9 @@ sub access_token {
     my @params = qw/consumer_key signature_method signature
                     timestamp nonce token version/;
 
-    my %oauth_params = get_parameters(@params);
-    validate_signature_method($oauth_params{signature_method});
-    my $consumer = get_consumer($oauth_params{consumer_key});
+    my %oauth_params  = get_parameters(@params);
+    my $consumer      = get_consumer($oauth_params{consumer_key});
+    my $signature_key = get_signature_key($oauth_params{signature_method}, $consumer);
 
     # is the request token they're using still valid?
     my $request_token = Jifty::Plugin::OAuth::Model::RequestToken->new(current_user => Jifty::CurrentUser->superuser);
@@ -106,6 +108,7 @@ sub access_token {
         request_method  => Jifty->handler->apache->method(),
         consumer_secret => $consumer->secret,
         token_secret    => $request_token->secret,
+        signature_key   => $signature_key,
 
         map { $_ => $oauth_params{$_} } @params
     ) };
@@ -138,11 +141,29 @@ sub get_consumer {
     return $consumer;
 }
 
-my %valid_signature_methods = map { $_ => 1 } qw/PLAINTEXT HMAC-SHA1 RSA-SHA1/;
-sub validate_signature_method {
-    my $method = shift;
-    return if $valid_signature_methods{$method};
-    abortmsg(400, "Unsupported signature method requested: $method");
+{
+    my %valid_signature_methods = map { $_ => 1 }
+                                  qw/PLAINTEXT HMAC-SHA1 RSA-SHA1/;
+    my %key_field = ('RSA-SHA1' => 'rsa_key');
+
+    sub get_signature_key {
+        my ($method, $consumer) = @_;
+        if (!$valid_signature_methods{$method}) {
+            abortmsg(400, "Unsupported signature method requested: $method");
+        }
+
+        my $field = $key_field{$method};
+
+        # this MUST return undef if the signature method requires no prior key
+        return undef if !defined($field);
+
+        my $key = $consumer->$field;
+
+        abortmsg(400, "Consumer does not have necessary field $field required for signature method $method")
+            unless defined $key;
+
+        return $key;
+    }
 }
 
 sub get_parameters {
@@ -152,8 +173,10 @@ sub get_parameters {
     # XXX: Check WWW-Authenticate header
 
     my %params = Jifty->handler->apache->params();
-    use Data::Dumper; warn Dumper \%params;
-    @p{@_} = @params{map {"oauth_$_"} @_};
+    for (@_) {
+        $p{$_} = $params{"oauth_$_"}
+            if !defined $p{$_};
+    }
 
     $p{version} ||= '1.0';
 

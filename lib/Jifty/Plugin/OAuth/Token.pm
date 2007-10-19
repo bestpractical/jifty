@@ -2,6 +2,7 @@
 package Jifty::Plugin::OAuth::Token;
 use strict;
 use warnings;
+use Scalar::Util 'blessed';
 
 # this just provides some helper methods for both token classes to use
 
@@ -15,7 +16,13 @@ sub before_create {
     # check if we're seeing a replay attack
     my $token = $self->new(current_user => Jifty::CurrentUser->superuser);
     $token->load_by_cols(nonce => $attr->{nonce}, time_stamp => $attr->{time_stamp});
-    return if $token->id;
+    if ($token->id) {
+        use Data::Dumper;
+        Jifty->log->warn(Dumper $token);
+        Jifty->log->warn(Dumper $self);
+        Jifty->log->warn("Duplicate nonce ($attr->{nonce}) and timestamp ($attr->{time_stamp}) from " . $token->id . " (self is " . $self->id . "). Possibly a replay attack.");
+        return;
+    }
 
     # attempt 20 times to create a unique token string
     for (1..20) {
@@ -25,7 +32,10 @@ sub before_create {
         last if !$token->id;
         delete $attr->{token};
     }
-    return if !defined($attr->{token});
+    if (!defined $attr->{token}) {
+        Jifty->log->warn("Failed 20 times to create a unique token. Giving up.");
+        return;
+    }
 
     # generate a secret. need not be unique, just hard to guess
     $attr->{secret} = generate_token();
