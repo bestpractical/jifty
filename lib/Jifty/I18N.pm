@@ -83,11 +83,10 @@ sub new {
             $it;
         } @$allowed_lang;
 
-        foreach my $sym (sort keys %Jifty::I18N::) {
-            $sym =~ /^(\w+)::/ or next;
+        foreach my $lang ($self->available_languages) {
             # "AllowedLang: zh" should let both zh_tw and zh_cn survive,
             # so we just check ^ but not $.
-            $1 =~ /^$allowed_regex/ or delete $Jifty::I18N::{$sym};
+            $lang =~ /^$allowed_regex/ or delete $Jifty::I18N::{$lang.'::'};
         }
     }
 
@@ -124,6 +123,16 @@ sub new {
         *_ = $loc_method;
     }
     return $self;
+}
+
+=head2 available_languages
+
+Return an array of available languages
+
+=cut
+
+sub available_languages {
+    return map { /^(\w+)::/ ? $1 : () } sort keys %Jifty::I18N::;
 }
 
 =head2 _get_file_patterns
