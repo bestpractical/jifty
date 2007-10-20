@@ -1,0 +1,51 @@
+--- 
+framework: 
+  AdminMode: 1
+  ApplicationClass: TestApp::Plugin::OAuth
+  ApplicationName: TestApp-Plugin-OAuth
+  ApplicationUUID: B5461398-7DC0-11DC-83A6-036B06D64C5E
+  ConfigFileVersion: 2
+  Database: 
+    CheckSchema: 1
+    Database: testapp_plugin_oauth
+    Driver: SQLite
+    Host: localhost
+    Password: ''
+    RecordBaseClass: Jifty::DBI::Record::Cachable
+    User: ''
+    Version: 0.0.1
+  DevelMode: 1
+  L10N: 
+    PoDir: share/po
+  LogLevel: INFO
+  Mailer: Sendmail
+  MailerArgs: []
+
+  Plugins: 
+    - REST: {}
+    - Halo: {}
+    - CompressedCSSandJS: {}
+    - AdminUI: {}
+    - OAuth: {}
+    - Authentication::Password: {}
+    - SkeletonApp: {}
+
+  PubSub: 
+    Backend: Memcached
+    Enable: ~
+  SkipAccessControl: 0
+  TemplateClass: TestApp::Plugin::OAuth::View
+  Web: 
+    BaseURL: http://localhost
+    DataDir: var/mason
+    Globals: []
+
+    MasonConfig: 
+      autoflush: 0
+      default_escape_flags: h
+      error_format: text
+      error_mode: fatal
+    Port: 8888
+    ServeStaticFiles: 1
+    StaticRoot: share/web/static
+    TemplateRoot: share/web/templates

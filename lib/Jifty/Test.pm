@@ -12,6 +12,8 @@ use Email::Folder;
 use File::Path;
 use File::Spec;
 use File::Temp;
+use Hash::Merge;
+use Cwd 'abs_path';
 
 =head1 NAME
 
@@ -209,9 +211,7 @@ sub setup_test_database {
 	my $booted;
 	if (Jifty->handle && !$@) {
 	    my $baseclass = Jifty->app_class;
-	    my $schema = Jifty::Script::Schema->new;
-	    $schema->prepare_model_classes;
-	    for my $model_class ( grep {/^\Q$baseclass\E::Model::/} $schema->models ) {
+	    for my $model_class ( grep {/^\Q$baseclass\E::Model::/} Jifty::Schema->new->models ) {
 		# We don't want to get the Collections, for example.
 		next unless $model_class->isa('Jifty::DBI::Record');
 		Jifty->handle->simple_query('TRUNCATE '.$model_class->table );
@@ -238,8 +238,7 @@ sub setup_test_database {
 
     Jifty->new( no_handle => 1, pre_init => 1 );
 
-    my $schema = Jifty::Script::Schema->new;
-    $schema->{drop_database}     = 1;
+    my $schema = Jifty::Script::Schema->new; $schema->{drop_database}     = 1;
     $schema->{create_database}   = 1;
     $schema->{create_all_tables} = 1;
     $schema->run;
@@ -247,14 +246,88 @@ sub setup_test_database {
     Jifty->new();
 }
 
+=head2 load_test_configs FILENAME
+
+This will load all the test config files that apply to FILENAME (default:
+C<$0>, the current test script file). Say you are running the test script
+C</home/bob/MyApp/t/user/12-delete.t>. The files that will be loaded are:
+
+=over 4
+
+=item C</home/bob/MyApp/t/user/12-delete.t-config.yml>
+
+=item C</home/bob/MyApp/t/user/test_config.yml>
+
+=item C</home/bob/MyApp/t/test_config.yml>
+
+=back
+
+..followed by the usual Jifty configuration files (such as
+C<MyApp/etc/config.yml> and C<MyApp/etc/site_config.yml>). The options in a
+more specific test file override the options in a less specific test file.
+
+The options are returned in a single hashref.
+
+=cut
+
+sub load_test_configs {
+    my $class = shift;
+    my ($test_config_file) = @_;
+
+    # Jifty::SubTest uses chdir which screws up $0, so to be nice it also makes
+    # available the cwd was before it uses chdir.
+    my $cwd = $Jifty::SubTest::OrigCwd;
+
+    # get the initial test config file, which is the input . "-config.yml"
+    $test_config_file = $0 if !defined($test_config_file);
+    $test_config_file .= "-config.yml";
+    $test_config_file = File::Spec->rel2abs($test_config_file, $cwd);
+
+    my $test_options = _read_and_merge_config_file($test_config_file, {});
+
+    # get the directory of the input, so we can recurse upwards
+    my ($volume, $directories) = File::Spec->splitpath($test_config_file);
+    my $directory = File::Spec->catdir($volume, $directories);
+
+    my $depth = $ENV{JIFTY_TEST_DEPTH} || 30;
+
+    for (1 .. $depth)
+    {
+        my $file = File::Spec->catfile($directory, "test_config.yml");
+        $test_options = _read_and_merge_config_file($file, $test_options);
+
+        # are we at the app root? if so, then we can stop moving up
+        $directory = abs_path(File::Spec->catdir($directory, File::Spec->updir($directory)));
+        return $test_options
+            if Jifty::Util->is_app_root($directory);
+    }
+
+    Jifty->log->fatal("Stopping looking for test config files after recursing upwards $depth times. Either you have a nonstandard layout or an incredibly deep test hierarchy. If you really do have an incredibly deep test hierarchy, you can set the environment variable JIFTY_TEST_DEPTH to a larger value.");
+
+    return $test_options;
+}
+
+sub _read_and_merge_config_file {
+    my $file = shift;
+    my $config = shift;
+
+    my $file_options = Jifty::Config->load_file($file);
+
+    Hash::Merge::set_behavior('RIGHT_PRECEDENT');
+
+    # merge the new options into what we have so far
+    return Hash::Merge::merge($file_options, $config);
+}
+
 =head2 test_config
 
 Returns a hash which overrides parts of the application's
 configuration for testing.  By default, this changes the database name
 by appending a 'test', as well as setting the port to a random port
-between 10000 and 15000.
+between 10000 and 15000. Individual test configurations may override these
+defaults (see C<load_test_configs>).
 
-It is passed the current configuration.
+It is passed the current configuration before any test config is loaded.
 
 You can override this to provide application-specific test
 configuration, e.g:
@@ -268,13 +341,16 @@ configuration, e.g:
         return $hash;
     }
 
+Note that this is deprecated in favor of having real config files in your
+test directory.
+
 =cut
 
 sub test_config {
     my $class = shift;
     my ($config) = @_;
 
-    return {
+    my $defaults = {
         framework => {
             Database => {
                 Database => $config->framework('Database')->{Database} . $class->_testfile_to_dbname(),
@@ -288,15 +364,23 @@ sub test_config {
             LogLevel => 'WARN'
         }
     };
+
+    Hash::Merge::set_behavior('RIGHT_PRECEDENT');
+    return Hash::Merge::merge($defaults, $class->load_test_configs);
 }
 
 
 sub _testfile_to_dbname {
+    if ($ENV{JIFTY_FAST_TEST}) {
+        return 'fasttest';
+    }
+    else {
     my $dbname = lc($0);
     $dbname =~ s/\.t$//;
     $dbname =~ s/[-_\.\/\\]//g;
     $dbname = substr($dbname,-32,32);	
     return $dbname;
+    } 
 }
 
 =head2 make_server
@@ -357,7 +441,7 @@ A mailbox used for testing mail sending.
 =cut
 
 sub mailbox {
-    return Jifty::Util->absolute_path("t/mailbox");
+    return Jifty::Util->absolute_path("t/mailbox_" . _testfile_to_dbname());
 }
 
 =head2 setup_mailbox

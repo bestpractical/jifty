@@ -96,6 +96,9 @@ framework will look for a test configuration file, specified in either
 the framework's C<TestConfig> or the C<JIFTY_TEST_CONFIG> environment
 variable.
 
+Note that the test config may be drawn from several files if you use
+L<Jifty::Test>. See the documentation of L<Jifty::Test::load_test_configs>.
+
 Values in the test configuration will clobber the site configuration.
 Values in the site configuration file clobber those in the vendor
 configuration file. Values in the vendor configuration file clobber
@@ -146,6 +149,9 @@ sub load {
     # Load the site configuration file
     my $site = $self->load_file(
         Jifty::Util->absolute_path(
+            # Note: $ENV{'JIFTY_SITE_CONFIG'} is already considered
+            #       in ->_default_config_files(), but we || here again
+            #       in case someone overrided _default_config_files().
             $self->framework('SiteConfig') || $ENV{'JIFTY_SITE_CONFIG'}
         )
     );
@@ -222,7 +228,9 @@ sub _default_config_files {
     my $self = shift;
     my $config  = {
         framework => {
-            SiteConfig => 'etc/site_config.yml'
+            SiteConfig => (
+                $ENV{JIFTY_SITE_CONFIG} || 'etc/site_config.yml'
+            )
         }
     };
     return $self->_expand_relative_paths($config);

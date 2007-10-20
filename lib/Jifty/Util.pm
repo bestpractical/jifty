@@ -174,6 +174,25 @@ sub app_root {
     return ''; # returning undef causes tons of 'uninitialized...' warnings.
 }
 
+=head2 is_app_root PATH
+
+Returns a boolean indicating whether the path passed in is the same path as
+the app root. Useful if you're recursing up a directory tree and want to
+stop when you've hit the root. It does not attempt to handle symbolic links.
+
+=cut
+
+sub is_app_root
+{
+    my $self = shift;
+    my $path = shift;
+    my $app_root = $self->app_root;
+
+    my $rel = File::Spec->abs2rel( $path, $app_root );
+
+    return $rel eq File::Spec->curdir;
+}
+
 =head2 default_app_name
 
 Returns the default name of the application.  This is the name of the

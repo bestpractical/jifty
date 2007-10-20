@@ -35,6 +35,7 @@ requires('Exporter::Lite');
 requires('File::Find::Rule');
 requires('File::MMagic');
 requires('File::ShareDir' => '0.04');
+requires('File::Spec' => '3.14');
 requires('HTML::Entities');
 requires('HTML::Lint');
 requires('HTML::Mason' => 1.3101);           # HTML::Mason::Exceptions HTML::Mason::FakeApache HTML::Mason::MethodMaker HTML::Mason::Request HTML::Mason::Utils
@@ -167,6 +168,16 @@ features(
         recommends('Devel::Events::Handler::ObjectTracker'),
         recommends('Devel::Events::Generator::Objects'),
         recommends('Devel::Size'),
+    ],
+    'OAuth Plugin' => [
+        -default => 0,
+        recommends('Net::OAuth::Request' => '0.04'),
+        recommends('Net::OAuth::RequestTokenRequest' => '0.04'),
+        recommends('Net::OAuth::AccessTokenRequest' => '0.04'),
+        recommends('Net::OAuth::ProtectedResourceRequest' => '0.04'),
+
+        recommends('Crypt::OpenSSL::RSA'),
+        recommends('Digest::HMAC_SHA1'),
     ],
 );
 

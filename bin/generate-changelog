@@ -1,4 +1,18 @@
 #perl -MFile::Slurp -MXML::Simple -MData::Dumper -e'print scalar Dumper ( XMLin( read_file(shift @ARGV).""))' 
+# Usage
+# --edit expects the output of svn log --xml as the first argument, and an intermediate
+#        file where we will be storing munged up xml that trags your tags and edits
+# --generate expects the intermediate file as the first argument and a plaintext
+#            changelog file as the second argument.  This changelog file is clobbered
+#
+# svn log --limit=100 --xml >> changelog.xml
+# generate-changelog --edit changelog.xml changelog.interim.xml
+# generate-changelog --generate changelog.interim.xml Changelog
+#
+# if you wish to do iterative editing, you can do
+# cp changelog.xml changelog.xml.orig
+# mv changelog.interim.xml changelog.xml
+# generate-changelog --edit changelog.xml changelog.interim.xml
 
 use warnings;
 use strict;
@@ -10,7 +24,7 @@ use XML::Simple;
 use Term::ReadKey;
 use Data::Dumper;
          use File::Temp qw/ tempfile tempdir /;
-my @tags = qw(doc install core plugin security view t-discard backward-compatiblity-problem u-pubsub r-crud e-testing);
+my @tags = qw(doc install core plugin security view f-bug t-discard backward-compatiblity-problem u-pubsub r-crud e-testing);
 
 my %tags = map { substr($_,0,1) => $_ } @tags;
 my $mode = shift @ARGV;
@@ -34,17 +48,29 @@ my $data = XMLin(read_file($source)."");
 
 if ($mode eq '--edit') {
 
-foreach my $entry (@{$data->{'logentry'}}) {
-   my %entries; 
+    my $count;
+    my $total;
+    my %entries; 
     foreach my $entry (@{$data->{'logentry'}}) {
+        $total++;
         push @{$entries{$entry->{section}||'uncategorized'}}, $entry;
     }
+# iterate over the uncategorized ones first
+    my $uncat_total = @{$entries{uncategorized}};
+    foreach my $entry (@{$entries{uncategorized}}){ 
+        $count++;
+        act_on($entry, $count, $uncat_total);
+    }
+# all of them in case you want to frob stuff
+    print "All uncategorized changes complete, now iterating the full set\nHit any key to continue\n";
+    getchar();
+    $count = 0;
     foreach my $key ( keys %entries) {
         foreach my $entry (@{$entries{$key}}){ 
-    act_on($entry);
+            $count++;
+            act_on($entry, $count, $total);
+        }
     }
-    }
-}
 
     do_quit();
 } elsif ($mode eq '--generate') {
@@ -53,24 +79,30 @@ foreach my $entry (@{$data->{'logentry'}}) {
         push @{$entries{$entry->{section}||'uncategorized'}}, $entry;
     }
 
+    open (my $fh, ">$dest") or die "Can't open $dest for writing";
+
     foreach my $key ( keys %entries) {
     my $title = $key;
     $title =~ s/^\w\-//;
-        print uc($key)."\n";
-        print "=" x length($key) ;
-        print "\n\n";
+        print $fh uc($key)."\n";
+        print $fh "=" x length($key) ;
+        print $fh "\n\n";
 
         foreach my $entry (@{$entries{$key}}){ 
 
-        format_entry($entry) ;
-        print "\n";
+        print $fh format_entry($entry) ;
+        print $fh "\n";
         }
     }
+
+    close $fh;
 
 }
 
 sub act_on {
     my $entry = shift;
+    my $count = shift;
+    my $total = shift;
 
     my $console = Term::ANSIScreen->new;
     while (1) {
@@ -81,7 +113,8 @@ sub act_on {
 
 
         if (!$entry->{'edited_msg'} && ref($entry->{msg})) { $entry->{'edited_msg'} = Dumper($entry->{'msg'}); }
-        format_entry ($entry => 1);
+        print "change $count / $total\n";
+        print format_entry($entry => 1);
     
     
         my $in = getchar();
@@ -94,6 +127,7 @@ sub act_on {
         elsif ($in eq 'e') { $command = 'edit'; }
         elsif ($in eq 'q') { $command = 'quit'; }
         elsif ($in eq 't') { $command = 'tag' }
+        elsif ($in eq 'x') { $command = 'exclude' }
         elsif ($in eq ' ') {
             return
         }
@@ -116,8 +150,9 @@ sub act_on {
         system( ( $ENV{EDITOR} || 'vi' ), $filename );
         $entry->{'edited_msg'} = read_file($filename);
     } elsif ($command eq 'quit') {
-
         do_quit();
+    } elsif ($command eq 'exclude') {
+        $entry->{section} = 't-discard';
     }
 
     }
@@ -157,38 +192,39 @@ my $out;
 sub getchar {
 
     ReadMode 4;
-        my $key = ReadKey(0);
-            ReadMode 0;
+    my $key = ReadKey(0);
+    ReadMode 0;
 
     return $key
-            }
+}
 
 
 sub format_entry {
     my $entry = shift;
     my $verbose = shift ||0; 
-        if  ($verbose ) {
-      print "r".$entry->{revision}." - ";
-      print $entry->{'section'} || "UNCATEGORIZED - HIT 't'";   
-      print "\n".("="x60)."\n";
-      }
+    my $text = '';
+    if  ($verbose ) {
+        $text .= "r".$entry->{revision}." - ";
+        $text .= $entry->{'section'} || "UNCATEGORIZED - HIT 't'";   
+        $text .= "\n".("="x60)."\n";
+    }
 
-     my $msg = ( $entry->{'edited_msg'} || $entry->{'msg'});
+    my $msg = ( $entry->{'edited_msg'} || $entry->{'msg'});
 
     if ($msg =~ /^[\s\*]*\w/) {
         $msg =~ s/^[\s\*]*/ * /;
     }
 
-        $msg =~  s/\n+$//g;
-     $msg .= " - ".$entry->{'author'}."\n";
+    $msg =~  s/\n+$//g;
+    $msg .= " - ".$entry->{'author'}."\n";
 
 
      $msg =   autoformat ($msg,  { left=>0, right=>78 });
-        $msg =~  s/\n+$//g;
-      print $msg."\n";
-        if  ($verbose ) {
-
-        print YAML::Dump( $entry->{'paths'});
-        print "\n";
-    }
+     $msg =~  s/\n+$//g;
+     $text .= $msg."\n";
+     if  ($verbose ) {
+         $text .= YAML::Dump( $entry->{'paths'});
+         $text .= "\n";
+     }
+     return $text;
 }

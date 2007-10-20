@@ -48,6 +48,10 @@ sub decode {
         $args{$_} = $$value_ref->$_ if(defined($$value_ref->$_));
     }
 
+    # the floating timezone indicates a date, so we don't want to set any
+    # other timezone on it
+    $args{time_zone} = 'floating' if $$value_ref->time_zone =~ /floating/i;
+
     my $dt = Jifty::DateTime->new(%args);
 
     $$value_ref = $dt;

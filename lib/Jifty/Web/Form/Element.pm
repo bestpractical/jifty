@@ -2,6 +2,7 @@ use warnings;
 use strict;
 
 package Jifty::Web::Form::Element;
+use Scalar::Util qw/blessed/;
 
 =head1 NAME
 
@@ -84,8 +85,14 @@ specifying elements of parent page regions.
 
 =item submit => MONIKER
 
-An action, moniker of an action, or array reference to such; these
-actions are submitted when the event is fired.
+A Jifty::Action, Jifty::Action moniker, hashref of 
+    { action => Jifty::Action::Subclass, 
+     arguments => { argument => value, argument2 => value2 }
+
+or an arrayref of them.
+
+These actions are submitted when the event is fired. Any arguments 
+specified will override arguments submitted by form field.
 
 =item disable => BOOLEAN
 
@@ -397,8 +404,26 @@ sub _handler_setup {
         # since Jifty::Action caches instances of Jifty::Web::Form::Clickable.
         if ( $hook->{submit} ) {
             $hook->{submit} = [ $hook->{submit} ] unless ref $hook->{submit} eq "ARRAY";
-            $hook->{submit} = [ map { ref $_ ? $_->moniker : $_ } @{ $hook->{submit} } ];
+
+            my @submit_tmp;
+            foreach my $submit ( @{$hook->{submit}}) {
+                if (!ref($submit)){ 
+                        push @submit_tmp, $submit;
+                    } 
+                elsif(blessed($submit)) {
+                        push @submit_tmp, $submit->moniker;
+
+                } else { # it's a hashref
+                        push @submit_tmp, $submit->{'action'}->moniker;
+                        $hook->{'action_arguments'}->{ $submit->{'action'}->moniker } = $submit->{'arguments'};
+                }
+
+            }
+
+            @{$hook->{submit}} =  @submit_tmp;
         }
+
+        $hook->{args} ||= $hook->{arguments}; # should be able to use 'arguments' and not lose.
 
         if ( $hook->{args} ) {
             # We're going to pass complex query mapping structures
@@ -406,9 +431,7 @@ sub _handler_setup {
             # trying to pass around Actions, merely their monikers.
             for my $key ( keys %{ $hook->{args} } ) {
                 next unless ref $hook->{args}{$key} eq "HASH";
-                $hook->{args}{$key}{$_} = $hook->{args}{$key}{$_}->moniker
-                  for grep { ref $hook->{args}{$key}{$_} }
-                  keys %{ $hook->{args}{$key} };
+                $hook->{args}{$key}{$_} = $hook->{args}{$key}{$_}->moniker for grep { ref $hook->{args}{$key}{$_} } keys %{ $hook->{args}{$key} };
             }
         } else {
             $hook->{args} = {};
@@ -442,7 +465,7 @@ sub javascript {
         my $actions = {};    # Maps actions => disable?
         my $confirm;
         my $beforeclick;
-
+        my $action_arguments = {};
         for my $hook (grep {ref $_ eq "HASH"} (@{$value})) {
 
             if (!($self->handler_allowed($trigger))) {
@@ -462,7 +485,11 @@ sub javascript {
                 my $disable_form_on_click = exists $hook->{disable} ? $hook->{disable} : 1;
                 # Normalize to 1/0 to pass to JS
                 $disable_form_on_click = $disable_form_on_click ? 1 : 0;
-                $actions->{$_} = $disable_form_on_click for (@{ $hook->{submit} || [] }); 
+                for (@{ $hook->{submit} || [] }) {
+                    $actions->{$_} = $disable_form_on_click;
+                    $action_arguments->{$_} = $hook->{'action_arguments'}->{$_};
+                }
+
             }
 
             $hook->{region} ||= Jifty->web->qualified_region;
@@ -530,11 +557,25 @@ sub javascript {
         }
 
         my $string = join ";", (grep {not ref $_} (ref $value eq "ARRAY" ? @{$value} : ($value)));
-        if (@fragments or (!$actions || %$actions)) {
+        if ( @fragments or ( !$actions || %$actions ) ) {
 
-            my $update = Jifty->web->escape("update( ". Jifty::JSON::objToJson( {actions => $actions, fragments => \@fragments, continuation => $self->continuation }, {singlequote => 1}) .", this );");
-            $string .= 'if(event.ctrlKey||event.metaKey||event.altKey||event.shiftKey) return true; ' if ($trigger eq 'onclick');
-            $string .= $self->javascript_preempt ? "return $update" : "$update; return true;";
+            my $update = Jifty->web->escape(
+                "update( "
+                    . Jifty::JSON::objToJson(
+                    {   actions      => $actions,
+                        action_arguments => $action_arguments,
+                        fragments    => \@fragments,
+                        continuation => $self->continuation
+                    },
+                    { singlequote => 1 }
+                    ) . ", this );"
+            );
+            $string
+                .= 'if(event.ctrlKey||event.metaKey||event.altKey||event.shiftKey) return true; '
+                if ( $trigger eq 'onclick' );
+            $string .= $self->javascript_preempt
+                ? "return $update"
+                : "$update; return true;";
         }
         if ($confirm) {
             $string = Jifty->web->escape("if(!confirm(" . Jifty::JSON::objToJson($confirm, {singlequote => 1}) . ")) { Event.stop(event); return false }") . $string;

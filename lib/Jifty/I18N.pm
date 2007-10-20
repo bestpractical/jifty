@@ -71,6 +71,25 @@ sub new {
     my $lang = Jifty->config->framework('L10N')->{'Lang'};
     $lang = [defined $lang ? $lang : ()] unless ref($lang) eq 'ARRAY';
 
+    # Allow hard-coded allowed-languages in the config file
+    my $allowed_lang = Jifty->config->framework('L10N')->{'AllowedLang'};
+    $allowed_lang = [defined $allowed_lang ? $allowed_lang : ()] unless ref($allowed_lang) eq 'ARRAY';
+
+    if (@$allowed_lang) {
+        my $allowed_regex = join '|', map {
+            my $it = $_;
+            $it =~ tr<-A-Z><_a-z>; # lc, and turn - to _
+            $it =~ tr<_a-z0-9><>cd;  # remove all but a-z0-9_
+            $it;
+        } @$allowed_lang;
+
+        foreach my $lang ($self->available_languages) {
+            # "AllowedLang: zh" should let both zh_tw and zh_cn survive,
+            # so we just check ^ but not $.
+            $lang =~ /^$allowed_regex/ or delete $Jifty::I18N::{$lang.'::'};
+        }
+    }
+
     my $lh = $class->get_handle(@$lang);
 
     $DynamicLH = \$lh unless @$lang; 
@@ -106,6 +125,16 @@ sub new {
     return $self;
 }
 
+=head2 available_languages
+
+Return an array of available languages
+
+=cut
+
+sub available_languages {
+    return map { /^(\w+)::/ ? $1 : () } sort keys %Jifty::I18N::;
+}
+
 =head2 _get_file_patterns
 
 Get list of patterns for all PO files in the project.
@@ -138,8 +167,17 @@ Get the lanauge language for this request.
 =cut
 
 sub get_language_handle {
+    # XXX: subrequest should not need to get_handle again.
     my $self = shift;
-    $$DynamicLH = $self->get_handle() if $DynamicLH;
+    my $lang = Jifty->web->session->get('jifty_lang');
+    $$DynamicLH = $self->get_handle($lang ? $lang : ()) if $DynamicLH;
+}
+
+sub get_current_language {
+    return unless $DynamicLH;
+
+    my ($lang) = ref($$DynamicLH) =~ m/::(\w+)$/;
+    return $lang;
 }
 
 =head2 refresh

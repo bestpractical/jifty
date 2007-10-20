@@ -1,0 +1,5 @@
+---
+application:
+    ThisConfigFile: etc/config.yml
+    EtcConfig: 1
+

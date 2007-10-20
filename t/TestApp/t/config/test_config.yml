@@ -1,0 +1,5 @@
+---
+application:
+    ThisConfigFile: t/config/test_config.yml
+    TConfigTestConfig: 1
+

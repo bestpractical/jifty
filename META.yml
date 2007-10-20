@@ -2,7 +2,7 @@
 build_requires: 
   ExtUtils::MakeMaker: 6.11
 distribution_type: module
-generated_by: Module::Install version 0.670
+generated_by: Module::Install version 0.67
 license: Perl
 meta-spec: 
   url: http://module-build.sourceforge.net/META-spec-v1.3.html
@@ -24,6 +24,7 @@ recommends:
   Cache::FileCache: 0
   Chart::Base: 0
   Class::Accessor::Named: 0
+  Crypt::OpenSSL::RSA: 0
   DBD::SQLite: 0
   Devel::Cover: 0
   Devel::EvalContext: 0
@@ -31,6 +32,7 @@ recommends:
   Devel::Events::Generator::Objects: 0
   Devel::Events::Handler::ObjectTracker: 0
   Devel::Size: 0
+  Digest::HMAC_SHA1: 0
   GD: 0
   GD::Graph: 0
   Image::Info: 0
@@ -38,6 +40,10 @@ recommends:
   Module::CoreList: 0
   Module::Install::Admin: 0.50
   Module::Refresh: 0.09
+  Net::OAuth::AccessTokenRequest: 0.04
+  Net::OAuth::ProtectedResourceRequest: 0.04
+  Net::OAuth::Request: 0.04
+  Net::OAuth::RequestTokenRequest: 0.04
   Net::OpenID::Consumer: 0
   Net::Server::Fork: 0
   Net::Server::PreFork: 0
@@ -60,6 +66,7 @@ requires:
   Class::Container: 0
   Class::Data::Inheritable: 0
   Class::Trigger: 0.12
+  Clone: 0.27
   Compress::Zlib: 0
   Crypt::CBC: 0
   Crypt::Rijndael: 0
@@ -82,6 +89,7 @@ requires:
   File::Find::Rule: 0
   File::MMagic: 0
   File::ShareDir: 0.04
+  File::Spec: 3.14
   HTML::Entities: 0
   HTML::Lint: 0
   HTML::Mason: 1.3101
@@ -95,7 +103,7 @@ requires:
   IPC::PubSub: 0.23
   IPC::Run3: 0
   JSON::Syck: 0.15
-  Jifty::DBI: 0.42
+  Jifty::DBI: 0.44
   LWP::UserAgent: 0
   Locale::Maketext::Extract: 0.20
   Locale::Maketext::Lexicon: 0.60
@@ -120,6 +128,7 @@ requires:
   Test::LongString: 0
   Test::More: 0.62
   Test::Pod::Coverage: 0
+  Test::WWW::Declare: 0
   Test::WWW::Mechanize: 1.04
   Test::WWW::Selenium: 0
   UNIVERSAL::require: 0

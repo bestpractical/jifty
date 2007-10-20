@@ -1,0 +1,5 @@
+---
+application:
+    ThisConfigFile: t/config/02-individual.t-config.yml
+    IndividualFile: 1
+

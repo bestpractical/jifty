@@ -293,21 +293,21 @@ Returns a database handle suitable for direct manipulation.
 sub connect_to_db_for_management {
     my $handle = Jifty::Handle->new();
 
-    my $driver   = Jifty->config->framework('Database')->{'Driver'};
+    my $driver = Jifty->config->framework('Database')->{'Driver'};
 
     # Everything but the template1 database is assumed
     my %connect_args;
-    $connect_args{'database'} = 'template1' if ( $handle->isa("Jifty::DBI::Handle::Pg") );
-    $connect_args{'database'} = ''          if ( $handle->isa("Jifty::DBI::Handle::mysql") );
-       for(1..50) {
-		my $counter = $_;
-    eval { 
-    $handle->connect(%connect_args);
-    };
-    my $err = $@;
-	    last if( !$err || $err =~ /does not exist/i);
-	sleep 1;
-        }
+    $connect_args{'database'} = 'template1'
+        if ( $handle->isa("Jifty::DBI::Handle::Pg") );
+    $connect_args{'database'} = ''
+        if ( $handle->isa("Jifty::DBI::Handle::mysql") );
+    for ( 1 .. 50 ) {
+        my $counter = $_;
+        eval { $handle->connect(%connect_args); };
+        my $err = $@;
+        last if ( !$err || $err =~ /does not exist/i );
+        sleep 1;
+    }
     return $handle;
 }
 
