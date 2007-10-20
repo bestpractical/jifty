@@ -116,7 +116,7 @@ sub _generate_javascript {
         my $js = "";
 
         for my $file ( @{ Jifty::Web->javascript_libs } ) {
-            my $include = $static_handler->file_path( $file );
+            my $include = $static_handler->file_path( File::Spec->catdir( 'js', $file ) );
 
             if ( defined $include ) {
                 my $fh;
