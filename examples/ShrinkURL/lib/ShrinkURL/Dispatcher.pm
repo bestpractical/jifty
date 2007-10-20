@@ -7,7 +7,7 @@ use Jifty::Dispatcher -base;
 # visiting / will let users create new shrunken URLs
 on '/' => show 'shrink';
 
-# any other URL is potentially a shrunken URL
+# any other URL (that has no path separator) is potentially a shrunken URL
 on '*' => run {
     my $url = $1;
 

@@ -9,8 +9,7 @@ use Jifty::DBI::Schema;
 use Jifty::Record schema {
     column url =>
         is distinct,
-        is varchar(1000),
-        is indexed;
+        is varchar(1000);
 };
 
 # shrunken URL is just an encoding of ID
