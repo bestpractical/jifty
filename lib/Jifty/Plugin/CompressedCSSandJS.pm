@@ -111,23 +111,12 @@ sub _generate_javascript {
         or Jifty->config->framework('DevelMode') ) {
         Jifty->log->debug("Generating JS...");
 
-        my @roots = map { Jifty::Util->absolute_path( File::Spec->catdir( $_, 'js' ) ) }
-                        Jifty->handler->view('Jifty::View::Static::Handler')->roots;
-
+        # for the file cascading logic
+        my $static_handler = Jifty->handler->view('Jifty::View::Static::Handler');
         my $js = "";
 
         for my $file ( @{ Jifty::Web->javascript_libs } ) {
-            my $include;
-
-            for my $root (@roots) {
-                my @spec = File::Spec->splitpath( $root, 1 );
-                my $path = File::Spec->catpath( @spec[ 0, 1 ], $file );
-
-                if ( -e $path ) {
-                    $include = $path;
-                    last;
-                }
-            }
+            my $include = $static_handler->file_path( $file );
 
             if ( defined $include ) {
                 my $fh;
