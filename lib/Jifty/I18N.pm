@@ -173,6 +173,13 @@ sub get_language_handle {
     $$DynamicLH = $self->get_handle($lang ? $lang : ()) if $DynamicLH;
 }
 
+sub get_current_language {
+    return unless $DynamicLH;
+
+    my ($lang) = ref($$DynamicLH) =~ m/::(\w+)$/;
+    return $lang;
+}
+
 =head2 refresh
 
 Used by L<Jifty::Handler> in DevelMode to reload F<.po> files whenever they
