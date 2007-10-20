@@ -13,14 +13,25 @@ on     POST '/oauth/request_token' => \&request_token;
 before GET  '/oauth/authorize'     => \&authorize;
 on     POST '/oauth/access_token'  => \&access_token;
 
-# helper function to abort with a debug message
+=head2 abortmsg CODE, MSG
+
+Helper function to abort with a debug message. Maybe should be factored into
+the C<abort> procedure?
+
+=cut
+
 sub abortmsg {
     my ($code, $msg) = @_;
     Jifty->log->debug($msg) if defined($msg);
     abort($code || 400);
 }
 
-# a consumer wants a request token
+=head2 request_token
+
+The consumer wants a request token
+
+=cut
+
 sub request_token {
     my @params = qw/consumer_key signature_method signature
                     timestamp nonce version/;
@@ -71,7 +82,12 @@ sub request_token {
     show 'oauth/response';
 }
 
-# the user is authorizing (or denying) a consumer's request token
+=head2 authorize
+
+The user is authorizing (or denying) a consumer's request token
+
+=cut
+
 sub authorize {
     my @params = qw/token callback/;
 
@@ -93,7 +109,12 @@ sub authorize {
     }
 }
 
-# the consumer is trying to trade a request token for an access token
+=head2 access_token
+
+The consumer is trying to trade a request token for an access token
+
+=cut
+
 sub access_token {
     my @params = qw/consumer_key signature_method signature
                     timestamp nonce token version/;
@@ -148,6 +169,13 @@ sub access_token {
     show 'oauth/response';
 }
 
+=head2 get_consumer CONSUMER KEY
+
+Helper function to load a consumer by consumer key. Will abort if the key
+is unknown.
+
+=cut
+
 sub get_consumer {
     my $key = shift;
     my $consumer = Jifty::Plugin::OAuth::Model::Consumer->new(current_user => Jifty::CurrentUser->superuser);
@@ -155,6 +183,18 @@ sub get_consumer {
     abortmsg(401, "No known consumer with key $key") if !$consumer->id;
     return $consumer;
 }
+
+=head2 get_signature_key SIGNATURE METHOD, CONSUMER
+
+Figures out the signature key for this consumer. Will abort if the signature
+method is unsupported, or if the consumer lacks the prerequisites for this
+signature method.
+
+Will return C<undef> is the signature key is consumer independent, as is the
+case for C<PLAINTEXT> and C<HMAC-SHA1>. C<RSA-SHA1> depends on the consumer
+having the C<rsa_key> field.
+
+=cut
 
 {
     my %valid_signature_methods = map { $_ => 1 }
@@ -184,6 +224,31 @@ sub get_consumer {
         return $key;
     }
 }
+
+=head2 get_parameters REQUIRED PARAMETERS
+
+This will retrieve all the request paremeters. This gets parameters besides
+the ones in the OAuth spec, because the signature is based on all such request
+parameters.
+
+Pass in by name all the OAuth-required parameters. Do not include the C<oauth_>
+prefix.
+
+The precedence of parameters, from highest priority to lowest priority, is:
+
+=over 4
+
+=item Authorization header
+
+=item WWW-Authenticate header
+
+=item POST parameters
+
+=item GET parameters (aka URL's query string)
+
+=back
+
+=cut
 
 sub get_parameters {
     my %p;

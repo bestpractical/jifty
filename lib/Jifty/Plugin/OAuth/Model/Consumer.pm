@@ -52,15 +52,45 @@ Consumers are stored in the table C<oauth_consumers>.
 
 sub table {'oauth_consumers'}
 
+=head2 before_set_last_timestamp
+
+If the new timestamp is different from the last_timestamp, then clear any
+nonces we've used. Nonces must only be unique for requests of a given
+timestamp.
+
+Note that you should ALWAYS call is_valid_request before updating the
+last_timestamp. You should also verify the signature and make sure the request
+all went through before updating the last_timestamp. Otherwise an attacker
+may be able to create a request with an extraordinarily high timestamp and
+screw up the regular consumer.
+
+=cut
+
 sub before_set_last_timestamp {
     my $self = shift;
     my $new_ts = shift;
+
+    # uh oh, looks like sloppy coding..
+    if ($new_ts < $self->last_timestamp) {
+        die "The new timestamp is LESS than the last timestamp. You forgot to call is_valid_request!";
+    }
 
     # if this is a new timestamp, then flush the nonces
     if ($new_ts != $self->last_timestamp) {
         $self->set_nonces( {} );
     }
 }
+
+=head2 is_valid_request TIMESTAMP, NONCE
+
+This will do some sanity checks (as required for security by the OAuth spec).
+It will make sure that the timestamp is not less than the latest timestamp for
+this consumer. It will also make sure that the nonce hasn't been seen for
+this timestamp (very important).
+
+ALWAYS call this method when handling OAuth requests. EARLY.
+
+=cut
 
 sub is_valid_request {
     my ($self, $timestamp, $nonce) = @_;
@@ -75,6 +105,15 @@ sub is_valid_request {
 
     return 1;
 }
+
+=head2 made_request TIMESTAMP, NONCE
+
+This method is to be called just before you're done processing an OAuth
+request. Parameters were valid, no errors occurred, everything's generally
+hunky-dory. This updates the C<last_timestamp> of the consumer, and sets the
+nonce as "used" for this new timestamp.
+
+=cut
 
 sub made_request {
     my ($self, $timestamp, $nonce) = @_;

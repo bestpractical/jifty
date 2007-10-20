@@ -22,15 +22,12 @@ framework:
   MailerArgs: []
 
   Plugins: 
-    - LetMe: {}
-    - SkeletonApp: {}
     - REST: {}
     - Halo: {}
-    - ErrorTemplates: {}
-    - OnlineDocs: {}
     - CompressedCSSandJS: {}
     - AdminUI: {}
     - OAuth: {}
+    - Authentication::Password: {}
 
   PubSub: 
     Backend: Memcached

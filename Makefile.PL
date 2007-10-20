@@ -168,9 +168,12 @@ features(
     'OAuth Plugin' => [
         -default => 0,
         recommends('Net::OAuth::Request' => '0.04'),
+        recommends('Net::OAuth::RequestTokenRequest' => '0.04'),
+        recommends('Net::OAuth::AccessTokenRequest' => '0.04'),
+        recommends('Net::OAuth::ProtectedResourceRequest' => '0.04'),
+
         recommends('Crypt::OpenSSL::RSA'),
         recommends('Digest::HMAC_SHA1'),
-        recommends('MIME::Base64'),
     ],
 );
 

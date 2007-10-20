@@ -4,6 +4,20 @@ use warnings;
 
 use Jifty::View::Declare -base;
 
+=head1 NAME
+
+Jifty::Plugin::OAuth::View - Views for OAuth-ey bits
+
+=cut
+
+=head2 oauth/response
+
+Internal template. Do not use.
+
+It returns OAuth parameters to the consumer in the HTTP response body.
+
+=cut
+
 template 'oauth/response' => sub {
     my $params = get 'oauth_response';
     if (ref($params) eq 'HASH') {
@@ -14,6 +28,13 @@ template 'oauth/response' => sub {
                  } keys %$params;
     }
 };
+
+=head2 oauth
+
+An OAuth description page very much geared towards Consumers, since they'll
+most likely be the only ones visiting yourapp.com/oauth
+
+=cut
 
 template 'oauth' => page {
     p {
@@ -65,6 +86,14 @@ template 'oauth' => page {
     }
 };
 
+=head2 oauth/authorize
+
+This is the page that Users see when authorizing a request token. It renders
+the "insert token here" textbox if the consumer didn't put the request token
+in the GET query, and (always) renders Allow/Deny buttons.
+
+=cut
+
 template 'oauth/authorize' => page { title => 'Someone wants stuff!' }
 content {
     show '/oauth/help';
@@ -100,6 +129,12 @@ content {
     Jifty->web->form->end();
 };
 
+=head2 oauth/help
+
+This provides a very, very layman description of OAuth for users
+
+=cut
+
 private template 'oauth/help' => sub {
     div {
         p {
@@ -111,6 +146,12 @@ private template 'oauth/help' => sub {
         }
     }
 };
+
+=head2 oauth/consumer
+
+Renders the consumer's name, and if available, its URL as a link.
+
+=cut
 
 private template 'oauth/consumer' => sub {
     my $consumer = (get 'consumer') || 'Some application';

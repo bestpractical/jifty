@@ -52,10 +52,26 @@ RequestTokens are stored in the table C<oauth_request_tokens>.
 
 sub table {'oauth_request_tokens'}
 
+=head2 after_set_authorized
+
+This will set the C<authorized_by> to the current user.
+
+=cut
+
 sub after_set_authorized {
     my $self = shift;
     $self->set_authorized_by(Jifty->web->current_user->id);
 }
+
+=head2 can_trade_for_access_token
+
+This neatly encapsulates the "is this request token perfect?" check.
+
+This will return a (boolean, message) pair, with boolean indicating success
+(true means the token is good) and message indicating error (or another
+affirmation of success).
+
+=cut
 
 sub can_trade_for_access_token {
     my $self = shift;
