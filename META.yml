@@ -2,7 +2,7 @@
 build_requires: 
   ExtUtils::MakeMaker: 6.11
 distribution_type: module
-generated_by: Module::Install version 0.670
+generated_by: Module::Install version 0.67
 license: Perl
 meta-spec: 
   url: http://module-build.sourceforge.net/META-spec-v1.3.html
@@ -24,6 +24,7 @@ recommends:
   Cache::FileCache: 0
   Chart::Base: 0
   Class::Accessor::Named: 0
+  Crypt::OpenSSL::RSA: 0
   DBD::SQLite: 0
   Devel::Cover: 0
   Devel::EvalContext: 0
@@ -31,6 +32,7 @@ recommends:
   Devel::Events::Generator::Objects: 0
   Devel::Events::Handler::ObjectTracker: 0
   Devel::Size: 0
+  Digest::HMAC_SHA1: 0
   GD: 0
   GD::Graph: 0
   Image::Info: 0
@@ -38,6 +40,10 @@ recommends:
   Module::CoreList: 0
   Module::Install::Admin: 0.50
   Module::Refresh: 0.09
+  Net::OAuth::AccessTokenRequest: 0.04
+  Net::OAuth::ProtectedResourceRequest: 0.04
+  Net::OAuth::Request: 0.04
+  Net::OAuth::RequestTokenRequest: 0.04
   Net::OpenID::Consumer: 0
   Net::Server::Fork: 0
   Net::Server::PreFork: 0

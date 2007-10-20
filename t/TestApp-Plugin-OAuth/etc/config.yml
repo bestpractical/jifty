@@ -28,6 +28,7 @@ framework:
     - AdminUI: {}
     - OAuth: {}
     - Authentication::Password: {}
+    - SkeletonApp: {}
 
   PubSub: 
     Backend: Memcached

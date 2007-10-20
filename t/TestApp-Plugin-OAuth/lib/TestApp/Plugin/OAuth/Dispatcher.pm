@@ -3,14 +3,12 @@ use strict;
 use warnings;
 use Jifty::Dispatcher -base;
 
-my @always_allowed = qw{
-    login
-    signup
-    oauth/request_token
-    oauth/access_token
+my @login_required = qw{
+    oauth/authorize
 };
-my $always_allowed = join '|', map {"^$_"} @always_allowed;
-$always_allowed = qr/$always_allowed/;
+
+my $login_required = join '|', map {"^$_"} @login_required;
+$login_required = qr/$login_required/;
 
 before '*' => run {
     if (Jifty->web->current_user->id) {
@@ -18,7 +16,7 @@ before '*' => run {
         $top->child( _('Pick!')    => url => '/pick' );
         $top->child( _('Choices')  => url => '/choices' );
     }
-    elsif ($1 !~ $always_allowed) {
+    elsif ($1 =~ $login_required) {
         tangent 'login';
     }
 };
