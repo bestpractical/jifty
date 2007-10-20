@@ -7,8 +7,5 @@ use Jifty::Record schema {
         type is 'boolean';
 };
 
-use Jifty::Plugin::User::Mixin::Model::User;
-use Jifty::Plugin::Authentication::Password::Mixin::Model::User;
-
 1;
 
