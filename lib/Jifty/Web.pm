@@ -49,6 +49,7 @@ __PACKAGE__->javascript_libs([qw(
     scriptaculous/controls.js
     formatDate.js
     template_declare.js
+    loc.js
     jifty.js
     jifty_utils.js
     jifty_subs.js
