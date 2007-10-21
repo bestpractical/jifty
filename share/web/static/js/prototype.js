@@ -645,9 +645,9 @@ Ajax.Request.prototype = Object.extend(new Ajax.Base(), {
         this.options.asynchronous);
 
       if (this.options.asynchronous) {
-        this.transport.onreadystatechange = this.onStateChange.bind(this);
         setTimeout((function() {this.respondToReadyState(1)}).bind(this), 10);
       }
+      this.transport.onreadystatechange = this.onStateChange.bind(this);
 
       this.setRequestHeaders();
 
