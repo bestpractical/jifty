@@ -221,9 +221,17 @@ sub promote_encoding {
     my $class = shift;
     my $string = shift;
     my $content_type = shift;
+    my $charset;
 
-    $content_type = Email::MIME::ContentType::parse_content_type($content_type) if $content_type;
-    my $charset = $content_type->{attributes}->{charset} if $content_type;
+    if ($content_type) {
+        # Multi-part form data have no notion of charsets, so we return the string
+        # verbatim here, to avoid the "Unquoted / not allowed in Content-Type"
+        # warnings when the Base64-encoded MIME boundary string contains "/".
+        return $string if $content_type =~ /^multipart\b/;
+
+        $content_type = Email::MIME::ContentType::parse_content_type($content_type);
+        $charset = $content_type->{attributes}->{charset};
+    }
 
     # XXX TODO Is this the right thing? Maybe we should just return
     # the string as-is.
