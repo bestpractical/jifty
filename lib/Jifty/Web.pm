@@ -1074,23 +1074,15 @@ Returns a C<< <link> >> tag for the compressed CSS
 =cut
 
 sub include_css {
-    # XXX: move to CompressCSSandJS plugin
     my $self = shift;
-    my ($ccjs) = Jifty->find_plugin('Jifty::Plugin::CompressedCSSandJS');
-    if ( $ccjs && $ccjs->css_enabled ) {
-        $self->generate_css;
-        $self->out(
-            qq{<link rel="stylesheet" type="text/css" href="@{[ $ccjs->cdn ]}/__jifty/css/}
-            . __PACKAGE__->cached_css_digest . '.css" />'
-        );
-    }
-    else {
-        $self->out(
-            '<link rel="stylesheet" type="text/css" '
-            . 'href="/static/css/main.css" />'
-        );
-    }
-    
+
+    # if there's no trigger, 0 is returned.  if aborted/handled, undef
+    # is returned.
+    defined $self->call_trigger( 'include_css', @_ ) or return '';
+
+    $self->out( '<link rel="stylesheet" type="text/css" '
+            . 'href="/static/css/main.css" />' );
+
     return '';
 }
 
@@ -1106,37 +1098,6 @@ sub add_css {
         @{ Jifty->web->css_files },
         @_
     ]);
-}
-
-=head3 generate_css
-
-Checks if the compressed CSS is generated, and if it isn't, generates
-and caches it.
-
-=cut
-
-sub generate_css {
-    my $self = shift;
-
-    if (not defined __PACKAGE__->cached_css_digest
-            or Jifty->config->framework('DevelMode'))
-    {
-        Jifty->log->debug("Generating CSS...");
-        
-        my @roots = map { Jifty::Util->absolute_path( File::Spec->catdir( $_, 'css' ) ) }
-                        Jifty->handler->view('Jifty::View::Static::Handler')->roots;
-
-        CSS::Squish->roots( @roots );
-        
-        my $css = CSS::Squish->concatenate(
-            map { CSS::Squish->_resolve_file( $_, @roots ) }
-                @{ $self->css_files }
-        );
-
-        __PACKAGE__->cached_css( $css );
-        __PACKAGE__->cached_css_digest( md5_hex( $css ) );
-		__PACKAGE__->cached_css_time( time );
-    }
 }
 
 =head3 include_javascript
@@ -1202,10 +1163,7 @@ Pushes files onto C<Jifty->web->javascript_libs>
 
 sub add_javascript {
     my $self = shift;
-    Jifty->web->javascript_libs([
-        @{ Jifty->web->javascript_libs },
-        @_
-    ]);
+    Jifty->web->javascript_libs([ @{ Jifty->web->javascript_libs }, @_ ]);
 }
 
 =head3 add_external_javascript URL1, URL2, ...
@@ -1217,9 +1175,7 @@ Pushes urls onto C<Jifty->web->external_javascript_libs>
 sub add_external_javascript {
     my $self = shift;
     Jifty->web->external_javascript_libs([
-        @{ Jifty->web->external_javascript_libs },
-        @_
-    ]);
+        @{ Jifty->web->external_javascript_libs }, @_ ]);
 }
 
 =head2 STATE VARIABLES

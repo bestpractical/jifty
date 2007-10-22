@@ -4,8 +4,9 @@ use warnings;
 package Jifty::Plugin::CompressedCSSandJS;
 use base 'Jifty::Plugin';
 
-use Digest::MD5 qw(md5_hex);
+use Digest::MD5 'md5_hex';
 use IPC::Run3 'run3';
+use Compress::Zlib ();
 use IO::Handle ();
 
 =head1 NAME
@@ -22,6 +23,8 @@ Jifty::Plugin::CompressedCSSandJS
         css: 1
         jsmin: /path/to/jsmin
         cdn: 'http://yourcdn.for.static.prefix/'
+        gzip: 1
+
 
 =head1 DESCRIPTION
 
@@ -36,9 +39,24 @@ L<http://www.crockford.com/javascript/jsmin.html>.
 Note that you will need to use C<ConfigFileVersion> 2 to be able to
 configure jsmin feature.
 
+The gzip configuration directive, which defaults to enabled, instructs
+Jifty to transparently gzip css and js files as they're served if the client
+indicates it supports that feature.
+
 =cut
 
-__PACKAGE__->mk_accessors(qw(css js jsmin cached_javascript cached_javascript_digest cached_javascript_time cdn ));
+__PACKAGE__->mk_accessors(qw(css js jsmin cdn gzip_enabled
+
+    cached_javascript 
+    cached_javascript_gzip
+    cached_javascript_digest 
+    cached_javascript_time 
+
+    cached_css
+    cached_css_gzip
+    cached_css_time
+    cached_css_digest
+));
 
 =head2 init
 
@@ -54,6 +72,7 @@ sub init {
 
     my %opt  = @_;
     $self->css( $opt{css} );
+    $self->gzip_enabled( exists $opt{gzip} ? $opt{gzip} : 1);
     $self->js( $opt{js} );
     $self->jsmin( $opt{jsmin} );
     $self->cdn( $opt{cdn} || '');
@@ -63,6 +82,12 @@ sub init {
         callback  => sub { $self->_include_javascript(@_) },
         abortable => 1,
     ) if $self->js_enabled;
+
+    Jifty::Web->add_trigger(
+        name => 'include_css',
+        callback => sub { $self->_include_css(@_) },
+        abortable => 1,
+    ) if $self->css_enabled;
 }
 
 =head2 js_enabled
@@ -87,6 +112,12 @@ sub css_enabled {
     defined $self->css ? $self->css : 1;
 }
 
+=head2 gzip_enabled
+
+Returns whether gzipping is enabled (which it is by default)
+
+=cut
+
 sub _include_javascript {
     my $self = shift;
 
@@ -96,6 +127,50 @@ sub _include_javascript {
             . qq[.js"></script>] );
     return 0;
 }
+
+sub _include_css {
+    my $self = shift;
+    $self->generate_css;
+    Jifty->web->out(
+    qq{<link rel="stylesheet" type="text/css" href="@{[ $self->cdn ]}/__jifty/css/}
+    . $self->cached_css_digest . '.css" />');
+    return 0;
+}
+
+=head3 generate_css 
+
+
+Checks if the compressed CSS is generated, and if it isn't, generates
+and caches it. (In devel mode, it always regenerates it)
+
+=cut
+
+            
+sub generate_css {
+    my $self = shift;
+            
+    if (not defined $self->cached_css_digest or Jifty->config->framework('DevelMode')) {
+        Jifty->log->debug("Generating CSS...");
+        
+        my @roots = map { Jifty::Util->absolute_path( File::Spec->catdir( $_, 'css' ) ) }
+                        Jifty->handler->view('Jifty::View::Static::Handler')->roots;
+    
+        CSS::Squish->roots( @roots );
+        
+        my $css = CSS::Squish->concatenate(
+            map { CSS::Squish->_resolve_file( $_, @roots ) }
+                @{ Jifty->web->css_files }
+        );
+
+        $self->cached_css( $css );
+        $self->cached_css_digest( md5_hex( $css ) );
+        $self->cached_css_time( time );
+        $self->cached_css_gzip(Compress::Zlib::memGzip( $css));
+
+    }
+}
+
+
 
 =head3 _generate_javascript
 
@@ -139,6 +214,7 @@ sub _generate_javascript {
         $self->cached_javascript($js);
         $self->cached_javascript_digest( md5_hex($js) );
         $self->cached_javascript_time(time);
+        $self->cached_javascript_gzip(Compress::Zlib::memGzip( $js));
     }
 }
 
