@@ -162,7 +162,7 @@ sub _get_file_patterns {
 
 =head2 get_language_handle
 
-Get the lanauge language for this request.
+Get the language handle for this request.
 
 =cut
 
@@ -172,6 +172,13 @@ sub get_language_handle {
     my $lang = Jifty->web->session->get('jifty_lang');
     $$DynamicLH = $self->get_handle($lang ? $lang : ()) if $DynamicLH;
 }
+
+=head2 get_current_language
+
+Get the current language for this request, formatted as a Locale::Maketext
+subclass string (i.e., C<zh_tw> instead of C<zh-TW>).
+
+=cut
 
 sub get_current_language {
     return unless $DynamicLH;
