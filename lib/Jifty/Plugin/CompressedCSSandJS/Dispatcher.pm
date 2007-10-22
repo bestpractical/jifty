@@ -18,9 +18,6 @@ use HTTP::Date ();
 
 use Jifty::Dispatcher -base;
 
-our($GZIP_CSS,$GZIP_JS);
-
-
 on '/__jifty/js/*' => run {
     my $arg = $1;
     if ( $arg !~ /^[0-9a-f]{32}\.js$/ ) {
@@ -55,10 +52,7 @@ on '/__jifty/js/*' => run {
         Jifty->handler->apache->header_out( "Content-Encoding" => "gzip" );
         Jifty->handler->apache->send_http_header();
         binmode STDOUT;
-
-
-        print $GZIP_JS ||= Compress::Zlib::memGzip( $ccjs->cached_javascript );
-
+        print Compress::Zlib::memGzip( $ccjs->cached_javascript );
     } else {
         Jifty->log->debug("Sending squished JS");
         Jifty->handler->apache->send_http_header();
@@ -97,7 +91,7 @@ on '/__jifty/css/*' => run {
         Jifty->handler->apache->header_out( "Content-Encoding" => "gzip" );
         Jifty->handler->apache->send_http_header();
         binmode STDOUT;
-        print $GZIP_CSS ||= Compress::Zlib::memGzip( Jifty->web->cached_css);
+        print Compress::Zlib::memGzip( Jifty->web->cached_css );
     } else {
         Jifty->log->debug("Sending squished CSS");
         Jifty->handler->apache->send_http_header();
