@@ -26,7 +26,7 @@ In your Mason templates:
 
 =head2 C<_>
 
-This module provides a method named C<_>, which allows you to quickly and easily include localized strings in your application. The first argument is the string to translated. If that string contains placeholders, the remaining arguments are used to replace the placeholders. The placeholders in the form of "%1" where the number is the number of the argument used to replace it:
+This module provides a method named C<_>, which allows you to quickly and easily include localized strings in your application. The first argument is the string to be translated. If that string contains placeholders, the remaining arguments are used to replace the placeholders. The placeholders in the form of "%1" where the number is the number of the argument used to replace it:
 
   _('Welcome %1 to the %2', 'Bob', 'World');
 
