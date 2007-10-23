@@ -9,15 +9,18 @@ Localization = Object.extend(new Object(), {
             Localization.show_dates_as_local_time();
         })
     },
+    switch_dict: function(lang) {
+        this.dict = this.load_dict(lang);
+    },
     load_dict: function(lang) {
         var d;
         new Ajax.Request(
-            this.dict_path + "/" + this.lang + ".json",
+            this.dict_path + "/" + lang + ".json",
             {
                 method: 'get',
                 asynchronous: false,
                 onComplete: function(t, obj) {
-                    eval("d = " + t.responseText);
+                    eval("d = " + t.responseText || "{}");
                 }
             }
         );
