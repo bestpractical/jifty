@@ -33,6 +33,14 @@ sub new {
 
 Sets or returns the string that the menu item will be displayed as.
 
+=cut
+
+sub label {
+    my $self = shift;
+    $self->{label} = shift if @_;
+    return $self->{label};
+}
+
 =head2 parent [MENU]
 
 Gets or sets the parent L<Jifty::Web::Menu> of this item; this defaults
