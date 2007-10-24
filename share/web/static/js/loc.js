@@ -1,6 +1,6 @@
 Localization = Object.extend(new Object(), {
     init: function(params) {
-        this.lang = params.lang || 'en'
+        this.lang = params.lang || 'en';
         if (params["dict_path"]) {
             this.dict_path = params["dict_path"]
             this.dict = this.load_dict(this.lang)
@@ -27,11 +27,11 @@ Localization = Object.extend(new Object(), {
         return d;
     },
     loc: function(str) {
-        var dict = this.dict
+        var dict = this.dict;
         if (dict[str]) {
-            return dict[str]
+            return dict[str];
         }
-        return str
+        return str;
     },
 
     show_dates_as_local_time: function() {
@@ -40,7 +40,7 @@ Localization = Object.extend(new Object(), {
             if (spans[i].className.match(/\bdatetime\b/i)) {
                 var d = this.get_local_time_for_date(spans[i].title);
                 if (d != 'NaN') {
-                    spans[i].innerHTML = d
+                    spans[i].innerHTML = d;
                 }
             }
         }
@@ -74,7 +74,7 @@ Localization = Object.extend(new Object(), {
         else return (Math.round(minutes / 1440) + _(' days'))
     }
 
-})
+});
 
-_ = Localization.loc.bind(Localization)
-
+Localization.dict = {};
+_ = Localization.loc.bind(Localization);
