@@ -233,7 +233,7 @@ sub render_as_hierarchical_menu_item {
     my @kids = $self->children;
     my $id   = Jifty->web->serial;
     Jifty->web->out( qq{<li class="toplevel }
-            . ( $self->active ? 'active' : 'closed' ) .' '.$self->class.' '. qq{">}
+            . ( $self->active ? 'active' : 'closed' ) .' '.($self->class||"").' '. qq{">}
             . qq{<span class="title">} );
     Jifty->web->out( $self->as_link );
     Jifty->web->out(qq{</span>});
@@ -246,7 +246,7 @@ sub render_as_hierarchical_menu_item {
                 . $id
                 . qq{">} );
         for (@kids) {
-            Jifty->web->out(qq{<li class="submenu }.($_->active ? 'active' : '' ).' '. $_->class.qq{">});
+            Jifty->web->out(qq{<li class="submenu }.($_->active ? 'active' : '' ).' '. ($_->class || "").qq{">});
 
             # We should be able to get this as a string.
             # Either stringify the link object or output the label
