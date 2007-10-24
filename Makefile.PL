@@ -49,7 +49,7 @@ requires('Hash::Merge');
 requires('Hook::LexWrap');
 requires('IPC::PubSub' => '0.23' );
 requires('IPC::Run3');
-requires('Jifty::DBI' => '0.44' );            # Jifty::DBI::Collection Jifty::DBI::Handle Jifty::DBI::Record::Cachable Jifty::DBI::SchemaGenerator
+requires('Jifty::DBI' => '0.45' );            # Jifty::DBI::Collection Jifty::DBI::Handle Jifty::DBI::Record::Cachable Jifty::DBI::SchemaGenerator
 requires('Locale::Maketext::Extract' => '0.20');
 requires('Locale::Maketext::Lexicon' => '0.60');
 requires('Log::Log4perl' => '1.04');
