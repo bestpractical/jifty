@@ -31,7 +31,7 @@ Each request contains several types of information:
 =item actions
 
 A request may contain one or more actions; these are represented as
-L<Jifty::Action> objects. Each action request has a
+L<Jifty::Request::Action> objects. Each action request has a
 L<moniker|Jifty::Manual::Glossary/moniker>, a set of submitted
 L<arguments|Jifty::Manual::Glossary/arguments>, and an implementation
 class.  By default, all actions that are submitted are run; it is
