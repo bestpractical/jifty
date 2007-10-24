@@ -1,0 +1,20 @@
+<&|/_elements/wrapper, title => _('Welcome to your new Jifty application') &>
+
+args:<% Jifty->web->request->arguments->{'J:V-region-content'} || ''%>
+
+<% Jifty->web->link(
+               label   => 'content',
+               id => 'replace_content',
+               onclick => {
+                   replace_with => '/content1.html',
+                   region => 'content',
+               },
+           ) %>
+
+<% Jifty->web->region( 
+    name     => 'content', 
+    path     => '/content.html',
+) %>
+
+
+</&>
