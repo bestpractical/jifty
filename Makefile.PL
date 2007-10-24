@@ -36,6 +36,7 @@ requires('File::Find::Rule');
 requires('File::MMagic');
 requires('File::ShareDir' => '0.04');
 requires('File::Spec' => '3.14');
+requires('File::Temp' => '0.15'); # we need cleanup()
 requires('HTML::Entities');
 requires('HTML::Lint');
 requires('HTML::Mason' => 1.3101);           # HTML::Mason::Exceptions HTML::Mason::FakeApache HTML::Mason::MethodMaker HTML::Mason::Request HTML::Mason::Utils
