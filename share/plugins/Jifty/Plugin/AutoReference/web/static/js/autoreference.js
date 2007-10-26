@@ -50,7 +50,8 @@ Object.extend(Object.extend(Jifty.Plugin.AutoReference.prototype, Jifty.Autocomp
         request['actions'][this.action.moniker]['active']  = 0;
 
         // Fix up the field to use the real field instead of the hidden one
-        request['actions'][this.action.moniker]['fields'][a['fields']['argument']]['value'] = this.field.value;
+        var value = this.field.value.replace(/\s*\[(?:i(?:d(?::(?:\s*(?:\d+\]?)?)?)?)?)?$/, '')
+        request['actions'][this.action.moniker]['fields'][a['fields']['argument']]['value'] = value;
 
         var options = { postBody: JSON.stringify(request),
             onComplete: this.onComplete.bind(this),
