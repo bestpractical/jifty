@@ -33,6 +33,47 @@ sub render {
     return $self->SUPER::render(@_);
 }
 
+sub _record_description {
+    my $self = shift;
+
+    my $value = $self->default_value;
+
+    my $name      = $self->name;
+    my $column    = $self->action->record->column($name);
+    my $reference = $column->refers_to;
+    my $brief     = $reference->can('_brief_description') ?
+                        $reference->_brief_description : 'name';
+
+    my $record = $self->action->record->$name;
+    if ($record and $record->id) {
+        return $record->$brief . ' [id:'. $record->id . ']';
+    }
+    else {
+        return;
+    }
+}
+
+sub _switch_current_value_temporarily(&$) {
+    my $code = shift;
+    my $self = shift;
+    
+    my $description = $self->_record_description;
+
+    if ($self->sticky_value and $self->sticky) {
+        my $old_value = $self->sticky_value;
+        $self->sticky_value($description);
+        $code->();
+        $self->sticky_value($old_value);
+    }
+
+    else {
+        my $old_value = $self->default_value;
+        $self->default_value($description);
+        $code->();
+        $self->default_value($old_value);
+    }
+}
+
 sub render_widget {
     my $self = shift;
 
@@ -43,7 +84,9 @@ sub render_widget {
     $self->_element_id($element_id.'-display');
     my $class = $self->class;
     $self->class(join ' ', ($class||''), 'text');
-    $self->SUPER::render_widget(@_);
+    _switch_current_value_temporarily {
+        $self->SUPER::render_widget(@_);
+    } $self;
     $self->input_name($input_name);
     $self->_element_id($element_id);
     $self->class($class);
@@ -59,17 +102,9 @@ sub render_widget {
 sub render_value {
     my $self = shift;
 
-    my $value = $self->default_value;
-
-    my $name      = $self->name;
-    my $column    = $self->action->record->column($name);
-    my $reference = $column->refers_to;
-    my $brief     = $reference->can('_brief_description') ?
-                        $reference->_brief_description : 'name';
-
-    $self->default_value($self->action->record->$name->$brief);
-    $self->SUPER::render_value(@_);
-    $self->default_value($value);
+    _switch_current_value_temporarily {
+        $self->SUPER::render_value(@_);
+    } $self;
 
     return '';
 }
