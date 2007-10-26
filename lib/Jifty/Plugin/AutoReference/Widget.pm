@@ -56,6 +56,24 @@ sub render_widget {
     return '';
 }
 
+sub render_value {
+    my $self = shift;
+
+    my $value = $self->default_value;
+
+    my $name      = $self->name;
+    my $column    = $self->action->record->column($name);
+    my $reference = $column->refers_to;
+    my $brief     = $reference->can('_brief_description') ?
+                        $reference->_brief_description : 'name';
+
+    $self->default_value($self->action->record->$name->$brief);
+    $self->SUPER::render_value(@_);
+    $self->default_value($value);
+
+    return '';
+}
+
 sub autocomplete_javascript {
     my $self = shift;
     return qq{new Jifty.Plugin.AutoReference('@{[$self->element_id]}-display','@{[$self->element_id]}','@{[$self->element_id]}-autocomplete')};
