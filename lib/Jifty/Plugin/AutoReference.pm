@@ -56,7 +56,6 @@ sub _auto_reference_autocompleter {
         );
 
         $collection->unlimit;
-        $collection->rows_per_page(20);
 
         if (length $value) {
             $collection->limit(
@@ -84,9 +83,16 @@ sub _auto_reference_autocompleter {
         $collection->columns('id', $brief);
         $collection->order_by(column => $brief);
 
-        Jifty->log->info($collection->build_select_query);
-
         my @choices;
+        if (!length $value && !$column->mandatory) {
+            $collection->rows_per_page(9);
+            push @choices, { label => _('- none -'), value => '' };
+        }
+        
+        else {
+            $collection->rows_per_page(10);
+        }
+
         while (my $record = $collection->next) {
             push @choices, { 
                 label => $record->brief_description.' [id:'.$record->id.']', 
