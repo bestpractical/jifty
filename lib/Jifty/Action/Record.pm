@@ -249,6 +249,10 @@ sub arguments {
                         collection => $collection
                     }
                 ];
+                unshift @{ $info->{valid_values} }, {
+                    display => _('no value'),
+                    value   => '',
+                } unless $column->mandatory;
             } 
             
             # If the reference is X-to-many instead, skip it
