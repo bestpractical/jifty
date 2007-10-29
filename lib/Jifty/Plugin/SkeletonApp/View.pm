@@ -60,12 +60,6 @@ private template 'header' => sub {
         title { _($title) };
         Jifty->web->include_css;
         Jifty->web->include_javascript;
-
-        if (Jifty->config->framework('L10N')->{js}) {
-            # js l10n
-            my $current_lang = Jifty::I18N->get_current_language || 'en';
-            outs_raw(qq{<script type="text/javascript">Localization.init({dict_path: '/static/js/dict', lang: '$current_lang'});</script>});
-        }
     };
 };
 

@@ -5,9 +5,6 @@ Localization = Object.extend(new Object(), {
             this.dict_path = params["dict_path"]
             this.dict = this.load_dict(this.lang)
         }
-        Ext.onReady(function() {
-            Localization.show_dates_as_local_time();
-        })
     },
     switch_dict: function(lang) {
         this.dict = this.load_dict(lang);
@@ -32,18 +29,6 @@ Localization = Object.extend(new Object(), {
             return dict[str];
         }
         return str;
-    },
-
-    show_dates_as_local_time: function() {
-        var spans = document.getElementsByTagName('span');
-        for (var i=0; i<spans.length; i++) {
-            if (spans[i].className.match(/\bdatetime\b/i)) {
-                var d = this.get_local_time_for_date(spans[i].title);
-                if (d != 'NaN') {
-                    spans[i].innerHTML = d;
-                }
-            }
-        }
     },
 
     get_local_time_for_date: function(time) {
