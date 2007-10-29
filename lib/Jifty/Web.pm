@@ -1144,13 +1144,15 @@ sub include_javascript {
 
     # if there's no trigger, 0 is returned.  if aborted/handled, undef
     # is returned.
-    defined $self->call_trigger('include_javascript', @_) or return '';
-
-    for my $file ( @{ __PACKAGE__->javascript_libs } ) {
-        $self->out(
-            qq[<script type="text/javascript" src="/static/js/$file"></script>\n]
-        );
+    if ( defined $self->call_trigger('include_javascript', @_) ) {
+        for my $file ( @{ __PACKAGE__->javascript_libs } ) {
+            $self->out(
+                       qq[<script type="text/javascript" src="/static/js/$file"></script>\n]
+                      );
+        }
     }
+
+    $self->call_trigger('after_include_javascript', @_);
 
     return '';
 }
