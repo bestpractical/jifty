@@ -1070,17 +1070,24 @@ Ajax.Request.prototype = Object.extend(new Ajax.Base(), {
       'Accept': 'text/javascript, text/html, application/xml, text/xml, */*'
     };
 
+    var headerNames = [ 'X-Requested-With', 'X-Prototype-Version', 'Accept' ];
+
     if (this.method == 'post') {
-      headers['Content-type'] = this.options.contentType +
-        (this.options.encoding ? '; charset=' + this.options.encoding : '');
+      if ( !this.options.contentType) {
+          headers['Content-Type'] = this.options.contentType +
+            (this.options.encoding ? '; charset=' + this.options.encoding : '');
+          headerNames.push('Content-type');
+      }
 
       /* Force "Connection: close" for older Mozilla browsers to work
        * around a bug where XMLHttpRequest sends an incorrect
        * Content-length header. See Mozilla Bugzilla #246651.
        */
       if (this.transport.overrideMimeType &&
-          (navigator.userAgent.match(/Gecko\/(\d{4})/) || [0,2005])[1] < 2005)
+          (navigator.userAgent.match(/Gecko\/(\d{4})/) || [0,2005])[1] < 2005) {
             headers['Connection'] = 'close';
+            headerNames.push('Connection');
+          }
     }
 
     // user-defined headers
@@ -1088,14 +1095,21 @@ Ajax.Request.prototype = Object.extend(new Ajax.Base(), {
       var extras = this.options.requestHeaders;
 
       if (typeof extras.push == 'function')
-        for (var i = 0, length = extras.length; i < length; i += 2)
+        for (var i = 0, length = extras.length; i < length; i += 2) {
           headers[extras[i]] = extras[i+1];
+          headerNames.push(extras[i]);
+        }
       else
-        $H(extras).each(function(pair) { headers[pair.key] = pair.value });
+        $H(extras).each(function(pair) { 
+            headers[pair.key] = pair.value 
+            headerNames.push(pair.key);
+        });
+    }
+    
+    for (var i=0; i<headerNames.length; i++) {
+        this.transport.setRequestHeader(headerNames[i], headers[headerNames[i]]);
     }
 
-    for (var name in headers)
-      this.transport.setRequestHeader(name, headers[name]);
   },
 
   success: function() {
@@ -1901,18 +1915,6 @@ Element.addMethods = function(methods) {
     return window[klass];
   }
 
-  if (F.ElementExtensions) {
-    copy(Element.Methods, HTMLElement.prototype);
-    copy(Element.Methods.Simulated, HTMLElement.prototype, true);
-  }
-
-  if (F.SpecificElementExtensions) {
-    for (var tag in Element.Methods.ByTag) {
-      var klass = findDOMClass(tag);
-      if (typeof klass == "undefined") continue;
-      copy(T[tag], klass.prototype);
-    }
-  }
 
   Object.extend(Element, Element.Methods);
   delete Element.ByTag;
