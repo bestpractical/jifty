@@ -21,6 +21,9 @@ use Jifty::Action schema {
     param 'authorize',
         valid_values are qw(allow deny);
 
+    param 'callback',
+        render as 'hidden';
+
 };
 
 =head2 validate_token
@@ -62,6 +65,10 @@ sub take_action {
     $token->load_by_cols(
         token => $self->argument_value('token'),
     );
+
+    $self->result->content(token_obj => $token);
+    $self->result->content(token     => $token->token);
+    $self->result->content(callback  => $self->argument_value('callback'));
 
     if ($self->argument_value('authorize') eq 'allow') {
         $token->set_authorized('t');

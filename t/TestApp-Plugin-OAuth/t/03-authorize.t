@@ -8,7 +8,7 @@ use Jifty::SubTest;
 use TestApp::Plugin::OAuth::Test;
 
 if (eval { require Net::OAuth::Request; require Crypt::OpenSSL::RSA; 1 }) {
-    plan tests => 33;
+    plan tests => 40;
 }
 else {
     plan skip_all => "Net::OAuth isn't installed";
@@ -27,7 +27,7 @@ my $consumer = Jifty::Plugin::OAuth::Model::Consumer->new(current_user => Jifty:
 my ($ok, $msg) = $consumer->create(
     consumer_key => 'foo',
     secret       => 'bar',
-    name         => 'FooBar industries',
+    name         => 'FooBar Industries',
     url          => 'http://foo.bar.example.com',
     rsa_key      => $pubkey,
 );
@@ -156,5 +156,87 @@ if ($error) {
 else {
     $mech->content_contains("I don't know of that request token.");
 }
+# }}}
+
+# get another request token as a known consumer (PLAINTEXT) {{{
+response_is(
+    code                   => 200,
+    testname               => "200 - plaintext signature",
+    consumer_secret        => 'bar',
+    oauth_consumer_key     => 'foo',
+    oauth_signature_method => 'PLAINTEXT',
+);
+# }}}
+# deny it with a request parameter {{{
+$mech->get_ok('/oauth/authorize?oauth_token=' . $token_obj->token);
+$mech->content_like(qr/If you trust this application/);
+$mech->content_unlike(qr/should have provided it/, "token hint doesn't show up if we already have it");
+
+$mech->form_number(1);
+$mech->click_button(value => 'Deny');
+
+$mech->content_contains("Denying FooBar Industries the right to access your stuff");
+# }}}
+# get another request token as a known consumer (PLAINTEXT) {{{
+response_is(
+    code                   => 200,
+    testname               => "200 - plaintext signature",
+    consumer_secret        => 'bar',
+    oauth_consumer_key     => 'foo',
+    oauth_signature_method => 'PLAINTEXT',
+);
+# }}}
+# allow it with a request parameter {{{
+$mech->get_ok('/oauth/authorize?oauth_token=' . $token_obj->token);
+$mech->content_like(qr/If you trust this application/);
+$mech->content_unlike(qr/should have provided it/, "token hint doesn't show up if we already have it");
+
+$mech->form_number(1);
+$mech->click_button(value => 'Allow');
+
+$mech->content_contains("Allowing FooBar Industries to access your stuff");
+# }}}
+# get another request token as a known consumer (PLAINTEXT) {{{
+response_is(
+    code                   => 200,
+    testname               => "200 - plaintext signature",
+    consumer_secret        => 'bar',
+    oauth_consumer_key     => 'foo',
+    oauth_signature_method => 'PLAINTEXT',
+);
+# }}}
+# deny it with a callback {{{
+$mech->get_ok('/oauth/authorize?oauth_callback=http%3A%2f%2fgoogle.com');
+$mech->content_like(qr/If you trust this application/);
+
+$mech->fill_in_action_ok($mech->moniker_for('TestApp::Plugin::OAuth::Action::AuthorizeRequestToken'), token => $token_obj->token);
+$mech->click_button(value => 'Deny');
+
+$mech->content_contains("Denying FooBar Industries the right to access your stuff");
+$mech->content_contains("Click here");
+$mech->content_contains("http://google.com?oauth_token=" . $token_obj->token);
+$mech->content_contains("to return to FooBar Industries");
+# }}}
+# get another request token as a known consumer (PLAINTEXT) {{{
+response_is(
+    code                   => 200,
+    testname               => "200 - plaintext signature",
+    consumer_secret        => 'bar',
+    oauth_consumer_key     => 'foo',
+    oauth_signature_method => 'PLAINTEXT',
+);
+# }}}
+# deny it with a callback + request params {{{
+$mech->get_ok('/oauth/authorize?oauth_token='.$token_obj->token.'&oauth_callback=http%3A%2f%2fgoogle.com%3ffoo%3d=bar');
+$mech->content_like(qr/If you trust this application/);
+$mech->content_unlike(qr/should have provided it/, "token hint doesn't show up if we already have it");
+
+$mech->form_number(1);
+$mech->click_button(value => 'Deny');
+
+$mech->content_contains("Denying FooBar Industries the right to access your stuff");
+$mech->content_contains("Click here");
+$mech->content_contains("http://google.com?foo=bar&oauth_token=" . $token_obj->token);
+$mech->content_contains("to return to FooBar Industries");
 # }}}
 

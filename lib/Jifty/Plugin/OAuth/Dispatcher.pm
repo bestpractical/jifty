@@ -94,7 +94,7 @@ sub authorize {
     set no_abort => 1;
     my %oauth_params = get_parameters(@params);
 
-    set next => $oauth_params{callback};
+    set callback => $oauth_params{callback};
     set consumer => 'Some application';
     del 'token';
 
