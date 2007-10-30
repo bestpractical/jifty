@@ -8,7 +8,7 @@ use Jifty::SubTest;
 use TestApp::Plugin::OAuth::Test;
 
 if (eval { require Net::OAuth::Request; require Crypt::OpenSSL::RSA; 1 }) {
-    plan tests => 9;
+    plan tests => 7;
 }
 else {
     plan skip_all => "Net::OAuth isn't installed";
