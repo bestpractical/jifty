@@ -111,7 +111,7 @@ sub _start_src {
 	    close *STDOUT;
 	}
 	$ENV{LANG} = $args{lang} || 'en_US.UTF-8';
-	$ENV{PATH} = "$ENV{PATH}:/usr/lib/firefox";
+	$ENV{PATH} = "$ENV{PATH}:/usr/lib/firefox:/usr/lib/mozilla-firefox";
 	Test::More::diag "start selenium rc [$$]";
 	local $SIG{CHLD} = \&_REAPER;
 	local $SIG{TERM} = sub { exit 0 };

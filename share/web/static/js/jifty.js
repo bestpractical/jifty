@@ -1271,6 +1271,11 @@ Jifty.update = function () {
     return false;
 }
 
+function update ( named_args, trigger ) {
+    alert( 'please use Jifty.update instead of update.' );
+    return Jifty.update( named_args, trigger );
+}
+
 function trace( msg ){
   if( typeof( jsTrace ) != 'undefined' ){
     jsTrace.send( msg );
