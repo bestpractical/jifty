@@ -153,8 +153,6 @@ sub after_create {
     $self->regenerate_auth_token;
     if ( $self->id and $self->email and not $self->email_confirmed ) {
         Jifty->app_class('Notification','ConfirmEmail')->new( to => $self )->send;
-    } else {
-        warn  $self->id . " " .$self->email;
     }
 }
 
