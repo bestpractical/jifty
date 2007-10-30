@@ -29,5 +29,5 @@ $mech->content_like(qr{/oauth/access_token}, "oauth page mentions access_token U
 $mech->content_like(qr{http://oauth\.net/}, "oauth page mentions OAuth homepage");
 
 $mech->get_ok($URL . '/oauth/authorize');
-$mech->content_like(qr{If you trust this application}, "oauth authorization page exists without fancy headers");
+$mech->content_unlike(qr{If you trust this application}, "/oauth/authorize requires being logged in");
 

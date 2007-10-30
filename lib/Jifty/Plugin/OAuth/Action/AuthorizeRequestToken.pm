@@ -41,6 +41,11 @@ sub validate_token {
 
     return $self->validation_error(token => "I don't know of that request token.") unless $request_token->id;
 
+    if ($request_token->valid_until < Jifty::DateTime->now(time_zone => 'GMT')) {
+        $request_token->delete();
+        return $self->validation_error(token => "This request token has expired.");
+    }
+
     return $self->validation_ok('token');
 }
 
