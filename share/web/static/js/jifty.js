@@ -24,7 +24,7 @@ function _get_named_args(args) {
 }
 
 function _get_onclick(action_hash, name, args, path) {
-    var onclick = 'if(event.ctrlKey||event.metaKey||event.altKey||event.shiftKey) return true; return update('
+    var onclick = 'if(event.ctrlKey||event.metaKey||event.altKey||event.shiftKey) return true; return Jifty.update('
     + JSON.stringify({'continuation': {},
                       'actions': action_hash,
                       'fragments': [{'mode': 'Replace', 'args': args, 'region': name, 'path': path}]})
@@ -1001,7 +1001,7 @@ var apply_fragment_updates = function(fragment, f) {
 //     - 'element' is the CSS selector of the element to update, if 'region' isn't supplied
 //     - 'mode' is one of 'Replace', or the name of a Prototype Insertion
 //     - 'effect' is the name of a Prototype Effect
-function update() {
+Jifty.update = function () {
     // loads
     if(!Ajax.getTransport()) return true;
     // XXX: prevent default behavior in IE
@@ -1515,7 +1515,7 @@ function _sp_submit_form(elt, event, submit_to) {
     // and then merge them.
     var hiddens = $H();
     var buttons = $H();
-    var inputs = $H()
+    var inputs = $H();
     for (var i = 0; i < elements.length; i++) {
         var e = elements[i];
         var parsed = e.getAttribute("name").match(/^J:V-region-__page\.(.*)/);
@@ -1526,22 +1526,22 @@ function _sp_submit_form(elt, event, submit_to) {
                 // Might also have J:V mappings on it
                 parsed = extras.keys()[j].match(/^J:V-region-__page\.(.*)/);
                 if ((parsed != null) && (parsed.length == 2)) {
-                    buttons[parsed[1]] = extras.values()[j];
+                    buttons.set(parsed[1], extras.values()[j]);
                 } else if (extras.keys()[j].length > 0) {
-                    inputs[extras.keys()[j]] = extras.values()[j];
+                    inputs.set(extras.keys()[j], extras.values()[j]);
                 }
                 
             }
         } else if ((parsed != null) && (parsed.length == 2)) {
             // Hidden default
-            hiddens[parsed[1]] = $F(e);
+            hiddens.set(parsed[1], $F(e));
         } else if (e.name.length > 0) {
             // Straight up values
-            inputs[e.name] = $F(e);
+            inputs.set(e.name, $F(e));
         }
     }
 
     var args = hiddens.merge(buttons.merge(inputs));
     if(event.ctrlKey||event.metaKey||event.altKey||event.shiftKey) return true;
-    return update( {'continuation':{},'actions':null,'fragments':[{'mode':'Replace','args':args,'region':'__page','path': submit_to}]}, elt );
+    return Jifty.update( {'continuation':{},'actions':null,'fragments':[{'mode':'Replace','args':args,'region':'__page','path': submit_to}]}, elt );
 }
