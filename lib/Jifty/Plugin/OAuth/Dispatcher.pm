@@ -14,6 +14,8 @@ before GET  '/oauth/authorize'     => \&authorize;
 on     POST '/oauth/authorize'     => \&authorize_post;
 on     POST '/oauth/access_token'  => \&access_token;
 
+on          '/oauth/authorized'    => run { redirect '/oauth/authorize' };
+
 =head2 abortmsg CODE, MSG
 
 Helper function to abort with a debug message. Maybe should be factored into
@@ -101,7 +103,7 @@ sub authorize {
 
     if ($oauth_params{token}) {
         my $request_token = Jifty::Plugin::OAuth::Model::RequestToken->new(current_user => Jifty::CurrentUser->superuser);
-        $request_token->load_by_cols(token => $oauth_params{token}, authorized => 'f');
+        $request_token->load_by_cols(token => $oauth_params{token}, authorized => '');
 
         if ($request_token->id) {
             set consumer => $request_token->consumer;

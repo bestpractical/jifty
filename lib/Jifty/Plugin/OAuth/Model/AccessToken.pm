@@ -22,8 +22,13 @@ use Jifty::Record schema {
         type is 'timestamp',
         filters are 'Jifty::DBI::Filter::DateTime';
 
+    column token =>
+        type is 'varchar',
+        is required;
+
     column secret =>
-        type is 'varchar';
+        type is 'varchar',
+        is required;
 
     column consumer =>
         refers_to Jifty::Plugin::OAuth::Model::Consumer;
