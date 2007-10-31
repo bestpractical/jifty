@@ -41,6 +41,8 @@ sub response_is {
         @_,
     );
 
+    local $url = delete $params{url} || $url;
+
     for (grep {!defined $params{$_}} keys %params) {
         delete $params{$_};
     }
@@ -51,6 +53,11 @@ sub response_is {
     my $token_secret    = delete $params{token_secret};
     my $consumer_secret = delete $params{consumer_secret}
         or die "consumer_secret not passed to response_is!";
+
+    if ($url =~ /access_token/) {
+        $token_secret ||= $token_obj->secret;
+        $params{oauth_token} ||= $token_obj->token;
+    }
 
     $params{oauth_signature} ||= sign($method, $token_secret, $consumer_secret, %params);
 
@@ -82,7 +89,7 @@ sub response_is {
 sub sign {
     my ($method, $token_secret, $consumer_secret, %params) = @_;
 
-    local $url = delete $params{url} || $url;
+    local $url = delete $params{sign_url} || $url;
 
     my $key = delete $params{signature_key};
     my $sig_method = $params{oauth_signature_method} || delete $params{_signature_method};

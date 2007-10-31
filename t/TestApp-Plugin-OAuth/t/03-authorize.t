@@ -8,7 +8,7 @@ use Jifty::SubTest;
 use TestApp::Plugin::OAuth::Test;
 
 if (eval { require Net::OAuth::Request; require Crypt::OpenSSL::RSA; 1 }) {
-    plan tests => 69;
+    plan tests => 81;
 }
 else {
     plan skip_all => "Net::OAuth isn't installed";
@@ -55,6 +55,9 @@ response_is(
 $mech->get_ok('/oauth/authorize');
 $mech->content_unlike(qr/If you trust this application/);
 
+$mech->get_ok('/oauth/authorized');
+$mech->content_unlike(qr/If you trust this application/);
+
 $mech->get_ok('/nuke/the/whales');
 $mech->content_unlike(qr/Press the shiny red button/);
 # }}}
@@ -70,6 +73,9 @@ $mech->content_contains('Logout');
 # }}}
 # try to navigate to protected pages while logged in {{{
 $mech->get_ok('/oauth/authorize');
+$mech->content_like(qr/If you trust this application/);
+
+$mech->get_ok('/oauth/authorized');
 $mech->content_like(qr/If you trust this application/);
 
 $mech->get_ok('/nuke/the/whales');
@@ -175,6 +181,10 @@ $mech->form_number(1);
 $mech->click_button(value => 'Deny');
 
 $mech->content_contains("Denying FooBar Industries the right to access your stuff");
+$mech->content_contains("click here");
+$mech->content_contains("http://foo.bar.example.com?oauth_token=" . $token_obj->token);
+$mech->content_contains("To return to");
+$mech->content_contains("FooBar Industries");
 # }}}
 # get another request token as a known consumer (PLAINTEXT) {{{
 response_is(
@@ -194,6 +204,10 @@ $mech->form_number(1);
 $mech->click_button(value => 'Allow');
 
 $mech->content_contains("Allowing FooBar Industries to access your stuff");
+$mech->content_contains("click here");
+$mech->content_contains("http://foo.bar.example.com?oauth_token=" . $token_obj->token);
+$mech->content_contains("To return to");
+$mech->content_contains("FooBar Industries");
 # }}}
 # get another request token as a known consumer (PLAINTEXT) {{{
 response_is(
