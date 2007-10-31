@@ -20,6 +20,7 @@ requires('DBD::SQLite' => 1.11 );
 requires('Data::Page');
 requires('Data::UUID');
 requires('DateTime');
+requires('DateTime::Locale');
 requires('Date::Manip');
 requires('Email::Folder');
 requires('Email::LocalDelivery');
