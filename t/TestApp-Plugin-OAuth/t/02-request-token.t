@@ -8,7 +8,7 @@ use Jifty::SubTest;
 use TestApp::Plugin::OAuth::Test;
 
 if (eval { require Net::OAuth::Request; require Crypt::OpenSSL::RSA; 1 }) {
-    plan tests => 56;
+    plan tests => 59;
 }
 else {
     plan skip_all => "Net::OAuth isn't installed";
@@ -162,17 +162,6 @@ response_is(
     oauth_signature        => 'hello ^____^',
 );
 # }}}
-# duplicate timestamp and nonce {{{
-response_is(
-    code                   => 401,
-    testname               => "401 - duplicate timestamp and nonce",
-    consumer_secret        => 'bar',
-    oauth_consumer_key     => 'foo',
-    oauth_timestamp        => 1,
-    oauth_nonce            => 1,
-    oauth_signature_method => 'PLAINTEXT',
-);
-# }}}
 # unknown signature method {{{
 response_is(
     code                   => 400,
@@ -275,3 +264,20 @@ response_is(
 );
 # }}}
 
+# duplicate timestamp and nonce {{{
+response_is(
+    code                   => 200,
+    testname               => "200 - plaintext signature",
+    consumer_secret        => 'bar',
+    oauth_consumer_key     => 'foo',
+    oauth_signature_method => 'PLAINTEXT',
+);
+--$timestamp;
+response_is(
+    code                   => 401,
+    testname               => "401 - duplicate timestamp and nonce",
+    consumer_secret        => 'bar',
+    oauth_consumer_key     => 'foo',
+    oauth_signature_method => 'PLAINTEXT',
+);
+# }}}

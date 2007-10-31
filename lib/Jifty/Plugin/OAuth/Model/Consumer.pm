@@ -118,7 +118,7 @@ nonce as "used" for this new timestamp.
 sub made_request {
     my ($self, $timestamp, $nonce) = @_;
     $self->set_last_timestamp($timestamp);
-    $self->nonces->{$nonce} = 1;
+    $self->set_nonces({ %{$self->nonces}, $nonce => 1 });
 }
 
 1;

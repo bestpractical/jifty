@@ -8,7 +8,7 @@ use Jifty::SubTest;
 use TestApp::Plugin::OAuth::Test;
 
 if (eval { require Net::OAuth::Request; require Crypt::OpenSSL::RSA; 1 }) {
-    plan tests => 45;
+    plan tests => 71;
 }
 else {
     plan skip_all => "Net::OAuth isn't installed";
@@ -35,12 +35,14 @@ sub get_request_token {
         oauth_signature_method => 'PLAINTEXT',
         @_,
     );
+    return $token_obj;
 }
 
 sub get_authorized_token {
     local $Test::Builder::Level = $Test::Builder::Level + 1;
     get_request_token(@_);
     allow_ok();
+    return $token_obj;
 }
 # }}}
 # setup {{{
@@ -140,6 +142,60 @@ response_is(
     oauth_consumer_key     => 'foo',
     oauth_signature_method => 'PLAINTEXT',
     oauth_nonce            => 'kjfh',
+);
+# }}}
+# duplicate timestamp and nonce as previous access token {{{
+get_authorized_token();
+$timestamp -= 2;
+response_is(
+    code                   => 401,
+    testname               => "401 - duplicate ts/nonce as previous access",
+    consumer_secret        => 'bar',
+    oauth_consumer_key     => 'foo',
+    oauth_signature_method => 'PLAINTEXT',
+);
+$timestamp += 100;
+# }}}
+# duplicate timestamp and nonce as request token {{{
+get_authorized_token();
+--$timestamp;
+response_is(
+    code                   => 401,
+    testname               => "401 - duplicate ts/nonce for request token",
+    consumer_secret        => 'bar',
+    oauth_consumer_key     => 'foo',
+    oauth_signature_method => 'PLAINTEXT',
+);
+# }}}
+# same request token {{{
+$token_obj = $request_token;
+response_is(
+    code                   => 401,
+    testname               => "401 - already used",
+    consumer_secret        => 'bar',
+    oauth_consumer_key     => 'foo',
+    oauth_signature_method => 'PLAINTEXT',
+);
+# }}}
+# expired request token {{{
+get_authorized_token();
+$token_obj->set_valid_until(DateTime->now(time_zone => "GMT")->subtract(days => 1));
+response_is(
+    code                   => 401,
+    testname               => "401 - expired",
+    consumer_secret        => 'bar',
+    oauth_consumer_key     => 'foo',
+    oauth_signature_method => 'PLAINTEXT',
+);
+# }}}
+# wrong consumer secret {{{
+get_authorized_token();
+response_is(
+    code                   => 401,
+    testname               => "401 - wrong secret",
+    consumer_secret        => 'bah!',
+    oauth_consumer_key     => 'foo',
+    oauth_signature_method => 'PLAINTEXT',
 );
 # }}}
 

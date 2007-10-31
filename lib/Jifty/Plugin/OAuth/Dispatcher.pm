@@ -181,6 +181,8 @@ sub access_token {
         if $@ || !defined($token) || !$ok;
 
     $consumer->made_request(@oauth_params{qw/timestamp nonce/});
+    $request_token->set_used('t');
+
     set oauth_response => {
         oauth_token        => $token->token,
         oauth_token_secret => $token->secret
