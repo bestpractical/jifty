@@ -157,7 +157,7 @@ sub map {
 
     # Bail unless it's a mapping
     return ( @original )
-        unless $args{destination} =~ /^J:M-(.*)/;
+        unless defined $args{destination} and $args{destination} =~ /^J:M-(.*)/;
 
     my $destination = $1;
 

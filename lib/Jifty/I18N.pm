@@ -26,7 +26,7 @@ In your Mason templates:
 
 =head2 C<_>
 
-This module provides a method named C<_>, which allows you to quickly and easily include localized strings in your application. The first argument is the string to translated. If that string contains placeholders, the remaining arguments are used to replace the placeholders. The placeholders in the form of "%1" where the number is the number of the argument used to replace it:
+This module provides a method named C<_>, which allows you to quickly and easily include localized strings in your application. The first argument is the string to be translated. If that string contains placeholders, the remaining arguments are used to replace the placeholders. The placeholders in the form of "%1" where the number is the number of the argument used to replace it:
 
   _('Welcome %1 to the %2', 'Bob', 'World');
 
@@ -162,7 +162,7 @@ sub _get_file_patterns {
 
 =head2 get_language_handle
 
-Get the lanauge language for this request.
+Get the language handle for this request.
 
 =cut
 
@@ -172,6 +172,13 @@ sub get_language_handle {
     my $lang = Jifty->web->session->get('jifty_lang');
     $$DynamicLH = $self->get_handle($lang ? $lang : ()) if $DynamicLH;
 }
+
+=head2 get_current_language
+
+Get the current language for this request, formatted as a Locale::Maketext
+subclass string (i.e., C<zh_tw> instead of C<zh-TW>).
+
+=cut
 
 sub get_current_language {
     return unless $DynamicLH;
@@ -221,9 +228,17 @@ sub promote_encoding {
     my $class = shift;
     my $string = shift;
     my $content_type = shift;
+    my $charset;
 
-    $content_type = Email::MIME::ContentType::parse_content_type($content_type) if $content_type;
-    my $charset = $content_type->{attributes}->{charset} if $content_type;
+    if ($content_type) {
+        # Multi-part form data have no notion of charsets, so we return the string
+        # verbatim here, to avoid the "Unquoted / not allowed in Content-Type"
+        # warnings when the Base64-encoded MIME boundary string contains "/".
+        return $string if $content_type =~ /^multipart\b/;
+
+        $content_type = Email::MIME::ContentType::parse_content_type($content_type);
+        $charset = $content_type->{attributes}->{charset};
+    }
 
     # XXX TODO Is this the right thing? Maybe we should just return
     # the string as-is.

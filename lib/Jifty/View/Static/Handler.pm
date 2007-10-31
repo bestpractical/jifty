@@ -192,8 +192,9 @@ sub mime_type {
         # MIME::Types returns application/javascript for .js, but Opera
         # chokes on ajax-fetched JS that has a type other than the one below
         # JSAN.js fetches JS via Ajax when it loads JSAN modules
-        'js' => 'application/x-javascript',
-        'htc' => 'text/x-component',
+        'js'   => 'application/x-javascript',
+        'json' => 'application/json; charset=UTF-8',
+        'htc'  => 'text/x-component',
     );
 
     return ($type_override{$1})

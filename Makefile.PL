@@ -36,6 +36,7 @@ requires('File::Find::Rule');
 requires('File::MMagic');
 requires('File::ShareDir' => '0.04');
 requires('File::Spec' => '3.14');
+requires('File::Temp' => '0.15'); # we need cleanup()
 requires('HTML::Entities');
 requires('HTML::Lint');
 requires('HTML::Mason' => 1.3101);           # HTML::Mason::Exceptions HTML::Mason::FakeApache HTML::Mason::MethodMaker HTML::Mason::Request HTML::Mason::Utils
@@ -48,7 +49,7 @@ requires('Hash::Merge');
 requires('Hook::LexWrap');
 requires('IPC::PubSub' => '0.23' );
 requires('IPC::Run3');
-requires('Jifty::DBI' => '0.44' );            # Jifty::DBI::Collection Jifty::DBI::Handle Jifty::DBI::Record::Cachable Jifty::DBI::SchemaGenerator
+requires('Jifty::DBI' => '0.45' );            # Jifty::DBI::Collection Jifty::DBI::Handle Jifty::DBI::Record::Cachable Jifty::DBI::SchemaGenerator
 requires('Locale::Maketext::Extract' => '0.20');
 requires('Locale::Maketext::Lexicon' => '0.60');
 requires('Log::Log4perl' => '1.04');
@@ -172,9 +173,9 @@ features(
     'OAuth Plugin' => [
         -default => 0,
         recommends('Net::OAuth::Request' => '0.04'),
-        recommends('Net::OAuth::RequestTokenRequest' => '0.04'),
-        recommends('Net::OAuth::AccessTokenRequest' => '0.04'),
-        recommends('Net::OAuth::ProtectedResourceRequest' => '0.04'),
+        recommends('Net::OAuth::RequestTokenRequest'),
+        recommends('Net::OAuth::AccessTokenRequest'),
+        recommends('Net::OAuth::ProtectedResourceRequest'),
 
         recommends('Crypt::OpenSSL::RSA'),
         recommends('Digest::HMAC_SHA1'),

@@ -60,8 +60,7 @@ private template 'header' => sub {
         title { _($title) };
         Jifty->web->include_css;
         Jifty->web->include_javascript;
-      };
-
+    };
 };
 
 private template 'heading_in_wrapper' => sub {

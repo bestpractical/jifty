@@ -6,8 +6,9 @@ use warnings;
 use base qw( Jifty::Plugin::OAuth::Token Jifty::Record );
 
 # kludge 1: you cannot call Jifty->app_class within schema {}
-my $app_user;
-BEGIN { $app_user = Jifty->app_class('Model', 'User') }
+# kludge 3: due to the loading order, you can't really do this
+#my $app_user;
+#BEGIN { $app_user = Jifty->app_class('Model', 'User') }
 
 use Jifty::DBI::Schema;
 use Jifty::Record schema {

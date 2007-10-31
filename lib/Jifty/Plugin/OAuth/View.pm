@@ -103,7 +103,10 @@ content {
         class   => 'AuthorizeRequestToken',
     );
 
-    Jifty->web->form->start( call => get 'next' );
+    Jifty->web->form->start();
+    Jifty->web->form->next_page(url => "/oauth/authorized");
+
+    outs $authorize->hidden(callback => get 'callback');
 
     # if the site put the token in the request, then use it
     # otherwise, prompt the user for it
@@ -127,6 +130,44 @@ content {
     ));
 
     Jifty->web->form->end();
+};
+
+=head2 oauth/authorized
+
+Displayed after the user authorizes or denies a request token. Uses a link
+to the callback if provided, otherwise the site's URL.
+
+=cut
+
+template 'oauth/authorized' => page { title => 'XXX' }
+content {
+    my $result    = Jifty->web->response->result('authorize_request_token');
+    my $callback  = $result->content('callback');
+    my $token     = $result->content('token');
+    my $token_obj = $result->content('token_obj');
+
+    $callback ||= $token_obj->consumer->url;
+
+    if (!$callback) {
+        p { "Oops! " . $token_obj->consumer->name . " didn't tell us how to get you back to their service. If you do find your way back, you'll probably need this token: " . $token };
+    }
+    else {
+        $callback .= ($callback =~ /\?/ ? '&' : '?')
+                  .  'oauth_token='
+                  .  $token;
+        set consumer => $token_obj->consumer;
+
+        p {
+            outs 'To return to ';
+            show 'oauth/consumer';
+            outs ', ';
+            hyperlink(
+                label => 'click here',
+                url   => $callback,
+            );
+            outs '.';
+        };
+    }
 };
 
 =head2 oauth/help

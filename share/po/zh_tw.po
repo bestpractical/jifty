@@ -796,15 +796,15 @@ msgstr "您已經確認過這個帳號了."
 
 #: lib/Jifty/Plugin/Authentication/Password/View.pm:146
 msgid "You lost your password. A link to reset it will be sent to the following email address:"
-msgstr ""
+msgstr "您忘記密碼了.我們會寄送一個重設密碼的連結到下面的電郵地址:"
 
 #: lib/Jifty/Plugin/Authentication/Password/View.pm:176
 msgid "You lost your password. A reminder will be send to the following mail:"
-msgstr ""
+msgstr "您忘記密碼了.我們會寄送一份提示到下面的電郵地址:"
 
 #: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:146 lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:152
 msgid "You may have mistyped your email or password. Give it another shot."
-msgstr ""
+msgstr "你可以打錯了電郵或密碼.請再試一次"
 
 #: lib/Jifty/Plugin/Authentication/Facebook/Action/LinkFacebookUser.pm:40
 msgid "You must be logged in to link your user to your Facebook account."
