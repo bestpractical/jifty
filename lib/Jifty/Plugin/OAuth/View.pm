@@ -104,9 +104,6 @@ content {
     );
 
     Jifty->web->form->start();
-    Jifty->web->form->next_page(url => "/oauth/authorized");
-
-    outs $authorize->hidden(callback => get 'callback');
 
     # if the site put the token in the request, then use it
     # otherwise, prompt the user for it
@@ -118,6 +115,8 @@ content {
     else {
         $authorize->form_field('token')->render;
     }
+
+    outs_raw $authorize->hidden(callback => get 'callback');
 
     outs_raw($authorize->button(
         label => 'Allow',
@@ -141,7 +140,7 @@ to the callback if provided, otherwise the site's URL.
 
 template 'oauth/authorized' => page { title => 'XXX' }
 content {
-    my $result    = Jifty->web->response->result('authorize_request_token');
+    my $result    = get 'result';
     my $callback  = $result->content('callback');
     my $token     = $result->content('token');
     my $token_obj = $result->content('token_obj');
@@ -159,7 +158,7 @@ content {
 
         p {
             outs 'To return to ';
-            show 'oauth/consumer';
+            show '/oauth/consumer';
             outs ', ';
             hyperlink(
                 label => 'click here',

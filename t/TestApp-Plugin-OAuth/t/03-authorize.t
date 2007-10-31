@@ -8,7 +8,7 @@ use Jifty::SubTest;
 use TestApp::Plugin::OAuth::Test;
 
 if (eval { require Net::OAuth::Request; require Crypt::OpenSSL::RSA; 1 }) {
-    plan tests => 40;
+    plan tests => 69;
 }
 else {
     plan skip_all => "Net::OAuth isn't installed";
@@ -66,7 +66,6 @@ ok($u->id, "New user has valid id set");
 $mech->get_ok('/login');
 $mech->fill_in_action_ok($mech->moniker_for('TestApp::Plugin::OAuth::Action::Login'), email => 'youzer@example.com', password => 'secret');
 $mech->submit;
-$mech->save_content('m2.html');
 $mech->content_contains('Logout');
 # }}}
 # try to navigate to protected pages while logged in {{{
@@ -213,9 +212,10 @@ $mech->fill_in_action_ok($mech->moniker_for('TestApp::Plugin::OAuth::Action::Aut
 $mech->click_button(value => 'Deny');
 
 $mech->content_contains("Denying FooBar Industries the right to access your stuff");
-$mech->content_contains("Click here");
+$mech->content_contains("click here");
 $mech->content_contains("http://google.com?oauth_token=" . $token_obj->token);
-$mech->content_contains("to return to FooBar Industries");
+$mech->content_contains("To return to");
+$mech->content_contains("FooBar Industries");
 # }}}
 # get another request token as a known consumer (PLAINTEXT) {{{
 response_is(
@@ -227,7 +227,7 @@ response_is(
 );
 # }}}
 # deny it with a callback + request params {{{
-$mech->get_ok('/oauth/authorize?oauth_token='.$token_obj->token.'&oauth_callback=http%3A%2f%2fgoogle.com%3ffoo%3d=bar');
+$mech->get_ok('/oauth/authorize?oauth_token='.$token_obj->token.'&oauth_callback=http%3A%2F%2Fgoogle.com%2F%3Ffoo%3Dbar');
 $mech->content_like(qr/If you trust this application/);
 $mech->content_unlike(qr/should have provided it/, "token hint doesn't show up if we already have it");
 
@@ -235,8 +235,10 @@ $mech->form_number(1);
 $mech->click_button(value => 'Deny');
 
 $mech->content_contains("Denying FooBar Industries the right to access your stuff");
-$mech->content_contains("Click here");
-$mech->content_contains("http://google.com?foo=bar&oauth_token=" . $token_obj->token);
-$mech->content_contains("to return to FooBar Industries");
+$mech->content_contains("click here");
+my $token = $token_obj->token;
+$mech->content_like(qr{http://google\.com/\?foo=bar&(?:amp;|#38;)?oauth_token=$token});
+$mech->content_contains("To return to");
+$mech->content_contains("FooBar Industries");
 # }}}
 

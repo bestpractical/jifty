@@ -11,6 +11,7 @@ use Crypt::OpenSSL::RSA;
 
 on     POST '/oauth/request_token' => \&request_token;
 before GET  '/oauth/authorize'     => \&authorize;
+on     POST '/oauth/authorize'     => \&authorize_post;
 on     POST '/oauth/access_token'  => \&access_token;
 
 =head2 abortmsg CODE, MSG
@@ -107,6 +108,22 @@ sub authorize {
             set token    => $oauth_params{token};
         }
     }
+}
+
+=head2 authorize_post
+
+The user is submitting an AuthorizeRequestToken action
+
+=cut
+
+sub authorize_post {
+    my $result = Jifty->web->response->result("authorize_request_token");
+    unless ($result && $result->success) {
+        redirect '/oauth/authorize';
+    }
+
+    set result => $result;
+    show '/oauth/authorized';
 }
 
 =head2 access_token
