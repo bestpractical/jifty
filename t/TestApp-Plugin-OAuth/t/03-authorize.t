@@ -57,6 +57,7 @@ my $rsaless = Jifty::Plugin::OAuth::Model::Consumer->new(current_user => Jifty::
 );
 ok($ok, $msg);
 # }}}
+
 # try to navigate to protected pages while not logged in {{{
 $mech->get_ok($URL . '/oauth/authorize');
 $mech->content_unlike(qr/If you trust this application/);
