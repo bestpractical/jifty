@@ -172,18 +172,30 @@ BUG: This should either be a private routine or factored out into Jifty::Util
 =cut
 
 sub merge_params {
-    my @merge = @_;
-
     # We pull this deref and re-ref trick to un-bless any
     # Jifty::Params which might exist; Hash::Merge pre-0.10 merged
-    # objects and hahrefs with no complaint, but 0.10 doesn't.
-    for my $m (@merge) {
-        $m->{$_} = {%{$m->{$_}}} for keys %{$m};
+    # objects and hahrefs with no complaint, but 0.10 doesn't.  This
+    # is a horrible, horrible hack, and will hopeflly be able to be
+    # backed out if and when Hash::Merge reverts to the old behavior.
+    my @types;
+    for my $m (@_) {
+        my @t;
+        for (keys %{$m}) {
+            push @t, ref $m->{$_};
+            bless $m->{$_}, "HASH";
+        }
+        push @types, \@t;
     }
     my $prev_behaviour = Hash::Merge::get_behavior();
     Hash::Merge::specify_behavior( MERGE_PARAM_BEHAVIOUR, "merge_params" );
-    my $rv = Hash::Merge::merge(@merge);
+    my $rv = Hash::Merge::merge(@_);
     Hash::Merge::set_behavior( $prev_behaviour );
+    for my $m (@_) {
+        my @t = @{shift @types};
+        for (keys %{$m}) {
+            bless $m->{$_}, shift @t;
+        }
+    }
     return $rv;
 }
 
