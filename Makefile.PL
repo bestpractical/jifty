@@ -74,7 +74,6 @@ requires('Test::Log4perl');
 requires('Test::LongString');
 requires('Test::More' => 0.62 ),
 requires('Test::Pod::Coverage'),
-requires('Test::WWW::Declare'),
 requires('Test::WWW::Mechanize' => 1.04 ),
 requires('Test::WWW::Selenium'),
 requires('WWW::Mechanize' => 1.30 ),
@@ -113,6 +112,7 @@ features(
         recommends('Test::MockModule' => '0.05'),
         recommends('Test::MockObject' => '1.07'),
         recommends('Module::Refresh' => '0.09'),
+        recommends('Test::WWW::Declare' => '0.01'),
     ],
     'Development of the jifty framework' => [
         -default => 0,
