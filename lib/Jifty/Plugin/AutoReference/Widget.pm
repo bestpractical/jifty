@@ -46,6 +46,10 @@ sub _record_description {
 
     my $name      = $self->name;
     my $column    = $self->action->record->column($name);
+
+    # XXX Does this need more advanced handling?
+    return unless $column; # happens in SearchXXX
+
     my $reference = $column->refers_to;
     my $brief     = $reference->can('_brief_description') ?
                         $reference->_brief_description : 'name';
