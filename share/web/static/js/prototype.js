@@ -2618,7 +2618,8 @@ Element.addMethods = function(methods) {
     onlyIfAbsent = onlyIfAbsent || false;
     for (var property in methods) {
       var value = methods[property];
-      if (!Object.isFunction(value)) continue;
+    // don't copy update, temporarily 
+      if (!Object.isFunction(value) || property == 'update') continue;
       if (!onlyIfAbsent || !(property in destination))
         destination[property] = value.methodize();
     }

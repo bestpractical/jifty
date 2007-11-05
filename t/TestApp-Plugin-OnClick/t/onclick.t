@@ -2,7 +2,7 @@ use strict;
 use warnings;
 use lib 't/lib';
 use Jifty::SubTest;
-use Jifty::Test tests => 6;
+use Jifty::Test tests => 10;
 use Jifty::Test::WWW::Selenium;
 use utf8;
 
@@ -18,15 +18,14 @@ my $html = $sel->get_html_source;
 like( $html, qr/yatta/, 'replace content correctly' );
 unlike( $html, qr{args:/content1\.html}, 'replaced by javascript' );
 
-# no alert any more
-#$sel->click_ok("//a[\@id='original_content']");
-#is( $sel->get_alert,
-#    'please use Jifty.update instead of update.',
-#    'bare update is deprecated'
-#);
-#$html = $sel->get_html_source;
-#like( $html, qr/original content/, 'replace content correctly' );
-#unlike( $html, qr{args:/content\.html}, 'replaced by javascript' );
+$sel->click_ok("//a[\@id='original_content']");
+is( $sel->get_alert,
+    'please use Jifty.update instead of update.',
+    'bare update is deprecated'
+);
+$html = $sel->get_html_source;
+like( $html, qr/original content/, 'replace content correctly' );
+unlike( $html, qr{args:/content\.html}, 'replaced by javascript' );
 
 $sel->stop;
 
