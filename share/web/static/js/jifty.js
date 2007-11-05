@@ -609,14 +609,14 @@ Object.extend(Form.Element, {
         var pairs = element.getAttribute("name").split("|");
         for (var i = 0; i < pairs.length; i++) {
             var bits = pairs[i].split('=',2);
-            extras[bits[0]] = bits[1];
+            extras.set(bits[0], bits[1]);
         }
         return extras;
     },
 
     buttonActions: function(element) {
         element = $(element);
-        var actions = Form.Element.buttonArguments(element)['J:ACTIONS'];
+        var actions = Form.Element.buttonArguments(element).get('J:ACTIONS');
         if(actions) {
             return actions.split(",");
         } else {
@@ -634,7 +634,7 @@ Object.extend(Form.Element, {
             var e = document.createElement("input");
             e.setAttribute("type", "hidden");
             e.setAttribute("name", keys[i]);
-            e.setAttribute("value", args[keys[i]]);
+            e.setAttribute("value", args.get(keys[i]));
             e['virtualform'] = Form.Element.getForm(element);
             extras.push(e);
         }
@@ -737,7 +737,7 @@ Region.prototype = {
         this.name = name;
         this.args = $H(args);
         this.path = path;
-        this.parent = parent ? fragments[parent] : null;
+        this.parent = parent ? fragments.get(parent) : null;
         if (fragments.get(name)) {
             // If this fragment already existed, we want to wipe out
             // whatever evil lies we might have said earlier; do this
@@ -796,7 +796,7 @@ Region.prototype = {
         keys = supplied.keys();
         for (var i = 0; i < keys.length; i++) {
             var k = keys[i];
-            current_args.set(this.name+'.'+k, supplied[k]);
+            current_args.set(this.name+'.'+k, supplied.get(k));
         }
         
         // Return new values
@@ -1066,7 +1066,7 @@ Jifty.update = function () {
                     fields[argname] = { value: override[argname] };
                 }
             }
-            request.get('actions')[moniker] = param;
+            request.get('actions').set(moniker, param);
             ++has_request;
         }
 
@@ -1548,5 +1548,5 @@ function _sp_submit_form(elt, event, submit_to) {
 
     var args = hiddens.merge(buttons.merge(inputs));
     if(event.ctrlKey||event.metaKey||event.altKey||event.shiftKey) return true;
-    return Jifty.update( {'continuation':{},'actions':null,'fragments':[{'mode':'Replace','args':args,'region':'__page','path': submit_to}]}, elt );
+    return Jifty.update( {'continuation':{},'actions':null,'fragments':[{'mode':'Replace','args':args.toJSON(),'region':'__page','path': submit_to}]}, elt );
 }
