@@ -1633,6 +1633,7 @@ Element.Methods = {
     var content, t, range;
 
     for (position in insertions) {
+      if ( position == 'extend' ) continue;
       content  = insertions[position];
       position = position.toLowerCase();
       t = Element._insertionTranslations[position];
@@ -2648,10 +2649,10 @@ Element.addMethods = function(methods) {
     return window[klass];
   }
 
-//  if (F.ElementExtensions) {
-//    copy(Element.Methods, HTMLElement.prototype);
-//    copy(Element.Methods.Simulated, HTMLElement.prototype, true);
-//  }
+  if (F.ElementExtensions) {
+    copy(Element.Methods, HTMLElement.prototype);
+    copy(Element.Methods.Simulated, HTMLElement.prototype, true);
+  }
 
   if (F.SpecificElementExtensions) {
     for (var tag in Element.Methods.ByTag) {
