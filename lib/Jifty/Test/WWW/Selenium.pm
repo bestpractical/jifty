@@ -22,8 +22,11 @@ extra Jifty integration
 
 L<Jifty::Test::WWW::Selenium> creates a L<Test::WWW::Selenium> object
 associated with your jifty application to test.  In addition, it
-starts selenium remote control for you, unless SELENIUM_RC_SERVER is
-specified when the test is run.
+starts selenium remote control for you, unless C<SELENIUM_RC_SERVER>
+is specified when the test is run.  You might also want to set
+C<SELENIUM_RC_TEST_AGAINST> to your local IP address so
+C<SELENIUM_RC_SERVER> can test against you.  C<SELENIUM_RC_BROWSER>
+tells the rc server what browser to run the tests with.
 
 =head2 rc_ok
 
@@ -59,9 +62,9 @@ sub rc_ok {
 	}
     }
 
-    $args{browser_url} ||= 'http://localhost:'.$server->port;
+    $args{browser_url} ||= 'http://'.($ENV{SELENIUM_RC_TEST_AGAINST} || $args{test_server} || 'localhost').':'.$server->port;
 
-    $args{browser} ||= $class->_get_default_browser;
+    $args{browser} ||= $ENV{SELENIUM_RC_BROWSER} || $class->_get_default_browser;
 
     $SIG{CHLD} = \&_REAPER;
 
@@ -115,7 +118,7 @@ sub _start_src {
 	Test::More::diag "start selenium rc [$$]";
 	local $SIG{CHLD} = \&_REAPER;
 	local $SIG{TERM} = sub { exit 0 };
-	Alien::SeleniumRC::start();
+	Alien::SeleniumRC::start(@{ $args{args} || [] });
 	Test::More::diag "selenium rc [$$] finished.";
 	exit;
     }
