@@ -90,7 +90,7 @@ sub _i18n_js {
         or Jifty->log->error("Can't find dictionary file $current_lang.json: $!");
 
     local $/;
-    my $inline_dict = <$fh> || {};
+    my $inline_dict = <$fh> || '{}';
     # js l10n init
     Jifty->web->out(qq{<script type="text/javascript">
 Localization.dict_path = '/static/js/dict';
