@@ -148,7 +148,6 @@ sub check_schema_version {
         unless (version->new($appv) == version->new($dbv)) {
             # if app version is older than db version, but we are still compatible
             my $compat = delete Jifty->config->framework('Database')->{'ForwardCompatible'} || $appv;
-            warn "==> $compat";
             die
             "Application schema version in database ($dbv) doesn't match application schema version ($appv)\n"
             . "Please run `bin/jifty schema --setup` to upgrade the database.\n"
