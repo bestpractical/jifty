@@ -11,7 +11,7 @@ Basic tests for CurrentUser.
 use lib 't/lib';
 use Jifty::SubTest;
 
-use Jifty::Test tests => 32;
+use Jifty::Test tests => 33;
 use Jifty::Test::WWW::Mechanize;
 
 use_ok('TestApp::Model::User');
@@ -62,11 +62,14 @@ like($bob->user_object->current_time->time_zone, qr{America::Anchorage}, "Jifty:
 
 $now = $bob->user_object->current_time->clone;
 $now->set_time_zone('America/New_York');
-like($now->time_zone, , qr{America::New_York}, "setting up other tests");
+like($now->time_zone, qr{America::New_York}, "setting up other tests");
 $now->set_current_user_timezone();
-like($now->time_zone, , qr{America::Anchorage}, "set_current_user_timezone correctly gets the user's timezone");
+like($now->time_zone, qr{America::Anchorage}, "set_current_user_timezone correctly gets the user's timezone");
 $now->set_current_user_timezone('America/Chicago');
 like($now->time_zone, , qr{America::Anchorage}, "set_current_user_timezone uses the user's in timezone even if one is passed in");
+
+my $dt = Jifty::DateTime->from_epoch(epoch => time);
+like($now->time_zone, qr{America::Anchorage}, "from_epoch correctly gets the user's timezone");
 
 my $server = Jifty::Test->make_server;
 isa_ok($server, 'Jifty::Server');
