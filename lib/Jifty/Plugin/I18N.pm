@@ -86,7 +86,11 @@ sub _i18n_js {
         }
     }
 
-    open my $fh, '<:encoding(utf-8)', Jifty->config->framework('Web')->{StaticRoot}."/js/dict/$current_lang.json"
+    open my $fh, '<:encoding(utf-8)',
+        Jifty::Util->absolute_path(
+        File::Spec->catdir(
+            Jifty->config->framework('Web')->{StaticRoot},
+            "js/dict/$current_lang.json" ))
         or Jifty->log->error("Can't find dictionary file $current_lang.json: $!");
 
     local $/;
