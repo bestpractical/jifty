@@ -91,7 +91,7 @@ sub connect {
 
     my %lc_db_config;
     # Skip the non-dsn keys, but not anything else
-    for (grep {!/^checkschema|version|recordbaseclass|attributes$/i} keys %db_config) {
+    for (grep {!/^checkschema|version|forwardcompatible|recordbaseclass|attributes$/i} keys %db_config) {
         $lc_db_config{lc($_)} = $db_config{$_};
     }
     $self->SUPER::connect( %lc_db_config , %args);
@@ -145,10 +145,15 @@ sub check_schema_version {
             . "\t bin/jifty schema --setup\n"
             unless defined $dbv;
 
-        die
+        unless (version->new($appv) == version->new($dbv)) {
+            # if app version is older than db version, but we are still compatible
+            my $compat = delete Jifty->config->framework('Database')->{'ForwardCompatible'} || $appv;
+            warn "==> $compat";
+            die
             "Application schema version in database ($dbv) doesn't match application schema version ($appv)\n"
             . "Please run `bin/jifty schema --setup` to upgrade the database.\n"
-            unless version->new($appv) == version->new($dbv);
+                if version->new($appv) > version->new($dbv) || version->new($compat) < version->new($dbv);
+        }
     }
 
     # Jifty db version check
