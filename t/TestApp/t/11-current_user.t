@@ -11,7 +11,7 @@ Basic tests for CurrentUser.
 use lib 't/lib';
 use Jifty::SubTest;
 
-use Jifty::Test tests => 27;
+use Jifty::Test tests => 32;
 use Jifty::Test::WWW::Mechanize;
 
 use_ok('TestApp::Model::User');
@@ -37,6 +37,12 @@ ok($o->tasty, "User is tasty");
 like($o->created_on->time_zone, qr/Floating/, "User's created_on date is in the floating timezone");
 like($o->current_time->time_zone, qr/UTC/, "Jifty::DateTime::now defaults to UTC (superuser has no user_object)");
 
+my $now = $o->current_time->clone;
+$now->set_current_user_timezone('America/Chicago');
+like($now->time_zone, , qr{America::Chicago}, "set_current_user_timezone defaults to the passed in timezone");
+$now->set_current_user_timezone();
+like($now->time_zone, , qr{UTC}, "set_current_user_timezone defaults to UTC if no passed in timezone");
+
 is($o->email, 'bob@example.com', 'email initially set correctly');
 $o->set_email('bob+jifty@example.com');
 is($o->email, 'bob+jifty@example.com', 'email updated correctly');
@@ -53,6 +59,14 @@ $bob->user_object->set_email('bob+test@example.com');
 is($bob->user_object->email, 'bob+test@example.com', 'email updated correctly');
 like($bob->user_object->created_on->time_zone, qr/Floating/, "User's created_on date is in the floating timezone");
 like($bob->user_object->current_time->time_zone, qr{America::Anchorage}, "Jifty::DateTime::now correctly peers into current_user->user_object->time_zone");
+
+$now = $bob->user_object->current_time->clone;
+$now->set_time_zone('America/New_York');
+like($now->time_zone, , qr{America::New_York}, "setting up other tests");
+$now->set_current_user_timezone();
+like($now->time_zone, , qr{America::Anchorage}, "set_current_user_timezone correctly gets the user's timezone");
+$now->set_current_user_timezone('America/Chicago');
+like($now->time_zone, , qr{America::Anchorage}, "set_current_user_timezone uses the user's in timezone even if one is passed in");
 
 my $server = Jifty::Test->make_server;
 isa_ok($server, 'Jifty::Server');

@@ -127,6 +127,23 @@ sub current_user_has_timezone {
     return $f->($user_obj);
 }
 
+=head2 set_current_user_timezone [DEFAULT_TZ]
+
+Set this Jifty::DateTime's timezone to the current user's timezone. If that's
+not available, then use the passed in DEFAULT_TZ (or GMT if not passed in).
+Returns the Jifty::DateTime object itself.
+
+=cut
+
+sub set_current_user_timezone {
+    my $self    = shift;
+    my $default = shift || 'GMT';
+    my $tz = $self->current_user_has_timezone || $default;
+
+    $self->set_time_zone($tz);
+    return $self;
+}
+
 =head2 new_from_string STRING
 
 Take some user defined string like "tomorrow" and turn it into a
