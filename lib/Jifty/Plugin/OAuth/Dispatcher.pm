@@ -13,8 +13,9 @@ on     POST '/oauth/request_token' => \&request_token;
 before GET  '/oauth/authorize'     => \&authorize;
 on     POST '/oauth/authorize'     => \&authorize_post;
 on     POST '/oauth/access_token'  => \&access_token;
-
 on          '/oauth/authorized'    => run { redirect '/oauth/authorize' };
+
+before '*' => \&try_oauth;
 
 =head2 abortmsg CODE, MSG
 
@@ -26,7 +27,7 @@ the C<abort> procedure?
 sub abortmsg {
     my ($code, $msg) = @_;
     Jifty->log->debug($msg) if defined($msg);
-    abort($code || 400);
+    abort($code) if $code;
 }
 
 =head2 request_token
@@ -190,6 +191,64 @@ sub access_token {
     show 'oauth/response';
 }
 
+=head2 try_oauth
+
+If this is a protected resource request, see if we can authorize the request
+with an access token.
+
+This is dissimilar to the other OAuth requests because if anything fails, you
+just don't set a current_user, and then the rest of the dispatcher rules will
+take care of it. Thus, failure is handled quite differently in this rule.  We
+try to abort as early as possible to make OAuth less of a hit on all requests.
+
+=cut
+
+sub try_oauth
+{
+    my @params = qw/consumer_key signature_method signature
+                    timestamp nonce token version/;
+    set no_abort => 1;
+    my %oauth_params  = get_parameters(@params);
+    for (@params) {
+        return if !defined($oauth_params{$_});
+    }
+
+    my $consumer = get_consumer($oauth_params{consumer_key});
+    return if !$consumer->id;
+
+    my $signature_key = get_signature_key($oauth_params{signature_method}, $consumer);
+    return if !$signature_key;
+
+    my ($ok, $msg) = $consumer->is_valid_request(@oauth_params{qw/timestamp nonce/});
+    abortmsg(undef, $msg), return if !$ok;
+
+    my $access_token = Jifty::Plugin::OAuth::Model::AccessToken->new(current_user => Jifty::CurrentUser->superuser);
+    $access_token->load_by_cols(consumer => $consumer, token => $oauth_params{token});
+
+    abortmsg(undef, "No token found for consumer ".$consumer->name." with key $oauth_params{token}"), return unless $access_token->id;
+
+    ($ok, $msg) = $access_token->is_valid;
+    abortmsg(undef, "Cannot access protected resources with this access token: $msg"), return if !$ok;
+
+    # Net::OAuth::Request will die hard if it doesn't get everything it wants
+    my $request = eval { Net::OAuth::ProtectedResourceRequest->new(
+        request_url     => Jifty->web->url(path => Jifty->web->request->path),
+        request_method  => Jifty->handler->apache->method(),
+        consumer_secret => $consumer->secret,
+        token_secret    => $access_token->secret,
+        signature_key   => $signature_key,
+
+        map { $_ => $oauth_params{$_} } @params
+    ) };
+
+    abortmsg(undef, "Unable to create ProtectedResourceRequest: $@"), return if $@ || !defined($request);
+
+    abortmsg(undef, "Invalid signature (type: $oauth_params{signature_method})."), return unless $request->verify;
+
+    $consumer->made_request(@oauth_params{qw/timestamp nonce/});
+    Jifty->web->current_user(BTDT::CurrentUser->new(id => $access_token->auth_as));
+}
+
 =head2 get_consumer CONSUMER KEY
 
 Helper function to load a consumer by consumer key. Will abort if the key
@@ -201,7 +260,7 @@ sub get_consumer {
     my $key = shift;
     my $consumer = Jifty::Plugin::OAuth::Model::Consumer->new(current_user => Jifty::CurrentUser->superuser);
     $consumer->load_by_cols(consumer_key => $key);
-    abortmsg(401, "No known consumer with key $key") if !$consumer->id;
+    abortmsg(401, "No known consumer with key $key") unless $consumer->id || get 'no_abort';
     return $consumer;
 }
 
@@ -225,7 +284,9 @@ having the C<rsa_key> field.
     sub get_signature_key {
         my ($method, $consumer) = @_;
         if (!$valid_signature_methods{$method}) {
-            abortmsg(400, "Unsupported signature method requested: $method");
+            abortmsg(400, "Unsupported signature method requested: $method")
+                unless get 'no_abort';
+            return;
         }
 
         my $field = $key_field{$method};
@@ -235,8 +296,10 @@ having the C<rsa_key> field.
 
         my $key = $consumer->$field;
 
-        abortmsg(400, "Consumer does not have necessary field $field required for signature method $method")
-            unless defined $key;
+        if (!defined $key) {
+            abortmsg(400, "Consumer does not have necessary field $field required for signature method $method") unless get 'no_abort';
+            return;
+        }
 
         if ($method eq 'RSA-SHA1') {
             $key = Crypt::OpenSSL::RSA->new_public_key($key);
