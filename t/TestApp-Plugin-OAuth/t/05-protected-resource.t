@@ -5,7 +5,7 @@ use strict;
 use Test::More;
 BEGIN {
     if (eval { require Net::OAuth::Request; require Crypt::OpenSSL::RSA; 1 }) {
-        plan tests => 15;
+        plan tests => 16;
     }
     else {
         plan skip_all => "Net::OAuth isn't installed";
@@ -51,17 +51,8 @@ $umech->submit;
 $umech->content_contains('Logout');
 # }}}
 # }}}
-# basic working access token {{{
-get_authorized_token();
-response_is(
-    code                   => 200,
-    testname               => "200 - plaintext signature",
-    consumer_secret        => 'bar',
-    oauth_consumer_key     => 'foo',
-    oauth_signature_method => 'PLAINTEXT',
-);
-# }}}
 # basic protected request {{{
+get_access_token();
 response_is(
     url                    => '/nuke/the/whales',
     code                   => 200,

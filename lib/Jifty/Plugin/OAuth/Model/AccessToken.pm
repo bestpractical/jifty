@@ -59,9 +59,6 @@ sub is_valid {
     return (0, "Access token has no authorizing user")
         if !$self->auth_as;
 
-    return (0, "Request token does not have an authorizing user")
-        if !$self->authorized_by;
-
     return (0, "Access token expired")
         if $self->valid_until < DateTime->now;
 

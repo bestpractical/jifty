@@ -250,7 +250,7 @@ sub try_oauth
     abortmsg(undef, "Invalid signature (type: $oauth_params{signature_method})."), return unless $request->verify;
 
     $consumer->made_request(@oauth_params{qw/timestamp nonce/});
-    Jifty->web->current_user(BTDT::CurrentUser->new(id => $access_token->auth_as));
+    Jifty->web->current_user(Jifty->app_class('CurrentUser')->new(id => $access_token->auth_as));
 }
 
 =head2 get_consumer CONSUMER KEY

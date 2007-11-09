@@ -88,13 +88,15 @@ sub response_is {
     local $Test::Builder::Level = $Test::Builder::Level + 1;
     main::is($r->code, $code, $testname);
 
-    undef $token_obj;
-    get_latest_token();
-    if ($code == 200 && $url =~ /oauth/) {
-        main::ok($token_obj, "Successfully loaded a token object with token ".$token_obj->token.".");
-    }
-    else {
-        main::ok(!$token_obj, "Did not get a token");
+    if ($url =~ /oauth/) {
+        undef $token_obj;
+        get_latest_token();
+        if ($code == 200) {
+            main::ok($token_obj, "Successfully loaded a token object with token ".$token_obj->token.".");
+        }
+        else {
+            main::ok(!$token_obj, "Did not get a token");
+        }
     }
 
     return $cmech->content;
