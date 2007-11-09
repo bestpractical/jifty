@@ -41,34 +41,34 @@ ok($ok, $msg);
 # }}}
 
 # try to navigate to protected pages while not logged in {{{
-$mech->get_ok($URL . '/oauth/authorize');
-$mech->content_unlike(qr/If you trust this application/);
+$umech->get_ok($URL . '/oauth/authorize');
+$umech->content_unlike(qr/If you trust this application/);
 
-$mech->get_ok('/oauth/authorized');
-$mech->content_unlike(qr/If you trust this application/);
+$umech->get_ok('/oauth/authorized');
+$umech->content_unlike(qr/If you trust this application/);
 
-$mech->get_ok('/nuke/the/whales');
-$mech->content_unlike(qr/Press the shiny red button/);
+$umech->get_ok('/nuke/the/whales');
+$umech->content_unlike(qr/Press the shiny red button/);
 # }}}
 # log in {{{
 my $u = TestApp::Plugin::OAuth::Model::User->new(current_user => TestApp::Plugin::OAuth::CurrentUser->superuser);
 $u->create( name => 'You Zer', email => 'youzer@example.com', password => 'secret', email_confirmed => 1);
 ok($u->id, "New user has valid id set");
 
-$mech->get_ok('/login');
-$mech->fill_in_action_ok($mech->moniker_for('TestApp::Plugin::OAuth::Action::Login'), email => 'youzer@example.com', password => 'secret');
-$mech->submit;
-$mech->content_contains('Logout');
+$umech->get_ok('/login');
+$umech->fill_in_action_ok($umech->moniker_for('TestApp::Plugin::OAuth::Action::Login'), email => 'youzer@example.com', password => 'secret');
+$umech->submit;
+$umech->content_contains('Logout');
 # }}}
 # try to navigate to protected pages while logged in {{{
-$mech->get_ok('/oauth/authorize');
-$mech->content_like(qr/If you trust this application/);
+$umech->get_ok('/oauth/authorize');
+$umech->content_like(qr/If you trust this application/);
 
-$mech->get_ok('/oauth/authorized');
-$mech->content_like(qr/If you trust this application/);
+$umech->get_ok('/oauth/authorized');
+$umech->content_like(qr/If you trust this application/);
 
-$mech->get_ok('/nuke/the/whales');
-$mech->content_like(qr/Press the shiny red button/);
+$umech->get_ok('/nuke/the/whales');
+$umech->content_like(qr/Press the shiny red button/);
 # }}}
 # deny an unknown access token {{{
 my $error = _authorize_request_token('Deny', 'deadbeef');
@@ -76,7 +76,7 @@ if ($error) {
     ok(0, $error);
 }
 else {
-    $mech->content_contains("I don't know of that request token.");
+    $umech->content_contains("I don't know of that request token.");
 }
 # }}}
 # allow an unknown access token {{{
@@ -85,7 +85,7 @@ if ($error) {
     ok(0, $error);
 }
 else {
-    $mech->content_contains("I don't know of that request token.");
+    $umech->content_contains("I don't know of that request token.");
 }
 # }}}
 # deny request token {{{
@@ -98,7 +98,7 @@ if ($error) {
     ok(0, $error);
 }
 else {
-    $mech->content_contains("I don't know of that request token.");
+    $umech->content_contains("I don't know of that request token.");
 }
 # }}}
 # allow request token {{{
@@ -111,7 +111,7 @@ if ($error) {
     ok(0, $error);
 }
 else {
-    $mech->content_contains("I don't know of that request token.");
+    $umech->content_contains("I don't know of that request token.");
 }
 # }}}
 # expire a token, try to allow it {{{
@@ -125,7 +125,7 @@ if ($error) {
     ok(0, $error);
 }
 else {
-    $mech->content_contains("This request token has expired.");
+    $umech->content_contains("This request token has expired.");
 }
 # }}}
 # try again, it should be deleted {{{
@@ -134,69 +134,69 @@ if ($error) {
     ok(0, $error);
 }
 else {
-    $mech->content_contains("I don't know of that request token.");
+    $umech->content_contains("I don't know of that request token.");
 }
 # }}}
 
 # deny token with a request parameter {{{
 get_request_token();
-$mech->get_ok('/oauth/authorize?oauth_token=' . $token_obj->token);
-$mech->content_like(qr/If you trust this application/);
-$mech->content_unlike(qr/should have provided it/, "token hint doesn't show up if we already have it");
+$umech->get_ok('/oauth/authorize?oauth_token=' . $token_obj->token);
+$umech->content_like(qr/If you trust this application/);
+$umech->content_unlike(qr/should have provided it/, "token hint doesn't show up if we already have it");
 
-$mech->form_number(1);
-$mech->click_button(value => 'Deny');
+$umech->form_number(1);
+$umech->click_button(value => 'Deny');
 
-$mech->content_contains("Denying FooBar Industries the right to access your stuff");
-$mech->content_contains("click here");
-$mech->content_contains("http://foo.bar.example.com?oauth_token=" . $token_obj->token);
-$mech->content_contains("To return to");
-$mech->content_contains("FooBar Industries");
+$umech->content_contains("Denying FooBar Industries the right to access your stuff");
+$umech->content_contains("click here");
+$umech->content_contains("http://foo.bar.example.com?oauth_token=" . $token_obj->token);
+$umech->content_contains("To return to");
+$umech->content_contains("FooBar Industries");
 # }}}
 # allow token with a request parameter {{{
 get_request_token();
-$mech->get_ok('/oauth/authorize?oauth_token=' . $token_obj->token);
-$mech->content_like(qr/If you trust this application/);
-$mech->content_unlike(qr/should have provided it/, "token hint doesn't show up if we already have it");
+$umech->get_ok('/oauth/authorize?oauth_token=' . $token_obj->token);
+$umech->content_like(qr/If you trust this application/);
+$umech->content_unlike(qr/should have provided it/, "token hint doesn't show up if we already have it");
 
-$mech->form_number(1);
-$mech->click_button(value => 'Allow');
+$umech->form_number(1);
+$umech->click_button(value => 'Allow');
 
-$mech->content_contains("Allowing FooBar Industries to access your stuff");
-$mech->content_contains("click here");
-$mech->content_contains("http://foo.bar.example.com?oauth_token=" . $token_obj->token);
-$mech->content_contains("To return to");
-$mech->content_contains("FooBar Industries");
+$umech->content_contains("Allowing FooBar Industries to access your stuff");
+$umech->content_contains("click here");
+$umech->content_contains("http://foo.bar.example.com?oauth_token=" . $token_obj->token);
+$umech->content_contains("To return to");
+$umech->content_contains("FooBar Industries");
 # }}}
 # deny token with a callback {{{
 get_request_token();
-$mech->get_ok('/oauth/authorize?oauth_callback=http%3A%2f%2fgoogle.com');
-$mech->content_like(qr/If you trust this application/);
+$umech->get_ok('/oauth/authorize?oauth_callback=http%3A%2f%2fgoogle.com');
+$umech->content_like(qr/If you trust this application/);
 
-$mech->fill_in_action_ok($mech->moniker_for('TestApp::Plugin::OAuth::Action::AuthorizeRequestToken'), token => $token_obj->token);
-$mech->click_button(value => 'Deny');
+$umech->fill_in_action_ok($umech->moniker_for('TestApp::Plugin::OAuth::Action::AuthorizeRequestToken'), token => $token_obj->token);
+$umech->click_button(value => 'Deny');
 
-$mech->content_contains("Denying FooBar Industries the right to access your stuff");
-$mech->content_contains("click here");
-$mech->content_contains("http://google.com?oauth_token=" . $token_obj->token);
-$mech->content_contains("To return to");
-$mech->content_contains("FooBar Industries");
+$umech->content_contains("Denying FooBar Industries the right to access your stuff");
+$umech->content_contains("click here");
+$umech->content_contains("http://google.com?oauth_token=" . $token_obj->token);
+$umech->content_contains("To return to");
+$umech->content_contains("FooBar Industries");
 # }}}
 # deny it with a callback + request params {{{
 get_request_token();
-$mech->get_ok('/oauth/authorize?oauth_token='.$token_obj->token.'&oauth_callback=http%3A%2F%2Fgoogle.com%2F%3Ffoo%3Dbar');
-$mech->content_like(qr/If you trust this application/);
-$mech->content_unlike(qr/should have provided it/, "token hint doesn't show up if we already have it");
+$umech->get_ok('/oauth/authorize?oauth_token='.$token_obj->token.'&oauth_callback=http%3A%2F%2Fgoogle.com%2F%3Ffoo%3Dbar');
+$umech->content_like(qr/If you trust this application/);
+$umech->content_unlike(qr/should have provided it/, "token hint doesn't show up if we already have it");
 
-$mech->form_number(1);
-$mech->click_button(value => 'Deny');
+$umech->form_number(1);
+$umech->click_button(value => 'Deny');
 
-$mech->content_contains("Denying FooBar Industries the right to access your stuff");
-$mech->content_contains("click here");
+$umech->content_contains("Denying FooBar Industries the right to access your stuff");
+$umech->content_contains("click here");
 my $token = $token_obj->token;
-$mech->content_like(qr{http://google\.com/\?foo=bar&(?:amp;|#38;)?oauth_token=$token});
-$mech->content_contains("To return to");
-$mech->content_contains("FooBar Industries");
+$umech->content_like(qr{http://google\.com/\?foo=bar&(?:amp;|#38;)?oauth_token=$token});
+$umech->content_contains("To return to");
+$umech->content_contains("FooBar Industries");
 # }}}
 
 # authorizing a token refreshes its valid_until {{{

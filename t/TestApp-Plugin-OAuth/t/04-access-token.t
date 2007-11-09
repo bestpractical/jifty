@@ -45,10 +45,10 @@ my $u = TestApp::Plugin::OAuth::Model::User->new(current_user => TestApp::Plugin
 $u->create( name => 'You Zer', email => 'youzer@example.com', password => 'secret', email_confirmed => 1);
 ok($u->id, "New user has valid id set");
 
-$mech->get_ok($URL . '/login');
-$mech->fill_in_action_ok($mech->moniker_for('TestApp::Plugin::OAuth::Action::Login'), email => 'youzer@example.com', password => 'secret');
-$mech->submit;
-$mech->content_contains('Logout');
+$umech->get_ok($URL . '/login');
+$umech->fill_in_action_ok($umech->moniker_for('TestApp::Plugin::OAuth::Action::Login'), email => 'youzer@example.com', password => 'secret');
+$umech->submit;
+$umech->content_contains('Logout');
 # }}}
 # }}}
 # basic working access token {{{

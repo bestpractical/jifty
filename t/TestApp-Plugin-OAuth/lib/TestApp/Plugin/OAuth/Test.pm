@@ -9,14 +9,15 @@ use Crypt::OpenSSL::RSA;
 use Digest::HMAC_SHA1 'hmac_sha1';
 use Jifty::Test::WWW::Mechanize;
 
-our @EXPORT = qw($timestamp $url $mech $pubkey $seckey $token_obj $server $URL
-                 response_is sign get_latest_token
-                 allow_ok deny_ok _authorize_request_token
-                 get_request_token get_authorized_token get_access_token);
+our @EXPORT = qw($timestamp $url $umech $cmech $pubkey $seckey $token_obj
+                 $server $URL response_is sign get_latest_token allow_ok deny_ok
+                 _authorize_request_token get_request_token get_authorized_token
+                 get_access_token);
 
 our $timestamp = 0;
 our $url;
-our $mech;
+our $umech;
+our $cmech;
 our $pubkey = slurp('t/id_rsa.pub');
 our $seckey = slurp('t/id_rsa');
 our $token_obj;
@@ -30,7 +31,8 @@ sub setup {
 
     $server  = Jifty::Test->make_server;
     $URL     = $server->started_ok;
-    $mech    = Jifty::Test::WWW::Mechanize->new();
+    $umech   = Jifty::Test::WWW::Mechanize->new();
+    $cmech   = Jifty::Test::WWW::Mechanize->new();
     $url     = $URL . '/oauth/request_token';
 }
 
@@ -74,13 +76,13 @@ sub response_is {
     my $r;
 
     if ($method eq 'POST') {
-        $r = $mech->post($url, [%params]);
+        $r = $cmech->post($url, [%params]);
     }
     else {
         my $query = join '&',
                     map { "$_=" . Jifty->web->escape_uri($params{$_}||'') }
                     keys %params;
-        $r = $mech->get("$url?$query");
+        $r = $cmech->get("$url?$query");
     }
 
     local $Test::Builder::Level = $Test::Builder::Level + 1;
@@ -88,12 +90,14 @@ sub response_is {
 
     undef $token_obj;
     get_latest_token();
-    if ($code == 200) {
+    if ($code == 200 && $url =~ /oauth/) {
         main::ok($token_obj, "Successfully loaded a token object with token ".$token_obj->token.".");
     }
     else {
         main::ok(!$token_obj, "Did not get a token");
     }
+
+    return $cmech->content;
 }
 
 sub sign {
@@ -161,7 +165,7 @@ sub slurp {
 }
 
 sub get_latest_token {
-    my $content = $mech->content;
+    my $content = $cmech->content;
 
     $content =~ s/\boauth_token=(\w+)//
         or return;
@@ -176,14 +180,14 @@ sub get_latest_token {
 
     my $package = 'Jifty::Plugin::OAuth::Model::';
 
-    if ($mech->uri =~ /request_token/) {
+    if ($cmech->uri =~ /request_token/) {
         $package .= 'RequestToken';
     }
-    elsif ($mech->uri =~ /access_token/) {
+    elsif ($cmech->uri =~ /access_token/) {
         $package .= 'AccessToken';
     }
     else {
-        Jifty->log->error("Called get_latest_token, but I cannot grok the URI " . $mech->uri);
+        Jifty->log->error("Called get_latest_token, but I cannot grok the URI " . $cmech->uri);
         return;
     }
 
@@ -205,7 +209,7 @@ sub allow_ok {
     ok(0, $error), return if $error;
 
     my $name = $token_obj->consumer->name;
-    $mech->content_contains("Allowing $name to access your stuff");
+    $umech->content_contains("Allowing $name to access your stuff");
 }
 
 sub deny_ok {
@@ -215,7 +219,7 @@ sub deny_ok {
     ok(0, $error), return if $error;
 
     my $name = $token_obj->consumer->name;
-    $mech->content_contains("Denying $name the right to access your stuff");
+    $umech->content_contains("Denying $name the right to access your stuff");
 }
 
 sub _authorize_request_token {
@@ -227,15 +231,15 @@ sub _authorize_request_token {
     my $token = shift || $token_obj->token;
     $token = $token->token if ref $token;
 
-    $mech->get('/oauth/authorize')
+    $umech->get('/oauth/authorize')
         or return "Unable to navigate to /oauth/authorize";;
-    $mech->content =~ /If you trust this application/
+    $umech->content =~ /If you trust this application/
         or return "Content did not much qr/If you trust this application/";
-    my $moniker = $mech->moniker_for('TestApp::Plugin::OAuth::Action::AuthorizeRequestToken')
+    my $moniker = $umech->moniker_for('TestApp::Plugin::OAuth::Action::AuthorizeRequestToken')
         or return "Unable to find moniker for AuthorizeRequestToken";
-    $mech->fill_in_action($moniker, token => $token)
+    $umech->fill_in_action($moniker, token => $token)
         or return "Unable to fill in the AuthorizeRequestToken action";
-    $mech->click_button(value => $which_button)
+    $umech->click_button(value => $which_button)
         or return "Unable to click $which_button button";
     return;
 }
