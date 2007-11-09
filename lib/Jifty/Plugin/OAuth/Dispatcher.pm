@@ -210,14 +210,18 @@ sub try_oauth
     set no_abort => 1;
     my %oauth_params  = get_parameters(@params);
     for (@params) {
-        return if !defined($oauth_params{$_});
+        abortmsg(undef, "Undefined required parameter: $_"), return if !defined($oauth_params{$_});
     }
 
     my $consumer = get_consumer($oauth_params{consumer_key});
     return if !$consumer->id;
+    abortmsg(undef, "No known consumer with key $oauth_params{consumer_key}"), return unless $consumer->id;
 
     my $signature_key = get_signature_key($oauth_params{signature_method}, $consumer);
-    return if !$signature_key;
+    if ($signature_key && ref($signature_key) && !defined($$signature_key)) {
+        abortmsg(undef, "Failed to get signature key.");
+        return;
+    }
 
     my ($ok, $msg) = $consumer->is_valid_request(@oauth_params{qw/timestamp nonce/});
     abortmsg(undef, $msg), return if !$ok;
@@ -270,9 +274,13 @@ Figures out the signature key for this consumer. Will abort if the signature
 method is unsupported, or if the consumer lacks the prerequisites for this
 signature method.
 
-Will return C<undef> is the signature key is consumer independent, as is the
+Will return C<undef> if the signature key is consumer independent, as is the
 case for C<PLAINTEXT> and C<HMAC-SHA1>. C<RSA-SHA1> depends on the consumer
 having the C<rsa_key> field.
+
+If the signature method is invalid and no_abort is set, it will return a
+special value of a reference to undef. Yes this sucks but undef already has
+an important meaning.
 
 =cut
 
@@ -286,7 +294,7 @@ having the C<rsa_key> field.
         if (!$valid_signature_methods{$method}) {
             abortmsg(400, "Unsupported signature method requested: $method")
                 unless get 'no_abort';
-            return;
+            return \undef;
         }
 
         my $field = $key_field{$method};
