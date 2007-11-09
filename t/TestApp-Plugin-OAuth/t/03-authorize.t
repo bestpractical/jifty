@@ -5,7 +5,7 @@ use strict;
 use Test::More;
 BEGIN {
     if (eval { require Net::OAuth::Request; require Crypt::OpenSSL::RSA; 1 }) {
-        plan tests => 86;
+        plan tests => 85;
     }
     else {
         plan skip_all => "Net::OAuth isn't installed";
@@ -19,27 +19,6 @@ use TestApp::Plugin::OAuth::Test;
 
 use Jifty::Test::WWW::Mechanize;
 
-my $server  = Jifty::Test->make_server;
-isa_ok($server, 'Jifty::Server');
-my $URL     = $server->started_ok;
-$mech    = Jifty::Test::WWW::Mechanize->new();
-$url     = $URL . '/oauth/request_token';
-
-# helper functions {{{
-sub get_request_token {
-    local $Test::Builder::Level = $Test::Builder::Level + 1;
-
-    response_is(
-        code                   => 200,
-        testname               => "200 - plaintext signature",
-        consumer_secret        => 'bar',
-        oauth_consumer_key     => 'foo',
-        oauth_signature_method => 'PLAINTEXT',
-        @_,
-    );
-    return $token_obj;
-}
-# }}}
 # create some consumers {{{
 my $consumer = Jifty::Plugin::OAuth::Model::Consumer->new(current_user => Jifty::CurrentUser->superuser);
 my ($ok, $msg) = $consumer->create(

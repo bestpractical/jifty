@@ -5,7 +5,7 @@ use strict;
 use Test::More;
 BEGIN {
     if (eval { require Net::OAuth::Request; require Crypt::OpenSSL::RSA; 1 }) {
-        plan tests => 9;
+        plan tests => 10;
     }
     else {
         plan skip_all => "Net::OAuth isn't installed";

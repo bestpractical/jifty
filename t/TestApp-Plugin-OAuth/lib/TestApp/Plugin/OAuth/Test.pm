@@ -7,16 +7,12 @@ use base qw/Jifty::Test/;
 use MIME::Base64;
 use Crypt::OpenSSL::RSA;
 use Digest::HMAC_SHA1 'hmac_sha1';
+use Jifty::Test::WWW::Mechanize;
 
-our @EXPORT = qw($timestamp $url $mech $pubkey $seckey $token_obj
+our @EXPORT = qw($timestamp $url $mech $pubkey $seckey $token_obj $server $URL
                  response_is sign get_latest_token
-                 allow_ok deny_ok _authorize_request_token);
-
-sub setup {
-    my $class = shift;
-    $class->SUPER::setup;
-    $class->export_to_level(1);
-}
+                 allow_ok deny_ok _authorize_request_token
+                 get_request_token get_authorized_token get_access_token);
 
 our $timestamp = 0;
 our $url;
@@ -24,6 +20,19 @@ our $mech;
 our $pubkey = slurp('t/id_rsa.pub');
 our $seckey = slurp('t/id_rsa');
 our $token_obj;
+our $server;
+our $URL;
+
+sub setup {
+    my $class = shift;
+    $class->SUPER::setup;
+    $class->export_to_level(1);
+
+    $server  = Jifty::Test->make_server;
+    $URL     = $server->started_ok;
+    $mech    = Jifty::Test::WWW::Mechanize->new();
+    $url     = $URL . '/oauth/request_token';
+}
 
 sub response_is {
     ++$timestamp;
@@ -41,7 +50,8 @@ sub response_is {
         @_,
     );
 
-    local $url = delete $params{url} || $url;
+    local $url = $URL . delete $params{url}
+        if $params{url};
 
     for (grep {!defined $params{$_}} keys %params) {
         delete $params{$_};
@@ -54,7 +64,7 @@ sub response_is {
     my $consumer_secret = delete $params{consumer_secret}
         or die "consumer_secret not passed to response_is!";
 
-    if ($url =~ /access_token/) {
+    if ($url !~ /request_token/) {
         $token_secret ||= $token_obj->secret;
         $params{oauth_token} ||= $token_obj->token;
     }
@@ -228,6 +238,41 @@ sub _authorize_request_token {
     $mech->click_button(value => $which_button)
         or return "Unable to click $which_button button";
     return;
+}
+
+sub get_request_token {
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
+
+    response_is(
+        url                    => '/oauth/request_token',
+        code                   => 200,
+        testname               => "200 - plaintext signature",
+        consumer_secret        => 'bar',
+        oauth_consumer_key     => 'foo',
+        oauth_signature_method => 'PLAINTEXT',
+        @_,
+    );
+    return $token_obj;
+}
+
+sub get_authorized_token {
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
+    get_request_token(@_);
+    allow_ok();
+    return $token_obj;
+}
+
+sub get_access_token {
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
+    get_authorized_token();
+    response_is(
+        url                    => '/oauth/access_token',
+        code                   => 200,
+        testname               => "200 - plaintext signature",
+        consumer_secret        => 'bar',
+        oauth_consumer_key     => 'foo',
+        oauth_signature_method => 'PLAINTEXT',
+    );
 }
 
 1;

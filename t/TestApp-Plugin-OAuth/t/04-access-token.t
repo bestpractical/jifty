@@ -5,7 +5,7 @@ use strict;
 use Test::More;
 BEGIN {
     if (eval { require Net::OAuth::Request; require Crypt::OpenSSL::RSA; 1 }) {
-        plan tests => 71;
+        plan tests => 70;
     }
     else {
         plan skip_all => "Net::OAuth isn't installed";
@@ -19,35 +19,6 @@ use TestApp::Plugin::OAuth::Test;
 
 use Jifty::Test::WWW::Mechanize;
 
-my $server  = Jifty::Test->make_server;
-isa_ok($server, 'Jifty::Server');
-my $URL     = $server->started_ok;
-$mech    = Jifty::Test::WWW::Mechanize->new();
-$url     = $URL . '/oauth/access_token';
-
-# helper functions {{{
-sub get_request_token {
-    local $Test::Builder::Level = $Test::Builder::Level + 1;
-
-    response_is(
-        url                    => $URL . '/oauth/request_token',
-        code                   => 200,
-        testname               => "200 - plaintext signature",
-        consumer_secret        => 'bar',
-        oauth_consumer_key     => 'foo',
-        oauth_signature_method => 'PLAINTEXT',
-        @_,
-    );
-    return $token_obj;
-}
-
-sub get_authorized_token {
-    local $Test::Builder::Level = $Test::Builder::Level + 1;
-    get_request_token(@_);
-    allow_ok();
-    return $token_obj;
-}
-# }}}
 # setup {{{
 # create two consumers {{{
 my $consumer = Jifty::Plugin::OAuth::Model::Consumer->new(current_user => Jifty::CurrentUser->superuser);
@@ -84,6 +55,7 @@ $mech->content_contains('Logout');
 get_authorized_token();
 my $request_token = $token_obj->token;
 response_is(
+    url                    => '/oauth/access_token',
     code                   => 200,
     testname               => "200 - plaintext signature",
     consumer_secret        => 'bar',
@@ -96,6 +68,7 @@ isnt($token_obj->token, $request_token, "different token for request and access"
 get_request_token();
 deny_ok();
 response_is(
+    url                    => '/oauth/access_token',
     code                   => 401,
     testname               => "401 - denied token",
     consumer_secret        => 'bar',
@@ -107,6 +80,7 @@ response_is(
 get_authorized_token();
 $request_token = $token_obj;
 response_is(
+    url                    => '/oauth/access_token',
     code                   => 401,
     testname               => "401 - denied token",
     consumer_secret        => 'bar2',
@@ -117,6 +91,7 @@ response_is(
 # get that same access token as the original consumer {{{
 $token_obj = $request_token;
 response_is(
+    url                    => '/oauth/access_token',
     code                   => 200,
     testname               => "200 - got token",
     consumer_secret        => 'bar',
@@ -128,6 +103,7 @@ response_is(
 get_authorized_token();
 --$timestamp;
 response_is(
+    url                    => '/oauth/access_token',
     code                   => 200,
     testname               => "200 - plaintext signature",
     consumer_secret        => 'bar',
@@ -139,6 +115,7 @@ response_is(
 # different timestamp, same nonce {{{
 get_authorized_token();
 response_is(
+    url                    => '/oauth/access_token',
     code                   => 200,
     testname               => "200 - plaintext signature",
     consumer_secret        => 'bar',
@@ -151,6 +128,7 @@ response_is(
 get_authorized_token();
 $timestamp -= 2;
 response_is(
+    url                    => '/oauth/access_token',
     code                   => 401,
     testname               => "401 - duplicate ts/nonce as previous access",
     consumer_secret        => 'bar',
@@ -163,6 +141,7 @@ $timestamp += 100;
 get_authorized_token();
 --$timestamp;
 response_is(
+    url                    => '/oauth/access_token',
     code                   => 401,
     testname               => "401 - duplicate ts/nonce for request token",
     consumer_secret        => 'bar',
@@ -173,6 +152,7 @@ response_is(
 # same request token {{{
 $token_obj = $request_token;
 response_is(
+    url                    => '/oauth/access_token',
     code                   => 401,
     testname               => "401 - already used",
     consumer_secret        => 'bar',
@@ -184,6 +164,7 @@ response_is(
 get_authorized_token();
 $token_obj->set_valid_until(DateTime->now(time_zone => "GMT")->subtract(days => 1));
 response_is(
+    url                    => '/oauth/access_token',
     code                   => 401,
     testname               => "401 - expired",
     consumer_secret        => 'bar',
@@ -194,6 +175,7 @@ response_is(
 # wrong consumer secret {{{
 get_authorized_token();
 response_is(
+    url                    => '/oauth/access_token',
     code                   => 401,
     testname               => "401 - wrong secret",
     consumer_secret        => 'bah!',
