@@ -23,7 +23,7 @@ requires('DateTime');
 requires('DateTime::Locale');
 requires('Date::Manip');
 requires('Email::Folder');
-requires('Email::LocalDelivery');
+requires('Email::LocalDelivery' => 0.217 );
 requires('Email::MIME');
 requires('Email::MIME::Creator');
 requires('Email::MIME::ContentType');
