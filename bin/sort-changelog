@@ -31,6 +31,7 @@ my %tags = (
     R => 'crud',
     8 => 'I18N',
     M => 'misc',
+    Q => 'performance',
 );
 
 my $command_string = join '', sort keys %commands;
