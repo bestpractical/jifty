@@ -1261,17 +1261,22 @@ Ajax.Request = Class.create(Ajax.Base, {
       'Accept': 'text/javascript, text/html, application/xml, text/xml, */*'
     };
 
+    var headerNames = [ 'X-Requested-With', 'X-Prototype-Version', 'Accept' ];
+
     if (this.method == 'post') {
-      headers['Content-type'] = this.options.contentType +
-        (this.options.encoding ? '; charset=' + this.options.encoding : '');
+          headers['Content-Type'] = this.options.contentType +
+            (this.options.encoding ? '; charset=' + this.options.encoding : '');
+          headerNames.push('Content-Type');
 
       /* Force "Connection: close" for older Mozilla browsers to work
        * around a bug where XMLHttpRequest sends an incorrect
        * Content-length header. See Mozilla Bugzilla #246651.
        */
       if (this.transport.overrideMimeType &&
-          (navigator.userAgent.match(/Gecko\/(\d{4})/) || [0,2005])[1] < 2005)
+          (navigator.userAgent.match(/Gecko\/(\d{4})/) || [0,2005])[1] < 2005) {
             headers['Connection'] = 'close';
+            headerNames.push('Connection');
+          }
     }
 
     // user-defined headers
@@ -1279,14 +1284,21 @@ Ajax.Request = Class.create(Ajax.Base, {
       var extras = this.options.requestHeaders;
 
       if (Object.isFunction(extras.push))
-        for (var i = 0, length = extras.length; i < length; i += 2)
+        for (var i = 0, length = extras.length; i < length; i += 2) {
           headers[extras[i]] = extras[i+1];
+          headerNames.push(extras[i]);
+        }
       else
-        $H(extras).each(function(pair) { headers[pair.key] = pair.value });
+        $H(extras).each(function(pair) {
+            headers[pair.key] = pair.value 
+            headerNames.push(pair.key);
+        });
     }
 
-    for (var name in headers)
-      this.transport.setRequestHeader(name, headers[name]);
+    for (var i=0; i<headerNames.length; i++) {
+        this.transport.setRequestHeader(headerNames[i], headers[headerNames[i]]);
+    }
+
   },
 
   success: function() {
@@ -1631,6 +1643,7 @@ Element.Methods = {
     var content, t, range;
 
     for (position in insertions) {
+      if ( position == 'extend' ) continue;
       content  = insertions[position];
       position = position.toLowerCase();
       t = Element._insertionTranslations[position];
@@ -2633,7 +2646,8 @@ Element.addMethods = function(methods) {
     onlyIfAbsent = onlyIfAbsent || false;
     for (var property in methods) {
       var value = methods[property];
-      if (!Object.isFunction(value)) continue;
+      // don't copy update, temporarily 
+      if (!Object.isFunction(value) || property == 'update') continue;
       if (!onlyIfAbsent || !(property in destination))
         destination[property] = value.methodize();
     }
