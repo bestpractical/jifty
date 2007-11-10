@@ -13,7 +13,10 @@ my $URL    = $server->started_ok;
 $sel->open_ok("/onclick.html");
 $sel->click_ok("//a[\@id='replace_content']");
 
+sleep 2; # in case the click returning slowly
+
 my $html = $sel->get_html_source;
+
 
 like( $html, qr/yatta/, 'replace content correctly' );
 unlike( $html, qr{args:/content1\.html}, 'replaced by javascript' );
