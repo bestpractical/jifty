@@ -522,7 +522,7 @@ sub javascript {
                 if ($region) {
                     @args{qw/mode path region/} = ('Replace', $region->path, $region->qualified_name);
                 } else {
-                    $self->log->debug("Can't find region ".$hook->{refresh});
+                    $self->log->warn("Can't find region ".$hook->{refresh});
                     @args{qw/mode path region/} = ('Replace', undef, $hook->{refresh});
                 }
             } elsif ((exists $hook->{refresh_self} and Jifty->web->current_region) or (Jifty->web->current_region and $hook->{args} and %{$hook->{args}})) {
