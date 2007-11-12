@@ -230,12 +230,10 @@ sub promote_encoding {
     my $content_type = shift;
     my $charset;
 
-    if ($content_type) {
-        # Multi-part form data have no notion of charsets, so we return the string
-        # verbatim here, to avoid the "Unquoted / not allowed in Content-Type"
-        # warnings when the Base64-encoded MIME boundary string contains "/".
-        return $string if $content_type =~ /^multipart\b/;
-
+    # Don't bother parsing the Content-Type header unless it mentions "charset".
+    # This is to avoid the "Unquoted / not allowed in Content-Type" warnings when
+    # the Base64-encoded MIME boundary string contains "/".
+    if ($content_type and $content_type =~ /charset/i) {
         $content_type = Email::MIME::ContentType::parse_content_type($content_type);
         $charset = $content_type->{attributes}->{charset};
     }

@@ -24,7 +24,7 @@ use XML::Simple;
 use Term::ReadKey;
 use Data::Dumper;
          use File::Temp qw/ tempfile tempdir /;
-my @tags = qw(doc install core plugin security view f-bug t-discard backward-compatiblity-problem u-pubsub r-crud e-testing);
+my @tags = qw(doc install core plugin security view f-bug t-discard backward-compatibility-problem u-pubsub r-crud e-testing);
 
 my %tags = map { substr($_,0,1) => $_ } @tags;
 my $mode = shift @ARGV;
@@ -81,7 +81,7 @@ if ($mode eq '--edit') {
 
     open (my $fh, ">$dest") or die "Can't open $dest for writing";
 
-    foreach my $key ( keys %entries) {
+    foreach my $key (sort keys %entries) {
     my $title = $key;
     $title =~ s/^\w\-//;
         print $fh uc($key)."\n";

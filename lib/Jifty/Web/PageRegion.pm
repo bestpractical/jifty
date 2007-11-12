@@ -36,7 +36,7 @@ unique id -- it should consist of only letters and numbers.
 The path to the fragment that this page region contains.  Defaults to
 C</__jifty/empty>, which, as its name implies, is empty.
 
-=item defaults (optional)
+=item arguments (optional) (formerly 'defaults')
 
 Specifies an optional set of parameter defaults.  These should all be
 simple scalars, as they might be passed across HTTP if AJAX is used.
@@ -82,6 +82,9 @@ sub new {
                 @_
                );
 
+
+    $args{'arguments'} ||= delete $args{'defaults'};
+
     # Name is required
     if (not defined $args{name}) {
         warn "Name is required for page regions.";
@@ -89,16 +92,16 @@ sub new {
     }
 
     # References don't go over HTTP very well
-    if (grep {ref $_} values %{$args{defaults}}) {
-        warn "Reference '$args{defaults}{$_}' passed as default for '$_' to region '$args{name}'"
-          for grep {ref $args{defaults}{$_}} keys %{$args{defaults}};
+    if (grep {ref $_} values %{$args{arguments}}) {
+        warn "Reference '$args{arguments}{$_}' passed as default for '$_' to region '$args{name}'"
+          for grep {ref $args{arguments}{$_}} keys %{$args{arguments}};
         return;
     }
 
     $self->name($args{name});
     $self->qualified_name(Jifty->web->qualified_region($self));
     $self->default_path($args{path});
-    $self->default_arguments($args{defaults});
+    $self->default_arguments($args{arguments});
     $self->force_arguments($args{force_arguments});
     $self->force_path($args{force_path});
     $self->arguments({});

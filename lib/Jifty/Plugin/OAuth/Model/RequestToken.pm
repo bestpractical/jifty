@@ -20,7 +20,7 @@ use Jifty::Record schema {
 
     column authorized =>
         type is 'boolean',
-        default is 'f';
+        default is '';
 
     # kludge 2: this kind of plugin cannot yet casually refer_to app models
     column authorized_by =>
@@ -31,9 +31,11 @@ use Jifty::Record schema {
         refers_to Jifty::Plugin::OAuth::Model::Consumer,
         is required;
 
+    # kludge 3: Jifty::DBI + SQLite = poor boolean handling
+    # so the empty string is the false value, 't' is the true value
     column used =>
         type is 'boolean',
-        default is 'f';
+        default is '';
 
     column token =>
         type is 'varchar',
@@ -55,13 +57,15 @@ sub table {'oauth_request_tokens'}
 
 =head2 after_set_authorized
 
-This will set the C<authorized_by> to the current user.
+This will set the C<authorized_by> to the current user. It will also refresh
+the valid_until to be active for another hour.
 
 =cut
 
 sub after_set_authorized {
     my $self = shift;
     $self->set_authorized_by(Jifty->web->current_user->id);
+    $self->set_valid_until(DateTime->now->add(hours => 1));
 }
 
 =head2 can_trade_for_access_token

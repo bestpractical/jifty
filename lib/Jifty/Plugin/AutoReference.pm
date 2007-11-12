@@ -31,6 +31,12 @@ and then this to your models:
 
 Provides a special autocompletion widget for reference columns. See L<Jifty::Plugin::AutoReference::Widget>.
 
+=head1 METHODS
+
+=head2 init
+
+Adds the F<autoreference.js> file to the JavaScript files to send to the browser.
+
 =cut
 
 sub init {

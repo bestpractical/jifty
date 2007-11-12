@@ -24,6 +24,12 @@ Provides a special autocomplete widget that can be useful when there are too man
 
 B<WARNING:> As of this writing, it should be noted that this widget does not degrade gracefully. If you need a widget that operates properly even when JavaScript is unavailable, this widget won't do that job at this time.
 
+=head1 METHODS
+
+=head2 render
+
+Overrides the field renderer to force autocompletion to be turned on.
+
 =cut
 
 sub render {
@@ -40,6 +46,10 @@ sub _record_description {
 
     my $name      = $self->name;
     my $column    = $self->action->record->column($name);
+
+    # XXX Does this need more advanced handling?
+    return unless $column; # happens in SearchXXX
+
     my $reference = $column->refers_to;
     my $brief     = $reference->can('_brief_description') ?
                         $reference->_brief_description : 'name';
@@ -74,6 +84,12 @@ sub _switch_current_value_temporarily(&$) {
     }
 }
 
+=head2 render_widget
+
+Overrides the widget renderer to draw both a hidden field that stores the actual referenced ID and a text field that is autocompleted using the records brief description.
+
+=cut
+
 sub render_widget {
     my $self = shift;
 
@@ -99,6 +115,12 @@ sub render_widget {
     return '';
 }
 
+=head2 render_value
+
+Overrides the value renderer to show the brief description of the referenced record.
+
+=cut
+
 sub render_value {
     my $self = shift;
 
@@ -108,6 +130,12 @@ sub render_value {
 
     return '';
 }
+
+=head2 autocomplete_javascript
+
+Overrides the JavaScript autocompletion widget to use C<Jifty.Plugin.AutoReference> instead of the regular C<Jifty.Autocompleter>.
+
+=cut
 
 sub autocomplete_javascript {
     my $self = shift;

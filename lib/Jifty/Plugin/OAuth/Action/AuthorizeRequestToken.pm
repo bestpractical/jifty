@@ -21,6 +21,9 @@ use Jifty::Action schema {
     param 'authorize',
         valid_values are qw(allow deny);
 
+    param 'callback',
+        render as 'hidden';
+
 };
 
 =head2 validate_token
@@ -36,10 +39,15 @@ sub validate_token {
     my $request_token = Jifty::Plugin::OAuth::Model::RequestToken->new(current_user => Jifty::CurrentUser->superuser);
     $request_token->load_by_cols(
         token => $token,
-        authorized => 'f',
+        authorized => '',
     );
 
     return $self->validation_error(token => "I don't know of that request token.") unless $request_token->id;
+
+    if ($request_token->valid_until < Jifty::DateTime->now(time_zone => 'GMT')) {
+        $request_token->delete();
+        return $self->validation_error(token => "This request token has expired.");
+    }
 
     return $self->validation_ok('token');
 }
@@ -57,6 +65,10 @@ sub take_action {
     $token->load_by_cols(
         token => $self->argument_value('token'),
     );
+
+    $self->result->content(token_obj => $token);
+    $self->result->content(token     => $token->token);
+    $self->result->content(callback  => $self->argument_value('callback'));
 
     if ($self->argument_value('authorize') eq 'allow') {
         $token->set_authorized('t');

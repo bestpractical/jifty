@@ -416,8 +416,11 @@ sub follow_link_ok {
     # Remove reason from end if it's there
     pop @_ if @_ % 2;
 
-    carp("Couldn't find link") unless
-      $self->follow_link(@_);
+    # Test::WWW::Mechanize allows passing in a hashref of arguments, so we should to
+    if  ( ref($_[0]) eq 'HASH') {
+        @_ = %{$_[0]};
+    }
+    carp("Couldn't find link") unless $self->follow_link(@_);
     {
         local $Test::Builder::Level = $Test::Builder::Level;
         $Test::Builder::Level++;
