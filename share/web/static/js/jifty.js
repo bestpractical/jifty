@@ -1525,9 +1525,10 @@ function _sp_submit_form(elt, event, submit_to) {
         var e = elements[i];
         var parsed = e.getAttribute("name").match(/^J:V-region-__page\.(.*)/);
         var extras = Form.Element.buttonArguments(e);
-        if (extras.keys().length > 0) {
+        if (extras.keys().length > 1) {
             // Button with values
             for (var j = 0; j < extras.keys().length; j++) {
+                if ( extras.keys()[j] == 'extend' ) continue;
                 // Might also have J:V mappings on it
                 parsed = extras.keys()[j].match(/^J:V-region-__page\.(.*)/);
                 if ((parsed != null) && (parsed.length == 2)) {
@@ -1550,7 +1551,7 @@ function _sp_submit_form(elt, event, submit_to) {
 
     /* we want to feed a common object instead of a Hash to Jifty.update */ 
     var args_object = {};
-    args.each( function( pair ) { args_object[pair.key] = args_object[pair.value]; } );
+    args.each( function( pair ) { args_object[pair.key] = pair.value; } );
 
     if(event.ctrlKey||event.metaKey||event.altKey||event.shiftKey) return true;
     return Jifty.update( {'continuation':{},'actions':null,'fragments':[{'mode':'Replace','args':args_object,'region':'__page','path': submit_to}]}, elt );
