@@ -157,10 +157,7 @@ sub generate_css {
     
         CSS::Squish->roots( @roots );
         
-        my $css = CSS::Squish->concatenate(
-            map { CSS::Squish->_resolve_file( $_, @roots ) }
-                @{ Jifty->web->css_files }
-        );
+        my $css = CSS::Squish->concatenate( @{ Jifty->web->css_files } );
 
         $self->cached_css( $css );
         $self->cached_css_digest( md5_hex( $css ) );
