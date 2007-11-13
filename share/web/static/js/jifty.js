@@ -1547,6 +1547,11 @@ function _sp_submit_form(elt, event, submit_to) {
     }
 
     var args = hiddens.merge(buttons.merge(inputs));
+
+    /* we want to feed a common object instead of a Hash to Jifty.update */ 
+    var args_object = {};
+    args.each( function( pair ) { args_object[pair.key] = args_object[pair.value]; } );
+
     if(event.ctrlKey||event.metaKey||event.altKey||event.shiftKey) return true;
-    return Jifty.update( {'continuation':{},'actions':null,'fragments':[{'mode':'Replace','args':args.toJSON(),'region':'__page','path': submit_to}]}, elt );
+    return Jifty.update( {'continuation':{},'actions':null,'fragments':[{'mode':'Replace','args':args_object,'region':'__page','path': submit_to}]}, elt );
 }
