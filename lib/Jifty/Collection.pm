@@ -39,15 +39,16 @@ the C<pager> method to B<get> information related to paging.
 
 Returns a L<Data::Page> object associated with this collection.  This
 object defaults to 10 entries per page.  You should use only use
-L<Data::Page>  methods on this object to B<get> information about paging,
-not to B<set> it; use C<set_page_info> to set paging information.
+L<Data::Page> methods on this object to B<get> information about
+paging, not to B<set> it; use C<set_page_info> to set paging
+information.
 
 =head2 results_are_readable
 
 If your results from the query are guaranteed to be readable by
 current_user, you can create the collection with
-C<results_are_readable => 1>.  This causes check_read_rights to
-bypass normal current_user_can checks.
+C<results_are_readable => 1>.  This causes check_read_rights to bypass
+normal current_user_can checks.
 
 =cut
 
@@ -55,9 +56,11 @@ __PACKAGE__->mk_accessors(qw(pager results_are_readable));
 
 =head2 as_search_action PARAMHASH
 
-Returns the L<Jifty::Action::Record::Search> action for the model associated with this collection.
+Returns the L<Jifty::Action::Record::Search> action for the model
+associated with this collection.
 
-The PARAMHASH allows you to add additional parameters to pass to L<Jifty::Web/new_action>.
+The PARAMHASH allows you to add additional parameters to pass to
+L<Jifty::Web/new_action>.
 
 =cut
 
@@ -68,15 +71,16 @@ sub as_search_action {
 
 =head2 add_record
 
-If L</results_are_readable> is false, only add records to the collection that
-we can read (by checking L<Jifty::Record/check_read_rights>). Otherwise, make
-sure all records added are readable.
+If L</results_are_readable> is false, only add records to the
+collection that we can read (by checking
+L<Jifty::Record/check_read_rights>). Otherwise, make sure all records
+added are readable.
 
 =cut
 
 sub add_record {
     my $self = shift;
-    my($record) = (@_);
+    my ($record) = (@_);
 
     # If results_are_readable is set, guarantee that they are
     $record->_is_readable(1)
@@ -98,24 +102,24 @@ sub add_record {
 sub _init {
     my $self = shift;
     my %args = (
-        record_class => undef,
-        current_user => undef,
+        record_class         => undef,
+        current_user         => undef,
         results_are_readable => undef,
         @_
     );
 
     # Setup the current user, record class, results_are_readable
     $self->_get_current_user(%args);
-    $self->record_class($args{record_class}) if defined $args{record_class};
-    $self->results_are_readable($args{results_are_readable});
+    $self->record_class( $args{record_class} ) if defined $args{record_class};
+    $self->results_are_readable( $args{results_are_readable} );
 
     # Bad stuff, we really need one of these
-    unless ($self->current_user) {
+    unless ( $self->current_user ) {
         Carp::confess("Collection created without a current user");
     }
 
     # Setup the table and call the super-implementation
-    $self->table($self->new_item->table());
+    $self->table( $self->new_item->table() );
     $self->SUPER::_init(%args);
 }
 
@@ -127,23 +131,17 @@ Defaults to ordering by the C<id> column.
 
 sub implicit_clauses {
     my $self = shift;
-    $self->order_by( column => 'id',order => 'asc');
+    $self->order_by( column => 'id', order => 'asc' );
 }
 
-=head2 new_item
-
-Overrides L<Jifty::DBI::Collection>'s new_item to pass in the current
-user.
-
-=cut
-
-sub new_item {
+sub _new_record_args {
     my $self = shift;
-    my $class =$self->record_class();
+    return ( current_user => $self->current_user );
+}
 
-    # We do this as a performance optimization, so we don't need to do the stackwalking to find it
-    Jifty::Util->require($class);
-    return $class->new(current_user => $self->current_user);
+sub _new_collection_args {
+    my $self = shift;
+    return ( current_user => $self->current_user );
 }
 
 =head1 SEE ALSO

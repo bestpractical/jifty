@@ -25,6 +25,9 @@ sub init {
     return if $self->_pre_init;
 
     Jifty::Web::Form::Clickable->add_trigger( before_new => _sp_link($self));
+    Jifty::Web::Form::Clickable->add_trigger( name      => 'before_state_variable',
+                                              callback  => _filter_page_region_vars($self),
+                                              abortable => 1 );
     my %opt = @_;
     $self->region_name($opt{region_name} || '__page');
 }
@@ -37,6 +40,17 @@ sub _push_onclick {
     push @{$args->{onclick}}, @_ if @_;
 }
 
+sub _filter_page_region_vars {
+    my $self = shift;
+    return sub {
+        my ( $clickable, $key, $value ) = @_;
+        if ($key eq 'region-'.$self->region_name || $key =~ m/^region-\Q$self->{region_name}\E\./) {
+            return 0;
+        }
+        return 1;
+    }
+}
+
 sub _sp_link {
     my $self = shift;
     return sub {
@@ -46,7 +60,7 @@ sub _sp_link {
             $self->_push_onclick($args, {
                 region       => $self->region_name,
                 replace_with => $url,
-                args         => $args->{parameters}});
+                args         => { %{$args->{parameters}}} });
         }
         elsif (exists $args->{submit} && !$args->{onclick}) {
 	    if ($args->{_form} && $args->{_form}{submit_to}) {

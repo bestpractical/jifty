@@ -20,9 +20,10 @@ requires('DBD::SQLite' => 1.11 );
 requires('Data::Page');
 requires('Data::UUID');
 requires('DateTime');
+requires('DateTime::Locale');
 requires('Date::Manip');
 requires('Email::Folder');
-requires('Email::LocalDelivery');
+requires('Email::LocalDelivery' => 0.217 );
 requires('Email::MIME');
 requires('Email::MIME::Creator');
 requires('Email::MIME::ContentType');
@@ -49,7 +50,7 @@ requires('Hash::Merge');
 requires('Hook::LexWrap');
 requires('IPC::PubSub' => '0.23' );
 requires('IPC::Run3');
-requires('Jifty::DBI' => '0.45' );            # Jifty::DBI::Collection Jifty::DBI::Handle Jifty::DBI::Record::Cachable Jifty::DBI::SchemaGenerator
+requires('Jifty::DBI' => '0.47' );            # Jifty::DBI::Collection Jifty::DBI::Handle Jifty::DBI::Record::Cachable Jifty::DBI::SchemaGenerator
 requires('Locale::Maketext::Extract' => '0.20');
 requires('Locale::Maketext::Lexicon' => '0.60');
 requires('Log::Log4perl' => '1.04');
@@ -77,7 +78,6 @@ requires('Test::Log4perl');
 requires('Test::LongString');
 requires('Test::More' => 0.62 ),
 requires('Test::Pod::Coverage'),
-requires('Test::WWW::Declare'),
 requires('Test::WWW::Mechanize' => 1.04 ),
 requires('Test::WWW::Selenium'),
 requires('WWW::Mechanize' => 1.30 ),
@@ -116,6 +116,7 @@ features(
         recommends('Test::MockModule' => '0.05'),
         recommends('Test::MockObject' => '1.07'),
         recommends('Module::Refresh' => '0.09'),
+        recommends('Test::WWW::Declare' => '0.01'),
     ],
     'Development of the jifty framework' => [
         -default => 0,

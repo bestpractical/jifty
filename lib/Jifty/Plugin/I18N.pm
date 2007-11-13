@@ -64,9 +64,42 @@ sub init {
 sub _i18n_js {
     my $self = shift;
 
-    # js l10n init
     my $current_lang = Jifty::I18N->get_current_language || 'en';
-    Jifty->web->out(qq{<script type="text/javascript">Localization.init({dict_path: '/static/js/dict', lang: '$current_lang'});</script>});
+
+    # diagnosis for htf the client is requesting something not in allowed_lang.
+    my $allowed_lang = Jifty->config->framework('L10N')->{'AllowedLang'};
+    $allowed_lang = [defined $allowed_lang ? $allowed_lang : ()] unless ref($allowed_lang) eq 'ARRAY';
+
+    if (@$allowed_lang) {
+        my $allowed_regex = join '|', map {
+            my $it = $_;
+            $it =~ tr<-A-Z><_a-z>; # lc, and turn - to _
+            $it =~ tr<_a-z0-9><>cd;  # remove all but a-z0-9_
+            $it;
+        } @$allowed_lang;
+
+        unless ( $current_lang =~ /^$allowed_regex/) {
+            Jifty->log->error("user is requesting $current_lang which is not allowed");
+            my $headers = Jifty->handler->apache->headers_in;
+            use Data::Dumper;
+            Jifty->log->error(Dumper($headers));
+        }
+    }
+
+    open my $fh, '<:encoding(utf-8)',
+        Jifty::Util->absolute_path(
+        File::Spec->catdir(
+            Jifty->config->framework('Web')->{StaticRoot},
+            "js/dict/$current_lang.json" ))
+        or Jifty->log->error("Can't find dictionary file $current_lang.json: $!");
+
+    local $/;
+    my $inline_dict = <$fh> || '{}';
+    # js l10n init
+    Jifty->web->out(qq{<script type="text/javascript">
+Localization.dict_path = '/static/js/dict';
+Localization.dict = $inline_dict;
+</script>});
 }
 
 1;

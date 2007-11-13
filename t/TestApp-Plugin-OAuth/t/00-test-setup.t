@@ -2,17 +2,19 @@
 use warnings;
 use strict;
 
+use Test::More;
+BEGIN {
+    if (eval { require Net::OAuth::Request; require Crypt::OpenSSL::RSA; 1 }) {
+        plan tests => 10;
+    }
+    else {
+        plan skip_all => "Net::OAuth isn't installed";
+    }
+}
+
 use lib 't/lib';
 use Jifty::SubTest;
-
 use TestApp::Plugin::OAuth::Test;
-
-if (eval { require Net::OAuth::Request; require Crypt::OpenSSL::RSA; 1 }) {
-    plan tests => 9;
-}
-else {
-    plan skip_all => "Net::OAuth isn't installed";
-}
 
 # sign PLAINTEXT {{{
 is(sign('POST', 'jjd999tj88uiths3', 'djr9rjt0jd78jf88',
@@ -30,7 +32,7 @@ my ($sig, $sbs, $nrp) = sign(
     'GET',
     'pfkkdhi9sl3r4s00',
     'kd94hf93k423kf44',
-    url => 'http://photos.example.net/photos',
+    sign_url => 'http://photos.example.net/photos',
     oauth_consumer_key => 'dpf43f3p2l4k3l03',
     oauth_signature_method => 'HMAC-SHA1',
     oauth_timestamp => '1191242096',
@@ -49,7 +51,7 @@ is($sig, 'Gcg/323lvAsQ707p+y41y14qWfY', 'HMAC-SHA1 signature correct');
     'GET',
     'pfkkdhi9sl3r4s00',
     'kd94hf93k423kf44',
-    url => 'http://photos.example.net/photos',
+    sign_url => 'http://photos.example.net/photos',
     signature_key => $seckey,
     oauth_consumer_key => 'dpf43f3p2l4k3l03',
     oauth_signature_method => 'RSA-SHA1',

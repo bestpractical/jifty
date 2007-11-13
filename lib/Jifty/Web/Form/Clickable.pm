@@ -302,6 +302,9 @@ Sets the state variable named C<KEY> to C<VALUE>.
 
 sub state_variable {
     my $self = shift;
+    defined $self->call_trigger('before_state_variable', @_)
+        or return; # if aborted by trigger
+
     my ( $key, $value, $fallback ) = @_;
     if ( defined $value and length $value ) {
         $self->{state_variable}{"J:V-$key"} = $value;

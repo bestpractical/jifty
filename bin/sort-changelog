@@ -1,0 +1,204 @@
+#!/usr/bin/env perl
+use warnings;
+use strict;
+use File::Slurp;
+use XML::Simple;
+use Term::ReadKey;
+use Term::CallEditor;
+use Term::ANSIScreen;
+use Text::Autoformat;
+
+my %commands = (
+    j   => sub { ++$_ },
+    k   => sub { --$_ },
+    q   => sub { die "Quitting.\n" },
+    e   => \&edit_entry,
+    t   => \&next_tag,
+);
+
+my %tags = (
+    D => 'doc',
+    I => 'install',
+    C => 'core',
+    P => 'plugin',
+    S => 'security',
+    T => 'testing',
+    V => 'view',
+    F => 'bugfix',
+    X => 'discard',
+    B => 'backward-compatibility-problem',
+    U => 'pubsub',
+    R => 'crud',
+    8 => 'I18N',
+    M => 'misc',
+    Q => 'performance',
+);
+
+my $command_string = join '', sort keys %commands;
+my $tag_string     = join '', sort keys %tags;
+my $untagged;
+
+# each tag gets its own command
+while (my ($k, $v) = each %tags) {
+    $commands{$k} = sub {
+        --$untagged if ($_[0]->{section}||'') eq '';  # update untagged count
+        $_[0]->{section} = $v;                        # apply tag
+        ++$_                                          # advance cursor
+    };
+}
+
+# other commands
+$commands{' '} = $commands{j};
+$commands{'?'} = sub {
+    print << "HELP";
+j - next entry
+k - previous entry
+q - write and quit
+e - edit entry
+t - find next entry with a different tag
+
+HELP
+    for (sort keys %tags) {
+        print "$_ - tag as $tags{$_}, next entry\n";
+    }
+
+    print "\nPress any key to continue.\n";
+    key();
+};
+
+# get the files
+@ARGV == 2
+    or die "Usage: $0 in.xml out.yml";
+
+my $in = shift;
+my $out = shift;
+
+$| = 1;
+
+# read data
+my $data = XMLin(read_file($in)."");
+
+my @entries =
+              # sort by tag
+              sort { ($a->{section}||'') cmp ($b->{section}||'') }
+
+              # help find duplicate messages
+              sort { $a->{msg} cmp $b->{msg} }
+
+              # clean up incoming messages
+              map { $_->{msg} = reformat_message($_->{msg}); $_ }
+
+              # remove no-msg commits
+              grep { !ref($_->{msg}) }
+
+              @{$data->{logentry} || $data->{opt}};
+
+# count untagged entries
+$untagged = grep { ($_->{section}||'') eq '' } @entries;
+
+munge_entries();
+
+# make sure we always print our output out
+END { write_entries() }
+
+sub write_entries {
+    $data->{logentry} = \@entries;
+    open my $outfh, '>', $out
+        or die "Unable to open $out for writing: $!";
+    print $outfh XMLout($data, NoAttr => 1);
+    close $outfh;
+}
+
+sub munge_entries {
+    $_ = 0;
+
+    while (1) {
+        display($entries[$_]);
+
+        # ask the user what to do
+        print "Now what? [$command_string] [$tag_string] or ?: ";
+        my $c = key();
+
+        unless (exists $commands{$c}) {
+            warn "Invalid command '$c'. Press a key to continue.\n";
+            key();
+            next;
+        }
+
+        $commands{$c}->( $entries[$_] );
+
+        if ($_ < 0) {
+            $_ += @entries;
+        }
+        if ($_ >= @entries) {
+            $_ -= @entries;
+        }
+    }
+}
+
+sub display {
+    my $entry = shift;
+
+    my $term = Term::ANSIScreen->new;
+    $term->Cls();
+    $term->Cursor(0, 0);
+
+    print "Number:    $_/$#entries  ($untagged untagged)\n";
+    print "Author:    $entry->{author}\n";
+    print "Date:      $entry->{date}\n";
+    print "Tagged as: ", $entry->{section} || '(none)', "\n";
+    print "-" x 79, "\n";
+    print $entry->{msg}, "\n\n";
+}
+
+sub reformat_message {
+    my $msg = shift;
+
+    # try to kill svn header
+    $msg =~ s/^\s*r\d+\@\S+:\s*\S+\s*\|\s*.*\n//;
+
+    # autoformat
+    $msg = autoformat $msg;
+
+    # remove leading whitespace
+    $msg =~ s/(\n|^)\s+/$1/g;
+
+    # chomp off all newlines
+    1 while chomp $msg;
+
+    return $msg;
+}
+
+sub edit_entry {
+    my $entry = shift;
+    my ($fh, $fn) = solicit($entry->{msg});
+    close $fh;
+    $entry->{msg} = do { local (@ARGV, $/) = $fn; <> };
+    $entry->{msg} = reformat_message($entry->{msg});
+}
+
+sub next_tag {
+    my $start = $_;
+    my $section = $_[0]->{section};
+
+    # wrap in eval just in case this logic screws up, the user can smash ^C and
+    # not kill everything
+    eval {
+        local $SIG{INT} = sub { die };
+        while (1) {
+            ++$_;
+            $_ -= @entries if $_ >= @entries;
+            last if $start == $_;
+            last if $entries[$_]->{section} ne $section;
+        }
+    }
+}
+
+sub key {
+    ReadMode 3;
+    my $c = ReadKey 0;
+    ReadMode 0;
+    print "$c\n";
+    return $c;
+}
+

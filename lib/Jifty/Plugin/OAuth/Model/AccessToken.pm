@@ -22,8 +22,13 @@ use Jifty::Record schema {
         type is 'timestamp',
         filters are 'Jifty::DBI::Filter::DateTime';
 
+    column token =>
+        type is 'varchar',
+        is required;
+
     column secret =>
-        type is 'varchar';
+        type is 'varchar',
+        is required;
 
     column consumer =>
         refers_to Jifty::Plugin::OAuth::Model::Consumer;
@@ -37,6 +42,28 @@ AccessTokens are stored in the table C<oauth_access_tokens>.
 =cut
 
 sub table {'oauth_access_tokens'}
+
+=head2 is_valid
+
+This neatly encapsulates the "is this access token perfect?" check.
+
+This will return a (boolean, message) pair, with boolean indicating success
+(true means the token is good) and message indicating error (or another
+affirmation of success).
+
+=cut
+
+sub is_valid {
+    my $self = shift;
+
+    return (0, "Access token has no authorizing user")
+        if !$self->auth_as;
+
+    return (0, "Access token expired")
+        if $self->valid_until < DateTime->now;
+
+    return (1, "Request token valid");
+}
 
 1;
 

@@ -69,7 +69,10 @@ sub new {
         # we want to convert to the end-user's timezone. If we ignore
         # $args{time_zone}, then DateTime::from_epoch will get very confused
         if (!$args{time_zone} and my $tz = $self->current_user_has_timezone) {
-            $self->set_time_zone("UTC"); # XXX: why are we doing this?
+
+            # XXX: we do this because of the floating timezone
+            $self->set_time_zone("UTC");
+
             $self->set_time_zone( $tz );
         }
     }
@@ -100,7 +103,24 @@ sub now {
     my %args  = @_;
     my $self  = $class->SUPER::now(%args);
 
-    $self->set_time_zone($self->current_user_has_timezone || 'UTC')
+    $self->set_current_user_timezone()
+        unless $args{time_zone};
+
+    return $self;
+}
+
+=head2 from_epoch ARGS
+
+See L<DateTime/from_epoch> and L<Jifty::DateTime/now>.
+
+=cut
+
+sub from_epoch {
+    my $class = shift;
+    my %args  = @_;
+    my $self  = $class->SUPER::from_epoch(%args);
+
+    $self->set_current_user_timezone()
         unless $args{time_zone};
 
     return $self;
@@ -117,7 +137,7 @@ sub current_user_has_timezone {
     $self->_get_current_user();
 
     # Can't continue if we have no notion of a user_object
-    return unless $self->current_user->can('user_object');
+    $self->current_user->can('user_object') or return;
 
     # Can't continue unless the user object is defined
     my $user_obj = $self->current_user->user_object or return;
@@ -125,6 +145,23 @@ sub current_user_has_timezone {
     # Check for a time_zone method and then use it if it exists
     my $f = $user_obj->can('time_zone') or return;
     return $f->($user_obj);
+}
+
+=head2 set_current_user_timezone [DEFAULT_TZ]
+
+Set this Jifty::DateTime's timezone to the current user's timezone. If that's
+not available, then use the passed in DEFAULT_TZ (or GMT if not passed in).
+Returns the Jifty::DateTime object itself.
+
+=cut
+
+sub set_current_user_timezone {
+    my $self    = shift;
+    my $default = shift || 'GMT';
+    my $tz = $self->current_user_has_timezone || $default;
+
+    $self->set_time_zone($tz);
+    return $self;
 }
 
 =head2 new_from_string STRING

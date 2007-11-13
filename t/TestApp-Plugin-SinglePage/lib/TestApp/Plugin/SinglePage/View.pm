@@ -25,6 +25,9 @@ template '/page2' =>
 					     arguments => { name => $foo });
 	my $redir = new_action(class     => "Jifty::Action::Redirect",
 			       arguments => { url => '/index.html' });
+	render_region( 'foo' );
+	hyperlink( label => 'foo', onclick => { region => 'foo', replace_with => '_r_foo', args => { foo => '123123' } } );
+
 	form {
 	    Jifty->web->form->register_action($redir);
 	    render_action($create);
@@ -40,6 +43,11 @@ template 'page3' =>
 	    hyperlink(label => 'Back', url => '/');
 	}
     };
+
+template '_r_foo' => sub {
+    my $foo = get('foo');
+    h1 { $foo };
+};
 
 1;
 

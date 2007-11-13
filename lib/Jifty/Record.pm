@@ -28,9 +28,8 @@ sub _init {
     my $self = shift;
     my %args = (@_);
     $self->_get_current_user(%args);
-    
-    $self->SUPER::_init(@_);
 
+    $self->SUPER::_init(@_);
 }
 
 =head1 METHODS
@@ -41,8 +40,8 @@ sub _init {
 
 C<create> can be called as either a class method or an object method.
 
-Takes an array of key-value pairs and inserts a new row into the database representing
-this object.
+Takes an array of key-value pairs and inserts a new row into the
+database representing this object.
 
 Override's L<Jifty::DBI::Record> in these ways:
 
@@ -159,9 +158,8 @@ This routine short-circuits a much heavier call up through Jifty::DBI
 
 =cut
 
-sub _primary_key { 'id' }
-sub id { $_[0]->{'values'}->{'id'} }
-
+sub _primary_key {'id'}
+sub id           { $_[0]->{'values'}->{'id'} }
 
 =head2 load_or_create
 
@@ -174,8 +172,8 @@ can't do so, it creates a new record.
 sub load_or_create {
     my $class = shift;
     my $self;
-    if (ref($class)) {
-       ($self,$class) = ($class,undef); 
+    if ( ref($class) ) {
+        ( $self, $class ) = ( $class, undef );
     } else {
         $self = $class->new();
     }
@@ -187,44 +185,47 @@ sub load_or_create {
         return $self->create(%args);
     }
 
-    return ($id,$msg);
+    return ( $id, $msg );
 }
-
 
 =head2 as_create_action PARAMHASH
 
-Returns the L<Jifty::Action::Record::Create> action for this model class.
+Returns the L<Jifty::Action::Record::Create> action for this model
+class.
 
-The PARAMHASH allows you to add additional parameters to pass to L<Jifty::Web/new_action>.
+The PARAMHASH allows you to add additional parameters to pass to
+L<Jifty::Web/new_action>.
 
 =cut
 
 sub _action_from_record {
-    my $self = shift;
-    my $verb = shift;
+    my $self  = shift;
+    my $verb  = shift;
     my $class = ref $self || $self;
     $class =~ s/::Model::/::Action::$verb/;
     return $class;
 }
 
 sub as_create_action {
-    my $self = shift;
+    my $self         = shift;
     my $action_class = $self->_action_from_record('Create');
     return Jifty->web->new_action( class => $action_class, @_ );
 }
 
 =head2 as_update_action PARAMHASH
 
-Returns the L<Jifty::Action::Record::Update> action for this model class. The current record is passed to the constructor.
+Returns the L<Jifty::Action::Record::Update> action for this model
+class. The current record is passed to the constructor.
 
-The PARAMHASH allows you to add additional parameters to pass to L<Jifty::Web/new_action>.
+The PARAMHASH allows you to add additional parameters to pass to
+L<Jifty::Web/new_action>.
 
 =cut
 
 sub as_update_action {
-    my $self = shift;
+    my $self         = shift;
     my $action_class = $self->_action_from_record('Update');
-    return Jifty->web->new_action( 
+    return Jifty->web->new_action(
         class  => $action_class,
         record => $self,
         @_,
@@ -233,14 +234,16 @@ sub as_update_action {
 
 =head2 as_delete_action PARAMHASH
 
-Returns the L<Jifty::Action::Record::Delete> action for this model class. The current record is passed to the constructor.
+Returns the L<Jifty::Action::Record::Delete> action for this model
+class. The current record is passed to the constructor.
 
-The PARAMHASH allows you to add additional parameters to pass to L<Jifty::Web/new_action>.
+The PARAMHASH allows you to add additional parameters to pass to
+L<Jifty::Web/new_action>.
 
 =cut
 
 sub as_delete_action {
-    my $self = shift;
+    my $self         = shift;
     my $action_class = $self->_action_from_record('Delete');
     return Jifty->web->new_action(
         class  => $action_class,
@@ -251,35 +254,40 @@ sub as_delete_action {
 
 =head2 as_search_action PARAMHASH
 
-Returns the L<Jifty::Action::Record::Search> action for this model class.
+Returns the L<Jifty::Action::Record::Search> action for this model
+class.
 
-The PARAMHASH allows you to add additional parameters to pass to L<Jifty::Web/new_action>.
+The PARAMHASH allows you to add additional parameters to pass to
+L<Jifty::Web/new_action>.
 
 =cut
 
 sub as_search_action {
-    my $self = shift;
+    my $self         = shift;
     my $action_class = $self->_action_from_record('Search');
     return Jifty->web->new_action(
-        class  => $action_class,
+        class => $action_class,
         @_,
     );
 }
 
 =head2 _guess_table_name
 
-Guesses a table name based on the class's last part. In addition to the work performed in L<Jifty::DBI::Record>, this method also prefixes the table name with the plugin table prefix, if the model belongs to a plugin.
+Guesses a table name based on the class's last part. In addition to
+the work performed in L<Jifty::DBI::Record>, this method also prefixes
+the table name with the plugin table prefix, if the model belongs to a
+plugin.
 
 =cut
 
 sub _guess_table_name {
-    my $self = shift;
+    my $self  = shift;
     my $table = $self->SUPER::_guess_table_name;
 
     # Add plugin table prefix if a plugin model
     my $class = ref($self) ? ref($self) : $self;
     my $app_plugin_root = Jifty->app_class('Plugin');
-    if ($class =~ /^(?:Jifty::Plugin::|$app_plugin_root)/) {
+    if ( $class =~ /^(?:Jifty::Plugin::|$app_plugin_root)/ ) {
 
         # Guess the plugin class name
         my $plugin_class = $class;
@@ -289,13 +297,14 @@ sub _guess_table_name {
         my ($plugin) = grep { ref $_ eq $plugin_class } Jifty->plugins;
 
         # Add the prefix if found
-        if (defined $plugin) {
+        if ( defined $plugin ) {
             $table = $plugin->table_prefix . $table;
         }
 
         # Uh oh. Warn, but try to keep going.
         else {
-            warn "Model $class looks like a plugin model, but $plugin_class could not be found.";
+            warn
+                "Model $class looks like a plugin model, but $plugin_class could not be found.";
         }
     }
 
@@ -333,7 +342,8 @@ Called before the object is deleted.
 
 =back
 
-Models wishing to customize authorization checks should override this method. You can do so like this:
+Models wishing to customize authorization checks should override this
+method. You can do so like this:
 
   sub current_user_can {
       my ($self, $right, %args) = @_;
@@ -346,7 +356,9 @@ Models wishing to customize authorization checks should override this method. Yo
       return $self->SUPER::current_user_can($right, %args);
   }
 
-If you are sure you don't want your model to fallback using the default implementation, you can replace the last line with whatever fallback policy required.
+If you are sure you don't want your model to fallback using the
+default implementation, you can replace the last line with whatever
+fallback policy required.
 
 =head3 Authorization steps
 
@@ -356,24 +368,25 @@ The default implementation proceeds as follows:
 
 =item 1.
 
-If the C<SkipAccessControl> setting is set to a true value in the framework configuration section of F<etc/config.yml>, C<current_user_can> always returns true.
+If the C<SkipAccessControl> setting is set to a true value in the
+framework configuration section of F<etc/config.yml>,
+C<current_user_can> always returns true.
 
 =item 2.
 
-The method first attempts to call the C<before_access> hooks to check for any
-allow or denial. See L</The before_access hook>.
+The method first attempts to call the C<before_access> hooks to check
+for any allow or denial. See L</The before_access hook>.
 
 =item 3.
 
 Next, the default implementation returns true if the current user is a
-superuser or a boostrap user.  
+superuser or a boostrap user.
 
 =item 4.
 
 Then, if the model can perform delegation, usually by using
-L<Jifty::RightsFrom>, the access control decision is deferred to another object
-(via the C<delegate_current_user_can>
-subroutine).  
+L<Jifty::RightsFrom>, the access control decision is deferred to
+another object (via the C<delegate_current_user_can> subroutine).
 
 =item 5.
 
@@ -383,7 +396,9 @@ Otherwise, it returns false.
 
 =head3 The before_access hook
 
-This implementation may make use of a trigger called C<before_access> to make the decision. A new handler can be added to the trigger point by calling C<add_handler>:
+This implementation may make use of a trigger called C<before_access>
+to make the decision. A new handler can be added to the trigger point
+by calling C<add_handler>:
 
   $record->add_trigger(
       name => 'before_access',
@@ -391,15 +406,21 @@ This implementation may make use of a trigger called C<before_access> to make th
       abortable => 1,
   );
 
-The C<before_access> handler will be passed the same arguments that were used to call C<current_user_can>, including the current record object, the operation being checked, and any arguments being passed to the operation.
+The C<before_access> handler will be passed the same arguments that
+were used to call C<current_user_can>, including the current record
+object, the operation being checked, and any arguments being passed to
+the operation.
 
-The C<before_access> handler should return one of three strings: C<'deny'>, C<'allow'>, or C<'ignore'>. The C<current_user_can> implementation reacts as follows to these results:
+The C<before_access> handler should return one of three strings:
+C<'deny'>, C<'allow'>, or C<'ignore'>. The C<current_user_can>
+implementation reacts as follows to these results:
 
 =over
 
 =item 1.
 
-If a handler is abortable and aborts by returning a false value (such as C<undef>), C<current_user_can> returns false.
+If a handler is abortable and aborts by returning a false value (such
+as C<undef>), C<current_user_can> returns false.
 
 =item 2.
 
@@ -407,11 +428,14 @@ If any handler returns 'deny', C<current_user_can> returns false.
 
 =item 3.
 
-If any handler returns 'allow' and no handler returns 'deny', C<current_user_can> returns true.
+If any handler returns 'allow' and no handler returns 'deny',
+C<current_user_can> returns true.
 
 =item 4.
 
-In all other cases, the results of the handlers are ignored and C<current_user_can> proceeds to check using superuser, bootstrap, and delegation.
+In all other cases, the results of the handlers are ignored and
+C<current_user_can> proceeds to check using superuser, bootstrap, and
+delegation.
 
 =back
 
@@ -420,38 +444,38 @@ In all other cases, the results of the handlers are ignored and C<current_user_c
 sub current_user_can {
     my $self  = shift;
     my $right = shift;
-    
+
     # Turn off access control for the whole application
-    if (Jifty->config->framework('SkipAccessControl')) {
-	    return 1;	
+    if ( Jifty->config->framework('SkipAccessControl') ) {
+        return 1;
     }
 
     my $hook_status = $self->call_trigger( before_access => $right, @_ );
 
     # If not aborted...
-    if (defined $hook_status) {
+    if ( defined $hook_status ) {
 
         # Compile the handler results
         my %results;
-        $results{ $_->[0] }++ for (@{ $self->last_trigger_results });
+        $results{ $_->[0] }++ for ( @{ $self->last_trigger_results } );
 
         # Deny always takes precedent
-        if ($results{deny}) {
+        if ( $results{deny} ) {
             return 0;
         }
 
         # Then allow...
-        elsif ($results{allow}) {
+        elsif ( $results{allow} ) {
             return 1;
         }
-       
+
         # Otherwise, no instruction from the handlers, move along...
     }
 
     # Abort! Return false for safety
     else {
         return 0;
-    } 
+    }
 
     if (   $self->current_user->is_bootstrap_user
         or $self->current_user->is_superuser )
@@ -459,12 +483,11 @@ sub current_user_can {
         return (1);
     }
 
-    
-    if ($self->can('delegate_current_user_can')) {
-        return $self->delegate_current_user_can($right, @_); 
+    if ( $self->can('delegate_current_user_can') ) {
+        return $self->delegate_current_user_can( $right, @_ );
     }
 
-    unless ( $self->current_user->isa( 'Jifty::CurrentUser' ) ) {
+    unless ( $self->current_user->isa('Jifty::CurrentUser') ) {
         $self->log->error(
             "Hm. called to authenticate without a currentuser - "
                 . $self->current_user );
@@ -480,8 +503,7 @@ Internal helper to call L</current_user_can> with C<create>.
 
 =cut
 
-sub check_create_rights { return shift->current_user_can('create', @_) }
-
+sub check_create_rights { return shift->current_user_can( 'create', @_ ) }
 
 =head2 check_read_rights
 
@@ -503,8 +525,7 @@ Internal helper to call L</current_user_can> with C<update>.
 
 =cut
 
-sub check_update_rights { return shift->current_user_can('update', @_) } 
-
+sub check_update_rights { return shift->current_user_can( 'update', @_ ) }
 
 =head2 check_delete_rights
 
@@ -512,24 +533,22 @@ Internal helper to call L</current_user_can> with C<delete>.
 
 =cut
 
-sub check_delete_rights { return shift->current_user_can('delete', @_) }
-
+sub check_delete_rights { return shift->current_user_can( 'delete', @_ ) }
 
 sub _set {
     my $self = shift;
 
-    unless ($self->check_update_rights(@_)) {
-        return (0, _('Permission denied'));
+    unless ( $self->check_update_rights(@_) ) {
+        return ( 0, _('Permission denied') );
     }
     $self->SUPER::_set(@_);
 }
 
-    
 sub _value {
-    my $self = shift;
+    my $self   = shift;
     my $column = shift;
 
-    unless ($self->check_read_rights( $column => @_ )) {
+    unless ( $self->check_read_rights( $column => @_ ) ) {
         return (undef);
     }
     my $value = $self->SUPER::_value( $column => @_ );
@@ -538,7 +557,6 @@ sub _value {
     Encode::_utf8_on($value) if defined $value;
     $value;
 }
-
 
 =head2 as_superuser
 
@@ -551,41 +569,9 @@ code that needs to for some reason or another.
 sub as_superuser {
     my $self = shift;
 
-    my $clone = $self->new(current_user => $self->current_user->superuser);
-    $clone->load($self->id);
+    my $clone = $self->new( current_user => $self->current_user->superuser );
+    $clone->load( $self->id );
     return $clone;
-}
-
-
-=head2 _collection_value METHOD
-
-A method ripped from the pages of Jifty::DBI::Record 
-so we could change the invocation method of the collection generator to
-add a current_user argument.
-
-=cut
-
-sub _collection_value {
-    my $self = shift;
-
-    my $method_name = shift;
-    return unless defined $method_name;
-
-    my $column    = $self->column($method_name);
-    my $classname = $column->refers_to();
-
-    return undef unless $classname;
-    return unless $classname->isa( 'Jifty::DBI::Collection' );
-
-    if ( my $prefetched_collection = $self->_prefetched_collection($method_name)) {
-        return $prefetched_collection;
-    }
-
-    my $coll = $classname->new( current_user => $self->current_user );
-    if ($column->by and $self->id) { 
-            $coll->limit( column => $column->by(), value => $self->id );
-    }
-    return $coll;
 }
 
 =head2 delete PARAMHASH
@@ -596,11 +582,11 @@ Overrides L<Jifty::DBI::Record> to check the delete ACL.
 
 sub delete {
     my $self = shift;
-    unless ($self->check_delete_rights(@_)) {
-            Jifty->log->logcluck("Permission denied");
-            return(0, _('Permission denied'));
-        }
-    $self->SUPER::delete(@_); 
+    unless ( $self->check_delete_rights(@_) ) {
+        Jifty->log->logcluck("Permission denied");
+        return ( 0, _('Permission denied') );
+    }
+    $self->SUPER::delete(@_);
 }
 
 =head2 brief_description
@@ -610,48 +596,45 @@ Display the friendly name of the record according to _brief_description.
 =cut
 
 sub brief_description {
-    my $self = shift;
+    my $self   = shift;
     my $method = $self->_brief_description;
     return $self->$method;
 }
 
 =head2 _brief_description
 
-When displaying a list of records, Jifty can display a friendly value 
+When displaying a list of records, Jifty can display a friendly value
 rather than the column's unique id.  Out of the box, Jifty always
-tries to display the 'name' field from the record. You can override this
-method to return the name of a method on your record class which will
-return a nice short human readable description for this record.
+tries to display the 'name' field from the record. You can override
+this method to return the name of a method on your record class which
+will return a nice short human readable description for this record.
 
 =cut
 
 sub _brief_description {'name'}
 
-=head2 _to_record
+=head2 _new_collection_args
 
-This is the Jifty::DBI function that is called when you fetch a value which C<REFERENCES> a
-Record class.  The only change from the Jifty::DBI code is the arguments to C<new>.
+Overrides the default arguments which this collection passes to new
+collections, to pass the C<current_user>.
 
 =cut
 
-sub _to_record {
-    my $self  = shift;
-    my $column_name = shift;
-    my $value = shift;
+sub _new_collection_args {
+    my $self = shift;
+    return ( current_user => $self->current_user );
+}
 
-    my $column = $self->column($column_name);
-    my $classname = $column->refers_to();
+=head2 _new_record_args
 
-    return undef unless $classname;
-    return unless $classname->isa( 'Jifty::Record' );
+Overrides the default arguments which this collection passes to new
+records, to pass the C<current_user>.
 
-    # XXX TODO FIXME we need to figure out the right way to call new here
-    # perhaps the handle should have an initiializer for records/collections
-    my $object = $classname->new(current_user => $self->current_user);
-    $object->load_by_cols(( $column->by || 'id')  => $value) if ($value);
-    # XXX: an attribute or hook to let model class declare implicit
-    # readable refers_to columns.  $object->_is_readable(1) if $column->blah;
-    return $object;
+=cut
+
+sub _new_record_args {
+    my $self = shift;
+    return ( current_user => $self->current_user );
 }
 
 =head2 cache_key_prefix
@@ -660,7 +643,6 @@ Returns a unique key for this application for the Memcached cache.
 This should be global within a given Jifty application instance.
 
 =cut
-
 
 sub cache_key_prefix {
     Jifty->config->framework('Database')->{'Database'};
@@ -673,20 +655,19 @@ sub _cache_config {
 }
 
 =head2 since
- 
-By default, all models exist since C<undef>, the ur-time when the application was created. Please override it for your model class.
- 
-=cut
- 
 
+By default, all models exist since C<undef>, the ur-time when the
+application was created. Please override it for your model class.
+
+=cut
 
 =head2 printable_table_schema
 
-When called, this method will generate the SQL schema for the current version of this 
-class and return it as a scalar, suitable for printing or execution in your database's command line.
+When called, this method will generate the SQL schema for the current
+version of this class and return it as a scalar, suitable for printing
+or execution in your database's command line.
 
 =cut
-
 
 sub printable_table_schema {
     my $class = shift;
@@ -697,8 +678,9 @@ sub printable_table_schema {
 
 =head2 create_table_in_db
 
-When called, this method will generate the SQL schema for the current version of this 
-class and insert it into the application's currently open database.
+When called, this method will generate the SQL schema for the current
+version of this class and insert it into the application's currently
+open database.
 
 =cut
 
@@ -731,9 +713,10 @@ sub drop_table_in_db {
     $ret or die "error removing table $self: " . $ret->error_message;
 }
 
-sub _make_schema { 
+sub _make_schema {
     my $class = shift;
 
+    require Jifty::DBI::SchemaGenerator;
     my $schema_gen = Jifty::DBI::SchemaGenerator->new( Jifty->handle )
         or die "Can't make Jifty::DBI::SchemaGenerator";
     my $ret = $schema_gen->add_model( $class->new );
@@ -744,7 +727,8 @@ sub _make_schema {
 
 =head2 add_column_sql column_name
 
-Returns the SQL statement necessary to add C<column_name> to this class's representation in the database
+Returns the SQL statement necessary to add C<column_name> to this
+class's representation in the database
 
 =cut
 
@@ -753,10 +737,10 @@ sub add_column_sql {
     my $column_name = shift;
 
     my $col        = $self->column($column_name);
-    my $definition = $self->_make_schema()->column_definition_sql($self->table => $col->name);
+    my $definition = $self->_make_schema()
+        ->column_definition_sql( $self->table => $col->name );
     return "ALTER TABLE " . $self->table . " ADD COLUMN " . $definition;
 }
-
 
 =head2 add_column_in_db column_name
 
@@ -766,14 +750,19 @@ Executes the SQL code generated by add_column_sql. Dies on failure.
 
 sub add_column_in_db {
     my $self = shift;
-        my $ret = Jifty->handle->simple_query($self->add_column_sql(@_));
-        $ret or die "error adding column ". $_[0] ." to  $self: " . $ret->error_message;
+    my $ret  = Jifty->handle->simple_query( $self->add_column_sql(@_) );
+    $ret
+        or die "error adding column "
+        . $_[0]
+        . " to  $self: "
+        . $ret->error_message;
 
 }
 
 =head2 drop_column_sql column_name
 
-Returns the SQL statement necessary to remove C<column_name> from this class's representation in the database
+Returns the SQL statement necessary to remove C<column_name> from this
+class's representation in the database
 
 =cut
 
@@ -807,14 +796,20 @@ Executes the SQL code generated by drop_column_sql. Dies on failure.
 
 sub drop_column_in_db {
     my $self = shift;
-        my $ret = Jifty->handle->simple_query($self->drop_column_sql(@_));
-        $ret or die "error dropping column ". $_[0] ." to  $self: " . $ret->error_message;
+    my $ret  = Jifty->handle->simple_query( $self->drop_column_sql(@_) );
+    $ret
+        or die "error dropping column "
+        . $_[0]
+        . " to  $self: "
+        . $ret->error_message;
 
 }
 
 =head2 schema_version
 
-This method is used by L<Jifty::DBI::Record> to determine which schema version is in use. It returns the current database version stored in the configuration.
+This method is used by L<Jifty::DBI::Record> to determine which schema
+version is in use. It returns the current database version stored in
+the configuration.
 
 Jifty's notion of the schema version is currently broken into two:
 
@@ -822,11 +817,14 @@ Jifty's notion of the schema version is currently broken into two:
 
 =item 1.
 
-The Jifty version is the first. In the case of models defined by Jifty itself, these use the version found in C<$Jifty::VERSION>.
+The Jifty version is the first. In the case of models defined by Jifty
+itself, these use the version found in C<$Jifty::VERSION>.
 
 =item 2.
 
-Any model defined by your application use the database version declared in the configuration. In F<etc/config.yml>, this is lcoated at:
+Any model defined by your application use the database version
+declared in the configuration. In F<etc/config.yml>, this is lcoated
+at:
 
   framework:
     Database:
@@ -834,15 +832,17 @@ Any model defined by your application use the database version declared in the c
 
 =back
 
-A model is considered to be defined by Jifty if it the package name starts with "Jifty::". Otherwise, it is assumed to be an application model.
+A model is considered to be defined by Jifty if it the package name
+starts with "Jifty::". Otherwise, it is assumed to be an application
+model.
 
 =cut
 
 sub schema_version {
     my $class = shift;
-    
+
     # Return the Jifty schema version
-    if ($class =~ /^Jifty::Model::/) {
+    if ( $class =~ /^Jifty::Model::/ ) {
         return $Jifty::VERSION;
     }
 
@@ -856,4 +856,3 @@ sub schema_version {
 }
 
 1;
-

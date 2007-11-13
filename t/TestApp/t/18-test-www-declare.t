@@ -4,6 +4,13 @@ use strict;
 
 use lib 't/lib';
 use Jifty::SubTest;
+use Test::More;
+
+BEGIN {
+    unless (eval { require Test::WWW::Declare }) {
+        plan skip_all => "Test::WWW::Declare isn't installed";
+    }
+}
 
 use Jifty::Test::WWW::Declare tests => 2;
 
