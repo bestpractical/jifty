@@ -145,19 +145,19 @@ and caches it. (In devel mode, it always regenerates it)
 
 =cut
 
-            
 sub generate_css {
     my $self = shift;
             
     if (not defined $self->cached_css_digest or Jifty->config->framework('DevelMode')) {
         Jifty->log->debug("Generating CSS...");
-        
-        my @roots = map { Jifty::Util->absolute_path( File::Spec->catdir( $_, 'css' ) ) }
-                        Jifty->handler->view('Jifty::View::Static::Handler')->roots;
+
+        my @roots = map { Jifty::Util->absolute_path( $_ ) }
+            Jifty->handler->view('Jifty::View::Static::Handler')->roots;
     
-        CSS::Squish->roots( @roots );
-        
-        my $css = CSS::Squish->concatenate( @{ Jifty->web->css_files } );
+        my $css = CSS::Squish->new( roots => \@roots )->concatenate(
+            map { File::Spec->catfile('css', $_ ) }
+                @{ Jifty->web->css_files }
+        );
 
         $self->cached_css( $css );
         $self->cached_css_digest( md5_hex( $css ) );
