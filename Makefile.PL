@@ -122,14 +122,6 @@ features(
         recommends('Module::CoreList'),
         recommends('Module::Install::Admin' => '0.50')
      ],
-     'Jifty changelogger' => [
-        -default => 0,
-        recommends('File::Slurp'),
-        recommends('Term::ANSIScreen'),
-        recommends('Term::CallEditor'),
-        recommends('Term::ReadKey'),
-        recommends('Text::Autoformat'),
-     ],
     'Forking jifty server' => [
         -default => 0,
         recommends('Net::Server::Fork'),
