@@ -6,6 +6,15 @@ use strict;
 Jifty::Filter::DateTime -- A Jifty::DBI filter to work with
                           Jifty::DateTime objects
 
+=head1 SYNOPSIS
+
+   # use it with Jifty::DBI::Filter::Date or J::D::F::DateTime
+    column created =>
+      type is 'timestamp',
+      filters are qw( Jifty::Filter::DateTime Jifty::DBI::Filter::DateTime),
+      label is 'Created',
+      is immutable;
+
 =head1 DESCRIPTION
 
 Jifty::Filter::DateTime promotes DateTime objects to Jifty::DateTime
@@ -61,6 +70,11 @@ sub decode {
 
 L<Jifty::DBI::Filter::Date>, L<Jifty::DBI::Filter::DateTime>,
 L<Jifty::DateTime>
+
+=head1 LICENSE
+
+Jifty is Copyright 2005-2007 Best Practical Solutions, LLC.
+Jifty is distributed under the same terms as Perl itself.
 
 =cut
 
