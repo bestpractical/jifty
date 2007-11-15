@@ -24,7 +24,7 @@ function _get_named_args(args) {
 }
 
 function _get_onclick(action_hash, name, args, path) {
-    var onclick = 'if(event.ctrlKey||event.metaKey||event.altKey||event.shiftKey) return true; return update('
+    var onclick = 'if(event.ctrlKey||event.metaKey||event.altKey||event.shiftKey) return true; return Jifty.update('
     + JSON.stringify({'continuation': {},
                       'actions': action_hash,
                       'fragments': [{'mode': 'Replace', 'args': args, 'region': name, 'path': path}]})
@@ -519,9 +519,9 @@ Object.extend(Form.Element, {
     getAction: function (element) {
         element = $(element);    
         var moniker = Form.Element.getMoniker(element);
-        if (!current_actions[moniker])
-            current_actions[moniker] = new Action(moniker);
-        return current_actions[moniker];
+        if (!current_actions.get(moniker))
+            current_actions.set(moniker, new Action(moniker));
+        return current_actions.get(moniker);
     },
 
     // Returns the name of the field
@@ -609,14 +609,14 @@ Object.extend(Form.Element, {
         var pairs = element.getAttribute("name").split("|");
         for (var i = 0; i < pairs.length; i++) {
             var bits = pairs[i].split('=',2);
-            extras[bits[0]] = bits[1];
+            extras.set(bits[0], bits[1]);
         }
         return extras;
     },
 
     buttonActions: function(element) {
         element = $(element);
-        var actions = Form.Element.buttonArguments(element)['J:ACTIONS'];
+        var actions = Form.Element.buttonArguments(element).get('J:ACTIONS');
         if(actions) {
             return actions.split(",");
         } else {
@@ -634,7 +634,7 @@ Object.extend(Form.Element, {
             var e = document.createElement("input");
             e.setAttribute("type", "hidden");
             e.setAttribute("name", keys[i]);
-            e.setAttribute("value", args[keys[i]]);
+            e.setAttribute("value", args.get(keys[i]));
             e['virtualform'] = Form.Element.getForm(element);
             extras.push(e);
         }
@@ -737,8 +737,8 @@ Region.prototype = {
         this.name = name;
         this.args = $H(args);
         this.path = path;
-        this.parent = parent ? fragments[parent] : null;
-        if (fragments[name]) {
+        this.parent = parent ? fragments.get(parent) : null;
+        if (fragments.get(name)) {
             // If this fragment already existed, we want to wipe out
             // whatever evil lies we might have said earlier; do this
             // by clearing out everything that looks relevant
@@ -747,12 +747,12 @@ Region.prototype = {
                 var k = keys[i];
                 var parsed = k.match(/^(.*?)\.(.*)/);
                 if ((parsed != null) && (parsed.length == 3) && (parsed[1] == this.name)) {
-                    delete current_args[k];
+                    current_args.unset(k);
                 }
             }
         }
 
-        fragments[name] = this;
+        fragments.set(name, this);
     },
 
     setPath: function(supplied) {
@@ -761,7 +761,7 @@ Region.prototype = {
         for (var i = 0; i < keys.length; i++) {
             var k = keys[i];
             if (k == this.name) {
-                this.path = current_args[k];
+                this.path = current_args.get(k);
             }
         }
 
@@ -771,7 +771,7 @@ Region.prototype = {
         }
         
         // Propagate back to current args
-        current_args[this.name] = this.path;
+        current_args.set(this.name, this.path);
 
         // Return new value
         return this.path;
@@ -785,7 +785,7 @@ Region.prototype = {
             var k = keys[i];
             var parsed = k.match(/^(.*?)\.(.*)/);
             if ((parsed != null) && (parsed.length == 3) && (parsed[1] == this.name)) {
-                this.args[parsed[2]] = current_args[k];
+                this.args.set(parsed[2], current_args.get(k));
             }
         }
 
@@ -796,7 +796,7 @@ Region.prototype = {
         keys = supplied.keys();
         for (var i = 0; i < keys.length; i++) {
             var k = keys[i];
-            current_args[this.name+'.'+k] = supplied[k];
+            current_args.set(this.name+'.'+k, supplied.get(k));
         }
         
         // Return new values
@@ -854,12 +854,12 @@ function prepare_element_for_update(f) {
         // If we're removing the element, do it now
         // XXX TODO: Effects on this?
         if (f['mode'] == "Delete") {
-            fragments[name] = null;
+            fragments.set(name, null);
             Element.remove(element);
             return;
         }
 
-        f['is_new'] = (fragments[name] ? false : true);
+        f['is_new'] = (fragments.get(name) ? false : true);
         // If it's new, we need to create it so we can dump it
         if (f['is_new']) {
             // Find what region we're inside
@@ -878,14 +878,14 @@ function prepare_element_for_update(f) {
 
             // Make the region (for now)
             new Region(name, f['args'], f['path'], f['parent']);
-        } else if ((f['path'] != null) && f['toggle'] && (f['path'] == fragments[name].path)) {
+        } else if ((f['path'] != null) && f['toggle'] && (f['path'] == fragments.get(name).path)) {
             // If they set the 'toggle' flag, and clicking wouldn't change the path
             Element.update(element, '');
-            fragments[name].path = null;
+            fragments.get(name).path = null;
             return;
         } else if (f['path'] == null) {
             // If they didn't know the path, fill it in now
-            f['path'] == fragments[name].path;
+            f['path'] == fragments.get(name).path;
         }
 
     return f;    
@@ -931,7 +931,7 @@ var extract_cacheable = function(fragment, f) {
 //   - f: fragment spec
 var apply_fragment_updates = function(fragment, f) {
     // We found the right fragment
-    var dom_fragment = fragments[f['region']];
+    var dom_fragment = fragments.get(f['region']);
     var new_dom_args = $H();
 
     var element = f['element'];
@@ -947,7 +947,7 @@ var apply_fragment_updates = function(fragment, f) {
             } else if (fragment_bit.firstChild) {
                 textContent = fragment_bit.firstChild.nodeValue;
             }
-            new_dom_args[fragment_bit.getAttribute("name")] = textContent;
+            new_dom_args.set(fragment_bit.getAttribute("name"), textContent);
         },
       content: function(fragment_bit) {
             var textContent = '';
@@ -1001,7 +1001,7 @@ var apply_fragment_updates = function(fragment, f) {
 //     - 'element' is the CSS selector of the element to update, if 'region' isn't supplied
 //     - 'mode' is one of 'Replace', or the name of a Prototype Insertion
 //     - 'effect' is the name of a Prototype Effect
-function update() {
+Jifty.update = function () {
     // loads
     if(!Ajax.getTransport()) return true;
     // XXX: prevent default behavior in IE
@@ -1019,7 +1019,7 @@ function update() {
     var disabled_elements = $A();
 
     // Set request base path
-    request['path'] = '/__jifty/webservices/xml';
+    request.set('path', '/__jifty/webservices/xml');
 
     // Grab extra arguments (from a button)
     var button_args = Form.Element.buttonFormElements(trigger);
@@ -1039,11 +1039,11 @@ function update() {
         optional_fragments = [ prepare_element_for_update({'mode':'Replace','args':{},'region':'__page','path': null}) ];
     // Build actions structure
     var has_request = 0;
-    request['actions'] = $H();
+    request.set('actions', $H());
     for (var moniker in named_args['actions']) {
         var disable = named_args['actions'][moniker];
         var a = new Action(moniker, button_args);
-            current_actions[moniker] = a; // XXX: how do i make this bloody singleton?
+            current_actions.set(moniker, a); // XXX: how do i make this bloody singleton?
         // Special case for Redirect, allow optional, implicit __page
         // from the response to be used.
         if (a.actionClass == 'Jifty::Action::Redirect')
@@ -1066,13 +1066,13 @@ function update() {
                     fields[argname] = { value: override[argname] };
                 }
             }
-            request['actions'][moniker] = param;
+            request.get('actions').set(moniker, param);
             ++has_request;
         }
 
     }
 
-    request['fragments'] = $H();
+    request.set('fragments', $H());
     var update_from_cache = new Array;
 
     // Build fragments structure
@@ -1087,7 +1087,7 @@ function update() {
             var content_node = document.createElement('content');
             var cached_result;
 
-            Jifty.Web.current_region = fragments[f['region']];
+            Jifty.Web.current_region = fragments.get(f['region']);
             try { cached_result = apply_cached_for_action(cached['content'], []) }
             catch (e) { alert(e) }
 
@@ -1107,7 +1107,7 @@ function update() {
             my_fragment.setAttribute('id', f['region']);
             update_from_cache.push(function(){
                     var cached_result;
-                    Jifty.Web.current_region = fragments[f['region']];
+                    Jifty.Web.current_region = fragments.get(f['region']);
                     try {
                         cached_result = apply_cached_for_action(cached['content'], Form.getActions(form));
                     }
@@ -1134,14 +1134,14 @@ function update() {
 
         // Update with all new values
         var name = f['region'];
-        var fragment_request = fragments[name].data_structure(f['path'], f['args']);
+        var fragment_request = fragments.get(name).data_structure(f['path'], f['args']);
 
         if (f['is_new'])
             // Ask for the wrapper if we are making a new region
             fragment_request['wrapper'] = 1;
 
         // Push it onto the request stack
-        request['fragments'][name] = fragment_request;
+        request.get('fragments').set(name, fragment_request);
         ++has_request;
     }
 
@@ -1169,7 +1169,7 @@ function update() {
                                       var text = error.textContent
                                           ? error.textContent
                                           : (error.firstChild ? error.firstChild.nodeValue : '');
-                                      var action = current_actions[moniker];
+                                      var action = current_actions.get(moniker);
                                       action.result.field_error[field.getAttribute("name")] = text;
                                       }
                               }});
@@ -1226,15 +1226,15 @@ function update() {
     };
 
     // Build variable structure
-    request['variables'] = $H();
+    request.set('variables', $H());
     var keys = current_args.keys();
     for (var i = 0; i < keys.length; i++) {
         var k = keys[i];
-        request['variables']['region-'+k] = current_args[k];
+        request.get('variables').set('region-'+k, current_args.get(k));
     }
 
     // Build continuation structure
-    request['continuation'] = named_args['continuation'];
+    request.set('continuation', named_args['continuation']);
 
     // Push any state variables which we set into the forms
     for (var i = 0; i < document.forms.length; i++) {
@@ -1243,20 +1243,20 @@ function update() {
         for (var j = 0; j < keys.length; j++) {
             var n = keys[j];
             if (form['J:V-region-'+n]) {
-                form['J:V-region-'+n].value = current_args[n];
+                form['J:V-region-'+n].value = current_args.get(n);
             } else {
                 var hidden = document.createElement('input');
                 hidden.setAttribute('type',  'hidden');
                 hidden.setAttribute('name',  'J:V-region-'+n);
                 hidden.setAttribute('id',    'J:V-region-'+n);
-                hidden.setAttribute('value', current_args[n]);
+                hidden.setAttribute('value', current_args.get(n));
                 form.appendChild(hidden);
             }
         }
     }
 
     // Set up our options
-    var options = { postBody: JSON.stringify(request),
+    var options = { postBody: request.toJSON(), //JSON.stringify(request.toObject),
                     onSuccess: onSuccess,
                     onException: onFailure,
                     onFailure: onFailure,
@@ -1269,6 +1269,11 @@ function update() {
                      options
                     );
     return false;
+}
+
+function update ( named_args, trigger ) {
+    alert( 'please use Jifty.update instead of update.' );
+    return Jifty.update( named_args, trigger );
 }
 
 function trace( msg ){
@@ -1411,10 +1416,10 @@ Object.extend(Object.extend(Jifty.Autocompleter.prototype, Ajax.Autocompleter.pr
   getUpdatedChoices: function() {
       var request = { path: this.url, actions: {} };
 
-      var a = $H();
+      var a = {}; //$H();
       a['moniker'] = 'autocomplete';
       a['class']   = 'Jifty::Action::Autocomplete';
-      a['fields']  = $H();
+      a['fields']  = {}; //$H();
       a['fields']['moniker']  = this.action.moniker;
       a['fields']['argument'] = Form.Element.getField(this.field);
       request['actions']['autocomplete'] = a;
@@ -1515,33 +1520,39 @@ function _sp_submit_form(elt, event, submit_to) {
     // and then merge them.
     var hiddens = $H();
     var buttons = $H();
-    var inputs = $H()
+    var inputs = $H();
     for (var i = 0; i < elements.length; i++) {
         var e = elements[i];
         var parsed = e.getAttribute("name").match(/^J:V-region-__page\.(.*)/);
         var extras = Form.Element.buttonArguments(e);
-        if (extras.keys().length > 0) {
+        if (extras.keys().length > 1) {
             // Button with values
             for (var j = 0; j < extras.keys().length; j++) {
+                if ( extras.keys()[j] == 'extend' ) continue;
                 // Might also have J:V mappings on it
                 parsed = extras.keys()[j].match(/^J:V-region-__page\.(.*)/);
                 if ((parsed != null) && (parsed.length == 2)) {
-                    buttons[parsed[1]] = extras.values()[j];
+                    buttons.set(parsed[1], extras.values()[j]);
                 } else if (extras.keys()[j].length > 0) {
-                    inputs[extras.keys()[j]] = extras.values()[j];
+                    inputs.set(extras.keys()[j], extras.values()[j]);
                 }
                 
             }
         } else if ((parsed != null) && (parsed.length == 2)) {
             // Hidden default
-            hiddens[parsed[1]] = $F(e);
+            hiddens.set(parsed[1], $F(e));
         } else if (e.name.length > 0) {
             // Straight up values
-            inputs[e.name] = $F(e);
+            inputs.set(e.name, $F(e));
         }
     }
 
     var args = hiddens.merge(buttons.merge(inputs));
+
+    /* we want to feed a common object instead of a Hash to Jifty.update */ 
+    var args_object = {};
+    args.each( function( pair ) { args_object[pair.key] = pair.value; } );
+
     if(event.ctrlKey||event.metaKey||event.altKey||event.shiftKey) return true;
-    return update( {'continuation':{},'actions':null,'fragments':[{'mode':'Replace','args':args,'region':'__page','path': submit_to}]}, elt );
+    return Jifty.update( {'continuation':{},'actions':null,'fragments':[{'mode':'Replace','args':args_object,'region':'__page','path': submit_to}]}, elt );
 }
