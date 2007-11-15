@@ -576,6 +576,15 @@ will return a nice short human readable description for this record.
 
 sub _brief_description {'name'}
 
+=head2 null_reference
+
+By default, L<Jifty::DBI::Record> returns C<undef> on non-existant
+related fields; Jifty prefers to get back an object with an undef id.
+
+=cut
+
+sub null_reference { 0 }
+
 =head2 _new_collection_args
 
 Overrides the default arguments which this collection passes to new
