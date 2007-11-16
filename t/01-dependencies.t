@@ -21,8 +21,6 @@ sub wanted {
     return unless -f $_;
     return if $File::Find::dir =~ m!/.svn($|/)!;
     return if $File::Find::name =~ /~$/;
-    return if $File::Find::name =~ /generate-changelog/;
-    return if $File::Find::name =~ /sort-changelog/;
     return if $File::Find::name =~ /\.(pod|html)$/;
     
     # read in the file from disk
