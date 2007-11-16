@@ -295,7 +295,7 @@ sub page (&;$) {
         my $wrapper = Jifty->app_class('View')->can('wrapper') || \&wrapper;
         my @metadata = $meta ? $meta->() : ();
         my $metadata = $#metadata == 0 ? $metadata[0] : {@metadata};
-        local *is::title = sub { warn "Can't use 'title is' when mixing mason and TD" };
+        local *is::title = sub { Carp::carp "Can't use 'title is' when mixing mason and TD" };
         $wrapper->( sub { $code->( $self, $metadata ) }, $metadata );
     }
 }
