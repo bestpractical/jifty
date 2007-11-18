@@ -48,13 +48,27 @@ sub run {
     if ( $self->{create_all_tables} ) {
         $self->create_all_tables();
     } elsif ( $self->{'setup_tables'} ) {
-        $self->upgrade_jifty_tables();
-        $self->upgrade_application_tables();
-        $self->upgrade_plugin_tables();
+        $self->run_upgrades();
     } else {
         print "Done.\n";
     }
 }
+
+
+=head2 run_upgrades
+
+Take the actions we need in order to bring an existing database up to current.
+
+=cut
+
+sub run_upgrades {
+    my $self = shift;
+        $self->upgrade_jifty_tables();
+        $self->upgrade_application_tables();
+        $self->upgrade_plugin_tables();
+
+}
+
 
 =head2 setup_environment
 
