@@ -7,6 +7,14 @@ package Jifty::JSON;
 
 Jifty::JSON -- Wrapper around L<JSON>
 
+=head1 SYNOPSIS
+
+  use Jifty::JSON;
+
+  # Even though you might be using JSON::Syck, use the original JSON names
+  my $obj  = jsonToObj(q! { 'x': 1, 'y': 2, 'z': 3 } !);
+  my $json = objToJson($obj);
+
 =head1 DESCRIPTION
 
 Provides a wrapper around the L<JSON> library.
@@ -26,14 +34,21 @@ L<JSON>, as it provides native support for single-quoted strings.
 =cut
 
 BEGIN {
+    # Errors that happen here, stay here.
     local $@;
+
+    # We're hacking, so tell the nannies to leave for a minute
     no strict 'refs';
     no warnings 'once';
+
+    # If a good version of JSON::Syck is available use that...
     if (eval { require JSON::Syck; JSON::Syck->VERSION(0.05) }) {
         *jsonToObj = *_jsonToObj_syck;
         *objToJson = *_objToJson_syck;
         $JSON::Syck::ImplicitUnicode = 1;
     }
+
+    # Bummer, fallback to the pure Perl implementation
     else {
         require JSON;
         *jsonToObj = *_jsonToObj_pp;
@@ -112,5 +127,12 @@ sub _objToJson_pp {
     };
     return JSON::objToJson($obj, $args);
 }
+
+=head1 LICENSE
+
+Jifty is Copyright 2005-2006 Best Practical Solutions, LLC.
+Jifty is distributed under the same terms as Perl itself.
+
+=cut
 
 1;

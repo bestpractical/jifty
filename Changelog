@@ -1,3 +1,696 @@
+Jifty 0.71116
+
+I18N
+====
+
+ * Delay i18n handle init until we have session. SkeletonApp dispatcher rule
+   to set language in session. - clkao
+
+ * I18N plugin: log when user is somehow able to pass in disallowed lang.
+   inline the initial dictionary json. - clkao
+
+ * I18N: load json dict from absolute path. - clkao
+
+ * I18N::Action::SetLang: scalar::defer is trigger some oddness, rewrite
+   available languages as normal runtime code, and cached. - clkao
+
+ * I18n: fix json dictionary fallback. - clkao
+
+ * Jifty::I18N - POD fixup. - audreyt
+
+ * Jifty::I18N: Implement the L10N.AllowedLang key to limit the set of
+   languages available to the user. Use case: ja.po is incomplete and we wish
+   to hide it from users. Requested by: clkao - audreyt
+
+ * Jifty::I18N: provide available_languages method. - clkao
+
+ * Jifty::I18N::promote_encoding - r4286 by yours truly broke auto- decoding
+   for POST requests. This is a better fix to avoid the "Unquoted / not
+   allowed in Content-Type" warning (which arugably is a
+   Email::MIME::ContentType glitch), by scanning the Content- Type header for
+   the substring "charset" before parsing it. This way, when "charset" is not
+   found in that header, we still fallback to Encode::Guess, regardless of
+   whether the request was of type "multipart/form-data". - audreyt
+
+ * Jifty::I18N::promote_encoding: Multi-part form data have no notion of
+   charsets, so we return the string verbatim here, to avoid the "Unquoted /
+   not allowed in Content-Type" warnings when the Base64- encoded MIME
+   boundary string contains "/". Prompted by this Content- Type header found
+   in real world: multipart/form-data; boundary=----
+   WebKitFormBoundaryRqXyEnBQ/5VSsexe which triggered this error: --
+   2007/10/22 04:19:30 WARN> Carp.pm:46 Carp::carp Unquoted / not allowed in
+   Content-Type! at /usr/local/lib/perl5/site_perl/5.9.5/Jifty/I18N.pm line
+   226 -- 2007/10/22 04:19:30 WARN> Carp.pm:46 Carp::carp Illegal Content-
+   Type parameter /5VSsexe at
+   /usr/local/lib/perl5/site_perl/5.9.5/Jifty/I18N.pm line 226 - audreyt
+
+ * Jifty::Plugin::I18N: provides SetLang action. provides loc.js and other
+   facilities to l10n your javascript along with po. - clkao
+
+ * Provide get_current language method in Jifty::I18N. - clkao
+
+ * Support serving json version of po and localization in javascript
+   space. - clkao
+
+ * Update zh-tw po to include translations for authentication::password
+   plugin. - clkao
+
+ * allow switching current language for Localization. - clkao
+
+ * bin/jifty po now takes two more options: --dir for additional directories
+   to look at so javascript files can be scanned. --js for generating json
+   dictionaries for messages appeared in javascript files declared with
+   Jifty::Web. - clkao
+
+ * loc.js cleanups. - clkao
+
+ * updated ja.po - ishigaki
+
+ * zh_tw l10n for Authenication::Password plugin. - clkao
+
+BUGFIX
+======
+
+ * Added missing jifty-result-popup div to the page detritus section of
+   Jifty::View::Declare::Page. - sterling
+
+ * Allow users to name their apps in lowercase (as pragmas ?!). Reported by
+   SteveH++ - jesse
+
+ * Bring the default back, but at 0.0.0 to prevent uninitialized complaints.
+   - sterling
+
+ * Class::Accessor::Fast cleanups - jesse
+
+ * Clean up Jifty::Web initialization a bit. - jesse
+
+ * Clean up the masonXXXXXXXXXX temp directory after each test run. - sterling
+
+ * Do not do clever & broken input_name for buttons when preserve_state is
+   false. - clkao
+
+ * Don't do weird things with loading model subclasses - jesse
+
+ * Don't override object_type if the CRUD view package already defines
+   object_type. - sterling
+
+ * Fix compatibility with Test::WWW::Mechanize - jesse
+
+ * Fix mismerge.. - sartak
+
+ * Fixes to several of my fixes for
+   Jifty::Request::load_from_data_structure - jesse
+
+ * Fixing a bug that prevents any but the first plugin being checked for
+   schema updates. - sterling
+
+ * Fixing a typo in the plugin DB version metadata key affecting upgrades.
+   - sterling
+
+ * Horrible Hash::Merge workaround, part 2 - alexmv
+
+ * Improving schema setup for plugins that are turned on after the application
+   is initially deployed. - sterling
+
+ * Jifty::Request::Mapper - Avoid uninitialized warnings when
+   $args{destination} ends up undefined. - audreyt
+
+ * Make sure Jifty::Filter::DateTime doesn't disturb Floating datetimes
+   Otherwise, dates would get set to the current_user's timezone, throwing a
+   wrench in the works - sartak
+
+ * Menu class is undef by default; fall back to the empty string - alexmv
+
+ * Minor edit: fixing reference to Jifty::Request::Action to Jifty::Action
+   - sterling
+
+ * Pg wants to connect to template1, but CREATE DATABASE foo TEMPLATE
+   template0 - alexmv
+
+ * Plugin upgrade incorrectly assumes a DB version of 0.0.1 when none is
+   found. - sterling
+
+ * Rather than helpfully failing to load model classes that have
+   compiletime errors, actually die with the error that caused the class
+   not to load. - jesse
+
+ * Remove debug info. - clkao
+
+ * Remove debugging statement - alexmv
+
+ * Removing the display style from the jifty-result-popup, which is breaking
+   it. - sterling
+
+ * Revert clkao's fixes for now because they break apps :/ - sartak
+
+ * Revert r4117 as the element readiness state is not compatible with what it
+   was. - clkao
+
+ * Reverting the addition of these files which were added by a push error.
+   - sterling
+
+ * Some databases have schema creation single-threadedness. If they block,
+   wait and retry for up to a minute - jesse
+
+ * Some parts of that last commit to use only one Module::Pluggable weren't as
+   hot as they appeared to be; - jesse
+
+ * The JIFTY_SITE_CONFIG environment variable was silently ignored. - audreyt
+
+ * Undoing 4302. There is such a class. Thanks to chmrr. - sterling
+
+ * Undoing previous accidental patch to Jifty::Continuation because I have not
+   finished proofing it. - sterling
+
+ * Use ->clone on DateTime objects to avoid possible DST issues, etc - sartak
+
+ * Use blessed() instead of ref() to keep an if statement from tripping on
+   ->isa(). - sterling
+
+ * We depend on the bugfix that
+   File::Spec->rel2abs("/foo","/foo") eq "." - alexmv
+
+ * When it's a ::Create action, $event_info won't have a record_id there,
+   cause a fatal error when it's published latter. - gugod
+
+ * When loading a web request from a data structure, don't totally throw away
+   the path it was requested at. - jesse
+
+ * Work around a "feature" in Hash::Merge < 0.10 - alexmv
+
+ * carp, don't warn, for a "title" Mason/TD warning - sartak
+
+ * collection generator may be called when we're loading models and not all
+   models have been loaded to the moment, so we have to try to require the
+   model before testing if it esists. - ruz
+
+ * don't gen a collection class if there is no model - ruz
+
+ * don't warn if database doesn't exist when dropping database - sunnavy
+
+ * friendly_date should be relative to the user, not floating - sartak
+
+ * no need to print STDERR, we can warn in $SIG{__WARN__} - sunnavy
+
+ * oops, should look for js files under js. - clkao
+
+ * our version of prototype can't deal with synchronous request. - clkao
+
+ * revert changes to ClassLoader. Collection classes are failing to be
+   generated in some TD views - falcone
+
+ * rollback r4242 which cached the gzipped js/css even through develmode
+   reload. - clkao
+
+ * tabview shouldn't force absolute paths to relative ones - jesse
+
+ * warnings should be to STDERR - sunnavy
+
+ * we want to compute UUIDs every time. really. it's not useful to always have
+   the same uuid - jesse
+
+ * webservices_rediret: don't redirect if there's any failed action. - clkao
+
+CORE
+====
+
+ * Add Jifty::DateTime::from_epoch which does our usual timezone magic, use
+   set_current_user_timezone more, too - sartak
+
+ * Add Jifty::Util->is_app_root to determine whether a path looks enough like
+   the app root - sartak
+
+ * Add a 'now' method to Jifty::DateTime which sets the timezone to the
+   current user's timezone. DateTime::now passes time_zone => UTC to
+   Jifty::DateTime::now, which caused it to skip over the currentuser/timezone
+   magic. - sartak
+
+ * Add a ForwardCompatible config in Database section. The usecase is that
+   when you switch your checkout to something with older version of app
+   schema, you can declare it is compatiable with the future version that is
+   currently in db. - clkao
+
+ * Add a Jifty::DateTime set_current_user_timezone method - sartak
+
+ * Add the ability for apps to have very fine-grained testing (such as
+   overriding config for a subdir of t/, or even a particular test file).
+   Still needs tests and I suppose some more doc :) - sartak
+
+ * Added the ability to craft a Jifty button with a "submit" link which
+   submits hardcoded arguments. - jesse
+
+ * Change how plugin is initialized so _pre_init is actually noted. - clkao
+
+ * Don't require recipients in Jifty::Notificaiton be objects. - clkao
+
+ * Finalize triggers if possible (supported in forthcoming Class::Trigger
+   release). Override JDBI's default of having refers_to null return undef,
+   instead of object with no id. RightsFrom 'foo_id' should work like
+   RightsFrom 'foo' - alexmv
+
+ * Fix the problem of tests having both config and a correctly-relative $0
+   Jifty::SubTest now makes available the old Cwd (which as 03-nosubtest
+   demonstrates doesn't break apps that don't use Jifty::SubTest) Also a bit
+   of doc in Jifty::Config The Feature is Done. :) - sartak
+
+ * Fixes to not cache compressed css+js while in devel mode. Refactoring js
+   compression code into the plugin where it belongs. - jesse
+
+ * Get rid of another place where we had a custom accessor that meant
+   'arguments' - for great consistency - jesse
+
+ * In Jifty::DateTime->new, set the timezone to floating if it looks like just
+   a date - sartak
+
+ * Initial implementation of Jifty::Test::WWW::Declare, with basic tests in
+   TestApp - sartak
+
+ * Just a perltidy - alexmv
+
+ * Make action_arguments effective from js update() - clkao
+
+ * Making the as_*_action() methods accept a paramhash for additional
+   new_action() parameters. - sterling
+
+ * New as_string method for Jifty::Web::Form::Link. - clkao
+
+ * Override T:W:D's get with ours which prepends the server's URL Start
+   documentation - sartak
+
+ * Recursively transform content structures. Set a flag when we change the
+   method, in case apps care - alexmv
+
+ * Remove the unused drop-column logic from jifty schema --setup, since
+   ->columns returns only active cols - sartak
+
+ * Ripping out new_record_action() from Jifty::Web. Re-implementing it as
+   as_create_action(), as_update_action(), as_delete_action, and
+   as_search_action() in Jifty::Record and Jifty::Collection. - sterling
+
+ * Test config loading is now complete code-wise :) And it has tests now too!
+   Just need to doc it in manual or Jifty::Config - sartak
+
+ * Untabify - alexmv
+
+ * Updated the JSON and YAML transports for web service requests to allow
+   complex data structures in actions - jesse
+
+ * Updating the Jifty web menu component to respect classes added by
+   users - jesse
+
+ * allow onsubmit in form to include custom javascript. - clkao
+
+ * if refers_to is not mandatory field then add 'no_value' option to
+   select box - ruz
+
+ * merged prototype-1.6 to trunk - sunnavy
+
+ * use object calls instead of instance calls. use better handling of roots
+   so server relative paths work as expected unless you're bind to a
+   location - ruz
+
+ * working toward onclick => { submit => { action => $action, arguments
+   => { foo => 'value', bar => 'other value'} }} Jifty's js still needs
+   help - jesse
+
+CRUD
+====
+
+ * added a bit more semantic markup to the crud view - jesse
+
+DOC
+===
+
+ * A lot of POD for OAuth, and some tiny fixes elsewhere - sartak
+
+ * Add a Jifty::Manual which lists each of the manuals with a short
+   description. Secret confession: I was tired of perldoc Jifty::Manual::<tab>
+   failing :) - sartak
+
+ * Added a synopsis and license section to docs. - sterling
+
+ * Adding a description to Jifty::Everything docs. - sterling
+
+ * Adding another CRUD setup example to the synopsis. - sterling
+
+ * Adding documentation for Action and Static attributes to resolve POD
+   coverage test failures. - sterling
+
+ * Another example app: ShrinkURL, which is basically (surprise!)
+   tinyurl - sartak
+
+ * Clean up the Pod, added a Synopsis, added a Why? section, added code
+   comments, and some code tidying. - sterling
+
+ * Cleaning up documentation to fix pod coverage test failures. - sterling
+
+ * Doc - sartak
+
+ * Fix Jifty::Server::Prefork's document so it mentions Net::Server::PreFork,
+   instead of Net::Server::Prefork. (Yes this is very confusing.) - audreyt
+
+ * Fix package names, add copyright notices - sartak
+
+ * Fixing POD coverage errors in the AutoReference plugin. - sterling
+
+ * Fixing pod coverage problems with the jQuery plugin. - sterling
+
+ * Improving POD and minor tidying. - sterling
+
+ * Include the http method (GET, POST, etc) in the debug message - sartak
+
+ * Jifty::Notification - Minor doc fix - The html_body method was misspelled
+   as html-body. - audreyt
+
+ * More comments - sartak
+
+ * POD clean-up, some code commenting, and minor tidying. - sterling
+
+ * POD for LeakTracker's subs - sartak
+
+ * POD re-wrapping. perltidy. Use Jifty::DBI's new ->_new_record_args and
+   _new_collection_args. Bump the JDBI dep accordingly - alexmv
+
+ * SendFeedback.pm: Take away the phrase "hiveminder" from the
+   documentation. - audreyt
+
+ * Simplifying the CRUD code for generating the record_class and making it
+   more flexible. Adding a stub for CRUD testing. - sterling
+
+ * a tiny change and typo fix - sunnavy
+
+ * doc fixes - sunnavy
+
+ * pod fixes - jesse
+
+ * tiny typo fix - sunnavy
+
+ * typo fix - sunnavy
+
+ * updated my email address in AUTHORS to agentzh@agentzh.org - agentz
+
+INSTALL
+=======
+
+ * Add changelogger dependencies - sartak
+
+ * Added requirement for URI 1.31, which adds uri_escape_utf8(). - sterling
+
+ * Adding File::Temp 0.15 requirement for cleanup(). - sterling
+
+ * Bump JDBI dep to 0.45 (Filter::DateTime changes) - sartak
+
+ * Force a clone which doesn't have as many bugs - alexmv
+
+ * Jifty::DBI now uses Class::Trigger instead of Jifty::DBi::Class::Trigger
+   (since rev3968) - ishigaki
+
+ * Make Test::WWW::Declare an optional dep for now - sartak
+
+ * Modules other than Net::OAuth::Request in Net-OAuth distro don't have
+   version - ishigaki
+
+ * Move memleak deps into its own Makefile.PL section - sartak
+
+ * Removing Test::Log4perl. It isn't used anywhere anymore. - sterling
+
+ * Require Net::OAuth 0.04 because 0.03 needs my patch. Don't run tests if
+   Net::OAuth is uninstalled - sartak
+
+ * added Test::Log4perl dep again; it is surely used at t/TestApp/t/02-dispatch-show-rule-in-wrong-
+   ruleset.t - ishigaki
+
+ * older Email::LocalDelivery is buggy. - clkao
+
+ * require CSS::Squish 0.07, no need to call _resolve_file any more - sunnavy
+
+ * we need DateTime::Locale - sunnavy
+
+MISC
+====
+
+ * A command line completion script is added into contrib/ - c9s
+
+ * Add 'performance' tag to sort-changelog - sartak
+
+ * Add another changelog sorting program, this one I think works a bit better
+   :) - sartak
+
+ * Remove bin/*-changelog, as they've been moved into their own dist, App-
+   Changelogger - sartak
+
+ * Sort change groups by header, typo fix - sartak
+
+ * add a bug tag - falcone
+
+ * add an exclude command for logs you don't need to ship - falcone
+
+ * fix so we don't try to print to a bogus filehandle - falcone
+
+ * make format_entry return text rather than printing. use the returned
+   message to generate the changelog rather than printing to STDOUT - falcone
+
+ * remove doubled loop over log messages. explicitly loop over
+   uncategorized first, then offer the user to review all the changes
+   again. reformatting - falcone
+
+ * talk about how to do iterative editing - falcone
+
+ * usage documentation - falcone
+
+ * use existing t-discard tag. don't autoskip things, just group them together
+   and you can delete them - falcone
+
+PERFORMANCE
+===========
+
+ * The cache was actually a huge performance problem - jesse
+
+ * Use much less UNIVERSAL::require (to shave a second or two off start
+   times) - jesse
+
+ * When replacing a region, use the technique described in
+   http://blog.stevenlevithan.com/archives/faster-than-innerhtml to improve
+   performance. - clkao
+
+ * Cache gzipped output from the compressedcssandjs plugin - jesse
+
+ * Fix a bug that after you access a static css file, it breaks the compressed
+   css by not actually squishing main.css, hence requests static css files
+   under __jifty/css. - clkao
+
+ * In Jifty::Model::Session: Turn session_id, data_key, key_type into
+   case_sensitive, so we don't do useless tolower on loading sessions. index
+   session_id by default. - clkao
+
+ * Switch to a single call to Module::Pluggable to help improve startup
+   performance. - jesse
+
+PLUGIN
+======
+
+ * Add an additional trigger in Clickable for SinglePage to filter out state
+   variables for region-__page. - clkao
+
+ * Add cdn option to CompressedCSSandJS plugin. - clkao
+
+ * Add new LeakDetector plugin. It kinda sorta works :) - sartak
+
+ * Added a new plugin that provides an autocomplete widget specially for
+   record references. Helpful in cases when a select is just be too big to
+   contemplate. - sterling
+
+ * Adding missing JavaScript file and cleaning up a method left-over from
+   testing. - sterling
+
+ * Expanded the previous fix to cover sticky values and the initial value in
+   the input tag. - sterling
+
+ * Fix it so that AutoReference fields show the _brief_description rather than
+   the id in read mode. - sterling
+
+ * Fixed AutoReference so that it is possible to set the field to empty if not
+   mandatory. - sterling
+
+ * Fixed a problem where AutoReference breaks in Search actions. - sterling
+
+ * Fixed the feedback plugin so it works even if the current user doesn't have
+   permission to read their own email. - chapman
+
+ * Fixing the data fetcher on the AutoReference box so that it sends the text
+   being typed rather than the current value in the hidden field. - sterling
+
+ * Get rid of spurious warning in Auth::Password plugin - sartak
+
+ * Handle region redirect with continuation return (for spa). - clkao
+
+ * Implement callback URLs and test them - sartak
+
+ * Include the list of object types leaked in the request report - sartak
+
+ * Make find_plugins() sensitive to wantarray. - sterling
+
+ * Many improvements, including some pages - sartak
+
+ * Modified the JS to ignore the [id:1] text at the end of the references.
+   - sterling
+
+ * More cleanup, hide zero-leak requests by default - sartak
+
+ * More fixes to get protected resource requests going. We might need a
+   WWW::Mechanize::OAuth subclass, so that each get/post will be properly
+   wrapped as an OAuth request - sartak
+
+ * Move files from LeakDetector to LeakTracker (because that's the term Cat
+   uses) - sartak
+
+ * Name the first Jifty->new during test 'pre_init', and tell plugins not to
+   register triggers just yet to avoid duplicated triggers. - clkao
+
+ * Now we send responses to token requests (and test them) What's left:
+   Authorizing request tokens is coded, but it's slightly flawed somehow
+   Getting access tokens is coded, but not tested No code yet for the actual
+   accessing of resources - sartak
+
+ * Patch by Alex to make sp_submit_form to be happier with J:V vars. - clkao
+
+ * Provide an after_include_javascript for plugins to do javascript
+   initialisation. - clkao
+
+ * Refactor timestamp and nonce out of tokens and into consumers. Thanks to
+   hannesty for discussing how it should work - sartak
+
+ * Some cleanups in LeakDetector - sartak
+
+ * Some more fleshing out of the OAuth plugin - sartak
+
+ * Somehow this file got duplicated. I might've done it. shrug - sartak
+
+ * Start adding an OAuth plugin - sartak
+
+ * Start writing tests Change timestamp to (ugh) time_stamp, because timestamp
+   is a reserved word in a few SQL apps - sartak
+
+ * The REST dispatcher should warn $@ if an error occurs - sartak
+
+ * Turns out we can't (so easily) have the URLs be configurable. Not too much
+   of a problem though Other fixes - sartak
+
+ * Users can now authorize/deny request tokens - sartak
+
+ * Various improvements of try_oauth so it gets further (but not all the way)
+   in the correct codepath - sartak
+
+ * Various refactors and cleanups Request tokens are now properly set to
+   "used" Life of a request token lengthened on authorize Fixed duplicate
+   timestamp/nonce check (and test) - sartak
+
+ * Whoops, committed in a subdirectory - sartak
+
+ * Whoops, the consumer and user were using the same mech. But fixing that
+   didn't break anything :) - sartak
+
+ * actormetadata: provide a current_user_is_owner method. - clkao
+
+ * default not to preserve state when spa is replacing __page - clkao
+
+ * simplify ccjs plugin with static handler method call. - clkao
+
+ * spa: don't translate javascript: links. - clkao
+
+ * tabview: fix the logic for defered tabs. - clkao
+
+TESTING
+=======
+
+ * Add (grr, passing) tests for setting columns in the test app - sartak
+
+ * Add TestMode: 1 to the default test config - sartak
+
+ * Add some more tests for Jifty::DateTime in the TestApp - sartak
+
+ * Begin adding tests for protected resource requests - sartak
+
+ * Clearing out old new_record_action() tests. - sterling
+
+ * Correctly skip OAuth tests in the absence of Net::OAuth - sartak
+
+ * Dispatcher and config fixes, start adding a new test file - sartak
+
+ * Expand the tests, now they actually test something real! So right now the
+   OAuth plugin is rejecting a few kinds of bad requests (e.g. unknown
+   consumer) while accepting a good request. Now to make more requests of each
+   type :) - sartak
+
+ * First cut of Selenium testing support in Jifty. - clkao
+
+ * Fix test count - alexmv
+
+ * Fixing long-broken support for the "JIFTY_FASTTEST" env variable - jesse
+
+ * Mailboxes need to have unique names for parallel testing - alexmv
+
+ * More tests, start implementing callbacks, but failing :) - sartak
+
+ * Most AccessToken tests done :) first implementation was right on - sartak
+
+ * Refactor the tests - sartak
+
+ * Skip OAuth tests if Crypt::OpenSSL::RSA is unavailable RSA should be
+   optional, will fix later - sartak
+
+ * The first few test scripts are now complete, and uncovered many bugs.
+   Yay. - sartak
+
+ * When testing, don't just use a single global test database. Instead, use
+   one per testfile. This allows some measure of parallelization - jesse
+
+ * Wrote most of the authorization tests - sartak
+
+ * added TestApp-Plugin-OnClick, initially for the update of
+   prototype.js - sunnavy
+
+ * clean dependency test since changelogger has been moved out - sunnavy
+
+ * first cut of tests for singlepage app plugin. - clkao
+
+ * my computer is slow. be more patient about selenium rc startup. - clkao
+
+ * not dep test for bin/sort-changelog - sunnavy
+
+ * only run pod coverage tests if you're a developer - jesse
+
+ * refactor Jifty::Test a bit - sunnavy
+
+ * support SELENIUM_RC_TEST_AGAINST and SELENIUM_RC_BROWSER environment
+   variable, and allow args to be passed into selenium rc invoker. - clkao
+
+VIEW
+====
+
+ * <embed> isn't a tag which gets a close on it - alexmv
+
+ * Add a hook to change a menu item's label - sartak
+
+ * Add support for "title" attribute on elements, which shows tooltips -
+   sartak
+
+ * Added an app_page_footer page call to jifty view declare page - jesse
+
+ * Additional selector to make sure that autocomplete hides .hidden_value on
+   .inline forms. - sterling
+
+ * In TD View handler, don't just return without printing headers if the
+   response content is empty, as when you access /__jifty/empty. - clkao
+
+ * Making Jifty::Web::Menu more extensible. - sterling
+
+ * Upgrade a region error from a debug to a warning. - jesse
+
+
+
+
+
 Jifty 0.70824
 
 INSTALL

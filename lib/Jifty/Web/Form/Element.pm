@@ -560,7 +560,7 @@ sub javascript {
         if ( @fragments or ( !$actions || %$actions ) ) {
 
             my $update = Jifty->web->escape(
-                "Jifty.update( "
+                "update( "
                     . Jifty::JSON::objToJson(
                     {   actions      => $actions,
                         action_arguments => $action_arguments,

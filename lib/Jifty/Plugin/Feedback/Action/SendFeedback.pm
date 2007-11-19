@@ -58,13 +58,19 @@ sub take_action {
     # Fall back to normal email
     my $mail = Jifty::Notification->new;
     $mail->body($msg);
-    $mail->from(
-        (          Jifty->web->current_user->id
-                && Jifty->web->current_user->user_object->can('email')
-        )
-        ? Jifty->web->current_user->user_object->email()
-        : $plugin->from
-    );
+
+    if (    Jifty->web->current_user->id
+         && Jifty->web->current_user->user_object->can('email') ) {
+
+         my $user = Jifty->web->current_user->user_object;
+         my $CurrentUser = Jifty->app_class('CurrentUser');
+         $user->current_user( $CurrentUser->superuser );
+         $mail->from( $user->email() || $plugin->from );
+    }
+    else {
+        $mail->from( $plugin->from );
+    }
+
     $mail->recipients( $plugin->to );
     $mail->subject( "["
             . Jifty->config->framework('ApplicationName')

@@ -363,7 +363,8 @@ sub test_config {
             },
             Mailer => 'Jifty::Test',
             MailerArgs => [],
-            LogLevel => 'WARN'
+            LogLevel => 'WARN',
+            TestMode => 1,
         }
     };
 

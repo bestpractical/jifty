@@ -22,6 +22,7 @@ TestApp::Model::User->add_trigger( before_access => sub {
     }
     return 'ignore';
 });
+TestApp::Model::User->finalize_triggers if TestApp::Model::User->can('finalize_triggers');
 
 # Try creating non-bob, which will be denied
 my $o = TestApp::Model::User->new(current_user => $system_user);

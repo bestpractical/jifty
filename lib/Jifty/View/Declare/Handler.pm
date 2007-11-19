@@ -76,7 +76,7 @@ sub show {
     };
     
     my $content = Template::Declare::Tags::show_page( $template, Jifty->web->request->arguments );
-    return unless defined $content && length $content;
+    return unless defined $content;
 
     my $r = Jifty->handler->apache;
     $r->content_type || $r->content_type('text/html; charset=utf-8'); # Set up a default

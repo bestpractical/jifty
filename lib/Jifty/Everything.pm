@@ -7,6 +7,14 @@ package Jifty::Everything;
 
 Jifty::Everything - Load all of the important Jifty modules at once.
 
+=head1 DESCRIPTION
+
+This package is loaded very early in the processof loading Jifty to bring in all of the wonderful goodies that make up Jifty. If you use L<JIfty>:
+
+  use Jifty;
+
+you use this package, so you should not need to use it yourself in most circumstances.
+
 =cut
 
 use Cwd ();
@@ -80,5 +88,16 @@ use Jifty::Subs::Render ();
 use Jifty::Module::Pluggable;
 #Jifty::Module::Pluggable->import(search_path => ['Jifty::Web::Form::Field'], require     => 1, except      => qr/\.#/);
 #__PACKAGE__->plugins;
+
+=head1 SEE ALSO
+
+L<Jifty>
+
+=head1 LICENSE
+
+Jifty is Copyright 2005-2007 Best Practical Solutions, LLC.
+Jifty is distributed under the same terms as Perl itself.
+
+=cut
 
 1;

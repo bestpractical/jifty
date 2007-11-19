@@ -231,10 +231,10 @@ Effect.Queues = {
   get: function(queueName) {
     if(typeof queueName != 'string') return queueName;
     
-    if(!this.instances.get(queueName))
-      this.instances.set(queueName, new Effect.ScopedQueue());
+    if(!this.instances[queueName])
+      this.instances[queueName] = new Effect.ScopedQueue();
       
-    return this.instances.get(queueName);
+    return this.instances[queueName];
   }
 }
 Effect.Queue = Effect.Queues.get('global');

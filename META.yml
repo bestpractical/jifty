@@ -53,13 +53,14 @@ recommends:
   Test::HTTP::Server::Simple: 0.02
   Test::MockModule: 0.05
   Test::MockObject: 1.07
+  Test::WWW::Declare: 0.01
   WWW::Facebook::API: 0.3.6
   XML::Simple: 0
 requires: 
   App::CLI: 0.03
   CGI: 3.19
   CGI::Cookie::Splitter: 0
-  CSS::Squish: 0.05
+  CSS::Squish: 0.07
   Cache::Cache: 0
   Calendar::Simple: 0
   Class::Accessor: 0
@@ -75,8 +76,9 @@ requires:
   Data::UUID: 0
   Date::Manip: 0
   DateTime: 0
+  DateTime::Locale: 0
   Email::Folder: 0
-  Email::LocalDelivery: 0
+  Email::LocalDelivery: 0.217
   Email::MIME: 0
   Email::MIME::ContentType: 0
   Email::MIME::CreateHTML: 0
@@ -90,6 +92,7 @@ requires:
   File::MMagic: 0
   File::ShareDir: 0.04
   File::Spec: 3.14
+  File::Temp: 0.15
   HTML::Entities: 0
   HTML::Lint: 0
   HTML::Mason: 1.3101
@@ -103,7 +106,7 @@ requires:
   IPC::PubSub: 0.23
   IPC::Run3: 0
   JSON::Syck: 0.15
-  Jifty::DBI: 0.44
+  Jifty::DBI: 0.47
   LWP::UserAgent: 0
   Locale::Maketext::Extract: 0.20
   Locale::Maketext::Lexicon: 0.60
@@ -128,7 +131,6 @@ requires:
   Test::LongString: 0
   Test::More: 0.62
   Test::Pod::Coverage: 0
-  Test::WWW::Declare: 0
   Test::WWW::Mechanize: 1.04
   Test::WWW::Selenium: 0
   UNIVERSAL::require: 0
@@ -142,4 +144,4 @@ requires:
   perl: 5.8.3
   version: 0
 tests: t/*.t t/*/*.t t/*/*/*.t t/*/*/*/*.t
-version: 0.70824
+version: 0.71116
