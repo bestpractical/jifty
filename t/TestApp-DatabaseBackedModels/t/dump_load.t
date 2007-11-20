@@ -28,6 +28,7 @@ my @keys = sort keys %$dumped_bootstrap;
 is_deeply(\@keys, [qw/Jifty::Model::Metadata 
                     Jifty::Model::ModelClass 
                     Jifty::Model::ModelClassColumn
+                    TestApp::DatabaseBackedModels::Model::Warehouse
                     TestApp::DatabaseBackedModels::Model::Widget
                     /]);
 
