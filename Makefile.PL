@@ -177,6 +177,10 @@ features(
         recommends('Crypt::OpenSSL::RSA'),
         recommends('Digest::HMAC_SHA1'),
     ],
+    'Ldap Plugin' => [
+        -default => 0,
+        recommends('Net::LDAP')
+    ]
 );
 
 
