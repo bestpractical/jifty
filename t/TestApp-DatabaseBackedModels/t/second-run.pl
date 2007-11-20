@@ -5,14 +5,14 @@ use strict;
 
 =head1 DESCRIPTION
 
-This is a template for your own tests. Copy it and modify it.
+Run tests with a fresh new Jifty.
 
 =cut
 
 use lib 't/lib';
 use Jifty::SubTest;
 
-use Jifty::Test tests => 27;
+use TestApp::DatabaseBackedModels::Test tests => 27;
 
 ok(1, "Loaded the test script");
 

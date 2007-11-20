@@ -163,6 +163,13 @@ sub add_column {
     $column->refers_to( $col->refers_to_class ) if $col->refers_to_class;
     $column->by( $col->refers_to_by ) if $col->refers_to_by;
 
+    # Try to load a collection reference ahead of time to make sure it gets
+    # proper handling when the methods are generated
+    if (defined $column->refers_to
+            and $column->refers_to =~ /::([^\.]+)Collection$/) {
+        $column->refers_to->require;
+    }
+
     $column->default( $col->default_value );
     $column->distinct( $col->distinct_value ) if $col->distinct_value;
     $column->type( $col->storage_type ) if $col->storage_type;
