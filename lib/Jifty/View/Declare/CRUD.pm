@@ -589,7 +589,7 @@ Paging for your list, rendered at the top of the list
 private template 'paging_top' => sub {
     my $self       = shift;
     my $collection = shift;
-    my $page       = shift;
+    my $page       = shift || 1;
 
     if ( $collection->pager->last_page > 1 ) {
         span {

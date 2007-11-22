@@ -289,6 +289,7 @@ sub guess {
                 Backend => 'Memcached',
             },
             Database         => {
+                AutoUpgrade => 1,
                 Database =>  $db_name,
                 Driver   => "SQLite",
                 Host     => "localhost",

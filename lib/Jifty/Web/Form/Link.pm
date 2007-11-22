@@ -31,8 +31,8 @@ L<Jifty::Web::Form::Element/accessors>.
 
 =cut
 
-sub accessors { shift->SUPER::accessors(), qw(url escape_label tooltip target); }
-__PACKAGE__->mk_accessors(qw(url escape_label tooltip target));
+sub accessors { shift->SUPER::accessors(), qw(url escape_label tooltip target rel); }
+__PACKAGE__->mk_accessors(qw(url escape_label tooltip target rel));
 
 =head2 new PARAMHASH
 
@@ -75,6 +75,7 @@ sub new {
         tooltip      => undef,
         escape_label => 1,
         class        => '',
+        rel          => '',
         target       => '' }, $args );
 
     return $self;
@@ -110,6 +111,7 @@ sub as_string {
     $output .= (qq( title="@{[$tooltip]}"))       if defined $tooltip;
     $output .= (qq( target="@{[$self->target]}")) if $self->target;
     $output .= (qq( accesskey="@{[$self->key_binding]}")) if $self->key_binding;
+    $output .= (qq( rel="@{[$self->rel]}"))       if $self->rel;
     $output .= (qq( href="@{[Jifty->web->escape($self->url)]}"));
     $output .= ( $self->javascript() );
     $output .= (qq(>$label</a>));
