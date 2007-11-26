@@ -1261,12 +1261,9 @@ Ajax.Request = Class.create(Ajax.Base, {
       'Accept': 'text/javascript, text/html, application/xml, text/xml, */*'
     };
 
-    var headerNames = [ 'X-Requested-With', 'X-Prototype-Version', 'Accept' ];
-
     if (this.method == 'post') {
           headers['Content-Type'] = this.options.contentType +
             (this.options.encoding ? '; charset=' + this.options.encoding : '');
-          headerNames.push('Content-Type');
 
       /* Force "Connection: close" for older Mozilla browsers to work
        * around a bug where XMLHttpRequest sends an incorrect
@@ -1275,7 +1272,6 @@ Ajax.Request = Class.create(Ajax.Base, {
       if (this.transport.overrideMimeType &&
           (navigator.userAgent.match(/Gecko\/(\d{4})/) || [0,2005])[1] < 2005) {
             headers['Connection'] = 'close';
-            headerNames.push('Connection');
           }
     }
 
@@ -1286,17 +1282,16 @@ Ajax.Request = Class.create(Ajax.Base, {
       if (Object.isFunction(extras.push))
         for (var i = 0, length = extras.length; i < length; i += 2) {
           headers[extras[i]] = extras[i+1];
-          headerNames.push(extras[i]);
         }
       else
         $H(extras).each(function(pair) {
             headers[pair.key] = pair.value 
-            headerNames.push(pair.key);
         });
     }
 
-    for (var i=0; i<headerNames.length; i++) {
-        this.transport.setRequestHeader(headerNames[i], headers[headerNames[i]]);
+    for (var name in headers) {
+        if ( typeof headers[name] == "string" ) 
+            this.transport.setRequestHeader(name, headers[name]);
     }
 
   },
