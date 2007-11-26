@@ -218,7 +218,7 @@ sub handle_request {
         for ( Jifty->plugins ) {
             $_->new_request;
         }
-        Jifty->log->debug( "Received " . $self->apache->method . " request for " . Jifty->web->request->path );
+        Jifty->log->info( $self->apache->method . " request for " . Jifty->web->request->path  );
         Jifty->web->setup_session;
 
         Jifty::I18N->get_language_handle;
