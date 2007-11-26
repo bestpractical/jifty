@@ -180,6 +180,10 @@ features(
     'Ldap Plugin' => [
         -default => 0,
         recommends('Net::LDAP')
+    ],
+    'CAS Plugin' => [
+        -default => 0,
+        recommends('Authen::CAS::Client')
     ]
 );
 
