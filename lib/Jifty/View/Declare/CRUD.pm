@@ -252,8 +252,24 @@ Returns a list of all the columns that this REST view should display
 sub display_columns {
     my $self = shift;
     my $action = shift;
-     return   grep { !( m/_confirm/ || lc $action->arguments->{$_}{render_as} eq 'password' ) } $action->argument_names;
+     return   $action->argument_names;
+     #return   grep { !( m/_confirm/ ||  $action->arguments->{$_}{unreadable} ) } $action->argument_names;
 }
+
+
+sub edit_columns {
+    my $self = shift; 
+    return $self->display_columns(@_);
+}
+
+sub create_columns {
+    my $self = shift; 
+    return $self->edit_columns(@_);
+
+
+}
+
+
 
 =head1 TEMPLATES
 
@@ -329,8 +345,8 @@ template 'view' => sub :CRUDView {
             }; 
         }
         show ('./view_item_controls', $record, $update); 
-        hr {};
     };
+    hr {};
 
 };
 
@@ -536,7 +552,8 @@ private template 'new_item_region' => sub {
         render_region(
             name     => 'new_item',
             path     => $fragment_for_new_item,
-            defaults => { object_type => $object_type },
+            defaults => {
+                        object_type => $object_type },
         );
     }
 };
@@ -547,7 +564,12 @@ Prints "No items found."
 
 =cut
 
-private template 'no_items_found' => sub { outs(_("No items found.")) };
+private template 'no_items_found' => sub {
+    div {
+        { class is 'no_items' };
+        outs( _("No items found.") );
+    }
+};
 
 =head2 list_items $collection $item_path
 
@@ -637,6 +659,23 @@ private template paging_bottom => sub {
     };
 };
 
+
+=head2 new_item $action
+
+Renders the action $Action, handing it the array ref returned by L</display_columns>.
+
+=cut
+
+private template 'create_item' => sub {
+    my $self = shift;
+    my $action = shift;
+   foreach my $field ($self->create_columns($action)) {
+            div { { class is 'create-argument-'.$field}
+                render_param($action, $field) ;
+        }
+   }
+};
+
 =head2 edit_item $action
 
 Renders the action $Action, handing it the array ref returned by L</display_columns>.
@@ -646,7 +685,7 @@ Renders the action $Action, handing it the array ref returned by L</display_colu
 private template 'edit_item' => sub {
     my $self = shift;
     my $action = shift;
-   foreach my $field ($self->display_columns($action)) {
+   foreach my $field ($self->edit_columns($action)) {
             div { { class is 'update-argument-'.$field}
     render_param($action, $field) ;
         }
@@ -668,7 +707,15 @@ template 'new_item' => sub {
 
     div {
         { class is 'crud create item inline' };
-        show('./edit_item', $create);
+        show('./create_item', $create);
+        show('./new_item_controls', $create);
+    }
+};
+
+private template 'new_item_controls' => sub {
+        my $self = shift;
+        my $create = shift;
+    my ( $object_type ) = ( $self->object_type);
 
         outs(
             Jifty->web->form->submit(
@@ -676,9 +723,7 @@ template 'new_item' => sub {
                 onclick => [
                     { submit       => $create },
                     { refresh_self => 1 },
-                    {   element =>
-                            Jifty->web->current_region->parent->get_element(
-                            'div.list'),
+                    {   element => Jifty->web->current_region->parent->get_element( 'div.list'),
                         append => $self->fragment_for('view'),
                         args   => {
                             object_type => $object_type,
@@ -687,9 +732,11 @@ template 'new_item' => sub {
                     },
                 ]
             )
-        );
-    }
-};
+        )
+    };
+
+
+
 
 =head1 SEE ALSO
 
