@@ -3,7 +3,7 @@
 args:<% Jifty->web->request->arguments->{'J:V-region-content'} || ''%>
 
 <% Jifty->web->link(
-               label   => 'content',
+               label   => 'replace content',
                id => 'replace_content',
                onclick => {
                    replace_with => '/content1.html',
@@ -16,5 +16,11 @@ args:<% Jifty->web->request->arguments->{'J:V-region-content'} || ''%>
     path     => '/content.html',
 ) %>
 
+
+<a id="original_content" 
+href="/onclick.html?J:V-region-content=%2Fcontent.html"
+onclick="return update(
+{'continuation':{},'actions':{},'fragments':[{'mode':'Replace','args':{},'region':'content','path':'/content.html'}],'action_arguments':{}},
+this );">revert content</a>
 
 </&>
