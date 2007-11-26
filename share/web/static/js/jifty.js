@@ -790,7 +790,6 @@ Region.prototype = {
         }
 
         // Merge in any supplied parameters
-        alert( JSON.stringify(current_args) );
         this.args = this.args.merge(supplied);
 
         // Fill supplied parameters into current args
@@ -800,7 +799,6 @@ Region.prototype = {
             current_args.set(this.name+'.'+k, supplied.get(k));
         }
         
-        alert( JSON.stringify(current_args) );
         // Return new values
         return this.args;
     },
@@ -1266,7 +1264,6 @@ Jifty.update = function () {
                     requestHeaders: ['Content-Type', 'text/x-json']
     };
 
-    alert(options.postBody);
     // Go!
     new Ajax.Request(document.URL,
                      options
