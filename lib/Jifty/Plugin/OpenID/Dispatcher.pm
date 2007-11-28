@@ -20,7 +20,7 @@ before qr'^/(?:openid/link)' => run {
 
 before qr'^/openid/login' => run {
     set action => Jifty->web->new_action(
-        class   => 'Jifty::Plugin::OpenID::Action::AuthenticateOpenID',
+        class   => 'AuthenticateOpenID',
         moniker => 'authenticateopenid'
     );
 };
@@ -97,7 +97,7 @@ on 'openid/create' => run {
         redirect '/';
     }
 
-    set action => Jifty->web->new_action( class => 'Jifty::Plugin::OpenID::Action::CreateOpenIDUser', parameters => { openid => Jifty->web->session->get("openid") } );
+    set action => Jifty->web->new_action( class => 'CreateOpenIDUser', parameters => { openid => Jifty->web->session->get("openid") } );
     set 'next' => Jifty->web->request->continuation ||
                   Jifty::Continuation->new( request => Jifty::Request->new( path => "/" ) );
 };
