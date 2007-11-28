@@ -521,6 +521,23 @@ sub _value {
     $value;
 }
 
+=head2 as_user CurrentUser
+
+Returns a copy of this object with the current_user set to the given
+current_user. This is a way to act on behalf of a particular user (perhaps the
+owner of the object)
+
+=cut
+
+sub as_user {
+    my $self = shift;
+    my $user = shift;
+
+    my $clone = $self->new( current_user => $user );
+    $clone->load( $self->id );
+    return $clone;
+}
+
 =head2 as_superuser
 
 Returns a copy of this object with the current_user set to the
@@ -531,10 +548,7 @@ code that needs to for some reason or another.
 
 sub as_superuser {
     my $self = shift;
-
-    my $clone = $self->new( current_user => $self->current_user->superuser );
-    $clone->load( $self->id );
-    return $clone;
+    return $self->as_user( $self->current_user->superuser );
 }
 
 =head2 delete PARAMHASH
