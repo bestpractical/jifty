@@ -225,7 +225,6 @@ sub handle_request {
 
         # Return from the continuation if need be
         Jifty->web->request->return_from_continuation;
-        Jifty->web->session->set_cookie;
         $self->dispatcher->handle_request();
         $self->cleanup_request();
     }
