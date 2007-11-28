@@ -413,12 +413,17 @@ should use C<ok> on C<find_link> first to check its existence).
 sub follow_link_ok {
     my $self = shift;
 
-    # Remove reason from end if it's there
-    pop @_ if @_ % 2;
 
     # Test::WWW::Mechanize allows passing in a hashref of arguments, so we should to
     if  ( ref($_[0]) eq 'HASH') {
+        # if the user is pashing in { text => 'foo' } ...
+
         @_ = %{$_[0]};
+    } elsif (@_ % 2 ) {
+        # IF the user is passing in text => 'foo' ,"Cicked the right thing"
+        # Remove reason from end if it's there
+        pop @_ ;
+
     }
     carp("Couldn't find link") unless $self->follow_link(@_);
     {
