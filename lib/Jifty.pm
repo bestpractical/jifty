@@ -243,7 +243,7 @@ sub new {
 
     # For plugins that want all the above initialization, but want to run before
     # we begin serving requests
-    Jifty->call_trigger('ready');
+    Jifty->call_trigger('post_init');
 }
 
 # Explicitly destroy the classloader; if this happens during global
