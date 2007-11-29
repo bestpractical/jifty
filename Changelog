@@ -1,4 +1,4 @@
-Jifty 0.71116
+Jifty 0.71129
 
 I18N
 ====
@@ -71,6 +71,11 @@ I18N
 BUGFIX
 ======
 
+ * A temporary fix for rico.js, which is defining the obsoleted (in
+   Prototype) Object.prototype.extend which and then breaks all calls
+   to jQuery.fn.extend.  That means all methods with jQuery.fn.extend
+   were simply not there. For instance, jQuery("div.secret").show() - gugod
+
  * Added missing jifty-result-popup div to the page detritus section of
    Jifty::View::Declare::Page. - sterling
 
@@ -91,8 +96,9 @@ BUGFIX
 
  * Don't do weird things with loading model subclasses - jesse
 
- * Don't override object_type if the CRUD view package already defines
-   object_type. - sterling
+ * Don't send cookies for static files. We suspect that doing so was screwing up
+   non-compliant proxies that were caching the cookie and causing.. "amusing"
+   security problems - sartak
 
  * Fix compatibility with Test::WWW::Mechanize - jesse
 
@@ -146,6 +152,8 @@ BUGFIX
  * Revert r4117 as the element readiness state is not compatible with what it
    was. - clkao
 
+ * Revert r4435 because it breaks Safari 3.0.4 - sartak
+
  * Reverting the addition of these files which were added by a push error.
    - sterling
 
@@ -190,6 +198,12 @@ BUGFIX
 
  * friendly_date should be relative to the user, not floating - sartak
 
+ * make a looser check for Content-Type since firefox 3 will append charset
+   stuff to it sometimes - sunnavy
+
+ * merged prototpe-1.6 to trunk again, wish it's all right this time :) -
+   sunnavy
+
  * no need to print STDERR, we can warn in $SIG{__WARN__} - sunnavy
 
  * oops, should look for js files under js. - clkao
@@ -232,9 +246,15 @@ CORE
 
  * Add a Jifty::DateTime set_current_user_timezone method - sartak
 
+ * Add an 'as_user' method and have 'as_superuser' use it - sartak
+
  * Add the ability for apps to have very fine-grained testing (such as
    overriding config for a subdir of t/, or even a particular test file).
    Still needs tests and I suppose some more doc :) - sartak
+
+ * Added a new 'AutoUpgrade' option for Jifty and Application schemas,   so you
+   don't need to manually upgrade every time jifty or your app version bumps -
+   jesse
 
  * Added the ability to craft a Jifty button with a "submit" link which
    submits hardcoded arguments. - jesse
@@ -298,6 +318,9 @@ CORE
  * Updating the Jifty web menu component to respect classes added by
    users - jesse
 
+ * added "rel" attribute to Jifty::Web::Form::Link/Element, to allow
+   <a rel="nofollow"...> or <a rel="next"...> - ishikaga
+
  * allow onsubmit in form to include custom javascript. - clkao
 
  * if refers_to is not mandatory field then add 'no_value' option to
@@ -316,6 +339,20 @@ CORE
 CRUD
 ====
 
+ * A bit of refactoring to expose some more overridable templates in CRUD view
+   - jesse
+
+ * Adding another CRUD setup example to the synopsis. - sterling
+
+ * Assume the page is "1" if no value for page is given to the pager in CRUD.
+   - sterling
+
+ * Don't override object_type if the CRUD view package already defines
+   object_type. - sterling
+
+ * Simplifying the CRUD code for generating the record_class and making it
+   more flexible. Adding a stub for CRUD testing. - sterling
+
  * added a bit more semantic markup to the crud view - jesse
 
 DOC
@@ -327,11 +364,13 @@ DOC
    description. Secret confession: I was tired of perldoc Jifty::Manual::<tab>
    failing :) - sartak
 
+ * Add Jason May to AUTHORS - sartak
+
  * Added a synopsis and license section to docs. - sterling
 
- * Adding a description to Jifty::Everything docs. - sterling
+ * Adding SYNOPSIS, LICENSE, and code comments. - sterling
 
- * Adding another CRUD setup example to the synopsis. - sterling
+ * Adding a description to Jifty::Everything docs. - sterling
 
  * Adding documentation for Action and Static attributes to resolve POD
    coverage test failures. - sterling
@@ -374,9 +413,6 @@ DOC
  * SendFeedback.pm: Take away the phrase "hiveminder" from the
    documentation. - audreyt
 
- * Simplifying the CRUD code for generating the record_class and making it
-   more flexible. Adding a stub for CRUD testing. - sterling
-
  * a tiny change and typo fix - sunnavy
 
  * doc fixes - sunnavy
@@ -391,6 +427,9 @@ DOC
 
 INSTALL
 =======
+
+ * mention Net::LDAP because of the new Plugin so we don't fail
+   01-dependencies - falcone
 
  * Add changelogger dependencies - sartak
 
@@ -420,6 +459,8 @@ INSTALL
  * added Test::Log4perl dep again; it is surely used at t/TestApp/t/02-dispatch-show-rule-in-wrong-
    ruleset.t - ishigaki
 
+ * clean dependency test since changelogger has been moved out - sunnavy
+
  * older Email::LocalDelivery is buggy. - clkao
 
  * require CSS::Squish 0.07, no need to call _resolve_file any more - sunnavy
@@ -438,8 +479,12 @@ MISC
 
  * Remove bin/*-changelog, as they've been moved into their own dist, App-
    Changelogger - sartak
+ 
+ * Remove some debugging statements - sartak
 
  * Sort change groups by header, typo fix - sartak
+
+ * Stripping off the execute flag in SVN. - sterling
 
  * add a bug tag - falcone
 
@@ -455,6 +500,10 @@ MISC
    again. reformatting - falcone
 
  * talk about how to do iterative editing - falcone
+
+ * update fr.po and debian control - yves
+
+ * upgraded request logging from DEBUG to INFO - jesse
 
  * usage documentation - falcone
 
@@ -486,11 +535,19 @@ PERFORMANCE
  * Switch to a single call to Module::Pluggable to help improve startup
    performance. - jesse
 
+ * More trying to force caching of static content. - jesse
+
 PLUGIN
 ======
 
+ * Add a trigger to Jifty.pm to be run after all initialization (so plugins can
+   use the database handle, or anything else) - sartak
+
  * Add an additional trigger in Clickable for SinglePage to filter out state
    variables for region-__page. - clkao
+
+ * Add better support for dates in the REST plugin, rewrite a somewhat hairy
+   method - sartak
 
  * Add cdn option to CompressedCSSandJS plugin. - clkao
 
@@ -502,6 +559,9 @@ PLUGIN
 
  * Adding missing JavaScript file and cleaning up a method left-over from
    testing. - sterling
+
+ * Don't set action defaults in REST. Actions can take care of themselves. -
+   sartak
 
  * Expanded the previous fix to cover sticky values and the initial value in
    the input tag. - sterling
@@ -557,6 +617,9 @@ PLUGIN
  * Provide an after_include_javascript for plugins to do javascript
    initialisation. - clkao
 
+ * Rename 'ready' to 'post_init'. 'ready' and 'server_ready' are somewhat
+   misleading because the plugins fire during other jifty commands - sartak
+
  * Refactor timestamp and nonce out of tokens and into consumers. Thanks to
    hannesty for discussing how it should work - sartak
 
@@ -576,6 +639,12 @@ PLUGIN
  * Turns out we can't (so easily) have the URLs be configurable. Not too much
    of a problem though Other fixes - sartak
 
+ * Unbreak OpenID plugin with new Jifty::API implementation.  Give
+   fully-qualified action class name here because Jifty::API does not resolve
+   action class names to those ones provided by plugins (those under
+   Jifty::Plugin::*::Action namespace) This is maybe a bug, but need further
+   discussion. - gugod
+
  * Users can now authorize/deny request tokens - sartak
 
  * Various improvements of try_oauth so it gets further (but not all the way)
@@ -592,7 +661,18 @@ PLUGIN
 
  * actormetadata: provide a current_user_is_owner method. - clkao
 
+ * add Jasig CAS plugin with mixin model user - yves
+
  * default not to preserve state when spa is replacing __page - clkao
+
+ * first release for an experimental mixin ldap release - yves
+
+ * r4534 belongs to trunk. In ClassLoader, if an action matches Create* that
+   isn't about creating a model, don't just return but continue to see if
+   there's any matching actions from plugins.  This solves CreateOpenIDUser in
+   particular.  - jesse
+
+ * revert its previous revision for it's fixed earler in classloader. - gugod
 
  * simplify ccjs plugin with static handler method call. - clkao
 

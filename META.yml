@@ -21,6 +21,7 @@ no_index:
     - DB
 recommends: 
   Apache2::Const: 0
+  Authen::CAS::Client: 0
   Cache::FileCache: 0
   Chart::Base: 0
   Class::Accessor::Named: 0
@@ -40,6 +41,7 @@ recommends:
   Module::CoreList: 0
   Module::Install::Admin: 0.50
   Module::Refresh: 0.09
+  Net::LDAP: 0
   Net::OAuth::AccessTokenRequest: 0
   Net::OAuth::ProtectedResourceRequest: 0
   Net::OAuth::Request: 0.04
@@ -144,4 +146,4 @@ requires:
   perl: 5.8.3
   version: 0
 tests: t/*.t t/*/*.t t/*/*/*.t t/*/*/*/*.t
-version: 0.71116
+version: 0.71129
