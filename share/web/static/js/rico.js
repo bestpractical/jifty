@@ -32,7 +32,7 @@
 
 //-------------------- rico.js
 var Rico = {
-  Version: '1.1.2.jifty.r963',
+  Version: '1.1.2.jifty.r4563',
   prototypeVersion: parseFloat(Prototype.Version.split(".")[0] + "." + Prototype.Version.split(".")[1])
 }
 
@@ -41,13 +41,10 @@ if((typeof Prototype=='undefined') || Rico.prototypeVersion < 1.3)
 
 Rico.ArrayExtensions = new Array();
 
-if (Object.prototype.extend) {
-   Rico.ArrayExtensions[ Rico.ArrayExtensions.length ] = Object.prototype.extend;
+if (Object.extend) {
+   Rico.ArrayExtensions[ Rico.ArrayExtensions.length ] = Object.extend;
 }else{
-  Object.prototype.extend = function(object) {
-    return Object.extend.apply(this, [this, object]);
-  }
-  Rico.ArrayExtensions[ Rico.ArrayExtensions.length ] = Object.prototype.extend;
+    throw("Rico requires Object.extend from Prototype");
 }
 
 if (Array.prototype.push) {
