@@ -179,6 +179,16 @@ sub add_column {
     }
 
     $self->qualified_class->_init_methods_for_column($column);
+
+    # Since columns are added after the mixins have already been imported, we
+    # need to make sure to call register_triggers_for_column() ourselves.
+    my $mixins = $self->qualified_class->RECORD_MIXINS || [];
+    for my $mixin (@$mixins) {
+        if (my $triggers_for_column
+                = $mixin->can('register_triggers_for_column')) {
+            $triggers_for_column->($self->qualified_class, $column->name);
+        }
+    }
 }
 
 
