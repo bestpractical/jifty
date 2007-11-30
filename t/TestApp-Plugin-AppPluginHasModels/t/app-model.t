@@ -10,17 +10,17 @@ A basic test harness for the Color model.
 
 use lib 't/lib';
 use Jifty::SubTest;
-use Jifty::Test tests => 12;
+use Jifty::Test tests => 16;
 
 # Make sure we can load the model
-use_ok('TestApp::Plugin::AppPluginHasModels::Plugin::MyAppPlugin::Model::Color');
+use_ok('TestApp::Plugin::AppPluginHasModels::Model::Color');
 
 # Grab a system user
 my $system_user = TestApp::Plugin::AppPluginHasModels::CurrentUser->superuser;
 ok($system_user, "Found a system user");
 
 # Try testing a create
-my $o = TestApp::Plugin::AppPluginHasModels::Plugin::MyAppPlugin::Model::Color->new(current_user => $system_user);
+my $o = TestApp::Plugin::AppPluginHasModels::Model::Color->new(current_user => $system_user);
 my ($id) = $o->create();
 ok($id, "Color create returned success");
 ok($o->id, "New Color has valid id set");
@@ -35,7 +35,7 @@ ok($o->id, "Color create returned another value");
 isnt($o->id, $id, "And it is different from the previous one");
 
 # Searches in general
-my $collection = TestApp::Plugin::AppPluginHasModels::Plugin::MyAppPlugin::Model::ColorCollection->new(current_user => $system_user);
+my $collection = TestApp::Plugin::AppPluginHasModels::Model::ColorCollection->new(current_user => $system_user);
 $collection->unlimit;
 is($collection->count, 2, "Finds two records");
 
@@ -52,3 +52,11 @@ is($collection->count, 0, "Deleted row is gone");
 $collection->unlimit;
 is($collection->count, 1, "Still one left");
 
+# Needed for the action tests...
+Jifty::Test->web;
+
+# Make sure actions are available
+isa_ok($collection->as_search_action, 'TestApp::Plugin::AppPluginHasModels::Action::SearchColor');
+isa_ok($o->as_create_action, 'TestApp::Plugin::AppPluginHasModels::Action::CreateColor');
+isa_ok($o->as_update_action, 'TestApp::Plugin::AppPluginHasModels::Action::UpdateColor');
+isa_ok($o->as_delete_action, 'TestApp::Plugin::AppPluginHasModels::Action::DeleteColor');
