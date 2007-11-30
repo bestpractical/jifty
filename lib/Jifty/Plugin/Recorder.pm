@@ -6,6 +6,7 @@ __PACKAGE__->mk_accessors(qw/start path handle/);
 
 use Time::HiRes 'time';
 use YAML;
+use Jifty::Util;
 
 our $VERSION = 0.01;
 
@@ -19,7 +20,7 @@ the baseline for all times.
 sub init {
     my $self = shift;
     my %args = (
-        path => 'log',
+        path => 'log/requests',
         @_,
     );
 
@@ -31,6 +32,7 @@ sub init {
 
     $self->start(time);
     $self->path($args{path});
+    Jifty::Util->make_path($args{path});
 
     $self->handle($self->get_handle);
 }
@@ -50,13 +52,14 @@ sub before_request
     my $request = { cgi => $cgi, ENV => \%ENV, time => $delta };
     my $yaml = YAML::Dump($request);
 
-    print { $self->handle } $yaml;
+    eval { print { $self->handle } $yaml };
+    Jifty->log->error("Unable to append to request log: $@") if $@;
 }
 
 sub get_handle {
     my $self = shift;
 
-    my $name = sprintf '%s/requests-%d-%d.log',
+    my $name = sprintf '%s/%d-%d.log',
                 $self->path,
                 $self->start,
                 $$;
