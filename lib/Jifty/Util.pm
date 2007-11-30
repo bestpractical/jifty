@@ -256,16 +256,21 @@ sub _require {
 
     return 1 if $self->already_required($class);
 
-    my $pkg = $class .".pm";
-    $pkg =~ s/::/\//g;
-    my $retval = eval  {CORE::require "$pkg"} ;
+    # .pm might already be there in a weird interaction in Module::Pluggable
+    my $file = $class;
+    $file .= ".pm"
+        unless $file =~ /\.pm$/;
+
+    $file =~ s/::/\//g;
+
+    my $retval = eval  {CORE::require "$file"} ;
     my $error = $@;
     if (my $message = $error) { 
         $message =~ s/ at .*?\n$//;
-        if ($args{'quiet'} and $message =~ /^Can't locate $pkg/) {
+        if ($args{'quiet'} and $message =~ /^Can't locate $file/) {
             return 0;
         }
-        elsif ( $error !~ /^Can't locate $pkg/) {
+        elsif ( $error !~ /^Can't locate $file/) {
             die $error;
         } else {
             Jifty->log->error(sprintf("$message at %s line %d\n", (caller(1))[1,2]));
