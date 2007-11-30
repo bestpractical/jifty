@@ -226,7 +226,13 @@ sub make_path {
     my $whole_path = shift;
     return 1 if (-d $whole_path);
     Jifty::Util->require('File::Path');
-    File::Path::mkpath([$whole_path]);
+
+    local $@;
+    eval { File::Path::mkpath([$whole_path]) };
+
+    if ($@) {
+        Jifty->log->fatal("Unable to make path: $whole_path: $@")
+    }
 }
 
 =head2 require PATH
