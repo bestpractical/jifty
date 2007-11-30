@@ -17,10 +17,9 @@ use Time::HiRes 'sleep';
 
 sub options {
     (
-     'f|file=s' => 'file',
+     'max=s'    => 'max',
      'quiet'    => 'quiet',
      'dbiprof'  => 'dbiprof',
-     'max=s'    => 'max',
     )
 }
 
@@ -52,8 +51,10 @@ sub run {
     # to be around.
 
     # now read in the YAML and do our dark deeds
-    my @requests = YAML::LoadFile($self->{file});
-    $self->play_requests(@requests);
+    for my $file (@ARGV) {
+        my @requests = YAML::LoadFile($file);
+        $self->play_requests(@requests);
+    }
 }
 
 sub play_request {
