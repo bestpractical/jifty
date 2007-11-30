@@ -26,15 +26,18 @@ sub init {
 
     return if $self->_pre_init;
 
-    Jifty::Handler->add_trigger(
-        before_request => sub { $self->before_request(@_) }
-    );
-
     $self->start(time);
     $self->path($args{path});
     Jifty::Util->make_path($args{path});
 
     $self->loghandle($self->get_loghandle);
+
+    # if creating the loghandle failed, then we may as well not bother :)
+    if ($self->loghandle) {
+        Jifty::Handler->add_trigger(
+            before_request => sub { $self->before_request(@_) }
+        );
+    }
 }
 
 =head2 before_request
