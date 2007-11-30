@@ -48,7 +48,11 @@ sub before_request
     my $request = { cgi => $cgi, ENV => \%ENV, time => $delta };
     my $yaml = YAML::Dump($request);
 
-    my $name = $self->path . '/requests-' . int($self->start) . '.log';
+    my $name = sprintf '%s/%d-%d.log',
+                $self->path,
+                $self->start,
+                $$;
+
     open my $handle, '>>', $name or do {
         Jifty->log->error("Unable to open $name for appending: $!");
         return;
