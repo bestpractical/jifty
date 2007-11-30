@@ -2,7 +2,7 @@ package Jifty::Plugin::Recorder;
 use strict;
 use warnings;
 use base qw/Jifty::Plugin Class::Data::Inheritable/;
-__PACKAGE__->mk_accessors(qw/start path/);
+__PACKAGE__->mk_accessors(qw/start path handle/);
 
 use Time::HiRes 'time';
 use YAML;
@@ -31,6 +31,8 @@ sub init {
 
     $self->start(time);
     $self->path($args{path});
+
+    $self->handle($self->get_handle);
 }
 
 =head2 before_request
@@ -48,19 +50,25 @@ sub before_request
     my $request = { cgi => $cgi, ENV => \%ENV, time => $delta };
     my $yaml = YAML::Dump($request);
 
-    my $name = sprintf '%s/%d-%d.log',
+    print { $self->handle } $yaml;
+}
+
+sub get_handle {
+    my $self = shift;
+
+    my $name = sprintf '%s/requests-%d-%d.log',
                 $self->path,
                 $self->start,
                 $$;
 
-    open my $handle, '>>', $name or do {
-        Jifty->log->error("Unable to open $name for appending: $!");
+    open my $handle, '>', $name or do {
+        Jifty->log->error("Unable to open $name for writing: $!");
         return;
     };
 
-    print $handle $yaml;
+    Jifty->log->info("Logging all HTTP requests to $name.");
 
-    close $handle;
+    return $handle;
 }
 
 =head1 NAME
