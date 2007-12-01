@@ -186,6 +186,8 @@ sub show {
 sub handle_comp {
     my ($self, $comp, $args) = @_;
 
+    Jifty->web->session->set_cookie;
+
     # Set up the global
     my $r = Jifty->handler->apache;
     $self->interp->set_global('$r', $r);

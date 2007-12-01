@@ -75,10 +75,10 @@ The arguments you want to hand to your sub.
 
 sub export_curried_sub {
     my %args = (
-        sub_name     => undef,
-        export_to => undef,
-        as           => undef,
-        args        =>  undef,
+        sub_name   => undef,
+        export_to  => undef,
+        as         => undef,
+        args       => undef,
         @_
     );
     no strict 'refs';
@@ -109,6 +109,7 @@ sub delegate_current_user_can {
     $right = 'update' if $right ne 'read';
     my $obj;
 
+    $col_name =~ s/_id$//;
     my $column   = $self->column($col_name);
     my $obj_type = $column->refers_to();
 

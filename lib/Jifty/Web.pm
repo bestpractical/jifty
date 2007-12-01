@@ -784,6 +784,10 @@ sub _redirect {
     # Headers..
     $apache->header_out( Location => $page );
     $apache->header_out( Status => 302 );
+
+    # cookie has to be sent or returning from continuations breaks
+    Jifty->web->session->set_cookie;
+
     $apache->send_http_header();
 
     # Mason abort, or dispatcher abort out of here

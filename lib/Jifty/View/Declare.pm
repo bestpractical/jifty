@@ -23,7 +23,7 @@ Jifty::View::Declare - Build views using Template::Declare
 
 L<Template::Declare> is a templating system using a declarative syntax built on top of Perl. This provides a templating language built in a similar style to the dispatcher language in L<Jifty::Dispatcher>, the model language in L<Jifty::DBI::Schema>, and the action language in L<Jifty::Param::Schema>.
 
-To use this view system, you must declare a class named C<MyApp::View> (where I<MyApp> is the name of your Jifyt application). Use this library class to bring in all the details needed to make it work:
+To use this view system, you must declare a class named C<MyApp::View> (where I<MyApp> is the name of your Jifty application). Use this library class to bring in all the details needed to make it work:
 
   package MyApp::View;
   use Jifty::View::Declare -base;

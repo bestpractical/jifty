@@ -126,7 +126,7 @@ sub render {
     $html .= "<embed";
     $html .= qq[ $_="@{[$tags->{embed}{$_}]}"]
         for keys %{ $tags->{embed} };
-    $html .= "></embed>\n";
+    $html .= " />\n";
     $html .= "</object>\n";
     $html .= "</div>\n";
 

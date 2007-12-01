@@ -81,6 +81,7 @@ sub show {
     my $r = Jifty->handler->apache;
     $r->content_type || $r->content_type('text/html; charset=utf-8'); # Set up a default
     unless ( Jifty->handler->apache->http_header_sent || Jifty->web->request->is_subrequest ) {
+        Jifty->web->session->set_cookie;
         Jifty->handler->apache->send_http_header;
     }
 

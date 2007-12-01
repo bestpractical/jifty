@@ -27,7 +27,7 @@ ok($o->id, "New Color has valid id set");
 is($o->id, $id, "Create returned the right id");
 
 # Does it use a prefixed table
-is($o->table, 'testapp_plugin_apppluginhasmodels_plugin_myappplugin_colors', 'plugin table prefix');
+is($o->table, 'myappplugin_colors', 'custom plugin table name');
 
 # And another
 $o->create();

@@ -5,13 +5,15 @@ package Jifty;
 use IPC::PubSub 0.22;
 use Data::UUID;
 use encoding 'utf8';
+use Class::Trigger;
+
 BEGIN { 
     # Work around the fact that Time::Local caches TZ on first require
     local $ENV{'TZ'} = "GMT";
     require Time::Local;
 
     # Declare early to make sure Jifty::Record::schema_version works
-    $Jifty::VERSION = '0.70824';
+    $Jifty::VERSION = '0.71129';
 }
 
 =head1 NAME
@@ -241,6 +243,10 @@ sub new {
     # Run the App::start() method if it exists for app-specific initialization
     $app->start()
         if $app->can('start');
+
+    # For plugins that want all the above initialization, but want to run before
+    # we begin serving requests
+    Jifty->call_trigger('post_init');
 }
 
 # Explicitly destroy the classloader; if this happens during global

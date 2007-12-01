@@ -489,7 +489,7 @@ sub render_widget {
     $field .= qq! name="@{[ $self->input_name ]}"! if ($self->input_name);
     $field .= qq! title="@{[ $self->title ]}"! if ($self->title);
     $field .= qq! id="@{[ $self->element_id ]}"!;
-    $field .= qq! value="@{[Jifty->web->escape($self->current_value)]}"! if defined $self->current_value;
+    $field .= qq! value="@{[$self->canonicalize_value(Jifty->web->escape($self->current_value))]}"! if defined $self->current_value;
     $field .= $self->_widget_class; 
     $field .= qq! size="@{[ $self->max_length() ]}" maxlength="@{[ $self->max_length() ]}"! if ($self->max_length());
     $field .= qq! autocomplete="off"! if defined $self->disable_autocomplete;
@@ -501,6 +501,17 @@ sub render_widget {
 }
 
 
+=head2 canonicalize_value
+
+Called when a value is about to be displayed. Can be overridden to, for example,
+display only the yyyy-mm-dd portion of a DateTime.
+
+=cut
+
+sub canonicalize_value {
+    my $self = shift;
+    return $_[0];
+}
 
 =head2 other_widget_properties
 
@@ -551,7 +562,7 @@ sub render_value {
     my $field = '<span';
     $field .= qq! class="@{[ $self->classes ]}"> !;
     # XXX: force stringify the value because maketext is buggy with overloaded objects.
-    $field .= Jifty->web->escape("@{[$self->current_value]}") if defined $self->current_value;
+    $field .= $self->canonicalize_value(Jifty->web->escape("@{[$self->current_value]}")) if defined $self->current_value;
     $field .= qq!</span>\n!;
     Jifty->web->out($field);
     return '';

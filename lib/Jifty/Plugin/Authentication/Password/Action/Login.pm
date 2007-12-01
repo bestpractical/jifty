@@ -154,7 +154,7 @@ sub take_action {
         }
     }
     unless ($user->email_confirmed) {
-                $self->result->error( q{You haven't confirmed your account yet.} );        return;
+                $self->result->error( _(q{You haven't confirmed your account yet.}) );        return;
                     }
 
     # Set up our login message

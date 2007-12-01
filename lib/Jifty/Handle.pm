@@ -98,7 +98,7 @@ sub connect {
 
     my %lc_db_config;
     # Skip the non-dsn keys, but not anything else
-    for (grep {!/^checkschema|version|forwardcompatible|recordbaseclass|attributes$/i} keys %db_config) {
+    for (grep {!/^autoupgrade|checkschema|version|forwardcompatible|recordbaseclass|attributes$/i} keys %db_config) {
         $lc_db_config{lc($_)} = $db_config{$_};
     }
     $self->SUPER::connect( %lc_db_config , %args);
@@ -121,7 +121,9 @@ then error out.
 =cut
 
 sub check_schema_version {
+    my $self = shift;
     require Jifty::Model::Metadata;
+            my $autoup = delete Jifty->config->framework('Database')->{'AutoUpgrade'};
 
     # Application db version check
     {
@@ -155,10 +157,16 @@ sub check_schema_version {
         unless (version->new($appv) == version->new($dbv)) {
             # if app version is older than db version, but we are still compatible
             my $compat = delete Jifty->config->framework('Database')->{'ForwardCompatible'} || $appv;
-            die
-            "Application schema version in database ($dbv) doesn't match application schema version ($appv)\n"
-            . "Please run `bin/jifty schema --setup` to upgrade the database.\n"
-                if version->new($appv) > version->new($dbv) || version->new($compat) < version->new($dbv);
+            if (version->new($appv) > version->new($dbv) || version->new($compat) < version->new($dbv)) {
+            warn "Application schema version in database ($dbv) doesn't match application schema version ($appv)\n";
+            if( $autoup 
+            ) {
+                warn "Automatically upgrading your database to match the current application schema";
+                $self->_upgrade_schema();
+            } else {
+                 die "Please run `bin/jifty schema --setup` to upgrade the database.\n";
+             }
+            }
         }
     }
 
@@ -172,10 +180,15 @@ sub check_schema_version {
             = version->new( Jifty::Model::Metadata->load("jifty_db_version")
                 || '0.60426' );
         my $appv = version->new($Jifty::VERSION);
-        die
-            "Internal jifty schema version in database ($dbv) doesn't match running jifty version ($appv)\n"
-            . "Please run `bin/jifty schema --setup` to upgrade the database.\n"
-            unless $appv == $dbv;
+            unless ( $appv == $dbv ) {
+           warn "Internal jifty schema version in database ($dbv) doesn't match running jifty version ($appv)\n";
+            if( $autoup) {
+                warn "Automatically upgrading your database to match the current Jifty schema\n";
+                $self->_upgrade_schema;
+            } else {
+        die "Please run `bin/jifty schema --setup` to upgrade the database.\n"
+            }
+        };
     }
 
 }
@@ -441,6 +454,15 @@ sub lookup_record {
     else {
         return;
     }
+}
+
+sub _upgrade_schema {
+    my $self = shift;
+    my $hack = {};
+    require Jifty::Script::Schema;
+    bless $hack, "Jifty::Script::Schema";
+    $hack->run_upgrades;
+
 }
 
 =head1 AUTHOR

@@ -13,7 +13,8 @@ use File::Path;
 use File::Spec;
 use File::Temp;
 use Hash::Merge;
-use Cwd 'abs_path';
+use Digest::MD5 qw/md5_hex/;
+use Cwd qw/abs_path cwd/;
 
 =head1 NAME
 
@@ -363,7 +364,8 @@ sub test_config {
             },
             Mailer => 'Jifty::Test',
             MailerArgs => [],
-            LogLevel => 'WARN'
+            LogLevel => 'WARN',
+            TestMode => 1,
         }
     };
 
@@ -373,16 +375,13 @@ sub test_config {
 
 
 sub _testfile_to_dbname {
-    if ($ENV{JIFTY_FAST_TEST}) {
-        return 'fasttest';
-    }
-    else {
+    return 'fasttest' if $ENV{JIFTY_FAST_TEST};
     my $dbname = lc($0);
     $dbname =~ s/\.t$//;
-    $dbname =~ s/[-_\.\/\\]//g;
-    $dbname = substr($dbname,-32,32);	
+    $dbname =~ s/(\W|[_-])+//g;
+    $dbname .= substr(md5_hex(cwd()), 0, 8);
+    $dbname = substr($dbname,-32,32);
     return $dbname;
-    } 
 }
 
 =head2 make_server

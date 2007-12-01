@@ -12,4 +12,6 @@ use TestApp::Plugin::AppPluginHasModels::Plugin::MyAppPlugin::Record schema {
         type is 'text';
 };
 
+sub table { 'myappplugin_colors' }
+
 1;

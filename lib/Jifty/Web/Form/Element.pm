@@ -167,11 +167,11 @@ C<new> parameter hash.
 
 =cut
 
-sub accessors { shift->handlers, qw(class title key_binding key_binding_label id label tooltip continuation) }
+sub accessors { shift->handlers, qw(class title key_binding key_binding_label id label tooltip continuation rel) }
 __PACKAGE__->mk_accessors(qw(_onclick _onchange _ondblclick _onmousedown _onmouseup _onmouseover 
                              _onmousemove _onmouseout _onfocus _onblur _onkeypress _onkeydown 
                              _onkeyup _onselect
-                             class title key_binding key_binding_label id label tooltip continuation));
+                             class title key_binding key_binding_label id label tooltip continuation rel));
 
 =head2 new PARAMHASH OVERRIDE
 
@@ -560,7 +560,7 @@ sub javascript {
         if ( @fragments or ( !$actions || %$actions ) ) {
 
             my $update = Jifty->web->escape(
-                "update( "
+                "Jifty.update( "
                     . Jifty::JSON::objToJson(
                     {   actions      => $actions,
                         action_arguments => $action_arguments,

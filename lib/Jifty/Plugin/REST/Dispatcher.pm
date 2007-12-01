@@ -98,11 +98,24 @@ magical.
 sub stringify {
     # XXX: allow configuration to specify model fields that are to be
     # expanded
-    no warnings 'uninitialized';
-    my @r = map { ref($_) && UNIVERSAL::isa($_, 'Jifty::Record')
-                             ? reference_to_data($_) :
-                  defined $_ ? '' . $_               : undef } @_;
-    return wantarray ? @r : pop @r;
+    my @r;
+
+    for (@_) {
+        if (UNIVERSAL::isa($_, 'Jifty::Record')) {
+            push @r, reference_to_data($_);
+        }
+        elsif (UNIVERSAL::isa($_, 'Jifty::DateTime')) {
+            push @r, _datetime_to_data($_);
+        }
+        elsif (defined $_) {
+            push @r, '' . $_; # force stringification
+        }
+        else {
+            push @r, undef;
+        }
+    }
+
+    return wantarray ? @r : $r[-1];
 }
 
 =head2 reference_to_data
@@ -125,6 +138,7 @@ Current known types:
 
   Jifty::DBI::Collection
   Jifty::DBI::Record
+  Jifty::DateTime
 
 =cut
 
@@ -134,6 +148,7 @@ sub object_to_data {
     my %types = (
         'Jifty::DBI::Collection' => \&_collection_to_data,
         'Jifty::DBI::Record'     => \&_record_to_data,
+        'Jifty::DateTime'        => \&_datetime_to_data,
     );
 
     for my $type ( keys %types ) {
@@ -166,6 +181,18 @@ sub _record_to_data {
                              : stringify( $record->_value( $_ ) ) )
                  } $record->readable_attributes;
     return \%data;
+}
+
+sub _datetime_to_data {
+    my $dt = shift;
+
+    # if it looks like just a date, then return just the date portion
+    return $dt->ymd
+        if lc($dt->time_zone->name) eq 'floating'
+        && $dt->hms('') eq '000000';
+
+    # otherwise let stringification take care of it
+    return $dt;
 }
 
 =head2 recurse_object_to_data REF
@@ -708,13 +735,6 @@ sub run_action {
     my $action = $action_name->new( arguments => $args ) or abort(404);
 
     Jifty->api->is_allowed( $action_name ) or abort(403);
-
-    my $params = $action->arguments;
-    for my $key ( keys %$params ) {
-        next if not exists $params->{ $key }{'default_value'};
-        next if $action->has_argument( $key );
-        $action->argument_value( $key => $params->{ $key }{'default_value'} );
-    }
 
     $action->validate;
 
