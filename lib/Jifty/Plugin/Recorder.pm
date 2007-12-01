@@ -13,7 +13,7 @@ our $VERSION = 0.01;
 =head2 init
 
 init installs the trigger needed before each HTTP request. It also establishes
-the baseline for all times.
+the baseline for all times and creates the log path.
 
 =cut
 
@@ -42,6 +42,7 @@ sub init {
 
 =head2 before_request
 
+Log as much of the request state as we can.
 
 =cut
 
@@ -58,6 +59,14 @@ sub before_request
     eval { print { $self->loghandle } $yaml };
     Jifty->log->error("Unable to append to request log: $@") if $@;
 }
+
+=head2 get_loghandle
+
+Creates the loghandle. The created file is named C<PATH/BOOTTIME-PID.log>.
+
+Returns C<undef> on error.
+
+=cut
 
 sub get_loghandle {
     my $self = shift;
@@ -79,10 +88,13 @@ sub get_loghandle {
 
 =head1 NAME
 
-Jifty::Plugin::Recorder
+Jifty::Plugin::Recorder - record HTTP requests for playback
 
 =head1 DESCRIPTION
 
+This plugin will log all HTTP requests as YAML. The logfiles can be used by
+C<jifty playback> (provided with this plugin) to replay the logged requests.
+This can be handy for perfomance tuning, debugging, and testing.
 
 =head1 USAGE
 
@@ -92,8 +104,20 @@ Add the following to your site_config.yml
    Plugins:
      - Recorder: {}
 
+=head2 OPTIONS
+
+=over 4
+
+=item path
+
+The path for creating request logs. Default: log/requests. This directory will
+be created for you, if necessary.
+
+=back
+
 =head1 SEE ALSO
 
+L<Jifty::Plugin::Recorder::Command::Playback>, L<HTTP::Server::Simple::Recorder>
 
 =head1 COPYRIGHT AND LICENSE
 

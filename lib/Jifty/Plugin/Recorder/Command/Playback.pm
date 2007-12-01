@@ -14,13 +14,13 @@ use Time::HiRes 'sleep';
 our $start = time; # for naming log files
 our $path = 'log/playback';
 
-=head1 Jifty::Script::Playback - Play back a request log
+=head1 Jifty::Script::Playback - Play back request logs
 
 =head1 DESCRIPTION
 
 L<Jifty::Plugin::Recorder> lets you record a request log. Using this command
-you can play back the request log. This can be handy for performance testing
-and debugging, and perhaps even testing.
+you can play back request logs. This can be handy for performance tuning,
+debugging, and testing.
 
 =head1 API
 
@@ -182,6 +182,18 @@ please let us know.
 =cut
 
 sub filename { __FILE__ }
+
+=head1 SEE ALSO
+
+L<Jifty::Plugin::Recorder>
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2007 Best Practical Solutions
+
+This is free software and may be modified and distributed under the same terms as Perl itself.
+
+=cut
 
 1;
 
