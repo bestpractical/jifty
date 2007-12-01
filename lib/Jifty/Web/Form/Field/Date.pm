@@ -34,4 +34,22 @@ sub handler_allowed {
 }
 
 
+=head2 canonicalize_value
+
+If the value is a DateTime, return just the ymd portion of it.
+
+=cut
+
+sub canonicalize_value {
+    my $self  = shift;
+    my $value = $self->current_value;
+
+    if (UNIVERSAL::isa($value, 'DateTime')) {
+        $value = $value->ymd;
+    }
+
+    return $value;
+}
+
+
 1;
