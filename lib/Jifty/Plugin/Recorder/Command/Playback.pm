@@ -11,6 +11,9 @@ use warnings;
 use base qw/App::CLI::Command/;
 use Time::HiRes 'sleep';
 
+our $start = time; # for naming log files
+our $path = 'log/playback';
+
 =head1 Jifty::Script::Playback - Play back a request log
 
 =head1 DESCRIPTION
@@ -90,9 +93,11 @@ sub run {
     # to be around.
 
     # now read in the YAML and do our dark deeds
+    my $file_num = 0;
+    Jifty::Util->make_path($path.'/'.$start);
     for my $file (@ARGV) {
         my @requests = YAML::LoadFile($file);
-        $self->play_requests(@requests);
+        $self->play_requests(++$file_num, @requests);
     }
 }
 
@@ -106,18 +111,27 @@ C<< Jifty->handler->handle_request >>.
 =cut
 
 sub play_request {
-    my $self    = shift;
-    my $request = shift;
-
-    # XXX: the output should go to a file for testability, and to suppress
-    # the "print on closed filehandle" warnings
-    close STDOUT;
+    my $self     = shift;
+    my $request  = shift;
+    my $filename = shift;
 
     %ENV = %{ $request->{ENV} };
+
+    # this doesn't use "select $newhandle" because a few places in Jifty use
+    # print STDOUT
+    local *STDOUT;
+
+    Jifty->log->info("Logging request's output to $filename.");
+
+    open *STDOUT, '>', $filename
+        or die "Unable to open $filename for writing: $!";
+
     Jifty->handler->handle_request(cgi => $request->{cgi});
+
+    close *STDOUT;
 }
 
-=head2 play_requests REQUESTs
+=head2 play_requests NUMBER, REQUESTs
 
 Plays through a list of requests, sleeping between each. Each request should be
 a hashref with fields C<time> (a possibly fractional number of seconds,
@@ -125,13 +139,21 @@ representing the time of the request, relative to when the server started);
 C<ENV> (used to set C<%ENV>); and C<cgi> (passed to
 Jifty->handler->handle_request).
 
+The NUMBER is used in logfile naming so different sets of requests don't
+overwrite the same file.
+
 =cut
 
 sub play_requests {
-    my $self = shift;
+    my $self    = shift;
+    my $set_num = shift;
 
     my $current_time = 0;
+    my $req_num = 0;
+
     for my $request (@_) {
+        ++$req_num;
+
         $request->{time} -= $current_time;
         $request->{time} = $self->{max}
             if defined($self->{max}) && $request->{time} > $self->{max};
@@ -140,7 +162,13 @@ sub play_requests {
         sleep $request->{time};
         $current_time += $request->{time};
 
-        $self->play_request($request);
+        my $filename = sprintf '%s/%d/%d-%d',
+                        $path,
+                        $start,
+                        $set_num,
+                        $req_num;
+
+        $self->play_request($request, $filename);
     }
 }
 
