@@ -48,8 +48,10 @@ template '__jifty/error/_elements/error_text' => sub {
 };
 
 =head2 wrapper
-                              This exists as a fallback wrapper,
-                              in case the error in question is caused by the Jifty app's wrapper, for instance.
+
+This exists as a fallback wrapper, in case the error in question is
+caused by the Jifty app's wrapper, for instance.
+
 =cut
 
 {
@@ -67,11 +69,11 @@ template '__jifty/error/_elements/error_text' => sub {
                         media => 'all'
                     }
                 };
-                }
-                body {
+            }
+            body {
                 div {
                     attr { id => 'headers' };
-                    h1  {'Internal Error'};
+                    h1 {'Internal Error'};
                     div {
                         attr { id => 'content' };
                         a { attr { name => 'content' } };
@@ -86,35 +88,34 @@ template '__jifty/error/_elements/error_text' => sub {
                                         )
                                         . 'is enabled.'
                                 );
-                                }
+                            }
                         }
                         Jifty->web->render_messages;
                         $code->();
-                        }
-
                     }
+
                 }
             }
+        }
     }
 }
 
 
 template '__jifty/error/dhandler' => sub {
     my $error = get('error');
-                            Jifty->log->error( "Unhandled web error " . $error );
-                            page {
-                              title is 'Something went awry';
-                              show('/__jifty/error/_elements/error_text', error => $error );
-                        };
-                    };
+    Jifty->log->error( "Unhandled web error " . $error );
+    page {
+        title is 'Something went awry';
+        show( '/__jifty/error/_elements/error_text', error => $error );
+    };
+};
 
 template '__jifty/error/error.css' => sub {
-                            Jifty->handler->apache->content_type("text/css");
-                            h1 {
-                              outs('color: red');
-                              }
-
-                          };
+    Jifty->handler->apache->content_type("text/css");
+    h1 {
+        outs('color: red');
+    };
+};
 
 
 template '/errors/404' => sub {
@@ -123,23 +124,22 @@ template '/errors/404' => sub {
     Jifty->handler->apache->header_out( Status => '404' );
     with( title => _("Something's not quite right") ), page {
 
-        with( id => "overview" ),
-        div {
+        with( id => "overview" ), div {
             p {
                 join( " ",
-                    _( "You got to a page that we don't think exists." ),
-                    _( "Anyway, the software has logged this error." ),
+                    _("You got to a page that we don't think exists."),
+                    _("Anyway, the software has logged this error."),
                     _("Sorry about this.") );
-                }
+            }
 
-                p {
+            p {
                 hyperlink(
                     url   => "/",
                     label => _('Go back home...')
                 );
-                }
-
             }
+
+        }
     };
 };
 
@@ -147,42 +147,44 @@ template '/errors/404' => sub {
 
 template '__jifty/error/mason_internal_error' => page {
     { title is _('Something went awry') }
+
     my $cont = Jifty->web->request->continuation;
-    #my $wrapper = "/__jifty/error/_elements/wrapper" if $cont and $cont->request->path eq "/__jifty/error/mason_internal_error";
+
+#my $wrapper = "/__jifty/error/_elements/wrapper" if $cont and $cont->request->path eq "/__jifty/error/mason_internal_error";
 
     # If we're not in devel, bail
     if ( not Jifty->config->framework("DevelMode") or not $cont ) {
-            show("/__jifty/error/_elements/error_text");
-    #    return;
+        show("/__jifty/error/_elements/error_text");
+
+        #    return;
     }
+    my $e = $cont->response->error;
+    if ( ref($e) ) {
+        my $msg = $e->message;
+        $msg =~ s/, <\S+> (line|chunk) \d+\././;
 
-    my $e   = $cont->response->error;
-    if (ref($e)) {
-    my $msg = $e->message;
-    $msg =~ s/, <\S+> (line|chunk) \d+\././;
-
-    my $info  = $e->analyze_error;
-    my $file  = $info->{file};
-    my @lines = @{ $info->{lines} };
-    my @stack = @{ $info->{frames} };
+        my $info  = $e->analyze_error;
+        my $file  = $info->{file};
+        my @lines = @{ $info->{lines} };
+        my @stack = @{ $info->{frames} };
 
         outs('Error in ');
         _error_line( $file, "@lines" );
         pre {$msg};
 
-        Jifty->web->return( label => _("Try again") );
+        form_return( label => _("Try again") );
 
-    h2 { 'Call stack' };
-    ul {
-        for my $frame (@stack) {
-            next if $frame->filename =~ m{/HTML/Mason/};
-            li {
-                _error_line( $frame->filename, $frame->line );
+        h2 {'Call stack'};
+        ul {
+            for my $frame (@stack) {
+                next if $frame->filename =~ m{/HTML/Mason/};
+                li {
+                    _error_line( $frame->filename, $frame->line );
                 }
-        }
-    }; 
+            }
+        };
     } else {
-    pre {$e};
+        pre {$e};
     }
 };
 
