@@ -2,6 +2,9 @@ package Jifty::Script;
 use App::CLI;
 use base qw/App::CLI App::CLI::Command/;
 
+use Jifty::Everything;
+Jifty::Everything->plugin_commands;
+
 =head1 NAME
 
 Jifty::Script - Base class for all bin/jifty commands
