@@ -378,17 +378,33 @@ Recursively render DATASTRUCTURE as some simple html dls and ols.
 sub html_dump {
     my $content = shift;
     if (ref($content) eq 'ARRAY') {
-        ul(map {
-            li(html_dump($_))
-        } @{$content});
+        if (keys %$content) {
+            return ul(map {
+                li(html_dump($_))
+            } @{$content});
+        }
+        else {
+            return;
+        }
     }
     elsif (ref($content) eq 'HASH') {
-        dl(map {
-            dt(Jifty::Web->escape($_)),
-            dd(html_dump($content->{$_})),
-        } sort keys %{$content}),
+        if (keys %$content) {
+            return dl(map {
+                dt(Jifty::Web->escape($_)),
+                dd(html_dump($content->{$_})),
+            } sort keys %{$content});
+        }
+        else {
+            return;
+        }
+    
     } elsif (ref($content) && $content->isa('Jifty::Collection')) {
-        return  ol( map { li( html_dump_record($_))  } @{$content->items_array_ref});
+        if ($content->count) {
+            return  ol( map { li( html_dump_record($_))  } @{$content->items_array_ref});
+        }
+        else {
+            return;
+        }
         
     } elsif (ref($content) && $content->isa('Jifty::Record')) {
           return   html_dump_record($content);
