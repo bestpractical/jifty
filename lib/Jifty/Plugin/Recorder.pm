@@ -27,8 +27,8 @@ sub init {
     return if $self->_pre_init;
 
     $self->start(time);
-    $self->path($args{path});
-    Jifty::Util->make_path($args{path});
+    $self->path(Jifty::Util->absolute_path( $args{path} ));
+    Jifty::Util->make_path($self->path);
 
     $self->loghandle($self->get_loghandle);
 
