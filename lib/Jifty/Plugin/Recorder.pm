@@ -5,7 +5,6 @@ use base qw/Jifty::Plugin Class::Data::Inheritable/;
 __PACKAGE__->mk_accessors(qw/start path loghandle/);
 
 use Time::HiRes 'time';
-use YAML;
 use Jifty::Util;
 use Storable 'nfreeze';
 
@@ -56,7 +55,7 @@ sub before_request
     eval {
         my $delta = time - $self->start;
         my $request = { cgi => nfreeze($cgi), ENV => \%ENV, time => $delta };
-        my $yaml = YAML::Dump($request);
+        my $yaml = Jifty::YAML::Dump($request);
 
         print { $self->loghandle } $yaml;
     };

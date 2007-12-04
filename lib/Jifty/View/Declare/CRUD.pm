@@ -583,6 +583,8 @@ private template 'list_items' => sub {
     my $item_path   = shift;
     my $callback    = shift;
     my $object_type = $self->object_type;
+    $collection->_do_search(); # we're going to need the results. 
+    # XXX TODO, should use a real API to force the search
     if ( $collection->count == 0 ) {
         show('./no_items_found');
     }
