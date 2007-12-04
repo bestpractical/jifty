@@ -7,6 +7,7 @@ __PACKAGE__->mk_accessors(qw/start path loghandle/);
 use Time::HiRes 'time';
 use YAML;
 use Jifty::Util;
+use Storable 'nfreeze';
 
 our $VERSION = 0.01;
 
@@ -52,11 +53,14 @@ sub before_request
     my $handler = shift;
     my $cgi     = shift;
 
-    my $delta = time - $self->start;
-    my $request = { cgi => $cgi, ENV => \%ENV, time => $delta };
-    my $yaml = YAML::Dump($request);
+    eval {
+        my $delta = time - $self->start;
+        my $request = { cgi => nfreeze($cgi), ENV => \%ENV, time => $delta };
+        my $yaml = YAML::Dump($request);
 
-    eval { print { $self->loghandle } $yaml };
+        print { $self->loghandle } $yaml;
+    };
+
     Jifty->log->error("Unable to append to request log: $@") if $@;
 }
 

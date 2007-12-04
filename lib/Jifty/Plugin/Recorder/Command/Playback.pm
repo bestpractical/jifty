@@ -10,6 +10,7 @@ use warnings;
 
 use base qw/App::CLI::Command/;
 use Time::HiRes 'sleep';
+use Storable 'thaw';
 
 our $start = time; # for naming log files
 our $path = 'log/playback';
@@ -167,6 +168,8 @@ sub play_requests {
                         $start,
                         $set_num,
                         $req_num;
+
+        $request->{cgi} = thaw($request->{cgi});
 
         $self->play_request($request, $filename);
     }
