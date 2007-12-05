@@ -139,7 +139,7 @@ sub take_action {
         #          every value until the action succeeds because nothing changed
         # <Sartak> it doesn't matter for HM but for other apps it may
 
-        unless ($self->record->current_user_can('update', $field => $value)) {
+        unless ($self->record->current_user_can('update', column => $field, value => $value)) {
             $self->result->field_error($field, _('Permission denied'));
             next;
         }
