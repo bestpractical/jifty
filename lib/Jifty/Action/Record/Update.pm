@@ -124,6 +124,26 @@ sub take_action {
             $value = scalar <$value>;
         }
 
+        # Error on columns we can't update
+        # <Sartak> ah ha. I think I know why passing due => undef reports
+        #          action success
+        # <Sartak> Jifty::Action::Record::Update compares the value of the
+        #          field with what you passed in
+        # <Sartak> but since user can't read the field, it returns undef
+        # <Sartak> and so: they're both undef, no change, skip this column
+        # <Sartak> and since that's the only column that changed, it'll notice
+        #          that every column it did try to update (which is.. none of
+        #          them) succeeded
+        # <Sartak> I don't think we can just skip ACLs for reading the column
+        #          -- that's a potential security issue. an attacker could try
+        #          every value until the action succeeds because nothing changed
+        # <Sartak> it doesn't matter for HM but for other apps it may
+
+        unless ($self->record->current_user_can('update', $field => $value)) {
+            $self->result->field_error($field, _('Permission denied'));
+            next;
+        }
+
         # Skip fields that have not changed
         my $old = $self->record->$field;
         # XXX TODO: This ignore "by" on columns
