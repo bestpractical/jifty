@@ -30,14 +30,9 @@ sub init {
     $self->path(Jifty::Util->absolute_path( $args{path} ));
     Jifty::Util->make_path($self->path);
 
-    $self->loghandle($self->get_loghandle);
-
-    # if creating the loghandle failed, then we may as well not bother :)
-    if ($self->loghandle) {
-        Jifty::Handler->add_trigger(
-            before_request => sub { $self->before_request(@_) }
-        );
-    }
+    Jifty::Handler->add_trigger(
+        before_request => sub { $self->before_request(@_) }
+    );
 }
 
 =head2 before_request
@@ -57,7 +52,7 @@ sub before_request
         my $request = { cgi => nfreeze($cgi), ENV => \%ENV, time => $delta };
         my $yaml = Jifty::YAML::Dump($request);
 
-        print { $self->loghandle } $yaml;
+        print { $self->get_loghandle } $yaml;
     };
 
     Jifty->log->error("Unable to append to request log: $@") if $@;
@@ -74,19 +69,22 @@ Returns C<undef> on error.
 sub get_loghandle {
     my $self = shift;
 
-    my $name = sprintf '%s/%d-%d.log',
-                $self->path,
-                $self->start,
-                $$;
+    unless ($self->loghandle) {
+        my $name = sprintf '%s/%d-%d.log',
+                    $self->path,
+                    $self->start,
+                    $$;
 
-    open my $loghandle, '>', $name or do {
-        Jifty->log->error("Unable to open $name for writing: $!");
-        return;
-    };
+        open my $loghandle, '>', $name or do {
+            Jifty->log->error("Unable to open $name for writing: $!");
+            return;
+        };
 
-    Jifty->log->info("Logging all HTTP requests to $name.");
+        Jifty->log->info("Logging all HTTP requests to $name.");
+        $self->loghandle($loghandle);
+    }
 
-    return $loghandle;
+    return $self->loghandle;
 }
 
 =head1 NAME
