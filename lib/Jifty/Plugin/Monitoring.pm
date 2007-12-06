@@ -154,6 +154,26 @@ sub timer {
     return tv_interval($t0);
 }
 
+=head2 Other Syntactic Sugar Methods
+
+The following methods simply return themselves:
+
+=over
+
+=item minute, minutes
+
+=item hour, hours
+
+=item day, days
+
+=item week, weeks
+
+=item month, months
+
+=item year, years
+
+=back
+
 =head1 OBJECT METHODS
 
 These are primarily used by
