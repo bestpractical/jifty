@@ -137,26 +137,28 @@ sub probe_database_existence {
             logger_component => 'SchemaTool',
         );
     };
+    my $error = $@;
 
-    if ( $@ =~ /doesn't match (application schema|running jifty) version/i ) {
+    if ( $error =~ /doesn't match (application schema|running jifty|running plugin) version/i 
+         or $error =~ /plugin isn't installed in database/i ) {
 
         # We found an out-of-date DB.  Upgrade it
         $self->{setup_tables} = 1;
-    } elsif ( $@ =~ /no version in the database/i ) {
+    } elsif ( $error =~ /no version in the database/i ) {
 
         # No version table.  Assume the DB is empty.
         $self->{create_all_tables} = 1;
-    } elsif ( $@ =~ /database .*? does not exist/i
-        or $@ =~ /unknown database/i )
+    } elsif ( $error =~ /database .*? does not exist/i
+        or $error =~ /unknown database/i )
     {
 
         # No database exists; we'll need to make one and fill it up
         $self->{create_database}   = 1;
         $self->{create_all_tables} = 1;
-    } elsif ($@) {
+    } elsif ($error) {
 
         # Some other unexpected error; rethrow it
-        die $@;
+        die $error;
     }
 
     # Setting up tables requires creating the DB if we just dropped it

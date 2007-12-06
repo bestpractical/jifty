@@ -206,6 +206,39 @@ sub check_schema_version {
         }
     }
 
+    # Plugin version check
+    for my $plugin ( Jifty->plugins ) {
+        my $plugin_class = ref $plugin;
+
+        my $dbv
+            = Jifty::Model::Metadata->load( $plugin_class . '_db_version' );
+        my $appv = version->new( $plugin->version );
+
+        if ( not defined $dbv ) {
+            warn
+                "$plugin_class plugin isn't installed in database\n";
+            if ($autoup) {
+                warn
+                    "Automatically upgrading your database to match the current plugin schema\n";
+                $self->_upgrade_schema;
+            } else {
+                die
+                    "Please run `bin/jifty schema --setup` to upgrade the database.\n";
+            }
+        } elsif (version->new($dbv) < $appv) {
+            warn
+                "$plugin_class plugin version in database ($dbv) doesn't match running plugin version ($appv)\n";
+            if ($autoup) {
+                warn
+                    "Automatically upgrading your database to match the current plugin schema\n";
+                $self->_upgrade_schema;
+            } else {
+                die
+                    "Please run `bin/jifty schema --setup` to upgrade the database.\n";
+            }
+        }
+    }
+
 }
 
 =head2 create_database MODE
