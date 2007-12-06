@@ -209,6 +209,8 @@ sub mk_normalising_accessor {
     no strict 'refs';
     *{$accessor} = sub {
         my $self = shift;
+        return $self->{$internal_method} unless @_;
+
         $self->$internal_method($self->_handler_setup($internal_method, @_));
     };
 }
