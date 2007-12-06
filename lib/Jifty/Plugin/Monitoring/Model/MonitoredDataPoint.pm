@@ -21,7 +21,7 @@ use Jifty::Record schema {
         is required;
 
     column sampled_at =>
-        type is 'datetime',
+        type is 'timestamp',
         filters are 'Jifty::DBI::Filter::DateTime';
 };
 
