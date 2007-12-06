@@ -237,6 +237,21 @@ sub remove {
     $setting->delete if $setting->id;
 }
 
+=head2 remove_all
+
+Removes the session from the database entirely.
+
+=cut
+
+sub remove_all {
+    my $self = shift;
+    return unless $self->loaded;
+    my $settings = Jifty::Model::SessionCollection->new;
+    $settings->limit( column => "session_id", value => $self->id );
+    $_->delete while $_ = $settings->next;
+    $self->unload;
+}
+
 =head2 set_continuation ID CONT
 
 Stores a continuation in the session.
