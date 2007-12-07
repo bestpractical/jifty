@@ -21,7 +21,7 @@ method.
 =cut
 
 use base qw/Jifty::Action/;
-
+use Scalar::Defer qw/ defer /;
 use Scalar::Util qw/ blessed /;
 use Clone qw/clone/;
 
@@ -161,11 +161,21 @@ sub _fill_in_argument_record_data {
     for my $field (keys %$arguments) {
             # Load the column object and the record's current value
             next unless my $function = $self->record->can($field);
-            my $current_value = $function->($self->record);
 
-            # If the current value is actually a pointer to
-            # another object, turn it into an ID
-            $current_value = $current_value->id if blessed($current_value) and $current_value->isa('Jifty::Record');
+
+
+            my $current_value = defer {
+                my $val = $function->( $self->record );
+
+                # If the current value is actually a pointer to
+                # another object, turn it into an ID
+                $val = $val->id
+                    if blessed($val)
+                        and $val->isa('Jifty::Record');
+
+                return $val;
+            };
+
 
             # The record's current value becomes the widget's default value
             $arguments->{$field}->{default_value} = $current_value if $self->record->id;
