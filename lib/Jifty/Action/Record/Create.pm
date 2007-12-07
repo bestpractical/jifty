@@ -29,13 +29,15 @@ the column is in the model
 
 sub arguments {
     my $self = shift;
-    
+
     # Add default values to the arguments configured by Jifty::Action::Record
     my $args = $self->SUPER::arguments;
-    for my $arg (keys %{$args}) {
-        my $column = $self->record->column($arg) or next;
-        $args->{$arg}{default_value} = $column->default
-          if not $args->{$arg}->{default_value};
+    for my $arg ( keys %{$args} ) {
+        unless ( $args->{$arg}->{default_value} ) {
+            my $column = $self->record->column($arg);
+            next if not $column;
+            $args->{$arg}{default_value} = $column->default;
+        }
     }
     return $args;
 }
