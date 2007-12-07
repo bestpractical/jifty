@@ -45,6 +45,7 @@ aid in placing them in L<HTML::Mason> components.
 use base 'Jifty::Web::Form::Element';
 
 use Scalar::Util;
+use Scalar::Defer qw/force/;
 use HTML::Entities;
 
 # We need the anonymous sub because otherwise the method of the base class is
@@ -322,7 +323,10 @@ sub current_value {
     if ($self->sticky_value and $self->sticky) {
         return $self->sticky_value;
     } else {
-        return $self->default_value;
+        # the force is here because very often this will be a Scalar::Defer object that we REALLY 
+        # want to be able to check definedness on.
+        # Because of a core limitation in perl, Scalar::Defer can't return undef for an object.
+        return force $self->default_value;
     }
 }
 

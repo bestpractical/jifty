@@ -160,11 +160,14 @@ sub _fill_in_argument_record_data {
 
     for my $field (keys %$arguments) {
             # Load the column object and the record's current value
-            next unless my $function = $self->record->can($field);
 
 
 
-            my $current_value = defer {
+            my $current_value;
+            
+            
+            if ( my $function = $self->record->can($field) ) {
+            $current_value = defer {
                 my $val = $function->( $self->record );
 
                 # If the current value is actually a pointer to
@@ -175,10 +178,10 @@ sub _fill_in_argument_record_data {
 
                 return $val;
             };
-
+            }
 
             # The record's current value becomes the widget's default value
-            $arguments->{$field}->{default_value} = $current_value if $self->record->id;
+            $arguments->{$field}->{default_value} = $current_value;
 
 
     }
