@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-package Jifty::Plugin::Queries;
+package Jifty::Plugin::SQLQueries;
 use base qw/Jifty::Plugin/;
 use strict;
 use warnings;
@@ -8,11 +8,11 @@ our @requests;
 
 =head1 NAME
 
-Jifty::Plugin::Queries
+Jifty::Plugin::SQLQueries
 
 =head1 DESCRIPTION
 
-Query logging and reporting for your Jifty app
+SQL query logging and reporting for your Jifty app
 
 =head1 USAGE
 
@@ -20,7 +20,7 @@ Add the following to your site_config.yml
 
  framework:
    Plugins:
-     - Queries: {}
+     - SQLQueries: {}
 
 This makes the following URLs available:
 
@@ -73,7 +73,7 @@ sub post_init {
     require Carp;
 
     Jifty->handle->log_sql_statements(1);
-    Jifty->handle->log_sql_hook(QueryPlugin => sub { Carp::longmess });
+    Jifty->handle->log_sql_hook(SQLQueryPlugin => sub { Carp::longmess });
 }
 
 =head2 before_request

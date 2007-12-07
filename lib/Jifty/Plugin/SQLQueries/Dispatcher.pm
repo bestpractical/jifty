@@ -1,4 +1,4 @@
-package Jifty::Plugin::Queries::Dispatcher;
+package Jifty::Plugin::SQLQueries::Dispatcher;
 use warnings;
 use strict;
 
@@ -18,7 +18,7 @@ on '/__jifty/admin/queries/all' => run {
 
 # http://your.app/queries/clear -- clear query log
 on '/__jifty/admin/queries/clear' => run {
-    @Jifty::Plugin::Queries::requests = ();
+    @Jifty::Plugin::SQLQueries::requests = ();
     set 'skip_zero' => 1;
     redirect "/__jifty/admin/queries";
 };
@@ -26,7 +26,7 @@ on '/__jifty/admin/queries/clear' => run {
 # http://your.app/queries/xxx -- display query report for request ID xxx
 on '/__jifty/admin/queries/#' => run {
     abort(404) if $1 < 1;
-    my $query = $Jifty::Plugin::Queries::requests[$1 - 1]
+    my $query = $Jifty::Plugin::SQLQueries::requests[$1 - 1]
         or abort(404);
     set query => $query;
     show "/__jifty/admin/queries/one";
@@ -34,7 +34,7 @@ on '/__jifty/admin/queries/#' => run {
 
 =head1 SEE ALSO
 
-L<Jifty::Plugin::Queries>, L<Jifty::Plugin::Queries::View>
+L<Jifty::Plugin::SQLQueries>, L<Jifty::Plugin::SQLQueries::View>
 
 =head1 COPYRIGHT AND LICENSE
 

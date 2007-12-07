@@ -1,13 +1,13 @@
 use strict;
 use warnings;
 
-package Jifty::Plugin::Queries::View;
+package Jifty::Plugin::SQLQueries::View;
 use Jifty::View::Declare -base;
 use Scalar::Util 'blessed';
 
 =head1 NAME
 
-Jifty::Plugin::Queries::View - Views for database queries
+Jifty::Plugin::SQLQueries::View - Views for database queries
 
 =head1 TEMPLATES
 
@@ -41,7 +41,7 @@ template '/__jifty/admin/queries/all' => sub {
                     th { "URL" }
                 };
 
-                for (@Jifty::Plugin::Queries::requests)
+                for (@Jifty::Plugin::SQLQueries::requests)
                 {
                     next if $skip_zero && @{ $_->{queries} } == 0;
 
@@ -89,7 +89,7 @@ template '/__jifty/admin/queries/one' => sub {
                 }
                 h5 { "Stack trace:" }
                 pre {
-                    $misc->{QueryPlugin};
+                    $misc->{SQLQueryPlugin};
                 }
             }
         }
@@ -98,7 +98,7 @@ template '/__jifty/admin/queries/one' => sub {
 
 =head1 SEE ALSO
 
-L<Jifty::Plugin::Queries>, L<Jifty::Plugin::Queries::Dispatcher>
+L<Jifty::Plugin::SQLQueries>, L<Jifty::Plugin::SQLQueries::Dispatcher>
 
 =head1 COPYRIGHT AND LICENSE
 
