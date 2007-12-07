@@ -5,31 +5,31 @@ use strict;
 use Jifty::Dispatcher -base;
 
 # http://your.app/queries -- display full query report
-on '/queries' => run {
+on '/__jifty/admin/queries' => run {
     set 'skip_zero' => 1;
-    show "/queries/all";
+    show "/__jifty/admin/queries/all";
 };
 
 # http://your.app/queries/all -- full query report with non-query requests
-on '/queries/all' => run {
+on '/__jifty/admin/queries/all' => run {
     set 'skip_zero' => 0;
-    show "/queries/all";
+    show "/__jifty/admin/queries/all";
 };
 
 # http://your.app/queries/clear -- clear query log
-on '/queries/clear' => run {
+on '/__jifty/admin/queries/clear' => run {
     @Jifty::Plugin::Queries::requests = ();
     set 'skip_zero' => 1;
-    redirect "/queries";
+    redirect "/__jifty/admin/queries";
 };
 
 # http://your.app/queries/xxx -- display query report for request ID xxx
-on '/queries/#' => run {
+on '/__jifty/admin/queries/#' => run {
     abort(404) if $1 < 1;
     my $query = $Jifty::Plugin::Queries::requests[$1 - 1]
         or abort(404);
     set query => $query;
-    show "/queries/one";
+    show "/__jifty/admin/queries/one";
 };
 
 =head1 SEE ALSO

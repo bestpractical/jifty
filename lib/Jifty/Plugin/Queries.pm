@@ -26,16 +26,16 @@ This makes the following URLs available:
 
 View the top-level query report (how many queries each request had)
 
-    http://your.app/queries
+    http://your.app/__jifty/admin/queries
 
 View the top-level query report, including zero-query requests
 
-    http://your.app/queries/all
+    http://your.app/__jifty/admin/queries/all
 
 View an individual request's detailed query report (which queries were made,
 where, how long they took, etc)
 
-    http://your.app/queries/3
+    http://your.app/__jifty/admin/queries/3
 
 =head2 init
 

@@ -11,7 +11,9 @@ Jifty::Plugin::Queries::View - Views for database queries
 
 =head1 TEMPLATES
 
-template '/queries/all' => sub {
+=cut
+
+template '/__jifty/admin/queries/all' => sub {
     my $skip_zero = get 'skip_zero';
 
     html {
@@ -19,14 +21,14 @@ template '/queries/all' => sub {
             h1 { "Queries" }
             p {
                 if ($skip_zero) {
-                    a { attr { href => "/queries/all" }
+                    a { attr { href => "/__jifty/admin/queries/all" }
                         "Show zero-query requests" }
                 }
                 else {
-                    a { attr { href => "/queries" }
+                    a { attr { href => "/__jifty/admin/queries" }
                         "Hide zero-query requests" }
                 }
-                a { attr { href => "/queries/clear" }
+                a { attr { href => "/__jifty/admin/queries/clear" }
                     "Clear query log" }
             }
             hr {}
@@ -44,8 +46,9 @@ template '/queries/all' => sub {
                     next if $skip_zero && @{ $_->{queries} } == 0;
 
                     row {
-                        cell { a { attr { href => "/queries/$_->{id}" }
-                                   $_->{id} } }
+                        cell { a {
+                            attr { href => "/__jifty/admin/queries/$_->{id}" }
+                            $_->{id} } }
 
                         cell { scalar @{ $_->{queries} } }
                         cell { $_->{duration} }
@@ -57,7 +60,7 @@ template '/queries/all' => sub {
     }
 };
 
-template '/queries/one' => sub {
+template '/__jifty/admin/queries/one' => sub {
     my $query = get 'query';
 
     html {
@@ -69,7 +72,8 @@ template '/queries/one' => sub {
                 li { "Time taken: $query->{duration}" }
                 li { "Queries made: " . @{ $query->{queries} } }
             }
-            p { a { attr { href => "/queries" } "Table of Contents" } };
+            p { a { attr { href => "/__jifty/admin/queries" }
+                    "Table of Contents" } };
 
             for ( @{ $query->{queries} } ) {
                 my ($time, $statement, $bindings, $duration, $misc) = @$_;
