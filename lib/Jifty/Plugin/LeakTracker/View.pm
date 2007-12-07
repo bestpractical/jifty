@@ -11,15 +11,9 @@ Jifty::Plugin::LeakTracker::View - Views for memory leak detection
 
 =head1 TEMPLATES
 
-=head2 leaks/chart
-
-This shows a chart using L<Chart>. It expects to find the arguments in the C<args> parameter, which is setup for it in L<Jifty::Plugin::Chart::Dispatcher>.
-
-This will output a PNG file unless there is an error building the chart.
-
 =cut
 
-template 'leaks/all' => sub {
+template '/__jifty/admin/leaks/all' => sub {
     my $skip_zero = get 'skip_zero';
 
     html {
@@ -27,11 +21,11 @@ template 'leaks/all' => sub {
             h1 { "Leaked Objects" }
             p {
                 if ($skip_zero) {
-                    a { attr { href => "/leaks/all" }
+                    a { attr { href => "/__jifty/admin/leaks/all" }
                         "Show zero-leak requests" }
                 }
                 else {
-                    a { attr { href => "/leaks" }
+                    a { attr { href => "/__jifty/admin/leaks" }
                         "Hide zero-leak requests" }
                 }
             }
@@ -51,8 +45,9 @@ template 'leaks/all' => sub {
                     next if $skip_zero && @{$_->{leaks}} == 0;
 
                     row {
-                        cell { a { attr { href => "leaks/$_->{id}" }
-                                   $_->{id} } }
+                        cell { a {
+                            attr { href => "/__jifty/admin/leaks/$_->{id}" }
+                            $_->{id} } }
 
                         cell { scalar @{$_->{leaks}} }
                         cell { $_->{size} }
@@ -65,7 +60,7 @@ template 'leaks/all' => sub {
     }
 };
 
-template 'leaks/one' => sub {
+template '/__jifty/admin/leaks/one' => sub {
     my $leak = get 'leak';
 
     html {
@@ -77,7 +72,7 @@ template 'leaks/one' => sub {
                 li { "Objects leaked: " . scalar(@{$leak->{leaks}}) }
                 li { "Total memory leaked: $leak->{size} bytes" }
             }
-            p { a { attr { href => "/leaks" } "Table of Contents" } }
+            p { a { attr { href => "/__jifty/admin/leaks" } "Table of Contents" } }
             hr {}
             h2 { "Object types leaked:" }
             ul {

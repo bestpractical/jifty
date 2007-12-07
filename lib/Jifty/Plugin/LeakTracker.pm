@@ -106,15 +106,15 @@ This makes the following URLs available:
 
 View the top-level leak report (how much each request has leaked)
 
-    http://your.app/leaks
+    http://your.app/__jifty/admin/leaks
 
 View the top-level leak report, including zero-leak requests
 
-    http://your.app/leaks/all
+    http://your.app/__jifty/admin/leaks/all
 
 View an individual request's detailed leak report (which objects were leaked)
 
-    http://your.app/leaks/3
+    http://your.app/__jifty/admin/leaks/3
 
 =head1 WARNING
 
