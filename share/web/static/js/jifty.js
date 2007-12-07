@@ -1447,6 +1447,8 @@ Object.extend(Jifty.Placeholder.prototype, {
   initialize: function(element, text) {
      this.element = $(element);
      this.text = text;
+     this.element.placeholderText = this.text;
+
      Event.observe(element, 'focus', this.onFocus.bind(this));
      Event.observe(element, 'blur', this.onBlur.bind(this));
      this.onBlur();
@@ -1486,7 +1488,10 @@ Object.extend(Jifty.Placeholder, {
   },
             
   clearPlaceholder: function(elt) {
-     if(Jifty.Placeholder.hasPlaceholder(elt)) {
+     // If the element's text isn't the same as its placeholder text, then the
+     // browser screwed up and didn't clear our placeholder. Opera on Mac with
+     // VirtueDesktops does this some times, and I lose data.
+     if(Jifty.Placeholder.hasPlaceholder(elt) && elt.value == elt.placeholderText) {
        elt.value = '';
        Element.removeClassName(elt, 'placeholder');
      }
