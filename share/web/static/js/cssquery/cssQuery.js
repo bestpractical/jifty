@@ -169,9 +169,20 @@ pseudoClasses["visited"] = function($element) {
 
 // IE5/6 includes comments (LOL) in it's elements collections.
 // so we have to check for this. the test is tagName != "!". LOL (again).
-var thisElement = function($element) {
-	return ($element && $element.nodeType == 1 && $element.tagName != "!") ? $element : null;
-};
+
+// Jifty: since we call this a LOT (11000 times for Hiveminder's /) we check
+// tagName only if IE. this cuts its runtime to half in all but IE
+var thisElement;
+if (Prototype.Browser.IE) {
+    thisElement = function($element) {
+        return ($element && $element.nodeType == 1 && $element.tagName != "!") ? $element : null;
+    };
+}
+else {
+    thisElement = function($element) {
+        return ($element && $element.nodeType == 1) ? $element : null;
+    };
+}
 
 // return the previous element to the supplied element
 //  previousSibling is not good enough as it might return a text or comment node
