@@ -5,6 +5,9 @@
 
 	Modifed by Nelson Elhage <nelhage@bestpractical.com>
 	(2006-06-21) to optimize selection by ID on non-IE browsers
+
+    Modified by Shawn M Moore <sartak@bestpractical.com>
+    (2007-12-07) sped up thisElement, descendent selector, and class selector
 */
 
 // the following functions allow querying of the DOM using CSS selectors
@@ -162,12 +165,14 @@ selectors["#"] = function($results, $from, $id) {
 
 // class selector
 selectors["."] = function($results, $from, $className) {
-	// create a RegExp version of the class
-	$className = new RegExp("(^|\\s)" + $className + "(\\s|$)");
-	// loop through current selection and check class
-	var $element, i;
-	for (i = 0; ($element = $from[i]); i++)
-		if ($className.test($element.className)) $results.push($element);
+    $className = " " + $className + " ";
+    var $element, i;
+    for (i = 0; ($element = $from[i]); i++) {
+        var classes = " " + $element.className + " ";
+        if (classes.indexOf($className) > -1) {
+            $results.push($element);
+        }
+    }
 };
 
 // pseudo-class selector
