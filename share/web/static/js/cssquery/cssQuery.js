@@ -106,8 +106,26 @@ var attributeSelectors = [];
 // selectors
 // -----------------------------------------------------------------------
 
+// Jifty: special case of the descent selector. this is by far the most time
+// consuming code path of JS. special casing it does cut JS time a bit
+selectAll = function($results, $from) {
+	// loop through current selection
+	var $element, $subset, i, j;
+	for (i = 0; i < $from.length; i++) {
+        $subset = $from[i].getElementsByTagName("*");
+		for (j = 0; ($element = $subset[j]); j++) {
+			if (thisElement($element))
+		        $results.push($element);
+		}
+	}
+};
+
 // descendant selector
 selectors[" "] = function($results, $from, $tagName, $namespace) {
+    if ($tagName == "*" && $namespace == "") {
+        return selectAll($results, $from);
+    }
+
 	// loop through current selection
 	var $element, i, j;
 	for (i = 0; i < $from.length; i++) {
