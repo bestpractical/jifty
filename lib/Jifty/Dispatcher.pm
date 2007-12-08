@@ -1183,23 +1183,21 @@ sub render_template {
     my $self     = shift;
     my $template = shift;
     my $showed   = 0;
-#    local $@;
     eval {
         foreach my $handler ( Jifty->handler->view_handlers ) {
-            if ( Jifty->handler->view($handler)->template_exists($template) ) {
+            my $handler_class = Jifty->handler->view($handler);
+            if ( $handler_class->template_exists($template) ) {
+                $handler_class->show($template);
                 $showed = 1;
-                Jifty->handler->view($handler)->show($template);
                 last;
             }
         }
         if ( not $showed and my $fallback_handler = Jifty->handler->fallback_view_handler ) {
             $fallback_handler->show($template);
         }
-
     };
 
     my $err = $@;
-
     # Handle parse errors
     $self->log->fatal("view class error: $err") if $err;
     if ( $err and not eval { $err->isa('HTML::Mason::Exception::Abort') } ) {
@@ -1221,7 +1219,6 @@ sub render_template {
     } elsif ($err) {
         die $err;
     }
-
 }
 
 
