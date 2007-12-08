@@ -151,39 +151,22 @@ sub arguments {
 sub _fill_in_argument_record_data {
     my $self = shift;
 
-    my $arguments = clone($ARGUMENT_PROTOTYPE_CACHE->{ref($self)});
+    my $arguments = clone( $ARGUMENT_PROTOTYPE_CACHE->{ ref($self) } );
+    return $arguments unless ( $self->record->id );
 
-    if ( $self->record->id ) {
-
-    for my $field (keys %$arguments) {
-            # Load the column object and the record's current value
-
-
-
-            my $current_value;
-            
-            
-            if ( my $function = $self->record->can($field) ) {
-            $current_value = defer {
+    for my $field ( keys %$arguments ) {
+        if ( my $function = $self->record->can($field) ) {
+            $arguments->{$field}->{default_value} = defer {
                 my $val = $function->( $self->record );
-
                 # If the current value is actually a pointer to
                 # another object, turn it into an ID
-                $val = $val->id
-                    if blessed($val)
-                        and $val->isa('Jifty::Record');
-
+                return $val->id if (blessed($val) and $val->isa('Jifty::Record'));
                 return $val;
-            };
             }
-
-            # The record's current value becomes the widget's default value
-            $arguments->{$field}->{default_value} = $current_value;
-
-
+        }
+        # The record's current value becomes the widget's default value
     }
-    }
-    return $arguments;    
+    return $arguments;
 }
 
 
@@ -257,11 +240,8 @@ sub _build_class_arguments {
             }
 
             # If it's a select box, setup the available values
-            if ( UNIVERSAL::isa( $refers_to, 'Jifty::Record' )
-                && $info->{render_as} eq 'Select' )
-            {
-                $info->{'valid_values'}
-                    = $self->_default_valid_values( $column, $refers_to );
+            if ( UNIVERSAL::isa( $refers_to, 'Jifty::Record' ) && $info->{render_as} eq 'Select' ) {
+                $info->{'valid_values'} = $self->_default_valid_values( $column, $refers_to );
             }
 
             # If the reference is X-to-many instead, skip it
@@ -276,13 +256,12 @@ sub _build_class_arguments {
                 # developer know what he/she is doing.
                 # So we just render it as whatever specified.
 
-# XXX TODO -  the next line seems to be a "next" which meeant to just fall through the else
-# next unless $render_as;
+                # XXX TODO -  the next line seems to be a "next" which meeant to just fall through the else
+            # next unless $render_as;
             }
         }
 
         #########
-
 
         $info->{'autocompleter'} ||= $self->_argument_autocompleter($column);
         my ( $validator, $ajax_validates ) = $self->_argument_validator($column);
@@ -298,6 +277,8 @@ sub _build_class_arguments {
                 $info->{$_} = $val;
             }
         }
+
+
         $field_info->{$field} = $info;
     }
 
