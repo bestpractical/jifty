@@ -31,8 +31,7 @@ sub render_widget {
         my $value   = $opt->{'value'};
         $value = "" unless defined $value;
         $field .= qq!<option value="$value"!;
-        $field .= qq! selected="selected"!
-            if defined $self->current_value and $self->current_value eq $value;
+        $field .= qq! selected="selected"!  if defined $self->current_value and $self->current_value eq $value;
         $field .= qq!>!;
         $field .= Jifty->web->escape(_($display)) if defined $display;
         $field .= qq!</option>\n!;

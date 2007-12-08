@@ -48,10 +48,8 @@ the constructor.
 sub record_class {
     my $self = shift;
     my $class = ref $self;
-    my $hint = $class eq __PACKAGE__ ? "" :
-        " (did you forget to override record_class in $class?)";
-    $self->log->fatal("Jifty::Action::Record must be subclassed to be used" .
-        $hint);
+    my $hint = $class eq __PACKAGE__ ? "" : " (did you forget to override record_class in $class?)";
+    $self->log->fatal("Jifty::Action::Record must be subclassed to be used" .  $hint);
 }
 
 =head2 new PARAMHASH
@@ -71,6 +69,7 @@ sub new {
         record => undef,
         @_,
     );
+
     my $self = $class->SUPER::new(%args);
 
     # Load the associated record class just in case it hasn't been already
@@ -98,11 +97,9 @@ sub new {
     
     # Otherwise, try to use the arguments to load the record
     else {
-
         # We could leave out the explicit current user, but it'd have
         # a slight negative performance implications
-        $self->record(
-            $record_class->new( current_user => $self->current_user ) );
+        $self->record( $record_class->new( current_user => $self->current_user ) );
         my %given_pks = ();
         for my $pk ( @{ $self->record->_primary_keys } ) {
             $given_pks{$pk} = $self->argument_value($pk)
@@ -209,10 +206,10 @@ sub _build_class_arguments {
             $column = $self->record->column($field);
         }
 
-        $field  = $column->name;
+        $field = $column->name;
 
         # Canonicalize the render_as setting for the column
-        my $render_as = lc($column->render_as ||'');
+        my $render_as = lc( $column->render_as || '' );
 
         # Use a select box if we have a list of valid values
         if ( defined( my $valid_values = $column->valid_values ) ) {
@@ -324,7 +321,7 @@ sub _build_class_arguments {
         # Cache the result of merging the Jifty::Action::Record and schema
         # parameters
         use Jifty::Param::Schema ();
-        return  Jifty::Param::Schema::merge_params( $field_info, $params ) ;
+        return Jifty::Param::Schema::merge_params( $field_info, $params );
     }
 
     # No schema { ... } block, so just use what we generated
@@ -439,89 +436,87 @@ sub _argument_autocompleter {
 
 
 sub _default_valid_values {
-        my $self = shift;
-        my $column = shift;
-        my $refers_to = shift;
+    my $self      = shift;
+    my $column    = shift;
+    my $refers_to = shift;
 
-        my @valid;
+    my @valid;
 
-                # Get an unlimited collection
-                my $collection = Jifty::Collection->new(
-                    record_class => $refers_to,
-                    current_user => $self->record->current_user,
-                );
-                $collection->unlimit;
+    # Get an unlimited collection
+    my $collection = Jifty::Collection->new(
+        record_class => $refers_to,
+        current_user => $self->record->current_user,
+    );
+    $collection->find_all_rows;
 
-                # Fetch the _brief_description() method
-                my $method = $refers_to->_brief_description();
+    # Fetch the _brief_description() method
+    my $method = $refers_to->_brief_description();
 
-                # FIXME: we should get value_from with the actualy refered by key
+    # FIXME: we should get value_from with the actualy refered by key
 
-                # Setup the list of valid values
-                @valid =  (
-                    {   display_from => $refers_to->can($method) ? $method : "id",
-                        value_from => 'id',
-                        collection => $collection
-                    }
-                );
-                unshift @valid, { 
-                    display => _('no value'),
-                    value   => '',
-                } unless $column->mandatory;
-                return \@valid;
+    # Setup the list of valid values
+    @valid = (
+        {   display_from => $refers_to->can($method) ? $method : "id",
+            value_from   => 'id',
+            collection   => $collection
+        }
+    );
+    unshift @valid, {
+        display => _('no value'),
+        value   => '' } unless $column->mandatory;
+    return \@valid;
 
-            } 
+}
 
 sub _default_autocompleter {
-                my ( $self, $value, $field) = @_;
+    my ( $self, $value, $field ) = @_;
 
-                my $collection = Jifty::Collection->new(
-                    record_class => $self->record_class,
-                    current_user => $self->record->current_user
-                );
+    my $collection = Jifty::Collection->new(
+        record_class => $self->record_class,
+        current_user => $self->record->current_user
+    );
 
-                # Return the first 20 matches...
-                $collection->rows_per_page(20);
+    # Return the first 20 matches...
+    $collection->rows_per_page(20);
 
-                # ...that start with the value typed...
-                if (length $value) {
-                    $collection->limit(
-                        column   => $field, 
-                        value    => $value, 
-                        operator => 'STARTSWITH', 
-                        entry_aggregator => 'AND'
-                    );
-                }
+    # ...that start with the value typed...
+    if ( length $value ) {
+        $collection->limit(
+            column           => $field,
+            value            => $value,
+            operator         => 'STARTSWITH',
+            entry_aggregator => 'AND'
+        );
+    }
 
-                # ...but are not NULL...
-                $collection->limit(
-                    column => $field, 
-                    value => 'NULL', 
-                    operator => 'IS NOT', 
-                    entry_aggregator => 'AND'
-                );
+    # ...but are not NULL...
+    $collection->limit(
+        column           => $field,
+        value            => 'NULL',
+        operator         => 'IS NOT',
+        entry_aggregator => 'AND'
+    );
 
-                # ...and are not empty.
-                $collection->limit(
-                    column => $field, 
-                    value => '', 
-                    operator => '!=', 
-                    entry_aggregator => 'AND'
-                );
+    # ...and are not empty.
+    $collection->limit(
+        column           => $field,
+        value            => '',
+        operator         => '!=',
+        entry_aggregator => 'AND'
+    );
 
-                # Optimize the query a little bit
-                $collection->columns('id', $field);
-                $collection->order_by(column => $field);
-                $collection->group_by(column => $field);
+    # Optimize the query a little bit
+    $collection->columns( 'id', $field );
+    $collection->order_by( column => $field );
+    $collection->group_by( column => $field );
 
-                # Set up the list of choices to return
-                my @choices;
-                while (my $record = $collection->next) {
-                    push @choices, $record->$field;
-                }
-                return @choices;
-            }
-
+    # Set up the list of choices to return
+    my @choices;
+    while ( my $record = $collection->next ) {
+        push @choices, $record->$field;
+    }
+    return @choices;
+}
 
 
 =head2 possible_fields
