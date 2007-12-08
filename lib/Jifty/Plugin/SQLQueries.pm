@@ -5,6 +5,7 @@ use strict;
 use warnings;
 
 our @requests;
+our @slow_queries;
 
 =head1 NAME
 
@@ -110,6 +111,13 @@ sub after_request {
                             $statement,
                             join ', ', @$bindings);
         $total_time += $duration;
+
+        # keep track of the ten slowest queries so far
+        if ($duration > $slow_queries[0][3]) {
+            push @slow_queries, $_;
+            @slow_queries = sort { $a->[3] <=> $b->[3] } @slow_queries;
+            shift @slow_queries if @slow_queries > 9;
+        }
     }
 
     push @requests, {

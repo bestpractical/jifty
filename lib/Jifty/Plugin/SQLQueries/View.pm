@@ -33,6 +33,26 @@ template '/__jifty/admin/queries/all' => sub {
             }
             hr {}
 
+            h3 { "Slowest queries" };
+            table {
+                row {
+                    th { "Time taken" };
+                    th { "Query" };
+                };
+
+                for (reverse @Jifty::Plugin::SQLQueries::slow_queries)
+                {
+                    my ($time, $statement, $bindings, $duration, $misc) = @$_;
+                    row {
+                        cell { $duration };
+                        cell { $statement };
+                    };
+                }
+            };
+
+            hr {};
+
+            h3 { "All queries" };
             table {
                 row {
                     th { "ID" }
@@ -76,23 +96,29 @@ template '/__jifty/admin/queries/one' => sub {
                     "Table of Contents" } };
 
             for ( @{ $query->{queries} } ) {
-                my ($time, $statement, $bindings, $duration, $misc) = @$_;
                 hr {};
-                h4 { pre { $statement } };
-                ul {
-                    li { "At: " . gmtime($time) };
-                    li { "Time taken: $duration" };
-                }
-                h5 { "Bindings:" }
-                ol {
-                    li { $_ } for @$bindings;
-                }
-                h5 { "Stack trace:" }
-                pre {
-                    $misc->{SQLQueryPlugin};
-                }
+                set query => $_;
+                show '/__jifty/admin/queries/query';
             }
         }
+    }
+};
+
+template '/__jifty/admin/queries/query' => sub {
+    my ($time, $statement, $bindings, $duration, $misc) = @{ get 'query' };
+
+    h4 { pre { $statement } };
+    ul {
+        li { "At: " . gmtime($time) };
+        li { "Time taken: $duration" };
+    }
+    h5 { "Bindings:" }
+    ol {
+        li { $_ } for @$bindings;
+    }
+    h5 { "Stack trace:" }
+    pre {
+        $misc->{SQLQueryPlugin};
     }
 };
 
