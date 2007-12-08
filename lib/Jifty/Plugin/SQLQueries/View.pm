@@ -13,94 +13,86 @@ Jifty::Plugin::SQLQueries::View - Views for database queries
 
 =cut
 
-template '/__jifty/admin/queries/all' => sub {
+template '/__jifty/admin/queries/all' => page {
     my $skip_zero = get 'skip_zero';
 
-    html {
-        body {
-            h1 { "Queries" }
-            p {
-                if ($skip_zero) {
-                    a { attr { href => "/__jifty/admin/queries/all" }
-                        "Show zero-query requests" }
-                }
-                else {
-                    a { attr { href => "/__jifty/admin/queries" }
-                        "Hide zero-query requests" }
-                }
-                a { attr { href => "/__jifty/admin/queries/clear" }
-                    "Clear query log" }
-            }
-            hr {}
+    h1 { "Queries" }
+    p {
+        if ($skip_zero) {
+            a { attr { href => "/__jifty/admin/queries/all" }
+                "Show zero-query requests" }
+        }
+        else {
+            a { attr { href => "/__jifty/admin/queries" }
+                "Hide zero-query requests" }
+        }
+        a { attr { href => "/__jifty/admin/queries/clear" }
+            "Clear query log" }
+    }
+    hr {}
 
-            h3 { "Slowest queries" };
-            table {
-                row {
-                    th { "Time taken" };
-                    th { "Query" };
-                };
+    h3 { "Slowest queries" };
+    table {
+        row {
+            th { "Time taken" };
+            th { "Query" };
+        };
 
-                for (reverse @Jifty::Plugin::SQLQueries::slow_queries)
-                {
-                    my ($time, $statement, $bindings, $duration, $misc) = @$_;
-                    row {
-                        cell { $duration };
-                        cell { $statement };
-                    };
-                }
+        for (reverse @Jifty::Plugin::SQLQueries::slow_queries)
+        {
+            my ($time, $statement, $bindings, $duration, $misc) = @$_;
+            row {
+                cell { $duration };
+                cell { $statement };
             };
+        }
+    };
 
-            hr {};
+    hr {};
 
-            h3 { "All queries" };
-            table {
-                row {
-                    th { "ID" }
-                    th { "Queries" }
-                    th { "Time taken" }
-                    th { "URL" }
-                };
+    h3 { "All queries" };
+    table {
+        row {
+            th { "ID" }
+            th { "Queries" }
+            th { "Time taken" }
+            th { "URL" }
+        };
 
-                for (@Jifty::Plugin::SQLQueries::requests)
-                {
-                    next if $skip_zero && @{ $_->{queries} } == 0;
+        for (@Jifty::Plugin::SQLQueries::requests)
+        {
+            next if $skip_zero && @{ $_->{queries} } == 0;
 
-                    row {
-                        cell { a {
-                            attr { href => "/__jifty/admin/queries/$_->{id}" }
-                            $_->{id} } }
+            row {
+                cell { a {
+                    attr { href => "/__jifty/admin/queries/$_->{id}" }
+                    $_->{id} } }
 
-                        cell { scalar @{ $_->{queries} } }
-                        cell { $_->{duration} }
-                        cell { $_->{url} }
-                    };
-                }
-            }
+                cell { scalar @{ $_->{queries} } }
+                cell { $_->{duration} }
+                cell { $_->{url} }
+            };
         }
     }
 };
 
-template '/__jifty/admin/queries/one' => sub {
+template '/__jifty/admin/queries/one' => page {
     my $query = get 'query';
 
-    html {
-        body {
-            h1 { "Queries from Request $query->{id}" }
-            ul {
-                li { "URL: $query->{url}" }
-                li { "At: " . $query->{time} }
-                li { "Time taken: $query->{duration}" }
-                li { "Queries made: " . @{ $query->{queries} } }
-            }
-            p { a { attr { href => "/__jifty/admin/queries" }
-                    "Table of Contents" } };
+    h1 { "Queries from Request $query->{id}" }
+    ul {
+        li { "URL: $query->{url}" }
+        li { "At: " . $query->{time} }
+        li { "Time taken: $query->{duration}" }
+        li { "Queries made: " . @{ $query->{queries} } }
+    }
+    p { a { attr { href => "/__jifty/admin/queries" }
+            "Table of Contents" } };
 
-            for ( @{ $query->{queries} } ) {
-                hr {};
-                set query => $_;
-                show '/__jifty/admin/queries/query';
-            }
-        }
+    for ( @{ $query->{queries} } ) {
+        hr {};
+        set query => $_;
+        show '/__jifty/admin/queries/query';
     }
 };
 
