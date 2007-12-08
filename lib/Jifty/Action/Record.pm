@@ -333,50 +333,42 @@ sub _build_class_arguments {
 
 
 sub _argument_validator {
-    my $self = shift;
-    my $column = shift;
-    my $field = $column->name;
+    my $self    = shift;
+    my $column  = shift;
+    my $field   = $column->name;
     my $do_ajax = 0;
     my $method;
 
-        # Figure out what the action's validation method would for this field
-        my $validate_method = "validate_" . $field;
+    # Figure out what the action's validation method would for this field
+    my $validate_method = "validate_" . $field;
 
-        # Build up a validator sub if the column implements validation
-        # and we're not overriding it at the action level
-        if ( $column->validator and not $self->can($validate_method) ) {
-            $do_ajax = 1;
-            $method = sub {
-                my $self  = shift;
-                my $value = shift;
+    # Build up a validator sub if the column implements validation
+    # and we're not overriding it at the action level
+    if ( $column->validator and not $self->can($validate_method) ) {
+        $do_ajax = 1;
+        $method  = sub {
+            my $self  = shift;
+            my $value = shift;
 
-                # Check the column's validator
-                my ( $is_valid, $message )
-                    = &{ $column->validator }( $self->record, $value );
+            # Check the column's validator
+            my ( $is_valid, $message )
+                = &{ $column->validator }( $self->record, $value );
 
-                # The validator reported valid, return OK
-                if ($is_valid) {
-                    return $self->validation_ok($field);
-                } 
-                
-                # Bad stuff, report an error
-                else {
-                    unless ($message) {
-                        $self->log->error(
-                            qq{Schema validator for $field didn't explain why the value '$value' is invalid}
-                        );
-                    }
-                    return (
-                        $self->validation_error(
-                            $field => ($message || _("That doesn't look right, but I don't know why"))
-                        )
-                    );
-                }
-            };
-        }
+            # The validator reported valid, return OK
+            return $self->validation_ok($field) if ($is_valid);
 
-        return ($method, $do_ajax);
+            # Bad stuff, report an error
+            unless ($message) {
+                $self->log->error(
+                    qq{Schema validator for $field didn't explain why the value '$value' is invalid}
+                );
+            }
+            return ( $self->validation_error( $field => ( $message || _( "That doesn't look right, but I don't know why"))));
+            }
     }
+
+    return ( $method, $do_ajax );
+}
 
 
 sub _argument_canonicalizer {
