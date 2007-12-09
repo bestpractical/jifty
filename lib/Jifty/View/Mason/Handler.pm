@@ -127,13 +127,13 @@ Does a css-busting but minimalist escaping of whatever html you're passing in.
 sub escape_utf8 {
     my $ref = shift;
     no warnings 'uninitialized';
-    $$ref =~ s/&/&#38;/g;
-    $$ref =~ s/</&lt;/g;
-    $$ref =~ s/>/&gt;/g;
-    $$ref =~ s/\(/&#40;/g;
-    $$ref =~ s/\)/&#41;/g;
-    $$ref =~ s/"/&#34;/g;
-    $$ref =~ s/'/&#39;/g;
+    $$ref =~ s/&/&#38;/gs;
+    $$ref =~ s/</&lt;/gs;
+    $$ref =~ s/>/&gt;/gs;
+    $$ref =~ s/\(/&#40;/gs;
+    $$ref =~ s/\)/&#41;/gs;
+    $$ref =~ s/"/&#34;/gs;
+    $$ref =~ s/'/&#39;/gs;
 }
 
 =head2 escape_uri SCALARREF
