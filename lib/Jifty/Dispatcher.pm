@@ -316,8 +316,8 @@ our $CURRENT_STAGE;
 =head2 import
 
 Jifty::Dispatcher is an L<Exporter>, that is, part of its role is to
-blast a bunch of symbols into another package. In this case, that other
-package is the dispatcher for your application.
+blast a bunch of symbols into another package. In this case, that
+other package is the dispatcher for your application.
 
 You never call import directly. Just:
 
