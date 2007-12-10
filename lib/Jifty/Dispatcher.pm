@@ -976,52 +976,60 @@ condition.
 
 =cut
 
+
+my %CONDITION_CACHE;
+
 sub _compile_condition {
     my ( $self, $cond ) = @_;
 
     # Previously compiled (eg. a qr{} -- return it verbatim)
     return $cond if ref $cond;
 
-    # Escape and normalize
-    $cond = quotemeta($cond);
-    $cond =~ s{(?:\\\/)+}{/}g;
-    $cond =~ s{/$}{};
+    unless ( $CONDITION_CACHE{$cond} ) {
 
-    my $has_capture = ( $cond =~ / \\ [*?#] /x);
-    if ($has_capture or $cond =~ / \\ [[{] /x) {
-        $cond = $self->_compile_glob($cond);
+        my $compiled = $cond;
+
+        # Escape and normalize
+        $compiled = quotemeta($compiled);
+        $compiled =~ s{(?:\\\/)+}{/}g;
+        $compiled =~ s{/$}{};
+
+        my $has_capture = ( $compiled =~ / \\ [*?#] /x );
+        if ( $has_capture or $compiled =~ / \\ [[{] /x ) {
+            $compiled = $self->_compile_glob($compiled);
+        }
+
+        if ( $compiled =~ m{^/} ) {
+
+            # '/foo' => qr{^/foo}
+            $compiled = "\\A$compiled";
+        } elsif ( length($compiled) ) {
+
+            # 'foo' => qr{^$cwd/foo}
+            $compiled = "(?<=\\A$self->{cwd}/)$compiled";
+        } else {
+
+            # empty path -- just match $cwd itself
+            $compiled = "(?<=\\A$self->{cwd})";
+        }
+
+        if ( $Dispatcher->{rule} eq 'on' ) {
+
+            # "on" anchors on complete match only
+            $compiled .= '/?\\z';
+        } else {
+
+            # "in" anchors on prefix match in directory boundary
+            $compiled .= '(?=/|\\z)';
+        }
+
+        # Make all metachars into capturing submatches
+        if ( !$has_capture ) {
+            $compiled = "($compiled)";
+        }
+        $CONDITION_CACHE{$cond} = qr{$compiled};
     }
-
-    if ( $cond =~ m{^/} ) {
-
-        # '/foo' => qr{^/foo}
-        $cond = "\\A$cond";
-    } elsif ( length($cond) ) {
-
-        # 'foo' => qr{^$cwd/foo}
-        $cond = "(?<=\\A$self->{cwd}/)$cond";
-    } else {
-
-        # empty path -- just match $cwd itself
-        $cond = "(?<=\\A$self->{cwd})";
-    }
-
-    if ( $Dispatcher->{rule} eq 'on' ) {
-
-        # "on" anchors on complete match only
-        $cond .= '/?\\z';
-    } else {
-
-        # "in" anchors on prefix match in directory boundary
-        $cond .= '(?=/|\\z)';
-    }
-
-    # Make all metachars into capturing submatches
-    if (!$has_capture) {
-        $cond = "($cond)";
-    }
-
-    return qr{$cond};
+    return $CONDITION_CACHE{$cond};
 }
 
 =head2 _compile_glob METAEXPRESSION
