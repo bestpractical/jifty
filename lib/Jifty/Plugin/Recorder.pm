@@ -111,6 +111,7 @@ sub get_loghandle {
             Jifty->log->error("Unable to open $name for writing: $!");
             return;
         };
+        $loghandle->autoflush(1);
 
         Jifty->log->info("Logging all HTTP requests to $name.");
         $self->loghandle($loghandle);
