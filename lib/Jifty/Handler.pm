@@ -244,6 +244,9 @@ sub handle_request {
         # Return from the continuation if need be
         Jifty->web->request->return_from_continuation;
         $self->dispatcher->handle_request();
+
+        $self->call_trigger('before_cleanup', $args{cgi});
+
         $self->cleanup_request();
     }
 

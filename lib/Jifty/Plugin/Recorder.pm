@@ -2,7 +2,7 @@ package Jifty::Plugin::Recorder;
 use strict;
 use warnings;
 use base qw/Jifty::Plugin Class::Data::Inheritable/;
-__PACKAGE__->mk_accessors(qw/start path loghandle/);
+__PACKAGE__->mk_accessors(qw/start path loghandle print_current_user/);
 
 use Time::HiRes 'time';
 use Jifty::Util;
@@ -33,6 +33,10 @@ sub init {
     Jifty::Handler->add_trigger(
         before_request => sub { $self->before_request(@_) }
     );
+
+    Jifty::Handler->add_trigger(
+        before_cleanup => sub { $self->before_cleanup }
+    );
 }
 
 =head2 before_request
@@ -47,15 +51,43 @@ sub before_request
     my $handler = shift;
     my $cgi     = shift;
 
+    $self->print_current_user(0);
+
     eval {
         my $delta = time - $self->start;
         my $request = { cgi => nfreeze($cgi), ENV => \%ENV, time => $delta };
         my $yaml = Jifty::YAML::Dump($request);
 
         print { $self->get_loghandle } $yaml;
+        $self->print_current_user(1);
     };
 
     Jifty->log->error("Unable to append to request log: $@") if $@;
+}
+
+=head2 before_cleanup
+
+Append the current user to the request log. This isn't done in one fell swoop
+because if the server explodes during a request, we would lose the request's
+data for logging.
+
+This, strictly speaking, isn't necessary. But we don't always want to lug the
+sessions table around, so this gets us most of the way there.
+
+C<print_current_user> is checked to ensure that we don't append the current
+user if the current request couldn't be logged for whatever reason (perhaps
+a serialization error?).
+
+=cut
+
+sub before_cleanup {
+    my $self = shift;
+
+    if ($self->print_current_user) {
+        eval {
+            print { $self->get_loghandle } "current_user: " . (Jifty->web->current_user->id || 0) . "\n";
+        };
+    }
 }
 
 =head2 get_loghandle
