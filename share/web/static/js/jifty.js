@@ -1491,6 +1491,10 @@ Object.extend(Jifty.Placeholder, {
      // If the element's text isn't the same as its placeholder text, then the
      // browser screwed up and didn't clear our placeholder. Opera on Mac with
      // VirtueDesktops does this some times, and I lose data.
+     // These are normalized because sometimes one has \r\n and the other has \n
+     elt.value = elt.value.replace(/\r/g, '');
+     elt.placeholderText = elt.placeholderText.replace(/\r/g, '');
+
      if(Jifty.Placeholder.hasPlaceholder(elt) && elt.value == elt.placeholderText) {
        elt.value = '';
        Element.removeClassName(elt, 'placeholder');
