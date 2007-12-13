@@ -34,6 +34,7 @@ template '/__jifty/admin/leaks/all' => page {
             th { "ID" }
             th { "Leaks" }
             th { "Bytes leaked" }
+            th { "Total size" }
             th { "Time" }
             th { "URL" }
         };
@@ -49,6 +50,7 @@ template '/__jifty/admin/leaks/all' => page {
 
                 cell { scalar @{$_->{leaks}} }
                 cell { $_->{size} }
+                cell { $_->{total} }
                 cell { $_->{time} }
                 cell { $_->{url} }
             };
@@ -63,8 +65,9 @@ template '/__jifty/admin/leaks/one' => page {
     ul {
         li { "URL: $leak->{url}" }
         li { "Time: $leak->{time}" }
+        li { "Total memory used: $leak->{total} bytes" }
         li { "Objects leaked: " . scalar(@{$leak->{leaks}}) }
-        li { "Total memory leaked: $leak->{size} bytes" }
+        li { "Memory leaked: $leak->{size} bytes" }
     }
     p { a { attr { href => "/__jifty/admin/leaks" } "Table of Contents" } }
     hr {}

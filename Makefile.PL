@@ -166,6 +166,7 @@ features(
         recommends('Devel::Events::Handler::ObjectTracker'),
         recommends('Devel::Events::Generator::Objects'),
         recommends('Devel::Size'),
+        recommends('Proc::ProcessTable'),
     ],
     'OAuth Plugin' => [
         -default => 0,
