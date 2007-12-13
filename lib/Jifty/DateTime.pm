@@ -248,6 +248,26 @@ sub friendly_date {
     return $ymd;
 }
 
+=head2 is_date
+
+Returns whether or not this C<Jifty::DateTime> object represents a date
+(without a specific time). Dates in Jifty are in the floating time zone and
+are set to midnight.
+
+=cut
+
+sub is_date {
+    my $self = shift;
+
+    # all dates are in the floating time zone
+    return 0 unless $self->time_zone->name eq 'floating'
+
+    # all dates are set to midnight
+    return 0 unless $self->hms eq '00:00:00';
+
+    return 1;
+}
+
 =head1 WHY?
 
 There are other ways to do some of these things and some of the decisions here may seem arbitrary, particularly if you read the code. They are.
