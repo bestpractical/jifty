@@ -260,7 +260,7 @@ sub is_date {
     my $self = shift;
 
     # all dates are in the floating time zone
-    return 0 unless $self->time_zone->name eq 'floating'
+    return 0 unless $self->time_zone->name eq 'floating';
 
     # all dates are set to midnight
     return 0 unless $self->hms eq '00:00:00';
