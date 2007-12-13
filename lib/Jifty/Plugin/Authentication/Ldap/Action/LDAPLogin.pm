@@ -79,8 +79,15 @@ sub take_action {
     }
 
     # Load up the user
+    my $infos =  $plugin->get_infos($username);
+    my $name = $infos->{name};
+    my $email = $infos->{email};
+ 
     my $current_user = Jifty->app_class('CurrentUser');
-    my $user = $current_user->new( ldap_id => $username );
+    my $user = ($email) 
+        ? $current_user->new( email => $email)    # load by email to mix authentication
+        : $current_user->new( ldap_id => $username );  # else load by ldap_id
+
 
     # Autocreate the user if necessary
     if ( not $user->id ) {
@@ -102,9 +109,6 @@ sub take_action {
         $user = $current_user->new( ldap_id => $username );
     }
 
-    my $infos =  $plugin->get_infos($username);
-    my $name = $infos->{name};
-    my $email = $infos->{email};
     my $u = $user->user_object;
 
     # Update, just in case

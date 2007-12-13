@@ -124,6 +124,17 @@ sub take_action {
             $value = scalar <$value>;
         }
 
+        # Skip fields that have not changed
+        my $old = $self->record->$field;
+        # XXX TODO: This ignore "by" on columns
+        $old = $old->id if blessed($old) and $old->isa( 'Jifty::Record' );
+
+        # ID is sometimes passed in, we want to ignore it if it doesn't change
+        next if $field eq 'id'
+           and defined $old
+           and defined $value
+           and "$old" eq "$value";
+
         # Error on columns we can't update
         # <Sartak> ah ha. I think I know why passing due => undef reports
         #          action success
@@ -144,11 +155,6 @@ sub take_action {
             next;
         }
 
-        # Skip fields that have not changed
-        my $old = $self->record->$field;
-        # XXX TODO: This ignore "by" on columns
-        $old = $old->id if blessed($old) and $old->isa( 'Jifty::Record' );
-    
         # if both the new and old values are defined and equal, we don't want to change em
         # XXX TODO "$old" is a cheap hack to scalarize datetime objects
         next if ( defined $old and defined $value and "$old" eq "$value" );

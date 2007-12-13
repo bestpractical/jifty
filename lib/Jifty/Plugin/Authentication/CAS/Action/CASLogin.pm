@@ -70,6 +70,9 @@ sub take_action {
 #    	$ENV{HTTP_HOST}.'/caslogin';
     
     my $service_url = Jifty->web->url.'/caslogin';
+    if ( Jifty->web->request->continuation ) {
+        $service_url .= '?J:C='.Jifty->web->request->continuation_id;
+    };
 
     if (! $ticket) {
         my $login_url = $plugin->CAS->login_url( $service_url );

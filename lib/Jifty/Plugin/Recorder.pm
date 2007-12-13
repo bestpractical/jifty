@@ -2,7 +2,7 @@ package Jifty::Plugin::Recorder;
 use strict;
 use warnings;
 use base qw/Jifty::Plugin Class::Data::Inheritable/;
-__PACKAGE__->mk_accessors(qw/start path loghandle/);
+__PACKAGE__->mk_accessors(qw/start path loghandle logged_request memory_usage/);
 
 use Time::HiRes 'time';
 use Jifty::Util;
@@ -21,17 +21,28 @@ sub init {
     my $self = shift;
     my %args = (
         path => 'log/requests',
+        memory_usage => 0,
         @_,
     );
 
     return if $self->_pre_init;
 
     $self->start(time);
+
+    $self->memory_usage($args{memory_usage});
+    if ($args{memory_usage}) {
+        require Proc::ProcessTable;
+    }
+
     $self->path(Jifty::Util->absolute_path( $args{path} ));
     Jifty::Util->make_path($self->path);
 
     Jifty::Handler->add_trigger(
         before_request => sub { $self->before_request(@_) }
+    );
+
+    Jifty::Handler->add_trigger(
+        before_cleanup => sub { $self->before_cleanup }
     );
 }
 
@@ -47,15 +58,57 @@ sub before_request
     my $handler = shift;
     my $cgi     = shift;
 
+    $self->logged_request(0);
+
     eval {
         my $delta = time - $self->start;
         my $request = { cgi => nfreeze($cgi), ENV => \%ENV, time => $delta };
         my $yaml = Jifty::YAML::Dump($request);
 
         print { $self->get_loghandle } $yaml;
+        $self->logged_request(1);
     };
 
     Jifty->log->error("Unable to append to request log: $@") if $@;
+}
+
+=head2 before_cleanup
+
+Append the current user to the request log. This isn't done in one fell swoop
+because if the server explodes during a request, we would lose the request's
+data for logging.
+
+This, strictly speaking, isn't necessary. But we don't always want to lug the
+sessions table around, so this gets us most of the way there.
+
+C<logged_request> is checked to ensure that we don't append the current
+user if the current request couldn't be logged for whatever reason (perhaps
+a serialization error?).
+
+=cut
+
+sub before_cleanup {
+    my $self = shift;
+
+    if ($self->logged_request) {
+        eval {
+            print { $self->get_loghandle } "current_user: " . (Jifty->web->current_user->id || 0) . "\n";
+
+            # get memory usage. yes, we really do need to go through these
+            # motions every request :(
+            if ($self->memory_usage) {
+                my $proc = Proc::ProcessTable->new;
+                for (@{ $proc->table }) {
+                    next unless $_->pid == $$;
+
+                    print { $self->get_loghandle } "memory: " . ($_->size||'?') . "\n";
+                    return;
+                }
+
+                Jifty->log->error("Unable to find myself, pid $$, in Proc::ProcessTable.");
+            }
+        };
+    }
 }
 
 =head2 get_loghandle
@@ -79,6 +132,7 @@ sub get_loghandle {
             Jifty->log->error("Unable to open $name for writing: $!");
             return;
         };
+        $loghandle->autoflush(1);
 
         Jifty->log->info("Logging all HTTP requests to $name.");
         $self->loghandle($loghandle);
@@ -113,6 +167,11 @@ Add the following to your site_config.yml
 
 The path for creating request logs. Default: log/requests. This directory will
 be created for you, if necessary.
+
+=item memory_usage
+
+Report how much memory (in bytes) Jifty is taking up. This uses
+L<Proc::ProcessTable>. Default is off.
 
 =back
 

@@ -73,6 +73,20 @@ sub after_request
     # XXX: Devel::Size seems to segfault Jifty at END time
     my $size = total_size([ @leaks ]) - $empty_array;
 
+    my $total = '?';
+
+    # report total memory, if able
+    eval {
+        require Proc::ProcessTable;
+        my $proc = Proc::ProcessTable->new;
+        for (@{ $proc->table }) {
+            next unless $_->pid == $$;
+            $total = $_->size;
+            last;
+        }
+    };
+    Jifty->log->warn($@) if $@;
+
     push @requests, {
         id => 1 + @requests,
         url => $cgi->url(-absolute=>1,-path_info=>1),
@@ -80,6 +94,7 @@ sub after_request
         objects => Dumper($leaked),
         time => scalar gmtime,
         leaks => \@leaks,
+        total => $total,
     };
 
     $self->generator(undef);

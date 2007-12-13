@@ -1,0 +1,55 @@
+<html>
+<head>
+<title>behaviour.js test</title>
+<script type="text/javascript" src="/static/js/jsan/JSAN.js" charset="UTF-8"></script>
+
+<script type="text/javascript" src="lib/Test/Builder.js" charset="UTF-8"></script>
+<script type="text/javascript" src="lib/Test/More.js" charset="UTF-8"></script>
+
+<script type="text/javascript" src="/static/js/prototype.js" charset="UTF-8"></script>
+<script type="text/javascript" src="/static/js/cssquery/cssQuery.js" charset="UTF-8"></script>
+<script type="text/javascript" src="/static/js/behaviour.js" charset="UTF-8"></script>
+<script type="text/javascript">
+Behaviour.register({
+    '#foo': function(element) {
+        element.innerHTML = "FOO is HERE";
+    },
+
+    '#bar': function(element) {
+        element.innerHTML = "BAR is HERE";
+    }
+});
+
+var add_bar = function() {
+    document.body.removeChild( document.getElementById("foo") );
+    var d = document.createElement("div");
+    d.setAttribute("id", "bar");
+    document.body.appendChild(d);
+};
+
+</script>
+</head>
+
+<body>
+    <div id="foo"></div>
+    <pre id="test"></pre>
+
+    <script type="text/javascript"><!--
+    JSAN.use('Test.More');
+    plan({ tests: 2 });
+    async_id = beginAsync();
+    
+    setTimeout(function() {
+        is( document.getElementById("foo").innerHTML, "FOO is HERE", "#foo rule is registered and applied");
+        
+        add_bar();
+        
+        Behaviour.apply();
+        
+        is( document.getElementById("bar").innerHTML, "BAR is HERE", "#bar rule is applied manually");
+        endAsync(async_id);
+    }, 1000);
+    //--></script>
+</body>
+</html>
+
