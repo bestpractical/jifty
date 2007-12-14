@@ -96,5 +96,22 @@ template '/c/page2' => page {
     }
 };
 
-##
+### tangent/reutrn test temapltes
+
+template '/tangent/returner' => page {
+    Jifty->web->return( label => "Go Back", to => "/", id => 'returner' )->render;
+};
+
+template '/tangent/page1' => page {
+    tangent( label => "Go to Returner", url => "/tangent/returner", id => 'to-returner' );
+};
+
+template '/tangent/page2' => page {
+    tangent( label => "Go to Returner", url => "/tangent/returner", id => 'to-returner' );
+};
+
+template '/tangent/page3' => page {
+    hyperlink( label => "Go to Returner", url => "/tangent/returner", id => 'to-returner' );
+};
+
 1;

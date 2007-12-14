@@ -1,4 +1,4 @@
-# This test is for testing Jifty.update() javascript function.
+# Test simple continuation using the example in Jifty::Manual::Continuation
 
 use strict;
 use warnings;
