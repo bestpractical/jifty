@@ -8,37 +8,27 @@ use Jifty::Test tests => 12;
 use Jifty::Test::WWW::Selenium;
 use utf8;
 
-my $server = Jifty::Test->make_server;
-my $sel    = Jifty::Test::WWW::Selenium->rc_ok($server);
-my $URL    = $server->started_ok;
+{
+    my $server = Jifty::Test->make_server;
+    my $sel    = Jifty::Test::WWW::Selenium->rc_ok($server);
+    my $URL    = $server->started_ok;
 
-$sel->open_ok("/1-jifty-update.html");
+    $sel->open_ok("/1-jifty-update.html");
+    $sel->wait_for_text_present_ok("Jifty.update() tests");
 
-my $html = $sel->get_html_source;
+    $sel->click_ok("region1");
+    $sel->wait_for_text_present_ok("Region One");
 
-like $html, qr{<h1>Jifty\.update\(\) tests</h1>}is;
+    $sel->click_ok("region2");
+    $sel->wait_for_text_present_ok("Region Two");
 
-$sel->click_ok("region1");
-sleep 2;
-$html = $sel->get_html_source;
-like $html, qr{<p>Region One</p>}is;
+    # Update the same region path with different argument
+    $sel->click_ok("region3");
+    $sel->wait_for_text_present_ok("Hello, John");
 
-$sel->click_ok("region2");
-sleep 2;
-$html = $sel->get_html_source;
-like $html, qr{<p>Region Two</p>}is;
+    $sel->click_ok("region4");
+    $sel->wait_for_text_present_ok("Hello, Smith");
 
-
-# Update the same region path with different argument
-$sel->click_ok("region3");
-sleep 2;
-$html = $sel->get_html_source;
-like $html, qr{<p>Hello, John</p>}is;
-
-$sel->click_ok("region4");
-sleep 2;
-$html = $sel->get_html_source;
-like $html, qr{<p>Hello, Smith</p>}is;
-
-$sel->stop;
+    $sel->stop;
+}
 
