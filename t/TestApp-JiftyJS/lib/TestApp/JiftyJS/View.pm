@@ -61,6 +61,25 @@ template 'region2' => sub {
     p { "Region Two" }
 };
 
+template '/region/multiupdate' => page {
+    hyperlink(
+        id => 'update',
+        label => "Update All",
+        onclick => [
+            "alert(42);",
+            { region => 'content1', replace_with => 'region1' },
+            { region => 'content2', replace_with => 'region2' },
+            { region => 'content3', replace_with => 'hello_world', arguments => { name => "Pony" } },
+        ]
+    );
+
+    for (1..3) {
+        with(class=>'column'), div {
+            render_region( name => "content$_" );
+        }
+    }
+    with(style=>"clear:both;"), div {};
+};
 
 # Templtes for testing continuation. Using the example in Jifty::Manual::Continuations
 private template '/c/_first_number_form' => sub {

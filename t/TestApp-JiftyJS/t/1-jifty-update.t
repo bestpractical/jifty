@@ -4,15 +4,15 @@ use strict;
 use warnings;
 use lib 't/lib';
 use Jifty::SubTest;
-use Jifty::Test tests => 12;
+use Jifty::Test tests => 18;
 use Jifty::Test::WWW::Selenium;
 use utf8;
 
-{
-    my $server = Jifty::Test->make_server;
-    my $sel    = Jifty::Test::WWW::Selenium->rc_ok($server);
-    my $URL    = $server->started_ok;
+my $server = Jifty::Test->make_server;
+my $sel    = Jifty::Test::WWW::Selenium->rc_ok($server);
+my $URL    = $server->started_ok;
 
+{
     $sel->open_ok("/1-jifty-update.html");
     $sel->wait_for_text_present_ok("Jifty.update() tests");
 
@@ -28,7 +28,20 @@ use utf8;
 
     $sel->click_ok("region4");
     $sel->wait_for_text_present_ok("Hello, Smith");
-
-    $sel->stop;
 }
+
+{
+    # One click updates 3 regions, and triggers an alert.
+
+    $sel->open_ok('/region/multiupdate');
+    $sel->click_ok('update');
+    $sel->get_alert_ok();
+
+    $sel->wait_for_text_present_ok("Region One");
+    $sel->wait_for_text_present_ok("Region Two");
+    $sel->wait_for_text_present_ok("Hello, Pony");
+}
+
+$sel->stop;
+
 
