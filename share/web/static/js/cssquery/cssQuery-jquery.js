@@ -1,6 +1,6 @@
 var cssQuery = function() {
     var cssQuery = function(a, c) {
-        var q = jQuery.makeArray( jQuery(a,c) );
+        return jQuery.makeArray( jQuery(a,c) );
     }
 
     // All public interfaces are showing alert instead of doing the realthing.
