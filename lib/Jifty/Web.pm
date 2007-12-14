@@ -39,7 +39,7 @@ __PACKAGE__->javascript_libs([qw(
     jsan/DOM/Events.js
     json.js
     prototype.js
-    jquery-1.2.js
+    jquery-1.2.1.js
     jquery_noconflict.js
     cssquery/cssQuery-jquery.js
     behaviour.js
