@@ -12,8 +12,8 @@ use base qw/TestApp::JiftyJS::Action Jifty::Action/;
 
 use Jifty::Param::Schema;
 use Jifty::Action schema {
-    param first_number  => type is 'integer', render as 'Text';
-    param second_number => type is 'integer', render as 'Text';
+    param first_number  => type is 'text';
+    param second_number => type is 'text';
 };
 
 =head2 take_action

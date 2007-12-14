@@ -91,7 +91,7 @@ template '/c/page_another_one' => page {
 template '/c/page2' => page {
     form {
         label { "Second Number" };
-        outs_raw('<input type="text" name="number" />');
+        outs_raw('<input type="text" class="text" name="number" />');
         form_return( label => "Pick", as_button => 1);
     }
 };
