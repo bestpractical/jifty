@@ -133,4 +133,16 @@ template '/tangent/page3' => page {
     hyperlink( label => "Go to Returner", url => "/tangent/returner", id => 'to-returner' );
 };
 
+
+### action field test templates
+
+template '/act/play' => page {
+    my $a = new_action(class => 'Play');
+    form {
+        render_action($a);
+        form_submit( label => "Submit" );
+    };
+};
+
+
 1;
