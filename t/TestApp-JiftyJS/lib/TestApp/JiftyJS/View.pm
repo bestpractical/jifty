@@ -63,7 +63,7 @@ template 'region2' => sub {
 
 
 # Templtes for testing continuation. Using the example in Jifty::Manual::Continuations
-template '/c/page1' => page {
+private template '/c/_first_number_form' => sub {
     my $action = new_action(class => 'AddTwoNumbers');
     form {
         $action->form_field( 'first_number' )->render;
@@ -80,6 +80,14 @@ template '/c/page1' => page {
     };
 };
 
+template '/c/page1' => page {
+    show('/c/_first_number_form');
+};
+
+template '/c/page_another_one' => page {
+    show('/c/_first_number_form');
+};
+
 template '/c/page2' => page {
     form {
         label { "Second Number" };
@@ -87,5 +95,6 @@ template '/c/page2' => page {
         form_return( label => "Pick", as_button => 1);
     }
 };
+
 ##
 1;
