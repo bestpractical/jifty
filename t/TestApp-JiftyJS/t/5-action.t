@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use lib 't/lib';
 use Jifty::SubTest;
-use Jifty::Test tests => 6;
+use Jifty::Test tests => 10;
 use Jifty::Test::WWW::Selenium;
 use utf8;
 
@@ -29,6 +29,19 @@ my $URL    = $server->started_ok;
 
     my $tag_value = $sel->get_value($tags);
     is $tag_value, 'foo', "Tags are canonicalized to lower-case";
+
+    $sel->type_ok($mood, "FOO");
+    $sel->fire_event($tags, "blur");
+    is($sel->get_text('//span[contains(@class, "error text argument-mood")]'),
+       "That doesn't look like a correct value",
+       "mood validation error");
+
+    $sel->type_ok($mood, "angry");
+    $sel->fire_event($tags, "blur");
+    is($sel->get_text('//span[contains(@class, "error text argument-mood")]'),
+       "",
+       "mood validation ok");
+
 }
 
 $sel->stop;
