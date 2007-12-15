@@ -343,7 +343,7 @@ Action.prototype = {
         if (!this.s_a) {
             /* XXX: make REST client accessible */
             var Todo = new AsynapseRecord('todo');
-            this.s_a = $H(Todo.eval_ajax_get('/=/action/'+this.actionClass+'.js'));
+            this.s_a = jQuery.extend({}, Todo.eval_ajax_get('/=/action/'+this.actionClass+'.js'));
         }
 
         return this.s_a
