@@ -603,29 +603,29 @@ jQuery.extend(Form.Element, {
     buttonArguments: function(element) {
         element = $(element);
         if (!element)
-            return $H();
+            return {}
 
         if (((element.nodeName != 'INPUT') || (element.getAttribute("type") != "submit"))
          && ((element.nodeName != 'A')     || (! element.getAttribute("name"))))
-            return $H();
+            return {}
 
         if (element.getAttribute("name").length == 0)
-            return $H();
+            return {}
 
-        var extras = $H();
+        var extras = {}
 
         // Split other arguments out, if we're on a button
         var pairs = element.getAttribute("name").split("|");
         for (var i = 0; i < pairs.length; i++) {
             var bits = pairs[i].split('=',2);
-            extras.set(bits[0], bits[1]);
+            extras[ bits[0] ] = bits[1];
         }
         return extras;
     },
 
     buttonActions: function(element) {
         element = $(element);
-        var actions = Form.Element.buttonArguments(element).get('J:ACTIONS');
+        var actions = Form.Element.buttonArguments(element)[ ('J:ACTIONS') ];
         if(actions) {
             return actions.split(",");
         } else {
@@ -636,17 +636,18 @@ jQuery.extend(Form.Element, {
     buttonFormElements: function(element) {
         element = $(element);
 
-        var extras = $A();
+        var extras = [];
         var args = Form.Element.buttonArguments(element);
-        var keys = args.keys();
-        for (var i = 0; i < keys.length; i++) {
+
+        jQuery.each(args, function(k, v) {
             var e = document.createElement("input");
             e.setAttribute("type", "hidden");
-            e.setAttribute("name", keys[i]);
-            e.setAttribute("value", args.get(keys[i]));
+            e.setAttribute("name", k);
+            e.setAttribute("value", v);
             e['virtualform'] = Form.Element.getForm(element);
             extras.push(e);
-        }
+        });
+
         return extras;
     },
 
@@ -841,13 +842,9 @@ function prepare_element_for_update(f) {
         var name = f['region'];
 
         // Find where we are going to go
-        var element = $('region-' + f['region']);
+        var element = document.getElementById('region-' + f['region']);
         if (f['element']) {
-            var possible = cssQuery(f['element']);
-            if (possible.length == 0)
-                element = null;
-            else
-                element = possible[0];
+            element = jQuery(f['element'])[0];
         }
         f['element'] = element;
 
@@ -1023,7 +1020,7 @@ Jifty.update = function () {
     var request = {};
 
     // Keep track of disabled elements
-    var disabled_elements = $A();
+    var disabled_elements = [];
 
     // Set request base path
     request.path = '/__jifty/webservices/xml';
@@ -1301,8 +1298,8 @@ function hide_wait_message_now() {
 }
 
 function show_action_result() {
-    var popup = $('jifty-result-popup');
-    if(!popup) return;
+    var $popup = jQuery('#jifty-result-popup');
+    if($popup.size() == 0) return;
 
     var moniker = arguments[0];
     var result = arguments[1];
@@ -1342,14 +1339,10 @@ function show_action_result() {
     wrap2.appendChild(wrap3);
     wrap3.appendChild(node);
 
-    if(popup.hasChildNodes()) {
-        popup.insertBefore(wrap1, popup.firstChild);
-    } else {
-        popup.appendChild(wrap1);
-    }
+    $popup.prepend( wrap1 );
 
     setTimeout(function () {
-           new Effect.Fade(wrap1, {duration: 3.0});
+        jQuery(wrap1).fadeOut(3000);
     }, 3500);
 }
 
@@ -1424,10 +1417,10 @@ jQuery.extend(Jifty.Autocompleter.prototype, {
   getUpdatedChoices: function() {
       var request = { path: this.url, actions: {} };
 
-      var a = {}; //$H();
+      var a = {};
       a['moniker'] = 'autocomplete';
       a['class']   = 'Jifty::Action::Autocomplete';
-      a['fields']  = {}; //$H();
+      a['fields']  = {};
       a['fields']['moniker']  = this.action.moniker;
       a['fields']['argument'] = Form.Element.getField(this.field);
       request['actions']['autocomplete'] = a;
@@ -1528,47 +1521,46 @@ if( !Object.prototype.hasOwnProperty ) {
 }
 
 function _sp_submit_form(elt, event, submit_to) {
+    if(event.ctrlKey||event.metaKey||event.altKey||event.shiftKey) return true;
+
     var form = Form.Element.getForm(elt);
     var elements = Form.getElements(form);
 
     // Three things need to get merged -- hidden defaults, defaults
     // from buttons, and form values.  Hence, we build up three lists
     // and then merge them.
-    var hiddens = $H();
-    var buttons = $H();
-    var inputs = $H();
+    var hiddens = {};
+    var buttons = {};
+    var inputs = {};
     for (var i = 0; i < elements.length; i++) {
         var e = elements[i];
         var parsed = e.getAttribute("name").match(/^J:V-region-__page\.(.*)/);
         var extras = Form.Element.buttonArguments(e);
-        if (extras.keys().length > 1) {
-            // Button with values
-            for (var j = 0; j < extras.keys().length; j++) {
-                if ( extras.keys()[j] == 'extend' ) continue;
-                // Might also have J:V mappings on it
-                parsed = extras.keys()[j].match(/^J:V-region-__page\.(.*)/);
-                if ((parsed != null) && (parsed.length == 2)) {
-                    buttons.set(parsed[1], extras.values()[j]);
-                } else if (extras.keys()[j].length > 0) {
-                    inputs.set(extras.keys()[j], extras.values()[j]);
-                }
 
-            }
+        var extras_key_length = 0;
+        jQuery.each(extras, function() { extras_key_length++ });
+
+        if (extras_key_length > 1) {
+            // Button with values
+            jQuery.each(extras, function(k, v) {
+                if (k == 'extend') return;
+                parsed = k.match(/^J:V-region-__page\.(.*)/);
+                if ((parsed != null) && (parsed.length == 2)) {
+                    buttons[ parsed[1] ] = v;
+                } else if (v.length > 0) {
+                    input[ k ] = v;
+                }
+            });
         } else if ((parsed != null) && (parsed.length == 2)) {
             // Hidden default
-            hiddens.set(parsed[1], $F(e));
+            hiddens[ parsed[1] ] = $F(e);
         } else if (e.name.length > 0) {
             // Straight up values
-            inputs.set(e.name, $F(e));
+            inputs[ e.name ] = $F(e);
         }
     }
 
-    var args = hiddens.merge(buttons.merge(inputs));
+    var args = jQuery.extend({}, hiddens, buttons, inputs);
 
-    /* we want to feed a common object instead of a Hash to Jifty.update */
-    var args_object = {};
-    args.each( function( pair ) { args_object[pair.key] = pair.value; } );
-
-    if(event.ctrlKey||event.metaKey||event.altKey||event.shiftKey) return true;
-    return Jifty.update( {'continuation':{},'actions':null,'fragments':[{'mode':'Replace','args':args_object,'region':'__page','path': submit_to}]}, elt );
+    return Jifty.update( {'continuation':{},'actions':null,'fragments':[{'mode':'Replace','args':args,'region':'__page','path': submit_to}]}, elt );
 }
