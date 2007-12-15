@@ -1,14 +1,15 @@
 /* An empty class so we can create things inside it */
-var Jifty = Class.create();
+var Jifty = {};
 
-Jifty.Web = Class.create();
-Jifty.Web.current_actions = new Array;
+Jifty.Web = {};
+Jifty.Web.current_actions = [];
 Jifty.Web.new_action = function() {
     var args = _get_named_args(arguments);
     var a;
-    Jifty.Web.current_actions.each(function(x) { if (x.moniker == args.moniker) a = x });
+    jQuery(Jifty.Web.current_actions).each(function(i, v) {
+        if (v.moniker == args.moniker) a = v;
+    });
     if (!a) throw "hate";
-    
     return a;
 };
 
@@ -93,7 +94,11 @@ function apply_cached_for_action(code, actions) {
 }
 
 /* Actions */
-var Action = Class.create();
+var Action = function() {
+    this.initialize.apply(this, arguments);
+    return this;
+};
+
 Action.prototype = {
     // New takes the moniker (a string), and an optional array of form
     // elements to additionally take into consideration
@@ -101,20 +106,23 @@ Action.prototype = {
         this.moniker = moniker;
 
         // Extra form parameters
-        this.extras = $A();
+        this.extras = [];
         if (arguments.length > 1) {
             this.extras = arguments[1];
         }
 
-        this.register = $('J:A-' + this.moniker);  // Simple case -- no ordering information
+        this.register = document.getElementById('J:A-' + this.moniker); // Simple case -- no ordering information
         if (! this.register) {
+            var elements = [];
             // We need to go looking -- this also goes looking through this.extras, from above
-            var elements = $A(document.getElementsByTagName('input'));
-            for (var i = 0; i < this.extras.length; i++)
-                elements.push(this.extras[i]);
+
+            var add_to_elements = function(){ elements.push(this) };
+            jQuery('input').each(add_to_elements);
+            jQuery.each(this.extras, add_to_elements);
+
             for (var i = 0; i < elements.length; i++) {
                 if ((Form.Element.getMoniker(elements[i]) == this.moniker)
-                 && (Form.Element.getType(elements[i]) == "registration")) {
+                    && (Form.Element.getType(elements[i]) == "registration")) {
                     this.register = elements[i];
                     break;
                 }
@@ -216,7 +224,7 @@ Action.prototype = {
                 // XXX: fallback value being an array makes server
                 // upset, we don't think that should happen anyway
                 if (type == 'fallback' && a['fields'][field][type])
-                    continue                    
+                    continue
                 a['fields'][field][type] = this._mergeValues(a['fields'][field][type],
                                                              Form.Element.getValue(f));
             }
@@ -255,19 +263,17 @@ Action.prototype = {
                                 for (var field = action.firstChild; field != null; field = field.nextSibling) {
                                     // Possibilities for field.nodeName: it could be #text (whitespace),
                                     // or 'blank' (the field was blank, don't mess with the error div), or 'ok'
-                                    // (clear the error and warning div!) or 'error' (fill in the error div, clear 
+                                    // (clear the error and warning div!) or 'error' (fill in the error div, clear
                                     // the warning div!) or 'warning' (fill in the warning div and clear the error div!)
                                     if (field.nodeName == 'error' || field.nodeName == 'warning') {
                                         var err_div = document.getElementById(field.getAttribute("id"));
                                         if (err_div != null) {
-                                            Element.show(err_div);
-                                            err_div.innerHTML = field.firstChild.data;
+                                            jQuery(err_div).show().html(field.firstChild.data);
                                         }
                                     } else if (field.nodeName == 'ok') {
                                         var err_div = document.getElementById(field.getAttribute("id"));
                                         if (err_div != null) {
-                                            Element.hide(err_div);
-                                            err_div.innerHTML = '';
+                                            jQuery(err_div).hide().html('');
                                         }
                                     }
                                 }
@@ -278,8 +284,7 @@ Action.prototype = {
                                     if (field.nodeName == 'canonicalization_note')  {
                                         var note_div= document.getElementById(field.getAttribute("id"));
                                         if (note_div != null) {
-                                            Element.show(note_div);
-                                            note_div.innerHTML = field.firstChild.data;
+                                            jQuery(note_div).show().html(field.firstChild.data);
                                         }
                                     }
 
@@ -297,7 +302,7 @@ Action.prototype = {
                         return true;
                     }
             }
-        ); 
+        );
         hide_wait_message();
         return false;
     },
@@ -340,7 +345,7 @@ Action.prototype = {
             var Todo = new AsynapseRecord('todo');
             this.s_a = $H(Todo.eval_ajax_get('/=/action/'+this.actionClass+'.js'));
         }
-        
+
         return this.s_a
     },
     argument_names: function() {
@@ -359,7 +364,11 @@ Action.prototype = {
 
 var SERIAL_postfix = Math.ceil(10000*Math.random());
 var SERIAL = 0;
-ActionField = Class.create();
+var ActionField = function() {
+    this.initialize.apply(this, arguments);
+    return this;
+};
+
 ActionField.prototype = {
  initialize: function(name, args, action) {
         this.name = name;
@@ -471,7 +480,7 @@ ActionField.prototype = {
 };
 
 /* Forms */
-Object.extend(Form, {
+jQuery.extend(Form, {
     // Return an Array of Actions that are in this form
     getActions: function (element) {
         var elements = new Array;
@@ -481,7 +490,7 @@ Object.extend(Form, {
             if (Form.Element.getType(possible[i]) == "registration")
                 elements.push(Form.Element.getAction(possible[i]));
         }
-        
+
         return elements;
     },
 
@@ -494,14 +503,14 @@ Object.extend(Form, {
 });
 
 
-var current_actions = $H();
+var current_actions = {};
 
 /* Fields */
-Object.extend(Form.Element, {
+jQuery.extend(Form.Element, {
     // Get the moniker for this form element
     // Takes an element or an element id
     getMoniker: function (element) {
-        element = $(element);    
+        element = $(element);
 
         if (/^J:A(:F)+-[^-]+-.+$/.test(element.name)) {
             var bits = element.name.match(/^J:A(?::F)+-[^-]+-(.+)$/);
@@ -517,16 +526,16 @@ Object.extend(Form.Element, {
     // Get the Action for this form element
     // Takes an element or an element id
     getAction: function (element) {
-        element = $(element);    
+        element = $(element);
         var moniker = Form.Element.getMoniker(element);
-        if (!current_actions.get(moniker))
-            current_actions.set(moniker, new Action(moniker));
-        return current_actions.get(moniker);
+        if (!current_actions.moniker)
+            current_actions.moniker = new Action(moniker);
+        return current_actions.moniker;
     },
 
     // Returns the name of the field
     getField: function (element) {
-        element = $(element);    
+        element = $(element);
 
         if (/^J:A(:F)+-[^-]+-.+$/.test(element.name)) {
             var bits = element.name.match(/^J:A(?::F)+-([^-]+)-.+$/);
@@ -553,20 +562,20 @@ Object.extend(Form.Element, {
 
     // Validates the action this form element is part of
     validate: function (element) {
-            if(!Element.hasClassName(element, 'validation_disabled')) {
-                Form.Element.getAction(element).validate();
-            }
+        if ( !jQuery(element).is('.validation_disabled') ) {
+            Form.Element.getAction(element).validate();
+        }
     },
 
     // Temporarily disable validation
-            disableValidation: function(element) {
-            Element.addClassName(element, 'validation_disabled');
-        },
+    disableValidation: function(element) {
+        jQuery(element).addClass('validation_disabled');
+    },
 
-            //Reenable validation            
-            enableValidation: function(element) {
-            Element.removeClassName(element, 'validation_disabled');
-        },
+    //Reenable validation
+    enableValidation: function(element) {
+        jQuery(element).removeClass('validation_disabled');
+    },
 
 
     // Look up the form that this element is part of -- this is sometimes
@@ -586,7 +595,7 @@ Object.extend(Form.Element, {
             if (elt.nodeName == 'FORM') {
                 element.form = elt;
                 return elt;
-            } 
+            }
        }
         return null;
     },
@@ -622,7 +631,7 @@ Object.extend(Form.Element, {
         } else {
             return new Array();
         }
-    },  
+    },
 
     buttonFormElements: function(element) {
         element = $(element);
@@ -672,30 +681,29 @@ Object.extend(Form.Element, {
 
 });
 
-JSAN.use("DOM.Events");
-
-
 // Form elements should focus if the CSS says so.
-Behaviour.register( { ".focus": function(e) {
-    /* Check to see if the element is already focused */
-    if ( !Element.hasClassName(e, "focused") ) {
-        e.focus();
-        Element.addClassName(e, "focused");
+Behaviour.register({
+    ".focus": function(e) {
+        /* Check to see if the element is already focused */
+        if (!jQuery(e).hasClass("focused")) {
+            e.focus();
+            jQuery(e).addClass("focused")
+        }
     }
-    } });
+});
 
 
 // Form elements should AJAX validate if the CSS says so
 Behaviour.register({
     'input.ajaxvalidation, textarea.ajaxvalidation, input.ajaxcanonicalization, textarea.ajaxcanonicalization': function(elt) {
-        DOM.Events.addListener(elt, "blur", function () {
-                Form.Element.validate(elt);
-            });
+        jQuery(elt).bind('blur', function () {
+            Form.Element.validate(elt);
+        });
     },
     'input.date': function(e) {
-        if ( !Element.hasClassName( e, 'has_calendar_link' ) ) {
+        if ( !jQuery(e).hasClass('has_calendar_link') ) {
             createCalendarLink(e);
-            Element.addClassName( e, 'has_calendar_link' );
+            jQuery(e).addClass('has_calendar_link');
         }
     },
     'input.button_as_link': function(e) {
@@ -706,99 +714,95 @@ Behaviour.register({
            when the autocomplete is active so we can use it on autocompleted
            fields
          */
-        if (   !Element.hasClassName( e, "jifty_enter_handler_attached" )
-            && !Element.hasClassName( e, "ajaxautocompletes" ) )
+        if (   !jQuery(e).hasClass("jifty_enter_handler_attached" )
+               && !jQuery(e).hasClass("ajaxautocompletes" ) )
         {
             /* Do not use keydown as the event, it will not work as expected in Safari */
-            DOM.Events.addListener( e, "keypress", Form.Element.handleEnter );
-            Element.addClassName( e, "jifty_enter_handler_attached" );
+            jQuery(e).bind('keypress', Form.Element.handleEnter).addClass("jifty_enter_handler_attached");
         }
     },
     ".messages": function(e) {
-        if (   !Element.hasClassName( e, "jifty_enter_handler_attached" ) ) {
-            e.innerHTML= 
-              '<a  href="#" id="dismiss_'+e.id+'" title="Dismiss" onmousedown="this.onfocus=this.blur;" onmouseup="this.onfocus=window.clientInformation?null:window.undefined" onclick="Effect.Fade(this.parentNode); return false;">Dismiss</a>' + e.innerHTML;
+        if ( !jQuery(e).hasClass('jifty_enter_handler_attached') ) {
+            jQuery(e)
+            .prepend('<a  href="#" id="dismiss_'+e.id+'" title="Dismiss" onmousedown="this.onfocus=this.blur;" onmouseup="this.onfocus=window.clientInformation?null:window.undefined" onclick="Effect.Fade(this.parentNode); return false;">Dismiss</a>')
+            .addClass("jifty_enter_handler_attached" );
 
-            Element.addClassName( e, "jifty_enter_handler_attached" );
         }
     },
     '.form_field .error, .form_field .warning, .form_field .canonicalization_note': function(e) {
-        if ( e.innerHTML == "" ) Element.hide(e);
+        if ( e.innerHTML == "" ) jQuery(e).hide();
     }
 });
 
 
 /* Regions */
 // Keep track of the fragments on the page
-var fragments = $H();
-var Region = Class.create();
+var fragments = {}
+var Region = function() {
+    this.initialize.apply(this, arguments);
+    return this;
+};
+
 Region.prototype = {
     initialize: function(name, args, path, parent) {
         this.name = name;
-        this.args = $H(args);
+        this.args = jQuery.extend({}, args);
         this.path = path;
-        this.parent = parent ? fragments.get(parent) : null;
-        if (fragments.get(name)) {
+        this.parent = parent ? fragments[parent] : null;
+        if (fragments[name]) {
             // If this fragment already existed, we want to wipe out
             // whatever evil lies we might have said earlier; do this
             // by clearing out everything that looks relevant
-            var keys = current_args.keys();
-            for (var i = 0; i < keys.length; i++) {
-                var k = keys[i];
+            jQuery.each(current_args, function(k, v) {
                 var parsed = k.match(/^(.*?)\.(.*)/);
                 if ((parsed != null) && (parsed.length == 3) && (parsed[1] == this.name)) {
-                    current_args.unset(k);
-                }
-            }
+                    current_args[k] = null;
+                }                
+            });
         }
 
-        fragments.set(name, this);
+        fragments[name] = this;
     },
 
     setPath: function(supplied) {
+        var self = this;
+
         // Merge in from current_args
-        var keys = current_args.keys();
-        for (var i = 0; i < keys.length; i++) {
-            var k = keys[i];
-            if (k == this.name) {
-                this.path = current_args.get(k);
+        jQuery.each(current_args, function(k, v) {
+            if (k == self.name) {
+                self.path = v
             }
-        }
+        });
 
         // Update with supplied
         if (supplied != null) {
             this.path = supplied;
         }
-        
+
         // Propagate back to current args
-        current_args.set(this.name, this.path);
+        current_args[ this.name ] = this.path;
 
         // Return new value
         return this.path;
     },
 
     setArgs: function(supplied) {
-        supplied = $H(supplied);
+        var self = this;
         // Merge in current args
-        var keys = current_args.keys();
-        for (var i = 0; i < keys.length; i++) {
-            var k = keys[i];
+        jQuery.each(current_args, function(k, v) {
             var parsed = k.match(/^(.*?)\.(.*)/);
             if ((parsed != null) && (parsed.length == 3) && (parsed[1] == this.name)) {
-                this.args.set(parsed[2], current_args.get(k));
+                self.args[ parsed[2] ] = v
             }
-        }
-
+        });
         // Merge in any supplied parameters
-        this.args = this.args.merge(supplied);
+        jQuery.extend(this.args, supplied);
 
         // Fill supplied parameters into current args
-        keys = supplied.keys();
-        for (var i = 0; i < keys.length; i++) {
-            var k = keys[i];
-            current_args.set(this.name+'.'+k, supplied.get(k));
-        }
-        
+        jQuery.each(supplied, function(k, v) {
+            current_args[ self.name + '.' + k ] = v;
+        });
+
         // Return new values
         return this.args;
     },
@@ -828,7 +832,7 @@ Region.prototype = {
 
 
 // Keep track of the state variables.
-var current_args = $H();
+var current_args = {};
 
 // Prepare element for use in update()
 //  - 'fragment' is a hash, see fragments in update()
@@ -854,12 +858,12 @@ function prepare_element_for_update(f) {
         // If we're removing the element, do it now
         // XXX TODO: Effects on this?
         if (f['mode'] == "Delete") {
-            fragments.set(name, null);
-            Element.remove(element);
+            fragments[name] = null;
+            jQuery(element).remove();
             return;
         }
 
-        f['is_new'] = (fragments.get(name) ? false : true);
+        f['is_new'] = (fragments[name] ? false : true);
         // If it's new, we need to create it so we can dump it
         if (f['is_new']) {
             // Find what region we're inside
@@ -878,17 +882,17 @@ function prepare_element_for_update(f) {
 
             // Make the region (for now)
             new Region(name, f['args'], f['path'], f['parent']);
-        } else if ((f['path'] != null) && f['toggle'] && (f['path'] == fragments.get(name).path)) {
+        } else if ((f['path'] != null) && f['toggle'] && (f['path'] == fragments[name].path)) {
             // If they set the 'toggle' flag, and clicking wouldn't change the path
-            Element.update(element, '');
-            fragments.get(name).path = null;
+            jQuery(element).empty();
+            fragments[name].path = null;
             return;
         } else if (f['path'] == null) {
             // If they didn't know the path, fill it in now
-            f['path'] == fragments.get(name).path;
+            f['path'] == fragments[name].path;
         }
 
-    return f;    
+    return f;
 }
 
 var CACHE = {};
@@ -913,12 +917,12 @@ var extract_cacheable = function(fragment, f) {
                 textContent = fragment_bit.textContent;
             } else if (fragment_bit.firstChild) {
                 textContent = fragment_bit.firstChild.nodeValue;
-            } 
+            }
             try {
                 var cache_func = eval(textContent);
                 CACHE[f['path']] = { 'type': c_type, 'content': cache_func };
             }
-            catch(e) { 
+            catch(e) {
                 alert(e);
                 alert(textContent);
             }
@@ -931,47 +935,50 @@ var extract_cacheable = function(fragment, f) {
 //   - f: fragment spec
 var apply_fragment_updates = function(fragment, f) {
     // We found the right fragment
-    var dom_fragment = fragments.get(f['region']);
-    var new_dom_args = $H();
+    var dom_fragment = fragments[ f['region'] ];
+    var new_dom_args = {};
 
     var element = f['element'];
-    walk_node(fragment,
-    { argument: function(fragment_bit) {
-            // First, update the fragment's arguments
-            // with what the server actually used --
-            // this is needed in case there was
-            // argument mapping going on
-            var textContent = '';
-            if (fragment_bit.textContent) {
-                textContent = fragment_bit.textContent;
-            } else if (fragment_bit.firstChild) {
-                textContent = fragment_bit.firstChild.nodeValue;
+    walk_node(
+        fragment,
+        {
+            argument: function(fragment_bit) {
+                // First, update the fragment's arguments
+                // with what the server actually used --
+                // this is needed in case there was
+                // argument mapping going on
+                var textContent = '';
+                if (fragment_bit.textContent) {
+                    textContent = fragment_bit.textContent;
+                } else if (fragment_bit.firstChild) {
+                    textContent = fragment_bit.firstChild.nodeValue;
+                }
+                new_dom_args[ fragment_bit.getAttribute("name") ] = textContent;
+            },
+            content: function(fragment_bit) {
+                var textContent = '';
+                if (fragment_bit.textContent) {
+                    textContent = fragment_bit.textContent;
+                } else if (fragment_bit.firstChild) {
+                    textContent = fragment_bit.firstChild.nodeValue;
+                }
+
+                // Once we find it, do the insertion
+                if (f['mode'] && (f['mode'] != 'Replace')) {
+                    var insertion = eval('Insertion.'+f['mode']);
+                    new insertion(element, textContent.stripScripts() );
+                } else {
+                    jQuery(element).html( textContent.stripScripts() );
+                }
+                // We need to give the browser some "settle" time before
+                // we eval scripts in the body
+                YAHOO.util.Event.onAvailable(element.id, function() {
+                    (function() { this.evalScripts() }).bind(textContent)();
+                });
+                Behaviour.apply(element);
             }
-            new_dom_args.set(fragment_bit.getAttribute("name"), textContent);
-        },
-      content: function(fragment_bit) {
-            var textContent = '';
-            if (fragment_bit.textContent) {
-                textContent = fragment_bit.textContent;
-            } else if (fragment_bit.firstChild) {
-                textContent = fragment_bit.firstChild.nodeValue;
-            }
-                    
-            // Once we find it, do the insertion
-            if (f['mode'] && (f['mode'] != 'Replace')) {
-                var insertion = eval('Insertion.'+f['mode']);
-                new insertion(element, textContent.stripScripts());
-            } else {
-                Element.update(element, textContent.stripScripts());
-            }
-            // We need to give the browser some "settle" time before
-            // we eval scripts in the body
-        YAHOO.util.Event.onAvailable(element.id, function() {
-            (function() { this.evalScripts() }).bind(textContent)();
-        });
-        Behaviour.apply(element);
         }
-    });
+    );
     dom_fragment.setArgs(new_dom_args);
 
     // Also, set us up the effect
@@ -1013,13 +1020,13 @@ Jifty.update = function () {
     var trigger    = arguments[1];
 
     // The YAML/JSON data structure that will be sent
-    var request = $H();
+    var request = {};
 
     // Keep track of disabled elements
     var disabled_elements = $A();
 
     // Set request base path
-    request.set('path', '/__jifty/webservices/xml');
+    request.path = '/__jifty/webservices/xml';
 
     // Grab extra arguments (from a button)
     var button_args = Form.Element.buttonFormElements(trigger);
@@ -1035,20 +1042,23 @@ Jifty.update = function () {
             });
     }
     var optional_fragments;
-    if (form && form['J:CALL']) 
+    if (form && form['J:CALL'])
         optional_fragments = [ prepare_element_for_update({'mode':'Replace','args':{},'region':'__page','path': null}) ];
     // Build actions structure
     var has_request = 0;
-    request.set('actions', $H());
+    request['actions'] = {};
+
     for (var moniker in named_args['actions']) {
         var disable = named_args['actions'][moniker];
         var a = new Action(moniker, button_args);
-            current_actions.set(moniker, a); // XXX: how do i make this bloody singleton?
+        current_actions[moniker] = a;
         // Special case for Redirect, allow optional, implicit __page
         // from the response to be used.
         if (a.actionClass == 'Jifty::Action::Redirect')
             optional_fragments = [ prepare_element_for_update({'mode':'Replace','args':{},'region':'__page','path': a.fields().last().value}) ];
-        a.result = {}; a.result.field_error = {};
+        a.result = {};
+        a.result.field_error = {};
+
         if (a.register) {
             if (a.hasUpload())
                 return true;
@@ -1066,13 +1076,12 @@ Jifty.update = function () {
                     fields[argname] = { value: override[argname] };
                 }
             }
-            request.get('actions').set(moniker, param);
+            request['actions'][moniker] = param;
             ++has_request;
         }
-
     }
 
-    request.set('fragments', $H());
+    request.fragments = {};
     var update_from_cache = new Array;
 
     // Build fragments structure
@@ -1087,7 +1096,7 @@ Jifty.update = function () {
             var content_node = document.createElement('content');
             var cached_result;
 
-            Jifty.Web.current_region = fragments.get(f['region']);
+            Jifty.Web.current_region = fragments[ f['region'] ];
             try { cached_result = apply_cached_for_action(cached['content'], []) }
             catch (e) { alert(e) }
 
@@ -1107,7 +1116,7 @@ Jifty.update = function () {
             my_fragment.setAttribute('id', f['region']);
             update_from_cache.push(function(){
                     var cached_result;
-                    Jifty.Web.current_region = fragments.get(f['region']);
+                    Jifty.Web.current_region = fragments[ f['region'] ];
                     try {
                         cached_result = apply_cached_for_action(cached['content'], Form.getActions(form));
                     }
@@ -1118,7 +1127,7 @@ Jifty.update = function () {
             continue;
         }
         else if (cached && cached['type'] == 'crudview') {
-            try { // XXX: get model class etc as metadata in cache 
+            try { // XXX: get model class etc as metadata in cache
                 // XXX: kill dup code
             var Todo = new AsynapseRecord('todo');
             var record = Todo.find(f['args']['id']);
@@ -1134,14 +1143,14 @@ Jifty.update = function () {
 
         // Update with all new values
         var name = f['region'];
-        var fragment_request = fragments.get(name).data_structure(f['path'], f['args']);
+        var fragment_request = fragments[ name ].data_structure(f['path'], f['args']);
 
         if (f['is_new'])
             // Ask for the wrapper if we are making a new region
             fragment_request['wrapper'] = 1;
 
         // Push it onto the request stack
-        request.get('fragments').set(name, fragment_request);
+        request.fragments[name] = fragment_request;
         ++has_request;
     }
 
@@ -1154,9 +1163,9 @@ Jifty.update = function () {
     show_wait_message();
 
     // And when we get the result back..
-    var onSuccess = function(transport, object) {
+    var onSuccess = function(responseXML, object) {
         // Grab the XML response
-        var response = transport.responseXML.documentElement;
+        var response = responseXML.documentElement;
 
         // Get action results
         walk_node(response,
@@ -1169,7 +1178,7 @@ Jifty.update = function () {
                                       var text = error.textContent
                                           ? error.textContent
                                           : (error.firstChild ? error.firstChild.nodeValue : '');
-                                      var action = current_actions.get(moniker);
+                                      var action = current_actions[moniker];
                                       action.result.field_error[field.getAttribute("name")] = text;
                                       }
                               }});
@@ -1211,8 +1220,9 @@ Jifty.update = function () {
           redirect: function(redirect) {
                 document.location =  redirect.firstChild.firstChild.nodeValue;
         }});
-        current_actions = $H();
+        current_actions = {}
     };
+
     var onFailure = function(transport, object) {
         hide_wait_message_now();
 
@@ -1226,48 +1236,43 @@ Jifty.update = function () {
     };
 
     // Build variable structure
-    request.set('variables', $H());
-    var keys = current_args.keys();
-    for (var i = 0; i < keys.length; i++) {
-        var k = keys[i];
-        request.get('variables').set('region-'+k, current_args.get(k));
-    }
+    request.variables = {};
+    jQuery.each(current_args, function(k, v) {
+        request.variables['region-'+k] = v;
+    });
 
     // Build continuation structure
-    request.set('continuation', named_args['continuation']);
+    request.continuation = named_args['continuation'];
 
     // Push any state variables which we set into the forms
     for (var i = 0; i < document.forms.length; i++) {
         var form = document.forms[i];
-        var keys = current_args.keys();
-        for (var j = 0; j < keys.length; j++) {
-            var n = keys[j];
-            if (form['J:V-region-'+n]) {
-                form['J:V-region-'+n].value = current_args.get(n);
+
+        jQuery.each(current_args, function(k, v) {
+            if (form['J:V-region-'+k]) {
+                form['J:V-region-'+k].value = v;
             } else {
                 var hidden = document.createElement('input');
                 hidden.setAttribute('type',  'hidden');
-                hidden.setAttribute('name',  'J:V-region-'+n);
-                hidden.setAttribute('id',    'J:V-region-'+n);
-                hidden.setAttribute('value', current_args.get(n));
+                hidden.setAttribute('name',  'J:V-region-'+k);
+                hidden.setAttribute('id',    'J:V-region-'+k);
+                hidden.setAttribute('value', v);
                 form.appendChild(hidden);
             }
-        }
+        })
     }
 
-    // Set up our options
-    var options = { postBody: request.toJSON(), //JSON.stringify(request.toObject),
-                    onSuccess: onSuccess,
-                    onException: onFailure,
-                    onFailure: onFailure,
-                    onComplete: function(){hide_wait_message()},
-                    requestHeaders: ['Content-Type', 'text/x-json']
-    };
-
     // Go!
-    new Ajax.Request(document.URL,
-                     options
-                    );
+    jQuery.ajax({
+        url: document.URL,
+        type: 'post',
+        dataType: 'xml',
+        data: JSON.stringify(request),
+        contentType: 'text/x-json',
+        error: onFailure,
+        complete: function(){hide_wait_message()},
+        success: onSuccess
+    });
     return false;
 }
 
@@ -1284,18 +1289,15 @@ function trace( msg ){
 
 
 function show_wait_message (){
-    if ($('jifty-wait-message'))
-        new Effect.Appear('jifty-wait-message', {duration: 0.5});
+    jQuery('#jifty-wait-message').fadeIn(500);
 }
 
 function hide_wait_message (){
-    if ($('jifty-wait-message'))
-        new Effect.Fade('jifty-wait-message', {duration: 0.2});
+    jQuery('#jifty-wait-message').fadeOut(200);
 }
 
 function hide_wait_message_now() {
-    if ($('jifty-wait-message'))
-        Element.hide('jifty-wait-message');
+    jQuery('#jifty-wait-message').hide();
 }
 
 function show_action_result() {
@@ -1328,7 +1330,7 @@ function show_action_result() {
     node.setAttribute('id', node_id);
     node.className = "popup_notification result-" + status;
     node.innerHTML = text;
-    
+
     var wrap1 = document.createElement("div");
     wrap1.className = "dropshadow_wrap1";
     var wrap2 = document.createElement("div");
@@ -1339,20 +1341,26 @@ function show_action_result() {
     wrap1.appendChild(wrap2);
     wrap2.appendChild(wrap3);
     wrap3.appendChild(node);
-    
+
     if(popup.hasChildNodes()) {
         popup.insertBefore(wrap1, popup.firstChild);
     } else {
         popup.appendChild(wrap1);
     }
-    
+
     setTimeout(function () {
            new Effect.Fade(wrap1, {duration: 3.0});
     }, 3500);
 }
 
-Jifty.Autocompleter = Class.create();
-Object.extend(Object.extend(Jifty.Autocompleter.prototype, Ajax.Autocompleter.prototype), {
+Jifty.Autocompleter = function() {
+    this.initialize.apply(this, arguments);
+    return this;
+};
+
+jQuery.extend(Jifty.Autocompleter.prototype, Ajax.Autocompleter.prototype);
+
+jQuery.extend(Jifty.Autocompleter.prototype, {
   initialize: function(field, div) {
     this.field  = $(field);
     this.action = Form.Element.getAction(this.field);
@@ -1375,11 +1383,11 @@ Object.extend(Object.extend(Jifty.Autocompleter.prototype, Ajax.Autocompleter.pr
         update.style.position = 'absolute';
         Position.clone(element, update, {setHeight: false, offsetTop: element.offsetHeight});
       }
-      Element.show( update );
+      jQuery(update).show();
   },
 
   onHide: function(element, update) {
-      Element.hide( update );
+      jQuery(update).hide();
   },
 
   beforeShow: function(obj) {
@@ -1405,14 +1413,14 @@ Object.extend(Object.extend(Jifty.Autocompleter.prototype, Ajax.Autocompleter.pr
 
     if (this.observer)
         clearTimeout(this.observer);
-    
+
     this.onObserverEvent();
   },
 
   afterUpdate: function(field, selection) {
      Form.Element.validate(field);
   },
-  
+
   getUpdatedChoices: function() {
       var request = { path: this.url, actions: {} };
 
@@ -1439,25 +1447,27 @@ Object.extend(Object.extend(Jifty.Autocompleter.prototype, Ajax.Autocompleter.pr
 
 });
 
-Jifty.Placeholder = Class.create();
-Object.extend(Jifty.Placeholder.prototype, {
+Jifty.Placeholder = function() {
+    this.initialize.apply(this, arguments);
+    return this;
+};
+
+jQuery.extend(Jifty.Placeholder.prototype, {
   element: null,
   text: null,
 
   initialize: function(element, text) {
      this.element = $(element);
      this.text = text;
-     this.element.placeholderText = this.text;
-
      Event.observe(element, 'focus', this.onFocus.bind(this));
      Event.observe(element, 'blur', this.onBlur.bind(this));
      this.onBlur();
 
      var form = Form.Element.getForm(element);
-     
+
      if(form && !form.hasPlaceholders) {
          form.hasPlaceholders = true;
-         // We can't attach this event via DOM event methods because 
+         // We can't attach this event via DOM event methods because
          // we need to call form.submit() sometimes and still have a good
          // way to call this event handler
          form.onsubmit = function () { Form.clearPlaceholders(form); };
@@ -1470,8 +1480,7 @@ Object.extend(Jifty.Placeholder.prototype, {
         as the placeholder text.  This does have the effect of making it
         impossible to submit a field with the same value as the placeholder. */
      if (this.element.value == '' || this.element.value == this.text) {
-       Element.addClassName(this.element, 'placeholder');
-       this.element.value = this.text;
+         jQuery(this.element).addClass('placeholder').val(this.text);
      }
   },
 
@@ -1481,12 +1490,11 @@ Object.extend(Jifty.Placeholder.prototype, {
 
 });
 
-Object.extend(Jifty.Placeholder, {
-
+jQuery.extend(Jifty.Placeholder, {
    hasPlaceholder: function(elt) {
-     return Element.hasClassName(elt, 'placeholder');
+       return jQuery(elt).hasClass('placeholder');
   },
-            
+
   clearPlaceholder: function(elt) {
      // If the element's text isn't the same as its placeholder text, then the
      // browser screwed up and didn't clear our placeholder. Opera on Mac with
@@ -1496,8 +1504,7 @@ Object.extend(Jifty.Placeholder, {
      elt.placeholderText = elt.placeholderText.replace(/\r/g, '');
 
      if(Jifty.Placeholder.hasPlaceholder(elt) && elt.value == elt.placeholderText) {
-       elt.value = '';
-       Element.removeClassName(elt, 'placeholder');
+       jQuery(elt).removeClass('placeholder').val('');
      }
   }
 
@@ -1545,7 +1552,7 @@ function _sp_submit_form(elt, event, submit_to) {
                 } else if (extras.keys()[j].length > 0) {
                     inputs.set(extras.keys()[j], extras.values()[j]);
                 }
-                
+
             }
         } else if ((parsed != null) && (parsed.length == 2)) {
             // Hidden default
@@ -1558,7 +1565,7 @@ function _sp_submit_form(elt, event, submit_to) {
 
     var args = hiddens.merge(buttons.merge(inputs));
 
-    /* we want to feed a common object instead of a Hash to Jifty.update */ 
+    /* we want to feed a common object instead of a Hash to Jifty.update */
     var args_object = {};
     args.each( function( pair ) { args_object[pair.key] = pair.value; } );
 
