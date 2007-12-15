@@ -5,7 +5,9 @@ use base qw/Jifty::Plugin Class::Data::Inheritable/;
 __PACKAGE__->mk_accessors(qw/prev_data/);
 
 use Devel::Gladiator;
-use Jifty::Util;
+use List::Util 'reduce';
+
+our @requests;
 
 our $VERSION = 0.01;
 
@@ -24,71 +26,64 @@ sub init {
 
     return if $self->_pre_init;
 
-
     Jifty::Handler->add_trigger(
-        before_request => sub { $self->before_request(@_) }
+        after_request => sub { $self->after_request(@_) }
     );
-
-    Jifty::Handler->add_trigger(
-        after_request => sub { $self->after_request }
-    );
-}
-
-=head2 before_request
-
-Log as much of the request state as we can.
-
-=cut
-
-sub before_request
-{
-    my $self    = shift;
-    my $handler = shift;
-    my $cgi     = shift;
-
-
-    Jifty->log->error("Unable to probe for gladiatorg: $@") if $@;
 }
 
 =head2 after_request
 
-Append the current user to the request log. This isn't done in one fell swoop
-because if the server explodes during a request, we would lose the request's
-data for logging.
-
-This, strictly speaking, isn't necessary. But we don't always want to lug the
-sessions table around, so this gets us most of the way there.
-
-C<logged_request> is checked to ensure that we don't append the current
-user if the current request couldn't be logged for whatever reason (perhaps
-a serialization error?).
-
 =cut
 
 sub after_request {
-    my $self = shift;
+    my $self    = shift;
+    my $handler = shift;
+    my $cgi     = shift;
 
-        my $type_map = {};
-    eval {
-        my $array = Devel::Gladiator::walk_arena();
-    use Devel::Cycle;
-        for my $entry (@$array) {
-            find_cycle($entry);
-            $type_map->{ ref($entry) }++;
-        }
-    };
-
-    my $prev = $self->prev_data || {};
-    for (keys %$type_map) {
-        $type_map->{$_} -= $prev->{$_};
-        delete $type_map->{$_} if $type_map->{$_} == 0;
+    # walk the arena, noting the type of each value
+    my %types;
+    for (@{ Devel::Gladiator::walk_arena() }) {
+        ++$types{ ref $_ };
     }
 
-    warn "This request";
-    warn Jifty::YAML::Dump($type_map);
+    # basic stats
+    my $all_values = reduce { $a + $b } values %types;
+    my $all_types  = keys %types;
+    my $new_values = 0;
+    my $new_types  = 0;
 
-    $self->prev_data($type_map);
+    my %prev = %{ $self->prev_data || {} };
 
+    # copy so when we modify %types it doesn't affect prev_data
+    my %new_prev = %types;
+    $self->prev_data(\%new_prev);
+
+    # find the difference
+    for my $type (keys %types) {
+        my $diff = $types{$type} - ($prev{$type} || 0);
+
+        if ($diff != 0) {
+            $new_values += $diff;
+            ++$new_types;
+        }
+
+        $types{$type} = {
+            all => $types{$type},
+            new => $diff,
+        }
+    }
+
+    push @requests, {
+        id         => 1 + @requests,
+        url        => $cgi->url(-absolute=>1,-path_info=>1),
+        time       => scalar gmtime,
+
+        all_values => $all_values,
+        all_types  => $all_types,
+        new_values => $new_values,
+        new_types  => $new_types,
+        diff       => \%types,
+    };
 }
 
 
