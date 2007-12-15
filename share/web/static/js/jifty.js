@@ -1359,7 +1359,10 @@ jQuery.extend(Jifty.Autocompleter.prototype, {
     this.action = Form.Element.getAction(this.field);
     this.url    = '/__jifty/autocomplete.xml';
 
-    Event.observe(this.field, "focus", this.onFocus.bindAsEventListener(this));
+    jQuery(this.field).bind("focus", function(event) {
+        self.onFocus(event);
+    });
+      
     this.baseInitialize(this.field, $(div), {
         minChars: "0",
         beforeShow: this.beforeShow,
@@ -1452,8 +1455,18 @@ jQuery.extend(Jifty.Placeholder.prototype, {
   initialize: function(element, text) {
      this.element = $(element);
      this.text = text;
-     Event.observe(element, 'focus', this.onFocus.bind(this));
-     Event.observe(element, 'blur', this.onBlur.bind(this));
+
+     var self = this;
+
+     jQuery(element)
+     .bind("focus", function(event) {
+         self.onFocus();
+     })
+     .bind("blur", function(event) {
+         self.onBlur();
+     });
+
+      
      this.onBlur();
 
      var form = Form.Element.getForm(element);
