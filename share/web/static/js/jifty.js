@@ -962,8 +962,14 @@ var apply_fragment_updates = function(fragment, f) {
 
                 // Once we find it, do the insertion
                 if (f['mode'] && (f['mode'] != 'Replace')) {
-                    var insertion = eval('Insertion.'+f['mode']);
-                    new insertion(element, textContent.stripScripts() );
+                    var method = ({
+                        After: 'after',
+                        Before: 'before',
+                        Bottom: 'append',
+                        Top: 'prepend'
+                    })[ f['mode'] ];
+
+                    jQuery(element)[method]( textContent.stripScripts() );
                 } else {
                     jQuery(element).html( textContent.stripScripts() );
                 }
