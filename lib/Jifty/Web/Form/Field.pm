@@ -44,7 +44,7 @@ aid in placing them in L<HTML::Mason> components.
 
 use base 'Jifty::Web::Form::Element';
 
-use Scalar::Util;
+use Scalar::Util qw/weaken/;
 use Scalar::Defer qw/force/;
 use HTML::Entities;
 
@@ -297,15 +297,16 @@ L<Jifty::Web::Form::Field/form_field>.
 =cut
 
 sub action {
-    my $self   = shift;
-    if (my $action = shift @_) {
-    # If we're setting the action, we need to weaken
-    # the reference to not get caught in a loop
-        Scalar::Util::weaken($action);
-        return $self->_action($action);
+    my $self = shift;
+
+    if (@_) {
+        $self->_action(@_);
+
+        # weaken our circular reference
+        weaken $self->{_action};
     }
 
-    return $self->_action();
+    return $self->_action;
 
 }
 
