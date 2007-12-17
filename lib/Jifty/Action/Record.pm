@@ -156,8 +156,10 @@ sub _fill_in_argument_record_data {
 
     for my $field ( keys %$arguments ) {
         if ( my $function = $self->record->can($field) ) {
+            my $weakself = $self;
+            Scalar::Util::weaken $weakself;
             $arguments->{$field}->{default_value} = defer {
-                my $val = $function->( $self->record );
+                my $val = undef;#$function->( $weakself->record );
                 # If the current value is actually a pointer to
                 # another object, turn it into an ID
                 return $val->id if (blessed($val) and $val->isa('Jifty::Record'));
