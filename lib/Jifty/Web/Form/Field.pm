@@ -298,12 +298,15 @@ L<Jifty::Web::Form::Field/form_field>.
 
 sub action {
     my $self   = shift;
-    my $action = $self->_action(@_);
-
+    if (my $action = shift @_) {
     # If we're setting the action, we need to weaken
     # the reference to not get caught in a loop
-    Scalar::Util::weaken( $self->{_action} ) if @_;
-    return $action;
+        Scalar::Util::weaken($action);
+        return $self->_action($action);
+    }
+
+    return $self->_action();
+
 }
 
 =head2 current_value
