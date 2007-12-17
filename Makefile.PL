@@ -160,12 +160,11 @@ features(
         recommends('XML::Simple'),
         recommends('Image::Info'), # for testing
     ],
-    'Memory Leak Plugin' => [
+    'Memory Leak Plugins' => [
         -default => 0,
-        recommends('Devel::Events' => '0.02'),
-        recommends('Devel::Events::Handler::ObjectTracker'),
-        recommends('Devel::Events::Generator::Objects'),
+        recommends('Devel::Events' => '0.02'), # Devel::Events::Handler::ObjectTracker Devel:Events::Generator::Objects
         recommends('Devel::Size'),
+        recommends('Devel::Gladiator'),
         recommends('Proc::ProcessTable'),
     ],
     'OAuth Plugin' => [
