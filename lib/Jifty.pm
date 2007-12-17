@@ -181,7 +181,6 @@ sub new {
         # Prepare to learn the plugin class name
         my ($plugin_name) = keys %{$plugin};
         my $class;
-
         # Is the plugin name a fully-qualified class name?
         if ($plugin_name =~ /^(?:Jifty::Plugin|$app_plugin)::/) {
             # app-specific plugins use fully qualified names, Jifty plugins may
