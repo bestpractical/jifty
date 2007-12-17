@@ -162,7 +162,7 @@ features(
     ],
     'Memory Leak Plugins' => [
         -default => 0,
-        recommends('Devel::Events::Objects' => '0.02'), # Devel::Events::Handler::ObjectTracker Devel:Events::Generator::Objects
+        recommends('Devel::Events::Objects' => '0.02'), # Devel::Events::Handler::ObjectTracker Devel::Events::Generator::Objects
         recommends('Devel::Size'),
         recommends('Devel::Gladiator'),
         recommends('Proc::ProcessTable'),
