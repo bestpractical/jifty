@@ -25,14 +25,15 @@ sub new {
     my $package = shift;
     my $args = ref($_[0]) eq 'HASH' ? shift @_ : {@_};
 
-    
-
-    $args->{'_parent'} ||= delete $args->{'parent'};
-    weaken $args->{'_parent'} if $args->{'_parent'};
+    my $parent = delete $args->{'parent'};
 
     # Class::Accessor only wants a hashref;
-    $package->SUPER::new( $args);
+    my $self = $package->SUPER::new( $args);
 
+    # make sure our reference is weak
+    $self->parent($parent) if defined $parent;
+
+    return $self;
 }
 
 
@@ -45,20 +46,19 @@ Sets or returns the string that the menu item will be displayed as.
 =head2 parent [MENU]
 
 Gets or sets the parent L<Jifty::Web::Menu> of this item; this defaults
-to null.
+to null. This ensures that the reference is weakened.
 
 =cut
 
 
 sub parent {
     my $self = shift;
-    my $parent;
     if (@_) {
-        $parent = shift;
-        weaken $parent;
+        $self->_parent(@_);
+        weaken $self->{_parent};
     }
 
-    return $self->_parent($parent);
+    return $self->_parent;
 }
 
 
