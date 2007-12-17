@@ -162,18 +162,14 @@ features(
     ],
     'Memory Leak Plugins' => [
         -default => 0,
-        recommends('Devel::Events' => '0.02'), # Devel::Events::Handler::ObjectTracker Devel:Events::Generator::Objects
+        recommends('Devel::Events::Objects' => '0.02'), # Devel::Events::Handler::ObjectTracker Devel:Events::Generator::Objects
         recommends('Devel::Size'),
         recommends('Devel::Gladiator'),
         recommends('Proc::ProcessTable'),
     ],
     'OAuth Plugin' => [
         -default => 0,
-        recommends('Net::OAuth::Request' => '0.04'),
-        recommends('Net::OAuth::RequestTokenRequest'),
-        recommends('Net::OAuth::AccessTokenRequest'),
-        recommends('Net::OAuth::ProtectedResourceRequest'),
-
+        recommends('Net::OAuth::Request' => '0.04'), # Net::OAuth::RequestTokenRequest Net::OAuth::AccessTokenRequest Net::OAuth::ProtectedResourceRequest
         recommends('Crypt::OpenSSL::RSA'),
         recommends('Digest::HMAC_SHA1'),
     ],
