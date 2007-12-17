@@ -4,6 +4,13 @@ use warnings;
 package Jifty::Plugin::LeakTracker;
 use base qw/Jifty::Plugin Class::Data::Inheritable/;
 use Data::Dumper;
+
+BEGIN {
+    if (!$INC{"Devel/Events/Generator/Objects.pm"}) {
+        Jifty->log->error("Devel::Events::Generator::Objects must be compiled very early so that it can override 'bless' in time. Usually this means you must run your Jifty application with: perl -MDevel::Events::Generator::Objects bin/jifty");
+    }
+}
+
 use Devel::Events::Handler::ObjectTracker;
 use Devel::Events::Generator::Objects;
 use Devel::Size 'total_size';
