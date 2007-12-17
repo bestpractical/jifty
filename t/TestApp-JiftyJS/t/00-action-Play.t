@@ -8,7 +8,8 @@ A (very) basic test harness for the Play action.
 
 =cut
 
-use lib ('t/lib', 't/TestApp-JiftyJS/lib');
+use lib 't/lib';
+use Jifty::SubTest;
 use Jifty::Test tests => 1;
 
 # Make sure we can load the action
