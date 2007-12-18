@@ -52,7 +52,7 @@ C<day>, C<week>, C<month>, and C<year>.
 
 =cut
 
-__PACKAGE__->mk_accessors(qw/base_classes monitors now current_monitor/);
+__PACKAGE__->mk_accessors(qw/base_classes monitors now current_monitor lockfile has_lock/);
 
 our @EXPORT = qw/monitor every
                  minute minutes
@@ -194,6 +194,7 @@ sub init {
     my @path = $args{path} ? @{$args{path}} : (Jifty->app_class("Monitor"));
     $self->base_classes(\@path);
     $self->monitors({});
+    $self->lockfile($args{lockfile} || "var/monitoring.pid");
     local $Jifty::Plugin::Monitoring::self = $self;
     Jifty::Module::Pluggable->import(
         require => 1,
@@ -273,6 +274,7 @@ run, and runs it if it is.
 
 sub run_monitors {
     my $self = shift;
+    return unless $self->lock;
     my $now = Jifty::DateTime->now->truncate( to => "minute" );
     $now->set_time_zone("UTC");
     $self->now($now);
@@ -296,6 +298,21 @@ sub run_monitors {
         }
     }
     $self->current_monitor(undef);
+}
+
+sub lock {
+    my $self = shift;
+    return if -e $self->lockfile;
+    open PID, ">", $self->lockfile;
+    print PID $$;
+    close PID;
+    $self->has_lock(1);
+    return 1;
+}
+
+sub DESTROY {
+    my $self = shift;
+    unlink $self->lockfile if $self->has_lock;
 }
 
 1;
