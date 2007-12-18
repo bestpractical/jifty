@@ -985,7 +985,9 @@ sub _compile_condition {
     # Previously compiled (eg. a qr{} -- return it verbatim)
     return $cond if ref $cond;
 
-    unless ( $CONDITION_CACHE{$cond} ) {
+    my $cachekey = join('-', (($Dispatcher->{rule} eq 'on') ? 'on' : 'in'),
+                             $cond);
+    unless ( $CONDITION_CACHE{$cachekey} ) {
 
         my $compiled = $cond;
 
@@ -1027,9 +1029,9 @@ sub _compile_condition {
         if ( !$has_capture ) {
             $compiled = "($compiled)";
         }
-        $CONDITION_CACHE{$cond} = qr{$compiled};
+        $CONDITION_CACHE{$cachekey} = qr{$compiled};
     }
-    return $CONDITION_CACHE{$cond};
+    return $CONDITION_CACHE{$cachekey};
 }
 
 =head2 _compile_glob METAEXPRESSION
