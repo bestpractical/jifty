@@ -107,31 +107,17 @@ var attributeSelectors = [];
 // -----------------------------------------------------------------------
 
 // Jifty: special case of the descent selector. this is by far the most time
-// consuming code path of JS. special casing and caching it saves roughly
-// 15% of JS time
-selectAllCache = {};
+// consuming code path of JS. special casing it does cut JS time a bit
 selectAll = function($results, $from) {
-    var cache = selectAllCache[$from];
-    var i;
-
-    if (!cache) {
-        var $element, $subset, j;
-        var $elements = new Array();
-
-        for (i = 0; i < $from.length; i++) {
-            $subset = $from[i].getElementsByTagName("*");
-            for (j = 0; ($element = $subset[j]); j++) {
-                if (thisElement($element))
-                    $elements.push($element);
-            }
-        }
-
-        selectAllCache[$from] = cache = $elements;
-    }
-
-    for (i in cache) {
-        $results.push(cache[i]);
-    }
+	// loop through current selection
+	var $element, $subset, i, j;
+	for (i = 0; i < $from.length; i++) {
+        $subset = $from[i].getElementsByTagName("*");
+		for (j = 0; ($element = $subset[j]); j++) {
+			if (thisElement($element))
+		        $results.push($element);
+		}
+	}
 };
 
 // descendant selector
