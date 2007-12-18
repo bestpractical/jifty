@@ -27,6 +27,9 @@ your Jifty application. cssQuery has been bundle with Jifty for a long
 time, for Jifty use it internally. Now it's been replaced with jQuery.
 It's now a plugin for backward compatibility.
 
+It is disabled by default, unless your C<ConfigFileVersion> is smaller
+or equal then 2.
+
 For more information about cssQuery, see L<http://dean.edwards.name/my/cssQuery/>.
 
 =head1 METHODS
