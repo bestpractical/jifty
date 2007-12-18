@@ -1009,7 +1009,7 @@ var apply_fragment_updates = function(fragment, f) {
 //     - 'args' is a hash of arguments to override
 //     - 'path' is the path of the fragment (if this is a new fragment)
 //     - 'element' is the CSS selector of the element to update, if 'region' isn't supplied
-//     - 'mode' is one of 'Replace', or the name of a Prototype Insertion
+//     - 'mode' is one of 'Replace', 'Top', 'Bottom', 'Before', or 'After'
 //     - 'effect' is the name of a Prototype Effect
 Jifty.update = function () {
     // loads
