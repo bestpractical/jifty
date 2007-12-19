@@ -210,9 +210,6 @@ sub as_hash {
         delete $out->{field_warnings}->{$_} unless $out->{field_warnings}->{$_};
     }
 
-    # bless this into Jifty::Result for back-compat
-    bless $out;
-
     return $out;
 }
 
