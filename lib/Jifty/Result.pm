@@ -179,4 +179,116 @@ sub content {
     return $self->_content->{$key};
 }
 
+=head2 as_hash
+
+This returns the results as a hash to be given directly to the end user
+(usually via REST or webservices). The difference between
+C<< $result->as_hash >> and C<%$result> is that the latter will expand
+everything as deeply as possible. The former won't inflate C<refers_to>
+columns, among other things.
+
+=cut
+
+sub as_hash {
+    my $self = shift;
+
+    my $out = {
+        success        => $self->success,
+        message        => $self->message,
+        error          => $self->error,
+        field_errors   => { $self->field_errors },
+        field_warnings => { $self->field_warnings },
+        content        => $self->_recurse_object_to_data($self->content),
+    };
+
+    for (keys %{$out->{field_errors}}) {
+        delete $out->{field_errors}->{$_} unless $out->{field_errors}->{$_};
+    }
+    for (keys %{$out->{field_warnings}}) {
+        delete $out->{field_warnings}->{$_} unless $out->{field_warnings}->{$_};
+    }
+
+    return $out;
+}
+
+sub _recurse_object_to_data {
+    my $self = shift;
+    my $o = shift;
+
+    return $o if !ref($o);
+
+    if (ref($o) eq 'ARRAY') {
+        return [ map { $self->_recurse_object_to_data($_) } @$o ];
+    }
+    elsif (ref($o) eq 'HASH') {
+        my %h;
+        $h{$_} = $self->_recurse_object_to_data($o->{$_}) for keys %$o;
+        return \%h;
+    }
+
+    return $self->_object_to_data($o);
+}
+
+sub _object_to_data {
+    my $self = shift;
+    my $o = shift;
+
+    my %types = (
+        'Jifty::DBI::Collection' => \&_collection_to_data,
+        'Jifty::DBI::Record'     => \&_record_to_data,
+        'Jifty::DateTime'        => \&_datetime_to_data,
+    );
+
+    for my $type (keys %types) {
+        if (UNIVERSAL::isa($o, $type)) {
+            return $types{$type}->($self, $o);
+        }
+    }
+
+    # As the last resort, return the object itself and expect the
+    # $accept-specific renderer to format the object as e.g. YAML or JSON data.
+    return $o;
+}
+
+# return an arrayref of the records
+sub _collection_to_data {
+    my $self = shift;
+    my $records = shift->items_array_ref;
+
+    return [ map { $self->_record_to_data($_) } @$records ];
+}
+
+# We could use ->as_hash but this method avoids transforming refers_to
+# columns into JDBI objects
+sub _record_to_data {
+    my $self   = shift;
+    my $record = shift;
+    my %data;
+
+    # XXX: maybe just test ->virtual?
+    for ($record->readable_attributes) {
+        next if UNIVERSAL::isa($record->column($_)->refers_to,
+                               'Jifty::DBI::Collection');
+        next if $record->column($_)->container;
+
+        $data{$_} = Jifty::Util->stringify($record->_value($_));
+    }
+
+    return \%data;
+}
+
+# returns a datetime string consistent with the Jifty "date" magic
+sub _datetime_to_data {
+    my $self = shift;
+    my $dt = shift;
+
+    # if it looks like just a date, then return just the date portion
+    return $dt->ymd
+        if lc($dt->time_zone->name) eq 'floating'
+        && $dt->hms('') eq '000000';
+
+    # otherwise let stringification take care of it
+    return $dt;
+}
+
 1;

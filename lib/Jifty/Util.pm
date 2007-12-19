@@ -334,6 +334,47 @@ sub generate_uuid {
     })->create_str;
 }
 
+=head2 reference_to_data Object
+
+Provides a saner output format for models than
+C<MyApp::Model::Foo=HASH(0x1800568)>.
+
+=cut
+
+sub reference_to_data {
+    my ($self, $obj) = @_;
+    (my $model = ref($obj)) =~ s/::/./g;
+    return { jifty_model_reference => 1, id => $obj->id, model => $model };
+}
+
+=head2 stringify LIST
+
+Takes a list of values and forces them into strings.  Right now all it does
+is concatenate them to an empty string, but future versions might be more
+magical.
+
+=cut
+
+sub stringify {
+    my $self = shift;
+
+    my @r;
+
+    for (@_) {
+        if (UNIVERSAL::isa($_, 'Jifty::Record')) {
+            push @r, Jifty::Util->reference_to_data($_);
+        }
+        elsif (defined $_) {
+            push @r, '' . $_; # force stringification
+        }
+        else {
+            push @r, undef;
+        }
+    }
+
+    return wantarray ? @r : $r[-1];
+}
+
 =head1 AUTHOR
 
 Various folks at Best Practical Solutions, LLC.
