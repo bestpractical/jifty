@@ -204,7 +204,7 @@ sub send_action {
 
     # Fire off the request, evaluate the result, and return it
     my $result = $self->request( $request );
-    my $content = Jifty::YAML::Load($result->content)->{action};
+    my $content = eval { Jifty::YAML::Load($result->content)->{action} } || undef;
     $self->back;
     return $content;
 }
