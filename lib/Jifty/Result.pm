@@ -233,62 +233,13 @@ sub _object_to_data {
     my $self = shift;
     my $o = shift;
 
-    my %types = (
-        'Jifty::DBI::Collection' => \&_collection_to_data,
-        'Jifty::DBI::Record'     => \&_record_to_data,
-        'Jifty::DateTime'        => \&_datetime_to_data,
-    );
-
-    for my $type (keys %types) {
-        if (UNIVERSAL::isa($o, $type)) {
-            return $types{$type}->($self, $o);
-        }
+    if ($o->can('jifty_serialize_format')) {
+        return $o->jifty_serialize_format($self);
     }
 
     # As the last resort, return the object itself and expect the
     # $accept-specific renderer to format the object as e.g. YAML or JSON data.
     return $o;
-}
-
-# return an arrayref of the records
-sub _collection_to_data {
-    my $self = shift;
-    my $records = shift->items_array_ref;
-
-    return [ map { $self->_record_to_data($_) } @$records ];
-}
-
-# We could use ->as_hash but this method avoids transforming refers_to
-# columns into JDBI objects
-sub _record_to_data {
-    my $self   = shift;
-    my $record = shift;
-    my %data;
-
-    # XXX: maybe just test ->virtual?
-    for ($record->readable_attributes) {
-        next if UNIVERSAL::isa($record->column($_)->refers_to,
-                               'Jifty::DBI::Collection');
-        next if $record->column($_)->container;
-
-        $data{$_} = Jifty::Util->stringify($record->_value($_));
-    }
-
-    return \%data;
-}
-
-# returns a datetime string consistent with the Jifty "date" magic
-sub _datetime_to_data {
-    my $self = shift;
-    my $dt = shift;
-
-    # if it looks like just a date, then return just the date portion
-    return $dt->ymd
-        if lc($dt->time_zone->name) eq 'floating'
-        && $dt->hms('') eq '000000';
-
-    # otherwise let stringification take care of it
-    return $dt;
 }
 
 1;

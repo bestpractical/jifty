@@ -268,6 +268,24 @@ sub is_date {
     return 1;
 }
 
+=head2 jifty_serialize_format
+
+This returns a DateTime (or string) consistent with Jifty's date format.
+
+=cut
+
+sub jifty_serialize_format {
+    my $dt = shift;
+
+    # if it looks like just a date, then return just the date portion
+    return $dt->ymd
+        if lc($dt->time_zone->name) eq 'floating'
+        && $dt->hms('') eq '000000';
+
+    # otherwise let stringification take care of it
+    return $dt;
+}
+
 =head1 WHY?
 
 There are other ways to do some of these things and some of the decisions here may seem arbitrary, particularly if you read the code. They are.
