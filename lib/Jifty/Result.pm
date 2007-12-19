@@ -194,6 +194,8 @@ sub as_hash {
 
     my $out = {
         success        => $self->success,
+        failure        => $self->failure,
+        action_class   => $self->action_class,
         message        => $self->message,
         error          => $self->error,
         field_errors   => { $self->field_errors },
@@ -207,6 +209,9 @@ sub as_hash {
     for (keys %{$out->{field_warnings}}) {
         delete $out->{field_warnings}->{$_} unless $out->{field_warnings}->{$_};
     }
+
+    # bless this into Jifty::Result for back-compat
+    bless $out;
 
     return $out;
 }
