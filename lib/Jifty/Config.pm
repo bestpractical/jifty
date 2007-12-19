@@ -393,6 +393,7 @@ sub update_config {
     if ( $config->{'framework'}->{'ConfigFileVersion'} < 3) {
         unshift (@{$config->{'framework'}->{'Plugins'}}, 
             { CSSQuery           => {}, }
+        );
     }
 
     return $config;
