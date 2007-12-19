@@ -153,9 +153,8 @@ collection.
 
 sub jifty_serialize_format {
     my $records = shift->items_array_ref;
-    my $result  = shift;
 
-    return [ map { $result->_record_to_data($_) } @$records ];
+    return [ map { $_->jifty_serialize_format(@_) } @$records ];
 }
 
 =head1 SEE ALSO
