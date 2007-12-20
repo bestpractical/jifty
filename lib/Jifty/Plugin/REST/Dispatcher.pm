@@ -87,142 +87,6 @@ specific format.
 }
 
 
-=head2 stringify LIST
-
-Takes a list of values and forces them into strings.  Right now all it does
-is concatenate them to an empty string, but future versions might be more
-magical.
-
-=cut
-
-sub stringify {
-    # XXX: allow configuration to specify model fields that are to be
-    # expanded
-    my @r;
-
-    for (@_) {
-        if (UNIVERSAL::isa($_, 'Jifty::Record')) {
-            push @r, reference_to_data($_);
-        }
-        elsif (UNIVERSAL::isa($_, 'Jifty::DateTime')) {
-            push @r, _datetime_to_data($_);
-        }
-        elsif (defined $_) {
-            push @r, '' . $_; # force stringification
-        }
-        else {
-            push @r, undef;
-        }
-    }
-
-    return wantarray ? @r : $r[-1];
-}
-
-=head2 reference_to_data
-
-provides a saner output format for models than MyApp::Model::Foo=HASH(0x1800568)
-
-=cut
-
-sub reference_to_data {
-    my $obj = shift;
-    my ($model) = map { s/::/./g; $_ } ref($obj);
-    return { jifty_model_reference => 1, id => $obj->id, model => $model };
-}
-
-=head2 object_to_data OBJ
-
-Takes an object and converts the known types into simple data structures.
-
-Current known types:
-
-  Jifty::DBI::Collection
-  Jifty::DBI::Record
-  Jifty::DateTime
-
-=cut
-
-sub object_to_data {
-    my $obj = shift;
-    
-    my %types = (
-        'Jifty::DBI::Collection' => \&_collection_to_data,
-        'Jifty::DBI::Record'     => \&_record_to_data,
-        'Jifty::DateTime'        => \&_datetime_to_data,
-    );
-
-    for my $type ( keys %types ) {
-        if ( UNIVERSAL::isa( $obj, $type ) ) {
-            return $types{$type}->( $obj );
-        }
-    }
-
-    # As the last resort, return the object itself and expect the $accept-specific
-    # renderer to format the object as e.g. YAML or JSON data.
-    return $obj;
-}
-
-sub _collection_to_data {
-    my $records = shift->items_array_ref;
-    return [ map { _record_to_data( $_ ) } @$records ];
-}
-
-sub _record_to_data {
-    my $record = shift;
-    # We could use ->as_hash but this method avoids transforming refers_to
-    # columns into JDBI objects
-
-    # XXX: maybe just test ->virtual?
-    my %data   = map {
-                    $_ => (UNIVERSAL::isa( $record->column( $_ )->refers_to,
-                                           'Jifty::DBI::Collection' ) ||
-                           $record->column($_)->container
-                             ? undef
-                             : stringify( $record->_value( $_ ) ) )
-                 } $record->readable_attributes;
-    return \%data;
-}
-
-sub _datetime_to_data {
-    my $dt = shift;
-
-    # if it looks like just a date, then return just the date portion
-    return $dt->ymd
-        if lc($dt->time_zone->name) eq 'floating'
-        && $dt->hms('') eq '000000';
-
-    # otherwise let stringification take care of it
-    return $dt;
-}
-
-=head2 recurse_object_to_data REF
-
-Takes a reference, and calls C<object_to_data> on it if that is
-meaningful.  If it is an arrayref, or recurses on each element.  If it
-is a hashref, recurses on each value.  Returns the new datastructure.
-
-=cut
-
-sub recurse_object_to_data {
-    my $o = shift;
-    return $o unless ref $o;
-
-    my $updated = object_to_data($o);
-    if ($o ne $updated) {
-        return $updated;
-    } elsif (ref $o eq "ARRAY") {
-        my @a = map {recurse_object_to_data($_)} @{$o};
-        return \@a;
-    } elsif (ref $o eq "HASH") {
-        my %h;
-        $h{$_} = recurse_object_to_data($o->{$_}) for keys %{$o};
-        return \%h;
-    } else {
-        return $o;
-    }
-}
-
-
 =head2 list PREFIX items
 
 Takes a URL prefix and a set of items to render. passes them on.
@@ -528,7 +392,8 @@ sub list_model_items {
     $col->order_by( column => $column );
 
     list( [ 'model', $model, $column ],
-        map { stringify($_->$column()) } @{ $col->items_array_ref || [] } );
+        map { Jifty::Util->stringify($_->$column()) }
+            @{ $col->items_array_ref || [] } );
 }
 
 
@@ -549,7 +414,8 @@ sub show_item_field {
     # Check that the field is actually a column (and not some other method)
     abort(404) if not scalar grep { $_->name eq $field } $rec->columns;
 
-    outs( [ 'model', $model, $column, $key, $field ], stringify($rec->$field()) );
+    outs( [ 'model', $model, $column, $key, $field ],
+          Jifty::Util->stringify($rec->$field()) );
 }
 
 =head2 show_item $model, $column, $key
@@ -565,7 +431,9 @@ sub show_item {
     my $rec = $model->new;
     $rec->load_by_cols( $column => $key );
     $rec->id or abort(404);
-    outs( ['model', $model, $column, $key],  { map {$_ => stringify($rec->$_())} map {$_->name} $rec->columns});
+    outs( ['model', $model, $column, $key], 
+        { map { $_ => Jifty::Util->stringify($rec->$_()) }
+              map {$_->name} $rec->columns});
 }
 
 =head2 create_item
@@ -769,24 +637,8 @@ sub run_action {
         } 'model', ref($rec), 'id', $rec->id);
         Jifty->handler->apache->header_out('Location' => $url);
     }
-    
-    my $result = $action->result;
 
-    my $out = {};
-    $out->{success} = $result->success;
-    $out->{message} = $result->message;
-    $out->{error} = $result->error;
-    $out->{field_errors} = {$result->field_errors};
-    for (keys %{$out->{field_errors}}) {
-        delete $out->{field_errors}->{$_} unless $out->{field_errors}->{$_};
-    }
-    $out->{field_warnings} = {$result->field_warnings};
-    for (keys %{$out->{field_warnings}}) {
-        delete $out->{field_warnings}->{$_} unless $out->{field_warnings}->{$_};
-    }
-    $out->{content} = recurse_object_to_data($result->content);
-    
-    outs(undef, $out);
+    outs(undef, $action->result->as_hash);
 
     last_rule;
 }

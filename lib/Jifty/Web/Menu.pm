@@ -2,9 +2,9 @@ package Jifty::Web::Menu;
 
 use base qw/Class::Accessor::Fast/;
 use URI;
-use Scalar::Util ();
+use Scalar::Util qw(weaken);
 
-__PACKAGE__->mk_accessors(qw(label parent sort_order link target escape_label class));
+__PACKAGE__->mk_accessors(qw(label _parent sort_order link target escape_label class));
 
 =head1 NAME
 
@@ -23,9 +23,17 @@ each option's use.
 
 sub new {
     my $package = shift;
-    # Class::Accessor only wants a hashref;
-    $package->SUPER::new( ref($_[0]) eq 'HASH' ? @_ : {@_} );
+    my $args = ref($_[0]) eq 'HASH' ? shift @_ : {@_};
 
+    my $parent = delete $args->{'parent'};
+
+    # Class::Accessor only wants a hashref;
+    my $self = $package->SUPER::new( $args);
+
+    # make sure our reference is weak
+    $self->parent($parent) if defined $parent;
+
+    return $self;
 }
 
 
@@ -35,16 +43,24 @@ Sets or returns the string that the menu item will be displayed as.
 
 =cut
 
-sub label {
-    my $self = shift;
-    $self->{label} = shift if @_;
-    return $self->{label};
-}
-
 =head2 parent [MENU]
 
 Gets or sets the parent L<Jifty::Web::Menu> of this item; this defaults
-to null.
+to null. This ensures that the reference is weakened.
+
+=cut
+
+
+sub parent {
+    my $self = shift;
+    if (@_) {
+        $self->_parent(@_);
+        weaken $self->{_parent};
+    }
+
+    return $self->_parent;
+}
+
 
 =head2 sort_order [NUMBER]
 

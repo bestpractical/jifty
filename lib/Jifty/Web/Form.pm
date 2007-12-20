@@ -7,6 +7,8 @@ use base qw/Jifty::Object Class::Accessor::Fast/;
 
 __PACKAGE__->mk_accessors(qw(actions printed_actions name call is_open disable_autocomplete target submit_to onsubmit));
 
+use Scalar::Util qw/weaken/;
+
 =head1 NAME
 
 Jifty::Web::Form - Tools for rendering and dealing with HTML forms
@@ -149,6 +151,7 @@ sub register_action {
     my $self = shift;
     my $action = shift;
     $self->actions->{ $action->moniker } =  $action;
+    weaken $self->actions->{ $action->moniker};
     return $action;
 }
 

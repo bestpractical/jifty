@@ -64,7 +64,7 @@ requires('Module::ScanDeps');
 requires('Object::Declare' => '0.13');
 requires('PadWalker');
 requires('Params::Validate');
-requires('Scalar::Defer' => '0.10');
+requires('Scalar::Defer' => '0.12');
 requires('Shell::Command');
 requires('String::Koremutake');
 requires('SQL::ReservedWords');
@@ -160,21 +160,16 @@ features(
         recommends('XML::Simple'),
         recommends('Image::Info'), # for testing
     ],
-    'Memory Leak Plugin' => [
+    'Memory Leak Plugins' => [
         -default => 0,
-        recommends('Devel::Events' => '0.02'),
-        recommends('Devel::Events::Handler::ObjectTracker'),
-        recommends('Devel::Events::Generator::Objects'),
+        recommends('Devel::Events::Objects' => '0.02'), # Devel::Events::Handler::ObjectTracker Devel::Events::Generator::Objects
         recommends('Devel::Size'),
+        recommends('Devel::Gladiator'),
         recommends('Proc::ProcessTable'),
     ],
     'OAuth Plugin' => [
         -default => 0,
-        recommends('Net::OAuth::Request' => '0.04'),
-        recommends('Net::OAuth::RequestTokenRequest'),
-        recommends('Net::OAuth::AccessTokenRequest'),
-        recommends('Net::OAuth::ProtectedResourceRequest'),
-
+        recommends('Net::OAuth::Request' => '0.04'), # Net::OAuth::RequestTokenRequest Net::OAuth::AccessTokenRequest Net::OAuth::ProtectedResourceRequest
         recommends('Crypt::OpenSSL::RSA'),
         recommends('Digest::HMAC_SHA1'),
     ],
