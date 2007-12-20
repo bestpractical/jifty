@@ -41,7 +41,6 @@ __PACKAGE__->javascript_libs([qw(
     prototype.js
     jquery-1.2.1.js
     jquery_noconflict.js
-    cssQuery-jquery.js
     behaviour.js
     scriptaculous/builder.js
     scriptaculous/effects.js

@@ -35,18 +35,11 @@ var Behaviour = {
     
     apply: function() {
         var root = arguments[0];
-        if(root) root = $(root);
-
         for (var h = 0; sheet = Behaviour.list[h]; h++) {
             for (var selector in sheet) {
-                var start = new Date();
-                var elements = jQuery(selector, root);
-
-                if ( !elements ) continue;
-
-                for (var i = 0; element = elements[i]; i++) {
-                    sheet[selector](element);
-                }
+                jQuery(selector, root).each(function() {
+                     sheet[selector](this);
+                });
             }
         }
     }
