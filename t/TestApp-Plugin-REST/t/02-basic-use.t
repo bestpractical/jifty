@@ -13,7 +13,7 @@ This is a template for your own tests. Copy it and modify it.
 use lib 't/lib';
 use Jifty::SubTest;
 
-use Jifty::Test tests => 70;
+use Jifty::Test tests => 78;
 use Jifty::Test::WWW::Mechanize;
 
 my $server  = Jifty::Test->make_server;
@@ -81,6 +81,24 @@ is(get_content(), 'test@example.com');
 # on PUT    '/=/model/*/*/*' => \&replace_item;
 # on DELETE '/=/model/*/*/*' => \&delete_item;
 
+# on GET    '/=/search/*/**' => \&search_items;
+$mech->get_ok('/=/search/user/id/1.yml');
+my $content = get_content();
+is_deeply($content, [{ name => 'test', email => 'test@example.com', id => 1, tasty => undef }]);
+
+$mech->get_ok('/=/search/user/id/1/name/test.yml');
+$content = get_content();
+is_deeply($content, [{ name => 'test', email => 'test@example.com', id => 1, tasty => undef }]);
+
+$mech->get_ok('/=/search/user/id/1/name/test/email.yml');
+$content = get_content();
+is_deeply($content, ['test@example.com']);
+
+$mech->get('/=/search/Usery/id/1.yml');
+is($mech->status,'404');
+
+$mech->get('/=/search/user/id/1/name/foo.yml');
+is($mech->status,'404');
 
 # on GET    '/=/action'      => \&list_actions;
 
