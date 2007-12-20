@@ -4,7 +4,7 @@ use strict;
 
 use lib 't/lib';
 use Jifty::SubTest;
-use Jifty::Test tests => 28;
+use Jifty::Test tests => 29;
 use Jifty::Test::WWW::Mechanize;
 
 my $server  = Jifty::Test->make_server;
@@ -20,6 +20,7 @@ $mech->content_contains("count: 0");
 $mech->content_contains("before: 0");
 $mech->content_contains("after: 0");
 $mech->content_contains("after_once: 0");
+$mech->content_lacks("phantom: 99");
 
 $mech->get_ok("$URL/dispatch/basic-show", "Got /dispatch/basic-show");
 $mech->content_contains("Basic test with forced show.");

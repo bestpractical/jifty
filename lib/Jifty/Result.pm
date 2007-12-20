@@ -179,4 +179,69 @@ sub content {
     return $self->_content->{$key};
 }
 
+=head2 as_hash
+
+This returns the results as a hash to be given directly to the end user
+(usually via REST or webservices). The difference between
+C<< $result->as_hash >> and C<%$result> is that the latter will expand
+everything as deeply as possible. The former won't inflate C<refers_to>
+columns, among other things.
+
+=cut
+
+sub as_hash {
+    my $self = shift;
+
+    my $out = {
+        success        => $self->success,
+        failure        => $self->failure,
+        action_class   => $self->action_class,
+        message        => $self->message,
+        error          => $self->error,
+        field_errors   => { $self->field_errors },
+        field_warnings => { $self->field_warnings },
+        content        => $self->_recurse_object_to_data($self->content),
+    };
+
+    for (keys %{$out->{field_errors}}) {
+        delete $out->{field_errors}->{$_} unless $out->{field_errors}->{$_};
+    }
+    for (keys %{$out->{field_warnings}}) {
+        delete $out->{field_warnings}->{$_} unless $out->{field_warnings}->{$_};
+    }
+
+    return $out;
+}
+
+sub _recurse_object_to_data {
+    my $self = shift;
+    my $o = shift;
+
+    return $o if !ref($o);
+
+    if (ref($o) eq 'ARRAY') {
+        return [ map { $self->_recurse_object_to_data($_) } @$o ];
+    }
+    elsif (ref($o) eq 'HASH') {
+        my %h;
+        $h{$_} = $self->_recurse_object_to_data($o->{$_}) for keys %$o;
+        return \%h;
+    }
+
+    return $self->_object_to_data($o);
+}
+
+sub _object_to_data {
+    my $self = shift;
+    my $o = shift;
+
+    if ($o->can('jifty_serialize_format')) {
+        return $o->jifty_serialize_format($self);
+    }
+
+    # As the last resort, return the object itself and expect the
+    # $accept-specific renderer to format the object as e.g. YAML or JSON data.
+    return $o;
+}
+
 1;

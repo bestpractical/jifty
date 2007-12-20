@@ -827,4 +827,28 @@ sub schema_version {
     }
 }
 
+=head2 jifty_serialize_format
+
+This is used to create a hash reference of the object's values. Unlike
+Jifty::DBI::Record->as_hash, this won't transform refers_to columns into JDBI
+objects
+
+=cut
+
+sub jifty_serialize_format {
+    my $record = shift;
+    my %data;
+
+    # XXX: maybe just test ->virtual?
+    for ($record->readable_attributes) {
+        next if UNIVERSAL::isa($record->column($_)->refers_to,
+                               'Jifty::DBI::Collection');
+        next if $record->column($_)->container;
+
+        $data{$_} = Jifty::Util->stringify($record->_value($_));
+    }
+
+    return \%data;
+}
+
 1;
