@@ -6,10 +6,12 @@
 <script type="text/javascript" src="lib/Test/Builder.js" charset="UTF-8"></script>
 <script type="text/javascript" src="lib/Test/More.js" charset="UTF-8"></script>
 
-<script type="text/javascript" src="/static/js/prototype.js" charset="UTF-8"></script>
-<script type="text/javascript" src="/static/js/cssquery/cssQuery.js" charset="UTF-8"></script>
+<script type="text/javascript" src="/static/js/jquery-1.2.1.js" charset="UTF-8"></script>
+<script type="text/javascript" src="/static/js/jquery_noconflict.js" charset="UTF-8"></script>
 <script type="text/javascript" src="/static/js/behaviour.js" charset="UTF-8"></script>
 <script type="text/javascript">
+var nonexists_applied = false;
+
 Behaviour.register({
     '#foo': function(element) {
         element.innerHTML = "FOO is HERE";
@@ -17,6 +19,12 @@ Behaviour.register({
 
     '#bar': function(element) {
         element.innerHTML = "BAR is HERE";
+    },
+    '.nonexists': function(element) {
+        nonexists_applied = true;
+        document.body.appendChild(
+            document.createTextNode("Foo")
+        );
     }
 });
 
@@ -32,11 +40,12 @@ var add_bar = function() {
 
 <body>
     <div id="foo"></div>
+    <div id="foo2"></div>
     <pre id="test"></pre>
 
     <script type="text/javascript"><!--
     JSAN.use('Test.More');
-    plan({ tests: 2 });
+    plan({ tests: 4 });
     async_id = beginAsync();
     
     setTimeout(function() {
@@ -44,9 +53,13 @@ var add_bar = function() {
         
         add_bar();
         
+        Behaviour.apply("#foo2");
+        is( document.getElementById("bar").innerHTML, "", "#bar rule is not applied because that's not under #foo2");
+
         Behaviour.apply();
-        
         is( document.getElementById("bar").innerHTML, "BAR is HERE", "#bar rule is applied manually");
+
+        is (nonexists_applied, false, ".nonexists rule never applied.");
         endAsync(async_id);
     }, 1000);
     //--></script>

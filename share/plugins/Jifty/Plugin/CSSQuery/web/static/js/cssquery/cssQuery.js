@@ -5,6 +5,9 @@
 
 	Modifed by Nelson Elhage <nelhage@bestpractical.com>
 	(2006-06-21) to optimize selection by ID on non-IE browsers
+
+    Modified by Shawn M Moore <sartak@bestpractical.com>
+    (2007-12-07) sped up thisElement, descendent selector, and class selector
 */
 
 // the following functions allow querying of the DOM using CSS selectors
@@ -107,17 +110,31 @@ var attributeSelectors = [];
 // -----------------------------------------------------------------------
 
 // Jifty: special case of the descent selector. this is by far the most time
-// consuming code path of JS. special casing it does cut JS time a bit
+// consuming code path of JS. special casing and caching it saves roughly
+// 15% of JS time
+selectAllCache = {};
 selectAll = function($results, $from) {
-	// loop through current selection
-	var $element, $subset, i, j;
-	for (i = 0; i < $from.length; i++) {
-        $subset = $from[i].getElementsByTagName("*");
-		for (j = 0; ($element = $subset[j]); j++) {
-			if (thisElement($element))
-		        $results.push($element);
-		}
-	}
+    var cache = selectAllCache[$from];
+    var i;
+
+    if (!cache) {
+        var $element, $subset, j;
+        var $elements = new Array();
+
+        for (i = 0; i < $from.length; i++) {
+            $subset = $from[i].getElementsByTagName("*");
+            for (j = 0; ($element = $subset[j]); j++) {
+                if (thisElement($element))
+                    $elements.push($element);
+            }
+        }
+
+        selectAllCache[$from] = cache = $elements;
+    }
+
+    for (i in cache) {
+        $results.push(cache[i]);
+    }
 };
 
 // descendant selector
@@ -148,12 +165,14 @@ selectors["#"] = function($results, $from, $id) {
 
 // class selector
 selectors["."] = function($results, $from, $className) {
-	// create a RegExp version of the class
-	$className = new RegExp("(^|\\s)" + $className + "(\\s|$)");
-	// loop through current selection and check class
-	var $element, i;
-	for (i = 0; ($element = $from[i]); i++)
-		if ($className.test($element.className)) $results.push($element);
+    $className = " " + $className + " ";
+    var $element, i;
+    for (i = 0; ($element = $from[i]); i++) {
+        var classes = " " + $element.className + " ";
+        if (classes.indexOf($className) > -1) {
+            $results.push($element);
+        }
+    }
 };
 
 // pseudo-class selector
