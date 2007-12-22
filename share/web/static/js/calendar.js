@@ -40,7 +40,7 @@ Jifty.Calendar = {
         
         wrap = document.createElement("div");
         wrap.setAttribute( "id", wrapId );
-        wrap.setAttribute( "className", "select-free" );
+        wrap.setAttribute( "class", "select-free" );
         
         wrap.style.position = "absolute";
         wrap.style.left     = Jifty.Utils.findRelativePosX( input ) + "px";

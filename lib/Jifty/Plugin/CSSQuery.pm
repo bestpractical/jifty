@@ -43,7 +43,7 @@ necessary to load cssQuery.
 
 sub init {
     Jifty->web->add_javascript(
-        'cssQuery/cssQuery.js',
+        'cssquery/cssQuery.js',
         'cssquery/cssQuery-level2.js',
         'cssquery/cssQuery-level3.js',
         'cssquery/cssQuery-standard.js'
