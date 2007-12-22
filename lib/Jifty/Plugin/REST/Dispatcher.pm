@@ -35,6 +35,8 @@ on POST   '/=/model/*'          => \&create_item;
 on PUT    '/=/model/*/*/*'      => \&replace_item;
 on DELETE '/=/model/*/*/*'      => \&delete_item;
 
+on GET    '/=/search/*/**'      => \&search_items;
+
 on GET    '/=/action/*'         => \&list_action_params;
 on GET    '/=/action'           => \&list_actions;
 on POST   '/=/action/*'         => \&run_action;
@@ -56,19 +58,22 @@ sub show_help {
     print qq{
 Accessing resources:
 
-on GET    /=/model                                  list models
-on GET    /=/model/<model>                          list model columns
-on GET    /=/model/<model>/<column>                 list model items
-on GET    /=/model/<model>/<column>/<key>           show item
-on GET    /=/model/<model>/<column>/<key>/<field>   show item field
+on GET    /=/model                                   list models
+on GET    /=/model/<model>                           list model columns
+on GET    /=/model/<model>/<column>                  list model items
+on GET    /=/model/<model>/<column>/<key>            show item
+on GET    /=/model/<model>/<column>/<key>/<field>    show item field
 
-on POST   /=/model/<model>                          create item
-on PUT    /=/model/<model>/<column>/<key>           update item
-on DELETE /=/model/<model>/<column>/<key>           delete item
+on POST   /=/model/<model>                           create item
+on PUT    /=/model/<model>/<column>/<key>            update item
+on DELETE /=/model/<model>/<column>/<key>            delete item
 
-on GET    /=/action                                 list actions
-on GET    /=/action/<action>                        list action params
-on POST   /=/action/<action>                        run action
+on GET    /=/search/<model>/<c1>/<v1>/<c2>/<v2>/...  search items
+on GET    /=/search/<model>/<c1>/<v1>/.../<field>    show matching items' field
+
+on GET    /=/action                                  list actions
+on GET    /=/action/<action>                         list action params
+on POST   /=/action/<action>                         run action
 
 
 Resources are available in a variety of formats:
@@ -434,6 +439,73 @@ sub show_item {
     outs( ['model', $model, $column, $key], 
         { map { $_ => Jifty::Util->stringify($rec->$_()) }
               map {$_->name} $rec->columns});
+}
+
+=head2 search_items $model, [c1, v1, c2, v2, ...] [, $field]
+
+Loads up all models of type C<$model> that match the given columns and values.
+If the column and value list has an odd count, then the last item is taken to
+be the output column. Otherwise, all items will be returned.
+
+Will throw a 404 if there were no matches, or C<$field> was invalid.
+
+=cut
+
+sub search_items {
+    my ($model, $fragment) = (model($1), $2);
+    my @pieces = grep {length} split '/', $fragment;
+    my @orig = @pieces;
+
+    # if they provided an odd number of pieces, the last is the output column
+    my $field;
+    if (@pieces % 2 == 1) {
+        $field = pop @pieces;
+    }
+
+    # limit to the key => value pairs they gave us
+    my $collection = eval { $model->collection_class->new }
+        or abort(404);
+
+    # no pieces? they must be asking for everything
+    if (!@pieces) {
+        $collection->unlimit;
+    }
+
+    while (@pieces) {
+        my $column = shift @pieces;
+        my $value  = shift @pieces;
+
+        $collection->limit(column => $column, value => $value);
+    }
+
+    $collection->count or abort(404);
+
+    # output
+    if (defined $field) {
+        my $item = $collection->first;
+
+        # make sure $field exists and is a real column
+        $item->can($field)    or abort(404);
+        $item->column($field) or abort(404);
+
+        my @values;
+
+        # collect the values for $field
+        do {
+            push @values, $item->$field;
+        } while $item = $collection->next;
+
+        outs(
+            ['search', $model, @orig],
+            \@values,
+        );
+    }
+    else {
+        outs(
+            ['search', $model, @orig],
+            $collection->jifty_serialize_format,
+        );
+    }
 }
 
 =head2 create_item

@@ -108,9 +108,28 @@ template '/__jifty/admin/queries/query' => sub {
     ol {
         li { $_ } for @$bindings;
     }
-    h5 { "Stack trace:" }
-    pre {
-        $misc->{SQLQueryPlugin};
+
+    my $more = Jifty->web->serial;
+    div {
+        attr {
+            class => "extra",
+            style => "display: none;",
+            id    => $more,
+        };
+        h5 { "Stack trace:" }
+        pre {
+            $misc->{SQLQueryPlugin};
+        }
+    }
+
+    div {
+        a {
+            attr {
+                href => "#",
+                onclick => "Effect.toggle(\$('$more'),'blind'); this.innerHTML = this.innerHTML == 'more...' ? 'less...' : 'more...'; return false;",
+            };
+            "more..."
+        }
     }
 };
 
