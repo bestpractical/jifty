@@ -58,8 +58,7 @@ sub validate_email {
     my $self  = shift;
     my $email = shift;
 
-    my $u = Jifty->app_class('Model', 'User')->new(current_user => Jifty->app_class('CurrentUser')->superuser);
-    $u->load_by_cols( email => $email );
+    my $u = $self->load_user($email);
     return $self->validation_error(email => _("It doesn't look like there's an account by that name.")) unless ($u->id);
 
     return $self->validation_ok('email');
@@ -131,10 +130,7 @@ Otherwise, throw an error.
 
 sub take_action {
     my $self = shift;
-    my $user = Jifty->app_class('Model', 'User')->new(current_user => Jifty->app_class('CurrentUser')->superuser);
-    $user->load_by_cols( email => $self->argument_value('email') );
-
-
+    my $user = $self->load_user( $self->argument_value('email') );
     my $password = $self->argument_value('password');
     my $token    = $self->argument_value('token') || '';
     my $hashedpw = $self->argument_value('hashed_password');
@@ -167,6 +163,21 @@ sub take_action {
     Jifty->web->session->set_cookie;
 
     return 1;
+}
+
+=head2 load_user
+
+Load up and return a YourApp::User object for the user trying to log in
+
+=cut
+
+sub load_user {
+    my $self = shift;
+    my $username = shift;
+    my $user = Jifty->app_class('Model', 'User')->new(current_user => Jifty->app_class('CurrentUser')->superuser);
+    $user->load_by_cols( email => $username);
+    return $user
+
 }
 
 =head2 login_message $user_object
