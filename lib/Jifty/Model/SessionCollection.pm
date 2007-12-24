@@ -29,6 +29,6 @@ are...
 
 =cut
 
-sub current_user { return Jifty::CurrentUser->superuser }
+sub current_user { return Jifty->app_class('CurrentUser')->superuser }
 
 1;

@@ -435,11 +435,13 @@ sub current_user_can {
         # Otherwise, no instruction from the handlers, move along...
     }
 
-    # Abort! Return false for safety
+    # Abort! Return false for safety if the hook exploded
     else {
         return 0;
     }
 
+
+    Carp::confess unless ( $self->current_user );
     if (   $self->current_user->is_bootstrap_user
         or $self->current_user->is_superuser )
     {

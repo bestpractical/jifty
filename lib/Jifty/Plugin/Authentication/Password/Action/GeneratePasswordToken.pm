@@ -36,7 +36,7 @@ sub take_action {
 
     my $email = $self->argument_value('email');
     my $class = Jifty->app_class('Model','User');
-    my $user = $class->new(current_user => Jifty::CurrentUser->superuser);
+    my $user = $class->new(current_user => Jifty->app_class('CurrentUser')->superuser);
     $user->load_by_cols(email => $email);
     unless($user->id) {
         $self->result->error('No such user');

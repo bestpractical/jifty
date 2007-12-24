@@ -246,21 +246,22 @@ sub current_user {
         $self->_current_user( $currentuser_obj || undef );
     }
 
+    my $object;
+
     if ( defined $self->temporary_current_user ) {
         return $self->temporary_current_user;
     } elsif ( defined $self->_current_user ) {
         return $self->_current_user;
-
     } elsif ( my $id = $self->session->get('user_id') ) {
-        my $object = Jifty->app_class("CurrentUser")->new( id => $id );
-        $self->_current_user($object);
-        return $object;
+         $object = Jifty->app_class("CurrentUser")->new( id => $id );
+    } elsif ( Jifty->config->framework('AdminMode')) {
+         $object = Jifty->app_class("CurrentUser")->superuser;
     } else {
-        my $object = Jifty->app_class("CurrentUser")->new;
-        $object->is_superuser(1) if Jifty->config->framework('AdminMode');
-        $self->_current_user($object);
-        return ($object);
+         $object = Jifty->app_class("CurrentUser")->new;
     }
+    
+    $self->_current_user($object);
+    return $object;
 }
 
 =head3 temporary_current_user [USER]
@@ -758,7 +759,7 @@ sub _redirect {
         local $self->{navigation} = undef;
         local $self->{page_navigation} = undef;
         $self->replace_current_region($page);
-        Jifty::Dispatcher::_abort;
+        Jifty::Dispatcher::_abort();
         return;
     }
 
@@ -790,7 +791,7 @@ sub _redirect {
 
     # Mason abort, or dispatcher abort out of here
     $self->mason->abort if $self->mason;
-    Jifty::Dispatcher::_abort;
+    Jifty::Dispatcher::_abort();
 }
 
 =head3 caller
