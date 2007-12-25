@@ -135,7 +135,7 @@ sub outs {
     elsif ($accept =~ /json/i) {
         $apache->header_out('Content-Type' => 'application/json; charset=UTF-8');
         $apache->send_http_header;
-        print Jifty::JSON::objToJson( @_, { singlequote => 1 } );
+        print Jifty::JSON::objToJson( @_ );
     }
     elsif ($accept =~ /j(?:ava)?s|ecmascript/i) {
         $apache->header_out('Content-Type' => 'application/javascript; charset=UTF-8');
