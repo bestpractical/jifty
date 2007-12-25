@@ -57,7 +57,7 @@ sub create {
         if not defined $args{usage};
 
     # XXX TODO: This should be in the schema, but we can't do that at the moment
-    my $check = Jifty::Plugin::Quota::Model::Quota->new;
+    my $check = Jifty::Plugin::Quota::Model::Quota->new( current_user => Jifty->app_class('CurrentUser')->superuser );
     $check->load_by_cols(
         object_id    => $args{object_id},
         object_class => $args{object_class},
