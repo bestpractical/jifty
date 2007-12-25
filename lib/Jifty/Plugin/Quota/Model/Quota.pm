@@ -56,6 +56,15 @@ sub create {
     $args{usage} = 0
         if not defined $args{usage};
 
+    # XXX TODO: This should be in the schema, but we can't do that at the moment
+    my $check = Jifty::Plugin::Quota::Model::Quota->new;
+    $check->load_by_cols(
+        object_id    => $args{object_id},
+        object_class => $args{object_class},
+        type         => $args{type}
+    );
+    return ( undef, "Already a quota for that object." ) if $check->id;
+
     return $self->SUPER::create( %args );
 }
 
