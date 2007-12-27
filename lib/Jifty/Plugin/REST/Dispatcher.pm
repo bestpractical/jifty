@@ -449,6 +449,16 @@ be the output column. Otherwise, all items will be returned.
 
 Will throw a 404 if there were no matches, or C<$field> was invalid.
 
+Pseudo-columns:
+
+=over 4
+
+=item __limit => N
+
+Limits the collection to N models.
+
+=back
+
 =cut
 
 sub search_items {
@@ -465,17 +475,33 @@ sub search_items {
     # limit to the key => value pairs they gave us
     my $collection = eval { $model->collection_class->new }
         or abort(404);
+    $collection->unlimit;
 
-    # no pieces? they must be asking for everything
-    if (!@pieces) {
-        $collection->unlimit;
-    }
+    my %special = (
+        __limit => sub {
+            my $N = shift;
+
+            # must be a number
+            $N =~ /^\d+$/
+                or abort(404);
+
+            $collection->set_page_info(
+                per_page     => $N,
+                current_page => 1,
+            );
+        },
+    );
 
     while (@pieces) {
         my $column = shift @pieces;
         my $value  = shift @pieces;
 
-        $collection->limit(column => $column, value => $value);
+        if (exists $special{$column}) {
+            $special{$column}->($value);
+        }
+        else {
+            $collection->limit(column => $column, value => $value);
+        }
     }
 
     $collection->count or abort(404);
