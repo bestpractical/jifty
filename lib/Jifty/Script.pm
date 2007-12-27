@@ -26,7 +26,7 @@ C<fastcgi> command.  If all fails, shows the help.
 
 sub prepare {
     my $self = shift;
-    if ($ARGV[0] =~ /--?h(elp?)/i) {
+    if ($ARGV[0] =~ /--?h(elp)?/i) {
         $ARGV[0] = 'help';
     }
     elsif (!@ARGV) {
