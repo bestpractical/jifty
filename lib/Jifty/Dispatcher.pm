@@ -1040,7 +1040,7 @@ Private function.
 
 Turns a metaexpression containing C<*>, C<?> and C<#> into a capturing regex pattern.
 
-Also supports the non-capturing C<[]>,and C<{}> notation.
+Also supports the non-capturing C<[]> and C<{}> notations.
 
 The rules are:
 
