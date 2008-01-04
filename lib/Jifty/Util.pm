@@ -364,6 +364,9 @@ sub stringify {
         if (UNIVERSAL::isa($_, 'Jifty::Record')) {
             push @r, Jifty::Util->reference_to_data($_);
         }
+        if (UNIVERSAL::isa($_, 'Jifty::DateTime') && $_->is_date) {
+            push @r, $_->ymd;
+        }
         elsif (defined $_) {
             push @r, '' . $_; # force stringification
         }
