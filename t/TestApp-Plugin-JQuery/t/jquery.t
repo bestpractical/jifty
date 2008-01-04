@@ -20,7 +20,7 @@ ok($script, "Found the script tag.");
 $mech->get_ok($url . $script, "Fetched $url$script");
 $mech->content_like(qr/^ \* jQuery (?:[\d\.]+) - New Wave Javascript/m,
     "Found the start of the jQuery script");
-$mech->content_like(qr/^var jQuery = function\(/m, 
+$mech->content_like(qr/^var jQuery = window\.jQuery = function\(/m, 
     "Found the main jQuery declaration");
 $mech->content_like(qr/^ \* noConflict.js/m, 
     "Found the start of the noConflict script");
