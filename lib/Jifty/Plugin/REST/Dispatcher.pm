@@ -140,11 +140,6 @@ sub outs {
     elsif ($accept =~ /j(?:ava)?s|ecmascript/i) {
         $apache->header_out('Content-Type' => 'application/javascript; charset=UTF-8');
         $apache->send_http_header;
-	# XXX: temporary hack to fix _() that aren't respected by json dumper
-	for (values %{$_[0]}) {
-	    $_->{label} = "$_->{label}" if exists $_->{label} && defined ref $_->{label};
-	    $_->{hints} = "$_->{hints}" if exists $_->{hints} && defined ref $_->{hints};
-	}
         print 'var $_ = ', Jifty::JSON::objToJson( @_, { singlequote => 1 } );
     }
     elsif ($accept =~ qr{^(?:application/x-)?(?:perl|pl)$}i) {
