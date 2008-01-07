@@ -1,6 +1,12 @@
 /* An empty class so we can create things inside it */
 var Jifty = {};
 
+Jifty.$ = function(id) {
+    if (typeof id == 'string')
+        return document.getElementById(id)
+    return id;
+}
+
 Jifty.Web = {};
 Jifty.Web.current_actions = [];
 Jifty.Web.new_action = function() {
@@ -111,7 +117,7 @@ Action.prototype = {
             this.extras = arguments[1];
         }
 
-        this.register = document.getElementById('J:A-' + this.moniker); // Simple case -- no ordering information
+        this.register = Jifty.$('J:A-' + this.moniker); // Simple case -- no ordering information
         if (! this.register) {
             var elements = [];
             // We need to go looking -- this also goes looking through this.extras, from above
@@ -120,7 +126,7 @@ Action.prototype = {
             jQuery('input').each(add_to_elements);
             jQuery.each(this.extras, add_to_elements);
 
-            for (var i = 0; i < elements.length; i++) {
+            for (var i = 0, l = elements.length; i < l; i++) {
                 if ((Form.Element.getMoniker(elements[i]) == this.moniker)
                     && (Form.Element.getType(elements[i]) == "registration")) {
                     this.register = elements[i];
@@ -185,9 +191,10 @@ Action.prototype = {
         var fields = this.fields();
         var serialized = new Array;
 
-        for (var i = 0; i < fields.length; i++) {
-            serialized.push(Form.Element.serialize(fields[i]));
-        }
+        jQuery.each(fields, function() {
+            serialized.push( jQuery(this).serialize() )
+        });
+
         return serialized.join('&');
     },
 
@@ -510,7 +517,7 @@ jQuery.extend(Form.Element, {
     // Get the moniker for this form element
     // Takes an element or an element id
     getMoniker: function (element) {
-        element = $(element);
+        element = Jifty.$(element);
 
         if (/^J:A(:F)+-[^-]+-.+$/.test(element.name)) {
             var bits = element.name.match(/^J:A(?::F)+-[^-]+-(.+)$/);
@@ -526,7 +533,7 @@ jQuery.extend(Form.Element, {
     // Get the Action for this form element
     // Takes an element or an element id
     getAction: function (element) {
-        element = $(element);
+        element = Jifty.$(element);
         var moniker = Form.Element.getMoniker(element);
         if (!current_actions.moniker)
             current_actions.moniker = new Action(moniker);
@@ -535,7 +542,7 @@ jQuery.extend(Form.Element, {
 
     // Returns the name of the field
     getField: function (element) {
-        element = $(element);
+        element = Jifty.$(element);
 
         if (/^J:A(:F)+-[^-]+-.+$/.test(element.name)) {
             var bits = element.name.match(/^J:A(?::F)+-([^-]+)-.+$/);
@@ -547,7 +554,7 @@ jQuery.extend(Form.Element, {
 
     // The type of Jifty form element
     getType: function (element) {
-        element = $(element);
+        element = Jifty.$(element);
 
         if (/^J:A-/.test(element.name)) {
             return "registration";
@@ -583,7 +590,7 @@ jQuery.extend(Form.Element, {
     // anymore, or the element may have been inserted into a new form.
     // Hence, we may need to walk the DOM.
     getForm: function (element) {
-        element = $(element);
+        element = Jifty.$(element);
 
         if (element.virtualform)
             return element.virtualform;
@@ -601,7 +608,7 @@ jQuery.extend(Form.Element, {
     },
 
     buttonArguments: function(element) {
-        element = $(element);
+        element = Jifty.$(element);
         if (!element)
             return {}
 
@@ -624,7 +631,7 @@ jQuery.extend(Form.Element, {
     },
 
     buttonActions: function(element) {
-        element = $(element);
+        element = Jifty.$(element);
         var actions = Form.Element.buttonArguments(element)[ ('J:ACTIONS') ];
         if(actions) {
             return actions.split(",");
@@ -634,7 +641,7 @@ jQuery.extend(Form.Element, {
     },
 
     buttonFormElements: function(element) {
-        element = $(element);
+        element = Jifty.$(element);
 
         var extras = [];
         var args = Form.Element.buttonArguments(element);
@@ -1361,7 +1368,7 @@ jQuery.extend(Jifty.Autocompleter.prototype, Ajax.Autocompleter.prototype);
 
 jQuery.extend(Jifty.Autocompleter.prototype, {
   initialize: function(field, div) {
-    this.field  = $(field);
+    this.field  = Jifty.$(field);
     this.action = Form.Element.getAction(this.field);
     this.url    = '/__jifty/autocomplete.xml';
 
@@ -1369,7 +1376,7 @@ jQuery.extend(Jifty.Autocompleter.prototype, {
         self.onFocus(event);
     });
       
-    this.baseInitialize(this.field, $(div), {
+    this.baseInitialize(this.field, Jifty.$(div), {
         minChars: "0",
         beforeShow: this.beforeShow,
         beforeHide: this.beforeHide,
@@ -1459,7 +1466,7 @@ jQuery.extend(Jifty.Placeholder.prototype, {
   text: null,
 
   initialize: function(element, text) {
-     this.element = $(element);
+     this.element = Jifty.$(element);
      this.text = text;
 
      var self = this;
