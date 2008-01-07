@@ -61,10 +61,7 @@ use strict;
 use warnings;
 
 use Jifty;
-BEGIN { 
-    Jifty->new;
-    push \@INC, Jifty::Util->app_root . '/lib');
-}
+BEGIN { Jifty->new }
 
 # Your script-specific code goes here.
 
