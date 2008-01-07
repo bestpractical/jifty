@@ -49,7 +49,7 @@ sub run {
     my $self = shift;
 
     my $script = $self->{name};
-    die "You need to give your new model a --name\n"
+    die "You need to give your new script a --name\n"
         unless defined $script;
 
     Jifty->new( no_handle => 1 );
@@ -83,7 +83,7 @@ sub _write {
         my ($volume, $dir, $file) = File::Spec->splitpath($path);
 
         # Make sure the directories we need are there
-	Jifty::Util->make_path($dir);
+        Jifty::Util->make_path($dir);
 
         # If it already exists, bail
         if (-e $path and not $self->{force}) {
@@ -92,7 +92,7 @@ sub _write {
         }
     }
     exit if $halt;
-    
+
     # Now that we've san-checked everything, we can write the files
     for my $path (keys %files) {
         print "Writing file $path\n";
