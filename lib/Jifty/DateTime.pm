@@ -22,11 +22,15 @@ Jifty::DateTime - a DateTime subclass that knows about Jifty users
 
 =head1 DESCRIPTION
 
-Jifty natively stores timestamps in the database in GMT.  Dates are stored
-without timezone. This class loads and parses dates and sets them
-into the proper timezone.
+Jifty natively stores timestamps in the database in GMT.  Dates are
+stored without timezone. This class loads and parses dates and sets
+them into the proper timezone.
 
-To use this DateTime class to it's fullest ability, you'll need to add a C<time_zone> method to your application's user object class. This is the class returned by L<Jifty::CurrentUser/user_object>. It must return a value valid for using as an argument to L<DateTime>'s C<set_time_zone()> method.
+To use this DateTime class to it's fullest ability, you'll need to add
+a C<time_zone> method to your application's user object class. This is
+the class returned by L<Jifty::CurrentUser/user_object>. It must
+return a value valid for using as an argument to L<DateTime>'s
+C<set_time_zone()> method.
 
 =cut
 
@@ -126,9 +130,26 @@ sub from_epoch {
     return $self;
 }
 
+=head2 current_user [CURRENTUSER]
+
+When setting the current user, update the timezone appropriately.
+
+=cut
+
+sub current_user {
+    my $self = shift;
+    return $self->SUPER::current_user unless @_;
+    my $ret = $self->SUPER::current_user(@_);
+    $self->set_current_user_timezone();
+    return $ret;
+}
+
 =head2 current_user_has_timezone
 
-Return timezone if the current user has one. This is determined by checking to see if the current user has a user object. If it has a user object, then it checks to see if that user object has a C<time_zone> method and uses that to determine the value.
+Return timezone if the current user has one. This is determined by
+checking to see if the current user has a user object. If it has a
+user object, then it checks to see if that user object has a
+C<time_zone> method and uses that to determine the value.
 
 =cut
 
@@ -171,7 +192,9 @@ C<Jifty::Datetime> object.  If the string appears to be a _date_, keep
 it in the floating timezone, otherwise, set it to the current user's
 timezone.
 
-As of this writing, this uses L<Date::Manip> along with some internal hacks to alter the way L<Date::Manip> normally interprets week day names. This may change in the future.
+As of this writing, this uses L<Date::Manip> along with some internal
+hacks to alter the way L<Date::Manip> normally interprets week day
+names. This may change in the future.
 
 =cut
 
@@ -288,9 +311,14 @@ sub jifty_serialize_format {
 
 =head1 WHY?
 
-There are other ways to do some of these things and some of the decisions here may seem arbitrary, particularly if you read the code. They are.
+There are other ways to do some of these things and some of the
+decisions here may seem arbitrary, particularly if you read the
+code. They are.
 
-These things are valuable to applications built by Best Practical Solutions, so it's here. If you disagree with the policy or need to do it differently, then you probably need to implement something yourself using a DateTime::Format::* class or your own code. 
+These things are valuable to applications built by Best Practical
+Solutions, so it's here. If you disagree with the policy or need to do
+it differently, then you probably need to implement something yourself
+using a DateTime::Format::* class or your own code.
 
 Parts may be cleaned up and the API cleared up a bit more in the future.
 
