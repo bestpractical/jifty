@@ -19,6 +19,10 @@ use Jifty::Action schema {
         ajax validates,
         valid are qw(happy angry normal);
 
+    param flavor =>
+        autocompleter is \&autocomplete_flavor,
+        type is 'text';
+
     param tags =>
         type is 'text',
         ajax canonicalizes;
@@ -52,6 +56,11 @@ sub canonicalize_tags {
     $v =~ s/\s*$//g;
 
     return $v;
+}
+
+sub autocomplete_flavor {
+    my ($self, $value) = @_;
+    return qw( vanilla caramel honey berry miso );
 }
 
 1;
