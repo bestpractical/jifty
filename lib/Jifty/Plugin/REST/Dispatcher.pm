@@ -472,18 +472,28 @@ sub search_items {
         or abort(404);
     $collection->unlimit;
 
+    my $added_order = 0;
+    my $per_page;
+    my $current_page = 1;
+
     my %special = (
-        __limit => sub {
+        __per_page => sub {
             my $N = shift;
 
             # must be a number
             $N =~ /^\d+$/
                 or abort(404);
 
-            $collection->set_page_info(
-                per_page     => $N,
-                current_page => 1,
-            );
+            $per_page = $N;
+        },
+        __page => sub {
+            my $N = shift;
+
+            # must be a number
+            $N =~ /^\d+$/
+                or abort(404);
+
+            $current_page = $N;
         },
         __order_by => sub {
             my $col = shift;
@@ -507,6 +517,9 @@ sub search_items {
         },
     );
 
+    # this was called __limit before it was generalized
+    $special{__limit} = $special{__per_page};
+
     # /__order_by/name/desc is impossible to distinguish between ordering by
     # 'name', descending, and ordering by 'name', with output column 'desc'.
     # so we use __order_by_desc instead (and __order_by_asc is provided for
@@ -526,11 +539,22 @@ sub search_items {
         }
     }
 
-    $collection->count or abort(404);
+    if (defined($per_page) || defined($current_page)) {
+        $per_page = 15 unless defined $per_page;
+        $current_page = 1 unless defined $current_page;
+        $collection->set_page_info(
+            current_page => $current_page,
+            per_page     => $per_page,
+        );
+    }
+
+    $collection->count                       or abort(404);
+    $collection->pager->entries_on_this_page or abort(404);
 
     # output
     if (defined $field) {
-        my $item = $collection->first;
+        my $item = $collection->first
+            or abort(404);
 
         # make sure $field exists and is a real column
         $item->can($field)    or abort(404);
