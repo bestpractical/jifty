@@ -485,7 +485,23 @@ sub search_items {
                 current_page => 1,
             );
         },
+        __order_by => sub {
+            my $col = shift;
+            my $order = shift || 'ASC';
+
+            $collection->order_by(
+                column => $col,
+                order  => $order,
+            );
+        },
     );
+
+    # /__order_by/name/desc is impossible to distinguish between ordering by
+    # 'name', descending, and ordering by 'name', with output column 'desc'.
+    # so we use __order_by_desc instead (and __order_by_asc is provided for
+    # consistency)
+    $special{__order_by_asc}  = $special{__order_by};
+    $special{__order_by_desc} = sub { $special{__order_by}->($_[0], 'DESC') };
 
     while (@pieces) {
         my $column = shift @pieces;
