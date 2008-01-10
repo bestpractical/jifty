@@ -4,9 +4,6 @@ use strict;
 package Jifty::Test;
 use base qw/Test::More/;
 
-use Jifty::YAML;
-use Jifty::Server;
-use Jifty::Script::Schema;
 use Email::LocalDelivery;
 use Email::Folder;
 use File::Path;
@@ -119,8 +116,23 @@ symbols to the namespace that C<use>'d this one.
 sub import_extra {
     my $class = shift;
     my $args  = shift;
+    # Spit out a plan *before* we load modules, in case of compilation
+    # errors
+    $class->builder->plan(@{$args});
+
+    # Require the things we need
+    require Jifty::YAML;
+    require Jifty::Server;
+    require Jifty::Script::Schema;
     $class->setup($args);
     Test::More->export_to_level(2);
+
+    # Now, clobber Test::Builder::plan so we don't try to spit out the
+    # plan *again* later
+    {
+        no warnings 'redefine';
+        *Test::Builder::plan = sub {};
+    }
 }
 
 =head2 setup ARGS
@@ -180,8 +192,8 @@ sub setup {
           use vars qw/$cache_key_prefix/;
 
           $cache_key_prefix = "jifty-test-" . $$;
-        
-          sub cache_key_prefix {
+          
+          *Jifty::Record::cache_key_prefix = sub {
               $Jifty::Record::cache_key_prefix;
           }
       }
