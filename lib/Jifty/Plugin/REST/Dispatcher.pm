@@ -489,10 +489,21 @@ sub search_items {
             my $col = shift;
             my $order = shift || 'ASC';
 
-            $collection->order_by(
-                column => $col,
-                order  => $order,
-            );
+            # this will wipe out the default ordering on your model the first
+            # time around
+            if ($added_order) {
+                $collection->add_order_by(
+                    column => $col,
+                    order  => $order,
+                );
+            }
+            else {
+                $added_order = 1;
+                $collection->order_by(
+                    column => $col,
+                    order  => $order,
+                );
+            }
         },
     );
 
