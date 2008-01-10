@@ -42,6 +42,7 @@ on GET    '/=/action'           => \&list_actions;
 on POST   '/=/action/*'         => \&run_action;
 
 on GET    '/=/help'             => \&show_help;
+on GET    '/=/version'          => \&show_version;
 
 =head2 show_help
 
@@ -75,6 +76,7 @@ on GET    /=/action                                  list actions
 on GET    /=/action/<action>                         list action params
 on POST   /=/action/<action>                         run action
 
+on GET    /=/version                                 version information
 
 Resources are available in a variety of formats:
 
@@ -91,6 +93,18 @@ specific format.
     last_rule;
 }
 
+=head2 show_version
+
+Displays versions of the various bits of your application.
+
+=cut
+
+sub show_version {
+    outs(['version'], {
+        Jifty => $Jifty::VERSION,
+        REST  => $Jifty::Plugin::REST::VERSION,
+    });
+}
 
 =head2 list PREFIX items
 
