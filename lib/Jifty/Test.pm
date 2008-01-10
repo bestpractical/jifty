@@ -116,20 +116,21 @@ symbols to the namespace that C<use>'d this one.
 sub import_extra {
     my $class = shift;
     my $args  = shift;
-    # Spit out a plan *before* we load modules, in case of compilation
-    # errors
+    # Spit out a plan (if we got one) *before* we load modules, in
+    # case of compilation errors
     $class->builder->plan(@{$args});
 
     # Require the things we need
     require Jifty::YAML;
+    require Jifty::Util;
     require Jifty::Server;
     require Jifty::Script::Schema;
     $class->setup($args);
     Test::More->export_to_level(2);
 
-    # Now, clobber Test::Builder::plan so we don't try to spit out the
-    # plan *again* later
-    {
+    # Now, clobber Test::Builder::plan (if we got given a plan) so we
+    # don't try to spit one out *again* later
+    if ($class->builder->has_plan) {
         no warnings 'redefine';
         *Test::Builder::plan = sub {};
     }
