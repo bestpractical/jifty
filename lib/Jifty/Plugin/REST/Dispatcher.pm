@@ -486,6 +486,9 @@ sub search_items {
         or abort(404);
     $collection->unlimit;
 
+    my $record = $model->new
+        or abort(404);
+
     my $added_order = 0;
     my $per_page;
     my $current_page = 1;
@@ -549,6 +552,10 @@ sub search_items {
             $special{$column}->($value);
         }
         else {
+            my $canonicalizer = "canonicalize_$column";
+            $value = $record->$canonicalizer($value)
+                if $record->can($canonicalizer);
+
             $collection->limit(column => $column, value => $value);
         }
     }
