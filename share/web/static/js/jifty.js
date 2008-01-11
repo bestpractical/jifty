@@ -316,10 +316,11 @@ Action.prototype = {
 
     submit: function() {
         show_wait_message();
-        new Ajax.Request(
-            '/empty',
-            { parameters: this.serialize() }
-        );
+        jQuery.ajax({
+            url: '/empty',
+            type: 'post',
+            data: this.serialize()
+        });
         hide_wait_message();
     },
 
