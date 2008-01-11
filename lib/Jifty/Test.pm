@@ -4,6 +4,7 @@ use strict;
 package Jifty::Test;
 use base qw/Test::More/;
 
+use Jifty::Util;
 use Email::LocalDelivery;
 use Email::Folder;
 use File::Path;
@@ -116,15 +117,7 @@ symbols to the namespace that C<use>'d this one.
 sub import_extra {
     my $class = shift;
     my $args  = shift;
-    # Spit out a plan (if we got one) *before* we load modules, in
-    # case of compilation errors
-    $class->builder->plan(@{$args});
 
-    # Require the things we need
-    require Jifty::YAML;
-    require Jifty::Util;
-    require Jifty::Server;
-    require Jifty::Script::Schema;
     $class->setup($args);
     Test::More->export_to_level(2);
 
@@ -174,6 +167,17 @@ And later in your tests, you may do the following:
 
 sub setup {
     my $class = shift;
+    my $args = shift;
+
+    # Spit out a plan (if we got one) *before* we load modules, in
+    # case of compilation errors
+    $class->builder->plan(@{$args})
+      unless $class->builder->has_plan;
+
+    # Require the things we need
+    require Jifty::YAML;
+    require Jifty::Server;
+    require Jifty::Script::Schema;
 
     my $test_config = File::Temp->new( UNLINK => 0 );
     Jifty::YAML::DumpFile("$test_config", $class->test_config(Jifty::Config->new));
