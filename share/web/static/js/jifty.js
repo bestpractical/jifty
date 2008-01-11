@@ -256,60 +256,57 @@ Action.prototype = {
         show_wait_message();
         var id = this.register.id;
 
-        new Ajax.Request(
-            '/__jifty/validator.xml',  // Right now, the URL is actually completely irrelevant
-            {
-                asynchronous: 1,
-                method: "get",
-                parameters: this.serialize() + "&J:VALIDATE=1",
-                onComplete:
-                    function (request) {
-                        var response  = request.responseXML.documentElement;
-                        for (var action = response.firstChild; action != null; action = action.nextSibling) {
-                            if ((action.nodeName == 'validationaction') && (action.getAttribute("id") == id)) {
-                                for (var field = action.firstChild; field != null; field = field.nextSibling) {
-                                    // Possibilities for field.nodeName: it could be #text (whitespace),
-                                    // or 'blank' (the field was blank, don't mess with the error div), or 'ok'
-                                    // (clear the error and warning div!) or 'error' (fill in the error div, clear
-                                    // the warning div!) or 'warning' (fill in the warning div and clear the error div!)
-                                    if (field.nodeName == 'error' || field.nodeName == 'warning') {
-                                        var err_div = document.getElementById(field.getAttribute("id"));
-                                        if (err_div != null) {
-                                            jQuery(err_div).show().html(field.firstChild.data);
-                                        }
-                                    } else if (field.nodeName == 'ok') {
-                                        var err_div = document.getElementById(field.getAttribute("id"));
-                                        if (err_div != null) {
-                                            jQuery(err_div).hide().html('');
-                                        }
-                                    }
+        jQuery.ajax({
+            url: '/__jifty/validator.xml',  // Right now, the URL is actually completely irrelevant
+            type: "get",
+            data: this.serialize() + "&J:VALIDATE=1",
+            complete: function (request, status) {
+                var response  = request.responseXML.documentElement;
+                for (var action = response.firstChild; action != null; action = action.nextSibling) {
+                    if ((action.nodeName == 'validationaction') && (action.getAttribute("id") == id)) {
+                        for (var field = action.firstChild; field != null; field = field.nextSibling) {
+                            // Possibilities for field.nodeName: it could be #text (whitespace),
+                            // or 'blank' (the field was blank, don't mess with the error div), or 'ok'
+                            // (clear the error and warning div!) or 'error' (fill in the error div, clear
+                            // the warning div!) or 'warning' (fill in the warning div and clear the error div!)
+                            if (field.nodeName == 'error' || field.nodeName == 'warning') {
+                                var err_div = document.getElementById(field.getAttribute("id"));
+                                if (err_div != null) {
+                                    jQuery(err_div).show().html(field.firstChild.data);
                                 }
-                            } else if ((action.nodeName == 'canonicalizeaction') && (action.getAttribute("id") == id)) {
-                                for (var field = action.firstChild; field != null; field = field.nextSibling) {
-                                    // Possibilities for field.nodeName: it could be 'ignored', 'blank' , 'update', or 'info'
-                                    // info is a separate action from the update
-                                    if (field.nodeName == 'canonicalization_note')  {
-                                        var note_div= document.getElementById(field.getAttribute("id"));
-                                        if (note_div != null) {
-                                            jQuery(note_div).show().html(field.firstChild.data);
-                                        }
-                                    }
-
-                                    if (field.nodeName == 'update') {
-                                        var field_name = field.getAttribute("name");
-                                        for (var form_number = 0 ; form_number < document.forms.length; form_number++) {
-                                            if (document.forms[form_number].elements[field_name] == null)
-                                                continue;
-                                            document.forms[form_number].elements[field_name].value = field.firstChild.data;
-                                        }
-                                    }
+                            } else if (field.nodeName == 'ok') {
+                                var err_div = document.getElementById(field.getAttribute("id"));
+                                if (err_div != null) {
+                                    jQuery(err_div).hide().html('');
                                 }
                             }
                         }
-                        return true;
+                    } else if ((action.nodeName == 'canonicalizeaction') && (action.getAttribute("id") == id)) {
+                        for (var field = action.firstChild; field != null; field = field.nextSibling) {
+                            // Possibilities for field.nodeName: it could be 'ignored', 'blank' , 'update', or 'info'
+                            // info is a separate action from the update
+                            if (field.nodeName == 'canonicalization_note')  {
+                                var note_div= document.getElementById(field.getAttribute("id"));
+                                if (note_div != null) {
+                                    jQuery(note_div).show().html(field.firstChild.data);
+                                }
+                            }
+
+                            if (field.nodeName == 'update') {
+                                var field_name = field.getAttribute("name");
+                                for (var form_number = 0 ; form_number < document.forms.length; form_number++) {
+                                    if (document.forms[form_number].elements[field_name] == null)
+                                        continue;
+                                    document.forms[form_number].elements[field_name].value = field.firstChild.data;
+                                }
+                            }
+                        }
                     }
-            }
-        );
+                }
+                return true;
+            }            
+        });
+        
         hide_wait_message();
         return false;
     },
