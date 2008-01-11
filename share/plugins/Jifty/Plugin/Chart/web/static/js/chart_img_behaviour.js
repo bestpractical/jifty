@@ -10,7 +10,7 @@ Behaviour.register({
         var url = e.src;
 
         var path  = url;
-        var query = $H();
+        var query = new Hash();
 
         if (url.indexOf('?') >= 0) {
             var path_and_query = url.split('?');
@@ -19,14 +19,14 @@ Behaviour.register({
             var query_params = path_and_query[1].split('&');
             for (var query_param in query_params) {
                 var key_and_value = query_param.split('=');
-                query[ key_and_value[0] ] = key_and_value[1];
+                query.set(key_and_value[0], key_and_value[1]);
             }
         }
 
-        query['width']  = dim.width + 'px';
-        query['height'] = dim.height + 'px';
+        query.set('width', dim.width + 'px');
+        query.set('height', dim.height + 'px');
 
-        url = path + '?' + $H(query).toQueryString();
+        url = path + '?' + query.toQueryString();
 
         e.src = url;
     }
