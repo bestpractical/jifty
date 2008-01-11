@@ -7,6 +7,23 @@ Jifty.$ = function(id) {
     return id;
 }
 
+Jifty.hasAjaxTransport = function() {
+    var r = false;
+    jQuery.each(
+        [
+            function() {return new XMLHttpRequest()},
+            function() {return new ActiveXObject('Msxml2.XMLHTTP')},
+            function() {return new ActiveXObject('Microsoft.XMLHTTP')}
+        ],
+        function(i, v) {
+            try {
+                r = v();
+                if (r) return false;
+            } catch(e) {}
+        })
+    return r ? true : false;
+}();
+
 Jifty.Web = {};
 Jifty.Web.current_actions = [];
 Jifty.Web.new_action = function() {
@@ -1018,7 +1035,7 @@ var apply_fragment_updates = function(fragment, f) {
 //     - 'effect' is the name of a Prototype Effect
 Jifty.update = function () {
     // loads
-    if(!Ajax.getTransport()) return true;
+    if (!Jifty.hasAjaxTransport) return true;
     // XXX: prevent default behavior in IE
     if(window.event) {
         window.event.returnValue = false;
