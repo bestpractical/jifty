@@ -1372,6 +1372,7 @@ jQuery.extend(Jifty.Autocompleter.prototype, {
     this.action = Form.Element.getAction(this.field);
     this.url    = '/__jifty/autocomplete.xml';
 
+    var self = this;
     jQuery(this.field).bind("focus", function(event) {
         self.onFocus(event);
     });
@@ -1442,18 +1443,22 @@ jQuery.extend(Jifty.Autocompleter.prototype, {
       request['actions']['autocomplete'] = a;
       request['actions'][this.action.moniker] = this.action.data_structure();
       request['actions'][this.action.moniker]['active']  = 0;
+      
+      var self = this;
+      jQuery.ajax({
+          url: this.url,
+          type: 'post',
+          data: JSON.stringify(request),
+          complete: function(xhr, status) {
+              self.onComplete(xhr);
+          },
+          beforeSend: function(xhr) {
+              xhr.setRequestHeader('Content-Type', 'text/x-json');
+          }
+      });
 
-      var options = { postBody: JSON.stringify(request),
-                      onComplete: this.onComplete.bind(this),
-                      requestHeaders: ['Content-Type', 'text/x-json']
-      };
 
-      new Ajax.Request(this.url,
-                       options
-                       );
   }
-
-
 });
 
 Jifty.Placeholder = function() {
@@ -1579,10 +1584,10 @@ function _sp_submit_form(elt, event, submit_to) {
             });
         } else if ((parsed != null) && (parsed.length == 2)) {
             // Hidden default
-            hiddens[ parsed[1] ] = $F(e);
+            hiddens[ parsed[1] ] = jQuery(e).val();
         } else if (e.name.length > 0) {
             // Straight up values
-            inputs[ e.name ] = $F(e);
+            inputs[ e.name ] = jQuery(e).val();
         }
     }
 
