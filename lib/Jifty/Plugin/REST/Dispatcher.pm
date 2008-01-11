@@ -42,6 +42,8 @@ on GET    '/=/action'           => \&list_actions;
 on POST   '/=/action/*'         => \&run_action;
 
 on GET    '/=/help'             => \&show_help;
+on GET    '/=/help/*'           => \&show_help_specific;
+
 on GET    '/=/version'          => \&show_version;
 
 =head2 show_help
@@ -76,6 +78,9 @@ on GET    /=/action                                  list actions
 on GET    /=/action/<action>                         list action params
 on POST   /=/action/<action>                         run action
 
+on GET    /=/help                                    this help page
+on GET    /=/help/search                             help for /=/search
+
 on GET    /=/version                                 version information
 
 Resources are available in a variety of formats:
@@ -91,6 +96,67 @@ HTML is output only if the Accept: header or an extension does not request a
 specific format.
     };
     last_rule;
+}
+
+=head2 show_help_specific
+
+Displays a help page about a specific topic. Will look for a method named
+C<show_help_specific_$1>.
+
+=cut
+
+sub show_help_specific {
+    my $topic = $1;
+    my $method = "show_help_specific_$topic";
+    __PACKAGE__->can($method) or abort(404);
+
+    my $apache = Jifty->handler->apache;
+
+    $apache->header_out('Content-Type' => 'text/plain; charset=UTF-8');
+    $apache->send_http_header;
+
+    print __PACKAGE__->$method;
+    last_rule;
+}
+
+=head2 show_help_specific_search
+
+Explains /=/search/ a bit more in-depth.
+
+=cut
+
+sub show_help_specific_search {
+    return << 'SEARCH';
+This interface supports searching arbitrary columns and values. For example, if
+you're looking at a Task with due date 1999-12-25 and complete, you can use:
+
+    /=/search/Task/due/1999-12-25/complete/1
+
+If you're looking for just the summaries of these tasks, you can use:
+
+    /=/search/Task/due/1999-12-25/complete/1/summary
+
+Any column in the model is eligible for searching. If you specify multiple
+values for the same column, they'll be ORed together. For example, if you're
+looking for Tasks with due dates 1999-12-25 OR 2000-12-25, you can use:
+
+    /=/search/Task/due/1999-12-25/due/2000-12-25/
+
+There are also some pseudo-columns that affect the results, but are not columns
+that are searched:
+
+    .../__order_by/<column>
+    .../__order_by_asc/<column>
+    .../__order_by_desc/<column>
+
+These let you change the output order of the results. Multiple '__order_by's
+will be respected.
+
+    .../__page/<number>
+    .../__per_page/<number>
+
+These let you control how many results you'll get.
+SEARCH
 }
 
 =head2 show_version
@@ -462,9 +528,21 @@ Pseudo-columns:
 
 =over 4
 
-=item __limit => N
+=item __per_page => N
 
-Limits the collection to N models.
+Return the collection as N records per page.
+
+=item __page => N
+
+Return page N of the collection
+
+=item __order_by => C<column>
+
+Order by the given column, ascending.
+
+=item __order_by_desc => C<column>
+
+Order by the given column, descending.
 
 =back
 
