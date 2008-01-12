@@ -157,7 +157,7 @@ sub current_user_has_timezone {
     my $self = shift;
 
     # make this work as Jifty::DateTime->current_user_has_timezone
-    my $dt = ref($self) ? $self : $self->new;
+    my $dt = ref($self) ? $self : $self->now;
 
     $dt->_get_current_user();
 
@@ -168,7 +168,9 @@ sub current_user_has_timezone {
     my $user_obj = $dt->current_user->user_object or return;
 
     # Check for a time_zone method and then use it if it exists
-    my $f = $dt->can('time_zone') or return;
+    my $f = $dt->can('time_zone') | $dt->can('timezone')
+        or return;
+
     return $f->($user_obj);
 }
 
