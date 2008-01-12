@@ -194,7 +194,10 @@ sub new {
             if ( !ref($submit) ) { push @submit_temp, $submit }
 
             # We've been handed a Jifty::Action to submit
-            elsif ( blessed($submit) ) { push @submit_temp, $submit->moniker }
+            elsif ( blessed($submit) ) { 
+                    push @submit_temp, $submit->moniker ;
+                    Jifty->web->form->register_action($submit); 
+                }
 
           # We've been handed a hashref which contains an action and arguments
             else {
@@ -206,6 +209,8 @@ sub new {
 
                 # Add the action's moniker to the submit
                 push @submit_temp, $submit->{'action'}->moniker;
+                Jifty->web->form->register_action($submit->{'action'}); 
+
             }
         }
 
