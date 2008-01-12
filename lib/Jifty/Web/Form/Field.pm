@@ -568,7 +568,7 @@ Renders a "view" version of the widget for field. Usually, this is just plain te
 sub render_value {
     my $self  = shift;
     my $field = '<span';
-    $field .= qq! class="@{[ $self->classes ]}"> !;
+    $field .= qq! class="@{[ $self->classes ]} value"> !;
     # XXX: force stringify the value because maketext is buggy with overloaded objects.
     $field .= $self->canonicalize_value(Jifty->web->escape("@{[$self->current_value]}")) if defined $self->current_value;
     $field .= qq!</span>\n!;
