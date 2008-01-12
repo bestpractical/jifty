@@ -168,7 +168,7 @@ sub current_user_has_timezone {
     my $user_obj = $dt->current_user->user_object or return;
 
     # Check for a time_zone method and then use it if it exists
-    my $f = $dt->can('time_zone') | $dt->can('timezone')
+    my $f = $user_obj->can('time_zone') || $user_obj->can('timezone')
         or return;
 
     return $f->($user_obj);
