@@ -1,7 +1,0 @@
-<%init>
-my $action = Jifty->web->new_action( class => 'Send' );
-</%init>
-<% Jifty->web->form->start %>
-<% $action->form_field('message', focus => 1) %>
-<% Jifty->web->form->submit(onclick => [ { submit => $action }, { refresh_self => 1 } ]) %>
-<% Jifty->web->form->end %>

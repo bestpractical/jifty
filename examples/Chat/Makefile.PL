@@ -1,5 +1,5 @@
 use inc::Module::Install;
-name('Clock');
+name('Chat');
 version('0.01');
 requires('Jifty' => '0.60912');
 
