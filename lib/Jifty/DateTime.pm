@@ -155,16 +155,20 @@ C<time_zone> method and uses that to determine the value.
 
 sub current_user_has_timezone {
     my $self = shift;
-    $self->_get_current_user();
+
+    # make this work as Jifty::DateTime->current_user_has_timezone
+    my $dt = ref($self) ? $self : $self->new;
+
+    $dt->_get_current_user();
 
     # Can't continue if we have no notion of a user_object
-    $self->current_user->can('user_object') or return;
+    $dt->current_user->can('user_object') or return;
 
     # Can't continue unless the user object is defined
-    my $user_obj = $self->current_user->user_object or return;
+    my $user_obj = $dt->current_user->user_object or return;
 
     # Check for a time_zone method and then use it if it exists
-    my $f = $user_obj->can('time_zone') or return;
+    my $f = $dt->can('time_zone') or return;
     return $f->($user_obj);
 }
 
