@@ -46,7 +46,7 @@ before '*' =>  run {
 
 };
 
-=head2 on qr/^(?:passwordreminder|signup|lost_password)$/ 
+=head2 on qr/^(?:signup|lost_password)$/ 
 
 Redirect to home if logged.
 
@@ -54,7 +54,7 @@ Request a password reminder or signup for an account otherwise.
 
 =cut
 
-before qr'^/(?:passwordreminder|signup|lost_password)$' => run {
+before qr'^/(?:signup|lost_password)$' => run {
     redirect('/') if ( Jifty->web->current_user->id );
     set 'next' => Jifty->web->request->continuation || Jifty::Continuation->new( request => Jifty::Request->new( path => "/login" ) );
 };
