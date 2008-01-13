@@ -60,7 +60,7 @@ sub canonicalize_tags {
 
 sub autocomplete_flavor {
     my ($self, $value) = @_;
-    return qw( vanilla caramel honey berry miso );
+    return sort qw( berry vanilla caramel caracara honey miso blueberry strawberry );
 }
 
 1;
