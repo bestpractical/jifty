@@ -40,6 +40,9 @@ __PACKAGE__->javascript_libs([qw(
     json.js
     prototype.js
     jquery-1.2.1.js
+    iutil.js
+    iautocompleter.js
+    jifty_interface.js
     jquery_noconflict.js
     behaviour.js
     scriptaculous/builder.js

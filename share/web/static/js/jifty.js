@@ -1379,102 +1379,63 @@ Jifty.Autocompleter = function() {
     return this;
 };
 
-jQuery.extend(Jifty.Autocompleter.prototype, Ajax.Autocompleter.prototype);
-
 jQuery.extend(Jifty.Autocompleter.prototype, {
-  initialize: function(field, div) {
-    this.field  = Jifty.$(field);
-    this.action = Form.Element.getAction(this.field);
-    this.url    = '/__jifty/autocomplete.xml';
+    initialize: function(field, div) {
+        this.field  = Jifty.$(field);
+        this.action = Form.Element.getAction(this.field);
+        this.url    = '/__jifty/autocomplete.xml';
 
-    var self = this;
-    jQuery(this.field).bind("focus", function(event) {
-        self.onFocus(event);
-    });
-      
-    this.baseInitialize(this.field, Jifty.$(div), {
-        minChars: "0",
-        beforeShow: this.beforeShow,
-        beforeHide: this.beforeHide,
-        frequency: 0.1,
-        onShow: this.onShow,
-        onHide: this.onHide,
-        afterUpdateElement: this.afterUpdate
-    });
-  },
+        var self = this;
+        jQuery(this.field).bind("focus", function(event) {
+            self.changed  = true;
+            self.hasFocus = true;
+            Jifty.current_autocompleter_object = self;
+        });
+        
+        jQuery(this.field).Autocomplete({
+            source: this.url,
+            minchars: 0,
+            delay: 100,
+            helperClass: 'autocomplete',
+            selectClass: 'selected'
+        });
+    },
 
-  onShow: function(element, update) {
-      if(!update.style.position || update.style.position=='absolute') {
-        update.style.position = 'absolute';
-        Position.clone(element, update, {setHeight: false, offsetTop: element.offsetHeight});
-      }
-      jQuery(update).show();
-  },
+    beforeShow: function() {
+        /* Prevents the race for canonicalization and updating via autocomplete */
+        if ( this.field.onblur ) {
+            this.element._onblur = this.element.onblur;
+            this.element.onblur  = null;
+        }
+    },
 
-  onHide: function(element, update) {
-      jQuery(update).hide();
-  },
+    beforeHide: function() {
+        /* Restore onblur and config option */
+        if ( this.element._onblur ) {
+            this.element.onblur  = this.element._onblur;
+            this.element._onblur = null;
+        }
+    },
 
-  beforeShow: function(obj) {
-    /* Prevents the race for canonicalization and updating
-       via autocomplete */
-    if ( obj.element.onblur ) {
-        obj.element._onblur = obj.element.onblur;
-        obj.element.onblur  = null;
+    afterUpdate: function(field, selection) {
+        Form.Element.validate(field);
+    },
+
+    buildRequest: function() {
+        var request = { path: this.url, actions: {} };
+        var a = {};
+        a['moniker'] = 'autocomplete';
+        a['class']   = 'Jifty::Action::Autocomplete';
+        a['fields']  = {};
+        a['fields']['moniker']  = this.action.moniker;
+        a['fields']['argument'] = Form.Element.getField(this.field);
+        request['actions']['autocomplete'] = a;
+        request['actions'][this.action.moniker] = this.action.data_structure();
+        request['actions'][this.action.moniker]['active']  = 0;
+        return request;
     }
-  },
-
-  beforeHide: function(obj) {
-    /* Restore onblur and config option */
-    if ( obj.element._onblur ) {
-        obj.element.onblur  = obj.element._onblur;
-        obj.element._onblur = null;
-    }
-  },
-
-  onFocus: function(event) {
-    this.changed  = true;
-    this.hasFocus = true;
-
-    if (this.observer)
-        clearTimeout(this.observer);
-
-    this.onObserverEvent();
-  },
-
-  afterUpdate: function(field, selection) {
-     Form.Element.validate(field);
-  },
-
-  getUpdatedChoices: function() {
-      var request = { path: this.url, actions: {} };
-
-      var a = {};
-      a['moniker'] = 'autocomplete';
-      a['class']   = 'Jifty::Action::Autocomplete';
-      a['fields']  = {};
-      a['fields']['moniker']  = this.action.moniker;
-      a['fields']['argument'] = Form.Element.getField(this.field);
-      request['actions']['autocomplete'] = a;
-      request['actions'][this.action.moniker] = this.action.data_structure();
-      request['actions'][this.action.moniker]['active']  = 0;
-      
-      var self = this;
-      jQuery.ajax({
-          url: this.url,
-          type: 'post',
-          data: JSON.stringify(request),
-          complete: function(xhr, status) {
-              self.onComplete(xhr);
-          },
-          beforeSend: function(xhr) {
-              xhr.setRequestHeader('Content-Type', 'text/x-json');
-          }
-      });
-
-
-  }
 });
+
 
 Jifty.Placeholder = function() {
     this.initialize.apply(this, arguments);
