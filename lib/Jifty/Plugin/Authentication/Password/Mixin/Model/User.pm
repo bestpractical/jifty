@@ -58,8 +58,8 @@ column auth_token =>
 column password =>
   is unreadable,
   label is _('Password'),
-  type is 'varchar(32)',
-  max_length is 32,
+  type is 'varchar(64)',
+  max_length is 64,
   lenght is 16,
   hints is _('Your password should be at least six characters'),
   render_as 'password',

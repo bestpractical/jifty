@@ -135,17 +135,18 @@ sub take_action {
     my $token    = $self->argument_value('token') || '';
     my $hashedpw = $self->argument_value('hashed_password');
 
+           my $BAD_PW =  _('You may have mistyped your email or password. Give it another shot.');
 
     if ( $token ne '' ) {   # browser supports javascript, do password hashing
         unless ( $user->id && $user->hashed_password_is( $hashedpw, $token ) )
         {
-            $self->result->error( _('You may have mistyped your email or password. Give it another shot.'));
+            $self->result->error($BAD_PW);
             return;
         }
         Jifty->web->session->set( login_token => '' );
     } else {                # no password hashing over the wire
         unless ( $user->id && $user->password_is($password) ) {
-            $self->result->error( _('You may have mistyped your email or password. Give it another shot.'));
+            $self->result->error($BAD_PW);
             return;
         }
     }
