@@ -6,7 +6,7 @@ use base qw/Jifty::Object/;
 use CGI::Cookie ();
 use DateTime ();
 use Storable ();
- 
+
 =head1 NAME
 
 Jifty::Web::Session - A Jifty session handler
