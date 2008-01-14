@@ -648,7 +648,7 @@ in the form.
 sub register_action {
     my $self = shift;
     my ($action) = @_;
-    return if Jifty->web->form->printed_actions->{ $action->moniker };
+    return if Jifty->web->form->actions->{ $action->moniker };
 
     my $arguments = $action->arguments;
     $self->parameter( $action->register_name, ref $action );
