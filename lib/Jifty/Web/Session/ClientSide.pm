@@ -19,7 +19,7 @@ use strict;
 use warnings;
 use base 'Jifty::Web::Session';
 use Jifty::Model::Session();
-use Jifty::YAML ();
+use Storable ();
 use Compress::Zlib ();
 use Crypt::CBC ();
 use Crypt::Rijndael ();
@@ -112,7 +112,7 @@ sub load {
     if ($data) {
         local $@;
         eval {
-            if (my $session = Jifty::YAML::Load(
+            if (my $session = Storable::thaw(
                 Compress::Zlib::uncompress(
                     $self->_cipher->decrypt(
                         decode_base64(
@@ -227,7 +227,7 @@ sub flush {
         -value   => encode_base64(
             $self->_cipher->encrypt(
                 Compress::Zlib::compress(
-                    Jifty::YAML::Dump(
+                    Storable::nfreeze(
                         $self->_session
                     )
                 )
