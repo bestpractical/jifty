@@ -369,6 +369,7 @@ lib/Jifty/Web/Form/Link.pm
 lib/Jifty/Web/Menu.pm
 lib/Jifty/Web/PageRegion.pm
 lib/Jifty/Web/Session.pm
+lib/Jifty/Web/Session/ApacheSession.pm
 lib/Jifty/Web/Session/ClientSide.pm
 lib/Jifty/Web/Session/None.pm
 lib/Jifty/YAML.pm
