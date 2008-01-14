@@ -211,7 +211,7 @@ sub new {
 
                 # Add the action's moniker to the submit
                 push @submit_temp, $submit->{'action'}->moniker;
-                $self->register_action($submit);
+                $self->register_action($submit->{'action'});
             }
         }
 
