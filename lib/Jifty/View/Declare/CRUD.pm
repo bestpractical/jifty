@@ -418,8 +418,6 @@ private template edit_item_controls => sub {
     my $delete = $record->as_delete_action(
         moniker => 'delete-' . Jifty->web->serial,
     );
-    Jifty->web->form->register_action($delete);
-
         div {
             { class is 'crud editlink' };
             hyperlink(
@@ -438,13 +436,13 @@ private template edit_item_controls => sub {
                     args         => { object_type => $object_type, id => $id }
                 },
                 as_button => 1,
-                class => 'cancel'
+                class     => 'cancel'
             );
             if ( $record->current_user_can('delete') ) {
                 $delete->button(
                     label   => _('Delete'),
                     onclick => {
-                        submit => $delete,
+                        submit  => $delete,
                         confirm => _('Really delete?'),
                         refresh => Jifty->web->current_region->parent,
                     },

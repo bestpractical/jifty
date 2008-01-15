@@ -373,4 +373,17 @@ sub next_page {
     return '';
 }
 
+=head2 DESTROY
+
+Checks to ensure that forms that were opened were actually closed,
+which is when actions are registered.
+
+=cut
+
+sub DESTROY {
+    my $self = shift;
+    warn "Action $_ was never registered (form was never closed)"
+      for grep {not $self->printed_actions->{$_}} keys %{$self->actions};
+}
+
 1;

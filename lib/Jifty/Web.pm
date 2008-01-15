@@ -385,57 +385,57 @@ sub _validate_request_actions {
 }
 
 sub _process_valid_actions {
-    my  $self = shift;
+    my $self          = shift;
     my $valid_actions = shift;
-        for my $request_action (@$valid_actions) {
+    for my $request_action (@$valid_actions) {
 
-            # Pull the action out of the request (again, since
-            # mappings may have affected parameters).  This
-            # returns the cached version unless the request has
-            # been changed by argument mapping from previous
-            # actions (Jifty::Request::Mapper)
-            my $action = $self->new_action_from_request($request_action);
-            next unless $action;
-            if ( $request_action->modified ) {
+        # Pull the action out of the request (again, since
+        # mappings may have affected parameters).  This
+        # returns the cached version unless the request has
+        # been changed by argument mapping from previous
+        # actions (Jifty::Request::Mapper)
+        my $action = $self->new_action_from_request($request_action);
+        next unless $action;
+        if ( $request_action->modified ) {
 
-                # If the request's action was changed, re-validate
-                $action->result( Jifty::Result->new );
-                $action->result->action_class( ref $action );
-                $self->response->result(
-                    $action->moniker => $action->result );
-                $self->log->debug( "Re-validating action "
-                        . ref($action) . " "
-                        . $action->moniker );
-                next unless $action->validate;
-            }
-
-            $self->log->debug(
-                "Running action " . ref($action) . " " . $action->moniker );
-            eval { $action->run; };
-            $request_action->has_run(1);
-
-            if ( my $err = $@ ) {
-
-                # Poor man's exception propagation; we need to get
-                # "LAST RULE" and "ABORT" exceptions back up to the
-                # dispatcher.  This is specifically for redirects from
-                # actions
-                die $err if ( $err =~ /^(LAST RULE|ABORT)/ );
-                $self->log->fatal($err);
-                $action->result->error(
-                    Jifty->config->framework("DevelMode")
-                    ? $err
-                    : _("There was an error completing the request.  Please try again later."
-                    )
-                );
-            }
-
-            # Fill in the request with any results that that action
-            # may have yielded.
-            $self->request->do_mapping;
+            # If the request's action was changed, re-validate
+            $action->result( Jifty::Result->new );
+            $action->result->action_class( ref $action );
+            $self->response->result( $action->moniker => $action->result );
+            $self->log->debug( "Re-validating action "
+                    . ref($action) . " "
+                    . $action->moniker );
+            next unless $action->validate;
         }
 
+        $self->log->debug(
+            "Running action " . ref($action) . " " . $action->moniker );
+        eval { $action->run; };
+        $request_action->has_run(1);
+
+        if ( my $err = $@ ) {
+
+            # Poor man's exception propagation; we need to get
+            # "LAST RULE" and "ABORT" exceptions back up to the
+            # dispatcher.  This is specifically for redirects from
+            # actions
+            die $err if ( $err =~ /^(LAST RULE|ABORT)/ );
+            $self->log->fatal($err);
+            $action->result->error(
+                Jifty->config->framework("DevelMode")
+                ? $err
+                : _("There was an error completing the request.  Please try again later."
+                )
+            );
+        }
+
+        # Fill in the request with any results that that action
+        # may have yielded.
+        $self->request->do_mapping;
     }
+
+}
+
 =head3 request [VALUE]
 
 Gets or sets the current L<Jifty::Request> object.
