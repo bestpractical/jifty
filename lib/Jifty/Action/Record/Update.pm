@@ -124,16 +124,33 @@ sub take_action {
             $value = scalar <$value>;
         }
 
-        # Skip fields that have not changed
-        my $old = $self->record->$field;
-        # XXX TODO: This ignore "by" on columns
-        $old = $old->id if blessed($old) and $old->isa( 'Jifty::Record' );
+        # Skip fields that have not changed, but only if we can read the field.
+        # This prevents us from getting an $old value that is wrongly undef
+        # when really we are just denied read access.  At the same time, it means
+        # we can keep the change checks before checking if we can update.
+        
+        if ( $self->record->current_user_can('read', column => $field) ) {
+            my $old = $self->record->$field;
 
-        # ID is sometimes passed in, we want to ignore it if it doesn't change
-        next if $field eq 'id'
-           and defined $old
-           and defined $value
-           and "$old" eq "$value";
+            # Handle columns which reference other tables
+            my $col = $self->record->column( $field );
+            my $by  = defined $col->by ? $col->by : 'id';
+            $old = $old->$by if blessed($old) and $old->isa( 'Jifty::Record' );
+
+            # ID is sometimes passed in, we want to ignore it if it doesn't change
+            next if $field eq 'id'
+               and defined $old
+               and defined $value
+               and "$old" eq "$value";
+
+            # if both the new and old values are defined and equal, we don't want to change em
+            # XXX TODO "$old" is a cheap hack to scalarize datetime objects
+            next if ( defined $old and defined $value and "$old" eq "$value" );
+
+            # If _both_ the values are ''
+            next if (  (not defined $old or not length $old)
+                        and ( not defined $value or not length $value ));
+        }
 
         # Error on columns we can't update
         # <Sartak> ah ha. I think I know why passing due => undef reports
@@ -154,14 +171,6 @@ sub take_action {
             $self->result->field_error($field, _('Permission denied'));
             next;
         }
-
-        # if both the new and old values are defined and equal, we don't want to change em
-        # XXX TODO "$old" is a cheap hack to scalarize datetime objects
-        next if ( defined $old and defined $value and "$old" eq "$value" );
-
-        # If _both_ the values are ''
-        next if (  (not defined $old or not length $old)
-                    and ( not defined $value or not length $value ));
 
         # Calculate the name of the setter and set; asplode on failure
         my $setter = "set_$field";
