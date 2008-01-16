@@ -207,7 +207,7 @@ names. This may change in the future.
 sub new_from_string {
     my $class  = shift;
     my $string = shift;
-    my $now;
+    my $epoch;
 
     # Hack to use Date::Manip to flexibly scan dates from strings
     {
@@ -218,23 +218,33 @@ sub new_from_string {
         if($string =~ /^\s* (?:monday|tuesday|wednesday|thursday|friday|saturday|sunday)$/xi) {
             $string = "next $string";
         }
-        
-        # Why are we parsing this as GMT? This feels really wrong.  It will get the wrong answer
-        # if the current user is in another tz.
+
+        my $offset = $class->get_tz_offset;
+        my $dt_now = $class->now;
+        my $now = $dt_now->ymd . ' ' . $dt_now->hms;
+
         require Date::Manip;
-        Date::Manip::Date_Init("TZ=GMT");
-        $now = Date::Manip::UnixDate( $string, "%o" );
+
+        # TZ sets the timezone for parsing
+        # ConvTZ sets the output timezone
+        # ForceDate forces the current date to be now in the user's timezone,
+        #    if we don't set it then DM uses the machine's timezone
+        Date::Manip::Date_Init("TZ=$offset", "ConvTZ=+0000", "ForceDate=$now");
+        $epoch = Date::Manip::UnixDate( $string, "%o" );
     }
 
     # Stop here if Date::Manip couldn't figure it out
-    return undef unless $now;
+    return undef unless $epoch;
 
     # Build a DateTime object from the Date::Manip value and setup the TZ
-    my $self = $class->from_epoch( epoch => $now, time_zone => 'gmt' );
+    my $self = $class->from_epoch( epoch => $epoch, time_zone => 'GMT' );
     if (my $tz = $self->current_user_has_timezone) {
-        $self->set_time_zone("floating")
-            unless ( $self->hour or $self->minute or $self->second );
-        $self->set_time_zone( $tz );
+        if ($self->hour || $self->minute || $self->second) {
+            $self->set_time_zone( $tz );
+        }
+        else {
+            $self->set_time_zone("floating")
+        }
     }
 
     return $self;
@@ -295,6 +305,25 @@ sub is_date {
     return 0 unless $self->hms eq '00:00:00';
 
     return 1;
+}
+
+=head2 get_tz_offset [DateTime] -> String
+
+Returns the offset for the current user's timezone. If there is no current
+user, or the current user's time zone is unset, then UTC will be used.
+
+The optional DateTime argument lets you calculate an offset for some time other
+than "right now".
+
+=cut
+
+sub get_tz_offset {
+    my $self = shift;
+    my $dt   = shift || DateTime->now();
+
+    $dt->set_time_zone( $self->current_user_has_timezone || 'UTC' );
+
+    return $dt->strftime("%z");
 }
 
 =head2 jifty_serialize_format
