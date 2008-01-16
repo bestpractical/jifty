@@ -154,7 +154,10 @@ sub child {
         
         # Figure out the URL
         my $child = $self->{children}{$key};
-        my $url   = defined $child->link ? $child->link->url : $child->url;
+        my $url   =     defined $child->link
+                    and ref $child->link
+                    and $child->link->can('url')
+                        ? $child->link->url : $child->url;
 
         # Activate it
         if ( defined $url and length $url and Jifty->web->request ) {
@@ -359,7 +362,7 @@ sub _render_as_classical_menu_item {
 
 }
 
-=head2 render_as_yui_menubar
+=head2 render_as_yui_menubar [PARAMHASH]
 
 Render menubar with YUI menu, suitable for an application's menu.
 It can support arbitary levels of submenu.
@@ -372,7 +375,7 @@ sub render_as_yui_menubar {
     $self->_render_as_yui_menu_item("yuimenubar", $id);
     Jifty->web->out(qq|<script type="text/javascript">\n|
         . qq|YAHOO.util.Event.onContentReady("|.$id.qq|", function() {\n|
-        . qq|var menu = new YAHOO.widget.MenuBar("|.$id.qq|", { autosubmenudisplay:true, hidedelay:750, lazyload:true });\n|
+        . qq|var menu = new YAHOO.widget.MenuBar("|.$id.qq|", { autosubmenudisplay:true, hidedelay:750, lazyload:true, showdelay:0 });\n|
         . qq|menu.render();\n|
         . qq|});</script>|
         );
