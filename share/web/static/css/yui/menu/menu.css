@@ -1,3 +1,4 @@
+/* Modified to fix URLs for squishing */
 /*
 Copyright (c) 2007, Yahoo! Inc. All rights reserved.
 Code licensed under the BSD License:
@@ -124,7 +125,7 @@ div.yuimenu div.topscrollbar,
 div.yuimenu div.bottomscrollbar {
 
     height:16px;
-    background-image:url(map.gif);
+    background-image:url(/static/css/yui/menu/map.gif);
     background-repeat:no-repeat;
 
 }
@@ -132,7 +133,7 @@ div.yuimenu div.bottomscrollbar {
 
 div.yuimenu div.topscrollbar {
 
-    background-image:url(map.gif);
+    background-image:url(/static/css/yui/menu/map.gif);
     background-position:center -72px;
 
 }
@@ -140,7 +141,7 @@ div.yuimenu div.topscrollbar {
 
 div.yuimenu div.topscrollbar_disabled {
 
-    background-image:url(map.gif);
+    background-image:url(/static/css/yui/menu/map.gif);
     background-position:center -88px;
 
 }
@@ -148,7 +149,7 @@ div.yuimenu div.topscrollbar_disabled {
 
 div.yuimenu div.bottomscrollbar {
 
-    background-image:url(map.gif);
+    background-image:url(/static/css/yui/menu/map.gif);
     background-position:center -104px;
 
 }
@@ -156,7 +157,7 @@ div.yuimenu div.bottomscrollbar {
 
 div.yuimenu div.bottomscrollbar_disabled {
 
-    background-image:url(map.gif);
+    background-image:url(/static/css/yui/menu/map.gif);
     background-position:center -120px;
 
 }
@@ -320,7 +321,7 @@ div.yuimenubar li.hassubmenu em.submenuindicator {
     text-indent:9px;
     font:0/0 arial;
     overflow:hidden;
-    background-image:url(map.gif);
+    background-image:url(/static/css/yui/menu/map.gif);
     background-repeat:no-repeat;
 
 }
@@ -378,7 +379,7 @@ div.yuimenu li.checked em.checkedindicator {
     width:8px;
     text-indent:9px;
     overflow:hidden;
-    background-image:url(map.gif);
+    background-image:url(/static/css/yui/menu/map.gif);
     background-position:0 -48px;
     background-repeat:no-repeat;
     position:absolute;
