@@ -4,7 +4,7 @@ use base qw/Class::Accessor::Fast/;
 use URI;
 use Scalar::Util qw(weaken);
 
-__PACKAGE__->mk_accessors(qw(label _parent sort_order link target escape_label class));
+__PACKAGE__->mk_accessors(qw(label _parent sort_order link target escape_label class group));
 
 =head1 NAME
 
@@ -67,7 +67,6 @@ sub parent {
 Gets or sets the sort order of the item, as it will be displayed under
 the parent.  This defaults to adding onto the end.
 
-
 =head2 link
 
 Gets or set a Jifty::Web::Link object that represents this menu item. If
@@ -84,6 +83,11 @@ Get or set the frame or pseudo-target for this link. something like L<_blank>
 
 Gets or sets the CSS class the link should have in addition to the default
 classes.  This is only used if C<link> isn't specified.
+
+=head2 group [STRING]
+
+Gets or sets the menu group this menu item is in.  Only used when rendering
+as a YUI menubar for now.  Groups are sorted by this value as well.
 
 =head2 url
 
@@ -207,6 +211,27 @@ sub children {
     return wantarray ? @kids : \@kids;
 }
 
+=head2 grouped_children
+
+Returns the children of this menu item in grouped sorted order; as an array
+of array refs in array context, or as an array ref of array refs in scalar.
+
+=cut
+
+sub grouped_children {
+    my $self = shift;
+    
+    my %group;
+    for my $kid ( $self->children ) {
+        push @{ $group{$kid->group} }, $kid;
+    }
+
+    my @grouped = map  { $group{$_} }
+                  sort { $a cmp $b }
+                  keys %group;
+
+    return wantarray ? @grouped : \@grouped;
+}
 
 =head2 render_as_menu
 
@@ -351,22 +376,27 @@ sub render_as_yui_menubar {
 
 sub _render_as_yui_menu_item {
     my ($self, $class, $id) = @_;
-    my @kids = $self->children 
-        or return;
+    my @grouped = $self->grouped_children or return;
     
     Jifty->web->out(
         qq{<div}
         . ($id ? qq{ id="$id"} : "")
-        . qq{ class="$class"><div class="bd"><ul>}
+        . qq{ class="$class"><div class="bd">}
     );
-    for (@kids) {
-        Jifty->web->out( qq{<li class="${class}item }
-        . ($_->active? 'active' : '') . qq{">});
-        Jifty->web->out( $_->as_link );
-        $_->_render_as_yui_menu_item("yuimenu");
-        Jifty->web->out( qq{</li>});
+    my $count = 1;
+    for my $group ( @grouped ) {
+        Jifty->web->out( $count == 1 ? '<ul class="first-of-type">' : '<ul>' );
+        for ( @$group ) {
+            Jifty->web->out( qq{<li class="${class}item }
+            . ($_->active? 'active' : '') . qq{">});
+            Jifty->web->out( $_->as_link );
+            $_->_render_as_yui_menu_item("yuimenu");
+            Jifty->web->out( qq{</li>});
+        }
+        Jifty->web->out('</ul>');
+        $count++;
     }
-    Jifty->web->out(qq{</ul></div></div>});
+    Jifty->web->out(qq{</div></div>});
 }
 
 =head2 as_link
