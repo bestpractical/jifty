@@ -151,16 +151,21 @@ sub child {
                                                @_
                                              });
         Scalar::Util::weaken($self->{children}{$key}{parent});
+        
+        # Figure out the URL
+        my $child = $self->{children}{$key};
+        my $url   = defined $child->link ? $child->link->url : $child->url;
+
         # Activate it
-        if (my $url = $self->{children}{$key}->url and Jifty->web->request) {
+        if ( defined $url and length $url and Jifty->web->request ) {
             # XXX TODO cleanup for mod_perl
             my $base_path = Jifty->web->request->path;
             chomp($base_path);
-        
-            $base_path =~ s/index\.html$//g;
-            $base_path =~ s/\/+$//g;
-            $url =~ s/\/+$//i;
-    
+            
+            $base_path =~ s/index\.html$//;
+            $base_path =~ s/\/+$//;
+            $url =~ s/\/+$//;
+            
             if ($url eq $base_path) {
                 $self->{children}{$key}->active(1); 
             }
