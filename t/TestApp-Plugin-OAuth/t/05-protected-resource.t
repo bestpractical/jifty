@@ -5,7 +5,7 @@ use strict;
 use Test::More;
 BEGIN {
     if (eval { require Net::OAuth::Request; require Crypt::OpenSSL::RSA; 1 }) {
-        plan tests => 19;
+        plan tests => 27;
     }
     else {
         plan skip_all => "Net::OAuth isn't installed";
@@ -59,6 +59,8 @@ response_is(
     consumer_secret        => 'bar',
     oauth_consumer_key     => 'foo',
     oauth_signature_method => 'PLAINTEXT',
+    oauth_token            => 'please',
+    token_secret           => 'letmein',
 );
 $cmech->content_contains("Login with a password", "redirected to login");
 $cmech->content_lacks("Press the shiny red button", "did NOT get to a protected page");
@@ -78,4 +80,38 @@ response_is(
 );
 $cmech->content_contains("Press the shiny red button", "got to a protected page");
 # }}}
+# without OAuth parameters, no access {{{
+$cmech->get_ok('/nuke/the/whales');
 
+$cmech->content_contains("Login with a password", "current_user unset");
+$cmech->content_lacks("Press the shiny red button", "did NOT get to a protected page");
+# }}}
+# access tokens last for more than one hit {{{
+response_is(
+    url                    => '/nuke/the/whales',
+    code                   => 200,
+    testname               => "200 - protected resource request",
+    consumer_secret        => 'bar',
+    oauth_consumer_key     => 'foo',
+    oauth_signature_method => 'PLAINTEXT',
+    oauth_token            => $token_obj->token,
+    token_secret           => $token_obj->secret,
+);
+$cmech->content_contains("Press the shiny red button", "got to a protected page");
+# }}}
+# expired access token {{{
+$token_obj->set_valid_until(DateTime->now->subtract(days => 1));
+
+response_is(
+    url                    => '/nuke/the/whales',
+    code                   => 200,
+    testname               => "200 - protected resource request",
+    consumer_secret        => 'bar',
+    oauth_consumer_key     => 'foo',
+    oauth_signature_method => 'PLAINTEXT',
+    oauth_token            => $token_obj->token,
+    token_secret           => $token_obj->secret,
+);
+$cmech->content_contains("Login with a password", "redirected to login");
+$cmech->content_lacks("Press the shiny red button", "did NOT get to a protected page");
+# }}}
