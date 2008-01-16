@@ -246,7 +246,7 @@ sub render_as_menu {
     Jifty->web->out(qq{<ul class="menu">});
 
     for (@kids) {
-	$_->render_as_hierarchical_menu_item();
+        $_->render_as_hierarchical_menu_item();
     }
     Jifty->web->out(qq{</ul>});
     '';
@@ -259,11 +259,11 @@ Render this menu with html markup as an inline dropdown menu.
 =cut
 
 sub render_as_context_menu {
-	my $self = shift;
-    	Jifty->web->out( qq{<ul class="context_menu">});
-	$self->render_as_hierarchical_menu_item();
-	Jifty->web->out(qq{</ul>});
-	'';
+    my $self = shift;
+    Jifty->web->out( qq{<ul class="context_menu">});
+    $self->render_as_hierarchical_menu_item();
+    Jifty->web->out(qq{</ul>});
+    '';
 }
 
 =head2 render_as_hierarchical_menu_item
@@ -318,13 +318,13 @@ Currently renders one level of submenu, if it exists.
 =cut
 
 sub  render_as_classical_menu {
-	my $self = shift;
+    my $self = shift;
     my @kids = $self->children;
 
     Jifty->web->out( qq{<ul class="menu">});
 
     for (@kids) {
-	    $_->_render_as_classical_menu_item();
+        $_->_render_as_classical_menu_item();
     }
 
     Jifty->web->out(qq{</ul>});
