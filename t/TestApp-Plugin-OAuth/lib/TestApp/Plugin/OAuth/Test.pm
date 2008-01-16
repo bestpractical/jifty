@@ -66,7 +66,7 @@ sub response_is {
     my $consumer_secret = delete $params{consumer_secret}
         or die "consumer_secret not passed to response_is!";
 
-    if ($url !~ /request_token/) {
+    if ($url =~ /access_token/) {
         $token_secret ||= $token_obj->secret;
         $params{oauth_token} ||= $token_obj->token;
     }
