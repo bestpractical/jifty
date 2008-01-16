@@ -154,9 +154,9 @@ sub child {
         
         # Figure out the URL
         my $child = $self->{children}{$key};
-        my $url   =     defined $child->link
+        my $url   =   ( defined $child->link
                     and ref $child->link
-                    and $child->link->can('url')
+                    and $child->link->can('url') )
                         ? $child->link->url : $child->url;
 
         # Activate it
