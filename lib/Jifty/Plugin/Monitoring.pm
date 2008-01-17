@@ -194,7 +194,7 @@ sub init {
     my @path = $args{path} ? @{$args{path}} : (Jifty->app_class("Monitor"));
     $self->base_classes(\@path);
     $self->monitors({});
-    $self->lockfile($args{lockfile} || "var/monitoring.pid");
+    $self->lockfile($args{lockfile} || Jifty::Util->absolute_path("var/monitoring.pid"));
     local $Jifty::Plugin::Monitoring::self = $self;
     Jifty::Module::Pluggable->import(
         require => 1,
@@ -303,7 +303,10 @@ sub run_monitors {
 sub lock {
     my $self = shift;
     return if -e $self->lockfile;
-    open PID, ">", $self->lockfile;
+    unless (open PID, ">", $self->lockfile) {
+        warn "Can't open lockfile @{[$self->lockfile]}: $!";
+        return 0;
+    }
     print PID $$;
     close PID;
     $self->has_lock(1);
