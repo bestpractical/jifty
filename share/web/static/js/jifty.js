@@ -628,6 +628,9 @@ Object.extend(Form.Element, {
         element = $(element);
 
         var extras = $A();
+        if (!element)
+            return extras;
+
         var args = Form.Element.buttonArguments(element);
         var keys = args.keys();
         for (var i = 0; i < keys.length; i++) {
@@ -724,6 +727,10 @@ Behaviour.register({
     },
     '.form_field .error, .form_field .warning, .form_field .canonicalization_note': function(e) {
         if ( e.innerHTML == "" ) Element.hide(e);
+    },
+    '.lazy_region': function(e) {
+        var region = e.getAttribute("id").replace(/^region-/,"");
+        Jifty.update( { 'fragments': [{'region': region, 'mode': 'Replace'}]}, e);
     }
 });
 
@@ -1041,6 +1048,8 @@ Jifty.update = function () {
     var has_request = 0;
     request.set('actions', $H());
     for (var moniker in named_args['actions']) {
+        if (moniker == 'extend')
+            continue;
         var disable = named_args['actions'][moniker];
         var a = new Action(moniker, button_args);
             current_actions.set(moniker, a); // XXX: how do i make this bloody singleton?
