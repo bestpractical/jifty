@@ -5,7 +5,7 @@ use URI;
 use Scalar::Util qw(weaken);
 
 __PACKAGE__->mk_accessors(qw(
-    label _parent sort_order link target escape_label class group group_heading
+    label _parent sort_order link target escape_label class render_children_inline
 ));
 
 =head1 NAME
@@ -86,15 +86,15 @@ Get or set the frame or pseudo-target for this link. something like L<_blank>
 Gets or sets the CSS class the link should have in addition to the default
 classes.  This is only used if C<link> isn't specified.
 
-=head2 group [STRING]
+=head2 render_children_inline [BOOLEAN]
 
-Gets or sets the menu group this menu item is in.  Only used when rendering
-as a YUI menubar for now.  Groups are sorted by this value as well.
+Gets or sets whether children are rendered inline as a menu "group" instead
+of a true submenu.  Only used when rendering with YUI for now.
+Defaults to false.
 
-=head2 group_heading [BOOLEAN]
-
-Gets or sets the menu group's heading that this item is in.  Only used when
-rendering as a YUI menubar for now.  May be a link, url, or just a label.
+Note that YUI doesn't support rendering nested menu groups, so having direct
+parent/children render_children_inline is likely not going to do what you
+want or expect.
 
 =head2 url
 
@@ -224,28 +224,6 @@ sub children {
     my @kids = values %{$self->{children} || {}};
     @kids = sort {$a->sort_order <=> $b->sort_order} @kids;
     return wantarray ? @kids : \@kids;
-}
-
-=head2 grouped_children
-
-Returns the children of this menu item in grouped sorted order; as an array
-of array refs in array context, or as an array ref of array refs in scalar.
-
-=cut
-
-sub grouped_children {
-    my $self = shift;
-    
-    my %group;
-    for my $kid ( $self->children ) {
-        push @{ $group{$kid->group} }, $kid;
-    }
-
-    my @grouped = map  { $group{$_} }
-                  sort { $a cmp $b }
-                  keys %group;
-
-    return wantarray ? @grouped : \@grouped;
 }
 
 =head2 render_as_menu
@@ -379,7 +357,7 @@ It can support arbitary levels of submenu.
 sub render_as_yui_menubar {
     my $self = shift;
     my $id   = Jifty->web->serial;
-    $self->_render_as_yui_menu_item("yuimenubar", $id);
+    $self->_render_as_yui_menu_item( class => "yuimenubar", id => $id );
     Jifty->web->out(qq|<script type="text/javascript">\n|
         . qq|YAHOO.util.Event.onContentReady("|.$id.qq|", function() {\n|
         . qq|var menu = new YAHOO.widget.MenuBar("|.$id.qq|", { autosubmenudisplay:true, hidedelay:750, lazyload:true, showdelay:0 });\n|
@@ -390,34 +368,65 @@ sub render_as_yui_menubar {
 }
 
 sub _render_as_yui_menu_item {
-    my ($self, $class, $id) = @_;
-    my @grouped = $self->grouped_children or return;
+    my $self = shift;
+    my %args = ( class => 'yuimenu', first => 0, id => undef, @_ );
+    my @kids = $self->children or return;
     
-    Jifty->web->out(
-        qq{<div}
-        . ($id ? qq{ id="$id"} : "")
-        . qq{ class="$class"><div class="bd">}
-    );
-    my $count = 1;
-    for my $group ( @grouped ) {
-        for ( grep { $_->group_heading } @$group ) {
-            Jifty->web->out(qq(<h6 class="@{[ $_->active ? 'active' : '' ]}">));
-            Jifty->web->out( $_->as_link );
-            Jifty->web->out('</h6>');
-        }
-        
-        Jifty->web->out( $count == 1 ? '<ul class="first-of-type">' : '<ul>' );
-        for ( grep { not $_->group_heading } @$group ) {
-            Jifty->web->out( qq{<li class="${class}item }
-            . ($_->active? 'active' : '') . qq{">});
-            Jifty->web->out( $_->as_link );
-            $_->_render_as_yui_menu_item("yuimenu");
+    if ( $self->render_children_inline ) {
+        Jifty->web->out( $args{'first'} ? '<ul class="first-of-type">' : '<ul>' );
+        for my $kid ( @kids ) {
+            Jifty->web->out( qq{<li class="${class}item } . ($kid->active? 'active' : '') . qq{">});
+            Jifty->web->out( $kid->as_link );
+            $kid->_render_as_yui_menu_item( class => 'yuimenu' );
             Jifty->web->out( qq{</li>});
         }
         Jifty->web->out('</ul>');
-        $count++;
     }
-    Jifty->web->out(qq{</div></div>});
+    else {
+        Jifty->web->out(
+            qq{<div}
+            . ($args{'id'} ? qq( id="$args{'id'}") : "")
+            . qq{ class="$class"><div class="bd">}
+        );
+
+        my $count    = 1;
+        my $count_h6 = 1;
+        my $openlist = 0;
+
+        for my $kid ( @kids ) {
+            if ( $kid->render_children_inline and $kid->children ) {
+                Jifty->web->out('</ul>') if $openlist;
+                
+                my @classes = ();
+                push @classes, 'active' if $kid->active;
+                push @classes, 'first-of-type'
+                    if $count_h6 == 1 and $count == 1;
+
+                Jifty->web->out(qq(<h6 class="@{[ join ' ', @classes ]}">));
+                Jifty->web->out( $kid->as_link );
+                Jifty->web->out('</h6>');
+                $kid->_render_as_yui_menu_item(
+                    class => 'yuimenu',
+                    first => ($count == 1 ? 1 : 0)
+                );
+                $openlist = 0;
+                $count_h6++;
+            }
+            else {
+                if ( not $openlist ) {
+                    Jifty->web->out( $count == 1 ? '<ul class="first-of-type">' : '<ul>' );
+                    $openlist = 1;
+                }
+                Jifty->web->out( qq{<li class="${class}item } . ($kid->active? 'active' : '') . qq{">});
+                Jifty->web->out( $kid->as_link );
+                $kid->_render_as_yui_menu_item( class => 'yuimenu' );
+                Jifty->web->out( qq{</li>});
+            }
+            $count++;
+        }
+        Jifty->web->out('</ul>') if $openlist;
+        Jifty->web->out(qq{</div></div>});
+    }
 }
 
 =head2 as_link
