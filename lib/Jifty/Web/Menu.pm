@@ -109,7 +109,7 @@ sub url {
     $self->{url} = shift if @_;
 
     $self->{url} = URI->new_abs($self->{url}, $self->parent->url . "/")->as_string
-      if $self->parent and $self->parent->url;
+      if defined $self->{url} and $self->parent and $self->parent->url;
 
     $self->{url} =~ s!///!/! if $self->{url};
 
