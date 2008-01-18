@@ -137,6 +137,10 @@ Jifty.Utils = {
         
         if ( diff > 0 )
              Jifty.SmoothScroll.scrollTo( scrollTop + diff );
+    },
+
+    stripScripts: function(str) {
+        return str.replace(/<script(.|\s)*?\/script>/g, "");
     }
 };
 

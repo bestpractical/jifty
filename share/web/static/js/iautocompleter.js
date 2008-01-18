@@ -300,7 +300,7 @@ jQuery.iAuto = {
 	{
 		window.clearTimeout(jQuery.iAuto.timer);
 		var subject = jQuery.iAuto.getFieldValues(this);
-				
+
 		var pressedKey = e.charCode || e.keyCode || -1;
 		if (/13|27|35|36|38|40|9/.test(pressedKey) && jQuery.iAuto.items) {
 			if (window.event) {

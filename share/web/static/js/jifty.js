@@ -162,7 +162,7 @@ Action.prototype = {
     fields: function() {
         if(!this.cached_fields) {
             var elements = new Array;
-            var possible = Form.getElements(this.form);
+            var possible = jQuery(":input", this.form).get();
             // Also pull from extra query parameters
             for (var i = 0; i < this.extras.length; i++)
                 possible.push(this.extras[i]);
@@ -340,7 +340,7 @@ Action.prototype = {
 
     disable_input_fields: function(disabled_elements) {
         var disable = function() {
-            var elt = arguments[0];
+            var elt = this;
             // Disabling hidden elements seems to  make IE sad for some reason
             if(elt.type != 'hidden') {
                 // Triggers https://bugzilla.mozilla.org/show_bug.cgi?id=236791
@@ -349,14 +349,14 @@ Action.prototype = {
                 disabled_elements.push(elt);
             }
         };
-        this.fields().each(disable);
-        this.buttons().each(disable);
+        jQuery.each(this.fields(), disable);
+        jQuery.each(this.buttons(), disable);
     },
 
     enable_input_fields: function() {
-        var enable = function() { arguments[0].disabled = false; };
-        this.fields().each( enable );
-        this.buttons().each( enable );
+        var enable = function() { this.disabled = false; };
+        jQuery.each(this.fields(), disable);
+        jQuery.each(this.buttons(), disable);
     },
 
 
@@ -502,6 +502,8 @@ ActionField.prototype = {
 };
 
 /* Forms */
+Form = {};
+
 jQuery.extend(Form, {
     // Return an Array of Actions that are in this form
     getActions: function (element) {
@@ -526,6 +528,8 @@ jQuery.extend(Form, {
 
 
 var current_actions = {};
+
+Form.Element = {};
 
 /* Fields */
 jQuery.extend(Form.Element, {
@@ -580,6 +584,11 @@ jQuery.extend(Form.Element, {
         } else {
             return null;
         }
+    },
+
+    getValue: function(element) {
+        element = Jifty.$(element);
+        return jQuery(element).val();
     },
 
     // Validates the action this form element is part of
@@ -991,15 +1000,10 @@ var apply_fragment_updates = function(fragment, f) {
                         Top: 'prepend'
                     })[ f['mode'] ];
 
-                    jQuery(element)[method]( textContent.stripScripts() );
+                    jQuery(element)[method]( textContent );
                 } else {
-                    jQuery(element).html( textContent.stripScripts() );
+                    jQuery(element).html( textContent );
                 }
-                // We need to give the browser some "settle" time before
-                // we eval scripts in the body
-                YAHOO.util.Event.onAvailable(element.id, function() {
-                    (function() { this.evalScripts() }).bind(textContent)();
-                });
                 Behaviour.apply(element);
             }
         }
@@ -1222,7 +1226,14 @@ Jifty.update = function () {
              response_fragment = response_fragment.nextSibling) {
 
             var exp_id = response_fragment.getAttribute("id");
-            var f = expected_fragments.find(function(f) { return exp_id == f['region'] });
+
+            var f;
+            jQuery.each(expected_fragments, function() {
+                if (exp_id == this['region']) {
+                    f = this;
+                    return false;
+                }
+            });
             if (!f)
                 continue;
 
@@ -1232,7 +1243,10 @@ Jifty.update = function () {
             extract_cacheable(response_fragment, f);
         }
 
-        update_from_cache.each(function(x) { x() });
+        jQuery.each(update_from_cache, function() {
+            this();
+        });
+        // update_from_cache.each(function(x) { x() });
 
         walk_node(response,
         { result: function(result) {
@@ -1394,7 +1408,7 @@ jQuery.extend(Jifty.Autocompleter.prototype, {
         
         jQuery(this.field).Autocomplete({
             source: this.url,
-            minchars: 0,
+            minchars: -1,
             delay: 100,
             helperClass: 'autocomplete',
             selectClass: 'selected'
@@ -1460,7 +1474,6 @@ jQuery.extend(Jifty.Placeholder.prototype, {
          self.onBlur();
      });
 
-      
      this.onBlur();
 
      var form = Form.Element.getForm(element);

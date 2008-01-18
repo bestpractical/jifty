@@ -26,7 +26,9 @@ jQuery.iAuto.update = function() {
 
 			subject.autoCFG.lastSuggestion.each(
 			    function(nr) {
-				toWrite += '<li rel="' + jQuery(this).text() + '" dir="' + nr + '" style="cursor: default;">' + jQuery(this).text() + '</li>';
+                                console.log("[" + jQuery(this).text() + "]");
+                                var v = jQuery(this).text();
+				toWrite += '<li rel="' + v + '" dir="' + nr + '" style="cursor: default;">' + v + '</li>';
 			    }
 			);
                         
@@ -39,7 +41,7 @@ jQuery.iAuto.update = function() {
 				subjectValue.item.length != valueToAdd.length ? (subjectValue.pre.length + valueToAdd.length) : valueToAdd.length
 			    );
 			}
-			
+
 			if (size > 0) {
 			    jQuery.iAuto.writeItems(subject, toWrite);
 			} else {
