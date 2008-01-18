@@ -166,5 +166,53 @@ template '/act/play' => page {
     };
 };
 
+template '/effects' => page {
+    h1 { "Jifty.update() tests with effects" };
+
+    for (qw(Appear SlideDown)) {
+        hyperlink(
+            label => "Append ($_)",
+            onclick => {
+                append => 'hello_world',
+                region => 'content',
+                args => {
+                    name => "Append with effect $_"
+                },
+                effect => $_,
+                effect_args => "slow"
+            }
+        );
+        outs_raw("&nbsp;");
+
+        hyperlink(
+            label => "Prepend ($_)",
+            onclick => {
+                prepend => 'hello_world',
+                region => 'content',
+                args => {
+                    name => "Prepend with effect $_"
+                },
+                effect => $_,
+                effect_args => "slow"
+            }
+        );
+
+        outs_raw("&nbsp;|&nbsp;");
+    }
+
+
+    hyperlink(
+        label => "Clear Region",
+        onclick => {
+            region => "content",
+            replace_with => "/__jifty/empty"
+        }
+    );
+
+    hr {};
+
+    render_region( name => 'content' );
+};
+
 
 1;
