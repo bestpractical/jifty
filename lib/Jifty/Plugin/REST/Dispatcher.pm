@@ -549,7 +549,7 @@ Order by the given column, descending.
 sub search_items {
     my ($model, $fragment) = (model($1), $2);
     my @pieces = grep {length} split '/', $fragment;
-    my @orig = @pieces;
+    my $ret = ['search', $model, @pieces];
 
     # if they provided an odd number of pieces, the last is the output column
     my $field;
@@ -645,13 +645,13 @@ sub search_items {
         );
     }
 
-    $collection->count                       or abort(404);
-    $collection->pager->entries_on_this_page or abort(404);
+    $collection->count                       or return outs($ret, []);
+    $collection->pager->entries_on_this_page or return outs($ret, []);
 
     # output
     if (defined $field) {
         my $item = $collection->first
-            or abort(404);
+            or return outs($ret, []);
 
         # make sure $field exists and is a real column
         $item->can($field)    or abort(404);
@@ -664,16 +664,10 @@ sub search_items {
             push @values, $item->$field;
         } while $item = $collection->next;
 
-        outs(
-            ['search', $model, @orig],
-            \@values,
-        );
+        outs($ret, \@values);
     }
     else {
-        outs(
-            ['search', $model, @orig],
-            $collection->jifty_serialize_format,
-        );
+        outs($ret, $collection->jifty_serialize_format);
     }
 }
 
