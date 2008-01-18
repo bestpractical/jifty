@@ -5,7 +5,7 @@ use strict;
 use Test::More;
 BEGIN {
     if (eval { require Net::OAuth::Request; require Crypt::OpenSSL::RSA; 1 }) {
-        plan tests => 27;
+        plan tests => 31;
     }
     else {
         plan skip_all => "Net::OAuth isn't installed";
@@ -79,12 +79,14 @@ response_is(
     token_secret           => $token_obj->secret,
 );
 $cmech->content_contains("Press the shiny red button", "got to a protected page");
+$cmech->content_contains("human #1.", "correct current_user");
 # }}}
 # without OAuth parameters, no access {{{
 $cmech->get_ok('/nuke/the/whales');
 
 $cmech->content_contains("Login with a password", "current_user unset");
 $cmech->content_lacks("Press the shiny red button", "did NOT get to a protected page");
+$cmech->content_lacks("human #1.", "did NOT get to a protected page");
 # }}}
 # access tokens last for more than one hit {{{
 response_is(
@@ -98,6 +100,7 @@ response_is(
     token_secret           => $token_obj->secret,
 );
 $cmech->content_contains("Press the shiny red button", "got to a protected page");
+$cmech->content_contains("human #1.", "correct current_user");
 # }}}
 # expired access token {{{
 $token_obj->set_valid_until(DateTime->now->subtract(days => 1));
@@ -114,4 +117,5 @@ response_is(
 );
 $cmech->content_contains("Login with a password", "redirected to login");
 $cmech->content_lacks("Press the shiny red button", "did NOT get to a protected page");
+$cmech->content_lacks("human #1.", "did NOT get to a protected page");
 # }}}
