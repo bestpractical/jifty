@@ -511,9 +511,7 @@ sub show_item {
     my $rec = $model->new;
     $rec->load_by_cols( $column => $key );
     $rec->id or abort(404);
-    outs( ['model', $model, $column, $key], 
-        { map { $_ => Jifty::Util->stringify($rec->$_()) }
-              map {$_->name} $rec->columns});
+    outs( ['model', $model, $column, $key], $rec->jifty_serialize_format );
 }
 
 =head2 search_items $model, [c1, v1, c2, v2, ...] [, $field]
