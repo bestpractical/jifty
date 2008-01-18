@@ -4,7 +4,9 @@ use base qw/Class::Accessor::Fast/;
 use URI;
 use Scalar::Util qw(weaken);
 
-__PACKAGE__->mk_accessors(qw(label _parent sort_order link target escape_label class group));
+__PACKAGE__->mk_accessors(qw(
+    label _parent sort_order link target escape_label class group group_heading
+));
 
 =head1 NAME
 
@@ -88,6 +90,11 @@ classes.  This is only used if C<link> isn't specified.
 
 Gets or sets the menu group this menu item is in.  Only used when rendering
 as a YUI menubar for now.  Groups are sorted by this value as well.
+
+=head2 group_heading [BOOLEAN]
+
+Gets or sets the menu group's heading that this item is in.  Only used when
+rendering as a YUI menubar for now.  May be a link, url, or just a label.
 
 =head2 url
 
@@ -393,8 +400,14 @@ sub _render_as_yui_menu_item {
     );
     my $count = 1;
     for my $group ( @grouped ) {
+        for ( grep { $_->group_heading } @$group ) {
+            Jifty->web->out(qq(<h6 class="@{[ $_->active ? 'active' : '' ]}">));
+            Jifty->web->out( $_->as_link );
+            Jifty->web->out('</h6>');
+        }
+        
         Jifty->web->out( $count == 1 ? '<ul class="first-of-type">' : '<ul>' );
-        for ( @$group ) {
+        for ( grep { not $_->group_heading } @$group ) {
             Jifty->web->out( qq{<li class="${class}item }
             . ($_->active? 'active' : '') . qq{">});
             Jifty->web->out( $_->as_link );
