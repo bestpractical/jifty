@@ -23,20 +23,16 @@ template '/1-jifty-update.html' => page {
     );
 
     hyperlink(
-        id => 'region3',
-        label => "John",
+        id => 'region3', label => "John",
         onclick => {
             region => 'content',
             replace_with => 'hello_world',
-            args => {
-                name => "John"
-            }
+            args => { name => "John" }
         }
     );
 
     hyperlink(
-        id => 'region4',
-        label => "Smith",
+        id => 'region4', label => "Smith",
         onclick => {
             region => 'content',
             replace_with => 'hello_world',
@@ -45,6 +41,32 @@ template '/1-jifty-update.html' => page {
             }
         }
     );
+
+    hyperlink(
+        id => 'append-region', label => "Append To Region",
+        onclick => {
+            region => "content",
+            append => "hello_world"
+        }
+    );
+
+    hyperlink(
+        id => 'prepend-region', label => "Prepend To Region",
+        onclick => {
+            region => "content",
+            prepend => "hello_world"
+        }
+    );
+
+    hyperlink(
+        id => 'delete-region',
+        label => "Delete Region",
+        onclick => {
+            delete => "content"
+        }
+    );
+
+    hr {};
 
     render_region( name => 'content' );
 };
