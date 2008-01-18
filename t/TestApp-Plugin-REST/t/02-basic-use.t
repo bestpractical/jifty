@@ -13,7 +13,7 @@ This is a template for your own tests. Copy it and modify it.
 use lib 't/lib';
 use Jifty::SubTest;
 
-use Jifty::Test tests => 78;
+use Jifty::Test tests => 79;
 use Jifty::Test::WWW::Mechanize;
 
 my $server  = Jifty::Test->make_server;
@@ -98,7 +98,9 @@ $mech->get('/=/search/Usery/id/1.yml');
 is($mech->status,'404');
 
 $mech->get('/=/search/user/id/1/name/foo.yml');
-is($mech->status,'404');
+is($mech->status,'200');
+$content = get_content();
+is_deeply($content, []);
 
 # on GET    '/=/action'      => \&list_actions;
 
