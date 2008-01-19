@@ -1012,16 +1012,14 @@ var apply_fragment_updates = function(fragment, f) {
 
     // Also, set us up the effect
     if (f['effect']) {
-        try {
-            var effect = eval('Effect.'+f['effect']);
-            var effect_args  = f['effect_args'] || {};
-            if (effect) {
-                if (f['is_new'])
-                    Element.hide($('region-'+f['region']));
-                (effect)($('region-'+f['region']), effect_args);
-            }
-        } catch ( e ) {
-            // Don't be sad if the effect doesn't exist
+        var effect = Jifty.Effect(f['effect'], f['effect_args']);
+        var el     = Jifty.$('region-'+f['region']);
+
+        if (effect) {
+            if(f['is_new'])
+                jQuery( el ).hide();
+            
+            effect( el );
         }
     }
 }
@@ -1584,3 +1582,39 @@ function _sp_submit_form(elt, event, submit_to) {
 
     return Jifty.update( {'continuation':{},'actions':null,'fragments':[{'mode':'Replace','args':args,'region':'__page','path': submit_to}]}, elt );
 }
+
+/*
+ * my f = new Jifty.Effect("show", { duration: 2.0 });
+ *
+ * f( element );
+ * 
+ */
+
+Jifty.Effect = function(name, args) {
+    // Scriptaculous
+    if (typeof Effect != 'undefined') {
+        return function(el) {
+            try {
+                var effect = eval('Effect.' + name);
+                var effect_args  = args || {};
+                if (effect) {
+                    (effect)(el, effect_args);
+                }
+                return effect;
+            } catch ( e ) {}
+        };
+    }
+
+    // jQuery built-ins
+    return function(el) {
+        try {
+            var effect =
+                name == 'Fade' ? 'fadeOut' :
+                name == 'Appear' ? 'fadeIn' :
+                name == 'SlideDown' ? 'slideDown' :
+                name == 'SlideUp' ? 'slideUp' :
+                name;
+            ( jQuery(el)[ effect ] )(args);
+        } catch(e) { }
+    };
+};
