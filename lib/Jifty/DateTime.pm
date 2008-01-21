@@ -57,6 +57,9 @@ method called C<time_zone>.
 sub new {
     my $class = shift;
     my %args  = (@_);
+
+    my $replace_tz = delete $args{_replace_time_zone};
+
     my $self  = $class->SUPER::new(%args);
 
     # XXX What if they really mean midnight offset by time zone?
@@ -69,15 +72,16 @@ sub new {
     # 00:00:00 implies that no time is used
     if ($self->hour || $self->minute || $self->second) {
 
-        # Unless the user has explicitly said they want a floating time,
+        # Unless the user has explicitly said they want a time zone,
         # we want to convert to the end-user's timezone. If we ignore
         # $args{time_zone}, then DateTime::from_epoch will get very confused
-        if (!$args{time_zone} and my $tz = $self->current_user_has_timezone) {
+        if (!$args{time_zone} || $replace_tz) {
+            if (my $tz = $self->current_user_has_timezone) {
+                # XXX: we do this because of the floating timezone
+                $self->set_time_zone("UTC");
 
-            # XXX: we do this because of the floating timezone
-            $self->set_time_zone("UTC");
-
-            $self->set_time_zone( $tz );
+                $self->set_time_zone( $tz );
+            }
         }
     }
 
