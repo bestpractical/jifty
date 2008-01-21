@@ -4,7 +4,9 @@ use base qw/Class::Accessor::Fast/;
 use URI;
 use Scalar::Util qw(weaken);
 
-__PACKAGE__->mk_accessors(qw(label _parent sort_order link target escape_label class));
+__PACKAGE__->mk_accessors(qw(
+    label _parent sort_order link target escape_label class render_children_inline
+));
 
 =head1 NAME
 
@@ -67,7 +69,6 @@ sub parent {
 Gets or sets the sort order of the item, as it will be displayed under
 the parent.  This defaults to adding onto the end.
 
-
 =head2 link
 
 Gets or set a Jifty::Web::Link object that represents this menu item. If
@@ -85,6 +86,16 @@ Get or set the frame or pseudo-target for this link. something like L<_blank>
 Gets or sets the CSS class the link should have in addition to the default
 classes.  This is only used if C<link> isn't specified.
 
+=head2 render_children_inline [BOOLEAN]
+
+Gets or sets whether children are rendered inline as a menu "group" instead
+of a true submenu.  Only used when rendering with YUI for now.
+Defaults to false.
+
+Note that YUI doesn't support rendering nested menu groups, so having direct
+parent/children render_children_inline is likely not going to do what you
+want or expect.
+
 =head2 url
 
 Gets or sets the URL that the menu's link goes to.  If the link
@@ -98,7 +109,7 @@ sub url {
     $self->{url} = shift if @_;
 
     $self->{url} = URI->new_abs($self->{url}, $self->parent->url . "/")->as_string
-      if $self->parent and $self->parent->url;
+      if defined $self->{url} and $self->parent and $self->parent->url;
 
     $self->{url} =~ s!///!/! if $self->{url};
 
@@ -147,16 +158,24 @@ sub child {
                                                @_
                                              });
         Scalar::Util::weaken($self->{children}{$key}{parent});
+        
+        # Figure out the URL
+        my $child = $self->{children}{$key};
+        my $url   =   ( defined $child->link
+                    and ref $child->link
+                    and $child->link->can('url') )
+                        ? $child->link->url : $child->url;
+
         # Activate it
-        if (my $url = $self->{children}{$key}->url and Jifty->web->request) {
+        if ( defined $url and length $url and Jifty->web->request ) {
             # XXX TODO cleanup for mod_perl
             my $base_path = Jifty->web->request->path;
             chomp($base_path);
-        
-            $base_path =~ s/index\.html$//g;
-            $base_path =~ s/\/+$//g;
-            $url =~ s/\/+$//i;
-    
+            
+            $base_path =~ s/index\.html$//;
+            $base_path =~ s/\/+$//;
+            $url =~ s/\/+$//;
+            
             if ($url eq $base_path) {
                 $self->{children}{$key}->active(1); 
             }
@@ -207,7 +226,6 @@ sub children {
     return wantarray ? @kids : \@kids;
 }
 
-
 =head2 render_as_menu
 
 Render this menu with HTML markup as multiple dropdowns, suitable for
@@ -221,7 +239,7 @@ sub render_as_menu {
     Jifty->web->out(qq{<ul class="menu">});
 
     for (@kids) {
-	$_->render_as_hierarchical_menu_item();
+        $_->render_as_hierarchical_menu_item();
     }
     Jifty->web->out(qq{</ul>});
     '';
@@ -234,11 +252,11 @@ Render this menu with html markup as an inline dropdown menu.
 =cut
 
 sub render_as_context_menu {
-	my $self = shift;
-    	Jifty->web->out( qq{<ul class="context_menu">});
-	$self->render_as_hierarchical_menu_item();
-	Jifty->web->out(qq{</ul>});
-	'';
+    my $self = shift;
+    Jifty->web->out( qq{<ul class="context_menu">});
+    $self->render_as_hierarchical_menu_item();
+    Jifty->web->out(qq{</ul>});
+    '';
 }
 
 =head2 render_as_hierarchical_menu_item
@@ -293,13 +311,13 @@ Currently renders one level of submenu, if it exists.
 =cut
 
 sub  render_as_classical_menu {
-	my $self = shift;
+    my $self = shift;
     my @kids = $self->children;
 
     Jifty->web->out( qq{<ul class="menu">});
 
     for (@kids) {
-	    $_->_render_as_classical_menu_item();
+        $_->_render_as_classical_menu_item();
     }
 
     Jifty->web->out(qq{</ul>});
@@ -329,7 +347,7 @@ sub _render_as_classical_menu_item {
 
 }
 
-=head2 render_as_yui_menubar
+=head2 render_as_yui_menubar [PARAMHASH]
 
 Render menubar with YUI menu, suitable for an application's menu.
 It can support arbitary levels of submenu.
@@ -339,10 +357,10 @@ It can support arbitary levels of submenu.
 sub render_as_yui_menubar {
     my $self = shift;
     my $id   = Jifty->web->serial;
-    $self->_render_as_yui_menu_item("yuimenubar", $id);
+    $self->_render_as_yui_menu_item( class => "yuimenubar", id => $id );
     Jifty->web->out(qq|<script type="text/javascript">\n|
         . qq|YAHOO.util.Event.onContentReady("|.$id.qq|", function() {\n|
-        . qq|var menu = new YAHOO.widget.MenuBar("|.$id.qq|", { autosubmenudisplay:true, hidedelay:750, lazyload:true });\n|
+        . qq|var menu = new YAHOO.widget.MenuBar("|.$id.qq|", { autosubmenudisplay:true, hidedelay:750, lazyload:true, showdelay:0 });\n|
         . qq|menu.render();\n|
         . qq|});</script>|
         );
@@ -350,23 +368,65 @@ sub render_as_yui_menubar {
 }
 
 sub _render_as_yui_menu_item {
-    my ($self, $class, $id) = @_;
-    my @kids = $self->children 
-        or return;
+    my $self = shift;
+    my %args = ( class => 'yuimenu', first => 0, id => undef, @_ );
+    my @kids = $self->children or return;
     
-    Jifty->web->out(
-        qq{<div}
-        . ($id ? qq{ id="$id"} : "")
-        . qq{ class="$class"><div class="bd"><ul>}
-    );
-    for (@kids) {
-        Jifty->web->out( qq{<li class="${class}item }
-        . ($_->active? 'active' : '') . qq{">});
-        Jifty->web->out( $_->as_link );
-        $_->_render_as_yui_menu_item("yuimenu");
-        Jifty->web->out( qq{</li>});
+    if ( $self->render_children_inline ) {
+        Jifty->web->out( $args{'first'} ? '<ul class="first-of-type">' : '<ul>' );
+        for my $kid ( @kids ) {
+            Jifty->web->out( qq{<li class="${class}item } . ($kid->active? 'active' : '') . qq{">});
+            Jifty->web->out( $kid->as_link );
+            $kid->_render_as_yui_menu_item( class => 'yuimenu' );
+            Jifty->web->out( qq{</li>});
+        }
+        Jifty->web->out('</ul>');
     }
-    Jifty->web->out(qq{</ul></div></div>});
+    else {
+        Jifty->web->out(
+            qq{<div}
+            . ($args{'id'} ? qq( id="$args{'id'}") : "")
+            . qq{ class="$class"><div class="bd">}
+        );
+
+        my $count    = 1;
+        my $count_h6 = 1;
+        my $openlist = 0;
+
+        for my $kid ( @kids ) {
+            if ( $kid->render_children_inline and $kid->children ) {
+                Jifty->web->out('</ul>') if $openlist;
+                
+                my @classes = ();
+                push @classes, 'active' if $kid->active;
+                push @classes, 'first-of-type'
+                    if $count_h6 == 1 and $count == 1;
+
+                Jifty->web->out(qq(<h6 class="@{[ join ' ', @classes ]}">));
+                Jifty->web->out( $kid->as_link );
+                Jifty->web->out('</h6>');
+                $kid->_render_as_yui_menu_item(
+                    class => 'yuimenu',
+                    first => ($count == 1 ? 1 : 0)
+                );
+                $openlist = 0;
+                $count_h6++;
+            }
+            else {
+                if ( not $openlist ) {
+                    Jifty->web->out( $count == 1 ? '<ul class="first-of-type">' : '<ul>' );
+                    $openlist = 1;
+                }
+                Jifty->web->out( qq{<li class="${class}item } . ($kid->active? 'active' : '') . qq{">});
+                Jifty->web->out( $kid->as_link );
+                $kid->_render_as_yui_menu_item( class => 'yuimenu' );
+                Jifty->web->out( qq{</li>});
+            }
+            $count++;
+        }
+        Jifty->web->out('</ul>') if $openlist;
+        Jifty->web->out(qq{</div></div>});
+    }
 }
 
 =head2 as_link

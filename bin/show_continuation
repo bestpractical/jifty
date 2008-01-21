@@ -1,0 +1,15 @@
+#!/usr/bin/env perl
+
+use Jifty::Everything;
+Jifty->new();
+
+my $id = shift @ARGV || die("Usage: $0 CONTINUATION_ID\n");
+
+my $session = Jifty::Model::SessionCollection->new(current_user => Jifty::CurrentUser->superuser);
+$session->limit(column => 'data_key', value => $id);
+
+while (my $item = $session->next) {
+    print scalar Jifty::YAML::Dump($item->value);
+}
+
+1;

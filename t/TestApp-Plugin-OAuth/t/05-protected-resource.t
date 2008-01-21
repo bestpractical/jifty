@@ -5,7 +5,7 @@ use strict;
 use Test::More;
 BEGIN {
     if (eval { require Net::OAuth::Request; require Crypt::OpenSSL::RSA; 1 }) {
-        plan tests => 16;
+        plan tests => 31;
     }
     else {
         plan skip_all => "Net::OAuth isn't installed";
@@ -51,8 +51,7 @@ $umech->submit;
 $umech->content_contains('Logout');
 # }}}
 # }}}
-# basic protected request {{{
-get_access_token();
+# make sure we're not logged in {{{
 response_is(
     url                    => '/nuke/the/whales',
     code                   => 200,
@@ -60,7 +59,63 @@ response_is(
     consumer_secret        => 'bar',
     oauth_consumer_key     => 'foo',
     oauth_signature_method => 'PLAINTEXT',
+    oauth_token            => 'please',
+    token_secret           => 'letmein',
+);
+$cmech->content_contains("Login with a password", "redirected to login");
+$cmech->content_lacks("Press the shiny red button", "did NOT get to a protected page");
+# }}}}
+# basic protected request {{{
+get_access_token();
+
+response_is(
+    url                    => '/nuke/the/whales',
+    code                   => 200,
+    testname               => "200 - protected resource request",
+    consumer_secret        => 'bar',
+    oauth_consumer_key     => 'foo',
+    oauth_signature_method => 'PLAINTEXT',
+    oauth_token            => $token_obj->token,
+    token_secret           => $token_obj->secret,
 );
 $cmech->content_contains("Press the shiny red button", "got to a protected page");
+$cmech->content_contains("human #1.", "correct current_user");
 # }}}
+# without OAuth parameters, no access {{{
+$cmech->get_ok('/nuke/the/whales');
 
+$cmech->content_contains("Login with a password", "current_user unset");
+$cmech->content_lacks("Press the shiny red button", "did NOT get to a protected page");
+$cmech->content_lacks("human #1.", "did NOT get to a protected page");
+# }}}
+# access tokens last for more than one hit {{{
+response_is(
+    url                    => '/nuke/the/whales',
+    code                   => 200,
+    testname               => "200 - protected resource request",
+    consumer_secret        => 'bar',
+    oauth_consumer_key     => 'foo',
+    oauth_signature_method => 'PLAINTEXT',
+    oauth_token            => $token_obj->token,
+    token_secret           => $token_obj->secret,
+);
+$cmech->content_contains("Press the shiny red button", "got to a protected page");
+$cmech->content_contains("human #1.", "correct current_user");
+# }}}
+# expired access token {{{
+$token_obj->set_valid_until(DateTime->now->subtract(days => 1));
+
+response_is(
+    url                    => '/nuke/the/whales',
+    code                   => 200,
+    testname               => "200 - protected resource request",
+    consumer_secret        => 'bar',
+    oauth_consumer_key     => 'foo',
+    oauth_signature_method => 'PLAINTEXT',
+    oauth_token            => $token_obj->token,
+    token_secret           => $token_obj->secret,
+);
+$cmech->content_contains("Login with a password", "redirected to login");
+$cmech->content_lacks("Press the shiny red button", "did NOT get to a protected page");
+$cmech->content_lacks("human #1.", "did NOT get to a protected page");
+# }}}

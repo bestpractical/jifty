@@ -244,21 +244,22 @@ sub current_user {
         $self->_current_user( $currentuser_obj || undef );
     }
 
+    my $object;
+
     if ( defined $self->temporary_current_user ) {
         return $self->temporary_current_user;
     } elsif ( defined $self->_current_user ) {
         return $self->_current_user;
-
     } elsif ( my $id = $self->session->get('user_id') ) {
-        my $object = Jifty->app_class("CurrentUser")->new( id => $id );
-        $self->_current_user($object);
-        return $object;
+         $object = Jifty->app_class("CurrentUser")->new( id => $id );
+    } elsif ( Jifty->config->framework('AdminMode')) {
+         $object = Jifty->app_class("CurrentUser")->superuser;
     } else {
-        my $object = Jifty->app_class("CurrentUser")->new;
-        $object->is_superuser(1) if Jifty->config->framework('AdminMode');
-        $self->_current_user($object);
-        return ($object);
+         $object = Jifty->app_class("CurrentUser")->new;
     }
+    
+    $self->_current_user($object);
+    return $object;
 }
 
 =head3 temporary_current_user [USER]
@@ -382,57 +383,57 @@ sub _validate_request_actions {
 }
 
 sub _process_valid_actions {
-    my  $self = shift;
+    my $self          = shift;
     my $valid_actions = shift;
-        for my $request_action (@$valid_actions) {
+    for my $request_action (@$valid_actions) {
 
-            # Pull the action out of the request (again, since
-            # mappings may have affected parameters).  This
-            # returns the cached version unless the request has
-            # been changed by argument mapping from previous
-            # actions (Jifty::Request::Mapper)
-            my $action = $self->new_action_from_request($request_action);
-            next unless $action;
-            if ( $request_action->modified ) {
+        # Pull the action out of the request (again, since
+        # mappings may have affected parameters).  This
+        # returns the cached version unless the request has
+        # been changed by argument mapping from previous
+        # actions (Jifty::Request::Mapper)
+        my $action = $self->new_action_from_request($request_action);
+        next unless $action;
+        if ( $request_action->modified ) {
 
-                # If the request's action was changed, re-validate
-                $action->result( Jifty::Result->new );
-                $action->result->action_class( ref $action );
-                $self->response->result(
-                    $action->moniker => $action->result );
-                $self->log->debug( "Re-validating action "
-                        . ref($action) . " "
-                        . $action->moniker );
-                next unless $action->validate;
-            }
-
-            $self->log->debug(
-                "Running action " . ref($action) . " " . $action->moniker );
-            eval { $action->run; };
-            $request_action->has_run(1);
-
-            if ( my $err = $@ ) {
-
-                # Poor man's exception propagation; we need to get
-                # "LAST RULE" and "ABORT" exceptions back up to the
-                # dispatcher.  This is specifically for redirects from
-                # actions
-                die $err if ( $err =~ /^(LAST RULE|ABORT)/ );
-                $self->log->fatal($err);
-                $action->result->error(
-                    Jifty->config->framework("DevelMode")
-                    ? $err
-                    : _("There was an error completing the request.  Please try again later."
-                    )
-                );
-            }
-
-            # Fill in the request with any results that that action
-            # may have yielded.
-            $self->request->do_mapping;
+            # If the request's action was changed, re-validate
+            $action->result( Jifty::Result->new );
+            $action->result->action_class( ref $action );
+            $self->response->result( $action->moniker => $action->result );
+            $self->log->debug( "Re-validating action "
+                    . ref($action) . " "
+                    . $action->moniker );
+            next unless $action->validate;
         }
 
+        $self->log->debug(
+            "Running action " . ref($action) . " " . $action->moniker );
+        eval { $action->run; };
+        $request_action->has_run(1);
+
+        if ( my $err = $@ ) {
+
+            # Poor man's exception propagation; we need to get
+            # "LAST RULE" and "ABORT" exceptions back up to the
+            # dispatcher.  This is specifically for redirects from
+            # actions
+            die $err if ( $err =~ /^(LAST RULE|ABORT)/ );
+            $self->log->fatal($err);
+            $action->result->error(
+                Jifty->config->framework("DevelMode")
+                ? $err
+                : _("There was an error completing the request.  Please try again later."
+                )
+            );
+        }
+
+        # Fill in the request with any results that that action
+        # may have yielded.
+        $self->request->do_mapping;
     }
+
+}
+
 =head3 request [VALUE]
 
 Gets or sets the current L<Jifty::Request> object.
@@ -756,7 +757,7 @@ sub _redirect {
         local $self->{navigation} = undef;
         local $self->{page_navigation} = undef;
         $self->replace_current_region($page);
-        Jifty::Dispatcher::_abort;
+        Jifty::Dispatcher::_abort();
         return;
     }
 
@@ -788,7 +789,7 @@ sub _redirect {
 
     # Mason abort, or dispatcher abort out of here
     $self->mason->abort if $self->mason;
-    Jifty::Dispatcher::_abort;
+    Jifty::Dispatcher::_abort();
 }
 
 =head3 caller

@@ -15,7 +15,7 @@ can be updated via AJAX or via query parameters.
 =cut
 
 use base qw/Jifty::Object Class::Accessor::Fast/;
-__PACKAGE__->mk_accessors(qw(name force_path force_arguments default_path default_arguments qualified_name parent region_wrapper));
+__PACKAGE__->mk_accessors(qw(name force_path force_arguments default_path default_arguments qualified_name parent region_wrapper lazy));
 use Jifty::JSON;
 use Encode ();
 
@@ -60,8 +60,9 @@ A boolean; whether or not the region, when rendered, will include the
 HTML region preamble that makes Javascript aware of its presence.
 Defaults to true.
 
+=item lazy (optional)
 
-=item
+Delays the loading of the fragment until render-time
 
 =back
 
@@ -79,6 +80,7 @@ sub new {
                 force_arguments => {},
                 force_path => undef,
                 region_wrapper => 1,
+                lazy => 0,
                 @_
                );
 
@@ -107,6 +109,7 @@ sub new {
     $self->arguments({});
     $self->parent($args{parent} || Jifty->web->current_region);
     $self->region_wrapper($args{region_wrapper});
+    $self->lazy($args{lazy});
 
     # Keep track of the fully qualified name (which should be unique)
     $self->log->warn("Repeated region: " . $self->qualified_name)
@@ -284,8 +287,11 @@ sub as_string {
             . qq|'| . $self->path . qq|',|
             . ( $self->parent ? qq|'| . $self->parent->qualified_name . qq|'| : q|null|)
             . qq|);\n|
-            . qq|</script>|
-            . qq|<div id="region-| . $self->qualified_name . qq|">|;
+            . qq|</script>|;
+        if ($self->lazy) {
+            return $result .  qq|<div id="region-| . $self->qualified_name . qq|" class="jifty-region-lazy"></div>|;
+        }
+        $result .= qq|<div id="region-| . $self->qualified_name . qq|" class="jifty-region">|;
     }
 
     $self->render_as_subrequest(\$result, \%arguments);

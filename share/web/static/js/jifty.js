@@ -668,6 +668,9 @@ jQuery.extend(Form.Element, {
         element = Jifty.$(element);
 
         var extras = [];
+        if (!element)
+            return extras;
+
         var args = Form.Element.buttonArguments(element);
 
         jQuery.each(args, function(k, v) {
@@ -763,6 +766,10 @@ Behaviour.register({
     },
     '.form_field .error, .form_field .warning, .form_field .canonicalization_note': function(e) {
         if ( e.innerHTML == "" ) jQuery(e).hide();
+    },
+    '.-jifty-region-lazy': function(e) {
+        var region = e.getAttribute("id").replace(/^region-/,"");
+        Jifty.update( { 'fragments': [{'region': region, 'mode': 'Replace'}]}, e);
     }
 });
 
@@ -1078,6 +1085,8 @@ Jifty.update = function () {
     request['actions'] = {};
 
     for (var moniker in named_args['actions']) {
+        if (moniker == 'extend')
+            continue;
         var disable = named_args['actions'][moniker];
         var a = new Action(moniker, button_args);
         current_actions[moniker] = a;

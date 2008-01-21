@@ -2210,7 +2210,11 @@ if (!document.createRange || Prototype.Browser.Opera) {
         if (position == 'top' || position == 'after') fragments.reverse();
         fragments.each(pos.insert.curry(element));
       }
-      else element.insertAdjacentHTML(pos.adjacency, content.stripScripts());
+      // Sartak: pos.adjacency may be undefined. IE6 gets very unhappy if you
+      // try to pass undef to insertAdjacentHTML
+      else if (pos.adjacency) {
+          element.insertAdjacentHTML(pos.adjacency, content.stripScripts());
+      }
 
       content.evalScripts.bind(content).defer();
     }

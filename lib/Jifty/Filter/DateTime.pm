@@ -53,13 +53,14 @@ sub decode {
 
     # XXX There has to be a better way to do this
     my %args;
-    for (qw(year month day hour minute second nanosecond formatter)) {
+    for (qw(year month day hour minute second nanosecond time_zone formatter)) {
         $args{$_} = $$value_ref->$_ if(defined($$value_ref->$_));
     }
 
-    # the floating timezone indicates a date, so we don't want to set any
-    # other timezone on it
-    $args{time_zone} = 'floating' if $$value_ref->time_zone =~ /floating/i;
+    # we want this DateTime's TZ to be in the current user's TZ, unless
+    # it represents a date
+    $args{_replace_time_zone} = 1
+        unless $args{time_zone} =~ /floating/i;
 
     my $dt = Jifty::DateTime->new(%args);
 

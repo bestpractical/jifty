@@ -63,9 +63,8 @@ Take the actions we need in order to bring an existing database up to current.
 sub run_upgrades {
     my $self = shift;
     $self->upgrade_jifty_tables();
-    $self->upgrade_application_tables();
     $self->upgrade_plugin_tables();
-
+    $self->upgrade_application_tables();
 }
 
 =head2 setup_environment

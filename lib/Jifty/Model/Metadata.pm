@@ -57,7 +57,7 @@ such a key cannot be found.
 
 sub load {
     my $self = shift;
-    $self = $self->new( current_user => Jifty::CurrentUser->superuser )
+    $self = $self->new( current_user => Jifty->app_class('CurrentUser')->superuser )
         unless ref $self;
     return undef unless $self->_handle and $self->_handle->dbh->ping;
 
@@ -83,7 +83,7 @@ value if it existed.
 
 sub store {
     my $self = shift;
-    $self = $self->new( current_user => Jifty::CurrentUser->superuser )
+    $self = $self->new( current_user => Jifty->app_class('CurrentUser')->superuser )
         unless ref $self;
 
     my ( $key, $value ) = @_;

@@ -402,7 +402,7 @@ sub require_classes_from_database {
 
     require Jifty::Model::ModelClassCollection;
     require Jifty::Model::ModelClass;
-    my $models = Jifty::Model::ModelClassCollection->new(current_user => Jifty::CurrentUser->superuser);
+    my $models = Jifty::Model::ModelClassCollection->new(current_user => Jifty->app_class('CurrentUser')->superuser);
     $models->unlimit();
     while (my $model = $models->next) {
         $model->instantiate();

@@ -4,9 +4,7 @@ use strict;
 package Jifty::Test;
 use base qw/Test::More/;
 
-use Jifty::YAML;
-use Jifty::Server;
-use Jifty::Script::Schema;
+use Jifty::Util;
 use Email::LocalDelivery;
 use Email::Folder;
 use File::Path;
@@ -119,8 +117,16 @@ symbols to the namespace that C<use>'d this one.
 sub import_extra {
     my $class = shift;
     my $args  = shift;
+
     $class->setup($args);
     Test::More->export_to_level(2);
+
+    # Now, clobber Test::Builder::plan (if we got given a plan) so we
+    # don't try to spit one out *again* later
+    if ($class->builder->has_plan) {
+        no warnings 'redefine';
+        *Test::Builder::plan = sub {};
+    }
 }
 
 =head2 setup ARGS
@@ -161,6 +167,17 @@ And later in your tests, you may do the following:
 
 sub setup {
     my $class = shift;
+    my $args = shift;
+
+    # Spit out a plan (if we got one) *before* we load modules, in
+    # case of compilation errors
+    $class->builder->plan(@{$args})
+      unless $class->builder->has_plan;
+
+    # Require the things we need
+    require Jifty::YAML;
+    require Jifty::Server;
+    require Jifty::Script::Schema;
 
     my $test_config = File::Temp->new( UNLINK => 0 );
     Jifty::YAML::DumpFile("$test_config", $class->test_config(Jifty::Config->new));
@@ -180,8 +197,8 @@ sub setup {
           use vars qw/$cache_key_prefix/;
 
           $cache_key_prefix = "jifty-test-" . $$;
-        
-          sub cache_key_prefix {
+          
+          *Jifty::Record::cache_key_prefix = sub {
               $Jifty::Record::cache_key_prefix;
           }
       }

@@ -49,6 +49,7 @@ use Jifty::Plugin::Authentication::Password::Record schema {
 column auth_token =>
   render_as 'unrendered',
   type is 'varchar(255)',
+  max_length is 255,
   default is '',
   label is _('Authentication token');
     
@@ -57,7 +58,9 @@ column auth_token =>
 column password =>
   is unreadable,
   label is _('Password'),
-  type is 'varchar(255)',
+  type is 'varchar(64)',
+  max_length is 64,
+  lenght is 16,
   hints is _('Your password should be at least six characters'),
   render_as 'password',
   filters are 'Jifty::DBI::Filter::SaltHash';
@@ -132,7 +135,7 @@ sub validate_password {
     return 1 if $self->has_alternative_auth();
 
     return ( 0, _('Passwords need to be at least six characters long') )
-        if length($new_value) < 6;
+        if  length($new_value) && length($new_value) < 6;
 
     return 1;
 }

@@ -105,10 +105,11 @@ See L<Jifty::Plugin::Authentication::Action::ResetLostPassword>.
 
 =cut
 
-template 'let/reset_lost_password' => page { title => 'Reset lost password' } content {
+template 'let/reset_lost_password' => page { title => _('Reset lost password') } content {
     my ( $next ) = get(qw(next));
     my $action = Jifty->web->new_action( class => 'ResetLostPassword' );
 
+    h1 { {class is 'title'};  _('Reset lost password')};
     Jifty->web->form->start( call => $next );
         render_param( $action => $_ ) for ( $action->argument_names );
         form_return( label => _("New password"), submit => $action );
@@ -143,6 +144,7 @@ template 'lost_password' => page { title => 'Send a link to reset your password'
         class   => 'SendPasswordReminder',
     );
 
+    h1 { {class is 'title'};  _('Send a link to reset your password')};
     outs( _(  "You lost your password. A link to reset it will be sent to the following email address:"));
     my $focused = 0;
     Jifty->web->form->start( call => $next );
@@ -150,35 +152,6 @@ template 'lost_password' => page { title => 'Send a link to reset your password'
             form_return( label => _(q{Send}), submit => $action);
     Jifty->web->form->end;
 
-};
-
-=head2 passwordreminder
-
-Starts the process of sending a link to reset a lost password by email.
-
-See L<Jifty::Plugin::Authentication::Password::SendPasswordReminder>.
-
-=begin comment
-
-What's the difference between lost_password and passwordreminder? -- Sterling
-
-=end comment
-
-=cut
-
-template 'passwordreminder' => page { title => 'Send a password reminder' } content {
-    my $next = get('next');
-    my $action = Jifty->web->new_action(
-        moniker => 'password_reminder',
-        class   => 'SendPasswordReminder',
-    );
-    h2 { _('Send a password reminder') };
-    p  { _(  "You lost your password. A reminder will be send to the following mail:") };
-
-    Jifty->web->form->start( call => $next );
-        render_param( $action => $_ ) for ( $action->argument_names );
-        form_return( label => _("Send"), submit => $action);
-    Jifty->web->form->end();
 };
 
 =head2 resend_confirmation

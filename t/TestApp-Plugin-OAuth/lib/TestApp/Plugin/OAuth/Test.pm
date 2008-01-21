@@ -66,7 +66,7 @@ sub response_is {
     my $consumer_secret = delete $params{consumer_secret}
         or die "consumer_secret not passed to response_is!";
 
-    if ($url !~ /request_token/) {
+    if ($url =~ /access_token/) {
         $token_secret ||= $token_obj->secret;
         $params{oauth_token} ||= $token_obj->token;
     }
@@ -130,9 +130,7 @@ sub sign {
           map { Jifty->web->escape_uri($_||'') }
               uc($method),
               $url,
-              $normalized_request_parameters,
-              $consumer_secret,
-              $token_secret;
+              $normalized_request_parameters;
 
     my $signature;
 
@@ -147,7 +145,7 @@ sub sign {
               $token_secret;
         my $hmac = Digest::HMAC_SHA1->new($key);
         $hmac->add($signature_base_string);
-        $signature = $hmac->b64digest;
+        $signature = encode_base64($hmac->digest, '');
     }
 
     return ($signature, $signature_base_string, $normalized_request_parameters)

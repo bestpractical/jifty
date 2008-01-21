@@ -5,7 +5,7 @@ use strict;
 use lib 't/lib';
 use Jifty::SubTest;
 
-use Jifty::Test tests => 22;
+use Jifty::Test tests => 27;
 use Jifty::Test::WWW::Mechanize;
 
 my $server  = Jifty::Test->make_server;
@@ -55,6 +55,15 @@ $mech->content_contains('<span class="error text  argument-foo" id="errors-J:A:F
 $mech->get_ok("$URL/__jifty/validator.xml?J:A-dosomething=TestApp::Action::DoSomethingElse&J:A:F-foo-dosomething=&J:A:F-bar-dosomething=blam&J:VALIDATE=1&_=",
     "Getting validator.xml output for a form entry");
 $mech->content_lacks('<error id="errors-J:A:F-bar-dosomething">', " ... validator didn't return error for bar");
+
+$mech->get_ok("$URL/__jifty/validator.xml?J:A-canontest=TestApp::Action::CreateCanonTest&J:A:F-column_1-canontest=f-f&J:VALIDATE=1",
+    "Getting validator.xml output for a form entry to check canonicalize_");
+$mech->content_contains('<update name="J:A:F-column_1-canontest">ff</update>');
+
+$mech->get_ok("$URL/__jifty/validator.xml?J:A-canontest=TestApp::Action::CreateCanonTest&J:A:F-column_1-canontest=%3Bf&J:VALIDATE=1",
+    "Getting validator.xml output for a form entry to check canonicalize_");
+$mech->content_lacks('<ignored name="J:A:F-column_1-canontest"');
+$mech->content_contains('<update name="J:A:F-column_1-canontest">f</update>');
 
 TODO: {
 local $TODO = "Not implemented in Jifty yet";

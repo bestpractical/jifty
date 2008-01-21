@@ -117,6 +117,8 @@ All of these changes will be made only to the production branch. In the upgrade 
 
 After you've copied your application onto the server, change into that directory and make any changes to your configuration required for production.
 
+Put all your site-specific changes in F<etc/site_config.yml> and never edit F<etc/config.yml>, as it will be overwritten with the next application update.
+
 Here are some things you'll want to consider changing:
 
 =over
@@ -195,7 +197,7 @@ Make sure to check over all the settings to make sure they will work in your pro
 
 If you've been developing your server using the default SQLite configuration, you will likely want to change this for your production server. SQLite might work for production environment, but chances are it will not.
 
-For your production system, you will probably want to modify the C<Driver> to suit your production environment. For example, if you were going to change to use a MySQL server, you might change your C<Database> configuration in F<etc/config.yml> to something like this:
+For your production system, you will probably want to modify the C<Driver> to suit your production environment. For example, if you were going to change to use a MySQL server, you might change your C<Database> configuration in F<etc/site_config.yml> to something like this:
 
   Database:
     Database: myapp
@@ -217,13 +219,17 @@ Please refer to your RDBMS documentation for full details on how to configure yo
 
 =head3 Configure the Web Server
 
-There are two primary ways to configure your web server. You can use FastCGI or you can use a proxy to the Jifty simple server. You will most likely want to do the former, but the configuration for the latter is presented for completeness.
+There are several ways to configure your web server. You can use FastCGI or mod_perl or you can use a proxy to the Jifty simple server. The first two options are what you will most likely want to do, but the proxy configuration is presented for completeness.
 
 =head4 Configuring FastCGI
 
 Several configurations are explained by the L<Jifty::Script::FastCGI/fastcgi> script that comes with Jifty. It is recommended that you take one of those and modify the configuration to suit your needs.
 
 It may take a few tries to get the configuration exactly right. Be sure to check the server logs for your web server when looking for problems.
+
+=head4 Configuring mod_perl
+
+Support for mod_perl version 2.0 is provided by L<Jifty::Script::ModPerl2>. Remember that you need to completely stop and start the Apache server after the Perl modules in your application are changed.
 
 =head4 Configuring a Proxy
 
@@ -239,6 +245,17 @@ Place that declaration in your main configuration or virtual host configuration 
   bin/jifty server
 
 Apache will proxy your server on port 80 for you. This may not work exactly as expected because the built-in server is intended for testing, not for a production environment. As such, it is not well-tested as a production server.
+
+=head3 Configure File Permissions
+
+The <var/> subdirectory in your application should be writable by the server process. If it runs as non-root UID (for example, FastCGI and Apache processes are usually running under the user named I<apache> or I<www> or something alike), you need to change the group or user permissions for this directory.
+
+For example, assume your application will run under user I<apache> and group I<apache>. Then the following commands should do the job:
+
+  chgrp -R apache var
+  chmod -R g+w var
+
+A more flexible way would be to create a new group I<myapp> and add I<apache> user in it. This allows you to maintain the application from non-root login and use C<sudo> for restarting Apache.
 
 =head3 All Systems Go
 

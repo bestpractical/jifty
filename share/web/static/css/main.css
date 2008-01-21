@@ -9,6 +9,8 @@
 @import "halos.css";
 @import "app.css";
 @import "autocomplete.css";
+@import "yui/calendar/calendar-core.css";
 @import "yui/calendar/calendar.css";
+@import "yui/menu/menu-core.css";
 @import "yui/menu/menu.css";
 @import "notices.css";

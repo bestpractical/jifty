@@ -42,6 +42,9 @@ on GET    '/=/action'           => \&list_actions;
 on POST   '/=/action/*'         => \&run_action;
 
 on GET    '/=/help'             => \&show_help;
+on GET    '/=/help/*'           => \&show_help_specific;
+
+on GET    '/=/version'          => \&show_version;
 
 =head2 show_help
 
@@ -75,6 +78,10 @@ on GET    /=/action                                  list actions
 on GET    /=/action/<action>                         list action params
 on POST   /=/action/<action>                         run action
 
+on GET    /=/help                                    this help page
+on GET    /=/help/search                             help for /=/search
+
+on GET    /=/version                                 version information
 
 Resources are available in a variety of formats:
 
@@ -91,6 +98,79 @@ specific format.
     last_rule;
 }
 
+=head2 show_help_specific
+
+Displays a help page about a specific topic. Will look for a method named
+C<show_help_specific_$1>.
+
+=cut
+
+sub show_help_specific {
+    my $topic = $1;
+    my $method = "show_help_specific_$topic";
+    __PACKAGE__->can($method) or abort(404);
+
+    my $apache = Jifty->handler->apache;
+
+    $apache->header_out('Content-Type' => 'text/plain; charset=UTF-8');
+    $apache->send_http_header;
+
+    print __PACKAGE__->$method;
+    last_rule;
+}
+
+=head2 show_help_specific_search
+
+Explains /=/search/ a bit more in-depth.
+
+=cut
+
+sub show_help_specific_search {
+    return << 'SEARCH';
+This interface supports searching arbitrary columns and values. For example, if
+you're looking at a Task with due date 1999-12-25 and complete, you can use:
+
+    /=/search/Task/due/1999-12-25/complete/1
+
+If you're looking for just the summaries of these tasks, you can use:
+
+    /=/search/Task/due/1999-12-25/complete/1/summary
+
+Any column in the model is eligible for searching. If you specify multiple
+values for the same column, they'll be ORed together. For example, if you're
+looking for Tasks with due dates 1999-12-25 OR 2000-12-25, you can use:
+
+    /=/search/Task/due/1999-12-25/due/2000-12-25/
+
+There are also some pseudo-columns that affect the results, but are not columns
+that are searched:
+
+    .../__order_by/<column>
+    .../__order_by_asc/<column>
+    .../__order_by_desc/<column>
+
+These let you change the output order of the results. Multiple '__order_by's
+will be respected.
+
+    .../__page/<number>
+    .../__per_page/<number>
+
+These let you control how many results you'll get.
+SEARCH
+}
+
+=head2 show_version
+
+Displays versions of the various bits of your application.
+
+=cut
+
+sub show_version {
+    outs(['version'], {
+        Jifty => $Jifty::VERSION,
+        REST  => $Jifty::Plugin::REST::VERSION,
+    });
+}
 
 =head2 list PREFIX items
 
@@ -135,16 +215,11 @@ sub outs {
     elsif ($accept =~ /json/i) {
         $apache->header_out('Content-Type' => 'application/json; charset=UTF-8');
         $apache->send_http_header;
-        print Jifty::JSON::objToJson( @_, { singlequote => 1 } );
+        print Jifty::JSON::objToJson( @_ );
     }
     elsif ($accept =~ /j(?:ava)?s|ecmascript/i) {
         $apache->header_out('Content-Type' => 'application/javascript; charset=UTF-8');
         $apache->send_http_header;
-	# XXX: temporary hack to fix _() that aren't respected by json dumper
-	for (values %{$_[0]}) {
-	    $_->{label} = "$_->{label}" if exists $_->{label} && defined ref $_->{label};
-	    $_->{hints} = "$_->{hints}" if exists $_->{hints} && defined ref $_->{hints};
-	}
         print 'var $_ = ', Jifty::JSON::objToJson( @_, { singlequote => 1 } );
     }
     elsif ($accept =~ qr{^(?:application/x-)?(?:perl|pl)$}i) {
@@ -436,9 +511,7 @@ sub show_item {
     my $rec = $model->new;
     $rec->load_by_cols( $column => $key );
     $rec->id or abort(404);
-    outs( ['model', $model, $column, $key], 
-        { map { $_ => Jifty::Util->stringify($rec->$_()) }
-              map {$_->name} $rec->columns});
+    outs( ['model', $model, $column, $key], $rec->jifty_serialize_format );
 }
 
 =head2 search_items $model, [c1, v1, c2, v2, ...] [, $field]
@@ -449,12 +522,34 @@ be the output column. Otherwise, all items will be returned.
 
 Will throw a 404 if there were no matches, or C<$field> was invalid.
 
+Pseudo-columns:
+
+=over 4
+
+=item __per_page => N
+
+Return the collection as N records per page.
+
+=item __page => N
+
+Return page N of the collection
+
+=item __order_by => C<column>
+
+Order by the given column, ascending.
+
+=item __order_by_desc => C<column>
+
+Order by the given column, descending.
+
+=back
+
 =cut
 
 sub search_items {
     my ($model, $fragment) = (model($1), $2);
     my @pieces = grep {length} split '/', $fragment;
-    my @orig = @pieces;
+    my $ret = ['search', $model, @pieces];
 
     # if they provided an odd number of pieces, the last is the output column
     my $field;
@@ -465,24 +560,98 @@ sub search_items {
     # limit to the key => value pairs they gave us
     my $collection = eval { $model->collection_class->new }
         or abort(404);
+    $collection->unlimit;
 
-    # no pieces? they must be asking for everything
-    if (!@pieces) {
-        $collection->unlimit;
-    }
+    my $record = $model->new
+        or abort(404);
+
+    my $added_order = 0;
+    my $per_page;
+    my $current_page = 1;
+
+    my %special = (
+        __per_page => sub {
+            my $N = shift;
+
+            # must be a number
+            $N =~ /^\d+$/
+                or abort(404);
+
+            $per_page = $N;
+        },
+        __page => sub {
+            my $N = shift;
+
+            # must be a number
+            $N =~ /^\d+$/
+                or abort(404);
+
+            $current_page = $N;
+        },
+        __order_by => sub {
+            my $col = shift;
+            my $order = shift || 'ASC';
+
+            # this will wipe out the default ordering on your model the first
+            # time around
+            if ($added_order) {
+                $collection->add_order_by(
+                    column => $col,
+                    order  => $order,
+                );
+            }
+            else {
+                $added_order = 1;
+                $collection->order_by(
+                    column => $col,
+                    order  => $order,
+                );
+            }
+        },
+    );
+
+    # this was called __limit before it was generalized
+    $special{__limit} = $special{__per_page};
+
+    # /__order_by/name/desc is impossible to distinguish between ordering by
+    # 'name', descending, and ordering by 'name', with output column 'desc'.
+    # so we use __order_by_desc instead (and __order_by_asc is provided for
+    # consistency)
+    $special{__order_by_asc}  = $special{__order_by};
+    $special{__order_by_desc} = sub { $special{__order_by}->($_[0], 'DESC') };
 
     while (@pieces) {
         my $column = shift @pieces;
         my $value  = shift @pieces;
 
-        $collection->limit(column => $column, value => $value);
+        if (exists $special{$column}) {
+            $special{$column}->($value);
+        }
+        else {
+            my $canonicalizer = "canonicalize_$column";
+            $value = $record->$canonicalizer($value)
+                if $record->can($canonicalizer);
+
+            $collection->limit(column => $column, value => $value);
+        }
     }
 
-    $collection->count or abort(404);
+    if (defined($per_page) || defined($current_page)) {
+        $per_page = 15 unless defined $per_page;
+        $current_page = 1 unless defined $current_page;
+        $collection->set_page_info(
+            current_page => $current_page,
+            per_page     => $per_page,
+        );
+    }
+
+    $collection->count                       or return outs($ret, []);
+    $collection->pager->entries_on_this_page or return outs($ret, []);
 
     # output
     if (defined $field) {
-        my $item = $collection->first;
+        my $item = $collection->first
+            or return outs($ret, []);
 
         # make sure $field exists and is a real column
         $item->can($field)    or abort(404);
@@ -495,16 +664,10 @@ sub search_items {
             push @values, $item->$field;
         } while $item = $collection->next;
 
-        outs(
-            ['search', $model, @orig],
-            \@values,
-        );
+        outs($ret, \@values);
     }
     else {
-        outs(
-            ['search', $model, @orig],
-            $collection->jifty_serialize_format,
-        );
+        outs($ret, $collection->jifty_serialize_format);
     }
 }
 

@@ -1,7 +1,5 @@
-=== share/web/static/js/yui/calendar.js
-==================================================================
---- share/web/static/js/yui/calendar.js	(revision 24788)
-+++ share/web/static/js/yui/calendar.js	(local)
+--- calendar.js.orig	2007-12-18 15:42:56.000000000 -0500
++++ calendar.js	2008-01-19 17:38:05.000000000 -0500
 @@ -1,4 +1,8 @@
  /*
 +    This file has been PATCHED by trs to allow selecting of out of month dates.
@@ -11,44 +9,97 @@
  Copyright (c) 2007, Yahoo! Inc. All rights reserved.
  Code licensed under the BSD License:
  http://developer.yahoo.net/yui/license.txt
-@@ -903,6 +907,7 @@
- 	MINDATE : {key:"mindate", value:null},
- 	MAXDATE : {key:"maxdate", value:null},
- 	MULTI_SELECT : {key:"multi_select",	value:false},
-+	OOM_SELECT : {key:"oom_select",	value:false},
- 	START_WEEKDAY : {key:"start_weekday", value:0},
- 	SHOW_WEEKDAYS : {key:"show_weekdays", value:true},
+@@ -1166,6 +1170,7 @@
  	SHOW_WEEK_HEADER : {key:"show_week_header", value:false},
-@@ -1505,6 +1510,14 @@
- 	*/
- 	this.cfg.addProperty(defCfg.MULTI_SELECT.key,	{ value:defCfg.MULTI_SELECT.value, handler:this.configOptions, validator:this.cfg.checkBoolean } );
- 
+ 	SHOW_WEEK_FOOTER : {key:"show_week_footer", value:false},
+ 	HIDE_BLANK_WEEKS : {key:"hide_blank_weeks", value:false},
++	OUT_OF_MONTH_SELECT : {key:"out_of_month_select", value:false},
+ 	NAV_ARROW_LEFT: {key:"nav_arrow_left", value:null} ,
+ 	NAV_ARROW_RIGHT : {key:"nav_arrow_right", value:null} ,
+ 	MONTHS_SHORT : {key:"months_short", value:["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]},
+@@ -1953,6 +1958,14 @@
+ 		*/	
+ 		this.cfg.addProperty(defCfg.HIDE_BLANK_WEEKS.key, { value:defCfg.HIDE_BLANK_WEEKS.value, handler:this.configOptions, validator:this.cfg.checkBoolean } );
+ 		
++        /**
++        * True if the Calendar should allow out of month selections. false by default.
++        * @config OUT_OF_MONTH_SELECT
++        * @type Boolean
++        * @default false
++        */
++        this.cfg.addProperty(defCfg.OUT_OF_MONTH_SELECT.key, { value:defCfg.OUT_OF_MONTH_SELECT.value, handler:this.configOptions, validator:this.cfg.checkBoolean } );
++
+ 		/**
+ 		* The image that should be used for the left navigation arrow.
+ 		* @config NAV_ARROW_LEFT
+@@ -2762,6 +2775,8 @@
+ 		var mindate = this.cfg.getProperty(defCfg.MINDATE.key);
+ 		var maxdate = this.cfg.getProperty(defCfg.MAXDATE.key);
+ 	
++        var outOfMonthSelect = this.cfg.getProperty(defCfg.OUT_OF_MONTH_SELECT.key);
++
+ 		if (mindate) {
+ 			mindate = YAHOO.widget.DateMath.clearTime(mindate);
+ 		}
+@@ -2785,7 +2800,7 @@
+ 			weekClass = weekPrefix + weekNum;
+ 	
+ 			// Local OOM check for performance, since we already have pagedate
+-			if (r !== 0 && hideBlankWeeks === true && workingDate.getMonth() != useDate.getMonth()) {
++			if (r !== 0 && hideBlankWeeks === true && workingDate.getMonth() != useDate.getMonth() && !outOfMonthSelect) {
+ 				break;
+ 			} else {
+ 	
+@@ -2812,7 +2827,11 @@
+ 					
+ 					// Local OOM check for performance, since we already have pagedate
+ 					if (workingDate.getMonth() != useDate.getMonth()) {
+-						cellRenderers[cellRenderers.length]=cal.renderCellNotThisMonth;
++                        if (outOfMonthSelect) {
++                            cellRenderers[cellRenderers.length]=cal.renderCellStyleNotThisMonth;
++                        } else {
++                            cellRenderers[cellRenderers.length]=cal.renderCellNotThisMonth;
++                        }
+ 					} else {
+ 						YAHOO.util.Dom.addClass(cell, workingDayPrefix + workingDate.getDay());
+ 						YAHOO.util.Dom.addClass(cell, dayPrefix + workingDate.getDate());
+@@ -3257,6 +3276,16 @@
+ 		YAHOO.util.Dom.addClass(cell, this.Style.CSS_CELL_TODAY);
+ 	},
+ 	
 +    /**
-+    * True if the Calendar should allow selection of out-of-month dates. False by default.
-+    * @config OOM_SELECT
-+    * @type Boolean
-+    * @default false
++    * Styles an out of month cell.
++    * @method renderCellStyleNotThisMonth
++    * @param {Date}					workingDate		The current working Date object being used to generate the calendar
++    * @param {HTMLTableCellElement}	cell			The current working cell in the calendar
 +    */
-+    this.cfg.addProperty(defCfg.OOM_SELECT.key,      { value:defCfg.OOM_SELECT.value, handler:this.configOptions, validator:this.cfg.checkBoolean } );
++    renderCellStyleNotThisMonth : function(workingDate, cell) {
++        YAHOO.util.Dom.addClass(cell, this.Style.CSS_CELL_OOM);
++    },
 +
  	/**
- 	* The weekday the week begins on. Default is 0 (Sunday).
- 	* @config START_WEEKDAY
-@@ -2176,7 +2189,7 @@
- 		weekClass = weekPrefix + weekNum;
- 
- 		// Local OOM check for performance, since we already have pagedate
--		if (r !== 0 && hideBlankWeeks === true && workingDate.getMonth() != useDate.getMonth()) {
-+		if (r !== 0 && hideBlankWeeks === true && workingDate.getMonth() != useDate.getMonth() && !this.cfg.getProperty(defCfg.OOM_SELECT.key)) {
- 			break;
- 		} else {
- 
-@@ -2203,7 +2216,7 @@
- 				this.cellDates[this.cellDates.length] = workingArray; // Add this date to cellDates
- 				
- 				// Local OOM check for performance, since we already have pagedate
--				if (workingDate.getMonth() != useDate.getMonth()) {
-+				if (workingDate.getMonth() != useDate.getMonth() && !this.cfg.getProperty(defCfg.OOM_SELECT.key)) {
- 					cellRenderers[cellRenderers.length]=cal.renderCellNotThisMonth;
- 				} else {
- 					YAHOO.util.Dom.addClass(cell, workingDayPrefix + workingDate.getDay());
+ 	* Applies the default style used for rendering selected dates to the current calendar cell
+ 	* @method renderCellStyleSelected
+@@ -4473,6 +4502,14 @@
+ 		*/		
+ 		this.cfg.addProperty(defCfg.HIDE_BLANK_WEEKS.key,{ value:defCfg.HIDE_BLANK_WEEKS.value, handler:this.delegateConfig, validator:this.cfg.checkBoolean } );
+ 		
++        /**
++        * True if the Calendar should allow out of month selections. false by default.
++        * @config OUT_OF_MONTH_SELECT
++        * @type Boolean
++        * @default false
++        */
++        this.cfg.addProperty(defCfg.OUT_OF_MONTH_SELECT.key,{ value:defCfg.OUT_OF_MONTH_SELECT.value, handler:this.delegateConfig, validator:this.cfg.checkBoolean } );
++
+ 		/**
+ 		* The image that should be used for the left navigation arrow.
+ 		* @config NAV_ARROW_LEFT
+@@ -5474,6 +5511,7 @@
+ 																 "renderCellStyleToday",
+ 																 "renderCellStyleSelected",
+ 																 "renderCellNotThisMonth",
++																 "renderCellStyleNotThisMonth",
+ 																 "renderBodyCellRestricted",
+ 																 "initStyles",
+ 																 "configTitle",

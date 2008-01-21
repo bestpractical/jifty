@@ -18,7 +18,7 @@ sub import
     Test::More->import(@_);
 
     # set up database and other things
-    Jifty::Test->setup($class);
+    Jifty::Test->setup(\@_);
 
     # export the DSL-ey functions
     Test::WWW::Declare->export_to_level(2);

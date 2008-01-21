@@ -6,7 +6,7 @@ use base qw/Jifty::Object/;
 use CGI::Cookie ();
 use DateTime ();
 use Storable ();
- 
+
 =head1 NAME
 
 Jifty::Web::Session - A Jifty session handler
@@ -316,6 +316,10 @@ Sets the session cookie.
 
 sub set_cookie {
     my $self = shift;
+
+    # never send a cookie with cached content. misbehaving proxies cause
+    # terrific problems
+    return if Jifty->handler->apache->header_out('Expires');
 
     my $cookie_name = $self->cookie_name;
     my %cookies     = CGI::Cookie->fetch();

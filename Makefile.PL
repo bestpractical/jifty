@@ -24,14 +24,14 @@ requires('DateTime::Locale');
 requires('Date::Manip');
 requires('Email::Folder');
 requires('Email::LocalDelivery' => 0.217 );
-requires('Email::MIME');
-requires('Email::MIME::Creator');
-requires('Email::MIME::ContentType');
+requires('Email::MIME' => 1.861);
+requires('Email::MIME::Creator' => 1.450 );
+requires('Email::MIME::ContentType' => 1.012 );
 requires('Email::MIME::CreateHTML');
-requires('Email::MIME::Modifier');
-requires('Email::Send' => '1.99_01'); # Email::Send::Jifty::Test
-requires('Email::Simple');
-requires('Email::Simple::Creator');
+requires('Email::MIME::Modifier' => 1.442 );
+requires('Email::Send' => '2.0'); # Email::Send::Jifty::Test
+requires('Email::Simple' => 2.003);
+requires('Email::Simple::Creator' => 1.400 );
 requires('Exporter::Lite');
 requires('File::Find::Rule');
 requires('File::MMagic');
@@ -169,7 +169,7 @@ features(
     ],
     'OAuth Plugin' => [
         -default => 0,
-        recommends('Net::OAuth::Request' => '0.04'), # Net::OAuth::RequestTokenRequest Net::OAuth::AccessTokenRequest Net::OAuth::ProtectedResourceRequest
+        recommends('Net::OAuth::Request' => '0.05'), # Net::OAuth::RequestTokenRequest Net::OAuth::AccessTokenRequest Net::OAuth::ProtectedResourceRequest
         recommends('Crypt::OpenSSL::RSA'),
         recommends('Digest::HMAC_SHA1'),
     ],
