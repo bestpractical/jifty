@@ -1000,7 +1000,7 @@ var apply_fragment_updates = function(fragment, f) {
                         Top: 'prepend'
                     })[ f['mode'] ];
 
-                    jQuery(element)[method]( textContent );
+                    (jQuery(element)[method])( textContent );
                 } else {
                     jQuery(element).html( textContent );
                 }
@@ -1012,15 +1012,17 @@ var apply_fragment_updates = function(fragment, f) {
 
     // Also, set us up the effect
     if (f['effect']) {
-        var effect = Jifty.Effect(f['effect'], f['effect_args']);
-        var el     = Jifty.$('region-'+f['region']);
-
-        if (effect) {
-            if(f['is_new'])
-                jQuery( el ).hide();
-            
-            effect( el );
-        }
+        Jifty.Effect(
+            Jifty.$('region-'+f['region']),
+            f['effect'],
+            f['effect_args'],
+            {
+                before: function() {
+                    if(f['is_new']) 
+                        jQuery(this).hide();
+                }
+            }
+        );
     }
 }
 
@@ -1584,37 +1586,61 @@ function _sp_submit_form(elt, event, submit_to) {
 }
 
 /*
- * my f = new Jifty.Effect("show", { duration: 2.0 });
- *
- * f( element );
+ * Jifty.Effect Usage:
  * 
+ * Jifty.Effect(element, "Fade", { duration: 2.0 });
+ * 
+ * When called, instantly pefrom a js effect on give element.
+ *
+ * The last arg "option" is a hash. Currently it's only used for
+ * specificing callbacks. There are two possible callbacks, before
+ * and after. You may specify them like this:
+ * 
+ * Jifty.Effect(element, "Fade", { duration: 2.0 }, {
+ *     before: function() { ... },
+ *     after: function() { ... }
+ * });
+ *
+ * The "before" callback is called right before the effect starts.
+ * The "after" callback is called right after it's started, but not
+ * necessarily ended.
+ *
+ * This function is written to make it possible that a Jifty plugin
+ * can override default effects with other fancy javascript
+ * libraries. By default, it delegates all the real work to
+ * jQuery's built-in effect functions.
+ *
  */
 
-Jifty.Effect = function(name, args) {
-    // Scriptaculous
+Jifty.Effect = function(el, name, args, options) {
+    // Scriptaculous. TODO: This should be overrided by Jifty::Prototype plugins instead of coded in here.
     if (typeof Effect != 'undefined') {
-        return function(el) {
-            try {
-                var effect = eval('Effect.' + name);
-                var effect_args  = args || {};
-                if (effect) {
-                    (effect)(el, effect_args);
-                }
-                return effect;
-            } catch ( e ) {}
-        };
+        try {
+            var effect = eval('Effect.' + name);
+            var effect_args  = args || {};
+            if (effect) {
+                (effect)(el, effect_args);
+            }
+            return effect;
+        } catch ( e ) {}
     }
 
     // jQuery built-ins
-    return function(el) {
-        try {
-            var effect =
-                name == 'Fade' ? 'fadeOut' :
-                name == 'Appear' ? 'fadeIn' :
-                name == 'SlideDown' ? 'slideDown' :
-                name == 'SlideUp' ? 'slideUp' :
-                name;
-            ( jQuery(el)[ effect ] )(args);
-        } catch(e) { }
-    };
+    var effect =
+        name == 'Fade' ? 'fadeOut' :
+        name == 'Appear' ? 'fadeIn' :
+        name == 'SlideDown' ? 'slideDown' :
+        name == 'SlideUp' ? 'slideUp' :
+        name;
+
+    if (jQuery.isFunction( jQuery(el)[ effect ] ) ) {
+        if ( jQuery.isFunction(options["before"])  ) 
+            options["before"].call( el );
+
+        ( jQuery(el)[ effect ] )(args);
+
+        if ( jQuery.isFunction(options["after"])  ) 
+            options["after"].call( el );
+    }
 };
+

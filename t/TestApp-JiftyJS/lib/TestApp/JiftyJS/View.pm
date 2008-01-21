@@ -72,7 +72,7 @@ template '/1-jifty-update.html' => page {
 };
 
 template 'hello_world' => sub {
-    p { "Hello, " . ( get('name') || "World" ) }
+    p { "Time: " . time . ". Hello, " . ( get('name') || "World" ) };
 };
 
 template 'region1' => sub {
@@ -202,16 +202,16 @@ template '/effects' => page {
 
 
     hyperlink(
-        label => "Clear Region",
+        label => "Reset",
         onclick => {
             region => "content",
-            replace_with => "/__jifty/empty"
+            replace_with => "hello_world"
         }
     );
 
     hr {};
 
-    render_region( name => 'content' );
+    render_region( name => 'content', path => "hello_world" );
 };
 
 
