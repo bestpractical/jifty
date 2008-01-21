@@ -60,6 +60,10 @@ div#jifty-wait-message {
     float: right;
 }
 
+div#jifty-region, div#jifty-region-lazy {
+    display: inline;
+}
+
 
 
 div.warning {

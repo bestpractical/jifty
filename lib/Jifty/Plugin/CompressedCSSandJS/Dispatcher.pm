@@ -41,8 +41,11 @@ on '/__jifty/js/*' => run {
         return;
     }
 
+
     Jifty->handler->apache->content_type("application/x-javascript");
-    Jifty->handler->apache->header_out( 'Expires' => HTTP::Date::time2str( time + 31536000 ) );
+    Jifty->handler->apache->header_out( 'Cache-Control' => 'max-age=259200, public' );
+    Jifty->handler->apache->header_out( Expires => HTTP::Date::time2str( time() + 31536000 ) ) ;    # Expire in a year
+    Jifty->handler->apache->header_out( 'Last-Modified' => HTTP::Date::time2str($^T) );
 
     # XXX TODO: If we start caching the squished JS in a file somewhere, we
     # can have the static handler serve it, which would take care of gzipping
@@ -83,7 +86,9 @@ on '/__jifty/css/*' => run {
     }
 
     Jifty->handler->apache->content_type("text/css");
-    Jifty->handler->apache->header_out( 'Expires' => HTTP::Date::time2str( time + 31536000 ) );
+    Jifty->handler->apache->header_out( 'Cache-Control' => 'max-age=259200, public' );
+    Jifty->handler->apache->header_out( Expires => HTTP::Date::time2str( time() + 31536000 ) ) ;    # Expire in a year
+    Jifty->handler->apache->header_out( 'Last-Modified' => HTTP::Date::time2str($^T) );
 
     # XXX TODO: If we start caching the squished CSS in a file somewhere, we
     # can have the static handler serve it, which would take care of gzipping

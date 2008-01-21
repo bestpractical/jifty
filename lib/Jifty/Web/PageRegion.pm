@@ -289,9 +289,9 @@ sub as_string {
             . qq|);\n|
             . qq|</script>|;
         if ($self->lazy) {
-            return $result .  qq|<div id="region-| . $self->qualified_name . qq|" class="lazy_region"></div>|;
+            return $result .  qq|<div id="region-| . $self->qualified_name . qq|" class="jifty-region-lazy"></div>|;
         }
-        $result .= qq|<div id="region-| . $self->qualified_name . qq|">|;
+        $result .= qq|<div id="region-| . $self->qualified_name . qq|" class="jifty-region">|;
     }
 
     $self->render_as_subrequest(\$result, \%arguments);
