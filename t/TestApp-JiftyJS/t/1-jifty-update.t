@@ -37,6 +37,8 @@ my $URL    = $server->started_ok;
 
     $sel->click_ok("prepend-region");
     $sel->wait_for_text_present_ok("Hello, World");
+    $sel->pause();
+
     $src = $sel->get_html_source();
 
     like $src, qr{<div id="region-content-content-.+">\n<p>Hello, World</p></div>\n<p>Hello, Smith</p><div id="region-content-content-.+">\n<p>Hello, World</p></div>};
@@ -63,5 +65,4 @@ my $URL    = $server->started_ok;
 }
 
 $sel->stop;
-
 

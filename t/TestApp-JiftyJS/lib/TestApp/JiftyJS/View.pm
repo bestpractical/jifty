@@ -72,7 +72,8 @@ template '/1-jifty-update.html' => page {
 };
 
 template 'hello_world' => sub {
-    p { "Time: " . time . ". Hello, " . ( get('name') || "World" ) };
+    p {  (get('with_time') ? "Time: " . time . ". " : "")
+             . "Hello, " . ( get('name') || "World" ) };
 };
 
 template 'region1' => sub {
@@ -176,6 +177,7 @@ template '/effects' => page {
                 append => 'hello_world',
                 region => 'content',
                 args => {
+                    with_time => 1,
                     name => "Append with effect $_"
                 },
                 effect => $_,
@@ -190,6 +192,7 @@ template '/effects' => page {
                 prepend => 'hello_world',
                 region => 'content',
                 args => {
+                    with_time => 1,
                     name => "Prepend with effect $_"
                 },
                 effect => $_,
