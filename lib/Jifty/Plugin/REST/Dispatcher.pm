@@ -397,7 +397,7 @@ sub _resolve {
     $name =~ s/\W+/\\W+/g;
 
     foreach my $cls (@_) {
-        return $cls if $cls =~ /$name$/i;
+        return $cls if $cls =~ /::$name$/i;
     }
 
     abort(404);
