@@ -399,10 +399,10 @@ sub _resolve {
 
     return $name if $name->isa($base);
 
-    $name =~ s/\W+/\\W+/g;
+    my $re = qr/(?:^|::)\Q$name\E$/i;
 
     foreach my $cls (@_) {
-        return $cls if $cls =~ /::$name$/i;
+        return $cls if $cls =~ $re;
     }
 
     abort(404);
