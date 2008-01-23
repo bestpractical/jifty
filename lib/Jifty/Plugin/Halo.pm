@@ -3,6 +3,7 @@ use warnings;
 
 package Jifty::Plugin::Halo;
 use base qw/Jifty::Plugin/;
+use Class::Trigger;
 
 =head1 NAME
 
@@ -33,10 +34,6 @@ sub init {
 
 }
 
-sub post_init {
-    Jifty->handle->log_sql_statements(1);
-}
-
 # parts of why this is.. weird is because we want to play nicely with Mason
 # halos
 sub around_template {
@@ -45,12 +42,6 @@ sub around_template {
     my $STACK       = Jifty->handler->stash->{'_halo_stack'} ||= [];
     my $DEPTH       = ++Jifty->handler->stash->{'_halo_depth'};
     my $ID          = Jifty->web->serial;
-
-    # if we have queries at this point, they belong to the previous template
-    if (@$STACK) {
-        push @{$STACK->[-1]->{sql_statements}}, Jifty->handle->sql_statement_log;
-        Jifty->handle->clear_sql_statement_log;
-    }
 
     # for now, call the last piece of the template's path the name
     $path =~ m{.*/(.+)};
@@ -67,15 +58,19 @@ sub around_template {
         depth        => $DEPTH,
     };
 
+    # if this is the first frame, discard anything from the previous queries
+    my $previous = $STACK->[-1] || {};
+
     push @$STACK, $frame;
     my $STACK_INDEX = $#$STACK;
 
-    Jifty->web->out(qq{<div id="halo-$ID">});
+    $self->call_trigger('halo_pre_template', frame => $frame, previous => $previous);
+
+    Jifty->web->out(qq{<div id="halo-$ID" class="halo">});
     $orig->();
     Jifty->web->out(qq{</div>});
 
-    push @{$frame->{sql_statements}}, Jifty->handle->sql_statement_log;
-    Jifty->handle->clear_sql_statement_log;
+    $self->call_trigger('halo_post_template', frame => $frame, previous => $previous);
 
     --Jifty->handler->stash->{'_halo_depth'};
 }

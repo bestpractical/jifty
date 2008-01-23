@@ -6,6 +6,7 @@ use warnings;
 
 our @requests;
 our @slow_queries;
+our @halo_queries;
 
 =head1 NAME
 
@@ -102,7 +103,7 @@ sub after_request {
     my $cgi = shift;
 
     my $total_time = 0;
-    my @log = Jifty->handle->sql_statement_log();
+    my @log = (splice @halo_queries), Jifty->handle->sql_statement_log();
     for (@log) {
         my ($time, $statement, $bindings, $duration, $results) = @$_;
 
@@ -127,6 +128,45 @@ sub after_request {
         time => scalar gmtime,
         queries => \@log,
     };
+}
+
+=head2 halo_pre_template
+
+Log any queries made to the previous template. Also, keep track of whatever
+queries made so the rest of the plugin can see them (since we clear the log)
+
+=cut
+
+sub halo_pre_template {
+    my $self = shift;
+    my $halo = shift;
+    my %args = @_;
+
+    push @{ $args{previous}{sql_statements} }, Jifty->handle->sql_statement_log;
+    push @halo_queries, Jifty->handle->sql_statement_log;
+
+    Jifty->handle->clear_sql_statement_log;
+}
+
+=head2 halo_post_template
+
+Log any queries made to the current template. Also, keep track of whatever
+queries made so the rest of the plugin can see them (since we clear the log)
+
+XXX: can this somehow be refactored into one function? If the same pattern
+occurs elsewhere I'll look into it.
+
+=cut
+
+sub halo_post_template {
+    my $self = shift;
+    my $halo = shift;
+    my %args = @_;
+
+    push @{ $args{frame}{sql_statements} }, Jifty->handle->sql_statement_log;
+    push @halo_queries, Jifty->handle->sql_statement_log;
+
+    Jifty->handle->clear_sql_statement_log;
 }
 
 =head1 COPYRIGHT AND LICENSE

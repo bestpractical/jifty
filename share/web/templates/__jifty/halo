@@ -142,7 +142,7 @@ while (my ($key, $value) = splice(@{$frame->{args}},0,2)) {
 @args = sort {$a->[0] cmp $b->[0]} @args;
 
 my $prev = '';
-my @stmts = @{$frame->{'sql_statements'}};
+my @stmts = @{$frame->{'sql_statements'} || []};
 
 </%init>
 </%def>
