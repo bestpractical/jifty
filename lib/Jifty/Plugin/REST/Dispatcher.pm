@@ -392,6 +392,11 @@ sub model  { _resolve($_[0], 'Jifty::Record', Jifty->class_loader->models) }
 sub _resolve {
     my $name = shift;
     my $base = shift;
+
+    # we display actions as "AppName.Action.Foo", so we want to convert those
+    # heathen names to be Perl-style
+    $name =~ s/\./::/g;
+
     return $name if $name->isa($base);
 
     $name =~ s/\W+/\\W+/g;
