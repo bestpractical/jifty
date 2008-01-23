@@ -20,6 +20,7 @@ a bug).
 
 sub init {
     my $self = shift;
+    return if $self->_pre_init;
 
     # 0.28 added around_template instrumentation
     eval { Template::Declare->VERSION('0.28'); 1 }
@@ -40,9 +41,9 @@ sub init {
 sub around_template {
     my ($self, $orig, $path, $args) = @_;
 
+    my $ID          = Jifty->web->serial;
     my $STACK       = Jifty->handler->stash->{'_halo_stack'} ||= [];
     my $DEPTH       = ++Jifty->handler->stash->{'_halo_depth'};
-    my $ID          = Jifty->web->serial;
 
     # for now, call the last piece of the template's path the name
     $path =~ m{.*/(.+)};
@@ -67,16 +68,54 @@ sub around_template {
 
     $self->call_trigger('halo_pre_template', frame => $frame, previous => $previous);
 
-    Jifty->web->out(qq{<div id="halo-$ID" class="halo">});
+    Template::Declare->buffer->append($self->halo_header($frame));
     $orig->();
-    Jifty->web->out(qq{</div>});
+    Template::Declare->buffer->append($self->halo_footer($frame));
 
-    $frame->{'render_time'} = int((time - $frame->{'start_time'}) * 1000)/1000
-        unless defined $frame->{'render_time'};
+    $frame->{'end_time'} = time;
 
     $self->call_trigger('halo_post_template', frame => $frame, previous => $previous);
 
     --Jifty->handler->stash->{'_halo_depth'};
 }
+
+sub halo_header {
+    my $self  = shift;
+    my $frame = shift;
+    my $id    = $frame->{id};
+
+    return << "    HEADER";
+        <div id="halo-$id" class="halo">
+            <div class="halo_header">
+                <span class="halo_name">
+                    $frame->{name}
+                </span>
+                <span class="halo_rendermode">
+                    [
+                    <a style="font-weight: bold"
+                       id="halo-render-$id"
+                       onclick="halo_render('$id'); return false"
+                       href="#">R</a>
+                    |
+                    <a id="halo-source-$id"
+                       onclick="halo_source('$id'); return false"
+                       href="#">S</a>
+                    ]
+                </span>
+            </div>
+            <div id="halo-inner-$id">
+    HEADER
+}
+
+sub halo_footer {
+    my $self  = shift;
+    my $frame = shift;
+
+    return << "    FOOTER";
+            </div>
+        </div>
+    FOOTER
+}
+
 
 1;

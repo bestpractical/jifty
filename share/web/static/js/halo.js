@@ -62,3 +62,52 @@ function resizeX (x, grip, window) {
     window.style.width = newWidth;
     grip.xFrom = x;
 }
+
+function render_info_tree() {
+    var halo_header_display = 'none';
+    var halo_border = '0';
+
+    var info_tree = $("render_info_tree");
+    Element.toggle(info_tree);
+
+    if (Element.visible(info_tree)) {
+        halo_header_display = 'block';
+        halo_border = '2px solid #666666';
+    }
+
+    YAHOO.util.Dom.getElementsByClassName("halo_header", null, null,
+        function (e) {
+            e.style.display = halo_header_display;
+        }
+    );
+
+    YAHOO.util.Dom.getElementsByClassName("halo", null, null,
+        function (e) {
+            e.style.border = halo_border;
+        }
+    );
+
+}
+
+function halo_render(id) {
+    $('halo-render-'+id).style.fontWeight = 'bold';
+    $('halo-source-'+id).style.fontWeight = 'normal';
+
+    var e = $('halo-inner-'+id);
+    if (e.halo_rendered) {
+        e.innerHTML = e.halo_rendered;
+        e.halo_rendered = null;
+    }
+}
+
+function halo_source(id) {
+    $('halo-source-'+id).style.fontWeight = 'bold';
+    $('halo-render-'+id).style.fontWeight = 'normal';
+
+    var e = $('halo-inner-'+id);
+    if (!e.halo_rendered) {
+        e.halo_rendered = e.innerHTML;
+        e.innerHTML = '<div class="halo_source">' + e.innerHTML.escapeHTML() + '</div>';
+    }
+}
+

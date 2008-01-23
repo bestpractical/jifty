@@ -1,3 +1,15 @@
+.halo {
+}
+
+.halo_header {
+    display: none;
+    border-bottom: 1px dotted #666666;
+}
+
+.halo_source {
+    font-family: monospace;
+}
+
 .halo_actions {
     position: fixed;
     border: 1px solid black;
