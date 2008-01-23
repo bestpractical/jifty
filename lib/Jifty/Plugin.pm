@@ -65,13 +65,25 @@ sub new {
     # plugins are loaded, initialized, and prereq-examined in the order they're
     # listed in the config files. Instead, each phase should be separate.
     Jifty::Util->require("Jifty::Plugin::Halo");
-    Jifty::Plugin::Halo->add_trigger(
-        halo_pre_template  => sub { $self->halo_pre_template(@_) },
-    ) if $self->can('halo_pre_template');
+    Jifty::Util->require("Jifty::Mason::Halo");
 
-    Jifty::Plugin::Halo->add_trigger(
-        halo_post_template => sub { $self->halo_post_template(@_) },
-    ) if $self->can('halo_post_template');
+    if ($self->can('halo_pre_template')) {
+        Jifty::Plugin::Halo->add_trigger(
+            halo_pre_template => sub { $self->halo_pre_template(@_) },
+        );
+        Jifty::Mason::Halo->add_trigger(
+            halo_pre_template => sub { $self->halo_pre_template(@_) },
+        );
+    }
+
+    if ($self->can('halo_post_template')) {
+        Jifty::Plugin::Halo->add_trigger(
+            halo_post_template => sub { $self->halo_post_template(@_) },
+        );
+        Jifty::Mason::Halo->add_trigger(
+            halo_post_template => sub { $self->halo_post_template(@_) },
+        );
+    }
 
     return $self;
 }

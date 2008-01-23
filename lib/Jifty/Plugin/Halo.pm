@@ -3,6 +3,7 @@ use warnings;
 
 package Jifty::Plugin::Halo;
 use base qw/Jifty::Plugin/;
+use Time::HiRes 'time';
 use Class::Trigger;
 
 =head1 NAME
@@ -50,7 +51,7 @@ sub around_template {
     my $frame = {
         id           => $ID,
         args         => [ %{ Jifty->web->request->arguments } ], # ugh :)
-        start_time   => Time::HiRes::time(),
+        start_time   => time,
         path         => $path,
         subcomponent => 0,
         name         => $name,
@@ -69,6 +70,9 @@ sub around_template {
     Jifty->web->out(qq{<div id="halo-$ID" class="halo">});
     $orig->();
     Jifty->web->out(qq{</div>});
+
+    $frame->{'render_time'} = int((time - $frame->{'start_time'}) * 1000)/1000
+        unless defined $frame->{'render_time'};
 
     $self->call_trigger('halo_post_template', frame => $frame, previous => $previous);
 
