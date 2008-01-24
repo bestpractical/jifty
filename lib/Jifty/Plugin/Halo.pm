@@ -87,9 +87,6 @@ sub halo_header {
     return << "    HEADER";
         <div id="halo-$id" class="halo">
             <div class="halo_header">
-                <span class="halo_name">
-                    $frame->{name}
-                </span>
                 <span class="halo_rendermode">
                     [
                     <a style="font-weight: bold"
@@ -102,6 +99,9 @@ sub halo_header {
                        href="#">S</a>
                     ]
                 </span>
+                <div class="halo_name">
+                    $frame->{name}
+                </div>
             </div>
             <div id="halo-inner-$id">
     HEADER

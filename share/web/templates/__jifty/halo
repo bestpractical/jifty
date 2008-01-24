@@ -1,4 +1,7 @@
-<div><a href="#" id="render_info" onclick="render_info_tree(); return false"><%_('Page info')%></a></div>
+<div id="render_info">
+    <a href="#" onclick="draw_halos(); return false"><%_('Draw halos')%></a>
+    <a href="#" onclick="render_info_tree(); return false"><%_('Page info')%></a>
+</div>
 <div style="display: none" id="render_info_tree">
 % foreach my $item (@stack) {
 %     if ( $item->{depth} > $depth ) {

@@ -1,4 +1,5 @@
 var halo_shown = null;
+var halos_drawn = null;
 
 var halo_top;
 var halo_left;
@@ -63,16 +64,17 @@ function resizeX (x, grip, window) {
     grip.xFrom = x;
 }
 
-function render_info_tree() {
+function draw_halos() {
     var halo_header_display = 'none';
-    var halo_border = '0';
+    var halo_border_width   = '0';
+    var halo_margin         = '0';
 
-    var info_tree = $("render_info_tree");
-    Element.toggle(info_tree);
+    halos_drawn = !halos_drawn;
 
-    if (Element.visible(info_tree)) {
+    if (halos_drawn) {
         halo_header_display = 'block';
-        halo_border = '2px solid #666666';
+        halo_border_width   = '1px';
+        halo_margin         = '2px';
     }
 
     YAHOO.util.Dom.getElementsByClassName("halo_header", null, null,
@@ -83,10 +85,14 @@ function render_info_tree() {
 
     YAHOO.util.Dom.getElementsByClassName("halo", null, null,
         function (e) {
-            e.style.border = halo_border;
+            e.style.borderWidth = halo_border_width;
+            e.style.margin = halo_margin;
         }
     );
+}
 
+function render_info_tree() {
+    Element.toggle("render_info_tree");
 }
 
 function halo_render(id) {
