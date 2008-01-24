@@ -1,5 +1,9 @@
 package Jifty::Web::Menu;
 
+use strict;
+use warnings;
+
+
 use base qw/Class::Accessor::Fast/;
 use URI;
 use Scalar::Util qw(weaken);
@@ -375,7 +379,7 @@ sub _render_as_yui_menu_item {
     if ( $self->render_children_inline ) {
         Jifty->web->out( $args{'first'} ? '<ul class="first-of-type">' : '<ul>' );
         for my $kid ( @kids ) {
-            Jifty->web->out( qq{<li class="${class}item } . ($kid->active? 'active' : '') . qq{">});
+            Jifty->web->out( qq{<li class="$args{class}item } . ($kid->active? 'active' : '') . qq{">});
             Jifty->web->out( $kid->as_link );
             $kid->_render_as_yui_menu_item( class => 'yuimenu' );
             Jifty->web->out( qq{</li>});
@@ -386,7 +390,7 @@ sub _render_as_yui_menu_item {
         Jifty->web->out(
             qq{<div}
             . ($args{'id'} ? qq( id="$args{'id'}") : "")
-            . qq{ class="$class"><div class="bd">}
+            . qq{ class="$args{class}"><div class="bd">}
         );
 
         my $count    = 1;
@@ -417,7 +421,7 @@ sub _render_as_yui_menu_item {
                     Jifty->web->out( $count == 1 ? '<ul class="first-of-type">' : '<ul>' );
                     $openlist = 1;
                 }
-                Jifty->web->out( qq{<li class="${class}item } . ($kid->active? 'active' : '') . qq{">});
+                Jifty->web->out( qq{<li class="$args{class}item } . ($kid->active? 'active' : '') . qq{">});
                 Jifty->web->out( $kid->as_link );
                 $kid->_render_as_yui_menu_item( class => 'yuimenu' );
                 Jifty->web->out( qq{</li>});
