@@ -376,21 +376,39 @@ sub _render_as_yui_menu_item {
     my %args = ( class => 'yuimenu', first => 0, id => undef, @_ );
     my @kids = $self->children or return;
     
+    # Add the appropriate YUI class to each kid
+    for my $kid ( @kids ) {
+        # Skip it if it's a group heading
+        next if $kid->render_children_inline and $kid->children;
+
+        # Figure out the correct object to be setting the class on
+        my $object =   ( defined $kid->link
+                     and ref $kid->link
+                     and $kid->link->can('class') )
+                         ? $kid->link : $kid;
+
+        my $class = defined $object->class ? $object->class . ' ' : '';
+        $class .= "$args{class}itemlabel";
+        $object->class( $class );
+    }
+
+    # We're rendering this inline, so just render a UL (and any submenus as normal)
     if ( $self->render_children_inline ) {
         Jifty->web->out( $args{'first'} ? '<ul class="first-of-type">' : '<ul>' );
         for my $kid ( @kids ) {
-            Jifty->web->out( qq{<li class="$args{class}item } . ($kid->active? 'active' : '') . qq{">});
+            Jifty->web->out( qq(<li class="$args{class}item ) . ($kid->active? 'active' : '') . qq{">});
             Jifty->web->out( $kid->as_link );
             $kid->_render_as_yui_menu_item( class => 'yuimenu' );
             Jifty->web->out( qq{</li>});
         }
         Jifty->web->out('</ul>');
     }
+    # Render as normal submenus
     else {
         Jifty->web->out(
             qq{<div}
             . ($args{'id'} ? qq( id="$args{'id'}") : "")
-            . qq{ class="$args{class}"><div class="bd">}
+            . qq( class="$args{class}"><div class="bd">)
         );
 
         my $count    = 1;
@@ -398,6 +416,9 @@ sub _render_as_yui_menu_item {
         my $openlist = 0;
 
         for my $kid ( @kids ) {
+            # We want to render the children of this child inline, so close
+            # any open <ul>s, render it as an <h6>, and then render it's
+            # children.
             if ( $kid->render_children_inline and $kid->children ) {
                 Jifty->web->out('</ul>') if $openlist;
                 
@@ -416,12 +437,13 @@ sub _render_as_yui_menu_item {
                 $openlist = 0;
                 $count_h6++;
             }
+            # It's a normal child
             else {
                 if ( not $openlist ) {
                     Jifty->web->out( $count == 1 ? '<ul class="first-of-type">' : '<ul>' );
                     $openlist = 1;
                 }
-                Jifty->web->out( qq{<li class="$args{class}item } . ($kid->active? 'active' : '') . qq{">});
+                Jifty->web->out( qq(<li class="$args{class}item ) . ($kid->active? 'active' : '') . qq{">});
                 Jifty->web->out( $kid->as_link );
                 $kid->_render_as_yui_menu_item( class => 'yuimenu' );
                 Jifty->web->out( qq{</li>});
