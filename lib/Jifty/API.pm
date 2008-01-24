@@ -116,8 +116,8 @@ sub qualify {
 
 Resets which actions are allowed to the defaults; that is, all of the
 application's actions, L<Jifty::Action::Autocomplete>, and
-L<Jifty::Action::Redirect> are allowed; everything else is denied. All actions
-are visible. See L</restrict> for the details of how limits are processed.
+L<Jifty::Action::Redirect> are allowed and visible; everything else is denied
+and hidden. See L</restrict> for the details of how limits are processed.
 
 =cut
 
@@ -129,13 +129,11 @@ sub reset {
 
     # These are the default action limits
     $self->action_limits(
-        [   { show => 1, restriction => qr/.*/ },
-            { deny => 1, restriction => qr/.*/ },
-            {   allow       => 1,
-                restriction => qr/^\Q$app_actions\E/,
-            },
-            { allow => 1, restriction => 'Jifty::Action::Autocomplete' },
-            { allow => 1, restriction => 'Jifty::Action::Redirect' },
+        [
+            { hide => 1, deny => 1, restriction => qr/.*/ },
+            { allow => 1, show => 1, restriction => qr/^\Q$app_actions\E/ },
+            { allow => 1, show => 1, restriction => 'Jifty::Action::Autocomplete' },
+            { allow => 1, show => 1, restriction => 'Jifty::Action::Redirect' },
         ]
     );
 }
@@ -145,6 +143,8 @@ sub reset {
 Takes a list of strings or regular expressions, and adds them in order
 to the list of limits for the purposes of L</is_allowed>.  See
 L</restrict> for the details of how limits are processed.
+
+Allowing actions also L</show> them.
 
 =cut
 
@@ -171,6 +171,8 @@ sub deny {
 Takes a list of strings or regular expressions, and adds them in order
 to the list of limits for the purposes of L</is_visible>.  See
 L</restrict> for the details of how limits are processed.
+
+Hiding actions also L</deny> them.
 
 =cut
 
@@ -252,6 +254,12 @@ sub restrict {
         if ($polarity eq 'hide') {
             push @{ $self->action_limits },
                 { deny => 1, restriction => $restriction };
+        }
+
+        # Allowing an action also shows it
+        if ($polarity eq 'allow') {
+            push @{ $self->action_limits },
+                { show => 1, restriction => $restriction };
         }
     }
 }
