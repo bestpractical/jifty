@@ -379,7 +379,7 @@ Canonicalizes ACTION into the form preferred by the code. (Cleans up casing, can
 =cut
 
 
-sub action {  _resolve($_[0], 'Jifty::Action', Jifty->api->actions) }
+sub action {  _resolve($_[0], 'Jifty::Action', Jifty->api->visible_actions) }
 
 =head2 model MODEL
 
@@ -754,12 +754,12 @@ sub _dispatch_to_action {
 
 =head2 list_actions
 
-Returns a list of all actions allowed to the current user. (Canonicalizes Perl::Style to Everything.Else.Style).
+Returns a list of all actions visible to the current user. (Canonicalizes Perl::Style to Everything.Else.Style).
 
 =cut
 
 sub list_actions {
-    list(['action'], map {s/::/./g; $_} Jifty->api->actions);
+    list(['action'], map {s/::/./g; $_} Jifty->api->visible_actions);
 }
 
 =head2 list_action_params
