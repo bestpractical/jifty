@@ -180,7 +180,12 @@ features(
     'CAS Plugin' => [
         -default => 0,
         recommends('Authen::CAS::Client')
-    ]
+    ],
+    'Improved halos' => [
+        -default => 0,
+        recommends('Template::Declare' => '0.28'),
+        recommends('Data::Dump::Streamer'),
+    ],
 );
 
 

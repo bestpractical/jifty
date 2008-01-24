@@ -15,8 +15,12 @@
     float: right;
 }
 
-.halo_source {
+.halo_source, .halo_perl {
     font-family: monospace;
+}
+
+.halo_perl {
+    display: none;
 }
 
 .halo_actions {

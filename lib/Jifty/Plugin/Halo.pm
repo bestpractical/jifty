@@ -39,7 +39,7 @@ sub init {
 # parts of why this is.. weird is because we want to play nicely with Mason
 # halos
 sub around_template {
-    my ($self, $orig, $path, $args) = @_;
+    my ($self, $orig, $path, $args, $code) = @_;
 
     my $ID          = Jifty->web->serial;
     my $STACK       = Jifty->handler->stash->{'_halo_stack'} ||= [];
@@ -48,6 +48,11 @@ sub around_template {
     # for now, call the last piece of the template's path the name
     $path =~ m{.*/(.+)};
     my $name = $1 || $path;
+
+    my $deparsed = eval {
+        require Data::Dump::Streamer;
+        Data::Dump::Streamer::Dump($code)->Out;
+    };
 
     my $frame = {
         id           => $ID,
@@ -58,6 +63,7 @@ sub around_template {
         name         => $name,
         proscribed   => 0,
         depth        => $DEPTH,
+        perl         => $deparsed,
     };
 
     # if this is the first frame, discard anything from the previous queries
@@ -83,6 +89,15 @@ sub halo_header {
     my $self  = shift;
     my $frame = shift;
     my $id    = $frame->{id};
+    my $perl  = $frame->{perl} || '';
+    my $name  = $frame->{name};
+
+    for ($perl, $name) {
+        $_ = Jifty->web->escape($_);
+    }
+
+    my $perl_link = $perl ? qq{ | <a id="halo-button-perl-$id" onclick="halo_perl('$id'); return false" href="#">P</a> } : '';
+    my $perl_div = $perl ? qq{<div id="halo-perl-$id" class="halo_perl"><pre>$perl</pre></div>} : '';
 
     return << "    HEADER";
         <div id="halo-$id" class="halo">
@@ -90,19 +105,19 @@ sub halo_header {
                 <span class="halo_rendermode">
                     [
                     <a style="font-weight: bold"
-                       id="halo-render-$id"
+                       id="halo-button-render-$id"
                        onclick="halo_render('$id'); return false"
                        href="#">R</a>
                     |
-                    <a id="halo-source-$id"
+                    <a id="halo-button-source-$id"
                        onclick="halo_source('$id'); return false"
                        href="#">S</a>
+                    $perl_link
                     ]
                 </span>
-                <div class="halo_name">
-                    $frame->{name}
-                </div>
+                <div class="halo_name">$name</div>
             </div>
+            $perl_div
             <div id="halo-inner-$id">
     HEADER
 }
