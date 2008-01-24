@@ -210,9 +210,6 @@ sub handle_request {
         @_
     );
 
-    # PING and reconnect if we've lost the database connection
-    Jifty->handle->connect;
-
     $self->call_trigger('before_request', $args{cgi});
 
     # this is scoped deeper because we want to make sure everything is cleaned
