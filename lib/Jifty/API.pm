@@ -138,6 +138,24 @@ sub reset {
     );
 }
 
+=head2 deny_for_get
+
+Denies all actions except L<Jifty::Action::Autocomplete> and
+L<Jifty::Action::Redirect>. This is to protect against a common cross-site
+scripting hole. In your C<before> dispatcher rules, you can whitelist actions
+that are known to be read-only.
+
+This is called automatically during any C<GET> request.
+
+=cut
+
+sub deny_for_get {
+    my $self = shift;
+    $self->deny(qr/.*/);
+    $self->allow("Jifty::Action::Autocomplete");
+    $self->allow("Jifty::Action::Redirect");
+}
+
 =head2 allow RESTRICTIONS
 
 Takes a list of strings or regular expressions, and adds them in order
