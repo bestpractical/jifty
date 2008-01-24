@@ -21,6 +21,7 @@ a bug).
 sub init {
     my $self = shift;
     return if $self->_pre_init;
+    return unless Jifty->config->framework('DevelMode');
 
     # 0.28 added around_template instrumentation
     eval { Template::Declare->VERSION('0.28'); 1 }
