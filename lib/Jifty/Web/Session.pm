@@ -304,7 +304,7 @@ sub continuations {
     $conts->limit( column => "session_id", value => $self->id );
 
     my %continuations;
-    $continuations{ $_->key } = $_->value while $_ = $conts->next;
+    $continuations{ $_->data_key } = $_->value while $_ = $conts->next;
     return %continuations;
 }
 
