@@ -506,7 +506,7 @@ Form = {};
 
 jQuery.extend(Form, {
     getElements: function(element) {
-        return jQuery.makeArray( jQuery(":input", element) );
+        return jQuery(":input", element).get();
     },
     // Return an Array of Actions that are in this form
     getActions: function (element) {
@@ -514,7 +514,7 @@ jQuery.extend(Form, {
 
         jQuery(":input", element).each(function() {
             if (Form.Element.getType(this) == "registration")
-                elements.push(Form.Element.getAction(possible[i]));            
+                elements.push(Form.Element.getAction(this));
         });
 
         return elements;
