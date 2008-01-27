@@ -6,9 +6,7 @@ use File::Spec;
 use Test::Builder;
 my $Tester = Test::Builder->new;
 
-# explicitly ignore ClassLoader objects in @INC,
-# which'd be ignored in the end, though.
-my $INC = [grep { defined } map { File::Spec->rel2abs($_) } grep { !ref } @INC ];
+my $INC = [grep { defined } map { File::Spec->rel2abs($_) } @INC ];
 my @perl = ($^X, map { "-I$_" } @$INC);
 
 =head1 NAME

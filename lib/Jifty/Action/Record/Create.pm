@@ -120,19 +120,6 @@ sub report_success {
     $self->result->message(_("Created"))
 }
 
-=head2 possible_fields
-
-Create actions do not provide fields for columns marked as C<private>
-or C<protected>.
-
-=cut
-
-sub possible_fields {
-    my $self = shift;
-    my @names = $self->SUPER::possible_fields;
-    return map {$_->name} grep {not $_->protected} map {$self->record->column($_)} @names;
-}
-
 =head1 SEE ALSO
 
 L<Jifty::Action::Record>, L<Jifty::Record>

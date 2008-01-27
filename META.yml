@@ -28,7 +28,6 @@ recommends:
   Class::Accessor::Named: 0
   Crypt::OpenSSL::RSA: 0
   DBD::SQLite: 0
-  Data::Dump::Streamer: 0
   Devel::Cover: 0
   Devel::EvalContext: 0
   Devel::Events::Objects: 0.02
@@ -43,13 +42,12 @@ recommends:
   Module::Install::Admin: 0.50
   Module::Refresh: 0.09
   Net::LDAP: 0
-  Net::OAuth::Request: 0.05
+  Net::OAuth::Request: 0.04
   Net::OpenID::Consumer: 0
   Net::Server::Fork: 0
   Net::Server::PreFork: 0
   PAR::Dist::FromCPAN: 0
   Proc::ProcessTable: 0
-  Template::Declare: 0.28
   Test::Base: 0.44
   Test::HTML::Lint: 0
   Test::HTTP::Server::Simple: 0.02

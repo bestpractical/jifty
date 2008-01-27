@@ -59,7 +59,7 @@ my @tests = (
 sub in_region {
     qq|<script type="text/javascript">
 new Region('$_[0]',{},'$_[1]',null);
-</script><div id="region-$_[0]" class="jifty-region">$_[2]</div>|;
+</script><div id="region-$_[0]">$_[2]</div>|;
 }
 
 plan tests => 2 + scalar(@tests) * 2;

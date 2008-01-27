@@ -94,7 +94,7 @@ or appending one of the extensions to any resource:
 
 HTML is output only if the Accept: header or an extension does not request a
 specific format.
-};
+    };
     last_rule;
 }
 
@@ -387,7 +387,7 @@ Canonicalizes MODEL into the form preferred by the code. (Cleans up casing, cano
 
 =cut
 
-sub model  { _resolve($_[0], 'Jifty::Record', grep {not $_->is_private} Jifty->class_loader->models) }
+sub model  { _resolve($_[0], 'Jifty::Record', Jifty->class_loader->models) }
 
 sub _resolve {
     my $name = shift;
@@ -416,14 +416,8 @@ Sends the user a list of models in this application, with the names transformed 
 =cut
 
 sub list_models {
-    list(['model'], map { s/::/./g; $_ } grep {not $_->is_private} Jifty->class_loader->models);
+    list(['model'], map { s/::/./g; $_ } Jifty->class_loader->models);
 }
-
-=head2 valid_column
-
-Returns true if the column is a valid column to observe on the model
-
-=cut
 
 our @column_attrs = 
 qw( name
@@ -441,10 +435,6 @@ qw( name
     valid_values
 );
 
-sub valid_column {
-    my ( $model, $column ) = @_;
-    return scalar grep { $_->name eq $column and not $_->virtual and not $_->private } $model->new->columns;
-}
 
 =head2 list_model_columns
 
@@ -458,14 +448,12 @@ sub list_model_columns {
 
     my %cols;
     for my $col ( $model->new->columns ) {
-        next if $col->private or $col->virtual;
         $cols{ $col->name } = { };
         for ( @column_attrs ) {
             my $val = $col->$_();
-            $cols{ $col->name }->{ $_ } = Scalar::Defer::force($val)
+            $cols{ $col->name }->{ $_ } = $val
                 if defined $val and length $val;
         }
-        $cols{ $col->name }{writable} = 0 if exists $cols{$col->name}{writable} and $col->protected;
     }
 
     outs( [ 'model', $model ], \%cols );
@@ -483,9 +471,6 @@ sub list_model_items {
     my ( $model, $column ) = ( model($1), $2 );
     my $col = $model->new->collection_class->new;
     $col->unlimit;
-
-    # Check that the field is actually a column
-    abort(404) unless valid_column($model, $column);
 
     # If we don't load the PK, we won't get data
     $col->columns("id", $column);
@@ -512,7 +497,7 @@ sub show_item_field {
     $rec->can($field) or abort(404);
 
     # Check that the field is actually a column (and not some other method)
-    abort(404) unless valid_column($model, $column);
+    abort(404) if not scalar grep { $_->name eq $field } $rec->columns;
 
     outs( [ 'model', $model, $column, $key, $field ],
           Jifty::Util->stringify($rec->$field()) );
@@ -529,10 +514,6 @@ Returns 404 if it doesn't exist.
 sub show_item {
     my ($model, $column, $key) = (model($1), $2, $3);
     my $rec = $model->new;
-
-    # Check that the field is actually a column
-    abort(404) unless valid_column($model, $column);
-
     $rec->load_by_cols( $column => $key );
     $rec->id or abort(404);
     outs( ['model', $model, $column, $key], $rec->jifty_serialize_format );
@@ -677,8 +658,9 @@ sub search_items {
         my $item = $collection->first
             or return outs($ret, []);
 
-        # Check that the field is actually a column
-        abort(404) unless valid_column($model, $field);
+        # make sure $field exists and is a real column
+        $item->can($field)    or abort(404);
+        $item->column($field) or abort(404);
 
         my @values;
 
