@@ -421,6 +421,7 @@ sub list_models {
 
 our @column_attrs = 
 qw( name
+    documentation
     type
     default
     readable writable
@@ -772,6 +773,7 @@ Shows the user all possible parameters to the action.
 
 our @param_attrs = qw(
     name
+    documentation
     type
     default_value
     label
