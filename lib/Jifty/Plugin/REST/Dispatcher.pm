@@ -322,7 +322,7 @@ Recursively render DATASTRUCTURE as some simple html dls and ols.
 sub html_dump {
     my $content = shift;
     if (ref($content) eq 'ARRAY') {
-        if (keys %$content) {
+        if (@$content) {
             return ul(map {
                 li(html_dump($_))
             } @{$content});
