@@ -505,15 +505,17 @@ ActionField.prototype = {
 Form = {};
 
 jQuery.extend(Form, {
+    getElements: function(element) {
+        return jQuery.makeArray( jQuery(":input", element) );
+    },
     // Return an Array of Actions that are in this form
     getActions: function (element) {
         var elements = new Array;
-        var possible = Form.getElements(element);
 
-        for (var i = 0; i < possible.length; i++) {
-            if (Form.Element.getType(possible[i]) == "registration")
-                elements.push(Form.Element.getAction(possible[i]));
-        }
+        jQuery(":input", element).each(function() {
+            if (Form.Element.getType(this) == "registration")
+                elements.push(Form.Element.getAction(possible[i]));            
+        });
 
         return elements;
     },
