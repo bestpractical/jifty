@@ -761,7 +761,7 @@ Behaviour.register({
     ".messages": function(e) {
         if ( !jQuery(e).hasClass('jifty_enter_handler_attached') ) {
             jQuery(e)
-            .prepend('<a  href="#" id="dismiss_'+e.id+'" title="Dismiss" onmousedown="this.onfocus=this.blur;" onmouseup="this.onfocus=window.clientInformation?null:window.undefined" onclick="Effect.Fade(this.parentNode); return false;">Dismiss</a>')
+            .prepend('<a  href="#" id="dismiss_'+e.id+'" title="Dismiss" onmousedown="this.onfocus=this.blur;" onmouseup="this.onfocus=window.clientInformation?null:window.undefined" onclick="Jifty.Effect(this.parentNode, \'Fade\'); return false;">Dismiss</a>')
             .addClass("jifty_enter_handler_attached" );
 
         }
@@ -1636,6 +1636,7 @@ Jifty.Effect = function(el, name, args, options) {
         } catch ( e ) {}
     }
 
+    if (options == null) options = {};
     // jQuery built-ins
     var effect =
         name == 'Fade' ? 'fadeOut' :
