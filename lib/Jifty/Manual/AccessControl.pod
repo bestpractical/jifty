@@ -21,7 +21,7 @@ On C<_set()> or C<I<set_somefieldname>>, we reject the operation
 if C<current_user_can('write')> returns false.
 
 
-On C<delete()>, we reject the operation  if C<current_user_can('delete')>
+On C<delete()>, we reject the operation if C<current_user_can('delete')>
 returns false.
 
 Out of the box, C<current_user_can> returns 1. When you want to actually 

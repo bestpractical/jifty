@@ -7,7 +7,7 @@ use lib 't/lib';
 use Jifty::SubTest;
 BEGIN { $ENV{'JIFTY_CONFIG'} = 't/config-Record' }
 
-use Jifty::Test tests => 11;
+use Jifty::Test tests => 10;
 use Jifty::Test::WWW::Mechanize;
 # Make sure we can load the model
 use_ok('TestApp::Model::User');
@@ -32,7 +32,14 @@ my $URL     = $server->started_ok;
 my $mech    = Jifty::Test::WWW::Mechanize->new();
 
 # Test action to update
-$mech->get_ok($URL.'/editform?J:A-updateuser=TestApp::Action::UpdateUser&J:A:F:F-id-updateuser=1&J:A:F-name-updateuser=edituser&J:A:F-email-updateuser=newemail@example.com&J:A:F-tasty-updateuser=0', "Form submitted");
+$mech->post($URL.'/editform', {
+    'J:A-updateuser' => 'TestApp::Action::UpdateUser',
+    'J:A:F:F-id-updateuser' => 1,
+    'J:A:F-name-updateuser' => 'edituser',
+    'J:A:F-email-updateuser' => 'newemail@example.com',
+    'J:A:F-tasty-updateuser' => '0'
+}, "Form submitted");
+
 undef $o;
 $o = TestApp::Model::User->new(current_user => $system_user);
 $o->load($id);

@@ -1,3 +1,13 @@
+Jifty $NEXT
+
+BACKWARDS COMPATIBILITY
+====
+ * Deny all actions during GET requests. Applications must now whitelist safe
+   actions. - Sartak
+ * The action API is now split between "runnable" and "inspectable". The REST
+   interface used to use the former, now it uses the latter. - Sartak
+
+
 Jifty 0.71129
 
 I18N

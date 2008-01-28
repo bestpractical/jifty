@@ -13,7 +13,7 @@ This is a template for your own tests. Copy it and modify it.
 use lib 't/lib';
 use Jifty::SubTest;
 
-use Jifty::Test tests => 6;
+use Jifty::Test tests => 5;
 use Jifty::Test::WWW::Mechanize;
 
 my $server  = Jifty::Test->make_server;
@@ -26,8 +26,7 @@ ok(1, "Loaded the test script");
 
 # {{{ Get token for logging in with a JS-based md5-hashed password
 my $service='/__jifty/webservices/yaml';
-my $service_request ="$URL$service?J:A-moniker=GeneratePasswordToken&J:A:F-email-moniker=gooduser\@example.com"; 
-$mech->get_ok($service_request, "Token-generating webservice $service_request exists");
+$mech->post("$URL/$service", {"J:A-moniker" => "GeneratePasswordToken", "J:A:F-email-moniker" => 'gooduser@example.com'});
 
 # XXX needs to be more precise in checking for the token, but this works
 # as long as we're using time() for the token

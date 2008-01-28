@@ -16,7 +16,7 @@ This chart renderer uses the XML SWF charting tools to render charts.
 
   Plugins:
     - Chart:
-        renderer: XMLSWF
+        DefaultRenderer: XMLSWF
         license_key: YOUR_OPTIONAL_LICENSE_KEY
 
 =head1 METHODS

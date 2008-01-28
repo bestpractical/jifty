@@ -14,7 +14,7 @@ my @tests = (
 <span>1</span>
 <span>2</span><script type="text/javascript">
 new Region('special',{'id':3},'/foo/item',null);
-</script><div id="region-special">
+</script><div id="region-special" class="jifty-region">
 <span>3</span></div>|
     },
 

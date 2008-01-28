@@ -53,7 +53,8 @@ alternate interface from C<failure> but has the same effect.
 
 sub success {
     my $self = shift;
-    return not $self->failure(map {not $_} @_);
+    return 0 if $self->failure(map {not $_} @_);
+    return 1;
 }
 
 =head2 action_class [MESSAGE]

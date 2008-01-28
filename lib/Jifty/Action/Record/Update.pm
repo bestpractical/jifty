@@ -36,7 +36,7 @@ sub arguments {
     my $arguments = $self->SUPER::arguments(@_);
 
     # Mark read-only columns for read-only display
-    for my $column ( $self->record->columns ) {
+    for my $column ( map {$self->record->column($_)} $self->possible_fields ) {
         if ( not $column->writable and $column->readable ) {
             $arguments->{$column->name}{'render_mode'} = 'read';
         }
@@ -203,6 +203,20 @@ user-friendly result.
 sub report_success {
     my $self = shift;
     $self->result->message(_("Updated"))
+}
+
+
+=head2 possible_fields
+
+Update actions do not provide fields for columns marked as C<private>
+or C<protected>.
+
+=cut
+
+sub possible_fields {
+    my $self = shift;
+    my @names = $self->SUPER::possible_fields;
+    return map {$_->name} grep {not $_->protected} map {$self->record->column($_)} @names;
 }
 
 =head1 SEE ALSO

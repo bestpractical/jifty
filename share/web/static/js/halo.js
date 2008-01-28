@@ -1,4 +1,5 @@
 var halo_shown = null;
+var halos_drawn = null;
 
 var halo_top;
 var halo_left;
@@ -62,3 +63,74 @@ function resizeX (x, grip, window) {
     window.style.width = newWidth;
     grip.xFrom = x;
 }
+
+function draw_halos() {
+    var halo_header_display = 'none';
+    var halo_border_width   = '0';
+    var halo_margin         = '0';
+
+    halos_drawn = !halos_drawn;
+
+    if (halos_drawn) {
+        halo_header_display = 'block';
+        halo_border_width   = '1px';
+        halo_margin         = '2px';
+    }
+
+    YAHOO.util.Dom.getElementsByClassName("halo_header", null, null,
+        function (e) {
+            e.style.display = halo_header_display;
+        }
+    );
+
+    YAHOO.util.Dom.getElementsByClassName("halo", null, null,
+        function (e) {
+            e.style.borderWidth = halo_border_width;
+            e.style.margin = halo_margin;
+        }
+    );
+}
+
+function render_info_tree() {
+    Element.toggle("render_info_tree");
+}
+
+function halo_render(id) {
+    halo_reset(id);
+    $('halo-button-render-'+id).style.fontWeight = 'bold';
+
+    var e = $('halo-inner-'+id);
+    if (e.halo_rendered) {
+        e.innerHTML = e.halo_rendered;
+        e.halo_rendered = null;
+    }
+}
+
+function halo_source(id) {
+    halo_reset(id);
+    $('halo-button-source-'+id).style.fontWeight = 'bold';
+
+    var e = $('halo-inner-'+id);
+    if (!e.halo_rendered) {
+        e.halo_rendered = e.innerHTML;
+        e.innerHTML = '<div class="halo_source">' + e.innerHTML.escapeHTML() + '</div>';
+    }
+}
+
+function halo_perl(id) {
+    halo_reset(id);
+    $('halo-button-perl-'+id).style.fontWeight = 'bold';
+    $('halo-inner-'+id).style.display   = 'none';
+    $('halo-perl-'+id).style.display    = 'block';
+
+}
+
+function halo_reset(id) {
+    $('halo-button-perl-'+id).style.fontWeight   = 'normal';
+    $('halo-button-source-'+id).style.fontWeight = 'normal';
+    $('halo-button-render-'+id).style.fontWeight = 'normal';
+
+    $('halo-inner-'+id).style.display     = 'block';
+    $('halo-perl-'+id).style.display      = 'none';
+}
+

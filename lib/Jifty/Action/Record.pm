@@ -274,7 +274,7 @@ sub _build_class_arguments {
         $info->{'ajax_canonicalizes'} ||= $ajax_canonicalizes;
 
         # If we're hand-coding a render_as, hints or label, let's use it.
-        for ( qw(render_as label hints max_length mandatory sort_order container)) {
+        for ( qw(render_as label hints max_length mandatory sort_order container documentation)) {
             if ( defined( my $val = $column->$_ ) ) {
                 $info->{$_} = $val;
             }
@@ -497,13 +497,13 @@ sub _default_autocompleter {
 =head2 possible_fields
 
 Returns the list of fields on the object that the action can update.
-This defaults to all of the fields of the object.
+This defaults to all of the non-C<private> fields of the object.
 
 =cut
 
 sub possible_fields {
     my $self = shift;
-    return map { $_->name } grep { $_->container || $_->type ne "serial" } $self->record->columns;
+    return map { $_->name } grep { $_->container || $_->type ne "serial" and not $_->private and not $_->virtual } $self->record->columns;
 }
 
 =head2 take_action

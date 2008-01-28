@@ -13,7 +13,7 @@ In your F<config.yml>:
 
   Plugins:
     - Chart:
-        renderer: MyApp::Renderer;
+        DefaultRenderer: MyApp::Renderer
 
 In F<lib/MyApp/Renderer.pm>:
 

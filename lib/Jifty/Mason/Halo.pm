@@ -2,8 +2,9 @@ use warnings;
 use strict;
 package Jifty::Mason::Halo;
 use base qw/HTML::Mason::Plugin/;
-use Time::HiRes ();
-Jifty->handle->log_sql_statements(1);
+use Time::HiRes 'time';
+use Class::Trigger;
+use Jifty::Plugin::Halo;
 
 =head1 NAME
 
@@ -28,38 +29,33 @@ sub start_component_hook {
     my $self    = shift;
     my $context = shift;
 
-    return if ($context->comp->path && $context->comp->path eq "/__jifty/halo");
+    return if ($context->comp->path || '') eq "/__jifty/halo";
 
-    Jifty->handler->stash->{ '_halo_index_stack' } ||= [];
+    my $ID          = Jifty->web->serial;
+    my $STACK       = Jifty->handler->stash->{'_halo_stack'} ||= [];
+    my $INDEX_STACK = Jifty->handler->stash->{'_halo_index_stack'} ||= [];
+    my $DEPTH       = ++Jifty->handler->stash->{'_halo_depth'};
 
-    my $DEPTH = Jifty->handler->stash->{'_halo_depth'} || 0;
-    my $STACK = Jifty->handler->stash->{'_halo_stack'} ||= [];
-        
-    my $INDEX_STACK = Jifty->handler->stash->{'_halo_index_stack'};
-
-    my $halo_base = Jifty->web->serial;
-
-    Jifty->handler->stash->{'_halo_depth'} = ++$DEPTH;
-    if ($STACK->[-1]) {
-        push @{$STACK->[-1]->{sql_statements}}, Jifty->handle->sql_statement_log;
-        Jifty->handle->clear_sql_statement_log;
-    }
-
-    push @$STACK, {
-        id           => $halo_base,
+    my $frame = {
+        id           => $ID,
         args         => [map { eval { defined $_ and fileno( $_ ) }  ? "*GLOB*" : $_} @{$context->args}],
-        start_time   => Time::HiRes::time(),
+        start_time   => time,
         path         => $context->comp->path || '',
-        subcomponent => (  $context->comp->is_subcomp() ? 1:0),
-        name         => $context->comp->name || '(Unamed component)',
-        proscribed   => ($self->_unrendered_component($context) ? 1 :0 ),
-        depth        => $DEPTH
+        subcomponent => $context->comp->is_subcomp() ? 1 : 0,
+        name         => $context->comp->name || '(Unnamed component)',
+        proscribed   => $self->_unrendered_component($context) ? 1 : 0,
+        depth        => $DEPTH,
     };
 
-    push @$INDEX_STACK, $#{$STACK};
+    my $previous = $STACK->[-1];
+    push @$STACK, $frame;
+    push @$INDEX_STACK, $#$STACK;
+
     return if $self->_unrendered_component($context);
 
-    $context->request->out(qq{<div id="halo-@{[$halo_base]}">});
+    $self->call_trigger('halo_pre_template', frame => $frame, previous => $previous);
+
+    $context->request->out(Jifty::Plugin::Halo->halo_header($frame));
 }
 
 =head2 end_component_hook CONTEXT_OBJECT
@@ -67,53 +63,35 @@ sub start_component_hook {
 When we're done rendering a component, record how long it took
 and close off the halo C<span> if we have one.
 
-
 =cut
 
 sub end_component_hook {
     my $self    = shift;
     my $context = shift;
 
-    return if ($context->comp->path && $context->comp->path =~ "^/__jifty/halo");
+    return if ($context->comp->path || '') eq "/__jifty/halo";
 
-    my $STACK = Jifty->handler->stash->{'_halo_stack'};
+    my $STACK       = Jifty->handler->stash->{'_halo_stack'};
     my $INDEX_STACK = Jifty->handler->stash->{'_halo_index_stack'};
-    my $DEPTH = Jifty->handler->stash->{'_halo_depth'};
-
-    my $FRAME_ID = pop @$INDEX_STACK;
+    my $FRAME_ID    = pop @$INDEX_STACK;
 
     my $frame = $STACK->[$FRAME_ID];
-    $frame->{'render_time'} = int((Time::HiRes::time - $frame->{'start_time'}) * 1000)/1000;
+    $frame->{'end_time'} = time;
 
-    push @{$frame->{sql_statements}}, Jifty->handle->sql_statement_log;
-    Jifty->handle->clear_sql_statement_log;
+    my $previous = $FRAME_ID ? $STACK->[$FRAME_ID - 1] : {};
 
+    $self->call_trigger('halo_post_template', frame => $frame, previous => $previous);
 
-    Jifty->handler->stash->{'_halo_depth'} = $DEPTH-1 ;
+    --Jifty->handler->stash->{'_halo_depth'};
 
-    # If 
     return if $self->_unrendered_component($context);
 
     # print out the div with our halo magic actions.
     # if we didn't render a beginning of the span, don't render an end
     unless ( $frame->{'proscribed'} ) {
         my $comp_name = $frame->{'path'};
-        $context->request->out('</div>');
-        $context->request->out(
-            Jifty->web->link(
-                label   => _( 'Edit %1', $comp_name ),
-                class => 'inline_edit',
-                onclick => [
-                    {   element      => "#halo-" . $frame->{id},
-                        replace_with =>
-                            '/__jifty/edit_inline/mason_component/'.$comp_name
-                    }
-                ]
-            )
-            )
-            if 0 and ( $frame->{'path'} and $frame->{'path'} !~ /^\/?__jifty/ );
+        $context->request->out(Jifty::Plugin::Halo->halo_footer($frame));
     }
-
 }
 
 =head2 _unrendered_component CONTEXT
@@ -152,7 +130,7 @@ sub render_component_tree {
     my @stack = @{ Jifty->handler->stash->{'_halo_stack'} };
 
     for (@stack) {
-        $_->{'render_time'} = int((Time::HiRes::time - $_->{'start_time'}) * 1000)/1000
+        $_->{'render_time'} = int((($_->{'end_time'}||time) - $_->{'start_time'}) * 1000)/1000
           unless defined $_->{'render_time'};
     }
 

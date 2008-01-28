@@ -1,6 +1,12 @@
 package Continuations::Dispatcher;
 use Jifty::Dispatcher -base;
 
+# whitelist these read-only actions
+before '*' => run {
+    Jifty->api->allow('GetGrail');
+    Jifty->api->allow('CrossBridge');
+};
+
 my $before = 0;
 before '/tutorial' => run {
     unless (Jifty->web->session->get('got_help')) {
