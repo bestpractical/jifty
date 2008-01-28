@@ -167,7 +167,7 @@ Action.prototype = {
             for (var i = 0; i < this.extras.length; i++)
                 possible.push(this.extras[i]);
 
-            for (var i = 0; i < possible.length; i++) {
+            for (var i = 0, l = possible.length; i < l; i++) {
                 if (Form.Element.getMoniker(possible[i]) == this.moniker)
                     elements.push(possible[i]);
             }
@@ -251,6 +251,7 @@ Action.prototype = {
                     continue
                 a['fields'][field][type] = this._mergeValues(a['fields'][field][type],
                                                              Form.Element.getValue(f));
+
             }
         }
 
@@ -576,7 +577,6 @@ jQuery.extend(Form.Element, {
     // The type of Jifty form element
     getType: function (element) {
         element = Jifty.$(element);
-
         if (/^J:A-/.test(element.name)) {
             return "registration";
         } else if (/^J:A:F-/.test(element.name)) {
@@ -589,8 +589,11 @@ jQuery.extend(Form.Element, {
     },
 
     getValue: function(element) {
-        element = Jifty.$(element);
-        return jQuery(element).val();
+        var $el = jQuery(Jifty.$(element));
+        if ( $el.is(":checkbox, :radio") ) {
+            return $el.is(":checked") ? $el.val() : null
+        }
+        return $el.val();
     },
 
     // Validates the action this form element is part of
