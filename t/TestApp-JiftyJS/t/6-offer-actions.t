@@ -10,7 +10,11 @@ use utf8;
 
 
 $/ = undef;
-my @commands = split /\n\n/, <DATA>;
+
+my $data = <DATA>;
+$data =~ s/^#.*$//gm;
+
+my @commands = split /\n\n+/, $data;
 
 plan tests => 2+@commands;
 
@@ -21,17 +25,14 @@ my $URL    = $server->started_ok;
 for (@commands) {
     my ($cmd, $arg1, $arg2) = (split(/\n\s*/, $_, 3), "", "");
 
-    if ($cmd eq 'verify_text') {
-        $arg2 =~ s/\s*$//;
-        $arg2 =~ s/^\s*//;
+    $cmd =~ s{^ *}{}g;
+    $cmd =~ s{ *$}{}g;
+    $arg1 =~ s{\s*$}{};
+    $arg2 =~ s{\s*$}{};
 
-        my $txt = $sel->get_text($arg1);
-        is($txt, $arg2);
-    }
-    else {
-        $cmd .= "_ok";
-        $sel->$cmd($arg1, $arg2);
-    }
+    $cmd .= "_ok";
+    $sel->$cmd($arg1, $arg2);
+
 }
 $sel->stop;
 
@@ -40,14 +41,11 @@ open
     /__jifty/admin/model/Offer
 
 type
-    xpath=//div[contains(@class, "jifty_admin create item")]//input[contains(@type, "text")]
+    xpath=//div[contains(@class, "jifty_admin create item")]//input[@type="text"]
     Not A Job Offer
 
 click
-    xpath=//div[contains(@class,"submit_button")]/input
-
-pause
-    1000
+    xpath=//div[contains(@class,"submit_button")]//input
 
 wait_for_text_present
     Not A Job Offer
@@ -56,8 +54,30 @@ wait_for_element_present
     xpath=//span[contains(@class, "text argument-name value")]
 
 wait_for_element_present
-    xpath=//input[@type="checkbox"][@disabled="disabled"]
+    xpath=//input[@type="checkbox"][contains(@class, "argument-is_job")]
 
 get_text
     xpath=//span[contains(@class, "text argument-name value")]
     Not A Job Offer
+
+####
+
+open
+    /__jifty/admin/model/Offer
+
+type
+    xpath=//div[contains(@class, "form_field argument-name")]//input[@type="text"]
+    Offer A Job
+
+check
+    xpath=//input[starts-with(@id, "J:A:F-is_job-auto-")][@type="checkbox"]
+
+click
+    xpath=//input[@type="submit"][@value="Create"]
+
+wait_for_element_present
+    xpath=//input[@type="checkbox"][@checked]
+
+get_text
+    xpath=//span[contains(@class, "text argument-name value")]
+    Offer A Job
