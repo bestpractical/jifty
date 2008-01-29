@@ -26,7 +26,6 @@ jQuery.iAuto.update = function() {
 
 			subject.autoCFG.lastSuggestion.each(
 			    function(nr) {
-                                console.log("[" + jQuery(this).text() + "]");
                                 var v = jQuery(this).text();
 				toWrite += '<li rel="' + v + '" dir="' + nr + '" style="cursor: default;">' + v + '</li>';
 			    }
