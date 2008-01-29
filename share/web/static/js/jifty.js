@@ -781,7 +781,12 @@ Behaviour.register({
 
 /* Regions */
 // Keep track of the fragments on the page
-var fragments = {}
+Jifty.fragments = {};
+
+// Todo: This "fragments" variable should be localized. External access should be restricted
+// to use "Jifty.fragments" instead.
+var fragments = Jifty.fragments;
+
 var Region = function() {
     this.initialize.apply(this, arguments);
     return this;
