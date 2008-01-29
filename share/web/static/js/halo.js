@@ -7,45 +7,43 @@ var halo_width;
 
 function halo_toggle (id) {
     if (halo_shown && (id != halo_shown)) {
-        halo_top   = $('halo-'+halo_shown+'-menu').style.top;
-        halo_left  = $('halo-'+halo_shown+'-menu').style.left;
-        halo_width = $('halo-'+halo_shown+'-menu').style.width;
-        Element.hide('halo-'+halo_shown+'-menu');
+        halo_top   = Jifty.$('halo-'+halo_shown+'-menu').style.top;
+        halo_left  = Jifty.$('halo-'+halo_shown+'-menu').style.left;
+        halo_width = Jifty.$('halo-'+halo_shown+'-menu').style.width;
+        jQuery('halo-'+halo_shown+'-menu').hide();
     }
-    $('halo-'+id+'-menu').style.top   = halo_top;
-    $('halo-'+id+'-menu').style.left  = halo_left;
-    $('halo-'+id+'-menu').style.width = halo_width;
-    Element.toggle('halo-'+id+'-menu');
+
+    jQuery("#halo-"+id+"-menu").css({
+        top: halo_top,
+        left: halo_left,
+        width: halo_width
+    }).toggle();
 
     Drag.init( $('halo-'+id+'-title'), $('halo-'+id+'-menu') );
     init_resize($('halo-'+id+'-resize'), $('halo-'+id+'-menu') );
 
     var e = $('halo-'+id);
-    if (Element.visible('halo-'+id+'-menu')) {
+    if (jQuery('#halo-'+id+'-menu').is(":visible")) {
         halo_shown = id;
-        Element.setStyle(e, {background: '#ffff80'});
+        jQuery(e).css({ background: '#ffff80' });
     } else {
         halo_top   = $('halo-'+halo_shown+'-menu').style.top;
         halo_left  = $('halo-'+halo_shown+'-menu').style.left;
         halo_width = $('halo-'+halo_shown+'-menu').style.width;
         halo_shown = null;
-        Element.setStyle(e, {background: 'inherit'});
+        jQuery(e).css({ background: 'inherit' });
     }
 
     return false;
 }
 
 function halo_over (id) {
-    var e = $('halo-'+id);
-    if (e) {
-        Element.setStyle(e, {background: '#ffff80'});
-    }
+    jQuery('#halo-'+id).css({ background: '#ffff80' });
 }
 
 function halo_out (id) {
-    var e = $('halo-'+id);
-    if (e && ! Element.visible('halo-'+id+'-menu')) {
-        Element.setStyle(e, {background: 'inherit'});
+    if (! jQuery("#halo-"+id+"-menu").is(":visible")) {
+        jQuery('#halo-'+id).css({ background: 'inherit' });
     }
 }
 
@@ -77,29 +75,25 @@ function draw_halos() {
         halo_margin         = '2px';
     }
 
-    YAHOO.util.Dom.getElementsByClassName("halo_header", null, null,
-        function (e) {
-            e.style.display = halo_header_display;
-        }
-    );
+    jQuery(".halo_header").css({
+        display: halo_header_display
+    });
 
-    YAHOO.util.Dom.getElementsByClassName("halo", null, null,
-        function (e) {
-            e.style.borderWidth = halo_border_width;
-            e.style.margin = halo_margin;
-        }
-    );
+    jQuery(".halo").css({
+        'border-width': halo_border_width,
+        'margin': halo_margin
+    });
 }
 
 function render_info_tree() {
-    Element.toggle("render_info_tree");
+    jQuery("#render_info_tree").toggle();
 }
 
 function halo_render(id) {
     halo_reset(id);
-    $('halo-button-render-'+id).style.fontWeight = 'bold';
+    jQuery('#halo-button-render-'+id).css({ 'font-weight': 'bold' });
 
-    var e = $('halo-inner-'+id);
+    var e = Jifty.$('halo-inner-'+id);
     if (e.halo_rendered) {
         e.innerHTML = e.halo_rendered;
         e.halo_rendered = null;
@@ -108,29 +102,27 @@ function halo_render(id) {
 
 function halo_source(id) {
     halo_reset(id);
-    $('halo-button-source-'+id).style.fontWeight = 'bold';
+    Jifty.$('halo-button-source-'+id).style.fontWeight = 'bold';
 
-    var e = $('halo-inner-'+id);
+    var e = Jifty.$('halo-inner-'+id);
     if (!e.halo_rendered) {
         e.halo_rendered = e.innerHTML;
-        e.innerHTML = '<div class="halo_source">' + e.innerHTML.escapeHTML() + '</div>';
+        jQuery(e).empty().append( jQuery('<div class="halo_source"></div>').text(e.halo_rendered) );
     }
 }
 
 function halo_perl(id) {
     halo_reset(id);
-    $('halo-button-perl-'+id).style.fontWeight = 'bold';
-    $('halo-inner-'+id).style.display   = 'none';
-    $('halo-perl-'+id).style.display    = 'block';
-
+    Jifty.$('halo-button-perl-'+id).style.fontWeight = 'bold';
+    Jifty.$('halo-inner-'+id).style.display   = 'none';
+    Jifty.$('halo-perl-'+id).style.display    = 'block';
 }
 
 function halo_reset(id) {
-    $('halo-button-perl-'+id).style.fontWeight   = 'normal';
-    $('halo-button-source-'+id).style.fontWeight = 'normal';
-    $('halo-button-render-'+id).style.fontWeight = 'normal';
-
-    $('halo-inner-'+id).style.display     = 'block';
-    $('halo-perl-'+id).style.display      = 'none';
+    jQuery.each([
+            "button-perl", "button-source", "button-render", "inner", "perl"
+    ], function() {
+        jQuery("#halo-" + this + "-" + id).css({ 'font-weight': 'normal' });
+    });
 }
 
