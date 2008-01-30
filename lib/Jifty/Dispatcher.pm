@@ -473,7 +473,9 @@ sub handle_request {
     local $SIG{__DIE__} = 'DEFAULT';
 
     eval {
-        $Dispatcher->_do_dispatch( Jifty->web->request->path);
+        my $path = Jifty->web->request->path;
+        utf8::downgrade($path); # Mason handle non utf8 path.
+        $Dispatcher->_do_dispatch( $path );
     };
     if ( my $err = $@ ) {
         $self->log->warn(ref($err) . " " ."'$err'") if ( $err !~ /^ABORT/ );
