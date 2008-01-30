@@ -161,7 +161,7 @@ Action.prototype = {
     // Returns an Array of all fields in this Action
     fields: function() {
         if(!this.cached_fields) {
-            var elements = new Array;
+            var elements = [];
             var possible = Form.getElements(this.form);
             // Also pull from extra query parameters
             for (var i = 0, l = this.extras.length; i < l; i++)
@@ -511,7 +511,7 @@ jQuery.extend(Form, {
     },
     // Return an Array of Actions that are in this form
     getActions: function (element) {
-        var elements = new Array;
+        var elements = [];
 
         jQuery(":input", element).each(function() {
             if (Form.Element.getType(this) == "registration")
@@ -557,9 +557,9 @@ jQuery.extend(Form.Element, {
     getAction: function (element) {
         element = Jifty.$(element);
         var moniker = Form.Element.getMoniker(element);
-        if (!current_actions.moniker)
-            current_actions.moniker = new Action(moniker);
-        return current_actions.moniker;
+        if (!current_actions[moniker])
+            current_actions[moniker] = new Action(moniker);
+        return current_actions[moniker];
     },
 
     // Returns the name of the field
@@ -1102,8 +1102,13 @@ Jifty.update = function () {
         current_actions[moniker] = a;
         // Special case for Redirect, allow optional, implicit __page
         // from the response to be used.
-        if (a.actionClass == 'Jifty::Action::Redirect')
-            optional_fragments = [ prepare_element_for_update({'mode':'Replace','args':{},'region':'__page','path': a.fields().last().value}) ];
+        if (a.actionClass == 'Jifty::Action::Redirect') {
+            (function() {
+                var fields = a.fields();
+                var path = fields[fields.length - 1];
+                optional_fragments = [ prepare_element_for_update({'mode':'Replace','args':{},'region':'__page','path': path}) ];
+            })()
+        }
         a.result = {};
         a.result.field_error = {};
 

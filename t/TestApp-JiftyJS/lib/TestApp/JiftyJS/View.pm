@@ -218,7 +218,7 @@ template '/effects' => page {
 };
 
 template '/act/play2' => page {
-    my $action = new_action(class => 'Play2');
+    my $action = new_action(class => 'Play2', moniker => "play2");
     form {
         render_action($action);
         form_next_page( url => "/redirected");
