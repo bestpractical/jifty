@@ -162,9 +162,9 @@ Action.prototype = {
     fields: function() {
         if(!this.cached_fields) {
             var elements = new Array;
-            var possible = jQuery(":input", this.form).get();
+            var possible = Form.getElements(this.form);
             // Also pull from extra query parameters
-            for (var i = 0; i < this.extras.length; i++)
+            for (var i = 0, l = this.extras.length; i < l; i++)
                 possible.push(this.extras[i]);
 
             for (var i = 0, l = possible.length; i < l; i++) {
@@ -218,7 +218,7 @@ Action.prototype = {
     // Returns true if there is a file upload form as one of our elements
     hasUpload: function() {
         var fields = this.fields();
-        for (var i = 0; i < fields.length; i++) {
+        for (var i = 0, l = fields.length; i < l; i++) {
             if ((fields[i].getAttribute("type") == "file") && fields[i].value)
                 return true;
         }
@@ -540,7 +540,7 @@ jQuery.extend(Form.Element, {
     // Takes an element or an element id
     getMoniker: function (element) {
         element = Jifty.$(element);
-
+        
         if (/^J:A(:F)+-[^-]+-.+$/.test(element.name)) {
             var bits = element.name.match(/^J:A(?::F)+-[^-]+-(.+)$/);
             return bits[1];

@@ -217,5 +217,17 @@ template '/effects' => page {
     render_region( name => 'content', path => "hello_world" );
 };
 
+template '/act/play2' => page {
+    my $action = new_action(class => 'Play2');
+    form {
+        render_action($action);
+        form_next_page( url => "/redirected");
+        form_submit( label => "Submit" );
+    };
+};
+
+template '/redirected' => page {
+    p { "Redirected!" }
+};
 
 1;
