@@ -68,13 +68,15 @@ function draw_halos() {
     var halo_header_display = 'none';
     var halo_border_width   = '0';
     var halo_margin         = '0';
+    var halo_padding        = '0';
 
     halos_drawn = !halos_drawn;
 
     if (halos_drawn) {
         halo_header_display = 'block';
         halo_border_width   = '1px';
-        halo_margin         = '2px';
+        halo_margin         = '3px';
+        halo_padding        = '3px';
     }
 
     YAHOO.util.Dom.getElementsByClassName("halo-header", null, null,
@@ -87,6 +89,7 @@ function draw_halos() {
         function (e) {
             e.style.borderWidth = halo_border_width;
             e.style.margin = halo_margin;
+            e.style.padding = halo_padding;
         }
     );
 }
@@ -99,7 +102,7 @@ function halo_render(id, name) {
     halo_reset(id);
     $('halo-button-'+name+'-'+id).style.fontWeight = 'bold';
 
-    var e = $('halo-inner-'+id);
+    var e = $('halo-rendered-'+id);
 
     if (name == 'source') {
         e.halo_rendered = e.innerHTML;
@@ -110,6 +113,7 @@ function halo_render(id, name) {
     }
     else {
         e.style.display = 'none';
+        $('halo-info-'+id).style.display = 'block';
         $('halo-info-'+name+'-'+id).style.display = 'block';
     }
 }
@@ -125,6 +129,7 @@ function halo_reset(id) {
     }
 
     /* hide all the info divs */
+    $('halo-info-'+id).style.display = 'none';
     for (var child = $('halo-info-'+id).firstChild;
          child != null;
          child = child.nextSibling) {
@@ -134,7 +139,7 @@ function halo_reset(id) {
     }
 
     /* restore the rendered div */
-    var e = $('halo-inner-'+id);
+    var e = $('halo-rendered-'+id);
     e.style.display = 'block';
     if (e.halo_rendered) {
         e.innerHTML = e.halo_rendered;

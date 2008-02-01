@@ -34,7 +34,6 @@ sub init {
         if Template::Declare->around_template;
 
     Template::Declare->around_template(sub { $self->around_template(@_) });
-
 }
 
 # parts of why this is.. weird is because we want to play nicely with Mason
@@ -46,17 +45,22 @@ sub around_template {
     $path =~ m{.*/(.+)};
     my $name = $1 || $path;
 
-    my $deparsed = eval {
-        require Data::Dump::Streamer;
-        Data::Dump::Streamer::Dump($code)->Out;
-    };
-
     my $frame = $self->push_frame(
-        args  => [ %{ Jifty->web->request->arguments } ], # ugh :)
+        args  => [ %{ Jifty->web->request->arguments } ],
         path  => $path,
         name  => $name,
-        perl  => $deparsed,
     );
+
+    $frame->{displays}->{P} = {
+        name     => "perl",
+        callback => sub {
+            my $deparsed = eval {
+                require Data::Dump::Streamer;
+                Data::Dump::Streamer::Dump($code)->Out;
+            };
+            Jifty->web->escape($deparsed);
+        },
+    };
 
     Template::Declare->buffer->append($self->halo_header($frame));
     $orig->();
@@ -79,12 +83,12 @@ sub halo_header {
 
         push @buttons, join "\n", grep { $_ }
             qq{<a id="halo-button-$name-$id"},
-            qq{  onclick="halo_render('$id', '$name')"; return false"},
+            qq{  onclick="halo_render('$id', '$name'); return false"},
             $d->{default} && qq{  style="font-weight:bold"},
             qq{  href="#">$letter</a>},
     }
 
-    my $rendermode = '[' . join('|', @buttons) . ']';
+    my $rendermode = '[ ' . join(' | ', @buttons) . ' ]';
 
     return << "    HEADER";
         <div id="halo-$id" class="halo">
@@ -95,6 +99,7 @@ sub halo_header {
                 <div class="halo-name">$name</div>
             </div>
             <div id="halo-inner-$id">
+                <div id="halo-rendered-$id">
     HEADER
 }
 
@@ -111,16 +116,17 @@ sub halo_footer {
 
         push @divs, join "\n", grep { $_ }
             qq{<div id="halo-info-$name-$id" style="display: none">},
-            $d->{callback} && $d->{callback}->($d),
+            $d->{callback} && $d->{callback}->($frame),
             qq{</div>},
     }
 
     my $divs = join "\n", @divs;
 
     return << "    FOOTER";
-            </div>
-            <div id="halo-info-$id">
-                $divs
+                </div>
+                <div id="halo-info-$id">
+                    $divs
+                </div>
             </div>
         </div>
     FOOTER
