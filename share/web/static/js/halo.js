@@ -74,10 +74,12 @@ function draw_halos() {
 
     if (halos_drawn) {
         halo_header_display = 'block';
-        halo_border_width   = '1px';
+        halo_border_width   = '2px';
         halo_margin         = '3px';
         halo_padding        = '3px';
     }
+
+    $("render_info-draw_halos").innerHTML = halos_drawn ? "Hide halos" : "Draw halos";
 
     YAHOO.util.Dom.getElementsByClassName("halo-header", null, null,
         function (e) {

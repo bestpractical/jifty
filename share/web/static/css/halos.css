@@ -8,7 +8,7 @@
 
 .halo-header {
     display: none;
-    border-bottom: 1px dashed #ffd700;
+    border-bottom: 1px solid #ffd700;
     background: #fff;
     margin: 3px;
 }

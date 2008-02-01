@@ -1,6 +1,6 @@
 <div id="render_info">
-    <a href="#" onclick="draw_halos(); return false"><%_('Draw halos')%></a>
-    <a href="#" onclick="render_info_tree(); return false"><%_('Page info')%></a>
+    <a id="render_info-draw_halos" href="#" onclick="draw_halos(); return false"><%_('Draw halos')%></a>
+    <a id="render_info-page_info" href="#" onclick="render_info_tree(); return false"><%_('Page info')%></a>
 </div>
 <div style="display: none" id="render_info_tree">
 % foreach my $item (@stack) {
