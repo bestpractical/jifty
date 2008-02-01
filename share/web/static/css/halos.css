@@ -21,6 +21,18 @@
     font-family: monospace;
 }
 
+.halo-argument {
+    position: absolute;
+    left: 200px;
+    border: 1px solid black;
+    background: #ccc;
+    padding: 1em;
+    padding-top: 0;
+    width: 300px;
+    height: 500px;
+    overflow: auto;
+}
+
 .halo_actions {
     position: fixed;
     border: 1px solid black;

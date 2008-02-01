@@ -147,6 +147,48 @@ sub halo_footer {
 sub new_frame {
     my $self = shift;
 
+    my $args = {
+        name => "arguments",
+        callback => sub {
+            my $frame = shift;
+            my @out;
+
+            my @args;
+            while (my ($key, $value) = splice(@{$frame->{args}},0,2)) {
+                push @args, [$key, $value];
+            }
+
+            for (sort { $a->[0] cmp $b->[0] } @args) {
+                my ($name, $value) = @$_;
+                my $ref = ref($value);
+                my $out = qq{<b>$name</b>: };
+
+                if ($ref) {
+                    my $expanded = Jifty->web->serial;
+                    my $yaml = Jifty->web->escape(Jifty::YAML::Dump($value));
+                    #$out .= qq{<a href="#" onclick="Element.toggle('$expanded'); return false">$ref</a><div id="$expanded" style="display: none; position: absolute; left: 200px; border: 1px solid black; background: #ccc; padding: 1em; padding-top: 0; width: 300px; height: 500px; overflow: auto"><pre>$yaml</pre></div>};
+                    $out .= qq{<a href="#" onclick="Element.toggle('$expanded'); return false">$ref</a><div id="$expanded" class="halo-argument" style="display: none"><pre>$yaml</pre></div>};
+                }
+                elsif (defined $value) {
+                    $out .= Jifty->web->escape($value);
+                }
+                else {
+                    $out .= "undef";
+                }
+
+                push @out, $out;
+            }
+
+            return undef if @out == 0;
+
+            return "<ul>"
+                 . join("\n",
+                        map { "<li>$_</li>" }
+                        @out)
+                 . "</ul>";
+        },
+    };
+
     return {
         id           => Jifty->web->serial,
         start_time   => time,
@@ -155,6 +197,7 @@ sub new_frame {
         displays     => {
             R => { name => "render", default => 1 },
             S => { name => "source" },
+            A => $args,
         },
         @_,
     };
