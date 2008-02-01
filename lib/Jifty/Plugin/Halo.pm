@@ -42,9 +42,6 @@ sub init {
 sub around_template {
     my ($self, $orig, $path, $args, $code) = @_;
 
-    my $STACK = Jifty->handler->stash->{'_halo_stack'} ||= [];
-    my $DEPTH = ++Jifty->handler->stash->{'_halo_depth'};
-
     # for now, call the last piece of the template's path the name
     $path =~ m{.*/(.+)};
     my $name = $1 || $path;
@@ -54,31 +51,18 @@ sub around_template {
         Data::Dump::Streamer::Dump($code)->Out;
     };
 
-    my $frame = $self->new_frame(
+    my $frame = $self->push_frame(
         args  => [ %{ Jifty->web->request->arguments } ], # ugh :)
         path  => $path,
         name  => $name,
-        depth => $DEPTH,
         perl  => $deparsed,
     );
 
-    # if this is the first frame, discard anything from the previous queries
-    my $previous = $STACK->[-1] || {};
-
-    push @$STACK, $frame;
-    my $STACK_INDEX = $#$STACK;
-
-    $self->call_trigger('halo_pre_template', frame => $frame, previous => $previous);
-
     Template::Declare->buffer->append($self->halo_header($frame));
     $orig->();
+
+    $frame = $self->pop_frame;
     Template::Declare->buffer->append($self->halo_footer($frame));
-
-    $frame->{'end_time'} = time;
-
-    $self->call_trigger('halo_post_template', frame => $frame, previous => $previous);
-
-    --Jifty->handler->stash->{'_halo_depth'};
 }
 
 sub halo_header {
@@ -156,6 +140,45 @@ sub new_frame {
         },
         @_,
     };
+}
+
+sub push_frame {
+    my $self = shift;
+
+    my $STACK       = Jifty->handler->stash->{'_halo_stack'} ||= [];
+    my $DEPTH       = ++Jifty->handler->stash->{'_halo_depth'};
+    my $INDEX_STACK = Jifty->handler->stash->{'_halo_index_stack'} ||= [];
+
+    # if this is the first frame, discard anything from the previous queries
+    my $previous = $STACK->[-1] || {};
+
+    my $frame = $self->new_frame(@_, previous => $previous, depth => $DEPTH);
+
+    push @$STACK, $frame;
+    push @$INDEX_STACK, $#$STACK;
+
+    $self->call_trigger('halo_pre_template', frame => $frame, previous => $previous);
+
+    return $frame;
+}
+
+sub pop_frame {
+    my $self = shift;
+
+    my $STACK       = Jifty->handler->stash->{'_halo_stack'} ||= [];
+    my $INDEX_STACK = Jifty->handler->stash->{'_halo_index_stack'} ||= [];
+    my $FRAME_ID    = pop @$INDEX_STACK;
+
+    my $frame = $STACK->[$FRAME_ID];
+    my $previous = $frame->{previous};
+
+    $frame->{'end_time'} = time;
+
+    $self->call_trigger('halo_post_template', frame => $frame, previous => $previous);
+
+    --Jifty->handler->stash->{'_halo_depth'};
+
+    return $frame;
 }
 
 1;
