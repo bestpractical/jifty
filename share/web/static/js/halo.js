@@ -147,3 +147,10 @@ function halo_reset(id) {
     }
 }
 
+function remove_link(id, name) {
+    var link = $('halo-button-'+name+'-'+id);
+    var newlink = document.createElement("span");
+    newlink.appendChild(link.childNodes[0]);
+    link.parentNode.replaceChild(newlink, link);
+}
+

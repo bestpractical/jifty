@@ -146,6 +146,50 @@ sub halo_pre_template {
     push @halo_queries, Jifty->handle->sql_statement_log;
 
     Jifty->handle->clear_sql_statement_log;
+
+    $args{frame}{displays}{Q} = {
+        name => "queries",
+        callback => sub {
+            my $frame = shift;
+            my @queries;
+
+            for (@{ $frame->{sql_statements} || [] }) {
+                my $bindings;
+
+                if (@{$_->[2]}) {
+                    my @bindings = map {
+                        defined $_
+                            ? $_ =~ /[^[:space:][:graph:]]/
+                                ? "*BLOB*"
+                                : Jifty->web->escape($_)
+                            : "undef"
+                    } @{$_->[2]};
+
+                    $bindings = join '',
+                        "<b>",
+                        _('Bindings'),
+                        ":</b> <tt>",
+                        join(', ', @bindings),
+                        "</tt><br />",
+                }
+
+                push @queries, join "\n",
+                    qq{<span class="fixed">},
+                    Jifty->web->escape($_->[1]),
+                    qq{</span><br />},
+                    $bindings,
+                    "<i>". _('%1 seconds', $_->[3]) ."</i>",
+            }
+
+            return undef if @queries == 0;
+
+            return "<ol>"
+                 . join("\n",
+                        map { "<li>$_</li>" }
+                        @queries)
+                 . "</ol>";
+        },
+    };
 }
 
 =head2 halo_post_template

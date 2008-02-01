@@ -114,10 +114,22 @@ sub halo_footer {
         my $d = $displays->{$_};
         my $name = Jifty->web->escape($d->{name});
 
-        push @divs, join "\n", grep { $_ }
-            qq{<div id="halo-info-$name-$id" style="display: none">},
-            $d->{callback} && $d->{callback}->($frame),
-            qq{</div>},
+        if ($d->{callback}) {
+            my $output =
+                qq{<div id="halo-info-$name-$id" style="display: none">};
+
+            if (defined(my $info = $d->{callback}->($frame))) {
+                $output .= $info;
+            }
+            else {
+                # downgrade the link to plaintext so it's obvious there's no
+                # information available
+                $output .= qq{<script type="text/javascript">remove_link('$id', '$name');</script>};
+            }
+
+            $output .= "</div>";
+            push @divs, $output;
+        }
     }
 
     my $divs = join "\n", @divs;
