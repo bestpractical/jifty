@@ -571,11 +571,11 @@ sub render_key_binding {
     my $self = shift;
     return unless $self->key_binding;
     Jifty->web->out(
-        '<script type="text/javascript"><!--' .
+        '<script type="text/javascript">' .
         "\n" .
         Jifty->web->escape($self->key_binding_javascript).
         "\n" .
-        "--></script>");
+        "</script>");
     return '';
 }
 

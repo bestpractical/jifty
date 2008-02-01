@@ -392,9 +392,9 @@ sub render_inline_javascript {
     );
     
     if($javascript =~ /\S/) {
-        Jifty->web->out(qq{<script type="text/javascript"><!--
+        Jifty->web->out(qq{<script type="text/javascript">
     $javascript
---></script>
+</script>
 });
     }
 }
