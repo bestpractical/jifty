@@ -392,9 +392,7 @@ sub render_inline_javascript {
     );
     
     if($javascript =~ /\S/) {
-        Jifty->web->out(qq{<script type="text/javascript">
-    $javascript
-</script>
+        Jifty->web->out(qq{<script type="text/javascript">$javascript</script>
 });
     }
 }
@@ -608,9 +606,7 @@ sub render_autocomplete {
     my $self = shift;
     return unless $self->autocompleter;
     $self->render_autocomplete_div;
-    Jifty->web->out(qq{<script type="text/javascript"><!--
-    @{[$self->autocomplete_javascript]}
---></script>});
+    Jifty->web->out(qq{<script type="text/javascript">@{[$self->autocomplete_javascript]}</script>});
     return '';
 }
 

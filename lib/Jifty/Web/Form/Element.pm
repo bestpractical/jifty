@@ -572,9 +572,7 @@ sub render_key_binding {
     return unless $self->key_binding;
     Jifty->web->out(
         '<script type="text/javascript">' .
-        "\n" .
         Jifty->web->escape($self->key_binding_javascript).
-        "\n" .
         "</script>");
     return '';
 }
