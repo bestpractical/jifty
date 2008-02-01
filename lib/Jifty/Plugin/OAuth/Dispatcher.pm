@@ -8,6 +8,7 @@ use Net::OAuth::RequestTokenRequest;
 use Net::OAuth::AccessTokenRequest;
 use Net::OAuth::ProtectedResourceRequest;
 use Crypt::OpenSSL::RSA;
+use URI::Escape 'uri_unescape';
 
 on     POST '/oauth/request_token' => \&request_token;
 before GET  '/oauth/authorize'     => \&authorize;
@@ -344,11 +345,16 @@ The precedence of parameters, from highest priority to lowest priority, is:
 
 sub get_parameters {
     my %p;
-
-    # XXX: Check Authorization header
-    # XXX: Check WWW-Authenticate header
-
     my %params = Jifty->handler->apache->params();
+
+    # Check Authorization header
+    my $authz = Jifty->handler->apache->header_in("Authorization");
+    if ($authz && $authz =~ s/^\s*OAuth\s*//i) {
+        while ($authz =~ m{\s*([%a-zA-Z0-9._~-]+)="([%a-zA-Z0-9._~-]*)"\s*}g) {
+            $params{uri_unescape($1)} = uri_unescape($2);
+        }
+    }
+
     for (@_) {
         $p{$_} = delete $params{"oauth_$_"}
             if !defined $p{$_};
