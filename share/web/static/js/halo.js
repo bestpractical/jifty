@@ -77,7 +77,7 @@ function draw_halos() {
         halo_margin         = '2px';
     }
 
-    YAHOO.util.Dom.getElementsByClassName("halo_header", null, null,
+    YAHOO.util.Dom.getElementsByClassName("halo-header", null, null,
         function (e) {
             e.style.display = halo_header_display;
         }
@@ -95,42 +95,50 @@ function render_info_tree() {
     Element.toggle("render_info_tree");
 }
 
-function halo_render(id) {
+function halo_render(id, name) {
     halo_reset(id);
-    $('halo-button-render-'+id).style.fontWeight = 'bold';
+    $('halo-button-'+name+'-'+id).style.fontWeight = 'bold';
 
     var e = $('halo-inner-'+id);
+
+    if (name == 'source') {
+        e.halo_rendered = e.innerHTML;
+        e.innerHTML = '<div class="halo-source">' + e.innerHTML.escapeHTML() + '</div>';
+    }
+    else if (name == 'render') {
+        /* ignore */
+    }
+    else {
+        e.style.display = 'none';
+        $('halo-info-'+name+'-'+id).style.display = 'block';
+    }
+}
+
+function halo_reset(id) {
+    /* restore all buttons to nonbold */
+    for (var child = $('halo-rendermode-'+id).firstChild;
+         child != null;
+         child = child.nextSibling) {
+            if (child.style) {
+                child.style.fontWeight = 'normal';
+            }
+    }
+
+    /* hide all the info divs */
+    for (var child = $('halo-info-'+id).firstChild;
+         child != null;
+         child = child.nextSibling) {
+            if (child.style) {
+                child.style.display = 'none';
+            }
+    }
+
+    /* restore the rendered div */
+    var e = $('halo-inner-'+id);
+    e.style.display = 'block';
     if (e.halo_rendered) {
         e.innerHTML = e.halo_rendered;
         e.halo_rendered = null;
     }
-}
-
-function halo_source(id) {
-    halo_reset(id);
-    $('halo-button-source-'+id).style.fontWeight = 'bold';
-
-    var e = $('halo-inner-'+id);
-    if (!e.halo_rendered) {
-        e.halo_rendered = e.innerHTML;
-        e.innerHTML = '<div class="halo_source">' + e.innerHTML.escapeHTML() + '</div>';
-    }
-}
-
-function halo_perl(id) {
-    halo_reset(id);
-    $('halo-button-perl-'+id).style.fontWeight = 'bold';
-    $('halo-inner-'+id).style.display   = 'none';
-    $('halo-perl-'+id).style.display    = 'block';
-
-}
-
-function halo_reset(id) {
-    $('halo-button-perl-'+id).style.fontWeight   = 'normal';
-    $('halo-button-source-'+id).style.fontWeight = 'normal';
-    $('halo-button-render-'+id).style.fontWeight = 'normal';
-
-    $('halo-inner-'+id).style.display     = 'block';
-    $('halo-perl-'+id).style.display      = 'none';
 }
 

@@ -5,22 +5,18 @@
     margin: 0;
 }
 
-.halo_header {
+.halo-header {
     display: none;
     border-bottom: 1px dashed #ffd700;
     background: #fff;
 }
 
-.halo_rendermode {
+.halo-rendermode {
     float: right;
 }
 
-.halo_source, .halo_perl {
+.halo-source {
     font-family: monospace;
-}
-
-.halo_perl {
-    display: none;
 }
 
 .halo_actions {

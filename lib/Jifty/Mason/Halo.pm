@@ -31,21 +31,18 @@ sub start_component_hook {
 
     return if ($context->comp->path || '') eq "/__jifty/halo";
 
-    my $ID          = Jifty->web->serial;
     my $STACK       = Jifty->handler->stash->{'_halo_stack'} ||= [];
     my $INDEX_STACK = Jifty->handler->stash->{'_halo_index_stack'} ||= [];
     my $DEPTH       = ++Jifty->handler->stash->{'_halo_depth'};
 
-    my $frame = {
-        id           => $ID,
+    my $frame = Jifty::Plugin::Halo->new_frame(
         args         => [map { eval { defined $_ and fileno( $_ ) }  ? "*GLOB*" : $_} @{$context->args}],
-        start_time   => time,
         path         => $context->comp->path || '',
         subcomponent => $context->comp->is_subcomp() ? 1 : 0,
         name         => $context->comp->name || '(Unnamed component)',
         proscribed   => $self->_unrendered_component($context) ? 1 : 0,
         depth        => $DEPTH,
-    };
+    );
 
     my $previous = $STACK->[-1];
     push @$STACK, $frame;
