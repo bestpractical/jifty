@@ -549,6 +549,7 @@ sub as_button {
         {   %$args,
             type         => 'InlineButton',
             continuation => $self->_continuation,
+            title        => $self->tooltip,
             @_
         }
     );
