@@ -48,6 +48,8 @@ You will still need to manually do the following to make client side l10n work:
 
 __PACKAGE__->mk_accessors(qw(js));
 
+Jifty->web->add_javascript('loc.js');
+
 sub init {
     my $self = shift;
     return if $self->_pre_init;
