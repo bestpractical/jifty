@@ -375,7 +375,7 @@ msgstr ""
 
 #: lib/Jifty/Plugin/OpenID/Action/AuthenticateOpenID.pm:59
 msgid "Invalid OpenID URL.  Please check to make sure it is correct.  (@{[$csr->err]})"
-msgstr ""
+msgstr "不正確的 OpenID 網址. (@{[$csr->err]})"
 
 #: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:63 lib/Jifty/Plugin/Authentication/Password/Action/SendAccountConfirmation.pm:75 lib/Jifty/Plugin/Authentication/Password/Action/SendPasswordReminder.pm:79
 msgid "It doesn't look like there's an account by that name."
@@ -383,11 +383,11 @@ msgstr "沒有這個帳號."
 
 #: lib/Jifty/Plugin/User/Mixin/Model/User.pm:106
 msgid "It looks like somebody else is using that address. Is there a chance you have another account?"
-msgstr ""
+msgstr "已經有其他人使用這個電郵地址. 您是否已經有其他帳號了？"
 
 #: lib/Jifty/Plugin/OpenID/Dispatcher.pm:43
 msgid "It looks like someone is already using that OpenID."
-msgstr ""
+msgstr "已經有其他人使用此 OpenID."
 
 #: lib/Jifty/Plugin/Authentication/Password/Action/Signup.pm:75
 msgid "It looks like you already have an account. Perhaps you want to <a href=\"/login\">log in</a> instead?"
@@ -511,7 +511,7 @@ msgstr "線上文件"
 
 #: lib/Jifty/Plugin/OpenID/Action/AuthenticateOpenID.pm:27
 msgid "OpenID URL"
-msgstr ""
+msgstr "OpenID 網址"
 
 #: lib/Jifty/Plugin/OpenID/Action/VerifyOpenID.pm:54
 msgid "OpenID verification failed.  It looks like you cancelled the OpenID verification request."
