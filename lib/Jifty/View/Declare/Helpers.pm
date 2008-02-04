@@ -234,9 +234,9 @@ If called in list context, returns the values of all items in C<args>.
 
 sub get {
     if (wantarray) {
-        map { request->argument($_) } @_;
+        map { request->template_argument($_) || request->argument($_) } @_;
     } else {
-        request->argument( $_[0] );
+        request->template_argument($_[0]) || request->argument( $_[0] );
     }
 }
 
@@ -251,7 +251,7 @@ Sets arguments for later grabbing with L<get>.
 
 sub set {
     while ( my ( $arg, $val ) = splice(@_, 0, 2) ) {
-        request->argument( $arg => $val );
+        request->template_argument( $arg => $val );
     }
 
 }

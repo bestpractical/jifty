@@ -26,6 +26,7 @@ arguments:
   J:A:F-id-mymoniker: 23
   J:A:F-something-mymoniker: else
   J:ACTIONS: mymoniker
+template_arguments: {}
 fragments: {}
 === two actions
 --- form
@@ -64,6 +65,7 @@ arguments:
   J:A:F-id-second: 42
   J:A:F-something-second: bla
   J:ACTIONS: mymoniker!second
+template_arguments: {}
 fragments: {}
 === two different actions
 --- form
@@ -102,6 +104,7 @@ arguments:
   J:A:F-id-second: 42
   J:A:F-something-second: bla
   J:ACTIONS: mymoniker!second
+template_arguments: {}
 fragments: {}
 === ignore arguments without actions
 --- form
@@ -130,6 +133,7 @@ arguments:
   J:A:F-id-second: 42
   J:A:F-something-second: bla
   J:ACTIONS: mymoniker!second
+template_arguments: {}
 fragments: {}
 === one active, one inactive action
 --- form
@@ -168,6 +172,7 @@ arguments:
   J:A:F-id-second: 42
   J:A:F-something-second: bla
   J:ACTIONS: second
+template_arguments: {}
 fragments: {}
 === two actions, no J:ACTIONS
 --- form
@@ -204,6 +209,7 @@ arguments:
   J:A-second: DoThat
   J:A:F-id-second: 42
   J:A:F-something-second: bla
+template_arguments: {}
 fragments: {}
 === ignore totally random stuff
 --- form
@@ -248,6 +254,7 @@ arguments:
   J:A-second: DoThat
   J:A:F-id-second: 42
   J:A:F-something-second: bla
+template_arguments: {}
 fragments: {}
 === order doesn't matter
 --- form
@@ -284,6 +291,7 @@ arguments:
   J:A-second: DoThat
   J:A:F-something-mymoniker: else
   J:A-mymoniker: DoSomething
+template_arguments: {}
 fragments: {}
 === fallbacks being ignored
 --- form
@@ -310,6 +318,7 @@ arguments:
   J:A:F:F-id-mymoniker: 96
   J:A:F-something-mymoniker: else
   J:ACTIONS: mymoniker
+template_arguments: {}
 fragments: {}
 === fallbacks being ignored (other order)
 --- form
@@ -336,6 +345,7 @@ arguments:
   J:A:F-id-mymoniker: 23
   J:A:F-something-mymoniker: else
   J:ACTIONS: mymoniker
+template_arguments: {}
 fragments: {}
 === fallbacks being used
 --- form
@@ -360,6 +370,7 @@ arguments:
   J:A:F:F-id-mymoniker: 96
   J:A:F-something-mymoniker: else
   J:ACTIONS: mymoniker
+template_arguments: {}
 fragments: {}
 === two different actions, one with fallback, one without
 --- form
@@ -400,6 +411,7 @@ arguments:
   J:A:F-id-second: 42
   J:A:F-something-second: feepy
   J:ACTIONS: mymoniker!second
+template_arguments: {}
 fragments: {}
 === just validating
 ---- form
@@ -441,4 +453,5 @@ arguments:
   J:A:F-id-second: 42
   J:A:F-something-second: bla
   J:ACTIONS: mymoniker!second
+template_arguments: {}
 fragments: {}
