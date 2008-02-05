@@ -3,7 +3,7 @@ use warnings;
 use strict;
 use lib 't/lib';
 use Jifty::SubTest;
-use Jifty::Test tests => 10;
+use Jifty::Test tests => 12;
 
 my $song = TestApp::Plugin::Attributes::Model::Song->new;
 my ($ok, $msg) = $song->create(
@@ -33,4 +33,14 @@ can_ok($attr, qw/name description content object_type object_id object/);
 is($attr->name, 'is_instrumental', "name of the attribute was saved");
 is($attr->description,  'Is this song an instrumental?', "description of the attribute was saved");
 is($attr->content, 1, "content of the attribute was saved");
+
+my $song2 = TestApp::Plugin::Attributes::Model::Song->new;
+($ok, $msg) = $song2->create(
+    name   => 'A Passage to Bangkok',
+    artist => 'Rush',
+    album  => '2112',
+);
+ok($ok, $msg);
+
+ok(!defined($song2->first_attribute('is_instrumental')), "second song has no is_instrumental attribute");
 

@@ -24,7 +24,8 @@ sub attributes {
 
 =head2 first_attribute name
 
-Returns the first attribute on this object with the given name.
+Returns the first attribute on this object with the given name, or C<undef> if
+none exist.
 
 =cut
 
@@ -37,8 +38,8 @@ sub first_attribute {
 
 =head2 add_attribute PARAMHASH
 
-Adds the given attribute to this object. The following fields must be
-provided:
+Adds the given attribute to this object. Returns the new attribute if
+successful, C<undef> otherwise. The following fields must be provided:
 
 =over 4
 
@@ -69,12 +70,15 @@ sub add_attribute {
         description => $args{description},
         content     => $args{content},
     );
+
+    return $attr->id ? $attr : undef;
 }
 
 =head2 set_attribute PARAMHASH
 
 Sets the given attribute on the object. Note that all existing attributes of
-that name will be removed. The following fields must be provided:
+that name will be removed. Returns the new attribute or C<undef> if one could
+not be created. The following fields must be provided:
 
 =over 4
 
@@ -117,18 +121,23 @@ sub set_attribute {
 
 =head2 delete_attribute name
 
-Deletes all attributes of the given name
+Deletes all attributes of the given name. Returns a true value if all attributes
+were deleted, a false if any could not be.
 
 =cut
 
 sub delete_attribute {
     my $self = shift;
     my $name = shift;
+    my $ok = 1;
 
     my $attrs = $self->attributes->named($name);
     while (my $attr = $attrs->next) {
-        $attr->delete;
+        $attr->delete
+            or $ok = 0;
     }
+
+    return $ok;
 }
 
 1;
