@@ -86,8 +86,6 @@ Clears the SQL log so you only get the request's queries
 
 sub before_request {
     Jifty->handle or return;
-
-    Jifty->handle->clear_sql_statement_log();
 }
 
 =head2 after_request
@@ -103,7 +101,9 @@ sub after_request {
     my $cgi = shift;
 
     my $total_time = 0;
-    my @log = (splice @halo_queries), Jifty->handle->sql_statement_log();
+    my @log = ((splice @halo_queries), Jifty->handle->sql_statement_log());
+    Jifty->handle->clear_sql_statement_log();
+
     for (@log) {
         my ($time, $statement, $bindings, $duration, $results) = @$_;
 
@@ -114,7 +114,7 @@ sub after_request {
         $total_time += $duration;
 
         # keep track of the ten slowest queries so far
-        if ($duration > $slow_queries[0][3]) {
+        if (@slow_queries < 10 || $duration > $slow_queries[0][3]) {
             push @slow_queries, $_;
             @slow_queries = sort { $a->[3] <=> $b->[3] } @slow_queries;
             shift @slow_queries if @slow_queries > 9;
@@ -177,7 +177,7 @@ sub halo_pre_template {
                     qq{<span class="fixed">},
                     Jifty->web->escape($_->[1]),
                     qq{</span><br />},
-                    $bindings,
+                    defined($bindings) ? $bindings : '',
                     "<i>". _('%1 seconds', $_->[3]) ."</i>",
             }
 
