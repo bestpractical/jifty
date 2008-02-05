@@ -75,7 +75,14 @@ sub post_init {
     require Carp;
 
     Jifty->handle->log_sql_statements(1);
-    Jifty->handle->log_sql_hook(SQLQueryPlugin => sub { Carp::longmess });
+    Jifty->handle->log_sql_hook(SQLQueryPlugin => sub {
+        my ($time, $statement, $bindings, $duration) = @_;
+        Jifty->log->debug(sprintf 'Query (%.3fs): "%s", with bindings: %s',
+                            $duration,
+                            $statement,
+                            join ', ', @$bindings);
+        return Carp::longmess;
+    });
 }
 
 =head2 before_request
@@ -107,10 +114,6 @@ sub after_request {
     for (@log) {
         my ($time, $statement, $bindings, $duration, $results) = @$_;
 
-        Jifty->log->debug(sprintf 'Query (%.3fs): "%s", with bindings: %s',
-                            $duration,
-                            $statement,
-                            join ', ', @$bindings);
         $total_time += $duration;
 
         # keep track of the ten slowest queries so far
