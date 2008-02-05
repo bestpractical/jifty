@@ -90,7 +90,11 @@ on 'openid/verify_and_login' => run {
         }
     }
     else {
-        redirect '/openid/login';
+        if(Jifty->web->request->continuation) {
+            Jifty->web->request->continuation->call;
+        } else {
+            redirect '/openid/login';
+        }
     }
 };
 
