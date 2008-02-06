@@ -66,63 +66,91 @@ function draw_halos() {
     var halo_header_display = 'none';
     var halo_border_width   = '0';
     var halo_margin         = '0';
+    var halo_padding        = '0';
 
     halos_drawn = !halos_drawn;
 
     if (halos_drawn) {
         halo_header_display = 'block';
-        halo_border_width   = '1px';
-        halo_margin         = '2px';
+        halo_border_width   = '2px';
+        halo_margin         = '3px';
+        halo_padding        = '3px';
     }
 
-    jQuery(".halo_header").css({
-        display: halo_header_display
-    });
+    $("render_info-draw_halos").innerHTML = halos_drawn ? "Hide halos" : "Draw halos";
 
-    jQuery(".halo").css({
-        'border-width': halo_border_width,
-        'margin': halo_margin
-    });
+    YAHOO.util.Dom.getElementsByClassName("halo-header", null, null,
+        function (e) {
+            e.style.display = halo_header_display;
+        }
+    );
+
+    YAHOO.util.Dom.getElementsByClassName("halo", null, null,
+        function (e) {
+            e.style.borderWidth = halo_border_width;
+            e.style.margin = halo_margin;
+            e.style.padding = halo_padding;
+        }
+    );
 }
 
 function render_info_tree() {
     jQuery("#render_info_tree").toggle();
 }
 
-function halo_render(id) {
+function halo_render(id, name) {
     halo_reset(id);
-    jQuery('#halo-button-render-'+id).css({ 'font-weight': 'bold' });
+    $('halo-button-'+name+'-'+id).style.fontWeight = 'bold';
 
-    var e = Jifty.$('halo-inner-'+id);
+    var e = $('halo-rendered-'+id);
+
+    if (name == 'source') {
+        e.halo_rendered = e.innerHTML;
+        e.innerHTML = '<div class="halo-source">' + e.innerHTML.escapeHTML() + '</div>';
+    }
+    else if (name == 'render') {
+        /* ignore */
+    }
+    else {
+        e.style.display = 'none';
+        $('halo-info-'+id).style.display = 'block';
+        $('halo-info-'+name+'-'+id).style.display = 'block';
+    }
+}
+
+function halo_reset(id) {
+    /* restore all buttons to nonbold */
+    for (var child = $('halo-rendermode-'+id).firstChild;
+         child != null;
+         child = child.nextSibling) {
+            if (child.style) {
+                child.style.fontWeight = 'normal';
+            }
+    }
+
+    /* hide all the info divs */
+    $('halo-info-'+id).style.display = 'none';
+    for (var child = $('halo-info-'+id).firstChild;
+         child != null;
+         child = child.nextSibling) {
+            if (child.style) {
+                child.style.display = 'none';
+            }
+    }
+
+    /* restore the rendered div */
+    var e = $('halo-rendered-'+id);
+    e.style.display = 'block';
     if (e.halo_rendered) {
         e.innerHTML = e.halo_rendered;
         e.halo_rendered = null;
     }
 }
 
-function halo_source(id) {
-    halo_reset(id);
-    Jifty.$('halo-button-source-'+id).style.fontWeight = 'bold';
-
-    var e = Jifty.$('halo-inner-'+id);
-    if (!e.halo_rendered) {
-        e.halo_rendered = e.innerHTML;
-        jQuery(e).empty().append( jQuery('<div class="halo_source"></div>').text(e.halo_rendered) );
-    }
-}
-
-function halo_perl(id) {
-    halo_reset(id);
-    Jifty.$('halo-button-perl-'+id).style.fontWeight = 'bold';
-    Jifty.$('halo-inner-'+id).style.display   = 'none';
-    Jifty.$('halo-perl-'+id).style.display    = 'block';
-}
-
-function halo_reset(id) {
-    jQuery.each([
-            "button-perl", "button-source", "button-render", "inner", "perl"
-    ], function() {
-        jQuery("#halo-" + this + "-" + id).css({ 'font-weight': 'normal' });
-    });
+function remove_link(id, name) {
+    var link = $('halo-button-'+name+'-'+id);
+    var newlink = document.createElement("span");
+    newlink.appendChild(link.childNodes[0]);
+    link.parentNode.replaceChild(newlink, link);
 }
 

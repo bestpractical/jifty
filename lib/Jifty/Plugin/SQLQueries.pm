@@ -75,7 +75,14 @@ sub post_init {
     require Carp;
 
     Jifty->handle->log_sql_statements(1);
-    Jifty->handle->log_sql_hook(SQLQueryPlugin => sub { Carp::longmess });
+    Jifty->handle->log_sql_hook(SQLQueryPlugin => sub {
+        my ($time, $statement, $bindings, $duration) = @_;
+        Jifty->log->debug(sprintf 'Query (%.3fs): "%s", with bindings: %s',
+                            $duration,
+                            $statement,
+                            join ', ', @$bindings);
+        return Carp::longmess;
+    });
 }
 
 =head2 before_request
@@ -86,8 +93,6 @@ Clears the SQL log so you only get the request's queries
 
 sub before_request {
     Jifty->handle or return;
-
-    Jifty->handle->clear_sql_statement_log();
 }
 
 =head2 after_request
@@ -103,18 +108,16 @@ sub after_request {
     my $cgi = shift;
 
     my $total_time = 0;
-    my @log = (splice @halo_queries), Jifty->handle->sql_statement_log();
+    my @log = ((splice @halo_queries), Jifty->handle->sql_statement_log());
+    Jifty->handle->clear_sql_statement_log();
+
     for (@log) {
         my ($time, $statement, $bindings, $duration, $results) = @$_;
 
-        Jifty->log->debug(sprintf 'Query (%.3fs): "%s", with bindings: %s',
-                            $duration,
-                            $statement,
-                            join ', ', @$bindings);
         $total_time += $duration;
 
         # keep track of the ten slowest queries so far
-        if ($duration > $slow_queries[0][3]) {
+        if (@slow_queries < 10 || $duration > $slow_queries[0][3]) {
             push @slow_queries, $_;
             @slow_queries = sort { $a->[3] <=> $b->[3] } @slow_queries;
             shift @slow_queries if @slow_queries > 9;
@@ -146,6 +149,50 @@ sub halo_pre_template {
     push @halo_queries, Jifty->handle->sql_statement_log;
 
     Jifty->handle->clear_sql_statement_log;
+
+    $args{frame}{displays}{Q} = {
+        name => "queries",
+        callback => sub {
+            my $frame = shift;
+            my @queries;
+
+            for (@{ $frame->{sql_statements} || [] }) {
+                my $bindings;
+
+                if (@{$_->[2]}) {
+                    my @bindings = map {
+                        defined $_
+                            ? $_ =~ /[^[:space:][:graph:]]/
+                                ? "*BLOB*"
+                                : Jifty->web->escape($_)
+                            : "undef"
+                    } @{$_->[2]};
+
+                    $bindings = join '',
+                        "<b>",
+                        _('Bindings'),
+                        ":</b> <tt>",
+                        join(', ', @bindings),
+                        "</tt><br />",
+                }
+
+                push @queries, join "\n",
+                    qq{<span class="fixed">},
+                    Jifty->web->escape($_->[1]),
+                    qq{</span><br />},
+                    defined($bindings) ? $bindings : '',
+                    "<i>". _('%1 seconds', $_->[3]) ."</i>",
+            }
+
+            return undef if @queries == 0;
+
+            return "<ol>"
+                 . join("\n",
+                        map { "<li>$_</li>" }
+                        @queries)
+                 . "</ol>";
+        },
+    };
 }
 
 =head2 halo_post_template

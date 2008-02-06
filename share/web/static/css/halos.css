@@ -3,24 +3,34 @@
     border-style: solid;
     border-width: 0;
     margin: 0;
+    padding: 0;
 }
 
-.halo_header {
+.halo-header {
     display: none;
-    border-bottom: 1px dashed #ffd700;
+    border-bottom: 1px solid #ffd700;
     background: #fff;
+    margin: 3px;
 }
 
-.halo_rendermode {
+.halo-rendermode {
     float: right;
 }
 
-.halo_source, .halo_perl {
+.halo-source {
     font-family: monospace;
 }
 
-.halo_perl {
-    display: none;
+.halo-argument {
+    position: absolute;
+    left: 200px;
+    border: 1px solid black;
+    background: #ccc;
+    padding: 1em;
+    padding-top: 0;
+    width: 300px;
+    height: 500px;
+    overflow: auto;
 }
 
 .halo_actions {

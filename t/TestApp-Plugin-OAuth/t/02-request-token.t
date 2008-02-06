@@ -5,7 +5,7 @@ use strict;
 use Test::More;
 BEGIN {
     if (eval { require Net::OAuth::Request; require Crypt::OpenSSL::RSA; 1 }) {
-        plan tests => 58;
+        plan tests => 61;
     }
     else {
         plan skip_all => "Net::OAuth isn't installed";
@@ -67,6 +67,16 @@ response_is(
     oauth_consumer_key     => 'foo',
     signature_key          => $seckey,
     oauth_signature_method => 'RSA-SHA1',
+);
+# }}}
+# get a request token using authorization header {{{
+response_is(
+    code                   => 200,
+    testname               => "200 - Authorization header",
+    consumer_secret        => 'bar',
+    params_in              => 'authz',
+    oauth_consumer_key     => 'foo',
+    oauth_signature_method => 'HMAC-SHA1',
 );
 # }}}
 # same timestamp, different nonce {{{

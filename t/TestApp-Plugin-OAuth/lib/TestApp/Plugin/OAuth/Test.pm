@@ -49,6 +49,7 @@ sub response_is {
         testname               => "",
         method                 => 'POST',
         token_secret           => '',
+        params_in              => 'method',
         @_,
     );
 
@@ -62,6 +63,7 @@ sub response_is {
     my $code            = delete $params{code};
     my $testname        = delete $params{testname} || "Response was $code";
     my $method          = delete $params{method};
+    my $params_in       = delete $params{params_in};
     my $token_secret    = delete $params{token_secret};
     my $consumer_secret = delete $params{consumer_secret}
         or die "consumer_secret not passed to response_is!";
@@ -75,15 +77,22 @@ sub response_is {
 
     my $r;
 
+    if ($params_in eq 'authz') {
+        $cmech->default_header("Authorization" => authz(%params));
+    }
+
     if ($method eq 'POST') {
-        $r = $cmech->post($url, [%params]);
+        $r = $cmech->post($url, $params_in eq 'method' ? [%params] : ());
     }
     else {
         my $query = join '&',
                     map { "$_=" . Jifty->web->escape_uri($params{$_}||'') }
                     keys %params;
-        $r = $cmech->get("$url?$query");
+        my $params = $params_in eq 'method' ? "?$query" : '';
+        $r = $cmech->get("$url$params");
     }
+
+    $cmech->default_headers->remove_header("Authorization");
 
     local $Test::Builder::Level = $Test::Builder::Level + 1;
     main::is($r->code, $code, $testname);
@@ -100,6 +109,16 @@ sub response_is {
     }
 
     return $cmech->content;
+}
+
+# creates an Authorization header
+sub authz {
+    my %params = @_;
+
+    return "OAuth "
+         . join ', ',
+             map { $_ . q{="} . Jifty->web->escape_uri($params{$_}) . q{"} }
+                keys %params;
 }
 
 sub sign {

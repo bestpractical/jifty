@@ -117,11 +117,9 @@ sub as_string {
     $output .= (qq(>$label</a>));
 
     $output .= (
-        '<script type="text/javascript"><!--' .
-        "\n" .
+        '<script type="text/javascript">' .
         Jifty->web->escape($self->key_binding_javascript).
-        "\n" .
-        "--></script>") if $self->key_binding;
+        "</script>") if $self->key_binding;
 
     return $output;
 }

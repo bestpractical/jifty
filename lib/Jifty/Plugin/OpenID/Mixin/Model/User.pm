@@ -79,7 +79,7 @@ sub canonicalize_openid {
         if not defined $openid or not length $openid;
 
     $openid = 'http://' . $openid
-        if $openid !~ m{^http://};
+        if $openid !~ m{^https?://};
 
     my $uri = URI->new( $openid );
 

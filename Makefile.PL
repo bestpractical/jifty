@@ -79,6 +79,7 @@ requires('Test::WWW::Selenium'),
 requires('WWW::Mechanize' => 1.30 ),
 requires('UNIVERSAL::require');
 requires('URI' => 1.31);
+requires('URI::Escape');
 requires('XML::Writer' => '0.601');
 requires('XML::Simple');
 requires('XML::XPath');

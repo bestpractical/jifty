@@ -69,7 +69,7 @@ private template 'heading_in_wrapper' => sub {
 
 private template 'keybindings' => sub {
     div { id is "keybindings";
-      outs_raw('<script type="text/javascript"><!-- Jifty.KeyBindings.reset() --></script>') };
+      outs_raw('<script type="text/javascript">Jifty.KeyBindings.reset()</script>') };
 };
 
 #template 'index.html' => page { { title is _('Welcome to your new Jifty application') } img { src is "/static/images/pony.jpg", alt is _( 'You said you wanted a pony. (Source %1)', 'http://hdl.loc.gov/loc.pnp/cph.3c13461'); }; };

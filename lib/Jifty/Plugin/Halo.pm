@@ -34,7 +34,6 @@ sub init {
         if Template::Declare->around_template;
 
     Template::Declare->around_template(sub { $self->around_template(@_) });
-
 }
 
 # parts of why this is.. weird is because we want to play nicely with Mason
@@ -42,96 +41,205 @@ sub init {
 sub around_template {
     my ($self, $orig, $path, $args, $code) = @_;
 
-    my $ID          = Jifty->web->serial;
-    my $STACK       = Jifty->handler->stash->{'_halo_stack'} ||= [];
-    my $DEPTH       = ++Jifty->handler->stash->{'_halo_depth'};
-
     # for now, call the last piece of the template's path the name
     $path =~ m{.*/(.+)};
     my $name = $1 || $path;
 
-    my $deparsed = eval {
-        require Data::Dump::Streamer;
-        Data::Dump::Streamer::Dump($code)->Out;
+    my $frame = $self->push_frame(
+        args  => [ %{ Jifty->web->request->arguments } ],
+        path  => $path,
+        name  => $name,
+    );
+
+    $frame->{displays}->{P} = {
+        name     => "perl",
+        callback => sub {
+            my $deparsed = eval {
+                require Data::Dump::Streamer;
+                Data::Dump::Streamer::Dump($code)->Out;
+            };
+            Jifty->web->escape($deparsed);
+        },
     };
 
-    my $frame = {
-        id           => $ID,
-        args         => [ %{ Jifty->web->request->arguments } ], # ugh :)
-        start_time   => time,
-        path         => $path,
-        subcomponent => 0,
-        name         => $name,
-        proscribed   => 0,
-        depth        => $DEPTH,
-        perl         => $deparsed,
+    Template::Declare->buffer->append($self->halo_header($frame));
+    $orig->();
+
+    $frame = $self->pop_frame;
+    Template::Declare->buffer->append($self->halo_footer($frame));
+}
+
+sub halo_header {
+    my $self     = shift;
+    my $frame    = shift;
+    my $id       = $frame->{id};
+    my $name     = Jifty->web->escape($frame->{name});
+    my $displays = $frame->{displays};
+
+    my @buttons;
+    for my $letter (sort keys %$displays) {
+        my $d = $displays->{$letter};
+        my $name = Jifty->web->escape($d->{name});
+
+        push @buttons, join "\n", grep { $_ }
+            qq{<a id="halo-button-$name-$id"},
+            qq{  onclick="halo_render('$id', '$name'); return false"},
+            $d->{default} && qq{  style="font-weight:bold"},
+            qq{  href="#">$letter</a>},
+    }
+
+    my $rendermode = '[ ' . join(' | ', @buttons) . ' ]';
+
+    return << "    HEADER";
+        <div id="halo-$id" class="halo">
+            <div class="halo-header">
+                <span id="halo-rendermode-$id" class="halo-rendermode">
+                    $rendermode
+                </span>
+                <div class="halo-name">$name</div>
+            </div>
+            <div id="halo-inner-$id">
+                <div id="halo-rendered-$id">
+    HEADER
+}
+
+sub halo_footer {
+    my $self     = shift;
+    my $frame    = shift;
+    my $id       = $frame->{id};
+    my $displays = $frame->{displays};
+
+    my @divs;
+    for (sort keys %$displays) {
+        my $d = $displays->{$_};
+        my $name = Jifty->web->escape($d->{name});
+
+        if ($d->{callback}) {
+            my $output =
+                qq{<div id="halo-info-$name-$id" style="display: none">};
+
+            if (defined(my $info = $d->{callback}->($frame))) {
+                $output .= $info;
+            }
+            else {
+                # downgrade the link to plaintext so it's obvious there's no
+                # information available
+                $output .= qq{<script type="text/javascript">remove_link('$id', '$name');</script>};
+            }
+
+            $output .= "</div>";
+            push @divs, $output;
+        }
+    }
+
+    my $divs = join "\n", @divs;
+
+    return << "    FOOTER";
+                </div>
+                <div id="halo-info-$id">
+                    $divs
+                </div>
+            </div>
+        </div>
+    FOOTER
+}
+
+sub new_frame {
+    my $self = shift;
+
+    my $args = {
+        name => "arguments",
+        callback => sub {
+            my $frame = shift;
+            my @out;
+
+            my @args;
+            while (my ($key, $value) = splice(@{$frame->{args}},0,2)) {
+                push @args, [$key, $value];
+            }
+
+            for (sort { $a->[0] cmp $b->[0] } @args) {
+                my ($name, $value) = @$_;
+                my $ref = ref($value);
+                my $out = qq{<b>$name</b>: };
+
+                if ($ref) {
+                    my $expanded = Jifty->web->serial;
+                    my $yaml = Jifty->web->escape(Jifty::YAML::Dump($value));
+                    #$out .= qq{<a href="#" onclick="Element.toggle('$expanded'); return false">$ref</a><div id="$expanded" style="display: none; position: absolute; left: 200px; border: 1px solid black; background: #ccc; padding: 1em; padding-top: 0; width: 300px; height: 500px; overflow: auto"><pre>$yaml</pre></div>};
+                    $out .= qq{<a href="#" onclick="Element.toggle('$expanded'); return false">$ref</a><div id="$expanded" class="halo-argument" style="display: none"><pre>$yaml</pre></div>};
+                }
+                elsif (defined $value) {
+                    $out .= Jifty->web->escape($value);
+                }
+                else {
+                    $out .= "undef";
+                }
+
+                push @out, $out;
+            }
+
+            return undef if @out == 0;
+
+            return "<ul>"
+                 . join("\n",
+                        map { "<li>$_</li>" }
+                        @out)
+                 . "</ul>";
+        },
     };
+
+    return {
+        id           => Jifty->web->serial,
+        start_time   => time,
+        subcomponent => 0,
+        proscribed   => 0,
+        displays     => {
+            R => { name => "render", default => 1 },
+            S => { name => "source" },
+            A => $args,
+        },
+        @_,
+    };
+}
+
+sub push_frame {
+    my $self = shift;
+
+    my $STACK       = Jifty->handler->stash->{'_halo_stack'} ||= [];
+    my $DEPTH       = ++Jifty->handler->stash->{'_halo_depth'};
+    my $INDEX_STACK = Jifty->handler->stash->{'_halo_index_stack'} ||= [];
 
     # if this is the first frame, discard anything from the previous queries
     my $previous = $STACK->[-1] || {};
 
+    my $frame = $self->new_frame(@_, previous => $previous, depth => $DEPTH);
+
     push @$STACK, $frame;
-    my $STACK_INDEX = $#$STACK;
+    push @$INDEX_STACK, $#$STACK;
 
     $self->call_trigger('halo_pre_template', frame => $frame, previous => $previous);
 
-    Template::Declare->buffer->append($self->halo_header($frame));
-    $orig->();
-    Template::Declare->buffer->append($self->halo_footer($frame));
+    return $frame;
+}
+
+sub pop_frame {
+    my $self = shift;
+
+    my $STACK       = Jifty->handler->stash->{'_halo_stack'} ||= [];
+    my $INDEX_STACK = Jifty->handler->stash->{'_halo_index_stack'} ||= [];
+    my $FRAME_ID    = pop @$INDEX_STACK;
+
+    my $frame = $STACK->[$FRAME_ID];
+    my $previous = $frame->{previous};
 
     $frame->{'end_time'} = time;
 
     $self->call_trigger('halo_post_template', frame => $frame, previous => $previous);
 
     --Jifty->handler->stash->{'_halo_depth'};
+
+    return $frame;
 }
-
-sub halo_header {
-    my $self  = shift;
-    my $frame = shift;
-    my $id    = $frame->{id};
-    my $perl  = $frame->{perl} || '';
-    my $name  = $frame->{name};
-
-    for ($perl, $name) {
-        $_ = Jifty->web->escape($_);
-    }
-
-    my $perl_link = $perl ? qq{ | <a id="halo-button-perl-$id" onclick="halo_perl('$id'); return false" href="#">P</a> } : '';
-    my $perl_div = $perl ? qq{<div id="halo-perl-$id" class="halo_perl"><pre>$perl</pre></div>} : '';
-
-    return << "    HEADER";
-        <div id="halo-$id" class="halo">
-            <div class="halo_header">
-                <span class="halo_rendermode">
-                    [
-                    <a style="font-weight: bold"
-                       id="halo-button-render-$id"
-                       onclick="halo_render('$id'); return false"
-                       href="#">R</a>
-                    |
-                    <a id="halo-button-source-$id"
-                       onclick="halo_source('$id'); return false"
-                       href="#">S</a>
-                    $perl_link
-                    ]
-                </span>
-                <div class="halo_name">$name</div>
-            </div>
-            $perl_div
-            <div id="halo-inner-$id">
-    HEADER
-}
-
-sub halo_footer {
-    my $self  = shift;
-    my $frame = shift;
-
-    return << "    FOOTER";
-            </div>
-        </div>
-    FOOTER
-}
-
 
 1;

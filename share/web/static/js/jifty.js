@@ -772,7 +772,7 @@ Behaviour.register({
     '.form_field .error, .form_field .warning, .form_field .canonicalization_note': function(e) {
         if ( e.innerHTML == "" ) jQuery(e).hide();
     },
-    '.-jifty-region-lazy': function(e) {
+    '.jifty-region-lazy': function(e) {
         var region = e.getAttribute("id").replace(/^region-/,"");
         Jifty.update( { 'fragments': [{'region': region, 'mode': 'Replace'}]}, e);
     }

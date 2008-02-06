@@ -296,7 +296,7 @@ sub abort (;$@)   { _ret @_ }    # abort request
 sub default ($$@) { _ret @_ }    # set parameter if it's not yet set
 sub set ($$@)     { _ret @_ }    # set parameter
 sub del ($@)      { _ret @_ }    # remove parameter
-sub get ($) { request->argument( $_[0] ) }
+sub get ($) { request->template_argument( $_[0] ) || request->argument( $_[0] ) }
 
 sub _qualify ($@);
 sub GET ($)     { _qualify method => @_ }
@@ -473,7 +473,9 @@ sub handle_request {
     local $SIG{__DIE__} = 'DEFAULT';
 
     eval {
-        $Dispatcher->_do_dispatch( Jifty->web->request->path);
+        my $path = Jifty->web->request->path;
+        utf8::downgrade($path); # Mason handle non utf8 path.
+        $Dispatcher->_do_dispatch( $path );
     };
     if ( my $err = $@ ) {
         $self->log->warn(ref($err) . " " ."'$err'") if ( $err !~ /^ABORT/ );
@@ -798,7 +800,7 @@ sub _do_show {
 sub _do_set {
     my ( $self, $key, $value ) = @_;
     $self->log->debug("Setting argument $key to ".($value||''));
-    request->argument($key, $value);
+    request->template_argument($key, $value);
 }
 
 sub _do_del {
@@ -810,8 +812,8 @@ sub _do_del {
 sub _do_default {
     my ( $self, $key, $value ) = @_;
     $self->log->debug("Setting argument default $key to ".($value||''));
-    request->argument($key, $value)
-        unless defined request->argument($key);
+    request->template_argument($key, $value)
+        unless defined request->argument($key) or defined request->template_argument($key);
 }
 
 =head2 _do_dispatch [PATH]
