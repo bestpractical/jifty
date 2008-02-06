@@ -103,7 +103,7 @@ In the most complex case, you have something like this:
               ]
 
 If you specify arguments in the submit block for a button, they will override 
-any values from form fileds submitted by the user.
+any values from form fields submitted by the user.
 
 
 =item preserve_state
@@ -621,8 +621,14 @@ sub generate {
                 for keys %{ $hook->{args} };
             if ( $hook->{submit} ) {
                 $self->{submit} ||= [];
-                $hook->{submit} = [ $hook->{submit} ]
-                    unless ref $hook->{submit} eq "ARRAY";
+                for my $moniker ( @{ $hook->{submit} } ) {
+                    my $action = Jifty->web->{'actions'}{$moniker};
+                    $self->register_action($action);
+                    $self->parameter( $action->form_field_name($_),
+                        $hook->{action_arguments}{$moniker}{$_} )
+                        for
+                        keys %{ $hook->{action_arguments}{$moniker} || {} };
+                }
                 push @{ $self->{submit} }, @{ $hook->{submit} };
             }
         }
