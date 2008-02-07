@@ -1,4 +1,4 @@
-Localization = Object.extend(new Object(), {
+Localization = jQuery.extend(new Object(), {
     init: function(params) {
         this.lang = params.lang || 'en';
         if (params["dict_path"]) {
@@ -62,4 +62,7 @@ Localization = Object.extend(new Object(), {
 });
 
 Localization.dict = {};
-_ = Localization.loc.bind(Localization);
+_ = function() {
+    Localization.loc.apply(Localization, arguments);
+}
+

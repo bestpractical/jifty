@@ -77,21 +77,20 @@ function draw_halos() {
         halo_padding        = '3px';
     }
 
-    $("render_info-draw_halos").innerHTML = halos_drawn ? "Hide halos" : "Draw halos";
-
-    YAHOO.util.Dom.getElementsByClassName("halo-header", null, null,
-        function (e) {
-            e.style.display = halo_header_display;
-        }
+    jQuery("#render_info-draw_halos").html(
+        halos_drawn ? "Hide halos" : "Draw halos"
     );
 
-    YAHOO.util.Dom.getElementsByClassName("halo", null, null,
-        function (e) {
-            e.style.borderWidth = halo_border_width;
-            e.style.margin = halo_margin;
-            e.style.padding = halo_padding;
-        }
-    );
+    jQuery(".halo-header").css({
+        display: halo_header_display
+    });
+
+    jQuery(".halo").css({
+        'border-width': halo_border_width,
+        'margin': halo_margin,
+        'padding': halo_padding
+    })
+
 }
 
 function render_info_tree() {
@@ -100,9 +99,10 @@ function render_info_tree() {
 
 function halo_render(id, name) {
     halo_reset(id);
-    $('halo-button-'+name+'-'+id).style.fontWeight = 'bold';
 
-    var e = $('halo-rendered-'+id);
+    jQuery('#halo-button-'+name+'-'+id).css("font-weight", "bold");
+
+    var e = jQuery('halo-rendered-'+id).get(0);
 
     if (name == 'source') {
         e.halo_rendered = e.innerHTML;
@@ -113,8 +113,8 @@ function halo_render(id, name) {
     }
     else {
         e.style.display = 'none';
-        $('halo-info-'+id).style.display = 'block';
-        $('halo-info-'+name+'-'+id).style.display = 'block';
+        jQuery("#halo-info-"+id).show();
+        jQuery('#halo-info-'+name+'-'+id).show();
     }
 }
 
@@ -129,7 +129,8 @@ function halo_reset(id) {
     }
 
     /* hide all the info divs */
-    $('halo-info-'+id).style.display = 'none';
+    jQuery('#halo-info-'+id).hide();
+
     for (var child = $('halo-info-'+id).firstChild;
          child != null;
          child = child.nextSibling) {
@@ -139,7 +140,7 @@ function halo_reset(id) {
     }
 
     /* restore the rendered div */
-    var e = $('halo-rendered-'+id);
+    var e = jQuery('#halo-rendered-'+id).get(0);
     e.style.display = 'block';
     if (e.halo_rendered) {
         e.innerHTML = e.halo_rendered;
@@ -148,7 +149,7 @@ function halo_reset(id) {
 }
 
 function remove_link(id, name) {
-    var link = $('halo-button-'+name+'-'+id);
+    var link = jQuery('#halo-button-'+name+'-'+id).get(0);
     var newlink = document.createElement("span");
     newlink.appendChild(link.childNodes[0]);
     link.parentNode.replaceChild(newlink, link);
