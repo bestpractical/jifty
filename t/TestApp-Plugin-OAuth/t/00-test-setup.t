@@ -5,10 +5,13 @@ use strict;
 use Test::More;
 BEGIN {
     if (eval { require Net::OAuth::Request; require Crypt::OpenSSL::RSA; 1 }) {
+        unless (eval { Net::OAuth::Request->VERSION('0.05') }) {
+            diag "You might see some test failures if your Net-OAuth isn't 0.05. Please upgrade.";
+        }
         plan tests => 10;
     }
     else {
-        plan skip_all => "Net::OAuth isn't installed";
+        plan skip_all => "Net::OAuth or Crypt::OpenSSL::RSA isn't installed";
     }
 }
 
