@@ -18,6 +18,12 @@ a bug).
 
 =cut
 
+=head2 init
+
+Only enable halos in DevelMode. Add our instrumentation to L<Template::Declare>.
+
+=cut
+
 sub init {
     my $self = shift;
     return if $self->_pre_init;
@@ -36,8 +42,13 @@ sub init {
     Template::Declare->around_template(sub { $self->around_template(@_) });
 }
 
-# parts of why this is.. weird is because we want to play nicely with Mason
-# halos
+=head2 around_template
+
+This is called to instrument L<Template::Declare> templates. We also draw a halo
+around the template itself.
+
+=cut
+
 sub around_template {
     my ($self, $orig, $path, $args, $code) = @_;
 
@@ -68,6 +79,13 @@ sub around_template {
     $frame = $self->pop_frame;
     Template::Declare->buffer->append($self->halo_footer($frame));
 }
+
+=head2 halo_header frame -> string
+
+This will give you the halo header which includes links to the various
+information displays for this template.
+
+=cut
 
 sub halo_header {
     my $self     = shift;
@@ -102,6 +120,13 @@ sub halo_header {
                 <div id="halo-rendered-$id">
     HEADER
 }
+
+=head2 halo_footer frame -> string
+
+This will give you the halo footer which includes the actual information to
+be displayed when the user pokes the halo.
+
+=cut
 
 sub halo_footer {
     my $self     = shift;
@@ -143,6 +168,12 @@ sub halo_footer {
         </div>
     FOOTER
 }
+
+=head2 new_frame -> hashref
+
+Gives you a new frame for storing halo information.
+
+=cut
 
 sub new_frame {
     my $self = shift;
@@ -203,6 +234,15 @@ sub new_frame {
     };
 }
 
+=head2 push_frame -> frame
+
+Creates and pushes a frame onto the render stack. Mason's halos do not support
+"around"ing a component, so we fake it with an explicit stack.
+
+This also triggers C<halo_pre_template> for plugins adding halo data.
+
+=cut
+
 sub push_frame {
     my $self = shift;
 
@@ -222,6 +262,15 @@ sub push_frame {
 
     return $frame;
 }
+
+=head2 pop_frame -> frame
+
+Pops a frame off the render stack. Mason's halos do not support
+"around"ing a component, so we fake it with an explicit stack.
+
+This also triggers C<halo_post_template> for plugins adding halo data.
+
+=cut
 
 sub pop_frame {
     my $self = shift;
