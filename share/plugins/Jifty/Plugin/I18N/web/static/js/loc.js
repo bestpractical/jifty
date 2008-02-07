@@ -1,4 +1,4 @@
-Localization = jQuery.extend(new Object(), {
+Localization = {
     init: function(params) {
         this.lang = params.lang || 'en';
         if (params["dict_path"]) {
@@ -10,22 +10,21 @@ Localization = jQuery.extend(new Object(), {
         this.dict = this.load_dict(lang);
     },
     load_dict: function(lang) {
-        var d;
-        new Ajax.Request(
-            this.dict_path + "/" + lang + ".json",
-            {
-                method: 'get',
-                asynchronous: false,
-                onComplete: function(t, obj) {
-                    eval("d = " + t.responseText || "{}");
-                }
+        var d = {};
+        jQuery.ajax({
+            url: this.dict_path + "/" + lang + ".json",
+            type: 'get',
+            asynchronous: fasle,
+            success: function(dict) {
+                eval("d = " + dict || "{}");
             }
-        );
+        });
+
         return d;
     },
     loc: function(str) {
         var dict = this.dict;
-        if (dict[str]) {
+        if (dict[str] != null) {
             return dict[str];
         }
         return str;
@@ -58,11 +57,10 @@ Localization = jQuery.extend(new Object(), {
         if (minutes < 2880) return _('about one day');
         else return (Math.round(minutes / 1440) + _(' days'))
     }
-
-});
+};
 
 Localization.dict = {};
-_ = function() {
-    Localization.loc.apply(Localization, arguments);
-}
 
+window._ = function() {
+    return Localization.loc.apply(Localization, arguments);
+}
