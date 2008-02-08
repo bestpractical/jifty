@@ -144,8 +144,8 @@ Action.prototype = {
             jQuery.each(this.extras, add_to_elements);
 
             for (var i = 0, l = elements.length; i < l; i++) {
-                if ((Form.Element.getMoniker(elements[i]) == this.moniker)
-                    && (Form.Element.getType(elements[i]) == "registration")) {
+                if ((Jifty.Form.Element.getMoniker(elements[i]) == this.moniker)
+                    && (Jifty.Form.Element.getType(elements[i]) == "registration")) {
                     this.register = elements[i];
                     break;
                 }
@@ -153,7 +153,7 @@ Action.prototype = {
         }
 
         if (this.register) {
-            this.form = Form.Element.getForm(this.register);
+            this.form = Jifty.Form.Element.getForm(this.register);
             this.actionClass = this.register.value;
         }
     },
@@ -162,13 +162,13 @@ Action.prototype = {
     fields: function() {
         if(!this.cached_fields) {
             var elements = [];
-            var possible = Form.getElements(this.form);
+            var possible = Jifty.Form.getElements(this.form);
             // Also pull from extra query parameters
             for (var i = 0, l = this.extras.length; i < l; i++)
                 possible.push(this.extras[i]);
 
             for (var i = 0, l = possible.length; i < l; i++) {
-                if (Form.Element.getMoniker(possible[i]) == this.moniker)
+                if (Jifty.Form.Element.getMoniker(possible[i]) == this.moniker)
                     elements.push(possible[i]);
             }
             this.cached_fields = elements;
@@ -178,10 +178,10 @@ Action.prototype = {
 
     buttons: function() {
         var elements = new Array();
-        var possible = Form.getElements(this.form);
+        var possible = Jifty.Form.getElements(this.form);
         for(var i = 0; i < possible.length; i++) {
             if(possible[i].nodeName == 'INPUT' && possible[i].getAttribute("type") == 'submit') {
-                actions = Form.Element.buttonActions(possible[i]);
+                actions = Jifty.Form.Element.buttonActions(possible[i]);
                 //If the button has no actions explicitly associated
                 //with it, it's associated with all the actions in the
                 //form
@@ -197,7 +197,7 @@ Action.prototype = {
     getField: function(name) {
         var elements = this.fields();
         for (var i = 0; i < elements.length; i++) {
-            if (Form.Element.getField(elements[i]) == name)
+            if (Jifty.Form.Element.getField(elements[i]) == name)
                 return elements[i];
         }
         return null;
@@ -236,21 +236,21 @@ Action.prototype = {
         for (var i = 0; i < fields.length; i++) {
             var f = fields[i];
 
-            if (   (Form.Element.getType(f) != "registration")
-                && (Form.Element.getValue(f) != null)
+            if (   (Jifty.Form.Element.getType(f) != "registration")
+                && (Jifty.Form.Element.getValue(f) != null)
                 && (!Jifty.Placeholder.hasPlaceholder(f)))
             {
-                if (! a['fields'][Form.Element.getField(f)])
-                    a['fields'][Form.Element.getField(f)] = {};
-                var field = Form.Element.getField(f);
-                var type = Form.Element.getType(f);
+                if (! a['fields'][Jifty.Form.Element.getField(f)])
+                    a['fields'][Jifty.Form.Element.getField(f)] = {};
+                var field = Jifty.Form.Element.getField(f);
+                var type = Jifty.Form.Element.getType(f);
 
                 // XXX: fallback value being an array makes server
                 // upset, we don't think that should happen anyway
                 if (type == 'fallback' && a['fields'][field][type])
                     continue
                 a['fields'][field][type] = this._mergeValues(a['fields'][field][type],
-                                                             Form.Element.getValue(f));
+                                                             Jifty.Form.Element.getValue(f));
 
             }
         }
@@ -503,9 +503,9 @@ ActionField.prototype = {
 };
 
 /* Forms */
-Form = {};
+Jifty.Form = {};
 
-jQuery.extend(Form, {
+jQuery.extend(Jifty.Form, {
     getElements: function(element) {
         return jQuery(":input", element).get();
     },
@@ -514,15 +514,15 @@ jQuery.extend(Form, {
         var elements = [];
 
         jQuery(":input", element).each(function() {
-            if (Form.Element.getType(this) == "registration")
-                elements.push(Form.Element.getAction(this));
+            if (Jifty.Form.Element.getType(this) == "registration")
+                elements.push(Jifty.Form.Element.getAction(this));
         });
 
         return elements;
     },
 
     clearPlaceholders: function(element) {
-        var elements = Form.getElements(element);
+        var elements = Jifty.Form.getElements(element);
         for(var i = 0; i < elements.length; i++) {
             Jifty.Placeholder.clearPlaceholder(elements[i]);
         }
@@ -532,10 +532,10 @@ jQuery.extend(Form, {
 
 var current_actions = {};
 
-Form.Element = {};
+Jifty.Form.Element = {};
 
 /* Fields */
-jQuery.extend(Form.Element, {
+jQuery.extend(Jifty.Form.Element, {
     // Get the moniker for this form element
     // Takes an element or an element id
     getMoniker: function (element) {
@@ -556,7 +556,7 @@ jQuery.extend(Form.Element, {
     // Takes an element or an element id
     getAction: function (element) {
         element = Jifty.$(element);
-        var moniker = Form.Element.getMoniker(element);
+        var moniker = Jifty.Form.Element.getMoniker(element);
         if (!current_actions[moniker])
             current_actions[moniker] = new Action(moniker);
         return current_actions[moniker];
@@ -599,7 +599,7 @@ jQuery.extend(Form.Element, {
     // Validates the action this form element is part of
     validate: function (element) {
         if ( !jQuery(element).is('.validation_disabled') ) {
-            Form.Element.getAction(element).validate();
+            Jifty.Form.Element.getAction(element).validate();
         }
     },
 
@@ -661,7 +661,7 @@ jQuery.extend(Form.Element, {
 
     buttonActions: function(element) {
         element = Jifty.$(element);
-        var actions = Form.Element.buttonArguments(element)[ ('J:ACTIONS') ];
+        var actions = Jifty.Form.Element.buttonArguments(element)[ ('J:ACTIONS') ];
         if(actions) {
             return actions.split(",");
         } else {
@@ -676,14 +676,14 @@ jQuery.extend(Form.Element, {
         if (!element)
             return extras;
 
-        var args = Form.Element.buttonArguments(element);
+        var args = Jifty.Form.Element.buttonArguments(element);
 
         jQuery.each(args, function(k, v) {
             var e = document.createElement("input");
             e.setAttribute("type", "hidden");
             e.setAttribute("name", k);
             e.setAttribute("value", v);
-            e['virtualform'] = Form.Element.getForm(element);
+            e['virtualform'] = Jifty.Form.Element.getForm(element);
             extras.push(e);
         });
 
@@ -695,12 +695,12 @@ jQuery.extend(Form.Element, {
        submit the action associated with the form element.
      */
     clickDefaultButton: function(element) {
-        var action = Form.Element.getAction( element );
+        var action = Jifty.Form.Element.getAction( element );
         if ( action ) {
             var buttons = action.buttons();
             for ( var i = 0; i < buttons.length; i++ ) {
                 var b = buttons[i];
-                if ( Form.Element.buttonActions( b ).indexOf( action.moniker ) >= 0 ) {
+                if ( Jifty.Form.Element.buttonActions( b ).indexOf( action.moniker ) >= 0 ) {
                     b.click();
                     return true;
                 }
@@ -714,7 +714,7 @@ jQuery.extend(Form.Element, {
         if (    event.keyCode == 13
              && !event.metaKey && !event.altKey && !event.ctrlKey )
         {
-            if ( Form.Element.clickDefaultButton( event.target ) )
+            if ( Jifty.Form.Element.clickDefaultButton( event.target ) )
                 event.preventDefault();
         }
     }
@@ -737,7 +737,7 @@ Behaviour.register({
 Behaviour.register({
     'input.ajaxvalidation, textarea.ajaxvalidation, input.ajaxcanonicalization, textarea.ajaxcanonicalization': function(elt) {
         jQuery(elt).bind('blur', function () {
-            Form.Element.validate(elt);
+            Jifty.Form.Element.validate(elt);
         });
     },
     'input.date': function(e) {
@@ -758,7 +758,7 @@ Behaviour.register({
                && !jQuery(e).hasClass("ajaxautocompletes" ) )
         {
             /* Do not use keydown as the event, it will not work as expected in Safari */
-            jQuery(e).bind('keypress', Form.Element.handleEnter).addClass("jifty_enter_handler_attached");
+            jQuery(e).bind('keypress', Jifty.Form.Element.handleEnter).addClass("jifty_enter_handler_attached");
         }
     },
     ".messages": function(e) {
@@ -1075,15 +1075,15 @@ Jifty.update = function () {
     request.path = '/__jifty/webservices/xml';
 
     // Grab extra arguments (from a button)
-    var button_args = Form.Element.buttonFormElements(trigger);
+    var button_args = Jifty.Form.Element.buttonFormElements(trigger);
 
-    var form = Form.Element.getForm(trigger);
+    var form = Jifty.Form.Element.getForm(trigger);
     // If the action is null, take all actions
     if (named_args['actions'] == null) {
         named_args['actions'] = {};
         // default to disable fields
         if (form)
-            Form.getActions(form).map(function(x){
+            Jifty.Form.getActions(form).map(function(x){
                 named_args['actions'][x.moniker] = 1;
             });
     }
@@ -1171,7 +1171,7 @@ Jifty.update = function () {
                     var cached_result;
                     Jifty.Web.current_region = fragments[ f['region'] ];
                     try {
-                        cached_result = apply_cached_for_action(cached['content'], Form.getActions(form));
+                        cached_result = apply_cached_for_action(cached['content'], Jifty.Form.getActions(form));
                     }
                     catch (e) { alert(e); throw e }
                     content_node.textContent = cached_result;
@@ -1420,7 +1420,7 @@ Jifty.Autocompleter = function() {
 jQuery.extend(Jifty.Autocompleter.prototype, {
     initialize: function(field, div) {
         this.field  = Jifty.$(field);
-        this.action = Form.Element.getAction(this.field);
+        this.action = Jifty.Form.Element.getAction(this.field);
         this.url    = '/__jifty/autocomplete.xml';
 
         var self = this;
@@ -1456,7 +1456,7 @@ jQuery.extend(Jifty.Autocompleter.prototype, {
     },
 
     afterUpdate: function(field, selection) {
-        Form.Element.validate(field);
+        Jifty.Form.Element.validate(field);
     },
 
     buildRequest: function() {
@@ -1466,7 +1466,7 @@ jQuery.extend(Jifty.Autocompleter.prototype, {
         a['class']   = 'Jifty::Action::Autocomplete';
         a['fields']  = {};
         a['fields']['moniker']  = this.action.moniker;
-        a['fields']['argument'] = Form.Element.getField(this.field);
+        a['fields']['argument'] = Jifty.Form.Element.getField(this.field);
         request['actions']['autocomplete'] = a;
         request['actions'][this.action.moniker] = this.action.data_structure();
         request['actions'][this.action.moniker]['active']  = 0;
@@ -1500,14 +1500,14 @@ jQuery.extend(Jifty.Placeholder.prototype, {
 
      this.onBlur();
 
-     var form = Form.Element.getForm(element);
+     var form = Jifty.Form.Element.getForm(element);
 
      if(form && !form.hasPlaceholders) {
          form.hasPlaceholders = true;
          // We can't attach this event via DOM event methods because
          // we need to call form.submit() sometimes and still have a good
          // way to call this event handler
-         form.onsubmit = function () { Form.clearPlaceholders(form); };
+         form.onsubmit = function () { Jifty.Form.clearPlaceholders(form); };
      }
   },
 
@@ -1567,8 +1567,8 @@ if( !Object.prototype.hasOwnProperty ) {
 function _sp_submit_form(elt, event, submit_to) {
     if(event.ctrlKey||event.metaKey||event.altKey||event.shiftKey) return true;
 
-    var form = Form.Element.getForm(elt);
-    var elements = Form.getElements(form);
+    var form = Jifty.Form.Element.getForm(elt);
+    var elements = Jifty.Form.getElements(form);
 
     // Three things need to get merged -- hidden defaults, defaults
     // from buttons, and form values.  Hence, we build up three lists
@@ -1579,7 +1579,7 @@ function _sp_submit_form(elt, event, submit_to) {
     for (var i = 0; i < elements.length; i++) {
         var e = elements[i];
         var parsed = e.getAttribute("name").match(/^J:V-region-__page\.(.*)/);
-        var extras = Form.Element.buttonArguments(e);
+        var extras = Jifty.Form.Element.buttonArguments(e);
 
         var extras_key_length = 0;
         jQuery.each(extras, function() { extras_key_length++ });
@@ -1668,4 +1668,13 @@ Jifty.Effect = function(el, name, args, options) {
             options["after"].call( el );
     }
 };
+
+/*
+ * Provide an alias in Global namespace for backward compatibility.
+ * Also Jifty.Form will still work even if prototype.js is loaded
+ * after jifty.js.
+ */
+
+if (window.Form == null)
+    window.Form = Jifty.Form;
 

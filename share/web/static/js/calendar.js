@@ -34,7 +34,7 @@ Jifty.Calendar = {
         
         /* We need to delay Jifty's canonicalization until after we've
            selected a value via the calendar */
-        Form.Element.disableValidation(input);
+        Jifty.Form.Element.disableValidation(input);
         
         wrap = document.createElement("div");
         wrap.setAttribute( "id", wrapId );
@@ -108,8 +108,8 @@ Jifty.Calendar = {
             var input = $( inputId );
 
             /* Reenable canonicalization, and do it */
-            Form.Element.enableValidation(input);
-            Form.Element.validate(input);
+            Jifty.Form.Element.enableValidation(input);
+            Jifty.Form.Element.validate(input);
 
             Jifty.Calendar.openCalendar = "";
         }
