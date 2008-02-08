@@ -8,11 +8,13 @@ use Jifty::Test;
 use Jifty::Test::WWW::Selenium;
 use utf8;
 
-if ($ENV{'SELENIUM_RC_BROWSER'} eq '*iexplore') {
-    plan(skip_all => "Temporarily, until the 'Operation Abort' bug is solved.");
-}
-else {
-    plan(tests => 10);
+BEGIN {
+    if ($ENV{'SELENIUM_RC_BROWSER'} eq '*iexplore') {
+        plan(skip_all => "Temporarily, until the 'Operation Abort' bug is solved.");
+    }
+    else {
+        plan(tests => 10);
+    }
 }
 
 my $server = Jifty::Test->make_server;
@@ -20,7 +22,10 @@ my $sel    = Jifty::Test::WWW::Selenium->rc_ok($server);
 my $URL    = $server->started_ok;
 
 $sel->open("/");
-$sel->set_speed(1000);
+
+if ($ENV{'SELENIUM_RC_BROWSER'} eq '*iexplore') {
+    $sel->set_speed(1000);
+}
 
 {
     # Test "Play" action's parameter.
@@ -36,17 +41,24 @@ $sel->set_speed(1000);
     $sel->type_ok($tags, "FOO");
     $sel->fire_event($tags, "blur");
 
+    $sel->pause(1000);
+
     my $tag_value = $sel->get_value($tags);
     is $tag_value, 'foo', "Tags are canonicalized to lower-case";
 
     $sel->type_ok($mood, "FOO");
     $sel->fire_event($tags, "blur");
+    $sel->pause(1000);
+
     is($sel->get_text('//span[contains(@class, "error text argument-mood")]'),
        "That doesn't look like a correct value",
        "mood validation error");
 
     $sel->type_ok($mood, "angry");
     $sel->fire_event($tags, "blur");
+
+    $sel->pause(1000);
+
     is($sel->get_text('//span[contains(@class, "error text argument-mood")]'),
        "",
        "mood validation ok");

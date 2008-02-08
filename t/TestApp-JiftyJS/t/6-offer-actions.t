@@ -23,7 +23,6 @@ my $sel    = Jifty::Test::WWW::Selenium->rc_ok($server);
 my $URL    = $server->started_ok;
 
 $sel->open("/");
-$sel->set_speed(1000);
 
 for (@commands) {
     my ($cmd, $arg1, $arg2) = (split(/\n\s*/, $_, 3), "", "");
@@ -49,6 +48,9 @@ type
 
 click
     xpath=//div[contains(@class,"submit_button")]//input
+
+pause
+    1000
 
 wait_for_element_present
     xpath=//span[contains(@class, "value")][contains(@class, "argument-name")][contains(@class, "text")]
@@ -79,6 +81,9 @@ check
 # Click the "Create" button
 click
     xpath=//div[@class="submit_button"]/input[@type="submit"][contains(@name,"J:ACTIONS=auto-")]
+
+pause
+    1000
 
 wait_for_element_present
     xpath=//input[@type="checkbox"][@checked]
