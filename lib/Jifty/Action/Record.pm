@@ -239,6 +239,8 @@ sub _build_class_arguments {
             # Render as a select box unless they override
             if ( UNIVERSAL::isa( $refers_to, 'Jifty::Record' ) ) {
                 $info->{render_as} = $render_as || 'Select';
+
+                $info->{render_as} = 'Text' unless $column->refers_to->enumerable;
             }
 
             # If it's a select box, setup the available values

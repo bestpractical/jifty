@@ -895,4 +895,14 @@ for this model.
 
 sub is_protected { return shift->is_private }
 
+=head2 enumerable
+
+Controls whether atogenerated actions with columns that refer to this
+class should attempt to provide a drop-down of possible values or not.
+This method will be called as a class method, and defaults to true.
+
+=cut
+
+sub enumerable { 1 }
+
 1;
