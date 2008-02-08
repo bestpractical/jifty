@@ -195,13 +195,13 @@ sub take_action {
     my $self = shift;
 
     # Create a generic collection for our record class
-    my $collection = Jifty::Collection->new(
+    my $collection = $self->record_class->collection_class->new(
         record_class => $self->record_class,
         current_user => $self->record->current_user
     );
 
     # Start with an unlimited collection
-    $collection->unlimit;
+    $collection->find_all_rows;
 
     # For each field, process the limits
     for my $field (grep {$self->has_argument($_)} $self->argument_names) {
