@@ -47,17 +47,17 @@ type
 click
     xpath=//div[contains(@class,"submit_button")]//input
 
+wait_for_element_present
+    xpath=//span[contains(@class, "value")][contains(@class, "argument-name")][contains(@class, "text")]
+
 wait_for_text_present
     Not A Job Offer
-
-wait_for_element_present
-    xpath=//span[contains(@class, "text argument-name value")]
 
 wait_for_element_present
     xpath=//input[@type="checkbox"][contains(@class, "argument-is_job")]
 
 get_text
-    xpath=//span[contains(@class, "text argument-name value")]
+    xpath=//span[contains(@class, "text")][contains(@class, "value")][contains(@class, "argument-name")]
     Not A Job Offer
 
 ####
@@ -66,18 +66,21 @@ open
     /__jifty/admin/model/Offer
 
 type
-    xpath=//div[contains(@class, "form_field argument-name")]//input[@type="text"]
+    xpath=//div[contains(@class, "form_field")][contains(@class,"argument-name")]//input[@type="text"]
     Offer A Job
 
 check
     xpath=//input[starts-with(@id, "J:A:F-is_job-auto-")][@type="checkbox"]
 
+
+# Click the "Create" button
 click
-    xpath=//input[@type="submit"][@value="Create"]
+    xpath=//div[@class="submit_button"]/input[@type="submit"][contains(@name,"J:ACTIONS=auto-")]
 
 wait_for_element_present
     xpath=//input[@type="checkbox"][@checked]
 
 get_text
-    xpath=//span[contains(@class, "text argument-name value")]
+    xpath=//span[contains(@class, "text")][contains(@class, "argument-name")][contains(@class, "value")]
     Offer A Job
+
