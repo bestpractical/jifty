@@ -22,6 +22,9 @@ my $server = Jifty::Test->make_server;
 my $sel    = Jifty::Test::WWW::Selenium->rc_ok($server);
 my $URL    = $server->started_ok;
 
+$sel->open("/");
+$sel->set_speed(1000);
+
 for (@commands) {
     my ($cmd, $arg1, $arg2) = (split(/\n\s*/, $_, 3), "", "");
 

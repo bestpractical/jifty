@@ -12,6 +12,10 @@ my $server = Jifty::Test->make_server;
 my $sel    = Jifty::Test::WWW::Selenium->rc_ok($server);
 my $URL    = $server->started_ok;
 
+$sel->open("/");
+$sel->set_speed(1000);
+$sel->pause();
+
 {
     # /tangent/page1 -- tangent --> /tangent/returner -- return --> /tangent/page1
 

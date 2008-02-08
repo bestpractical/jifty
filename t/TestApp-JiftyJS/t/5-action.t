@@ -4,13 +4,23 @@ use strict;
 use warnings;
 use lib 't/lib';
 use Jifty::SubTest;
-use Jifty::Test tests => 10;
+use Jifty::Test;
 use Jifty::Test::WWW::Selenium;
 use utf8;
+
+if ($ENV{'SELENIUM_RC_BROWSER'} eq '*iexplore') {
+    plan(skip_all => "Temporarily, until the 'Operation Abort' bug is solved.");
+}
+else {
+    plan(tests => 10);
+}
 
 my $server = Jifty::Test->make_server;
 my $sel    = Jifty::Test::WWW::Selenium->rc_ok($server);
 my $URL    = $server->started_ok;
+
+$sel->open("/");
+$sel->set_speed(1000);
 
 {
     # Test "Play" action's parameter.
@@ -22,7 +32,6 @@ my $URL    = $server->started_ok;
 
     # Tag is ajax canonicalized to lowercase.
 
-    $sel->set_speed(1000);
     $sel->click_ok($tags);
     $sel->type_ok($tags, "FOO");
     $sel->fire_event($tags, "blur");
@@ -45,3 +54,4 @@ my $URL    = $server->started_ok;
 }
 
 $sel->stop;
+
