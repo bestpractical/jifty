@@ -147,10 +147,11 @@ sub app_root {
 
     Jifty::Util->require('ExtUtils::MM') if $^O =~ /(?:MSWin32|cygwin|os2)/;
     Jifty::Util->require('Config');
-    for (@roots) {
-        my @root = File::Spec->splitdir($_);
+    for my $root_path (@roots) {
+        my ($volume, $dirs) = File::Spec->splitpath($root_path, 'no_file');
+        my @root = File::Spec->splitdir($dirs);
         while (@root) {
-            my $try = File::Spec->catdir( @root, "bin", "jifty" );
+            my $try = File::Spec->catpath($volume, File::Spec->catdir( @root, "bin", "jifty" ));
             if (# XXX: Just a quick hack
                 # MSWin32's 'maybe_command' sees only file extension.
                 # Maybe we should check 'jifty.bat' instead on Win32,
@@ -163,7 +164,7 @@ sub app_root {
                 and lc($try) ne lc(File::Spec->catdir($Config::Config{bin}, "jifty"))
                 and lc($try) ne lc(File::Spec->catdir($Config::Config{scriptdir}, "jifty")) )
             {
-                return $APP_ROOT = File::Spec->catdir(@root);
+                return $APP_ROOT = File::Spec->catpath($volume, File::Spec->catdir(@root));
             }
             pop @root;
         }
