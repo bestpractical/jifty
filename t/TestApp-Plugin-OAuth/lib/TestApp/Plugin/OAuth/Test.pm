@@ -225,7 +225,7 @@ sub allow_ok {
     local $Test::Builder::Level = $Test::Builder::Level + 1;
 
     my $error = _authorize_request_token('Allow');
-    ok(0, $error), return if $error;
+    ::fail($error), return if $error;
 
     my $name = $token_obj->consumer->name;
     $umech->content_contains("Allowing $name to access your stuff");
@@ -235,7 +235,7 @@ sub deny_ok {
     local $Test::Builder::Level = $Test::Builder::Level + 1;
 
     my $error = _authorize_request_token('Deny');
-    ok(0, $error), return if $error;
+    ::fail($error), return if $error;
 
     my $name = $token_obj->consumer->name;
     $umech->content_contains("Denying $name the right to access your stuff");

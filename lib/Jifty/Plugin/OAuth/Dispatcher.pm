@@ -27,8 +27,13 @@ the C<abort> procedure?
 
 sub abortmsg {
     my ($code, $msg) = @_;
-    Jifty->log->debug($msg) if defined($msg);
-    abort($code) if $code;
+    if ($code) {
+        Jifty->log->debug("$code for ".Jifty->web->request->path.":" . $msg) if defined($msg);
+        abort($code);
+    }
+    elsif (defined $msg) {
+        Jifty->log->debug("OAuth denied for ".Jifty->web->request->path.":" . $msg);
+    }
 }
 
 =head2 request_token
