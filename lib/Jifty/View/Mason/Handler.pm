@@ -231,7 +231,7 @@ L<Jifty::Request> object.
 =cut
 
 sub request_args {
-    return %{Jifty->web->request->arguments}, %{Jifty->web->request->template_arguments};
+    return %{Jifty->web->request->arguments}, %{Jifty->web->request->template_arguments || {}};
 }
 
 ###########################################################

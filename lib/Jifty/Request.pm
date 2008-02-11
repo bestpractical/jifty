@@ -373,6 +373,7 @@ sub template_argument {
     my $self = shift;
 
     my $key = shift;
+    $self->template_arguments({}) unless $self->template_arguments;
     if (@_) {
         my $value = shift;
         $self->template_arguments->{$key} = $value;
@@ -392,6 +393,7 @@ sub delete {
     my $self = shift;
 
     my $key = shift;
+    $self->template_arguments({}) unless $self->template_arguments;
     if (exists $self->template_arguments->{$key}) {
         delete $self->template_arguments->{$key};
         return;
