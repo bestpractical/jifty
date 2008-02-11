@@ -62,6 +62,7 @@ sub response_is {
 
     my $code            = delete $params{code};
     my $testname        = delete $params{testname} || "Response was $code";
+    my $no_token        = delete $params{no_token};
     my $method          = delete $params{method};
     my $params_in       = delete $params{params_in};
     my $token_secret    = delete $params{token_secret};
@@ -100,11 +101,12 @@ sub response_is {
     if ($url =~ /oauth/) {
         undef $token_obj;
         get_latest_token();
-        if ($code == 200) {
-            main::ok($token_obj, "Successfully loaded a token object with token ".$token_obj->token.".");
-        }
-        else {
+
+        if ($no_token || $code != 200) {
             main::ok(!$token_obj, "Did not get a token");
+        }
+        elsif ($code == 200) {
+            main::ok($token_obj, "Successfully loaded a token object with token ".$token_obj->token.".");
         }
     }
 
@@ -287,7 +289,7 @@ sub get_authorized_token {
 
 sub get_access_token {
     local $Test::Builder::Level = $Test::Builder::Level + 1;
-    get_authorized_token();
+    get_authorized_token() unless shift;
     response_is(
         url                    => '/oauth/access_token',
         code                   => 200,
