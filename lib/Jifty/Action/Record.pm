@@ -505,7 +505,7 @@ This defaults to all of the non-C<private> fields of the object.
 
 sub possible_fields {
     my $self = shift;
-    return map { $_->name } grep { $_->container or $_->type ne "serial" and not $_->private and not $_->virtual } $self->record->columns;
+    return map { $_->name } grep { $_->container or ($_->type ne "serial" and !$_->private and !$_->virtual) } $self->record->columns;
 }
 
 =head2 take_action
