@@ -103,7 +103,7 @@ In the most complex case, you have something like this:
               ]
 
 If you specify arguments in the submit block for a button, they will override 
-any values from form fileds submitted by the user.
+any values from form fields submitted by the user.
 
 
 =item preserve_state
@@ -156,28 +156,30 @@ sub new {
     my ($root) = $ENV{'REQUEST_URI'} =~ /([^\?]*)/;
 
     my %args = (
-        parameters     => {},
-        as_button      => 0,
-        as_link        => 0,
+        parameters => {},
+        as_button  => 0,
+        as_link    => 0,
         @_,
     );
 
-    $class->call_trigger('before_new', \%args);
+    $class->call_trigger( 'before_new', \%args );
 
     $args{render_as_button} = delete $args{as_button};
     $args{render_as_link}   = delete $args{as_link};
 
-    my $self = $class->SUPER::new({
-        class          => '',
-        label          => 'Click me!',
-        url            => $root,
-        escape_label   => 1,
-        tooltip        => '',
-        continuation   => Jifty->web->request->continuation,
-        submit         => [],
-        preserve_state => 0,
-        parameters     => {},
-    }, \%args);
+    my $self = $class->SUPER::new(
+        {   class          => '',
+            label          => 'Click me!',
+            url            => $root,
+            escape_label   => 1,
+            tooltip        => '',
+            continuation   => Jifty->web->request->continuation,
+            submit         => [],
+            preserve_state => 0,
+            parameters     => {},
+        },
+        \%args
+    );
 
     for (qw/continuation call/) {
         $self->{$_} = $self->{$_}->id if $self->{$_} and ref $self->{$_};
@@ -194,7 +196,10 @@ sub new {
             if ( !ref($submit) ) { push @submit_temp, $submit }
 
             # We've been handed a Jifty::Action to submit
-            elsif ( blessed($submit) ) { push @submit_temp, $submit->moniker }
+            elsif ( blessed($submit) ) {
+                push @submit_temp, $submit->moniker;
+                $self->register_action($submit);
+            }
 
           # We've been handed a hashref which contains an action and arguments
             else {
@@ -206,18 +211,18 @@ sub new {
 
                 # Add the action's moniker to the submit
                 push @submit_temp, $submit->{'action'}->moniker;
+                $self->register_action($submit->{'action'});
             }
         }
 
         @{ $self->{submit} } = @submit_temp;
     }
 
-
     # Anything doing fragment replacement needs to preserve the
     # current state as well
     if ( grep { $self->$_ } $self->handlers or $self->preserve_state ) {
         my %state_vars = Jifty->web->state_variables;
-        while ( my ($key,  $val) = each %state_vars ) {
+        while ( my ( $key, $val ) = each %state_vars ) {
             if ( $key =~ /^region-(.*?)\.(.*)$/ ) {
                 $self->region_argument( $1, $2 => $val );
             } elsif ( $key =~ /^region-(.*)$/ ) {
@@ -302,8 +307,8 @@ Sets the state variable named C<KEY> to C<VALUE>.
 
 sub state_variable {
     my $self = shift;
-    defined $self->call_trigger('before_state_variable', @_)
-        or return; # if aborted by trigger
+    defined $self->call_trigger( 'before_state_variable', @_ )
+        or return;    # if aborted by trigger
 
     my ( $key, $value, $fallback ) = @_;
     if ( defined $value and length $value ) {
@@ -345,9 +350,9 @@ sub region_argument {
     my $self = shift;
     my ( $region, $argument, $value ) = @_;
 
-    my $name = ref $region ? $region->qualified_name : $region;
+    my $name     = ref $region ? $region->qualified_name : $region;
     my $defaults = Jifty->web->get_region($name);
-    my $default = $defaults ? $defaults->default_argument($argument) : undef;
+    my $default  = $defaults ? $defaults->default_argument($argument) : undef;
 
     if (   ( not defined $default and not defined $value )
         or ( defined $default and defined $value and $default eq $value ) )
@@ -364,8 +369,9 @@ sub _map {
     my %old_args = @_;
     my %new_args;
 
-    while (my ($key, $val) = each %old_args) {
-        my ($new_key, $new_val) = Jifty::Request::Mapper->query_parameters($key => $val);
+    while ( my ( $key, $val ) = each %old_args ) {
+        my ( $new_key, $new_val )
+            = Jifty::Request::Mapper->query_parameters( $key => $val );
         $new_args{$new_key} = $new_val;
     }
 
@@ -386,17 +392,19 @@ sub parameters {
     my %parameters;
 
     if ( $self->returns ) {
-        %parameters = Jifty::Request::Mapper->query_parameters( %{ $self->returns } );
+        %parameters
+            = Jifty::Request::Mapper->query_parameters( %{ $self->returns } );
         $parameters{"J:CREATE"} = 1;
-        $parameters{"J:PATH"} = Jifty::Web::Form::Clickable->new( url => $self->url,
-                                                                  parameters => $self->{parameters},
-                                                                  continuation => undef,
-                                                                )->complete_url;
+        $parameters{"J:PATH"}   = Jifty::Web::Form::Clickable->new(
+            url          => $self->url,
+            parameters   => $self->{parameters},
+            continuation => undef,
+        )->complete_url;
     } else {
-        %parameters = %{ $self->{parameters} };        
+        %parameters = %{ $self->{parameters} };
     }
 
-    %parameters = _map( %{$self->{state_variable} || {}}, %parameters );
+    %parameters = _map( %{ $self->{state_variable} || {} }, %parameters );
 
     $parameters{"J:CALL"} = $self->call
         if $self->call;
@@ -417,13 +425,15 @@ The hash of parameters as they would be needed on a POST request.
 sub post_parameters {
     my $self = shift;
 
-    my %parameters = ( _map( %{ $self->{fallback} || {} } ), $self->parameters );
+    my %parameters
+        = ( _map( %{ $self->{fallback} || {} } ), $self->parameters );
 
     my ($root) = $ENV{'REQUEST_URI'} =~ /([^\?]*)/;
 
     # Submit actions should only show up once
     my %uniq;
-    $self->submit([grep {not $uniq{$_}++} @{$self->submit}]) if $self->submit;
+    $self->submit( [ grep { not $uniq{$_}++ } @{ $self->submit } ] )
+        if $self->submit;
 
     # Add a redirect, if this isn't to the right page
     if ( $self->url ne $root and not $self->returns ) {
@@ -432,11 +442,12 @@ sub post_parameters {
             arguments => { url => $self->url } );
         $parameters{ $redirect->register_name } = ref $redirect;
         $parameters{ $redirect->form_field_name('url') } = $self->url;
-        $parameters{"J:ACTIONS"} = join( '!', @{ $self->submit }, $redirect->moniker )
-          if $self->submit;
+        $parameters{"J:ACTIONS"}
+            = join( '!', @{ $self->submit }, $redirect->moniker )
+            if $self->submit;
     } else {
         $parameters{"J:ACTIONS"} = join( '!', @{ $self->submit } )
-          if $self->submit;
+            if $self->submit;
     }
 
     return %parameters;
@@ -479,8 +490,8 @@ sub complete_url {
 
 sub _defined_accessor_values {
     my $self = shift;
-    return { map { my $val = $self->$_; defined $val ? ($_ => $val) : () } 
-        $self->SUPER::accessors };
+    return { map { my $val = $self->$_; defined $val ? ( $_ => $val ) : () }
+            $self->SUPER::accessors };
 }
 
 =head2 as_link
@@ -496,24 +507,26 @@ sub as_link {
 
     my $args = $self->_defined_accessor_values;
     my $link = Jifty::Web::Form::Link->new(
-        { %$args,
-          escape_label => $self->escape_label,
-          url          => $self->complete_url,
-          target       => $self->target,
-          continuation => $self->_continuation,
-          @_ }
+        {   %$args,
+            escape_label => $self->escape_label,
+            url          => $self->complete_url,
+            target       => $self->target,
+            continuation => $self->_continuation,
+            @_
+        }
     );
     return $link;
 }
 
 sub _continuation {
+
     # continuation info used by the update() call on client side
     my $self = shift;
-    if ($self->call) {
-	return { 'type' => 'call', id => $self->call };
+    if ( $self->call ) {
+        return { 'type' => 'call', id => $self->call };
     }
-    if ($self->returns) {
-	return { 'create' => $self->url };
+    if ( $self->returns ) {
+        return { 'create' => $self->url };
     }
 
     return {};
@@ -531,12 +544,14 @@ appropriate.
 sub as_button {
     my $self = shift;
 
-    my $args = $self->_defined_accessor_values;
+    my $args  = $self->_defined_accessor_values;
     my $field = Jifty::Web::Form::Field->new(
-        { %$args,
-          type => 'InlineButton',
-          continuation => $self->_continuation,
-          @_ }
+        {   %$args,
+            type         => 'InlineButton',
+            continuation => $self->_continuation,
+            title        => $self->tooltip,
+            @_
+        }
     );
     my %parameters = $self->post_parameters;
 
@@ -546,7 +561,7 @@ sub as_button {
             grep { defined $parameters{$_} } keys %parameters
     );
     $field->name( join '|', keys %{ $args->{parameters} } );
-    $field->button_as_link($self->render_as_link);
+    $field->button_as_link( $self->render_as_link );
 
     return $field;
 }
@@ -571,39 +586,82 @@ sub generate {
         my @hooks = @{$value};
         for my $hook (@hooks) {
             next unless ref $hook eq "HASH";
-            $hook->{region} ||= $hook->{refresh} || Jifty->web->qualified_region;
+            $hook->{region} ||= $hook->{refresh}
+                || Jifty->web->qualified_region;
 
-            my $region = ref $hook->{region} ? $hook->{region} : Jifty->web->get_region( $hook->{region} );
+            my $region
+                = ref $hook->{region}
+                ? $hook->{region}
+                : Jifty->web->get_region( $hook->{region} );
 
-            if ($hook->{replace_with}) {
+            if ( $hook->{replace_with} ) {
                 my $currently_shown = '';
                 if ($region) {
 
-                my $state_var = Jifty->web->request->state_variable("region-".$region->qualified_name);
-                $currently_shown = $state_var->value if ($state_var);
-                } 
-                # Toggle region if the toggle flag is set, and clicking wouldn't change path
-                if ($hook->{toggle} and $hook->{replace_with} eq $currently_shown) {
-                    $self->region_fragment( $hook->{region}, "/__jifty/empty" );
+                    my $state_var = Jifty->web->request->state_variable(
+                        "region-" . $region->qualified_name );
+                    $currently_shown = $state_var->value if ($state_var);
+                }
+
+  # Toggle region if the toggle flag is set, and clicking wouldn't change path
+                if (    $hook->{toggle}
+                    and $hook->{replace_with} eq $currently_shown )
+                {
+                    $self->region_fragment( $hook->{region},
+                        "/__jifty/empty" );
+
 #                    Jifty->web->request->remove_state_variable('region-'.$region->qualified_name);
                 } else {
-                    $self->region_fragment( $hook->{region}, $hook->{replace_with} )
+                    $self->region_fragment( $hook->{region},
+                        $hook->{replace_with} );
                 }
-                
+
             }
             $self->region_argument( $hook->{region}, $_ => $hook->{args}{$_} )
                 for keys %{ $hook->{args} };
             if ( $hook->{submit} ) {
                 $self->{submit} ||= [];
-                $hook->{submit} = [ $hook->{submit} ] unless ref $hook->{submit} eq "ARRAY";
+                for my $moniker ( @{ $hook->{submit} } ) {
+                    my $action = Jifty->web->{'actions'}{$moniker};
+                    $self->register_action($action);
+                    $self->parameter( $action->form_field_name($_),
+                        $hook->{action_arguments}{$moniker}{$_} )
+                        for
+                        keys %{ $hook->{action_arguments}{$moniker} || {} };
+                }
                 push @{ $self->{submit} }, @{ $hook->{submit} };
             }
         }
     }
 
-    return ( ( not( $self->submit ) || @{ $self->submit } || $self->render_as_button )
+    return (
+        (          not( $self->submit )
+                || @{ $self->submit }
+                || $self->render_as_button
+        )
         ? $self->as_button(@_)
-        : $self->as_link(@_) );
+        : $self->as_link(@_)
+    );
+}
+
+=head2 register_action ACTION
+
+Reisters the action if it isn't registered already, but only on the
+link.  That is, the registration will not be seen by any other buttons
+in the form.
+
+=cut
+
+sub register_action {
+    my $self = shift;
+    my ($action) = @_;
+    return if Jifty->web->form->actions->{ $action->moniker };
+
+    my $arguments = $action->arguments;
+    $self->parameter( $action->register_name, ref $action );
+    $self->parameter( $action->fallback_form_field_name($_),
+        $action->argument_value($_) || $arguments->{$_}->{'default_value'} )
+        for grep { $arguments->{$_}{constructor} } keys %{$arguments};
 }
 
 1;

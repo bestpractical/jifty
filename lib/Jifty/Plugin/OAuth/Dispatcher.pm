@@ -8,6 +8,7 @@ use Net::OAuth::RequestTokenRequest;
 use Net::OAuth::AccessTokenRequest;
 use Net::OAuth::ProtectedResourceRequest;
 use Crypt::OpenSSL::RSA;
+use URI::Escape 'uri_unescape';
 
 on     POST '/oauth/request_token' => \&request_token;
 before GET  '/oauth/authorize'     => \&authorize;
@@ -26,8 +27,13 @@ the C<abort> procedure?
 
 sub abortmsg {
     my ($code, $msg) = @_;
-    Jifty->log->debug($msg) if defined($msg);
-    abort($code) if $code;
+    if ($code) {
+        Jifty->log->debug("$code for ".Jifty->web->request->path.":" . $msg) if defined($msg);
+        abort($code);
+    }
+    elsif (defined $msg) {
+        Jifty->log->debug("OAuth denied for ".Jifty->web->request->path.":" . $msg);
+    }
 }
 
 =head2 request_token
@@ -94,6 +100,7 @@ The user is authorizing (or denying) a consumer's request token
 
 sub authorize {
     my @params = qw/token callback/;
+    abortmsg(403, "Cannot authorize tokens as an OAuthed user") if Jifty->handler->stash->{oauth};
 
     set no_abort => 1;
     my %oauth_params = get_parameters(@params);
@@ -120,6 +127,7 @@ The user is submitting an AuthorizeRequestToken action
 =cut
 
 sub authorize_post {
+    abortmsg(403, "Cannot authorize tokens as an OAuthed user") if Jifty->handler->stash->{oauth};
     my $result = Jifty->web->response->result("authorize_request_token");
     unless ($result && $result->success) {
         redirect '/oauth/authorize';
@@ -250,7 +258,8 @@ sub try_oauth
     abortmsg(undef, "Invalid signature (type: $oauth_params{signature_method})."), return unless $request->verify;
 
     $consumer->made_request(@oauth_params{qw/timestamp nonce/});
-    Jifty->web->current_user(Jifty->app_class('CurrentUser')->new(id => $access_token->auth_as));
+    Jifty->handler->stash->{oauth} = 1;
+    Jifty->web->temporary_current_user(Jifty->app_class('CurrentUser')->new(id => $access_token->auth_as));
 }
 
 =head2 get_consumer CONSUMER KEY
@@ -344,11 +353,16 @@ The precedence of parameters, from highest priority to lowest priority, is:
 
 sub get_parameters {
     my %p;
-
-    # XXX: Check Authorization header
-    # XXX: Check WWW-Authenticate header
-
     my %params = Jifty->handler->apache->params();
+
+    # Check Authorization header
+    my $authz = Jifty->handler->apache->header_in("Authorization");
+    if ($authz && $authz =~ s/^\s*OAuth\s*//i) {
+        while ($authz =~ m{\s*([%a-zA-Z0-9._~-]+)="([%a-zA-Z0-9._~-]*)"\s*}g) {
+            $params{uri_unescape($1)} = uri_unescape($2);
+        }
+    }
+
     for (@_) {
         $p{$_} = delete $params{"oauth_$_"}
             if !defined $p{$_};

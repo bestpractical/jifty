@@ -34,9 +34,9 @@ sub wanted {
     $data =~ s/^=head.+?(^=cut|\Z)//gms;
 
     # look for use and use base statements
-    $used{$1}{$filename}++ while $data =~ /^\s*use\s+([\w:]+)/gm;
+    $used{$1}{$File::Find::name}++ while $data =~ /^\s*use\s+([\w:]+)/gm;
     while ($data =~ m|^\s*use base qw.([\w\s:]+)|gm) {
-        $used{$_}{$filename}++ for split ' ', $1;
+        $used{$_}{$File::Find::name}++ for split ' ', $1;
     }
 }
 

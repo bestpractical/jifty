@@ -36,7 +36,7 @@ sub arguments {
     my $arguments = $self->SUPER::arguments(@_);
 
     # Mark read-only columns for read-only display
-    for my $column ( $self->record->columns ) {
+    for my $column ( map {$self->record->column($_)} $self->possible_fields ) {
         if ( not $column->writable and $column->readable ) {
             $arguments->{$column->name}{'render_mode'} = 'read';
         }
@@ -124,18 +124,53 @@ sub take_action {
             $value = scalar <$value>;
         }
 
-        # Skip fields that have not changed
-        my $old = $self->record->$field;
-        # XXX TODO: This ignore "by" on columns
-        $old = $old->id if blessed($old) and $old->isa( 'Jifty::Record' );
-    
-        # if both the new and old values are defined and equal, we don't want to change em
-        # XXX TODO "$old" is a cheap hack to scalarize datetime objects
-        next if ( defined $old and defined $value and "$old" eq "$value" );
+        # Skip fields that have not changed, but only if we can read the field.
+        # This prevents us from getting an $old value that is wrongly undef
+        # when really we are just denied read access.  At the same time, it means
+        # we can keep the change checks before checking if we can update.
+        
+        if ( $self->record->current_user_can('read', column => $field) ) {
+            my $old = $self->record->$field;
 
-        # If _both_ the values are ''
-        next if (  (not defined $old or not length $old)
-                    and ( not defined $value or not length $value ));
+            # Handle columns which reference other tables
+            my $col = $self->record->column( $field );
+            my $by  = defined $col->by ? $col->by : 'id';
+            $old = $old->$by if blessed($old) and $old->isa( 'Jifty::Record' );
+
+            # ID is sometimes passed in, we want to ignore it if it doesn't change
+            next if $field eq 'id'
+               and defined $old
+               and defined $value
+               and "$old" eq "$value";
+
+            # if both the new and old values are defined and equal, we don't want to change em
+            # XXX TODO "$old" is a cheap hack to scalarize datetime objects
+            next if ( defined $old and defined $value and "$old" eq "$value" );
+
+            # If _both_ the values are ''
+            next if (  (not defined $old or not length $old)
+                        and ( not defined $value or not length $value ));
+        }
+
+        # Error on columns we can't update
+        # <Sartak> ah ha. I think I know why passing due => undef reports
+        #          action success
+        # <Sartak> Jifty::Action::Record::Update compares the value of the
+        #          field with what you passed in
+        # <Sartak> but since user can't read the field, it returns undef
+        # <Sartak> and so: they're both undef, no change, skip this column
+        # <Sartak> and since that's the only column that changed, it'll notice
+        #          that every column it did try to update (which is.. none of
+        #          them) succeeded
+        # <Sartak> I don't think we can just skip ACLs for reading the column
+        #          -- that's a potential security issue. an attacker could try
+        #          every value until the action succeeds because nothing changed
+        # <Sartak> it doesn't matter for HM but for other apps it may
+
+        unless ($self->record->current_user_can('update', column => $field, value => $value)) {
+            $self->result->field_error($field, _('Permission denied'));
+            next;
+        }
 
         # Calculate the name of the setter and set; asplode on failure
         my $setter = "set_$field";
@@ -168,6 +203,20 @@ user-friendly result.
 sub report_success {
     my $self = shift;
     $self->result->message(_("Updated"))
+}
+
+
+=head2 possible_fields
+
+Update actions do not provide fields for columns marked as C<private>
+or C<protected>.
+
+=cut
+
+sub possible_fields {
+    my $self = shift;
+    my @names = $self->SUPER::possible_fields;
+    return map {$_->name} grep {not $_->protected} map {$self->record->column($_)} @names;
 }
 
 =head1 SEE ALSO

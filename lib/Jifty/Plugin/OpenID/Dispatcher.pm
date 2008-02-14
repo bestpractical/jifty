@@ -19,6 +19,7 @@ before qr'^/(?:openid/link)' => run {
 };
 
 before qr'^/openid/login' => run {
+    Jifty->api->allow('AuthenticateOpenID');
     set action => Jifty->web->new_action(
         class   => 'AuthenticateOpenID',
         moniker => 'authenticateopenid'
@@ -26,6 +27,7 @@ before qr'^/openid/login' => run {
 };
 
 before qr'^/openid/verify' => run {
+    Jifty->api->allow('VerifyOpenID');
     Jifty->web->request->add_action(
         class   => 'VerifyOpenID',
         moniker => 'verifyopenid'
@@ -88,7 +90,11 @@ on 'openid/verify_and_login' => run {
         }
     }
     else {
-        redirect '/openid/login';
+        if(Jifty->web->request->continuation) {
+            Jifty->web->request->continuation->call;
+        } else {
+            redirect '/openid/login';
+        }
     }
 };
 

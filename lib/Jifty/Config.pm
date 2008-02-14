@@ -255,19 +255,20 @@ sub guess {
     if (@_) {
         $app_name = shift;
     }
-   
+
     # Is it already in the stash?
-    elsif ($self->stash->{framework}->{ApplicationName}) {
-        $app_name =  $self->stash->{framework}->{ApplicationName};
-    } 
-    
+    elsif ( $self->stash->{framework}->{ApplicationName} ) {
+        $app_name = $self->stash->{framework}->{ApplicationName};
+    }
+
     # Finally, just guess from the application root
     else {
-        $app_name =  Jifty::Util->default_app_name;
+        $app_name = Jifty::Util->default_app_name;
     }
 
     # Setup the application class name based on the application name
-    my $app_class =  $self->stash->{framework}->{ApplicationClass} ||$app_name;
+    my $app_class = $self->stash->{framework}->{ApplicationClass}
+        || $app_name;
     $app_class =~ s/-/::/g;
     my $db_name = lc $app_name;
     $db_name =~ s/-/_/g;
@@ -276,49 +277,56 @@ sub guess {
     # Build up the guessed configuration
     my $guess = {
         framework => {
-            AdminMode        => 1,
-            DevelMode        => 1,
+            AdminMode         => 1,
+            DevelMode         => 1,
             SkipAccessControl => 0,
-            ApplicationClass => $app_class,
-            TemplateClass    => $app_class."::View",
-            ApplicationName  => $app_name,
-            ApplicationUUID  => $app_uuid,
-            LogLevel         => 'INFO',
-            PubSub           => {
-                Enable => undef,
+            ApplicationClass  => $app_class,
+            TemplateClass     => $app_class . "::View",
+            ApplicationName   => $app_name,
+            ApplicationUUID   => $app_uuid,
+            LogLevel          => 'INFO',
+            PubSub            => {
+                Enable  => undef,
                 Backend => 'Memcached',
             },
-            Database         => {
-                AutoUpgrade => 1,
-                Database =>  $db_name,
-                Driver   => "SQLite",
-                Host     => "localhost",
-                Password => "",
-                User     => "",
-                Version  => "0.0.1",
+            Database => {
+                AutoUpgrade     => 1,
+                Database        => $db_name,
+                Driver          => "SQLite",
+                Host            => "localhost",
+                Password        => "",
+                User            => "",
+                Version         => "0.0.1",
                 RecordUUIDs => 'active',
                 RecordBaseClass => 'Jifty::DBI::Record::Cachable',
-                CheckSchema => '1'
+                CheckSchema     => '1'
             },
             Mailer     => 'Sendmail',
             MailerArgs => [],
-            L10N       => {
-                PoDir => "share/po",
+            L10N       => { PoDir => "share/po", },
+
+            View => {
+                FallbackHandler => 'Jifty::View::Mason::Handler',
+                Handlers => [
+                    'Jifty::View::Static::Handler',
+                    'Jifty::View::Declare::Handler',
+                    'Jifty::View::Mason::Handler'
+                ]
             },
-            Web        => {
-                Port => '8888',
-                BaseURL => 'http://localhost',
-                DataDir     => "var/mason",
-                StaticRoot   => "share/web/static",
-                TemplateRoot => "share/web/templates",
+            Web => {
+                Port             => '8888',
+                BaseURL          => 'http://localhost',
+                DataDir          => "var/mason",
+                StaticRoot       => "share/web/static",
+                TemplateRoot     => "share/web/templates",
                 ServeStaticFiles => 1,
-                MasonConfig => {
-                    autoflush    => 0,
-                    error_mode   => 'fatal',
-                    error_format => 'text',
+                MasonConfig      => {
+                    autoflush            => 0,
+                    error_mode           => 'fatal',
+                    error_format         => 'text',
                     default_escape_flags => 'h',
                 },
-                Globals      => [],
+                Globals => [],
             },
         },
     };
@@ -339,7 +347,7 @@ See L<Jifty::Script::App>.
 sub initial_config {
     my $self = shift;
     my $guess = $self->guess(@_);
-    $guess->{'framework'}->{'ConfigFileVersion'} = 2;
+    $guess->{'framework'}->{'ConfigFileVersion'} = 3;
 
     # These are the plugins which new apps will get by default
     $guess->{'framework'}->{'Plugins'} = [
@@ -380,6 +388,12 @@ sub update_config {
             { OnlineDocs         => {}, },
             { CompressedCSSandJS => {}, },
             { AdminUI            => {}, }
+        );
+    }
+
+    if ( $config->{'framework'}->{'ConfigFileVersion'} < 3) {
+        unshift (@{$config->{'framework'}->{'Plugins'}}, 
+            { CSSQuery           => {}, }
         );
     }
 

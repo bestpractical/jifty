@@ -43,6 +43,7 @@ function buttonToLink(e) {
         });
     }
     link.setAttribute("onclick", onclick);
+    link.setAttribute("title", e.getAttribute("title"));
 
     link.className = e.className;
     link["virtualform"] = form;

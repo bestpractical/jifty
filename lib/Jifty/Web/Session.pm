@@ -6,7 +6,7 @@ use base qw/Jifty::Object/;
 use CGI::Cookie ();
 use DateTime ();
 use Storable ();
- 
+
 =head1 NAME
 
 Jifty::Web::Session - A Jifty session handler
@@ -237,6 +237,21 @@ sub remove {
     $setting->delete if $setting->id;
 }
 
+=head2 remove_all
+
+Removes the session from the database entirely.
+
+=cut
+
+sub remove_all {
+    my $self = shift;
+    return unless $self->loaded;
+    my $settings = Jifty::Model::SessionCollection->new;
+    $settings->limit( column => "session_id", value => $self->id );
+    $_->delete while $_ = $settings->next;
+    $self->unload;
+}
+
 =head2 set_continuation ID CONT
 
 Stores a continuation in the session.
@@ -289,7 +304,7 @@ sub continuations {
     $conts->limit( column => "session_id", value => $self->id );
 
     my %continuations;
-    $continuations{ $_->key } = $_->value while $_ = $conts->next;
+    $continuations{ $_->data_key } = $_->value while $_ = $conts->next;
     return %continuations;
 }
 
@@ -301,6 +316,10 @@ Sets the session cookie.
 
 sub set_cookie {
     my $self = shift;
+
+    # never send a cookie with cached content. misbehaving proxies cause
+    # terrific problems
+    return if Jifty->handler->apache->header_out('Expires');
 
     my $cookie_name = $self->cookie_name;
     my %cookies     = CGI::Cookie->fetch();

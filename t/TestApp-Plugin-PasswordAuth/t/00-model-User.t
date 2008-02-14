@@ -11,7 +11,7 @@ A basic test harness for the User model.
 use lib 't/lib';
 use Jifty::SubTest;
 
-use Jifty::Test tests => 17;
+use Jifty::Test tests => 24;
 
 # Make sure we can load the model
 use_ok('TestApp::Plugin::PasswordAuth::Model::User');
@@ -67,4 +67,30 @@ my $r = TestApp::Plugin::PasswordAuth::Model::User->new(current_user => $system_
                        swallow_type => 'african',
                        password => 'secret');
 ok($id, "Created with grey");
+
+my ($res, $msg) = $r->set_password('foo');
+TODO: {
+local $TODO = 'huh?';
+ok(!$res, 'unable to set password shorter than 6');
+like($msg, qr/at least six/);
+ok($r->password_is('secret'), 'password not changed');
+};
+
+($id, $msg) = $r->create( name => 'jesse3',
+                          email => 'jrv2@orz',
+                          color => 'gray',
+                          password => '',
+                          swallow_type => 'african' );
+
+ok(!$id, "Can't creaet without password");
+like($msg, qr/at least six/);
+
+($id, $msg) = $r->create( name => 'jesse3',
+                          email => 'jrv2@orz',
+                          color => 'gray',
+                          password => '',
+                          swallow_type => 'african' );
+
+ok(!$id, "Can't create without password");
+like($msg, qr/at least six/);
 

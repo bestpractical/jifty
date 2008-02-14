@@ -93,7 +93,7 @@ sub _generate_digest {
 
     # get user's generic secret
     my $user;
-    return '' unless ( $user = $self->_user_from_email($self->email) );
+    return '' unless ( $user = $self->user || $self->_user_from_email($self->email) );
     return '' unless ($user->auth_token);
 
 

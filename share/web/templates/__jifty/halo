@@ -1,4 +1,7 @@
-<div><a href="#" id="render_info" onclick="Element.toggle('render_info_tree'); return false"><%_('Page info')%></a></div>
+<div id="render_info">
+    <a id="render_info-draw_halos" href="#" onclick="draw_halos(); return false"><%_('Draw halos')%></a>
+    <a id="render_info-page_info" href="#" onclick="render_info_tree(); return false"><%_('Page info')%></a>
+</div>
 <div style="display: none" id="render_info_tree">
 % foreach my $item (@stack) {
 %     if ( $item->{depth} > $depth ) {
@@ -142,7 +145,7 @@ while (my ($key, $value) = splice(@{$frame->{args}},0,2)) {
 @args = sort {$a->[0] cmp $b->[0]} @args;
 
 my $prev = '';
-my @stmts = @{$frame->{'sql_statements'}};
+my @stmts = @{$frame->{'sql_statements'} || []};
 
 </%init>
 </%def>

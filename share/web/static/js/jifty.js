@@ -628,6 +628,9 @@ Object.extend(Form.Element, {
         element = $(element);
 
         var extras = $A();
+        if (!element)
+            return extras;
+
         var args = Form.Element.buttonArguments(element);
         var keys = args.keys();
         for (var i = 0; i < keys.length; i++) {
@@ -724,6 +727,10 @@ Behaviour.register({
     },
     '.form_field .error, .form_field .warning, .form_field .canonicalization_note': function(e) {
         if ( e.innerHTML == "" ) Element.hide(e);
+    },
+    '.jifty-region-lazy': function(e) {
+        var region = e.getAttribute("id").replace(/^region-/,"");
+        Jifty.update( { 'fragments': [{'region': region, 'mode': 'Replace'}]}, e);
     }
 });
 
@@ -1041,6 +1048,8 @@ Jifty.update = function () {
     var has_request = 0;
     request.set('actions', $H());
     for (var moniker in named_args['actions']) {
+        if (moniker == 'extend')
+            continue;
         var disable = named_args['actions'][moniker];
         var a = new Action(moniker, button_args);
             current_actions.set(moniker, a); // XXX: how do i make this bloody singleton?
@@ -1447,6 +1456,8 @@ Object.extend(Jifty.Placeholder.prototype, {
   initialize: function(element, text) {
      this.element = $(element);
      this.text = text;
+     this.element.placeholderText = this.text;
+
      Event.observe(element, 'focus', this.onFocus.bind(this));
      Event.observe(element, 'blur', this.onBlur.bind(this));
      this.onBlur();
@@ -1486,7 +1497,14 @@ Object.extend(Jifty.Placeholder, {
   },
             
   clearPlaceholder: function(elt) {
-     if(Jifty.Placeholder.hasPlaceholder(elt)) {
+     // If the element's text isn't the same as its placeholder text, then the
+     // browser screwed up and didn't clear our placeholder. Opera on Mac with
+     // VirtueDesktops does this some times, and I lose data.
+     // These are normalized because sometimes one has \r\n and the other has \n
+     elt.value = elt.value.replace(/\r/g, '');
+     elt.placeholderText = elt.placeholderText.replace(/\r/g, '');
+
+     if(Jifty.Placeholder.hasPlaceholder(elt) && elt.value == elt.placeholderText) {
        elt.value = '';
        Element.removeClassName(elt, 'placeholder');
      }

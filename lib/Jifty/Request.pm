@@ -4,7 +4,7 @@ use strict;
 package Jifty::Request;
 
 use base qw/Jifty::Object Class::Accessor::Fast/;
-__PACKAGE__->mk_accessors(qw(_top_request arguments just_validating path continuation_id continuation_type continuation_path));
+__PACKAGE__->mk_accessors(qw(_top_request arguments template_arguments just_validating path continuation_id continuation_type continuation_path));
 
 use Jifty::JSON;
 use Jifty::YAML;
@@ -80,6 +80,7 @@ sub new {
     $self->{'state_variables'} = {};
     $self->{'fragments'} = {};
     $self->arguments({});
+    $self->template_arguments({});
 
     my %args = @_;
     for (keys %args) {
@@ -359,6 +360,28 @@ sub argument {
     $val;
 }
 
+=head2 template_argument KEY [=> VALUE]
+
+Sets an argument for the current template.  Template arguments, unlike
+values set via L</argument>, B<cannot> add actions, change action
+argument, or change state variables.  They are also not stored in
+continuations.
+
+=cut
+
+sub template_argument {
+    my $self = shift;
+
+    my $key = shift;
+    $self->template_arguments({}) unless $self->template_arguments;
+    if (@_) {
+        my $value = shift;
+        $self->template_arguments->{$key} = $value;
+    }
+    defined(my $val = $self->template_arguments->{$key}) or return undef;
+    $val;
+}
+
 =head2 delete KEY
 
 Removes the argument supplied -- this is the opposite of L</argument>,
@@ -370,6 +393,11 @@ sub delete {
     my $self = shift;
 
     my $key = shift;
+    $self->template_arguments({}) unless $self->template_arguments;
+    if (exists $self->template_arguments->{$key}) {
+        delete $self->template_arguments->{$key};
+        return;
+    }
     delete $self->arguments->{$key};
     if ($key =~ /^J:A-(?:(\d+)-)?(.+)/s) {
         $self->remove_action($2);
@@ -531,6 +559,10 @@ sub save_continuation {
     # Clear out the create path so we don't ave the "create a
     # continuation" into the continuation!
     $self->continuation_path(undef);
+
+    # Clear out the (locally-set) template arguments, which would
+    # bloat the continuation, and can be entirely re-generated.
+    $self->template_arguments({});
 
     my $c = Jifty::Continuation->new(
         request  => $self,

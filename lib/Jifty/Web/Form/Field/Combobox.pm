@@ -59,9 +59,9 @@ EOF
 
 $field .= <<"EOF";
 </select>
-<script language="javascript"><!--
+<script language="javascript">
 ComboBox_InitWith('@{[ $self->element_id ]}');
-//--></script>
+</script>
 </nobr>
 EOF
 

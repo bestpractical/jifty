@@ -1,0 +1,82 @@
+<html>
+  <head>
+    <title>jifty.js test for "Action" object.</title>
+    <script type="text/javascript" src="/static/js/jsan/JSAN.js" charset="UTF-8"></script>
+    <script type="text/javascript" src="lib/Test/Builder.js" charset="UTF-8"></script>
+    <script type="text/javascript" src="lib/Test/More.js" charset="UTF-8"></script>
+
+    <script type="text/javascript" src="/static/js/prototype.js" charset="UTF-8"></script>
+    <script type="text/javascript" src="/static/js/cssquery/cssQuery.js" charset="UTF-8"></script>
+    <script type="text/javascript" src="/static/js/cssquery/cssQuery-level2.js" charset="UTF-8"></script>
+    <script type="text/javascript" src="/static/js/cssquery/cssQuery-level3.js" charset="UTF-8"></script>
+    <script type="text/javascript" src="/static/js/cssquery/cssQuery-standard.js" charset="UTF-8"></script>
+    <script type="text/javascript" src="/static/js/behaviour.js" charset="UTF-8"></script>
+    <script type="text/javascript" src="/static/js/scriptaculous/builder.js" charset="UTF-8"></script>
+    <script type="text/javascript" src="/static/js/scriptaculous/effects.js" charset="UTF-8"></script>
+    <script type="text/javascript" src="/static/js/scriptaculous/controls.js" charset="UTF-8"></script>
+
+    <script type="text/javascript" src="/static/js/jifty.js" charset="UTF-8"></script>
+    <script type="text/javascript">
+    </script>
+  </head>
+
+  <body>
+    
+    <div>
+      <form enctype="multipart/form-data" action="/__jifty/admin/action/TestApp::JiftyJS::Action::AddTwoNumbers" method="post">
+
+
+        <div class="hidden"><input type="hidden" value="TestApp::JiftyJS::Action::AddTwoNumbers" id="J:A-run-TestApp::JiftyJS::Action::AddTwoNumbers" name="J:A-run-TestApp::JiftyJS::Action::AddTwoNumbers"/></div>
+        <div class="form_field argument-first_number">
+          <span class="preamble text argument-first_number"/>
+          <label for="J:A:F-first_number-run-TestApp::JiftyJS::Action::AddTwoNumbers-S1182827" class="label text argument-first_number">first_number</label>
+          <input type="text" class="widget text argument-first_number jifty_enter_handler_attached" value="" id="J:A:F-first_number-run-TestApp::JiftyJS::Action::AddTwoNumbers-S1182827" name="J:A:F-first_number-run-TestApp::JiftyJS::Action::AddTwoNumbers"/>
+          <span class="hints text argument-first_number"/>
+          <span id="errors-J:A:F-first_number-run-TestApp::JiftyJS::Action::AddTwoNumbers" class="error text argument-first_number" style="display: none;"/>
+          <span id="warnings-J:A:F-first_number-run-TestApp::JiftyJS::Action::AddTwoNumbers" class="warning text argument-first_number" style="display: none;"/>
+          <span id="canonicalization_note-J:A:F-first_number-run-TestApp::JiftyJS::Action::AddTwoNumbers" class="canonicalization_note text argument-first_number" style="display: none;"/>
+        </div>
+
+        <div class="form_field argument-second_number">
+          <span class="preamble text argument-second_number"/>
+          <label for="J:A:F-second_number-run-TestApp::JiftyJS::Action::AddTwoNumbers-S1192827" class="label text argument-second_number">second_number</label>
+          <input type="text" class="widget text argument-second_number jifty_enter_handler_attached" value="" id="J:A:F-second_number-run-TestApp::JiftyJS::Action::AddTwoNumbers-S1192827" name="J:A:F-second_number-run-TestApp::JiftyJS::Action::AddTwoNumbers"/>
+          <span class="hints text argument-second_number"/>
+          <span id="errors-J:A:F-second_number-run-TestApp::JiftyJS::Action::AddTwoNumbers" class="error text argument-second_number" style="display: none;"/>
+          <span id="warnings-J:A:F-second_number-run-TestApp::JiftyJS::Action::AddTwoNumbers" class="warning text argument-second_number" style="display: none;"/>
+          <span id="canonicalization_note-J:A:F-second_number-run-TestApp::JiftyJS::Action::AddTwoNumbers" class="canonicalization_note text argument-second_number" style="display: none;"/>
+        </div>
+
+
+        <div class="submit_button"><input type="submit" class="widget button" id="S1202827" value="Run the action" name=""/> 
+        </div>
+
+        <div class="hidden">
+        </div>
+      </form>
+
+    </div>
+
+    <pre id="test"></pre>
+    
+    <script type="text/javascript">
+    
+JSAN.use('Test.More');
+plan({ tests: 3 });
+
+// Test very simple Action object initialization.
+(function() {
+    var a = new Action("run-TestApp::JiftyJS::Action::AddTwoNumbers");
+    var register = document.getElementById('J:A-run-TestApp::JiftyJS::Action::AddTwoNumbers');
+    var theform = document.getElementsByTagName("form")[0];
+    
+    is( a.register, register, "Got a J:A register in dom.");
+    is( a.form, theform, "Got the form of that action");
+    is( a.actionClass, 'TestApp::JiftyJS::Action::AddTwoNumbers', "Got the actionClass");
+})();
+
+    </script>
+
+  </body>
+</html>
+

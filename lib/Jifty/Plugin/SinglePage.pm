@@ -54,6 +54,7 @@ sub _filter_page_region_vars {
 sub _sp_link {
     my $self = shift;
     return sub {
+        return if Jifty->web->temporary_current_user;
         my ( $clickable, $args ) = @_;
         my $url = $args->{'url'};
         if ( $url && $url !~ m/^#/ && $url !~ m{^https?://} && $url !~ m{^javascript:} ) {

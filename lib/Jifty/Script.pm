@@ -2,6 +2,9 @@ package Jifty::Script;
 use App::CLI;
 use base qw/App::CLI App::CLI::Command Jifty::Object/;
 
+use Jifty::Everything;
+Jifty::Everything->plugin_commands;
+
 =head1 NAME
 
 Jifty::Script - Base class for all bin/jifty commands
@@ -23,7 +26,7 @@ C<fastcgi> command.  If all fails, shows the help.
 
 sub prepare {
     my $self = shift;
-    if ($ARGV[0] =~ /--?h(elp?)/i) {
+    if ($ARGV[0] =~ /--?h(elp)?/i) {
         $ARGV[0] = 'help';
     }
     elsif (!@ARGV) {

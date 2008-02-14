@@ -30,7 +30,7 @@ we need L<Net::LDAP> and an accessor to our LDAP value.
 
   __PACKAGE__->mk_accessors(qw(LDAP));
 
-and we can write our C<ldap_search> fonction. 
+and we can write our C<ldap_search> function. 
 Search need at least 3 characters and return an array of C<DisplayName (login)>
 
   sub ldap_search {

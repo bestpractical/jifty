@@ -94,13 +94,13 @@ ALWAYS call this method when handling OAuth requests. EARLY.
 
 sub is_valid_request {
     my ($self, $timestamp, $nonce) = @_;
-    return (0, "Timestamp nonincreasing.")
+    return (0, "Timestamp nonincreasing, $timestamp < ".$self->last_timestamp.".")
         if $timestamp < $self->last_timestamp;
     return 1 if $timestamp > $self->last_timestamp;
 
     # if this is the same timestamp as the last, we must check that the nonce
     # is unique across the requests of these timestamps
-    return (0, "Already used this nonce.")
+    return (0, "Already used the nonce $nonce.")
         if defined $self->nonces->{$nonce};
 
     return 1;

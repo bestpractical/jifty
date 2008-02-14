@@ -144,6 +144,19 @@ sub _new_collection_args {
     return ( current_user => $self->current_user );
 }
 
+=head2 jifty_serialize_format
+
+This returns an array reference of the individual records that make up this
+collection.
+
+=cut
+
+sub jifty_serialize_format {
+    my $records = shift->items_array_ref;
+
+    return [ map { $_->jifty_serialize_format(@_) } @$records ];
+}
+
 =head1 SEE ALSO
 
 L<Jifty::DBI::Collection>, L<Jifty::Object>, L<Jifty::Record>

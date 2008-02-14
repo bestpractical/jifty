@@ -296,7 +296,7 @@ sub abort (;$@)   { _ret @_ }    # abort request
 sub default ($$@) { _ret @_ }    # set parameter if it's not yet set
 sub set ($$@)     { _ret @_ }    # set parameter
 sub del ($@)      { _ret @_ }    # remove parameter
-sub get ($) { request->argument( $_[0] ) }
+sub get ($) { request->template_argument( $_[0] ) || request->argument( $_[0] ) }
 
 sub _qualify ($@);
 sub GET ($)     { _qualify method => @_ }
@@ -316,8 +316,8 @@ our $CURRENT_STAGE;
 =head2 import
 
 Jifty::Dispatcher is an L<Exporter>, that is, part of its role is to
-blast a bunch of symbols into another package. In this case, that other
-package is the dispatcher for your application.
+blast a bunch of symbols into another package. In this case, that
+other package is the dispatcher for your application.
 
 You never call import directly. Just:
 
@@ -473,7 +473,9 @@ sub handle_request {
     local $SIG{__DIE__} = 'DEFAULT';
 
     eval {
-        $Dispatcher->_do_dispatch( Jifty->web->request->path);
+        my $path = Jifty->web->request->path;
+        utf8::downgrade($path); # Mason handle non utf8 path.
+        $Dispatcher->_do_dispatch( $path );
     };
     if ( my $err = $@ ) {
         $self->log->warn(ref($err) . " " ."'$err'") if ( $err !~ /^ABORT/ );
@@ -798,7 +800,7 @@ sub _do_show {
 sub _do_set {
     my ( $self, $key, $value ) = @_;
     $self->log->debug("Setting argument $key to ".($value||''));
-    request->argument($key, $value);
+    request->template_argument($key, $value);
 }
 
 sub _do_del {
@@ -810,8 +812,8 @@ sub _do_del {
 sub _do_default {
     my ( $self, $key, $value ) = @_;
     $self->log->debug("Setting argument default $key to ".($value||''));
-    request->argument($key, $value)
-        unless defined request->argument($key);
+    request->template_argument($key, $value)
+        unless defined request->argument($key) or defined request->template_argument($key);
 }
 
 =head2 _do_dispatch [PATH]
@@ -837,6 +839,9 @@ sub _do_dispatch {
     $self->{path} =~ s{/+}{/}g;
 
     $self->log->debug("Dispatching request to ".$self->{path});
+
+    # Disable most actions on GET requests
+    Jifty->api->deny_for_get() if $self->_match_method('GET');
 
     # Setup -- we we don't abort out of setup, then run the
     # actions and then the RUN stage.
@@ -976,52 +981,62 @@ condition.
 
 =cut
 
+
+my %CONDITION_CACHE;
+
 sub _compile_condition {
     my ( $self, $cond ) = @_;
 
     # Previously compiled (eg. a qr{} -- return it verbatim)
     return $cond if ref $cond;
 
-    # Escape and normalize
-    $cond = quotemeta($cond);
-    $cond =~ s{(?:\\\/)+}{/}g;
-    $cond =~ s{/$}{};
+    my $cachekey = join('-', (($Dispatcher->{rule} eq 'on') ? 'on' : 'in'),
+                             $cond);
+    unless ( $CONDITION_CACHE{$cachekey} ) {
 
-    my $has_capture = ( $cond =~ / \\ [*?#] /x);
-    if ($has_capture or $cond =~ / \\ [[{] /x) {
-        $cond = $self->_compile_glob($cond);
+        my $compiled = $cond;
+
+        # Escape and normalize
+        $compiled = quotemeta($compiled);
+        $compiled =~ s{(?:\\\/)+}{/}g;
+        $compiled =~ s{/$}{};
+
+        my $has_capture = ( $compiled =~ / \\ [*?#] /x );
+        if ( $has_capture or $compiled =~ / \\ [[{] /x ) {
+            $compiled = $self->_compile_glob($compiled);
+        }
+
+        if ( $compiled =~ m{^/} ) {
+
+            # '/foo' => qr{^/foo}
+            $compiled = "\\A$compiled";
+        } elsif ( length($compiled) ) {
+
+            # 'foo' => qr{^$cwd/foo}
+            $compiled = "(?<=\\A$self->{cwd}/)$compiled";
+        } else {
+
+            # empty path -- just match $cwd itself
+            $compiled = "(?<=\\A$self->{cwd})";
+        }
+
+        if ( $Dispatcher->{rule} eq 'on' ) {
+
+            # "on" anchors on complete match only
+            $compiled .= '/?\\z';
+        } else {
+
+            # "in" anchors on prefix match in directory boundary
+            $compiled .= '(?=/|\\z)';
+        }
+
+        # Make all metachars into capturing submatches
+        if ( !$has_capture ) {
+            $compiled = "($compiled)";
+        }
+        $CONDITION_CACHE{$cachekey} = qr{$compiled};
     }
-
-    if ( $cond =~ m{^/} ) {
-
-        # '/foo' => qr{^/foo}
-        $cond = "\\A$cond";
-    } elsif ( length($cond) ) {
-
-        # 'foo' => qr{^$cwd/foo}
-        $cond = "(?<=\\A$self->{cwd}/)$cond";
-    } else {
-
-        # empty path -- just match $cwd itself
-        $cond = "(?<=\\A$self->{cwd})";
-    }
-
-    if ( $Dispatcher->{rule} eq 'on' ) {
-
-        # "on" anchors on complete match only
-        $cond .= '/?\\z';
-    } else {
-
-        # "in" anchors on prefix match in directory boundary
-        $cond .= '(?=/|\\z)';
-    }
-
-    # Make all metachars into capturing submatches
-    if (!$has_capture) {
-        $cond = "($cond)";
-    }
-
-    return qr{$cond};
+    return $CONDITION_CACHE{$cachekey};
 }
 
 =head2 _compile_glob METAEXPRESSION
@@ -1030,7 +1045,7 @@ Private function.
 
 Turns a metaexpression containing C<*>, C<?> and C<#> into a capturing regex pattern.
 
-Also supports the non-capturing C<[]>,and C<{}> notation.
+Also supports the non-capturing C<[]> and C<{}> notations.
 
 The rules are:
 
@@ -1183,23 +1198,21 @@ sub render_template {
     my $self     = shift;
     my $template = shift;
     my $showed   = 0;
-#    local $@;
     eval {
         foreach my $handler ( Jifty->handler->view_handlers ) {
-            if ( Jifty->handler->view($handler)->template_exists($template) ) {
+            my $handler_class = Jifty->handler->view($handler);
+            if ( $handler_class->template_exists($template) ) {
+                $handler_class->show($template);
                 $showed = 1;
-                Jifty->handler->view($handler)->show($template);
                 last;
             }
         }
         if ( not $showed and my $fallback_handler = Jifty->handler->fallback_view_handler ) {
             $fallback_handler->show($template);
         }
-
     };
 
     my $err = $@;
-
     # Handle parse errors
     $self->log->fatal("view class error: $err") if $err;
     if ( $err and not eval { $err->isa('HTML::Mason::Exception::Abort') } ) {
@@ -1221,7 +1234,6 @@ sub render_template {
     } elsif ($err) {
         die $err;
     }
-
 }
 
 

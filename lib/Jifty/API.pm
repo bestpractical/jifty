@@ -20,15 +20,28 @@ make up a Jifty application's API
      Jifty->api->deny('FooBarDeleteTheWorld');
  }
 
+ # New users cannot even see some actions
+ if (Jifty->web->current_user->age < 18) {
+     Jifty->api->hide(qr/Vote|PurchaseTobacco/);
+ }
+
  # Fetch the class names of all the allowed actions
  my @actions = Jifty->api->actions;
+
+ # Fetch all of the visible actions (some of which may not be allowed)
+ my @visible = Jifty->api->visible_actions;
 
  # Check to see if an action is allowed
  if (Jifty->api->is_allowed('TrueFooBar')) {
      # do something...
  }
 
- # Undo all allow/deny/restrict calls
+ # Check to see if an action is visible
+ if (Jifty->api->is_visible('SpamOurUsers')) {
+     SpamBot->be_annoying;
+ }
+
+ # Undo all allow/deny/restrict/hide calls
  Jifty->api->reset;
 
 =head1 DESCRIPTION
@@ -103,8 +116,8 @@ sub qualify {
 
 Resets which actions are allowed to the defaults; that is, all of the
 application's actions, L<Jifty::Action::Autocomplete>, and
-L<Jifty::Action::Redirect> are allowed; everything else is denied.
-See L</restrict> for the details of how limits are processed.
+L<Jifty::Action::Redirect> are allowed and visible; everything else is denied
+and hidden. See L</restrict> for the details of how limits are processed.
 
 =cut
 
@@ -116,14 +129,31 @@ sub reset {
 
     # These are the default action limits
     $self->action_limits(
-        [   { deny => 1, restriction => qr/.*/ },
-            {   allow       => 1,
-                restriction => qr/^\Q$app_actions\E/,
-            },
-            { allow => 1, restriction => 'Jifty::Action::Autocomplete' },
-            { allow => 1, restriction => 'Jifty::Action::Redirect' },
+        [
+            { hide => 1, deny => 1, restriction => qr/.*/ },
+            { allow => 1, show => 1, restriction => qr/^\Q$app_actions\E/ },
+            { allow => 1, show => 1, restriction => 'Jifty::Action::Autocomplete' },
+            { allow => 1, show => 1, restriction => 'Jifty::Action::Redirect' },
         ]
     );
+}
+
+=head2 deny_for_get
+
+Denies all actions except L<Jifty::Action::Autocomplete> and
+L<Jifty::Action::Redirect>. This is to protect against a common cross-site
+scripting hole. In your C<before> dispatcher rules, you can whitelist actions
+that are known to be read-only.
+
+This is called automatically during any C<GET> request.
+
+=cut
+
+sub deny_for_get {
+    my $self = shift;
+    $self->deny(qr/.*/);
+    $self->allow("Jifty::Action::Autocomplete");
+    $self->allow("Jifty::Action::Redirect");
 }
 
 =head2 allow RESTRICTIONS
@@ -131,6 +161,8 @@ sub reset {
 Takes a list of strings or regular expressions, and adds them in order
 to the list of limits for the purposes of L</is_allowed>.  See
 L</restrict> for the details of how limits are processed.
+
+Allowing actions also L</show> them.
 
 =cut
 
@@ -152,16 +184,44 @@ sub deny {
     $self->restrict( deny => @_ );
 }
 
+=head2 hide RESTRICTIONS
+
+Takes a list of strings or regular expressions, and adds them in order
+to the list of limits for the purposes of L</is_visible>.  See
+L</restrict> for the details of how limits are processed.
+
+Hiding actions also L</deny> them.
+
+=cut
+
+sub hide {
+    my $self = shift;
+    $self->restrict( hide => @_ );
+}
+
+=head2 show RESTRICTIONS
+
+Takes a list of strings or regular expressions, and adds them in order
+to the list of limits for the purposes of L</is_visible>.  See
+L</restrict> for the details of how limits are processed.
+
+=cut
+
+sub show {
+    my $self = shift;
+    $self->restrict( show => @_ );
+}
+
 =head2 restrict POLARITY RESTRICTIONS
 
-Method that L</allow> and L</deny> call internally; I<POLARITY> is
-either C<allow> or C<deny>.  Allow and deny limits are evaluated in
-the order they're called.  The last limit that applies will be the one
-which takes effect.  Regexes are matched against the class; strings
-are fully L</qualify|qualified> and used as an exact match against the
-class name.  The base set of restrictions (which is reset every
-request) is set in L</reset>, and usually modified by the
-application's L<Jifty::Dispatcher> if need be.
+Method that L</allow>, L</deny>, L</hide>, and L</show> call internally;
+I<POLARITY> is one of C<allow>, C<deny>, C<hide>, or C<show>. Limits are
+evaluated in the order they're called. The last limit that applies will be the
+one which takes effect. Regexes are matched against the class; strings are
+fully L</qualify|qualified> and used as an exact match against the class name.
+The base set of restrictions (which is reset every request) is set in
+L</reset>, and usually modified by the application's L<Jifty::Dispatcher> if
+need be.
 
 If you call:
 
@@ -181,15 +241,16 @@ If you call:
 
 =cut
 
+my %valid_polarity = map { $_ => 1 } qw/allow deny hide show/;
+
 sub restrict {
     my $self         = shift;
     my $polarity     = shift;
     my @restrictions = @_;
 
     # Check the sanity of the polarity
-    die "Polarity must be 'allow' or 'deny'"
-        unless $polarity eq "allow"
-        or $polarity     eq "deny";
+    die "Polarity must be one of: " . join(', ', sort keys %valid_polarity)
+        unless $valid_polarity{$polarity};
 
     for my $restriction (@restrictions) {
 
@@ -206,6 +267,18 @@ sub restrict {
         # Add to list of restrictions
         push @{ $self->action_limits },
             { $polarity => 1, restriction => $restriction };
+
+        # Hiding an action also denies it
+        if ($polarity eq 'hide') {
+            push @{ $self->action_limits },
+                { deny => 1, restriction => $restriction };
+        }
+
+        # Allowing an action also shows it
+        if ($polarity eq 'allow') {
+            push @{ $self->action_limits },
+                { show => 1, restriction => $restriction };
+        }
     }
 }
 
@@ -218,15 +291,49 @@ the rules that the class name must pass.
 =cut
 
 sub is_allowed {
+    my $self   = shift;
+    my $action = shift;
+
+    $self->decide_action_polarity($action, 'allow', 'deny');
+}
+
+=head2 is_visible CLASS
+
+Returns true if the I<CLASS> name (which is fully qualified if it is
+not already) is allowed to be seen.  See L</restrict> above for
+the rules that the class name must pass.
+
+=cut
+
+sub is_visible {
+    my $self   = shift;
+    my $action = shift;
+
+    $self->decide_action_polarity($action, 'show', 'hide');
+}
+
+=head2 decide_action_polarity CLASS, ALLOW, DENY
+
+Returns true if the I<CLASS> name it has the ALLOW restriction, false if it has
+the DENY restriction. This is a helper method used by L</is_allowed> and
+L</is_visible>.
+
+If no restrictions apply to this action, then false will be returned.
+
+=cut
+
+sub decide_action_polarity {
     my $self  = shift;
     my $class = shift;
+    my $allow = shift;
+    my $deny  = shift;
 
     # Qualify the action
     $class = $self->qualify($class);
 
     # Assume that it doesn't pass; however, the real fallbacks are
     # controlled by L</reset>, above.
-    my $allow = 0;
+    my $valid = 0;
 
     # Walk all of the limits
     for my $limit ( @{ $self->action_limits } ) {
@@ -236,18 +343,24 @@ sub is_allowed {
             or ( $class eq $limit->{restriction} ) )
         {
 
-            # If the restriction passes, set the current allow/deny
+            # If the restriction passes, set the current $allow/$deny
             # bit according to if this was a positive or negative
             # limit
-            $allow = $limit->{allow} ? 1 : 0;
+            if ($limit->{$allow}) {
+                $valid = 1;
+            }
+            if ($limit->{$deny}) {
+                $valid = 0;
+            }
         }
     }
-    return $allow;
+
+    return $valid;
 }
 
 =head2 actions
 
-Lists the class names of all of the allowed actions for this Jifty
+Lists the class names of all of the B<allowed> actions for this Jifty
 application; this may include actions under the C<Jifty::Action::>
 namespace, in addition to your application's actions.
 
@@ -255,7 +368,20 @@ namespace, in addition to your application's actions.
 
 sub actions {
     my $self = shift;
-    return sort grep { $self->is_allowed($_) } $self->_actions;
+    return sort grep { not /::SUPER$/ and $self->is_allowed($_) } $self->_actions;
+}
+
+=head2 visible_actions
+
+Lists the class names of all of the B<visible> actions for this Jifty
+application; this may include actions under the C<Jifty::Action::>
+namespace, in addition to your application's actions.
+
+=cut
+
+sub visible_actions {
+    my $self = shift;
+    return sort grep { not /::SUPER$/ and $self->is_visible($_) } $self->_actions;
 }
 
 =head1 SEE ALSO

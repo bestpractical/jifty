@@ -75,7 +75,7 @@ sub show {
         goto &Template::Declare::Tags::outs_raw;
     };
     
-    my $content = Template::Declare::Tags::show_page( $template, Jifty->web->request->arguments );
+    my $content = Template::Declare::Tags::show_page( $template, { %{Jifty->web->request->arguments}, %{Jifty->web->request->template_arguments || {}} } );
     return unless defined $content;
 
     my $r = Jifty->handler->apache;

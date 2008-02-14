@@ -19,11 +19,12 @@ use strict;
 use warnings;
 use base 'Jifty::Web::Session';
 use Jifty::Model::Session();
-use Jifty::YAML ();
+use Storable ();
 use Compress::Zlib ();
 use Crypt::CBC ();
 use Crypt::Rijndael ();
 use CGI::Cookie::Splitter ();
+use MIME::Base64;
 
 my $session_key;
 my $splitter = CGI::Cookie::Splitter->new;
@@ -36,13 +37,14 @@ Returns a new, empty session handler, subclassing L<Jifty::Web::Session>.
 
 sub new {
     my $class = shift;
+    my $cookie_name = Jifty->config->framework('Web')->{'SessionCookieName'};
     my $session_key = Jifty->config->framework('Web')->{'SessionSecret'}
         or die "Please set SessionSecret in your framework/Web settings";
     my $cipher = Crypt::CBC->new(
         -key    => $session_key,
         -cipher => 'Rijndael',
     );
-    bless { _cipher => $cipher, _session => undef }, $class;
+    bless { _cookie_name => $cookie_name, _cipher => $cipher, _session => undef }, $class;
 }
 
 =head2 _cipher
@@ -85,10 +87,10 @@ sub load {
 
     unless ($session_id) {
         my $cookie_name = $self->cookie_name;
-        $session_id = $cookies{$cookie_name}
-            ? $cookies{$cookie_name}->value()
-            : Jifty::Model::Session->new_session_id,
+        $session_id = $cookies{$cookie_name}->value() if $cookies{$cookie_name};
+        $session_id ||= Jifty::Model::Session->new_session_id;
     }
+
 
     my $data;
 
@@ -110,17 +112,19 @@ sub load {
     if ($data) {
         local $@;
         eval {
-            $self->_session(
-                Jifty::YAML::Load(
-                    Compress::Zlib::uncompress(
-                        $self->_cipher->decrypt(
+            if (my $session = Storable::thaw(
+                Compress::Zlib::uncompress(
+                    $self->_cipher->decrypt(
+                        decode_base64(
                             $data->value
                         )
                     )
                 )
-            );
-            die "Session id mismatch"
-                unless $self->_session->{session_id} eq $session_id;
+            )) {
+                $self->_session($session);
+                die "Session id mismatch"
+                    unless $self->_session->{session_id} eq $session_id;
+            }
             1;
         } and return;
         warn $@ if $@;
@@ -220,10 +224,12 @@ sub flush {
     my $data_cookie = CGI::Cookie->new(
         -name    => "JIFTY_DAT_$session_id",
         -expires => $self->expires,
-        -value   => $self->_cipher->encrypt(
-            Compress::Zlib::compress(
-                Jifty::YAML::Dump(
-                    $self->_session
+        -value   => encode_base64(
+            $self->_cipher->encrypt(
+                Compress::Zlib::compress(
+                    Storable::nfreeze(
+                        $self->_session
+                    )
                 )
             )
         )

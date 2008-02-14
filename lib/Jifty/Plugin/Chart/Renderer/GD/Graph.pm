@@ -14,7 +14,7 @@ In F<config.yml>:
 
   Plugins:
     - Chart:
-        renderer: Jifty::Plugin::Chart::Renderer::GD::Graph
+        DefaultRenderer: Jifty::Plugin::Chart::Renderer::GD::Graph
 
 =head1 DESCRIPTION
 

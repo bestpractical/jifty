@@ -8,7 +8,7 @@ BEGIN {
         plan tests => 70;
     }
     else {
-        plan skip_all => "Net::OAuth isn't installed";
+        plan skip_all => "Net::OAuth or Crypt::OpenSSL::RSA isn't installed";
     }
 }
 

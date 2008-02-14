@@ -44,7 +44,8 @@ aid in placing them in L<HTML::Mason> components.
 
 use base 'Jifty::Web::Form::Element';
 
-use Scalar::Util;
+use Scalar::Util qw/weaken/;
+use Scalar::Defer qw/force/;
 use HTML::Entities;
 
 # We need the anonymous sub because otherwise the method of the base class is
@@ -296,13 +297,17 @@ L<Jifty::Web::Form::Field/form_field>.
 =cut
 
 sub action {
-    my $self   = shift;
-    my $action = $self->_action(@_);
+    my $self = shift;
 
-    # If we're setting the action, we need to weaken
-    # the reference to not get caught in a loop
-    Scalar::Util::weaken( $self->{_action} ) if @_;
-    return $action;
+    if (@_) {
+        $self->_action(@_);
+
+        # weaken our circular reference
+        weaken $self->{_action};
+    }
+
+    return $self->_action;
+
 }
 
 =head2 current_value
@@ -322,7 +327,10 @@ sub current_value {
     if ($self->sticky_value and $self->sticky) {
         return $self->sticky_value;
     } else {
-        return $self->default_value;
+        # the force is here because very often this will be a Scalar::Defer object that we REALLY 
+        # want to be able to check definedness on.
+        # Because of a core limitation in perl, Scalar::Defer can't return undef for an object.
+        return force $self->default_value;
     }
 }
 
@@ -384,9 +392,7 @@ sub render_inline_javascript {
     );
     
     if($javascript =~ /\S/) {
-        Jifty->web->out(qq{<script type="text/javascript"><!--
-    $javascript
---></script>
+        Jifty->web->out(qq{<script type="text/javascript">$javascript</script>
 });
     }
 }
@@ -560,7 +566,7 @@ Renders a "view" version of the widget for field. Usually, this is just plain te
 sub render_value {
     my $self  = shift;
     my $field = '<span';
-    $field .= qq! class="@{[ $self->classes ]}"> !;
+    $field .= qq! class="@{[ $self->classes ]} value"> !;
     # XXX: force stringify the value because maketext is buggy with overloaded objects.
     $field .= $self->canonicalize_value(Jifty->web->escape("@{[$self->current_value]}")) if defined $self->current_value;
     $field .= qq!</span>\n!;
@@ -600,9 +606,7 @@ sub render_autocomplete {
     my $self = shift;
     return unless $self->autocompleter;
     $self->render_autocomplete_div;
-    Jifty->web->out(qq{<script type="text/javascript"><!--
-    @{[$self->autocomplete_javascript]}
---></script>});
+    Jifty->web->out(qq{<script type="text/javascript">@{[$self->autocomplete_javascript]}</script>});
     return '';
 }
 

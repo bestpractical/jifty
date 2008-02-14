@@ -58,8 +58,9 @@ Jifty.ContextMenu = {
     
         var li = Jifty.ContextMenu.getParentListItem(ul);
 
+        Element.addClassName( ul, "dropdown_menu" );
         ul.style.position = "absolute";
-        ul.style.width    = li.offsetWidth * 2 + "px";
+        ul.style.width    = "12em";
         
         /* Use position: relative based positioning for every browser
            but IE, which needs to use absolute positioning */

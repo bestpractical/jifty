@@ -1,8 +1,9 @@
 --- 
+author: ~
 build_requires: 
   ExtUtils::MakeMaker: 6.11
 distribution_type: module
-generated_by: Module::Install version 0.67
+generated_by: Module::Install version 0.680
 license: Perl
 meta-spec: 
   url: http://module-build.sourceforge.net/META-spec-v1.3.html
@@ -27,11 +28,11 @@ recommends:
   Class::Accessor::Named: 0
   Crypt::OpenSSL::RSA: 0
   DBD::SQLite: 0
+  Data::Dump::Streamer: 0
   Devel::Cover: 0
   Devel::EvalContext: 0
-  Devel::Events: 0.02
-  Devel::Events::Generator::Objects: 0
-  Devel::Events::Handler::ObjectTracker: 0
+  Devel::Events::Objects: 0.02
+  Devel::Gladiator: 0
   Devel::Size: 0
   Digest::HMAC_SHA1: 0
   GD: 0
@@ -42,14 +43,13 @@ recommends:
   Module::Install::Admin: 0.50
   Module::Refresh: 0.09
   Net::LDAP: 0
-  Net::OAuth::AccessTokenRequest: 0
-  Net::OAuth::ProtectedResourceRequest: 0
-  Net::OAuth::Request: 0.04
-  Net::OAuth::RequestTokenRequest: 0
+  Net::OAuth::Request: 0.05
   Net::OpenID::Consumer: 0
   Net::Server::Fork: 0
   Net::Server::PreFork: 0
   PAR::Dist::FromCPAN: 0
+  Proc::ProcessTable: 0
+  Template::Declare: 0.28
   Test::Base: 0.44
   Test::HTML::Lint: 0
   Test::HTTP::Server::Simple: 0.02
@@ -81,14 +81,14 @@ requires:
   DateTime::Locale: 0
   Email::Folder: 0
   Email::LocalDelivery: 0.217
-  Email::MIME: 0
-  Email::MIME::ContentType: 0
+  Email::MIME: 1.861
+  Email::MIME::ContentType: 1.012
   Email::MIME::CreateHTML: 0
-  Email::MIME::Creator: 0
-  Email::MIME::Modifier: 0
-  Email::Send: 1.99_01
-  Email::Simple: 0
-  Email::Simple::Creator: 0
+  Email::MIME::Creator: 1.45
+  Email::MIME::Modifier: 1.442
+  Email::Send: 2.0
+  Email::Simple: 2.003
+  Email::Simple::Creator: 1.4
   Exporter::Lite: 0
   File::Find::Rule: 0
   File::MMagic: 0
@@ -101,14 +101,14 @@ requires:
   HTML::Mason::Plugin: 0
   HTTP::Cookies: 0
   HTTP::Date: 0
-  HTTP::Server::Simple: 0.26
+  HTTP::Server::Simple: 0.28
   HTTP::Server::Simple::Recorder: 0
   Hash::Merge: 0
   Hook::LexWrap: 0
   IPC::PubSub: 0.23
   IPC::Run3: 0
   JSON::Syck: 0.15
-  Jifty::DBI: 0.47
+  Jifty::DBI: 0.49
   LWP::UserAgent: 0
   Locale::Maketext::Extract: 0.20
   Locale::Maketext::Lexicon: 0.60
@@ -124,7 +124,7 @@ requires:
   Params::Validate: 0
   Pod::Simple: 0
   SQL::ReservedWords: 0
-  Scalar::Defer: 0.10
+  Scalar::Defer: 0.12
   Shell::Command: 0
   String::Koremutake: 0
   Template::Declare: 0.26
@@ -137,6 +137,7 @@ requires:
   Test::WWW::Selenium: 0
   UNIVERSAL::require: 0
   URI: 1.31
+  URI::Escape: 0
   WWW::Mechanize: 1.3
   XML::Simple: 0
   XML::Writer: 0.601

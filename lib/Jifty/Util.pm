@@ -147,10 +147,11 @@ sub app_root {
 
     Jifty::Util->require('ExtUtils::MM') if $^O =~ /(?:MSWin32|cygwin|os2)/;
     Jifty::Util->require('Config');
-    for (@roots) {
-        my @root = File::Spec->splitdir($_);
+    for my $root_path (@roots) {
+        my ($volume, $dirs) = File::Spec->splitpath($root_path, 'no_file');
+        my @root = File::Spec->splitdir($dirs);
         while (@root) {
-            my $try = File::Spec->catdir( @root, "bin", "jifty" );
+            my $try = File::Spec->catpath($volume, File::Spec->catdir( @root, "bin", "jifty" ), '');
             if (# XXX: Just a quick hack
                 # MSWin32's 'maybe_command' sees only file extension.
                 # Maybe we should check 'jifty.bat' instead on Win32,
@@ -163,7 +164,7 @@ sub app_root {
                 and lc($try) ne lc(File::Spec->catdir($Config::Config{bin}, "jifty"))
                 and lc($try) ne lc(File::Spec->catdir($Config::Config{scriptdir}, "jifty")) )
             {
-                return $APP_ROOT = File::Spec->catdir(@root);
+                return $APP_ROOT = File::Spec->catpath($volume, File::Spec->catdir(@root), '');
             }
             pop @root;
         }
@@ -332,6 +333,50 @@ sub generate_uuid {
         require Data::UUID;
         Data::UUID->new;
     })->create_str;
+}
+
+=head2 reference_to_data Object
+
+Provides a saner output format for models than
+C<MyApp::Model::Foo=HASH(0x1800568)>.
+
+=cut
+
+sub reference_to_data {
+    my ($self, $obj) = @_;
+    (my $model = ref($obj)) =~ s/::/./g;
+    return { jifty_model_reference => 1, id => $obj->id, model => $model };
+}
+
+=head2 stringify LIST
+
+Takes a list of values and forces them into strings.  Right now all it does
+is concatenate them to an empty string, but future versions might be more
+magical.
+
+=cut
+
+sub stringify {
+    my $self = shift;
+
+    my @r;
+
+    for (@_) {
+        if (UNIVERSAL::isa($_, 'Jifty::Record')) {
+            push @r, Jifty::Util->reference_to_data($_);
+        }
+        if (UNIVERSAL::isa($_, 'Jifty::DateTime') && $_->is_date) {
+            push @r, $_->ymd;
+        }
+        elsif (defined $_) {
+            push @r, '' . $_; # force stringification
+        }
+        else {
+            push @r, undef;
+        }
+    }
+
+    return wantarray ? @r : $r[-1];
 }
 
 =head1 AUTHOR

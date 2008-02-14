@@ -418,8 +418,6 @@ private template edit_item_controls => sub {
     my $delete = $record->as_delete_action(
         moniker => 'delete-' . Jifty->web->serial,
     );
-    Jifty->web->form->register_action($delete);
-
         div {
             { class is 'crud editlink' };
             hyperlink(
@@ -438,13 +436,13 @@ private template edit_item_controls => sub {
                     args         => { object_type => $object_type, id => $id }
                 },
                 as_button => 1,
-                class => 'cancel'
+                class     => 'cancel'
             );
             if ( $record->current_user_can('delete') ) {
                 $delete->button(
                     label   => _('Delete'),
                     onclick => {
-                        submit => $delete,
+                        submit  => $delete,
                         confirm => _('Really delete?'),
                         refresh => Jifty->web->current_region->parent,
                     },
@@ -499,7 +497,7 @@ sub _current_collection {
         $collection = $search;
     } else {
         $collection = $collection_class->new();
-        $collection->unlimit();
+        $collection->find_all_rows();
     }
 
     $collection->set_page_info( current_page => $page, per_page => $self->per_page );
@@ -583,6 +581,8 @@ private template 'list_items' => sub {
     my $item_path   = shift;
     my $callback    = shift;
     my $object_type = $self->object_type;
+    $collection->_do_search(); # we're going to need the results. 
+    # XXX TODO, should use a real API to force the search
     if ( $collection->count == 0 ) {
         show('./no_items_found');
     }

@@ -49,6 +49,7 @@ sub response_is {
         testname               => "",
         method                 => 'POST',
         token_secret           => '',
+        params_in              => 'method',
         @_,
     );
 
@@ -61,12 +62,14 @@ sub response_is {
 
     my $code            = delete $params{code};
     my $testname        = delete $params{testname} || "Response was $code";
+    my $no_token        = delete $params{no_token};
     my $method          = delete $params{method};
+    my $params_in       = delete $params{params_in};
     my $token_secret    = delete $params{token_secret};
     my $consumer_secret = delete $params{consumer_secret}
         or die "consumer_secret not passed to response_is!";
 
-    if ($url !~ /request_token/) {
+    if ($url =~ /access_token/) {
         $token_secret ||= $token_obj->secret;
         $params{oauth_token} ||= $token_obj->token;
     }
@@ -75,15 +78,22 @@ sub response_is {
 
     my $r;
 
+    if ($params_in eq 'authz') {
+        $cmech->default_header("Authorization" => authz(%params));
+    }
+
     if ($method eq 'POST') {
-        $r = $cmech->post($url, [%params]);
+        $r = $cmech->post($url, $params_in eq 'method' ? [%params] : ());
     }
     else {
         my $query = join '&',
                     map { "$_=" . Jifty->web->escape_uri($params{$_}||'') }
                     keys %params;
-        $r = $cmech->get("$url?$query");
+        my $params = $params_in eq 'method' ? "?$query" : '';
+        $r = $cmech->get("$url$params");
     }
+
+    $cmech->default_headers->remove_header("Authorization");
 
     local $Test::Builder::Level = $Test::Builder::Level + 1;
     main::is($r->code, $code, $testname);
@@ -91,15 +101,26 @@ sub response_is {
     if ($url =~ /oauth/) {
         undef $token_obj;
         get_latest_token();
-        if ($code == 200) {
-            main::ok($token_obj, "Successfully loaded a token object with token ".$token_obj->token.".");
-        }
-        else {
+
+        if ($no_token || $code != 200) {
             main::ok(!$token_obj, "Did not get a token");
+        }
+        elsif ($code == 200) {
+            main::ok($token_obj, "Successfully loaded a token object with token ".$token_obj->token.".");
         }
     }
 
     return $cmech->content;
+}
+
+# creates an Authorization header
+sub authz {
+    my %params = @_;
+
+    return "OAuth "
+         . join ', ',
+             map { $_ . q{="} . Jifty->web->escape_uri($params{$_}) . q{"} }
+                keys %params;
 }
 
 sub sign {
@@ -130,9 +151,7 @@ sub sign {
           map { Jifty->web->escape_uri($_||'') }
               uc($method),
               $url,
-              $normalized_request_parameters,
-              $consumer_secret,
-              $token_secret;
+              $normalized_request_parameters;
 
     my $signature;
 
@@ -147,7 +166,7 @@ sub sign {
               $token_secret;
         my $hmac = Digest::HMAC_SHA1->new($key);
         $hmac->add($signature_base_string);
-        $signature = $hmac->b64digest;
+        $signature = encode_base64($hmac->digest, '');
     }
 
     return ($signature, $signature_base_string, $normalized_request_parameters)
@@ -208,7 +227,7 @@ sub allow_ok {
     local $Test::Builder::Level = $Test::Builder::Level + 1;
 
     my $error = _authorize_request_token('Allow');
-    ok(0, $error), return if $error;
+    ::fail($error), return if $error;
 
     my $name = $token_obj->consumer->name;
     $umech->content_contains("Allowing $name to access your stuff");
@@ -218,7 +237,7 @@ sub deny_ok {
     local $Test::Builder::Level = $Test::Builder::Level + 1;
 
     my $error = _authorize_request_token('Deny');
-    ok(0, $error), return if $error;
+    ::fail($error), return if $error;
 
     my $name = $token_obj->consumer->name;
     $umech->content_contains("Denying $name the right to access your stuff");
@@ -270,7 +289,7 @@ sub get_authorized_token {
 
 sub get_access_token {
     local $Test::Builder::Level = $Test::Builder::Level + 1;
-    get_authorized_token();
+    get_authorized_token() unless shift;
     response_is(
         url                    => '/oauth/access_token',
         code                   => 200,

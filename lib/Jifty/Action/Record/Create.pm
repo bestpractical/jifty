@@ -29,13 +29,15 @@ the column is in the model
 
 sub arguments {
     my $self = shift;
-    
+
     # Add default values to the arguments configured by Jifty::Action::Record
     my $args = $self->SUPER::arguments;
-    for my $arg (keys %{$args}) {
-        my $column = $self->record->column($arg) or next;
-        $args->{$arg}{default_value} = $column->default
-          if not $args->{$arg}->{default_value};
+    for my $arg ( keys %{$args} ) {
+        unless ( $args->{$arg}->{default_value} ) {
+            my $column = $self->record->column($arg);
+            next if not $column;
+            $args->{$arg}{default_value} = $column->default;
+        }
     }
     return $args;
 }
@@ -116,6 +118,19 @@ more user-friendly result.
 sub report_success {
     my $self = shift;
     $self->result->message(_("Created"))
+}
+
+=head2 possible_fields
+
+Create actions do not provide fields for columns marked as C<private>
+or C<protected>.
+
+=cut
+
+sub possible_fields {
+    my $self = shift;
+    my @names = $self->SUPER::possible_fields;
+    return map {$_->name} grep {not $_->protected} map {$self->record->column($_)} @names;
 }
 
 =head1 SEE ALSO

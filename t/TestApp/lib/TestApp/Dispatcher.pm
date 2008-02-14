@@ -1,6 +1,16 @@
 package TestApp::Dispatcher;
 use Jifty::Dispatcher -base;
 
+under '/' => run {
+}
+
+on '/' => run {
+    # shouldn't ever run because 02-dispatch.t doesn't request the root
+    # demonstrates bad interaction between under '/' and on '/' and 
+    # the condition cache in the dispatcher
+    set phantom => 99;
+}
+
 before '/redirect' => run {
     Jifty->web->request->add_action(
         moniker => 'thing',
@@ -8,8 +18,6 @@ before '/redirect' => run {
     );
     redirect '/index.html';
 };
-
-
 
 on '/dispatch/' => run {
     dispatch "/dispatch/basic";
@@ -19,11 +27,11 @@ on '/dispatch/show/' => run {
     dispatch "/dispatch/basic-show";
 };
 
-
 my $count = 0;
 my $before = 0;
 my $after = 0;
 my $after_once = 0;
+
 
 on '/dispatch/basic' => run {
     set count => $count++;

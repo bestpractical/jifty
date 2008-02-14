@@ -16,9 +16,7 @@ Jifty.Calendar = {
     dateRegex: /^(\d{4})\W(\d{2})\W(\d{2})/,
     
     Options: {
-        NAV_ARROW_LEFT: "/static/images/yui/us/tr/callt.gif",
-        NAV_ARROW_RIGHT: "/static/images/yui/us/tr/calrt.gif",
-        OOM_SELECT: true
+        OUT_OF_MONTH_SELECT: true
     },
 
     toggleCalendar: function(ev) {
@@ -40,7 +38,7 @@ Jifty.Calendar = {
         
         wrap = document.createElement("div");
         wrap.setAttribute( "id", wrapId );
-        wrap.setAttribute( "className", "select-free" );
+        wrap.setAttribute( "class", "select-free" );
         
         wrap.style.position = "absolute";
         wrap.style.left     = Jifty.Utils.findRelativePosX( input ) + "px";

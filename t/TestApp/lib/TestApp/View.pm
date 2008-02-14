@@ -7,7 +7,7 @@ use Jifty::View::Declare -base;
 __PACKAGE__->use_mason_wrapper;
 
 template 'say_hi' => page {
-    my $a = Jifty->web->new_action( class => 'SayHi' );
+    my $a = Jifty->web->new_action( class => 'SayHi', moniker => "say_hi" );
     form {
 
         #render_param($a => 'name');

@@ -89,9 +89,14 @@ use Jifty::Module::Pluggable;
 #Jifty::Module::Pluggable->import(search_path => ['Jifty::Web::Form::Field'], require     => 1, except      => qr/\.#/);
 #__PACKAGE__->plugins;
 
-# load commands defined in Jifty/Plugin/*/Command/*.pm
-Jifty::Module::Pluggable->import(search_path => ['Jifty::Plugin'], file_regex => qr{/Command/[^/]+}, require => 1);
-__PACKAGE__->plugins;
+# Set up to load commands defined in Jifty/Plugin/*/Command/*.pm
+# we do the actual load in Jifty::Script
+Jifty::Module::Pluggable->import(
+    search_path => ['Jifty::Plugin'],
+    file_regex  => qr{/Command/[^/]+},
+    require     => 1,
+    sub_name    => "plugin_commands"
+);
 
 =head1 SEE ALSO
 

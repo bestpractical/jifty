@@ -2210,7 +2210,11 @@ if (!document.createRange || Prototype.Browser.Opera) {
         if (position == 'top' || position == 'after') fragments.reverse();
         fragments.each(pos.insert.curry(element));
       }
-      else element.insertAdjacentHTML(pos.adjacency, content.stripScripts());
+      // Sartak: pos.adjacency may be undefined. IE6 gets very unhappy if you
+      // try to pass undef to insertAdjacentHTML
+      else if (pos.adjacency) {
+          element.insertAdjacentHTML(pos.adjacency, content.stripScripts());
+      }
 
       content.evalScripts.bind(content).defer();
     }
@@ -3480,9 +3484,16 @@ Form.Element.Methods = {
     if (!element.disabled && element.name) {
       var value = element.getValue();
       if (value != undefined) {
-        var pair = { };
-        pair[element.name] = value;
-        return Object.toQueryString(pair);
+        // XXX: Jifty: this used to be:
+        //     var pair = { };
+        //     pair[element.name] = value
+        //     return Object.toQueryString(pair)
+        // but that included the pair.extend function, which occurred
+        // a lot whenever we validated an action. since we're only encoding
+        // the key (element.name) and value, do what we actually mean
+        return encodeURIComponent(element.name)
+             + '='
+             + encodeURIComponent(value);
       }
     }
     return '';

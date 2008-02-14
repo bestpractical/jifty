@@ -253,7 +253,8 @@ sub delete {
     my $self = shift;
 
     # Remove all continuations that point to me
-    $_->delete for grep {$_->parent eq $self->id} values %{Jifty->web->session->continuations};
+    my %continuations = Jifty->web->session->continuations;
+    $_->delete for grep {$_->parent eq $self->id} values %continuations;
 
     # Finally, remove me from the list of continuations
     Jifty->web->session->remove_continuation($self->id);

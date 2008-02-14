@@ -1,0 +1,7 @@
+<&|/_elements/wrapper, title => 'Jifty Test Application' &>
+Whee!
+
+% Jifty->web->non_existant_method;
+
+Fun!
+</&>

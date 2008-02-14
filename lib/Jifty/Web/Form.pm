@@ -7,6 +7,8 @@ use base qw/Jifty::Object Class::Accessor::Fast/;
 
 __PACKAGE__->mk_accessors(qw(actions printed_actions name call is_open disable_autocomplete target submit_to onsubmit));
 
+use Scalar::Util qw/weaken/;
+
 =head1 NAME
 
 Jifty::Web::Form - Tools for rendering and dealing with HTML forms
@@ -149,6 +151,7 @@ sub register_action {
     my $self = shift;
     my $action = shift;
     $self->actions->{ $action->moniker } =  $action;
+    weaken $self->actions->{ $action->moniker};
     return $action;
 }
 
@@ -368,6 +371,19 @@ sub next_page {
 
     $self->add_action(class => "Jifty::Action::Redirect", moniker => "next_page", arguments => {@_});
     return '';
+}
+
+=head2 DESTROY
+
+Checks to ensure that forms that were opened were actually closed,
+which is when actions are registered.
+
+=cut
+
+sub DESTROY {
+    my $self = shift;
+    warn "Action $_ was never registered (form was never closed)"
+      for grep {not $self->printed_actions->{$_}} keys %{$self->actions};
 }
 
 1;

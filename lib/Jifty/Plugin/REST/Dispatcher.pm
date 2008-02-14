@@ -35,11 +35,16 @@ on POST   '/=/model/*'          => \&create_item;
 on PUT    '/=/model/*/*/*'      => \&replace_item;
 on DELETE '/=/model/*/*/*'      => \&delete_item;
 
+on GET    '/=/search/*/**'      => \&search_items;
+
 on GET    '/=/action/*'         => \&list_action_params;
 on GET    '/=/action'           => \&list_actions;
 on POST   '/=/action/*'         => \&run_action;
 
 on GET    '/=/help'             => \&show_help;
+on GET    '/=/help/*'           => \&show_help_specific;
+
+on GET    '/=/version'          => \&show_version;
 
 =head2 show_help
 
@@ -56,20 +61,27 @@ sub show_help {
     print qq{
 Accessing resources:
 
-on GET    /=/model                                  list models
-on GET    /=/model/<model>                          list model columns
-on GET    /=/model/<model>/<column>                 list model items
-on GET    /=/model/<model>/<column>/<key>           show item
-on GET    /=/model/<model>/<column>/<key>/<field>   show item field
+on GET    /=/model                                   list models
+on GET    /=/model/<model>                           list model columns
+on GET    /=/model/<model>/<column>                  list model items
+on GET    /=/model/<model>/<column>/<key>            show item
+on GET    /=/model/<model>/<column>/<key>/<field>    show item field
 
-on POST   /=/model/<model>                          create item
-on PUT    /=/model/<model>/<column>/<key>           update item
-on DELETE /=/model/<model>/<column>/<key>           delete item
+on POST   /=/model/<model>                           create item
+on PUT    /=/model/<model>/<column>/<key>            update item
+on DELETE /=/model/<model>/<column>/<key>            delete item
 
-on GET    /=/action                                 list actions
-on GET    /=/action/<action>                        list action params
-on POST   /=/action/<action>                        run action
+on GET    /=/search/<model>/<c1>/<v1>/<c2>/<v2>/...  search items
+on GET    /=/search/<model>/<c1>/<v1>/.../<field>    show matching items' field
 
+on GET    /=/action                                  list actions
+on GET    /=/action/<action>                         list action params
+on POST   /=/action/<action>                         run action
+
+on GET    /=/help                                    this help page
+on GET    /=/help/search                             help for /=/search
+
+on GET    /=/version                                 version information
 
 Resources are available in a variety of formats:
 
@@ -82,146 +94,83 @@ or appending one of the extensions to any resource:
 
 HTML is output only if the Accept: header or an extension does not request a
 specific format.
-    };
+};
     last_rule;
 }
 
+=head2 show_help_specific
 
-=head2 stringify LIST
-
-Takes a list of values and forces them into strings.  Right now all it does
-is concatenate them to an empty string, but future versions might be more
-magical.
+Displays a help page about a specific topic. Will look for a method named
+C<show_help_specific_$1>.
 
 =cut
 
-sub stringify {
-    # XXX: allow configuration to specify model fields that are to be
-    # expanded
-    my @r;
+sub show_help_specific {
+    my $topic = $1;
+    my $method = "show_help_specific_$topic";
+    __PACKAGE__->can($method) or abort(404);
 
-    for (@_) {
-        if (UNIVERSAL::isa($_, 'Jifty::Record')) {
-            push @r, reference_to_data($_);
-        }
-        elsif (UNIVERSAL::isa($_, 'Jifty::DateTime')) {
-            push @r, _datetime_to_data($_);
-        }
-        elsif (defined $_) {
-            push @r, '' . $_; # force stringification
-        }
-        else {
-            push @r, undef;
-        }
-    }
+    my $apache = Jifty->handler->apache;
 
-    return wantarray ? @r : $r[-1];
+    $apache->header_out('Content-Type' => 'text/plain; charset=UTF-8');
+    $apache->send_http_header;
+
+    print __PACKAGE__->$method;
+    last_rule;
 }
 
-=head2 reference_to_data
+=head2 show_help_specific_search
 
-provides a saner output format for models than MyApp::Model::Foo=HASH(0x1800568)
+Explains /=/search/ a bit more in-depth.
 
 =cut
 
-sub reference_to_data {
-    my $obj = shift;
-    my ($model) = map { s/::/./g; $_ } ref($obj);
-    return { jifty_model_reference => 1, id => $obj->id, model => $model };
+sub show_help_specific_search {
+    return << 'SEARCH';
+This interface supports searching arbitrary columns and values. For example, if
+you're looking at a Task with due date 1999-12-25 and complete, you can use:
+
+    /=/search/Task/due/1999-12-25/complete/1
+
+If you're looking for just the summaries of these tasks, you can use:
+
+    /=/search/Task/due/1999-12-25/complete/1/summary
+
+Any column in the model is eligible for searching. If you specify multiple
+values for the same column, they'll be ORed together. For example, if you're
+looking for Tasks with due dates 1999-12-25 OR 2000-12-25, you can use:
+
+    /=/search/Task/due/1999-12-25/due/2000-12-25/
+
+There are also some pseudo-columns that affect the results, but are not columns
+that are searched:
+
+    .../__order_by/<column>
+    .../__order_by_asc/<column>
+    .../__order_by_desc/<column>
+
+These let you change the output order of the results. Multiple '__order_by's
+will be respected.
+
+    .../__page/<number>
+    .../__per_page/<number>
+
+These let you control how many results you'll get.
+SEARCH
 }
 
-=head2 object_to_data OBJ
+=head2 show_version
 
-Takes an object and converts the known types into simple data structures.
-
-Current known types:
-
-  Jifty::DBI::Collection
-  Jifty::DBI::Record
-  Jifty::DateTime
+Displays versions of the various bits of your application.
 
 =cut
 
-sub object_to_data {
-    my $obj = shift;
-    
-    my %types = (
-        'Jifty::DBI::Collection' => \&_collection_to_data,
-        'Jifty::DBI::Record'     => \&_record_to_data,
-        'Jifty::DateTime'        => \&_datetime_to_data,
-    );
-
-    for my $type ( keys %types ) {
-        if ( UNIVERSAL::isa( $obj, $type ) ) {
-            return $types{$type}->( $obj );
-        }
-    }
-
-    # As the last resort, return the object itself and expect the $accept-specific
-    # renderer to format the object as e.g. YAML or JSON data.
-    return $obj;
+sub show_version {
+    outs(['version'], {
+        Jifty => $Jifty::VERSION,
+        REST  => $Jifty::Plugin::REST::VERSION,
+    });
 }
-
-sub _collection_to_data {
-    my $records = shift->items_array_ref;
-    return [ map { _record_to_data( $_ ) } @$records ];
-}
-
-sub _record_to_data {
-    my $record = shift;
-    # We could use ->as_hash but this method avoids transforming refers_to
-    # columns into JDBI objects
-
-    # XXX: maybe just test ->virtual?
-    my %data   = map {
-                    $_ => (UNIVERSAL::isa( $record->column( $_ )->refers_to,
-                                           'Jifty::DBI::Collection' ) ||
-                           $record->column($_)->container
-                             ? undef
-                             : stringify( $record->_value( $_ ) ) )
-                 } $record->readable_attributes;
-    return \%data;
-}
-
-sub _datetime_to_data {
-    my $dt = shift;
-
-    # if it looks like just a date, then return just the date portion
-    return $dt->ymd
-        if lc($dt->time_zone->name) eq 'floating'
-        && $dt->hms('') eq '000000';
-
-    # otherwise let stringification take care of it
-    return $dt;
-}
-
-=head2 recurse_object_to_data REF
-
-Takes a reference, and calls C<object_to_data> on it if that is
-meaningful.  If it is an arrayref, or recurses on each element.  If it
-is a hashref, recurses on each value.  Returns the new datastructure.
-
-=cut
-
-sub recurse_object_to_data {
-    my $o = shift;
-    return $o unless ref $o;
-
-    my $updated = object_to_data($o);
-    if ($o ne $updated) {
-        return $updated;
-    } elsif (ref $o eq "ARRAY") {
-        my @a = map {recurse_object_to_data($_)} @{$o};
-        return \@a;
-    } elsif (ref $o eq "HASH") {
-        my %h;
-        $h{$_} = recurse_object_to_data($o->{$_}) for keys %{$o};
-        return \%h;
-    } else {
-        return $o;
-    }
-}
-
 
 =head2 list PREFIX items
 
@@ -266,16 +215,11 @@ sub outs {
     elsif ($accept =~ /json/i) {
         $apache->header_out('Content-Type' => 'application/json; charset=UTF-8');
         $apache->send_http_header;
-        print Jifty::JSON::objToJson( @_, { singlequote => 1 } );
+        print Jifty::JSON::objToJson( @_ );
     }
     elsif ($accept =~ /j(?:ava)?s|ecmascript/i) {
         $apache->header_out('Content-Type' => 'application/javascript; charset=UTF-8');
         $apache->send_http_header;
-	# XXX: temporary hack to fix _() that aren't respected by json dumper
-	for (values %{$_[0]}) {
-	    $_->{label} = "$_->{label}" if exists $_->{label} && defined ref $_->{label};
-	    $_->{hints} = "$_->{hints}" if exists $_->{hints} && defined ref $_->{hints};
-	}
         print 'var $_ = ', Jifty::JSON::objToJson( @_, { singlequote => 1 } );
     }
     elsif ($accept =~ qr{^(?:application/x-)?(?:perl|pl)$}i) {
@@ -378,17 +322,33 @@ Recursively render DATASTRUCTURE as some simple html dls and ols.
 sub html_dump {
     my $content = shift;
     if (ref($content) eq 'ARRAY') {
-        ul(map {
-            li(html_dump($_))
-        } @{$content});
+        if (@$content) {
+            return ul(map {
+                li(html_dump($_))
+            } @{$content});
+        }
+        else {
+            return;
+        }
     }
     elsif (ref($content) eq 'HASH') {
-        dl(map {
-            dt(Jifty::Web->escape($_)),
-            dd(html_dump($content->{$_})),
-        } sort keys %{$content}),
+        if (keys %$content) {
+            return dl(map {
+                dt(Jifty::Web->escape($_)),
+                dd(html_dump($content->{$_})),
+            } sort keys %{$content});
+        }
+        else {
+            return;
+        }
+    
     } elsif (ref($content) && $content->isa('Jifty::Collection')) {
-        return  ol( map { li( html_dump_record($_))  } @{$content->items_array_ref});
+        if ($content->count) {
+            return  ol( map { li( html_dump_record($_))  } @{$content->items_array_ref});
+        }
+        else {
+            return;
+        }
         
     } elsif (ref($content) && $content->isa('Jifty::Record')) {
           return   html_dump_record($content);
@@ -419,7 +379,7 @@ Canonicalizes ACTION into the form preferred by the code. (Cleans up casing, can
 =cut
 
 
-sub action {  _resolve($_[0], 'Jifty::Action', Jifty->api->actions) }
+sub action {  _resolve($_[0], 'Jifty::Action', Jifty->api->visible_actions) }
 
 =head2 model MODEL
 
@@ -427,17 +387,20 @@ Canonicalizes MODEL into the form preferred by the code. (Cleans up casing, cano
 
 =cut
 
-sub model  { _resolve($_[0], 'Jifty::Record', Jifty->class_loader->models) }
+sub model  { _resolve($_[0], 'Jifty::Record', grep {not $_->is_private} Jifty->class_loader->models) }
 
 sub _resolve {
     my $name = shift;
     my $base = shift;
-    return $name if $name->isa($base);
 
-    $name =~ s/\W+/\\W+/g;
+    # we display actions as "AppName.Action.Foo", so we want to convert those
+    # heathen names to be Perl-style
+    $name =~ s/\./::/g;
+
+    my $re = qr/(?:^|::)\Q$name\E$/i;
 
     foreach my $cls (@_) {
-        return $cls if $cls =~ /$name$/i;
+        return $cls if $cls =~ $re && $cls->isa($base);
     }
 
     abort(404);
@@ -451,11 +414,18 @@ Sends the user a list of models in this application, with the names transformed 
 =cut
 
 sub list_models {
-    list(['model'], map { s/::/./g; $_ } Jifty->class_loader->models);
+    list(['model'], map { s/::/./g; $_ } grep {not $_->is_private} Jifty->class_loader->models);
 }
+
+=head2 valid_column
+
+Returns true if the column is a valid column to observe on the model
+
+=cut
 
 our @column_attrs = 
 qw( name
+    documentation
     type
     default
     readable writable
@@ -470,6 +440,10 @@ qw( name
     valid_values
 );
 
+sub valid_column {
+    my ( $model, $column ) = @_;
+    return scalar grep { $_->name eq $column and not $_->virtual and not $_->private } $model->new->columns;
+}
 
 =head2 list_model_columns
 
@@ -483,12 +457,14 @@ sub list_model_columns {
 
     my %cols;
     for my $col ( $model->new->columns ) {
+        next if $col->private or $col->virtual;
         $cols{ $col->name } = { };
         for ( @column_attrs ) {
             my $val = $col->$_();
-            $cols{ $col->name }->{ $_ } = $val
+            $cols{ $col->name }->{ $_ } = Scalar::Defer::force($val)
                 if defined $val and length $val;
         }
+        $cols{ $col->name }{writable} = 0 if exists $cols{$col->name}{writable} and $col->protected;
     }
 
     outs( [ 'model', $model ], \%cols );
@@ -507,12 +483,16 @@ sub list_model_items {
     my $col = $model->new->collection_class->new;
     $col->unlimit;
 
+    # Check that the field is actually a column
+    abort(404) unless valid_column($model, $column);
+
     # If we don't load the PK, we won't get data
     $col->columns("id", $column);
     $col->order_by( column => $column );
 
     list( [ 'model', $model, $column ],
-        map { stringify($_->$column()) } @{ $col->items_array_ref || [] } );
+        map { Jifty::Util->stringify($_->$column()) }
+            @{ $col->items_array_ref || [] } );
 }
 
 
@@ -531,9 +511,10 @@ sub show_item_field {
     $rec->can($field) or abort(404);
 
     # Check that the field is actually a column (and not some other method)
-    abort(404) if not scalar grep { $_->name eq $field } $rec->columns;
+    abort(404) unless valid_column($model, $column);
 
-    outs( [ 'model', $model, $column, $key, $field ], stringify($rec->$field()) );
+    outs( [ 'model', $model, $column, $key, $field ],
+          Jifty::Util->stringify($rec->$field()) );
 }
 
 =head2 show_item $model, $column, $key
@@ -547,9 +528,169 @@ Returns 404 if it doesn't exist.
 sub show_item {
     my ($model, $column, $key) = (model($1), $2, $3);
     my $rec = $model->new;
+
+    # Check that the field is actually a column
+    abort(404) unless valid_column($model, $column);
+
     $rec->load_by_cols( $column => $key );
     $rec->id or abort(404);
-    outs( ['model', $model, $column, $key],  { map {$_ => stringify($rec->$_())} map {$_->name} $rec->columns});
+    outs( ['model', $model, $column, $key], $rec->jifty_serialize_format );
+}
+
+=head2 search_items $model, [c1, v1, c2, v2, ...] [, $field]
+
+Loads up all models of type C<$model> that match the given columns and values.
+If the column and value list has an odd count, then the last item is taken to
+be the output column. Otherwise, all items will be returned.
+
+Will throw a 404 if there were no matches, or C<$field> was invalid.
+
+Pseudo-columns:
+
+=over 4
+
+=item __per_page => N
+
+Return the collection as N records per page.
+
+=item __page => N
+
+Return page N of the collection
+
+=item __order_by => C<column>
+
+Order by the given column, ascending.
+
+=item __order_by_desc => C<column>
+
+Order by the given column, descending.
+
+=back
+
+=cut
+
+sub search_items {
+    my ($model, $fragment) = (model($1), $2);
+    my @pieces = grep {length} split '/', $fragment;
+    my $ret = ['search', $model, @pieces];
+
+    # if they provided an odd number of pieces, the last is the output column
+    my $field;
+    if (@pieces % 2 == 1) {
+        $field = pop @pieces;
+    }
+
+    # limit to the key => value pairs they gave us
+    my $collection = eval { $model->collection_class->new }
+        or abort(404);
+    $collection->unlimit;
+
+    my $record = $model->new
+        or abort(404);
+
+    my $added_order = 0;
+    my $per_page;
+    my $current_page = 1;
+
+    my %special = (
+        __per_page => sub {
+            my $N = shift;
+
+            # must be a number
+            $N =~ /^\d+$/
+                or abort(404);
+
+            $per_page = $N;
+        },
+        __page => sub {
+            my $N = shift;
+
+            # must be a number
+            $N =~ /^\d+$/
+                or abort(404);
+
+            $current_page = $N;
+        },
+        __order_by => sub {
+            my $col = shift;
+            my $order = shift || 'ASC';
+
+            # this will wipe out the default ordering on your model the first
+            # time around
+            if ($added_order) {
+                $collection->add_order_by(
+                    column => $col,
+                    order  => $order,
+                );
+            }
+            else {
+                $added_order = 1;
+                $collection->order_by(
+                    column => $col,
+                    order  => $order,
+                );
+            }
+        },
+    );
+
+    # this was called __limit before it was generalized
+    $special{__limit} = $special{__per_page};
+
+    # /__order_by/name/desc is impossible to distinguish between ordering by
+    # 'name', descending, and ordering by 'name', with output column 'desc'.
+    # so we use __order_by_desc instead (and __order_by_asc is provided for
+    # consistency)
+    $special{__order_by_asc}  = $special{__order_by};
+    $special{__order_by_desc} = sub { $special{__order_by}->($_[0], 'DESC') };
+
+    while (@pieces) {
+        my $column = shift @pieces;
+        my $value  = shift @pieces;
+
+        if (exists $special{$column}) {
+            $special{$column}->($value);
+        }
+        else {
+            my $canonicalizer = "canonicalize_$column";
+            $value = $record->$canonicalizer($value)
+                if $record->can($canonicalizer);
+
+            $collection->limit(column => $column, value => $value);
+        }
+    }
+
+    if (defined($per_page) || defined($current_page)) {
+        $per_page = 15 unless defined $per_page;
+        $current_page = 1 unless defined $current_page;
+        $collection->set_page_info(
+            current_page => $current_page,
+            per_page     => $per_page,
+        );
+    }
+
+    $collection->count                       or return outs($ret, []);
+    $collection->pager->entries_on_this_page or return outs($ret, []);
+
+    # output
+    if (defined $field) {
+        my $item = $collection->first
+            or return outs($ret, []);
+
+        # Check that the field is actually a column
+        abort(404) unless valid_column($model, $field);
+
+        my @values;
+
+        # collect the values for $field
+        do {
+            push @values, $item->$field;
+        } while $item = $collection->next;
+
+        outs($ret, \@values);
+    }
+    else {
+        outs($ret, $collection->jifty_serialize_format);
+    }
 }
 
 =head2 create_item
@@ -630,12 +771,12 @@ sub _dispatch_to_action {
 
 =head2 list_actions
 
-Returns a list of all actions allowed to the current user. (Canonicalizes Perl::Style to Everything.Else.Style).
+Returns a list of all actions visible to the current user. (Canonicalizes Perl::Style to Everything.Else.Style).
 
 =cut
 
 sub list_actions {
-    list(['action'], map {s/::/./g; $_} Jifty->api->actions);
+    list(['action'], map {s/::/./g; $_} Jifty->api->visible_actions);
 }
 
 =head2 list_action_params
@@ -648,6 +789,7 @@ Shows the user all possible parameters to the action.
 
 our @param_attrs = qw(
     name
+    documentation
     type
     default_value
     label
@@ -753,24 +895,8 @@ sub run_action {
         } 'model', ref($rec), 'id', $rec->id);
         Jifty->handler->apache->header_out('Location' => $url);
     }
-    
-    my $result = $action->result;
 
-    my $out = {};
-    $out->{success} = $result->success;
-    $out->{message} = $result->message;
-    $out->{error} = $result->error;
-    $out->{field_errors} = {$result->field_errors};
-    for (keys %{$out->{field_errors}}) {
-        delete $out->{field_errors}->{$_} unless $out->{field_errors}->{$_};
-    }
-    $out->{field_warnings} = {$result->field_warnings};
-    for (keys %{$out->{field_warnings}}) {
-        delete $out->{field_warnings}->{$_} unless $out->{field_warnings}->{$_};
-    }
-    $out->{content} = recurse_object_to_data($result->content);
-    
-    outs(undef, $out);
+    outs(undef, $action->result->as_hash);
 
     last_rule;
 }

@@ -21,10 +21,14 @@ method.
 =cut
 
 use base qw/Jifty::Action/;
-
+use Scalar::Defer qw/ defer /;
 use Scalar::Util qw/ blessed /;
+use Clone qw/clone/;
 
 __PACKAGE__->mk_accessors(qw(record _cached_arguments));
+
+our $ARGUMENT_PROTOTYPE_CACHE = {};
+
 
 =head1 METHODS
 
@@ -44,10 +48,8 @@ the constructor.
 sub record_class {
     my $self = shift;
     my $class = ref $self;
-    my $hint = $class eq __PACKAGE__ ? "" :
-        " (did you forget to override record_class in $class?)";
-    $self->log->fatal("Jifty::Action::Record must be subclassed to be used" .
-        $hint);
+    my $hint = $class eq __PACKAGE__ ? "" : " (did you forget to override record_class in $class?)";
+    $self->log->fatal("Jifty::Action::Record must be subclassed to be used" .  $hint);
 }
 
 =head2 new PARAMHASH
@@ -67,6 +69,7 @@ sub new {
         record => undef,
         @_,
     );
+
     my $self = $class->SUPER::new(%args);
 
     # Load the associated record class just in case it hasn't been already
@@ -94,11 +97,9 @@ sub new {
     
     # Otherwise, try to use the arguments to load the record
     else {
-
         # We could leave out the explicit current user, but it'd have
         # a slight negative performance implications
-        $self->record(
-            $record_class->new( current_user => $self->current_user ) );
+        $self->record( $record_class->new( current_user => $self->current_user ) );
         my %given_pks = ();
         for my $pk ( @{ $self->record->_primary_keys } ) {
             $given_pks{$pk} = $self->argument_value($pk)
@@ -139,11 +140,44 @@ sub arguments {
     my $self = shift;
 
     # Don't do this twice, it's too expensive
-    return $self->_cached_arguments if $self->_cached_arguments;
+    unless ( $self->_cached_arguments ) {
+        $ARGUMENT_PROTOTYPE_CACHE->{ ref($self) } ||= $self->_build_class_arguments();
+        $self->_cached_arguments( $self->_fill_in_argument_record_data());
+    }
+    return $self->_cached_arguments();
+}
+
+
+sub _fill_in_argument_record_data {
+    my $self = shift;
+
+    my $arguments = clone( $ARGUMENT_PROTOTYPE_CACHE->{ ref($self) } );
+    return $arguments unless ( $self->record->id );
+
+    for my $field ( keys %$arguments ) {
+        if ( my $function = $self->record->can($field) ) {
+            my $weakself = $self;
+            Scalar::Util::weaken $weakself;
+            $arguments->{$field}->{default_value} = defer {
+                my $val = $function->( $weakself->record );
+                # If the current value is actually a pointer to
+                # another object, turn it into an ID
+                return $val->id if (blessed($val) and $val->isa('Jifty::Record'));
+                return $val;
+            }
+        }
+        # The record's current value becomes the widget's default value
+    }
+    return $arguments;
+}
+
+
+sub _build_class_arguments {
+    my $self = shift;
 
     # Get ready to rumble
     my $field_info = {};
-    my @fields = $self->possible_fields;
+    my @fields     = $self->possible_fields;
 
     # we use a while here because we may be modifying the fields on the fly.
     while ( my $field = shift @fields ) {
@@ -153,47 +187,26 @@ sub arguments {
         # The field is a column object, adjust to that
         if ( ref $field ) {
             $column = $field;
-            $field  = $column->name;
-        } 
-        
-        # Otherwise, we need to load the column info
-        else {
-            # Load teh column object and the record's current value
+        } else {
             $column = $self->record->column($field);
-            my $current_value = $self->record->$field;
-
-            # If the current value is actually a pointer to
-            # another object, turn it into an ID
-            $current_value = $current_value->id
-                if blessed($current_value)
-                and $current_value->isa('Jifty::Record');
-
-            # The record's current value becomes the widget's default value
-            $info->{default_value} = $current_value if $self->record->id;
         }
 
-        # 
-        #  if($field =~ /^(.*)_id$/ && $self->record->column($1)) {
-        #    $column = $self->record->column($1);
-        #}
-
-    #########
+        $field = $column->name;
 
         # Canonicalize the render_as setting for the column
-        my $render_as = $column->render_as;
-        $render_as = defined $render_as ? lc($render_as) : '';
+        my $render_as = lc( $column->render_as || '' );
 
         # Use a select box if we have a list of valid values
-        if ( defined (my $valid_values = $column->valid_values)) {
+        if ( defined( my $valid_values = $column->valid_values ) ) {
             $info->{valid_values} = $valid_values;
             $info->{render_as}    = 'Select';
-        } 
-        
+        }
+
         # Use a checkbox for boolean fields
         elsif ( defined $column->type && $column->type =~ /^bool/i ) {
             $info->{render_as} = 'Checkbox';
-        } 
-        
+        }
+
         # Add an additional _confirm field for passwords
         elsif ( $render_as eq 'password' ) {
 
@@ -202,7 +215,8 @@ sub arguments {
                 my ( $self, $value ) = @_;
                 if ( $value ne $self->argument_value($field) ) {
                     return $self->validation_error(
-                        ($field.'_confirm') => _("The passwords you typed didn't match each other")
+                        ( $field . '_confirm' ) => _(
+                            "The passwords you typed didn't match each other")
                     );
                 } else {
                     return $self->validation_ok( $field . '_confirm' );
@@ -211,52 +225,32 @@ sub arguments {
 
             # Add the extra confirmation field
             $field_info->{ $field . "_confirm" } = {
-                render_as => 'Password',
-                virtual => '1',
-                validator => $same,
-                sort_order => ($column->sort_order +.01),
-                mandatory => 0
+                render_as  => 'Password',
+                virtual    => '1',
+                validator  => $same,
+                sort_order => ( $column->sort_order + .01 ),
+                mandatory  => 0
             };
         }
 
         # Handle the X-to-one references
-        elsif ( defined (my $refers_to = $column->refers_to) ) {
+        elsif ( defined( my $refers_to = $column->refers_to ) ) {
 
             # Render as a select box unless they override
             if ( UNIVERSAL::isa( $refers_to, 'Jifty::Record' ) ) {
                 $info->{render_as} = $render_as || 'Select';
+
+                $info->{render_as} = 'Text' unless $column->refers_to->enumerable;
             }
 
             # If it's a select box, setup the available values
             if ( UNIVERSAL::isa( $refers_to, 'Jifty::Record' ) && $info->{render_as} eq 'Select' ) {
+                $info->{'valid_values'} = $self->_default_valid_values( $column, $refers_to );
+            }
 
-                # Get an unlimited collection
-                my $collection = Jifty::Collection->new(
-                    record_class => $refers_to,
-                    current_user => $self->record->current_user,
-                );
-                $collection->unlimit;
-
-                # Fetch the _brief_description() method
-                my $method = $refers_to->_brief_description();
-
-                # FIXME: we should get value_from with the actualy refered by key
-
-                # Setup the list of valid values
-                $info->{valid_values} = [
-                    {   display_from => $refers_to->can($method) ? $method : "id",
-                        value_from => 'id',
-                        collection => $collection
-                    }
-                ];
-                unshift @{ $info->{valid_values} }, {
-                    display => _('no value'),
-                    value   => '',
-                } unless $column->mandatory;
-            } 
-            
             # If the reference is X-to-many instead, skip it
             else {
+
                 # No need to generate arguments for
                 # JDBI::Collections, as we can't do anything
                 # useful with them yet, anyways.
@@ -266,60 +260,143 @@ sub arguments {
                 # developer know what he/she is doing.
                 # So we just render it as whatever specified.
 
-                next unless $render_as;
+                # XXX TODO -  the next line seems to be a "next" which meeant to just fall through the else
+            # next unless $render_as;
             }
         }
 
-    #########
+        #########
 
-        # Figure out what the action's validation method would for this field
-        my $validate_method = "validate_" . $field;
+        $info->{'autocompleter'} ||= $self->_argument_autocompleter($column);
+        my ( $validator, $ajax_validates ) = $self->_argument_validator($column);
+        $info->{validator}      ||= $validator;
+        $info->{ajax_validates} ||= $ajax_validates;
+        my ( $canonicalizer, $ajax_canonicalizes ) = $self->_argument_canonicalizer($column);
+        $info->{'canonicalizer'}      ||= $canonicalizer;
+        $info->{'ajax_canonicalizes'} ||= $ajax_canonicalizes;
 
-        # Build up a validator sub if the column implements validation
-        # and we're not overriding it at the action level
-        if ( $column->validator and not $self->can($validate_method) ) {
-            $info->{ajax_validates} = 1;
-            $info->{validator} = sub {
-                my $self  = shift;
-                my $value = shift;
-
-                # Check the column's validator
-                my ( $is_valid, $message )
-                    = &{ $column->validator }( $self->record, $value );
-
-                # The validator reported valid, return OK
-                if ($is_valid) {
-                    return $self->validation_ok($field);
-                } 
-                
-                # Bad stuff, report an error
-                else {
-                    unless ($message) {
-                        $self->log->error(
-                            qq{Schema validator for $field didn't explain why the value '$value' is invalid}
-                        );
-                    }
-                    return (
-                        $self->validation_error(
-                            $field => ($message || _("That doesn't look right, but I don't know why"))
-                        )
-                    );
-                }
-            };
+        # If we're hand-coding a render_as, hints or label, let's use it.
+        for ( qw(render_as label hints max_length mandatory sort_order container documentation)) {
+            if ( defined( my $val = $column->$_ ) ) {
+                $info->{$_} = $val;
+            }
         }
+
+
+        $field_info->{$field} = $info;
+    }
+
+    # After all that, use the schema { ... } params for the final bits
+    if ( $self->can('PARAMS') ) {
+
+       # User-defined declarative schema fields can override default ones here
+        my $params = $self->PARAMS;
+
+     # We really, really want our sort_order to prevail over user-defined ones
+     # (as opposed to all other param fields).  So we do exactly that here.
+        while ( my ( $key, $param ) = each %$params ) {
+            defined( my $sort_order = $param->sort_order ) or next;
+
+        # The .99 below means that it's autogenerated by Jifty::Param::Schema.
+            if ( $sort_order =~ /\.99$/ ) {
+                $param->sort_order( $field_info->{$key}{sort_order} );
+            }
+        }
+
+        # Cache the result of merging the Jifty::Action::Record and schema
+        # parameters
+        use Jifty::Param::Schema ();
+        return Jifty::Param::Schema::merge_params( $field_info, $params );
+    }
+
+    # No schema { ... } block, so just use what we generated
+    else {
+        return $field_info;
+    }
+}
+
+
+
+sub _argument_validator {
+    my $self    = shift;
+    my $column  = shift;
+    my $field   = $column->name;
+    my $do_ajax = 0;
+    my $method;
+
+    # Figure out what the action's validation method would for this field
+    my $validate_method = "validate_" . $field;
+
+    # Build up a validator sub if the column implements validation
+    # and we're not overriding it at the action level
+    if ( $column->validator and not $self->can($validate_method) ) {
+        $do_ajax = 1;
+        $method  = sub {
+            my $self  = shift;
+            my $value = shift;
+
+            # Check the column's validator
+            my ( $is_valid, $message )
+                = &{ $column->validator }( $self->record, $value );
+
+            # The validator reported valid, return OK
+            return $self->validation_ok($field) if ($is_valid);
+
+            # Bad stuff, report an error
+            unless ($message) {
+                $self->log->error(
+                    qq{Schema validator for $field didn't explain why the value '$value' is invalid}
+                );
+            }
+            return ( $self->validation_error( $field => ( $message || _( "That doesn't look right, but I don't know why"))));
+            }
+    }
+
+    return ( $method, $do_ajax );
+}
+
+
+sub _argument_canonicalizer {
+    my $self = shift;
+    my $column = shift;
+    my $field = $column->name;
+    my $method;
+    my $do_ajax = 0;
+
+
+        # Add a canonicalizer for the column if the record provides one
+        if ( $self->record->has_canonicalizer_for_column($field) ) {
+            $do_ajax = 1;
+            $method ||= sub {
+                my ( $self, $value ) = @_;
+                return $self->record->run_canonicalization_for_column(column => $field, value => $value);
+            };
+        } 
+        
+        # Otherwise, if it's a date, we have a built-in canonicalizer for that
+        elsif ( lc($column->render_as) eq 'date') {
+            $do_ajax = 1;
+        }
+    return ($method, $do_ajax);
+    }
+
+sub _argument_autocompleter {
+    my $self = shift;
+    my $column = shift;
+    my $field  = $column->name;
+
+    my $autocomplete;
 
         # What would the autocomplete method be for this column in the record
         my $autocomplete_method = "autocomplete_" . $field;
 
         # Set the autocompleter if the record has one
         if ( $self->record->can($autocomplete_method) ) {
-            $info->{'autocompleter'} ||= sub {
+            $autocomplete ||= sub {
                 my ( $self, $value ) = @_;
                 my %columns;
-                $columns{$_} = $self->argument_value($_)
-                    for grep { $_ ne $field } $self->possible_fields;
-                return $self->record->$autocomplete_method( $value,
-                    %columns );
+                $columns{$_} = $self->argument_value($_) for grep { $_ ne $field } $self->possible_fields;
+                return $self->record->$autocomplete_method( $value, %columns );
             };
         }
 
@@ -327,123 +404,108 @@ sub arguments {
         # is baed upon the values available in the field
         elsif ($column->autocompleted) {
             # Auto-generated autocompleter
-            $info->{'autocompleter'} ||= sub {
-                my ( $self, $value ) = @_;
-
-                my $collection = Jifty::Collection->new(
-                    record_class => $self->record_class,
-                    current_user => $self->record->current_user
-                );
-
-                # Return the first 20 matches...
-                $collection->unlimit;
-                $collection->rows_per_page(20);
-
-                # ...that start with the value typed...
-                if (length $value) {
-                    $collection->limit(
-                        column   => $field, 
-                        value    => $value, 
-                        operator => 'STARTSWITH', 
-                        entry_aggregator => 'AND'
-                    );
-                }
-
-                # ...but are not NULL...
-                $collection->limit(
-                    column => $field, 
-                    value => 'NULL', 
-                    operator => 'IS NOT', 
-                    entry_aggregator => 'AND'
-                );
-
-                # ...and are not empty.
-                $collection->limit(
-                    column => $field, 
-                    value => '', 
-                    operator => '!=', 
-                    entry_aggregator => 'AND'
-                );
-
-                # Optimize the query a little bit
-                $collection->columns('id', $field);
-                $collection->order_by(column => $field);
-                $collection->group_by(column => $field);
-
-                # Set up the list of choices to return
-                my @choices;
-                while (my $record = $collection->next) {
-                    push @choices, $record->$field;
-                }
-                return @choices;
-            };
+            $autocomplete ||=  sub {  $self->_default_autocompleter(shift , $field)};
+            
         }
+        return $autocomplete;
 
-        # Add a canonicalizer for the column if the record provides one
-        if ( $self->record->has_canonicalizer_for_column($field) ) {
-            $info->{'ajax_canonicalizes'} = 1;
-            $info->{'canonicalizer'} ||= sub {
-                my ( $self, $value ) = @_;
-                return $self->record->run_canonicalization_for_column(column => $field, value => $value);
-            };
-        } 
-        
-        # Otherwise, if it's a date, we have a built-in canonicalizer for that
-        elsif ( $render_as eq 'date') {
-            $info->{'ajax_canonicalizes'} = 1;
-        }
-
-        # If we're hand-coding a render_as, hints or label, let's use it.
-        for (qw(render_as label hints max_length mandatory sort_order container)) {
-
-            if ( defined (my $val = $column->$_) ) {
-                $info->{$_} = $val;
-            }
-        }
-        $field_info->{$field} = $info;
     }
 
-    # After all that, use the schema { ... } params for the final bits
-    if ($self->can('PARAMS')) {
 
-        # User-defined declarative schema fields can override default ones here
-        my $params = $self->PARAMS;
+sub _default_valid_values {
+    my $self      = shift;
+    my $column    = shift;
+    my $refers_to = shift;
 
-        # We really, really want our sort_order to prevail over user-defined ones
-        # (as opposed to all other param fields).  So we do exactly that here.
-        while (my ($key, $param) = each %$params) {
-            defined(my $sort_order = $param->sort_order) or next;
+    my @valid;
 
-            # The .99 below means that it's autogenerated by Jifty::Param::Schema.
-            if ($sort_order =~ /\.99$/) {
-                $param->sort_order($field_info->{$key}{sort_order});
-            }
+    # Get an unlimited collection
+    my $collection = Jifty::Collection->new(
+        record_class => $refers_to,
+        current_user => $self->record->current_user,
+    );
+    $collection->find_all_rows;
+
+    # Fetch the _brief_description() method
+    my $method = $refers_to->_brief_description();
+
+    # FIXME: we should get value_from with the actualy refered by key
+
+    # Setup the list of valid values
+    @valid = (
+        {   display_from => $refers_to->can($method) ? $method : "id",
+            value_from   => 'id',
+            collection   => $collection
         }
+    );
+    unshift @valid, {
+        display => _('no value'),
+        value   => '' } unless $column->mandatory;
+    return \@valid;
 
-        # Cache the result of merging the Jifty::Action::Record and schema
-        # parameters
-        use Jifty::Param::Schema ();
-        $self->_cached_arguments(Jifty::Param::Schema::merge_params($field_info, $params));
-    }
-
-    # No schema { ... } block, so just use what we generated
-    else {
-        $self->_cached_arguments($field_info);
-    }
-
-    return $self->_cached_arguments();
 }
+
+sub _default_autocompleter {
+    my ( $self, $value, $field ) = @_;
+
+    my $collection = Jifty::Collection->new(
+        record_class => $self->record_class,
+        current_user => $self->record->current_user
+    );
+
+    # Return the first 20 matches...
+    $collection->rows_per_page(20);
+
+    # ...that start with the value typed...
+    if ( length $value ) {
+        $collection->limit(
+            column           => $field,
+            value            => $value,
+            operator         => 'STARTSWITH',
+            entry_aggregator => 'AND'
+        );
+    }
+
+    # ...but are not NULL...
+    $collection->limit(
+        column           => $field,
+        value            => 'NULL',
+        operator         => 'IS NOT',
+        entry_aggregator => 'AND'
+    );
+
+    # ...and are not empty.
+    $collection->limit(
+        column           => $field,
+        value            => '',
+        operator         => '!=',
+        entry_aggregator => 'AND'
+    );
+
+    # Optimize the query a little bit
+    $collection->columns( 'id', $field );
+    $collection->order_by( column => $field );
+    $collection->group_by( column => $field );
+
+    # Set up the list of choices to return
+    my @choices;
+    while ( my $record = $collection->next ) {
+        push @choices, $record->$field;
+    }
+    return @choices;
+}
+
 
 =head2 possible_fields
 
 Returns the list of fields on the object that the action can update.
-This defaults to all of the fields of the object.
+This defaults to all of the non-C<private> fields of the object.
 
 =cut
 
 sub possible_fields {
     my $self = shift;
-    return map { $_->name } grep { $_->container || $_->type ne "serial" } $self->record->columns;
+    return map { $_->name } grep { $_->container || $_->type ne "serial" and not $_->private and not $_->virtual } $self->record->columns;
 }
 
 =head2 take_action

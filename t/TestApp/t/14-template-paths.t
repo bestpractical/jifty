@@ -51,6 +51,6 @@ my $URL = $server->started_ok;
 
 my $mech = Jifty::Test::WWW::Mechanize->new;
 foreach my $test (@tests) {
-    $mech->get_ok( $URL . $test->{url}, "get '$URL$test->{url}'" );
+    $mech->get_ok( $URL . $test->{url}, "get '$URL: $test->{url}'" );
     $mech->content_contains( $test->{text}, "found content '$test->{text}'" );
 }
