@@ -320,7 +320,7 @@ output a form where the user can fill in the action's arguments:
     </div>
       <% $create->form_field('body') %>
     <% Jifty->web->form->submit(label => "Post") %>
-    %# or <% Jifty->web->form->link(label => "Post", submit => $create) %>
+    %# or <% Jifty->web->link(label => "Post", submit => $create) %>
     %# or <% $action->button(label => "Post"); %>
     <% Jifty->web->form->end %>
 
