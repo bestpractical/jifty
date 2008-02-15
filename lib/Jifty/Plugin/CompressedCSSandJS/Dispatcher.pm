@@ -32,33 +32,8 @@ on '/__jifty/js/*' => run {
 
     $ccjs->_generate_javascript;
 
-    if ( Jifty->handler->cgi->http('If-Modified-Since')
-        and $arg eq $ccjs->cached_javascript_digest . '.js' )
-    {
-        Jifty->log->debug("Returning 304 for cached javascript");
-        Jifty->handler->apache->header_out( Status => 304 );
-        Jifty->handler->apache->send_http_header();
-        return;
-    }
-
-    Jifty->handler->apache->content_type("application/x-javascript");
-    Jifty->handler->apache->header_out( 'Expires' => HTTP::Date::time2str( time + 31536000 ) );
-
-    # XXX TODO: If we start caching the squished JS in a file somewhere, we
-    # can have the static handler serve it, which would take care of gzipping
-    # for us.
-    if ( $ccjs->gzip_enabled && Jifty::View::Static::Handler->client_accepts_gzipped_content ) {
-        Jifty->log->debug("Sending gzipped squished JS");
-        Jifty->handler->apache->header_out( "Content-Encoding" => "gzip" );
-        Jifty->handler->apache->send_http_header();
-        binmode STDOUT;
-        print $ccjs->cached_javascript_gzip;
-
-    } else {
-        Jifty->log->debug("Sending squished JS");
-        Jifty->handler->apache->send_http_header();
-        print $ccjs->cached_javascript;
-    }
+    $arg =~ s/\.js$//;
+    $ccjs->_serve_cas_object( 'js-all', $arg );
     abort;
 };
 
@@ -74,31 +49,8 @@ on '/__jifty/css/*' => run {
 
     $ccjs->generate_css;
 
-    if ( Jifty->handler->cgi->http('If-Modified-Since')
-        and $arg eq $ccjs->cached_css_digest . '.css' )
-    {
-        Jifty->log->debug("Returning 304 for cached css");
-        Jifty->handler->apache->header_out( Status => 304 );
-        return;
-    }
-
-    Jifty->handler->apache->content_type("text/css");
-    Jifty->handler->apache->header_out( 'Expires' => HTTP::Date::time2str( time + 31536000 ) );
-
-    # XXX TODO: If we start caching the squished CSS in a file somewhere, we
-    # can have the static handler serve it, which would take care of gzipping
-    # for us.
-    if ($ccjs->gzip_enabled && Jifty::View::Static::Handler->client_accepts_gzipped_content ) {
-        Jifty->log->debug("Sending gzipped squished CSS");
-        Jifty->handler->apache->header_out( "Content-Encoding" => "gzip" );
-        Jifty->handler->apache->send_http_header();
-        binmode STDOUT;
-        print $ccjs->cached_css_gzip;
-    } else {
-        Jifty->log->debug("Sending squished CSS");
-        Jifty->handler->apache->send_http_header();
-        print $ccjs->cached_css;
-    }
+    $arg =~ s/\.css$//;
+    $ccjs->_serve_cas_object( 'css-all', $arg );
     abort;
 };
 
