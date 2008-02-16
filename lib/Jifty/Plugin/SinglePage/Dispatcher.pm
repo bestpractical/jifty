@@ -19,7 +19,7 @@ before '__jifty/webservices/*' => run {
 
     # XXX: shouldn't have multiple redirect
     # Simply ignore Redirect from webservice if we are not in SPA
-    set '_webservice_redirect' => [map { $_->arguments->{url} } @actions]
+    Jifty->web->request->argument( '_webservice_redirect' => [map { $_->arguments->{url} } @actions] )
         if Jifty->find_plugin('Jifty::Plugin::SinglePage');
 
 };
@@ -28,7 +28,7 @@ on qr{(__jifty/webservices/.*)} => run {
     my $actions = get '_webservice_redirect';
     for my $act (@$actions) {
         if ($act =~ m{^https?://}) {
-            set '_webservice_external_redirect' => $act;
+            Jifty->web->request->argument( '_webservice_external_redirect' => $act );
         }
         else {
             Jifty->web->webservices_redirect($act);
