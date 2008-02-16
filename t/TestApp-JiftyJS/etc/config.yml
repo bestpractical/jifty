@@ -17,6 +17,8 @@ framework:
   DevelMode: 1
   L10N: 
     PoDir: share/po
+    AllowedLang:
+      - en
   LogLevel: INFO
   Mailer: Sendmail
   MailerArgs: []
