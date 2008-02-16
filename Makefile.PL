@@ -92,11 +92,11 @@ if (can_cc()) {
     requires('YAML' => 0.35); 	# Use YAML::Dump for the moment since YAML.pm segfaults on
 				# reading stupidly long (~20K characters) double-quoted
 				# strings, and we need to produce YAML.pm-readable output.
-    requires('JSON::Syck' => 0.15);
+    requires('JSON::Syck' => 0.29);
 }
 else {
     requires('YAML' => 0.35) unless can_use('YAML::Syck' => 0.71);
-    requires('JSON' => 0.01) unless can_use('JSON::Syck' => 0.15);
+    requires('JSON' => 0.01) unless can_use('JSON::Syck' => 0.29);
 }
 
 features(
