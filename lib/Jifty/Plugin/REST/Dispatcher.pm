@@ -397,12 +397,10 @@ sub _resolve {
     # heathen names to be Perl-style
     $name =~ s/\./::/g;
 
-    return $name if $name->isa($base);
-
     my $re = qr/(?:^|::)\Q$name\E$/i;
 
     foreach my $cls (@_) {
-        return $cls if $cls =~ $re;
+        return $cls if $cls =~ $re && $cls->isa($base);
     }
 
     abort(404);

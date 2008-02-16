@@ -17,6 +17,7 @@
 <div id="custom-stuff">Custom Wrapper</div>
   </div>
   <div id="jifty-wait-message" style="display: none"><%_('Loading...')%></div>
+  <div id="jifty-result-popup"></div>
 % Jifty::Mason::Halo->render_component_tree() if (Jifty->config->framework('DevelMode') );
 %# This is required for jifty server push.  If you maintain your own
 %# wrapper, make sure you have this as well.

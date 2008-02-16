@@ -497,7 +497,7 @@ sub _current_collection {
         $collection = $search;
     } else {
         $collection = $collection_class->new();
-        $collection->unlimit();
+        $collection->find_all_rows();
     }
 
     $collection->set_page_info( current_page => $page, per_page => $self->per_page );

@@ -664,6 +664,24 @@ sub printable_table_schema {
     return $schema_gen->create_table_sql_text;
 }
 
+
+=head2 table_schema_statements
+
+When called, this method will generate the SQL schema statements
+for the current version of this class and return it as array.
+
+=cut
+
+sub table_schema_statements {
+    my $class = shift;
+
+    my $schema_gen = $class->_make_schema();
+    return $schema_gen->create_table_sql_statements;
+}
+
+
+
+
 =head2 create_table_in_db
 
 When called, this method will generate the SQL schema for the current
@@ -675,10 +693,8 @@ open database.
 sub create_table_in_db {
     my $class = shift;
 
-    my $schema_gen = $class->_make_schema();
-
     # Run all CREATE commands
-    for my $statement ( $schema_gen->create_table_sql_statements ) {
+    for my $statement ( $class->table_schema_statements ) {
         my $ret = Jifty->handle->simple_query($statement);
         $ret or die "error creating table $class: " . $ret->error_message;
     }
@@ -894,5 +910,15 @@ for this model.
 =cut
 
 sub is_protected { return shift->is_private }
+
+=head2 enumerable
+
+Controls whether atogenerated actions with columns that refer to this
+class should attempt to provide a drop-down of possible values or not.
+This method will be called as a class method, and defaults to true.
+
+=cut
+
+sub enumerable { 1 }
 
 1;

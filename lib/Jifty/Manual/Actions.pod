@@ -234,7 +234,7 @@ textual message describing the result of running the action.
 Thus, if your action failed for some reason, you would, in
 C<take_action>, write code like:
 
-    $self->result->error('Couldn't write blog post');
+    $self->result->error('Could not write blog post');
     return;
 
 If, however, the action completed successfully, you might write:
@@ -320,7 +320,7 @@ output a form where the user can fill in the action's arguments:
     </div>
       <% $create->form_field('body') %>
     <% Jifty->web->form->submit(label => "Post") %>
-    %# or <% Jifty->web->form->link(label => "Post", submit => $create) %>
+    %# or <% Jifty->web->link(label => "Post", submit => $create) %>
     %# or <% $action->button(label => "Post"); %>
     <% Jifty->web->form->end %>
 

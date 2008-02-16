@@ -19,14 +19,11 @@ framework:
     PoDir: share/po
     AllowedLang:
       - en
-      - zh_tw
   LogLevel: INFO
   Mailer: Sendmail
   MailerArgs: []
 
   Plugins: 
-    - I18N: { js: 1 }
-
     - 
       LetMe: {}
 

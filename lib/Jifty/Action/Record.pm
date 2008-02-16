@@ -239,6 +239,8 @@ sub _build_class_arguments {
             # Render as a select box unless they override
             if ( UNIVERSAL::isa( $refers_to, 'Jifty::Record' ) ) {
                 $info->{render_as} = $render_as || 'Select';
+
+                $info->{render_as} = 'Text' unless $column->refers_to->enumerable;
             }
 
             # If it's a select box, setup the available values
@@ -503,7 +505,7 @@ This defaults to all of the non-C<private> fields of the object.
 
 sub possible_fields {
     my $self = shift;
-    return map { $_->name } grep { $_->container || $_->type ne "serial" and not $_->private and not $_->virtual } $self->record->columns;
+    return map { $_->name } grep { $_->container or ($_->type ne "serial" and !$_->private and !$_->virtual) } $self->record->columns;
 }
 
 =head2 take_action

@@ -368,7 +368,7 @@ namespace, in addition to your application's actions.
 
 sub actions {
     my $self = shift;
-    return sort grep { $self->is_allowed($_) } $self->_actions;
+    return sort grep { not /::SUPER$/ and $self->is_allowed($_) } $self->_actions;
 }
 
 =head2 visible_actions
@@ -381,7 +381,7 @@ namespace, in addition to your application's actions.
 
 sub visible_actions {
     my $self = shift;
-    return sort grep { $self->is_visible($_) } $self->_actions;
+    return sort grep { not /::SUPER$/ and $self->is_visible($_) } $self->_actions;
 }
 
 =head1 SEE ALSO

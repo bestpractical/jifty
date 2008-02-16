@@ -506,7 +506,7 @@ sub upgrade_tables {
             and $model->since > $dbv )
         {
             unshift @{ $UPGRADES{ $model->since } },
-                $model->printable_table_schema();
+                $model->table_schema_statements();
         } else {
 
             # Go through the currently-active columns

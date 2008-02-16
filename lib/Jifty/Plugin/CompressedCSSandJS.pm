@@ -4,9 +4,7 @@ use warnings;
 package Jifty::Plugin::CompressedCSSandJS;
 use base 'Jifty::Plugin';
 
-use Digest::MD5 'md5_hex';
 use IPC::Run3 'run3';
-use Compress::Zlib ();
 use IO::Handle ();
 
 =head1 NAME
@@ -45,18 +43,7 @@ indicates it supports that feature.
 
 =cut
 
-__PACKAGE__->mk_accessors(qw(css js jsmin cdn gzip_enabled
-
-    cached_javascript 
-    cached_javascript_gzip
-    cached_javascript_digest 
-    cached_javascript_time 
-
-    cached_css
-    cached_css_gzip
-    cached_css_time
-    cached_css_digest
-));
+__PACKAGE__->mk_accessors(qw(css js jsmin cdn gzip_enabled));
 
 =head2 init
 
@@ -123,7 +110,7 @@ sub _include_javascript {
 
     $self->_generate_javascript;
     Jifty->web->out( qq[<script type="text/javascript" src="@{[ $self->cdn ]}/__jifty/js/]
-            . $self->cached_javascript_digest
+            . Jifty::CAS->key('ccjs', 'js-all')
             . qq[.js"></script>] );
     return 0;
 }
@@ -133,7 +120,7 @@ sub _include_css {
     $self->generate_css;
     Jifty->web->out(
     qq{<link rel="stylesheet" type="text/css" href="@{[ $self->cdn ]}/__jifty/css/}
-    . $self->cached_css_digest . '.css" />');
+    . Jifty::CAS->key('ccjs', 'css-all') . '.css" />');
     return 0;
 }
 
@@ -147,24 +134,20 @@ and caches it. (In devel mode, it always regenerates it)
 
 sub generate_css {
     my $self = shift;
-            
-    if (not defined $self->cached_css_digest or Jifty->config->framework('DevelMode')) {
-        Jifty->log->debug("Generating CSS...");
 
-        my @roots = map { Jifty::Util->absolute_path( $_ ) }
-            Jifty->handler->view('Jifty::View::Static::Handler')->roots;
-    
-        my $css = CSS::Squish->new( roots => \@roots )->concatenate(
-            map { File::Spec->catfile('css', $_ ) }
-                @{ Jifty->web->css_files }
-        );
+    return if Jifty::CAS->key('ccjs', 'css-all') && !Jifty->config->framework('DevelMode');
 
-        $self->cached_css( $css );
-        $self->cached_css_digest( md5_hex( $css ) );
-        $self->cached_css_time( time );
-        $self->cached_css_gzip(Compress::Zlib::memGzip( $css));
+    Jifty->log->debug("Generating CSS...");
 
-    }
+    my @roots = map { Jifty::Util->absolute_path( $_ ) }
+        Jifty->handler->view('Jifty::View::Static::Handler')->roots;
+
+    my $css = CSS::Squish->new( roots => \@roots )->concatenate(
+        map { File::Spec->catfile('css', $_ ) } @{ Jifty->web->css_files }
+    );
+
+    Jifty::CAS->publish( 'ccjs', 'css-all', $css,
+        { content_type => 'text/css', deflate => $self->gzip_enabled, time => time() } );
 }
 
 
@@ -179,11 +162,10 @@ and caches it.
 sub _generate_javascript {
     my $self = shift;
 
-    if ( not defined $self->cached_javascript_digest
-        or Jifty->config->framework('DevelMode') ) {
-        Jifty->log->debug("Generating JS...");
+    return if Jifty::CAS->key('ccjs', 'js-all') && !Jifty->config->framework('DevelMode');
+    Jifty->log->debug("Generating JS...");
 
-        # for the file cascading logic
+    # for the file cascading logic
         my $static_handler = Jifty->handler->view('Jifty::View::Static::Handler');
         my $js = "";
 
@@ -208,11 +190,9 @@ sub _generate_javascript {
             eval { $self->minify_js(\$js) };
             Jifty->log->error("Unable to run jsmin: $@") if $@;
         }
-        $self->cached_javascript($js);
-        $self->cached_javascript_digest( md5_hex($js) );
-        $self->cached_javascript_time(time);
-        $self->cached_javascript_gzip(Compress::Zlib::memGzip( $js));
-    }
+
+    Jifty::CAS->publish( 'ccjs', 'js-all', $js,
+        { content_type => 'application/x-javascript', deflate => $self->gzip_enabled, time => time() } );
 }
 
 =head2 minify_js \$js
@@ -244,5 +224,34 @@ sub minify_js {
 
     $$input = $output;
 }
+
+# this should be cleaned up and moved to Jifty::CAS
+sub _serve_cas_object {
+    my ($self, $name, $incoming_key) = @_;
+    my $key = Jifty::CAS->key('ccjs', $name);
+
+    if ( Jifty->handler->cgi->http('If-Modified-Since') and $incoming_key eq $key ) {
+        Jifty->log->debug("Returning 304 for cached $name");
+        Jifty->handler->apache->header_out( Status => 304 );
+        return;
+    }
+
+    my $obj = Jifty::CAS->retrieve('ccjs', $key);
+    Jifty->handler->apache->content_type($obj->metadata->{content_type});
+    Jifty->handler->apache->header_out( 'Expires' => HTTP::Date::time2str( time + 31536000 ) );
+
+    if ($obj->metadata->{deflate} && Jifty::View::Static::Handler->client_accepts_gzipped_content ) {
+        Jifty->log->debug("Sending gzipped squished $name");
+        Jifty->handler->apache->header_out( "Content-Encoding" => "gzip" );
+        Jifty->handler->apache->send_http_header();
+        binmode STDOUT;
+        print $obj->content_deflated;
+    } else {
+        Jifty->log->debug("Sending squished $name");
+        Jifty->handler->apache->send_http_header();
+        print $obj->content;
+    }
+}
+
 
 1;

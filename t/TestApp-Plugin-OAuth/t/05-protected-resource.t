@@ -5,10 +5,10 @@ use strict;
 use Test::More;
 BEGIN {
     if (eval { require Net::OAuth::Request; require Crypt::OpenSSL::RSA; 1 }) {
-        plan tests => 31;
+        plan tests => 58;
     }
     else {
-        plan skip_all => "Net::OAuth isn't installed";
+        plan skip_all => "Net::OAuth or Crypt::OpenSSL::RSA isn't installed";
     }
 }
 
@@ -118,4 +118,72 @@ response_is(
 $cmech->content_contains("Login with a password", "redirected to login");
 $cmech->content_lacks("Press the shiny red button", "did NOT get to a protected page");
 $cmech->content_lacks("human #1.", "did NOT get to a protected page");
+# }}}
+# basic protected request {{{
+get_access_token();
+my $good_token = $token_obj;
+
+response_is(
+    url                    => '/nuke/the/whales',
+    code                   => 200,
+    testname               => "200 - protected resource request",
+    consumer_secret        => 'bar',
+    oauth_consumer_key     => 'foo',
+    oauth_signature_method => 'PLAINTEXT',
+    oauth_token            => $good_token->token,
+    token_secret           => $good_token->secret,
+);
+$cmech->content_contains("Press the shiny red button", "got to a protected page");
+$cmech->content_contains("human #1.", "correct current_user");
+# }}}
+# authorizing an access token through a protected resource request {{{
+my $request_token = get_request_token();
+$umech->get_ok('/oauth/authorize');
+$umech->content_like(qr/If you trust this application/);
+
+response_is(
+    url                    => '/oauth/authorize',
+    code                   => 403,
+    testname               => "403 - not able to get to /oauth/authorize",
+    no_token               => 1,
+    consumer_secret        => 'bar',
+    oauth_consumer_key     => 'foo',
+    oauth_signature_method => 'PLAINTEXT',
+    oauth_token            => $good_token->token,
+    token_secret           => $good_token->secret,
+);
+# }}}
+# the original user can still authorize tokens {{{
+$token_obj = $request_token;
+allow_ok();
+get_access_token(1);
+# }}}
+# consumer can use either token {{{
+response_is(
+    url                    => '/nuke/the/whales',
+    code                   => 200,
+    testname               => "200 - protected resource request",
+    consumer_secret        => 'bar',
+    oauth_consumer_key     => 'foo',
+    oauth_signature_method => 'PLAINTEXT',
+    oauth_token            => $token_obj->token,
+    token_secret           => $token_obj->secret,
+);
+$cmech->content_contains("Press the shiny red button", "got to a protected page");
+$cmech->content_contains("human #1.", "correct current_user");
+
+$token_obj = $good_token;
+response_is(
+    url                    => '/nuke/the/whales',
+    code                   => 200,
+    testname               => "200 - protected resource request",
+    consumer_secret        => 'bar',
+    oauth_consumer_key     => 'foo',
+    oauth_signature_method => 'PLAINTEXT',
+    oauth_token            => $good_token->token,
+    token_secret           => $good_token->secret,
+);
+$cmech->content_contains("Press the shiny red button", "got to a protected page");
+$cmech->content_contains("human #1.", "correct current_user");
+
 # }}}

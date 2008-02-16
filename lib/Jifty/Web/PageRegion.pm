@@ -316,6 +316,7 @@ sub render_as_subrequest {
     $subrequest->argument( region => $self );
     # XXX: use ->arguments?
     $subrequest->argument( $_ => $arguments->{$_}) for keys %$arguments;
+    $subrequest->template_arguments({});
     $subrequest->path( $self->path );
     $subrequest->top_request( Jifty->web->request->top_request );
 
