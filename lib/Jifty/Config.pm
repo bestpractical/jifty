@@ -346,7 +346,7 @@ See L<Jifty::Script::App>.
 sub initial_config {
     my $self = shift;
     my $guess = $self->guess(@_);
-    $guess->{'framework'}->{'ConfigFileVersion'} = 3;
+    $guess->{'framework'}->{'ConfigFileVersion'} = 4;
 
     # These are the plugins which new apps will get by default
     $guess->{'framework'}->{'Plugins'} = [
@@ -393,6 +393,12 @@ sub update_config {
     if ( $config->{'framework'}->{'ConfigFileVersion'} < 3) {
         unshift (@{$config->{'framework'}->{'Plugins'}}, 
             { CSSQuery           => {}, }
+        );
+    }
+
+    if ( $config->{'framework'}->{'ConfigFileVersion'} < 4) {
+        unshift (@{$config->{'framework'}->{'Plugins'}}, 
+            { Prototypism        => {}, }
         );
     }
 

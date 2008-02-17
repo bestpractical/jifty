@@ -24,7 +24,6 @@ framework:
   MailerArgs: []
 
   Plugins: 
-    - Prototypism: {}
     - 
       LetMe: {}
 
@@ -44,7 +43,7 @@ framework:
       OnlineDocs: {}
 
     - 
-      CompressedCSSandJS: { js: 0 }
+      CompressedCSSandJS: { }
 
     - 
       AdminUI: {}
