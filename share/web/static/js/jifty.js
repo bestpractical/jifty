@@ -1377,6 +1377,10 @@ Object.extend(Object.extend(Jifty.Autocompleter.prototype, Ajax.Autocompleter.pr
         onHide: this.onHide,
         afterUpdateElement: this.afterUpdate
     });
+
+    if ((document.all)&&(navigator.appVersion.indexOf("MSIE 7.")!=-1)) {
+        Event.observe(this.element, "keydown", this.onKeyPress.bindAsEventListener(this));
+    }
   },
 
   onShow: function(element, update) {
