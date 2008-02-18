@@ -46,12 +46,7 @@ var Behaviour = {
 };
 
 (function($) {
-    // XXX: Problems with .ready() less than jQuery 1.2.2 in IE6.
-    // http://groups.google.com/group/jquery-en/browse_thread/thread/cb84c7a1f08a1d6d
     $(document).ready(function(){
-	// making IE happy (and sometimes Safari) 
-	setTimeout(function(){}, 500); 
-
         Behaviour.apply();
     });
 })(jQuery);
