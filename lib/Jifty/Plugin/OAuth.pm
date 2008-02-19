@@ -20,7 +20,7 @@ This plugin is not yet complete. DO NOT USE IT.
 
 =head1 USAGE
 
-Add the following to your site_config.yml
+Add the following to your config:
 
  framework:
    Plugins:
@@ -66,9 +66,12 @@ C</oauth/access_token>.
 You must not allow public access to C</oauth/authorize>. C</oauth/authorize>
 depends on having the user be logged in.
 
+You should allow public access to C</oauth>. This has some information for
+consumers.
+
 There is currently no way for consumers to add themselves. This might change in
-the future, but it would be a nondefault configuration. Consumers must
-contact you and provide you with the following data:
+the future, with an OAuth extension. Consumers must contact you and provide you
+with the following data:
 
 =over 4
 

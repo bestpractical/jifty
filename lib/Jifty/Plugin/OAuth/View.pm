@@ -39,7 +39,7 @@ most likely be the only ones visiting yourapp.com/oauth
 template 'oauth' => page {
     p {
         b { a { attr { href => "http://oauth.net/" } "OAuth" } };
-        outs " is an open protocol to allow secure authentication to users' private data."
+        outs " is an open protocol to allow secure authentication to users' private data. It's far more secure than users giving out their passwords."
     }
 
     p {
@@ -51,18 +51,14 @@ template 'oauth' => page {
     }
 
     dl {
-        dt {
-            outs "Request a Request Token";
-            dd { Jifty->web->url(path => '/oauth/request_token') }
-        }
-        dt {
-            outs "Obtain user authorization for a Request Token";
-            dd { Jifty->web->url(path => '/oauth/authorize') }
-        }
-        dt {
-            outs "Exchange a Request Token for an Access Token";
-            dd { Jifty->web->url(path => '/oauth/access_token') }
-        }
+        dt { "Request a Request Token" }
+        dd { Jifty->web->url(path => '/oauth/request_token') }
+
+        dt { "Obtain user authorization for a Request Token" }
+        dd { Jifty->web->url(path => '/oauth/authorize') }
+
+        dt { "Exchange a Request Token for an Access Token" }
+        dd { Jifty->web->url(path => '/oauth/access_token') }
     }
 
     p {
@@ -179,10 +175,18 @@ private template 'oauth/help' => sub {
     div {
         p {
             show '/oauth/consumer';
-            outs ' is trying to access some of your data on this site. If you trust this application, you may grant it access. Note that access is read-only and will expire in one hour.';
+            outs ' is trying to access your data on this site. If you trust this application, you may grant it access. Note that ';
+            strong { "access is unrestricted" };
+            outs ' and will expire in one hour after you click "Allow".';
         }
         p {
             "If you're at all uncomfortable with the idea of someone rifling through your things, click Deny."
+        }
+        p {
+            hyperlink(
+                label => "Learn more about OAuth.",
+                url   => "http://oauth.net/",
+            )
         }
     }
 };
