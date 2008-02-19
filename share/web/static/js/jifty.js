@@ -1378,7 +1378,7 @@ Object.extend(Object.extend(Jifty.Autocompleter.prototype, Ajax.Autocompleter.pr
         afterUpdateElement: this.afterUpdate
     });
 
-    if ((document.all)&&(navigator.appVersion.indexOf("MSIE 7.")!=-1)) {
+    if ((document.all)&&(navigator.appVersion.indexOf("MSIE")!=-1)) {
         Event.observe(this.element, "keydown", this.onKeyPress.bindAsEventListener(this));
     }
   },
