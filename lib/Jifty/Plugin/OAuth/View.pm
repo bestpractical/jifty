@@ -37,6 +37,10 @@ most likely be the only ones visiting yourapp.com/oauth
 =cut
 
 template 'oauth' => page {
+    title    => 'OAuth',
+    subtitle => 'Information',
+}
+content {
     p {
         b { a { attr { href => "http://oauth.net/" } "OAuth" } };
         outs " is an open protocol to allow secure authentication to users' private data. It's far more secure than users giving out their passwords."
@@ -90,7 +94,10 @@ in the GET query, and (always) renders Allow/Deny buttons.
 
 =cut
 
-template 'oauth/authorize' => page { title => 'Someone wants stuff!' }
+template 'oauth/authorize' => page {
+    title => 'OAuth',
+    subtitle => 'Someone wants stuff!',
+}
 content {
     show '/oauth/help';
 
@@ -134,7 +141,10 @@ to the callback if provided, otherwise the site's URL.
 
 =cut
 
-template 'oauth/authorized' => page { title => 'XXX' }
+template 'oauth/authorized' => page {
+    title    => 'OAuth',
+    subtitle => 'Authorized',
+}
 content {
     my $result    = get 'result';
     my $callback  = $result->content('callback');
