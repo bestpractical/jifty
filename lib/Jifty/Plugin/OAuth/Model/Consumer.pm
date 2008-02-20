@@ -5,6 +5,8 @@ use warnings;
 
 use base qw( Jifty::Record );
 
+use constant is_private => 1;
+
 use Jifty::DBI::Schema;
 use Jifty::Record schema {
 
@@ -119,6 +121,18 @@ sub made_request {
     my ($self, $timestamp, $nonce) = @_;
     $self->set_last_timestamp($timestamp);
     $self->set_nonces({ %{$self->nonces}, $nonce => 1 });
+}
+
+=head2 current_user_can
+
+Only root may have access to this model.
+
+=cut
+
+sub current_user_can {
+    my $self = shift;
+
+    return $self->current_user->is_superuser;
 }
 
 1;

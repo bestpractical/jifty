@@ -5,6 +5,8 @@ use warnings;
 
 use base qw( Jifty::Plugin::OAuth::Token Jifty::Record );
 
+use constant is_private => 1;
+
 # kludge 1: you cannot call Jifty->app_class within schema {}
 # kludge 3: due to the loading order, you can't really do this
 #my $app_user;
@@ -94,6 +96,18 @@ sub can_trade_for_access_token {
         if $self->valid_until < DateTime->now;
 
     return (1, "Request token valid");
+}
+
+=head2 current_user_can
+
+Only root may have access to this model.
+
+=cut
+
+sub current_user_can {
+    my $self = shift;
+
+    return $self->current_user->is_superuser;
 }
 
 1;
