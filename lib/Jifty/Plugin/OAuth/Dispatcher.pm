@@ -16,6 +16,9 @@ on     POST '/oauth/authorize'     => \&authorize_post;
 on     POST '/oauth/access_token'  => \&access_token;
 on          '/oauth/authorized'    => run { redirect '/oauth/authorize' };
 
+on     GET  '/oauth/request_token' => \&invalid_method;
+on     GET  '/oauth/access_token'  => \&invalid_method;
+
 before '*' => \&try_oauth;
 
 =head2 abortmsg CODE, MSG
@@ -260,6 +263,17 @@ sub try_oauth
     $consumer->made_request(@oauth_params{qw/timestamp nonce/});
     Jifty->handler->stash->{oauth} = 1;
     Jifty->web->temporary_current_user(Jifty->app_class('CurrentUser')->new(id => $access_token->auth_as));
+}
+
+=head2 invalid_method
+
+This aborts the request with an "invalid HTTP method" response code.
+
+=cut
+
+sub invalid_method {
+    Jifty->web->response->add_header(Allow => 'POST');
+    abort(405);
 }
 
 =head2 get_consumer CONSUMER KEY

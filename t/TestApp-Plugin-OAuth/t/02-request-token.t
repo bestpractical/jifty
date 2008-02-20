@@ -260,8 +260,8 @@ $timestamp = 2000;
 # }}}
 # GET not POST {{{
 response_is(
-    code                   => 404,
-    testname               => "404 - GET not supported for request_token",
+    code                   => 405,
+    testname               => "405 - GET not allowed for request_token",
     consumer_secret        => 'bar',
     oauth_consumer_key     => 'foo',
     oauth_signature_method => 'PLAINTEXT',
