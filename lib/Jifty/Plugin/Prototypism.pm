@@ -33,6 +33,7 @@ sub init {
         scriptaculous/controls
     );
 
+    push @js, 'jifty_compatible' if Jifty->config->framework('ConfigFileVersion') < 4;
     Jifty->web->add_javascript( "prototypism/$_.js" ) for @js;
 
 }
