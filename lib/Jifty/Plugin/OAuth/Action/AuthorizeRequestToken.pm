@@ -19,6 +19,7 @@ use Jifty::Action schema {
         ajax validates;
 
     param 'authorize',
+        render as 'select',
         valid_values are qw(allow deny);
 
     param 'callback',
@@ -39,7 +40,7 @@ sub validate_token {
     my $request_token = Jifty::Plugin::OAuth::Model::RequestToken->new(current_user => Jifty::CurrentUser->superuser);
     $request_token->load_by_cols(
         token => $token,
-        authorized => '',
+        authorized => 0,
     );
 
     return $self->validation_error(token => "I don't know of that request token.") unless $request_token->id;
@@ -71,7 +72,7 @@ sub take_action {
     $self->result->content(callback  => $self->argument_value('callback'));
 
     if ($self->argument_value('authorize') eq 'allow') {
-        $token->set_authorized('t');
+        $token->set_authorized(1);
         $self->result->message("Allowing " . $token->consumer->name . " to access your stuff.");
     }
     else {

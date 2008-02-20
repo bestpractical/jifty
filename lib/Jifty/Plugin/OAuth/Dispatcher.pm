@@ -114,7 +114,7 @@ sub authorize {
 
     if ($oauth_params{token}) {
         my $request_token = Jifty::Plugin::OAuth::Model::RequestToken->new(current_user => Jifty::CurrentUser->superuser);
-        $request_token->load_by_cols(token => $oauth_params{token}, authorized => '');
+        $request_token->load_by_cols(token => $oauth_params{token}, authorized => 0);
 
         if ($request_token->id) {
             set consumer => $request_token->consumer;
@@ -193,7 +193,7 @@ sub access_token {
         if $@ || !defined($token) || !$ok;
 
     $consumer->made_request(@oauth_params{qw/timestamp nonce/});
-    $request_token->set_used('t');
+    $request_token->set_used(1);
 
     set oauth_response => {
         oauth_token        => $token->token,

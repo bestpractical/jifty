@@ -22,7 +22,7 @@ use Jifty::Record schema {
 
     column authorized =>
         type is 'boolean',
-        default is '';
+        default is 0;
 
     # kludge 2: this kind of plugin cannot yet casually refer_to app models
     column authorized_by =>
@@ -33,11 +33,9 @@ use Jifty::Record schema {
         refers_to Jifty::Plugin::OAuth::Model::Consumer,
         is required;
 
-    # kludge 3: Jifty::DBI + SQLite = poor boolean handling
-    # so the empty string is the false value, 't' is the true value
     column used =>
         type is 'boolean',
-        default is '';
+        default is 0;
 
     column token =>
         type is 'varchar',
