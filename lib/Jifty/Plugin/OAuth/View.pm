@@ -42,7 +42,13 @@ template 'oauth' => page {
 }
 content {
     p {
-        b { a { attr { href => "http://oauth.net/" } "OAuth" } };
+        b {
+            hyperlink(
+                url    => "http://oauth.net/",
+                label  => "OAuth",
+                target => "_blank",
+            )
+        };
         outs " is an open protocol to allow secure authentication to users' private data. It's far more secure than users giving out their passwords."
     }
 
@@ -78,10 +84,11 @@ content {
 
         if ($restful) {
             outs " You may also use our REST interface. See ";
-            a {
-                attr { href => Jifty->web->url(path => '=/help') }
-                Jifty->web->url(path => '=/help')
-            }
+            hyperlink(
+                url    => Jifty->web->url(path => '=/help'),
+                label  => Jifty->web->url(path => '=/help'),
+                target => "_blank",
+            )
         }
     }
 };
@@ -122,13 +129,13 @@ content {
     outs_raw $authorize->hidden(callback => get 'callback');
 
     outs_raw($authorize->button(
-        label => 'Allow',
-        arguments => { %args, authorize => 'allow' },
+        label => 'Deny',
+        arguments => { %args, authorize => 'deny' },
     ));
 
     outs_raw($authorize->button(
-        label => 'Deny',
-        arguments => { %args, authorize => 'deny' },
+        label => 'Allow',
+        arguments => { %args, authorize => 'allow' },
     ));
 
     Jifty->web->form->end();
@@ -194,8 +201,9 @@ private template 'oauth/help' => sub {
         }
         p {
             hyperlink(
-                label => "Learn more about OAuth.",
-                url   => "http://oauth.net/",
+                label  => "Learn more about OAuth.",
+                url    => "http://oauth.net/",
+                target => "_blank",
             )
         }
     }
@@ -214,7 +222,11 @@ private template 'oauth/consumer' => sub {
         outs ref($consumer) ? $consumer->name : $consumer;
         if (ref($consumer) && $consumer->url) {
             outs ' <';
-            a { attr { href => $consumer->url } $consumer->url };
+            hyperlink(
+                url    => $consumer->url,
+                label  => $consumer->url,
+                target => "_blank",
+            );
             outs ' >';
         }
     }
