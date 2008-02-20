@@ -621,6 +621,9 @@ jQuery.extend(Jifty.Form.Element, {
     getForm: function (element) {
         element = Jifty.$(element);
 
+        if (element == null)
+            return null;
+
         if (element.virtualform)
             return element.virtualform;
 
