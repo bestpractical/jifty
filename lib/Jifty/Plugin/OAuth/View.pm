@@ -52,6 +52,22 @@ content {
         outs " is an open protocol to allow secure authentication to users' private data. It's far more secure than users giving out their passwords."
     }
 
+    h2 { "Users" }
+
+    p {
+        "OAuth is nearly transparent to end users. Through OAuth, other applications can have secure -- and time-limited -- read and write access to your data on this site."
+    }
+    p {
+        outs "Applications may ask you to ";
+        hyperlink(
+            label => "authorize a 'token' on our site",
+            url   => Jifty->web->url(path => '/oauth/authorize'),
+        );
+        outs ". This is normal. We want to make sure you approve of other people looking at your data.";
+    }
+
+    h2 { "Consumers" }
+
     p {
         "This application supports OAuth. If you'd like to access the private resources of users of this site, you must first establish a Consumer Key, Consumer Secret, and, if applicable, RSA public key with us. You can do so by contacting " . (Jifty->config->framework('AdminEmail')||'us') . ".";
     }
@@ -197,7 +213,7 @@ private template 'oauth/help' => sub {
             outs ' and will expire in one hour after you click "Allow".';
         }
         p {
-            "If you're at all uncomfortable with the idea of someone rifling through your things, click Deny."
+            "If you're at all uncomfortable with the idea of someone rifling through your things, or don't know what this is, click Deny."
         }
         p {
             hyperlink(
