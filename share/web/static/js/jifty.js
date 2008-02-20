@@ -1008,6 +1008,16 @@ var apply_fragment_updates = function(fragment, f) {
                     textContent = fragment_bit.firstChild.nodeValue;
                 }
 
+                // Re-arrange all <script> tags to the end of textContent.
+                // This approach easily deal with the uncertain amount of
+                // time we need to wait before the region is ready for running
+                // some javascript.
+
+                var re = new RegExp('<script[^>]*>([\\S\\s]*?)<\/script>', 'img');
+                var scripts = (textContent.match(re) || []).join("");
+                var textContentWithoutScript = textContent.replace(re, '');
+                textContent = textContentWithoutScript + scripts;
+
                 // Once we find it, do the insertion
                 if (f['mode'] && (f['mode'] != 'Replace')) {
                     var method = ({
