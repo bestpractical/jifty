@@ -1,0 +1,127 @@
+
+=head1 NAME
+
+JavaScript programming guide for Jifty
+
+=head1 DESCRIPTION
+
+jQuery took over Prototype and becoming the core of Jifty's Javascript
+development. Besides re-implement core javascript libraries with
+jQuery, some good refactor is also being done.
+
+This document is written to help JavaScript programmers working for
+a Jifty project to understand what's the different before jQuery landed,
+and provide a quick reference for prototypism believers to learn the new wave
+of JavaScript programming in Jifty.
+
+=head1 Migration to jQuery
+
+=head2 Selecting elements with jQuery()
+
+Invokin jQuery function with exactly one string argument will return
+a jQuery object that represents a list of elements. The string is
+a CSS selector. For example:
+
+    jQuery("span.message")
+
+This works very similar to Prototype's $$() function, but with one
+difference. The return value is I<not> an Array, it's a jQuery
+object that acts likes a Enumerable object (but still, not one). If you
+really want a Array, you can do:
+
+   my array_of_message = jQuery("span.message").get()
+
+For most cases, C<jQuery("#" + id).get(0)> can be a replacement pattern
+to C<$(id)>. Selecting elements with C<jQuery()> function always
+returns a jQuery object, but not element it self. There are two notice
+especially for Jifty world.
+
+First, you should use C<Jifty.$>, deep in the design of Jifty, there
+are many kind of elements with C<":"> character in their id. Sadly
+it is a feature in jQuery to do more powerful seleciton with C<":">
+character. For example, this selects current mouse-overed elements:
+
+    jQuery(":hover")
+
+C<jifty.js> internally use C<Jifty.$> as the direct replacement to C<$()>
+function.
+
+=head2 Document ready with jQuery()
+
+=head1 METHODS
+
+This section list those public functions under C<Jifty> namespace.
+
+=over
+
+=item Jifty.$( element_id )
+
+This is a shorthand of document.getElementById function, like $ in
+prototype's $ function. It is also internally used a lot because many
+form specific element ID does not get along with jQuery's selector,
+which expect the ":" character is used for special purpose.
+
+element_id should be a string. If not, element_id itself is returned.
+
+=item Jifty.Effect(element, effect_name, option)
+
+When called, instantly pefrom a js effect on give element. "element" is an
+element object.
+
+The last arg "option" is a hash. Currently it's only used for
+specificing callbacks. There are two possible callbacks, before and
+after. You may specify them like this:
+
+    Jifty.Effect(element, "Fade", { duration: 2.0 }, {
+        before: function() { ... },
+        after: function() { ... }
+    });
+
+The "before" callback is called right before the effect starts.
+The "after" callback is called right after it's started, but not
+necessarily ended.
+
+This function is written to make it possible that a Jifty plugin
+can override default effects with other fancy javascript libraries.
+By default, it delegates all the real work to jQuery's built-in
+effect functions.
+
+=item Jifty.Form.getActions()
+
+=item Jifty.Form.getElements(element)
+
+=item Jifty.Form.clearPlaceholders(element)
+
+=item Jifty.Form.Element.getMoniker( element )
+
+=item Jifty.Form.Element.getAction( element )
+
+=item Jifty.Form.Element.getType( element )
+
+=item Jifty.Form.Element.getField( element )
+
+=item Jifty.Form.Element.getValue( element )
+
+=item Jifty.Form.Element.validate( element )
+
+=item Jifty.Form.Element.disableValidation( element )
+
+=item Jifty.Form.Element.enableValidation( element )
+
+=item Jifty.Form.Element.getForm( element )
+
+=item Jifty.Form.Element.buttonArguments( element )
+
+=item Jifty.Form.Element.buttonActions( element )
+
+=item Jifty.Form.Element.buttonFormElements( element )
+
+=item Jifty.Form.Element.clickDefaultButton( element )
+
+=item Jifty.Form.Element.handleEnter( event )
+
+=back
+
+
+=cut
+
