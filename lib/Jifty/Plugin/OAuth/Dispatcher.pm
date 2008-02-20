@@ -31,11 +31,11 @@ the C<abort> procedure?
 sub abortmsg {
     my ($code, $msg) = @_;
     if ($code) {
-        Jifty->log->debug("$code for ".Jifty->web->request->path.":" . $msg) if defined($msg);
+        Jifty->log->debug("$code for ".Jifty->web->request->path.": $msg") if defined($msg);
         abort($code);
     }
     elsif (defined $msg) {
-        Jifty->log->debug("OAuth denied for ".Jifty->web->request->path.":" . $msg);
+        Jifty->log->debug("OAuth denied for ".Jifty->web->request->path.": $msg");
     }
 }
 
@@ -103,7 +103,7 @@ The user is authorizing (or denying) a consumer's request token
 
 sub authorize {
     my @params = qw/token callback/;
-    abortmsg(403, "Cannot authorize tokens as an OAuthed user") if Jifty->handler->stash->{oauth};
+    abortmsg(403, "Cannot authorize tokens as an OAuthed user") if Jifty->web->current_user->is_oauthed;
 
     set no_abort => 1;
     my %oauth_params = get_parameters(@params);
@@ -130,7 +130,7 @@ The user is submitting an AuthorizeRequestToken action
 =cut
 
 sub authorize_post {
-    abortmsg(403, "Cannot authorize tokens as an OAuthed user") if Jifty->handler->stash->{oauth};
+    abortmsg(403, "Cannot authorize tokens as an OAuthed user") if Jifty->web->current_user->is_oauthed;
     my $result = Jifty->web->response->result("authorize_request_token");
     unless ($result && $result->success) {
         redirect '/oauth/authorize';
@@ -261,8 +261,8 @@ sub try_oauth
     abortmsg(undef, "Invalid signature (type: $oauth_params{signature_method})."), return unless $request->verify;
 
     $consumer->made_request(@oauth_params{qw/timestamp nonce/});
-    Jifty->handler->stash->{oauth} = 1;
     Jifty->web->temporary_current_user(Jifty->app_class('CurrentUser')->new(id => $access_token->auth_as));
+    Jifty->web->current_user->is_oauthed(1);
 }
 
 =head2 invalid_method

@@ -6,17 +6,50 @@ use base qw/Jifty::Plugin/;
 
 our $VERSION = 0.01;
 
+sub init {
+    Jifty::CurrentUser->mk_accessors(qw(is_oauthed));
+}
+
 =head1 NAME
 
-Jifty::Plugin::OAuth
+Jifty::Plugin::OAuth - secure API authentication
 
 =head1 DESCRIPTION
 
-A OAuth web services API for your Jifty app.
+A OAuth web services API for your Jifty app. Other applications may have secure
+and limited access to your users' data.
+
+This plugin adds an C</oauth> set of URLs to your application, listed below. It
+also adds C<is_oauthed> to L<Jifty::CurrentUser>, so you may have additional
+restrictions on OAuth access (such as forbidding OAuthed users to change users'
+passwords).
+
+=head2 /oauth
+
+This lists some basic information about OAuth, and where to find more. It also
+tells consumers how they may gain OAuth-ability for your site.
+
+=head2 /oauth/request_token
+
+The URL that consumers POST to get a request token
+
+=head2 /oauth/authorize
+
+The URL at which users authorize request tokens
+
+=head2 /oauth/authorized
+
+After authorizing or denying a request token, users are directed here before
+going back to the consumer's site.
+
+=head2 /oauth/access_token
+
+The URL that consumers POST to trade an authorized request token for an access
+token
 
 =head1 WARNING
 
-This plugin is not yet complete. DO NOT USE IT.
+This plugin is beta. Please let us know if there are any issues with it.
 
 =head1 USAGE
 
@@ -147,6 +180,12 @@ the user's behalf in a limited way, for a limited amount of time.
 By establishing secrets and using signatures and timestamps, this can be done
 in a very secure manner. For example, a replay attack (an eavesdropper repeats
 a request made by a legitimate consumer) is actively defended against.
+
+=head1 METHODS
+
+=head2 init
+
+This adds an is_oauthed accessor to L<Jifty::CurrentUser>.
 
 =head1 SEE ALSO
 

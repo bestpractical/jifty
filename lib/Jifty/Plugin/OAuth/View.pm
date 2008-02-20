@@ -99,12 +99,13 @@ content {
         outs "While you have a valid access token, you may browse the site as the user normally does.";
 
         if ($restful) {
-            outs " You may also use our REST interface. See ";
+            outs " You may also use ";
             hyperlink(
                 url    => Jifty->web->url(path => '=/help'),
-                label  => Jifty->web->url(path => '=/help'),
+                label  => "our REST interface",
                 target => "_blank",
-            )
+            );
+            outs ".";
         }
     }
 };
