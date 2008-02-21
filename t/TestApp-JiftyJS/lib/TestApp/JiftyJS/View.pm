@@ -230,4 +230,43 @@ template '/redirected' => page {
     p { "Redirected!" }
 };
 
+template '/p/zero' => page {
+    render_region("__page", path => "/p/one");
+};
+
+template '/p/one' => sub {
+    p {
+        outs "FooBar.";
+        hyperlink(
+            label => "Two",
+            onclick => {
+              replace_with => '/p/two'
+            },
+            as_button => 1
+        );
+    }
+};
+
+template '/p/two' => sub {
+    hyperlink(
+        label => "Two",
+        onclick => {
+            refresh_self => 1,
+        },
+        as_button => 1
+    );
+    p { "Lorem Ipsum... " } for 1..100;
+
+    outs_raw(<<E);
+    <script type="text/javascript">
+    jQuery(function() {
+        alert( jQuery("p").size() );
+    });
+    </script>
+E
+
+
+};
+
+
 1;

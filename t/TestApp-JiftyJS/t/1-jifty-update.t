@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use lib 't/lib';
 use Jifty::SubTest;
-use Jifty::Test tests => 26;
+use Jifty::Test tests => 29;
 use Jifty::Test::WWW::Selenium;
 use utf8;
 
@@ -64,5 +64,16 @@ my $URL    = $server->started_ok;
     $sel->wait_for_text_present_ok("Hello, Pony");
 }
 
-$sel->stop;
+{
+    # Make sure there's 100 <p> element.
+    # For any region update, using Jifty.udpate(), javascript code in there are always executed
+    # after HTML is all done. This is to test how many <p> elements the javascript code
+    # can get. And ithe number should be 100.
+    $sel->open_ok('/p/zero');
+    $sel->click_ok('xpath=//input');
+    $sel->pause();
+    my $msg = $sel->get_alert();
+    is($msg, "100");
+}
 
+$sel->stop;
