@@ -345,7 +345,17 @@ C<MyApp::Model::Foo=HASH(0x1800568)>.
 sub reference_to_data {
     my ($self, $obj) = @_;
     (my $model = ref($obj)) =~ s/::/./g;
-    return { jifty_model_reference => 1, id => $obj->id, model => $model };
+    my $id = $obj->id;
+
+    # probably a file extension, from the REST rewrite
+    my $extension = $ENV{HTTP_ACCEPT} =~ /^\w+$/ ? ".$ENV{HTTP_ACCEPT}" : '';
+
+    return {
+        jifty_model_reference => 1,
+        id                    => $obj->id,
+        model                 => $model,
+        url                   => Jifty->web->url(path => "/=/model/$model/id/$id$extension"),
+    };
 }
 
 =head2 stringify LIST
