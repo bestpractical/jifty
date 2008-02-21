@@ -262,7 +262,7 @@ sub try_oauth
 
     $consumer->made_request(@oauth_params{qw/timestamp nonce/});
     Jifty->web->temporary_current_user(Jifty->app_class('CurrentUser')->new(id => $access_token->auth_as));
-    Jifty->web->current_user->is_oauthed(1);
+    Jifty->web->current_user->is_oauthed($access_token);
 }
 
 =head2 invalid_method

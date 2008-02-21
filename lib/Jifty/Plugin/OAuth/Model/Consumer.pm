@@ -70,7 +70,7 @@ screw up the regular consumer.
 
 sub before_set_last_timestamp {
     my $self = shift;
-    my $new_ts = shift;
+    my $new_ts = shift->{value};
 
     # uh oh, looks like sloppy coding..
     if ($new_ts < $self->last_timestamp) {
