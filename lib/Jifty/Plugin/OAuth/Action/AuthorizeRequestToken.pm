@@ -98,11 +98,13 @@ sub take_action {
             use_limit => $self->inflate_use_limit,
         });
 
-        $self->result->message("Allowing " . $token->consumer->name . " to access your stuff.");
+        my $right = $self->argument_value('can_write') ? "read and write" : "read";
+
+        $self->result->message("Allowing " . $token->consumer->name . " to $right your data for ". $self->argument_value('use_limit') .".");
     }
     else {
         $token->delete;
-        $self->result->message("Denying " . $token->consumer->name . " the right to access your stuff.");
+        $self->result->message("Denying " . $token->consumer->name . " the right to access your data.");
     }
 
     return 1;

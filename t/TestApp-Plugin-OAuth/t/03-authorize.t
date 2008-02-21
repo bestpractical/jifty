@@ -147,7 +147,7 @@ $umech->content_unlike(qr/should have provided it/, "token hint doesn't show up 
 $umech->form_number(1);
 $umech->click_button(value => 'Deny');
 
-$umech->content_contains("Denying FooBar Industries the right to access your stuff");
+$umech->content_contains("Denying FooBar Industries the right to access your data.");
 $umech->content_contains("click here");
 $umech->content_contains("http://foo.bar.example.com?oauth_token=" . $token_obj->token);
 $umech->content_contains("To return to");
@@ -162,7 +162,7 @@ $umech->content_unlike(qr/should have provided it/, "token hint doesn't show up 
 $umech->form_number(1);
 $umech->click_button(value => 'Allow');
 
-$umech->content_contains("Allowing FooBar Industries to access your stuff");
+$umech->content_contains("Allowing FooBar Industries to read your data for 1 hour.");
 $umech->content_contains("click here");
 $umech->content_contains("http://foo.bar.example.com?oauth_token=" . $token_obj->token);
 $umech->content_contains("To return to");
@@ -176,7 +176,7 @@ $umech->content_like(qr/If you trust this application/);
 $umech->fill_in_action_ok($umech->moniker_for('TestApp::Plugin::OAuth::Action::AuthorizeRequestToken'), token => $token_obj->token);
 $umech->click_button(value => 'Deny');
 
-$umech->content_contains("Denying FooBar Industries the right to access your stuff");
+$umech->content_contains("Denying FooBar Industries the right to access your data.");
 $umech->content_contains("click here");
 $umech->content_contains("http://google.com?oauth_token=" . $token_obj->token);
 $umech->content_contains("To return to");
@@ -191,7 +191,7 @@ $umech->content_unlike(qr/should have provided it/, "token hint doesn't show up 
 $umech->form_number(1);
 $umech->click_button(value => 'Deny');
 
-$umech->content_contains("Denying FooBar Industries the right to access your stuff");
+$umech->content_contains("Denying FooBar Industries the right to access your data.");
 $umech->content_contains("click here");
 my $token = $token_obj->token;
 $umech->content_like(qr{http://google\.com/\?foo=bar&(?:amp;|#38;)?oauth_token=$token});

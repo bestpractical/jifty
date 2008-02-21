@@ -14,7 +14,6 @@ sub init {
         my $right  = shift;
 
         # not oauthed? usual rules
-        warn $record->current_user->id;
         $record->current_user->is_oauthed
             or return 'ignore';
 

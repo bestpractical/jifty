@@ -95,6 +95,11 @@ sub response_is {
         );
 
         if ($params_in eq 'method') {
+            # avoid Encode complaining about undef
+            for (values %params) {
+                defined or $_ = '';
+            }
+
             my $content = Jifty->web->query_string(%params);
             $req->header('Content-type' => 'application/x-www-form-urlencoded');
             $req->content($content);
@@ -240,7 +245,7 @@ sub allow_ok {
     ::fail($error), return if $error;
 
     my $name = $token_obj->consumer->name;
-    $umech->content_contains("Allowing $name to access your stuff");
+    $umech->content_contains("Allowing $name to read your data for 1 hour.");
 }
 
 sub deny_ok {
@@ -250,7 +255,7 @@ sub deny_ok {
     ::fail($error), return if $error;
 
     my $name = $token_obj->consumer->name;
-    $umech->content_contains("Denying $name the right to access your stuff");
+    $umech->content_contains("Denying $name the right to access your data.");
 }
 
 sub _authorize_request_token {
