@@ -262,8 +262,10 @@ It flushes the session to disk, as well as flushing L<Jifty::DBI>'s cache.
 
 sub cleanup_request {
     my $self = shift;
+
     # Clean out the cache. the performance impact should be marginal.
     # Consistency is improved, too.
+
     Jifty->web->session->unload();
     Jifty::Record->flush_cache if Jifty::Record->can('flush_cache');
     $self->cgi(undef);

@@ -96,6 +96,7 @@ ALWAYS call this method when handling OAuth requests. EARLY.
 
 sub is_valid_request {
     my ($self, $timestamp, $nonce) = @_;
+
     return (0, "Timestamp nonincreasing, $timestamp < ".$self->last_timestamp.".")
         if $timestamp < $self->last_timestamp;
     return 1 if $timestamp > $self->last_timestamp;

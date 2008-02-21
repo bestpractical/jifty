@@ -219,7 +219,7 @@ sub try_oauth
     my @params = qw/consumer_key signature_method signature
                     timestamp nonce token version/;
     set no_abort => 1;
-    my %oauth_params  = get_parameters(@params);
+    my %oauth_params = get_parameters(@params);
     for (@params) {
         abortmsg(undef, "Undefined required parameter: $_"), return if !defined($oauth_params{$_});
     }
@@ -261,8 +261,11 @@ sub try_oauth
     abortmsg(undef, "Invalid signature (type: $oauth_params{signature_method})."), return unless $request->verify;
 
     $consumer->made_request(@oauth_params{qw/timestamp nonce/});
+
     Jifty->web->temporary_current_user(Jifty->app_class('CurrentUser')->new(id => $access_token->auth_as));
     Jifty->web->current_user->is_oauthed($access_token);
+
+    Jifty->log->info("Consumer " . $consumer->name . " successfully OAuthed as user ". $access_token->auth_as);
 }
 
 =head2 invalid_method
