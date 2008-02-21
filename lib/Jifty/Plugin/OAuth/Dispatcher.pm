@@ -182,12 +182,7 @@ sub access_token {
     # make sure the signature matches the rest of what the consumer gave us
     abortmsg(401, "Invalid signature (type: $oauth_params{signature_method}).") unless $request->verify;
 
-    my $token = Jifty::Plugin::OAuth::Model::AccessToken->new(current_user => Jifty::CurrentUser->superuser);
-
-    ($ok, $msg) = eval {
-        $token->create(consumer => $consumer,
-                       auth_as  => $request_token->authorized_by);
-    };
+    my $token = Jifty::Plugin::OAuth::Model::AccessToken->create_from_request_token($request_token);
 
     abortmsg(401, "Unable to create an Access Token: " . $@ || $msg)
         if $@ || !defined($token) || !$ok;
@@ -262,8 +257,13 @@ sub try_oauth
 
     $consumer->made_request(@oauth_params{qw/timestamp nonce/});
 
-    Jifty->web->temporary_current_user(Jifty->app_class('CurrentUser')->new(id => $access_token->auth_as));
-    Jifty->web->current_user->is_oauthed($access_token);
+    my $new_current_user = Jifty->app_class('CurrentUser')->new(
+        id => $access_token->auth_as,
+    );
+    $new_current_user->is_oauthed(1);
+    $new_current_user->oauth_token($access_token);
+
+    Jifty->web->temporary_current_user($new_current_user);
 
     Jifty->log->info("Consumer " . $consumer->name . " successfully OAuthed as user ". $access_token->auth_as);
 }

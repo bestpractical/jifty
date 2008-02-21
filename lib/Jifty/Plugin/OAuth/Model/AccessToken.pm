@@ -35,6 +35,9 @@ use Jifty::Record schema {
     column consumer =>
         refers_to Jifty::Plugin::OAuth::Model::Consumer;
 
+    column can_write =>
+        type is 'boolean',
+        default is '0';
 };
 
 =head2 table
@@ -44,6 +47,34 @@ AccessTokens are stored in the table C<oauth_access_tokens>.
 =cut
 
 sub table {'oauth_access_tokens'}
+
+=head2 create_from_request_token
+
+This creates a new access token (as the superuser) and populates its values
+from the given request token.
+
+=cut
+
+sub create_from_request_token {
+    my $self = shift;
+    my $request_token = shift;
+
+    if (!ref($self)) {
+        $self = $self->new(current_user => Jifty::CurrentUser->superuser);
+    }
+
+    my $restrictions = $request_token->access_token_restrictions
+        or die "No access-token restrictions given in the request token.";
+
+    $self->create(
+        consumer    => $request_token->consumer,
+        auth_as     => $request_token->authorized_by,
+        valid_until => $restrictions->{use_limit},
+        can_write   => $restrictions->{can_write} ? 1 : 0,
+    );
+
+    return $self;
+}
 
 =head2 is_valid
 

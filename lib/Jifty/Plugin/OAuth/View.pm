@@ -143,6 +143,9 @@ content {
         $authorize->form_field('token')->render;
     }
 
+    $authorize->form_field('use_limit')->render;
+    $authorize->form_field('can_write')->render;
+
     outs_raw $authorize->hidden(callback => get 'callback');
 
     outs_raw($authorize->button(
@@ -209,9 +212,7 @@ private template 'oauth/help' => sub {
     div {
         p {
             show '/oauth/consumer';
-            outs ' is trying to access your data on this site. If you trust this application, you may grant it access. Note that ';
-            strong { "access is unrestricted" };
-            outs ' and will expire in one hour after you click "Allow".';
+            outs ' is trying to access your data on this site. If you trust this application, you may grant it access.';
         }
         p {
             "If you're at all uncomfortable with the idea of someone rifling through your things, or don't know what this is, click Deny."

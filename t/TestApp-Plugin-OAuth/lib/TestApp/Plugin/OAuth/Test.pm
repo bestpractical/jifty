@@ -82,15 +82,25 @@ sub response_is {
         $cmech->default_header("Authorization" => authz(%params));
     }
 
-    if ($method eq 'POST') {
-        $r = $cmech->post($url, $params_in eq 'method' ? [%params] : ());
-    }
-    else {
+    if ($method eq 'GET') {
         my $query = join '&',
                     map { "$_=" . Jifty->web->escape_uri($params{$_}||'') }
                     keys %params;
         my $params = $params_in eq 'method' ? "?$query" : '';
         $r = $cmech->get("$url$params");
+    }
+    else {
+        my $req = HTTP::Request->new(
+            uc($method) => $url,
+        );
+
+        if ($params_in eq 'method') {
+            my $content = Jifty->web->query_string(%params);
+            $req->header('Content-type' => 'application/x-www-form-urlencoded');
+            $req->content($content);
+        }
+
+        $r = $cmech->request($req);
     }
 
     $cmech->default_headers->remove_header("Authorization");

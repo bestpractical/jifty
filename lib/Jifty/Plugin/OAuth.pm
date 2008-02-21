@@ -7,7 +7,29 @@ use base qw/Jifty::Plugin/;
 our $VERSION = 0.01;
 
 sub init {
-    Jifty::CurrentUser->mk_accessors(qw(is_oauthed));
+    Jifty::CurrentUser->mk_accessors(qw(is_oauthed oauth_token));
+
+    Jifty::Record->add_trigger(before_access => sub {
+        my $record = shift;
+        my $right  = shift;
+
+        # not oauthed? usual rules
+        warn $record->current_user->id;
+        $record->current_user->is_oauthed
+            or return 'ignore';
+
+        my $token = $record->current_user->oauth_token;
+
+        # read access? usual rules
+        $right eq 'read'
+            or return 'ignore';
+
+        # if the token does not give write access, then WE DO NOT HAVE IT
+        return 'deny' unless $token->__value('can_write');
+
+        # we have not been forbidden from updating, so: usual rules
+        return 'ignore';
+    });
 }
 
 =head1 NAME
@@ -20,9 +42,9 @@ A OAuth web services API for your Jifty app. Other applications may have secure
 and limited access to your users' data.
 
 This plugin adds an C</oauth> set of URLs to your application, listed below. It
-also adds C<is_oauthed> to L<Jifty::CurrentUser>, so you may have additional
-restrictions on OAuth access (such as forbidding OAuthed users to change users'
-passwords).
+also adds C<is_oauthed> and C<oauth_token> to L<Jifty::CurrentUser>, so you may
+have additional restrictions on OAuth access (such as forbidding OAuthed users
+to change users' passwords).
 
 =head2 /oauth
 
@@ -185,7 +207,9 @@ a request made by a legitimate consumer) is actively defended against.
 
 =head2 init
 
-This adds an is_oauthed accessor to L<Jifty::CurrentUser>.
+This adds an is_oauthed accessor to L<Jifty::CurrentUser>. It also establishes
+a trigger in L<Jifty::Record> so that only OAuthed consumers with write access
+can do anything other than read.
 
 =head1 SEE ALSO
 

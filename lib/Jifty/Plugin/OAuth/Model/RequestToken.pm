@@ -45,6 +45,9 @@ use Jifty::Record schema {
         type is 'varchar',
         is required;
 
+    column access_token_restrictions =>
+        type is 'blob',
+        filters are 'Jifty::DBI::Filter::Storable';
 };
 
 =head2 table
@@ -65,7 +68,6 @@ the valid_until to be active for another hour.
 sub after_set_authorized {
     my $self = shift;
     $self->set_authorized_by(Jifty->web->current_user->id);
-    $self->set_valid_until(DateTime->now->add(hours => 1));
 }
 
 =head2 can_trade_for_access_token

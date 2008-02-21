@@ -6,6 +6,7 @@ use Jifty::Dispatcher -base;
 my @login_required = qw{
     oauth/authorize
     nuke/?
+    =
 };
 
 my $login_required = join '|', map {"^$_"} @login_required;

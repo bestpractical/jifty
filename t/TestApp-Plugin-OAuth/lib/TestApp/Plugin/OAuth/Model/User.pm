@@ -14,5 +14,16 @@ use TestApp::Plugin::OAuth::Record schema {
 use Jifty::Plugin::User::Mixin::Model::User;
 use Jifty::Plugin::Authentication::Password::Mixin::Model::User;
 
+sub current_user_can {
+    my $self = shift;
+
+    return 1 if $_[0] eq 'create';
+
+    my $id = $self->__value('id');
+    return 1 if $id == $self->current_user->id;
+
+    $self->SUPER::current_user_can(@_);
+}
+
 1;
 
