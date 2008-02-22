@@ -46,7 +46,6 @@ if(!$search) {
    $collection->order_by(column => $sort_by, order=>'DESC') if ($sort_by && $order);
 } else {
     $collection = $search->content('search');
-    warn $collection->build_select_query;
 }
 
 $collection->set_page_info( current_page => $page,
@@ -84,7 +83,12 @@ my $search_region = Jifty::Web::PageRegion->new(
 % if ($collection->pager->total_entries == 0) {
  <% _('No items found') %>
 % } else {
+% if ($collection->pager->total_entries == 1) { # totally the wrong way to do it, but this was irritating me
+  <% _('1 entry') %> 
+% } else {
   <% _('%1 entries', $collection-> count) %> 
+% }
+
   <& $list_path.'header', object_type => $object_type, list_path => $list_path, 
     mask_field => $limit_field, mask_val => $limit_val, sort_by => $sort_by, order => $order &>
 % }
