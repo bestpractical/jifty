@@ -154,6 +154,10 @@ features(
         -default => 0,
         recommends('Devel::EvalContext'),
     ],
+    'Jifty REPL' => [
+        -default => 0,
+        recommends('Devel::REPL'), # Devel::REPL::Script
+    ],
     'Chart Plugin (none of these must be installed for Charts to work)' => [
         -default => 0,
         recommends('Chart::Base'),
