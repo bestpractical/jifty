@@ -37,11 +37,16 @@ For more information about cssQuery, see L<http://dean.edwards.name/my/cssQuery/
 =head2 init
 
 This initializes the plugin, which simply includes the JavaScript
-necessary to load cssQuery.
+necessary to load cssQuery, and gets rid of the cssQuery-jquery back-compat
+script.
 
 =cut
 
 sub init {
+    Jifty->web->remove_javascript(
+        'cssQuery-jquery.js',
+    );
+
     Jifty->web->add_javascript(
         'cssquery/cssQuery.js',
         'cssquery/cssQuery-level2.js',
