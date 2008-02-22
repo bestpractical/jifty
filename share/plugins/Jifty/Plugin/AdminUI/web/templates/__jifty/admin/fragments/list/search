@@ -9,6 +9,7 @@ my $search = Jifty->web->new_action(
 );
 
 </%init>
+<% Jifty->web->form->start %>
 <div class="jifty_admin">
 % for my $arg ($search->argument_names) {
  <% $search->form_field($arg) %>
@@ -23,5 +24,6 @@ my $search = Jifty->web->new_action(
     }
   )
 %>
+<% Jifty->web->form->end %>
 <hr />
 </div>

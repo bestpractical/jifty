@@ -9,6 +9,8 @@ $list_path
 my $record_class = Jifty->app_class("Model", $object_type);
 my $create = Jifty->web->new_action(class => 'Create'.$object_type);
 </%init>
+<% Jifty->web->form->start %>
+
 % if ($mask_field) {
   <% $create->hidden($mask_field,$mask_val) %>
 % }
@@ -37,6 +39,8 @@ Jifty->web->form->submit(
                  },
                 ]
     ) %>
+
+<% Jifty->web->form->end %>
 
 <%doc>
 
