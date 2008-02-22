@@ -5,7 +5,7 @@ use strict;
 use Test::More;
 BEGIN {
     if (eval { require Net::OAuth::Request; require Crypt::OpenSSL::RSA; 1 }) {
-        plan tests => 58;
+        plan tests => 22;
     }
     else {
         plan skip_all => "Net::OAuth or Crypt::OpenSSL::RSA isn't installed";
@@ -82,11 +82,12 @@ response_is(
 );
 $cmech->content_contains("You Zer", "REST GET works while OAuthed");
 # }}}
-# REST PUT {{{
+# REST DELETE {{{
 response_is(
-    url                    => "/=/model/User/id/$uid.yml",
+    url                    => "/=/model/User/id/$uid.yml!DELETE",
+    id                     => $uid,
     code                   => 200,
-    method                 => 'DELETE',
+    method                 => 'POST',
     testname               => "200 - protected resource request",
     consumer_secret        => 'bar',
     oauth_consumer_key     => 'foo',
@@ -94,6 +95,11 @@ response_is(
     oauth_token            => $token_obj->token,
     token_secret           => $token_obj->secret,
 );
-$cmech->content_contains("You Zer", "REST DELETE doesn't work while the consumer has no write access");
+
+$cmech->content_like(qr/failure: 1/, "failed to delete");
+
+my $user_copy = TestApp::Plugin::OAuth::Model::User->new(current_user => Jifty::CurrentUser->superuser);
+$user_copy->load($uid);
+is($user_copy->name, "You Zer", "REST DELETE doesn't work while the consumer has no write access");
 # }}}
 

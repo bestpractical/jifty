@@ -13,22 +13,55 @@ sub init {
         my $record = shift;
         my $right  = shift;
 
-        # not oauthed? usual rules
+        # not oauthed, so use default
         $record->current_user->is_oauthed
             or return 'ignore';
-
         my $token = $record->current_user->oauth_token;
 
-        # read access? usual rules
-        $right eq 'read'
-            or return 'ignore';
+        # OAuthed users have no read restrictions, so use default
+        return 'ignore' if $right eq 'read';
 
-        # if the token does not give write access, then WE DO NOT HAVE IT
-        return 'deny' unless $token->__value('can_write');
+        # token gives write access, so use default
+        return 'ignore' if $token->__value('can_write');
 
-        # we have not been forbidden from updating, so: usual rules
-        return 'ignore';
+        # we have been forbidden from writing!
+        Jifty->log->error("Unable to $right " . ref($record) . " " . $record->id . " because the OAuth access token does not allow it.");
+        return 'deny';
     });
+
+    for my $type (qw/create set delete/) {
+        Jifty::DBI::Record->add_trigger(
+            abortable => 1,
+            name      => "before_$type",
+            callback  => sub {
+                my $record = shift;
+
+                # not a Jifty::Object, so allow write
+                $record->can('current_user')
+                    or return 1;
+
+                # not oauthed, so allow write
+                $record->current_user->is_oauthed
+                    or return 1;
+
+                my $token = $record->current_user->oauth_token;
+
+                # token gives write access, so allow write
+                return 1 if $token->__value('can_write');
+
+                # we have been forbidden from writing!
+                Jifty->log->debug("Unable to $type " . ref($record) . " " . $record->id . " because the OAuth access token does not allow it.");
+                my $ret = Class::ReturnValue->new;
+                $ret->as_array(0, "Your OAuth access token denies you write access.");
+                $ret->as_error(
+                    errno => 1,
+                    message => 'Your OAuth access token denies you write access.',
+                );
+                my $return = $ret->return_value;
+                return $ret->return_value;
+            },
+        );
+    }
 }
 
 =head1 NAME
