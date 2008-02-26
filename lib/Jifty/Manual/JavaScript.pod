@@ -127,6 +127,7 @@ effect functions.
 L<http://www.slideshare.net/simon/jquery-in-15-minutes/>
 L<http://www.slideshare.net/simon/learning-jquery-in-30-minutes/>
 L<http://www.slideshare.net/remy.sharp/prototype-jquery-going-from-one-to-the-other/>
+L<http://docs.jquery.com/>
 
 =cut
 
