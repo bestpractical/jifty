@@ -5,7 +5,7 @@ use strict;
 use Test::More;
 BEGIN {
     if (eval { require Net::OAuth::Request; require Crypt::OpenSSL::RSA; 1 }) {
-        plan tests => 22;
+        plan tests => 28;
     }
     else {
         plan skip_all => "Net::OAuth or Crypt::OpenSSL::RSA isn't installed";
@@ -85,9 +85,7 @@ $cmech->content_contains("You Zer", "REST GET works while OAuthed");
 # REST DELETE {{{
 response_is(
     url                    => "/=/model/User/id/$uid.yml!DELETE",
-    id                     => $uid,
     code                   => 200,
-    method                 => 'POST',
     testname               => "200 - protected resource request",
     consumer_secret        => 'bar',
     oauth_consumer_key     => 'foo',
@@ -102,4 +100,37 @@ my $user_copy = TestApp::Plugin::OAuth::Model::User->new(current_user => Jifty::
 $user_copy->load($uid);
 is($user_copy->name, "You Zer", "REST DELETE doesn't work while the consumer has no write access");
 # }}}
+# REST POST {{{
+response_is(
+    url                    => "/=/model/Favorite.yml",
+    thing                  => 'tests',
+    code                   => 200,
+    testname               => "200 - protected resource request",
+    consumer_secret        => 'bar',
+    oauth_consumer_key     => 'foo',
+    oauth_signature_method => 'PLAINTEXT',
+    oauth_token            => $token_obj->token,
+    token_secret           => $token_obj->secret,
+);
 
+$cmech->content_like(qr/failure: 1/, "failed to create");
+
+my $favorites = TestApp::Plugin::OAuth::Model::FavoriteCollection->new(
+    current_user => Jifty::CurrentUser->superuser,
+);
+$favorites->unlimit;
+is($favorites->count, 0, "no favorites found");
+# }}}
+# user REST POST {{{
+$umech->post("$URL/=/model/Favorite.yml",
+    { thing => 'more tests' },
+);
+$umech->content_contains("success: 1", "created a favorite");
+
+$favorites = TestApp::Plugin::OAuth::Model::FavoriteCollection->new(
+    current_user => Jifty::CurrentUser->superuser,
+);
+$favorites->unlimit;
+is($favorites->count, 1, "favorite created");
+is($favorites->first->thing, 'more tests', "correct argument");
+# }}}

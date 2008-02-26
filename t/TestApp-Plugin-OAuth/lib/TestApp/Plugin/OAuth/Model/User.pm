@@ -8,6 +8,8 @@ use TestApp::Plugin::OAuth::Record schema {
     column 'tasty' =>
         type is 'boolean',
         default is 'f';
+    column 'favorites' =>
+        refers_to TestApp::Plugin::OAuth::Model::FavoriteCollection by 'owner';
 
 };
 

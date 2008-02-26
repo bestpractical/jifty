@@ -4,7 +4,7 @@ use warnings;
 
 use base qw/Jifty::Plugin/;
 
-our $VERSION = 0.01;
+our $VERSION = '0.01';
 
 sub init {
     Jifty::CurrentUser->mk_accessors(qw(is_oauthed oauth_token));
@@ -25,7 +25,7 @@ sub init {
         return 'ignore' if $token->__value('can_write');
 
         # we have been forbidden from writing!
-        Jifty->log->error("Unable to $right " . ref($record) . " " . $record->id . " because the OAuth access token does not allow it.");
+        Jifty->log->error("Unable to $right " . ref($record) . " " . ($record->id||'new') . " because the OAuth access token does not allow it.");
         return 'deny';
     });
 
@@ -50,14 +50,13 @@ sub init {
                 return 1 if $token->__value('can_write');
 
                 # we have been forbidden from writing!
-                Jifty->log->debug("Unable to $type " . ref($record) . " " . $record->id . " because the OAuth access token does not allow it.");
+                Jifty->log->debug("Unable to $type " . ref($record) . " " . ($record->id||'new') . " because the OAuth access token does not allow it.");
                 my $ret = Class::ReturnValue->new;
                 $ret->as_array(0, "Your OAuth access token denies you write access.");
                 $ret->as_error(
                     errno => 1,
                     message => 'Your OAuth access token denies you write access.',
                 );
-                my $return = $ret->return_value;
                 return $ret->return_value;
             },
         );
