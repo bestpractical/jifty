@@ -67,7 +67,10 @@ $cmech->content_contains("Login with a password", "redirected to login");
 $cmech->content_lacks("Press the shiny red button", "did NOT get to a protected page");
 # }}}}
 # REST GET {{{
-get_access_token();
+do {
+    local $TestApp::Plugin::OAuth::Test::can_write = 1;
+    get_access_token();
+};
 
 response_is(
     url                    => "/=/model/User/id/$uid.yml",
@@ -95,13 +98,14 @@ response_is(
     token_secret           => $token_obj->secret,
 );
 
-$cmech->content_like(qr/failure: 1/, "failed to create");
+$cmech->content_unlike(qr/failure: 1/, "created");
 
 my $favorites = TestApp::Plugin::OAuth::Model::FavoriteCollection->new(
     current_user => Jifty::CurrentUser->superuser,
 );
 $favorites->unlimit;
-is($favorites->count, 0, "no favorites found");
+is($favorites->count, 1, "no favorites found");
+is($favorites->first->thing, 'tests', "correct argument");
 # }}}
 # user REST POST {{{
 $umech->post("$URL/=/model/Favorite.yml",
@@ -113,8 +117,7 @@ $favorites = TestApp::Plugin::OAuth::Model::FavoriteCollection->new(
     current_user => Jifty::CurrentUser->superuser,
 );
 $favorites->unlimit;
-is($favorites->count, 1, "favorite created");
-is($favorites->first->thing, 'more tests', "correct argument");
+is($favorites->count, 2, "favorite created");
 # }}}
 # REST DELETE {{{
 response_is(
@@ -128,9 +131,12 @@ response_is(
     token_secret           => $token_obj->secret,
 );
 
-$cmech->content_like(qr/failure: 1/, "failed to delete");
+$cmech->content_unlike(qr/failure: 1/, "failed to delete");
+
+Jifty::Record->flush_cache if Jifty::Record->can('flush_cache');
 
 my $user_copy = TestApp::Plugin::OAuth::Model::User->new(current_user => Jifty::CurrentUser->superuser);
 $user_copy->load($uid);
-is($user_copy->name, "You Zer", "REST DELETE doesn't work while the consumer has no write access");
+is($user_copy->name, undef, "REST DELETE works while consumer has write access");
 # }}}
+

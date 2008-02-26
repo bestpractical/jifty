@@ -23,6 +23,7 @@ our $seckey = slurp('t/id_rsa');
 our $token_obj;
 our $server;
 our $URL;
+our $can_write;
 
 sub setup {
     my $class = shift;
@@ -245,7 +246,12 @@ sub allow_ok {
     ::fail($error), return if $error;
 
     my $name = $token_obj->consumer->name;
-    $umech->content_contains("Allowing $name to read your data for 1 hour.");
+    if ($can_write) {
+        $umech->content_contains("Allowing $name to read and write your data for 1 hour.");
+    }
+    else {
+        $umech->content_contains("Allowing $name to read your data for 1 hour.");
+    }
 }
 
 sub deny_ok {
@@ -273,8 +279,10 @@ sub _authorize_request_token {
         or return "Content did not much qr/If you trust this application/";
     my $moniker = $umech->moniker_for('TestApp::Plugin::OAuth::Action::AuthorizeRequestToken')
         or return "Unable to find moniker for AuthorizeRequestToken";
-    $umech->fill_in_action($moniker, token => $token)
-        or return "Unable to fill in the AuthorizeRequestToken action";
+    $umech->fill_in_action($moniker,
+        token => $token,
+        can_write => $can_write,
+    ) or return "Unable to fill in the AuthorizeRequestToken action";
     $umech->click_button(value => $which_button)
         or return "Unable to click $which_button button";
     return;
