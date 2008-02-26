@@ -122,6 +122,11 @@ effect functions.
 
 =back
 
+=head1 REFERENCE
+
+L<http://www.slideshare.net/simon/jquery-in-15-minutes/>
+L<http://www.slideshare.net/simon/learning-jquery-in-30-minutes/>
+L<http://www.slideshare.net/remy.sharp/prototype-jquery-going-from-one-to-the-other/>
 
 =cut
 
