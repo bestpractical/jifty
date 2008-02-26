@@ -7,7 +7,6 @@ use Jifty::Dispatcher -base;
 use Net::OAuth::RequestTokenRequest;
 use Net::OAuth::AccessTokenRequest;
 use Net::OAuth::ProtectedResourceRequest;
-use Crypt::OpenSSL::RSA;
 use URI::Escape 'uri_unescape';
 
 on     POST '/oauth/request_token' => \&request_token;
@@ -312,7 +311,15 @@ an important meaning.
 
 {
     my %valid_signature_methods = map { $_ => 1 }
-                                  qw/PLAINTEXT HMAC-SHA1 RSA-SHA1/;
+                                  qw/PLAINTEXT HMAC-SHA1 /;
+
+    if (eval { require Crypt::OpenSSL::RSA; 1 }) {
+        $valid_signature_methods{"RSA-SHA1"} = 1;
+    }
+    else {
+        Jifty->log->debug("RSA-SHA1 support for OAuth unavailable: Crypt::OpenSSL::RSA is not installed.");
+    }
+
     my %key_field = ('RSA-SHA1' => 'rsa_key');
 
     sub get_signature_key {

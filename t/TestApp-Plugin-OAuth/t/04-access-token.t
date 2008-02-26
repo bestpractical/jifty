@@ -4,11 +4,11 @@ use strict;
 
 use Test::More;
 BEGIN {
-    if (eval { require Net::OAuth::Request; require Crypt::OpenSSL::RSA; 1 }) {
+    if (eval { require Net::OAuth::Request; 1 } && eval { Net::OAuth::Request->VERSION('0.05') }) {
         plan tests => 70;
     }
     else {
-        plan skip_all => "Net::OAuth or Crypt::OpenSSL::RSA isn't installed";
+        plan skip_all => "Net::OAuth 0.05 isn't installed";
     }
 }
 

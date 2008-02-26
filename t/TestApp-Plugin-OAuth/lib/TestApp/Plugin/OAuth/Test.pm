@@ -5,14 +5,13 @@ use warnings;
 use base qw/Jifty::Test/;
 
 use MIME::Base64;
-use Crypt::OpenSSL::RSA;
 use Digest::HMAC_SHA1 'hmac_sha1';
 use Jifty::Test::WWW::Mechanize;
 
 our @EXPORT = qw($timestamp $url $umech $cmech $pubkey $seckey $token_obj
                  $server $URL response_is sign get_latest_token allow_ok deny_ok
                  _authorize_request_token get_request_token get_authorized_token
-                 get_access_token);
+                 get_access_token has_rsa rsa_skip);
 
 our $timestamp = 0;
 our $url;
@@ -172,6 +171,7 @@ sub sign {
     my $signature;
 
     if ($sig_method eq 'RSA-SHA1') {
+        require Crypt::OpenSSL::RSA;
         my $pubkey = Crypt::OpenSSL::RSA->new_private_key($key);
         $signature = encode_base64($pubkey->sign($signature_base_string), "");
     }
@@ -189,6 +189,15 @@ sub sign {
         if wantarray;
     return $signature;
 
+}
+
+sub has_rsa {
+    eval { require Crypt::OpenSSL::RSA; 1 }
+}
+
+sub rsa_skip {
+    my $count = shift || Carp::carp "You must specify a number of tests to skip.";
+    ::skip 'Crypt::OpenSSL::RSA is required for these tests', $count unless has_rsa;
 }
 
 sub slurp {
