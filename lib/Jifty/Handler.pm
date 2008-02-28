@@ -242,8 +242,9 @@ sub handle_request {
         Jifty::I18N->get_language_handle;
 
         # Return from the continuation if need be
-        Jifty->web->request->return_from_continuation;
-        $self->dispatcher->handle_request();
+        unless (Jifty->web->request->return_from_continuation) {
+            $self->dispatcher->handle_request();
+        } 
 
         $self->call_trigger('before_cleanup', $args{cgi});
 

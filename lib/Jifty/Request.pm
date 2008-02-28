@@ -596,14 +596,31 @@ sub call_continuation {
 
 =head2 return_from_continuation
 
+Returns from the current continuation, if there is one.  If the
+request path doesn't match, we call the continuation again, which
+should redirect to the right place.  If we have to do this, we return
+true, which should be taken as a sign to not process the reqest
+further.
+
 =cut
 
 sub return_from_continuation {
     my $self = shift;
     return unless $self->continuation_type and $self->continuation_type eq "return" and $self->continuation;
-    return $self->continuation->call unless $self->continuation->return_path_matches;
+    unless ($self->continuation->return_path_matches) {
+        # This aborts via Jifty::Dispatcher::_abort -- but we're not
+        # in the dispatcher yet, so it would go uncaught.  Catch it
+        # here.
+        eval {
+            $self->continuation->call;
+        };
+        my $err = $@;
+        warn $err if $err and $err ne "ABORT";
+        return 1;
+    }
     $self->log->debug("Returning from continuation ".$self->continuation->id);
-    return $self->continuation->return;
+    $self->continuation->return;
+    return undef;
 }
 
 =head2 path

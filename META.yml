@@ -33,6 +33,7 @@ recommends:
   Devel::EvalContext: 0
   Devel::Events::Objects: 0.02
   Devel::Gladiator: 0
+  Devel::REPL: 0
   Devel::Size: 0
   Digest::HMAC_SHA1: 0
   GD: 0
@@ -68,6 +69,7 @@ requires:
   Class::Accessor: 0
   Class::Container: 0
   Class::Data::Inheritable: 0
+  Class::Inspector: 1.2
   Class::Trigger: 0.12
   Clone: 0.27
   Compress::Zlib: 0
@@ -107,7 +109,7 @@ requires:
   Hook::LexWrap: 0
   IPC::PubSub: 0.23
   IPC::Run3: 0
-  JSON::Syck: 0.15
+  JSON::Syck: 0.29
   Jifty::DBI: 0.49
   LWP::UserAgent: 0
   Locale::Maketext::Extract: 0.20
