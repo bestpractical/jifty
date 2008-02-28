@@ -16,6 +16,9 @@ of JavaScript programming in Jifty.
 
 =head1 Migration to jQuery
 
+This section provides a simple guide through jQuery's core functions
+that's used to replace Prototype javascript library.
+
 =head2 Selecting elements with jQuery()
 
 Invokin jQuery function with exactly one string argument will return
@@ -36,32 +39,57 @@ to C<$(id)>. Selecting elements with C<jQuery()> function always
 returns a jQuery object, but not element it self. There are two notice
 especially for Jifty world.
 
-First, you should use C<Jifty.$>, deep in the design of Jifty, there
-are many kind of elements with C<":"> character in their id. Sadly
-it is a feature in jQuery to do more powerful seleciton with C<":">
-character. For example, this selects current mouse-overed elements:
+First of all, Jifty develoeprs should always use C<Jifty.$>. Deep in
+the design of Jifty, there are many kind of elements with C<":">
+character in their id. Sadly it is a feature in jQuery to do more
+powerful seleciton with C<":"> character. For example, this selects
+current mouse-overed elements:
 
     jQuery(":hover")
 
-C<jifty.js> internally use C<Jifty.$> as the direct replacement to C<$()>
-function.
+C<jifty.js> internally use C<Jifty.$> as the direct replacement to
+C<$()> function defined in the Prototype library.
+
+However, for application developers it's quite safe to use
+C<jQuery("#id")> to select elements they created.
 
 =head2 Document ready with jQuery()
+
+The way to do execute some javascript right after the DOM is ready is
+to bind a handler for C<"ready"> event on the C<document> object:
+
+    jQuery(document).ready(function() {
+        ...
+    });
+
+Since is done quite often, there's a shortcut:
+
+    jQuery(function() {
+        ...
+    });
 
 =head1 METHODS
 
 This section list those public functions under C<Jifty> namespace.
+They are defined in jifty.js.
 
 =over
 
 =item Jifty.$( element_id )
 
-This is a shorthand of document.getElementById function, like $ in
-prototype's $ function. It is also internally used a lot because many
-form specific element ID does not get along with jQuery's selector,
-which expect the ":" character is used for special purpose.
+This is a shorthand of document.getElementById function, like the C<$>
+function defined in Prototype library. It is also internally used a
+lot because many form specific element ID does not get along with
+jQuery's selector, which expect the ":" character is used for special
+purpose.
 
 element_id should be a string. If not, element_id itself is returned.
+Therefore, this convention:
+
+    element = Jifty.$(element)
+
+Can work when the variable C<element> is either a string, or a HTML
+element object.
 
 =item Jifty.Effect(element, effect_name, option)
 
@@ -86,39 +114,102 @@ can override default effects with other fancy javascript libraries.
 By default, it delegates all the real work to jQuery's built-in
 effect functions.
 
-=item Jifty.Form.getActions()
-
 =item Jifty.Form.getElements(element)
+
+Given a form element, returns all input fields inside this form. That
+includes INPUT, SELECT, tags. The returned value is an array of HTML
+elements.
+
+=item Jifty.Form.getActions(element)
+
+Given a form element, returns a array of elements that are defined as
+Jifty actions.
 
 =item Jifty.Form.clearPlaceholders(element)
 
 =item Jifty.Form.Element.getMoniker( element )
 
+Given an element, or an element id, return a string representing a
+moniker of this element. It returs null if the given element is
+considered having no moniker at all.
+
 =item Jifty.Form.Element.getAction( element )
+
+Takes an element or an element id. Get the action for this form
+element. The returned value is an Action object.
 
 =item Jifty.Form.Element.getType( element )
 
+Takes an element or an element id, returns the type associated with
+this element. Possible return values are "registraion", "value",
+"fallback", or null if the element does not belongs to any of these
+types.
+
 =item Jifty.Form.Element.getField( element )
+
+Takes an element or an element id, returns the name of it. Returns
+null if the element given does not have a name.
 
 =item Jifty.Form.Element.getValue( element )
 
+Tkaes an element or an element id, returns the element value. If the
+element is a CHECKBOX or a RADIO button but it's un-checked, returns
+null.
+
 =item Jifty.Form.Element.validate( element )
+
+Validates the action this form element is part of.
 
 =item Jifty.Form.Element.disableValidation( element )
 
+Temporarily disable validation.
+
 =item Jifty.Form.Element.enableValidation( element )
+
+Re-enable validation.
 
 =item Jifty.Form.Element.getForm( element )
 
+Look up the form that this element is part of.
+
+This is sometimes more complicated than you'd think because the form
+may not exist anymore, or the element may have been inserted into a
+new form.  Hence, we may need to walk the DOM.
+
+Upon the failure of searching, null is returned.
+
 =item Jifty.Form.Element.buttonArguments( element )
+
+Takes an element or an element id that is considered as a "button",
+which can be an <INPUT type="submit"> tag, or a <A> tag, returns the
+arguments on this element.
+
+If none, an empty object is returned.
 
 =item Jifty.Form.Element.buttonActions( element )
 
+Takes an element or an element id that is considered as a "button",
+return array of actions on this element.
+
+If none, an empty array is returned.
+
 =item Jifty.Form.Element.buttonFormElements( element )
+
+Takes an element or an element id that is considered as a "button",
+return an array of form elements that's just constructed based on the
+arguments on this element.
+
+If none, an empty array is returned.
 
 =item Jifty.Form.Element.clickDefaultButton( element )
 
+Click the first button that will submit the action associated with the
+form element.
+
 =item Jifty.Form.Element.handleEnter( event )
+
+Trap "Enter" key, and prevent it from doing any browser default
+behaviours.
 
 =back
 
