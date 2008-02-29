@@ -421,6 +421,9 @@ sub make_server {
         $^O eq 'MSWin32') {
         require Jifty::TestServer;
         unshift @Jifty::Server::ISA, 'Jifty::TestServer';
+    } elsif ($ENV{JIFTY_APACHETEST}) {
+        require Jifty::TestServer::Apache;
+        unshift @Jifty::Server::ISA, 'Jifty::TestServer::Apache';
     }
     else {
         require Test::HTTP::Server::Simple;
@@ -430,7 +433,7 @@ sub make_server {
     my $server = Jifty::Server->new;
 
     return $server;
-} 
+}
 
 
 =head2 web
