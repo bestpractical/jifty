@@ -2,7 +2,6 @@ package Jifty::TestServer::Apache;
 
 use strict;
 use warnings;
-use File::Slurp;
 use File::Spec;
 use Test::Builder;
 my $Tester = Test::Builder->new;
@@ -82,7 +81,7 @@ CONFIG
 sub pids {
     my $self = shift;
     return unless -e $self->{pidfile};
-    my $pid = read_file($self->{pidfile});
+    my $pid = do {local @ARGV = ($self->{pidfile}); scalar <>};
     chomp $pid;
     return ($pid);
 }
