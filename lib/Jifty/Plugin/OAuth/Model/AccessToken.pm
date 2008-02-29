@@ -36,8 +36,7 @@ use Jifty::Record schema {
         refers_to Jifty::Plugin::OAuth::Model::Consumer;
 
     column can_write =>
-        type is 'boolean',
-        default is '0';
+        is boolean;
 };
 
 =head2 table

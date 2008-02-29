@@ -21,8 +21,7 @@ use Jifty::Record schema {
         is required;
 
     column authorized =>
-        type is 'boolean',
-        default is 0;
+        is boolean;
 
     # kludge 2: this kind of plugin cannot yet casually refer_to app models
     column authorized_by =>
@@ -34,8 +33,7 @@ use Jifty::Record schema {
         is required;
 
     column used =>
-        type is 'boolean',
-        default is 0;
+        is boolean;
 
     column token =>
         type is 'varchar',
