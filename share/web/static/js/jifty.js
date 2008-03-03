@@ -286,9 +286,10 @@ Action.prototype = {
                                     if (field.nodeName == 'update') {
                                         var field_name = field.getAttribute("name");
                                         for (var form_number = 0 ; form_number < document.forms.length; form_number++) {
-                                            if (document.forms[form_number].elements[field_name] == null)
+                                            var form_field = document.forms[form_number].elements[field_name];
+                                            if (form_field == null || !form_field.hasClassName('ajaxcanonicalization'))
                                                 continue;
-                                            document.forms[form_number].elements[field_name].value = field.firstChild.data;
+                                            form_field.value = field.firstChild.data;
                                         }
                                     }
                                 }
