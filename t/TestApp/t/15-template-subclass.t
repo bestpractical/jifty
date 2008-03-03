@@ -58,7 +58,7 @@ my @tests = (
 
 sub in_region {
     qq|<script type="text/javascript">
-new Region('$_[0]',{},'$_[1]',null);
+new Region('$_[0]',{},'$_[1]',null,null);
 </script><div id="region-$_[0]" class="jifty-region">$_[2]</div>|;
 }
 
