@@ -218,6 +218,7 @@ sub from_data_structure {
             path      => $f->{path},
             arguments => $f->{args},
             wrapper   => $f->{wrapper} || 0,
+            in_form   => $f->{in_form},
         );
         while ( ref $f->{parent} eq "HASH" and $f = $f->{parent} ) {
             $current = $current->parent(
@@ -854,12 +855,13 @@ sub add_fragment {
                 path      => undef,
                 arguments => undef,
                 wrapper   => undef,
+                in_form   => undef,
                 @_
                );
 
     my $fragment = $self->{'fragments'}->{ $args{'name'} } || Jifty::Request::Fragment->new;
 
-    for my $k (qw/name path wrapper/) {
+    for my $k (qw/name path wrapper in_form/) {
         $fragment->$k($args{$k}) if defined $args{$k};
     } 
     
@@ -992,7 +994,7 @@ A small package that encapsulates the bits of a state variable:
 
 package Jifty::Request::Fragment;
 use base 'Class::Accessor::Fast';
-__PACKAGE__->mk_accessors( qw/name path wrapper arguments parent/ );
+__PACKAGE__->mk_accessors( qw/name path wrapper in_form arguments parent/ );
 
 =head2 Jifty::Request::Fragment
 
@@ -1003,6 +1005,8 @@ A small package that encapsulates the bits of a fragment request:
 =head3 path [PATH]
 
 =head3 wrapper [BOOLEAN]
+
+=head3 in_form [BOOLEAN]
 
 =head3 argument NAME [VALUE]
 

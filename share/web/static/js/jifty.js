@@ -741,11 +741,12 @@ Behaviour.register({
 var fragments = $H();
 var Region = Class.create();
 Region.prototype = {
-    initialize: function(name, args, path, parent) {
+    initialize: function(name, args, path, parent, in_form) {
         this.name = name;
         this.args = $H(args);
         this.path = path;
         this.parent = parent ? fragments.get(parent) : null;
+        this.in_form = in_form;
         if (fragments.get(name)) {
             // If this fragment already existed, we want to wipe out
             // whatever evil lies we might have said earlier; do this
@@ -885,7 +886,7 @@ function prepare_element_for_update(f) {
             }
 
             // Make the region (for now)
-            new Region(name, f['args'], f['path'], f['parent']);
+            new Region(name, f['args'], f['path'], f['parent'], f['parent'] ? f['parent'].in_form : null);
         } else if ((f['path'] != null) && f['toggle'] && (f['path'] == fragments.get(name).path)) {
             // If they set the 'toggle' flag, and clicking wouldn't change the path
             Element.update(element, '');
@@ -1149,6 +1150,9 @@ Jifty.update = function () {
         if (f['is_new'])
             // Ask for the wrapper if we are making a new region
             fragment_request['wrapper'] = 1;
+
+        if (fragments.get(name).in_form)
+            fragment_request['in_form'] = 1;
 
         // Push it onto the request stack
         request.get('fragments').set(name, fragment_request);
