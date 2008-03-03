@@ -105,7 +105,7 @@ EOT
 sub _make_directories {
     my $self = shift;
 
-    mkdir($self->prefix);
+    mkdir($self->prefix) or die("Can't create " . $self->prefix . ": $!");
     my @dirs = qw( lib );
     my @dir_parts = split('::',$self->mod_name);
     my $lib_dir = "";
