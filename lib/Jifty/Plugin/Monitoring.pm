@@ -236,7 +236,7 @@ sub last_run {
 
     my $unit = $self->monitors->{$name}->{unit};
     my $now = Jifty::DateTime->now->truncate( to => $unit );
-    warn "No last run time for monitor $name; inserting $now\n";
+    Jifty->log->warn("No last run time for monitor $name; inserting $now");
     $last->set_last_run($now);
     return $last;
 }
@@ -282,17 +282,15 @@ sub run_monitors {
         my $last = $self->last_run($name);
         my %monitor = %{$self->monitors->{$name}};
         my $next = $last->last_run->add( $monitor{unit}."s" => $monitor{count} );
-        warn "For monitor $name, next $next, now $now\n";
         next unless $now >= $next;
-        warn "Cron not being run often enough: we skipped a '$name'!\n"
+        Jifty->log->warn("Cron not being run often enough: we skipped a '$name'!")
           if $now >= $next->add( $monitor{unit}."s" => $monitor{count} );
-        warn "Running monitor $name\n";
         $self->current_monitor(\%monitor);
         eval {
             $monitor{sub}->($self);
         };
         if (my $error = $@) {
-            warn "Error running monitor $name: $error\n";
+            Jifty->log->warn("Error running monitor $name: $error");
         } else {
             $last->set_last_run($now);
         }
@@ -304,7 +302,7 @@ sub lock {
     my $self = shift;
     return if -e $self->lockfile;
     unless (open PID, ">", $self->lockfile) {
-        warn "Can't open lockfile @{[$self->lockfile]}: $!";
+        Jifty->log->warn("Can't open lockfile @{[$self->lockfile]}: $!");
         return 0;
     }
     print PID $$;
