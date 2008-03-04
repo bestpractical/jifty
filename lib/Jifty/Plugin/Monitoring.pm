@@ -62,7 +62,7 @@ our @EXPORT = qw/monitor every
                  month months
                  year years
 
-                 data_point timer/;
+                 data_point timer previous/;
 
 BEGIN {
     for my $time (qw/minute hour day week month year/) {
@@ -113,7 +113,7 @@ sub monitor {
     $self->add_monitor(@_);
 }
 
-=head2 data_point NAME, VALUE [, CATEGORY]
+=head2 data_point [CATEGORY,] NAME, VALUE
 
 Records a data point, associating C<NAME> to C<VALUE> at the current
 time.  C<CATEGORY> defaults to the name of the monitor that the data
@@ -135,6 +135,31 @@ sub data_point {
         value => $value,
         sampled_at => $self->now,
     );
+}
+
+=head2 previous [CATEGORY,] NAME
+
+Returns the most recent valeu for the data point of the given C<NAME>
+and C<CATEGORY>.  C<CATEGORY> defaults to the name of the current
+monitor.
+
+=cut
+
+sub previous {
+    my ($self) = Jifty->find_plugin("Jifty::Plugin::Monitoring");
+    $self ||= $Jifty::Plugin::Monitoring::self;
+
+    my $category = @_ == 2 ? shift : $self->current_monitor->{name};
+    my ($name) = @_;    
+
+    my $data = Jifty::Plugin::Monitoring::Model::MonitoredDataPointCollection->new();
+    $data->limit( column => 'category', value => $category );
+    $data->limit( column => 'sample_name', value => $name );
+    $data->limit( column => 'sampled_at', operator => '<', value => $self->now );
+    $data->set_page_info(per_page => 1);
+    $data->order_by(column => 'sampled_at', order => 'DESC');
+    my $row = $data->first;
+    return $row ? $row->value : undef;
 }
 
 =head2 timer MECH, URL
