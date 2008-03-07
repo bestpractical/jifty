@@ -36,7 +36,7 @@ supply a default Log4perl configuration.
 The default log configuration that logs all messages to the screen
 (i.e. to STDERR, be that directly to the terminal or to fastcgi's
 log file.)  It will log all messages of equal or higher priority
-to he LogLevel configuration option.
+to the LogLevel configuration option.
 
     --- 
     framework: 
