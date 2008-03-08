@@ -957,7 +957,7 @@ sub _validate_argument {
     if ( $value && $field_info->{valid_values} ) {
 
         # If you're not on the list, you can't come to the party
-        unless ( grep $_->{'value'} eq $value,
+        unless ( grep {defined $_->{'value'} and $_->{'value'} eq $value}
             @{ $self->valid_values($field) } ) {
 
             return $self->validation_error(

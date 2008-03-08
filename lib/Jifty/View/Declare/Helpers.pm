@@ -244,9 +244,9 @@ sub _get_single {
 
     if (request->top_request ne request() and $v = request->top_request->template_argument($_[0])) {
         if (ref $v) {
-            warn "The template argument '$_[0]' was not explicitly passed to the current region, and thus will not work if the region is ever refreshed.  Unfortunately, it is a reference, so it can't be passed explicitly either.  You'll need to explicitly pass some stringification of what it is to the region.\n";
+            warn("The template argument '$_[0]' was not explicitly passed to the current region ('@{[request->path]}'), and thus will not work if the region is ever refreshed.  Unfortunately, it is a reference, so it can't be passed explicitly either.  You'll need to explicitly pass some stringification of what it is to the region.".Carp::longmess);
         } else {
-            warn "The template argument '$_[0]' was not explicitly passed to the current region, and thus will not work if the region is ever refreshed.  Try passing it explicitly?";
+            warn("The template argument '$_[0]' was not explicitly passed to the the current region ('@{[request->path]}'), and thus will not work if the region is ever refreshed.  Try passing it explicitly?");
         }
     }
     return undef;
