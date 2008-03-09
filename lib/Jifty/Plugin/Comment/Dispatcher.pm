@@ -4,9 +4,6 @@ use warnings;
 package Jifty::Plugin::Comment::Dispatcher;
 use Jifty::Dispatcher -base;
 
-use DateTime::Format::Mail;
-use DateTime::Format::W3CDTF;
-use Jifty::DateTime;
 use Scalar::Util qw/ blessed looks_like_number /;
 
 sub setup_parent_object() {
@@ -43,12 +40,12 @@ sub setup_parent_object() {
 
 }
 
-on 'comment/list' => run {
+on '__comment/list' => run {
     setup_parent_object();
-    show '/comment/list';
+    show '/__comment/list';
 };
 
-on 'comment/add' => run {
+on '__comment/add' => run {
     setup_parent_object();
 
     my $parent = get 'parent';
@@ -65,10 +62,10 @@ on 'comment/add' => run {
         unless $action->argument_value('title');
     set action => $action;
 
-    show '/comment/add';
+    show '/__comment/add';
 };
 
-on 'comment/display' => run {
+on '__comment/display' => run {
     my $id = get 'id';
 
     my $comment = Jifty->app_class('Model', 'Comment')->new;

@@ -13,7 +13,7 @@ sub scrub_html($) {
     return $plugin->scrubber->scrub($text);
 }
 
-template 'comment/view' => page {
+template '__comment/view' => page {
     my $comment = get 'comment';
 
     { title is _( $comment->title ); }
@@ -23,7 +23,7 @@ template 'comment/view' => page {
 
         render_region
             name => 'comment-'.$comment->id,
-            path => '/comment/display',
+            path => '/__comment/display',
             defaults => {
                 id  => $comment->id,
                 top => 1,
@@ -34,7 +34,7 @@ template 'comment/view' => page {
     show '/advertisement';
 };
 
-template 'comment/display' => sub {
+template '__comment/display' => sub {
     my $comment = get 'comment';
     my $top     = get 'top';
 
@@ -115,7 +115,7 @@ template 'comment/display' => sub {
     };
 };
 
-template 'comment/add' => sub {
+template '__comment/add' => sub {
     my $collapsed = get 'collapsed';
     my $region    = get 'region';
 
@@ -208,7 +208,7 @@ template 'comment/add' => sub {
                                 },
                                 {
                                     element => $region->parent->get_element('div.list'),
-                                    append  => '/comment/display',
+                                    append  => '/__comment/display',
                                     args    => {
                                         id  => { result => $action, name => 'id' },
                                         top => 0,
@@ -223,7 +223,7 @@ template 'comment/add' => sub {
     }
 };
 
-template 'comment/list' => sub {
+template '__comment/list' => sub {
     my $parent   = get 'parent';
     my $title    = get 'initial_title';
     my $comments = $parent->comments;
@@ -242,7 +242,7 @@ template 'comment/list' => sub {
             while (my $comment = $comments->next) {
                 render_region
                     name => 'comment-'.$comment->id,
-                    path => '/comment/display',
+                    path => '/__comment/display',
                     defaults => {
                         id  => $comment->id,
                         top => 0,
@@ -263,7 +263,7 @@ template 'comment/list' => sub {
     unless (get 'no_add') {
         render_region
             name     => 'comment-add-'.$parent->id,
-            path     => '/comment/add',
+            path     => '/__comment/add',
             defaults => {
                 parent_class => ref $parent,
                 parent_id    => $parent->id,
