@@ -8,7 +8,7 @@ our $VERSION = '0.01';
 
 sub init {
     Jifty::DBI::Record->add_trigger(
-        name      => "before_delete",
+        name      => "after_delete",
         callback  => sub {
             my $record = shift;
             if ($record->can('delete_all_attributes')) {
