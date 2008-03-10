@@ -6,12 +6,34 @@ use Jifty::View::Declare -base;
 
 use Jifty::DateTime;
 
+=head1 NAME
+
+Jifty::Plugin::Comment::View - the templates for the comment plugin
+
+=head1 DESCRIPTION
+
+=head1 METHODS
+
+=head2 scrub_html
+
+This is a utility used internally for cleaning up the input which might come from a malicious source.
+
+=cut
+
 sub scrub_html($) {
     my $text = shift;
 
     my $plugin = Jifty->find_plugin('Jifty::Plugin::Comment');
     return $plugin->scrubber->scrub($text);
 }
+
+=head1 TEMPLATES
+
+=head2 __comment/view
+
+This displays a single comment in a page.
+
+=cut
 
 template '__comment/view' => page {
     my $comment = get 'comment';
@@ -33,6 +55,12 @@ template '__comment/view' => page {
 
     show '/advertisement';
 };
+
+=head2 __comment/display
+
+Display a comment in a page region.
+
+=cut
 
 template '__comment/display' => sub {
     my $comment = get 'comment';
@@ -114,6 +142,12 @@ template '__comment/display' => sub {
 
     };
 };
+
+=head2 __comment/add
+
+This presents the form for adding a new comment.
+
+=cut
 
 template '__comment/add' => sub {
     my $collapsed = get 'collapsed';
@@ -223,6 +257,12 @@ template '__comment/add' => sub {
     }
 };
 
+=head2 __comment/list
+
+This presents a list of comments attached to a particular comment and the form for adding one more.
+
+=cut
+
 template '__comment/list' => sub {
     my $parent   = get 'parent';
     my $title    = get 'initial_title';
@@ -273,5 +313,21 @@ template '__comment/list' => sub {
             ;
     }
 };
+
+=head1 SEE ALSO
+
+L<Jifty::View::Declare>
+
+=head1 AUTHOR
+
+Andrew Sterling Hanenkamp, C<< <hanenkamp@cpan.org> >>
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2008 Boomer Consulting, Inc. All Rights Reserved.
+
+This program is free software and may be modified and distributed under the same terms as Perl itself.
+
+=cut
 
 1;

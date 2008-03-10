@@ -4,6 +4,70 @@ use warnings;
 package Jifty::Plugin::Comment::Action::CreateComment;
 use base qw/ Jifty::Action::Record::Create /;
 
+=head1 NAME
+
+Jifty::Plugin::Comment::Action::CreateComment - custom CreateComment that attaches the comment to the parent
+
+=head1 DESCRIPTION
+
+This is a specialized create action that attaches the comment to the parent object.
+
+=head1 SCHEMA
+
+=head2 parent_class
+
+This is the parent model class. This class must use the L<Jifty::Plugin::Comment::Mixin::Model::Commented> mixin.
+
+=head2 parent_id
+
+This is the ID of the object to attach the comment to.
+
+=head2 title
+
+This is the title the author of the comment has given it.
+
+=head2 your_name
+
+This is the name of the author of the comment.
+
+=head2 web_site
+
+This is the (optional) web site of the author of the comment.
+
+=head2 email
+
+This is the (optional) email address of the author of the comment.
+
+=head2 body
+
+This is the comment message.
+
+=head2 published
+
+This is true if the comment should be published or false if it is only visible to moderators.
+
+=head2 created_on
+
+This is the timestamp of the comment's creation.
+
+=head2 status
+
+This is string with either the value "spam" for a message that has been flagged as spam or "ham" for a message that is not spam.
+
+=head2 http_referer
+
+The referer claimed by the client.
+
+=head2 http_user_agent
+
+The user agent claimed by the client.
+
+=head2 ip_addr
+
+The IP address of the client.
+
+=cut
+
 use Jifty::Param::Schema;
 use Jifty::Action::Record::Create schema {
     param parent_class =>
@@ -101,7 +165,21 @@ use MIME::Base64::URLSafe;
 #use Contentment::Util;
 use Regexp::Common qw/ Email::Address URI /;
 
+=head1 METHODS
+
+=head2 record_class
+
+Returns the application's comment class.
+
+=cut
+
 sub record_class { Jifty->app_class('Model', 'Comment') }
+
+=head2 parent
+
+This converts the "parent_id" and "parent_class" arguments into an object.
+
+=cut
 
 sub parent {
     my $self = shift;
@@ -114,6 +192,12 @@ sub parent {
 
     return $parent;
 }
+
+=head2 take_action
+
+Performs the work of attaching the comment to the parent object.
+
+=cut
 
 sub take_action {
     my $self = shift;
@@ -173,10 +257,22 @@ sub take_action {
     }
 }
 
+=head2 report_success
+
+Reports success or the need for moderation of the message.
+
+=cut
+
 sub report_success {
     my $self = shift;
     $self->result->message(_("Your comment has been added. If it does not immediately appear, it may have been flagged for moderation and should appear shortly."));
 }
+
+=head2 fetch_comment_cookie
+
+Creating a comment this way causes a cookie named "COMMENT_REMEMBORY" to be stored on the client to remember the client's name, email, and web site choice for the next comment.
+
+=cut
 
 my $comment_cookie;
 sub fetch_comment_cookie {
@@ -188,6 +284,12 @@ sub fetch_comment_cookie {
 
     return $comment_cookie;
 }
+
+=head2 from_cookie
+
+Loads the name, email, and web site from the stored cookie.
+
+=cut
 
 sub from_cookie {
     my $pos = shift;
@@ -217,6 +319,12 @@ sub from_cookie {
     }
 }
 
+=head2 validate_title
+
+Make sure a title is set.
+
+=cut
+
 sub validate_title {
     my $self = shift;
     my $title = shift;
@@ -240,6 +348,12 @@ sub validate_title {
 #    return $your_name;
 #}
 
+=head2 validate_web_site
+
+Make sure the web site given is valid.
+
+=cut
+
 sub validate_web_site {
     my $self = shift;
     my $web_site = shift;
@@ -257,6 +371,12 @@ sub validate_web_site {
     return $self->validation_ok('web_site');
 }
 
+=head2 validate_email
+
+Make sure the email given is valid.
+
+=cut
+
 sub validate_email {
     my $self = shift;
     my $email = shift;
@@ -273,6 +393,12 @@ sub validate_email {
 
     return $self->validation_ok('email');
 }
+
+=head2 validate_body
+
+Checks to see if the scrubbed HTML is the same as the given HTML to see if it will be changed on save and reports that to the client.
+
+=cut
 
 sub validate_body {
     my $self = shift;
@@ -293,5 +419,17 @@ sub validate_body {
 
     return $self->validation_ok('body');
 }
+
+=head1 AUTHOR
+
+Andrew Sterling Hanenkamp, C<< <hanenkamp@cpan.org> >>
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2008 Boomer Consulting, Inc. All Rights Reserved.
+
+This program is free software and may be modified and distributed under the same terms as Perl itself.
+
+=cut
 
 1;

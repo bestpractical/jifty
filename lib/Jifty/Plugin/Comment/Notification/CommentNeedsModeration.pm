@@ -6,9 +6,13 @@ use base qw/ Jifty::Notification /;
 
 __PACKAGE__->mk_accessors(qw/ comment parent /);
 
-=head1 DESCRIPTION
+=head1 NAME
 
-If you want to receive these notifications, you must override L</setup> to set your the C<to_list> for your application.
+Jifty::Plugin::Comment::Notification::CommentNeedsModeration - new comments made, but not published
+
+=head1 SYNOPSIS
+
+To activate this notification, you must override the notification in your application.
 
   use strict;
   use warnings;
@@ -27,7 +31,24 @@ If you want to receive these notifications, you must override L</setup> to set y
       $self->SUPER::setup(@_);
   }
 
+  sub url {
+      my $self = shift;
+      return Jifty->config->framework('Web')->{'BaseURL'}
+          . $self->parent->permalink
+          . '#comment-'.$self->comment->id;
+  }
+
   1;
+
+=head1 DESCRIPTION
+
+This notificaiton (when properly configured) is sent out to any who need to know when a comment has been created, but not published because L<Net::Akismet> has marked it as spam.
+
+=head1 METHODS
+
+=head2 setup
+
+This method sets up the notification. This method should be overridden to setup L<Jifty::Notification/to_list> to select who will receive this message. See the L</SYNOPSIS>.
 
 =cut
 
@@ -65,9 +86,39 @@ Date: %5
     ));
 }
 
+=head2 comment
+
+This will contain the L<Jifty::Plugin::Comment::Model::Comment> that has been published.
+
+=head2 parent
+
+This will contain the object that the comment has been attached to.
+
+=head2 url
+
+THis returns the URL that the message will link to. This should be overridden to provide application-specific URLs. The default implementation returns the BaseURL setting for the application.
+
+=cut
+
 sub url {
     my $self = shift;
     return Jifty->config->framework('Web')->{'BaseURL'};
 }
+
+=head1 SEE ALSO
+
+L<Jifty::Notification>, L<Jifty::Plugin::Comment::Notification::CommentPublished>
+
+=head1 AUTHOR
+
+Andrew Sterling Hanenkamp, C<< <hanenkamp@cpan.org> >>
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2008 Boomer Consulting, Inc. All Rights Reserved.
+
+This program is free software and may be modified and distributed under the same terms as Perl itself.
+
+=cut
 
 1;

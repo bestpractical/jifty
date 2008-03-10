@@ -6,6 +6,22 @@ use Jifty::Dispatcher -base;
 
 use Scalar::Util qw/ blessed looks_like_number /;
 
+=head1 NAME
+
+Jifty::Plugin::Comment::Dispatcher - dispatcher for the comment plugin
+
+=head1 DESCRIPTION
+
+Handles the dispatch of the C<__comment> paths used by this plugin.
+
+=head1 METHODS
+
+=head2 setup_parent_object
+
+Called internally by the dispatcher rules to create the "parent" dispatcher argument from "comment_upon" or "parent_class" and "parent_id".
+
+=cut
+
 sub setup_parent_object() {
     my $parent;
     unless (get 'parent') {
@@ -40,10 +56,23 @@ sub setup_parent_object() {
 
 }
 
+=head1 RULES
+
+=head2 __comment/list
+
+Sets up the "parent" argument for the list template.
+
+=cut
+
 on '__comment/list' => run {
     setup_parent_object();
-    show '/__comment/list';
 };
+
+=head2 __comment/add
+
+Set up the "parent" argument for the add template and set the "CreateComment" action into the "action" argument.
+
+=cut
 
 on '__comment/add' => run {
     setup_parent_object();
@@ -64,6 +93,12 @@ on '__comment/add' => run {
 
     show '/__comment/add';
 };
+
+=head2 __comment/display
+
+Sets up the "comment" argument and will update the status and published values of the comment if "update_status" or "update_published" are set, respectively.
+
+=cut
 
 on '__comment/display' => run {
     my $id = get 'id';
@@ -89,5 +124,21 @@ on '__comment/display' => run {
 
     set comment => $comment;
 };
+
+=head1 SEE ALSO
+
+L<Jifty::Dispatcher>
+
+=head1 AUTHOR
+
+Andrew Sterling Hanenkamp, C<< <hanenkamp@cpan.org> >>
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2008 Boomer Consulting, Inc. All Rights Reserved.
+
+This program is free software and may be modified and distributed under the same terms as Perl itself.
+
+=cut
 
 1;
