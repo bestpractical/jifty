@@ -11,7 +11,15 @@ A basic test harness for the BlogPost model.
 use lib 't/lib';
 use Jifty::SubTest;
 
-use Jifty::Test tests => 16;
+use Jifty::Test;
+
+eval "use HTML::Scrubber; use MIME::Base64::URLSafe; use Regexp::Common; 1";
+if ($@) {
+    plan skip_all => 'A requirement of the Comment plugin is not installed.';
+}
+else {
+    plan tests => 16;
+}
 
 # Make sure we can load the model
 use_ok('TestApp::Plugin::Comments::Model::BlogPost');
