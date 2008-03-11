@@ -149,4 +149,4 @@ requires:
   perl: 5.8.3
   version: 0
 tests: t/*.t t/*/*.t t/*/*/*.t t/*/*/*/*.t
-version: 0.71129
+version: 0.80311
