@@ -520,13 +520,10 @@ sub _form_widget {
             Jifty->log->warn("$arg_name isn't a valid field for $self");
         }
     } 
-    
     # It has been cached, but render_as is explicitly set
-    elsif ( $args{render_as} ) {
+    elsif ( my $widget = $args{render_as} ) {
+        $self->{_private_form_fields_hash}{$arg_name}->rebless( $widget );
 
-        # Rebless the form control as something else
-        bless $self->{_private_form_fields_hash}{$arg_name},
-          "Jifty::Web::Form::Field::".ucfirst($args{render_as});
     }
 
     return $self->{_private_form_fields_hash}{$arg_name};
