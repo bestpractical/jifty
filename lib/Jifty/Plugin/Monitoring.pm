@@ -323,9 +323,26 @@ sub run_monitors {
     $self->current_monitor(undef);
 }
 
+=head2 lock
+
+Attempt to determine if there are other monitoring processes running.
+If there are, we return false.  This keeps a long-running monitor from
+making later jobs pile up.
+
+=cut
+
 sub lock {
     my $self = shift;
-    return if -e $self->lockfile;
+    if (-e $self->lockfile) {
+        my ($pid) = do {local @ARGV = ($self->lockfile); <>};
+        if (kill 0, $pid) {
+            Jifty->log->warn("Monitor PID $pid still running");
+            return 0;
+        } else {
+            Jifty->log->warn("Stale PID file @{[$self->lockfile]}; removing");
+            unlink($self->lockfile);
+        }
+    }
     unless (open PID, ">", $self->lockfile) {
         Jifty->log->warn("Can't open lockfile @{[$self->lockfile]}: $!");
         return 0;
@@ -335,6 +352,12 @@ sub lock {
     $self->has_lock(1);
     return 1;
 }
+
+=head2 DESTROY
+
+On destruction, remove the lockfile.
+
+=cut
 
 sub DESTROY {
     my $self = shift;
