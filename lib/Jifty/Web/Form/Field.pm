@@ -88,7 +88,7 @@ sub new {
     }
 
     # now that the form field has been instantiated, register the action with the form.
-    if ($self->action and not (Jifty->web->form->has_action($self->action))) {
+    if ($self->action and Jifty->web->form->is_open and not (Jifty->web->form->has_action($self->action))) {
         Jifty->web->form->register_action( $self->action);
         Jifty->web->form->print_action_registration($self->action->moniker);
     }
