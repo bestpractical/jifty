@@ -777,7 +777,7 @@ Object.extend(Form.Element, {
 
     handleEnter: function(event) {
         // DEPRECATED: use Jifty.Form.Element.handleEnter instead
-        return Jifty.Form.Element.handleEnter(element);
+        return Jifty.Form.Element.handleEnter(event);
     }
 
 });
