@@ -5,7 +5,6 @@ use MIME::Types ();
 use Compress::Zlib ();
 use HTTP::Date ();
 
-
 package Jifty::View::Static::Handler;
 
 use base qw/Jifty::Object/;
@@ -16,7 +15,7 @@ our ($MIME,$MAGIC);
 
 Jifty::View::Static::Handler - Jifty view handler for static files
 
-head1 DESCRIPTION
+=head1 DESCRIPTION
 
 This class takes care of serving out static files for a Jifty application. 
 
@@ -39,15 +38,12 @@ When fully operational, it will use an algorithm along the lines of the followin
      * if the browser doesn't accept gzipped content
         send the content uncompressed
 
-
-=cut
-
-
 =head2 new
 
 Create a new static file handler. Likely, only the C<Jifty::Handler> needs to do this.
 
 =cut
+
 sub new {
     my $class = shift;
     
@@ -221,11 +217,10 @@ If C<$compression> is C<gzip>, gzip the output stream.
 
 
 sub send_file {
-    my $self       = shift;
-    my $local_path = shift;
-    my $mime_type  = shift;
+    my $self        = shift;
+    my $local_path  = shift;
+    my $mime_type   = shift;
     my $compression = shift;
-
 
     my $fh = IO::File->new( $local_path, 'r' );
     if ( defined $fh ) {
@@ -238,34 +233,48 @@ sub send_file {
         Jifty->web->mason->clear_buffer if Jifty->web->mason;
 
         my @file_info = stat($local_path);
-        my $apache = Jifty->handler->apache;
-
-        $apache->header_out( Status => 200 );
+        my $apache    = Jifty->handler->apache;
         $apache->content_type($mime_type);
-        my $now = time();
-     
-        $apache->header_out('Cache-Control' =>  'max-age=259200, public');
+        $self->send_http_header( $compression, $file_info[7], $file_info[9] );
 
-        $apache->header_out(Expires =>  HTTP::Date::time2str($now + 31536000));  # Expire in a year
-        $apache->header_out('Last-Modified' =>  HTTP::Date::time2str( $file_info[9]));
-        $apache->header_out('Content-Length' => $file_info[7]) unless ($compression eq 'gzip');  
-
-        $apache->header_out( "Content-Encoding" => "gzip") if ($compression eq 'gzip');
-        $apache->send_http_header();
-
-        if ($compression eq 'gzip') {
+        if ( $compression eq 'gzip' ) {
             local $/;
             binmode STDOUT;
+
             # XXX TODO: Cache this
             print STDOUT Compress::Zlib::memGzip(<$fh>);
-        } else{
+        }
+        else {
             $apache->send_fd($fh);
         }
         close($fh);
         return 1;
-    } else {
+    }
+    else {
         return undef;
     }
+}
+
+sub send_http_header {
+    my $self = shift;
+    my ($compression, $length, $modified) = @_;
+    my $now    = time();
+    my $apache = Jifty->handler->apache;
+    $apache->header_out( Status          => 200 );
+
+    # Expire in a year
+    $apache->header_out( 'Cache-Control' => 'max-age=31536000, public' );
+    $apache->header_out( 'Expires' => HTTP::Date::time2str( $now + 31536000 ) );
+ 
+    $apache->header_out(
+      'Last-Modified' => HTTP::Date::time2str( $modified ) ) if $modified;
+
+    $apache->header_out( 'Content-Length' => $length )
+      unless ( $compression eq 'gzip' );
+    $apache->header_out( 'Content-Encoding' => "gzip" )
+      if ( $compression eq 'gzip' );
+
+    $apache->send_http_header();
 }
 
 

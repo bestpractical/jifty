@@ -286,6 +286,7 @@ sub as_string {
             . Jifty::JSON::objToJson( \%arguments, { singlequote => 1 } ) . qq|,| 
             . qq|'| . $self->path . qq|',|
             . ( $self->parent ? qq|'| . $self->parent->qualified_name . qq|'| : q|null|)
+            . qq|,| . (Jifty->web->form->is_open ? '1' : 'null')
             . qq|);\n|
             . qq|</script>|;
         if ($self->lazy) {

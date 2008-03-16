@@ -228,23 +228,34 @@ Returns arguments as set in the dispatcher or with L</set> below.
 If called in scalar context, pulls the first item in C<args> and returns it.
 If called in list context, returns the values of all items in C<args>.
 
-
-
 =cut
 
 sub get {
     if (wantarray) {
-        map { request->template_argument($_) || request->argument($_) } @_;
+        map { _get_single($_) } @_;
     } else {
-        request->template_argument($_[0]) || request->argument( $_[0] );
+        _get_single($_[0]);
     }
+}
+
+sub _get_single {
+    my $v = request->template_argument($_[0]) || request->argument( $_[0] );
+    return $v if defined $v;
+
+    if (request->top_request ne request() and $v = request->top_request->template_argument($_[0])) {
+        if (ref $v) {
+            warn("The template argument '$_[0]' was not explicitly passed to the current region ('@{[request->path]}'), and thus will not work if the region is ever refreshed.  Unfortunately, it is a reference, so it can't be passed explicitly either.  You'll need to explicitly pass some stringification of what it is to the region.".Carp::longmess);
+        } else {
+            warn("The template argument '$_[0]' was not explicitly passed to the the current region ('@{[request->path]}'), and thus will not work if the region is ever refreshed.  Try passing it explicitly?");
+        }
+    }
+    return undef;
 }
 
 
 =head2 set key => val [ key => val ...]
 
 Sets arguments for later grabbing with L<get>.
-
 
 =cut
 

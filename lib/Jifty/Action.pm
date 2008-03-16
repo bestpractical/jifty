@@ -520,13 +520,10 @@ sub _form_widget {
             Jifty->log->warn("$arg_name isn't a valid field for $self");
         }
     } 
-    
     # It has been cached, but render_as is explicitly set
-    elsif ( $args{render_as} ) {
+    elsif ( my $widget = $args{render_as} ) {
+        $self->{_private_form_fields_hash}{$arg_name}->rebless( $widget );
 
-        # Rebless the form control as something else
-        bless $self->{_private_form_fields_hash}{$arg_name},
-          "Jifty::Web::Form::Field::".ucfirst($args{render_as});
     }
 
     return $self->{_private_form_fields_hash}{$arg_name};
@@ -957,7 +954,7 @@ sub _validate_argument {
     if ( $value && $field_info->{valid_values} ) {
 
         # If you're not on the list, you can't come to the party
-        unless ( grep $_->{'value'} eq $value,
+        unless ( grep {defined $_->{'value'} and $_->{'value'} eq $value}
             @{ $self->valid_values($field) } ) {
 
             return $self->validation_error(

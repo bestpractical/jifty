@@ -37,10 +37,36 @@ most likely be the only ones visiting yourapp.com/oauth
 =cut
 
 template 'oauth' => page {
+    title    => 'OAuth',
+    subtitle => 'Information',
+}
+content {
     p {
-        b { a { attr { href => "http://oauth.net/" } "OAuth" } };
-        outs " is an open protocol to allow secure authentication to users' private data."
+        b {
+            hyperlink(
+                url    => "http://oauth.net/",
+                label  => "OAuth",
+                target => "_blank",
+            )
+        };
+        outs " is an open protocol to allow secure authentication to users' private data. It's far more secure than users giving out their passwords."
     }
+
+    h2 { "Users" }
+
+    p {
+        "OAuth is nearly transparent to end users. Through OAuth, other applications can have secure -- and time-limited -- read and write access to your data on this site."
+    }
+    p {
+        outs "Applications may ask you to ";
+        hyperlink(
+            label => "authorize a 'token' on our site",
+            url   => Jifty->web->url(path => '/oauth/authorize'),
+        );
+        outs ". This is normal. We want to make sure you approve of other people looking at your data.";
+    }
+
+    h2 { "Consumers" }
 
     p {
         "This application supports OAuth. If you'd like to access the private resources of users of this site, you must first establish a Consumer Key, Consumer Secret, and, if applicable, RSA public key with us. You can do so by contacting " . (Jifty->config->framework('AdminEmail')||'us') . ".";
@@ -51,18 +77,14 @@ template 'oauth' => page {
     }
 
     dl {
-        dt {
-            outs "Request a Request Token";
-            dd { Jifty->web->url(path => '/oauth/request_token') }
-        }
-        dt {
-            outs "Obtain user authorization for a Request Token";
-            dd { Jifty->web->url(path => '/oauth/authorize') }
-        }
-        dt {
-            outs "Exchange a Request Token for an Access Token";
-            dd { Jifty->web->url(path => '/oauth/access_token') }
-        }
+        dt { "Request a Request Token" }
+        dd { Jifty->web->url(path => '/oauth/request_token') }
+
+        dt { "Obtain user authorization for a Request Token" }
+        dd { Jifty->web->url(path => '/oauth/authorize') }
+
+        dt { "Exchange a Request Token for an Access Token" }
+        dd { Jifty->web->url(path => '/oauth/access_token') }
     }
 
     p {
@@ -77,11 +99,13 @@ template 'oauth' => page {
         outs "While you have a valid access token, you may browse the site as the user normally does.";
 
         if ($restful) {
-            outs " You may also use our REST interface. See ";
-            a {
-                attr { href => Jifty->web->url(path => '=/help') }
-                Jifty->web->url(path => '=/help')
-            }
+            outs " You may also use ";
+            hyperlink(
+                url    => Jifty->web->url(path => '=/help'),
+                label  => "our REST interface",
+                target => "_blank",
+            );
+            outs ".";
         }
     }
 };
@@ -94,7 +118,10 @@ in the GET query, and (always) renders Allow/Deny buttons.
 
 =cut
 
-template 'oauth/authorize' => page { title => 'Someone wants stuff!' }
+template 'oauth/authorize' => page {
+    title => 'OAuth',
+    subtitle => 'Someone wants stuff!',
+}
 content {
     show '/oauth/help';
 
@@ -116,16 +143,19 @@ content {
         $authorize->form_field('token')->render;
     }
 
-    outs_raw $authorize->hidden(callback => get 'callback');
+    $authorize->form_field('use_limit')->render;
+    $authorize->form_field('can_write')->render;
 
-    outs_raw($authorize->button(
-        label => 'Allow',
-        arguments => { %args, authorize => 'allow' },
-    ));
+    outs_raw $authorize->hidden(callback => get 'callback');
 
     outs_raw($authorize->button(
         label => 'Deny',
         arguments => { %args, authorize => 'deny' },
+    ));
+
+    outs_raw($authorize->button(
+        label => 'Allow',
+        arguments => { %args, authorize => 'allow' },
     ));
 
     Jifty->web->form->end();
@@ -138,7 +168,10 @@ to the callback if provided, otherwise the site's URL.
 
 =cut
 
-template 'oauth/authorized' => page { title => 'XXX' }
+template 'oauth/authorized' => page {
+    title    => 'OAuth',
+    subtitle => 'Authorized',
+}
 content {
     my $result    = get 'result';
     my $callback  = $result->content('callback');
@@ -179,10 +212,17 @@ private template 'oauth/help' => sub {
     div {
         p {
             show '/oauth/consumer';
-            outs ' is trying to access some of your data on this site. If you trust this application, you may grant it access. Note that access is read-only and will expire in one hour.';
+            outs ' is trying to access your data on this site. If you trust this application, you may grant it access.';
         }
         p {
-            "If you're at all uncomfortable with the idea of someone rifling through your things, click Deny."
+            "If you're at all uncomfortable with the idea of someone rifling through your things, or don't know what this is, click Deny."
+        }
+        p {
+            hyperlink(
+                label  => "Learn more about OAuth.",
+                url    => "http://oauth.net/",
+                target => "_blank",
+            )
         }
     }
 };
@@ -200,7 +240,11 @@ private template 'oauth/consumer' => sub {
         outs ref($consumer) ? $consumer->name : $consumer;
         if (ref($consumer) && $consumer->url) {
             outs ' <';
-            a { attr { href => $consumer->url } $consumer->url };
+            hyperlink(
+                url    => $consumer->url,
+                label  => $consumer->url,
+                target => "_blank",
+            );
             outs ' >';
         }
     }

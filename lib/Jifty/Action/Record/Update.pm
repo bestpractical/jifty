@@ -175,8 +175,8 @@ sub take_action {
         # Calculate the name of the setter and set; asplode on failure
         my $setter = "set_$field";
         my ( $val, $msg ) = $self->record->$setter( $value );
-        $self->result->field_error($field, $msg)
-          if not $val and $msg;
+        $self->result->field_error($field, $msg || _('Permission denied'))
+          if not $val;
 
         # Remember that we changed something (if we did)
         $changed = 1 if $val;

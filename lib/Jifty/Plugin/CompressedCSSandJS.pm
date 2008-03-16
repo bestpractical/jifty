@@ -237,18 +237,19 @@ sub _serve_cas_object {
     }
 
     my $obj = Jifty::CAS->retrieve('ccjs', $key);
-    Jifty->handler->apache->content_type($obj->metadata->{content_type});
-    Jifty->handler->apache->header_out( 'Expires' => HTTP::Date::time2str( time + 31536000 ) );
+    my $compression = '';
+    $compression = 'gzip' if $obj->metadata->{deflate}
+      && Jifty::View::Static::Handler->client_accepts_gzipped_content;
 
-    if ($obj->metadata->{deflate} && Jifty::View::Static::Handler->client_accepts_gzipped_content ) {
+    Jifty->handler->apache->content_type($obj->metadata->{content_type});
+    Jifty::View::Static::Handler->send_http_header($compression, length($obj->content));
+
+    if ( $compression ) {
         Jifty->log->debug("Sending gzipped squished $name");
-        Jifty->handler->apache->header_out( "Content-Encoding" => "gzip" );
-        Jifty->handler->apache->send_http_header();
         binmode STDOUT;
         print $obj->content_deflated;
     } else {
         Jifty->log->debug("Sending squished $name");
-        Jifty->handler->apache->send_http_header();
         print $obj->content;
     }
 }

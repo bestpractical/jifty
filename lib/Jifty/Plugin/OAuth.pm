@@ -4,23 +4,109 @@ use warnings;
 
 use base qw/Jifty::Plugin/;
 
-our $VERSION = 0.01;
+our $VERSION = '0.01';
+
+sub init {
+    Jifty::CurrentUser->mk_accessors(qw(is_oauthed oauth_token));
+
+    Jifty::Record->add_trigger(before_access => sub {
+        my $record = shift;
+        my $right  = shift;
+
+        # not oauthed, so use default
+        $record->current_user->is_oauthed
+            or return 'ignore';
+        my $token = $record->current_user->oauth_token;
+
+        # OAuthed users have no read restrictions, so use default
+        return 'ignore' if $right eq 'read';
+
+        # token gives write access, so use default
+        return 'ignore' if $token->__value('can_write');
+
+        # we have been forbidden from writing!
+        Jifty->log->error("Unable to $right " . ref($record) . " " . ($record->id||'new') . " because the OAuth access token does not allow it.");
+        return 'deny';
+    });
+
+    for my $type (qw/create set delete/) {
+        Jifty::DBI::Record->add_trigger(
+            abortable => 1,
+            name      => "before_$type",
+            callback  => sub {
+                my $record = shift;
+
+                # not a Jifty::Object, so allow write
+                $record->can('current_user')
+                    or return 1;
+
+                # not oauthed, so allow write
+                $record->current_user->is_oauthed
+                    or return 1;
+
+                my $token = $record->current_user->oauth_token;
+
+                # token gives write access, so allow write
+                return 1 if $token->__value('can_write');
+
+                # we have been forbidden from writing!
+                Jifty->log->debug("Unable to $type " . ref($record) . " " . ($record->id||'new') . " because the OAuth access token does not allow it.");
+                my $ret = Class::ReturnValue->new;
+                $ret->as_array(0, "Your OAuth access token denies you write access.");
+                $ret->as_error(
+                    errno => 1,
+                    message => 'Your OAuth access token denies you write access.',
+                );
+                return $ret->return_value;
+            },
+        );
+    }
+}
 
 =head1 NAME
 
-Jifty::Plugin::OAuth
+Jifty::Plugin::OAuth - secure API authentication
 
 =head1 DESCRIPTION
 
-A OAuth web services API for your Jifty app.
+A OAuth web services API for your Jifty app. Other applications may have secure
+and limited access to your users' data.
+
+This plugin adds an C</oauth> set of URLs to your application, listed below. It
+also adds C<is_oauthed> and C<oauth_token> to L<Jifty::CurrentUser>, so you may
+have additional restrictions on OAuth access (such as forbidding OAuthed users
+to change users' passwords).
+
+=head2 /oauth
+
+This lists some basic information about OAuth, and where to find more. It also
+tells consumers how they may gain OAuth-ability for your site.
+
+=head2 /oauth/request_token
+
+The URL that consumers POST to get a request token
+
+=head2 /oauth/authorize
+
+The URL at which users authorize request tokens
+
+=head2 /oauth/authorized
+
+After authorizing or denying a request token, users are directed here before
+going back to the consumer's site.
+
+=head2 /oauth/access_token
+
+The URL that consumers POST to trade an authorized request token for an access
+token
 
 =head1 WARNING
 
-This plugin is not yet complete. DO NOT USE IT.
+This plugin is beta. Please let us know if there are any issues with it.
 
 =head1 USAGE
 
-Add the following to your site_config.yml
+Add the following to your config:
 
  framework:
    Plugins:
@@ -66,9 +152,12 @@ C</oauth/access_token>.
 You must not allow public access to C</oauth/authorize>. C</oauth/authorize>
 depends on having the user be logged in.
 
+You should allow public access to C</oauth>. This has some information for
+consumers.
+
 There is currently no way for consumers to add themselves. This might change in
-the future, but it would be a nondefault configuration. Consumers must
-contact you and provide you with the following data:
+the future, with an OAuth extension. Consumers must contact you and provide you
+with the following data:
 
 =over 4
 
@@ -144,6 +233,14 @@ the user's behalf in a limited way, for a limited amount of time.
 By establishing secrets and using signatures and timestamps, this can be done
 in a very secure manner. For example, a replay attack (an eavesdropper repeats
 a request made by a legitimate consumer) is actively defended against.
+
+=head1 METHODS
+
+=head2 init
+
+This adds an is_oauthed accessor to L<Jifty::CurrentUser>. It also establishes
+a trigger in L<Jifty::Record> so that only OAuthed consumers with write access
+can do anything other than read.
 
 =head1 SEE ALSO
 

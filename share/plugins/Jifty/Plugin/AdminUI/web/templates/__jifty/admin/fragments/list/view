@@ -23,6 +23,7 @@ my $delete = Jifty->web->new_action(
 </%init>
 <div class="jifty_admin read item inline">
   
+<% Jifty->web->form->start %>
 <%
     Jifty->web->form->submit(
         class   => "editlink",
@@ -34,6 +35,7 @@ my $delete = Jifty->web->new_action(
         ]
         )
 %> 
+<% Jifty->web->form->end %>
 
 <%
     Jifty->web->link(

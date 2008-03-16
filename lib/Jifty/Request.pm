@@ -218,6 +218,7 @@ sub from_data_structure {
             path      => $f->{path},
             arguments => $f->{args},
             wrapper   => $f->{wrapper} || 0,
+            in_form   => $f->{in_form},
         );
         while ( ref $f->{parent} eq "HASH" and $f = $f->{parent} ) {
             $current = $current->parent(
@@ -596,14 +597,31 @@ sub call_continuation {
 
 =head2 return_from_continuation
 
+Returns from the current continuation, if there is one.  If the
+request path doesn't match, we call the continuation again, which
+should redirect to the right place.  If we have to do this, we return
+true, which should be taken as a sign to not process the reqest
+further.
+
 =cut
 
 sub return_from_continuation {
     my $self = shift;
     return unless $self->continuation_type and $self->continuation_type eq "return" and $self->continuation;
-    return $self->continuation->call unless $self->continuation->return_path_matches;
+    unless ($self->continuation->return_path_matches) {
+        # This aborts via Jifty::Dispatcher::_abort -- but we're not
+        # in the dispatcher yet, so it would go uncaught.  Catch it
+        # here.
+        eval {
+            $self->continuation->call;
+        };
+        my $err = $@;
+        warn $err if $err and $err ne "ABORT";
+        return 1;
+    }
     $self->log->debug("Returning from continuation ".$self->continuation->id);
-    return $self->continuation->return;
+    $self->continuation->return;
+    return undef;
 }
 
 =head2 path
@@ -837,12 +855,13 @@ sub add_fragment {
                 path      => undef,
                 arguments => undef,
                 wrapper   => undef,
+                in_form   => undef,
                 @_
                );
 
     my $fragment = $self->{'fragments'}->{ $args{'name'} } || Jifty::Request::Fragment->new;
 
-    for my $k (qw/name path wrapper/) {
+    for my $k (qw/name path wrapper in_form/) {
         $fragment->$k($args{$k}) if defined $args{$k};
     } 
     
@@ -975,7 +994,7 @@ A small package that encapsulates the bits of a state variable:
 
 package Jifty::Request::Fragment;
 use base 'Class::Accessor::Fast';
-__PACKAGE__->mk_accessors( qw/name path wrapper arguments parent/ );
+__PACKAGE__->mk_accessors( qw/name path wrapper in_form arguments parent/ );
 
 =head2 Jifty::Request::Fragment
 
@@ -986,6 +1005,8 @@ A small package that encapsulates the bits of a fragment request:
 =head3 path [PATH]
 
 =head3 wrapper [BOOLEAN]
+
+=head3 in_form [BOOLEAN]
 
 =head3 argument NAME [VALUE]
 

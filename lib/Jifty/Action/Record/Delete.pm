@@ -58,7 +58,7 @@ sub take_action {
 
     # Delete the record and return an error if delete fails
     my ( $val, $msg ) = $self->record->delete;
-    $self->result->error($msg) if not $val and $msg;
+    $self->result->error($msg || _('Permission denied')) if not $val;
 
     # Otherwise, we seem to have succeeded, report that
     $self->report_success if not $self->result->failure;

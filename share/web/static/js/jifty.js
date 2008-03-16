@@ -313,9 +313,10 @@ Action.prototype = {
                             if (field.nodeName == 'update') {
                                 var field_name = field.getAttribute("name");
                                 for (var form_number = 0 ; form_number < document.forms.length; form_number++) {
-                                    if (document.forms[form_number].elements[field_name] == null)
+                                    var form_field = document.forms[form_number].elements[field_name];
+                                    if (form_field  == null || !form_field.is('.ajaxcanonicalization'))
                                         continue;
-                                    document.forms[form_number].elements[field_name].value = field.firstChild.data;
+                                    form_field.value = field.firstChild.data;
                                 }
                             }
                         }
@@ -503,12 +504,14 @@ ActionField.prototype = {
 };
 
 /* Forms */
+
 Jifty.Form = {};
 
 jQuery.extend(Jifty.Form, {
     getElements: function(element) {
         return jQuery(":input", element).get();
     },
+
     // Return an Array of Actions that are in this form
     getActions: function (element) {
         var elements = [];
@@ -529,12 +532,12 @@ jQuery.extend(Jifty.Form, {
     }
 });
 
-
 var current_actions = {};
 
 Jifty.Form.Element = {};
 
 /* Fields */
+
 jQuery.extend(Jifty.Form.Element, {
     // Get the moniker for this form element
     // Takes an element or an element id
@@ -664,7 +667,7 @@ jQuery.extend(Jifty.Form.Element, {
 
     buttonActions: function(element) {
         element = Jifty.$(element);
-        var actions = Jifty.Form.Element.buttonArguments(element)[ ('J:ACTIONS') ];
+        var actions = Jifty.Form.Element.buttonArguments(element)['J:ACTIONS'];
         if(actions) {
             return actions.split(",");
         } else {
@@ -796,11 +799,12 @@ var Region = function() {
 };
 
 Region.prototype = {
-    initialize: function(name, args, path, parent) {
+    initialize: function(name, args, path, parent, in_form) {
         this.name = name;
         this.args = jQuery.extend({}, args);
         this.path = path;
         this.parent = parent ? fragments[parent] : null;
+        this.in_form = in_form;
         if (fragments[name]) {
             // If this fragment already existed, we want to wipe out
             // whatever evil lies we might have said earlier; do this
@@ -929,7 +933,7 @@ function prepare_element_for_update(f) {
             }
 
             // Make the region (for now)
-            new Region(name, f['args'], f['path'], f['parent']);
+            new Region(name, f['args'], f['path'], f['parent'], f['parent'] ? f['parent'].in_form : null);
         } else if ((f['path'] != null) && f['toggle'] && (f['path'] == fragments[name].path)) {
             // If they set the 'toggle' flag, and clicking wouldn't change the path
             jQuery(element).empty();
@@ -1214,6 +1218,9 @@ Jifty.update = function () {
         if (f['is_new'])
             // Ask for the wrapper if we are making a new region
             fragment_request['wrapper'] = 1;
+
+        if (fragments.get(name).in_form)
+            fragment_request['in_form'] = 1;
 
         // Push it onto the request stack
         request.fragments[name] = fragment_request;
@@ -1643,6 +1650,104 @@ Jifty.Effect = function(el, name, args, options) {
  * after jifty.js.
  */
 
-if (window.Form == null)
-    window.Form = Jifty.Form;
+Form = {};
 
+jQuery.extend(Form, {
+    // Return an Array of Actions that are in this form
+    getActions: function (element) {
+        // DEPRECATED: use Jifty.Form.getActions instead
+        return Jifty.Form.getActions(element);
+    },
+    clearPlaceholders: function(element) {
+        // DEPRECATED: use Jifty.Form.clearPlaceholders instead
+        return Jifty.Form.clearPlaceholders(element);
+    },
+
+    Element: {}
+});
+
+jQuery.extend(Form.Element, {
+    // Get the moniker for this form element
+    // Takes an element or an element id
+    getMoniker: function (element) {
+        // DEPRECATED: use Jifty.Form.Element.getMoniker instead
+        return Jifty.Form.Element.getMoniker(element);
+    },
+
+    // Get the Action for this form element
+    // Takes an element or an element id
+    getAction: function (element) {
+        // DEPRECATED: use Jifty.Form.Element.getAction instead
+        return Jifty.Form.Element.getAction(element);
+    },
+
+    // Returns the name of the field
+    getField: function (element) {
+        // DEPRECATED: use Jifty.Form.Element.getField instead
+        return Jifty.Form.Element.getField(element);
+    },
+
+    // The type of Jifty form element
+    getType: function (element) {
+        // DEPRECATED: use Jifty.Form.Element.getType instead
+        return Jifty.Form.Element.getType(element);
+    },
+
+    // Validates the action this form element is part of
+    validate: function (element) {
+        // DEPRECATED: use Jifty.Form.Element.validate instead
+        return Jifty.Form.Element.validate(element);
+    },
+
+    // Temporarily disable validation
+            disableValidation: function(element) {
+                // DEPRECATED: use Jifty.Form.Element.disableValidation instead
+                return Jifty.Form.Element.disableValidation(element);
+        },
+
+            //Reenable validation            
+            enableValidation: function(element) {
+                // DEPRECATED: use Jifty.Form.Element.enableValidation instead
+                return Jifty.Form.Element.enableValidation(element);
+        },
+
+
+    // Look up the form that this element is part of -- this is sometimes
+    // more complicated than you'd think because the form may not exist
+    // anymore, or the element may have been inserted into a new form.
+    // Hence, we may need to walk the DOM.
+    getForm: function (element) {
+        // DEPRECATED: use Jifty.Form.Element.getForm instead
+        return Jifty.Form.Element.getForm(element);
+    },
+
+    buttonArguments: function(element) {
+        // DEPRECATED: use Jifty.Form.Element.buttonArguments instead
+        return Jifty.Form.Element.buttonArguments(element);
+    },
+
+    buttonActions: function(element) {
+        // DEPRECATED: use Jifty.Form.Element.buttonActions instead
+        return Jifty.Form.Element.buttonActions(element);
+    },  
+
+    buttonFormElements: function(element) {
+        // DEPRECATED: use Jifty.Form.Element.buttonFormElements instead
+        return Jifty.Form.Element.buttonFormElements(element);
+    },
+
+    /* Someday Jifty may have the concept of "default"
+       buttons.  For now, this clicks the first button that will
+       submit the action associated with the form element.
+     */
+    clickDefaultButton: function(element) {
+        // DEPRECATED: use Jifty.Form.Element.clickDefaultButton instead
+        return Jifty.Form.Element.clickDefaultButton(element);
+    },
+
+    handleEnter: function(event) {
+        // DEPRECATED: use Jifty.Form.Element.handleEnter instead
+        return Jifty.Form.Element.handleEnter(event);
+    }
+
+});

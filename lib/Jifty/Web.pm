@@ -68,6 +68,7 @@ __PACKAGE__->javascript_libs([qw(
     app.js
     app_behaviour.js
     css_browser_selector.js
+    cssQuery-jquery.js
 )]);
 
 use Class::Trigger;
@@ -1167,6 +1168,25 @@ Pushes files onto C<Jifty->web->javascript_libs>
 sub add_javascript {
     my $self = shift;
     Jifty->web->javascript_libs([ @{ Jifty->web->javascript_libs }, @_ ]);
+}
+
+=head3 remove_javascript FILE1, FILE2, ...
+
+Removes the given files from C<< Jifty->web->javascript_libs >>.
+
+This is intended for plugins or applications that provide another version of
+the functionality given in our default JS libraries. For example, the CSSQuery
+plugin will get rid of the cssQuery-jQuery.js back-compat script.
+
+=cut
+
+sub remove_javascript {
+    my $self = shift;
+    my %remove = map { $_ => 1 } @_;
+
+    Jifty->web->javascript_libs([
+        grep { !$remove{$_} } @{ Jifty->web->javascript_libs }
+    ]);
 }
 
 =head3 add_external_javascript URL1, URL2, ...

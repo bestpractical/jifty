@@ -462,7 +462,7 @@ The list template provides an interactive list for showing a list of records in 
 template 'list' => sub {
     my $self = shift;
 
-    my ( $page ) = get(qw(page ));
+    my ( $page ) = get('page');
     my $item_path = get('item_path') || $self->fragment_for("view");
     my $collection =  $self->_current_collection();
     div { {class is 'crud-'.$self->object_type}; 
@@ -489,9 +489,9 @@ sub per_page { 25 }
 # unlimited collection if there is no current search.
 sub _current_collection {
     my $self = shift; 
-    my ( $page, $search_collection ) = get(qw(page  search_collection));
+    my ( $page ) = get('page');
     my $collection_class = $self->record_class->collection_class;
-    my $search = $search_collection || ( Jifty->web->response->result('search') ? Jifty->web->response->result('search')->content('search') : undef );
+    my $search = ( Jifty->web->response->result('search') ? Jifty->web->response->result('search')->content('search') : undef );
     my $collection;
     if ( $search ) {
         $collection = $search;
@@ -700,7 +700,7 @@ The new_item template provides a form for creating new model records. See L<Jift
 
 template 'new_item' => sub {
     my $self = shift;
-    my ( $object_type, $id ) = ( $self->object_type, get('id') );
+    my ( $object_type ) = ( $self->object_type );
 
     my $record_class = $self->record_class;
     my $create = $record_class->as_create_action;

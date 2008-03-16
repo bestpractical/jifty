@@ -8,7 +8,7 @@ use Jifty::Plugin::Attributes::Model::AttributeCollection;
 use base 'Exporter';
 
 our @EXPORT = qw/attributes first_attribute add_attribute set_attribute
-                 delete_attribute/;
+                 delete_attribute delete_all_attributes/;
 
 =head2 attributes
 
@@ -132,6 +132,25 @@ sub delete_attribute {
     my $ok = 1;
 
     my $attrs = $self->attributes->named($name);
+    while (my $attr = $attrs->next) {
+        $attr->delete
+            or $ok = 0;
+    }
+
+    return $ok;
+}
+
+=head2 delete_all_attributes
+
+Deletes all the attributes associated with the object.
+
+=cut
+
+sub delete_all_attributes {
+    my $self = shift;
+    my $ok = 1;
+
+    my $attrs = $self->attributes;
     while (my $attr = $attrs->next) {
         $attr->delete
             or $ok = 0;

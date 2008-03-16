@@ -62,7 +62,7 @@ our @EXPORT = qw/monitor every
                  month months
                  year years
 
-                 data_point timer/;
+                 data_point timer previous/;
 
 BEGIN {
     for my $time (qw/minute hour day week month year/) {
@@ -113,7 +113,7 @@ sub monitor {
     $self->add_monitor(@_);
 }
 
-=head2 data_point NAME, VALUE [, CATEGORY]
+=head2 data_point [CATEGORY,] NAME, VALUE
 
 Records a data point, associating C<NAME> to C<VALUE> at the current
 time.  C<CATEGORY> defaults to the name of the monitor that the data
@@ -135,6 +135,31 @@ sub data_point {
         value => $value,
         sampled_at => $self->now,
     );
+}
+
+=head2 previous [CATEGORY,] NAME
+
+Returns the most recent valeu for the data point of the given C<NAME>
+and C<CATEGORY>.  C<CATEGORY> defaults to the name of the current
+monitor.
+
+=cut
+
+sub previous {
+    my ($self) = Jifty->find_plugin("Jifty::Plugin::Monitoring");
+    $self ||= $Jifty::Plugin::Monitoring::self;
+
+    my $category = @_ == 2 ? shift : $self->current_monitor->{name};
+    my ($name) = @_;    
+
+    my $data = Jifty::Plugin::Monitoring::Model::MonitoredDataPointCollection->new();
+    $data->limit( column => 'category', value => $category );
+    $data->limit( column => 'sample_name', value => $name );
+    $data->limit( column => 'sampled_at', operator => '<', value => $self->now );
+    $data->set_page_info(per_page => 1);
+    $data->order_by(column => 'sampled_at', order => 'DESC');
+    my $row = $data->first;
+    return $row ? $row->value : undef;
 }
 
 =head2 timer MECH, URL
@@ -236,7 +261,7 @@ sub last_run {
 
     my $unit = $self->monitors->{$name}->{unit};
     my $now = Jifty::DateTime->now->truncate( to => $unit );
-    warn "No last run time for monitor $name; inserting $now\n";
+    Jifty->log->warn("No last run time for monitor $name; inserting $now");
     $last->set_last_run($now);
     return $last;
 }
@@ -282,17 +307,15 @@ sub run_monitors {
         my $last = $self->last_run($name);
         my %monitor = %{$self->monitors->{$name}};
         my $next = $last->last_run->add( $monitor{unit}."s" => $monitor{count} );
-        warn "For monitor $name, next $next, now $now\n";
         next unless $now >= $next;
-        warn "Cron not being run often enough: we skipped a '$name'!\n"
+        Jifty->log->warn("Cron not being run often enough: we skipped a '$name'!")
           if $now >= $next->add( $monitor{unit}."s" => $monitor{count} );
-        warn "Running monitor $name\n";
         $self->current_monitor(\%monitor);
         eval {
             $monitor{sub}->($self);
         };
         if (my $error = $@) {
-            warn "Error running monitor $name: $error\n";
+            Jifty->log->warn("Error running monitor $name: $error");
         } else {
             $last->set_last_run($now);
         }
@@ -300,11 +323,28 @@ sub run_monitors {
     $self->current_monitor(undef);
 }
 
+=head2 lock
+
+Attempt to determine if there are other monitoring processes running.
+If there are, we return false.  This keeps a long-running monitor from
+making later jobs pile up.
+
+=cut
+
 sub lock {
     my $self = shift;
-    return if -e $self->lockfile;
+    if (-e $self->lockfile) {
+        my ($pid) = do {local @ARGV = ($self->lockfile); <>};
+        if (kill 0, $pid) {
+            Jifty->log->warn("Monitor PID $pid still running");
+            return 0;
+        } else {
+            Jifty->log->warn("Stale PID file @{[$self->lockfile]}; removing");
+            unlink($self->lockfile);
+        }
+    }
     unless (open PID, ">", $self->lockfile) {
-        warn "Can't open lockfile @{[$self->lockfile]}: $!";
+        Jifty->log->warn("Can't open lockfile @{[$self->lockfile]}: $!");
         return 0;
     }
     print PID $$;
@@ -312,6 +352,12 @@ sub lock {
     $self->has_lock(1);
     return 1;
 }
+
+=head2 DESTROY
+
+On destruction, remove the lockfile.
+
+=cut
 
 sub DESTROY {
     my $self = shift;

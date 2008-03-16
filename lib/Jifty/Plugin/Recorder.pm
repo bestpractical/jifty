@@ -2,7 +2,7 @@ package Jifty::Plugin::Recorder;
 use strict;
 use warnings;
 use base qw/Jifty::Plugin Class::Data::Inheritable/;
-__PACKAGE__->mk_accessors(qw/start path loghandle logged_request memory_usage/);
+__PACKAGE__->mk_accessors(qw/start path loghandle request_time logged_request memory_usage/);
 
 use Time::HiRes 'time';
 use Jifty::Util;
@@ -59,10 +59,18 @@ sub before_request
     my $cgi     = shift;
 
     $self->logged_request(0);
+    $self->request_time(time);
 
     eval {
-        my $delta = time - $self->start;
-        my $request = { cgi => nfreeze($cgi), ENV => \%ENV, time => $delta };
+        my $delta = $self->request_time - $self->start;
+
+        my $request = {
+            cgi   => nfreeze($cgi),
+            ENV   => \%ENV,
+            time  => $delta,
+            start => $self->request_time,
+        };
+
         my $yaml = Jifty::YAML::Dump($request);
 
         print { $self->get_loghandle } $yaml;
@@ -92,6 +100,8 @@ sub before_cleanup {
 
     if ($self->logged_request) {
         eval {
+            print { $self->get_loghandle } "end: " . time . "\n";
+            print { $self->get_loghandle } "took: " . (time - $self->request_time) . "\n";
             print { $self->get_loghandle } "current_user: " . (Jifty->web->current_user->id || 0) . "\n";
 
             # get memory usage. yes, we really do need to go through these

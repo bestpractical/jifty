@@ -70,9 +70,7 @@ sub new {
         render_mode   => 'update' });
     my $args = ref($_[0]) ? $_[0] : {@_};
 
-    my $subclass = ucfirst($args->{render_as} || $args->{type} || 'text');
-    $subclass = 'Jifty::Web::Form::Field::' . $subclass unless $subclass =~ /::/;
-    bless $self, $subclass if Jifty::Util->require($subclass);
+    $self->rebless( $args->{render_as} || $args->{type} || 'text' );
 
     for my $field ( $self->accessors() ) {
         $self->$field( $args->{$field} ) if exists $args->{$field};
@@ -83,8 +81,7 @@ sub new {
     # but ignore that if the field is a container in the model
     my ($key, $value) = Jifty::Request::Mapper->query_parameters($self->input_name, $self->current_value);
     if ($key ne $self->input_name && !$self->action->arguments->{$self->name}{container}) {
-        Jifty::Util->require('Jifty::Web::Form::Field::Hidden');
-        bless $self, "Jifty::Web::Form::Field::Hidden";
+        $self->rebless('Hidden');
         $self->input_name($key);
         $self->default_value($value);
         $self->sticky_value(undef);
@@ -98,6 +95,21 @@ sub new {
     return $self;
 }
 
+=head2 $self->rebless($widget)
+
+Turn the current blessed class into the given widget class.
+
+=cut
+
+sub rebless {
+    my ($self, $widget) = @_;
+    my $widget_class = $widget =~ m/::/ ? $widget : "Jifty::Web::Form::Field::".ucfirst($widget);
+
+    $self->log->error("Invalid widget class $widget_class")
+        unless Jifty::Util->require($widget_class);
+
+    bless $self, $widget_class;
+}
 
 =head2 accessors
 

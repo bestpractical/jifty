@@ -6,9 +6,14 @@ $mask_val => ""
 $list_path
 </%args>
 <%init>
-my $record_class = Jifty->app_class("Model", $object_type);
-my $create = Jifty->web->new_action(class => 'Create'.$object_type);
+my $create = Jifty->web->new_action(
+    class => "Create$object_type",
+    moniker => "create-$object_type",
+);
 </%init>
+<% Jifty->web->form->start %>
+% Jifty->web->form->register_action($create);
+
 % if ($mask_field) {
   <% $create->hidden($mask_field,$mask_val) %>
 % }
@@ -31,12 +36,14 @@ Jifty->web->form->submit(
                    append => $list_path.'view',
                    args   => { 
                               object_type => $object_type,
-                              list_path => $list_path,
+                              list_path   => $list_path,
                               id          => { result_of => $create, name => 'id' },
                              },
                  },
                 ]
     ) %>
+
+<% Jifty->web->form->end %>
 
 <%doc>
 

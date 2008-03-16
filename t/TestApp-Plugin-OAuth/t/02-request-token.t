@@ -4,11 +4,11 @@ use strict;
 
 use Test::More;
 BEGIN {
-    if (eval { require Net::OAuth::Request; require Crypt::OpenSSL::RSA; 1 }) {
+    if (eval { require Net::OAuth::Request; 1 } && eval { Net::OAuth::Request->VERSION('0.05') }) {
         plan tests => 61;
     }
     else {
-        plan skip_all => "Net::OAuth or Crypt::OpenSSL::RSA isn't installed";
+        plan skip_all => "Net::OAuth 0.05 isn't installed";
     }
 }
 
@@ -60,14 +60,18 @@ response_is(
 );
 # }}}
 # get a request token as a known consumer (RSA-SHA1) {{{
-response_is(
-    code                   => 200,
-    testname               => "200 - RSA-SHA1 signature",
-    consumer_secret        => 'bar',
-    oauth_consumer_key     => 'foo',
-    signature_key          => $seckey,
-    oauth_signature_method => 'RSA-SHA1',
-);
+SKIP: {
+    rsa_skip(3);
+
+    response_is(
+        code                   => 200,
+        testname               => "200 - RSA-SHA1 signature",
+        consumer_secret        => 'bar',
+        oauth_consumer_key     => 'foo',
+        signature_key          => $seckey,
+        oauth_signature_method => 'RSA-SHA1',
+    );
+};
 # }}}
 # get a request token using authorization header {{{
 response_is(
@@ -83,23 +87,21 @@ response_is(
 --$timestamp;
 response_is(
     code                   => 200,
-    testname               => "200 - RSA-SHA1 signature",
+    testname               => "200 - same timestamp, different nonce",
     consumer_secret        => 'bar',
     oauth_consumer_key     => 'foo',
     oauth_nonce            => 'kjfh',
-    signature_key          => $seckey,
-    oauth_signature_method => 'RSA-SHA1',
+    oauth_signature_method => 'HMAC-SHA1',
 );
 # }}}
 # same nonce, different timestamp {{{
 response_is(
     code                   => 200,
-    testname               => "200 - RSA-SHA1 signature",
+    testname               => "200 - same nonce, different timestamp",
     consumer_secret        => 'bar',
     oauth_consumer_key     => 'foo',
     oauth_nonce            => 'kjfh',
-    signature_key          => $seckey,
-    oauth_signature_method => 'RSA-SHA1',
+    oauth_signature_method => 'HMAC-SHA1',
 );
 # }}}}
 
@@ -131,14 +133,18 @@ response_is(
 # failure modes
 
 # request a request token as an RSA-less consumer (RSA-SHA1) {{{
-response_is(
-    code                   => 400,
-    testname               => "400 - RSA-SHA1 signature, without registering RSA key!",
-    consumer_secret        => 'bar2',
-    oauth_consumer_key     => 'foo2',
-    signature_key          => $seckey,
-    oauth_signature_method => 'RSA-SHA1',
-);
+SKIP: {
+    rsa_skip(2);
+
+    response_is(
+        code                   => 400,
+        testname               => "400 - RSA-SHA1 signature, without registering RSA key!",
+        consumer_secret        => 'bar2',
+        oauth_consumer_key     => 'foo2',
+        signature_key          => $seckey,
+        oauth_signature_method => 'RSA-SHA1',
+    );
+};
 # }}}
 # unknown consumer {{{
 # we're back to the first consumer, so we need a locally larger timestamp
@@ -260,8 +266,8 @@ $timestamp = 2000;
 # }}}
 # GET not POST {{{
 response_is(
-    code                   => 404,
-    testname               => "404 - GET not supported for request_token",
+    code                   => 405,
+    testname               => "405 - GET not allowed for request_token",
     consumer_secret        => 'bar',
     oauth_consumer_key     => 'foo',
     oauth_signature_method => 'PLAINTEXT',

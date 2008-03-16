@@ -5,6 +5,8 @@ use warnings;
 
 use base qw( Jifty::Plugin::OAuth::Token Jifty::Record );
 
+use constant is_private => 1;
+
 # kludge 1: you cannot call Jifty->app_class within schema {}
 # kludge 3: due to the loading order, you can't really do this
 #my $app_user;
@@ -33,6 +35,8 @@ use Jifty::Record schema {
     column consumer =>
         refers_to Jifty::Plugin::OAuth::Model::Consumer;
 
+    column can_write =>
+        is boolean;
 };
 
 =head2 table
@@ -42,6 +46,34 @@ AccessTokens are stored in the table C<oauth_access_tokens>.
 =cut
 
 sub table {'oauth_access_tokens'}
+
+=head2 create_from_request_token
+
+This creates a new access token (as the superuser) and populates its values
+from the given request token.
+
+=cut
+
+sub create_from_request_token {
+    my $self = shift;
+    my $request_token = shift;
+
+    if (!ref($self)) {
+        $self = $self->new(current_user => Jifty::CurrentUser->superuser);
+    }
+
+    my $restrictions = $request_token->access_token_restrictions
+        or die "No access-token restrictions given in the request token.";
+
+    $self->create(
+        consumer    => $request_token->consumer,
+        auth_as     => $request_token->authorized_by,
+        valid_until => $restrictions->{use_limit},
+        can_write   => $restrictions->{can_write} ? 1 : 0,
+    );
+
+    return $self;
+}
 
 =head2 is_valid
 
@@ -63,6 +95,22 @@ sub is_valid {
         if $self->valid_until < DateTime->now;
 
     return (1, "Request token valid");
+}
+
+=head2 current_user_can
+
+Only root may have access to this model.
+
+In the near future, we should allow the authorizing user to edit this token
+(taking care of course that the authorizing user is not actually authed via
+OAuth!)
+
+=cut
+
+sub current_user_can {
+    my $self = shift;
+
+    return $self->current_user->is_superuser;
 }
 
 1;

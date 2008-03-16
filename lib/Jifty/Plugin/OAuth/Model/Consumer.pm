@@ -5,6 +5,8 @@ use warnings;
 
 use base qw( Jifty::Record );
 
+use constant is_private => 1;
+
 use Jifty::DBI::Schema;
 use Jifty::Record schema {
 
@@ -68,7 +70,7 @@ screw up the regular consumer.
 
 sub before_set_last_timestamp {
     my $self = shift;
-    my $new_ts = shift;
+    my $new_ts = shift->{value};
 
     # uh oh, looks like sloppy coding..
     if ($new_ts < $self->last_timestamp) {
@@ -94,6 +96,7 @@ ALWAYS call this method when handling OAuth requests. EARLY.
 
 sub is_valid_request {
     my ($self, $timestamp, $nonce) = @_;
+
     return (0, "Timestamp nonincreasing, $timestamp < ".$self->last_timestamp.".")
         if $timestamp < $self->last_timestamp;
     return 1 if $timestamp > $self->last_timestamp;
@@ -119,6 +122,18 @@ sub made_request {
     my ($self, $timestamp, $nonce) = @_;
     $self->set_last_timestamp($timestamp);
     $self->set_nonces({ %{$self->nonces}, $nonce => 1 });
+}
+
+=head2 current_user_can
+
+Only root may have access to this model.
+
+=cut
+
+sub current_user_can {
+    my $self = shift;
+
+    return $self->current_user->is_superuser;
 }
 
 1;

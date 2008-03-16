@@ -129,36 +129,21 @@ sub check_schema_version {
 
     # Application db version check
     {
-        my $dbv  = Jifty::Model::Metadata->load("application_db_version");
         my $appv = Jifty->config->framework('Database')->{'Version'};
+        my $dbv = $self->_fetch_dbv;
 
-        if ( not defined $dbv ) {
+        unless (defined $dbv) {
+            warn "Application schema has no version in the database.\n";
 
-      # First layer of backwards compatibility -- it used to be in _db_version
-            my @v;
-            eval {
-                local $SIG{__WARN__} = sub { };
-                @v = Jifty->handle->fetch_result(
-                    "SELECT major, minor, rev FROM _db_version");
-            };
-            $dbv = join( ".", @v ) if @v == 3;
+            # we can just create it and we'll be up to date
+            if ( $autoup ) {
+                warn "Automatically creating your database.\n";
+                $self->_create_original_database();
+                return 1;
+            }
+
+            die "Please run `bin/jifty schema --setup` to create the database.\n";
         }
-        if ( not defined $dbv ) {
-
-            # It was also called the 'key' column, not the data_key column
-            eval {
-                local $SIG{__WARN__} = sub { };
-                $dbv
-                    = Jifty->handle->fetch_result(
-                    "SELECT value FROM _jifty_metadata WHERE key = 'application_db_version'"
-                    );
-            } or undef($dbv);
-        }
-
-        die
-            "Application schema has no version in the database; perhaps you need to run this:\n"
-            . "\t bin/jifty schema --setup\n"
-            unless defined $dbv;
 
         unless ( version->new($appv) == version->new($dbv) ) {
 
@@ -172,7 +157,7 @@ sub check_schema_version {
                     "Application schema version in database ($dbv) doesn't match application schema version ($appv)\n";
                 if ( $autoup ) {
                     warn
-                        "Automatically upgrading your database to match the current application schema";
+                        "Automatically upgrading your database to match the current application schema.\n";
                     $self->_upgrade_schema();
                 } else {
                     die
@@ -292,6 +277,20 @@ sub drop_database {
     }
 }
 
+sub _create_original_database {
+    my $self = shift;
+
+    my $hack = {};
+    require Jifty::Script::Schema;
+    bless $hack, "Jifty::Script::Schema";
+    $hack->create_all_tables;
+
+    # reconnect for consistency
+    # SQLite complains about the schema being changed
+    $self->disconnect;
+    $self->connect;
+}
+
 sub _upgrade_schema {
     my $self = shift;
 
@@ -299,7 +298,32 @@ sub _upgrade_schema {
     require Jifty::Script::Schema;
     bless $hack, "Jifty::Script::Schema";
     $hack->run_upgrades;
+}
 
+sub _fetch_dbv {
+    my $self = shift;
+
+    my $dbv = Jifty::Model::Metadata->load("application_db_version");
+    return $dbv if defined $dbv;
+
+    # First layer of backwards compatibility -- it used to be in _db_version
+    eval {
+        local $SIG{__WARN__} = sub { };
+        my @v = Jifty->handle->fetch_result(
+            "SELECT major, minor, rev FROM _db_version");
+        return join( ".", @v ) if @v == 3;
+    };
+
+    # Second layer -- it was also called the 'key' column, not the data_key column
+    eval {
+        local $SIG{__WARN__} = sub { };
+        return Jifty->handle->fetch_result(
+            "SELECT value FROM _jifty_metadata WHERE key = 'application_db_version'"
+        );
+    };
+
+    # most likely no database exists
+    return undef;
 }
 
 =head1 AUTHOR

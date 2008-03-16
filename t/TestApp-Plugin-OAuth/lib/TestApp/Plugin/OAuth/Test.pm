@@ -5,14 +5,13 @@ use warnings;
 use base qw/Jifty::Test/;
 
 use MIME::Base64;
-use Crypt::OpenSSL::RSA;
 use Digest::HMAC_SHA1 'hmac_sha1';
 use Jifty::Test::WWW::Mechanize;
 
 our @EXPORT = qw($timestamp $url $umech $cmech $pubkey $seckey $token_obj
                  $server $URL response_is sign get_latest_token allow_ok deny_ok
                  _authorize_request_token get_request_token get_authorized_token
-                 get_access_token);
+                 get_access_token has_rsa rsa_skip);
 
 our $timestamp = 0;
 our $url;
@@ -23,6 +22,7 @@ our $seckey = slurp('t/id_rsa');
 our $token_obj;
 our $server;
 our $URL;
+our $can_write;
 
 sub setup {
     my $class = shift;
@@ -82,15 +82,30 @@ sub response_is {
         $cmech->default_header("Authorization" => authz(%params));
     }
 
-    if ($method eq 'POST') {
-        $r = $cmech->post($url, $params_in eq 'method' ? [%params] : ());
-    }
-    else {
+    if ($method eq 'GET') {
         my $query = join '&',
                     map { "$_=" . Jifty->web->escape_uri($params{$_}||'') }
                     keys %params;
         my $params = $params_in eq 'method' ? "?$query" : '';
         $r = $cmech->get("$url$params");
+    }
+    else {
+        my $req = HTTP::Request->new(
+            uc($method) => $url,
+        );
+
+        if ($params_in eq 'method') {
+            # avoid Encode complaining about undef
+            for (values %params) {
+                defined or $_ = '';
+            }
+
+            my $content = Jifty->web->query_string(%params);
+            $req->header('Content-type' => 'application/x-www-form-urlencoded');
+            $req->content($content);
+        }
+
+        $r = $cmech->request($req);
     }
 
     $cmech->default_headers->remove_header("Authorization");
@@ -156,6 +171,7 @@ sub sign {
     my $signature;
 
     if ($sig_method eq 'RSA-SHA1') {
+        require Crypt::OpenSSL::RSA;
         my $pubkey = Crypt::OpenSSL::RSA->new_private_key($key);
         $signature = encode_base64($pubkey->sign($signature_base_string), "");
     }
@@ -173,6 +189,15 @@ sub sign {
         if wantarray;
     return $signature;
 
+}
+
+sub has_rsa {
+    eval { require Crypt::OpenSSL::RSA; 1 }
+}
+
+sub rsa_skip {
+    my $count = shift || Carp::carp "You must specify a number of tests to skip.";
+    ::skip 'Crypt::OpenSSL::RSA is required for these tests', $count unless has_rsa;
 }
 
 sub slurp {
@@ -230,7 +255,12 @@ sub allow_ok {
     ::fail($error), return if $error;
 
     my $name = $token_obj->consumer->name;
-    $umech->content_contains("Allowing $name to access your stuff");
+    if ($can_write) {
+        $umech->content_contains("Allowing $name to read and write your data for 1 hour.");
+    }
+    else {
+        $umech->content_contains("Allowing $name to read your data for 1 hour.");
+    }
 }
 
 sub deny_ok {
@@ -240,7 +270,7 @@ sub deny_ok {
     ::fail($error), return if $error;
 
     my $name = $token_obj->consumer->name;
-    $umech->content_contains("Denying $name the right to access your stuff");
+    $umech->content_contains("Denying $name the right to access your data.");
 }
 
 sub _authorize_request_token {
@@ -258,8 +288,10 @@ sub _authorize_request_token {
         or return "Content did not much qr/If you trust this application/";
     my $moniker = $umech->moniker_for('TestApp::Plugin::OAuth::Action::AuthorizeRequestToken')
         or return "Unable to find moniker for AuthorizeRequestToken";
-    $umech->fill_in_action($moniker, token => $token)
-        or return "Unable to fill in the AuthorizeRequestToken action";
+    $umech->fill_in_action($moniker,
+        token => $token,
+        can_write => $can_write,
+    ) or return "Unable to fill in the AuthorizeRequestToken action";
     $umech->click_button(value => $which_button)
         or return "Unable to click $which_button button";
     return;

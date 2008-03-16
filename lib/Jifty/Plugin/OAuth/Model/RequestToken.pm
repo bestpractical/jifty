@@ -5,6 +5,8 @@ use warnings;
 
 use base qw( Jifty::Plugin::OAuth::Token Jifty::Record );
 
+use constant is_private => 1;
+
 # kludge 1: you cannot call Jifty->app_class within schema {}
 # kludge 3: due to the loading order, you can't really do this
 #my $app_user;
@@ -19,8 +21,7 @@ use Jifty::Record schema {
         is required;
 
     column authorized =>
-        type is 'boolean',
-        default is '';
+        is boolean;
 
     # kludge 2: this kind of plugin cannot yet casually refer_to app models
     column authorized_by =>
@@ -31,11 +32,8 @@ use Jifty::Record schema {
         refers_to Jifty::Plugin::OAuth::Model::Consumer,
         is required;
 
-    # kludge 3: Jifty::DBI + SQLite = poor boolean handling
-    # so the empty string is the false value, 't' is the true value
     column used =>
-        type is 'boolean',
-        default is '';
+        is boolean;
 
     column token =>
         type is 'varchar',
@@ -45,6 +43,9 @@ use Jifty::Record schema {
         type is 'varchar',
         is required;
 
+    column access_token_restrictions =>
+        type is 'blob',
+        filters are 'Jifty::DBI::Filter::Storable';
 };
 
 =head2 table
@@ -65,7 +66,6 @@ the valid_until to be active for another hour.
 sub after_set_authorized {
     my $self = shift;
     $self->set_authorized_by(Jifty->web->current_user->id);
-    $self->set_valid_until(DateTime->now->add(hours => 1));
 }
 
 =head2 can_trade_for_access_token
@@ -94,6 +94,18 @@ sub can_trade_for_access_token {
         if $self->valid_until < DateTime->now;
 
     return (1, "Request token valid");
+}
+
+=head2 current_user_can
+
+Only root may have access to this model.
+
+=cut
+
+sub current_user_can {
+    my $self = shift;
+
+    return $self->current_user->is_superuser;
 }
 
 1;

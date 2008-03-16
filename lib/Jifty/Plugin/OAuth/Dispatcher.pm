@@ -7,7 +7,6 @@ use Jifty::Dispatcher -base;
 use Net::OAuth::RequestTokenRequest;
 use Net::OAuth::AccessTokenRequest;
 use Net::OAuth::ProtectedResourceRequest;
-use Crypt::OpenSSL::RSA;
 use URI::Escape 'uri_unescape';
 
 on     POST '/oauth/request_token' => \&request_token;
@@ -15,6 +14,9 @@ before GET  '/oauth/authorize'     => \&authorize;
 on     POST '/oauth/authorize'     => \&authorize_post;
 on     POST '/oauth/access_token'  => \&access_token;
 on          '/oauth/authorized'    => run { redirect '/oauth/authorize' };
+
+on     GET  '/oauth/request_token' => \&invalid_method;
+on     GET  '/oauth/access_token'  => \&invalid_method;
 
 before '*' => \&try_oauth;
 
@@ -28,11 +30,11 @@ the C<abort> procedure?
 sub abortmsg {
     my ($code, $msg) = @_;
     if ($code) {
-        Jifty->log->debug("$code for ".Jifty->web->request->path.":" . $msg) if defined($msg);
+        Jifty->log->debug("$code for ".Jifty->web->request->path.": $msg") if defined($msg);
         abort($code);
     }
     elsif (defined $msg) {
-        Jifty->log->debug("OAuth denied for ".Jifty->web->request->path.":" . $msg);
+        Jifty->log->debug("OAuth denied for ".Jifty->web->request->path.": $msg");
     }
 }
 
@@ -100,7 +102,7 @@ The user is authorizing (or denying) a consumer's request token
 
 sub authorize {
     my @params = qw/token callback/;
-    abortmsg(403, "Cannot authorize tokens as an OAuthed user") if Jifty->handler->stash->{oauth};
+    abortmsg(403, "Cannot authorize tokens as an OAuthed user") if Jifty->web->current_user->is_oauthed;
 
     set no_abort => 1;
     my %oauth_params = get_parameters(@params);
@@ -111,7 +113,7 @@ sub authorize {
 
     if ($oauth_params{token}) {
         my $request_token = Jifty::Plugin::OAuth::Model::RequestToken->new(current_user => Jifty::CurrentUser->superuser);
-        $request_token->load_by_cols(token => $oauth_params{token}, authorized => '');
+        $request_token->load_by_cols(token => $oauth_params{token}, authorized => 0);
 
         if ($request_token->id) {
             set consumer => $request_token->consumer;
@@ -127,7 +129,7 @@ The user is submitting an AuthorizeRequestToken action
 =cut
 
 sub authorize_post {
-    abortmsg(403, "Cannot authorize tokens as an OAuthed user") if Jifty->handler->stash->{oauth};
+    abortmsg(403, "Cannot authorize tokens as an OAuthed user") if Jifty->web->current_user->is_oauthed;
     my $result = Jifty->web->response->result("authorize_request_token");
     unless ($result && $result->success) {
         redirect '/oauth/authorize';
@@ -179,18 +181,13 @@ sub access_token {
     # make sure the signature matches the rest of what the consumer gave us
     abortmsg(401, "Invalid signature (type: $oauth_params{signature_method}).") unless $request->verify;
 
-    my $token = Jifty::Plugin::OAuth::Model::AccessToken->new(current_user => Jifty::CurrentUser->superuser);
-
-    ($ok, $msg) = eval {
-        $token->create(consumer => $consumer,
-                       auth_as  => $request_token->authorized_by);
-    };
+    my $token = Jifty::Plugin::OAuth::Model::AccessToken->create_from_request_token($request_token);
 
     abortmsg(401, "Unable to create an Access Token: " . $@ || $msg)
         if $@ || !defined($token) || !$ok;
 
     $consumer->made_request(@oauth_params{qw/timestamp nonce/});
-    $request_token->set_used('t');
+    $request_token->set_used(1);
 
     set oauth_response => {
         oauth_token        => $token->token,
@@ -216,7 +213,7 @@ sub try_oauth
     my @params = qw/consumer_key signature_method signature
                     timestamp nonce token version/;
     set no_abort => 1;
-    my %oauth_params  = get_parameters(@params);
+    my %oauth_params = get_parameters(@params);
     for (@params) {
         abortmsg(undef, "Undefined required parameter: $_"), return if !defined($oauth_params{$_});
     }
@@ -258,8 +255,27 @@ sub try_oauth
     abortmsg(undef, "Invalid signature (type: $oauth_params{signature_method})."), return unless $request->verify;
 
     $consumer->made_request(@oauth_params{qw/timestamp nonce/});
-    Jifty->handler->stash->{oauth} = 1;
-    Jifty->web->temporary_current_user(Jifty->app_class('CurrentUser')->new(id => $access_token->auth_as));
+
+    my $new_current_user = Jifty->app_class('CurrentUser')->new(
+        id => $access_token->auth_as,
+    );
+    $new_current_user->is_oauthed(1);
+    $new_current_user->oauth_token($access_token);
+
+    Jifty->web->temporary_current_user($new_current_user);
+
+    Jifty->log->info("Consumer " . $consumer->name . " successfully OAuthed as user ". $access_token->auth_as);
+}
+
+=head2 invalid_method
+
+This aborts the request with an "invalid HTTP method" response code.
+
+=cut
+
+sub invalid_method {
+    Jifty->web->response->add_header(Allow => 'POST');
+    abort(405);
 }
 
 =head2 get_consumer CONSUMER KEY
@@ -295,7 +311,15 @@ an important meaning.
 
 {
     my %valid_signature_methods = map { $_ => 1 }
-                                  qw/PLAINTEXT HMAC-SHA1 RSA-SHA1/;
+                                  qw/PLAINTEXT HMAC-SHA1 /;
+
+    if (eval { require Crypt::OpenSSL::RSA; 1 }) {
+        $valid_signature_methods{"RSA-SHA1"} = 1;
+    }
+    else {
+        Jifty->log->debug("RSA-SHA1 support for OAuth unavailable: Crypt::OpenSSL::RSA is not installed.");
+    }
+
     my %key_field = ('RSA-SHA1' => 'rsa_key');
 
     sub get_signature_key {
