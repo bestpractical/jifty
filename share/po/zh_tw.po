@@ -804,7 +804,7 @@ msgstr "您忘記密碼了.我們會寄送一份提示到下面的電郵地址:"
 
 #: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:146 lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:152
 msgid "You may have mistyped your email or password. Give it another shot."
-msgstr "你可以打錯了電郵或密碼.請再試一次"
+msgstr "你可能打錯了電郵或密碼.請再試一次"
 
 #: lib/Jifty/Plugin/Authentication/Facebook/Action/LinkFacebookUser.pm:40
 msgid "You must be logged in to link your user to your Facebook account."
