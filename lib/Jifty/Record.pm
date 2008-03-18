@@ -143,6 +143,13 @@ sub load_or_create {
 
     my %args = (@_);
 
+    foreach my $key ( keys %args ) {
+        $args{$key} = $self->run_canonicalization_for_column(
+            column => $key,
+            value  => $args{$key}
+        );
+    }
+
     my ( $id, $msg ) = $self->load_by_cols(%args);
     unless ( $self->id ) {
         return $self->create(%args);
