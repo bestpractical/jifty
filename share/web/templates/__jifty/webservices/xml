@@ -14,9 +14,11 @@ else {
 
 FRAGMENT:
 for my $f ( Jifty->web->request->fragments ) {
-    # Set up the region stack
+    # Set up the form if need be
+    Jifty->web->form->_init;
     Jifty->web->form->is_open(1) if $f->in_form;
 
+    # Set up the region stack
     local Jifty->web->{'region_stack'} = [];
     my @regions;
     do {
@@ -60,8 +62,8 @@ for my $f ( Jifty->web->request->fragments ) {
     $writer->cdataElement( "content", Jifty->web->current_region->as_string );
     $writer->endTag();
 
+    # Clean up region stack and form
     Jifty->web->current_region->exit while Jifty->web->current_region;
-
     Jifty->web->form->is_open(0);
 }
 
