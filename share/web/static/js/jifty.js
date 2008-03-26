@@ -1219,7 +1219,7 @@ Jifty.update = function () {
             // Ask for the wrapper if we are making a new region
             fragment_request['wrapper'] = 1;
 
-        if (fragments.get(name).in_form)
+        if (fragments[name].in_form)
             fragment_request['in_form'] = 1;
 
         // Push it onto the request stack
