@@ -4,7 +4,7 @@ if ( typeof Jifty == "undefined" ) Jifty = { };
 
 Jifty.Calendar = {
     registerDateWidget: function(id) {
-        var input = $(id);
+        var input = document.getElementById(id);
         
         if ( !input ) return false;
 
@@ -22,7 +22,7 @@ Jifty.Calendar = {
     toggleCalendar: function(ev) {
         var calId  = "cal_" + ev.target.id;
         var wrapId = calId + "_wrap";
-        var wrap   = $(wrapId);
+        var wrap   = document.getElementById(wrapId);
         var input  = ev.target;
 
         if ( Jifty.Calendar.openCalendar == wrapId ) {
@@ -96,7 +96,7 @@ Jifty.Calendar = {
     openCalendar: "",
 
     hideOpenCalendar: function() {
-        if ( Jifty.Calendar.openCalendar && $( Jifty.Calendar.openCalendar ) ) {
+        if ( Jifty.Calendar.openCalendar && document.getElementById( Jifty.Calendar.openCalendar ) ) {
 
             /* Get the input's ID */
             var inputId = Jifty.Calendar.openCalendar;
@@ -105,7 +105,7 @@ Jifty.Calendar = {
 
             Element.remove(Jifty.Calendar.openCalendar);
 
-            var input = $( inputId );
+            var input = document.getElementById( inputId );
 
             /* Reenable canonicalization, and do it */
             Jifty.Form.Element.enableValidation(input);
