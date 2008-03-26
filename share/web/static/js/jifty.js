@@ -314,7 +314,7 @@ Action.prototype = {
                                 var field_name = field.getAttribute("name");
                                 for (var form_number = 0 ; form_number < document.forms.length; form_number++) {
                                     var form_field = document.forms[form_number].elements[field_name];
-                                    if (form_field  == null || !form_field.is('.ajaxcanonicalization'))
+                                    if (form_field  == null || !jQuery(form_field).is('.ajaxcanonicalization'))
                                         continue;
                                     form_field.value = field.firstChild.data;
                                 }
