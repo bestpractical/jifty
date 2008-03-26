@@ -933,7 +933,7 @@ function prepare_element_for_update(f) {
             }
 
             // Make the region (for now)
-            new Region(name, f['args'], f['path'], f['parent'], f['parent'] ? f['parent'].in_form : null);
+            new Region(name, f['args'], f['path'], f['parent'], f['parent'] ? fragments.get(f['parent']).in_form : null);
         } else if ((f['path'] != null) && f['toggle'] && (f['path'] == fragments[name].path)) {
             // If they set the 'toggle' flag, and clicking wouldn't change the path
             jQuery(element).empty();
