@@ -1507,10 +1507,11 @@ jQuery.extend(Jifty.Placeholder.prototype, {
   initialize: function(element, text) {
      this.element = Jifty.$(element);
      this.text = text;
+     this.element.placeholderText = this.text;
 
      var self = this;
 
-     jQuery(element)
+     jQuery( this.element )
      .bind("focus", function(event) {
          self.onFocus();
      })
