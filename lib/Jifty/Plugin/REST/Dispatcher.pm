@@ -737,19 +737,15 @@ sub _dispatch_to_action {
             if defined $rec->id;
     }
     
-    # CGI.pm doesn't handle form encoded data in PUT requests (in fact,
-    # it doesn't really handle PUT requests properly at all), so we have
-    # to read the request body ourselves and have CGI.pm parse it
+    # CGI.pm doesn't handle form encoded data in PUT requests, so we have
+    # to read the request body from PUTDATA and have CGI.pm parse it
     if (    $ENV{'REQUEST_METHOD'} eq 'PUT'
         and (   $ENV{'CONTENT_TYPE'} =~ m|^application/x-www-form-urlencoded$|
               or $ENV{'CONTENT_TYPE'} =~ m|^multipart/form-data$| ) )
     {
         my $cgi    = Jifty->handler->cgi;
         my $length = defined $ENV{'CONTENT_LENGTH'} ? $ENV{'CONTENT_LENGTH'} : 0;
-        my $data;
-
-        $cgi->read_from_client( \$data, $length, 0 )
-            if $length > 0;
+        my $data = $cgi->param('PUTDATA');
 
         if ( defined $data ) {
             my @params = $cgi->all_parameters;
