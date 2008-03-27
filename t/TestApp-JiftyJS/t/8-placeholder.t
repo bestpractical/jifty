@@ -13,7 +13,7 @@ BEGIN {
         plan(skip_all => "Temporarily, until the 'Operation Abort' bug is solved.");
     }
     else {
-        plan(tests => 4);
+        plan(tests => 6);
     }
 }
 
@@ -29,7 +29,7 @@ $sel->set_speed(1000);
     # Test placeholder
     $sel->open_ok("/act/play3");
 
-    my $input = 'css=input.placeholder';
+    my $input = 'css=input[name="J:A:F-text-play2"]';
 
     $sel->is_element_present($input);
     my $text = $sel->get_value($input);
