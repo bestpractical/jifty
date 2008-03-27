@@ -834,10 +834,6 @@ Behaviour.register({
     },
     '.form_field .error, .form_field .warning, .form_field .canonicalization_note': function(e) {
         if ( e.innerHTML == "" ) Element.hide(e);
-    },
-    '.jifty-region-lazy': function(e) {
-        var region = e.getAttribute("id").replace(/^region-/,"");
-        Jifty.update( { 'fragments': [{'region': region, 'mode': 'Replace'}]}, e);
     }
 });
 
@@ -1081,10 +1077,10 @@ var apply_fragment_updates = function(fragment, f) {
             }
             // We need to give the browser some "settle" time before
             // we eval scripts in the body
-        YAHOO.util.Event.onAvailable(element.id, function() {
-            (function() { this.evalScripts() }).bind(textContent)();
-        });
-        Behaviour.apply(element);
+            YAHOO.util.Event.onAvailable(element.id, function() {
+                (function() { this.evalScripts() }).bind(textContent)();
+            });
+            Behaviour.apply(element);
         }
     });
     dom_fragment.setArgs(new_dom_args);
