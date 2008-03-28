@@ -102,7 +102,7 @@ template 'chart/xmlswf' => sub {
         axis_ticks       => { major_color => '808080' },
         legend_label     => { size => '11' },
         chart_value      => { position => 'cursor', size => '11', color => '666666' },
-        %{ $args->{options} },
+        %{ $args->{options} || {} },
         chart_data       => {
             row => [
                 {
