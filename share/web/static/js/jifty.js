@@ -597,6 +597,9 @@ Object.extend(Jifty.Form.Element, {
     getForm: function (element) {
         element = $(element);
 
+        if (!element)
+            return null;
+
         if (element.virtualform)
             return element.virtualform;
 
@@ -1072,6 +1075,7 @@ var apply_fragment_updates = function(fragment, f) {
             if (f['mode'] && (f['mode'] != 'Replace')) {
                 var insertion = eval('Insertion.'+f['mode']);
                 new insertion(element, textContent.stripScripts());
+                element = document.getElementById('region-' + f['region']);
             } else {
                 Element.update(element, textContent.stripScripts());
             }
