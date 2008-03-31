@@ -63,6 +63,9 @@ L<Net::LDAP>
 
 package Jifty::Plugin::AuthzLDAP;
 use base qw/Jifty::Plugin/;
+
+our $VERSION = '0.02';
+
 use Net::LDAP;
 use Cache::MemoryCache;
 
@@ -74,7 +77,7 @@ use Cache::MemoryCache;
         my %args = @_;
 
         my $appname = Jifty->config->framework('ApplicationName');
-        $LDAPFilterClass = "${appname}::Model::LDAPFilter";
+        $LDAPFilterClass = "Jifty::Plugin::AuthzLDAP::Model::LDAPFilter";
 
         $params{'Hostname'} = $args{LDAPhost};
         $params{'base'} = $args{LDAPbase};
@@ -158,7 +161,7 @@ sub ldapvalidate {
     # (?) allow use of writing filter in filtername
     # TODO: filtername must be cleanned
     # my $filter = ($record->filter)?$record->filter:$filtername;
-    my $filter = $record->filter;
+    my $filter = $record->ldapfilter;
 
     $user = $self->UID().'='.$user.','.$self->BASE();
     
