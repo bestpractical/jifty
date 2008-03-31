@@ -9,7 +9,7 @@ our @EXPORT = (
     qw(hyperlink tangent redirect new_action
     form_submit form_return form_next_page page content
     wrapper request get set render_param current_user
-    render_action render_region),
+    render_action render_region js_handlers),
     @Template::Declare::Tags::EXPORT,
     @Template::Declare::Tags::TagSubs,  # Backward compatibility only
     @Template::Declare::Tags::TAG_SUB_LIST,
@@ -367,7 +367,26 @@ sub wrapper {
     }
 }
 
+=head2 js_handlers
 
+Allows you to put javascript handlers, a la
+L<Jifty::Web::Form::Element>, onto arbitrary HTML elements:
+
+  div {
+      js_handlers {
+          onclick => { path => "/some/region/path" }
+      }
+  }
+
+=cut
+
+sub js_handlers(&;@) {
+    my $code = shift;
+    my $element = Jifty::Web::Form::Element->new({$code->()});
+    my %js = $element->javascript_attrs;
+    Template::Declare::Tags::append_attr($_ => $js{$_}) for keys %js;
+    return @_;
+}
 
 
 1;

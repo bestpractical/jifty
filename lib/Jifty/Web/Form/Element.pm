@@ -357,13 +357,28 @@ sub _handler_setup {
 
 =head2 javascript
 
-Returns the javascript necessary to make the events happen.
+Returns the javascript necessary to make the events happen, as a
+string of HTML attributes.
 
 =cut
+
 sub javascript {
     my $self = shift;
+    my %response = $self->javascript_attrs;
+    return join "", map {qq| $_="| . Jifty->web->escape($response{$_}).qq|"|} sort keys %response;
+}
 
-    my $response = "";
+=head2 javascript_attrs
+
+Returns the javascript necessary to make the events happen, as a
+hash of attribute-name and value.
+
+=cut
+
+sub javascript_attrs {
+    my $self = shift;
+
+    my %response;
 
   HANDLER:
     for my $trigger ( $self->handlers ) {
@@ -471,7 +486,7 @@ sub javascript {
         my $string = join ";", (grep {not ref $_} (ref $value eq "ARRAY" ? @{$value} : ($value)));
         if ( @fragments or ( !$actions || %$actions ) ) {
 
-            my $update = Jifty->web->escape(
+            my $update =
                 "Jifty.update( "
                     . Jifty::JSON::objToJson(
                     {   actions      => $actions,
@@ -480,8 +495,7 @@ sub javascript {
                         continuation => $self->continuation
                     },
                     { singlequote => 1 }
-                    ) . ", this );"
-            );
+                    ) . ", this );";
             $string
                 .= 'if(event.ctrlKey||event.metaKey||event.altKey||event.shiftKey) return true; '
                 if ( $trigger eq 'onclick' );
@@ -490,14 +504,14 @@ sub javascript {
                 : "$update; return true;";
         }
         if ($confirm) {
-            $string = Jifty->web->escape("if(!confirm(" . Jifty::JSON::objToJson($confirm, {singlequote => 1}) . ")) { Event.stop(event); return false }") . $string;
+            $string = "if(!confirm(" . Jifty::JSON::objToJson($confirm, {singlequote => 1}) . ")) { Event.stop(event); return false }" . $string;
         }
         if ($beforeclick) {
-           $string = Jifty->web->escape($beforeclick) . $string;
+           $string = $beforeclick . $string;
         }
-        $response .= qq| $trigger="$string"|;
+        $response{$trigger} = $string;
     }
-    return $response;
+    return %response;
 }
 
 =head2 javascript_preempt
