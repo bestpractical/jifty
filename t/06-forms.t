@@ -104,13 +104,13 @@ SKIP: {
     is $out, qq{<span class="preamble text blah argument-agentz">}.
         qq{preamble's here!</span>\n};
 
-    # Test empty labels:
+    # Test empty labels are not output
     $field->name('yichun');
     $field->label('');
     $field->class('');
     $out = '';
     $field->render_label;
-    is $out, qq{<label class="label text  argument-yichun" for="search_keys-32"></label>\n};
+    is $out, qq{};
 
     # Test default labels:
     $field->name('yichun');
