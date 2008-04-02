@@ -1036,7 +1036,6 @@ var apply_fragment_updates = function(fragment, f) {
                 }
                 Behaviour.apply(element);
             }
-            new_dom_args.set(fragment_bit.getAttribute("name"), textContent);
         }
     );
     dom_fragment.setArgs(new_dom_args);
