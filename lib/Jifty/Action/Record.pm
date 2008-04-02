@@ -357,28 +357,30 @@ sub _argument_validator {
 
 
 sub _argument_canonicalizer {
-    my $self = shift;
+    my $self   = shift;
     my $column = shift;
-    my $field = $column->name;
+    my $field  = $column->name;
     my $method;
     my $do_ajax = 0;
 
-
-        # Add a canonicalizer for the column if the record provides one
-        if ( $self->record->has_canonicalizer_for_column($field) ) {
-            $do_ajax = 1;
-            $method ||= sub {
-                my ( $self, $value ) = @_;
-                return $self->record->run_canonicalization_for_column(column => $field, value => $value);
-            };
-        } 
-        
-        # Otherwise, if it's a date, we have a built-in canonicalizer for that
-        elsif ( lc($column->render_as) eq 'date') {
-            $do_ajax = 1;
-        }
-    return ($method, $do_ajax);
+    # Add a canonicalizer for the column if the record provides one
+    if ( $self->record->has_canonicalizer_for_column($field) ) {
+        $do_ajax = 1 unless lc($column->render_as) eq 'checkbox';
+        $method ||= sub {
+            my ( $self, $value ) = @_;
+            return $self->record->run_canonicalization_for_column(
+                column => $field,
+                value  => $value
+            );
+        };
     }
+
+    # Otherwise, if it's a date, we have a built-in canonicalizer for that
+    elsif ( lc( $column->render_as ) eq 'date' ) {
+        $do_ajax = 1;
+    }
+    return ( $method, $do_ajax );
+}
 
 sub _argument_autocompleter {
     my $self = shift;

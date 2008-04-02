@@ -478,6 +478,7 @@ an empty string.
 
 sub render_label {
     my $self = shift;
+    return '' unless defined $self->label and length $self->label;
     if ( $self->render_mode eq 'update' ) {
         Jifty->web->out(
 qq!<label class="label @{[$self->classes]}" for="@{[$self->element_id ]}">@{[_($self->label) ]}</label>\n!

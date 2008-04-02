@@ -10,7 +10,7 @@ column
   is distinct;
 
 column
-  filter => type is 'text',
+  ldapfilter => type is 'text',
   label is 'Filter',
   is mandatory;
 

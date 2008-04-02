@@ -624,7 +624,7 @@ jQuery.extend(Jifty.Form.Element, {
     getForm: function (element) {
         element = Jifty.$(element);
 
-        if (element == null)
+        if (!element)
             return null;
 
         if (element.virtualform)
@@ -777,10 +777,6 @@ Behaviour.register({
     },
     '.form_field .error, .form_field .warning, .form_field .canonicalization_note': function(e) {
         if ( e.innerHTML == "" ) jQuery(e).hide();
-    },
-    '.jifty-region-lazy': function(e) {
-        var region = e.getAttribute("id").replace(/^region-/,"");
-        Jifty.update( { 'fragments': [{'region': region, 'mode': 'Replace'}]}, e);
     }
 });
 
@@ -1040,6 +1036,30 @@ var apply_fragment_updates = function(fragment, f) {
                 }
                 Behaviour.apply(element);
             }
+            new_dom_args.set(fragment_bit.getAttribute("name"), textContent);
+        },
+      content: function(fragment_bit) {
+            var textContent = '';
+            if (fragment_bit.textContent) {
+                textContent = fragment_bit.textContent;
+            } else if (fragment_bit.firstChild) {
+                textContent = fragment_bit.firstChild.nodeValue;
+            }
+                    
+            // Once we find it, do the insertion
+            if (f['mode'] && (f['mode'] != 'Replace')) {
+                var insertion = eval('Insertion.'+f['mode']);
+                new insertion(element, textContent.stripScripts());
+                element = document.getElementById('region-' + f['region']);
+            } else {
+                Element.update(element, textContent.stripScripts());
+            }
+            // We need to give the browser some "settle" time before
+            // we eval scripts in the body
+            YAHOO.util.Event.onAvailable(element.id, function() {
+                (function() { this.evalScripts() }).bind(textContent)();
+            });
+            Behaviour.apply(element);
         }
     );
     dom_fragment.setArgs(new_dom_args);

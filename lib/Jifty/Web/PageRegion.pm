@@ -290,9 +290,12 @@ sub as_string {
             . qq|);\n|
             . qq|</script>|;
         if ($self->lazy) {
-            return $result .  qq|<div id="region-| . $self->qualified_name . qq|" class="jifty-region-lazy"></div>|;
+            $result .= qq|<script type="text/javascript">|
+              . qq|Jifty.update( { 'fragments': [{'region': '|.$self->qualified_name.qq|', 'mode': 'Replace'}], 'actions': {}}, document.getElementById('region-|.$self->qualified_name.qq|'))|
+              . qq|</script>|;
         }
         $result .= qq|<div id="region-| . $self->qualified_name . qq|" class="jifty-region">|;
+        return $result . qq|</div>| if $self->lazy;
     }
 
     $self->render_as_subrequest(\$result, \%arguments);

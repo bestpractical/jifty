@@ -27,7 +27,7 @@ template 'view' => page {
 
     render_region
         name      => 'comments',
-        path      => '/comment/list',
+        path      => '/__comment/list',
         arguments => {
             collapsed    => 1,
             parent_class => Jifty->app_class('Model', 'BlogPost'),
