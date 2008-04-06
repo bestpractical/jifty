@@ -118,10 +118,11 @@ sub share_root {
 
 =head2 app_root
 
-Returns the application's root path.  This is done by searching upward
-from the current directory, looking for a directory which contains a
-C<bin/jifty>.  Failing that, it searches upward from wherever the
-executable was found.
+Returns the application's root path.  This is done by returning
+$ENV{'JIFTY_APP_ROOT'} if it exists.  If not, Jifty tries searching
+upward from the current directory, looking for a directory which
+contains a C<bin/jifty>.  Failing that, it searches upward from
+wherever the executable was found.
 
 It C<die>s if it can only find C</usr> or C</usr/local> which fit
 these criteria.
@@ -131,7 +132,7 @@ these criteria.
 sub app_root {
     my $self = shift;
 
-
+    return $ENV{'JIFTY_APP_ROOT'} if ($ENV{'JIFTY_APP_ROOT'});
     return $APP_ROOT if ($APP_ROOT);
     
     my @roots;
