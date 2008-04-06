@@ -102,7 +102,7 @@ else {
 features(
     'Administrative Interface (web)' => [ 
         -default => 1,
-       requires( 'Pod::Simple') # Pod::Simple::Text Pod::Simple::HTML
+       recommends( 'Pod::Simple') # Pod::Simple::Text Pod::Simple::HTML
     ],
     'Development of a jifty application' => [
         -default => 1,
@@ -194,10 +194,10 @@ features(
     ],
     'Comment Plugin' => [
         -default => 0,
-        requires('HTML::Scrubber'),
-        requires('MIME::Base64::URLSafe'),
+        recommends('HTML::Scrubber'),
+        recommends('MIME::Base64::URLSafe'),
         recommends('Net::Akismet'),
-        requires('Regexp::Common'),
+        recommends('Regexp::Common::Email::Address'),
     ],
 );
 
