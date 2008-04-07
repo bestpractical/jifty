@@ -10,7 +10,7 @@ function halo_toggle (id) {
         halo_top   = Jifty.$('halo-'+halo_shown+'-menu').style.top;
         halo_left  = Jifty.$('halo-'+halo_shown+'-menu').style.left;
         halo_width = Jifty.$('halo-'+halo_shown+'-menu').style.width;
-        jQuery('halo-'+halo_shown+'-menu').hide();
+        jQuery('#halo-'+halo_shown+'-menu').hide();
     }
 
     jQuery("#halo-"+id+"-menu").css({
@@ -19,17 +19,17 @@ function halo_toggle (id) {
         width: halo_width
     }).toggle();
 
-    Drag.init( $('halo-'+id+'-title'), $('halo-'+id+'-menu') );
-    init_resize($('halo-'+id+'-resize'), $('halo-'+id+'-menu') );
+    Drag.init( Jifty.$('halo-'+id+'-title'), Jifty.$('halo-'+id+'-menu') );
+    init_resize(Jifty.$('halo-'+id+'-resize'), Jifty.$('halo-'+id+'-menu') );
 
-    var e = $('halo-'+id);
+    var e = jQuery('#halo-'+id).get(0);
     if (jQuery('#halo-'+id+'-menu').is(":visible")) {
         halo_shown = id;
         jQuery(e).css({ background: '#ffff80' });
     } else {
-        halo_top   = $('halo-'+halo_shown+'-menu').style.top;
-        halo_left  = $('halo-'+halo_shown+'-menu').style.left;
-        halo_width = $('halo-'+halo_shown+'-menu').style.width;
+        halo_top   = Jifty.$('halo-'+halo_shown+'-menu').style.top;
+        halo_left  = Jifty.$('halo-'+halo_shown+'-menu').style.left;
+        halo_width = Jifty.$('halo-'+halo_shown+'-menu').style.width;
         halo_shown = null;
         jQuery(e).css({ background: 'inherit' });
     }
@@ -77,9 +77,7 @@ function draw_halos() {
         halo_padding        = '3px';
     }
 
-    jQuery("#render_info-draw_halos").html(
-        halos_drawn ? "Hide halos" : "Draw halos"
-    );
+    jQuery("#render_info-draw_halos").text(halos_drawn ? "Hide halos" : "Draw halos");
 
     jQuery(".halo-header").css({
         display: halo_header_display
@@ -102,11 +100,11 @@ function halo_render(id, name) {
 
     jQuery('#halo-button-'+name+'-'+id).css("font-weight", "bold");
 
-    var e = jQuery('halo-rendered-'+id).get(0);
+    var e = jQuery('#halo-rendered-'+id).get(0);
 
     if (name == 'source') {
         e.halo_rendered = e.innerHTML;
-        e.innerHTML = '<div class="halo-source">' + e.innerHTML.escapeHTML() + '</div>';
+        jQuery(e).html('<div class="halo-source"></div>').find("div").text(e.halo_rendered);
     }
     else if (name == 'render') {
         /* ignore */
@@ -120,7 +118,7 @@ function halo_render(id, name) {
 
 function halo_reset(id) {
     /* restore all buttons to nonbold */
-    for (var child = $('halo-rendermode-'+id).firstChild;
+    for (var child = jQuery('#halo-rendermode-'+id).firstChild;
          child != null;
          child = child.nextSibling) {
             if (child.style) {
@@ -131,7 +129,7 @@ function halo_reset(id) {
     /* hide all the info divs */
     jQuery('#halo-info-'+id).hide();
 
-    for (var child = $('halo-info-'+id).firstChild;
+    for (var child = jQuery('#halo-info-'+id).firstChild;
          child != null;
          child = child.nextSibling) {
             if (child.style) {
