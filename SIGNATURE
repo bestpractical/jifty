@@ -1303,7 +1303,7 @@ SHA1 bfe6d22d8ede80d8424379a165ce5d05d29f0fe2 t/TestApp-Plugin-Comments/etc/conf
 SHA1 9a707c56bbc706bbaf08d86cb1843734938a7f8b t/TestApp-Plugin-Comments/lib/TestApp/Plugin/Comments/Dispatcher.pm
 SHA1 8a02c5a327e089929211b0162e26cfaeefb881a6 t/TestApp-Plugin-Comments/lib/TestApp/Plugin/Comments/Model/BlogPost.pm
 SHA1 c9b61f396f4ca7be1b2124bde2966749aef70517 t/TestApp-Plugin-Comments/lib/TestApp/Plugin/Comments/View.pm
-SHA1 ffb47c37eea4b2a55fa32f009b6410afdf799abe t/TestApp-Plugin-Comments/t/00-model-BlogPost.t
+SHA1 da42a866e158f3b1858aee3dc2c0c1406241e46e t/TestApp-Plugin-Comments/t/00-model-BlogPost.t
 SHA1 9b5d9862b4385107e235ea1619401f562a927f88 t/TestApp-Plugin-CompressedCSSandJS/Makefile.PL
 SHA1 c1ff9ff7f2a88bc4306b3866b6b80fb9aa8e8423 t/TestApp-Plugin-CompressedCSSandJS/bin/jifty
 SHA1 b51eb68ba760a5f48db573d44eb7588a57f02a57 t/TestApp-Plugin-CompressedCSSandJS/etc/config.yml
@@ -1433,7 +1433,7 @@ SHA1 356c4043f53392ba95145a407a19ba9c1b7b81a5 utils/js_size.pl
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.7 (Darwin)
 
-iD8DBQFH+9pAsxfQtHhyRPoRAmKvAKCIAbyQCnZJh1rVdAqNgNTccvFtOgCfTDy0
-mR4fiLSOKCQP51hj1ihS/V8=
-=0ZHU
+iD4DBQFH+91UsxfQtHhyRPoRAj7qAJi3SAQZOwxrSH5q3rFeI0TGWX7cAJ9juSRz
+MtzZ3cTkSq8jFI7qKWyieA==
+=Tgd6
 -----END PGP SIGNATURE-----
