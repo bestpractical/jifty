@@ -157,3 +157,10 @@ Architecture: all
 Depends: ${perl:Depends}, perl (>> 5.8.3), jifty, libcrypt-openssl-bignum-perl, libdigest-hmac-perl,
  libnet-oauth-perl
 Description: Jifty plugin for OAuth authentication
+
+Package: libjifty-plugin-comment-perl
+Section: perl
+Architecture: all
+Depends: ${perl:Depends}, perl (>> 5.8.3), jifty, libhtml-scrubber-perl, libmime-base64-urlsafe-perl, libregexp-common-email-address-perl, libregexp-common-perl
+Recommends: libnet-akismet-perl
+Description: Jifty plugin to add comment to any record
