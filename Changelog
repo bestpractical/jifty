@@ -647,6 +647,8 @@ PLUGIN
 
  * Add CurrentUser->oauth_token - sartak
 
+ * OAuth is now its own dist, Jifty-Plugin-OAuth - sartak
+
  * OAuth should set temporary_current_user, not current_user - sartak
 
  * OAuth: Better allow/deny notifications - sartak

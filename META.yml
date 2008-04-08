@@ -26,7 +26,6 @@ recommends:
   Cache::FileCache: 0
   Chart::Base: 0
   Class::Accessor::Named: 0
-  Crypt::OpenSSL::RSA: 0
   DBD::SQLite: 0
   Data::Dump::Streamer: 0
   Devel::Cover: 0
@@ -35,7 +34,6 @@ recommends:
   Devel::Gladiator: 0
   Devel::REPL: 0
   Devel::Size: 0
-  Digest::HMAC_SHA1: 0
   GD: 0
   GD::Graph: 0
   HTML::Scrubber: 0
@@ -47,7 +45,6 @@ recommends:
   Module::Refresh: 0.09
   Net::Akismet: 0
   Net::LDAP: 0
-  Net::OAuth::Request: 0.05
   Net::OpenID::Consumer: 0
   Net::Server::Fork: 0
   Net::Server::PreFork: 0

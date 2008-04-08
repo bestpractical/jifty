@@ -15,11 +15,11 @@ not run its Makefile.PL or Build.PL.
 Hash: SHA1
 
 SHA1 665c936d3e69c5c31bcbd44ae3fa4e566dd8fd98 AUTHORS
-SHA1 65831624e33eeea032706a47f3f2cfa70633380e Changelog
-SHA1 e490428ce84d463af9a65340867433b3352060e4 MANIFEST
+SHA1 2247427defd6c082aac058a4ca9dbc13ff6aaa97 Changelog
+SHA1 7cba078ffe8b924693a6866651e48890babcf8e5 MANIFEST
 SHA1 d4adbf5948041cd460da5cb7ad21394a790e2022 MANIFEST.SKIP
-SHA1 05cd7ec8650902a70f0cacdf8a20b8bf396cb793 META.yml
-SHA1 0b3767e8698272ba79caa5212c613924b3e65e58 Makefile.PL
+SHA1 ff32874165abd7ac38e683f327e27b2381841e48 META.yml
+SHA1 a42d22389c5c5cbfe569b9a18077a1ca16f81da0 Makefile.PL
 SHA1 e395a2eabaf8faf8266dedc664c1eb52c6c589cf README
 SHA1 aaf8f7a1025fc97077072672f325e2a5f3c03a41 bin/build_par
 SHA1 4619129b3230851a6fda68c21f5c407d1e31db30 bin/jifty
@@ -291,14 +291,6 @@ SHA1 52dd14dfb3f2bbd971c2a7df08258558cd692957 lib/Jifty/Plugin/Monitoring.pm
 SHA1 c3de6612ec2bb510a7036520f639bda7465a0ba2 lib/Jifty/Plugin/Monitoring/Command/Cron.pm
 SHA1 960ceb8f60269e1901422a07c00ee9a9900a60eb lib/Jifty/Plugin/Monitoring/Model/LastRun.pm
 SHA1 09560ffe500c36fa0eecd33f86e5fcaf8f429ccf lib/Jifty/Plugin/Monitoring/Model/MonitoredDataPoint.pm
-SHA1 dffc583bf08abd918fdf83654c06271bd01a1ad2 lib/Jifty/Plugin/OAuth.pm
-SHA1 8e8667b1d470c10243ed46dddb8e9529ec62266a lib/Jifty/Plugin/OAuth/Action/AuthorizeRequestToken.pm
-SHA1 aa961380641c4d2d422876eb12498918db1e3ad4 lib/Jifty/Plugin/OAuth/Dispatcher.pm
-SHA1 0ebe0c4f268c79ca8e03b34741c4552206e46d7c lib/Jifty/Plugin/OAuth/Model/AccessToken.pm
-SHA1 286caebeef718fc73a53416a0f8d363015a21a71 lib/Jifty/Plugin/OAuth/Model/Consumer.pm
-SHA1 bf49e8f4cb3b4bbc6a4ae035b74ae97ddfc7fa36 lib/Jifty/Plugin/OAuth/Model/RequestToken.pm
-SHA1 0ecb471c00653630443029761dce4816f8b308d3 lib/Jifty/Plugin/OAuth/Token.pm
-SHA1 8210120a1b6a4e5fad42e0e9691858118eb51f82 lib/Jifty/Plugin/OAuth/View.pm
 SHA1 af733b25eee3cc4e0e6b087a76bfd965534a2343 lib/Jifty/Plugin/OnlineDocs.pm
 SHA1 fcc3ccbee7c9646745fc79475d53f67e81d7c0db lib/Jifty/Plugin/OnlineDocs/Dispatcher.pm
 SHA1 c39eb405a1d25e84b582868e12279fcbdcede688 lib/Jifty/Plugin/OpenID.pm
@@ -1311,7 +1303,7 @@ SHA1 bfe6d22d8ede80d8424379a165ce5d05d29f0fe2 t/TestApp-Plugin-Comments/etc/conf
 SHA1 9a707c56bbc706bbaf08d86cb1843734938a7f8b t/TestApp-Plugin-Comments/lib/TestApp/Plugin/Comments/Dispatcher.pm
 SHA1 8a02c5a327e089929211b0162e26cfaeefb881a6 t/TestApp-Plugin-Comments/lib/TestApp/Plugin/Comments/Model/BlogPost.pm
 SHA1 c9b61f396f4ca7be1b2124bde2966749aef70517 t/TestApp-Plugin-Comments/lib/TestApp/Plugin/Comments/View.pm
-SHA1 665519a865be4227347b74594d718d8a1fccd8c0 t/TestApp-Plugin-Comments/t/00-model-BlogPost.t
+SHA1 ffb47c37eea4b2a55fa32f009b6410afdf799abe t/TestApp-Plugin-Comments/t/00-model-BlogPost.t
 SHA1 9b5d9862b4385107e235ea1619401f562a927f88 t/TestApp-Plugin-CompressedCSSandJS/Makefile.PL
 SHA1 c1ff9ff7f2a88bc4306b3866b6b80fb9aa8e8423 t/TestApp-Plugin-CompressedCSSandJS/bin/jifty
 SHA1 b51eb68ba760a5f48db573d44eb7588a57f02a57 t/TestApp-Plugin-CompressedCSSandJS/etc/config.yml
@@ -1321,31 +1313,13 @@ SHA1 f7f44f9a7337def0c97f981073e3ed970851d9ae t/TestApp-Plugin-News/bin/jifty
 SHA1 47529b82ece48a5943eac7c1ab8b2de5c94f8795 t/TestApp-Plugin-News/etc/config.yml
 SHA1 f69a79e81e98c9c6a99c74cedd9b060b6618970a t/TestApp-Plugin-News/lib/TestApp/Plugin/News/Model/News.pm
 SHA1 53c30add7fff4ebeedf1b6b2ee8474c3bc34efd6 t/TestApp-Plugin-News/lib/TestApp/Plugin/News/View.pm
-SHA1 b0dc42eb7e0b87d3f9c920a9a64400b7b271a49f t/TestApp-Plugin-OAuth/Makefile.PL
-SHA1 c1ff9ff7f2a88bc4306b3866b6b80fb9aa8e8423 t/TestApp-Plugin-OAuth/bin/jifty
-SHA1 16b96d806838e0ab88d1b640c8f09be26d65f431 t/TestApp-Plugin-OAuth/etc/config.yml
-SHA1 0a14b3d26fbd625c85cf3bd3c7abeca8f9859e32 t/TestApp-Plugin-OAuth/lib/TestApp/Plugin/OAuth/Dispatcher.pm
-SHA1 40d6556bcc188bd6248099c48b5341bacbba6007 t/TestApp-Plugin-OAuth/lib/TestApp/Plugin/OAuth/Model/Favorite.pm
-SHA1 a612b956e26b173d2dda74d15b9ba5eb8062247a t/TestApp-Plugin-OAuth/lib/TestApp/Plugin/OAuth/Model/User.pm
-SHA1 48000b62cce66e346661be302b737fa31c6c9363 t/TestApp-Plugin-OAuth/lib/TestApp/Plugin/OAuth/Test.pm
-SHA1 df3a28c0ac04c289db4e3d0a3b4f7a9b07e37a3c t/TestApp-Plugin-OAuth/lib/TestApp/Plugin/OAuth/View.pm
-SHA1 d8982483415ed7cacf03762e94fef1b099e06a6c t/TestApp-Plugin-OAuth/t/00-test-setup.t
-SHA1 2222425ef280d20a67db77a07d236ea3564b4a33 t/TestApp-Plugin-OAuth/t/01-basic.t
-SHA1 b9a11dbc8c6ebb317cf8a3079ea63f9ba9f9fa55 t/TestApp-Plugin-OAuth/t/02-request-token.t
-SHA1 d6b3d7783f7788de5cbd81bb43afc946991052ee t/TestApp-Plugin-OAuth/t/03-authorize.t
-SHA1 a92398bceccaba05f0fa54f5e050f1eb78e039a6 t/TestApp-Plugin-OAuth/t/04-access-token.t
-SHA1 dc6dc631b2f30ed84928037ba24356de1951e0f9 t/TestApp-Plugin-OAuth/t/05-protected-resource.t
-SHA1 020771bd89cbcbc9c0b0707ca78ba260e863f462 t/TestApp-Plugin-OAuth/t/06-read-only.t
-SHA1 6fc00a7f4dfbb08dd5aaedff3ecde5eeb0db12a5 t/TestApp-Plugin-OAuth/t/07-read-write.t
-SHA1 e38a2d7034e474f2efb95efdb01afdbb1c675d7d t/TestApp-Plugin-OAuth/t/id_rsa
-SHA1 73fd51a00ea7b52b0feffbc2e11d8fefc918b814 t/TestApp-Plugin-OAuth/t/id_rsa.pub
 SHA1 b29fa9fb471d0b3b1c314a8cde57ae623c1d6f52 t/TestApp-Plugin-OnClick/Makefile.PL
 SHA1 c1ff9ff7f2a88bc4306b3866b6b80fb9aa8e8423 t/TestApp-Plugin-OnClick/bin/jifty
 SHA1 750bc31fc1747ca292d3f2d6b82600eac85ee7ef t/TestApp-Plugin-OnClick/etc/config.yml
 SHA1 09c2f8647e14e49e922b955c194102070597c2d1 t/TestApp-Plugin-OnClick/share/web/templates/content.html
 SHA1 358cb997ccc4f7db96e5a3bb710a25b1affd8823 t/TestApp-Plugin-OnClick/share/web/templates/content1.html
 SHA1 dfe47fe40442840e7b738c7587a55c8324bff55d t/TestApp-Plugin-OnClick/share/web/templates/onclick.html
-SHA1 2a6feee9c6f26290b11f5293702dc38f87e86139 t/TestApp-Plugin-OnClick/t/onclick.t
+SHA1 a555ddc22d214b0fc41de1eedab10248bcf7f500 t/TestApp-Plugin-OnClick/t/onclick.t
 SHA1 26f9ac2619437d07d64d6ae253f5938e5f152bde t/TestApp-Plugin-PasswordAuth/Makefile.PL
 SHA1 f7f44f9a7337def0c97f981073e3ed970851d9ae t/TestApp-Plugin-PasswordAuth/bin/jifty
 SHA1 2ad861771e8cc20e90a5820cb4d3d0837a4fc047 t/TestApp-Plugin-PasswordAuth/etc/config.yml
@@ -1459,7 +1433,7 @@ SHA1 356c4043f53392ba95145a407a19ba9c1b7b81a5 utils/js_size.pl
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.7 (Darwin)
 
-iD8DBQFH+zpksxfQtHhyRPoRApVbAJ97fXnGTzUNszXCPmFw9Y8mzxNQmACfdL9h
-YbYek2zsdFQDW7lkD1Za79Q=
-=7ixT
+iD8DBQFH+9pAsxfQtHhyRPoRAmKvAKCIAbyQCnZJh1rVdAqNgNTccvFtOgCfTDy0
+mR4fiLSOKCQP51hj1ihS/V8=
+=0ZHU
 -----END PGP SIGNATURE-----
