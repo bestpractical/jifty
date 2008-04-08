@@ -173,12 +173,6 @@ features(
         recommends('Devel::Gladiator'),
         recommends('Proc::ProcessTable'),
     ],
-    'OAuth Plugin' => [
-        -default => 0,
-        recommends('Net::OAuth::Request' => '0.05'), # Net::OAuth::RequestTokenRequest Net::OAuth::AccessTokenRequest Net::OAuth::ProtectedResourceRequest
-        recommends('Crypt::OpenSSL::RSA'),
-        recommends('Digest::HMAC_SHA1'),
-    ],
     'Ldap Plugin' => [
         -default => 0,
         recommends('Net::LDAP')
