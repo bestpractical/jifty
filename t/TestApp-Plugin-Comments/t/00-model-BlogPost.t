@@ -13,7 +13,7 @@ use Jifty::SubTest;
 
 use Jifty::Test;
 
-eval "use HTML::Scrubber; use MIME::Base64::URLSafe; use Regexp::Common; 1";
+eval "use HTML::Scrubber; use MIME::Base64::URLSafe; use Regexp::Common::Email::Address; 1";
 if ($@) {
     plan skip_all => 'A requirement of the Comment plugin is not installed.';
 }
