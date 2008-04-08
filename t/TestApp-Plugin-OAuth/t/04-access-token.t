@@ -20,6 +20,7 @@ use TestApp::Plugin::OAuth::Test;
 use Jifty::Test::WWW::Mechanize;
 
 # setup {{{
+start_server();
 # create two consumers {{{
 my $consumer = Jifty::Plugin::OAuth::Model::Consumer->new(current_user => Jifty::CurrentUser->superuser);
 my ($ok, $msg) = $consumer->create(

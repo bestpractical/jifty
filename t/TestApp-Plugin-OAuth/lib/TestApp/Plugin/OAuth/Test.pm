@@ -11,7 +11,7 @@ use Jifty::Test::WWW::Mechanize;
 our @EXPORT = qw($timestamp $url $umech $cmech $pubkey $seckey $token_obj
                  $server $URL response_is sign get_latest_token allow_ok deny_ok
                  _authorize_request_token get_request_token get_authorized_token
-                 get_access_token has_rsa rsa_skip);
+                 get_access_token has_rsa rsa_skip start_server);
 
 our $timestamp = 0;
 our $url;
@@ -28,7 +28,9 @@ sub setup {
     my $class = shift;
     $class->SUPER::setup;
     $class->export_to_level(1);
+}
 
+sub start_server {
     $server  = Jifty::Test->make_server;
     $URL     = $server->started_ok;
     $umech   = Jifty::Test::WWW::Mechanize->new();
