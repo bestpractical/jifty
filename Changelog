@@ -19,17 +19,24 @@ BACKWARD-COMPATIBILITY-PROBLEM
 ==============================
 
  * THE FOLLOWING CHANGE BREAKS BACK COMPATABILITY:
-* 'set' in T::D templates and the dispatcher no longer alters the
-values in the request itself.  It alters values that are not stored
-if the request is saved as a continuation.  This saves us from
-contiuation bloat due to objects getting stored in the
-continuation.  This does not lose us much, because any arguments
-set via 'set' will get a chance to be set again when the
-continuation is called.
-Due to the implementation, however, 'set' cannot be used any more
-to alter or add actions, state variables, or the like.  Some might
-view this new restriction as a feature, though, given how much of a
-kludge it felt like before. - alexmv
+ * 'set' in T::D templates and the dispatcher no longer alters the
+   values in the request itself.  It alters values that are not stored
+   if the request is saved as a continuation.  This saves us from
+   contiuation bloat due to objects getting stored in the
+   continuation.  This does not lose us much, because any arguments
+   set via 'set' will get a chance to be set again when the
+   continuation is called.
+   Due to the implementation, however, 'set' cannot be used any more
+   to alter or add actions, state variables, or the like.  Some might
+   view this new restriction as a feature, though, given how much of a
+   kludge it felt like before. - alexmv
+
+ * Complain loudly about back-compat when an action is denied. Changelog the
+   Jifty::API changes. - sartak
+
+ * Update YUI from 2.2.1 to 2.4.1 *** Please check your apps for
+   incompatibilities as there have been *** many changes between these YUI
+   versions. - trs
 
 BUGFIX
 ======
@@ -60,8 +67,8 @@ BUGFIX
  * Jifty::Util->_require can muck up $1, $2 so save those before using
 it. - sterling
 
-*      Added an additional guard on actions to keep from short-circuiting
-       record actions built from plugins that are overridden. - sterling
+ * Added an additional guard on actions to keep from short-circuiting
+   record actions built from plugins that are overridden. - sterling
 
  * Jifty::Util::app_root - File::Spec::Win32's catdir() just got much more
    strict in PathTools 3.27, such that catdir('C:', 'perl') now returns
@@ -170,7 +177,7 @@ e.g. perms) - nelhage
 
  * Tiny fixes in the new Jifty::Script::Script (hanenkamp++) - sartak
 
-*     Two small fixes for Jifty::Result changes: missed two fields and for
+ * Two small fixes for Jifty::Result changes: missed two fields and for
    backcompat we need to bless the resulting hash into Jifty::Result - sartak
 
  * Use the cssQuery-jquery back-compat script, and have the CSSQuery plugin
@@ -455,7 +462,7 @@ PERFORMANCE
 PLUGIN
 ======
 
-* 'unexpected dispatch on REST' fixed - Patch from bokutin - jesse
+ * 'unexpected dispatch on REST' fixed - Patch from bokutin - jesse
 
  * A first pass attempt at a Devel::Gladiator plugin for Jifty. Doesn't seem
    to work very well - jesse
@@ -729,8 +736,8 @@ PLUGIN
  * Run delete_all_attributes _after_ deleting the original record, in case
    that fails - sartak
 
-*     SPA is not compatible with letme's across clicks/submit for obvious
-       reasons. So disable it when we got temporary_current_user. - clkao
+ * SPA is not compatible with letme's across clicks/submit for obvious
+   reasons. So disable it when we got temporary_current_user. - clkao
 
  * SQLQueries: Finish renaming from Queries - sartak
 
@@ -799,9 +806,6 @@ SECURITY
    actions. This is because you generally want to disable actions during GET,
    but that breaks GET /=/action/ So if you have actions you really mean to
    hide, then you'll need to update your application. - sartak
-
- * Complain loudly about back-compat when an action is denied. Changelog the
-   Jifty::API changes. - sartak
 
  * Distinguish between *runnable* actions and *visible* actions in Jifty::API.
    This distinction will be used in the REST interface shortly. You should
@@ -964,8 +968,8 @@ VIEW
  * onclick => { submit => { action => $a, arguments => { a => "b" }}} now
    propagates the action arguments to the non-JS click as well. - alexmv
 
-* 'mandatory' columns are not mandatory if they have a default and didn't
-  appear in the form. - alexmv
+ * 'mandatory' columns are not mandatory if they have a default and didn't
+   appear in the form. - alexmv
 
  * Allow onclick, etc, handlers on arbitrary elements - alexmv
 
@@ -1112,10 +1116,6 @@ VIEW
 
  * Turns out turning off ajax canonicalization for a single form field was
    just ignored. We need more JS tests. :( - sartak
-
- * Update YUI from 2.2.1 to 2.4.1 *** Please check your apps for
-   incompatibilities as there have been *** many changes between these YUI
-   versions. - trs
 
  * Updated the chart image behaviour JavaScript since it broke with the
    Prototype 1.6 update. - sterling
