@@ -29,9 +29,9 @@ SHA1 2690410eddf290bd0b5e6c493285f7a24d8e7106 bin/show_continuation
 SHA1 543a2677f66d3c8ca671b790509b6c1721ac6270 bin/xgettext
 SHA1 807b1f94b379fd537b780ecf43b0e6642ec00f4d contrib/jifty_completion.sh
 SHA1 1c042485ba8a21f0f124dd8ed412d43d3805430e debian/README
-SHA1 abd0bc47e8f6e42610dc1349564f9ab2a71d3857 debian/changelog
+SHA1 6d05229b3c1d8d42b336daa4e2f7e25ea88e75c9 debian/changelog
 SHA1 5d9474c0309b7ca09a182d888f73b37a8fe1362c debian/compat
-SHA1 e02ff7e7f4e17529b9519fe17157d97be0320344 debian/control
+SHA1 e7780bc36ba0580abfc194a30f6f861652400134 debian/control
 SHA1 8fc130ffa6d53c47d94eab1616887c511d54d61f debian/rules
 SHA1 b8bb315ef8fbdd2f069b6339ad0461b5d933d7da doc/ajax-upgraded-links
 SHA1 a0d03921821ca39ea461f1f9fa812fdbb5f501a0 doc/building_a_par
@@ -1459,7 +1459,7 @@ SHA1 356c4043f53392ba95145a407a19ba9c1b7b81a5 utils/js_size.pl
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.7 (Darwin)
 
-iD8DBQFH+zmwsxfQtHhyRPoRAk3mAJ9yp+4YN+ev1+p0Bnr2qf2ASAQBCgCgkUox
-agdtAn+5Kk+zePaHex2dr8U=
-=Js6h
+iD8DBQFH+zpksxfQtHhyRPoRApVbAJ97fXnGTzUNszXCPmFw9Y8mzxNQmACfdL9h
+YbYek2zsdFQDW7lkD1Za79Q=
+=7ixT
 -----END PGP SIGNATURE-----
