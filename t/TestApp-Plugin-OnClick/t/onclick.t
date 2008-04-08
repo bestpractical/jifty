@@ -22,6 +22,7 @@ like( $html, qr/yatta/, 'replace content correctly' );
 unlike( $html, qr{args:/content1\.html}, 'replaced by javascript' );
 
 $sel->click_ok("//a[\@id='original_content']");
+sleep 2; # in case the click returning slowly
 is( $sel->get_alert,
     'please use Jifty.update instead of update.',
     'bare update is deprecated'
