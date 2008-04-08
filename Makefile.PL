@@ -158,7 +158,7 @@ features(
         -default => 0,
         recommends('Devel::REPL'), # Devel::REPL::Script
     ],
-    'Chart Plugin (none of these must be installed for Charts to work)' => [
+    'Chart Plugin (none of these need to be installed for Charts to work)' => [
         -default => 0,
         recommends('Chart::Base'),
         recommends('GD'),          # for a testing hack
