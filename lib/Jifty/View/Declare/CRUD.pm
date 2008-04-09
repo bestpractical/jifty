@@ -660,7 +660,7 @@ private template paging_bottom => sub {
 };
 
 
-=head2 new_item $action
+=head2 create_item $action
 
 Renders the action $Action, handing it the array ref returned by L</display_columns>.
 

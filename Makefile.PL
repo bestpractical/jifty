@@ -102,7 +102,7 @@ else {
 features(
     'Administrative Interface (web)' => [ 
         -default => 1,
-       requires( 'Pod::Simple') # Pod::Simple::Text Pod::Simple::HTML
+       recommends( 'Pod::Simple') # Pod::Simple::Text Pod::Simple::HTML
     ],
     'Development of a jifty application' => [
         -default => 1,
@@ -158,7 +158,7 @@ features(
         -default => 0,
         recommends('Devel::REPL'), # Devel::REPL::Script
     ],
-    'Chart Plugin (none of these must be installed for Charts to work)' => [
+    'Chart Plugin (none of these need to be installed for Charts to work)' => [
         -default => 0,
         recommends('Chart::Base'),
         recommends('GD'),          # for a testing hack
@@ -172,12 +172,6 @@ features(
         recommends('Devel::Size'),
         recommends('Devel::Gladiator'),
         recommends('Proc::ProcessTable'),
-    ],
-    'OAuth Plugin' => [
-        -default => 0,
-        recommends('Net::OAuth::Request' => '0.05'), # Net::OAuth::RequestTokenRequest Net::OAuth::AccessTokenRequest Net::OAuth::ProtectedResourceRequest
-        recommends('Crypt::OpenSSL::RSA'),
-        recommends('Digest::HMAC_SHA1'),
     ],
     'Ldap Plugin' => [
         -default => 0,
@@ -194,10 +188,11 @@ features(
     ],
     'Comment Plugin' => [
         -default => 0,
-        requires('HTML::Scrubber'),
-        requires('MIME::Base64::URLSafe'),
+        recommends('HTML::Scrubber'),
+        recommends('MIME::Base64::URLSafe'),
         recommends('Net::Akismet'),
-        requires('Regexp::Common'),
+        recommends('Regexp::Common'),
+        recommends('Regexp::Common::Email::Address'),
     ],
 );
 

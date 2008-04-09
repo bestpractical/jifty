@@ -26,7 +26,6 @@ recommends:
   Cache::FileCache: 0
   Chart::Base: 0
   Class::Accessor::Named: 0
-  Crypt::OpenSSL::RSA: 0
   DBD::SQLite: 0
   Data::Dump::Streamer: 0
   Devel::Cover: 0
@@ -35,22 +34,25 @@ recommends:
   Devel::Gladiator: 0
   Devel::REPL: 0
   Devel::Size: 0
-  Digest::HMAC_SHA1: 0
   GD: 0
   GD::Graph: 0
+  HTML::Scrubber: 0
   Image::Info: 0
   LWPx::ParanoidAgent: 0
+  MIME::Base64::URLSafe: 0
   Module::CoreList: 0
   Module::Install::Admin: 0.50
   Module::Refresh: 0.09
   Net::Akismet: 0
   Net::LDAP: 0
-  Net::OAuth::Request: 0.05
   Net::OpenID::Consumer: 0
   Net::Server::Fork: 0
   Net::Server::PreFork: 0
   PAR::Dist::FromCPAN: 0
+  Pod::Simple: 0
   Proc::ProcessTable: 0
+  Regexp::Common: 0
+  Regexp::Common::Email::Address: 0
   Template::Declare: 0.28
   Test::Base: 0.44
   Test::HTML::Lint: 0
@@ -62,7 +64,7 @@ recommends:
   XML::Simple: 0
 requires: 
   App::CLI: 0.03
-  CGI: 3.19
+  CGI: 3.30
   CGI::Cookie::Splitter: 0
   CSS::Squish: 0.07
   Cache::Cache: 0
@@ -102,7 +104,6 @@ requires:
   HTML::Lint: 0
   HTML::Mason: 1.3101
   HTML::Mason::Plugin: 0
-  HTML::Scrubber: 0
   HTTP::Cookies: 0
   HTTP::Date: 0
   HTTP::Server::Simple: 0.28
@@ -117,7 +118,6 @@ requires:
   Locale::Maketext::Extract: 0.20
   Locale::Maketext::Lexicon: 0.60
   Log::Log4perl: 1.04
-  MIME::Base64::URLSafe: 0
   MIME::Types: 0
   Module::CoreList: 0
   Module::Pluggable: 3.5
@@ -127,8 +127,6 @@ requires:
   Object::Declare: 0.13
   PadWalker: 0
   Params::Validate: 0
-  Pod::Simple: 0
-  Regexp::Common: 0
   SQL::ReservedWords: 0
   Scalar::Defer: 0.12
   Shell::Command: 0
@@ -153,4 +151,4 @@ requires:
   perl: 5.8.3
   version: 0
 tests: t/*.t t/*/*.t t/*/*/*.t t/*/*/*/*.t
-version: 0.80311
+version: 0.80408

@@ -42,24 +42,13 @@ sub rc_ok {
     my %args = @_;
 
     if ( $args{selenium_rc} ||= $ENV{SELENIUM_RC_SERVER} ) {
-	@args{'host','port'} = split /:/, $args{selenium_rc}, 2;
+        @args{'host','port'} = split /:/, $args{selenium_rc}, 2;
     }
     else {
-	@args{'host','port'} = eval { $class->_start_src(%args) };
-	if ($@) { # Schwern: i want skip_rest
-	    my $why = "No selenium: $@";
-	    my $Tester = Test::Builder->new;
-	    $Tester->skip($why);
-
-	    unless ($Tester->{No_Plan}) {
-		for (my $ct = $Tester->{Curr_Test};
-		     $ct < $Tester->{Expected_Tests};
-		     $ct++) {
-		    $Tester->skip($why); # skip rest of the test
-		}
-	    }
-	    exit(0);
-	}
+        @args{'host','port'} = eval { $class->_start_src(%args) };
+        if ($@) {
+            $class->_skip_rest("No selenium: $@");
+        }
     }
 
     $args{browser_url} ||= 'http://'.($ENV{SELENIUM_RC_TEST_AGAINST} || $args{test_server} || 'localhost').':'.$server->port;
@@ -71,11 +60,16 @@ sub rc_ok {
     my $try = 5;
     my $sel;
     while ($try--) {
-	$sel = eval { Test::WWW::Selenium->new( %args, auto_stop => 0 ) };
-	last if $sel;
-	Test::More::diag "waiting for selenium rc...";
-	sleep 3;
+        $sel = eval { Test::WWW::Selenium->new( %args, auto_stop => 0 ) };
+        last if $sel;
+        Test::More::diag "waiting for selenium rc...";
+        sleep 3;
     }
+
+    if (!$sel) {
+        $class->_skip_rest("No selenium");
+    }
+
     Test::More::isa_ok($sel, 'Test::WWW::Selenium');
     return $sel;
 }
@@ -128,5 +122,20 @@ END {
     kill(15, -$_) for @cleanup;
 }
 
+sub _skip_rest {
+    my $self = shift;
+    my $why  = shift;
+
+    # Schwern: i want skip_rest
+    my $Tester = Test::Builder->new;
+    $Tester->skip($why);
+
+    unless ($Tester->{No_Plan}) {
+        for my $ct ($Tester->{Curr_Test} + 1 .. $Tester->{Expected_Tests}) {
+            $Tester->skip($why); # skip rest of the test
+        }
+    }
+    exit(0);
+}
 
 1;

@@ -47,9 +47,6 @@ sub new {
     $self->setup_jifty(@_);
     $self->recording_on if $ENV{'JIFTY_RECORD'};
 
-    use Hook::LexWrap;
-    wrap 'HTML::Mason::FakeApache::send_http_header', pre => \&_send_http_status;
-    
 
     return ($self);
 
@@ -136,6 +133,10 @@ parent when the server is ready for requests.
 
 sub after_setup_listener {
     my $self = shift;
+
+    use Hook::LexWrap;
+    wrap 'HTML::Mason::FakeApache::send_http_header', pre => \&_send_http_status;
+
     my $sig = $ENV{JIFTY_SERVER_SIGREADY} or return;
     kill $sig => getppid();
 }

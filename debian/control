@@ -68,7 +68,7 @@ Depends: ${perl:Depends}, perl (>> 5.8.3),
  libfile-find-rule-perl, libfile-mmagic-perl,
  libfile-sharedir-perl (>> 0.04), libhtml-parser-perl,
  libhtml-lint-perl, libhtml-mason-perl (>> 1.31), 
- libwww-perl, libhttp-server-simple-perl (>> 0.26), 
+ libwww-perl, libhttp-server-simple-perl (>> 0.28), 
  libhttp-server-simple-recorder-perl, libhash-merge-perl, libhook-lexwrap-perl,
  libipc-pubsub-perl (>> 0.23), libjifty-dbi-perl (>> 0.40), libipc-run3-perl,
  liblocale-maketext-lexicon-perl, liblocale-maketext-simple-perl, liblog-log4perl-perl,
@@ -157,3 +157,10 @@ Architecture: all
 Depends: ${perl:Depends}, perl (>> 5.8.3), jifty, libcrypt-openssl-bignum-perl, libdigest-hmac-perl,
  libnet-oauth-perl
 Description: Jifty plugin for OAuth authentication
+
+Package: libjifty-plugin-comment-perl
+Section: perl
+Architecture: all
+Depends: ${perl:Depends}, perl (>> 5.8.3), jifty, libhtml-scrubber-perl, libmime-base64-urlsafe-perl, libregexp-common-email-address-perl, libregexp-common-perl
+Recommends: libnet-akismet-perl
+Description: Jifty plugin to add comment to any record
