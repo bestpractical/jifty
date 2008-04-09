@@ -32,7 +32,7 @@ difference. The return value is I<not> an Array, it's a jQuery
 object that acts likes a Enumerable object (but still, not one). If you
 really want a Array, you can do:
 
-   my array_of_message = jQuery("span.message").get()
+    var array_of_message = jQuery("span.message").get()
 
 For most cases, C<jQuery("#" + id).get(0)> can be a replacement pattern
 to C<$(id)>. Selecting elements with C<jQuery()> function always
