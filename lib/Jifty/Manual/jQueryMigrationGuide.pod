@@ -36,10 +36,10 @@ to use C<$> function, create that alias in your C<app.js> like this:
     $ = jQuery;
 
 However, instead of making a global alias, it's always recommended to
-always make this alias with a closure to really localize it.
+localize this alias within a closure:
 
     (function($) {
-        // $ is an alias to jQuery to the end of this closure
+        // $ is an alias to jQuery only inside this closure
 
         $(".message").show();
     })(jQuery);
@@ -55,7 +55,7 @@ dangerous to name those functions under Form. Because loading
 Prototype library can destroy those Jifty functions.
 
 The new jQuery-fashioned way is to always extend internal functions
-under Jifty object. C<Form becomes C<Jifty.Form>, C<Form.Element> becomes
+under Jifty object. C<Form> becomes C<Jifty.Form>, C<Form.Element> becomes
 C<Jifty.Form.Element>, and so on. The detail list of these defined
 functions are given in L<Jifty::Manual::Javascript>. Most of
 those functions are internal functions that you probably should not
