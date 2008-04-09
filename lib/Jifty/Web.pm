@@ -38,13 +38,12 @@ __PACKAGE__->javascript_libs([qw(
     jsan/Upgrade/Array/push.js
     jsan/DOM/Events.js
     json.js
-    prototype.js
     jquery-1.2.1.js
+    iutil.js
+    iautocompleter.js
+    jifty_interface.js
     jquery_noconflict.js
     behaviour.js
-    scriptaculous/builder.js
-    scriptaculous/effects.js
-    scriptaculous/controls.js
     formatDate.js
     template_declare.js
     jifty.js
@@ -58,7 +57,6 @@ __PACKAGE__->javascript_libs([qw(
     key_bindings.js
     context_menu.js
     bps_util.js
-    rico.js
     yui/yahoo.js
     yui/dom.js
     yui/event.js

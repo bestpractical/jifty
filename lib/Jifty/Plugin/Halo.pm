@@ -198,7 +198,7 @@ sub new_frame {
                     my $expanded = Jifty->web->serial;
                     my $yaml = Jifty->web->escape(Jifty::YAML::Dump($value));
                     #$out .= qq{<a href="#" onclick="Element.toggle('$expanded'); return false">$ref</a><div id="$expanded" style="display: none; position: absolute; left: 200px; border: 1px solid black; background: #ccc; padding: 1em; padding-top: 0; width: 300px; height: 500px; overflow: auto"><pre>$yaml</pre></div>};
-                    $out .= qq{<a href="#" onclick="Element.toggle('$expanded'); return false">$ref</a><div id="$expanded" class="halo-argument" style="display: none"><pre>$yaml</pre></div>};
+                    $out .= qq{<a href="#" onclick="jQuery(Jifty.$('$expanded')).toggle()); return false">$ref</a><div id="$expanded" class="halo-argument" style="display: none"><pre>$yaml</pre></div>};
                 }
                 elsif (defined $value) {
                     $out .= Jifty->web->escape($value);

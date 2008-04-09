@@ -1,0 +1,136 @@
+=head1 NAME
+
+jQueryMigrationGuide - How to migrate your code to use jQuery.
+
+=head1 Migrate your jifty app to jquery
+
+Application developers may start the migration by modifying
+F<config.yml>, set the C<ConfigFileVersion> to 4. If you did not write
+any custom javascript code for your app, then its done. Everything
+should just work.
+
+If you did wrote some javascript code before, but you did not use any
+of those funcitons defined in F<jifty*.js>, F<prototype.js> or
+F<scriptaculous.js>, then you're still good to go.
+
+Otherwise, your code might need to be modified a little bit. Since
+both F<prototype.js> and F<scriptaculous.js> are removed by default,
+one trivial choice is to simply bring them back. That is as easy as
+adding a B<Prototypism> plugin to your Jifty application.
+
+If you dislike the whole Prototypism like us, you can choose to
+re-write your code with jQuery. In the section L</"From Prototype
+to jQuery"> below, we provide some known pattern that can be applied to
+rewrite prototypism code with jQuery, or with just normal javascript.
+
+If you hack Jifty internal, please make sure you've read the following
+L</"Jifty API"> section and L<Jifty::Manual::JavaScript> to catch the
+Javascript API update since the removal of C<prototype.js>.
+
+Although we've removed C<prototype.js>, we still prefer to use
+non-conflict mode of jQuery at this moment. That is, C<$> function is
+now undefined, but not an alias of jQuery. This is to ensure that it's
+not conflicting with Prototypism at all conditions. If you'd like
+to use C<$> function, create that alias in your C<app.js> like this:
+
+    $ = jQuery;
+
+However, instead of making a global alias, it's always recommended to
+always make this alias with a closure to really localize it.
+
+    (function($) {
+        // $ is an alias to jQuery to the end of this closure
+
+        $(".message").show();
+    })(jQuery);
+
+=head1 Jifty API
+
+Jifty javascript libraries embraced a major re-architect after jQuery
+landed. Especially those internal functions to process form elements.
+
+The Prototype-based old way is to extend Form object and the
+Form.Element object. Since the removal of Prototype library, it is
+dangerous to name those functions under Form. Because loading
+Prototype library can destroy those Jifty functions.
+
+The new jQuery-fashioned way is to always extend internal functions
+under Jifty object. C<Form becomes C<Jifty.Form>, C<Form.Element> becomes
+C<Jifty.Form.Element>, and so on. The detail list of these defined
+functions are given in L<Jifty::Manual::Javascript>. Most of
+those functions are internal functions that you probably should not
+use them directly.
+
+=head1 From Prototype to jQuery
+
+If you've ever written javascript code on your Jifty applications, and
+you'd like to remove PrototypeJS library, here are some dummy rules to
+re-write prototypejs-based javascript code with jQuery.
+
+=head3 Array iteration
+
+From:
+
+    A.each( function( $_ ) { ... } )
+
+To:
+
+    jQuery.each(A, function(index, value ) {
+        // "this" is an alias to current value.
+    })
+
+=head2 Hash key iteration
+
+From:
+
+    H = new Hash({...});
+
+    H.each(function( pair ) {
+        // pair.key is the key
+        // pair.value is the value
+    });
+
+jQuery.each is designed to work on both C<Array> and C<Object> in the
+same way. So there's not much difference.
+
+To:
+
+    // H can be any kind of "Object"
+
+    jQuery.each(H, function(key, value) {
+        // "this" is an alias to current value.
+    })
+
+=head2 Object extend
+
+From:
+
+    obj.extend({ ... }}
+
+To:
+
+    jQuery.extend( obj, { ... } )
+
+=head2 JSON
+
+jQuery does not build-in with JSON stringify function, but since it
+neither altered the native Array, nor defined its own Hash, it's
+prefered and fine to just use C<JSON.stringify> from C<json.js>.
+
+From:
+
+    // obj need to be one of those objects defined in C<prototype.js>
+    obj.toJSON();
+
+To:
+
+    JSON.stringify( obj )
+
+=head2 Effects
+
+jQuery has a small set of default effects built-in to its core. They
+have different naming then those defined in C<scriptaculous.js>. The
+internal way to do effect is via the C<Jifty.Effect> method. Please
+see the detail usage in L<Jifty::Manual::JavaScript>.
+
+=cut

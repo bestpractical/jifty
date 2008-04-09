@@ -74,7 +74,7 @@ Jifty.KeyBindings = {
     writeLegend: function(e) {
         if (    !document.createElement
              || !document.createTextNode
-             || Element.hasClassName(e, 'keybindings-written') )
+                || jQuery(e).is('.keybindings-written') )
             return;
         
         
@@ -109,7 +109,7 @@ Jifty.KeyBindings = {
             
             e.appendChild( label );
             e.appendChild( dl );
-            Element.addClassName(e, 'keybindings-written');
+            jQuery(e).addClass('keybindings-written');
         
             /* since we wrote the legend, now obey it */
             Jifty.KeyBindings.activate();

@@ -7,45 +7,43 @@ var halo_width;
 
 function halo_toggle (id) {
     if (halo_shown && (id != halo_shown)) {
-        halo_top   = $('halo-'+halo_shown+'-menu').style.top;
-        halo_left  = $('halo-'+halo_shown+'-menu').style.left;
-        halo_width = $('halo-'+halo_shown+'-menu').style.width;
-        Element.hide('halo-'+halo_shown+'-menu');
+        halo_top   = Jifty.$('halo-'+halo_shown+'-menu').style.top;
+        halo_left  = Jifty.$('halo-'+halo_shown+'-menu').style.left;
+        halo_width = Jifty.$('halo-'+halo_shown+'-menu').style.width;
+        jQuery('#halo-'+halo_shown+'-menu').hide();
     }
-    $('halo-'+id+'-menu').style.top   = halo_top;
-    $('halo-'+id+'-menu').style.left  = halo_left;
-    $('halo-'+id+'-menu').style.width = halo_width;
-    Element.toggle('halo-'+id+'-menu');
 
-    Drag.init( $('halo-'+id+'-title'), $('halo-'+id+'-menu') );
-    init_resize($('halo-'+id+'-resize'), $('halo-'+id+'-menu') );
+    jQuery("#halo-"+id+"-menu").css({
+        top: halo_top,
+        left: halo_left,
+        width: halo_width
+    }).toggle();
 
-    var e = $('halo-'+id);
-    if (Element.visible('halo-'+id+'-menu')) {
+    Drag.init( Jifty.$('halo-'+id+'-title'), Jifty.$('halo-'+id+'-menu') );
+    init_resize(Jifty.$('halo-'+id+'-resize'), Jifty.$('halo-'+id+'-menu') );
+
+    var e = jQuery('#halo-'+id).get(0);
+    if (jQuery('#halo-'+id+'-menu').is(":visible")) {
         halo_shown = id;
-        Element.setStyle(e, {background: '#ffff80'});
+        jQuery(e).css({ background: '#ffff80' });
     } else {
-        halo_top   = $('halo-'+halo_shown+'-menu').style.top;
-        halo_left  = $('halo-'+halo_shown+'-menu').style.left;
-        halo_width = $('halo-'+halo_shown+'-menu').style.width;
+        halo_top   = Jifty.$('halo-'+halo_shown+'-menu').style.top;
+        halo_left  = Jifty.$('halo-'+halo_shown+'-menu').style.left;
+        halo_width = Jifty.$('halo-'+halo_shown+'-menu').style.width;
         halo_shown = null;
-        Element.setStyle(e, {background: 'inherit'});
+        jQuery(e).css({ background: 'inherit' });
     }
 
     return false;
 }
 
 function halo_over (id) {
-    var e = $('halo-'+id);
-    if (e) {
-        Element.setStyle(e, {background: '#ffff80'});
-    }
+    jQuery('#halo-'+id).css({ background: '#ffff80' });
 }
 
 function halo_out (id) {
-    var e = $('halo-'+id);
-    if (e && ! Element.visible('halo-'+id+'-menu')) {
-        Element.setStyle(e, {background: 'inherit'});
+    if (! jQuery("#halo-"+id+"-menu").is(":visible")) {
+        jQuery('#halo-'+id).css({ background: 'inherit' });
     }
 }
 
@@ -79,50 +77,48 @@ function draw_halos() {
         halo_padding        = '3px';
     }
 
-    $("render_info-draw_halos").innerHTML = halos_drawn ? "Hide halos" : "Draw halos";
+    jQuery("#render_info-draw_halos").text(halos_drawn ? "Hide halos" : "Draw halos");
 
-    YAHOO.util.Dom.getElementsByClassName("halo-header", null, null,
-        function (e) {
-            e.style.display = halo_header_display;
-        }
-    );
+    jQuery(".halo-header").css({
+        display: halo_header_display
+    });
 
-    YAHOO.util.Dom.getElementsByClassName("halo", null, null,
-        function (e) {
-            e.style.borderWidth = halo_border_width;
-            e.style.margin = halo_margin;
-            e.style.padding = halo_padding;
-        }
-    );
+    jQuery(".halo").css({
+        'border-width': halo_border_width,
+        'margin': halo_margin,
+        'padding': halo_padding
+    })
+
 }
 
 function render_info_tree() {
-    Element.toggle("render_info_tree");
+    jQuery("#render_info_tree").toggle();
 }
 
 function halo_render(id, name) {
     halo_reset(id);
-    $('halo-button-'+name+'-'+id).style.fontWeight = 'bold';
 
-    var e = $('halo-rendered-'+id);
+    jQuery('#halo-button-'+name+'-'+id).css("font-weight", "bold");
+
+    var e = jQuery('#halo-rendered-'+id).get(0);
 
     if (name == 'source') {
         e.halo_rendered = e.innerHTML;
-        e.innerHTML = '<div class="halo-source">' + e.innerHTML.escapeHTML() + '</div>';
+        jQuery(e).html('<div class="halo-source"></div>').find("div").text(e.halo_rendered);
     }
     else if (name == 'render') {
         /* ignore */
     }
     else {
         e.style.display = 'none';
-        $('halo-info-'+id).style.display = 'block';
-        $('halo-info-'+name+'-'+id).style.display = 'block';
+        jQuery("#halo-info-"+id).show();
+        jQuery('#halo-info-'+name+'-'+id).show();
     }
 }
 
 function halo_reset(id) {
     /* restore all buttons to nonbold */
-    for (var child = $('halo-rendermode-'+id).firstChild;
+    for (var child = jQuery('#halo-rendermode-'+id).firstChild;
          child != null;
          child = child.nextSibling) {
             if (child.style) {
@@ -131,8 +127,9 @@ function halo_reset(id) {
     }
 
     /* hide all the info divs */
-    $('halo-info-'+id).style.display = 'none';
-    for (var child = $('halo-info-'+id).firstChild;
+    jQuery('#halo-info-'+id).hide();
+
+    for (var child = jQuery('#halo-info-'+id).firstChild;
          child != null;
          child = child.nextSibling) {
             if (child.style) {
@@ -141,7 +138,7 @@ function halo_reset(id) {
     }
 
     /* restore the rendered div */
-    var e = $('halo-rendered-'+id);
+    var e = jQuery('#halo-rendered-'+id).get(0);
     e.style.display = 'block';
     if (e.halo_rendered) {
         e.innerHTML = e.halo_rendered;
@@ -150,7 +147,7 @@ function halo_reset(id) {
 }
 
 function remove_link(id, name) {
-    var link = $('halo-button-'+name+'-'+id);
+    var link = jQuery('#halo-button-'+name+'-'+id).get(0);
     var newlink = document.createElement("span");
     newlink.appendChild(link.childNodes[0]);
     link.parentNode.replaceChild(newlink, link);

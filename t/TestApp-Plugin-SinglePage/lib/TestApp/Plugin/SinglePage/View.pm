@@ -49,5 +49,18 @@ template '_r_foo' => sub {
     h1 { $foo };
 };
 
+template '/p/history/one' => page {
+    p { "This Is Page One" };
+};
+
+template '/p/history/two' => page {
+    p { "This Is Page Two" };
+};
+
+
+template '/p/history/three' => page {
+    p { "This Is Page Three" };
+};
+
 1;
 

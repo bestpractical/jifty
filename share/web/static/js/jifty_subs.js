@@ -1,6 +1,6 @@
 if (typeof Jifty == "undefined") Jifty = { };
 
-{
+(function(){
 
     /* onPushHandler is called for each new pushed element.
        (currently, this is always a <pushfrag>).  This routine takes
@@ -18,11 +18,18 @@ if (typeof Jifty == "undefined") Jifty = { };
     	var mode = t.getAttribute('mode');
     	var rid =  t.firstChild.getAttribute('id');
     	var f = { region: rid, path: '', mode: mode };
+
+        // If SinglePlugin is enabled, region name will be prefixed
+        // "__page-" by the time that region was rendered. Therefore
+        // it should also be prefixed the same here.
+        if(Jifty.fragments["__page"] != null) {
+            f['region'] = "__page-" + f['region']
+        }
+
     	f = prepare_element_for_update(f);
+        if (f == null) return;
     	apply_fragment_updates(t.firstChild, f);
     };
-
-
 
     
     /* This function constructs a new Jifty.Subs object and sets
@@ -38,34 +45,30 @@ if (typeof Jifty == "undefined") Jifty = { };
     	var window_id = args.window_id; // XXX: not yet
     	var uri = args.uri;
     	if (!uri)
-    	    uri = "/=/subs?";
-    	//var push = new HTTP.Push({ "uri": uri, interval : 100, "onPush" : onPushHandler});
+    	    uri = "/=/subs?forever=0";
     	
     	this.start = function() {
     	    //push.start();
+            var self = this;
 
-	    new Ajax.PeriodicalUpdater({},'/=/subs?forever=0',
-	    {
-	        'decay': 1, 'frequency': 0,
-	        'asynchronous':true, 
-	        'evalScripts':false,
-	        'method': 'get',
-	        'onSuccess': onSuccess,
-	        'onFailure': onFailure
-	    });
-	    	};
+            jQuery.ajax({
+                url: uri,
+                type: "get",
+                success: function(responseText) {
+                    var container = document.createElement('div');
+                    container.innerHTML = responseText;
+                    jQuery("pushfrag", container).each(function() {
+                        onPushHandler(this);
+                    });
+
+                    setTimeout(function() {
+                        self.start();
+                    }, 1000)
+                },
+                error: function() {
+                }
+            });
+        }          
     }
 
-
-    function onSuccess(req, json) {
-        var container = document.createElement('div');
-        container.innerHTML = req.responseText;
-        var frags = container.getElementsByTagName('pushfrag');
-        for(var i = 0 ; i < frags.length; i++) {
-            onPushHandler(frags[i]);
-        }
-    }
-    function onFailure(req) { }
-
-}
-
+})();

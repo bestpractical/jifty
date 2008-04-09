@@ -23,7 +23,7 @@ function buttonToLink(e) {
     link.setAttribute("href","#");
     link.setAttribute("name",e.getAttribute("name"));
 
-    var form = Form.Element.getForm(e);
+    var form = Jifty.Form.Element.getForm(e);
     var onclick = e.getAttribute("onclick");
 
     /* Simple buttons that don't use any JS need us to create an onclick
