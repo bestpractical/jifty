@@ -38,8 +38,7 @@ Jifty.ContextMenu = {
 
         if ( ul ) {
             var li = Jifty.ContextMenu.getParentListItem(ul);
-            Element.removeClassName(li, "open");
-            Element.addClassName(li, "closed");
+            jQuery(li).removeClass("open").addClass("closed");
             
             ul.style.display = "none";
         }
@@ -58,7 +57,7 @@ Jifty.ContextMenu = {
     
         var li = Jifty.ContextMenu.getParentListItem(ul);
 
-        Element.addClassName( ul, "dropdown_menu" );
+        jQuery(ul).addClass("dropdown_menu");
         ul.style.position = "absolute";
         ul.style.width    = "12em";
         
@@ -79,8 +78,7 @@ Jifty.ContextMenu = {
             li.style.position = "relative";
         }
 
-        Element.removeClassName(li, "closed");
-        Element.addClassName(li, "open");
+        jQuery(li).removeClass("closed").addClass("open");
         
         ul.style.display = "block";
         Jifty.ContextMenu.currently_open = ul.id;
