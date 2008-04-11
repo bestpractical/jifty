@@ -7,7 +7,9 @@ use strict;
 use lib 't/lib';
 use Jifty::SubTest;
 
-use Jifty::Test skip_all => "test file not done yet";
+use Jifty::Test;
+
+plan skip_all => "test file not done yet";
 
 #### garbage collection
 #  for now, an "on request, sweep all continuations older than the last 50"?
