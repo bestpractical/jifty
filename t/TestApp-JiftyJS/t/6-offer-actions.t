@@ -75,12 +75,12 @@ type
     Offer A Job
 
 check
-    xpath=//input[starts-with(@id, "J:A:F-is_job-auto-")][@type="checkbox"]
+    xpath=//input[starts-with(@id, "J:A:F-is_job-create-")][@type="checkbox"]
 
 
 # Click the "Create" button
 click
-    xpath=//div[@class="submit_button"]/input[@type="submit"][contains(@name,"J:ACTIONS=auto-")]
+    xpath=//div[@class="submit_button"]/input[@type="submit"][contains(@name,"J:ACTIONS=create-")]
 
 pause
     1000
