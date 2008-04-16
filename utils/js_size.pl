@@ -43,18 +43,32 @@ for my $file ( @{ Jifty::Web->javascript_libs } ) {
     }
 }
 
+my $min_format = "%6.2f%% (%5.2f%%) %7d (%7d) %s\n";
+my $format = "%6.2f%% %7d %s\n";
+
 for my $file ( @{ Jifty::Web->javascript_libs } ) {
     if ($jsmin) {
-        printf("%5.2f%% (%5.2f%%) %7d (%7d) $file\n",
+        printf($min_format,
            ($size->{$file} / $total * 100),
            ($size_minified->{$file} / $total_minified * 100),
            $size->{$file}, $size_minified->{$file}, $file );
     }
     else {
-        printf("%5.2f%% %7d $file\n",
+        printf($format,
            ($size->{$file} / $total * 100),
            $size->{$file}, $file );
     }
 }
 
-#    
+if ($jsmin) {
+    printf($min_format,
+        100,
+        ($total_minified / $total * 100),
+        $total, $total_minified, 'total');
+}
+else {
+    printf($format,
+        100,
+        $total, 'total');
+}
+
