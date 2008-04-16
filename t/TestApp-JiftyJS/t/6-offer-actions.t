@@ -23,7 +23,9 @@ my $sel    = Jifty::Test::WWW::Selenium->rc_ok($server);
 my $URL    = $server->started_ok;
 
 $sel->open("/");
+# $sel->set_speed(3000);
 
+my $i = 3;
 for (@commands) {
     my ($cmd, $arg1, $arg2) = (split(/\n\s*/, $_, 3), "", "");
 
@@ -33,6 +35,7 @@ for (@commands) {
     $arg2 =~ s{\s*$}{};
 
     $cmd .= "_ok";
+    # diag($i++, $cmd, $arg1, $arg2);
     $sel->$cmd($arg1, $arg2);
 
 }
@@ -75,19 +78,22 @@ type
     Offer A Job
 
 check
-    xpath=//input[starts-with(@id, "J:A:F-is_job-create-")][@type="checkbox"]
+    xpath=//input[starts-with(@id, "J:A:F-is_job-create")][@type="checkbox"]
 
 
 # Click the "Create" button
 click
-    xpath=//div[@class="submit_button"]/input[@type="submit"][contains(@name,"J:ACTIONS=create-")]
+    xpath=//div[@class="submit_button"]/input[contains(@name,"create")]
+ 
 
 pause
-    1000
+    100
 
+# 14
 wait_for_element_present
-    xpath=//input[@type="checkbox"][@checked]
+    xpath=//input[@type="checkbox"][@readonly="readonly"][@checked="checked"]
 
+# 15
 get_text
     xpath=//span[contains(@class, "text")][contains(@class, "argument-name")][contains(@class, "value")]
     Offer A Job
