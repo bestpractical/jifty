@@ -66,15 +66,17 @@ sub take_action {
     my $dn = $plugin->uid().'='.$username.','.
         $plugin->base();
 
+    Jifty->log->debug( "dn = $dn" );
 
     # Bind on ldap
     my $msg = $plugin->LDAP()->bind($dn ,'password' =>$self->argument_value('password'));
 
 
-    unless (not $msg->code) {
+    if ($msg->code) {
         $self->result->error(
      _('You may have mistyped your login or password. Give it another shot?')
         );
+        Jifty->log->error( "LDAP bind $dn " . $msg->error . "" );
         return;
     }
 

@@ -58,3 +58,18 @@ jQuery.iAuto.update = function() {
 	);
     }
 };
+
+jQuery.fn.shake = function() {
+    this.each(function(init) {
+        var e = jQuery(this);
+        e.css('position', 'relative');
+        for (var i = 1; i < 5; i++) {
+            e.animate({ left: -20/i }, 50)
+             .animate({ left: 0 },     50)
+             .animate({ left: 20/i },  50)
+             .animate({ left: 0 },     50);
+        }
+    });
+    return this;
+};
+

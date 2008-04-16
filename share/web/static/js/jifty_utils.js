@@ -129,7 +129,7 @@ Jifty.Utils = {
     },
 
     scrollToShow: function(id) {
-        var ul        = $(id);
+        var ul        = Jifty.$(id);
         var y         = Jifty.Utils.findPosY( ul ) + ul.offsetHeight + 10;
         var scrollTop = Jifty.Utils.getScrollTop();
         var screen    = Jifty.Utils.findScreenHeight() + scrollTop;

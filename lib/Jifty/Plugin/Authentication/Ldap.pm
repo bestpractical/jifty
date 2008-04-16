@@ -56,11 +56,12 @@ sub init {
     my %args = @_;
 
     $params{'Hostname'} = $args{LDAPhost};
-    $params{'base'} = $args{LDAPbase};
+    $params{'base'} = $args{LDAPbase} or die "Need LDAPbase in plugin config";
     $params{'uid'} = $args{LDAPuid} || "uid";
     $params{'email'} = $args{LDAPMail} || "";
     $params{'name'} = $args{LDAPName} || "cn";
-    $LDAP = Net::LDAP->new($params{Hostname},async=>1,onerror => 'undef', debug => 0);
+    $LDAP = Net::LDAP->new($params{Hostname},async=>1,onerror => 'undef', debug => 0)
+        or die "Can't connect to LDAP server ",$params{Hostname};
 }
 
 sub LDAP {
@@ -94,6 +95,7 @@ sub get_infos {
             attrs  =>  [$self->name(),$self->email()],
             sizelimit => 1
              );
+    $result->code && Jifty->log->error( 'LDAP uid=' . $user . ' ' . $result->error );
     my ($ret) = $result->entries;
     my $name = $ret->get_value($self->name());
     my $email = $ret->get_value($self->email());

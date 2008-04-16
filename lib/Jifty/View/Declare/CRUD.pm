@@ -489,7 +489,7 @@ sub per_page { 25 }
 # unlimited collection if there is no current search.
 sub _current_collection {
     my $self = shift; 
-    my ( $page ) = get('page');
+    my ( $page ) = get('page') || 1;
     my $collection_class = $self->record_class->collection_class;
     my $search = ( Jifty->web->response->result('search') ? Jifty->web->response->result('search')->content('search') : undef );
     my $collection;

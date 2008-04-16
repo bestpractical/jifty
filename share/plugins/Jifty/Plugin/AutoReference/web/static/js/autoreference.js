@@ -7,7 +7,7 @@ Object.extend(Object.extend(Jifty.Plugin.AutoReference.prototype, Jifty.Autocomp
 
         // Copied from Jifty.Autocompleter.initialize
         this.field  = $(field);
-        this.action = Form.Element.getAction(this.hiddenField);
+        this.action = Jifty.Form.Element.getAction(this.hiddenField);
         this.url    = '/__jifty/autocomplete.xml';
 
         Event.observe(this.field, "focus", this.onFocus.bindAsEventListener(this));
@@ -33,7 +33,7 @@ Object.extend(Object.extend(Jifty.Plugin.AutoReference.prototype, Jifty.Autocomp
 
     afterUpdate: function(field, selection) {
         
-        Form.Element.validate(this.hiddenField);
+        Jifty.Form.Element.validate(this.hiddenField);
     },
 
     getUpdatedChoices: function() {
@@ -44,7 +44,7 @@ Object.extend(Object.extend(Jifty.Plugin.AutoReference.prototype, Jifty.Autocomp
         a['class']   = 'Jifty::Action::Autocomplete';
         a['fields']  = $H();
         a['fields']['moniker']  = this.action.moniker;
-        a['fields']['argument'] = Form.Element.getField(this.field);
+        a['fields']['argument'] = Jifty.Form.Element.getField(this.field);
         request['actions']['autocomplete'] = a;
         request['actions'][this.action.moniker] = this.action.data_structure();
         request['actions'][this.action.moniker]['active']  = 0;
