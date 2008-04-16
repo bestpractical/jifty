@@ -1030,7 +1030,8 @@ var apply_fragment_updates = function(fragment, f) {
                         Top: 'prepend'
                     })[ f['mode'] ];
 
-                    (jQuery(element)[method])( textContent );
+                    jQuery.fn[method].call(jQuery(element), textContent);
+                    element = document.getElementById('region-' + f['region']);
                 } else {
                     jQuery(element).html( textContent );
                 }
