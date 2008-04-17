@@ -1440,12 +1440,17 @@ jQuery.extend(Jifty.Autocompleter.prototype, {
         this.action = Jifty.Form.Element.getAction(this.field);
         this.url    = '/__jifty/autocomplete.xml';
 
+        var sel = '#'+this.field.id+'-autocomplete';
+        var autocomplete_div = jQuery(sel.replace(/:/g, '\\\\\\:'));
         var self = this;
-        jQuery(this.field).bind("focus", function(event) {
+        jQuery(this.field).focus(function(event) {
             self.changed  = true;
             self.hasFocus = true;
             Jifty.current_autocompleter_object = self;
-        });
+            autocomplete_div.append(jQuery('#autocompleteHelper'))
+            .show();
+        })
+        .blur(function() { autocomplete_div.hide() });
         
         jQuery(this.field).Autocomplete({
             source: this.url,
