@@ -95,7 +95,9 @@ Jifty.Calendar = {
                 inputId = inputId.replace(/^cal_/, '');
                 inputId = inputId.replace(/_wrap$/, '');
 
-            jQuery(Jifty.Calendar.openCalendar).remove();
+            // XXX: jQuery(Jifty.Calendar.openCalendar).remove() doesn't work for some reason
+            var cal = document.getElementById(Jifty.Calendar.openCalendar);
+            cal.parentNode.removeChild(cal);
 
             var input = document.getElementById( inputId );
 
