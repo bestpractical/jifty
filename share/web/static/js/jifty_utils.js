@@ -42,7 +42,7 @@ Jifty.Utils = {
         while ( parent ) {
             if ( !parent.style ) break;
             
-            var pos = Element.getStyle( parent, "position" );
+            var pos = jQuery(parent).css("position");
             if ( pos == "relative" || pos == "absolute" ) {
                 parentx = Jifty.Utils.findPosX( parent );
                 break;
@@ -60,7 +60,7 @@ Jifty.Utils = {
         while ( parent ) {
             if ( !parent.style ) break;
             
-            var pos = Element.getStyle( parent, "position" );
+            var pos = jQuery(parent).css("position");
             if ( pos == "relative" || pos == "absolute" ) {
                 parenty = Jifty.Utils.findPosY( parent );
                 break;
