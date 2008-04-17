@@ -1,0 +1,43 @@
+<html>
+  <head>
+    <title>jifty.js for simple functions.</title>
+    <script type="text/javascript" src="/static/js/jsan/JSAN.js" charset="UTF-8"></script>
+    <script type="text/javascript" src="lib/Test/Builder.js" charset="UTF-8"></script>
+    <script type="text/javascript" src="lib/Test/More.js" charset="UTF-8"></script>
+    <script type="text/javascript" src="/static/js/jquery-1.2.3.js" charset="UTF-8"></script>
+    <script type="text/javascript" src="/static/js/jquery_noconflict.js" charset="UTF-8"></script>
+    <script type="text/javascript" src="/static/js/behaviour.js" charset="UTF-8"></script>
+    <script type="text/javascript" src="/static/js/bps_util.js" charset="UTF-8"></script>
+    <script type="text/javascript" src="/static/js/jifty.js" charset="UTF-8"></script>
+    <script type="text/javascript">
+    </script>
+  </head>
+
+  <body>
+    <div id="button-to-link">
+      <input class="button_as_link" value="Hi"></input>
+    </div>
+
+    <pre id="test"></pre>
+    
+    <script type="text/javascript">
+
+JSAN.use('Test.More');
+plan({ tests: 2 });
+
+var id = beginAsync();
+
+jQuery(window).bind("load", function() {
+    // input.button_as_link is transformed into a link
+    is(0, jQuery("input").size());
+    is(1, jQuery("a").size());
+
+    endAsync(id);
+});
+
+
+    </script>
+
+  </body>
+</html>
+
