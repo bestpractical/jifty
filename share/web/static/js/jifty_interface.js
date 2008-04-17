@@ -26,8 +26,16 @@ jQuery.iAuto.update = function() {
 
 			subject.autoCFG.lastSuggestion.each(
 			    function(nr) {
+                                // XXX: we should be looking at span.hidden_value, but it doesn't exist... 
                                 var v = jQuery(this).text();
-				toWrite += '<li rel="' + v + '" dir="' + nr + '" style="cursor: default;">' + v + '</li>';
+                                var value = v;
+                                if (jQuery('span:last', this).size()) {
+                                    value = jQuery('span:last', this).text();
+                                    // XXX for some reasons .html() / innerHTML is empty though we have .text() working, so reconstruct the bloody html
+                                    v = '<span class="informal">'+jQuery('span:first', this).text()+'</span>'+'<span class="hidden_value">'+jQuery('span:last', this).text()+'</span>';
+                                }
+
+				toWrite += '<li rel="' + value + '" dir="' + nr + '" style="cursor: default;">' + v + '</li>';
 			    }
 			);
                         
