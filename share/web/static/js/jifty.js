@@ -1430,7 +1430,8 @@ function show_action_result() {
 }
 
 Jifty.Autocompleter = function() {
-    this.initialize.apply(this, arguments);
+    var that = this;
+    jQuery(function () { that.initialize.apply(that, arguments) } );
     return this;
 };
 
