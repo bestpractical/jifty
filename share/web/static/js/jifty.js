@@ -1431,7 +1431,8 @@ function show_action_result() {
 
 Jifty.Autocompleter = function() {
     var that = this;
-    jQuery(function () { that.initialize.apply(that, arguments) } );
+    var args = arguments;
+    jQuery(function () { that.initialize.apply(that, args) } );
     return this;
 };
 
