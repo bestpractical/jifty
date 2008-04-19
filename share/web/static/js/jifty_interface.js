@@ -15,10 +15,12 @@ jQuery.iAuto.update = function() {
         var request = Jifty.current_autocompleter_object.buildRequest();
 	jQuery.ajax(
 	    {
-		type: 'post',
-		data: JSON.stringify(request),
-		success: function(xml)
-		{
+		'type': 'post',
+		'url': subject.autoCFG.source,
+                'contentType': 'text/x-json',
+		'data': JSON.stringify(request),
+                'dataType': 'xml',
+		'success': function(xml, textStatus) {
 		    subject.autoCFG.lastSuggestion = jQuery('li',xml);
 		    size = subject.autoCFG.lastSuggestion.size();
 		    if (size > 0) {
@@ -57,11 +59,7 @@ jQuery.iAuto.update = function() {
 		    } else {
 			jQuery.iAuto.clear();
 		    }
-		},
-                beforeSend: function(xhr) {
-                    xhr.setRequestHeader('Content-Type', 'text/x-json');
-                },
-		url : subject.autoCFG.source
+		}
 	    }
 	);
     }
