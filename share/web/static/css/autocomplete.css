@@ -1,9 +1,12 @@
 /* Autocomplete */
 
-.autocomplete {
+#autocompleteHelper {
     border: 1px solid #666;
     background: white;
     z-index: 43;
+}
+
+.autocomplete {
 }
 
 .autocomplete ul {
