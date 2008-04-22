@@ -41,6 +41,8 @@ sub rc_ok {
     my $server = shift;
     my %args = @_;
 
+    $ENV{JIFTY_OPENID_WHITELIST_HOST} = $ENV{SELENIUM_RC_TEST_AGAINST} || 'localhost';
+
     if ( $args{selenium_rc} ||= $ENV{SELENIUM_RC_SERVER} ) {
         @args{'host','port'} = split /:/, $args{selenium_rc}, 2;
     }
