@@ -12,7 +12,6 @@ use base qw/Jifty::Action/;
 
 use Net::OpenID::Consumer;
 use Cache::FileCache;
-use LWPx::ParanoidAgent;
 
 =head2 arguments
 
@@ -39,12 +38,7 @@ sub take_action {
     $sig =~ s/ /+/g;
     Jifty->handler->cgi->param( 'openid.sig' => $sig );
 
-    my $csr = Net::OpenID::Consumer->new(
-        ua              => LWPx::ParanoidAgent->new,
-        cache           => Cache::FileCache->new,
-        args            => scalar Jifty->handler->cgi->Vars,
-        consumer_secret => Jifty->config->app('OpenIDSecret')
-    );
+    my $csr = Jifty::Plugin::OpenID->get_csr;
 
     if ( my $setup = $csr->user_setup_url ) {
         Jifty->web->_redirect($setup);

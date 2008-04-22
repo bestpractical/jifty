@@ -45,13 +45,7 @@ sub take_action {
     my $path   = $self->argument_value('return_to');
 
     my $baseurl = Jifty->web->url;
-    my $csr = Net::OpenID::Consumer->new(
-        ua    => LWPx::ParanoidAgent->new,
-        cache => Cache::FileCache->new,
-        args  => scalar Jifty->handler->cgi->Vars,
-        consumer_secret => Jifty->config->app('OpenIDSecret'),
-        required_root => $baseurl
-    );
+    my $csr = Jifty::Plugin::OpenID->get_csr( required_root => $baseurl );
 
     my $claimed_id = $csr->claimed_identity( $openid );
 
