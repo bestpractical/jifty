@@ -6,6 +6,8 @@ use base 'Jifty::Plugin';
 
 __PACKAGE__->mk_accessors(qw(region_name));
 
+our $NO_SPA;
+
 =head1 NAME
 
 Jifty::Plugin::SinglePage
@@ -48,6 +50,7 @@ sub _push_onclick {
 sub _filter_page_region_vars {
     my $self = shift;
     return sub {
+        return if $NO_SPA;
         my ( $clickable, $key, $value ) = @_;
         if ($key eq 'region-'.$self->region_name || $key =~ m/^region-\Q$self->{region_name}\E\./) {
             return 0;
@@ -59,7 +62,8 @@ sub _filter_page_region_vars {
 sub _sp_link {
     my $self = shift;
     return sub {
-        return if Jifty->web->temporary_current_user;
+        return if $NO_SPA;
+        return if Jifty->web->temporary_current_user; # for LetMe
         my ( $clickable, $args ) = @_;
         my $url = $args->{'url'};
         if ( $url && $url !~ m/^#/ && $url !~ m{^https?://} && $url !~ m{^javascript:} ) {
