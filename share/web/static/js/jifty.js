@@ -1128,7 +1128,7 @@ Jifty.update = function () {
 
         if (a.register) {
             if (a.hasUpload()) {
-                // XXX: restore default behavior in IE
+                // XXX: restore default behavior in IE (and Opera, Safari)
                 if(window.event) {
                     window.event.returnValue = true;
                 }
