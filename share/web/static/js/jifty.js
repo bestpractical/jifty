@@ -1127,8 +1127,13 @@ Jifty.update = function () {
         a.result.field_error = {};
 
         if (a.register) {
-            if (a.hasUpload())
+            if (a.hasUpload()) {
+                // XXX: restore default behavior in IE
+                if(window.event) {
+                    window.event.returnValue = true;
+                }
                 return true;
+            }
             if(disable) {
                 a.disable_input_fields(disabled_elements);
             }
