@@ -72,7 +72,11 @@ jQuery.iAuto = {
 						break;
 				}
 			} else {
-				jQuery.iAuto.helper.hide();
+			    jQuery.iAuto.helper.hide();
+
+		            if (jQuery.iAuto.iframe)
+			        jQuery.iAuto.iframe.hide();
+
 			}
 			if (jQuery.iAuto.subject.autoCFG.onHide)
 				jQuery.iAuto.subject.autoCFG.onHide.apply(jQuery.iAuto.subject, [jQuery.iAuto.helper, jQuery.iAuto.iframe]);
@@ -155,8 +159,8 @@ jQuery.iAuto = {
 				.css('display', 'block')
 				.css('top', position.y + size.hb + 'px')
 				.css('left', position.x +  'px')
-				.css('width', jQuery.iAuto.helper.css('width'))
-				.css('height', jQuery.iAuto.helper.css('height'));
+		                .css('width', jQuery.iAuto.helper.width() )
+         	                .css('height', jQuery.iAuto.helper.height() );
 		}
 		jQuery.iAuto.selectedItem = 0;
 		jQuery.iAuto.items.get(0).className = subject.autoCFG.selectClass;
@@ -466,7 +470,7 @@ jQuery.iAuto = {
 
 		if (!jQuery.iAuto.helper) {
 			if (jQuery.browser.msie) {
-				jQuery('body', document).append('<iframe style="display:none;position:absolute;filter:progid:DXImageTransform.Microsoft.Alpha(opacity=0);" id="autocompleteIframe" src="javascript:false;" frameborder="0" scrolling="no"></iframe>');
+			        jQuery('body', document).append('<iframe style="display:none;position:absolute;filter:progid:DXImageTransform.Microsoft.Alpha(opacity=0);" id="autocompleteIframe" src="about:blank" frameborder="0" scrolling="no"></iframe>');
 				jQuery.iAuto.iframe = jQuery('#autocompleteIframe');
 			}
 			jQuery('body', document).append('<div id="autocompleteHelper" style="position: absolute; top: 0; left: 0; z-index: 30001; display: none;"><ul style="margin: 0;padding: 0; list-style: none; z-index: 30002;">&nbsp;</ul></div>');
