@@ -19,6 +19,8 @@ on '/__jifty/admin/queries/all' => run {
 # http://your.app/queries/clear -- clear query log
 on '/__jifty/admin/queries/clear' => run {
     @Jifty::Plugin::SQLQueries::requests = ();
+    @Jifty::Plugin::SQLQueries::slow_queries = ();
+    @Jifty::Plugin::SQLQueries::halo_queries = ();
     set 'skip_zero' => 1;
     redirect "/__jifty/admin/queries";
 };
