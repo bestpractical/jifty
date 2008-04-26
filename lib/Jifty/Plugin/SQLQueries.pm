@@ -80,7 +80,9 @@ sub post_init {
         Jifty->log->debug(sprintf 'Query (%.3fs): "%s", with bindings: %s',
                             $duration,
                             $statement,
-                            join ', ', @$bindings);
+                            join ', ',
+                                map { defined $_ ? $_ : 'undef' } @$bindings,
+        );
         return Carp::longmess;
     });
 }
