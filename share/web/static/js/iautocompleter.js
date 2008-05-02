@@ -147,7 +147,7 @@ jQuery.iAuto = {
 		jQuery.iAuto.items = jQuery('li', jQuery.iAuto.content.get(0));
 		jQuery.iAuto.items
 			.mouseover(jQuery.iAuto.hoverItem)
-			.bind('click', jQuery.iAuto.clickItem);
+			.bind('mousedown', jQuery.iAuto.clickItem);
 		var position = jQuery.iUtil.getPosition(subject);
 		var size = jQuery.iUtil.getSize(subject);
 		jQuery.iAuto.helper
