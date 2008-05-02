@@ -442,7 +442,7 @@ Now, add your records. To create a relationship between a row the two tables:
   $left->load(1);
 
   my $right = MyApp::Model::RightTable->new;
-  $right->laod(1);
+  $right->load(1);
 
   my $link = MyApp::Model::LinkTable->new;
   $link->create(
