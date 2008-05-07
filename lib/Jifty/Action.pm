@@ -1098,11 +1098,13 @@ sub _values_for_field {
                 my $disp = $v->{'display_from'};
                 my $val  = $v->{'value_from'};
 
-                unless ($v->{'collection'}->first->can($disp)) {
-                    Jifty->log->error("Invalid 'display_from' of $disp on $field");
-                }
-                unless ($v->{'collection'}->first->can($val)) {
-                    Jifty->log->error("Invalid 'value_from' of $val on $field");
+                if ($v->{'collection'}->count) {
+                    unless ($v->{'collection'}->first->can($disp)) {
+                        Jifty->log->error("Invalid 'display_from' of $disp on $field");
+                    }
+                    unless ($v->{'collection'}->first->can($val)) {
+                        Jifty->log->error("Invalid 'value_from' of $val on $field");
+                    }
                 }
 
                 # XXX TODO: wrap this in an eval?
