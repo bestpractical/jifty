@@ -434,6 +434,7 @@ qw( name
     distinct
     sort_order
     refers_to
+    by
     alias_for_column
     aliased_as
     label hints
