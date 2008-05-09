@@ -153,7 +153,7 @@ sub from_data_structure {
     my $path = $data->{'path'};
     
     if ($cgi && ! $path) {
-        $path = URI::Escape::uri_unescape($cgi->path_info);
+        $path = $cgi->path_info;
         $path =~ s/\?.*//;
     };
 
@@ -249,9 +249,7 @@ sub from_cgi {
     my $self = shift;
     my ($cgi) = @_;
 
-    # always get the unescaped path for dispatcher, which is already
-    # the case for fastcgi, but not standalone.
-    my $path = URI::Escape::uri_unescape($cgi->path_info);
+    my $path = $cgi->path_info;
     $path =~ s/\?.*//;
     $self->path( $path );
 

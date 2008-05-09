@@ -69,7 +69,7 @@ If you do nothing, code similar to this will be called by _init.
 	}
 
 That is, it will attempt to load the columns given in the model named C<App::Model::User> (where I<App> is the name of your application class). If your notion of a user object isn't a typical Jifty model or named something else, you will definitely need to override this method. If you need to perform any additional initialization for user objects, you may want to override this as well.
-	
+
 =cut
 
 sub _init {
