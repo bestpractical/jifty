@@ -39,7 +39,7 @@ sub start_component_hook {
         proscribed   => $self->_unrendered_component($context) ? 1 : 0,
     );
 
-    return if $self->_unrendered_component($context);
+    return if Jifty::Plugin::Halo->is_proscribed( $frame );
 
     $context->request->out(Jifty::Plugin::Halo->halo_header($frame));
 }
@@ -58,15 +58,8 @@ sub end_component_hook {
     return if ($context->comp->path || '') eq "/__jifty/halo";
 
     my $frame = Jifty::Plugin::Halo->pop_frame;
-
-    return if $self->_unrendered_component($context);
-
-    # print out the div with our halo magic actions.
-    # if we didn't render a beginning of the span, don't render an end
-    unless ( $frame->{'proscribed'} ) {
-        my $comp_name = $frame->{'path'};
-        $context->request->out(Jifty::Plugin::Halo->halo_footer($frame));
-    }
+    return if Jifty::Plugin::Halo->is_proscribed( $frame );
+    $context->request->out(Jifty::Plugin::Halo->halo_footer($frame));
 }
 
 =head2 _unrendered_component CONTEXT
@@ -81,14 +74,7 @@ for subcomponents being too "heavy")
 sub _unrendered_component {
     my $self    = shift;
     my $context = shift;
-    if (   $context->comp->is_subcomp()
-        or not Jifty->handler->stash->{'in_body'})
-    {
-        return 1;
-    } else {
-        return undef;
-    }
-
+    return $context->comp->is_subcomp ? 1 : 0; 
 }
 
 =head2 render_component_tree

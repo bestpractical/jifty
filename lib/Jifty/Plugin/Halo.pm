@@ -290,4 +290,13 @@ sub pop_frame {
     return $frame;
 }
 
+sub is_proscribed {
+    my ($self, $frame) = @_;
+    return 1 if $frame->{'proscribed'};
+
+    $frame->{'proscribed'} = 1 unless Jifty->handler->stash->{'in_body'};
+
+    return $frame->{'proscribed'}? 1 : 0;
+}
+
 1;
