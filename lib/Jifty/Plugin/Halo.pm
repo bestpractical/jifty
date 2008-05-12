@@ -72,12 +72,15 @@ sub around_template {
             Jifty->web->escape($deparsed);
         },
     };
+    my $proscribed = $self->is_proscribed($frame);
 
-    Template::Declare->buffer->append($self->halo_header($frame));
+    Template::Declare->buffer->append($self->halo_header($frame))
+        unless $proscribed;
     $orig->();
 
     $frame = $self->pop_frame;
-    Template::Declare->buffer->append($self->halo_footer($frame));
+    Template::Declare->buffer->append($self->halo_footer($frame))
+        unless $proscribed;
 }
 
 =head2 halo_header frame -> string

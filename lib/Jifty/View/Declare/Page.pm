@@ -70,7 +70,11 @@ Renders $body_code inside a body tag
 sub render_body {
     my ($self, $body_code) = @_;
 
-    body { $body_code->() };
+    body {
+        Jifty->handler->stash->{'in_body'} = 1;
+        $body_code->();
+        Jifty->handler->stash->{'in_body'} = 0;
+    };
 }
 
 =head2 render_page
@@ -208,7 +212,10 @@ sub _render_header {
     my $title = shift || '';
     $title =~ s/<.*?>//g;    # remove html
     HTML::Entities::decode_entities($title);
+    my $old = Jifty->handler->stash->{'in_body'};
+    Jifty->handler->stash->{'in_body'} = 0;
     with( title => $title ), show('/header');
+    Jifty->handler->stash->{'in_body'} = $old;
 }
 
 1;
