@@ -4,6 +4,7 @@ use strict;
 package Jifty::Script::Po;
 use base qw(App::CLI::Command Class::Accessor::Fast);
 
+use Pod::Usage;
 use File::Copy ();
 use File::Path 'mkpath';
 use Jifty::Config ();
@@ -17,38 +18,22 @@ use constant USE_GETTEXT_STYLE => 1;
 
 __PACKAGE__->mk_accessors(qw/language/);
 
-
-=head1 NAME
-
-Jifty::Script::Po - Extract translatable strings from your application
-
-=head1 DESCRIPTION
-
-Extracts message catalogs for your Jifty app. When run, Jifty will update
-all existing message catalogs, as well as create a new one if you specify a --language flag
+### Help is below in __DATA__ section
 
 =head2 options
 
-This script an option, C<--language>, which is optional; it is the
-name of a message catalog to create.
-
-It also takes C<--dir> to specify additional directories to extract
-from.
-
-If C<--js> is given, other options are ignored and the script will
-generate json files for each language under
-F<share/web/static/js/dict> from the current po files.  Before doing
-so, you might want to run C<jifty po> with C<--dir share/web/static/js>
-to include messages from javascript in your po files.
+Returns a hash of all the options this script takes. (See the usage message for details)
 
 =cut
 
 sub options {
-    (
-     'l|language=s' => 'language',
-     'dir=s@'       => 'directories',
-     'js'           => 'js',
-    )
+    return (
+        'l|language=s' => 'language',
+        'dir=s@'       => 'directories',
+        'js'           => 'js',
+        'help|?'       => "help",
+        'man'          => "man",
+    );
 }
 
 
@@ -61,6 +46,8 @@ Runs the "update_catalogs" method.
 
 sub run {
     my $self = shift;
+    return if $self->print_help;
+
     Jifty->new(no_handle => 1);
 
     return $self->_js_gen if $self->{js};
@@ -186,4 +173,86 @@ sub extract_messages {
 
 }
 
+=head2 print_help
+
+Prints out help for the package using pod2usage.
+
+If the user specified --help, prints a brief usage message
+
+If the user specified --man, prints out a manpage
+
+=cut
+
+sub print_help {
+    my $self = shift;
+    return 0 unless $self->{help} || $self->{man};
+
+    # Option handling
+    my $docs = \*DATA;
+    pod2usage( -exitval => 1, -input => $docs ) if $self->{help};
+    pod2usage( -exitval => 0, -verbose => 2, -input => $docs )
+        if $self->{man};
+    return 1;
+}
+
 1;
+
+__DATA__
+
+=head1 NAME
+
+Jifty::Script::Po - Extract translatable strings from your application
+
+=head1 SYNOPSIS
+
+  jifty po --language <lang>  Creates a <lang>.po file for translation
+  jifty po                    Updates all existing po files
+
+ Options:
+   --language         Language to deal with
+   --dir              Additionl dirs to extract from
+   --js               Generate json files from the current po files
+
+   --help             brief help message
+   --man              full documentation
+
+=head1 OPTIONS
+
+=over 8
+
+=item B<--language>
+
+This script an option, C<--language>, which is optional; it is the
+name of a message catalog to create.
+
+=item B<--dir>
+
+Specify additional directories to extract from. Can be used multiple
+times.
+
+=item B<--js>
+
+If C<--js> is given, other options are ignored and the script will
+generate json files for each language under
+F<share/web/static/js/dict> from the current po files.  Before doing
+so, you might want to run C<jifty po> with C<--dir share/web/static/js>
+to include messages from javascript in your po files.
+
+=item B<--help>
+
+Print a brief help message and exits.
+
+=item B<--man>
+
+Prints the manual page and exits.
+
+=back
+
+=head1 DESCRIPTION
+
+Extracts message catalogs for your Jifty app. When run, Jifty will update
+all existing message catalogs, as well as create a new one if you specify
+a --language option.
+
+=cut
+
