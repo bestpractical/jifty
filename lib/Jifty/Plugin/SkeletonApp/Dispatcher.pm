@@ -9,14 +9,19 @@ Jifty::Plugin::SkeletonApp::Dispatcher
 
 =head1 DESCRIPTION
 
-When a user asks for /, give them index.html.
+Elementary things for a basic app.
 
 =cut
 
-
 use Jifty::Dispatcher -base;
 
-    
+=head1 RULES
+
+=head2 on '**'
+
+Add 'Home' item to the top navigation unless it's there already.
+
+=cut
 
 on '**' => run {
     my $top = Jifty->web->navigation;
@@ -25,17 +30,14 @@ on '**' => run {
     unless ( $top->child('Home') ) {
         $top->child( Home => url => "/", sort_order => 1, label => _('Home') );
     }
-
-    if ( Jifty->config->framework('AdminMode') ) {
-        $top->child(
-            Administration =>
-              url          => "/__jifty/admin/",
-            label      => _('Administration'),
-            sort_order => 998
-        );
-    }
     return ();
 };
+
+=head2 before '**'
+
+Sets language of the current session if the request has '_jifty_lang' argument.
+
+=cut
 
 before '**' => run {
     if (my $lang = Jifty->web->request->arguments->{_jifty_lang}) {
