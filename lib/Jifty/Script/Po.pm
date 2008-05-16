@@ -113,17 +113,29 @@ all your message catalogs and updates them with new and changed messages.
 
 sub update_catalogs {
     my $self = shift;
-    $self->extract_messages();
-    my @catalogs = File::Find::Rule->file->in(
-        Jifty->config->framework('L10N')->{'PoDir'} );
-    if ($self->{'language'}) { 
-        $self->update_catalog( File::Spec->catfile( Jifty->config->framework('L10N')->{'PoDir'}, $self->{'language'} . ".po"));
+
+    if ($self->{'language'}) {
+        $self->extract_messages;
+        $self->update_catalog( File::Spec->catfile(
+            Jifty->config->framework('L10N')->{'PoDir'}, $self->{'language'} . ".po"
+        ) );
+        return;
     }
-    else {
-        foreach my $catalog (@catalogs) {
-            next if $catalog =~ m{(^|/)\.svn/};
-            $self->update_catalog( $catalog );
-        }
+
+    my @catalogs = grep !m{(^|/)\.svn/}, File::Find::Rule->file->in(
+        Jifty->config->framework('L10N')->{'PoDir'}
+    );
+
+    unless ( @catalogs ) {
+        Jifty->log->error("You have no existing message catalogs.");
+        Jifty->log->error("Run `jifty po --language <lang>` to create a new one.");
+        Jifty->log->error("Read `jifty po --help` to get more info.");
+        return 
+    }
+
+    $self->extract_messages;
+    foreach my $catalog (@catalogs) {
+        $self->update_catalog( $catalog );
     }
 }
 

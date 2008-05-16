@@ -10,6 +10,8 @@ use Jifty::DBI::SchemaGenerator;
 use Jifty::Config;
 use Jifty::Schema;
 
+### Help is below in __DATA__ section
+
 =head2 options
 
 Returns a hash of all the options this script takes. (See the usage message for details)
