@@ -46,11 +46,14 @@ structure, and a C<Makefile.PL> for you application.
 sub run {
     my $self = shift;
 
-    $self->prefix( $self->{name} ||''); 
+    my $name = $self->{'name'};
+    $name =~ s/::/-/g;
+    $self->prefix( $name); 
 
     unless ($self->prefix =~ /\w+/ ) { die "You need to give your new Jifty app a --name"."\n";}
 
     # Turn my-app-name into My::App::Name.
+
 
     $self->mod_name (join ("::", split (/\-/, $self->prefix)));
     my $dist = $self->mod_name;
