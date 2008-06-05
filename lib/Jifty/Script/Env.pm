@@ -3,7 +3,7 @@ package Jifty::Script::Env;
 use warnings;
 use strict;
 
-use base qw/App::CLI::Command/;
+use base qw/Jifty::Script/;
 
 use Scalar::Util ();
 
@@ -14,14 +14,35 @@ use Jifty::YAML;
 
 Jifty::Script::Env - access the Jifty environment
 
+=head1 SYNOPSIS
+
+    jifty env <Class> <method> [arguments]
+
+    jifty env  Util share_root
+    jifty env 'Util->share_root'
+    jifty env  Util.share_root
+
+=head1 OPTIONS
+
+This script has no specific options now. Maybe it will have
+some command lines options in the future.
+
+=over 8
+
+=item B<--help>
+
+Print a brief help message and exits.
+
+=item B<--man>
+
+Prints the manual page and exits.
+
+=back
+
 =head1 DESCRIPTION
 
 Loads Jifty and your configuration, allowing you to verify and examine
 your setup.
-
-=head2 run
-
-  jifty env <Class> <method> [arguments]
 
 Loads Jifty::Class and calls method on it, providing shortcuts for
 things like:
@@ -48,10 +69,14 @@ sub run {
     my $self = shift;
     my (@args) = @_;
 
+    $self->print_help;
+
     Jifty->new();
 
     unless(@args) {
-        return($self->run('Jifty.config.stash'));
+        $self->run('Jifty.config.stash');
+        print "\nSee also `jifty env --help`\n";
+        return;
     }
 
     my ($class, $method, @and) = split(/(?:->?|\.)/, shift(@args));

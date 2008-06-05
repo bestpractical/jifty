@@ -4,6 +4,7 @@ use base qw/App::CLI App::CLI::Command/;
 
 use Jifty::Everything;
 Jifty::Everything->plugin_commands;
+use Pod::Usage;
 
 =head1 NAME
 
@@ -43,6 +44,17 @@ sub prepare {
     return $self->SUPER::prepare(@_);
 }
 
+=head2 options
+
+=cut
+
+sub options {
+    return (
+     'h|help|?' => 'help',
+     'man'      => 'man',
+    );
+}
+
 =head2 alias
 
 The alias table lets users type C<fastcgi> in place of C<FastCGI>.
@@ -55,7 +67,38 @@ sub alias {
            )
 }
 
+=head2 print_help
 
+Prints out help for the package using pod2usage.
 
+If the user specified --help, prints a brief usage message
+
+If the user specified --man, prints out a manpage
+
+=cut
+
+sub print_help {
+    my $self = shift;
+    my $msg = shift;
+
+    $self->{'help'} = 1
+        if $msg && !( $self->{'help'} || $self->{'man'} );
+
+    my %opts = (
+        -exitval => $msg? 1: 0,
+        -input   => $self->filename,
+        -verbose => 99,
+        $msg? (-message => $msg): (),
+    );
+    # Option handling
+    pod2usage(
+        %opts,
+        -sections => 'NAME|SYNOPSIS',
+    ) if $self->{help};
+    pod2usage(
+        %opts,
+        -sections => '!METHODS',
+    ) if $self->{man};
+}
 
 1;

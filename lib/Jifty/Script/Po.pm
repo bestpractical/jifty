@@ -2,7 +2,7 @@ use warnings;
 use strict;
 
 package Jifty::Script::Po;
-use base qw(App::CLI::Command Class::Accessor::Fast);
+use base qw(Jifty::Script Class::Accessor::Fast);
 
 use Pod::Usage;
 use File::Copy ();
@@ -27,13 +27,13 @@ Returns a hash of all the options this script takes. (See the usage message for 
 =cut
 
 sub options {
+    my $self = shift;
     return (
+        $self->SUPER::options,
         'l|language=s' => 'language',
         'dir=s@'       => 'directories',
         'js'           => 'js',
-        'help|?'       => "help",
-        'man'          => "man",
-    );
+    )
 }
 
 

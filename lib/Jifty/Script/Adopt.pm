@@ -3,7 +3,7 @@ package Jifty::Script::Adopt;
 use warnings;
 use strict;
 
-use base qw/App::CLI::Command/;
+use base qw/Jifty::Script/;
 
 use File::Copy ();
 use File::Spec ();
@@ -15,41 +15,67 @@ use Jifty::Util;
 
 Jifty::Script::Adopt - localize a stock jifty component
 
-=head1 DESCRIPTION
+=head1 SYNOPSIS
 
-Creates directories and copies files for you, launching $ENV{EDITOR} if
-it is defined.
+    jifty adopt web/templates/_elements/nav
+    jifty adopt --ls web/static/
 
-=head2 options
+ Options:
+   --ls <path>        list components for adoption
+   --tree <path>      list components for adoption
 
-=over
+   --help             brief help message
+   --man              full documentation
 
-=item --ls PATH
+=head1 OPTIONS
 
-List the contents of the stock components path.
+=over 8
+
+=item B<-l>, B<--ls> PATH
+
+Lists the contents of the stock components path.
+
+=item B<-t>, B<--tree> PATH
+
+Lists the contents of the stock components path recursively.
+
+=item B<--help>
+
+Print a brief help message and exits.
+
+=item B<--man>
+
+Prints the manual page and exits.
 
 =back
 
 =cut
 
 sub options {
-    (
-     'l|ls' => 'list',
-     't|tree' => 'tree',
+    my $self = shift;
+    return (
+        $self->SUPER::options,
+        'l|ls' => 'list',
+        't|tree' => 'tree',
     )
 }
 
+=head1 DESCRIPTION
+
+Creates directories and copies files for you, launching $ENV{EDITOR} if
+it is defined.
+
+=head1 METHODS
+
 =head2 run
-
-  jifty adopt web/templates/_elements/nav
-
-  jifty adopt --ls web/static/
 
 =cut
 
 sub run {
     my $self = shift;
     my (@args) = @_;
+
+    $self->print_help();
 
     my $filename = shift(@args);
     $filename ||= '';

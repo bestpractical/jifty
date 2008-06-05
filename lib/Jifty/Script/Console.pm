@@ -2,13 +2,36 @@ use strict;
 use warnings;
 
 package Jifty::Script::Console;
-use base qw/App::CLI::Command/;
+use base qw/Jifty::Script/;
 use Devel::EvalContext;
 use Term::ReadLine;
 
 =head1 NAME
 
 Jifty::Script::Console - A console for your Jifty application
+
+=head1 SYNOPSIS
+
+    jifty console
+    jifty console --help
+    jifty console --man
+
+=head1 OPTIONS
+
+This script has no specific options now except help.
+Maybe it will have some command lines options in the future.
+
+=over 8
+
+=item B<--help>
+
+Print a brief help message and exits.
+
+=item B<--man>
+
+Prints the manual page and exits.
+
+=back
 
 =head1 DESCRIPTION
 
@@ -25,16 +48,7 @@ C<eval()>.
 
 =head1 METHODS
 
-=head2 options()
-
-Returns nothing. This script has no options now. Maybe it will have
-some command lines options in the future.
-
-=cut
-
-sub options { }
-
-=head2 run()
+=head2 run
 
 Creates a new console process.
 
@@ -42,6 +56,7 @@ Creates a new console process.
 
 sub run {
     my $self = shift;
+    $self->print_help();
     Jifty->new();
     my $term = new Term::ReadLine 'Jifty Console';
     my $OUT = $term->OUT || \*STDOUT;

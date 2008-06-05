@@ -2,47 +2,65 @@ use warnings;
 use strict;
 
 package Jifty::Script::Model;
-use base qw/App::CLI::Command/;
-
-
+use base qw/Jifty::Script/;
 
 =head1 NAME
 
 Jifty::Script::Model - Add a model class to your Jifty application
 
-=head1 DESCRIPTION
+=head1 SYNOPSIS
 
-This creates a skeleton of a new model class for your jifty
-application, complete with a skeleton of a test suite for it, as well.
+    jifty model --name MyFirstModel
+    jifty model --name MyFirstModel --force
 
-=head1 API
+  Options:
+    --name <name>      name of the model
+    --force            overwrite files
 
-=head2 options
+    --help             brief help message
+    --man              full documentation
 
-There are only two possible options to this script:
+=head1 OPTIONS
 
-=over
+=over 8
 
-=item --name NAME (required)
+=item B<--name> NAME (required)
 
 Name of the model class.
 
-=item --force
+=item B<--force>
 
 By default, this will stop and warn you if any of the files it is
 going to write already exist.  Passing the --force flag will make it
 overwrite the files.
+
+=item B<--help>
+
+Print a brief help message and exits.
+
+=item B<--man>
+
+Prints the manual page and exits.
 
 =back
 
 =cut
 
 sub options {
-    (
-     'n|name=s' => 'name',
-     'force' => 'force',
+    my $self = shift;
+    return (
+        $self->SUPER::options,
+        'n|name=s' => 'name',
+        'force' => 'force',
     )
 }
+
+=head1 DESCRIPTION
+
+This creates a skeleton of a new model class for your jifty
+application, complete with a skeleton of a test suite for it, as well.
+
+=head1 METHODS
 
 =head2 run
 
@@ -54,8 +72,10 @@ well as a skeleton tests file.
 sub run {
     my $self = shift;
     
+    $self->print_help;
+
     my $model = $self->{name} || '';
-    die "You need to give your new model a --name\n"
+    $self->print_help("You need to give your new model a --name")
       unless $model =~ /\w+/;
 
     Jifty->new( no_handle => 1 );

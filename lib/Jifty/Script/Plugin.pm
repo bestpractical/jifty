@@ -2,7 +2,7 @@ use warnings;
 use strict;
 
 package Jifty::Script::Plugin;
-use base qw(App::CLI::Command Class::Accessor::Fast);
+use base qw(Jifty::Script Class::Accessor::Fast);
 
 use File::Copy;
 use Jifty::Config;
@@ -16,11 +16,21 @@ __PACKAGE__->mk_accessors(qw/prefix dist_name mod_name lib_dir/);
 
 Jifty::Script::Plugin - Create the skeleton of a Jifty plugin
 
+=head1 SYNOPSIS
+    
+    jifty plugin --name NewPlugin
+    jifty plugin --help
+    jifty plugin --man
+
 =head1 DESCRIPTION
 
 Creates a skeleton of a new L<Jifty::Plugin>.
 
-=head2 options
+=head1 OPTIONS
+
+=over 8
+
+=item --name
 
 This script only takes one option, C<--name>, which is required; it is
 the name of the plugin to create; this will be prefixed with
@@ -28,13 +38,27 @@ C<Jifty::Plugin::> automatically.  Jifty will create a directory with
 that name, and place all of the files it creates inside that
 directory.
 
+=item B<--help>
+
+Print a brief help message and exits.
+
+=item B<--man>
+
+Prints the manual page and exits.
+
+=back
+
 =cut
 
 sub options {
-    (
-     'n|name=s' => 'name',
+    my $self = shift;
+    return (
+        $self->SUPER::options,
+        'n|name=s' => 'name',
     )
 }
+
+=head1 METHODS
 
 =head2 run
 
@@ -45,6 +69,7 @@ a C<Makefile.PL> for your plugin.
 
 sub run {
     my $self = shift;
+    $self->print_help();
 
     $self->prefix( $self->{name} ||''); 
 
@@ -145,6 +170,4 @@ sub _directories {
     );
 }
 
-
 1;
-

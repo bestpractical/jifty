@@ -2,7 +2,7 @@ use warnings;
 use strict;
 
 package Jifty::Script::App;
-use base qw(App::CLI::Command Class::Accessor::Fast);
+use base qw(Jifty::Script Class::Accessor::Fast);
 
 use File::Copy;
 use Jifty::Config;
@@ -16,25 +16,52 @@ __PACKAGE__->mk_accessors(qw/prefix dist_name mod_name/);
 
 Jifty::Script::App - Create the skeleton of a Jifty application
 
+=head1 SYNOPSIS
+
+  jifty --name MyApp  Creates an application
+
+ Options:
+   --name             applicaation name
+
+   --help             brief help message
+   --man              full documentation
+
+=head1 OPTIONS
+
+=over 8
+
+=item B<--name>
+
+Required option. It is the name of the application to create.
+Jifty will create a directory with that name, and place all of
+the files it creates inside that directory.
+
+=item B<--help>
+
+Print a brief help message and exits.
+
+=item B<--man>
+
+Prints the manual page and exits.
+
+=back
+
+=cut
+
+sub options {
+    my $self = shift;
+    return (
+        $self->SUPER::options,
+        'n|name=s' => 'name',
+    )
+}
+
 =head1 DESCRIPTION
 
 Creates a skeleton of a new Jifty application.  See
 L<Jifty::Manual::Tutorial> for an example of its use.
 
-=head2 options
-
-This script only takes one option, C<--name>, which is required; it is
-the name of the application to create.  Jifty will create a directory
-with that name, and place all of the files it creates inside that
-directory.
-
-=cut
-
-sub options {
-    (
-     'n|name=s' => 'name',
-    )
-}
+=head1 METHODS
 
 =head2 run
 
@@ -48,12 +75,14 @@ sub run {
 
     my $name = $self->{'name'};
     $name =~ s/::/-/g;
-    $self->prefix( $name); 
+    $self->prefix( $name ); 
 
-    unless ($self->prefix =~ /\w+/ ) { die "You need to give your new Jifty app a --name"."\n";}
+    $self->print_help;
+    unless ($self->prefix =~ /\w+/ ) {
+        $self->print_help("You need to give your new Jifty app a --name");
+    }
 
     # Turn my-app-name into My::App::Name.
-
 
     $self->mod_name (join ("::", split (/\-/, $self->prefix)));
     my $dist = $self->mod_name;

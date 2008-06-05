@@ -2,7 +2,7 @@ use warnings;
 use strict;
 
 package Jifty::Script::Server;
-use base qw/App::CLI::Command/;
+use base qw/Jifty::Script/;
 
 # XXX: if test::builder is not used, sometimes connection is not
 # properly closed, causing the client to wait for the content for a
@@ -26,30 +26,61 @@ use constant PIDFILE => 'var/jifty-server.pid';
 
 Jifty::Script::Server - A standalone webserver for your Jifty application
 
+=head1 SYNOPSIS
+
+    jifty server
+    jifty server --port 6666
+    jifty server --stop
+
+=head1 OPTIONS
+
+=over 8
+
+=item --port
+
+The port to run the server on. Overrides the port in the config file, if it is
+set there. The default port is 8888.
+
+=item --stop
+
+Stops the server.
+
+=item --sigready
+
+=item --quiet
+
+=item --dbiprof
+
+=item B<--help>
+
+Print a brief help message and exits.
+
+=item B<--man>
+
+Prints the manual page and exits.
+
+=back
+
+=cut
+
+sub options {
+    my $self = shift;
+    return (
+        $self->SUPER::options,
+        'p|port=s'   => 'port',
+        'stop'       => 'stop',
+        'sigready=s' => 'sigready',
+        'quiet'      => 'quiet',
+        'dbiprof'    => 'dbiprof',
+    )
+}
+
 =head1 DESCRIPTION
 
 When you're getting started with Jifty, this is the server you
 want. It's lightweight and easy to work with.
 
-=head1 API
-
-=head2 options
-
-The server takes only one option, C<--port>, the port to run the
-server on.  This is overrides the port in the config file, if it is
-set there.  The default port is 8888.
-
-=cut
-
-sub options {
-    (
-     'p|port=s'   => 'port',
-     'stop'       => 'stop',
-     'sigready=s' => 'sigready',
-     'quiet'      => 'quiet',
-     'dbiprof'    => 'dbiprof',
-    )
-}
+=head1 METHODS
 
 =head2 run
 
@@ -60,6 +91,7 @@ you.
 
 sub run {
     my $self = shift;
+    $self->print_help;
     Jifty->new();
 
     if ($self->{stop}) {

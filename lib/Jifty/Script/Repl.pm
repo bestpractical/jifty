@@ -2,12 +2,35 @@ use strict;
 use warnings;
 
 package Jifty::Script::Repl;
-use base qw/App::CLI::Command/;
+use base qw/Jifty::Script/;
 use Devel::REPL::Script;
 
 =head1 NAME
 
 Jifty::Script::Repl - A REPL for your Jifty application
+
+=head1 SYNOPSIS
+
+    jifty repl
+    jifty repl --help
+    jifty repl --man
+
+=head1 OPTIONS
+
+This script has no specific options now except help.
+Maybe it will have some command lines options in the future.
+
+=over 8
+
+=item B<--help>
+
+Print a brief help message and exits.
+
+=item B<--man>
+
+Prints the manual page and exits.
+
+=back
 
 =head1 DESCRIPTION
 
@@ -20,15 +43,6 @@ long-running commands, autorefresh code each line, etc).
 
 =head1 METHODS
 
-=head2 options()
-
-Returns nothing. This script has no options now. Maybe it will have
-some command lines options in the future.
-
-=cut
-
-sub options { }
-
 =head2 run()
 
 Creates a L<Devel::REPL> object and runs it.
@@ -37,6 +51,7 @@ Creates a L<Devel::REPL> object and runs it.
 
 sub run {
     my $self = shift;
+    $self->print_help();
     Jifty->new();
     Devel::REPL::Script->new->run();
 }

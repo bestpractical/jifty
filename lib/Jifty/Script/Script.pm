@@ -2,21 +2,22 @@ use warnings;
 use strict;
 
 package Jifty::Script::Script;
-use base qw/ App::CLI::Command /;
+use base qw/ Jifty::Script /;
 
 =head1 NAME
 
 Jifty::Script::Script - Add a new Jifty script to your Jifty application
 
-=head1 DESCRIPTION
+=head1 SYNOPSIS
 
-This creates a skeleton of a new script file for your Jifty application. Often it such a script is needed for cron jobs, annual maintenance work, and any other server-side activity that would benefit from a command-line script.
+    jifty script --name my_new_script
+    jifty script --name my_new_script --force
+    jifty script --help
+    jifty script --man
 
-=head1 API
+=head1 OPTIONS
 
-=head2 options
-
-=over
+=over 8
 
 =item --name NAME (required)
 
@@ -26,16 +27,32 @@ Name of the script to create.
 
 By default, this will stop and warn you if any of the files it is going to write already exist. Passing the --force flag will make it overwrite the files.
 
+=item B<--help>
+
+Print a brief help message and exits.
+
+=item B<--man>
+
+Prints the manual page and exits.
+
 =back
 
 =cut
 
 sub options {
-    (
+    my $self = shift;
+    return (
+        $self->SUPER::options,
         'n|name=s' => 'name',
         'force'    => 'force',
     )
 }
+
+=head1 DESCRIPTION
+
+This creates a skeleton of a new script file for your Jifty application. Often such a script is needed for cron jobs, annual maintenance work, and any other server-side activity that would benefit from a command-line script.
+
+=head1 METHODS
 
 =head2 run
 
@@ -48,8 +65,10 @@ TODO Should this create skeleton test files too?
 sub run {
     my $self = shift;
 
+    $self->print_help;
+
     my $script = $self->{name};
-    die "You need to give your new script a --name\n"
+    $self->print_help("You need to give your new script a --name")
         unless defined $script;
 
     Jifty->new( no_handle => 1 );

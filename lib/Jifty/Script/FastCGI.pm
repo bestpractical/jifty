@@ -3,15 +3,53 @@ use warnings;
 
 
 package Jifty::Script::FastCGI;
-use base qw/App::CLI::Command/;
+use base qw/Jifty::Script/;
 
 use File::Basename;
 use CGI::Fast;
 
-
 =head1 NAME
 
 Jifty::Script::FastCGI - A FastCGI server for your Jifty application
+
+=head1 SYNOPSIS
+
+    AddHandler fastcgi-script fcgi
+    FastCgiServer /path/to/your/jifty/app/bin/jifty -initial-env JIFTY_COMMAND=fastcgi 
+
+  Options:
+    --maxrequests      maximum number of requests per process
+
+    --help             brief help message
+    --man              full documentation
+
+=head1 OPTIONS
+
+=over 8
+
+=item B<--maxrequests>
+
+Set maximum number of requests per process. Read also --man.
+
+=item B<--help>
+
+Print a brief help message and exits.
+
+=item B<--man>
+
+Prints the manual page and exits.
+
+=back
+
+=cut
+
+sub options {
+    my $self = shift;
+    return (
+        $self->SUPER::options,
+        'maxrequests=i' => 'maxrequests',
+    );
+}
 
 =head1 DESCRIPTION
 
@@ -68,15 +106,7 @@ configuration instead:
 
 It may be possible to do this without using mod_rewrite.
 
-=head2 options
-
-=cut
-
-sub options {
-    (
-        'maxrequests=i' => 'maxrequests',
-    );
-}
+=head1 METHODS
 
 =head2 run
 
@@ -86,6 +116,9 @@ Creates a new FastCGI process.
 
 sub run {
     my $self = shift;
+
+    $self->print_help;
+
     Jifty->new();
     my $conf = Jifty->config->framework('Web')->{'FastCGI'} || {};
     $self->{maxrequests} ||= $conf->{MaxRequests};

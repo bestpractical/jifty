@@ -2,7 +2,7 @@ use warnings;
 use strict;
 
 package Jifty::Script::Deps;
-use base qw/App::CLI::Command/;
+use base qw/Jifty::Script/;
 
 use Config;
 use File::Find::Rule;
@@ -16,34 +16,56 @@ use Jifty::Config;
 
 Jifty::Script::Deps - Looks for module dependencies and attempts to install them from CPAN
 
-=head1 METHODS
+=head1 SYNOPSIS
 
-=head2 options
+    jifty deps
+    jifty deps --setup
 
-Returns a hash of all the options this script takes. (See the usage message for details)
+  Options:
+    --setup        ... no description ...
+
+    --help             brief help message
+    --man              full documentation
+
+=head1 OPTIONS
+
+=over 8
+
+=item B<--setup>
+
+... no description ...
+
+=item B<--help>
+
+Print a brief help message and exits.
+
+=item B<--man>
+
+Prints the manual page and exits.
+
+=back
 
 =cut
 
-
 sub options {
+    my $self = shift;
     return (
+        $self->SUPER::options,
         "setup"             => "setup_deps",
-        "help|?"            => "help",
     );
 }
 
+=head1 METHODS
+
 =head2 run
-
-Prints a help message if the users want it. If not, goes about its
-business.
-
-Sets up the environment, checks current database state, creates or deletes
-a database as necessary and then creates or updates your models' schema.
 
 =cut
 
 sub run {
     my $self = shift;
+    
+    $self->print_help;
+    
     local     $ENV{'PERL_MM_USE_DEFAULT'} = 1;
     Jifty->new( no_handle => 1 );
 
