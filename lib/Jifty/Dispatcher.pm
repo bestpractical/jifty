@@ -296,7 +296,11 @@ sub abort (;$@)   { _ret @_ }    # abort request
 sub default ($$@) { _ret @_ }    # set parameter if it's not yet set
 sub set ($$@)     { _ret @_ }    # set parameter
 sub del ($@)      { _ret @_ }    # remove parameter
-sub get ($) { request->template_argument( $_[0] ) || request->argument( $_[0] ) }
+sub get ($) {
+    my $val = request->template_argument( $_[0] );
+    return $val if defined $val;
+    return request->argument( $_[0] );
+}
 
 sub _qualify ($@);
 sub GET ($)     { _qualify method => @_ }
