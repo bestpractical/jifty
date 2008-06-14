@@ -769,7 +769,7 @@ sub _do_show {
 
     # Fix up the path
     $path = shift if (@_);
-    $path ||= $self->{path};
+    $path = $self->{path} unless defined $path and length $path;
 
     unless ($CURRENT_STAGE eq 'RUN') {
         die "You can't call a 'show' rule in a 'before' or 'after' block in the dispatcher.  Not showing path $path";
@@ -803,7 +803,8 @@ sub _do_show {
 
 sub _do_set {
     my ( $self, $key, $value ) = @_;
-    $self->log->debug("Setting argument $key to ".($value||''));
+    no warnings 'uninitialized';
+    $self->log->debug("Setting argument $key to $value");
     request->template_argument($key, $value);
 }
 
@@ -815,7 +816,8 @@ sub _do_del {
 
 sub _do_default {
     my ( $self, $key, $value ) = @_;
-    $self->log->debug("Setting argument default $key to ".($value||''));
+    no warnings 'uninitialized';
+    $self->log->debug("Setting argument default $key to $value");
     request->template_argument($key, $value)
         unless defined request->argument($key) or defined request->template_argument($key);
 }
