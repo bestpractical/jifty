@@ -6,7 +6,7 @@ use base qw/Jifty::Plugin Class::Accessor::Fast/;
 
 =head1 NAME
 
-Jifty::Plugin::UUID
+Jifty::Plugin::UUID - Provides Universally Unique Identifier for Jifty
 
 =head1 SYNOPSIS
 

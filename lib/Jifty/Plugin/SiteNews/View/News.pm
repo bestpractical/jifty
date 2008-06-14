@@ -7,7 +7,7 @@ use Jifty::View::Declare::CRUD;
 
 =head1 NAME
 
-Jifty::Plugin::SiteNews::View::News
+Jifty::Plugin::SiteNews::View::News - /news pages for your app
 
 =head1 DESCRIPTION
 

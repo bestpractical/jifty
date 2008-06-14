@@ -9,7 +9,7 @@ use base qw/Jifty::Plugin Class::Accessor::Fast/;
 
 =head1 NAME
 
-Jifty::Plugin::Feedback
+Jifty::Plugin::Feedback - Plugin to provides a feedback box
 
 =head1 DESCRIPTION
 

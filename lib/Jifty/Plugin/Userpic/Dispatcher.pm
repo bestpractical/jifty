@@ -6,7 +6,7 @@ package Jifty::Plugin::Userpic::Dispatcher;
 
 =head1 NAME
 
-Jifty::Plugin::Userpic::Dispatcher
+Jifty::Plugin::Userpic::Dispatcher - Dispatcher for the Jifty Userpic plugin
 
 =head1 DESCRIPTION
 

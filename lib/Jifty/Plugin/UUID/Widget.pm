@@ -8,7 +8,7 @@ use base qw/Jifty::Web::Form::Field/;
 
 =head1 NAME
 
-Jifty::Plugin::UUID::Widget - 
+Jifty::Plugin::UUID::Widget -  Widget for UUID plugin
 
 =head1 METHODS
 

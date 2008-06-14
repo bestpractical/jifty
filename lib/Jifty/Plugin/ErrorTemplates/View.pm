@@ -10,7 +10,7 @@ use Scalar::Defer;
 
 =head1 NAME
 
-Jifty::Plugin::ErrorTemplates::View;
+Jifty::Plugin::ErrorTemplates::View - Template pages to show errors
 
 =head1 DESCRIPTION
 

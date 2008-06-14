@@ -5,7 +5,7 @@ use Jifty::Dispatcher -base;
 
 =head1 NAME
 
-Jifty::Plugin::SinglePage::Dispatcher
+Jifty::Plugin::SinglePage::Dispatcher - Dispatcher for SinglePage plugin
 
 =head1 DESCRIPTION
 

@@ -5,6 +5,12 @@ use warnings;
 package Jifty::Plugin::Attributes::Model::Attribute;
 use base 'Jifty::Record';
 
+=head1 NAME
+
+Jifty::Plugin::Attributes::Model::Attribute - Attribute model
+
+=cut
+
 use Jifty::DBI::Schema;
 use Jifty::Record schema {
     column name =>

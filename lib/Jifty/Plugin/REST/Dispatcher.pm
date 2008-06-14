@@ -46,6 +46,10 @@ on GET    '/=/help/*'           => \&show_help_specific;
 
 on GET    '/=/version'          => \&show_version;
 
+=head1 NAME
+
+Jifty::Plugin::REST::Dispatcher - Dispatcher for REST plugin
+
 =head2 show_help
 
 Shows basic help about resources and formats available via this RESTian interface.

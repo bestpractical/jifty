@@ -9,7 +9,7 @@ use base qw/Jifty::Plugin/;
 
 =head1 NAME
 
-Jifty::Plugin::SkeletonApp
+Jifty::Plugin::SkeletonApp - Skeleton for your application
 
 =head1 DESCRIPTION
 

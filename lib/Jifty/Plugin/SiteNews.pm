@@ -5,7 +5,7 @@ use base qw'Jifty::Plugin';
 
 =head1 NAME
 
-Jifty::Plugin::SiteNews
+Jifty::Plugin::SiteNews - Provide site news in your app
 
 =head1 DESCRIPTION
 

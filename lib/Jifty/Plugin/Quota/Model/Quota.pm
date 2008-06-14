@@ -3,7 +3,7 @@ use warnings;
 
 =head1 NAME
 
-BTDT::Model::Quota
+Jifty::Plugin::Quota::Model::Quota - Quota model
 
 =head1 DESCRIPTION
 

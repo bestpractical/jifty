@@ -6,7 +6,7 @@ use Jifty::Dispatcher -base;
 
 =head1 NAME
 
-Jifty::Plugin::LetMe::Dispatcher
+Jifty::Plugin::LetMe::Dispatcher - Dispatcher for LetMe plugin
 
 =head1 DESCRIPTION
 

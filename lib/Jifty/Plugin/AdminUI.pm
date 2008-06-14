@@ -7,7 +7,7 @@ use base qw/Jifty::Plugin/;
 
 =head2 NAME
 
-Jifty::Plugin::AdminUI
+Jifty::Plugin::AdminUI - Add basic administrative CRUD view
 
 =head2  DESCRIPTION
 

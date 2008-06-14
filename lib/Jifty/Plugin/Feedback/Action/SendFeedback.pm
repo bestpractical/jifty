@@ -4,7 +4,7 @@ use strict;
 
 =head1 NAME
 
-Jifty::Plugin::Feedback::Action::SendFeedback
+Jifty::Plugin::Feedback::Action::SendFeedback - Send feedback by mail
 
 =cut
 

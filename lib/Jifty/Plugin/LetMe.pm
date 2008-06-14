@@ -9,7 +9,7 @@ use base qw/Jifty::Plugin/;
 
 =head1 NAME
 
-Jifty::Plugin::LetMe
+Jifty::Plugin::LetMe - Plugin for url-based authentication
 
 =head1 DESCRIPTION
 

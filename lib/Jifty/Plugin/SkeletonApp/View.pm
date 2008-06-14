@@ -10,7 +10,7 @@ use Scalar::Defer;
 
 =head1 NAME
 
-Jifty::Plugin::SkeletonApp::View
+Jifty::Plugin::SkeletonApp::View - Default fragments for your pages
 
 =head1 DESCRIPTION
 

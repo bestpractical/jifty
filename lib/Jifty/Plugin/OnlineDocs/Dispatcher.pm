@@ -5,7 +5,7 @@ package Jifty::Plugin::OnlineDocs::Dispatcher;
 
 =head1 NAME
 
-Jifty::Plugin::OnlineDocs::Dispatcher
+Jifty::Plugin::OnlineDocs::Dispatcher - Dispatcher for OnlineDocs plugin
 
 =head1 DESCRIPTION
 

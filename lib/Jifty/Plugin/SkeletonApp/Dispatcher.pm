@@ -5,7 +5,7 @@ package Jifty::Plugin::SkeletonApp::Dispatcher;
 
 =head1 NAME
 
-Jifty::Plugin::SkeletonApp::Dispatcher
+Jifty::Plugin::SkeletonApp::Dispatcher - Dispatcher for SkeletonApp plugin
 
 =head1 DESCRIPTION
 

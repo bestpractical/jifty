@@ -4,6 +4,12 @@ use strict;
 
 use Jifty::Dispatcher -base;
 
+=head1 NAME
+
+Jifty::Plugin::Gladiator::Dispatcher - Dispatcher for gladiator plugin
+
+=cut
+
 # http://your.app/arena
 on '/__jifty/admin/arena' => run {
     set 'skip_zero' => 1;

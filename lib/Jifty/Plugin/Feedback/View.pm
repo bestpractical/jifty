@@ -6,7 +6,7 @@ use Jifty::View::Declare -base;
 
 =head1 NAME
 
-Jifty::Plugin::Feedback::View
+Jifty::Plugin::Feedback::View - Fragment for feedback box
 
 =head1 DESCRIPTION
 

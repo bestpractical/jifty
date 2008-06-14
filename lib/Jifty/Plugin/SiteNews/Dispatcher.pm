@@ -6,7 +6,7 @@ use base 'Jifty::Dispatcher';
 
 =head1 NAME
 
-Jifty::Plugin::SiteNews::Dispatcher
+Jifty::Plugin::SiteNews::Dispatcher - Dispatcher for SiteNews plugin
 
 =head1 DESCRIPTION
 

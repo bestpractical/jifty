@@ -9,7 +9,7 @@ use IO::Handle ();
 
 =head1 NAME
 
-Jifty::Plugin::CompressedCSSandJS
+Jifty::Plugin::CompressedCSSandJS - Compression of CSS and javascript files
 
 =head1 SYNOPSIS
 

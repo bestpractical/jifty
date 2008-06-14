@@ -10,7 +10,7 @@ our @halo_queries;
 
 =head1 NAME
 
-Jifty::Plugin::SQLQueries
+Jifty::Plugin::SQLQueries - SQL query logging and reporting for your Jifty app
 
 =head1 DESCRIPTION
 

@@ -2,6 +2,12 @@ package Jifty::Plugin::LeakTracker::Dispatcher;
 use warnings;
 use strict;
 
+=head1 NAME
+
+Jifty::Plugin::LeakTracker::Dispatcher - Dispatcher for leak tracker plugin
+
+=cut
+
 use Jifty::Dispatcher -base;
 
 # http://your.app/__jifty/admin/leaks -- display full leak report

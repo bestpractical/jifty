@@ -10,7 +10,7 @@ our $NO_SPA;
 
 =head1 NAME
 
-Jifty::Plugin::SinglePage
+Jifty::Plugin::SinglePage - Makes your app into a single-page
 
 =head1 DESCRIPTION
 

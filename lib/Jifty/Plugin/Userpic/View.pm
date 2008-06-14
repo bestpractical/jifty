@@ -5,7 +5,7 @@ use Jifty::View::Declare -base;
 
 =head1 NAME
 
-Jifty::Plugin::Userpic::View
+Jifty::Plugin::Userpic::View - View for the Userpic plugin
 
 =head1 DESCRIPTION
 

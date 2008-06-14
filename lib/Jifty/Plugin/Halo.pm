@@ -8,7 +8,7 @@ use Class::Trigger;
 
 =head1 NAME
 
-Jifty::Plugin::Halo
+Jifty::Plugin::Halo - Provides halos
 
 =head1 DESCRIPTION
 

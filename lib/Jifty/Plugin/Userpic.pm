@@ -7,7 +7,7 @@ use base qw/Jifty::Plugin Class::Accessor::Fast/;
 
 =head1 NAME
 
-Jifty::Plugin::Userpic
+Jifty::Plugin::Userpic - Provides user pictures for Jifty
 
 =head1 SYNOPSIS
 

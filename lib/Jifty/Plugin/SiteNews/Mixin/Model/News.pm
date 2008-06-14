@@ -7,6 +7,12 @@ use base 'Jifty::DBI::Record::Plugin';
 
 our @EXPORT = qw(current_user_can);
 
+=head1 NAME
+
+Jifty::Plugin::SiteNews::Mixin::Model::News - News model
+
+=cut
+
 use Jifty::Record schema {
 
     my $user_class = Jifty->app_class('Model', 'User');

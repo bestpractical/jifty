@@ -7,7 +7,7 @@ use base qw/Jifty::Plugin Class::Accessor::Fast/;
 
 =head1 NAME
 
-Jifty::Plugin::GoogleMap
+Jifty::Plugin::GoogleMap - GoogleMap plugin
 
 =head1 SYNOPSIS
 

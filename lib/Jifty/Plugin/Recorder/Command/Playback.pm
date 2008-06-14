@@ -15,7 +15,9 @@ use Storable 'thaw';
 our $start = time; # for naming log files
 our $path = 'log/playback';
 
-=head1 Jifty::Script::Playback - Play back request logs
+=head1 NAME
+
+Jifty::Script::Playback - Play back request logs
 
 =head1 DESCRIPTION
 

@@ -9,7 +9,7 @@ use base qw/Jifty::Plugin/;
 
 =head1 NAME
 
-Jifty::Plugin::ErrorTemplates
+Jifty::Plugin::ErrorTemplates - Plugin for showing errors
 
 =head1 DESCRIPTION
 

@@ -8,7 +8,7 @@ our $VERSION = '1.01';
 
 =head1 NAME
 
-Jifty::Plugin::REST
+Jifty::Plugin::REST - Add REST web services to your app
 
 =head1 DESCRIPTION
 

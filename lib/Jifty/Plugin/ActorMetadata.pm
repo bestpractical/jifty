@@ -6,11 +6,13 @@ use base qw/Jifty::Plugin/;
 
 =head1 NAME
 
-Jifty::Plugin::ActorMetadata
+Jifty::Plugin::ActorMetadata - add created_by created_on updated_on columns to
+a model class
 
 =head1 DESCRIPTION
- 
-This plugin adds a model mixin which adds C<created_by>, C<created_on> and C<updated_on> columns to a model class.
+
+This plugin adds a model mixin which adds C<created_by>, C<created_on> and
+C<updated_on> columns to a model class.
 
 =head1 EXAMPLE 
 

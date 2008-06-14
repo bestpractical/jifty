@@ -5,6 +5,11 @@ use warnings;
 package Jifty::Plugin::Attributes::Model::AttributeCollection;
 use base 'Jifty::Collection';
 
+=head1 NAME
+
+Jifty::Plugin::Attributes::Model::AttributeCollection - Collection of
+attributes
+
 =head2 record_class
 
 Is this even required any more?

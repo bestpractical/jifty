@@ -34,6 +34,10 @@ on '/__jifty/admin/queries/#' => run {
     show "/__jifty/admin/queries/one";
 };
 
+=head1 NAME
+
+Jifty::Plugin::SQLQueries::Dispatcher - Dispatcher for SQLQueries plugin
+
 =head1 SEE ALSO
 
 L<Jifty::Plugin::SQLQueries>, L<Jifty::Plugin::SQLQueries::View>

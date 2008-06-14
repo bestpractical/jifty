@@ -6,7 +6,7 @@ use base 'Jifty::Plugin';
 
 =head1 NAME
 
-Jifty::Plugin::I18N
+Jifty::Plugin::I18N - Additional i18n facility such as language selector
 
 =head1 SYNOPSIS
 

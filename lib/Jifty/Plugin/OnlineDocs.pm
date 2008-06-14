@@ -9,7 +9,7 @@ use base qw/Jifty::Plugin/;
 
 =head1 NAME
 
-Jifty::Plugin::OnlineDocs
+Jifty::Plugin::OnlineDocs - Online documentation for Jifty in current application
 
 =head1 DESCRIPTION
 

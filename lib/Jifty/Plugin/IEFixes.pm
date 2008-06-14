@@ -6,7 +6,7 @@ use base 'Jifty::Plugin';
 
 =head1 NAME
 
-Jifty::Plugin::CompressedCSSandJS
+Jifty::Plugin::IEFixes - Add javascript files for IE
 
 =head1 SYNOPSIS
 

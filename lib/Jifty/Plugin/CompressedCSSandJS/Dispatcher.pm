@@ -5,7 +5,8 @@ package Jifty::Plugin::CompressedCSSandJS::Dispatcher;
 
 =head1 NAME
 
-Jifty::Plugin::CompressedCSSandJS::Dispatcher
+Jifty::Plugin::CompressedCSSandJS::Dispatcher - Dispatcher for css and js
+compression
 
 =head1 DESCRIPTION
 

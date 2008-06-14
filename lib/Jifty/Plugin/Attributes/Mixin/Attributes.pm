@@ -10,6 +10,10 @@ use base 'Exporter';
 our @EXPORT = qw/attributes first_attribute add_attribute set_attribute
                  delete_attribute delete_all_attributes/;
 
+=head1 NAME
+
+Jifty::Plugin::Attributes::Mixin::Attributes - Mixin attributes
+
 =head2 attributes
 
 Returns an AttributeCollection limited to the invoking object.
