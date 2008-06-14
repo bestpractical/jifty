@@ -1,0 +1,6 @@
+This directory contains first version of deprecated plugins
+or plugins need to be moved outside trunk.
+
+AuthCASLogin AuthCASOnly AuthLDAPLogin AuthLDAPOnly are
+deprecated, use Jifty::Plugin::Authentication::CAS or
+Jifty::Plugin::Authentication::Ldap instead

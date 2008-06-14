@@ -1,9 +1,0 @@
-lib/Jifty/Plugin/AuthzLDAP.pm
-lib/Jifty/Plugin/AuthzLDAP/Action/LDAPValidate.pm
-lib/Jifty/Plugin/AuthzLDAP/Model/LDAPFilter.pm
-Makefile.PL
-MANIFEST
-share/po/en.po
-share/po/fr.po
-share/web/templates/error/AccessDenied
-t/00-load.t
