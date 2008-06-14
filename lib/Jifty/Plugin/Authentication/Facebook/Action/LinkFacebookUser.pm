@@ -3,7 +3,7 @@ use strict;
 
 =head1 NAME
 
-Jifty::Plugin::Authentication::Facebook::Action::LinkFacebookUser;
+Jifty::Plugin::Authentication::Facebook::Action::LinkFacebookUser - link facebook user to current user
 
 =cut
 

@@ -6,7 +6,7 @@ use base qw/Jifty::Notification/;
 
 =head1 NAME
 
-Jifty::Plugin::Authentication::Password::Notification::ConfirmLostPassword
+Jifty::Plugin::Authentication::Password::Notification::ConfirmLostPassword - mail notification to change password
 
 =head1 ARGUMENTS
 

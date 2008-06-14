@@ -6,7 +6,7 @@ use base 'Jifty::DBI::Record::Plugin';
 
 =head1 NAME
 
-Jifty::Plugin::Authentication::CAS::Mixin::Model::User;
+Jifty::Plugin::Authentication::CAS::Mixin::Model::User - CAS mixin for User model
 
 =head1 DESCRIPTION
 

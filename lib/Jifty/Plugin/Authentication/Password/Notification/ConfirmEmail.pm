@@ -6,7 +6,7 @@ use base qw/Jifty::Notification/;
 
 =head1 NAME
 
-Jifty::Plugin::Authentication::Password::Notification::ConfirmEmail
+Jifty::Plugin::Authentication::Password::Notification::ConfirmEmail - mail notification to confirm email
 
 =head1 ARGUMENTS
 

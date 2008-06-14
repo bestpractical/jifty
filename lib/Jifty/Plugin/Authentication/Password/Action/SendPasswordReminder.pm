@@ -3,7 +3,7 @@ use strict;
 
 =head1 NAME
 
-Jifty::Plugin::Authentication::Password::Action::SendPasswordReminder
+Jifty::Plugin::Authentication::Password::Action::SendPasswordReminder - send a link to reset a password
 
 =cut
 

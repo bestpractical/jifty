@@ -8,7 +8,7 @@ use WWW::Facebook::API;
 
 =head1 NAME
 
-Jifty::Plugin::Authentication::Facebook
+Jifty::Plugin::Authentication::Facebook - Facebook authentication plugin for Jifty
 
 =head2 DESCRIPTION
 

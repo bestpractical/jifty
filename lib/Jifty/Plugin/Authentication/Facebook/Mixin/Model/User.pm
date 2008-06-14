@@ -5,6 +5,12 @@ package Jifty::Plugin::Authentication::Facebook::Mixin::Model::User;
 use Jifty::DBI::Schema;
 use base 'Jifty::DBI::Record::Plugin';
 
+=head1 NAME
+
+Jifty::Plugin::Authentication::Facebook::Mixin::Model::User - mixin facebook an model users
+
+=cut
+
 use Jifty::Plugin::Authentication::Facebook::Record schema {
 
     column facebook_name => 

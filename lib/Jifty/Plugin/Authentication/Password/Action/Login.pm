@@ -3,7 +3,7 @@ use strict;
 
 =head1 NAME
 
-Jifty::Plugin::Authentication::Password::Action::Login
+Jifty::Plugin::Authentication::Password::Action::Login - process login with password
 
 =cut
 

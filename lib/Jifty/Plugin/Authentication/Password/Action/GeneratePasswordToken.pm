@@ -3,7 +3,7 @@ use strict;
 
 =head1 NAME
 
-Jifty::Plugin::Authentication::PasswordAction::GeneratePasswordToken
+Jifty::Plugin::Authentication::PasswordAction::GeneratePasswordToken - generate password token
 
 =cut
 

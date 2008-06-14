@@ -3,7 +3,7 @@ use strict;
 
 =head1 NAME
 
-Jifty::Plugin::Authentication::CAS::Action::CASLogin
+Jifty::Plugin::Authentication::CAS::Action::CASLogin - process CAS login plugin
 
 =cut
 

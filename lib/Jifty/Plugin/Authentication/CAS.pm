@@ -7,7 +7,7 @@ use Authen::CAS::Client;
 
 =head1 NAME
 
-Jifty::Plugin::Authentication::CAS
+Jifty::Plugin::Authentication::CAS - JA-SIG CAS authentication plugin
 
 =head1 DESCRIPTION
 

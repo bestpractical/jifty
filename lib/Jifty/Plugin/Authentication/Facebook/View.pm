@@ -6,7 +6,7 @@ use Jifty::View::Declare -base;
 
 =head1 NAME
 
-Jifty::Plugin::Authentication::Facebook::View
+Jifty::Plugin::Authentication::Facebook::View - Facebook login fragment
 
 =head1 DESCRIPTION
 

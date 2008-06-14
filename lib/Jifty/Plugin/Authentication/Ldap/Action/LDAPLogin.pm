@@ -3,7 +3,7 @@ use strict;
 
 =head1 NAME
 
-Jifty::Plugin::Authentication::Ldap::Action::LDAPLogin;
+Jifty::Plugin::Authentication::Ldap::Action::LDAPLogin - process LDAP login plugin
 
 =cut
 

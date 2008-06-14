@@ -3,7 +3,7 @@ use strict;
 
 =head1 NAME
 
-Jifty::Plugin::Authentication::Facebook::Action::LoginFacebookUser;
+Jifty::Plugin::Authentication::Facebook::Action::LoginFacebookUser - login facebook user
 
 =cut
 

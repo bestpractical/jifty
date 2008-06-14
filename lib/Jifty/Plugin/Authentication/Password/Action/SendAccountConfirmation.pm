@@ -3,7 +3,7 @@ use strict;
 
 =head1 NAME
 
-Jifty::Plugin::Authentication::Password::Action::SendAccountConfirmation
+Jifty::Plugin::Authentication::Password::Action::SendAccountConfirmation - send confirmation for an email
 
 =cut
 

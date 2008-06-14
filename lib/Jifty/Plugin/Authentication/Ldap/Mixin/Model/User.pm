@@ -7,7 +7,7 @@ use URI;
 
 =head1 NAME
 
-Jifty::Plugin::Authentication::Ldap::Mixin::Model::User;
+Jifty::Plugin::Authentication::Ldap::Mixin::Model::User - Ldap mixin with User model
 
 =head1 DESCRIPTION
 

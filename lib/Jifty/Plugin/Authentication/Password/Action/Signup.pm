@@ -3,7 +3,7 @@ use strict;
 
 =head1 NAME
 
-Jifty::Plugin::Authentication::Password::Action::Signup
+Jifty::Plugin::Authentication::Password::Action::Signup - signup for an account
 
 =cut
 

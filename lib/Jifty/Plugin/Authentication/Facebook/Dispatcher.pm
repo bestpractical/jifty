@@ -6,7 +6,7 @@ use Jifty::Dispatcher -base;
 
 =head1 NAME
 
-Jifty::Plugin::Authentication::Facebook::Dispatcher
+Jifty::Plugin::Authentication::Facebook::Dispatcher - dispatcher for facebook plugin
 
 =head1 DESCRIPTION
 

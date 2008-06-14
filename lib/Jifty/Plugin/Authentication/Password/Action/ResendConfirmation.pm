@@ -3,7 +3,7 @@ use strict;
 
 =head1 NAME
 
-Jifty::Plugin::Authentication::Password::Action::ResendConfirmation
+Jifty::Plugin::Authentication::Password::Action::ResendConfirmation - resend confirmation for new mail or password
 
 =cut
 

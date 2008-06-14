@@ -2,9 +2,9 @@ use utf8;
 use warnings;
 use strict;
 
-=head1 NAME Jifty::Plugin::Authentication::Ldap::View
+=head1 NAME
 
-This provides the templates for the pages and forms used by the ldap authentication plugin.
+Jifty::Plugin::Authentication::Ldap::View - provides templates for the pages and forms used by the ldap authentication plugin.
 
 =cut
 

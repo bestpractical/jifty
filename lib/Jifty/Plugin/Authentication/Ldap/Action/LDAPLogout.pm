@@ -3,7 +3,7 @@ use strict;
 
 =head1 NAME
 
-Jifty::Plugin::Authentication::Ldap::Action::LDAPLogout;
+Jifty::Plugin::Authentication::Ldap::Action::LDAPLogout - process LDAP logout plugin
 
 =cut
 
