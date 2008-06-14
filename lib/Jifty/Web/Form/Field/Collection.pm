@@ -5,6 +5,10 @@ package Jifty::Web::Form::Field::Collection;
 
 use base qw/Jifty::Web::Form::Field/;
 
+=head1 NAME
+
+Jifty::Web::Form::Field::Collection - render a whole collection of available values
+
 =head2 render_widget
 
 Renders the whole collection of available values.

@@ -5,6 +5,12 @@ package Jifty::Schema;
 use base qw/Jifty::Object/;
 use SQL::ReservedWords;
 
+=head1 NAME
+
+Jifty::Schema - Jifty schemas
+
+=cut
+
 Jifty::Module::Pluggable->import(
     require     => 1,
     search_path => ["SQL::ReservedWords"],

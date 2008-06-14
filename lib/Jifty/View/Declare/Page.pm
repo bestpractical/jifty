@@ -5,7 +5,7 @@ use base qw/Template::Declare Class::Accessor::Fast/;
 
 =head1 NAME
 
-Jifty::View::Declare::Page
+Jifty::View::Declare::Page - page wrappers
 
 =head1 DESCRIPTION
 
