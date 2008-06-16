@@ -169,7 +169,9 @@ Get the language handle for this request.
 sub get_language_handle {
     # XXX: subrequest should not need to get_handle again.
     my $self = shift;
-    my $lang = Jifty->web->session->get('jifty_lang');
+    # optional argument makes it easy to disable I18N
+    # while comparing test strings (without loading session)
+    my $lang = shift || Jifty->web->session->get('jifty_lang');
     $$DynamicLH = $self->get_handle($lang ? $lang : ()) if $DynamicLH;
 }
 
