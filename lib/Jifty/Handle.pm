@@ -72,6 +72,7 @@ sub canonical_database_name {
 
     if ( $db_config->{'Driver'} =~ /SQLite/ ) {
         $db = Jifty::Util->absolute_path($db);
+        $db =~ s{::}{-}g;  # ':' is not allowed in a Win32 path
     }
 
     return $db;
