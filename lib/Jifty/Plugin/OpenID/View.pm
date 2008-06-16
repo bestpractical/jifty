@@ -5,7 +5,7 @@ use Jifty::View::Declare -base;
 
 =head1 NAME
 
-Jifty::Plugin::OpenID::View
+Jifty::Plugin::OpenID::View - Login and create pages for OpenID plugin
 
 =head1 DESCRIPTION
 

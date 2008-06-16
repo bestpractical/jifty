@@ -6,7 +6,7 @@ use Jifty::Dispatcher -base;
 
 =head1 NAME
 
-Jifty::Plugin::OpenID::Dispatcher
+Jifty::Plugin::OpenID::Dispatcher - Dispatcher for OpenID plugin
 
 =head1 DESCRIPTION
 

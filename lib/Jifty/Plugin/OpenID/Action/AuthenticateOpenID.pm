@@ -3,7 +3,7 @@ use strict;
 
 =head1 NAME
 
-Jifty::Plugin::OpenID::Action::AuthenticateOpenID;
+Jifty::Plugin::OpenID::Action::AuthenticateOpenID - make OpenId authentication
 
 =cut
 

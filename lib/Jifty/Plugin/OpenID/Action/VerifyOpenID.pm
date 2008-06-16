@@ -3,7 +3,7 @@ use strict;
 
 =head1 NAME
 
-Jifty::Plugin::OpenID::Action::VerifyOpenID;
+Jifty::Plugin::OpenID::Action::VerifyOpenID - verify OpenID
 
 =cut
 

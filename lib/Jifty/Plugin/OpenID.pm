@@ -7,7 +7,7 @@ use LWPx::ParanoidAgent;
 
 =head1 NAME
 
-Jifty::Plugin::OpenID
+Jifty::Plugin::OpenID - Provides OpenID authentication for your jifty app
 
 =head1 DESCRIPTION
 

@@ -7,7 +7,7 @@ use URI;
 
 =head1 NAME
 
-Jifty::Plugin::OpenID::Mixin::Model::User
+Jifty::Plugin::OpenID::Mixin::Model::User - Mixin model user
 
 =head1 DESCRIPTION
 
