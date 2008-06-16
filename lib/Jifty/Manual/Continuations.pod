@@ -8,9 +8,9 @@ Continuations are a powerful concept in computer science -- in a
 nutshell, they allow you to store away the state of of the interpreter
 at any given point.  More importantly, they allow you to return to
 that state at any later time, by calling the continuation with, and
-evaluation of that interpreter state will resume.  They're a concept
-that first arose in LISP, but has implementations these days in Ruby,
-Scheme, Haskell, Smalltalk, to name a few.
+evaluation of that interpreter state will resume.  They are a concept
+that first arose in LISP, but have implementations these days in Ruby,
+Scheme, Haskell, and Smalltalk, to name a few.
 
 Thus, continuations allow you to preserve context, and return to it
 later.  This is amazingly useful in web programming, which is limited
@@ -19,13 +19,13 @@ around continuations, we can keep track of the context that got us to
 the current page.
 
 While we can't construct I<full continuations> at the interpreter level
--- because Perl doesn't support them -- we can implement them at the
+-- because Perl does not support them -- we can implement them at the
 level of HTTP requests.  In technical terms, because they capture the
 control stack up from the beginning of a user's session, they are
 called I<delimited continuations>.
 
-Continuations are more useful than session because sessions store
-information across browser windows; sessions may also break in the
+Continuations are more useful than sessions. Sessions store
+information across browser windows. Sessions may also break in the
 presence of the back button, as the information displayed on the
 screen, and the information stored in the session may differ.  Since
 continuations are immutable, and a new one is produced every time a
