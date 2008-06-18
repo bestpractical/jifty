@@ -10,7 +10,7 @@ Jifty::Plugin::Feedback::Action::SendFeedback - Send feedback by mail
 
 package Jifty::Plugin::Feedback::Action::SendFeedback;
 use base qw/Jifty::Action/;
-
+use Jifty::Notification;
 
 =head2 arguments
 
