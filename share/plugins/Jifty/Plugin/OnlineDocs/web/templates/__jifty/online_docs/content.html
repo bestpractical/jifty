@@ -15,6 +15,7 @@ a:focus { background: #99ff99; border: 1px black dotted }
 my $jifty_dirname = Jifty::Util->jifty_root."/";
 my $app_dirname = Jifty::Util->app_root."/lib/";
 $n =~ s/::/\//g;
+my $app_name = Jifty->app_class();
 
 my @options = (
     $app_dirname.$n.".pod",
@@ -49,7 +50,7 @@ $body =~ s{</body>\s*</html>\s*$}{};
 $n    =~ s{/}{::}g;
 $m->print("<h1>$n</h1>");
 $m->print("<h2>"._('Schema')."</h2><pre>$schema</pre>") if ($schema);
-$body =~ s{<a href="http://search\.cpan\.org/perldoc\?(Jifty%3A%3A[^"]+)"([^>]*)>}{<a href="content.html?n=$1"$2>}g;
+$body =~ s{<a href="http://search\.cpan\.org/perldoc\?((?:Jifty|$app_name)%3A%3A[^"]+)"([^>]*)>}{<a href="content.html?n=$1"$2>}g;
 $body =~ s!</li>\n\t<ul>!<ul>!;
 $body =~ s!</ul>!</ul></li>!;
 $body =~ s!<p></p>!!;
