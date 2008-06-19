@@ -5,6 +5,31 @@ use strict;
 
 Jifty::Upgrade - Superclass for schema/data upgrades to Jifty applicaitons
 
+=head1 SYNOPSIS
+
+  package MyApp::Upgrade;
+
+  use base qw/ Jifty::Upgrade /;
+  use Jifty::Upgrade qw/ since rename /;
+
+  since '0.7.4' => sub {
+      # Rename a column
+      rename table => 'cthulus', name => 'description', 
+                                   to => 'mind_numbingly_horrible_word_picture';
+  };
+
+  since '0.6.1' => sub {
+      my @sizes       = ('Huge', 'Gigantic', 'Monstrous', 'Really Big');
+      my @appearances = ('Horrible', 'Disgusting', 'Frightening', 'Evil');
+      
+      # populate new columns with some random stuff
+      my $cthulus = MyApp::Model::CthuluCollection->new;
+      while (my $cthulu = $cthulus->next) {
+          $cthulu->set_size($sizes[ int(rand(@sizes)) ]);
+          $cthulu->set_appearance($sizes[ int(rand(@appearances)) ]);
+      }
+  };
+
 =head1 DESCRIPTION
 
 C<Jifty::Upgrade> is an abstract baseclass to use to customize schema
