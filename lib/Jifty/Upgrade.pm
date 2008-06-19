@@ -26,7 +26,7 @@ Jifty::Upgrade - Superclass for schema/data upgrades to Jifty applicaitons
       my $cthulus = MyApp::Model::CthuluCollection->new;
       while (my $cthulu = $cthulus->next) {
           $cthulu->set_size($sizes[ int(rand(@sizes)) ]);
-          $cthulu->set_appearance($sizes[ int(rand(@appearances)) ]);
+          $cthulu->set_appearance($appearances[ int(rand(@appearances)) ]);
       }
   };
 
