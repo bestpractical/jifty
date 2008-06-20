@@ -10,7 +10,7 @@ a:focus { background: #99ff99; border: 1px black dotted }
 --></style>
 </head>
 <FRAMESET COLS="*, 250">
-    <FRAME src="content.html" name="podcontent">
+    <FRAME src="content.html<% $n ? "?n=$n" : "" %>" name="podcontent">
     <FRAME src="toc.html" name="podtoc">
     <NOFRAMES>
         <a style="display: none" href="#toc"><%_('Table of Contents')%></a>
