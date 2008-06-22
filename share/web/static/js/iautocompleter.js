@@ -148,17 +148,17 @@ jQuery.iAuto = {
 		jQuery.iAuto.items
 			.mouseover(jQuery.iAuto.hoverItem)
 			.bind('mousedown', jQuery.iAuto.clickItem);
-		var position = jQuery.iUtil.getPosition(subject);
+		var position = jQuery(subject).position();
 		var size = jQuery.iUtil.getSize(subject);
 		jQuery.iAuto.helper
-			.css('top', position.y + size.hb + 'px')
-			.css('left', position.x +  'px')
+			.css('top', position.top + size.hb + 'px')
+			.css('left', position.left +  'px')
 			.addClass(subject.autoCFG.helperClass);
 		if (jQuery.iAuto.iframe) {
 			jQuery.iAuto.iframe
 				.css('display', 'block')
-				.css('top', position.y + size.hb + 'px')
-				.css('left', position.x +  'px')
+				.css('top', position.top + size.hb + 'px')
+				.css('left', position.left +  'px')
 		                .css('width', jQuery.iAuto.helper.width() )
          	                .css('height', jQuery.iAuto.helper.height() );
 		}
