@@ -38,8 +38,7 @@ __PACKAGE__->javascript_libs([qw(
     jsan/Upgrade/Array/push.js
     jsan/DOM/Events.js
     json.js
-    jquery-1.2.3.js
-    jquery_patch.js
+    jquery-1.2.6.js
     iutil.js
     iautocompleter.js
     jifty_interface.js
