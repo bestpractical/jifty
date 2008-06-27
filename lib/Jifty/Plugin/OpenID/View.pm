@@ -61,7 +61,7 @@ template 'openid/create' => page {
         );
     };
     Jifty->web->form->start( call => $next );
-    render_param( $action, 'name', default_value => get('nickname') );
+    render_action($action);
     form_submit( label => _('Continue'), submit => $action );
     Jifty->web->form->end;
 };

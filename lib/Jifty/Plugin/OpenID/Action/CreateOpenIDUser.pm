@@ -35,20 +35,10 @@ The fields for C<CreateOpenIDUser> are:
 
 sub arguments {
     my $self = shift;
-    my $args = $self->SUPER::arguments;
-
-    my %fields = (
-        name => 1,
-    );
-
-    for ( keys %$args ){
-        delete $args->{$_} unless $fields{$_};
-    }
-
-    $args->{'name'}{'ajax_validates'} = 1;
+    my $args = $self->record_class->new->as_create_action->arguments;
+    delete $args->{openid};
     return $args;
 }
-
 
 =head2 take_action
 
@@ -65,7 +55,7 @@ sub take_action {
         return;
     }
 
-    my $user = Jifty->app_class("Model", "User")->new(current_user => Jifty->app_class("CurrentUser")->superuser );
+    my $user = $self->record_class->new(current_user => Jifty->app_class("CurrentUser")->superuser );
 
     $user->load_by_cols( openid => $openid );
 
@@ -74,7 +64,7 @@ sub take_action {
         return;
     }
 
-    $user->create( openid => $openid, name => $self->argument_value('name') );
+    $user->create( openid => $openid, %{$self->argument_values} );
 
     if ( not $user->id ) {
         $self->result->error( "Something bad happened and we couldn't log you in.  Please try again later." );
