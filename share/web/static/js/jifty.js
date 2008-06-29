@@ -732,8 +732,7 @@ Behaviour.register({
     ".focus": function(e) {
         /* Check to see if the element is already focused */
         if (!jQuery(e).hasClass("focused")) {
-            e.focus();
-            jQuery(e).addClass("focused")
+            jQuery(e).addClass("focused").focus();
         }
     }
 });
