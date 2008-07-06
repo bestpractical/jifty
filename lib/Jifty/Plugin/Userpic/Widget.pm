@@ -7,7 +7,7 @@ use base qw/Jifty::Web::Form::Field/;
 
 =head1 NAME
 
-Jifty::Plugin::Userpic::Widget - google map widget for geolocation display and editing
+Jifty::Plugin::Userpic::Widget - for displaying and uploading user picture.
 
 =head1 METHODS
 
