@@ -730,7 +730,11 @@ sub redirect {
         }
         my %parameters = ($page->parameters);
         $request->argument($_ => $parameters{$_}) for keys %parameters;
-        $request->path($page->url);
+
+        # Apache, lighttpd, and HSS all do one pass of unescaping on
+        # PATH_INFO, which is what $request->path is normally set to.
+        # We should replicate that here.
+        $request->path( URI::Escape::uri_unescape( $page->url ) );
 
         $request->continuation($self->request->continuation);
         my $cont = Jifty::Continuation->new(
