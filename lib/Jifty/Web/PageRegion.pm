@@ -291,7 +291,7 @@ sub as_string {
             . qq|</script>|;
         if ($self->lazy) {
             $result .= qq|<script type="text/javascript">|
-              . qq|Jifty.update( { 'fragments': [{'region': '|.$self->qualified_name.qq|', 'mode': 'Replace'}], 'actions': {}}, document.getElementById('region-|.$self->qualified_name.qq|'))|
+              . qq|jQuery(function(){ Jifty.update( { 'fragments': [{'region': '|.$self->qualified_name.qq|', 'mode': 'Replace'}], 'actions': {}}, document.getElementById('region-|.$self->qualified_name.qq|'))})|
               . qq|</script>|;
         }
         $result .= qq|<div id="region-| . $self->qualified_name . qq|" class="jifty-region">|;
