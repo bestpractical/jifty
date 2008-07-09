@@ -41,7 +41,8 @@ sub rc_ok {
     my $server = shift;
     my %args = @_;
 
-    $class->_skip_rest("live test doesn't work on Win32 at the moment");
+    $class->_skip_rest("live test doesn't work on Win32 at the moment")
+		if $^O eq 'MSWin32';
 
     $ENV{JIFTY_OPENID_WHITELIST_HOST} = $ENV{SELENIUM_RC_TEST_AGAINST} || 'localhost';
 
