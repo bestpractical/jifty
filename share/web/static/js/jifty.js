@@ -1096,8 +1096,8 @@ Jifty.update = function () {
         named_args['actions'] = {};
         // default to disable fields
         if (form)
-            Jifty.Form.getActions(form).map(function(x){
-                named_args['actions'][x.moniker] = 1;
+            jQuery.each(Jifty.Form.getActions(form), function(){
+                named_args['actions'][this.moniker] = 1;
             });
     }
     var optional_fragments;
