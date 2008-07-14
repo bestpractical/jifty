@@ -849,7 +849,8 @@ sub schema_version {
 
 This is used to create a hash reference of the object's values. Unlike
 Jifty::DBI::Record->as_hash, this won't transform refers_to columns into JDBI
-objects
+objects. Override this if you want to include calculated values (for use in,
+say, your REST interface)
 
 =cut
 
