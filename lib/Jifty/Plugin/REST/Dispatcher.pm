@@ -516,7 +516,7 @@ sub show_item_field {
     $rec->can($field) or abort(404);
 
     # Check that the field is actually a column (and not some other method)
-    abort(404) unless valid_column($model, $column);
+    abort(404) unless valid_column($model, $field);
 
     outs( [ 'model', $model, $column, $key, $field ],
           Jifty::Util->stringify($rec->$field()) );
