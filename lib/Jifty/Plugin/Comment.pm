@@ -51,20 +51,27 @@ Setup a model that has comments:
 
   use Jifty::Plugin::Comment::Mixin::Model::Commented;
 
-  App::Model::FoobleComment->add_trigger( before_access => sub {
+  sub allow_owner_update_delete {
       my $self = shift;
       my ($right, %args) = @_;
 
       if ($right eq 'create') {
-          return 1 if $self->current_user->id;
+          return 'allow' ;#if $self->current_user->id;
+      }
+
+      if ($right eq 'update' || $right eq 'delete') {
+          return 'allow' if $self->current_user->id;
       }
 
       if ($right eq 'read') {
-          return 1;
+          return 'allow';
       }
 
-      return $self->App::Model::FoobleComment::current_user_can(@_);
-  });
+      return 'deny';
+  };
+
+  App::Model::FoobleComment->add_trigger( name => 'before_access', callback => \&allow_owner_update_delete);
+  App::Model::Comment->add_trigger( name => 'before_access', callback => \&allow_owner_update_delete);
 
 Setup a view for creating, viewing, and managing the comments:
 
