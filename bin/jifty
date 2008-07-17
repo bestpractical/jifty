@@ -3,6 +3,12 @@ use warnings;
 use strict;
 use UNIVERSAL::require;
 
+BEGIN {
+    Jifty::Util->require or die $UNIVERSAL::require::ERROR;
+    my $root = Jifty::Util->app_root;
+    unshift @INC, "$root/lib" if ($root);
+}
+
 use Jifty;
 use Jifty::Script;
 
