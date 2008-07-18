@@ -67,10 +67,11 @@ sub _sp_link {
         my ( $clickable, $args ) = @_;
         my $url = $args->{'url'};
         if ( $url && $url !~ m/^#/ && $url !~ m{^https?://} && $url !~ m{^javascript:} ) {
+            my $complete_url = $url.'?'.Jifty->web->query_string(%{$args->{parameters}});
             $self->_push_onclick($args, {
                 region       => $self->region_name,
                 replace_with => $url,
-                beforeclick  => qq{SPA.historyChange('$url', { 'continuation':{}, 'actions':{}, 'fragments':[{'mode':'Replace','args':@{[ Jifty::JSON::objToJson($args->{parameters})]},'region':'__page','path':'$url'}],'action_arguments':{}}, true);},
+                beforeclick  => qq{SPA.historyChange('$complete_url', { 'continuation':{}, 'actions':{}, 'fragments':[{'mode':'Replace','args':@{[ Jifty::JSON::objToJson($args->{parameters})]},'region':'__page','path':'$url'}],'action_arguments':{}}, true);},
                 args         => { %{$args->{parameters}}} });
         }
         elsif (exists $args->{submit} && !$args->{onclick}) {
