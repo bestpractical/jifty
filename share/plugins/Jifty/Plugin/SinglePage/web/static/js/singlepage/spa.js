@@ -7,7 +7,7 @@
 
             /* reload if user goes to the first page */
             if (newLocation == SPA.initialHash) {
-                location.href = location.pathname;
+                location.href = location.pathname + location.search;
             }
 
             if (first) {
