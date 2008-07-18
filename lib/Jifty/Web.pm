@@ -43,6 +43,7 @@ __PACKAGE__->javascript_libs([qw(
     iautocompleter.js
     jifty_interface.js
     jquery_noconflict.js
+    jquery.jgrowl.js
     behaviour.js
     formatDate.js
     template_declare.js

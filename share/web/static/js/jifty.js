@@ -1385,9 +1385,6 @@ function hide_wait_message_now() {
 }
 
 function show_action_result() {
-    var $popup = jQuery('#jifty-result-popup');
-    if($popup.size() == 0) return;
-
     var moniker = arguments[0];
     var result = arguments[1];
     var status = result.nodeName;
@@ -1409,28 +1406,9 @@ function show_action_result() {
 
     if(status != 'message' && status != 'error') return;
 
-    var node = document.createElement('div');
-    var node_id = 'result-' + moniker;
-    node.setAttribute('id', node_id);
-    node.className = "popup_notification result-" + status;
-    node.innerHTML = text;
-
-    var wrap1 = document.createElement("div");
-    wrap1.className = "dropshadow_wrap1";
-    var wrap2 = document.createElement("div");
-    wrap2.className = "dropshadow_wrap2";
-    var wrap3 = document.createElement("div");
-    wrap3.className = "dropshadow_wrap3";
-
-    wrap1.appendChild(wrap2);
-    wrap2.appendChild(wrap3);
-    wrap3.appendChild(node);
-
-    $popup.prepend( wrap1 );
-
-    setTimeout(function () {
-        jQuery(wrap1).fadeOut(3000);
-    }, 3500);
+    jQuery.jGrowl( text, {
+        theme: 'result-'+status
+    });
 }
 
 Jifty.Autocompleter = function() {
