@@ -68,6 +68,7 @@ sub _sp_link {
         my $url = $args->{'url'};
         if ( $url && $url !~ m/^#/ && $url !~ m{^https?://} && $url !~ m{^javascript:} ) {
             my $complete_url = $url.'?'.Jifty->web->query_string(%{$args->{parameters}});
+            $complete_url =~ s/\?$//;
             $self->_push_onclick($args, {
                 region       => $self->region_name,
                 replace_with => $url,
