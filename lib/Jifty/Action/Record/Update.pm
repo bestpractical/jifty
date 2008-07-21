@@ -19,6 +19,7 @@ L<Jifty::Record> subclass that this action should update.
 use base qw/Jifty::Action::Record/;
 
 use Scalar::Util qw/ blessed /;
+use Hash::Merge;
 
 =head1 METHODS
 
@@ -50,7 +51,12 @@ sub arguments {
         $arguments->{$pk}{'render_as'} = 'Unrendered'; 
         # primary key fields should always be hidden fields
     }
-    return $arguments;
+
+    # XXX Should this be moved up into Jifty::Action::Record?
+    return Hash::Merge::merge(
+        $arguments,
+        ($self->can('PARAMS') && $self->PARAMS)
+    );
 }
 
 =head2 validate_arguments
