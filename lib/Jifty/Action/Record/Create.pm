@@ -78,9 +78,6 @@ sub take_action {
     # Iterate through all that are set, except for the virtual ones
     for (grep { defined $self->argument_value($_) && !$self->arguments->{$_}->{virtual} } $self->argument_names) {
 
-        # Ignore values that don't have corresponding columns in the record
-        next unless defined $record->column($_);
-
         # Prepare the hash to pass to create for each argument
         $values{$_} = $self->argument_value($_);
 
