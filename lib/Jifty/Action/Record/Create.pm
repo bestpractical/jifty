@@ -18,6 +18,8 @@ L<Jifty::Record> subclass that this action creates.
 
 use base qw/Jifty::Action::Record/;
 
+use Hash::Merge;
+
 =head1 METHODS
 
 =head2 arguments
@@ -39,7 +41,11 @@ sub arguments {
             $args->{$arg}{default_value} = $column->default;
         }
     }
-    return $args;
+
+    return Hash::Merge::merge(
+        $args,
+        (eval { $self->PARAMS } || {}),
+    );
 }
 
 =head2 take_action
@@ -66,6 +72,9 @@ sub take_action {
 
     # Iterate through all that are set, except for the virtual ones
     for (grep { defined $self->argument_value($_) && !$self->arguments->{$_}->{virtual} } $self->argument_names) {
+
+        # Ignore values that don't have corresponding columns in the record
+        next unless defined $record->column($_);
 
         # Prepare the hash to pass to create for each argument
         $values{$_} = $self->argument_value($_);

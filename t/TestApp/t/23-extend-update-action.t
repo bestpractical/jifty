@@ -5,7 +5,7 @@ use strict;
 
 =head1 DESCRIPTION
 
-Try out and make sure the the Do record action extends nicely.
+Try out and make sure the the Update record action extends nicely.
 
 =cut
 
