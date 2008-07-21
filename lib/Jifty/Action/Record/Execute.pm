@@ -49,7 +49,7 @@ Jifty::Action::Record::Execute - Simple abstract based for record actions
       record => $encabulator,
   );
 
-  Jifty->web->start;
+  Jifty->web->form->start;
 
   Jifty->web->out( $startup->form_field('cardinal_grammeter_mode') );
 
@@ -58,7 +58,7 @@ Jifty::Action::Record::Execute - Simple abstract based for record actions
       submit => $startup,
   );
 
-  Jifty->web->end;
+  Jifty->web->form->end;
 
 =head1 DESCRIPTION
 
