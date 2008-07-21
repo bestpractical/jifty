@@ -27,6 +27,9 @@ sub take_action {
         $self->argument_value( test3 => $test3 );
     }
 
+    # Unset direction because our create for Something doesn't handle it.
+    $self->argument_value( direction => undef );
+
     $self->argument_value( test3 => $test3 . $self->argument_value('append') )
         if defined $self->argument_value('append');
 

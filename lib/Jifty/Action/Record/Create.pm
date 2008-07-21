@@ -41,11 +41,16 @@ sub arguments {
             $args->{$arg}{default_value} = $column->default;
         }
     }
-
-    return Hash::Merge::merge(
-        $args,
-        (eval { $self->PARAMS } || {}),
-    );
+   
+    if ( $self->can('PARAMS') ) {
+        use Jifty::Param::Schema;
+        return Jifty::Param::Schema::merge_params(
+            $args, ($self->PARAMS || {})
+        );
+    }
+    else {
+        return $args;
+    }
 }
 
 =head2 take_action
