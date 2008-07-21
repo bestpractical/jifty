@@ -2,7 +2,7 @@ use strict;
 use warnings;
 
 package TestApp::Action::PassSomething;
-use base qw/ Jifty::Action::Record::Do /;
+use base qw/ TestApp::Action::ExecuteSomething /;
 
 use Test::More ();
 

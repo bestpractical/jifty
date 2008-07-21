@@ -1,14 +1,14 @@
 use warnings;
 use strict;
 
-package Jifty::Action::Record::Do;
+package Jifty::Action::Record::Execute;
 use base qw/ Jifty::Action::Record /;
 
 use Hash::Merge;
 
 =head1 NAME
 
-Jifty::Action::Record::Do - Simple abstract based for record actions
+Jifty::Action::Record::Execute - Simple abstract based for record actions
 
 =head1 SYNOPSIS
 
@@ -16,7 +16,7 @@ Jifty::Action::Record::Do - Simple abstract based for record actions
   use warnings;
 
   package MyApp::Action::StartEncabulator;
-  use base qw/ MyApp::Action::DoEncabulator /;
+  use base qw/ MyApp::Action::ExecuteEncabulator /;
 
   use Jifty::Param::Schema;
   use Jifty::Action schema {
