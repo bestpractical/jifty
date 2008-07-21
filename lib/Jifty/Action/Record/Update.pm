@@ -55,7 +55,7 @@ sub arguments {
     # XXX Should this be moved up into Jifty::Action::Record?
     return Hash::Merge::merge(
         $arguments,
-        ($self->can('PARAMS') && $self->PARAMS)
+        (eval { $self->PARAMS } || {}),
     );
 }
 
