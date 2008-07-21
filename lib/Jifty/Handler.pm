@@ -25,7 +25,6 @@ handlers.
 =cut
 
 use base qw/Class::Accessor::Fast/;
-use Module::Refresh ();
 use Jifty::View::Declare::Handler ();
 use Class::Trigger;
 
@@ -222,6 +221,7 @@ sub handle_request {
         local $Jifty::WEB = Jifty::Web->new();
 
         if ( Jifty->config->framework('DevelMode') ) {
+            require Module::Refresh;
             Module::Refresh->refresh;
             Jifty::I18N->refresh;
         }
