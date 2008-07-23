@@ -4,7 +4,7 @@ $forever => 1
 <%init>
 
 $r->content_type("text/html; charset=utf-8");
-$r->headers_out->{'Pragma'} = 'no-cache';
+$r->headers_out->{'Pragma'}        = 'no-cache';
 $r->headers_out->{'Cache-control'} = 'no-cache';
 $r->send_http_header;
 
@@ -18,7 +18,6 @@ my $begin = <<'END';
 END
 chomp $begin;
 
-
 if ($forever) {
     my $whitespace = " " x ( 1024 - length $begin );
     $begin =~ s/<body>$/$whitespace<body>/s;
@@ -28,19 +27,14 @@ $m->print($begin);
 $m->flush_buffer;
 $writer->startTag("body");
 
-
-    while (1) {
-        my $sent = write_subs_once($writer);
-        flush STDOUT;
-        last if ($sent && !$forever);
-        sleep 1;
-    }
-    $writer->endTag();
-    return;
-
-
-
-
+while (1) {
+    my $sent = write_subs_once($writer);
+    flush STDOUT;
+    last if ( $sent && !$forever );
+    sleep 1;
+}
+$writer->endTag();
+return;
 
 sub write_subs_once {
     my $writer = shift;
@@ -53,6 +47,7 @@ sub write_subs_once {
             $writer->dataElement( "content", $content );
             $writer->endTag();
             $writer->endTag();
-            } );
+        }
+    );
 }
 </%init>
