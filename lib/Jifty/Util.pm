@@ -60,10 +60,10 @@ sub canonicalize_path {
             next;
         }
         elsif( $_ ne '..')  {
-        push @newpath, $_ ;
-    } else {
-        pop @newpath;
-    }
+            push @newpath, $_ ;
+        } else {
+            pop @newpath;
+        }
 
     }
 
