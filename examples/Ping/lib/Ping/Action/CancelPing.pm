@@ -15,7 +15,10 @@ sub take_action {
 
     my $id  = Jifty->web->session->id;
     my $sid = Jifty->bus->modify("$id-ping" => sub {
-        delete($_->{$host})
+        delete($_->{$host});
+    });
+    Jifty->bus->modify("hosts" => sub {
+        kill 2, delete $_->{$host};
     });
     Jifty->subs->cancel($sid);
 

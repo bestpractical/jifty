@@ -7,7 +7,7 @@
 <table width="80%"><tr valign="top"><td>
 <fieldset>
 <legend>New Pings</legend>
-% my $form = Jifty->web->form->new(name => 'new');
+% my $form = Jifty->web->form;
 <% $form->start %>
 <% $action->form_field('host') %>
 <% $action->form_field('only_failure')%>
@@ -22,7 +22,7 @@
 <legend>Current Pings</legend>
 <table width="100%">
 % foreach my $sub (@subs) {
-% $form = Jifty->web->form->new(name => $sub);
+% $form = Jifty->web->form;
 <% $form->start %>
 %    my $del = Jifty->web->new_action(class => 'CancelPing', arguments => { host => $sub });
 <tr><td>
@@ -37,7 +37,6 @@
 </fieldset>
 % }
 </td></tr></table>
-<script>new Jifty.Subs({}).start();</script>
 </&>
 
 <%init>
