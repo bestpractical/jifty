@@ -36,9 +36,10 @@ Creates a new C<Jifty::Server> object.
 =cut
 
 sub _send_http_status {
-      print STDOUT "HTTP/1.0 ".  (Jifty->handler->apache->{headers_out}->{'Status'} || '200 Jifty OK') .  "\n";
-};
-
+    print STDOUT "HTTP/1.0 ".  (Jifty->handler->apache->{headers_out}->{'Status'} || '200 Jifty OK') .  "\n";
+}
+use Hook::LexWrap;
+wrap 'HTML::Mason::FakeApache::send_http_header', pre => \&_send_http_status;
 
 sub new {
     my $class = shift;
@@ -133,9 +134,6 @@ parent when the server is ready for requests.
 
 sub after_setup_listener {
     my $self = shift;
-
-    use Hook::LexWrap;
-    wrap 'HTML::Mason::FakeApache::send_http_header', pre => \&_send_http_status;
 
     my $sig = $ENV{JIFTY_SERVER_SIGREADY} or return;
     kill $sig => getppid();
