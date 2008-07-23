@@ -121,7 +121,7 @@ sub cancel {
     my ($class, $channel_id) = @_;
 
     unless (Jifty->config->framework('PubSub')->{'Enable'}) {
-        Jifty->log->error("PubSub disabled, but $class->add called");
+        Jifty->log->error("PubSub disabled, but $class->cancel called");
         return undef;
     }
 
