@@ -1328,8 +1328,8 @@ sub replace_current_region {
 
 =head3 current_region
 
-Returns the name of the current L<Jifty::Web::PageRegion>, or undef if
-there is none.
+Returns the current L<Jifty::Web::PageRegion>, or undef if there is
+none.
 
 =cut
 
