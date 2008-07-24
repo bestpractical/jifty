@@ -5,7 +5,7 @@ package Jifty::Plugin::Chart::Renderer::Google;
 use base qw/ Jifty::Plugin::Chart::Renderer /;
 
 use URI::Escape qw(uri_escape);
-use List::Util qw(max min);
+use List::Util qw(max min sum);
 use Scalar::Util qw(looks_like_number);
 
 =head1 NAME
@@ -58,7 +58,7 @@ sub render {
     );
 
     # Make sure the type is ready to be used
-    my $type = $types{ $args{type} } || undef;
+    my $type = $types{ lc $args{type} } || undef;
 
     # Not a supported type
     if ( not defined $type ) {
@@ -96,14 +96,37 @@ sub render {
         my $max = 0;
         my $min = 0;
 
-        for my $dataset ( @{ $args{'data'} } ) {
-            if ( not defined $args{'max_value'} ) {
-                my $lmax = max @$dataset;
-                $max = $lmax if $lmax > $max;
+        if ( $args{'type'} =~ /stacked/i ) {
+            # Stacked bar charts are additive, so max / min take a little
+            # more work to calculate
+            my $size = @{ $args{'data'}->[0] } - 1;
+            for my $index ( 0 .. $size ) {
+                my @stack = grep { defined } map { $_->[$index] } @{ $args{'data'} };
+
+                if ( not defined $args{'max_value'} ) {
+                    # Add all of the positive numbers
+                    my $lmax = sum grep { $_ > 0 } @stack;
+                    $max = $lmax if defined $lmax and $lmax > $max;
+                }
+                if ( not defined $args{'min_value'} ) {
+                    # Add all of the negative numbers
+                    my $lmin = sum grep { $_ < 0 } @stack;
+                    $min = $lmin if defined $lmin and $lmin < $min;
+                }
             }
-            if ( not defined $args{'min_value'} ) {
-                my $lmin = min @$dataset;
-                $min = $lmin if $lmin < $min;
+        }
+        else {
+            # Everything else, simply find the largest and smallest value in
+            # any of the datasets
+            for my $dataset ( @{ $args{'data'} } ) {
+                if ( not defined $args{'max_value'} ) {
+                    my $lmax = max grep { defined } @$dataset;
+                    $max = $lmax if $lmax > $max;
+                }
+                if ( not defined $args{'min_value'} ) {
+                    my $lmin = min grep { defined } @$dataset;
+                    $min = $lmin if $lmin < $min;
+                }
             }
         }
         
@@ -130,6 +153,15 @@ sub render {
         $url .= "&chd=s:" . $self->_simple_encode_data( $args{'max_value'}, @{$args{'data'}} );
     }
     else {
+        # If we want to add/subtract a percentage of the max/min, then
+        # calculate it now
+        for my $limit (qw( min max )) {
+            my $key = $limit . "_" . ($limit eq 'min' ? 'minus' : 'plus');
+            if ( $args{$key} =~ s/%$// ) {
+                $args{$key} = int( ($args{$key} / 100) * abs($args{ $limit ."_value" }) );
+            }
+        }
+
         my $min = $args{'min_value'} - $args{'min_minus'};
         my $max = $args{'max_value'} + $args{'max_plus'};
 
@@ -137,7 +169,7 @@ sub render {
         # number out of range to mark it as undefined
         my @data;
         for my $data ( @{$args{'data'}} ) {
-            push @data, [map { looks_like_number($_) ? $_ : $max+42 } @$data];
+            push @data, [map { looks_like_number($_) ? $_ : $min-42 } @$data];
         }
 
         # Let's do text encoding with data scaling
@@ -168,12 +200,17 @@ sub render {
         $url .= "&chxl=$labels" if defined $labels;
     }
 
-    # Add colors since Google::Chart sucks at it
+    # Add colors
     if ( defined $args{'colors'} ) {
         $url .= "&chco=" . join ',', @{ $args{'colors'} };
     }
     if ( defined $args{'bgcolor'} ) {
         $url .= "&chf=bg,s,$args{'bgcolor'}";
+    }
+
+    # Add bar widths for bar charts
+    if ( $args{'type'} =~ /bar/i ) {
+        $url .= "&chbh=" . join ',', @{ $args{'bar_width'} };
     }
 
     Jifty->web->out( qq{<img src="$url" />} );
