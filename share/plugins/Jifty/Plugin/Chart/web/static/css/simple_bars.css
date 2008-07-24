@@ -23,6 +23,10 @@ div.simple_bars div.row span.barArea span.bar {
     display: block;
 }
 
+div.simple_bars span.bar {
+    background-color: #4d89f9;
+}
+
 div.simple_bars div.row span.value {
     display: block;
     float: left;

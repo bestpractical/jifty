@@ -28,7 +28,8 @@ To maximize the accessibility of your chart, set this to describe the data. This
 
 =head1 STYLING
 
-Please be aware that when using this object, you must add background  color to the application CSS file to see the bars.
+Please be aware that when using this object, you can change the bar color
+using CSS like so:
 
   div.simple_bars span.bar {
       background-color: black;
