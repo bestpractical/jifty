@@ -147,7 +147,9 @@ sub render {
 
     # Add the legend
     if ( $args{'legend'} ) {
-        $url .= "&chdl="  . join '|', map { uri_escape($_) } @{ $args{'legend'} };
+        my $key = $args{'type'} =~ /pie/i ? 'chl' : 'chdl';
+
+        $url .= "&$key="  . join '|', map { uri_escape($_) } @{ $args{'legend'} };
         $url .= "&chdlp=" . substr $args{'legend_position'}, 0, 1
             if $args{'legend_position'};
     }
