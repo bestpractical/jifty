@@ -30,7 +30,7 @@ sub render {
         width     => 200,
         height    => 100,
         labels    => [],
-        geography => 'world',
+        geoarea   => 'world',
         min_minus => 0,
         max_plus  => 0,
         @_
@@ -70,7 +70,21 @@ sub render {
     $args{'width'} =~ s/px$//;
     $args{'height'} =~ s/px$//;
 
-    if ( $args{'type'} eq 'map' ) {
+    # Check size and die if wrong
+    for ( qw(width height) ) {
+        if ( $type eq 't' ) {
+            my $max = $_ eq 'width' ? 440 : 220;
+            die "$_ over ${max}px" if $args{$_} > $max;
+        } else {
+            die "$_ over 1000px" if $args{$_} > 1000;
+        }
+    }
+
+    # Check chart area
+    die "Chart area over maximum allowed (300,000 for charts, 96,800 for maps)"
+        if $args{'width'} * $args{'height'} > ( $type eq 't' ? 96800 : 300000 );
+
+    if ( $type eq 't' ) {
         $args{'codes'} = shift @{ $args{'data'} };
         
         # Light blue for water
@@ -107,12 +121,13 @@ sub render {
     $url .= "&chs=$args{'width'}x$args{'height'}";
 
     # Add the data (encoding it first)
-    if ( $args{'type'} eq 'map' ) {
-        $url .= "&chtm=$args{'geographical'}";           # Geo. area
-        $url .= "&chld=" . join '', @{ $args{'codes'} }; # Codes
+    if ( $type eq 't' ) {
+        # Map!
+        $url .= "&chtm=$args{'geoarea'}";
+        $url .= "&chld=" . join '', @{ $args{'codes'} };
         
         # We need to do simple encoding
-        $url .= "&chd=t:" . $self->_simple_encode_data( $args{'max_value'}, $args{'data'} );
+        $url .= "&chd=s:" . $self->_simple_encode_data( $args{'max_value'}, @{$args{'data'}} );
     }
     else {
         my $min = $args{'min_value'} - $args{'min_minus'};
