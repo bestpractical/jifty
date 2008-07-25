@@ -33,6 +33,7 @@ sub render {
         geoarea   => 'world',
         min_minus => 0,
         max_plus  => 0,
+        format    => '%0.1f',
         @_
     );
 
@@ -140,8 +141,19 @@ sub render {
     # Add the type
     $url .= "cht=$type";
 
-    # Add the width - XXX TODO: we don't validate these yet
+    # Add the width
     $url .= "&chs=$args{'width'}x$args{'height'}";
+
+    # Format the data
+    unless ( not defined $args{'format'} ) {
+        for my $set ( @{$args{'data'}} ) {
+            @$set = map {
+                        looks_like_number($_)
+                            ? sprintf $args{'format'}, $_
+                            : $_
+                    } @$set;
+        }
+    }
 
     # Add the data (encoding it first)
     if ( $type eq 't' ) {
@@ -164,6 +176,14 @@ sub render {
 
         my $min = $args{'min_value'} - $args{'min_minus'};
         my $max = $args{'max_value'} + $args{'max_plus'};
+
+        unless ( not defined $args{'format'} ) {
+            $min = sprintf $args{'format'}, $min;
+            $max = sprintf $args{'format'}, $max;
+        }
+
+        $args{'calculated_min'} = $min;
+        $args{'calculated_max'} = $max;
 
         # If it's a number, pass it through, otherwise replace it with a
         # number out of range to mark it as undefined
@@ -189,15 +209,23 @@ sub render {
     # Add any axes
     if ( $args{'axes'} ) {
         $url .= "&chxt=" . $args{'axes'};
-        
-        my $labels;
-        my $index = 0;
-        for my $labelset ( @{ $args{'labels'} } ) {
-            $labels .= "$index:|" . join '|', map { uri_escape($_) } @$labelset
-                if @$labelset;
-            $index++;
+
+        if ( defined $args{'labels'} ) {
+            my @labels;
+            my @ranges;
+            my $index = 0;
+            for my $labelset ( @{ $args{'labels'} } ) {
+                if ( ref $labelset eq 'ARRAY' and @$labelset ) {
+                    push @labels, "$index:|" . join '|', map { uri_escape($_) } @$labelset;
+                }
+                elsif ( not ref $labelset and $labelset eq 'RANGE' ) {
+                    push @ranges, "$index,$args{'calculated_min'},$args{'calculated_max'}";
+                }
+                $index++;
+            }
+            $url .= "&chxl=" . join '|', @labels if @labels;
+            $url .= "&chxr=" . join '|', @ranges if @ranges;
         }
-        $url .= "&chxl=$labels" if defined $labels;
     }
 
     # Add colors
