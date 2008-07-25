@@ -57,6 +57,7 @@ sub render {
         'bars'           => 'column',
         'stackedbars'    => 'stacked column',
         'horizontalbars' => 'bar',
+        'stackedhorizontalbars' => 'stacked bar',
         'lines'          => 'line',
         'pie'            => '3d pie',
         'points'         => 'scatter',

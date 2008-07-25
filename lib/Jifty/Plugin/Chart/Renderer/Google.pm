@@ -197,6 +197,12 @@ sub render {
         $url .= "&chds=$min,$max";
     }
 
+    # Add a title
+    if ( defined $args{'title'} ) {
+        $args{'title'} =~ tr/\n/|/;
+        $url .= "&chtt=" . uri_escape( $args{'title'} );
+    }
+
     # Add the legend
     if ( $args{'legend'} ) {
         my $key = $args{'type'} =~ /pie/i ? 'chl' : 'chdl';
