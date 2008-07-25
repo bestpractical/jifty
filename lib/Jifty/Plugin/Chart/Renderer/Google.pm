@@ -169,8 +169,8 @@ sub render {
         # calculate it now
         for my $limit (qw( min max )) {
             my $key = $limit . "_" . ($limit eq 'min' ? 'minus' : 'plus');
-            if ( $args{$key} =~ s/%$// ) {
-                $args{$key} = int( ($args{$key} / 100) * abs($args{ $limit ."_value" }) );
+            if ( $args{$key} =~ s/\%$// ) {
+                $args{$key} = ($args{$key} / 100) * abs($args{ $limit."_value" });
             }
         }
 
