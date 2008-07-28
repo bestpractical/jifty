@@ -208,8 +208,28 @@ version_from('lib/Jifty.pm');
 install_script('bin/jifty');
 install_share;
 
+my @plugins = qw(TabView);
+
 # Test all of our sub-dist tests too
-tests('t/*.t t/*/*.t t/*/*/*.t t/*/*/*/*.t');
+tests(join(' ', qw(t/*.t t/*/*.t t/*/*/*.t t/*/*/*/*.t), map { "plugins/$_/t/*.t"} @plugins));
+
+
+for (@plugins) {
+    die unless -d "plugins/$_";
+#    install_share("plugins/$_/share");
+    chdir("plugins/$_");
+    system("$^X -I../../lib Makefile.PL");
+    chdir('../..');
+
+}
+
+postamble(<<"END");
+
+install ::
+@{[ join("\n", map { "\tcd plugins/$_; make install" } @plugins)   ]}
+
+
+END
 
 WriteAll;
 
