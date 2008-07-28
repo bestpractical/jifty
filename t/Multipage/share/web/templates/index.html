@@ -1,0 +1,15 @@
+<&|/_elements/wrapper, title => 'Jifty Test Application' &>
+
+From here, you can start on your magical journey!
+
+<% Jifty->web->form->start %>
+
+<% $action->form_field("name") %>
+<% $action->next_page_button( url => "/page2" ) %>
+
+<% Jifty->web->form->end %>
+
+</&>
+<%init>
+my $action = Jifty->web->new_action( moniker => "multi", class => "BigTest" );
+</%init>

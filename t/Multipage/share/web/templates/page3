@@ -1,0 +1,18 @@
+<&|/_elements/wrapper, title => 'Jifty Test Application' &>
+
+Step three
+
+<% Jifty->web->form->start %>
+
+Your name is <% $action->argument_value("name") %>, email is <% $action->argument_value("email") %>
+
+<% $action->form_field("age") %>
+<% $action->cancel_button %>
+<% $action->finish_button( url => "/done") %>
+
+<% Jifty->web->form->end %>
+
+</&>
+<%init>
+my $action = Jifty->web->new_action( moniker => "multi", class => "BigTest" );
+</%init>
