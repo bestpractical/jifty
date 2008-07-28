@@ -208,7 +208,7 @@ version_from('lib/Jifty.pm');
 install_script('bin/jifty');
 install_share;
 
-my @plugins = qw(TabView);
+my @plugins = defined $ENV{JIFTY_PLUGINS} ? split(/ /, $ENV{JIFTY_PLUGINS}) : qw(TabView);
 
 # Test all of our sub-dist tests too
 tests(join(' ', qw(t/*.t t/*/*.t t/*/*/*.t t/*/*/*/*.t), map { "plugins/$_/t/*.t"} @plugins));
