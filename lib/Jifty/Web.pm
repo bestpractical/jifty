@@ -359,7 +359,7 @@ sub _validate_request_actions {
                         . $request_action->class
                         . "'" );
                 Carp::cluck;
-                $self->log->error("NOTICE! A cross-site scriptng security fix has been installed so that actions are now by default DENIED during GET requests. You must specifically whitelist safe actions using this in your dispatcher: before '*' => run { Jifty->api->allow('SafeAction') }; - We apologize for the inconvenience.");
+                $self->log->error("NOTICE! A cross-site scripting security fix has been installed so that actions are now by default DENIED during GET requests. You must specifically whitelist safe actions using this in your dispatcher: before '*' => run { Jifty->api->allow('SafeAction') }; - We apologize for the inconvenience.");
                 push @denied_actions, $request_action;
                 next;
             }
