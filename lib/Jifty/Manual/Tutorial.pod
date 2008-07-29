@@ -66,7 +66,6 @@ Change directory to some place it will be safe to create a new
 Jifty application. (Jifty will create a subdirectory for you).
 
   # jifty app --name MyWeblog
-  Can't guess application root from current path (/tmp) or bin path (/usr/bin)
   Creating new application MyWeblog
   Creating directory lib
   Creating directory lib/MyWeblog
@@ -188,8 +187,8 @@ to create is the C<post>:
 
   # cd MyWeblog
   # jifty model --name Post
-  Writing file /tmp/MyWeblog/t/00-model-Post.t
   Writing file /tmp/MyWeblog/lib/MyWeblog/Model/Post.pm
+  Writing file /tmp/MyWeblog/t/00-model-Post.t
 
 Great! Now you have a B<Post> model (not that it models anything yet).
 
@@ -244,11 +243,13 @@ for a bit more information).
 
   # jifty schema --setup
   INFO - Generating SQL for application MyWeblog...
-  INFO - Using MyWeblog::Model::Post
-  INFO - Using Jifty::Model::Session
-  INFO - Using Jifty::Model::Metadata
-  INFO - Using Jifty::Model::Schema
-  INFO - Set up version v0.0.1, jifty version 0.607280
+  INFO - Using MyWeblog::Model::Post, as it appears to be new.
+  INFO - Using Jifty::Model::Session, as it appears to be new.
+  INFO - Using Jifty::Model::Metadata, as it appears to be new.
+  INFO - Set up version 0.0.1, jifty version 0.80408
+  Jifty version 0.80408 up to date.
+  ...
+  MyWeblog version 0.0.1 up to date.
 
 =head2 Starting the Jifty application server
 

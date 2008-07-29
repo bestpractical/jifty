@@ -237,7 +237,7 @@ C<J:> so there won't be a problem.
 
 =head2 Perform database migration
 
-Edit etc/config.yaml and change Database->Version to a proper value
+Edit etc/config.yml and change Database->Version to a proper value
 (say, 0.0.2). Then run
 
     jifty schema --setup
@@ -323,7 +323,7 @@ Change it to
 	  Plugins: 
 	    - EditInPlace: {}
 
-Take care the indentation is significant. Use spaces, not tabs.
+Take care: the indentation is significant. Use spaces, not tabs.
 Once you have done that you can restart your Jifty application and the
 edit links should then function correctly.
 
@@ -334,7 +334,7 @@ automatically add PNG support to IMG elements and also supports any
 element with a "background-image" CSS property.
 
 If you want to use this fix, please include this one line in your CSS
-file, whit tag names to which you want the script applied:
+file, with tag names to which you want the script applied:
 
     img, div { behavior: url(/static/js/iepngfix.htc) }
 
@@ -370,7 +370,7 @@ Sometimes you need two tables that both depend upon each other. That is, you hav
     column a_record => refers_to ModelA;
   };
 
-Otherwise, everything should work as expected.
+Everything should work as expected.
 
 =head2 Reuse Jifty models and actions outside of a Jifty app
 
