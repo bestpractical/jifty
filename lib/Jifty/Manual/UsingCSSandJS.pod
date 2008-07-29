@@ -126,15 +126,9 @@ libraries, like
 
 =over
 
-=item C<Prototype> L<http://prototype.conio.net>
+=item C<jQuery> L<http://jquery.com/>
 
-Prototype is a toolkit for providing AJAX support. This is a library
-some others depend on.
-
-=item C<scriptaculous.js> L<http://script.aculo.us/>
-
-This library provides support for animation with effects, drag & drop,
-AJAX controls and DOM utilities.
+jQuery is a fast, concise, JavaScript Library that simplifies how you traverse HTML documents, handle events, perform animations, and add Ajax interactions to your web pages.
 
 =item C<Rico> L<http://openrico.org>
 

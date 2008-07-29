@@ -54,7 +54,7 @@ L</take_action> method.
 =head2 parameters
 
 Every C<Jifty::Action> subclass should define a C<schema>, which contains
-some C<param> declarations that describes what arguments it takes.
+some C<param> declarations that describe what arguments it takes.
 Supposing we were writing an action to post a blog article, we might start
 out with parameters like thus:
 

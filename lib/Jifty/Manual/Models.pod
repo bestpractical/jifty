@@ -4,13 +4,13 @@ Jifty::Manual::Models - Managing your datastore
 
 =head1 DESCRIPTION
 
-The idea behing a model is to give the user a database-independent way
+The idea behind a model is to give the user a database-independent way
 of defining how the data looks alike and how different parts of the
 data relate to each other. In database terms, you might think of a
 schema definition.
 
 Besides the pure definition of a model, creation, updating and lookup
-of data is also possible in a comfortable way.
+of data are also possible in a comfortable way.
 
 =head2 Creating a model
 
