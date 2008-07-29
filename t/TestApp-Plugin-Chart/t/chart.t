@@ -2,8 +2,6 @@
 use strict;
 use warnings;
 
-use lib 't/lib';
-
 # XXX FIXME This is here to prevent a segfault on my machine during testing.
 #   -- sterling
 use Test::More;
@@ -15,8 +13,7 @@ else {
     plan tests => 9;
 }
 
-use Jifty::SubTest;
-use Jifty::Test;
+use Jifty::Test::Dist;
 use Jifty::Test::WWW::Mechanize;
 
 use Jifty::Plugin::Chart::Renderer::Chart;

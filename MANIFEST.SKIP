@@ -2,9 +2,6 @@
 \bCVS\b
 \b.svn\b
 ~$
-t/lib/File/
-t/Big-Dummy
-t/Problem-Module
 .gz$
 .bak$
 Makefile$

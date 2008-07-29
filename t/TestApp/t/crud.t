@@ -2,10 +2,7 @@
 use warnings;
 use strict;
 
-use lib 't/lib';
-use Jifty::SubTest;
-
-use Jifty::Test tests => 3;
+use Jifty::Test::Dist tests => 3;
 use Jifty::Test::WWW::Mechanize;
 
 my $server = Jifty::Test->make_server;

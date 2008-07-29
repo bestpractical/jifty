@@ -8,9 +8,7 @@ A basic test harness for the Wallpaper model.
 
 =cut
 
-use lib 't/lib';
-use Jifty::SubTest;
-use Jifty::Test tests => 20;
+use Jifty::Test::Dist tests => 20;
 
 # Make sure we can load the model
 use_ok('TestApp::Plugin::AppPluginHasModels::Model::Wallpaper');

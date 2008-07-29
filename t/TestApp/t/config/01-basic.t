@@ -2,10 +2,7 @@
 use strict;
 use warnings;
 
-use lib 't/lib';
-use Jifty::SubTest;
-
-use Jifty::Test;
+use Jifty::Test::Dist;
 
 my %option_from_file = (
     EtcConfig         => 'etc/config.yml',

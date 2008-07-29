@@ -1,8 +1,6 @@
 use strict;
 use warnings;
-use lib 't/lib';
-use Jifty::SubTest;
-use Jifty::Test tests => 6;
+use Jifty::Test::Dist tests => 6;
 use Jifty::Test::WWW::Selenium;
 use utf8;
 

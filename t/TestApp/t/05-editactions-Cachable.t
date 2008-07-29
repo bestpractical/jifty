@@ -3,11 +3,8 @@
 use warnings;
 use strict;
 
-use lib 't/lib';
-use Jifty::SubTest;
 BEGIN { $ENV{'JIFTY_CONFIG'} = 't/config-Cachable' }
-
-use Jifty::Test tests => 7;
+use Jifty::Test::Dist tests => 7;
 use Jifty::Test::WWW::Mechanize;
 
 # Make sure we can load the model

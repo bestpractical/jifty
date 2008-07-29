@@ -8,12 +8,7 @@ Test Jifty::Action::Record::Search
 
 =cut
 
-use lib 't/lib';
-use lib 't/lib';
-use Jifty::SubTest;
-
-use Jifty::Test tests => 53;
-
+use Jifty::Test::Dist tests => 53;
 
 my $user = TestApp::Model::User->new(current_user => TestApp::CurrentUser->superuser);
 

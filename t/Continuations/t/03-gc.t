@@ -4,10 +4,7 @@ use warnings;
 use strict;
 
 # {{{ Setup
-use lib 't/lib';
-use Jifty::SubTest;
-
-use Jifty::Test;
+use Jifty::Test::Dist;
 
 plan skip_all => "test file not done yet";
 

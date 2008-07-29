@@ -2,10 +2,7 @@
 use warnings;
 use strict;
 
-use lib 't/lib';
-use Jifty::SubTest;
-
-use Jifty::Test tests => 20;
+use Jifty::Test::Dist tests => 20;
 use Jifty::Test::WWW::Mechanize;
 use Net::HTTP;
 use URI;

@@ -2,11 +2,8 @@
 use strict;
 use warnings;
 
-use lib 't/lib';
-
-use Jifty::SubTest;
 use Log::Log4perl;
-use Jifty::Test tests => 1;
+use Jifty::Test::Dist tests => 1;
 
 my $config = Jifty::YAML::LoadFile($ENV{JIFTY_TEST_CONFIG});
 $config->{'framework'}->{'Database'}->{'Version'} = '0.0.2';

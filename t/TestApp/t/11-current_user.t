@@ -8,10 +8,7 @@ Basic tests for CurrentUser.
 
 =cut
 
-use lib 't/lib';
-use Jifty::SubTest;
-
-use Jifty::Test tests => 33;
+use Jifty::Test::Dist tests => 33;
 use Jifty::Test::WWW::Mechanize;
 
 use_ok('TestApp::Model::User');

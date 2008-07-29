@@ -8,10 +8,7 @@ Basic tests for CurrentUser.
 
 =cut
 
-use lib 't/lib';
-use Jifty::SubTest;
-
-use Jifty::Test tests => 14;
+use Jifty::Test::Dist tests => 14;
 #use Jifty::Test::WWW::Mechanize;
 
 use_ok('TestApp::Plugin::PasswordAuth::Model::User');

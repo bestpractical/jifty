@@ -10,10 +10,7 @@ blocks
 
 =cut
 
-use lib 't/lib';
-use Jifty::SubTest;
-
-use Jifty::Test tests => 9;
+use Jifty::Test::Dist tests => 9;
 
 use_ok('Jifty::Test::WWW::Mechanize');
 

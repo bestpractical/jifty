@@ -2,8 +2,7 @@
 use warnings;
 use strict;
 
-use lib 't/lib';
-use Jifty::SubTest;
+use Jifty::Test::Dist qw//;
 use Test::More;
 
 BEGIN {

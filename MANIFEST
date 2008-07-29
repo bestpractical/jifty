@@ -342,6 +342,7 @@ lib/Jifty/Server/Prefork/NetServer.pm
 lib/Jifty/Subs.pm
 lib/Jifty/Subs/Render.pm
 lib/Jifty/Test.pm
+lib/Jifty/Test/Dist.pm
 lib/Jifty/Test/WWW/Declare.pm
 lib/Jifty/Test/WWW/Mechanize.pm
 lib/Jifty/Test/WWW/Selenium.pm
@@ -1160,7 +1161,6 @@ t/Continuations/t/03-gc.t
 t/Continuations/t/04-before-blocks.t
 t/DateTime.t
 t/Jifty.pm
-t/lib/Jifty/SubTest.pm
 t/Mapper/bin/jifty
 t/Mapper/lib/Mapper/Action/CrossBridge.pm
 t/Mapper/lib/Mapper/Action/GetGrail.pm

@@ -8,10 +8,7 @@ Test the RightsFrom mixin.
 
 =cut
 
-use lib 't/lib';
-use Jifty::SubTest;
-
-use Jifty::Test no_plan => 1;;
+use Jifty::Test::Dist tests => 56;
 
 use_ok('TestApp::Model::User');
 use_ok('TestApp::Model::Thingy');

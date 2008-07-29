@@ -2,9 +2,7 @@
 use warnings;
 use strict;
 
-use lib 't/lib';
-use Jifty::SubTest;
-use Jifty::Test tests => 8;
+use Jifty::Test::Dist tests => 8;
 use Jifty::Test::WWW::Mechanize;
 use Test::Log4perl;
 

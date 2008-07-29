@@ -9,9 +9,7 @@ Try out and make sure the the Do record action extends nicely.
 
 =cut
 
-use lib 't/lib';
-use Jifty::SubTest;
-use Jifty::Test tests => 5;
+use Jifty::Test::Dist tests => 5;
 
 Jifty::Test->web;
 

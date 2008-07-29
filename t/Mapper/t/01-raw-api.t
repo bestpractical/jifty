@@ -9,10 +9,7 @@ Tests for request mapper
 
 =cut
 
-use lib 't/lib';
-use Jifty::SubTest;
-
-use Jifty::Test tests => 32;
+use Jifty::Test::Dist tests => 32;
 use_ok('Jifty::Test::WWW::Mechanize');
 
 # Set up server

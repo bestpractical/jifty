@@ -1,9 +1,7 @@
 #!/usr/bin/env perl
 use warnings;
 use strict;
-use lib 't/lib';
-use Jifty::SubTest;
-use Jifty::Test tests => 8;
+use Jifty::Test::Dist tests => 8;
 
 my $song = TestApp::Plugin::Attributes::Model::Song->new;
 my ($ok, $msg) = $song->create(

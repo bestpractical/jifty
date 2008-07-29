@@ -8,10 +8,7 @@ A basic test harness for the User model.
 
 =cut
 
-use lib 't/lib';
-use Jifty::SubTest;
-
-use Jifty::Test tests => 24;
+use Jifty::Test::Dist tests => 24;
 Jifty::Test->web; # initialize for use with the as_*_action tests
 # Make sure we can load the model
 use_ok('TestApp::Model::User');

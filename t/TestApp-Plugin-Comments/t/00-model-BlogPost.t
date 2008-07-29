@@ -18,10 +18,7 @@ BEGIN {
     }
 }
 
-use lib 't/lib';
-use Jifty::SubTest;
-
-use Jifty::Test;
+use Jifty::Test::Dist;
 
 # Make sure we can load the model
 use_ok('TestApp::Plugin::Comments::Model::BlogPost');

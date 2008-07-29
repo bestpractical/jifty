@@ -8,9 +8,7 @@ A basic test harness for the Color model.
 
 =cut
 
-use lib 't/lib';
-use Jifty::SubTest;
-use Jifty::Test tests => 16;
+use Jifty::Test::Dist tests => 16;
 
 # Make sure we can load the model
 use_ok('TestApp::Plugin::AppPluginHasModels::Model::Color');

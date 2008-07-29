@@ -2,10 +2,7 @@
 use warnings;
 use strict;
 
-use lib 't/lib';
-use Jifty::SubTest;
-
-use Jifty::Test;
+use Jifty::Test::Dist;
 use Jifty::Test::WWW::Mechanize;
 
 my @tests = (

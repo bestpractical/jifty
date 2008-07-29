@@ -2,10 +2,7 @@
 use strict;
 use warnings;
 
-use lib 't/lib';
-use Jifty::SubTest;
-
-use Jifty::Test tests => 4;
+use Jifty::Test::Dist tests => 4;
 
 use_ok('TestApp::Model::User');
 

@@ -3,11 +3,8 @@
 use warnings;
 use strict;
 
-use lib 't/lib';
-use Jifty::SubTest;
 BEGIN { $ENV{'JIFTY_CONFIG'} = 't/config-Record' }
-
-use Jifty::Test tests => 10;
+use Jifty::Test::Dist tests => 10;
 use Jifty::Test::WWW::Mechanize;
 # Make sure we can load the model
 use_ok('TestApp::Model::User');

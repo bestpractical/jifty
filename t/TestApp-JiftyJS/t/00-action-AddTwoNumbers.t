@@ -8,9 +8,7 @@ A (very) basic test harness for the AddTwoNumbers action.
 
 =cut
 
-use lib 't/lib';
-use Jifty::SubTest;
-use Jifty::Test tests => 1;
+use Jifty::Test::Dist tests => 1;
 
 # Make sure we can load the action
 use_ok('TestApp::JiftyJS::Action::AddTwoNumbers');

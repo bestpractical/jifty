@@ -8,9 +8,7 @@ A basic test harness for the Offer model.
 
 =cut
 
-use lib 't/lib';
-use Jifty::SubTest;
-use Jifty::Test tests => 11;
+use Jifty::Test::Dist tests => 11;
 
 # Make sure we can load the model
 use_ok('TestApp::JiftyJS::Model::Offer');

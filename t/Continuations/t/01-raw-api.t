@@ -9,10 +9,7 @@ Continuations tests
 
 =cut
 
-use lib 't/lib';
-use Jifty::SubTest;
-use lib '../lib';
-use Jifty::Test tests => 47;
+use Jifty::Test::Dist tests => 47;
 
 use_ok('Jifty::Test::WWW::Mechanize');
 

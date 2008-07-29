@@ -9,11 +9,8 @@ still get run.
 
 =cut
 
-use lib 't/lib';
-use Jifty::SubTest;
 BEGIN { $ENV{'JIFTY_CONFIG'} = 't/config-Cachable' }
-
-use Jifty::Test tests => 5;
+use Jifty::Test::Dist tests => 5;
 use Jifty::Test::WWW::Mechanize;
 
 my $server  = Jifty::Test->make_server;

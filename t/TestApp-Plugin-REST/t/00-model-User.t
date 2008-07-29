@@ -8,11 +8,7 @@ A basic test harness for the User model.
 
 =cut
 
-
-use lib 't/lib';
-use Jifty::SubTest;
-
-use Jifty::Test tests => 12;
+use Jifty::Test::Dist tests => 12;
 # Make sure we can load the model
 use_ok('TestApp::Plugin::REST::Model::User');
 

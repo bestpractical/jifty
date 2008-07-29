@@ -9,10 +9,7 @@ This is a template for your own tests. Copy it and modify it.
 
 =cut
 
-use lib 't/lib';
-use Jifty::SubTest;
-
-use Jifty::Test tests => 3;
+use Jifty::Test::Dist tests => 3;
 
 ok(1, "Loaded the test script");
 

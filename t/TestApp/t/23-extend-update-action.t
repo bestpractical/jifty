@@ -9,9 +9,7 @@ Try out and make sure the the Update record action extends nicely.
 
 =cut
 
-use lib 't/lib';
-use Jifty::SubTest;
-use Jifty::Test tests => 4;
+use Jifty::Test::Dist tests => 4;
 
 Jifty::Test->web;
 

@@ -9,10 +9,7 @@ Tests that error pages work
 
 =cut
 
-use lib 't/lib';
-use Jifty::SubTest;
-
-use Jifty::Test tests => 10;
+use Jifty::Test::Dist tests => 10;
 use Jifty::Test::WWW::Mechanize;
 
 ok(1, "Loaded the test script");

@@ -2,9 +2,7 @@
 
 use strict;
 use warnings;
-use lib 't/lib';
-use Jifty::SubTest;
-use Jifty::Test;
+use Jifty::Test::Dist;
 use Jifty::Test::WWW::Selenium;
 use utf8;
 
