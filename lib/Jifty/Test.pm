@@ -294,9 +294,9 @@ sub load_test_configs {
     my $class = shift;
     my ($test_config_file) = @_;
 
-    # Jifty::SubTest uses chdir which screws up $0, so to be nice it also makes
-    # available the cwd was before it uses chdir.
-    my $cwd = $Jifty::SubTest::OrigCwd;
+    # Jifty::Test::Dist uses chdir which screws up $0, so to be nice
+    # it also makes available the cwd was before it uses chdir.
+    my $cwd = $Jifty::Test::Dist::OrigCwd;
 
     # get the initial test config file, which is the input . "-config.yml"
     $test_config_file = $0 if !defined($test_config_file);
