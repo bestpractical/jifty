@@ -1,21 +1,24 @@
 use warnings;
 use strict;
 
-package Jifty::Action::Multipage;
+package Jifty::Plugin::Multipage::Action;
+
+use Moose::Role;
 
 =head1 NAME
 
-Jifty::Action::Multipage - Actions stretched across multiple pages
+Jifty::Plugin::Multipage::Action - Actions stretched across multiple
+pages
 
 =head1 DESCRIPTION
 
-C<Jifty::Action::Multipage> is the action base class for actions which
-span across multiple pages, in a "wizard" workflow.  Each page but the
-last gets a chance to validate all of the inputs yet entered, and
-transparently remembers inputs from previous pages.  Since the
-information is stored in continuations, not directly on sessions, it
-is "back"-button compatible, and the same user can be in the middle of
-multiple instances of the same multipage action at once.
+C<Jifty::Plugin::Multipage::Action> is a L<Moose::Role> mixin for
+actions which span across multiple pages, in a "wizard" workflow.
+Each page but the last gets a chance to validate all of the inputs yet
+entered, and transparently remembers inputs from previous pages.
+Since the information is stored in continuations, not directly on
+sessions, it is "back"-button compatible, and the same user can be in
+the middle of multiple instances of the same multipage action at once.
 
 The action must have the same moniker on all pages which it appears.
 Field validators on the action must be prepared to be called with no
@@ -28,8 +31,6 @@ page; then it will be run.
 
 =cut
 
-use base qw/Jifty::Action/;
-
 =head1 METHODS
 
 =head2 new
@@ -40,10 +41,9 @@ them, most recent ones taking precedence.
 
 =cut
 
-sub new {
-    my $class = shift;
-    my %args = @_;
-    my $self = $class->SUPER::new(%args);
+around 'new' => sub {
+    my ($next, $class, %args) = @_;
+    my $self = $next->($class, %args);
 
     # Fetch any arguments from a passed in request
     my @actions;
@@ -74,7 +74,7 @@ sub new {
     $self->values_from_request->{$_} = 0 for keys %{ $args{'arguments' } };
 
     return $self;
-}
+};
 
 =head2 validate
 
@@ -84,16 +84,14 @@ doesn't get run if the continuation somehow gets called.
 
 =cut
 
-sub validate {
+after 'validate' => sub {
     my $self = shift;
-    $self->SUPER::validate(@_);
     if ($self->result->failure) {
         Jifty->web->request->continuation_path(undef);
     } elsif (Jifty->web->request->continuation_path) {
         Jifty->web->request->action( $self->moniker )->active(0);
     }
-    return $self->result->success;
-}
+};
 
 =head2 top_continuation
 
@@ -101,10 +99,7 @@ Returns the topmost continuation which contains this multipage action.
 
 =cut
 
-sub top_continuation {
-    my $self = shift;
-    return $self->{top_continuation};
-}
+has top_continuation => ( is => 'rw', isa => 'Jifty::Continuation' );
 
 =head2 next_page_button url => PATH, [ARGS]
 
@@ -117,8 +112,9 @@ user is kept on the same page.
 sub next_page_button {
     my $self = shift;
     my %args = @_;
-    die "No 'url' passed to next_page_button for @{[ref $self]}\n" unless $args{url};
-    return $self->button( returns => {}, label => "Next", @_);
+    confess "No 'url' passed to next_page_button for @{[ref $self]}"
+      unless $args{url};
+    return $self->button( returns => {}, label => "Next", %args);
 }
 
 =head2 finish_button [ARGS]
@@ -139,7 +135,7 @@ sub finish_button {
 
     my $req;
     if ( $args{url} ) {
-        $req = Jifty::Request->new( path => $args{url} );
+        $req = Jifty::Request->new( path => delete $args{url} );
     } else {
         $req = $top->request;
         $req->remove_action( $self->moniker );
@@ -149,7 +145,7 @@ sub finish_button {
         response => Jifty::Response->new,
         parent   => $top->parent
     );
-    return $self->button( call => $return, label => "Finish", @_ );
+    return $self->button( call => $return, label => "Finish", %args );
 }
 
 =head2 cancel_button [ARGS]
@@ -161,7 +157,8 @@ return the user to the page where the multipage action started.
 
 sub cancel_button {
     my $self = shift;
-    return Jifty->web->link( call => $self->top_continuation, label => "Cancel", as_button => 1, @_ );
+    my %args;
+    return Jifty->web->link( call => $self->top_continuation, label => "Cancel", as_button => 1, %args );
 }
 
 1;

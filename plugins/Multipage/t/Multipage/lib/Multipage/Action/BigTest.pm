@@ -1,6 +1,8 @@
 package Multipage::Action::BigTest;
 
-use base 'Jifty::Action::Multipage';
+use Moose;
+extends('Jifty::Action');
+with('Jifty::Plugin::Multipage::Action');
 
 use Jifty::Param::Schema;
 use Jifty::Action schema {

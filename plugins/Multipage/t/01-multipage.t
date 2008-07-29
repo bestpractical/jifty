@@ -9,10 +9,9 @@ Multipage action tests
 
 =cut
 
-use lib 't/lib';
-use Jifty::SubTest;
-use lib '../lib';
-use Jifty::Test tests => 41;
+use FindBin;
+BEGIN { $ENV{JIFTY_APP_ROOT} = "$FindBin::Bin/Multipage"; }
+use Jifty::Test::Dist tests => 41;
 
 use_ok('Jifty::Test::WWW::Mechanize');
 
