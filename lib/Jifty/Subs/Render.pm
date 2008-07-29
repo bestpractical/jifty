@@ -46,8 +46,6 @@ sub render {
             # XXX - We don't yet use $timestamp here.
             my ( $timestamp, $msg ) = @$rv;
 
-
-
             # Channel name is always App::Event::Class-MD5QUERIES
             my $event_class = $channel;
             $event_class =~ s/-.*//;
@@ -59,26 +57,27 @@ sub render {
 
             Jifty->log->debug("Rendering $channel event $msg");
 
-            my $render_info = $render->{$channel};
-            my $region      = Jifty::Web::PageRegion->new(
-                name => $render_info->{region},
-                path => $render_info->{render_with},
-            );
-            delete Jifty->web->{'regions'}{ $region->qualified_name };
+            for my $render_info (values %{$render->{$channel}}) {
+                my $region      = Jifty::Web::PageRegion->new(
+                    name => $render_info->{region},
+                    path => $render_info->{render_with},
+                );
+                delete Jifty->web->{'regions'}{ $region->qualified_name };
 
-            # Finally render the region.  In addition to the user-supplied arguments
-            # in $render_info, we always pass the target $region and the event object
-            # into its %ARGS.
-            my $region_content = '';
-            my $event_object   = $event_class->new($msg);
-            $region->render_as_subrequest( \$region_content,
-                {   %{ $render_info->{arguments} || {} },
-                    event => $event_object,
-                    $event_object->render_arguments,
-                }
-            );
-            $callback->( $render_info->{mode}, $region->qualified_name, $region_content);
-            $sent++;
+                # Finally render the region.  In addition to the user-supplied arguments
+                # in $render_info, we always pass the target $region and the event object
+                # into its %ARGS.
+                my $region_content = '';
+                my $event_object   = $event_class->new($msg);
+                $region->render_as_subrequest( \$region_content,
+                    {   %{ $render_info->{arguments} || {} },
+                        event => $event_object,
+                        $event_object->render_arguments,
+                    }
+                );
+                $callback->( $render_info->{mode}, $region->qualified_name, $region_content);
+                $sent++;
+            }
         }
     }
     return ($sent);

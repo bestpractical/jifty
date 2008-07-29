@@ -73,6 +73,7 @@ sub add {
     my $event_class = Jifty->app_class("Event", $args->{class});
 
     my $queries = $args->{queries} || [];
+    my $region  = $args->{region};
     my $channel = $event_class->encode_queries(@$queries);
 
     # The ->modify here is calling into the callback sub{...} with
@@ -92,7 +93,7 @@ sub add {
     # including the frament, region, argument and ajax updating mode.
     Jifty->bus->modify(
         "$id-render" => sub {
-            $_->{$channel} = {
+            $_->{$channel}{$region} = {
                 map { $_ => $args->{$_} }
                     qw/render_with region arguments mode/
             };
@@ -108,7 +109,7 @@ sub add {
         }
     );
 
-    return "$channel!$id";
+    return "$channel!$id!$region";
 }
 
 =head2 cancel CHANNEL_ID
@@ -125,28 +126,32 @@ sub cancel {
         return undef;
     }
 
-    my ($channel, $id) = split(/!/, $channel_id, 2);
+    my ($channel, $id, $region) = split(/!/, $channel_id, 3);
     my ($event_class)  = split(/-/, $channel);
 
     $id ||= Jifty->web->session->id;
 
-    Jifty->bus->modify(
-        "$event_class-subscriptions" => sub {
-            delete $_->{$channel};
-        }
-    );
-
+    my $last;
     Jifty->bus->modify(
         "$id-render" => sub {
-            delete $_->{$channel};
+            delete $_->{$channel}{$region};
+            $last = 1 unless %{$_->{$channel}};
         }
     );
 
-    Jifty->bus->modify(
-        "$id-subscriber" => sub {
-            if ($_) { $_->unsubscribe($channel) }
-        }
-    );
+    if ($last) {
+        Jifty->bus->modify(
+            "$event_class-subscriptions" => sub {
+                delete $_->{$channel};
+            }
+        );
+
+        Jifty->bus->modify(
+            "$id-subscriber" => sub {
+                if ($_) { $_->unsubscribe($channel) }
+            }
+        );
+    }
 }
 
 =head2 list [window/sessionid]
