@@ -4,8 +4,6 @@ use strict;
 package Jifty::Action::Record::Execute;
 use base qw/ Jifty::Action::Record /;
 
-use Hash::Merge;
-
 =head1 NAME
 
 Jifty::Action::Record::Execute - Simple abstract based for record actions
@@ -87,11 +85,15 @@ sub arguments {
         # primary key fields should always be hidden fields
     }
 
-    # XXX Should this be moved up into Jifty::Action::Record?
-    return Hash::Merge::merge( 
-        $arguments, 
-        (eval { $self->PARAMS } || {}),
-    );
+    if ( $self->can('PARAMS') ) {
+        use Jifty::Param::Schema;
+        return Jifty::Param::Schema::merge_params(
+            $arguments, ($self->PARAMS || {})
+        );
+    }
+    else {
+        return $arguments;
+    }
 }
 
 =head2 take_action
