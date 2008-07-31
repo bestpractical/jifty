@@ -760,7 +760,8 @@ Behaviour.register({
            fields
          */
         if (   !jQuery(e).hasClass("jifty_enter_handler_attached" )
-               && !jQuery(e).hasClass("ajaxautocompletes" ) )
+               && !jQuery(e).hasClass("ajaxautocompletes" )
+               && !jQuery(e).hasClass("disable_enter_handler") )
         {
             /* Do not use keydown as the event, it will not work as expected in Safari */
             jQuery(e).bind('keypress', Jifty.Form.Element.handleEnter).addClass("jifty_enter_handler_attached");
