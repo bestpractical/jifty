@@ -950,17 +950,8 @@ sub _validate_argument {
     }
 
     # If we have a set of allowed values, let's check that out.
-    # XXX TODO this should be a validate_valid_values sub
     if ( $value && $field_info->{valid_values} ) {
-
-        # If you're not on the list, you can't come to the party
-        unless ( grep {defined $_->{'value'} and $_->{'value'} eq $value}
-            @{ $self->valid_values($field) } ) {
-
-            return $self->validation_error(
-                $field => _("That doesn't look like a correct value") );
-        }
-
+        $self->_validate_valid_values($field => $value);
    # ... but still check through a validator function even if it's in the list
     }
 
@@ -1050,6 +1041,22 @@ sub valid_values {
     my $field = shift;
 
     $self->_values_for_field( $field => 'valid' );
+}
+
+sub _validate_valid_values {
+    my $self  = shift;
+    my $field = shift;
+    my $value = shift;
+
+    # If you're not on the list, you can't come to the party
+    unless ( grep {defined $_->{'value'} and $_->{'value'} eq $value}
+        @{ $self->valid_values($field) } ) {
+
+        return $self->validation_error(
+            $field => _("That doesn't look like a correct value") );
+    }
+
+    return 1;
 }
 
 =head2 available_values ARGUMENT
