@@ -80,7 +80,8 @@ sub create {
         my $attr = $attribs{$key};
         my ( $val, $msg ) = $self->run_validation_for_column(
             column => $key,
-            value  => $attribs{$key}
+            value  => $attribs{$key},
+            extra  => [\%attribs],
         );
         if ( not $val ) {
             $self->log->error("There was a validation error for $key");

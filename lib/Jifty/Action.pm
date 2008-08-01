@@ -962,12 +962,12 @@ sub _validate_argument {
     if ( $field_info->{validator}
         and defined &{ $field_info->{validator} } )
     {
-        return $field_info->{validator}->( $self, $value );
+        return $field_info->{validator}->( $self, $value, $self->argument_values );
     }
 
     # Check to see if it's the validate_$field method instead and use that
     elsif ( $self->can($default_validator) ) {
-        return $self->$default_validator( $value );
+        return $self->$default_validator( $value, $self->argument_values );
     }
 
     # If none of the checks have failed so far, then it's ok

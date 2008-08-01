@@ -337,7 +337,7 @@ sub _argument_validator {
 
             # Check the column's validator
             my ( $is_valid, $message )
-                = &{ $column->validator }( $self->record, $value );
+                = &{ $column->validator }( $self->record, $value, @_ );
 
             # The validator reported valid, return OK
             return $self->validation_ok($field) if ($is_valid);
