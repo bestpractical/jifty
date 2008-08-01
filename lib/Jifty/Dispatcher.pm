@@ -744,8 +744,9 @@ sub _do_abort {
         my $status = shift;
         my $apache = Jifty->handler->apache;
         $apache->header_out(Status => $status);
-        $apache->send_http_header;
+        Jifty->handler->send_http_header;
 
+        # The body should just be the status
         require HTTP::Status;
         print STDOUT $status, ' ' , HTTP::Status::status_message($status);
     }

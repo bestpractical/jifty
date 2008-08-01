@@ -60,7 +60,7 @@ sub show_help {
     my $apache = Jifty->handler->apache;
 
     $apache->header_out('Content-Type' => 'text/plain; charset=UTF-8');
-    $apache->send_http_header;
+    Jifty->handler->send_http_header;
    
     print qq{
 Accessing resources:
@@ -117,7 +117,7 @@ sub show_help_specific {
     my $apache = Jifty->handler->apache;
 
     $apache->header_out('Content-Type' => 'text/plain; charset=UTF-8');
-    $apache->send_http_header;
+    Jifty->handler->send_http_header;
 
     print __PACKAGE__->$method;
     last_rule;
@@ -213,32 +213,32 @@ sub outs {
 
     if ($accept =~ /ya?ml/i) {
         $apache->header_out('Content-Type' => 'text/x-yaml; charset=UTF-8');
-        $apache->send_http_header;
+        Jifty->handler->send_http_header;
         print Jifty::YAML::Dump(@_);
     }
     elsif ($accept =~ /json/i) {
         $apache->header_out('Content-Type' => 'application/json; charset=UTF-8');
-        $apache->send_http_header;
+        Jifty->handler->send_http_header;
         print Jifty::JSON::objToJson( @_ );
     }
     elsif ($accept =~ /j(?:ava)?s|ecmascript/i) {
         $apache->header_out('Content-Type' => 'application/javascript; charset=UTF-8');
-        $apache->send_http_header;
+        Jifty->handler->send_http_header;
         print 'var $_ = ', Jifty::JSON::objToJson( @_, { singlequote => 1 } );
     }
     elsif ($accept =~ qr{^(?:application/x-)?(?:perl|pl)$}i) {
         $apache->header_out('Content-Type' => 'application/x-perl; charset=UTF-8');
-        $apache->send_http_header;
+        Jifty->handler->send_http_header;
         print Data::Dumper::Dumper(@_);
     }
     elsif ($accept =~  qr|^(text/)?xml$|i) {
         $apache->header_out('Content-Type' => 'text/xml; charset=UTF-8');
-        $apache->send_http_header;
+        Jifty->handler->send_http_header;
         print render_as_xml(@_);
     }
     else {
         $apache->header_out('Content-Type' => 'text/html; charset=UTF-8');
-        $apache->send_http_header;
+        Jifty->handler->send_http_header;
         
         # Special case showing particular actions to show an HTML form
         if (    defined $prefix

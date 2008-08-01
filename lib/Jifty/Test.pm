@@ -431,7 +431,7 @@ sub make_server {
     }
 
     my $server = Jifty::Server->new;
-
+    $Jifty::SERVER = $server;
     return $server;
 }
 

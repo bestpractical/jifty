@@ -35,12 +35,6 @@ Creates a new C<Jifty::Server> object.
 
 =cut
 
-sub _send_http_status {
-    print STDOUT "HTTP/1.0 ".  (Jifty->handler->apache->{headers_out}->{'Status'} || '200 Jifty OK') .  "\n";
-}
-use Hook::LexWrap;
-wrap 'HTML::Mason::FakeApache::send_http_header', pre => \&_send_http_status;
-
 sub new {
     my $class = shift;
     my $self  = {};
@@ -84,9 +78,17 @@ sub handle_request {
     my $cgi = shift;
 
     Jifty->handler->handle_request( cgi  => $cgi );
-
 }
 
+=head2 send_http_status
+
+Sends the HTTP status header.
+
+=cut
+
+sub send_http_status {
+    print STDOUT "HTTP/1.0 ".  (Jifty->handler->apache->{headers_out}->{'Status'} || '200 Jifty OK') .  "\n";
+}
 
 =head2 print_banner
 

@@ -40,7 +40,7 @@ template '__jifty/subs' => sub {
     Jifty->handler->apache->content_type("text/html; charset=utf-8");
     Jifty->handler->apache->headers_out->{'Pragma'}        = 'no-cache';
     Jifty->handler->apache->headers_out->{'Cache-control'} = 'no-cache';
-    Jifty->handler->apache->send_http_header;
+    Jifty->handler->send_http_header;
 
     my $writer = XML::Writer->new;
     $writer->xmlDecl( "UTF-8", "yes" );

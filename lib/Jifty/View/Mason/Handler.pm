@@ -215,7 +215,7 @@ sub handle_comp {
         # Unlike under mod_perl, we cannot simply return a 301 or 302
         # status and let Apache send headers, we need to explicitly
         # send this header ourself.
-        $r->send_http_header if $retval && grep { $retval eq $_ } ( 200, 301, 302 );
+        Jifty->handler->send_http_header if $retval && grep { $retval eq $_ } ( 200, 301, 302 );
 
         return $retval;
     }
@@ -287,7 +287,7 @@ sub exec
     if ($self->auto_send_headers
         and not $r->http_header_sent
         and (!$retval or $retval==200)) {
-        $r->send_http_header();
+        Jifty->handler->send_http_header;
     }
 }
 

@@ -791,7 +791,7 @@ sub _redirect {
     # cookie has to be sent or returning from continuations breaks
     Jifty->web->session->set_cookie;
 
-    $apache->send_http_header();
+    Jifty->handler->send_http_header;
 
     # Mason abort, or dispatcher abort out of here
     $self->mason->abort if $self->mason;

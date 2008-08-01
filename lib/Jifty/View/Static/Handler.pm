@@ -274,7 +274,7 @@ sub send_http_header {
     $apache->header_out( 'Content-Encoding' => "gzip" )
       if ( $compression eq 'gzip' );
 
-    $apache->send_http_header();
+    Jifty->handler->send_http_header;
 }
 
 
@@ -288,7 +288,7 @@ sub send_not_modified {
     my $self = shift;
     my $apache = Jifty->handler->apache;
     $apache->header_out( Status => 304 );
-    $apache->send_http_header();
+    Jifty->handler->send_http_header;
     return 1;
 
 }

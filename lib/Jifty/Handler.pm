@@ -254,6 +254,24 @@ sub handle_request {
     $self->call_trigger('after_request', $args{cgi});
 }
 
+=head2 send_http_header
+
+Sends any relevent HTTP headers, by calling
+L<HTML::Mason::FakeApache/send_http_header>.  If this is running
+inside a standalone server, also sends the HTTP status header first.
+
+Returns false if the header has already been sent.
+
+=cut
+
+sub send_http_header {
+    my $self = shift;
+    return if $self->apache->http_header_sent;
+    $Jifty::SERVER->send_http_status if $Jifty::SERVER;
+    $self->apache->send_http_header;
+    return 1;
+}
+
 =head2 cleanup_request
 
 Dispatchers should call this at the end of each request, as a class method.

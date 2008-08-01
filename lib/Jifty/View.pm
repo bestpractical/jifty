@@ -38,7 +38,7 @@ sub out_method {
     $r->content_type || $r->content_type('text/html; charset=utf-8'); # Set up a default
 
     unless ( $r->http_header_sent or not __PACKAGE__->auto_send_headers ) {
-        $r->send_http_header();
+        Jifty->handler->send_http_header;
     }
 
     # We could perhaps install a new, faster out_method here that
