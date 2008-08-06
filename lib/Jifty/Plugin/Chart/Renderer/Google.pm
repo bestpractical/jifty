@@ -34,6 +34,7 @@ sub render {
         min_minus => 0,
         max_plus  => 0,
         format    => '%0.1f',
+        axis_styles => [],
         @_
     );
 
@@ -229,8 +230,19 @@ sub render {
                 }
                 $index++;
             }
+            
+            my @styles;
+            $index = 0;
+            for my $style ( @{ $args{'axis_styles'} } ) {
+                if ( ref $style eq 'ARRAY' and @$style ) {
+                    push @styles, join ',', $index, @$style;
+                }
+                $index++;
+            }
+
             $url .= "&chxl=" . join '|', @labels if @labels;
             $url .= "&chxr=" . join '|', @ranges if @ranges;
+            $url .= "&chxs=" . join '|', @styles if @styles;
         }
     }
 
