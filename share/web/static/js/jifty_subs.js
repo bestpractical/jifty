@@ -16,8 +16,9 @@ if (typeof Jifty == "undefined") Jifty = { };
 
     var onPushHandler = function(t) {
     	var mode = t.getAttribute('mode');
+    	var effect =  t.getAttribute('effect');
     	var rid =  t.firstChild.getAttribute('id');
-    	var f = { region: rid, path: '', mode: mode };
+    	var f = { region: rid, path: '', mode: mode, effect: effect };
 
         // If SinglePlugin is enabled, region name will be prefixed
         // "__page-" by the time that region was rendered. Therefore

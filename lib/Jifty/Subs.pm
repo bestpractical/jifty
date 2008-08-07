@@ -57,6 +57,16 @@ The moniker of the region that updates to this subscription should be rendered i
 
 The path of the fragment used to render items matching this subscription
 
+=item effect
+
+The effect to use when showing the region, if any.
+
+=item coalesce
+
+If multiple events would cause the update of the given region with the
+same C<render_with> path, merge them and only render the region once,
+with the latest update.
+
 =back
 
 =cut
@@ -68,6 +78,8 @@ sub add {
         Jifty->log->error("PubSub disabled, but $class->add called");
         return undef;
     }
+
+    $args->{coalesce} = 1 if not exists $args->{coalesce} and $args->{mode} eq "Replace";
 
     my $id          = ($args->{window_id} || Jifty->web->session->id);
     my $event_class = Jifty->app_class("Event", $args->{class});
@@ -95,7 +107,7 @@ sub add {
         "$id-render" => sub {
             $_->{$channel}{$region} = {
                 map { $_ => $args->{$_} }
-                    qw/render_with region arguments mode/
+                    qw/render_with region arguments mode effect coalesce/
             };
         }
     );

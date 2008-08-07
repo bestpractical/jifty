@@ -3,7 +3,7 @@ use strict;
 
 package Jifty::Event;
 
-use Storable 'nfreeze';
+use Jifty::YAML;
 use Digest::MD5 qw(md5_hex);
 use vars qw/%PUBLISHER/;
 
@@ -100,8 +100,7 @@ sub encode_queries {
     my $class   = ref($self) || $self;
     return $class unless @_;
 
-    local $Storable::canonical = 1;
-    return $class . '-' . md5_hex(join('', sort map { Storable::nfreeze($_) } @_));
+    return $class . '-' . md5_hex(join('', sort map { Jifty::YAML::Dump($_) } @_));
 }
 
 
