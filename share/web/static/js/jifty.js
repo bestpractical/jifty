@@ -1061,15 +1061,18 @@ var apply_fragment_updates = function(fragment, f) {
 
     // Also, set us up the effect
     if (f['effect']) {
-        if(f['is_new']) 
-            jQuery(Jifty.$('region-'+f['region'])).hide();
         Jifty.Effect(
             Jifty.$('region-'+f['region']),
             f['effect'],
-            f['effect_args']
+            f['effect_args'],
+            {
+                before: function() {
+                    if(f['is_new']) 
+                        jQuery(this).hide();
+                }
+            }
         );
     }
-    return Jifty.$('region-'+f['region']);
 }
 
 // Update a region.  Takes a hash of named parameters, including:
@@ -1636,14 +1639,15 @@ Jifty.Effect = function(el, name, args, options) {
         name == 'SlideUp' ? 'slideUp' :
         name;
 
-    if ( jQuery.isFunction(options["before"]) ) 
-        options["before"].call( el );
+    if (jQuery.isFunction( jQuery(el)[ effect ] ) ) {
+        if ( jQuery.isFunction(options["before"])  ) 
+            options["before"].call( el );
 
-    if ( jQuery.isFunction( jQuery(el)[ effect ] ) )
         ( jQuery(el)[ effect ] )(args);
 
-    if ( jQuery.isFunction(options["after"]) ) 
-        options["after"].call( el );
+        if ( jQuery.isFunction(options["after"])  ) 
+            options["after"].call( el );
+    }
 };
 
 /*
