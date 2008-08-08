@@ -727,17 +727,6 @@ jQuery.extend(Jifty.Form.Element, {
 
 });
 
-// Form elements should focus if the CSS says so.
-Behaviour.register({
-    ".focus": function(e) {
-        /* Check to see if the element is already focused */
-        if (!jQuery(e).hasClass("focused")) {
-            jQuery(e).addClass("focused").focus();
-        }
-    }
-});
-
-
 // Form elements should AJAX validate if the CSS says so
 Behaviour.register({
     'input.ajaxvalidation, textarea.ajaxvalidation, input.ajaxcanonicalization, textarea.ajaxcanonicalization': function(elt) {
@@ -777,6 +766,14 @@ Behaviour.register({
     },
     '.form_field .error, .form_field .warning, .form_field .canonicalization_note': function(e) {
         if ( e.innerHTML == "" ) jQuery(e).hide();
+    },
+    // Form elements should focus if the CSS says so.
+    ".focus": function(e) {
+        /* Check to see if the element is already focused */
+        if (!jQuery(e).hasClass("focused")) {
+            console.log("here");
+            jQuery(e).addClass("focused").focus();
+        }
     }
 });
 

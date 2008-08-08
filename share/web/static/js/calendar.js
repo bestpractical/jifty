@@ -23,7 +23,7 @@ Jifty.Calendar = {
             Jifty.Calendar.hideOpenCalendar();
             return;
         }
-        
+
         Jifty.Calendar.hideOpenCalendar();
         
         /* We need to delay Jifty's canonicalization until after we've
@@ -80,7 +80,9 @@ Jifty.Calendar = {
         if (day < 10)
             day = "0" + day;
 
-        obj.input.value = year + "-" + month + "-" + day;
+        jQuery(obj.input).val(year + "-" + month + "-" + day);
+        // Trigger an onchange event for any listeners
+        jQuery(obj.input).change();
 
         Jifty.Calendar.hideOpenCalendar();
     },
