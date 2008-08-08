@@ -17,6 +17,7 @@ if (typeof Jifty == "undefined") Jifty = { };
     var onPushHandler = function(t) {
         var rid =  t.firstChild.getAttribute('id');
         var f = { region: rid, path: '' };
+        f['mode']               =  t.getAttribute('mode');
         f['effect']             =  t.getAttribute('effect');
         f['effect_args']        =  t.getAttribute('effect_args');
         f['remove_effect']      =  t.getAttribute('remove_effect');
