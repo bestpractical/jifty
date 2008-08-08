@@ -82,10 +82,14 @@ sub render {
 
 sub render_single {
     my ($class, $msg, $render_info, $callback) = @_;
+
     my $region = Jifty::Web::PageRegion->new(
         name => $render_info->{region},
         path => $render_info->{render_with},
     );
+
+    # So we don't warn about "duplicate region"s
+    delete Jifty->web->{'regions'}{ $region->qualified_name };
 
     # Finally render the region.  In addition to the user-supplied arguments
     # in $render_info, we always pass the target $region and the event object
@@ -99,7 +103,7 @@ sub render_single {
             $event_object->render_arguments,
         }
     );
-    $callback->( $render_info->{mode}, $region->qualified_name, $region_content, $render_info->{effect});
+    $callback->( $render_info->{mode}, $region->qualified_name, $region_content, $render_info->{attrs} );
     $region->exit;
 }
 

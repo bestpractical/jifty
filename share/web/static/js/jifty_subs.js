@@ -9,16 +9,18 @@ if (typeof Jifty == "undefined") Jifty = { };
        Then it calls jifty's "apply_fragment_updates to the item
        inside the <pushfrag> (the actual fragment);
 
-	f is the specification for the new fragment. (region, path,
-	mode and other infomration extracted from the fragment)
+        f is the specification for the new fragment. (region, path,
+        mode and other information extracted from the fragment)
 
        */
 
     var onPushHandler = function(t) {
-    	var mode = t.getAttribute('mode');
-    	var effect =  t.getAttribute('effect');
-    	var rid =  t.firstChild.getAttribute('id');
-    	var f = { region: rid, path: '', mode: mode, effect: effect };
+        var rid =  t.firstChild.getAttribute('id');
+        var f = { region: rid, path: '' };
+        f['effect']             =  t.getAttribute('effect');
+        f['effect_args']        =  t.getAttribute('effect_args');
+        f['remove_effect']      =  t.getAttribute('remove_effect');
+        f['remove_effect_args'] =  t.getAttribute('remove_effect_args');
 
         // If SinglePlugin is enabled, region name will be prefixed
         // "__page-" by the time that region was rendered. Therefore
@@ -27,9 +29,9 @@ if (typeof Jifty == "undefined") Jifty = { };
             f['region'] = "__page-" + f['region']
         }
 
-    	f = prepare_element_for_update(f);
+        f = prepare_element_for_update(f);
         if (f == null) return;
-    	apply_fragment_updates(t.firstChild, f);
+        apply_fragment_updates(t.firstChild, f);
     };
 
     
@@ -43,13 +45,13 @@ if (typeof Jifty == "undefined") Jifty = { };
     /* Jifty.Subs.start() will connect to the iframe transport */
 
     Jifty.Subs = function(args) {
-    	var window_id = args.window_id; // XXX: not yet
-    	var uri = args.uri;
-    	if (!uri)
-    	    uri = "/=/subs?forever=0";
-    	
-    	this.start = function() {
-    	    //push.start();
+        var window_id = args.window_id; // XXX: not yet
+        var uri = args.uri;
+        if (!uri)
+            uri = "/=/subs?forever=0";
+        
+        this.start = function() {
+            //push.start();
             var self = this;
 
             jQuery.ajax({

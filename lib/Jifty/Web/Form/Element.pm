@@ -110,13 +110,22 @@ region that the region was given when it was last rendered.
 
 =item effect => STRING
 
-The Scriptaculous visual effect to use when updating or creating the
-fragment.
+The Scriptaculous or jQuery visual effect to use when updating or
+creating the fragment.
 
 =item effect_args => HASHREF
 
 A hashref of arguments to pass to the effect when it is created.  These
 can be used to change the duration of the effect, for instance.
+
+=item remove_effect => STRING
+
+As C<effect>, but for when the previous version of the region is
+removed.
+
+=item remove_effect_args => HASHREF
+
+As C<effect_args>, but for C<remove_effect>.
 
 =item beforeclick => STRING
 
@@ -478,7 +487,7 @@ sub javascript_attrs {
             $args{toggle} = 1 if $hook->{toggle};
 
             # Effects
-            $args{$_} = $hook->{$_} for grep {exists $hook->{$_}} qw/effect effect_args/;
+            $args{$_} = $hook->{$_} for grep {exists $hook->{$_}} qw/effect effect_args remove_effect remove_effect_args/;
 
             push @fragments, \%args;
         }

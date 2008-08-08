@@ -41,8 +41,8 @@ sub write_subs_once {
     Jifty::Subs::Render->render(
         Jifty->web->session->id,
         sub {
-            my ( $mode, $name, $content, $effect ) = @_;
-            $writer->startTag( "pushfrag", mode => $mode, ($effect? (effect => $effect) : ()) );
+            my ( $mode, $name, $content, $attrs ) = @_;
+            $writer->startTag( "pushfrag", mode => $mode, %{$attrs || {}} );
             $writer->startTag( "fragment", id   => $name );
             $writer->dataElement( "content", $content );
             $writer->endTag();

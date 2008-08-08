@@ -900,10 +900,25 @@ function prepare_element_for_update(f) {
             return;
 
         // If we're removing the element, do it now
-        // XXX TODO: Effects on this?
         if (f['mode'] == "Delete") {
             fragments[name] = null;
-            jQuery(element).remove();
+            if (f['effect']) {
+                Jifty.Effect(
+                    Jifty.$('region-'+f['region']),
+                    f['effect'],
+                    f['effect_args']
+                );
+                jQuery(element).queue(function() { jQuery(element).remove(); });
+            } else if (f['remove_effect']) {
+                Jifty.Effect(
+                    Jifty.$('region-'+f['region']),
+                    f['remove_effect'],
+                    f['remove_effect_args']
+                );
+                jQuery(element).queue(function() { jQuery(element).remove(); });
+            } else {
+                jQuery(element).remove();
+            }
             return;
         }
 
@@ -1028,6 +1043,13 @@ var apply_fragment_updates = function(fragment, f) {
 
                     jQuery.fn[method].call(jQuery(element), textContent);
                     element = document.getElementById('region-' + f['region']);
+                } else if (f['remove_effect']) {
+                    Jifty.Effect(
+                        Jifty.$('region-'+f['region']),
+                        f['remove_effect'],
+                        f['remove_effect_args']
+                    );
+                    jQuery(element).queue(function() { jQuery(element).html( textContent ); });
                 } else {
                     jQuery(element).html( textContent );
                 }
@@ -1039,18 +1061,15 @@ var apply_fragment_updates = function(fragment, f) {
 
     // Also, set us up the effect
     if (f['effect']) {
+        if(f['is_new']) 
+            jQuery(Jifty.$('region-'+f['region'])).hide();
         Jifty.Effect(
             Jifty.$('region-'+f['region']),
             f['effect'],
-            f['effect_args'],
-            {
-                before: function() {
-                    if(f['is_new']) 
-                        jQuery(this).hide();
-                }
-            }
+            f['effect_args']
         );
     }
+    return Jifty.$('region-'+f['region']);
 }
 
 // Update a region.  Takes a hash of named parameters, including:
@@ -1617,15 +1636,14 @@ Jifty.Effect = function(el, name, args, options) {
         name == 'SlideUp' ? 'slideUp' :
         name;
 
-    if (jQuery.isFunction( jQuery(el)[ effect ] ) ) {
-        if ( jQuery.isFunction(options["before"])  ) 
-            options["before"].call( el );
+    if ( jQuery.isFunction(options["before"]) ) 
+        options["before"].call( el );
 
+    if ( jQuery.isFunction( jQuery(el)[ effect ] ) )
         ( jQuery(el)[ effect ] )(args);
 
-        if ( jQuery.isFunction(options["after"])  ) 
-            options["after"].call( el );
-    }
+    if ( jQuery.isFunction(options["after"]) ) 
+        options["after"].call( el );
 };
 
 /*

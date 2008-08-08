@@ -61,6 +61,18 @@ The path of the fragment used to render items matching this subscription
 
 The effect to use when showing the region, if any.
 
+=item effect_args
+
+Arguments to the effect
+
+=item remove_effect
+
+The effect to use when removing the old value of the region, if any.
+
+=item remove_effect_args
+
+Arguments to the remove effect
+
 =item coalesce
 
 If multiple events would cause the update of the given region with the
@@ -87,6 +99,8 @@ sub add {
     my $queries = $args->{queries} || [];
     my $region  = $args->{region};
     my $channel = $event_class->encode_queries(@$queries);
+    $args->{attrs}{$_} = delete $args->{$_}
+        for grep {exists $args->{$_}} qw/effect effect_args remove_effect remove_effect_args/;
 
     # The ->modify here is calling into the callback sub{...} with
     # the previous value of $_, that is a hashref of channels to
@@ -107,7 +121,7 @@ sub add {
         "$id-render" => sub {
             $_->{$channel}{$region} = {
                 map { $_ => $args->{$_} }
-                    qw/render_with region arguments mode effect coalesce/
+                    qw/render_with region arguments mode coalesce attrs/
             };
         }
     );
