@@ -485,7 +485,7 @@ jQuery.iAuto = {
 					return;
 				this.autoCFG = {};
 				this.autoCFG.source = options.source;
-				this.autoCFG.minchars = Math.abs(parseInt(options.minchars)||1);
+				this.autoCFG.minchars = parseInt(options.minchars) || 1;
 				this.autoCFG.helperClass = options.helperClass ? options.helperClass : '';
 				this.autoCFG.selectClass = options.selectClass ? options.selectClass : '';
 				this.autoCFG.onSelect = options.onSelect && options.onSelect.constructor == Function ? options.onSelect : null;
