@@ -80,6 +80,12 @@ sub render {
     return ($sent);
 }
 
+=head2 render_single CLASS, MESSAGE, INFO, CALLBACK
+
+Renders a single region, based on the region information in C<INFO>.
+
+=cut
+
 sub render_single {
     my ($class, $msg, $render_info, $callback) = @_;
 
@@ -87,21 +93,21 @@ sub render_single {
         name => $render_info->{region},
         path => $render_info->{render_with},
     );
-
     # So we don't warn about "duplicate region"s
     delete Jifty->web->{'regions'}{ $region->qualified_name };
 
-    # Finally render the region.  In addition to the user-supplied arguments
-    # in $render_info, we always pass the target $region and the event object
-    # into its %ARGS.
-    my $region_content = '';
     my $event_object   = $class->new($msg);
+    # Region's arguments come from explicit arguments only
+    $region->arguments( $render_info->{arguments} );
+
+    my $region_content = '';
     $region->enter;
-    $region->render_as_subrequest( \$region_content,
-        {   %{ $render_info->{arguments} || {} },
-            event => $event_object,
-            $event_object->render_arguments,
-        }
+    # Also provide an 'event' argument, and fill in the render
+    # arguments.  These don't show up in the region's arguments if
+    # inspected, but do show up in the request.
+    $region->render_as_subrequest(
+        \$region_content,
+        { %{$region->arguments}, event => $event_object, $event_object->render_arguments },
     );
     $callback->( $render_info->{mode}, $region->qualified_name, $region_content, $render_info->{attrs} );
     $region->exit;

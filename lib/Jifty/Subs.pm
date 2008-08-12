@@ -94,7 +94,8 @@ sub add {
     $args->{coalesce} = 1 if not exists $args->{coalesce} and $args->{mode} eq "Replace";
 
     my $id          = ($args->{window_id} || Jifty->web->session->id);
-    my $event_class = Jifty->app_class("Event", $args->{class});
+    my $event_class = $args->{class};
+    $event_class = Jifty->app_class("Event", $args->{class}) unless $event_class =~ /^Jifty::Event::/;
 
     my $queries = $args->{queries} || [];
     my $region  = $args->{region};
@@ -198,6 +199,38 @@ sub list {
     my $id   = (shift || Jifty->web->session->id);
     my $subscribe = Jifty->bus->modify( "$id-subscriber" ) or return ();
     return $subscribe->channels;
+}
+
+=head2 update_on PARAMHASH
+
+Like L</add>, but provides a sane set of defaults for updating the
+current region, based on inspection of the current region's
+properties.  C<queries> is set to the region's arguments, and C<class>
+is left unspecified.
+
+=cut
+
+sub update_on {
+    my $self = shift;
+
+    my $region = Jifty->web->current_region;
+    unless ($region) {
+        warn "Jifty->subs->update_on called when not in a region";
+        return;
+    }
+
+    my %args = %{ $region->arguments };
+    delete $args{region};
+    delete $args{event};
+
+    $self->add(
+        queries     => [ \%args ],
+        arguments   => \%args,
+        mode        => 'Replace',
+        region      => $region->qualified_name,
+        render_with => $region->path,
+        @_,
+    );
 }
 
 1;
