@@ -908,14 +908,20 @@ function prepare_element_for_update(f) {
                     f['effect'],
                     f['effect_args']
                 );
-                jQuery(element).queue(function() { jQuery(element).remove(); });
+                jQuery(element).queue(function() {
+                    jQuery(element).remove();
+                    jQuery(element).dequeue();
+                });
             } else if (f['remove_effect']) {
                 Jifty.Effect(
                     Jifty.$('region-'+f['region']),
                     f['remove_effect'],
                     f['remove_effect_args']
                 );
-                jQuery(element).queue(function() { jQuery(element).remove(); });
+                jQuery(element).queue(function() {
+                    jQuery(element).remove();
+                    jQuery(element).dequeue();
+                });
             } else {
                 jQuery(element).remove();
             }
@@ -1049,7 +1055,10 @@ var apply_fragment_updates = function(fragment, f) {
                         f['remove_effect'],
                         f['remove_effect_args']
                     );
-                    jQuery(element).queue(function() { jQuery(element).html( textContent ); });
+                    jQuery(element).queue(function() {
+                        jQuery(element).html( textContent );
+                        jQuery(element).dequeue();
+                    });
                 } else {
                     jQuery(element).html( textContent );
                 }
@@ -1639,13 +1648,13 @@ Jifty.Effect = function(el, name, args, options) {
         name == 'SlideUp' ? 'slideUp' :
         name;
 
-    if (jQuery.isFunction( jQuery(el)[ effect ] ) ) {
-        if ( jQuery.isFunction(options["before"])  ) 
+    if ( jQuery.isFunction( jQuery(el)[ effect ] ) ) {
+        if ( jQuery.isFunction(options["before"]) ) 
             options["before"].call( el );
 
         ( jQuery(el)[ effect ] )(args);
 
-        if ( jQuery.isFunction(options["after"])  ) 
+        if ( jQuery.isFunction(options["after"]) ) 
             options["after"].call( el );
     }
 };
