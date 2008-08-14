@@ -33,7 +33,8 @@ sub render {
         geoarea   => 'world',
         min_minus => 0,
         max_plus  => 0,
-        format    => '%0.1f',
+        format    => '%0.2f',
+        markers   => [],
         axis_styles => [],
         @_
     );
@@ -166,6 +167,17 @@ sub render {
         $url .= "&chd=s:" . $self->_simple_encode_data( $args{'max_value'}, @{$args{'data'}} );
     }
     else {
+        # Deal with out of range horizontal markers here by fixing our range
+        if ( @{ $args{'markers'} } ) {
+            for my $marker ( grep { $_->{'type'} eq 'h' } @{$args{'markers'}} ) {
+                $args{'max_value'} = $marker->{'position'}
+                    if $marker->{'position'} > $args{'max_value'};
+                
+                $args{'min_value'} = $marker->{'position'}
+                    if $marker->{'position'} < $args{'min_value'};
+            }
+        }
+
         # If we want to add/subtract a percentage of the max/min, then
         # calculate it now
         for my $limit (qw( min max )) {
@@ -177,14 +189,15 @@ sub render {
 
         my $min = $args{'min_value'} - $args{'min_minus'};
         my $max = $args{'max_value'} + $args{'max_plus'};
+        
+        $args{'calculated_min'} = $min;
+        $args{'calculated_max'} = $max;
 
+        # Format the min and max for use a few lines down
         unless ( not defined $args{'format'} ) {
             $min = sprintf $args{'format'}, $min;
             $max = sprintf $args{'format'}, $max;
         }
-
-        $args{'calculated_min'} = $min;
-        $args{'calculated_max'} = $max;
 
         # If it's a number, pass it through, otherwise replace it with a
         # number out of range to mark it as undefined
@@ -226,7 +239,8 @@ sub render {
                     push @labels, "$index:|" . join '|', map { uri_escape($_) } @$labelset;
                 }
                 elsif ( not ref $labelset and $labelset eq 'RANGE' ) {
-                    push @ranges, "$index,$args{'calculated_min'},$args{'calculated_max'}";
+                    push @ranges, sprintf "%d,$args{'format'},$args{'format'}",
+                                           $index, $args{'calculated_min'}, $args{'calculated_max'};
                 }
                 $index++;
             }
@@ -257,6 +271,37 @@ sub render {
     # Add bar widths for bar charts
     if ( $args{'type'} =~ /bar/i ) {
         $url .= "&chbh=" . join ',', @{ $args{'bar_width'} };
+    }
+
+    # Add shape markers
+    if ( @{ $args{'markers'} } ) {
+        my @markers;
+        for my $data ( @{$args{'markers'}} ) {
+            my %marker = (
+                type     => 'x',
+                color    => '000000',
+                dataset  => 0,
+                position => 0,
+                size     => 5,
+                priority => 0,
+                %$data,
+            );
+
+            # Calculate where the position should be for horizontal lines
+            if ( $marker{'type'} eq 'h' ) {
+                $marker{'position'} /= abs( $args{'calculated_max'} - $args{'calculated_min'} );
+            }
+            # Fix text type
+            elsif ( $marker{'type'} eq 't' ) {
+                $marker{'type'} .= uri_escape( $marker{'text'} );
+            }
+
+            # Format the position
+            $marker{'position'} = sprintf $args{'format'}, $marker{'position'};
+
+            push @markers, join(',', @marker{qw( type color dataset position size priority )});
+        }
+        $url .= "&chm=" . join '|', @markers if @markers;
     }
 
     Jifty->web->out( qq{<img src="$url" />} );
