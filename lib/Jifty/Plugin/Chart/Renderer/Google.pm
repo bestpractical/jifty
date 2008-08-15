@@ -273,7 +273,7 @@ sub render {
         $url .= "&chbh=" . join ',', @{ $args{'bar_width'} };
     }
 
-    # Add shape markers
+    # Add shape/range markers
     if ( @{ $args{'markers'} } ) {
         my @markers;
         for my $data ( @{$args{'markers'}} ) {
@@ -289,15 +289,34 @@ sub render {
 
             # Calculate where the position should be for horizontal lines
             if ( $marker{'type'} eq 'h' ) {
-                $marker{'position'} /= abs( $args{'calculated_max'} - $args{'calculated_min'} );
+                $marker{'position'} = $self->_position_in_range( $marker{'position'},
+                                                                 $args{'calculated_min'},
+                                                                 $args{'calculated_max'} );
+            }
+            # Calculate where the position should be for ranges
+            elsif ( lc($marker{'type'}) eq 'r' ) {
+                for (qw( start end )) {
+                    $marker{$_} = $args{'calculated_min'} if $marker{$_} eq 'MIN';
+                    $marker{$_} = $args{'calculated_max'} if $marker{$_} eq 'MAX';
+
+                    $marker{$_} = $self->_position_in_range( $marker{$_},
+                                                             $args{'calculated_min'},
+                                                             $args{'calculated_max'} );
+                }
             }
             # Fix text type
             elsif ( $marker{'type'} eq 't' ) {
                 $marker{'type'} .= uri_escape( $marker{'text'} );
             }
 
-            # Format the position
-            $marker{'position'} = sprintf $args{'format'}, $marker{'position'};
+            if ( lc($marker{'type'}) eq 'r' ) {
+                $marker{'position'} = sprintf $args{'format'}, $marker{'start'};
+                $marker{'size'}     = sprintf $args{'format'}, $marker{'end'};
+            }
+            else {
+                # Format the position
+                $marker{'position'} = sprintf $args{'format'}, $marker{'position'};
+            }
 
             push @markers, join(',', @marker{qw( type color dataset position size priority )});
         }
@@ -308,6 +327,11 @@ sub render {
 
     # Make sure we don't return anything that will get output
     return;
+}
+
+sub _position_in_range {
+    my ( $self, $point, $min, $max ) = @_;
+    return ($point - $min) / ($max - $min);
 }
 
 # Borrowed with slight modifications from Google::Chart::Data::SimpleEncoding
