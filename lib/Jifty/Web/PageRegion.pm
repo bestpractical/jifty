@@ -15,7 +15,7 @@ can be updated via AJAX or via query parameters.
 =cut
 
 use base qw/Jifty::Object Class::Accessor::Fast/;
-__PACKAGE__->mk_accessors(qw(name force_path force_arguments default_path default_arguments qualified_name parent region_wrapper lazy));
+__PACKAGE__->mk_accessors(qw(name force_path force_arguments default_path default_arguments qualified_name parent region_wrapper lazy loading_path));
 use Jifty::JSON;
 use Encode ();
 
@@ -62,7 +62,15 @@ Defaults to true.
 
 =item lazy (optional)
 
-Delays the loading of the fragment until render-time
+Delays the loading of the fragment until client render-time.
+Obviously, does not work with downlevel browsers which don't uspport
+javascript.
+
+=item loading_path (optional)
+
+The fragment to display while the client fetches the actual region.
+Make this lightweight, or you'll be losing most of the benefits of
+lazy loading!
 
 =back
 
@@ -81,6 +89,7 @@ sub new {
                 force_path => undef,
                 region_wrapper => 1,
                 lazy => 0,
+                loading_path => undef,
                 @_
                );
 
@@ -110,6 +119,7 @@ sub new {
     $self->parent($args{parent} || Jifty->web->current_region);
     $self->region_wrapper($args{region_wrapper});
     $self->lazy($args{lazy});
+    $self->loading_path($args{loading_path});
 
     # Keep track of the fully qualified name (which should be unique)
     $self->log->warn("Repeated region: " . $self->qualified_name)
@@ -295,7 +305,13 @@ sub as_string {
               . qq|</script>|;
         }
         $result .= qq|<div id="region-| . $self->qualified_name . qq|" class="jifty-region">|;
-        return $result . qq|</div>| if $self->lazy;
+        if ($self->lazy) {
+            if ($self->loading_path) {
+                local $self->{path} = $self->loading_path;
+                $self->render_as_subrequest(\$result, \%arguments);
+            }
+            return $result . qq|</div>|;
+        }
     }
 
     $self->render_as_subrequest(\$result, \%arguments);
