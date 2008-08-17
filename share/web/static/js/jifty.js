@@ -1088,6 +1088,7 @@ var apply_fragment_updates = function(fragment, f) {
 //  - 'actions' is an array of monikers to submit
 //  - 'action_arguments' is a hash of action monikers to hashes of arguments which should override any arguments coming from form fields
 //        the hash keys for 'action_arguments' are the values of the 'actions' array
+//  - 'continuation' is ??? Please document me
 //  - 'fragments' is an array of hashes, which may have:
 //     - 'region' is the name of the region to update
 //     - 'args' is a hash of arguments to override

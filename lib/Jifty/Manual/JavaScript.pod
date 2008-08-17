@@ -6,7 +6,7 @@ JavaScript programming guide for Jifty
 =head1 DESCRIPTION
 
 jQuery took over Prototype and becoming the core of Jifty's Javascript
-development. Besides re-implement core javascript libraries with
+development. Besides re-implementing core javascript libraries with
 jQuery, some good refactor is also being done.
 
 This document is written to help JavaScript programmers working for
@@ -210,6 +210,97 @@ form element.
 
 Trap "Enter" key, and prevent it from doing any browser default
 behaviours.
+
+=item Jifty.update(options)
+
+This function is used to handle most Jifty-related ajax requests. It handles the submission of actions, manipulation of continuations, and modification of page regions. Whenever building C<onclick> or other L<Jifty::Web::Form::Element> event handlers, this method is generally used.
+
+The C<options> are passed as an object where the following attributes are available.
+
+=over
+
+=item actions
+
+This is an object declaring the monikers you wish to submit with the update. These actions will be taken based upon the form inputs and also the values described in C<action_arguments>. The values assigned to each moniker should be "1" to signify that that moniker should be submitted.
+
+For example,
+
+  Jifty.update({ 'actions': { 'new_entry': 1 } });
+
+=item action_arguments
+
+This specifies any additional arguments to submit with the action. These are specified as a object where the fields are the names of the monikers to submit arguments for. The values are objects describing the parameters to pass to the action.
+
+For example,
+
+  Jifty.update({ 
+      'actions': { 'new_entry': 1 }, 
+      'action_arguments': { 'new_entry': { 'foo': 42, 'bar': 'blah' } }
+  });
+
+This would submit the action for moniker C<new_entry> with whatever form elements are included on the page along with setting the parameter C<foo> to "42" and the parameter C<bar> to "blah".
+
+=item continuation
+
+TODO Please document this...
+
+=item fragments
+
+This is an array describing modifications to make to page regions. Each element of the array is an object describing a single modification. The fields that are valid for each include the following:
+
+=over
+
+=item region
+
+This is the fully-qualified name of the region to manipulate.
+
+=item args
+
+This is a list of arguments to pass to the server.
+
+=item path
+
+This is the path of the fragment to use when modifying the region.
+
+=item element
+
+This is a special C<jQuery> selector to use to choose an element to update. If this is given, the C<region> value will be ignored and the first element matching this selector will be used instead.
+
+=item mode
+
+This determines what kind of update to perform. It may be one of the following:
+
+=over
+
+=item Replace
+
+The contents of the region or selected element will be completely replaced by the server response.
+
+=item Top
+
+The server response will be inserted within the region or selected element before the rest of the content.
+
+=item Bottomer
+
+The server response will be inserted within the region or selected element after the rest of the content.
+
+=item Before
+
+The content returned by the server will be inserted immediately before and outside the given region or element.
+
+=item After
+
+The content returned by the server will be inserted immedately after and outside the given region or element.
+
+=back
+
+=item effect
+
+This is used to select the C<Jifty.Effect> to use when performing the modification. This is a string naming the effect.
+
+=back
+
+=back
 
 =back
 
