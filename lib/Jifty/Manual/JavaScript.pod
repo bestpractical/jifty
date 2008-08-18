@@ -256,7 +256,7 @@ This is the fully-qualified name of the region to manipulate.
 
 =item args
 
-This is a list of arguments to pass to the server.
+These are the arguments to pass to the server. These are passed as an argument where the field names are the keys to pass. The values may be a typical string value to pass in or may be one of the special values listed in L<Jifty::Request::Mapper>, which will set the values based upon action results and other values in the request. (Those values will need to be produced using the JavaScript analog of the descriptions in Perl. Specifically, hashes are JavaScript objects and actions must be given as action monikers.)
 
 =item path
 
