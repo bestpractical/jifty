@@ -331,6 +331,13 @@ sub render {
 
 sub _position_in_range {
     my ( $self, $point, $min, $max ) = @_;
+
+    return 0 if not defined $point
+             or not defined $min
+             or not defined $max;
+
+    return $min if $max == $min;
+
     return ($point - $min) / ($max - $min);
 }
 
