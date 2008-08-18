@@ -199,7 +199,9 @@ sub start {
         }
     }
 
-    my $form_start = qq!<form method="post" action="!  . Jifty->web->escape( $self->submit_to || $ENV{PATH_INFO}) . qq!"!;
+    my $root = $self->submit_to;
+    ($root) = $ENV{'REQUEST_URI'} =~ /([^\?]*)/ unless defined $root;
+    my $form_start = qq!<form method="post" action="!  . Jifty->web->escape( $root ) . qq!"!;
     $form_start .= qq! name="@{[ $self->name ]}"! if defined $self->name;
     $form_start .= qq! target="@{[ $self->target ]}"! if defined $self->target;
     $form_start .= qq! autocomplete="off"!  if defined $self->disable_autocomplete;
