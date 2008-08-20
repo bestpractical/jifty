@@ -1084,7 +1084,9 @@ var apply_fragment_updates = function(fragment, f) {
     }
 }
 
-// Update a region.  Takes a hash of named parameters, including:
+// Update a region. It takes two arguments.
+//
+// The first argument is a hash of named parameters, including:
 //  - 'actions' is an array of monikers to submit
 //  - 'action_arguments' is a hash of action monikers to hashes of arguments which should override any arguments coming from form fields
 //        the hash keys for 'action_arguments' are the values of the 'actions' array
@@ -1095,15 +1097,21 @@ var apply_fragment_updates = function(fragment, f) {
 //     - 'path' is the path of the fragment (if this is a new fragment)
 //     - 'element' is the CSS selector of the element to update, if 'region' isn't supplied
 //     - 'mode' is one of 'Replace', 'Top', 'Bottom', 'Before', or 'After'
-//     - 'effect' is the name of a Prototype Effect
+//     - 'effect' is the name of an effect
+//
+// The second argument is the element (usually a submit button) that triggered
+// it.
+//
 Jifty.update = function () {
-    // loads
+    // Let the regular form submit take over if this browser can't do this
     if (!Jifty.hasAjaxTransport) return true;
+
     // XXX: prevent default behavior in IE
     if(window.event) {
         window.event.returnValue = false;
     }
 
+    // Load the arguments
     var named_args = arguments[0];
     var trigger    = arguments[1];
 
@@ -1119,55 +1127,107 @@ Jifty.update = function () {
     // Grab extra arguments (from a button)
     var button_args = Jifty.Form.Element.buttonFormElements(trigger);
 
+    // Load the form to which this trigger element belongs
     var form = Jifty.Form.Element.getForm(trigger);
+
     // If the action is null, take all actions
     if (named_args['actions'] == null) {
         named_args['actions'] = {};
-        // default to disable fields
-        if (form)
+        
+        // Add all the actions into the list to submit
+        if (form) {
             jQuery.each(Jifty.Form.getActions(form), function(){
                 named_args['actions'][this.moniker] = 1;
             });
+        }
     }
+
+    // SPA = Special code related to the Single Page Plugin
+
+    // SPA Variable used to tell us to update __page under some conditions
     var optional_fragments;
-    if (form && form['J:CALL'])
-        optional_fragments = [ prepare_element_for_update({'mode':'Replace','args':{},'region':'__page','path': null}) ];
-    // Build actions structure
+
+    // SPA Update __page when the form calls a continuation
+    if (form && form['J:CALL']) {
+        optional_fragments = [ 
+            prepare_element_for_update({
+                'mode':   'Replace',
+                'args':   {},
+                'region': '__page',
+                'path':   null
+            }) 
+        ];
+    }
+
+    // Build actions request structure
     var has_request = 0;
     request['actions'] = {};
 
+    // Go through the monikers and actions we know about
     for (var moniker in named_args['actions']) {
+
+        // SPA The extend moniker is special, skip it
         if (moniker == 'extend')
             continue;
+
+        // Remember this action, we will disable it in a minute
         var disable = named_args['actions'][moniker];
+
+        // Find the information related to this action
         var a = new Action(moniker, button_args);
+
+        // Stuff this into the current actions map
         current_actions[moniker] = a;
-        // Special case for Redirect, allow optional, implicit __page
+
+        // SPA Special case for Redirect, allow optional, implicit __page
         // from the response to be used.
         if (a.actionClass == 'Jifty::Action::Redirect') {
             (function() {
                 var fields = a.fields();
                 var path = fields[fields.length - 1];
-                optional_fragments = [ prepare_element_for_update({'mode':'Replace','args':{},'region':'__page','path': path}) ];
+                optional_fragments = [ 
+                    prepare_element_for_update({
+                        'mode':   'Replace',
+                        'args':   {},
+                        'region': '__page',
+                        'path':   path
+                    }) 
+                ];
             })()
         }
+
+        // Fill these with empty values for the moment
         a.result = {};
         a.result.field_error = {};
 
+        // Do we have an action registration field?
         if (a.register) {
+
+            // Do we need to worry about a file upload field? If so, we cannot
+            // ajax this, do a full form submission.
+            //
+            // TODO Consider some IFRAME magic to fallback upon?
             if (a.hasUpload()) {
+
                 // XXX: restore default behavior in IE (and Opera, Safari)
                 if(window.event) {
                     window.event.returnValue = true;
                 }
+
                 return true;
             }
+
+            // Disable the action being submitted
             if(disable) {
                 a.disable_input_fields(disabled_elements);
             }
+
+            // Build a list of parameters
             var param = a.data_structure();
             var fields = param.fields;
             var override = named_args['action_arguments'][param.moniker] || {};
+
+            // Override the action fields with action_arguments
             for (var argname in override) {
                 if (fields[argname]) {
                     fields[argname].value = override[argname];
@@ -1176,131 +1236,192 @@ Jifty.update = function () {
                     fields[argname] = { value: override[argname] };
                 }
             }
+
+            // Add the parameters to the request we're building
             request['actions'][moniker] = param;
+
+            // Remember that we have a request if we're submitting an action
             ++has_request;
         }
     }
 
+    // Get ready to specify the fragment updates we're looking for
     request.fragments = {};
+
+    // CST - Client-side Templating
+
+    // CST Holding tank for client-cacheable templates
     var update_from_cache = new Array;
 
-    // Build fragments structure
+    // Build the fragments request
     for (var i = 0; i < named_args['fragments'].length; i++) {
+
+        // Grab the current fragment
         var f = named_args['fragments'][i];
+
+        // Put together the data structure that will request the fragment
         f = prepare_element_for_update(f);
+
+        // Skip it if we just deleted the fragment
         if (!f) continue;
 
+        // CST Load the fragment from cache if it has been saved there
         var cached = CACHE[f['path']];
+
+        // CST XXX XXX XXX
         if (cached && cached['type'] == 'static') {
             var my_fragment = document.createElement('fragment');
             var content_node = document.createElement('content');
             var cached_result;
 
             Jifty.Web.current_region = fragments[ f['region'] ];
-            try { cached_result = apply_cached_for_action(cached['content'], []) }
+            try { 
+                cached_result = apply_cached_for_action(cached['content'], []) 
+            }
             catch (e) { alert(e) }
 
             content_node.textContent = cached_result;
             my_fragment.appendChild(content_node);
             my_fragment.setAttribute('id', f['region']);
 
-            update_from_cache.push(function(){ apply_fragment_updates(my_fragment, f);
- } );
+            update_from_cache.push(function(){ 
+                apply_fragment_updates(my_fragment, f);
+            } );
+
             continue;
         }
+
+        // CST XXX XXX XXX
         else if (cached && cached['type'] == 'action') {
             var my_fragment = document.createElement('fragment');
             var content_node = document.createElement('content');
 
             my_fragment.appendChild(content_node);
             my_fragment.setAttribute('id', f['region']);
-            update_from_cache.push(function(){
-                    var cached_result;
-                    Jifty.Web.current_region = fragments[ f['region'] ];
-                    try {
-                        cached_result = apply_cached_for_action(cached['content'], Jifty.Form.getActions(form));
-                    }
-                    catch (e) { alert(e); throw e }
-                    content_node.textContent = cached_result;
-                    apply_fragment_updates(my_fragment, f);
- } );
+            update_from_cache.push(function() {
+                var cached_result;
+                Jifty.Web.current_region = fragments[ f['region'] ];
+                try {
+                    cached_result = apply_cached_for_action(
+                        cached['content'], Jifty.Form.getActions(form)
+                    );
+                }
+                catch (e) { alert(e); throw e }
+                content_node.textContent = cached_result;
+                apply_fragment_updates(my_fragment, f);
+            } );
+
             continue;
         }
+        
+        // CST XXX XXX XXX
         else if (cached && cached['type'] == 'crudview') {
-            try { // XXX: get model class etc as metadata in cache
+            try { 
+                // XXX: get model class etc as metadata in cache
                 // XXX: kill dup code
-            var Todo = new AsynapseRecord('todo');
-            var record = Todo.find(f['args']['id']);
-            var my_fragment = document.createElement('fragment');
-            var content_node = document.createElement('content');
-            content_node.textContent = cached['content'](record);
-            my_fragment.appendChild(content_node);
-            my_fragment.setAttribute('id', f['region']);
-            update_from_cache.push(function(){ apply_fragment_updates(my_fragment, f); } );
-            } catch (e) { alert(e) };
+                var Todo = new AsynapseRecord('todo');
+                var record = Todo.find(f['args']['id']);
+                var my_fragment = document.createElement('fragment');
+                var content_node = document.createElement('content');
+                content_node.textContent = cached['content'](record);
+                my_fragment.appendChild(content_node);
+                my_fragment.setAttribute('id', f['region']);
+                update_from_cache.push(function(){ apply_fragment_updates(my_fragment, f); } );
+            } 
+            catch (e) { alert(e) };
+
             continue;
         }
 
-        // Update with all new values
+        // Build a fragment request from the path and args
         var name = f['region'];
-        var fragment_request = fragments[ name ].data_structure(f['path'], f['args']);
+        var fragment_request = fragments[ name ].data_structure(
+            f['path'], f['args']
+        );
 
-        if (f['is_new'])
-            // Ask for the wrapper if we are making a new region
+        // Ask for the wrapper if we are making a new region
+        if (f['is_new']) {
             fragment_request['wrapper'] = 1;
+        }
 
-        if (fragments[name].in_form)
+        // Is the fragment in a form? Prevent <form></form> tags
+        if (fragments[name].in_form) {
             fragment_request['in_form'] = 1;
+        }
 
         // Push it onto the request stack
         request.fragments[name] = fragment_request;
+
+        // Remember that we have a request if we're updating a fragment
         ++has_request;
     }
 
+    // CST XXX XXX XXX
     if (!has_request) {
-        for (var i = 0; i < update_from_cache.length; i++)
+        for (var i = 0; i < update_from_cache.length; i++) {
             update_from_cache[i]();
+        }
         return false;
     }
 
+    // Show the "Loading..." message (or equivalent)
     show_wait_message();
 
-    // And when we get the result back..
+    // And when we get the result back, we'll want to deal with it
+    //
+    // NOTE: Success here doesn't mean the server liked the request, but that
+    // the HTTP communication succeeded. There still might be errors validating
+    // fields, with the app connecting to the database, etc.
     var onSuccess = function(responseXML, object) {
+
         // Grab the XML response
         var response = responseXML.documentElement;
 
-        // Get action results
-        walk_node(response,
-        { result: function(result) {
+        // Look through the action results looking for field validation errors
+        walk_node(response, { 
+            result: function(result) {
                 var moniker = result.getAttribute("moniker");
-                walk_node(result,
-                          { field: function(field) {
-                                  var error = field.getElementsByTagName('error')[0];
-                                  if (error) {
-                                      var text = error.textContent
-                                          ? error.textContent
-                                          : (error.firstChild ? error.firstChild.nodeValue : '');
-                                      var action = current_actions[moniker];
-                                      action.result.field_error[field.getAttribute("name")] = text;
-                                      }
-                              }});
-            }});
+                walk_node(result, { 
+                    field: function(field) {
+                        var error = field.getElementsByTagName('error')[0];
 
+                        // Record the validation errors and such with the form
+                        if (error) {
+                            var text 
+                                = error.textContent ? error.textContent
+                                : (error.firstChild ? error.firstChild.nodeValue 
+                                :                     '');
+                            var action = current_actions[moniker];
+                            action.result
+                                .field_error[field.getAttribute("name")] = text;
+                        }
+                    }
+                });
+            }
+        });
+
+        // Re-enable all the controls in the actions we previously disabled
         for ( var i = 0; i < disabled_elements.length; i++ ) {
             disabled_elements[i].disabled = false;
         }
 
-        // empty known action. XXX: we should only need to discard actions being submitted
+        // empty known action. 
+        // XXX: we should only need to discard actions being submitted
 
-        // Loop through the result looking for it
-        var expected_fragments = optional_fragments ? optional_fragments : named_args['fragments'];
+        // SPA We only care about __page sometimes
+        var expected_fragments = optional_fragments ? optional_fragments 
+                               :                      named_args['fragments'];
+
+        // Loop through the response looking for fragments we requested
         for (var response_fragment = response.firstChild;
-             response_fragment != null && response_fragment.nodeName == 'fragment';
-             response_fragment = response_fragment.nextSibling) {
+                response_fragment != null && 
+                    response_fragment.nodeName == 'fragment';
+                response_fragment = response_fragment.nextSibling) {
 
+            // Get the returned ID attached to the new fragment for validation
             var exp_id = response_fragment.getAttribute("id");
 
+            // Pull out the expected fragment from args matching the response
             var f;
             jQuery.each(expected_fragments, function() {
                 if (exp_id == this['region']) {
@@ -1308,56 +1429,77 @@ Jifty.update = function () {
                     return false;
                 }
             });
-            if (!f)
-                continue;
 
+            // If we didn't expect it, skip it
+            if (!f) {
+                continue;
+            }
+
+            // Apply the fragment update to the page
             try {
                 apply_fragment_updates(response_fragment, f);
-            }catch (e) { alert(e) }
+            } catch (e) { alert(e) }
+
+            // CST XXX XXX XXX
             extract_cacheable(response_fragment, f);
         }
 
+        // CST XXX XXX XXX
         jQuery.each(update_from_cache, function() {
             this();
         });
         // update_from_cache.each(function(x) { x() });
 
-        walk_node(response,
-        { result: function(result) {
+        // Look through the response again
+        walk_node(response, { 
+
+            // Report all the action results we have
+            result: function(result) {
                 for (var key = result.firstChild;
-                     key != null;
-                     key = key.nextSibling) {
+                        key != null;
+                        key = key.nextSibling) {
                     show_action_result(result.getAttribute("moniker"),key);
                 }
             },
-          redirect: function(redirect) {
+
+            // If we've been told to redirect, do it
+            redirect: function(redirect) {
                 document.location =  redirect.firstChild.firstChild.nodeValue;
-        }});
+            }
+        });
+
+        // Forget the actions, we're oh-fficially done with them
         current_actions = {}
     };
 
+    // When an HTTP communication failure happens, we need to clean up
     var onFailure = function(transport, object) {
+
+        // We failed, but we at least know we're done waiting
         hide_wait_message_now();
 
+        // Cry like a baby
         alert("Unable to connect to server.\n\nTry again in a few minutes.");
 
+        // Record the failed request (XXX for debugging?)
         Jifty.failedRequest = transport;
 
+        // Re-enable the forms, no sense in locking them up
         for ( var i = 0; i < disabled_elements.length; i++ ) {
             disabled_elements[i].disabled = false;
         }
     };
 
-    // Build variable structure
+    // Almost ready to submit! Add the region arguments
     request.variables = {};
     jQuery.each(current_args, function(k, v) {
         request.variables['region-'+k] = v;
     });
 
-    // Build continuation structure
+    // Add in the continuation information
     request.continuation = named_args['continuation'];
 
-    // Push any state variables which we set into the forms
+    // Update the region state information or add it, if needed
     for (var i = 0; i < document.forms.length; i++) {
         var form = document.forms[i];
 
@@ -1375,17 +1517,21 @@ Jifty.update = function () {
         })
     }
 
-    // Go!
+    // Submit ajax request as JSON; expect XML in return
     jQuery.ajax({
-        url: document.URL,
-        type: 'post',
-        dataType: 'xml',
-        data: JSON.stringify(request),
+        url:         document.URL,
+        type:        'post',
+        dataType:    'xml',
+        data:        JSON.stringify(request),
         contentType: 'text/x-json',
-        error: onFailure,
-        complete: function(){hide_wait_message()},
-        success: onSuccess
+        error:       onFailure,
+
+        // Hide the wait message when we're done
+        complete:    function(){hide_wait_message()},
+        success:     onSuccess
     });
+
+    // Disable regular browser form submission (we're Ajaxing instead)
     return false;
 }
 
