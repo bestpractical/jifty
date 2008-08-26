@@ -23,6 +23,6 @@ the L<Net::Server> CPAN distribution.
 
 =cut
 
-sub net_server { 'Net::Server::Fork' }
+sub net_server { 'Jifty::Server::Fork::NetServer' }
 
 1;

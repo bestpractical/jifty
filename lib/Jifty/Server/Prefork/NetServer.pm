@@ -15,7 +15,7 @@ Sets up the database connection when spawning a new child
 =cut
 
 sub child_init_hook {
-	Jifty->setup_database_connection();
+    Jifty->setup_database_connection();
 }
 
 1;

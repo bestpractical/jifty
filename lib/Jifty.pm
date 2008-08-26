@@ -492,6 +492,10 @@ sub setup_database_connection {
         Jifty->handle( $handle_class->new );
         Jifty->handle->connect();
 
+        # Clean out any stale Cache::Memcached connections
+        $Jifty::DBI::Record::Memcached::MEMCACHED->disconnect_all
+            if $Jifty::DBI::Record::Memcached::MEMCACHED;
+
         # Make sure the app version matches the database version
         Jifty->handle->check_schema_version()
             unless $args{'no_version_check'};
