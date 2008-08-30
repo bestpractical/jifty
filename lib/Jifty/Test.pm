@@ -121,8 +121,8 @@ sub import_extra {
     $class->setup($args);
     Test::More->export_to_level(2);
 
-    # Now, clobber Test::Builder::plan (if we got given a plan) so we
-    # don't try to spit one out *again* later
+    # Now, clobber Test::Builder::plan (if we were given a plan) so 
+    # Test::Builder::Module doesn't plan for us
     if ($class->builder->has_plan) {
         no warnings 'redefine';
         *Test::Builder::plan = sub {};
