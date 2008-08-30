@@ -332,6 +332,7 @@ template 'view' => sub :CRUDView {
     my $self   = shift;
     my $record = $self->_get_record( get('id') );
 
+    return unless $record->id;
     my $update = $record->as_update_action(
         moniker => "update-" . Jifty->web->serial,
     );
