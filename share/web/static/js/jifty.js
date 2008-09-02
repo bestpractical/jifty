@@ -24,6 +24,12 @@ Jifty.hasAjaxTransport = function() {
     return r ? true : false;
 }();
 
+Jifty.stopEvent = function(ev) {
+    jQuery.event.fix(ev);
+    ev.preventDefault();
+    ev.stopPropagation();
+};
+
 Jifty.Web = {};
 Jifty.Web.current_actions = [];
 Jifty.Web.new_action = function() {

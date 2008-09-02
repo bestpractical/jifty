@@ -513,7 +513,8 @@ sub javascript_attrs {
                 : "$update; return true;";
         }
         if ($confirm) {
-            $string = "if(!confirm(" . Jifty::JSON::objToJson($confirm, {singlequote => 1}) . ")) { Event.stop(event); return false }" . $string;
+            my $text = Jifty::JSON::objToJson($confirm, {singlequote => 1});
+            $string = "if(!confirm($text)){ Jifty.stopEvent(event); return false; }" . $string;
         }
         if ($beforeclick) {
            $string = $beforeclick . $string;
