@@ -3,9 +3,6 @@
 # packages. It was created by Marc Brockschmidt <marc@dch-faq.de> for
 # the Debian Perl Group (http://pkg-perl.alioth.debian.org/) but may
 # be used freely wherever it is useful.
-#
-# It was later modified by Jason Kohles <email@jasonkohles.com>
-# http://www.jasonkohles.com/ to support Module::Build installed modules
 
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
@@ -13,68 +10,109 @@
 # If set to a true value then MakeMaker's prompt function will
 # always return the default without waiting for user input.
 export PERL_MM_USE_DEFAULT=1
+export DH_ALWAYS_EXCLUDE=.svn
 
-PACKAGE=$(shell dh_listpackages)
+PERL   ?= /usr/bin/perl
+PACKAGE = jifty
+TMP     = $(CURDIR)/debian/tmp
 
-ifndef PERL
-PERL = /usr/bin/perl
-endif
-
-#TMP     =$(CURDIR)/debian/$(PACKAGE)
-TMP     =$(CURDIR)/debian/libjifty-dbi-perl
+include /usr/share/quilt/quilt.make
 
 build: build-stamp
-build-stamp:
+build-stamp: $(QUILT_STAMPFN)
 	dh_testdir
-
-	# Add commands to compile the package here
-	$(PERL) Makefile.PL installdirs=vendor
+	$(PERL) Makefile.PL --skipdeps INSTALLDIRS=vendor
 	$(MAKE)
-	$(MAKE) test
-	touch build-stamp
+	# install some old but usefull plugins, will be in cpan on the next release
+	# WikiToolbar and AuthzLDAP have to use the same Module::Install than jifty
+	# since Module::Install 0.76 share destination path changed
+	ln -s $(CURDIR)/inc $(CURDIR)/plugins/WikiToolbar;
+	ln -s $(CURDIR)/inc $(CURDIR)/plugins/AuthzLDAP;
+	( cd $(CURDIR)/plugins/EditInPlace; \
+	$(PERL) Makefile.PL --skipdeps INSTALLDIRS=vendor; $(MAKE) )
+	( cd $(CURDIR)/plugins/WikiToolbar; \
+	$(PERL) Makefile.PL --skipdeps INSTALLDIRS=vendor; $(MAKE) )
+	( cd $(CURDIR)/plugins/AuthzLDAP; \
+	$(PERL) Makefile.PL --skipdeps INSTALLDIRS=vendor; $(MAKE) )
+	LANG=C $(MAKE) test
+	touch $@
 
-clean:
+clean: unpatch
 	dh_testdir
 	dh_testroot
-
-	# Add commands to clean up after the build process here
-	-$(MAKE) clean
 	dh_clean build-stamp install-stamp
+	# remove mason cache files
+	rm -rf t/TestApp/mason*
+	# clean old plugins
+	[ ! -f Makefile ] || $(MAKE) realclean
+	( cd $(CURDIR)/plugins/EditInPlace; \
+	[ ! -f Makefile ] || $(MAKE) realclean )
+	( cd $(CURDIR)/plugins/WikiToolbar; \
+	 ( [ ! -f Makefile ] || $(MAKE) realclean); \
+	 ( [ ! -L inc ] || rm inc) )
+	( cd $(CURDIR)/plugins/AuthzLDAP; \
+	 ( [ ! -f Makefile ] || $(MAKE) realclean ); \
+	 ( [ ! -L inc ] || rm inc ) )
 
-install: build install-stamp
-install-stamp:
+install: install-stamp
+install-stamp: build-stamp
 	dh_testdir
 	dh_testroot
-	dh_clean -k
-
-	# Add commands to install the package into debian/$PACKAGE_NAME here
-	$(MAKE) install DESTDIR=$(CURDIR)/debian/libjifty-perl
-	find debian/libjifty-perl --name "*.svn*" | xargs rm -rf
-	touch install-stamp
+	dh_clean -k 
+	$(MAKE) install DESTDIR=$(TMP) PREFIX=/usr
+	# this old plugins will be in cpan on next release
+	( cd $(CURDIR)/plugins/EditInPlace; \
+	$(MAKE) install DESTDIR=$(TMP) PREFIX=/usr )
+	( cd $(CURDIR)/plugins/WikiToolbar; \
+	$(MAKE) install DESTDIR=$(TMP) PREFIX=/usr )
+	( cd $(CURDIR)/plugins/AuthzLDAP; \
+	$(MAKE) install DESTDIR=$(TMP) PREFIX=/usr )
+	[ ! -d $(TMP)/usr/lib/perl5 ] || \
+		rmdir --ignore-fail-on-non-empty --parents --verbose \
+		$(TMP)/usr/lib/perl5
+	touch $@
 
 binary-arch:
-# We have nothing to do by default.
+# We have nothing to do here for an architecture-independent package
 
 binary-indep: build install
 	dh_testdir
 	dh_testroot
-#	dh_installcron
-#	dh_installmenu
-#	dh_installexamples
-	dh_installdocs README
+	dh_installexamples doc/examples/* examples/*
+	dh_install
+	dh_install -plibjifty-perl -XManual/Tutorial \
+		-Xjs/scriptaculous -Xjs/jquery-1.2.1.js \
+		-Xjs/prototype.js -XMochiKit/MochiKit.js \
+		-XEditInPlace \
+		-XWikiToolbar \
+		-XAuthzLDAP \
+		-XFacebook \
+		-XOpenID \
+		-XGoogleMap \
+		-XAuthentication/CAS -XAuthentication::CAS \
+		-XAuthentication/Ldap -XAuthentication::Ldap \
+		-XPlugin/Chart -XPlugin::Chart \
+		-XPlugin/Comment -XPlugin::Comment \
+		-XPlugin/Halo -XPlugin::Halo \
+		-XPlugin/Userpic -XPlugin::Userpic\
+		-XPlugin/SiteNews -XPlugin::SiteNews debian/tmp/*
+	dh_installdocs
 	dh_installchangelogs Changelog
+	dh_installdirs -plibjifty-perl usr/share/lintian/overrides
+	install -m 644 debian/libjifty-perl.lintian-overrides $(CURDIR)/debian/libjifty-perl/usr/share/lintian/overrides/libjifty-perl
 	dh_perl
-	dh_link
-	dh_strip
 	dh_compress
 	dh_fixperms
+	# fix some mistake in right on web files
+	chmod 644 $(CURDIR)/debian/libjifty-perl/usr/share/perl5/auto/Jifty/web/static/css/combobox.css
+	chmod 644 $(CURDIR)/debian/libjifty-plugin-chart-perl/usr/share/perl5/auto/Jifty/plugins/Jifty/Plugin/Chart/web/static/js/PlotKit/excanvas.js
+	chmod 644 $(CURDIR)/debian/libjifty-perl/usr/share/perl5/auto/Jifty/plugins/Jifty/Plugin/OnlineDocs/web/templates/__jifty/online_docs/autohandler
+	chmod 644 $(CURDIR)/debian/libjifty-perl/usr/share/perl5/auto/Jifty/plugins/Jifty/Plugin/AdminUI/web/templates/__jifty/admin/_elements/nav
+	dh_link
 	dh_installdeb
 	dh_gencontrol
 	dh_md5sums
 	dh_builddeb
 
-source diff:                                                                  
-	@echo >&2 'source and diff are obsolete - use dpkg-source -b'; false
-
 binary: binary-indep binary-arch
-.PHONY: build clean binary-indep binary-arch binary
+.PHONY: build clean binary-indep binary-arch binary install

@@ -1,23 +1,70 @@
 Source: jifty
-Section: web
+Section: perl
 Priority: optional
-Maintainer: Yves Agostini <agostini@univ-metz.fr>
-Build-Depends-Indep: debhelper (>> 5), libmodule-corelist-perl,
- libdevel-cover-perl, libmodule-scandeps-perl, libpod-simple-perl,
- libtest-base-perl, libtest-www-mechanize-perl (>> 1.04),
- libtest-pod-coverage-perl, libwww-mechanize-perl (>> 1.12),
- libclass-accessor-named-perl, 
- libmodule-install-perl, libtest-mockobject-perl,
- libtest-mockmodule-perl, libtest-www-declare-perl
+Build-Depends: debhelper (>= 5), quilt (>= 0.40)
+Build-Depends-Indep: perl (>= 5.8.3), libyaml-perl (>= 0.35),
+ libtest-log4perl-perl, libtest-www-selenium-perl, libtest-pod-perl,
+ libemail-simple-perl (>= 2.003), libcgi-pm-perl (>= 3.30),
+ libipc-run3-perl, libemail-localdelivery-perl (>= 0.217), libtest-base-perl,
+ libhtml-mason-perl (>= 1.3101), libhtml-parser-perl,
+ libemail-mime-creator-perl (>= 1.45), libipc-pubsub-perl (>= 0.23),
+ libfile-find-rule-perl, liburi-perl (>= 1.31),
+ libtest-pod-coverage-perl, libtemplate-declare-perl (>= 0.26),
+ libclass-accessor-perl, libossp-uuid-perl, libcrypt-rijndael-perl,
+ libdata-page-perl, libstring-koremutake-perl, libparams-validate-perl,
+ libwww-perl, liblocale-maketext-lexicon-perl (>= 0.20), libdatetime-perl,
+ libhtml-lint-perl, libscalar-defer-perl (>= 0.12),
+ libcss-squish-perl (>= 0.07),
+ libdatetime-locale-perl, libhttp-server-simple-perl (>= 0.28),
+ libxml-xpath-perl, libfile-mmagic-perl, libclass-container-perl,
+ libtest-longstring-perl, liblocale-maketext-lexicon-perl (>= 0.60),
+ libexporter-lite-perl, libmodule-refresh-perl,
+ libwww-mechanize-perl (>= 1.3), libemail-mime-perl (>= 1.861),
+ libapp-cli-perl (>= 0.03), libwww-perl, libyaml-syck-perl (>= 0.29),
+ libemail-mime-createhtml-perl, libemail-send-perl (>= 2.0), libcrypt-cbc-perl,
+ libxml-writer-perl (>= 0.601), libsql-reservedwords-perl,
+ libmodule-scandeps-perl, libclass-inspector-perl (>= 1.2), libdate-manip-perl,
+ liblog-log4perl-perl (>= 1.04), libemail-simple-creator-perl (>= 1.4),
+ libpadwalker-perl, libdbd-sqlite3-perl (>= 1.11),
+ libemail-mime-modifier-perl (>= 1.442), libxml-simple-perl,
+ libcalendar-simple-perl, libhook-lexwrap-perl, libcache-cache-perl,
+ libfile-sharedir-perl (>= 0.04), libobject-declare-perl (>= 0.13),
+ libclass-data-inheritable-perl, libcgi-cookie-splitter-perl,
+ libextutils-command-perl, libhash-merge-perl, libemail-folder-perl,
+ libyaml-syck-perl (>= 0.71), libmime-types-perl,
+ libclass-trigger-perl (>= 0.12), libclone-perl (>= 0.27),
+ libemail-mime-contenttype-perl (>= 1.012), libuniversal-require-perl,
+ libtest-mockmodule-perl, libtest-www-declare-perl, libtest-mockobject-perl,
+ libtest-www-mechanize-perl (>= 1.04), libhttp-server-simple-recorder-perl,
+ libmodule-install-perl (>= 0.75), libyaml-syck-perl (>= 0.29),
+ libjifty-dbi-perl (>= 0.49), libjs-scriptaculous, libjs-jquery,
+ libjs-prototype, libjs-mochikit,
+ perl-modules (>= 5.10) | libversion-perl,
+ libdevel-cover-perl,
+ libauthen-cas-client-perl,
+ libnet-ldap-perl,
+ libdevel-repl-perl,
+ liburi-fetch-perl, libcrypt-dh-perl, libnet-openid-consumer-perl, libcache-cache-perl, liblwpx-paranoidagent-perl,
+ libchart-perl,libgd-graph-perl, libgd-gd2-perl, libimage-info-perl, libxml-simple-perl,
+ libcrypt-openssl-bignum-perl, libdigest-hmac-perl,
+ libhtml-scrubber-perl, libmime-base64-urlsafe-perl, libregexp-common-email-address-perl, libregexp-common-perl,
+ libdata-dump-streamer-perl,
+ libnet-server-perl,
+ libnet-akismet-perl,
+ libwww-facebook-api-perl
+Maintainer: Debian Perl Group <pkg-perl-maintainers@lists.alioth.debian.org>
+Uploaders: AGOSTINI Yves <agostini@univ-metz.fr>
+Standards-Version: 3.8.0
+Homepage: http://search.cpan.org/dist/Jifty/
+Vcs-Svn: svn://svn.debian.org/pkg-perl/trunk/jifty/
+Vcs-Browser: http://svn.debian.org/wsvn/pkg-perl/trunk/jifty/
 
 Package: jifty
-Section: perl
 Architecture: all
 Depends: ${perl:Depends}, libjifty-perl
-Description: Jifty perl libraries
- Yet another web framework.
- .
- What's cool about Jifty? (Buzzwords)
+Description: perl web MVC framework
+ Perl based web framekwork.
+ Jifty offers the following features:
  .
  DRY (Don't Repeat Yourself)
         Jifty tries not to make you say things more than once.
@@ -41,126 +88,170 @@ Description: Jifty perl libraries
         want an input for this argument here" and Jifty takes care of the
         rest. (Even autocomplete and validation)
  .
- A Pony
-        Jifty is the only web application framework that comes with a pony.
- .
- This package provides Jifty scripts.
+ This metapackage provides examples to help you writing application on your
+ desktop. You can use libjifty-perl package alone for running your jifty 
+ application on servers.
 
 Package: libjifty-perl
-Section: perl
 Architecture: all
-Depends: ${perl:Depends}, perl (>> 5.8.3),
- libapp-cli-perl (>> 0.03), libclone-perl (>> 0.0.27), libcache-cache-perl,
- libcalendar-simple-perl, libclass-accessor-perl,
- libclass-container-perl, libclass-data-inheritable-perl, libcss-squish-perl (>> 0.0.7),
- perl-modules, libcgi-cookie-splitter-perl, libcgi-simple-perl,
- libcrypt-cbc-perl, libcrypt-rijndael-perl,
- libcompress-zlib-perl, libcss-squish-perl (>> 0.05), 
- libclass-trigger-perl, libdevel-evalcontext-perl,
- libdbd-sqlite3-perl, libdata-page-perl, libossp-uuid-perl,
- libdatetime-perl, libdatetime-format-builder-perl, 
- libdate-manip-perl, libemail-folder-perl,
- libemail-messageid-perl, libemail-mime-perl (>> 1.861), libemail-mime-encodings-perl, libemail-mime-perl, libemail-mime-encodings-perl, libemail-mime-contenttype-perl, libemail-simple-perl, libemail-mime-modifier-perl, libemail-mime-creator-perl, libemail-mime-createhtml-perl,
- libemail-localdelivery-perl (>> 0.217), 
- libemail-send-perl (>> 2.003), 
- libemail-simple-creator-perl, libexporter-lite-perl,
- libextutils-command-perl, 
- libfile-find-rule-perl, libfile-mmagic-perl,
- libfile-sharedir-perl (>> 0.04), libhtml-parser-perl,
- libhtml-lint-perl, libhtml-mason-perl (>> 1.31), 
- libwww-perl, libhttp-server-simple-perl (>> 0.28), 
- libhttp-server-simple-recorder-perl, libhash-merge-perl, libhook-lexwrap-perl,
- libipc-pubsub-perl (>> 0.23), libjifty-dbi-perl (>> 0.40), libipc-run3-perl,
- liblocale-maketext-lexicon-perl, liblocale-maketext-simple-perl, liblog-log4perl-perl,
- libmime-types-perl, libmodule-pluggable-perl (>> 3.5),
- libmodule-corelist-perl, libmodule-refresh-perl,
- libmodule-scandeps-perl, libobject-declare-perl (>> 0.22),
- libparams-validate-perl, libscalar-defer-perl (>> 0.14),
- libpadwalker-perl,
- libstring-koremutake-perl, libsql-reservedwords-perl,
- libtemplate-declare-perl (>> 0.26), 
- libtest-base-perl, libtest-log4perl-perl, libtest-www-selenium-perl, 
- libuniversal-require-perl, liburi-perl,
- libxml-writer-perl (>> 0.601), libxml-simple-perl,
- libxml-xpath-perl, libversion-perl, libyaml-syck-perl (>> 0.72), 
- libyaml-perl (>> 0.35), libjson-perl (>> 0.01),
- libpod-simple-perl, 
- libsub-exporter-perl, libcache-memcached-perl, liblog-dispatch-perl
-Recommends: libmodule-install-perl,
- libcgi-fast-perl, libapache-mod-fastcgi,
- libjifty-plugin-login-perl, libpar-dist-fromcpan-perl,
- libjifty-plugin-authentication-cas-perl, libjifty-plugin-authentication-ldap-perl,
- libjifty-plugin-openid-perl, libjifty-plugin-oauth-perl,
- libjifty-plugin-chart-perl, libjifty-plugin-wikitoolbar-perl,
- libjifty-plugin-editinplace-perl
-Description: Jifty perl libraries
- Yet another web framework.
+Depends: perl (>= 5.8.3), ${misc:Depends}, libyaml-perl (>= 0.35),
+ libtest-log4perl-perl, libtest-www-selenium-perl, libtest-pod-perl,
+ libemail-simple-perl (>= 2.003), libcgi-pm-perl (>= 3.30),
+ libipc-run3-perl, libemail-localdelivery-perl (>= 0.217), libtest-base-perl,
+ libhtml-mason-perl (>= 1.3101), libhtml-parser-perl,
+ libemail-mime-creator-perl (>= 1.45), libipc-pubsub-perl (>= 0.23),
+ libfile-find-rule-perl, liburi-perl (>= 1.31),
+ libtest-pod-coverage-perl, libtemplate-declare-perl (>= 0.26),
+ libclass-accessor-perl, libossp-uuid-perl, libcrypt-rijndael-perl,
+ libdata-page-perl, libstring-koremutake-perl, libparams-validate-perl,
+ libwww-perl, liblocale-maketext-lexicon-perl (>= 0.20), libdatetime-perl,
+ libhtml-lint-perl, libscalar-defer-perl (>= 0.12),
+ libcss-squish-perl (>= 0.07),
+ libdatetime-locale-perl, libhttp-server-simple-perl (>= 0.28),
+ libxml-xpath-perl, libfile-mmagic-perl, libclass-container-perl,
+ libtest-longstring-perl, liblocale-maketext-lexicon-perl (>= 0.60),
+ libexporter-lite-perl, libmodule-refresh-perl,
+ libwww-mechanize-perl (>= 1.3), libemail-mime-perl (>= 1.861),
+ libapp-cli-perl (>= 0.03), libwww-perl, libyaml-syck-perl (>= 0.29),
+ libemail-mime-createhtml-perl, libemail-send-perl (>= 2.0), libcrypt-cbc-perl,
+ libxml-writer-perl (>= 0.601), libsql-reservedwords-perl,
+ libmodule-scandeps-perl, libclass-inspector-perl (>= 1.2), libdate-manip-perl,
+ liblog-log4perl-perl (>= 1.04), libemail-simple-creator-perl (>= 1.4),
+ libpadwalker-perl, libdbd-sqlite3-perl (>= 1.11),
+ libemail-mime-modifier-perl (>= 1.442), libxml-simple-perl,
+ libcalendar-simple-perl, libhook-lexwrap-perl, libcache-cache-perl,
+ libfile-sharedir-perl (>= 0.04), libobject-declare-perl (>= 0.13),
+ libclass-data-inheritable-perl, libcgi-cookie-splitter-perl,
+ libextutils-command-perl, libhash-merge-perl, libemail-folder-perl,
+ libyaml-syck-perl (>= 0.71), libmime-types-perl,
+ libclass-trigger-perl (>= 0.12), libclone-perl (>= 0.27),
+ libemail-mime-contenttype-perl (>= 1.012), libuniversal-require-perl,
+ libtest-mockmodule-perl, libtest-www-declare-perl, libtest-mockobject-perl,
+ libtest-www-mechanize-perl (>= 1.04), libhttp-server-simple-recorder-perl,
+ libmodule-install-perl (>= 0.75), libyaml-syck-perl (>= 0.29),
+ libjifty-dbi-perl (>= 0.49), libjs-scriptaculous, libjs-jquery,
+ libjs-prototype,
+ perl-modules (>= 5.10) | libversion-perl
+Suggests: libjifty-plugin-authentication-cas-perl
+ libjifty-plugin-authentication-facebook-perl
+ libjifty-plugin-authentication-ldap-perl libjifty-plugin-chart-perl
+ libjifty-plugin-comment-perl libjifty-plugin-halo-perl
+ libjifty-plugin-oauth-perl libjifty-plugin-openid-perl
+ libjifty-plugin-googlemap-perl libjifty-plugin-userpic-perl
+ libjifty-plugin-sitenews-perl libjifty-plugin-authzldap-perl
+ libjifty-plugin-editinplace-perl libjifty-plugin-wikitoolbar-perl
+Description:  Jifty perl libraries
+ This package provides perl libraries for Jifty framework. 
  .
- What's cool about Jifty? (Buzzwords)
+ You can use this package alone or with suggested plugins to run your jifty
+ applications on your servers. 
  .
- DRY (Don't Repeat Yourself)
-        Jifty tries not to make you say things more than once.
- .
- Full-stack
-        Out of the proverbial box, Jifty comes with one way to do everything
-        you should need to do: One database mapper, one templating system,
-        one web services layer, one AJAX toolkit, one set of handlers for
-        standalone or FastCGI servers. We work hard to make all the bits
-        play well together, so you don't have to.
- .
- Continuations
-        With Jifty, it's easy to let the user go off and do something else,
-        like fill out a wizard, look something up in the help system or go
-        twiddle their preferences and come right back to where they were.
- .
- Form-based dispatch
-        This is one of the things that Jifty does that we've not seen
-        anywhere else. Jifty owns your form rendering and processing. This
-        means you never need to write form handling logic. All you say is "I
-        want an input for this argument here" and Jifty takes care of the
-        rest. (Even autocomplete and validation)
- .
- A Pony
-        Jifty is the only web application framework that comes with a pony.
- .
- This package provides the Jifty perl libraries.
+ Use jifty metapackage to add more examples when you write application on your
+ desktop.
 
 Package: libjifty-plugin-authentication-cas-perl
 Section: perl
 Architecture: all
-Depends: ${perl:Depends}, perl (>> 5.8.3), jifty, libauthen-cas-client-perl
+Depends: ${perl:Depends}, perl (>> 5.8.3), libjifty-perl,
+ libauthen-cas-client-perl
 Description: Jifty plugin for Jasig CAS authentication
+ This package adds Jasig CAS authentication to your Jifty application.
 
 Package: libjifty-plugin-authentication-ldap-perl
 Section: perl
 Architecture: all
-Depends: ${perl:Depends}, perl (>> 5.8.3), jifty, libnet-ldap-perl
-Description: Jifty plugin for Jasig CAS authentication
+Depends: ${perl:Depends}, perl (>> 5.8.3), libjifty-perl, libnet-ldap-perl
+Description: Jifty plugin for Ldap authentication
+ This package adds Ldap authentication to your Jifty application.
 
 Package: libjifty-plugin-openid-perl
 Section: perl
 Architecture: all
-Depends: ${perl:Depends}, perl (>> 5.8.3), jifty, liburi-fetch-perl, libcrypt-dh-perl, 
-  libnet-openid-consumer-perl, libcache-cache-perl, liblwpx-paranoidagent-perl
+Depends: ${perl:Depends}, perl (>> 5.8.3), libjifty-perl, liburi-fetch-perl,
+ libcrypt-dh-perl, libnet-openid-consumer-perl, libcache-cache-perl,
+ liblwpx-paranoidagent-perl
 Description: Jifty plugin for OpenID authentication
+ This package adds OpenID authentication to your Jifty application.
 
 Package: libjifty-plugin-chart-perl
 Section: perl
 Architecture: all
-Depends: ${perl:Depends}, perl (>> 5.8.3), jifty, libchart-perl,libgd-graph-perl, libgd-gd2-perl,
- libimage-info-perl, libxml-simple-perl
+Depends: ${perl:Depends}, perl (>> 5.8.3), libjifty-perl, libchart-perl,
+ libgd-graph-perl, libgd-gd2-perl, libimage-info-perl, libxml-simple-perl,
+ libjs-mochikit
 Description: Jifty plugin for Chart
-
-Package: libjifty-plugin-oauth-perl
-Section: perl
-Architecture: all
-Depends: ${perl:Depends}, perl (>> 5.8.3), jifty, libcrypt-openssl-bignum-perl, libdigest-hmac-perl,
- libnet-oauth-perl
-Description: Jifty plugin for OAuth authentication
+ This plugin provides ability to draw dynamic charts to your Jifty application. 
 
 Package: libjifty-plugin-comment-perl
 Section: perl
 Architecture: all
-Depends: ${perl:Depends}, perl (>> 5.8.3), jifty, libhtml-scrubber-perl, libmime-base64-urlsafe-perl, libregexp-common-email-address-perl, libregexp-common-perl
+Depends: ${perl:Depends}, perl (>> 5.8.3), libjifty-perl,
+ libhtml-scrubber-perl, libmime-base64-urlsafe-perl,
+ libregexp-common-email-address-perl, libregexp-common-perl
 Recommends: libnet-akismet-perl
 Description: Jifty plugin to add comment to any record
+ This package provides ability to add online comments to any data model in your
+ Jifty application.
+
+Package: libjifty-plugin-halo-perl
+Section: perl
+Architecture: all
+Depends: ${perl:Depends}, perl (>> 5.8.3), libjifty-perl,
+ libdata-dump-streamer-perl
+Description: Jifty plugin to add halo in admin interface
+ This package provides online debugging informations when you develop your
+ Jifty application.
+
+Package: libjifty-plugin-authentication-facebook-perl
+Section: perl
+Architecture: all
+Depends: ${perl:Depends}, perl (>> 5.8.3), libjifty-perl,
+ libwww-facebook-api-perl
+Description: Jifty plugin to add Facebook authentication
+ This package provides authentication or mixing authentication with Facebook
+ accounts.
+
+Package: libjifty-plugin-googlemap-perl
+Section: perl
+Architecture: all
+Depends: ${perl:Depends}, perl (>> 5.8.3), libjifty-perl
+Description: Jifty plugin to add GoogleMap widgets
+ This plugin provides a Google-map widget for Jifty, as well as a new 
+ GeoLocation column type.
+
+Package: libjifty-plugin-userpic-perl
+Section: perl
+Architecture: all
+Depends: ${perl:Depends}, perl (>> 5.8.3), libjifty-perl
+Description: Jifty plugin to add UserPic 
+ This plugin provides user pictures for your Jifty application.
+
+Package: libjifty-plugin-sitenews-perl
+Section: perl
+Architecture: all
+Depends: ${perl:Depends}, perl (>> 5.8.3), libjifty-perl
+Description: Jifty plugin to add SiteNews 
+ This plugin provides a way to include site news in your Jifty application.
+
+Package: libjifty-plugin-editinplace-perl
+Section: perl
+Architecture: all
+Depends: ${perl:Depends}, perl (>> 5.8.3), libjifty-perl
+Description: Edit files via web browser
+ This plugin provides a way to edit files and develop online your Jifty
+ application.
+
+Package: libjifty-plugin-wikitoolbar-perl
+Section: perl
+Architecture: all
+Depends: ${perl:Depends}, perl (>> 5.8.3), libjifty-perl
+Description: Jifty plugin to add a wiki toolbar to your textarea box 
+ This plugin provides a way to add a toolbar widget to your text area.
+
+Package: libjifty-plugin-authzldap-perl
+Section: perl
+Architecture: all
+Depends: ${perl:Depends}, perl (>> 5.8.3), libjifty-perl, libnet-ldap-perl, 
+ libcache-cache-perl
+Description: Jifty plugin to add dynamic ldap authorization
+ This plugin provides authorization with dynamic ldap filters.

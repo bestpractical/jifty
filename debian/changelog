@@ -1,74 +1,17 @@
-jifty (0.080408-1) unstable; urgency=low
+jifty (0.80408-2) unstable; urgency=low
 
-  * New cpan release
+  * add links in debian rules for WikiToolbar and AuthzLDAP plugins to use the
+    same Module::Install version than jifty. Since Module::Install 0.76, share
+    destination path changed. (Closes: #493439)
+  * debian/control, rules, libjifty-perl.links: add dep and links to use
+    packaged libjs-prototype. Closes lintian warning.
+  * debian/control, rules, libjifty-plugin-chart-perl.links: add dep and links
+    to use packaged libjs-mochikit. Closes lintian warning.
 
- -- AGOSTINI Yves <agostini@univ-metz.fr>  Tue,  8 Apr 2008 08:56:42 +0200
+ -- AGOSTINI Yves <agostini@univ-metz.fr>  Tue, 12 Aug 2008 09:26:42 +0200
 
-jifty (0.70820-1) unstable; urgency=low
+jifty (0.80408-1) unstable; urgency=low
 
-  * svn snaphsot
+  * Initial Release. (Closes: #479555)
 
- -- AGOSTINI Yves <agostini@univ-metz.fr>  Tue, 21 Aug 2007 11:17:06 +0200
-
-jifty (0.70416-1) unstable; urgency=low
-
-  * New cpan release
-
- -- Agostini yves <agostini@univ-metz.fr>  Sun, 15 Apr 2007 22:59:09 +0200
-
-jifty (0.70317-1) unstable; urgency=low
-
-  * merge with T::D branche
-
- -- AGOSTINI Yves <agostini@univ-metz.fr>  Fri,  9 Mar 2007 15:36:49 +0100
-
-jifty (0.70117-1) unstable; urgency=low
-
-  * New cpan release
-
- -- AGOSTINI Yves <agostini@univ-metz.fr>  Thu, 18 Jan 2007 08:52:53 +0100
-
-jifty (0.70116-1) unstable; urgency=low
-
-  * New cpan release
-
- -- AGOSTINI Yves <agostini@univ-metz.fr>  Wed, 17 Jan 2007 08:46:31 +0100
-
-jifty (0.61123-1) unstable; urgency=low
-
-  * New cpan release 
-
- -- AGOSTINI Yves <agostini@univ-metz.fr>  Wed, 24 Nov 2006 21:08:26 +0200
-
-jifty (0.60912-2) unstable; urgency=low
-
-  * Add missing dependencies, 
-  * Add fr.po 
-
- -- AGOSTINI Yves <agostini@univ-metz.fr>  Wed, 25 Oct 2006 09:46:26 +0200
-
-jifty (0.60912-1) unstable; urgency=low
-
-  * Change version and clean dependencies on module-refresh-perl and
-    locale-maketext-lexicon for sarge
-
- -- AGOSTINI Yves <agostini@univ-metz.fr>  Mon, 23 Oct 2006 10:55:17 +0200
-
-jifty (0.60728-3) unstable; urgency=low
-
-  * Missed some date dependencies
-
- -- Bart Bunting <bart@ursys.com.au>  Fri, 25 Aug 2006 09:30:28 +1000
-
-jifty (0.60728-2) unstable; urgency=low
-
-  * More dependencies, we're nearly there seems I missed some.
-
- -- Bart Bunting <bart@bunting.net.au>  Fri, 25 Aug 2006 06:55:04 +1000
-
-jifty (0.60728-1) unstable; urgency=low
-
-  * Initial debianisation.
-
- -- Bart Bunting <bart@ursys.com.au>  Tue, 22 Aug 2006 10:39:31 +1000
-
+ -- AGOSTINI Yves <agostini@univ-metz.fr>  Sat, 24 May 2008 08:54:18 +0200

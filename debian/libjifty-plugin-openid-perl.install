@@ -1,0 +1,2 @@
+debian/tmp/usr/share/perl5/Jifty/Plugin/OpenID* usr/share/perl5/Jifty/Plugin/
+debian/tmp/usr/share/man/man3/Jifty::Plugin::OpenID* usr/share/man/man3/

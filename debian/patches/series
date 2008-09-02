@@ -1,0 +1,6 @@
+skip-second-template-region-internal-redirect.patch
+openid-plugin-manpage-has-bad-whatis.patch
+jifty-plugin-manpage-has-bad-whatis.patch
+auth-plugin-manpage-has-bad-whatis.patch
+main-jifty-manpage-has-bad-whatis.patch
+oldplugins.path

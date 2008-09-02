@@ -1,0 +1,12 @@
+# This file contains a long url as example
+libjifty-perl: manpage-has-errors-from-man usr/share/man/man3/Jifty::LetMe.3pm.gz 191: warning [p 1, 10.0i]: can't break line
+# Whatis entry is write in japanese (I imagine ...)
+libjifty-perl: manpage-has-bad-whatis-entry usr/share/man/man3/Jifty::Manual::Tutorial_ja.3pm.gz
+# The very long name of this package can't be break
+libjifty-perl: manpage-has-errors-from-man usr/share/man/man3/Jifty::Plugin::Authentication::Password::Action::SendAccountConfirmation.3pm.gz 141: warning [p 1, 0.8i]: can't break line
+# The very long name of this package can't be break
+libjifty-perl: manpage-has-errors-from-man usr/share/man/man3/Jifty::Plugin::Authentication::Password::Notification::ConfirmLostPassword.3pm.gz 141: warning [p 1, 0.8i]: can't break line
+# This file contains a long url
+libjifty-perl: manpage-has-errors-from-man usr/share/man/man3/Jifty::View::Declare::CoreTemplates.3pm.gz 313: warning [p 3, 7.7i]: can't break line
+# Files in share/web are called inline 
+libjifty-perl: script-not-executable ./usr/share/perl5/auto/Jifty/web/transform_templates

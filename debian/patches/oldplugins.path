@@ -1,0 +1,171 @@
+--- a/plugins/EditInPlace/lib/Jifty/Plugin/EditInPlace.pm
++++ b/plugins/EditInPlace/lib/Jifty/Plugin/EditInPlace.pm
+@@ -4,11 +4,31 @@
+ package Jifty::Plugin::EditInPlace;
+ use base qw/Jifty::Plugin/;
+ 
++=head1 NAME
++
++Jifty::Plugin::EditInPlace - Edit files via web browser
++
++=cut
+ 
+ package HTML::Mason::Request::Jifty;
+ 
++=head1 SYNOPSIS
++
++In etc/config.yml
++
++   Plugins:
++     - EditInPlace: {}
++
++=head1 DESCRIPTION
++
++In admin interface you can edit mason files with your web browser
++
++=head1 METHOD
++
+ =head2 fetch_comp
+ 
++read mason file
++
+ =cut
+ 
+ sub fetch_comp {
+@@ -30,5 +50,17 @@
+ }
+ 
+ 
++=head1 AUTHORS
++
++Jesse Vincent C<< <jesse@bestpractical.com> >>
++Alex Vandiver C<< <alexmv@bestpractical.com> >>
++Shawn M Moore C<< <sartak@bestpractical.com> >>
++
++=head1 LICENSE
++
++Jifty::Plugin::EditInPlace is Copyright 2006-2008 Best Practical Solutions, LLC.
++This module is distributed under the same terms as Perl itself.
++
++=cut
+ 
+ 1;
+--- a/plugins/WikiToolbar/lib/Jifty/Plugin/WikiToolbar.pm
++++ b/plugins/WikiToolbar/lib/Jifty/Plugin/WikiToolbar.pm
+@@ -4,6 +4,10 @@
+ package Jifty::Plugin::WikiToolbar;
+ use base qw/Jifty::Plugin/;
+ 
++=head1 NAME
++
++Jifty::Plugin::WikiToolbar - Jifty plugin to add a wiki toolbar to your textarea box
++
+ =head1 SYNOPSIS
+ 
+ In etc/config.yml
+@@ -19,11 +23,19 @@
+ 
+   render_as 'Jifty::Plugin::WikiToolbar::Textarea';
+ 
+-To custom the toolbar, copy wikitoolbar.js in your application, at the end of the file put your changes with addButton function.
++To custom the toolbar, copy wikitoolbar.js in your application, at the end of
++the file put your changes with addButton function.
+ 
+ =head1 DESCRIPTION
+ 
+-Add a toolbar to your textarea field. Default toolbar provide markdown markup syntax. http://daringfireball.net/projects/markdown/
++Add a toolbar to your textarea field. Default toolbar provide markdown markup
++syntax. http://daringfireball.net/projects/markdown/
++
++=head1 METHOD
++
++=head2 init
++
++load wikitoolbar.js on startup
+ 
+ =cut
+ 
+@@ -35,4 +47,17 @@
+     ]);
+ }
+ 
++=head1 AUTHOR
++
++Yves Agostini, <yvesago@cpan.org>
++
++=head1 LICENSE
++
++Copyright 2007-2008 Yves Agostini. All Rights Reserved.
++
++This program is free software and may be modified and distributed under the
++same terms as Perl itself.
++
++=cut
++
+ 1;
+--- a/plugins/AuthzLDAP/lib/Jifty/Plugin/AuthzLDAP.pm
++++ b/plugins/AuthzLDAP/lib/Jifty/Plugin/AuthzLDAP.pm
+@@ -3,7 +3,7 @@
+ 
+ =head1 NAME
+ 
+-Jifty::Plugin::AuthzLDAP
++Jifty::Plugin::AuthzLDAP - Jifty plugin to a add dynamic ldap authorization
+ 
+ =head1 DESCRIPTION
+ 
+@@ -186,5 +186,16 @@
+     return ( $response eq 'ok' )?1:0; 
+ }
+ 
++=head1 AUTHOR
++
++Yves Agostini, <yvesago@cpan.org>
++
++=head1 LICENSE
++
++Copyright 2007-2008 Yves Agostini. All Rights Reserved.
++
++This program is free software and may be modified and distributed under the same terms as Perl itself.
++
++=cut
+ 
+ 1;
+--- a/plugins/AuthzLDAP/lib/Jifty/Plugin/AuthzLDAP/Action/LDAPValidate.pm
++++ b/plugins/AuthzLDAP/lib/Jifty/Plugin/AuthzLDAP/Action/LDAPValidate.pm
+@@ -3,7 +3,7 @@
+ 
+ =head1 NAME
+ 
+-Jifty::Plugin::AuthzLDAP::Action::LDAPValidate
++Jifty::Plugin::AuthzLDAP::Action::LDAPValidate - action to validate filter
+ 
+ =cut
+ 
+--- a/plugins/AuthzLDAP/lib/Jifty/Plugin/AuthzLDAP/Model/LDAPFilter.pm
++++ b/plugins/AuthzLDAP/lib/Jifty/Plugin/AuthzLDAP/Model/LDAPFilter.pm
+@@ -2,6 +2,12 @@
+ use Jifty::DBI::Schema;
+ use Scalar::Defer;
+ 
++=head1 NAME
++
++Jifty::Plugin::AuthzLDAP::Model::LDAPFilter - model for filters
++
++=cut
++
+ use Jifty::Record schema {
+ column
+   name => type is 'text',
+--- a/plugins/EditInPlace/lib/Jifty/Plugin/EditInPlace/Action/FileEditor.pm
++++ b/plugins/EditInPlace/lib/Jifty/Plugin/EditInPlace/Action/FileEditor.pm
+@@ -7,7 +7,8 @@
+ 
+ =head1 NAME
+ 
+-Jifty::Plugin::EditInPlace::Action::FileEditor
++Jifty::Plugin::EditInPlace::Action::FileEditor - file
++editor for EditInPlace plugin
+ 
+ =head1 DESCRIPTION
+ 

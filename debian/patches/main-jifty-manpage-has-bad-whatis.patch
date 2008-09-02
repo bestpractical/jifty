@@ -1,0 +1,52 @@
+--- a/lib/Email/Send/Jifty/Test.pm
++++ b/lib/Email/Send/Jifty/Test.pm
+@@ -3,6 +3,10 @@
+ use strict;
+ use warnings;
+ 
++=head1 NAME
++
++Email::Send::Jifty::Test - fix namespace
++
+ =head1 WHY?
+ 
+ Because L<Email::Send> 1.99_01 requires senders to be in this namespace.
+--- a/lib/Jifty/Schema.pm
++++ b/lib/Jifty/Schema.pm
+@@ -5,6 +5,12 @@
+ use base qw/Jifty::Object/;
+ use SQL::ReservedWords;
+ 
++=head1 NAME
++
++Jifty::Schema - Jifty schemas
++
++=cut
++
+ Jifty::Module::Pluggable->import(
+     require     => 1,
+     search_path => ["SQL::ReservedWords"],
+--- a/lib/Jifty/View/Declare/Page.pm
++++ b/lib/Jifty/View/Declare/Page.pm
+@@ -5,7 +5,7 @@
+ 
+ =head1 NAME
+ 
+-Jifty::View::Declare::Page
++Jifty::View::Declare::Page - page wrappers
+ 
+ =head1 DESCRIPTION
+ 
+--- a/lib/Jifty/Web/Form/Field/Collection.pm
++++ b/lib/Jifty/Web/Form/Field/Collection.pm
+@@ -5,6 +5,10 @@
+ 
+ use base qw/Jifty::Web::Form::Field/;
+ 
++=head1 NAME
++
++Jifty::Web::Form::Field::Collection - render a whole collection of available values
++
+ =head2 render_widget
+ 
+ Renders the whole collection of available values.

@@ -1,0 +1,6 @@
+usr/share/man/man3/Jifty.3pm.gz  usr/share/man/man1/jifty.1pm.gz
+# use of packaged scriptaculous, prototype and jquery
+/usr/share/javascript/scriptaculous/  usr/share/perl5/auto/Jifty/web/static/js/scriptaculous
+/usr/share/javascript/jquery/jquery.js  usr/share/perl5/auto/Jifty/web/static/js/jquery-1.2.1.js
+/usr/share/javascript/prototype/prototype.js  usr/share/perl5/auto/Jifty/web/static/js/prototype.js
+

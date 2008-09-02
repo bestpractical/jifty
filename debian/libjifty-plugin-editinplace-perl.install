@@ -1,0 +1,3 @@
+debian/tmp/usr/share/perl5/Jifty/Plugin/EditInPlace* usr/share/perl5/Jifty/Plugin/
+debian/tmp/usr/share/man/man3/Jifty::Plugin::EditInPlace* usr/share/man/man3/
+debian/tmp/usr/share/perl5/auto/Jifty/Plugin/EditInPlace* usr/share/perl5/auto/Jifty/plugins/Jifty/Plugin/

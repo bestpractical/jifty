@@ -2,14 +2,23 @@ This directory contains Debian packaging files for Jifty.
 
 There is a debian repository at:
 
- deb http://debian.jifty.org/debian sarge jifty
+ deb http://debian.jifty.org/debian etch jifty
 
 It contains jifty packages as well as some jifty plugins, updates for
-sarge and ubuntu 6.06 LTS
+etch and ubuntu 6.06 and 8.04 LTS
 
-Please let us know if there are any issues by sending mail to the
-jifty mailing list and we'll try and fix them.
+--
 
-Bart Bunting
+Since 08/08 jifty is packaged on Debian lenny + backports and Ubuntu Intrepid
+
+*** This files are rather for documentation or local packaging. ***
+
+This files refer to the packaging of jifty CPAN release .80408
+Patches are already applied on trunk.
+
+Current work on debian packaging can be find here:
+ svn://svn.debian.org/pkg-perl/trunk/jifty/debian/
+ http://svn.debian.org/viewsvn/pkg-perl/trunk/jifty/debian/
+
 Yves Agostini
 

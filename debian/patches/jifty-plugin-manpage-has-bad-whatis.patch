@@ -1,0 +1,513 @@
+--- a/lib/Jifty/Plugin/ActorMetadata.pm
++++ b/lib/Jifty/Plugin/ActorMetadata.pm
+@@ -6,11 +6,13 @@
+ 
+ =head1 NAME
+ 
+-Jifty::Plugin::ActorMetadata
++Jifty::Plugin::ActorMetadata - add created_by created_on updated_on columns to
++a model class
+ 
+ =head1 DESCRIPTION
+- 
+-This plugin adds a model mixin which adds C<created_by>, C<created_on> and C<updated_on> columns to a model class.
++
++This plugin adds a model mixin which adds C<created_by>, C<created_on> and
++C<updated_on> columns to a model class.
+ 
+ =head1 EXAMPLE 
+ 
+--- a/lib/Jifty/Plugin/AdminUI.pm
++++ b/lib/Jifty/Plugin/AdminUI.pm
+@@ -7,7 +7,7 @@
+ 
+ =head2 NAME
+ 
+-Jifty::Plugin::AdminUI
++Jifty::Plugin::AdminUI - Add basic administrative CRUD view
+ 
+ =head2  DESCRIPTION
+ 
+--- a/lib/Jifty/Plugin/Attributes/Mixin/Attributes.pm
++++ b/lib/Jifty/Plugin/Attributes/Mixin/Attributes.pm
+@@ -10,6 +10,10 @@
+ our @EXPORT = qw/attributes first_attribute add_attribute set_attribute
+                  delete_attribute delete_all_attributes/;
+ 
++=head1 NAME
++
++Jifty::Plugin::Attributes::Mixin::Attributes - Mixin attributes
++
+ =head2 attributes
+ 
+ Returns an AttributeCollection limited to the invoking object.
+--- a/lib/Jifty/Plugin/Attributes/Model/Attribute.pm
++++ b/lib/Jifty/Plugin/Attributes/Model/Attribute.pm
+@@ -5,6 +5,12 @@
+ package Jifty::Plugin::Attributes::Model::Attribute;
+ use base 'Jifty::Record';
+ 
++=head1 NAME
++
++Jifty::Plugin::Attributes::Model::Attribute - Attribute model
++
++=cut
++
+ use Jifty::DBI::Schema;
+ use Jifty::Record schema {
+     column name =>
+--- a/lib/Jifty/Plugin/Attributes/Model/AttributeCollection.pm
++++ b/lib/Jifty/Plugin/Attributes/Model/AttributeCollection.pm
+@@ -5,6 +5,11 @@
+ package Jifty::Plugin::Attributes::Model::AttributeCollection;
+ use base 'Jifty::Collection';
+ 
++=head1 NAME
++
++Jifty::Plugin::Attributes::Model::AttributeCollection - Collection of
++attributes
++
+ =head2 record_class
+ 
+ Is this even required any more?
+--- a/lib/Jifty/Plugin/CompressedCSSandJS.pm
++++ b/lib/Jifty/Plugin/CompressedCSSandJS.pm
+@@ -9,7 +9,7 @@
+ 
+ =head1 NAME
+ 
+-Jifty::Plugin::CompressedCSSandJS
++Jifty::Plugin::CompressedCSSandJS - Compression of CSS and javascript files
+ 
+ =head1 SYNOPSIS
+ 
+--- a/lib/Jifty/Plugin/CompressedCSSandJS/Dispatcher.pm
++++ b/lib/Jifty/Plugin/CompressedCSSandJS/Dispatcher.pm
+@@ -5,7 +5,8 @@
+ 
+ =head1 NAME
+ 
+-Jifty::Plugin::CompressedCSSandJS::Dispatcher
++Jifty::Plugin::CompressedCSSandJS::Dispatcher - Dispatcher for css and js
++compression
+ 
+ =head1 DESCRIPTION
+ 
+--- a/lib/Jifty/Plugin/ErrorTemplates.pm
++++ b/lib/Jifty/Plugin/ErrorTemplates.pm
+@@ -9,7 +9,7 @@
+ 
+ =head1 NAME
+ 
+-Jifty::Plugin::ErrorTemplates
++Jifty::Plugin::ErrorTemplates - Plugin for showing errors
+ 
+ =head1 DESCRIPTION
+ 
+--- a/lib/Jifty/Plugin/ErrorTemplates/View.pm
++++ b/lib/Jifty/Plugin/ErrorTemplates/View.pm
+@@ -10,7 +10,7 @@
+ 
+ =head1 NAME
+ 
+-Jifty::Plugin::ErrorTemplates::View;
++Jifty::Plugin::ErrorTemplates::View - Template pages to show errors
+ 
+ =head1 DESCRIPTION
+ 
+--- a/lib/Jifty/Plugin/Feedback.pm
++++ b/lib/Jifty/Plugin/Feedback.pm
+@@ -9,7 +9,7 @@
+ 
+ =head1 NAME
+ 
+-Jifty::Plugin::Feedback
++Jifty::Plugin::Feedback - Plugin to provides a feedback box
+ 
+ =head1 DESCRIPTION
+ 
+--- a/lib/Jifty/Plugin/Feedback/Action/SendFeedback.pm
++++ b/lib/Jifty/Plugin/Feedback/Action/SendFeedback.pm
+@@ -4,7 +4,7 @@
+ 
+ =head1 NAME
+ 
+-Jifty::Plugin::Feedback::Action::SendFeedback
++Jifty::Plugin::Feedback::Action::SendFeedback - Send feedback by mail
+ 
+ =cut
+ 
+--- a/lib/Jifty/Plugin/Feedback/View.pm
++++ b/lib/Jifty/Plugin/Feedback/View.pm
+@@ -6,7 +6,7 @@
+ 
+ =head1 NAME
+ 
+-Jifty::Plugin::Feedback::View
++Jifty::Plugin::Feedback::View - Fragment for feedback box
+ 
+ =head1 DESCRIPTION
+ 
+--- a/lib/Jifty/Plugin/Gladiator/Dispatcher.pm
++++ b/lib/Jifty/Plugin/Gladiator/Dispatcher.pm
+@@ -4,6 +4,12 @@
+ 
+ use Jifty::Dispatcher -base;
+ 
++=head1 NAME
++
++Jifty::Plugin::Gladiator::Dispatcher - Dispatcher for gladiator plugin
++
++=cut
++
+ # http://your.app/arena
+ on '/__jifty/admin/arena' => run {
+     set 'skip_zero' => 1;
+--- a/lib/Jifty/Plugin/GoogleMap.pm
++++ b/lib/Jifty/Plugin/GoogleMap.pm
+@@ -7,7 +7,7 @@
+ 
+ =head1 NAME
+ 
+-Jifty::Plugin::GoogleMap
++Jifty::Plugin::GoogleMap - GoogleMap plugin
+ 
+ =head1 SYNOPSIS
+ 
+--- a/lib/Jifty/Plugin/Halo.pm
++++ b/lib/Jifty/Plugin/Halo.pm
+@@ -8,7 +8,7 @@
+ 
+ =head1 NAME
+ 
+-Jifty::Plugin::Halo
++Jifty::Plugin::Halo - Provides halos
+ 
+ =head1 DESCRIPTION
+ 
+--- a/lib/Jifty/Plugin/I18N.pm
++++ b/lib/Jifty/Plugin/I18N.pm
+@@ -6,7 +6,7 @@
+ 
+ =head1 NAME
+ 
+-Jifty::Plugin::I18N
++Jifty::Plugin::I18N - Additional i18n facility such as language selector
+ 
+ =head1 SYNOPSIS
+ 
+--- a/lib/Jifty/Plugin/IEFixes.pm
++++ b/lib/Jifty/Plugin/IEFixes.pm
+@@ -6,7 +6,7 @@
+ 
+ =head1 NAME
+ 
+-Jifty::Plugin::CompressedCSSandJS
++Jifty::Plugin::IEFixes - Add javascript files for IE
+ 
+ =head1 SYNOPSIS
+ 
+--- a/lib/Jifty/Plugin/LeakTracker.pm
++++ b/lib/Jifty/Plugin/LeakTracker.pm
+@@ -5,6 +5,12 @@
+ use base qw/Jifty::Plugin Class::Data::Inheritable/;
+ use Data::Dumper;
+ 
++=head1 NAME
++
++Jifty::Plugin::LeakTracker - Leak tracker plugin
++
++=cut
++
+ BEGIN {
+     if (!$INC{"Devel/Events/Generator/Objects.pm"}) {
+         Jifty->log->error("Devel::Events::Generator::Objects must be compiled very early so that it can override 'bless' in time. Usually this means you must run your Jifty application with: perl -MDevel::Events::Generator::Objects bin/jifty");
+--- a/lib/Jifty/Plugin/LeakTracker/Dispatcher.pm
++++ b/lib/Jifty/Plugin/LeakTracker/Dispatcher.pm
+@@ -2,6 +2,12 @@
+ use warnings;
+ use strict;
+ 
++=head1 NAME
++
++Jifty::Plugin::LeakTracker::Dispatcher - Dispatcher for leak tracker plugin
++
++=cut
++
+ use Jifty::Dispatcher -base;
+ 
+ # http://your.app/__jifty/admin/leaks -- display full leak report
+--- a/lib/Jifty/Plugin/LetMe.pm
++++ b/lib/Jifty/Plugin/LetMe.pm
+@@ -9,7 +9,7 @@
+ 
+ =head1 NAME
+ 
+-Jifty::Plugin::LetMe
++Jifty::Plugin::LetMe - Plugin for url-based authentication
+ 
+ =head1 DESCRIPTION
+ 
+--- a/lib/Jifty/Plugin/LetMe/Dispatcher.pm
++++ b/lib/Jifty/Plugin/LetMe/Dispatcher.pm
+@@ -6,7 +6,7 @@
+ 
+ =head1 NAME
+ 
+-Jifty::Plugin::LetMe::Dispatcher
++Jifty::Plugin::LetMe::Dispatcher - Dispatcher for LetMe plugin
+ 
+ =head1 DESCRIPTION
+ 
+--- a/lib/Jifty/Plugin/OnlineDocs.pm
++++ b/lib/Jifty/Plugin/OnlineDocs.pm
+@@ -9,7 +9,7 @@
+ 
+ =head1 NAME
+ 
+-Jifty::Plugin::OnlineDocs
++Jifty::Plugin::OnlineDocs - Online documentation for Jifty in current application
+ 
+ =head1 DESCRIPTION
+ 
+--- a/lib/Jifty/Plugin/OnlineDocs/Dispatcher.pm
++++ b/lib/Jifty/Plugin/OnlineDocs/Dispatcher.pm
+@@ -5,7 +5,7 @@
+ 
+ =head1 NAME
+ 
+-Jifty::Plugin::OnlineDocs::Dispatcher
++Jifty::Plugin::OnlineDocs::Dispatcher - Dispatcher for OnlineDocs plugin
+ 
+ =head1 DESCRIPTION
+ 
+--- a/lib/Jifty/Plugin/Quota/Model/Quota.pm
++++ b/lib/Jifty/Plugin/Quota/Model/Quota.pm
+@@ -3,7 +3,7 @@
+ 
+ =head1 NAME
+ 
+-BTDT::Model::Quota
++Jifty::Plugin::Quota::Model::Quota - Quota model
+ 
+ =head1 DESCRIPTION
+ 
+--- a/lib/Jifty/Plugin/REST.pm
++++ b/lib/Jifty/Plugin/REST.pm
+@@ -8,7 +8,7 @@
+ 
+ =head1 NAME
+ 
+-Jifty::Plugin::REST
++Jifty::Plugin::REST - Add REST web services to your app
+ 
+ =head1 DESCRIPTION
+ 
+--- a/lib/Jifty/Plugin/REST/Dispatcher.pm
++++ b/lib/Jifty/Plugin/REST/Dispatcher.pm
+@@ -46,6 +46,10 @@
+ 
+ on GET    '/=/version'          => \&show_version;
+ 
++=head1 NAME
++
++Jifty::Plugin::REST::Dispatcher - Dispatcher for REST plugin
++
+ =head2 show_help
+ 
+ Shows basic help about resources and formats available via this RESTian interface.
+--- a/lib/Jifty/Plugin/Recorder/Command/Playback.pm
++++ b/lib/Jifty/Plugin/Recorder/Command/Playback.pm
+@@ -15,7 +15,9 @@
+ our $start = time; # for naming log files
+ our $path = 'log/playback';
+ 
+-=head1 Jifty::Script::Playback - Play back request logs
++=head1 NAME
++
++Jifty::Script::Playback - Play back request logs
+ 
+ =head1 DESCRIPTION
+ 
+--- a/lib/Jifty/Plugin/SQLQueries.pm
++++ b/lib/Jifty/Plugin/SQLQueries.pm
+@@ -10,7 +10,7 @@
+ 
+ =head1 NAME
+ 
+-Jifty::Plugin::SQLQueries
++Jifty::Plugin::SQLQueries - SQL query logging and reporting for your Jifty app
+ 
+ =head1 DESCRIPTION
+ 
+--- a/lib/Jifty/Plugin/SQLQueries/Dispatcher.pm
++++ b/lib/Jifty/Plugin/SQLQueries/Dispatcher.pm
+@@ -32,6 +32,10 @@
+     show "/__jifty/admin/queries/one";
+ };
+ 
++=head1 NAME
++
++Jifty::Plugin::SQLQueries::Dispatcher - Dispatcher for SQLQueries plugin
++
+ =head1 SEE ALSO
+ 
+ L<Jifty::Plugin::SQLQueries>, L<Jifty::Plugin::SQLQueries::View>
+--- a/lib/Jifty/Plugin/SinglePage.pm
++++ b/lib/Jifty/Plugin/SinglePage.pm
+@@ -8,7 +8,7 @@
+ 
+ =head1 NAME
+ 
+-Jifty::Plugin::SinglePage
++Jifty::Plugin::SinglePage - Makes your app into a single-page
+ 
+ =head1 DESCRIPTION
+ 
+--- a/lib/Jifty/Plugin/SinglePage/Dispatcher.pm
++++ b/lib/Jifty/Plugin/SinglePage/Dispatcher.pm
+@@ -5,7 +5,7 @@
+ 
+ =head1 NAME
+ 
+-Jifty::Plugin::SinglePage::Dispatcher
++Jifty::Plugin::SinglePage::Dispatcher - Dispatcher for SinglePage plugin
+ 
+ =head1 DESCRIPTION
+ 
+--- a/lib/Jifty/Plugin/SiteNews.pm
++++ b/lib/Jifty/Plugin/SiteNews.pm
+@@ -5,7 +5,7 @@
+ 
+ =head1 NAME
+ 
+-Jifty::Plugin::SiteNews
++Jifty::Plugin::SiteNews - Provide site news in your app
+ 
+ =head1 DESCRIPTION
+ 
+--- a/lib/Jifty/Plugin/SiteNews/Dispatcher.pm
++++ b/lib/Jifty/Plugin/SiteNews/Dispatcher.pm
+@@ -6,7 +6,7 @@
+ 
+ =head1 NAME
+ 
+-Jifty::Plugin::SiteNews::Dispatcher
++Jifty::Plugin::SiteNews::Dispatcher - Dispatcher for SiteNews plugin
+ 
+ =head1 DESCRIPTION
+ 
+--- a/lib/Jifty/Plugin/SiteNews/Mixin/Model/News.pm
++++ b/lib/Jifty/Plugin/SiteNews/Mixin/Model/News.pm
+@@ -7,6 +7,12 @@
+ 
+ our @EXPORT = qw(current_user_can);
+ 
++=head1 NAME
++
++Jifty::Plugin::SiteNews::Mixin::Model::News - News model
++
++=cut
++
+ use Jifty::Record schema {
+ 
+     my $user_class = Jifty->app_class('Model', 'User');
+--- a/lib/Jifty/Plugin/SiteNews/View/News.pm
++++ b/lib/Jifty/Plugin/SiteNews/View/News.pm
+@@ -7,7 +7,7 @@
+ 
+ =head1 NAME
+ 
+-Jifty::Plugin::SiteNews::View::News
++Jifty::Plugin::SiteNews::View::News - /news pages for your app
+ 
+ =head1 DESCRIPTION
+ 
+--- a/lib/Jifty/Plugin/SkeletonApp.pm
++++ b/lib/Jifty/Plugin/SkeletonApp.pm
+@@ -9,7 +9,7 @@
+ 
+ =head1 NAME
+ 
+-Jifty::Plugin::SkeletonApp
++Jifty::Plugin::SkeletonApp - Skeleton for your application
+ 
+ =head1 DESCRIPTION
+ 
+--- a/lib/Jifty/Plugin/SkeletonApp/Dispatcher.pm
++++ b/lib/Jifty/Plugin/SkeletonApp/Dispatcher.pm
+@@ -5,7 +5,7 @@
+ 
+ =head1 NAME
+ 
+-Jifty::Plugin::SkeletonApp::Dispatcher
++Jifty::Plugin::SkeletonApp::Dispatcher - Dispatcher for SkeletonApp plugin
+ 
+ =head1 DESCRIPTION
+ 
+--- a/lib/Jifty/Plugin/SkeletonApp/View.pm
++++ b/lib/Jifty/Plugin/SkeletonApp/View.pm
+@@ -10,7 +10,7 @@
+ 
+ =head1 NAME
+ 
+-Jifty::Plugin::SkeletonApp::View
++Jifty::Plugin::SkeletonApp::View - Default fragments for your pages
+ 
+ =head1 DESCRIPTION
+ 
+--- a/lib/Jifty/Plugin/UUID.pm
++++ b/lib/Jifty/Plugin/UUID.pm
+@@ -6,7 +6,7 @@
+ 
+ =head1 NAME
+ 
+-Jifty::Plugin::UUID
++Jifty::Plugin::UUID - Provides Universally Unique Identifier for Jifty
+ 
+ =head1 SYNOPSIS
+ 
+--- a/lib/Jifty/Plugin/UUID/Widget.pm
++++ b/lib/Jifty/Plugin/UUID/Widget.pm
+@@ -8,7 +8,7 @@
+ 
+ =head1 NAME
+ 
+-Jifty::Plugin::UUID::Widget - 
++Jifty::Plugin::UUID::Widget -  Widget for UUID plugin
+ 
+ =head1 METHODS
+ 
+--- a/lib/Jifty/Plugin/Userpic.pm
++++ b/lib/Jifty/Plugin/Userpic.pm
+@@ -7,7 +7,7 @@
+ 
+ =head1 NAME
+ 
+-Jifty::Plugin::Userpic
++Jifty::Plugin::Userpic - Provides user pictures for Jifty
+ 
+ =head1 SYNOPSIS
+ 
+--- a/lib/Jifty/Plugin/Userpic/Dispatcher.pm
++++ b/lib/Jifty/Plugin/Userpic/Dispatcher.pm
+@@ -6,7 +6,7 @@
+ 
+ =head1 NAME
+ 
+-Jifty::Plugin::Userpic::Dispatcher
++Jifty::Plugin::Userpic::Dispatcher - Dispatcher for the Jifty Userpic plugin
+ 
+ =head1 DESCRIPTION
+ 
+--- a/lib/Jifty/Plugin/Userpic/View.pm
++++ b/lib/Jifty/Plugin/Userpic/View.pm
+@@ -5,7 +5,7 @@
+ 
+ =head1 NAME
+ 
+-Jifty::Plugin::Userpic::View
++Jifty::Plugin::Userpic::View - View for the Userpic plugin
+ 
+ =head1 DESCRIPTION
+ 

@@ -1,0 +1,2 @@
+debian/tmp/usr/share/perl5/Jifty/Plugin/Comment* usr/share/perl5/Jifty/Plugin/
+debian/tmp/usr/share/man/man3/Jifty::Plugin::Comment* usr/share/man/man3/

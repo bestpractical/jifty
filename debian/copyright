@@ -1,0 +1,187 @@
+Format-Specification: http://wiki.debian.org/Proposals/CopyrightFormat?action=recall&rev=102
+Debianized-By: AGOSTINI Yves <agostini@univ-metz.fr>
+Debianized-Date: Sun, 16 Jun 2008 17:41:06 +0200
+Original-Source-Location: http://search.cpan.org/dist/Jifty/
+Upstream-Author: Shawn M Moore <sartak@bestpractical.com>
+
+Files: *
+Copyright: Copyright 2005-2006 Best Practical Solutions, LLC. 
+License: GPL-1+ | Artistic
+ Jifty is distributed under the same terms as Perl itself.
+
+Files: inc/*
+Copyright: Copyright 2002 - 2008 by Brian Ingerson, Audrey Tang and Adam Kennedy.
+License: GPL-1+ | Artistic
+ This program is free software; you can redistribute it and/or modify it under
+ the same terms as Perl itself.
+
+Files: */share/web/static/js/key_bindings.js
+Copyright: Copyright 2004-2006, Best Practical Solutions, LLC
+License: GPL-1+ | Artistic
+ This Library is licensed to you under the same terms as Perl 5.x
+
+Files: */share/web/static/[css|js|images]/yui/* 
+Copyright: Copyright (c) 2007, Yahoo! Inc.
+License: BSD-like
+ This files are a selection of 8 js files with patch of yui v2.4.1
+ .
+ Software License Agreement (BSD License)
+ .
+ Copyright (c) 2006, Yahoo! Inc.
+ All rights reserved.
+ .
+ Redistribution and use of this software in source and binary forms, with or
+ without modification, are permitted provided that the following conditions are
+ met:
+ * Redistributions of source code must retain the above
+   copyright notice, this list of conditions and the
+   following disclaimer.
+ .
+ *  Redistributions in binary form must reproduce the above
+   copyright notice, this list of conditions and the
+   following disclaimer in the documentation and/or other
+   materials provided with the distribution.
+ .
+ * Neither the name of Yahoo! Inc. nor the names of its
+   contributors may be used to endorse or promote products
+   derived from this software without specific prior
+   written permission of Yahoo! Inc.
+ .
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+Files: */share/web/static/js/json.js
+Copyright: Copyright (c) 2005 JSON.org
+License: MIT-like
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+ .
+ The Software shall be used for Good, not Evil.
+ .
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ SOFTWARE.
+
+Files: */share/web/static/js/jquery-1.2.1.js  	 
+Copyright: Copyright (c) 2007 John Resig (jquery.com) 	 
+License: GPL | MIT 	 
+ Dual licensed under the MIT and GPL licenses. See MIT license below. 	 
+  	 
+Files: */share/web/static/js/jsan/DOM/Events.js 	 
+Copyright: Copyright (c) 2005 Justin Constantino. All rights reserved. 	 
+License: LGPL 	 
+ This module is free software; you can redistribute it and/or modify it 	 
+ under the terms of the GNU Lesser General Public Licence. 	 
+
+Files: */share/web/static/js/jsan/Upgrade.js
+Copyright: Copyright (c) 2005 Adam Kennedy. All rights reserved.
+License:  GPL-1+ | Artistic
+ This program is free software; you can redistribute it and/or modify
+ it under the the terms of the Perl dual GPL/Artistic license.
+
+Files: */share/web/static/js/rico.js
+Copyright: Copyright 2005 Sabre Airline Solutions
+License: Apache-2.0
+ Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ use this file except in compliance with the License.
+
+Files: */share/web/static/js/scriptaculous/*  	 
+Copyright: Copyright (c) 2005 Thomas Fuchs 	 
+License: MIT 	 
+ Permission is hereby granted, free of charge, to any person obtaining 	 
+ a copy of this software and associated documentation files (the 	 
+ "Software"), to deal in the Software without restriction, including 	 
+ without limitation the rights to use, copy, modify, merge, publish, 	 
+ distribute, sublicense, and/or sell copies of the Software, and to 	 
+ permit persons to whom the Software is furnished to do so, subject to 	 
+ the following conditions: 	 
+ . 	 
+ The above copyright notice and this permission notice shall be 	 
+ included in all copies or substantial portions of the Software. 	 
+ . 	 
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, 	 
+ EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF 	 
+ MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND 	 
+ NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE 	 
+ LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION 	 
+ OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION 	 
+ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+Files: */Jifty/Plugin/*
+Copyright: Copyright 2005-2007 Best Practical Solutions, LLC. 
+License: GPL-1+ | Artistic
+ Jifty is distributed under the same terms as Perl itself.
+
+Files: */Jifty/Plugin/WikiToolbar*, Jifty/Plugin/AuthzLDAP*
+Copyright: Copyright 2007-2008 Yves Agostini
+License: GPL-1+ | Artistic
+ This program is free software and may be modified and distributed under the
+ same terms as Perl itself.
+
+Files: */Jifty/Plugin/Comment* *Plugin/AutoReference/Widget.pm
+Copyright: Copyright 2007-2008 Boomer Consulting, Inc. All Rights Reserved.
+License: GPL-1+ | Artistic
+ This program is free software and may be modified and distributed under the
+ same terms as Perl itself.
+
+Files: */Jifty/Plugin/Chart*, */static/js/simple_bars.js
+Copyright: Copyright 2007 Boomer Consulting, Inc. All Rights Reserved.
+License: GPL-1+ | Artistic
+ This program is free software and may be modified and distributed under the
+ same terms as Perl itself.
+
+Files: */Jifty/Plugin/Chart/web/static/js/PlotKit/PlotKit_Packed-20060807-custom.js
+Copyright: Copyright (c) 2006. Alastair Tse.
+License: BSD
+ Licensed under the BSD License.
+
+Files: */Jifty/Plugin/Chart/web/static/js/PlotKit/excanvas.js
+Copyright: copyright (c) 2006. Google Inc.
+License: Apache-2.0
+ Licensed under the Apache License, Version 2.0.
+
+Files: examples/Yada/share/web/static/js/Asynapse/REST.js
+Copyright: Copyright (c) 2007, Kang-min Liu <gugod@gugod.org>
+License: GPL-1+ | Artistic
+ This module is free software; you can redistribute it and/or
+ modify it under the same terms as Perl itself.
+
+Files: */Jifty/Plugin/CSSQuery*
+Copyright: Copyright 2007 Handlino, Inc.
+License: GPL-1+ | Artistic
+ It is available for modication and distribution under the same terms as Perl itself.
+
+Files: */static/js/cssquery*
+Copyright: Copyright: 2004-2005, Dean Edwards
+License: http://creativecommons.org/licenses/LGPL/2.1/
+  On Debian GNU/Linux systems, the complete text of the LGPL-2.1 can be found
+  in `/usr/share/common-licenses/LGPL-2.1'
+
+Files: debian/*
+Copyright: Copyright 2008 Debian Perl Group <pkg-perl-maintainers@lists.alioth.debian.org>
+License: GPL-1+ | Artistic
+ The Debian packaging is put under the same terms as the module itself.
+
+Perl is distributed under your choice of the GNU General Public License or
+the Artistic License.  On Debian GNU/Linux systems, the complete text of the
+GNU General Public License can be found in `/usr/share/common-licenses/GPL'
+and the Artistic Licence in `/usr/share/common-licenses/Artistic'. The Apache,
+version 2.0 license can be found in `/usr/share/common-licenses/Apache-2.0'.
+The BSD license can be found in `/usr/share/common-licenses/BSD'. The LGPL
+license can be found in `/usr/share/common-licenses/LGPL'.

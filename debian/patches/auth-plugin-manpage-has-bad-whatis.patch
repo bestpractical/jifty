@@ -1,0 +1,260 @@
+--- a/lib/Jifty/Plugin/Authentication/CAS.pm
++++ b/lib/Jifty/Plugin/Authentication/CAS.pm
+@@ -7,7 +7,7 @@
+ 
+ =head1 NAME
+ 
+-Jifty::Plugin::Authentication::CAS
++Jifty::Plugin::Authentication::CAS - JA-SIG CAS authentication plugin
+ 
+ =head1 DESCRIPTION
+ 
+--- a/lib/Jifty/Plugin/Authentication/CAS/Action/CASLogin.pm
++++ b/lib/Jifty/Plugin/Authentication/CAS/Action/CASLogin.pm
+@@ -3,7 +3,7 @@
+ 
+ =head1 NAME
+ 
+-Jifty::Plugin::Authentication::CAS::Action::CASLogin
++Jifty::Plugin::Authentication::CAS::Action::CASLogin - process CAS login plugin
+ 
+ =cut
+ 
+--- a/lib/Jifty/Plugin/Authentication/CAS/Action/CASLogout.pm
++++ b/lib/Jifty/Plugin/Authentication/CAS/Action/CASLogout.pm
+@@ -3,7 +3,7 @@
+ 
+ =head1 NAME
+ 
+-Jifty::Plugin::Authentication::CAS::Action::CASLogout
++Jifty::Plugin::Authentication::CAS::Action::CASLogout -  - process CAS logout plugin
+ 
+ =cut
+ 
+--- a/lib/Jifty/Plugin/Authentication/CAS/Mixin/Model/User.pm
++++ b/lib/Jifty/Plugin/Authentication/CAS/Mixin/Model/User.pm
+@@ -6,7 +6,7 @@
+ 
+ =head1 NAME
+ 
+-Jifty::Plugin::Authentication::CAS::Mixin::Model::User;
++Jifty::Plugin::Authentication::CAS::Mixin::Model::User - CAS mixin for User model
+ 
+ =head1 DESCRIPTION
+ 
+--- a/lib/Jifty/Plugin/Authentication/Facebook.pm
++++ b/lib/Jifty/Plugin/Authentication/Facebook.pm
+@@ -8,7 +8,7 @@
+ 
+ =head1 NAME
+ 
+-Jifty::Plugin::Authentication::Facebook
++Jifty::Plugin::Authentication::Facebook - Facebook authentication plugin for Jifty
+ 
+ =head2 DESCRIPTION
+ 
+--- a/lib/Jifty/Plugin/Authentication/Facebook/Action/LinkFacebookUser.pm
++++ b/lib/Jifty/Plugin/Authentication/Facebook/Action/LinkFacebookUser.pm
+@@ -3,7 +3,7 @@
+ 
+ =head1 NAME
+ 
+-Jifty::Plugin::Authentication::Facebook::Action::LinkFacebookUser;
++Jifty::Plugin::Authentication::Facebook::Action::LinkFacebookUser - link facebook user to current user
+ 
+ =cut
+ 
+--- a/lib/Jifty/Plugin/Authentication/Facebook/Action/LoginFacebookUser.pm
++++ b/lib/Jifty/Plugin/Authentication/Facebook/Action/LoginFacebookUser.pm
+@@ -3,7 +3,7 @@
+ 
+ =head1 NAME
+ 
+-Jifty::Plugin::Authentication::Facebook::Action::LoginFacebookUser;
++Jifty::Plugin::Authentication::Facebook::Action::LoginFacebookUser - login facebook user
+ 
+ =cut
+ 
+--- a/lib/Jifty/Plugin/Authentication/Facebook/Dispatcher.pm
++++ b/lib/Jifty/Plugin/Authentication/Facebook/Dispatcher.pm
+@@ -6,7 +6,7 @@
+ 
+ =head1 NAME
+ 
+-Jifty::Plugin::Authentication::Facebook::Dispatcher
++Jifty::Plugin::Authentication::Facebook::Dispatcher - dispatcher for facebook plugin
+ 
+ =head1 DESCRIPTION
+ 
+--- a/lib/Jifty/Plugin/Authentication/Facebook/Mixin/Model/User.pm
++++ b/lib/Jifty/Plugin/Authentication/Facebook/Mixin/Model/User.pm
+@@ -5,6 +5,12 @@
+ use Jifty::DBI::Schema;
+ use base 'Jifty::DBI::Record::Plugin';
+ 
++=head1 NAME
++
++Jifty::Plugin::Authentication::Facebook::Mixin::Model::User - mixin facebook an model users
++
++=cut
++
+ use Jifty::Plugin::Authentication::Facebook::Record schema {
+ 
+     column facebook_name => 
+--- a/lib/Jifty/Plugin/Authentication/Facebook/View.pm
++++ b/lib/Jifty/Plugin/Authentication/Facebook/View.pm
+@@ -6,7 +6,7 @@
+ 
+ =head1 NAME
+ 
+-Jifty::Plugin::Authentication::Facebook::View
++Jifty::Plugin::Authentication::Facebook::View - Facebook login fragment
+ 
+ =head1 DESCRIPTION
+ 
+--- a/lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm
++++ b/lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm
+@@ -3,7 +3,7 @@
+ 
+ =head1 NAME
+ 
+-Jifty::Plugin::Authentication::Ldap::Action::LDAPLogin;
++Jifty::Plugin::Authentication::Ldap::Action::LDAPLogin - process LDAP login plugin
+ 
+ =cut
+ 
+--- a/lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogout.pm
++++ b/lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogout.pm
+@@ -3,7 +3,7 @@
+ 
+ =head1 NAME
+ 
+-Jifty::Plugin::Authentication::Ldap::Action::LDAPLogout;
++Jifty::Plugin::Authentication::Ldap::Action::LDAPLogout - process LDAP logout plugin
+ 
+ =cut
+ 
+--- a/lib/Jifty/Plugin/Authentication/Ldap/Mixin/Model/User.pm
++++ b/lib/Jifty/Plugin/Authentication/Ldap/Mixin/Model/User.pm
+@@ -7,7 +7,7 @@
+ 
+ =head1 NAME
+ 
+-Jifty::Plugin::Authentication::Ldap::Mixin::Model::User;
++Jifty::Plugin::Authentication::Ldap::Mixin::Model::User - Ldap mixin with User model
+ 
+ =head1 DESCRIPTION
+ 
+--- a/lib/Jifty/Plugin/Authentication/Ldap/View.pm
++++ b/lib/Jifty/Plugin/Authentication/Ldap/View.pm
+@@ -2,9 +2,9 @@
+ use warnings;
+ use strict;
+ 
+-=head1 NAME Jifty::Plugin::Authentication::Ldap::View
++=head1 NAME
+ 
+-This provides the templates for the pages and forms used by the ldap authentication plugin.
++Jifty::Plugin::Authentication::Ldap::View - provides templates for the pages and forms used by the ldap authentication plugin.
+ 
+ =cut
+ 
+--- a/lib/Jifty/Plugin/Authentication/Password/Action/GeneratePasswordToken.pm
++++ b/lib/Jifty/Plugin/Authentication/Password/Action/GeneratePasswordToken.pm
+@@ -3,7 +3,7 @@
+ 
+ =head1 NAME
+ 
+-Jifty::Plugin::Authentication::PasswordAction::GeneratePasswordToken
++Jifty::Plugin::Authentication::PasswordAction::GeneratePasswordToken - generate password token
+ 
+ =cut
+ 
+--- a/lib/Jifty/Plugin/Authentication/Password/Action/Login.pm
++++ b/lib/Jifty/Plugin/Authentication/Password/Action/Login.pm
+@@ -3,7 +3,7 @@
+ 
+ =head1 NAME
+ 
+-Jifty::Plugin::Authentication::Password::Action::Login
++Jifty::Plugin::Authentication::Password::Action::Login - process login with password
+ 
+ =cut
+ 
+--- a/lib/Jifty/Plugin/Authentication/Password/Action/Logout.pm
++++ b/lib/Jifty/Plugin/Authentication/Password/Action/Logout.pm
+@@ -3,7 +3,7 @@
+ 
+ =head1 NAME
+ 
+-Jifty::Plugin::Authentication::Password::Action::Logout
++Jifty::Plugin::Authentication::Password::Action::Logout - process logout
+ 
+ =cut
+ 
+--- a/lib/Jifty/Plugin/Authentication/Password/Action/ResendConfirmation.pm
++++ b/lib/Jifty/Plugin/Authentication/Password/Action/ResendConfirmation.pm
+@@ -3,7 +3,7 @@
+ 
+ =head1 NAME
+ 
+-Jifty::Plugin::Authentication::Password::Action::ResendConfirmation
++Jifty::Plugin::Authentication::Password::Action::ResendConfirmation - resend confirmation for new mail or password
+ 
+ =cut
+ 
+--- a/lib/Jifty/Plugin/Authentication/Password/Action/SendAccountConfirmation.pm
++++ b/lib/Jifty/Plugin/Authentication/Password/Action/SendAccountConfirmation.pm
+@@ -3,7 +3,7 @@
+ 
+ =head1 NAME
+ 
+-Jifty::Plugin::Authentication::Password::Action::SendAccountConfirmation
++Jifty::Plugin::Authentication::Password::Action::SendAccountConfirmation - send confirmation for an email
+ 
+ =cut
+ 
+--- a/lib/Jifty/Plugin/Authentication/Password/Action/SendPasswordReminder.pm
++++ b/lib/Jifty/Plugin/Authentication/Password/Action/SendPasswordReminder.pm
+@@ -3,7 +3,7 @@
+ 
+ =head1 NAME
+ 
+-Jifty::Plugin::Authentication::Password::Action::SendPasswordReminder
++Jifty::Plugin::Authentication::Password::Action::SendPasswordReminder - send a link to reset a password
+ 
+ =cut
+ 
+--- a/lib/Jifty/Plugin/Authentication/Password/Action/Signup.pm
++++ b/lib/Jifty/Plugin/Authentication/Password/Action/Signup.pm
+@@ -3,7 +3,7 @@
+ 
+ =head1 NAME
+ 
+-Jifty::Plugin::Authentication::Password::Action::Signup
++Jifty::Plugin::Authentication::Password::Action::Signup - signup for an account
+ 
+ =cut
+ 
+--- a/lib/Jifty/Plugin/Authentication/Password/Notification/ConfirmEmail.pm
++++ b/lib/Jifty/Plugin/Authentication/Password/Notification/ConfirmEmail.pm
+@@ -6,7 +6,7 @@
+ 
+ =head1 NAME
+ 
+-Jifty::Plugin::Authentication::Password::Notification::ConfirmEmail
++Jifty::Plugin::Authentication::Password::Notification::ConfirmEmail - mail notification to confirm email
+ 
+ =head1 ARGUMENTS
+ 
+--- a/lib/Jifty/Plugin/Authentication/Password/Notification/ConfirmLostPassword.pm
++++ b/lib/Jifty/Plugin/Authentication/Password/Notification/ConfirmLostPassword.pm
+@@ -6,7 +6,7 @@
+ 
+ =head1 NAME
+ 
+-Jifty::Plugin::Authentication::Password::Notification::ConfirmLostPassword
++Jifty::Plugin::Authentication::Password::Notification::ConfirmLostPassword - mail notification to change password
+ 
+ =head1 ARGUMENTS
+ 

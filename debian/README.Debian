@@ -1,0 +1,6 @@
+The dependency chain with javascript libraries might install apache2 with jifty.
+You can safely remove it on a developer's desktop machine.
+Or remove apache2 and use lighttpd.
+
+libjifty-perl can be used alone on servers. The main jifty package add more
+examples and tutorials which can be useless on servers.
