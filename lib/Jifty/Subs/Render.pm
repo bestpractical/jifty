@@ -70,8 +70,8 @@ sub render {
         }
     }
 
-    for (values %coalesce) {
-        my (undef, $event_class, $msg, $render_info) = @{$_};
+    for my $c (values %coalesce) {
+        my (undef, $event_class, $msg, $render_info) = @{$c};
         Jifty->log->debug("Rendering @{[$render_info->{region}]} with @{[$render_info->{render_with}]} for $event_class");
         render_single( $event_class, $msg, $render_info, $callback );
         $sent++;
