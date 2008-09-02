@@ -854,7 +854,7 @@ sub _do_dispatch {
     # actions and then the RUN stage.
     if ($self->_handle_stage('SETUP')) {
         # Run actions
-        Jifty->web->handle_request();
+        Jifty->web->handle_request unless Jifty->web->request->is_subrequest;
 
         # Run, and show the page
         $self->_handle_stage('RUN' => 'show');
