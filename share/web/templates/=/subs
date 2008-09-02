@@ -27,7 +27,7 @@ $m->print($begin);
 $m->flush_buffer;
 $writer->startTag("body");
 
-while (1) {
+while (Jifty->config->framework('PubSub')->{'Enable'}) {
     my $sent = write_subs_once($writer);
     flush STDOUT;
     last if ( $sent && !$forever );
