@@ -126,7 +126,7 @@ template '__comment/display' => sub {
             $poster = qq{<a href="@{[$comment->web_site]}">$poster</a>}
                 if $comment->web_site;
 
-            my $created_on = Jifty::DateTime->now;
+            my $created_on = $comment->created_on;
 
             p { 
                 outs_raw _('By %1 %2', 
