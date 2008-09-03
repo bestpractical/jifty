@@ -66,6 +66,8 @@ template '__comment/display' => sub {
     my $comment = get 'comment';
     my $top     = get 'top';
 
+    my $plugin = Jifty->find_plugin('Jifty::Plugin::Comment');
+
     div {
         my $class = 'comment';
         $class .= $comment->status eq 'ham' ? ' ham' : ' spam'
@@ -80,7 +82,7 @@ template '__comment/display' => sub {
             if (Jifty->web->current_user->id) {
 
                 for my $status (qw( ham spam )) {
-                    if ($comment->status ne $status) {
+                    if ($comment->status ne $status && $plugin->akismet) {
                         hyperlink
                             label => _('mark as %1', $status),
                             onclick => {
@@ -95,7 +97,7 @@ template '__comment/display' => sub {
                 for my $published (0, 1) {
                     if ($comment->published ne $published) {
                         hyperlink
-                            label => _($published ? 'publish' : 'unpublish'),
+                            label => $published ? _('publish') : _('unpublish'),
                             onclick => {
                                 args  => {
                                     update_published => $published,
