@@ -112,13 +112,15 @@ template '__comment/display' => sub {
         };
 
         unless ($top) {
-            h5 { 
-                a {
-                    attr { name => 'comment-'.$comment->id };
-                    $comment->title 
+            if ($comment->status eq 'ham' && $comment->published) {
+                h5 { 
+                    a {
+                        attr { name => 'comment-'.$comment->id };
+                        $comment->title 
+                    };
                 };
             };
-        }
+        };
 
         div {
             { class is 'comment-info' }
@@ -138,8 +140,10 @@ template '__comment/display' => sub {
             };
         };
 
-        div {
-            outs_raw scrub_html($comment->body);
+        if ($comment->status eq 'ham' && $comment->published) {
+            div {
+                outs_raw scrub_html($comment->body);
+            };
         };
 
     };
