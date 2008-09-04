@@ -219,7 +219,7 @@ for (@plugins) {
     die unless -d "plugins/$_";
 #    install_share("plugins/$_/share");
     chdir("plugins/$_");
-    system("$^X -I../../lib Makefile.PL");
+    system("$^X -I../../lib Makefile.PL INSTALLDIRS=$(INSTALLDIRS)");
     chdir('../..');
 
 }
