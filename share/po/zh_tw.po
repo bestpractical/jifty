@@ -14,6 +14,20 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#: lib/Jifty/Plugin/Comment/Notification/CommentPublished.pm:71
+#. ($url,        $self->parent->title,        $comment->title,         $from,         $comment->created_on->strftime('%A, %B %d, %Y @ %H:%M%P')
+msgid ""
+"\n"
+"View Comment: %1\n"
+"\n"
+"On Post: %2\n"
+"Subject: %3\n"
+"From: %4\n"
+"Date: %5\n"
+"\n"
+"%6\n"
+msgstr ""
+
 #: lib/Jifty/Plugin/Authentication/Password/Notification/ConfirmLostPassword.pm:38
 #. ($appname,$confirm_url)
 msgid ""
@@ -134,7 +148,7 @@ msgstr "%1 小於"
 msgid "%1 line %2"
 msgstr "%1 第 %2 列"
 
-#: share/web/templates/__jifty/halo:119
+#: lib/Jifty/Plugin/SQLQueries.pm:186 share/web/templates/__jifty/halo:122
 #. ($_->[3])
 msgid "%1 seconds"
 msgstr "%1 秒"
@@ -153,6 +167,10 @@ msgstr "%1 至"
 msgid "(any)"
 msgstr "(不限)"
 
+#: lib/Jifty/Plugin/AutoReference.pm:95
+msgid "- none -"
+msgstr ""
+
 #: lib/Jifty/Plugin/Authentication/Password/Action/ConfirmEmail.pm:58
 msgid ". Your email address has now been confirmed."
 msgstr ". 現已成功確認您的電郵地址."
@@ -170,19 +188,23 @@ msgstr "%1 捎來的訊息!"
 msgid "Actions"
 msgstr "操作"
 
-#: lib/Jifty/Plugin/SkeletonApp/Dispatcher.pm:33
+#: lib/Jifty/Plugin/Comment/View.pm:165
+msgid "Add a comment"
+msgstr ""
+
+#: lib/Jifty/Plugin/AdminUI/Dispatcher.pm:34
 msgid "Administration"
 msgstr "管理介面"
 
-#: lib/Jifty/View/Declare/Page.pm:176 share/web/templates/_elements/wrapper:11
+#: lib/Jifty/View/Declare/Page.pm:180 share/web/templates/_elements/wrapper:11
 msgid "Administration mode is enabled."
 msgstr "系統管理模式開啟中."
 
-#: lib/Jifty/View/Declare/Page.pm:173 share/web/templates/_elements/wrapper:11
+#: lib/Jifty/View/Declare/Page.pm:177 share/web/templates/_elements/wrapper:11
 msgid "Alert"
 msgstr "請注意"
 
-#: lib/Jifty/Action/Record/Create.pm:92
+#: lib/Jifty/Action/Record/Create.pm:105
 msgid "An error occurred.  Try again later"
 msgstr "系統無法執行此項操作, 請稍後再試"
 
@@ -194,7 +216,7 @@ msgstr "任意欄位包含"
 msgid "Anyway, the software has logged this error."
 msgstr ""
 
-#: lib/Jifty/Plugin/Authentication/Password/Mixin/Model/User.pm:53
+#: lib/Jifty/Plugin/Authentication/Password/Mixin/Model/User.pm:54
 msgid "Authentication token"
 msgstr ""
 
@@ -206,20 +228,26 @@ msgstr "回到管理介面"
 msgid "Back to the application"
 msgstr "回到應用程式"
 
-#: share/web/templates/__jifty/halo:117
+#: lib/Jifty/Plugin/SQLQueries.pm:175 share/web/templates/__jifty/halo:120
 msgid "Bindings"
 msgstr "快速鍵"
+
+#: lib/Jifty/Plugin/Comment/View.pm:138 lib/Jifty/Plugin/Comment/View.pm:197
+#. ($poster,                     $created_on->strftime('%A, %B %d, %Y @ %H:%M%P')
+#. ($poster,                             $created_on->strftime('%A, %B %d, %Y @ %H:%M%P')
+msgid "By %1 %2"
+msgstr ""
 
 #: share/web/templates/helpers/calendar.html:4
 #. (_ &><body class="calpopup"><a href="#" onclick="window.close()
 msgid "Calendar"
 msgstr "日曆"
 
-#: lib/Jifty/View/Declare/CRUD.pm:417
+#: lib/Jifty/View/Declare/CRUD.pm:434
 msgid "Cancel"
 msgstr "取消"
 
-#: share/web/templates/__jifty/halo:81
+#: share/web/templates/__jifty/halo:84
 msgid "Children"
 msgstr "子元件"
 
@@ -239,16 +267,16 @@ msgstr "確認信已寄出."
 msgid "Continue"
 msgstr ""
 
-#: lib/Jifty/View/Declare/CRUD.pm:668
+#: lib/Jifty/View/Declare/CRUD.pm:723
 msgid "Create"
 msgstr "建立"
 
-#: lib/Jifty/Action/Record/Create.pm:91
+#: lib/Jifty/Action/Record/Create.pm:104
 #. (ref($record)
 msgid "Create of %1 failed: %2"
 msgstr "無法建立 %1: %2"
 
-#: lib/Jifty/Action/Record/Create.pm:118
+#: lib/Jifty/Action/Record/Create.pm:131
 msgid "Created"
 msgstr "成功建立項目."
 
@@ -256,7 +284,7 @@ msgstr "成功建立項目."
 msgid "Database Administration"
 msgstr "資料庫管理"
 
-#: lib/Jifty/View/Declare/CRUD.pm:427
+#: lib/Jifty/View/Declare/CRUD.pm:444
 msgid "Delete"
 msgstr "刪除"
 
@@ -272,12 +300,15 @@ msgstr "關閉"
 msgid "Done?"
 msgstr "設定完畢?"
 
-#: lib/Jifty/View/Declare/CRUD.pm:347 share/web/templates/__jifty/halo:126 share/web/templates/__jifty/halo:20
+#: share/web/templates/__jifty/halo:2
+msgid "Draw halos"
+msgstr ""
+
+#: lib/Jifty/View/Declare/CRUD.pm:366 share/web/templates/__jifty/halo:129 share/web/templates/__jifty/halo:23
 msgid "Edit"
 msgstr "編輯"
 
-#: lib/Jifty/Mason/Halo.pm:104
-#. ($comp_name)
+#:
 msgid "Edit %1"
 msgstr "編輯 %1"
 
@@ -293,19 +324,19 @@ msgstr "電郵地址"
 msgid "Email address confirmed?"
 msgstr "已確認電郵地址?"
 
-#: lib/Jifty/Plugin/Authentication/Password/View.pm:209
+#:
 msgid "Fill in your address below, and we'll send out another confirmation email to you. "
 msgstr "請填入您的電郵，我們會再寄一封確認信給您."
 
-#: lib/Jifty/Action.pm:1312
+#: lib/Jifty/Action.pm:1309
 msgid "Foo cannot contain -, *, +, or ?."
 msgstr ""
 
-#: lib/Jifty/Action.pm:1306
+#: lib/Jifty/Action.pm:1303
 msgid "Foo cannot contain uppercase letters."
 msgstr ""
 
-#: lib/Jifty/Action.pm:1285
+#: lib/Jifty/Action.pm:1282
 msgid "Foo values are always in lowercase."
 msgstr ""
 
@@ -334,9 +365,15 @@ msgstr "回首頁"
 msgid "Hello, %1!"
 msgstr "%1 您好!"
 
-#: lib/Jifty/Plugin/Authentication/Facebook/Action/LoginFacebookUser.pm:103
+#: lib/Jifty/Plugin/Authentication/Facebook/Action/LoginFacebookUser.pm:103 lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:137 plugins/Authentication-CAS/lib/Jifty/Plugin/Authentication/CAS/Action/CASLogin.pm:147
 #. (Jifty->web->current_user->user_object->facebook_name)
+#. (Jifty->web->current_user->user_object->name)
 msgid "Hi %1!"
+msgstr ""
+
+#: lib/Jifty/Plugin/I18N/Action/SetLang.pm:44
+#. (DateTime::Locale->load($lang)
+msgid "Hi, we speak %1."
 msgstr ""
 
 #: lib/Jifty/Plugin/SkeletonApp/View.pm:31 share/web/templates/_elements/sidebar:4
@@ -345,7 +382,7 @@ msgstr ""
 msgid "Hiya, %1."
 msgstr "%1 您好."
 
-#: lib/Jifty/Plugin/SkeletonApp/Dispatcher.pm:26
+#: lib/Jifty/Plugin/SkeletonApp/Dispatcher.pm:31
 msgid "Home"
 msgstr "首頁"
 
@@ -353,7 +390,7 @@ msgstr "首頁"
 msgid "How should I display your name to other users?"
 msgstr "您在本系統的代號"
 
-#: lib/Jifty/Action.pm:1212
+#: lib/Jifty/Action.pm:1214
 msgid "I changed $field for you"
 msgstr ""
 
@@ -365,27 +402,23 @@ msgstr ""
 msgid "If the username provided conflicts with an existing username or contains invalid characters, you will have to give us a new one."
 msgstr ""
 
-#: lib/Jifty/Plugin/OpenID/View.pm:27
-msgid "If you have a Livejournal or other OpenID account, you don't even need to sign up. Just log in."
-msgstr ""
-
-#: lib/Jifty/Plugin/ErrorTemplates/View.pm:62
+#: lib/Jifty/Plugin/ErrorTemplates/View.pm:64
 msgid "Internal error"
 msgstr ""
 
-#: lib/Jifty/Plugin/OpenID/Action/AuthenticateOpenID.pm:59
+#: lib/Jifty/Plugin/OpenID/Action/AuthenticateOpenID.pm:53
 msgid "Invalid OpenID URL.  Please check to make sure it is correct.  (@{[$csr->err]})"
 msgstr "不正確的 OpenID 網址. (@{[$csr->err]})"
 
-#: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:63 lib/Jifty/Plugin/Authentication/Password/Action/SendAccountConfirmation.pm:75 lib/Jifty/Plugin/Authentication/Password/Action/SendPasswordReminder.pm:79
+#: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:62 lib/Jifty/Plugin/Authentication/Password/Action/SendAccountConfirmation.pm:75 lib/Jifty/Plugin/Authentication/Password/Action/SendPasswordReminder.pm:79
 msgid "It doesn't look like there's an account by that name."
 msgstr "沒有這個帳號."
 
-#: lib/Jifty/Plugin/User/Mixin/Model/User.pm:106
+#: lib/Jifty/Plugin/User/Mixin/Model/User.pm:107
 msgid "It looks like somebody else is using that address. Is there a chance you have another account?"
 msgstr "已經有其他人使用這個電郵地址. 您是否已經有其他帳號了？"
 
-#: lib/Jifty/Plugin/OpenID/Dispatcher.pm:43
+#: lib/Jifty/Plugin/OpenID/Dispatcher.pm:45
 msgid "It looks like someone is already using that OpenID."
 msgstr "已經有其他人使用此 OpenID."
 
@@ -413,11 +446,15 @@ msgstr "Jifty 線上開發文件"
 msgid "Jifty Pod Online"
 msgstr "Jifty 線上 POD 文件"
 
-#: lib/Jifty/View/Declare/Page.pm:194 share/web/templates/_elements/wrapper:18
+#: lib/Jifty/Plugin/I18N/Action/SetLang.pm:12
+msgid "Language"
+msgstr ""
+
+#: lib/Jifty/View/Declare/Page.pm:198 share/web/templates/_elements/wrapper:18
 msgid "Loading..."
 msgstr "請稍候..."
 
-#: lib/Jifty/Plugin/Authentication/Password/Dispatcher.pm:132 lib/Jifty/Plugin/Authentication/Password/View.pm:88
+#: lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:23 lib/Jifty/Plugin/Authentication/Password/Dispatcher.pm:132
 msgid "Login"
 msgstr "登入"
 
@@ -433,11 +470,19 @@ msgstr ""
 msgid "Login with a password"
 msgstr "使用密碼登入"
 
+#: lib/Jifty/Plugin/Authentication/Ldap/View.pm:28
+msgid "Login with your Ldap account"
+msgstr ""
+
 #: lib/Jifty/Plugin/OpenID/View.pm:17
 msgid "Login with your OpenID"
 msgstr ""
 
-#: lib/Jifty/Plugin/Authentication/Password/View.pm:57
+#: lib/Jifty/Plugin/Authentication/Ldap/View.pm:35
+msgid "Login with your ldap account"
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Ldap/View.pm:22 lib/Jifty/Plugin/Authentication/Password/View.pm:57
 msgid "Login!"
 msgstr "登入!"
 
@@ -465,11 +510,11 @@ msgstr "Mason 系統錯誤"
 msgid "Models"
 msgstr "模型"
 
-#: lib/Jifty/Plugin/Authentication/Password/View.pm:114
+#: lib/Jifty/Plugin/Authentication/Password/View.pm:115
 msgid "New password"
 msgstr "新的密碼"
 
-#: lib/Jifty/View/Declare/CRUD.pm:628
+#: lib/Jifty/View/Declare/CRUD.pm:654
 msgid "Next Page"
 msgstr "下一頁"
 
@@ -489,11 +534,15 @@ msgstr "沒有欄位包含"
 msgid "No items found"
 msgstr "未找到記錄"
 
-#: lib/Jifty/View/Declare/CRUD.pm:547
+#: lib/Jifty/View/Declare/CRUD.pm:569
 msgid "No items found."
 msgstr ""
 
-#: lib/Jifty/Web.pm:307
+#: lib/Jifty/Plugin/Comment/View.pm:304
+msgid "No one has made a comment yet."
+msgstr ""
+
+#: lib/Jifty/Web.pm:306
 msgid "No request to handle"
 msgstr "沒有可處理的要求"
 
@@ -513,36 +562,36 @@ msgstr "線上文件"
 msgid "OpenID URL"
 msgstr "OpenID 網址"
 
-#: lib/Jifty/Plugin/OpenID/Action/VerifyOpenID.pm:54
+#: lib/Jifty/Plugin/OpenID/Action/VerifyOpenID.pm:48
 msgid "OpenID verification failed.  It looks like you cancelled the OpenID verification request."
 msgstr ""
 
-#: lib/Jifty/Plugin/OpenID/Action/VerifyOpenID.pm:63
+#: lib/Jifty/Plugin/OpenID/Action/VerifyOpenID.pm:57
 msgid "OpenID verification failed: "
 msgstr ""
 
-#: lib/Jifty/View/Declare/CRUD.pm:595
+#: lib/Jifty/View/Declare/CRUD.pm:621
 #. ($page, $collection->pager->last_page)
 msgid "Page %1 of %2"
 msgstr "第 %1 頁, 共 %2 頁"
 
-#: share/web/templates/__jifty/halo:1
+#: share/web/templates/__jifty/halo:3
 msgid "Page info"
 msgstr "頁面資訊"
 
-#: share/web/templates/__jifty/halo:72
+#: share/web/templates/__jifty/halo:75
 msgid "Parent"
 msgstr "上層元件"
 
-#: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:29 lib/Jifty/Plugin/Authentication/Password/Action/ResetLostPassword.pm:32 lib/Jifty/Plugin/Authentication/Password/Mixin/Model/User.pm:59
+#: lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:28 lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:29 lib/Jifty/Plugin/Authentication/Password/Action/ResetLostPassword.pm:32 lib/Jifty/Plugin/Authentication/Password/Mixin/Model/User.pm:60
 msgid "Password"
 msgstr "密碼"
 
-#: lib/Jifty/Plugin/Authentication/Password/Mixin/Model/User.pm:134
+#: lib/Jifty/Plugin/Authentication/Password/Mixin/Model/User.pm:136
 msgid "Passwords need to be at least six characters long"
 msgstr "密碼至少需要有六個字"
 
-#: lib/Jifty/Record.pm:485 lib/Jifty/Record.pm:564 lib/Jifty/Record.pm:71
+#: lib/Jifty/Action/Record/Delete.pm:61 lib/Jifty/Action/Record/Update.pm:180 lib/Jifty/Action/Record/Update.pm:187 lib/Jifty/Record.pm:508 lib/Jifty/Record.pm:567 lib/Jifty/Record.pm:70
 msgid "Permission denied"
 msgstr "權限不足."
 
@@ -550,11 +599,15 @@ msgstr "權限不足."
 msgid "Please email us!"
 msgstr "請寫信通知我們!"
 
-#: lib/Jifty/View/Declare/CRUD.pm:617
+#: lib/Jifty/Plugin/Comment/View.pm:221
+msgid "Preview"
+msgstr ""
+
+#: lib/Jifty/View/Declare/CRUD.pm:643
 msgid "Previous Page"
 msgstr "上一頁"
 
-#: lib/Jifty/View/Declare/CRUD.pm:430
+#: lib/Jifty/View/Declare/CRUD.pm:447
 msgid "Really delete?"
 msgstr ""
 
@@ -570,12 +623,12 @@ msgstr "成功建立項目."
 msgid "Remember me?"
 msgstr "記住我?"
 
-#: share/web/templates/__jifty/halo:69
+#: share/web/templates/__jifty/halo:72
 #. ($frame->{'render_time'})
 msgid "Rendered in %1s"
 msgstr "頁面繪製時間: %1 秒"
 
-#:
+#: lib/Jifty/Plugin/Authentication/Password/View.pm:108 lib/Jifty/Plugin/Authentication/Password/View.pm:112
 msgid "Reset lost password"
 msgstr "重設密碼"
 
@@ -583,11 +636,11 @@ msgstr "重設密碼"
 msgid "Run the action"
 msgstr "執行動作"
 
-#: share/web/templates/__jifty/halo:111
+#: share/web/templates/__jifty/halo:114
 msgid "SQL Statements"
 msgstr "SQL 陳述式"
 
-#: lib/Jifty/View/Declare/CRUD.pm:408
+#: lib/Jifty/View/Declare/CRUD.pm:425
 msgid "Save"
 msgstr "儲存"
 
@@ -595,19 +648,19 @@ msgstr "儲存"
 msgid "Schema"
 msgstr "綱要"
 
-#: lib/Jifty/View/Declare/CRUD.pm:298
+#: lib/Jifty/View/Declare/CRUD.pm:314
 msgid "Search"
 msgstr "搜尋"
 
-#: lib/Jifty/Plugin/Authentication/Password/View.pm:150 lib/Jifty/Plugin/Authentication/Password/View.pm:180
+#:
 msgid "Send"
 msgstr "寄出"
 
-#:
+#: lib/Jifty/Plugin/Authentication/Password/View.pm:147
 msgid "Send a link to reset your password"
 msgstr "寄送重設密碼的鏈結"
 
-#: lib/Jifty/Plugin/Authentication/Password/View.pm:175
+#:
 msgid "Send a password reminder"
 msgstr "重設密碼"
 
@@ -636,7 +689,7 @@ msgstr ""
 msgid "Something went awry"
 msgstr ""
 
-#: lib/Jifty/Plugin/ErrorTemplates/View.pm:124 share/web/templates/dhandler:1
+#: lib/Jifty/Plugin/ErrorTemplates/View.pm:125 share/web/templates/dhandler:1
 msgid "Something's not quite right"
 msgstr "系統錯誤"
 
@@ -644,8 +697,16 @@ msgstr "系統錯誤"
 msgid "Sorry about this."
 msgstr "非常抱歉."
 
-#: lib/Jifty/Plugin/Authentication/Facebook/Action/LoginFacebookUser.pm:62
+#: lib/Jifty/Plugin/Authentication/Facebook/Action/LoginFacebookUser.pm:62 lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:107 plugins/Authentication-CAS/lib/Jifty/Plugin/Authentication/CAS/Action/CASLogin.pm:115
 msgid "Sorry, something weird happened (we couldn't create a user for you).  Try again later."
+msgstr ""
+
+#: lib/Jifty/Action/Record/Execute.pm:55
+msgid "Start"
+msgstr ""
+
+#: lib/Jifty/Plugin/Comment/View.pm:236
+msgid "Submit"
 msgstr ""
 
 #:
@@ -657,32 +718,40 @@ msgstr "目錄"
 msgid "Tell us what's good, what's bad, and what else you want %1 to do!"
 msgstr ""
 
-#: lib/Jifty/Plugin/User/Mixin/Model/User.pm:99
+#: lib/Jifty/Plugin/User/Mixin/Model/User.pm:100
 #. ($new_email)
 msgid "That %1 doesn't look like an email address."
 msgstr ""
 
-#: lib/Jifty/Action.pm:975
+#: lib/Jifty/Action.pm:1056
 msgid "That doesn't look like a correct value"
 msgstr "欄位格式錯誤."
+
+#: lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:46
+msgid "That doesn't look like a valid login."
+msgstr ""
+
+#: plugins/Authentication-CAS/lib/Jifty/Plugin/Authentication/CAS/Action/CASLogin.pm:47
+msgid "That doesn't look like a valid ticket."
+msgstr ""
 
 #: lib/Jifty/Plugin/Authentication/Password/Action/SendAccountConfirmation.pm:68 lib/Jifty/Plugin/Authentication/Password/Action/SendPasswordReminder.pm:72 lib/Jifty/Plugin/Authentication/Password/Action/Signup.pm:70
 msgid "That doesn't look like an email address."
 msgstr ""
 
-#: lib/Jifty/Action/Record.pm:300
+#: lib/Jifty/Action/Record.pm:351
 msgid "That doesn't look right, but I don't know why"
 msgstr "欄位內容錯誤."
 
-#: lib/Jifty/Plugin/OpenID/Dispatcher.pm:48
+#: lib/Jifty/Plugin/OpenID/Dispatcher.pm:50
 msgid "The OpenID '$openid' has been linked to your account."
 msgstr ""
 
-#: lib/Jifty/Action/Record.pm:205
+#: lib/Jifty/Action/Record.pm:219
 msgid "The passwords you typed didn't match each other"
 msgstr "兩組密碼不符合."
 
-#: lib/Jifty/Web.pm:428
+#: lib/Jifty/Web.pm:427
 msgid "There was an error completing the request.  Please try again later."
 msgstr "系統執行錯誤, 請稍候再試."
 
@@ -702,11 +771,11 @@ msgstr "您可利用此介面來管理資料庫的內容. 請點選表格名稱,
 msgid "To disable this administrative console, add \"AdminMode: 0\" under the \"framework:\" settings in the config file (etc/config.yml)."
 msgstr "如欲停用管理介面, 請在設定檔 (etc/config.yml) 的 \"framework:\" 設定內加上 \"AdminMode: 0\" 即可."
 
-#: lib/Jifty/View/Declare/CRUD.pm:515
+#: lib/Jifty/View/Declare/CRUD.pm:533
 msgid "Toggle search"
 msgstr "切換搜尋畫面"
 
-#: lib/Jifty/Plugin/ErrorTemplates/View.pm:173 share/web/templates/__jifty/error/mason_internal_error:6
+#: lib/Jifty/Plugin/ErrorTemplates/View.pm:175 share/web/templates/__jifty/error/mason_internal_error:6
 msgid "Try again"
 msgstr "再試一下"
 
@@ -718,15 +787,15 @@ msgstr ""
 msgid "Type that again?"
 msgstr "請再輸入一次"
 
-#: lib/Jifty/Action/Record/Update.pm:168
+#: lib/Jifty/Action/Record/Update.pm:214
 msgid "Updated"
 msgstr "成功更新項目."
 
-#: share/web/templates/__jifty/halo:93
+#: share/web/templates/__jifty/halo:96
 msgid "Variables"
 msgstr "變數"
 
-#: lib/Jifty.pm:27
+#: lib/Jifty.pm:29
 msgid "W00t"
 msgstr "喔耶"
 
@@ -743,11 +812,11 @@ msgstr "系統已將確認信寄送到您的電郵信箱."
 msgid "Welcome %1 to the %2"
 msgstr "歡迎 %1 蒞臨 %2"
 
-#: lib/Jifty/Plugin/OpenID/Dispatcher.pm:64
+#: lib/Jifty/Plugin/OpenID/Dispatcher.pm:66
 msgid "Welcome back, "
 msgstr ""
 
-#: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:182
+#: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:194
 #. ($user->name)
 msgid "Welcome back, %1."
 msgstr "歡迎回來, %1."
@@ -766,11 +835,11 @@ msgstr "歡迎光臨 %1, %2!"
 msgid "Welcome to %1, %2. "
 msgstr "歡迎光臨 %1, %2. "
 
-#: lib/Jifty/Plugin/SkeletonApp/View.pm:76 share/web/templates/index.html:1
+#: lib/Jifty/Plugin/SkeletonApp/View.pm:75 share/web/templates/index.html:1
 msgid "Welcome to your new Jifty application"
 msgstr "歡迎光臨您嶄新的 Jifty 應用程式"
 
-#: lib/Jifty/Plugin/OpenID/Action/CreateOpenIDUser.pm:104
+#: lib/Jifty/Plugin/OpenID/Action/CreateOpenIDUser.pm:94
 msgid "Welcome, "
 msgstr ""
 
@@ -794,32 +863,36 @@ msgstr "抱歉, 此頁面不存在, 系統已留下紀錄."
 msgid "You have already confirmed your account."
 msgstr "您已經確認過這個帳號了."
 
-#: lib/Jifty/Plugin/Authentication/Password/View.pm:146
+#: lib/Jifty/Plugin/Authentication/Password/View.pm:148
 msgid "You lost your password. A link to reset it will be sent to the following email address:"
 msgstr "您忘記密碼了.我們會寄送一個重設密碼的連結到下面的電郵地址:"
 
-#: lib/Jifty/Plugin/Authentication/Password/View.pm:176
+#:
 msgid "You lost your password. A reminder will be send to the following mail:"
 msgstr "您忘記密碼了.我們會寄送一份提示到下面的電郵地址:"
 
-#: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:146 lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:152
+#: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:138
 msgid "You may have mistyped your email or password. Give it another shot."
 msgstr "你可能打錯了電郵或密碼.請再試一次"
+
+#: lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:77
+msgid "You may have mistyped your login or password. Give it another shot?"
+msgstr ""
 
 #: lib/Jifty/Plugin/Authentication/Facebook/Action/LinkFacebookUser.pm:40
 msgid "You must be logged in to link your user to your Facebook account."
 msgstr ""
 
-#: lib/Jifty/Action.pm:962
+#: lib/Jifty/Action.pm:948
 msgid "You need to fill in this field"
 msgstr "此欄位不能留空."
 
-#: lib/Jifty/Plugin/SkeletonApp/View.pm:76 share/web/templates/index.html:3
+#: lib/Jifty/Plugin/SkeletonApp/View.pm:75 share/web/templates/index.html:3
 #. ('http://hdl.loc.gov/loc.pnp/cph.3c13461')
 msgid "You said you wanted a pony. (Source %1)"
 msgstr "您可不正是想要一匹小馬嗎? (參見 %1)"
 
-#: lib/Jifty/Plugin/Authentication/Password/View.pm:96
+#: lib/Jifty/Plugin/Authentication/Ldap/View.pm:45 lib/Jifty/Plugin/Authentication/Password/View.pm:96
 msgid "You're already logged in."
 msgstr "您已經登入了."
 
@@ -836,13 +909,27 @@ msgstr ""
 msgid "Your browser can remember your login for you"
 msgstr "下次開啟瀏覽器時, 是否保留您的登入狀態?"
 
+#: lib/Jifty/Plugin/Comment/Action/CreateComment.pm:268
+msgid "Your comment has been added. If it does not immediately appear, it may have been flagged for moderation and should appear shortly."
+msgstr ""
+
 #: lib/Jifty/Plugin/Authentication/Password/Action/ResetLostPassword.pm:87
 msgid "Your password has been reset.  Welcome back."
 msgstr "成功重設您的密碼. 歡迎回來."
 
-#: lib/Jifty/Plugin/Authentication/Password/Mixin/Model/User.pm:61
+#: lib/Jifty/Plugin/Authentication/Password/Mixin/Model/User.pm:63
 msgid "Your password should be at least six characters"
 msgstr "您的密碼必須至少有六個字"
+
+#: lib/Jifty/Plugin/Comment/Notification/CommentNeedsModeration.pm:67
+#. ($appname, $comment->title)
+msgid "[%1] Moderate comment: %2"
+msgstr ""
+
+#: lib/Jifty/Plugin/Comment/Notification/CommentPublished.pm:65
+#. ($appname, $comment->title)
+msgid "[%1] New comment: %2"
+msgstr ""
 
 #:
 msgid "asc"
@@ -860,6 +947,19 @@ msgstr "電郵地址"
 msgid "for now, and try to forget that we let you down."
 msgstr ""
 
+#: lib/Jifty/Plugin/Comment/View.pm:87
+#. ($status)
+msgid "mark as %1"
+msgstr ""
+
+#: lib/Jifty/Action/Record.pm:444
+msgid "no value"
+msgstr ""
+
+#: lib/Jifty/Plugin/Comment/View.pm:100
+msgid "publish"
+msgstr ""
+
 #: lib/Jifty/Manual/PageRegions.pod:188
 msgid "text of the link"
 msgstr "連結文字"
@@ -872,6 +972,10 @@ msgstr "隱藏連結文字"
 msgid "type your password again"
 msgstr "請再次鍵入您的密碼"
 
-#: lib/Jifty/Action.pm:1172
+#: lib/Jifty/Plugin/Comment/View.pm:100
+msgid "unpublish"
+msgstr ""
+
+#: lib/Jifty/Action.pm:1174
 msgid "warning"
 msgstr ""

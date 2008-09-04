@@ -837,3 +837,831 @@ msgstr "もう一度パスワードを入力してください"
 #: lib/Jifty/Action.pm:1172
 msgid "warning"
 msgstr "警告"
+
+#: lib/Jifty/Plugin/Comment/Notification/CommentPublished.pm:71
+#. ($url,        $self->parent->title,        $comment->title,         $from,         $comment->created_on->strftime('%A, %B %d, %Y @ %H:%M%P')
+msgid ""
+"\n"
+"View Comment: %1\n"
+"\n"
+"On Post: %2\n"
+"Subject: %3\n"
+"From: %4\n"
+"Date: %5\n"
+"\n"
+"%6\n"
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Password/Notification/ConfirmLostPassword.pm:38
+#. ($appname,$confirm_url)
+msgid ""
+"\n"
+"You're getting this message because you (or somebody claiming to be you)\n"
+"request to reset your password for %1.\n"
+"\n"
+"If you don't want to reset your password just ignore this message.\n"
+"\n"
+"To reset your password, click on the link below:\n"
+"\n"
+"%2\n"
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Password/Notification/ConfirmEmail.pm:41
+#. ($appname,$confirm_url)
+msgid ""
+"\n"
+"You're getting this message because you (or somebody claiming to be you)\n"
+"wants to use %1. \n"
+"\n"
+"We need to make sure that we got your email address right.  Click on the link below to get started:\n"
+"\n"
+"%2\n"
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Facebook/View.pm:43
+msgid ""
+" id is 'facebook_link' };\n"
+"        span { _(\"Login to Facebook now to link it with your current account!\") };\n"
+"        a {{ href is $plugin->get_link_url };\n"
+"            img {{ src is 'http://static.ak.facebook.com/images/devsite/facebook_login.gif', border is '0' "
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Facebook/View.pm:26
+msgid ""
+" id is 'facebook_login' };\n"
+"        span { _(\"Login to Facebook now to get started!\") };\n"
+"        a {{ href is $plugin->get_login_url };\n"
+"            img {{ src is 'http://static.ak.facebook.com/images/devsite/facebook_login.gif', border is '0' "
+msgstr ""
+
+#: lib/Jifty/Action/Record/Search.pm:172
+msgid "!=>< allowed"
+msgstr ""
+
+#: lib/Jifty/Notification.pm:108 lib/Jifty/Notification.pm:125
+#. ($appname, Jifty->config->framework('AdminEmail')
+msgid "%1 <%2>"
+msgstr ""
+
+#: lib/Jifty/Action/Record/Search.pm:143
+#. ($label)
+msgid "%1 after"
+msgstr ""
+
+#: lib/Jifty/Action/Record/Search.pm:146
+#. ($label)
+msgid "%1 before"
+msgstr ""
+
+#: lib/Jifty/Action/Record/Search.pm:133
+#. ($label)
+msgid "%1 contains"
+msgstr ""
+
+#: lib/Jifty/Action/Record/Search.pm:166
+#. ($label)
+msgid "%1 greater or equal to"
+msgstr ""
+
+#: lib/Jifty/Action/Record/Search.pm:160
+#. ($label)
+msgid "%1 greater than"
+msgstr ""
+
+#: lib/Jifty/Action/Record/Search.pm:121
+#. ($label)
+msgid "%1 is not"
+msgstr ""
+
+#: lib/Jifty/Action/Record/Search.pm:136
+#. ($label)
+msgid "%1 lacks"
+msgstr ""
+
+#: lib/Jifty/Action/Record/Search.pm:169
+#. ($label)
+msgid "%1 less or equal to"
+msgstr ""
+
+#: lib/Jifty/Action/Record/Search.pm:163
+#. ($label)
+msgid "%1 less than"
+msgstr ""
+
+#: share/web/templates/__jifty/error/mason_internal_error:31 share/web/templates/__jifty/error/mason_internal_error:35 share/web/templates/__jifty/error/mason_internal_error:39
+#. ($path, $line)
+#. ($file, $line)
+msgid "%1 line %2"
+msgstr ""
+
+#: lib/Jifty/Plugin/SQLQueries.pm:186 share/web/templates/__jifty/halo:122
+#. ($_->[3])
+msgid "%1 seconds"
+msgstr ""
+
+#: lib/Jifty/Action/Record/Search.pm:149
+#. ($label)
+msgid "%1 since"
+msgstr ""
+
+#: lib/Jifty/Action/Record/Search.pm:152
+#. ($label)
+msgid "%1 until"
+msgstr ""
+
+#: lib/Jifty/Action/Record/Search.pm:81
+msgid "(any)"
+msgstr ""
+
+#: lib/Jifty/Plugin/AutoReference.pm:95
+msgid "- none -"
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Password/Action/ConfirmEmail.pm:58
+msgid ". Your email address has now been confirmed."
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Password/Action/SendPasswordReminder.pm:96
+msgid "A link to reset your password has been sent to your email account."
+msgstr ""
+
+#: lib/Jifty/Notification.pm:110 lib/Jifty/Notification.pm:127
+#. ($appname)
+msgid "A notification from %1!"
+msgstr ""
+
+#: lib/Jifty/Plugin/Comment/View.pm:165
+msgid "Add a comment"
+msgstr ""
+
+#: lib/Jifty/Plugin/AdminUI/Dispatcher.pm:34
+msgid "Administration"
+msgstr ""
+
+#: lib/Jifty/View/Declare/Page.pm:180 share/web/templates/_elements/wrapper:11
+msgid "Administration mode is enabled."
+msgstr ""
+
+#: lib/Jifty/View/Declare/Page.pm:177 share/web/templates/_elements/wrapper:11
+msgid "Alert"
+msgstr ""
+
+#: lib/Jifty/Action/Record/Create.pm:105
+msgid "An error occurred.  Try again later"
+msgstr ""
+
+#: lib/Jifty/Action/Record/Search.pm:177
+msgid "Any field contains"
+msgstr ""
+
+#: lib/Jifty/Plugin/ErrorTemplates/View.pm:131
+msgid "Anyway, the software has logged this error."
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Password/Mixin/Model/User.pm:54
+msgid "Authentication token"
+msgstr ""
+
+#: lib/Jifty/Plugin/SQLQueries.pm:175 share/web/templates/__jifty/halo:120
+msgid "Bindings"
+msgstr ""
+
+#: lib/Jifty/Plugin/Comment/View.pm:138 lib/Jifty/Plugin/Comment/View.pm:197
+#. ($poster,                     $created_on->strftime('%A, %B %d, %Y @ %H:%M%P')
+#. ($poster,                             $created_on->strftime('%A, %B %d, %Y @ %H:%M%P')
+msgid "By %1 %2"
+msgstr ""
+
+#: share/web/templates/helpers/calendar.html:4
+#. (_ &><body class="calpopup"><a href="#" onclick="window.close()
+msgid "Calendar"
+msgstr ""
+
+#: lib/Jifty/View/Declare/CRUD.pm:434
+msgid "Cancel"
+msgstr ""
+
+#: share/web/templates/__jifty/halo:84
+msgid "Children"
+msgstr ""
+
+#: share/web/templates/helpers/calendar.html:4
+msgid "Close window"
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Password/Action/SendAccountConfirmation.pm:94
+msgid "Confirmation resent."
+msgstr ""
+
+#: lib/Jifty/Plugin/OpenID/View.pm:65
+msgid "Continue"
+msgstr ""
+
+#: lib/Jifty/View/Declare/CRUD.pm:723
+msgid "Create"
+msgstr ""
+
+#: lib/Jifty/Action/Record/Create.pm:104
+#. (ref($record)
+msgid "Create of %1 failed: %2"
+msgstr ""
+
+#: lib/Jifty/Action/Record/Create.pm:131
+msgid "Created"
+msgstr ""
+
+#: lib/Jifty/View/Declare/CRUD.pm:444
+msgid "Delete"
+msgstr ""
+
+#: lib/Jifty/Action/Record/Delete.pm:82
+msgid "Deleted"
+msgstr ""
+
+#: share/web/templates/__jifty/halo:2
+msgid "Draw halos"
+msgstr ""
+
+#: lib/Jifty/View/Declare/CRUD.pm:366 share/web/templates/__jifty/halo:129 share/web/templates/__jifty/halo:23
+msgid "Edit"
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:23 lib/Jifty/Plugin/Authentication/Password/Action/SendPasswordReminder.pm:32
+msgid "Email"
+msgstr ""
+
+#: lib/Jifty/Plugin/User/Mixin/Model/User.pm:52
+msgid "Email address"
+msgstr ""
+
+#: lib/Jifty/Plugin/User/Mixin/Model/User.pm:54
+msgid "Email address confirmed?"
+msgstr ""
+
+#: lib/Jifty/Action.pm:1309
+msgid "Foo cannot contain -, *, +, or ?."
+msgstr ""
+
+#: lib/Jifty/Action.pm:1303
+msgid "Foo cannot contain uppercase letters."
+msgstr ""
+
+#: lib/Jifty/Action.pm:1282
+msgid "Foo values are always in lowercase."
+msgstr ""
+
+#: lib/Jifty/Plugin/ErrorTemplates/View.pm:27
+msgid "For one reason or another, you got to a web page that caused a bit of an error. And then you got to our 'basic' error handler. Which means we haven't written a pretty, easy to understand error message for you just yet. The message we do have is :"
+msgstr ""
+
+#: lib/Jifty/Plugin/ErrorTemplates/View.pm:138 share/web/templates/dhandler:7
+msgid "Go back home..."
+msgstr ""
+
+#: lib/Jifty/Plugin/OpenID/View.pm:35
+msgid "Go for it!"
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:34
+msgid "Hashed Password"
+msgstr ""
+
+#: lib/Jifty/Plugin/ErrorTemplates/View.pm:44
+msgid "Head on back home"
+msgstr ""
+
+#: lib/Jifty/I18N.pm:19 lib/Jifty/I18N.pm:23
+#. ('World')
+msgid "Hello, %1!"
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Facebook/Action/LoginFacebookUser.pm:103 lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:137 plugins/Authentication-CAS/lib/Jifty/Plugin/Authentication/CAS/Action/CASLogin.pm:147
+#. (Jifty->web->current_user->user_object->facebook_name)
+#. (Jifty->web->current_user->user_object->name)
+msgid "Hi %1!"
+msgstr ""
+
+#: lib/Jifty/Plugin/I18N/Action/SetLang.pm:44
+#. (DateTime::Locale->load($lang)
+msgid "Hi, we speak %1."
+msgstr ""
+
+#: lib/Jifty/Plugin/SkeletonApp/View.pm:31 share/web/templates/_elements/sidebar:4
+#. ($u->username)
+#. (Jifty->web->current_user->username)
+msgid "Hiya, %1."
+msgstr ""
+
+#: lib/Jifty/Plugin/SkeletonApp/Dispatcher.pm:31
+msgid "Home"
+msgstr ""
+
+#: lib/Jifty/Plugin/User/Mixin/Model/User.pm:49
+msgid "How should I display your name to other users?"
+msgstr ""
+
+#: lib/Jifty/Action.pm:1214
+msgid "I changed $field for you"
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Password/Action/ResetLostPassword.pm:64
+msgid "I'm not sure how this happened."
+msgstr ""
+
+#: lib/Jifty/Plugin/OpenID/View.pm:59
+msgid "If the username provided conflicts with an existing username or contains invalid characters, you will have to give us a new one."
+msgstr ""
+
+#: lib/Jifty/Plugin/ErrorTemplates/View.pm:64
+msgid "Internal error"
+msgstr ""
+
+#: lib/Jifty/Plugin/OpenID/Action/AuthenticateOpenID.pm:53
+msgid "Invalid OpenID URL.  Please check to make sure it is correct.  (@{[$csr->err]})"
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:62 lib/Jifty/Plugin/Authentication/Password/Action/SendAccountConfirmation.pm:75 lib/Jifty/Plugin/Authentication/Password/Action/SendPasswordReminder.pm:79
+msgid "It doesn't look like there's an account by that name."
+msgstr ""
+
+#: lib/Jifty/Plugin/User/Mixin/Model/User.pm:107
+msgid "It looks like somebody else is using that address. Is there a chance you have another account?"
+msgstr ""
+
+#: lib/Jifty/Plugin/OpenID/Dispatcher.pm:45
+msgid "It looks like someone is already using that OpenID."
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Password/Action/Signup.pm:75
+msgid "It looks like you already have an account. Perhaps you want to <a href=\"/login\">log in</a> instead?"
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Password/Action/ResetLostPassword.pm:75
+msgid "It looks like you didn't enter the same password into both boxes. Give it another shot?"
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Password/Action/SendAccountConfirmation.pm:79
+msgid "It looks like you're already confirmed."
+msgstr ""
+
+#: lib/Jifty/Plugin/I18N/Action/SetLang.pm:12
+msgid "Language"
+msgstr ""
+
+#: lib/Jifty/View/Declare/Page.pm:198 share/web/templates/_elements/wrapper:18
+msgid "Loading..."
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:23 lib/Jifty/Plugin/Authentication/Password/Dispatcher.pm:132
+msgid "Login"
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Facebook/View.pm:24
+msgid "Login to Facebook now to get started!"
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Facebook/View.pm:41
+msgid "Login to Facebook now to link it with your current account!"
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Password/View.pm:82
+msgid "Login with a password"
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Ldap/View.pm:28
+msgid "Login with your Ldap account"
+msgstr ""
+
+#: lib/Jifty/Plugin/OpenID/View.pm:17
+msgid "Login with your OpenID"
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Ldap/View.pm:35
+msgid "Login with your ldap account"
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Ldap/View.pm:22 lib/Jifty/Plugin/Authentication/Password/View.pm:57
+msgid "Login!"
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Password/Dispatcher.pm:151
+msgid "Logout"
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Password/View.pm:90
+msgid "Lost your password?"
+msgstr ""
+
+#: share/web/templates/__jifty/error/mason_internal_error:1
+msgid "Mason error"
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Password/View.pm:115
+msgid "New password"
+msgstr ""
+
+#: lib/Jifty/View/Declare/CRUD.pm:654
+msgid "Next Page"
+msgstr ""
+
+#: lib/Jifty/Plugin/User/Mixin/Model/User.pm:48
+msgid "Nickname"
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Password/View.pm:79
+msgid "No account yet? It's quick and easy. "
+msgstr ""
+
+#: lib/Jifty/Action/Record/Search.pm:178
+msgid "No field contains"
+msgstr ""
+
+#: lib/Jifty/View/Declare/CRUD.pm:569
+msgid "No items found."
+msgstr ""
+
+#: lib/Jifty/Plugin/Comment/View.pm:304
+msgid "No one has made a comment yet."
+msgstr ""
+
+#: lib/Jifty/Web.pm:306
+msgid "No request to handle"
+msgstr ""
+
+#: lib/Jifty/Plugin/UUID/Widget.pm:37
+msgid "No value yet"
+msgstr ""
+
+#: lib/Jifty/Plugin/OnlineDocs/Dispatcher.pm:26
+msgid "Online docs"
+msgstr ""
+
+#: lib/Jifty/Plugin/OpenID/Action/AuthenticateOpenID.pm:27
+msgid "OpenID URL"
+msgstr ""
+
+#: lib/Jifty/Plugin/OpenID/Action/VerifyOpenID.pm:48
+msgid "OpenID verification failed.  It looks like you cancelled the OpenID verification request."
+msgstr ""
+
+#: lib/Jifty/Plugin/OpenID/Action/VerifyOpenID.pm:57
+msgid "OpenID verification failed: "
+msgstr ""
+
+#: lib/Jifty/View/Declare/CRUD.pm:621
+#. ($page, $collection->pager->last_page)
+msgid "Page %1 of %2"
+msgstr ""
+
+#: share/web/templates/__jifty/halo:3
+msgid "Page info"
+msgstr ""
+
+#: share/web/templates/__jifty/halo:75
+msgid "Parent"
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:28 lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:29 lib/Jifty/Plugin/Authentication/Password/Action/ResetLostPassword.pm:32 lib/Jifty/Plugin/Authentication/Password/Mixin/Model/User.pm:60
+msgid "Password"
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Password/Mixin/Model/User.pm:136
+msgid "Passwords need to be at least six characters long"
+msgstr ""
+
+#: lib/Jifty/Action/Record/Delete.pm:61 lib/Jifty/Action/Record/Update.pm:180 lib/Jifty/Action/Record/Update.pm:187 lib/Jifty/Record.pm:508 lib/Jifty/Record.pm:567 lib/Jifty/Record.pm:70
+msgid "Permission denied"
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Password/Action/ResetLostPassword.pm:66
+msgid "Please email us!"
+msgstr ""
+
+#: lib/Jifty/Plugin/Comment/View.pm:221
+msgid "Preview"
+msgstr ""
+
+#: lib/Jifty/View/Declare/CRUD.pm:643
+msgid "Previous Page"
+msgstr ""
+
+#: lib/Jifty/View/Declare/CRUD.pm:447
+msgid "Really delete?"
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Password/Action/ResetLostPassword.pm:65
+msgid "Really, really sorry."
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:37
+msgid "Remember me?"
+msgstr ""
+
+#: share/web/templates/__jifty/halo:72
+#. ($frame->{'render_time'})
+msgid "Rendered in %1s"
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Password/View.pm:108 lib/Jifty/Plugin/Authentication/Password/View.pm:112
+msgid "Reset lost password"
+msgstr ""
+
+#: share/web/templates/__jifty/halo:114
+msgid "SQL Statements"
+msgstr ""
+
+#: lib/Jifty/View/Declare/CRUD.pm:425
+msgid "Save"
+msgstr ""
+
+#: lib/Jifty/View/Declare/CRUD.pm:314
+msgid "Search"
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Password/View.pm:147
+msgid "Send a link to reset your password"
+msgstr ""
+
+#: lib/Jifty/Plugin/Feedback/View.pm:21
+msgid "Send us feedback!"
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Password/Dispatcher.pm:137 lib/Jifty/Plugin/Authentication/Password/View.pm:42 lib/Jifty/Plugin/Authentication/Password/View.pm:47
+msgid "Sign up"
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Password/View.pm:80
+msgid "Sign up for an account!"
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Password/Action/Signup.pm:108
+#. ($msg)
+msgid "Something bad happened and we couldn't create your account: %1"
+msgstr ""
+
+#: lib/Jifty/Plugin/ErrorTemplates/View.pm:149
+msgid "Something went awry"
+msgstr ""
+
+#: lib/Jifty/Plugin/ErrorTemplates/View.pm:125 share/web/templates/dhandler:1
+msgid "Something's not quite right"
+msgstr ""
+
+#: lib/Jifty/Plugin/ErrorTemplates/View.pm:132
+msgid "Sorry about this."
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Facebook/Action/LoginFacebookUser.pm:62 lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:107 plugins/Authentication-CAS/lib/Jifty/Plugin/Authentication/CAS/Action/CASLogin.pm:115
+msgid "Sorry, something weird happened (we couldn't create a user for you).  Try again later."
+msgstr ""
+
+#: lib/Jifty/Action/Record/Execute.pm:55
+msgid "Start"
+msgstr ""
+
+#: lib/Jifty/Plugin/Comment/View.pm:236
+msgid "Submit"
+msgstr ""
+
+#: lib/Jifty/Plugin/Feedback/View.pm:23
+#. (Jifty->config->framework('ApplicationName')
+msgid "Tell us what's good, what's bad, and what else you want %1 to do!"
+msgstr ""
+
+#: lib/Jifty/Plugin/User/Mixin/Model/User.pm:100
+#. ($new_email)
+msgid "That %1 doesn't look like an email address."
+msgstr ""
+
+#: lib/Jifty/Action.pm:1056
+msgid "That doesn't look like a correct value"
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:46
+msgid "That doesn't look like a valid login."
+msgstr ""
+
+#: plugins/Authentication-CAS/lib/Jifty/Plugin/Authentication/CAS/Action/CASLogin.pm:47
+msgid "That doesn't look like a valid ticket."
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Password/Action/SendAccountConfirmation.pm:68 lib/Jifty/Plugin/Authentication/Password/Action/SendPasswordReminder.pm:72 lib/Jifty/Plugin/Authentication/Password/Action/Signup.pm:70
+msgid "That doesn't look like an email address."
+msgstr ""
+
+#: lib/Jifty/Action/Record.pm:351
+msgid "That doesn't look right, but I don't know why"
+msgstr ""
+
+#: lib/Jifty/Plugin/OpenID/Dispatcher.pm:50
+msgid "The OpenID '$openid' has been linked to your account."
+msgstr ""
+
+#: lib/Jifty/Action/Record.pm:219
+msgid "The passwords you typed didn't match each other"
+msgstr ""
+
+#: lib/Jifty/Web.pm:427
+msgid "There was an error completing the request.  Please try again later."
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Password/Action/ResetLostPassword.pm:81
+msgid "There was an error setting your password."
+msgstr ""
+
+#: lib/Jifty/Plugin/ErrorTemplates/View.pm:37
+msgid "There's a pretty good chance that error message doesn't mean anything to you, but we'd rather you have a little bit of information about what went wrong than nothing. We've logged this error, so we know we need to write something friendly explaining just what happened and how to fix it."
+msgstr ""
+
+#: lib/Jifty/View/Declare/CRUD.pm:533
+msgid "Toggle search"
+msgstr ""
+
+#: lib/Jifty/Plugin/ErrorTemplates/View.pm:175 share/web/templates/__jifty/error/mason_internal_error:6
+msgid "Try again"
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Password/Action/Signup.pm:108
+msgid "Try again later. We're really, really sorry."
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Password/Action/Signup.pm:53
+msgid "Type that again?"
+msgstr ""
+
+#: lib/Jifty/Action/Record/Update.pm:214
+msgid "Updated"
+msgstr ""
+
+#: share/web/templates/__jifty/halo:96
+msgid "Variables"
+msgstr ""
+
+#: lib/Jifty.pm:29
+msgid "W00t"
+msgstr ""
+
+#: lib/Jifty/Plugin/OpenID/View.pm:53
+msgid "We need you to set a username or quickly check the one associated with your OpenID. Your username is what other people will see when you ask questions or make suggestions"
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Password/Action/Signup.pm:114
+msgid "We've sent a confirmation message to your email box."
+msgstr ""
+
+#: lib/Jifty/I18N.pm:31
+#. ('Bob', 'World')
+msgid "Welcome %1 to the %2"
+msgstr ""
+
+#: lib/Jifty/Plugin/OpenID/Dispatcher.pm:66
+msgid "Welcome back, "
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:194
+#. ($user->name)
+msgid "Welcome back, %1."
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Password/Notification/ConfirmEmail.pm:40
+#. ($appname)
+msgid "Welcome to %1!"
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Password/Action/ConfirmEmail.pm:57 lib/Jifty/Plugin/Authentication/Password/Action/Signup.pm:113
+#. (Jifty->config->framework('ApplicationName')
+msgid "Welcome to %1, %2."
+msgstr ""
+
+#: lib/Jifty/Plugin/SkeletonApp/View.pm:75 share/web/templates/index.html:1
+msgid "Welcome to your new Jifty application"
+msgstr ""
+
+#: lib/Jifty/Plugin/OpenID/Action/CreateOpenIDUser.pm:94
+msgid "Welcome, "
+msgstr ""
+
+#: lib/Jifty/Plugin/OpenID/View.pm:42
+msgid "You already logged in."
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Password/Action/ResetLostPassword.pm:63
+msgid "You don't exist."
+msgstr ""
+
+#: lib/Jifty/Plugin/ErrorTemplates/View.pm:130
+msgid "You got to a page that we don't think exists."
+msgstr ""
+
+#: share/web/templates/dhandler:5
+msgid "You got to a page that we don't think exists.  Anyway, the software has logged this error. Sorry about this."
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Password/Action/ConfirmEmail.pm:44
+msgid "You have already confirmed your account."
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Password/View.pm:148
+msgid "You lost your password. A link to reset it will be sent to the following email address:"
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:138
+msgid "You may have mistyped your email or password. Give it another shot."
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:77
+msgid "You may have mistyped your login or password. Give it another shot?"
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Facebook/Action/LinkFacebookUser.pm:40
+msgid "You must be logged in to link your user to your Facebook account."
+msgstr ""
+
+#: lib/Jifty/Action.pm:948
+msgid "You need to fill in this field"
+msgstr ""
+
+#: lib/Jifty/Plugin/SkeletonApp/View.pm:75 share/web/templates/index.html:3
+#. ('http://hdl.loc.gov/loc.pnp/cph.3c13461')
+msgid "You said you wanted a pony. (Source %1)"
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Ldap/View.pm:45 lib/Jifty/Plugin/Authentication/Password/View.pm:96
+msgid "You're already logged in."
+msgstr ""
+
+#: lib/Jifty/Plugin/SkeletonApp/View.pm:34 share/web/templates/_elements/sidebar:6
+msgid "You're not currently signed in."
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Facebook/Action/LinkFacebookUser.pm:72
+#. (Jifty->web->current_user->user_object->facebook_name)
+msgid "Your account has been successfully linked to your Facebook user %1!"
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:38
+msgid "Your browser can remember your login for you"
+msgstr ""
+
+#: lib/Jifty/Plugin/Comment/Action/CreateComment.pm:268
+msgid "Your comment has been added. If it does not immediately appear, it may have been flagged for moderation and should appear shortly."
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Password/Action/ResetLostPassword.pm:87
+msgid "Your password has been reset.  Welcome back."
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Password/Mixin/Model/User.pm:63
+msgid "Your password should be at least six characters"
+msgstr ""
+
+#: lib/Jifty/Plugin/Comment/Notification/CommentNeedsModeration.pm:67
+#. ($appname, $comment->title)
+msgid "[%1] Moderate comment: %2"
+msgstr ""
+
+#: lib/Jifty/Plugin/Comment/Notification/CommentPublished.pm:65
+#. ($appname, $comment->title)
+msgid "[%1] New comment: %2"
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Password/Action/SendAccountConfirmation.pm:31
+msgid "email address"
+msgstr ""
+
+#: lib/Jifty/Plugin/ErrorTemplates/View.pm:46
+msgid "for now, and try to forget that we let you down."
+msgstr ""
+
+#: lib/Jifty/Plugin/Comment/View.pm:87
+#. ($status)
+msgid "mark as %1"
+msgstr ""
+
+#: lib/Jifty/Action/Record.pm:444
+msgid "no value"
+msgstr ""
+
+#: lib/Jifty/Plugin/Comment/View.pm:100
+msgid "publish"
+msgstr ""
+
+#: lib/Jifty/Manual/PageRegions.pod:188
+msgid "text of the link"
+msgstr ""
+
+#: lib/Jifty/Manual/PageRegions.pod:225
+msgid "text of the link that hides"
+msgstr ""
+
+#: lib/Jifty/Plugin/Authentication/Password/Action/ResetLostPassword.pm:37
+msgid "type your password again"
+msgstr ""
+
+#: lib/Jifty/Plugin/Comment/View.pm:100
+msgid "unpublish"
+msgstr ""
+
+#: lib/Jifty/Action.pm:1174
+msgid "warning"
+msgstr ""
