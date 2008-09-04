@@ -219,7 +219,7 @@ for (@plugins) {
     die unless -d "plugins/$_";
 #    install_share("plugins/$_/share");
     chdir("plugins/$_");
-    system("$^X -I../../lib Makefile.PL INSTALLDIRS=$(INSTALLDIRS)");
+    system("$^X -I../../lib Makefile.PL INSTALLDIRS=".$ENV{INSTALLDIRS});
     chdir('../..');
 
 }
@@ -227,7 +227,7 @@ for (@plugins) {
 postamble(<<"END");
 
 install ::
-@{[ join("\n", map { "\tcd plugins/$_; make install" } @plugins)   ]}
+@{[ join("\n", map { "\tcd plugins/$_; make install".' DESTDIR=$(DESTDIR) PREFIX=$(PREFIX)' } @plugins)   ]}
 
 
 END
