@@ -227,8 +227,13 @@ for (@plugins) {
 postamble(<<"END");
 
 install ::
-@{[ join("\n", map { "\tcd plugins/$_; make install".' DESTDIR=$(DESTDIR) PREFIX=$(PREFIX)' } @plugins)   ]}
+@{[ join("\n", map { "\tcd plugins/$_;".' $(MAKE) install DESTDIR=$(DESTDIR) PREFIX=$(PREFIX)' } @plugins)   ]}
 
+distclean :: realclean
+@{[ "\t".'$(NOECHO) $(NOOP)']}
+
+realclean :: 
+@{[ join("\n", map { "\tcd plugins/$_;".' $(MAKE) realclean' } @plugins)   ]}
 
 END
 
