@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Audrey Tang <audreyt@audreyt.org>\n"
+"Last-Translator: Kang-min LIu <gugod@gugod.org>\n"
 "Language-Team: Traditional Chinese\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -169,7 +169,7 @@ msgstr "(不限)"
 
 #: lib/Jifty/Plugin/AutoReference.pm:95
 msgid "- none -"
-msgstr ""
+msgstr "- 無 -"
 
 #: lib/Jifty/Plugin/Authentication/Password/Action/ConfirmEmail.pm:58
 msgid ". Your email address has now been confirmed."
@@ -190,7 +190,7 @@ msgstr "操作"
 
 #: lib/Jifty/Plugin/Comment/View.pm:165
 msgid "Add a comment"
-msgstr ""
+msgstr "發表迴響"
 
 #: lib/Jifty/Plugin/AdminUI/Dispatcher.pm:34
 msgid "Administration"
@@ -214,7 +214,7 @@ msgstr "任意欄位包含"
 
 #: lib/Jifty/Plugin/ErrorTemplates/View.pm:131
 msgid "Anyway, the software has logged this error."
-msgstr ""
+msgstr "總之，軟體已經記錄此錯誤。"
 
 #: lib/Jifty/Plugin/Authentication/Password/Mixin/Model/User.pm:54
 msgid "Authentication token"
@@ -350,7 +350,7 @@ msgstr "回首頁..."
 
 #: lib/Jifty/Plugin/OpenID/View.pm:35
 msgid "Go for it!"
-msgstr ""
+msgstr "去吧！"
 
 #: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:34
 msgid "Hashed Password"
@@ -365,7 +365,7 @@ msgstr "回首頁"
 msgid "Hello, %1!"
 msgstr "%1 您好!"
 
-#: lib/Jifty/Plugin/Authentication/Facebook/Action/LoginFacebookUser.pm:103 lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:137 plugins/Authentication-CAS/lib/Jifty/Plugin/Authentication/CAS/Action/CASLogin.pm:147
+#: lib/Jifty/Plugin/Authentication/Facebook/Action/LoginFacebookUser.pm:103 lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:137
 #. (Jifty->web->current_user->user_object->facebook_name)
 #. (Jifty->web->current_user->user_object->name)
 msgid "Hi %1!"
@@ -374,7 +374,7 @@ msgstr ""
 #: lib/Jifty/Plugin/I18N/Action/SetLang.pm:44
 #. (DateTime::Locale->load($lang)
 msgid "Hi, we speak %1."
-msgstr ""
+msgstr "嗨，我們現在說 %1"
 
 #: lib/Jifty/Plugin/SkeletonApp/View.pm:31 share/web/templates/_elements/sidebar:4
 #. ($u->username)
@@ -404,7 +404,7 @@ msgstr ""
 
 #: lib/Jifty/Plugin/ErrorTemplates/View.pm:64
 msgid "Internal error"
-msgstr ""
+msgstr "內部錯誤"
 
 #: lib/Jifty/Plugin/OpenID/Action/AuthenticateOpenID.pm:53
 msgid "Invalid OpenID URL.  Please check to make sure it is correct.  (@{[$csr->err]})"
@@ -448,7 +448,7 @@ msgstr "Jifty 線上 POD 文件"
 
 #: lib/Jifty/Plugin/I18N/Action/SetLang.pm:12
 msgid "Language"
-msgstr ""
+msgstr "語言"
 
 #: lib/Jifty/View/Declare/Page.pm:198 share/web/templates/_elements/wrapper:18
 msgid "Loading..."
@@ -476,7 +476,7 @@ msgstr ""
 
 #: lib/Jifty/Plugin/OpenID/View.pm:17
 msgid "Login with your OpenID"
-msgstr ""
+msgstr "以您的 OpenID 登入"
 
 #: lib/Jifty/Plugin/Authentication/Ldap/View.pm:35
 msgid "Login with your ldap account"
@@ -536,11 +536,11 @@ msgstr "未找到記錄"
 
 #: lib/Jifty/View/Declare/CRUD.pm:569
 msgid "No items found."
-msgstr ""
+msgstr "未找到記錄"
 
 #: lib/Jifty/Plugin/Comment/View.pm:304
 msgid "No one has made a comment yet."
-msgstr ""
+msgstr "尚無人發表評論"
 
 #: lib/Jifty/Web.pm:306
 msgid "No request to handle"
@@ -564,11 +564,11 @@ msgstr "OpenID 網址"
 
 #: lib/Jifty/Plugin/OpenID/Action/VerifyOpenID.pm:48
 msgid "OpenID verification failed.  It looks like you cancelled the OpenID verification request."
-msgstr ""
+msgstr "OpenID 確認失敗。您似乎中途取消了確認 OpenID 的要求。"
 
 #: lib/Jifty/Plugin/OpenID/Action/VerifyOpenID.pm:57
 msgid "OpenID verification failed: "
-msgstr ""
+msgstr "OpenID 確認失敗: "
 
 #: lib/Jifty/View/Declare/CRUD.pm:621
 #. ($page, $collection->pager->last_page)
@@ -601,7 +601,7 @@ msgstr "請寫信通知我們!"
 
 #: lib/Jifty/Plugin/Comment/View.pm:221
 msgid "Preview"
-msgstr ""
+msgstr "預覽"
 
 #: lib/Jifty/View/Declare/CRUD.pm:643
 msgid "Previous Page"
@@ -609,7 +609,7 @@ msgstr "上一頁"
 
 #: lib/Jifty/View/Declare/CRUD.pm:447
 msgid "Really delete?"
-msgstr ""
+msgstr "真的要刪除嗎？"
 
 #: lib/Jifty/Plugin/Authentication/Password/Action/ResetLostPassword.pm:65
 msgid "Really, really sorry."
@@ -666,7 +666,7 @@ msgstr "重設密碼"
 
 #: lib/Jifty/Plugin/Feedback/View.pm:21
 msgid "Send us feedback!"
-msgstr ""
+msgstr "給我們回應！"
 
 #: lib/Jifty/Plugin/Authentication/Password/Dispatcher.pm:137 lib/Jifty/Plugin/Authentication/Password/View.pm:42 lib/Jifty/Plugin/Authentication/Password/View.pm:47
 msgid "Sign up"
@@ -683,11 +683,11 @@ msgstr "註冊"
 #: lib/Jifty/Plugin/Authentication/Password/Action/Signup.pm:108
 #. ($msg)
 msgid "Something bad happened and we couldn't create your account: %1"
-msgstr ""
+msgstr "發生了不好的事以至於我們無法建立你的帳號： %1"
 
 #: lib/Jifty/Plugin/ErrorTemplates/View.pm:149
 msgid "Something went awry"
-msgstr ""
+msgstr "好像搞錯什麼了"
 
 #: lib/Jifty/Plugin/ErrorTemplates/View.pm:125 share/web/templates/dhandler:1
 msgid "Something's not quite right"
@@ -697,17 +697,17 @@ msgstr "系統錯誤"
 msgid "Sorry about this."
 msgstr "非常抱歉."
 
-#: lib/Jifty/Plugin/Authentication/Facebook/Action/LoginFacebookUser.pm:62 lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:107 plugins/Authentication-CAS/lib/Jifty/Plugin/Authentication/CAS/Action/CASLogin.pm:115
+#: lib/Jifty/Plugin/Authentication/Facebook/Action/LoginFacebookUser.pm:62 lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:107
 msgid "Sorry, something weird happened (we couldn't create a user for you).  Try again later."
-msgstr ""
+msgstr "不好意思，發生了奇怪的事（我們無法替您建立帳號）。請稍候再試。"
 
 #: lib/Jifty/Action/Record/Execute.pm:55
 msgid "Start"
-msgstr ""
+msgstr "開始"
 
 #: lib/Jifty/Plugin/Comment/View.pm:236
 msgid "Submit"
-msgstr ""
+msgstr "送出"
 
 #:
 msgid "Table of Contents"
@@ -716,12 +716,12 @@ msgstr "目錄"
 #: lib/Jifty/Plugin/Feedback/View.pm:23
 #. (Jifty->config->framework('ApplicationName')
 msgid "Tell us what's good, what's bad, and what else you want %1 to do!"
-msgstr ""
+msgstr "請告訴我們的好壞，或是你想要 %1 提供的功能！"
 
 #: lib/Jifty/Plugin/User/Mixin/Model/User.pm:100
 #. ($new_email)
 msgid "That %1 doesn't look like an email address."
-msgstr ""
+msgstr "那個 %1 看起來不太像是個電子郵件地址。"
 
 #: lib/Jifty/Action.pm:1056
 msgid "That doesn't look like a correct value"
@@ -729,15 +729,11 @@ msgstr "欄位格式錯誤."
 
 #: lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:46
 msgid "That doesn't look like a valid login."
-msgstr ""
-
-#: plugins/Authentication-CAS/lib/Jifty/Plugin/Authentication/CAS/Action/CASLogin.pm:47
-msgid "That doesn't look like a valid ticket."
-msgstr ""
+msgstr "看起來不像是有個有效的登入帳號"
 
 #: lib/Jifty/Plugin/Authentication/Password/Action/SendAccountConfirmation.pm:68 lib/Jifty/Plugin/Authentication/Password/Action/SendPasswordReminder.pm:72 lib/Jifty/Plugin/Authentication/Password/Action/Signup.pm:70
 msgid "That doesn't look like an email address."
-msgstr ""
+msgstr "看起來不像是電子郵件地址"
 
 #: lib/Jifty/Action/Record.pm:351
 msgid "That doesn't look right, but I don't know why"
@@ -745,7 +741,7 @@ msgstr "欄位內容錯誤."
 
 #: lib/Jifty/Plugin/OpenID/Dispatcher.pm:50
 msgid "The OpenID '$openid' has been linked to your account."
-msgstr ""
+msgstr "OpenID '$openid' 已經連結至您的帳號。"
 
 #: lib/Jifty/Action/Record.pm:219
 msgid "The passwords you typed didn't match each other"
@@ -757,7 +753,7 @@ msgstr "系統執行錯誤, 請稍候再試."
 
 #: lib/Jifty/Plugin/Authentication/Password/Action/ResetLostPassword.pm:81
 msgid "There was an error setting your password."
-msgstr ""
+msgstr "在設置您的密碼時發生了錯誤。"
 
 #: lib/Jifty/Plugin/ErrorTemplates/View.pm:37
 msgid "There's a pretty good chance that error message doesn't mean anything to you, but we'd rather you have a little bit of information about what went wrong than nothing. We've logged this error, so we know we need to write something friendly explaining just what happened and how to fix it."
@@ -781,7 +777,7 @@ msgstr "再試一下"
 
 #: lib/Jifty/Plugin/Authentication/Password/Action/Signup.pm:108
 msgid "Try again later. We're really, really sorry."
-msgstr ""
+msgstr "請稍候再試。請接受我們十二萬分歉意。"
 
 #: lib/Jifty/Plugin/Authentication/Password/Action/Signup.pm:53
 msgid "Type that again?"
@@ -814,7 +810,7 @@ msgstr "歡迎 %1 蒞臨 %2"
 
 #: lib/Jifty/Plugin/OpenID/Dispatcher.pm:66
 msgid "Welcome back, "
-msgstr ""
+msgstr "歡迎回來，"
 
 #: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:194
 #. ($user->name)
@@ -841,11 +837,11 @@ msgstr "歡迎光臨您嶄新的 Jifty 應用程式"
 
 #: lib/Jifty/Plugin/OpenID/Action/CreateOpenIDUser.pm:94
 msgid "Welcome, "
-msgstr ""
+msgstr "歡迎，"
 
 #: lib/Jifty/Plugin/OpenID/View.pm:42
 msgid "You already logged in."
-msgstr ""
+msgstr "您已經登入了。"
 
 #: lib/Jifty/Plugin/Authentication/Password/Action/ResetLostPassword.pm:63
 msgid "You don't exist."
@@ -978,4 +974,4 @@ msgstr ""
 
 #: lib/Jifty/Action.pm:1174
 msgid "warning"
-msgstr ""
+msgstr "警告"
