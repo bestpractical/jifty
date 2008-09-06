@@ -208,7 +208,6 @@ version_from('lib/Jifty.pm');
 install_script('bin/jifty');
 install_share;
 
-# ls plugins -> Authentication-CAS  Multipage  TabView
 my @plugins = defined $ENV{JIFTY_PLUGINS} ? split(/ /, $ENV{JIFTY_PLUGINS}) : qw(TabView);
 
 # Test all of our sub-dist tests too
@@ -219,7 +218,7 @@ for (@plugins) {
     die unless -d "plugins/$_";
 #    install_share("plugins/$_/share");
     chdir("plugins/$_");
-    system("$^X -I../../lib Makefile.PL INSTALLDIRS=".$ENV{INSTALLDIRS});
+    system("$^X -I../../lib Makefile.PL");
     chdir('../..');
 
 }
@@ -227,13 +226,8 @@ for (@plugins) {
 postamble(<<"END");
 
 install ::
-@{[ join("\n", map { "\tcd plugins/$_;".' $(MAKE) install DESTDIR=$(DESTDIR) PREFIX=$(PREFIX)' } @plugins)   ]}
+@{[ join("\n", map { "\tcd plugins/$_; make install" } @plugins)   ]}
 
-distclean :: realclean
-@{[ "\t".'$(NOECHO) $(NOOP)']}
-
-realclean :: 
-@{[ join("\n", map { "\tcd plugins/$_;".' $(MAKE) realclean' } @plugins)   ]}
 
 END
 
