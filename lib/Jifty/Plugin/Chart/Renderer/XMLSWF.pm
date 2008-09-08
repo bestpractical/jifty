@@ -65,7 +65,22 @@ sub render {
     );
 
     # Make sure the type is ready to be used
-    $args{type} = $types{ $args{type} } || undef;
+
+    if ($args{type} eq 'composite') {
+        for (@{ $args{types} }) {
+            if (!$types{$_}) {
+                Jifty->log->warn("Unsupported chart type: $_!");
+                return;
+            }
+            $_ = $types{$_};
+        }
+    }
+    else {
+        $args{type} = $types{ $args{type} } or do {
+            Jifty->log->warn("Unsupported chart type: $args{type}!");
+            return;
+        };
+    }
 
     # Kill the "px" unit
     $args{width} =~ s/px$//;

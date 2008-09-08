@@ -112,6 +112,10 @@ template 'chart/xmlswf' => sub {
         },
     );
 
+    if ($args->{type} eq 'composite') {
+        $chart{chart_type} = { string => $args->{types} };
+    }
+
     for my $i ( 0 .. $#{ $args->{data} } ) {
         push @{$chart{'chart_data'}{'row'}}, {
             string => [ $args->{legend}[$i] || {} ],
