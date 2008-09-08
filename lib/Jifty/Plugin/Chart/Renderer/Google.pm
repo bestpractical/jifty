@@ -200,8 +200,8 @@ sub render {
         my @max = map { $_ - $args{'max_plus'}  } @{ $args{'max_value'} };
 
         # repeat if necessary
-        #push @min, ($min[-1]) x (@data - @min);
-        #push @max, ($max[-1]) x (@data - @max);
+        push @min, ($min[-1]) x (@{ $args{'data'} } - @min);
+        push @max, ($max[-1]) x (@{ $args{'data'} } - @max);
 
         $args{'calculated_min'} = \@min;
         $args{'calculated_max'} = \@max;
