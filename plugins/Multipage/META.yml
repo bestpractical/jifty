@@ -1,7 +1,7 @@
 --- 
 author: ~
 distribution_type: module
-generated_by: Module::Install version 0.68
+generated_by: Module::Install version 0.70
 license: unknown
 meta-spec: 
   url: http://module-build.sourceforge.net/META-spec-v1.3.html

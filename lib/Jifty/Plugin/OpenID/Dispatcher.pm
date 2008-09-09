@@ -14,6 +14,14 @@ Dispatcher for L<Jifty::Plugin::OpenID>.  Handles a lot of the work.
 
 =cut
 
+sub _continuation_or_redirect {
+    if(Jifty->web->request->continuation) {
+        Jifty->web->request->continuation->call;
+    } else {
+        redirect @_;
+    }
+}
+
 before qr'^/(?:openid/link)' => run {
     tangent('/openid/login') unless (Jifty->web->current_user->id)
 };
@@ -43,14 +51,13 @@ on 'openid/verify_and_link' => run {
 
         if ( not $ret ) {
             $result->error(_("It looks like someone is already using that OpenID."));
-            redirect '/openid/link';
         }
         else {
             $user->user_object->link_to_openid( $openid );
             $result->message(_("The OpenID '$openid' has been linked to your account."));
         }
     }
-    redirect '/';
+    _continuation_or_redirect('/openid/link');
 };
 
 on 'openid/verify_and_login' => run {
@@ -70,11 +77,7 @@ on 'openid/verify_and_login' => run {
             Jifty->web->session->expires( undef );
             Jifty->web->session->set_cookie;
 
-            if(Jifty->web->request->continuation) {
-                Jifty->web->request->continuation->call;
-            } else {
-                redirect '/';
-            }
+            _continuation_or_redirect('/');
         }
         else {
             # User needs to create account still
@@ -90,11 +93,7 @@ on 'openid/verify_and_login' => run {
         }
     }
     else {
-        if(Jifty->web->request->continuation) {
-            Jifty->web->request->continuation->call;
-        } else {
-            redirect '/openid/login';
-        }
+        _continuation_or_redirect('/openid/login');
     }
 };
 
