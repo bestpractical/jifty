@@ -771,7 +771,9 @@ Behaviour.register({
         }
     },
     '.form_field .error, .form_field .warning, .form_field .canonicalization_note': function(e) {
-        if ( e.innerHTML == "" ) jQuery(e).hide();
+        if ( e.innerHTML == "" ) {
+            e.style.display = "none";
+        }
     },
     // Form elements should focus if the CSS says so.
     ".focus": function(e) {
