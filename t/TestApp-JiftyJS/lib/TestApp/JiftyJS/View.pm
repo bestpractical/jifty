@@ -84,24 +84,6 @@ template 'region2' => sub {
     p { "Region Two" }
 };
 
-template 'region_many' => sub {
-
-    p { 'many regions' };
-
-    hyperlink(
-        id => 'region_many',
-        label => "replace me",
-        onclick => {
-            replace_with => 'region_many'
-        }
-    );
-
-    render_region( name => "content$_", path => "/region$_" )
-        for 1..2;
-
-};
-
-
 template '/region/multiupdate' => page {
     hyperlink(
         id => 'update',

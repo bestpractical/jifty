@@ -46,7 +46,7 @@ sub init {
     my @base_js = @{ $opt{ js } || ['IE7'] };
 
     Jifty::Web->add_trigger(
-        name     => 'include_javascript',
+        name     => 'after_include_javascript',
         callback => sub {
             Jifty->web->out(qq{<!--[if lt IE 7]>\n});
             if ($self->use_external_ie7js) {

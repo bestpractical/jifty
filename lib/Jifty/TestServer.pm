@@ -79,7 +79,7 @@ sub started_ok {
 
     my @extra;
     if (my $profile_file = $ENV{JIFTY_TESTSERVER_PROFILE}) {
-        push @extra, '-d:NYTProf';
+        push @extra, '-d:DProf';
         $ENV{"PERL_DPROF_OUT_FILE_NAME"} = $profile_file;
     }
     if ($ENV{JIFTY_TESTSERVER_NAMED_ACCESSOR}) {

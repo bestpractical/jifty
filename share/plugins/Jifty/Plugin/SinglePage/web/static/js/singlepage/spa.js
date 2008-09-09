@@ -63,13 +63,7 @@ window.dhtmlHistory.create({
 
             var args = $.extend({}, hiddens, buttons, inputs);
 
-            var ret;
-            try { ret = Jifty.update( {'continuation':{},'actions':null,'fragments':[{'mode':'Replace','args':args,'region':'__page','path': submit_to}]}, elt ); }
-            catch (e) {
-                alert(e);
-            }
-            
-            return ret;
+            return Jifty.update( {'continuation':{},'actions':null,'fragments':[{'mode':'Replace','args':args,'region':'__page','path': submit_to}]}, elt );
         }
     };
 

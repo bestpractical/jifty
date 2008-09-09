@@ -103,7 +103,6 @@ sub _start_src {
     die if $pid == -1;
     if ($pid) {
 	push @cleanup, $pid;
-        warn "==> $pid for cleanup";
 	return ('localhost', 4444);
     }
     else {
@@ -127,7 +126,6 @@ sub _start_src {
 }
 
 END {
-    warn "to kill $_" for @cleanup;
     kill(15, -$_) for @cleanup;
 }
 
