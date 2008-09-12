@@ -18,6 +18,8 @@ Jifty::Plugin::Authentication::Password - password authentication plugin
     - Authentication::Password:
         login_by: email
 
+# we now support two login_by: email or username
+
 =head1 DESCRIPTION
 
 B<CAUTION:> This plugin is experimental.
