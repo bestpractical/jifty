@@ -21,9 +21,13 @@ Return the email and password form fields
 
 sub arguments { 
     return( { email => { label => _('Email'),
-                           mandatory => 1,
+                           mandatory => 0,
                            ajax_validates => 1,
-                            }  ,
+                            },
+              username => { label => _('Username'),
+                           mandatory => 0,
+                           ajax_validates => 1,
+                            },
 
               password => { type => 'password',
                             label => _('Password'),
@@ -58,12 +62,43 @@ sub validate_email {
     my $self  = shift;
     my $email = shift;
 
-    my $u = $self->load_user($email);
-    return $self->validation_error(email => _("It doesn't look like there's an account by that name.")) unless ($u->id);
-
-    return $self->validation_ok('email');
+    unless ( $self->_validate_email_or_username(email => $email) ) {
+        return 1;
+    }
+    else {
+        return $self->validate_username( $self->argument_value('username') );
+    }
 }
 
+=head2 validate_username ADDRESS
+
+there's a user in the database with it.
+
+Overridden from Jifty::Action::Record.
+
+=cut
+
+sub validate_username {
+    my $self     = shift;
+    my $username = shift;
+
+    return $self->_validate_email_or_username(username => $username);
+}
+
+sub _validate_email_or_username {
+    my $self  = shift;
+    my $name  = shift;
+    my $value = shift;
+
+    if ($value) {
+        my $u = $self->load_user($value);
+        return $self->validation_error(
+            $name => _("It doesn't look like there's an account by that name.")
+        ) unless ( $u->id );
+        return $self->validation_ok($name);
+    }
+    return;
+}
 
 =head2 validate_password PASSWORD
 
@@ -130,7 +165,9 @@ Otherwise, throw an error.
 
 sub take_action {
     my $self = shift;
-    my $user = $self->load_user( $self->argument_value('email') );
+    my $user =
+      $self->load_user( $self->argument_value('email')
+          || $self->argument_value('username') );
     my $password = $self->argument_value('password');
     my $token    = $self->argument_value('token') || '';
     my $hashedpw = $self->argument_value('hashed_password');
