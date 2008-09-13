@@ -312,7 +312,7 @@ msgstr "Revenire"
 msgid "Hello, %1!"
 msgstr "Bună ziua"
 
-#: lib/Jifty/Plugin/Authentication/Facebook/Action/LoginFacebookUser.pm:103 lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:137 plugins/Authentication-CAS/lib/Jifty/Plugin/Authentication/CAS/Action/CASLogin.pm:147 plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:137
+#: lib/Jifty/Plugin/Authentication/Facebook/Action/LoginFacebookUser.pm:103 plugins/Authentication-CAS/lib/Jifty/Plugin/Authentication/CAS/Action/CASLogin.pm:147 plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:137
 #. (Jifty->web->current_user->user_object->facebook_name)
 #. (Jifty->web->current_user->user_object->name)
 msgid "Hi %1!"
@@ -389,7 +389,7 @@ msgstr "Limba"
 msgid "Loading..."
 msgstr "Se incarcă"
 
-#: lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:23 lib/Jifty/Plugin/Authentication/Password/Dispatcher.pm:132 plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:23
+#: lib/Jifty/Plugin/Authentication/Password/Dispatcher.pm:132 plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:23
 msgid "Login"
 msgstr "Identificare"
 
@@ -405,7 +405,7 @@ msgstr "Identificaţi-vă în Facebook acum pentru a asocia cu contul curent!"
 msgid "Login with a password"
 msgstr "Indentificare cu o parolă"
 
-#: lib/Jifty/Plugin/Authentication/Ldap/View.pm:28 plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/View.pm:28
+#: plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/View.pm:28
 msgid "Login with your Ldap account"
 msgstr "Identificare cu un cont Ldap"
 
@@ -413,11 +413,11 @@ msgstr "Identificare cu un cont Ldap"
 msgid "Login with your OpenID"
 msgstr "Indeitificare cu OpenID"
 
-#: lib/Jifty/Plugin/Authentication/Ldap/View.pm:35 plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/View.pm:35
+#: plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/View.pm:35
 msgid "Login with your ldap account"
 msgstr "Identificare cu un cont Ldap"
 
-#: lib/Jifty/Plugin/Authentication/Ldap/View.pm:22 lib/Jifty/Plugin/Authentication/Password/View.pm:57 plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/View.pm:22
+#: lib/Jifty/Plugin/Authentication/Password/View.pm:57 plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/View.pm:22
 msgid "Login!"
 msgstr "Identificare!"
 
@@ -498,7 +498,7 @@ msgstr "Pagina info"
 msgid "Parent"
 msgstr ""
 
-#: lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:28 lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:64 lib/Jifty/Plugin/Authentication/Password/Action/ResetLostPassword.pm:32 lib/Jifty/Plugin/Authentication/Password/Mixin/Model/User.pm:60 plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:28
+#: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:64 lib/Jifty/Plugin/Authentication/Password/Action/ResetLostPassword.pm:32 lib/Jifty/Plugin/Authentication/Password/Mixin/Model/User.pm:60 plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:28
 msgid "Password"
 msgstr "Parola"
 
@@ -588,7 +588,7 @@ msgstr "Ceva nu e corect"
 msgid "Sorry about this."
 msgstr "Ne cerem scuze."
 
-#: lib/Jifty/Plugin/Authentication/Facebook/Action/LoginFacebookUser.pm:62 lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:107 plugins/Authentication-CAS/lib/Jifty/Plugin/Authentication/CAS/Action/CASLogin.pm:115 plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:107
+#: lib/Jifty/Plugin/Authentication/Facebook/Action/LoginFacebookUser.pm:62 plugins/Authentication-CAS/lib/Jifty/Plugin/Authentication/CAS/Action/CASLogin.pm:115 plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:107
 msgid "Sorry, something weird happened (we couldn't create a user for you).  Try again later."
 msgstr "Scuze, datorită unei probleme, nu va pute; crea contul. Încercaţi mai târziu."
 
@@ -614,7 +614,7 @@ msgstr "Această adresa: %1 nu pare a fi o adresă validă."
 msgid "That doesn't look like a correct value"
 msgstr "Această valoare nu pare a fi corectă"
 
-#: lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:46 plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:46
+#: plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:46
 msgid "That doesn't look like a valid login."
 msgstr "Acest login nu pare a fi valid."
 
@@ -750,7 +750,7 @@ msgstr "Aţi pierdut parola. Un link pentru modificarea parolei va fi trans;is l
 msgid "You may have mistyped your email or password. Give it another shot."
 msgstr "Aţi greşit adresa email sau parola. Re-încercaţi."
 
-#: lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:77 plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:77
+#: plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:77
 msgid "You may have mistyped your login or password. Give it another shot?"
 msgstr "Aţi greşit adresa email sau parola. Re-încercaţi?"
 
@@ -767,7 +767,7 @@ msgstr "Infor;aţie obligatorie"
 msgid "You said you wanted a pony. (Source %1)"
 msgstr ""
 
-#: lib/Jifty/Plugin/Authentication/Ldap/View.pm:45 lib/Jifty/Plugin/Authentication/Password/View.pm:96 plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/View.pm:45
+#: lib/Jifty/Plugin/Authentication/Password/View.pm:96 plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/View.pm:45
 msgid "You're already logged in."
 msgstr "Sunteţi deja conectat"
 

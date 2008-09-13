@@ -365,7 +365,7 @@ msgstr "回首頁"
 msgid "Hello, %1!"
 msgstr "%1 您好!"
 
-#: lib/Jifty/Plugin/Authentication/Facebook/Action/LoginFacebookUser.pm:103 lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:137 plugins/Authentication-CAS/lib/Jifty/Plugin/Authentication/CAS/Action/CASLogin.pm:147 plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:137
+#: lib/Jifty/Plugin/Authentication/Facebook/Action/LoginFacebookUser.pm:103 plugins/Authentication-CAS/lib/Jifty/Plugin/Authentication/CAS/Action/CASLogin.pm:147 plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:137
 #. (Jifty->web->current_user->user_object->facebook_name)
 #. (Jifty->web->current_user->user_object->name)
 msgid "Hi %1!"
@@ -454,7 +454,7 @@ msgstr "語言"
 msgid "Loading..."
 msgstr "請稍候..."
 
-#: lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:23 lib/Jifty/Plugin/Authentication/Password/Dispatcher.pm:132 plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:23
+#: lib/Jifty/Plugin/Authentication/Password/Dispatcher.pm:132 plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:23
 msgid "Login"
 msgstr "登入"
 
@@ -470,7 +470,7 @@ msgstr ""
 msgid "Login with a password"
 msgstr "使用密碼登入"
 
-#: lib/Jifty/Plugin/Authentication/Ldap/View.pm:28 plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/View.pm:28
+#: plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/View.pm:28
 msgid "Login with your Ldap account"
 msgstr ""
 
@@ -478,11 +478,11 @@ msgstr ""
 msgid "Login with your OpenID"
 msgstr "以您的 OpenID 登入"
 
-#: lib/Jifty/Plugin/Authentication/Ldap/View.pm:35 plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/View.pm:35
+#: plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/View.pm:35
 msgid "Login with your ldap account"
 msgstr ""
 
-#: lib/Jifty/Plugin/Authentication/Ldap/View.pm:22 lib/Jifty/Plugin/Authentication/Password/View.pm:57 plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/View.pm:22
+#: lib/Jifty/Plugin/Authentication/Password/View.pm:57 plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/View.pm:22
 msgid "Login!"
 msgstr "登入!"
 
@@ -583,7 +583,7 @@ msgstr "頁面資訊"
 msgid "Parent"
 msgstr "上層元件"
 
-#: lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:28 lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:64 lib/Jifty/Plugin/Authentication/Password/Action/ResetLostPassword.pm:32 lib/Jifty/Plugin/Authentication/Password/Mixin/Model/User.pm:60 plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:28
+#: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:64 lib/Jifty/Plugin/Authentication/Password/Action/ResetLostPassword.pm:32 lib/Jifty/Plugin/Authentication/Password/Mixin/Model/User.pm:60 plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:28
 msgid "Password"
 msgstr "密碼"
 
@@ -697,7 +697,7 @@ msgstr "系統錯誤"
 msgid "Sorry about this."
 msgstr "非常抱歉."
 
-#: lib/Jifty/Plugin/Authentication/Facebook/Action/LoginFacebookUser.pm:62 lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:107 plugins/Authentication-CAS/lib/Jifty/Plugin/Authentication/CAS/Action/CASLogin.pm:115 plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:107
+#: lib/Jifty/Plugin/Authentication/Facebook/Action/LoginFacebookUser.pm:62 plugins/Authentication-CAS/lib/Jifty/Plugin/Authentication/CAS/Action/CASLogin.pm:115 plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:107
 msgid "Sorry, something weird happened (we couldn't create a user for you).  Try again later."
 msgstr "不好意思，發生了奇怪的事（我們無法替您建立帳號）。請稍候再試。"
 
@@ -727,7 +727,7 @@ msgstr "那個 %1 看起來不太像是個電子郵件地址。"
 msgid "That doesn't look like a correct value"
 msgstr "欄位格式錯誤."
 
-#: lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:46 plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:46
+#: plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:46
 msgid "That doesn't look like a valid login."
 msgstr "看起來不像是有個有效的登入帳號"
 
@@ -879,7 +879,7 @@ msgstr "您忘記密碼了.我們會寄送一份提示到下面的電郵地址:"
 msgid "You may have mistyped your email or password. Give it another shot."
 msgstr "你可能打錯了電郵或密碼.請再試一次"
 
-#: lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:77 plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:77
+#: plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:77
 msgid "You may have mistyped your login or password. Give it another shot?"
 msgstr ""
 
@@ -896,7 +896,7 @@ msgstr "此欄位不能留空."
 msgid "You said you wanted a pony. (Source %1)"
 msgstr "您可不正是想要一匹小馬嗎? (參見 %1)"
 
-#: lib/Jifty/Plugin/Authentication/Ldap/View.pm:45 lib/Jifty/Plugin/Authentication/Password/View.pm:96 plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/View.pm:45
+#: lib/Jifty/Plugin/Authentication/Password/View.pm:96 plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/View.pm:45
 msgid "You're already logged in."
 msgstr "您已經登入了."
 
