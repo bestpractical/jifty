@@ -263,7 +263,7 @@ msgstr ""
 msgid "Edit"
 msgstr ""
 
-#: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:23 lib/Jifty/Plugin/Authentication/Password/Action/SendPasswordReminder.pm:32
+#: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:53 lib/Jifty/Plugin/Authentication/Password/Action/SendPasswordReminder.pm:32
 msgid "Email"
 msgstr ""
 
@@ -299,7 +299,7 @@ msgstr ""
 msgid "Go for it!"
 msgstr ""
 
-#: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:34
+#: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:69
 msgid "Hashed Password"
 msgstr ""
 
@@ -312,7 +312,7 @@ msgstr ""
 msgid "Hello, %1!"
 msgstr ""
 
-#: lib/Jifty/Plugin/Authentication/Facebook/Action/LoginFacebookUser.pm:103 lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:137 plugins/Authentication-CAS/lib/Jifty/Plugin/Authentication/CAS/Action/CASLogin.pm:147
+#: lib/Jifty/Plugin/Authentication/Facebook/Action/LoginFacebookUser.pm:103 lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:137 plugins/Authentication-CAS/lib/Jifty/Plugin/Authentication/CAS/Action/CASLogin.pm:147 plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:137
 #. (Jifty->web->current_user->user_object->facebook_name)
 #. (Jifty->web->current_user->user_object->name)
 msgid "Hi %1!"
@@ -357,7 +357,7 @@ msgstr ""
 msgid "Invalid OpenID URL.  Please check to make sure it is correct.  (@{[$csr->err]})"
 msgstr ""
 
-#: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:62 lib/Jifty/Plugin/Authentication/Password/Action/SendAccountConfirmation.pm:75 lib/Jifty/Plugin/Authentication/Password/Action/SendPasswordReminder.pm:79
+#: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:122 lib/Jifty/Plugin/Authentication/Password/Action/SendAccountConfirmation.pm:75 lib/Jifty/Plugin/Authentication/Password/Action/SendPasswordReminder.pm:79
 msgid "It doesn't look like there's an account by that name."
 msgstr ""
 
@@ -389,7 +389,7 @@ msgstr ""
 msgid "Loading..."
 msgstr ""
 
-#: lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:23 lib/Jifty/Plugin/Authentication/Password/Dispatcher.pm:132
+#: lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:23 lib/Jifty/Plugin/Authentication/Password/Dispatcher.pm:132 plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:23
 msgid "Login"
 msgstr ""
 
@@ -405,7 +405,7 @@ msgstr ""
 msgid "Login with a password"
 msgstr ""
 
-#: lib/Jifty/Plugin/Authentication/Ldap/View.pm:28
+#: lib/Jifty/Plugin/Authentication/Ldap/View.pm:28 plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/View.pm:28
 msgid "Login with your Ldap account"
 msgstr ""
 
@@ -413,11 +413,11 @@ msgstr ""
 msgid "Login with your OpenID"
 msgstr ""
 
-#: lib/Jifty/Plugin/Authentication/Ldap/View.pm:35
+#: lib/Jifty/Plugin/Authentication/Ldap/View.pm:35 plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/View.pm:35
 msgid "Login with your ldap account"
 msgstr ""
 
-#: lib/Jifty/Plugin/Authentication/Ldap/View.pm:22 lib/Jifty/Plugin/Authentication/Password/View.pm:57
+#: lib/Jifty/Plugin/Authentication/Ldap/View.pm:22 lib/Jifty/Plugin/Authentication/Password/View.pm:57 plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/View.pm:22
 msgid "Login!"
 msgstr ""
 
@@ -498,7 +498,7 @@ msgstr ""
 msgid "Parent"
 msgstr ""
 
-#: lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:28 lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:29 lib/Jifty/Plugin/Authentication/Password/Action/ResetLostPassword.pm:32 lib/Jifty/Plugin/Authentication/Password/Mixin/Model/User.pm:60
+#: lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:28 lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:64 lib/Jifty/Plugin/Authentication/Password/Action/ResetLostPassword.pm:32 lib/Jifty/Plugin/Authentication/Password/Mixin/Model/User.pm:60 plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:28
 msgid "Password"
 msgstr ""
 
@@ -530,7 +530,7 @@ msgstr ""
 msgid "Really, really sorry."
 msgstr ""
 
-#: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:37
+#: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:72
 msgid "Remember me?"
 msgstr ""
 
@@ -588,7 +588,7 @@ msgstr ""
 msgid "Sorry about this."
 msgstr ""
 
-#: lib/Jifty/Plugin/Authentication/Facebook/Action/LoginFacebookUser.pm:62 lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:107 plugins/Authentication-CAS/lib/Jifty/Plugin/Authentication/CAS/Action/CASLogin.pm:115
+#: lib/Jifty/Plugin/Authentication/Facebook/Action/LoginFacebookUser.pm:62 lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:107 plugins/Authentication-CAS/lib/Jifty/Plugin/Authentication/CAS/Action/CASLogin.pm:115 plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:107
 msgid "Sorry, something weird happened (we couldn't create a user for you).  Try again later."
 msgstr ""
 
@@ -614,7 +614,7 @@ msgstr ""
 msgid "That doesn't look like a correct value"
 msgstr ""
 
-#: lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:46
+#: lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:46 plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:46
 msgid "That doesn't look like a valid login."
 msgstr ""
 
@@ -670,6 +670,10 @@ msgstr ""
 msgid "Updated"
 msgstr ""
 
+#: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:44
+msgid "Username"
+msgstr ""
+
 #: share/web/templates/__jifty/halo:96
 msgid "Variables"
 msgstr ""
@@ -695,7 +699,7 @@ msgstr ""
 msgid "Welcome back, "
 msgstr ""
 
-#: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:194
+#: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:258
 #. ($user->name)
 msgid "Welcome back, %1."
 msgstr ""
@@ -742,11 +746,11 @@ msgstr ""
 msgid "You lost your password. A link to reset it will be sent to the following email address:"
 msgstr ""
 
-#: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:138
+#: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:199
 msgid "You may have mistyped your email or password. Give it another shot."
 msgstr ""
 
-#: lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:77
+#: lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:77 plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:77
 msgid "You may have mistyped your login or password. Give it another shot?"
 msgstr ""
 
@@ -763,7 +767,7 @@ msgstr ""
 msgid "You said you wanted a pony. (Source %1)"
 msgstr ""
 
-#: lib/Jifty/Plugin/Authentication/Ldap/View.pm:45 lib/Jifty/Plugin/Authentication/Password/View.pm:96
+#: lib/Jifty/Plugin/Authentication/Ldap/View.pm:45 lib/Jifty/Plugin/Authentication/Password/View.pm:96 plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/View.pm:45
 msgid "You're already logged in."
 msgstr ""
 
@@ -776,7 +780,7 @@ msgstr ""
 msgid "Your account has been successfully linked to your Facebook user %1!"
 msgstr ""
 
-#: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:38
+#: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:73
 msgid "Your browser can remember your login for you"
 msgstr ""
 
