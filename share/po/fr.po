@@ -195,6 +195,10 @@ msgstr "Une URL pour changer votre mots de passe, vous a été transmis par mail
 msgid "A notification from %1!"
 msgstr "Message de %1 !"
 
+#: plugins/AuthzLDAP/lib/Jifty/Plugin/AuthzLDAP/Action/LDAPValidate.pm:61 plugins/AuthzLDAP/share/web/templates/error/AccessDenied:1 plugins/AuthzLDAP/share/web/templates/error/AccessDenied:2
+msgid "Access denied."
+msgstr ""
+
 #: lib/Jifty/Plugin/Comment/View.pm:165
 msgid "Add a comment"
 msgstr "Ajouter un commentaire"

@@ -184,6 +184,10 @@ msgstr "重设密码的链接已发送到您的电子邮箱."
 msgid "A notification from %1!"
 msgstr "从 %1 送来的消息!"
 
+#: plugins/AuthzLDAP/lib/Jifty/Plugin/AuthzLDAP/Action/LDAPValidate.pm:61 plugins/AuthzLDAP/share/web/templates/error/AccessDenied:1 plugins/AuthzLDAP/share/web/templates/error/AccessDenied:2
+msgid "Access denied."
+msgstr ""
+
 #:
 msgid "Actions"
 msgstr "操作"

@@ -167,6 +167,10 @@ msgstr "V-am trimis un link pentru a resetq parola la adresa dvs. de mail"
 msgid "A notification from %1!"
 msgstr "O notificare de la %1!"
 
+#: plugins/AuthzLDAP/lib/Jifty/Plugin/AuthzLDAP/Action/LDAPValidate.pm:61 plugins/AuthzLDAP/share/web/templates/error/AccessDenied:1 plugins/AuthzLDAP/share/web/templates/error/AccessDenied:2
+msgid "Access denied."
+msgstr ""
+
 #: lib/Jifty/Plugin/Comment/View.pm:165
 msgid "Add a comment"
 msgstr "Adaugă un comentariu"
