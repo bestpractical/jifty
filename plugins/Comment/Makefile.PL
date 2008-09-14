@@ -4,7 +4,7 @@ version_from('../../lib/Jifty.pm');
 
 requires('HTML::Scrubber'),
 requires('MIME::Base64::URLSafe'),
-requires('Net::Akismet'),
+recommends('Net::Akismet'),
 requires('Regexp::Common'),
 requires('Regexp::Common::Email::Address'),
 

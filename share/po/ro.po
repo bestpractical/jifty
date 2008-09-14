@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: lib/Jifty/Plugin/Comment/Notification/CommentPublished.pm:71
+#: plugins/Comment/lib/Jifty/Plugin/Comment/Notification/CommentPublished.pm:71
 #. ($url,        $self->parent->title,        $comment->title,         $from,         $comment->created_on->strftime('%A, %B %d, %Y @ %H:%M%P')
 msgid ""
 "\n"
@@ -171,7 +171,7 @@ msgstr "O notificare de la %1!"
 msgid "Access denied."
 msgstr ""
 
-#: lib/Jifty/Plugin/Comment/View.pm:165
+#: plugins/Comment/lib/Jifty/Plugin/Comment/View.pm:165
 msgid "Add a comment"
 msgstr "Adaugă un comentariu"
 
@@ -207,7 +207,12 @@ msgstr "Jeton de Autentificare"
 msgid "Bindings"
 msgstr ""
 
-#: lib/Jifty/Plugin/Comment/View.pm:138 lib/Jifty/Plugin/Comment/View.pm:197
+#: plugins/Comment/t/TestApp-Plugin-Comments/lib/TestApp/Plugin/Comments/View.pm:22
+#. ($blog->author)
+msgid "By %1"
+msgstr ""
+
+#: plugins/Comment/lib/Jifty/Plugin/Comment/View.pm:138 plugins/Comment/lib/Jifty/Plugin/Comment/View.pm:197
 #. ($poster,                     $created_on->strftime('%A, %B %d, %Y @ %H:%M%P')
 #. ($poster,                             $created_on->strftime('%A, %B %d, %Y @ %H:%M%P')
 msgid "By %1 %2"
@@ -461,7 +466,7 @@ msgstr "Nici un câmp(field) nu conţine"
 msgid "No items found."
 msgstr "Nicio înregistrare găsită."
 
-#: lib/Jifty/Plugin/Comment/View.pm:304
+#: plugins/Comment/lib/Jifty/Plugin/Comment/View.pm:304
 msgid "No one has made a comment yet."
 msgstr "Niciun comentariu deocamdată."
 
@@ -518,7 +523,11 @@ msgstr "Autorizaţie interzisă"
 msgid "Please email us!"
 msgstr "Contactaţi-ne prin email, vă rugăm!"
 
-#: lib/Jifty/Plugin/Comment/View.pm:221
+#: plugins/Comment/t/TestApp-Plugin-Comments/lib/TestApp/Plugin/Comments/View.pm:13
+msgid "Post"
+msgstr ""
+
+#: plugins/Comment/lib/Jifty/Plugin/Comment/View.pm:221
 msgid "Preview"
 msgstr "Previzualizare"
 
@@ -600,7 +609,7 @@ msgstr "Scuze, datorită unei probleme, nu va pute; crea contul. Încercaţi mai
 msgid "Start"
 msgstr ""
 
-#: lib/Jifty/Plugin/Comment/View.pm:236
+#: plugins/Comment/lib/Jifty/Plugin/Comment/View.pm:236
 msgid "Submit"
 msgstr "Trimite"
 
@@ -788,7 +797,7 @@ msgstr "Contul dvs. a fost asociat cu contul dvs. Facebook  %1!"
 msgid "Your browser can remember your login for you"
 msgstr "Navigatorul dvs. vă poate memora loginul pentru o conectare ulterioară"
 
-#: lib/Jifty/Plugin/Comment/Action/CreateComment.pm:268
+#: plugins/Comment/lib/Jifty/Plugin/Comment/Action/CreateComment.pm:268
 msgid "Your comment has been added. If it does not immediately appear, it may have been flagged for moderation and should appear shortly."
 msgstr "Co;entariul dvs. a fost adăugat. Dacă nu apare imediat, este in aşteptare de moderare si va apărea curând."
 
@@ -800,12 +809,12 @@ msgstr "Parola dvs. a fost resetată. Bine v-aţi întors."
 msgid "Your password should be at least six characters"
 msgstr "Parola trebuie sa conţină şase caractere"
 
-#: lib/Jifty/Plugin/Comment/Notification/CommentNeedsModeration.pm:67
+#: plugins/Comment/lib/Jifty/Plugin/Comment/Notification/CommentNeedsModeration.pm:67
 #. ($appname, $comment->title)
 msgid "[%1] Moderate comment: %2"
 msgstr "[%1] Comentariu moderat: %2"
 
-#: lib/Jifty/Plugin/Comment/Notification/CommentPublished.pm:65
+#: plugins/Comment/lib/Jifty/Plugin/Comment/Notification/CommentPublished.pm:65
 #. ($appname, $comment->title)
 msgid "[%1] New comment: %2"
 msgstr "Nou omentariut: %2"
@@ -818,7 +827,7 @@ msgstr "adresă email"
 msgid "for now, and try to forget that we let you down."
 msgstr ""
 
-#: lib/Jifty/Plugin/Comment/View.pm:87
+#: plugins/Comment/lib/Jifty/Plugin/Comment/View.pm:87
 #. ($status)
 msgid "mark as %1"
 msgstr ""
@@ -827,7 +836,7 @@ msgstr ""
 msgid "no value"
 msgstr ""
 
-#: lib/Jifty/Plugin/Comment/View.pm:100
+#: plugins/Comment/lib/Jifty/Plugin/Comment/View.pm:100
 msgid "publish"
 msgstr "publicaţi"
 
@@ -843,7 +852,7 @@ msgstr ""
 msgid "type your password again"
 msgstr "re-scrieţi parola"
 
-#: lib/Jifty/Plugin/Comment/View.pm:100
+#: plugins/Comment/lib/Jifty/Plugin/Comment/View.pm:100
 msgid "unpublish"
 msgstr "nu publicaţi"
 

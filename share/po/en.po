@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: lib/Jifty/Plugin/Comment/Notification/CommentPublished.pm:71
+#: plugins/Comment/lib/Jifty/Plugin/Comment/Notification/CommentPublished.pm:71
 #. ($url,        $self->parent->title,        $comment->title,         $from,         $comment->created_on->strftime('%A, %B %d, %Y @ %H:%M%P')
 msgid ""
 "\n"
@@ -171,7 +171,7 @@ msgstr ""
 msgid "Access denied."
 msgstr ""
 
-#: lib/Jifty/Plugin/Comment/View.pm:165
+#: plugins/Comment/lib/Jifty/Plugin/Comment/View.pm:165
 msgid "Add a comment"
 msgstr ""
 
@@ -207,7 +207,12 @@ msgstr ""
 msgid "Bindings"
 msgstr ""
 
-#: lib/Jifty/Plugin/Comment/View.pm:138 lib/Jifty/Plugin/Comment/View.pm:197
+#: plugins/Comment/t/TestApp-Plugin-Comments/lib/TestApp/Plugin/Comments/View.pm:22
+#. ($blog->author)
+msgid "By %1"
+msgstr ""
+
+#: plugins/Comment/lib/Jifty/Plugin/Comment/View.pm:138 plugins/Comment/lib/Jifty/Plugin/Comment/View.pm:197
 #. ($poster,                     $created_on->strftime('%A, %B %d, %Y @ %H:%M%P')
 #. ($poster,                             $created_on->strftime('%A, %B %d, %Y @ %H:%M%P')
 msgid "By %1 %2"
@@ -461,7 +466,7 @@ msgstr ""
 msgid "No items found."
 msgstr ""
 
-#: lib/Jifty/Plugin/Comment/View.pm:304
+#: plugins/Comment/lib/Jifty/Plugin/Comment/View.pm:304
 msgid "No one has made a comment yet."
 msgstr ""
 
@@ -518,7 +523,11 @@ msgstr ""
 msgid "Please email us!"
 msgstr ""
 
-#: lib/Jifty/Plugin/Comment/View.pm:221
+#: plugins/Comment/t/TestApp-Plugin-Comments/lib/TestApp/Plugin/Comments/View.pm:13
+msgid "Post"
+msgstr ""
+
+#: plugins/Comment/lib/Jifty/Plugin/Comment/View.pm:221
 msgid "Preview"
 msgstr ""
 
@@ -600,7 +609,7 @@ msgstr ""
 msgid "Start"
 msgstr ""
 
-#: lib/Jifty/Plugin/Comment/View.pm:236
+#: plugins/Comment/lib/Jifty/Plugin/Comment/View.pm:236
 msgid "Submit"
 msgstr ""
 
@@ -788,7 +797,7 @@ msgstr ""
 msgid "Your browser can remember your login for you"
 msgstr ""
 
-#: lib/Jifty/Plugin/Comment/Action/CreateComment.pm:268
+#: plugins/Comment/lib/Jifty/Plugin/Comment/Action/CreateComment.pm:268
 msgid "Your comment has been added. If it does not immediately appear, it may have been flagged for moderation and should appear shortly."
 msgstr ""
 
@@ -800,12 +809,12 @@ msgstr ""
 msgid "Your password should be at least six characters"
 msgstr ""
 
-#: lib/Jifty/Plugin/Comment/Notification/CommentNeedsModeration.pm:67
+#: plugins/Comment/lib/Jifty/Plugin/Comment/Notification/CommentNeedsModeration.pm:67
 #. ($appname, $comment->title)
 msgid "[%1] Moderate comment: %2"
 msgstr ""
 
-#: lib/Jifty/Plugin/Comment/Notification/CommentPublished.pm:65
+#: plugins/Comment/lib/Jifty/Plugin/Comment/Notification/CommentPublished.pm:65
 #. ($appname, $comment->title)
 msgid "[%1] New comment: %2"
 msgstr ""
@@ -818,7 +827,7 @@ msgstr ""
 msgid "for now, and try to forget that we let you down."
 msgstr ""
 
-#: lib/Jifty/Plugin/Comment/View.pm:87
+#: plugins/Comment/lib/Jifty/Plugin/Comment/View.pm:87
 #. ($status)
 msgid "mark as %1"
 msgstr ""
@@ -827,7 +836,7 @@ msgstr ""
 msgid "no value"
 msgstr ""
 
-#: lib/Jifty/Plugin/Comment/View.pm:100
+#: plugins/Comment/lib/Jifty/Plugin/Comment/View.pm:100
 msgid "publish"
 msgstr ""
 
@@ -843,7 +852,7 @@ msgstr ""
 msgid "type your password again"
 msgstr ""
 
-#: lib/Jifty/Plugin/Comment/View.pm:100
+#: plugins/Comment/lib/Jifty/Plugin/Comment/View.pm:100
 msgid "unpublish"
 msgstr ""
 

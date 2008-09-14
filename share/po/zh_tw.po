@@ -14,7 +14,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: lib/Jifty/Plugin/Comment/Notification/CommentPublished.pm:71
+#: plugins/Comment/lib/Jifty/Plugin/Comment/Notification/CommentPublished.pm:71
 #. ($url,        $self->parent->title,        $comment->title,         $from,         $comment->created_on->strftime('%A, %B %d, %Y @ %H:%M%P')
 msgid ""
 "\n"
@@ -192,7 +192,7 @@ msgstr ""
 msgid "Actions"
 msgstr "操作"
 
-#: lib/Jifty/Plugin/Comment/View.pm:165
+#: plugins/Comment/lib/Jifty/Plugin/Comment/View.pm:165
 msgid "Add a comment"
 msgstr "發表迴響"
 
@@ -236,7 +236,12 @@ msgstr "回到應用程式"
 msgid "Bindings"
 msgstr "快速鍵"
 
-#: lib/Jifty/Plugin/Comment/View.pm:138 lib/Jifty/Plugin/Comment/View.pm:197
+#: plugins/Comment/t/TestApp-Plugin-Comments/lib/TestApp/Plugin/Comments/View.pm:22
+#. ($blog->author)
+msgid "By %1"
+msgstr ""
+
+#: plugins/Comment/lib/Jifty/Plugin/Comment/View.pm:138 plugins/Comment/lib/Jifty/Plugin/Comment/View.pm:197
 #. ($poster,                     $created_on->strftime('%A, %B %d, %Y @ %H:%M%P')
 #. ($poster,                             $created_on->strftime('%A, %B %d, %Y @ %H:%M%P')
 msgid "By %1 %2"
@@ -542,7 +547,7 @@ msgstr "未找到記錄"
 msgid "No items found."
 msgstr "未找到記錄"
 
-#: lib/Jifty/Plugin/Comment/View.pm:304
+#: plugins/Comment/lib/Jifty/Plugin/Comment/View.pm:304
 msgid "No one has made a comment yet."
 msgstr "尚無人發表評論"
 
@@ -603,7 +608,11 @@ msgstr "權限不足."
 msgid "Please email us!"
 msgstr "請寫信通知我們!"
 
-#: lib/Jifty/Plugin/Comment/View.pm:221
+#: plugins/Comment/t/TestApp-Plugin-Comments/lib/TestApp/Plugin/Comments/View.pm:13
+msgid "Post"
+msgstr ""
+
+#: plugins/Comment/lib/Jifty/Plugin/Comment/View.pm:221
 msgid "Preview"
 msgstr "預覽"
 
@@ -709,7 +718,7 @@ msgstr "不好意思，發生了奇怪的事（我們無法替您建立帳號）
 msgid "Start"
 msgstr "開始"
 
-#: lib/Jifty/Plugin/Comment/View.pm:236
+#: plugins/Comment/lib/Jifty/Plugin/Comment/View.pm:236
 msgid "Submit"
 msgstr "送出"
 
@@ -917,7 +926,7 @@ msgstr ""
 msgid "Your browser can remember your login for you"
 msgstr "下次開啟瀏覽器時, 是否保留您的登入狀態?"
 
-#: lib/Jifty/Plugin/Comment/Action/CreateComment.pm:268
+#: plugins/Comment/lib/Jifty/Plugin/Comment/Action/CreateComment.pm:268
 msgid "Your comment has been added. If it does not immediately appear, it may have been flagged for moderation and should appear shortly."
 msgstr ""
 
@@ -929,12 +938,12 @@ msgstr "成功重設您的密碼. 歡迎回來."
 msgid "Your password should be at least six characters"
 msgstr "您的密碼必須至少有六個字"
 
-#: lib/Jifty/Plugin/Comment/Notification/CommentNeedsModeration.pm:67
+#: plugins/Comment/lib/Jifty/Plugin/Comment/Notification/CommentNeedsModeration.pm:67
 #. ($appname, $comment->title)
 msgid "[%1] Moderate comment: %2"
 msgstr ""
 
-#: lib/Jifty/Plugin/Comment/Notification/CommentPublished.pm:65
+#: plugins/Comment/lib/Jifty/Plugin/Comment/Notification/CommentPublished.pm:65
 #. ($appname, $comment->title)
 msgid "[%1] New comment: %2"
 msgstr ""
@@ -955,7 +964,7 @@ msgstr "電郵地址"
 msgid "for now, and try to forget that we let you down."
 msgstr ""
 
-#: lib/Jifty/Plugin/Comment/View.pm:87
+#: plugins/Comment/lib/Jifty/Plugin/Comment/View.pm:87
 #. ($status)
 msgid "mark as %1"
 msgstr ""
@@ -964,7 +973,7 @@ msgstr ""
 msgid "no value"
 msgstr ""
 
-#: lib/Jifty/Plugin/Comment/View.pm:100
+#: plugins/Comment/lib/Jifty/Plugin/Comment/View.pm:100
 msgid "publish"
 msgstr ""
 
@@ -980,7 +989,7 @@ msgstr "隱藏連結文字"
 msgid "type your password again"
 msgstr "請再次鍵入您的密碼"
 
-#: lib/Jifty/Plugin/Comment/View.pm:100
+#: plugins/Comment/lib/Jifty/Plugin/Comment/View.pm:100
 msgid "unpublish"
 msgstr ""
 
