@@ -1,5 +1,5 @@
 use inc::Module::Install 0.46;
-name('Authentication-CAS');
+name('Jifty-Plugin-Authentication-CAS');
 #version_from('lib/Jifty/Plugin/Authentication/CAS.pm');
 version_from('../../lib/Jifty.pm');
 

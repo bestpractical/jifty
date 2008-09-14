@@ -1,5 +1,5 @@
 use inc::Module::Install 0.46;
-name('Comment');
+name('Jifty-Plugin-Comment');
 version_from('../../lib/Jifty.pm');
 
 requires('HTML::Scrubber'),
