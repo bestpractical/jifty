@@ -179,14 +179,6 @@ features(
         recommends('Template::Declare' => '0.28'),
         recommends('Data::Dump::Streamer'),
     ],
-    'Comment Plugin' => [
-        -default => 0,
-        recommends('HTML::Scrubber'),
-        recommends('MIME::Base64::URLSafe'),
-        recommends('Net::Akismet'),
-        recommends('Regexp::Common'),
-        recommends('Regexp::Common::Email::Address'),
-    ],
 );
 
 
