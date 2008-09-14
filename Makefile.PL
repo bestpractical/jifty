@@ -201,8 +201,6 @@ install_share;
 # ls plugins -> Authentication-CAS Authentication-Ldap  Multipage  TabView
 my @plugins = defined $ENV{JIFTY_PLUGINS} ? split(/ /, $ENV{JIFTY_PLUGINS}) : qw(TabView);
 
-# Test all of our sub-dist tests too
-tests(join(' ', qw(t/*.t t/*/*.t t/*/*/*.t t/*/*/*/*.t), map { "plugins/$_/t/*.t"} @plugins));
 
 
 for (@plugins) {
@@ -225,7 +223,14 @@ distclean :: realclean
 realclean :: 
 @{[ join("\n", map { "\tcd plugins/$_;".' $(MAKE) realclean' } @plugins)   ]}
 
+INST_LIB= lib/
+
+INST_ARCHLIB= @{[ join("','", map { "plugins/$_/lib"} @plugins) ]}
+
 END
+
+# Test all of our sub-dist tests too
+tests(join(' ', qw(t/*.t t/*/*.t t/*/*/*.t t/*/*/*/*.t), map { "plugins/$_/t/*.t"} @plugins));
 
 WriteAll;
 
