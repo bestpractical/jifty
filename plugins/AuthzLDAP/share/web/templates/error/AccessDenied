@@ -1,0 +1,3 @@
+<&| /_elements/wrapper, title => _("Access denied.") &>
+<p><% _("Access denied.") %></p>
+</&>
