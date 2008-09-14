@@ -202,6 +202,8 @@ install_share;
 my @plugins = defined $ENV{JIFTY_PLUGINS} ? split(/ /, $ENV{JIFTY_PLUGINS}) : qw(TabView);
 
 
+# Test all of our sub-dist tests too
+tests(join(' ', qw(t/*.t t/*/*.t t/*/*/*.t t/*/*/*/*.t), map { "plugins/$_/t/*.t plugins/$_/t/*/*/*.t"} @plugins));
 
 for (@plugins) {
     die unless -d "plugins/$_";
@@ -214,6 +216,9 @@ for (@plugins) {
 
 postamble(<<"END");
 
+all ::
+@{[ join("\n", map { "\tcd plugins/$_;".' $(MAKE) ' } @plugins)   ]}
+
 install ::
 @{[ join("\n", map { "\tcd plugins/$_;".' $(MAKE) install DESTDIR=$(DESTDIR) PREFIX=$(PREFIX)' } @plugins)   ]}
 
@@ -223,14 +228,10 @@ distclean :: realclean
 realclean :: 
 @{[ join("\n", map { "\tcd plugins/$_;".' $(MAKE) realclean' } @plugins)   ]}
 
-INST_LIB= lib/
-
-INST_ARCHLIB= @{[ join("','", map { "plugins/$_/lib"} @plugins) ]}
+INST_LIB= blib/lib', '@{[ join("','", map { "plugins/$_/blib/lib"} @plugins) ]}
 
 END
 
-# Test all of our sub-dist tests too
-tests(join(' ', qw(t/*.t t/*/*.t t/*/*/*.t t/*/*/*/*.t), map { "plugins/$_/t/*.t"} @plugins));
 
 WriteAll;
 
