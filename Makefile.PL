@@ -228,7 +228,9 @@ distclean :: realclean
 realclean :: 
 @{[ join("\n", map { "\tcd plugins/$_;".' $(MAKE) realclean' } @plugins)   ]}
 
-INST_LIB= blib/lib','@{[ join("','", map { "plugins/$_/blib/lib"} @plugins) ]}
+INST_LIB= blib/lib
+
+INST_ARCHLIB= @{[ join("','", map { "plugins/$_/blib/lib"} @plugins) ]}
 
 END
 
