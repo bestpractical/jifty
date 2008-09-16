@@ -61,6 +61,7 @@ sub render {
         'lines'          => 'line',
         'pie'            => '3d pie',
         'points'         => 'scatter',
+        'area'           => 'area',
     );
 
     # Make sure the type is ready to be used
