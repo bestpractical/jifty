@@ -56,27 +56,6 @@ sub render {
             # XXX - We don't yet use $timestamp here.
             my ( $timestamp, $msg ) = @$rv;
 
-            for my $render_info (values %{$render->{$channel}}) {
-                if ($render_info->{coalesce} and $render_info->{mode} eq "Replace") {
-                    my $hash = Digest::MD5::md5_hex( YAML::Dump([$render_info->{region}, $render_info->{render_with}] ) );
-                    Jifty->log->debug("Coalesced duplicate region @{[$render_info->{region}]} with @{[$render_info->{render_with}]} from $channel event $msg") if exists $coalesce{$hash};
-                    $coalesce{$hash} = [ $timestamp, $event_class, $msg, $render_info ] unless $coalesce{$hash} and $coalesce{$hash}[0] > $timestamp;
-                } else {
-                    Jifty->log->debug("Rendering $channel event $msg in @{[$render_info->{region}]} with @{[$render_info->{render_with}]}");
-                    render_single( $event_class, $msg, $render_info, $callback );
-                    $sent++;
-                }
-            }
-        }
-    }
-
-    for my $c (values %coalesce) {
-        my (undef, $event_class, $msg, $render_info) = @{$c};
-        Jifty->log->debug("Rendering @{[$render_info->{region}]} with @{[$render_info->{render_with}]} for $event_class");
-        render_single( $event_class, $msg, $render_info, $callback );
-        $sent++;
-    }
-
     return ($sent);
 }
 
@@ -84,33 +63,30 @@ sub render {
 
 Renders a single region, based on the region information in C<INFO>.
 
-=cut
+            for my $render_info (values %{$render->{$channel}}) {
+                my $region      = Jifty::Web::PageRegion->new(
+                    name => $render_info->{region},
+                    path => $render_info->{render_with},
+                );
+                delete Jifty->web->{'regions'}{ $region->qualified_name };
 
-sub render_single {
-    my ($class, $msg, $render_info, $callback) = @_;
-
-    my $region = Jifty::Web::PageRegion->new(
-        name => $render_info->{region},
-        path => $render_info->{render_with},
-    );
-    # So we don't warn about "duplicate region"s
-    delete Jifty->web->{'regions'}{ $region->qualified_name };
-
-    my $event_object   = $class->new($msg);
-    # Region's arguments come from explicit arguments only
-    $region->arguments( $render_info->{arguments} );
-
-    my $region_content = '';
-    $region->enter;
-    # Also provide an 'event' argument, and fill in the render
-    # arguments.  These don't show up in the region's arguments if
-    # inspected, but do show up in the request.
-    $region->render_as_subrequest(
-        \$region_content,
-        { %{$region->arguments}, event => $event_object, $event_object->render_arguments },
-    );
-    $callback->( $render_info->{mode}, $region->qualified_name, $region_content, $render_info->{attrs} );
-    $region->exit;
+                # Finally render the region.  In addition to the user-supplied arguments
+                # in $render_info, we always pass the target $region and the event object
+                # into its %ARGS.
+                my $region_content = '';
+                my $event_object   = $event_class->new($msg);
+                $region->render_as_subrequest( \$region_content,
+                    {   %{ $render_info->{arguments} || {} },
+                        event => $event_object,
+                        $event_object->render_arguments,
+                    }
+                );
+                $callback->( $render_info->{mode}, $region->qualified_name, $region_content);
+                $sent++;
+            }
+        }
+    }
+    return ($sent);
 }
 
 1;

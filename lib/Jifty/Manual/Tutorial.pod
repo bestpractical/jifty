@@ -246,8 +246,8 @@ for a bit more information).
   INFO - Using MyWeblog::Model::Post, as it appears to be new.
   INFO - Using Jifty::Model::Session, as it appears to be new.
   INFO - Using Jifty::Model::Metadata, as it appears to be new.
-  INFO - Set up version 0.0.1, jifty version 0.80913
-  Jifty version 0.80913 up to date.
+  INFO - Set up version 0.0.1, jifty version 0.80408
+  Jifty version 0.80408 up to date.
   ...
   MyWeblog version 0.0.1 up to date.
 

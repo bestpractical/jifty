@@ -193,47 +193,28 @@ version_from('lib/Jifty.pm');
 install_script('bin/jifty');
 install_share;
 
-# INSTALLDIRS need to be set before Makefile if you want to change default install path
-# debian packaging use :
-#  INSTALLDIRS=vendor $(PERL) Makefile.PL --skipdeps INSTALLDIRS=vendor 
-#
-# TODO?: JIFTY_PLUGINS=ALL
-# ls plugins -> Authentication-CAS Authentication-Ldap  Multipage  TabView
 my @plugins = defined $ENV{JIFTY_PLUGINS} ? split(/ /, $ENV{JIFTY_PLUGINS}) : qw(TabView);
 
-
 # Test all of our sub-dist tests too
-tests(join(' ', qw(t/*.t t/*/*.t t/*/*/*.t t/*/*/*/*.t), map { "plugins/$_/t/*.t plugins/$_/t/*/*/*.t"} @plugins));
+tests(join(' ', qw(t/*.t t/*/*.t t/*/*/*.t t/*/*/*/*.t), map { "plugins/$_/t/*.t"} @plugins));
+
 
 for (@plugins) {
     die unless -d "plugins/$_";
 #    install_share("plugins/$_/share");
     chdir("plugins/$_");
-    system("$^X -I../../lib Makefile.PL INSTALLDIRS=".$ENV{INSTALLDIRS});
+    system("$^X -I../../lib Makefile.PL");
     chdir('../..');
 
 }
 
 postamble(<<"END");
 
-all ::
-@{[ join("\n", map { "\tcd plugins/$_;".' $(MAKE) ' } @plugins)   ]}
-
 install ::
-@{[ join("\n", map { "\tcd plugins/$_;".' $(MAKE) install DESTDIR=$(DESTDIR) PREFIX=$(PREFIX)' } @plugins)   ]}
+@{[ join("\n", map { "\tcd plugins/$_; make install" } @plugins)   ]}
 
-distclean :: realclean
-@{[ "\t".'$(NOECHO) $(NOOP)']}
-
-realclean :: 
-@{[ join("\n", map { "\tcd plugins/$_;".' $(MAKE) realclean' } @plugins)   ]}
-
-INST_LIB= blib/lib
-
-INST_ARCHLIB= @{[ join("','", map { "plugins/$_/blib/lib"} @plugins) ]}
 
 END
-
 
 WriteAll;
 
