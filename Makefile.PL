@@ -174,26 +174,10 @@ features(
         recommends('Devel::Gladiator'),
         recommends('Proc::ProcessTable'),
     ],
-    'Ldap Plugin' => [
-        -default => 0,
-        recommends('Net::LDAP')
-    ],
-#    'CAS Plugin' => [
-#        -default => 0,
-#        recommends('Authen::CAS::Client')
-#    ],
     'Improved halos' => [
         -default => 0,
         recommends('Template::Declare' => '0.28'),
         recommends('Data::Dump::Streamer'),
-    ],
-    'Comment Plugin' => [
-        -default => 0,
-        recommends('HTML::Scrubber'),
-        recommends('MIME::Base64::URLSafe'),
-        recommends('Net::Akismet'),
-        recommends('Regexp::Common'),
-        recommends('Regexp::Common::Email::Address'),
     ],
 );
 
@@ -209,12 +193,17 @@ version_from('lib/Jifty.pm');
 install_script('bin/jifty');
 install_share;
 
-# ls plugins -> Authentication-CAS  Multipage  TabView
+# INSTALLDIRS need to be set before Makefile if you want to change default install path
+# debian packaging use :
+#  INSTALLDIRS=vendor $(PERL) Makefile.PL --skipdeps INSTALLDIRS=vendor 
+#
+# TODO?: JIFTY_PLUGINS=ALL
+# ls plugins -> Authentication-CAS Authentication-Ldap  Multipage  TabView
 my @plugins = defined $ENV{JIFTY_PLUGINS} ? split(/ /, $ENV{JIFTY_PLUGINS}) : qw(TabView);
 
-# Test all of our sub-dist tests too
-tests(join(' ', qw(t/*.t t/*/*.t t/*/*/*.t t/*/*/*/*.t), map { "plugins/$_/t/*.t"} @plugins));
 
+# Test all of our sub-dist tests too
+tests(join(' ', qw(t/*.t t/*/*.t t/*/*/*.t t/*/*/*/*.t), map { "plugins/$_/t/*.t plugins/$_/t/*/*/*.t"} @plugins));
 
 for (@plugins) {
     die unless -d "plugins/$_";
@@ -227,6 +216,9 @@ for (@plugins) {
 
 postamble(<<"END");
 
+all ::
+@{[ join("\n", map { "\tcd plugins/$_;".' $(MAKE) ' } @plugins)   ]}
+
 install ::
 @{[ join("\n", map { "\tcd plugins/$_;".' $(MAKE) install DESTDIR=$(DESTDIR) PREFIX=$(PREFIX)' } @plugins)   ]}
 
@@ -236,7 +228,12 @@ distclean :: realclean
 realclean :: 
 @{[ join("\n", map { "\tcd plugins/$_;".' $(MAKE) realclean' } @plugins)   ]}
 
+INST_LIB= blib/lib
+
+INST_ARCHLIB= @{[ join("','", map { "plugins/$_/blib/lib"} @plugins) ]}
+
 END
+
 
 WriteAll;
 

@@ -14,7 +14,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: lib/Jifty/Plugin/Comment/Notification/CommentPublished.pm:71
+#: plugins/Comment/lib/Jifty/Plugin/Comment/Notification/CommentPublished.pm:71
 #. ($url,        $self->parent->title,        $comment->title,         $from,         $comment->created_on->strftime('%A, %B %d, %Y @ %H:%M%P')
 msgid ""
 "\n"
@@ -184,11 +184,15 @@ msgstr "重设密码的链接已发送到您的电子邮箱."
 msgid "A notification from %1!"
 msgstr "从 %1 送来的消息!"
 
+#: plugins/AuthzLDAP/lib/Jifty/Plugin/AuthzLDAP/Action/LDAPValidate.pm:61 plugins/AuthzLDAP/share/web/templates/error/AccessDenied:1 plugins/AuthzLDAP/share/web/templates/error/AccessDenied:2
+msgid "Access denied."
+msgstr ""
+
 #:
 msgid "Actions"
 msgstr "操作"
 
-#: lib/Jifty/Plugin/Comment/View.pm:165
+#: plugins/Comment/lib/Jifty/Plugin/Comment/View.pm:165
 msgid "Add a comment"
 msgstr ""
 
@@ -232,7 +236,12 @@ msgstr "回到应用程序"
 msgid "Bindings"
 msgstr "快捷键"
 
-#: lib/Jifty/Plugin/Comment/View.pm:138 lib/Jifty/Plugin/Comment/View.pm:197
+#: plugins/Comment/t/TestApp-Plugin-Comments/lib/TestApp/Plugin/Comments/View.pm:22
+#. ($blog->author)
+msgid "By %1"
+msgstr ""
+
+#: plugins/Comment/lib/Jifty/Plugin/Comment/View.pm:138 plugins/Comment/lib/Jifty/Plugin/Comment/View.pm:197
 #. ($poster,                     $created_on->strftime('%A, %B %d, %Y @ %H:%M%P')
 #. ($poster,                             $created_on->strftime('%A, %B %d, %Y @ %H:%M%P')
 msgid "By %1 %2"
@@ -312,7 +321,7 @@ msgstr "编辑"
 msgid "Edit %1"
 msgstr "编辑 %1"
 
-#: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:23 lib/Jifty/Plugin/Authentication/Password/Action/SendPasswordReminder.pm:32
+#: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:53 lib/Jifty/Plugin/Authentication/Password/Action/SendPasswordReminder.pm:32
 msgid "Email"
 msgstr "电子邮箱"
 
@@ -348,7 +357,7 @@ msgstr "回首页..."
 msgid "Go for it!"
 msgstr ""
 
-#: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:34
+#: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:69
 msgid "Hashed Password"
 msgstr ""
 
@@ -361,7 +370,7 @@ msgstr "回首页"
 msgid "Hello, %1!"
 msgstr "%1, 您好!"
 
-#: lib/Jifty/Plugin/Authentication/Facebook/Action/LoginFacebookUser.pm:103 lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:137 plugins/Authentication-CAS/lib/Jifty/Plugin/Authentication/CAS/Action/CASLogin.pm:147
+#: lib/Jifty/Plugin/Authentication/Facebook/Action/LoginFacebookUser.pm:103 plugins/Authentication-CAS/lib/Jifty/Plugin/Authentication/CAS/Action/CASLogin.pm:147 plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:137
 #. (Jifty->web->current_user->user_object->facebook_name)
 #. (Jifty->web->current_user->user_object->name)
 msgid "Hi %1!"
@@ -406,7 +415,7 @@ msgstr "内部错误"
 msgid "Invalid OpenID URL.  Please check to make sure it is correct.  (@{[$csr->err]})"
 msgstr ""
 
-#: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:62 lib/Jifty/Plugin/Authentication/Password/Action/SendAccountConfirmation.pm:75 lib/Jifty/Plugin/Authentication/Password/Action/SendPasswordReminder.pm:79
+#: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:122 lib/Jifty/Plugin/Authentication/Password/Action/SendAccountConfirmation.pm:75 lib/Jifty/Plugin/Authentication/Password/Action/SendPasswordReminder.pm:79
 msgid "It doesn't look like there's an account by that name."
 msgstr "该账号不存在."
 
@@ -450,7 +459,7 @@ msgstr ""
 msgid "Loading..."
 msgstr "正在加载..."
 
-#: lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:23 lib/Jifty/Plugin/Authentication/Password/Dispatcher.pm:132
+#: lib/Jifty/Plugin/Authentication/Password/Dispatcher.pm:132 plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:23
 msgid "Login"
 msgstr "登录"
 
@@ -466,7 +475,7 @@ msgstr ""
 msgid "Login with a password"
 msgstr "使用密码登录"
 
-#: lib/Jifty/Plugin/Authentication/Ldap/View.pm:28
+#: plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/View.pm:28
 msgid "Login with your Ldap account"
 msgstr ""
 
@@ -474,11 +483,11 @@ msgstr ""
 msgid "Login with your OpenID"
 msgstr ""
 
-#: lib/Jifty/Plugin/Authentication/Ldap/View.pm:35
+#: plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/View.pm:35
 msgid "Login with your ldap account"
 msgstr ""
 
-#: lib/Jifty/Plugin/Authentication/Ldap/View.pm:22 lib/Jifty/Plugin/Authentication/Password/View.pm:57
+#: lib/Jifty/Plugin/Authentication/Password/View.pm:57 plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/View.pm:22
 msgid "Login!"
 msgstr "登录!"
 
@@ -538,7 +547,7 @@ msgstr "未找到记录"
 msgid "No items found."
 msgstr ""
 
-#: lib/Jifty/Plugin/Comment/View.pm:304
+#: plugins/Comment/lib/Jifty/Plugin/Comment/View.pm:304
 msgid "No one has made a comment yet."
 msgstr ""
 
@@ -583,7 +592,7 @@ msgstr "页面信息"
 msgid "Parent"
 msgstr "父组件"
 
-#: lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:28 lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:29 lib/Jifty/Plugin/Authentication/Password/Action/ResetLostPassword.pm:32 lib/Jifty/Plugin/Authentication/Password/Mixin/Model/User.pm:60
+#: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:64 lib/Jifty/Plugin/Authentication/Password/Action/ResetLostPassword.pm:32 lib/Jifty/Plugin/Authentication/Password/Mixin/Model/User.pm:60 plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:28
 msgid "Password"
 msgstr "密码"
 
@@ -599,7 +608,11 @@ msgstr "权限不足"
 msgid "Please email us!"
 msgstr "请给我们发邮件!"
 
-#: lib/Jifty/Plugin/Comment/View.pm:221
+#: plugins/Comment/t/TestApp-Plugin-Comments/lib/TestApp/Plugin/Comments/View.pm:13
+msgid "Post"
+msgstr ""
+
+#: plugins/Comment/lib/Jifty/Plugin/Comment/View.pm:221
 msgid "Preview"
 msgstr ""
 
@@ -619,7 +632,7 @@ msgstr "非常非常抱歉"
 msgid "Record created"
 msgstr "成功建立记录."
 
-#: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:37
+#: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:72
 msgid "Remember me?"
 msgstr "记住我?"
 
@@ -697,7 +710,7 @@ msgstr "系统错误"
 msgid "Sorry about this."
 msgstr "非常抱歉"
 
-#: lib/Jifty/Plugin/Authentication/Facebook/Action/LoginFacebookUser.pm:62 lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:107 plugins/Authentication-CAS/lib/Jifty/Plugin/Authentication/CAS/Action/CASLogin.pm:115
+#: lib/Jifty/Plugin/Authentication/Facebook/Action/LoginFacebookUser.pm:62 plugins/Authentication-CAS/lib/Jifty/Plugin/Authentication/CAS/Action/CASLogin.pm:115 plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:107
 msgid "Sorry, something weird happened (we couldn't create a user for you).  Try again later."
 msgstr ""
 
@@ -705,7 +718,7 @@ msgstr ""
 msgid "Start"
 msgstr ""
 
-#: lib/Jifty/Plugin/Comment/View.pm:236
+#: plugins/Comment/lib/Jifty/Plugin/Comment/View.pm:236
 msgid "Submit"
 msgstr ""
 
@@ -727,7 +740,7 @@ msgstr "%1 不是合法的电子邮箱"
 msgid "That doesn't look like a correct value"
 msgstr "字段格式错误."
 
-#: lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:46
+#: plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:46
 msgid "That doesn't look like a valid login."
 msgstr ""
 
@@ -791,6 +804,10 @@ msgstr "再输入一次?"
 msgid "Updated"
 msgstr "成功更新项目."
 
+#: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:44
+msgid "Username"
+msgstr ""
+
 #: share/web/templates/__jifty/halo:96
 msgid "Variables"
 msgstr "变项"
@@ -816,7 +833,7 @@ msgstr "%2, 欢迎来到 %1"
 msgid "Welcome back, "
 msgstr ""
 
-#: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:194
+#: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:258
 #. ($user->name)
 msgid "Welcome back, %1."
 msgstr "欢迎回来, %1."
@@ -875,11 +892,11 @@ msgstr "您忘记了密码. 密码提醒将被发送到以下的电子信箱中:
 msgid "You may have mistyped your email address or password. Give it another shot."
 msgstr "您或许输错了电子邮箱或密码，请重试."
 
-#: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:138
+#: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:199
 msgid "You may have mistyped your email or password. Give it another shot."
 msgstr "您或许输错了电子邮箱或密码，请重试."
 
-#: lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:77
+#: plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:77
 msgid "You may have mistyped your login or password. Give it another shot?"
 msgstr ""
 
@@ -896,7 +913,7 @@ msgstr "此字段非空."
 msgid "You said you wanted a pony. (Source %1)"
 msgstr "您不正想要一匹小马吗? (参见 %1)"
 
-#: lib/Jifty/Plugin/Authentication/Ldap/View.pm:45 lib/Jifty/Plugin/Authentication/Password/View.pm:96
+#: lib/Jifty/Plugin/Authentication/Password/View.pm:96 plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/View.pm:45
 msgid "You're already logged in."
 msgstr "您已经登录了."
 
@@ -909,11 +926,11 @@ msgstr "您目前尚未登录."
 msgid "Your account has been successfully linked to your Facebook user %1!"
 msgstr ""
 
-#: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:38
+#: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:73
 msgid "Your browser can remember your login for you"
 msgstr "下次开启浏览器时, 是否保持登录状态?"
 
-#: lib/Jifty/Plugin/Comment/Action/CreateComment.pm:268
+#: plugins/Comment/lib/Jifty/Plugin/Comment/Action/CreateComment.pm:268
 msgid "Your comment has been added. If it does not immediately appear, it may have been flagged for moderation and should appear shortly."
 msgstr ""
 
@@ -925,12 +942,12 @@ msgstr "您的密码已被重设. 欢迎回来."
 msgid "Your password should be at least six characters"
 msgstr "密码长度至少为6位"
 
-#: lib/Jifty/Plugin/Comment/Notification/CommentNeedsModeration.pm:67
+#: plugins/Comment/lib/Jifty/Plugin/Comment/Notification/CommentNeedsModeration.pm:67
 #. ($appname, $comment->title)
 msgid "[%1] Moderate comment: %2"
 msgstr ""
 
-#: lib/Jifty/Plugin/Comment/Notification/CommentPublished.pm:65
+#: plugins/Comment/lib/Jifty/Plugin/Comment/Notification/CommentPublished.pm:65
 #. ($appname, $comment->title)
 msgid "[%1] New comment: %2"
 msgstr ""
@@ -951,7 +968,7 @@ msgstr "电子邮箱"
 msgid "for now, and try to forget that we let you down."
 msgstr ""
 
-#: lib/Jifty/Plugin/Comment/View.pm:87
+#: plugins/Comment/lib/Jifty/Plugin/Comment/View.pm:87
 #. ($status)
 msgid "mark as %1"
 msgstr ""
@@ -960,7 +977,7 @@ msgstr ""
 msgid "no value"
 msgstr ""
 
-#: lib/Jifty/Plugin/Comment/View.pm:100
+#: plugins/Comment/lib/Jifty/Plugin/Comment/View.pm:100
 msgid "publish"
 msgstr ""
 
@@ -976,7 +993,7 @@ msgstr "隐藏链接文字"
 msgid "type your password again"
 msgstr "重新输入密码"
 
-#: lib/Jifty/Plugin/Comment/View.pm:100
+#: plugins/Comment/lib/Jifty/Plugin/Comment/View.pm:100
 msgid "unpublish"
 msgstr ""
 

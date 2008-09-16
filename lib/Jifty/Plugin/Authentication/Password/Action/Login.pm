@@ -13,6 +13,21 @@ use Digest::MD5 qw(md5_hex);
 
 use constant TOKEN_EXPIRE_TIME => 30;
 
+__PACKAGE__->mk_accessors( 'login_by' );
+
+=head2 new
+
+=cut
+
+sub new {
+    my $class = shift;
+    my $self = $class->SUPER::new(@_);
+    my $plugin =
+        Jifty->find_plugin('Jifty::Plugin::Authentication::Password');
+    $self->login_by( $plugin->{login_by} || 'email' );
+    return $self;
+}
+
 =head2 arguments
 
 Return the email and password form fields
@@ -20,10 +35,30 @@ Return the email and password form fields
 =cut
 
 sub arguments { 
-    return( { email => { label => _('Email'),
-                           mandatory => 1,
-                           ajax_validates => 1,
-                            }  ,
+    my $self = shift;
+
+    my $login_para;
+    if ( $self->login_by eq 'username' ) {
+        $login_para = {
+            username => {
+                label          => _( 'Username' ),
+                mandatory      => 1,
+                ajax_validates => 1,
+            }
+        };
+    }
+    else {
+        $login_para = {
+            email => {
+                label          => _( 'Email' ),
+                mandatory      => 1,
+                ajax_validates => 1,
+            }
+        };
+    }
+
+    return( { 
+              %$login_para,
 
               password => { type => 'password',
                             label => _('Password'),
@@ -58,12 +93,38 @@ sub validate_email {
     my $self  = shift;
     my $email = shift;
 
-    my $u = $self->load_user($email);
-    return $self->validation_error(email => _("It doesn't look like there's an account by that name.")) unless ($u->id);
-
-    return $self->validation_ok('email');
+    return $self->_validate_email_or_username(email => $email);
 }
 
+=head2 validate_username ADDRESS
+
+there's a user in the database with it.
+
+Overridden from Jifty::Action::Record.
+
+=cut
+
+sub validate_username {
+    my $self     = shift;
+    my $username = shift;
+
+    return $self->_validate_email_or_username(username => $username);
+}
+
+sub _validate_email_or_username {
+    my $self  = shift;
+    my $name  = shift;
+    my $value = shift;
+
+    if ($value) {
+        my $u = $self->load_user( $value);
+        return $self->validation_error(
+            $name => _("It doesn't look like there's an account by that name.")
+        ) unless ( $u->id );
+        return $self->validation_ok($name);
+    }
+    return;
+}
 
 =head2 validate_password PASSWORD
 
@@ -130,7 +191,7 @@ Otherwise, throw an error.
 
 sub take_action {
     my $self = shift;
-    my $user = $self->load_user( $self->argument_value('email') );
+    my $user = $self->load_user( $self->argument_value( $self->login_by ) );
     my $password = $self->argument_value('password');
     my $token    = $self->argument_value('token') || '';
     my $hashedpw = $self->argument_value('hashed_password');
@@ -174,10 +235,13 @@ Load up and return a YourApp::User object for the user trying to log in
 
 sub load_user {
     my $self = shift;
-    my $username = shift;
+    my $value = shift;
     my $user = Jifty->app_class('Model', 'User')->new(current_user => Jifty->app_class('CurrentUser')->superuser);
-    $user->load_by_cols( email => $username);
-    return $user
+
+    # normally we use name as column name instead of usernmae
+    my $column = $self->login_by eq 'username' ? 'name' : $self->login_by;
+    $user->load_by_cols( $column => $value );
+    return $user;
 
 }
 
