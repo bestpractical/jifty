@@ -88,33 +88,20 @@ sub _i18n_js {
         }
     }
 
-    if (
-        open my $fh,
-        '<:encoding(utf-8)',
+    open my $fh, '<:encoding(utf-8)',
         Jifty::Util->absolute_path(
-            File::Spec->catdir(
-                Jifty->config->framework('Web')->{StaticRoot},
-                "js/dict/$current_lang.json"
-            )
-        )
-      )
-    {
-        local $/;
-        my $inline_dict = <$fh> || '{}';
+        File::Spec->catdir(
+            Jifty->config->framework('Web')->{StaticRoot},
+            "js/dict/$current_lang.json" ))
+        or Jifty->log->error("Can't find dictionary file $current_lang.json: $!");
 
-        # js l10n init
-        Jifty->web->out(
-            qq{<script type="text/javascript">
+    local $/;
+    my $inline_dict = <$fh> || '{}';
+    # js l10n init
+    Jifty->web->out(qq{<script type="text/javascript">
 Localization.dict_path = '/static/js/dict';
 Localization.dict = $inline_dict;
-</script>}
-        );
-
-    }
-    else {
-        Jifty->log->error("Can't find dictionary file $current_lang.json: $!");
-    }
-
+</script>});
 }
 
 1;

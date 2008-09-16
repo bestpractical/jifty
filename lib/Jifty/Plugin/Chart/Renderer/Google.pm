@@ -6,7 +6,6 @@ use base qw/ Jifty::Plugin::Chart::Renderer /;
 
 use URI::Escape qw(uri_escape);
 use List::Util qw(max min sum);
-use List::MoreUtils qw(mesh);
 use Scalar::Util qw(looks_like_number);
 
 =head1 NAME
@@ -73,10 +72,6 @@ sub render {
     # Kill the "px" unit
     $args{'width'} =~ s/px$//;
     $args{'height'} =~ s/px$//;
-
-    # a bit of dwim
-    $args{'min_value'} ||= delete $args{'min_values'};
-    $args{'max_value'} ||= delete $args{'max_values'};
 
     # Check size and die if wrong
     for ( qw(width height) ) {
@@ -192,43 +187,28 @@ sub render {
             }
         }
 
-        for ('min_value', 'max_value') {
-            $args{$_} = [ $args{$_} ] if !ref($args{$_});
-        }
-
-        my @min = map { $_ - $args{'min_minus'} } @{ $args{'min_value'} };
-        my @max = map { $_ - $args{'max_plus'}  } @{ $args{'max_value'} };
-
-        # repeat if necessary
-        push @min, ($min[-1]) x (@{ $args{'data'} } - @min);
-        push @max, ($max[-1]) x (@{ $args{'data'} } - @max);
-
-        $args{'calculated_min'} = \@min;
-        $args{'calculated_max'} = \@max;
+        my $min = $args{'min_value'} - $args{'min_minus'};
+        my $max = $args{'max_value'} + $args{'max_plus'};
+        
+        $args{'calculated_min'} = $min;
+        $args{'calculated_max'} = $max;
 
         # Format the min and max for use a few lines down
         unless ( not defined $args{'format'} ) {
-            @min = map { sprintf $args{'format'}, $_ } @min;
-            @max = map { sprintf $args{'format'}, $_ } @max;
+            $min = sprintf $args{'format'}, $min;
+            $max = sprintf $args{'format'}, $max;
         }
 
         # If it's a number, pass it through, otherwise replace it with a
         # number out of range to mark it as undefined
         my @data;
-        for my $data_idx ( 0 .. @{$args{'data'}}-1 ) {
-            push @data, [
-                map {
-                    looks_like_number($_)
-                    ? $_
-                    : $min[$data_idx] - 42
-                } @{ $args{'data'}[$data_idx] }
-            ];
+        for my $data ( @{$args{'data'}} ) {
+            push @data, [map { looks_like_number($_) ? $_ : $min-42 } @$data];
         }
 
         # Let's do text encoding with data scaling
         $url .= "&chd=t:" . join '|', map { join ',', @$_ } @data;
-
-        $url .= "&chds=" . join(',', mesh @min, @max);
+        $url .= "&chds=$min,$max";
     }
 
     # Add a title
@@ -260,9 +240,7 @@ sub render {
                 }
                 elsif ( not ref $labelset and $labelset eq 'RANGE' ) {
                     push @ranges, sprintf "%d,$args{'format'},$args{'format'}",
-                                           $index,
-                                           $args{'calculated_min'}[$index],
-                                           $args{'calculated_max'}[$index];
+                                           $index, $args{'calculated_min'}, $args{'calculated_max'};
                 }
                 $index++;
             }
@@ -298,7 +276,6 @@ sub render {
     # Add shape/range markers
     if ( @{ $args{'markers'} } ) {
         my @markers;
-        my $index = 0;
         for my $data ( @{$args{'markers'}} ) {
             my %marker = (
                 type     => 'x',
@@ -313,18 +290,18 @@ sub render {
             # Calculate where the position should be for horizontal lines
             if ( $marker{'type'} eq 'h' ) {
                 $marker{'position'} = $self->_position_in_range( $marker{'position'},
-                                                                 $args{'calculated_min'}[$index],
-                                                                 $args{'calculated_max'}[$index] );
+                                                                 $args{'calculated_min'},
+                                                                 $args{'calculated_max'} );
             }
             # Calculate where the position should be for ranges
             elsif ( lc($marker{'type'}) eq 'r' ) {
                 for (qw( start end )) {
-                    $marker{$_} = $args{'calculated_min'}[$index] if $marker{$_} eq 'MIN';
-                    $marker{$_} = $args{'calculated_max'}[$index] if $marker{$_} eq 'MAX';
+                    $marker{$_} = $args{'calculated_min'} if $marker{$_} eq 'MIN';
+                    $marker{$_} = $args{'calculated_max'} if $marker{$_} eq 'MAX';
 
                     $marker{$_} = $self->_position_in_range( $marker{$_},
-                                                             $args{'calculated_min'}[$index],
-                                                             $args{'calculated_max'}[$index] );
+                                                             $args{'calculated_min'},
+                                                             $args{'calculated_max'} );
                 }
             }
             # Fix text type
@@ -344,7 +321,6 @@ sub render {
             push @markers, join(',', @marker{qw( type color dataset position size priority )});
         }
         $url .= "&chm=" . join '|', @markers if @markers;
-        ++$index;
     }
 
     Jifty->web->out( qq{<img src="$url" />} );
@@ -367,23 +343,21 @@ sub _position_in_range {
 
 # Borrowed with slight modifications from Google::Chart::Data::SimpleEncoding
 sub _simple_encode_data {
-    my $self  = shift;
-    my $maxes = shift;
-    my $data  = shift;
+    my $self = shift;
+    my $max  = shift;
+    my $data = shift;
 
-    my $i = 0;
     my $result = '';
     my @map = ('A'..'Z', 'a'..'z', 0..9);
     for my $value ( @$data ) {
         if ( looks_like_number($value) ) {
-            my $index = int($value / $maxes->[$i] * (@map - 1));
+            my $index = int($value / $max * (@map - 1));
             $index = 0 if $index < 0;
             $index = @map if $index > @map;
             $result .= $map[$index];
         } else {
             $result .= '_';
         }
-        ++$i;
     }
     return $result;
 }

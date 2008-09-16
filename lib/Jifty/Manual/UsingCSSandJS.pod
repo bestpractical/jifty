@@ -37,9 +37,9 @@ definitions in a single request.
 =head2 Assembly of CSS definitions
 
 When Jifty assembles all CSS definitions (which is internally done
-inside L<Jifty::Web> by the method C<include_css>), a single file,
+inside L<Jifty::Web> by the method C<include_css>, a single file,
 C<main.css> is included into the generated HTML code of the current
-page. This file consists of a series of C<@import> directives that
+page. This file consists of a series of C<@include> directives that
 reference every single CSS file to get used.
 
 =head2 Expansion of CSS definitions

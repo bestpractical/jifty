@@ -52,7 +52,6 @@ requires('Hook::LexWrap');
 requires('IPC::PubSub' => '0.23' );
 requires('IPC::Run3');
 requires('Jifty::DBI' => '0.49' );            # Jifty::DBI::Collection Jifty::DBI::Handle Jifty::DBI::Record::Cachable Jifty::DBI::SchemaGenerator
-requires('List::MoreUtils');
 requires('Locale::Maketext::Extract' => '0.20');
 requires('Locale::Maketext::Lexicon' => '0.60');
 requires('Log::Log4perl' => '1.04'); # Log::Log4perl::Appender
@@ -174,10 +173,26 @@ features(
         recommends('Devel::Gladiator'),
         recommends('Proc::ProcessTable'),
     ],
+    'Ldap Plugin' => [
+        -default => 0,
+        recommends('Net::LDAP')
+    ],
+#    'CAS Plugin' => [
+#        -default => 0,
+#        recommends('Authen::CAS::Client')
+#    ],
     'Improved halos' => [
         -default => 0,
         recommends('Template::Declare' => '0.28'),
         recommends('Data::Dump::Streamer'),
+    ],
+    'Comment Plugin' => [
+        -default => 0,
+        recommends('HTML::Scrubber'),
+        recommends('MIME::Base64::URLSafe'),
+        recommends('Net::Akismet'),
+        recommends('Regexp::Common'),
+        recommends('Regexp::Common::Email::Address'),
     ],
 );
 
@@ -193,6 +208,7 @@ version_from('lib/Jifty.pm');
 install_script('bin/jifty');
 install_share;
 
+# ls plugins -> Authentication-CAS  Multipage  TabView
 my @plugins = defined $ENV{JIFTY_PLUGINS} ? split(/ /, $ENV{JIFTY_PLUGINS}) : qw(TabView);
 
 # Test all of our sub-dist tests too
@@ -203,7 +219,7 @@ for (@plugins) {
     die unless -d "plugins/$_";
 #    install_share("plugins/$_/share");
     chdir("plugins/$_");
-    system("$^X -I../../lib Makefile.PL");
+    system("$^X -I../../lib Makefile.PL INSTALLDIRS=".$ENV{INSTALLDIRS});
     chdir('../..');
 
 }
@@ -211,8 +227,13 @@ for (@plugins) {
 postamble(<<"END");
 
 install ::
-@{[ join("\n", map { "\tcd plugins/$_; make install" } @plugins)   ]}
+@{[ join("\n", map { "\tcd plugins/$_;".' $(MAKE) install DESTDIR=$(DESTDIR) PREFIX=$(PREFIX)' } @plugins)   ]}
 
+distclean :: realclean
+@{[ "\t".'$(NOECHO) $(NOOP)']}
+
+realclean :: 
+@{[ join("\n", map { "\tcd plugins/$_;".' $(MAKE) realclean' } @plugins)   ]}
 
 END
 
