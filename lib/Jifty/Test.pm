@@ -376,7 +376,7 @@ sub test_config {
                 Database => $config->framework('Database')->{Database} . $class->_testfile_to_dbname(),
             },
             Web => {
-                Port => int(rand(5000) + 10000),
+                Port => ($$ % 5000) + 10000,
                 DataDir => File::Temp::tempdir('masonXXXXXXXXXX', CLEANUP => 1)
             },
             Mailer => 'Jifty::Test',
