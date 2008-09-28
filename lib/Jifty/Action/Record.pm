@@ -27,8 +27,9 @@ use Clone qw/clone/;
 
 __PACKAGE__->mk_accessors(qw(record _cached_arguments));
 
-our $ARGUMENT_PROTOTYPE_CACHE = {};
+use constant report_detailed_messages => 1;
 
+our $ARGUMENT_PROTOTYPE_CACHE = {};
 
 =head1 METHODS
 
@@ -42,6 +43,13 @@ through the C<record> accessor.
 This method can either be overridden to return a string specifying the
 name of the record class, or the name of the class can be passed to
 the constructor.
+
+=head2 report_detailed_messages
+
+If the action returns true for C<report_detailed_message>, report the
+message returned by the model classes as the resulting message.  For
+Update actions, Put the per-field message in C<detailed_messages>
+field of action result content.  The default is false.
 
 =cut
 

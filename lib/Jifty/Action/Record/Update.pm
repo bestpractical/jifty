@@ -101,6 +101,8 @@ sub take_action {
     # Prepare the event for later publishing
     my $event_info = $self->_setup_event_before_action();
 
+    my $detailed_messages = {};
+
     # Iterate through all the possible arguments
     for my $field ( $self->argument_names ) {
 
@@ -184,16 +186,22 @@ sub take_action {
         # Calculate the name of the setter and set; asplode on failure
         my $setter = "set_$field";
         my ( $val, $msg ) = $self->record->$setter( $value );
-        $self->result->field_error($field, $msg || _('Permission denied'))
-          if not $val;
-
-        # Remember that we changed something (if we did)
-        $changed = 1 if $val;
+        if ($val) {
+            # Remember that we changed something (if we did)
+            $changed = 1;
+            $detailed_messages->{$field} = $msg;
+        }
+        else {
+            $self->result->field_error($field, $msg || _('Permission denied'));
+        }
     }
 
     # Report success if there's a change and no error, otherwise say nah-thing
     $self->report_success
       if $changed and not $self->result->failure;
+
+    $self->result->content( detailed_messages => $detailed_messages )
+        if $self->report_detailed_messages;
 
     # Publish the update event
     $self->_setup_event_after_action($event_info);
