@@ -1,0 +1,10 @@
+---
+framework:
+    Plugins:
+        - REST: {}
+    DevelMode: 0
+
+application:
+    ThisConfigFile: etc/config.yml
+    EtcConfig: 1
+
