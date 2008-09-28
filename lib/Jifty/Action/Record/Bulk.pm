@@ -67,11 +67,20 @@ sub arguments {
 
 sub perform_action {
     my ($self, $action_class, $ids) = @_;
+    $self->result->content('detailed_messages', {})
+        unless $self->result->content('detailed_messages');
+
     for (@$ids) {
         my $record = $self->record_class->new;
         $record->load($_);
-        $self->record( $record );
-        $action_class->can('take_action')->($self);
+
+        my $action = $action_class->new(
+            moniker => join('-', $self->moniker, $action_class, $_),
+            record => $record,
+            arguments => $self->argument_values );
+
+        $action->take_action;
+        $self->result->content('detailed_messages')->{ $action->moniker } = $action->result->message;
     }
     # allow bulk action to define if they allow individual action to fail
 }
