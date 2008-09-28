@@ -126,7 +126,7 @@ template '/__jifty/admin/queries/query' => sub {
         a {
             attr {
                 href => "#",
-                onclick => "Effect.toggle(\$('$more'),'blind'); this.innerHTML = this.innerHTML == 'more...' ? 'less...' : 'more...'; return false;",
+                onclick => "jQuery('#$more').toggle(500); this.innerHTML = this.innerHTML == 'more...' ? 'less...' : 'more...'; return false;",
             };
             "more..."
         }
