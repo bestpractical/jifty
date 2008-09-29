@@ -20,7 +20,6 @@ ok($system_user, "Found a system user");
 
 # Make it so that all users have full access
 TestApp::Model::User->add_trigger( before_access => sub { 'allow' } );
-TestApp::Model::User->finalize_triggers if TestApp::Model::User->can('finalize_triggers');
 
 # Create two users
 my $o = TestApp::Model::User->new(current_user => $system_user);

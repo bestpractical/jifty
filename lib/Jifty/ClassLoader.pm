@@ -370,7 +370,6 @@ sub require {
     for my $full ($self->models) {
         $self->_require_model_related_classes($full);
     }
-    $_->finalize_triggers for grep {$_->can('finalize_triggers')} $self->models;
 }
 
 # This class helps Jifty::ClassLoader::require() load each model, the model's

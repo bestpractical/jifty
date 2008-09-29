@@ -233,12 +233,6 @@ sub new {
     Jifty->class_loader($class_loader);
     $class_loader->require;
 
-    # Cache triggers on our model classes (the classloader does this
-    # for app model classes)
-    $_->finalize_triggers
-        for grep { $_->can('finalize_triggers') }
-        qw/Jifty::Model::Metadata Jifty::Model::Session/;
-
     # Configure the request handler and action API handler
     Jifty->handler(Jifty::Handler->new()) unless $args{no_views};
     Jifty->api(Jifty::API->new());

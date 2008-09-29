@@ -8,7 +8,7 @@ requires('Calendar::Simple');
 requires('Class::Accessor'); # Class::Accessor::Fast
 requires('Class::Container');
 requires('Class::Data::Inheritable');
-requires('Class::Trigger' => '0.12');
+requires('Class::Trigger' => '0.13');
 requires('Clone' => '0.27');
 requires('CGI' => '3.30');
 requires('CGI::Cookie::Splitter');
