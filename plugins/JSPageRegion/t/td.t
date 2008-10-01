@@ -44,8 +44,8 @@ package main;
 
 use Test::More;
 use IPC::Run3;
-eval 'use Jifty::View::Declare::Compile; 1'
-    or plan skip_all => "Can't load Jifty::View::Declare::Compile";
+eval 'use Jifty::Plugin::JSPageRegion::Compile; 1'
+    or plan skip_all => "Can't load Jifty::Plugin::JSPageRegion::Compile: $@";
 
 plan skip_all => "require new B::Deparse" unless B::Deparse->can('e_method');
 
@@ -78,7 +78,7 @@ sub is_compatible {
 
 sub js_code {
     my $code = shift;
-    return '(function() '.Jifty::View::Declare::Compile->new->coderef2text($code) . ')()';
+    return '(function() '.Jifty::Plugin::JSPageRegion::Compile->new->coderef2text($code) . ')()';
 }
 
 sub js_output {

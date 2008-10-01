@@ -1,4 +1,4 @@
-package Jifty::View::Declare::Compile;
+package Jifty::Plugin::JSPageRegion::Compile;
 use strict;
 use base 'B::Deparse';
 use B qw(class main_root main_start main_cv svref_2object opnumber perlstring

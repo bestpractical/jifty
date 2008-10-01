@@ -3,8 +3,6 @@ package Jifty::View::Declare::BaseClass;
 use strict;
 use warnings;
 use base qw/Exporter Jifty::View::Declare::Helpers/;
-use Scalar::Defer;
-use PadWalker;
 
 use Jifty::View::Declare::Helpers;
 
@@ -53,16 +51,8 @@ sub use_mason_wrapper {
     }
 }
 
-sub _actual_td_code {
-    my $class = shift;
-    my $path = shift;
-    my $code = Template::Declare->resolve_template($path) or return;
-    my $closed_over = PadWalker::closed_over($code)->{'$coderef'};
-    return $closed_over ? $$closed_over : $code;
-}
-
 use Attribute::Handlers;
-my (%Static, %Action);
+our (%Static, %Action);
 
 =head2 Static
 
@@ -80,23 +70,6 @@ This function allows a developer to mark a Template::Declare template as an acti
 
 
 sub Action :ATTR(CODE,BEGIN) { $Action{$_[2]}++; }
-
-=head2 client_cacheable
-
-Returns the type of cacheable object for client
-
-=cut
-
-sub client_cacheable {
-    my $self = shift;
-    my $path = shift;
-    my $code = $self->_actual_td_code($path) or return;
-
-    return 'static' if $Static{$code};
-    return 'action' if $Action{$code};
-    return;
-}
-
 
 =head2 show templatename arguments
 

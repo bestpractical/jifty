@@ -128,7 +128,14 @@ sub _calculate_share {
         if ( $self->{'share'} ) {
             my $class_to_path = $class;
             $class_to_path =~ s|::|/|g;
+            # for the in dist plugin share resides in share/plugins/...
             $self->{share} .= "/plugins/" . $class_to_path;
+            if (!-d $self->{share}) {
+                # for the plugin share resides in plugins/NAME/share
+                $self->{share} = $INC{$class_to_path.'.pm'};
+                $self->{share} =~ s{lib/\Q$class_to_path.pm}{share};
+                $self->{share} = File::Spec->rel2abs($self->{share});
+            }
         }
     }
     return $self->{share};

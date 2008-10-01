@@ -422,8 +422,6 @@ sub get_element {
     return "#region-" . $self->qualified_name . ' ' . join(' ', @_);
 }
 
-my $can_compile = eval 'use Jifty::View::Declare::Compile; 1' ? 1 : 0;
-
 =head2 client_cacheable
 
 Returns the client cacheable state of the regions path. Returns false if the template has not been marked as client cacheable. Otherwise it returns the string "static" or "action" based uon the cacheable attribute set on the template.
@@ -432,9 +430,9 @@ Returns the client cacheable state of the regions path. Returns false if the tem
 
 sub client_cacheable {
     my $self = shift;
-    return unless $can_compile;
+    my ($jspr) = Jifty->find_plugin('Jifty::Plugin::JSPageRegion') or return;
 
-    return Jifty::View::Declare::BaseClass->client_cacheable($self->path);
+    return $jspr->client_cacheable($self->path);
 }
 
 =head2 client_cache_content
@@ -445,11 +443,9 @@ Returns the template as JavaScript code.
 
 sub client_cache_content {
     my $self = shift;
-    return unless $can_compile;
+    my ($jspr) = Jifty->find_plugin('Jifty::Plugin::JSPageRegion') or return;
 
-    return Jifty::View::Declare::Compile->compile_to_js(
-        Jifty::View::Declare::BaseClass->_actual_td_code($self->path)
-    );
+    return $jspr->compile_to_js($self->path);
 }
 
 1;

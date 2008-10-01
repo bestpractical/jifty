@@ -64,7 +64,6 @@ requires('Module::CoreList');
 requires('Module::Refresh');
 requires('Module::ScanDeps');
 requires('Object::Declare' => '0.13');
-requires('PadWalker');
 requires('Params::Validate');
 requires('Scalar::Defer' => '0.12');
 requires('Shell::Command');
