@@ -160,11 +160,37 @@ sub update_catalog {
 
     $LMExtract->read_po($translation) if ( -f $translation && $translation !~ m/pot$/ );
 
+    my $orig_lexicon;
+
     # Reset previously compiled entries before a new compilation
     $LMExtract->set_compiled_entries;
     $LMExtract->compile(USE_GETTEXT_STYLE);
 
-    $LMExtract->write_po($translation);
+    if ($self->_is_core && !$self->{'template_name'}) {
+        $LMExtract->write_po($translation);
+    }
+    else {
+        $orig_lexicon = $LMExtract->lexicon;
+        my $lexicon = { %$orig_lexicon };
+
+        # XXX: cache core_lm
+        my $core_lm = Locale::Maketext::Extract->new();
+        Locale::Maketext::Lexicon::set_option('allow_empty' => 1);
+        $core_lm->read_po( File::Spec->catfile(
+            Jifty->config->framework('L10N')->{'DefaultPoDir'}, 'jifty.pot'
+        ));
+        Locale::Maketext::Lexicon::set_option('allow_empty' => 0);
+        for (keys %{ $core_lm->lexicon }) {
+            next unless exists $lexicon->{$_};
+            # keep the local entry overriding core if it exists
+            delete $lexicon->{$_} unless length $lexicon->{$_};
+        }
+        $LMExtract->set_lexicon($lexicon);
+
+        $LMExtract->write_po($translation);
+
+        $LMExtract->set_lexicon($orig_lexicon);
+    }
 }
 
 
