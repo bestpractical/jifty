@@ -15,20 +15,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: plugins/Comment/lib/Jifty/Plugin/Comment/Notification/CommentPublished.pm:71
-#. ($url,        $self->parent->title,        $comment->title,         $from,         $comment->created_on->strftime('%A, %B %d, %Y @ %H:%M%P')
-msgid ""
-"\n"
-"View Comment: %1\n"
-"\n"
-"On Post: %2\n"
-"Subject: %3\n"
-"From: %4\n"
-"Date: %5\n"
-"\n"
-"%6\n"
-msgstr ""
-
 #: lib/Jifty/Plugin/Authentication/Password/Notification/ConfirmLostPassword.pm:38
 #. ($appname,$confirm_url)
 msgid ""
@@ -167,11 +153,7 @@ msgstr "V-am trimis un link pentru a resetq parola la adresa dvs. de mail"
 msgid "A notification from %1!"
 msgstr "O notificare de la %1!"
 
-#: plugins/AuthzLDAP/lib/Jifty/Plugin/AuthzLDAP/Action/LDAPValidate.pm:61 plugins/AuthzLDAP/share/web/templates/error/AccessDenied:1 plugins/AuthzLDAP/share/web/templates/error/AccessDenied:2
-msgid "Access denied."
-msgstr ""
-
-#: plugins/Comment/lib/Jifty/Plugin/Comment/View.pm:165
+#:
 msgid "Add a comment"
 msgstr "Adaugă un comentariu"
 
@@ -207,14 +189,7 @@ msgstr "Jeton de Autentificare"
 msgid "Bindings"
 msgstr ""
 
-#: plugins/Comment/t/TestApp-Plugin-Comments/lib/TestApp/Plugin/Comments/View.pm:22
-#. ($blog->author)
-msgid "By %1"
-msgstr ""
-
-#: plugins/Comment/lib/Jifty/Plugin/Comment/View.pm:138 plugins/Comment/lib/Jifty/Plugin/Comment/View.pm:197
-#. ($poster,                     $created_on->strftime('%A, %B %d, %Y @ %H:%M%P')
-#. ($poster,                             $created_on->strftime('%A, %B %d, %Y @ %H:%M%P')
+#:
 msgid "By %1 %2"
 msgstr "De %1 %2"
 
@@ -284,6 +259,10 @@ msgstr "Adresă Email"
 msgid "Email address confirmed?"
 msgstr "Confirmţi adresa Email?"
 
+#: lib/Jifty/Plugin/Authentication/Password/View.pm:182
+msgid "Fill in your address below, and we'll send out another confirmation email to you. "
+msgstr ""
+
 #: lib/Jifty/Action.pm:1309
 msgid "Foo cannot contain -, *, +, or ?."
 msgstr "Foo nu poate conţine -, *, +, or ?."
@@ -321,9 +300,8 @@ msgstr "Revenire"
 msgid "Hello, %1!"
 msgstr "Bună ziua"
 
-#: lib/Jifty/Plugin/Authentication/Facebook/Action/LoginFacebookUser.pm:103 plugins/Authentication-CAS/lib/Jifty/Plugin/Authentication/CAS/Action/CASLogin.pm:147 plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:137
+#: lib/Jifty/Plugin/Authentication/Facebook/Action/LoginFacebookUser.pm:103
 #. (Jifty->web->current_user->user_object->facebook_name)
-#. (Jifty->web->current_user->user_object->name)
 msgid "Hi %1!"
 msgstr "Salut %1!"
 
@@ -357,6 +335,10 @@ msgstr "Problemă neindentificată."
 #: lib/Jifty/Plugin/OpenID/View.pm:59
 msgid "If the username provided conflicts with an existing username or contains invalid characters, you will have to give us a new one."
 msgstr "Dacă acest nume de utilisator intră in conflict cu numele existente sau conţine caractere invalide, va trebui să-l schimbaţi."
+
+#: lib/Jifty/Plugin/OpenID/View.pm:27
+msgid "If you have a Livejournal or other OpenID account, you don't even need to sign up. Just log in."
+msgstr ""
 
 #: lib/Jifty/Plugin/ErrorTemplates/View.pm:64
 msgid "Internal error"
@@ -398,7 +380,7 @@ msgstr "Limba"
 msgid "Loading..."
 msgstr "Se incarcă"
 
-#: lib/Jifty/Plugin/Authentication/Password/Dispatcher.pm:132 plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:23
+#: lib/Jifty/Plugin/Authentication/Password/Dispatcher.pm:132 lib/Jifty/Plugin/Authentication/Password/View.pm:88
 msgid "Login"
 msgstr "Identificare"
 
@@ -414,7 +396,7 @@ msgstr "Identificaţi-vă în Facebook acum pentru a asocia cu contul curent!"
 msgid "Login with a password"
 msgstr "Indentificare cu o parolă"
 
-#: plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/View.pm:28
+#:
 msgid "Login with your Ldap account"
 msgstr "Identificare cu un cont Ldap"
 
@@ -422,11 +404,11 @@ msgstr "Identificare cu un cont Ldap"
 msgid "Login with your OpenID"
 msgstr "Indeitificare cu OpenID"
 
-#: plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/View.pm:35
+#:
 msgid "Login with your ldap account"
 msgstr "Identificare cu un cont Ldap"
 
-#: lib/Jifty/Plugin/Authentication/Password/View.pm:57 plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/View.pm:22
+#: lib/Jifty/Plugin/Authentication/Password/View.pm:57
 msgid "Login!"
 msgstr "Identificare!"
 
@@ -466,11 +448,11 @@ msgstr "Nici un câmp(field) nu conţine"
 msgid "No items found."
 msgstr "Nicio înregistrare găsită."
 
-#: plugins/Comment/lib/Jifty/Plugin/Comment/View.pm:304
+#:
 msgid "No one has made a comment yet."
 msgstr "Niciun comentariu deocamdată."
 
-#: lib/Jifty/Web.pm:306
+#: lib/Jifty/Web.pm:305
 msgid "No request to handle"
 msgstr "Nicio cerere de tratat"
 
@@ -507,7 +489,7 @@ msgstr "Pagina info"
 msgid "Parent"
 msgstr ""
 
-#: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:64 lib/Jifty/Plugin/Authentication/Password/Action/ResetLostPassword.pm:32 lib/Jifty/Plugin/Authentication/Password/Mixin/Model/User.pm:60 plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:28
+#: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:64 lib/Jifty/Plugin/Authentication/Password/Action/ResetLostPassword.pm:32 lib/Jifty/Plugin/Authentication/Password/Mixin/Model/User.pm:60
 msgid "Password"
 msgstr "Parola"
 
@@ -515,7 +497,7 @@ msgstr "Parola"
 msgid "Passwords need to be at least six characters long"
 msgstr "Parola trebuie sa fie de minimum şase caractere"
 
-#: lib/Jifty/Action/Record/Delete.pm:61 lib/Jifty/Action/Record/Update.pm:180 lib/Jifty/Action/Record/Update.pm:187 lib/Jifty/Record.pm:508 lib/Jifty/Record.pm:567 lib/Jifty/Record.pm:70
+#: lib/Jifty/Action/Record/Delete.pm:61 lib/Jifty/Action/Record/Update.pm:182 lib/Jifty/Action/Record/Update.pm:195 lib/Jifty/Record.pm:508 lib/Jifty/Record.pm:567 lib/Jifty/Record.pm:70
 msgid "Permission denied"
 msgstr "Autorizaţie interzisă"
 
@@ -523,11 +505,7 @@ msgstr "Autorizaţie interzisă"
 msgid "Please email us!"
 msgstr "Contactaţi-ne prin email, vă rugăm!"
 
-#: plugins/Comment/t/TestApp-Plugin-Comments/lib/TestApp/Plugin/Comments/View.pm:13
-msgid "Post"
-msgstr ""
-
-#: plugins/Comment/lib/Jifty/Plugin/Comment/View.pm:221
+#:
 msgid "Preview"
 msgstr "Previzualizare"
 
@@ -568,6 +546,10 @@ msgstr "Înregistrare"
 msgid "Search"
 msgstr "Căutare"
 
+#: lib/Jifty/Plugin/Authentication/Password/View.pm:152
+msgid "Send"
+msgstr ""
+
 #: lib/Jifty/Plugin/Authentication/Password/View.pm:147
 msgid "Send a link to reset your password"
 msgstr "Trimitere link pentru schimbarea parolei"
@@ -601,7 +583,7 @@ msgstr "Ceva nu e corect"
 msgid "Sorry about this."
 msgstr "Ne cerem scuze."
 
-#: lib/Jifty/Plugin/Authentication/Facebook/Action/LoginFacebookUser.pm:62 plugins/Authentication-CAS/lib/Jifty/Plugin/Authentication/CAS/Action/CASLogin.pm:115 plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:107
+#: lib/Jifty/Plugin/Authentication/Facebook/Action/LoginFacebookUser.pm:62
 msgid "Sorry, something weird happened (we couldn't create a user for you).  Try again later."
 msgstr "Scuze, datorită unei probleme, nu va pute; crea contul. Încercaţi mai târziu."
 
@@ -609,7 +591,7 @@ msgstr "Scuze, datorită unei probleme, nu va pute; crea contul. Încercaţi mai
 msgid "Start"
 msgstr ""
 
-#: plugins/Comment/lib/Jifty/Plugin/Comment/View.pm:236
+#:
 msgid "Submit"
 msgstr "Trimite"
 
@@ -627,11 +609,11 @@ msgstr "Această adresa: %1 nu pare a fi o adresă validă."
 msgid "That doesn't look like a correct value"
 msgstr "Această valoare nu pare a fi corectă"
 
-#: plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:46
+#:
 msgid "That doesn't look like a valid login."
 msgstr "Acest login nu pare a fi valid."
 
-#: plugins/Authentication-CAS/lib/Jifty/Plugin/Authentication/CAS/Action/CASLogin.pm:47
+#:
 msgid "That doesn't look like a valid ticket."
 msgstr "Nu pare a fi un tichet valid."
 
@@ -639,7 +621,7 @@ msgstr "Nu pare a fi un tichet valid."
 msgid "That doesn't look like an email address."
 msgstr "Nu pare a fi o adresă email."
 
-#: lib/Jifty/Action/Record.pm:351
+#: lib/Jifty/Action/Record.pm:359
 msgid "That doesn't look right, but I don't know why"
 msgstr "Nu pare corect, dar nu ştiu cauza"
 
@@ -647,11 +629,11 @@ msgstr "Nu pare corect, dar nu ştiu cauza"
 msgid "The OpenID '$openid' has been linked to your account."
 msgstr "OpenID-ul '$openid' a fost asociat contului dvs."
 
-#: lib/Jifty/Action/Record.pm:219
+#: lib/Jifty/Action/Record.pm:227
 msgid "The passwords you typed didn't match each other"
 msgstr "Parolele date nu corespund una cu cealaltă"
 
-#: lib/Jifty/Web.pm:427
+#: lib/Jifty/Web.pm:426
 msgid "There was an error completing the request.  Please try again later."
 msgstr "Datorita unei probleme, cererea dvs. nu a fost finalizată. Vă rugăm incercaţi mai târziu."
 
@@ -679,7 +661,7 @@ msgstr "Încercaţi din nou, mai târziu. Vă cere; scuze."
 msgid "Type that again?"
 msgstr "Confirmaţi?"
 
-#: lib/Jifty/Action/Record/Update.pm:214
+#: lib/Jifty/Action/Record/Update.pm:222
 msgid "Updated"
 msgstr "Modificare inregistrată"
 
@@ -755,6 +737,10 @@ msgstr "Aceasta pagină nu există. Eroarea a fost inregistrată."
 msgid "You have already confirmed your account."
 msgstr "Contul dvs. a fost deja confirmat."
 
+#: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:215
+msgid "You haven't confirmed your account yet."
+msgstr ""
+
 #: lib/Jifty/Plugin/Authentication/Password/View.pm:148
 msgid "You lost your password. A link to reset it will be sent to the following email address:"
 msgstr "Aţi pierdut parola. Un link pentru modificarea parolei va fi trans;is la adresa email următoare:"
@@ -763,7 +749,7 @@ msgstr "Aţi pierdut parola. Un link pentru modificarea parolei va fi trans;is l
 msgid "You may have mistyped your email or password. Give it another shot."
 msgstr "Aţi greşit adresa email sau parola. Re-încercaţi."
 
-#: plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/Action/LDAPLogin.pm:77
+#:
 msgid "You may have mistyped your login or password. Give it another shot?"
 msgstr "Aţi greşit adresa email sau parola. Re-încercaţi?"
 
@@ -780,7 +766,7 @@ msgstr "Infor;aţie obligatorie"
 msgid "You said you wanted a pony. (Source %1)"
 msgstr ""
 
-#: lib/Jifty/Plugin/Authentication/Password/View.pm:96 plugins/Authentication-Ldap/lib/Jifty/Plugin/Authentication/Ldap/View.pm:45
+#: lib/Jifty/Plugin/Authentication/Password/View.pm:96
 msgid "You're already logged in."
 msgstr "Sunteţi deja conectat"
 
@@ -797,7 +783,7 @@ msgstr "Contul dvs. a fost asociat cu contul dvs. Facebook  %1!"
 msgid "Your browser can remember your login for you"
 msgstr "Navigatorul dvs. vă poate memora loginul pentru o conectare ulterioară"
 
-#: plugins/Comment/lib/Jifty/Plugin/Comment/Action/CreateComment.pm:268
+#:
 msgid "Your comment has been added. If it does not immediately appear, it may have been flagged for moderation and should appear shortly."
 msgstr "Co;entariul dvs. a fost adăugat. Dacă nu apare imediat, este in aşteptare de moderare si va apărea curând."
 
@@ -809,13 +795,11 @@ msgstr "Parola dvs. a fost resetată. Bine v-aţi întors."
 msgid "Your password should be at least six characters"
 msgstr "Parola trebuie sa conţină şase caractere"
 
-#: plugins/Comment/lib/Jifty/Plugin/Comment/Notification/CommentNeedsModeration.pm:67
-#. ($appname, $comment->title)
+#:
 msgid "[%1] Moderate comment: %2"
 msgstr "[%1] Comentariu moderat: %2"
 
-#: plugins/Comment/lib/Jifty/Plugin/Comment/Notification/CommentPublished.pm:65
-#. ($appname, $comment->title)
+#:
 msgid "[%1] New comment: %2"
 msgstr "Nou omentariut: %2"
 
@@ -827,35 +811,26 @@ msgstr "adresă email"
 msgid "for now, and try to forget that we let you down."
 msgstr ""
 
-#: plugins/Comment/lib/Jifty/Plugin/Comment/View.pm:87
-#. ($status)
-msgid "mark as %1"
-msgstr ""
-
-#: lib/Jifty/Action/Record.pm:444
+#: lib/Jifty/Action/Record.pm:452
 msgid "no value"
 msgstr ""
 
-#: plugins/Comment/lib/Jifty/Plugin/Comment/View.pm:100
+#:
 msgid "publish"
 msgstr "publicaţi"
-
-#: lib/Jifty/Manual/PageRegions.pod:188
-msgid "text of the link"
-msgstr ""
-
-#: lib/Jifty/Manual/PageRegions.pod:225
-msgid "text of the link that hides"
-msgstr ""
 
 #: lib/Jifty/Plugin/Authentication/Password/Action/ResetLostPassword.pm:37
 msgid "type your password again"
 msgstr "re-scrieţi parola"
 
-#: plugins/Comment/lib/Jifty/Plugin/Comment/View.pm:100
+#:
 msgid "unpublish"
 msgstr "nu publicaţi"
 
 #: lib/Jifty/Action.pm:1174
 msgid "warning"
 msgstr "atenţie"
+
+#: lib/Jifty/Action/Record/Bulk.pm:113
+msgid "yatta"
+msgstr ""

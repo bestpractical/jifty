@@ -11,5 +11,6 @@ for (glob("plugins/*")) {
     s{plugins/}{};
     mkpath("plugins/$_/share/po");
     my $name = lc($_);
+    $name =~ s/-/_/g;
     system("$perl bin/jifty po --dir plugins/$_ --podir plugins/$_/share/po --template_name jifty_plugin_$name");
 }
