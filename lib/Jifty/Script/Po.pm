@@ -32,7 +32,9 @@ sub options {
         $self->SUPER::options,
         'l|language=s' => 'language',
         'dir=s@'       => 'directories',
+        'podir=s'      => 'podir',
         'js'           => 'js',
+        'template_name=s' => 'template_name',
     )
 }
 
@@ -113,17 +115,22 @@ all your message catalogs and updates them with new and changed messages.
 
 sub update_catalogs {
     my $self = shift;
+    my $podir = $self->{'podir'} || Jifty->config->framework('L10N')->{'PoDir'};
+
+    $self->extract_messages;
+    $self->update_catalog( File::Spec->catfile(
+            $podir, $self->pot_name . ".pot"
+        ) );
 
     if ($self->{'language'}) {
-        $self->extract_messages;
         $self->update_catalog( File::Spec->catfile(
-            Jifty->config->framework('L10N')->{'PoDir'}, $self->{'language'} . ".po"
+            $podir, $self->{'language'} . ".po"
         ) );
         return;
     }
 
-    my @catalogs = grep !m{(^|/)\.svn/}, File::Find::Rule->file->in(
-        Jifty->config->framework('L10N')->{'PoDir'}
+    my @catalogs = grep !m{(^|/)\.svn/}, File::Find::Rule->file->name('*.po')->in(
+        $podir
     );
 
     unless ( @catalogs ) {
@@ -133,7 +140,6 @@ sub update_catalogs {
         return 
     }
 
-    $self->extract_messages;
     foreach my $catalog (@catalogs) {
         $self->update_catalog( $catalog );
     }
@@ -152,7 +158,7 @@ sub update_catalog {
     my $logger =Log::Log4perl->get_logger("main");
     $logger->info( "Updating message catalog '$translation'");
 
-    $LMExtract->read_po($translation) if ( -f $translation );
+    $LMExtract->read_po($translation) if ( -f $translation && $translation !~ m/pot$/ );
 
     # Reset previously compiled entries before a new compilation
     $LMExtract->set_compiled_entries;
@@ -172,12 +178,15 @@ L<Locale::Maketext::Extract>.
 sub extract_messages {
     my $self = shift;
     # find all the .pm files in @INC
-    my @files = File::Find::Rule->file->in( Jifty->config->framework('Web')->{'TemplateRoot'}, 'lib', 'bin', @{ $self->{directories} || [] } );
+    my @files = File::Find::Rule->file->in( @{ $self->{directories} ||
+                                                   [ Jifty->config->framework('Web')->{'TemplateRoot'},
+                                                     'lib', 'bin'] } );
 
     my $logger =Log::Log4perl->get_logger("main");
     foreach my $file (@files) {
         next if $file =~ m{(^|/)[\._]svn/};
         next if $file =~ m{\~$};
+        next if $file =~ m{\.pod$};
         next unless $self->_check_mime_type($file );
         $logger->info("Extracting messages from '$file'");
         $LMExtract->extract_file($file);
@@ -205,6 +214,24 @@ sub print_help {
     pod2usage( -exitval => 0, -verbose => 2, -input => $docs )
         if $self->{man};
     return 1;
+}
+
+
+sub _is_core {
+    return 1 if Jifty->config->framework('ApplicationName') eq 'JiftyApp';
+}
+
+=head2 pot_name
+
+Returns the name of the po template.
+
+=cut
+
+sub pot_name {
+    my $self = shift;
+    return $self->{'template_name'} if $self->{'template_name'};
+    return 'jifty' if $self->_is_core;
+    return lc  Jifty->config->framework('ApplicationName');
 }
 
 1;
@@ -239,8 +266,16 @@ name of a message catalog to create.
 
 =item B<--dir>
 
-Specify additional directories to extract from. Can be used multiple
-times.
+Specify explicit directories to extract from. Can be used multiple
+times.  The default directores will not be extracted if you use this option.
+
+=item B<--template_name>
+
+Specify the name of the po template.  Default to the lower-cased application name.
+
+=item B<--podir>
+
+Specify the directory of the po templates.
 
 =item B<--js>
 
