@@ -1287,7 +1287,7 @@ Jifty.update = function () {
                 apply_fragment_updates(response_fragment, f);
             } catch (e) { alert(e) }
 
-            jQuery.each(Jifty.Update.response_hook,
+            jQuery.each(Jifty.Update.response_hooks,
                         function() { this(response_fragment, f) });
         }
 
