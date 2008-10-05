@@ -88,7 +88,8 @@ sub perform_action {
 sub take_action {
     my $self = shift;
     my $ids = $self->argument_value('ids');
-    $ids = [split /,/,$ids] if !ref($ids);
+    # ids can be '0', and we don't want to keep '0'
+    $ids = [ grep { $_ ne 0 } split /,/,$ids] if !ref($ids);
     for (@{$self->actions}) {
         my ($action_class, $param) = @$_;
         # XXX: create real action objects and invoke them, so we have separate result objects
