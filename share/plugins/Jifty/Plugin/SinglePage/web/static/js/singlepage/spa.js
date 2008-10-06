@@ -49,7 +49,7 @@ window.dhtmlHistory.create({
                         if ((parsed != null) && (parsed.length == 2)) {
                             buttons[ parsed[1] ] = v;
                         } else if (v.length > 0) {
-                            input[ k ] = v;
+                            inputs[ k ] = v;
                         }
                     });
                 } else if ((parsed != null) && (parsed.length == 2)) {
