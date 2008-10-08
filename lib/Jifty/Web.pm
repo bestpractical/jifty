@@ -1344,13 +1344,15 @@ sub current_region {
 Returns the fully qualified name of the current
 L<Jifty::Web::PageRegion>, or the empty string if there is none.  If
 C<REGION> is supplied, gives the qualified name of C<REGION> were it
-placed in the current region.
+placed in the current region. You may also use a literal region name.
 
 =cut
 
 sub qualified_region {
     my $self = shift;
-    return join( "-", map { $_->name } @{ $self->{'region_stack'} || [] }, @_ );
+    join "-",
+        map { ref($_) ? $_->name : $_ }
+            @{ $self->{'region_stack'} || [] }, @_;
 }
 
 1;
