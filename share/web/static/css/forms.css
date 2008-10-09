@@ -206,7 +206,7 @@ input.placeholder, textarea.placeholder {
     color: #666;
 }
 
-form div.mandatory label {
+form div.mandatory .label {
     font-weight: bold;
 }
 
