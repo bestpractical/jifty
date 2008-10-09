@@ -41,15 +41,40 @@ Jifty::Script::Server - A standalone webserver for your Jifty application
 The port to run the server on. Overrides the port in the config file, if it is
 set there. The default port is 8888.
 
+=item --user USER
+
+The user to become after binding to the port.  It is advised that you
+use this when binding to low ports, instead of running as C<root>.
+This option only works if the server is using a L<Net::Server>
+subclass.
+
+=item --group GROUP
+
+The group to become after binding to the port.  Like C<--user>, this
+option only works if the server is using a L<Net::Server> subclass.
+
+=item --host HOSTNAME
+
+The host to bind to.  This option only works if the server is using a
+L<Net::Server> subclass.
+
 =item --stop
 
-Stops the server.
+Stops the server, if it is running.  This is accomplished by reading
+the PID from C<var/jifty-server.pid>
 
-=item --sigready
+=item --sigready SIGNAL
+
+Sets the signal number that shouldbe sent to the server's parent
+process when the server is ready to accept connections.
 
 =item --quiet
 
+Reduces the amount of debug output sent by the server
+
 =item --dbiprof
+
+Turns on DBI profiling; see L<DBI::ProfileDumper>.
 
 =item B<--help>
 
@@ -72,6 +97,9 @@ sub options {
         'sigready=s' => 'sigready',
         'quiet'      => 'quiet',
         'dbiprof'    => 'dbiprof',
+        'host=s'     => 'host',
+        'u|user=s'   => 'user',
+        'g|group=s'  => 'group',
     )
 }
 
@@ -104,6 +132,13 @@ sub run {
     # Purge stale mason cache data
     my $data_dir = Jifty->config->framework('Web')->{'DataDir'};
     my $server_class = Jifty->config->framework('Web')->{'ServerClass'} || 'Jifty::Server';
+    die "--user option only available with Net::Server subclasses\n"
+        if $self->{user} and $server_class eq "Jifty::Server";
+    die "--group option only available with Net::Server subclasses\n"
+        if $self->{group} and $server_class eq "Jifty::Server";
+    die "--host option only available with Net::Server subclasses\n"
+        if $self->{host} and $server_class eq "Jifty::Server";
+
     Jifty::Util->require($server_class);
 
     if (-d $data_dir) {
@@ -127,7 +162,9 @@ sub run {
         if $self->{quiet};
     $Jifty::SERVER = $server_class->new(port => $self->{port});
     $Jifty::SERVER->{server}{no_client_stdout} = 1;
-    $Jifty::SERVER->run;
+    my @args;
+    push @args, $_ => $self->{$_} for grep {exists $self->{$_}} qw/user group host/;
+    $Jifty::SERVER->run( @args );
 }
 
 1;
