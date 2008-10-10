@@ -81,7 +81,8 @@ sub moniker_for {
         my $moniker = $1;
 
         for my $id (keys %args) {
-          my $idfield = $f->find_input("J:A:F:F-$id-$moniker");
+          my $idfield = $f->find_input("J:A:F:F-$id-$moniker")
+                     || $f->find_input("J:A:F-$id-$moniker");
           next INPUT unless $idfield and $idfield->value eq $args{$id};
         }
 
