@@ -179,11 +179,13 @@ sub merge_params {
     # objects and hahrefs with no complaint, but 0.10 doesn't.  This
     # is a horrible, horrible hack, and will hopeflly be able to be
     # backed out if and when Hash::Merge reverts to the old behavior.
+    my $field_type = {};
     my @types;
     for my $m (@_) {
         my @t;
         for (keys %{$m}) {
             push @t, ref $m->{$_};
+            $field_type->{$_} = ref $m->{$_};
             bless $m->{$_}, "HASH";
         }
         push @types, \@t;
@@ -197,6 +199,11 @@ sub merge_params {
         for (keys %{$m}) {
             bless $m->{$_}, shift @t;
         }
+    }
+
+    for ( keys %$rv ) {
+        bless $rv->{$_}, $field_type->{$_}
+            if $field_type->{$_};
     }
     return $rv;
 }
