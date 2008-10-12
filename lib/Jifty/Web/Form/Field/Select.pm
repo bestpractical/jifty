@@ -25,13 +25,21 @@ sub render_widget {
     $field .= qq! title="@{[ $self->title ]}"! if ($self->title);
     $field .= $self->_widget_class;
     $field .= $self->javascript;
+    $field .= q! multiple="multiple"! if $self->multiple;
     $field .= qq!      >\n!;
+    my $current_value = $self->current_value;
+    Jifty->log->error( Data::Dumper::Dumper $current_value );
     for my $opt (@{ $self->action->available_values($self->name) }) {
         my $display = $opt->{'display'};
         my $value   = $opt->{'value'};
         $value = "" unless defined $value;
         $field .= qq!<option value="@{[ Jifty->web->escape($value) ]}"!;
-        $field .= qq! selected="selected"!  if defined $self->current_value and $self->current_value eq $value;
+        $field .= qq! selected="selected"!
+          if defined $current_value
+              && (
+                  ref $current_value eq 'ARRAY'
+                  ? ( grep { $value eq $_ } @$current_value )
+                  : $current_value eq $value );
         $field .= qq!>!;
         $field .= Jifty->web->escape(_($display)) if defined $display;
         $field .= qq!</option>\n!;

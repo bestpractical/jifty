@@ -118,8 +118,19 @@ C<new>.  Subclasses should extend this list.
 
 =cut
 
-sub accessors { shift->SUPER::accessors(), qw(name label input_name type sticky sticky_value default_value action mandatory ajax_validates ajax_canonicalizes autocompleter preamble hints placeholder focus render_mode max_length _element_id disable_autocomplete); }
-__PACKAGE__->mk_accessors(qw(name _label _input_name type sticky sticky_value default_value _action mandatory ajax_validates ajax_canonicalizes autocompleter preamble hints placeholder focus render_mode max_length _element_id disable_autocomplete));
+sub accessors {
+    shift->SUPER::accessors(), qw(name label input_name type
+      sticky sticky_value default_value action mandatory ajax_validates
+      ajax_canonicalizes autocompleter preamble hints placeholder focus
+      render_mode max_length _element_id disable_autocomplete multiple);
+}
+
+__PACKAGE__->mk_accessors(
+    qw(name _label _input_name type sticky sticky_value
+      default_value _action mandatory ajax_validates ajax_canonicalizes
+      autocompleter preamble hints placeholder focus render_mode
+      max_length _element_id disable_autocomplete multiple)
+);
 
 =head2 name [VALUE]
 
@@ -190,6 +201,11 @@ Gets or sets whether to disable _browser_ autocomplete for this field.
 =head2 preamble [VALUE]
 
 Gets or sets the preamble located in front of the field.
+
+=head2 multiple [VALUE]
+
+A boolean indicating that the field is multiple.
+aka. has multiple attribute, which is uselful for select field.
 
 =head2 id 
 
