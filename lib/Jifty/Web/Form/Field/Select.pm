@@ -28,7 +28,6 @@ sub render_widget {
     $field .= q! multiple="multiple"! if $self->multiple;
     $field .= qq!      >\n!;
     my $current_value = $self->current_value;
-    Jifty->log->error( Data::Dumper::Dumper $current_value );
     for my $opt (@{ $self->action->available_values($self->name) }) {
         my $display = $opt->{'display'};
         my $value   = $opt->{'value'};
