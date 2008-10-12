@@ -68,6 +68,7 @@ requires('Params::Validate');
 requires('Scalar::Defer' => '0.12');
 requires('Shell::Command');
 requires('String::Koremutake');
+requires('SUPER');
 requires('SQL::ReservedWords');
 requires('Template::Declare' => '0.26');                # Template::Declare::Tags
 requires('Test::Base');

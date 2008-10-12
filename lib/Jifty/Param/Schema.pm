@@ -83,6 +83,8 @@ use warnings;
 use Jifty::I18N;
 use Jifty::Param;
 use Scalar::Defer;
+use SUPER;
+
 use Object::Declare (
     mapping => {
         param => 'Jifty::Param',
@@ -127,7 +129,7 @@ sub schema (&) {
         $count += 10;
     }
 
-    if (my $super_params = $from->can('SUPER::PARAMS')) {
+    if (my $super_params = $from->super('PARAMS')) {
         $from->PARAMS(merge_params( $super_params->(), { @params } ));
     }
     else {
