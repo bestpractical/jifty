@@ -953,7 +953,7 @@ sub _validate_argument {
     if ( $value && $field_info->{valid_values} ) {
         $self->_validate_valid_values($field => $value);
         # ... but still check through a validator function even if it's in the list
-#        return if $self->result->field_error($field);
+        return if $self->result->field_error($field);
     }
 
     # the validator method name is validate_$field
