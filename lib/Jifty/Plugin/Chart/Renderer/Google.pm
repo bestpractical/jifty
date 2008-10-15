@@ -292,6 +292,8 @@ sub render {
 
     # Add bar widths for bar charts
     if ( $args{'type'} =~ /bar/i ) {
+        @{ $args{'bar_width'} } = $self->_calculate_bar_width(\%args)
+            if @{ $args{'bar_width'} } == 0;
         $url .= "&chbh=" . join ',', @{ $args{'bar_width'} };
     }
 
@@ -386,6 +388,20 @@ sub _simple_encode_data {
         ++$i;
     }
     return $result;
+}
+
+sub _calculate_bar_width {
+    my $self = shift;
+    my $args = shift;
+
+    my $bars = @{ $args->{data}[0] };
+    my $bar_width = $args->{width};
+
+    $bar_width -= 10;         # chart margins
+    $bar_width -= 3 * $bars;  # bar margins
+    $bar_width /= $bars;      # each bar's width
+
+    return int($bar_width), 3;
 }
 
 =head1 SEE ALSO
