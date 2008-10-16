@@ -279,6 +279,10 @@ sub render {
             $url .= "&chxl=" . join '|', @labels if @labels;
             $url .= "&chxr=" . join '|', @ranges if @ranges;
             $url .= "&chxs=" . join '|', @styles if @styles;
+
+            # label positions
+            $url .= "&chxp=" . join '|', @{ $args{'positions'} }
+                if defined @{ $args{'positions'} };
         }
     }
 
