@@ -356,6 +356,8 @@ sub render {
         ++$index;
     }
 
+    return $url if $args{'want_url'};
+
     Jifty->web->out( qq{<img src="$url" />} );
 
     # Make sure we don't return anything that will get output
