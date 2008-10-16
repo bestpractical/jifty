@@ -357,6 +357,7 @@ sub render {
     }
 
     return $url if $args{'want_url'};
+    Jifty->web->_redirect($url) if $args{'redirect'};
 
     Jifty->web->out( qq{<img src="$url" />} );
 
