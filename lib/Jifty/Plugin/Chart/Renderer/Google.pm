@@ -290,11 +290,14 @@ sub render {
         $url .= "&chf=bg,s,$args{'bgcolor'}";
     }
 
-    # Add bar widths for bar charts
+    # Add bar widths and zero line for bar charts
     if ( $args{'type'} =~ /bar/i ) {
         @{ $args{'bar_width'} } = $self->_calculate_bar_width(\%args)
             if @{ $args{'bar_width'} || [] } == 0;
         $url .= "&chbh=" . join ',', @{ $args{'bar_width'} };
+
+        $url .= "&chp=" . $args{'zero_line'}
+            if defined $args{'zero_line'};
     }
 
     # Add shape/range markers
