@@ -281,8 +281,8 @@ sub render {
             $url .= "&chxs=" . join '|', @styles if @styles;
 
             # label positions
-            $url .= "&chxp=" . join '|', @{ $args{'positions'} }
-                if defined @{ $args{'positions'} };
+            $url .= "&chxp=" . join ',', @{ $args{'positions'} }
+                if defined $args{'positions'};
         }
     }
 
