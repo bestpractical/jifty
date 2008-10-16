@@ -129,11 +129,19 @@ sub schema (&) {
         $count += 10;
     }
 
-    if (my $super_params = $from->super('PARAMS')) {
-        $from->PARAMS(merge_params( $super_params->(), { @params } ));
+    if ( my $super_params = $from->super('PARAMS') ) {
+        my $super = $super_params->();
+        # XXX: skip the merge_params if the parent class' PARAMS is
+        # empty to avoid the currently kludgy merge_params
+        # implementation to pollute scalar::defer with undetermined
+        # behaviour
+        $from->PARAMS(
+            ($super && keys %$super)
+            ? merge_params( $super, {@params} )
+            : {@params} );
     }
     else {
-        $from->PARAMS({ @params });
+        $from->PARAMS( {@params} );
     }
 
     no strict 'refs';
