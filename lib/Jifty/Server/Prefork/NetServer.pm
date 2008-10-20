@@ -37,7 +37,9 @@ sub log {
         $Log::Log4perl::TRACE,
         $Log::Log4perl::TRACE,
     );
+    $Log::Log4perl::caller_depth++;
     Log::Log4perl->get_logger(ref $self)->log($levels[$level],$msg);
+    $Log::Log4perl::caller_depth--;
 }
 
 1;
