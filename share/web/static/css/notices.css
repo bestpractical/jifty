@@ -42,6 +42,10 @@ div#messages,  div#errors {
     padding-left: 20px;
 }
 
+#jGrowl .result-error { 
+    background: #a00000;
+}
+
 #jGrowl .result-error .message {
     background: url(/static/images/silk/error.png) no-repeat center left;
     padding-left: 20px;

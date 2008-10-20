@@ -708,6 +708,22 @@ Behaviour.register({
         if (!jQuery(e).hasClass("focused")) {
             jQuery(e).addClass("focused").focus();
         }
+    },
+    /* Use jQuery for full-page-refresh notifications, as well */
+    '#messages.jifty.results.messages, #errors.jifty.results.messages': function(e) {
+        jQuery(e).hide();
+    },
+    '#messages.jifty.results.messages .message': function(e) {
+        jQuery.jGrowl( e.innerHTML, {
+            sticky: true,
+            theme: 'result-message'
+        });
+    },
+    '#errors.jifty.results.messages .error': function(e) {
+        jQuery.jGrowl( e.innerHTML, {
+            sticky: true,
+            theme: 'result-error'
+        });
     }
 });
 
