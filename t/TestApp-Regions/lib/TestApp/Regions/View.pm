@@ -9,6 +9,7 @@ template '/' => sub {
         render_region(
             name => 'mason',
             path => '/mason.html',
+            region_wrapper => 0,
         );
     };
 };
