@@ -185,21 +185,12 @@ sub _build_class_arguments {
 
     # Get ready to rumble
     my $field_info = {};
-    my @fields     = $self->possible_fields;
+    my @columns     = $self->possible_columns;
 
     # we use a while here because we may be modifying the fields on the fly.
-    while ( my $field = shift @fields ) {
+    while ( my $column = shift @columns ) {
         my $info = {};
-        my $column;
-
-        # The field is a column object, adjust to that
-        if ( ref $field ) {
-            $column = $field;
-        } else {
-            $column = $self->record->column($field);
-        }
-
-        $field = $column->name;
+        my $field = $column->name;
 
         # Canonicalize the render_as setting for the column
         my $render_as = lc( $column->render_as || '' );

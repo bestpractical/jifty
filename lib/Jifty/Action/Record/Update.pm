@@ -36,7 +36,7 @@ sub arguments {
     my $arguments = $self->SUPER::arguments(@_);
 
     # Mark read-only columns for read-only display
-    for my $column ( map {$self->record->column($_)} $self->possible_fields ) {
+    for my $column ( $self->possible_columns ) {
         if ( not $column->writable and $column->readable ) {
             $arguments->{$column->name}{'render_mode'} = 'read';
         }
