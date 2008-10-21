@@ -505,17 +505,33 @@ sub _default_autocompleter {
     return @choices;
 }
 
+=head2 possible_columns
+
+Returns the list of columns objects on the object that the action
+can update. This defaults to all of the C<containers> or the non-C<private>,
+non-C<virtual> and non-C<serial> columns of the object.
+
+=cut
+
+sub possible_columns {
+    my $self = shift;
+    return grep { $_->container or (!$_->private and !$_->virtual and $_->type ne "serial") } $self->record->columns;
+}
+
 
 =head2 possible_fields
 
-Returns the list of fields on the object that the action can update.
-This defaults to all of the non-C<private> fields of the object.
+Returns the list of the L</possible_columns>' names.
+
+Usually at the end names are required, however for subclassing column objects
+are better, or this method in a subclass turns out to be "map to column" -
+"filter" - "map to name" chain.
 
 =cut
 
 sub possible_fields {
     my $self = shift;
-    return map { $_->name } grep { $_->container or (!$_->private and !$_->virtual and $_->type ne "serial") } $self->record->columns;
+    return map { $_->name } $self->possible_columns;
 }
 
 =head2 take_action

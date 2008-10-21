@@ -131,17 +131,16 @@ sub report_success {
     $self->result->message(_("Created"))
 }
 
-=head2 possible_fields
+=head2 possible_columns
 
 Create actions do not provide fields for columns marked as C<private>
 or C<protected>.
 
 =cut
 
-sub possible_fields {
+sub possible_columns {
     my $self = shift;
-    my @names = $self->SUPER::possible_fields;
-    return map {$_->name} grep {not $_->protected} map {$self->record->column($_)} @names;
+    return grep {not $_->protected} $self->SUPER::possible_columns( @_ );
 }
 
 =head1 SEE ALSO
