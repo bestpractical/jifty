@@ -479,46 +479,46 @@ sub _form_widget {
     # This particular field hasn't been added to the form yet
     if ( not exists $self->{_private_form_fields_hash}{$arg_name} ) {
         my $field_info = $self->arguments->{$field};
-        my $sticky = 0;
+        # The field name is not known by this action
+        unless ($field_info) {
+            Jifty->log->warn("$arg_name isn't a valid field for $self");
+            return;
+        }
+        # It is in fact a form field for this action
 
-        # Check stickiness iff the values came from the request
-        if (Jifty->web->response->result($self->moniker)) {
+        my $sticky = 0;
+        # $sticky can be overriden per-parameter
+        if ( defined $field_info->{sticky} ) {
+            $sticky = $field_info->{sticky};
+        }
+        # Check stickiness if the values came from the request
+        elsif (Jifty->web->response->result($self->moniker)) {
             $sticky = 1 if $self->sticky_on_failure and $self->result->failure;
             $sticky = 1 if $self->sticky_on_success and $self->result->success;
         }
 
-        # $sticky can be overrided per-parameter
-        $sticky = $field_info->{sticky} if defined $field_info->{sticky};
 
-        # It is in fact a form field for this action
-        if ($field_info) {
-            
-            # form_fields overrides stickiness of what the user last entered.
-            my $default_value;
-            $default_value = $field_info->{'default_value'}
-              if exists $field_info->{'default_value'};
-            $default_value = $self->argument_value($field)
-              if $self->has_argument($field) && !$self->values_from_request->{$field};
+        # form_fields overrides stickiness of what the user last entered.
+        my $default_value;
+        $default_value = $field_info->{'default_value'}
+          if exists $field_info->{'default_value'};
+        $default_value = $self->argument_value($field)
+          if $self->has_argument($field) && !$self->values_from_request->{$field};
 
-            # Add the form field to the cache
-            $self->{_private_form_fields_hash}{$arg_name}
-                = Jifty::Web::Form::Field->new(
-                %$field_info,
-                action        => $self,
-                name          => $field,
-                sticky        => $sticky,
-                sticky_value  => $self->argument_value($field),
-                default_value => $default_value,
-                render_mode   => $args{'render_mode'},
-                %args
-                );
+        # Add the form field to the cache
+        $self->{_private_form_fields_hash}{$arg_name}
+            = Jifty::Web::Form::Field->new(
+            %$field_info,
+            action        => $self,
+            name          => $field,
+            sticky        => $sticky,
+            sticky_value  => $self->argument_value($field),
+            default_value => $default_value,
+            render_mode   => $args{'render_mode'},
+            %args
+            );
 
-        }    
 
-        # The field name is not known by this action
-        else {
-            Jifty->log->warn("$arg_name isn't a valid field for $self");
-        }
     } 
     # It has been cached, but render_as is explicitly set
     elsif ( my $widget = $args{render_as} ) {
