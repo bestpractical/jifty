@@ -199,9 +199,12 @@ sub merge_params {
         push @types, \@t;
     }
     my $prev_behaviour = Hash::Merge::get_behavior();
+    my $prev_clone_behaviour = Hash::Merge::get_clone_behavior();
+    Hash::Merge::set_clone_behavior(0);
     Hash::Merge::specify_behavior( MERGE_PARAM_BEHAVIOUR, "merge_params" );
     my $rv = Hash::Merge::merge(@_);
     Hash::Merge::set_behavior( $prev_behaviour );
+    Hash::Merge::set_clone_behavior($prev_clone_behaviour);
     for my $m (@_) {
         my @t = @{shift @types};
         for (keys %{$m}) {
