@@ -116,6 +116,8 @@ features(
         recommends('Test::MockObject' => '1.07'),
         recommends('Module::Refresh' => '0.09'),
         recommends('Test::WWW::Declare' => '0.01'),
+        recommends('Test::Email'),
+        recommends('Email::Abstract'),
     ],
     'Development of the jifty framework' => [
         -default => 0,
