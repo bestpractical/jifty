@@ -44,6 +44,8 @@ sub mail_ok (&@) {
     $code->();
     local $Test::Builder::Level = $Test::Builder::Level + 1;
     my @msgs = Jifty::Test->messages;
+    is(@msgs, @_, "Sent exactly " . @_ . " emails");
+
     for my $spec (@_) {
         my $msg = shift @msgs
             or ok(0, 'Expecting message but none found.'), next;
