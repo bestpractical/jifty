@@ -3,6 +3,7 @@ use strict;
 
 package Jifty::View::Declare::CRUD;
 use Jifty::View::Declare -base;
+use Scalar::Defer 'force';
 
 # XXX: should register 'template type' handler, so the
 # client_cache_content & the TD sub here agrees with the arguments.
@@ -496,6 +497,12 @@ sub _current_collection {
     my $collection;
     if ( $search ) {
         $collection = $search;
+    } elsif (my $predefined = get('predefined')) {
+        my ($entry) = grep { $_->{name} eq $predefined } $self->predefined_search;
+        $collection = force $entry->{collection} || $collection_class->new();
+        for (@{$entry->{condition} || []}) {
+            $collection->limit(%$_);
+        }
     } else {
         $collection = $collection_class->new();
         $collection->find_all_rows();
@@ -506,6 +513,53 @@ sub _current_collection {
     return $collection;    
 }
 
+use constant predefined_search => ();
+
+=head2 predefined_search
+
+The I<private> template makes use of the C<predefined_search> constant, which contains a list of hashref, each defines a collection in the format:
+
+  { name => 'my_list',
+    label => "My List",
+    collection => defer {
+      # ... construct and return the collection
+    }
+  },
+  { name => 'my_list2',
+    label => "My List2",
+    condition => [
+       { column => 'foo' value => 'bar' },
+       # ... and your other Jifty::DBI::Collection limit args
+    ]
+  }
+
+
+=cut
+
+private template 'predefined_search' => sub {
+    my $self = shift;
+    my @predefined = $self->predefined_search or return;
+
+    ul { { class is 'predefined-search' };
+        li { hyperlink( label => _("Default"),
+                onclick => [ {
+                        refresh => Jifty->web->current_region,
+                        args => { predefined => undef }
+                } ] ) };
+
+        for (@predefined) {
+            li {
+                hyperlink( label => $_->{label},
+                    onclick => [ {
+                            refresh => Jifty->web->current_region,
+                            args => { predefined => $_->{name} }
+                        } ]
+                );
+            }
+        }
+    };
+    div { { class is 'clear' } };
+};
 
 =head2 search_region
 
@@ -516,6 +570,8 @@ This I<private> template renders a region to show an expandable region for a sea
 private template 'search_region' => sub {
     my $self        = shift;
     my $object_type = $self->object_type;
+
+    show('predefined_search');
 
     my $search_region = Jifty::Web::PageRegion->new(
         name => 'search',
