@@ -50,6 +50,12 @@ around 'new' => sub {
     push @actions, Jifty->web->request->action( $self->moniker )
       if Jifty->web->request->action( $self->moniker );
 
+    # Keep track of the current request, as that trumps default
+    # values.  This makes the back button "remember" what you entered
+    # when you were previously on the page.
+    my %this;
+    %this = %{$actions[0]->arguments} if @actions;
+
     # Also, all earlier versions of this action in the continuation tree
     my $cont = Jifty->web->request->continuation;
     while ( $cont and $cont->request->action( $self->moniker ) ) {
@@ -71,6 +77,7 @@ around 'new' => sub {
     # Track how an argument was set, again new_action args taking precedent
     $self->values_from_request({});
     $self->values_from_request->{$_} = 1 for keys %earlier;
+    $self->values_from_request->{$_} = 0 for keys %this;
     $self->values_from_request->{$_} = 0 for keys %{ $args{'arguments' } };
 
     return $self;
