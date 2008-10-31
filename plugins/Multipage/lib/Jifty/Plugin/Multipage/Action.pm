@@ -54,7 +54,7 @@ around 'new' => sub {
     # values.  This makes the back button "remember" what you entered
     # when you were previously on the page.
     my %this;
-    %this = %{$actions[0]->arguments} if @actions;
+    %this = %{$actions[0]->arguments || {}} if @actions;
 
     # Also, all earlier versions of this action in the continuation tree
     my $cont = Jifty->web->request->continuation;
