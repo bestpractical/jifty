@@ -132,6 +132,7 @@ sub next_page_button {
         register => 1,
         returns => \%returns,
         label => "Next",
+        class => "next",
         %args,
     );
 }
@@ -150,6 +151,7 @@ sub prev_page_button {
     return $self->button(
         register => 1,
         label => "Back",
+        class => "back",
         submit => [],
         call => Jifty->web->request->continuation,
         as_button => 1,
@@ -183,9 +185,14 @@ sub finish_button {
     my $return = Jifty::Continuation->new(
         request  => $req,
         response => Jifty::Response->new,
-        parent   => $top->parent
+        parent   => $top->parent,
     );
-    return $self->button( call => $return, label => "Finish", %args );
+    return $self->button(
+        call => $return,
+        label => "Finish",
+        class => "next finish",
+        %args,
+    );
 }
 
 =head2 cancel_button [ARGS]
@@ -198,7 +205,13 @@ return the user to the page where the multipage action started.
 sub cancel_button {
     my $self = shift;
     my %args;
-    return Jifty->web->link( call => $self->top_continuation, label => "Cancel", as_button => 1, %args );
+    return Jifty->web->link(
+        call => $self->top_continuation,
+        label => "Cancel",
+        class => "back cancel",
+        as_button => 1,
+        %args
+    );
 }
 
 1;
