@@ -13,8 +13,8 @@ my $mech = Jifty::Test::WWW::Mechanize->new;
 $mech->get_ok($URL);
 
 $mech->content_like(qr{
-    <div \s+ class="mason-wrapper"> .*
-        <div \s+ class="mason2-wrapper"> .*
+    <div \s+ id="mason-wrapper"> .*
+        <div \s+ id="mason2-wrapper"> .*
             <h1>mason \s+ 2!</h1> .*
         </div> .*
     </div>
