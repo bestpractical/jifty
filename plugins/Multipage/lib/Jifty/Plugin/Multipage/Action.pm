@@ -129,6 +129,27 @@ sub next_page_button {
     );
 }
 
+=head2 prev_page_button [ARGS]
+
+Acts like L<Jifty::Action/button>, except with appropriate defaults to
+move to the previous page in the action.
+
+=cut
+
+sub prev_page_button {
+    my $self = shift;
+    my %args = @_;
+
+    return $self->button(
+        register => 1,
+        label => "Back",
+        submit => [],
+        call => Jifty->web->request->continuation,
+        as_button => 1,
+        %args,
+    );
+}
+
 =head2 finish_button [ARGS]
 
 Acts like L<Jifty::Action/button>, except with appropriate defaults to
