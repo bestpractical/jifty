@@ -114,7 +114,19 @@ sub next_page_button {
     my %args = @_;
     confess "No 'url' passed to next_page_button for @{[ref $self]}"
       unless $args{url};
-    return $self->button( returns => {}, label => "Next", %args);
+
+    # We do this munging so that we don't attempt a registration as part of the redirect
+    my %returns;
+    $returns{$self->form_field_name($_)} = $args{arguments}{$_}
+        for keys %{$args{arguments} || {}};
+    delete $args{arguments};
+
+    return $self->button(
+        register => 1,
+        returns => \%returns,
+        label => "Next",
+        %args,
+    );
 }
 
 =head2 finish_button [ARGS]
