@@ -207,10 +207,16 @@ Action.prototype = {
         show_wait_message();
         var id = this.register.id;
 
+        var data = this.serialize();
+        data += '&J:VALIDATE=1';
+        if (this.form['J:C']) {
+            data += '&J:C='+this.form['J:C'].value;
+        }
+
         jQuery.ajax({
             url: '/__jifty/validator.xml',  // Right now, the URL is actually completely irrelevant
             type: "get",
-            data: this.serialize() + "&J:VALIDATE=1",
+            data: data,
             complete: function (request, status) {
                 var response  = request.responseXML.documentElement;
                 for (var action = response.firstChild; action != null; action = action.nextSibling) {
