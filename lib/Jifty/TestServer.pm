@@ -55,12 +55,12 @@ sub started_ok {
         $SIG{USR1} = sub { };
         sleep 15;
         $self->{started} = 1;
-        Jifty->handle->dbh->{'InactiveDestroy'} = 1;
         $Tester->ok(1, $text);
         # XXX: pull from jifty::config maybe
         return "http://localhost:".$self->port;
     } else {
         Jifty->handle->dbh->{'InactiveDestroy'} = 1;
+        Jifty->handle->dbh(undef);
         # See DBI.pm: 
         #
         # This attribute is specifically designed for use in Unix applications
