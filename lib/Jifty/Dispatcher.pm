@@ -860,6 +860,9 @@ sub _do_dispatch {
         $self->_handle_stage('RUN' => 'show');
     }
 
+    # Close the handle down, so the client can go on their merry way
+    close STDOUT unless Jifty->web->request->is_subrequest;
+
     # Cleanup
     $self->_handle_stage('CLEANUP');
 
