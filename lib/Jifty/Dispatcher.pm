@@ -861,7 +861,11 @@ sub _do_dispatch {
     }
 
     # Close the handle down, so the client can go on their merry way
-    close STDOUT unless Jifty->web->request->is_subrequest;
+    # XXX TODO FIXME: Doing this causes tests to explode with "message
+    # type 0x32 arrived from server while idle", which is a mesage
+    # from Postgres.  It's unclear why Pg cares that we closed STDOUT,
+    # but this yak is too big to shave right now.
+    #close STDOUT unless Jifty->web->request->is_subrequest;
 
     # Cleanup
     $self->_handle_stage('CLEANUP');
