@@ -113,7 +113,7 @@ requires:
   List::MoreUtils: 0
   Locale::Maketext::Extract: 0.20
   Locale::Maketext::Lexicon: 0.60
-  Log::Log4perl: 1.04
+  Log::Log4perl: 1.11
   MIME::Types: 0
   Module::CoreList: 0
   Module::Pluggable: 3.5
