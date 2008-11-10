@@ -376,8 +376,9 @@ Returns an IPC::PubSub object for the current application.
 =cut
 
 sub bus {
-
-    unless ($PUB_SUB) {
+    my $class = shift;
+    my %args = ( connect => 1, @_ );
+    if (not $PUB_SUB and $args{connect}) {
         my @args;
 
         my $backend = Jifty->config->framework('PubSub')->{'Backend'};
