@@ -481,7 +481,8 @@ sub _form_widget {
         my $field_info = $self->arguments->{$field};
         # The field name is not known by this action
         unless ($field_info) {
-            Jifty->log->warn("$arg_name isn't a valid field for $self");
+            local $Log::Log4perl::caller_depth += 2;
+            Jifty->log->warn("$field isn't a valid field for $self");
             return;
         }
         # It is in fact a form field for this action
