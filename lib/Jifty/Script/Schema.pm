@@ -300,7 +300,7 @@ sub create_all_tables {
             table_prefix => '_jifty_pubsub_',
             db_init      => 1,
         )
-    );
+    )->disconnect;
     $log->info("Set up version $appv, jifty version $jiftyv");
 }
 
