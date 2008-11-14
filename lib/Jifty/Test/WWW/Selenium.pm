@@ -89,7 +89,7 @@ sub _REAPER {
 sub _get_default_browser {
     my $class = shift;
 
-    return '*firefox';
+    return '*firefox /usr/lib/mozilla-firefox/firefox';
 }
 
 my @cleanup;

@@ -69,7 +69,7 @@ sub render {
     if ($args{type} eq 'composite') {
         for (@{ $args{types} }) {
             if (!$types{$_}) {
-                Jifty->log->warn("Unsupported chart type: $_!");
+                $self->log->warn("Unsupported chart type: $_!");
                 return;
             }
             $_ = $types{$_};
@@ -77,7 +77,7 @@ sub render {
     }
     else {
         $args{type} = $types{ $args{type} } or do {
-            Jifty->log->warn("Unsupported chart type: $args{type}!");
+            $self->log->warn("Unsupported chart type: $args{type}!");
             return;
         };
     }

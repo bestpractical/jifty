@@ -3,6 +3,8 @@ use warnings;
 
 package Jifty::Plugin::Chart::Renderer;
 
+use base qw/Jifty::Object/;
+
 =head1 NAME
 
 Jifty::Plugin::Chart::Renderer - Base class for chart rendering classes

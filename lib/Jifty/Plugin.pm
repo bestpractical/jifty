@@ -3,7 +3,7 @@ use warnings;
 
 package Jifty::Plugin;
 use File::ShareDir 'module_dir';
-use base 'Class::Accessor::Fast';
+use base qw/Class::Accessor::Fast Jifty::Object/;
 __PACKAGE__->mk_accessors('_pre_init');
 
 =head1 NAME

@@ -137,7 +137,7 @@ sub generate_css {
 
     return if Jifty::CAS->key('ccjs', 'css-all') && !Jifty->config->framework('DevelMode');
 
-    Jifty->log->debug("Generating CSS...");
+    $self->log->debug("Generating CSS...");
 
     my @roots = map { Jifty::Util->absolute_path( $_ ) }
         Jifty->handler->view('Jifty::View::Static::Handler')->roots;
@@ -163,7 +163,7 @@ sub _generate_javascript {
     my $self = shift;
 
     return if Jifty::CAS->key('ccjs', 'js-all') && !Jifty->config->framework('DevelMode');
-    Jifty->log->debug("Generating JS...");
+    $self->log->debug("Generating JS...");
 
     # for the file cascading logic
         my $static_handler = Jifty->handler->view('Jifty::View::Static::Handler');
@@ -188,7 +188,7 @@ sub _generate_javascript {
         }
         if ($self->jsmin) {
             eval { $self->minify_js(\$js) };
-            Jifty->log->error("Unable to run jsmin: $@") if $@;
+            $self->log->error("Unable to run jsmin: $@") if $@;
         }
 
     Jifty::CAS->publish( 'ccjs', 'js-all', $js,
@@ -206,7 +206,7 @@ sub minify_js {
     my $input = shift;
     my $output;
 
-    Jifty->log->debug("Minifying JS...");
+    $self->log->debug("Minifying JS...");
 
     # We need to reopen stdout temporarily, because in FCGI
     # environment, stdout is tied to FCGI::Stream, and the child
@@ -231,7 +231,7 @@ sub _serve_cas_object {
     my $key = Jifty::CAS->key('ccjs', $name);
 
     if ( Jifty->handler->cgi->http('If-Modified-Since') and $incoming_key eq $key ) {
-        Jifty->log->debug("Returning 304 for cached $name");
+        $self->log->debug("Returning 304 for cached $name");
         Jifty->handler->apache->header_out( Status => 304 );
         return;
     }
@@ -245,11 +245,11 @@ sub _serve_cas_object {
     Jifty::View::Static::Handler->send_http_header($compression, length($obj->content));
 
     if ( $compression ) {
-        Jifty->log->debug("Sending gzipped squished $name");
+        $self->log->debug("Sending gzipped squished $name");
         binmode STDOUT;
         print $obj->content_deflated;
     } else {
-        Jifty->log->debug("Sending squished $name");
+        $self->log->debug("Sending squished $name");
         print $obj->content;
     }
 }

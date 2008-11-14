@@ -2,6 +2,8 @@ package Jifty::View;
 use strict;
 use warnings;
 
+use base qw/Jifty::Object/;
+
 =head1 NAME
 
 Jifty::View - Base class for view modules

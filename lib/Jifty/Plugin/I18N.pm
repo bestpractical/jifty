@@ -81,10 +81,10 @@ sub _i18n_js {
         } @$allowed_lang;
 
         unless ( $current_lang =~ /^$allowed_regex/) {
-            Jifty->log->error("user is requesting $current_lang which is not allowed");
+            $self->log->error("user is requesting $current_lang which is not allowed");
             my $headers = Jifty->handler->apache->headers_in;
             use Data::Dumper;
-            Jifty->log->error(Dumper($headers));
+            $self->log->error(Dumper($headers));
         }
     }
 
@@ -112,7 +112,7 @@ Localization.dict = $inline_dict;
 
     }
     else {
-        Jifty->log->error("Can't find dictionary file $current_lang.json: $!");
+        $self->log->error("Can't find dictionary file $current_lang.json: $!");
     }
 
 }

@@ -482,7 +482,7 @@ sub _form_widget {
         # The field name is not known by this action
         unless ($field_info) {
             local $Log::Log4perl::caller_depth += 2;
-            Jifty->log->warn("$field isn't a valid field for $self");
+            $self->log->warn("$field isn't a valid field for $self");
             return;
         }
         # It is in fact a form field for this action
@@ -1109,10 +1109,10 @@ sub _values_for_field {
 
                 if ($v->{'collection'}->count) {
                     unless ($v->{'collection'}->first->can($disp)) {
-                        Jifty->log->error("Invalid 'display_from' of $disp on $field");
+                        $self->log->error("Invalid 'display_from' of $disp on $field");
                     }
                     unless ($v->{'collection'}->first->can($val)) {
-                        Jifty->log->error("Invalid 'value_from' of $val on $field");
+                        $self->log->error("Invalid 'value_from' of $val on $field");
                     }
                 }
 

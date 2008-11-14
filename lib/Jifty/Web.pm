@@ -830,7 +830,7 @@ sub tangent {
     my $self = shift;
 
     if (@_ == 1  ) {
-        Jifty->log->error("Jifty::Web->tangent takes a paramhash. Perhaps you passed '".$_[0]."' , rather than 'url => ".$_[0]."'");
+        $self->log->error("Jifty::Web->tangent takes a paramhash. Perhaps you passed '".$_[0]."' , rather than 'url => ".$_[0]."'");
         die; 
     }
     my $clickable = Jifty::Web::Form::Clickable->new(

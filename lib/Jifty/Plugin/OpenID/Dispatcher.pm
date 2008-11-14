@@ -59,7 +59,7 @@ on 'openid/verify_and_login' => run {
     if ( defined $result and $result->success ) {
         my $openid = $result->content('openid');
         my $user = Jifty->app_class('CurrentUser')->new( openid => $openid );
-        Jifty->log->info("User Class: $user. OpenID: $openid");
+        $Dispatcher->log->info("User Class: $user. OpenID: $openid");
 
         if ( $user->id ) {
             # Set up our login message
@@ -79,7 +79,7 @@ on 'openid/verify_and_login' => run {
         else {
             # User needs to create account still
             Jifty->web->session->set( openid => $openid );
-            Jifty->log->info("got openid: $openid");
+            $Dispatcher->log->info("got openid: $openid");
             my $nick = get('openid.sreg.nickname');
             if ( $nick ) {
                 redirect( Jifty::Web::Form::Clickable->new( url => '/openid/create', parameters => { nickname => $nick, openid => $openid } ));

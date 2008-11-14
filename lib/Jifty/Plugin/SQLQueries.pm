@@ -77,7 +77,7 @@ sub post_init {
     Jifty->handle->log_sql_statements(1);
     Jifty->handle->log_sql_hook(SQLQueryPlugin => sub {
         my ($time, $statement, $bindings, $duration) = @_;
-        Jifty->log->debug(sprintf 'Query (%.3fs): "%s", with bindings: %s',
+        __PACKAGE__->log->debug(sprintf 'Query (%.3fs): "%s", with bindings: %s',
                             $duration,
                             $statement,
                             join ', ',

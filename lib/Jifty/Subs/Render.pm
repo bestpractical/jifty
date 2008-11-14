@@ -2,6 +2,8 @@ package Jifty::Subs::Render;
 use strict;
 use warnings;
 
+use base qw/Jifty::Object/;
+
 =head1 NAME
 
 Jifty::Subs::Render - Helper for subscriptions rendering
@@ -47,7 +49,7 @@ sub render {
         $event_class =~ s/-.*//;
 
         unless ( UNIVERSAL::can( $event_class => 'new' ) ) {
-            Jifty->log->error("Receiving unknown event $event_class from the Bus");
+            $class->log->error("Receiving unknown event $event_class from the Bus");
             $event_class = Jifty->app_class("Event");
         }
 
@@ -59,10 +61,10 @@ sub render {
             for my $render_info (values %{$render->{$channel}}) {
                 if ($render_info->{coalesce} and $render_info->{mode} eq "Replace") {
                     my $hash = Digest::MD5::md5_hex( YAML::Dump([$render_info->{region}, $render_info->{render_with}] ) );
-                    Jifty->log->debug("Coalesced duplicate region @{[$render_info->{region}]} with @{[$render_info->{render_with}]} from $channel event $msg") if exists $coalesce{$hash};
+                    $class->log->debug("Coalesced duplicate region @{[$render_info->{region}]} with @{[$render_info->{render_with}]} from $channel event $msg") if exists $coalesce{$hash};
                     $coalesce{$hash} = [ $timestamp, $event_class, $msg, $render_info ] unless $coalesce{$hash} and $coalesce{$hash}[0] > $timestamp;
                 } else {
-                    Jifty->log->debug("Rendering $channel event $msg in @{[$render_info->{region}]} with @{[$render_info->{render_with}]}");
+                    $class->log->debug("Rendering $channel event $msg in @{[$render_info->{region}]} with @{[$render_info->{render_with}]}");
                     render_single( $event_class, $msg, $render_info, $callback );
                     $sent++;
                 }
@@ -72,7 +74,7 @@ sub render {
 
     for my $c (values %coalesce) {
         my (undef, $event_class, $msg, $render_info) = @{$c};
-        Jifty->log->debug("Rendering @{[$render_info->{region}]} with @{[$render_info->{render_with}]} for $event_class");
+        $class->log->debug("Rendering @{[$render_info->{region}]} with @{[$render_info->{render_with}]} for $event_class");
         render_single( $event_class, $msg, $render_info, $callback );
         $sent++;
     }

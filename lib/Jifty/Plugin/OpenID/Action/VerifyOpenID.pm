@@ -58,7 +58,7 @@ sub take_action {
         return;
     }
 
-    Jifty->log( "identified as: " . $ident->url );
+    $self->log->debug( "identified as: " . $ident->url );
     $self->result->content( openid => $ident->url );
 
     return 1;

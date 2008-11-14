@@ -885,7 +885,7 @@ sub run_action {
     eval { $action->run };
 
     if ($@) {
-        Jifty->log->warn($@);
+        $Dispatcher->log->warn($@);
         abort(500);
     }
 

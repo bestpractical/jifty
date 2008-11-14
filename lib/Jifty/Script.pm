@@ -1,6 +1,6 @@
 package Jifty::Script;
 use App::CLI;
-use base qw/App::CLI App::CLI::Command/;
+use base qw/App::CLI App::CLI::Command Jifty::Object/;
 
 use Jifty::Everything;
 Jifty::Everything->plugin_commands;

@@ -272,22 +272,22 @@ sub validate {
     # email must exist
 
     unless ($self->_user_from_email($self->email)) {
-        Jifty->log->debug("Token validation failed - Invalid user");
+        $self->log->debug("Token validation failed - Invalid user");
         return undef;
     }
 
     unless ($self->path) {
-        Jifty->log->debug("Token validation failed - Invalid path");
+        $self->log->debug("Token validation failed - Invalid path");
         return undef;
     }
     unless ($self->checksum_provided) {
-        Jifty->log->debug("Token validation failed - Checksum not provided");
+        $self->log->debug("Token validation failed - Checksum not provided");
         return undef;
     }
 
 
     unless ($self->_correct_checksum_provided) {
-        Jifty->log->debug("Token validation failed - Checksum not correct");
+        $self->log->debug("Token validation failed - Checksum not correct");
         return undef;
     }
 
@@ -304,7 +304,7 @@ actually do much input checking. You want to call "validate"
 
 sub _correct_checksum_provided {
     my $self = shift;
-        Jifty->log->debug("LetMe checksum: ".$self->checksum_provided . " vs ". $self->generate_checksum );
+    $self->log->debug("LetMe checksum: ".$self->checksum_provided . " vs ". $self->generate_checksum );
     return undef
         unless ( $self->checksum_provided eq $self->generate_checksum )
         or

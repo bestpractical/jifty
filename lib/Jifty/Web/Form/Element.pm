@@ -405,7 +405,7 @@ sub javascript_attrs {
         for my $hook (grep {ref $_ eq "HASH"} (@{$value})) {
 
             if (!($self->handler_allowed($trigger))) {
-                Jifty->log->error("Handler '$trigger' is not supported for field '" . 
+                $self->log->error("Handler '$trigger' is not supported for field '" . 
                                   $self->label . 
                                   "' with class " . ref $self);
                 next HANDLER;

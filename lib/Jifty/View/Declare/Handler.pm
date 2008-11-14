@@ -3,7 +3,7 @@ package Jifty::View::Declare::Handler;
 use warnings;
 use strict;
 
-use base qw/Jifty::Object Class::Accessor::Fast/;
+use base qw/Jifty::View Class::Accessor::Fast/;
 use Template::Declare;
 
 __PACKAGE__->mk_accessors(qw/root_class/);
@@ -49,7 +49,7 @@ sub config {
         unless (defined $comp_root and $comp_root->isa('Template::Declare') ){
             next;
         }
-        Jifty->log->debug( "Plugin @{[ref($plugin)]}::View added as a Template::Declare root");
+        $plugin->log->debug( "Plugin @{[ref($plugin)]}::View added as a Template::Declare root");
         push @{ $config{roots} }, $comp_root ;
     }
 

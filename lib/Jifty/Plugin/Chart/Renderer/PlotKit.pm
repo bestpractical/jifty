@@ -61,7 +61,7 @@ sub render {
 
     # Bad stuff, not a supported type
     if ( not defined $args{type} ) {
-        Jifty->log->warn("Unsupported chart type: $orig_type!");
+        $self->log->warn("Unsupported chart type: $orig_type!");
         return;
     }
 

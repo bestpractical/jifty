@@ -77,7 +77,7 @@ sub before_request
         $self->logged_request(1);
     };
 
-    Jifty->log->error("Unable to append to request log: $@") if $@;
+    $self->log->error("Unable to append to request log: $@") if $@;
 }
 
 =head2 before_cleanup
@@ -115,7 +115,7 @@ sub before_cleanup {
                     return;
                 }
 
-                Jifty->log->error("Unable to find myself, pid $$, in Proc::ProcessTable.");
+                $self->log->error("Unable to find myself, pid $$, in Proc::ProcessTable.");
             }
         };
     }
@@ -139,12 +139,12 @@ sub get_loghandle {
                     $$;
 
         open my $loghandle, '>', $name or do {
-            Jifty->log->error("Unable to open $name for writing: $!");
+            $self->log->error("Unable to open $name for writing: $!");
             return;
         };
         $loghandle->autoflush(1);
 
-        Jifty->log->info("Logging all HTTP requests to $name.");
+        $self->log->info("Logging all HTTP requests to $name.");
         $self->loghandle($loghandle);
     }
 

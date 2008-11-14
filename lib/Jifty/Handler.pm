@@ -24,7 +24,7 @@ handlers.
 
 =cut
 
-use base qw/Class::Accessor::Fast/;
+use base qw/Class::Accessor::Fast Jifty::Object/;
 use Jifty::View::Declare::Handler ();
 use Class::Trigger;
 
@@ -236,7 +236,7 @@ sub handle_request {
         for ( Jifty->plugins ) {
             $_->new_request;
         }
-        Jifty->log->info( $self->apache->method . " request for " . Jifty->web->request->path  );
+        $self->log->info( $self->apache->method . " request for " . Jifty->web->request->path  );
         Jifty->web->setup_session;
 
         Jifty::I18N->get_language_handle;

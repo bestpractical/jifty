@@ -21,7 +21,7 @@ Records the request. The INFO level log message recorded contains the PID of the
 =cut
 
 on qr'(.*)' => run {
-    Jifty->log->info("[$$] $1 ".(Jifty->web->current_user->id ? Jifty->web->current_user->username : ''));
+    $Dispatcher->log->info("[$$] $1 ".(Jifty->web->current_user->id ? Jifty->web->current_user->username : ''));
 };
 
 1;

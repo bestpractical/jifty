@@ -3,6 +3,7 @@ use strict;
 
 package Jifty::Subs;
 
+use base qw/Jifty::Object/;
 
 use constant new => __PACKAGE__;
 
@@ -87,7 +88,7 @@ sub add {
     my $class = shift;
     my $args = {@_};
     unless (Jifty->config->framework('PubSub')->{'Enable'}) {
-        Jifty->log->error("PubSub disabled, but $class->add called");
+        $class->log->error("PubSub disabled, but $class->add called");
         return undef;
     }
 
@@ -149,7 +150,7 @@ sub cancel {
     my ($class, $channel_id) = @_;
 
     unless (Jifty->config->framework('PubSub')->{'Enable'}) {
-        Jifty->log->error("PubSub disabled, but $class->cancel called");
+        $class->log->error("PubSub disabled, but $class->cancel called");
         return undef;
     }
 
@@ -189,10 +190,10 @@ Returns a lost of channel ids this session or window is subscribed to.
 
 
 sub list {
-    my $self = shift;
+    my $class = shift;
 
     unless (Jifty->config->framework('PubSub')->{'Enable'}) {
-        Jifty->log->error("PubSub disabled, but $self->add called");
+        $class->log->error("PubSub disabled, but $class->add called");
         return undef;
     }
 
@@ -211,7 +212,7 @@ is left unspecified.
 =cut
 
 sub update_on {
-    my $self = shift;
+    my $class = shift;
 
     my $region = Jifty->web->current_region;
     unless ($region) {
@@ -223,7 +224,7 @@ sub update_on {
     delete $args{region};
     delete $args{event};
 
-    $self->add(
+    $class->add(
         queries     => [ \%args ],
         arguments   => \%args,
         mode        => 'Replace',

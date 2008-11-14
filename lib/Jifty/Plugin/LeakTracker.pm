@@ -98,7 +98,7 @@ sub after_request
             last;
         }
     };
-    Jifty->log->warn($@) if $@;
+    $self->log->warn($@) if $@;
 
     push @requests, {
         id => 1 + @requests,

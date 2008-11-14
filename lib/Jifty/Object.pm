@@ -118,7 +118,7 @@ is the same as the class of C<$self>.
 sub log {
     my $self = shift;
 
-    return Log::Log4perl->get_logger(ref $self);
+    return Log::Log4perl->get_logger(ref($self) || $self);
 }
 
 

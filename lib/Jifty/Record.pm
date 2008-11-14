@@ -563,7 +563,7 @@ Overrides L<Jifty::DBI::Record> to check the delete ACL.
 sub delete {
     my $self = shift;
     unless ( $self->check_delete_rights(@_) ) {
-        Jifty->log->logcluck("Permission denied");
+        $self->log->logcluck("Permission denied");
         return ( 0, _('Permission denied') );
     }
     $self->SUPER::delete(@_);

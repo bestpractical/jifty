@@ -7,7 +7,7 @@ use HTTP::Date ();
 
 package Jifty::View::Static::Handler;
 
-use base qw/Jifty::Object/;
+use base qw/Jifty::View/;
 
 our ($MIME,$MAGIC);
 
@@ -52,7 +52,7 @@ sub new {
         my $root = $plugin->static_root;
         if ( -d $root and -r $root ) {
             push @roots, $root;
-            Jifty->log->debug( "Plugin @{[ref($plugin)]} static root added: (@{[$root ||'']})");
+            $plugin->log->debug( "Plugin @{[ref($plugin)]} static root added: (@{[$root ||'']})");
         }
     }
     push @roots, (Jifty->config->framework('Web')->{DefaultStaticRoot});

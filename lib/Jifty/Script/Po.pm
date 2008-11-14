@@ -134,9 +134,9 @@ sub update_catalogs {
     );
 
     unless ( @catalogs ) {
-        Jifty->log->error("You have no existing message catalogs.");
-        Jifty->log->error("Run `jifty po --language <lang>` to create a new one.");
-        Jifty->log->error("Read `jifty po --help` to get more info.");
+        $self->log->error("You have no existing message catalogs.");
+        $self->log->error("Run `jifty po --language <lang>` to create a new one.");
+        $self->log->error("Read `jifty po --help` to get more info.");
         return 
     }
 

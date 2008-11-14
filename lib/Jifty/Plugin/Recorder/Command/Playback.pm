@@ -124,7 +124,7 @@ sub play_request {
     # print STDOUT
     local *STDOUT;
 
-    Jifty->log->info("Logging request's output to $filename.");
+    $self->log->info("Logging request's output to $filename.");
 
     open *STDOUT, '>', $filename
         or die "Unable to open $filename for writing: $!";
@@ -161,7 +161,7 @@ sub play_requests {
         $request->{time} = $self->{max}
             if defined($self->{max}) && $request->{time} > $self->{max};
 
-        Jifty->log->info("Next request in $request->{time} seconds.");
+        $self->log->info("Next request in $request->{time} seconds.");
         sleep $request->{time};
         $current_time += $request->{time};
 
