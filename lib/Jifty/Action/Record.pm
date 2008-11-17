@@ -281,7 +281,6 @@ sub _build_class_arguments {
             }
         }
 
-
         $field_info->{$field} = $info;
     }
 
@@ -320,7 +319,7 @@ sub _argument_validator {
     my $self    = shift;
     my $column  = shift;
     my $field   = $column->name;
-    my $do_ajax = 0;
+    my $do_ajax = $column->attributes->{ajax_validates};
     my $method;
 
     # Figure out what the action's validation method would for this field
@@ -356,11 +355,11 @@ sub _argument_validator {
 
 
 sub _argument_canonicalizer {
-    my $self   = shift;
-    my $column = shift;
-    my $field  = $column->name;
+    my $self    = shift;
+    my $column  = shift;
+    my $field   = $column->name;
+    my $do_ajax = $column->attributes->{ajax_canonicalizes};
     my $method;
-    my $do_ajax = 0;
 
     # Add a canonicalizer for the column if the record provides one
     if ( $self->record->has_canonicalizer_for_column($field) ) {
