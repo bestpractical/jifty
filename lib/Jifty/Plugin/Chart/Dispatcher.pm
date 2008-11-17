@@ -59,16 +59,16 @@ on 'chart/*/*' => run {
     $args->{width}  ||= 400;
     $args->{height} ||= 300;
 
-    my $class = $classes{$renderer};
-    
-    # Use the "type" to determine which class to use
-    $class =~ s/\$TYPE/$args->{type}/g;
+    if (my $class = $classes{$renderer}) {
+        # Use the "type" to determine which class to use
+        $class =~ s/\$TYPE/$args->{type}/g;
 
-    # Load that class or die if it does not exist
-    $class->require;
+        # Load that class or die if it does not exist
+        $class->require;
 
-    # Remember the class name for the view
-    $args->{class} = $class;
+        # Remember the class name for the view
+        $args->{class} = $class;
+    }
 
     # Send them on to chart the chart
     set 'args' => $args;
