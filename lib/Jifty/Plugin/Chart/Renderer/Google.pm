@@ -383,6 +383,8 @@ sub _simple_encode_data {
     my $maxes = shift;
     my $data  = shift;
 
+    $maxes = [ ($maxes) x @$data ] if !ref($maxes);
+
     my $i = 0;
     my $result = '';
     my @map = ('A'..'Z', 'a'..'z', 0..9);
