@@ -183,6 +183,7 @@ Renders the opening form tag.
 
 sub start {
     my $self = shift;
+    local $Log::Log4perl::caller_depth = $Log::Log4perl::caller_depth + 1;
 
     my %args = (@_);
 
