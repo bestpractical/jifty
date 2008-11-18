@@ -39,7 +39,7 @@ sub render {
                 var data = new google.visualization.DataTable();
 JS_HEADER
 
-    $self->render_data(%args));
+    $self->render_data(%args);
 
     Jifty->web->out(<< "JS_FOOTER");
                 var chart = new $chart_class(document.getElementById('$chart_id'));
