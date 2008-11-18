@@ -94,16 +94,19 @@ is the column's C<id> and the value is either a string (the C<type>) or a
 hashref. The hashref may specify C<type> and C<label>. If no C<label> is given,
 the C<id> is used.
 
+It also canonicalizes the columns so that each is a hashref with C<type> and
+C<label> set.
+
 =cut
 
 sub add_columns {
     my $self = shift;
     my %args = @_;
 
-    my %cols = %{ $args{columns} };
+    my $cols = $args{columns};
 
-    for my $id (keys %cols) {
-        my $column = $cols{$id};
+    for my $id (keys %$cols) {
+        my $column = $cols->{$id};
 
         my ($type, $label);
         if (ref($column)) {
@@ -115,6 +118,11 @@ sub add_columns {
         }
 
         $label ||= $id;
+
+        $cols->{$id} = {
+            type  => $type,
+            label => $label,
+        };
 
         Jifty->web->out("data.addColumn('$type', '$label', '$id');\n");
     }
