@@ -83,8 +83,8 @@ sub render_data {
     my $self = shift;
     my %args = @_;
 
-    $self->add_columns(%args);
-    $self->add_data(%args);
+    my $cols = $self->add_columns(%args);
+    $self->add_data(%args, columns => $cols);
 }
 
 =head2 add_columns
@@ -94,8 +94,7 @@ is the column's C<id> and the value is either a string (the C<type>) or a
 hashref. The hashref may specify C<type> and C<label>. If no C<label> is given,
 the C<id> is used.
 
-It also canonicalizes the columns so that each is a hashref with C<type> and
-C<label> set.
+It will return a hashref of canonicalized columns.
 
 =cut
 
@@ -103,11 +102,11 @@ sub add_columns {
     my $self = shift;
     my %args = @_;
 
-    my $cols = $args{columns};
+    my $index = 0;
+    my @cols = @{ $args{columns} };
+    my %canonicalized_columns;
 
-    for my $id (keys %$cols) {
-        my $column = $cols->{$id};
-
+    while (my ($name, $column) = splice @cols, 0, 2) {
         my ($type, $label);
         if (ref($column)) {
             $type  = $column->{type};
@@ -117,15 +116,18 @@ sub add_columns {
             $type = $column;
         }
 
-        $label ||= $id;
+        $label ||= $name;
 
-        $cols->{$id} = {
+        $canonicalized_columns{$name} = {
             type  => $type,
             label => $label,
+            index => $index++,
         };
 
-        Jifty->web->out("data.addColumn('$type', '$label', '$id');\n");
+        Jifty->web->out("data.addColumn('$type', '$label', '$name');\n");
     }
+
+    return \%canonicalized_columns;
 }
 
 =head2 add_data
@@ -140,7 +142,7 @@ sub add_data {
     my %args = @_;
 
     my @data = @{ $args{data} };
-    my %cols = %{ $args{columns} };
+    my $cols = $args{columns};
 
     Jifty->web->out('data.addRows(' . scalar(@data) . ");\n");
 
@@ -149,10 +151,11 @@ sub add_data {
         for my $column (keys %$datapoint) {
             my $value = $self->encode_value(
                 value  => $datapoint->{$column},
-                column => $cols{$column},
+                column => $cols->{$column},
             );
+            my $cid = $cols->{$column}{index};
 
-            Jifty->web->out("data.setValue($row, '$column', $value);\n");
+            Jifty->web->out("data.setValue($row, $cid, $value);\n");
         }
 
         ++$row;
