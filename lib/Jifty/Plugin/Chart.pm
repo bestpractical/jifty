@@ -135,26 +135,31 @@ sub init_renderer {
     }
 
     # Prepend Jifty::Plugin::Chart::Renderer:: if we think we need to
-    if ( $renderer_class !~ /::/ ) {
-        $renderer_class = __PACKAGE__.'::Renderer::'.$renderer_class;
+    my @renderer_classes = (
+        $renderer_class,
+        __PACKAGE__ . '::Renderer::' . $renderer_class,
+    );
+
+    for my $renderer_class (@renderer_classes) {
+        # Check to see if we already loaded this one
+        my $renderer = $self->renderers->{ $renderer_class };
+        return $renderer if defined $renderer;
+
+        # Tell perl to load the class
+        unless ($renderer_class->require) {
+           warn $@ unless $@ =~ /^Can't locate /;
+           next;
+        }
+
+        # Initialize the renderer
+        $renderer = $renderer_class->new( %{ $self->plugin_args } );
+
+        # Remember it
+        $self->renderers->{ $renderer_class } = $renderer;
+
+        # Return it!
+        return $renderer;
     }
-
-    # Check to see if we already loaded this one
-    my $renderer = $self->renderers->{ $renderer_class };
-    return $renderer if defined $renderer;
-
-    # Tell perl to load the class
-    $renderer_class->require
-        or warn $@;
-
-    # Initialize the renderer
-    $renderer = $renderer_class->new( %{ $self->plugin_args } );
-
-    # Remember it
-    $self->renderers->{ $renderer_class } = $renderer;
-
-    # Return it!
-    return $renderer;
 }
 
 =head1 SEE ALSO
