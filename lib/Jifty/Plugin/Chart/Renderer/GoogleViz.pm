@@ -73,5 +73,80 @@ sub load_params {
     };
 }
 
+=head2 render_data
+
+Renders the columns and the data.
+
+=cut
+
+sub render_data {
+    my $self = shift;
+    my %args = @_;
+
+    $self->add_columns(%args);
+    $self->add_data(%args);
+}
+
+=head2 add_columns
+
+Adds the columns to the visualization. Each column is a key-value pair; the key
+is the column's C<id> and the value is either a string (the C<type>) or a
+hashref. The hashref may specify C<type> and C<label>. If no C<label> is given,
+the C<id> is used.
+
+=cut
+
+sub add_columns {
+    my $self = shift;
+    my %args = @_;
+
+    my %cols = %{ $args{columns} };
+
+    for my $id (keys %cols) {
+        my $column = $cols{$id};
+
+        my ($type, $label);
+        if (ref($column)) {
+            $type  = $column->{type};
+            $label = $column->{label};
+        }
+        else {
+            $type = $column;
+        }
+
+        $label ||= $id;
+
+        Jifty->web->out("data.addColumn('$type', '$label', '$id');\n");
+    }
+}
+
+=head2 add_data
+
+Adds the data to the chart. Each data point should be a hash reference of
+column id to value.
+
+=cut
+
+sub add_data {
+    my $self = shift;
+    my %args = @_;
+
+    my @data = @{ $args{data} };
+
+    Jifty->web->out('data.addRows(' . scalar(@data) . ");\n");
+
+    my $row = 0;
+    for my $datapoint (@data) {
+        for my $column (keys %$datapoint) {
+            my $value = $datapoint->{$column};
+            my $encoded = objToJson($value);
+
+            Jifty->web->out("data.setValue($row, '$column', $encoded);\n");
+        }
+
+        ++$row;
+    }
+}
+
 1;
 
