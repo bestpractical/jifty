@@ -152,9 +152,7 @@ sub add_data {
                 column => $cols{$column},
             );
 
-            my $encoded = objToJson($value);
-
-            Jifty->web->out("data.setValue($row, '$column', $encoded);\n");
+            Jifty->web->out("data.setValue($row, '$column', $value);\n");
         }
 
         ++$row;
