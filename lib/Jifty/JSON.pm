@@ -3,13 +3,16 @@ use strict;
 
 package Jifty::JSON;
 
+use base 'Exporter';
+our @EXPORT_OK = qw/jsonToObj objToJson/;
+
 =head1 NAME
 
 Jifty::JSON -- Wrapper around L<JSON>
 
 =head1 SYNOPSIS
 
-  use Jifty::JSON;
+  use Jifty::JSON qw/jsonToObj objToJson/;
 
   # Even though you might be using JSON::Syck, use the original JSON names
   my $obj  = jsonToObj(q! { 'x': 1, 'y': 2, 'z': 3 } !);
