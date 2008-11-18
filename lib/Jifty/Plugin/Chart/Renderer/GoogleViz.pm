@@ -140,13 +140,18 @@ sub add_data {
     my %args = @_;
 
     my @data = @{ $args{data} };
+    my %cols = %{ $args{columns} };
 
     Jifty->web->out('data.addRows(' . scalar(@data) . ");\n");
 
     my $row = 0;
     for my $datapoint (@data) {
         for my $column (keys %$datapoint) {
-            my $value = $datapoint->{$column};
+            my $value = $self->encode_value(
+                value  => $datapoint->{$column},
+                column => $cols{$column},
+            );
+
             my $encoded = objToJson($value);
 
             Jifty->web->out("data.setValue($row, '$column', $encoded);\n");
@@ -154,6 +159,46 @@ sub add_data {
 
         ++$row;
     }
+}
+
+=head2 encode_value
+
+=cut
+
+sub encode_value {
+    my $self = shift;
+    my %args = @_;
+
+    my $value  = $args{value};
+    my $column = $args{column};
+
+    if ($column->{type} eq 'date') {
+        if (!ref($value)) {
+            $value = Jifty::DateTime->new_from_string($value);
+        }
+
+        if (ref($value)) {
+            if ($value->isa('Jifty::DateTime') && $value->is_date) {
+                return sprintf 'new Date(%d, %d, %d)',
+                    $value->year,
+                    $value->month,
+                    $value->day;
+            }
+            elsif ($value->isa('DateTime')) {
+                return sprintf 'new Date(%d, %d, %d, %d, %d, %d)',
+                    $value->year,
+                    $value->month,
+                    $value->day,
+                    $value->hour,
+                    $value->minute,
+                    $value->second;
+            }
+        }
+
+        die "Can't handle the date '$value'";
+    }
+
+    return objToJson($value);
 }
 
 1;
