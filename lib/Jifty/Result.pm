@@ -82,10 +82,13 @@ sub error {
     return $self->{error};
 }
 
-=head2 field_error FIELD [ERROR]
+=head2 field_error FIELD [ERROR] [OPTIONS]
 
 Gets or sets the error string for a specific field on the action.
-This also automatically sets the result to be a failure.
+This also automatically sets the result to be a failure.  C<OPTIONS>
+is an optional set of key-value pairs; the only currently supported
+option is C<force>, which sets the L</ajax_force_validate> for this
+field.
 
 =cut
 
@@ -95,6 +98,10 @@ sub field_error {
 
     $self->failure(1) if @_ and $_[0];
     $self->{field_errors}{ $field } = shift if @_;
+
+    my %args = @_;
+    $self->{ajax_force_validate}{ $field } = $args{force} if exists $args{force};
+
     return $self->{field_errors}{ $field };
 }
 
@@ -110,9 +117,12 @@ sub field_errors {
     return %{$self->{field_errors} || {}};
 }
 
-=head2 field_warning FIELD [WARNING]
+=head2 field_warning FIELD [WARNING] [OPTIONS]
 
-Gets or sets the warning string for a specific field on the action.
+Gets or sets the warning string for a specific field on the
+action. C<OPTIONS> is an optional set of key-value pairs; the only
+currently supported option is C<force>, which sets the
+L</ajax_force_validate> for this field.
 
 =cut
 
@@ -121,6 +131,10 @@ sub field_warning {
     my $field = shift;
 
     $self->{field_warnings}{ $field } = shift if @_;
+
+    my %args = @_;
+    $self->{ajax_force_validate}{ $field } = $args{force} if exists $args{force};
+
     return $self->{field_warnings}{ $field };
 }
 
@@ -134,6 +148,24 @@ name to warning.
 sub field_warnings {
     my $self = shift;
     return %{$self->{field_warnings} || {}};
+}
+
+=head2 ajax_force_validate FIELD [VALUE]
+
+Gets or sets the flag which determines if warnings and errors are set
+using ajax validation, even if the field is empty.  By default,
+validation warnings and errors are I<not> shown for empty fields, as
+yelling to users about mandatory fields they've not gotten to yet is
+poor form.  You can use this method to force ajax errors to show even
+on empty fields.
+
+=cut
+
+sub ajax_force_validate {
+    my $self = shift;
+    my $field = shift;
+    $self->{ajax_force_validate}{ $field } = shift if @_;
+    return $self->{ajax_force_validate}{$field};
 }
 
 =head2 field_canonicalization_note FIELD [NOTE]

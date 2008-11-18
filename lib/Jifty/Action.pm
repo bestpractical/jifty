@@ -972,6 +972,11 @@ sub _validate_argument {
         return $self->$default_validator( $value, $self->argument_values );
     }
 
+    # Check if we already have a failure for it, from some other field
+    elsif ( $self->result->field_error($field) or $self->result->field_warning($field) ) {
+        return 0;
+    }
+
     # If none of the checks have failed so far, then it's ok
     else {
         return $self->validation_ok($field);
@@ -1147,63 +1152,73 @@ sub _values_for_field {
     return $vv;
 }
 
-=head2 validation_error ARGUMENT => ERROR TEXT
+=head2 validation_error ARGUMENT => ERROR TEXT, [OPTIONS]
 
 Used to report an error during validation.  Inside a validator you
 should write:
 
   return $self->validation_error( $field => "error");
 
-..where C<$field> is the name of the argument which is at fault.
+..where C<$field> is the name of the argument which is at fault.  Any
+extra C<OPTIONS> are passed through to L<Jifty::Result/field_error>.
 
 =cut
 
 sub validation_error {
     my $self = shift;
-    my $field = shift;
-    my $error = shift;
-  
-    $self->result->field_error($field => $error); 
-  
+    my ($field, $error, %args) = @_;
+    $self->log->warn("No such field '$field' -- did you forget to specify a field?")
+        unless $self->arguments->{$field};
+
+    $self->result->field_error($field => $error, %args);
+
     return 0;
 }
 
-=head2 validation_warning ARGUMENT => WARNING TEXT
+=head2 validation_warning ARGUMENT => WARNING TEXT, [OPTIONS]
 
 Used to report a warning during validation.  Inside a validator you
 should write:
 
   return $self->validation_warning( $field => _("warning"));
 
-..where C<$field> is the name of the argument which is at fault.
+..where C<$field> is the name of the argument which is at fault.  Any
+extra C<OPTIONS> are passed through to L<Jifty::Result/field_warning>.
 
 =cut
 
 sub validation_warning {
     my $self = shift;
-    my $field = shift;
-    my $warning = shift;
-  
-    $self->result->field_warning($field => $warning); 
-  
+    my ($field, $warning, %args) = @_;
+    $self->log->warn("No such field '$field' -- did you forget to specify a field?")
+        unless $self->arguments->{$field};
+
+    $self->result->field_warning($field => $warning, %args); 
+
     return 0;
 }
 
-=head2 validation_ok ARGUMENT
+=head2 validation_ok ARGUMENT, [OPTIONS]
 
 Used to report that a field B<does> validate.  Inside a validator you
 should write:
 
   return $self->validation_ok($field);
 
+Any extra C<OPTIONS> are passed through to
+L<Jifty::Result/field_warning> and L<Jifty::Result/field_error> when
+unsetting them.
+
 =cut
 
 sub validation_ok {
     my $self = shift;
-    my $field = shift;
+    my ($field, %args) = @_;
+    $self->log->warn("No such field '$field' -- did you forget to specify a field?")
+        unless $self->arguments->{$field};
 
-    $self->result->field_error($field => undef);
-    $self->result->field_warning($field => undef);
+    $self->result->field_error($field => undef, %args);
+    $self->result->field_warning($field => undef, %args);
 
     return 1;
 }
