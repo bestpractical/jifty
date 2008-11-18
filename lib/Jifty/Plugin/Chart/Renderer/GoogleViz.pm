@@ -25,9 +25,7 @@ sub render {
     my $self = shift;
     my $chart_id = 'chart_' . Jifty->web->serial;
     my $chart_class = $self->chart_class;
-    my $load_params = objToJson {
-        packages => [ $self->packages_to_load ],
-    };
+    my $load_params = objToJson($self->load_params);
     my $draw_params = objToJson($self->draw_params);
 
     Jifty->web->out(<< "JS_HEADER");
@@ -49,6 +47,21 @@ JS_FOOTER
     Jifty->web->out(qq{<div id="$chart_id"></div>});
 
     return;
+}
+
+=head2 load_params
+
+Load the "packages" required for the visualization; define a
+C<packages_to_load> method which returns a list of them.
+
+=cut
+
+sub load_params {
+    my $self = shift;
+
+    return {
+        packages => [ $self->packages_to_load ],
+    };
 }
 
 1;
