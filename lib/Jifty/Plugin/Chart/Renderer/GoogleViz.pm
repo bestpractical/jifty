@@ -23,6 +23,8 @@ sub init {
 
 sub render {
     my $self = shift;
+    my %args = @_;
+
     my $chart_id = 'chart_' . Jifty->web->serial;
     my $chart_class = $self->chart_class;
     my $load_params = objToJson($self->load_params);
@@ -37,7 +39,7 @@ sub render {
                 var data = new google.visualization.DataTable();
 JS_HEADER
 
-    $self->render_data(@_);
+    $self->render_data(%args));
 
     Jifty->web->out(<< "JS_FOOTER");
                 var chart = new $chart_class(document.getElementById('$chart_id'));
@@ -46,7 +48,12 @@ JS_HEADER
         </script>
 JS_FOOTER
 
-    Jifty->web->out(qq{<div id="$chart_id"></div>});
+    Jifty->web->out(qq{
+        <div
+            style="width: $args{width}; height: $args{height};"
+            id="$chart_id"
+        ></div>
+    });
 
     return;
 }
