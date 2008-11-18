@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use base 'Jifty::Plugin::Chart::Renderer';
 
-use Jifty::JSON;
+use Jifty::JSON 'objToJson';
 
 =head2 init
 
@@ -27,20 +27,22 @@ sub render {
     my $chart_class = $self->chart_class;
     my $load_params = objToJson($self->load_params);
     my $draw_params = objToJson($self->draw_params);
+    my $callback_name = 'callback_' . Jifty->web->serial;
 
     Jifty->web->out(<< "JS_HEADER");
         <script type="text/javascript">
             google.load('visualization', 1, $load_params);
-            google.setOnLoadCallback(function () {
+            google.setOnLoadCallback($callback_name);
+            function $callback_name() {
                 var data = new google.visualization.DataTable();
 JS_HEADER
 
-    $self->render_data;
+    $self->render_data(@_);
 
     Jifty->web->out(<< "JS_FOOTER");
                 var chart = new $chart_class(document.getElementById('$chart_id'));
                 chart.draw(data, $draw_params);
-            });
+            }
         </script>
 JS_FOOTER
 
