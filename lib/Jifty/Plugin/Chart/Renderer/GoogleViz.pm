@@ -149,11 +149,14 @@ sub add_data {
     my $row = 0;
     for my $datapoint (@data) {
         for my $column (keys %$datapoint) {
+            my $col = $cols->{$column}
+                or die "Invalid column id '$column'";
+
             my $value = $self->encode_value(
                 value  => $datapoint->{$column},
-                column => $cols->{$column},
+                column => $col,
             );
-            my $cid = $cols->{$column}{index};
+            my $cid = $col->{index};
 
             Jifty->web->out("data.setValue($row, $cid, $value);\n");
         }
