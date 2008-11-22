@@ -4,6 +4,8 @@ use warnings;
 package Jifty::Plugin::Authentication::Password;
 use base qw/Jifty::Plugin/;
 
+__PACKAGE__->mk_accessors(qw(nav_menu));
+
 =head1 NAME
 
 Jifty::Plugin::Authentication::Password - password authentication plugin
@@ -37,6 +39,20 @@ This plugin depends on the L<User|Jifty::Plugin::User> and L<LetMe|Jifty::Plugin
 
 sub prereq_plugins {
     return ('User', 'LetMe');
+}
+
+=head2 init 
+
+=cut
+
+sub init {
+    my $self = shift;
+    return if $self->_pre_init;
+
+    my %opt  = ( nav_menu => 1,
+                 @_ );
+
+    $self->nav_menu( $opt{nav_menu} );
 }
 
 =head1 SEE ALSO

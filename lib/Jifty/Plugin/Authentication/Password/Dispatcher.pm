@@ -37,6 +37,11 @@ Setup the navigation menu for login or logout.
 =cut
 
 before '*' =>  run {
+    my ($ap) = Jifty->find_plugin('Jifty::Plugin::Authentication::Password')
+        or return;
+
+    return unless $ap->nav_menu;
+
     if ( Jifty->web->current_user->id ) {
         logged_in_nav();
     } else {
