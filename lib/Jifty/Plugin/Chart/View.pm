@@ -59,6 +59,7 @@ template 'chart/gd_graph' => sub {
     eval {
         my $graph = $args->{class}->new( $args->{width}, $args->{height} );
         $graph->set(%{ $args->{options} }) if $args->{options};
+        $graph->set_legend(@{ $args->{legend} } ) if $args->{legend};
         my $gd    = $graph->plot($args->{data})
             or die $graph->error;
         outs_raw($gd->png);
