@@ -36,9 +36,9 @@ private template 'salutation' => sub {
 };
 
 private template 'menu' => sub {
-    div {
-    attr { id => "navigation" };
-        Jifty->web->navigation->render_as_menu; };
+    div { attr { id => "navigation" };
+        Jifty->web->navigation->render_as_menu;
+    };
 };
 
 template '__jifty/empty' => sub :Static {
