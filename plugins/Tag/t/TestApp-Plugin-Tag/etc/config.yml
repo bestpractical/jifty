@@ -1,0 +1,77 @@
+--- 
+framework: 
+  AdminMode: 1
+  ApplicationClass: TestApp::Plugin::Tag
+  ApplicationName: TestApp-Plugin-Tag
+  ApplicationUUID: 9D293C06-BD00-11DD-96D9-F645A48C7FB7
+  ConfigFileVersion: 4
+  Database: 
+    AutoUpgrade: 1
+    CheckSchema: 1
+    Database: testapp_plugin_tag
+    Driver: SQLite
+    Host: localhost
+    Password: ''
+    RecordBaseClass: Jifty::DBI::Record::Cachable
+    User: ''
+    Version: 0.0.1
+  DevelMode: 1
+  L10N: 
+    PoDir: share/po
+  LogLevel: INFO
+  Mailer: Sendmail
+  MailerArgs: []
+
+  Plugins: 
+    - 
+      LetMe: {}
+
+    - 
+      SkeletonApp: {}
+
+    - 
+      REST: {}
+
+    - 
+      Halo: {}
+
+    - 
+      ErrorTemplates: {}
+
+    - 
+      OnlineDocs: {}
+
+    - 
+      CompressedCSSandJS: {}
+
+    - 
+      AdminUI: {}
+
+    - 
+      Tag: {}
+
+  PubSub: 
+    Backend: Memcached
+    Enable: ~
+  SkipAccessControl: 0
+  TemplateClass: TestApp::Plugin::Tag::View
+  View: 
+    FallbackHandler: Jifty::View::Mason::Handler
+    Handlers: 
+      - Jifty::View::Static::Handler
+      - Jifty::View::Declare::Handler
+      - Jifty::View::Mason::Handler
+  Web: 
+    BaseURL: http://localhost
+    DataDir: var/mason
+    Globals: []
+
+    MasonConfig: 
+      autoflush: 0
+      default_escape_flags: h
+      error_format: text
+      error_mode: fatal
+    Port: 8888
+    ServeStaticFiles: 1
+    StaticRoot: share/web/static
+    TemplateRoot: share/web/templates

@@ -1,0 +1,18 @@
+---
+abstract: ~
+author:
+  - 'Ruslan Zakirov <Ruslan.Zakirov@gmail.com>'
+distribution_type: module
+generated_by: 'Module::Install version 0.77'
+license: unknown
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
+name: Jifty-Plugin-Tag
+no_index:
+  directory:
+    - inc
+    - t
+requires:
+  perl: 5.8.0
+version: undef
