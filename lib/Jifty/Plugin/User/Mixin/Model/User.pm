@@ -16,8 +16,9 @@ Jifty::Plugin::User::Mixin::Model::User - user model base mixin
  use MyApp::Record schema { 
      # column definitions
  };
- 
- use Jifty::Plugin::User::Mixin::Model::User; # Imports two columns: name and email
+
+ # Import columns: name, email and email_confirmed
+ use Jifty::Plugin::User::Mixin::Model::User;
 
 =head1 DESCRIPTION
 
