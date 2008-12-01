@@ -46,6 +46,8 @@ sub get {
     }
 }
 
+sub request; # defined later
+
 sub _get_single {
     my $v = request->template_argument($_[0]) || request->argument( $_[0] );
     return $v if defined $v;
