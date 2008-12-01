@@ -34,7 +34,7 @@ sub new {
     $self->_title($title);
 
     $self->_title($self->_meta->{title})
-	if $self->_meta && $self->_meta->{title};
+        if $self->_meta && $self->_meta->{title};
 
     return $self;
 }
@@ -123,7 +123,7 @@ sub mk_title_handler {
     return sub {
         shift;
         for (@_) {
-	    no warnings qw( uninitialized );
+            no warnings qw( uninitialized );
             if ( ref($_) eq 'CODE' ) {
                 Template::Declare->new_buffer_frame;
                 $_->();
@@ -135,7 +135,7 @@ sub mk_title_handler {
             }
         }
         $self->render_header;
-	$self->render_title();
+        $self->render_title();
     };
 }
 
