@@ -23,12 +23,11 @@ a dispatcher or the other plugins that implement it.
 =cut
 
 private template 'salutation' => sub {
+    my $cu = Jifty->web->current_user;
     div {
     attr {id => "salutation" };
-        if (    Jifty->web->current_user->id
-            and Jifty->web->current_user->user_object )
-        {
-            _( 'Hiya, %1.', Jifty->web->current_user->username );
+        if ( $cu->id and $cu->user_object ) {
+            _( 'Hiya, %1.', $cu->username );
         }
         else {
             _("You're not currently signed in.");
