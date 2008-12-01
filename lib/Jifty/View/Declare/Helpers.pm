@@ -25,208 +25,16 @@ This library provides mixins to help build your application's user interface.
 
 =head1 METHODS
 
+=head2 Arguments
 
-
-
-=head2 form CODE
-
-Takes a subroutine reference or block of perl as its only argument and renders it as a Jifty C<form>. 
-
-
-=cut
-
- {
-    no warnings qw/redefine/;
-    sub form (&;$) {
-        my $code = shift;
-
-        smart_tag_wrapper {
-          outs_raw( Jifty->web->form->start(@_) );
-          $code->();
-          outs_raw( Jifty->web->form->end );
-          return '';
-        };
-    }
- }
-
-
-=head2 hyperlink 
-
-Shortcut for L<Jifty::Web/link>.
-
-=cut
-
-sub hyperlink(@) {
-    _function_wrapper( link => @_);
-}
-
-sub _function_wrapper {
-    my $function = shift;
-    Template::Declare->new_buffer_frame;
-    my $once= Jifty->web->$function(@_)->render || '';
-    my $content = Template::Declare->buffer->data() ||'';
-    Template::Declare->end_buffer_frame;
-    outs_raw( $content.$once); 
-    return '';
-
-
-}
-
-
-=head2 tangent
-
-Shortcut for L<Jifty::Web/tangent>.
-
-=cut
-
-
-sub tangent(@) {
-    _function_wrapper( tangent => @_);
-}
-
-=head2 redirect
-
-Shortcut for L<Jifty::Web/redirect>.
-
-=cut
-
-sub redirect(@) {
-    Jifty->web->redirect(@_);
-    return '';
-}
-
-=head2 new_action
-
-Shortcut for L<Jifty::Web/new_action>.
-
-=cut
-
-sub new_action(@) {
-    return Jifty->web->new_action(@_);
-}
-
-
-=head2 render_region 
-
-A shortcut for Jifty::Web::PageRegion->new(@_)->render which does the
-Template::Declare magic necessary to not mix its output with your current
-page's.
-
-
-=cut
-
-sub render_region(@) {
-    unshift @_, 'name' if @_ % 2;
-    my $args = {@_};
-    my $path = $args->{path} ||= '/__jifty/empty';
-    if ($Template::Declare::Tags::self && $path !~ m|^/|) {
-	$args->{path} = $Template::Declare::Tags::self->path_for($path);
-    }
-    local $Template::Declare::Tags::self = undef;
-    Template::Declare->new_buffer_frame;
-    Jifty::Web::PageRegion->new(%$args)->render;
-    my $content = Template::Declare->buffer->data();
-    Template::Declare->end_buffer_frame;
-    Jifty->web->out($content);
-}
-
-
-=head2 render_action $action_object, $fields, $args_to_pass_to_action
-
-Renders an action out of whole cloth.
-
-Arguments
-
-=over 
-
-=item $action_object
-
-A Jifty::Action object which has already been initialized
-
-=item $fields
-
-A reference to an array of fields that should be rendered when
-displaying this action. If left undefined, all of the 
-action's fields will be rendered.
-
-=item $args_to_pass_to_action
-
-A hashref of arguments that should be passed to $action->form_field for
-every field of this action.
-
-=back
-
-
-=cut
-
-sub render_action(@) {
-    my ( $action, $fields, $field_args ) = @_;
-   
-    my @f = ($fields && ref ($fields) eq 'ARRAY') ? @$fields : $action->argument_names;
-    foreach my $argument (@f) {
-        outs_raw( $action->form_field( $argument, %$field_args ) );
-    }
-}
-
-=head2 form_return
-
-Shortcut for L<Jifty::Web::Form/return>.
-
-=cut
-
-sub form_return(@) {
-    outs_raw( Jifty->web->form->return(@_) );
-    '';
-}
-
-=head2 form_submit
-
-Shortcut for L<Jifty::Web::Form/submit>.
-
-=cut
-
-sub form_submit(@) {
-    outs_raw( Jifty->web->form->submit(@_) );
-    '';
-}
-
-=head2 form_next_page
-
-Shortcut for L<Jifty::Web::Form/next_page>.
-
-=cut
-
-
-sub form_next_page(@) {
-    Jifty->web->form->next_page(@_);
-}
-
-=head2 request
-
-Shortcut for L<Jifty::Web/request>.
-
-=cut
-
-sub request {
-    Jifty->web->request;
-}
-
-=head2 current_user
-
-Shortcut for L<Jifty::Web/current_user>.
-
-=cut
-
-
-sub current_user {
-    Jifty->web->current_user;
-}
-
-=head2 get args
+=head3 get args
 
 Returns arguments as set in the dispatcher or with L</set> below.
 If called in scalar context, pulls the first item in C<args> and returns it.
 If called in list context, returns the values of all items in C<args>.
+
+    my $action = get('action');
+    my ($action, $object) = get(qw(action object));
 
 =cut
 
@@ -252,34 +60,21 @@ sub _get_single {
     return undef;
 }
 
-
-=head2 set key => val [ key => val ...]
+=head3 set key => val [ key => val ...]
 
 Sets arguments for later grabbing with L<get>.
 
 =cut
 
-
 sub set {
     while ( my ( $arg, $val ) = splice(@_, 0, 2) ) {
         request->template_argument( $arg => $val );
     }
-
 }
 
-=head2 render_param $action @args
+=head2 HTML pages and layouts
 
-Takes an action and one or more arguments to pass to L<Jifty::Action->form_field>.
-
-=cut
-
-sub render_param {
-    my $action = shift;
-    outs_raw( $action->form_field(@_) );
-    return '';
-}
-
-=head2 page
+=head3 page
 
  template 'foo' => page {{ title is 'Foo' } ... };
 
@@ -311,9 +106,9 @@ sub page (&;$) {
     }
 }
 
-=head2 content
+=head3 content
 
-Helper function for page { ... } content { ... }
+Helper function for page { ... } content { ... }, read L</page> instead.
 
 =cut
 
@@ -322,7 +117,7 @@ sub content (&;$) {
     return $_[0];
 }
 
-=head2 wrapper $coderef
+=head3 wrapper $coderef
 
 Render a page. $coderef is a L<Template::Declare> coderef. 
 This badly wants to be redone.
@@ -335,7 +130,7 @@ sub wrapper {
 
     my $page_class = Jifty->app_class( $app_class );
     $page_class = 'Jifty::View::Declare::Page'
-        unless Jifty::Util->_require( module => $page_class, quiet => 1 );
+        unless Jifty::Util->_require( module => $page_class, quiet => 0 );
     # XXX: fallback, this is ugly
     Jifty::Util->require( $page_class );
 
@@ -347,27 +142,236 @@ sub wrapper {
 
     # XXX: spa hooks should be moved to page handlers
     if ($spa && $page->allow_single_page) {
-	# If it's a single page app, we want to either render a
-	# wrapper and then get the region or render just the content
+        # If it's a single page app, we want to either render a
+        # wrapper and then get the region or render just the content
         if ( !Jifty->web->current_region ) {
-	    $page->render_header;
+            $page->render_header;
             $page->render_body(sub {
                 render_region( $spa->region_name,
                     path => Jifty->web->request->path );
             });
-	    $page->render_footer;
+            $page->render_footer;
         } else {
-	    $page->done_header(1);
-	    $page->render_page->();
+            $page->done_header(1);
+            $page->render_page->();
         }
     }
     else {
-	$page->render_body( sub { $page->render_page->() });
-	$page->render_footer;
+        $page->render_body( sub { $page->render_page->() });
+        $page->render_footer;
     }
 }
 
-=head2 js_handlers
+=head2 Forms and actions
+
+=head3 form CODE
+
+Takes a subroutine reference or block of perl as its only argument and renders it as a Jifty C<form>,
+for example:
+
+    new_action class => 'CreateTask';
+    form {
+        form_next_page url => '/';
+        render_action $action;
+        form_submit( label => _('Create') );
+    };
+
+=cut
+
+{
+    no warnings qw/redefine/;
+    sub form (&;$) {
+        my $code = shift;
+
+        smart_tag_wrapper {
+          outs_raw( Jifty->web->form->start(@_) );
+          $code->();
+          outs_raw( Jifty->web->form->end );
+          return '';
+        };
+    }
+}
+
+=head3 new_action
+
+Shortcut for L<Jifty::Web/new_action>.
+
+=cut
+
+sub new_action(@) {
+    return Jifty->web->new_action(@_);
+}
+
+=head3 render_action $action_object, $fields, $args_to_pass_to_action
+
+Renders an action out of whole cloth.
+
+Arguments
+
+=over 4
+
+=item $action_object
+
+A Jifty::Action object which has already been initialized
+
+=item $fields
+
+A reference to an array of fields that should be rendered when
+displaying this action. If left undefined, all of the 
+action's fields will be rendered.
+
+=item $args_to_pass_to_action
+
+A hashref of arguments that should be passed to $action->form_field for
+every field of this action.
+
+=back
+
+=cut
+
+sub render_action(@) {
+    my ( $action, $fields, $field_args ) = @_;
+   
+    my @f = ($fields && ref ($fields) eq 'ARRAY') ? @$fields : $action->argument_names;
+    foreach my $argument (@f) {
+        outs_raw( $action->form_field( $argument, %$field_args ) );
+    }
+}
+
+=head2 render_param $action @args
+
+Takes an action and one or more arguments to pass to L<Jifty::Action->form_field>.
+
+=cut
+
+sub render_param {
+    my $action = shift;
+    outs_raw( $action->form_field(@_) );
+    return '';
+}
+
+=head3 form_return
+
+Shortcut for L<Jifty::Web::Form/return>.
+
+=cut
+
+sub form_return(@) {
+    outs_raw( Jifty->web->form->return(@_) );
+    '';
+}
+
+=head3 form_submit
+
+Shortcut for L<Jifty::Web::Form/submit>.
+
+=cut
+
+sub form_submit(@) {
+    outs_raw( Jifty->web->form->submit(@_) );
+    '';
+}
+
+=head3 form_next_page
+
+Shortcut for L<Jifty::Web::Form/next_page>.
+
+=cut
+
+sub form_next_page(@) {
+    Jifty->web->form->next_page(@_);
+}
+
+=head2 Other functions and shortcuts
+
+=head3 hyperlink
+
+Shortcut for L<Jifty::Web/link>.
+
+=cut
+
+sub hyperlink(@) {
+    _function_wrapper( link => @_);
+}
+
+sub _function_wrapper {
+    my $function = shift;
+    Template::Declare->new_buffer_frame;
+    my $once = Jifty->web->$function(@_)->render || '';
+    my $content = Template::Declare->buffer->data() ||'';
+    Template::Declare->end_buffer_frame;
+    outs_raw( $content.$once); 
+    return '';
+}
+
+
+=head3 tangent
+
+Shortcut for L<Jifty::Web/tangent>.
+
+=cut
+
+sub tangent(@) {
+    _function_wrapper( tangent => @_);
+}
+
+=head3 redirect
+
+Shortcut for L<Jifty::Web/redirect>.
+
+=cut
+
+sub redirect(@) {
+    Jifty->web->redirect(@_);
+    return '';
+}
+
+=head3 render_region 
+
+A shortcut for C<Jifty::Web::PageRegion->new(@_)->render> which does the
+L<Template::Declare> magic necessary to not mix its output with your current
+page's.
+
+=cut
+
+sub render_region(@) {
+    unshift @_, 'name' if @_ % 2;
+    my $args = {@_};
+    my $path = $args->{path} ||= '/__jifty/empty';
+    if ($Template::Declare::Tags::self && $path !~ m|^/|) {
+        $args->{path} = $Template::Declare::Tags::self->path_for($path);
+    }
+    local $Template::Declare::Tags::self = undef;
+    Template::Declare->new_buffer_frame;
+    Jifty::Web::PageRegion->new(%$args)->render;
+    my $content = Template::Declare->buffer->data();
+    Template::Declare->end_buffer_frame;
+    Jifty->web->out($content);
+}
+
+
+=head3 request
+
+Shortcut for L<Jifty::Web/request>.
+
+=cut
+
+sub request {
+    Jifty->web->request;
+}
+
+=head3 current_user
+
+Shortcut for L<Jifty::Web/current_user>.
+
+=cut
+
+
+sub current_user {
+    Jifty->web->current_user;
+}
+
+=head3 js_handlers
 
 Allows you to put javascript handlers, a la
 L<Jifty::Web::Form::Element>, onto arbitrary HTML elements:
