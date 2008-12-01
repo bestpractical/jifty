@@ -21,7 +21,15 @@ This class provides a base class for your L<Template::Declare> derived view clas
 
 =head2 use_mason_wrapper
 
-Call this function in your view class to use your mason wrapper for L<Template::Declare> templates.
+Call this function in your view class to use your mason wrapper for L<Template::Declare> templates,
+something like:
+
+    package TestApp::View;
+    use Jifty::View::Declare -base;
+    __PACKAGE__->use_mason_wrapper;
+
+If you don't use mason then you can define a C<wrapper> function in the view class to override
+default page layouts.
 
 =cut
 
