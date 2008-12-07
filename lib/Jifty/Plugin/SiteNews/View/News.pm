@@ -3,7 +3,7 @@ use strict;
 
 package Jifty::Plugin::SiteNews::View::News;
 use Jifty::View::Declare -base;
-use Jifty::View::Declare::CRUD;
+use base 'Jifty::View::Declare::CRUD';
 
 =head1 NAME
 
@@ -15,7 +15,6 @@ The /news pages for L<Jifty::Plugin::SiteNews>
 
 =cut
 
-import_templates Jifty::View::Declare::CRUD under '/';
 
 =head2 object_type
 
@@ -28,11 +27,12 @@ sub object_type { 'News' }
 template search_region => sub {''};
 
 template 'index.html' => page {
+    my $self = shift;
     title is  'Site news' ;
     form {
             render_region(
                 name     => 'newslist',
-                path     => 'list');
+                path     =>  $self->fragment_base_path.'/list');
     }
 
 };
@@ -44,10 +44,10 @@ template 'view' => sub {
     my $update = new_action(
         class => 'Update' . $object_type,
         moniker => "update-" . Jifty->web->serial,
-        record  => $self->get_record( $id )
+        record  => $self->_get_record( $id )
     );
 
-    my $record = $self->get_record($id);
+    my $record = $self->_get_record($id);
 
     h1 { $record->title };
     blockquote {$record->content};

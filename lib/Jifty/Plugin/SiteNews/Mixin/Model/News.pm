@@ -15,7 +15,7 @@ Jifty::Plugin::SiteNews::Mixin::Model::News - News model
 
 use Jifty::Record schema {
 
-    my $user_class = Jifty->app_class('Model', 'User');
+    my $user_class = Jifty->app_class('Model', 'News');
 
 #column author_id => refers_to $user_class; label is 'Author';
 column created   =>
