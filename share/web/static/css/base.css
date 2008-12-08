@@ -50,14 +50,16 @@ div.spacer {
 .prev-page { padding-left: 1em; }
 
 div#jifty-wait-message {
-    color: red;
-    background: black;
-    font-size: 2em;
-    position: fixed;
-    top: 10px;
-    right: 10px;
+    background: #fff url(/images/css/spinner.gif) no-repeat scroll center center;
+    position:fixed;
+    top: 5px;
+    right: 5px;
+    height: 24px;
+    width: 24px;
+    padding: 5px;
+    text-indent: 10em;
     z-index: 42;
-    float: right;
+    -moz-border-radius: 15px;
 }
 
 div#jifty-region, div#jifty-region-lazy {
