@@ -1,15 +1,30 @@
 /**
- * jGrowl 1.1.0
+ * jGrowl 1.1.2
  *
  * Dual licensed under the MIT (http://www.opensource.org/licenses/mit-license.php)
  * and GPL (http://www.opensource.org/licenses/gpl-license.php) licenses.
  *
  * Written by Stan Lemon <stanlemon@mac.com>
- * Last updated: 2008.06.13
+ * Last updated: 2008.08.17
  *
  * jGrowl is a jQuery plugin implementing unobtrusive userland notifications.  These 
  * notifications function similarly to the Growl Framework available for
  * Mac OS X (http://growl.info).
+ *
+ * To Do:
+ * - Move library settings to containers and allow them to be changed per container
+ *
+ * Changes in 1.1.2
+ * - Added iPhone styled example
+ * - Fixed possible IE7 bug when determining if the ie6 class shoudl be applied.
+ * - Added template for the close button, so that it's content could be customized.
+ *
+ * Changes in 1.1.1
+ * - Fixed CSS styling bug for ie6 caused by a mispelling
+ * - Changes height restriction on default notifications to min-height
+ * - Added skinned examples using a variety of images
+ * - Added the ability to customize the content of the [close all] box
+ * - Added jTweet, an example of using jGrowl + Twitter
  *
  * Changes in 1.1.0
  * - Multiple container and instances.
@@ -49,8 +64,6 @@
  * Changes in 1.0.1:
  * - Removed dependency on metadata plugin in favor of .data()
  * - Namespaced all events
- *
- * @todo	Group by header.
  */
 (function($) {
 
@@ -102,6 +115,8 @@
 			speed: 			'normal',
 			easing: 		'swing',
 			closer: 		true,
+			closeTemplate: '&times;',
+			closerTemplate: '<div>[ close all ]</div>',
 			log: 			function(e,m,o) {},
 			beforeOpen: 	function(e,m,o) {},
 			open: 			function(e,m,o) {},
@@ -128,7 +143,7 @@
 
 			o.log.apply( this.element , [this.element,message,o] );
 
-			var notification = $('<div class="jGrowl-notification"><div class="close">&times;</div><div class="header">' + o.header + '</div><div class="message">' + message + '</div></div>')
+			var notification = $('<div class="jGrowl-notification"><div class="close">' + o.closeTemplate + '</div><div class="header">' + o.header + '</div><div class="message">' + message + '</div></div>')
 				.data("jGrowl", o).addClass(o.theme).children('div.close').bind("click.jGrowl", function() {
 					$(this).unbind('click.jGrowl').parent().trigger('jGrowl.beforeClose').animate(o.animateClose, o.speed, o.easing, function() {
 						$(this).trigger('jGrowl.close').remove();
@@ -159,7 +174,7 @@
 
 			/** Add a Global Closer if more than one notification exists **/
 			if ( $('div.jGrowl-notification:parent', this.element).size() > 1 && $('div.jGrowl-closer', this.element).size() == 0 && this.defaults.closer != false ) {
-				$('<div class="jGrowl-closer">[ close all ]</div>').addClass(this.defaults.theme).appendTo(this.element).animate(this.defaults.animateOpen, this.defaults.speed, this.defaults.easing).bind("click.jGrowl", function() {
+				$(this.defaults.closerTemplate).addClass('jGrowl-closer').addClass(this.defaults.theme).appendTo(this.element).animate(this.defaults.animateOpen, this.defaults.speed, this.defaults.easing).bind("click.jGrowl", function() {
 					$(this).siblings().children('div.close').trigger("click.jGrowl");
 
 					if ( $.isFunction( self.defaults.closer ) ) self.defaults.closer.apply( $(this).parent()[0] , [$(this).parent()[0]] );
@@ -188,7 +203,7 @@
 			this.element = $(e).addClass('jGrowl').append('<div class="jGrowl-notification"></div>');
 			this.interval = setInterval( function() { jQuery(e).data('jGrowl.instance').update(); }, this.defaults.check);
 			
-			if ($.browser.msie && parseInt($.browser.version) < 7) $(this.element).addClass('ie6');
+			if ($.browser.msie && parseInt($.browser.version) < 7 && !window["XMLHttpRequest"]) $(this.element).addClass('ie6');
 		},
 
 		/** Shutdown jGrowl, removing it and clearing the interval **/
