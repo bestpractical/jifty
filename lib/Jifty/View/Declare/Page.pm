@@ -39,6 +39,13 @@ sub new {
     return $self;
 }
 
+=head2 render
+
+Renders everything. This main driver of page rendering and called
+right after constructing page object.
+
+=cut
+
 sub render {
     my $self = shift;
     $self->render_body( sub { $self->render_page->() });
