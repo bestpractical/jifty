@@ -1359,4 +1359,12 @@ sub qualified_region {
             @{ $self->{'region_stack'} || [] }, @_;
 }
 
+=head2 is_ssl
+
+Indicates whether the current request was made using SSL.
+
+=cut
+
+sub is_ssl { $ENV{HTTPS} }
+
 1;
