@@ -127,15 +127,6 @@ This badly wants to be redone.
 =cut
 
 sub wrapper {
-    my $app_class = get_current_attr('PageClass') || 'View::Page';
-    delete $Template::Declare::Tags::ATTRIBUTES{ 'PageClass' };
-
-    my $page_class = Jifty->app_class( $app_class );
-    $page_class = 'Jifty::View::Declare::Page'
-        unless Jifty::Util->_require( module => $page_class, quiet => 0 );
-    # XXX: fallback, this is ugly
-    Jifty::Util->require( $page_class );
-
     my $content_code = shift;
     my $meta = shift;
     my $page = $page_class->new({ content_code => $content_code, _meta => $meta });
@@ -162,6 +153,20 @@ sub wrapper {
         $page->render_body( sub { $page->render_page->() });
         $page->render_footer;
     }
+}
+
+sub page_class {
+    my $hard_require = 0;
+    my $app_class = get_current_attr('PageClass');;
+    delete $Template::Declare::Tags::ATTRIBUTES{ 'PageClass' };
+    $hard_require = 1 if $app_class;
+
+    my $page_class = Jifty->app_class( $app_class || 'View::Page' );
+    $page_class = 'Jifty::View::Declare::Page'
+        unless Jifty::Util->_require( module => $page_class, quiet => !$hard_require );
+    # XXX: fallback, this is ugly
+    Jifty::Util->require( $page_class );
+    return $page_class;
 }
 
 =head2 Forms and actions
