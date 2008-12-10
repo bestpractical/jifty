@@ -150,8 +150,7 @@ sub wrapper {
         }
     }
     else {
-        $page->render_body( sub { $page->render_page->() });
-        $page->render_footer;
+        $page->render;
     }
 }
 

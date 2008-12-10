@@ -39,6 +39,13 @@ sub new {
     return $self;
 }
 
+sub render {
+    my $self = shift;
+    $self->render_body( sub { $self->render_page->() });
+    $self->render_footer;
+    return '';
+}
+
 =head2 render_header $title
 
 Renders an HTML "doctype", <head> and the first part of a page body. This bit isn't terribly well thought out and we're not happy with it.
