@@ -136,9 +136,10 @@ sub url {
         # Explicit flag needed because URI->new("noscheme") is structurally
         # different from URI->new("http://smth"). Clunky, but works.
         my $dirty;
-        if ($http_host_env !~ m{^https?://}) {
+        if ($http_host_env !~ m{^http(s?)://}) {
             $dirty++;
             $http_host_env = "http://" . $http_host_env;
+            $http_host_env =~ s/http/https/ if $1 eq 's' || Jifty->web->is_ssl;
         }
         $uri = URI->new($http_host_env);
         if ($dirty && (my $req_uri_env = $ENV{REQUEST_URI})) {
