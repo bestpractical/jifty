@@ -200,6 +200,6 @@ returns the id of the current user or C<undef> if not logged in.
 
 =head1 SEE ALSO
 
-L<Jifty::CurrentUser>, L<Jifty::Record>, L<Jifty::RightsFrom>
+L<Jifty::CurrentUser>, L<Jifty::Record>, L<Jifty::RightsFrom>, L<Jifty::Plugin::Authentication::Ldap>, L<Jifty::Plugin::Authentication::CAS> 
 
 =cut
