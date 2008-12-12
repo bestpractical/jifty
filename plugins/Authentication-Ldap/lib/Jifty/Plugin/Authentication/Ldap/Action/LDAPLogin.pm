@@ -47,7 +47,7 @@ sub validate_ldap_id {
     }
 
 
-    return $self->validation_ok('name');
+    return $self->validation_ok('ldap_id');
 }
 
 
@@ -114,8 +114,10 @@ sub take_action {
     my $u = $user->user_object;
 
     # Update, just in case
-    $u->__set( column => 'name', value => $name );
-    $u->__set( column => 'email', value => $email );
+    $u->__set( column => 'ldap_id', value => $username ) unless ($u->ldap_id and $u->ldap_id eq $username);
+    $u->__set( column => 'name', value => $username )    unless ($u->name and length $u->name);
+    $u->__set( column => 'name', value => $name )	 if ($name);
+    $u->__set( column => 'email', value => $email )	 if ($email);
 
 
     # Login!

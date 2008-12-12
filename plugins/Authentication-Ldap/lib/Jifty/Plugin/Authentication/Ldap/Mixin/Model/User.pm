@@ -22,8 +22,8 @@ use Jifty::Plugin::Authentication::Ldap::Record schema {
 column ldap_id =>
   type is 'text',
   label is 'Ldap ID',
-  is distinct,
-  is immutable;
+  is distinct;
+  #is immutable;
 
 };
 
