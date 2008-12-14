@@ -1,0 +1,45 @@
+--- 
+framework: 
+  ConfigFileVersion: 4
+
+  ApplicationClass: TestApp::Dispatcher
+  ApplicationName: TestApp-Dispatcher
+  ApplicationUUID: 910B667E-C97B-11DD-9E38-714D7437C21E
+
+  AdminMode: 0
+  DevelMode: 0
+
+  Database: 
+    AutoUpgrade: 1
+    CheckSchema: 1
+    Database: testapp_dispatcher
+    Driver: SQLite
+    Host: localhost
+    Password: ''
+    RecordBaseClass: Jifty::DBI::Record::Cachable
+    User: ''
+    Version: 0.0.1
+  LogLevel: DEBUG
+
+  Plugins: 
+    - 
+      SkeletonApp: {}
+
+    - 
+      CompressedCSSandJS: {}
+
+  PubSub: 
+    Backend: Memcached
+    Enable: ~
+  SkipAccessControl: 0
+  TemplateClass: TestApp::Dispatcher::View
+  View: 
+    Handlers: 
+      - Jifty::View::Static::Handler
+      - Jifty::View::Declare::Handler
+  Web: 
+    BaseURL: http://localhost
+    DataDir: var/mason
+    Port: 8888
+    ServeStaticFiles: 1
+    StaticRoot: share/web/static
