@@ -161,15 +161,23 @@ You can perform any action you want inside the C<since> blocks of your upgrade s
 For example, let's say our users always gave us C<first_name> and C<last_name> before, but we've added a new column C<display_name> which will normally contain their name in "last, first" format, but could be customized per-account. We want to go ahead and initialize this new column during the upgrade. In your upgrade script, you could add:
 
   since '0.2.4' => sub {
-      my $users = MyApp::Model::UserCollection->new;
+      my $users = MyApp::Model::UserCollection->new(
+          current_user => Jifty->app_class('CurrentUser')->superuser
+      );
       $users->unlimit;
 
       while (my $user = $users->next) {
-          $user->set_display_name(
+          # error checks may save you from hours of debugging
+          my ($status, $msg) = $user->set_display_name(
               join(', ', $user->last_name, $user->first_name)
           );
+          Jifty->log->error("Couldn't change user record: $msg")
+              unless $status;
       }
   };
+
+Note that collection created using super user to pass ACL checks and other restrictions, if your models are protected from super user
+then you may have problems. See also L<Jifty::Manual::AccessControl>.
 
 =head1 SEE ALSO
 
