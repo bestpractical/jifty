@@ -60,7 +60,7 @@ and edit lib/App/Model/User.pm to look something like this:
     
     # all logged in users can read this table
     return 1
-        if ($type eq 'read' &&  && $self->current_user->id);
+        if ($type eq 'read' && $self->current_user->id);
     
     return $self->SUPER::current_user_can($type, @_);
   };
