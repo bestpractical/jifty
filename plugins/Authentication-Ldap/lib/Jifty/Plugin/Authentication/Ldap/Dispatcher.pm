@@ -6,6 +6,9 @@ use Jifty::Dispatcher -base;
 
 # Put any plugin-specific dispatcher rules here.
 
+# whitelist safe actions to avoid cross-site scripting
+before '*' => run { Jifty->api->allow('LDAPLogout') };
+
 # Log out
 before 'ldaplogout' => run {
     Jifty->web->request->add_action(
@@ -14,6 +17,9 @@ before 'ldaplogout' => run {
     );
 };
 
+on ldaplogout  => run {
+        redirect '/';
+};
 
 # Login
 on 'ldaplogin' => run {

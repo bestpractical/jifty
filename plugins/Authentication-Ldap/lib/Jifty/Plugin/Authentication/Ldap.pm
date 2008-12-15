@@ -55,8 +55,15 @@ and edit lib/App/Model/User.pm to look something like this:
       my $type = shift;
       my %args = (@_);
       
-      return 1;
-  }
+    return 1 if
+          $self->current_user->is_superuser;
+    
+    # all logged in users can read this table
+    return 1
+        if ($type eq 'read' &&  && $self->current_user->id);
+    
+    return $self->SUPER::current_user_can($type, @_);
+  };
   
   1;
 
