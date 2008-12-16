@@ -67,7 +67,7 @@ override L</render_content>.
 
 =item title is always rendered in page
 
-Even when there is no 'title is ...' in the content code,
+Even when there is no 'page_title is ...' in the content code,
 see L</instrument_content> and L</render_title_inpage>.
 
 =item no html in title
@@ -214,21 +214,21 @@ in content.
 
 Calls L</render_doctype>.
 
-=item C<title is ...>
+=item C<page_title is ...>
 
 You can define dynamic title using the following:
 
     template some => page {
         my $page_title = ...;
         ...
-        title is $page_title;
+        page_title is $page_title;
         ...
     };
 
 Don't want to define dynamic title then as well you can use syntax
 described in L</init> above.
 
-When 'title is' is used in the content code, L</render_title_inpage>
+When 'page_title is' is used in the content code, L</render_title_inpage>
 is called, read more in L</instrument_content>.
 
 L</render_title_inhead> is called during rendering of the head tag,
@@ -360,10 +360,10 @@ Something you don't want ever touch. However, does the following:
 
 =over 4
 
-=item setups local 'title is ...' handler which calls L</render_title_inpage>
-if 'title is' is used.
+=item setups local 'page_title is ...' handler which calls L</render_title_inpage>
+if 'page_title is' is used.
 
-=item if 'title is' is not used then calls L</render_title_inpage> after
+=item if 'page_title is' is not used then calls L</render_title_inpage> after
 and put result into output stream before the content.
 
 =item setup handler for 'add rel ...' and 'add rev ...', that calls
@@ -381,7 +381,7 @@ sub instrument_content {
     no warnings qw( redefine once );
 
     my $seen_title = 0;
-    local *is::title = sub {
+    local *is::page_title = sub {
         shift;
         $seen_title = 1;
         no warnings qw(uninitialized);
