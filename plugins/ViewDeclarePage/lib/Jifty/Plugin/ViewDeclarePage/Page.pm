@@ -392,7 +392,7 @@ sub instrument_content {
                 $_->();
                 $res .= Template::Declare->end_buffer_frame->data;
             } else {
-                $res .= Jifty->web->escape($_);
+                $res .= $_;
             }
         }
         $self->_title( $self->_title . $res );
