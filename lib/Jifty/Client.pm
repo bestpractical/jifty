@@ -4,7 +4,7 @@ use warnings;
 package Jifty::Client;
 use base qw/WWW::Mechanize/;
 
-$ENV{'http_proxy'} = ''; # Otherwise WWW::Mechanize tries to go through your HTTP proxy
+delete $ENV{'http_proxy'}; # Otherwise WWW::Mechanize tries to go through your HTTP proxy
 
 use Jifty::YAML;
 use HTTP::Cookies;
