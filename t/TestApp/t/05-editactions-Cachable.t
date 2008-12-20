@@ -34,7 +34,7 @@ $mech->post($URL.'/editform', {
     'J:A:F-name-updateuser' => 'edituser',
     'J:A:F-email-updateuser' => 'newemail@example.com',
     'J:A:F-tasty-updateuser' => '0'
-}, "Form submitted");
+});
 
 undef $o;
 $o = TestApp::Model::User->new(current_user => $system_user);
