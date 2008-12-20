@@ -138,8 +138,7 @@ sub url {
         my $dirty;
         if ($http_host_env !~ m{^http(s?)://}) {
             $dirty++;
-            $http_host_env = "http://" . $http_host_env;
-            $http_host_env =~ s/http/https/ if $1 eq 's' || Jifty->web->is_ssl;
+            $http_host_env = (Jifty->web->is_ssl ? "https" : "http") ."://$http_host_env";
         }
         $uri = URI->new($http_host_env);
         if ($dirty && (my $req_uri_env = $ENV{REQUEST_URI})) {
