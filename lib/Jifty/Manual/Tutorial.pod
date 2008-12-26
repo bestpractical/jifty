@@ -436,6 +436,58 @@ to obsolete the I<hard bits> of this tutorial as quickly as we can.
 Please join us on the C<jifty-devel> mailing list to talk about how you're 
 using Jifty or what you find difficult or hard to use about it.
 
+=head1 MORE TUTORIALS
+
+=over 4
+
+=item * Managing your datastore
+
+L<Jifty::Manual::Models>
+
+=item * Doing Stuff With Jifty
+
+L<Jifty::Manual::Actions>
+
+=item * Using page regions
+
+L<Jifty::Manual::PageRegions>
+
+=item * Customized view
+
+For L<Template::Declare> views you can read L<Jifty::Plugin::ViewDeclarePage>,
+which has pretty good documentation on customizing page layouts.
+
+=item * CSS and JS
+
+L<Jifty::Manual::UsingCSSandJS>,
+L<Jifty::Manual::JavaScript>
+
+=item * Web Services
+
+See L<Jifty::Manual::TutorialRest> for a quick overview.
+
+=item * Continuations - "There And Back Again"
+
+L<Jifty::Manual::Continuations>
+
+=item * Access Control and Security
+
+L<Jifty::Manual::AccessControl>
+
+=item * Deploying your application in production
+
+L<Jifty::Manual::Deploying>
+
+=item * Upgrading your application's data model
+
+L<Jifty::Manual::Upgrading>
+
+=item * Recipes for common tasks in Jifty
+
+L<Jifty::Manual::Cookbook>
+
+=back
+
 =head1 GETTING HELP
 
 =head2 Online Help
@@ -471,29 +523,5 @@ available from the jifty subversion repository.
 
 At this incredibly early stage in its life, please report bugs in Jifty
 to C<jifty-devel@lists.jifty.org>.
-
-=head1 FUTURE TUTORIALS
-
-Future tutorials include:
-
-=over 4
-
-=item * Access Control and Security
-
-=item * Upgrading your application's data model
-
-=item * The dispatcher in depth
-
-=item * Deploying your application in production
-
-=item * Web Services
-
-See L<Jifty::Manual::TutorialRest> for a quick overview.
-
-=item * Continuations in depth
-
-=item * Customized view (user-defined wrappers and css)
-
-=back
 
 =cut
