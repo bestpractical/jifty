@@ -74,11 +74,12 @@ sub run {
     my $self = shift;
 
     my $name = $self->{'name'};
+    $name = '' unless defined $name;
     $name =~ s/::/-/g;
     $self->prefix( $name ); 
 
     $self->print_help;
-    unless ($self->prefix =~ /\w+/ ) {
+    unless ( $self->prefix =~ /\w+/ ) {
         $self->print_help("You need to give your new Jifty app a --name");
     }
 
