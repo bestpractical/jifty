@@ -28,7 +28,9 @@ Takes one mandatory argument, C<base>, which should be the the
 application's or a plugin's base path; all of the classes under this will be
 automatically loaded.
 
-L<Jifty::ClassLoader> objects are singletons per C<base>. If you call C<new> and a class loader for the given base has already been initialized, this will return a reference to that object rather than creating a new one.
+L<Jifty::ClassLoader> objects are singletons per C<base>. If you call C<new>
+and a class loader for the given base has already been initialized, this will
+return a reference to that object rather than creating a new one.
 
 =cut
 
@@ -52,7 +54,10 @@ The hook that is called when a module has been C<require>'d that
 cannot be found on disk.  The following stub classes are
 auto-generated the class loader. 
 
-Here the "I<Application>" indicates the name of the application the class loader is being applied to. However, this really just refers to the C<base> argument passed to the constructor, so it could refer to a plugin class or just about anything else.
+Here the "I<Application>" indicates the name of the application the class
+loader is being applied to. However, this really just refers to the C<base>
+argument passed to the constructor, so it could refer to a plugin class
+or just about anything else.
 
 =over
 
