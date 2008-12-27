@@ -61,8 +61,8 @@ sub _get_current_user {
     if ( $args{'current_user'} ) {
         return $self->current_user( $args{'current_user'} );
     }
-    my $depth = 1;
-    my $caller;
+
+    my $cu;
 
     # Mason introduces a DIE handler that generates a mason exception
     # which in turn generates a backtrace. That's fine when you only
@@ -73,27 +73,22 @@ sub _get_current_user {
     eval {
         package DB;
 
-        # get the caller in array context to populate @DB::args
-        while ( not $self->current_user and $depth < 10 ) {
-
-            #local @DB::args;
-            my ($package,   $filename, $line,       $subroutine, $hasargs,
-                $wantarray, $evaltext, $is_require, $hints,      $bitmask
-                )
-                = CORE::caller( $depth++ );
+        my $depth = 1;
+        while ( not $cu and $depth < 10 ) {
+            # get the caller in array context to populate @DB::args
+            my $x = (CORE::caller( $depth++ ))[0];
             my $caller_self = $DB::args[0];
-            next unless ( ref($caller_self) );    #skip class methods;
-	    next if $caller_self->isa('Jifty::Date'); 
-            next
-                unless ( $caller_self->can('current_user')
-                and $caller_self->current_user
-                and defined $caller_self->current_user->id );
-            $self->current_user( $caller_self->current_user() );
+            next unless ref($caller_self);    #skip class methods;
+            next if $caller_self->isa('Jifty::Date'); 
+            next unless $caller_self->can('current_user');
+            next unless my $t = $caller_self->current_user;
+            next unless defined $t->id;
+            $cu = $t;
         }
     };
 
     # If we found something, return it
-    return $self->current_user if $self->current_user;
+    return $self->current_user( $cu ) if $cu;
 
     # Fallback to web ui framework
     if ( Jifty->web ) {
