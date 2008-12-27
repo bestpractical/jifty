@@ -1,7 +1,6 @@
-
 =head1 NAME
 
-JavaScript programming guide for Jifty
+Jifty::Manual::JavaScript - JavaScript programming guide for Jifty
 
 =head1 DESCRIPTION
 
