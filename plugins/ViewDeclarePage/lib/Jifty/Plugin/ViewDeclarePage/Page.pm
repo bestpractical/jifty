@@ -387,6 +387,8 @@ sub instrument_content {
         no warnings qw(uninitialized);
         my $res = '';
         for (@_) {
+            # just in case somebody if somebody put a tag into title
+            # tags' code may play with buffers directly
             if ( ref($_) eq 'CODE' ) {
                 Template::Declare->new_buffer_frame;
                 $_->();
