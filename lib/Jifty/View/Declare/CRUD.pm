@@ -466,11 +466,14 @@ template 'list' => sub {
 
     my ( $page ) = get('page');
     my $item_path = get('item_path') || $self->fragment_for("view");
+    my $sort_by = get ('sort_by') || '';
+    my $order = get ('order') || '';
     my $collection =  $self->_current_collection();
     div { {class is 'crud-'.$self->object_type}; 
 
     show('./search_region');
     show( './paging_top',    $collection, $page );
+    show( './sort_header', $item_path, $sort_by, $order );
     show( './list_items',    $collection, $item_path );
     show( './paging_bottom', $collection, $page );
     show( './new_item_region');
@@ -492,6 +495,8 @@ sub per_page { 25 }
 sub _current_collection {
     my $self = shift; 
     my ( $page ) = get('page') || 1;
+    my ( $sort_by ) = get('sort_by');
+    my ( $order ) = get('order');
     my $collection_class = $self->record_class->collection_class;
     my $search = ( Jifty->web->response->result('search') ? Jifty->web->response->result('search')->content('search') : undef );
     my $collection;
@@ -506,12 +511,55 @@ sub _current_collection {
     } else {
         $collection = $collection_class->new();
         $collection->find_all_rows();
+        $collection->order_by(column => $sort_by, order=>'ASC') if ($sort_by && !$order);
+        $collection->order_by(column => $sort_by, order=>'DESC') if ($sort_by && $order);
     }
 
     $collection->set_page_info( current_page => $page, per_page => $self->per_page );
 
     return $collection;    
 }
+
+=head2 sort_header
+
+Sort by field toolbar
+
+=cut
+
+template 'sort_header' => sub {
+    my $self = shift;
+    my $item_path = shift;
+    my $sort_by = shift;
+    my $order = shift;
+    my $record_class = $self->record_class;
+    my $create = $record_class->as_create_action;
+
+    div { { class is "jifty_admin_header"};
+     foreach my $argument ($create->argument_names) {
+        next if $create->arguments->{$argument}{unreadable};
+        my $css_class = ($sort_by && !$order && $sort_by eq $argument)?'up_select':'up';
+         span { {class is $css_class };
+            hyperlink(
+                label   => _("asc"),
+                onclick =>
+                    { args   => { sort_by => $argument, order => undef } }
+                )
+          };
+        $css_class = ($sort_by && $order && $sort_by eq $argument)?'down_select':'down' ;
+         span { {class is $css_class };
+            hyperlink(
+                label   => _("desc"),
+                onclick =>
+                    { args   => { sort_by => $argument, order => 'D' } }
+                )
+          };
+         span{ {class is "field"};
+            outs $create->arguments->{$argument}{label} || $argument; };
+     };
+    hr {};
+    };
+};
+
 
 use constant predefined_search => ();
 
