@@ -97,7 +97,7 @@ hashref, as well as the last argument for the content sub.
 sub page (&;$) {
     unshift @_, undef if $#_ == 0;
     my ( $meta, $code ) = @_;
-    sub {
+    my $ret = sub {
         my $self = shift;
         Jifty->handler->apache->content_type('text/html; charset=utf-8');
         my $wrapper = Jifty->app_class('View')->can('wrapper') || \&wrapper;
@@ -105,7 +105,9 @@ sub page (&;$) {
         my $metadata = $#metadata == 0 ? $metadata[0] : {@metadata};
         local *is::title = sub { Carp::carp "Can't use 'title is' when mixing mason and TD" };
         $wrapper->( sub { $code->( $self, $metadata ) }, $metadata );
-    }
+    };
+    $ret->() unless defined wantarray;
+    return $ret;
 }
 
 =head3 content
