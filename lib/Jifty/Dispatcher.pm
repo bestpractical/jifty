@@ -120,12 +120,19 @@ by using a variant on the C<before> and C<after> syntax:
     after plugin NAME =>
         RULE(S);
 
+    after app,
+        RULE(S)
+
 C<NAME> may either be a string, which must match the plugin name
 exactly, or a regular expression, which is matched against the plugin
 name.  The rule will be placed at the first boundary that it matches --
 that is, given a C<before plugin qr/^Jifty::Plugin::Auth::/> and both
 a C<Jifty::Plugin::Auth::Basic> and a C<Jifty::Plugin::Auth::Complex>,
 the rules will be placed before the first.
+
+C<after app> inserts the folowing C<RULES> after the application's
+dispatcher rules, and is identical to, but hopefuly clearer than,
+C<< after plugin Jifty => RULES >>.
 
 C<RULES> may either be a single C<before>, C<on>, C<under>, or
 C<after> rule to change the ordering of, or an array reference of
@@ -269,7 +276,7 @@ our @EXPORT = qw<
 
     HTTPS HTTP
 
-    plugin
+    plugin app
 
     get next_rule last_rule
 
@@ -314,6 +321,7 @@ sub HTTPS ($)   { _qualify https  => @_ }
 sub HTTP ($)    { _qualify http   => @_ }
 
 sub plugin ($) { return { plugin => @_ } }
+sub app ()     { return { plugin => 'Jifty' } }
 
 our $CURRENT_STAGE;
 
@@ -1265,7 +1273,7 @@ sub import_plugins {
     push @deferred, $_->dispatcher->rules('DEFERRED') for Jifty->plugins;
     push @deferred, $self->rules('DEFERRED');
 
-    # XXX TODO: Examine @deferred and find rles that cannot fire
+    # XXX TODO: Examine @deferred and find rules that cannot fire
     # because they match no plugins; they should become un-deferred in
     # the appropriate group.  This is so 'before plugin qr/Auth/' runs
     # even if we have no auth plugin
