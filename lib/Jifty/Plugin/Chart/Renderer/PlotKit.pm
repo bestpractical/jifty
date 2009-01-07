@@ -2,7 +2,7 @@ use strict;
 use warnings;
 
 package Jifty::Plugin::Chart::Renderer::PlotKit;
-use base qw/ Jifty::Plugin::Chart::Renderer /;
+use base qw/Jifty::Plugin::Chart::Renderer /;
 
 use Jifty::YAML;
 
@@ -23,6 +23,7 @@ Adds the various JavaScript files required to use PlotKit.
 =cut
 
 sub init {
+
     Jifty->web->add_external_javascript(qw(
         /static/js/mochikit.noexport.js
         /static/js/MochiKit/MochiKit.js
@@ -128,6 +129,10 @@ sub _transform_data {
     }
 
     $args->{data} = \@data;
+}
+
+sub prereq_plugins {
+  return ("Prototypism");
 }
 
 =head1 SEE ALSO

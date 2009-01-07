@@ -7,7 +7,7 @@ use base qw/ Jifty::Plugin Class::Accessor::Fast /;
 use Jifty::Plugin::Chart::Web;
 use Scalar::Util qw/ blessed /;
 
-__PACKAGE__->mk_accessors(qw/ renderer renderers plugin_args /);
+__PACKAGE__->mk_accessors(qw/ renderer renderers plugin_args _prereq_plugins/);
 
 =head1 NAME
 
@@ -154,6 +154,11 @@ sub init_renderer {
         # Initialize the renderer
         $renderer = $renderer_class->new( %{ $self->plugin_args } );
 
+        if( $renderer->can('prereq_plugins') ) {
+          my @prereq_plugins =  $renderer->prereq_plugins ;
+          push @{ $self->{_prereq_plugins} } , @prereq_plugins ;
+        }
+
         # Remember it
         $self->renderers->{ $renderer_class } = $renderer;
 
@@ -161,6 +166,12 @@ sub init_renderer {
         return $renderer;
     }
 }
+
+sub prereq_plugins {
+  my $self = shift;
+  return @{ $self->_prereq_plugins };
+}
+
 
 =head1 SEE ALSO
 
