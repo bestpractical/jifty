@@ -93,8 +93,8 @@ sub password_is {
     my $self = shift;
     my $pass = shift;
 
-    return undef unless $self->_value('password');
-    my ($hash, $salt) = @{$self->_value('password')};
+    return undef unless $self->__value('password');
+    my ($hash, $salt) = @{$self->__value('password')};
 
     return 1 if ( $hash eq Digest::MD5::md5_hex($pass . $salt) );
     return undef;
@@ -115,7 +115,7 @@ sub hashed_password_is {
     my $hash = shift;
     my $token = shift;
 
-    my $password = $self->_value('password');
+    my $password = $self->__value('password');
     return $password && Digest::MD5::md5_hex("$token " . $password->[0]) eq $hash;
 }
 
