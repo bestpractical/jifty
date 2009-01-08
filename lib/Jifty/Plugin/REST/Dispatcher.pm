@@ -20,7 +20,7 @@ before qr{^ (/=/ .*) \. (js|json|yml|yaml|perl|pl|xml) $}x => run {
 };
 
 before POST qr{^ (/=/ .*) ! (DELETE|PUT|GET|POST|OPTIONS|HEAD|TRACE|CONNECT) $}x => run {
-    $ENV{REQUEST_METHOD} = $2;
+    request->request_method($2);
     $ENV{REST_REWROTE_METHOD} = 1;
     dispatch $1;
 };
@@ -744,7 +744,7 @@ sub _dispatch_to_action {
     
     # CGI.pm doesn't handle form encoded data in PUT requests, so we have
     # to read the request body from PUTDATA and have CGI.pm parse it
-    if (    $ENV{'REQUEST_METHOD'} eq 'PUT'
+    if ( Jifty->web->request->request_method eq 'PUT'
         and (   $ENV{'CONTENT_TYPE'} =~ m|^application/x-www-form-urlencoded$|
               or $ENV{'CONTENT_TYPE'} =~ m|^multipart/form-data$| ) )
     {
@@ -766,7 +766,7 @@ sub _dispatch_to_action {
         }
     }
 
-    $ENV{REQUEST_METHOD} = 'POST';
+    Jifty->web->request->request_method('POST');
     dispatch '/=/action/' . action( $prefix . $class );
 }
 

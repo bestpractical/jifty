@@ -962,8 +962,8 @@ came in with that method.
 
 sub _match_method {
     my ( $self, $method ) = @_;
-    #$self->log->debug("Matching URL $ENV{REQUEST_METHOD} against ".$method);
-    lc( $ENV{REQUEST_METHOD} ) eq lc($method);
+    #$self->log->debug("Matching method ".request->request_method." against ".$method);
+    lc( request->request_method ) eq lc($method);
 }
 
 =head2 _match_https

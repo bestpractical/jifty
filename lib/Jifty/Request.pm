@@ -4,7 +4,7 @@ use strict;
 package Jifty::Request;
 
 use base qw/Jifty::Object Class::Accessor::Fast/;
-__PACKAGE__->mk_accessors(qw(_top_request arguments template_arguments just_validating path continuation_id future_continuation_id continuation_type continuation_path));
+__PACKAGE__->mk_accessors(qw(_top_request arguments template_arguments just_validating path continuation_id future_continuation_id continuation_type continuation_path request_method));
 
 use Jifty::JSON;
 use Jifty::YAML;
@@ -116,6 +116,9 @@ YAML, JSON, etc.  Falls back to query parameters.  Takes a CGI object.
 sub fill {
     my $self = shift;
     my ($cgi) = @_;
+
+    # Store away request method
+    $self->request_method( $cgi->request_method );
 
     # Grab content type and posted data, if any
     my $ct   = $ENV{"CONTENT_TYPE"};
