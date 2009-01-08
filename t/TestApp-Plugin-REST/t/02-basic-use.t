@@ -112,11 +112,6 @@ my @actions = qw(
                  TestApp.Plugin.REST.Action.SearchUser
                  TestApp.Plugin.REST.Action.ExecuteUser
                  TestApp.Plugin.REST.Action.DoSomething
-                 TestApp.Plugin.REST.Action.Record.Create
-                 TestApp.Plugin.REST.Action.Record.Delete
-                 TestApp.Plugin.REST.Action.Record.Search
-                 TestApp.Plugin.REST.Action.Record.Update
-                 TestApp.Plugin.REST.Action.Record.Execute
                  Jifty.Action.Autocomplete
                  Jifty.Action.Redirect);
 
