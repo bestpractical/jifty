@@ -90,6 +90,7 @@ sub init {
 
     # Save the arguments for use in init_renderer() later
     $self->plugin_args( \%args );
+    $self->_prereq_plugins( [] );
 
     # Deprecating the old form
     if (defined $args{renderer}) {
@@ -168,8 +169,8 @@ sub init_renderer {
 }
 
 sub prereq_plugins {
-  my $self = shift;
-  return @{ $self->_prereq_plugins };
+    my $self = shift;
+    return @{ $self->_prereq_plugins };
 }
 
 
