@@ -89,24 +89,22 @@ sub load_by_kv {
     my $self = shift;
     my $k    = shift;
     my $v    = shift;
-    my $session_id;
-
-    # tried doing this with load_by_cols but it never returned any rows
-    my $sessions = Jifty::Model::SessionCollection->new;
-    $sessions->limit( column => 'key_type', value => 'key' );
-    $sessions->limit( column => 'data_key', value => $k );
 
     # XXX TODO: we store this data in a storable. so we now want to match on the storable version
     # It would be so nice if Jifty::DBI could do this for us.
     $Storable::Deparse = 1;
-    my $value = Storable::nfreeze(\$v);
+    my $encoded = Storable::nfreeze(\$v);
 
-    $sessions->limit( column => 'value' => value => $value );
+    my $session = Jifty::Model::Session->new;
+    $session->load_by_cols(
+        key_type => 'key',
+        data_key => $k,
+        value    => $encoded,
+    );
+    my $session_id = $session->session_id;
 
-    while ( my $row = $sessions->next ) {
-        $session_id = $row->session_id;
-        last;
-    }
+    # XXX: if $session_id is undef, then bad things happen. This *can* happen.
+
     $self->load($session_id);
     $self->set( $k => $v ) if !$session_id;
 }
