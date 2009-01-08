@@ -130,8 +130,13 @@ sub reset {
     # These are the default action limits
     $self->action_limits(
         [
-            { hide => 1, deny => 1, restriction => qr/.*/ },
+            { deny => 1,  hide => 1, restriction => qr/.*/ },
             { allow => 1, show => 1, restriction => qr/^\Q$app_actions\E/ },
+            { deny => 1,  hide => 1, restriction => $app_actions."::Record::Create" },
+            { deny => 1,  hide => 1, restriction => $app_actions."::Record::Delete" },
+            { deny => 1,  hide => 1, restriction => $app_actions."::Record::Execute" },
+            { deny => 1,  hide => 1, restriction => $app_actions."::Record::Search" },
+            { deny => 1,  hide => 1, restriction => $app_actions."::Record::Update" },
             { allow => 1, show => 1, restriction => 'Jifty::Action::Autocomplete' },
             { allow => 1, show => 1, restriction => 'Jifty::Action::Redirect' },
         ]
