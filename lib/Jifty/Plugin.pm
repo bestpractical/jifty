@@ -103,15 +103,11 @@ sub init {
 
 =head2 new_request
 
-Called right before every request.  By default, this adds the plugin's
-actions to the list of allowed actions, using L<Jifty::API/allow>.
+Called right before every request.  By default, does nothing.
 
 =cut
 
 sub new_request {
-    my $self = shift;
-    my $class = ref($self) || $self;
-    Jifty->api->allow(qr/^\Q$class\E::Action/);
 }
 
 sub _calculate_share {

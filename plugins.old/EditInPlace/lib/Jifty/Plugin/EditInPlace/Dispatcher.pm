@@ -11,7 +11,7 @@ before qr'^/__jifty/(edit|create)(_inline/|)/(.*?)/(.*)$', run {
 
 on qr'^/__jifty/(edit|create)(_inline|)/(.*?)/(.*)$', run {
     my $editor = Jifty->web->new_action(
-        class     => 'Jifty::Plugin::EditInPlace::Action::FileEditor',
+        class     => Jifty->app_class('Action','FileEditor'),
         moniker   => 'editpage',
         arguments => {
             source_path => $4,

@@ -73,7 +73,7 @@ sub new {
     # Setup the basic allow/deny rules
     $self->reset;
 
-    # Find all the actions for the API reference (available at _actions)
+    # Find all the actions for the API reference (available at __actions)
     Jifty::Module::Pluggable->import(
         search_path => [
             Jifty->app_class("Action"),
@@ -81,10 +81,30 @@ sub new {
             map {ref($_)."::Action"} Jifty->plugins,
         ],
         except   => qr/\.#/,
-        sub_name => "_actions",
+        sub_name => "__actions"
     );
 
     return ($self);
+}
+
+# Plugin actions under Jifty::Plugin::*::Action are mirrored under
+# AppName::Action by Jifty::ClassLoader; this code makes _actions
+# reflect this mirroring.
+sub _actions {
+    my $self = shift;
+    unless ( $self->{_actions} ) {
+        my @actions = $self->__actions;
+        my %seen;
+        $seen{$_}++ for @actions;
+        for (@actions) {
+            if (/^Jifty::Plugin::(.*)::Action::(.*)$/) {
+                my $classname = Jifty->app_class( Action => $2 );
+                push @actions, $classname unless $seen{$classname};
+            }
+        }
+        $self->{_actions} = \@actions;
+    }
+    return @{ $self->{_actions} };
 }
 
 =head2 qualify ACTIONNAME

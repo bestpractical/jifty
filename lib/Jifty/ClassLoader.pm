@@ -76,7 +76,7 @@ If I<Application>::Model::I<Something> is a valid model class and I<Verb> is one
 
 =item I<Application>::Action::I<Something>
 
-The class loader will search for a plugin I<Plugin> such that I<Plugin>::Action::I<Something> exists. It will then create an empty class named I<Application>::Action::I<Something> that descends from I<Plugin>::Action::I<Something>.
+The class loader will search for a plugin I<Plugin> such that C<I<Plugin>::Action::I<Something>> exists. It will then create an empty class named I<Application>::Action::I<Something> that descends from I<Plugin>::Action::I<Something>.
 
 This means that a plugin may be written to allow the application to override the default implementation used by the plugin as long as the plugin uses the application version of the class.
 
@@ -118,7 +118,7 @@ An empty class that descends from L<Jifty::Handle> is created.
 
 =item I<Application>::Model::I<Something>
 
-If C<I<Application>::Plugin::I<Plugin>::Model::I<Something>> exists and is a model class, then it creates a subclass of it named C<I<Application>::Model::I<Something>> for the local application.
+If C<I<Plugin>::Model::I<Something>> exists and is a model class, then it creates a subclass of it named C<I<Application>::Model::I<Something>> for the local application.
 
 This allows an application to customize a model provided by a subclass (or choose not to). Plugins should be written to use the application's version.
 
