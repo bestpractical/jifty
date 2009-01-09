@@ -260,7 +260,7 @@ sub display_columns {
 
 sub edit_columns {
     my $self = shift; 
-    return $self->display_columns(@_);
+    return grep { $_ ne 'id' } $self->display_columns(@_);
 }
 
 sub create_columns {
