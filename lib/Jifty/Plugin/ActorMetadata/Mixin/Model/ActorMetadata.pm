@@ -19,7 +19,7 @@ Jifty::Plugin::ActorMetadata::Mixin::Model::ActorMetadata - ActorMetadata mixin
       # custom column defrinitions
   };
 
-  use Jifty::Plugin::ActorMetadata::Mixin::Model::ActorMetadata; # created_by, created_on, updated_on
+  use Jifty::Plugin::ActorMetadata::Mixin::Model::ActorMetadata; # created_by, created_on, updated_on and updated_by
 
 =head1 DESCRIPTION
 
@@ -32,6 +32,8 @@ This mixin adds the following columns to the model schema:
 =head2 created_on
 
 =head2 updated_on
+
+=head2 updated_by
 
 =cut
 
@@ -61,6 +63,10 @@ use Jifty::Record schema {
 column created_by =>
   render_as 'hidden',
   refers_to $app_user;
+
+column updated_by =>
+#refers_to $app_user, # TODO this weirdly doesn't work, need dig
+  render_as 'hidden';
 
 column created_on => is TimeStamp,
   render_as 'hidden';
@@ -92,7 +98,7 @@ sub register_triggers_for_column {
     my $self   = shift;
     my $column = shift;
 
-    return unless $column eq 'updated_on';
+    return unless $column eq 'updated_on' || $column eq 'updated_by';
 
     $self->add_trigger(name => 'after_set', callback => \&after_set);
     return 1;
@@ -100,7 +106,7 @@ sub register_triggers_for_column {
 
 =head2 before_create
 
-Sets C<created_by>, C<created_on>, C<updated_on> based on the current user and time.
+Sets C<created_by>, C<created_on>, C<updated_on> and C<updated_by> based on the current user and time.
 
 =cut
 
@@ -108,7 +114,7 @@ sub before_create {
     my $self = shift;
     my $args = shift;
 
-    $args->{'created_by'} = $self->current_user->id;
+    $args->{'created_by'} = $args->{'updated_by'} = $self->current_user->id;
     $args->{'created_on'} = $args->{'updated_on'} = Jifty::DateTime->now;
 
     return 1;
@@ -116,13 +122,14 @@ sub before_create {
 
 =head2 after_set
 
-update C<updated_on> based on the current time.
+update C<updated_on> and C<updated_by> based on the current user and current time.
 
 =cut
 
 sub after_set {
     my $self = shift;
     $self->__set( column => 'updated_on', value => Jifty::DateTime->now );
+    $self->__set( column => 'updated_by', value => $self->current_user->id );
 
     return 1;
 }
