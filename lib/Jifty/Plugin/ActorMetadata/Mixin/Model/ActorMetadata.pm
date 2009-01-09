@@ -103,7 +103,6 @@ sub before_create {
 =head2 current_user_can
 
 Rejects creation unless there's a current_user. 
-Rejects update or deletion unless the current_user is the creator.  (Jesse says: this feels like wrong logic for this mixin)
 
 =cut
 
@@ -118,9 +117,10 @@ sub current_user_can {
         return undef unless ($self->current_user and $self->current_user->id);
     }
 
-    if ($action eq 'update' or $action eq 'delete') {
-        return undef unless $self->current_user_is_owner;
-    }
+#Rejects update or deletion unless the current_user is the creator.  (Jesse says: this feels like wrong logic for this mixin)
+#    if ($action eq 'update' or $action eq 'delete') {
+#        return undef unless $self->current_user_is_owner;
+#    }
 
     return 1;
 }
