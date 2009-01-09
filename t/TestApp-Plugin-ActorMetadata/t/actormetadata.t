@@ -2,7 +2,7 @@ use strict;
 use warnings;
 
 use Test::More tests => 17;
-use Jifty::Test;
+use Jifty::Test::Dist;
 my ( $user_foo, $user_bar );
 
 $user_foo = TestApp::Plugin::ActorMetadata::Model::User->new;
