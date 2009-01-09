@@ -84,6 +84,20 @@ sub register_triggers {
     $self->add_trigger(name => 'before_create', callback => \&before_create);
 }
 
+=head2 register_triggers_for_column
+
+=cut
+
+sub register_triggers_for_column {
+    my $self   = shift;
+    my $column = shift;
+
+    return unless $column eq 'updated_on';
+
+    $self->add_trigger(name => 'after_set', callback => \&after_set);
+    return 1;
+}
+
 =head2 before_create
 
 Sets C<created_by>, C<created_on>, C<updated_on> based on the current user and time.
@@ -96,6 +110,19 @@ sub before_create {
 
     $args->{'created_by'} = $self->current_user->id;
     $args->{'created_on'} = $args->{'updated_on'} = Jifty::DateTime->now;
+
+    return 1;
+}
+
+=head2 after_set
+
+update C<updated_on> based on the current time.
+
+=cut
+
+sub after_set {
+    my $self = shift;
+    $self->__set( column => 'updated_on', value => Jifty::DateTime->now );
 
     return 1;
 }
