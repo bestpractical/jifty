@@ -157,6 +157,10 @@ sub _get_file_patterns {
         push @ret, $dir ;
     }
 
+    # Unique-ify paths
+    my %seen;
+    @ret = grep {not $seen{$_}++} @ret;
+
     return ( map { $_ . '/*.po' } @ret );
 }
 
