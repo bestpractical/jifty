@@ -366,9 +366,9 @@ sub require {
     # Construct the list of models for the application for later reference
     my %models;
     for ($self->plugins) {
-        Jifty::Util->require($_);  
+        Jifty::Util->require($_);
+        $models{$_} = 1 if /^($base)::Model::(.*)$/ and not /Collection(?:$||\:\:)/;
     }
-    $models{$_} = 1 for grep {/^($base)::Model::(.*)$/ and not /Collection(?:$||\:\:)/} $self->plugins;
     $self->models(sort keys %models);
 
     # Load all those models and model-related actions, notifications, and events
