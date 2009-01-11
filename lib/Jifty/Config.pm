@@ -195,7 +195,7 @@ sub load {
     my $self = shift;
 
     # Add the default configuration file locations to the stash
-    $self->stash( Hash::Merge::merge( $self->_default_config_files, $self->stash ));
+    $self->merge( $self->_default_config_files );
 
     # Calculate the location of the application etc/config.yml
     my $file = $ENV{'JIFTY_CONFIG'} || Jifty::Util->app_root . '/etc/config.yml';
@@ -204,11 +204,8 @@ sub load {
 
     # Start by loading application configuration file
     if ( -f $file and -r $file ) {
-        $app = $self->load_file($file);
-        $app = Hash::Merge::merge( $self->stash, $app );
-
         # Load the $app so we know where to find the vendor config file
-        $self->stash($app);
+        $self->merge( $self->load_file($file) );
     }
 
     # Load the vendor configuration file
@@ -219,8 +216,7 @@ sub load {
     );
 
     # Merge the app config with vendor config, vendor taking precedent
-    my $config = Hash::Merge::merge( $self->stash, $vendor );
-    $self->stash($config);
+    $self->merge( $vendor );
 
     # Load the site configuration file
     my $site = $self->load_file(
@@ -233,8 +229,7 @@ sub load {
     );
 
     # Merge the app, vendor, and site config, site taking precedent
-    $config = Hash::Merge::merge( $self->stash, $site );
-    $self->stash($config);
+    $self->merge( $site );
 
     # Load the test configuration file
     my $test = $self->load_file(
@@ -244,16 +239,15 @@ sub load {
     );
 
     # Merge the app, vendor, site and test config, test taking precedent
-    $config = Hash::Merge::merge( $self->stash, $test );
-    $self->stash($config);
+    $self->merge( $test );
 
     # Merge guessed values in for anything we didn't explicitly define
     # Whatever's in the stash overrides anything we guess
-    $self->stash( Hash::Merge::merge( $self->guess, $self->stash ));
+    $self->merge( $self->stash, $self->guess );
     
     # There are a couple things we want to guess that we don't want
     # getting stuck in a default config file for an app
-    $self->stash( Hash::Merge::merge( $self->defaults, $self->stash));
+    $self->merge( $self->stash, $self->defaults );
 
     # Bring old configurations up to current expectations
     $self->stash($self->update_config($self->stash));
@@ -266,7 +260,7 @@ sub load {
         bless $self, $app_class;
     } elsif ( $found ) {
         warn "You have $app_class, however it's not an sub-class of Jifty::Config."
-            ." Read `perldoc Jifty::Config` about sub classing. Skipping.";
+            ." Read `perldoc Jifty::Config` about subclassing. Skipping.";
     }
 
     # post load hook for sub-classes
@@ -276,7 +270,27 @@ sub load {
     # test harness)
     $self->$Jifty::Config::postload()
       if $Jifty::Config::postload;
+}
 
+=head2 merge NEW, [FALLBACK]
+
+Merges the given C<NEW> hashref into the stash, with values taking
+precedence over pre-existing ones from C<FALLBACK>, which defaults to
+L</stash>.  This also deals with special cases (MailerArgs,
+Handlers.View) where array reference contents should be replaced, not
+concatenated.
+
+=cut
+
+sub merge {
+    my $self = shift;
+    my ($new, $fallback) = @_;
+    $fallback ||= $self->stash;
+
+    delete $fallback->{framework}{MailerArgs} if exists $new->{framework}{MailerArgs};
+    delete $fallback->{framework}{View}{Handlers} if exists $new->{framework}{View}{Handlers};
+
+    $self->stash(Hash::Merge::merge( $fallback, $new ));
 }
 
 # Sets up the initial location of the site configuration file

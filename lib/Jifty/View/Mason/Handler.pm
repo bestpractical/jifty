@@ -101,15 +101,14 @@ sub config {
     );
 
     my $root_serial = 0;
+    my %seen; $seen{$_} = 1 for map Jifty->config->framework('Web')->{$_}, qw/TemplateRoot DefaultTemplateRoot/;
     for my $plugin (Jifty->plugins) {
         my $comp_root = $plugin->template_root;
-        unless  ( $comp_root and -d $comp_root) {
-            next;
-        }
+        next unless  ( $comp_root and -d $comp_root and not $seen{$comp_root}++);
         $plugin->log->debug( "Plugin @{[ref($plugin)]} mason component root added: (@{[$comp_root ||'']})");
         push @{ $config{comp_root} }, [ ref($plugin)."-". $root_serial++ => $comp_root ];
     }
-    push @{$config{comp_root}}, [jifty => Jifty->config->framework('Web')->{'DefaultTemplateRoot'}];
+    push @{$config{comp_root}}, [jifty => Jifty::Util->absolute_path( Jifty->config->framework('Web')->{'DefaultTemplateRoot'})];
 
     # In developer mode, we want halos, refreshing and all that other good stuff. 
     if (Jifty->config->framework('DevelMode') ) {

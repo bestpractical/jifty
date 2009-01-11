@@ -46,14 +46,13 @@ Create a new static file handler. Likely, only the C<Jifty::Handler> needs to do
 
 sub new {
     my $class = shift;
-    
     my @roots = (Jifty->config->framework('Web')->{StaticRoot});
+    my %seen; $seen{$_} = 1 for map Jifty->config->framework('Web')->{$_}, qw/StaticRoot DefaultStaticRoot/;
     for my $plugin ( Jifty->plugins ) {
         my $root = $plugin->static_root;
-        if ( -d $root and -r $root ) {
-            push @roots, $root;
-            $plugin->log->debug( "Plugin @{[ref($plugin)]} static root added: (@{[$root ||'']})");
-        }
+        next unless ( -d $root and -r $root and not $seen{$root}++);
+        push @roots, $root;
+        $plugin->log->debug( "Plugin @{[ref($plugin)]} static root added: (@{[$root ||'']})");
     }
     push @roots, (Jifty->config->framework('Web')->{DefaultStaticRoot});
 

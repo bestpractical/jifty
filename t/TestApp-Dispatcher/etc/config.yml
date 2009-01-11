@@ -22,12 +22,8 @@ framework:
   LogLevel: DEBUG
 
   Plugins: 
-    - 
-      SkeletonApp: {}
-
-    - 
-      CompressedCSSandJS: {}
-
+    - SkeletonApp: {}
+    - CompressedCSSandJS: {}
   PubSub: 
     Backend: Memcached
     Enable: ~
@@ -35,6 +31,7 @@ framework:
   TemplateClass: TestApp::Dispatcher::View
   View: 
     Handlers: 
+      - Jifty::View::Mason::Handler
       - Jifty::View::Static::Handler
       - Jifty::View::Declare::Handler
   Web: 
