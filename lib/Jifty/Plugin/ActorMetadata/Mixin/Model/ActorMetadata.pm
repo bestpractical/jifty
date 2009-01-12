@@ -6,6 +6,7 @@ use Jifty::DBI::Schema;
 use base 'Jifty::DBI::Record::Plugin';
 
 our @EXPORT = qw(current_user_can current_user_is_owner);
+my %column_names;
 
 =head1 NAME
 
@@ -77,8 +78,9 @@ sub register_triggers {
 sub register_triggers_for_column {
     my $self   = shift;
     my $column = shift;
-
-    return unless $column eq 'updated_on' || $column eq 'updated_by';
+    return
+      unless $column eq $column_names{ ref $self || $self }{'updated_on'}
+          || $column eq $column_names{ ref $self || $self }{'updated_by'};
 
     $self->add_trigger(name => 'after_set', callback => \&after_set);
     return 1;
@@ -93,9 +95,17 @@ Sets C<created_by>, C<created_on>, C<updated_on> and C<updated_by> based on the 
 sub before_create {
     my $self = shift;
     my $args = shift;
+    for my $by (qw/created_by updated_by/) {
+        if ( $column_names{ ref $self || $self }{$by} ) {
+            $args->{$column_names{ ref $self || $self }{$by}} = $self->current_user->id;
+        }
+    }
 
-    $args->{'created_by'} = $args->{'updated_by'} = $self->current_user->id;
-    $args->{'created_on'} = $args->{'updated_on'} = Jifty::DateTime->now;
+    for my $time ( qw/created_on updated_on/ ) {
+        if ( $column_names{ ref $self || $self }{$time} ) {
+            $args->{$column_names{ ref $self || $self }{$time}} = Jifty::DateTime->now;
+        }
+    }
 
     return 1;
 }
@@ -108,8 +118,18 @@ update C<updated_on> and C<updated_by> based on the current user and current tim
 
 sub after_set {
     my $self = shift;
-    $self->__set( column => 'updated_on', value => Jifty::DateTime->now );
-    $self->__set( column => 'updated_by', value => $self->current_user->id );
+    if ( $column_names{ ref $self || $self }{'updated_on'} ) {
+        $self->__set(
+            column => $column_names{ ref $self || $self }{'updated_on'},
+            value  => Jifty::DateTime->now
+        );
+    }
+    if ( $column_names{ ref $self || $self }{'updated_by'} ) {
+        $self->__set(
+            column => $column_names{ ref $self || $self }{'updated_by'},
+            value  => $self->current_user->id
+        );
+    }
 
     return 1;
 }
@@ -146,7 +166,7 @@ sub current_user_can {
 sub current_user_is_owner {
     my $self = shift;
 
-    my $created_by = $self->__value('created_by');
+    my $created_by = $self->__value($column_names{ref $self || $self}{'created_by'});
     return unless $self->current_user && $created_by;
 
     return unless $self->current_user->id;
@@ -175,7 +195,6 @@ map => { created_by => 'creator', ... }
 
 sub import {
     my $self = shift;
-
     my %args = @_;
     my $user_class = $args{'user_class'} || Jifty->app_class('Model', 'User');
 
@@ -193,10 +212,12 @@ sub import {
         @map{@columns} = @defined{@columns} = @columns;
     }
 
+    $column_names{scalar caller} = \%map;
+
     my @ret = schema {
         if ( $defined{'created_by'} ) {
-            column $map{'created_by'} => render_as 'hidden',
-                refers_to $user_class;
+            column $map{'created_by'} => references $user_class, 
+                render_as 'hidden';
         }
         if ( $defined{'created_on'} ) {
             column $map{'created_on'} => is TimeStamp,
@@ -204,7 +225,7 @@ sub import {
         }
         if ( $defined{'updated_by'} ) {
             column $map{'updated_by'} =>
-                #refers_to $user_class, # TODO this weirdly doesn't work, need dig
+#references $user_class, # TODO this weirdly doesn't work, need dig
                 render_as 'hidden';
         }
         if ( $defined{'updated_on'} ) {
