@@ -214,6 +214,7 @@ sub import {
 
     $column_names{scalar caller} = \%map;
 
+    Jifty::DBI::Schema->import; # to import subs like schema, references
     my @ret = schema {
         if ( $defined{'created_by'} ) {
             column $map{'created_by'} => references $user_class, 
