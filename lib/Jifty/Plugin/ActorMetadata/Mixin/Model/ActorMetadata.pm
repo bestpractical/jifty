@@ -38,11 +38,8 @@ This mixin adds the following columns to the model schema:
 =cut
 
 # XXX: move this to somewhere
-my $app_user;
 BEGIN {
 
-# Do not call ->app_class within the schmea {} block.
-$app_user = Jifty->app_class('Model', 'User');
 Jifty::DBI::Schema->register_types(
     Date =>
         sub { type is 'date', input_filters are qw/Jifty::DBI::Filter::Date/ },
@@ -57,23 +54,6 @@ Jifty::DBI::Schema->register_types(
     }
 );
 }
-
-use Jifty::Record schema {
-
-column created_by =>
-  render_as 'hidden',
-  refers_to $app_user;
-
-column updated_by =>
-#refers_to $app_user, # TODO this weirdly doesn't work, need dig
-  render_as 'hidden';
-
-column created_on => is TimeStamp,
-  render_as 'hidden';
-column updated_on => is TimeStamp,
-  render_as 'hidden';
-
-};
 
 =head1 METHODS
 
@@ -172,6 +152,91 @@ sub current_user_is_owner {
     return unless $self->current_user->id;
 
     return $self->current_user->id == $created_by;
+}
+
+=head2 import
+
+to be more flexible, we allow some configurations like:
+e.g.
+use Jifty::Plugin::ActorMetadata::Mixin::Model::ActorMetadata 
+    user_class => 'Foo::Model::Principal',
+    map => { created_by => 'creator', created_on => 'created' }
+
+current valid args are:
+user_class => 'Foo::Model::User'  
+        class that you want created_by and updated_by to be refers_to
+map => { created_by => 'creator', ... }
+        the real column name you want to use. this also controls whether
+        a column will be added or not. i.e. if the hashref is 
+        { created_by => 'creator', created_on => 'created' }, then columns
+        'updated_by' and 'updated_on' will not be added.
+
+=cut
+
+sub import {
+    my $self = shift;
+
+    my %args = @_;
+    my $user_class = $args{'user_class'} || Jifty->app_class('Model', 'User');
+
+    my @columns = qw/created_on created_by updated_on updated_by/;
+    my (%map, %defined);
+
+    # fiddle map
+    if ( $args{'map'} && ref $args{'map'} eq 'HASH' ) {
+        for my $column ( keys %{$args{'map'}} ) {
+            $defined{$column}++;
+        }
+        %map = ( ( map { $_ => 1 } @columns ), %{$args{'map'}} );
+    }
+    else {
+        @map{@columns} = @defined{@columns} = @columns;
+    }
+
+    my @ret = schema {
+        if ( $defined{'created_by'} ) {
+            column $map{'created_by'} => render_as 'hidden',
+                refers_to $user_class;
+        }
+        if ( $defined{'created_on'} ) {
+            column $map{'created_on'} => is TimeStamp,
+                render_as 'hidden';
+        }
+        if ( $defined{'updated_by'} ) {
+            column $map{'updated_by'} =>
+                #refers_to $user_class, # TODO this weirdly doesn't work, need dig
+                render_as 'hidden';
+        }
+        if ( $defined{'updated_on'} ) {
+            column $map{'updated_on'} => is TimeStamp,
+                render_as 'hidden';
+        }
+    };
+    require Jifty::Record;
+    Jifty::Record->import( @ret );
+    
+# TODO
+# below is the import sub from Jifty::DBI::Record::Plugin, 
+# because of some caller stuff, I can't just call SUPER
+# need to refactor, either here or Jifty::DBI::Record::Plugin
+    my $caller = caller;
+
+    for ($self->columns) {
+            $caller->COLUMNS->{$_->name} = $_ ;
+            $caller->_init_methods_for_column($_);
+    }
+    $self->export_to_level(1,undef);
+
+    if (my $triggers =  $self->can('register_triggers') ) {
+        $triggers->($caller)
+    }
+
+    if (my $triggers_for_column =  $self->can('register_triggers_for_column') ) {
+        for my $column (map { $_->name } $caller->columns) {
+            $triggers_for_column->($caller, $column)
+        }
+    }
+    push(@{ $caller->RECORD_MIXINS }, $self)
 }
 
 1;
