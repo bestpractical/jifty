@@ -79,8 +79,10 @@ sub register_triggers_for_column {
     my $self   = shift;
     my $column = shift;
     return
-      unless $column eq $column_names{ ref $self || $self }{'updated_on'}
-          || $column eq $column_names{ ref $self || $self }{'updated_by'};
+      unless $column_names{ ref $self || $self }{'updated_on'}
+          && $column eq $column_names{ ref $self || $self }{'updated_on'}
+          || $column_names{ ref $self || $self }{'updated_by'}
+          && $column eq $column_names{ ref $self || $self }{'updated_by'};
 
     $self->add_trigger(name => 'after_set', callback => \&after_set);
     return 1;
@@ -199,37 +201,35 @@ sub import {
     my $user_class = $args{'user_class'} || Jifty->app_class('Model', 'User');
 
     my @columns = qw/created_on created_by updated_on updated_by/;
-    my (%map, %defined);
+    my %map;
 
     # fiddle map
     if ( $args{'map'} && ref $args{'map'} eq 'HASH' ) {
         for my $column ( keys %{$args{'map'}} ) {
-            $defined{$column}++;
+            $map{$column} = $args{'map'}{$column};
         }
-        %map = ( ( map { $_ => 1 } @columns ), %{$args{'map'}} );
     }
     else {
-        @map{@columns} = @defined{@columns} = @columns;
+        @map{@columns} = @columns;
     }
 
     $column_names{scalar caller} = \%map;
 
     Jifty::DBI::Schema->import; # to import subs like schema, references
     my @ret = schema {
-        if ( $defined{'created_by'} ) {
+        if ( $map{'created_by'} ) {
             column $map{'created_by'} => references $user_class, 
                 render_as 'hidden';
         }
-        if ( $defined{'created_on'} ) {
+        if ( $map{'created_on'} ) {
             column $map{'created_on'} => is TimeStamp,
                 render_as 'hidden';
         }
-        if ( $defined{'updated_by'} ) {
-            column $map{'updated_by'} =>
-                references $user_class,
+        if ( $map{'updated_by'} ) {
+            column $map{'updated_by'} => references $user_class,
                 render_as 'hidden';
         }
-        if ( $defined{'updated_on'} ) {
+        if ( $map{'updated_on'} ) {
             column $map{'updated_on'} => is TimeStamp,
                 render_as 'hidden';
         }
