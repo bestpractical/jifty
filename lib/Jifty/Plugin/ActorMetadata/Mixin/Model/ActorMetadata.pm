@@ -97,13 +97,13 @@ sub before_create {
     my $args = shift;
     for my $by (qw/created_by updated_by/) {
         if ( $column_names{ ref $self || $self }{$by} ) {
-            $args->{$column_names{ ref $self || $self }{$by}} = $self->current_user->id;
+            $args->{$column_names{ ref $self || $self }{$by}} ||= $self->current_user->id;
         }
     }
 
     for my $time ( qw/created_on updated_on/ ) {
         if ( $column_names{ ref $self || $self }{$time} ) {
-            $args->{$column_names{ ref $self || $self }{$time}} = Jifty::DateTime->now;
+            $args->{$column_names{ ref $self || $self }{$time}} ||= Jifty::DateTime->now;
         }
     }
 
