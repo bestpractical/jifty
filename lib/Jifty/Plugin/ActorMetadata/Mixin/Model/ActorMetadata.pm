@@ -244,8 +244,9 @@ sub import {
     my $caller = caller;
 
     for ($self->columns) {
-            $caller->COLUMNS->{$_->name} = $_ ;
-            $caller->_init_methods_for_column($_);
+        $caller->_init_methods_for_column($_);
+        # virtual will be handled later
+        $caller->COLUMNS->{$_->name} = $_ unless $_->virtual;
     }
     $self->export_to_level(1,undef);
 
