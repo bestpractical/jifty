@@ -20,9 +20,8 @@ $post->create( title => 'foo' );
 ok( $post->id, 'created a post' );
 is( $post->created_by->id, $user_foo->id, 'created_by is set' );
 
-# XXX TODO update_by can't be refers to user :/
 # see Jifty::Plugin::ActorMetadata::Mixin::Model::ActorMetadata
-is( $post->updated_by, $user_foo->id, 'updated_by is set' );
+is( $post->updated_by->id, $user_foo->id, 'updated_by is set' );
 
 my $now        = Jifty::DateTime->now;
 my $created_on = $post->created_on;
@@ -37,7 +36,7 @@ is( $post->title,             'foo 2',            'updated title' );
 is( $post->created_by->id,    $user_foo->id,      'created_by is not updated' );
 is( $post->created_on->epoch, $created_on->epoch, 'created_on is not updated' );
 
-is( $post->updated_by, $user_foo->id, 'updated_by is not updated' );
+is( $post->updated_by->id, $user_foo->id, 'updated_by is not updated' );
 ok( abs( $post->updated_on->epoch - Jifty::DateTime->now->epoch ) < 1 ,
     'update_on is updated correctly' );
 sleep 3;
@@ -49,6 +48,6 @@ is( $post->title,             'bar',              'updated title' );
 is( $post->created_by->id,    $user_foo->id,      'created_by is not updated' );
 is( $post->created_on->epoch, $created_on->epoch, 'created_on is not updated' );
 
-is( $post->updated_by, $user_bar->id, 'updated_by is not updated' );
+is( $post->updated_by->id, $user_bar->id, 'updated_by is not updated' );
 ok( abs( $post->updated_on->epoch - Jifty::DateTime->now->epoch ) < 2,
     'update_on is updated' );
