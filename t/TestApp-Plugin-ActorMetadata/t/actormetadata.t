@@ -5,6 +5,10 @@ use Test::More tests => 17;
 use Jifty::Test::Dist;
 my ( $user_foo, $user_bar );
 
+my $has_mock_time;
+eval "use Test::MockTime qw/set_relative_time/";
+$has_mock_time = 1 unless $@;
+
 $user_foo = TestApp::Plugin::ActorMetadata::Model::User->new;
 $user_foo->create( name => 'foo', email => 'foo@example.com' );
 ok( $user_foo->id, 'created user foo' );
@@ -28,7 +32,7 @@ my $created_on = $post->created_on;
 ok( abs( $created_on->epoch - $now->epoch < 2 ),       'created_on is set' );
 ok( abs( $post->updated_on->epoch - $now->epoch < 2 ), 'created_on is set' );
 
-sleep 3;    # just let time pass
+mysleep( 3 );    # just let time pass
 
 # update by foo
 $post->set_title( 'foo 2' );
@@ -39,7 +43,7 @@ is( $post->created_on->epoch, $created_on->epoch, 'created_on is not updated' );
 is( $post->updated_by->id, $user_foo->id, 'updated_by is not updated' );
 ok( abs( $post->updated_on->epoch - Jifty::DateTime->now->epoch ) < 1 ,
     'update_on is updated correctly' );
-sleep 3;
+mysleep( 3 );
 # update by bar
 $post->current_user($user_bar);
 
@@ -51,3 +55,14 @@ is( $post->created_on->epoch, $created_on->epoch, 'created_on is not updated' );
 is( $post->updated_by->id, $user_bar->id, 'updated_by is not updated' );
 ok( abs( $post->updated_on->epoch - Jifty::DateTime->now->epoch ) < 2,
     'update_on is updated' );
+
+
+sub mysleep {
+    my $second = shift;
+    if ( $has_mock_time ) {
+        set_relative_time( $second );
+    }
+    else {
+        sleep $second;
+    }
+}
