@@ -150,7 +150,10 @@ sub current_user_can {
     my %args = (@_);
 
     if ($action eq 'create') {
-        return undef unless ($self->current_user and $self->current_user->id);
+        return
+          unless $self->current_user
+            and $self->current_user->id
+            || $self->current_user->is_bootstrap_user;
     }
 
 #Rejects update or deletion unless the current_user is the creator.  (Jesse says: this feels like wrong logic for this mixin)
