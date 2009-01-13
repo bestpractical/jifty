@@ -226,7 +226,7 @@ sub import {
         }
         if ( $defined{'updated_by'} ) {
             column $map{'updated_by'} =>
-#references $user_class, # TODO this weirdly doesn't work, need dig
+                references $user_class,
                 render_as 'hidden';
         }
         if ( $defined{'updated_on'} ) {
