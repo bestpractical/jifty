@@ -730,8 +730,7 @@ sub _dispatch_to_action {
         if defined $column and defined $key;
 
     if ( not $rec->id ) {
-        abort(404)         if $prefix eq 'Delete';
-        $prefix = 'Create' if $prefix eq 'Update';
+        abort(404) if $prefix eq 'Delete' || $prefix eq 'Update';
     }
 
     $class =~ s/^[\w\.]+\.//;
