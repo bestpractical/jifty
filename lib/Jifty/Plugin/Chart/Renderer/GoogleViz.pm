@@ -44,6 +44,7 @@ JS_HEADER
     Jifty->web->out(<< "JS_FOOTER");
                 var chart = new $chart_class(document.getElementById('$chart_id'));
                 chart.draw(data, $draw_params);
+
             }
         </script>
 JS_FOOTER
@@ -185,13 +186,13 @@ sub encode_value {
             if ($value->isa('Jifty::DateTime') && $value->is_date) {
                 return sprintf 'new Date(%d, %d, %d)',
                     $value->year,
-                    $value->month,
+                    $value->month - 1,
                     $value->day;
             }
             elsif ($value->isa('DateTime')) {
                 return sprintf 'new Date(%d, %d, %d, %d, %d, %d)',
                     $value->year,
-                    $value->month,
+                    $value->month - 1,
                     $value->day,
                     $value->hour,
                     $value->minute,
