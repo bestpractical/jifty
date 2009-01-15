@@ -24,6 +24,7 @@ Jifty::Script::Schema - Create SQL to update or create your Jifty app's tables
    --create-database  Only creates the database
    --drop-database    Drops the database
    --ignore-reserved-words   Ignore any SQL reserved words in schema definition
+   --no-bootstrap     don't run bootstrap
 
    --help             brief help message
    --man              full documentation
@@ -62,6 +63,10 @@ the same as the application's version.
 Ignore any SQL reserved words used in table or column deffinitions, if
 this option is not used and a reserved word is found it will cause an error.
 
+=item B<--no-bootstrap>
+
+don't run Bootstrap, mostly to get rid of creating initial data
+
 =item B<--help>
 
 Print a brief help message and exits.
@@ -83,6 +88,7 @@ sub options {
         "create-database|c"     => "create_database",
         "ignore-reserved-words" => "ignore_reserved",
         "drop-database"         => "drop_database",
+        "no-bootstrap"          => "no_bootstrap",
     );
 }
 
@@ -276,19 +282,22 @@ sub create_all_tables {
             ( ref $plugin ) . '_db_version' => $pluginv );
     }
 
-    # Load initial data
-    eval {
-        my $bootstrapper = Jifty->app_class("Bootstrap");
-        Jifty::Util->require($bootstrapper);
-        $bootstrapper->run() if $bootstrapper->can('run');
+    unless ( $self->{'no_bootstrap'} ) {
 
-        for my $plugin ( Jifty->plugins ) {
-            my $plugin_bootstrapper = $plugin->bootstrapper;
-            Jifty::Util->require($plugin_bootstrapper);
-            $plugin_bootstrapper->run() if $plugin_bootstrapper->can('run');
-        }
-    };
-    die $@ if $@;
+        # Load initial data
+        eval {
+            my $bootstrapper = Jifty->app_class("Bootstrap");
+            Jifty::Util->require($bootstrapper);
+            $bootstrapper->run() if $bootstrapper->can('run');
+
+            for my $plugin ( Jifty->plugins ) {
+                my $plugin_bootstrapper = $plugin->bootstrapper;
+                Jifty::Util->require($plugin_bootstrapper);
+                $plugin_bootstrapper->run() if $plugin_bootstrapper->can('run');
+            }
+        };
+        die $@ if $@;
+    }
 
     # Commit it all
     Jifty->handle->commit;
