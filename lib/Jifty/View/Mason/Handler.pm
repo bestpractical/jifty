@@ -44,10 +44,10 @@ __PACKAGE__->contained_objects
 =head2 new PARAMHASH
 
 Takes a number of key-value parameters; see L<HTML::Mason::Params>.
-Defaults the C<out_method> to L</out_method>, and the C<request_class>
-to L<HTML::Mason::Request::Jifty> (below).  Finally, adds C<h> and
-C<u> escapes, which map to L</escape_uri> and L<escape_utf8>
-respectively.
+Defaults the C<out_method> to appending to L<Jifty::Handler/buffer>
+and the C<request_class> to L<HTML::Mason::Request::Jifty> (below).
+Finally, adds C<h> and C<u> escapes, which map to L</escape_uri> and
+L<escape_utf8> respectively.
 
 =cut
 
@@ -56,7 +56,7 @@ sub new {
 
     my %p = @_ || $package->config;
     my $self = $package->SUPER::new( request_class => 'HTML::Mason::Request::Jifty',
-                                     out_method => $package->can('out_method'),
+                                     out_method => sub {Jifty->handler->buffer->append(@_)},
                                      %p );
     $self->interp->compiler->add_allowed_globals('$r');
     $self->interp->set_escape( h => \&escape_utf8 );
@@ -98,6 +98,7 @@ sub config {
                           [application =>  Jifty::Util->absolute_path( Jifty->config->framework('Web')->{'TemplateRoot'} )],
                          ],
         %{ Jifty->config->framework('Web')->{'MasonConfig'} },
+        autoflush => 1, # Now forced on
     );
 
     my $root_serial = 0;
@@ -163,8 +164,8 @@ A convenience method for $self->interp->comp_exists().
 =cut
 
 sub template_exists {
-	my $self = shift;
-	return $self->interp->comp_exists(@_);
+    my $self = shift;
+    return $self->interp->comp_exists(@_);
 }
 
 

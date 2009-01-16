@@ -108,8 +108,8 @@ Send a string to the browser. The default implementation uses Mason->out;
 =cut
 
 sub out {
-    my $m = shift->mason;
-    $m ? $m->out(@_) : Jifty::View::out_method(@_);
+    shift;
+    Jifty->handler->buffer->append(@_);
 }
 
 

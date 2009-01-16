@@ -1,6 +1,4 @@
 <%init>
-$r->content_type('text/html; charset=utf-8');
-
 # XXX FIXME See Jifty::View::Mason::Handler for the source of this puke.
 use vars qw/ $jifty_internal_request /;
 if (!$jifty_internal_request && $m->base_comp->path =~ m|/_elements/|) {

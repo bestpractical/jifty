@@ -67,29 +67,9 @@ sub show {
     my $self     = shift;
     my $template = shift;
 
-    no warnings qw/redefine/;
-    local *Jifty::Web::out = sub {
-        shift;    # Turn the method into a function
-        goto &Template::Declare::Tags::outs_raw;
-    };
-    
-    my $content = Template::Declare::Tags::show_page( $template, { %{Jifty->web->request->arguments}, %{Jifty->web->request->template_arguments || {}} } );
-    return unless defined $content;
-
-    my $r = Jifty->handler->apache;
-    $r->content_type || $r->content_type('text/html; charset=utf-8'); # Set up a default
-    unless ( $r->http_header_sent || Jifty->web->request->is_subrequest ) {
-        Jifty->web->session->set_cookie;
-        Jifty->handler->send_http_header;
-    }
-
-    binmode *STDOUT;
-    if ( my ($enc) = $r->content_type =~ /charset=([\w-]+)$/ ) {
-        print STDOUT Encode::encode($enc, $content);
-    } else {
-        print STDOUT $content;
-    }
-    return undef;
+    Template::Declare->buffer( Jifty->handler->buffer );
+    Template::Declare::Tags::show_page( $template, { %{Jifty->web->request->arguments}, %{Jifty->web->request->template_arguments || {}} } );
+    return; # Explicit return so TD call above is in void context, and appends instead of returning.
 }
 
 =head2 template_exists TEMPLATENAME
@@ -98,8 +78,9 @@ Given a template name, returns true if the template is in any of our Template::D
 
 =cut
 
-sub template_exists { my $pkg =shift;  
-
-return Template::Declare->resolve_template(@_);}
+sub template_exists {
+    my $pkg =shift;
+    return Template::Declare->resolve_template(@_);
+}
 
 1;

@@ -67,10 +67,11 @@ requires('Object::Declare' => '0.13');
 requires('Params::Validate');
 requires('Scalar::Defer' => '0.12');
 requires('Shell::Command');
+requires('String::BufferStack' => '1.10');
 requires('String::Koremutake');
 requires('SUPER');
 requires('SQL::ReservedWords');
-requires('Template::Declare' => '0.26');                # Template::Declare::Tags
+requires('Template::Declare' => '0.35');                # Template::Declare::Tags
 requires('Test::Base');
 requires('Test::Log4perl');
 requires('Test::LongString');

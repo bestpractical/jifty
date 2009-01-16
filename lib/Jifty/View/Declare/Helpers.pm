@@ -290,7 +290,7 @@ sub form_next_page(@) {
     Jifty->web->form->next_page(@_);
 }
 
-=head2 Other functions and shortcuts
+=head2 Other functions and shortcutxs
 
 =head3 hyperlink
 
@@ -304,11 +304,7 @@ sub hyperlink(@) {
 
 sub _function_wrapper {
     my $function = shift;
-    Template::Declare->new_buffer_frame;
-    my $once = Jifty->web->$function(@_)->render || '';
-    my $content = Template::Declare->buffer->data() ||'';
-    Template::Declare->end_buffer_frame;
-    outs_raw( $content.$once); 
+    Template::Declare->buffer->append( Jifty->web->$function(@_)->render || '' );
     return '';
 }
 
@@ -409,14 +405,7 @@ Renders the Mason template at C<PATH> (a string) with C<ARGS> (a hashref).
 sub render_mason {
     my ($template, $args) = @_;
     my $mason = Jifty->handler->view('Jifty::View::Mason::Handler');
-    my $orig_out = $mason->interp->out_method || Jifty::View->can('out_method');
-
-    my $buf = '';
-    $mason->interp->out_method(\$buf);
     $mason->handle_comp($template, $args);
-    $mason->interp->out_method($orig_out);
-
-    Template::Declare->buffer->append($buf);
     return '';
 }
 

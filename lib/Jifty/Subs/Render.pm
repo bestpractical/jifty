@@ -102,16 +102,20 @@ sub render_single {
     # Region's arguments come from explicit arguments only
     $region->arguments( $render_info->{arguments} );
 
-    my $region_content = '';
     $region->enter;
     # Also provide an 'event' argument, and fill in the render
     # arguments.  These don't show up in the region's arguments if
     # inspected, but do show up in the request.
+    Jifty->handler->buffer->push( private => 1 );
     $region->render_as_subrequest(
-        \$region_content,
         { %{$region->arguments}, event => $event_object, $event_object->render_arguments },
     );
-    $callback->( $render_info->{mode}, $region->qualified_name, $region_content, $render_info->{attrs} );
+    $callback->(
+        $render_info->{mode},       
+        $region->qualified_name,
+        Jifty->handler->buffer->pop,
+        $render_info->{attrs},
+    );
     $region->exit;
 }
 

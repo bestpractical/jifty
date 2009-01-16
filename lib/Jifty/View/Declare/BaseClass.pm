@@ -40,22 +40,17 @@ sub use_mason_wrapper {
     *{ $class . '::wrapper' } = sub {
         my $code = shift;
         my $args = shift || {};
-        # so in td handler, we made jifty::web->out appends to td
-        # buffer, we need it back for here before we call $code.
-        # someday we need to finish fixing the output system that is
-        # in Jifty::View.
-        my $td_out = \&Jifty::Web::out;
-        local *Jifty::Web::out = sub { shift->mason->out(@_) };
 
-        local *HTML::Mason::Request::content = sub {
-            local *Jifty::Web::out = $td_out;
-            $code->();
-            my $content = Template::Declare->buffer->data;
-            Template::Declare->buffer->clear;
-            $content;
-        };
-
-        Jifty->handler->fallback_view_handler->show('/_elements/wrapper', $args);
+        my $interp = Jifty->handler->view('Jifty::View::Mason::Handler')->interp;
+        my $req = $interp->make_request( comp => '/_elements/wrapper' );
+        my $wrapper = $interp->load("/_elements/wrapper");
+        local $HTML::Mason::Commands::m = $req;
+        local $HTML::Mason::Commands::r = Jifty->handler->apache;
+        $req->comp(
+            {content => sub {$code->()}, store => \$req->{request_buffer}},
+            $wrapper,
+            %{$args}
+        );
     }
 }
 

@@ -37,22 +37,24 @@ sub out_method {
     Jifty->web->session->set_cookie;
     my $r = Jifty->handler->apache;
 
+    # Send a header
     $r->content_type || $r->content_type('text/html; charset=utf-8'); # Set up a default
-
     unless ( $r->http_header_sent or not __PACKAGE__->auto_send_headers ) {
         Jifty->handler->send_http_header;
     }
 
-    # We could perhaps install a new, faster out_method here that
-    # wouldn't have to keep checking whether headers have been
-    # sent and what the $r->method is.  That would require
-    # additions to the Request interface, though.
     binmode *STDOUT;
+
+    # We now install a new, faster out_method that doesn't have to
+    # keep checking whether headers have been sent.
+    my $content;
     if ( my ($enc) = $r->content_type =~ /charset=([\w-]+)$/ ) {
-        print STDOUT map Encode::encode($enc, $_), grep {defined} @_;
+        $content = sub { print STDOUT map Encode::encode($enc, $_), @_; };
     } else {
-        print STDOUT grep {defined} @_;
+        $content = sub { print STDOUT @_; };
     }
+    Jifty->handler->buffer->out_method( $content );
+    $content->(@_);
 }
 
 =head1 SEE ALSO

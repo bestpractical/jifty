@@ -27,6 +27,7 @@ handlers.
 use base qw/Class::Accessor::Fast Jifty::Object/;
 use Jifty::View::Declare::Handler ();
 use Class::Trigger;
+use String::BufferStack;
 
 BEGIN {
     # Creating a new CGI object breaks FastCGI in all sorts of painful
@@ -48,7 +49,7 @@ BEGIN {
 
 
 
-__PACKAGE__->mk_accessors(qw(dispatcher _view_handlers  cgi apache stash));
+__PACKAGE__->mk_accessors(qw(dispatcher _view_handlers cgi apache stash buffer));
 
 =head2 mason
 
@@ -82,6 +83,7 @@ sub new {
     $self->dispatcher->import_plugins;
     eval { Jifty::Plugin::DumpDispatcher->dump_rules };
 
+    $self->buffer(String::BufferStack->new( out_method => \&Jifty::View::out_method ));
     $self->setup_view_handlers();
     return $self;
 }
@@ -123,8 +125,7 @@ You can override this by specifying:
 
 sub fallback_view_handler { 
    my $self = shift; 
-    return $self->view(Jifty->config->framework('View')->{'FallbackHandler'});
-    
+   return $self->view(Jifty->config->framework('View')->{'FallbackHandler'}); 
 }
 
 =head2 setup_view_handlers
@@ -141,7 +142,6 @@ sub setup_view_handlers {
     foreach my $class ($self->view_handlers()) {
         $self->_view_handlers->{$class} =  $class->new();
     }
-
 }
 
 =head2 view ClassName
@@ -155,7 +155,6 @@ sub view {
     my $self = shift;
     my $class = shift;
     return $self->_view_handlers->{$class};
-
 }
 
 
@@ -243,7 +242,9 @@ sub handle_request {
 
         # Return from the continuation if need be
         unless (Jifty->web->request->return_from_continuation) {
+            $self->buffer->out_method(\&Jifty::View::out_method);
             $self->dispatcher->handle_request();
+            $self->buffer->flush_output;
         } 
 
         $self->call_trigger('before_cleanup', $args{cgi});
@@ -290,6 +291,8 @@ sub cleanup_request {
     $self->cgi(undef);
     $self->apache(undef);
     $self->stash(undef);
+    $self->buffer->pop for 1 .. $self->buffer->depth;
+    $self->buffer->clear;
 }
 
 1;

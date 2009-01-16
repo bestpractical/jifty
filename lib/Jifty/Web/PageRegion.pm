@@ -272,18 +272,28 @@ string of the fragment and associated javascript (if any).
 
 sub as_string {
     my $self = shift;
+    Jifty->handler->buffer->push(private => 1);
+    $self->render;
+    return Jifty->handler->buffer->pop;
+}
 
-    if (Jifty->web->current_region ne $self) {
-        # XXX TODO: Possibly we should just call ->enter
-        warn "Attempt to call as_string on a region which is not the current region";
-        return "";
-    }
-    
+=head2 render
+
+Calls L</enter>, outputs the results of L</as_string>, and then calls
+L</exit>.  Returns an empty string.
+
+=cut
+
+sub render {
+    my $self = shift;
+
+    $self->enter;
+    my $buffer = Jifty->handler->buffer;
+
     my %arguments = %{ $self->arguments };
 
     # undef arguments cause warnings. We hatesses the warnings, we do.
     defined $arguments{$_} or delete $arguments{$_} for keys %arguments;
-    my $result = "";
 
     # We need to tell the browser this is a region and what its
     # default arguments are as well as the path of the "fragment".  We
@@ -291,33 +301,37 @@ sub as_string {
     # information.  We only render this region wrapper if we're asked
     # to (which is true by default)
     if ( $self->region_wrapper ) {
-        $result .= qq|<script type="text/javascript">\n|
+         $buffer->append(qq|<script type="text/javascript">\n|
             . qq|new Region('| . $self->qualified_name . qq|',|
             . Jifty::JSON::objToJson( \%arguments, { singlequote => 1 } ) . qq|,| 
             . qq|'| . $self->path . qq|',|
             . ( $self->parent ? qq|'| . $self->parent->qualified_name . qq|'| : q|null|)
             . qq|,| . (Jifty->web->form->is_open ? '1' : 'null')
             . qq|);\n|
-            . qq|</script>|;
+            . qq|</script>|);
         if ($self->lazy) {
-            $result .= qq|<script type="text/javascript">|
+            $buffer->append(qq|<script type="text/javascript">|
               . qq|jQuery(function(){ Jifty.update( { 'fragments': [{'region': '|.$self->qualified_name.qq|', 'mode': 'Replace'}], 'actions': {}}, document.getElementById('region-|.$self->qualified_name.qq|'))})|
-              . qq|</script>|;
+              . qq|</script>|);
         }
-        $result .= qq|<div id="region-| . $self->qualified_name . qq|" class="jifty-region">|;
+        $buffer->append(qq|<div id="region-| . $self->qualified_name . qq|" class="jifty-region">|);
         if ($self->lazy) {
             if ($self->loading_path) {
                 local $self->{path} = $self->loading_path;
-                $self->render_as_subrequest(\$result, \%arguments);
+                $self->render_as_subrequest(\%arguments);
             }
-            return $result . qq|</div>|;
+            $buffer->append(qq|</div>|);
         }
     }
 
-    $self->render_as_subrequest(\$result, \%arguments);
-    $result .= qq|</div>| if ( $self->region_wrapper );
+    # Make mason flush from its buffers into our String::BufferStack
+    $HTML::Mason::Commands::m->flush_buffer if $HTML::Mason::Commands::m;
 
-    return $result;
+    $self->render_as_subrequest(\%arguments);
+    $buffer->append(qq|</div>|) if ( $self->region_wrapper );
+
+    $self->exit;
+    return '';
 }
 
 =head2 render_as_subrequest
@@ -325,11 +339,7 @@ sub as_string {
 =cut
 
 sub render_as_subrequest {
-    my ($self, $out_method, $arguments, $enable_actions) = @_;
-
-    my $orig_out = Jifty->handler->mason->interp->out_method || Jifty::View->can('out_method');
-
-    Jifty->handler->mason->interp->out_method($out_method);
+    my ($self, $arguments, $enable_actions) = @_;
 
     # Make a fake request and throw it at the dispatcher
     my $subrequest = Jifty->web->request->clone;
@@ -366,47 +376,10 @@ sub render_as_subrequest {
 	Jifty->web->request->top_request($top);
     }
 
-    # While we're inside this region, have Mason to tack its response
-    # onto a variable and not send headers when it does so
-    #XXX TODO: There's gotta be a better way to localize it
-
-    # template-declare based regions are printing to stdout
-    my $td_out = '';
-    {
-        open my $output_fh, '>>', \$td_out;
-        local *STDOUT = $output_fh;
-
-        local $main::DEBUG = 1;
-        # Call into the dispatcher
-        Jifty->handler->dispatcher->handle_request;
-    }
-
-    Jifty->handler->mason->interp->out_method($orig_out);
-
-    return unless length $td_out;
-
-    if ( my ($enc) = Jifty->handler->apache->content_type =~ /charset=([\w-]+)$/ ) {
-        $td_out = Encode::decode($enc, $td_out);
-    }
-    $$out_method .= $td_out;
+    # Call into the dispatcher
+    Jifty->handler->dispatcher->handle_request;
 
     return;
-}
-
-=head2 render
-
-Calls L</enter>, outputs the results of L</as_string>, and then calls
-L</exit>.  Returns an empty string.
-
-=cut
-
-sub render {
-    my $self = shift;
-
-    $self->enter;
-    Jifty->web->out($self->as_string);
-    $self->exit;
-    "";
 }
 
 =head2 get_element [RULES]
