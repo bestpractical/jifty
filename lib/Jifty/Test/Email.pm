@@ -19,7 +19,7 @@ Jifty::Test::Email -
 
   mail_ok {
     # ... code
-  } { from => 'admin@localhost', body => qr('hello') }
+  } { from => 'admin@localhost', body => qr('hello') },
     { from => 'admin@localhost', body => qr('hello again') };
 
   # ... more code
