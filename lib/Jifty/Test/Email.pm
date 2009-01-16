@@ -19,9 +19,8 @@ Jifty::Test::Email -
 
   mail_ok {
     # ... code
-
-  }, { from => 'admin@localhost', body => qr('hello') },
-     { from => 'admin@localhost', body => qr('hello again') };
+  } { from => 'admin@localhost', body => qr('hello') }
+    { from => 'admin@localhost', body => qr('hello again') };
 
   # ... more code
 
@@ -39,6 +38,7 @@ notification generated during the block or the test.
 =cut
 
 sub mail_ok (&@) {
+    warn Dumper( @_ );use Data::Dumper;
     my $code = shift;
     # XXX. ensure mailbox is empty; but make sure the test count is correct
     $code->();
