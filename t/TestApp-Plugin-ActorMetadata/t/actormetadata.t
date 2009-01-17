@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 17;
+use Test::More tests => 26;
 use Jifty::Test::Dist;
 my ( $user_foo, $user_bar );
 
@@ -55,6 +55,24 @@ is( $post->created_on->epoch, $created_on->epoch, 'created_on is not updated' );
 is( $post->updated_by->id, $user_bar->id, 'updated_by is not updated' );
 ok( abs( $post->updated_on->epoch - Jifty::DateTime->now->epoch ) < 2,
     'update_on is updated' );
+
+# creator and created are columns of comment, post doesn't have those
+for my $method (qw/creator created/) {
+    ok( !$post->can($method), "no method $method" );
+}
+
+my $comment =
+  TestApp::Plugin::ActorMetadata::Model::Comment->new( current_user => $user_foo );
+
+$now = Jifty::DateTime->now;
+$comment->create();
+ok( $comment->id, 'created a comment' );
+is( $comment->creator->id, $user_foo->id, 'creator is set' );
+ok( abs( $comment->created->epoch - $now->epoch < 2 ), 'created is set' );
+
+for my $method (qw/created_by created_on updated_by updated_on/) {
+    ok( !$comment->can($method), "no method $method" );
+}
 
 
 sub mysleep {
