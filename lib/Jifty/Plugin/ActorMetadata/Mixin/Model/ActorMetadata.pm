@@ -263,7 +263,8 @@ sub import {
             $triggers_for_column->($caller, $column)
         }
     }
-    push(@{ $caller->RECORD_MIXINS }, $self)
+    push(@{ $caller->RECORD_MIXINS }, $self);
+    $self->COLUMNS(undef); # reset columns for ActorMetadata.pm
 }
 
 1;
