@@ -60,8 +60,6 @@ sub rc_ok {
 
     $args{browser} ||= $ENV{SELENIUM_RC_BROWSER} || $class->_get_default_browser;
 
-    warn $args{browser};
-
     $SIG{CHLD} = \&_REAPER;
 
     my $try = 5;
