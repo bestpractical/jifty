@@ -47,7 +47,7 @@ sub use_mason_wrapper {
         local $HTML::Mason::Commands::m = $req;
         local $HTML::Mason::Commands::r = Jifty->handler->apache;
         $req->comp(
-            {content => sub {$code->()}, store => \$req->{request_buffer}},
+            {content => sub {$code->()}},
             $wrapper,
             %{$args}
         );

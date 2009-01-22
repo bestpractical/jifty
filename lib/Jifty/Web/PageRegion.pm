@@ -272,7 +272,7 @@ string of the fragment and associated javascript (if any).
 
 sub as_string {
     my $self = shift;
-    Jifty->handler->buffer->push(private => 1);
+    Jifty->handler->buffer->push(private => 1, from => "PageRegion render of ".$self->path);
     $self->render;
     return Jifty->handler->buffer->pop;
 }
@@ -323,9 +323,6 @@ sub render {
             $buffer->append(qq|</div>|);
         }
     }
-
-    # Make mason flush from its buffers into our String::BufferStack
-    $HTML::Mason::Commands::m->flush_buffer if $HTML::Mason::Commands::m;
 
     $self->render_as_subrequest(\%arguments);
     $buffer->append(qq|</div>|) if ( $self->region_wrapper );

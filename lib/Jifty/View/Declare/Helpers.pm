@@ -346,11 +346,7 @@ sub render_region(@) {
         $args->{path} = $Template::Declare::Tags::self->path_for($path);
     }
     local $Template::Declare::Tags::self = undef;
-    Template::Declare->new_buffer_frame;
     Jifty::Web::PageRegion->new(%$args)->render;
-    my $content = Template::Declare->buffer->data();
-    Template::Declare->end_buffer_frame;
-    Jifty->web->out($content);
 }
 
 

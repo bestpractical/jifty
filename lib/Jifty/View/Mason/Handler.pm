@@ -56,7 +56,7 @@ sub new {
 
     my %p = @_ || $package->config;
     my $self = $package->SUPER::new( request_class => 'HTML::Mason::Request::Jifty',
-                                     out_method => sub {Jifty->handler->buffer->append(@_)},
+                                     out_method => sub {Carp::cluck("Mason output skipped Jifty's output stack!")},
                                      %p );
     $self->interp->compiler->add_allowed_globals('$r');
     $self->interp->set_escape( h => \&escape_utf8 );
@@ -98,7 +98,6 @@ sub config {
                           [application =>  Jifty::Util->absolute_path( Jifty->config->framework('Web')->{'TemplateRoot'} )],
                          ],
         %{ Jifty->config->framework('Web')->{'MasonConfig'} },
-        autoflush => 1, # Now forced on
     );
 
     my $root_serial = 0;
@@ -117,6 +116,10 @@ sub config {
         $config{static_source}    = 0;
         $config{use_object_files} = 0;
     }
+
+    # We require autoflush now.
+    $config{autoflush} = 1;
+
     return %config;
 }
 
@@ -291,6 +294,41 @@ sub exec
         and (!$retval or $retval==200)) {
         Jifty->handler->send_http_header;
     }
+}
+
+sub print {
+    shift;
+    Jifty->handler->buffer->append(@_);
+}
+
+*out = \&print;
+
+sub comp {
+    my $self = shift;
+
+    my %mods;
+    %mods = (%{shift()}, %mods) while ref($_[0]) eq 'HASH';
+    my @args;
+    push @args, buffer => delete $mods{store} if $mods{store} and $mods{store} ne \($self->{request_buffer});
+    Jifty->handler->buffer->push(@args, from => "Mason path ".(ref $_[0] ? $_[0]{path} : $_[0]));
+
+    my $wantarray = wantarray;
+    my @result;
+    eval {
+        if ($wantarray) {
+            @result = $self->SUPER::comp(\%mods, @_);
+        } elsif (defined $wantarray) {
+            $result[0] = $self->SUPER::comp(\%mods, @_);
+        } else {
+            $self->SUPER::comp(\%mods, @_);
+        }
+    };
+    my $error = $@;
+
+    Jifty->handler->buffer->pop;
+
+    rethrow_exception $error if $error;
+    return $wantarray ? @result : $result[0];    
 }
 
 =head2 redirect
