@@ -1,0 +1,23 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+use YAML 'LoadFile';
+
+@ARGV = glob("log/requests/*.log") if @ARGV == 0;
+die "No files to analyze" if @ARGV == 0;
+
+my @hits;
+
+for my $logfile (@ARGV) {
+    my @entries = LoadFile($logfile);
+    for (my $i = 1; $i < @entries; ++$i) {
+        my $delta_memory = $entries[$i]{memory} - $entries[$i-1]{memory};
+        my $path = $entries[$i]{ENV}{PATH_INFO};
+        push @hits, [$delta_memory, $path] if $delta_memory != 0;
+    }
+}
+
+for my $hit (sort { $b->[0] <=> $a->[0] } @hits) {
+    print "$hit->[1]: $hit->[0]\n";
+}
+
