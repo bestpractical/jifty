@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 use strict;
 use warnings;
-use YAML 'LoadFile';
+use YAML::Syck 'LoadFile';
 
 @ARGV = glob("log/requests/*.log") if @ARGV == 0;
 die "No files to analyze" if @ARGV == 0;
