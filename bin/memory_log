@@ -19,14 +19,15 @@ for my $logfile (@ARGV) {
 
 for my $hit (sort { $b->[0] <=> $a->[0] } @hits) {
     my $human_readable = sub {
-        my $bytes = shift;
+        my $bytes = abs(shift);
         return $bytes if $bytes < 1024;
         return int($bytes / 1024)    . 'KB' if $bytes < 1024 ** 2;
         return int($bytes / 1024**2) . 'MB' if $bytes < 1024 ** 3;
         return int($bytes / 1024**3) . 'GB';
     }->($hit->[0]);
 
-    $human_readable =~ s/^(?!-)/+/; # add leading + if it's not negative
+    $human_readable = ($hit->[0] > 0 ? '+' : '-')
+                    . $human_readable;
 
     print "$hit->[1]: $human_readable\n";
 }
