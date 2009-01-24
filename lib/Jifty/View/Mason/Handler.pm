@@ -56,7 +56,7 @@ sub new {
 
     my %p = @_ || $package->config;
     my $self = $package->SUPER::new( request_class => 'HTML::Mason::Request::Jifty',
-                                     out_method => sub {Carp::cluck("Mason output skipped Jifty's output stack!")},
+                                     out_method => sub {Carp::cluck("Mason output skipped Jifty's output stack!") if grep {defined and length} @_},
                                      %p );
     $self->interp->compiler->add_allowed_globals('$r');
     $self->interp->set_escape( h => \&escape_utf8 );
