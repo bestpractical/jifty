@@ -461,6 +461,12 @@ sub models {
     wantarray ? @{ $self->{models} ||= [] } : $self->{models};
 }
 
+=head2 stringify
+
+ClassLoaders stringify as C<Jifty::ClassLoader(I<base class name>)>
+
+=cut
+
 sub stringify {
     my $self = shift;
     return "Jifty::ClassLoader(@{[$self->{base}]})";
