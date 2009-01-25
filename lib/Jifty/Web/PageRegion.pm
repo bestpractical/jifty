@@ -273,7 +273,7 @@ string of the fragment and associated javascript (if any).
 sub as_string {
     my $self = shift;
     Jifty->handler->buffer->push(private => 1, from => "PageRegion render of ".$self->path);
-    $self->render;
+    $self->make_body;
     return Jifty->handler->buffer->pop;
 }
 
@@ -288,6 +288,20 @@ sub render {
     my $self = shift;
 
     $self->enter;
+    $self->make_body;
+    $self->exit;
+
+    return '';
+}
+
+=head2 make_body
+
+Outputs the results of the region to the current buffer.
+
+=cut
+
+sub make_body {
+    my $self = shift;
     my $buffer = Jifty->handler->buffer;
 
     my %arguments = %{ $self->arguments };
@@ -328,9 +342,6 @@ sub render {
 
     $self->render_as_subrequest(\%arguments);
     $buffer->append(qq|</div>|) if ( $self->region_wrapper );
-
-    $self->exit;
-    return '';
 }
 
 =head2 render_as_subrequest
