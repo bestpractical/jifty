@@ -6,18 +6,13 @@ use Jifty::View::Declare -base;
 
 =head1 NAME
 
-Jifty::Plugin::SiteNews::View - /newsfeed pages for your app
+Jifty::Plugin::NewsFeed::View - template for feed
 
 =head1 DESCRIPTION
 
-The tempaltes for L<Jifty::Plugin::NewsFeed>
+The templates for L<Jifty::Plugin::NewsFeed>
 
 =cut
-
-template 'feedpage' => page { title => "Feed" } 
-content {
-    h1 { "I am NEWS FEED PLUGIN!" } ;
-};
 
 =head1 Templates
 
@@ -81,8 +76,9 @@ template 'display_feed' => sub {
 
     my $feed_title = decode_utf8 ( $feed->title );
 
-    # filter
     my @entries = $feed->entries;
+
+    # filter entry
     if( defined $options->{before} ) {
         my $before = $options->{before};
         my ( $num , $slice ) = ( $before =~ m/^(\d+)\s*(\w+)$/ );
@@ -93,8 +89,8 @@ template 'display_feed' => sub {
         } 
     }
 
-    splice @entries,0,scalar @entries
-            if( defined $options->{max} );
+    splice @entries,0,$options->{max_items}
+            if( defined $options->{max_items} );
 
     @entries = reverse @entries 
             if( defined $options->{order} and $options->{order} eq 'ASC' );

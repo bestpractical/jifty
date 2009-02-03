@@ -17,7 +17,7 @@ Jifty::Plugin::NewsFeed - Provide site news by feeds in your app
 
 =head1 DESCRIPTION
 
-Provides a way to include site news feeds in your Jifty app
+Provides templates to include site news feeds in your Jifty app. See L<Jifty::Plugin::NewsFeed::View>
 
 =cut
 
