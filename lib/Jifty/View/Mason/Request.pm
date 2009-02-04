@@ -1,0 +1,108 @@
+use strict;
+use warnings;
+
+package Jifty::View::Mason::Request;
+# Subclass for HTML::Mason::Request object $m
+
+=head1 Jifty::View::Mason::Request
+
+Subclass of L<HTML::Mason::Request> which is customised for Jifty's use.
+
+=cut
+
+use HTML::Mason::Exceptions;
+use HTML::Mason::Request;
+use base qw(HTML::Mason::Request);
+
+=head2 auto_send_headers
+
+Doesn't send headers if this is a subrequest (according to the current
+L<Jifty::Request>).
+
+=cut
+
+sub auto_send_headers {
+    Jifty::View->auto_send_headers;
+}
+
+=head2 exec
+
+Actually runs the component; in case no headers have been sent after
+running the component, and we're supposed to send headers, sends them.
+
+=cut
+
+sub exec
+{
+    my $self = shift;
+    my $r = Jifty->handler->apache;
+    my $retval;
+
+    eval { $retval = $self->SUPER::exec(@_) };
+
+    if (my $err = $@)
+    {
+	$retval = isa_mason_exception($err, 'Abort')   ? $err->aborted_value  :
+                  isa_mason_exception($err, 'Decline') ? $err->declined_value :
+                  rethrow_exception $err;
+    }
+
+    # On a success code, send headers if they have not been sent and
+    # if we are the top-level request. Since the out_method sends
+    # headers, this will typically only apply after $m->abort.
+    if ($self->auto_send_headers
+        and not $r->http_header_sent
+        and (!$retval or $retval==200)) {
+        Jifty->handler->send_http_header;
+    }
+}
+
+sub print {
+    shift;
+    Jifty->handler->buffer->append(@_);
+}
+
+*out = \&print;
+
+sub comp {
+    my $self = shift;
+
+    my %mods;
+    %mods = (%{shift()}, %mods) while ref($_[0]) eq 'HASH';
+    my @args;
+    push @args, buffer => delete $mods{store} if $mods{store} and $mods{store} ne \($self->{request_buffer});
+    Jifty->handler->buffer->push(@args, from => "Mason path ".(ref $_[0] ? $_[0]{path} : $_[0]));
+
+    my $wantarray = wantarray;
+    my @result;
+    eval {
+        if ($wantarray) {
+            @result = $self->SUPER::comp(\%mods, @_);
+        } elsif (defined $wantarray) {
+            $result[0] = $self->SUPER::comp(\%mods, @_);
+        } else {
+            $self->SUPER::comp(\%mods, @_);
+        }
+    };
+    my $error = $@;
+
+    Jifty->handler->buffer->pop;
+
+    rethrow_exception $error if $error;
+    return $wantarray ? @result : $result[0];    
+}
+
+=head2 redirect
+
+Calls L<Jifty::Web/redirect>.
+
+=cut
+
+sub redirect {
+    my $self = shift;
+    my $url = shift;
+
+    Jifty->web->redirect($url);
+}
+
+1;

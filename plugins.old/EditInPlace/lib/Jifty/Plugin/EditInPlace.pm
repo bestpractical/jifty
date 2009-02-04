@@ -5,7 +5,7 @@ package Jifty::Plugin::EditInPlace;
 use base qw/Jifty::Plugin/;
 
 
-package HTML::Mason::Request::Jifty;
+package Jifty::View::Mason::Request;
 
 =head2 fetch_comp
 
