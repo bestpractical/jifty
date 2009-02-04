@@ -1,0 +1,4 @@
+start <% $content %> end
+<%init>
+my $content = $m->content;
+</%init>
