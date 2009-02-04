@@ -18,7 +18,7 @@ my $mech = Jifty::Test::WWW::Mechanize->new;
 for my $path ("", "/td") {
     my $prefix = "$URL$path";
     $mech->get_ok("$prefix/template-with-error");
-#    $mech->warnings_like(qr/Can't locate object method "non_existent_method" via package "Jifty::Web"/);
+    $mech->warnings_like(qr/Can't locate object method "non_existent_method" via package "Jifty::Web"/);
     $mech->base_like(qr{errors/500}, "End up on error page");
     $mech->content_like(qr/something went awry/i, "Have error header");
     $mech->content_like(qr/locate object method .*?non_existent_method.*?/, "Have error itself, if in devel mode");
@@ -32,7 +32,7 @@ for my $path ("", "/td") {
 
     # Region itself gets full page wrapper if it's the only request
     $mech->get_ok("$prefix/region-with-error", "Request region (no wrapper!) with error");
-#    $mech->warnings_like(qr/Can't locate object method "non_existent_method" via package "Jifty::Web"/);
+    $mech->warnings_like(qr/Can't locate object method "non_existent_method" via package "Jifty::Web"/);
     $mech->base_like(qr{errors/500}, "End up at error page");
     $mech->content_like(qr/something went awry/i, "Have error header");
     $mech->content_like(qr/locate object method .*?non_existent_method.*?/, "Have error itself, if in devel mode");
@@ -42,7 +42,7 @@ for my $path ("", "/td") {
 
     # If it's a subrequest, don't nest wrappers
     $mech->get_ok("$prefix/call-region-with-error");
-#    $mech->warnings_like(qr/Can't locate object method "non_existent_method" via package "Jifty::Web"/);
+    $mech->warnings_like(qr/Can't locate object method "non_existent_method" via package "Jifty::Web"/);
     $mech->base_unlike(qr{errors/500}, "Doesn't redirect if only a region error");
     $mech->content_unlike(qr/something went awry/i, "Doesn't have error header");
     $mech->content_like(qr/locate object method .*?non_existent_method.*?/, "Has error itself, if in devel mode");
