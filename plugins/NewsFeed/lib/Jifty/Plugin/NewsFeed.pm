@@ -14,11 +14,24 @@ Jifty::Plugin::NewsFeed - Provide site news by feeds in your app
   Plugins:
     - NewsFeed: {}
 
+# In your jifty application view
+
+    template 'news' => page { title is 'News' } content  {
+        show 'display_feed', 'http://path/to/feed', { max_items => 6 };
+    };
+  
+
 
 =head1 DESCRIPTION
 
-Provides templates to include site news feeds in your Jifty app. See L<Jifty::Plugin::NewsFeed::View>
+Provides templates to include site news feeds in your Jifty app. 
+More detail about templates , see L<Jifty::Plugin::NewsFeed::View>
+
+=head2 AUTHOR
+
+Yo-An Lin ( Cornelius )
 
 =cut
+
 
 1;
