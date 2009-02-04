@@ -92,6 +92,18 @@ sub comp {
     return $wantarray ? @result : $result[0];    
 }
 
+sub content {
+    my $self = shift;
+
+    Jifty->handler->buffer->push( private => 1 );
+    eval { $self->SUPER::content };
+    if (my $err = $@) {
+        Jifty->handler->buffer->pop;
+        rethrow_exception $err;
+    } 
+    return Jifty->handler->buffer->pop;
+}
+
 =head2 redirect
 
 Calls L<Jifty::Web/redirect>.
