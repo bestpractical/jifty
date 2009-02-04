@@ -73,7 +73,6 @@ requires('SUPER');
 requires('SQL::ReservedWords');
 requires('Template::Declare' => '0.35');                # Template::Declare::Tags
 requires('Test::Base');
-requires('Test::Log4perl');
 requires('Test::LongString');
 requires('Test::More' => 0.62 ),
 requires('Test::Pod::Coverage'),

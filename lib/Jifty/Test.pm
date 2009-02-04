@@ -379,6 +379,9 @@ sub test_config {
                 Port => ($$ % 5000) + 10000,
                 DataDir => File::Temp::tempdir('masonXXXXXXXXXX', CLEANUP => 1)
             },
+            Plugins => [
+                { TestServerWarnings => {} },
+            ],
             Mailer => 'Jifty::Test',
             MailerArgs => [],
             LogLevel => 'WARN',
@@ -434,7 +437,6 @@ sub make_server {
     $Jifty::SERVER = $server;
     return $server;
 }
-
 
 =head2 web
 
@@ -601,6 +603,10 @@ END { Jifty::Test->_ending }
 
 sub _ending {
     my $Test = Jifty::Test->builder;
+
+    my $plugin = Jifty->find_plugin("Jifty::Plugin::TestServerWarnings");
+    warn "Uncaught warning: $_" for $plugin->stashed_warnings;
+
     # Such a hack -- try to detect if this is a forked copy and don't
     # do cleanup in that case.
     return if $Test->{Original_Pid} != $$;

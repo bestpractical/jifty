@@ -24,6 +24,7 @@ framework:
   Plugins: 
     - SkeletonApp: {}
     - CompressedCSSandJS: {}
+    - ErrorTemplates: {}
   PubSub: 
     Backend: Memcached
     Enable: ~

@@ -42,9 +42,7 @@ sub new {
     $self->setup_jifty(@_);
     $self->recording_on if $ENV{'JIFTY_RECORD'};
 
-
     return ($self);
-
 }
 
 =head2 setup_jifty
@@ -64,12 +62,10 @@ sub setup_jifty {
     $self->port( Jifty->config->framework('Web')->{'Port'} || 8888 );
 }
 
-=head2 handle_request
+=head2 handle_request CGI
 
-Overrives L<HTML::Server::Simple::Mason>'s handle_request method to
-make use of L<Module::Refresh> to refresh any relevant modules, as
-well as to set up the C<$JiftyWeb> global before handling the actual
-request.
+Calls L<Jifty::Handler/handle_request> with the CGI object.  If
+running tests, send test warnings on specific requests.
 
 =cut
 

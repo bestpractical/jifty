@@ -2,7 +2,7 @@
 use warnings;
 use strict;
 
-use Jifty::Test::Dist tests => 8;
+use Jifty::Test::Dist tests => 9;
 use Jifty::Test::WWW::Mechanize;
 
 
@@ -33,3 +33,4 @@ get_ok("/on_not_exist_show");
 $mech->content_contains("woot");
 
 get_nok("/something_that_really_not_exists");
+$mech->warnings_like(qr/404/);

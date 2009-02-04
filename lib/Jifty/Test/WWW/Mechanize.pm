@@ -6,6 +6,7 @@ use base qw/Test::WWW::Mechanize/;
 
 delete $ENV{'http_proxy'}; # Otherwise Test::WWW::Mechanize tries to go through your HTTP proxy
 
+use Test::More;
 use Jifty::YAML;
 use HTML::Lint;
 use Test::HTML::Lint qw();
@@ -432,7 +433,24 @@ sub follow_link_ok {
         $Test::Builder::Level++;
         Test::HTML::Lint::html_ok( $lint, $self->content );
     }
-} 
+}
+
+sub warnings_like {
+    my $self = shift;
+    my @args = shift;
+    @args = @{$args[0]} if ref $args[0] eq "ARRAY";
+    my $reason = pop || "Server warnings matched";
+
+    local $Test::Builder::Level = $Test::Builder::Level;
+    $Test::Builder::Level++;
+
+    my $plugin = Jifty->find_plugin("Jifty::Plugin::TestServerWarnings");
+    my @warnings = $plugin->decoded_warnings($self->uri);
+    my $max = @warnings > @args ? $#warnings : $#args;
+    for (0 .. $max) {
+        like($warnings[$_], $_ <= $#args ? qr/$args[$_]/ : qr/(?!unexpected)unexpected warning/, $reason);
+    }
+}
 
 
 =head2 session

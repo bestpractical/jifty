@@ -2,7 +2,7 @@
 use warnings;
 use strict;
 
-use Jifty::Test::Dist tests => 6;
+use Jifty::Test::Dist tests => 7;
 use Jifty::Test::WWW::Mechanize;
 
 my $server = Jifty::Test->make_server;
@@ -16,3 +16,4 @@ $mech->content_contains( 'Custom Wrapper', 'used the custom wrapper' );
 
 $mech->get_ok( $url . '/_elements/wrapper', 'getting the wrapper directly');
 $mech->content_contains( 'Something went awry', 'and we were not able to');
+$mech->warnings_like(qr/Unhandled web error/);

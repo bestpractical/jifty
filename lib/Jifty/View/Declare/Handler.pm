@@ -6,6 +6,11 @@ use strict;
 use base qw/Jifty::View Class::Accessor::Fast/;
 use Template::Declare;
 
+use Exception::Class ( 'Template::Declare::Exception' =>
+    {description => 'error in a Template::Declare template', alias => 'error'});
+@Template::Declare::Exception::ISA = 'HTML::Mason::Exception';
+
+
 __PACKAGE__->mk_accessors(qw/root_class/);
 
 =head1 NAME
@@ -68,7 +73,12 @@ sub show {
     my $template = shift;
 
     Template::Declare->buffer( Jifty->handler->buffer );
-    Template::Declare::Tags::show_page( $template, { %{Jifty->web->request->arguments}, %{Jifty->web->request->template_arguments || {}} } );
+    eval {
+        Template::Declare::Tags::show_page( $template, { %{Jifty->web->request->arguments}, %{Jifty->web->request->template_arguments || {}} } );
+    };
+    my $err = $@;
+    Template::Declare::Exception->throw($err) if $err;
+    
     return; # Explicit return so TD call above is in void context, and appends instead of returning.
 }
 
