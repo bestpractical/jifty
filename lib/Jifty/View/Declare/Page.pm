@@ -48,8 +48,11 @@ right after constructing page object.
 
 sub render {
     my $self = shift;
-    $self->render_body( sub { $self->render_page->() });
+    # This needs to be private so we can prepend the header at the end
+    Template::Declare->buffer->push(private => 1);
+    $self->render_body( sub { $self->render_page->() } );
     $self->render_footer;
+    outs_raw(Template::Declare->buffer->pop);
     return '';
 }
 
@@ -70,8 +73,7 @@ sub render_header {
 
     $self->_render_header($self->_title || Jifty->config->framework('ApplicationName'));
 
-    $self->done_header(Template::Declare->buffer->data);
-    Template::Declare->end_buffer_frame;
+    $self->done_header(Template::Declare->buffer->pop);
     return '';
 };
 
@@ -142,8 +144,7 @@ sub mk_title_handler {
                 Template::Declare->new_buffer_frame;
                 $_->();
                 $self->_title(
-                    $self->_title . Template::Declare->buffer->data );
-                Template::Declare->end_buffer_frame;
+                    $self->_title . Template::Declare->buffer->pop );
             } else {
                 $self->_title( $self->_title . Jifty->web->escape($_) );
             }
@@ -176,7 +177,9 @@ Renders the page footer and prepends the header to the L<Template::Declare> buff
 sub render_footer {
     my $self = shift;
     outs_raw('</html>');
-    Template::Declare->buffer->data( $self->done_header . Template::Declare->buffer->data );
+    my $ref = Template::Declare->buffer->buffer_ref;
+    $$ref = $self->done_header . $$ref;
+    return '';
 }
 
 =head2 render_pre_content_hook

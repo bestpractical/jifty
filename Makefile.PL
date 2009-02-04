@@ -56,7 +56,7 @@ requires('List::MoreUtils');
 requires('Locale::Maketext::Extract' => '0.20');
 requires('Locale::Maketext::Lexicon' => '0.60');
 requires('Log::Log4perl' => '1.11'); # Log::Log4perl::Appender
-requires('LWP::UserAgent'); # Net::HTTP
+requires('LWP::UserAgent'); # Net::HTTP LWP::Simple
 requires('MIME::Types');
 requires('Module::Pluggable' => '3.5'); # Module::Pluggable::Object
 requires('Module::Pluggable::Object');
@@ -67,7 +67,7 @@ requires('Object::Declare' => '0.13');
 requires('Params::Validate');
 requires('Scalar::Defer' => '0.12');
 requires('Shell::Command');
-requires('String::BufferStack' => '1.10');
+requires('String::BufferStack' => '1.12');
 requires('String::Koremutake');
 requires('SUPER');
 requires('SQL::ReservedWords');
