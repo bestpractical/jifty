@@ -30,6 +30,10 @@ sub prepare {
     if ($ARGV[0] =~ /--?h(elp)?/i) {
         $ARGV[0] = 'help';
     }
+    elsif ( $ARGV[0] =~ /^(-v|--version|version)$/ ) {
+        print "This is Jifty, version $Jifty::VERSION\n";
+        exit 0;
+    }
     elsif (!@ARGV) {
         if ( my $cmd = $ENV{'JIFTY_COMMAND'} ) {
             unshift @ARGV, $cmd;
