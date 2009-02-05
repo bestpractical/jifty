@@ -452,6 +452,21 @@ sub warnings_like {
     }
 }
 
+sub no_warnings_ok {
+    my $self = shift;
+    my $name = shift || "no warnings emitted";
+
+    local $Test::Builder::Level = $Test::Builder::Level;
+    $Test::Builder::Level++;
+
+    my $plugin   = Jifty->find_plugin("Jifty::Plugin::TestServerWarnings");
+    my @warnings = $plugin->decoded_warnings( $self->uri );
+
+    Test::More::is( @warnings, 0, $name );
+    for (@warnings) {
+        Test::More::diag("got warning: $_");
+    }
+}
 
 =head2 session
 
