@@ -7,21 +7,51 @@ use base qw/Jifty::Plugin/;
 use LWP::Simple qw//;
 use Jifty::Plugin::TestServerWarnings::Appender;
 
+__PACKAGE__->mk_accessors(qw(clear_screen));
+
 =head2 NAME
 
 Jifty::Plugin::TestServerWarnings - Stores server warnings away for later fetching
 
+=head2 SYNOPSIS
+
+# In your jifty config.yml under the framework section:
+
+  Plugins:
+    - TestServerWarnings:
+        clear_screen: 1
+
 =head2 DESCRIPTION
 
-This plugin removes the default "Screen" appender on the first request
-it sees, replacing it with a
-L<Jifty::Plugin::TestServerWarnings::Appender>, which stores away all
-messages it receives.  The warnings can be retrieved by a client-side
-process by calling L</decoded_warnings> with a base URI to the server.
+This plugin add a new appender L<Jifty::Plugin::TestServerWarnings::Appender>
+on the first request it sees, which stores away all messages it receives. 
+It also removes the default "Screen" appender unless clear_screen in
+config.yml is set to be false or env TEST_VERBOSE is true.
+
+The warnings can be retrieved by a client-side process by calling 
+L</decoded_warnings> with a base URI to the server.
 
 This plugin is automatically added for all jifty tests.
 
 =head2 METHODS
+
+=head3 init
+
+set clear_screen to 1 if the clear_screen in config.yml is set to be true,
+if it's not set at all, set it to 1 if TEST_VERBOSE is set to be true.
+
+=cut
+
+sub init {
+    my $self = shift;
+    my %opt = @_;
+    if ( defined $opt{clear_screen} ) {
+        $self->clear_screen( 1 ) if $opt{clear_screen};
+    }
+    elsif ( ! $ENV{TEST_VERBOSE} ) {
+        $self->clear_screen( 1 );
+    }
+}
 
 =head3 new_request
 
@@ -37,7 +67,8 @@ sub new_request {
     return if $self->{init}++;
 
     my $root = Log::Log4perl->get_logger("");
-    $root->remove_appender("Screen") unless $ENV{TEST_VERBOSE};
+    $root->remove_appender("Screen") if $self->clear_screen;
+
     my $a = Jifty::Plugin::TestServerWarnings::Appender->new(name => "TestServerAppender");
     $root->add_appender($a);
 }
