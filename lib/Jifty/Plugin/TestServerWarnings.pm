@@ -66,11 +66,10 @@ sub new_request {
     my $self = shift;
     return if $self->{init}++;
 
-    my $root = Log::Log4perl->get_logger("");
-    $root->remove_appender("Screen") if $self->clear_screen;
+    Log::Log4perl->eradicate_appender("Screen") if $self->clear_screen;
 
     my $a = Jifty::Plugin::TestServerWarnings::Appender->new(name => "TestServerAppender");
-    $root->add_appender($a);
+    Log::Log4perl->get_logger("")->add_appender($a);
 }
 
 =head3 add_warnings WARN, WARN, ..
