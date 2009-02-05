@@ -33,6 +33,7 @@ requires('Email::MIME::Modifier' => 1.442 );
 requires('Email::Send' => '2.0'); # Email::Send::Jifty::Test
 requires('Email::Simple' => 2.003);
 requires('Email::Simple::Creator' => 1.400 );
+requires('Exception::Class');
 requires('Exporter::Lite');
 requires('File::Find::Rule');
 requires('File::MMagic');
