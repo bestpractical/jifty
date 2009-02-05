@@ -71,36 +71,27 @@ sub comp {
     %mods = (%{shift()}, %mods) while ref($_[0]) eq 'HASH';
     my @args;
     push @args, buffer => delete $mods{store} if $mods{store} and $mods{store} ne \($self->{request_buffer});
-    Jifty->handler->buffer->push(@args, from => "Mason path ".(ref $_[0] ? $_[0]{path} : $_[0]));
+    my $file = (ref $_[0] ? $_[0]{path} : $_[0]);
+    Jifty->handler->buffer->push(@args, from => "Mason path $file", file => $file);
 
     my $wantarray = wantarray;
     my @result;
-    eval {
-        if ($wantarray) {
-            @result = $self->SUPER::comp(\%mods, @_);
-        } elsif (defined $wantarray) {
-            $result[0] = $self->SUPER::comp(\%mods, @_);
-        } else {
-            $self->SUPER::comp(\%mods, @_);
-        }
-    };
-    my $error = $@;
-
+    if ($wantarray) {
+        @result = $self->SUPER::comp(\%mods, @_);
+    } elsif (defined $wantarray) {
+        $result[0] = $self->SUPER::comp(\%mods, @_);
+    } else {
+        $self->SUPER::comp(\%mods, @_);
+    }
     Jifty->handler->buffer->pop;
-
-    rethrow_exception $error if $error;
     return $wantarray ? @result : $result[0];    
 }
 
 sub content {
     my $self = shift;
 
-    Jifty->handler->buffer->push( private => 1 );
-    eval { $self->SUPER::content };
-    if (my $err = $@) {
-        Jifty->handler->buffer->pop;
-        rethrow_exception $err;
-    } 
+    Jifty->handler->buffer->push( private => 1, from => "Mason call to content" );
+    $self->SUPER::content;
     return Jifty->handler->buffer->pop;
 }
 

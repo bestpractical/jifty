@@ -169,7 +169,15 @@ A convenience method for $self->interp->comp_exists().
 
 sub template_exists {
     my $self = shift;
-    return $self->interp->comp_exists(@_);
+    my ($component) = @_;
+    $component =~ s{^/*}{/};
+    return 1 if $self->interp->comp_exists($component);
+
+    my $dhandler = $self->interp->dhandler_name;
+    $dhandler = "dhandler" unless defined $dhandler;
+    return if defined $dhandler and not length $dhandler;
+    return 1 if $self->interp->find_comp_upwards($component, $dhandler);
+    return 0;
 }
 
 
@@ -203,30 +211,7 @@ sub handle_comp {
     $self->interp->set_global('$jifty_internal_request', 1) if defined $args;
 
     my %args = $args ? %$args : $self->request_args($r);
-
-    my @result;
-    if (wantarray) {
-        @result = eval { $self->interp->exec($comp, %args) };
-    } elsif ( defined wantarray ) {
-        $result[0] = eval { $self->interp->exec($comp, %args) };
-    } else {
-        eval { $self->interp->exec($comp, %args) };
-    }
-
-    if (my $err = $@) {
-        my $retval = isa_mason_exception($err, 'Abort')   ? $err->aborted_value  :
-                     isa_mason_exception($err, 'Decline') ? $err->declined_value :
-                     rethrow_exception $err;
-
-        # Unlike under mod_perl, we cannot simply return a 301 or 302
-        # status and let Apache send headers, we need to explicitly
-        # send this header ourself.
-        Jifty->handler->send_http_header if $retval && grep { $retval eq $_ } ( 200, 301, 302 );
-
-        return $retval;
-    }
-
-    return wantarray ? @result : defined wantarray ? $result[0] : undef;
+    $self->interp->exec($comp, %args);
 }
 
 =head2 request_args

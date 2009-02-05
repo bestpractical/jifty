@@ -776,9 +776,8 @@ sub _redirect {
     # This is designed to work under CGI or FastCGI; will need an
     # abstraction for mod_perl
 
-    # Clear out the mason output, if any
-    $self->mason->clear_buffer if $self->mason;
-    Template::Declare->buffer->clear if(Template::Declare->buffer);
+    # Clear out the output, if any
+    Jifty->handler->buffer->clear;
 
     my $apache = Jifty->handler->apache;
 

@@ -6,10 +6,9 @@ use strict;
 use base qw/Jifty::View Class::Accessor::Fast/;
 use Template::Declare;
 
+use HTML::Mason::Exceptions;
 use Exception::Class ( 'Template::Declare::Exception' =>
     {description => 'error in a Template::Declare template', alias => 'error'});
-@Template::Declare::Exception::ISA = 'HTML::Mason::Exception';
-
 
 __PACKAGE__->mk_accessors(qw/root_class/);
 
@@ -57,13 +56,14 @@ sub config {
     }
 
     push @{$config{roots}},  Jifty->config->framework('TemplateClass');
-        
     return %config;
 }
 
 =head2 show TEMPLATENAME
 
-Render a template. Expects that the template and any jifty methods called internally will end up being returned as a scalar, which we then print to STDOUT
+Render a template. Expects that the template and any jifty methods
+called internally will end up being returned as a scalar, which we
+then print to STDOUT
 
 
 =cut
@@ -76,15 +76,17 @@ sub show {
     eval {
         Template::Declare::Tags::show_page( $template, { %{Jifty->web->request->arguments}, %{Jifty->web->request->template_arguments || {}} } );
     };
-    my $err = $@;
-    Template::Declare::Exception->throw($err) if $err;
-    
-    return; # Explicit return so TD call above is in void context, and appends instead of returning.
+    if (my $err = $@) {
+        $err->rethrow if ref $err;
+        Template::Declare::Exception->throw($err);
+    }
+    return;
 }
 
 =head2 template_exists TEMPLATENAME
 
-Given a template name, returns true if the template is in any of our Template::Declare template libraries. Otherwise returns false.
+Given a template name, returns true if the template is in any of our
+Template::Declare template libraries. Otherwise returns false.
 
 =cut
 
@@ -92,5 +94,34 @@ sub template_exists {
     my $pkg =shift;
     return Template::Declare->resolve_template(@_);
 }
+
+package HTML::Mason::Exception;
+no warnings 'redefine';
+
+sub template_stack {
+    my $self = shift;
+    unless ($self->{_stack}) {
+        $self->{_stack} = [reverse grep defined $_, map {$_->{from}} @{Jifty->handler->buffer->{stack}}],
+    }
+    return $self->{_stack};
+}
+
+sub as_text
+{
+    my ($self) = @_;
+    my $msg = $self->full_message;
+    my @template_stack = @{$self->template_stack};
+    if (@template_stack) {
+        my $stack = join("\n", map { sprintf("  [%s]", $_) } @template_stack);
+        return sprintf("%s\nTemplate stack:\n%s\n", $msg, $stack);
+    } else {
+        my $info = $self->analyze_error;
+        my $stack = join("\n", map { sprintf("  [%s:%d]", $_->filename, $_->line) } @{$info->{frames}});
+        return sprintf("%s\nStack:\n%s\n", $msg, $stack);
+    }
+}
+
+package Template::Declare::Exception;
+our @ISA = 'HTML::Mason::Exception';
 
 1;

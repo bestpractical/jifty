@@ -1,0 +1,5 @@
+<&|/_elements/wrapper, title => 'Jifty Test Application' &>
+Calling before
+<% Jifty->web->region( path => "/region-with-error", name => "error" ) %>
+Calling after
+</&>

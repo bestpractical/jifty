@@ -26,6 +26,24 @@ template 'say_hi' => page {
     };
 };
 
+template '/td/template-with-error' => page {
+    outs('Before error');
+    Jifty->web->non_existent_method;
+    outs('After error');
+};
+
+template '/td/region-with-error' => sub{
+    outs('Region before');
+    Jifty->web->non_existent_method;
+    outs('Region after');
+};
+
+template '/td/call-region-with-error' => sub {
+    outs('Calling before');
+    render_region( 'error', path => '/td/region-with-error' );
+    outs('Calling after');
+};
+
 template 'concrete2.html' => sub {
     html {
         body {

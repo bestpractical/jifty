@@ -772,6 +772,8 @@ Otherwise, just render whatever we were going to anyway.
 
 =cut
 
+my %TEMPLATE_CACHE;
+
 sub _do_show {
     my $self = shift;
     my $path;
@@ -791,21 +793,26 @@ sub _do_show {
     # a relative path, prepend the working directory
     $path = "$self->{cwd}/$path" unless $path =~ m{^/};
 
-    # When we're requesting a directory, go looking for the index.html if the 
-    # path given does not exist
-    if (  ! $self->template_exists( $path )
-         && $self->template_exists( $path . "/index.html" ) ) {
-        $path .= "/index.html";
-    }
-
+    # Check for ../../../../../etc/passwd
     my $abs_template_path = Jifty::Util->absolute_path( Jifty->config->framework('Web')->{'TemplateRoot'} . $path );
     my $abs_root_path = Jifty::Util->absolute_path( Jifty->config->framework('Web')->{'TemplateRoot'} );
+    $self->render_template('/errors/500')
+        if $abs_template_path !~ /^\Q$abs_root_path\E/;
 
-    if ( $abs_template_path !~ /^\Q$abs_root_path\E/ ) {
-        $self->render_template('/__jifty/errors/500');
-    } else {
-        $self->render_template( $path);
+    # When we're requesting a directory, go looking for the index.html if the 
+    # path given does not exist.  Cache the handler and path.
+    if ( not exists $TEMPLATE_CACHE{$path} or Jifty->config->framework('DevelMode')) {
+        my $handler;
+        if ( $handler = $self->template_exists( $path ) ) {
+            $TEMPLATE_CACHE{$path} = [ $path, $handler ];
+        } elsif ( $handler = $self->template_exists( $path . "/index.html" ) ) {
+            $TEMPLATE_CACHE{$path} = [ $path . "/index.html", $handler ];
+        } else {
+            $TEMPLATE_CACHE{$path} = [];
+        }
     }
+
+    $self->render_template( @{$TEMPLATE_CACHE{$path} } );
 
     last_rule;
 }
@@ -1189,8 +1196,10 @@ sub _unescape {
 
 =head2 template_exists PATH
 
-Returns true if PATH is a valid template inside your template root. This checks
-for both Template::Declare and HTML::Mason Templates.
+Returns true if PATH is a valid template inside your template
+root. This checks for both Template::Declare and HTML::Mason
+Templates.  Specifically, returns a reference to the handler which can
+process the template.
 
 =cut
 
@@ -1200,49 +1209,63 @@ sub template_exists {
 
     foreach my $handler ( Jifty->handler->view_handlers) {
         if ( Jifty->handler->view($handler)->template_exists($template) ) {
-            return 1;
+            return Jifty->handler->view($handler);
         }
     }
     return undef;
 }
 
 
-=head2 render_template PATH
+=head2 render_template PATH, [HANDLER]
 
-Use our templating system to render a template. If there's an error, do the
-right thing. If the same 'PATH' is found in both Template::Declare and
-HTML::Mason templates then the T::D template is used.
+Use our templating system to render a template.  If C<HANDLER> is
+provided, uses it to render the template.  Otherwise, searches through
+L<Jifty::Handler/view_handlers> to find the first handler which
+provides the given template.
 
+Catches errors, and redirects to C</errors/500>; also shows
+C</errors/404> if the template cannot be found.
 
 =cut
 
 sub render_template {
     my $self     = shift;
     my $template = shift;
+    my $handler  = shift;
     my $showed   = 0;
+
+    my $start_depth = Jifty->handler->buffer->depth;
     eval {
-        foreach my $handler ( Jifty->handler->view_handlers ) {
-            my $handler_class = Jifty->handler->view($handler);
-            if ( $handler_class->template_exists($template) ) {
+        if ($handler) {
+            $handler->show($template);
+            $showed = 1;
+        } elsif (defined $template) {
+            my @handlers = map {Jifty->handler->view($_)} Jifty->handler->view_handlers;
+            push @handlers, Jifty->handler->fallback_view_handler;
+            foreach my $handler_class ( @handlers  ) {
+                next unless $handler_class->template_exists($template);
                 $handler_class->show($template);
                 $showed = 1;
                 last;
             }
         }
-        if ( not $showed and my $fallback_handler = Jifty->handler->fallback_view_handler ) {
-            $fallback_handler->show($template);
-        }
     };
 
-    my $err = $@;
     # Handle parse errors
-    $self->log->fatal("view class error: $err") if $err;
+    my $err = $@;
+    $self->log->fatal("View error: $err") if $err;
     if ( $err and not eval { $err->isa('HTML::Mason::Exception::Abort') } ) {
-        if ($template eq '/__jifty/error/mason_internal_error') {
-            $self->log->debug("can't render internal_error: $err");
+        if ($template eq '/errors/500') {
+            $self->log->warn("Can't render internal_error: $err");
+            # XXX Built-in static "oh noes" page?
             $self->_abort;
             return;
         }
+
+        # XXX: This may leave a half-written tag open
+        $err->template_stack;
+        Jifty->handler->buffer->pop while Jifty->handler->buffer->depth > $start_depth;
+
         # Save the request away, and redirect to an error page
         Jifty->web->response->error($err);
         my $c = Jifty::Continuation->new(
@@ -1250,11 +1273,18 @@ sub render_template {
             response => Jifty->web->response,
             parent   => Jifty->web->request->continuation,
         );
-
         # Redirect with a continuation
-        Jifty->web->_redirect( "/__jifty/error/mason_internal_error?J:C=" . $c->id );
+        Jifty->web->_redirect( "/errors/500?J:C=" . $c->id );
     } elsif ($err) {
+        Jifty->handler->buffer->pop while Jifty->handler->buffer->depth > $start_depth;
         die $err;
+    }
+
+    # Handle 404's
+    unless ($showed) {
+        return $self->render_template("/errors/404") unless defined $template and $template eq "/errors/404";
+        $self->log->warn("Can't find 404 page!");
+        $self->_abort;
     }
 }
 
