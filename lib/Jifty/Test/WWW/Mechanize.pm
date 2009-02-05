@@ -454,7 +454,7 @@ sub warnings_like {
 
 sub no_warnings_ok {
     my $self = shift;
-    my $name = shift || "no warnings emitted";
+    my $reason = shift || "no warnings emitted";
 
     local $Test::Builder::Level = $Test::Builder::Level;
     $Test::Builder::Level++;
@@ -462,9 +462,9 @@ sub no_warnings_ok {
     my $plugin   = Jifty->find_plugin("Jifty::Plugin::TestServerWarnings");
     my @warnings = $plugin->decoded_warnings( $self->uri );
 
-    Test::More::is( @warnings, 0, $name );
+    is( @warnings, 0, $reason );
     for (@warnings) {
-        Test::More::diag("got warning: $_");
+        diag("got warning: $_");
     }
 }
 
