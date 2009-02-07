@@ -1,6 +1,15 @@
 Jifty 0.80408
 Subversion r5269
 
+ON UPGRADE
+==========
+
+ * some files (for example share/web/templates/dhandler) have been removed,
+   if you don't use system's packages manager then files most probably stay
+   in system lib dirs and may break jifty and your app.
+
+   Delete all Jifty's files from perl's @INC before installing new Jifty.
+
 I18N
 ====
 
