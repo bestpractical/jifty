@@ -13,7 +13,18 @@ use Locale::Maketext::Extract ();
 use File::Find::Rule ();
 use MIME::Types ();
 our $MIME = MIME::Types->new();
-our $LMExtract = Locale::Maketext::Extract->new;
+our $LMExtract = Locale::Maketext::Extract->new(
+        # Specify which parser plugins to use
+        plugins => {
+            # Use Perl parser, process files with extension .pl .pm .cgi
+            'Locale::Maketext::Extract::Plugin::PPI' => ['pm','pl'],
+            'tt2' => [ ],
+            'perl' => ['js','json'],
+            'mason' => [ ] ,
+        },
+        verbose => 1,
+);
+
 use constant USE_GETTEXT_STYLE => 1;
 
 __PACKAGE__->mk_accessors(qw/language/);
