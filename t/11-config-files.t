@@ -5,15 +5,11 @@ use strict;
 
 =head1 DESCRIPTION
 
-This is a template for your own tests. Copy it and modify it.
+Check that nested config files work as expected
 
 =cut
 
-use Jifty::Test tests => 2;
-
-use_ok('Jifty');
-
-Jifty->new(no_handle => 1);
+use Jifty::Test tests => 1, no_handle => 1;
 
 is(Jifty->config->framework('WhichConfigFile'), 'site', "We set the driver to what's in the site config file");
 

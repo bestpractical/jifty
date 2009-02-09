@@ -3,10 +3,7 @@
 use warnings;
 use strict;
 
-use Jifty::Test::Dist tests => 11;
-
-use_ok('Jifty');
-Jifty->new();
+use Jifty::Test::Dist tests => 10;
 
 use_ok('Jifty::Web::Session');
 

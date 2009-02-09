@@ -26,6 +26,7 @@ sub import
     # export $server, $URL, and whatever else J:T:W:D adds
     # note that this must come AFTER T:W:D->export because we override some
     # of its functions
+    no warnings 'redefine';
     __PACKAGE__->export_to_level(1);
 
     # create a server (which will be automatically exported)

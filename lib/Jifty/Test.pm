@@ -179,6 +179,9 @@ sub setup {
     require Jifty::Server;
     require Jifty::Script::Schema;
 
+    my %args = @{$args} % 2 ? (@{$args}, 1) : @{$args};
+    $class->builder->{no_handle} = $args{no_handle};
+
     my $test_config = File::Temp->new( UNLINK => 0 );
     Jifty::YAML::DumpFile("$test_config", $class->test_config(Jifty::Config->new));
     # Invoking bin/jifty and friends will now have the test config ready.
@@ -224,6 +227,10 @@ different way.
 sub setup_test_database {
     my $class = shift;
 
+    if ($class->builder->{no_handle}) {
+        Jifty->new( no_handle => 1 );
+        return;
+    }
 
     if ($ENV{JIFTY_FAST_TEST}) {
 	local $SIG{__WARN__} = sub {};

@@ -9,7 +9,6 @@ use Jifty::Test::WWW::Mechanize;
 # Make sure we can load the model
 use_ok('TestApp::Model::User');
 
-Jifty->new();
 # Grab a system use
 my $system_user = TestApp::CurrentUser->superuser;
 ok($system_user, "Found a system user");
