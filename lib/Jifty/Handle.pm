@@ -234,8 +234,9 @@ sub check_schema_version {
 
 C<MODE> is either "print" or "execute".
 
-This method either prints the commands necessary to create the database
-or actually creates it, depending on the value of MODE.
+This method either prints the commands necessary to create the
+database or actually creates it, depending on the value of MODE.
+Returns undef on failure.
 
 =cut
 
@@ -248,9 +249,11 @@ sub create_database {
     $query .= " TEMPLATE template0" if $driver =~ /Pg/;
     if ( $mode eq 'print' ) {
         print "$query;\n";
-    } elsif ( $driver !~ /SQLite/ ) {
-        $self->simple_query($query);
-    }
+    } elsif ( $driver =~ /SQLite/ ) {
+        return 1; # Kinda an optimistic hack
+    } else {
+        return $self->simple_query($query);
+    } 
 }
 
 =head2 drop_database MODE
@@ -258,7 +261,8 @@ sub create_database {
 C<MODE> is either "print" or "execute".
 
 This method either prints the commands necessary to drop the database
-or actually drops it, depending on the value of MODE.
+or actually drops it, depending on the value of MODE.  Returns undef
+on failure.
 
 =cut
 
@@ -273,11 +277,11 @@ sub drop_database {
 
         # Win32 complains when you try to unlink open DB
         $self->disconnect if $^O eq 'MSWin32';
-        unlink($database);
+        return unlink($database);
     } else {
         local $SIG{__WARN__}
             = sub { warn $_[0] unless $_[0] =~ /exist|couldn't execute/i };
-        $self->simple_query("DROP DATABASE $database");
+        return $self->simple_query("DROP DATABASE $database");
     }
 }
 

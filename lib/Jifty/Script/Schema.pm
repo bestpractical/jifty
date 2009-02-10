@@ -300,7 +300,7 @@ sub create_all_tables {
     }
 
     # Commit it all
-    Jifty->handle->commit;
+    Jifty->handle->commit or exit 1;
 
     Jifty::Util->require('IPC::PubSub');
     IPC::PubSub->new(
@@ -671,7 +671,8 @@ sub _print_upgrades {
 =head2 manage_database_existence
 
 If the user wants the database created, creates the database. If the
-user wants the old database deleted, does that too.
+user wants the old database deleted, does that too.  Exits with a
+return value of 1 if the database drop or create fails.
 
 =cut
 
@@ -684,8 +685,14 @@ sub manage_database_existence {
         $handle->drop_database('print')   if ( $self->{'drop_database'} );
         $handle->create_database('print') if ( $self->{'create_database'} );
     } else {
-        $handle->drop_database('execute')   if ( $self->{'drop_database'} );
-        $handle->create_database('execute') if ( $self->{'create_database'} );
+        if ( $self->{'drop_database'} ) {
+            exit 1 unless $handle->drop_database('execute');
+        }
+
+        if ( $self->{'create_database'} ) {        
+            exit 1 unless $handle->create_database('execute'); 
+        }
+
         $handle->disconnect;
         $self->_reinit_handle() if ( $self->{'create_database'} );
     }
@@ -698,8 +705,7 @@ sub _reinit_handle {
 
 sub _exec_sql {
     my $sql = shift;
-    my $ret = Jifty->handle->simple_query($sql);
-    $ret or die "error updating a table: " . $ret->error_message;
+    exit 1 unless Jifty->handle->simple_query($sql);
 }
 
 1;
