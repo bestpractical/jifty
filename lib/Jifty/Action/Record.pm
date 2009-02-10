@@ -111,9 +111,9 @@ sub new {
         my %given_pks = ();
         for my $pk ( @{ $self->record->_primary_keys } ) {
             $given_pks{$pk} = $self->argument_value($pk)
-                if defined $self->argument_value($pk);
+                if defined $self->argument_value($pk) && ($self->argument_value($pk) ne '');
         }
-        $self->record->load_by_primary_keys(%given_pks) if %given_pks;
+        $self->record->load_by_primary_keys(%given_pks) if keys %given_pks;
     }
 
     return $self;
