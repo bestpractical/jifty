@@ -223,9 +223,7 @@ sub probe_database_existence {
 
         # No version table.  Assume the DB is empty.
         $self->{create_all_tables} = 1;
-    } elsif ( $error =~ /database .*? does not exist/i
-        or $error =~ /unknown database/i )
-    {
+    } elsif ( $error =~ /(database .*? (?:does not|doesn't) exist|unknown database)/i) {
 
         # No database exists; we'll need to make one and fill it up
         $self->{drop_database}     = 0;
