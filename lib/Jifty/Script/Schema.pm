@@ -228,6 +228,7 @@ sub probe_database_existence {
     {
 
         # No database exists; we'll need to make one and fill it up
+        $self->{drop_database}     = 0;
         $self->{create_database}   = 1;
         $self->{create_all_tables} = 1;
     } elsif ($error) {
