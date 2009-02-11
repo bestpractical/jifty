@@ -265,9 +265,9 @@ sub setup_test_database {
 
     Jifty->new( no_handle => 1, pre_init => 1 );
 
-    my $schema = Jifty::Script::Schema->new; $schema->{drop_database}     = 1;
-    $schema->{create_database}   = 1;
-    $schema->{create_all_tables} = 1;
+    my $schema = Jifty::Script::Schema->new;
+    $schema->{drop_database} = 1;
+    $schema->{setup_tables}  = 1;
     $schema->run;
 
     Jifty->new();

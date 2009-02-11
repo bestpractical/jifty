@@ -687,11 +687,14 @@ sub manage_database_existence {
         $handle->create_database('print') if ( $self->{'create_database'} );
     } else {
         if ( $self->{'drop_database'} ) {
-            exit 1 unless $handle->drop_database('execute');
+            my $ret = $handle->drop_database('execute');
+            die "Error dropping database: ". $ret->error_message
+                unless $ret or $ret->error_message =~ /(database .*? does not exist|unknown database)/i;
         }
 
         if ( $self->{'create_database'} ) {        
-            exit 1 unless $handle->create_database('execute'); 
+            my $ret = $handle->create_database('execute');
+            die "Error creating database: ". $ret->error_message unless $ret;
         }
 
         $handle->disconnect;
@@ -706,7 +709,8 @@ sub _reinit_handle {
 
 sub _exec_sql {
     my $sql = shift;
-    exit 1 unless Jifty->handle->simple_query($sql);
+    my $ret = Jifty->handle->simple_query($sql);
+    die "error updating a table: " . $ret->error_message unless $ret;
 }
 
 1;
