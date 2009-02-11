@@ -689,7 +689,7 @@ sub manage_database_existence {
         if ( $self->{'drop_database'} ) {
             my $ret = $handle->drop_database('execute');
             die "Error dropping database: ". $ret->error_message
-                unless $ret or $ret->error_message =~ /(database .*? does not exist|unknown database)/i;
+                unless $ret or $ret->error_message =~ /database .*?(?:does not|doesn't) exist|unknown database/i;
         }
 
         if ( $self->{'create_database'} ) {        
