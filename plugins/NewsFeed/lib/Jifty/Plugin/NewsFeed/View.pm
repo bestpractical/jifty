@@ -67,11 +67,21 @@ template 'display_feed' => sub {
     return unless ( $feed_url and $feed_url =~ m(^https?://) );
 
     use XML::Feed;
-    use App::Cache;
     use Encode qw(decode_utf8);
+	use Cache::File;
 
-    my $cache = App::Cache->new({ ttl =>  $options->{cache_ttl} || 60*60   });
-    my $feed_xml = $cache->get_url( $feed_url );
+	my $plugin = Jifty->find_plugin( 'Jifty::Plugin::NewsFeed' );
+	warn $plugin->config->{CacheRoot};
+
+
+	my $c1 = Cache::File->new( cache_root =>  $plugin->config->{CacheRoot}  );
+	my $feed_xml = $c1->get( 'feed_url' );
+ 	unless ($feed_xml) {
+		use LWP::Simple;
+		Jifty->log->info('Fetch feed:' . $feed_url );
+ 		$feed_xml = get $feed_url;
+ 		$c1->set( 'feed_url' , $feed_xml , '1 hours' );
+ 	}
 
     my $feed = XML::Feed->parse ( \$feed_xml );
 
