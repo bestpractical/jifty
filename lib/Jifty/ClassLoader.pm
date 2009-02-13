@@ -367,9 +367,9 @@ sub require {
     
     # Construct the list of models for the application for later reference
     my %models;
-    for ($self->plugins) {
-        Jifty::Util->require($_);
-        $models{$_} = 1 if /^($base)::Model::(.*)$/ and not /Collection(?:$||\:\:)/;
+    for my $p ($self->plugins) {
+        Jifty::Util->require($p);
+        $models{$p} = 1 if $p =~ m/^($base)::Model::(.*)$/ and not $p =~ m/Collection(?:$||\:\:)/;
     }
     $self->models(sort keys %models);
 
