@@ -1,11 +1,10 @@
 =head1 NAME
 
-Jifty::Manual::Tutorial - Zero to Jifty in a Jiffy
+Jifty::Manual::Tutorial - Jifty 從零開始
 
 =head1 DESCRIPTION
 
-This tutorial should give you everything you need to 
-build your first application with Jifty.
+這份教學文件將提供建構第一個 jifty 應用程式所需要的技巧。
 
 =cut
 
@@ -13,30 +12,27 @@ build your first application with Jifty.
 
 =head2 The requirements
 
-Here's what you need to have installed -- at least when we write it.
+這就是你需要安裝的。
 
 =head2 Installing Jifty
 
-No bones about it. We believe pretty strongly in the DRY (Don't Repeat
-Yourself) principle. That's one of the big reasons we love Perl and
-CPAN. Jifty makes use of lots of amazing code from CPAN.  At last count,
-it directly depended on 60 packages from CPAN.  Most of these libraries
-are cross-platform pure-Perl packages and should run great out of the
-box on any platform you can get Perl onto.
+我們相當相信 DRY ( Don't Repeat Yourself ) 的原則，這是我們喜愛 Perl 與 CPAN 的一個很重要的原因。
 
-We've gone to lengths to make sure you don't spend your day
-downloading library after library by bundling everything we can inside
-the Jifty package.  The Jifty installer is capable of determining what
-modules your system needs, and downloading and installing them all in
-one go.  Don't worry, it will ask you first before it makes any changes.
+Jifty 使用了 CPAN 上許多令人驚奇的程式碼。他直接使用 60 多個來自 CPAN 的模組 。
 
-On most systems you can use Perl's bundled CPAN module to download
-and install Jifty:
+大部分的套件都是跨平台且只以 Perl 寫成的模組，且能在你可取得 Perl 的任何平台上良好運作。
+
+我們花了很長的一段時間讓您能夠不用花上一整天的時間下載函式庫以及所有相關的套件。 
+
+Jifty 的安裝程式能夠自動偵測您機器上尚未安裝的模組，並且直接下載並安裝他們。
+
+別擔心，Jifty 在更動之前提醒你。
+
+在大多數的系統上，你可以使用 Perl 所提供的 CPAN 模組來下載並且安裝 Jifty:
 
   # perl -MCPAN -e"install Jifty"
 
-If you've downloaded a C<.tar.gz> of Jifty, you can do a
-manual install:
+如果你下載了 Jifty 的 C<.tar.gz> 檔，您可以使用手動安裝:
 
   # tar xzvf jifty-<version>.tgz
   # cd jifty-<version>
@@ -45,25 +41,18 @@ manual install:
   # make test
   # make install
 
-If the tests don't pass, we want to hear about it. Please join us
-on C<jifty-devel@lists.jifty.org> and report the failure. (See 
-L</GETTING HELP> below for info on how to join the list.)
+我們會想要知道如果單元測試沒有通過的原因，如果您遇到了這樣的問題。
+請加入我們的 C<jifty-devel@lists.jifty.org> 並回報相關的錯誤訊息。
+關於如何加入我們，請參見下方的 L<GETTING HELP> 
 
 =head2 Setting up the Scaffolding
 
-Once you have Jifty happily installed, you're ready to 
-create your first application. 
+一旦你完成了 Jifty 的安裝，便能開始構築你第一份 Jifty 應用程式。
 
-Jifty is intentionally a bit minimalist. All you I<really> need to make
-an application go is a copy of the F<jifty> commandline tool (inside
-your new application's F<bin/> directory.)
+Jifty 將所有的事情設計的相當簡單使用，你只需要使用 Jifty 提供的 F<jifty> 命令列工具來啟動您的應用程式
+ ( 在您建構的應用程式裡的 F<bin/> 資料夾內 )
 
-Of course, it's often helpful to have a bit more structure around to
-help guide your work. Jifty comes with tools to build that structure for
-you.
-
-Change directory to some place it will be safe to create a new
-Jifty application. (Jifty will create a subdirectory for you).
+請切換到一個乾淨的目露底下來建立你的 Jifty 應用程式。 ( Jifty 會為您建立子資料夾 ).
 
   # jifty app --name MyWeblog
   Creating new application MyWeblog
@@ -85,16 +74,18 @@ Jifty application. (Jifty will create a subdirectory for you).
   Creating directory t
   Creating configuration file MyWeblog/etc/config.yml
 
-Let's take those one by one.
+以下將逐一解說。
 
 =over
 
 =item bin
 
-Inside F<bin/> is F<jifty>, the Jifty command dispatcher. Some
-of the most important commands are C<schema>, which sets up or updates
-your database schema and C<server>, which starts a standalone
-webserver. To find out what commands your F<jifty> comes with, run:
+在 F<bin/> 資料夾內的便是 F<jifty>, 是 Jifty 用來處理 Jifty 指令的程式 . 
+
+一些較重要的指令是 C<schema> , 這個指令用來設置或更新您的資料庫。
+又如指令 C<server> , 這個指令將啟動獨立的網頁伺服器。 .
+
+想知道其他 Jifty 提供的指令，可執行:
 
     jifty help
 
