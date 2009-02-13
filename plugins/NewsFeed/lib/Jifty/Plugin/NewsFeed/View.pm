@@ -53,10 +53,6 @@ max items to display.
 
 order feed items by date, 'DESC' or 'ASC'
 
-=item style => I<string>  I<(optional)>
-
-style could be 'list', 'p' , 'none' , default is 'list'.
-
 =cut
 
 template 'display_feed' => sub {
@@ -67,6 +63,7 @@ template 'display_feed' => sub {
     return unless ( $feed_url and $feed_url =~ m(^https?://) );
 
     use XML::Feed;
+	use LWP::Simple ();
     use Encode qw(decode_utf8);
 	use Cache::File;
 
@@ -77,9 +74,8 @@ template 'display_feed' => sub {
 	my $c1 = Cache::File->new( cache_root =>  $plugin->config->{CacheRoot}  );
 	my $feed_xml = $c1->get( 'feed_url' );
  	unless ($feed_xml) {
-		use LWP::Simple;
 		Jifty->log->info('Fetch feed:' . $feed_url );
- 		$feed_xml = get $feed_url;
+ 		$feed_xml = LWP::Simple::get $feed_url;
  		$c1->set( 'feed_url' , $feed_xml , '1 hours' );
  	}
 
@@ -116,74 +112,26 @@ template 'display_feed' => sub {
     @entries = reverse @entries 
             if( defined $options->{order} and $options->{order} eq 'ASC' );
 
-    my $style = $options->{style} || 'list';
+	return unless @entries ;
 
-    h2 { { class is 'feed-title' } ; $feed_title } 
-            unless ( defined $options->{hide_title} );
+	div { { id is $options->{wrapper_id} || 'feed' , class is $options->{wrapper_class} || 'feed' } ;
+		h2 { { class is 'feed-title' } ; $feed_title } 
+			unless ( defined $options->{hide_title} );
+		
+		for my $entry ( @entries ) {
+			my $issued = $entry->issued;
+			my $title = decode_utf8 $entry->title ;
+			my $summary = decode_utf8 $entry->summary ;
+			my $link  = $entry->link;
 
-    if( $style eq 'list' ) {
-        show 'feed_list_style',\@entries;
-    }
-    elsif( $style eq 'p' ) {
-        show 'feed_p_style',\@entries;
-    }
-    elsif( $style eq 'none' ) {
-        show 'feed_none_style',\@entries;
-    }
-    else {
-        show 'feed_list_style',\@entries;
-    }
- 
+			span { { class is $options->{item_class} || 'feed-entry' }; 
+				outs_raw (qq|<a class="feed-link" href="$link">$title</a>|); } 
+					if ( $title );
+		}
+	};
+
+
 };
-
-template 'feed_list_style' => sub {
-    my $self = shift;
-    my @entries = @{ +shift };
-    ul { { class is 'feed-entries' } ;
-        for my $entry ( @entries ) {
-            my $issued = $entry->issued;
-            my $title = decode_utf8 ( $entry->title );
-            my $summary = decode_utf8( $entry->summary );
-            my $link  = $entry->link;
-
-            li { { class is 'feed-entry' }; 
-                outs_raw (qq|<a class="feed-link" href="$link">$title</a>|); } 
-                    if ( $title );
-        }
-    };
-};
-
-template 'feed_p_style' => sub {
-    my $self = shift;
-    my @entries = @{ +shift };
-    for my $entry ( @entries ) {
-        my $issued = $entry->issued;
-        my $title = decode_utf8 ( $entry->title );
-        my $summary = decode_utf8( $entry->summary );
-        my $link  = $entry->link;
-
-        p { { class is 'feed-entry' }; 
-            outs_raw (qq|<a class="feed-link" href="$link">$title</a>|); } 
-                if ( $title );
-    }
-};
-
-template 'feed_none_style' => sub {
-    my $self = shift;
-    my @entries = @{ +shift };
-    for my $entry ( @entries ) {
-        my $issued = $entry->issued;
-        my $title = decode_utf8 ( $entry->title );
-        my $summary = decode_utf8( $entry->summary );
-        my $link  = $entry->link;
-
-        span { { class is 'feed-entry' }; 
-            outs_raw (qq|<a class="feed-link" href="$link">$title</a>|); } 
-                if ( $title );
-    }
-    
-};
-
 
 
 
