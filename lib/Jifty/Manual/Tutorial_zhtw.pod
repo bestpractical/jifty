@@ -1,0 +1,527 @@
+=head1 NAME
+
+Jifty::Manual::Tutorial - Zero to Jifty in a Jiffy
+
+=head1 DESCRIPTION
+
+This tutorial should give you everything you need to 
+build your first application with Jifty.
+
+=cut
+
+=head1 HOW TO
+
+=head2 The requirements
+
+Here's what you need to have installed -- at least when we write it.
+
+=head2 Installing Jifty
+
+No bones about it. We believe pretty strongly in the DRY (Don't Repeat
+Yourself) principle. That's one of the big reasons we love Perl and
+CPAN. Jifty makes use of lots of amazing code from CPAN.  At last count,
+it directly depended on 60 packages from CPAN.  Most of these libraries
+are cross-platform pure-Perl packages and should run great out of the
+box on any platform you can get Perl onto.
+
+We've gone to lengths to make sure you don't spend your day
+downloading library after library by bundling everything we can inside
+the Jifty package.  The Jifty installer is capable of determining what
+modules your system needs, and downloading and installing them all in
+one go.  Don't worry, it will ask you first before it makes any changes.
+
+On most systems you can use Perl's bundled CPAN module to download
+and install Jifty:
+
+  # perl -MCPAN -e"install Jifty"
+
+If you've downloaded a C<.tar.gz> of Jifty, you can do a
+manual install:
+
+  # tar xzvf jifty-<version>.tgz
+  # cd jifty-<version>
+  # perl Makefile.PL
+  # make
+  # make test
+  # make install
+
+If the tests don't pass, we want to hear about it. Please join us
+on C<jifty-devel@lists.jifty.org> and report the failure. (See 
+L</GETTING HELP> below for info on how to join the list.)
+
+=head2 Setting up the Scaffolding
+
+Once you have Jifty happily installed, you're ready to 
+create your first application. 
+
+Jifty is intentionally a bit minimalist. All you I<really> need to make
+an application go is a copy of the F<jifty> commandline tool (inside
+your new application's F<bin/> directory.)
+
+Of course, it's often helpful to have a bit more structure around to
+help guide your work. Jifty comes with tools to build that structure for
+you.
+
+Change directory to some place it will be safe to create a new
+Jifty application. (Jifty will create a subdirectory for you).
+
+  # jifty app --name MyWeblog
+  Creating new application MyWeblog
+  Creating directory lib
+  Creating directory lib/MyWeblog
+  Creating directory bin
+  Creating directory etc
+  Creating directory doc
+  Creating directory log
+  Creating directory var
+  Creating directory var/mason
+  Creating directory share
+  Creating directory share/po
+  Creating directory share/web
+  Creating directory share/web/templates
+  Creating directory share/web/static
+  Creating directory lib/MyWeblog/Model
+  Creating directory lib/MyWeblog/Action
+  Creating directory t
+  Creating configuration file MyWeblog/etc/config.yml
+
+Let's take those one by one.
+
+=over
+
+=item bin
+
+Inside F<bin/> is F<jifty>, the Jifty command dispatcher. Some
+of the most important commands are C<schema>, which sets up or updates
+your database schema and C<server>, which starts a standalone
+webserver. To find out what commands your F<jifty> comes with, run:
+
+    jifty help
+
+=item etc
+
+Configuration files live in F<etc/>, though if you don't have a config
+file, Jifty will supply some sane defaults.
+
+=item doc
+
+Jifty won't magically write your documentation for you, but when B<you>
+write your docs, put them in F<doc/>.
+
+=item log
+
+Jifty uses L<Log::Log4perl> to configure its logging. By default, it
+dumps logs named F<server.log> and F<error.log> into the F<log> directory.
+
+=item share/web/templates
+
+Jifty uses L<HTML::Mason> as its primary templating system.  Put
+your application's templates into F<share/web/templates/>.  Out of
+the box, Jifty comes with an application I<skeleton> that it installs
+in F<share/web/templates/>.  This default application is a convenient
+way to get a basic application up and running quickly, but probably
+needs some customization as you build a more advanced application.
+
+You can find where Perl stuck Jifty's default templates with:
+
+  perl -MJifty::Util -e 'print Jifty::Util->share_root'
+
+=item share/web/static
+
+Some nontrivial percentage of the I<stuff> your web application serves
+out doesn't need to (or I<shouldn't>) pass through your templating
+engine.
+
+Just drop your static files into F<share/web/static/> and Jifty will serve
+them out if it can't find a template with the right name.
+
+Out of the box, Jifty comes with a CSS style, Javascript libraries and a
+Pony. Look in F<share/web/static> in the Jifty distribution, or in the same
+place Jifty stuck its default templates.
+
+=item lib/MyWeblog
+
+For a full treatment of the Jifty object model see
+L<Jifty::Manual::ObjectModel>.
+
+To build a basic Jifty application, you only need to worry about two
+sorts of classes, B<Models> and B<Actions>.
+
+=item lib/MyWeblog/Model
+
+The real base of your application lives in
+C<lib/B<ApplicationName>/Model>. Classes here define your application's data
+structures and how they relate to each other.  Jifty will use your model
+classes to set up and upgrade your database's schema when it needs to.
+
+=item lib/MyWeblog/Action
+
+When we said you only need to worry about B<Models> and B<Actions>,
+we weren't telling the whole truth.  Jifty will take care of basic
+database-interaction (C<CREATE, READ, UPDATE, DELETE>) B<Actions> for
+your B<Models>, but they're there if you want to change anything.
+
+=item t
+
+Jifty starts off your application with a basic harness, but can't yet write 
+all your tests for you. (It does, however, build simple tests for model
+classes you generate.)
+
+=item var
+
+Jifty stores cache files here while the server is running. You shouldn't ever
+have to touch this directory.
+
+=back
+
+=head2 Building your data model
+
+As you might imagine by the fact that this tutorial application is named
+B<MyWeblog>, the example here is a simple weblog application.  Future
+tutorials will add authentication, comments, and RSS and Atom feeds.
+
+=head3 Posts
+
+Weblogs tend to center around posts, so it's no surprise that the first model
+to create is the C<post>:
+
+  # cd MyWeblog
+  # jifty model --name Post
+  Writing file /tmp/MyWeblog/lib/MyWeblog/Model/Post.pm
+  Writing file /tmp/MyWeblog/t/00-model-Post.t
+
+Great! Now you have a B<Post> model (not that it models anything yet).
+
+Open F<lib/MyWeblog/Model/Post.pm> in your favorite text editor.
+
+You should see something like this:
+
+  use strict;
+  use warnings;
+  
+  package MyWeblog::Model::Post;
+  use Jifty::DBI::Schema;
+  
+  use MyWeblog::Record schema {
+  
+  };
+  
+  # Your model-specific methods go here.
+  
+  1;
+
+
+Now it's time to tell the model class about posts. Start by giving our post a
+C<body> and a C<title>. (In a future tutorial, the application will become fully
+folksonomy-compliant by adding a C<category> and upgrading that C<category> to a
+C<tags> table.)
+
+Position your cursor right after:
+
+  use MyWeblog::Record schema {
+
+Add the lines:
+
+  column title =>
+        type is 'text',
+        label is 'Title',
+        default is 'Untitled post';
+
+  column body => 
+        type is 'text',
+        label is 'Content',
+        render_as 'Textarea';
+
+Save your model class.
+
+=head2 Setting up the database
+
+Ok. It's time to initialize MyWeblog's database. By default, Jifty sets up your
+application with the SQLite database engine.  If you'd rather use PostgreSQL or
+MySQL, you need to add some content to F<etc/config.yml>. (See L<Jifty::Config>
+for a bit more information).
+
+  # jifty schema --setup
+  INFO - Generating SQL for application MyWeblog...
+  INFO - Using MyWeblog::Model::Post, as it appears to be new.
+  INFO - Using Jifty::Model::Session, as it appears to be new.
+  INFO - Using Jifty::Model::Metadata, as it appears to be new.
+  INFO - Set up version 0.0.1, jifty version 0.80913
+  Jifty version 0.80913 up to date.
+  ...
+  MyWeblog version 0.0.1 up to date.
+
+=head2 Starting the Jifty application server
+
+Ok. You have a working, if simplistic, application.  Start up a webserver and
+have a look around.  Be sure to check out the AJAX-enabled administrative UI,
+the online documentation browser, and the Pony.
+
+  # ./bin/jifty server
+  INFO - You can connect to your server at http://localhost:8888/
+
+Please always run this command at the root directory of your Jifty applications,
+or you'll be caught by a lot of errors.
+
+For many platforms, a simple "jifty server" command works too. :)
+
+=head2 Building a user interface
+
+The administrative web does give you everything you need to work with your
+application's data, but it's not much of a weblog.
+
+=head3 Posting
+
+Create a page to post a new weblog entry:
+
+  # cd share/web/templates/
+
+Open a new file called F<post> in your text editor. Make it look like this:
+
+  <%init>
+  my $action = Jifty->web->new_action(class => 'CreatePost');
+  </%init>
+
+  <&| /_elements/wrapper, title => "Post to your weblog" &>
+  <% Jifty->web->form->start() %>
+  <% Jifty->web->form->next_page( url => '/') %>
+  <% $action->form_field('title') %>
+  <% $action->form_field('body') %>
+  <% Jifty->web->form->submit( label => 'Post' ) %>
+  <% Jifty->web->form->end() %>
+  </&>
+
+Yes, it's a template file in L<HTML::Mason> syntax. If you're not familiar with Mason,
+we recommend you to consult its online documentation for details. I<Mason templates 
+should start in the first column of the file. Particularly importantly, the C<E<lt>%initE<gt>>
+and C<E<lt>/%initE<gt>> blocks must be flush left.>
+
+=head3 Viewing
+
+It's really easy to get a I<basic> listing of entries and a little bit more
+complex to get a pretty AJAXified paged list.  Here's how to do both; you can
+decide which one works best for you.
+
+(If you cut and paste the code in the examples below, make sure it's 
+lined up in column 1, or it won't work.)
+
+=head4 The quick and dirty way
+
+Open a new file called F<index.html> in the F<share/web/templates> directory
+in your text editor. (Your webserver will
+treat the URL C</index.html> as the I<default> page for your site).  Make it
+look like this:
+
+  <%init>
+  my $posts = MyWeblog::Model::PostCollection->new();
+  $posts->unlimit();
+  </%init>
+
+  <&| /_elements/wrapper, title => Jifty->config->framework('ApplicationName') &>
+  <dl>
+  % while (my $post = $posts->next) {
+   <dt><% $post->title %></dt>
+   <dd><% $post->body %></dd>
+  % }
+  </dl>
+  </&>
+
+(Make sure to remove that leading whitespace!)
+
+=head4 The complex way that gets you lots of cool toys
+
+The I<complex way> involves using one of Jifty's advanced features: I<Page
+regions>. These regions let your application reload page sections
+independently, either using AJAX on modern high-end browsers or regular GET
+requests with downlevel browsers such as C<lynx>, C<w3m>, or the browser on
+your mobile phone.
+
+The downside of this approach is that each separate region needs to live in
+its own I<fragment> file.
+
+The complex way starts off about the same as the easy way.  Open a new file
+called F<share/web/templates/index.html> in your text editor.  Fill it with this:
+
+  <&| /_elements/wrapper, title => Jifty->config->framework('ApplicationName') &>
+
+  <% Jifty->web->region(name => "myweblog-posts",
+                        path => "/fragments/page_of_posts") %>
+  </&>
+
+If you're on the ball, you've probably already guessed that you need to create
+a file called F<share/web/templates/fragments/page_of_posts> containing:
+
+  <%args>
+  $page => 1
+  </%args>
+  <%init>
+  my $posts = MyWeblog::Model::PostCollection->new();
+  $posts->unlimit();
+  $posts->set_page_info( current_page => $page,
+                         per_page     => 15
+                       );
+  $m->out("No items found.") if ($posts->pager->total_entries == 0);
+
+  </%init>
+  % if ($posts->pager->last_page > 1) {
+     Page <% $page %> of <% $posts->pager->last_page %>
+  % }
+  <dl class="list">
+  % while (my $post = $posts->next) {
+   <dt><% $post->title %></dt>
+   <dd><% $post->body %></dd>
+  % }
+  </dl>
+
+  % if ($posts->pager->previous_page) {
+    <% Jifty->web->link( label => "Previous Page", onclick => { args => { page => $posts->pager->previous_page } } ) %>
+  % }
+  % if ($posts->pager->next_page) {
+    <% Jifty->web->link( label => "Next Page", onclick => { args => { page => $posts->pager->next_page } } ) %>
+  % }
+
+Now fire up your Jifty webserver again. Go create a post by browsing C</post>
+on your webserver. Create more than 15 posts, and notice how Jifty gives you
+AJAX C<Next Page> and C<Previous Page> buttons for you. Turn off javascript or
+view the page in lynx, and notice how the AJAX automatically falls-back to page
+loads for you. All for free, thanks to Jifty!
+
+=head3 Hey, where'd that class come from?
+
+If you're paying attention, you may have wondered about C<MyWeblog::Model::PostCollection>,
+since there's no file called F<PostCollection.pm>. By default, Jifty uses 
+C<Jifty::ClassLoader> to auto-generate a bunch of classes for you. Of course,
+you can override these definitions if you like. See L<Jifty::ClassLoader> for more details.
+
+=head2 Navigation
+
+Of course, having to remember the URL to get to the posting page is a bit
+annoying.  To get a B<Post> button in the menu, you need to override the default
+menus.
+
+Jifty's I<default> menus live in F<_elements/nav> in the default application
+template (along with the Pony).  For now, override F<_elements/nav>. (We're
+working on ways to make this better.)
+
+Inside your applications F<share/web/templates> directory, create a directory called
+F<_elements>.
+
+  mkdir share/web/templates/_elements
+
+You may want to start with the stock jifty template, in which case you
+only need to add the C<< $top->child( Post... >> part
+
+  cat $(perl -MJifty::Util -e 'print Jifty::Util->share_root' \
+    )/web/templates/_elements/nav > share/web/templates/_elements/nav
+
+Otherwise, inside F<_elements>, open up a new file called C<nav> in your
+text editor and insert:
+
+  <%init>
+  my $top = Jifty->web->navigation;
+  $top->child( Home => url => "/");
+  $top->child( Post => url => "/post", 
+                       label => "Post Article");
+  </%init>
+
+For more information about the menu system, see the documentation in
+L<Jifty::Web::Menu>.
+
+=head2 That's it!
+
+That's just about everything you need to get started building Jifty
+applications.  We're working hard to make Jifty even easier to use and
+to obsolete the I<hard bits> of this tutorial as quickly as we can.
+
+Please join us on the C<jifty-devel> mailing list to talk about how you're 
+using Jifty or what you find difficult or hard to use about it.
+
+=head1 MORE TUTORIALS
+
+=over 4
+
+=item * Managing your datastore
+
+L<Jifty::Manual::Models>
+
+=item * Doing Stuff With Jifty
+
+L<Jifty::Manual::Actions>
+
+=item * Using page regions
+
+L<Jifty::Manual::PageRegions>
+
+=item * Customized view
+
+For L<Template::Declare> views you can read L<Jifty::Plugin::ViewDeclarePage>,
+which has pretty good documentation on customizing page layouts.
+
+=item * CSS and JS
+
+L<Jifty::Manual::UsingCSSandJS>,
+L<Jifty::Manual::JavaScript>
+
+=item * Web Services
+
+See L<Jifty::Manual::TutorialRest> for a quick overview.
+
+=item * Continuations - "There And Back Again"
+
+L<Jifty::Manual::Continuations>
+
+=item * Access Control and Security
+
+L<Jifty::Manual::AccessControl>
+
+=item * Deploying your application in production
+
+L<Jifty::Manual::Deploying>
+
+=item * Upgrading your application's data model
+
+L<Jifty::Manual::Upgrading>
+
+=item * Recipes for common tasks in Jifty
+
+L<Jifty::Manual::Cookbook>
+
+=back
+
+=head1 GETTING HELP
+
+=head2 Online Help
+
+The C<jifty> command-line application comes with builtin help.
+
+  jifty help
+
+  jifty help <command>
+
+If your server is running with administration mode enabled (the
+configuration file C<AdminMode> setting is missing or non-zero), you can
+click the "Online Docs" link in your browser for an extensive list of
+per-module Jifty documentation.
+
+=head2 Joining the mailing list
+
+C<jifty-devel@lists.jifty.org> is where we discuss how we're building Jifty,
+what we're having trouble with and so on.
+
+To join the list, send mail to C<jifty-devel-subscribe@lists.jifty.org>.
+
+=head2 Browsing the wiki
+
+We have a wiki! (Actually, the wiki is Jifty's primary website)
+
+Please visit L<http://jifty.org/>, browse and contribute.
+
+The wiki is powered by I<Wifty>, a Wiki built on Jifty. Its code is freely 
+available from the jifty subversion repository.
+
+=head1 REPORTING BUGS
+
+At this incredibly early stage in its life, please report bugs in Jifty
+to C<jifty-devel@lists.jifty.org>.
+
+=cut
