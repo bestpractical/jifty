@@ -72,7 +72,7 @@ requires('String::BufferStack' => '1.12');
 requires('String::Koremutake');
 requires('SUPER');
 requires('SQL::ReservedWords');
-requires('Template::Declare' => '0.35');                # Template::Declare::Tags
+requires('Template::Declare' => '0.36');                # Template::Declare::Tags
 requires('Test::Base');
 requires('Test::LongString');
 requires('Test::More' => 0.62 ),
