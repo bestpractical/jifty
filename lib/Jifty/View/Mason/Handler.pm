@@ -162,8 +162,15 @@ sub escape_uri {
 
 =head2 template_exists COMPONENT
 
-A convenience method for $self->interp->comp_exists().  
-(Jifty uses this method as part of its standard Templating system API).
+Checks if the C<COMPONENT> exists, or if C<COMPONENT/index.html>
+exists, and returns which one did.  If neither did, it seaches for
+C<dhandler> components which could match, returning C<COMPONENT> if it
+finds one.  Finally, if it finds no possible component matches,
+returns undef.
+
+Note that this algorithm does not actually decisively return if Mason
+I<will> handle a given component; the I<dhandler>s could defer
+handling, for instance.
 
 =cut
 
@@ -171,13 +178,14 @@ sub template_exists {
     my $self = shift;
     my ($component) = @_;
     $component =~ s{^/*}{/};
-    return 1 if $self->interp->comp_exists($component);
+    return $component if $self->interp->comp_exists($component);
+    return "$component/index.html" if $self->interp->comp_exists("$component/index.html");
 
     my $dhandler = $self->interp->dhandler_name;
     $dhandler = "dhandler" unless defined $dhandler;
     return if defined $dhandler and not length $dhandler;
-    return 1 if $self->interp->find_comp_upwards($component, $dhandler);
-    return 0;
+    return $component if $self->interp->find_comp_upwards($component, $dhandler);
+    return undef;
 }
 
 

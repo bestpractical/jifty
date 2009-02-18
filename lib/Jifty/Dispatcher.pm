@@ -803,10 +803,8 @@ sub _do_show {
     # path given does not exist.  Cache the handler and path.
     if ( not exists $TEMPLATE_CACHE{$path} or Jifty->config->framework('DevelMode')) {
         my $handler;
-        if ( $handler = $self->template_exists( $path ) ) {
+        if ( $handler = $self->template_exists( \$path ) ) {
             $TEMPLATE_CACHE{$path} = [ $path, $handler ];
-        } elsif ( $handler = $self->template_exists( $path . "/index.html" ) ) {
-            $TEMPLATE_CACHE{$path} = [ $path . "/index.html", $handler ];
         } else {
             $TEMPLATE_CACHE{$path} = [];
         }
@@ -1201,14 +1199,21 @@ root. This checks for both Template::Declare and HTML::Mason
 Templates.  Specifically, returns a reference to the handler which can
 process the template.
 
+If PATH is a I<reference> to the path, it will update the path to
+append C</index.html> if the path in question doesn't exist, bit the
+index does.
+
 =cut
 
 sub template_exists {
     my $self     = shift;
     my $template = shift;
 
+    my $value = ref $template ? $$template : $template;
+
     foreach my $handler ( Jifty->handler->view_handlers) {
-        if ( Jifty->handler->view($handler)->template_exists($template) ) {
+        if ( my $path = Jifty->handler->view($handler)->template_exists($value) ) {
+            $$template = $path if ref $template;
             return Jifty->handler->view($handler);
         }
     }
@@ -1243,7 +1248,7 @@ sub render_template {
             my @handlers = map {Jifty->handler->view($_)} Jifty->handler->view_handlers;
             push @handlers, Jifty->handler->fallback_view_handler;
             foreach my $handler_class ( @handlers  ) {
-                next unless $handler_class->template_exists($template);
+                next unless $handler_class->template_exists(\$template);
                 $handler_class->show($template);
                 $showed = 1;
                 last;

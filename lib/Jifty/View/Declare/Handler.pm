@@ -85,14 +85,19 @@ sub show {
 
 =head2 template_exists TEMPLATENAME
 
-Given a template name, returns true if the template is in any of our
-Template::Declare template libraries. Otherwise returns false.
+Given a template name, returns a valid template path (either
+C<TEMPLATENAME> or C<TEMPLATENAME/index.html>) if the template is in
+any of our Template::Declare template libraries. Otherwise returns
+false.
 
 =cut
 
 sub template_exists {
-    my $pkg =shift;
-    return Template::Declare->resolve_template(@_);
+    my $pkg = shift;
+    my $template = shift;
+    return $template if Template::Declare->resolve_template($template);
+    return "$template/index.html" if Template::Declare->resolve_template("$template/index.html");
+    return undef;
 }
 
 package HTML::Mason::Exception;
