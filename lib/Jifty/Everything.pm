@@ -95,9 +95,9 @@ use Jifty::Module::Pluggable;
 # we do the actual load in Jifty::Script
 Jifty::Module::Pluggable->import(
     search_path => ['Jifty::Plugin'],
-    file_regex  => qr{/Command/[^/]+},
+    file_regex  => qr{/Command/[^/]+\.pm},
     require     => 1,
-    sub_name    => "plugin_commands"
+    sub_name    => "plugin_commands",
 );
 
 =head1 SEE ALSO
