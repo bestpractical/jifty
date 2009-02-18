@@ -12,8 +12,8 @@ sub log {
     my $self = shift;
     my $plugin = Jifty->find_plugin("Jifty::Plugin::TestServerWarnings");
     my $message = $_[0]{message};
-    my @messages = ref $message eq "ARRAY" ? @{$message} : ($message);
-    $plugin->add_warnings(@messages);
+    $message = join('',@{$message}) if ref $message eq "ARRAY";
+    $plugin->add_warnings($message);
 }
 
 1;
