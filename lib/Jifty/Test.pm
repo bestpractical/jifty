@@ -179,6 +179,7 @@ sub setup {
     require Jifty::Server;
     require Jifty::Script::Schema;
 
+    $args ||= [];
     my %args = @{$args} % 2 ? (@{$args}, 1) : @{$args};
     $class->builder->{no_handle} = $args{no_handle};
 
