@@ -11,8 +11,5 @@ my $URL  = $server->started_ok;
 my $mech = Jifty::Test::WWW::Mechanize->new;
 $mech->get_ok($URL . '/foo');
 
-TODO: {
-    local $TODO = "we haven't fixed this yet";
-    $mech->content_like(qr{this is foo/index.html});
-    $mech->content_unlike(qr{this is foo/dhandler});
-}
+$mech->content_like(qr{this is foo/index.html});
+$mech->content_unlike(qr{this is foo/dhandler});
