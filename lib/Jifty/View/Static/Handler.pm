@@ -147,7 +147,10 @@ An alias for L</file_path>.
 =cut
 
 sub template_exists {
-    shift->file_path(@_);
+    my $class = shift;
+    my $template = shift;
+    return $template if $class->file_path($template);
+    return undef;
 }
 
 sub file_path {
