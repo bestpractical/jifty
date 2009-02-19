@@ -55,7 +55,6 @@ framework:
   SkipAccessControl: 0
   TemplateClass: TestApp::Plugin::Attributes::View
   View: 
-    FallbackHandler: Jifty::View::Mason::Handler
     Handlers: 
       - Jifty::View::Static::Handler
       - Jifty::View::Declare::Handler

@@ -1200,10 +1200,7 @@ sub template_exists {
 
     my $value = ref $template ? $$template : $template;
 
-    my @handlers = map {Jifty->handler->view($_)} Jifty->handler->view_handlers;
-    push @handlers, Jifty->handler->fallback_view_handler;
-
-    foreach my $handler ( @handlers ) {
+    foreach my $handler ( map {Jifty->handler->view($_)} Jifty->handler->view_handlers ) {
         if ( my $path = $handler->template_exists($value) ) {
             $$template = $path if ref $template;
             return $handler;

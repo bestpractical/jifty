@@ -29,7 +29,6 @@ framework:
   SkipAccessControl: 0
   TemplateClass: TestApp::Mason::View
   View: 
-    FallbackHandler: Jifty::View::Mason::Handler
     Handlers: 
       - Jifty::View::Mason::Handler
   Web: 

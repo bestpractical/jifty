@@ -31,7 +31,6 @@ framework:
   SkipAccessControl: 0
   TemplateClass: Multipage::View
   View: 
-    FallbackHandler: Jifty::View::Mason::Handler
     Handlers: 
       - Jifty::View::Static::Handler
       - Jifty::View::Declare::Handler

@@ -105,33 +105,20 @@ You can override this by specifying:
 =cut
 
 sub view_handlers {
-    @{Jifty->config->framework('View')->{'Handlers'}}
+    my @default = @{Jifty->config->framework('View')->{'Handlers'}};
+
+    # If there's a (deprecated) fallback handler, and it's not already
+    # in our set of handlers, tack it on the end
+    my $fallback = Jifty->config->framework('View')->{'FallbackHandler'};
+    push @default, $fallback if defined $fallback and not grep {$_ eq $fallback} @default;
+
+    return @default;
 }
 
-
-=head2 fallback_view_handler
-
-Returns the object for our "last-resort" view handler. By default, this is the L<HTML::Mason> handler.
-
-You can override this by specifying: 
-
-  framework:
-      View:
-         FallbackHandler: Jifty::View::Something::Handler
-
-=cut
-
-
-
-sub fallback_view_handler { 
-   my $self = shift; 
-   return $self->view(Jifty->config->framework('View')->{'FallbackHandler'}); 
-}
 
 =head2 setup_view_handlers
 
 Initialize all of our view handlers. 
-
 
 =cut
 
@@ -145,7 +132,6 @@ sub setup_view_handlers {
 }
 
 =head2 view ClassName
-
 
 Returns the Jifty view handler for C<ClassName>.
 

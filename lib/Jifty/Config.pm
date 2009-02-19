@@ -467,7 +467,6 @@ sub guess {
             L10N       => { PoDir => "share/po", },
 
             View => {
-                FallbackHandler => 'Jifty::View::Mason::Handler',
                 Handlers => [
                     'Jifty::View::Static::Handler',
                     'Jifty::View::Declare::Handler',
@@ -541,7 +540,7 @@ sub update_config {
         # These are the plugins which old apps expect because their
         # features used to be in the core.
         unshift (@{$config->{'framework'}->{'Plugins'}}, 
-            { SkeletonApp            => {}, },
+            { SkeletonApp        => {}, },
             { REST               => {}, },
             { Halo               => {}, },
             { ErrorTemplates     => {}, },
