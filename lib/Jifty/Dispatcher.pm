@@ -799,18 +799,7 @@ sub _do_show {
     $self->render_template('/errors/500')
         if $abs_template_path !~ /^\Q$abs_root_path\E/;
 
-    # When we're requesting a directory, go looking for the index.html if the 
-    # path given does not exist.  Cache the handler and path.
-    if ( not exists $TEMPLATE_CACHE{$path} or Jifty->config->framework('DevelMode')) {
-        my $handler;
-        if ( $handler = $self->template_exists( \$path ) ) {
-            $TEMPLATE_CACHE{$path} = [ $path, $handler ];
-        } else {
-            $TEMPLATE_CACHE{$path} = [];
-        }
-    }
-
-    $self->render_template( @{$TEMPLATE_CACHE{$path} } );
+    $self->render_template( $path );
 
     last_rule;
 }
@@ -1211,22 +1200,25 @@ sub template_exists {
 
     my $value = ref $template ? $$template : $template;
 
-    foreach my $handler ( Jifty->handler->view_handlers) {
-        if ( my $path = Jifty->handler->view($handler)->template_exists($value) ) {
+    my @handlers = map {Jifty->handler->view($_)} Jifty->handler->view_handlers;
+    push @handlers, Jifty->handler->fallback_view_handler;
+
+    foreach my $handler ( @handlers ) {
+        if ( my $path = $handler->template_exists($value) ) {
             $$template = $path if ref $template;
-            return Jifty->handler->view($handler);
+            return $handler;
         }
     }
     return undef;
 }
 
 
-=head2 render_template PATH, [HANDLER]
+=head2 render_template PATH
 
-Use our templating system to render a template.  If C<HANDLER> is
-provided, uses it to render the template.  Otherwise, searches through
+Use our templating system to render a template.  Searches through
 L<Jifty::Handler/view_handlers> to find the first handler which
-provides the given template.
+provides the given template, and caches the handler for future
+requests.
 
 Catches errors, and redirects to C</errors/500>; also shows
 C</errors/404> if the template cannot be found.
@@ -1236,24 +1228,32 @@ C</errors/404> if the template cannot be found.
 sub render_template {
     my $self     = shift;
     my $template = shift;
-    my $handler  = shift;
-    my $showed   = 0;
+    my $handler;
+
+    # Look for a possible handler, and cache it for future requests.
+    # With DevelMode, always look it up.
+    if ( not exists $TEMPLATE_CACHE{$template} or Jifty->config->framework('DevelMode')) {
+        my $found = $template;
+        $handler = $self->template_exists( \$found );
+        # We don't cache failing URLs, so clients' can't cause us to
+        # chew up memory by requesting 404's
+        $TEMPLATE_CACHE{$template} = [ $found, $handler ] if $handler;
+    }
+
+    # Dig out the actual template (which could have a "/index.html" on
+    # it, or what have you) and its handler.
+    ($template, $handler) = @{$TEMPLATE_CACHE{$template} || [$template, undef] };
+
+    # Handle 404's
+    unless ($handler) {
+        return $self->render_template("/errors/404") unless defined $template and $template eq "/errors/404";
+        $self->log->warn("Can't find 404 page!");
+        $self->_abort;
+    }
 
     my $start_depth = Jifty->handler->buffer->depth;
     eval {
-        if ($handler) {
-            $handler->show($template);
-            $showed = 1;
-        } elsif (defined $template) {
-            my @handlers = map {Jifty->handler->view($_)} Jifty->handler->view_handlers;
-            push @handlers, Jifty->handler->fallback_view_handler;
-            foreach my $handler_class ( @handlers  ) {
-                next unless $handler_class->template_exists(\$template);
-                $handler_class->show($template);
-                $showed = 1;
-                last;
-            }
-        }
+        $handler->show($template);
     };
 
     # Handle parse errors
@@ -1285,12 +1285,6 @@ sub render_template {
         die $err;
     }
 
-    # Handle 404's
-    unless ($showed) {
-        return $self->render_template("/errors/404") unless defined $template and $template eq "/errors/404";
-        $self->log->warn("Can't find 404 page!");
-        $self->_abort;
-    }
 }
 
 
