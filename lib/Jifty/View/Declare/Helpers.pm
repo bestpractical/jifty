@@ -177,7 +177,7 @@ sub page_class {
 Takes a subroutine reference or block of perl as its only argument and renders it as a Jifty C<form>,
 for example:
 
-    new_action class => 'CreateTask';
+    my $action = new_action class => 'CreateTask';
     form {
         form_next_page url => '/';
         render_action $action;
