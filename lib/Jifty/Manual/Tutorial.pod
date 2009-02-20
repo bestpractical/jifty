@@ -126,7 +126,7 @@ have to touch this directory.
 =item share/web/po
 
 Jifty supports internationalization. F<share/web/po/> is where your
-translations will go.
+translations ("portable object templates") will go.
 
 =item share/web/templates
 
