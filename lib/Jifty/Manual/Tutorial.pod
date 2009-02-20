@@ -245,36 +245,35 @@ Add the lines:
 
 Save your model class.
 
-=head2 Setting up the database
-
-Ok. It's time to initialize MyWeblog's database. By default, Jifty sets up your
-application with the SQLite database engine.  If you'd rather use PostgreSQL or
-MySQL, you need to add some content to F<etc/config.yml>. (See L<Jifty::Config>
-for a bit more information).
-
-  # jifty schema --setup
-  INFO - Generating SQL for application MyWeblog...
-  INFO - Using MyWeblog::Model::Post, as it appears to be new.
-  INFO - Using Jifty::Model::Session, as it appears to be new.
-  INFO - Using Jifty::Model::Metadata, as it appears to be new.
-  INFO - Set up version 0.0.1, jifty version 0.80913
-  Jifty version 0.80913 up to date.
-  ...
-  MyWeblog version 0.0.1 up to date.
-
 =head2 Starting the Jifty application server
 
-Ok. You have a working, if simplistic, application.  Start up a webserver and
-have a look around.  Be sure to check out the AJAX-enabled administrative UI,
-the online documentation browser, and the Pony.
+You now have a working, if simplistic, application. Start up the Jifty web
+server by typing C<jifty server>.
 
-  # ./bin/jifty server
-  INFO - You can connect to your server at http://localhost:8888/
+The first thing you'll see is that Jifty notices you have no database, so it
+creates one for you. By default, Jifty sets up your application with the SQLite
+database engine. If you'd rather use PostgreSQL or MySQL, you need to add some
+content to F<etc/config.yml>. (See L<Jifty::Config> for a bit more
+information).
 
-Please always run this command at the root directory of your Jifty applications,
-or you'll be caught by a lot of errors.
+    # jifty server
+    WARN - Application schema has no version in the database.
+    WARN - Automatically creating your database.
+    INFO - Generating SQL for application MyWeblog...
+    INFO - Using MyWeblog::Model::Post, as it appears to be new.
+    INFO - Using Jifty::Model::Session, as it appears to be new.
+    INFO - Using Jifty::Model::Metadata, as it appears to be new.
+    INFO - Set up version 0.0.1, jifty version 0.81208
+    INFO - You can connect to your server at http://localhost:8888/
 
-For many platforms, a simple "jifty server" command works too. :)
+Everything but the last time was database setup information you'll only see
+when Jifty changes your database.
+
+The last line tells you the URL you can go to with your web browser. Have a
+look around. Be sure to check out the AJAX-enabled administrative UI, the
+online documentation browser, and the Pony.
+
+For some platforms, you may have to type "./bin/jifty server".
 
 =head2 Building a user interface
 
