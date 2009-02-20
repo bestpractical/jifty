@@ -111,7 +111,7 @@ features(
         recommends('DBD::SQLite' => 1.11 ),
         recommends('Test::Base' => 0.44 ),            # Test::Base::Filter
         recommends('Module::Install::Admin' => '0.50'),
-        ($^O ne 'MSWin32' ? recommends('Test::HTTP::Server::Simple' => '0.02' ) : ()),
+        recommends('Test::HTTP::Server::Simple' => '0.10' ),
         recommends('Test::HTML::Lint'),
         recommends('Test::MockModule' => '0.05'),
         recommends('Test::MockObject' => '1.07'),
