@@ -335,7 +335,6 @@ sub make_body {
                 $self->render_as_subrequest(\%arguments);
             }
             $buffer->append(qq|</div>|);
-            $self->exit;
             return;
         }
     }
