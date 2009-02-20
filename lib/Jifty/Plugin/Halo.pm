@@ -29,13 +29,6 @@ sub init {
     return if $self->_pre_init;
     return unless Jifty->config->framework('DevelMode');
 
-    # 0.28 added around_template instrumentation
-    eval { Template::Declare->VERSION('0.28'); 1 }
-        or do {
-            $self->log->debug("Template::Declare 0.28 required for TD halos.");
-            return;
-        };
-
     warn "Overwriting an existing Template::Declare->around_template"
         if Template::Declare->around_template;
 
