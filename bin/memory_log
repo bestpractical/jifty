@@ -7,13 +7,21 @@ use YAML::Syck 'LoadFile';
 die "No files to analyze" if @ARGV == 0;
 
 my @hits;
+my @deaths;
 
 for my $logfile (@ARGV) {
     my @entries = LoadFile($logfile);
     for (my $i = 1; $i < @entries; ++$i) {
+        if (!defined($entries[$i]{memory})) {
+            # died during request
+            push @deaths, $entries[$i]{ENV}{PATH_INFO};
+            next;
+        }
+
         my $delta_memory = $entries[$i]{memory} - $entries[$i-1]{memory};
         my $path = $entries[$i]{ENV}{PATH_INFO};
-        push @hits, [$delta_memory, $path] if $delta_memory != 0;
+        my $took = $entries[$i]{took};
+        push @hits, [$delta_memory, $path, $took] if $delta_memory != 0;
     }
 }
 
@@ -29,6 +37,13 @@ for my $hit (sort { $b->[0] <=> $a->[0] } @hits) {
     $human_readable = ($hit->[0] > 0 ? '+' : '-')
                     . $human_readable;
 
-    print "$hit->[1]: $human_readable\n";
+    print "$hit->[1]: $human_readable, took $hit->[2]\n";
+}
+
+if (@deaths) {
+    print "I died while processing the following URLs:\n";
+    for my $death (@deaths) {
+        print "$death\n";
+    }
 }
 
