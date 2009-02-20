@@ -278,33 +278,31 @@ For some platforms, you may have to type "./bin/jifty server".
 =head2 Building a user interface
 
 The administrative web does give you everything you need to work with your
-application's data, but it's not much of a weblog.
+application's data. You can create, update, and delete posts. However, it's not
+much of a weblog.
 
 =head3 Posting
 
-Create a page to post a new weblog entry:
+Let's start building our user interface with a page to create new posts.
 
-  # cd share/web/templates/
+Open a new file called F<lib/MyWeblog/View.pm> in your text editor. Make it
+look like this:
 
-Open a new file called F<post> in your text editor. Make it look like this:
-
-  <%init>
-  my $action = Jifty->web->new_action(class => 'CreatePost');
-  </%init>
-
-  <&| /_elements/wrapper, title => "Post to your weblog" &>
-  <% Jifty->web->form->start() %>
-  <% Jifty->web->form->next_page( url => '/') %>
-  <% $action->form_field('title') %>
-  <% $action->form_field('body') %>
-  <% Jifty->web->form->submit( label => 'Post' ) %>
-  <% Jifty->web->form->end() %>
-  </&>
-
-Yes, it's a template file in L<HTML::Mason> syntax. If you're not familiar with Mason,
-we recommend you to consult its online documentation for details. I<Mason templates 
-should start in the first column of the file. Particularly importantly, the C<E<lt>%initE<gt>>
-and C<E<lt>/%initE<gt>> blocks must be flush left.>
+  package MyWeblog::View;
+  use strict;
+  use warnings;
+  use Jifty::View::Declare -base;
+  
+  template post => page { title => "Post Entry" } content {
+      my $action = new_action(class => 'CreatePost');
+  
+      form {
+          render_action $action;
+          form_submit(label => 'Post');
+      }
+  };
+  
+  1;
 
 =head3 Viewing
 
