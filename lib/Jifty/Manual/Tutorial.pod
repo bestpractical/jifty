@@ -67,27 +67,32 @@ Jifty application. (Jifty will create a subdirectory for you).
 
   # jifty app --name MyWeblog
   Creating new application MyWeblog
-  Creating directory lib
-  Creating directory lib/MyWeblog
-  Creating directory bin
-  Creating directory etc
-  Creating directory doc
-  Creating directory log
-  Creating directory var
-  Creating directory var/mason
-  Creating directory share
-  Creating directory share/po
-  Creating directory share/web
-  Creating directory share/web/templates
-  Creating directory share/web/static
-  Creating directory lib/MyWeblog/Model
-  Creating directory lib/MyWeblog/Action
-  Creating directory t
+  Creating directory MyWeblog/lib
+  Creating directory MyWeblog/lib/MyWeblog
+  Creating directory MyWeblog/bin
+  Creating directory MyWeblog/etc
+  Creating directory MyWeblog/doc
+  Creating directory MyWeblog/log
+  Creating directory MyWeblog/var
+  Creating directory MyWeblog/var/mason
+  Creating directory MyWeblog/share
+  Creating directory MyWeblog/share/po
+  Creating directory MyWeblog/share/web
+  Creating directory MyWeblog/share/web/templates
+  Creating directory MyWeblog/share/web/static
+  Creating directory MyWeblog/lib/MyWeblog/Model
+  Creating directory MyWeblog/lib/MyWeblog/Action
+  Creating directory MyWeblog/t
   Creating configuration file MyWeblog/etc/config.yml
 
 Let's take those one by one.
 
 =over
+
+=item lib
+
+Inside F<lib/> is where all of your application code goes. Your application
+generally consists of a set of classes.
 
 =item bin
 
@@ -100,8 +105,8 @@ webserver. To find out what commands your F<jifty> comes with, run:
 
 =item etc
 
-Configuration files live in F<etc/>, though if you don't have a config
-file, Jifty will supply some sane defaults.
+Configuration files live in F<etc/>. Jifty creates a basic config
+file for your application.
 
 =item doc
 
@@ -113,22 +118,33 @@ write your docs, put them in F<doc/>.
 Jifty uses L<Log::Log4perl> to configure its logging. By default, it
 dumps logs named F<server.log> and F<error.log> into the F<log> directory.
 
+=item var
+
+Jifty stores cache files here while the server is running. You shouldn't ever
+have to touch this directory.
+
+=item share/web/po
+
+Jifty supports internationalization. F<share/web/po/> is where your
+translations will go.
+
 =item share/web/templates
 
-Jifty uses L<HTML::Mason> as its primary templating system.  Put
-your application's templates into F<share/web/templates/>.  Out of
-the box, Jifty comes with an application I<skeleton> that it installs
-in F<share/web/templates/>.  This default application is a convenient
-way to get a basic application up and running quickly, but probably
-needs some customization as you build a more advanced application.
+Though modern Jifty applications are encouraged to use L<Template::Declare>
+for templating, we also support L<HTML::Mason> templates. Put your
+application's Mason templates into F<share/web/templates/>. Out of the
+box, Jifty comes with an application I<skeleton> that it installs in
+F<share/web/templates/>. This default application is a convenient way to
+get a basic application up and running quickly, but probably needs some
+customization as you build a more advanced application.
 
 You can find where Perl stuck Jifty's default templates with:
 
-  perl -MJifty::Util -e 'print Jifty::Util->share_root'
+  perl -MJifty::Util -le 'print Jifty::Util->share_root'
 
 =item share/web/static
 
-Some nontrivial percentage of the I<stuff> your web application serves
+Some nontrivial percentage of the content your web application serves
 out doesn't need to (or I<shouldn't>) pass through your templating
 engine.
 
@@ -141,18 +157,18 @@ place Jifty stuck its default templates.
 
 =item lib/MyWeblog
 
-For a full treatment of the Jifty object model see
-L<Jifty::Manual::ObjectModel>.
-
 To build a basic Jifty application, you only need to worry about two
 sorts of classes, B<Models> and B<Actions>.
 
 =item lib/MyWeblog/Model
 
 The real base of your application lives in
-C<lib/B<ApplicationName>/Model>. Classes here define your application's data
+C<lib/MyWeblog/Model>. Classes here define your application's data
 structures and how they relate to each other.  Jifty will use your model
 classes to set up and upgrade your database's schema when it needs to.
+
+For a full treatment of the Jifty object model see
+L<Jifty::Manual::ObjectModel>.
 
 =item lib/MyWeblog/Action
 
@@ -163,14 +179,9 @@ your B<Models>, but they're there if you want to change anything.
 
 =item t
 
-Jifty starts off your application with a basic harness, but can't yet write 
+Jifty starts off your application with a basic harness, but can't yet write
 all your tests for you. (It does, however, build simple tests for model
 classes you generate.)
-
-=item var
-
-Jifty stores cache files here while the server is running. You shouldn't ever
-have to touch this directory.
 
 =back
 
