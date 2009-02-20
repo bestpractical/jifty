@@ -20,7 +20,7 @@ Here's what you need to have installed -- at least when we write it.
 No bones about it. We believe pretty strongly in the DRY (Don't Repeat
 Yourself) principle. That's one of the big reasons we love Perl and
 CPAN. Jifty makes use of lots of amazing code from CPAN.  At last count,
-it directly depended on 60 packages from CPAN.  Most of these libraries
+it directly depended on 100 packages from CPAN.  Most of these libraries
 are cross-platform pure-Perl packages and should run great out of the
 box on any platform you can get Perl onto.
 
