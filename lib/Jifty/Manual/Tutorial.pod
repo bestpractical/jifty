@@ -241,7 +241,7 @@ Add the lines:
   column body => 
         type is 'text',
         label is 'Content',
-        render_as 'Textarea';
+        render as 'Textarea';
 
 Save your model class.
 
