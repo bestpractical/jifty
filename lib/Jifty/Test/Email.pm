@@ -51,7 +51,7 @@ sub mail_ok (&@) {
 
         my $te = Email::Abstract->new($msg)->cast('MIME::Entity');
         bless $te, 'Test::Email';
-        $te->ok($spec, "email matched");
+        $te->ok($spec, "email matched") or diag $msg->as_string;
     }
     Jifty::Test->setup_mailbox;
 }
