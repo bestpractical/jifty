@@ -735,7 +735,7 @@ sub redirect {
         # PATH_INFO, which is what $request->path is normally set to.
         # We should replicate that here.
         $request->path( URI::Escape::uri_unescape( $page->url ) );
-
+        $request->request_method("GET"); # ..effectively.
         $request->continuation($self->request->continuation);
         my $cont = Jifty::Continuation->new(
             request  => $request,
