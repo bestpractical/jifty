@@ -102,16 +102,19 @@ of Jifty and it's plugins.
 sub share_root {
     my $self = shift;
 
-    
-    Jifty::Util->require('File::ShareDir');
-    $SHARE_ROOT ||=  eval { File::Spec->rel2abs( File::ShareDir::module_dir('Jifty') )};
-    if (not $SHARE_ROOT or not -d $SHARE_ROOT) {
-        # XXX TODO: This is a bloody hack
-        # Module::Install::ShareDir and File::ShareDir don't play nicely
-        # together
-        my @root = File::Spec->splitdir($self->jifty_root); # lib
-        pop @root; # Jifty-version
-        $SHARE_ROOT = File::Spec->catdir(@root,"share");
+    unless ($SHARE_ROOT) {
+        my @root = File::Spec->splitdir( $self->jifty_root );
+
+        if ( $root[-2] ne 'blib' && $root[-1] eq 'lib' ) {
+
+            # so it's -Ilib in the Shipwright's source dir
+            $root[-1] = 'share';
+        }
+        else {
+            push @root, qw/auto share dist Jifty/;
+        }
+
+        $SHARE_ROOT = File::Spec->catdir(@root);
     }
     return ($SHARE_ROOT);
 }
