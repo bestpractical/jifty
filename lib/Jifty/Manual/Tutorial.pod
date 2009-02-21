@@ -315,24 +315,23 @@ lined up in column 1, or it won't work.)
 
 =head4 The quick and dirty way
 
-Open a new file called F<index.html> in the F<share/web/templates> directory
-in your text editor. (Your webserver will
-treat the URL C</index.html> as the I<default> page for your site).  Make it
-look like this:
+Open your F<lib/MyWeblog/View.pm> file and add this between the C<post>
+template and the "1;" at the very end of the file:
 
-  <%init>
-  my $posts = MyWeblog::Model::PostCollection->new();
-  $posts->unlimit();
-  </%init>
+  template '/' => page {
+      my $posts = MyWeblog::Model::PostCollection->new;
+      $posts->unlimit;
+  
+      dl {
+          while (my $post = $posts->next) {
+              dt { $post->title }
+              dd { $post->body  }
+          }
+      }
+  };
 
-  <&| /_elements/wrapper, title => Jifty->config->framework('ApplicationName') &>
-  <dl>
-  % while (my $post = $posts->next) {
-   <dt><% $post->title %></dt>
-   <dd><% $post->body %></dd>
-  % }
-  </dl>
-  </&>
+Now when you go to C<http://localhost:8888>, you'll be greeted with all of
+your blog posts.
 
 (Make sure to remove that leading whitespace!)
 
