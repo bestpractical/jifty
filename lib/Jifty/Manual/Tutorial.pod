@@ -33,7 +33,7 @@ one go.  Don't worry, it will ask you first before it makes any changes.
 On most systems you can use Perl's bundled CPAN module to download
 and install Jifty:
 
-  # perl -MCPAN -e"install Jifty"
+  # perl -MCPAN -e'install Jifty'
 
 If you've downloaded a C<.tar.gz> of Jifty, you can do a
 manual install:
@@ -293,7 +293,7 @@ look like this:
   use warnings;
   use Jifty::View::Declare -base;
   
-  template post => page { title => "Post Entry" } content {
+  template post => page { title => 'Post Entry' } content {
       my $action = new_action(class => 'CreatePost');
   
       form {
@@ -309,9 +309,6 @@ look like this:
 It's really easy to get a I<basic> listing of entries and a little bit more
 complex to get a pretty AJAXified paged list.  Here's how to do both; you can
 decide which one works best for you.
-
-(If you cut and paste the code in the examples below, make sure it's 
-lined up in column 1, or it won't work.)
 
 =head4 The quick and dirty way
 
@@ -333,21 +330,19 @@ template and the "1;" at the very end of the file:
 Now when you go to C<http://localhost:8888>, you'll be greeted with all of
 your blog posts.
 
-(Make sure to remove that leading whitespace!)
-
 =head4 The complex way that gets you lots of cool toys
 
-The I<complex way> involves using one of Jifty's advanced features: I<Page
-regions>. These regions let your application reload page sections
+The I<complex way> involves using one of Jifty's advanced features:
+I<Page regions>. These regions let your application reload page sections
 independently, either using AJAX on modern high-end browsers or regular GET
-requests with downlevel browsers such as C<lynx>, C<w3m>, or the browser on
-your mobile phone.
+requests with downlevel browsers such as C<lynx> and C<w3m>.
 
 The downside of this approach is that each separate region needs to live in
-its own I<fragment> file.
+its own template.
 
-The complex way starts off about the same as the easy way.  Open a new file
-called F<share/web/templates/index.html> in your text editor.  Fill it with this:
+The complex way starts off about the same as the easy way. Replace (or add, if
+you shied away from simplicity) the '/' template in your
+F<lib/MyWeblog/View.pm>:
 
   <&| /_elements/wrapper, title => Jifty->config->framework('ApplicationName') &>
 
