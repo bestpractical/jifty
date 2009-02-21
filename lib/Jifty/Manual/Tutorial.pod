@@ -260,8 +260,8 @@ information.)
     INFO - Set up version 0.0.1, jifty version 0.81208
     INFO - You can connect to your server at http://localhost:8888/
 
-Everything but the last line was database setup information you'll only see
-when Jifty changes your database.
+Everything but the last line was database setup information that you'll only
+see when Jifty changes your database.
 
 The last line tells you the URL you can go to with your web browser. Have a
 look around. Be sure to check out the AJAX-enabled administrative UI, the
@@ -310,9 +310,11 @@ Open your F<lib/MyWeblog/View.pm> file and add this between the C<post>
 template and the "1;" at the very end of the file:
 
   template '/' => page {
+      # Get all posts.
       my $posts = MyWeblog::Model::PostCollection->new;
       $posts->unlimit;
   
+      # Display each post in a <dl>.
       dl {
           while (my $post = $posts->next) {
               dt { $post->title }
@@ -332,7 +334,7 @@ independently, either using AJAX on modern high-end browsers or regular GET
 requests with downlevel browsers such as C<lynx> and C<w3m>.
 
 The downside of this approach is that each separate region needs to live in
-its own template.
+its own template. Happily, this is a good design practice even without regions.
 
 The complex way starts off about the same as the easy way. Replace (or add, if
 you shied away from simplicity) the '/' template in your
@@ -349,22 +351,27 @@ If you're on the ball, you've probably already guessed that you need to create
 a template called C</fragments/page_of_posts>. Make it contain the following:
 
   template '/fragments/page_of_posts' => sub {
+      # Retrieve the current page argument, defaulting to 1.
       my $page = get('page') || 1;
       
+      # Get all posts.
       my $posts = MyWeblog::Model::PostCollection->new;
       $posts->unlimit;
       
+      # Display up to three posts on the current page.
       $posts->set_page_info(
           current_page => $page,
           per_page     => 3,
       );
   
+      # Notify the user what page they're on if there are multiple.
       if ($posts->pager->last_page > 1) {
           p { "Page $page of " . $posts->pager->last_page }
       }
   
+      # Display the current page of posts.
       dl {
-          attr { class => "list" };
+          attr { class => 'list' };
   
           while (my $post = $posts->next) {
               dt { $post->title }
@@ -372,9 +379,11 @@ a template called C</fragments/page_of_posts>. Make it contain the following:
           }
       };
   
+      # Previous page link, the 'page' argument here will set a new value when
+      # this region is invoked again.
       if ($posts->pager->previous_page) {
           hyperlink(
-              label => "Previous Page",
+              label => 'Previous Page',
               onclick => {
                   args => {
                       page => $posts->pager->previous_page,
@@ -383,9 +392,10 @@ a template called C</fragments/page_of_posts>. Make it contain the following:
           );
       }
   
+      # Next page link.
       if ($posts->pager->next_page) {
           hyperlink(
-              label => "Next Page",
+              label => 'Next Page',
               onclick => {
                   args => {
                       page => $posts->pager->next_page,
@@ -404,10 +414,9 @@ you. All for free, thanks to Jifty!
 =head3 Hey, where'd that class come from?
 
 You may have wondered about C<MyWeblog::Model::PostCollection>, since there's
-no file called F<PostCollection.pm>. By default, Jifty uses
-C<Jifty::ClassLoader> to auto-generate a bunch of classes for you. Of course,
-you can override these definitions if you like. See L<Jifty::ClassLoader> for
-more details.
+no file called F<PostCollection.pm>. Jifty uses C<Jifty::ClassLoader> to
+auto-generate a bunch of classes for you. Of course, you can override these
+definitions if you like. See L<Jifty::ClassLoader> for more details.
 
 =head2 Navigation
 
@@ -415,7 +424,12 @@ Of course, having to remember the URL to get to the posting page is a bit
 annoying. To get a B<Post> button in the menu, you need to override the default
 menus.
 
-Open up a new file called F<lib/MyWeblog/Dispatcher.pm> and stick this into it:
+We're going to set up a dispatcher for your weblog. A dispatcher handles "doing
+things" based on the URL of each incoming request. We can set up additional
+menu items by adding them in a "before rendering any template" dispatcher rule.
+
+Open up a new file called F<lib/MyWeblog/Dispatcher.pm> and stick this content
+into it:
 
   package MyWeblog::Dispatcher;
   use strict;
