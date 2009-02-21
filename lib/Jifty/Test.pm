@@ -531,6 +531,7 @@ L<Email::MIME> to parse multi-part messages stored in the mailbox.
 =cut
 
 sub messages {
+    return () unless -f mailbox();
     return Email::Folder->new(mailbox())->messages;
 }
 
@@ -612,8 +613,9 @@ END { Jifty::Test->_ending }
 sub _ending {
     my $Test = Jifty::Test->builder;
 
-    my $plugin = Jifty->find_plugin("Jifty::Plugin::TestServerWarnings");
-    warn "Uncaught warning: $_" for $plugin->stashed_warnings;
+    if (my $plugin = Jifty->find_plugin("Jifty::Plugin::TestServerWarnings")) {
+        warn "Uncaught warning: $_" for $plugin->stashed_warnings;
+    }
 
     # Such a hack -- try to detect if this is a forked copy and don't
     # do cleanup in that case.
