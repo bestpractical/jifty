@@ -206,6 +206,7 @@ lib/Jifty/Manual/Style.pod
 lib/Jifty/Manual/Tutorial.pod
 lib/Jifty/Manual/Tutorial_de.pod
 lib/Jifty/Manual/Tutorial_ja.pod
+lib/Jifty/Manual/Tutorial_zhtw.pod
 lib/Jifty/Manual/TutorialRest.pod
 lib/Jifty/Manual/Upgrading.pod
 lib/Jifty/Manual/UsingCSSandJS.pod
@@ -219,6 +220,7 @@ lib/Jifty/Object.pm
 lib/Jifty/Param.pm
 lib/Jifty/Param/Schema.pm
 lib/Jifty/Plugin.pm
+lib/Jifty/Plugin/AccessLog.pm
 lib/Jifty/Plugin/ActorMetadata.pm
 lib/Jifty/Plugin/ActorMetadata/Mixin/Model/ActorMetadata.pm
 lib/Jifty/Plugin/AdminUI.pm
@@ -970,6 +972,7 @@ plugins/Comment/lib/Jifty/Plugin/Comment/Notification/CommentPublished.pm
 plugins/Comment/lib/Jifty/Plugin/Comment/View.pm
 plugins/Comment/Makefile.PL
 plugins/Comment/share/po/jifty_plugin_comment.pot
+plugins/Comment/t/00-load.t
 plugins/Comment/t/TestApp-Plugin-Comments/bin/jifty
 plugins/Comment/t/TestApp-Plugin-Comments/etc/config.yml
 plugins/Comment/t/TestApp-Plugin-Comments/lib/TestApp/Plugin/Comments/Dispatcher.pm
@@ -977,7 +980,6 @@ plugins/Comment/t/TestApp-Plugin-Comments/lib/TestApp/Plugin/Comments/Model/Blog
 plugins/Comment/t/TestApp-Plugin-Comments/lib/TestApp/Plugin/Comments/View.pm
 plugins/Comment/t/TestApp-Plugin-Comments/Makefile.PL
 plugins/Comment/t/TestApp-Plugin-Comments/t/00-model-BlogPost.t
-plugins/Comment/t/00-load.t
 plugins/JSPageRegion/inc/Module/AutoInstall.pm
 plugins/JSPageRegion/inc/Module/Install.pm
 plugins/JSPageRegion/inc/Module/Install/AutoInstall.pm
@@ -1361,9 +1363,12 @@ t/TestApp-JiftyJS/t/7-redirect.t
 t/TestApp-JiftyJS/t/8-placeholder.t
 t/TestApp-Mason/bin/jifty
 t/TestApp-Mason/etc/config.yml
+t/TestApp-Mason/share/web/templates/foo/dhandler
+t/TestApp-Mason/share/web/templates/foo/index.html
 t/TestApp-Mason/share/web/templates/inner
 t/TestApp-Mason/share/web/templates/outer
 t/TestApp-Mason/t/content.t
+t/TestApp-Mason/t/index_vs_dhandler.t
 t/TestApp-Plugin-ActorMetadata/bin/jifty
 t/TestApp-Plugin-ActorMetadata/etc/config.yml
 t/TestApp-Plugin-ActorMetadata/lib/TestApp/Plugin/ActorMetadata/Model/Comment.pm
