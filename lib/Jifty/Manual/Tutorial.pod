@@ -363,11 +363,11 @@ a template called C</fragments/page_of_posts>. Make it contain the following:
       $posts->set_page_info(
           current_page => $page,
           per_page     => 3,
-      );  
+      );
   
       if ($posts->pager->last_page > 1) {
           p { "Page $page of " . $posts->pager->last_page }
-      }   
+      }
   
       dl {
           attr { class => "list" };
