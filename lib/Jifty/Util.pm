@@ -131,6 +131,7 @@ these criteria.
 
 sub app_root {
     my $self = shift;
+    my %args = @_;
 
     return $ENV{'JIFTY_APP_ROOT'} if ($ENV{'JIFTY_APP_ROOT'});
     return $APP_ROOT if ($APP_ROOT);
@@ -172,7 +173,7 @@ sub app_root {
     }
     warn "Can't guess application root from current path ("
         . Cwd::cwd()
-        . ") or bin path ($FindBin::Bin)\n";
+        . ") or bin path ($FindBin::Bin)\n" unless $args{quiet};
     return ''; # returning undef causes tons of 'uninitialized...' warnings.
 }
 
