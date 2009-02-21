@@ -421,30 +421,20 @@ Of course, having to remember the URL to get to the posting page is a bit
 annoying. To get a B<Post> button in the menu, you need to override the default
 menus.
 
-Jifty's I<default> menus live in F<_elements/nav> in the default application
-template (along with the Pony).  For now, override F<_elements/nav>. (We're
-working on ways to make this better.)
+Open up a new file called F<lib/MyWeblog/Dispatcher.pm> and stick this into it:
 
-Inside your applications F<share/web/templates> directory, create a directory called
-F<_elements>.
-
-  mkdir share/web/templates/_elements
-
-You may want to start with the stock jifty template, in which case you
-only need to add the C<< $top->child( Post... >> part
-
-  cat $(perl -MJifty::Util -e 'print Jifty::Util->share_root' \
-    )/web/templates/_elements/nav > share/web/templates/_elements/nav
-
-Otherwise, inside F<_elements>, open up a new file called C<nav> in your
-text editor and insert:
-
-  <%init>
-  my $top = Jifty->web->navigation;
-  $top->child( Home => url => "/");
-  $top->child( Post => url => "/post", 
-                       label => "Post Article");
-  </%init>
+  package MyWeblog::Dispatcher;
+  use strict;
+  use warnings;
+  use Jifty::Dispatcher -base;
+  
+  before '*' => run {
+      my $top = Jifty->web->navigation;
+      $top->child(Home => url => '/');
+      $top->child(Post => url => '/post', label => 'Post Article');
+  };
+  
+  1;
 
 For more information about the menu system, see the documentation in
 L<Jifty::Web::Menu>.
