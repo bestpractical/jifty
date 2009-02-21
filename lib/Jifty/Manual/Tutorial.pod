@@ -344,61 +344,81 @@ The complex way starts off about the same as the easy way. Replace (or add, if
 you shied away from simplicity) the '/' template in your
 F<lib/MyWeblog/View.pm>:
 
-  <&| /_elements/wrapper, title => Jifty->config->framework('ApplicationName') &>
-
-  <% Jifty->web->region(name => "myweblog-posts",
-                        path => "/fragments/page_of_posts") %>
-  </&>
+  template '/' => page {
+      render_region(
+          name => 'myweblog-posts',
+          path => '/fragments/page_of_posts',
+      );
+  };
 
 If you're on the ball, you've probably already guessed that you need to create
-a file called F<share/web/templates/fragments/page_of_posts> containing:
+a template called C</fragments/page_of_posts>. Make it contain the following:
 
-  <%args>
-  $page => 1
-  </%args>
-  <%init>
-  my $posts = MyWeblog::Model::PostCollection->new();
-  $posts->unlimit();
-  $posts->set_page_info( current_page => $page,
-                         per_page     => 15
-                       );
-  $m->out("No items found.") if ($posts->pager->total_entries == 0);
+  template '/fragments/page_of_posts' => sub {
+      my $page = get('page') || 1;
+      
+      my $posts = MyWeblog::Model::PostCollection->new;
+      $posts->unlimit;
+      
+      $posts->set_page_info(
+          current_page => $page,
+          per_page     => 3,
+      );  
+  
+      if ($posts->pager->last_page > 1) {
+          p { "Page $page of " . $posts->pager->last_page }
+      }   
+  
+      dl {
+          attr { class => "list" };
+  
+          while (my $post = $posts->next) {
+              dt { $post->title }
+              dd { $post->body  }
+          }
+      };
+  
+      if ($posts->pager->previous_page) {
+          hyperlink(
+              label => "Previous Page",
+              onclick => {
+                  args => {
+                      page => $posts->pager->previous_page,
+                  },
+              },
+          );
+      }
+  
+      if ($posts->pager->next_page) {
+          hyperlink(
+              label => "Next Page",
+              onclick => {
+                  args => {
+                      page => $posts->pager->next_page,
+                  },
+              },
+          );
+      }
+  };
 
-  </%init>
-  % if ($posts->pager->last_page > 1) {
-     Page <% $page %> of <% $posts->pager->last_page %>
-  % }
-  <dl class="list">
-  % while (my $post = $posts->next) {
-   <dt><% $post->title %></dt>
-   <dd><% $post->body %></dd>
-  % }
-  </dl>
-
-  % if ($posts->pager->previous_page) {
-    <% Jifty->web->link( label => "Previous Page", onclick => { args => { page => $posts->pager->previous_page } } ) %>
-  % }
-  % if ($posts->pager->next_page) {
-    <% Jifty->web->link( label => "Next Page", onclick => { args => { page => $posts->pager->next_page } } ) %>
-  % }
-
-Now fire up your Jifty webserver again. Go create a post by browsing C</post>
-on your webserver. Create more than 15 posts, and notice how Jifty gives you
-AJAX C<Next Page> and C<Previous Page> buttons for you. Turn off javascript or
-view the page in lynx, and notice how the AJAX automatically falls-back to page
-loads for you. All for free, thanks to Jifty!
+Now fire up your Jifty webserver again. Browse to C</post> and create more than
+three posts. Return to the home page and check out the nifty AJAX C<Next Page>
+and C<Previous Page> links you now have. Turn off javascript or view the page
+in C<lynx>, and notice how the AJAX automatically falls-back to page loads for
+you. All for free, thanks to Jifty!
 
 =head3 Hey, where'd that class come from?
 
-If you're paying attention, you may have wondered about C<MyWeblog::Model::PostCollection>,
-since there's no file called F<PostCollection.pm>. By default, Jifty uses 
+You may have wondered about C<MyWeblog::Model::PostCollection>, since there's
+no file called F<PostCollection.pm>. By default, Jifty uses
 C<Jifty::ClassLoader> to auto-generate a bunch of classes for you. Of course,
-you can override these definitions if you like. See L<Jifty::ClassLoader> for more details.
+you can override these definitions if you like. See L<Jifty::ClassLoader> for
+more details.
 
 =head2 Navigation
 
 Of course, having to remember the URL to get to the posting page is a bit
-annoying.  To get a B<Post> button in the menu, you need to override the default
+annoying. To get a B<Post> button in the menu, you need to override the default
 menus.
 
 Jifty's I<default> menus live in F<_elements/nav> in the default application
