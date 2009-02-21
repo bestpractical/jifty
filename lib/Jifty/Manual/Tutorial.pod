@@ -62,7 +62,7 @@ help guide your work. Jifty comes with tools to build that structure for
 you.
 
 Change directory to some place it will be safe to create a new
-Jifty application. (Jifty will create a subdirectory for you).
+Jifty application. (Jifty will create a subdirectory for you.)
 
   # jifty app --name MyWeblog
   Creating new application MyWeblog
@@ -154,16 +154,11 @@ Out of the box, Jifty comes with a CSS style, Javascript libraries and a
 Pony. Look in F<share/web/static> in the Jifty distribution, or in the same
 place Jifty stuck its default templates.
 
-=item lib/MyWeblog
-
-To build a basic Jifty application, you only need to worry about two
-sorts of classes, B<Models> and B<Actions>.
-
 =item lib/MyWeblog/Model
 
 The real base of your application lives in
 C<lib/MyWeblog/Model>. Classes here define your application's data
-structures and how they relate to each other.  Jifty will use your model
+structures and how they relate to each other. Jifty will use your model
 classes to set up and upgrade your database's schema when it needs to.
 
 For a full treatment of the Jifty object model see
@@ -171,10 +166,10 @@ L<Jifty::Manual::ObjectModel>.
 
 =item lib/MyWeblog/Action
 
-When we said you only need to worry about B<Models> and B<Actions>,
-we weren't telling the whole truth.  Jifty will take care of basic
-database-interaction (C<CREATE, READ, UPDATE, DELETE>) B<Actions> for
-your B<Models>, but they're there if you want to change anything.
+Actions are an API for your model classes. One way you might think of them is
+that an action is an HTML form, but generalized. Jifty will generate basic
+database-interaction (C<CREATE>, C<READ>, C<UPDATE>, C<DELETE>) B<Actions> for
+your B<Models> on-the-fly.
 
 =item t
 
@@ -253,7 +248,7 @@ The first thing you'll see is that Jifty notices you have no database, so it
 creates one for you. By default, Jifty sets up your application with the SQLite
 database engine. If you'd rather use PostgreSQL or MySQL, you need to add some
 content to F<etc/config.yml>. (See L<Jifty::Config> for a bit more
-information).
+information.)
 
     # jifty server
     WARN - Application schema has no version in the database.
