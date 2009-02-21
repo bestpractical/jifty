@@ -1,7 +1,7 @@
 use inc::Module::Install 0.46;
 name('Jifty');
 license('Perl');
-requires(perl => '5.8.3');
+perl_version '5.8.3';
 requires('App::CLI' => 0.03 ); # App::CLI::Command::Help App::CLI::Command
 requires('Cache::Cache'); #Cache::FileCache
 requires('Calendar::Simple');
@@ -101,87 +101,99 @@ else {
     requires('JSON' => 0.01) unless can_use('JSON::Syck' => 0.29);
 }
 
-features(
-    'Administrative Interface (web)' => [ 
-        -default => 1,
-       recommends( 'Pod::Simple') # Pod::Simple::Text Pod::Simple::HTML
-    ],
-    'Development of a jifty application' => [
-        -default => 1,
-        recommends('DBD::SQLite' => 1.11 ),
-        recommends('Test::Base' => 0.44 ),            # Test::Base::Filter
-        recommends('Module::Install::Admin' => '0.50'),
-        recommends('Test::HTTP::Server::Simple' => '0.10' ),
-        recommends('Test::HTML::Lint'),
-        recommends('Test::MockModule' => '0.05'),
-        recommends('Test::MockObject' => '1.07'),
-        recommends('Module::Refresh' => '0.09'),
-        recommends('Test::WWW::Declare' => '0.01'),
-        recommends('Test::Email'),
-        recommends('Email::Abstract'),
-    ],
-    'Development of the jifty framework' => [
-        -default => 0,
-        recommends('DBD::SQLite'),
-        recommends('Class::Accessor::Named'),
-        recommends('Devel::Cover'),
-        recommends('Module::CoreList'),
-        recommends('Module::Install::Admin' => '0.50')
-     ],
-    'Forking jifty server' => [
-        -default => 0,
-        recommends('Net::Server::Fork'),
-    ],
-    'Pre-forking jifty server' => [
-        -default => 0,
-        recommends('Net::Server::PreFork'),
-    ],
-    'Apache2/ModPerl2 handler' => [
-        -default => 0,
-        recommends('Apache2::Const'),
-    ],
-    'Experimental features' => [
-        -default => 0,
-        recommends('PAR::Dist::FromCPAN'),
-    ],
-    'OpenID Login Plugin' => [
-        -default => 0,
-        recommends('Net::OpenID::Consumer'),
-        recommends('Cache::FileCache'),
-        recommends('LWPx::ParanoidAgent'),
-    ],
-    'Facebook Login Plugin' => [
-        -default => 0,
-        recommends('WWW::Facebook::API' => '0.3.6'),
-    ],
-    'Jifty console' => [
-        -default => 0,
-        recommends('Devel::EvalContext'),
-    ],
-    'Jifty REPL' => [
-        -default => 0,
-        recommends('Devel::REPL'), # Devel::REPL::Script
-    ],
-    'Chart Plugin (none of these need to be installed for Charts to work)' => [
-        -default => 0,
-        recommends('Chart::Base'),
-        recommends('GD'),          # for a testing hack
-        recommends('GD::Graph'),
-        recommends('XML::Simple'),
-        recommends('Image::Info'), # for testing
-    ],
-    'Memory Leak Plugins' => [
-        -default => 0,
-        recommends('Devel::Events::Objects' => '0.02'), # Devel::Events::Handler::ObjectTracker Devel::Events::Generator::Objects
-        recommends('Devel::Size'),
-        recommends('Devel::Gladiator'),
-        recommends('Proc::ProcessTable'),
-    ],
-    'Improved halos' => [
-        -default => 0,
-        recommends('Data::Dump::Streamer'),
-    ],
-);
+feature 'Administrative Interface (web)' =>
+    -default => 1,
+    recommends('Pod::Simple' => 0), # Pod::Simple::Text Pod::Simple::HTML
+    ;
+
+feature 'Development of a jifty application' =>
+    -default => 1,
+    recommends('DBD::SQLite' => 1.11),
+    recommends('Test::Base' => 0.44),            # Test::Base::Filter
+    recommends('Module::Install::Admin' => '0.50'),
+    recommends('Test::HTTP::Server::Simple' => '0.10'),
+    recommends('Test::HTML::Lint' => 0),
+    recommends('Test::MockModule' => '0.05'),
+    recommends('Test::MockObject' => '1.07'),
+    recommends('Module::Refresh' => '0.09'),
+    recommends('Test::WWW::Declare' => '0.01'),
+    recommends('Test::Email' => 0),
+    recommends('Email::Abstract' => 0),
+    ;
+
+feature 'Development of the jifty framework' =>
+    -default => 0,
+    recommends('DBD::SQLite' => 0),
+    recommends('Class::Accessor::Named' => 0),
+    recommends('Devel::Cover' => 0),
+    recommends('Module::CoreList' => 0),
+    recommends('Module::Install::Admin' => '0.50'),
+    ;
+
+
+feature 'Forking jifty server' =>
+    -default => 0,
+    recommends('Net::Server::Fork' => 0),
+    ;
+
+feature 'Pre-forking jifty server' =>
+    -default => 0,
+    recommends('Net::Server::PreFork' => 0),
+    ;
+
+feature 'Apache2/ModPerl2 handler' =>
+    -default => 0,
+    recommends('Apache2::Const' => 0),
+    ;
+
+feature 'Experimental features' =>
+    -default => 0,
+    recommends('PAR::Dist::FromCPAN' => 0),
+    ;
+
+feature 'OpenID Login Plugin' =>
+    -default => 0,
+    recommends('Net::OpenID::Consumer' => 0),
+    recommends('Cache::FileCache' => 0),
+    recommends('LWPx::ParanoidAgent' => 0),
+    ;
+
+feature 'Facebook Login Plugin' =>
+    -default => 0,
+    recommends('WWW::Facebook::API' => '0.3.6'),
+    ;
+
+feature 'Jifty console' =>
+    -default => 0,
+    recommends('Devel::EvalContext' => 0),
+    ;
+
+feature 'Jifty REPL' =>
+    -default => 0,
+    recommends('Devel::REPL' => 0), # Devel::REPL::Script
+    ;
+
+feature 'Chart Plugin (none of these need to be installed for Charts to work)' =>
+    -default => 0,
+    recommends('Chart::Base' => 0),
+    recommends('GD' => 0),          # for a testing hack
+    recommends('GD::Graph' => 0),
+    recommends('XML::Simple' => 0),
+    recommends('Image::Info' => 0), # for testing
+    ;
+
+feature 'Memory Leak Plugins' =>
+    -default => 0,
+    recommends('Devel::Events::Objects' => '0.02'), # Devel::Events::Handler::ObjectTracker Devel::Events::Generator::Objects
+    recommends('Devel::Size' => 0),
+    recommends('Devel::Gladiator' => 0),
+    recommends('Proc::ProcessTable' => 0),
+    ;
+
+feature 'Improved halos' =>
+    -default => 0,
+    recommends('Data::Dump::Streamer' => 0),
+    ;
 
 
 no_index( directory => qw< debian doc examples share plugins/*/t> );
