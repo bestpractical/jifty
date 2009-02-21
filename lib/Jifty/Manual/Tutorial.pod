@@ -4,7 +4,7 @@ Jifty::Manual::Tutorial - Zero to Jifty in a Jiffy
 
 =head1 DESCRIPTION
 
-This tutorial should give you everything you need to 
+This tutorial should give you everything you need to
 build your first application with Jifty.
 
 =cut
@@ -46,13 +46,13 @@ manual install:
   # make install
 
 If the tests don't pass, we want to hear about it. Please join us
-on C<jifty-devel@lists.jifty.org> and report the failure. (See 
+on C<jifty-devel@lists.jifty.org> and report the failure. (See
 L</GETTING HELP> below for info on how to join the list.)
 
 =head2 Setting up the Scaffolding
 
-Once you have Jifty happily installed, you're ready to 
-create your first application. 
+Once you have Jifty happily installed, you're ready to
+create your first application.
 
 Jifty is intentionally a bit minimalist. All you I<really> need to make
 an application go is a copy of the F<jifty> commandline tool (inside
@@ -238,7 +238,7 @@ Add the lines:
         label is 'Title',
         default is 'Untitled post';
 
-  column body => 
+  column body =>
         type is 'text',
         label is 'Content',
         render as 'Textarea';
@@ -445,7 +445,7 @@ That's just about everything you need to get started building Jifty
 applications.  We're working hard to make Jifty even easier to use and
 to obsolete the I<hard bits> of this tutorial as quickly as we can.
 
-Please join us on the C<jifty-devel> mailing list to talk about how you're 
+Please join us on the C<jifty-devel> mailing list to talk about how you're
 using Jifty or what you find difficult or hard to use about it.
 
 =head1 MORE TUTORIALS
@@ -463,11 +463,6 @@ L<Jifty::Manual::Actions>
 =item * Using page regions
 
 L<Jifty::Manual::PageRegions>
-
-=item * Customized view
-
-For L<Template::Declare> views you can read L<Jifty::Plugin::ViewDeclarePage>,
-which has pretty good documentation on customizing page layouts.
 
 =item * CSS and JS
 
@@ -528,12 +523,11 @@ We have a wiki! (Actually, the wiki is Jifty's primary website)
 
 Please visit L<http://jifty.org/>, browse and contribute.
 
-The wiki is powered by I<Wifty>, a Wiki built on Jifty. Its code is freely 
-available from the jifty subversion repository.
+The wiki is powered by I<Wifty>, a Wiki built on Jifty. Its code is freely
+available from the Jifty subversion repository.
 
 =head1 REPORTING BUGS
 
-At this incredibly early stage in its life, please report bugs in Jifty
-to C<jifty-devel@lists.jifty.org>.
+Please report bugs in Jifty to C<jifty-devel@lists.jifty.org>.
 
 =cut
