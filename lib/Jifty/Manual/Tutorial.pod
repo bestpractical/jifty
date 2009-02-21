@@ -266,7 +266,7 @@ information).
     INFO - Set up version 0.0.1, jifty version 0.81208
     INFO - You can connect to your server at http://localhost:8888/
 
-Everything but the last time was database setup information you'll only see
+Everything but the last line was database setup information you'll only see
 when Jifty changes your database.
 
 The last line tells you the URL you can go to with your web browser. Have a
