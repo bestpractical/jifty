@@ -111,15 +111,12 @@ sub _calculate_share {
     my $self = shift;
     my $class = ref($self);
 
-#XXX TODO File::ShareDir 1.0 doesn't play well with Module::Install 0.79
-# waiting for update
-
-# use File::ShareDir 'module_dir';
-#    unless ( $self->{share} ) {
-#        local $@
-#            ; # We're just avoiding File::ShareDir's failure behaviour of dying
-#        eval { $self->{share} = module_dir($class) };
-#    }
+    Jifty::Util->require('File::ShareDir');
+    unless ( $self->{share} ) {
+        local $@
+            ; # We're just avoiding File::ShareDir's failure behaviour of dying
+        eval { $self->{share} = File::ShareDir::dist_dir($class) };
+    }
     unless ( $self->{share} ) {
         $self->{share} = Jifty::Util->share_root;
         if ( $self->{'share'} ) {
