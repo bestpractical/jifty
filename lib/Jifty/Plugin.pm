@@ -2,7 +2,6 @@ use strict;
 use warnings;
 
 package Jifty::Plugin;
-use File::ShareDir 'module_dir';
 use base qw/Class::Accessor::Fast Jifty::Object/;
 __PACKAGE__->mk_accessors('_pre_init');
 
@@ -37,8 +36,6 @@ Actions and models under a plugin's namespace are automatically
 discovered and made available to applications.
 
 =cut
-
-use File::ShareDir;
 
 =head2 new
 
@@ -114,11 +111,15 @@ sub _calculate_share {
     my $self = shift;
     my $class = ref($self);
 
-    unless ( $self->{share} ) {
-        local $@
-            ; # We're just avoiding File::ShareDir's failure behaviour of dying
-        eval { $self->{share} = module_dir($class) };
-    }
+#XXX TODO File::ShareDir 1.0 doesn't play well with Module::Install 0.79
+# waiting for update
+
+# use File::ShareDir 'module_dir';
+#    unless ( $self->{share} ) {
+#        local $@
+#            ; # We're just avoiding File::ShareDir's failure behaviour of dying
+#        eval { $self->{share} = module_dir($class) };
+#    }
     unless ( $self->{share} ) {
         $self->{share} = Jifty::Util->share_root;
         if ( $self->{'share'} ) {
