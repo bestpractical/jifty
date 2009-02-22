@@ -6,7 +6,6 @@ use base 'Locale::Maketext';
 use Locale::Maketext::Lexicon ();
 use Email::MIME::ContentType;
 use Encode::Guess qw(iso-8859-1);
-use File::ShareDir 'module_dir';
 use Jifty::Util;
 
 =head1 NAME
