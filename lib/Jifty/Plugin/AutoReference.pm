@@ -29,7 +29,10 @@ and then this to your models:
 
 =head1 DESCRIPTION
 
-Provides a special autocompletion widget for reference columns. See L<Jifty::Plugin::AutoReference::Widget>.
+Provides a special autocompletion widget for reference columns. See
+L<Jifty::Plugin::AutoReference::Widget>.  Use this plugin if a
+C<select> box for a table reference is impractical, but you need
+similar semantics.
 
 =head1 METHODS
 

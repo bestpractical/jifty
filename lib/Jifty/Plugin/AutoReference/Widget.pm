@@ -20,9 +20,13 @@ Jifty::Plugin::AutoReference::Widget - an autocomplete widget for references
 
 =head1 DESCRIPTION
 
-Provides a special autocomplete widget that can be useful when there are too many items for a Select box to be practical.
+Provides a special autocomplete widget that can be useful when there
+are too many items for a Select box to be practical.
 
-B<WARNING:> As of this writing, it should be noted that this widget does not degrade gracefully. If you need a widget that operates properly even when JavaScript is unavailable, this widget won't do that job at this time.
+B<WARNING:> As of this writing, it should be noted that this widget
+does not degrade gracefully. If you need a widget that operates
+properly even when JavaScript is unavailable, this widget won't do
+that job at this time.
 
 =head1 METHODS
 
@@ -86,7 +90,9 @@ sub _switch_current_value_temporarily(&$) {
 
 =head2 render_widget
 
-Overrides the widget renderer to draw both a hidden field that stores the actual referenced ID and a text field that is autocompleted using the records brief description.
+Overrides the widget renderer to draw both a hidden field that stores
+the actual referenced ID and a text field that is autocompleted using
+the records brief description.
 
 =cut
 
@@ -117,7 +123,8 @@ sub render_widget {
 
 =head2 render_value
 
-Overrides the value renderer to show the brief description of the referenced record.
+Overrides the value renderer to show the brief description of the
+referenced record.
 
 =cut
 
@@ -133,7 +140,9 @@ sub render_value {
 
 =head2 autocomplete_javascript
 
-Overrides the JavaScript autocompletion widget to use C<Jifty.Plugin.AutoReference> instead of the regular C<Jifty.Autocompleter>.
+Overrides the JavaScript autocompletion widget to use
+C<Jifty.Plugin.AutoReference> instead of the regular
+C<Jifty.Autocompleter>.
 
 =cut
 
