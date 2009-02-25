@@ -16,6 +16,15 @@ Jifty::Plugin::Prototypism
     - Prototypism
         cdn: 'http://yourcdn.for.static.prefix/'
 
+=head1 DESCRIPTION
+
+This module provides the Prototype and Scriptaculous javascript
+libraries to your application.  Jifty used to rely on these libraries,
+so this plugin may be automatically added to your application's
+plugins if you upgrade from an older version of Jifty.  It is safe to
+remove if your application does not use Prototype or Scriptaculous
+javascript code, however.
+
 =cut
 
 __PACKAGE__->mk_accessors(qw(cdn));
