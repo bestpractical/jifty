@@ -9,6 +9,38 @@ use Data::Dumper;
 
 Jifty::Plugin::LeakTracker - Leak tracker plugin
 
+=head1 DESCRIPTION
+
+Memory leak detection and reporting for your Jifty app
+
+=head1 USAGE
+
+Add the following to your site_config.yml
+
+ framework:
+   Plugins:
+     - LeakTracker: {}
+
+This makes the following URLs available:
+
+View the top-level leak report (how much each request has leaked)
+
+    http://your.app/__jifty/admin/leaks
+
+View the top-level leak report, including zero-leak requests
+
+    http://your.app/__jifty/admin/leaks/all
+
+View an individual request's detailed leak report (which objects were leaked)
+
+    http://your.app/__jifty/admin/leaks/3
+
+=head1 WARNING
+
+If you use this in production, be sure to block off 'leaks' from
+non-administrators. The full Data::Dumper output of the objects
+leaked is available, which may of course contain sensitive information.
+
 =cut
 
 BEGIN {
@@ -28,9 +60,12 @@ our @requests;
 
 my $empty_array = total_size([]);
 
+=head1 METHODS
+
 =head2 init
 
 init installs the triggers needed around each HTTP request
+
 =cut
 
 sub init {
@@ -114,43 +149,9 @@ sub after_request
     $self->tracker(undef);
 }
 
-=head1 NAME
-
-Jifty::Plugin::LeakTracker
-
-=head1 DESCRIPTION
-
-Memory leak detection and reporting for your Jifty app
-
-=head1 USAGE
-
-Add the following to your site_config.yml
-
- framework:
-   Plugins:
-     - LeakTracker: {}
-
-This makes the following URLs available:
-
-View the top-level leak report (how much each request has leaked)
-
-    http://your.app/__jifty/admin/leaks
-
-View the top-level leak report, including zero-leak requests
-
-    http://your.app/__jifty/admin/leaks/all
-
-View an individual request's detailed leak report (which objects were leaked)
-
-    http://your.app/__jifty/admin/leaks/3
-
-=head1 WARNING
-
-If you use this in production, be sure to block off 'leaks' from
-non-administrators. The full Data::Dumper output of the objects
-leaked is available, which may of course contain sensitive information.
-
 =head1 SEE ALSO
+
+L<Jifty::Plugin::Gladiator>
 
 L<Jifty::Plugin::LeakTracker::View>, L<Jifty::Plugin::LeakTracker::Dispatcher>
 
