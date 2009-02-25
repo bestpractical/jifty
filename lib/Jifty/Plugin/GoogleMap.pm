@@ -17,7 +17,8 @@ Jifty::Plugin::GoogleMap - GoogleMap plugin
     - GoogleMap:
         apikey: ABQIAAAA66LEkTHjdh-UhDZ_NkfdjBTb-vLQlFZmc2N8bgWI8YDPp5FEVBTjCfxPSocuJ53SPMNQDO7Sywpp_w
 
-# note that this is an api for http://localhost:8888/
+Note that this is an api for http://localhost:8888/ -- you will need
+to provide your own API key for your own site.
 
 
 In your model class schema description, add the following:
@@ -28,7 +29,6 @@ In your model class schema description, add the following:
 =head1 DESCRIPTION
 
 This plugin provides a Google-map widget for Jifty, as well as a new GeoLocation column type.
-
 
 =cut
 
