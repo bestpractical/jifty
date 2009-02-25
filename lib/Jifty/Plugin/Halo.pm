@@ -12,15 +12,16 @@ Jifty::Plugin::Halo - Provides halos
 
 =head1 DESCRIPTION
 
-This plugin provides L<http://seaside.st|Seasidesque> halos for
-your application. It's included by default when using Jifty. (That's
-a bug).
+This plugin provides L<http://seaside.st|Seasidesque> halos for your
+application. It's included by default when using Jifty with DevelMode
+turned on.
 
 =cut
 
 =head2 init
 
-Only enable halos in DevelMode. Add our instrumentation to L<Template::Declare>.
+Only enable halos in DevelMode. Add our instrumentation to
+L<Template::Declare>.
 
 =cut
 
