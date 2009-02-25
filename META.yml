@@ -25,7 +25,6 @@ recommends:
   DBD::SQLite: 0
   Data::Dump::Streamer: 0
   Devel::Cover: 0
-  Devel::EvalContext: 0
   Email::Abstract: 0
   Module::CoreList: 0
   Module::Install::Admin: 0.50
@@ -41,7 +40,7 @@ recommends:
   Test::MockObject: 1.07
   Test::WWW::Declare: 0.01
 requires:
-  App::CLI: 0.03
+  App::CLI: 0.08
   CGI: 3.30
   CGI::Cookie::Splitter: 0
   CSS::Squish: 0.07

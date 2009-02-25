@@ -146,11 +146,6 @@ feature 'Apache2/ModPerl2 handler' =>
     recommends('Apache2::Const' => 0),
     ;
 
-feature 'Jifty console' =>
-    -default => 0,
-    recommends('Devel::EvalContext' => 0),
-    ;
-
 feature 'Improved halos' =>
     -default => 0,
     recommends('Data::Dump::Streamer' => 0),
