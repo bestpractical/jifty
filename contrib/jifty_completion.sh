@@ -9,7 +9,7 @@ _jifty()
     local cur
     cur=${COMP_WORDS[COMP_CWORD]}
 
-    local jifty_commands="action adopt app console deps env fastcgi help modperl2 model plugin po schema server"
+    local jifty_commands="action adopt app console env fastcgi help modperl2 model plugin po schema server"
     if (($COMP_CWORD == 1)); then
         COMPREPLY=( $( compgen -W "$jifty_commands" -- $cur ) )
         return 0

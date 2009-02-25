@@ -146,11 +146,6 @@ feature 'Apache2/ModPerl2 handler' =>
     recommends('Apache2::Const' => 0),
     ;
 
-feature 'Experimental features' =>
-    -default => 0,
-    recommends('PAR::Dist::FromCPAN' => 0),
-    ;
-
 feature 'OpenID Login Plugin' =>
     -default => 0,
     recommends('Net::OpenID::Consumer' => 0),
