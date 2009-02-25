@@ -1,8 +1,0 @@
-MANIFEST
-lib/Jifty/Plugin/AuthCASLogin.pm
-lib/Jifty/Plugin/AuthCASLogin/Action/CASLogin.pm
-lib/Jifty/Plugin/AuthCASLogin/Action/CASLogout.pm
-lib/Jifty/Plugin/AuthCASLogin/Dispatcher.pm
-Makefile.PL
-share/web/templates/caslogin
-share/web/templates/caslogout
