@@ -16,6 +16,8 @@ Jifty::Plugin::SinglePage - Makes your app into a single-page
 
 Makes your normal Jifty app into a single-page app through clever use of regions
 
+=head1 METHODS
+
 =head2 init
 
 Registers a before_new trigger to modify links and sets up the special region
