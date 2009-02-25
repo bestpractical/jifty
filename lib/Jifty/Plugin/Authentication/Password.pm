@@ -26,7 +26,9 @@ Jifty::Plugin::Authentication::Password - password authentication plugin
 
 B<CAUTION:> This plugin is experimental.
 
-This may be combined with the L<Jifty::Plugin::User> and L<Jifty::Plugin::LetMe> plugins to provide user accounts and form-based password authentication to your application.
+This may be combined with the L<Jifty::Plugin::User> and
+L<Jifty::Plugin::LetMe> plugins to provide user accounts and
+form-based password authentication to your application.
 
 =head2 METHODS
 
