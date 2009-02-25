@@ -11,12 +11,10 @@ Jifty::Plugin::Userpic::Widget - for displaying and uploading user picture.
 
 =head1 METHODS
 
-
-=cut
-
 =head2 render_widget
 
-Renders form fields as googlemap widget.
+Renders an upload form for the user picture, along side the current
+image (if any)
 
 =cut
 
@@ -45,7 +43,7 @@ sub render_widget {
 
 =head2 render_value
 
-Renders value as a checkbox widget.
+Renders the image.
 
 =cut
 

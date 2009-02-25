@@ -4,7 +4,6 @@ use warnings;
 package Jifty::Plugin::Userpic;
 use base qw/Jifty::Plugin Class::Accessor::Fast/;
 
-
 =head1 NAME
 
 Jifty::Plugin::Userpic - Provides user pictures for Jifty
@@ -13,13 +12,12 @@ Jifty::Plugin::Userpic - Provides user pictures for Jifty
 
 In your model class schema description, add the following:
 
-    column userpic => is Userpic;
-
+    column image => is Userpic;
 
 =head1 DESCRIPTION
 
-This plugin provides user pictures for Jifty;
-
+This plugin provides user pictures, or any image field associated with
+a record.
 
 =cut
 
