@@ -3,7 +3,7 @@ use warnings;
 
 =head1 NAME
 
-Jifty::Plugin::ExtJS
+Jifty::Plugin::ExtJS - Use the Ext javascript library
 
 =cut
 
@@ -35,11 +35,7 @@ Ext supports YUI, prototype and jQuery. This plugin uses YUI by default.
 
     Ext: http://extjs.com/
 
-
 =cut
-
-# Your plugin goes here.  If takes any configuration or arguments, you
-# probably want to override L<Jifty::Plugin/init>.
 
 sub init {
     my $self = shift;
