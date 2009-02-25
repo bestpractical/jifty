@@ -6,6 +6,12 @@ use base 'Jifty::Plugin';
 
 our $VERSION = '0.01';
 
+=head1 NAME
+
+Jifty::Plugin::Attributes - Associate arbitrary key-value attributes with any Jifty record
+
+=cut
+
 sub init {
     Jifty::DBI::Record->add_trigger(
         name      => "after_delete",
