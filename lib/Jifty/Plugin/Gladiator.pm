@@ -11,6 +11,26 @@ our @requests;
 
 our $VERSION = 0.01;
 
+
+=head1 NAME
+
+Jifty::Plugin::Gladiator - Walk the areas, looking for leaked objects
+
+=head1 DESCRIPTION
+
+This plugin will attempt to output diffs between the current contents
+of memory after each request, in order to track leaks.
+
+=head1 USAGE
+
+Add the following to your site_config.yml
+
+ framework:
+   Plugins:
+     - Gladiator: {}
+
+=head1 METHODS
+
 =head2 init
 
 init installs the trigger needed before each HTTP request. It also establishes
@@ -86,33 +106,9 @@ sub after_request {
     };
 }
 
-
-=head1 NAME
-
-Jifty::Plugin::Gladiator - find leaks
-
-=head1 DESCRIPTION
-
-This plugin will attempt to output diffs between the current contents of memory after each request.
-
-
-=head1 USAGE
-
-Add the following to your site_config.yml
-
- framework:
-   Plugins:
-     - Gladiator: {}
-
-=head2 OPTIONS
-
-=over 4
-
-
-=back
-
 =head1 SEE ALSO
 
+L<Jifty::Plugin::LeakTracker>
 
 =head1 COPYRIGHT AND LICENSE
 
