@@ -17,10 +17,10 @@ Jifty::Filter::DateTime -- A Jifty::DBI filter to work with
 
 =head1 DESCRIPTION
 
-Jifty::Filter::DateTime promotes DateTime objects to Jifty::DateTime
-objects on load. This has the side effect of setting their time zone
-based on the record's current user's preferred time zone, when
-available.
+Jifty::Filter::DateTime promotes DateTime objects to Jifty::DateTime (or your
+application's DateTime subclass) objects on load. This has the side effect of
+setting their time zone based on the record's current user's preferred time
+zone, when available.
 
 This is intended to be combined with C<Jifty::DBI::Filter::Date> or
 C<Jifty::DBI::Filter::DateTime>, e.g.
@@ -39,8 +39,9 @@ use base qw(Jifty::DBI::Filter);
 
 =head2 decode
 
-If the value is a DateTime, replace it with a Jifty::DateTime
-representing the same time, setting the time zone in the process.
+If the value is a DateTime, replace it with a Jifty::DateTime (or your
+application's subclass) representing the same time, setting the time zone in
+the process.
 
 =cut
 
@@ -62,7 +63,9 @@ sub decode {
     $args{_replace_time_zone} = 1
         unless $args{time_zone} =~ /floating/i;
 
-    my $dt = Jifty::DateTime->new(%args);
+    my $class = Jifty->app_class('DateTime');
+    $class = 'Jifty::DateTime' unless $class->can('new');
+    my $dt = $class->new(%args);
 
     $$value_ref = $dt;
 }
