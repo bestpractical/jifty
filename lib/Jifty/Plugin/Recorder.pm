@@ -10,6 +10,42 @@ use Storable 'nfreeze';
 
 our $VERSION = 0.01;
 
+=head1 NAME
+
+Jifty::Plugin::Recorder - record HTTP requests for playback
+
+=head1 DESCRIPTION
+
+This plugin will log all HTTP requests as YAML. The logfiles can be used by
+C<jifty playback> (provided with this plugin) to replay the logged requests.
+This can be handy for perfomance tuning, debugging, and testing.
+
+=head1 USAGE
+
+Add the following to your site_config.yml
+
+ framework:
+   Plugins:
+     - Recorder: {}
+
+=head2 OPTIONS
+
+=over 4
+
+=item path
+
+The path for creating request logs. Default: log/requests. This directory will
+be created for you, if necessary.
+
+=item memory_usage
+
+Report how much memory (in bytes) Jifty is taking up. This uses
+L<Proc::ProcessTable>. Default is off.
+
+=back
+
+=head1 METHODS
+
 =head2 init
 
 init installs the trigger needed before each HTTP request. It also establishes
@@ -151,39 +187,6 @@ sub get_loghandle {
     return $self->loghandle;
 }
 
-=head1 NAME
-
-Jifty::Plugin::Recorder - record HTTP requests for playback
-
-=head1 DESCRIPTION
-
-This plugin will log all HTTP requests as YAML. The logfiles can be used by
-C<jifty playback> (provided with this plugin) to replay the logged requests.
-This can be handy for perfomance tuning, debugging, and testing.
-
-=head1 USAGE
-
-Add the following to your site_config.yml
-
- framework:
-   Plugins:
-     - Recorder: {}
-
-=head2 OPTIONS
-
-=over 4
-
-=item path
-
-The path for creating request logs. Default: log/requests. This directory will
-be created for you, if necessary.
-
-=item memory_usage
-
-Report how much memory (in bytes) Jifty is taking up. This uses
-L<Proc::ProcessTable>. Default is off.
-
-=back
 
 =head1 SEE ALSO
 
