@@ -10,11 +10,11 @@ use Log::Log4perl::Level;
 
 __PACKAGE__->mk_accessors(qw(clear_screen));
 
-=head2 NAME
+=head1 NAME
 
 Jifty::Plugin::TestServerWarnings - Stores server warnings away for later fetching
 
-=head2 SYNOPSIS
+=head1 SYNOPSIS
 
 # In your jifty config.yml under the framework section:
 
@@ -22,7 +22,7 @@ Jifty::Plugin::TestServerWarnings - Stores server warnings away for later fetchi
     - TestServerWarnings:
         clear_screen: 1
 
-=head2 DESCRIPTION
+=head1 DESCRIPTION
 
 This plugin add a new appender L<Jifty::Plugin::TestServerWarnings::Appender>
 on the first request it sees, which stores away all messages it receives. 
@@ -34,9 +34,9 @@ L</decoded_warnings> with a base URI to the server.
 
 This plugin is automatically added for all jifty tests.
 
-=head2 METHODS
+=head1 METHODS
 
-=head3 init
+=head2 init
 
 set clear_screen to 1 if the clear_screen in config.yml is set to be true,
 if it's not set at all, set it to 1 if TEST_VERBOSE is set to be true.
@@ -54,7 +54,7 @@ sub init {
     }
 }
 
-=head3 new_request
+=head2 new_request
 
 On the first call to new_request, the plugin adjusts the appenders.
 This causes it to only have effect if it is run in a forked server
@@ -74,7 +74,7 @@ sub new_request {
     Log::Log4perl->get_logger("")->level($WARN);
 }
 
-=head3 add_warnings WARN, WARN, ..
+=head2 add_warnings WARN, WARN, ..
 
 Takes the given warnings, and stores them away for later reporting.
 
@@ -85,7 +85,7 @@ sub add_warnings {
     push @{ $self->{'stashed_warnings'} }, @_;
 }
 
-=head3 stashed_warnings
+=head2 stashed_warnings
 
 Returns the stored warnings, as a list.  This does not clear the list,
 unlike L</encoded_warnings> or L</decoded_warnings>.
@@ -98,7 +98,7 @@ sub stashed_warnings {
     return @{ $self->{'stashed_warnings'} || [] };
 }
 
-=head3 encoded_warnings
+=head2 encoded_warnings
 
 Returns the stored warnings, encoded using L<Storable>.  This also
 clears the list of stashed warnings.
@@ -112,7 +112,7 @@ sub encoded_warnings {
     return Storable::nfreeze(\@warnings);
 }
 
-=head3 decoded_warnings URI
+=head2 decoded_warnings URI
 
 Given the URI to a jifty server with this plugin enabled, retrieves
 and decodes the stored warnings, returning them.  This will also clear
