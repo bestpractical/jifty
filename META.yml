@@ -26,7 +26,6 @@ recommends:
   Data::Dump::Streamer: 0
   Devel::Cover: 0
   Devel::EvalContext: 0
-  Devel::REPL: 0
   Email::Abstract: 0
   Module::CoreList: 0
   Module::Install::Admin: 0.50

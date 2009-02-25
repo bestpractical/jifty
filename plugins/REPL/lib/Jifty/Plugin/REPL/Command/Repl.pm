@@ -1,6 +1,8 @@
 use strict;
 use warnings;
 
+package Jifty::Plugin::REPL::Command::Repl;
+
 package Jifty::Script::Repl;
 use base qw/Jifty::Script/;
 use Devel::REPL::Script;
@@ -55,6 +57,17 @@ sub run {
     Jifty->new();
     Devel::REPL::Script->new->run();
 }
+
+=head2 filename
+
+This is used as a hack to get L<App::CLI> to retrieve our POD correctly.
+
+Inner packages are not given in C<%INC>. If anyone finds a way around this,
+please let us know.
+
+=cut
+
+sub filename { __FILE__ }
 
 1;
 

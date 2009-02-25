@@ -2,7 +2,7 @@ use inc::Module::Install 0.46;
 name('Jifty');
 license('Perl');
 perl_version '5.8.3';
-requires('App::CLI' => 0.03 ); # App::CLI::Command::Help App::CLI::Command
+requires('App::CLI' => 0.08 ); # App::CLI::Command::Help App::CLI::Command
 requires('Cache::Cache'); #Cache::FileCache
 requires('Calendar::Simple');
 requires('Class::Accessor'); # Class::Accessor::Fast
@@ -149,11 +149,6 @@ feature 'Apache2/ModPerl2 handler' =>
 feature 'Jifty console' =>
     -default => 0,
     recommends('Devel::EvalContext' => 0),
-    ;
-
-feature 'Jifty REPL' =>
-    -default => 0,
-    recommends('Devel::REPL' => 0), # Devel::REPL::Script
     ;
 
 feature 'Improved halos' =>
