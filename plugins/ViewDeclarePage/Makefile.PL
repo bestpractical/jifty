@@ -1,8 +1,10 @@
 use inc::Module::Install 0.46;
+name('Jifty-Plugin-ViewDeclarePage');
+version_from('lib/Jifty/Plugin/ViewDeclarePage.pm');
 
-name        'Jifty-Plugin-ViewDeclarePage';
-all_from    'lib/Jifty/Plugin/ViewDeclarePage.pm';
+requires('Jifty');
 
-tests(join ' ', qw(t/*.t t/*/*.t t/*/*/*.t t/*/*/*/*.t));
+auto_install();
+tests(qw( t/*/t/*.t ));
 
-WriteAll();
+WriteAll;

@@ -1,6 +1,6 @@
 use inc::Module::Install 0.46;
-name('Jifty-Plugin-AuthzLDAP');
-version_from('lib/Jifty/Plugin/AuthzLDAP.pm');
+name('Jifty-Plugin-GoogleMap');
+version_from('lib/Jifty/Plugin/GoogleMap.pm');
 
 requires('Jifty');
 

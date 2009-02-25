@@ -1,7 +1,10 @@
-use inc::Module::Install;
+use inc::Module::Install 0.46;
 name('Jifty-Plugin-Multipage');
-version('0.01');
+version_from('lib/Jifty/Plugin/Multipage.pm');
 
-requires('Moose');
+requires('Jifty');
+
+auto_install();
+tests(qw( t/*/t/*.t ));
 
 WriteAll;

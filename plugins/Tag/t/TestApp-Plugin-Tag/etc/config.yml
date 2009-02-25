@@ -23,32 +23,16 @@ framework:
   MailerArgs: []
 
   Plugins: 
-    - 
-      LetMe: {}
+    - AdminUI: {}
+    - CompressedCSSandJS: {}
+    - ErrorTemplates: {}
+    - Halo: {}
+    - LetMe: {}
+    - OnlineDocs: {}
+    - REST: {}
+    - SkeletonApp: {}
 
-    - 
-      SkeletonApp: {}
-
-    - 
-      REST: {}
-
-    - 
-      Halo: {}
-
-    - 
-      ErrorTemplates: {}
-
-    - 
-      OnlineDocs: {}
-
-    - 
-      CompressedCSSandJS: {}
-
-    - 
-      AdminUI: {}
-
-    - 
-      Tag: {}
+    - Tag: {}
 
   PubSub: 
     Backend: Memcached

@@ -1,9 +1,10 @@
 use inc::Module::Install 0.46;
 name('Jifty-Plugin-TabView');
-version_from('lib/Jifty/Plugin/TabView/View.pm');
+version_from('lib/Jifty/Plugin/TabView.pm');
 
-requires('URI' => 1.31);
+requires('Jifty');
 
-&auto_install();
+auto_install();
+tests(qw( t/*/t/*.t ));
 
 WriteAll;

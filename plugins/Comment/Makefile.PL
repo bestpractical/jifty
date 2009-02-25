@@ -1,13 +1,10 @@
 use inc::Module::Install 0.46;
 name('Jifty-Plugin-Comment');
-version_from('../../lib/Jifty.pm');
+version_from('lib/Jifty/Plugin/Comment.pm');
 
-requires('HTML::Scrubber'),
-requires('MIME::Base64::URLSafe'),
-recommends('Net::Akismet'),
-requires('Regexp::Common'),
-requires('Regexp::Common::Email::Address'),
+requires('Jifty');
 
-&auto_install();
+auto_install();
+tests(qw( t/*/t/*.t ));
 
 WriteAll;

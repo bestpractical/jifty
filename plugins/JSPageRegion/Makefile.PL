@@ -2,10 +2,9 @@ use inc::Module::Install 0.46;
 name('Jifty-Plugin-JSPageRegion');
 version_from('lib/Jifty/Plugin/JSPageRegion.pm');
 
-requires('PadWalker');
+requires('Jifty');
 
-install_share;
-
-&auto_install();
+auto_install();
+tests(qw( t/*/t/*.t ));
 
 WriteAll;

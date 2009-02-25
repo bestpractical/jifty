@@ -1,9 +1,10 @@
-use inc::Module::Install;
+use inc::Module::Install 0.46;
 name('Jifty-Plugin-EmailErrors');
-version('0.01');
-requires('Jifty' => '0.60507');
-&auto_install();
+version_from('lib/Jifty/Plugin/EmailErrors.pm');
 
-install_share;
+requires('Jifty');
+
+auto_install();
+tests(qw( t/*/t/*.t ));
 
 WriteAll;

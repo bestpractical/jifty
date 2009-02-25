@@ -21,30 +21,19 @@ no_index:
     - DB
 recommends:
   Apache2::Const: 0
-  Cache::FileCache: 0
-  Chart::Base: 0
   Class::Accessor::Named: 0
   DBD::SQLite: 0
   Data::Dump::Streamer: 0
   Devel::Cover: 0
   Devel::EvalContext: 0
-  Devel::Events::Objects: 0.02
-  Devel::Gladiator: 0
   Devel::REPL: 0
-  Devel::Size: 0
   Email::Abstract: 0
-  GD: 0
-  GD::Graph: 0
-  Image::Info: 0
-  LWPx::ParanoidAgent: 0
   Module::CoreList: 0
   Module::Install::Admin: 0.50
   Module::Refresh: 0.09
-  Net::OpenID::Consumer: 0
   Net::Server::Fork: 0
   Net::Server::PreFork: 0
   Pod::Simple: 0
-  Proc::ProcessTable: 0
   Test::Base: 0.44
   Test::Email: 0
   Test::HTML::Lint: 0
@@ -52,8 +41,6 @@ recommends:
   Test::MockModule: 0.05
   Test::MockObject: 1.07
   Test::WWW::Declare: 0.01
-  WWW::Facebook::API: 0.3.6
-  XML::Simple: 0
 requires:
   App::CLI: 0.03
   CGI: 3.30

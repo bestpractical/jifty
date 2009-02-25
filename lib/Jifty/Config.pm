@@ -510,14 +510,14 @@ sub initial_config {
 
     # These are the plugins which new apps will get by default
     $guess->{'framework'}->{'Plugins'} = [
-        { LetMe              => {}, },
-        { SkeletonApp        => {}, },
-        { REST               => {}, },
-        { Halo               => {}, },
-        { ErrorTemplates     => {}, },
-        { OnlineDocs         => {}, },
+        { AdminUI            => {}, },
         { CompressedCSSandJS => {}, },
-        { AdminUI            => {}, }
+        { ErrorTemplates     => {}, },
+        { Halo               => {}, },
+        { LetMe              => {}, },
+        { OnlineDocs         => {}, },
+        { REST               => {}, },
+        { SkeletonApp        => {}, },
     ];
 
     return $guess;
@@ -540,13 +540,13 @@ sub update_config {
         # These are the plugins which old apps expect because their
         # features used to be in the core.
         unshift (@{$config->{'framework'}->{'Plugins'}}, 
-            { SkeletonApp        => {}, },
-            { REST               => {}, },
-            { Halo               => {}, },
-            { ErrorTemplates     => {}, },
-            { OnlineDocs         => {}, },
+            { AdminUI            => {}, },
             { CompressedCSSandJS => {}, },
-            { AdminUI            => {}, }
+            { ErrorTemplates     => {}, },
+            { Halo               => {}, },
+            { OnlineDocs         => {}, },
+            { REST               => {}, },
+            { SkeletonApp        => {}, },
         );
     }
 

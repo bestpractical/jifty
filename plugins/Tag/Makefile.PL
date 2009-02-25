@@ -1,8 +1,10 @@
 use inc::Module::Install 0.46;
+name('Jifty-Plugin-Tag');
+version_from('lib/Jifty/Plugin/Tag.pm');
 
-name        'Jifty-Plugin-Tag';
-all_from    'lib/Jifty/Plugin/Tag.pm';
+requires('Jifty');
 
-tests(join ' ', qw(t/*.t t/*/*.t t/*/*/*.t t/*/*/*/*.t));
+auto_install();
+tests(qw( t/*/t/*.t ));
 
-WriteAll();
+WriteAll;

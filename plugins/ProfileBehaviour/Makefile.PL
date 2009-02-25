@@ -1,8 +1,10 @@
-use inc::Module::Install;
+use inc::Module::Install 0.46;
 name('Jifty-Plugin-ProfileBehaviour');
-version('0.01');
-requires('Jifty' => '0.60722');
+version_from('lib/Jifty/Plugin/ProfileBehaviour.pm');
 
-install_share;
+requires('Jifty');
+
+auto_install();
+tests(qw( t/*/t/*.t ));
 
 WriteAll;

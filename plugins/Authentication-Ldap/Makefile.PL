@@ -1,10 +1,10 @@
 use inc::Module::Install 0.46;
 name('Jifty-Plugin-Authentication-Ldap');
-#version_from('lib/Jifty/Plugin/Authentication/CAS.pm');
-version_from('../../lib/Jifty.pm');
+version_from('lib/Jifty/Plugin/Authentication-Ldap.pm');
 
-requires('Net::LDAP');
+requires('Jifty');
 
-&auto_install();
+auto_install();
+tests(qw( t/*/t/*.t ));
 
 WriteAll;

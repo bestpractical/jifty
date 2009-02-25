@@ -146,18 +146,6 @@ feature 'Apache2/ModPerl2 handler' =>
     recommends('Apache2::Const' => 0),
     ;
 
-feature 'OpenID Login Plugin' =>
-    -default => 0,
-    recommends('Net::OpenID::Consumer' => 0),
-    recommends('Cache::FileCache' => 0),
-    recommends('LWPx::ParanoidAgent' => 0),
-    ;
-
-feature 'Facebook Login Plugin' =>
-    -default => 0,
-    recommends('WWW::Facebook::API' => '0.3.6'),
-    ;
-
 feature 'Jifty console' =>
     -default => 0,
     recommends('Devel::EvalContext' => 0),
@@ -166,23 +154,6 @@ feature 'Jifty console' =>
 feature 'Jifty REPL' =>
     -default => 0,
     recommends('Devel::REPL' => 0), # Devel::REPL::Script
-    ;
-
-feature 'Chart Plugin (none of these need to be installed for Charts to work)' =>
-    -default => 0,
-    recommends('Chart::Base' => 0),
-    recommends('GD' => 0),          # for a testing hack
-    recommends('GD::Graph' => 0),
-    recommends('XML::Simple' => 0),
-    recommends('Image::Info' => 0), # for testing
-    ;
-
-feature 'Memory Leak Plugins' =>
-    -default => 0,
-    recommends('Devel::Events::Objects' => '0.02'), # Devel::Events::Handler::ObjectTracker Devel::Events::Generator::Objects
-    recommends('Devel::Size' => 0),
-    recommends('Devel::Gladiator' => 0),
-    recommends('Proc::ProcessTable' => 0),
     ;
 
 feature 'Improved halos' =>
@@ -195,54 +166,13 @@ no_index( directory => qw< debian doc examples share plugins/*/t> );
 no_index package => 'DB';
 
 version_from('lib/Jifty.pm');
-#&auto_bundle_deps();
 &auto_install();
-#&auto_include_dependent_dists();
 
 install_script('bin/jifty');
 install_share;
 
-# INSTALLDIRS need to be set before Makefile if you want to change default install path
-# debian packaging use :
-#  INSTALLDIRS=vendor $(PERL) Makefile.PL --skipdeps INSTALLDIRS=vendor 
-#
-# TODO?: JIFTY_PLUGINS=ALL
-# ls plugins -> Authentication-CAS Authentication-Ldap  Multipage  TabView
-my @plugins = defined $ENV{JIFTY_PLUGINS} ? split(/ /, $ENV{JIFTY_PLUGINS}) : qw(TabView);
-
-
 # Test all of our sub-dist tests too
-tests(join(' ', qw(t/*.t t/*/*.t t/*/*/*.t t/*/*/*/*.t), map { "plugins/$_/t/*.t plugins/$_/t/*/*/*.t"} @plugins));
-
-for (@plugins) {
-    die unless -d "plugins/$_";
-#    install_share("plugins/$_/share");
-    chdir("plugins/$_");
-    system("$^X -I../../lib Makefile.PL INSTALLDIRS=".$ENV{INSTALLDIRS});
-    chdir('../..');
-
-}
-
-postamble(<<"END");
-
-all ::
-@{[ join("\n", map { "\tcd plugins/$_;".' $(MAKE) ' } @plugins)   ]}
-
-install ::
-@{[ join("\n", map { "\tcd plugins/$_;".' $(MAKE) install DESTDIR=$(DESTDIR) PREFIX=$(PREFIX)' } @plugins)   ]}
-
-distclean :: realclean
-@{[ "\t".'$(NOECHO) $(NOOP)']}
-
-realclean :: 
-@{[ join("\n", map { "\tcd plugins/$_;".' $(MAKE) realclean' } @plugins)   ]}
-
-INST_LIB= blib/lib
-
-INST_ARCHLIB= @{[ join("','", map { "plugins/$_/blib/lib"} @plugins) ]}
-
-END
-
+tests('t/*.t t/*/*.t t/*/*/*.t t/*/*/*/*.t');
 
 WriteAll;
 

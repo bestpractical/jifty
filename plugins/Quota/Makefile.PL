@@ -1,6 +1,6 @@
 use inc::Module::Install 0.46;
-name('Jifty-Plugin-AuthzLDAP');
-version_from('lib/Jifty/Plugin/AuthzLDAP.pm');
+name('Jifty-Plugin-Quota');
+version_from('lib/Jifty/Plugin/Quota.pm');
 
 requires('Jifty');
 

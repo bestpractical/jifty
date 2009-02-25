@@ -1,8 +1,10 @@
-use inc::Module::Install;
+use inc::Module::Install 0.46;
 name('Jifty-Plugin-CodePress');
-version('0.02');
-requires('Jifty' => '0.70422');
+version_from('lib/Jifty/Plugin/CodePress.pm');
 
-install_share;
+requires('Jifty');
+
+auto_install();
+tests(qw( t/*/t/*.t ));
 
 WriteAll;
