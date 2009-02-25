@@ -12,12 +12,6 @@ Jifty::Plugin::UUID::Widget -  Widget for UUID plugin
 
 =head1 METHODS
 
-=head2 accessors
-
-Overrides L<Jifty::Web::Form::Field/accessors>.
-
-=cut
-
 =head2 render_widget
 
 Renders form fields as a UUID.
@@ -25,10 +19,8 @@ Renders form fields as a UUID.
 =cut
 
 sub render_widget {
-    warn "Rendering form field";
     my $self     = shift;
     my $action   = $self->action;
-    my $readonly = 1;
     
     my $name = $self->name;
     if ( $action->record->$name() ) {

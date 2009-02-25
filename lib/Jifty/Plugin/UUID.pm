@@ -6,19 +6,13 @@ use base qw/Jifty::Plugin Class::Accessor::Fast/;
 
 =head1 NAME
 
-Jifty::Plugin::UUID - Provides Universally Unique Identifier for Jifty
+Jifty::Plugin::UUID - Provides a Universally Unique Identifier type for Jifty
 
 =head1 SYNOPSIS
 
 In your model class schema description, add the following:
 
     column photo => is UUID;
-
-
-=head1 DESCRIPTION
-
-This plugin provides user pictures for Jifty;
-
 
 =cut
 
