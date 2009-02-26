@@ -21,11 +21,11 @@ framework:
   MailerArgs:
     - %log/mail.log%
   Plugins: 
-    - Authentication::Password: {}
-    - REST: {}
-    - OnlineDocs: {}
-    - CompressedCSSandJS: {}
     - AdminUI: {}
+    - Authentication::Password: {}
+    - CompressedCSSandJS: {}
+    - OnlineDocs: {}
+    - REST: {}
   PubSub: 
     Backend: Memcached
     Enable: ~

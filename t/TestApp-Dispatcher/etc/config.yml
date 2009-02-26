@@ -22,9 +22,9 @@ framework:
   LogLevel: DEBUG
 
   Plugins: 
-    - SkeletonApp: {}
     - CompressedCSSandJS: {}
     - ErrorTemplates: {}
+    - SkeletonApp: {}
   PubSub: 
     Backend: Memcached
     Enable: ~

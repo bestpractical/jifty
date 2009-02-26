@@ -25,17 +25,17 @@ framework:
   MailerArgs: []
 
   Plugins: 
-    - SkeletonApp: {}
-    - REST: {}
-    - ErrorTemplates: {}
-    - OnlineDocs: {}
-    - CompressedCSSandJS: {}
     - AdminUI: {}
-    - LetMe: {}
-    - User: {}
     - Authentication::Password: {}
+    - CompressedCSSandJS: {}
+    - ErrorTemplates: {}
+    - LetMe: {}
+    - OnlineDocs: {}
     - OpenID: {}
+    - REST: {}
     - SinglePage: {}
+    - SkeletonApp: {}
+    - User: {}
 
   PubSub: 
     Backend: Memcached

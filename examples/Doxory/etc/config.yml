@@ -22,12 +22,12 @@ framework:
   MailerArgs: []
 
   Plugins: 
-    - SkeletonApp: {}
-    - REST: {}
-    - Halo: {}
-    - ErrorTemplates: {}
-    - CompressedCSSandJS: {}
     - Authentication::Password: {}
+    - CompressedCSSandJS: {}
+    - ErrorTemplates: {}
+    - Halo: {}
+    - REST: {}
+    - SkeletonApp: {}
 
   PubSub: 
     Backend: Memcached
