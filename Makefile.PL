@@ -152,7 +152,7 @@ feature 'Improved halos' =>
     ;
 
 
-no_index( directory => qw< debian doc examples share plugins/*/t> );
+no_index( directory => qw< debian doc examples share > );
 no_index package => 'DB';
 
 version_from('lib/Jifty.pm');
