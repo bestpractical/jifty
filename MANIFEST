@@ -220,7 +220,6 @@ lib/Jifty/Object.pm
 lib/Jifty/Param.pm
 lib/Jifty/Param/Schema.pm
 lib/Jifty/Plugin.pm
-lib/Jifty/Plugin/AccessLog.pm
 lib/Jifty/Plugin/ActorMetadata.pm
 lib/Jifty/Plugin/ActorMetadata/Mixin/Model/ActorMetadata.pm
 lib/Jifty/Plugin/AdminUI.pm
