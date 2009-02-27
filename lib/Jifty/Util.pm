@@ -104,7 +104,7 @@ sub share_root {
 
     
     Jifty::Util->require('File::ShareDir');
-    $SHARE_ROOT ||=  eval { File::Spec->rel2abs( File::ShareDir::dist_dir('Jifty') )};
+    $SHARE_ROOT ||=  eval { File::Spec->rel2abs( File::ShareDir::module_dir('Jifty') )};
     if (not $SHARE_ROOT or not -d $SHARE_ROOT) {
         # XXX TODO: This is a bloody hack
         # Module::Install::ShareDir and File::ShareDir don't play nicely
