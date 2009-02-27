@@ -2,7 +2,7 @@ use inc::Module::Install 0.46;
 name('Jifty');
 license('Perl');
 perl_version '5.8.3';
-requires('App::CLI' => 0.03 ); # App::CLI::Command::Help App::CLI::Command
+requires('App::CLI' => 0.08 ); # App::CLI::Command::Help App::CLI::Command
 requires('Cache::Cache'); #Cache::FileCache
 requires('Calendar::Simple');
 requires('Class::Accessor'); # Class::Accessor::Fast
@@ -144,45 +144,6 @@ feature 'Pre-forking jifty server' =>
 feature 'Apache2/ModPerl2 handler' =>
     -default => 0,
     recommends('Apache2::Const' => 0),
-    ;
-
-feature 'OpenID Login Plugin' =>
-    -default => 0,
-    recommends('Net::OpenID::Consumer' => 0),
-    recommends('Cache::FileCache' => 0),
-    recommends('LWPx::ParanoidAgent' => 0),
-    ;
-
-feature 'Facebook Login Plugin' =>
-    -default => 0,
-    recommends('WWW::Facebook::API' => '0.3.6'),
-    ;
-
-feature 'Jifty console' =>
-    -default => 0,
-    recommends('Devel::EvalContext' => 0),
-    ;
-
-feature 'Jifty REPL' =>
-    -default => 0,
-    recommends('Devel::REPL' => 0), # Devel::REPL::Script
-    ;
-
-feature 'Chart Plugin (none of these need to be installed for Charts to work)' =>
-    -default => 0,
-    recommends('Chart::Base' => 0),
-    recommends('GD' => 0),          # for a testing hack
-    recommends('GD::Graph' => 0),
-    recommends('XML::Simple' => 0),
-    recommends('Image::Info' => 0), # for testing
-    ;
-
-feature 'Memory Leak Plugins' =>
-    -default => 0,
-    recommends('Devel::Events::Objects' => '0.02'), # Devel::Events::Handler::ObjectTracker Devel::Events::Generator::Objects
-    recommends('Devel::Size' => 0),
-    recommends('Devel::Gladiator' => 0),
-    recommends('Proc::ProcessTable' => 0),
     ;
 
 feature 'Improved halos' =>
