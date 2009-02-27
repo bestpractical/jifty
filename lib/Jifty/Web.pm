@@ -462,6 +462,8 @@ sub form {
 Creates a new action (an instance of a subclass of
 L<Jifty::Action>). The named arguments passed to this method are
 passed on to the C<new> method of the action named in C<CLASS>.
+If you pass an odd number of arguments, then the first argument
+is interpreted as C<class>.
 
 =head3 Arguments
 
@@ -503,6 +505,9 @@ field at that time.
 
 sub new_action {
     my $self = shift;
+
+    # Handle new_action('CreateFoo', moniker => 'create_foo')
+    unshift @_, 'class' if @_ % 2;
 
     my %args = (
         class     => undef,
