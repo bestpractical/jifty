@@ -59,8 +59,11 @@ sub new {
     my %args  = (@_);
 
     my $replace_tz = delete $args{_replace_time_zone};
+    my $current_user = delete $args{current_user};
 
     my $self  = $class->SUPER::new(%args);
+
+    $self->current_user($current_user) if $current_user;
 
     # XXX What if they really mean midnight offset by time zone?
 
