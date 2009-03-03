@@ -76,7 +76,7 @@ sub arguments {
             $info->{valid_values} = $valid_values = (eval { [ @$valid_values ] } || [$valid_values]);
 
             # For radio display, display an "any" label (empty looks weird)
-            if (lc $info->{render_as} eq 'radio') {
+            if (defined $info->{render_as} and lc $info->{render_as} eq 'radio') {
                 if (@$valid_values > 1) {
                     unshift @$valid_values, { display => _("(any)"), value => '' };
                     $info->{default_value} ||= '';
@@ -94,7 +94,7 @@ sub arguments {
         }
 
         # You can't search passwords, so remove the fields
-        if(lc $info->{'render_as'} eq 'password') {
+        if(defined $info->{'render_as'} and lc $info->{'render_as'} eq 'password') {
             delete $args->{$field};
             next;
         }
