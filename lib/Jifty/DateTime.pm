@@ -63,7 +63,7 @@ sub new {
 
     my $self = $class->SUPER::new(%args);
 
-    $self->current_user($current_user) if $current_user;
+    $self->current_user($current_user);
 
     # XXX What if they really mean midnight offset by time zone?
 
@@ -115,9 +115,9 @@ sub now {
     my %args  = @_;
 
     my $current_user = delete $args{current_user};
-    my $self  = $class->SUPER::now(%args);
+    my $self = $class->SUPER::now(%args);
 
-    $self->current_user($current_user) if $current_user;
+    $self->current_user($current_user);
     $self->time_zone($args{time_zone}) if $args{time_zone};
 
     return $self;
@@ -134,9 +134,9 @@ sub from_epoch {
     my %args  = @_;
 
     my $current_user = delete $args{current_user};
-    my $self  = $class->SUPER::from_epoch(%args);
+    my $self = $class->SUPER::from_epoch(%args);
 
-    $self->current_user($current_user) if $current_user;
+    $self->current_user($current_user);
     $self->time_zone($args{time_zone}) if $args{time_zone};
 
     return $self;
@@ -151,6 +151,11 @@ When setting the current user, update the timezone appropriately.
 sub current_user {
     my $self = shift;
     return $self->SUPER::current_user unless @_;
+
+    # $date->current_user(undef) will not remove the current user, but it will
+    # calculate who the current user is for setting the time zone
+    shift if @_ == 1 && !defined($_[0]);
+
     my $ret = $self->SUPER::current_user(@_);
     $self->set_current_user_timezone();
     return $ret;
