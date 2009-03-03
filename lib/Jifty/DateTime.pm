@@ -69,9 +69,9 @@ sub new {
     $self->time_zone($args{time_zone}) if $args{time_zone};
 
     if ($is_date) {
-        $self->hour(0);
-        $self->minute(0);
-        $self->second(0);
+        $self->set_hour(0);
+        $self->set_minute(0);
+        $self->set_second(0);
         $self->set_time_zone('floating');
     }
 
