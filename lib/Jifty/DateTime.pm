@@ -66,7 +66,7 @@ sub new {
                && $self->time_zone->name eq 'floating';
 
     $self->current_user($current_user);
-    $self->time_zone($args{time_zone}) if $args{time_zone};
+    $self->set_time_zone($args{time_zone}) if $args{time_zone};
 
     if ($is_date) {
         $self->set_hour(0);
