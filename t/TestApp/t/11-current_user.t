@@ -31,14 +31,14 @@ $o->create( name => 'Bob', email => 'bob@example.com',
             password => 'secret2', tasty => 1 );
 ok($o->id, "New user has valid id set");
 ok($o->tasty, "User is tasty");
-like($o->created_on->time_zone, qr/Floating/, "User's created_on date is in the floating timezone");
-like($o->current_time->time_zone, qr/UTC/, "Jifty::DateTime::now defaults to UTC (superuser has no user_object)");
+is($o->created_on->time_zone->name, 'floating', "User's created_on date is in the floating timezone");
+is($o->current_time->time_zone->name, 'UTC', "Jifty::DateTime::now defaults to UTC (superuser has no user_object)");
 
 my $now = $o->current_time->clone;
 $now->set_current_user_timezone('America/Chicago');
-like($now->time_zone, , qr{America::Chicago}, "set_current_user_timezone defaults to the passed in timezone");
+is($now->time_zone->name, 'America/Chicago', "set_current_user_timezone defaults to the passed in timezone");
 $now->set_current_user_timezone();
-like($now->time_zone, , qr{UTC}, "set_current_user_timezone defaults to UTC if no passed in timezone");
+is($now->time_zone->name, 'UTC', "set_current_user_timezone defaults to UTC if no passed in timezone");
 
 is($o->email, 'bob@example.com', 'email initially set correctly');
 $o->set_email('bob+jifty@example.com');
@@ -54,19 +54,19 @@ ok($bob->is_superuser, "CurrentUser is a superuser");
 is($bob->user_object->email, 'bob+jifty@example.com', 'email from before');
 $bob->user_object->set_email('bob+test@example.com');
 is($bob->user_object->email, 'bob+test@example.com', 'email updated correctly');
-like($bob->user_object->created_on->time_zone, qr/Floating/, "User's created_on date is in the floating timezone");
-like($bob->user_object->current_time->time_zone, qr{America::Anchorage}, "Jifty::DateTime::now correctly peers into current_user->user_object->time_zone");
+is($bob->user_object->created_on->time_zone->name, 'floating', "User's created_on date is in the floating timezone");
+is($bob->user_object->current_time->time_zone->name, 'America::Anchorage', "Jifty::DateTime::now correctly peers into current_user->user_object->time_zone");
 
 $now = $bob->user_object->current_time->clone;
 $now->set_time_zone('America/New_York');
-like($now->time_zone, qr{America::New_York}, "setting up other tests");
+is($now->time_zone->name, 'America/New_York', "setting up other tests");
 $now->set_current_user_timezone();
-like($now->time_zone, qr{America::Anchorage}, "set_current_user_timezone correctly gets the user's timezone");
+is($now->time_zone->name, 'America/Anchorage', "set_current_user_timezone correctly gets the user's timezone");
 $now->set_current_user_timezone('America/Chicago');
-like($now->time_zone, , qr{America::Anchorage}, "set_current_user_timezone uses the user's in timezone even if one is passed in");
+is($now->time_zone->name, 'America/Anchorage', "set_current_user_timezone uses the user's in timezone even if one is passed in");
 
 my $dt = Jifty::DateTime->from_epoch(epoch => time);
-like($now->time_zone, qr{America::Anchorage}, "from_epoch correctly gets the user's timezone");
+is($now->time_zone->name, 'America/Anchorage', "from_epoch correctly gets the user's timezone");
 
 my $server = Jifty::Test->make_server;
 isa_ok($server, 'Jifty::Server');
