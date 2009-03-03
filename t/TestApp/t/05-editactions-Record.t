@@ -4,7 +4,7 @@ use warnings;
 use strict;
 
 BEGIN { $ENV{'JIFTY_CONFIG'} = 't/config-Record' }
-use Jifty::Test::Dist tests => 10;
+use Jifty::Test::Dist tests => 9;
 use Jifty::Test::WWW::Mechanize;
 # Make sure we can load the model
 use_ok('TestApp::Model::User');
@@ -44,6 +44,5 @@ ok($id, "Load returned success");
 
 is($o->email, 'newemail@example.com', "Email was updated by form");
 is($o->tasty, 1, "User is still tasty (was not updated since immutable)");
-ok($o->uuid,  "The user has a uuid ". $o->uuid);
 1;
 

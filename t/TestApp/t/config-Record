@@ -2,5 +2,3 @@
 framework:
   Database:
     RecordBaseClass: Jifty::DBI::Record
-  Plugins:
-    - UUID: {}

@@ -34,7 +34,6 @@ column 'created_on' =>
   is immutable,
   default is defer { DateTime->now },
   filters are qw(Jifty::Filter::DateTime Jifty::DBI::Filter::Date);
-column 'uuid' => is UUID;
 };
 
 
