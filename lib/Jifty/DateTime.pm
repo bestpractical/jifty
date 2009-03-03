@@ -99,7 +99,7 @@ sub now {
     my $self = $class->SUPER::now(%args);
 
     $self->current_user($current_user);
-    $self->time_zone($args{time_zone}) if $args{time_zone};
+    $self->set_time_zone($args{time_zone}) if $args{time_zone};
 
     return $self;
 }
@@ -118,7 +118,7 @@ sub from_epoch {
     my $self = $class->SUPER::from_epoch(%args);
 
     $self->current_user($current_user);
-    $self->time_zone($args{time_zone}) if $args{time_zone};
+    $self->set_time_zone($args{time_zone}) if $args{time_zone};
 
     return $self;
 }
