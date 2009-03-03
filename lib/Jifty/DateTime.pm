@@ -135,7 +135,10 @@ sub current_user {
 
     # $date->current_user(undef) will not remove the current user, but it will
     # calculate who the current user is for setting the time zone
-    shift if @_ == 1 && !defined($_[0]);
+    if (@_ == 1 && !defined($_[0])) {
+        shift;
+        $self->_get_current_user;
+    }
 
     my $ret = $self->SUPER::current_user(@_);
     $self->set_current_user_timezone();
