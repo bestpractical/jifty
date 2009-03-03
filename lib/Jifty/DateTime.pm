@@ -182,7 +182,7 @@ Returns the Jifty::DateTime object itself.
 
 sub set_current_user_timezone {
     my $self    = shift;
-    my $default = shift || 'GMT';
+    my $default = shift || 'UTC';
     my $tz = $self->current_user_has_timezone || $default;
 
     $self->set_time_zone($tz);
@@ -235,7 +235,7 @@ sub new_from_string {
     return undef unless $epoch;
 
     # Build a DateTime object from the Date::Manip value and setup the TZ
-    my $self = $class->from_epoch( epoch => $epoch, time_zone => 'GMT' );
+    my $self = $class->from_epoch( epoch => $epoch, time_zone => 'UTC' );
     if (my $tz = $self->current_user_has_timezone) {
         if ($self->hour || $self->minute || $self->second) {
             $self->set_time_zone( $tz );
