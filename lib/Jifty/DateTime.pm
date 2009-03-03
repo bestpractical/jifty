@@ -113,10 +113,12 @@ user's timezone (unless otherwise requested, of course).
 sub now {
     my $class = shift;
     my %args  = @_;
+
+    my $current_user = delete $args{current_user};
     my $self  = $class->SUPER::now(%args);
 
-    $self->set_current_user_timezone()
-        unless $args{time_zone};
+    $self->current_user($current_user) if $current_user;
+    $self->time_zone($args{time_zone}) if $args{time_zone};
 
     return $self;
 }
@@ -130,10 +132,12 @@ See L<DateTime/from_epoch> and L<Jifty::DateTime/now>.
 sub from_epoch {
     my $class = shift;
     my %args  = @_;
+
+    my $current_user = delete $args{current_user};
     my $self  = $class->SUPER::from_epoch(%args);
 
-    $self->set_current_user_timezone()
-        unless $args{time_zone};
+    $self->current_user($current_user) if $current_user;
+    $self->time_zone($args{time_zone}) if $args{time_zone};
 
     return $self;
 }
