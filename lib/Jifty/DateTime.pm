@@ -58,40 +58,21 @@ sub new {
     my $class = shift;
     my %args  = @_;
 
-    my $replace_tz = delete $args{_replace_time_zone};
     my $current_user = delete $args{current_user};
 
     my $self = $class->SUPER::new(%args);
 
+    my $is_date = $self->hms eq '00:00:00'
+               && $self->time_zone->name eq 'floating';
+
     $self->current_user($current_user);
+    $self->time_zone($args{time_zone}) if $args{time_zone};
 
-    # XXX What if they really mean midnight offset by time zone?
-
-    #     this behavior is (sadly!) consistent with
-    #     DateTime->truncate(to => 'day') and Jifty::DateTime::new_from_string
-    #     suggestions for improvement are very welcome
-
-    # Do not bother with time zones unless time is used, we assume that
-    # 00:00:00 implies that no time is used
-    if ($self->hour || $self->minute || $self->second) {
-
-        # Unless the user has explicitly said they want a time zone,
-        # we want to convert to the end-user's timezone. If we ignore
-        # $args{time_zone}, then DateTime::from_epoch will get very confused
-        if (!$args{time_zone} || $replace_tz) {
-            if (my $tz = $self->current_user_has_timezone) {
-                # if we just set $tz directly, then it won't convert properly
-                # from the Floating time zone.
-                $self->set_time_zone("UTC");
-
-                $self->set_time_zone( $tz );
-            }
-        }
-    }
-
-    # No time, just use the floating time zone
-    else {
-        $self->set_time_zone("floating");
+    if ($is_date) {
+        $self->hour(0);
+        $self->minute(0);
+        $self->second(0);
+        $self->set_time_zone('floating');
     }
 
     return $self;

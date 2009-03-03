@@ -58,11 +58,6 @@ sub decode {
         $args{$_} = $$value_ref->$_ if(defined($$value_ref->$_));
     }
 
-    # we want this DateTime's TZ to be in the current user's TZ, unless
-    # it represents a date
-    $args{_replace_time_zone} = 1
-        unless $args{time_zone} =~ /floating/i;
-
     my $class = Jifty->app_class('DateTime');
     $class = 'Jifty::DateTime' unless $class->can('new');
     my $dt = $class->new(%args);
