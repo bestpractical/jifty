@@ -111,26 +111,21 @@ sub _calculate_share {
     my $self = shift;
     my $class = ref($self);
 
-    Jifty::Util->require('File::ShareDir');
     unless ( $self->{share} ) {
-        local $@
-            ; # We're just avoiding File::ShareDir's failure behaviour of dying
-        eval { $self->{share} = File::ShareDir::dist_dir($class) };
+        # Try File::ShareDir, in case it's a non-core plugin
+        Jifty::Util->require('File::ShareDir');
+        my $dist = $class;
+        $dist =~ s/::/-/g;
+        local $@;
+        eval { $self->{share} = File::ShareDir::dist_dir($dist) };
     }
     unless ( $self->{share} ) {
+        # Core plugins live in jifty's share/plugins/Jifty/Plugin/Whatever/
+        my $class_to_path = $class;
+        $class_to_path =~ s|::|/|g;
+        # for the in dist plugin share resides in share/plugins/...
         $self->{share} = Jifty::Util->share_root;
-        if ( $self->{'share'} ) {
-            my $class_to_path = $class;
-            $class_to_path =~ s|::|/|g;
-            # for the in dist plugin share resides in share/plugins/...
-            $self->{share} .= "/plugins/" . $class_to_path;
-            if (!-d $self->{share}) {
-                # for the plugin share resides in plugins/NAME/share
-                $self->{share} = $INC{$class_to_path.'.pm'};
-                $self->{share} =~ s{lib/\Q$class_to_path.pm}{share};
-                $self->{share} = File::Spec->rel2abs($self->{share});
-            }
-        }
+        $self->{share} .= "/plugins/" . $class_to_path;
     }
     return $self->{share};
 }

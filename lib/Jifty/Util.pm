@@ -101,18 +101,20 @@ of Jifty and it's plugins.
 
 sub share_root {
     my $self = shift;
-
-    
-    Jifty::Util->require('File::ShareDir');
-    $SHARE_ROOT ||=  eval { File::Spec->rel2abs( File::ShareDir::module_dir('Jifty') )};
-    if (not $SHARE_ROOT or not -d $SHARE_ROOT) {
-        # XXX TODO: This is a bloody hack
-        # Module::Install::ShareDir and File::ShareDir don't play nicely
-        # together
+    unless (defined $SHARE_ROOT) {
+        # Try for the local version, first
         my @root = File::Spec->splitdir($self->jifty_root); # lib
         pop @root; # Jifty-version
         $SHARE_ROOT = File::Spec->catdir(@root,"share");
+        undef $SHARE_ROOT unless defined $SHARE_ROOT and -d $SHARE_ROOT and -d File::Spec->catdir($SHARE_ROOT,"web");
+
+        # If that doesn't pass inspection, try File::ShareDir::dist_dir
+        Jifty::Util->require('File::ShareDir');
+        $SHARE_ROOT ||= eval { File::Spec->rel2abs( File::ShareDir::dist_dir('Jifty') )};
+        undef $SHARE_ROOT unless defined $SHARE_ROOT and -d $SHARE_ROOT and -d File::Spec->catdir($SHARE_ROOT,"web");
     }
+
+    die "Can't locate Jifty share root!" unless defined $SHARE_ROOT;
     return ($SHARE_ROOT);
 }
 
