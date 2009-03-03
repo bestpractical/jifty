@@ -56,12 +56,12 @@ method called C<time_zone>.
 
 sub new {
     my $class = shift;
-    my %args  = (@_);
+    my %args  = @_;
 
     my $replace_tz = delete $args{_replace_time_zone};
     my $current_user = delete $args{current_user};
 
-    my $self  = $class->SUPER::new(%args);
+    my $self = $class->SUPER::new(%args);
 
     $self->current_user($current_user) if $current_user;
 
@@ -80,7 +80,8 @@ sub new {
         # $args{time_zone}, then DateTime::from_epoch will get very confused
         if (!$args{time_zone} || $replace_tz) {
             if (my $tz = $self->current_user_has_timezone) {
-                # XXX: we do this because of the floating timezone
+                # if we just set $tz directly, then it won't convert properly
+                # from the Floating time zone.
                 $self->set_time_zone("UTC");
 
                 $self->set_time_zone( $tz );
@@ -289,7 +290,7 @@ sub friendly_date {
     if ($ymd eq $tomorrow->ymd) {
         return "tomorrow";
     }
-    
+
     # None of the above, just spit out the date
     return $ymd;
 }
@@ -343,9 +344,7 @@ sub jifty_serialize_format {
     my $dt = shift;
 
     # if it looks like just a date, then return just the date portion
-    return $dt->ymd
-        if lc($dt->time_zone->name) eq 'floating'
-        && $dt->hms('') eq '000000';
+    return $dt->ymd if $dt->is_date;
 
     # otherwise let stringification take care of it
     return $dt;
