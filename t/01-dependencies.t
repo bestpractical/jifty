@@ -55,6 +55,7 @@ my %required;
 }
 
 for (sort keys %used) {
+    next if /^5(\.\d+)?/;
     my $first_in = Module::CoreList->first_release($_);
     next if defined $first_in and $first_in <= 5.00803;
     next if /^(Jifty|Jifty::DBI|inc|t|TestApp|Application)(::|$)/;
