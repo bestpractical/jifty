@@ -55,7 +55,7 @@ is($bob->user_object->email, 'bob+jifty@example.com', 'email from before');
 $bob->user_object->set_email('bob+test@example.com');
 is($bob->user_object->email, 'bob+test@example.com', 'email updated correctly');
 is($bob->user_object->created_on->time_zone->name, 'floating', "User's created_on date is in the floating timezone");
-is($bob->user_object->current_time->time_zone->name, 'America::Anchorage', "Jifty::DateTime::now correctly peers into current_user->user_object->time_zone");
+is($bob->user_object->current_time->time_zone->name, 'America/Anchorage', "Jifty::DateTime::now correctly peers into current_user->user_object->time_zone");
 
 $now = $bob->user_object->current_time->clone;
 $now->set_time_zone('America/New_York');
