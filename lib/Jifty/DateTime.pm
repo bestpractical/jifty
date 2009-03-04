@@ -110,7 +110,7 @@ sub now {
     my $class = shift;
     my %args  = (
         current_user => undef,
-        time_zone    => undef,
+        #time_zone => undef, # DateTime doesn't like undef time_zone
         @_,
     );
 
@@ -135,7 +135,11 @@ See L<DateTime/from_epoch> and L<Jifty::DateTime/now>.
 
 sub from_epoch {
     my $class = shift;
-    my %args  = @_;
+    my %args  = (
+        current_user => undef,
+        #time_zone => undef, # DateTime doesn't like undef time_zone
+        @_,
+    );
 
     my $current_user = delete $args{current_user};
     my $self = $class->SUPER::from_epoch(%args);
