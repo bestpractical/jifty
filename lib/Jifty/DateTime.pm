@@ -47,16 +47,19 @@ use base qw(Jifty::Object DateTime);
 
 =head2 new ARGS
 
-See L<DateTime/new>. If we get what appears to be a date, then we
-keep this in the floating datetime. Otherwise, set this object's
-timezone to the current user's time zone, if the current user has a
-method called C<time_zone>.  
+See L<DateTime/new>. If we get what appears to be a date, then we keep this in
+the floating datetime. Otherwise, set this object's timezone to the current
+user's time zone, if the current user's user object has a method called
+C<time_zone>. 
 
 =cut
 
 sub new {
     my $class = shift;
-    my %args  = @_;
+    my %args  = (
+        current_user => undef,
+        @_,
+    );
 
     my $current_user = delete $args{current_user};
 
@@ -65,16 +68,26 @@ sub new {
     my $is_date = $self->hms eq '00:00:00'
                && $self->time_zone->name eq 'floating';
 
+    # The output time_zone is the *current user's* time zone. It's okay that
+    # $current_user can be undef; we'll still find and set the right current
+    # user then set the time zone.
     $self->current_user($current_user);
 
-    if ($args{time_zone}) {
-        $self->set_time_zone($args{time_zone});
-    }
-    elsif ($is_date) {
-        $self->set_hour(0);
-        $self->set_minute(0);
-        $self->set_second(0);
+    # If we were given a date, then we need to make sure its output time zone
+    # is Floating and it's set to 00:00:00.
+    # This sucks when you want a timestamp (not just a datestamp) at midnight
+    # in the floating time zone but we don't have any better way to make this
+    # work.
+    if ($is_date) {
         $self->set_time_zone('floating');
+
+        # Without this check we loop infinitely, because set_hour constructs
+        # a new Jifty::DateTime object.
+        if ($self->hms ne '00:00:00') {
+            $self->set_hour(0);
+            $self->set_minute(0);
+            $self->set_second(0);
+        }
     }
 
     return $self;
@@ -82,25 +95,33 @@ sub new {
 
 =head2 now ARGS
 
-See L<DateTime/now>. If a time_zone argument is passed in, then this method
+See L<DateTime/now>. If a time_zone argument is passed in, then this wrapper
 is effectively a no-op.
 
 OTHERWISE this will always set this object's timezone to the current user's
-timezone (or UTC if that's not available). Without this, DateTime's C<now> will
-set the timezone to UTC always (by passing C<< time_zone => 'UTC' >> to
-C<Jifty::DateTime::new>. We want Jifty::DateTime to always reflect the current
+timezone. Without this, DateTime's C<now> will set the timezone to UTC always
+(by passing C<< time_zone => 'UTC' >> to C<Jifty::DateTime::new>. We want
+Jifty::DateTime to always reflect the current
 user's timezone (unless otherwise requested, of course).
 
 =cut
 
 sub now {
     my $class = shift;
-    my %args  = @_;
+    my %args  = (
+        current_user => undef,
+        time_zone    => undef,
+        @_,
+    );
 
     my $current_user = delete $args{current_user};
     my $self = $class->SUPER::now(%args);
 
     $self->current_user($current_user);
+
+    # We set time_zone here since saying
+    # "Jifty::DateTime->now(time_zone => 'UTC')" is obviously referring the
+    # output time zone; the input time zone doesn't matter at all.
     $self->set_time_zone($args{time_zone}) if $args{time_zone};
 
     return $self;
@@ -120,6 +141,10 @@ sub from_epoch {
     my $self = $class->SUPER::from_epoch(%args);
 
     $self->current_user($current_user);
+
+    # We set time_zone here since saying
+    # "Jifty::DateTime->now(time_zone => 'UTC')" is obviously referring the
+    # output time zone; the input time zone doesn't matter at all.
     $self->set_time_zone($args{time_zone}) if $args{time_zone};
 
     return $self;
@@ -128,6 +153,9 @@ sub from_epoch {
 =head2 current_user [CURRENTUSER]
 
 When setting the current user, update the timezone appropriately.
+
+If an C<undef> current user is passed, this method will find the correct
+current user and set the time zone.
 
 =cut
 
@@ -143,6 +171,7 @@ sub current_user {
     }
 
     my $ret = $self->SUPER::current_user(@_);
+
     $self->set_current_user_timezone();
     return $ret;
 }
