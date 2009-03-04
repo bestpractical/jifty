@@ -54,7 +54,7 @@ sub decode {
 
     # XXX There has to be a better way to do this
     my %args;
-    for (qw(year month day hour minute second nanosecond time_zone formatter)) {
+    for (qw(year month day hour minute second nanosecond formatter)) {
         $args{$_} = $$value_ref->$_ if(defined($$value_ref->$_));
     }
 
