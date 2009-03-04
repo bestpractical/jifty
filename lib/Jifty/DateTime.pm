@@ -343,22 +343,27 @@ sub is_date {
     return 1;
 }
 
-=head2 get_tz_offset [DateTime] -> String
+=head2 get_tz_offset
 
-Returns the offset for the current user's timezone. If there is no current
+Returns the offset for a time zone. If there is no current
 user, or the current user's time zone is unset, then UTC will be used.
 
-The optional DateTime argument lets you calculate an offset for some time other
+The optional datetime argument lets you calculate an offset for some time other
 than "right now".
 
 =cut
 
 sub get_tz_offset {
     my $self = shift;
-    my $dt   = shift || DateTime->now();
+    my %args = (
+        datetime  => DateTime->now,
+        time_zone => $self->current_user_has_timezone || 'UTC',
+        @_,
+    );
 
-    $dt->set_time_zone( $self->current_user_has_timezone || 'UTC' );
+    my $dt = $args{datetime}->clone;
 
+    $dt->set_time_zone($args{time_zone});
     return $dt->strftime("%z");
 }
 
