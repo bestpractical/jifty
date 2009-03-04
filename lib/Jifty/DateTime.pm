@@ -227,12 +227,14 @@ sub set_current_user_timezone {
     return $self;
 }
 
-=head2 new_from_string STRING
+=head2 new_from_string STRING[, ARGS]
 
 Take some user defined string like "tomorrow" and turn it into a
-C<Jifty::Datetime> object.  If the string appears to be a _date_, keep
-it in the floating timezone, otherwise, set it to the current user's
-timezone.
+C<Jifty::Datetime> object. If a C<time_zone> argument is passed in, that is
+used for the B<input> time zone.
+
+If the string appears to be a _date_, the B<output> time zone will be floating.
+Otherwise, the B<output> time zone will be the current user's time zone.
 
 As of this writing, this uses L<Date::Manip> along with some internal
 hacks to alter the way L<Date::Manip> normally interprets week day
@@ -243,6 +245,11 @@ names. This may change in the future.
 sub new_from_string {
     my $class  = shift;
     my $string = shift;
+    my %args = (
+        time_zone => undef,
+        @_,
+    );
+
     my $epoch;
 
     # Hack to use Date::Manip to flexibly scan dates from strings
@@ -255,7 +262,10 @@ sub new_from_string {
             $string = "next $string";
         }
 
-        my $offset = $class->get_tz_offset;
+        my $offset = $class->get_tz_offset(
+            $args{time_zone} ? (time_zone => $args{time_zone}) : (),
+        );
+
         my $dt_now = $class->now;
         my $now = $dt_now->ymd . ' ' . $dt_now->hms;
 
@@ -275,11 +285,11 @@ sub new_from_string {
     # Build a DateTime object from the Date::Manip value and setup the TZ
     my $self = $class->from_epoch( epoch => $epoch, time_zone => 'UTC' );
     if (my $tz = $self->current_user_has_timezone) {
-        if ($self->hour || $self->minute || $self->second) {
-            $self->set_time_zone( $tz );
+        if ($self->hms(':') ne '00:00:00') {
+            $self->set_time_zone($tz);
         }
         else {
-            $self->set_time_zone("floating")
+            $self->set_time_zone("floating");
         }
     }
 
