@@ -376,26 +376,25 @@ sub html_dump_record {
      return  dl( map {dt($_), dd($hash{$_}) } keys %hash )
 }
 
-=head2 action ACTION
+=head2 action ACTION, [CODE]
 
-Canonicalizes ACTION into the form preferred by the code. (Cleans up casing, canonicalizing, etc. Returns 404 if it can't work its magic
+Canonicalizes ACTION into the form preferred by the code. (Cleans up casing, canonicalizing, etc. Returns CODE (defaulting to 404) if it can't work its magic
 
 =cut
 
 
-sub action {  _resolve($_[0], 'Jifty::Action', Jifty->api->visible_actions) }
+sub action {  _resolve($_[0], 'Jifty::Action', [Jifty->api->visible_actions], $_[1]) }
 
 =head2 model MODEL
 
-Canonicalizes MODEL into the form preferred by the code. (Cleans up casing, canonicalizing, etc. Returns 404 if it can't work its magic
+Canonicalizes MODEL into the form preferred by the code. (Cleans up casing, canonicalizing, etc. Returns CODE (defaulting to 404) if it can't work its magic
 
 =cut
 
-sub model  { _resolve($_[0], 'Jifty::Record', grep {not $_->is_private} Jifty->class_loader->models) }
+sub model  { _resolve($_[0], 'Jifty::Record', [grep {not $_->is_private} Jifty->class_loader->models], $_[1]) }
 
 sub _resolve {
-    my $name = shift;
-    my $base = shift;
+    my($name, $base, $classes, $code) = @_;
 
     # we display actions as "AppName.Action.Foo", so we want to convert those
     # heathen names to be Perl-style
@@ -403,11 +402,11 @@ sub _resolve {
 
     my $re = qr/(?:^|::)\Q$name\E$/i;
 
-    foreach my $cls (@_) {
+    foreach my $cls (@{$classes || []}) {
         return $cls if $cls =~ $re && $cls->isa($base);
     }
 
-    abort(404);
+    abort($code || 404);
 }
 
 
@@ -735,6 +734,9 @@ sub _dispatch_to_action {
 
     $class =~ s/^[\w\.]+\.//;
 
+    # 403 unless the action exists
+    my $action = action( $prefix . $class, 403 );
+
     if ( defined $column and defined $key ) {
         Jifty->web->request->argument( $column => $key );
         Jifty->web->request->argument( 'id' => $rec->id )
@@ -766,7 +768,7 @@ sub _dispatch_to_action {
     }
 
     Jifty->web->request->request_method('POST');
-    dispatch '/=/action/' . action( $prefix . $class );
+    dispatch "/=/action/$action";
 }
 
 =head2 list_actions
@@ -800,7 +802,7 @@ our @param_attrs = qw(
 );
 
 sub list_action_params {
-    my ($class) = action($1) or abort(404);
+    my ($class) = action($1);
     Jifty::Util->require($class) or abort(404);
     my $action = $class->new or abort(404);
 
@@ -827,7 +829,7 @@ Shows the user an HTML form of the action's parameters to run that action.
 =cut
 
 sub show_action_form {
-    my ($action) = action(shift) or abort(404);
+    my ($action) = action(shift);
     Jifty::Util->require($action) or abort(404);
     $action = $action->new or abort(404);
 
@@ -868,7 +870,7 @@ On an internal error, throws a C<500>.
 =cut
 
 sub run_action {
-    my ($action_name) = action($1) or abort(404);
+    my ($action_name) = action($1);
     Jifty::Util->require($action_name) or abort(404);
     
     my $args = Jifty->web->request->arguments;

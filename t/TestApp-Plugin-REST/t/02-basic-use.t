@@ -77,6 +77,13 @@ is(get_content(), 'test@example.com');
 # on PUT    '/=/model/*/*/*' => \&replace_item;
 # on DELETE '/=/model/*/*/*' => \&delete_item;
 
+# on POST   '/=/model/*'     => \&create_item;
+$mech->post( $URL . '/=/model/User', { name => "moose", email => 'moose@example.com' } );
+is($mech->status, 200, "create via POST to model worked");
+
+$mech->post( $URL . '/=/model/Group', { } );
+is($mech->status, 403, "create via POST to model with disallowed create action failed with 403");
+
 # on GET    '/=/search/*/**' => \&search_items;
 $mech->get_ok('/=/search/user/id/1.yml');
 my $content = get_content();
@@ -101,7 +108,6 @@ is_deeply($content, []);
 # on GET    '/=/action'      => \&list_actions;
 
 my @actions = qw(
-                 TestApp.Plugin.REST.Action.CreateGroup
                  TestApp.Plugin.REST.Action.UpdateGroup
                  TestApp.Plugin.REST.Action.DeleteGroup
                  TestApp.Plugin.REST.Action.SearchGroup
