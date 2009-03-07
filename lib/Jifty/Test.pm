@@ -21,6 +21,8 @@ Jifty::Test - Jifty's test module
 =head1 SYNOPSIS
 
     use Jifty::Test tests => 5;
+    # to load po for test:
+    # use Jifty::Test tests => 5, l10n => 1;
 
     # ...all of Test::More's functionality...
     my $model = MyApp::Model::MyModel->new;
@@ -32,6 +34,7 @@ Jifty::Test - Jifty's test module
     my $server = Jifty::Test->make_server;
     my $server_url = $server->started_ok;
     # You're probably also interested in Jifty::Test::WWW::Mechanize
+
 
 =head1 DESCRIPTION
 
@@ -184,7 +187,7 @@ sub setup {
     $class->builder->{no_handle} = $args{no_handle};
 
     my $test_config = File::Temp->new( UNLINK => 0 );
-    Jifty::YAML::DumpFile("$test_config", $class->test_config(Jifty::Config->new));
+    Jifty::YAML::DumpFile("$test_config", $class->test_config(Jifty::Config->new, \%args));
     # Invoking bin/jifty and friends will now have the test config ready.
     $ENV{'JIFTY_TEST_CONFIG'} ||= "$test_config";
     $class->builder->{test_config} = $test_config;
@@ -376,12 +379,15 @@ test directory.
 
 sub test_config {
     my $class = shift;
-    my ($config) = @_;
+    my ($config, $args) = @_;
 
     my $defaults = {
         framework => {
             Database => {
                 Database => $config->framework('Database')->{Database} . $class->_testfile_to_dbname(),
+            },
+            L10N => {
+                Disable => $args->{l10n} ? 0 : 1,
             },
             Web => {
                 Port => ($$ % 5000) + 10000,

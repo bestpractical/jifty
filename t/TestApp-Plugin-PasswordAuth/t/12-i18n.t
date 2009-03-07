@@ -8,7 +8,7 @@ Basic tests for I18N.
 
 =cut
 
-use Jifty::Test::Dist tests => 7;
+use Jifty::Test::Dist tests => 7, l10n => 1;
 use Jifty::Test::WWW::Mechanize;
 
 use Encode 'decode';

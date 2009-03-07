@@ -2,7 +2,7 @@
 use warnings;
 use strict;
 
-use Jifty::Test::Dist tests => 20;
+use Jifty::Test::Dist tests => 20, l10n => 1;
 use Jifty::Test::WWW::Mechanize;
 use Net::HTTP;
 use URI;
