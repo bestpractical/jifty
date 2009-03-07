@@ -378,7 +378,7 @@ sub _argument_canonicalizer {
 
     # Add a canonicalizer for the column if the record provides one
     if ( $self->record->has_canonicalizer_for_column($field) ) {
-        $do_ajax = 1 unless lc( $column->render_as ) eq 'checkbox';
+        $do_ajax = 1 unless defined $column->render_as and lc( $column->render_as ) eq 'checkbox';
         $method ||= sub {
             my ( $self, $value ) = @_;
             return $self->record->run_canonicalization_for_column(
@@ -389,7 +389,7 @@ sub _argument_canonicalizer {
     }
 
     # Otherwise, if it's a date, we have a built-in canonicalizer for that
-    elsif ( lc( $column->render_as ) eq 'date' ) {
+    elsif ( defined $column->render_as and lc( $column->render_as ) eq 'date' ) {
         $do_ajax = 1;
     }
     return ( $method, $do_ajax );

@@ -125,7 +125,8 @@ sub take_action {
             and defined $value and $value eq '' );
 
         # Skip file uploads if blank
-        next if lc $self->arguments->{$field}{render_as} eq "upload"
+        next if defined $self->arguments->{$field}{render_as}
+          and lc $self->arguments->{$field}{render_as} eq "upload"
           and (not defined $value or not ref $value);
 
         # Handle file uploads
