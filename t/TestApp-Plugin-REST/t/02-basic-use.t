@@ -9,7 +9,7 @@ This is a template for your own tests. Copy it and modify it.
 
 =cut
 
-use Jifty::Test::Dist tests => 77;
+use Jifty::Test::Dist tests => 78;
 use Jifty::Test::WWW::Mechanize;
 
 my $server  = Jifty::Test->make_server;
