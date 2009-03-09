@@ -1094,8 +1094,8 @@ sub include_css {
     # is returned.
     defined $self->call_trigger( 'include_css', @_ ) or return '';
 
-    $self->out( '<link rel="stylesheet" type="text/css" '
-            . 'href="/static/css/main.css" />' );
+    $self->out( qq[<link rel="stylesheet" type="text/css" href="/static/css/$_" />\n] )
+        for @{ Jifty->web->css_files };
 
     return '';
 }
