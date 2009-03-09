@@ -2,14 +2,14 @@ package TestApp::Dispatcher;
 use Jifty::Dispatcher -base;
 
 under '/' => run {
-}
+};
 
 on '/' => run {
     # shouldn't ever run because 02-dispatch.t doesn't request the root
     # demonstrates bad interaction between under '/' and on '/' and 
     # the condition cache in the dispatcher
     set phantom => 99;
-}
+};
 
 before '/redirect' => run {
     Jifty->web->request->add_action(
