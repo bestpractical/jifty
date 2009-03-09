@@ -129,14 +129,15 @@ sub _calculate_share {
     }
     unless ( -d $self->{share} ) {
 
-        # for the plugin share resides in plugins/NAME/share
+        # If we've got a plugin distribution in @INC, then
+        # File::Sharedir will be wrong; tear off everything after the
+        # lib/ and replace it with share/
         my $class_to_path = $class;
         $class_to_path =~ s|::|/|g;
 
         $self->{share} = $INC{ $class_to_path . '.pm' };
         $self->{share} =~ s{lib/+\Q$class_to_path.pm}{share};
         $self->{share} = File::Spec->rel2abs( $self->{share} );
-
     }
     return $self->{share};
 }
