@@ -108,7 +108,7 @@ sub new_request {
 }
 
 sub _calculate_share {
-    my $self = shift;
+    my $self  = shift;
     my $class = ref($self);
 
     unless ( $self->{share} ) {
@@ -126,6 +126,17 @@ sub _calculate_share {
         # for the in dist plugin share resides in share/plugins/...
         $self->{share} = Jifty::Util->share_root;
         $self->{share} .= "/plugins/" . $class_to_path;
+    }
+    unless ( -d $self->{share} ) {
+
+        # for the plugin share resides in plugins/NAME/share
+        my $class_to_path = $class;
+        $class_to_path =~ s|::|/|g;
+
+        $self->{share} = $INC{ $class_to_path . '.pm' };
+        $self->{share} =~ s{lib/+\Q$class_to_path.pm}{share};
+        $self->{share} = File::Spec->rel2abs( $self->{share} );
+
     }
     return $self->{share};
 }
