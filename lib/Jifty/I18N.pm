@@ -215,8 +215,10 @@ sub refresh {
         require Locale::Maketext::Lexicon;
         my $lh = __PACKAGE__->get_handle;
         my $orig = Jifty::I18N::en->can('maketext');
+        no warnings 'redefine';
         *Jifty::I18N::en::maketext = Locale::Maketext::Lexicon->_style_gettext($orig);
         __PACKAGE__->install_global_loc(\$lh);
+        ++$loaded;
         return;
     }
 
