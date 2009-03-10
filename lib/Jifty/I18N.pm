@@ -211,8 +211,12 @@ are modified on disk.
 my $LAST_MODIFED = '';
 sub refresh {
     if ( Jifty->config->framework('L10N')->{'Disable'} && !$loaded) {
-        # skip loading po
-        __PACKAGE__->install_global_loc(\__PACKAGE__->get_handle);
+        # skip loading po, but still do the translation for maketext
+        require Locale::Maketext::Lexicon;
+        my $lh = __PACKAGE__->get_handle;
+        my $orig = Jifty::I18N::en->can('maketext');
+        *Jifty::I18N::en::maketext = Locale::Maketext::Lexicon->_style_gettext($orig);
+        __PACKAGE__->install_global_loc(\$lh);
         return;
     }
 
