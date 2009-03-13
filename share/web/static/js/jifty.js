@@ -1,6 +1,20 @@
 /* An empty class so we can create things inside it */
 var Jifty = {};
 
+// to add a response_hook
+// the handler will get two arguments:
+//
+// response_fragment:
+//     - response xml dom object
+//
+// f:
+//     - 'region' is the name of the region to update
+//     - 'args' is a hash of arguments to override
+//     - 'path' is the path of the fragment (if this is a new fragment)
+//     - 'element' is the CSS selector of the element to update, if 'region' isn't supplied
+//     - 'mode' is one of 'Replace', 'Top', 'Bottom', 'Before', or 'After'
+//     - 'effect' is the name of an effect
+//
 Jifty.Update = {
     response_hooks: [],
     handler_hooks: [],
