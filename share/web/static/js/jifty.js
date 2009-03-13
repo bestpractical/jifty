@@ -3,7 +3,10 @@ var Jifty = {};
 
 Jifty.Update = {
     response_hooks: [],
-    handler_hooks: []
+    handler_hooks: [],
+    addHook:function(f){
+        this.response_hooks.push(f);
+    }
 };
 
 Jifty.$ = function(id) {
@@ -1304,16 +1307,23 @@ Jifty.update = function () {
                 continue;
             }
 
+
             // Apply the fragment update to the page
             try {
                 apply_fragment_updates(response_fragment, f);
             } catch (e) { alert(e) }
 
-            jQuery.each(Jifty.Update.response_hooks,
-                        function() { this(response_fragment, f) });
+            // f
+            jQuery.each(Jifty.Update.response_hooks, function(i) { 
+                    this(response_fragment, f);
+            });
+
+            jQuery('.fragment_updates_attached').trigger('fragment_updates',f);
         }
 
+
         jQuery.each(hooks, function() { this.process_update() } );
+
 
         // Look through the response again
         walk_node(response, { 
