@@ -107,6 +107,10 @@ sub arguments {
             delete $args->{$field}
              if UNIVERSAL::isa($refers_to, 'Jifty::Collection');
         }
+        if ($info->{container}) {
+            delete $args->{$field};
+            next;
+        }
 
         # XXX TODO: What about booleans? Checkbox doesn't quite work,
         # since there are three choices: yes, no, either.
@@ -310,13 +314,15 @@ sub take_action {
 
         # See if any column contains the text described
         my $any = $self->argument_value('contains');
-        for my $col ($self->record->columns) {
-            if($col->type =~ /(?:text|varchar)/) {
-                $collection->limit(column   => $col->name,
-                                   value    => "%$any%",
-                                   operator => 'LIKE',
-                                   entry_aggregator => 'OR',
-                                   subclause => 'contains');
+        if (length $any) {
+            for my $col ($self->record->columns) {
+                if($col->type =~ /(?:text|varchar)/) {
+                    $collection->limit(column   => $col->name,
+                                       value    => "%$any%",
+                                       operator => 'LIKE',
+                                       entry_aggregator => 'OR',
+                                       subclause => 'contains');
+                }
             }
         }
     }
