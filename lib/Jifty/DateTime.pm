@@ -73,12 +73,15 @@ sub new {
     # user then set the time zone.
     $self->current_user($current_user);
 
+    if ($args{time_zone}) {
+        $self->set_time_zone($args{time_zone});
+    }
     # If we were given a date, then we need to make sure its output time zone
     # is Floating and it's set to 00:00:00.
     # This sucks when you want a timestamp (not just a datestamp) at midnight
     # in the floating time zone but we don't have any better way to make this
     # work.
-    if ($is_date) {
+    elsif ($is_date) {
         $self->set_time_zone('floating');
 
         # Without this check we loop infinitely, because set_hour constructs
