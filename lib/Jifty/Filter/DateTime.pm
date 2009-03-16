@@ -58,6 +58,8 @@ sub decode {
         $args{$_} = $$value_ref->$_ if(defined($$value_ref->$_));
     }
 
+    $args{input_time_zone} = delete $args{time_zone};
+
     my $class = Jifty->app_class('DateTime');
     $class = 'Jifty::DateTime' unless $class->can('new');
     my $dt = $class->new(%args);
