@@ -57,13 +57,20 @@ C<time_zone>.
 sub new {
     my $class = shift;
     my %args  = (
-        current_user => undef,
+        current_user     => undef,
+        time_zone        => undef,
+        input_time_zone  => undef,
+        output_time_zone => undef,
         @_,
     );
 
+    my ($input_time_zone, $output_time_zone);
+    $input_time_zone = delete($args{input_time_zone})   || $args{time_zone};
+    $output_time_zone = delete($args{output_time_zone}) || $args{time_zone};
+
     my $current_user = delete $args{current_user};
 
-    my $self = $class->SUPER::new(%args);
+    my $self = $class->SUPER::new(%args, time_zone => $input_time_zone);
 
     my $is_date = $self->hms eq '00:00:00'
                && $self->time_zone->name eq 'floating';
@@ -73,8 +80,8 @@ sub new {
     # user then set the time zone.
     $self->current_user($current_user);
 
-    if ($args{time_zone}) {
-        $self->set_time_zone($args{time_zone});
+    if ($output_time_zone) {
+        $self->set_time_zone($output_time_zone);
     }
     # If we were given a date, then we need to make sure its output time zone
     # is Floating and it's set to 00:00:00.
