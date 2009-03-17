@@ -285,14 +285,15 @@ sub render_as_hierarchical_menu_item {
         @_
     );
     my @kids = $self->children;
-    my $id   = Jifty->web->serial;
-    Jifty->web->out( qq{<li class="toplevel }
+    my $web = Jifty->web;
+    my $id   = $web->serial;
+    $web->out( qq{<li class="toplevel }
             . ( $self->active ? 'active' : 'closed' ) .' '.($self->class||"").' '. qq{">}
             . qq{<span class="title">} );
-    Jifty->web->out( $self->as_link );
-    Jifty->web->out(qq{</span>});
+    $web->out( $self->as_link );
+    $web->out(qq{</span>});
     if (@kids) {
-        Jifty->web->out(
+        $web->out(
             qq{<span class="expand"><a href="#" onclick="Jifty.ContextMenu.hideshow('}
                 . $id
                 . qq{'); return false;">&nbsp;</a></span>}
@@ -300,17 +301,17 @@ sub render_as_hierarchical_menu_item {
                 . $id
                 . qq{">} );
         for (@kids) {
-            Jifty->web->out(qq{<li class="submenu }.($_->active ? 'active' : '' ).' '. ($_->class || "").qq{">});
+            $web->out(qq{<li class="submenu }.($_->active ? 'active' : '' ).' '. ($_->class || "").qq{">});
 
             # We should be able to get this as a string.
             # Either stringify the link object or output the label
             # This is really icky. XXX TODO
-            Jifty->web->out( $_->as_link );
-            Jifty->web->out("</li>");
+            $web->out( $_->as_link );
+            $web->out("</li>");
         }
-        Jifty->web->out(qq{</ul>});
+        $web->out(qq{</ul>});
     }
-    Jifty->web->out(qq{</li>});
+    $web->out(qq{</li>});
     '';
 
 }
