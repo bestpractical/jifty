@@ -340,12 +340,17 @@ returns YourApp::Model::Foo.
 
 By the time you get it back, the class will have already been required
 
+Is you pass a hashref as the first argument, it will be treated as
+configuration parameters.  The only existing parameter is C<require>,
+which defaults to true.
+
 =cut
 
 sub app_class {
     shift;
+    my $args = (ref $_[0] ? shift : { require => 1 });
     my $val = join('::', Jifty->config->framework('ApplicationClass'), @_);
-    Jifty::Util->try_to_require($val);
+    Jifty::Util->try_to_require($val) if $args->{require};
     return $val;
 }
 
