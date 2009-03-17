@@ -13,16 +13,16 @@ make up a Jifty application's API
  # Find the full name of an action
  my $class = Jifty->api->qualify('SomeAction');
 
- # Logged users with an ID greater than 10 have restrictions
- if (Jifty->web->current_user->id > 10) {
-     Jifty->api->deny('Foo');
-     Jifty->api->allow('FooBar');
-     Jifty->api->deny('FooBarDeleteTheWorld');
+ # New users cannot run some actions
+ if (Jifty->web->current_user->age < 18) {
+     Jifty->api->deny(qr/Vote|PurchaseTobacco/);
  }
 
- # New users cannot even see some actions
- if (Jifty->web->current_user->age < 18) {
-     Jifty->api->hide(qr/Vote|PurchaseTobacco/);
+ # Some users cannot even see some actions
+ if (Jifty->web->current_user->id > 10) {
+     Jifty->api->hide('Foo');
+     Jifty->api->show('FooBar');
+     Jifty->api->hide('FooBarDeleteTheWorld');
  }
 
  # Fetch the class names of all actions
