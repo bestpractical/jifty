@@ -105,7 +105,7 @@ sub all_actions {
                 push @actions, $classname unless $seen{$classname};
             }
         }
-        $self->{all_actions} = \@actions;
+        $self->{all_actions} = [ grep { not /::SUPER$/ } @actions ];
     }
     return @{ $self->{all_actions} };
 }
@@ -392,7 +392,7 @@ namespace, in addition to your application's actions.
 
 sub actions {
     my $self = shift;
-    return sort grep { not /::SUPER$/ and $self->is_allowed($_) } $self->all_actions;
+    return sort grep { $self->is_allowed($_) } $self->all_actions;
 }
 
 =head2 visible_actions
@@ -405,7 +405,7 @@ namespace, in addition to your application's actions.
 
 sub visible_actions {
     my $self = shift;
-    return sort grep { not /::SUPER$/ and $self->is_visible($_) } $self->all_actions;
+    return sort grep { $self->is_visible($_) } $self->all_actions;
 }
 
 =head1 SEE ALSO
