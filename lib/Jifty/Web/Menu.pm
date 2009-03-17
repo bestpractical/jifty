@@ -32,9 +32,10 @@ sub new {
     my $args = ref($_[0]) eq 'HASH' ? shift @_ : {@_};
 
     my $parent = delete $args->{'parent'};
+    $args->{sort_order} ||= 0;
 
     # Class::Accessor only wants a hashref;
-    my $self = $package->SUPER::new( $args);
+    my $self = $package->SUPER::new( $args );
 
     # make sure our reference is weak
     $self->parent($parent) if defined $parent;
