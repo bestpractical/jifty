@@ -48,11 +48,12 @@ Jifty.Calendar = {
             cal = new YAHOO.widget.Calendar( calId,
                                              wrapId,
                                              { pagedate: bits[2]+"/"+bits[1],
-                                               selected: bits[2]+"/"+bits[3]+"/"+bits[1] }
+                                               selected: bits[2]+"/"+bits[3]+"/"+bits[1],
+                                               start_weekday: Jifty.Config.start_weekday }
                                             );
         }
         else {
-            cal = new YAHOO.widget.Calendar( calId, wrapId );
+            cal = new YAHOO.widget.Calendar( calId, wrapId, { start_weekday: Jifty.Config.start_weekday });
         }
         
         cal.cfg.applyConfig( Jifty.Calendar.Options );
