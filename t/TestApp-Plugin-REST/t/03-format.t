@@ -19,6 +19,8 @@ my $u1 = TestApp::Plugin::REST::Model::User->new(
 $u1->create(name => 'test', email => 'test@example.com');
 ok($u1->id);
 
+our $FORMAT_NUMBER;
+
 sub result_of {
     local $Test::Builder::Level = $Test::Builder::Level + 1;
     my $request = shift;
@@ -36,7 +38,10 @@ sub result_of {
         json => \&Jifty::JSON::jsonToObj,
     );
 
+    local $FORMAT_NUMBER = 0;
     for my $format (keys %loaders) {
+        $FORMAT_NUMBER++;
+
         my $url = $URL . $request->{url} . '.' . $format;
 
         my $method = $request->{mech_method};
