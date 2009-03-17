@@ -318,11 +318,10 @@ Helper function to test whether a given class has already been require'd.
 
 =cut
 
-
 sub already_required {
     my ($self, $class) = @_;
-    my $path =  join('/', split(/::/,$class)).".pm";
-    return ( $INC{$path} ? 1 : 0);
+    $class =~ s{::}{/}g;
+    return ( $INC{"$class.pm"} ? 1 : 0);
 }
 
 =head2 generate_uuid
