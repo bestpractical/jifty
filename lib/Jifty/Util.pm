@@ -14,6 +14,7 @@ Jifty::Util - Things that don't fit anywhere else
 
 use Jifty ();
 use File::Spec ();
+use File::ShareDir ();
 use Cwd ();
 
 use vars qw/%ABSOLUTE_PATH $JIFTY_ROOT $SHARE_ROOT $APP_ROOT/;
@@ -109,7 +110,6 @@ sub share_root {
         undef $SHARE_ROOT unless defined $SHARE_ROOT and -d $SHARE_ROOT and -d File::Spec->catdir($SHARE_ROOT,"web");
 
         # If that doesn't pass inspection, try File::ShareDir::dist_dir
-        Jifty::Util->require('File::ShareDir');
         $SHARE_ROOT ||= eval { File::Spec->rel2abs( File::ShareDir::dist_dir('Jifty') )};
         undef $SHARE_ROOT unless defined $SHARE_ROOT and -d $SHARE_ROOT and -d File::Spec->catdir($SHARE_ROOT,"web");
     }
