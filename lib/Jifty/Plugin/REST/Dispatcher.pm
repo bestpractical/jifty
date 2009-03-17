@@ -414,37 +414,63 @@ sub html_dump_record {
      return  dl( map {dt($_), dd($hash{$_}) } keys %hash )
 }
 
-=head2 action ACTION, [CODE]
+=head2 action ACTION
 
-Canonicalizes ACTION into the form preferred by the code. (Cleans up casing, canonicalizing, etc. Returns CODE (defaulting to 404) if it can't work its magic
+Canonicalizes ACTION into the class-name form preferred by Jifty by cleaning up
+casing, delimiters, etc. Throws an appropriate HTTP error code if the action is
+unavailable.
 
 =cut
 
 
-sub action {  _resolve($_[0], 'Jifty::Action', [Jifty->api->visible_actions], $_[1]) }
+sub action {
+    _resolve(
+        name          => $_[0],
+        base          => 'Jifty::Action',
+        possibilities => [Jifty->api->visible_actions],
+        is_allowed    => sub { Jifty->api->is_allowed(shift) },
+    );
+}
 
 =head2 model MODEL
 
-Canonicalizes MODEL into the form preferred by the code. (Cleans up casing, canonicalizing, etc. Returns CODE (defaulting to 404) if it can't work its magic
+Canonicalizes MODEL into the class-name form preferred by Jifty by cleaning up
+casing, delimiters, etc. Throws an appropriate HTTP error code if the model is
+unavailable.
 
 =cut
 
-sub model  { _resolve($_[0], 'Jifty::Record', [grep {not $_->is_private} Jifty->class_loader->models], $_[1]) }
+sub model {
+    _resolve(
+        name          => $_[0],
+        base          => 'Jifty::Record',
+        possibilities => [Jifty->class_loader->models],
+        is_allowed    => sub { not shift->is_private },
+    );
+}
 
 sub _resolve {
-    my($name, $base, $classes, $code) = @_;
+    my %args = @_;
 
     # we display actions as "AppName.Action.Foo", so we want to convert those
     # heathen names to be Perl-style
-    $name =~ s/\./::/g;
+    $args{name} =~ s/\./::/g;
 
-    my $re = qr/(?:^|::)\Q$name\E$/i;
+    my $re = qr/(?:^|::)\Q$args{name}\E$/i;
 
-    foreach my $cls (@{$classes || []}) {
-        return $cls if $cls =~ $re && $cls->isa($base);
+    my $hit;
+    foreach my $class (@{ $args{possibilities} }) {
+        if ($class =~ $re && $class->isa($args{base})) {
+            $hit = $class;
+            last;
+        }
     }
 
-    abort($code || 404);
+    abort(404) if !defined($hit);
+
+    abort(403) unless $args{is_allowed}->($hit);
+
+    return $hit;
 }
 
 
@@ -773,7 +799,7 @@ sub _dispatch_to_action {
     $class =~ s/^[\w\.]+\.//;
 
     # 403 unless the action exists
-    my $action = action( $prefix . $class, 403 );
+    my $action = action($prefix . $class);
 
     if ( defined $column and defined $key ) {
         Jifty->web->request->argument( $column => $key );
