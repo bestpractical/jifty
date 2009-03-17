@@ -2,7 +2,7 @@
 use warnings;
 use strict;
 
-use Jifty::Test::Dist tests => 32;
+use Jifty::Test::Dist tests => 46;
 use Jifty::Test::WWW::Mechanize;
 
 my $server  = Jifty::Test->make_server;
@@ -36,6 +36,11 @@ sub result_of {
     my %loaders = (
         yml  => \&Jifty::YAML::Load,
         json => \&Jifty::JSON::jsonToObj,
+        js   => sub {
+            my $js = shift;
+            $js =~ s/.*? = //; # variable assignment
+            return Jifty::JSON::jsonToObj($js);
+        },
     );
 
     local $FORMAT_NUMBER = 0;
