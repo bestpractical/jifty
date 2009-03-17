@@ -127,7 +127,7 @@ sub accessors {
 
 __PACKAGE__->mk_accessors(
     qw(name _label _input_name type sticky sticky_value
-      default_value _action mandatory ajax_validates ajax_canonicalizes
+      default_value mandatory ajax_validates ajax_canonicalizes
       autocompleter preamble hints placeholder focus render_mode
       max_length _element_id disable_autocomplete multiple)
 );
@@ -328,13 +328,13 @@ sub action {
     my $self = shift;
 
     if (@_) {
-        $self->_action(@_);
+        $self->{action} = shift;
 
         # weaken our circular reference
-        weaken $self->{_action};
+        weaken $self->{action};
     }
 
-    return $self->_action;
+    return $self->{action};
 
 }
 
