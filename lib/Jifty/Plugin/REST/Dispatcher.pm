@@ -41,6 +41,7 @@ on GET    '/=/action/*'         => \&list_action_params;
 on GET    '/=/action'           => \&list_actions;
 on POST   '/=/action/*'         => \&run_action;
 
+on GET    '/='                  => \&show_help;
 on GET    '/=/help'             => \&show_help;
 on GET    '/=/help/*'           => \&show_help_specific;
 
