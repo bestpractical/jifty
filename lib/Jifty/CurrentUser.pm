@@ -138,16 +138,14 @@ user_object, return that user's id.
 sub id {
     my $self = shift;
 
-    # Make sure we have a user object before trying to ID it
-    if ($self->user_object) {
-        return ($self->user_object->id());
-    } 
-    
-    # No user object, return a null ID
-    else {
-        return '0';
-    }
+    # This can be a hotspot, so we don't use method calls, instead
+    # directly accessing the value.
 
+    # Make sure we have a user object before trying to ID it
+    return $self->{user_object}->id if $self->{user_object};
+
+    # No user object, return a null ID
+    return 0;
 }
 
 =head2 current_user
