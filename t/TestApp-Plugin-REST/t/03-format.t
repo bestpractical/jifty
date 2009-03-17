@@ -2,7 +2,7 @@
 use warnings;
 use strict;
 
-use Jifty::Test::Dist tests => 24;
+use Jifty::Test::Dist tests => 32;
 use Jifty::Test::WWW::Mechanize;
 
 my $server  = Jifty::Test->make_server;
@@ -110,6 +110,33 @@ result_of '/=/model/user/id/1' => sub {
 
 result_of '/=/model/user/id/1/email' => sub {
     is($_[0], 'test@example.com');
+};
+
+result_of_post '/=/model/user' => {
+    name => 'moose',
+    email => 'moose@example.com',
+} => sub {
+    my ($action_result, $record) = @_;
+
+    my $id = 2 + ($FORMAT_NUMBER - 1);
+
+    is_deeply($action_result, {
+        action_class   => 'TestApp::Plugin::REST::Action::CreateUser',
+        content        => { id => $id },
+        error          => undef,
+        failure        => 0,
+        field_errors   => {},
+        field_warnings => {},
+        message        => 'Created',
+        success        => 1,
+    });
+
+    is_deeply($record, {
+        email => 'moose@example.com',
+        id    => $id,
+        name  => 'moose',
+        tasty => undef,
+    });
 };
 
 __END__
