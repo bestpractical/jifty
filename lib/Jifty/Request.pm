@@ -80,6 +80,7 @@ sub new {
     $self->{'fragments'} = {};
     $self->arguments({});
     $self->template_arguments({});
+    $self->request_method("GET");
 
     my %args = @_;
     for (keys %args) {
