@@ -392,7 +392,8 @@ sub javascript_attrs {
 
   HANDLER:
     for my $trigger ( $self->handlers_used ) {
-        my $value = $self->$trigger;
+        # Walk around the Class::Accessor, for speed
+        my $value = $self->{"_$trigger"};
         next unless $value;
 
         if ( !( $self->handler_allowed($trigger) ) ) {
