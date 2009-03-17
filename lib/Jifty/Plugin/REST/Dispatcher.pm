@@ -929,9 +929,15 @@ sub run_action {
 
     my $rec = $action->{record};
     if ($action->result->success && $rec and $rec->isa('Jifty::Record') and $rec->id) {
-        my $url    = Jifty->web->url(path => join '/', '=', map {
-            Jifty::Web->escape_uri($_)
-        } 'model', ref($rec), 'id', $rec->id);
+        my @fragments = ('model', ref($rec), 'id', $rec->id);
+
+        my $path = join '/', '=', map { Jifty::Web->escape_uri($_) } @fragments;
+
+        my $extension = output_format(\@fragments)->{extension};
+        $path .= '.' . $extension;
+
+        my $url = Jifty->web->url(path => $path);
+
         Jifty->handler->apache->header_out('Location' => $url);
     }
 
