@@ -251,11 +251,11 @@ sub current_user {
     } elsif ( defined $self->_current_user ) {
         return $self->_current_user;
     } elsif ( my $id = $self->session->get('user_id') ) {
-         $object = Jifty->app_class("CurrentUser")->new( id => $id );
+         $object = Jifty->app_class({require => 0}, "CurrentUser")->new( id => $id );
     } elsif ( Jifty->config->framework('AdminMode')) {
-         $object = Jifty->app_class("CurrentUser")->superuser;
+         $object = Jifty->app_class({require => 0}, "CurrentUser")->superuser;
     } else {
-         $object = Jifty->app_class("CurrentUser")->new;
+         $object = Jifty->app_class({require => 0}, "CurrentUser")->new;
     }
     
     $self->_current_user($object);
@@ -529,10 +529,9 @@ sub new_action {
     # Prepend the base path (probably "App::Action") unless it's there already
     $class = Jifty->api->qualify($class);
 
-    my $loaded = Jifty::Util->require( $class );
     # The implementation class is provided by the client, so this
     # isn't a "shouldn't happen"
-    return unless $loaded;
+    return unless Jifty::Util->require( $class );
 
     my $action;
     # XXX TODO bullet proof
