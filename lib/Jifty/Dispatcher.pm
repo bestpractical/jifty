@@ -1255,8 +1255,8 @@ sub render_template {
 
     # Handle parse errors
     my $err = $@;
-    $self->log->fatal("View error: $err") if $err;
     if ( $err and not eval { $err->isa('HTML::Mason::Exception::Abort') } ) {
+        $self->log->fatal("View error: $err") if $err;
         if ($template eq '/errors/500') {
             $self->log->warn("Can't render internal_error: $err");
             # XXX Built-in static "oh noes" page?
@@ -1279,9 +1279,8 @@ sub render_template {
         Jifty->web->_redirect( "/errors/500?J:C=" . $c->id );
     } elsif ($err) {
         Jifty->handler->buffer->pop while Jifty->handler->buffer->depth > $start_depth;
-        die $err;
+        $self->_abort;
     }
-
 }
 
 
