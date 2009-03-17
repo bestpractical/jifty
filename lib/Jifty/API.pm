@@ -121,7 +121,7 @@ sub qualify {
     my $action = shift;
 
     # Get the application class name
-    my $base_path = Jifty->app_class;
+    my $base_path = Jifty->config->framework('ApplicationClass');
 
     # Return the class now if it's already fully qualified
     return $action
