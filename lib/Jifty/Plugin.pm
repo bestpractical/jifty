@@ -127,7 +127,6 @@ sub _calculate_share {
     unless ( $self->{share} and -d $self->{share} ) {
         # If it's an installed non-core plugin, File::ShareDir's
         # dist_dir will find it for us
-        Jifty::Util->require('File::ShareDir');
         my $dist = $class;
         $dist =~ s/::/-/g;
         local $@;
