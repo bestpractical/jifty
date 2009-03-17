@@ -50,6 +50,23 @@ sub result_of {
     }
 }
 
+sub result_of_post {
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
+    my $request    = shift;
+    my $parameters = shift;
+    my $test       = shift;
+
+    if (!ref($request)) {
+        $request = {
+            mech_method => 'post',
+            mech_args   => [$parameters],
+            url         => $request,
+        };
+    }
+
+    result_of($request, $test);
+}
+
 result_of '/=/model' => sub {
     is_deeply($_[0], [
         'TestApp.Plugin.REST.Model.Group',
