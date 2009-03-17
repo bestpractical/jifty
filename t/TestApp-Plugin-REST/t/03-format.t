@@ -45,13 +45,25 @@ sub result_of {
         my $url = $URL . $request->{url} . '.' . $format;
 
         my $method = $request->{mech_method};
-        $mech->$method($url, @{ $request->{mech_args} || [] });
+        my $response = $mech->$method($url, @{ $request->{mech_args} || [] });
 
-        is($mech->status, 200, "HTTP response status for $url");
+        ok($response->is_success, "$method successful");
+        my @contents = $response->content;
 
-        my $loaded = $loaders{$format}->($mech->content);
+        if (my $location = $response->header('Location')) {
+            $response = $mech->get($location);
+            ok($response->is_success, "redirect successful");
+            push @contents, $response->content;
+        }
+
         local $Test::Builder::Level = $Test::Builder::Level + 1;
-        $test->($loaded);
+
+        eval {
+            @contents = map { scalar $loaders{$format}->($_) } @contents;
+        };
+        fail($@) if $@;
+
+        $test->(@contents);
     }
 }
 
