@@ -55,6 +55,9 @@ L<Jifty::Dispatcher>.
 
 
 use Storable 'dclone';
+$Storable::Deparse = 1;
+$Storable::Eval = 1;
+$Storable::forgive_me = 1;
 
 use base qw/Class::Accessor::Fast Jifty::Object/;
 

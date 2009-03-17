@@ -6,6 +6,9 @@ use base qw/Jifty::Object/;
 use CGI::Cookie ();
 use DateTime ();
 use Storable ();
+$Storable::Deparse = 1;
+$Storable::Eval = 1;
+$Storable::forgive_me = 1;
 
 =head1 NAME
 
@@ -92,7 +95,6 @@ sub load_by_kv {
 
     # XXX TODO: we store this data in a storable. so we now want to match on the storable version
     # It would be so nice if Jifty::DBI could do this for us.
-    $Storable::Deparse = 1;
     my $encoded = Storable::nfreeze(\$v);
 
     my $session = Jifty::Model::Session->new;

@@ -112,6 +112,8 @@ sub load {
     if ($data) {
         local $@;
         eval {
+            local $Storable::Eval = 0; # Just to be on the safe side...
+
             if (my $session = Storable::thaw(
                 Compress::Zlib::uncompress(
                     $self->_cipher->decrypt(

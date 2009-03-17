@@ -8,7 +8,6 @@ __PACKAGE__->mk_accessors(qw(_top_request arguments template_arguments just_vali
 
 use Jifty::JSON;
 use Jifty::YAML;
-use Storable 'dclone';
 
 =head1 NAME
 
