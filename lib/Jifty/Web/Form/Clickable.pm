@@ -581,6 +581,7 @@ parameters.
 
 sub generate {
     my $self = shift;
+    my $web = Jifty->web;
     for my $trigger ( $self->handlers_used ) {
         my $value = $self->$trigger;
         next unless $value;
@@ -588,18 +589,18 @@ sub generate {
         for my $hook (@hooks) {
             next unless ref $hook eq "HASH";
             $hook->{region} ||= $hook->{refresh}
-                || Jifty->web->qualified_region;
+                || $web->qualified_region;
 
             my $region
                 = ref $hook->{region}
                 ? $hook->{region}
-                : Jifty->web->get_region( $hook->{region} );
+                : $web->get_region( $hook->{region} );
 
             if ( $hook->{replace_with} ) {
                 my $currently_shown = '';
                 if ($region) {
 
-                    my $state_var = Jifty->web->request->state_variable(
+                    my $state_var = $web->request->state_variable(
                         "region-" . $region->qualified_name );
                     $currently_shown = $state_var->value if ($state_var);
                 }
@@ -622,7 +623,7 @@ sub generate {
             if ( $hook->{submit} ) {
                 $self->{submit} ||= [];
                 for my $moniker ( @{ $hook->{submit} } ) {
-                    my $action = Jifty->web->{'actions'}{$moniker};
+                    my $action = $web->{'actions'}{$moniker};
                     $self->register_action($action);
                     $self->parameter( $action->form_field_name($_),
                         $hook->{action_arguments}{$moniker}{$_} )
