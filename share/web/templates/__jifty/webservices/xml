@@ -15,24 +15,24 @@ if (my $ext = Jifty->web->request->argument('_webservice_external_redirect')) {
 }
 
 FRAGMENT:
-for my $f ( Jifty->web->request->fragments ) {
+for my $fragment ( Jifty->web->request->fragments ) {
     # Set up the form if need be
     Jifty->web->form->_init;
-    Jifty->web->form->is_open(1) if $f->in_form;
+    Jifty->web->form->is_open(1) if $fragment->in_form;
 
     # Set up the region stack
     local Jifty->web->{'region_stack'} = [];
     my @regions;
     do {
-        push @regions, $f;
-    } while ($f = $f->parent);
+        push @regions, $fragment;
+    } while ($fragment = $fragment->parent);
 
-    for $f (reverse @regions) {
-        my $new = Jifty->web->get_region( join '-', grep {$_} Jifty->web->qualified_region, $f->name );
+    for my $current (reverse @regions) {
+        my $new = Jifty->web->get_region( join '-', grep {$_} Jifty->web->qualified_region, $current->name );
 
         # Arguments can be complex mapped hash values.  Get their
         # real values by mapping.
-        my %defaults = %{$f->arguments || {}};
+        my %defaults = %{$current->arguments || {}};
         for (keys %defaults) {
             my ($key, $value) = Jifty::Request::Mapper->map(destination => $_, source => $defaults{$_});
             delete $defaults{$_};
@@ -40,9 +40,9 @@ for my $f ( Jifty->web->request->fragments ) {
         }
 
         $new ||= Jifty::Web::PageRegion->new(
-            name           => $f->name,
-            path           => URI::Escape::uri_unescape($f->path),
-            region_wrapper => $f->wrapper,
+            name           => $current->name,
+            path           => URI::Escape::uri_unescape($current->path),
+            region_wrapper => $current->wrapper,
             parent         => Jifty->web->current_region,
             defaults       => \%defaults,
         );
