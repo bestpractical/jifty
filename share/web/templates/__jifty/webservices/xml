@@ -1,16 +1,18 @@
 <%init>
 my $output = "";
 my $writer = XML::Writer->new( OUTPUT => \$output, UNSAFE => 1 );
+$r->content_type('text/xml; charset=utf-8');
 $writer->xmlDecl( "UTF-8", "yes" );
 $writer->startTag("response");
 
 if (my $ext = Jifty->web->request->argument('_webservice_external_redirect')) {
     $writer->startTag("redirect");
     $writer->cdataElement(url=> $ext);
-
     $writer->endTag();
+    $writer->endTag();
+    Jifty->web->out($output);
+    $m->abort;
 }
-else {
 
 FRAGMENT:
 for my $f ( Jifty->web->request->fragments ) {
@@ -67,8 +69,6 @@ for my $f ( Jifty->web->request->fragments ) {
     Jifty->web->form->is_open(0);
 }
 
-}
-
 my %results = Jifty->web->response->results;
 for (keys %results) {
     $writer->startTag("result", moniker => $_, class => $results{$_}->action_class);
@@ -92,33 +92,7 @@ for (keys %results) {
     # Jifty::DBI::Record's yet, which are technically circular data
     # structures at some level (current_user of a
     # current_user->user_object is itself)
-    use Scalar::Util qw(blessed);
-    my $content = $results{$_}->content;
-
-    sub stripkids {
-        my $top = shift;
-        if ( not ref $top ) { return $top }
-        elsif (
-            blessed($top)
-            and (  $top->isa("Jifty::DBI::Record")
-                or $top->isa("Jifty::DBI::Collection") )
-            )
-        {
-            return undef;
-        } elsif ( ref $top eq 'HASH' ) {
-            foreach my $item ( keys %$top ) {
-                $top->{$item} = stripkids( $top->{$item} );
-            }
-        } elsif ( ref $top eq 'ARRAY' ) {
-            for ( 0 .. $#{$top} ) {
-                $top->[$_] = stripkids( $top->[$_] );
-            }
-        }
-        return $top;
-    }
-
-    $content = stripkids($content);
-    use XML::Simple;
+    my $content = stripkids($results{$_}->content);
     $writer->raw(XML::Simple::XMLout($content, NoAttr => 1, RootName => "content", NoIndent => 1))
       if keys %{$content};
 
@@ -126,6 +100,30 @@ for (keys %results) {
 }
 
 $writer->endTag();
-$r->content_type('text/xml; charset=utf-8');
 Jifty->web->out($output);
 </%init>
+<%once>
+use Scalar::Util qw(blessed);
+use XML::Simple;
+sub stripkids {
+    my $top = shift;
+    if ( not ref $top ) { return $top }
+    elsif (
+        blessed($top)
+        and (  $top->isa("Jifty::DBI::Record")
+            or $top->isa("Jifty::DBI::Collection") )
+        )
+    {
+        return undef;
+    } elsif ( ref $top eq 'HASH' ) {
+        foreach my $item ( keys %$top ) {
+            $top->{$item} = stripkids( $top->{$item} );
+        }
+    } elsif ( ref $top eq 'ARRAY' ) {
+        for ( 0 .. $#{$top} ) {
+            $top->[$_] = stripkids( $top->[$_] );
+        }
+    }
+    return $top;
+}
+</%once>
