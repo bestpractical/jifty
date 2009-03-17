@@ -80,9 +80,8 @@ sub new {
 
     my $self = $class->SUPER::new(%args);
 
-    # Load the associated record class just in case it hasn't been already
+    # Look up the record class
     my $record_class = $self->record_class;
-    Jifty::Util->require($record_class);
 
     # Die if we were given a record that wasn't a record
     if (ref $args{'record'} && !$args{'record'}->isa($record_class)) {
