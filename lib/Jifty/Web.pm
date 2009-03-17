@@ -1164,6 +1164,13 @@ sub include_javascript {
         }
     }
 
+    my $config = $self->current_user->javascript_config;
+    my $js_config = $self->escape(Jifty::JSON::objToJson($config, { singlequote => 1 }));
+
+    $self->out(
+        qq[<script type="text/javascript">Jifty.Config = $js_config;</script>\n]
+    );
+
     $self->call_trigger('after_include_javascript', @_);
 
     return '';
