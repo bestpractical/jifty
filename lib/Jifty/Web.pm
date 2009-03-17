@@ -1164,8 +1164,6 @@ sub include_javascript {
         }
     }
 
-    $self->out(qq[<script type="text/javascript" src="/__jifty/config.js"></script>\n]);
-
     $self->call_trigger('after_include_javascript', @_);
 
     return '';
