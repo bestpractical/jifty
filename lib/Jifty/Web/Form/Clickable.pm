@@ -159,8 +159,6 @@ sub new {
 
     my %args = (
         parameters => {},
-        as_button  => 0,
-        as_link    => 0,
         @_,
     );
 
@@ -170,17 +168,19 @@ sub new {
     $args{render_as_link}   = delete $args{as_link};
 
     my $self = $class->SUPER::new(
-        {   class          => '',
-            label          => 'Click me!',
-            url            => $root,
-            escape_label   => 1,
-            tooltip        => '',
-            continuation   => Jifty->web->request->continuation,
-            submit         => [],
-            preserve_state => 0,
-            parameters     => {},
+        {   class            => '',
+            label            => 'Click me!',
+            url              => $root,
+            escape_label     => 1,
+            tooltip          => '',
+            continuation     => Jifty->web->request->continuation,
+            submit           => [],
+            preserve_state   => 0,
+            parameters       => {},
+            render_as_button => 0,
+            render_as_link   => 0,
+            %args,
         },
-        \%args
     );
 
     for (qw/continuation call/) {
@@ -222,7 +222,7 @@ sub new {
 
     # Anything doing fragment replacement needs to preserve the
     # current state as well
-    if ( grep { $self->$_ } $self->handlers or $self->preserve_state ) {
+    if ( grep { $self->$_ } $self->handlers_used or $self->preserve_state ) {
         my %state_vars = Jifty->web->state_variables;
         while ( my ( $key, $val ) = each %state_vars ) {
             if ( $key =~ /^region-(.*?)\.(.*)$/ ) {
@@ -581,7 +581,7 @@ parameters.
 
 sub generate {
     my $self = shift;
-    for my $trigger ( $self->handlers ) {
+    for my $trigger ( $self->handlers_used ) {
         my $value = $self->$trigger;
         next unless $value;
         my @hooks = @{$value};
@@ -611,7 +611,6 @@ sub generate {
                     $self->region_fragment( $hook->{region},
                         "/__jifty/empty" );
 
-#                    Jifty->web->request->remove_state_variable('region-'.$region->qualified_name);
                 } else {
                     $self->region_fragment( $hook->{region},
                         $hook->{replace_with} );

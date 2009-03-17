@@ -162,10 +162,13 @@ error from your browser.
 
 =cut
 
-sub handlers { qw(onclick onchange ondblclick onmousedown onmouseup onmouseover 
-                  onmousemove onmouseout onfocus onblur onkeypress onkeydown 
-                  onkeyup onselect) }
+use constant handlers => qw(
+    onclick onchange ondblclick onmousedown onmouseup onmouseover
+    onmousemove onmouseout onfocus onblur onkeypress onkeydown
+    onkeyup onselect
+);
 
+use constant possible_handlers => { map {($_ => 1)} handlers};
 
 
 =head2 accessors
@@ -176,11 +179,10 @@ C<new> parameter hash.
 
 =cut
 
-sub accessors { shift->handlers, qw(class title key_binding key_binding_label id label tooltip continuation rel) }
-__PACKAGE__->mk_accessors(qw(_onclick _onchange _ondblclick _onmousedown _onmouseup _onmouseover 
-                             _onmousemove _onmouseout _onfocus _onblur _onkeypress _onkeydown 
-                             _onkeyup _onselect
-                             class title key_binding key_binding_label id label tooltip continuation rel));
+sub accessors { handlers, qw(class title key_binding key_binding_label id label tooltip continuation rel) }
+
+__PACKAGE__->mk_accessors(map "_$_", handlers);
+__PACKAGE__->mk_accessors(qw(class title key_binding key_binding_label id label tooltip continuation rel) );
 
 =head2 new PARAMHASH OVERRIDE
 
@@ -190,22 +192,17 @@ PARAMHASH, and set with accessors for the hash values in OVERRIDE.
 =cut
 
 sub new {
-    my ($class, $args, $override) = @_;
+    my ($class, $args, $other) = @_;
+    $args = {%{$args}, %{$other || {}}};
     # force using accessor for onclick init
-    for my $trigger ( __PACKAGE__->handlers() ) {
-      if (my $triggerArgs = delete $args->{$trigger}) {
-        $override->{$trigger} = $triggerArgs;
-      }
-    }
+    my $override = {};
+    $override->{$_} = delete $args->{$_}
+        for grep {possible_handlers->{$_} and defined $args->{$_}} keys %{$args};
 
     my $self = $class->SUPER::new($args);
 
-    if ($override) {
-        for my $field ( $self->accessors() ) {
-            # XXX: warn about unexpected ones
-            $self->$field( $override->{$field} ) if exists $override->{$field};
-        }
-    }
+    $self->{handlers_used} = {};
+    $self->$_( $override->{$_} ) for keys %{$override};
 
     return $self;
 }
@@ -311,6 +308,7 @@ sub _handler_setup {
     my $trigger = shift;
 
     return $self->$trigger unless @_;
+    $self->{handlers_used}{$trigger} = 1;
 
     my ($arg) = @_;
 
@@ -328,15 +326,13 @@ sub _handler_setup {
 
             my @submit_tmp;
             foreach my $submit ( @{$hook->{submit}}) {
-                if (!ref($submit)){ 
-                        push @submit_tmp, $submit;
-                    } 
-                elsif(blessed($submit)) {
-                        push @submit_tmp, $submit->moniker;
-
+                if (!ref($submit)) {
+                    push @submit_tmp, $submit;
+                } elsif(blessed($submit)) {
+                    push @submit_tmp, $submit->moniker;
                 } else { # it's a hashref
-                        push @submit_tmp, $submit->{'action'}->moniker;
-                        $hook->{'action_arguments'}->{ $submit->{'action'}->moniker } = $submit->{'arguments'};
+                    push @submit_tmp, $submit->{'action'}->moniker;
+                    $hook->{'action_arguments'}->{ $submit->{'action'}->moniker } = $submit->{'arguments'};
                 }
 
             }
@@ -362,6 +358,11 @@ sub _handler_setup {
 
     return $arg;
 
+}
+
+sub handlers_used {
+    my $self = shift;
+    return keys %{$self->{handlers_used}};
 }
 
 =head2 javascript
@@ -390,9 +391,18 @@ sub javascript_attrs {
     my %response;
 
   HANDLER:
-    for my $trigger ( $self->handlers ) {
+    for my $trigger ( $self->handlers_used ) {
         my $value = $self->$trigger;
         next unless $value;
+
+        if ( !( $self->handler_allowed($trigger) ) ) {
+            $self->log->error(
+                      "Handler '$trigger' is not supported for field '"
+                    . $self->label
+                    . "' with class "
+                    . ref $self );
+            next;
+        }
 
         my @fragments;
             # if $actions is undef, that means we're submitting _all_ actions in the clickable
@@ -403,19 +413,9 @@ sub javascript_attrs {
         my $beforeclick;
         my $action_arguments = {};
         for my $hook (grep {ref $_ eq "HASH"} (@{$value})) {
-
-            if (!($self->handler_allowed($trigger))) {
-                $self->log->error("Handler '$trigger' is not supported for field '" . 
-                                  $self->label . 
-                                  "' with class " . ref $self);
-                next HANDLER;
-            }
-
             my %args;
 
             # Submit action
-          
-            
             if ( exists $hook->{submit} ) {
                 $actions = undef;
                 my $disable_form_on_click = exists $hook->{disable} ? $hook->{disable} : 1;
@@ -492,7 +492,7 @@ sub javascript_attrs {
             push @fragments, \%args;
         }
 
-        my $string = join ";", (grep {not ref $_} (ref $value eq "ARRAY" ? @{$value} : ($value)));
+        my $string = join ";", grep {not ref $_} @{$value};
         if ( @fragments or ( !$actions || %$actions ) ) {
 
             my $update =
