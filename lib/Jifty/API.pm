@@ -105,7 +105,7 @@ sub all_actions {
                 push @actions, $classname unless $seen{$classname};
             }
         }
-        $self->{all_actions} = [ grep { not /::SUPER$/ } @actions ];
+        $self->{all_actions} = \@actions;
     }
     return @{ $self->{all_actions} };
 }

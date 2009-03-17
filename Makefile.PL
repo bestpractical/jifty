@@ -59,7 +59,7 @@ requires('Locale::Maketext::Lexicon' => '0.77');
 requires('Log::Log4perl' => '1.11'); # Log::Log4perl::Appender Log::Log4perl::Level
 requires('LWP::UserAgent'); # Net::HTTP LWP::Simple
 requires('MIME::Types');
-requires('Module::Pluggable' => '3.5'); # Module::Pluggable::Object
+requires('Module::Pluggable' => '3.7'); # Module::Pluggable::Object
 requires('Module::Pluggable::Object');
 requires('Module::CoreList');
 requires('Module::Refresh');
