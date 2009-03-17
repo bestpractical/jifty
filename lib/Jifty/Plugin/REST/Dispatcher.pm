@@ -187,7 +187,90 @@ sub list {
     outs($prefix, \@_)
 }
 
+=head2 output_format [prefix]
 
+Returns the user's desired output format. Returns a hashref of:
+
+    format: JSON, JS, YAML, XML, Perl, or HTML
+    extension: json, js, yml, xml, pl, or html
+    content_type: text/x-yaml; charset=UTF-8, etc.
+    freezer: \&Jifty::YAML::Dump, etc.
+
+
+=cut
+
+sub output_format {
+    my $prefix = shift;
+    my $accept = ($ENV{HTTP_ACCEPT} || '');
+
+    my (@prefix, $url);
+    if ($prefix) {
+        @prefix = map {s/::/./g; $_} @$prefix;
+        $url    = Jifty->web->url(path => join '/', '=',@prefix);
+    }
+
+    if ($accept =~ /ya?ml/i) {
+        return {
+            format       => 'YAML',
+            extension    => 'yml',
+            content_type => 'text/x-yaml; charset=UTF-8',
+            freezer      => \&Jifty::YAML::Dump,
+        };
+    }
+    elsif ($accept =~ /json/i) {
+        return {
+            format       => 'JSON',
+            extension    => 'json',
+            content_type => 'application/json; charset=UTF-8',
+            freezer      => \&Jifty::JSON::objToJson,
+        };
+    }
+    elsif ($accept =~ /j(?:ava)?s|ecmascript/i) {
+        return {
+            format       => 'JS',
+            extension    => 'js',
+            content_type => 'application/javascript; charset=UTF-8',
+            freezer      => sub { 'var $_ = ' . Jifty::JSON::objToJson( @_, { singlequote => 1 } ) },
+        };
+    }
+    elsif ($accept =~ qr{^(?:application/x-)?(?:perl|pl)$}i) {
+        return {
+            format       => 'Perl',
+            extension    => 'pl',
+            content_type => 'application/x-perl; charset=UTF-8',
+            freezer      => \&Data::Dumper::Dumper,
+        };
+    }
+    elsif ($accept =~  qr|^(text/)?xml$|i) {
+        return {
+            format       => 'XML',
+            extension    => 'xml',
+            content_type => 'text/xml; charset=UTF-8',
+            freezer      => \&render_as_xml,
+        };
+    }
+    else {
+        my $freezer;
+
+        # Special case showing particular actions to show an HTML form
+        if (    defined $prefix
+            and $prefix->[0] eq 'action'
+            and scalar @$prefix == 2 )
+        {
+            $freezer = sub { show_action_form($prefix->[1]) };
+        }
+        else {
+            $freezer = sub { render_as_html($prefix, $url, @_) };
+        }
+
+        return {
+            format       => 'HTML',
+            extension    => 'html',
+            content_type => 'text/html; charset=UTF-8',
+            freezer      => $freezer,
+        };
+    }
+}
 
 =head2 outs PREFIX DATASTRUCTURE
 
@@ -196,61 +279,15 @@ renders the content as yaml, json, javascript, perl, xml or html.
 
 =cut
 
-
 sub outs {
     my $prefix = shift;
-    my $accept = ($ENV{HTTP_ACCEPT} || '');
     my $apache = Jifty->handler->apache;
-    my @prefix;
-    my $url;
 
-    if($prefix) {
-        @prefix = map {s/::/./g; $_} @$prefix;
-         $url    = Jifty->web->url(path => join '/', '=',@prefix);
-    }
+    my $format = output_format($prefix);
 
-
-
-    if ($accept =~ /ya?ml/i) {
-        $apache->header_out('Content-Type' => 'text/x-yaml; charset=UTF-8');
-        Jifty->handler->send_http_header;
-        print Jifty::YAML::Dump(@_);
-    }
-    elsif ($accept =~ /json/i) {
-        $apache->header_out('Content-Type' => 'application/json; charset=UTF-8');
-        Jifty->handler->send_http_header;
-        print Jifty::JSON::objToJson( @_ );
-    }
-    elsif ($accept =~ /j(?:ava)?s|ecmascript/i) {
-        $apache->header_out('Content-Type' => 'application/javascript; charset=UTF-8');
-        Jifty->handler->send_http_header;
-        print 'var $_ = ', Jifty::JSON::objToJson( @_, { singlequote => 1 } );
-    }
-    elsif ($accept =~ qr{^(?:application/x-)?(?:perl|pl)$}i) {
-        $apache->header_out('Content-Type' => 'application/x-perl; charset=UTF-8');
-        Jifty->handler->send_http_header;
-        print Data::Dumper::Dumper(@_);
-    }
-    elsif ($accept =~  qr|^(text/)?xml$|i) {
-        $apache->header_out('Content-Type' => 'text/xml; charset=UTF-8');
-        Jifty->handler->send_http_header;
-        print render_as_xml(@_);
-    }
-    else {
-        $apache->header_out('Content-Type' => 'text/html; charset=UTF-8');
-        Jifty->handler->send_http_header;
-        
-        # Special case showing particular actions to show an HTML form
-        if (    defined $prefix
-            and $prefix->[0] eq 'action'
-            and scalar @$prefix == 2 )
-        {
-            show_action_form($1);
-        }
-        else {
-            print render_as_html($prefix, $url, @_);
-        }
-    }
+    $apache->header_out('Content-Type' => $format->{content_type});
+    Jifty->handler->send_http_header;
+    print $format->{freezer}->(@_);
 
     last_rule;
 }
