@@ -196,6 +196,20 @@ sub username {
     return($self->user_object->brief_description(@_));
 }
 
+=head2 javascript_config
+
+Returns a hashref of javascript config to be included on each page.
+
+=cut
+
+sub javascript_config {
+    my $self = shift;
+
+    return {
+        start_weekday => 0, # calendars display with Sunday as first day
+    };
+}
+
 =head2 auth_token
 
 Return a string which proves that the user is who they claim to be.  A
