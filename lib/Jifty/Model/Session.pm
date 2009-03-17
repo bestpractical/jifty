@@ -58,9 +58,7 @@ are...
 
 =cut
 
-my $SUPERUSER;
-sub current_user { return $SUPERUSER ||= Jifty->app_class('CurrentUser')->superuser }
-sub current_user_can {return 1;}
+sub current_user { return Jifty->app_class('CurrentUser')->superuser }
 
 =head2 new_session_id
 

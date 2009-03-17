@@ -159,6 +159,8 @@ sub new {
 
     my %args = (
         parameters => {},
+        as_button  => 0,
+        as_link    => 0,
         @_,
     );
 
@@ -168,19 +170,17 @@ sub new {
     $args{render_as_link}   = delete $args{as_link};
 
     my $self = $class->SUPER::new(
-        {   class            => '',
-            label            => 'Click me!',
-            url              => $root,
-            escape_label     => 1,
-            tooltip          => '',
-            continuation     => Jifty->web->request->continuation,
-            submit           => [],
-            preserve_state   => 0,
-            parameters       => {},
-            render_as_button => 0,
-            render_as_link   => 0,
-            %args,
+        {   class          => '',
+            label          => 'Click me!',
+            url            => $root,
+            escape_label   => 1,
+            tooltip        => '',
+            continuation   => Jifty->web->request->continuation,
+            submit         => [],
+            preserve_state => 0,
+            parameters     => {},
         },
+        \%args
     );
 
     for (qw/continuation call/) {
@@ -222,7 +222,7 @@ sub new {
 
     # Anything doing fragment replacement needs to preserve the
     # current state as well
-    if ( grep { $self->$_ } $self->handlers_used or $self->preserve_state ) {
+    if ( grep { $self->$_ } $self->handlers or $self->preserve_state ) {
         my %state_vars = Jifty->web->state_variables;
         while ( my ( $key, $val ) = each %state_vars ) {
             if ( $key =~ /^region-(.*?)\.(.*)$/ ) {
@@ -491,8 +491,7 @@ sub complete_url {
 
 sub _defined_accessor_values {
     my $self = shift;
-    # Note we're walking around Class::Accessor here
-    return { map { my $val = $self->{$_}; defined $val ? ( $_ => $val ) : () }
+    return { map { my $val = $self->$_; defined $val ? ( $_ => $val ) : () }
             $self->SUPER::accessors };
 }
 
@@ -582,26 +581,25 @@ parameters.
 
 sub generate {
     my $self = shift;
-    my $web = Jifty->web;
-    for my $trigger ( $self->handlers_used ) {
+    for my $trigger ( $self->handlers ) {
         my $value = $self->$trigger;
         next unless $value;
         my @hooks = @{$value};
         for my $hook (@hooks) {
             next unless ref $hook eq "HASH";
             $hook->{region} ||= $hook->{refresh}
-                || $web->qualified_region;
+                || Jifty->web->qualified_region;
 
             my $region
                 = ref $hook->{region}
                 ? $hook->{region}
-                : $web->get_region( $hook->{region} );
+                : Jifty->web->get_region( $hook->{region} );
 
             if ( $hook->{replace_with} ) {
                 my $currently_shown = '';
                 if ($region) {
 
-                    my $state_var = $web->request->state_variable(
+                    my $state_var = Jifty->web->request->state_variable(
                         "region-" . $region->qualified_name );
                     $currently_shown = $state_var->value if ($state_var);
                 }
@@ -613,6 +611,7 @@ sub generate {
                     $self->region_fragment( $hook->{region},
                         "/__jifty/empty" );
 
+#                    Jifty->web->request->remove_state_variable('region-'.$region->qualified_name);
                 } else {
                     $self->region_fragment( $hook->{region},
                         $hook->{replace_with} );
@@ -624,7 +623,7 @@ sub generate {
             if ( $hook->{submit} ) {
                 $self->{submit} ||= [];
                 for my $moniker ( @{ $hook->{submit} } ) {
-                    my $action = $web->{'actions'}{$moniker};
+                    my $action = Jifty->web->{'actions'}{$moniker};
                     $self->register_action($action);
                     $self->parameter( $action->form_field_name($_),
                         $hook->{action_arguments}{$moniker}{$_} )

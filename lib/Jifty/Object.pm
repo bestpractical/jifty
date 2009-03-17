@@ -79,8 +79,9 @@ sub _get_current_user {
             my $x = (CORE::caller( $depth++ ))[0];
             my $caller_self = $DB::args[0];
             next unless ref($caller_self);    #skip class methods;
-            next unless my $s = $caller_self->can('current_user');
-            next unless my $t = $s->($caller_self);
+            next if $caller_self->isa('Jifty::Date'); 
+            next unless $caller_self->can('current_user');
+            next unless my $t = $caller_self->current_user;
             next unless defined $t->id;
             $cu = $t;
         }

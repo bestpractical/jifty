@@ -286,9 +286,8 @@ our @EXPORT = qw<
 >;
 
 our $Dispatcher;
-our $Request;
 
-sub request       { $Request }
+sub request       { Jifty->web->request }
 sub _ret (@);
 sub under ($$@)   { _ret @_ }    # partial match at beginning of path component
 sub before ($$@)  { _ret @_ }    # exact match on the path component
@@ -305,9 +304,9 @@ sub default ($$@) { _ret @_ }    # set parameter if it's not yet set
 sub set ($$@)     { _ret @_ }    # set parameter
 sub del ($@)      { _ret @_ }    # remove parameter
 sub get ($) {
-    my $val = $Request->template_argument( $_[0] );
+    my $val = request->template_argument( $_[0] );
     return $val if defined $val;
-    return $Request->argument( $_[0] );
+    return request->argument( $_[0] );
 }
 
 sub _qualify ($@);
@@ -484,10 +483,9 @@ sub handle_request {
     # do it once per request. But it's really, really painful when you
     # do it often, as is the case with fragments
     local $SIG{__DIE__} = 'DEFAULT';
-    local $Request = Jifty->web->request;
 
     eval {
-        my $path = $Request->path;
+        my $path = Jifty->web->request->path;
         utf8::downgrade($path); # Mason handle non utf8 path.
         $Dispatcher->_do_dispatch( $path );
     };
@@ -810,21 +808,21 @@ sub _do_set {
     my ( $self, $key, $value ) = @_;
     no warnings 'uninitialized';
     $self->log->debug("Setting argument $key to $value");
-    $Request->template_argument($key, $value);
+    request->template_argument($key, $value);
 }
 
 sub _do_del {
     my ( $self, $key ) = @_;
     $self->log->debug("Deleting argument $key");
-    $Request->delete($key);
+    request->delete($key);
 }
 
 sub _do_default {
     my ( $self, $key, $value ) = @_;
     no warnings 'uninitialized';
     $self->log->debug("Setting argument default $key to $value");
-    $Request->template_argument($key, $value)
-        unless defined $Request->argument($key) or defined $Request->template_argument($key);
+    request->template_argument($key, $value)
+        unless defined request->argument($key) or defined request->template_argument($key);
 }
 
 =head2 _do_dispatch [PATH]
@@ -921,8 +919,9 @@ sub _match {
     elsif ( ref($cond) eq 'HASH' ) {
         local $@;
         my $rv = eval {
-            for my $key ( sort grep {length} keys %$cond )
+            for my $key ( sort keys %$cond )
             {
+                next if $key eq '';
                 my $meth = "_match_$key";
                 $self->$meth( $cond->{$key} ) or return;
             }
@@ -958,7 +957,7 @@ came in with that method.
 sub _match_method {
     my ( $self, $method ) = @_;
     #$self->log->debug("Matching method ".request->request_method." against ".$method);
-    $Request->request_method eq uc($method);
+    lc( request->request_method ) eq lc($method);
 }
 
 =head2 _match_https
@@ -1256,8 +1255,8 @@ sub render_template {
 
     # Handle parse errors
     my $err = $@;
+    $self->log->fatal("View error: $err") if $err;
     if ( $err and not eval { $err->isa('HTML::Mason::Exception::Abort') } ) {
-        $self->log->fatal("View error: $err") if $err;
         if ($template eq '/errors/500') {
             $self->log->warn("Can't render internal_error: $err");
             # XXX Built-in static "oh noes" page?
@@ -1280,8 +1279,9 @@ sub render_template {
         Jifty->web->_redirect( "/errors/500?J:C=" . $c->id );
     } elsif ($err) {
         Jifty->handler->buffer->pop while Jifty->handler->buffer->depth > $start_depth;
-        $self->_abort;
+        die $err;
     }
+
 }
 
 

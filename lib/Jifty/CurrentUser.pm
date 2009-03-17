@@ -77,9 +77,8 @@ sub _init {
     my %args = (@_);
 
     # Duck-typing to check to for a user class
-    my $user_class = Jifty->app_class({require => 0}, 'Model', 'User');
-    if (keys %args and UNIVERSAL::can($user_class, 'new')  ) {
-        $self->user_object($user_class->new(current_user => $self));
+    if (keys %args and UNIVERSAL::can(Jifty->app_class('Model', 'User'), 'new')  ) {
+        $self->user_object(Jifty->app_class('Model', 'User')->new(current_user => $self));
         $self->user_object->load_by_cols(%args);
     }
 
@@ -138,14 +137,16 @@ user_object, return that user's id.
 sub id {
     my $self = shift;
 
-    # This can be a hotspot, so we don't use method calls, instead
-    # directly accessing the value.
-
     # Make sure we have a user object before trying to ID it
-    return $self->{user_object}->id if $self->{user_object};
-
+    if ($self->user_object) {
+        return ($self->user_object->id());
+    } 
+    
     # No user object, return a null ID
-    return 0;
+    else {
+        return '0';
+    }
+
 }
 
 =head2 current_user

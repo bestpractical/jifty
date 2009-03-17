@@ -250,7 +250,7 @@ sub _guess_table_name {
 
     # Add plugin table prefix if a plugin model
     my $class = ref($self) ? ref($self) : $self;
-    my $app_plugin_root = Jifty->app_class({require => 0}, 'Plugin');
+    my $app_plugin_root = Jifty->app_class('Plugin');
     if ( $class =~ /^(?:Jifty::Plugin::|$app_plugin_root)/ ) {
 
         # Guess the plugin class name

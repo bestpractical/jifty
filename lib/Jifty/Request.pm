@@ -118,7 +118,7 @@ sub fill {
     my ($cgi) = @_;
 
     # Store away request method
-    $self->request_method( uc $cgi->request_method );
+    $self->request_method( $cgi->request_method );
 
     # Grab content type and posted data, if any
     my $ct   = $ENV{"CONTENT_TYPE"};
