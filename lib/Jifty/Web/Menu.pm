@@ -9,7 +9,7 @@ use URI;
 use Scalar::Util qw(weaken);
 
 __PACKAGE__->mk_accessors(qw(
-    label _parent sort_order link target escape_label class render_children_inline
+    label sort_order link target escape_label class render_children_inline
 ));
 
 =head1 NAME
@@ -60,11 +60,11 @@ to null. This ensures that the reference is weakened.
 sub parent {
     my $self = shift;
     if (@_) {
-        $self->_parent(@_);
-        weaken $self->{_parent};
+        $self->{parent} = shift;
+        weaken $self->{parent};
     }
 
-    return $self->_parent;
+    return $self->{parent};
 }
 
 
@@ -110,13 +110,12 @@ treated as relative to it's parent's url, and made absolute.
 
 sub url {
     my $self = shift;
-    $self->{url} = shift if @_;
-
-    $self->{url} = URI->new_abs($self->{url}, $self->parent->url . "/")->as_string
-      if defined $self->{url} and $self->parent and $self->parent->url;
-
-    $self->{url} =~ s!///!/! if $self->{url};
-
+    if (@_) {
+        $self->{url} = shift;
+        $self->{url} = URI->new_abs($self->{url}, $self->parent->url . "/")->as_string
+            if defined $self->{url} and $self->parent and $self->parent->url;
+        $self->{url} =~ s!///!/! if $self->{url};
+    }
     return $self->{url};
 }
 
@@ -154,6 +153,9 @@ sub child {
     my $proto = ref $self || $self;
 
     if (@_) {
+        # Clear children ordering cache
+        delete $self->{children_list};
+
         $self->{children}{$key} = $proto->new({parent => $self,
                                                sort_order => ($self->{children}{$key}{sort_order}
                                                           || scalar values %{$self->{children}}),
@@ -161,7 +163,6 @@ sub child {
                                                escape_label => 1,
                                                @_
                                              });
-        Scalar::Util::weaken($self->{children}{$key}{parent});
         
         # Figure out the URL
         my $child = $self->{children}{$key};
@@ -213,6 +214,7 @@ Removes the child with the provided I<KEY>.
 sub delete {
     my $self = shift;
     my $key = shift;
+    delete $self->{children_list};
     delete $self->{children}{$key};
 }
 
@@ -225,8 +227,14 @@ array context, or as an array reference in scalar context.
 
 sub children {
     my $self = shift;
-    my @kids = values %{$self->{children} || {}};
-    @kids = sort {$a->sort_order <=> $b->sort_order} @kids;
+    my @kids;
+    if ($self->{children_list}) {
+        @kids = @{$self->{children_list}};
+    } else {
+        @kids = values %{$self->{children} || {}};
+        @kids = sort {$a->{sort_order} <=> $b->{sort_order}} @kids;
+        $self->{children_list} = \@kids;
+    }
     return wantarray ? @kids : \@kids;
 }
 
@@ -277,14 +285,15 @@ sub render_as_hierarchical_menu_item {
         @_
     );
     my @kids = $self->children;
-    my $id   = Jifty->web->serial;
-    Jifty->web->out( qq{<li class="toplevel }
+    my $web = Jifty->web;
+    my $id   = $web->serial;
+    $web->out( qq{<li class="toplevel }
             . ( $self->active ? 'active' : 'closed' ) .' '.($self->class||"").' '. qq{">}
             . qq{<span class="title">} );
-    Jifty->web->out( $self->as_link );
-    Jifty->web->out(qq{</span>});
+    $web->out( $self->as_link );
+    $web->out(qq{</span>});
     if (@kids) {
-        Jifty->web->out(
+        $web->out(
             qq{<span class="expand"><a href="#" onclick="Jifty.ContextMenu.hideshow('}
                 . $id
                 . qq{'); return false;">&nbsp;</a></span>}
@@ -292,17 +301,17 @@ sub render_as_hierarchical_menu_item {
                 . $id
                 . qq{">} );
         for (@kids) {
-            Jifty->web->out(qq{<li class="submenu }.($_->active ? 'active' : '' ).' '. ($_->class || "").qq{">});
+            $web->out(qq{<li class="submenu }.($_->active ? 'active' : '' ).' '. ($_->class || "").qq{">});
 
             # We should be able to get this as a string.
             # Either stringify the link object or output the label
             # This is really icky. XXX TODO
-            Jifty->web->out( $_->as_link );
-            Jifty->web->out("</li>");
+            $web->out( $_->as_link );
+            $web->out("</li>");
         }
-        Jifty->web->out(qq{</ul>});
+        $web->out(qq{</ul>});
     }
-    Jifty->web->out(qq{</li>});
+    $web->out(qq{</li>});
     '';
 
 }

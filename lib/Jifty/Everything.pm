@@ -40,6 +40,8 @@ use Jifty::DateTime ();
 use Jifty::Record ();
 use Jifty::Collection ();
 use Jifty::Action ();
+use Jifty::Action::Autocomplete ();
+use Jifty::Action::Redirect ();
 use Jifty::Action::Record ();
 use Jifty::Action::Record::Create ();
 use Jifty::Action::Record::Update ();

@@ -85,6 +85,11 @@ sub new {
 
     $self->buffer(String::BufferStack->new( out_method => \&Jifty::View::out_method ));
     $self->setup_view_handlers();
+    {
+        my $buffer = $self->buffer;
+        no warnings 'redefine';
+        *Jifty::Web::out = sub {shift;unshift @_,$buffer;goto \&String::BufferStack::append};
+    }
     return $self;
 }
 

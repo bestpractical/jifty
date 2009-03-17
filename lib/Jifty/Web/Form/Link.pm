@@ -97,11 +97,12 @@ Returns the string of the link, including any necessary javascript.
 sub as_string {
     my $self = shift;
     my $label = $self->label;
-    $label = Jifty->web->escape( $label )
+    my $web = Jifty->web;
+    $label = $web->escape( $label )
         if ( $self->escape_label );
 
     my $tooltip = $self->tooltip;
-    $tooltip = Jifty->web->escape( $tooltip )
+    $tooltip = $web->escape( $tooltip )
         if ( defined $tooltip and $self->escape_label );
 
     my $output = '';
@@ -113,13 +114,13 @@ sub as_string {
     $output .= (qq( target="@{[$self->target]}")) if $self->target;
     $output .= (qq( accesskey="@{[$self->key_binding]}")) if $self->key_binding;
     $output .= (qq( rel="@{[$self->rel]}"))       if $self->rel;
-    $output .= (qq( href="@{[Jifty->web->escape($self->url)]}"));
+    $output .= (qq( href="@{[$web->escape($self->url)]}"));
     $output .= ( $self->javascript() );
     $output .= (qq(>$label</a>));
 
     $output .= (
         '<script type="text/javascript">' .
-        Jifty->web->escape($self->key_binding_javascript).
+        $web->escape($self->key_binding_javascript).
         "</script>") if $self->key_binding;
 
     return $output;

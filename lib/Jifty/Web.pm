@@ -20,7 +20,7 @@ use base qw/Class::Accessor::Fast Class::Data::Inheritable Jifty::Object/;
 use vars qw/$SERIAL @JS_INCLUDES/;
 
 __PACKAGE__->mk_accessors(
-    qw(next_page force_redirect request response session temporary_current_user _current_user _state_variables)
+    qw(next_page force_redirect request response session temporary_current_user)
 );
 
 __PACKAGE__->mk_classdata($_)
@@ -241,24 +241,24 @@ sub current_user {
         my $currentuser_obj = shift;
         $self->session->set(
             'user_id' => $currentuser_obj ? $currentuser_obj->id : undef );
-        $self->_current_user( $currentuser_obj || undef );
+        $self->{current_user} = ( $currentuser_obj || undef );
     }
 
     my $object;
 
     if ( defined $self->temporary_current_user ) {
         return $self->temporary_current_user;
-    } elsif ( defined $self->_current_user ) {
-        return $self->_current_user;
+    } elsif ( defined $self->{current_user} ) {
+        return $self->{current_user};
     } elsif ( my $id = $self->session->get('user_id') ) {
-         $object = Jifty->app_class("CurrentUser")->new( id => $id );
+         $object = Jifty->app_class({require => 0}, "CurrentUser")->new( id => $id );
     } elsif ( Jifty->config->framework('AdminMode')) {
-         $object = Jifty->app_class("CurrentUser")->superuser;
+         $object = Jifty->app_class({require => 0}, "CurrentUser")->superuser;
     } else {
-         $object = Jifty->app_class("CurrentUser")->new;
+         $object = Jifty->app_class({require => 0}, "CurrentUser")->new;
     }
     
-    $self->_current_user($object);
+    $self->{current_user} = $object;
     return $object;
 }
 
@@ -354,11 +354,10 @@ sub _validate_request_actions {
         next if $request_action->has_run;
         unless ( $self->request->just_validating ) {
             unless ( Jifty->api->is_allowed( $request_action->class ) ) {
-                $self->log->warn( "Attempt to call denied action '"
+                $self->log->warn( Carp::longmess("Attempt to call denied action '"
                         . $request_action->class
-                        . "'" );
-                Carp::cluck;
-                $self->log->error("NOTICE! A cross-site scripting security fix has been installed so that actions are now by default DENIED during GET requests. You must specifically whitelist safe actions using this in your dispatcher: before '*' => run { Jifty->api->allow('SafeAction') }; - We apologize for the inconvenience.");
+                        . "'" ));
+                $self->log->error("NOTICE! A cross-site scripting security fix has been installed so that actions are now by default DENIED during GET requests. You must specifically whitelist safe actions using this in your dispatcher: before '*' => run { Jifty->api->allow('SafeAction') }; - We apologize for the inconvenience.") if $self->request->request_method eq "GET";
                 push @denied_actions, $request_action;
                 next;
             }
@@ -530,10 +529,9 @@ sub new_action {
     # Prepend the base path (probably "App::Action") unless it's there already
     $class = Jifty->api->qualify($class);
 
-    my $loaded = Jifty::Util->require( $class );
     # The implementation class is provided by the client, so this
     # isn't a "shouldn't happen"
-    return unless $loaded;
+    return unless Jifty::Util->require( $class );
 
     my $action;
     # XXX TODO bullet proof
@@ -717,8 +715,8 @@ sub redirect {
         my $request = Jifty::Request->new();
         $request->add_state_variable( key => $_->key, value => $_->value )
           for $self->request->state_variables;
-        $request->add_state_variable( key => $_, value => $self->_state_variables->{$_} )
-          for keys %{ $self->_state_variables };
+        $request->add_state_variable( key => $_, value => $self->{state_variables}->{$_} )
+          for keys %{ $self->{state_variables} };
         for (@actions) {
             my $new_action = $request->add_action(
                 moniker   => $_->moniker,
@@ -1248,9 +1246,9 @@ sub set_variable {
     my $value = shift;
 
     if (!defined($value)) {
-        delete $self->_state_variables->{$name};
+        delete $self->{state_variables}{$name};
     } else {
-        $self->_state_variables->{$name} = $value;
+        $self->{state_variables}{$name} = $value;
     }
 
 }
@@ -1267,7 +1265,7 @@ versions of Jifty
 
 sub state_variables {
     my $self = shift;
-    return %{ $self->_state_variables };
+    return %{ $self->{state_variables} };
 }
 
 =head3 clear_state_variables
@@ -1279,7 +1277,7 @@ Remove all the state variables to be serialized for the next request.
 sub clear_state_variables {
     my $self = shift;
 
-    $self->_state_variables({});
+    $self->{state_variables} = {};
 }
 
 =head2 REGIONS
