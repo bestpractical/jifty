@@ -2,7 +2,7 @@
 use warnings;
 use strict;
 
-use Jifty::Test::Dist tests => 20;
+use Jifty::Test::Dist tests => 24;
 use Jifty::Test::WWW::Mechanize;
 
 my $server  = Jifty::Test->make_server;
@@ -19,75 +19,66 @@ my $u1 = TestApp::Plugin::REST::Model::User->new(
 $u1->create(name => 'test', email => 'test@example.com');
 ok($u1->id);
 
-my %loader = (
-    yml  => \&Jifty::YAML::Load,
-    json => \&Jifty::JSON::jsonToObj,
-);
-sub fetch {
+sub result_of {
     local $Test::Builder::Level = $Test::Builder::Level + 1;
-    my ($url, $format) = @_;
+    my $request = shift;
+    my $test    = shift;
 
-    if (!exists($loader{$format})) {
-        die "Invalid format '$format'. Valid formats are: "
-          . join ', ', sort keys %loader;
+    if (!ref($request)) {
+        $request = {
+            mech_method => 'get',
+            url         => $request,
+        };
     }
 
-    $mech->get_ok("$URL$url.$format", "Get $url in $format");
-    is($mech->status, 200, "HTTP response status for $URL$url.$format");
-    my $from_dot_format = $loader{$format}->($mech->content);
+    my %loaders = (
+        yml  => \&Jifty::YAML::Load,
+        json => \&Jifty::JSON::jsonToObj,
+    );
 
-    return $from_dot_format;
+    for my $format (keys %loaders) {
+        my $url = $URL . $request->{url} . '.' . $format;
+
+        my $method = $request->{mech_method};
+        $mech->$method($url, @{ $request->{mech_args} || [] });
+
+        is($mech->status, 200, "HTTP response status for $url");
+
+        my $loaded = $loaders{$format}->($mech->content);
+        local $Test::Builder::Level = $Test::Builder::Level + 1;
+        $test->($loaded);
+    }
 }
 
-my $list = fetch('/=/model', 'yml');
-is(scalar @$list, 2, 'Got two models in YAML');
-is($list->[0],'TestApp.Plugin.REST.Model.Group');
-is($list->[1],'TestApp.Plugin.REST.Model.User');
+result_of '/=/model' => sub {
+    is_deeply($_[0], [
+        'TestApp.Plugin.REST.Model.Group',
+        'TestApp.Plugin.REST.Model.User',
+    ]);
+};
 
-$list = fetch('/=/model', 'json');
-is(scalar @$list, 2, 'Got two models in JSON');
-is($list->[0],'TestApp.Plugin.REST.Model.Group');
-is($list->[1],'TestApp.Plugin.REST.Model.User');
+result_of '/=/model/User' => sub {
+    is(scalar keys %{ $_[0] }, 4, 'four keys in the user record');
+};
 
-my $user = fetch('/=/model/User', 'yml');
-is(scalar keys %$user, 4, 'four keys in the user record, YAML');
+result_of '/=/model/user/id' => sub {
+    is(@{ $_[0] }, 1, "one user");
+};
 
-$user = fetch('/=/model/User', 'json');
-is(scalar keys %$user, 4, 'four keys in the user record, JSON');
+result_of '/=/model/user/id/1' => sub {
+    is_deeply($_[0], {
+        name  => 'test',
+        email => 'test@example.com',
+        id    => 1,
+        tasty => undef,
+    });
+};
+
+result_of '/=/model/user/id/1/email' => sub {
+    is($_[0], 'test@example.com');
+};
 
 __END__
-
-$mech->get_ok('/=/model/user');
-is($mech->status,'200');
-$mech->get_ok('/=/model/TestApp::Plugin::REST::Model::User');
-is($mech->status,'200');
-$mech->get_ok('/=/model/TestApp.Plugin.REST.Model.User');
-is($mech->status,'200');
-$mech->get_ok('/=/model/testapp.plugin.rest.model.user');
-is($mech->status,'200');
-
-
-$mech->get_ok('/=/model/User.yml');
-my %keys =  %{get_content()};
-
-is((0+keys(%keys)), 4, "The model has 4 keys");
-is_deeply([sort keys %keys], [sort qw/id name email tasty/]);
-
-
-# on GET    '/=/model/*/*'   => \&list_model_items;
-$mech->get_ok('/=/model/user/id.yml');
-my @rows = @{get_content()};
-is($#rows,0);
-
-
-# on GET    '/=/model/*/*/*' => \&show_item;
-$mech->get_ok('/=/model/user/id/1.yml');
-my %content = %{get_content()};
-is_deeply(\%content, { name => 'test', email => 'test@example.com', id => 1, tasty => undef });
-
-# on GET    '/=/model/*/*/*/*' => \&show_item_Field;
-$mech->get_ok('/=/model/user/id/1/email.yml');
-is(get_content(), 'test@example.com');
 
 # on PUT    '/=/model/*/*/*' => \&replace_item;
 # on DELETE '/=/model/*/*/*' => \&delete_item;
