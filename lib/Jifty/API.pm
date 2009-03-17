@@ -25,8 +25,11 @@ make up a Jifty application's API
      Jifty->api->hide(qr/Vote|PurchaseTobacco/);
  }
 
+ # Fetch the class names of all actions
+ my @actions = Jifty->api->all_actions;
+
  # Fetch the class names of all the allowed actions
- my @actions = Jifty->api->actions;
+ my @allowed = Jifty->api->actions;
 
  # Fetch all of the visible actions (some of which may not be allowed)
  my @visible = Jifty->api->visible_actions;
@@ -88,9 +91,9 @@ sub new {
 }
 
 # Plugin actions under Jifty::Plugin::*::Action are mirrored under
-# AppName::Action by Jifty::ClassLoader; this code makes _actions
+# AppName::Action by Jifty::ClassLoader; this code makes all_actions
 # reflect this mirroring.
-sub _actions {
+sub all_actions {
     my $self = shift;
     unless ( $self->{_actions} ) {
         my @actions = $self->__actions;
@@ -389,7 +392,7 @@ namespace, in addition to your application's actions.
 
 sub actions {
     my $self = shift;
-    return sort grep { not /::SUPER$/ and $self->is_allowed($_) } $self->_actions;
+    return sort grep { not /::SUPER$/ and $self->is_allowed($_) } $self->all_actions;
 }
 
 =head2 visible_actions
@@ -402,7 +405,7 @@ namespace, in addition to your application's actions.
 
 sub visible_actions {
     my $self = shift;
-    return sort grep { not /::SUPER$/ and $self->is_visible($_) } $self->_actions;
+    return sort grep { not /::SUPER$/ and $self->is_visible($_) } $self->all_actions;
 }
 
 =head1 SEE ALSO
