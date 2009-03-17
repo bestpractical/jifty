@@ -95,7 +95,7 @@ sub new {
 # reflect this mirroring.
 sub all_actions {
     my $self = shift;
-    unless ( $self->{_actions} ) {
+    unless ( $self->{all_actions} ) {
         my @actions = $self->__actions;
         my %seen;
         $seen{$_}++ for @actions;
@@ -105,9 +105,9 @@ sub all_actions {
                 push @actions, $classname unless $seen{$classname};
             }
         }
-        $self->{_actions} = \@actions;
+        $self->{all_actions} = \@actions;
     }
-    return @{ $self->{_actions} };
+    return @{ $self->{all_actions} };
 }
 
 =head2 qualify ACTIONNAME
