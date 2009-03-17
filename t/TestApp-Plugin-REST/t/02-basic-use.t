@@ -30,7 +30,7 @@ ok( $u1->id );
 
 $mech->get_ok("$URL/=/model.yml", "Got model list");
 my $list = Jifty::YAML::Load($mech->content);
-is(scalar @$list, 2, "Got one model");
+is(scalar @$list, 2, "Got two models");
 is($list->[0],'TestApp.Plugin.REST.Model.Group');
 is($list->[1],'TestApp.Plugin.REST.Model.User');
 
