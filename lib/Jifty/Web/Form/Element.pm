@@ -308,6 +308,7 @@ sub _handler_setup {
     my $trigger = shift;
 
     return $self->$trigger unless @_;
+    $trigger =~ s/^_//;
     $self->{handlers_used}{$trigger} = 1;
 
     my ($arg) = @_;
