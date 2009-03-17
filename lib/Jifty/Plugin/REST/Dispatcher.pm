@@ -841,7 +841,6 @@ our @param_attrs = qw(
 
 sub list_action_params {
     my ($class) = action($1);
-    Jifty::Util->require($class) or abort(404);
     my $action = $class->new or abort(404);
 
     my $arguments = $action->arguments;
