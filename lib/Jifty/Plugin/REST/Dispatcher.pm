@@ -428,8 +428,8 @@ sub action {
         name          => $_[0],
         base          => 'Jifty::Action',
         possibilities => [Jifty->api->visible_actions],
-# XXX: This does not quite work for some applications yet. Older versions of
-# the REST API did not have this explicit restriction.
+# We do not do this check because we want users to see actions on GET requests,
+# like when they're exploring the REST API in their browser.
 #        is_allowed    => sub { Jifty->api->is_allowed(shift) },
     );
 }
