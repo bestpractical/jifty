@@ -428,7 +428,9 @@ sub action {
         name          => $_[0],
         base          => 'Jifty::Action',
         possibilities => [Jifty->api->visible_actions],
-        is_allowed    => sub { Jifty->api->is_allowed(shift) },
+# XXX: This does not quite work for some applications yet. Older versions of
+# the REST API did not have this explicit restriction.
+#        is_allowed    => sub { Jifty->api->is_allowed(shift) },
     );
 }
 
@@ -468,7 +470,7 @@ sub _resolve {
 
     abort(404) if !defined($hit);
 
-    abort(403) unless $args{is_allowed}->($hit);
+    abort(403) if $args{is_allowed} && !$args{is_allowed}->($hit);
 
     return $hit;
 }
