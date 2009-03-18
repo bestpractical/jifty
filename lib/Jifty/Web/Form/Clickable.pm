@@ -492,7 +492,7 @@ sub complete_url {
 sub _defined_accessor_values {
     my $self = shift;
     # Note we're walking around Class::Accessor here
-    return { map { my $val = $self->{$_}; defined $val ? ( $_ => $val ) : () }
+    return { map { my $val = $self->{"_$_"} || $self->{$_}; defined $val ? ( $_ => $val ) : () }
             $self->SUPER::accessors };
 }
 
