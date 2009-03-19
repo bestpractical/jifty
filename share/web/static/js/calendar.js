@@ -42,19 +42,29 @@ Jifty.Calendar = {
         this.parentNode.insertBefore( wrap, this.nextSibling );
 
         var cal;
-        
+
+        var start_weekday = jQuery(this).hasClass('calendar-starts-monday') ? 1 : 0;
+
         if (Jifty.Calendar.dateRegex.test(this.value) ) {
             var bits = this.value.match(Jifty.Calendar.dateRegex);
-            cal = new YAHOO.widget.Calendar( calId,
-                                             wrapId,
-                                             { pagedate: bits[2]+"/"+bits[1],
-                                               selected: bits[2]+"/"+bits[3]+"/"+bits[1] }
-                                            );
+            cal = new YAHOO.widget.Calendar(
+                calId,
+                wrapId,
+                {
+                    pagedate: bits[2]+"/"+bits[1],
+                    selected: bits[2]+"/"+bits[3]+"/"+bits[1],
+                    start_weekday: start_weekday
+                }
+            );
         }
         else {
-            cal = new YAHOO.widget.Calendar( calId, wrapId);
+            cal = new YAHOO.widget.Calendar(
+                calId,
+                wrapId,
+                { start_weekday: start_weekday }
+            );
         }
-        
+
         cal.cfg.applyConfig( Jifty.Calendar.Options );
         cal.cfg.fireQueue();
         

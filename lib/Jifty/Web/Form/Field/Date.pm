@@ -13,13 +13,24 @@ Jifty::Web::Form::Field::Date - Add date pickers to your forms
 
 =head2 classes
 
-Output date fields with the class 'date'
+Output date fields with the class 'date'. If the current user's user object has
+a C<calendar_starts_monday> method, and it returns true, the
+'calendar-starts-monday' class is added as well.
 
 =cut
 
 sub classes {
     my $self = shift;
-    return join(' ', 'date', ($self->SUPER::classes));
+    my $classes = join ' ', $self->SUPER::classes;
+    $classes .= ' date';
+
+    if (my $user = Jifty->web->current_user->user_object) {
+        $classes .= ' calendar-starts-monday'
+            if $user->can('calendar_starts_monday')
+            && $user->calendar_starts_monday;
+    }
+
+    return $classes;
 }
 
 =head2 canonicalize_value
