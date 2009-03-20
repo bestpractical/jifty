@@ -157,16 +157,20 @@ sub child {
         # Clear children ordering cache
         delete $self->{children_list};
 
-        $self->{children}{$key} = $proto->new({parent => $self,
-                                               sort_order => ($self->{children}{$key}{sort_order}
-                                                          || scalar values %{$self->{children}}),
-                                               label => $key,
-                                               escape_label => 1,
-                                               @_
-                                             });
+        # Set us up the child
+        my $child = $proto->new({parent => $self,
+                                 sort_order => ($self->{children}{$key}{sort_order}
+                                                    || scalar values %{$self->{children}}),
+                                 label => $key,
+                                 escape_label => 1,
+                                 @_
+                             });
+        $self->{children}{$key} = $child;
+
+        # URL is relative to parents, and cached, so set it up now
+        $child->url($child->{url});
         
         # Figure out the URL
-        my $child = $self->{children}{$key};
         my $url   =   ( defined $child->link
                     and ref $child->link
                     and $child->link->can('url') )
