@@ -81,8 +81,8 @@ is(get_content(), 'test@example.com');
 $mech->post( $URL . '/=/model/User', { name => "moose", email => 'moose@example.com' } );
 is($mech->status, 200, "create via POST to model worked");
 
-$mech->post( $URL . '/=/model/Group', { } );
-is($mech->status, 403, "create via POST to model with disallowed create action failed with 403");
+my $response = $mech->post( $URL . '/=/model/Group', { } );
+ok(!$response->is_success, "create via POST to model with disallowed create action failed");
 
 # on GET    '/=/search/*/**' => \&search_items;
 $mech->get_ok('/=/search/user/id/1.yml');
