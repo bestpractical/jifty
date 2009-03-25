@@ -100,6 +100,7 @@ for (keys %results) {
 }
 
 $writer->endTag();
+Jifty->handler->apache->content_type('text/xml; charset=UTF-8');
 Jifty->web->out($output);
 </%init>
 <%once>
