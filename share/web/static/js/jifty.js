@@ -696,6 +696,9 @@ Behaviour.register({
             jQuery(e).addClass('has_calendar_link');
         }
     },
+    'input.time': function(e) {
+        jQuery(e).timepickr({handle: jQuery(e)});
+    },
     'input.button_as_link': function(e) {
         buttonToLink(e);
     },

@@ -69,6 +69,7 @@ __PACKAGE__->javascript_libs([qw(
     app_behaviour.js
     css_browser_selector.js
     cssQuery-jquery.js
+    jquery.timepickr.js
 )]);
 
 use Class::Trigger;
