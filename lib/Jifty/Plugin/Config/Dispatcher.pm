@@ -1,0 +1,43 @@
+use warnings;
+use strict;
+
+package Jifty::Plugin::Config::Dispatcher;
+
+=head1 NAME
+
+Jifty::Plugin::Config::Dispatcher - dispatcher of the Config plugin
+
+=head1 DESCRIPTION
+
+Adds dispatching rules required for the Config plugin.
+
+=cut
+
+use Jifty::Dispatcher -base;
+
+=head1 RULES
+
+=head2 on '**'
+
+Adds 'Configuration' item to the top navigation
+
+=cut
+
+on '**' => run {
+    my $top = Jifty->web->navigation;
+
+    # for now leave check here, but we want Config to be
+    # real plugin someday
+    $top->child(
+        Configuration => url => "/__jifty/config/",
+        label         => _('Configuration'),
+        sort_order    => 990,
+    );
+    return ();
+};
+
+before '*' => run {
+    Jifty->api->allow('Jifty::Plugin::Config::Action::Config');
+};
+
+1;

@@ -1,0 +1,20 @@
+<&| /_elements/wrapper, title => _('Jifty Configuration') &>
+
+<h1><% _('Configuration') %></h1>
+
+<% Jifty->web->form->start %>
+% for my $field ( @fields ) {
+<% $action->form_field($field) %>
+% }
+<% Jifty->web->form->submit( label => 'Save' ) %>
+<% Jifty->web->form->end %>
+
+</&>
+
+<%init>
+my $action = Jifty->web->new_action( class =>
+'Jifty::Plugin::Config::Action::Config' );
+my @fields = qw/database_type database_name database_host 
+database_user database_password/;
+</%init>
+
