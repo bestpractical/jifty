@@ -43,19 +43,14 @@ use Jifty::Action schema {
           Jifty->config->framework('Database')->{'Database'}
       };
     param
-      database_user => label is 'Database username for RT',                 
-      hints is
-'RT will connect to the database using this user.'
-      ,                                                                     
+      database_user => label is 'Database username',                 
       default is defer { 
           Jifty->config->framework('Database')->{'User'}
       };
 
     param
-      database_password => label is 'Database password for RT',             
-      render as 'Password',
-      hints is 'The password RT should use to connect to the database.';
-
+      database_password => label is 'Database password',             
+      render as 'Password';
 };
 
 =head2 take_action
