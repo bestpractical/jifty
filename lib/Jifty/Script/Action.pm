@@ -78,7 +78,16 @@ sub run {
     Jifty->new( no_handle => 1 );
     my $root = Jifty::Util->app_root;
     my $appclass = Jifty->config->framework("ApplicationClass");
-    my $appclass_path =  File::Spec->catfile(split(/::/,Jifty->config->framework("ApplicationClass")));
+    my $appclass_path =  File::Spec->catfile(split(/::/,$appclass));
+
+    # Detect if they're creating an App::Action::UpdateWidget, for example
+    my $subclass = "Jifty::Action";
+    if ($action =~ /^(Create|Search|Execute|Update|Delete)(.+)$/) {
+        my($type, $model) = ($1, $2);
+        $model = Jifty->app_class( Model => $model );
+        $subclass = Jifty->app_class( Action => Record => $type )
+            if grep {$_ eq $model} Jifty->class_loader->models;
+    }
 
     my $actionFile = <<"EOT";
 use strict;
@@ -91,7 +100,7 @@ use warnings;
 =cut
 
 package @{[$appclass]}::Action::@{[$action]};
-use base qw/@{[$appclass]}::Action Jifty::Action/;
+use base qw/@{[$appclass]}::Action @{[$subclass]}/;
 
 use Jifty::Param::Schema;
 use Jifty::Action schema {
