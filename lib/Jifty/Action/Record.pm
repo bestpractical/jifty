@@ -15,8 +15,9 @@ method of L<Jifty::Action> so that you don't need to bother.
 
 To actually use this class, you probably want to inherit from one of
 L<Jifty::Action::Record::Create>, L<Jifty::Action::Record::Update>, or
-L<Jifty::Action::Record::Delete> and override the C<record_class>
-method.
+L<Jifty::Action::Record::Delete>.  You may need to override the
+L</record_class> method, if Jifty cannot determine the record class of
+this action.
 
 =cut
 
@@ -55,9 +56,20 @@ field of action result content.  The default is false.
 
 sub record_class {
     my $self = shift;
-    my $class = ref $self;
-    my $hint = $class eq __PACKAGE__ ? "" : " (did you forget to override record_class in $class?)";
-    $self->log->fatal("Jifty::Action::Record must be subclassed to be used" .  $hint);
+    return $self->{record_class} ||= do {
+        my $class = ref($self);
+        if ($class =~ /::(Create|Search|Execute|Update|Delete)([^:]+)$/) {
+            my($type, $model) = ($1, $2);
+            $model = Jifty->app_class( Model => $model );
+            return $model if grep {$_ eq $model} Jifty->class_loader->models;
+        }
+
+        if ($class eq "Jifty::Action::Record") {
+            $self->log->fatal("Jifty::Action::Record must be subclassed to be used");
+        } else {
+            $self->log->fatal("Cannot determine model for Jifty::Action::Record subclass $class");
+        }
+    };
 }
 
 =head2 new PARAMHASH
