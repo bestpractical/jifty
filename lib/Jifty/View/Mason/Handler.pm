@@ -55,6 +55,8 @@ L<escape_utf8> respectively.
 sub new {
     my $package = shift;
 
+    $package->create_cache_directories;
+
     my %p = @_ || $package->config;
     my $self = $package->SUPER::new( request_class => 'Jifty::View::Mason::Request',
                                      out_method => sub {Carp::cluck("Mason output skipped Jifty's output stack!") if grep {defined and length} @_},
@@ -231,6 +233,19 @@ L<Jifty::Request> object.
 
 sub request_args {
     return %{Jifty->web->request->arguments}, %{Jifty->web->request->template_arguments || {}};
+}
+
+
+=head2 create_cache_directories
+
+Attempts to create our app's mason cache directory.
+
+=cut
+
+sub create_cache_directories {
+    for ( Jifty->config->framework('Web')->{'DataDir'} ) {
+        Jifty::Util->make_path( Jifty::Util->absolute_path($_) );
+    }
 }
 
 1;

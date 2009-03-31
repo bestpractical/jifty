@@ -5,7 +5,7 @@ package Jifty::Handler;
 
 =head1 NAME
 
-Jifty::Handler - Methods related to the Mason handler
+Jifty::Handler - Methods related to the finding and returning content
 
 =head1 SYNOPSIS
 
@@ -19,8 +19,9 @@ Jifty::Handler - Methods related to the Mason handler
 
 =head1 DESCRIPTION
 
-L<Jifty::Handler> provides methods required to deal with Mason CGI
-handlers.  
+L<Jifty::Handler> provides methods required to find and return content
+to the browser.  L</handle_request>, for instance, is the main entry
+point for HTTP requests.
 
 =cut
 
@@ -51,20 +52,6 @@ BEGIN {
 
 __PACKAGE__->mk_accessors(qw(dispatcher _view_handlers cgi apache stash buffer));
 
-=head2 mason
-
-
-Returns the Jifty c<HTML::Mason> handler. While this "should" be just another template handler,
-we still rely on it for little bits of Jifty infrastructure. Patches welcome.
-
-=cut
-
-sub mason {
-    my $self = shift;
-    return $self->view('Jifty::View::Mason::Handler');
-}
-
-
 =head2 new
 
 Create a new Jifty::Handler object. Generally, Jifty.pm does this only once at startup.
@@ -75,8 +62,6 @@ sub new {
     my $class = shift;
     my $self  = {};
     bless $self, $class;
-
-    $self->create_cache_directories();
 
     $self->dispatcher( Jifty->app_class( "Dispatcher" ) );
     Jifty::Util->require( $self->dispatcher );
@@ -147,22 +132,6 @@ sub view {
     my $class = shift;
     return $self->_view_handlers->{$class};
 }
-
-
-=head2 create_cache_directories
-
-Attempts to create our app's mason cache directory.
-
-=cut
-
-sub create_cache_directories {
-    my $self = shift;
-
-    for ( Jifty->config->framework('Web')->{'DataDir'} ) {
-        Jifty::Util->make_path( Jifty::Util->absolute_path($_) );
-    }
-}
-
 
 =head2 cgi
 
