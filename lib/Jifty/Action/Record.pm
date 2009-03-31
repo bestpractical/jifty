@@ -58,10 +58,10 @@ sub record_class {
     my $self = shift;
     return $self->{record_class} ||= do {
         my $class = ref($self);
+        my $model;
         if ($class =~ /::(Create|Search|Execute|Update|Delete)([^:]+)$/) {
-            my($type, $model) = ($1, $2);
-            $model = Jifty->app_class( Model => $model );
-            return $model if grep {$_ eq $model} Jifty->class_loader->models;
+            $model = Jifty->app_class( Model => $2 );
+            undef $model unless grep {$_ eq $model} Jifty->class_loader->models;
         }
 
         if ($class eq "Jifty::Action::Record") {
@@ -69,6 +69,7 @@ sub record_class {
         } else {
             $self->log->fatal("Cannot determine model for Jifty::Action::Record subclass $class");
         }
+        $model
     };
 }
 
