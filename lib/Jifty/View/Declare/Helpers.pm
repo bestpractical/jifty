@@ -8,8 +8,9 @@ use base qw/Template::Declare Exporter/;
 our @EXPORT = (
     qw(hyperlink tangent redirect new_action
     form_submit form_return form_next_page page content
-    wrapper request get set render_param current_user
-    render_action render_region js_handlers render_mason),
+    wrapper request get set render_param render_hidden
+    render_action render_region render_mason
+    current_user js_handlers),
     @Template::Declare::Tags::EXPORT,
     @Template::Declare::Tags::TagSubs,  # Backward compatibility only
     @Template::Declare::Tags::TAG_SUB_LIST,
@@ -255,6 +256,18 @@ Takes an action and one or more arguments to pass to L<< Jifty::Action->form_fie
 sub render_param {
     my $action = shift;
     outs_raw( $action->form_field(@_) );
+    return '';
+}
+
+=head2 render_hidden $action $name $default @args
+
+Takes an action and one or more arguments to pass to L<< Jifty::Action->hidden >>
+
+=cut
+
+sub render_hidden {
+    my $action = shift;
+    outs_raw( $action->hidden(@_) );
     return '';
 }
 
