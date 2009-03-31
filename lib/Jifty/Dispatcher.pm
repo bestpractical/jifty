@@ -1256,7 +1256,7 @@ sub render_template {
 
     # Handle parse errors
     my $err = $@;
-    if ( $err and not eval { $err->isa('HTML::Mason::Exception::Abort') } ) {
+    if ( $err and not (eval { $err->isa('HTML::Mason::Exception::Abort') } or $err =~ /^ABORT/) ) {
         $self->log->fatal("View error: $err") if $err;
         if ($template eq '/errors/500') {
             $self->log->warn("Can't render internal_error: $err");
