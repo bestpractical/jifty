@@ -1101,7 +1101,7 @@ sub include_css {
 
 =head3 add_css FILE1, FILE2, ...
 
-Pushes files onto C<Jifty->web->css_files>
+Pushes files onto C<< Jifty->web->css_files >>
 
 =cut
 
@@ -1172,7 +1172,7 @@ sub include_javascript {
 
 =head3 add_javascript FILE1, FILE2, ...
 
-Pushes files onto C<Jifty->web->javascript_libs>
+Pushes files onto C<< Jifty->web->javascript_libs >>
 
 =cut
 
@@ -1202,7 +1202,7 @@ sub remove_javascript {
 
 =head3 add_external_javascript URL1, URL2, ...
 
-Pushes urls onto C<Jifty->web->external_javascript_libs>
+Pushes urls onto C<< Jifty->web->external_javascript_libs >>
 
 =cut
 

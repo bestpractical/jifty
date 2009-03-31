@@ -248,7 +248,7 @@ sub render_action(@) {
 
 =head2 render_param $action @args
 
-Takes an action and one or more arguments to pass to L<Jifty::Action->form_field>.
+Takes an action and one or more arguments to pass to L<< Jifty::Action->form_field >>.
 
 =cut
 
@@ -332,7 +332,7 @@ sub redirect(@) {
 
 =head3 render_region 
 
-A shortcut for C<Jifty::Web::PageRegion->new(@_)->render> which does the
+A shortcut for C<< Jifty::Web::PageRegion->new(@_)->render >> which does the
 L<Template::Declare> magic necessary to not mix its output with your current
 page's.
 

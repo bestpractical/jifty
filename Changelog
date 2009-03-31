@@ -3092,7 +3092,7 @@ Jifty 0.70416
   either directly or indirectly (via C<new>) [Jifty::I18N]
  * C<handle_request> now always calls
   Jifty::I18N->update directly or indirectly
-  (via C<Jifty::I18N->refresh>) [Jifty::Handler]
+  (via C<< Jifty::I18N->refresh >>) [Jifty::Handler]
  * Misc minor startup-time performance improvements
  * Only run onsubmit() if we have an onsubmit property
  * Support for controlling browser-based autocomplete on form fields

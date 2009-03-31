@@ -63,7 +63,7 @@ C<accessors> method defined in C<Element>. Every subclass of
 C<Element> keeps a list of the accessors defined on that class
 (typically these are defined using C<Class::Accessor::Fast>, but not
 always). When C<Clickable> needs to clone itself, it walks the list
-C<($self->accessors)>, building up a hash of all the accessor
+C<< ($self->accessors) >>, building up a hash of all the accessor
 key-value pairs on itself, and passes these to C<new> on C<Field> or
 C<Link>, which calls accessors on itself for every C<key => value>
 pair in its argument list.
