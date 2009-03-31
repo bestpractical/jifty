@@ -105,6 +105,7 @@ no warnings 'redefine';
 
 sub template_stack {
     my $self = shift;
+    return [] unless Jifty->handler and Jifty->handler->buffer;
     unless ($self->{_stack}) {
         $self->{_stack} = [reverse grep defined $_, map {$_->{from}} @{Jifty->handler->buffer->{stack}}],
     }
