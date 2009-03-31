@@ -141,12 +141,8 @@ sub run {
 
     Jifty::Util->require($server_class);
 
-    if (-d $data_dir) {
-        File::Path::rmtree(["$data_dir/cache", "$data_dir/obj"]);
-    }
-    else {
-        File::Path::mkpath([$data_dir]);
-    }
+    File::Path::rmtree(["$data_dir/cache", "$data_dir/obj"])
+          if Jifty->handler->view('Jifty::View::Mason::Handler') and -d $data_dir;
 
     $SIG{TERM} = sub { exit };
     open my $fh, '>', PIDFILE or die $!;
