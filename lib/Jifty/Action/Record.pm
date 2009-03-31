@@ -66,7 +66,7 @@ sub record_class {
 
         if ($class eq "Jifty::Action::Record") {
             $self->log->fatal("Jifty::Action::Record must be subclassed to be used");
-        } else {
+        } elsif (not $model) {
             $self->log->fatal("Cannot determine model for Jifty::Action::Record subclass $class");
         }
         $model
