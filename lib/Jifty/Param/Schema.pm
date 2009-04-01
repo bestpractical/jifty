@@ -145,7 +145,8 @@ sub schema (&) {
     }
 
     no strict 'refs';
-    push @{$from . '::ISA'}, 'Jifty::Action';
+    push @{$from . '::ISA'}, 'Jifty::Action'
+        unless $from->isa('Jifty::Action');
     return;
 }
 
