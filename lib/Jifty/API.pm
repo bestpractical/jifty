@@ -272,6 +272,8 @@ sub restrict {
     my $polarity     = shift;
     my @restrictions = @_;
 
+    my(undef, $file, $line) = (caller(1));
+
     # Check the sanity of the polarity
     die "Polarity must be one of: " . join(', ', sort keys %valid_polarity)
         unless $valid_polarity{$polarity};
@@ -288,20 +290,19 @@ sub restrict {
         $restriction = $self->qualify($restriction)
             unless ref $restriction;
 
-        # Add to list of restrictions
-        push @{ $self->action_limits },
-            { $polarity => 1, restriction => $restriction };
 
-        # Hiding an action also denies it
         if ($polarity eq 'hide') {
+            # Hiding an action also denies it
             push @{ $self->action_limits },
-                { deny => 1, restriction => $restriction };
-        }
-
-        # Allowing an action also shows it
-        if ($polarity eq 'allow') {
+                { deny => 1, hide => 1, restriction => $restriction, from => "$file:$line" };
+        } elsif ($polarity eq 'allow') {
+            # Allowing an action also shows it
             push @{ $self->action_limits },
-                { show => 1, restriction => $restriction };
+                { allow => 1, show => 1, restriction => $restriction, from => "$file:$line" };
+        } else {
+            # Otherwise, add to list of restrictions unmodified
+            push @{ $self->action_limits },
+                { $polarity => 1, restriction => $restriction, from => "$file:$line" };
         }
     }
 }
@@ -380,6 +381,34 @@ sub decide_action_polarity {
     }
 
     return $valid;
+}
+
+=head2 explain CLASS
+
+Returns a string describing what allow, deny, show, and hide rules
+apply to the class name.
+
+=cut
+
+sub explain {
+    my $self = shift;
+    my $class = shift;
+
+    $class = $self->qualify($class);
+
+    my $str = "";
+    for my $limit ( @{$self->action_limits} ) {
+        next unless $lilmit->{from};
+        if ( ( ref $limit->{restriction} and $class =~ $limit->{restriction} )
+            or ( $class eq $limit->{restriction} ) )
+        {
+            for my $type (qw/allow deny show hide/) {
+                $str .= ucfirst($type)." at ".$limit->{from}.", matches ".$limit->{restriction}."\n"
+                    if $limit->{$type};
+            }
+        }
+    }
+    return $str;
 }
 
 =head2 actions
