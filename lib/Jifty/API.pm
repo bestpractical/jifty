@@ -398,7 +398,7 @@ sub explain {
 
     my $str = "";
     for my $limit ( @{$self->action_limits} ) {
-        next unless $lilmit->{from};
+        next unless $limit->{from};
         if ( ( ref $limit->{restriction} and $class =~ $limit->{restriction} )
             or ( $class eq $limit->{restriction} ) )
         {
