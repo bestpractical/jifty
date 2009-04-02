@@ -355,9 +355,10 @@ sub _validate_request_actions {
         next if $request_action->has_run;
         unless ( $self->request->just_validating ) {
             unless ( Jifty->api->is_allowed( $request_action->class ) ) {
-                $self->log->warn( Carp::longmess("Attempt to call denied action '"
+                $self->log->warn( "Attempt to call denied action '"
                         . $request_action->class
-                        . "'" ));
+                        . "'" );
+                $self->log->warn( Jifty->api->explain($request_action->class ) );
                 $self->log->error("NOTICE! A cross-site scripting security fix has been installed so that actions are now by default DENIED during GET requests. You must specifically whitelist safe actions using this in your dispatcher: before '*' => run { Jifty->api->allow('SafeAction') }; - We apologize for the inconvenience.") if $self->request->request_method eq "GET";
                 push @denied_actions, $request_action;
                 next;
