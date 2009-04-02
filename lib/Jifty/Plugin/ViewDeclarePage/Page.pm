@@ -591,9 +591,7 @@ sub render_jifty_page_detritus {
     with( id => "jifty-wait-message", style => "display: none" ),
         div { _('Loading...') };
 
-    div { id is "keybindings";
-        script { outs_raw('Jifty.KeyBindings.reset()') }
-    };
+    div { id is "keybindings" };
 
     # This is required for jifty server push
     if ( Jifty->config->framework('PubSub')->{'Enable'} && Jifty::Subs->list )
