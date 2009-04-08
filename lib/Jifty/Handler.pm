@@ -69,7 +69,6 @@ sub new {
     eval { Jifty::Plugin::DumpDispatcher->dump_rules };
 
     $self->buffer(String::BufferStack->new( out_method => \&Jifty::View::out_method ));
-    $self->setup_view_handlers();
     {
         my $buffer = $self->buffer;
         no warnings 'redefine';
@@ -167,6 +166,8 @@ sub handle_request {
         cgi => undef,
         @_
     );
+
+    $self->setup_view_handlers() unless $self->_view_handlers;
 
     $self->call_trigger('before_request', $args{cgi});
 

@@ -132,15 +132,6 @@ connect to a database.  Only use this if you're about to drop the
 database or do something extreme like that; most of Jifty expects the
 handle to exist.  Defaults to false.
 
-=item no_views
-
-If this is set to true, does not initialize any of the view handling
-components of Jifty.  This is useful if you are running a command-line
-script, and not want the overhead associated with it.  This also
-prevents the mason cache files from being created, which may be the
-right thing if your script is running as a privileged user.  Defaults
-to false.
-
 =item logger_component
 
 The name that Jifty::Logger will log under.  If you don't specify anything
@@ -159,7 +150,6 @@ sub new {
         no_handle        => 0,
         pre_init         => 0,
         logger_component => undef,
-        no_views         => 0,
         @_
     );
 
@@ -234,7 +224,7 @@ sub new {
     $class_loader->require;
 
     # Configure the request handler and action API handler
-    Jifty->handler(Jifty::Handler->new()) unless $args{no_views};
+    Jifty->handler(Jifty::Handler->new());
     Jifty->api(Jifty::API->new());
 
     # We can only require view classes once we have our models and actions set.
