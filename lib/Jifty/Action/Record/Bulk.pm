@@ -15,8 +15,6 @@ Jifty::Action::Record::Bulk - Perform multiple record actions
   package MyApp::Action::BulkUpdateFoo;
   use base qw/ Jifty::Action::Record::Bulk /;
 
-  use constant record_class => 'MyApp::Model::Foo';
-
   __PACKAGE__->add_action('MyApp::Action::DeleteFoo' => { trigger => 'delete', final => 1 });
   __PACKAGE__->add_action('MyApp::Action::UpdateFoo');
 
@@ -92,11 +90,6 @@ sub take_action {
     $ids = [ grep { $_ ne 0 } split /,/,$ids] if !ref($ids);
     for (@{$self->actions}) {
         my ($action_class, $param) = @$_;
-        # XXX: create real action objects and invoke them, so we have separate result objects
-
-        # $action_class->new( record => $loaded, arguments => ..., moniker => ... );
-        # collect action->result object for reporting, index by content of the current action
-
         if (my $trigger = $param->{trigger}) {
             if ($self->argument_value($trigger)) {
                 $self->perform_action($action_class, $ids);
@@ -111,7 +104,7 @@ sub take_action {
 
 sub report_success {
     my $self = shift;
-    $self->result->message(_("yatta"));
+    $self->result->message(_("Bulk update successful"));
 }
 
 1;
