@@ -522,7 +522,7 @@ Jesse Vincent, Alex Vandiver and David Glasser.
 
 =head1 LICENSE
 
-Jifty is Copyright 2005-2008 Best Practical Solutions, LLC.
+Jifty is Copyright 2005-2009 Best Practical Solutions, LLC.
 Jifty is distributed under the same terms as Perl itself.
 
 
