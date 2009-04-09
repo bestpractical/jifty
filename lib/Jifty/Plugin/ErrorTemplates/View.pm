@@ -87,6 +87,13 @@ template '__jifty/error/error.css' => sub {
     };
 };
 
+=head2 maybe_page
+
+Like L<Jifty::View::Declare::Helpers/page>, but only outputs a page
+wrapper if the request is not a subrequest.
+
+=cut
+
 sub maybe_page (&;$) {
     unshift @_, undef unless @_ == 2;
     my ($meta, $code) = @_;
