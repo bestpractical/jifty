@@ -699,6 +699,31 @@ Behaviour.register({
     'input.time': function(e) {
         jQuery(e).timepickr({handle: jQuery(e)});
     },
+    'input.datetime': function(e) {
+        if ( !jQuery(e).hasClass('has_datetime_link') ) {
+            createDateTimeLink(e);
+
+            var button = document.createElement('input');
+            button.setAttribute('type',  'button');
+            jQuery(button).insertAfter(e);
+            jQuery(button).timepickr({});
+            jQuery(button).blur( function() { 
+                var old_value = jQuery(this).prev().val();
+                if ( Jifty.Calendar.dateRegex.test(old_value) ) {
+                    var bits = old_value.match(Jifty.Calendar.dateRegex);
+                    old_value = bits[1] + '-' + bits[2] + '-' + bits[3];
+                }
+                var time = jQuery(button).val();
+                jQuery(e).val(  old_value + ' ' + time + ':00' );
+
+                // Trigger an onchange event for any listeners
+                jQuery(e).change();
+                jQuery(button).val('');
+            } 
+            );
+            jQuery(e).addClass('has_datetime_link');
+        }
+    },
     'input.button_as_link': function(e) {
         buttonToLink(e);
     },

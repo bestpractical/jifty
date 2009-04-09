@@ -16,6 +16,10 @@ function createCalendarLink(id) {
     return Jifty.Calendar.registerDateWidget( id );
 }
 
+function createDateTimeLink(id) {
+    return Jifty.DateTime.registerDateTimeWidget( id );
+}
+
 JSAN.use("DOM.Events");
 
 function buttonToLink(e) {

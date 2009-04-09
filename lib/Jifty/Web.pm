@@ -51,6 +51,7 @@ __PACKAGE__->javascript_libs([qw(
     jifty_subs.js
     jifty_smoothscroll.js
     calendar.js
+    datetime.js
     dom-drag.js
     halo.js
     combobox.js
