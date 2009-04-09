@@ -261,6 +261,8 @@ Take a continuation here, and tangent to another URI.
 
 =head2 plugin
 
+=head2 app
+
 See L</Plugins and rule ordering>, above.
 
 =cut
