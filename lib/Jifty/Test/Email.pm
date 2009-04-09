@@ -35,6 +35,14 @@ Jifty::Test::Email -
 This is a test helper module for jifty, allowing you to expect mail
 notification generated during the block or the test.
 
+=head1 METHODS
+
+=head2 mail_ok BLOCK HASHREF [, HASHREF ...]
+
+Executes the C<BLOCK>, and expects it to send a number of emails equal
+to the number of C<HASHREF>s after the C<BLOCK>.  L<Test::Email/ok> is
+used to check if the messages match up to the appropriate hashrefs.
+
 =cut
 
 sub mail_ok (&@) {
@@ -55,6 +63,13 @@ sub mail_ok (&@) {
     }
     Jifty::Test->setup_mailbox;
 }
+
+=head1 ENDING TESTS
+
+An END block causes the test to C<die> if there are uncaught
+notifications at the end of the test script.
+
+=cut
 
 END {
     my $Test = Jifty::Test->builder;
