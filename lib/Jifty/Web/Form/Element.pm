@@ -207,9 +207,9 @@ sub new {
     return $self;
 }
 
-__PACKAGE__->mk_normalising_accessor($_) for __PACKAGE__->handlers;
+__PACKAGE__->_mk_normalising_accessor($_) for __PACKAGE__->handlers;
 
-sub mk_normalising_accessor {
+sub _mk_normalising_accessor {
     my ($class, $accessor) = @_;
     my $internal_method = "_$accessor";
     no strict 'refs';
@@ -360,6 +360,12 @@ sub _handler_setup {
     return $arg;
 
 }
+
+=head2 handlers_used
+
+Returns the names of javascript handlers which exist for this element.
+
+=cut
 
 sub handlers_used {
     my $self = shift;
