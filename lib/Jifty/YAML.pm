@@ -12,6 +12,19 @@ Jifty::YAML -- Wrapper around L<YAML>
 Provides a wrapper around the L<YAML> library.  If the faster L<YAML::Syck>
 is available, then it's used instead.
 
+=head1 METHODS
+
+=head2 Dump
+
+=head2 DumpFile
+
+=head2 Load
+
+=head2 LoadFile
+
+Each of the above is alias to the equivient function in either L<YAML>
+or L<YAML::Syck>.
+
 =cut
 
 BEGIN {
