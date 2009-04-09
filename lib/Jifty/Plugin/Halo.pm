@@ -287,6 +287,12 @@ sub pop_frame {
     return $frame;
 }
 
+=head2 is_proscribed FRAME
+
+Returns true if the given C<FRAME> should not have a halo around it.
+
+=cut
+
 sub is_proscribed {
     my ($self, $frame) = @_;
     return 1 if $frame->{'proscribed'};
