@@ -29,6 +29,15 @@ javascript code, however.
 
 __PACKAGE__->mk_accessors(qw(cdn));
 
+=head1 METHODS
+
+=head2 init
+
+On initialization, adds Jifty compatibility methods if the
+configuration file version is before 4.
+
+=cut
+
 sub init {
     my $self = shift;
     return if $self->_pre_init;
