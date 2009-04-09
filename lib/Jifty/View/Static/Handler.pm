@@ -257,6 +257,13 @@ sub send_file {
     }
 }
 
+=head2 send_http_header [COMPRESSION, LENGTH, LAST_MODIFIED]
+
+Sends appropriate cache control and expiration headers such that the
+client will cache the content.
+
+=cut
+
 sub send_http_header {
     my $self = shift;
     my ($compression, $length, $modified) = @_;
