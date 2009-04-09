@@ -49,7 +49,9 @@ make up a Jifty application's API
 
 =head1 DESCRIPTION
 
-You can fetch an instance of this class by calling L<Jifty/api> in your application. This object can be used to examine the actions available within your application and manage access to those actions.
+You can fetch an instance of this class by calling L<Jifty/api> in
+your application. This object can be used to examine the actions
+available within your application and manage access to those actions.
 
 =cut
 
@@ -65,7 +67,8 @@ __PACKAGE__->mk_accessors(qw(action_limits));
 
 Creates a new C<Jifty::API> object.
 
-Don't use this, see L<Jifty/api> to access a reference to C<Jifty::API> in your application.
+Don't use this, see L<Jifty/api> to access a reference to
+C<Jifty::API> in your application.
 
 =cut
 
@@ -88,26 +91,6 @@ sub new {
     );
 
     return ($self);
-}
-
-# Plugin actions under Jifty::Plugin::*::Action are mirrored under
-# AppName::Action by Jifty::ClassLoader; this code makes all_actions
-# reflect this mirroring.
-sub all_actions {
-    my $self = shift;
-    unless ( $self->{all_actions} ) {
-        my @actions = $self->__actions;
-        my %seen;
-        $seen{$_}++ for @actions;
-        for (@actions) {
-            if (/^Jifty::Plugin::(.*)::Action::(.*)$/) {
-                my $classname = Jifty->app_class( Action => $2 );
-                push @actions, $classname unless $seen{$classname};
-            }
-        }
-        $self->{all_actions} = \@actions;
-    }
-    return @{ $self->{all_actions} };
 }
 
 =head2 qualify ACTIONNAME
@@ -411,11 +394,40 @@ sub explain {
     return $str;
 }
 
+=head2 all_actions
+
+Lists the class names of all actions for this Jifty application,
+regardless of which are allowed or hidden.  See also L</actions> and
+L</visible_actions>.
+
+=cut
+
+# Plugin actions under Jifty::Plugin::*::Action are mirrored under
+# AppName::Action by Jifty::ClassLoader; this code makes all_actions
+# reflect this mirroring.
+sub all_actions {
+    my $self = shift;
+    unless ( $self->{all_actions} ) {
+        my @actions = $self->__actions;
+        my %seen;
+        $seen{$_}++ for @actions;
+        for (@actions) {
+            if (/^Jifty::Plugin::(.*)::Action::(.*)$/) {
+                my $classname = Jifty->app_class( Action => $2 );
+                push @actions, $classname unless $seen{$classname};
+            }
+        }
+        $self->{all_actions} = \@actions;
+    }
+    return @{ $self->{all_actions} };
+}
+
 =head2 actions
 
 Lists the class names of all of the B<allowed> actions for this Jifty
 application; this may include actions under the C<Jifty::Action::>
-namespace, in addition to your application's actions.
+namespace, in addition to your application's actions.  See also
+L</all_actions> and L</visible_actions>.
 
 =cut
 
@@ -428,7 +440,8 @@ sub actions {
 
 Lists the class names of all of the B<visible> actions for this Jifty
 application; this may include actions under the C<Jifty::Action::>
-namespace, in addition to your application's actions.
+namespace, in addition to your application's actions.  See also
+L</all_actions> and L</actions>.
 
 =cut
 
