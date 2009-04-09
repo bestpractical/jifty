@@ -78,6 +78,12 @@ CONFIG
     exec($ENV{JIFTY_APACHETEST}, "-f", $config);
 }
 
+=head2 pids
+
+Returns the process ID of the Apache server.
+
+=cut
+
 sub pids {
     my $self = shift;
     return unless -e $self->{pidfile};
