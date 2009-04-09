@@ -129,7 +129,7 @@ Returns the Jifty view handler for C<ClassName>.
 sub view {
     my $self = shift;
     my $class = shift;
-    return unless $self->_view_handlers;
+    $self->setup_view_handlers unless $self->_view_handlers;
     return $self->_view_handlers->{$class};
 }
 
