@@ -57,12 +57,27 @@ sub exec
     }
 }
 
+=head2 print
+
+=head2 out
+
+Append to the shared L<String::BufferStack> stored in L<Jifty::Handler/buffer>.
+
+=cut
+
 sub print {
     shift;
     Jifty->handler->buffer->append(@_);
 }
 
 *out = \&print;
+
+=head2 comp
+
+Jump through hoops necessary to keep L<Jifty::Handler/buffer> lined up
+with Mason's internal buffer stack.
+
+=cut
 
 sub comp {
     my $self = shift;
@@ -86,6 +101,13 @@ sub comp {
     Jifty->handler->buffer->pop;
     return $wantarray ? @result : $result[0];    
 }
+
+=head2 content
+
+Jump through hoops necessary to keep L<Jifty::Handler/buffer> lined up
+with Mason's internal buffer stack.
+
+=cut
 
 sub content {
     my $self = shift;
