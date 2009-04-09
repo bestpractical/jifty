@@ -5,6 +5,18 @@ use DateTime::Locale ();
 use base 'Class::Data::Inheritable';
 __PACKAGE__->mk_classdata(_available_languages => undef);
 
+=head1 NAME
+
+Jifty::Plugin::I18N::Action::SetLang - Sets user's current language
+
+=head1 PARAMETERS
+
+=head1 lang
+
+The language to change to
+
+=cut
+
 use Jifty::Param::Schema;
 use Jifty::Action schema {
 
@@ -13,6 +25,15 @@ param
     render as 'select',
     default is defer { Jifty::I18N->get_current_language };
 };
+
+=head1 METHODS
+
+=head2 available_languages
+
+Returns the list of possible internationalizations, as an array
+reference suitable to pass to C<valid_values>.
+
+=cut
 
 sub available_languages {
     my $class = shift;
@@ -24,6 +45,12 @@ sub available_languages {
     return $class->_available_languages;
 }
 
+=head2 arguments
+
+Sets the valid values for C<lang> to L</available_languages>.
+
+=cut
+
 sub arguments {
     my $self = shift;
     my $args = $self->SUPER::arguments;
@@ -33,6 +60,12 @@ sub arguments {
 
     return $args;
 }
+
+=head2 take_action
+
+Alters the current session to use the given language.
+
+=cut
 
 sub take_action {
     my $self = shift;
