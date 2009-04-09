@@ -30,7 +30,7 @@ requires('Email::MIME::Creator' => 1.450 );
 requires('Email::MIME::ContentType' => 1.012 );
 requires('Email::MIME::CreateHTML');
 requires('Email::MIME::Modifier' => 1.442 );
-requires('Email::Send' => '2.0'); # Email::Send::Jifty::Test
+requires('Email::Send' => '2.10');
 requires('Email::Simple' => 2.003);
 requires('Email::Simple::Creator' => 1.400 );
 requires('Exception::Class');
