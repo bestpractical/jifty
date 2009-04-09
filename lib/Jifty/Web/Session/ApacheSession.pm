@@ -140,10 +140,14 @@ sub remove {
     delete $self->_session->{$key_type,$key};
 }
 
+=head2 remove_all
+
+See L<Jifty::Web::Session/remove_all>.
+
+=cut
+
 sub remove_all {
     my $self     = shift;
-    my $key      = shift;
-    my $key_type = shift || "key";
 
     return undef unless $self->loaded;
     undef %{$self->_session};
