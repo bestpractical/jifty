@@ -51,6 +51,8 @@ sub since { '0.60428' }
 
 =head2 current_user
 
+=head2 current_user_can
+
 Everyone is treated as the superuser when dealing with session
 objects.  This avoids infinite recursion, as otherwise it would try to
 look up the current user in the session object to find out who we
