@@ -18,8 +18,6 @@ Jifty::Action::Record::Bulk - Perform multiple record actions
   __PACKAGE__->add_action('MyApp::Action::DeleteFoo' => { trigger => 'delete', final => 1 });
   __PACKAGE__->add_action('MyApp::Action::UpdateFoo');
 
-=head1 DESCRIPTION
-
 =cut
 
 use base qw/Jifty::Action::Record Class::Data::Inheritable/;
@@ -28,6 +26,31 @@ __PACKAGE__->mk_classdata( actions => [] );
 __PACKAGE__->mk_classdata( record_class => undef );
 
 use constant ids_name => 'ids';
+
+=head1 METHODS
+
+=head2 add_action CLASS [, OPTIONS]
+
+Merges the given action class into this one.  Will C<die> if the
+L<Jifty::Action::Record/action_class> of the given C<CLASS> doesn't
+match previously added classes.
+
+OPTIONS should be a hash reference of additional options.  The
+existing options are:
+
+=over
+
+=item trigger
+
+Only run if this argument is provided
+
+=item final
+
+If this action runs, run B<only> this action.
+
+=back
+
+=cut
 
 sub add_action {
     my ($class, $name, $param) = @_;
@@ -41,6 +64,14 @@ sub add_action {
         $class->record_class( $name->record_class );
     }
 }
+
+=head2 arguments
+
+Merges together arguments from all of the actions added with
+L</add_action>.  The record IDs to act on are stored (comma-separated)
+in an argument named C<ids>, by default.
+
+=cut
 
 sub arguments {
     my $self = shift;
@@ -63,6 +94,13 @@ sub arguments {
     return $arguments;
 }
 
+=head2 perform_action CLASS, IDS
+
+Performs the given action C<CLASS> on the given record C<ID>s, which
+should be an array reference.
+
+=cut
+
 sub perform_action {
     my ($self, $action_class, $ids) = @_;
     $self->result->content('detailed_messages', {})
@@ -83,6 +121,12 @@ sub perform_action {
     # allow bulk action to define if they allow individual action to fail
 }
 
+=head2 take_action
+
+Completes the actions on all of the IDs given.
+
+=cut
+
 sub take_action {
     my $self = shift;
     my $ids = $self->argument_value('ids');
@@ -101,6 +145,12 @@ sub take_action {
         }
     }
 }
+
+=head2 report_success
+
+Reports C<Bulk update successful>.
+
+=cut
 
 sub report_success {
     my $self = shift;
