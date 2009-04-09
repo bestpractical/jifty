@@ -1,7 +1,6 @@
 AUTHORS
 bin/build_par
 bin/jifty
-bin/memory_log
 bin/runcover
 bin/service
 bin/show_continuation
@@ -242,8 +241,10 @@ lib/Jifty/Plugin/Authentication/Password/View.pm
 lib/Jifty/Plugin/ClassLoader.pm
 lib/Jifty/Plugin/CompressedCSSandJS.pm
 lib/Jifty/Plugin/CompressedCSSandJS/Dispatcher.pm
+lib/Jifty/Plugin/Config.pm
+lib/Jifty/Plugin/Config/Action/Config.pm
+lib/Jifty/Plugin/Config/Dispatcher.pm
 lib/Jifty/Plugin/CSSQuery.pm
-lib/Jifty/Plugin/Debug/Dispatcher.pm
 lib/Jifty/Plugin/ErrorTemplates.pm
 lib/Jifty/Plugin/ErrorTemplates/View.pm
 lib/Jifty/Plugin/Halo.pm
@@ -341,6 +342,7 @@ lib/Jifty/Web/Form/Field/ResetButton.pm
 lib/Jifty/Web/Form/Field/Select.pm
 lib/Jifty/Web/Form/Field/Text.pm
 lib/Jifty/Web/Form/Field/Textarea.pm
+lib/Jifty/Web/Form/Field/Time.pm
 lib/Jifty/Web/Form/Field/Unrendered.pm
 lib/Jifty/Web/Form/Field/Upload.pm
 lib/Jifty/Web/Form/Link.pm
@@ -371,6 +373,7 @@ share/plugins/Jifty/Plugin/AdminUI/web/templates/__jifty/admin/fragments/list/up
 share/plugins/Jifty/Plugin/AdminUI/web/templates/__jifty/admin/fragments/list/view
 share/plugins/Jifty/Plugin/AdminUI/web/templates/__jifty/admin/index.html
 share/plugins/Jifty/Plugin/AdminUI/web/templates/__jifty/admin/model/dhandler
+share/plugins/Jifty/Plugin/Config/web/templates/__jifty/config/index.html
 share/plugins/Jifty/Plugin/CSSQuery/web/static/js/cssquery/cssQuery-level2.js
 share/plugins/Jifty/Plugin/CSSQuery/web/static/js/cssquery/cssQuery-level3.js
 share/plugins/Jifty/Plugin/CSSQuery/web/static/js/cssquery/cssQuery-standard.js
@@ -417,6 +420,7 @@ share/web/static/css/context-menus.css
 share/web/static/css/forms.css
 share/web/static/css/halos.css
 share/web/static/css/jquery.jgrowl.css
+share/web/static/css/jquery.timepickr.css
 share/web/static/css/keybindings.css
 share/web/static/css/main.css
 share/web/static/css/nav.css
@@ -428,6 +432,7 @@ share/web/static/css/yui/menu/menu.css
 share/web/static/css/yui/tabview/border_tabs.css
 share/web/static/css/yui/tabview/tabview-core.css
 share/web/static/css/yui/tabview/tabview.css
+share/web/static/datetime.css
 share/web/static/favicon.ico
 share/web/static/images/css/bullet_arrow_down.png
 share/web/static/images/css/bullet_arrow_up.png
@@ -476,6 +481,7 @@ share/web/static/js/combobox.js
 share/web/static/js/context_menu.js
 share/web/static/js/css_browser_selector.js
 share/web/static/js/cssQuery-jquery.js
+share/web/static/js/datetime.js
 share/web/static/js/dom-drag.js
 share/web/static/js/formatDate.js
 share/web/static/js/halo.js
@@ -489,6 +495,7 @@ share/web/static/js/jifty_subs.js
 share/web/static/js/jifty_utils.js
 share/web/static/js/jquery-1.2.6.js
 share/web/static/js/jquery.jgrowl.js
+share/web/static/js/jquery.timepickr.js
 share/web/static/js/jquery_noconflict.js
 share/web/static/js/jsan/DOM/Events.js
 share/web/static/js/jsan/JSAN.js
@@ -712,6 +719,7 @@ t/TestApp-Plugin-REST/lib/TestApp/Plugin/REST/Model/User.pm
 t/TestApp-Plugin-REST/t/00-model-User.t
 t/TestApp-Plugin-REST/t/00-prototype.t
 t/TestApp-Plugin-REST/t/02-basic-use.t
+t/TestApp-Plugin-REST/t/03-format.t
 t/TestApp-Plugin-SinglePage/bin/jifty
 t/TestApp-Plugin-SinglePage/etc/config.yml
 t/TestApp-Plugin-SinglePage/lib/TestApp/Plugin/SinglePage/Model/User.pm
