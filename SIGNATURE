@@ -338,7 +338,7 @@ SHA1 c2172d4c001c01c3190428db85ba765a18b58178 lib/Jifty/View/Declare/BaseClass.p
 SHA1 adcc74438b4980c3333e87431a16a67a33f372cc lib/Jifty/View/Declare/CRUD.pm
 SHA1 320270e6645d81c85aadbf93e5219a94b816ddbd lib/Jifty/View/Declare/CoreTemplates.pm
 SHA1 81900e047973f92029d09f2c16520f85db679590 lib/Jifty/View/Declare/Handler.pm
-SHA1 b35c489df831690830062cc43831d5d98e4b6da2 lib/Jifty/View/Declare/Helpers.pm
+SHA1 3504b01e08718a4d201f06bce9a21b7723407d75 lib/Jifty/View/Declare/Helpers.pm
 SHA1 c479835e4722cc047af1f503f305f5f4d6237e91 lib/Jifty/View/Declare/Page.pm
 SHA1 1a6c7b84ed099e3bdd292389cf847639d6b0ee4b lib/Jifty/View/Mason/Handler.pm
 SHA1 fb3a382d8e5ce0856e3bb27a9c81dbdde9f500bf lib/Jifty/View/Mason/Request.pm
@@ -843,7 +843,7 @@ SHA1 e34d6d5bd8edf3214225893ad8378b356cac1dcc utils/js_size.pl
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.11 (GNU/Linux)
 
-iEYEARECAAYFAkneeiMACgkQMflWJZZAbqCM5wCdGQ2g3Oy5Dwvx3UnkTLXvGalH
-UE8An0juh5zrb6IRdH5fyaQ5KhVbrIZk
-=VfUa
+iEYEARECAAYFAknefR4ACgkQMflWJZZAbqAcsgCeNNEPRZzZIsTNd3RFYpVF36JA
+qZAAoKU/7zx9QuZF+yyCHp34o0oTRAbF
+=xHGx
 -----END PGP SIGNATURE-----
