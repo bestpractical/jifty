@@ -100,30 +100,30 @@ sub template_exists {
     return undef;
 }
 
-package HTML::Mason::Exception;
-no warnings 'redefine';
-
-sub template_stack {
-    my $self = shift;
-    return [] unless Jifty->handler and Jifty->handler->buffer;
-    unless ($self->{_stack}) {
-        $self->{_stack} = [reverse grep defined $_, map {$_->{from}} @{Jifty->handler->buffer->{stack}}],
-    }
-    return $self->{_stack};
-}
-
-sub as_text
 {
-    my ($self) = @_;
-    my $msg = $self->full_message;
-    my @template_stack = @{$self->template_stack};
-    if (@template_stack) {
-        my $stack = join("\n", map { sprintf("  [%s]", $_) } @template_stack);
-        return sprintf("%s\nTemplate stack:\n%s\n", $msg, $stack);
-    } else {
-        my $info = $self->analyze_error;
-        my $stack = join("\n", map { sprintf("  [%s:%d]", $_->filename, $_->line) } @{$info->{frames}});
-        return sprintf("%s\nStack:\n%s\n", $msg, $stack);
+    no warnings 'redefine';
+
+    sub HTML::Mason::Exception::template_stack {
+        my $self = shift;
+        return [] unless Jifty->handler and Jifty->handler->buffer;
+        unless ($self->{_stack}) {
+            $self->{_stack} = [reverse grep defined $_, map {$_->{from}} @{Jifty->handler->buffer->{stack}}],
+        }
+        return $self->{_stack};
+    }
+
+    sub HTML::Mason::Exception::as_text {
+        my ($self) = @_;
+        my $msg = $self->full_message;
+        my @template_stack = @{$self->template_stack};
+        if (@template_stack) {
+            my $stack = join("\n", map { sprintf("  [%s]", $_) } @template_stack);
+            return sprintf("%s\nTemplate stack:\n%s\n", $msg, $stack);
+        } else {
+            my $info = $self->analyze_error;
+            my $stack = join("\n", map { sprintf("  [%s:%d]", $_->filename, $_->line) } @{$info->{frames}});
+            return sprintf("%s\nStack:\n%s\n", $msg, $stack);
+        }
     }
 }
 
