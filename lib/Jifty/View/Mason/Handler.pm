@@ -115,7 +115,7 @@ sub config {
 
     # In developer mode, we want halos, refreshing and all that other good stuff. 
     if (Jifty->config->framework('DevelMode') ) {
-        push @{$config{'plugins'}}, 'Jifty::Mason::Halo';
+        push @{$config{'plugins'}}, 'Jifty::View::Mason::Halo';
         $config{static_source}    = 0;
         $config{use_object_files} = 0;
     }

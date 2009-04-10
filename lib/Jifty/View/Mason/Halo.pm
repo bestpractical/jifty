@@ -1,6 +1,6 @@
 use warnings;
 use strict;
-package Jifty::Mason::Halo;
+package Jifty::View::Mason::Halo;
 use base qw/HTML::Mason::Plugin/;
 use Time::HiRes 'time';
 use Class::Trigger;
@@ -8,22 +8,18 @@ use Jifty::Plugin::Halo;
 
 =head1 NAME
 
-Jifty::Mason::Halo - Class for drawing "halos" around page components
+Jifty::View::Mason::Halo - Class for drawing "halos" around page components
 
 =head1 DESCRIPTION
 
-
-=cut
-
-
 =head2 start_component_hook CONTEXT_OBJECT
 
-Whenever we start to render a component, check to see if we can draw a halo around the component.
+Whenever we start to render a component, check to see if we can draw a
+halo around the component.
 
 Either way, record halo metadata.
 
 =cut
-
 
 sub start_component_hook {
     my $self    = shift;
@@ -70,7 +66,6 @@ for subcomponents being too "heavy")
 
 =cut
 
-
 sub _unrendered_component {
     my $self    = shift;
     my $context = shift;
@@ -82,7 +77,6 @@ sub _unrendered_component {
 Once we're just about to finish rendering our HTML page (just before
 the C<</body>> tag, we should call render_component_tree to output all
 the halo data and metadata.
-
 
 =cut
 
