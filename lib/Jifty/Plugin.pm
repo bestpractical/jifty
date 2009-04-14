@@ -112,11 +112,21 @@ sub _calculate_share {
     my $class = ref($self);
 
     unless ( $self->{share} and -d $self->{share} ) {
+        # If we've got a Jifty in @INC, and the plugin is core, the
+        # right thing to do is to strip off lib/ and replace it with
+        # share/plugins/Jifty/Plugin/Whatever/
+        my $class_to_path = $class;
+        $class_to_path =~ s|::|/|g;
 
-        # If we've got a plugin distribution in @INC as well as an
-        # installed version, then File::Sharedir will find the
-        # installed version.  So, we first try to tear off everything
-        # after the lib/ and replace it with share/
+        $self->{share} = $INC{ $class_to_path . '.pm' };
+        $self->{share} =~ s{lib/+\Q$class_to_path.pm}{share/plugins/$class_to_path};
+        $self->{share} = File::Spec->rel2abs( $self->{share} );
+    }
+    unless ( $self->{share} and -d $self->{share} ) {
+        # As above, but only tack on share/, for when we have a
+        # non-core plugin in @INC.  We do this before the
+        # File::ShareDir, because File::ShareDir only looks at install
+        # locations, and the plugin could be hand-set in @INC.
         my $class_to_path = $class;
         $class_to_path =~ s|::|/|g;
 
