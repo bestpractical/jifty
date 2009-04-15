@@ -113,60 +113,15 @@ sub rename {
     my $renamed = $package->just_renamed || {};
 
     if ( $args{column} ) {
-        my $driver = Jifty->config->framework('Database')->{'Driver'};
-        if ( $driver =~ /SQLite/ ) {
 
-            # Convert columns
-            my ($schema) = Jifty->handle->fetch_result("SELECT sql FROM sqlite_master WHERE tbl_name = '$table_name' AND type = 'table'");
-
-            $schema =~ s/(.*create\s+table\s+)\S+(.*?\(\s*)//i or die "Cannot find 'CREATE TABLE' statement in schema for '$table_name': $schema";
-
-            my $new_table_name    = join( '_', $table_name, 'new', $$ );
-            my $new_create_clause = "$1$new_table_name$2";
-
-            my @column_info = ( split /,/, $schema );
-            my @column_names = map { /^\s*(\S+)/ ? $1 : () } @column_info;
-
-            s/^(\s*)\b\Q$args{column}\E\b/$1$args{to}/i for @column_info;
-
-            my $new_schema = $new_create_clause . join( ',', @column_info );
-            my $copy_columns = join(
-                ', ',
-                map {
-                    ( lc($_) eq lc( $args{column} ) )
-                      ? "$_ AS $args{to}"
-                      : $_
-                  } @column_names
-            );
-
-            # Convert indices
-            my $indice_sth = Jifty->handle->simple_query("SELECT sql FROM sqlite_master WHERE tbl_name = '$table_name' AND type = 'index'");
-            my @indice_sql;
-            while ( my ($index) = $indice_sth->fetchrow_array ) {
-                $index =~ s/^(.*\(.*)\b\Q$args{column}\E\b/$1$args{to}/i;
-                push @indice_sql, $index;
-            }
-            $indice_sth->finish;
-
-            # Run the conversion SQLs
-            Jifty->handle->begin_transaction;
-            Jifty->handle->simple_query($new_schema);
-            Jifty->handle->simple_query("INSERT INTO $new_table_name SELECT $copy_columns FROM $table_name");
-            Jifty->handle->simple_query("DROP TABLE $table_name");
-            Jifty->handle->simple_query("ALTER TABLE $new_table_name RENAME TO $table_name");
-            Jifty->handle->simple_query($_) for @indice_sql;
-            Jifty->handle->commit;
-        }
-        else {
-            Jifty->handle->simple_query("ALTER TABLE $table_name RENAME $args{column} TO $args{to}");
-        }
+        Jifty->handle->rename_column( %args, table => $table_name );
 
         # Mark this table column as renamed
         $renamed->{ $table_name }{'drop'}{ $args{'column'} } = $args{'to'};
         $renamed->{ $table_name }{'add' }{ $args{'to'    } } = $args{'column'};
     }
     else {
-        Jifty->handle->simple_query("ALTER TABLE $table_name RENAME TO $args{to}");
+        Jifty->handle->rename_table( %args, table => $table_name );
 
         # Mark this table as renamed
         $renamed->{ $table_name }{'drop_table'} = $args{'to'};
@@ -176,8 +131,6 @@ sub rename {
     # Remember renames so that adds/drops are canceled
     $package->just_renamed($renamed);
 }
-
-
 
 =head1 SEE ALSO
 
