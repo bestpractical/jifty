@@ -5,7 +5,7 @@ build_requires:
 configure_requires:
   ExtUtils::MakeMaker: 6.42
 distribution_type: module
-generated_by: 'Module::Install version 0.82'
+generated_by: 'Module::Install version 0.84'
 license: Perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -93,7 +93,7 @@ requires:
   IPC::PubSub: 0.23
   IPC::Run3: 0
   JSON::Syck: 0.29
-  Jifty::DBI: 0.53
+  Jifty::DBI: 0.55
   LWP::UserAgent: 0
   List::MoreUtils: 0
   Locale::Maketext::Extract: 0.35
