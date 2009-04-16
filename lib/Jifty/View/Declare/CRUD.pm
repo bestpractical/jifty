@@ -281,7 +281,68 @@ sub create_columns {
     return $self->edit_columns(@_);
 }
 
+=head2 render_field mode => $mode, field => $field, action => $action
 
+Renders a particular field in a given mode (read, create, edit). This attempts
+to dispatch directly to a method with the given field name. For example, if the
+subclass has, say, an C<edit_field_post> method, then it will be preferred over
+the generic C<edit_field> method.
+
+=cut
+
+sub render_field {
+    my $self = shift;
+    my %args = @_;
+
+    my $mode  = $args{mode};
+    my $field = $args{field};
+
+    my $render_method = "${mode}_field";
+
+    $render_method = "${mode}_field_${field}"
+        if $self->can("${mode}_field_${field}");
+
+    $self->$render_method(%args);
+}
+
+=head2 view_field action => $action_object, field => $field_name
+
+Displays the column as read-only.
+
+=cut
+
+sub view_field {
+    my $self = shift;
+    my %args = @_;
+
+    render_param($args{action} => $args{field}, render_mode => 'read');
+}
+
+=head2 create_field action => $action_object, field => $field_name
+
+Displays the column for a create form.
+
+=cut
+
+sub create_field {
+    my $self = shift;
+    my %args = @_;
+
+    render_param($args{action}, $args{field});
+}
+
+=head2 edit_field action => $action_object, field => $field_name
+
+Displays the column for an edit form.
+
+=cut
+
+sub edit_field {
+    my $self = shift;
+    my %args = @_;
+
+    render_param($args{action}, $args{field});
+}
 
 =head1 TEMPLATES
 
@@ -355,8 +416,12 @@ template 'view' => sub :CRUDView {
         my @fields = $self->display_columns($update);
         for my $field (@fields) {
             div { { class is 'view-argument-'.$field};
-            render_param( $update => $field,  render_mode => 'read'  );
-            }; 
+                $self->render_field(
+                    mode   => 'view',
+                    action => $update,
+                    field  => $field,
+                );
+            };
         }
         show ('./view_item_controls', $record, $update); 
     };
@@ -797,7 +862,11 @@ private template 'create_item' => sub {
     for my $field ($self->create_columns($action)) {
         div { 
             { class is 'create-argument-'.$field};
-            render_param($action, $field);
+            $self->render_field(
+                mode   => 'create',
+                action => $action,
+                field  => $field,
+            );
         }
     }
 };
@@ -814,7 +883,11 @@ private template 'edit_item' => sub {
     for my $field ($self->edit_columns($action)) {
         div {
             { class is 'update-argument-'.$field};
-            render_param($action, $field);
+            $self->render_field(
+                mode   => 'edit',
+                action => $action,
+                field  => $field,
+            );
         }
     }
 };
