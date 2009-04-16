@@ -92,7 +92,7 @@ sub take_action {
 
     # Attempt creating the record
     my $id;
-    my $msg = $record->create(%values);
+    my $msg = $self->create_record(%values);
 
     # Convert Class::ReturnValue to an id and message
     if (ref($msg)) {
@@ -116,6 +116,21 @@ sub take_action {
     $self->_setup_event_after_action($event_info);
 
     return ($self->record->id);
+}
+
+=head2 create_record
+
+This method actually performs the call to C<< record->create >>. It receives as
+arguments the parameter hash and should return the message for the user,
+indicating success or failure.
+
+=cut
+
+sub create_record {
+    my $self = shift;
+    my $record = $self->record;
+
+    return $record->create(@_);
 }
 
 =head2 report_success
