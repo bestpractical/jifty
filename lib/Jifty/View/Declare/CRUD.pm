@@ -344,6 +344,17 @@ sub edit_field {
     render_param($args{action}, $args{field});
 }
 
+=head2 page_title
+
+The title for the CRUD page
+
+=cut
+
+sub page_title {
+    my $self = shift;
+    $self->object_type;
+}
+
 =head1 TEMPLATES
 
 =head2 index.html
@@ -354,7 +365,7 @@ Contains the master form and page region containing the list of items. This is m
 
 template 'index.html' => page {
     my $self = shift;
-    title is $self->object_type;
+    title is $self->page_title;
     form {
         render_region(
             name     => $self->object_type.'-list',
