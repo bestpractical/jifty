@@ -683,7 +683,7 @@ Prints "No items found."
 
 =cut
 
-private template 'no_items_found' => sub {
+template 'no_items_found' => sub {
     div {
         { class is 'no_items' };
         outs( _("No items found.") );
@@ -704,8 +704,12 @@ private template 'list_items' => sub {
     my $object_type = $self->object_type;
     $collection->_do_search(); # we're going to need the results. 
     # XXX TODO, should use a real API to force the search
+
     if ( $collection->count == 0 ) {
-        show('./no_items_found');
+        render_region(
+            name => 'no_items_found',
+            path => $self->fragment_for('no_items_found'),
+        );
     }
 
     my $i = 0;
