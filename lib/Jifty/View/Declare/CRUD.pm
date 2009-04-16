@@ -850,6 +850,7 @@ private template 'new_item_controls' => sub {
             onclick => [
                 { submit       => $create },
                 { refresh_self => 1 },
+                { delete => Jifty->web->qualified_parent_region('no_items_found') },
                 {   element => Jifty->web->current_region->parent->get_element( 'div.list'),
                     append => $self->fragment_for('view'),
                     args   => {
