@@ -458,7 +458,7 @@ private template edit_item_controls => sub {
                 onclick => {
                     submit  => $delete,
                     confirm => _('Really delete?'),
-                    refresh => Jifty->web->current_region->parent,
+                    replace_with => '/__jifty/empty',
                 },
                 class => 'delete'
             );
