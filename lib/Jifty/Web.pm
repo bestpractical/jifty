@@ -876,11 +876,12 @@ I<PARAMHASH>.
 
 sub link {
     my $self = shift;
-    if (not defined wantarray) {
-        Jifty::Web::Form::Clickable->new(@_)->generate->render;
-    } else {
-        return Jifty::Web::Form::Clickable->new(@_)->generate;
-    }
+
+    my $link = Jifty::Web::Form::Clickable->new(@_)->generate;
+
+    return $link if defined wantarray;
+
+    $link->render;
 }
 
 =head3 return PARAMHASH
