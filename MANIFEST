@@ -166,6 +166,7 @@ lib/Jifty/Action/Redirect.pm
 lib/Jifty/API.pm
 lib/Jifty/Bootstrap.pm
 lib/Jifty/CAS.pm
+lib/Jifty/CAS/Blob.pm
 lib/Jifty/ClassLoader.pm
 lib/Jifty/Client.pm
 lib/Jifty/Collection.pm
@@ -208,7 +209,6 @@ lib/Jifty/Manual/Tutorial_zhtw.pod
 lib/Jifty/Manual/TutorialRest.pod
 lib/Jifty/Manual/Upgrading.pod
 lib/Jifty/Manual/UsingCSSandJS.pod
-lib/Jifty/Mason/Halo.pm
 lib/Jifty/Model/Metadata.pm
 lib/Jifty/Model/Session.pm
 lib/Jifty/Model/SessionCollection.pm
@@ -319,6 +319,7 @@ lib/Jifty/View/Declare/CRUD.pm
 lib/Jifty/View/Declare/Handler.pm
 lib/Jifty/View/Declare/Helpers.pm
 lib/Jifty/View/Declare/Page.pm
+lib/Jifty/View/Mason/Halo.pm
 lib/Jifty/View/Mason/Handler.pm
 lib/Jifty/View/Mason/Request.pm
 lib/Jifty/View/Static/Handler.pm
