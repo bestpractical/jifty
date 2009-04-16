@@ -102,7 +102,7 @@ sub page (&;$) {
         my $self = shift;
         Jifty->handler->apache->content_type('text/html; charset=utf-8');
         my $wrapper = Jifty->app_class('View')->can('wrapper') || \&wrapper;
-        my @metadata = $meta ? $meta->() : ();
+        my @metadata = $meta ? $meta->($self) : ();
         my $metadata = $#metadata == 0 ? $metadata[0] : {@metadata};
         local *is::title = sub { Carp::carp "Can't use 'title is' when mixing mason and TD" };
         $wrapper->( sub { $code->( $self, $metadata ) }, $metadata );
