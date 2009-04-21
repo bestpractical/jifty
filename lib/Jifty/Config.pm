@@ -259,8 +259,11 @@ sub load {
     if ( $found && $app_class->isa('Jifty::Config') ) {
         bless $self, $app_class;
     } elsif ( $found ) {
-        warn "You have $app_class, however it's not an sub-class of Jifty::Config."
-            ." Read `perldoc Jifty::Config` about subclassing. Skipping.";
+# XXX this warning is not always useful, sometimes annoying, 
+# e.g. RT has its own config mechanism, we don't want to sub-class
+# Jifty::Config at all.
+#        warn "You have $app_class, however it's not an sub-class of Jifty::Config."
+#            ." Read `perldoc Jifty::Config` about subclassing. Skipping.";
     }
 
     # post load hook for sub-classes
