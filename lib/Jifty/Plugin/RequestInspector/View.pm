@@ -42,13 +42,15 @@ template '/__jifty/admin/requests/plugins' => sub {
     my $request = $request_inspector->get_request($id);
 
     table {
-        for my $plugin_name (keys %{ $request->{plugin_data} }) {
-            my $plugin_data = $request->{plugin_data}{$plugin_name};
-            my $plugin = Jifty->find_plugin($plugin_name);
-            $plugin_name =~ s/^Jifty::Plugin:://;
+        row {
+            for my $plugin_name (sort keys %{ $request->{plugin_data} }) {
+                my $plugin_data = $request->{plugin_data}{$plugin_name};
+                my $plugin = Jifty->find_plugin($plugin_name);
+                $plugin_name =~ s/^Jifty::Plugin:://;
 
-            cell { $plugin_name };
-            cell { $plugin->inspect_render_summary($plugin_data) };
+                cell { $plugin_name };
+                cell { $plugin->inspect_render_summary($plugin_data) };
+            }
         }
     };
 };
