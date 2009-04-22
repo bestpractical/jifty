@@ -13,6 +13,19 @@ template '/__jifty/admin/requests' => page {
                 cell { $request->{url} };
                 cell { sprintf '%.2gs', $request->{end} - $request->{start} };
             };
+            row {
+                for my $plugin_name (keys %{ $request->{plugin_data} }) {
+                    my $plugin_data = $request->{plugin_data}{$plugin_name};
+                    my $plugin = Jifty->find_plugin($plugin_name);
+
+                    my $summary = $plugin->inspect_render_summary($plugin_data);
+                    next if !defined($summary);
+
+                    $plugin_name =~ s/^Jifty::Plugin:://;
+                    cell { $plugin_name };
+                    cell { $summary };
+                }
+            };
         }
     };
 };
