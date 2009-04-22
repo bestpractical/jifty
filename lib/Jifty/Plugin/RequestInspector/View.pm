@@ -15,14 +15,14 @@ content {
         for my $request ($request_inspector->requests) {
             li {
                 my $id = $request->{id};
-                attr { id is "request-$id" };
 
                 hyperlink(
                     label => $request->{url},
                     onclick => {
-                        element => "#request-$id",
-                        append  => '/__jifty/admin/requests/plugins',
-                        effect  => 'slideDown',
+                        element   => "#request-$id",
+                        replace_with => '/__jifty/admin/requests/plugins',
+                        toggle    => 1,
+                        effect    => 'slideDown',
                         arguments => {
                             id => $id,
                         },
@@ -30,6 +30,8 @@ content {
                 );
 
                 outs sprintf ' (%.2gs)',  $request->{end} - $request->{start};
+
+                div { attr { id is "request-$id" } };
             };
         }
     };
@@ -54,7 +56,8 @@ template '/__jifty/admin/requests/plugins' => sub {
                     label => $short_name,
                     onclick => {
                         element => "#$row_id",
-                        append  => '/__jifty/admin/requests/plugin',
+                        replace_with => '/__jifty/admin/requests/plugin',
+                        toggle  => 1,
                         effect  => 'slideDown',
                         arguments => {
                             id => $id,
@@ -64,8 +67,8 @@ template '/__jifty/admin/requests/plugins' => sub {
                 );
             };
             dd {
-                attr { id is $row_id };
-                $plugin->inspect_render_summary($plugin_data)
+                outs $plugin->inspect_render_summary($plugin_data);
+                div { attr { id is $row_id } };
             };
         }
     };
@@ -84,9 +87,7 @@ template '/__jifty/admin/requests/plugin' => sub {
     my $plugin = Jifty->find_plugin($plugin_name)
         or abort(404);
 
-    dd {
-        $plugin->inspect_render_analysis($plugin_data);
-    };
+    $plugin->inspect_render_analysis($plugin_data);
 };
 
 1;
