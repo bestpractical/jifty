@@ -22,7 +22,6 @@ content {
                     onclick => {
                         element => "#request-$id",
                         append  => '/__jifty/admin/requests/plugins',
-                        toggle  => 1,
                         effect  => 'slideDown',
                         arguments => {
                             id => $id,
