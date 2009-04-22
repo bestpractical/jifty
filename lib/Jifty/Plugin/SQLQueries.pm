@@ -5,6 +5,8 @@ use base 'Jifty::Plugin';
 use List::Util 'sum';
 use Template::Declare::Tags;
 
+sub prereq_plugins { 'RequestInspector' }
+
 sub init {
     my $self = shift;
     return if $self->_pre_init;
