@@ -52,7 +52,6 @@ sub before_request {
     return unless $self->should_handle_request($cgi);
 
     $current_inspection = $self->new_request_inspection($cgi);
-    push @requests, $current_inspection;
 
     for my $plugin ($self->inspector_plugins) {
         next unless $plugin->can('inspect_before_request');
@@ -71,6 +70,7 @@ sub after_request {
             $plugin->inspect_after_request($plugin_data, $cgi);
         }
         $current_inspection->{end} = DateTime->now;
+        push @requests, $current_inspection;
     }
 
     undef $current_inspection;
