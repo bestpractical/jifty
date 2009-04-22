@@ -9,7 +9,7 @@ template '/__jifty/admin/requests' => page {
     table {
         for my $request ($request_inspector->requests) {
             row {
-                cell { $request->{uri} };
+                cell { $request->{url} };
             };
         }
     };
