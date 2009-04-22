@@ -19,6 +19,8 @@ sub init {
     });
 }
 
+sub requests { @requests }
+
 sub new_request_inspection {
     my ($self, $cgi) = @_;
 
