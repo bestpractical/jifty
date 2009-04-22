@@ -33,26 +33,7 @@ template '/__jifty/admin/requests/requests' => sub {
         attr { id is 'request-inspector' };
 
         for my $request ($request_inspector->requests) {
-            li {
-                my $id = $request->{id};
-
-                hyperlink(
-                    label => $request->{url},
-                    onclick => {
-                        element   => "#request-$id",
-                        replace_with => '/__jifty/admin/requests/plugins',
-                        toggle    => 1,
-                        effect    => 'slideDown',
-                        arguments => {
-                            id => $id,
-                        },
-                    },
-                );
-
-                outs sprintf ' (%.2gs)',  $request->{end} - $request->{start};
-
-                div { attr { id is "request-$id" } };
-            };
+            render_request($request);
         }
     };
 
@@ -107,6 +88,31 @@ template '/__jifty/admin/requests/plugin' => sub {
 
     $plugin->inspect_render_analysis($plugin_data);
 };
+
+sub render_request {
+    my $request = shift;
+
+    li {
+        my $id = $request->{id};
+
+        hyperlink(
+            label => $request->{url},
+            onclick => {
+                element   => "#request-$id",
+                replace_with => '/__jifty/admin/requests/plugins',
+                toggle    => 1,
+                effect    => 'slideDown',
+                arguments => {
+                    id => $id,
+                },
+            },
+        );
+
+        outs sprintf ' (%.2gs)',  $request->{end} - $request->{start};
+
+        div { attr { id is "request-$id" } };
+    };
+}
 
 1;
 
