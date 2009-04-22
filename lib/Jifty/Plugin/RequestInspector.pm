@@ -25,9 +25,9 @@ sub new_request_inspection {
     my ($self, $cgi) = @_;
 
     return {
-        id   => 1 + @requests,
-        time => DateTime->now,
-        url  => $cgi->url(-absolute => 1, -path_info => 1),
+        id    => 1 + @requests,
+        start => DateTime->now,
+        url   => $cgi->url(-absolute => 1, -path_info => 1),
     };
 }
 
@@ -70,6 +70,7 @@ sub after_request {
             my $plugin_data = $current_inspection->{plugin_data}{$plugin->name};
             $plugin->inspect_after_request($plugin_data, $cgi);
         }
+        $current_inspection->{end} = DateTime->now;
     }
 
     undef $current_inspection;
