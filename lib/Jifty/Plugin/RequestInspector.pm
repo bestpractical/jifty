@@ -32,7 +32,7 @@ do {
                 grep {
                     $_->can('inspect_before_request') ||
                     $_->can('inspect_after_request')
-                } Jifty->plugins;
+                } Jifty->plugins
             ];
         }
         return @$inspector_plugins;
