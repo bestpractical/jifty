@@ -10,8 +10,13 @@ sub init {
     my $self = shift;
     return if $self->_pre_init;
 
-    Jifty::Handler->add_trigger(before_request => \&before_request);
-    Jifty::Handler->add_trigger(after_request  => \&after_request);
+    Jifty::Handler->add_trigger(before_request => sub {
+        $self->before_request(@_);
+    });
+
+    Jifty::Handler->add_trigger(after_request => sub {
+        $self->after_request(@_);
+    });
 }
 
 sub new_request_inspection {
