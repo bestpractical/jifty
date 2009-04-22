@@ -4,31 +4,33 @@ use warnings;
 use Jifty::View::Declare -base;
 
 template '/__jifty/admin/requests' => page {
+    title => "Request Inspector"
+}
+content {
     my $request_inspector = Jifty->find_plugin('Jifty::Plugin::RequestInspector');
 
-    table {
+    ol {
+        attr { id is 'request-inspector' };
+
         for my $request ($request_inspector->requests) {
-            row {
-                cell { $request->{id} };
-                cell { $request->{url} };
-                cell { sprintf '%.2gs', $request->{end} - $request->{start} };
-            };
-            row {
-                for my $plugin_name (keys %{ $request->{plugin_data} }) {
-                    my $plugin_data = $request->{plugin_data}{$plugin_name};
-                    my $plugin = Jifty->find_plugin($plugin_name);
+            li {
+                my $id = $request->{id};
+                attr { id is "request-$id" };
 
-                    my $summary = $plugin->inspect_render_summary($plugin_data);
-                    next if !defined($summary);
+                hyperlink(
+                    label => $request->{url},
+                    onclick => {
+                        element => "#request-$id",
+                        append  => '/__jifty/admin/requests/plugins',
+                        toggle  => 1,
+                        effect  => 'slideDown',
+                        arguments => {
+                            id => $id,
+                        },
+                    },
+                );
 
-                    $plugin_name =~ s/^Jifty::Plugin:://;
-                    cell { $plugin_name };
-                    cell { $summary };
-
-                    my $analysis = $plugin->inspect_render_analysis($plugin_data);
-                    next if !defined($summary);
-                    cell { $analysis };
-                }
+                outs sprintf ' (%.2gs)',  $request->{end} - $request->{start};
             };
         }
     };
