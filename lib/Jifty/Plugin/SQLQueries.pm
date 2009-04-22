@@ -2,6 +2,7 @@ package Jifty::Plugin::SQLQueries;
 use strict;
 use warnings;
 use base 'Jifty::Plugin';
+use List::Util 'sum';
 
 sub init {
     my $self = shift;
@@ -42,7 +43,10 @@ sub inspect_render_summary {
     my $self = shift;
     my $log = shift;
 
-    return scalar @$log . ' queries';
+    my $count = @$log;
+    my $seconds = sprintf '%.2g', sum map { $_->[3] } @$log;
+
+    return _("%quant(%1,query,queries), %2s", $count, $seconds);
 }
 
 1;
