@@ -4,12 +4,18 @@ use warnings;
 use base 'Jifty::Plugin';
 use Time::HiRes 'time';
 
+__PACKAGE__->mk_accessors(qw(url_filter));
+
 my $current_inspection;
 my @requests;
 
 sub init {
     my $self = shift;
     return if $self->_pre_init;
+
+    my %opt = @_;
+    my $filter = $opt{url_filter} || '.*';
+    $self->url_filter(qr/$filter/);
 
     Jifty::Handler->add_trigger(before_request => sub {
         $self->before_request(@_);
@@ -88,7 +94,12 @@ sub after_request {
 }
 
 sub should_handle_request {
-    return 1;
+    my $self = shift;
+    my $cgi  = shift;
+
+    my $url = $cgi->url(-absolute => 1, -path_info => 1);
+
+    return $url =~ $self->url_filter;
 }
 
 1;
