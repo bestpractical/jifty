@@ -7,7 +7,27 @@ template '/__jifty/admin/requests' => page {
     title => "Request Inspector"
 }
 content {
+    render_region(
+        name => 'request-inspector',
+        path => '/__jifty/admin/requests/requests',
+    );
+
+    div {
+        hyperlink(
+            label => "Clear requests",
+            onclick => {
+                refresh => 'request-inspector',
+                args => {
+                    clear_requests => 1,
+                },
+            },
+        ),
+    };
+};
+
+template '/__jifty/admin/requests/requests' => sub {
     my $request_inspector = Jifty->find_plugin('Jifty::Plugin::RequestInspector');
+    $request_inspector->clear_requests if get('clear_requests');
 
     ol {
         attr { id is 'request-inspector' };
@@ -35,6 +55,7 @@ content {
             };
         }
     };
+
 };
 
 template '/__jifty/admin/requests/plugins' => sub {

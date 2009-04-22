@@ -35,6 +35,11 @@ sub get_request {
     return $requests[$id - 1]; # 1-based
 }
 
+sub clear_requests {
+    @requests = ();
+    undef $current_inspection;
+}
+
 sub get_plugin_data {
     my $self   = shift;
     my $id     = shift;
