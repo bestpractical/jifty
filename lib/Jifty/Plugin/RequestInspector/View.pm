@@ -46,9 +46,11 @@ template '/__jifty/admin/requests/plugins' => sub {
             row {
                 my $plugin_data = $request->{plugin_data}{$plugin_name};
                 my $plugin = Jifty->find_plugin($plugin_name);
-                $plugin_name =~ s/^Jifty::Plugin:://;
 
-                cell { $plugin_name };
+                cell {
+                    (my $short_name = $plugin_name) =~ s/^Jifty::Plugin:://;
+                    $short_name
+                };
                 cell { $plugin->inspect_render_summary($plugin_data) };
             }
         }
