@@ -24,6 +24,10 @@ template '/__jifty/admin/requests' => page {
                     $plugin_name =~ s/^Jifty::Plugin:://;
                     cell { $plugin_name };
                     cell { $summary };
+
+                    my $analysis = $plugin->inspect_render_analysis($plugin_data);
+                    next if !defined($summary);
+                    cell { $analysis };
                 }
             };
         }

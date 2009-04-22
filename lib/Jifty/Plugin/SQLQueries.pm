@@ -3,6 +3,7 @@ use strict;
 use warnings;
 use base 'Jifty::Plugin';
 use List::Util 'sum';
+use Template::Declare::Tags;
 
 sub init {
     my $self = shift;
@@ -47,6 +48,17 @@ sub inspect_render_summary {
     my $seconds = sprintf '%.2g', sum map { $_->[3] } @$log;
 
     return _("%quant(%1,query,queries), %2s", $count, $seconds);
+}
+
+sub inspect_render_analysis {
+    my $self = shift;
+    my $log = shift;
+
+    ol {
+        for (@$log) {
+            li { $_->[1] };
+        }
+    }
 }
 
 1;
