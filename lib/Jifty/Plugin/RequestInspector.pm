@@ -22,6 +22,13 @@ sub init {
 
 sub requests { @requests }
 
+sub get_request {
+    my $self = shift;
+    my $id = shift;
+
+    $requests[$id - 1]; # 1-based
+}
+
 sub new_request_inspection {
     my ($self, $cgi) = @_;
 
