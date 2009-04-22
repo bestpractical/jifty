@@ -79,10 +79,7 @@ template '/__jifty/admin/requests/plugin' => sub {
     my $plugin_name = get('plugin_name');
 
     my $request_inspector = Jifty->find_plugin('Jifty::Plugin::RequestInspector');
-    my $request = $request_inspector->get_request($id)
-        or abort(404);
-
-    my $plugin_data = $request->{plugin_data}{$plugin_name};
+    my $plugin_data = $request_inspector->get_plugin_data($id, $plugin_name);
 
     my $plugin = Jifty->find_plugin($plugin_name)
         or abort(404);
