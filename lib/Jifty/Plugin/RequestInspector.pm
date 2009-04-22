@@ -1,7 +1,7 @@
 package Jifty::Plugin::RequestInspector;
-use base qw/Jifty::Plugin/;
 use strict;
 use warnings;
+use base 'Jifty::Plugin';
 use Time::HiRes 'time';
 
 my $current_inspection;
@@ -57,7 +57,7 @@ sub before_request {
     for my $plugin ($self->inspector_plugins) {
         next unless $plugin->can('inspect_before_request');
         my $plugin_data = $plugin->inspect_before_request($cgi);
-        $current_inspection->{plugin_data}{$plugin->name} = $plugin_data;
+        $current_inspection->{plugin_data}{ref $plugin} = $plugin_data;
     }
 }
 
@@ -67,8 +67,11 @@ sub after_request {
     if ($current_inspection) {
         for my $plugin ($self->inspector_plugins) {
             next unless $plugin->can('inspect_after_request');
-            my $plugin_data = $current_inspection->{plugin_data}{$plugin->name};
-            $plugin->inspect_after_request($plugin_data, $cgi);
+            my $plugin_data = $current_inspection->{plugin_data}{ref $plugin};
+            my $new_plugin_data = $plugin->inspect_after_request($plugin_data, $cgi);
+            if (defined($new_plugin_data)) {
+                $current_inspection->{plugin_data}{ref $plugin} = $new_plugin_data;
+            }
         }
         $current_inspection->{end} = time;
         push @requests, $current_inspection;
