@@ -9,7 +9,9 @@ template '/__jifty/admin/requests' => page {
     table {
         for my $request ($request_inspector->requests) {
             row {
+                cell { $request->{id} };
                 cell { $request->{url} };
+                cell { sprintf '%.2gs', $request->{end} - $request->{start} };
             };
         }
     };

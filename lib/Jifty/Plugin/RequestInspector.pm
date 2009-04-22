@@ -2,6 +2,7 @@ package Jifty::Plugin::RequestInspector;
 use base qw/Jifty::Plugin/;
 use strict;
 use warnings;
+use Time::HiRes 'time';
 
 my $current_inspection;
 my @requests;
@@ -26,7 +27,7 @@ sub new_request_inspection {
 
     return {
         id    => 1 + @requests,
-        start => DateTime->now,
+        start => time,
         url   => $cgi->url(-absolute => 1, -path_info => 1),
     };
 }
@@ -69,7 +70,7 @@ sub after_request {
             my $plugin_data = $current_inspection->{plugin_data}{$plugin->name};
             $plugin->inspect_after_request($plugin_data, $cgi);
         }
-        $current_inspection->{end} = DateTime->now;
+        $current_inspection->{end} = time;
         push @requests, $current_inspection;
     }
 
