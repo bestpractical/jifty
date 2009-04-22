@@ -24,11 +24,20 @@ sub new_request_inspection {
     };
 }
 
-sub inspector_plugins {
-    return grep {
-        $_->can('inspect_before_request') || $_->can('inspect_after_request')
-    } Jifty->plugins;
-}
+do {
+    my $inspector_plugins;
+    sub inspector_plugins {
+        if (!defined($inspector_plugins)) {
+            $inspector_plugins = [
+                grep {
+                    $_->can('inspect_before_request') ||
+                    $_->can('inspect_after_request')
+                } Jifty->plugins;
+            ];
+        }
+        return @$inspector_plugins;
+    }
+};
 
 sub before_request {
     my ($self, $handler, $cgi) = @_;
