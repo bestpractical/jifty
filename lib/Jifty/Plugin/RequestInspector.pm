@@ -49,7 +49,7 @@ sub before_request {
 
     return unless $self->should_handle_request($cgi);
 
-    $current_inspection = $self->new_request_inspection;
+    $current_inspection = $self->new_request_inspection($cgi);
     push @requests, $current_inspection;
 
     for my $plugin ($self->inspector_plugins) {
