@@ -42,8 +42,8 @@ template '/__jifty/admin/requests/plugins' => sub {
     my $request = $request_inspector->get_request($id);
 
     table {
-        row {
-            for my $plugin_name (sort keys %{ $request->{plugin_data} }) {
+        for my $plugin_name (sort keys %{ $request->{plugin_data} }) {
+            row {
                 my $plugin_data = $request->{plugin_data}{$plugin_name};
                 my $plugin = Jifty->find_plugin($plugin_name);
                 $plugin_name =~ s/^Jifty::Plugin:://;
