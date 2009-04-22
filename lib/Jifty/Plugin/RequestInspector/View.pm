@@ -41,18 +41,33 @@ template '/__jifty/admin/requests/plugins' => sub {
     my $request_inspector = Jifty->find_plugin('Jifty::Plugin::RequestInspector');
     my $request = $request_inspector->get_request($id);
 
-    table {
+    dl {
         for my $plugin_name (sort keys %{ $request->{plugin_data} }) {
-            row {
-                my $plugin_data = $request->{plugin_data}{$plugin_name};
-                my $plugin = Jifty->find_plugin($plugin_name);
+            my $row_id = "request-$id-$plugin_name";
+            $row_id =~ s/::/-/g;
 
-                cell {
-                    (my $short_name = $plugin_name) =~ s/^Jifty::Plugin:://;
-                    $short_name
-                };
-                cell { $plugin->inspect_render_summary($plugin_data) };
-            }
+            my $plugin_data = $request->{plugin_data}{$plugin_name};
+            my $plugin = Jifty->find_plugin($plugin_name);
+
+            dt {
+                (my $short_name = $plugin_name) =~ s/^Jifty::Plugin:://;
+                hyperlink(
+                    label => $short_name,
+                    onclick => {
+                        element => "#$row_id",
+                        append  => '/__jifty/admin/requests/plugin',
+                        effect  => 'slideDown',
+                        arguments => {
+                            id => $id,
+                            plugin_name => $plugin_name,
+                        },
+                    },
+                );
+            };
+            dd {
+                attr { id is $row_id };
+                $plugin->inspect_render_summary($plugin_data)
+            };
         }
     };
 };
