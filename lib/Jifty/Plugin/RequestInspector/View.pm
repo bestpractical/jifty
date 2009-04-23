@@ -8,7 +8,7 @@ template '/__jifty/admin/requests' => page {
 }
 content {
     render_region(
-        name => 'request-inspector',
+        name => 'request_inspector',
         path => '/__jifty/admin/requests/requests',
     );
 
@@ -16,7 +16,7 @@ content {
         hyperlink(
             label => "Clear requests",
             onclick => {
-                refresh => 'request-inspector',
+                refresh => 'request_inspector',
                 args => {
                     clear_requests => 1,
                 },
@@ -30,7 +30,7 @@ template '/__jifty/admin/requests/requests' => sub {
     $request_inspector->clear_requests if get('clear_requests');
 
     ol {
-        attr { id is 'request-inspector' };
+        attr { id is 'request_inspector' };
 
         for my $request ($request_inspector->requests) {
             render_request($request);
