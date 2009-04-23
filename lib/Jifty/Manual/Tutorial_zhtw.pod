@@ -91,40 +91,39 @@ Jifty 將所有的事情設計的相當簡單使用，你只需要使用 Jifty �
 
 =item etc
 
-Configuration files live in F<etc/>, though if you don't have a config
-file, Jifty will supply some sane defaults.
+設定檔都放在 F<etc/> 內，如果你沒有這個檔案，Jifty 會為你自動產生一個設定檔。
 
 =item doc
 
-Jifty won't magically write your documentation for you, but when B<you>
-write your docs, put them in F<doc/>.
+當你需要寫文件時，可以直接寫在 F<doc/> 內。
 
 =item log
 
-Jifty uses L<Log::Log4perl> to configure its logging. By default, it
-dumps logs named F<server.log> and F<error.log> into the F<log> directory.
+Jifty 使用 L<Log::Log4perl> 模組來紀錄所有訊息。預設會將訊息紀錄至 F<log>
+資料夾內的 F<server.log> 以及 F<error.log> 檔案。
 
 =item var
 
-Jifty stores cache files here while the server is running. You shouldn't ever
-have to touch this directory.
+Jifty 會將 Server 執行時的快取檔案存放在 var 資料夾。請不要去碰這個資料夾。
 
 =item share/web/po
 
-Jifty supports internationalization. F<share/web/po/> is where your
-translations ("portable object templates") will go.
+Jifty 支援國際化。 F<share/web/po/> 裡頭可以放你的本地化翻譯。
+("portable object templates") will go.
 
 =item share/web/templates
 
-Though modern Jifty applications are encouraged to use L<Template::Declare>
-for templating, we also support L<HTML::Mason> templates. Put your
-application's Mason templates into F<share/web/templates/>. Out of the
-box, Jifty comes with an application I<skeleton> that it installs in
-F<share/web/templates/>. This default application is a convenient way to
-get a basic application up and running quickly, but probably needs some
-customization as you build a more advanced application.
+Jifty 應用程式大多使用 L<Template::Declare> 模組來產生樣板。
+但我們也支援 L<HTML::Mason> 樣板引擎。
 
-You can find where Perl stuck Jifty's default templates with:
+你可將你的 Mason 樣板放入 F<share/web/templates/> 目錄內。
+此外， Jifty 內建的 I<skeleton> 會為你放在 F<share/web/templates/> 內。
+
+如此一來，預設的 Jifty 應用程式提供了一個最基本的功能，也可以馬上執行。
+
+不過， 當你需要建制更進階的應用程式時， 你仍需要自己客制化你的樣板，
+
+你可以由此找到 Jifty 設置的預設樣板位置:
 
   perl -MJifty::Util -le 'print Jifty::Util->share_root'
 
