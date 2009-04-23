@@ -140,13 +140,13 @@ Jifty 應用程式大多使用 L<Template::Declare> 模組來產生樣板。
 
 =item lib/MyWeblog/Model
 
-The real base of your application lives in
-C<lib/MyWeblog/Model>. Classes here define your application's data
-structures and how they relate to each other. Jifty will use your model
-classes to set up and upgrade your database's schema when it needs to.
+你的應用程式裡頭，最重要的部份就是在 C<lib/MyWeblog/Model>。
 
-For a full treatment of the Jifty object model see
-L<Jifty::Manual::ObjectModel>.
+這裡放置的類別，定義了你應用程式的資料結構，以及他們如何與其他資料模型關聯。
+
+Jifty 會從你的資料模型類別的定義，來設置或升級你的資料庫 schema。
+
+完整的 Jifty 物件模型請參考 L<Jifty::Manual::ObjectModel>
 
 =item lib/MyWeblog/Action
 
