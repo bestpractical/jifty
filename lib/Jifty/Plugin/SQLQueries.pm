@@ -49,7 +49,7 @@ sub inspect_render_summary {
     my $count = @$log;
     my $seconds = sprintf '%.2g', sum map { $_->[3] } @$log;
 
-    return _("%quant(%1,query,queries), %2s", $count, $seconds);
+    return _("%quant(%1,query,queries) taking %2s", $count, $seconds);
 }
 
 sub inspect_render_analysis {
