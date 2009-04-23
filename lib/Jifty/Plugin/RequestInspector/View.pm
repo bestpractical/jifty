@@ -49,7 +49,7 @@ template '/__jifty/admin/requests/more_button' => sub {
     my $starting_id = $last_request ? $last_request->{id} + 1 : 0;
 
     hyperlink(
-        label => "more",
+        label => "Load subsequent requests",
         onclick => [{
             element => '#request_inspector',
             append  => '/__jifty/admin/requests/more_requests',
