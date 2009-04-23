@@ -129,16 +129,14 @@ Jifty 應用程式大多使用 L<Template::Declare> 模組來產生樣板。
 
 =item share/web/static
 
-Some nontrivial percentage of the content your web application serves
-out doesn't need to (or I<shouldn't>) pass through your templating
-engine.
+你的網頁應用程式有些內容其實是不需要經過樣板引擎的。這些靜態檔案，
+都可以放在 F<share/web/static> 目錄內。
 
-Just drop your static files into F<share/web/static/> and Jifty will serve
-them out if it can't find a template with the right name.
+當 Jifty 找不到相對應的樣板名稱時，將會由靜態檔案的路徑去搜尋正確的名稱。
 
-Out of the box, Jifty comes with a CSS style, Javascript libraries and a
-Pony. Look in F<share/web/static> in the Jifty distribution, or in the same
-place Jifty stuck its default templates.
+另外，Jifty 提供 CSS 樣式、Javascript 函式庫以及一隻小馬在此目錄裡頭。
+
+可看看 Jifty F<share/web/static> 目錄，或者在預設樣板引擎的目錄裡頭。
 
 =item lib/MyWeblog/Model
 
