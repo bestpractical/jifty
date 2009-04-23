@@ -91,22 +91,29 @@ template '/__jifty/admin/requests/plugins' => sub {
 
             dt {
                 (my $short_name = $plugin_name) =~ s/^Jifty::Plugin:://;
-                hyperlink(
-                    label => $short_name,
-                    onclick => {
-                        element => "#$row_id",
-                        replace_with => '/__jifty/admin/requests/plugin',
-                        toggle  => 1,
-                        effect  => 'slideDown',
-                        arguments => {
-                            id => $id,
-                            plugin_name => $plugin_name,
+                if ($plugin->can('inspect_render_analysis')) {
+                    hyperlink(
+                        label => $short_name,
+                        onclick => {
+                            element => "#$row_id",
+                            replace_with => '/__jifty/admin/requests/plugin',
+                            toggle  => 1,
+                            effect  => 'slideDown',
+                            arguments => {
+                                id => $id,
+                                plugin_name => $plugin_name,
+                            },
                         },
-                    },
-                );
+                    );
+                }
+                else {
+                    outs $short_name;
+                }
             };
             dd {
-                outs $plugin->inspect_render_summary($plugin_data);
+                if ($plugin->can('inspect_render_summary')) {
+                    outs $plugin->inspect_render_summary($plugin_data);
+                }
                 div { attr { id is $row_id } };
             };
         }
