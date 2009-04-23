@@ -142,18 +142,21 @@ Jifty 應用程式大多使用 L<Template::Declare> 模組來產生樣板。
 
 你的應用程式裡頭，最重要的部份就是在 C<lib/MyWeblog/Model>。
 
-這裡放置的類別，定義了你應用程式的資料結構，以及他們如何與其他資料模型關聯。
+這裡放置的類別，定義了你應用程式的資料結構，以及他們如何與其他資料模型 ( Data
+Model ) 關聯。
 
-Jifty 會從你的資料模型類別的定義，來設置或升級你的資料庫 schema。
+Jifty 會從你的資料模型類別 ( Model Class ) 的定義，來設置或升級你的資料庫 schema。
 
 完整的 Jifty 物件模型請參考 L<Jifty::Manual::ObjectModel>
 
 =item lib/MyWeblog/Action
 
-Actions are an API for your model classes. One way you might think of them is
-that an action is an HTML form, but generalized. Jifty will generate basic
-database-interaction (C<CREATE>, C<READ>, C<UPDATE>, C<DELETE>) B<Actions> for
-your B<Models> on-the-fly.
+行為 ( Actions ) 是你資料模型類別 ( Model Class ) 的 API。
+
+你可以將他們想像程式 HTML 表單，但是是 Generalized 的。
+
+Jifty 會在執行期間自動為你的資料模型 ( B<Models> ) 自動產生基本的資料庫行為 (
+C<CREATE> , C<READ> , C<UPDATE> , C<DELETE> ) B< 行為 ( Actions )>。
 
 =item t
 
