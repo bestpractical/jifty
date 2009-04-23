@@ -37,6 +37,43 @@ template '/__jifty/admin/requests/requests' => sub {
         }
     };
 
+    render_region(
+        name => 'more_button',
+        path => '/__jifty/admin/requests/more_button',
+    );
+};
+
+template '/__jifty/admin/requests/more_button' => sub {
+    my $request_inspector = Jifty->find_plugin('Jifty::Plugin::RequestInspector');
+    my $last_request = ($request_inspector->requests)[-1];
+    my $starting_id = $last_request ? $last_request->{id} + 1 : 0;
+
+    hyperlink(
+        label => "more",
+        onclick => [{
+            element => '#request_inspector',
+            append  => '/__jifty/admin/requests/more_requests',
+            effect  => 'slideDown',
+            arguments => {
+                starting_id => $starting_id,
+            },
+        },
+        {
+            refresh_self => 1,
+        }],
+    );
+};
+
+template '/__jifty/admin/requests/more_requests' => sub {
+    my $request_inspector = Jifty->find_plugin('Jifty::Plugin::RequestInspector');
+    my $starting_id = get('starting_id');
+
+    my @requests = $request_inspector->requests;
+    splice @requests, 0, $starting_id;
+
+    for my $request (@requests) {
+        render_request($request);
+    }
 };
 
 template '/__jifty/admin/requests/plugins' => sub {
