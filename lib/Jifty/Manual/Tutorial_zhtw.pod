@@ -160,33 +160,33 @@ C<CREATE> , C<READ> , C<UPDATE> , C<DELETE> ) B< 行為 ( Actions )>。
 
 =item t
 
-Jifty starts off your application with a basic harness, but can't yet write 
-all your tests for you. (It does, however, build simple tests for model
-classes you generate.)
+Jifty 可以為你提供一些基本的測試，如資料模型 (Model)
+的基本測試，不過沒辦法為你提供所有的測試。 然而，你可以你可在 F<t/>
+目錄底下撰寫更詳盡的測試。
 
 =back
 
-=head2 Building your data model
+=head2 建置你的資料模型 (Data Model)
 
-As you might imagine by the fact that this tutorial application is named
-B<MyWeblog>, the example here is a simple weblog application.  Future
-tutorials will add authentication, comments, and RSS and Atom feeds.
+如同我們教學應用程式被命名為 B<MyWeblog>
+，這裡的範例就是要示範如何建置一個簡單的 weblog 應用程式。
+
+未來的教學將會提供使用者驗證，回應、以及 RSS 與 ATOM Feeds。
 
 =head3 Posts
 
-Weblogs tend to center around posts, so it's no surprise that the first model
-to create is the C<post>:
+Weblogs 都以文章為中心，所以我們第一個需要的資料模型為 C<Post> ，用來存放文章:
 
   # cd MyWeblog
   # jifty model --name Post
   Writing file /tmp/MyWeblog/lib/MyWeblog/Model/Post.pm
   Writing file /tmp/MyWeblog/t/00-model-Post.t
 
-Great! Now you have a B<Post> model (not that it models anything yet).
+太棒了！現在你有了 B<Post> 資料模型 ( 不過我們還沒有定義任何東西 )。
 
-Open F<lib/MyWeblog/Model/Post.pm> in your favorite text editor.
+以你最喜歡的編輯器，將 F<lib/MyWeblog/Model/Post.pm> 檔案打開。
 
-You should see something like this:
+你會看見如下的東西:
 
   use strict;
   use warnings;
@@ -201,7 +201,6 @@ You should see something like this:
   # Your model-specific methods go here.
   
   1;
-
 
 Now it's time to tell the model class about posts. Start by giving our post a
 C<body> and a C<title>. (In a future tutorial, the application will become fully
@@ -523,6 +522,10 @@ available from the Jifty subversion repository.
 
 =head1 REPORTING BUGS
 
-Please report bugs in Jifty to C<jifty-devel@lists.jifty.org>.
+請將 Jifty 程式錯誤 (Bugs) 回報至 C<jifty-devel@lists.jifty.org>。
+
+=head1 翻譯者
+
+林佑安 (c9s) ( C<cornelius.howl_at_gmail.com> ) L<http://oulixe.us/>
 
 =cut
