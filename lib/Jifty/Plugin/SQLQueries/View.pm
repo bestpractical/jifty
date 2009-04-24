@@ -44,9 +44,11 @@ template '/__jifty/admin/requests/query' => sub {
     my ($timestamp, $query, $binds, $duration, $plugins) = @$query_log;
     my $stack_trace = $plugins->{SQLQueryPlugin};
 
-    h3 { "Bind Parameters" }
-    ol {
-        li { $_ } for @$binds;
+    if (@{ $binds || [] }) {
+        h3 { "Bind Parameters" }
+        ol {
+            li { $_ } for @$binds;
+        }
     }
 
     h3 { "Stack Trace" }
