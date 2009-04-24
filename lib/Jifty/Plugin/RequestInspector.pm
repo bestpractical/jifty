@@ -91,7 +91,7 @@ sub after_request {
     my ($self, $handler, $cgi) = @_;
 
     if ($current_inspection) {
-        for my $plugin ($self->inspector_plugins) {
+        for my $plugin (reverse $self->inspector_plugins) {
             next unless $plugin->can('inspect_after_request');
             my $plugin_data = $current_inspection->{plugin_data}{ref $plugin};
             my $new_plugin_data = $plugin->inspect_after_request($plugin_data, $cgi);
