@@ -29,7 +29,7 @@ sub post_init {
                             join ', ',
                                 map { defined $_ ? $_ : 'undef' } @$bindings,
         );
-        return Carp::longmess;
+        return Carp::longmess("Query");
     });
 }
 
