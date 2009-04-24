@@ -3,7 +3,6 @@ use strict;
 use warnings;
 use base 'Jifty::Plugin';
 use List::Util 'sum';
-use Template::Declare::Tags;
 
 sub prereq_plugins { 'RequestInspector' }
 
@@ -55,12 +54,15 @@ sub inspect_render_summary {
 sub inspect_render_analysis {
     my $self = shift;
     my $log = shift;
+    my $id = shift;
 
-    ol {
-        for (@$log) {
-            li { $_->[1] };
-        }
-    }
+    Jifty::View::Declare::Helpers::render_region(
+        name => 'sqlqueries',
+        path => '/__jifty/admin/requests/query',
+        args => {
+            id => $id,
+        },
+    );
 }
 
 1;
