@@ -58,7 +58,7 @@ sub inspect_render_analysis {
 
     Jifty::View::Declare::Helpers::render_region(
         name => 'sqlqueries',
-        path => '/__jifty/admin/requests/query',
+        path => '/__jifty/admin/requests/queries',
         args => {
             id => $id,
         },
