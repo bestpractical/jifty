@@ -202,7 +202,13 @@ sub new {
         my $plugin_obj = $class->new(%options);
         push @plugins, $plugin_obj;
         foreach my $name ($plugin_obj->prereq_plugins) {
-            next if grep { $_ eq $name } @plugins_to_load;
+            my $this_class = qr/^(?:Jifty::Plugin::|\Q$app_plugin\E)?\Q$name\E$/;
+
+            next if grep { $_ =~ $this_class } @plugins_to_load;
+
+            # already loaded plugin objects
+            next if grep { ref($_) =~ $this_class } @plugins;
+
             push @plugins_to_load, {$name => {}};
         }
     }
