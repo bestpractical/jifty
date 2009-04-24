@@ -112,7 +112,7 @@ template '/__jifty/admin/requests/plugins' => sub {
             };
             dd {
                 if ($plugin->can('inspect_render_summary')) {
-                    outs $plugin->inspect_render_summary($plugin_data);
+                    outs $plugin->inspect_render_summary($plugin_data, $id);
                 }
                 div { attr { id is $row_id } };
             };
@@ -130,7 +130,7 @@ template '/__jifty/admin/requests/plugin' => sub {
     my $plugin = Jifty->find_plugin($plugin_name)
         or abort(404);
 
-    $plugin->inspect_render_analysis($plugin_data);
+    $plugin->inspect_render_analysis($plugin_data, $id);
 };
 
 sub render_request {
