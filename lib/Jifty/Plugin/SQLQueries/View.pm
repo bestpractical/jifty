@@ -15,7 +15,7 @@ template '/__jifty/admin/requests/queries' => sub {
                 hyperlink(
                     label => $query,
                     onclick => {
-                        element   => "#query-$id-$query_id",
+                        region    => Jifty->web->qualified_region("query_$query_id"),
                         replace_with => '/__jifty/admin/requests/query',
                         toggle    => 1,
                         effect    => 'slideDown',
@@ -26,7 +26,7 @@ template '/__jifty/admin/requests/queries' => sub {
                     },
                 );
 
-                div { attr { id is "query-$id-$query_id" } };
+                render_region("query_$query_id");
             };
         }
     }

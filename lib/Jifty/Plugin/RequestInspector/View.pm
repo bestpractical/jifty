@@ -83,9 +83,6 @@ template '/__jifty/admin/requests/plugins' => sub {
 
     dl {
         for my $plugin_name (sort keys %{ $request->{plugin_data} }) {
-            my $row_id = "request-$id-$plugin_name";
-            $row_id =~ s/::/-/g;
-
             my $plugin_data = $request->{plugin_data}{$plugin_name};
             my $plugin = Jifty->find_plugin($plugin_name);
 
@@ -95,7 +92,7 @@ template '/__jifty/admin/requests/plugins' => sub {
                     hyperlink(
                         label => $short_name,
                         onclick => {
-                            element => "#$row_id",
+                            region => Jifty->web->qualified_region($plugin_name),
                             replace_with => '/__jifty/admin/requests/plugin',
                             toggle  => 1,
                             effect  => 'slideDown',
@@ -114,7 +111,7 @@ template '/__jifty/admin/requests/plugins' => sub {
                 if ($plugin->can('inspect_render_summary')) {
                     outs $plugin->inspect_render_summary($plugin_data, $id);
                 }
-                div { attr { id is $row_id } };
+                render_region($plugin_name);
             };
         }
     };
@@ -142,7 +139,7 @@ sub render_request {
         hyperlink(
             label => $request->{url},
             onclick => {
-                element   => "#request-$id",
+                region       => Jifty->web->qualified_region("request_$id"),
                 replace_with => '/__jifty/admin/requests/plugins',
                 toggle    => 1,
                 effect    => 'slideDown',
@@ -154,7 +151,7 @@ sub render_request {
 
         outs sprintf ' (%.2gs)',  $request->{end} - $request->{start};
 
-        div { attr { id is "request-$id" } };
+        render_region("request_$id");
     };
 }
 
