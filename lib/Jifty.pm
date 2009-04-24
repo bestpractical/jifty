@@ -175,6 +175,8 @@ sub new {
     my $app_plugin = Jifty->app_class('Plugin');
     # we are pushing prereq to plugin, hence the 3-part for.
     for (my $i = 0; my $plugin = $plugins_to_load[$i]; $i++) {
+        my $is_prereq = delete $plugin->{_prereq};
+
         # Prepare to learn the plugin class name
         my ($plugin_name) = keys %{$plugin};
         my $class;
@@ -190,6 +192,17 @@ sub new {
             $class = "Jifty::Plugin::".$plugin_name;
         }
 
+        # avoid duplicating prereq plugins. we can't do this in the loop below
+        # because a plugin might prereq a plugin later in config.yml
+        if ($is_prereq) {
+            my $this_class = qr/^(?:Jifty::Plugin::|\Q$app_plugin\E)?\Q$plugin_name\E$/;
+
+            next if grep { $_ =~ $this_class } @plugins_to_load;
+
+            # already loaded plugin objects
+            next if grep { ref($_) =~ $this_class } @plugins;
+        }
+
         # Load the plugin options
         my %options = (%{ $plugin->{ $plugin_name } },
                         _pre_init => $args{'pre_init'} );
@@ -202,14 +215,7 @@ sub new {
         my $plugin_obj = $class->new(%options);
         push @plugins, $plugin_obj;
         foreach my $name ($plugin_obj->prereq_plugins) {
-            my $this_class = qr/^(?:Jifty::Plugin::|\Q$app_plugin\E)?\Q$name\E$/;
-
-            next if grep { $_ =~ $this_class } @plugins_to_load;
-
-            # already loaded plugin objects
-            next if grep { ref($_) =~ $this_class } @plugins;
-
-            push @plugins_to_load, {$name => {}};
+            push @plugins_to_load, {$name => {}, _prereq => 1};
         }
     }
 
