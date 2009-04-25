@@ -348,7 +348,8 @@ F<lib/MyWeblog/View.pm>:
   };
 
 If you're on the ball, you've probably already guessed that you need to create
-a template called C</fragments/page_of_posts>. Make it contain the following:
+a template called C</fragments/page_of_posts> in your F<lib/MyWeblog/View.pm>.
+Make it contain the following:
 
   template '/fragments/page_of_posts' => sub {
       # Retrieve the current page argument, defaulting to 1.
