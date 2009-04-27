@@ -1,20 +1,22 @@
-=head1 NAME
+=encoding utf8
+
+=head1 標題
 
 Jifty::Manual::Tutorial - Jifty 從零開始
 
-=head1 DESCRIPTION
+=head1 敘述
 
 這份教學文件將提供建構第一個 jifty 應用程式所需要的技巧。
 
 =cut
 
-=head1 HOW TO
+=head1 如何做？
 
-=head2 The requirements
+=head2 需求
 
 這就是你需要安裝的。
 
-=head2 Installing Jifty
+=head2 安裝 Jifty
 
 我們相當相信 DRY ( Don't Repeat Yourself ) 的原則，這是我們喜愛 Perl 與 CPAN 的一個很重要的原因。
 
