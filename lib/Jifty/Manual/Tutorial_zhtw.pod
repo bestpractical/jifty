@@ -2,7 +2,7 @@
 
 =head1 標題
 
-Jifty::Manual::Tutorial - Jifty 從零開始
+Jifty::Manual::Tutorial_zhtw - Jifty 從零開始
 
 =head1 敘述
 
