@@ -78,8 +78,17 @@ sub take_action {
         }
     }
 
-    Jifty::YAML::DumpFile( $ENV{'JIFTY_SITE_CONFIG'}
-          || Jifty::Util->app_root . '/etc/site_config.yml', $stash );
+    # hack
+    # do *not* dump all the Plugins stuff because Plugins is arrayref
+    # dumping all will cause duplicate problems
+    # instead, we keep the old Plugins
+    my $site_config_file = $ENV{'JIFTY_SITE_CONFIG'}
+      || Jifty::Util->app_root . '/etc/site_config.yml';
+    if ( -e $site_config_file ) {
+        my $site_config = Jifty::YAML::LoadFile($site_config_file);
+        $stash->{framework}{Plugins} = $site_config->{framework}{Plugins};
+    }
+    Jifty::YAML::DumpFile( $site_config_file, $stash );
     Jifty->config->load;
     $self->report_success unless $self->result->failure;
 
