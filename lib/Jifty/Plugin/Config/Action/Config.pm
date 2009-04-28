@@ -88,6 +88,10 @@ sub take_action {
         my $site_config = Jifty::YAML::LoadFile($site_config_file);
         $stash->{framework}{Plugins} = $site_config->{framework}{Plugins};
     }
+    else {
+        $stash->{framework}{Plugins} = [];
+    }
+
     Jifty::YAML::DumpFile( $site_config_file, $stash );
     Jifty->config->load;
     $self->report_success unless $self->result->failure;
