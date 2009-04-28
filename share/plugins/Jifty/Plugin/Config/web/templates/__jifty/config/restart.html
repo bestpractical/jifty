@@ -1,0 +1,12 @@
+%# TODO make it more beautiful
+<html>
+<head>
+<title><% _('restarting' ) %></title>
+<meta http-equiv="refresh" content="5;url=<% Jifty::Plugin::Config->after_restart_url %>" />
+</head>
+<body>
+<h1>please wait for 5 seconds so the server can restart</h1>
+</body>
+</html>
+% Jifty->handler->buffer->flush_output();
+% $Jifty::SERVER->restart;

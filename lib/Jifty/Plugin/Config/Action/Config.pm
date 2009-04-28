@@ -93,8 +93,9 @@ sub take_action {
     }
 
     Jifty::YAML::DumpFile( $site_config_file, $stash );
-    Jifty->config->load;
     $self->report_success unless $self->result->failure;
+
+    Jifty->web->tangent( url => '/__jifty/config/restart.html' );
 
     return 1;
 }

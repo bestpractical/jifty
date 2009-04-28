@@ -6,7 +6,7 @@
 % for my $field ( @fields ) {
 <% $action->form_field($field) %>
 % }
-<% Jifty->web->form->submit( label => 'Save' ) %>
+<% Jifty->web->form->submit( label => _('Save and restart server') ) %>
 <% Jifty->web->form->end %>
 
 </&>
