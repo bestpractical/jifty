@@ -137,6 +137,11 @@ sub after_setup_listener {
     kill $sig => getppid();
 }
 
+sub restart {
+    my $self = shift;
+    local @ARGV = ( 'server' );
+    $self->SUPER::restart;
+}
 
 1;
 
