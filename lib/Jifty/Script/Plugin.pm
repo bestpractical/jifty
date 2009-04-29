@@ -26,7 +26,7 @@ Jifty::Script::Plugin - Create the skeleton of a Jifty plugin
 
 Creates a skeleton of a new L<Jifty::Plugin>.
 
-=head1 OPTIONS
+=head2 options
 
 =over 8
 

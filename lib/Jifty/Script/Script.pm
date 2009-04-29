@@ -15,7 +15,11 @@ Jifty::Script::Script - Add a new Jifty script to your Jifty application
     jifty script --help
     jifty script --man
 
-=head1 OPTIONS
+=head1 DESCRIPTION
+
+Add a skeleton command-line script file.
+
+=head2 options
 
 =over 8
 

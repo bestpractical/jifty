@@ -20,7 +20,11 @@ Jifty::Script::Model - Add a model class to your Jifty application
     --help             brief help message
     --man              full documentation
 
-=head1 OPTIONS
+=head1 DESCRIPTION
+
+Creates a skeleton model file.
+
+=head2 options
 
 =over 8
 

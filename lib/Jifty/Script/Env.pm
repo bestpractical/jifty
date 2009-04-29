@@ -22,23 +22,6 @@ Jifty::Script::Env - access the Jifty environment
     jifty env 'Util->share_root'
     jifty env  Util.share_root
 
-=head1 OPTIONS
-
-This script has no specific options now. Maybe it will have
-some command lines options in the future.
-
-=over 8
-
-=item B<--help>
-
-Print a brief help message and exits.
-
-=item B<--man>
-
-Prints the manual page and exits.
-
-=back
-
 =head1 DESCRIPTION
 
 Loads Jifty and your configuration, allowing you to verify and examine
@@ -62,6 +45,29 @@ You may chain accessors.  A leading dot also means the class is Jifty.
   jifty env .config.framework ApplicationName
 
 With no arguments, acts as 'C<jifty env Jifty.config.stash>'.
+
+=head2 options
+
+This script has no specific options now. Maybe it will have
+some command lines options in the future.
+
+=over 8
+
+=item B<--help>
+
+Print a brief help message and exits.
+
+=item B<--man>
+
+Prints the manual page and exits.
+
+=back
+
+=head1 METHODS
+
+=head2 run
+
+Prints whatever the user asked for.
 
 =cut
 

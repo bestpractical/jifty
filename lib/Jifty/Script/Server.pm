@@ -32,7 +32,11 @@ Jifty::Script::Server - A standalone webserver for your Jifty application
     jifty server --port 6666
     jifty server --stop
 
-=head1 OPTIONS
+=head1 DESCRIPTION
+
+Starts and stops Jifty's standalone web server.
+
+=head2 options
 
 =over 8
 

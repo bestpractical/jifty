@@ -29,7 +29,11 @@ Jifty::Script::Schema - Create SQL to update or create your Jifty app's tables
    --help             brief help message
    --man              full documentation
 
-=head1 OPTIONS
+=head1 DESCRIPTION
+
+Manages your database.
+
+=head2 options
 
 =over 8
 

@@ -14,7 +14,11 @@ Jifty::Script::Action - Add an action class to your Jifty application
     jifty action --help
     jifty action --man
 
-=head1 OPTIONS
+=head1 DESCRIPTION
+
+Creates a skeleton action file.
+
+=head2 options
 
 There are only two possible options to this script:
 

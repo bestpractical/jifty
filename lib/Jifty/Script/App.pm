@@ -21,12 +21,17 @@ Jifty::Script::App - Create the skeleton of a Jifty application
   jifty --name MyApp  Creates an application
 
  Options:
-   --name             applicaation name
+   --name             application name
 
    --help             brief help message
    --man              full documentation
 
-=head1 OPTIONS
+=head1 DESCRIPTION
+
+This script creates the skeleton of your application. See
+L<Jifty::Manual::Tutorial> for more information.
+
+=head2 options
 
 =over 8
 

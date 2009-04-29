@@ -27,7 +27,14 @@ Jifty::Script::Adopt - localize a stock jifty component
    --help             brief help message
    --man              full documentation
 
-=head1 OPTIONS
+=head1 DESCRIPTION
+
+This script will let you create an application-specific replacement for stock
+Jifty components. For various reasons, Jifty does not actually create these
+skeleton files in your application's directory tree. While this makes upgrading
+easier, it can make finding which files to create a little difficult.
+
+=head2 options
 
 =over 8
 
