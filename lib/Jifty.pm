@@ -523,6 +523,27 @@ sub app_instance_id {
     return $app_instance_id;
 }
 
+=head2 background SUB
+
+Forks a background process, and ensures that database connections are
+not shared with the parent process.
+
+=cut
+
+sub background {
+    my $class = shift;
+    my $sub = shift;
+    if (my $pid = fork) {
+        return $pid;
+    } else {
+        close STDOUT;
+        close STDIN;
+        Jifty->setup_database_connection();
+        $sub->();
+        exit;
+    }
+}
+
 
 =head1 SEE ALSO
 
