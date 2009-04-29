@@ -263,7 +263,6 @@ lib/Jifty/Plugin/SkeletonApp.pm
 lib/Jifty/Plugin/SkeletonApp/Dispatcher.pm
 lib/Jifty/Plugin/SkeletonApp/View.pm
 lib/Jifty/Plugin/SQLQueries.pm
-lib/Jifty/Plugin/SQLQueries/Dispatcher.pm
 lib/Jifty/Plugin/SQLQueries/View.pm
 lib/Jifty/Plugin/TestServerWarnings.pm
 lib/Jifty/Plugin/TestServerWarnings/Appender.pm
