@@ -67,3 +67,61 @@ sub inspect_render_analysis {
 
 1;
 
+__END__
+
+=head1 NAME
+
+Jifty::Plugin::SQLQueries - Inspect your app's SQL queries
+
+=head1 DESCRIPTION
+
+This plugin will log each SQL query, its duration, its bind parameters, and its stack trace. Such reports are available at:
+
+    http://your.app/__jifty/admin/requests
+
+=head1 USAGE
+
+Add the following to your site_config.yml
+
+ framework:
+   Plugins:
+     - SQLQueries: {}
+
+=head1 METHODS
+
+=head2 init
+
+Sets up a L</post_init> hook.
+
+=head2 inspect_before_request
+
+Clears the query log so we don't log any unrelated previous queries.
+
+=head2 inspect_after_request
+
+Stash the query log.
+
+=head2 inspect_render_summary
+
+Display how many queries and their total time.
+
+=head2 inspect_render_analysis
+
+Render a template with all the detailed information.
+
+=head2 post_init
+
+Tells L<Jifty::DBI> to log queries in a way that records stack traces.
+
+=head2 prereq_plugins
+
+This plugin depends on L<Jifty::Plugin::RequestInspector>.
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2007-2009 Best Practical Solutions
+
+This is free software and may be modified and distributed under the same terms as Perl itself.
+
+=cut
+
