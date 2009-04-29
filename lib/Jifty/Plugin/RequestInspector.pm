@@ -117,3 +117,61 @@ sub should_handle_request {
 
 1;
 
+__END__
+
+=head1 NAME
+
+Jifty::Plugin::RequestInspector
+
+=head1 DESCRIPTION
+
+Do not use this plugin directly. Other plugins use this plugin.
+
+=head1 METHODS
+
+=head2 init
+
+Sets up hooks into the request cycle.
+
+=head2 before_request
+
+Hooks into the request cycle to forward "request is beginning" and more
+metadata to RequestInspector plugins.
+
+=head2 after_request
+
+Hooks into the request cycle to forward "request is done" and more metadata
+to RequestInspector plugins.
+
+=head2 clear_requests
+
+Clears the list of request inspections.
+
+=head2 get_plugin_data RequestID, Plugin::Name
+
+Returns the B<opaque> plugin data for a particular request ID and plugin class
+name.
+
+=head2 get_request RequestID
+
+Returns all data for a particular request ID.
+
+=head2 requests
+
+Returns a list of all inspections for all requests.
+
+=head2 inspector_plugins
+
+Returns a list of plugin instances that hook into RequestInspector.
+
+=head2 new_request_inspection
+
+Instantiates a new request inspection, setting up some defalt values.
+
+=head2 should_handle_request CGI
+
+Decides whether the request described by the CGI parameter should be handled,
+based on plugin configuration.
+
+=cut
+
