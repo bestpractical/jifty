@@ -57,3 +57,11 @@ template '/__jifty/admin/requests/query' => sub {
 
 1;
 
+__END__
+
+=head1 NAME
+
+Jifty::Plugin::SQLQueries::View
+
+=cut
+

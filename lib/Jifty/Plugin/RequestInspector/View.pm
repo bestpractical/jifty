@@ -33,7 +33,7 @@ template '/__jifty/admin/requests/requests' => sub {
         attr { id is 'request_inspector' };
 
         for my $request ($request_inspector->requests) {
-            render_request($request);
+            _render_request($request);
         }
     };
 
@@ -72,7 +72,7 @@ template '/__jifty/admin/requests/more_requests' => sub {
     splice @requests, 0, $starting_id;
 
     for my $request (@requests) {
-        render_request($request);
+        _render_request($request);
     }
 };
 
@@ -130,7 +130,7 @@ template '/__jifty/admin/requests/plugin' => sub {
     $plugin->inspect_render_analysis($plugin_data, $id);
 };
 
-sub render_request {
+sub _render_request {
     my $request = shift;
 
     li {
@@ -156,4 +156,12 @@ sub render_request {
 }
 
 1;
+
+__END__
+
+=head1 NAME
+
+Jifty::Plugin::RequestInspector::View
+
+=cut
 
