@@ -137,6 +137,12 @@ sub after_setup_listener {
     kill $sig => getppid();
 }
 
+=head2 restart
+
+Sets up the arguments needed for restarting the server using C<jifty server>.
+
+=cut
+
 sub restart {
     my $self = shift;
     local @ARGV = ( 'server' );
