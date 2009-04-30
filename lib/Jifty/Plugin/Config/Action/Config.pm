@@ -7,6 +7,12 @@ use UNIVERSAL::require;
 use Jifty::YAML;
 use File::Spec;
 
+=head2 NAME
+
+Jifty::Plugin::Config::Action::Config - Register config
+
+=cut
+
 use Scalar::Defer; 
 sub arguments {
     my $self = shift;

@@ -11,7 +11,7 @@ our @EXPORT = qw(mail_ok);
 
 =head1 NAME
 
-Jifty::Test::Email - 
+Jifty::Test::Email - Test mail notification
 
 =head1 SYNOPSIS
 

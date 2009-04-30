@@ -6,7 +6,7 @@ use base 'Jifty::Plugin';
 
 =head1 NAME
 
-Jifty::Plugin::Prototypism
+Jifty::Plugin::Prototypism - Provide Prototype and Scriptaculous js libraries
 
 =head1 SYNOPSIS
 

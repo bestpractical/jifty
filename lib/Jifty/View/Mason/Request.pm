@@ -4,7 +4,11 @@ use warnings;
 package Jifty::View::Mason::Request;
 # Subclass for HTML::Mason::Request object $m
 
-=head1 Jifty::View::Mason::Request
+=head1 NAME
+
+Jifty::View::Mason::Request -View mason request
+
+=head1 DESCRIPTION
 
 Subclass of L<HTML::Mason::Request> which is customised for Jifty's use.
 
