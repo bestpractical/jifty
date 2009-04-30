@@ -5,7 +5,7 @@ build_requires:
 configure_requires:
   ExtUtils::MakeMaker: 6.42
 distribution_type: module
-generated_by: 'Module::Install version 0.84'
+generated_by: 'Module::Install version 0.85'
 license: Perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -131,4 +131,4 @@ requires:
   YAML::Syck: 0.71
   perl: 5.8.3
   version: 0
-version: 0.90409
+version: 0.90422
