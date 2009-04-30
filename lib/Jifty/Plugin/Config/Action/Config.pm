@@ -7,94 +7,57 @@ use UNIVERSAL::require;
 use Jifty::YAML;
 use File::Spec;
 
-use Jifty::Param::Schema;
-use Jifty::Action schema {
-    param
-      database_type => label is 'Database type',    # loc
-      render as 'Select', available are defer {
-        my %map = (
-            mysql  => 'MySQL',                      
-            Pg     => 'PostgreSQL',                 
-            SQLite => 'SQLite',                     
-            Oracle => 'Oracle',                     
-        );
+use Scalar::Defer; 
+sub arguments {
+    my $self = shift;
+    return $self->{__cached_arguments} if ( $self->{__cached_arguments} );
+    my $args = {
+        'etc/config.yml' => {
+            render_as     => 'Textarea',
+            rows => 60,
+            default_value => defer {
+                local $/;
+                open my $fh, '<', Jifty::Util->app_root . '/etc/config.yml';
+                return <$fh>;
+            }
+        },
+    };
 
-        for ( keys %map ) {
-            my $m = 'DBD::' . $_;
-            delete $map{$_} unless $m->require;
-        }
-
-        [ map { { display => $map{$_}, value => $_ } } keys %map ];
-      },
-      default is defer { 
-          Jifty->config->framework('Database')->{'Driver'}
-      };
-    param
-      database_host => label is 'Database host',    # loc
-      hints is
-      "The domain name of your database server (like 'db.example.com')",    
-      default is defer {
-          Jifty->config->framework('Database')->{'Host'}
-      };
-
-    param
-      database_name => label is 'Database name',                            
-      default is defer {
-          Jifty->config->framework('Database')->{'Database'}
-      };
-    param
-      database_user => label is 'Database username',                 
-      default is defer { 
-          Jifty->config->framework('Database')->{'User'}
-      };
-
-    param
-      database_password => label is 'Database password',             
-      render as 'Password';
-};
+    return $self->{__cached_arguments} = $args;
+}
 
 =head2 take_action
 
 =cut
 
-my %database_map = (
-    name => 'Database',
-    type => 'Driver',
-);
-
 sub take_action {
     my $self = shift;
 
-    my $stash = Jifty->config->stash;
-    for my $arg ( $self->argument_names ) {
-        if ( $self->has_argument($arg) ) {
-            if ( $arg =~ /database_(\w+)/ ) {
-                my $key = $database_map{$1} || ucfirst $1;
-                my $database = $stash->{'framework'}{'Database'};
-                if ( $database->{$key} ne $self->argument_value($arg) ) {
-                    $database->{$key} = $self->argument_value($arg);
-                }
+    if ( $self->has_argument('etc/config.yml') ) {
+        my $new_config = $self->argument_value( 'config' );
+        eval { Jifty::YAML::Load( $new_config ) };
+        if ( $@ ) {
+# invalid yaml
+            $self->result->message( _( "invalid yaml" ) );
+            $self->result->failure(1);
+            return;
+        }
+        else {
+            if ( open my $fh, '>', Jifty::Util->app_root . '/etc/config.yml' ) {
+                print $fh $new_config;
+                close $fh;
+            }
+            else {
+                $self->result->message(
+                    _("can't write to etc/config.yml: $1") );
+                $self->result->failure(1);
+                return;
             }
         }
     }
+    $self->report_success;
 
-    # hack
-    # do *not* dump all the Plugins stuff because Plugins is arrayref
-    # dumping all will cause duplicate problems
-    # instead, we keep the old Plugins
-    my $site_config_file = $ENV{'JIFTY_SITE_CONFIG'}
-      || Jifty::Util->app_root . '/etc/site_config.yml';
-    if ( -e $site_config_file ) {
-        my $site_config = Jifty::YAML::LoadFile($site_config_file);
-        $stash->{framework}{Plugins} = $site_config->{framework}{Plugins};
-    }
-    else {
-        $stash->{framework}{Plugins} = [];
-    }
-
-    Jifty::YAML::DumpFile( $site_config_file, $stash );
-    $self->report_success unless $self->result->failure;
-
+    Jifty->config->load;
     Jifty->web->tangent( url => '/__jifty/config/restart.html' );
 
     return 1;

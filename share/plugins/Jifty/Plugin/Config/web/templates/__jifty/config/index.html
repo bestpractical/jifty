@@ -3,9 +3,7 @@
 <h1><% _('Configuration') %></h1>
 
 <% Jifty->web->form->start %>
-% for my $field ( @fields ) {
-<% $action->form_field($field) %>
-% }
+<% $action->form_field('etc/config.yml') %>
 <% Jifty->web->form->submit( label => _('Save and restart server') ) %>
 <% Jifty->web->form->end %>
 
@@ -14,7 +12,5 @@
 <%init>
 my $action = Jifty->web->new_action( class =>
 'Jifty::Plugin::Config::Action::Config' );
-my @fields = qw/database_type database_name database_host 
-database_user database_password/;
 </%init>
 
