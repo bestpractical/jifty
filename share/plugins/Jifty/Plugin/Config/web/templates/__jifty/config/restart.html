@@ -2,11 +2,17 @@
 <html>
 <head>
 <title><% _('restarting' ) %></title>
-<meta http-equiv="refresh" content="5;url=<% Jifty::Plugin::Config->after_restart_url %>" />
+<meta http-equiv="refresh" content="<% $seconds %>;url=<% $url %>" />
 </head>
 <body>
-<h1>please wait for 5 seconds so the server can restart</h1>
+<h1>please wait for <% $seconds %> seconds so the server can restart,
+    then we'll redirect to <a href="<% $url %>">here</a></h1>
 </body>
 </html>
 % Jifty->handler->buffer->flush_output();
 % $Jifty::SERVER->restart;
+
+<%init>
+my $seconds = Jifty::Plugin::Config->wait_seconds;
+my $url = Jifty::Plugin::Config->after_restart_url;
+</%init>
