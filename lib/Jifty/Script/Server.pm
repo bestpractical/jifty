@@ -161,7 +161,6 @@ sub run {
     Log::Log4perl->get_logger($server_class)->less_logging(3)
         if $self->{quiet};
     $Jifty::SERVER = $server_class->new(port => $self->{port});
-    $Jifty::SERVER->{server}{no_client_stdout} = 1;
     my @args;
     push @args, $_ => $self->{$_} for grep {exists $self->{$_}} qw/user group host/;
     $Jifty::SERVER->run( @args );
