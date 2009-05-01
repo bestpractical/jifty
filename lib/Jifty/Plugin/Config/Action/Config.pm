@@ -18,7 +18,7 @@ sub arguments {
     my $self = shift;
     return $self->{__cached_arguments} if ( $self->{__cached_arguments} );
     my $args = {
-        'etc/config.yml' => {
+        'config' => {
             render_as     => 'Textarea',
             rows => 60,
             default_value => defer {
@@ -39,7 +39,7 @@ sub arguments {
 sub take_action {
     my $self = shift;
 
-    if ( $self->has_argument('etc/config.yml') ) {
+    if ( $self->has_argument('config') ) {
         my $new_config = $self->argument_value( 'config' );
         eval { Jifty::YAML::Load( $new_config ) };
         if ( $@ ) {
