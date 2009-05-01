@@ -10,7 +10,7 @@ Jifty::Server::Prefork::NetServer - Sets up children for Jifty::Server::Prefork
 
 =head2 new
 
-Store the created L<Net::Server::Fork> object away after creating it.
+Store the created L<Net::Server::PreFork> object away after creating it.
 
 =cut
 
