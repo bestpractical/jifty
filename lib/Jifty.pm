@@ -538,7 +538,7 @@ sub background {
     } else {
         close STDOUT;
         close STDIN;
-        $Jifty::SERVER->close_sockets if $Jifty::SERVER;
+        $Jifty::SERVER->close_client_sockets if $Jifty::SERVER;
         Jifty->setup_database_connection();
         $sub->();
         exit;
