@@ -525,8 +525,8 @@ sub app_instance_id {
 
 =head2 background SUB
 
-Forks a background process, and ensures that database connections are
-not shared with the parent process.
+Forks a background process, and ensures that database connections and
+sockets are not shared with the parent process.
 
 =cut
 
@@ -538,6 +538,7 @@ sub background {
     } else {
         close STDOUT;
         close STDIN;
+        $Jifty::SERVER->close_sockets if $Jifty::SERVER;
         Jifty->setup_database_connection();
         $sub->();
         exit;

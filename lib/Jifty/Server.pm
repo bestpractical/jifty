@@ -149,5 +149,22 @@ sub restart {
     $self->SUPER::restart;
 }
 
+=head2 close_client_sockets
+
+Closes all active client connections.
+
+=cut
+
+sub close_client_sockets {
+    my $self = shift;
+    close STDOUT;
+    close STDIN;
+    if ($self->{net_server}) {
+        close $self->{net_server}{server}{client};
+    } else {
+        close $self->{_stdio_handle};
+    }
+}
+
 1;
 

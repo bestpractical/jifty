@@ -8,6 +8,19 @@ Jifty::Server::Prefork::NetServer - Sets up children for Jifty::Server::Prefork
 
 =head1 METHODS
 
+=head2 new
+
+Store the created L<Net::Server::Fork> object away after creating it.
+
+=cut
+
+sub new {
+    my $class = shift;
+    my $self = $class->SUPER::new(@_);
+    $Jifty::SERVER->{net_server} = $self;
+    return $self;
+}
+
 =head2 child_init_hook
 
 Sets up the database connection when spawning a new child

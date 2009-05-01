@@ -8,6 +8,19 @@ Jifty::Server::Fork::NetServer - Sets up children for Jifty::Server::Fork
 
 =head1 METHODS
 
+=head2 new
+
+Store the created L<Net::Server::Fork> object away after creating it.
+
+=cut
+
+sub new {
+    my $class = shift;
+    my $self = $class->SUPER::new(@_);
+    $Jifty::SERVER->{net_server} = $self;
+    return $self;
+}
+
 =head2 post_accept_hook
 
 After forking every connection, resetup the database connections so we
