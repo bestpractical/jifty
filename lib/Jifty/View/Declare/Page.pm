@@ -218,7 +218,7 @@ sub render_jifty_page_detritus {
     # wrapper, make sure you have this as well.
     if ( Jifty->config->framework('PubSub')->{'Enable'} && Jifty::Subs->list )
     {
-        script { outs_raw('new Jifty.Subs({}).start();') };
+        script { outs_raw('jQuery(document).ready(function(){new Jifty.Subs({}).start()});') };
     }
 }
 
