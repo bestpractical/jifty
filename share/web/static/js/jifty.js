@@ -706,7 +706,7 @@ Behaviour.register({
             var button = document.createElement('input');
             button.setAttribute('type',  'button');
             jQuery(button).insertAfter(e);
-            jQuery(button).timepickr({});
+            jQuery(button).timepickr({val: 'Pick time'});
             jQuery(button).blur( function() { 
                 var old_value = jQuery(this).prev().val();
                 if ( Jifty.Calendar.dateRegex.test(old_value) ) {
