@@ -41,6 +41,7 @@ sub take_action {
 
     if ( $self->has_argument('config') ) {
         my $new_config = $self->argument_value( 'config' );
+        $new_config =~ s/\r\n/\n/g; #textarea gives us dos format
         eval { Jifty::YAML::Load( $new_config ) };
         if ( $@ ) {
 # invalid yaml
