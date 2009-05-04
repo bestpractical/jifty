@@ -13,7 +13,12 @@
 % $Jifty::SERVER->restart;
 
 <%init>
-my $seconds = Jifty::Plugin::Config->wait_seconds;
-my $url = Jifty::Plugin::Config->after_restart_url;
+$seconds ||= Jifty::Plugin::Config->wait_seconds;
+$url ||= Jifty::Plugin::Config->after_restart_url;
 $url = Jifty->config->framework('Web')->{BaseURL} . ':' .  Jifty->config->framework('Web')->{Port} . $url unless $url =~ /^https?:/;
 </%init>
+
+<%args>
+$seconds => undef
+$url => undef
+</%args>
