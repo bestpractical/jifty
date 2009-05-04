@@ -1,4 +1,4 @@
-﻿=encoding utf8
+=encoding utf8
 
 =head1 題名
 
@@ -6,8 +6,7 @@ Jifty::Manual::Tutorial - あっという間にゼロからJifty
 
 =head1 説明
 
-このチュートリアルを読めば、Jiftyではじめてのアプリケーションを
-構築するにあたって知っておくべきことはすべてわかるはずです。
+このチュートリアルを読めば、Jiftyではじめてのアプリケーションを構築するにあたって知っておくべきことはすべてわかるはずです。
 
 =cut
 
@@ -15,37 +14,19 @@ Jifty::Manual::Tutorial - あっという間にゼロからJifty
 
 =head2 必要なもの
 
-ここでは――少なくともこのチュートリアルの執筆時点で――インス
-トールしておくべきものを紹介します。
+ここでは――少なくともこのチュートリアルの執筆時点で――インストールしておくべきものを紹介します。
 
 =head2 Jiftyのインストール
 
-そんなに構えなくても大丈夫。私たちはDRY (Don't Repeat Yourself) 
-の原則をとても大事に思っていますし、だからこそPerlやCPANを愛し
-ているのですから。JiftyはCPANのすばらしいコードをたくさん利用し
-ています。直接依存しているCPANパッケージは全部あわせて60にもな
-りましたが、そのほとんどはクロス・プラットフォームなピュアPerl
-パッケージですから、Perlを利用できるプラットフォームならインス
-トールするだけでばっちり動くはずです。
+そんなに構えなくても大丈夫。私たちはDRY (Don't Repeat Yourself) の原則をとても大事に思っていますし、だからこそPerlやCPANを愛しているのですから。JiftyはCPANのすばらしいコードをたくさん利用しています。直接依存しているCPANパッケージは全部あわせて100にもなりましたが、そのほとんどはクロス・プラットフォームなピュアPerlパッケージですから、Perlを利用できるプラットフォームならインストールするだけでばっちり動くはずです。
 
-それだけではありません。次から次へとライブラリをダウンロードす
-るだけで一日が終わってしまわないよう、バンドルできるライブラリ
-はすべてJiftyパッケージのなかにまとめるようにしています。運が
-よければ、（Perlのデータベース・インタフェースやJiftyがデフォ
-ルトで利用する組み込みSQLiteのように）実際にOSにあわせてコンパ
-イルしなければならないトリッキーなライブラリをいくつかインスト
-ールするだけですみます。
+それだけではありません。次から次へとライブラリをダウンロードするだけで一日が終わってしまわないよう、バンドルできるライブラリはすべてJiftyパッケージのなかにまとめるようにしています。Jiftyのインストーラはシステムに必要なモジュールを調べて一気にダウンロード、インストールできるようになっています。でも、ご心配なく。システムの構成を変更する前にはまずみなさんの確認を取るようになっていますから。
 
-http://download.jifty.org/pub/jifty/ から完全版をダウンロード
-するのでも、CPANからインストールするのでも結構ですが、CPANから
-「スリム」版を入手する場合は、依存パッケージは自分でインストー
-ルする必要があります（その場合でもできる限り簡単にインストール
-できるようにはしてありますが）。すぐに始めたいのであれば、以下
-のURLからどうぞ。
+ほとんどのシステムでは、PerlにバンドルされているCPANモジュールを使えばJiftyをダウンロードしてインストールできます。
 
-    http://download.jifty.org/pub/jifty/
+  # perl -MCPAN -e'install Jifty'
 
-いずれにしても、インストールの手順は同じです。
+JiftyのC<.tar.gz>をダウンロードしてきた場合は手動でインストールすることもできます。
 
   # tar xzvf jifty-<version>.tgz
   # cd jifty-<version>
@@ -54,185 +35,142 @@ http://download.jifty.org/pub/jifty/ から完全版をダウンロード
   # make test
   # make install
 
-テストが通らないようでしたら、お話を聞きたいので、
-C<jifty-devel@lists.jifty.org>に参加して失敗したことを報告して
-ください（メーリング・リストへの参加方法については以下の
-「L</困ったときは>」をご覧ください）。
+テストが通らないようでしたら、お話を聞きたいので、C<jifty-devel@lists.jifty.org>に参加して失敗したことを報告してください（メーリング・リストへの参加方法については以下の「L</困ったときは>」をご覧ください）。
 
 =head2 足場をつくる（スキャフォールディング）
 
-Jiftyをうまくインストールできたら、準備完了。はじめてのアプリケ
-ーションをつくってみましょう。
+Jiftyをうまくインストールできたら、準備完了。はじめてのアプリケーションをつくってみましょう。
 
-Jiftyはわざと少々ミニマリスト的につくってあります。アプリケーシ
-ョンを走らせるにあたって、「本当に」必要なのはF<jifty>というコ
-マンドラインツールのみなのです（新しくつくったアプリケーション
-のF<bin/>ディレクトリに入っています）。
+アプリケーションを走らせるにあたって、「本当に」必要なのはF<jifty>というコマンドラインツールのみです（新しくつくったアプリケーションのF<bin/>ディレクトリに入っています）。
 
-もちろん往々にしてもう少し仕掛けを用意しておいた方が作業は楽に
-なるものですから、そのような仕掛けを構築するツールも用意して
-あります。
+もちろんふつうはもう少しディレクトリやファイルを用意しておいた方が作業が楽になります。Jiftyにはそのような構造を構築するツールもついてきます。
 
-どこか、新しいJiftyアプリケーションをつくってもかまわないディレ
-クトリに移動してください（Jiftyはサブディレクトリをつくります）。
+どこか、新しいJiftyアプリケーションをつくってもかまわないディレクトリに移動してください（Jiftyはサブディレクトリをつくります）。
 
   # jifty app --name MyWeblog
-  Can't guess application root from current path (/your/current/directory) or bin path (/usr/bin)
-  Creating new application MyWebLog
-  Creating directory lib
-  Creating directory lib/MyWebLog
-  Creating directory bin
-  Creating directory etc
-  Creating directory doc
-  Creating directory log
-  Creating directory web
-  Creating directory web/templates
-  Creating directory web/static
-  Creating directory lib/MyWebLog/Model
-  Creating directory lib/MyWebLog/Action
-  Creating directory t
+  Creating new application MyWeblog
+  Creating directory MyWeblog/lib
+  Creating directory MyWeblog/lib/MyWeblog
+  Creating directory MyWeblog/bin
+  Creating directory MyWeblog/etc
+  Creating directory MyWeblog/doc
+  Creating directory MyWeblog/log
+  Creating directory MyWeblog/var
+  Creating directory MyWeblog/var/mason
+  Creating directory MyWeblog/share
+  Creating directory MyWeblog/share/po
+  Creating directory MyWeblog/share/web
+  Creating directory MyWeblog/share/web/templates
+  Creating directory MyWeblog/share/web/static
+  Creating directory MyWeblog/lib/MyWeblog/Model
+  Creating directory MyWeblog/lib/MyWeblog/Action
+  Creating directory MyWeblog/t
   Creating configuration file MyWeblog/etc/config.yml
 
 では、ひとつひとつ見ていきましょう。
 
 =over
 
+=item lib
+
+F<lib/>はみなさんのアプリケーションのコードを入れるところです。アプリケーションはふつういくつかのクラスで構成されます。
+
 =item bin
 
-F<bin/>のなかにはF<jifty>というコマンド・ディスパッチャが入って
-います。特に重要なコマンドとしては、データベースのスキーマを設定
-したり更新したりするC<schema>と、スタンドアロンのウェブサーバを
-起動するC<server>があります。F<jifty>にどのようなコマンドがある
-か知りたい場合は次のようにタイプしてください。
+F<bin/>のなかにはF<jifty>というコマンド・ディスパッチャが入っています。特に重要なコマンドとしては、データベースのスキーマを設定したり更新したりするC<schema>と、スタンドアロンのウェブサーバを起動するC<server>があります。F<jifty>にどのようなコマンドがあるか知りたい場合は次のようにタイプしてください。
 
     jifty help
 
 =item etc
 
-F<etc/>には設定ファイルが入ります。設定ファイルがない場合はJifty
-が適切なデフォルト値を用意します。
+F<etc/>には設定ファイルが入ります。設定ファイルがない場合はJiftyが適切なデフォルト値を用意します。
 
 =item doc
 
-Jiftyの魔法もドキュメントまでは書いてはくれませんが、「みなさん
-が」ドキュメントを書くときはF<doc/>に入れてください。
+いかにJiftyの魔法でもドキュメントまでは書いてはくれませんが、「みなさんが」ドキュメントを書くときはF<doc/>に入れてください。
 
 =item log
 
-JiftyはL<Log::Log4perl>を使ってログの設定を行います。デフォルト
-ではF<log>ディレクトリにF<server.log>とF<error.log>というログを
-吐き出します。
+JiftyはL<Log::Log4perl>を使ってログの設定を行います。デフォルトではF<log>ディレクトリにF<server.log>とF<error.log>というログを吐き出します。
 
-=item web/templates
+=item var
 
-JiftyはL<HTML::Mason>をメインのテンプレート・システムとしていま
-す。アプリケーションのテンプレートはF<web/templates/>に入れてく
-ださい。Jiftyには最初からアプリケーションの「スケルトン」が用意
-されています（F<share/web/templates/>にインストールされています）。
-このデフォルト・アプリケーションは、基本的なアプリケーションを
-急いで準備したいときには便利です。ただし、もっと複雑なアプリケ
-ーションを構築するときにはなにがしかのカスタマイズを行う必要が
-あるでしょう。
+Jiftyはサーバが走っている間はここにキャッシュファイルを保管します。このディレクトリにはいっさい手を触れる必要はありません。
 
-PerlがどこにJiftyのデフォルト・テンプレートをインストールしたか
-知りたい場合は次のようにします。
+=item share/web/po
+
+Jiftyは国際化にも対応しています。翻訳("portable object templates")はF<share/web/po/>に入れてください。
+
+=item share/web/templates
+
+モダンなJiftyアプリケーションのテンプレートとしてはL<Template::Declare>をおすすめしていますが、L<HTML::Mason>のテンプレートもサポートしています。MasonのテンプレートはF<share/web/templates/>に入れてください。Jiftyに最初からついてくるアプリケーションの「ひな形」もF<share/web/templates/>にインストールされます。このデフォルトアプリケーションは、基本的なアプリケーションを手っ取り早くつくるときには便利ですが、アプリケーションが進化していくにつれてカスタマイズが必要になっていくことでしょう。
+
+PerlがどこにJiftyのデフォルト・テンプレートをインストールしたか知りたい場合は次のようにします。
 
   perl -MJifty::Util -e 'print Jifty::Util->share_root'
 
-=item web/static
+=item share/web/static
 
-ウェブ・アプリケーションが提供する「素材」のなかには、テンプレ
-ート・エンジンを通す必要のない（あるいは「通すべきでない」）も
-のも少なからずあります。
+ウェブ・アプリケーションが提供するコンテンツのなかには、テンプレート・エンジンを通す必要のない（あるいは「通すべきでない」）ものも少なからずあります。
 
-そのような静的ファイルについては、F<web/static/>に入れておいて
-ください。 適切な名前のテンプレートが見つからない場合はそこか
-らサーブされます。
+そのような静的ファイルについては、F<share/web/static/>に入れておいてください。適切な名前のテンプレートがない場合は静的ファイルがサーブされます。
 
-また、Jiftyには最初からCSSのスタイルシート、Javascriptライブラ
-リ、Ponyも用意されています。F</usr/local/share/jifty/web/static>
-のなかをご覧ください。
-
-=item lib/MyWebLog
-
-Jiftyのオブジェクト・モデルの詳細については
-L<Jifty::Manual::ObjectModel>をご覧ください。
-
-基本的なJiftyアプリケーションを構築するだけなら、気にかける必
-要があるのは「モデル」と「アクション」という二種類のクラスのみ
-です。
+また、Jiftyには最初からCSSのスタイルシート、Javascriptライブラリ、Ponyがついてきます。JiftyディストリビューションのF<share/web/static>のなか、あるいはJiftyがデフォルトテンプレートをインストールした場所をご覧ください。
 
 =item lib/MyWebLog/Model
 
-アプリケーションの本当の基礎となるものは
-C<lib/B<アプリケーション名>/Model>に入っています。ここに入って
-いるクラスはアプリケーションのデータ構造とそれらの相関関係を定
-義するものです。Jiftyはこのモデル・クラスを利用して必要なときに
-データベースのスキーマを設定・更新します。
+アプリケーションの本当の基礎となるものはC<lib/MyWeblog/Model>に入っています。ここに入っているクラスはアプリケーションのデータ構造とそれらの相関関係を定義するものです。Jiftyはこのモデル・クラスを利用して必要なときにデータベースのスキーマを設定・更新します。
+
+Jiftyのオブジェクトモデルの詳細についてはL<Jifty::Manual::ObjectModel>をご覧ください。
 
 =item lib/MyWebLog/Action
 
-先ほどは「モデル」と「アクション」さえ気にかけていればいいと言
-いましたが、それは真実の一面でしかありません。たしかにJiftyは
-「モデル」となるデータベースに対する基本的なやりとり（C<CREATE、
-READ、UPDATE、DELETE>) をする「アクション」を用意してくれるの
-ですが、なにがしかの変更を加えたければ、変更すべきものはここに
-あります。
+アクションはモデル・クラスに対するAPIです。ある意味アクションはHTMLフォームだと思われるかもしれませんが、それをもっと一般化したものです。JiftyはみなさんのB<モデル>に対して基本的なデータベース操作(C<CREATE>, C<READ>, C<UPDATE>, C<DELETE>)を行うB<アクション>を動的に生成します。
 
 =item t
 
-Jiftyはアプリケーションの土台を一式用意しますが、まだあらゆる
-テストを用意することまではできません（もっとも、生成したモデル
-・クラスに対する簡単なテストは用意します）。
+Jiftyはアプリケーションの土台を一式用意しますが、まだあらゆるテストを用意することまではできません（もっとも、生成したモデル・クラスに対する簡単なテストは用意します）。
 
 =back
 
 =head2 データ・モデルを構築する
 
-このチュートリアル・アプリケーションの名前がB<MyWebLog>である
-ことからも想像がつくかと思いますが、ここでは例題として簡単なウ
-ェブログ・アプリケーションをとりあげます。今後のチュートリアル
-では、認証、コメント、RSSやAtomフィードの機能を追加する予定です。
+このチュートリアル・アプリケーションの名前がB<MyWebLog>であることからも想像がつくかと思いますが、ここでは例題として簡単なウェブログ・アプリケーションをとりあげます。今後のチュートリアルでは、認証やコメント、RSSやAtomフィードの機能を追加する予定です。
 
 =head3 記事
 
-ウェブログの中心はふつう記事です。だから、当然最初につくるモデ
-ルはC<post>になります。
+ウェブログの中心はふつう記事です。だから、当然最初につくるモデルはC<post>になります。
 
   # cd MyWeblog
   # jifty model --name Post
-  Writing file /tmp/MyWeblog/t/00-model-Post.t
   Writing file /tmp/MyWeblog/lib/MyWeblog/Model/Post.pm
+  Writing file /tmp/MyWeblog/t/00-model-Post.t
 
-すごいですね！　これでB<Post>というモデルができたのです（もっと
-も、いまのところモデルらしいことはしませんけれどね）。
+すごいですね！　これでB<Post>というモデルができたのです（もっとも、いまのところモデルらしいことはしませんけれどね）。
 
 お好きなエディタでF<lib/MyWeblog/Model/Post.pm>を開いてください。
 
 このような画面になるはずです。
 
-  package MyWeblog::Model::Post::Schema;
-  use Jifty::DBI::Schema;
-
-  # Your column definitions go here.  See L<Jifty::DBI::Schema> for
-  # documentation about how to write column definitions.
-
+  use strict;
+  use warnings;
+  
   package MyWeblog::Model::Post;
-  use base qw/MyWeblog::Record/;
-
+  use Jifty::DBI::Schema;
+  
+  use MyWeblog::Record schema {
+  
+  };
+  
   # Your model-specific methods go here.
-
+  
   1;
 
-では、このモデル・クラスに記事の構造を教えましょう。まずは記事
-にC<body>とC<title>、C<category>を用意します（将来的にはこの
-C<category>をC<tags>テーブルにアップグレードして完全なフォーク
-ソノミー対応にする予定です）。
+では、このモデル・クラスに記事の構造を教えましょう。まずは記事にC<body>とC<title>を用意します（将来的にはC<category>を追加したり、C<category>をC<tags>テーブルにアップグレードして、完全なフォークソノミー対応にする予定です）。
 
 カーソルを以下の行のすぐ下に移動してください。
 
-  # Your column definitions go here.  See L<Jifty::DBI::Schema> for
-  # documentation about how to write column definitions.
+  use MyWeblog::Record schema {
 
 以下の行を加えます。
 
@@ -248,188 +186,249 @@ C<category>をC<tags>テーブルにアップグレードして完全なフォ�
 
 モデル・クラスを保存しましょう。
 
-=head2 データベースのセットアップ
-
-ＯＫ。今度はMyWeblogのデータベースを初期化します。デフォルトで
-はSQLiteデータベース・エンジンを使うようにセットアップされます
-ので、PostgreSQLやMySQLを使いたい場合は、F<etc/jifty.yml>に何
-行か付け足す必要があります（C<Jifty::Config>にもう少し詳しい説
-明があります）。
-
-  # jifty schema --setup
-  INFO - Generating SQL for application MyWeblog...
-  INFO - Using MyWeblog::Model::Post
-  INFO - Using Jifty::Model::Schema
-  INFO - Set up version v0.0.1
-
 =head2 Jiftyのアプリケーション・サーバを起動する
 
-ＯＫ。これで簡単ながら動作するアプリケーションができました。
-ウェブサーバを起動して見てみましょう。AJAXのきいた管理UIやオ
-ンライン・ドキュメント・ブラウザ、Ponyを確かめてみてください。
+これで簡単ながら動作するアプリケーションができました。C<jifty server>とタイプしてウェブサーバを起動して見てみましょう。
 
-  # ./bin/jifty server
-  INFO - You can connect to your server at http://localhost:8888/
+最初に目にするのは、Jiftyはデータベースがないことに気がついたので用意します、というメッセージでしょう。Jiftyは、デフォルトではSQLiteデータベースを使ってアプリケーションをセットアップします。PostgreSQLやMySQLを使いたい場合はF<etc/config.yml>に多少設定を追加する必要があります(L<Jifty::Config>にもう少し詳しい説明があります)。
+
+    # jifty server
+    WARN - Application schema has no version in the database.
+    WARN - Automatically creating your database.
+    INFO - Generating SQL for application MyWeblog...
+    INFO - Using MyWeblog::Model::Post, as it appears to be new.
+    INFO - Using Jifty::Model::Session, as it appears to be new.
+    INFO - Using Jifty::Model::Metadata, as it appears to be new.
+    INFO - Set up version 0.0.1, jifty version 0.81208
+    INFO - You can connect to your server at http://localhost:8888/
+
+最後の行以外はデータベースの設定についての情報です。これはJiftyがデータベースを変更したときにしか表示されません。
+
+最後の行には、ブラウザで表示するときのURLが書いてあります。試しに見てみてください。AJAXのきいた管理UIやオンラインドキュメントブラウザ、Ponyをお見逃しなく。
+
+プラットフォームによっては"./bin/jifty server"とタイプする必要があるかもしれません。
 
 =head2 ユーザ・インタフェースの構築
 
-管理画面を使えばアプリケーションのデータを管理するのに必要な
-ものはすべて手に入りますが、それではあまりウェブログらしくは
-ありません。
+管理画面を使えばアプリケーションのデータを管理するのに必要なものはすべて手に入ります。エントリを追加したり更新したり削除したりもできるのですが、それではあまりウェブログらしくはありません。
 
 =head3 記事を投稿する
 
-新しいエントリを投稿するページをつくりましょう。
+まずは新しいエントリを投稿するページをつくりましょう。
 
-  # cd web/templates/
+エディタで新しくF<lib/MyWeblog/View.pm>というファイルを開いて、このようにしてください。
 
-F<post>という新規ファイルをテキスト・エディタで開いて、この
-ようにしてください。
-
-  <%init>
-  my $action = Jifty->web->new_action(class =>'CreatePost');
-  </%init>
-
-  <&|/_elements/wrapper, title => "Post to your weblog" &>
-  <% Jifty->web->form->start() %>
-  <% Jifty->web->form->next_page( url => '/') %>
-  <% $action->form_field('title') %>
-  <% $action->form_field('body') %>
-  <% Jifty->web->form->submit( label => 'Post' ) %>
-  <% Jifty->web->form->end() %>
-  </&>
+  package MyWeblog::View;
+  use strict;
+  use warnings;
+  use Jifty::View::Declare -base;
+  
+  template post => page { title => 'Post Entry' } content {
+      my $action = new_action(class => 'CreatePost');
+  
+      form {
+          render_action $action;
+          form_submit(label => 'Post');
+      }
+  };
+  
+  1;
 
 =head3 閲覧する
 
-「基本的な」エントリ一覧をつくるのは本当に簡単です。AJAXでペー
-ジングするきれいな一覧の方はもう少し複雑ですが、ここでは両方の
-やり方を紹介します。お好みの方を選んでください。
+「基本的な」エントリ一覧をつくるのは本当に簡単です。AJAXでページングするきれいな一覧の方はもう少し複雑ですが、ここでは両方のやり方を紹介します。お好みの方を選んでください。
 
 =head4 手っ取り早いやり方
 
-F<web/templates>ディレクトリでF<index.html>という新規ファイル
-をテキスト・エディタで開き（ウェブサーバはC</index.html>という
-URLをサイトの「デフォルト」ページとしてくれるはずです）、この
-ようにしてください。
+F<lib/MyWeblog/View.pm>を開いて、C<post>テンプレートとファイル末尾の"1;"の間にこのようなコードを追加してください。
 
-  <%init>
-  my $posts = MyWeblog::Model::PostCollection->new();
-  $posts->unlimit();
-  </%init>
+  template '/' => page {
+      # Get all posts.
+      my $posts = MyWeblog::Model::PostCollection->new;
+      $posts->unlimit;
+  
+      # Display each post in a <dl>.
+      dl {
+          while (my $post = $posts->next) {
+              dt { $post->title }
+              dd { $post->body  }
+          }
+      }
+  };
 
-  <&|/_elements/wrapper, title => Jifty->config->framework('ApplicationName') &>
-  <dl>
-  % while (my $post = $posts->next) {
-   <dt><%$post->title%></dt>
-   <dd><%$post->body%></dd>
-  % }
-  </dl>
-  </&>
+これでC<http://localhost:8888>に行くと、すべてのエントリが迎えてくれるようになります。
 
 =head4 複雑だけどクールなツールをふんだんに使う方法
 
-「複雑な方法」ではJiftyの上級機能のひとつである「ページ領域
-（Page regions）」というものを使います。領域を指定しておくと、
-最近の高性能ブラウザならAJAXで、C<lynx>やC<w3m>、携帯電話のブ
-ラウザのように機能が限定されたブラウザでも通常のGETリクエスト
-を使って、ページの一部だけを独立してリロードすることが
-できるのです。
+「複雑な方法」ではJiftyの上級機能のひとつである「ページ領域（Page regions）」というものを使います。領域を指定しておくと、最近の高性能なブラウザならAJAXで、C<lynx>やC<w3m>のように機能が限定されたブラウザでも通常のGETリクエストを使って、ページの一部だけを独立してリロードすることができます。
 
-このアプローチの欠点は、指定する領域ごとに固有の「部品」ファイ
-ルを用意しなければならないことです。
+このアプローチの欠点は、指定する領域ごとに固有のテンプレートを用意しなければならないことです。でも、うれしいことに、これは領域の問題を抜きにしてもよいデザインの仕方といえます。
 
-複雑な方法も、最初は簡単な方法とほとんど同じです。テキスト・エ
-ディタでF<web/templates/index.html>という新規ファイルを開いて、
-以下のように書き込んでください。
+複雑な方法も、最初は簡単な方法と同じです。F<lib/MyWeblog/View.pm>の'/'テンプレートをこのようなコードで置き換えてください（シンプルにしてしまうのが怖ければ追加しても結構です）。
 
-  <&|/_elements/wrapper, title => Jifty->config->framework('ApplicationName') &>
+  template '/' => page {
+      render_region(
+          name => 'myweblog-posts',
+          path => '/fragments/page_of_posts',
+      );
+  };
 
-  <% Jifty->web->region(name => "myweblog-posts",
-                        path => "/fragments/page_of_posts") %>
-  </&>
+勘のいい方ならたぶんもうおわかりでしょうが、今度はF<lib/MyWeblog/View.pm>の中にC</fragments/page_of_posts>というテンプレートをつくる必要があります。このようにしてください。
 
-勘のいい方ならたぶんもうおわかりでしょうが、今度は
-F<web/templates/fragments/page_of_posts>というファイルをつく
-って、以下のようにする必要があります。
+  template '/fragments/page_of_posts' => sub {
+      # Retrieve the current page argument, defaulting to 1.
+      my $page = get('page') || 1;
+      
+      # Get all posts.
+      my $posts = MyWeblog::Model::PostCollection->new;
+      $posts->unlimit;
+      
+      # Display up to three posts on the current page.
+      $posts->set_page_info(
+          current_page => $page,
+          per_page     => 3,
+      );
+  
+      # Notify the user what page they're on if there are multiple.
+      if ($posts->pager->last_page > 1) {
+          p { "Page $page of " . $posts->pager->last_page }
+      }
+  
+      # Display the current page of posts.
+      dl {
+          attr { class => 'list' };
+  
+          while (my $post = $posts->next) {
+              dt { $post->title }
+              dd { $post->body  }
+          }
+      };
+  
+      # Previous page link, the 'page' argument here will set a new value when
+      # this region is invoked again.
+      if ($posts->pager->previous_page) {
+          hyperlink(
+              label => 'Previous Page',
+              onclick => {
+                  args => {
+                      page => $posts->pager->previous_page,
+                  },
+              },
+          );
+      }
+  
+      # Next page link.
+      if ($posts->pager->next_page) {
+          hyperlink(
+              label => 'Next Page',
+              onclick => {
+                  args => {
+                      page => $posts->pager->next_page,
+                  },
+              },
+          );
+      }
+  };
 
-  <%args>
-  $page => 1
-  </%args>
-  <%init>
-  my $posts = MyWeblog::Model::PostCollection->new();
-  $posts->unlimit();
-  $posts->set_page_info( current_page => $page,
-                         per_page     => 25
-                       );
-  $m->out("No items found.") if ($posts->pager->total_entries == 0);
+さて、もう一度Jiftyのウェブサーバを起動してみましょう。ブラウザでC</post>を表示して、3つ以上記事を作成してみてください。トップページに戻って、AJAXの利いたC<Next Page>とC<Previous Page>というリンクがあることもチェックしましょう。Javascriptを切るか、C<lynx>で見てみれば、AJAXが自動的にふつうのページの読み込みに変わる様子が確認できます。これだけできて無料なのですから、ありがたいことですね!
 
-  </%init>
-  % if ($posts->pager->last_page > 1) {
-     Page <% $page %> of <% $posts->pager->last_page %>
-  % }
-  <dl class="list">
-  % while (my $post = $posts->next) {
-   <dt><%$post->title%></dt>
-   <dd><%$post->body%></dd>
-  % }
-  </dl>
+=head3 ところで、そのクラスはどこから来たの?
 
-  % if ($posts->pager->previous_page) {
-    <% Jifty->web->link( label => "Previous Page", onclick => { args => { page => $posts->pager->previous_page } } ) %>
-  % }
-  % if ($posts->pager->next_page) {
-    <% Jifty->web->link( label => "Next Page", onclick => { args => { page => $posts->pager->next_page } } ) %>
-  % }
-
-さて、もう一度Jiftyのウェブサーバを起動してみましょう。ブラウ
-ザでC</post>を表示して、記事を作成してみてください。
+C<MyWeblog::Model::PostCollection>というクラスを見て、あれっと思われた方もいるかもしれません。F<PostCollection.pm>というファイルは存在しないからです。JiftyはC<Jifty::ClassLoader>を使ってさまざまなクラスを自動的に生成しています。もちろんお好みとあればこれらの定義をオーバーライドすることもできます。詳しくはL<Jifty::ClassLoader>をご覧ください。
 
 =head2 ナビゲーション
 
-当然のことながら、投稿ページのURLを覚えていなければならないと
-いうのはいささか面倒なことです。ただし、メニューに「投稿」ボタ
-ンを用意するには、デフォルトのメニューをオーバーライドしなけれ
-ばなりません。
+当然のことながら、投稿ページのURLを覚えていなければならないというのはいささか面倒なことです。メニューに「投稿」ボタンを用意するには、デフォルトのメニューをオーバーライドしなければなりません。
 
-Jiftyの「デフォルト」メニューは（Ponyともども）アプリケーショ
-ンのデフォルト・テンプレートのなかのF<_elements/nav>にあります。
-さしあたっては、F<_elements/nav>をオーバーライドしましょう（こ
-こは改善中です）。
+ここではウェブログにディスパッチャを設定しましょう。ディスパッチャは、リクエストされたURLに応じて「なにをするか」を決めるものです。「テンプレートをレンダリングする前」という規則を追加すれば追加のメニューを設定できます。
 
-アプリケーションのF<web/templates>ディレクトリのなかに、
-F<_elements>というディレクトリをつくります。
+F<lib/MyWeblog/Dispatcher.pm>というファイルを新たに開いて、この内容を貼り付けてください。
 
-F<_elements>ディレクトリのなかにテキスト・エディタでC<nav>とい
-う新規ファイルをつくり、以下を挿入してください。
+  package MyWeblog::Dispatcher;
+  use strict;
+  use warnings;
+  use Jifty::Dispatcher -base;
+  
+  before '*' => run {
+      my $top = Jifty->web->navigation;
+      $top->child(Home => url => '/');
+      $top->child(Post => url => '/post', label => 'Post Article');
+  };
+  
+  1;
 
-  <%init>
-  my $top = Jifty->web->navigation;
-  $top->child( Home => url => "/");
-  $top->child( Post => url => "/post", 
-                       label => "Post Article");
-  </%init>
-
-メニュー・システムについての詳細はL<Jifty::Web::Menu>をご覧ください。
+メニューシステムの詳細はL<Jifty::Web::Menu>をご覧ください。
 
 =head2 おしまい！
 
-おおよそこれだけ知っていればJiftyアプリケーションの構築は始め
-られるはずです。私たちもJiftyをもっと使いやすく、またこのチュ
-ートリアルの「手強い部分」をなくすべく鋭意努力しています。
+おおよそこれだけ知っていればJiftyアプリケーションの構築は始められるはずです。私たちもJiftyをもっと使いやすく、またこのチュートリアルの「手ごわい部分」をなくすべく鋭意努力しています。
 
-ぜひC<jifty-devel>メーリング・リストに参加して、Jiftyをどう使
-っているか、使ってみて難しいとか使いづらいと思った点をお知らせ
-ください。
+ぜひC<jifty-devel>メーリング・リストに参加して、Jiftyをどう使っているか、使ってみて難しいとか使いづらいと思った点をお知らせください。
+
+=head1 そのほかのチュートリアル
+
+=over 4
+
+=item * データベースの管理について
+
+L<Jifty::Manual::Models>
+
+=item * Jiftyに何かをさせる
+
+L<Jifty::Manual::Actions>
+
+=item * ページ領域の使い方
+
+L<Jifty::Manual::PageRegions>
+
+=item * CSSとJS
+
+L<Jifty::Manual::UsingCSSandJS>,
+L<Jifty::Manual::JavaScript>
+
+=item * ウェブサービス
+
+L<Jifty::Manual::TutorialRest>に簡単な概要があります。
+
+=item * 継続 - 「ちょっと行ってきて」
+
+L<Jifty::Manual::Continuations>
+
+=item * アクセス管理とセキュリティ
+
+L<Jifty::Manual::AccessControl>
+
+=item * 本番環境へのデプロイ
+
+L<Jifty::Manual::Deploying>
+
+=item * データベースのアップグレード
+
+L<Jifty::Manual::Upgrading>
+
+=item * 一般的な作業のレシピ
+
+L<Jifty::Manual::Cookbook>
+
+=back
 
 =head1 困ったときは
 
+=head2 オンラインヘルプ
+
+C<jifty>のコマンドラインツールにはヘルプ機能が組み込まれています。
+
+  jifty help
+
+  jifty help <command>
+
+サーバが管理者モードで実行されているときは（設定ファイルにC<AdminMode>がない、または非ゼロになっている場合）、ブラウザで「Online Docs」をクリックすると、モジュールごとの膨大なドキュメント一覧が表示されます。
+
 =head2 メーリング・リストに参加する
 
-C<jifty-devel@lists.jifty.org>ではJiftyをどのように構築するか、
-何に困っているか等が話し合われています。
+C<jifty-devel@lists.jifty.org>ではJiftyをどのように構築するか、何に困っているか等が話し合われています。
 
-メーリング・リストに参加したい方は
-C<jifty-devel-subscribe@lists.jifty.org>にメールを送ってください。
+メーリング・リストに参加したい方はC<jifty-devel-subscribe@lists.jifty.org>宛にメールを送ってください。
 
 =head2 wikiを見る
 
@@ -437,36 +436,14 @@ wikiもあります！（というか、このwikiがJiftyのメイン・サイ�
 
 L<http://jifty.org/>に来て、書き込みしてみてください。
 
-このwikiは、I<Wifty>というJiftyベースのwikiで運用されています。
-ソースコードはjiftyのsubversionリポジトリから自由に入手可能です。
+このwikiは、I<Wifty>というJiftyベースのwikiで運用されています。ソースコードはjiftyのsubversionリポジトリから自由に入手可能です。
 
 =head1 バグを報告する
 
-Jiftyは信じられないほど初期の段階にありますので、バグが見つかっ
-たらC<jifty-devel@lists.jifty.org>に報告してください。
-
-=head1 予定されているチュートリアル
-
-将来的には以下のチュートリアルが予定されています。
-
-=over 4
-
-=item * アクセス・コントロールとセキュリティ
-
-=item * データ・モデルのアップグレード
-
-=item * ディスパッチャの詳細
-
-=item * 本番環境への移行
-
-=item * ウェブ・サービス
-
-=item * 継続についての詳細
-
-=back
+JiftyのバグはC<jifty-devel@lists.jifty.org>に報告してください。
 
 =head1 翻訳者
 
-石垣憲一（C<ishigaki_at_tcool.org>） L<http://www.tcool.org/>
+石垣憲一 (C<ishigaki_at_cpan.org>)
 
 =cut
