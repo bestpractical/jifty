@@ -94,6 +94,7 @@ non-terminals that are self-explanatory to perl-developers):
        | 'validator' 'is' subroutine_reference
        | 'immutable'
        | 'unreadable'
+       | 'display_length' 'is' number
        | 'max_length' 'is' number
        | 'mandatory'
        | 'not_null'

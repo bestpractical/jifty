@@ -498,6 +498,7 @@ qw( name
     type
     default
     readable writable
+    display_length
     max_length
     mandatory
     distinct

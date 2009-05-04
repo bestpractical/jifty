@@ -13,6 +13,7 @@ render_as
 label
 hints
 placeholder
+display_length
 max_length
 mandatory
 
@@ -122,14 +123,16 @@ sub accessors {
     shift->SUPER::accessors(), qw(name label input_name type
       sticky sticky_value default_value action mandatory ajax_validates
       ajax_canonicalizes autocompleter preamble hints placeholder focus
-      render_mode max_length _element_id disable_autocomplete multiple);
+      render_mode display_length max_length _element_id disable_autocomplete
+      multiple);
 }
 
 __PACKAGE__->mk_accessors(
     qw(name _label _input_name type sticky sticky_value
       default_value mandatory ajax_validates ajax_canonicalizes
       autocompleter preamble hints placeholder focus render_mode
-      max_length _element_id disable_autocomplete multiple)
+      display_length max_length _element_id disable_autocomplete
+      multiple)
 );
 
 =head2 name [VALUE]
@@ -526,7 +529,15 @@ sub render_widget {
     $field .= qq! id="@{[ $self->element_id ]}"!;
     $field .= qq! value="@{[$self->canonicalize_value(Jifty->web->escape($self->current_value))]}"! if defined $self->current_value;
     $field .= $self->_widget_class; 
-    $field .= qq! size="@{[ $self->max_length() ]}" maxlength="@{[ $self->max_length() ]}"! if ($self->max_length());
+
+    if ($self->display_length) {
+        $field .= qq! size="@{[ $self->display_length() ]}"!;
+    }
+    elsif ($self->max_length) {
+        $field .= qq! size="@{[ $self->max_length() ]}"!;
+    }
+
+    $field .= qq! maxlength="@{[ $self->max_length() ]}"! if ($self->max_length());
     $field .= qq! autocomplete="off"! if defined $self->disable_autocomplete;
     $field .= " " .$self->other_widget_properties;
     $field .= $self->javascript;

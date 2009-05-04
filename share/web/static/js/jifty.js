@@ -437,7 +437,14 @@ ActionField.prototype = {
                             fields.push('id', tthis.element_id());
                             if (tthis.current_value) fields.push('value', tthis.current_value);
                             fields.push('class', tthis._widget_class().join(' '));
-                            if (tthis.max_length) fields.push('size', tthis.max_length, 'maxlength', tthis.max_length);
+                            if (tthis.display_length) {
+                                fields.push('size', tthis.display_length)
+                            }
+                            else if (tthis.max_length) {
+                                fields.push('size', tthis.max_length)
+                            }
+
+                            if (tthis.max_length) fields.push('maxlength', tthis.max_length);
                             if (tthis.disable_autocomplete) fields.push('autocomplete', "off");
                             //" " .$self->other_widget_properties;
                             return fields;
