@@ -65,7 +65,6 @@ sub take_action {
     $self->report_success;
 
     Jifty->config->load;
-    Jifty->web->tangent( url => '/__jifty/config/restart.html' );
 
     return 1;
 }

@@ -29,7 +29,7 @@ on '**' => run {
     # for now leave check here, but we want Config to be
     # real plugin someday
     $top->child(
-        Configuration => url => "/__jifty/config/",
+        Configuration => url => Jifty::Plugin::Config->config_url,
         label         => _('Configuration'),
         sort_order    => 990,
     );
