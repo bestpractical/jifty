@@ -94,12 +94,13 @@ sub moniker_for {
     # possibly a form with only its continuation-marking hidden field.
     # Fall back to a submit field with similar attributes.
     for my $input ($f->inputs) {
-	if ($input->type eq "submit" and $input->name =~ /$action/
-	    and $input->name =~ /J:ACTIONS=([^|]+)\|/ ) {
-	  $input->name =~ /J:ACTIONS=([^|]+)\|/;
-	  my $moniker = $1;
-	  return $moniker;
-      }
+        my $name = $input->name || '';
+
+        next unless $input->type eq "submit";
+        next unless $name =~ /\Q$action\E/;
+        my ($moniker) = $name =~ /J:ACTIONS=([^|]+)\|/
+            or next;
+        return $moniker;
     }
   }
   return undef;
