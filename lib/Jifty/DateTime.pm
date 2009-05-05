@@ -139,12 +139,17 @@ sub now {
 
 =head2 from_epoch ARGS
 
-See L<DateTime/from_epoch> and L<Jifty::DateTime/now>.
+See L<DateTime/from_epoch> and L<Jifty::DateTime/now>. This handles the common
+mistake of C<from_epoch($epoch)> as well.
 
 =cut
 
 sub from_epoch {
     my $class = shift;
+
+    # from_epoch(100) should dwim
+    unshift @_, 'epoch' if @_ == 1;
+
     my %args  = (
         current_user => undef,
         #time_zone => undef, # DateTime doesn't like undef time_zone
