@@ -442,7 +442,7 @@ sub current_user_can {
     }
 
 
-    Carp::confess unless ( $self->current_user );
+    Carp::confess "No current user" unless ( $self->current_user );
     if (   $self->current_user->is_bootstrap_user
         or $self->current_user->is_superuser )
     {
