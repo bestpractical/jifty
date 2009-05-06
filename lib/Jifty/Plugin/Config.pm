@@ -6,8 +6,7 @@ use base qw/Jifty::Plugin Class::Data::Inheritable/;
 __PACKAGE__->mk_classdata( after_restart_url => '/' );
 __PACKAGE__->mk_classdata( wait_seconds => 5 );
 __PACKAGE__->mk_classdata( config_url => '/__jifty/config' );
-__PACKAGE__->mk_classdata(
-    restart_url => __PACKAGE__->config_url . '/restart.html' );
+__PACKAGE__->mk_classdata( restart_url => '/__jifty/config/restart.html' );
 
 =head2 NAME
 
@@ -21,7 +20,8 @@ Jifty::Plugin::Config - Add configuration editor
     - Config:
         after_restart_url: '/'
         wait_seconds: 5
-        config_url: '__jifty/config'
+        config_url: '/__jifty/config'
+        restart_url: '/__jifty/config/restart.html'
 
 =head2  DESCRIPTION
 
@@ -36,20 +36,15 @@ default is '/', 5 and '/__jifty/config', respectively
 after_restart_url is the url where we will redirect to after restart
 wait_seconds are the seconds that we wait for before redirecting
 config_url is the url where we will update the config
+restart_url is the url where we acturally do the restart, with a wait page
 
 =cut
 
 sub init {
     my $self = shift;
     my %opt = @_;
-    if ( $opt{after_restart_url} ) {
-        __PACKAGE__->after_restart_url( $opt{after_restart_url} );
-    }
-    if ( $opt{wait_seconds} ) {
-        __PACKAGE__->wait_seconds( $opt{wait_seconds} );
-    }
-    if ( $opt{config_url} ) {
-        __PACKAGE__->config_url( $opt{config_url} );
+    for ( qw/after_restart_url restart_url config_url wait_seconds/ ) {
+        __PACKAGE__->$_( $opt{$_} );
     }
 }
 
