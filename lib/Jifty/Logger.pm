@@ -5,7 +5,7 @@ package Jifty::Logger;
 
 =head1 NAME
 
-Jifty::Logger -- A master class for Jifty's logging framwork
+Jifty::Logger -- A master class for Jifty's logging framework
 
 =head1 DESCRIPTION
 
@@ -13,7 +13,7 @@ Jifty uses the Log4perl module to log error messages. In Jifty
 programs there's two ways you can get something logged:
 
 Firstly, Jifty::Logger captures all standard warnings that Perl
-emmits.  So in addtion to everying output from perl via the 
+emits.  So in addition to everying output from perl via the 
 warnings pragmas, you can also log messages like so:
 
     warn("The WHAM is overheating!");
