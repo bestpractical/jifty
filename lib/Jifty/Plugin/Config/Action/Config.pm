@@ -19,8 +19,9 @@ sub arguments {
     return $self->{__cached_arguments} if ( $self->{__cached_arguments} );
     my $args = {
         'config' => {
+            label         => '',           # don't show label
             render_as     => 'Textarea',
-            rows => 60,
+            rows          => 60,
             default_value => defer {
                 local $/;
                 open my $fh, '<', Jifty::Util->app_root . '/etc/config.yml';
