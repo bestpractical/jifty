@@ -9,10 +9,18 @@ my $config_url = Jifty::Plugin::Config->config_url;
 my $restart_url = Jifty::Plugin::Config->restart_url;
 template $config_url => sub {
     my $config = new_action( class => 'Config' );
+    $config->order(1);
+    my $restart = new_action( class => 'Restart' );
+    $restart->order(2);
     form {
         render_action( $config );
-        form_next_page( url => '/__jifty/config/restart.html' );
-        form_submit( label => _('Save and Restart') );
+        form_submit( label => _('Save') );
+        form_submit(
+            label   => _('Save and Restart'),
+            # WARN: though it's an array, it doesn't mean the actions are run
+            # in this order, please set ->order for each action to do this 
+            submit => [ $config, $restart ],
+        );
     }
 };
 

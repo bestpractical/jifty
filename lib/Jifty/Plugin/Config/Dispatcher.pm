@@ -38,6 +38,7 @@ on '**' => run {
 
 before '*' => run {
     Jifty->api->allow('Jifty::Plugin::Config::Action::Config');
+    Jifty->api->allow('Jifty::Plugin::Config::Action::Restart');
 };
 
 1;
