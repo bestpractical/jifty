@@ -10,14 +10,11 @@ Jifty::Plugin::Config::Action::Restart - Restart action
 
 =cut
 
-
-=head2 arguments
-
-=cut
-
-sub arguments {
-    return {};
-}
+use Jifty::Param::Schema;
+use Jifty::Action schema {
+    param 'url' =>
+        render as 'hidden';
+};
 
 =head2 take_action
 
@@ -25,7 +22,13 @@ sub arguments {
 
 sub take_action {
     my $self = shift;
-    Jifty->web->tangent( url => Jifty::Plugin::Config->restart_url . '?url=/' );
+    Jifty->web->tangent(
+        url => Jifty::Plugin::Config->restart_url . '?url='
+          . (
+            $self->argument_value('url')
+              || Jifty::Plugin::Config->after_restart_url
+          )
+    );
     return 1;
 }
 
