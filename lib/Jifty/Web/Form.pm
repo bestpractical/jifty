@@ -224,7 +224,7 @@ sub start {
 Renders a submit button with the text MESSAGE on it (which will be
 HTML escaped).  Returns the empty string (for ease of use in
 interpolation).  Any extra PARAMETERS are passed to
-L<Jifty::Web::Form::Field::Button>'s constructor.
+L<Jifty::Web::Form::Field::Clickable>'s constructor.
 
 =cut
 
