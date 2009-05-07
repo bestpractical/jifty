@@ -21,14 +21,26 @@ sub new {
     return $self;
 }
 
+=head2 pre_loop_hook
+
+Tear down the database connection before falling into the accept loop,
+so that there is no shared database connection for children to
+inherit.
+
+=cut
+
+sub pre_loop_hook {
+    Jifty->handle(undef);
+}
+
 =head2 child_init_hook
 
-Sets up the database connection when spawning a new child
+Sets up the database connection when spawning a new child.
 
 =cut
 
 sub child_init_hook {
-    Jifty->setup_database_connection();
+    Jifty->setup_database_connection;
 }
 
 =head2 log
