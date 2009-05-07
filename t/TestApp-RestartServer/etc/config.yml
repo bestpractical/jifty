@@ -1,0 +1,47 @@
+--- 
+framework: 
+  AdminMode: 1
+  ApplicationClass: TestApp::RestartServer
+  ApplicationName: TestApp-RestartServer
+  ApplicationUUID: 691A2590-F25E-11DD-9995-406635203BE5
+  ConfigFileVersion: 4
+  Database: 
+    AutoUpgrade: 1
+    CheckSchema: 1
+    Database: testapp_mason
+    Driver: SQLite
+    Host: localhost
+    Password: ''
+    RecordBaseClass: Jifty::DBI::Record::Cachable
+    User: ''
+    Version: 0.0.1
+  DevelMode: 1
+  L10N: 
+    PoDir: share/po
+  LogLevel: FATAL
+  Mailer: Sendmail
+  MailerArgs: []
+
+  Plugins: []
+  PubSub: 
+    Backend: Memcached
+    Enable: ~
+  SkipAccessControl: 0
+  TemplateClass: TestApp::Mason::View
+  View: 
+    Handlers: 
+      - Jifty::View::Mason::Handler
+  Web: 
+    BaseURL: http://localhost
+    DataDir: var/mason
+    Globals: []
+
+    MasonConfig: 
+      autoflush: 0
+      default_escape_flags: h
+      error_format: text
+      error_mode: fatal
+    Port: 12888
+    ServeStaticFiles: 1
+    StaticRoot: share/web/static
+    TemplateRoot: share/web/templates
