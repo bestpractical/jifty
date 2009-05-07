@@ -145,7 +145,7 @@ Sets up the arguments needed for restarting the server using C<jifty server>.
 
 sub restart {
     my $self = shift;
-    local @ARGV = ( 'server' );
+    local @ARGV = ( 'server', '--restart' );
     $self->SUPER::restart;
 }
 
