@@ -8,13 +8,13 @@ use Jifty::YAML;
 use File::Spec;
 use Scalar::Defer;
 
-=head2 NAME
+=head1 NAME
 
 Jifty::Plugin::Config::Action::Config - Register config
 
-=head2 METHODS
+=head1 METHODS
 
-=head1 arguments
+=head2 arguments
 
 Provides a single argument, C<config>, which is a textarea with
 Jifty's L<YAML> configuration in it.
