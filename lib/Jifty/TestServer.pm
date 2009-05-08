@@ -60,15 +60,7 @@ sub started_ok {
         return "http://localhost:".$self->port;
     } else {
         Jifty->handle->dbh->{'InactiveDestroy'} = 1;
-        Jifty->handle->dbh(undef);
-        # See DBI.pm: 
-        #
-        # This attribute is specifically designed for use in Unix applications
-        # that "fork" child processes. Either the parent or the child process,
-        # but not both, should set C<InactiveDestroy> true on all their shared handles.
-        # (Note that some databases, including Oracle, don't support passing a
-        # database connection across a fork.)
-        #
+        Jifty->setup_database_connection;
     }
 
     require POSIX;

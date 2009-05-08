@@ -166,5 +166,22 @@ sub close_client_sockets {
     }
 }
 
+=head2 started_ok
+
+After starting, ensure we have a different database socket from the
+server.
+
+=cut
+
+sub started_ok {
+    my $self = shift;
+    my $ret = $self->SUPER::started_ok(@_);
+    if ($ret) {
+        Jifty->handle->dbh->{InactiveDestroy} = 1;
+        Jifty->setup_database_connection;
+    }
+    return $ret;
+}
+
 1;
 
