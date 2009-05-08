@@ -15,14 +15,6 @@ password authentication plugin.
 package Jifty::Plugin::Authentication::Password::View;
 use Jifty::View::Declare -base;
 
-{ no warnings 'redefine';
-sub page (&;$) {
-    no strict 'refs'; 
-    BEGIN {Jifty::Util->require(Jifty->app_class('View'))};
-    Jifty->app_class('View')->can('page')->(@_);
-}
-}
-
 =head1 TEMPLATES
 
 =head2 signup
