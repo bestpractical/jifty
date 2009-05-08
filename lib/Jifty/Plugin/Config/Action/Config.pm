@@ -6,14 +6,21 @@ use base qw/Jifty::Action/;
 use UNIVERSAL::require;
 use Jifty::YAML;
 use File::Spec;
+use Scalar::Defer;
 
 =head2 NAME
 
 Jifty::Plugin::Config::Action::Config - Register config
 
+=head2 METHODS
+
+=head1 arguments
+
+Provides a single argument, C<config>, which is a textarea with
+Jifty's L<YAML> configuration in it.
+
 =cut
 
-use Scalar::Defer; 
 sub arguments {
     my $self = shift;
     return $self->{__cached_arguments} if ( $self->{__cached_arguments} );
@@ -34,6 +41,9 @@ sub arguments {
 }
 
 =head2 take_action
+
+Attempts to update the application's F<etc/config.yml> file with the
+new configuration.
 
 =cut
 
@@ -71,6 +81,8 @@ sub take_action {
 }
 
 =head2 report_success
+
+Reports that the action succeeded.
 
 =cut
 

@@ -1,7 +1,22 @@
-package Jifty::Plugin::Config::View;
 use strict;
 use warnings;
 
+=head1 NAME
+
+Jifty::Plugin::Config::View - Templates for Config plugin
+
+=head1 DESCRIPTION
+
+This provides two views for the configuration plugin.
+
+=head2 /__jifty/config
+
+This path (configurable by the C<config_url> setting of the plugin)
+shows the L<Jifty::Plugin::Config::Action::Config> action.
+
+=cut
+
+package Jifty::Plugin::Config::View;
 use Jifty::View::Declare -base;
 
 __PACKAGE__->use_mason_wrapper;
@@ -23,6 +38,14 @@ template $config_url => sub {
         );
     }
 };
+
+=head2 /__jifty/config/restart.html
+
+This path (configurable by the C<restart_url> setting of the plugin)
+waits five seconds, then redirects to the configured
+C<after_restart_url>.
+
+=cut
 
 template $restart_url => sub {
     my $seconds = get('seconds') || Jifty::Plugin::Config->wait_seconds || 5;
@@ -48,3 +71,5 @@ EOF
     Jifty->handler->buffer->flush_output();
     $Jifty::SERVER->restart;
 };
+
+1;
