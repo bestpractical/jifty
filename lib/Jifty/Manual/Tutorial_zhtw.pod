@@ -258,11 +258,12 @@ Jifty 會使用 SQLite 作為你預設的資料庫引擎。
 
 對有些平台而言，你可能需要輸入 "./bin/jifty server" 。
 
-=head2 Building a user interface
+=head2 建置你的使用者介面
 
-The administrative web does give you everything you need to work with your
-application's data. You can create, update, and delete posts. However, it's not
-much of a weblog.
+這個網頁管理介面提供讓你可以操作應用程式資料的功能。你可以建立、更新、刪除我們剛剛
+所建置的資料 (posts) 。
+
+是的，你可以建立、更新、刪除文章。然而，它還不算是一個 welog。
 
 =head3 Posting
 
