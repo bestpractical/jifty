@@ -204,16 +204,19 @@ Weblogs 都以文章為中心，所以我們第一個需要的資料模型為 C<
   
   1;
 
-Now it's time to tell the model class about posts. Start by giving our post a
-C<body> and a C<title>. (In a future tutorial, the application will become fully
+現在是該說明文章的模型類別 (model class) 了。
+
+從給我們的文章 C<body> 以及 C<title> 欄位開始吧。
+
+(In a future tutorial, the application will become fully
 folksonomy-compliant by adding a C<category> and upgrading that C<category> to a
 C<tags> table.)
 
-Position your cursor right after:
+將你的游標放置在下面這行的下方
 
   use MyWeblog::Record schema {
 
-Add the lines:
+新增這些行:
 
   column title =>
         type is 'text',
@@ -225,18 +228,17 @@ Add the lines:
         label is 'Content',
         render_as 'Textarea';
 
-Save your model class.
+接著存檔。
 
-=head2 Starting the Jifty application server
+=head2 啟動 Jifty 應用程式伺服
 
-You now have a working, if simplistic, application. Start up the Jifty web
-server by typing C<jifty server>.
+現在你有了可以運作、簡易的應用程式。積著可以透過 C<jifty server> 啟動你的
+Jifty 應用程式了。
 
-The first thing you'll see is that Jifty notices you have no database, so it
-creates one for you. By default, Jifty sets up your application with the SQLite
-database engine. If you'd rather use PostgreSQL or MySQL, you need to add some
-content to F<etc/config.yml>. (See L<Jifty::Config> for a bit more
-information.)
+現在你第一個看到的應該是 Jifty 提示你目前沒有資料庫，所以它會立刻將你建置一個。
+Jifty 會使用 SQLite 作為你預設的資料庫引擎。
+如果你想使用 PostgreSQL 或是 MySQL ，你需要新增一些設定在 F<etc/config.yml>。
+(請參見 L<Jifty::Config> 了解更多資訊)
 
     # jifty server
     WARN - Application schema has no version in the database.
@@ -248,14 +250,13 @@ information.)
     INFO - Set up version 0.0.1, jifty version 0.81208
     INFO - You can connect to your server at http://localhost:8888/
 
-Everything but the last line was database setup information that you'll only
-see when Jifty changes your database.
+除了最後一行之外，都是關於資料庫設置的訊息。
+而這些訊息只會在 Jifty 修改你的資料庫時才會顯示。
 
-The last line tells you the URL you can go to with your web browser. Have a
-look around. Be sure to check out the AJAX-enabled administrative UI, the
-online documentation browser, and the Pony.
+最後一行告訴你可以到你的網頁瀏覽器打開瀏覽這個網址。
+到處看看已啟用 AJAX 的管理介面，還有線上文件瀏覽器以及一隻小馬。
 
-For some platforms, you may have to type "./bin/jifty server".
+對有些平台而言，你可能需要輸入 "./bin/jifty server" 。
 
 =head2 Building a user interface
 
