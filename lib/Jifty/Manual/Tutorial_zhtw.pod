@@ -265,12 +265,12 @@ Jifty 會使用 SQLite 作為你預設的資料庫引擎。
 
 是的，你可以建立、更新、刪除文章。然而，它還不算是一個 welog。
 
-=head3 Posting
+=head3 張貼
 
-Let's start building our user interface with a page to create new posts.
+現在讓我們建置一個用來建立新文章的頁面吧。
 
-Open a new file called F<lib/MyWeblog/View.pm> in your text editor. Make it
-look like this:
+請使用文字編輯器開啟 F<lib/MyWeblog/View.pm> 檔案。
+讓它看起來像這樣:
 
   package MyWeblog::View;
   use strict;
@@ -288,16 +288,15 @@ look like this:
   
   1;
 
-=head3 Viewing
+=head3 瀏覽
 
-It's really easy to get a I<basic> listing of entries and a little bit more
-complex to get a pretty AJAXified paged list.  Here's how to do both; you can
-decide which one works best for you.
+要取得 I<基本> 的文章列表或是有些複雜的 AJAX 的清單其實是相當容易的。
+這裡將會示範如何做這兩種清單。 你可以選擇最適合你的方式來實做。
 
 =head4 The quick and dirty way
 
-Open your F<lib/MyWeblog/View.pm> file and add this between the C<post>
-template and the "1;" at the very end of the file:
+開啟你的 F<lib/MyWeblog/View.pm> 檔案，並且在 C<post> 以及 "1;"
+之間，新增以下這些程式:
 
   template '/' => page {
       # Get all posts.
@@ -313,8 +312,7 @@ template and the "1;" at the very end of the file:
       }
   };
 
-Now when you go to C<http://localhost:8888>, you'll be greeted with all of
-your blog posts.
+現在你到 C<http://localhost:8888> ，你就可以看到你所有的文章了。
 
 =head4 The complex way that gets you lots of cool toys
 
