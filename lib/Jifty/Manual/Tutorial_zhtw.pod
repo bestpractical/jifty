@@ -323,9 +323,9 @@ Jifty 會使用 SQLite 作為你預設的資料庫引擎。
 這種方式的下層其實是每個分開的區塊都需要存在在它所屬的樣板 (template) 內。
 然而就算不用區塊 (regions) 這也是一個相當不錯的設計練習。
 
+
 這個較複雜的方式初步與上頭介紹的簡單方式是一樣的。
-取代 (or add, if you shied away from simplicity) 原本你 
-F<lib/MyWeblog/View.pm> 內的 '/' 樣板:
+取代 F<lib/MyWeblog/View.pm> 內的 '/' 樣板（若你仍對其簡單性有些顧忌，那加上它吧）:
 
   template '/' => page {
       render_region(
@@ -394,8 +394,8 @@ C</fragments/page_of_posts>。 讓這個樣板填入以下程式:
 現在重新啟動你的 Jifty 網頁伺服器。瀏覽 C</post> 並且建立三份以上的文章。
 回到首頁，並且玩玩看 C<Next Page> 以及 C<Previous Page> 的 AJAX 連結。
 
-關掉你瀏覽器的 Javascript 或者用 C<lynx> 來瀏覽，你可注意網頁上使用的 AJAX 
-如何自動退回到使用基本載入頁面。
+關掉你瀏覽器的 Javascript 或者用 C<lynx> 來瀏覽， 
+並注意網頁上使用 AJAX 的區域已經自動退為一般的頁面內容
 
 所有都是免費並且自由的，感謝 Jifty!
 
