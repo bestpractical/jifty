@@ -399,25 +399,23 @@ C</fragments/page_of_posts>。 讓這個樣板填入以下程式:
 
 所有都是免費並且自由的，感謝 Jifty!
 
-=head3 Hey, where'd that class come from?
+=head3 嘿，那些類別哪來的？ 
 
-You may have wondered about C<MyWeblog::Model::PostCollection>, since there's
-no file called F<PostCollection.pm>. Jifty uses C<Jifty::ClassLoader> to
-auto-generate a bunch of classes for you. Of course, you can override these
-definitions if you like. See L<Jifty::ClassLoader> for more details.
+你也許會想知道 C<MyWeblog::Model::PostCollection> ，因為沒有檔案叫做 
+F<PostCollection.pm>。 Jifty 使用 C<Jifty::ClassLoader> 來自動產生許多類別。
+當然，你也可以繼承這些自動產生的類別並給予新的定義。請參見 L<Jifty::ClassLoader> 。
 
-=head2 Navigation
+=head2 導覽列
 
-Of course, having to remember the URL to get to the posting page is a bit
-annoying. To get a B<Post> button in the menu, you need to override the default
-menus.
+當然，要記住這些能夠取得文章頁面的 URL 是有點惱人的。
+要讓我們的導覽列選單能夠有一個 B<Post> 按鈕，你需要覆載原本預設的選單。
 
-We're going to set up a dispatcher for your weblog. A dispatcher handles "doing
-things" based on the URL of each incoming request. We can set up additional
-menu items by adding them in a "before rendering any template" dispatcher rule.
+我們將要為你的 Blog 設定新的分派器(dispatcher)。一個分派器負責將每個頁面需求的 URL
+對應到應該要做的事情。
 
-Open up a new file called F<lib/MyWeblog/Dispatcher.pm> and stick this content
-into it:
+我們可以在 "繪製任何網頁樣板之前" 的分派規則內，設定更多的選單項目。
+
+打開一個新檔叫做 F<lib/MyWeblog/Dispatcher.pm> 並且將以下內容填入:
 
   package MyWeblog::Dispatcher;
   use strict;
@@ -432,19 +430,17 @@ into it:
   
   1;
 
-For more information about the menu system, see the documentation in
-L<Jifty::Web::Menu>.
+關於更多關於選單系統的資訊，請參見 L<Jifty::Web::Menu>。
 
-=head2 That's it!
+=head2 就是這樣了！
 
-That's just about everything you need to get started building Jifty
-applications.  We're working hard to make Jifty even easier to use and
-to obsolete the I<hard bits> of this tutorial as quickly as we can.
+以上就是你初步以 Jifty 建置網頁應用程式需要了解的事情。
+我們致力於將 Jifty 做的更簡單易用，並且儘快將像這樣有點難的教學棄置。
 
-Please join us on the C<jifty-devel> mailing list to talk about how you're
-using Jifty or what you find difficult or hard to use about it.
+請加入我們在 C<jifty-devel> 的 mailing list 來討論你如何使用 Jifty 或者
+你覺得有哪些特別難用地方。
 
-=head1 MORE TUTORIALS
+=head1 更多的教學
 
 =over 4
 
@@ -456,16 +452,16 @@ L<Jifty::Manual::Models>
 
 L<Jifty::Manual::Actions>
 
-=item * Using page regions
+=item * 使用頁面區塊
 
 L<Jifty::Manual::PageRegions>
 
-=item * CSS and JS
+=item * CSS 與 JS
 
 L<Jifty::Manual::UsingCSSandJS>,
 L<Jifty::Manual::JavaScript>
 
-=item * Web Services
+=item * 網頁服務
 
 See L<Jifty::Manual::TutorialRest> for a quick overview.
 
@@ -473,15 +469,15 @@ See L<Jifty::Manual::TutorialRest> for a quick overview.
 
 L<Jifty::Manual::Continuations>
 
-=item * Access Control and Security
+=item * 存取控制以及安全性
 
 L<Jifty::Manual::AccessControl>
 
-=item * Deploying your application in production
+=item * 佈署你的應用程式
 
 L<Jifty::Manual::Deploying>
 
-=item * Upgrading your application's data model
+=item * 關於資料庫模型的升級
 
 L<Jifty::Manual::Upgrading>
 
@@ -515,12 +511,11 @@ To join the list, send mail to C<jifty-devel-subscribe@lists.jifty.org>.
 
 =head2 Browsing the wiki
 
-We have a wiki! (Actually, the wiki is Jifty's primary website)
+我們有 wiki ! (事實上這個 wiki 正是使用 Jifty 做出的第一個網站)
 
-Please visit L<http://jifty.org/>, browse and contribute.
+請參閱 L<http://jifty.org/>, 瀏覽或者貢獻。
 
-The wiki is powered by I<Wifty>, a Wiki built on Jifty. Its code is freely
-available from the Jifty subversion repository.
+Wiki 系統是由 I<Wifty> 來建置的，程式碼可由 Jifty Subversion 儲存庫自由取用。
 
 =head1 REPORTING BUGS
 
