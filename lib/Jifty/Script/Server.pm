@@ -146,7 +146,7 @@ sub _fork {
 
     die 'fork failed' unless defined $pid;
     if ($pid) {
-        open my $fh, '>', PARENTPIDFILE or die $!;
+        open my $fh, '>', PARENTPIDFILE or die "Can't open @{[PARENTPIDFILE]} for writing: $!";
         print $fh $$;
         close $fh;
 
@@ -182,7 +182,7 @@ sub _run_server {
           and -d $data_dir;
 
     $SIG{TERM} = sub { exit };
-    open my $fh, '>', PIDFILE or die $!;
+    open my $fh, '>', PIDFILE or die "Can't open @{[PIDFILE]} for writing: $!";
     print $fh $$;
     close $fh;
 
@@ -202,7 +202,7 @@ sub _run_server {
 
 sub _stop {
     my $self = shift;
-    open my $fh, '<', PARENTPIDFILE or die $!;
+    open my $fh, '<', PARENTPIDFILE or die "Can't open @{[PARENTPIDFILE]} for reading: $!";
     my $pid = <$fh>;
     kill 'TERM' => $pid;
 
@@ -211,7 +211,7 @@ sub _stop {
 }
 
 sub _stop_child {
-    open my $fh, '<', PIDFILE or die $!;
+    open my $fh, '<', PIDFILE or die "Can't open @{[PIDFILE]} for reading: $!";
     my $pid = <$fh>;
     kill 'TERM' => $pid;
 }
