@@ -44,7 +44,7 @@ sub init {
     my $self = shift;
     my %opt = @_;
     for ( qw/after_restart_url restart_url config_url wait_seconds/ ) {
-        __PACKAGE__->$_( $opt{$_} );
+        __PACKAGE__->$_( $opt{$_} ) if defined $opt{$_};
     }
 }
 
