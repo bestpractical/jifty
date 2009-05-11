@@ -79,7 +79,7 @@ requires('Test::More' => 0.62 ),
 requires('Test::Pod::Coverage'),
 requires('Test::WWW::Mechanize' => 1.04 ),
 requires('Test::WWW::Selenium'),
-requires('WWW::Mechanize' => 1.30 ),
+requires('WWW::Mechanize' => 1.51 ),
 requires('UNIVERSAL::require');
 requires('URI' => 1.31);
 requires('URI::Escape');
