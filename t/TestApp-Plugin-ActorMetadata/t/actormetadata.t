@@ -45,6 +45,7 @@ ok( abs( $post->updated_on->epoch - Jifty::DateTime->now->epoch ) < 1 ,
     'update_on is updated correctly' );
 mysleep( 3 );
 # update by bar
+$now = Jifty::DateTime->now;
 $post->current_user($user_bar);
 
 $post->set_title( 'bar' );
@@ -53,7 +54,7 @@ is( $post->created_by->id,    $user_foo->id,      'created_by is not updated' );
 is( $post->created_on->epoch, $created_on->epoch, 'created_on is not updated' );
 
 is( $post->updated_by->id, $user_bar->id, 'updated_by is not updated' );
-ok( abs( $post->updated_on->epoch - Jifty::DateTime->now->epoch ) < 2,
+ok( $post->updated_on->epoch >= $now->epoch,
     'update_on is updated' );
 
 # creator and created are columns of comment, post doesn't have those
