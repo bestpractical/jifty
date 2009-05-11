@@ -188,9 +188,9 @@ about this below in L</render_header> and L</instrument_content>.
 sub render {
     my $self = shift;
 
-    Template::Declare->new_buffer_frame;
+    Template::Declare->buffer->push( private => 1 );
     $self->render_body;
-    my $body = Template::Declare->end_buffer_frame->data;
+    my $body = Template::Declare->buffer->pop;
 
     $self->render_header;
 
@@ -390,9 +390,9 @@ sub instrument_content {
             # just in case somebody if somebody put a tag into title
             # tags' code may play with buffers directly
             if ( ref($_) eq 'CODE' ) {
-                Template::Declare->new_buffer_frame;
+                Template::Declare->buffer->push( private => 1);
                 $_->();
-                $res .= Template::Declare->end_buffer_frame->data;
+                $res .= Template::Declare->buffer->pop;
             } else {
                 $res .= $_;
             }
@@ -422,9 +422,9 @@ sub instrument_content {
         return '';
     };
 
-    Template::Declare->new_buffer_frame;
+    Template::Declare->buffer->push( private => 1 );
     $self->render_content;
-    my $content = Template::Declare->end_buffer_frame->data;
+    my $content = Template::Declare->buffer->pop;
 
     unless ( $seen_title ) {
         $self->render_title_inpage;

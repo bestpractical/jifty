@@ -66,7 +66,7 @@ sub render_header {
     my $self = shift;
     return if $self->done_header;
 
-    Template::Declare->new_buffer_frame;
+    Template::Declare->buffer->push( private => 1 );
     outs_raw(
         '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">' . "\n"
       . '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">' . "\n" );
@@ -141,7 +141,7 @@ sub mk_title_handler {
         for (@_) {
             no warnings qw( uninitialized );
             if ( ref($_) eq 'CODE' ) {
-                Template::Declare->new_buffer_frame;
+                Template::Declare->buffer->push( private => 1 );
                 $_->();
                 $self->_title(
                     $self->_title . Template::Declare->buffer->pop );
