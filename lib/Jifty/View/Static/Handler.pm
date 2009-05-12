@@ -75,11 +75,7 @@ sub roots {
 
 Handle a request for C<$path>. If we can't find a static file of that name, return undef.
 
-
-=cut
-
 =head2 handle_request $path
-
 
 An alias for L</show>
 
