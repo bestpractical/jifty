@@ -47,7 +47,7 @@ Jifty 的安裝程式能夠自動偵測您機器上尚未安裝的模組，並�
 請加入我們的 C<jifty-devel@lists.jifty.org> 並回報相關的錯誤訊息。
 關於如何加入我們，請參見下方的 L<GETTING HELP> 
 
-=head2 Setting up the Scaffolding
+=head2 設置框架
 
 一旦你完成了 Jifty 的安裝，便能開始構築你第一份 Jifty 應用程式。
 
@@ -175,9 +175,9 @@ Jifty 可以為你提供一些基本的測試，如資料模型 (Model)
 
 未來的教學將會提供使用者驗證，回應、以及 RSS 與 ATOM Feeds。
 
-=head3 Posts
+=head3 文章
 
-Weblogs 都以文章為中心，所以我們第一個需要的資料模型為 C<Post> ，用來存放文章:
+Weblogs 最主要的重點就是文章，所以我們第一個需要的資料模型為 C<Post> ，用來存放文章:
 
   # cd MyWeblog
   # jifty model --name Post
@@ -208,9 +208,8 @@ Weblogs 都以文章為中心，所以我們第一個需要的資料模型為 C<
 
 從給我們的文章 C<body> 以及 C<title> 欄位開始吧。
 
-(In a future tutorial, the application will become fully
-folksonomy-compliant by adding a C<category> and upgrading that C<category> to a
-C<tags> table.)
+(在這份教學文件，我們計畫在未來提供更完整的解釋，
+以及加入文章類別 (C<category>) 以及 標籤 (C<tags>) 資料表的範例 )
 
 將你的游標放置在下面這行的下方
 
@@ -261,7 +260,7 @@ Jifty 會使用 SQLite 作為你預設的資料庫引擎。
 =head2 建置你的使用者介面
 
 這個網頁管理介面提供讓你可以操作應用程式資料的功能。你可以建立、更新、刪除我們剛剛
-所建置的資料 (posts) 。
+所建置的文章 (posts) 。
 
 是的，你可以建立、更新、刪除文章。然而，它還不算是一個 welog。
 
@@ -316,7 +315,7 @@ Jifty 會使用 SQLite 作為你預設的資料庫引擎。
 
 =head4 酷但也比較複雜的方式
 
-這個 I<complex way> 會使用 Jifty 的進階功能之一:  頁面區塊 I<Page regions>
+這個 I<complex way> 會使用 Jifty 的進階功能之一:  頁面區塊 ( I<Page regions> )
 不論你是用現在高階網頁瀏覽器來使用 AJAX 或是使用低階瀏覽器如 C<lynx> 或 C<w3m> 
 來做一般的 GET 要求，這些區塊可以讓你的應用程式只單獨對你頁面中的小部份區塊獨立更新
 
@@ -463,7 +462,7 @@ L<Jifty::Manual::JavaScript>
 
 =item * 網頁服務
 
-See L<Jifty::Manual::TutorialRest> for a quick overview.
+參見 L<Jifty::Manual::TutorialRest>
 
 =item * Continuations - "There And Back Again"
 
@@ -491,7 +490,7 @@ L<Jifty::Manual::Cookbook>
 
 =head2 Online Help
 
-The C<jifty> command-line application comes with builtin help.
+C<jifty> 的內建指令提供了協助訊息:
 
   jifty help
 
@@ -502,14 +501,13 @@ configuration file C<AdminMode> setting is missing or non-zero), you can
 click the "Online Docs" link in your browser for an extensive list of
 per-module Jifty documentation.
 
-=head2 Joining the mailing list
+=head2 加入轉信清單
 
-C<jifty-devel@lists.jifty.org> is where we discuss how we're building Jifty,
-what we're having trouble with and so on.
+C<jifty-devel@lists.jifty.org> 是我們討論如何建置 Jifty 的地方，以及任何相關問題的地方。
 
-To join the list, send mail to C<jifty-devel-subscribe@lists.jifty.org>.
+要加入轉信清單，請寄信件至 C<jifty-devel-subscribe@lists.jifty.org>.
 
-=head2 Browsing the wiki
+=head2 瀏覽 Wiki
 
 我們有 wiki ! (事實上這個 wiki 正是使用 Jifty 做出的第一個網站)
 
@@ -517,7 +515,7 @@ To join the list, send mail to C<jifty-devel-subscribe@lists.jifty.org>.
 
 Wiki 系統是由 I<Wifty> 來建置的，程式碼可由 Jifty Subversion 儲存庫自由取用。
 
-=head1 REPORTING BUGS
+=head1 錯誤回報
 
 請將 Jifty 程式錯誤 (Bugs) 回報至 C<jifty-devel@lists.jifty.org>。
 
