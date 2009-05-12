@@ -1192,7 +1192,7 @@ Templates.  Specifically, returns a reference to the handler which can
 process the template.
 
 If PATH is a I<reference> to the path, it will update the path to
-append C</index.html> if the path in question doesn't exist, bit the
+append C</index.html> if the path in question doesn't exist, but the
 index does.
 
 =cut
