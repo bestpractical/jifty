@@ -73,6 +73,10 @@ The tutorial in German
 
 The tutorial in Japanese
 
+=item L<Jifty::Manual::Tutorial_zhtw>
+
+The tutorial in Traditional Chinese
+
 =item L<Jifty::Manual::Upgrading>
 
 How to change your application's database
