@@ -1,13 +1,4 @@
-% $r->content_type("text/x-yaml");
-<% Jifty::YAML::Dump(\%results) |n%>
-
 <%INIT>
-my %results = Jifty->web->response->results;
-for (values %results) {
-    $_ = $_->as_hash;
-
-    # backwards compatibility :(
-    $_->{_content} = delete $_->{content};
-}
+return Jifty->web->services->yaml;
 </%INIT>
 

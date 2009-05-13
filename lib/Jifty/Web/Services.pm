@@ -10,7 +10,7 @@ use XML::Simple;
 use Jifty::JSON;
 use Jifty::YAML;
 
-sub JSON {
+sub json {
     my $self = shift;
 
     Jifty->handler->apache->content_type("text/x-json");
@@ -25,7 +25,7 @@ sub JSON {
     Jifty->web->out( Jifty::JSON::objToJson(\%results) );
 }
 
-sub YAML {
+sub yaml {
     my $self = shift;
 
     Jifty->handler->apache->content_type("text/x-yaml");
@@ -40,10 +40,10 @@ sub YAML {
     Jifty->web->out( Jifty::YAML::Dump(\%results) );
 }
 
-sub XML {
+sub xml {
     my $self = shift;
 
-    Jifty->handler->apache->content_type('text/xml; charset=utf-8');
+    Jifty->handler->apache->content_type('text/xml; charset=UTF-8');
 
     my $output = "";
     my $writer = XML::Writer->new( OUTPUT => \$output, UNSAFE => 1 );
@@ -138,7 +138,7 @@ sub XML {
         # Jifty::DBI::Record's yet, which are technically circular data
         # structures at some level (current_user of a
         # current_user->user_object is itself)
-        my $content = stripkids($results{$_}->content);
+        my $content = _stripkids($results{$_}->content);
         $writer->raw(XML::Simple::XMLout($content, NoAttr => 1, RootName => "content", NoIndent => 1))
           if keys %{$content};
 
@@ -146,11 +146,10 @@ sub XML {
     }
 
     $writer->endTag();
-    Jifty->handler->apache->content_type('text/xml; charset=UTF-8');
     Jifty->web->out($output);
 }
 
-sub stripkids {
+sub _stripkids {
     my $top = shift;
     if ( not ref $top ) {
         return $top
