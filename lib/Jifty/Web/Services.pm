@@ -10,10 +10,8 @@ use XML::Simple;
 use Jifty::JSON;
 use Jifty::YAML;
 
-sub json {
+sub _results {
     my $self = shift;
-
-    Jifty->handler->apache->content_type("text/x-json");
 
     my %results = Jifty->web->response->results;
     for (values %results) {
@@ -22,22 +20,19 @@ sub json {
         # backwards compatibility :(
         $_->{_content} = delete $_->{content};
     }
-    Jifty->web->out( Jifty::JSON::objToJson(\%results) );
+    return \%results;
+}
+
+sub json {
+    my $self = shift;
+    Jifty->handler->apache->content_type("text/x-json");
+    Jifty->web->out( Jifty::JSON::objToJson( $self->_results ) );
 }
 
 sub yaml {
     my $self = shift;
-
     Jifty->handler->apache->content_type("text/x-yaml");
-
-    my %results = Jifty->web->response->results;
-    for (values %results) {
-        $_ = $_->as_hash;
-
-        # backwards compatibility :(
-        $_->{_content} = delete $_->{content};
-    }
-    Jifty->web->out( Jifty::YAML::Dump(\%results) );
+    Jifty->web->out( Jifty::YAML::Dump( $self->_results ) );
 }
 
 sub xml {
