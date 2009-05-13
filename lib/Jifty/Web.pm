@@ -1319,7 +1319,6 @@ sub region {
     $region->render;
 }
 
-
 =head3 replace_current_region PATH
 
 Replaces the current region with a new region and renders it Returns undef if there's no current region
@@ -1382,6 +1381,17 @@ sub qualified_parent_region {
     join "-",
         map { ref($_) ? $_->name : $_ }
             @region_stack, @_;
+}
+
+=head3 services
+
+Returns L<Jifty::Web::Services> object.
+
+=cut
+
+sub services {
+    require Jifty::Web::Services;
+    return new Jifty::Web::Services;
 }
 
 =head2 is_ssl
