@@ -1391,7 +1391,7 @@ Returns L<Jifty::Web::Services> object.
 
 sub services {
     require Jifty::Web::Services;
-    return new Jifty::Web::Services;
+    return 'Jifty::Web::Services';
 }
 
 =head2 is_ssl
