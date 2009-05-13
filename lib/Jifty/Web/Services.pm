@@ -163,10 +163,10 @@ sub _stripkids {
         return undef;
     }
     elsif ( ref $top eq 'HASH' ) {
-        $top->{$_} = stripkids( $top->{$_} ) foreach keys %$top;
+        $top->{$_} = _stripkids( $top->{$_} ) foreach keys %$top;
     }
     elsif ( ref $top eq 'ARRAY' ) {
-        push @$top, stripkids( $_ ) foreach splice @$top;
+        push @$top, _stripkids( $_ ) foreach splice @$top;
     }
     return $top;
 }
