@@ -25,10 +25,18 @@ if ($forever) {
 
 $m->print($begin);
 $m->flush_buffer;
+Jifty->handler->buffer->flush_output;
 $writer->startTag("body");
 
+local $SIG{PIPE} = sub {
+    die "ABORT";
+};
+
+my $loops;
 while (Jifty->config->framework('PubSub')->{'Enable'}) {
+    Jifty->web->out(" ") if ++$loops % 10 == 0;
     my $sent = write_subs_once($writer);
+    Jifty->handler->buffer->flush_output;
     flush STDOUT;
     last if ( $sent && !$forever );
     sleep 1;
