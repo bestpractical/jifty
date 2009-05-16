@@ -19,7 +19,7 @@ our $LMExtract = Locale::Maketext::Extract->new(
             # Use Perl parser, process files with extension .pl .pm .cgi
             'Locale::Maketext::Extract::Plugin::PPI' => ['pm','pl'],
             'tt2' => [ ],
-            'perl' => ['js','json'],
+            'perl' => ['pl','pm','js','json'],
             'mason' => [ ] ,
         },
         verbose => 1,
