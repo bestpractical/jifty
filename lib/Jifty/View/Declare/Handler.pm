@@ -47,6 +47,9 @@ sub config {
         %{ Jifty->config->framework('Web')->{'TemplateDeclareConfig'} ||{}},
     );
 
+    Jifty::Util->require('Jifty::View::Declare::CoreTemplates');
+    push @{$config{roots}}, 'Jifty::View::Declare::CoreTemplates';
+
     for my $plugin ( Jifty->plugins ) {
         my $comp_root = $plugin->template_class;
         Jifty::Util->require($comp_root);
