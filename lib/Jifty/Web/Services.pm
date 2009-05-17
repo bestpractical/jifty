@@ -10,6 +10,11 @@ use XML::Simple;
 use Jifty::JSON;
 use Jifty::YAML;
 
+sub new {
+    my $proto = shift;
+    return bless {}, ref($proto)||$proto;
+}
+
 sub _results {
     my $self = shift;
 
