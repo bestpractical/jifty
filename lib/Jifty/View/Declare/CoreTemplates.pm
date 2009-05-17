@@ -5,8 +5,6 @@ use warnings;
 
 use Jifty::View::Declare -base;
 
-use Scalar::Defer;
-
 =head1 NAME 
 
 Jifty::View::Declare::CoreTemplates - Templates Jifty can't function without
@@ -200,152 +198,19 @@ template '__jifty/validator.xml' => sub {
     Jifty->web->out($output);
 };
 
-template '__jifty/webservices/xml' => sub {
-    my $output = "";
-    my $writer = XML::Writer->new(
-        OUTPUT => \$output,
-        UNSAFE => 1
-    );
-    $writer->xmlDecl( "UTF-8", "yes" );
-    $writer->startTag("response");
-    for my $f ( Jifty->web->request->fragments ) {
-
-        # Set up the region stack
-        local Jifty->web->{'region_stack'} = [];
-        my @regions;
-        do {
-            push @regions, $f;
-        } while ( $f = $f->parent );
-
-        for $f ( reverse @regions ) {
-            my $new =
-              Jifty->web->get_region( join '-',
-                grep { $_ } Jifty->web->qualified_region, $f->name );
-
-            # Arguments can be complex mapped hash values.  Get their
-            # real values by mapping.
-            my %defaults = %{ $f->arguments || {} };
-            for ( keys %defaults ) {
-                my ( $key, $value ) = Jifty::Request::Mapper->map(
-                    destination => $_,
-                    source      => $defaults{$_}
-                );
-                delete $defaults{$_};
-                $defaults{$key} = $value;
-            }
-
-            $new ||= Jifty::Web::PageRegion->new(
-                name           => $f->name,
-                path           => $f->path,
-                region_wrapper => $f->wrapper,
-                parent         => Jifty->web->current_region,
-                defaults       => \%defaults,
-            );
-            $new->enter;
-        }
-
-        # Stuff the rendered region into the XML
-        $writer->startTag( "fragment",
-            id => Jifty->web->current_region->qualified_name );
-        my %args = %{ Jifty->web->current_region->arguments };
-        $writer->dataElement( "argument", $args{$_}, name => $_ )
-          for sort keys %args;
-        $writer->cdataElement( "content",
-            Jifty->web->current_region->as_string );
-        $writer->endTag();
-
-        Jifty->web->current_region->exit while Jifty->web->current_region;
-    }
-
-    my %results = Jifty->web->response->results;
-    for ( keys %results ) {
-        $writer->startTag(
-            "result",
-            moniker => $_,
-            class   => $results{$_}->action_class
-        );
-        $writer->dataElement( "success", $results{$_}->success );
-
-        $writer->dataElement( "message", $results{$_}->message )
-          if $results{$_}->message;
-        $writer->dataElement( "error", $results{$_}->error )
-          if $results{$_}->error;
-
-        my %warnings = $results{$_}->field_warnings;
-        my %errors   = $results{$_}->field_errors;
-        my %fields;
-        $fields{$_}++ for keys(%warnings), keys(%errors);
-        for ( sort keys %fields ) {
-            next unless $warnings{$_} or $errors{$_};
-            $writer->startTag( "field", name => $_ );
-            $writer->dataElement( "warning", $warnings{$_} )
-              if $warnings{$_};
-            $writer->dataElement( "error", $errors{$_} )
-              if $errors{$_};
-            $writer->endTag();
-        }
-
-        # XXX TODO: Hack because we don't have a good way to serialize
-        # Jifty::DBI::Record's yet, which are technically circular data
-        # structures at some level (current_user of a
-        # current_user->user_object is itself)
-        use Scalar::Util qw(blessed);
-        my $content = $results{$_}->content;
-
-
-        $content = _stripkids($content);
-        use XML::Simple;
-        $writer->raw(
-            XML::Simple::XMLout(
-                $content,
-                NoAttr   => 1,
-                RootName => "content",
-                NoIndent => 1
-            )
-        ) if keys %{$content};
-
-        $writer->endTag();
-    }
-
-    $writer->endTag();
-    Jifty->handler->apache->content_type('text/xml; charset=UTF-8');
-
-    # For some reason, this line is needed, lest we end up outputting ISO-8859-1 text
-    utf8::decode($output);
-
-    outs_raw($output);
-};
-
-        sub _stripkids {
-            my $top = shift;
-            if ( not ref $top ) { return $top }
-            elsif (
-                blessed($top)
-                and (  $top->isa("Jifty::DBI::Record")
-                    or $top->isa("Jifty::DBI::Collection") )
-              )
-            {
-                return undef;
-            }
-            elsif ( ref $top eq 'HASH' ) {
-                foreach my $item ( keys %$top ) {
-                    $top->{$item} = _stripkids( $top->{$item} );
-                }
-            }
-            elsif ( ref $top eq 'ARRAY' ) {
-                for ( 0 .. $#{$top} ) {
-                    $top->[$_] = _stripkids( $top->[$_] );
-                }
-            }
-            return $top;
-        }
-
-
-template '__jifty/webservices/yaml' => sub {
-    Jifty->handler->apache->content_type("text/x-yaml");
-    outs( Jifty::YAML::Dump( { Jifty->web->response->results } ) );
-};
-
 =cut
+
+template '__jifty/webservices/xml' => sub {
+    Jifty->web->services->xml;
+    return;
+};
+template '__jifty/webservices/json' => sub {
+    Jifty->web->services->json;
+    return;
+};
+template '__jifty/webservices/yaml' => sub {
+    Jifty->web->services->yaml;
+    return;
+};
 
 1;
