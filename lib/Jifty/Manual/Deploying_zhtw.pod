@@ -1,0 +1,418 @@
+=head1 NAME
+
+Jifty::Manual::Deploying_zhtw - 佈署你的應用程式 Deploying your application for production use
+
+=head1 DESCRIPTION
+
+這份文件傾向於回答兩個問題:
+This document is intended to answer two questions:
+
+=over
+
+=item *
+
+現在你已經開發好你的 Jifty 應用程式了，你該如何佈署你的應用程式到你實際使用的伺服器？ 
+Now that you've developed your Jifty application, how do you deploy it on the production server? 
+
+=item *
+
+一旦佈署之後，該遵循什麼樣的步驟來升級已經實際使用的伺服器？
+Once deployed, what's the process for performing upgrades to the production server?
+
+=back
+
+Developers and administrators may wish to use this document as a checklist to make sure they hit everything when deploying. This document should be updated according to the best practices of Jifty deployment to aid this end.
+
+=head1 HOW TO
+
+=head2 Installing on a Production Server
+
+Once you've finished developing your Jifty application and you want to deploy it for use on a production server you'll need to follow these steps:
+
+=over
+
+=item 1.
+
+Install Jifty on your production server.
+
+=item 2.
+
+Copy your application onto the production server.
+
+=item 3.
+
+Adjust the configuration to suit your production environment.
+
+=item 4.
+
+Deploy your production database.
+
+=item 5.
+
+Configure your web server.
+
+=item 6.
+
+Start using your production service.
+
+=back
+
+=head3 Install Jifty
+
+Jifty installation proceeds just as it did on your development machine (or machines). If you installed from CPAN, you may do the same for your production server. 
+
+  perl -MCPAN -e 'install Jifty'
+
+or download Jifty and run:
+
+  tar zxf Jifty-VERSION.tar.gz
+  cd Jifty-VERSION
+  perl Makefile.PL
+  make
+  make test
+  sudo make install
+
+You may also have installed it via the package manager available for your Linux distribution.
+
+Finally, you may want to use bleeding-edge features available only in the Jifty Subversion repository. This has a slightly higher risk, but this is what the Best Practical team does for their Jifty applications. When doing this, you will probably want to be sure to check out the exact same version as you are using on your development machines.
+
+Be sure to run the tests when installing Jifty to make sure there aren't any problems on your production server that you need to fix before deploying your application.
+
+=head3 Copy the Application
+
+After you've gotten Jifty deployed, you need to copy your application onto the server. This can be done in whatever way suits your project. You can run your Jifty application straight out of the development directory just as you have on testing. Just place the directory into an appropriate location on your server.
+
+It may be advisable to consider using a version control system, such as SVK or Subversion, to aid you in this process. For example, with either SVK or Subversion, any production customizations can be handled as branches of your application to help you keep those changes sorted out clearly. This can also help you if you make any tweaks to the code on the production server that need to be put back into your development.
+
+Here is an example of how to create the branch in Subversion or. This example is built upon in the L<Upgrading the Production Server> section below.
+
+All these commands are assumed to be running on the production server in this example, but you could do much of these from anywhere.
+
+  svn mkdir http://svn.example.com/myapp/branches
+  svn copy http://svn.example.com/myapp/trunk \
+           http://svn.example.com/myapp/branches/production
+  svn checkout http://svn.example.com/myapp/branches/production \
+               myapp
+  cd myapp
+
+Make sure to remember (possibly by recording it in the log messages) which revision your trunk was at when you ran the copy command. This will be important later. If you're using SVK rather than Subversion, you don't have to worry about this.
+
+In SVK:
+
+  svk mkdir //myapp/branches
+  svk copy //myapp/trunk //myapp/branches/production
+  svk checkout //myapp/branches/production myapp
+  cd myapp
+
+You will now have a copy of the latest version of your project in the directory named F<myapp>. You can then make any of the modifications you need to to get your application configured for the production environment (read the following sections for details).
+
+When you're finished, commit those changes to the branch:
+
+  svn commit
+
+or in SVK:
+
+  svk commit
+
+All of these changes will be made only to the production branch. In the upgrade section, it will be clearer how this will help you.
+
+=head3 Tweak the Configuration
+
+After you've copied your application onto the server, change into that directory and make any changes to your configuration required for production.
+
+Put all your site-specific changes in F<etc/site_config.yml> and never edit F<etc/config.yml>, as it will be overwritten with the next application update.
+
+Here are some things you'll want to consider changing:
+
+=over
+
+=item AdminMode
+
+While developing, you'll probably want to try running your application with this turned off. This turns on the administrative functions for managing models, data, and actions.
+
+Set this to 0 to turn it off.
+
+=item Database
+
+These settings will be covered in more detail in L</Deploy the Database>.
+
+=item DevelMode
+
+This turns off certain checks that slow down a production system but are vital to fast development. For example, with ever request to a server with C<DevelMode> turned on, the server checks to see if any of the library or template files have changed and reloads them, if this is turned on.
+
+By switching this setting off, you also enable extra caching and speed-up features including the use of L<CSS::Squish>, which helps your application load CSS files more quickly.
+
+=item LogConfig
+
+You may wish to add this option to specify a custom logger configuration. See L<Jifty::Logger>.
+
+=item LogLevel
+
+Depending on your environment, you may want to adjust the default log level or you may want to customize the log configuration by introducing an F<etc/log4perl.conf> configuration file.
+
+You can set the LogLevel to: DEBUG, INFO, WARN, ERROR, or FATAL to specify the level. If you want a custom log configuration for your server (allowing you to have per-module log settings among other features), you need to set L</LogConfig> and possibly L</LogReload>. See L<Jifty::Logger>
+
+=item LogReload
+
+This allows you specify a custom reload period for your log configuration, if you use L</LogConfig>. See L<Jifty::Logger>.
+
+=item Mailer
+
+In some cases you will want to adjust the mailer configuration used by Jifty. The mail configuration is used whenever L<Jifty::Notification> messages are sent, which may or may not be used by your application.
+
+If you change the C<Mailer> setting, be sure to also change C<MailerArgs> to match.
+
+See L<Jifty::Notification> and L<Email::Send>.
+
+=item MailerArgs
+
+You may want to adjust the configuration of the mailer you are using. See L<Jifty::Notification> and L<Email::Send>.
+
+=item Plugins
+
+You may want to disable plugins you've been using in your development that you don't ened in production. In general, if these plugins are well-behaved this isn't necessary, but you can provide yourself with extra insurance in case they are not.
+
+You can disable them without removing them from the file by commenting them out using the Perl-style "#" comment mark.
+
+=item Web
+
+=over
+
+=item BaseURL
+
+You will want to change the C<BaseURL> setting under C<Web> to make sure it shows the name of your production server's base URL.
+
+=item ServeStaticFiles
+
+If you want to improve the performance of your server, you may want your main web server to serve static files rather than having Jifty do it. You will need to manually flatten the static file structure yourself for this to work, but it can be done.
+
+=back
+
+=item etc.
+
+Your application configuration may have additional changes that need to be made for your application to operate properly in a production environment.
+
+Make sure to check over all the settings to make sure they will work in your produciton environment to save yourself headaches later.
+
+=back
+
+=head3 Deploy the Database
+
+If you've been developing your server using the default SQLite configuration, you will likely want to change this for your production server. SQLite might work for production environment, but chances are it will not.
+
+For your production system, you will probably want to modify the C<Driver> to suit your production environment. For example, if you were going to change to use a MySQL server, you might change your C<Database> configuration in F<etc/site_config.yml> to something like this:
+
+  Database:
+    Database: myapp
+    Driver: mysql
+    Host: mysql.example.com
+    Password: 'secret'
+    RecordBaseClass: Jifty::DBI::Record::Cachable
+    User: myapp_user
+    Version: 0.0.1
+
+In this example, the server is running the MySQL driver, connecting to the host at "mysql.example.com" with the username "myapp_user" and password "secret".
+
+You will need to create the database and grant access to the users according to your RDBMS administrator documentation. In MySQL, this could be done to match the example above by running these commands:
+
+  mysqladmin -uadmin -psecret create myapp
+  mysql -uadmin -psecret -e "grant all on myapp.\* to myapp_user'@'myapp.example.com identified by 'secret'"
+
+Please refer to your RDBMS documentation for full details on how to configure your database.
+
+=head3 Configure the Web Server
+
+There are several ways to configure your web server. You can use FastCGI or mod_perl or you can use a proxy to the Jifty simple server. The first two options are what you will most likely want to do, but the proxy configuration is presented for completeness.
+
+=head4 Configuring FastCGI
+
+Several configurations are explained by the L<Jifty::Script::FastCGI/fastcgi> script that comes with Jifty. It is recommended that you take one of those and modify the configuration to suit your needs.
+
+It may take a few tries to get the configuration exactly right. Be sure to check the server logs for your web server when looking for problems.
+
+=head4 Configuring mod_perl
+
+Support for mod_perl version 2.0 is provided by L<Jifty::Script::ModPerl2>. Remember that you need to completely stop and start the Apache server after the Perl modules in your application are changed.
+
+=head4 Configuring a Proxy
+
+You can use a proxy with the built-in server. This can be done with the following configuration in Apache:
+
+  <Location />
+  ProxyPass        / http://localhost:8888/
+  ProxyPassReverse / http://localhost:8888/
+  </Location>
+
+Place that declaration in your main configuration or virtual host configuration file and then whenever you run:
+
+  bin/jifty server
+
+Apache will proxy your server on port 80 for you. This may not work exactly as expected because the built-in server is intended for testing, not for a production environment. As such, it is not well-tested as a production server.
+
+=head3 Configure File Permissions
+
+The <var/> subdirectory in your application should be writable by the server process. If it runs as non-root UID (for example, FastCGI and Apache processes are usually running under the user named I<apache> or I<www> or something alike), you need to change the group or user permissions for this directory.
+
+For example, assume your application will run under user I<apache> and group I<apache>. Then the following commands should do the job:
+
+  chgrp -R apache var
+  chmod -R g+w var
+
+A more flexible way would be to create a new group I<myapp> and add I<apache> user in it. This allows you to maintain the application from non-root login and use C<sudo> for restarting Apache.
+
+=head3 All Systems Go
+
+Once you have done all of the above, your application should be ready to use at the production address you have configured.
+
+=head2 Updating the Production Server
+
+After you've made some collection of updates to your Jifty application, you'll then need to install those changes onto your server and prepr your application to use the changes.
+
+This documentation assumes a "cold" upgrade with the application offline during the duration of the process. A future version of this document might also include instructions for performing a "hot" upgrade without taking the server offline.
+
+You can do  his with the following steps:
+
+=over
+
+=item 1.
+
+Shutdown the application.
+
+=item 2.
+
+Update the Jifty installation.
+
+=item 3.
+
+Update your Jifty application.
+
+=item 4.
+
+Merge in configuration changes.
+
+=item 5.
+
+Clean up any temporary and cached files.
+
+=item 6.
+
+Upgrade your database.
+
+=item 7.
+
+Start using the updated application.
+
+=back
+
+=head3 Shutdown the Application
+
+This process cannot be performed on a live server. If it is, bad things may happen. You may choose to shutdown the application in one of two ways: turn off your web server or reconfigure your web server into an offline mode.
+
+Remember, shutdown all Jifty application processes before continuing, or bad things may happen!
+
+=head4 Shutting Down the Server
+
+This will involve a two step process. First, you will want to shutodwn your web server. The second is to shutdown the Jifty server. If you are using the built-in Jifty server, you may do this by running:
+
+  bin/jifty server --stop
+
+If you are using FastCGI, you will need to locate your server's process IDs and then kill all the processes. If this is the only FastCGI and Perl script running on your system, you may be able to just run:
+
+  killall perl
+
+However, that might stop too many processes in many environments, so you'll just have to find the processes and clean them up as suits your server.
+
+=head4 Offline Mode
+
+If you want to provide you site visitors with some feedback letting them know that the web site is down, you might want to provide an alternative configuration for your application. You still need to stop all your Jifty application processes when you engage the offline configuration.
+
+For example, you could have the following configuration on an Apache server to run an offline mode:
+
+  <Location />
+  RewriteEngine on
+  RewriteRule ^.*$ /offline.html
+  </Location>
+
+Then create a file named "offline.html" in your server root containing the message you wish to give your visitors.
+
+You can make this configuration change and then restart your web server to give it effect. Then, stop all the Jifty application processes.
+
+=head3 Update Jifty
+
+This is exactly the same as L</Install Jifty> above. Again, you'll probably want to install the same version as you are using to developing with. If you have not made any changes to the Jifty version you are using, you may skip this step.
+
+=head3 Update the Application
+
+This is again similar to what you've done above. You just need to update all the files that have changed. However, you should be careful not to clobber any configuration changes that you need to remember. 
+
+If you've used the suggestion of using a branch described above, you can automatically update your production server to use the latest code without risk of clobbering your changes on the production server.
+
+In Subversion, you will first need to recall the revision of either the initial copy or of the last merge you performed. If you stored this information in the log message, you can retrieve it by running:
+
+  svn log http://svn.example.com/myapp/branches/production
+
+When you have the revision number, you can then merge in all the latest changes in your production server copy. Here, I assume that the revision number is "1234".
+
+  cd myapp
+  svn merge -r 1234:HEAD http://svn.example.com/myapp/trunk .
+
+If you're using SVK, you can just run the following:
+
+  cd myapp
+  svk smerge //myapp/trunk .
+
+SVK automatically remembers the revision number for you so you don't have to worry about it.
+
+Next, watch for any conflicts that might have occurred and be sure to correct them. Check over all the changed files and make sure they look alright and you should also run your tests again to be sure everything is working. Once you're sure everything is correct, you can accept the changes with:
+
+  svn commit
+
+or:
+
+  svk commit
+
+Your code should now be ready. 
+
+=head3 Configuration Changes
+
+Again, you need to look for any configuration updates that need to adjusted. This is no different from the process during the initial installation.
+
+=head3 Clear Temporary/Cached Files
+
+This step is important to prevent strange issues from occuring. You remove all files from the following directories:
+
+=over
+
+=item *
+
+F<var/mason/cache>
+
+=item *
+
+F<var/mason/obj>
+
+=back
+
+You can run the following command (B<BE CAREFUL TO TYPE THIS CORRECTLY OR PAY THE CONSEQUENCES>):
+
+  rm -rf var/mason/{cache,obj}/*
+
+This means that your application will have to rebuild these cached files, which will slow your application down slightly at first. 
+
+However, if these files are left in place, the Mason server may continue using cached versions of files that don't match your latest updates. This will lead to very strange problems.
+
+=head3 Upgrade the Database
+
+If you've made any changes to the database schema or to the structure of your data that requires an upgrade, you will need to run:
+
+  bin/jifty schema --setup
+
+See L<Jifty::Manual::Upgrading>.
+
+=head3 All Systems Go
+
+Now that all these changes have been made, you are ready to start your web server or reconfigure your web server for production mode and restart.
+
+=head1 SEE ALSO
+
+L<Jifty::Manual::Tutorial>, L<Jifty::Manual::Upgrading>
