@@ -153,12 +153,12 @@ Jifty 會從你的資料模型類別 ( Model Class ) 的定義，來設置或升
 
 =item lib/MyWeblog/Action
 
-行為 ( Actions ) 是你資料模型類別 ( Model Class ) 的 API。
+動作 ( Actions ) 是你資料模型類別 ( Model Class ) 的 API。
 
-你可以將他們想像程式 HTML 表單，但是是 Generalized 的。
+你可以將他們想像程式 HTML 表單，但表單是自動產生的。
 
-Jifty 會在執行期間自動為你的資料模型 ( B<Models> ) 自動產生基本的資料庫行為 (
-C<CREATE> , C<READ> , C<UPDATE> , C<DELETE> ) B< 行為 ( Actions )>。
+Jifty 會在執行期間自動為你的資料模型 ( B<Models> ) 自動產生基本的資料庫動作 (
+C<CREATE> , C<READ> , C<UPDATE> , C<DELETE> ) B< 動作 ( Actions )>。
 
 =item t
 
@@ -431,6 +431,53 @@ F<PostCollection.pm>。 Jifty 使用 C<Jifty::ClassLoader> 來自動產生許多
 
 關於更多關於選單系統的資訊，請參見 L<Jifty::Web::Menu>。
 
+=head2 使用自己的頁面類別 (此條目僅於中文文件新增)
+
+如果你不喜歡 Jifty 為你預設的頁面以及選單，你可以將 L<MyWeblog::View::Page> 類別覆載
+請建立 F<lib/MyWeblog/View/Page.pm> 檔案，並填入下列內容:
+
+    use strict;
+    use warnings;
+    package MyWeblog::View::Page;
+    use base 'Jifty::View::Declare::Page';
+    use Jifty::View::Declare::Helpers;
+
+    sub render_body {
+        my ($self, $body_code) = @_;
+        $self->render_header();
+        body {
+
+            # so that we dont show menu template here.
+
+            $self->render_pre_content_hook();
+            $body_code->();
+        };
+    }
+
+    sub render_page {
+        my $self = shift;
+        Carp::cluck $self unless $self->content_code;
+        div { 
+
+            # 可自訂每頁 Page 在產生主內容前要做什麼。
+            # page wrapper here
+
+            $self->content_code->(); 
+        };
+    }
+
+    sub render_footer {
+        my $self = shift;
+
+        # 可新增自己想要的樣板於每頁的註腳
+        # do what you want
+
+        $self->SUPER::render_footer;
+    }
+
+關於 MyWeblog::View::Page 所覆載 (override) 的各項函式名稱，請參考
+L<Jifty::View::Declare::Page> 類別的文件。
+
 =head2 就是這樣了！
 
 以上就是你初步以 Jifty 建置網頁應用程式需要了解的事情。
@@ -443,11 +490,11 @@ F<PostCollection.pm>。 Jifty 使用 C<Jifty::ClassLoader> 來自動產生許多
 
 =over 4
 
-=item * Managing your datastore
+=item * 控制與管理你的資料模型
 
 L<Jifty::Manual::Models>
 
-=item * Doing Stuff With Jifty
+=item * 讓 Jifty 做事 - 動作 (Action)
 
 L<Jifty::Manual::Actions>
 
@@ -464,7 +511,7 @@ L<Jifty::Manual::JavaScript>
 
 參見 L<Jifty::Manual::TutorialRest>
 
-=item * Continuations - "There And Back Again"
+=item * 內容接續 ( Continuations )
 
 L<Jifty::Manual::Continuations>
 
@@ -480,15 +527,15 @@ L<Jifty::Manual::Deploying>
 
 L<Jifty::Manual::Upgrading>
 
-=item * Recipes for common tasks in Jifty
+=item * 使用 Jifty 常見問題的解決方案
 
 L<Jifty::Manual::Cookbook>
 
 =back
 
-=head1 GETTING HELP
+=head1 取得求助
 
-=head2 Online Help
+=head2 線上說明
 
 C<jifty> 的內建指令提供了協助訊息:
 
@@ -496,10 +543,8 @@ C<jifty> 的內建指令提供了協助訊息:
 
   jifty help <command>
 
-If your server is running with administration mode enabled (the
-configuration file C<AdminMode> setting is missing or non-zero), you can
-click the "Online Docs" link in your browser for an extensive list of
-per-module Jifty documentation.
+如果你啟用了管理者模式 ( 設定檔內的 C<AdminMode> 屬性為一 )
+那麼你可以在你的瀏覽器內點選 "線上文件" 連結，來瀏覽每個 Jifty 模組的文件內容。
 
 =head2 加入轉信清單
 
