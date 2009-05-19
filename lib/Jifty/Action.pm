@@ -506,9 +506,7 @@ sub _form_widget {
         $default_value = $self->argument_value($field)
           if $self->has_argument($field) && !$self->values_from_request->{$field};
 
-        # Add the form field to the cache
-        $self->{_private_form_fields_hash}{$arg_name}
-            = Jifty::Web::Form::Field->new(
+        my %field_args = (
             %$field_info,
             action        => $self,
             name          => $field,
@@ -516,10 +514,12 @@ sub _form_widget {
             sticky_value  => $self->argument_value($field),
             default_value => $default_value,
             render_mode   => $args{'render_mode'},
-            %args
-            );
+            %args,
+        );
 
-
+        # Add the form field to the cache
+        $self->{_private_form_fields_hash}{$arg_name}
+            = Jifty::Web::Form::Field->new(%field_args);
     } 
     # It has been cached, but render_as is explicitly set
     elsif ( my $widget = $args{render_as} ) {
