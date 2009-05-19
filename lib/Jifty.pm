@@ -7,13 +7,13 @@ use Data::UUID;
 use encoding 'utf8';
 use Class::Trigger;
 
-BEGIN { 
+BEGIN {
     # Work around the fact that Time::Local caches TZ on first require
     local $ENV{'TZ'} = "GMT";
     require Time::Local;
 
     # Declare early to make sure Jifty::Record::schema_version works
-    $Jifty::VERSION = '0.90422';
+    $Jifty::VERSION = '0.90519';
 }
 
 =head1 NAME
