@@ -56,7 +56,7 @@ $mech->content_contains("woot");
     }
 }
 
-diag('test caching of compiled regular expressions');
+diag('test caching of compiled regular expressions') if $ENV{TEST_VERBOSE};
 {
     get_ok("/under_run_on_special/some_special");
     $mech->content_contains("woot: under");
