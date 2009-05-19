@@ -1,6 +1,7 @@
 \.ppd$
 \bCVS\b
 \b.svn\b
+\b.git\b
 ~$
 .gz$
 .bak$
