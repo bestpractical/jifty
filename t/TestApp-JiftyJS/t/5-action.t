@@ -7,7 +7,7 @@ use Jifty::Test::WWW::Selenium;
 use utf8;
 
 BEGIN {
-    if ($ENV{'SELENIUM_RC_BROWSER'} eq '*iexplore') {
+    if (($ENV{'SELENIUM_RC_BROWSER'}||'') eq '*iexplore') {
         plan(skip_all => "Temporarily, until the 'Operation Abort' bug is solved.");
     }
     else {
