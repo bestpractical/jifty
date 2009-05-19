@@ -189,10 +189,12 @@ lib/Jifty/Logger.pm
 lib/Jifty/Logger/EventAppender.pm
 lib/Jifty/Manual.pm
 lib/Jifty/Manual/AccessControl.pod
+lib/Jifty/Manual/AccessControl_zhtw.pod
 lib/Jifty/Manual/Actions.pod
 lib/Jifty/Manual/Continuations.pod
 lib/Jifty/Manual/Cookbook.pod
 lib/Jifty/Manual/Deploying.pod
+lib/Jifty/Manual/Deploying_zhtw.pod
 lib/Jifty/Manual/FAQ.pod
 lib/Jifty/Manual/Glossary.pod
 lib/Jifty/Manual/JavaScript.pod
@@ -242,7 +244,9 @@ lib/Jifty/Plugin/CompressedCSSandJS.pm
 lib/Jifty/Plugin/CompressedCSSandJS/Dispatcher.pm
 lib/Jifty/Plugin/Config.pm
 lib/Jifty/Plugin/Config/Action/Config.pm
+lib/Jifty/Plugin/Config/Action/Restart.pm
 lib/Jifty/Plugin/Config/Dispatcher.pm
+lib/Jifty/Plugin/Config/View.pm
 lib/Jifty/Plugin/CSSQuery.pm
 lib/Jifty/Plugin/ErrorTemplates.pm
 lib/Jifty/Plugin/ErrorTemplates/View.pm
@@ -255,6 +259,8 @@ lib/Jifty/Plugin/LetMe/Dispatcher.pm
 lib/Jifty/Plugin/OnlineDocs.pm
 lib/Jifty/Plugin/OnlineDocs/Dispatcher.pm
 lib/Jifty/Plugin/Prototypism.pm
+lib/Jifty/Plugin/RequestInspector.pm
+lib/Jifty/Plugin/RequestInspector/View.pm
 lib/Jifty/Plugin/REST.pm
 lib/Jifty/Plugin/REST/Dispatcher.pm
 lib/Jifty/Plugin/SinglePage.pm
@@ -372,7 +378,6 @@ share/plugins/Jifty/Plugin/AdminUI/web/templates/__jifty/admin/fragments/list/up
 share/plugins/Jifty/Plugin/AdminUI/web/templates/__jifty/admin/fragments/list/view
 share/plugins/Jifty/Plugin/AdminUI/web/templates/__jifty/admin/index.html
 share/plugins/Jifty/Plugin/AdminUI/web/templates/__jifty/admin/model/dhandler
-share/plugins/Jifty/Plugin/Config/web/templates/__jifty/config/index.html
 share/plugins/Jifty/Plugin/CSSQuery/web/static/js/cssquery/cssQuery-level2.js
 share/plugins/Jifty/Plugin/CSSQuery/web/static/js/cssquery/cssQuery-level3.js
 share/plugins/Jifty/Plugin/CSSQuery/web/static/js/cssquery/cssQuery-standard.js
@@ -409,6 +414,7 @@ share/po/ru.po
 share/po/zh_CN.po
 share/po/zh_TW.po
 share/web/static/css/app-base.css
+share/web/static/css/app-late.css
 share/web/static/css/app.css
 share/web/static/css/autocomplete.css
 share/web/static/css/autohandler
@@ -732,6 +738,9 @@ t/TestApp-Regions/Makefile.PL
 t/TestApp-Regions/share/web/templates/mason.html
 t/TestApp-Regions/share/web/templates/mason2.html
 t/TestApp-Regions/t/01-region.t
+t/TestApp-RestartServer/bin/jifty
+t/TestApp-RestartServer/etc/config.yml
+t/TestApp-RestartServer/t/restart.t
 t/TestApp-Template-Declare/bin/jifty
 t/TestApp-Template-Declare/etc/config.yml
 t/TestApp-Template-Declare/lib/TestApp.pm
