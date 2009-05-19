@@ -476,6 +476,12 @@ sub _form_widget {
     my $field = $args{'argument'};
     my $arg_name = $field. '!!' .$args{'render_mode'};
 
+    # They specified some arguments. This means we don't want to reuse the
+    # cached version, since that will ignore the arguments.
+    if (keys(%args) > 2) {
+        delete $self->{_private_form_fields_hash}{$arg_name};
+    }
+
     # This particular field hasn't been added to the form yet
     if ( not exists $self->{_private_form_fields_hash}{$arg_name} ) {
         my $field_info = $self->arguments->{$field};
