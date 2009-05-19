@@ -47,5 +47,7 @@ TODO: {
     local $TODO = "virtual columns need to be sorted out";
     ok($mech->action_field_value($mon, 'author'), 'check for author field');
 
+    # Silencing warnings suck, but it IS a todo block
+    local $SIG{__WARN__} = sub { 'IGNORE' };
     ok($mech->select("J:A:F-author-$mon", $id), 'select 1st author');
 }
