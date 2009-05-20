@@ -1,10 +1,10 @@
 =encoding utf8
 
-=head1 標題
+=head1 NAME
 
 Jifty::Manual::Tutorial_zhtw - Jifty 從零開始
 
-=head1 敘述
+=head1 DESCRIPTION
 
 這份教學文件將提供建構第一個 jifty 應用程式所需要的技巧。
 
