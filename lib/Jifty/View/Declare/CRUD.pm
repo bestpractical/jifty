@@ -743,6 +743,8 @@ private template 'new_item_region' => sub {
     my $fragment_for_new_item = get('fragment_for_new_item') || $self->fragment_for('new_item');
     my $object_type = $self->object_type;
 
+    return unless $self->record_class->new->current_user_can('create');
+
     if ($fragment_for_new_item) {
         render_region(
             name     => 'new_item',
