@@ -54,7 +54,7 @@ Jifty 的安裝程式能夠自動偵測您機器上尚未安裝的模組，並�
 Jifty 將所有的事情設計的相當簡單使用，你只需要使用 Jifty 提供的 F<jifty> 命令列工具來啟動您的應用程式
  ( 在您建構的應用程式裡的 F<bin/> 資料夾內 )
 
-請切換到一個乾淨的目露底下來建立你的 Jifty 應用程式。 ( Jifty 會為您建立子資料夾 ).
+請切換到一個乾淨的目錄底下來建立你的 Jifty 應用程式。 ( Jifty 會為您建立子資料夾 ).
 
   # jifty app --name MyWeblog
   Creating new application MyWeblog
@@ -281,6 +281,8 @@ Jifty 會使用 SQLite 作為你預設的資料庫引擎。
   
       form {
           render_action $action;
+
+          # 提交按鈕
           form_submit(label => 'Post');
       }
   };
@@ -298,11 +300,12 @@ Jifty 會使用 SQLite 作為你預設的資料庫引擎。
 之間，新增以下這些程式:
 
   template '/' => page {
-      # Get all posts.
+
+      # 取得所有文章資料
       my $posts = MyWeblog::Model::PostCollection->new;
       $posts->unlimit;
   
-      # Display each post in a <dl>.
+      # 將每則文章顯示於 <dl> HTML 標籤內。
       dl {
           while (my $post = $posts->next) {
               dt { $post->title }
@@ -433,13 +436,16 @@ F<PostCollection.pm>。 Jifty 使用 C<Jifty::ClassLoader> 來自動產生許多
 
 =head2 使用自己的頁面類別 (此條目僅於中文文件新增)
 
-如果你不喜歡 Jifty 為你預設的頁面以及選單，你可以將 L<MyWeblog::View::Page> 類別覆載
+由於 Jifty 使用 Jifty::ClassLoader 來自動為你產生 MyWeblog::View::Page 
+因此為你套用的頁面、選單都是預設的。 如果你不喜歡 Jifty 為你建立預設的頁面以及選單
+你可以將 MyWeblog::View::Page 類別覆載 (override) 來客制化自己的頁面
+
 請建立 F<lib/MyWeblog/View/Page.pm> 檔案，並填入下列內容:
 
     use strict;
     use warnings;
     package MyWeblog::View::Page;
-    use base 'Jifty::View::Declare::Page';
+    use base 'Jifty::View::Declare::Page';   # 繼承 Jifty::View::Declare::Page
     use Jifty::View::Declare::Helpers;
 
     sub render_body {
