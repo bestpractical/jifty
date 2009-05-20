@@ -10,10 +10,13 @@ template '/__jifty/admin/requests/queries' => sub {
 
     ol {
         for (my $query_id = 0; $query_id < @$log; ++$query_id) {
+            my $seconds = sprintf('%.2f', $log->[$query_id][3]);
             my $query = $log->[$query_id][1];
+            my $label = _("(%1s) %2", $seconds, $query);
+
             li {
                 hyperlink(
-                    label => $query,
+                    label => $label,
                     onclick => {
                         region    => Jifty->web->qualified_region("query_$query_id"),
                         replace_with => '/__jifty/admin/requests/query',
