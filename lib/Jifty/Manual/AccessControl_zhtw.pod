@@ -1,3 +1,6 @@
+
+=encoding utf8
+
 =head1 NAME
 
 Jifty::Manual::AccessControl_zhtw - Using Jifty's default ACL system

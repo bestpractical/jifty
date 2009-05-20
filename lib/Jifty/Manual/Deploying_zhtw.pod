@@ -1,3 +1,6 @@
+
+=encoding utf8
+
 =head1 NAME
 
 Jifty::Manual::Deploying_zhtw - 佈署你的應用程式 Deploying your application for production use
