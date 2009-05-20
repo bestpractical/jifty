@@ -204,7 +204,7 @@ msgstr "總之，軟體已經記錄此錯誤。"
 
 #: lib/Jifty/Plugin/Authentication/Password/Mixin/Model/User.pm:54
 msgid "Authentication token"
-msgstr ""
+msgstr "驗證碼"
 
 #:
 msgid "Back to the admin console"
@@ -245,7 +245,7 @@ msgstr "確認信已寄出."
 
 #: lib/Jifty/Plugin/OpenID/View.pm:65
 msgid "Continue"
-msgstr ""
+msgstr "下一步"
 
 #: lib/Jifty/View/Declare/CRUD.pm:723
 msgid "Create"
@@ -282,7 +282,7 @@ msgstr "設定完畢?"
 
 #: share/web/templates/__jifty/halo:2
 msgid "Draw halos"
-msgstr ""
+msgstr "繪製樣板輪廓"
 
 #: lib/Jifty/View/Declare/CRUD.pm:366 share/web/templates/__jifty/halo:129 share/web/templates/__jifty/halo:23
 msgid "Edit"
@@ -302,7 +302,7 @@ msgstr "電郵地址"
 
 #: lib/Jifty/Plugin/User/Mixin/Model/User.pm:54
 msgid "Email address confirmed?"
-msgstr "已確認電郵地址?"
+msgstr "電郵地址已確認？"
 
 #: lib/Jifty/Plugin/Authentication/Password/View.pm:182
 msgid "Fill in your address below, and we'll send out another confirmation email to you. "
@@ -334,7 +334,7 @@ msgstr "去吧！"
 
 #: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:69
 msgid "Hashed Password"
-msgstr ""
+msgstr "已雜湊密碼"
 
 #: lib/Jifty/Plugin/ErrorTemplates/View.pm:44
 msgid "Head on back home"
@@ -348,7 +348,7 @@ msgstr "%1 您好!"
 #: lib/Jifty/Plugin/Authentication/Facebook/Action/LoginFacebookUser.pm:103
 #. (Jifty->web->current_user->user_object->facebook_name)
 msgid "Hi %1!"
-msgstr ""
+msgstr "你好 %1!"
 
 #: lib/Jifty/Plugin/I18N/Action/SetLang.pm:44
 #. (DateTime::Locale->load($lang)
@@ -371,19 +371,19 @@ msgstr "您在本系統的代號"
 
 #: lib/Jifty/Action.pm:1214
 msgid "I changed $field for you"
-msgstr ""
+msgstr "我為你修改了 $field"
 
 #: lib/Jifty/Plugin/Authentication/Password/Action/ResetLostPassword.pm:64
 msgid "I'm not sure how this happened."
-msgstr ""
+msgstr "我不太確定這如何發生"
 
 #: lib/Jifty/Plugin/OpenID/View.pm:59
 msgid "If the username provided conflicts with an existing username or contains invalid characters, you will have to give us a new one."
-msgstr ""
+msgstr "如果提供的使用者名稱與現有的使用者名稱產生衝突或者包含了不合法字元，你需要輸入一個新的名稱"
 
 #: lib/Jifty/Plugin/OpenID/View.pm:27
 msgid "If you have a Livejournal or other OpenID account, you don't even need to sign up. Just log in."
-msgstr ""
+msgstr "如果你有使用 LiveJournal 或者其他 OpenID 帳號，你不需要註冊，請直接登入即可。"
 
 #: lib/Jifty/Plugin/ErrorTemplates/View.pm:64
 msgid "Internal error"
@@ -395,7 +395,7 @@ msgstr "不正確的 OpenID 網址. (@{[$csr->err]})"
 
 #: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:122 lib/Jifty/Plugin/Authentication/Password/Action/SendAccountConfirmation.pm:75 lib/Jifty/Plugin/Authentication/Password/Action/SendPasswordReminder.pm:79
 msgid "It doesn't look like there's an account by that name."
-msgstr "沒有這個帳號."
+msgstr "這個帳號並不存在"
 
 #: lib/Jifty/Plugin/User/Mixin/Model/User.pm:107
 msgid "It looks like somebody else is using that address. Is there a chance you have another account?"
@@ -443,7 +443,7 @@ msgstr "登入"
 
 #: lib/Jifty/Plugin/Authentication/Facebook/View.pm:24
 msgid "Login to Facebook now to get started!"
-msgstr ""
+msgstr "登入 Facebook 並開始使用!"
 
 #: lib/Jifty/Plugin/Authentication/Facebook/View.pm:41
 msgid "Login to Facebook now to link it with your current account!"
@@ -764,7 +764,7 @@ msgstr "成功更新項目."
 
 #: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:44
 msgid "Username"
-msgstr ""
+msgstr "使用者名稱"
 
 #: share/web/templates/__jifty/halo:96
 msgid "Variables"
@@ -836,11 +836,11 @@ msgstr "抱歉, 此頁面不存在, 系統已留下紀錄."
 
 #: lib/Jifty/Plugin/Authentication/Password/Action/ConfirmEmail.pm:44
 msgid "You have already confirmed your account."
-msgstr "您已經確認過這個帳號了."
+msgstr "您已經確認過這個帳號。"
 
 #: lib/Jifty/Plugin/Authentication/Password/Action/Login.pm:215
 msgid "You haven't confirmed your account yet."
-msgstr ""
+msgstr "您還未確認您的帳號。"
 
 #: lib/Jifty/Plugin/Authentication/Password/View.pm:148
 msgid "You lost your password. A link to reset it will be sent to the following email address:"
@@ -910,7 +910,7 @@ msgstr ""
 
 #: lib/Jifty/Action/Record.pm:452
 msgid "no value"
-msgstr ""
+msgstr "無資料"
 
 #:
 msgid "text of the link"
@@ -930,4 +930,4 @@ msgstr "警告"
 
 #: lib/Jifty/Action/Record/Bulk.pm:113
 msgid "yatta"
-msgstr ""
+msgstr "太棒了!"
