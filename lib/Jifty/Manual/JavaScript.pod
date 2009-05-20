@@ -305,10 +305,24 @@ This is used to select the C<Jifty.Effect> to use when performing the modificati
 
 =head1 REFERENCE
 
+=over 
+
+=item jQuery in 15 minutes
+
 L<http://www.slideshare.net/simon/jquery-in-15-minutes/>
+
+=item Learning jQuery in 30 minutes
+
 L<http://www.slideshare.net/simon/learning-jquery-in-30-minutes/>
+
+=item Prototype jQuery going from one to the other
+
 L<http://www.slideshare.net/remy.sharp/prototype-jquery-going-from-one-to-the-other/>
+
+=item jQuery Officail Documentation
+
 L<http://docs.jquery.com/>
 
-=cut
+=back
 
+=cut
