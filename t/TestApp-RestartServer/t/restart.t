@@ -52,6 +52,7 @@ if ($pid) {
         'admin mode is gone on page, restart works!',
     );
     system("@perl bin/jifty server --stop");
+    system("@perl bin/jifty schema --drop-database");
 }
 else {
     system("@perl bin/jifty server");
