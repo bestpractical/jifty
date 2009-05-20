@@ -8,9 +8,11 @@ __PACKAGE__->use_mason_wrapper;
 
 template 'say_hi' => page {
     my $a = Jifty->web->new_action( class => 'SayHi', moniker => "say_hi" );
-    form {
-        $a->hidden('xxx_name','hidden');
-        render_param($a => 'xxx_name');
+    form {a
+       ### THIS is wrong / deprecated
+       # $a->hidden('xxx_name','hidden');
+       # render_param($a => 'xxx_name');
+        render_param($a => 'xxx_name', render_as => 'hidden', default_value => 'some value');
         render_param( $a => 'greeting' );
         Jifty->web->form->submit(
             label   => _('Create'),
