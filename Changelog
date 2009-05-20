@@ -1,240 +1,124 @@
--------------------------------
+------------------------------
 Jifty 0.90519 - May 19th, 2009
--------------------------------
+------------------------------
+
+POSSIBLE INCOMPATIBILITIES
+==========================
+ * Jifty::Mason::Halo has been demoted into into
+   Jifty::View::Mason::Halo; if your wrapper scripts invoked methods
+   in Jifty::Mason::Halo, they may need to be changed.
+
+CORE FEATURES
+=============
+ * Add a Jifty->web->qualified_parent_region for munging your sibling
+   regions
+ * Basic background process support via Jifty->background
+ * Add and use the display_length attribute on columns
+ * Make Jifty::DateTime->from_epoch(100) dwim
+ * Server script immediately forks, so it can be restarted
+ * Flush and close the client connection before running after {}
+   blocks
 
 CRUD
 ====
- * When we delete an item in CRUD, don't refresh the parent, because that
-   closes open editing forms. Just replace the current region with empty
+ * When we delete an item in CRUD, don't refresh the parent, because
+   that closes open editing forms. Just replace the current region
+   with empty
  * Make no_items_found a region
- * When you use CRUD to create a new element, clear any existing "No items
-   found" notice
+ * When you use CRUD to create a new element, clear any existing "No
+   items found" notice
  * Hooks for overriding the display of a particular form field
  * Factor out page_title for CRUD
 
 I18N
 ====
- * apply maketext perl plugin to pl,pm files. to grep more kinds of i18n string formats.
- *  fix localization js typo
-
-ACK!
-====
- *  r60104@68-246-143-250:  jesse | 2009-03-09 13:09:42 -0400
-    make a comment like less
-    r61412@68-246-143-250:  jesse | 2009-04-10 10:21:22 -0400
-    * Cleanup of fallout from Jifty::Mason::Halo -> Jifty::View::Mason::Halo
+ * Apply maketext perl plugin to pl,pm files, to grep more kinds of
+   i18n string formats.
+ * Fix localization js typo
 
 BUGFIX
 ======
  * Call to _page_class needs parens to not get parsed as a package
- * Avoid use of "packge HTML::Mason::Exception", which cause PAUSE to hate us
+ * Avoid use of "packge HTML::Mason::Exception", which causes PAUSE to
+   hate us
  * Fixes for plugin share paths when running Jifty out of @INC
- * comment the warning when ApplicationClass::Config is not a sub-class of Jifty::Config
- * Close Net::Server client sockets on background
-
-   HTTP::Server::Simple, when Net::Server implementations are used, does
-   not store away the created Net::Server subclasses.  This means that it
-   is not possible to find and close the client connections after a
-   fork().  We amend the Net::Server::Fork and Net::Server::PreFork
-   classes to store themselves on the Jifty::Server object, so we can
-   close client connections as need be later.
- * Remove bogus line; this never did anything
-
-   Jifty::Server objects are not Net::Server objects; as of the previous
-   commit, they _have_ a Net::Server object at times, but not always.
+ * Comment the warning when ApplicationClass::Config is not a
+   sub-class of Jifty::Config
  * Move pubsub activation to being on document ready, just in case
  * Fix a function call name
  * Give an actual error message when there's no current user
  * Set the InactiveDestroy on the dbh when backgrounding
  * In forking servers, disconnect the database before stalling on accept
-
-   In forking servers, the main server process never accesses the
-   database, so it does not need to hold a database connection open.
-   After working, ither it or its children need to set InactiveDestroy,
-   or it needs to not have a connection at all.  Since a connection is
-   not needed, we choose the latter.
  * Fix another shared database handle between tests and test servers
-
-   Tests shared a database handle with their spawned test servers, which
-   amazongly mostly never bit us, except when requests finished very
-   quickly.  Ensure that the test script gets a new database handle after
-   spasning the test server.
- * Flush and close the client connection before running after{} blocks
  * There is no utf8 in this file, thus no need for "use utf8"
  * Always specify _which_ file had errors opening when you die
 
 DOC
 ===
- *  - update the untranslated part of zhtw tutorial from tutorial.pod
- *  more translation for zhtw tutorial
- *  translation for share/web/static part of zhtw tutorial.
- *  translate for lib/MyWeblog/Model part of zhtw tutorial.
- *  translation for lib/MyWeblog/Action part. (zhtw tutorial)
- *  translation for test directory , model. (zhtw tutorial)
- * Be more explicit about where this new template goes
- * pod encoding utf8 (tutorial_zhtw)
- * fix pod name (tutorial_zhtw)
  * Begin making POD coverage a little happier with TD templates
  * RequestInspector API doc
  * Pod coverage for script classes
- * Jifty::Server::restart POD
  * POD coverage for SQLQueries
  * Fix POD warnings find by lintian tool from debian packaging
- * Fix a documentation lie
- * updated japanese tutorial
- * update pod a bit
- * Some doc typo fixes
  * Better POD coverage
- * Fix =head1 and =head2 swap
- *  zhtw tutorial: translate jifty server section
- *  Tutorial_zhtw: translate user interface section
- *  Tutorial_zhtw: translate viewing section
- *  Tutorial_zhtw: translate the complex way section
- *  tutorial_zhtw: fix translation. thanks to gugod++
- *  more translation on Tutorial_zhtw.pod
- * new entry in Manual::Cookbook:  Render model refers_to field as a select widget with meaningful display name
- *  update tutorial_zhtw
- * * doc typo
- * * minor pod markup change
- *  fix cookbook "brief_description" section
- *  update Manual index
- *  r2675@Oulixeus:  c9s | 2009-05-10 23:40:22 +0800
-
-    add Deploying_zhtw
- *  r2749@Oulixeus:  c9s | 2009-05-16 14:11:06 +0800
-     AccessControl zhtw
- *  r2750@Oulixeus:  c9s | 2009-05-19 07:48:43 +0800
-     - complete jifty tutorial translation
-
-FEATURE
-=======
- * Add a Jifty->web->qualified_parent_region for munging your sibling
-   regions
- * add restart method for server
- * Basic background process support
- * let restart.html accepts seconds and url arguments
- * Add and use the display_length attribute on columns
- * Make Jifty::DateTime->from_epoch(100) dwim
- * forked server script so we can have real restart from now on
-
-IGNORE
-======
- * Take two on Jifty 0.90409 releng
- * .gitignore
- * Syntax error fix
- * We need to explicitly pass $self
- * Begin working on the RI view
- * Need to pass $cgi to new_request_inspection
- * requests method to get all of the requests so far
- * start and end timestamps for each request
- * url not uri
- * Add only complete requests to @requests
- * Use Time::HiRes instead of DateTime, give time taken in the table
- * inspect_after_request returns the new plugin_data, cleanup
- * Render plugin data
- * Add a more detailed analysis for RI plugins
- * RI->get_request(id)
- * Cleanup, use an ol instead of a table for requests
- * When clicking on a request, add a table for plugin data
- * Plugin table cleanups
- * Dyslexia
- * Limit the scope of short plugin name
- * Use a dl/dd/dt instead of a table for plugins
- * Analysis region
- * Don't toggle just yet
- * url_filter option for the plugin
- * Make toggling actually work
- * get_plugin_data
- * Use get_plugin_data
- * prereq_plugins=RequestInspector for SQLQueries
- * Ignore .swp files
- * Add a way to clear requests
- * Factor out rendering a particular request
- * Rename #request-inspector div to #request_inspector
- * Add a "more" link to load up more requests
- * Only display/link data when a plugin provides it
- * Better prose for SQLQueries summary
- * Better label on the load more button
- * Begrudgingly give RI plugins their request ID
- * Marginally better stack trace
- * Fix toggling of request inspector regions
- * Add .git to MANIFEST.SKIP
- * Make sure we keep this var directory around :/
-
-    0 files changed, 0 insertions(+), 0 deletions(-)
- * Ignore testapp_mason
- * Bump version
+ * New entry in Manual::Cookbook: Render model refers_to field as a
+   select widget with meaningful display name
+ * Fix cookbook "brief_description" section
+ * Update Manual index
+ * Updated japanese tutorial
+ * Updated zhtw tutorial
+ * add Deploying_zhtw, AccessControl_zhtw
 
 INSTALL
 =======
- * * bump dependency on JDBI
- * Update to Module::Install 0.84
- * Update MANIFEST
- * Bump version, for dependencies
- * Update MANIFEST for deleted files
- * Bump Module::Install 0.84 to 0.85
- * * depend on JDBI 0.56 because of display_length
- * Update META.yml
+ * Update to Module::Install 0.85
+ * Depend on JDBI 0.57 because of display_length and
+   rename_table/rename_column
  * Bump WWW::Mechanize dep for working ->back method
- * JDBI dep bump
- * Update MANIFEST and META.yml
 
 PLUGINS
 =======
  * allow plugins to return more than one static_root.
- * Begin adding a RequestInspector plugin
- * memoize inspector_plugins
- * Reimplement SQLQueries as a RequestInspector consumer
+ * Add a RequestInspector plugin, which any per-request debugging aids
+   use
+ * Reimplement SQLQueries as a RequestInspector consumer; LeakTracker,
+   Gladiator, and NYTProf now also use RequestInspector
  * Include sum of query time in the SQLQueries summary
  * Try harder to avoid loading a prereq_plugin multiple times
- * Try even harder to avoid loading a prereq plugin twice!
  * Refactor SQLQueries to use a real view
  * SQLQueries further display: bind parameters and stack traces
  * Don't display bind parameters if there are none
- * Run plugins in reverse order on the way out
- * Preserve plugin order
- * keep the old Plugins stuff in site_config instead of dumping all into it, because of the array merge problem(duplicate occurs)
- * rescue the previous commit: set Plugins to empty array if site_config does not have any Plugins
- * add after_restart_url class data for Config plugin
- * add restart functionality for Config plugin
- * add wait_seconds class attribute for config plugin
- * make the whole content of config.yml as atextarea so we can config everything
- * fix Config plugin: seems arguments do *not* like \W chars
- * remain config.yml unix format
- * replace mason pages with View.pm: so we can make config_url more flexible
- * add restart_url config item so we can cusomize more flexible
- * tweak config plugin: add Restart action; now we have "save" and "save&restart" buttons
- * add url argument to restart action so we can specify the url it tangents
- * do not show label for config
- * Remove custom page {} sub from Password's View class
-
-   The page {} in Password's View class simply delegated to the
-   application's View class' page {} -- no other part of the TD page code
-   uses this codepath.  This _may_ break backwards compatibility in some
+ * Add a Config plugin, for adjusting Jifty configuration from the
+   application; can restart the standalone server to take changes,
+   additionally.
+ * Remove custom page {} sub from Password's View class.  The page {}
+   in Password's View class simply delegated to the application's View
+   class' page {} -- no other part of the TD page code uses this
+   codepath.  This _may_ break backwards compatibility in some
    applications, however.
- * set only if defined
 
 PUBSUB
 ======
- * Every 10 seconds, have PubSub send a whitespace character as a keep-alive
-
-   Without this, Pubsub children under a Forking server stick around
-   forever after the client has left the page.  This does not address the
-   problem of FastCGI clients, which have a similar problem.
+ * Every 10 seconds, have PubSub send a whitespace character as a
+   keep-alive.  Without this, Pubsub children under a Forking server
+   stick around forever after the client has left the page.  This does
+   not address the problem of FastCGI clients, which have a similar
+   problem.
 
 REFACTOR
 ========
  * Split Jifty::CAS::Blob out, and document
- * Demote Jifty::Mason::Halo into Jifty::View::Mason::Halo
- * * migrate to rename_table/rename_column in the JDBI
- * Factor out the actual record creation in JARC into a create_record method
+ * Migrate to new rename_table/rename_column in JDBI
+ * Factor out the actual record creation in JARC into a create_record
+   method
  * Refactor away duplication in Jifty->web->link
- * Change all calls from Template::Declare->(new|end)_buffer_frame to new API
+ * Change all calls from Template::Declare->(new|end)_buffer_frame to
+   new API
 
 TEST
 ====
  * Improve clarity and correctness of moniker_for
- * add restart server test
+ * Add a test for restarting the server
  * Fix a non-deterministic test which failed when load was too high
  * Silence TODO warnings
  * Avoid undef warning
@@ -245,7 +129,7 @@ VIEW
  * Pass $self to page's meta so method dispatch still works
  * Apps can now include app-late.css for restyling YUI and jQuery and
    whatnot
- * Give timepickr buttons a label of "Pick time"
+ * Give timepicker buttons a label of "Pick time"
 
 -------------------------------
 Jifty 0.90409 - April 9th, 2009
