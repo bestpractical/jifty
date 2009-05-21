@@ -37,17 +37,15 @@ C<update> right, if the C<FIELD> is C<paid_account>.
 
 =head1 ENABLING ACCESS CONTROL USING THE USER PLUGIN
 
-To painlessly enable the AccessControl subsystem, a User plugin is available
-with an authentication plugin, the C<Authentication::Password> plugin may get 
-enabled. This is done in the F<etc/config.yml> configuration file.
+要無痛啟用 AccessControl 子系統，可以使用 User 插件來搭配一個驗證插件，
+如 C<Authentication::Password> 插件。我們可以在 F<etc/config.yml> 來將這件事設定完成:
 
     Plugins:
       - Authentication::Password: {}
 
-Then, create an C<App::Model::User> class that will be override with
-C<Jifty::Plugin::User::Mixin::Model::User> and an authentication plugin 
-C<Jifty::Plugin::Authentication::Password::Mixin::Model::User>
-, for example:
+然後，建立你的 C<App::Model::User> 類別，讓它覆載 C<Jifty::Plugin::User::Mixin::Model::User> 
+以及驗證插件的 C<Jifty::Plugin::Authentication::Password::Mixin::Model::User>
+舉例來說:
 
     use strict;
     use warnings;
@@ -66,15 +64,18 @@ C<Jifty::Plugin::Authentication::Password::Mixin::Model::User>
 
     1;
 
-Next, create the table in your database using the F<jifty> executable
-like C<./bin/jifty schema --setup>.
+下一步，使用 F<jifty> 執行檔，來建立你資料庫內的資料表。如:
 
-=head2 Expanding the Model
+    $ bin/jifty schema --setup
 
-The model that manages C<User> Records is not limited to the plugin's
-definition. It can be expanded by providing an additional schema
-definition. Every column here will be added to the plugin's
-columns. Simply add a schema definition block like this:
+=head2 延展資料模型
+
+管理 C<User> 紀錄的資料模型並不限定於插件的定義。
+
+它可以被延展，並可被定義其他額外的欄位。
+每個欄位都會被新增到插件的欄位之中。
+
+只需要簡單的在資料模型綱要 ( schema ) 的定義區塊中新增一些欄位定義:
 
     use Jifty::DBI::Schema;
     use App::Record schema {
@@ -87,12 +88,13 @@ columns. Simply add a schema definition block like this:
         # more columns if necessary
     };
 
-The full syntax for defining a schema can be found in
-L<Jifty::Manual::Models> or in L<Jifty::DBI::Schema>.
+關於定義資料模型綱要的完整語法，可於
+L<Jifty::Manual::Models> 或 L<Jifty::DBI::Schema> 內參閱更詳細的資料。
 
-If you want to manage an admin group, you must protect the group column 
-as only a superuser can change it.
-Then, you override C<current_user_can> in C<App::Model::User> 
+如果你需要管理系統管理者群組，你需要保護這個群組欄位只能讓超級使用者
+(superuser) 來改變。
+
+接著，你需要覆載 C<App::Model::User> 中的 C<current_user_can> 函式:
 
     sub current_user_can {
         my $self = shift;
@@ -108,9 +110,10 @@ Then, you override C<current_user_can> in C<App::Model::User>
         return 1;
     }
 
-Defining a method C<_init> in your C<App::CurrentUser> class gives you
-a chance to add more data to the C<CurrentUser> object. This method
-will automatically get called after the Plugin's C<_init> is done.
+在你的 C<App::CurrentUser> 類別中，定義 C<_init> 函式
+讓你有機會新增更多資料到你的 C<CurrentUser> 物件。
+
+這則函式會在插件的 C<_init> 函式完畢之後自動被呼叫。
 
     package App::CurrentUser;
 
