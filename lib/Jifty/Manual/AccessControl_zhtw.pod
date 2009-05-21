@@ -3,33 +3,31 @@
 
 =head1 NAME
 
-Jifty::Manual::AccessControl_zhtw - Using Jifty's default ACL system
+Jifty::Manual::AccessControl_zhtw - 使用 Jifty 預設的 ACL 系統
 
 =head1 DESCRIPTION
 
+以 Jifty 為基礎的應用程式都有 ACL 系統。這個系統能夠透過呼叫
+C<current_user_can> 函式來在建立、讀取、更新、刪除等動作之前自動驗證
+L<Jifty::Record> 物件的 ACLs。
 
-Out of the box Jifty-based applications have an ACL system.  The system 
-automatically validates ACLs on L<Jifty::Record> objects by calling the method
-C<current_user_can> before any create, read, update, or delete operation.
-In all cases, the arguments passed to the CRUD operation are passed as 
-extra arguments to C<current_user_can>.
+在任何狀況，傳遞給 CRUD 程序的參數都會以額外的參數傳遞給 C<current_user> 函式。
 
-On C<create()>, we reject the operation if C<current_user_can('create')>
-returns FALSE.
+在 C<create()> 函式，如果 C<current_user_can('create')> 回傳 false
+則拒絕此項操作。
 
-On C<_value()> or C<I<somefieldname>>, we reject the operation
-if C<current_user_can('read')> returns false.
+在 C<_value()> 或 C<I<somefieldname>> 函式， 如果 C<current_user_can('read')>
+回傳 false 則操作會被拒絕。
 
-On C<_set()> or C<I<set_somefieldname>>, we reject the operation
-if C<current_user_can('update')> returns false.
+在 C<_set()> 或 C<I<set_somefieldname>> 函式，如果 C<current_user_can('read')>
+回傳 false 則操作會被拒絕。
 
+在 C<delete()> 函式，如果 C<current_user_can('read')>
+回傳 false 則操作會被拒絕。
 
-On C<delete()>, we reject the operation if C<current_user_can('delete')>
-returns false.
+系統預設的行為會讓 C<current_user_can> 回傳 1。
 
-Out of the box, C<current_user_can> returns 1. When you want to actually 
-check ACLs, you'll need to override C<current_user_can()> in your
-C<Jifty::Record> subclass.
+當你想檢查 ACLs 時，你需要在你的 C<Jifty::Record> 內覆載 C<current_user_can()> 函式。
 
 It's likely that at some point, you'll decide you want to ask other
 questions on certain types of operations.  Say, you only want to let
