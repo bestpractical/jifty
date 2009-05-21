@@ -7,9 +7,9 @@ Jifty::Manual::AccessControl_zhtw - 使用 Jifty 預設的 ACL 系統
 
 =head1 DESCRIPTION
 
-以 Jifty 為基礎的應用程式都有 ACL 系統。這個系統能夠透過呼叫
+以 Jifty 為基礎的應用程式都有存取權限控制 (ACL) 系統。這個系統能夠透過呼叫
 C<current_user_can> 函式來在建立、讀取、更新、刪除等動作之前自動驗證
-L<Jifty::Record> 物件的 ACLs。
+L<Jifty::Record> 物件的存取權限控制 ( ACL )。
 
 在任何狀況，傳遞給 CRUD 程序的參數都會以額外的參數傳遞給 C<current_user> 函式。
 
@@ -35,7 +35,7 @@ administrators update the C<paid_account> field. In that case, you'd override
 C<check_update_rights()> to look for the C<admin> right rather than the 
 C<update> right, if the C<FIELD> is C<paid_account>.
 
-=head1 ENABLING ACCESS CONTROL USING THE USER PLUGIN
+=head1 透過插件來啟用權限控制 ( ENABLING ACCESS CONTROL USING THE USER PLUGIN )
 
 要無痛啟用 AccessControl 子系統，可以使用 User 插件來搭配一個驗證插件，
 如 C<Authentication::Password> 插件。我們可以在 F<etc/config.yml> 來將這件事設定完成:
@@ -141,64 +141,60 @@ L<Jifty::Manual::Models> 或 L<Jifty::DBI::Schema> 內參閱更詳細的資料�
         $self->SUPER::_init(%args);
     };
 
-With your C<App::CurrentUser>, users in group admin are superuser and you can 
-use C<< Jifty->web->current_user->group >> in your application.
+透過你所定義的 C<App::CurrentUser> , 在 admin 群組內的使用者都將是超級使用者 (superuser) 
+並且你可以在你的應用程式內使用 C<< Jifty->web->current_user->group >>。
 
-=head2 Templates defined by the C<Authentication::Password> plugin
+=head2 C<Authentication::Password> 插件所定義的樣板
 
-To avoid the need for repetitive work, the C<Authentication::Password> plugin already
-defines a couple of usable templates:
+C<Authentication::Password> 插件已經定義了許多可使用的樣板，來避免做重複的事情，
 
 =over 4
 
 =item F</login>
 
-provides a login screen with a signup option. After
-successful login, the current continuation is called. If no
-continuation exists, the template sitting at the base URL (F</>) is called.
+提供了登入表單的樣板。並且有註冊 (signup) 的選項。
+
+在成功登入之後，便會導向到接續的頁面。若是沒有定義，則會導向到 F</> 。
 
 =item F</logout>
 
-logs out the current user.
+讓目前使用者登出
 
 =item F</signup>
 
-allows a user to sign up himself/herself. By default
-a confirmation mail is sent out that has to get followed by
-the user.
+讓使用者註冊。 系統預設會確認信件寄給使用者。
 
 =item F</passwordreminder>
 
-after entering his/her mail address, the user will receive a mail that
-contains a link to F</let/reset_lost_password>.
+在輸入他或她的電子郵件地址之後，使用者會收到一封包含重設密碼連結的信件
+於 F</let/reset_lost_password> 重設密碼。
 
 =item F</let/confirm_email>
 
-is called in the mail and results in accepting the user.
+會在使用者點選確認信件連結之後被呼叫。並且確認使用者。
 
 =item F</let/reset_lost_password>
 
-enabled by the passwordreminder template, this template allows a user
-to reenter a password for future use.
+重設密碼。
+此樣板允許使用者重新設定密碼。
 
 =back
 
 =head2 Doing checks at other places in your code
 
-If you need to check more than Model-based record operations you will
-have to do some coding on your own. C<< Jifty->web->current_user >> provides a
-C<App::CurrentUser> object that can get queried about the current user.
-This object provides some convenience methods:
+如果你需要檢查更多關於資料模型為基礎的資料操作，那麼你需要自己撰寫
+細節的程式碼。 C<< Jifty->web->current_user >> 提供了
+C<App::CurrentUser> 物件以取得目前的使用者，此物件包含了一些相當好用的函式:
 
 =over 4
 
 =item C<username>
 
-returns the name of the current user or C<undef> if not logged in.
+傳回目前使用者的名稱，如果沒有登入，則傳回 C<undef>
 
 =item C<id>
 
-returns the id of the current user or C<undef> if not logged in.
+傳回目前使用者的 ID ，若沒有登入，則傳回 C<undef>
 
 =back
 
