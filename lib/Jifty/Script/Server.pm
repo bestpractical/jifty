@@ -18,9 +18,10 @@ BEGIN { $SIG{__DIE__} = $x;}
 
 
 use File::Path ();
+use Jifty::Util;
 
-use constant PIDFILE => 'var/jifty-server.pid';
-use constant PARENTPIDFILE => 'var/jifty-server-parent.pid';
+use constant PIDFILE => Jifty::Util->absolute_path('var/jifty-server.pid');
+use constant PARENTPIDFILE => Jifty::Util->absolute_path('var/jifty-server-parent.pid');
 
 =head1 NAME
 
