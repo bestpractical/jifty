@@ -161,7 +161,7 @@ __END__
 
 =head1 NAME
 
-Jifty::Plugin::RequestInspector::View
+Jifty::Plugin::RequestInspector::View - View for RequestInspector
 
 =cut
 

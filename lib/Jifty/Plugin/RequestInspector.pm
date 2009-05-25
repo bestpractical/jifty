@@ -121,7 +121,7 @@ __END__
 
 =head1 NAME
 
-Jifty::Plugin::RequestInspector
+Jifty::Plugin::RequestInspector - Inspect requests
 
 =head1 DESCRIPTION
 

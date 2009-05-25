@@ -64,7 +64,7 @@ __END__
 
 =head1 NAME
 
-Jifty::Plugin::SQLQueries::View
+Jifty::Plugin::SQLQueries::View - View for SQLQueries
 
 =cut
 
