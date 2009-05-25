@@ -44,7 +44,9 @@ for my $path ("", "/td") {
     $mech->get_ok("$prefix/call-region-with-error");
     $mech->warnings_like(qr/Can't locate object method "non_existent_method" via package "Jifty::Web"/);
     $mech->base_unlike(qr{errors/500}, "Doesn't redirect if only a region error");
-    $mech->content_unlike(qr/something went awry/i, "Doesn't have error header");
+    #$mech->content_unlike(qr/something went awry/i, "Doesn't have error header");
+    #warn $mech->content;
+    $mech->content_like(qr/<h2>Call stack<\/h2>/i, "Doesn't have error header");
     $mech->content_like(qr/locate object method .*?non_existent_method.*?/, "Has error itself, if in devel mode");
     $mech->content_like(qr/region-with-error/, "Have stack trace");
     $mech->content_like(qr/Calling before/, "Does have region content from before error");
