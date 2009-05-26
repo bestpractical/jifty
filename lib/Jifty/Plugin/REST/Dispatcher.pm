@@ -330,9 +330,13 @@ sub render_as_html {
     if (ref($content) eq 'ARRAY') {
         return start_html(-encoding => 'UTF-8', -declare_xml => 1, -title => 'REST API'),
               ul(map {
-                  li($prefix ?
+                ref($_) eq 'HASH' ? render_as_html($url, $prefix,$_) :
+                    li(
+                    ref($_) eq 'ARRAY' ? render_as_html($url, $prefix,$_) :
+                      
+                      ($prefix ?
                      a({-href => "$url/".Jifty::Web->escape_uri($_)}, Jifty::Web->escape($_))
-                     : Jifty::Web->escape($_) )
+                     : Jifty::Web->escape($_) ))
               } @{$content}),
               end_html();
     }
