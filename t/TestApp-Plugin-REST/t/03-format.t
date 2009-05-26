@@ -2,7 +2,7 @@
 use warnings;
 use strict;
 
-use Jifty::Test::Dist tests => 46;
+use Jifty::Test::Dist tests => 99;
 use Jifty::Test::WWW::Mechanize;
 
 my $server  = Jifty::Test->make_server;
@@ -144,7 +144,6 @@ result_of_post '/=/model/user' => {
     });
 };
 
-__END__
 
 # on PUT    '/=/model/*/*/*' => \&replace_item;
 # on DELETE '/=/model/*/*/*' => \&delete_item;
@@ -165,6 +164,11 @@ $mech->get_ok('/=/search/user/id/1/name/test.yml');
 $content = get_content();
 is_deeply($content, [{ name => 'test', email => 'test@example.com', id => 1, tasty => undef }]);
 
+$mech->get_ok('/=/search/user/id/1');
+$content = get_content();
+unlike($content, qr/HASH/);
+
+
 $mech->get_ok('/=/search/user/id/1/name/test/email.yml');
 $content = get_content();
 is_deeply($content, ['test@example.com']);
@@ -180,6 +184,7 @@ is_deeply($content, []);
 # on GET    '/=/action'      => \&list_actions;
 
 my @actions = qw(
+                 TestApp.Plugin.REST.Action.CreateGroup
                  TestApp.Plugin.REST.Action.UpdateGroup
                  TestApp.Plugin.REST.Action.DeleteGroup
                  TestApp.Plugin.REST.Action.SearchGroup
@@ -252,6 +257,7 @@ $mech->content_contains('Something happened!');
 # Test YAML posts
 $mech->post ( $URL . '/=/action/DoSomething.yml', { email => 'good@email.com' } );
 
+my %content;
 eval {
     %content = %{get_content()};
 };
