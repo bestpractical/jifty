@@ -2,7 +2,7 @@
 use warnings;
 use strict;
 
-use Jifty::Test::Dist tests => 99;
+use Jifty::Test::Dist tests => 102;
 use Jifty::Test::WWW::Mechanize;
 
 my $server  = Jifty::Test->make_server;
@@ -167,7 +167,11 @@ is_deeply($content, [{ name => 'test', email => 'test@example.com', id => 1, tas
 $mech->get_ok('/=/search/user/id/1');
 $content = get_content();
 unlike($content, qr/HASH/);
+like($content, qr/test\@example.com/);
 
+$mech->get_ok('/=/search/user/id/1.html');
+$content = get_content();
+like($content, qr/test\@example.com/);
 
 $mech->get_ok('/=/search/user/id/1/name/test/email.yml');
 $content = get_content();
