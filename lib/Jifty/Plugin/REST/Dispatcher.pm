@@ -14,7 +14,7 @@ use Jifty::JSON ();
 use Data::Dumper ();
 use XML::Simple;
 
-before qr{^ (/=/ .*) \. (js|json|yml|yaml|perl|pl|xml) $}x => run {
+before qr{^ (/=/ .*) \. (js|json|yml|yaml|perl|pl|xml|html) $}x => run {
     $ENV{HTTP_ACCEPT} = $2;
     dispatch $1;
 };
@@ -250,6 +250,8 @@ sub output_format {
             freezer      => \&render_as_xml,
         };
     }
+    # if we ever have a non-html fallback case, we should be checking for an
+    # $accept of HTML here
     else {
         my $freezer;
 
