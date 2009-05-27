@@ -623,8 +623,12 @@ sub _ending {
         warn "Uncaught warning: $_" for $plugin->stashed_warnings;
     }
 
-    # Such a hack -- try to detect if this is a forked copy and don't
+    # Such a hack -- try to detect if this is a forked child process and don't
     # do cleanup in that case.
+    # TODO: note that this check fails if you're forking off multiple
+    # children that all do similar things, say running RT and Jifty tests
+    # in the same process
+    # XXX TODO - This makes assumptions about Test::Builder internals
     return if $Test->{Original_Pid} != $$;
 
     # If all tests passed..
@@ -649,6 +653,9 @@ sub _ending {
             # this shouldn't kill tests
             local $@; 
             eval { $schema->run };
+            if (my $err = $@) { 
+                warn $err;
+            }
         }
 
         # Unlink test files
