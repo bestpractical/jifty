@@ -644,7 +644,11 @@ sub _ending {
             Jifty->handle->disconnect();
             my $schema = Jifty::Script::Schema->new;
             $schema->{drop_database} = 1;
-            $schema->run;
+
+            # The schema dropper dies when it can't drop the database
+            # this shouldn't kill tests
+            local $@; 
+            eval { $schema->run };
         }
 
         # Unlink test files
