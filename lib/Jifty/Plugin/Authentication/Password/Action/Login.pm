@@ -144,13 +144,13 @@ sub validate_password {
 
     if ($token eq '') { # we have no token, validate in a standard way
         unless ( defined $pw && length $pw ) {
-            return $self->validation_error(password => "Please fill in this field." );
+            return $self->validation_error(password => "You need to fill in the 'password' field" );
         }
     } else { # we have a token, so we should have a hashed pw
         my $emptypw = '';
         my $blankhash = md5_hex("$token $emptypw");
         if ($hashedpw eq $blankhash) {
-            return $self->validation_error(password => "Please fill in this field." );
+            return $self->validation_error(password => "You need to fill in the 'password' field" );
         }
         
     }
