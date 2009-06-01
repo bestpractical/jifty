@@ -42,33 +42,41 @@ template '/__jifty/admin/setupwizard/step' => sub {
 
     div {
         class is 'setupwizard-links';
-        if ($step > 0) {
-            my $prev = $steps[$step - 1];
-            hyperlink(
-                label => _("Back: %1", $prev->{link} || $prev->{header} || $prev->{template}),
-                onclick => {
-                    replace_self => 1,
-                    arguments => {
-                        step => $step - 1,
-                    },
-                },
-            );
-        }
-
-        if ($step < @steps - 1) {
-            my $next = $steps[$step + 1];
-            hyperlink(
-                label => _("Skip to: %1", $next->{link} || $next->{header} || $next->{template}),
-                onclick => {
-                    replace_self => 1,
-                    arguments => {
-                        step => $step + 1,
-                    },
-                },
-            );
-        }
+        step_link(
+            index => $step - 1,
+            label => "Back: %1",
+        );
+        step_link(
+            index => $step + 1,
+            label => "Skip to: %1",
+        );
     };
 };
+
+sub step_link {
+    my %args = (
+        index => 0,
+        label => "%1",
+        @_,
+    );
+
+    my $index = $args{index};
+
+    return unless $index >= 0 && $index < @steps;
+
+    my $info = $steps[$index];
+    my $name = $info->{link} || $info->{header} || $info->{template};
+
+    hyperlink(
+        label => _($args{label}, $name),
+        onclick => {
+            replace_self => 1,
+            arguments => {
+                step => $index,
+            },
+        },
+    );
+}
 
 template '/__jifty/admin/setupwizard/language' => sub {
     p { _("You may select a different language.") };
