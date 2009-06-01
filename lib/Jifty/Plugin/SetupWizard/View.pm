@@ -103,6 +103,16 @@ template '/__jifty/admin/setupwizard/language' => sub {
 
 template '/__jifty/admin/setupwizard/database' => sub {
     p { _("You may choose a database engine.") };
+
+    config_field(
+        field      => 'Driver',
+        context    => '/framework/Database',
+        value_args => {
+            label            => 'Database Engine',
+            # render_as        => 'select',
+            available_values => [qw(SQLite mysql Pg)],
+        },
+    );
 };
 
 template '/__jifty/admin/setupwizard/web' => sub {
