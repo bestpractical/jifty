@@ -42,6 +42,9 @@ sub import {
     Jifty::Util->require(BaseClassName);
     push @{ $pkg . '::ISA' }, BaseClassName;
 
+    strict->import;
+    warnings->import;
+
     @_ = BaseClassName;
     goto &{BaseClassName()->can('import')};
 }
