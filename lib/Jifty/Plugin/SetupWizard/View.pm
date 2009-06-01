@@ -79,7 +79,14 @@ sub config_field {
 
     my $action = new_action('AddConfig');
 
-    outs_raw($action->form_field('value', %{ $args{value_args} }));
+    my %value_args = %{ $args{value_args} || {} };
+
+    # Grab a sensible default, the current value of config
+    if (!exists($value_args{default_value})) {
+        $value_args{default_value} ||= Jifty->config->contextual_get($args{context}, $args{field});
+    }
+
+    outs_raw($action->form_field('value' => %value_args));
 
     for my $field (qw/field context target_file/) {
         outs_raw($action->form_field(
