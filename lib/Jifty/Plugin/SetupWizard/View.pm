@@ -81,5 +81,9 @@ template '/__jifty/admin/setupwizard/web' => sub {
     p { _("You may change web server settings.") };
 };
 
+template '/__jifty/admin/setupwizard/finalize' => sub {
+    p { _("You may finalize your configuration.") };
+};
+
 1;
 

@@ -30,6 +30,10 @@ sub init {
                 template => 'web',
                 header   => 'Web',
             },
+            {
+                template => 'finalize',
+                header   => 'Finalize',
+            },
         ]);
     }
 }
@@ -38,7 +42,13 @@ sub add_step {
     my $self = shift;
     my %step = @_;
 
-    push @{ $self->steps }, \%step;
+    # Keep finalize at the end
+    if ($self->steps->[-1]->{template} eq 'finalize') {
+        splice @{ $self->steps }, -1, 0, \%step;
+    }
+    else {
+        push @{ $self->steps }, \%step;
+    }
 }
 
 1;
