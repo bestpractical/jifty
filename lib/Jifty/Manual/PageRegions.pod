@@ -170,6 +170,7 @@ any messages and errors from actions.
 
 =head2 EXAMPLES
 
+
 =head3 Hidden information that shows after click on a link
 
 It's ofetn required to hide some extra information, a list of objects
@@ -232,5 +233,38 @@ to use links generation. In the component's else branch add:
     % }
 
 Wow! Works again. Enjoy.
+
+=head3 Page Region in Template::Declare
+
+    use Jifty::View::Declare -base;
+    use Jifty::View::Declare::Helpers;
+
+    template '/replaced' => sub {
+        my $data = get('region_data');   # get "data to pass"
+        h1 { 'Replaced!' };
+    };
+
+    template '/' => page {
+        my $region = Jifty::Web::PageRegion->new(
+                    name => "region-to-replace",
+                    path => "/__jifty/empty",
+        );
+
+        div { { class is 'region-div' };
+            $region->render;
+        }:
+
+        hyperlink(
+            label => "Replace",
+            onclick => {
+                region => $region,
+                replace_with => '/replaced',
+                arguments => {
+                    region_data => "data to pass"
+                }
+            }
+        );
+    };
+
 
 =cut
