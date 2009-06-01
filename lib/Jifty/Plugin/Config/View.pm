@@ -55,17 +55,31 @@ template $restart_url => sub {
       . Jifty->config->framework('Web')->{Port}
       . $url
       unless $url =~ /^https?:/;
-    outs_raw(<<"EOF");
-<html>
-<head>
-<title>Restarting @{[ Jifty->config->framework('ApplicationName') ]}</title>
-<meta http-equiv="refresh" content="$seconds;url=$url" />
-</head>
-<body>
-<p>Please wait a few moments so the server can restart, then we'll redirect you <a href="$url">here</a>.</p>
-</body>
-</html>
-EOF
+
+    html {
+        head {
+            title {
+                outs "Restarting ";
+                outs Jifty->config->framework('ApplicationName');
+            };
+            meta {
+                attr {
+                    'http-equiv' => 'refresh',
+                    content      => "$seconds;url=$url",
+                };
+            };
+        };
+        body {
+            p {
+                outs "Please wait a few moments so the server can restart, then we'll redirect you ";
+                hyperlink(
+                    label => "here",
+                    url   => $url,
+                );
+                outs ".";
+            }
+        }
+    };
 
     Jifty->handler->buffer->flush_output();
     $Jifty::SERVER->restart;
