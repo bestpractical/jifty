@@ -79,14 +79,14 @@ sub config_field {
 
     my $action = new_action('AddConfig');
 
-    $action->form_field('value');
+    outs_raw($action->form_field('value'));
 
     for my $field (qw/field context target_file/) {
-        $action->form_field(
+        outs_raw($action->form_field(
             $field,
             render_as => 'hidden',
             (exists($args{$field}) ? (default_value => $args{$field}) : ()),
-        );
+        ));
     }
 }
 
