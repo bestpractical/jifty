@@ -30,5 +30,12 @@ sub init {
     }
 }
 
+sub add_step {
+    my $self = shift;
+    my %step = @_;
+
+    push @{ $self->steps }, \%step;
+}
+
 1;
 
