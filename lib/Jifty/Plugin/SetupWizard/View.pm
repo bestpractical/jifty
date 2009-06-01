@@ -36,6 +36,7 @@ template '/__jifty/admin/setupwizard/step' => sub {
             index => $step - 1,
             label => "Back: %1",
         );
+        br {};
         step_link(
             index => $step + 1,
             label => "Skip to: %1",
