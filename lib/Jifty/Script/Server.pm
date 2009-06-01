@@ -20,8 +20,9 @@ BEGIN { $SIG{__DIE__} = $x;}
 use File::Path ();
 use Jifty::Util;
 
-use constant PIDFILE => Jifty::Util->absolute_path('var/jifty-server.pid');
-use constant PARENTPIDFILE => Jifty::Util->absolute_path('var/jifty-server-parent.pid');
+use constant PIDDIR => Jifty::Util->absolute_path('var/');
+use constant PIDFILE => PIDDIR . 'jifty-server.pid';
+use constant PARENTPIDFILE => PIDDIR . 'jifty-server-parent.pid';
 
 =head1 NAME
 
@@ -147,6 +148,9 @@ sub _fork {
 
     die 'fork failed' unless defined $pid;
     if ($pid) {
+        mkdir PIDDIR or die "Can't create directory @{[PIDDIR]}: $!"
+            if !-d PIDDIR;
+
         open my $fh, '>', PARENTPIDFILE or die "Can't open @{[PARENTPIDFILE]} for writing: $!";
         print $fh $$;
         close $fh;
@@ -183,6 +187,8 @@ sub _run_server {
           and -d $data_dir;
 
     $SIG{TERM} = sub { exit };
+    mkdir PIDDIR or die "Can't create directory @{[PIDDIR]}: $!"
+        if !-d PIDDIR;
     open my $fh, '>', PIDFILE or die "Can't open @{[PIDFILE]} for writing: $!";
     print $fh $$;
     close $fh;
@@ -203,6 +209,8 @@ sub _run_server {
 
 sub _stop {
     my $self = shift;
+    mkdir PIDDIR or die "Can't create directory @{[PIDDIR]}: $!"
+        if !-d PIDDIR;
     open my $fh, '<', PARENTPIDFILE or die "Can't open @{[PARENTPIDFILE]} for reading: $!";
     my $pid = <$fh>;
     kill 'TERM' => $pid;
