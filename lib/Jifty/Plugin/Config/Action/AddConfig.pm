@@ -39,13 +39,31 @@ sub contextualize {
     return ($top, $pointer);
 }
 
+sub write_new_config {
+    my $self       = shift;
+    my $new_config = shift;
+
+    my $file = Jifty::Util->app_root
+             . '/'
+             . $self->argument_value('target_file');
+
+    my $existing_config = Jifty::YAML::LoadFile($file);
+
+    Hash::Merge::set_behavior('RIGHT_PRECEDENT');
+    my $combined_config = merge($existing_config, $new_config);
+
+    Jifty::YAML::DumpFile($file, $combined_config);
+}
+
 sub take_action {
     my $self = shift;
     my ($new_config, $pointer) = $self->contextualize($self->argument_value('context'));
+
     $pointer->{$self->argument_value('field')} = $self->argument_value('value');
 
-    # Hash::Merge site_config with $new_config
-    # Restart server
+    $self->write_new_config($new_config);
+
+    Jifty->config->load;
 }
 
 1;
