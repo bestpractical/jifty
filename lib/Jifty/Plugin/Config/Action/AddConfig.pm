@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use base 'Jifty::Action';
 
-use Hash::Merge;
+use Hash::Merge 'merge';
 
 use Jifty::Param::Schema;
 use Jifty::Action schema {
