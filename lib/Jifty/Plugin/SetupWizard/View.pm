@@ -4,8 +4,14 @@ use warnings;
 use Jifty::View::Declare -base;
 
 my @steps = (
-    'language',
-    'database',
+    {
+        template => 'language',
+        header   => 'Choose a Language',
+    },
+    {
+        template => 'database',
+        header   => 'Database',
+    },
 );
 
 template '/__jifty/admin/setupwizard' => page {
@@ -25,18 +31,21 @@ template '/__jifty/admin/setupwizard' => page {
 
 template '/__jifty/admin/setupwizard/step' => sub {
     my $step = get('step');
-    my $name = $steps[$step] or abort(400);
+    my $step_info = $steps[$step] or abort(400);
 
     div {
         class is 'setupwizard-step';
-        show "/__jifty/admin/setupwizard/$name";
+
+        h3 { $step_info->{header} } if $step_info->{header};
+        show "/__jifty/admin/setupwizard/$step_info->{template}";
     };
 
     div {
         class is 'setupwizard-links';
         if ($step > 0) {
+            my $prev = $steps[$step - 1];
             hyperlink(
-                label => _("Back: %1", $steps[$step - 1]),
+                label => _("Back: %1", $prev->{link} || $prev->{header} || $prev->{template}),
                 onclick => {
                     replace_self => 1,
                     arguments => {
@@ -47,8 +56,9 @@ template '/__jifty/admin/setupwizard/step' => sub {
         }
 
         if ($step < @steps - 1) {
+            my $next = $steps[$step + 1];
             hyperlink(
-                label => _("Skip: %1", $steps[$step + 1]),
+                label => _("Skip to: %1", $next->{link} || $next->{header} || $next->{template}),
                 onclick => {
                     replace_self => 1,
                     arguments => {
@@ -61,12 +71,10 @@ template '/__jifty/admin/setupwizard/step' => sub {
 };
 
 template '/__jifty/admin/setupwizard/language' => sub {
-    h3 { "Choose a Language" };
     p { _("You may select a different language.") };
 };
 
 template '/__jifty/admin/setupwizard/database' => sub {
-    h3 { "Database" };
     p { _("You may choose a database engine.") };
 };
 
