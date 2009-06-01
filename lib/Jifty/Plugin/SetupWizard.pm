@@ -26,6 +26,10 @@ sub init {
                 template => 'database',
                 header   => 'Database',
             },
+            {
+                template => 'web',
+                header   => 'Web',
+            },
         ]);
     }
 }

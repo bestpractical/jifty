@@ -77,5 +77,9 @@ template '/__jifty/admin/setupwizard/database' => sub {
     p { _("You may choose a database engine.") };
 };
 
+template '/__jifty/admin/setupwizard/web' => sub {
+    p { _("You may change web server settings.") };
+};
+
 1;
 
