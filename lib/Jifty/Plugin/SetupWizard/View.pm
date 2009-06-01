@@ -55,10 +55,12 @@ template '/__jifty/admin/setupwizard/step' => sub {
 };
 
 template '/__jifty/admin/setupwizard/language' => sub {
+    h3 { "Choose a Language" };
     p { _("You may select a different language.") };
 };
 
 template '/__jifty/admin/setupwizard/database' => sub {
+    h3 { "Database" };
     p { _("You may choose a database engine.") };
 };
 
