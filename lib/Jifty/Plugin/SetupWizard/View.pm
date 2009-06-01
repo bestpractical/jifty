@@ -27,31 +27,37 @@ template '/__jifty/admin/setupwizard/step' => sub {
     my $step = get('step');
     my $name = $steps[$step] or abort(400);
 
-    show "/__jifty/admin/setupwizard/$name";
+    div {
+        class is 'setupwizard-step';
+        show "/__jifty/admin/setupwizard/$name";
+    };
 
-    if ($step > 0) {
-        hyperlink(
-            label => _("Back: %1", $steps[$step - 1]),
-            onclick => {
-                replace_self => 1,
-                arguments => {
-                    step => $step - 1,
+    div {
+        class is 'setupwizard-links';
+        if ($step > 0) {
+            hyperlink(
+                label => _("Back: %1", $steps[$step - 1]),
+                onclick => {
+                    replace_self => 1,
+                    arguments => {
+                        step => $step - 1,
+                    },
                 },
-            },
-        );
-    }
+            );
+        }
 
-    if ($step < @steps - 1) {
-        hyperlink(
-            label => _("Skip: %1", $steps[$step + 1]),
-            onclick => {
-                replace_self => 1,
-                arguments => {
-                    step => $step + 1,
+        if ($step < @steps - 1) {
+            hyperlink(
+                label => _("Skip: %1", $steps[$step + 1]),
+                onclick => {
+                    replace_self => 1,
+                    arguments => {
+                        step => $step + 1,
+                    },
                 },
-            },
-        );
-    }
+            );
+        }
+    };
 };
 
 template '/__jifty/admin/setupwizard/language' => sub {
