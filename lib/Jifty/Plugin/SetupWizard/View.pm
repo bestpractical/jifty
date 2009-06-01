@@ -26,8 +26,12 @@ template '/__jifty/admin/setupwizard/step' => sub {
     div {
         class is 'setupwizard-step';
 
-        h3 { $step_info->{header} } if $step_info->{header};
-        show "/__jifty/admin/setupwizard/$step_info->{template}";
+        form {
+            h3 { $step_info->{header} } if $step_info->{header};
+
+            show "/__jifty/admin/setupwizard/$step_info->{template}";
+            form_submit(label => _('Save'));
+        };
     };
 
     div {
