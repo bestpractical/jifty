@@ -58,12 +58,11 @@ template $restart_url => sub {
     outs_raw(<<"EOF");
 <html>
 <head>
-<title>restarting</title>
+<title>Restarting @{[ Jifty->config->framework('ApplicationName') ]}</title>
 <meta http-equiv="refresh" content="$seconds;url=$url" />
 </head>
 <body>
-<h1>please wait for $seconds seconds so the server can restart,
-    then we'll redirect to <a href="$url">here</a></h1>
+<p>Please wait a few moments so the server can restart, then we'll redirect you <a href="$url">here</a>.</p>
 </body>
 </html>
 EOF
