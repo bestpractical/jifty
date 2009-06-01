@@ -74,6 +74,22 @@ sub step_link {
     );
 }
 
+sub config_field {
+    my %args = @_;
+
+    my $action = new_action('AddConfig');
+
+    $action->form_field('value');
+
+    for my $field (qw/field context target_file/) {
+        $action->form_field(
+            $field,
+            render_as => 'hidden',
+            (exists($args{$field}) ? (default_value => $args{$field}) : ()),
+        );
+    }
+}
+
 template '/__jifty/admin/setupwizard/language' => sub {
     p { _("You may select a different language.") };
 };
