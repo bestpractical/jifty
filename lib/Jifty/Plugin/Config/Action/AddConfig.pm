@@ -48,7 +48,7 @@ sub write_new_config {
              . '/'
              . $self->argument_value('target_file');
 
-    my $existing_config = Jifty::YAML::LoadFile($file);
+    my $existing_config = -r $file ? Jifty::YAML::LoadFile($file) : {};
 
     Hash::Merge::set_behavior('RIGHT_PRECEDENT');
     my $combined_config = merge($existing_config, $new_config);
