@@ -958,7 +958,7 @@ sub run_action {
     eval { $action->run };
 
     if ($@) {
-        $Dispatcher->log->warn($@);
+        warn $@;
         abort(500);
     }
 
