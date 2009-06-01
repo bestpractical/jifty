@@ -356,6 +356,10 @@ sub import {
 
         # User said "-base", let's push ourselves into their @ISA.
         push @{ $pkg . '::ISA' }, $class;
+
+        # Turn on strict and warnings for them too, a la Moose
+        strict->import;
+        warnings->import;
     }
 
     $class->export_to_level( 1, @args );
