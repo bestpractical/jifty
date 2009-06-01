@@ -79,7 +79,7 @@ sub config_field {
 
     my $action = new_action('AddConfig');
 
-    outs_raw($action->form_field('value'));
+    outs_raw($action->form_field('value', %{ $args{value_args} }));
 
     for my $field (qw/field context target_file/) {
         outs_raw($action->form_field(
