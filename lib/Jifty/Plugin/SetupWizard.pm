@@ -18,10 +18,11 @@ sub init {
     }
     else {
         $self->steps([
-            {
-                template => 'language',
-                header   => 'Choose a Language',
-            },
+            # Not sure this is worth doing quite yet.
+#            {
+#                template => 'language',
+#                header   => 'Choose a Language',
+#            },
             {
                 template => 'database',
                 header   => 'Database',
