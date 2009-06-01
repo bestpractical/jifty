@@ -77,6 +77,31 @@ sub app { return shift->_get( application => @_ ) }
 # A teeny helper for framework and app
 sub _get { return $_[0]->stash->{ $_[1] }{ $_[2] } }
 
+=head2 contextual_get CONTEXT VARIABLE
+
+Gets the configuration variable in the context C<CONTEXT>. The C<CONTEXT> is a
+slash-separated list of hash keys. For example, the following might return
+C<SQLite>:
+
+    contextual_get('/framework/Database', 'Driver')
+
+=cut
+
+sub contextual_get {
+    my $self    = shift;
+    my $context = shift;
+    my $field   = shift;
+
+    my $pointer = $self->stash;
+
+    my @fragments = grep { length } split '/', $context;
+    for my $fragment (@fragments) {
+        $pointer = $pointer->{$fragment} || return;
+    }
+
+    return $pointer->{$field};
+}
+
 =head1 LOADING
 
 =head2 new PARAMHASH
