@@ -3,16 +3,25 @@ use strict;
 use warnings;
 use base 'Jifty::Action';
 
+use Hash::Merge;
+
 use Jifty::Param::Schema;
 use Jifty::Action schema {
     param field =>
-        is mandatory;
+        is mandatory,
+        type is 'text';
 
     param value =>
-        is mandatory;
+        is mandatory,
+        type is 'text';
 
     param context =>
-        default is '/';
+        default is '/',
+        type is 'text';
+
+    param target_file =>
+        default is 'etc/site_config.yml',
+        type is 'text';
 };
 
 sub contextualize {
