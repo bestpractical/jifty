@@ -3,17 +3,6 @@ use strict;
 use warnings;
 use Jifty::View::Declare -base;
 
-my @steps = (
-    {
-        template => 'language',
-        header   => 'Choose a Language',
-    },
-    {
-        template => 'database',
-        header   => 'Database',
-    },
-);
-
 template '/__jifty/admin/setupwizard' => page {
     my $appname = Jifty->config->framework('ApplicationName');
     h1 { "Welcome to $appname!" };
@@ -31,7 +20,8 @@ template '/__jifty/admin/setupwizard' => page {
 
 template '/__jifty/admin/setupwizard/step' => sub {
     my $step = get('step');
-    my $step_info = $steps[$step] or abort(400);
+    my $steps = Jifty->find_plugin('Jifty::Plugin::SetupWizard')->steps;
+    my $step_info = $steps->[$step] or abort(400);
 
     div {
         class is 'setupwizard-step';
@@ -62,9 +52,10 @@ sub step_link {
 
     my $index = $args{index};
 
-    return unless $index >= 0 && $index < @steps;
+    my $steps = Jifty->find_plugin('Jifty::Plugin::SetupWizard')->steps;
+    return unless $index >= 0 && $index < @$steps;
 
-    my $info = $steps[$index];
+    my $info = $steps->[$index];
     my $name = $info->{link} || $info->{header} || $info->{template};
 
     hyperlink(
