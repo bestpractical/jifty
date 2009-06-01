@@ -17,7 +17,8 @@ use Jifty::Action schema {
 
     param context =>
         default is '/',
-        type is 'text';
+        type is 'text',
+        hints are 'Example: /framework/Web/MasonConfig';
 
     param target_file =>
         default is 'etc/site_config.yml',
