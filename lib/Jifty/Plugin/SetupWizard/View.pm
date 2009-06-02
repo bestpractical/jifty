@@ -173,15 +173,32 @@ template '/__jifty/admin/setupwizard/database' => sub {
 };
 
 template '/__jifty/admin/setupwizard/database/SQLite' => sub {
-    h4 { "SQLite" };
+    # Nothing more needed!
 };
 
+sub _configure_database_connectivity {
+    config_field(
+        field   => 'Host',
+        context => '/framework/Database',
+    );
+
+    config_field(
+        field   => 'User',
+        context => '/framework/Database',
+    );
+
+    config_field(
+        field   => 'Password',
+        context => '/framework/Database',
+    );
+}
+
 template '/__jifty/admin/setupwizard/database/mysql' => sub {
-    h4 { "MySQL" };
+    _configure_database_connectivity;
 };
 
 template '/__jifty/admin/setupwizard/database/Pg' => sub {
-    h4 { "PostgreSQL" };
+    _configure_database_connectivity;
 };
 
 template '/__jifty/admin/setupwizard/web' => sub {
