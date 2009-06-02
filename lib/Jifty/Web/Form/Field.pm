@@ -119,21 +119,22 @@ C<new>.  Subclasses should extend this list.
 
 =cut
 
+my @new_fields = qw(
+    name type sticky sticky_value default_value action
+    mandatory ajax_validates ajax_canonicalizes autocompleter preamble hints
+    placeholder focus render_mode display_length max_length _element_id
+    disable_autocomplete multiple
+);
+
+my @semiexposed_fields = qw(
+    label input_name
+);
+
 sub accessors {
-    shift->SUPER::accessors(), qw(name label input_name type
-      sticky sticky_value default_value action mandatory ajax_validates
-      ajax_canonicalizes autocompleter preamble hints placeholder focus
-      render_mode display_length max_length _element_id disable_autocomplete
-      multiple);
+    shift->SUPER::accessors(), @new_fields, @semiexposed_fields;
 }
 
-__PACKAGE__->mk_accessors(
-    qw(name _label _input_name type sticky sticky_value
-      default_value mandatory ajax_validates ajax_canonicalizes
-      autocompleter preamble hints placeholder focus render_mode
-      display_length max_length _element_id disable_autocomplete
-      multiple)
-);
+__PACKAGE__->mk_accessors(@new_fields, map { "_$_" } @semiexposed_fields);
 
 =head2 name [VALUE]
 
