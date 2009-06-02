@@ -69,3 +69,28 @@ sub take_action {
 
 1;
 
+__END__
+
+=head1 NAME
+
+Jifty::Plugin::Config::Action::AddConfig - add a configuration entry
+
+=head1 METHODS
+
+=head2 contextualize
+
+Takes a context string (slash-separated list of keys) and returns a pair of
+hash-references: the "top" of the config (for merging) and the "current
+pointer" into the "top" hashref for where the new config entry should go.
+
+=head2 write_new_config
+
+Merges the existing config file at C<target_file> with the new entry and
+updates C<target_file>.
+
+=head2 take_action
+
+Sets C<field = value> at C<context> in C<target_file>.
+
+=cut
+
