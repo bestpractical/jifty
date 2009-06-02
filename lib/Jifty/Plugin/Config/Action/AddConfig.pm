@@ -12,7 +12,6 @@ use Jifty::Action schema {
         type is 'text';
 
     param value =>
-        is mandatory,
         type is 'text';
 
     param context =>
