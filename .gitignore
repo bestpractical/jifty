@@ -9,6 +9,7 @@ inc/
 pm_to_blib
 jiftyapp
 t/*/mason*/
+t/*/t/mailbox*
 var/
 mason*/
 *.swp
