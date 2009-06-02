@@ -54,3 +54,44 @@ sub add_step {
 
 1;
 
+__END__
+
+=head1 NAME
+
+Jifty::Plugin::SetupWizard - make it easy for end-users to set up your app
+
+=head1 DESCRIPTION
+
+    http://your.app/__jifty/admin/setupwizard
+
+=head1 USAGE
+
+Add the following to your site_config.yml
+
+ framework:
+   Plugins:
+     - SetupWizard: {}
+
+=head1 METHODS
+
+=head2 init
+
+Sets up a L</post_init> hook.
+
+=head2 add_step(%params)
+
+Adds another step to the setup wizard. It will go at the end, but before the
+"finalize" step if it exists.
+
+=head2 prereq_plugins
+
+This plugin depends on L<Jifty::Plugin::Config>.
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2007-2009 Best Practical Solutions
+
+This is free software and may be modified and distributed under the same terms as Perl itself.
+
+=cut
+
