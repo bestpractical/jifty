@@ -127,6 +127,14 @@ template '/__jifty/admin/setupwizard/database' => sub {
             available_values => [qw(SQLite mysql Pg)],
         },
     );
+
+    config_field(
+        field      => 'Database',
+        context    => '/framework/Database',
+        value_args => {
+            label => 'Database Name',
+        },
+    );
 };
 
 template '/__jifty/admin/setupwizard/web' => sub {
