@@ -125,6 +125,22 @@ template '/__jifty/admin/setupwizard/database' => sub {
 
 template '/__jifty/admin/setupwizard/web' => sub {
     p { _("You may change web server settings.") };
+
+    config_field(
+        field      => 'BaseURL',
+        context    => '/framework/Web',
+        value_args => {
+            label => 'BaseURL',
+        },
+    );
+
+    config_field(
+        field      => 'Port',
+        context    => '/framework/Web',
+        value_args => {
+            label => 'Port',
+        },
+    );
 };
 
 template '/__jifty/admin/setupwizard/finalize' => sub {
