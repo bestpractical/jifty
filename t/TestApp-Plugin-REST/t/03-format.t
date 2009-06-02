@@ -2,7 +2,7 @@
 use warnings;
 use strict;
 
-use Jifty::Test::Dist tests => 102;
+use Jifty::Test::Dist tests => 101;
 use Jifty::Test::WWW::Mechanize;
 
 my $server  = Jifty::Test->make_server;
@@ -190,7 +190,6 @@ is_deeply($content, []);
 my @actions = qw(
                  TestApp.Plugin.REST.Action.CreateGroup
                  TestApp.Plugin.REST.Action.UpdateGroup
-                 TestApp.Plugin.REST.Action.DeleteGroup
                  TestApp.Plugin.REST.Action.SearchGroup
                  TestApp.Plugin.REST.Action.ExecuteGroup
                  TestApp.Plugin.REST.Action.CreateUser

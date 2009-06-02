@@ -108,8 +108,8 @@ is_deeply($content, []);
 # on GET    '/=/action'      => \&list_actions;
 
 my @actions = qw(
+                 TestApp.Plugin.REST.Action.CreateGroup
                  TestApp.Plugin.REST.Action.UpdateGroup
-                 TestApp.Plugin.REST.Action.DeleteGroup
                  TestApp.Plugin.REST.Action.SearchGroup
                  TestApp.Plugin.REST.Action.ExecuteGroup
                  TestApp.Plugin.REST.Action.CreateUser
