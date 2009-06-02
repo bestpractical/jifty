@@ -30,14 +30,20 @@ template '/__jifty/admin/setupwizard/step' => sub {
             h3 { $step_info->{header} } if $step_info->{header};
 
             show "/__jifty/admin/setupwizard/$step_info->{template}";
+            my @actions = keys %{ Jifty->web->form->actions };
             form_submit(
                 label => _('Save'),
-                onclick => {
-                    replace_self => 1,
-                    arguments => {
-                        step => $step + 1,
+                onclick => [
+                    {
+                        submit => \@actions,
                     },
-                },
+                    {
+                        replace_self => 1,
+                        arguments => {
+                            step => $step + 1,
+                        },
+                    },
+                ],
             );
         };
     };
