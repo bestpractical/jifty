@@ -1,5 +1,8 @@
 package TestApp::Dispatcher;
 use Jifty::Dispatcher -base;
+use Data::Dumper;
+use strict;
+use warnings;
 
 under '/' => run {
 };
@@ -84,8 +87,8 @@ before '__jifty/webservices/*' => run {
 };
 
 on qr{(__jifty/webservices/.*)} => run {
-    use Data::Dumper;
-    for $act (@actions) {
+    my (@actions) = values %{ Jifty->web->request->{'actions'} };
+    for my $act (@actions) {
 	warn Dumper($act);
     }
 };
