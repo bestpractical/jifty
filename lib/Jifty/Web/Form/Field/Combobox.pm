@@ -45,7 +45,7 @@ my $field = <<"EOF";
 EOF
 
 
-    for my $opt (@{ $self->action->available_values($self->name) }) {
+    for my $opt ($self->available_values) {
         my $display = $opt->{'display'};
         my $value   = $opt->{'value'} ||'' ;
         # TODO XXX FIXME worry about escape value, display?

@@ -771,6 +771,16 @@ qq!<span class="canonicalization_note @{[$self->classes]}" id="@{[$self->action-
     return '';
 }
 
+=head2 available_values
+
+Returns the available values for this field.
+
+=cut
+
+sub available_values {
+    my $self = shift;
+    return @{ $self->action->available_values($self->name) };
+}
 
 =for private
 

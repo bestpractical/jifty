@@ -20,7 +20,7 @@ Renders the whole radio button collection.
 sub render_widget {
     my $self  = shift;
 
-    for my $opt (@{ $self->action->available_values($self->name) }) {
+    for my $opt ($self->available_values) {
         $self->render_option($opt);
     }
 }
