@@ -787,8 +787,8 @@ sub available_values {
     }
 
     # If the available_values are available in the field..
-    if (my @available = $self->_available_values) {
-        return @available;
+    if (my $available = $self->_available_values) {
+        return @$available;
     }
 
     # Otherwise consult the action
