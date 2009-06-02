@@ -230,9 +230,12 @@ L<Jifty::Web::Form::Field::Clickable>'s constructor.
 
 sub submit {
     my $self = shift;
-    my %args = (submit => undef,
-                _form => $self,
-                @_);
+    my %args = (
+        submit    => undef,
+        _form     => $self,
+        as_button => 1,
+        @_,
+    );
 
     my @submit = ref($args{'submit'}) eq 'ARRAY' ? @{$args{'submit'}} : $args{'submit'};
     if ($self->actions->{'next_page'} && $submit[0] && ! grep {$_->moniker eq 'next_page' } @submit)  {
