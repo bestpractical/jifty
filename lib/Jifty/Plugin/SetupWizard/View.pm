@@ -97,7 +97,12 @@ sub config_field {
 
     # Grab a sensible default, the current value of config
     if (!exists($value_args{default_value})) {
-        $value_args{default_value} ||= Jifty->config->contextual_get($args{context}, $args{field});
+        $value_args{default_value} = Jifty->config->contextual_get($args{context}, $args{field});
+    }
+
+    # Grab sensible label, the value of field
+    if (!exists($value_args{label})) {
+        $value_args{label} = $args{field};
     }
 
     outs_raw($action->form_field('value' => %value_args));
@@ -183,19 +188,13 @@ template '/__jifty/admin/setupwizard/web' => sub {
     p { _("You may change web server settings.") };
 
     config_field(
-        field      => 'BaseURL',
-        context    => '/framework/Web',
-        value_args => {
-            label => 'BaseURL',
-        },
+        field   => 'BaseURL',
+        context => '/framework/Web',
     );
 
     config_field(
-        field      => 'Port',
-        context    => '/framework/Web',
-        value_args => {
-            label => 'Port',
-        },
+        field   => 'Port',
+        context => '/framework/Web',
     );
 };
 
