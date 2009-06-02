@@ -123,8 +123,12 @@ template '/__jifty/admin/setupwizard/database' => sub {
         context    => '/framework/Database',
         value_args => {
             label            => 'Database Engine',
-            # render_as        => 'select',
-            available_values => [qw(SQLite mysql Pg)],
+            render_as        => 'select',
+            available_values => [
+                { display => 'SQLite',     value => 'SQLite' },
+                { display => 'MySQL',      value => 'mysql' },
+                { display => 'PostgreSQL', value => 'Pg' },
+            ],
         },
     );
 
