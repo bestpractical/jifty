@@ -118,6 +118,25 @@ template '/__jifty/admin/setupwizard/language' => sub {
 template '/__jifty/admin/setupwizard/database' => sub {
     p { _("You may choose a database engine.") };
 
+    # XXX: We've got to add a sane way to unquote stuff in onfoo handlers...
+    my $onchange = 'Jifty.update('
+                 . Jifty::JSON::objToJson({
+                    actions          => {},
+                    action_arguments => {},
+                    fragments        => [
+                        {
+                            mode => 'Replace',
+                            path => '/__jifty/admin/setupwizard/database/PLACEHOLDER',
+                            region => Jifty->web->qualified_region('database_details'),
+                        },
+                    ],
+                    continuation     => undef,
+
+                 }, {singlequote => 1})
+                 . ', this)';
+
+    $onchange =~ s/PLACEHOLDER/'+this.value+'/;
+
     config_field(
         field      => 'Driver',
         context    => '/framework/Database',
@@ -129,6 +148,7 @@ template '/__jifty/admin/setupwizard/database' => sub {
                 { display => 'MySQL',      value => 'mysql' },
                 { display => 'PostgreSQL', value => 'Pg' },
             ],
+            onchange => [$onchange],
         },
     );
 
@@ -139,6 +159,24 @@ template '/__jifty/admin/setupwizard/database' => sub {
             label => 'Database Name',
         },
     );
+
+    my $driver = Jifty->config->framework('Database')->{Driver};
+    render_region(
+        name => 'database_details',
+        path => "/__jifty/admin/setupwizard/database/$driver",
+    );
+};
+
+template '/__jifty/admin/setupwizard/database/SQLite' => sub {
+    h4 { "SQLite" };
+};
+
+template '/__jifty/admin/setupwizard/database/mysql' => sub {
+    h4 { "MySQL" };
+};
+
+template '/__jifty/admin/setupwizard/database/Pg' => sub {
+    h4 { "PostgreSQL" };
 };
 
 template '/__jifty/admin/setupwizard/web' => sub {
