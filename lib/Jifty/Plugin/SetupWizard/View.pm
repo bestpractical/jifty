@@ -125,3 +125,39 @@ template '/__jifty/admin/setupwizard/finalize' => sub {
 
 1;
 
+__END__
+
+=head1 NAME
+
+Jifty::Plugin::SetupWizard::View - templates for SetupWizard
+
+=head1 FUNCTIONS
+
+=head2 step_link
+
+A helper function for constructing a link to a different step. Expected
+arguments: the C<index> of the step and the C<label> for the link.
+
+=head2 config_field
+
+A helper function for constructing a mini-form for a config field. Expected
+arguments are:
+
+=over 4
+
+=item value_args
+
+The arguments for the C<form_field> call for value. If there's no C<default_value>, one will be constructed using the C<context> parameter.
+
+=item field
+
+=item context
+
+=item target_file
+
+These parameters are for specifying defaults for each action argument.
+
+=back
+
+=cut
+
