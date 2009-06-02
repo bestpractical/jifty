@@ -58,9 +58,15 @@ sub write_new_config {
 
 sub take_action {
     my $self = shift;
-    my ($new_config, $pointer) = $self->contextualize($self->argument_value('context'));
 
-    $pointer->{$self->argument_value('field')} = $self->argument_value('value');
+    my $context = $self->argument_value('context');
+    my $field   = $self->argument_value('field');
+    my $value   = $self->argument_value('value');
+
+    my ($new_config, $pointer) = $self->contextualize($context);
+
+    $self->log->info("Changing config $field (in context $context) to $value");
+    $pointer->{$field} = $value;
 
     $self->write_new_config($new_config);
 
