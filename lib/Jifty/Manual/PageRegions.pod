@@ -266,5 +266,37 @@ Wow! Works again. Enjoy.
         );
     };
 
+=head3 Page Region in Javascript 
+
+Assume that you have region named "latest-posts", then the full-qualified name
+is C<__page-latest-posts>. Or if you have a Jifty::Web::PageRegion object , you can retrieve
+the full-qualified name via C<qualified_name> method.
+
+to use JavaScript to replace a region, you could write the follow JavaScript in your code:
+
+    Jifty.update({
+        fragments: [ {
+            region: '__page-latest-posts',
+            args: {},
+            path: '/latest_expends',
+            mode: 'Replace'
+        } ]
+    });
+
+the C<fragments> attribute must contains an array of hashes,  which may have:
+
+C<region> is the name of the region to update
+
+C<args> is a hash of arguments to override
+
+C<path> is the path of the fragment (if this is a new fragment)
+
+C<element> is the CSS selector of the element to update, if 'region' isn't supplied
+
+C<mode> is one of 'Replace', 'Top', 'Bottom', 'Before', or 'After'
+
+C<effect> is the name of an effect
+
+See L<Jifty::Manual::JavaScript> in more detail.
 
 =cut
