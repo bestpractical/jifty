@@ -94,6 +94,10 @@ or an arrayref of them.
 These actions are submitted when the event is fired. Any arguments 
 specified will override arguments submitted by form field.
 
+If you explicitly pass C<undef>, then all actions will be submitted.
+This can be useful in conjunction with an C<onclick> handler, since
+declaring an C<onclick> handler inentionally turns off action submission.
+
 =item disable => BOOLEAN
 
 If true, disable all form fields associated with the actions in
