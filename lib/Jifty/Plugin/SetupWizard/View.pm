@@ -5,7 +5,7 @@ use Jifty::View::Declare -base;
 
 template '/__jifty/admin/setupwizard' => page {
     my $appname = Jifty->config->framework('ApplicationName');
-    h1 { "Welcome to $appname!" };
+    h1 { _("Welcome to %1!", $appname) };
 
     render_region(
         name      => 'WizardStep',
@@ -15,7 +15,7 @@ template '/__jifty/admin/setupwizard' => page {
         },
     );
 
-    p { _("You're seeing this configuration because you started $appname in AdminMode and the SetupWizard plugin. Disable one or both of these to restore normal operation.") };
+    p { _("You're seeing this configuration because you started %1 in AdminMode and the SetupWizard plugin. Disable one or both of these to restore normal operation.", $appname) };
 };
 
 template '/__jifty/admin/setupwizard/step' => sub {
