@@ -191,6 +191,10 @@ sub _configure_database_connectivity {
     config_field(
         field   => 'Host',
         context => '/framework/Database',
+        value_args => {
+            hints => "The domain name of your database server (for example, db.example.com)",
+        },
+    );
     );
 
     config_field(
@@ -201,6 +205,9 @@ sub _configure_database_connectivity {
     config_field(
         field   => 'Password',
         context => '/framework/Database',
+        value_args => {
+            render_as => 'password',
+        },
     );
 }
 
