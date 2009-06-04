@@ -140,18 +140,22 @@ template '/__jifty/admin/setupwizard/database' => sub {
 
     $onchange =~ s/PLACEHOLDER/'+this.value+'/;
 
+    # Only show them drivers they have available
+    my @available_values =
+        grep { Jifty->handle->is_available_driver($_->{value}) } (
+            { display => 'SQLite',     value => 'SQLite' },
+            { display => 'MySQL',      value => 'mysql' },
+            { display => 'PostgreSQL', value => 'Pg' },
+        );
+
     config_field(
         field      => 'Driver',
         context    => '/framework/Database',
         value_args => {
             label            => 'Database Engine',
             render_as        => 'select',
-            available_values => [
-                { display => 'SQLite',     value => 'SQLite' },
-                { display => 'MySQL',      value => 'mysql' },
-                { display => 'PostgreSQL', value => 'Pg' },
-            ],
-            onchange => [$onchange],
+            available_values => \@available_values,
+            onchange         => [$onchange],
         },
     );
 
