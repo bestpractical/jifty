@@ -224,6 +224,14 @@ template '/__jifty/admin/setupwizard/database/mysql' => sub {
 
 template '/__jifty/admin/setupwizard/database/Pg' => sub {
     _configure_database_connectivity;
+
+    config_field(
+        field   => 'RequireSSL',
+        context => '/framework/Database',
+        value_args => {
+            render_as => 'checkbox',
+        },
+    );
 };
 
 template '/__jifty/admin/setupwizard/web' => sub {
