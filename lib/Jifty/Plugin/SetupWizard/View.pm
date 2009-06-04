@@ -229,6 +229,7 @@ template '/__jifty/admin/setupwizard/database/Pg' => sub {
         field   => 'RequireSSL',
         context => '/framework/Database',
         value_args => {
+            label     => 'Use SSL?',
             render_as => 'checkbox',
         },
     );
