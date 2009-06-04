@@ -360,7 +360,8 @@ sub _validate_request_actions {
                         . $request_action->class
                         . "'" );
                 $self->log->warn( Jifty->api->explain($request_action->class ) );
-                $self->log->error("NOTICE! A cross-site scripting security fix has been installed so that actions are now by default DENIED during GET requests. You must specifically whitelist safe actions using this in your dispatcher: before '*' => run { Jifty->api->allow('SafeAction') }; - We apologize for the inconvenience.") if $self->request->request_method eq "GET";
+                # Possible cross-site request forgery
+                $self->log->error("Action " . $request_action->class . " has been denied because the request is a GET") if $self->request->request_method eq "GET";
                 push @denied_actions, $request_action;
                 next;
             }
