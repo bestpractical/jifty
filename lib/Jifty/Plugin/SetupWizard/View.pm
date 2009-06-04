@@ -195,6 +195,13 @@ sub _configure_database_connectivity {
             hints => "The domain name of your database server (for example, db.example.com)",
         },
     );
+
+    config_field(
+        field   => 'Port',
+        context => '/framework/Database',
+        value_args => {
+            hints => "Leave blank to use the default value for your database",
+        },
     );
 
     config_field(
