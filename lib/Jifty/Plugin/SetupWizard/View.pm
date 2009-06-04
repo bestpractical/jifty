@@ -119,8 +119,6 @@ template '/__jifty/admin/setupwizard/language' => sub {
 };
 
 template '/__jifty/admin/setupwizard/database' => sub {
-    p { _("You may choose a database engine.") };
-
     # XXX: We've got to add a sane way to unquote stuff in onfoo handlers...
     my $onchange = 'Jifty.update('
                  . Jifty::JSON::objToJson({
@@ -141,12 +139,15 @@ template '/__jifty/admin/setupwizard/database' => sub {
     $onchange =~ s/PLACEHOLDER/'+this.value+'/;
 
     # Only show them drivers they have available
-    my @available_values =
+    my @available_drivers =
         grep { Jifty->handle->is_available_driver($_->{value}) } (
             { display => 'SQLite',     value => 'SQLite' },
             { display => 'MySQL',      value => 'mysql' },
             { display => 'PostgreSQL', value => 'Pg' },
         );
+    my $current_driver = Jifty->config->framework('Database')->{Driver};
+
+    p { _("You may choose a database engine.") };
 
     config_field(
         field      => 'Driver',
@@ -154,7 +155,7 @@ template '/__jifty/admin/setupwizard/database' => sub {
         value_args => {
             label            => 'Database Engine',
             render_as        => 'select',
-            available_values => \@available_values,
+            available_values => \@available_drivers,
             onchange         => [$onchange],
         },
     );
@@ -167,10 +168,9 @@ template '/__jifty/admin/setupwizard/database' => sub {
         },
     );
 
-    my $driver = Jifty->config->framework('Database')->{Driver};
     render_region(
         name => 'database_details',
-        path => "/__jifty/admin/setupwizard/database/$driver",
+        path => "/__jifty/admin/setupwizard/database/$current_driver",
     );
 };
 
