@@ -146,8 +146,17 @@ template '/__jifty/admin/setupwizard/database' => sub {
             { display => 'PostgreSQL', value => 'Pg' },
         );
     my $current_driver = Jifty->config->framework('Database')->{Driver};
+    my $appname = Jifty->config->framework('ApplicationName');
 
     p { _("You may choose a database engine.") };
+
+    p { _("%1 works with a number of different databases. MySQL, PostgreSQL, Oracle, and SQLite are all supported. You should choose the database that you or your local database administrator knows best.", $appname) };
+
+    p { _("SQLite is a small database engine that does not need a server or any configuration. We recommend it for testing, demonstration, and development, but it is not quite right for a high-volume production server.") };
+
+    p { _("MySQL and PostgreSQL are well-supported production-quality database engines. ") };
+
+    p { _("If your preferred database is not listed in the dropdown below, that means we could not find a database driver for it. You may be able to remedy this by using CPAN to download and install DBD::MySQL, DBD::Pg, or DBD::Oracle.") };
 
     config_field(
         field      => 'Driver',
