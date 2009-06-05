@@ -238,9 +238,15 @@ template '/__jifty/admin/setupwizard/database/Pg' => sub {
 template '/__jifty/admin/setupwizard/web' => sub {
     p { _("You may change web server settings.") };
 
+    my $appname = lc Jifty->config->framework('ApplicationName');
+    $appname =~ s/-//g;
+
     config_field(
-        field   => 'BaseURL',
-        context => '/framework/Web',
+        field      => 'BaseURL',
+        context    => '/framework/Web',
+        value_args => {
+            hints => _('The root URL (examples: http://%1.yourcompany.com, http://business.com/%1)', $appname),
+        },
     );
 
     config_field(
