@@ -50,10 +50,10 @@ Renders a radio widget
 sub render_option {
     my $self = shift;
     my $opt = shift;
-    my $display = $opt->{'display'};
-    my $value   = defined $opt->{'value'} ? $opt->{'value'} : '';
+    my $display = ref($opt) ? $opt->{'display'} : $opt;
+    my $value   = ref($opt) ? $opt->{'value'} : $opt;
+    $value = '' if !defined($value);
 
-    
     my $id = $self->element_id . "-" . $value;
     $id =~ s/\s+/_/;
     my $field = qq! <input type="radio" !;

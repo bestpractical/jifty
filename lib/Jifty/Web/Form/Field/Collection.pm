@@ -48,8 +48,9 @@ Renders a normal input field.
 sub render_option {
     my $self = shift;
     my $opt = shift;
-    my $display = $opt->{'display'};
-    my $value   = defined $opt->{'value'} ? $opt->{'value'} : "0";
+    my $display = ref($opt) ? $opt->{'display'} : $opt;
+    my $value   = ref($opt) ? $opt->{'value'} : $value;
+    $value = "0" if !defined($value);
 
     my $id = $self->element_id . "-" . $value;
     $id =~ s/\s+/_/;
