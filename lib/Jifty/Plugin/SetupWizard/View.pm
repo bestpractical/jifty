@@ -245,7 +245,7 @@ template '/__jifty/admin/setupwizard/web' => sub {
         field      => 'BaseURL',
         context    => '/framework/Web',
         value_args => {
-            hints => _('The root URL (examples: http://%1.yourcompany.com, http://business.com/%1)', $appname),
+            hints => _('The root URL for the web server (examples: http://%1.yourcompany.com, http://business.com/%1)', $appname),
         },
     );
 
