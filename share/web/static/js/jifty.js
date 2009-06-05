@@ -1298,6 +1298,25 @@ Jifty.update = function () {
         // Grab the XML response
         var response = responseXML.documentElement;
 
+        /* var response is an xml , which's content is like:
+        <response>
+            <fragment id="__page-region-name">
+                <argument name="argument1">value1</argument>
+                <argument name="argument2">value2</argument>
+                <content> 
+                        ...
+                </content>
+            </fragment>
+            <result class="MyApp::Action::DoPost" moniker="do-post">
+                <success>1</success>
+                <content>
+                    <title>Title</title>
+                    <id>123</id>
+                </content>
+            </result>
+        </response>
+        */
+
         // Look through the action results looking for field validation errors
         walk_node(response, { 
             result: function(result) {
