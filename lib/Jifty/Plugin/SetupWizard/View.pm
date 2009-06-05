@@ -162,7 +162,7 @@ template '/__jifty/admin/setupwizard/database' => sub {
         field      => 'Driver',
         context    => '/framework/Database',
         value_args => {
-            label            => 'Database Engine',
+            label            => _('Database Engine'),
             render_as        => 'select',
             available_values => \@available_drivers,
             onchange         => [$onchange],
@@ -173,7 +173,7 @@ template '/__jifty/admin/setupwizard/database' => sub {
         field      => 'Database',
         context    => '/framework/Database',
         value_args => {
-            label => 'Database Name',
+            label => _('Database Name'),
         },
     );
 
@@ -192,7 +192,7 @@ sub _configure_database_connectivity {
         field   => 'Host',
         context => '/framework/Database',
         value_args => {
-            hints => "The domain name of your database server (for example, db.example.com)",
+            hints => _('The domain name of your database server (for example, db.example.com)'),
         },
     );
 
@@ -200,7 +200,7 @@ sub _configure_database_connectivity {
         field   => 'Port',
         context => '/framework/Database',
         value_args => {
-            hints => "Leave blank to use the default value for your database",
+            hints => _('Leave blank to use the default value for your database'),
         },
     );
 
@@ -229,7 +229,7 @@ template '/__jifty/admin/setupwizard/database/Pg' => sub {
         field   => 'RequireSSL',
         context => '/framework/Database',
         value_args => {
-            label     => 'Use SSL?',
+            label     => _('Use SSL?'),
             render_as => 'checkbox',
         },
     );
