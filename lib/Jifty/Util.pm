@@ -86,7 +86,7 @@ sub jifty_root {
     my $self = shift;
     unless ($JIFTY_ROOT) {
         my ($vol,$dir,$file) = File::Spec->splitpath($INC{"Jifty.pm"});
-        $JIFTY_ROOT = File::Spec->rel2abs($dir);   
+        $JIFTY_ROOT = File::Spec->rel2abs("$vol$dir");
     }
     return ($JIFTY_ROOT);
 }
