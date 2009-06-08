@@ -4,7 +4,7 @@ use warnings;
 package Jifty::Plugin::REST;
 use base qw/Jifty::Plugin/;
 
-our $VERSION = '1.10';
+our $VERSION = '1.11';
 
 =head1 NAME
 
