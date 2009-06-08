@@ -60,7 +60,7 @@ template $restart_url => sub {
         head {
             title {
                 outs "Restarting ";
-                outs Jifty->config->framework('ApplicationName');
+                outs( Jifty->config->framework('ApplicationName') );
             };
             meta {
                 attr {
