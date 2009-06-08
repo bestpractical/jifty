@@ -68,16 +68,36 @@ template $restart_url => sub {
                     content      => "$seconds;url=$url",
                 };
             };
+            Jifty->web->include_javascript;
+            
+            outs_raw( <<EOF );
+<script type="text/javascript">
+
+var interval_id;
+function reduceTime () {
+    var left = parseInt(jQuery('#seconds').html());
+    if ( left > 0 ) {
+        jQuery('#seconds').html(left-1 + '');
+    }
+    else {
+        clearInterval(interval_id);
+    }
+};
+
+jQuery( function(){ interval_id = setInterval('reduceTime()', 1000 ) } );
+</script>
+
+EOF
         };
         body {
-            p {
-                outs "Please wait a few moments so the server can restart, then we'll redirect you ";
-                hyperlink(
-                    label => "here",
-                    url   => $url,
-                );
-                outs ".";
-            }
+            outs "Please wait ";
+            div { attr { style => 'display: inline', id => 'seconds' } $seconds };
+            outs " seconds so the server can restart, then we'll redirect you "; 
+            hyperlink(
+                label => "here",
+                url   => $url,
+            );
+            outs ".";
         }
     };
 
