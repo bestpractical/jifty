@@ -614,6 +614,8 @@ sub show_item {
 
     $rec->load_by_cols( $column => $key );
     $rec->id or abort(404);
+    $rec->current_user_can('read') or abort(403);
+
     outs( ['model', $model, $column, $key], $rec->jifty_serialize_format );
 }
 
