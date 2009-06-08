@@ -329,8 +329,11 @@ sub render_as_html {
     my $prefix = shift;
     my $url = shift;
     my $content = shift;
+
+    my $title = _("%1 - REST API", Jifty->config->framework('ApplicationName'));
+
     if (ref($content) eq 'ARRAY') {
-        return start_html(-encoding => 'UTF-8', -declare_xml => 1, -title => 'REST API'),
+        return start_html(-encoding => 'UTF-8', -declare_xml => 1, -title => $title),
               ul(map {
                 ref($_) eq 'HASH' ? render_as_html($url, $prefix,$_) :
                     li(
@@ -343,7 +346,7 @@ sub render_as_html {
               end_html();
     }
     elsif (ref($content) eq 'HASH') {
-        return start_html(-encoding => 'UTF-8', -declare_xml => 1, -title => 'REST API'),
+        return start_html(-encoding => 'UTF-8', -declare_xml => 1, -title => $title),
               dl(map {
                   dt($prefix ?
                      a({-href => "$url/".Jifty::Web->escape_uri($_)}, Jifty::Web->escape($_))
@@ -353,7 +356,7 @@ sub render_as_html {
               end_html();
     }
     else {
-        return start_html(-encoding => 'UTF-8', -declare_xml => 1, -title => 'REST API'),
+        return start_html(-encoding => 'UTF-8', -declare_xml => 1, -title => $title),
               Jifty::Web->escape($content),
               end_html();
     }
