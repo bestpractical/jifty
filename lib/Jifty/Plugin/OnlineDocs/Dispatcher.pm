@@ -28,7 +28,7 @@ on '*' => run {
 };
 
 under '/__jifty/online_docs' => run {
-    return unless Jifty->config->framework('AdminMode');
+    return if Jifty->config->framework('AdminMode');
     warn "Attempt to access /__jifty/online_docs; either enable AdminMode, or remove the OnlineDocs plugin";
     redirect('/__jifty/error/permission_denied');
 };
