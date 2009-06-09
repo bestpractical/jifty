@@ -1,12 +1,18 @@
 use strict;
 use warnings;
 
-use Test::More tests => 8;
+use Test::More;
 use File::Spec;
 use Jifty::Test::WWW::Mechanize;
 use FindBin qw($Bin);
 use Cwd;
 my $cwd;
+
+BEGIN {
+    plan skip_all => "live test doesn't work on Win32 at the moment" if $^O eq 'MSWin32';
+}
+
+plan tests => 8;
 
 # NOTE: we don't use Jifty's test server just 
 # because we want to test Jifty's real server
