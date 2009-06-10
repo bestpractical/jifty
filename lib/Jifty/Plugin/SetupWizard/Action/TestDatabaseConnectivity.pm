@@ -1,4 +1,4 @@
-package Jifty::Plugin::SetupWizard::Action::TestDatabaseConnection;
+package Jifty::Plugin::SetupWizard::Action::TestDatabaseConnectivity;
 use strict;
 use warnings;
 use base 'Jifty::Action';
@@ -52,13 +52,13 @@ __END__
 
 =head1 NAME
 
-Jifty::Plugin::SetupWizard::Action::TestDatabaseConnection
+Jifty::Plugin::SetupWizard::Action::TestDatabaseConnectivity
 
 =head1 METHODS
 
 =head2 take_action
 
-Tests the database connection!
+Tests the database connectivity!
 
 =cut
 
