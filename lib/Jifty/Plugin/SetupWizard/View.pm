@@ -193,6 +193,8 @@ template '/__jifty/admin/setupwizard/database/SQLite' => sub {
 };
 
 sub _configure_database_connectivity {
+    my $driver = shift;
+
     config_field(
         field   => 'Host',
         context => '/framework/Database',
@@ -211,10 +213,17 @@ sub _configure_database_connectivity {
         empty_is_undef => 1,
     );
 
+    # Better default for postgres ("root" is Jifty's current default)
+    my %user_value_args;
+    $user_value_args{default_value} = 'postgres'
+        if $driver eq 'Pg'
+        && Jifty->config->framework('Database')->{User} eq 'root';
+
     config_field(
         field   => 'User',
         context => '/framework/Database',
         empty_is_undef => 1,
+        value_args => \%user_value_args,
     );
 
     config_field(
@@ -228,11 +237,11 @@ sub _configure_database_connectivity {
 }
 
 template '/__jifty/admin/setupwizard/database/mysql' => sub {
-    _configure_database_connectivity;
+    _configure_database_connectivity('mysql');
 };
 
 template '/__jifty/admin/setupwizard/database/Pg' => sub {
-    _configure_database_connectivity;
+    _configure_database_connectivity('Pg');
 
     config_field(
         field   => 'RequireSSL',
