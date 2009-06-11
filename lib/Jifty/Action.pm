@@ -403,6 +403,14 @@ sub argument_value {
         $self->argument_values->{$arg} = shift;
     }
 
+    # Pull in default value if there is one
+    if (!exists($self->argument_values->{$arg})) {
+        if (defined(my $default = $self->arguments->{$arg}{default_value})) {
+            $self->values_from_request->{$arg} = 0;
+            $self->argument_values->{$arg} = $default;
+        }
+    }
+
     # Get it
     return $self->argument_values->{$arg};
 }
