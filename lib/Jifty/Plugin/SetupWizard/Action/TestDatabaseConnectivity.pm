@@ -58,6 +58,10 @@ sub take_action {
     };
     my $error = $@;
 
+    # database will be created, so not worth complaining about this
+    $ok = 1 if $error =~ /Connection failed: Unknown database '/
+            || $error =~ /Connection failed: .* database ".*" does not exist/;
+
     if (!$ok) {
         $error ||= _("No handle created");
         warn $error;
