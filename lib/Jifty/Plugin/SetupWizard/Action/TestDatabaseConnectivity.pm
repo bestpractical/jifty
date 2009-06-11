@@ -44,9 +44,14 @@ sub take_action {
         local $SIG{__DIE__};
         $handle->connect(%{ $self->argument_values })
     };
-    warn $@ if $@;
+    my $error = $@;
+    warn $error if $error;
 
-    return $ok;
+    if (!$ok) {
+        return $self->result->error(_('Failed to connect: %1', $error));
+    }
+
+    $self->result->message(_('Connected'));
 }
 
 1;
