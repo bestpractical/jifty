@@ -49,7 +49,12 @@ sub take_action {
     my $handle = Jifty::DBI::Handle->new;
     my $ok = eval {
         local $SIG{__DIE__};
+
+        # Connect returns undef if there's already a connection, so we
+        # only report failure to connect if an exception was thrown
         $handle->connect(%args);
+
+        1;
     };
     my $error = $@;
 
