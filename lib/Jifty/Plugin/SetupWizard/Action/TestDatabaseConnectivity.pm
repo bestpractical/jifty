@@ -61,6 +61,7 @@ sub take_action {
     if (!$ok) {
         $error ||= _("No handle created");
         warn $error;
+        $error =~ s/ at .* line \d+$//;
         return $self->result->error($error);
     }
 
