@@ -889,7 +889,7 @@ sub list_action_params {
         $args{ $arg } = { };
         for ( @param_attrs ) {
             my $val = $arguments->{ $arg }{ $_ };
-            $args{ $arg }->{ $_ } = $val
+            $args{ $arg }->{ $_ } = Scalar::Defer::force($val)
                 if defined $val and length $val;
         }
     }
