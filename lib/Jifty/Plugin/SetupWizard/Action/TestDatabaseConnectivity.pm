@@ -40,7 +40,11 @@ sub take_action {
     my $self = shift;
 
     my $handle = Jifty::DBI::Handle->new;
-    my $ok = eval { $handle->connect(%{ $self->argument_values }) };
+    my $ok = eval {
+        local $SIG{__DIE__};
+        $handle->connect(%{ $self->argument_values })
+    };
+    warn $@ if $@;
 
     return $ok;
 }

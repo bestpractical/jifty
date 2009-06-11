@@ -181,6 +181,11 @@ template '/__jifty/admin/setupwizard/database' => sub {
         name => 'database_details',
         path => "/__jifty/admin/setupwizard/database/$current_driver",
     );
+
+    render_region(
+        name => 'test_connectivity',
+        path => '/__jifty/admin/setupwizard/database/test_connectivity_button',
+    );
 };
 
 template '/__jifty/admin/setupwizard/database/SQLite' => sub {
@@ -233,6 +238,27 @@ template '/__jifty/admin/setupwizard/database/Pg' => sub {
             render_as => 'checkbox',
         },
     );
+};
+
+template '/__jifty/admin/setupwizard/database/test_connectivity_button' => sub {
+    hyperlink(
+        label => _("Test connectivity"),
+        onclick => {
+            # Submit all actions
+            submit => undef,
+
+            # Actually test connectivity
+            replace_with => '/__jifty/admin/setupwizard/database/test_connectivity',
+        },
+    );
+};
+
+template '/__jifty/admin/setupwizard/database/test_connectivity' => sub {
+    my $action = Jifty::Plugin::SetupWizard::Action::TestDatabaseConnectivity->new;
+    $action->validate;
+    $action->run;
+
+    show '/__jifty/admin/setupwizard/database/test_connectivity_button';
 };
 
 template '/__jifty/admin/setupwizard/web' => sub {
