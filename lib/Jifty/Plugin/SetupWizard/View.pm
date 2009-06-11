@@ -27,7 +27,7 @@ template '/__jifty/admin/setupwizard/step' => sub {
         class is 'setupwizard-step';
 
         form {
-            h3 { $step_info->{header} } if $step_info->{header};
+            h3 { _('%1. %2', $step+1, $step_info->{header}) } if $step_info->{header};
 
             show "/__jifty/admin/setupwizard/$step_info->{template}";
             form_submit(
