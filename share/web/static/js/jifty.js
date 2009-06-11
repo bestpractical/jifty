@@ -768,16 +768,16 @@ Behaviour.register({
         }
     },
     /* Use jQuery for full-page-refresh notifications, as well */
-    '#messages.jifty.results.messages, #errors.jifty.results.messages': function(e) {
+    '#messages.jifty.results.messages, #errors.jifty.results.messages, .popup_message, .popup_error': function(e) {
         jQuery(e).hide();
     },
-    '#messages.jifty.results.messages .message': function(e) {
+    '#messages.jifty.results.messages .message, .popup_message': function(e) {
         jQuery.jGrowl( e.innerHTML, {
             sticky: true,
             theme: 'result-message'
         });
     },
-    '#errors.jifty.results.messages .error': function(e) {
+    '#errors.jifty.results.messages .error, .popup_error': function(e) {
         jQuery.jGrowl( e.innerHTML, {
             sticky: true,
             theme: 'result-error'
