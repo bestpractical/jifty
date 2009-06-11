@@ -118,17 +118,6 @@ template '/__jifty/admin/setupwizard/language' => sub {
     p { _("You may select a different language.") };
 };
 
-sub _reset_connectivity {
-    # XXX: contextual awareness of current region (in database details or not)
-    my $region = Jifty->web->qualified_region('test_connectivity');
-
-    return {
-        mode   => 'Replace',
-        path   => '/__jifty/admin/setupwizard/database/test_connectivity_button',
-        region => $region,
-    };
-};
-
 template '/__jifty/admin/setupwizard/database' => sub {
     # XXX: We've got to add a sane way to unquote stuff in onfoo handlers...
     my $onchange = 'Jifty.update('
@@ -141,7 +130,6 @@ template '/__jifty/admin/setupwizard/database' => sub {
                             path => '/__jifty/admin/setupwizard/database/PLACEHOLDER',
                             region => Jifty->web->qualified_region('database_details'),
                         },
-                        _reset_connectivity(),
                     ],
                     continuation     => undef,
 
@@ -186,7 +174,6 @@ template '/__jifty/admin/setupwizard/database' => sub {
         context    => '/framework/Database',
         value_args => {
             label     => _('Database Name'),
-            onkeydown => _reset_connectivity(),
         },
     );
 
@@ -211,7 +198,6 @@ sub _configure_database_connectivity {
         context => '/framework/Database',
         value_args => {
             hints => _('The domain name of your database server (for example, db.example.com)'),
-            onkeydown => _reset_connectivity(),
         },
     );
 
@@ -220,16 +206,12 @@ sub _configure_database_connectivity {
         context => '/framework/Database',
         value_args => {
             hints => _('Leave blank to use the default value for your database'),
-            onkeydown => _reset_connectivity(),
         },
     );
 
     config_field(
         field   => 'User',
         context => '/framework/Database',
-        value_args => {
-            onkeydown => _reset_connectivity(),
-        },
     );
 
     config_field(
@@ -237,7 +219,6 @@ sub _configure_database_connectivity {
         context => '/framework/Database',
         value_args => {
             render_as => 'password',
-            onkeydown => _reset_connectivity(),
         },
     );
 }
@@ -255,7 +236,6 @@ template '/__jifty/admin/setupwizard/database/Pg' => sub {
         value_args => {
             label     => _('Use SSL?'),
             render_as => 'checkbox',
-            onchange  => _reset_connectivity(),
         },
     );
 };
