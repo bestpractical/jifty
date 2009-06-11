@@ -39,7 +39,8 @@ use Jifty::Action schema {
 sub take_action {
     my $self = shift;
 
-    my $ok = Jifty::DBI::Handle->connect(
+    my $handle = Jifty::DBI::Handle->new;
+    my $ok = $handle->connect(
         %{ $self->argument_values },
     );
 
