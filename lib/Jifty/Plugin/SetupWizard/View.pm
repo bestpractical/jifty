@@ -242,8 +242,9 @@ template '/__jifty/admin/setupwizard/database/Pg' => sub {
 
 template '/__jifty/admin/setupwizard/database/test_connectivity_button' => sub {
     hyperlink(
-        label => _("Test connectivity"),
-        onclick => {
+        label     => _("Test connectivity"),
+        as_button => 1,
+        onclick   => {
             # Submit all actions
             submit => undef,
 
