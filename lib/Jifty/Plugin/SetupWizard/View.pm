@@ -148,6 +148,7 @@ template '/__jifty/admin/setupwizard/database' => sub {
         { display => 'SQLite',     value => 'SQLite' },
         { display => 'MySQL',      value => 'mysql' },
         { display => 'PostgreSQL', value => 'Pg' },
+        #{ display => 'Oracle', value => 'Oracle' },
     );
     for (@all_drivers) {
         if (Jifty->handle->is_available_driver($_->{value})) {
@@ -163,7 +164,7 @@ template '/__jifty/admin/setupwizard/database' => sub {
 
     p { _("You may choose a database engine.") };
 
-    p { _("%1 works with a number of different databases. MySQL, PostgreSQL, Oracle, and SQLite are all supported. You should choose the database that you or your local database administrator knows best.", $appname) };
+    p { _("%1 works with a number of different databases. MySQL, PostgreSQL, and SQLite are all supported. You should choose the database that you or your local database administrator knows best.", $appname) };
 
     p { _("SQLite is a small database engine that does not need a server or any configuration. We recommend it for testing, demonstration, and development, but it is not quite right for a high-volume production server.") };
 
