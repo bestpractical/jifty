@@ -143,12 +143,21 @@ template '/__jifty/admin/setupwizard/database' => sub {
     $onchange =~ s/PLACEHOLDER/'+this.value+'/;
 
     # Only show them drivers they have available
-    my @available_drivers =
-        grep { Jifty->handle->is_available_driver($_->{value}) } (
-            { display => 'SQLite',     value => 'SQLite' },
-            { display => 'MySQL',      value => 'mysql' },
-            { display => 'PostgreSQL', value => 'Pg' },
-        );
+    my (@available_drivers, @unavailable_drivers);
+    my @all_drivers = (
+        { display => 'SQLite',     value => 'SQLite' },
+        { display => 'MySQL',      value => 'mysql' },
+        { display => 'PostgreSQL', value => 'Pg' },
+    );
+    for (@all_drivers) {
+        if (Jifty->handle->is_available_driver($_->{value})) {
+            push @available_drivers, $_;
+        }
+        else {
+            push @unavailable_drivers, $_;
+        }
+    }
+
     my $current_driver = Jifty->config->framework('Database')->{Driver};
     my $appname = Jifty->config->framework('ApplicationName');
 
@@ -160,7 +169,14 @@ template '/__jifty/admin/setupwizard/database' => sub {
 
     p { _("MySQL and PostgreSQL are well-supported production-quality database engines. ") };
 
-    p { _("If your preferred database is not listed in the dropdown below, that means we could not find a database driver for it. You may be able to remedy this by using CPAN to download and install DBD::MySQL, DBD::Pg, or DBD::Oracle.") };
+    if (@unavailable_drivers) {
+        my @drivers = map { "DBD::$_->{value}" } @unavailable_drivers;
+        my $drivers = join ', ', @drivers;
+
+        $drivers =~ s/, (?!.*,)/ or /;
+
+        p { _("If your preferred database is not listed in the dropdown below, that means we could not find a database driver for it. You may be able to remedy this by using CPAN to download and install $drivers.") };
+    }
 
     config_field(
         field      => 'Driver',
