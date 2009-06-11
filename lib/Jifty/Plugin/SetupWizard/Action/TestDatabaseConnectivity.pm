@@ -40,9 +40,7 @@ sub take_action {
     my $self = shift;
 
     my $handle = Jifty::DBI::Handle->new;
-    my $ok = $handle->connect(
-        %{ $self->argument_values },
-    );
+    my $ok = eval { $handle->connect(%{ $self->argument_values }) };
 
     return $ok;
 }
