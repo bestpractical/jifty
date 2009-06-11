@@ -42,12 +42,13 @@ sub take_action {
     my $handle = Jifty::DBI::Handle->new;
     my $ok = eval {
         local $SIG{__DIE__};
-        $handle->connect(%{ $self->argument_values })
+        $handle->connect(%args);
     };
     my $error = $@;
-    warn $error if $error;
 
     if (!$ok) {
+        $error ||= _("No handle created");
+        warn $error;
         return $self->result->error($error);
     }
 
