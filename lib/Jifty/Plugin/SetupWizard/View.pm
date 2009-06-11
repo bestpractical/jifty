@@ -280,10 +280,16 @@ template '/__jifty/admin/setupwizard/database/test_connectivity' => sub {
     $action->run;
 
     if ($action->result->success) {
-        p { "Connected!" }
+        p {
+            attr { class => 'popup_message' };
+            outs $action->result->message;
+        }
     }
     else {
-        p { "Failed to connect" }
+        p {
+            attr { class => 'popup_error' };
+            outs $action->result->error;
+        }
     }
 
     show '/__jifty/admin/setupwizard/database/test_connectivity_button';
