@@ -48,7 +48,7 @@ sub take_action {
     warn $error if $error;
 
     if (!$ok) {
-        return $self->result->error(_('Failed to connect: %1', $error));
+        return $self->result->error($error);
     }
 
     $self->result->message(_('Connection successful'));
