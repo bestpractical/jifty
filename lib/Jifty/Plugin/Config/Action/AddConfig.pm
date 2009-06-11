@@ -22,6 +22,10 @@ use Jifty::Action schema {
     param target_file =>
         default is 'etc/site_config.yml',
         type is 'text';
+
+    param empty_is_undef =>
+        default is 0,
+        type is 'bool';
 };
 
 sub contextualize {
@@ -64,7 +68,11 @@ sub take_action {
 
     my ($new_config, $pointer) = $self->contextualize($context);
 
-    $self->log->info("Changing config $field (in context $context) to $value");
+    undef $value if $self->argument_value('empty_is_undef') && $value eq '';
+
+    my $display_value = defined($value) ? $value : "(undef)";
+    $self->log->info("Changing config $field (in context $context) to $display_value");
+
     $pointer->{$field} = $value;
 
     $self->write_new_config($new_config);
