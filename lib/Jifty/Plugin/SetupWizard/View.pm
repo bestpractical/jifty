@@ -289,7 +289,18 @@ template '/__jifty/admin/setupwizard/database/test_connectivity_button' => sub {
 };
 
 template '/__jifty/admin/setupwizard/database/test_connectivity' => sub {
-    my $action = Jifty::Plugin::SetupWizard::Action::TestDatabaseConnectivity->new;
+    my $db_args = Jifty->config->framework('Database');
+    my $action = Jifty::Plugin::SetupWizard::Action::TestDatabaseConnectivity->new(
+        arguments => {
+            driver     => $db_args->{Driver},
+            database   => $db_args->{Database},
+            host       => $db_args->{Host},
+            port       => $db_args->{Port},
+            user       => $db_args->{User},
+            password   => $db_args->{Password},
+            requiressl => $db_args->{RequireSSL},
+        },
+    );
     $action->validate;
     $action->run;
 
