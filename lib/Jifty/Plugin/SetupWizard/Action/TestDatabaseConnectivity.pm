@@ -39,6 +39,13 @@ use Jifty::Action schema {
 sub take_action {
     my $self = shift;
 
+    # Remove empty arguments (empty port confuses DBI)
+    # Maybe should go in Jifty::DBI. it does handle undef..
+    my %args = %{ $self->argument_values };
+    for my $key (keys %args) {
+        delete $args{$key} if !defined($args{$key}) || !length($args{$key});
+    }
+
     my $handle = Jifty::DBI::Handle->new;
     my $ok = eval {
         local $SIG{__DIE__};
