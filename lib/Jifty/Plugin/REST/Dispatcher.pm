@@ -877,6 +877,7 @@ our @param_attrs = qw(
     mandatory
     ajax_validates
     length
+    valid_values
 );
 
 sub list_action_params {
