@@ -772,14 +772,16 @@ Behaviour.register({
         jQuery(e).hide();
     },
     '#messages.jifty.results.messages .message, .popup_message': function(e) {
+        var sticky = jQuery(e).hasClass('popup_sticky');
         jQuery.jGrowl( e.innerHTML, {
-            sticky: true,
+            sticky: sticky,
             theme: 'result-message'
         });
     },
     '#errors.jifty.results.messages .error, .popup_error': function(e) {
+        var sticky = jQuery(e).hasClass('popup_sticky');
         jQuery.jGrowl( e.innerHTML, {
-            sticky: true,
+            sticky: sticky,
             theme: 'result-error'
         });
     }
