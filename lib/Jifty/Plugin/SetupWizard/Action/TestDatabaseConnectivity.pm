@@ -51,7 +51,7 @@ sub take_action {
         return $self->result->error(_('Failed to connect: %1', $error));
     }
 
-    $self->result->message(_('Connected'));
+    $self->result->message(_('Connection successful'));
 }
 
 1;
