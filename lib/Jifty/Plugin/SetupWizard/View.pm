@@ -105,7 +105,7 @@ sub config_field {
 
     outs_raw($action->form_field('value' => %value_args));
 
-    for my $field (qw/field context target_file/) {
+    for my $field (qw/field context target_file empty_is_undef/) {
         outs_raw($action->form_field(
             $field,
             render_as => 'hidden',
@@ -199,6 +199,7 @@ sub _configure_database_connectivity {
         value_args => {
             hints => _('The domain name of your database server (for example, db.example.com)'),
         },
+        empty_is_undef => 1,
     );
 
     config_field(
@@ -207,11 +208,13 @@ sub _configure_database_connectivity {
         value_args => {
             hints => _('Leave blank to use the default value for your database'),
         },
+        empty_is_undef => 1,
     );
 
     config_field(
         field   => 'User',
         context => '/framework/Database',
+        empty_is_undef => 1,
     );
 
     config_field(
@@ -220,6 +223,7 @@ sub _configure_database_connectivity {
         value_args => {
             render_as => 'password',
         },
+        empty_is_undef => 1,
     );
 }
 
