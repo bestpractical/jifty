@@ -114,6 +114,10 @@ sub config_field {
     }
 }
 
+template '/__jifty/admin/setupwizard/welcome' => sub {
+    p { _("Hi!") };
+};
+
 template '/__jifty/admin/setupwizard/language' => sub {
     p { _("You may select a different language.") };
 };

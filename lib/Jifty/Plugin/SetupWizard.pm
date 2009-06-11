@@ -18,6 +18,10 @@ sub init {
     }
     else {
         $self->steps([
+            {
+                template => 'welcome',
+                header   => 'Welcome',
+            },
             # Not sure this is worth doing quite yet.
 #            {
 #                template => 'language',
