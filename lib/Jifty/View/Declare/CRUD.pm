@@ -624,12 +624,10 @@ template 'sort_header' => sub {
     my $sort_by = shift;
     my $order = shift;
     my $record_class = $self->record_class;
-    my $create = $record_class->as_create_action;
 
     div { 
         { class is "jifty_admin_header" };
-        for my $argument ($self->display_columns($create)) {
-            next if $create->arguments->{$argument}{unreadable};
+        for my $argument ($self->display_columns) {
             my $css_class = ($sort_by && !$order && $sort_by eq $argument)?'up_select':'up';
             span {
                 { class is $css_class };
@@ -650,7 +648,7 @@ template 'sort_header' => sub {
             };
             span{
                 {class is "field"};
-                outs $create->arguments->{$argument}{label} || $argument;
+                outs $argument;
             };
         };
         hr {};
