@@ -244,17 +244,22 @@ sub _get_record {
     return $record;
 }
 
-=head2 display_columns ACTION
+=head2 display_columns [ACTION]
 
 Returns a list of all the column names that this REST view should
 display.  Defaults to all argument names for the provided C<ACTION>.
+If there is no action provided, returns the C<record_class>'s
+C<readable_attributes>.
 
 =cut
 
 sub display_columns {
     my $self = shift;
     my $action = shift;
-    return $action->argument_names;
+
+    return $action->argument_names if $action;
+
+    return $self->record_class->readable_attributes;
 }
 
 =head2 edit_columns ACTION
