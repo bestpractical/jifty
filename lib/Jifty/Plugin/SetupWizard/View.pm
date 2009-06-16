@@ -348,7 +348,14 @@ template '/__jifty/admin/setupwizard/web' => sub {
 template '/__jifty/admin/setupwizard/finalize' => sub {
     p { _("You may finalize your configuration.") };
 
-    my $action = new_action('FinalizeSetup');
+    my $action = config_field(
+        field      => 'SetupMode',
+        context    => '/framework',
+        value_args => {
+            render_as     => 'hidden',
+            default_value => 0,
+        },
+    );
 
     form_next_page url => '/';
     $action->button(
