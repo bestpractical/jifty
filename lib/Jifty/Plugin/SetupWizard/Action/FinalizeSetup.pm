@@ -25,6 +25,8 @@ sub take_action {
     my $new_config = $self->change_config($existing_config);
 
     Jifty::YAML::DumpFile($file, $new_config);
+
+    Jifty->config->load;
 }
 
 1;
