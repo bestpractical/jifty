@@ -136,7 +136,18 @@ template '/__jifty/admin/setupwizard/welcome' => sub {
 
     p {
         outs_raw _("This setup wizard was activated by the presence of <tt>SetupMode: 1</tt> in one of your configuration files. If you are seeing this erroneously, you may restore normal operation by adjusting the <tt>etc/site_config.yml</tt> file to have <tt>SetupMode: 0</tt> set under <tt>framework</tt>.");
-    }
+    };
+
+    form_submit(
+        label => _('Begin'),
+        onclick => {
+            # Advance to the next step
+            refresh_self => 1,
+            arguments => {
+                step => get('step') + 1,
+            },
+        },
+    );
 };
 
 template '/__jifty/admin/setupwizard/language' => sub {

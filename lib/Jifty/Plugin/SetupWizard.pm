@@ -19,8 +19,9 @@ sub init {
     else {
         $self->steps([
             {
-                template => 'welcome',
-                header   => 'Welcome',
+                template    => 'welcome',
+                header      => 'Welcome',
+                hide_button => 1,
             },
             # Not sure this is worth doing quite yet.
 #            {
