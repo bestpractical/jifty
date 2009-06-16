@@ -7,27 +7,8 @@ sub change_config {
     my $self   = shift;
     my $config = shift;
 
-    # Disable admin mode (a requirement for SetupWizard)
     $config->{framework}{AdminMode} = 0;
-
-    # Deactivate SetupWizard
-    my @plugins = @{ $config->{framework}{Plugins} || [] };
-    my $deactivated = 0;
-
-    for my $plugin (@plugins) {
-        my ($name) = keys %$plugin;
-        if ($name =~ /SetupWizard/) {
-            $plugin->{activated} = 0;
-            $deactivated = 1;
-
-            # There may be multiple instances of SetupWizard (!) in the list,
-            # so we don't "last" out here
-        }
-    }
-
-    if (!$deactivated) {
-        warn "Unable to find SetupWizard in the plugin list, so I cannot deactivate it!";
-    }
+    $config->{framework}{SetupMode} = 0;
 
     return $config;
 }
@@ -60,8 +41,7 @@ Jifty::Plugin::SetupWizard::Action::FinalizeSetup
 
 Writes the config settings for finalizing and deactivating the setup wizard.
 
-It turns off admin mode, and sets the "activated" option of SetupWizard to
-false.
+It turns off admin mode and setup mode.
 
 =cut
 
