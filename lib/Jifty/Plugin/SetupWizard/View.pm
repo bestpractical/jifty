@@ -49,22 +49,29 @@ template '/__jifty/admin/setupwizard/step' => sub {
 
     div {
         class is 'setupwizard-links';
-        step_link(
-            index => $step - 1,
-            label => "Back: %1",
-        );
-        br {};
-        step_link(
-            index => $step + 1,
-            label => "Skip to: %1",
-        );
+
+        span { 'Skip to: ' };
+
+        for my $i (0 .. @$steps - 1) {
+            # Separator
+            if ($i > 0) {
+                span { ' | ' }
+            }
+
+            step_link(
+                index   => $i,
+                label   => "%1",
+                current => $i == $step,
+            );
+        }
     };
 };
 
 sub step_link {
     my %args = (
-        index => 0,
-        label => "%1",
+        index   => 0,
+        label   => "%1",
+        current => 0,
         @_,
     );
 
@@ -76,15 +83,20 @@ sub step_link {
     my $info = $steps->[$index];
     my $name = $info->{link} || $info->{header} || $info->{template};
 
-    hyperlink(
-        label => _($args{label}, $name),
-        onclick => {
-            replace_self => 1,
-            arguments => {
-                step => $index,
+    if ($args{current}) {
+        b { _($args{label}, $name) },
+    }
+    else {
+        hyperlink(
+            label => _($args{label}, $name),
+            onclick => {
+                replace_self => 1,
+                arguments => {
+                    step => $index,
+                },
             },
-        },
-    );
+        );
+    }
 }
 
 sub config_field {
