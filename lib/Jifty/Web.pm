@@ -254,7 +254,7 @@ sub current_user {
         return $self->{current_user};
     } elsif ( my $id = $self->session->get('user_id') ) {
          $object = Jifty->app_class({require => 0}, "CurrentUser")->new( id => $id );
-    } elsif ( Jifty->config->framework('AdminMode')) {
+    } elsif ( Jifty->admin_mode ) {
          $object = Jifty->app_class({require => 0}, "CurrentUser")->superuser;
     } else {
          $object = Jifty->app_class({require => 0}, "CurrentUser")->new;

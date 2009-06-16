@@ -576,7 +576,7 @@ Called from L</render_page>.
 =cut
 
 sub render_jifty_page_detritus {
-    if ( Jifty->config->framework('AdminMode') ) {
+    if ( Jifty->admin_mode ) {
         with( class => "warning admin_mode" ), div {
             outs( _('Alert') . ': ' );
             outs_raw(

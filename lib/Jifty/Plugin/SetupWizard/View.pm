@@ -15,7 +15,7 @@ template '/__jifty/admin/setupwizard' => page {
         },
     );
 
-    p { _("You're seeing this configuration because you started %1 in AdminMode and the SetupWizard plugin. Disable one or both of these to restore normal operation.", $appname) };
+    p { _("You're seeing this configuration because you started %1 in SetupMode. Disable this to restore normal operation.", $appname) };
 };
 
 template '/__jifty/admin/setupwizard/step' => sub {

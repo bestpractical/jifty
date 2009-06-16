@@ -189,7 +189,7 @@ Renders the AdminMode alert (if AdminMode is on)
 =cut
 
 sub render_pre_content_hook {
-    if ( Jifty->config->framework('AdminMode') ) {
+    if ( Jifty->admin_mode ) {
         with( class => "warning admin_mode" ), div {
             outs( _('Alert') . ': ' );
             outs_raw(

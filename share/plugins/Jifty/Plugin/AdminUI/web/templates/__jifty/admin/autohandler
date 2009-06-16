@@ -1,7 +1,7 @@
 <%init>
 
 # If "AdminMode" is turned off in Jifty's config file, don't let people at the admin UI.
-unless (Jifty->config->framework('AdminMode')) {
+unless (Jifty->admin_mode) {
     $m->redirect('/__jifty/error/permission_denied'); 
     $m->abort();
 }

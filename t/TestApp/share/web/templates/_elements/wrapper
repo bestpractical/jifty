@@ -6,7 +6,7 @@
   <& sidebar &>
   <div id="content">
     <a name="content"></a>
-% if (Jifty->config->framework('AdminMode') ) {
+% if (Jifty->admin_mode) {
 <div class="warning admin_mode">
 <%_('Alert')%>: <% Jifty->web->tangent( label => _('Administration mode is enabled.') , url => '/__jifty/admin/')%>
 </div>

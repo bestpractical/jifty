@@ -3,7 +3,7 @@ my $top = Jifty->web->navigation;
 $top->child( Home => url => "/", sort_order => 1);
 $top->child( Post => url => "/post", label => "Post Article");
 
-if (Jifty->config->framework('AdminMode') ) {
+if (Jifty->admin_mode) {
     $top->child(Administration       => url => "/__jifty/admin/", sort_order => 998);
     $top->child(OnlineDocs       => url => "/__jifty/online_docs/", label => 'Online docs',  sort_order => 999);
  }

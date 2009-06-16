@@ -27,7 +27,7 @@ on '**' => run {
     my $top = Jifty->web->navigation;
     # for now leave check here, but we want AdminUI to be
     # real plugin someday
-    if ( Jifty->config->framework('AdminMode') ) {
+    if (Jifty->admin_mode) {
         $top->child(
             Administration =>
             url        => "/__jifty/admin/",

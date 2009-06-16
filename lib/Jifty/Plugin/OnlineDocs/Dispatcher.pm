@@ -16,7 +16,7 @@ Load up the OnlineDocs tab when we're in Admin mode
 use Jifty::Dispatcher -base;
     
 on '*' => run {
-    return unless Jifty->config->framework('AdminMode');
+    return unless Jifty->admin_mode;
 
     my $top = Jifty->web->navigation;
     $top->child(
@@ -28,7 +28,7 @@ on '*' => run {
 };
 
 under '/__jifty/online_docs' => run {
-    return if Jifty->config->framework('AdminMode');
+    return if Jifty->admin_mode;
     warn "Attempt to access /__jifty/online_docs; either enable AdminMode, or remove the OnlineDocs plugin";
     redirect('/__jifty/error/permission_denied');
 };
