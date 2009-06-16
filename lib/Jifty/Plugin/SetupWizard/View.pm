@@ -108,7 +108,7 @@ sub config_field {
 
     outs_raw($action->form_field('value' => %value_args));
 
-    for my $field (qw/field context target_file empty_is_undef/) {
+    for my $field (qw/field context target_file message empty_is_undef/) {
         outs_raw($action->form_field(
             $field,
             render_as => 'hidden',
@@ -348,9 +348,11 @@ template '/__jifty/admin/setupwizard/web' => sub {
 template '/__jifty/admin/setupwizard/finalize' => sub {
     p { _("You may finalize your configuration.") };
 
+    my $appname = Jifty->config->framework('ApplicationName');
     my $action = config_field(
         field      => 'SetupMode',
         context    => '/framework',
+        message    => _('Setup finished. Welcome to %1!', $appname),
         value_args => {
             render_as     => 'hidden',
             default_value => 0,
@@ -394,6 +396,10 @@ The arguments for the C<form_field> call for value. If there's no C<default_valu
 =item context
 
 =item target_file
+
+=item message
+
+=item empty_is_undef
 
 These parameters are for specifying defaults for each action argument.
 
