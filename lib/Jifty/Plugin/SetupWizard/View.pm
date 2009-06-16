@@ -21,7 +21,7 @@ template '/__jifty/admin/setupwizard' => page {
 template '/__jifty/admin/setupwizard/step' => sub {
     my $step = get('step');
     my $steps = Jifty->find_plugin('Jifty::Plugin::SetupWizard')->steps;
-    my $step_info = $steps->[$step] or abort(400);
+    my $step_info = $steps->[$step] or die "Invalid step index";
 
     div {
         class is 'setupwizard-step';
