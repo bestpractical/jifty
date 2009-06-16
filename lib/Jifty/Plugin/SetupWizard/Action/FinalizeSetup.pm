@@ -12,7 +12,8 @@ sub change_config {
 
     # Deactivate SetupWizard
     my @plugins = @{ $config->{framework}{Plugins} || [] };
-    my $plugin (@plugins) {
+
+    for my $plugin (@plugins) {
         my ($name) = keys %$plugin;
         if ($name =~ /SetupWizard/) {
             $plugin->{activated} = 0;
