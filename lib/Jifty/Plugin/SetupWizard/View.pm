@@ -30,19 +30,22 @@ template '/__jifty/admin/setupwizard/step' => sub {
             h3 { _('%1. %2', $step+1, $step_info->{header}) } if $step_info->{header};
 
             show "/__jifty/admin/setupwizard/$step_info->{template}";
-            form_submit(
-                label => _('Save'),
-                onclick => {
-                    # Submit all actions
-                    submit => undef,
 
-                    # Advance to the next step
-                    refresh_self => 1,
-                    arguments => {
-                        step => $step + 1,
+            unless ($step_info->{hide_button}) {
+                form_submit(
+                    label => _('Save'),
+                    onclick => {
+                        # Submit all actions
+                        submit => undef,
+
+                        # Advance to the next step
+                        refresh_self => 1,
+                        arguments => {
+                            step => $step + 1,
+                        },
                     },
-                },
-            );
+                );
+            }
         };
     };
 

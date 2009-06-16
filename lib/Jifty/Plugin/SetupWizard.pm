@@ -36,8 +36,9 @@ sub init {
                 header   => 'Web',
             },
             {
-                template => 'finalize',
-                header   => 'Finalize',
+                template    => 'finalize',
+                header      => 'Finalize',
+                hide_button => 1,
             },
         ]);
     }
