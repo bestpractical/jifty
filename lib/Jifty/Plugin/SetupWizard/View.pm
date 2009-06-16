@@ -115,6 +115,8 @@ sub config_field {
             (exists($args{$field}) ? (default_value => $args{$field}) : ()),
         ));
     }
+
+    return $action;
 }
 
 template '/__jifty/admin/setupwizard/welcome' => sub {
@@ -371,8 +373,8 @@ arguments: the C<index> of the step and the C<label> for the link.
 
 =head2 config_field
 
-A helper function for constructing a mini-form for a config field. Expected
-arguments are:
+A helper function for constructing a mini-form for a config field. It returns
+the action that was created. Expected arguments are:
 
 =over 4
 
