@@ -345,6 +345,13 @@ template '/__jifty/admin/setupwizard/web' => sub {
 
 template '/__jifty/admin/setupwizard/finalize' => sub {
     p { _("You may finalize your configuration.") };
+
+    my $action = new_action('FinalizeSetup');
+
+    form_next_page url => '/';
+    $action->button(
+        label => 'Done!',
+    );
 };
 
 1;
