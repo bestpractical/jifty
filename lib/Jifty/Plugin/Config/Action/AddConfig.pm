@@ -26,6 +26,9 @@ use Jifty::Action schema {
     param empty_is_undef =>
         default is 0,
         type is 'bool';
+
+    param message =>
+        type is 'text';
 };
 
 sub contextualize {
@@ -57,6 +60,10 @@ sub write_new_config {
     my $combined_config = merge($existing_config, $new_config);
 
     Jifty::YAML::DumpFile($file, $combined_config);
+
+    if (length $self->argument_value('message')) {
+        $self->result->message($self->argument_value('message'));
+    }
 }
 
 sub take_action {
