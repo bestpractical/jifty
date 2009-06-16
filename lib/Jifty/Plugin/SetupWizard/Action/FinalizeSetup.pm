@@ -27,6 +27,7 @@ sub take_action {
     Jifty::YAML::DumpFile($file, $new_config);
 
     Jifty->config->load;
+    $self->result->message(_("Setup finished. Welcome to RT!"));
 }
 
 1;
