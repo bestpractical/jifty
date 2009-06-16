@@ -12,15 +12,21 @@ sub change_config {
 
     # Deactivate SetupWizard
     my @plugins = @{ $config->{framework}{Plugins} || [] };
+    my $deactivated = 0;
 
     for my $plugin (@plugins) {
         my ($name) = keys %$plugin;
         if ($name =~ /SetupWizard/) {
             $plugin->{activated} = 0;
+            $deactivated = 1;
 
             # There may be multiple instances of SetupWizard (!) in the list,
             # so we don't "last" out here
         }
+    }
+
+    if (!$deactivated) {
+        warn "Unable to find SetupWizard in the plugin list, so I cannot deactivate it!";
     }
 
     return $config;
