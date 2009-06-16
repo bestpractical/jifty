@@ -14,8 +14,6 @@ template '/__jifty/admin/setupwizard' => page {
             step => 0,
         },
     );
-
-    p { _("You're seeing this configuration because you started %1 in SetupMode. Disable this to restore normal operation.", $appname) };
 };
 
 template '/__jifty/admin/setupwizard/step' => sub {
@@ -120,7 +118,25 @@ sub config_field {
 }
 
 template '/__jifty/admin/setupwizard/welcome' => sub {
-    p { _("Hi!") };
+    my $appname = Jifty->config->framework('ApplicationName');
+
+    p {
+        _("This installer will help you configure %1 by walking you through the following steps.", $appname)
+    }
+
+    ol {
+        for my $step (@{ Jifty->find_plugin('Jifty::Plugin::SetupWizard')->steps }) {
+            li { $step->{header} }
+        }
+    }
+
+    p {
+        _("At any time you may close the wizard; your progress will be saved for next time. You may also skip around, doing these steps in whatever order suits you.");
+    }
+
+    p {
+        outs_raw _("This setup wizard was activated by the presence of <tt>SetupMode: 1</tt> in one of your configuration files. If you are seeing this erroneously, you may restore normal operation by adjusting the <tt>etc/site_config.yml</tt> file to have <tt>SetupMode: 0</tt> set under <tt>framework</tt>.");
+    }
 };
 
 template '/__jifty/admin/setupwizard/language' => sub {
