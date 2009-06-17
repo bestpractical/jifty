@@ -137,8 +137,14 @@ template '/__jifty/admin/setupwizard/welcome' => sub {
     }
 
     ol {
-        for my $step (@{ Jifty->find_plugin('Jifty::Plugin::SetupWizard')->steps }) {
-            li { $step->{header} }
+        for my $i (0 .. @{ Jifty->find_plugin('Jifty::Plugin::SetupWizard')->steps } - 1) {
+            li {
+                step_link(
+                    index   => $i,
+                    label   => "%1",
+                    current => $i == get('step'),
+                );
+            }
         }
     }
 
