@@ -43,6 +43,10 @@ sub init {
             },
         ]);
     }
+
+    for my $step (@{ $opt{add_steps} || [] }) {
+        $self->add_step(%$step);
+    }
 }
 
 sub add_step {
