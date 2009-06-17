@@ -181,6 +181,12 @@ Action.prototype = {
         a['moniker'] = this.moniker;
         a['class']   = this.actionClass;
 
+        if (this.register && this.register.id) {
+            var tmp = this.register.id.match(/^J:A-(\d+)-/);
+            if (tmp.length == 2)
+                a['order'] = tmp[1];
+        }
+
         a['fields']  = {};
         var fields = this.fields();
         for (var i = 0; i < fields.length; i++) {
