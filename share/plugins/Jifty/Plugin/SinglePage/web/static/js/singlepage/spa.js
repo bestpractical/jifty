@@ -11,13 +11,24 @@ window.dhtmlHistory.create({
     SPA = {
         initialHash: null,
         historyChange: function(newLocation, historyData, first) {
+            // if has first history, meaning ! is first load
             if (first) {
                 dhtmlHistory.add(newLocation, historyData);
-            } else {
+            } 
+            else {
+                // first page load
                 if (historyStorage.hasKey(newLocation)) {
                     Jifty.update(historyStorage.get(newLocation), "");
-                } else {
-                    Jifty.update({ "continuation": {}, "actions": {}, "fragments": [ { "mode": "Replace", "args": {}, "region": "__page", "path": SPA.initialHash } ], "action_arguments":{} }, "");
+                } 
+                else {
+                    // go back to initail hash or initail path
+                    Jifty.update({ 
+                             "continuation": {}, "actions": {}, 
+                                "fragments": [ { "mode": "Replace", "args": {}, 
+                                   "region": "__page", 
+                                     "path": SPA.initialHash } ], 
+                         "action_arguments":{} }, ""
+                    );
                 }
             }
         },
@@ -67,10 +78,23 @@ window.dhtmlHistory.create({
         }
     };
 
+    // for page load event
     $(document).ready(function(){
-        SPA.initialHash = location.pathname + location.search;
+
+        if( location.hash ) {
+            SPA.initialHash = location.hash.slice(1) ; 
+        }
+        else {
+            SPA.initialHash = location.pathname + location.search; // /entrypoint
+        }
+
         dhtmlHistory.initialize();
         dhtmlHistory.addListener(SPA.historyChange);
+
+        // fire history event manually
+        if( dhtmlHistory.isFirstLoad() && location.hash ) {
+            dhtmlHistory.fireHistoryEvent( location.hash.slice(1) );
+        }
     });
     
 })(jQuery);
