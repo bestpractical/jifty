@@ -4,7 +4,6 @@ use strict;
 use warnings;
 use File::Spec;
 use Test::Builder;
-my $Tester = Test::Builder->new;
 
 # explicitly ignore ClassLoader objects in @INC,
 # which'd be ignored in the end, though.
@@ -36,6 +35,7 @@ sub started_ok {
 
         my $why = "live test doesn't work on Win32 at the moment";
 
+        my $Tester = Test::Builder->new;
         $Tester->skip($why);
 
         unless ($Tester->{No_Plan}) {
@@ -55,6 +55,7 @@ sub started_ok {
         $SIG{USR1} = sub { };
         sleep 15;
         $self->{started} = 1;
+        my $Tester = Test::Builder->new;
         $Tester->ok(1, $text);
         # XXX: pull from jifty::config maybe
         return "http://localhost:".$self->port;

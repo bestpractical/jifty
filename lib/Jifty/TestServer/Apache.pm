@@ -4,7 +4,6 @@ use strict;
 use warnings;
 use File::Spec;
 use Test::Builder;
-my $Tester = Test::Builder->new;
 
 # explicitly ignore ClassLoader objects in @INC,
 # which'd be ignored in the end, though.
@@ -65,6 +64,7 @@ CONFIG
             last if $pid = $self->pids;
             sleep 1;
         }
+        my $Tester = Test::Builder->new;
         if ($pid) {
             $self->{started} = 1;
             $Tester->ok(1, $text);

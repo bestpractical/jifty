@@ -16,8 +16,6 @@ use Hook::LexWrap;
 use List::Util qw(first);
 use Carp;
 
-my $Test = Test::Builder->new;
-
 # XXX TODO: We're leaving out FLUFF errors because it complains about non-standard
 # attributes such as "autocomplete" on <form> elements.  There should be a better
 # way to fix this.
@@ -151,6 +149,7 @@ sub fill_in_action_ok {
     my $moniker = shift;
 
     my $ret = $self->fill_in_action($moniker, @_);
+    my $Test = Test::Builder->new;
     $Test->ok($ret, "Filled in action $moniker");
 } 
 
