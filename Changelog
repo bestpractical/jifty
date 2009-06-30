@@ -1,3 +1,68 @@
+-------------------------------
+Jifty 0.90630 - June 30th, 2009
+-------------------------------
+
+POSSIBLE INCOMPATIBILITIES
+==========================
+ * Modules which 'use Jifty::Dispatcher -base' and 'use
+   Jifty::View::Declare -base' will have strict and warnings
+   automatically turned on in them.
+
+CORE FEATURES
+=============
+ * Factor out available_values into a method
+ * Support plain strings in available_values
+ * In mandatory fields, tell the user which fields failed validation
+
+REFACTOR
+========
+ * Add a jifty->admin_mode method; this should be used in place of
+   Jifty->config->framework('AdminMode')
+
+BUGFIX
+======
+ * Don't rely on cwd for creating and reading PID files
+ * Automatically create the pid dir if it's not existent
+ * Even admin users couldn't access the online docs
+ * jifty_root returned a wrong path (actually a wrong volume) if we're
+   not in the same volume as we installed Jifty
+ * Extract ordering information for actions submitted via AJAX
+ * Fix SPA history event on page load and page reload
+
+CRUD
+====
+ * Don't show new item widget unless current user can create
+ * Make display_columns fall back to the record's readable columns
+
+I18N
+====
+ * Updated zh_tw translations
+
+PLUGINS
+=======
+ * REST: Run more of the dispatcher tests
+ * REST: Support .html format
+ * REST: 403 if the record is unreadable
+ * REST: Display actions valid_values
+ * SQLQueries: Display query time in each query's summary
+ * SetupWizard: Plugin to make it easy for end-users to set up your
+   app
+ * Config: Plugin to add configuration editor
+
+DOC
+===
+ * Updated zhtw tutorial
+ * Provide a Template::Declare page region example
+
+TEST
+====
+ * Per-test Test::Builder object, for compat with new nested TAP
+   support in Test::More
+
+VIEW
+====
+ * Add extra css selectors, allowing arbitrary growl updates
+
 ------------------------------
 Jifty 0.90519 - May 19th, 2009
 ------------------------------
