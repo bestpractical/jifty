@@ -183,7 +183,7 @@ Action.prototype = {
 
         if (this.register && this.register.id) {
             var tmp = this.register.id.match(/^J:A-(\d+)-/);
-            if (tmp.length == 2)
+            if (tmp && tmp.length == 2)
                 a['order'] = tmp[1];
         }
 
