@@ -78,7 +78,7 @@ __END__
 
 =head1 NAME
 
-Jifty::Plugin::SetupWizard::Action::TestDatabaseConnectivity
+Jifty::Plugin::SetupWizard::Action::TestDatabaseConnectivity - Test database connectivity action
 
 =head1 METHODS
 
