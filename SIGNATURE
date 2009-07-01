@@ -15,7 +15,7 @@ not run its Makefile.PL or Build.PL.
 Hash: SHA1
 
 SHA1 21a2c8d6579836d378f6530b6d6ae4572fc60d17 AUTHORS
-SHA1 555c6bddc0326b78bff66cc982d6c62bb1d51b03 Changelog
+SHA1 bc9940a05a93b01bbf460216bc47242de5434a0d Changelog
 SHA1 05331fe6ab223e15ff7ede671d95aab9c674547f MANIFEST
 SHA1 a27197123c93439a0af18bf40f32934ae36c304f MANIFEST.SKIP
 SHA1 e15d84e3f2bbc89d58b2c5aa3750a301b5b0e66f META.yml
@@ -173,7 +173,7 @@ SHA1 3406c9015148c75406903e7382f8182613b5022a inc/Module/Install/Scripts.pm
 SHA1 a1ccb2a21d1118b1bed4f97bd31ebd7dfd8fe43c inc/Module/Install/Share.pm
 SHA1 f7ee667e878bd2faf22ee9358a7b5a2cc8e91ba4 inc/Module/Install/Win32.pm
 SHA1 8ed29d6cf217e0977469575d788599cbfb53a5ca inc/Module/Install/WriteAll.pm
-SHA1 89f0cacb763a6b4b0d296d7ad7bb4eec9da01932 lib/Jifty.pm
+SHA1 f11cf330c17522a71223cbbf39d0eba9ed1af36b lib/Jifty.pm
 SHA1 62faf38bd0b4abba5baa9f82b972fa8f533e0e0a lib/Jifty/API.pm
 SHA1 ed73c8a65857b84e1e014a45c453fede0da88b0a lib/Jifty/Action.pm
 SHA1 14be4def02c11173c504eff60256df952b3c305f lib/Jifty/Action/Autocomplete.pm
@@ -288,7 +288,7 @@ SHA1 87a5c123b58cd1dcae256578df49809fa5679ba2 lib/Jifty/Plugin/RequestInspector/
 SHA1 c591a4d51fb27b22c6bd2909965b108bd724235a lib/Jifty/Plugin/SQLQueries.pm
 SHA1 e0628a005f5988dccb27c1a3b1c9c569ae99cbc8 lib/Jifty/Plugin/SQLQueries/View.pm
 SHA1 8d0d4c95ceb77333d06c134b6e7b8b84a54b310d lib/Jifty/Plugin/SetupWizard.pm
-SHA1 1b5dda3dbbebbabedb4c5f040c1a9de45e3e9766 lib/Jifty/Plugin/SetupWizard/Action/TestDatabaseConnectivity.pm
+SHA1 b8c7bed6f3e7628fe6406adb7d1f2ec44ab3752e lib/Jifty/Plugin/SetupWizard/Action/TestDatabaseConnectivity.pm
 SHA1 394c1000471fd14fd9d98cffe8e649639d45364c lib/Jifty/Plugin/SetupWizard/View.pm
 SHA1 9a6b1f7e1344fcfeeba6ef10872c139ad23ed3ae lib/Jifty/Plugin/SinglePage.pm
 SHA1 c55938ad7e19a4fcf44c0b1c2ccc9fb5146b371d lib/Jifty/Plugin/SinglePage/Dispatcher.pm
@@ -426,7 +426,7 @@ SHA1 f26a7fdc15dc122722d4c40ef9dec5ced6160423 share/plugins/Jifty/Plugin/SingleP
 SHA1 887e57c56298168851f871bb9e7dfed02a9f2312 share/plugins/Jifty/Plugin/SinglePage/web/static/js/singlepage/rsh/rsh.js
 SHA1 030c539b169c31e5433df5332d2a17af1eb25522 share/plugins/Jifty/Plugin/SinglePage/web/static/js/singlepage/spa.js
 SHA1 840b52c4975341dfa226e8a8ed04ad178ffdbbaf share/po/en.po
-SHA1 26a889a581b1c62f83c9f589a040e6c13fef0559 share/po/fr.po
+SHA1 a94efcf11f73a15e16fc064363c1b52911202c2e share/po/fr.po
 SHA1 119502d6da3394876aeae73cb82092b1aa0f16b3 share/po/ja.po
 SHA1 0626bb9ce6585b26723ed80f7230dda8ef42a78d share/po/jifty.pot
 SHA1 4f5e7d5fbc603e38f7f0b180fcf86745b8442768 share/po/ro.po
@@ -513,7 +513,7 @@ SHA1 ce2071bc853709a38405e59510e0345983f9263e share/web/static/js/halo.js
 SHA1 e19e06ba60a3854f483f91908a52943e029a9a18 share/web/static/js/iautocompleter.js
 SHA1 08b20563e958e72c3e8a221d91614c412bdd068b share/web/static/js/iepngfix.htc
 SHA1 6e8198c3dcbba9278f3a2bfb00b84db59383a1cf share/web/static/js/iutil.js
-SHA1 3c56aaae1564888c72b36f0a9063914ba7b94587 share/web/static/js/jifty.js
+SHA1 090ce4e97f72a9a0108e6a7f4e1b367e023a5e74 share/web/static/js/jifty.js
 SHA1 4a79a9b318ef56956e82f289c65f5954d3b7cf61 share/web/static/js/jifty_interface.js
 SHA1 29fe34f11192976f1a388562188b1eb9af7f4497 share/web/static/js/jifty_smoothscroll.js
 SHA1 262ed4b35eb5ae4b8241e80d0036a802c93f0703 share/web/static/js/jifty_subs.js
@@ -856,7 +856,7 @@ SHA1 e34d6d5bd8edf3214225893ad8378b356cac1dcc utils/js_size.pl
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.11 (GNU/Linux)
 
-iEYEARECAAYFAkpKSgkACgkQMflWJZZAbqC65QCgkuGCoznmMCiQfhDaZtkO2Lwt
-C/gAnR6mkCRCPMBt2x5KZ/NHVL9nvHO0
-=5oFp
+iEYEARECAAYFAkpLmUcACgkQMflWJZZAbqDyxQCgjdH3uCIFSZ2hYOP3VfwHLccU
+rnQAnjwQpS4oReH0Nozis7BjsweqpQMp
+=3Qye
 -----END PGP SIGNATURE-----

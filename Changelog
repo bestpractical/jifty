@@ -1,3 +1,16 @@
+------------------------------
+Jifty 0.90701 - July 1st, 2009
+------------------------------
+
+BUGFIX
+======
+ * Fix a bug in jifty.js when extracting ordering information for
+   actions submitted via AJAX
+
+I18N
+====
+ * Updated zh_tw translation
+
 -------------------------------
 Jifty 0.90630 - June 30th, 2009
 -------------------------------
@@ -36,7 +49,7 @@ CRUD
 
 I18N
 ====
- * Updated zh_tw translations
+ * Updated zh_tw translation
 
 PLUGINS
 =======
