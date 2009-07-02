@@ -15,7 +15,31 @@ template '/index.html' =>
 	    form_submit( label => 'Next' );
 	};
 	render_region('random');
-    };
+
+    hyperlink( 
+        url => '/xxx', 
+        escape_label => 0, 
+        label => 'Link Test',
+    );
+
+    hyperlink( 
+        url => '/xxx', 
+        escape_label => 0, 
+        label => 'Link Test with parameters',
+        parameters => { id => 3 },
+    );
+
+    hr { };
+    
+	hyperlink( 
+        label => 'foo', 
+        onclick => { 
+            region => 'foo', 
+            replace_with => '_r_foo', 
+            args => { foo => '123123' } } 
+    );
+
+};
 
 template '/page2' =>
     page { title => 'page2' }
@@ -33,7 +57,7 @@ template '/page2' =>
 	    render_action($create);
 	    form_submit( label   => 'Next' );
 	}
-    };
+};
 
 template 'page3' =>
     page { title => 'page3' }
@@ -42,7 +66,7 @@ template 'page3' =>
 	form {
 	    hyperlink(label => 'Back', url => '/');
 	}
-    };
+};
 
 template '_r_foo' => sub {
     my $foo = get('foo');
@@ -60,6 +84,12 @@ template '/p/history/two' => page {
 
 template '/p/history/three' => page {
     p { "This Is Page Three" };
+};
+
+
+template '/xxx' => page {
+    h2 { "xxx" };
+    h2 { get('id') };
 };
 
 1;
