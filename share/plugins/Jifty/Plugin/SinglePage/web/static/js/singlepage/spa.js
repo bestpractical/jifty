@@ -10,6 +10,7 @@ window.dhtmlHistory.create({
 (function($) {
     SPA = {
         initialHash: null,
+        initailArgs: { },
         historyChange: function(newLocation, historyData, first) {
             // if has first history, meaning ! is first load
             if (first) {
@@ -23,12 +24,15 @@ window.dhtmlHistory.create({
                 else {
                     // go back to initail hash or initail path
                     Jifty.update({ 
-                             "continuation": {}, "actions": {}, 
-                                "fragments": [ { "mode": "Replace", "args": {}, 
-                                   "region": "__page", 
-                                     "path": SPA.initialHash } ], 
-                         "action_arguments":{} }, ""
-                    );
+                             "continuation": {}, 
+                                  "actions": {}, 
+                         "action_arguments": {},
+                                "fragments": [ { 
+                                        "mode": "Replace", 
+                                        "args": SPA.initailArgs , 
+                                      "region": "__page", 
+                                        "path": SPA.initialHash 
+                                          } ] }, "");
                 }
             }
         },
@@ -74,15 +78,36 @@ window.dhtmlHistory.create({
 
             var args = $.extend({}, hiddens, buttons, inputs);
 
-            return Jifty.update( {'continuation':{},'actions':null,'fragments':[{'mode':'Replace','args':args,'region':'__page','path': submit_to}]}, elt );
+            return Jifty.update( {'continuation':{},'actions':null,'fragments':[
+                        {'mode':'Replace','args':args,'region':'__page','path': submit_to
+                    }]}, elt );
         }
     };
 
     // for page load event
     $(document).ready(function(){
+        var hash = location.hash.slice(1);
+        var search = location.search.slice(1);
 
-        if( location.hash ) {
-            SPA.initialHash = location.hash.slice(1) ; 
+        if( location.hash && ! location.search ) {
+            if ( hash.indexOf('?') >= 0 ) {
+                search = location.hash.slice(1);
+                search = search.substring( search.indexOf('?') + 1 );
+                hash = hash.substring( 0 , hash.indexOf('?') );
+            }else {
+                search = '';
+            }
+
+            var args = { } ;
+            var gy = search.split("&");
+            for (i=0; i<gy.length; i++) {
+                var res =  gy[i].split("=");
+                args[  res[0]  ] = res[1];
+            }
+
+            SPA.initailArgs = args;
+            SPA.initialHash = hash;
+
         }
         else {
             SPA.initialHash = location.pathname + location.search; // /entrypoint
@@ -93,7 +118,7 @@ window.dhtmlHistory.create({
 
         // fire history event manually
         if( dhtmlHistory.isFirstLoad() && location.hash ) {
-            dhtmlHistory.fireHistoryEvent( location.hash.slice(1) );
+            dhtmlHistory.fireHistoryEvent( hash );
         }
     });
     
