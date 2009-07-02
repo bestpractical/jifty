@@ -22,6 +22,8 @@ template '/index.html' =>
         label => 'Link Test',
     );
 
+    hr { };
+
     hyperlink( 
         url => '/xxx', 
         escape_label => 0, 
