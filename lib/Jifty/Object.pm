@@ -87,13 +87,14 @@ sub _get_current_user {
         }
     };
 
+    # Just return it if we're a cless method
+    return $cu || Jifty->web->current_user unless ref $self;
+
     # If we found something, return it
     return $self->current_user( $cu ) if $cu;
 
     # Fallback to web ui framework
-    if ( Jifty->web ) {
-        return $self->current_user( Jifty->web->current_user );
-    }
+    return $self->current_user( Jifty->web->current_user ) if Jifty->web;
 
     return undef;
 }
