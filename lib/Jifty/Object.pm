@@ -73,7 +73,7 @@ sub _get_current_user {
     eval {
         package DB;
 
-        my $depth = 1;
+        my $depth = 2;
         while ( not $cu and $depth < 10 ) {
             # get the caller in array context to populate @DB::args
             my ($package) = CORE::caller( $depth++ );
