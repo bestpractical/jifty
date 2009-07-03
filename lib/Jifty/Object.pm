@@ -76,7 +76,8 @@ sub _get_current_user {
         my $depth = 1;
         while ( not $cu and $depth < 10 ) {
             # get the caller in array context to populate @DB::args
-            my $x = (CORE::caller( $depth++ ))[0];
+            my ($package) = CORE::caller( $depth++ );
+            last if defined $package and $package eq "HTML::Mason::Commands";
             my $caller_self = $DB::args[0];
             next unless ref($caller_self);    #skip class methods;
             next unless my $s = $caller_self->can('current_user');
