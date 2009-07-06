@@ -31,7 +31,7 @@ template '/__jifty/admin/setupwizard/step' => sub {
 
             unless ($step_info->{hide_button}) {
                 form_submit(
-                    label => _('Save'),
+                    label => _('Next'),
                     onclick => {
                         # Submit all actions
                         submit => undef,
