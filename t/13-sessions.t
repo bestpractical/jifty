@@ -7,7 +7,25 @@ Tests Jifty::Web::Session
 
 =cut
 
-use Jifty::Test tests => 19;
+use Jifty::Test tests => 21;
+
+{
+    my $session = Jifty::Model::Session->new;
+    $session->create(
+        data_key => 'old',
+        value    => 'one',
+    );
+    $session->set_created( DateTime->now->subtract( days => 14 ) );
+    $session->set_updated( DateTime->now->subtract( days => 14 ) );
+
+    my $collection = Jifty::Model::SessionCollection->new;
+    $collection->expired_update( DateTime->now->subtract( days => 2 ) );
+    is($collection->first->value,'one');
+
+    $collection->unlimit;
+    $collection->expired_create( DateTime->now->subtract( days => 2 ) );
+    is($collection->first->value,'one');
+}
 
 my ($first_id, $third_id);
 

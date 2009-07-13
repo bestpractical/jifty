@@ -31,4 +31,26 @@ are...
 
 sub current_user { return Jifty->app_class('CurrentUser')->superuser }
 
+=head2 expired_update
+
+find sessions where updated time is expired.
+
+=cut
+
+sub expired_update { 
+    my ($self,$dt) = @_;
+    $self->limit( column => 'updated', operator => '<', value => $dt );
+}
+
+=head2 expired_create 
+
+find sessions where created time is expired.
+
+=cut
+
+sub expired_create {
+    my ($self,$dt) = @_;
+    $self->limit( column => 'created', operator => '<', value => $dt, );
+}
+
 1;
