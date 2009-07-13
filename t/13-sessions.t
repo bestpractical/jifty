@@ -20,11 +20,11 @@ use Jifty::Test tests => 21;
 
     my $collection = Jifty::Model::SessionCollection->new;
     $collection->expired_update( DateTime->now->subtract( days => 2 ) );
-    is($collection->first->value,'one');
+    is($collection->first->value,'one' , 'expired by updated');
 
     $collection->unlimit;
     $collection->expired_create( DateTime->now->subtract( days => 2 ) );
-    is($collection->first->value,'one');
+    is($collection->first->value,'one' , 'expired by created');
 }
 
 my ($first_id, $third_id);
