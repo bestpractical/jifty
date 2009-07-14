@@ -1,0 +1,5 @@
+---
+framework:
+    Plugins:
+        - SetupWizard: {}
+    SetupMode: 1
