@@ -1,5 +1,11 @@
 package TestApp::Plugin::SetupWizard::Test;
-BEGIN { push @Jifty::Test::Dist::post_chdir, sub { unlink "etc/site_config.yml" } }
+use Cwd;
+BEGIN {
+    push @Jifty::Test::Dist::post_chdir, sub { unlink "etc/site_config.yml" };
+    unlink "etc/site_config.yml"
+        if getcwd =~ /TestApp-Plugin-SetupWizard/;
+}
+
 use warnings;
 use strict;
 use Jifty::Test::Dist ();
