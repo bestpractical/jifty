@@ -93,7 +93,7 @@ requires:
   IPC::PubSub: 0.23
   IPC::Run3: 0
   JSON::Syck: 0.29
-  Jifty::DBI: 0.57
+  Jifty::DBI: 0.58
   LWP::UserAgent: 0
   List::MoreUtils: 0
   Locale::Maketext::Extract: 0.35
