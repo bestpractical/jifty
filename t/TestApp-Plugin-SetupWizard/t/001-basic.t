@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 use lib 't/TestApp-Plugin-SetupWizard/lib';
-use TestApp::Plugin::SetupWizard::Test tests => 4;
+use TestApp::Plugin::SetupWizard::Test tests => 9;
 
 my $server = Jifty::Test->make_server;
 
@@ -10,5 +10,18 @@ my $URL  = $server->started_ok;
 my $mech = Jifty::Test::WWW::Mechanize->new();
 
 $mech->get_ok("$URL", "Got the doc root");
-$mech->content_like(qr/This installer will help you configure TestApp-Plugin-SetupWizard/, "setup wizard");
+$mech->content_like(qr/This installer will help you configure TestApp-Plugin-SetupWizard/, "got setup wizard on load");
+
+$mech->click_button(value => "Begin");
+$mech->content_like(qr/choose a database engine/, "step 1: database");
+
+$mech->click_button(value => "Next");
+$mech->content_like(qr/web server settings/, "step 2: server");
+
+$mech->click_button(value => "Next");
+$mech->content_like(qr/finalize your config/, "step 3: finalize");
+
+$mech->click_button(value => "Done!");
+$mech->content_like(qr/Setup finished. Welcome to TestApp-Plugin-SetupWizard!/, "setup tells us we're finished");
+$mech->content_like(qr/You said you wanted a pony/, "we're on the regular homepage");
 
