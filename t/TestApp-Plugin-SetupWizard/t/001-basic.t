@@ -1,4 +1,5 @@
 #!/usr/bin/env perl
+BEGIN { push @Jifty::Test::Dist::post_chdir, sub { unlink "etc/site_config.yml" } }
 use warnings;
 use strict;
 use Jifty::Test::Dist tests => 4;
