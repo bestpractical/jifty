@@ -8,6 +8,9 @@ use Jifty::Test::WWW::Mechanize ();
 sub import {
     my $class = shift;
 
+    strict->import;
+    warnings->import;
+
     unshift @_, 'Jifty::Test::Dist';
     my $import = Jifty::Test::Dist->can('import');
     goto $import;
