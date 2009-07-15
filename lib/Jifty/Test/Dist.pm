@@ -4,11 +4,17 @@ use FindBin;
 use File::Spec;
 use Cwd;
 
+our @post_chdir;
+
 BEGIN {
     $Jifty::Test::Dist::OrigCwd = Cwd::cwd;
 
     @INC = grep { defined } map { ref($_) ? $_ : File::Spec->rel2abs($_) } @INC;
     chdir "$FindBin::Bin/..";
+
+    # SetupWizard needs this to remove lingering site_config files before
+    # loading Jifty
+    for (@post_chdir) { $_->() }
 }
 
 use lib 'lib';
