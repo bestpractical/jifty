@@ -127,7 +127,7 @@ my @new_fields = qw(
 );
 
 my @semiexposed_fields = qw(
-    label input_name available_values
+    label input_name
 );
 
 sub accessors {
@@ -780,18 +780,6 @@ Returns the available values for this field.
 
 sub available_values {
     my $self = shift;
-
-    # Setter
-    if (@_) {
-        return $self->_available_values(@_);
-    }
-
-    # If the available_values are available in the field..
-    if (my $available = $self->_available_values) {
-        return @$available;
-    }
-
-    # Otherwise consult the action
     return @{ $self->action->available_values($self->name) };
 }
 
