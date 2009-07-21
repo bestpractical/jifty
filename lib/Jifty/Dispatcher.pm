@@ -794,9 +794,6 @@ sub _do_show {
         die "You can't call a 'show' rule in a 'before' or 'after' block in the dispatcher.  Not showing path $path";
     }
 
-    $self->log->debug("Showing path $path");
-
-
     # If we've got a working directory (from an "under" rule) and we have
     # a relative path, prepend the working directory
     $path = "$self->{cwd}/$path" unless $path =~ m{^/};
@@ -1254,6 +1251,8 @@ sub render_template {
         $self->log->warn("Can't find 404 page!");
         $self->_abort;
     }
+
+    $self->log->debug("Showing path $template using @{[ref $handler]}");
 
     my $start_depth = Jifty->handler->buffer->depth;
     eval {
