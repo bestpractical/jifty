@@ -11,6 +11,19 @@ of Jifty use, and ones that work pretty well.
 
 =head1 HOW DO I ...
 
+=head2 Use PostgreSQL insteads of default SQLite database.
+
+You need to modify your F<etc/config.yml> file.
+
+  Database:
+    AutoUpgrade: 1
+    CheckSchema: 1
+    Database: twetter
+    Driver: SQLite
+
+Please change Driver "SQLite" to "Pg", and 
+make sure that you've installed L<DBD::Pg>.
+
 =head2 Create an LDAP autocomplete field
 
 You need an action in your application. Then run
