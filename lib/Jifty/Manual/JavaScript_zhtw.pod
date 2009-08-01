@@ -1,0 +1,328 @@
+=head1 NAME
+
+Jifty::Manual::JavaScript_zhtw - Jifty 之 JavaScript 程式設計指引
+
+=head1 DESCRIPTION
+
+jQuery took over Prototype and becoming the core of Jifty's Javascript
+development. Besides re-implementing core javascript libraries with
+jQuery, some good refactor is also being done.
+
+This document is written to help JavaScript programmers working for
+a Jifty project to understand what's the different before jQuery landed,
+and provide a quick reference for prototypism believers to learn the new wave
+of JavaScript programming in Jifty.
+
+=head1 Migration to jQuery
+
+這部份提供了 jQuery 的核心函式的簡單指引。
+用來取代 Prototype 的 javascript 函式庫。
+
+=head2 Selecting elements with jQuery()
+
+Invokin jQuery function with exactly one string argument will return
+a jQuery object that represents a list of elements. The string is
+a CSS selector. For example:
+
+    jQuery("span.message")
+
+This works very similar to Prototype's $$() function, but with one
+difference. The return value is I<not> an Array, it's a jQuery
+object that acts likes a Enumerable object (but still, not one). If you
+really want a Array, you can do:
+
+    var array_of_message = jQuery("span.message").get()
+
+For most cases, C<jQuery("#" + id).get(0)> can be a replacement pattern
+to C<$(id)>. Selecting elements with C<jQuery()> function always
+returns a jQuery object, but not element it self. There are two notice
+especially for Jifty world.
+
+First of all, Jifty develoeprs should always use C<Jifty.$>. Deep in
+the design of Jifty, there are many kind of elements with C<":">
+character in their id. Sadly it is a feature in jQuery to do more
+powerful seleciton with C<":"> character. For example, this selects
+current mouse-overed elements:
+
+    jQuery(":hover")
+
+C<jifty.js> internally use C<Jifty.$> as the direct replacement to
+C<$()> function defined in the Prototype library.
+
+However, for application developers it's quite safe to use
+C<jQuery("#id")> to select elements they created.
+
+=head2 Document ready with jQuery()
+
+The way to do execute some javascript right after the DOM is ready is
+to bind a handler for C<"ready"> event on the C<document> object:
+
+    jQuery(document).ready(function() {
+        ...
+    });
+
+Since is done quite often, there's a shortcut:
+
+    jQuery(function() {
+        ...
+    });
+
+=head1 METHODS
+
+This section list those public functions under C<Jifty> namespace.
+They are defined in jifty.js.
+
+=over
+
+=item Jifty.$( element_id )
+
+This is a shorthand of document.getElementById function, like the C<$>
+function defined in Prototype library. It is also internally used a
+lot because many form specific element ID does not get along with
+jQuery's selector, which expect the ":" character is used for special
+purpose.
+
+element_id should be a string. If not, element_id itself is returned.
+Therefore, this convention:
+
+    element = Jifty.$(element)
+
+Can work when the variable C<element> is either a string, or a HTML
+element object.
+
+=item Jifty.Effect(element, effect_name, option)
+
+When called, instantly pefrom a js effect on give element. "element" is an
+element object.
+
+The last arg "option" is a hash. Currently it's only used for
+specificing callbacks. There are two possible callbacks, before and
+after. You may specify them like this:
+
+    Jifty.Effect(element, "Fade", { duration: 2.0 }, {
+        before: function() { ... },
+        after: function() { ... }
+    });
+
+The "before" callback is called right before the effect starts.
+The "after" callback is called right after it's started, but not
+necessarily ended.
+
+This function is written to make it possible that a Jifty plugin
+can override default effects with other fancy javascript libraries.
+By default, it delegates all the real work to jQuery's built-in
+effect functions.
+
+=item Jifty.Form.getElements(element)
+
+Given a form element, returns all input fields inside this form. That
+includes INPUT, SELECT, tags. The returned value is an array of HTML
+elements.
+
+=item Jifty.Form.getActions(element)
+
+Given a form element, returns a array of elements that are defined as
+Jifty actions.
+
+=item Jifty.Form.clearPlaceholders(element)
+
+=item Jifty.Form.Element.getMoniker( element )
+
+Given an element, or an element id, return a string representing a
+moniker of this element. It returs null if the given element is
+considered having no moniker at all.
+
+=item Jifty.Form.Element.getAction( element )
+
+Takes an element or an element id. Get the action for this form
+element. The returned value is an Action object.
+
+=item Jifty.Form.Element.getType( element )
+
+Takes an element or an element id, returns the type associated with
+this element. Possible return values are "registraion", "value",
+"fallback", or null if the element does not belongs to any of these
+types.
+
+=item Jifty.Form.Element.getField( element )
+
+Takes an element or an element id, returns the name of it. Returns
+null if the element given does not have a name.
+
+=item Jifty.Form.Element.getValue( element )
+
+Tkaes an element or an element id, returns the element value. If the
+element is a CHECKBOX or a RADIO button but it's un-checked, returns
+null.
+
+=item Jifty.Form.Element.validate( element )
+
+Validates the action this form element is part of.
+
+=item Jifty.Form.Element.disableValidation( element )
+
+Temporarily disable validation.
+
+=item Jifty.Form.Element.enableValidation( element )
+
+Re-enable validation.
+
+=item Jifty.Form.Element.getForm( element )
+
+Look up the form that this element is part of.
+
+This is sometimes more complicated than you'd think because the form
+may not exist anymore, or the element may have been inserted into a
+new form.  Hence, we may need to walk the DOM.
+
+Upon the failure of searching, null is returned.
+
+=item Jifty.Form.Element.buttonArguments( element )
+
+Takes an element or an element id that is considered as a "button",
+which can be an <INPUT type="submit"> tag, or a <A> tag, returns the
+arguments on this element.
+
+If none, an empty object is returned.
+
+=item Jifty.Form.Element.buttonActions( element )
+
+Takes an element or an element id that is considered as a "button",
+return array of actions on this element.
+
+If none, an empty array is returned.
+
+=item Jifty.Form.Element.buttonFormElements( element )
+
+Takes an element or an element id that is considered as a "button",
+return an array of form elements that's just constructed based on the
+arguments on this element.
+
+If none, an empty array is returned.
+
+=item Jifty.Form.Element.clickDefaultButton( element )
+
+Click the first button that will submit the action associated with the
+form element.
+
+=item Jifty.Form.Element.handleEnter( event )
+
+Trap "Enter" key, and prevent it from doing any browser default
+behaviours.
+
+=item Jifty.update(options)
+
+This function is used to handle most Jifty-related ajax requests. It handles the submission of actions, manipulation of continuations, and modification of page regions. Whenever building C<onclick> or other L<Jifty::Web::Form::Element> event handlers, this method is generally used.
+
+The C<options> are passed as an object where the following attributes are available.
+
+=over
+
+=item actions
+
+This is an object declaring the monikers you wish to submit with the update. These actions will be taken based upon the form inputs and also the values described in C<action_arguments>. The values assigned to each moniker should be "1" to signify that that moniker should be submitted.
+
+For example,
+
+  Jifty.update({ 'actions': { 'new_entry': 1 } });
+
+=item action_arguments
+
+This specifies any additional arguments to submit with the action. These are specified as a object where the fields are the names of the monikers to submit arguments for. The values are objects describing the parameters to pass to the action.
+
+For example,
+
+  Jifty.update({ 
+      'actions': { 'new_entry': 1 }, 
+      'action_arguments': { 'new_entry': { 'foo': 42, 'bar': 'blah' } }
+  });
+
+This would submit the action for moniker C<new_entry> with whatever form elements are included on the page along with setting the parameter C<foo> to "42" and the parameter C<bar> to "blah".
+
+=item continuation
+
+TODO Please document this...
+
+=item fragments
+
+This is an array describing modifications to make to page regions. Each element of the array is an object describing a single modification. The fields that are valid for each include the following:
+
+=over
+
+=item region
+
+This is the fully-qualified name of the region to manipulate.
+
+=item args
+
+These are the arguments to pass to the server. These are passed as an argument where the field names are the keys to pass. The values may be a typical string value to pass in or may be one of the special values listed in L<Jifty::Request::Mapper>, which will set the values based upon action results and other values in the request. (Those values will need to be produced using the JavaScript analog of the descriptions in Perl. Specifically, hashes are JavaScript objects and actions must be given as action monikers.)
+
+=item path
+
+This is the path of the fragment to use when modifying the region.
+
+=item element
+
+This is a special C<jQuery> selector to use to choose an element to update. If this is given, the C<region> value will be ignored and the first element matching this selector will be used instead.
+
+=item mode
+
+This determines what kind of update to perform. It may be one of the following:
+
+=over
+
+=item Replace
+
+The contents of the region or selected element will be completely replaced by the server response.
+
+=item Top
+
+The server response will be inserted within the region or selected element before the rest of the content.
+
+=item Bottomer
+
+The server response will be inserted within the region or selected element after the rest of the content.
+
+=item Before
+
+The content returned by the server will be inserted immediately before and outside the given region or element.
+
+=item After
+
+The content returned by the server will be inserted immedately after and outside the given region or element.
+
+=back
+
+=item effect
+
+This is used to select the C<Jifty.Effect> to use when performing the modification. This is a string naming the effect.
+
+=back
+
+=back
+
+=back
+
+=head1 REFERENCE
+
+=over 
+
+=item jQuery in 15 minutes
+
+L<http://www.slideshare.net/simon/jquery-in-15-minutes/>
+
+=item Learning jQuery in 30 minutes
+
+L<http://www.slideshare.net/simon/learning-jquery-in-30-minutes/>
+
+=item Prototype jQuery going from one to the other
+
+L<http://www.slideshare.net/remy.sharp/prototype-jquery-going-from-one-to-the-other/>
+
+=item jQuery Officail Documentation
+
+L<http://docs.jquery.com/>
+
+=back
+
+=cut
