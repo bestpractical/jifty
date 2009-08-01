@@ -202,4 +202,8 @@ C<App::CurrentUser> 物件以取得目前的使用者，此物件包含了一些
 
 L<Jifty::CurrentUser>, L<Jifty::Record>, L<Jifty::RightsFrom>, L<Jifty::Plugin::Authentication::Ldap>, L<Jifty::Plugin::Authentication::CAS> 
 
+=head1 翻譯者
+
+林佑安 (c9s) ( C<cornelius.howl_at_gmail.com> ) L<http://oulixe.us/>
+
 =cut
