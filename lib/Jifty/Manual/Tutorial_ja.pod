@@ -2,7 +2,7 @@
 
 =head1 題名
 
-Jifty::Manual::Tutorial - あっという間にゼロからJifty
+Jifty::Manual::Tutorial_ja - あっという間にゼロからJifty
 
 =head1 説明
 
