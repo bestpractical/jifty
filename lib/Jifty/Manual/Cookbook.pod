@@ -11,6 +11,26 @@ of Jifty use, and ones that work pretty well.
 
 =head1 HOW DO I ...
 
+=head2 Catching Action Result in Dispatcher
+
+To get action result in your dispatcher:
+
+    on '/=/your_action_name/'  => run {
+
+        my $result = Jifty->web->response->result( 'action-moniker' );
+
+
+    };
+
+=head2 Catching POST data in Dispatcher
+
+In your L<MyApp::Dispatcher>:
+
+    on POST '/=/catch' => run {
+        my $data = get('data');
+
+    };
+
 =head2 Upload file via Action parameter
 
 In your action schema:
