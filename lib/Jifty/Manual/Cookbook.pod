@@ -11,6 +11,30 @@ of Jifty use, and ones that work pretty well.
 
 =head1 HOW DO I ...
 
+=head2 Upload file via Action parameter
+
+In your action schema:
+
+    use Jifty::Action schema {
+
+        param image =>
+            type is 'upload'
+            label is _('Upload a file');
+
+    };
+
+to catch the file , in your C<take_action> method:
+
+    sub take_action {
+        my $self = shift;
+
+        my $fh = $self->argument_value('image');
+        local $/;
+        my $file_content = <$fh>
+        close $fh;
+
+    }
+
 =head2 Use PostgreSQL insteads of default SQLite database.
 
 You need to modify your F<etc/config.yml> file.
