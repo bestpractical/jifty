@@ -11,15 +11,14 @@ C<Jifty::Action> 抽象敘述了於編譯時期 (complie time) 宣告參數的�
 (L<"arguments"|Jifty::Manual::Glossary/argument>),
 並處理一些事情，最後回傳結果給使用者。
 
-If this sounds incredibly
-general, that's because it is -- actions do nearly B<everything> in Jifty.
+如果這些聽起來實在太一般，那是因為 -- 動作 (Action) 其實幾乎可以做 Jifty
+裡的每一件事情。
 
-C<Jifty::Action> will also generate HTML for you from its parameters --
-no more manually writing C<< <input> >> tags and extracting GET and
-POST arguments by hand and dispatching them where they belong --
-C<Jifty::Action> does it all for you.
+C<Jifty::Action> 同時也會為你從參數產生 HTML -- 不需要自己手動寫 C<< <input> >> 標籤
+或是手動處理由 GET 或 POST 傳回的參數，並且 Jifty 會自動幫你把不同的表單分派到相對應
+的動作 (Action)。 C<Jifty::Action> 為你完成了所有該做的事情。
 
-=head1 WRITING ACTIONS
+=head1 如何寫 Action 
 
 Jifty 已經提供了一些預設的行為 (Action) 給你 -- 可參見
 L<Jifty::Manual::ObjectModel> 以及在 L<Jifty::Action::Record> 會有動態產生的行為 (Action)
