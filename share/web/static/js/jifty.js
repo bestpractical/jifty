@@ -1475,8 +1475,9 @@ Jifty.update = function () {
     }
 
     if (Jifty.preloaded_regions) {
-        onSuccess(Jifty.preloaded_regions);
+        var faux_response = Jifty.preloaded_regions;
         delete Jifty.preloaded_regions;
+        onSuccess(faux_response);
         return;
     }
 
