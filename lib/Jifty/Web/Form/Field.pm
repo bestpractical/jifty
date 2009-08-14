@@ -734,19 +734,25 @@ sub preload_javascript {
     my $self = shift;
 
     my $structure = $self->_javascript_attrs_structure;
-    return unless $structure->{preload_key};
+    my @javascript;
+    for my $trigger (keys %$structure) {
+        my $trigger_structure = $structure->{$trigger};
+        next unless $trigger_structure->{preload_key};
 
-    my @preloaded;
+        my @preloaded;
 
-    my $preload_json = Jifty::JSON::objToJson(
-        {
-            fragments   => $structure->{fragments},
-            preload_key => $structure->{preload_key},
-        },
-        { singlequote => 1 },
-    );
+        my $preload_json = Jifty::JSON::objToJson(
+            {
+                fragments   => $trigger_structure->{fragments},
+                preload_key => $trigger_structure->{preload_key},
+            },
+            { singlequote => 1 },
+        );
 
-    return "Jifty.preload($preload_json, this);";
+        push @javascript, "Jifty.preload($preload_json, this);";
+    }
+
+    return join "\n", @javascript;
 }
 
 =head2 render_hints
