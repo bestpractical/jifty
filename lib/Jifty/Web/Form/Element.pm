@@ -420,6 +420,8 @@ sub _javascript_attrs_structure {
         my $confirm;
         my $beforeclick;
         my $action_arguments = {};
+        my $preload;
+
         for my $hook (grep {ref $_ eq "HASH"} (@{$value})) {
             my %args;
 
@@ -495,7 +497,7 @@ sub _javascript_attrs_structure {
             $args{toggle} = 1 if $hook->{toggle};
 
             # Preloading functionality
-            $args{preload} = $hook->{preload} if $hook->{preload};
+            $preload = $hook->{preload} if $hook->{preload};
 
             # Effects
             $args{$_} = $hook->{$_} for grep {exists $hook->{$_}} qw/effect effect_args remove_effect remove_effect_args/;
@@ -510,6 +512,7 @@ sub _javascript_attrs_structure {
             action_arguments => $action_arguments,
             confirm          => $confirm,
             beforeclick      => $beforeclick,
+            preload          => $preload,
         };
     }
 
@@ -544,6 +547,7 @@ sub javascript_attrs {
                     action_arguments => $trigger_structure->{action_arguments},
                     fragments    => $fragments,
                     continuation => $self->continuation,
+                    preload      => $trigger_structure->{preload},
                 },
                 { singlequote => 1 },
             );

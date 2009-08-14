@@ -734,22 +734,15 @@ sub preload_javascript {
     my $self = shift;
 
     my $structure = $self->_javascript_attrs_structure;
+    return unless $structure->{preload};
+
     my @preloaded;
 
-    for my $trigger (keys %$structure) {
-        my $trigger_structure = $structure->{$trigger};
-        my $fragments = $trigger_structure->{fragments};
-
-        for my $fragment (@$fragments) {
-            next unless $fragment->{preload};
-            push @preloaded, $fragment;
-        }
-    }
-
-    return if !@preloaded;
-
     my $preload_json = Jifty::JSON::objToJson(
-        { fragments   => \@preloaded },
+        {
+            fragments => $structure->{fragments},
+            preload   => $structure->{preload},
+        },
         { singlequote => 1 },
     );
 

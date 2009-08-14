@@ -1521,18 +1521,11 @@ Jifty.update = function () {
 Jifty.preloaded_regions = {};
 
 Jifty.preload = function (named_args, trigger) {
-    var fragments = named_args['fragments'];
+    var args = named_args.clone();
+    args.hide_wait_message = 1;
+    args.actions = [];
 
-    for (i = 0; i < fragments.length; ++i) {
-        var fragment = fragments[i];
-
-        Jifty.update({
-            hide_wait_message: 1,
-            preload: 1,
-            actions: [],
-            fragments: [fragment]
-        }, trigger);
-    }
+    Jifty.update(args, trigger);
 }
 
 function update ( named_args, trigger ) {
