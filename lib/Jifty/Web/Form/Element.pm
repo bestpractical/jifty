@@ -386,7 +386,10 @@ string of HTML attributes.
 sub javascript {
     my $self = shift;
     my %response = $self->javascript_attrs;
-    return join "", map {qq| $_="| . Jifty->web->escape($response{$_}).qq|"|} sort keys %response;
+
+    return join "",
+           map { qq| $_="| . Jifty->web->escape($response{$_}) . qq|"| }
+           sort keys %response;
 }
 
 =head2 javascript_attrs
