@@ -733,7 +733,7 @@ directly.
 sub preload_javascript {
     my $self = shift;
 
-    my %structure = $self->_javascript_attrs_structure;
+    my $structure = $self->_javascript_attrs_structure;
     my @preloaded;
 
     for my $trigger (keys %$structure) {
@@ -747,6 +747,13 @@ sub preload_javascript {
     }
 
     return if !@preloaded;
+
+    my $preload_json = Jifty::JSON::objToJson(
+        { fragments   => \@preloaded },
+        { singlequote => 1 },
+    );
+
+    return "Jifty.preload($preload_json, this);";
 }
 
 =head2 render_hints

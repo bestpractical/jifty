@@ -1492,6 +1492,14 @@ Jifty.update = function () {
     return false;
 }
 
+Jifty.preload = function (named_args, trigger) {
+    var fragments = named_args['fragments'];
+
+    for (i = 0; i < fragments.length; ++i) {
+        alert(fragments[i].path);
+    }
+}
+
 function update ( named_args, trigger ) {
     alert( 'please use Jifty.update instead of update.' );
     return Jifty.update( named_args, trigger );
