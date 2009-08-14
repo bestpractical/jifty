@@ -1504,6 +1504,7 @@ Jifty.update = function () {
 
         // Hide the wait message when we're done
         complete: function() {
+            delete Jifty.preloading_regions[ args['preload_key'] ];
             if (!hide_wait) {
                 hide_wait_message();
             }
@@ -1524,8 +1525,14 @@ Jifty.update = function () {
 }
 
 Jifty.preloaded_regions = {};
+Jifty.preloading_regions = {};
 
 Jifty.preload = function (args, trigger) {
+    if (Jifty.preloading_regions[ args['preload_key'] ]) {
+        return;
+    }
+    Jifty.preloading_regions[ args['preload_key'] ] = 1;
+
     args.hide_wait_message = 1;
     args.preload = 1;
     args.actions = [];
