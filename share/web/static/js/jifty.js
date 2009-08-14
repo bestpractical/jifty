@@ -1084,6 +1084,7 @@ var apply_fragment_updates = function(fragment, f) {
 //        the hash keys for 'action_arguments' are the values of the 'actions' array
 //  - 'continuation' is ??? Please document me
 //  - 'hide_wait_message' for when you don't want to see it
+//  - 'preload' this request is preloading regions
 //  - 'headers' is a hash of headers to send in this request
 //  - 'fragments' is an array of hashes, which may have:
 //     - 'region' is the name of the region to update
@@ -1518,6 +1519,7 @@ Jifty.preload = function (named_args, trigger) {
 
         Jifty.update({
             hide_wait_message: 1,
+            preload: 1,
             actions: [],
             fragments: [fragment],
             headers: {
