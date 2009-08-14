@@ -1521,8 +1521,7 @@ Jifty.update = function () {
 
 Jifty.preloaded_regions = {};
 
-Jifty.preload = function (orig_args, trigger) {
-    var args = orig_args.clone();
+Jifty.preload = function (args, trigger) {
     args.hide_wait_message = 1;
     args.preload = 1;
     args.actions = [];
