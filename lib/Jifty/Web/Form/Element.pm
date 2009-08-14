@@ -539,15 +539,16 @@ sub javascript_attrs {
                      @{ $trigger_structure->{value} };
 
         if ( @$fragments or ( !$actions || %$actions ) ) {
-            my $update = "Jifty.update( "
-                . Jifty::JSON::objToJson(
-                {   actions      => $actions,
+            my $update_json = Jifty::JSON::objToJson({
+                    actions      => $actions,
                     action_arguments => $trigger_structure->{action_arguments},
                     fragments    => $fragments,
                     continuation => $self->continuation,
                 },
-                { singlequote => 1 }
-                ) . ", this );";
+                { singlequote => 1 },
+            );
+
+            my $update = "Jifty.update($update_json, this);";
 
             $string .=
                 'if(event.ctrlKey||event.metaKey||event.altKey||event.shiftKey) return true; '
