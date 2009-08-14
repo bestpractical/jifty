@@ -1437,7 +1437,11 @@ Jifty.update = function () {
         }
 
         // Cry like a baby
-        alert("Unable to connect to server.\n\nTry again in a few minutes.");
+        // Don't irritate the user about preload failures, maybe it'll work
+        // if they actually do click through to the region
+        if (!named_args['preload']) {
+            alert("Unable to connect to server.\n\nTry again in a few minutes.");
+        }
 
         // Record the failed request (XXX for debugging?)
         Jifty.failedRequest = transport;
