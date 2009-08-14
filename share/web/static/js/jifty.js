@@ -1562,7 +1562,6 @@ Jifty.preload = function (args, trigger) {
     if (Jifty.preloading_regions[ args['preload_key'] ]) {
         return;
     }
-    Jifty.preloading_regions[ args['preload_key'] ] = 1;
 
     // Preloading is supposed to be silent
     args.hide_wait_message = 1;
@@ -1575,6 +1574,9 @@ Jifty.preload = function (args, trigger) {
     args.actions = [];
 
     Jifty.update(args, trigger);
+
+    // Now we're waiting on the AJAX request
+    Jifty.preloading_regions[ args['preload_key'] ] = 1;
 }
 
 function update ( named_args, trigger ) {
