@@ -1304,8 +1304,18 @@ Jifty.update = function () {
     // fields, with the app connecting to the database, etc.
     var onSuccess = function(responseXML) {
         if (named_args['preload']) {
-            Jifty.preloaded_regions[ named_args['preload_key'] ] = responseXML;
-            return;
+            // Did we click on a region we were waiting for? If so, pretend
+            // we're not preloading at all and treat this as a regular region
+            // load.
+            if (Jifty.want_preloaded_regions[ named_args['preload_key'] ]) {
+                delete Jifty.want_preloaded_regions[ named_args['preload_key'] ];
+            }
+            // Otherwise, stash this preloaded region away where we can find it
+            // for later (possible) reuse.
+            else {
+                Jifty.preloaded_regions[ named_args['preload_key'] ] = responseXML;
+                return;
+            }
         }
 
         // Grab the XML response
@@ -1479,10 +1489,21 @@ Jifty.update = function () {
         })
     }
 
+    // Are we requesting a region we have preloaded? If so, use the response
+    // from the cache instead of making a new request. Snappy!
     if (Jifty.preloaded_regions[ named_args['preload_key'] ]) {
         var faux_response = Jifty.preloaded_regions[ named_args['preload_key'] ];
         delete Jifty.preloaded_regions[ named_args['preload_key'] ];
         onSuccess(faux_response);
+        return;
+    }
+
+    // If we're loading a region, then we should just wait for it instead
+    // of making a second request and throwing away the preload. If the
+    // onSuccess callback sees the want_preloaded_region it will immediately
+    // process it.
+    if (Jifty.preloading_regions[ named_args['preload_key'] ]) {
+        Jifty.want_preloaded_regions[ named_args['preload_key'] ] = 1;
         return;
     }
 
@@ -1504,7 +1525,9 @@ Jifty.update = function () {
 
         // Hide the wait message when we're done
         complete: function() {
+            // If we want this same region again, don't reuse it from the cache
             delete Jifty.preloading_regions[ args['preload_key'] ];
+
             if (!hide_wait) {
                 hide_wait_message();
             }
@@ -1524,17 +1547,31 @@ Jifty.update = function () {
     return false;
 }
 
+// A cache of preload_key to XMLresponse objects
 Jifty.preloaded_regions = {};
+
+// Are we currently preloading a given preload_key?
 Jifty.preloading_regions = {};
 
+// For when we want a preloading region to be processed immediately (e.g. when
+// we click a preloaded button)
+Jifty.want_preloaded_regions = {};
+
 Jifty.preload = function (args, trigger) {
+    // Don't request the same region multiple times
     if (Jifty.preloading_regions[ args['preload_key'] ]) {
         return;
     }
     Jifty.preloading_regions[ args['preload_key'] ] = 1;
 
+    // Preloading is supposed to be silent
     args.hide_wait_message = 1;
+
+    // Tell Jifty.update to delay processing of the response
     args.preload = 1;
+
+    // Preloading should never submit actions, preloaded regions should be
+    // relatively pure
     args.actions = [];
 
     Jifty.update(args, trigger);
