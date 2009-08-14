@@ -495,11 +495,7 @@ sub _javascript_attrs_structure {
             $args{toggle} = 1 if $hook->{toggle};
 
             # Preloading functionality
-            if ($hook->{preload}) {
-                $args{preload} = $hook->{preload} eq "1"
-                               ? Jifty->web->serial
-                               : $hook->{preload};
-            }
+            $args{preload} = $hook->{preload} if $hook->{preload};
 
             # Effects
             $args{$_} = $hook->{$_} for grep {exists $hook->{$_}} qw/effect effect_args remove_effect remove_effect_args/;
