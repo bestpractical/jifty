@@ -1475,7 +1475,7 @@ Jifty.update = function () {
         })
     }
 
-    if (Jifty.preloaded_regions[ named_args['preload'_key] ]) {
+    if (Jifty.preloaded_regions[ named_args['preload_key'] ]) {
         var faux_response = Jifty.preloaded_regions[ named_args['preload_key'] ];
         delete Jifty.preloaded_regions[ named_args['preload_key'] ];
         onSuccess(faux_response);
