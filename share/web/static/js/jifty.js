@@ -1303,7 +1303,7 @@ Jifty.update = function () {
     // fields, with the app connecting to the database, etc.
     var onSuccess = function(responseXML) {
         if (named_args['preload']) {
-            Jifty.preloaded_regions = responseXML;
+            Jifty.preloaded_regions[ named_args['preload'] ] = responseXML;
             return;
         }
 
@@ -1475,7 +1475,7 @@ Jifty.update = function () {
     }
 
     if (Jifty.preloaded_regions) {
-        var faux_response = Jifty.preloaded_regions;
+        var faux_response = Jifty.preloaded_regions[ named_args['preload'] ];
         delete Jifty.preloaded_regions;
         onSuccess(faux_response);
         return;
@@ -1531,11 +1531,6 @@ Jifty.preload = function (named_args, trigger) {
             fragments: [fragment]
         }, trigger);
     }
-}
-
-// This could be improved in the future with a sha1 or something
-Jifty.preload_key = function (args) {
-    return JSON.stringify(args);
 }
 
 function update ( named_args, trigger ) {
