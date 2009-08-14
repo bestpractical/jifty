@@ -1083,6 +1083,7 @@ var apply_fragment_updates = function(fragment, f) {
 //  - 'action_arguments' is a hash of action monikers to hashes of arguments which should override any arguments coming from form fields
 //        the hash keys for 'action_arguments' are the values of the 'actions' array
 //  - 'continuation' is ??? Please document me
+//  - 'hide_wait_message' for when you don't want to see it
 //  - 'fragments' is an array of hashes, which may have:
 //     - 'region' is the name of the region to update
 //     - 'args' is a hash of arguments to override
@@ -1294,7 +1295,10 @@ Jifty.update = function () {
     }
 
     // Show the "Loading..." message (or equivalent)
-    show_wait_message();
+    var hide_wait = named_args['hide_wait_message'];
+    if (!hide_wait) {
+        show_wait_message();
+    }
 
     // And when we get the result back, we'll want to deal with it
     //
@@ -1427,7 +1431,9 @@ Jifty.update = function () {
     var onFailure = function(transport, object) {
 
         // We failed, but we at least know we're done waiting
-        hide_wait_message_now();
+        if (!hide_wait) {
+            hide_wait_message_now();
+        }
 
         // Cry like a baby
         alert("Unable to connect to server.\n\nTry again in a few minutes.");
@@ -1478,7 +1484,7 @@ Jifty.update = function () {
         error:       onFailure,
 
         // Hide the wait message when we're done
-        complete:    function(){hide_wait_message()},
+        complete:    function(){if (!hide_wait) { hide_wait_message() }},
         success:     onSuccess
     });
 
