@@ -1474,9 +1474,9 @@ Jifty.update = function () {
         })
     }
 
-    if (Jifty.preloaded_regions) {
+    if (Jifty.preloaded_regions[ named_args['preload'] ]) {
         var faux_response = Jifty.preloaded_regions[ named_args['preload'] ];
-        delete Jifty.preloaded_regions;
+        delete Jifty.preloaded_regions[ named_args['preload'] ];
         onSuccess(faux_response);
         return;
     }
@@ -1517,6 +1517,8 @@ Jifty.update = function () {
     // Disable regular browser form submission (we're Ajaxing instead)
     return false;
 }
+
+Jifty.preloaded_regions = {};
 
 Jifty.preload = function (named_args, trigger) {
     var fragments = named_args['fragments'];
