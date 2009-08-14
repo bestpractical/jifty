@@ -714,9 +714,21 @@ directly.
 sub preload_javascript {
     my $self = shift;
 
-    return '';
-}
+    my %structure = $self->_javascript_attrs_structure;
+    my @preloaded;
 
+    for my $trigger (keys %$structure) {
+        my $trigger_structure = $structure->{$trigger};
+        my $fragments = $trigger_structure->{fragments};
+
+        for my $fragment (@$fragments) {
+            next unless $fragment->{preload};
+            push @preloaded, $fragment;
+        }
+    }
+
+    return if !@preloaded;
+}
 
 =head2 render_hints
 
