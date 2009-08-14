@@ -392,17 +392,10 @@ sub javascript {
            sort keys %response;
 }
 
-=head2 javascript_attrs
-
-Returns the javascript necessary to make the events happen, as a
-hash of attribute-name and value.
-
-=cut
-
-sub javascript_attrs {
+sub _javascript_attrs_structure {
     my $self = shift;
+    my %structure;
 
-    my %response;
     my $current_region = Jifty->web->current_region;
 
     for my $trigger ( $self->handlers_used ) {
@@ -510,35 +503,76 @@ sub javascript_attrs {
             push @fragments, \%args;
         }
 
-        my $string = join ";", grep {not ref $_} @{$value};
-        if ( @fragments or ( !$actions || %$actions ) ) {
+        $structure{$trigger} = {
+            value            => $value,
+            fragments        => \@fragments,
+            actions          => $actions,
+            action_arguments => $action_arguments,
+            confirm          => $confirm,
+            beforeclick      => $beforeclick,
+        };
+    }
 
-            my $update =
-                "Jifty.update( "
-                    . Jifty::JSON::objToJson(
-                    {   actions      => $actions,
-                        action_arguments => $action_arguments,
-                        fragments    => \@fragments,
-                        continuation => $self->continuation
-                    },
-                    { singlequote => 1 }
-                    ) . ", this );";
-            $string
-                .= 'if(event.ctrlKey||event.metaKey||event.altKey||event.shiftKey) return true; '
+    return \%structure;
+}
+
+=head2 javascript_attrs
+
+Returns the javascript necessary to make the events happen, as a
+hash of attribute-name and value.
+
+=cut
+
+sub javascript_attrs {
+    my $self = shift;
+
+    my $structure = $self->_javascript_attrs_structure(@_);
+    my %response;
+
+    for my $trigger (keys %$structure) {
+        my $trigger_structure = $structure->{$trigger};
+        my $fragments = $trigger_structure->{fragments};
+        my $actions   = $trigger_structure->{actions};
+
+        my $string = join ";",
+                     grep { not ref $_ }
+                     @{ $trigger_structure->{value} };
+
+        if ( @$fragments or ( !$actions || %$actions ) ) {
+            my $update = "Jifty.update( "
+                . Jifty::JSON::objToJson(
+                {   actions      => $actions,
+                    action_arguments => $trigger_structure->{action_arguments},
+                    fragments    => $fragments,
+                    continuation => $self->continuation,
+                },
+                { singlequote => 1 }
+                ) . ", this );";
+
+            $string .=
+                'if(event.ctrlKey||event.metaKey||event.altKey||event.shiftKey) return true; '
                 if ( $trigger eq 'onclick' );
+
             $string .= $self->javascript_preempt
                 ? "return $update"
                 : "$update; return true;";
         }
-        if ($confirm) {
-            my $text = Jifty::JSON::objToJson($confirm, {singlequote => 1});
+
+        if ($trigger_structure->{confirm}) {
+            my $text = Jifty::JSON::objToJson(
+                $trigger_structure->{confirm},
+                {singlequote => 1},
+            );
             $string = "if(!confirm($text)){ Jifty.stopEvent(event); return false; }" . $string;
         }
-        if ($beforeclick) {
-           $string = $beforeclick . $string;
+
+        if ($trigger_structure->{beforeclick}) {
+           $string = $trigger_structure->{beforeclick} . $string;
         }
+
         $response{$trigger} = $string;
     }
+
     return %response;
 }
 
