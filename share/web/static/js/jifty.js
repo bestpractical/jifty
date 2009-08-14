@@ -1496,7 +1496,13 @@ Jifty.preload = function (named_args, trigger) {
     var fragments = named_args['fragments'];
 
     for (i = 0; i < fragments.length; ++i) {
-        alert(fragments[i].path);
+        var fragment = fragments[i];
+
+        Jifty.update({
+            hide_wait_message: 1,
+            actions: [],
+            fragments: [fragment],
+        }, trigger);
     }
 }
 
