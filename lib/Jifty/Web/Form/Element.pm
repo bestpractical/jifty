@@ -403,6 +403,7 @@ sub javascript_attrs {
     my $self = shift;
 
     my %response;
+    my $current_region = Jifty->web->current_region;
 
     for my $trigger ( $self->handlers_used ) {
         # Walk around the Class::Accessor, for speed
@@ -475,9 +476,9 @@ sub javascript_attrs {
                     $self->log->warn("Can't find region ".$hook->{refresh});
                     @args{qw/mode path region/} = ('Replace', undef, $hook->{refresh});
                 }
-            } elsif ((exists $hook->{refresh_self} and Jifty->web->current_region) or (Jifty->web->current_region and $hook->{args} and %{$hook->{args}})) {
+            } elsif ((exists $hook->{refresh_self} and $current_region) or ($current_region and $hook->{args} and %{$hook->{args}})) {
                 # If we just pass arguments, treat as a refresh_self
-                @args{qw/mode path region/} = ('Replace', Jifty->web->current_region->path, Jifty->web->current_region);
+                @args{qw/mode path region/} = ('Replace', $current_region->path, $current_region);
             } elsif (exists $hook->{delete}) {
                 @args{qw/mode region/} = ('Delete', $hook->{delete});
             } else {
