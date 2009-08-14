@@ -1512,6 +1512,9 @@ Jifty.preload = function (named_args, trigger) {
             hide_wait_message: 1,
             actions: [],
             fragments: [fragment],
+            headers: {
+                'X-Jifty-PreloadingRegion': 1
+            }
         }, trigger);
     }
 }

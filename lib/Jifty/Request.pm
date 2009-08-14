@@ -4,7 +4,7 @@ use strict;
 package Jifty::Request;
 
 use base qw/Jifty::Object Class::Accessor::Fast/;
-__PACKAGE__->mk_accessors(qw(_top_request arguments template_arguments just_validating path continuation_id future_continuation_id continuation_type continuation_path request_method));
+__PACKAGE__->mk_accessors(qw(_top_request arguments template_arguments just_validating path continuation_id future_continuation_id continuation_type continuation_path request_method preloading_region));
 
 use Jifty::JSON;
 use Jifty::YAML;
@@ -123,6 +123,8 @@ sub fill {
     # Grab content type and posted data, if any
     my $ct   = $ENV{"CONTENT_TYPE"};
     my $data = $cgi->param('POSTDATA');
+
+    $self->preloading_region($ENV{"HTTP_X_JIFTY_PRELOADINGREGION"});
 
     # Check it for something appropriate
     if ($data) {
