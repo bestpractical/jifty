@@ -1296,12 +1296,6 @@ Jifty.update = function () {
         return false;
     }
 
-    // Show the "Loading..." message (or equivalent)
-    var hide_wait = named_args['hide_wait_message'];
-    if (!hide_wait) {
-        show_wait_message();
-    }
-
     // And when we get the result back, we'll want to deal with it
     //
     // NOTE: Success here doesn't mean the server liked the request, but that
@@ -1484,6 +1478,12 @@ Jifty.update = function () {
         onSuccess(Jifty.preloaded_regions);
         delete Jifty.preloaded_regions;
         return;
+    }
+
+    // Show the "Loading..." message (or equivalent)
+    var hide_wait = named_args['hide_wait_message'];
+    if (!hide_wait) {
+        show_wait_message();
     }
 
     // Submit ajax request as JSON; expect XML in return
