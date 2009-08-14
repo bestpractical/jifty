@@ -498,6 +498,9 @@ sub javascript_attrs {
             # Toggle functionality
             $args{toggle} = 1 if $hook->{toggle};
 
+            # Preloading functionality
+            $args{preload} = 1 if $hook->{preload};
+
             # Effects
             $args{$_} = $hook->{$_} for grep {exists $hook->{$_}} qw/effect effect_args remove_effect remove_effect_args/;
 
