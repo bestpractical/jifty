@@ -1511,6 +1511,8 @@ Jifty.update = function () {
     return false;
 }
 
+Jifty.preloaded_regions = {};
+
 Jifty.preload = function (named_args, trigger) {
     var fragments = named_args['fragments'];
 
@@ -1527,6 +1529,11 @@ Jifty.preload = function (named_args, trigger) {
             }
         }, trigger);
     }
+}
+
+// This could be improved in the future with a sha1 or something
+Jifty.preload_key = function (args) {
+    return JSON.stringify(args);
 }
 
 function update ( named_args, trigger ) {
