@@ -1084,6 +1084,7 @@ var apply_fragment_updates = function(fragment, f) {
 //        the hash keys for 'action_arguments' are the values of the 'actions' array
 //  - 'continuation' is ??? Please document me
 //  - 'hide_wait_message' for when you don't want to see it
+//  - 'headers' is a hash of headers to send in this request
 //  - 'fragments' is an array of hashes, which may have:
 //     - 'region' is the name of the region to update
 //     - 'args' is a hash of arguments to override
@@ -1485,7 +1486,16 @@ Jifty.update = function () {
 
         // Hide the wait message when we're done
         complete:    function(){if (!hide_wait) { hide_wait_message() }},
-        success:     onSuccess
+        success:     onSuccess,
+
+        beforeSend:  function (request) {
+            var headers = named_arg['headers'];
+            for (header in headers) {
+                if (headers.hasOwnProperty(header)) {
+                    request.setRequestHeader(header, headers[header]);
+                }
+            }
+        }
     });
 
     // Disable regular browser form submission (we're Ajaxing instead)
