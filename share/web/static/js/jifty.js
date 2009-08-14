@@ -1306,10 +1306,14 @@ Jifty.update = function () {
     // NOTE: Success here doesn't mean the server liked the request, but that
     // the HTTP communication succeeded. There still might be errors validating
     // fields, with the app connecting to the database, etc.
-    var onSuccess = function(responseXML, object) {
+    var onSuccess = function(responseXML, preload) {
 
         // Grab the XML response
         var response = responseXML.documentElement;
+
+        if (preload) {
+            return;
+        }
 
         /* var response is an xml , which's content is like:
         <response>
@@ -1485,10 +1489,17 @@ Jifty.update = function () {
         error:       onFailure,
 
         // Hide the wait message when we're done
-        complete:    function(){if (!hide_wait) { hide_wait_message() }},
-        success:     onSuccess,
+        complete: function() {
+            if (!hide_wait) {
+                hide_wait_message();
+            }
+        },
 
-        beforeSend:  function (request) {
+        success: function(responseXML) {
+            onSuccess(responseXML, named_args['preload']);
+        },
+
+        beforeSend: function (request) {
             var headers = named_args['headers'];
             for (header in headers) {
                 if (headers.hasOwnProperty(header)) {
