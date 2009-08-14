@@ -734,14 +734,14 @@ sub preload_javascript {
     my $self = shift;
 
     my $structure = $self->_javascript_attrs_structure;
-    return unless $structure->{preload};
+    return unless $structure->{preload_key};
 
     my @preloaded;
 
     my $preload_json = Jifty::JSON::objToJson(
         {
-            fragments => $structure->{fragments},
-            preload   => $structure->{preload},
+            fragments   => $structure->{fragments},
+            preload_key => $structure->{preload_key},
         },
         { singlequote => 1 },
     );

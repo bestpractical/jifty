@@ -1085,6 +1085,7 @@ var apply_fragment_updates = function(fragment, f) {
 //  - 'continuation' is ??? Please document me
 //  - 'hide_wait_message' for when you don't want to see it
 //  - 'preload' this request is preloading regions
+//  - 'preload_key' the cache key for using preloaded regions
 //  - 'headers' is a hash of headers to send in this request
 //  - 'fragments' is an array of hashes, which may have:
 //     - 'region' is the name of the region to update
@@ -1303,7 +1304,7 @@ Jifty.update = function () {
     // fields, with the app connecting to the database, etc.
     var onSuccess = function(responseXML) {
         if (named_args['preload']) {
-            Jifty.preloaded_regions[ named_args['preload'] ] = responseXML;
+            Jifty.preloaded_regions[ named_args['preload_key'] ] = responseXML;
             return;
         }
 
@@ -1474,9 +1475,9 @@ Jifty.update = function () {
         })
     }
 
-    if (Jifty.preloaded_regions[ named_args['preload'] ]) {
-        var faux_response = Jifty.preloaded_regions[ named_args['preload'] ];
-        delete Jifty.preloaded_regions[ named_args['preload'] ];
+    if (Jifty.preloaded_regions[ named_args['preload'_key] ]) {
+        var faux_response = Jifty.preloaded_regions[ named_args['preload_key'] ];
+        delete Jifty.preloaded_regions[ named_args['preload_key'] ];
         onSuccess(faux_response);
         return;
     }
@@ -1520,9 +1521,10 @@ Jifty.update = function () {
 
 Jifty.preloaded_regions = {};
 
-Jifty.preload = function (named_args, trigger) {
-    var args = named_args.clone();
+Jifty.preload = function (orig_args, trigger) {
+    var args = orig_args.clone();
     args.hide_wait_message = 1;
+    args.preload = 1;
     args.actions = [];
 
     Jifty.update(args, trigger);
