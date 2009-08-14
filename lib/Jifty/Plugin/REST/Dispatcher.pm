@@ -58,11 +58,8 @@ Shows basic help about resources and formats available via this RESTian interfac
 =cut
 
 sub show_help {
-    my $apache = Jifty->handler->apache;
+    Jifty->web->response->content_type('text/plain; charset=utf-8');
 
-    $apache->header_out('Content-Type' => 'text/plain; charset=UTF-8');
-    Jifty->handler->send_http_header;
-   
     print qq{
 Accessing resources:
 
@@ -115,10 +112,7 @@ sub show_help_specific {
     my $method = "show_help_specific_$topic";
     __PACKAGE__->can($method) or abort(404);
 
-    my $apache = Jifty->handler->apache;
-
-    $apache->header_out('Content-Type' => 'text/plain; charset=UTF-8');
-    Jifty->handler->send_http_header;
+    Jifty->web->response->content_type('text/plain; charset=utf-8');
 
     print __PACKAGE__->$method;
     last_rule;
@@ -284,12 +278,9 @@ renders the content as yaml, json, javascript, perl, xml or html.
 
 sub outs {
     my $prefix = shift;
-    my $apache = Jifty->handler->apache;
-
     my $format = output_format($prefix);
 
-    $apache->header_out('Content-Type' => $format->{content_type});
-    Jifty->handler->send_http_header;
+    Jifty->web->response->content_type($format->{content_type});
     print $format->{freezer}->(@_);
 
     last_rule;
@@ -821,31 +812,7 @@ sub _dispatch_to_action {
             if defined $rec->id;
     }
     
-    # CGI.pm doesn't handle form encoded data in PUT requests, so we have
-    # to read the request body from PUTDATA and have CGI.pm parse it
-    if ( Jifty->web->request->request_method eq 'PUT'
-        and (   $ENV{'CONTENT_TYPE'} =~ m|^application/x-www-form-urlencoded$|
-              or $ENV{'CONTENT_TYPE'} =~ m|^multipart/form-data$| ) )
-    {
-        my $cgi    = Jifty->handler->cgi;
-        my $length = defined $ENV{'CONTENT_LENGTH'} ? $ENV{'CONTENT_LENGTH'} : 0;
-        my $data = $cgi->param('PUTDATA');
-
-        if ( defined $data ) {
-            my @params = $cgi->all_parameters;
-            $cgi->parse_params( $data );
-            push @params, $cgi->all_parameters;
-            
-            my %seen;
-            my @uniq = map { $seen{$_}++ == 0 ? $_ : () } @params;
-
-            # Add only the newly parsed arguments to the Jifty::Request
-            Jifty->web->request->argument( $_ => $cgi->param( $_ ) )
-                for @uniq;
-        }
-    }
-
-    Jifty->web->request->request_method('POST');
+    Jifty->web->request->method('POST');
     dispatch "/=/action/$action";
 }
 
@@ -979,7 +946,8 @@ sub run_action {
 
         my $url = Jifty->web->url(path => $path);
 
-        Jifty->handler->apache->header_out('Location' => $url);
+        Jifty->web->response->status( 302 );
+        Jifty->web->response->header('Location' => $url);
     }
 
     outs(undef, $action->result->as_hash);

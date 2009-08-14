@@ -1,4 +1,4 @@
-% $r->content_type("text/x-json");
+% Jifty->web->response->content_type("text/x-json");
 <% Jifty::JSON::encode_json(\%results) |n%>
 
 <%INIT>

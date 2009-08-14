@@ -3,7 +3,7 @@ h1 {
 }
 
 <%init>
-$r->content_type("text/css");
+Jifty->web->response->content_type("text/css");
 </%init>
 <%doc>
 

@@ -760,14 +760,7 @@ sub _do_abort {
     $self->log->debug("Aborting processing");
     if (@_) {
         # This is the status code
-        my $status = shift;
-        my $apache = Jifty->handler->apache;
-        $apache->header_out(Status => $status);
-        Jifty->handler->send_http_header;
-
-        # The body should just be the status
-        require HTTP::Status;
-        print STDOUT $status, ' ' , HTTP::Status::status_message($status);
+        Jifty->web->response->status( shift );
     }
     $self->_abort;
 }
@@ -873,8 +866,9 @@ sub _do_dispatch {
     unless (Jifty->web->request->is_subrequest) {
         Jifty->handler->call_trigger("before_flush");
         Jifty->handler->buffer->flush_output;
-        close(STDOUT);
-        $Jifty::SERVER->close_client_sockets if $Jifty::SERVER;
+		# XXX: flush
+		#close(STDOUT);
+		#$Jifty::SERVER->close_client_sockets if $Jifty::SERVER;
         Jifty->handler->call_trigger("after_flush");
     }
 
@@ -966,7 +960,7 @@ came in with that method.
 sub _match_method {
     my ( $self, $method ) = @_;
     #$self->log->debug("Matching method ".request->request_method." against ".$method);
-    $Request->request_method eq uc($method);
+    $Request->method eq uc($method);
 }
 
 =head2 _match_https

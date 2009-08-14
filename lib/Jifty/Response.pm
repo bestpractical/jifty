@@ -15,51 +15,10 @@ L<Jifty::Result> objects of each L<Jifty::Action> that ran.
 
 =cut
 
-use base qw/Jifty::Object Class::Accessor::Fast/;
+use Any::Moose;
+extends 'Plack::Response';
 
-__PACKAGE__->mk_accessors(qw(error));
-
-=head2 new
-
-Creates a new L<Jifty::Response> object.
-
-=cut
-
-sub new {
-    my $class = shift;
-    bless {results => {}, headers => []}, $class;
-}
-
-
-=head2 add_header KEY => VALUE
-
-Add an HTTP header to the outgoing HTTP response. 
-
-=cut
-
-
-sub add_header {
-    my $self = shift;
-     Jifty->handler->apache->header_out( @_ ) if Jifty->handler->apache;
-
-    # This one is so we can get jifty's headers into mason
-    # Otherwise we'd have to wrap mason's output layer
-
-    push @{$self->{headers}}, [@_];
-}
-
-=head2 headers
-
-Returns an array of key-value pairs of all the HTTP headers we want to
-stick on the outgoing HTTP request.
-
-
-=cut
-
-sub headers {
-    my $self = shift;
-    return @{$self->{headers}};
-}
+has 'error'   => (is => 'rw');
 
 =head2 result MONIKER [RESULT]
 
@@ -83,7 +42,7 @@ Returns a hash which maps moniker to its L<Jifty::Result>
 
 sub results {
     my $self = shift;
-    return %{$self->{results}};
+    return %{$self->{results} || {}};
 }
 
 =head2 messages
@@ -112,7 +71,7 @@ L</error> set.
 
 sub success {
     my $self = shift;
-    return 0 if grep {$_->failure} values %{$self->{results}};
+    return 0 if grep {$_->failure} values %{$self->{results} || {}};
     return 1;
 }
 
@@ -128,4 +87,6 @@ sub failure {
     return not $self->success;
 }
 
+no Any::Moose;
+__PACKAGE__->meta->make_immutable();
 1;

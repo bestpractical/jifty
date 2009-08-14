@@ -17,6 +17,7 @@ use Test::Builder ();
 BEGIN { $SIG{__DIE__} = $x;}
 
 
+use HTTP::Engine;
 use File::Path ();
 use Jifty::Util;
 
@@ -170,41 +171,40 @@ sub _run_server {
     Jifty->new();
 
     # Purge stale mason cache data
-    my $data_dir     = Jifty->config->framework('Web')->{'DataDir'};
-    my $server_class = Jifty->config->framework('Web')->{'ServerClass'}
-      || 'Jifty::Server';
-    die "--user option only available with Net::Server subclasses\n"
-      if $self->{user} and $server_class eq "Jifty::Server";
-    die "--group option only available with Net::Server subclasses\n"
-      if $self->{group} and $server_class eq "Jifty::Server";
-    die "--host option only available with Net::Server subclasses\n"
-      if $self->{host} and $server_class eq "Jifty::Server";
-
-    Jifty::Util->require($server_class);
-
+    my $data_dir = Jifty->config->framework('Web')->{'DataDir'};
     File::Path::rmtree( [ "$data_dir/cache", "$data_dir/obj" ] )
-      if Jifty->handler->view('Jifty::View::Mason::Handler')
-          and -d $data_dir;
+        if Jifty->handler->view('Jifty::View::Mason::Handler')
+            and -d $data_dir;
 
-    $SIG{TERM} = sub { exit };
-    mkdir PIDDIR or die "Can't create directory @{[PIDDIR]}: $!"
+    $SIG{TERM} = sub {exit};
+    mkdir PIDDIR
+        or die "Can't create directory @{[PIDDIR]}: $!"
         if !-d PIDDIR;
-    open my $fh, '>', PIDFILE or die "Can't open @{[PIDFILE]} for writing: $!";
+    open my $fh, '>', PIDFILE
+        or die "Can't open @{[PIDFILE]} for writing: $!";
     print $fh $$;
     close $fh;
 
     Jifty->handle->dbh->{Profile} = '6/DBI::ProfileDumper'
-      if $self->{dbiprof};
+        if $self->{dbiprof};
 
     $ENV{JIFTY_SERVER_SIGREADY} ||= $self->{sigready}
-      if $self->{sigready};
-    Log::Log4perl->get_logger($server_class)->less_logging(3)
-      if $self->{quiet};
-    $Jifty::SERVER = $server_class->new( port => $self->{port} );
-    my @args;
-    push @args, $_ => $self->{$_}
-      for grep { exists $self->{$_} } qw/user group host/;
-    $Jifty::SERVER->run(@args);
+        if $self->{sigready};
+
+    Jifty->config->framework('Web')->{'Port'} = $self->{port} if $self->{port};
+    my $port = Jifty->config->framework('Web')->{'Port'} || 8888;
+
+    my %args = ( port => $port );
+    $args{$_} = $self->{$_} for grep defined $self->{$_}, qw/host user group/;
+
+    $Jifty::SERVER = HTTP::Engine->new(
+        interface => {
+            module => 'Standalone',
+            args   => \%args,
+            request_handler => sub { Jifty->handler->handle_request(@_) },
+        },
+    );
+    $Jifty::SERVER->run;
 }
 
 sub _stop {

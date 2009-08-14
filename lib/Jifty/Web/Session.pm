@@ -315,7 +315,7 @@ sub set_cookie {
 
     # never send a cookie with cached content. misbehaving proxies cause
     # terrific problems
-    return if Jifty->handler->apache->header_out('Expires');
+    return if Jifty->web->response->header('Expires');
 
     my $cookie_name = $self->cookie_name;
     my %cookies     = CGI::Cookie->fetch();
@@ -325,12 +325,10 @@ sub set_cookie {
         -expires => $self->expires,
     );
 
-    # XXX TODO might need to change under mod_perl
     if ( not $cookies{$cookie_name}
         or ( $cookies{$cookie_name} ne $cookie->as_string ) )
     {
-        Jifty->web->response->add_header(
-            'Set-Cookie' => $cookie->as_string );
+        Jifty->web->response->cookies->{$cookie->name} = $cookie;
     }
 }
 

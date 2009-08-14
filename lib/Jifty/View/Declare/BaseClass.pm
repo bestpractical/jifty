@@ -45,7 +45,6 @@ sub use_mason_wrapper {
         my $req = $interp->make_request( comp => '/_elements/wrapper' );
         my $wrapper = $interp->load("/_elements/wrapper");
         local $HTML::Mason::Commands::m = $req;
-        local $HTML::Mason::Commands::r = Jifty->handler->apache;
         $req->comp(
             {content => sub {$code->()}},
             $wrapper,

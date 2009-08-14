@@ -1,7 +1,7 @@
 <%init>
 my $output = "";
 my $writer = XML::Writer->new( OUTPUT => \$output, UNSAFE => 1 );
-$r->content_type('text/xml; charset=utf-8');
+Jifty->web->response->content_type('text/xml; charset=utf-8');
 $writer->xmlDecl( "UTF-8", "yes" );
 $writer->startTag("response");
 
@@ -100,7 +100,7 @@ for (keys %results) {
 }
 
 $writer->endTag();
-Jifty->handler->apache->content_type('text/xml; charset=UTF-8');
+Jifty->web->response->content_type('text/xml; charset=UTF-8');
 Jifty->web->out($output);
 </%init>
 <%once>

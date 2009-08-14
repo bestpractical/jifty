@@ -259,9 +259,9 @@ sub _serve_cas_object {
     my ($self, $name, $incoming_key) = @_;
     my $key = Jifty::CAS->key('ccjs', $name);
 
-    if ( Jifty->handler->cgi->http('If-Modified-Since') and $incoming_key eq $key ) {
+    if ( Jifty->web->request->header('If-Modified-Since') and $incoming_key eq $key ) {
         $self->log->debug("Returning 304 for cached $name");
-        Jifty->handler->apache->header_out( Status => 304 );
+        Jifty->web->response->status( 304 );
         return;
     }
 
@@ -270,16 +270,15 @@ sub _serve_cas_object {
     $compression = 'gzip' if $obj->metadata->{deflate}
       && Jifty::View::Static::Handler->client_accepts_gzipped_content;
 
-    Jifty->handler->apache->content_type($obj->metadata->{content_type});
+    Jifty->web->response->content_type($obj->metadata->{content_type});
     Jifty::View::Static::Handler->send_http_header($compression, length($obj->content));
 
     if ( $compression ) {
         $self->log->debug("Sending gzipped squished $name");
-        binmode STDOUT;
-        print $obj->content_deflated;
+        Jifty->web->out($obj->content_deflated);
     } else {
         $self->log->debug("Sending squished $name");
-        print $obj->content;
+        Jifty->web->out($obj->content);
     }
 }
 

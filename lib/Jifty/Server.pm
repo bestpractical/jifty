@@ -54,8 +54,8 @@ Sets up the Jifty singleton.  This is called automatically by L</new>.
 sub setup_jifty {
     my $self = shift;
     my %args = (
-                port => undef,
-                @_
+        port => undef,
+        @_
     );
 
     Jifty->config->framework('Web')->{'Port'} = $args{port} if $args{port};
@@ -74,16 +74,6 @@ sub handle_request {
     my $cgi = shift;
 
     Jifty->handler->handle_request( cgi  => $cgi );
-}
-
-=head2 send_http_status
-
-Sends the HTTP status header.
-
-=cut
-
-sub send_http_status {
-    print STDOUT "HTTP/1.0 ".  (Jifty->handler->apache->{headers_out}->{'Status'} || '200 Jifty OK') .  "\n";
 }
 
 =head2 print_banner

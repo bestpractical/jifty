@@ -13,5 +13,5 @@
 $title => ""
 </%args>
 <%init>
-$r->content_type('text/html; charset=utf-8');
+Jifty->web->response->content_type('text/html; charset=utf-8');
 </%init>

@@ -3,8 +3,17 @@ use strict;
 
 package Jifty::Request;
 
-use base qw/Jifty::Object Class::Accessor::Fast/;
-__PACKAGE__->mk_accessors(qw(_top_request arguments template_arguments just_validating path continuation_id future_continuation_id continuation_type continuation_path request_method));
+use Any::Moose;
+extends 'Plack::Request', 'Jifty::Object';
+
+has '_top_request' => (is => 'rw');
+has 'arguments' => (is => 'rw');
+has 'template_arguments' => (is => 'rw');
+has 'just_validating' => (is => 'rw');
+has 'continuation_id' => (is => 'rw');
+has 'future_continuation_id' => (is => 'rw');
+has 'continuation_type' => (is => 'rw');
+has 'continuation_path' => (is => 'rw');
 
 use Jifty::JSON;
 use Jifty::YAML;
@@ -64,7 +73,7 @@ independent fragments.  See L<Jifty::Web::PageRegion>.
 
 =head1 METHODS
 
-=head2 new PARAMHASH
+=head2 BUILD PARAMHASH
 
 Creates a new request object.  For each key in the I<PARAMHASH>, the
 method of that name is called, with the I<PARAMHASH>'s value as its
@@ -72,23 +81,20 @@ sole argument.
 
 =cut
 
-sub new {
-    my $class = shift;
-    my $self = bless {}, $class;
+sub BUILD {
+    my $self = shift;
+
+    # Copy a bunch of information off of the top Plack request
+    my $env = Jifty->web->request->top_request->env;
+    $self->{env}{$_} = $env->{$_} for qw/psgi.version psgi.multithread psgi.multiprocess psgi.errors/;
+    # Stub in an empty input filehandle
+    $self->{env}{"psgi.input"} = Plack::Util::inline_object( read => sub {0} );
 
     $self->{'actions'} = {};
     $self->{'state_variables'} = {};
     $self->{'fragments'} = {};
     $self->arguments({});
     $self->template_arguments({});
-    $self->request_method("GET");
-
-    my %args = @_;
-    for (keys %args) {
-        $self->$_($args{$_}) if $self->can($_);
-    }
-
-    return $self;
 }
 
 =head2 clone
@@ -103,39 +109,47 @@ sub clone {
     # "Semi-shallow" clone
     return bless({map {
         my $val = $self->{$_};
-        $_ => (ref($val) ? { %$val } : $val);
+        $_ => (ref($val) eq "HASH" ? { %$val } : ref($val) eq "ARRAY" ? [ @$val ] : $val);
     } keys %$self}, ref($self));
 }
 
-=head2 fill
+=head2 promote
 
 Attempt to fill in the request from any number of various methods --
-YAML, JSON, etc.  Falls back to query parameters.  Takes a CGI object.
+YAML, JSON, etc.  Falls back to query parameters.  Takes a
+L<HTTP::Engine::Request> object.
 
 =cut
 
-sub fill {
-    my $self = shift;
-    my ($cgi) = @_;
+sub promote {
+    my $class = shift;
+    my ($req) = @_;
 
-    # Store away request method
-    $self->request_method( uc $cgi->request_method );
+    die Carp::longmess("old calling style") unless ref $req;
+
+    # Import all props from HTTP::Engine::Request object
+    my $self = bless $req, $class;
+    $self->{'actions'} = {};
+    $self->{'state_variables'} = {};
+    $self->{'fragments'} = {};
+    $self->arguments({});
+    $self->template_arguments({});
 
     # Grab content type and posted data, if any
-    my $ct   = $ENV{"CONTENT_TYPE"};
-    my $data = $cgi->param('POSTDATA');
+    my $ct   = $req->content_type;
+    my $data = $req->raw_body;
 
     # Check it for something appropriate
     if ($data) {
         if ($ct =~ m{^text/x-json}) {
-            return $self->from_data_structure(eval{Jifty::JSON::decode_json($data)}, $cgi);
+            return $self->from_data_structure(eval{Jifty::JSON::decode_json($data)});
         } elsif ($ct =~ m{^text/x-yaml}) {
-            return $self->from_data_structure(eval{Jifty::YAML::Load($data)}, $cgi);
+            return $self->from_data_structure(eval{Jifty::YAML::Load($data)});
         }
     }
 
-    # Fall back on using the mason args
-    return $self->from_cgi($cgi);
+    # Fall back on using the straight HTTP arguments
+    return $self->from_args;
 }
 
 =head2 from_data_structure
@@ -151,21 +165,11 @@ Returns itself.
 sub from_data_structure {
     my $self = shift;
     my $data = shift;
-    my $cgi;
-    $cgi = shift if (@_);
 
     my $path = $data->{'path'};
-    
-    if ($cgi && ! $path) {
-        $path = $cgi->path_info;
-        $path =~ s/\?.*//;
-    };
+    $path ||= $self->path || '/';
 
-    if (!$path) {
-        $path = '/';
-    }
-
-    $self->path( Jifty::Util->canonicalize_path( $path));
+    $self->path( Jifty::Util->canonicalize_path( $path ) );
     $self->just_validating( $data->{validating} ) if $data->{validating};
 
     if ( ref $data->{continuation} eq "HASH" ) {
@@ -188,10 +192,7 @@ sub from_data_structure {
             for my $arg ( keys %{ $a->{fields} || {} } ) {
                 if ( ref $a->{fields}{$arg} ) {
 
-                    # Double-fallback exists for historical reasons only;
-                    # Jifty applications after July 10th, 2006 should
-                    # never generate them.
-                    for my $type (qw/doublefallback fallback value/) {
+                    for my $type (qw/fallback value/) {
                         $arguments{$arg} = $a->{fields}{$arg}{$type}
                             if exists $a->{fields}{$arg}{$type};
                     }
@@ -244,34 +245,27 @@ sub from_data_structure {
     return $self;
 }
 
-=head2 from_cgi CGI
+=head2 from_args REQ
 
-Calls C<from_webform> with the CGI's parameters, after doing Mason
-parameter mapping, and splitting C<|>'s in argument names.  See
-L</argument munging>.
+Calls C<from_webform> with the L<HTTP::Engine::Request/parameters>
+after splitting C<|>'s in argument names.  See L</argument munging>.
 
 Returns itself.
 
 =cut
 
-sub from_cgi {
+sub from_args {
     my $self = shift;
-    my ($cgi) = @_;
 
-    my $path = $cgi->path_info;
-    $path =~ s/\?.*//;
-    $self->path( $path );
-
-    use HTML::Mason::Utils;
-    my %args = HTML::Mason::Utils::cgi_request_args( $cgi, $cgi->request_method );
+    my %args = %{ $self->parameters };
 
     # Either CGI.pm or HTML::Mason should really deal with encoding for us.
     for my $k (keys %args) {
         my $val = $args{$k};
         if(ref($val) && ref($val) eq 'ARRAY') {
-            $args{$k} = [map {Jifty::I18N->promote_encoding($_, $ENV{CONTENT_TYPE})} @$val];
+            $args{$k} = [map {Jifty::I18N->promote_encoding($_, $self->content_type)} @$val];
         } elsif(!ref($val)) {
-            $args{$k} = Jifty::I18N->promote_encoding($val, $ENV{CONTENT_TYPE});
+            $args{$k} = Jifty::I18N->promote_encoding($val, $self->content_type);
         }
 
         if (ref($val) eq 'Fh') {
@@ -286,8 +280,6 @@ sub from_cgi {
             # If your key has a '=', you may just lose
             my ($k, $v) = split /=/, $newarg, 2;
             $args{$k} = $v;
-            # The following breaks page regions and the like, sadly:
-            #$args{$k} ? (ref $args{$k} ? [@{$args{$k}},$v] : [$args{$k}, $v] ) : $v;
         }
     }
     return $self->from_webform( %args );
@@ -505,9 +497,7 @@ sub webform_to_data_structure {
 
 
     # Mapping from argument types to data structure names;
-    # Double-fallback exists for historical reasons only; Jifty
-    # applications after July 10th, 2006 should never generate them.
-    my %types = ("J:A:F:F:F" => "doublefallback", "J:A:F:F" => "fallback", "J:A:F" => "value");
+    my %types = ("J:A:F:F" => "fallback", "J:A:F" => "value");
 
     # The "sort" here is key; it ensures that action registrations
     # come before action arguments
@@ -965,9 +955,20 @@ sub top_request {
     return $self->_top_request || $self;
 }
 
+no Any::Moose;
+__PACKAGE__->meta->make_immutable;
+
+
 package Jifty::Request::Action;
-use base 'Class::Accessor::Fast';
-__PACKAGE__->mk_accessors( qw/moniker arguments class order active modified has_run/);
+use Any::Moose;
+
+has 'moniker';
+has 'arguments';
+has 'class';
+has 'order';
+has 'active';
+has 'modified';
+has 'has_run';
 
 =head2 Jifty::Request::Action
 
@@ -1010,9 +1011,18 @@ sub delete {
 }
 
 
+no Any::Moose;
+__PACKAGE__->meta->make_immutable;
+
+
 package Jifty::Request::StateVariable;
-use base 'Class::Accessor::Fast';
-__PACKAGE__->mk_accessors (qw/key value/);
+use Any::Moose;
+
+has 'key';
+has 'value';
+
+no Any::Moose;
+__PACKAGE__->meta->make_immutable;
 
 =head2 Jifty::Request::StateVariable
 
@@ -1025,8 +1035,17 @@ A small package that encapsulates the bits of a state variable:
 =cut
 
 package Jifty::Request::Fragment;
-use base 'Class::Accessor::Fast';
-__PACKAGE__->mk_accessors( qw/name path wrapper in_form arguments parent/ );
+use Any::Moose;
+
+has 'name';
+has 'path';
+has 'wrapper';
+has 'in_form';
+has 'arguments';
+has 'parent';
+
+no Any::Moose;
+__PACKAGE__->meta->make_immutable;
 
 =head2 Jifty::Request::Fragment
 

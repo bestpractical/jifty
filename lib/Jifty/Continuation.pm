@@ -63,6 +63,7 @@ use base qw/Class::Accessor::Fast Jifty::Object/;
 
 __PACKAGE__->mk_accessors(qw(id parent
                              request response code
+                             version
                              ));
 
 =head2 new PARAMHASH
@@ -112,7 +113,8 @@ sub new {
                 request  => Jifty::Request->new(),
                 response => Jifty::Response->new(),
                 code     => undef,
-                @_
+                @_,
+                version  => 2,
                );
 
     # We don't want refs
@@ -128,6 +130,11 @@ sub new {
     # FIXME: use a real ID
     my $key = Jifty->web->serial . "_" . int(rand(10)) . int(rand(10)) . int(rand(10)) . int(rand(10)) . int(rand(10)) . int(rand(10));
     $self->id($key);
+
+    # Make sure we don't store any of the connection information
+    local $self->request->{env}{"psgi.input"};
+    local $self->request->{env}{"psgi.errors"};
+    local $self->request->{_body_parser}{input_handle} if defined $self->request->{_body_parser};
 
     # Save it into the session
     Jifty->web->session->set_continuation($key => $self);
@@ -145,7 +152,7 @@ to ask "are we about to call a continuation?"
 
 sub return_path_matches {
     my $self = shift;
-    my $called_uri = $ENV{'REQUEST_URI'};
+    my $called_uri = Jifty->web->request->uri;
     my $request_path = $self->request->path;
 
     # XXX TODO: WE should be using URI canonicalization
@@ -242,7 +249,12 @@ sub return {
       if $self->code;
 
     # Set the current request to the one in the continuation
-    return Jifty->web->request($self->request->clone);
+    my $input  = Jifty->web->request->env->{"psgi.input"};
+    my $errors = Jifty->web->request->env->{"psgi.errors"};
+    Jifty->web->request($self->request->clone);
+    Jifty->web->request->env->{"psgi.input"}  = $input;
+    Jifty->web->request->env->{"psgi.errors"} = $errors;
+    return Jifty->web->request;
 }
 
 =head2 delete

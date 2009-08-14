@@ -1,4 +1,4 @@
-% $r->content_type("text/x-yaml");
+% Jifty->web->response->content_type("text/x-yaml");
 <% Jifty::YAML::Dump(\%results) |n%>
 
 <%INIT>

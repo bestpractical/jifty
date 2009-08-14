@@ -238,9 +238,7 @@ sub flush {
     );
 
     foreach my $cookie ($splitter->split( $data_cookie )) {
-        Jifty->web->response->add_header(
-            'Set-Cookie' => $cookie->as_string
-        );
+        Jifty->web->response->cookies->{$cookie->name} = $cookie;
     }
 }
 

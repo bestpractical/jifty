@@ -99,7 +99,7 @@ sub mason {
 
 =head3 out
 
-Send a string to the browser. The default implementation uses Mason->out;
+Send a string to the browser.
 
 =cut
 
@@ -358,7 +358,7 @@ sub _validate_request_actions {
                         . "'" );
                 $self->log->warn( Jifty->api->explain($request_action->class ) );
                 # Possible cross-site request forgery
-                $self->log->error("Action " . $request_action->class . " has been denied because the request is a GET") if $self->request->request_method eq "GET";
+                $self->log->error("Action " . $request_action->class . " has been denied because the request is a GET") if $self->request->method eq "GET";
                 push @denied_actions, $request_action;
                 next;
             }
@@ -742,7 +742,7 @@ sub redirect {
         # PATH_INFO, which is what $request->path is normally set to.
         # We should replicate that here.
         $request->path( URI::Escape::uri_unescape( $page->url ) );
-        $request->request_method("GET"); # ..effectively.
+        $request->method("GET"); # ..effectively.
         $request->continuation($self->request->continuation);
         my $cont = Jifty::Continuation->new(
             request  => $request,
@@ -786,17 +786,15 @@ sub _redirect {
     # Clear out the output, if any
     Jifty->handler->buffer->clear;
 
-    my $apache = Jifty->handler->apache;
+    my $response = Jifty->web->response;
 
     $self->log->debug("Execing redirect to $page");
     # Headers..
-    $apache->header_out( Location => $page );
-    $apache->header_out( Status => 302 );
+    $response->header( Location => $page );
+    $response->status( 302 );
 
     # cookie has to be sent or returning from continuations breaks
     Jifty->web->session->set_cookie;
-
-    Jifty->handler->send_http_header;
 
     # Mason abort, or dispatcher abort out of here
     $self->mason->abort if $self->mason;

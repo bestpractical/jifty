@@ -39,10 +39,9 @@ These templates are still in masonland. we're doign something wrong with escapin
 template '__jifty/subs' => sub {
     my ($forever) = get(qw(forever)) || 1;
 
-    Jifty->handler->apache->content_type("text/html; charset=utf-8");
-    Jifty->handler->apache->headers_out->{'Pragma'}        = 'no-cache';
-    Jifty->handler->apache->headers_out->{'Cache-control'} = 'no-cache';
-    Jifty->handler->send_http_header;
+    Jifty->web->response->content_type("text/html; charset=utf-8");
+    Jifty->web->response->header('Pragma' => 'no-cache');
+    Jifty->web->response->header('Cache-control' => 'no-cache');
 
     my $writer = XML::Writer->new;
     $writer->xmlDecl( "UTF-8", "yes" );
@@ -93,7 +92,7 @@ template '__jifty/autocomplete.xml' => sub {
     # Note: the only point to this file is to set the content_type; the actual
     # behavior is accomplished inside the framework.  It will go away once we
     # have infrastructure for serving things of various content-types.
-    Jifty->handler->apache->content_type('text/xml; charset=UTF-8');
+    Jifty->web->response->content_type('text/xml; charset=utf-8');
     my $ref = Jifty->web->response->result('autocomplete')->content;
     my @options = @{ $ref->{'completions'} || [] };
     body {
@@ -119,7 +118,7 @@ template '__jifty/autocomplete.xml' => sub {
 
 
 template '__jifty/validator.xml' => sub {
-    Jifty->handler->apache->content_type('text/xml; charset=UTF-8');
+    Jifty->web->response->content_type('text/xml; charset=utf-8');
     my $output = "";
     use XML::Writer;
     my $writer = XML::Writer->new( OUTPUT => \$output );
@@ -310,7 +309,7 @@ template '__jifty/webservices/xml' => sub {
     }
 
     $writer->endTag();
-    Jifty->handler->apache->content_type('text/xml; charset=UTF-8');
+    Jifty->web->response->content_type('text/xml; charset=utf-8');
 
     # For some reason, this line is needed, lest we end up outputting ISO-8859-1 text
     utf8::decode($output);
@@ -344,7 +343,7 @@ template '__jifty/webservices/xml' => sub {
 
 
 template '__jifty/webservices/yaml' => sub {
-    Jifty->handler->apache->content_type("text/x-yaml");
+    Jifty->web->response->content_type("text/x-yaml");
     outs( Jifty::YAML::Dump( { Jifty->web->response->results } ) );
 };
 

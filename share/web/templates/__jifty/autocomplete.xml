@@ -2,7 +2,7 @@
 # Note: the only point to this file is to set the content_type; the actual
 # behavior is accomplished inside the framework.  It will go away once we
 # have infrastructure for serving things of various content-types.
-$r->content_type('text/xml; charset=UTF-8');
+Jifty->web->response->content_type('text/xml; charset=UTF-8');
 unless (Jifty->web->response->result('autocomplete')) {
   print "<body />";
   return;

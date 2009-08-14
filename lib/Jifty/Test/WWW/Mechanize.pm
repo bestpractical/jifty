@@ -2,6 +2,7 @@ use strict;
 use warnings;
 
 package Jifty::Test::WWW::Mechanize;
+use WWW::Mechanize::HTTPEngineTest;
 use base qw/Test::WWW::Mechanize/;
 
 delete $ENV{'http_proxy'}; # Otherwise Test::WWW::Mechanize tries to go through your HTTP proxy
@@ -40,8 +41,14 @@ sub new {
     my $class = shift;
     my $self = $class->SUPER::new(@_);
     $self->cookie_jar(HTTP::Cookies->new);
+    $self->WWW::Mechanize::HTTPEngineTest::http_engine_hook(
+        uri => Jifty->web->url,
+        handler => sub {
+            Jifty->handler->handle_request(@_);
+        },
+    );
     return $self;
-} 
+}
 
 =head2 moniker_for ACTION, FIELD1 => VALUE1, FIELD2 => VALUE2
 
