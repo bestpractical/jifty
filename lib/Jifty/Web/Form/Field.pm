@@ -663,7 +663,8 @@ call, if necessary.
 sub autocomplete_javascript {
     my $self = shift;
     return unless($self->autocompleter);
-    return qq{new Jifty.Autocompleter('@{[$self->element_id]}','@{[$self->element_id]}-autocomplete')};
+    my $element_id = $self->element_id;
+    return qq{new Jifty.Autocompleter('$element_id','$element_id-autocomplete')};
 }
 
 =head2 placeholder_javascript
