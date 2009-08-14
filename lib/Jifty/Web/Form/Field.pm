@@ -419,7 +419,8 @@ sub render_inline_javascript {
             $self->autocomplete_javascript(),
             $self->placeholder_javascript(),
             $self->key_binding_javascript(),
-            $self->focus_javascript()
+            $self->focus_javascript(),
+            $self->preload_javascript(),
         )
     );
     
@@ -700,6 +701,22 @@ sub focus_javascript {
         return qq{DOM.Events.addListener( window, "load", function(){document.getElementById("@{[$self->element_id]}").focus()})};
     }
 }
+
+=head2 preload_javascript
+
+Returns the javascript necessary to load regions that have been marked for
+preloading, as plain javascript. The L</javascript> method will look for
+regions marked with preloading and swap them in, instead of loading them
+directly.
+
+=cut
+
+sub preload_javascript {
+    my $self = shift;
+
+    return '';
+}
+
 
 =head2 render_hints
 
