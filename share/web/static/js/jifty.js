@@ -1489,7 +1489,7 @@ Jifty.update = function () {
         success:     onSuccess,
 
         beforeSend:  function (request) {
-            var headers = named_arg['headers'];
+            var headers = named_args['headers'];
             for (header in headers) {
                 if (headers.hasOwnProperty(header)) {
                     request.setRequestHeader(header, headers[header]);
