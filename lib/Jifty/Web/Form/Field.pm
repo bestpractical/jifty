@@ -648,7 +648,7 @@ sub render_autocomplete {
     my $self = shift;
     return unless $self->autocompleter;
     $self->render_autocomplete_div;
-    Jifty->web->out(qq{<script type="text/javascript">@{[$self->autocomplete_javascript]}</script>});
+    Jifty->web->out(qq!<script type="text/javascript">@{[$self->autocomplete_javascript]}</script>!);
     return '';
 }
 
@@ -683,7 +683,7 @@ sub placeholder_javascript {
     $placeholder =~ s{(['\\])}{\\$1}g;
     $placeholder =~ s{\n}{\\n}g;
     $placeholder =~ s{\r}{\\r}g;
-    return qq{new Jifty.Placeholder('@{[$self->element_id]}', '$placeholder');};
+    return qq!new Jifty.Placeholder('@{[$self->element_id]}', '$placeholder');!;
 }
 
 =head2 focus_javascript
@@ -697,8 +697,8 @@ sub focus_javascript {
     my $self = shift;
     return undef;
     if($self->focus) {
-        return qq{document.getElementById("@{[$self->element_id]}").focus()};
-        return qq{DOM.Events.addListener( window, "load", function(){document.getElementById("@{[$self->element_id]}").focus()})};
+        return qq!document.getElementById("@{[$self->element_id]}").focus()!;
+        return qq!DOM.Events.addListener( window, "load", function(){document.getElementById("@{[$self->element_id]}").focus()})!;
     }
 }
 
