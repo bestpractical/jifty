@@ -395,6 +395,7 @@ sub render {
         $self->render_canonicalization_notes();
     } elsif ($self->render_mode eq 'read'){ 
         $self->render_value();
+        $self->render_preload_javascript();
     }
     $self->render_wrapper_end();
     return ('');
@@ -402,9 +403,9 @@ sub render {
 
 =head2 render_inline_javascript
 
-Render a <script> tag (if neceesary) containing any inline javascript
-that should follow this form field. This is used to add an
-autocompleter, placeholder, or keybinding to form fields where needed.
+Render a <script> tag (if necessary) containing any inline javascript that
+should follow this form field. This is used to add an autocompleter,
+placeholder, keybinding, or preloading to form fields where needed.
 
 =cut
 
@@ -424,6 +425,24 @@ sub render_inline_javascript {
         )
     );
     
+    if($javascript =~ /\S/) {
+        Jifty->web->out(qq{<script type="text/javascript">$javascript</script>
+});
+    }
+}
+
+=head2 render_preload_javascript
+
+Render a <script> tag (if necessary) containing any inline preload javascript
+that should follow this form field.
+
+=cut
+
+sub render_preload_javascript {
+    my $self = shift;
+
+    my $javascript = $self->preload_javascript;
+
     if($javascript =~ /\S/) {
         Jifty->web->out(qq{<script type="text/javascript">$javascript</script>
 });
