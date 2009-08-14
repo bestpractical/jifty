@@ -1526,7 +1526,7 @@ Jifty.update = function () {
         // Hide the wait message when we're done
         complete: function() {
             // If we want this same region again, don't reuse it from the cache
-            delete Jifty.preloading_regions[ args['preload_key'] ];
+            delete Jifty.preloading_regions[ named_args['preload_key'] ];
 
             if (!hide_wait) {
                 hide_wait_message();
