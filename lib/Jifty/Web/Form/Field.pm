@@ -748,6 +748,15 @@ sub preload_javascript {
 
     return if !@preloaded;
 
+    # If we're inside a preloaded region, then we don't want to preload any
+    # other regions. Otherwise you could get into a cycle where you're always
+    # preloading the same set of regions. So we set it up so that when this
+    # preloaded region is put into the page, it will preload its child regions.
+    if (Jifty->web->request->preloading_region) {
+        my $region = Jifty->web->current_region->qualified_name;
+        return;
+    }
+
     my $preload_json = Jifty::JSON::objToJson(
         { fragments   => \@preloaded },
         { singlequote => 1 },
