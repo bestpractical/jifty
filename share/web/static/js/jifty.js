@@ -1309,7 +1309,7 @@ Jifty.update = function () {
     // fields, with the app connecting to the database, etc.
     var onSuccess = function(responseXML) {
         if (named_args['preload']) {
-            // XXX: stash responseXML somewhere
+            Jifty.preloaded_regions = responseXML;
             return;
         }
 
@@ -1480,6 +1480,12 @@ Jifty.update = function () {
         })
     }
 
+    if (Jifty.preloaded_regions) {
+        onSuccess(Jifty.preloaded_regions);
+        delete Jifty.preloaded_regions;
+        return;
+    }
+
     // Submit ajax request as JSON; expect XML in return
     jQuery.ajax({
         url:         document.URL,
@@ -1510,8 +1516,6 @@ Jifty.update = function () {
     // Disable regular browser form submission (we're Ajaxing instead)
     return false;
 }
-
-Jifty.preloaded_regions = {};
 
 Jifty.preload = function (named_args, trigger) {
     var fragments = named_args['fragments'];
