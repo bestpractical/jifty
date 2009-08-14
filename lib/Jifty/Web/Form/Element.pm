@@ -404,7 +404,6 @@ sub javascript_attrs {
 
     my %response;
 
-  HANDLER:
     for my $trigger ( $self->handlers_used ) {
         # Walk around the Class::Accessor, for speed
         my $value = $self->{"_$trigger"};
