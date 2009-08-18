@@ -1520,7 +1520,7 @@ Jifty.update = function () {
         }
 
         onSuccess(faux_response);
-        return;
+        return false;
     }
 
     // If we're loading a region, then we should just wait for it instead
@@ -1529,7 +1529,7 @@ Jifty.update = function () {
     // process it.
     if (Jifty.preloading_regions[ named_args['preload_key'] ]) {
         Jifty.want_preloaded_regions[ named_args['preload_key'] ] = 1;
-        return;
+        return false;
     }
 
     // Show the "Loading..." message (or equivalent)
