@@ -1553,6 +1553,13 @@ Jifty.preloaded_regions = {};
 // Are we currently preloading a given preload_key?
 Jifty.preloading_regions = {};
 
+// Are we submitting an action? If so, delay preloading.
+Jifty.preloading_is_queued = 0;
+
+// A cache of preloads to execute once we have a response to the action
+// we submitted
+Jifty.queued_preloads = [];
+
 // For when we want a preloading region to be processed immediately (e.g. when
 // we click a preloaded button)
 Jifty.want_preloaded_regions = {};
@@ -1560,6 +1567,15 @@ Jifty.want_preloaded_regions = {};
 Jifty.preload = function (args, trigger) {
     // Don't request the same region multiple times
     if (Jifty.preloading_regions[ args['preload_key'] ]) {
+        return;
+    }
+
+    // We're waiting for an action. We don't want to preload any more regions
+    // until we know that action has been executed.
+    if (Jifty.preloading_is_queued) {
+        Jifty.queued_preloads.push(function () {
+            Jifty.preload(args, trigger);
+        });
         return;
     }
 
