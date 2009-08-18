@@ -1599,12 +1599,13 @@ Jifty.preload = function (args, trigger) {
     if (Jifty.preloading_regions[ args['preload_key'] ]) {
         return false;
     }
-    Jifty.preloading_regions[ args['preload_key'] ] = 1;
 
     // We're waiting for an action. We don't want to preload any more regions
     // until we know that action has been executed.
     if (Jifty.preloading_is_queued) {
+        Jifty.preloading_regions[ args['preload_key'] ] = 1;
         Jifty.queued_preloads.push(function () {
+            delete Jifty.preloading_regions[ args['preload_key'] ];
             Jifty.preload(args, trigger);
         });
         return false;
@@ -1621,6 +1622,8 @@ Jifty.preload = function (args, trigger) {
     args.actions = [];
 
     Jifty.update(args, trigger);
+
+    Jifty.preloading_regions[ args['preload_key'] ] = 1;
 
     return false;
 }
