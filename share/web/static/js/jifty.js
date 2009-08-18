@@ -1590,9 +1590,14 @@ Jifty.queued_preloads = [];
 Jifty.want_preloaded_regions = {};
 
 Jifty.preload = function (args, trigger) {
+    // XXX: prevent default behavior in IE
+    if(window.event) {
+        window.event.returnValue = false;
+    }
+
     // Don't request the same region multiple times
     if (Jifty.preloading_regions[ args['preload_key'] ]) {
-        return;
+        return false;
     }
     Jifty.preloading_regions[ args['preload_key'] ] = 1;
 
@@ -1602,7 +1607,7 @@ Jifty.preload = function (args, trigger) {
         Jifty.queued_preloads.push(function () {
             Jifty.preload(args, trigger);
         });
-        return;
+        return false;
     }
 
     // Preloading is supposed to be silent
@@ -1616,6 +1621,8 @@ Jifty.preload = function (args, trigger) {
     args.actions = [];
 
     Jifty.update(args, trigger);
+
+    return false;
 }
 
 Jifty.preload_action_request = function () {
