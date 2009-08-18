@@ -1594,6 +1594,7 @@ Jifty.preload = function (args, trigger) {
     if (Jifty.preloading_regions[ args['preload_key'] ]) {
         return;
     }
+    Jifty.preloading_regions[ args['preload_key'] ] = 1;
 
     // We're waiting for an action. We don't want to preload any more regions
     // until we know that action has been executed.
@@ -1615,9 +1616,6 @@ Jifty.preload = function (args, trigger) {
     args.actions = [];
 
     Jifty.update(args, trigger);
-
-    // Now we're waiting on the AJAX request
-    Jifty.preloading_regions[ args['preload_key'] ] = 1;
 }
 
 Jifty.preload_action_request = function () {
