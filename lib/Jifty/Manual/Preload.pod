@@ -1,0 +1,46 @@
+=head1 NAME
+
+Jifty::Manual::Preload - One Path to a Snappy UI
+
+=head1 DESCRIPTION
+
+=head1 WARNING
+
+Preloading is applicable only if your use case fulfills a specific set of
+constraints.
+
+The region you are preloading must I<not> depend greatly on the actions
+submitted by the current page. For example, you cannot sanely preload a region
+which includes the content of a textarea that the user is typing in the current
+page.
+
+On the other hand, the click of a button may be preloadable depending on what
+the button does. We use a nice tactic in Changelogger
+(L<http://changelogger.bestpractical.com>) to preload vote buttons. We need to
+know which change to display to the user next, which is a nontrivial amount of
+database work. When rendering a button, we begin a transaction, submit a fake
+vote action, choose the next change, then rollback the transaction. This turns
+out to be a fairly simple way to figure out what to display next for
+preloading.
+
+Preloading should also be agnostic of real-world-time. If you preload a region
+that contains a timestamp, then that timestamp may be stale by the time the
+region is actually shown. Similarly for duration. At the end of Hiveminder's
+task review, we tell you exactly how long you spent in the review. This final
+report update cannot be preloaded because the user may spend ten minutes on the
+last task.
+
+Preloading can cause additional server load. Instead of a single request
+containing action submission and region updates, preloading sends a request
+containing action submission, then a request for each region update handler.
+The overhead of each request is probably nontrivial. However, the cost of
+preloading is probably worth it to improve user experience.
+
+Finally, preloading is pretty new. It has not been battle tested. There may be
+serious race conditions that result in inconsistencies that confound your
+users. There may be data loss. These things would be very difficult to debug.
+
+Good luck!
+
+=cut
+
