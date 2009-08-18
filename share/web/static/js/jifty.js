@@ -1157,6 +1157,7 @@ Jifty.update = function () {
 
     // Build actions request structure
     var has_request = 0;
+    var action_count = 0;
     request['actions'] = {};
 
     // Go through the monikers and actions we know about
@@ -1235,6 +1236,7 @@ Jifty.update = function () {
 
             // Add the parameters to the request we're building
             request['actions'][moniker] = param;
+            ++action_count;
 
             // Remember that we have a request if we're submitting an action
             ++has_request;
@@ -1494,6 +1496,29 @@ Jifty.update = function () {
     if (Jifty.preloaded_regions[ named_args['preload_key'] ]) {
         var faux_response = Jifty.preloaded_regions[ named_args['preload_key'] ];
         delete Jifty.preloaded_regions[ named_args['preload_key'] ];
+
+        // If we have to submit actions, then it gets more complicated
+        // We submit a request with the action and block preloading until
+        // the action has returned
+        if (action_count > 0) {
+
+            // We do not want any region updates. That is for the preloading
+            // request.
+            delete request.fragments;
+
+            Jifty.preload_action_request();
+            jQuery.ajax({
+                url:         document.URL,
+                type:        'post',
+                dataType:    'xml',
+                data:        JSON.stringify(request),
+                contentType: 'text/x-json',
+                error:       onFailure,
+                success:     onSuccess,
+                complete:    Jifty.preload_action_respond,
+            });
+        }
+
         onSuccess(faux_response);
         return;
     }
@@ -1594,6 +1619,21 @@ Jifty.preload = function (args, trigger) {
     // Now we're waiting on the AJAX request
     Jifty.preloading_regions[ args['preload_key'] ] = 1;
 }
+
+Jifty.preload_action_request = function () {
+    ++Jifty.preloading_is_queued;
+};
+
+Jifty.preload_action_respond = function () {
+    if (--Jifty.preloading_is_queued == 0) {
+        var preloads = Jifty.queued_preloads;
+        Jifty.queued_preloads = [];
+
+        for (var i = 0; i < preloads.length; ++i) {
+            preloads[i]();
+        }
+    }
+};
 
 function update ( named_args, trigger ) {
     alert( 'please use Jifty.update instead of update.' );
