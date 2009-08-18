@@ -84,5 +84,50 @@ preloaded!
 
 =head1 GORY DETAILS
 
+=head2 Basis
+
+Preloading hijacks Jifty's ordinary AJAX update mechanism. When a preloadable
+element is rendered, we include a bit of additional javascript which
+immediately calls C<Jifty.preload>. Thus the preload request is initiated
+around the time the page is rendered. Since the request is nonblocking, it
+should not noticeably affect the user experience.
+
+When the user agent receives the response to the preload request, it is cached.
+Finally, when the user activates the handler that was preloaded, we run the
+cached response through the C<onSuccess> update routine.
+
+This is a slight simplification. In reality, a few forces make this process
+more complicated.
+
+=head2 Many requests for a preload key
+
+Suppose your form has many buttons which perform the same kind of region
+update. They all replace this vote form with the next vote form. It does not
+matter which specific button the user clicks, they're all going to preload the
+next vote form. Thus, it is desirable to make only one preload request for all
+of these buttons, instead of one preload request for each button.
+
+When we initiate a preload request, we check to see if there is already a
+pending preload request for the given preload cache key. If so, we bail out.
+This way, only one request is made.
+
+In the future, we may also bail out if a response exists for the preload key in
+the cache. We do not do this yet because of cache staleness concerns.
+
+=head2 Activating handler before its request cycle finishes
+
+If a user is quick, they may click a preloadable button during, or even before,
+that region's preload request/response cycle finishes. The simple way to handle
+this would be to ignore that the handler has preloading and just continue with
+the usual update cycle, sending a fresh HTTP hit.
+
+Since we may have already sent the preload request, we instead of just wait for
+its response instead of initiating a new request. We then mark that preload key
+as "wanted". This means that upon response, it will be immediately processed
+instead of waiting for its handler to be activated.
+
+=head2 Actions
+
+
 =cut
 
