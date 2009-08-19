@@ -29,6 +29,12 @@ vote action, choose the next change, then rollback the transaction. This turns
 out to be a fairly simple way to figure out what to display next for
 preloading.
 
+A region that is preloaded should not cause gratuitous side effects. It should
+never construct and submit actions on its own, mutate records, or anything else
+of that sort. Basically, the region should expect to be generated
+unconditionally. It can of course display a form, since that itself does not
+have side effects.
+
 Preloading should also be agnostic of real-world time. If you preload a region
 that contains a timestamp, then that timestamp may be stale by the time the
 region is actually shown. Similarly for displaying duration. For example, at
