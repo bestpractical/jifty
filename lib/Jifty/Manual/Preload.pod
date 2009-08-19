@@ -85,6 +85,9 @@ If you have a "undo vote" button which sends you backwards, you would not want
 to preload that with the same cache key as regular votes. In fact, you probably
 do not want to preload it all if it's a rare occurrence.
 
+You may also pass a value of C<1> for the C<preload> key. This tells Jifty to
+generate a unique key for this preload so that you don't have to.
+
 Note that the C<$vote> action is submitted well after the next region has been
 preloaded!
 
