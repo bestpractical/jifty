@@ -33,7 +33,8 @@ A region that is preloaded should not cause gratuitous side effects. It should
 never construct and submit actions on its own, mutate records, or anything else
 of that sort. Basically, the region should expect to be generated
 unconditionally. It can of course display a form, since that itself does not
-have side effects.
+have side effects. It can also cause side effects that are rolled back, such as
+the example in the previous paragraph.
 
 Preloading should also be agnostic of real-world time. If you preload a region
 that contains a timestamp, then that timestamp may be stale by the time the
@@ -82,8 +83,9 @@ then ordinarily you would make ten preload requests. However, if you give all
 of the buttons the C<vote> cache key, only one preload request will be made.
 Obviously this means that the specific button being clicked should not matter.
 If you have a "undo vote" button which sends you backwards, you would not want
-to preload that with the same cache key as regular votes. In fact, you probably
-do not want to preload it all if it's a rare occurrence.
+to preload that with the same cache key as regular votes, since a different
+form would be displayed. In fact, you probably do not want to preload it al,
+since it's presumably a rare occurrence.
 
 You may also pass a value of C<1> for the C<preload> key. This tells Jifty to
 generate a unique key for this preload so that you don't have to.
@@ -103,7 +105,9 @@ should not noticeably affect the user experience.
 
 When the user agent receives the response to the preload request, it is cached.
 Finally, when the user activates the handler that was preloaded, we run the
-cached response through the C<onSuccess> update routine.
+cached response through the C<onSuccess> update routine. This ends up being
+very fast since the user does not have to wait for request and response
+overhead, or the server processing time.
 
 This is a slight simplification. In reality, a few forces make this process
 more complicated.
@@ -113,7 +117,7 @@ more complicated.
 Suppose your form has many buttons which perform the same kind of region
 update. They all replace this vote form with the next vote form. It does not
 matter which specific button the user clicks, they're all going to preload the
-next vote form. Thus, it is desirable to make only one preload request for all
+same vote form. Thus, it is desirable to make only one preload request for all
 of these buttons, instead of one preload request for each button.
 
 When we initiate a preload request, we check to see if there is already a
@@ -130,10 +134,10 @@ that region's preload request/response cycle finishes. The simple way to handle
 this would be to ignore that the handler has preloading and just continue with
 the usual update cycle, sending a fresh HTTP hit.
 
-Since we may have already sent the preload request, we instead of just wait for
-its response instead of initiating a new request. We then mark that preload key
-as "wanted". This means that upon response, it will be immediately processed
-instead of waiting for its handler to be activated.
+We can do better though. Since we may have already sent the preload request, we
+instead of just wait for its response instead of initiating a new request. We
+then mark that preload key as "wanted". This means that upon response, it will
+be immediately processed instead of waiting for its handler to be activated.
 
 =head2 Actions
 
@@ -161,7 +165,7 @@ This puts the unprocessed region into a cache for later use.
 
 =item The user clicks the button
 
-Now a number of things occur...
+Now a number of things occur pretty quickly.
 
 =item A nonblocking AJAX request for the action submission occurs
 
