@@ -134,6 +134,68 @@ instead of waiting for its handler to be activated.
 
 =head2 Actions
 
+Actions complicate the whole workflow. Ordinarily, we strip out action
+submission from region preload requests, since preloaded regions are supposed
+to be side-effect free. Rendering the button does I<not> imply that the button
+will always be clicked, so preloading the onclick's region does not submit the
+action. Instead, the action is submitted when the onclick handler is activated
+by the user.
+
+Given a page that has a button which preloads a refresh_self region update and
+submits an action, the following sequence of events happens.
+
+=over 4
+
+=item The page is loaded
+
+This renders a button which fires off...
+
+=item The refresh_self preload request cycle occurs
+
+This puts the unprocessed region into a cache for later use.
+
+=item Time passes
+
+=item The user clicks the button
+
+Now a number of things occur...
+
+=item A nonblocking AJAX request for the action submission occurs
+
+This takes no noticeable time so the later region replacement still feels
+instantaneous.
+
+=item Preloading is temporarily halted
+
+=item The region replacement occurs
+
+Ordinarily, this would render the button again, which includes some javascript
+to preload the next replace_self. However, preload submission is blocked until
+the action's response arrives. This is to make sure the action has been run
+before the next region is rendered, otherwise things could get too
+inconsistent. We block preloading because the action submission request and the
+preload request are not guaranteed to happen in order since they are separate
+connections. They could be routed differently.
+
+In the future, we may do something similar to Nagle's algorithm where all such
+pieces end up in the same request.
+
+While preloading is blocked, all preload requests go into a queue. When
+preloading becomes unblocked, all of the delayed preload requests will be
+executed.
+
+=item The action response arrives
+
+=item We display the action results
+
+This could take the form of jGrowl updates or what have you, so the user still
+receives feedback about the actions they submitted.
+
+=item Preloading is unblocked
+
+=item Delayed preload requests are executed
+
+=back
 
 =cut
 
