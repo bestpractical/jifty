@@ -18,7 +18,8 @@ constraints.
 The region you are preloading must I<not> depend greatly on the actions
 submitted by the current page. For example, you cannot sanely preload a region
 which includes the content of a textarea that the user is typing in the current
-page.
+page. When the preload occurs, the user probably has not even begun to type
+into the textarea yet.
 
 On the other hand, the click of a button may be preloadable depending on what
 the button does. We use a nice tactic in Changelogger
