@@ -1491,12 +1491,7 @@ Jifty.update = function () {
         })
     }
 
-    // Are we requesting a region we have preloaded? If so, use the response
-    // from the cache instead of making a new request. Snappy!
-    if (Jifty.preloaded_regions[ named_args['preload_key'] ]) {
-        var faux_response = Jifty.preloaded_regions[ named_args['preload_key'] ];
-        delete Jifty.preloaded_regions[ named_args['preload_key'] ];
-
+    var submitActions = function () {
         // If we have to submit actions, then it gets more complicated
         // We submit a request with the action and block preloading until
         // the action has returned
@@ -1518,6 +1513,15 @@ Jifty.update = function () {
                 complete:    Jifty.preload_action_respond,
             });
         }
+    };
+
+    // Are we requesting a region we have preloaded? If so, use the response
+    // from the cache instead of making a new request. Snappy!
+    if (Jifty.preloaded_regions[ named_args['preload_key'] ]) {
+        var faux_response = Jifty.preloaded_regions[ named_args['preload_key'] ];
+        delete Jifty.preloaded_regions[ named_args['preload_key'] ];
+
+        submitActions();
 
         onSuccess(faux_response);
         return false;
@@ -1529,6 +1533,7 @@ Jifty.update = function () {
     // process it.
     if (Jifty.preloading_regions[ named_args['preload_key'] ]) {
         Jifty.want_preloaded_regions[ named_args['preload_key'] ] = 1;
+        submitActions();
         return false;
     }
 
