@@ -825,7 +825,7 @@ private template 'paging_top' => sub {
     my $page       = shift || 1;
 
     if ( $collection->pager->last_page > 1 ) {
-        span {
+        div {
             { class is 'page-count' };
             outs(
                 _( "Page %1 of %2", $page, $collection->pager->last_page ) );
