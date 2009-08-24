@@ -566,9 +566,10 @@ template 'list' => sub {
     my $sort_by = get ('sort_by') || '';
     my $order = get ('order') || '';
     my $collection =  $self->_current_collection();
+
     div {
-        {class is 'crud-'.$self->object_type }; 
-        show('./search_region');
+        {class is 'crud-ui crud-'.$self->object_type };
+        show( './search_region');
         show( './paging_top',    $collection, $page );
         show( './sort_header', $item_path, $sort_by, $order );
         show( './list_items',    $collection, $item_path );
@@ -631,7 +632,7 @@ template 'sort_header' => sub {
     my $record_class = $self->record_class;
 
     div { 
-        { class is "jifty_admin_header" };
+        { class is "crud-column-headers jifty_admin_header" };
         for my $argument ($self->display_columns) {
             my $css_class = ($sort_by && !$order && $sort_by eq $argument)?'up_select':'up';
             span {
@@ -719,25 +720,29 @@ private template 'search_region' => sub {
     my $self        = shift;
     my $object_type = $self->object_type;
 
-    show('predefined_search');
+    div {
+        attr { class is 'crud-search' };
 
-    my $search_region = Jifty::Web::PageRegion->new(
-        name => 'search',
-        path => '/__jifty/empty'
-    );
+        show('predefined_search');
 
-    hyperlink(
-        onclick => [
-            {   region       => $search_region->qualified_name,
-                replace_with => $self->fragment_for('search'),
-                toggle       => 1,
-                args         => { object_type => $object_type }
-            },
-        ],
-        label => _('Toggle search'),
-    );
+        my $search_region = Jifty::Web::PageRegion->new(
+            name => 'search',
+            path => '/__jifty/empty'
+        );
 
-    outs( $search_region->render );
+        hyperlink(
+            onclick => [
+                {   region       => $search_region->qualified_name,
+                    replace_with => $self->fragment_for('search'),
+                    toggle       => 1,
+                    args         => { object_type => $object_type }
+                },
+            ],
+            label => _('Toggle search'),
+        );
+
+        outs( $search_region->render );
+    }
 };
 
 =head2 new_item_region
@@ -826,7 +831,7 @@ private template 'paging_top' => sub {
 
     if ( $collection->pager->last_page > 1 ) {
         div {
-            { class is 'page-count' };
+            { class is 'crud-pages page-count' };
             outs(
                 _( "Page %1 of %2", $page, $collection->pager->last_page ) );
             }
