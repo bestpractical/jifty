@@ -140,7 +140,12 @@ This method returns the type of object this CRUD view has been generated for. Th
 
 sub object_type {
     my $self = shift;
-    return $self->package_variable('object_type') || get('object_type');
+    my $object_type = $self->package_variable('object_type') || get('object_type');
+
+    warn "No object type found for $self"
+        if !$object_type;
+
+    return $object_type;
 }
 
 =head2 record_class
