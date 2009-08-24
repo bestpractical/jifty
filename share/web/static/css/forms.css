@@ -148,50 +148,6 @@ div.inline div.form_field label.label {
     font-family : sans-serif;
 }
 
-.field {
-    float: left;
-    margin: 0.15em 0.5em 0.15em 0.15em;
-    font-weight: bold;
-}
-
-.down {
-    height : 1.5em;
-    float: left;
-    background: url(/static/images/css/bullet_arrow_down.png) no-repeat bottom center;
-    margin-right: 0.2em;
-}
-
-.down_select {
-    height : 1.5em;
-    float: left;
-    background: url(/static/images/css/bullet_arrow_down.png) no-repeat bottom center;
-    margin-right: 0.2em;
-}
-
-.down_select a {
-    font-weight: bold;
-    color: #900;
-}
-    
-.up {
-    height : 1.5em;
-    float: left;
-    background: url(/static/images/css/bullet_arrow_up.png) no-repeat bottom center;
-    margin-right: 0.2em;
-} 
-
-.up_select {
-    height : 1.5em;
-    float: left;
-    background: url(/static/images/css/bullet_arrow_up.png) no-repeat bottom center;
-    margin-right: 0.2em;
-} 
-
-.up_select a {
-    font-weight: bold;
-    color: #900;
-}
-
 div.subline {
     display: inline;
     float: left;  
