@@ -329,7 +329,7 @@ sub make_body {
               . qq|jQuery(function(){ Jifty.update( { 'fragments': [{'region': '|.$self->qualified_name.qq|', 'mode': 'Replace'}], 'actions': {}}, document.getElementById('region-|.$self->qualified_name.qq|'))})|
               . qq|</script>|);
         }
-        $buffer->append(qq|<div id="region-| . $self->qualified_name . qq|" class="| . $self->class . qq| jifty-region">|);
+        $buffer->append(qq|<div id="region-| . $self->qualified_name . qq|" class="| . ($self->class||'') . qq| jifty-region">|);
         if ($self->lazy) {
             if ($self->loading_path) {
                 local $self->{path} = $self->loading_path;
