@@ -839,6 +839,7 @@ private template 'paging_top' => sub {
     render_mason '/_elements/paging' => {
         collection => $collection,
         page       => $page,
+        per_page   => $self->per_page,
     };
 };
 
@@ -856,6 +857,7 @@ private template paging_bottom => sub {
     render_mason '/_elements/paging' => {
         collection => $collection,
         page       => $page,
+        per_page   => $self->per_page,
     };
 };
 
