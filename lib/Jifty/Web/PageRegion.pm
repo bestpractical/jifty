@@ -15,7 +15,7 @@ can be updated via AJAX or via query parameters.
 =cut
 
 use base qw/Jifty::Object Class::Accessor::Fast/;
-__PACKAGE__->mk_accessors(qw(name force_path force_arguments default_path default_arguments qualified_name parent region_wrapper lazy loading_path));
+__PACKAGE__->mk_accessors(qw(name force_path force_arguments default_path default_arguments qualified_name parent region_wrapper lazy loading_path class));
 use Jifty::JSON;
 use Encode ();
 
@@ -120,6 +120,7 @@ sub new {
     $self->region_wrapper($args{region_wrapper});
     $self->lazy($args{lazy});
     $self->loading_path($args{loading_path});
+    $self->class($args{class});
 
     # Keep track of the fully qualified name (which should be unique)
     $self->log->warn("Repeated region: " . $self->qualified_name)
@@ -328,7 +329,7 @@ sub make_body {
               . qq|jQuery(function(){ Jifty.update( { 'fragments': [{'region': '|.$self->qualified_name.qq|', 'mode': 'Replace'}], 'actions': {}}, document.getElementById('region-|.$self->qualified_name.qq|'))})|
               . qq|</script>|);
         }
-        $buffer->append(qq|<div id="region-| . $self->qualified_name . qq|" class="jifty-region">|);
+        $buffer->append(qq|<div id="region-| . $self->qualified_name . qq|" class="| . $self->class . qq| jifty-region">|);
         if ($self->lazy) {
             if ($self->loading_path) {
                 local $self->{path} = $self->loading_path;
