@@ -446,8 +446,6 @@ template 'view' => sub :CRUDView {
         }
         show ('./view_item_controls', $record, $update); 
     };
-    hr {};
-
 };
 
 =head2 private template view_item_controls
@@ -496,8 +494,6 @@ template 'update' => sub {
 
         show('./edit_item', $update);
         show('./edit_item_controls', $record, $update);
-
-        hr {};
     }
 };
 
@@ -657,7 +653,6 @@ template 'sort_header' => sub {
                 outs $argument;
             };
         };
-        hr {};
     };
 };
 
