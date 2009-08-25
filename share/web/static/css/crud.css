@@ -30,6 +30,10 @@
     background: #DDFFFF;
 }
 
+.crud-list {
+    display: table-row-group;
+}
+
 .crud-create {
 }
 
