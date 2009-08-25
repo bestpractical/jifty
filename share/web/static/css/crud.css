@@ -78,3 +78,17 @@
     font-family : sans-serif;
 }
 
+.paging-nav {
+    font-size: 0.8em;
+}
+
+.paging-nav a,
+.paging-nav a:active,
+.paging-nav a:hover,
+.paging-nav a:visited {
+    color: #0000FF;
+}
+
+.paging-prev, .paging-next {
+    font-size: 0.8em;
+}
