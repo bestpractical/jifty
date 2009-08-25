@@ -325,7 +325,10 @@ sub view_field {
     my $self = shift;
     my %args = @_;
 
-    render_param($args{action} => $args{field}, render_mode => 'read');
+    my $action = delete $args{action};
+    my $field  = delete $args{field};
+
+    render_param($action => $field, render_mode => 'read', %args);
 }
 
 =head2 create_field action => $action_object, field => $field_name
@@ -338,7 +341,10 @@ sub create_field {
     my $self = shift;
     my %args = @_;
 
-    render_param($args{action}, $args{field});
+    my $action = delete $args{action};
+    my $field  = delete $args{field};
+
+    render_param($action => $field, %args);
 }
 
 =head2 edit_field action => $action_object, field => $field_name
@@ -351,7 +357,10 @@ sub edit_field {
     my $self = shift;
     my %args = @_;
 
-    render_param($args{action}, $args{field});
+    my $action = delete $args{action};
+    my $field  = delete $args{field};
+
+    render_param($action => $field, %args);
 }
 
 =head2 page_title
