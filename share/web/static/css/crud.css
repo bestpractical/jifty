@@ -10,10 +10,16 @@
 .crud-paging {
 }
 
-.crud-column-headers {
+.crud-table {
+    display: table;
 }
 
-.crud-list {
+.crud-column-headers {
+    display: table-header-group;
+}
+
+.crud-column-header, .crud-field {
+    display: table-cell;
 }
 
 .crud-list .even {
@@ -28,6 +34,7 @@
 }
 
 .crud-item-view {
+    display: table-row;
 }
 
 .field {

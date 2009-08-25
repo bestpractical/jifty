@@ -445,7 +445,7 @@ template 'view' => sub :CRUDView {
         { class is 'crud-item-view' };
         my @fields = $self->display_columns;
         for my $field (@fields) {
-            div { { class is 'view-argument-'.$field};
+            div { { class is 'crud-field view-argument-'.$field};
                 $self->render_field(
                     mode   => 'view',
                     action => $update,
@@ -577,8 +577,13 @@ template 'list' => sub {
         {class is 'crud-ui crud-'.$self->object_type };
         show( './search_region');
         show( './paging_top',    $collection, $page );
-        show( './sort_header',   $item_path, $sort_by, $order );
-        show( './list_items',    $collection, $item_path );
+
+        div {
+            { class is 'crud-table' };
+            show( './sort_header',   $item_path, $sort_by, $order );
+            show( './list_items',    $collection, $item_path );
+        };
+
         show( './paging_bottom', $collection, $page );
         show( './new_item_region');
     };
@@ -640,28 +645,31 @@ template 'sort_header' => sub {
     div {
         { class is "crud-column-headers" };
         for my $argument ($self->display_columns) {
-            my $css_class = ($sort_by && !$order && $sort_by eq $argument)?'up_select':'up';
-            span {
-                { class is $css_class };
-                hyperlink(
-                    label => _("asc"),
-                    onclick =>
-                        { args => { sort_by => $argument, order => undef } },
-                );
-            };
-            $css_class = ($sort_by && $order && $sort_by eq $argument)?'down_select':'down' ;
-            span {
-                { class is $css_class };
-                hyperlink(
-                    label => _("desc"),
-                    onclick =>
-                        { args => { sort_by => $argument, order => 'D' } },
-                );
-            };
-            span{
-                {class is "field"};
-                outs $argument;
-            };
+            div {
+                { class is 'crud-column-header' };
+                my $css_class = ($sort_by && !$order && $sort_by eq $argument)?'up_select':'up';
+                span {
+                    { class is $css_class };
+                    hyperlink(
+                        label => _("asc"),
+                        onclick =>
+                            { args => { sort_by => $argument, order => undef } },
+                    );
+                };
+                $css_class = ($sort_by && $order && $sort_by eq $argument)?'down_select':'down' ;
+                span {
+                    { class is $css_class };
+                    hyperlink(
+                        label => _("desc"),
+                        onclick =>
+                            { args => { sort_by => $argument, order => 'D' } },
+                    );
+                };
+                span{
+                    {class is "field"};
+                    outs $argument;
+                };
+            }
         };
     };
 };
