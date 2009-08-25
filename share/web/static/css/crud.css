@@ -89,6 +89,10 @@
     color: #0000FF;
 }
 
+.paging-nav .current {
+    font-weight: bold;
+}
+
 .paging-prev, .paging-next {
     font-size: 0.8em;
 }
