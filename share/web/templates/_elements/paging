@@ -5,8 +5,8 @@ $per_page => 15
 $argument => 'page'
 </%args>
 % if ($collection->count != 0) {
-<div class="page-nav">
-Page <span class="page-numbers">
+<div class="paging-nav">
+Page <span class="paging-numbers">
 % my $last = $collection->pager->last_page;
 
 % my $last_num = 0;
@@ -16,16 +16,16 @@ Page <span class="page-numbers">
 % if ( ($goto_page - $last_num) > 1) { 
 &hellip;
 % } 
-<span class="page-number <%$goto_page == $page ? 'current' : ''%>"><% Jifty->web->link( label => $goto_page, onclick => { args => { $argument => $goto_page } } ) %></span>
+<span class="paging-number <%$goto_page == $page ? 'current' : ''%>"><% Jifty->web->link( label => $goto_page, onclick => { args => { $argument => $goto_page } } ) %></span>
 % $last_num = $goto_page;
 % }
 
 % if ($collection->pager->previous_page) {
-<span class="prev-page"><% Jifty->web->link( label => "Back", class => "prev", onclick => { args => { $argument => $collection->pager->previous_page } } ) %></span>
+<span class="paging-prev"><% Jifty->web->link( label => "Back", class => "prev", onclick => { args => { $argument => $collection->pager->previous_page } } ) %></span>
 % }
 
 % if ($collection->pager->next_page) {
-<span class="next-page"><% Jifty->web->link( label => "Next", class => "next", onclick => { args => { $argument => $collection->pager->next_page } } ) %></span>
+<span class="paging-next"><% Jifty->web->link( label => "Next", class => "next", onclick => { args => { $argument => $collection->pager->next_page } } ) %></span>
 % }
 </span>
 </div>
