@@ -16,6 +16,14 @@
 .crud-list {
 }
 
+.crud-list .even {
+    background: #FFFFFF;
+}
+
+.crud-list .odd {
+    background: #DDFFFF;
+}
+
 .crud-create {
 }
 

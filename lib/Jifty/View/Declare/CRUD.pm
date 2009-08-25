@@ -567,7 +567,7 @@ template 'list' => sub {
         {class is 'crud-ui crud-'.$self->object_type };
         show( './search_region');
         show( './paging_top',    $collection, $page );
-        show( './sort_header', $item_path, $sort_by, $order );
+        show( './sort_header',   $item_path, $sort_by, $order );
         show( './list_items',    $collection, $item_path );
         show( './paging_bottom', $collection, $page );
         show( './new_item_region');
@@ -804,12 +804,20 @@ private template 'list_items' => sub {
         div {
             { class is 'list' };
             while ( my $item = $collection->next ) {
-                render_region(
-                    name     => 'item-' . $item->id,
-                    path     => $item_path,
-                    defaults => { id => $item->id, object_type => $object_type }
-                );
-                $callback->(++$i) if $callback;
+                div {
+                    class is ($i++ % 2 ? 'odd' : 'even');
+
+                    render_region(
+                        name     => 'item-' . $item->id,
+                        path     => $item_path,
+                        defaults => {
+                            id => $item->id,
+                            object_type => $object_type,
+                        }
+                    );
+
+                    $callback->($i) if $callback;
+                }
             }
         };
     };
