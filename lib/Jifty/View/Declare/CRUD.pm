@@ -434,7 +434,7 @@ template 'view' => sub :CRUDView {
 
     div {
         { class is 'crud-item-view' };
-        my @fields = $self->display_columns($update);
+        my @fields = $self->display_columns;
         for my $field (@fields) {
             div { { class is 'view-argument-'.$field};
                 $self->render_field(
