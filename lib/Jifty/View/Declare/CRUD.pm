@@ -834,16 +834,12 @@ Paging for your list, rendered at the top of the list
 private template 'paging_top' => sub {
     my $self       = shift;
     my $collection = shift;
-    my $page       = shift || 1;
+    my $page       = shift;
 
-    if ( $collection->pager->last_page > 1 ) {
-        div {
-            { class is 'crud-pages page-count' };
-            outs(
-                _( "Page %1 of %2", $page, $collection->pager->last_page ) );
-            }
-    }
-
+    render_mason '/_elements/paging' => {
+        collection => $collection,
+        page       => $page,
+    };
 };
 
 =head2 paging_bottom $collection $page_number
@@ -856,29 +852,10 @@ private template paging_bottom => sub {
     my $self       = shift;
     my $collection = shift;
     my $page       = shift;
-    div {
-        { class is 'crud-paging paging' };
-        if ( $collection->pager->previous_page ) {
-            span {
-                { class is 'crud-prev-page' };
-                hyperlink(
-                    label   => _("Previous Page"),
-                    onclick => {
-                        args => { page => $collection->pager->previous_page }
-                    }
-                );
-            }
-        }
-        if ( $collection->pager->next_page ) {
-            span {
-                { class is 'crud-next-page' };
-                hyperlink(
-                    label   => _("Next Page"),
-                    onclick =>
-                        { args => { page => $collection->pager->next_page } }
-                );
-            }
-        }
+
+    render_mason '/_elements/paging' => {
+        collection => $collection,
+        page       => $page,
     };
 };
 
