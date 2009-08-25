@@ -441,21 +441,18 @@ template 'view' => sub :CRUDView {
         moniker => "update-" . Jifty->web->serial,
     );
 
-    div {
-        { class is 'crud-item-view' };
-        my @fields = $self->display_columns;
-        for my $field (@fields) {
-            div { { class is 'crud-field view-argument-'.$field};
-                $self->render_field(
-                    mode   => 'view',
-                    action => $update,
-                    field  => $field,
-                    label  => '',
-                );
-            };
-        }
-        show ('./view_item_controls', $record, $update); 
-    };
+    my @fields = $self->display_columns;
+    for my $field (@fields) {
+        div { { class is 'crud-field view-argument-'.$field};
+            $self->render_field(
+                mode   => 'view',
+                action => $update,
+                field  => $field,
+                label  => '',
+            );
+        };
+    }
+    show ('./view_item_controls', $record, $update);
 };
 
 =head2 private template view_item_controls
@@ -670,7 +667,7 @@ template 'sort_header' => sub {
                     outs $argument;
                 };
             }
-        };
+        }
     };
 };
 
@@ -819,25 +816,20 @@ private template 'list_items' => sub {
         }
 
         my $i = 0;
-        div {
-            { class is 'list' };
-            while ( my $item = $collection->next ) {
-                div {
-                    class is ($i++ % 2 ? 'odd' : 'even');
+        while ( my $item = $collection->next ) {
 
-                    render_region(
-                        name     => 'item-' . $item->id,
-                        path     => $item_path,
-                        defaults => {
-                            id => $item->id,
-                            object_type => $object_type,
-                        }
-                    );
-
-                    $callback->($i) if $callback;
+            render_region(
+                name     => 'item-' . $item->id,
+                path     => $item_path,
+                class    => 'crud-item ' . ($i++ % 2 ? 'odd' : 'even'),
+                defaults => {
+                    id => $item->id,
+                    object_type => $object_type,
                 }
-            }
-        };
+            );
+
+            $callback->($i) if $callback;
+        }
     };
 };
 
