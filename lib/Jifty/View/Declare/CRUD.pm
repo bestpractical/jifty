@@ -450,6 +450,7 @@ template 'view' => sub :CRUDView {
                     mode   => 'view',
                     action => $update,
                     field  => $field,
+                    label  => '',
                 );
             };
         }
