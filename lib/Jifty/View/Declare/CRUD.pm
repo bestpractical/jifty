@@ -437,22 +437,14 @@ template 'view' => sub :CRUDView {
     my $record = $self->_get_record( get('id') );
 
     return unless $record->id;
-    my $update = $record->as_update_action(
-        moniker => "update-" . Jifty->web->serial,
-    );
 
     my @fields = $self->display_columns;
     for my $field (@fields) {
         div { { class is 'crud-field view-argument-'.$field};
-            $self->render_field(
-                mode   => 'view',
-                action => $update,
-                field  => $field,
-                label  => '',
-            );
+            span { $record->$field };
         };
     }
-    show ('./view_item_controls', $record, $update);
+    show ('./view_item_controls', $record);
 };
 
 =head2 private template view_item_controls
