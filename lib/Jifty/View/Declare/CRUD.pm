@@ -631,8 +631,8 @@ template 'sort_header' => sub {
     my $order = shift;
     my $record_class = $self->record_class;
 
-    div { 
-        { class is "crud-column-headers jifty_admin_header" };
+    div {
+        { class is "crud-column-headers" };
         for my $argument ($self->display_columns) {
             my $css_class = ($sort_by && !$order && $sort_by eq $argument)?'up_select':'up';
             span {
