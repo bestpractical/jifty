@@ -20,6 +20,8 @@
 
 .crud-column-header, .crud-field {
     display: table-cell;
+    padding-left: .2em;
+    padding-right: .2em;
 }
 
 .crud-list .even {
