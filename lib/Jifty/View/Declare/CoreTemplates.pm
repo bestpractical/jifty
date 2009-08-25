@@ -27,6 +27,8 @@ This library contains templates that Jifty can't function without:
 
 =item YAML and XML webservice endpoints for core jifty functionality
 
+=back
+
 =cut
 
 =for later 
