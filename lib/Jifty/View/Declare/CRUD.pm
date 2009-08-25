@@ -796,26 +796,28 @@ private template 'list_items' => sub {
     $collection->_do_search(); # we're going to need the results. 
     # XXX TODO, should use a real API to force the search
 
-    if ( $collection->count == 0 ) {
-        render_region(
-            name => 'no_items_found',
-            path => $self->fragment_for('no_items_found'),
-        );
-    }
-
-    my $i = 0;
     div {
-        { class is 'list' };
-        while ( my $item = $collection->next ) {
+        { class is 'crud-list' };
+        if ( $collection->count == 0 ) {
             render_region(
-                name     => 'item-' . $item->id,
-                path     => $item_path,
-                defaults => { id => $item->id, object_type => $object_type }
+                name => 'no_items_found',
+                path => $self->fragment_for('no_items_found'),
             );
-            $callback->(++$i) if $callback;
         }
-    };
 
+        my $i = 0;
+        div {
+            { class is 'list' };
+            while ( my $item = $collection->next ) {
+                render_region(
+                    name     => 'item-' . $item->id,
+                    path     => $item_path,
+                    defaults => { id => $item->id, object_type => $object_type }
+                );
+                $callback->(++$i) if $callback;
+            }
+        };
+    };
 };
 
 =head2 paging_top $collection $page_number
@@ -850,10 +852,10 @@ private template paging_bottom => sub {
     my $collection = shift;
     my $page       = shift;
     div {
-        { class is 'paging' };
+        { class is 'crud-paging paging' };
         if ( $collection->pager->previous_page ) {
             span {
-                { class is 'prev-page' };
+                { class is 'crud-prev-page' };
                 hyperlink(
                     label   => _("Previous Page"),
                     onclick => {
@@ -864,7 +866,7 @@ private template paging_bottom => sub {
         }
         if ( $collection->pager->next_page ) {
             span {
-                { class is 'next-page' };
+                { class is 'crud-next-page' };
                 hyperlink(
                     label   => _("Next Page"),
                     onclick =>
@@ -885,6 +887,7 @@ Renders the action $Action, handing it the array ref returned by L</display_colu
 private template 'create_item' => sub {
     my $self = shift;
     my $action = shift;
+
     for my $field ($self->create_columns($action)) {
         div { 
             { class is 'create-argument-'.$field};
@@ -932,7 +935,7 @@ template 'new_item' => sub {
     my $create = $record_class->as_create_action;
 
     div {
-        { class is 'crud create item inline' };
+        { class is 'crud-create crud create item inline' };
         show('./create_item', $create);
         show('./new_item_controls', $create);
     }
