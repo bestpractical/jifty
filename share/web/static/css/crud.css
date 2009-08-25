@@ -19,6 +19,9 @@
 .crud-create {
 }
 
+.crud-item-view {
+}
+
 .field {
     float: left;
     margin: 0.15em 0.5em 0.15em 0.15em;
@@ -32,7 +35,6 @@
 }
 
 .up, .up_select {
-    background: url(/static/images/css/bullet_arrow_up.png) no-repeat bottom center;
     background: url(/static/images/css/bullet_arrow_up.png) no-repeat bottom center;
 }
 

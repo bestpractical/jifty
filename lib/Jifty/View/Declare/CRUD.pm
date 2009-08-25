@@ -433,7 +433,7 @@ template 'view' => sub :CRUDView {
     );
 
     div {
-        { class is 'crud read item inline' };
+        { class is 'crud-item-view' };
         my @fields = $self->display_columns($update);
         for my $field (@fields) {
             div { { class is 'view-argument-'.$field};
@@ -862,7 +862,7 @@ private template paging_bottom => sub {
                         args => { page => $collection->pager->previous_page }
                     }
                 );
-                }
+            }
         }
         if ( $collection->pager->next_page ) {
             span {
@@ -872,7 +872,7 @@ private template paging_bottom => sub {
                     onclick =>
                         { args => { page => $collection->pager->next_page } }
                 );
-                }
+            }
         }
     };
 };
