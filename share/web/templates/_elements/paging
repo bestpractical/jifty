@@ -9,6 +9,9 @@ return if $collection->count == 0;
 
 $page ||= 1;
 my $last = $collection->pager->last_page;
+my $prev = $collection->pager->previous_page;
+my $next = $collection->pager->next_page;
+
 </%init>
 
 <div class="paging-nav">
@@ -34,28 +37,28 @@ Page <span class="paging-numbers">
 % $last_num = $goto_page;
 % }
 
-% if ($collection->pager->previous_page) {
+% if ($prev) {
 <span class="paging-prev">
     <% Jifty->web->link(
         label => "Back",
         class => "prev",
         onclick => {
             args => {
-                $argument => $collection->pager->previous_page,
+                $argument => $prev,
             },
         },
     ) %>
 </span>
 % }
 
-% if ($collection->pager->next_page) {
+% if ($next) {
 <span class="paging-next">
     <% Jifty->web->link(
         label => "Next",
         class => "next",
         onclick => {
             args => {
-                $argument => $collection->pager->next_page,
+                $argument => $next,
             },
         },
     ) %>
