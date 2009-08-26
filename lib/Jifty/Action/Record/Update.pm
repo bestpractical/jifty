@@ -46,11 +46,9 @@ sub arguments {
     for my $pk (@{ $self->record->_primary_keys }) {
         $arguments->{$pk}{'constructor'} = 1;
         $arguments->{$pk}{'mandatory'} = 1;
-        # XXX TODO IS THERE A BETTER WAY TO NOT RENDER AN ITEM IN arguments
-        $arguments->{$pk}{'render_as'} = 'Unrendered'; 
-        # primary key fields should always be hidden fields
+        $arguments->{$pk}{'render_mode'} = 'read';
     }
-    
+
     if ( $self->can('PARAMS') ) {
         use Jifty::Param::Schema;
         return Jifty::Param::Schema::merge_params(
