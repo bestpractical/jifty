@@ -521,6 +521,8 @@ private template edit_item_controls => sub {
     my $delete = $record->as_delete_action(
         moniker => 'delete-' . Jifty->web->serial,
     );
+    my $view_region = $self->object_type.'-list-item-'.$record->id;
+
     div {
         { class is 'crud editlink' };
         hyperlink(
@@ -528,6 +530,7 @@ private template edit_item_controls => sub {
             onclick => [
                 { submit => $update },
                 "jQuery(document).trigger('close.facebox');",
+                { refresh => $view_region },
             ],
         );
         if ( $record->current_user_can('delete') ) {
@@ -539,8 +542,12 @@ private template edit_item_controls => sub {
                         confirm => _('Really delete?'),
                     },
                     "jQuery(document).trigger('close.facebox');",
+                    {
+                        region => $view_region,
+                        replace_with => '/__jifty/empty',
+                    },
                 ],
-                class => 'delete'
+                class => 'delete',
             );
         }
     };
