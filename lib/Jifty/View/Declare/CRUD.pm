@@ -527,19 +527,19 @@ private template edit_item_controls => sub {
             label   => _("Save"),
             onclick => [
                 { submit => $update },
-                {   replace_with => $self->fragment_for('view'),
-                    args => { object_type => $object_type, id => $id }
-                }
-            ]
+                "jQuery(document).trigger('close.facebox');",
+            ],
         );
         if ( $record->current_user_can('delete') ) {
             $delete->button(
                 label   => _('Delete'),
-                onclick => {
-                    submit  => $delete,
-                    confirm => _('Really delete?'),
-                    replace_with => '/__jifty/empty',
-                },
+                onclick => [
+                    {
+                        submit  => $delete,
+                        confirm => _('Really delete?'),
+                    },
+                    "jQuery(document).trigger('close.facebox');",
+                ],
                 class => 'delete'
             );
         }
