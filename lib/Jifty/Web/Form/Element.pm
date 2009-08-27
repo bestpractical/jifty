@@ -39,6 +39,10 @@ Add the given C<PATH> as a new fragment, just after the start of the
 CSS selector given by L</element>, which defaults to the start of the
 current region.
 
+=item popout => PATH
+
+Displays the given C<PATH> as a new fragment in a lightbox-style popout.
+
 =item replace_with => PATH
 
 Replaces the region specified by the C<region> parameter (which
@@ -456,6 +460,9 @@ sub _javascript_attrs_structure {
                 $hook->{element} ||= "#region-".$hook->{region};
             } elsif (exists $hook->{prepend}) {
                 @args{qw/mode path/} = ('Top', $hook->{prepend});
+                $hook->{element} ||= "#region-".$hook->{region};
+            } elsif (exists $hook->{popout}) {
+                @args{qw/mode path/} = ('Popout', $hook->{popout});
                 $hook->{element} ||= "#region-".$hook->{region};
             } elsif (exists $hook->{replace_with}) {
                 if (defined $hook->{replace_with}) {

@@ -1031,7 +1031,9 @@ var apply_fragment_updates = function(fragment, f) {
                 textContent = textContentWithoutScript + scripts;
 
                 // Once we find it, do the insertion
-                if (f['mode'] && (f['mode'] != 'Replace')) {
+                if (f['mode'] == 'Popout') {
+                    jQuery.facebox(textContent);
+                } else if (f['mode'] && (f['mode'] != 'Replace')) {
                     var method = ({
                         After: 'after',
                         Before: 'before',
