@@ -470,8 +470,8 @@ private template view_item_controls  => sub {
             label   => _("Edit"),
             class   => "editlink",
             onclick => {
-                replace_with => $self->fragment_for('update'),
-                args         => { id => $record->id }
+                popout => $self->fragment_for('update'),
+                args   => { id => $record->id },
             },
         );
     }
