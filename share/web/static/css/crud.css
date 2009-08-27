@@ -24,13 +24,21 @@
     padding-right: .2em;
 }
 
-.crud-list .even {
+.crud-list {
     background: #FFFFFF;
 }
 
-.crud-list .odd {
+/* this is the fallback for when you do not have css 3 */
+.crud-list div.odd {
     background: #DDFFFF;
 }
+
+/* this is more robust as it permits adding/removing rows */
+/* XXX: it's not ready yet because there are intermittent script tags only
+ * in the original CRUD, not in region updates. argh */
+/*.crud-list > div:nth-child(odd) {
+    background: #DDFFFF;
+}*/
 
 .crud-list {
     display: table-row-group;
