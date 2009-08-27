@@ -532,15 +532,6 @@ private template edit_item_controls => sub {
                 }
             ]
         );
-        hyperlink(
-            label   => _("Cancel"),
-            onclick => {
-                replace_with => $self->fragment_for('view'),
-                args         => { object_type => $object_type, id => $id }
-            },
-            as_button => 1,
-            class     => 'cancel'
-        );
         if ( $record->current_user_can('delete') ) {
             $delete->button(
                 label   => _('Delete'),
