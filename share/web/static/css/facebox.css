@@ -2,23 +2,23 @@
  * changes before upgrading */
 
 #facebox .b {
-  background:url(/image/facebox/b.png);
+  background:url(/images/facebox/b.png);
 }
 
 #facebox .tl {
-  background:url(/image/facebox/tl.png);
+  background:url(/images/facebox/tl.png);
 }
 
 #facebox .tr {
-  background:url(/image/facebox/tr.png);
+  background:url(/images/facebox/tr.png);
 }
 
 #facebox .bl {
-  background:url(/image/facebox/bl.png);
+  background:url(/images/facebox/bl.png);
 }
 
 #facebox .br {
-  background:url(/image/facebox/br.png);
+  background:url(/images/facebox/br.png);
 }
 
 #facebox {

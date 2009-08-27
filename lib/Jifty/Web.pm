@@ -44,6 +44,7 @@ __PACKAGE__->javascript_libs([qw(
     jifty_interface.js
     jquery_noconflict.js
     jquery.jgrowl.js
+    facebox.js
     behaviour.js
     formatDate.js
     jifty.js
