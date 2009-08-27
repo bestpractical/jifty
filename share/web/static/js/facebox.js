@@ -1,3 +1,6 @@
+/* This file has been changed for Jifty. Please see the commit log for its
+ * changes before upgrading */
+
 /*
  * Facebox (for jQuery)
  * version: 1.2 (05/05/2008)
@@ -79,8 +82,8 @@
     settings: {
       opacity      : 0,
       overlay      : true,
-      loadingImage : '/facebox/loading.gif',
-      closeImage   : '/facebox/closelabel.gif',
+      loadingImage : '/image/facebox/loading.gif',
+      closeImage   : '/image/facebox/closelabel.gif',
       imageTypes   : [ 'png', 'jpg', 'jpeg', 'gif' ],
       faceboxHtml  : '\
     <div id="facebox" style="display:none;"> \
@@ -97,7 +100,7 @@
                 </div> \
                 <div class="footer"> \
                   <a href="#" class="close"> \
-                    <img src="/facebox/closelabel.gif" title="close" class="close_image" /> \
+                    <img src="/image/facebox/closelabel.gif" title="close" class="close_image" /> \
                   </a> \
                 </div> \
               </td> \
