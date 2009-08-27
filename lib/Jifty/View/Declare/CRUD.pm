@@ -521,7 +521,7 @@ private template edit_item_controls => sub {
     my $delete = $record->as_delete_action(
         moniker => 'delete-' . Jifty->web->serial,
     );
-    my $view_region = $self->object_type.'-list-item-'.$record->id;
+    my $view_region = Jifty->web->qualified_parent_region;
 
     div {
         { class is 'crud editlink' };
