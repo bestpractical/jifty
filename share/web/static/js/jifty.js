@@ -773,6 +773,11 @@ Behaviour.register({
             jQuery(e).addClass("focused").focus();
         }
     },
+    // Hide with javascript (since the user may have even partially-working CSS
+    // but no JS)
+    ".jshide": function(e) {
+        jQuery(e).hide();
+    },
     /* Use jQuery for full-page-refresh notifications, as well */
     '#messages.jifty.results.messages, #errors.jifty.results.messages, .popup_message, .popup_error': function(e) {
         jQuery(e).hide();
