@@ -835,7 +835,7 @@ Returns the available values for this field.
 
 sub available_values {
     my $self = shift;
-    return @{ $self->action->available_values($self->name) };
+    return @{ $self->action->available_values($self->name) || [] };
 }
 
 =for private
