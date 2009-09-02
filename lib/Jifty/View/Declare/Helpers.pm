@@ -247,9 +247,10 @@ sub render_action(@) {
     }
 }
 
-=head2 render_param $action @args
+=head2 render_param $action, $param, %args
 
-Takes an action and one or more arguments to pass to L<< Jifty::Action->form_field >>.
+Takes an action and one or more arguments to pass to
+L<< Jifty::Action->form_field >>.
 
 =cut
 
