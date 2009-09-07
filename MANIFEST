@@ -339,6 +339,7 @@ lib/Jifty/Web/Form/Element.pm
 lib/Jifty/Web/Form/Field.pm
 lib/Jifty/Web/Form/Field/Button.pm
 lib/Jifty/Web/Form/Field/Checkbox.pm
+lib/Jifty/Web/Form/Field/Checkboxes.pm
 lib/Jifty/Web/Form/Field/Collection.pm
 lib/Jifty/Web/Form/Field/Combobox.pm
 lib/Jifty/Web/Form/Field/Date.pm

@@ -166,3 +166,11 @@ form div.mandatory .label {
     font-weight: bold;
 }
 
+form ul.checkboxlist {
+    display: block;
+    float: left;
+}
+
+form ul.checkboxlist li.checkboxlistitem{
+    list-style-type: none;
+}
