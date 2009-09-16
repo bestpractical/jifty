@@ -22,6 +22,8 @@ Jifty::Plugin::CompressedCSSandJS - Compression of CSS and javascript files
         jsmin: /path/to/jsmin
         cdn: 'http://yourcdn.for.static.prefix/'
         gzip: 1
+        skipped_js:
+            - complex.js
 
 
 =head1 DESCRIPTION
@@ -41,9 +43,11 @@ The gzip configuration directive, which defaults to enabled, instructs
 Jifty to transparently gzip css and js files as they're served if the client
 indicates it supports that feature.
 
+skipped_js is a list of js that you don't want to compress for some reason.
+
 =cut
 
-__PACKAGE__->mk_accessors(qw(css js jsmin cdn gzip_enabled));
+__PACKAGE__->mk_accessors(qw(css js jsmin cdn gzip_enabled skipped_js));
 
 =head2 init
 
@@ -109,9 +113,18 @@ sub _include_javascript {
     my $self = shift;
 
     $self->_generate_javascript;
-    Jifty->web->out( qq[<script type="text/javascript" src="@{[ $self->cdn ]}/__jifty/js/]
-            . Jifty::CAS->key('ccjs', 'js-all')
-            . qq[.js"></script>] );
+    Jifty->web->out(
+        qq[<script type="text/javascript" src="@{[ $self->cdn ]}/__jifty/js/]
+          . Jifty::CAS->key( 'ccjs', 'js-all' )
+          . qq[.js"></script>] );
+
+    my $skipped_js = $self->skipped_js;
+    if ( $self->skipped_js ) {
+        for my $file ( @{ $self->skipped_js } ) {
+            Jifty->web->out(
+                qq{<script type="text/javascript" src="/static/js/$file" /> });
+        }
+    }
     return 0;
 }
 
@@ -170,6 +183,7 @@ sub _generate_javascript {
         my $js = "";
 
         for my $file ( @{ Jifty::Web->javascript_libs } ) {
+            next if $self->_js_is_skipped($file);
             my $include = $static_handler->file_path( File::Spec->catdir( 'js', $file ) );
 
             if ( defined $include ) {
@@ -252,6 +266,14 @@ sub _serve_cas_object {
         $self->log->debug("Sending squished $name");
         print $obj->content;
     }
+}
+
+sub _js_is_skipped {
+    my $self       = shift;
+    my $file       = shift;
+    my $skipped_js = $self->skipped_js;
+    return unless $self->skipped_js;
+    return grep { $file eq $_ } @{ $self->skipped_js };
 }
 
 
