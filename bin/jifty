@@ -1,16 +1,39 @@
 #!/usr/bin/env perl
 use warnings;
 use strict;
-use UNIVERSAL::require;
 
 BEGIN {
-    Jifty::Util->require or die $UNIVERSAL::require::ERROR;
-    my $root = Jifty::Util->app_root(quiet => 1);
-    unshift @INC, "$root/lib" if ($root);
+
+    # `use Jifty::Everything' is time-consuming,
+    # when people just want to read the help message, waiting sucks.
+    # on my machine, this is 4.5x faster or so, from 0.7s to 0.15s
+    require Jifty::Script;
+    if (
+        @ARGV == 0
+        || ( $ARGV[0] eq 'help' )
+        && (
+            @ARGV == 1 || grep { lc $ARGV[1] eq lc $_ } @Jifty::Script::CORE_CMDS,
+            @Jifty::Script::CORE_MAN,
+        )
+      )
+    {
+
+   # only_core is to tell Jifty::Script not to use Jifty::Everything to find all
+   # the cmds
+        Jifty::Script->import( only_core => 1 );
+    }
+    else {
+        no warnings 'once';
+        require UNIVERSAL::require;
+        Jifty::Util->require or die $UNIVERSAL::require::ERROR;
+        my $root = Jifty::Util->app_root( quiet => 1 );
+        unshift @INC, "$root/lib" if ($root);
+
+        require Jifty;
+        Jifty::Script->import;
+    }
 }
 
-use Jifty;
-use Jifty::Script;
 
 local $SIG{INT} = sub { warn "Stopped\n"; exit; };
 Jifty::Script->dispatch();

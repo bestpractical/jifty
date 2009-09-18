@@ -2,9 +2,20 @@ package Jifty::Script;
 use App::CLI;
 use base qw/App::CLI App::CLI::Command Jifty::Object/;
 
-use Jifty::Everything;
-Jifty::Everything->plugin_commands;
 use Pod::Usage;
+
+our @CORE_CMDS = qw/action adopt app env fastcgi help modperl2 model
+  plugin po schema script server/;
+our @CORE_MAN = qw/
+  AccessControl         Glossary              Tutorial
+  AccessControl_zhtw    JavaScript            TutorialRest
+  Actions               JavaScript_zhtw       Tutorial_de
+  Actions_zhtw          Models                Tutorial_ja
+  Continuations         ObjectModel           Tutorial_zhtw
+  Cookbook              PageRegions           Upgrading
+  Deploying             Preload               UsingCSSandJS
+  Deploying_zhtw        RequestHandling       jQueryMigrationGuide
+  FAQ                   Style                /;
 
 =head1 NAME
 
@@ -103,6 +114,15 @@ sub print_help {
         %opts,
         -sections => '!METHODS',
     ) if $self->{man};
+}
+
+sub import {
+    my $self = shift;
+    my %args = @_;
+    unless ( $args{only_core} ) {
+        require Jifty::Everything;
+        Jifty::Everything->plugin_commands;
+    }
 }
 
 1;

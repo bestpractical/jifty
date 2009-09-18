@@ -3,6 +3,37 @@ use strict;
 use base qw( App::CLI::Command::Help Jifty::Script );
 use File::Find qw(find);
 
+sub run {
+    my $self   = shift;
+    my @topics = @_;
+
+    push @topics, 'commands' unless (@topics);
+
+    foreach my $topic (@topics) {
+        if ( $topic eq 'commands' ) {
+            $self->brief_usage($_) for $self->app->files;
+        }
+        elsif ( grep { $topic eq $_ } @Jifty::Script::CORE_CMDS ) {
+            # to find usage of a CMD, App::CLI will require the CMD.pm first
+            # that's too heavy for us because some CMD.pm `use Jifty', 
+            # which `use Jifty::Everything'!
+            my $file = $INC{'Jifty/Script/Help.pm'};
+            $file =~ s/Help(?=\.pm$)/ucfirst $topic/e;
+
+            open my $fh, '<:utf8', $file or die $!;
+            require Pod::Simple::Text;
+            my $parser = Pod::Simple::Text->new;
+            my $buf;
+            $parser->output_string( \$buf );
+            $parser->parse_file($fh);
+            print $self->loc_text($buf);
+        }
+        else {
+            $self->SUPER::run($topic);
+        }
+    }
+}
+
 sub help_base {
     return "Jifty::Manual";
 }
