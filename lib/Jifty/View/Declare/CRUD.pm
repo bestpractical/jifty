@@ -234,7 +234,7 @@ sub fragment_base_path {
 
 =head2 _get_record $id
 
-Given an $id, returns a record object for the CRUD view's model class.
+Given an C<$id>, returns a record object for the CRUD view's model class.
 
 =cut
 
