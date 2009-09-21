@@ -166,6 +166,9 @@ sub url {
       $uri->port($port);
     }
 
+    # https is sticky
+    $uri->scheme('https') if $uri->scheme eq 'http' && Jifty->web->is_ssl;
+
     if ( defined $args{'scheme'} ) {
         $uri->scheme( $args{'scheme'} );
     }
