@@ -1094,7 +1094,7 @@ sub _values_for_field {
     my @values = eval { @$vv_orig } or return $vv_orig;
 
     # This is a final return list
-    my $vv = [];
+    my @vv;
 
     # For each value in the *_values list
     for my $v (@values) {
@@ -1121,7 +1121,7 @@ sub _values_for_field {
                 # XXX TODO: wrap this in an eval?
 
                 # Fetch all the record from the given collection and keep'em
-                push @$vv, map {
+                push @vv, map {
                     {
                         display => ( $_->$disp() || '' ),
                         value   => ( $_->$val()  || '' )
@@ -1134,7 +1134,7 @@ sub _values_for_field {
             else {
 
                 # assume it's already display/value
-                push @$vv, $v;
+                push @vv, $v;
             }
         }
 
@@ -1142,11 +1142,11 @@ sub _values_for_field {
         else {
 
             # just a string
-            push @$vv, { display => $v, value => $v };
+            push @vv, { display => $v, value => $v };
         }
     }
 
-    return $vv;
+    return \@vv;
 }
 
 =head2 validation_error ARGUMENT => ERROR TEXT, [OPTIONS]
