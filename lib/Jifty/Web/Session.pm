@@ -4,10 +4,10 @@ use strict;
 package Jifty::Web::Session;
 use base qw/Jifty::Object/;
 use CGI::Cookie ();
-use DateTime ();
-use Storable ();
-$Storable::Deparse = 1;
-$Storable::Eval = 1;
+use DateTime    ();
+use Storable    ();
+$Storable::Deparse    = 1;
+$Storable::Eval       = 1;
 $Storable::forgive_me = 1;
 
 =head1 NAME
@@ -33,12 +33,11 @@ sub new {
     my $class = shift;
 
     my $session_class = Jifty->config->framework('Web')->{'SessionClass'};
-    my $cookie_name   = Jifty->config->framework('Web')->{'SessionCookieName'};
-    if ($session_class and $class ne $session_class) {
-        Jifty::Util->require( $session_class );
+    my $cookie_name = Jifty->config->framework('Web')->{'SessionCookieName'};
+    if ( $session_class and $class ne $session_class ) {
+        Jifty::Util->require($session_class);
         return $session_class->new(@_);
-    }
-    else {
+    } else {
         return bless { _cookie_name => $cookie_name }, $class;
     }
 }
@@ -66,14 +65,13 @@ sub load {
     my $self       = shift;
     my $session_id = shift;
 
-   $session_id ||= $self->_get_session_id_from_client();
+    $session_id ||= $self->_get_session_id_from_client();
 
     my $session = Jifty::Model::Session->new;
     $session->load_by_cols(
         session_id => $session_id,
         key_type   => "session"
-        )
-        if $session_id;
+    ) if $session_id;
 
     $session->create( key_type => "session" ) unless $session->id;
     $self->_session($session);
@@ -93,9 +91,9 @@ sub load_by_kv {
     my $k    = shift;
     my $v    = shift;
 
-    # XXX TODO: we store this data in a storable. so we now want to match on the storable version
-    # It would be so nice if Jifty::DBI could do this for us.
-    my $encoded = Storable::nfreeze(\$v);
+# XXX TODO: we store this data in a storable. so we now want to match on the storable version
+# It would be so nice if Jifty::DBI could do this for us.
+    my $encoded = Storable::nfreeze( \$v );
 
     my $session = Jifty::Model::Session->new;
     $session->load_by_cols(
@@ -112,11 +110,11 @@ sub load_by_kv {
 }
 
 sub _get_session_id_from_client {
-        my $self = shift;
-        my %cookies    = CGI::Cookie->fetch();
-        my $cookie_name = $self->cookie_name;
-        my $session_id
-            = $cookies{$cookie_name} ? $cookies{$cookie_name}->value() : undef;
+    my $self        = shift;
+    my %cookies     = CGI::Cookie->fetch();
+    my $cookie_name = $self->cookie_name;
+    my $session_id
+        = $cookies{$cookie_name} ? $cookies{$cookie_name}->value() : undef;
 }
 
 =head2 unload
@@ -164,14 +162,13 @@ sub get {
 
     return undef unless $self->loaded;
 
-
-        my $setting = Jifty::Model::Session->new;
-        $setting->load_by_cols(
-            session_id => $self->id,
-            key_type   => $key_type,
-            data_key   => $key
-        );
-        return $setting->value;
+    my $setting = Jifty::Model::Session->new;
+    $setting->load_by_cols(
+        session_id => $self->id,
+        key_type   => $key_type,
+        data_key   => $key
+    );
+    return $setting->value;
 
 }
 
@@ -210,7 +207,6 @@ sub set {
             value      => $value
         );
     }
-
 
 }
 
@@ -323,7 +319,7 @@ sub set_cookie {
 
     my $cookie_name = $self->cookie_name;
     my %cookies     = CGI::Cookie->fetch();
-    my $cookie = new CGI::Cookie(
+    my $cookie      = CGI::Cookie->new(
         -name    => $cookie_name,
         -value   => $self->id,
         -expires => $self->expires,
@@ -346,9 +342,9 @@ users, but varies according to the port the server is running on.
 =cut
 
 sub cookie_name {
-    my $self = shift;
+    my $self        = shift;
     my $cookie_name = $self->{'_cookie_name'};
-    my $port = ( $ENV{'SERVER_PORT'} || 'NOPORT' );
+    my $port        = ( $ENV{'SERVER_PORT'} || 'NOPORT' );
     $cookie_name =~ s/\$PORT/$port/g;
     return ($cookie_name);
 }
