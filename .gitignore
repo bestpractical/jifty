@@ -12,7 +12,10 @@ t/*/mason*/
 t/*/t/mailbox*
 var/
 mason*/
+
 *.swp
+\#*#
+.#*
 
 t/TestApp-Plugin-SetupWizard/etc/site_config.yml
 t/TestApp-Plugin-SetupWizard/testapp_plugin_setupwizard*
