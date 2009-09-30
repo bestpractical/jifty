@@ -167,7 +167,7 @@ mylongusername@example.com/update_task/23/until/20050101/bekidrikufryvagygefuba
 into 
 
       email => mylongusername@example.com,
-      token => 'update_task/23'
+      path  => 'update_task/23'
       until => 20050101,
       checksum_provided => bekidrikufryvagygefuba
 
