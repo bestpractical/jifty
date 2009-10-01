@@ -374,6 +374,9 @@ Returns an empty string so it can be included in forms
 
 sub next_page {
     my $self = shift;
+    if (@_ % 2) {
+        Carp::carp("next_page accepts a parameter hash. You probably want to specify url => ...");
+    }
 
     $self->add_action(class => "Jifty::Action::Redirect", moniker => "next_page", arguments => {@_});
     return '';
