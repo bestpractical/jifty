@@ -9,7 +9,7 @@ our @EXPORT = (
     qw(hyperlink tangent redirect new_action
     form_submit form_return form_next_page page content
     wrapper request get set render_param render_hidden
-    render_action render_region render_mason
+    render_action render_region render_mason mason_scomp
     current_user js_handlers),
     @Template::Declare::Tags::EXPORT,
     @Template::Declare::Tags::TagSubs,  # Backward compatibility only
@@ -417,6 +417,19 @@ sub render_mason {
     my $mason = Jifty->handler->view('Jifty::View::Mason::Handler');
     $mason->handle_comp($template, $args);
     return '';
+}
+
+=head3 mason_scomp PATH, ARGS
+
+Executes the Mason template at C<PATH> (a string) with C<ARGS> (a hashref) and
+returns its results as a string.
+
+=cut
+
+sub mason_scomp {
+    my ($template, $args) = @_;
+    my $mason = Jifty->handler->view('Jifty::View::Mason::Handler');
+    return $mason->handle_scomp($template, $args);
 }
 
 1;
