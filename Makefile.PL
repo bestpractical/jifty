@@ -17,6 +17,7 @@ requires('Crypt::CBC');
 requires('Crypt::Rijndael');
 requires('Compress::Zlib');
 requires('CSS::Squish' => 0.07 );
+requires('DBI');
 requires('DBD::SQLite' => 1.11 );
 requires('Data::Page');
 requires('Data::UUID');
@@ -78,7 +79,7 @@ requires('Test::LongString');
 requires('Test::More' => 0.62 ),
 requires('Test::Pod::Coverage'),
 requires('Test::WWW::Mechanize' => 1.04 ),
-requires('Test::WWW::Selenium'),
+requires('Test::WWW::Selenium' => 1.18 ),
 requires('WWW::Mechanize' => 1.51 ),
 requires('UNIVERSAL::require');
 requires('URI' => 1.31);
