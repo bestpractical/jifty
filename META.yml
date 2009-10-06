@@ -58,6 +58,7 @@ requires:
   Crypt::CBC: 0
   Crypt::Rijndael: 0
   DBD::SQLite: 1.11
+  DBI: 0
   Data::Page: 0
   Data::UUID: 0
   Date::Manip: 0
@@ -119,7 +120,7 @@ requires:
   Test::More: 0.62
   Test::Pod::Coverage: 0
   Test::WWW::Mechanize: 1.04
-  Test::WWW::Selenium: 0
+  Test::WWW::Selenium: 1.18
   UNIVERSAL::require: 0
   URI: 1.31
   URI::Escape: 0
