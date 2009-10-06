@@ -201,6 +201,10 @@ component.
 
 A synonym for show
 
+=head2 handle_scomp
+
+Returns a component's output as a string, ignoring its return value.
+
 =cut
 
 sub show {
@@ -229,6 +233,15 @@ sub handle_comp {
 
     my %args = $self->_comp_setup(@_);
     $self->interp->exec($comp, %args);
+}
+
+sub handle_scomp {
+    my $self = shift;
+    my ($comp) = @_;
+
+    my %args = $self->_comp_setup(@_);
+    my $request = $self->interp->make_request(comp => $comp, args => [%args]);
+    return $request->scomp($comp);
 }
 
 =head2 request_args
