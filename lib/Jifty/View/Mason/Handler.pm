@@ -207,7 +207,7 @@ sub show {
     shift->handle_comp(@_);
 }
 
-sub handle_comp {
+sub _comp_setup {
     my ($self, $comp, $args) = @_;
 
     Jifty->web->session->set_cookie;
@@ -220,7 +220,14 @@ sub handle_comp {
     $self->interp->set_global('$jifty_internal_request', 0);
     $self->interp->set_global('$jifty_internal_request', 1) if defined $args;
 
-    my %args = $args ? %$args : $self->request_args($r);
+    return $args ? %$args : $self->request_args($r);
+}
+
+sub handle_comp {
+    my $self = shift;
+    my ($comp) = @_;
+
+    my %args = $self->_comp_setup(@_);
     $self->interp->exec($comp, %args);
 }
 
