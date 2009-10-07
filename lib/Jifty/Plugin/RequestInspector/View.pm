@@ -7,6 +7,8 @@ template '/__jifty/admin/requests' => page {
     title => "Request Inspector"
 }
 content {
+    h2 { "Request Inspector" };
+
     render_region(
         name => 'request_inspector',
         path => '/__jifty/admin/requests/requests',
