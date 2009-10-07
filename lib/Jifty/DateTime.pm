@@ -227,9 +227,15 @@ sub current_user_has_timezone {
 
 =head2 set_current_user_timezone [DEFAULT_TZ]
 
+=head2 set_current_user_time_zone [DEFAULT_TZ]
+
 Set this Jifty::DateTime's timezone to the current user's timezone. If that's
 not available, then use the passed in DEFAULT_TZ (or GMT if not passed in).
 Returns the Jifty::DateTime object itself.
+
+If your subclass changes this method, please override
+C<set_current_user_timezone> not C<set_current_user_time_zone>, since the
+latter is merely an alias for the former.
 
 =cut
 
@@ -241,6 +247,8 @@ sub set_current_user_timezone {
     $self->set_time_zone($tz);
     return $self;
 }
+
+sub set_current_user_time_zone { shift->set_current_user_timezone(@_) }
 
 =head2 new_from_string STRING[, ARGS]
 
