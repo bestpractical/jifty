@@ -80,6 +80,7 @@ requires('Test::More' => 0.62 );
 requires('Test::Pod::Coverage');
 requires('Test::WWW::Mechanize' => 1.04 );
 requires('Test::WWW::Selenium' => 1.18 );
+requires('Text::WikiFormat');
 requires('WWW::Mechanize' => 1.51 );
 requires('UNIVERSAL::require');
 requires('URI' => 1.31);
