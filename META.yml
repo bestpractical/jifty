@@ -121,6 +121,7 @@ requires:
   Test::Pod::Coverage: 0
   Test::WWW::Mechanize: 1.04
   Test::WWW::Selenium: 1.18
+  Text::WikiFormat: 0
   UNIVERSAL::require: 0
   URI: 1.31
   URI::Escape: 0
