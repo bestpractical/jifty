@@ -33,7 +33,7 @@ sub render {
 
 =head2 handler_allowed HANDLER_NAME
 
-Returns 1 if the handler (e.g. onclick) is allowed.  Undef otherwise.
+Handlers are not useful on hidden elements
 
 =cut
 
