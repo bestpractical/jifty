@@ -402,7 +402,6 @@ sub render {
     } elsif ($self->render_mode eq 'read'){ 
         $self->render_value();
         $self->render_preload_javascript();
-        $self->render_hidden_widget();
     }
     $self->render_wrapper_end();
     return ('');
@@ -832,24 +831,6 @@ sub render_canonicalization_notes {
 qq!<span class="canonicalization_note @{[$self->classes]}" id="@{[$self->action->canonicalization_note_div_id($self->name)]}">@{[$self->action->result->field_canonicalization_note( $self->name ) || '']}</span>\n!
     );
     return '';
-}
-
-=head2 render_hidden_widget
-
-Renders a hidden widget so that the field's value is included in the form
-submission.
-
-=cut
-
-sub render_hidden_widget {
-    my $self = shift;
-    my $original_class = ref($self);
-
-    $self->rebless('Hidden');
-    my $widget = $self->render_widget;
-    $self->rebless($original_class);
-
-    return $widget;
 }
 
 =head2 available_values
