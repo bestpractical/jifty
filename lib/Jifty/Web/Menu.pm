@@ -76,7 +76,7 @@ the parent.  This defaults to adding onto the end.
 
 =head2 link
 
-Gets or set a Jifty::Web::Form::Clickable object that represents this
+Gets or set a Jifty::Web::Form::Link object that represents this
 menu item. If you're looking to do complex ajaxy things with menus,
 this is likely the option you want.
 
@@ -471,7 +471,7 @@ sub _render_as_yui_menu_item {
 
 =head2 as_link
 
-Return this menu item as a C<Jifty::Web::Form::Clickable>, either the one
+Return this menu item as a C<Jifty::Web::Form::Link>, either the one
 we were initialized with or a new one made from the C</label> and C</url>
 
 If there's no C</url> and no C</link>, renders just the label.
