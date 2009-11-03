@@ -10,6 +10,7 @@ use Scalar::Util qw(weaken);
 
 __PACKAGE__->mk_accessors(qw(
     label sort_order link target escape_label class render_children_inline
+    raw_html
 ));
 
 =head1 NAME
@@ -57,6 +58,11 @@ to null. This ensures that the reference is weakened.
 
 =cut
 
+=head2 raw_html [STRING]
+
+Sets the content of this menu item to a raw blob of HTML. When 
+asked or output, rather than constructing a link, Jifty will return 
+this raw content. No escaping is done.
 
 sub parent {
     my $self = shift;
@@ -483,7 +489,10 @@ sub as_link {
     # Stringifying $self->link may return '' and output something, so
     # we need to be careful to not stringify it more than once, and to
     # check it for defined-ness, not truth.
-    if ( defined (my $str = $self->link) ) {
+    if  ( my $raw = $self->raw_html) {
+        return $raw;
+    }
+    elsif ( defined (my $str = $self->link) ) {
         return $str;
     } elsif ( $self->url ) {
         return Jifty->web->link( label => _( $self->label ),
