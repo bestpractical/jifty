@@ -85,7 +85,6 @@ requires:
   HTML::Lint: 0
   HTML::Mason: 1.3101
   HTML::Mason::Plugin: 0
-  HTML::Scrubber: 0
   HTTP::Cookies: 0
   HTTP::Date: 0
   HTTP::Server::Simple: 0.35
@@ -122,7 +121,6 @@ requires:
   Test::Pod::Coverage: 0
   Test::WWW::Mechanize: 1.04
   Test::WWW::Selenium: 1.18
-  Text::WikiFormat: 0
   UNIVERSAL::require: 0
   URI: 1.31
   URI::Escape: 0
