@@ -45,7 +45,6 @@ requires('HTML::Entities');
 requires('HTML::Lint');
 requires('HTML::Mason' => 1.3101);           # HTML::Mason::Exceptions HTML::Mason::FakeApache HTML::Mason::MethodMaker HTML::Mason::Request HTML::Mason::Utils
 requires('HTML::Mason::Plugin');
-requires('HTML::Scrubber');
 requires('HTTP::Cookies');
 requires('HTTP::Date');
 requires('HTTP::Server::Simple' => '0.35');  # HTTP::Server::Simple::CGI
@@ -81,7 +80,6 @@ requires('Test::More' => 0.62 );
 requires('Test::Pod::Coverage');
 requires('Test::WWW::Mechanize' => 1.04 );
 requires('Test::WWW::Selenium' => 1.18 );
-requires('Text::WikiFormat');
 requires('WWW::Mechanize' => 1.51 );
 requires('UNIVERSAL::require');
 requires('URI' => 1.31);
