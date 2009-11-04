@@ -56,13 +56,13 @@ Sets or returns the string that the menu item will be displayed as.
 Gets or sets the parent L<Jifty::Web::Menu> of this item; this defaults
 to null. This ensures that the reference is weakened.
 
-=cut
-
 =head2 raw_html [STRING]
 
 Sets the content of this menu item to a raw blob of HTML. When 
 asked or output, rather than constructing a link, Jifty will return 
 this raw content. No escaping is done.
+
+=cut
 
 sub parent {
     my $self = shift;
