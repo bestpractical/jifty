@@ -85,6 +85,7 @@ requires:
   HTML::Lint: 0
   HTML::Mason: 1.3101
   HTML::Mason::Plugin: 0
+  HTML::Scrubber: 0
   HTTP::Cookies: 0
   HTTP::Date: 0
   HTTP::Server::Simple: 0.35
