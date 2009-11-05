@@ -178,18 +178,21 @@ sub setup {
     my $class = shift;
     my $args = shift;
 
+    $args ||= [];
+    my %args = @{$args} % 2 ? (@{$args}, 1) : @{$args};
+
     # Spit out a plan (if we got one) *before* we load modules, in
     # case of compilation errors
-    $class->builder->plan(@{$args})
-      unless $class->builder->has_plan;
+    unless ($class->builder->has_plan) {
+        $class->builder->plan(@{$args})
+            if $args{plan} || $args{skip_all};
+    }
 
     # Require the things we need
     require Jifty::YAML;
     require Jifty::Server;
     require Jifty::Script::Schema;
 
-    $args ||= [];
-    my %args = @{$args} % 2 ? (@{$args}, 1) : @{$args};
     $class->builder->{no_handle} = $args{no_handle};
     $WARNINGS_ARE_FATAL = 1 if $args{strict};
     my $test_config = File::Temp->new( UNLINK => 0 );
@@ -636,7 +639,6 @@ sub _ending {
     if ($Jifty::SERVER && (my $plugin = Jifty->find_plugin("Jifty::Plugin::TestServerWarnings"))) {
         my @warnings = $plugin->decoded_warnings( 'http://localhost:'.$Jifty::SERVER->port );
 
-        my @warningsX = $plugin->stashed_warnings;
         $Test->diag("Uncaught warning: $_") for @warnings;
         if ($WARNINGS_ARE_FATAL && @warnings) {
             $Test->diag('Warnings not accepted in strict mode.');
