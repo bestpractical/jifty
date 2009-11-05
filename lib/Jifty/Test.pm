@@ -14,6 +14,10 @@ use Hash::Merge;
 use Digest::MD5 qw/md5_hex/;
 use Cwd qw/abs_path cwd/;
 
+# this is required here because we want Test::HTTP::Server::Simple's
+# END to be at the very last, later than Jifty::Test's
+use Test::HTTP::Server::Simple;
+
 =head1 NAME
 
 Jifty::Test - Jifty's test module
@@ -168,6 +172,8 @@ And later in your tests, you may do the following:
 
 =cut
 
+my $WARNINGS_ARE_FATAL;
+
 sub setup {
     my $class = shift;
     my $args = shift;
@@ -185,7 +191,7 @@ sub setup {
     $args ||= [];
     my %args = @{$args} % 2 ? (@{$args}, 1) : @{$args};
     $class->builder->{no_handle} = $args{no_handle};
-
+    $WARNINGS_ARE_FATAL = 1 if $args{strict};
     my $test_config = File::Temp->new( UNLINK => 0 );
     Jifty::YAML::DumpFile("$test_config", $class->test_config(Jifty::Config->new, \%args));
     # Invoking bin/jifty and friends will now have the test config ready.
@@ -443,7 +449,6 @@ sub make_server {
         unshift @Jifty::Server::ISA, 'Jifty::TestServer::Apache';
     }
     else {
-        require Test::HTTP::Server::Simple;
         unshift @Jifty::Server::ISA, 'Test::HTTP::Server::Simple';
     }
 
@@ -619,10 +624,6 @@ END { Jifty::Test->_ending }
 sub _ending {
     my $Test = Jifty::Test->builder;
 
-    if (my $plugin = Jifty->find_plugin("Jifty::Plugin::TestServerWarnings")) {
-        warn "Uncaught warning: $_" for $plugin->stashed_warnings;
-    }
-
     # Such a hack -- try to detect if this is a forked child process and don't
     # do cleanup in that case.
     # TODO: note that this check fails if you're forking off multiple
@@ -630,6 +631,18 @@ sub _ending {
     # in the same process
     # XXX TODO - This makes assumptions about Test::Builder internals
     return if $Test->{Original_Pid} != $$;
+
+    my $should_die = 0;
+    if ($Jifty::SERVER && (my $plugin = Jifty->find_plugin("Jifty::Plugin::TestServerWarnings"))) {
+        my @warnings = $plugin->decoded_warnings( 'http://localhost:'.$Jifty::SERVER->port );
+
+        my @warningsX = $plugin->stashed_warnings;
+        $Test->diag("Uncaught warning: $_") for @warnings;
+        if ($WARNINGS_ARE_FATAL && @warnings) {
+            $Test->diag('Warnings not accepted in strict mode.');
+            $should_die = 1;
+        }
+    }
 
     # If all tests passed..
     if (Jifty::Test->is_passing && Jifty::Test->is_done) {
@@ -667,6 +680,7 @@ sub _ending {
 
     # Unlink test file
     unlink $Test->{test_config} if $Test->{test_config};
+    exit -1 if $should_die;
 }
 
 =head1 SEE ALSO
