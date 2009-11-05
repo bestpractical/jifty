@@ -184,8 +184,8 @@ sub setup {
     # Spit out a plan (if we got one) *before* we load modules, in
     # case of compilation errors
     unless ($class->builder->has_plan) {
-        $class->builder->plan(@{$args})
-            if $args{plan} || $args{skip_all};
+        $class->builder->plan(map { $_ => $args{$_ } } qw(tests skip_all))
+            if $args{tests} || $args{skip_all};
     }
 
     # Require the things we need
