@@ -268,6 +268,7 @@ names. This may change in the future.
 sub new_from_string {
     my $class  = shift;
     my $string = shift;
+    return unless $string;
     my %args = (
         time_zone => undef,
         @_,
