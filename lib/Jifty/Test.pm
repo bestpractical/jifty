@@ -418,6 +418,12 @@ sub test_config {
         }
     };
 
+    if ($INC{'Devel/Cover.pm'}) {
+        $defaults->{framework}{DevelMode} = 0;
+        $defaults->{framework}{Web}{MasonConfig}{named_component_subs} = 1;
+        $defaults->{framework}{Web}{DataDir} = Jifty::Util->absolute_path( 'var/mason-cover' );
+    }
+
     Hash::Merge::set_behavior('RIGHT_PRECEDENT');
     return Hash::Merge::merge($defaults, $class->load_test_configs);
 }
