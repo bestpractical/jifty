@@ -127,7 +127,7 @@ sub decoded_warnings {
     my $uri = URI->new_abs( "/__jifty/test_warnings", $base );
     my $text = LWP::Simple::get($uri);
 
-    return @{ Storable::thaw($text) };
+    return @{ Storable::thaw($text) || [] };
 }
 
 1;
