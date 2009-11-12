@@ -662,7 +662,7 @@ template 'sort_header' => sub {
                 };
                 span{
                     {class is "field"};
-                    outs $argument;
+                    outs $record_class->column($argument)->label || $argument;
                 };
             }
         }
