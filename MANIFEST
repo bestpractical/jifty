@@ -191,6 +191,7 @@ lib/Jifty/Manual.pm
 lib/Jifty/Manual/AccessControl.pod
 lib/Jifty/Manual/AccessControl_zhtw.pod
 lib/Jifty/Manual/Actions.pod
+lib/Jifty/Manual/Actions_zhtw.pod
 lib/Jifty/Manual/Continuations.pod
 lib/Jifty/Manual/Cookbook.pod
 lib/Jifty/Manual/Deploying.pod
@@ -198,10 +199,12 @@ lib/Jifty/Manual/Deploying_zhtw.pod
 lib/Jifty/Manual/FAQ.pod
 lib/Jifty/Manual/Glossary.pod
 lib/Jifty/Manual/JavaScript.pod
+lib/Jifty/Manual/JavaScript_zhtw.pod
 lib/Jifty/Manual/jQueryMigrationGuide.pod
 lib/Jifty/Manual/Models.pod
 lib/Jifty/Manual/ObjectModel.pod
 lib/Jifty/Manual/PageRegions.pod
+lib/Jifty/Manual/Preload.pod
 lib/Jifty/Manual/RequestHandling.pod
 lib/Jifty/Manual/Style.pod
 lib/Jifty/Manual/Tutorial.pod
@@ -224,6 +227,7 @@ lib/Jifty/Plugin/ActorMetadata.pm
 lib/Jifty/Plugin/ActorMetadata/Mixin/Model/ActorMetadata.pm
 lib/Jifty/Plugin/AdminUI.pm
 lib/Jifty/Plugin/AdminUI/Dispatcher.pm
+lib/Jifty/Plugin/AdminUI/View.pm
 lib/Jifty/Plugin/Authentication/Password.pm
 lib/Jifty/Plugin/Authentication/Password/Action/ConfirmEmail.pm
 lib/Jifty/Plugin/Authentication/Password/Action/GeneratePasswordToken.pm
@@ -375,14 +379,7 @@ share/dtd/xhtml1-strict.dtd
 share/plugins/Jifty/Plugin/AdminUI/web/templates/__jifty/admin/_elements/nav
 share/plugins/Jifty/Plugin/AdminUI/web/templates/__jifty/admin/action/dhandler
 share/plugins/Jifty/Plugin/AdminUI/web/templates/__jifty/admin/autohandler
-share/plugins/Jifty/Plugin/AdminUI/web/templates/__jifty/admin/fragments/list/header
-share/plugins/Jifty/Plugin/AdminUI/web/templates/__jifty/admin/fragments/list/list
-share/plugins/Jifty/Plugin/AdminUI/web/templates/__jifty/admin/fragments/list/new_item
-share/plugins/Jifty/Plugin/AdminUI/web/templates/__jifty/admin/fragments/list/search
-share/plugins/Jifty/Plugin/AdminUI/web/templates/__jifty/admin/fragments/list/update
-share/plugins/Jifty/Plugin/AdminUI/web/templates/__jifty/admin/fragments/list/view
 share/plugins/Jifty/Plugin/AdminUI/web/templates/__jifty/admin/index.html
-share/plugins/Jifty/Plugin/AdminUI/web/templates/__jifty/admin/model/dhandler
 share/plugins/Jifty/Plugin/CSSQuery/web/static/js/cssquery/cssQuery-level2.js
 share/plugins/Jifty/Plugin/CSSQuery/web/static/js/cssquery/cssQuery-level3.js
 share/plugins/Jifty/Plugin/CSSQuery/web/static/js/cssquery/cssQuery-standard.js
@@ -427,6 +424,8 @@ share/web/static/css/base.css
 share/web/static/css/calendar.css
 share/web/static/css/combobox.css
 share/web/static/css/context-menus.css
+share/web/static/css/crud.css
+share/web/static/css/facebox.css
 share/web/static/css/forms.css
 share/web/static/css/halos.css
 share/web/static/css/jquery.jgrowl.css
@@ -449,6 +448,13 @@ share/web/static/images/css/bullet_arrow_up.png
 share/web/static/images/css/fieldbg-autocomplete.gif
 share/web/static/images/css/fieldbg.gif
 share/web/static/images/css/spinner.gif
+share/web/static/images/facebox/b.png
+share/web/static/images/facebox/bl.png
+share/web/static/images/facebox/br.png
+share/web/static/images/facebox/closelabel.gif
+share/web/static/images/facebox/loading.gif
+share/web/static/images/facebox/tl.png
+share/web/static/images/facebox/tr.png
 share/web/static/images/iepngfix/blank.gif
 share/web/static/images/pony.jpg
 share/web/static/images/silk/bullet_arrow_down.png
@@ -493,6 +499,7 @@ share/web/static/js/css_browser_selector.js
 share/web/static/js/cssQuery-jquery.js
 share/web/static/js/datetime.js
 share/web/static/js/dom-drag.js
+share/web/static/js/facebox.js
 share/web/static/js/formatDate.js
 share/web/static/js/halo.js
 share/web/static/js/iautocompleter.js
@@ -546,6 +553,7 @@ share/web/templates/_elements/keybindings
 share/web/templates/_elements/menu
 share/web/templates/_elements/nav
 share/web/templates/_elements/page_nav
+share/web/templates/_elements/paging
 share/web/templates/_elements/sidebar
 share/web/templates/_elements/wrapper
 share/web/templates/autohandler
@@ -730,6 +738,12 @@ t/TestApp-Plugin-REST/t/00-model-User.t
 t/TestApp-Plugin-REST/t/00-prototype.t
 t/TestApp-Plugin-REST/t/02-basic-use.t
 t/TestApp-Plugin-REST/t/03-format.t
+t/TestApp-Plugin-SetupWizard/bin/jifty
+t/TestApp-Plugin-SetupWizard/etc/config.yml
+t/TestApp-Plugin-SetupWizard/etc/site_config.yml
+t/TestApp-Plugin-SetupWizard/lib/TestApp/Plugin/SetupWizard/Dispatcher.pm
+t/TestApp-Plugin-SetupWizard/lib/TestApp/Plugin/SetupWizard/Test.pm
+t/TestApp-Plugin-SetupWizard/t/001-basic.t
 t/TestApp-Plugin-SinglePage/bin/jifty
 t/TestApp-Plugin-SinglePage/etc/config.yml
 t/TestApp-Plugin-SinglePage/lib/TestApp/Plugin/SinglePage/Model/User.pm
@@ -839,3 +853,4 @@ t/TestApp/t/test_config.yml
 t/TestApp/t/upgrade.t
 t/TestApp/t/use_mason_wrapper.t
 utils/js_size.pl
+utils/run_coverage.sh
