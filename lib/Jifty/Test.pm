@@ -138,8 +138,11 @@ sub import_extra {
     # the modified $args is then passed to Test::Builder's plan.  we should 
     # strip our custom items.
     # XXX: this should probably be done in _strip_imports
-    my %args = @$args;
-    @$args = map { $args{$_} ? ($_ => $args{$_ }) : () } qw(tests skip_all);
+    # we check for multiple args because of 'no_plan'
+    if (@$args > 1) {
+        my %args = @$args;
+        @$args = map { $args{$_} ? ($_ => $args{$_ }) : () } qw(tests skip_all);
+    }
 }
 
 =head2 setup ARGS
