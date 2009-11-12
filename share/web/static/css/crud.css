@@ -101,6 +101,6 @@
     font-weight: bold;
 }
 
-.paging-prev, .paging-next {
+.paging-prev, .paging-next, .paging-all {
     font-size: 0.8em;
 }

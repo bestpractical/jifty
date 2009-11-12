@@ -4,6 +4,7 @@ $page => 1
 $per_page => 15
 $argument => 'page'
 $hide_single_page => 1
+$allow_all => 0
 </%args>
 <%init>
 return if $collection->count == 0;
@@ -62,6 +63,20 @@ Page <span class="paging-numbers">
         onclick => {
             args => {
                 $argument => $next,
+            },
+        },
+    ) %>
+</span>
+% }
+
+% if ($allow_all && $last > 1) {
+<span class="paging-all">
+    <% Jifty->web->link(
+        label => "All",
+        class => "all",
+        onclick => {
+            args => {
+                $argument => 'all',
             },
         },
     ) %>
