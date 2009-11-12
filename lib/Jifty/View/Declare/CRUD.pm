@@ -416,13 +416,15 @@ template 'search' => sub {
 
         $search->button(
             label   => _('Search'),
-            onclick => {
-                submit  => $search,
-                refresh => Jifty->web->current_region->parent,
-                args    => { page => 1 }
-            }
+            onclick => [
+                { submit => $search },
+                "jQuery(document).trigger('close.facebox');",
+                {
+                    refresh => Jifty->web->current_region->parent,
+                    args    => { page => 1 },
+                },
+            ],
         );
-
     }
 };
 
@@ -739,14 +741,11 @@ private template 'search_region' => sub {
         );
 
         hyperlink(
-            onclick => [
-                {   region       => $search_region->qualified_name,
-                    replace_with => $self->fragment_for('search'),
-                    toggle       => 1,
-                    args         => { object_type => $object_type }
-                },
-            ],
-            label => _('Toggle search'),
+            onclick => {
+                popout => $self->fragment_for('search'),
+                args   => { object_type => $object_type }
+            },
+            label => _('Search'),
         );
 
         outs( $search_region->render );
