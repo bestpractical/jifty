@@ -845,6 +845,7 @@ private template 'paging_top' => sub {
         collection => $collection,
         page       => $page,
         per_page   => $self->per_page,
+        allow_all  => 1,
     };
 };
 
@@ -863,6 +864,7 @@ private template paging_bottom => sub {
         collection => $collection,
         page       => $page,
         per_page   => $self->per_page,
+        allow_all  => 1,
     };
 };
 
