@@ -90,32 +90,31 @@ Let's take those one by one.
 
 =item lib
 
-Inside F<lib/> is where all of your application code goes. Your application
-generally consists of a set of classes.
+Inside F<lib/> is where all of your application Perl code goes. Your
+application generally consists of a set of classes.
 
 =item bin
 
-Inside F<bin/> is F<jifty>, the Jifty command dispatcher. Some
-of the most important commands are C<schema>, which sets up or updates
-your database schema and C<server>, which starts a standalone
+Inside F<bin/> is F<jifty>, the Jifty command dispatcher. The
+most important command is C<jifty server> which starts a standalone
 webserver. To find out what commands your F<jifty> comes with, run:
 
     jifty help
 
 =item etc
 
-Configuration files live in F<etc/>. Jifty creates a basic config
-file for your application.
+Configuration files live in F<etc/>. Jifty generates a basic config
+file for your application, F<etc/config.yml>.
 
 =item doc
 
-Jifty won't magically write your documentation for you, but when B<you>
+Jifty can't magically write your documentation for you, but when B<you>
 write your docs, put them in F<doc/>.
 
 =item log
 
 Jifty uses L<Log::Log4perl> to configure its logging. By default, it
-dumps logs named F<server.log> and F<error.log> into the F<log> directory.
+dumps logs named F<server.log> and F<error.log> into the F<log/> directory.
 
 =item var
 
@@ -131,7 +130,7 @@ translations ("portable object templates") will go.
 
 Though modern Jifty applications are encouraged to use L<Template::Declare>
 for templating, we also support L<HTML::Mason> templates. Put your
-application's Mason templates into F<share/web/templates/>. Out of the
+application's Mason templates in F<share/web/templates/>. Out of the
 box, Jifty comes with an application I<skeleton> that it installs in
 F<share/web/templates/>. This default application is a convenient way to
 get a basic application up and running quickly, but probably needs some
@@ -145,14 +144,14 @@ You can find where Perl stuck Jifty's default templates with:
 
 Some nontrivial percentage of the content your web application serves
 out doesn't need to (or I<shouldn't>) pass through your templating
-engine.
+engine. This includes, for example, images.
 
 Just drop your static files into F<share/web/static/> and Jifty will serve
 them out if it can't find a template with the right name.
 
-Out of the box, Jifty comes with a CSS style, Javascript libraries and a
-Pony. Look in F<share/web/static> in the Jifty distribution, or in the same
-place Jifty stuck its default templates.
+Out of the box, Jifty comes with plenty of CSS stylesheets, JavaScript
+libraries, and even a Pony. Look in F<share/web/static> in the Jifty
+distribution, or in the same place Jifty stuck its default templates.
 
 =item lib/MyWeblog/Model
 
@@ -171,11 +170,13 @@ that an action is an HTML form, but generalized. Jifty will generate basic
 database-interaction (C<CREATE>, C<READ>, C<UPDATE>, C<DELETE>) B<Actions> for
 your B<Models> on-the-fly.
 
+You can also create your own actions for any kind of application logic.
+
 =item t
 
 Jifty starts off your application with a basic harness, but can't yet write
-all your tests for you. (It does, however, build simple tests for model
-classes you generate.)
+all your tests for you. It does, however, build some simple tests for model
+and action classes you generate.
 
 =back
 
@@ -216,10 +217,10 @@ You should see something like this:
   1;
 
 
-Now it's time to tell the model class about posts. We'll start out by giving
-our post a C<body> and a C<title>. (In a future tutorial, the application will
-become fully folksonomy-compliant by adding a C<category> and upgrading that
-C<category> to a C<tags> table.)
+Now it's time to tell the model class about what comprises a post. We'll start
+out by giving our post a C<body> and a C<title>. (In a future tutorial, the
+application will become fully folksonomy-compliant by adding a C<category> and
+upgrading that C<category> to a C<tags> table.)
 
 Position your cursor right after:
 
@@ -239,16 +240,20 @@ Add the lines:
 
 Save your model class.
 
+Don't be mistaken, these are lines of actual Perl code. Jifty provides you with
+a human-readable language for declaring your models' columns.
+
 =head2 Starting the Jifty application server
 
 You now have a working, if simplistic, application. Start up the Jifty web
-server by typing C<jifty server>.
+server by typing C<jifty server>. For some platforms, you may have to type
+C<./bin/jifty server>.
 
 The first thing you'll see is that Jifty notices you have no database, so it
 creates one for you. By default, Jifty sets up your application with the SQLite
 database engine. If you'd rather use PostgreSQL or MySQL, you need to add some
-content to F<etc/config.yml>. (See L<Jifty::Config> for a bit more
-information.)
+content to F<etc/config.yml>. See L<Jifty::Config> for a bit more
+information.
 
     # jifty server
     WARN - Application schema has no version in the database.
@@ -266,8 +271,6 @@ see when Jifty changes your database.
 The last line tells you the URL you can go to with your web browser. Have a
 look around. Be sure to check out the AJAX-enabled administrative UI, the
 online documentation browser, and the Pony.
-
-For some platforms, you may have to type "./bin/jifty server".
 
 =head2 Building a user interface
 
@@ -297,6 +300,9 @@ look like this:
   };
   
   1;
+
+Jifty provides very concise syntax for generating HTML using
+L<Template::Declare>. We'll see plenty more soon.
 
 =head3 Viewing
 
@@ -337,7 +343,7 @@ The downside of this approach is that each separate region needs to live in
 its own template. Happily, this is a good design practice even without regions.
 
 The complex way starts off about the same as the easy way. Replace (or add, if
-you shied away from simplicity) the '/' template in your
+you shied away from simplicity) the C</> template in your
 F<lib/MyWeblog/View.pm>:
 
   template '/' => page {
@@ -408,14 +414,14 @@ Make it contain the following:
 
 Now fire up your Jifty webserver again. Browse to C</post> and create more than
 three posts. Return to the home page and check out the nifty AJAX C<Next Page>
-and C<Previous Page> links you now have. Turn off javascript or view the page
+and C<Previous Page> links you now have. Turn off JavaScript or view the page
 in C<lynx>, and notice how the AJAX automatically falls-back to page loads for
 you. All for free, thanks to Jifty!
 
 =head3 Hey, where'd that class come from?
 
 You may have wondered about C<MyWeblog::Model::PostCollection>, since there's
-no file called F<PostCollection.pm>. Jifty uses C<Jifty::ClassLoader> to
+no file called F<PostCollection.pm>. Jifty uses L<Jifty::ClassLoader> to
 auto-generate a bunch of classes for you. Of course, you can override these
 definitions if you like. See L<Jifty::ClassLoader> for more details.
 
@@ -445,13 +451,15 @@ into it:
   
   1;
 
-For more information about the menu system, see the documentation in
+Jifty provides nice syntax (yet again!) for declaring dispatcher rules. For
+more information about dispatching, see L<Jifty::Dispatcher>. For more
+information about the menu system, see the documentation in
 L<Jifty::Web::Menu>.
 
 =head2 That's it!
 
 That's just about everything you need to get started building Jifty
-applications.  We're working hard to make Jifty even easier to use and
+applications. We're working hard to make Jifty even easier to use and
 to obsolete the I<hard bits> of this tutorial as quickly as we can.
 
 Please join us on the C<jifty-devel> mailing list to talk about how you're
