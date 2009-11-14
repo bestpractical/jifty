@@ -250,8 +250,8 @@ sub new {
     my $app = Jifty->app_class;
     
     # Run the App::start() method if it exists for app-specific initialization
-    $app->start()
-        if $app->can('start');
+    $app->start
+        if not $args{no_handle} and $app->can('start');
 
     # For plugins that want all the above initialization, but want to run before
     # we begin serving requests
