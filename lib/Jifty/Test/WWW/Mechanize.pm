@@ -48,7 +48,7 @@ sub new {
 Finds the moniker of the first action of type I<ACTION> whose
 "constructor" field I<FIELD1> is I<VALUE1>, and so on.
 
-   my $mon =$mech->moniker_for('MyApp::Action::UpdateInfok');
+   my $mon = $mech->moniker_for('MyApp::Action::UpdateInfo');
 
 If there is only one action of type ACTION, be sure not to pass
 any more arguments to this method, or the method will return undef.
