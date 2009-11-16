@@ -121,9 +121,13 @@ symbols to the namespace that C<use>'d this one.
 
 =cut
 
+our $imported = 0;
+
 sub import_extra {
     my $class = shift;
     my $args  = shift;
+
+    $imported = 1;
 
     $class->setup($args);
     Test::More->export_to_level(2);
@@ -640,6 +644,9 @@ sub test_in_isolation {
 END { Jifty::Test->_ending }
 
 sub _ending {
+    # only run the teardown code if we were responsible for setup
+    return unless $imported;
+
     my $Test = Jifty::Test->builder;
 
     # Such a hack -- try to detect if this is a forked child process and don't
