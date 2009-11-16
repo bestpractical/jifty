@@ -14,7 +14,7 @@ Localization = {
         jQuery.ajax({
             url: this.dict_path + "/" + lang + ".json",
             type: 'get',
-            asynchronous: false,
+            async: false,
             success: function(dict) {
                 eval("d = " + dict || "{}");
             }
