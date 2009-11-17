@@ -4,6 +4,7 @@ use warnings;
 use Test::More;
 use File::Spec;
 use Jifty::Test::WWW::Mechanize;
+use Test::Script::Run 'get_perl_cmd';
 use FindBin qw($Bin);
 use Cwd;
 my $cwd;
@@ -30,10 +31,6 @@ open my $fh, '<', $config_path or die $!;
 my $config = <$fh>;
 like( $config, qr/AdminMode: 1/, 'admin mode in config is enabled' );
 
-my $INC =
-  [ grep { defined } map { File::Spec->rel2abs($_) } grep { !ref } @INC ];
-my @perl = ( $^X, map { "-I$_" } @$INC );
-
 my $pid = fork;
 die 'fork failed' unless defined $pid;
 
@@ -49,7 +46,7 @@ if ($pid) {
     $config =~ s/AdminMode: 1/AdminMode: 0/;
     like( $config, qr/AdminMode: 0/, 'admin mode in config is off' );
     write_file( $config_path, $config );
-    system("@perl bin/jifty server --restart");
+    system(get_perl_cmd('jifty'), 'server', '--restart');
     sleep 5;
     $mech->get_ok($URL);
     $mech->content_like( qr/pony\.jpg/, 'we still have a pony!' );
@@ -57,11 +54,11 @@ if ($pid) {
         qr/Administration mode is enabled/,
         'admin mode is gone on page, restart works!',
     );
-    system("@perl bin/jifty server --stop");
-    system("@perl bin/jifty schema --drop-database");
+    system(get_perl_cmd('jifty'), 'server', '--stop');
+    system(get_perl_cmd('jifty'), 'schema', '--drop-database');
 }
 else {
-    system("@perl bin/jifty server");
+    system(get_perl_cmd('jifty'), 'server');
     exit 0;
 }
 
