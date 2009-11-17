@@ -4,11 +4,7 @@ use strict;
 use warnings;
 use File::Spec;
 use Test::Builder;
-
-# explicitly ignore ClassLoader objects in @INC,
-# which'd be ignored in the end, though.
-my $INC = [grep { defined } map { File::Spec->rel2abs($_) } grep { !ref } @INC ];
-my @perl = ($^X, map { "-I$_" } @$INC);
+use Test::Script::Run 'get_perl_cmd';
 
 =head1 NAME
 
@@ -82,7 +78,7 @@ sub started_ok {
         push @extra, '-MDevel::Cover'.($coverage =~ m/,/ ? "=$coverage" : '');
     }
 
-    exec(@perl, @extra, '-MJifty::Util', '-MJifty::Script',
+    exec(get_perl_cmd(), @extra, '-MJifty::Util', '-MJifty::Script',
          '-e', 'Jifty::Script->dispatch', 'server', '--quiet',
          '--sigready', 'USR1',
          $ENV{JIFTY_TESTSERVER_DBIPROF} ? ('--dbiprof') : (),
@@ -91,7 +87,7 @@ sub started_ok {
 
 sub DESTROY {
     return unless $_[0]->{started};
-    exec(@perl, 'bin/jifty', 'server', '--stop');
+    exec(get_perl_cmd('jifty'), 'server', '--stop');
 }
 
 1;

@@ -119,6 +119,7 @@ requires:
   Test::LongString: 0
   Test::More: 0.62
   Test::Pod::Coverage: 0
+  Test::Script::Run: 0.03
   Test::WWW::Mechanize: 1.04
   Test::WWW::Selenium: 1.18
   UNIVERSAL::require: 0

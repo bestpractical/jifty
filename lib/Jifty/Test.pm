@@ -639,7 +639,6 @@ sub test_in_isolation {
     return $result;
 }
 
-
 # Stick the END block in a method so we can test it.
 END { Jifty::Test->_ending }
 
