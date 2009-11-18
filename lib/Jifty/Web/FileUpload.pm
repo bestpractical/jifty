@@ -5,6 +5,12 @@ use base qw/Jifty::Object Class::Accessor::Fast/;
 
 __PACKAGE__->mk_accessors(qw(filehandle content filename content_type));
 
+use overload (
+    q{""} => 'content',
+    '*{}' => 'filehandle',
+    fallback => 1,
+);
+
 =head1 NAME
 
 Jifty::Web::FileUpload - Describes an HTTP file upload
