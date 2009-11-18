@@ -1,3 +1,114 @@
+-----------------------------------
+Jifty 0.91117 - November 17th, 2009
+-----------------------------------
+
+POSSIBLE INCOMPATABILITIES
+==========================
+ * Don't call App->start if we're running with no handle (i.e., `jifty schema`)
+ * Render PKs as read-only in update actions.  If you do not specify
+   which parameters to render for update actions, this will begin
+   rendering id as a read-only field.
+ * Replace AdminUI's CRUD with Jifty::View::Declare::CRUD.  You may
+   need to run something like:
+
+     perl -MFile::ShareDir=dist_dir -e 'print dist_dir("Jifty")' \
+      | xargs sudo rm -ir
+
+   ...to make sure the old CRUD is gone so the new CRUD can take its
+   place.
+
+CORE FEATURES
+=============
+ * Page region preloading (see Jifty::Manual::Preload)
+ * Optimize magic curent_user intuition a bit
+ * Add expired_update/create helper method to session collection.
+ * Bump JDBI dep to 0.58 for SetupWizard's available_databases queries
+ * Warn about next_page 'url'
+ * Add DBI as an explicit dependency
+ * Allow underscore in time_zone for set_current_user_time_zone
+ * by-pass additional column attributes of models to corresponding
+   form fields of model actions.
+ * add a "raw_html" option to Jifty::Web::Menu items
+
+CRUD
+====
+ * Warn about missing object_type
+ * Don't pass the update action to display_columns
+ * Pass on extra arguments to render_param from CRUD
+ * Popout CRUD update forms
+ * CRUD: Prefer the column's label to its name when available
+ * Make CRUD search a lightbox instead of the horrific splat it is now
+ * Use paging for CRUD listings
+
+DOC
+===
+ * Cookbook: how to use postgresql database instead of sqlite
+ * Cookbook: file upload code snippet
+ * Cookbook: how to catch action results and POST data
+ * Clarify the signature of render_param
+ * Fix pod of Jifty::LetMe; productse "path", not "token"
+ * Jifty::Web::Link doesn't exist. Jifty::Web::Form::Link does.
+ * Minor tutorial improvements
+
+I18N
+====
+ * zhtw: note translator
+ * zhtw: Add Jifty::Manual::JavaScript_zhtw
+ * zhtw: Add Jifty::Manual::Actions_zhtw
+
+PLUGINS
+=======
+ * SinglePage: link test
+ * SinglePage: add hr between test links
+ * SinglePage: fix spa for link with parameters
+ * Authentication::Password: missing email field in login_widget when we don't use login_by: username
+ * SetupWizard: Change "Save" to "Next"
+ * SetupWizard: Skeleton of the SetupWizard tests
+ * SetupWizard: Basic tests to make sure stepping through the wizard works
+ * SetupWizard: Make sure we update the site_config correctly for each step of the process
+ * CompressedCSSandJS: add skipped_js; some js does *not* work if compressed
+ * I18N: specify jquery asynchronous by option async.
+
+REFACTOR
+========
+ * Stub out Field->preload_javascript
+ * Factor javascript_attrs into a second method for building up an
+   inspectable data structure
+ * Break up $update into $update_json
+ * Improve clarity of _values_for_field
+ * Refactor Select's render_widget so it can be extended
+ * Refactor handle_comp so that we can reuse its setup
+
+TEST
+====
+ * Add @post_chdir to Jifty::Test::Dist for tests that need to do stuff
+   between chdir and Jifty load
+ * Provide strict mode to require no warnings (from test server for now) during tests.
+ * Workaround the problem plan() only ignores unknown arguments if it sees known ones.
+ * strip jifty-specific test import options in import_extra
+ * appropriate test config tweaks for coverage run.
+ * utility for running tests with coverage.
+ * find uncovered mason files.
+ * Handle use Jifty::Test 'no_plan' more gracefully than exploding
+ * Refactor most of action_field_value into action_field_input
+ * Only run Jifty::Test's teardown code if it setup
+ * Use Test::Script::Run's get_perl_cmd instead of reinventing it
+ * Use get_perl_cmd for restart.t too
+
+VIEW
+====
+ * Improve debug information by including the servicing view handler in message
+ * Add a css file for CRUD
+ * Integrate facebox into jifty
+ * Hide elements with the jshide class
+ * fix a lot of missing escapes in ::Field::Collection and some other
+   obvious problems, probably it never been used
+ * List of checkboxes for multiple-choice selection
+ * If we are in https, then stay in https
+ * mason_scomp helper function in Jifty::View::Declare
+ * Support for an "all" link in /_elements/paging
+
+
 ------------------------------
 Jifty 0.90701 - July 1st, 2009
 ------------------------------
@@ -29,7 +140,7 @@ CORE FEATURES
 
 REFACTOR
 ========
- * Add a jifty->admin_mode method; this should be used in place of
+ * Add a Jifty->admin_mode method; this should be used in place of
    Jifty->config->framework('AdminMode')
 
 BUGFIX
