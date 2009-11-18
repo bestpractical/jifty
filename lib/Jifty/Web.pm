@@ -734,10 +734,13 @@ sub redirect {
                 has_run   => $_->has_run,
                 arguments => $_->arguments,
             );
+
             # Clear out filehandles, which don't go thorugh continuations well
-            $new_action->arguments->{$_} = ''
-              for grep {ref $new_action->arguments->{$_} eq "Fh"}
-                keys %{$new_action->arguments || {}};
+            for (keys %{$new_action->arguments || {}}) {
+                $new_action->arguments->{$_} = ''
+                    if ref($new_action->arguments->{$_}) eq "Fh"
+                    || ref($new_action->arguments->{$_}) eq "Jifty::Web::FileUpload";
+            }
         }
         my %parameters = ($page->parameters);
         $request->argument($_ => $parameters{$_}) for keys %parameters;
