@@ -86,5 +86,18 @@ sub new {
     return $self;
 }
 
+=head2 new_from_fh Fh
+
+Convenience method, since the other bits can be gleaned from the L<Fh> object.
+
+=cut
+
+sub new_from_fh {
+    my $self = shift;
+    my $fh   = shift;
+
+    $self->new(filehandle => $fh);
+}
+
 1;
 
