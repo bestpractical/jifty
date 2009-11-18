@@ -152,6 +152,10 @@ L</label> defaults to the I<KEY>, and the L</sort_order> defaults to the
 pre-existing child's sort order (if a C<KEY> is being over-written) or
 the end of the list, if it is a new C<KEY>.
 
+If the paramhash contains a key called C<menu>, that will be used instead
+of creating a new Jifty::Web::Menu.
+
+
 =cut
 
 sub child {
@@ -159,18 +163,23 @@ sub child {
     my $key = shift;
     my $proto = ref $self || $self;
 
-    if (@_) {
+    if (my %args = @_) {
         # Clear children ordering cache
         delete $self->{children_list};
 
+		my $child;
+		if($child = $args{menu}) {
+			$child->parent($self);
+		}
+		else {	
         # Set us up the child
-        my $child = $proto->new({parent => $self,
-                                 sort_order => ($self->{children}{$key}{sort_order}
-                                                    || scalar values %{$self->{children}}),
+        $child = $proto->new({parent => $self,
+                                 sort_order => ($self->{children}{$key}{sort_order} || scalar values %{$self->{children}}),
                                  label => $key,
                                  escape_label => 1,
-                                 @_
+                                 %args
                              });
+		}
         $self->{children}{$key} = $child;
 
         # URL is relative to parents, and cached, so set it up now
