@@ -943,7 +943,7 @@ sub _validate_argument {
     # When it isn't even given, check if it's mandatory and whine about it
     if ( !defined $value || !length $value ) {
         if ( $field_info->{mandatory} and ($self->has_argument($field) or not defined $field_info->{default_value})) {
-            return $self->validation_error( $field => _("You need to fill in the '%1' field", $field) );
+            return $self->validation_error( $field => _("You need to fill in the '%1' field", $field_info->{label} || $field) );
         }
     }
 
