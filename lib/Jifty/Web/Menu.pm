@@ -159,55 +159,62 @@ of creating a new Jifty::Web::Menu.
 =cut
 
 sub child {
-    my $self = shift;
-    my $key = shift;
+    my $self  = shift;
+    my $key   = shift;
     my $proto = ref $self || $self;
 
-    if (my %args = @_) {
+    if ( my %args = @_ ) {
+
         # Clear children ordering cache
         delete $self->{children_list};
 
-		my $child;
-		if($child = $args{menu}) {
-			$child->parent($self);
-		}
-		else {	
-        # Set us up the child
-        $child = $proto->new({parent => $self,
-                                 sort_order => ($self->{children}{$key}{sort_order} || scalar values %{$self->{children}}),
-                                 label => $key,
-                                 escape_label => 1,
-                                 %args
-                             });
-		}
+        my $child;
+        if ( $child = $args{menu} ) {
+            $child->parent($self);
+        } else {
+            $child = $proto->new(
+                {   parent     => $self,
+                    sort_order => (
+                        $self->{children}{$key}{sort_order}
+                            || scalar values %{ $self->{children} }
+                    ),
+                    label        => $key,
+                    escape_label => 1,
+                    %args
+                }
+            );
+        }
         $self->{children}{$key} = $child;
 
         # URL is relative to parents, and cached, so set it up now
-        $child->url($child->{url});
-        
+        $child->url( $child->{url} );
+
         # Figure out the URL
-        my $url   =   ( defined $child->link
-                    and ref $child->link
-                    and $child->link->can('url') )
-                        ? $child->link->url : $child->url;
+        my $url
+            = (     defined $child->link
+                and ref $child->link
+                and $child->link->can('url') )
+            ? $child->link->url
+            : $child->url;
 
         # Activate it
         if ( defined $url and length $url and Jifty->web->request ) {
+
             # XXX TODO cleanup for mod_perl
             my $base_path = Jifty->web->request->path;
             chomp($base_path);
-            
+
             $base_path =~ s/index\.html$//;
             $base_path =~ s/\/+$//;
-            $url =~ s/\/+$//;
-            
-            if ($url eq $base_path) {
-                $self->{children}{$key}->active(1); 
+            $url       =~ s/\/+$//;
+
+            if ( $url eq $base_path ) {
+                $self->{children}{$key}->active(1);
             }
         }
     }
 
-    return $self->{children}{$key}
+    return $self->{children}{$key};
 }
 
 =head2 active_child
