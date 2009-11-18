@@ -6,8 +6,8 @@ use base qw/Jifty::Object Class::Accessor::Fast/;
 __PACKAGE__->mk_accessors(qw(filehandle content filename content_type));
 
 use overload (
-    q{""} => 'content',
-    '*{}' => 'filehandle',
+    q{""} => sub { $_[0]->content },
+    '*{}' =>  sub { $_[0]->filehandle },
     fallback => 1,
 );
 
@@ -88,7 +88,6 @@ sub new {
     $self->content($args{content});
     $self->filename($args{filename});
     $self->content_type($args{content_type});
-
     return $self;
 }
 
