@@ -80,14 +80,6 @@ sub take_action {
 
         # Prepare the hash to pass to create for each argument
         $values{$_} = $self->argument_value($_);
-
-        # Handle file uploads
-        if (ref $values{$_} eq "Fh") { # CGI.pm's "lightweight filehandle class"
-            local $/;
-            my $fh = $values{$_};
-            binmode $fh;
-            $values{$_} = scalar <$fh>;
-        }
     }
 
     # Attempt creating the record

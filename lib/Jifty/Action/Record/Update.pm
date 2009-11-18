@@ -127,13 +127,6 @@ sub take_action {
           and lc $self->arguments->{$field}{render_as} eq "upload"
           and (not defined $value or not ref $value);
 
-        # Handle file uploads
-        if (ref $value eq "Fh") { # CGI.pm's "lightweight filehandle class"
-            local $/;
-            binmode $value;
-            $value = scalar <$value>;
-        }
-
         # Skip fields that have not changed, but only if we can read the field.
         # This prevents us from getting an $old value that is wrongly undef
         # when really we are just denied read access.  At the same time, it means
