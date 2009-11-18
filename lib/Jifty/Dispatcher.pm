@@ -780,7 +780,6 @@ Otherwise, just render whatever we were going to anyway.
 
 =cut
 
-my %TEMPLATE_CACHE;
 
 sub _do_show {
     my $self = shift;
@@ -801,10 +800,10 @@ sub _do_show {
     # Check for ../../../../../etc/passwd
     my $abs_template_path = Jifty::Util->absolute_path( Jifty->config->framework('Web')->{'TemplateRoot'} . $path );
     my $abs_root_path = Jifty::Util->absolute_path( Jifty->config->framework('Web')->{'TemplateRoot'} );
-    $self->render_template('/errors/500')
+    Jifty->web->render_template('/errors/500')
         if $abs_template_path !~ /^\Q$abs_root_path\E/;
 
-    $self->render_template( $path );
+    Jifty->web->render_template( $path );
 
     last_rule;
 }
@@ -1184,110 +1183,6 @@ sub _unescape {
     return $text;
 }
 
-
-=head2 template_exists PATH
-
-Returns true if PATH is a valid template inside your template
-root. This checks for both Template::Declare and HTML::Mason
-Templates.  Specifically, returns a reference to the handler which can
-process the template.
-
-If PATH is a I<reference> to the path, it will update the path to
-append C</index.html> if the path in question doesn't exist, but the
-index does.
-
-=cut
-
-sub template_exists {
-    my $self     = shift;
-    my $template = shift;
-
-    my $value = ref $template ? $$template : $template;
-
-    foreach my $handler ( map {Jifty->handler->view($_)} Jifty->handler->view_handlers ) {
-        if ( my $path = $handler->template_exists($value) ) {
-            $$template = $path if ref $template;
-            return $handler;
-        }
-    }
-    return undef;
-}
-
-
-=head2 render_template PATH
-
-Use our templating system to render a template.  Searches through
-L<Jifty::Handler/view_handlers> to find the first handler which
-provides the given template, and caches the handler for future
-requests.
-
-Catches errors, and redirects to C</errors/500>; also shows
-C</errors/404> if the template cannot be found.
-
-=cut
-
-sub render_template {
-    my $self     = shift;
-    my $template = shift;
-    my $handler;
-
-    # Look for a possible handler, and cache it for future requests.
-    # With DevelMode, always look it up.
-    if ( not exists $TEMPLATE_CACHE{$template} or Jifty->config->framework('DevelMode')) {
-        my $found = $template;
-        $handler = $self->template_exists( \$found );
-        # We don't cache failing URLs, so clients' can't cause us to
-        # chew up memory by requesting 404's
-        $TEMPLATE_CACHE{$template} = [ $found, $handler ] if $handler;
-    }
-
-    # Dig out the actual template (which could have a "/index.html" on
-    # it, or what have you) and its handler.
-    ($template, $handler) = @{$TEMPLATE_CACHE{$template} || [$template, undef] };
-
-    # Handle 404's
-    unless ($handler) {
-        return $self->render_template("/errors/404") unless defined $template and $template eq "/errors/404";
-        $self->log->warn("Can't find 404 page!");
-        $self->_abort;
-    }
-
-    $self->log->debug("Showing path $template using @{[ref $handler]}");
-
-    my $start_depth = Jifty->handler->buffer->depth;
-    eval {
-        $handler->show($template);
-    };
-
-    # Handle parse errors
-    my $err = $@;
-    if ( $err and not (eval { $err->isa('HTML::Mason::Exception::Abort') } or $err =~ /^ABORT/) ) {
-        $self->log->fatal("View error: $err") if $err;
-        if ($template eq '/errors/500') {
-            $self->log->warn("Can't render internal_error: $err");
-            # XXX Built-in static "oh noes" page?
-            $self->_abort;
-            return;
-        }
-
-        # XXX: This may leave a half-written tag open
-        $err->template_stack;
-        Jifty->handler->buffer->pop while Jifty->handler->buffer->depth > $start_depth;
-
-        # Save the request away, and redirect to an error page
-        Jifty->web->response->error($err);
-        my $c = Jifty::Continuation->new(
-            request  => Jifty->web->request->top_request,
-            response => Jifty->web->response,
-            parent   => Jifty->web->request->continuation,
-        );
-        # Redirect with a continuation
-        Jifty->web->_redirect( "/errors/500?J:C=" . $c->id );
-    } elsif ($err) {
-        Jifty->handler->buffer->pop while Jifty->handler->buffer->depth > $start_depth;
-        $self->_abort;
-    }
-}
 
 
 =head2 import_plugins
