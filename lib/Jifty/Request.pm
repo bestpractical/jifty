@@ -8,6 +8,7 @@ __PACKAGE__->mk_accessors(qw(_top_request arguments template_arguments just_vali
 
 use Jifty::JSON;
 use Jifty::YAML;
+use Jifty::Web::FileUpload;
 
 =head1 NAME
 
@@ -264,13 +265,17 @@ sub from_cgi {
     use HTML::Mason::Utils;
     my %args = HTML::Mason::Utils::cgi_request_args( $cgi, $cgi->request_method );
 
-    # Either CGI.pm or HTML::Mason should really deal with this for us.
+    # Either CGI.pm or HTML::Mason should really deal with encoding for us.
     for my $k (keys %args) {
         my $val = $args{$k};
         if(ref($val) && ref($val) eq 'ARRAY') {
             $args{$k} = [map {Jifty::I18N->promote_encoding($_, $ENV{CONTENT_TYPE})} @$val];
         } elsif(!ref($val)) {
             $args{$k} = Jifty::I18N->promote_encoding($val, $ENV{CONTENT_TYPE});
+        }
+
+        if (ref($val) eq 'Fh') {
+            $args{$k} = Jifty::Web::FileUpload->new_from_fh($val);
         }
     }
     
