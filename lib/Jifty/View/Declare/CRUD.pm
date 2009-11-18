@@ -804,7 +804,7 @@ private template 'list_items' => sub {
     # XXX TODO, should use a real API to force the search
 
     div {
-        { class is 'crud-list' };
+        { class is 'crud-list list' };
         if ( $collection->count == 0 ) {
             render_region(
                 name => 'no_items_found',
