@@ -15,7 +15,7 @@ for my $class (Jifty->class_loader->models) {
 
 =head1 NAME
 
-Jifty::Plugin::AdminUI::View
+Jifty::Plugin::AdminUI::View - CRUD views for AdminUI
 
 =head1 DESCRIPTION
 
