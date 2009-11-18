@@ -24,6 +24,9 @@ Adds 'Configuration' item to the top navigation
 =cut
 
 on '**' => run {
+    my ($plugin) = Jifty->find_plugin('Jifty::Plugin::Config') or return;
+    return unless $plugin->nav_menu;
+
     my $top = Jifty->web->navigation;
 
     # for now leave check here, but we want Config to be
