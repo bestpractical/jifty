@@ -48,6 +48,7 @@ requires:
   CSS::Squish: 0.07
   Cache::Cache: 0
   Calendar::Simple: 0
+  Carp::Clan: 0
   Class::Accessor: 0
   Class::Container: 0
   Class::Data::Inheritable: 0
