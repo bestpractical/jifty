@@ -979,9 +979,8 @@ sub render_template {
     my $self     = shift;
     my $template = shift;
     my $handler;
-
+    my $content;
 	my $void_context = ( defined wantarray ? 0 :1);
-    Jifty->handler->buffer->push( private => 1 ) unless $void_context;
 
     # Look for a possible handler, and cache it for future requests.
     # With DevelMode, always look it up.
@@ -1007,13 +1006,17 @@ sub render_template {
     $self->log->debug("Showing path $template using @{[ref $handler]}");
 
     my $start_depth = Jifty->handler->buffer->depth;
-    eval {
-        $handler->show($template);
-		return Jifty->handler->buffer->pop unless $void_context;
-    };
+
+    Jifty->handler->buffer->push( private => 1 ) unless $void_context;
+
+    eval { $handler->show($template) };
 
     # Handle parse errors
     my $err = $@;
+
+    $content = Jifty->handler->buffer->pop unless $void_context;
+
+
     if ( $err and not (eval { $err->isa('HTML::Mason::Exception::Abort') } or $err =~ /^ABORT/) ) {
         $self->log->fatal("View error: $err") if $err;
         if ($template eq '/errors/500') {
@@ -1039,6 +1042,8 @@ sub render_template {
         Jifty->handler->buffer->pop while Jifty->handler->buffer->depth > $start_depth;
 		die "ABORT";
 
+    } else {
+        return $content;
     }
 }
 
