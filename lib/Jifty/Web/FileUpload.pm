@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use base qw/Jifty::Object Class::Accessor::Fast/;
 
-__PACKAGE__->mk_accessors(qw(filehandle content filename content_type));
+__PACKAGE__->mk_accessors(qw(filehandle _content filename content_type));
 
 use overload (
     q{""} => sub { $_[0]->filename },
@@ -69,12 +69,6 @@ sub new {
     ref($fh) eq 'Fh'
         or die "The filehandle must be an Fh object produced by CGI";
 
-    if (!defined($args{content})) {
-        binmode $fh;
-        local $/;
-        $args{content} = <$fh>;
-    }
-
     if (!defined($args{filename})) {
         $args{filename} = "$fh";
     }
@@ -90,6 +84,29 @@ sub new {
     $self->filename($args{filename});
     $self->content_type($args{content_type});
     return $self;
+}
+
+=head2 content
+
+Lazily slurps in the filehandle's content.
+
+=cut
+
+sub content {
+    my $self = shift;
+    if (@_) {
+        return $self->_content(@_);
+    }
+
+    my $content = $self->_content;
+    if (!defined($content)) {
+        my $fh = $self->filehandle;;
+        local $/;
+        $content = <$fh>;
+        $self->_content($content);
+    }
+
+    return $content;
 }
 
 =head2 new_from_fh Fh
