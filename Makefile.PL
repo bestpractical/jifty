@@ -5,6 +5,7 @@ perl_version '5.8.3';
 requires('App::CLI' => 0.08 ); # App::CLI::Command::Help App::CLI::Command
 requires('Cache::Cache'); #Cache::FileCache
 requires('Calendar::Simple');
+requires('Carp::Clan');
 requires('Class::Accessor'); # Class::Accessor::Fast
 requires('Class::Container');
 requires('Class::Data::Inheritable');

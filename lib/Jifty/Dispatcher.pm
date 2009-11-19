@@ -4,7 +4,7 @@ use warnings;
 use Exporter;
 use Jifty::YAML;
 use base qw/Exporter Jifty::Object/;
-           
+use Carp::Clan; # croak
 
 =head1 NAME
 
@@ -790,7 +790,7 @@ sub _do_show {
     $path = $self->{path} unless defined $path and length $path;
 
     unless ($CURRENT_STAGE eq 'RUN') {
-        die "You can't call a 'show' rule in a 'before' or 'after' block in the dispatcher.  Not showing path $path";
+        croak "You can't call a 'show' rule in a 'before' or 'after' block in the dispatcher.  Not showing path $path";
     }
 
     # If we've got a working directory (from an "under" rule) and we have
