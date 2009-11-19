@@ -71,6 +71,9 @@ sub new {
 
     if (!defined($args{filename})) {
         $args{filename} = "$fh";
+
+        # Strip all but the basename for consistency between browsers
+        $args{filename} =~ s#^.*[\\/]##;
     }
 
     if (!defined($args{content_type})) {
