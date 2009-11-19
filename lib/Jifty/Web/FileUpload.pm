@@ -7,7 +7,8 @@ __PACKAGE__->mk_accessors(qw(filehandle content filename content_type));
 
 use overload (
     q{""} => sub { $_[0]->content },
-    '*{}' =>  sub { $_[0]->filehandle },
+    '*{}' => sub { $_[0]->filehandle },
+    '${}' => sub { \($_[0]->filename) },
     fallback => 1,
 );
 
