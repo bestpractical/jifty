@@ -9,7 +9,7 @@ my $server = Jifty::Test->make_server;
 my $url = $server->started_ok;
 
 my $mech = Jifty::Test::WWW::Mechanize->new;
-$mech->get_ok( $url, 'grab a page' );
+$mech->get_ok( $url."/content-type-bug", 'grab a page' );
 
 my $css_page = '';
 if ( $mech->content =~ qr{type="text/css" href="(.*?)"} ) {

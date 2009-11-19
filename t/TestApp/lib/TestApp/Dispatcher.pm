@@ -107,7 +107,7 @@ on '/dispatch/protocol' => run {
 
 
 
-before '*' => run {
+before '/content-type-bug' => run {
     
     Jifty->web->navigation->child( test1 => label => '<i>Italic</i>', escape_label => 0);
 
