@@ -1,0 +1,3 @@
+<form id="inmenu" name="inmenu">
+<input type="text" name="x" id="x"/>
+</form>

@@ -105,4 +105,16 @@ on '/dispatch/protocol' => run {
     set footer => 'normal';
 };
 
+
+
+before '*' => run {
+    
+    Jifty->web->navigation->child( test1 => label => '<i>Italic</i>', escape_label => 0);
+
+    my $content = Jifty->web->render_template('/sample-widget');
+    Jifty->web->navigation->child( test2 => label => $content, escape_label => 0);
+};
+
+
+
 1;
