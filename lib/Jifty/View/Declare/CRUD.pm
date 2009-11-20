@@ -501,7 +501,7 @@ template 'update' => sub {
     );
 
     div {
-        { class is "crud update item " . $object_type }
+        { class is "crud-field update item " . $object_type }
 
         show('./edit_item', $update);
         show('./edit_item_controls', $record, $update);
