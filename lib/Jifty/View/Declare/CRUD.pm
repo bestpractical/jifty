@@ -454,7 +454,9 @@ template 'view' => sub :CRUDView {
             );
         };
     }
-    show ('./view_item_controls', $record, $update);
+    div { { class is 'crud-field view-item-controls'};
+        show ('./view_item_controls', $record, $update);
+    };
 };
 
 =head2 private template view_item_controls
