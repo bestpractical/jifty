@@ -568,8 +568,6 @@ template 'list' => sub {
 
     my ( $page ) = get('page');
     my $item_path = get('item_path') || $self->fragment_for("view");
-    my $sort_by = get ('sort_by') || '';
-    my $order = get ('order') || '';
     my $collection =  $self->_current_collection();
 
     div {
@@ -579,7 +577,7 @@ template 'list' => sub {
 
         div {
             { class is 'crud-table' };
-            show( './sort_header',   $item_path, $sort_by, $order );
+            show( './sort_header',   $item_path );
             show( './list_items',    $collection, $item_path );
         };
 
@@ -603,8 +601,36 @@ sub per_page { 25 }
 sub _current_collection {
     my $self = shift; 
     my ( $page ) = get('page') || 1;
-    my ( $sort_by ) = get('sort_by');
-    my ( $order ) = get('order');
+    my $sort = get('CRUDSort') || '';
+    my $session_sort = Jifty->web->session->get('CRUDSort') || '';
+    my($sort_by,$order);
+
+    if ( $session_sort =~ m/(.*?)-(ASC|DESC)$/) {
+        $sort_by=$1;$order=$2; };
+
+    # reset session if args doesn't exist
+    if ( $sort_by && ! grep /^$sort_by$/, $self->display_columns ) {
+        $order = ''; $sort_by = ''; $sort ='';
+        Jifty->web->session->set('CRUDSort'=>undef);
+    };
+    # 3 state switch for Sort order and column
+    if ($sort) {
+        $sort_by = $sort;
+        if (!$order) {
+            $order = 'ASC';
+            Jifty->web->session->set('CRUDSort'=>$sort.'-ASC');
+        }
+        elsif ( $order eq 'ASC') {
+            $order = 'DESC';
+            Jifty->web->session->set('CRUDSort'=>$sort.'-DESC');
+        }
+        elsif ( $order eq 'DESC') {
+            $order = '';
+            $sort_by = '';
+            Jifty->web->session->set('CRUDSort'=>undef);
+        };
+    };
+
     my $collection_class = $self->record_class->collection_class;
     my $search = ( Jifty->web->response->result('search') ? Jifty->web->response->result('search')->content('search') : undef );
     my $collection;
@@ -619,8 +645,7 @@ sub _current_collection {
     } else {
         $collection = $collection_class->new();
         $collection->find_all_rows();
-        $collection->order_by(column => $sort_by, order=>'ASC') if ($sort_by && !$order);
-        $collection->order_by(column => $sort_by, order=>'DESC') if ($sort_by && $order);
+        $collection->order_by(column => $sort_by, order=>$order) if ($sort_by && $order);
     }
 
     $collection->set_page_info( current_page => $page, per_page => $self->per_page );
@@ -637,42 +662,33 @@ Sort by field toolbar
 template 'sort_header' => sub {
     my $self = shift;
     my $item_path = shift;
-    my $sort_by = shift;
-    my $order = shift;
-    my $record_class = $self->record_class;
+    my $sort = get('CRUDSort') || '';
+    my $session_sort = Jifty->web->session->get('CRUDSort') || '';
+    my($sort_by,$order);
 
+    if ( $session_sort =~ m/(.*?)-(ASC|DESC)$/) {
+        $sort_by=$1;$order=$2; };
+
+    my $record_class = $self->record_class;
     div {
         { class is "crud-column-headers" };
         for my $argument ($self->display_columns) {
+            my $label = $record_class->column($argument)->label || $argument;
             div {
                 { class is 'crud-column-header' };
-                my $css_class = ($sort_by && !$order && $sort_by eq $argument)?'up_select':'up';
-                span {
-                    { class is $css_class };
-                    hyperlink(
-                        label => _("asc"),
-                        onclick =>
-                            { args => { sort_by => $argument, order => undef } },
-                    );
+                if ( $sort_by && $argument eq $sort_by ) {
+                    strong {hyperlink ( label =>$label, onclick => { args => {CRUDSort=>$argument}});};
+                    my $img = ($order eq 'ASC')?'up':'down';
+                    img { attr { src => '/images/css/bullet_arrow_'.$img.'.png' }; };
+                }
+                else {
+                    hyperlink ( label =>$label, onclick => { args => {CRUDSort=>$argument}});
                 };
-                $css_class = ($sort_by && $order && $sort_by eq $argument)?'down_select':'down' ;
-                span {
-                    { class is $css_class };
-                    hyperlink(
-                        label => _("desc"),
-                        onclick =>
-                            { args => { sort_by => $argument, order => 'D' } },
-                    );
-                };
-                span{
-                    {class is "field"};
-                    outs $record_class->column($argument)->label || $argument;
-                };
+
             }
         }
     };
 };
-
 
 use constant predefined_search => ();
 
