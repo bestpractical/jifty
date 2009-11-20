@@ -32,7 +32,7 @@ Page <span class="paging-numbers">
         label => $goto_page,
         onclick => {
             args => {
-                $argument => $goto_page, CRUDSort => ''
+                $argument => $goto_page,
             },
         },
     ) %>
@@ -47,7 +47,7 @@ Page <span class="paging-numbers">
         class => "prev",
         onclick => {
             args => {
-                $argument => $prev, CRUDSort => ''
+                $argument => $prev,
             },
         },
     ) %>
@@ -61,7 +61,7 @@ Page <span class="paging-numbers">
         class => "next",
         onclick => {
             args => {
-                $argument => $next, CRUDSort => ''
+                $argument => $next,
             },
         },
     ) %>
@@ -75,7 +75,7 @@ Page <span class="paging-numbers">
         class => "all",
         onclick => {
             args => {
-                $argument => 'all', CRUDSort => ''
+                $argument => 'all',
             },
         },
     ) %>
