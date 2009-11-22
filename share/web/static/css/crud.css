@@ -57,33 +57,33 @@
     font-weight: bold;
 }
 
-.up, .down, .up_select, .down_select {
-    height : 1.5em;
+.crud-sort-menu {
     float: left;
-    margin-right: 0.2em;
 }
 
-.up, .up_select {
-    background: url(/static/images/css/bullet_arrow_up.png) no-repeat bottom center;
+.crud-column-header img {
+    vertical-align:middle;
+    border: 0;
 }
-
-.down, .down_select {
-    background: url(/static/images/css/bullet_arrow_down.png) no-repeat bottom center;
-}
-
-.up_select a, .down_select a {
-    font-weight: bold;
-    color: #900;
-}
-
 
 .crud-column-headers a {
     color: black;
-    display: block;
-    font-size: 0.6em;
+    float: left;
+    font-size: 0.8em;
     height: 100%;
     text-decoration: none;
     font-family : sans-serif;
+}
+
+.crud-column-header ul {
+    list-style-type:none;
+    margin: 0;
+    padding: 0;
+    border: 1px solid #ccc;
+}
+
+.crud-column-header li {
+    float:left;
 }
 
 .paging-nav {

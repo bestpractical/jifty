@@ -646,31 +646,64 @@ template 'sort_header' => sub {
         for my $argument ($self->display_columns) {
             div {
                 { class is 'crud-column-header' };
-                my $css_class = ($sort_by && !$order && $sort_by eq $argument)?'up_select':'up';
-                span {
-                    { class is $css_class };
-                    hyperlink(
-                        label => _("asc"),
-                        onclick =>
-                            { args => { sort_by => $argument, order => undef } },
-                    );
-                };
-                $css_class = ($sort_by && $order && $sort_by eq $argument)?'down_select':'down' ;
-                span {
-                    { class is $css_class };
-                    hyperlink(
-                        label => _("desc"),
-                        onclick =>
-                            { args => { sort_by => $argument, order => 'D' } },
-                    );
+                ul { attr { class => 'crud-sort-menu', style => 'display:none;' };
+                    li { 
+                        my $imgdown ="<img src='/images/silk/bullet_arrow_down.png' alt='down' name='down'>";
+                        hyperlink(
+                            label => $imgdown,
+                            escape_label => 0,
+                            onclick =>
+                                { args => { sort_by => $argument, order => undef } },
+                        );
+                    } if (!($sort_by && !$order && $argument eq $sort_by));
+                    li {
+                        my $imgup ="<img src='/images/silk/bullet_arrow_up.png' alt='up' name='up'>";
+                        hyperlink(
+                            label => $imgup,
+                            escape_label => 0,
+                            onclick =>
+                                { args => { sort_by => $argument, order => 'D' } },
+                        );
+                    } if (!($sort_by && $order && $argument eq $sort_by));
+                    li {
+                        my $imgup ="<img src='/images/silk/cancel.png' alt='del' name='del'>";
+                        hyperlink(
+                            label => $imgup,
+                            escape_label => 0,
+                        );
+                    } if ($sort_by && $argument eq $sort_by);
                 };
                 span{
                     {class is "field"};
-                    outs $record_class->column($argument)->label || $argument;
+                    my $label = $record_class->column($argument)->label || $argument;
+                    if ( $sort_by && $argument eq $sort_by ) {
+                        div { class is 'crud-sort-selected';
+                        hyperlink ( label =>$label );
+                        my $img = ($order eq 'D')?'up':'down';
+                        img { attr { src => '/images/silk/bullet_arrow_'.$img.'.png' }; };
+                        };
+                    }
+                    else {
+                        hyperlink(label => $label);
+                    };
                 };
             }
         }
     };
+    outs_raw("<script type=\"text/javascript\">
+    jQuery(document).ready(function() {
+      jQuery('.crud-sort-menu').each(function(){
+        jQuery(this).parent().hover(
+        function(){
+        jQuery(this).children('.crud-sort-menu').show();
+        },
+        function(){
+            jQuery(this).children('.crud-sort-menu').hide();
+        });
+      });
+    });
+    </script>");
+
 };
 
 
