@@ -174,10 +174,6 @@ sub child {
         } else {
             $child = $proto->new(
                 {   parent     => $self,
-                    sort_order => (
-                        $self->{children}{$key}{sort_order}
-                            || scalar values %{ $self->{children} }
-                    ),
                     label        => $key,
                     escape_label => 1,
                     %args
@@ -185,6 +181,11 @@ sub child {
             );
         }
         $self->{children}{$key} = $child;
+
+        $child->sort_order( sort_order =>
+                ( $args{sort_order} || 
+                  $self->{children}{$key}{sort_order} || 
+                  scalar values %{ $self->{children} } ) );
 
         # URL is relative to parents, and cached, so set it up now
         $child->url( $child->{url} );
