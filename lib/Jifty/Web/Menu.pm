@@ -184,8 +184,7 @@ sub child {
 
         $child->sort_order( sort_order =>
                 ( $args{sort_order} || 
-                  $self->{children}{$key}{sort_order} || 
-                  scalar values %{ $self->{children} } ) );
+                  scalar values %{ $self->{children} } ) ) unless ($child->sort_order());
 
         # URL is relative to parents, and cached, so set it up now
         $child->url( $child->{url} );
