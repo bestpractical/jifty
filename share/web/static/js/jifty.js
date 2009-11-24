@@ -1517,7 +1517,7 @@ Jifty.update = function () {
                 contentType: 'text/x-json',
                 error:       onFailure,
                 success:     onSuccess,
-                complete:    Jifty.preload_action_respond,
+                complete:    Jifty.preload_action_respond
             });
         }
     };
