@@ -666,7 +666,7 @@ template 'sort_header' => sub {
                         );
                     } if (!($sort_by && $order && $argument eq $sort_by));
                     li {
-                        my $imgup ="<img src='/images/silk/cancel.png' alt='del' name='del'>";
+                        my $imgup ="<img src='/images/silk/cancel_grey.png' alt='del' name='del'>";
                         hyperlink(
                             label => $imgup,
                             escape_label => 0,
