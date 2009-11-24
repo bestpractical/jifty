@@ -1364,8 +1364,7 @@ Jifty.update = function () {
                                 : (error.firstChild ? error.firstChild.nodeValue 
                                 :                     '');
                             var action = current_actions[moniker];
-                            action.result
-                                .field_error[field.getAttribute("name")] = text;
+                            action.result.field_error[field.getAttribute("name")] = text;
                         }
                     }
                 });
