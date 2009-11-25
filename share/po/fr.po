@@ -541,7 +541,7 @@ msgstr "Page Suivante"
 
 #: lib/Jifty/Plugin/User/Mixin/Model/User.pm:49
 msgid "Nickname"
-msgstr "Identifiant"
+msgstr "Nom"
 
 #: lib/Jifty/Plugin/Authentication/Password/View.pm:63
 msgid "No account yet? It's quick and easy. "
