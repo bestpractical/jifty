@@ -443,7 +443,7 @@ template 'view' => sub :CRUDView {
         moniker => "update-" . Jifty->web->serial,
     );
 
-    my @fields = $self->display_columns;
+    my @fields = $self->display_columns($update);
     for my $field (@fields) {
         div { { class is 'crud-field view-argument-'.$field};
             $self->render_field(
@@ -640,10 +640,11 @@ template 'sort_header' => sub {
     my $sort_by = shift;
     my $order = shift;
     my $record_class = $self->record_class;
+    my $update = $record_class->as_update_action();
 
     div {
         { class is "crud-column-headers" };
-        for my $argument ($self->display_columns) {
+        for my $argument ($self->display_columns($update)) {
             div {
                 { class is 'crud-column-header' };
                 ul { attr { class => 'crud-sort-menu', style => 'display:none;' };
