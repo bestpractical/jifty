@@ -671,6 +671,8 @@ template 'sort_header' => sub {
                         hyperlink(
                             label => $imgup,
                             escape_label => 0,
+                            onclick =>
+                                { args => { sort_by =>'', order => '' } },
                         );
                     } if ($sort_by && $argument eq $sort_by);
                 };
