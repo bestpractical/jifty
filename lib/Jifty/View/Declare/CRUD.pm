@@ -154,7 +154,7 @@ This is the full name of the model class these CRUD views are for. The default i
 
   Jifty->app_class('Model', $self->object_type);
 
-You will want to override this if (in addition to L</object_type>) if you want to provide CRUD views in a plugin, or from an external model class, or for one of the Jifty built-in models.
+You will want to override this (in addition to L</object_type>) if you want to provide CRUD views in a plugin, or from an external model class, or for one of the Jifty built-in models.
 
 =cut
 
@@ -162,7 +162,7 @@ You will want to override this if (in addition to L</object_type>) if you want t
 # the mount_view() method is generally called very early in the Jifty
 # lifecycle. As such, Jifty->app_class() might not work yet since it requires
 # the Jifty singleton to be built and the configuration to be loaded. So, this
-# implementation caches teh record class after the first calculation, which
+# implementation caches the record class after the first calculation, which
 # should happen during the request dispatch process, which always happens after
 # Jifty is completely initialized.
 sub record_class {
