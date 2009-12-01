@@ -10,6 +10,8 @@ use Cwd;
 my $cwd;
 
 BEGIN {
+    plan skip_all => "disabled for psgi";
+
     plan skip_all => "live test doesn't work on Win32 at the moment" if $^O eq 'MSWin32';
 }
 
