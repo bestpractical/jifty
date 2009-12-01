@@ -1021,8 +1021,8 @@ __PACKAGE__->meta->make_immutable;
 package Jifty::Request::StateVariable;
 use Any::Moose;
 
-has 'key';
-has 'value';
+has 'key', is => 'rw';
+has 'value', is => 'rw';
 
 no Any::Moose;
 __PACKAGE__->meta->make_immutable;
