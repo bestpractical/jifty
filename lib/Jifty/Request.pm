@@ -18,6 +18,7 @@ has 'continuation_path' => (is => 'rw');
 use Jifty::JSON;
 use Jifty::YAML;
 use Jifty::Web::FileUpload;
+use Plack::Util ();
 
 =head1 NAME
 
@@ -117,7 +118,7 @@ sub clone {
 
 Attempt to fill in the request from any number of various methods --
 YAML, JSON, etc.  Falls back to query parameters.  Takes a
-L<HTTP::Engine::Request> object.
+L<Plack::Request> object.
 
 =cut
 
@@ -127,7 +128,7 @@ sub promote {
 
     die Carp::longmess("old calling style") unless ref $req;
 
-    # Import all props from HTTP::Engine::Request object
+    # Import all props from Plack::Request object
     my $self = bless $req, $class;
     $self->{'actions'} = {};
     $self->{'state_variables'} = {};
@@ -247,7 +248,7 @@ sub from_data_structure {
 
 =head2 from_args REQ
 
-Calls C<from_webform> with the L<HTTP::Engine::Request/parameters>
+Calls C<from_webform> with the L<Plack::Request/parameters>
 after splitting C<|>'s in argument names.  See L</argument munging>.
 
 Returns itself.

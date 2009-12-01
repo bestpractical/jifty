@@ -471,7 +471,8 @@ sub make_server {
         unshift @Jifty::Server::ISA, 'Jifty::TestServer::Apache';
     }
     else {
-        unshift @Jifty::Server::ISA, 'Test::HTTP::Server::Simple';
+        require Jifty::TestServer::Plack;
+        unshift @Jifty::Server::ISA, 'Jifty::TestServer::Plack';
     }
 
     my $server = Jifty::Server->new;

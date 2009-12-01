@@ -13,7 +13,7 @@ Jifty::Handler - Methods related to the finding and returning content
   Jifty->new();
 
   my $handler = Jifty::Handler->new;
-  $handler->handle_request( request => HTTP::Engine::Request->new(...) );
+  $handler->handle_request( $env );
 
 =head1 DESCRIPTION
 
@@ -120,8 +120,8 @@ should call C<handle_request>.
 =cut
 
 sub handle_request {
-    my $self = shift;
-    my $req = Plack::Request->new(shift);
+    my ($self, $env) = @_;
+    my $req = Plack::Request->new($env);
     my $response;
 
     $self->setup_view_handlers() unless $self->_view_handlers;

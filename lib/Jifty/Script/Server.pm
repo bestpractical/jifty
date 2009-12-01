@@ -17,7 +17,7 @@ use Test::Builder ();
 BEGIN { $SIG{__DIE__} = $x;}
 
 
-use HTTP::Engine;
+use Plack::Loader;
 use File::Path ();
 use Jifty::Util;
 
@@ -197,14 +197,10 @@ sub _run_server {
     my %args = ( port => $port );
     $args{$_} = $self->{$_} for grep defined $self->{$_}, qw/host user group/;
 
-    $Jifty::SERVER = HTTP::Engine->new(
-        interface => {
-            module => 'Standalone',
-            args   => \%args,
-            request_handler => sub { Jifty->handler->handle_request(@_) },
-        },
-    );
-    $Jifty::SERVER->run;
+    my $app = sub { Jifty->handler->handle_request(@_) };
+
+    $Jifty::SERVER = Plack::Loader->load('Standalone', %args);
+    $Jifty::SERVER->run($app);
 }
 
 sub _stop {

@@ -2,7 +2,6 @@ use strict;
 use warnings;
 
 package Jifty::Test::WWW::Mechanize;
-use WWW::Mechanize::HTTPEngineTest;
 use base qw/Test::WWW::Mechanize/;
 
 delete $ENV{'http_proxy'}; # Otherwise Test::WWW::Mechanize tries to go through your HTTP proxy
@@ -15,6 +14,7 @@ use HTTP::Cookies;
 use XML::XPath;
 use Hook::LexWrap;
 use List::Util qw(first);
+use Plack::Test;
 use Carp;
 
 # XXX TODO: We're leaving out FLUFF errors because it complains about non-standard
@@ -41,13 +41,39 @@ sub new {
     my $class = shift;
     my $self = $class->SUPER::new(@_);
     $self->cookie_jar(HTTP::Cookies->new);
-    $self->WWW::Mechanize::HTTPEngineTest::http_engine_hook(
+    $self->_plack_hook(
         uri => Jifty->web->url,
         handler => sub {
             Jifty->handler->handle_request(@_);
         },
     );
     return $self;
+}
+
+sub _plack_hook {
+    my $self = shift;
+    my %args = (
+        uri => "http://localhost:8888/",
+        @_
+    );
+
+    die "No handler provided"
+        unless $args{handler};
+
+    my $cb;
+
+    test_psgi
+        app => $args{handler},
+        client => sub {$cb = shift};
+
+    my $for = URI->new( $args{uri} );
+    $self->add_handler(
+        request_send => $cb,
+        m_scheme => $for->scheme,
+        m_host => $for->host,
+        m_port => $for->port,
+        m_path_prefix => $for->path,
+    );
 }
 
 =head2 moniker_for ACTION, FIELD1 => VALUE1, FIELD2 => VALUE2
