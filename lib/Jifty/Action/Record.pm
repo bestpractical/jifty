@@ -391,11 +391,13 @@ sub _argument_canonicalizer {
     # Add a canonicalizer for the column if the record provides one
     if ( $self->record->has_canonicalizer_for_column($field) ) {
         $do_ajax = 1 unless defined $column->render_as and lc( $column->render_as ) eq 'checkbox';
+        my $for = $self->isa('Jifty::Action::Record::Create') ? 'create' : 'update';
         $method ||= sub {
             my ( $self, $value ) = @_;
             return $self->record->run_canonicalization_for_column(
                 column => $field,
                 value  => $value
+                extra  => [{}, { for => $for }],
             );
         };
     }
