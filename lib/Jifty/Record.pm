@@ -73,7 +73,7 @@ sub create {
     foreach my $key ( keys %attribs ) {
         $attribs{$key} = $self->run_canonicalization_for_column(
             column => $key,
-            value  => $attribs{$key}
+            value  => $attribs{$key},
             extra  => [\%attribs, { for => 'create' }],
         );
     }
