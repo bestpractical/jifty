@@ -24,16 +24,15 @@ my $mech = Jifty::Test::WWW::Mechanize->new();
 
 $mech->get_ok("$URL/login","Got login page");
 
-my $ua = LWP::UserAgent->new;
 my $res;
 
-$ua->default_header('Accept-Language' => "en");
-$res = $ua->get("$URL/login");
+$mech->default_header('Accept-Language' => "en");
+$res = $mech->get("$URL/login");
 ok $res->is_success, "can access login page";
 like $res->content, qr/Lost your password/, 'en works';
 
-$ua->default_header('Accept-Language' => "fr");
-$res = $ua->get("$URL/login");
+$mech->default_header('Accept-Language' => "fr");
+$res = $mech->get("$URL/login");
 ok $res->is_success, "can access login page";
 like adjust($res->content), qr/oublié/,'fr login works';
 
