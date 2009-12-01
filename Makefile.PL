@@ -12,6 +12,7 @@ requires('Class::Data::Inheritable');
 requires('Class::Trigger' => '0.13');
 requires('Clone' => '0.27');
 requires('CGI' => '3.30');
+requires('CGI::Simple');
 requires('CGI::Cookie::Splitter');
 requires('Class::Inspector' => 1.20); # For File::ShareDir on Win32
 requires('Crypt::CBC');

@@ -3,7 +3,7 @@ use strict;
 
 package Jifty::Web::Session;
 use base qw/Jifty::Object/;
-use CGI::Cookie ();
+use CGI::Simple::Cookie ();
 use DateTime    ();
 use Storable    ();
 $Storable::Deparse    = 1;
@@ -111,10 +111,11 @@ sub load_by_kv {
 
 sub _get_session_id_from_client {
     my $self        = shift;
-    my %cookies     = CGI::Cookie->fetch();
+    my %cookies     = CGI::Simple::Cookie->parse(Jifty->web->request->env->{HTTP_COOKIE});
     my $cookie_name = $self->cookie_name;
     my $session_id
         = $cookies{$cookie_name} ? $cookies{$cookie_name}->value() : undef;
+    return $session_id;
 }
 
 =head2 unload
@@ -318,8 +319,8 @@ sub set_cookie {
     return if Jifty->web->response->header('Expires');
 
     my $cookie_name = $self->cookie_name;
-    my %cookies     = CGI::Cookie->fetch();
-    my $cookie      = CGI::Cookie->new(
+    my %cookies     = CGI::Simple::Cookie->parse(Jifty->web->request->env->{HTTP_COOKIE});
+    my $cookie      = CGI::Simple::Cookie->new(
         -name    => $cookie_name,
         -value   => $self->id,
         -expires => $self->expires,
