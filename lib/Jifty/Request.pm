@@ -965,13 +965,13 @@ __PACKAGE__->meta->make_immutable;
 package Jifty::Request::Action;
 use Any::Moose;
 
-has 'moniker';
-has 'arguments';
-has 'class';
-has 'order';
-has 'active';
-has 'modified';
-has 'has_run';
+has 'moniker', is => 'rw';
+has 'arguments', is => 'rw';
+has 'class', is => 'rw';
+has 'order', is => 'rw';
+has 'active', is => 'rw';
+has 'modified', is => 'rw';
+has 'has_run', is => 'rw';
 
 =head2 Jifty::Request::Action
 
@@ -1040,12 +1040,12 @@ A small package that encapsulates the bits of a state variable:
 package Jifty::Request::Fragment;
 use Any::Moose;
 
-has 'name';
-has 'path';
-has 'wrapper';
-has 'in_form';
-has 'arguments';
-has 'parent';
+has 'name', is => 'rw';
+has 'path', is => 'rw';
+has 'wrapper', is => 'rw';
+has 'in_form', is => 'rw';
+has 'arguments', is => 'rw';
+has 'parent', is => 'rw';
 
 no Any::Moose;
 __PACKAGE__->meta->make_immutable;
