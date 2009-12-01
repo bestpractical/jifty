@@ -74,6 +74,7 @@ sub create {
         $attribs{$key} = $self->run_canonicalization_for_column(
             column => $key,
             value  => $attribs{$key}
+            extra  => [\%attribs],
         );
     }
     foreach my $key ( keys %attribs ) {
