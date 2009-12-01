@@ -86,10 +86,12 @@ sub BUILD {
     my $self = shift;
 
     # Copy a bunch of information off of the top Plack request
-    my $env = Jifty->web->request->top_request->env;
-    $self->{env}{$_} = $env->{$_} for qw/psgi.version psgi.multithread psgi.multiprocess psgi.errors/;
-    # Stub in an empty input filehandle
-    $self->{env}{"psgi.input"} = Plack::Util::inline_object( read => sub {0} );
+    if ( Jifty->web->request ) {
+        my $env = Jifty->web->request->top_request->env;
+        $self->{env}{$_} = $env->{$_} for qw/psgi.version psgi.multithread psgi.multiprocess psgi.errors/;
+        # Stub in an empty input filehandle
+        $self->{env}{"psgi.input"} = Plack::Util::inline_object( read => sub {0} );
+    }
 
     $self->{'actions'} = {};
     $self->{'state_variables'} = {};
