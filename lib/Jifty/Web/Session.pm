@@ -111,7 +111,7 @@ sub load_by_kv {
 
 sub _get_session_id_from_client {
     my $self        = shift;
-    my %cookies     = CGI::Simple::Cookie->parse(Jifty->web->request->env->{HTTP_COOKIE});
+    my %cookies     = Jifty->web->request ? CGI::Simple::Cookie->parse(Jifty->web->request->env->{HTTP_COOKIE}) : ();
     my $cookie_name = $self->cookie_name;
     my $session_id
         = $cookies{$cookie_name} ? $cookies{$cookie_name}->value() : undef;
@@ -319,7 +319,8 @@ sub set_cookie {
     return if Jifty->web->response->header('Expires');
 
     my $cookie_name = $self->cookie_name;
-    my %cookies     = CGI::Simple::Cookie->parse(Jifty->web->request->env->{HTTP_COOKIE});
+    my %cookies     = Jifty->web->request ? CGI::Simple::Cookie->parse(Jifty->web->request->env->{HTTP_COOKIE}) : ();
+
     my $cookie      = CGI::Simple::Cookie->new(
         -name    => $cookie_name,
         -value   => $self->id,
