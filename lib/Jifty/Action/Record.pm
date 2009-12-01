@@ -396,7 +396,7 @@ sub _argument_canonicalizer {
             my ( $self, $value ) = @_;
             return $self->record->run_canonicalization_for_column(
                 column => $field,
-                value  => $value
+                value  => $value,
                 extra  => [{}, { for => $for }],
             );
         };
