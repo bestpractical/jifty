@@ -1,6 +1,14 @@
 /* An empty class so we can create things inside it */
 var Jifty = {};
 
+// NOTICE: line break should be in a proper place.
+//   something like 
+//          return 
+//          {
+//              a : 123
+//          };
+//   would cause IE javascript error.
+
 // to add a response_hook
 // the handler will get two arguments:
 //
@@ -1791,11 +1799,9 @@ jQuery.extend(Jifty.Placeholder.prototype, {
 
      var self = this;
 
-     jQuery( this.element )
-     .bind("focus", function(event) {
+     jQuery( this.element ).bind("focus", function(event) {
          self.onFocus();
-     })
-     .bind("blur", function(event) {
+     }).bind("blur", function(event) {
          self.onBlur();
      });
 
@@ -1907,12 +1913,11 @@ Jifty.Effect = function(el, name, args, options) {
 
     if (options == null) options = {};
     // jQuery built-ins
-    var effect =
-        name == 'Fade' ? 'fadeOut' :
-        name == 'Appear' ? 'fadeIn' :
-        name == 'SlideDown' ? 'slideDown' :
-        name == 'SlideUp' ? 'slideUp' :
-        name;
+    var effect = name == 'Fade' ? 'fadeOut' :
+                    name == 'Appear' ? 'fadeIn' :
+                    name == 'SlideDown' ? 'slideDown' :
+                    name == 'SlideUp' ? 'slideUp' :
+                    name;
 
     if ( jQuery.isFunction( jQuery(el)[ effect ] ) ) {
         if ( jQuery.isFunction(options["before"]) ) 
