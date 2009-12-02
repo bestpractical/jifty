@@ -623,16 +623,16 @@ jQuery.extend(Jifty.Form.Element, {
     buttonArguments: function(element) {
         element = Jifty.$(element);
         if (!element)
-            return {}
+            return {};
 
         if (((element.nodeName != 'INPUT') || (element.getAttribute("type") != "submit"))
          && ((element.nodeName != 'A')     || (! element.getAttribute("name"))))
-            return {}
+            return {};
 
         if (element.getAttribute("name").length == 0)
-            return {}
+            return {};
 
-        var extras = {}
+        var extras = {};
 
         // Split other arguments out, if we're on a button
         var pairs = element.getAttribute("name").split("|");
@@ -764,9 +764,9 @@ Behaviour.register({
     },
     ".messages": function(e) {
         if ( !jQuery(e).hasClass('jifty_enter_handler_attached') ) {
-            jQuery(e)
-            .prepend('<a  href="#" id="dismiss_'+e.id+'" title="Dismiss" onmousedown="this.onfocus=this.blur;" onmouseup="this.onfocus=window.clientInformation?null:window.undefined" onclick="Jifty.Effect(this.parentNode, \'Fade\'); return false;">Dismiss</a>')
-            .addClass("jifty_enter_handler_attached" );
+            jQuery(e).prepend(
+                '<a  href="#" id="dismiss_'+e.id+'" title="Dismiss" onmousedown="this.onfocus=this.blur;" onmouseup="this.onfocus=window.clientInformation?null:window.undefined" onclick="Jifty.Effect(this.parentNode, \'Fade\'); return false;">Dismiss</a>'
+                ).addClass("jifty_enter_handler_attached" );
 
         }
     },
@@ -1702,7 +1702,7 @@ function show_action_result() {
     }
 
     /* This is a workaround for Safari, which does not support textContent */
-    var text = result.textContent
+    var text = result.textContent 
                     ? result.textContent
                     : (result.firstChild ? result.firstChild.nodeValue : '');
 
@@ -1733,10 +1733,8 @@ jQuery.extend(Jifty.Autocompleter.prototype, {
             self.changed  = true;
             self.hasFocus = true;
             Jifty.current_autocompleter_object = self;
-            autocomplete_div.append(jQuery('#autocompleteHelper'))
-            .show();
-        })
-        .blur(function() { autocomplete_div.hide() });
+            autocomplete_div.append(jQuery('#autocompleteHelper')).show();
+        }).blur(function() { autocomplete_div.hide() });
         
         jQuery(this.field).Autocomplete({
             source: this.url,
