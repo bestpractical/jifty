@@ -346,7 +346,7 @@ Action.prototype = {
             this.s_a = jQuery.extend({}, Todo.eval_ajax_get('/=/action/'+this.actionClass+'.js'));
         }
 
-        return this.s_a
+        return this.s_a;
     },
     argument_names: function() {
         return this._action_spec().keys();
@@ -577,7 +577,7 @@ jQuery.extend(Jifty.Form.Element, {
     getValue: function(element) {
         var $el = jQuery(Jifty.$(element));
         if ( $el.is(":checkbox, :radio") ) {
-            return $el.is(":checked") ? $el.val() : null
+            return $el.is(":checked") ? $el.val() : null;
         }
         return $el.val();
     },
