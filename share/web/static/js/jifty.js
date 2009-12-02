@@ -7,21 +7,26 @@ var Jifty = {};
 //          {
 //              a : 123
 //          };
-//   would cause IE javascript error.
+//   would cause IE6,7 javascript error.
+//   should write:
+//          return {
+//              a: 123
+//          };
 
-// to add a response_hook
-// the handler will get two arguments:
+// Jifty.Update:
+//   to add a response_hook
+//   the handler will get two arguments:
 //
-// response_fragment:
-//     - response xml dom object
+//   response_fragment:
+//       - response xml dom object
 //
-// f:
-//     - 'region' is the name of the region to update
-//     - 'args' is a hash of arguments to override
-//     - 'path' is the path of the fragment (if this is a new fragment)
-//     - 'element' is the CSS selector of the element to update, if 'region' isn't supplied
-//     - 'mode' is one of 'Replace', 'Top', 'Bottom', 'Before', or 'After'
-//     - 'effect' is the name of an effect
+//   f:
+//       - 'region' is the name of the region to update
+//       - 'args' is a hash of arguments to override
+//       - 'path' is the path of the fragment (if this is a new fragment)
+//       - 'element' is the CSS selector of the element to update, if 'region' isn't supplied
+//       - 'mode' is one of 'Replace', 'Top', 'Bottom', 'Before', or 'After'
+//       - 'effect' is the name of an effect
 //
 Jifty.Update = {
     response_hooks: [],
