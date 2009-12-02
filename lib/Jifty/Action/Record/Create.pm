@@ -150,6 +150,16 @@ sub possible_columns {
     return grep {not $_->protected} $self->SUPER::possible_columns( @_ );
 }
 
+=head2 _extra_validator_args
+
+Passes C<< for => 'create' >> to validators.
+
+=cut
+
+sub _extra_validator_args {
+    return { for => 'create' };
+}
+
 =head1 SEE ALSO
 
 L<Jifty::Action::Record>, L<Jifty::Record>

@@ -961,12 +961,12 @@ sub _validate_argument {
     if ( $field_info->{validator}
         and defined &{ $field_info->{validator} } )
     {
-        return $field_info->{validator}->( $self, $value, $self->argument_values );
+        return $field_info->{validator}->( $self, $value, $self->argument_values, $self->_extra_validator_args );
     }
 
     # Check to see if it's the validate_$field method instead and use that
     elsif ( $self->can($default_validator) ) {
-        return $self->$default_validator( $value, $self->argument_values );
+        return $self->$default_validator( $value, $self->argument_values, $self->_extra_validator_args );
     }
 
     # Check if we already have a failure for it, from some other field
@@ -978,6 +978,17 @@ sub _validate_argument {
     else {
         return $self->validation_ok($field);
     }
+}
+
+=head2 _extra_validator_args
+
+Returns a list of extra arguments to pass to validators. By default, an empty
+hash reference, but subclasses can override it to pass, say, a better C<for>.
+
+=cut
+
+sub _extra_validator_args {
+    return {};
 }
 
 =head2 _autocomplete_argument ARGUMENT
