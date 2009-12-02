@@ -855,14 +855,14 @@ sub _canonicalize_argument {
         and defined &{ $field_info->{canonicalizer} } ) {
         
         # Run it, sucka
-        $value = $field_info->{canonicalizer}->( $self, $value );
+        $value = $field_info->{canonicalizer}->( $self, $value, $self->argument_values, $self->_extra_canonicalizer_args );
     } 
     
     # How about a method named canonicalize_$field?
     elsif ( $self->can($default_method) ) {
 
         # Run that, foo'
-        $value = $self->$default_method( $value );
+        $value = $self->$default_method( $value, $self->argument_values, $self->_extra_canonicalizer_args );
     } 
     
     # Or is it a date?
@@ -870,7 +870,7 @@ sub _canonicalize_argument {
              && lc( $field_info->{render_as} ) eq 'date') {
 
         # Use the default date canonicalizer, Mr. T!
-        $value = $self->_canonicalize_date( $value );
+        $value = $self->_canonicalize_date( $value, $self->argument_values, $self->_extra_canonicalizer_args );
     }
 
     $self->argument_value($field => $value);
@@ -991,6 +991,30 @@ sub _extra_validator_args {
     return {};
 }
 
+=head2 _extra_canonicalizer_args
+
+Returns a list of extra arguments to pass to canonicalizers. By default, an
+empty hash reference, but subclasses can override it to pass, say, a better
+C<for>.
+
+=cut
+
+sub _extra_canonicalizer_args {
+    return {};
+}
+
+=head2 _extra_autocompleter_args
+
+Returns a list of extra arguments to pass to autocompleters. By default, an
+empty hash reference, but subclasses can override it to pass, say, a better
+C<for>.
+
+=cut
+
+sub _extra_autocompleter_args {
+    return {};
+}
+
 =head2 _autocomplete_argument ARGUMENT
 
 Get back a list of possible completions for C<ARGUMENT>.  The list
@@ -1025,12 +1049,12 @@ sub _autocomplete_argument {
     # If it's defined on the field, use that autocompleter
     if ( $field_info->{autocompleter}  )
     {
-        return $field_info->{autocompleter}->( $self, $value, $self->argument_values );
+        return $field_info->{autocompleter}->( $self, $value, $self->argument_values, $self->_extra_autocompleter_args );
     }
 
     # If it's a method on the class, use that autocompleter
     elsif ( $self->can($default_autocomplete) ) {
-        return $self->$default_autocomplete( $value, $self->argument_values );
+        return $self->$default_autocomplete( $value, $self->argument_values, $self->_extra_autocompleter_args );
     }
 
     # Otherwise, return zip-zero-notta

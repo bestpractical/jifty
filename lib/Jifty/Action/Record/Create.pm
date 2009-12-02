@@ -160,6 +160,26 @@ sub _extra_validator_args {
     return { for => 'create' };
 }
 
+=head2 _extra_canonicalizer_args
+
+Passes C<< for => 'create' >> to canonicalizers.
+
+=cut
+
+sub _extra_canonicalizer_args {
+    return { for => 'create' };
+}
+
+=head2 _extra_autocompleter_args
+
+Passes C<< for => 'create' >> to autocompleters.
+
+=cut
+
+sub _extra_autocompleter_args {
+    return { for => 'create' };
+}
+
 =head1 SEE ALSO
 
 L<Jifty::Action::Record>, L<Jifty::Record>

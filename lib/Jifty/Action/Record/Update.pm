@@ -237,6 +237,26 @@ sub _extra_validator_args {
     return { for => 'update' };
 }
 
+=head2 _extra_canonicalizer_args
+
+Passes C<< for => 'update' >> to canonicalizers.
+
+=cut
+
+sub _extra_canonicalizer_args {
+    return { for => 'update' };
+}
+
+=head2 _extra_autocompleter_args
+
+Passes C<< for => 'update' >> to autocompleters.
+
+=cut
+
+sub _extra_autocompleter_args {
+    return { for => 'update' };
+}
+
 =head1 SEE ALSO
 
 L<Jifty::Action::Record>, L<Jifty::Record>
