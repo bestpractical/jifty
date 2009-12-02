@@ -144,6 +144,7 @@ C<< sub validate_<parameter> >>, and it will be called as appropriate:
     sub validate_body {
        my $self = shift;
        my $body = shift;
+
        if ( $body =~ /$RE{profanity}/i) {
            return $self->validation_error(
                body => 'Would you speak like that in front of your mother? *cough*'
@@ -152,8 +153,16 @@ C<< sub validate_<parameter> >>, and it will be called as appropriate:
        return $self->validation_ok('body');
     }
 
-You can also do validation in the model -- see
-L<Jifty::Action::Record> 
+
+Your C<< validate_<parameter> >> method will be called with the value of C<<
+<parameter> >> followed by two hash references. The first is a hash reference
+of the full set of arguments passed along with C<< <parameter> >> to permit
+more advanced validation. For example you could forbid profanity only if the
+content is C<rated> for all ages. The final parameter is another hash reference
+of extra metadata. The C<for> key will be set to C<create> or C<update> to give
+you still more control.
+
+You can also do validation in the model -- see L<Jifty::Action::Record>.
 
 =head2 canonicalization
 
@@ -171,13 +180,16 @@ validator.
        return $body;
     }
 
-A L<canonicalizer|Jifty::Manual::Glossary/canonicalize> can also 
+Note that the parameters (value, all parameters, metadata) are the same as in
+L</validation>.
+
+A L<canonicalizer|Jifty::Manual::Glossary/canonicalize> can also
 change other parts of the action.  This lets you update the display
 dynamically in an L<AJAX|Jifty::Manual::Glossary/ajax>-enabled browser
 based on what the user has entered.  For example, we can let a user
-use magic syntax to provide tags for their blog post by surrounding the 
+use magic syntax to provide tags for their blog post by surrounding the
 tags with square brackets.  You can also let the user know you're
-doing something magical by using C<canonicalization_note> which 
+doing something magical by using C<canonicalization_note> which
 will display a message to the user.
 
     use Jifty::Param::Schema;
