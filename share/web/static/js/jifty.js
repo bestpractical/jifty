@@ -204,7 +204,8 @@ Action.prototype = {
                 // XXX: fallback value being an array makes server
                 // upset, we don't think that should happen anyway
                 if (type == 'fallback' && a['fields'][field][type])
-                    continue
+                    continue;
+
                 a['fields'][field][type] = this._mergeValues(a['fields'][field][type],
                                                              Jifty.Form.Element.getValue(f));
 
