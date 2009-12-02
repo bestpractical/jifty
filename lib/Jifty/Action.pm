@@ -1312,16 +1312,20 @@ This is just a method titled C<canonicalize_FIELD> where C<FIELD> is
 the name of the field be normalized. Here is an example:
 
   sub canonicalize_foo {
-      my ($self, $value) = @_;
+      my ($self, $value, $other, $metadata) = @_;
 
       # do something to canonicalize the value
-      my $normal_form = lc($value);
+      my $normal_form = lc($value) . '-' . $other->{other_field};
+      $normal_form .= '-update' if $metadata->{for} eq 'update';
       
       return $normal_form;
   }
 
-In this case, all values in the "foo" field will be changed into lower
-case.
+The first parameter to your canonicalizer will be the value to be
+canonicalized. The next will be a hash reference of all the parameters
+submitted with this canonicalization, so you can be smarter. Finally, the third
+parameter is a hash reference of other metadata, such as C<for>, whose value
+will be C<create> or C<update>.
 
 While doing this you might also want to call the
 L</canonicalization_note> to inform the client of the modification:
@@ -1344,7 +1348,7 @@ A validation method is one named C<validate_FIELD> where C<FIELD> is
 the name of the field being checked. Here is an example:
 
   sub validate_foo {
-      my ($self, $value) = @_;
+      my ($self, $value, $other, $metadata) = @_;
 
       # Check for uppercase letters
       if ($value =~ /\p{Lu}/) {
@@ -1366,6 +1370,8 @@ contain the characters '-', '*', '+', or '?'. You can use
 L</validation_error> and L</validation_warning> to return the results
 of your validation to the user or simply return 1 to indicate a valid
 value.
+
+Note that the parameters are the same as in L</Canonicalization>.
 
 If you just have a list of valid values, you may want to use the
 C<valid_values> schema parameter to perform this task instead.
