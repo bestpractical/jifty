@@ -1360,10 +1360,8 @@ Jifty.update = function () {
 
                         // Record the validation errors and such with the form
                         if (error) {
-                            var text 
-                                = error.textContent ? error.textContent
-                                : (error.firstChild ? error.firstChild.nodeValue 
-                                :                     '');
+                            var text = error.textContent ? error.textContent
+                                        : (error.firstChild ? error.firstChild.nodeValue : '');
                             var action = current_actions[moniker];
                             action.result.field_error[field.getAttribute("name")] = text;
                         }
