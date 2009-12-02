@@ -372,21 +372,21 @@ ActionField.prototype = {
 
  render: function() {
         if (this.render_mode == 'read')
-            return this.render_wrapper
-                (this.render_preamble,
-                 this.render_label,
-                 this.render_value);
+            return this.render_wrapper(
+                        this.render_preamble,
+                        this.render_label,
+                        this.render_value);
         else
-            return this.render_wrapper
-            (this.render_preamble,
-             this.render_label,
-             this.render_widget,
-             this.render_autocomplete_div,
-             this.render_inline_javascript,
-             this.render_hints,
-             this.render_errors,
-             this.render_warnings,
-             this.render_canonicalization_notes);
+            return this.render_wrapper(
+                        this.render_preamble,
+                        this.render_label,
+                        this.render_widget,
+                        this.render_autocomplete_div,
+                        this.render_inline_javascript,
+                        this.render_hints,
+                        this.render_errors,
+                        this.render_warnings,
+                        this.render_canonicalization_notes);
     },
  render_wrapper: function () {
         var classes = ['form_field'];
