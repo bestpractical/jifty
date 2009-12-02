@@ -1025,12 +1025,12 @@ sub _autocomplete_argument {
     # If it's defined on the field, use that autocompleter
     if ( $field_info->{autocompleter}  )
     {
-        return $field_info->{autocompleter}->( $self, $value );
+        return $field_info->{autocompleter}->( $self, $value, $self->argument_values );
     }
 
     # If it's a method on the class, use that autocompleter
     elsif ( $self->can($default_autocomplete) ) {
-        return $self->$default_autocomplete( $value );
+        return $self->$default_autocomplete( $value, $self->argument_values );
     }
 
     # Otherwise, return zip-zero-notta
