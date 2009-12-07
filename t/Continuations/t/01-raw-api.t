@@ -9,7 +9,7 @@ Continuations tests
 
 =cut
 
-use Jifty::Test::Dist tests => 47;
+use Jifty::Test::Dist tests => 49;
 
 use_ok('Jifty::Test::WWW::Mechanize');
 
@@ -67,6 +67,8 @@ ok($mech->continuation->response->result("cross")->failure, "Action's result was
 $mech->get("$URL/index-help.html?J:CALL=$first");
 like($mech->uri, qr/index.html/, "Back at original page");
 unlike($mech->uri, qr/J:CALL=$first/, "With new continuation parameter");
+is($mech->status, 200, "Got back happily");
+$mech->content_like(qr/Get help/, "Has content after redirect");
 my $next = $mech->continuation->id;
 
 # Now with return value
