@@ -152,7 +152,7 @@ to ask "are we about to call a continuation?"
 
 sub return_path_matches {
     my $self = shift;
-    my $called_uri = Jifty->web->request->uri;
+    my $called_uri = Jifty->web->request->request_uri;
     my $request_path = $self->request->path;
 
     # XXX TODO: WE should be using URI canonicalization
