@@ -1,6 +1,6 @@
 --- 
 framework: 
-  AdminMode: 1
+  AdminMode: 0
   ApplicationClass: TestApp::Plugin::ActorMetadata
   ApplicationName: TestApp::Plugin::ActorMetadata
   ApplicationUUID: C4418A2E-DE0B-11DD-96DC-F9E9C3E98ACD
@@ -15,7 +15,7 @@ framework:
     RecordBaseClass: Jifty::DBI::Record::Cachable
     User: ''
     Version: 0.0.1
-  DevelMode: 1
+  DevelMode: 0
   L10N: 
     PoDir: share/po
   LogLevel: INFO

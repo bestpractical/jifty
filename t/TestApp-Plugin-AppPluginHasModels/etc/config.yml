@@ -1,6 +1,6 @@
 --- 
 framework: 
-  AdminMode: 1
+  AdminMode: 0
   ApplicationClass: TestApp::Plugin::AppPluginHasModels
   ApplicationName: TestApp-Plugin-AppPluginHasModels
   ApplicationUUID: 646FD662-32DD-11DC-AD79-2A0157C3B83B
@@ -15,7 +15,7 @@ framework:
     RecordUUIDs: active
     User: ''
     Version: 0.0.1
-  DevelMode: 1
+  DevelMode: 0
   L10N: 
     PoDir: share/po
   LogLevel: INFO

@@ -1,6 +1,6 @@
 --- 
 framework: 
-  AdminMode: 1
+  AdminMode: 0
   ApplicationClass: TestApp::JiftyJS
   ApplicationName: TestApp::JiftyJS
   ApplicationUUID: F43CA57E-A4BE-11DC-A07C-465A83BE23AB
@@ -14,7 +14,7 @@ framework:
     RecordBaseClass: Jifty::DBI::Record::Cachable
     User: ''
     Version: 0.0.1
-  DevelMode: 1
+  DevelMode: 0
   L10N: 
     PoDir: share/po
     AllowedLang:
