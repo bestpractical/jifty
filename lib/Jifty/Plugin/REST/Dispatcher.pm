@@ -15,13 +15,13 @@ use Data::Dumper ();
 use XML::Simple;
 
 before qr{^ (/=/ .*) \. (js|json|yml|yaml|perl|pl|xml|html) $}x => run {
-    $ENV{HTTP_ACCEPT} = $2;
+    Jifty->web->request->env->{HTTP_ACCEPT} = $2;
     dispatch $1;
 };
 
 before POST qr{^ (/=/ .*) ! (DELETE|PUT|GET|POST|OPTIONS|HEAD|TRACE|CONNECT) $}x => run {
     Jifty->web->request->request_method($2);
-    $ENV{REST_REWROTE_METHOD} = 1;
+    Jifty->web->request->env->{REST_REWROTE_METHOD} = 1;
     dispatch $1;
 };
 
@@ -113,8 +113,7 @@ sub show_help_specific {
     __PACKAGE__->can($method) or abort(404);
 
     Jifty->web->response->content_type('text/plain; charset=utf-8');
-
-    print __PACKAGE__->$method;
+    Jifty->web->response->body(__PACKAGE__->$method);
     last_rule;
 }
 
@@ -196,7 +195,7 @@ Returns the user's desired output format. Returns a hashref of:
 
 sub output_format {
     my $prefix = shift;
-    my $accept = ($ENV{HTTP_ACCEPT} || '');
+    my $accept = (Jifty->web->request->env->{HTTP_ACCEPT} || '');
 
     my (@prefix, $url);
     if ($prefix) {
@@ -279,7 +278,7 @@ renders the content as yaml, json, javascript, perl, xml or html.
 sub outs {
     my $prefix = shift;
     my $format = output_format($prefix);
-
+    warn "==> using $format->{format}" if $main::DEBUG;
     Jifty->web->response->content_type($format->{content_type});
     Jifty->web->response->body($format->{freezer}->(@_));
 
@@ -877,22 +876,20 @@ sub show_action_form {
     my ($action) = action(shift);
     Jifty::Util->require($action) or abort(404);
     $action = $action->new or abort(404);
-
     # XXX - Encapsulation?  Someone please think of the encapsulation!
     no warnings 'redefine';
-    local *Jifty::Web::out = sub { shift; print @_ };
     local *Jifty::Action::form_field_name = sub { shift; $_[0] };
     local *Jifty::Action::register = sub { 1 };
     local *Jifty::Web::Form::Field::Unrendered::render = \&Jifty::Web::Form::Field::render;
 
-    print start_html(-encoding => 'UTF-8', -declare_xml => 1, -title => ref($action));
+    Jifty->web->response->{body} .= start_html(-encoding => 'UTF-8', -declare_xml => 1, -title => ref($action));
     Jifty->web->form->start;
     for my $name ($action->argument_names) {
-        print $action->form_field($name);
+        Jifty->web->response->{body} .= $action->form_field($name);
     }
     Jifty->web->form->submit( label => 'POST' );
     Jifty->web->form->end;
-    print end_html;
+    Jifty->web->response->{body} .= end_html;
     last_rule;
 }
 
