@@ -42,9 +42,11 @@ recommends:
   Test::MockObject: 1.07
   Test::WWW::Declare: 0.01
 requires:
+  Any::Moose: 0
   App::CLI: 0.08
   CGI: 3.30
   CGI::Cookie::Splitter: 0
+  CGI::Simple: 0
   CSS::Squish: 0.07
   Cache::Cache: 0
   Calendar::Simple: 0
@@ -107,6 +109,8 @@ requires:
   Module::ScanDeps: 0
   Object::Declare: 0.13
   Params::Validate: 0
+  Plack: 0
+  Plack::Request: 0
   SQL::ReservedWords: 0
   SUPER: 0
   Scalar::Defer: 0.12
