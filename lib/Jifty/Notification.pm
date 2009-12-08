@@ -315,13 +315,12 @@ Returns the parts as an array reference.
 
 sub parts {
   my $self = shift;
-  return [
-    Email::MIME->create(
+  my $fullbody = $self->full_body;
+  $fullbody = Encode::encode_utf8( $fullbody ) unless Encode::is_utf8( $fullbody );
+  return [ Email::MIME->create(
       attributes => { charset => 'UTF-8' },
-      body       => Encode::encode_utf8($self->full_body),
-    )
-  ];
-
+      body       => $fullbody,
+    ) ];
 }
 
 =head2 magic_letme_token_for PATH
