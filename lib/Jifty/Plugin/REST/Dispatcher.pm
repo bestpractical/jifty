@@ -281,7 +281,7 @@ sub outs {
     my $format = output_format($prefix);
 
     Jifty->web->response->content_type($format->{content_type});
-    print $format->{freezer}->(@_);
+    Jifty->web->response->body($format->{freezer}->(@_));
 
     last_rule;
 }
