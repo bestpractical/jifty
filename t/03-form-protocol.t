@@ -10,8 +10,7 @@ J:A:F-id-mymoniker: 23
 J:A:F-something-mymoniker: else
 J:ACTIONS: mymoniker
 --- request
-request_method: GET
-path: /
+uri: http:///
 state_variables: {}
 actions:
   mymoniker:
@@ -39,8 +38,7 @@ J:A:F-id-second: 42
 J:A:F-something-second: bla
 J:ACTIONS: mymoniker!second
 --- request
-request_method: GET
-path: /
+uri: http:///
 state_variables: {}
 actions:
   mymoniker:
@@ -79,8 +77,7 @@ J:A:F-id-second: 42
 J:A:F-something-second: bla
 J:ACTIONS: mymoniker!second
 --- request
-request_method: GET
-path: /
+uri: http:///
 state_variables: {}
 actions:
   mymoniker:
@@ -118,8 +115,7 @@ J:A:F-id-second: 42
 J:A:F-something-second: bla
 J:ACTIONS: mymoniker!second
 --- request
-request_method: GET
-path: /
+uri: http:///
 state_variables: {}
 actions:
   mymoniker:
@@ -149,8 +145,7 @@ J:A:F-id-second: 42
 J:A:F-something-second: bla
 J:ACTIONS: second
 --- request
-request_method: GET
-path: /
+uri: http:///
 state_variables: {}
 actions:
   mymoniker:
@@ -188,8 +183,7 @@ J:A-second: DoThat
 J:A:F-id-second: 42
 J:A:F-something-second: bla
 --- request
-request_method: GET
-path: /
+uri: http:///
 state_variables: {}
 actions:
   mymoniker:
@@ -230,8 +224,7 @@ J:A-second: DoThat
 J:A:F-id-second: 42
 J:A:F-something-second: bla
 --- request
-request_method: GET
-path: /
+uri: http:///
 state_variables: {}
 actions:
   mymoniker:
@@ -272,8 +265,7 @@ J:A-second: DoThat
 J:A:F-something-mymoniker: else
 J:A-mymoniker: DoSomething
 --- request
-request_method: GET
-path: /
+uri: http:///
 state_variables: {}
 actions:
   mymoniker:
@@ -309,8 +301,7 @@ J:A:F:F-id-mymoniker: 96
 J:A:F-something-mymoniker: else
 J:ACTIONS: mymoniker
 --- request
-request_method: GET
-path: /
+uri: http:///
 state_variables: {}
 actions:
   mymoniker:
@@ -337,8 +328,7 @@ J:A:F-id-mymoniker: 23
 J:A:F-something-mymoniker: else
 J:ACTIONS: mymoniker
 --- request
-request_method: GET
-path: /
+uri: http:///
 state_variables: {}
 actions:
   mymoniker:
@@ -364,8 +354,7 @@ J:A:F:F-id-mymoniker: 96
 J:A:F-something-mymoniker: else
 J:ACTIONS: mymoniker
 --- request
-request_method: GET
-path: /
+uri: http:///
 state_variables: {}
 actions:
   mymoniker:
@@ -394,8 +383,7 @@ J:A:F-id-second: 42
 J:A:F-something-second: feepy
 J:ACTIONS: mymoniker!second
 --- request
-request_method: GET
-path: /
+uri: http:///
 state_variables: {}
 actions:
   mymoniker:
@@ -436,8 +424,7 @@ J:A:F-id-second: 42
 J:A:F-something-second: bla
 J:ACTIONS: mymoniker;second
 --- request
-request_method: GET
-path: /
+uri: http:///
 state_variables: {}
 actions:
   mymoniker:
