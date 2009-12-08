@@ -60,7 +60,7 @@ Shows basic help about resources and formats available via this RESTian interfac
 sub show_help {
     Jifty->web->response->content_type('text/plain; charset=utf-8');
 
-    print qq{
+    Jifty->web->response->body(qq{
 Accessing resources:
 
 on GET    /=/model                                   list models
@@ -96,7 +96,7 @@ or appending one of the extensions to any resource:
 
 HTML is output only if the Accept: header or an extension does not request a
 specific format.
-};
+});
     last_rule;
 }
 
