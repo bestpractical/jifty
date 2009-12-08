@@ -103,7 +103,14 @@ sub send_one_message {
     my %attrs = ( charset => 'UTF-8' );
 
     if (defined $self->html_body) {
-      $message = Email::MIME->create_html(
+
+        my $fullbody = $self->full_body;
+        my $fullhtml = $self->full_html;
+
+        $fullbody = Encode::encode_utf8( $fullbody ) unless Encode::is_utf8( $fullbody );
+        $fullhtml = Encode::encode_utf8( $fullhtml ) unless Encode::is_utf8( $fullhtml );
+
+        $message = Email::MIME->create_html(
 					     header => [
 							From    => ($self->from    || _('%1 <%2>' , $appname, Jifty->config->framework('AdminEmail'))) ,
 							To      => $to,
@@ -112,8 +119,8 @@ sub send_one_message {
 					     attributes => \%attrs,
                          text_body_attributes => \%attrs,
                          body_attributes => \%attrs,
-					     text_body => Encode::encode_utf8($self->full_body),
-					     body => Encode::encode_utf8($self->full_html),
+					     text_body => $fullbody,
+					     body => $fullhtml,
                          embed => 0,
                          inline_css => 0
 					    );
