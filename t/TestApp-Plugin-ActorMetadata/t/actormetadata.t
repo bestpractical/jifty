@@ -9,11 +9,11 @@ my $has_mock_time;
 eval "use Test::MockTime qw/set_relative_time/";
 $has_mock_time = 1 unless $@;
 
-$user_foo = TestApp::Plugin::ActorMetadata::Model::User->new;
+$user_foo = TestApp::Plugin::ActorMetadata::Model::User->new->as_superuser;
 $user_foo->create( name => 'foo', email => 'foo@example.com' );
 ok( $user_foo->id, 'created user foo' );
 
-$user_bar = TestApp::Plugin::ActorMetadata::Model::User->new;
+$user_bar = TestApp::Plugin::ActorMetadata::Model::User->new->as_superuser;
 $user_bar->create( name => 'bar', email => 'bar@example.com' );
 ok( $user_bar->id, 'created user bar' );
 
