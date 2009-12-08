@@ -205,6 +205,7 @@ sub _generate_javascript {
                 my $fh;
 
                 if ( open $fh, '<', $include ) {
+                    local $_;
                     $js .= "/* Including '$file' */\n\n";
                     $js .= $_ while <$fh>;
                     $js .= "\n/* End of '$file' */\n\n";
