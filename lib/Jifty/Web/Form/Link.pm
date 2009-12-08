@@ -69,7 +69,7 @@ Any parameter which L<Jifty::Web::Form::Element/new> can take.
 sub new {
     my $class = shift;
     my $args = ref($_[0]) ? $_[0] : {@_};
-    my ($root) = Jifty->web->request->uri =~ /([^\?]*)/;
+    my ($root) = Jifty->web->request->request_uri =~ /([^\?]*)/;
     my $self  = $class->SUPER::new(
       { url          => $root,
         label        => "Click me!",

@@ -155,7 +155,7 @@ get an unexpected error from your browser.
 
 sub new {
     my $class = shift;
-    my $root = Jifty->web->request->path;
+    my ($root) = Jifty->web->request->request_uri =~ /([^\?]*)/;
 
     my %args = (
         parameters => {},
@@ -428,7 +428,7 @@ sub post_parameters {
     my %parameters
         = ( _map( %{ $self->{fallback} || {} } ), $self->parameters );
 
-    my $root = Jifty->web->request->request_uri;
+    my ($root) = Jifty->web->request->request_uri =~ /([^\?]*)/;
 
     # Submit actions should only show up once
     my %uniq;
@@ -479,7 +479,7 @@ sub complete_url {
 
     my %parameters = $self->get_parameters;
 
-    my ($root) = Jifty->web->request->request_uri;
+    my ($root) = Jifty->web->request->request_uri =~ /([^\?]*)/;
     my $url = $self->returns ? $root : $self->url;
     if (%parameters) {
         $url .= ( $url =~ /\?/ ) ? ";" : "?";
