@@ -198,8 +198,10 @@ sub get_language_handle {
         }
     }
 
-    local $ENV{REQUEST_METHOD} = Jifty->web->request->method;
-    local $ENV{HTTP_ACCEPT_LANGUAGE} = Jifty->web->request->header("Accept-Language") || "";
+    local $ENV{REQUEST_METHOD} = Jifty->web->request->method
+        if Jifty->web->request;
+    local $ENV{HTTP_ACCEPT_LANGUAGE} = Jifty->web->request->header("Accept-Language") || ""
+        if Jifty->web->request;
     $$DynamicLH = $self->get_handle($lang ? $lang : ()) if $DynamicLH;
 }
 
