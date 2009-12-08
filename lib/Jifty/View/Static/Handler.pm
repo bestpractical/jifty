@@ -104,7 +104,10 @@ sub handle_request {
     }
     my $mime_type = $self->mime_type($local_path);
 
-    if ( $self->client_accepts_gzipped_content and $mime_type =~ m!^(text/|application/x-javascript)! ) {
+    # XXX: gzipped sendfile is printing to STDOUT.
+    # port this to psgi or plack::app::file.
+    # gzip should be a separate middleware as well.
+    if ( 0 && $self->client_accepts_gzipped_content and $mime_type =~ m!^(text/|application/x-javascript)! ) {
         return $self->send_file($local_path, $mime_type, 'gzip');
     } else {
         return $self->send_file($local_path, $mime_type, 'uncompressed');
