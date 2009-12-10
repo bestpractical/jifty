@@ -740,7 +740,6 @@ t/TestApp-Plugin-REST/t/02-basic-use.t
 t/TestApp-Plugin-REST/t/03-format.t
 t/TestApp-Plugin-SetupWizard/bin/jifty
 t/TestApp-Plugin-SetupWizard/etc/config.yml
-t/TestApp-Plugin-SetupWizard/etc/site_config.yml
 t/TestApp-Plugin-SetupWizard/lib/TestApp/Plugin/SetupWizard/Dispatcher.pm
 t/TestApp-Plugin-SetupWizard/lib/TestApp/Plugin/SetupWizard/Test.pm
 t/TestApp-Plugin-SetupWizard/t/001-basic.t
