@@ -648,8 +648,8 @@ template 'sort_header' => sub {
             div {
                 { class is 'crud-column-header' };
                 ul { attr { class => 'crud-sort-menu', style => 'display:none;' };
-                    li { 
-                        my $imgdown ="<img src='/images/silk/bullet_arrow_down.png' alt='down' name='down'>";
+                    li {
+                        my $imgdown ="<img height='16' width='16' src='/images/silk/bullet_arrow_down.png' alt='down' name='down'>";
                         hyperlink(
                             label => $imgdown,
                             escape_label => 0,
@@ -658,7 +658,7 @@ template 'sort_header' => sub {
                         );
                     } if (!($sort_by && !$order && $argument eq $sort_by));
                     li {
-                        my $imgup ="<img src='/images/silk/bullet_arrow_up.png' alt='up' name='up'>";
+                        my $imgup ="<img height='16' width='16' src='/images/silk/bullet_arrow_up.png' alt='up' name='up'>";
                         hyperlink(
                             label => $imgup,
                             escape_label => 0,
@@ -667,7 +667,7 @@ template 'sort_header' => sub {
                         );
                     } if (!($sort_by && $order && $argument eq $sort_by));
                     li {
-                        my $imgup ="<img src='/images/silk/cancel_grey.png' alt='del' name='del'>";
+                        my $imgup ="<img height='16' width='16' rc='/images/silk/cancel_grey.png' alt='del' name='del'>";
                         hyperlink(
                             label => $imgup,
                             escape_label => 0,
@@ -683,7 +683,10 @@ template 'sort_header' => sub {
                         div { class is 'crud-sort-selected';
                         hyperlink ( label =>$label );
                         my $img = ($order eq 'D')?'up':'down';
-                        img { attr { src => '/images/silk/bullet_arrow_'.$img.'.png' }; };
+                        img { attr {
+                            height => 16,
+                            width  => 16,
+                            src    => '/images/silk/bullet_arrow_'.$img.'.png' }; };
                         };
                     }
                     else {
