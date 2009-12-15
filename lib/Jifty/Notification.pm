@@ -116,8 +116,8 @@ sub send_one_message {
 					     attributes => \%attrs,
                          text_body_attributes => \%attrs,
                          body_attributes => \%attrs,
-					     text_body => $self->fullbody,
-					     body => $self->fullhtml,
+					     text_body => $self->full_body,
+					     body => $self->full_html,
                          embed => 0,
                          inline_css => 0
 					    );
