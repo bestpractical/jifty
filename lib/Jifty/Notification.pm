@@ -104,12 +104,9 @@ sub send_one_message {
 
     if (defined $self->html_body) {
 
-        my $fullbody = $self->full_body;
-        my $fullhtml = $self->full_html;
-
-        $fullbody = Encode::encode_utf8( $fullbody ) unless Encode::is_utf8( $fullbody );
-        $fullhtml = Encode::encode_utf8( $fullhtml ) unless Encode::is_utf8( $fullhtml );
-
+        # NOTICE: we should keep string in perl string (with utf8 flag)
+        # rather then encode it into octets. Email::MIME would call Encode::encode in 
+        # its create function.
         $message = Email::MIME->create_html(
 					     header => [
 							From    => ($self->from    || _('%1 <%2>' , $appname, Jifty->config->framework('AdminEmail'))) ,
@@ -119,8 +116,8 @@ sub send_one_message {
 					     attributes => \%attrs,
                          text_body_attributes => \%attrs,
                          body_attributes => \%attrs,
-					     text_body => $fullbody,
-					     body => $fullhtml,
+					     text_body => $self->fullbody,
+					     body => $self->fullhtml,
                          embed => 0,
                          inline_css => 0
 					    );
@@ -322,11 +319,12 @@ Returns the parts as an array reference.
 
 sub parts {
   my $self = shift;
-  my $fullbody = $self->full_body;
-  $fullbody = Encode::encode_utf8( $fullbody ) unless Encode::is_utf8( $fullbody );
+# NOTICE: we should keep string in perl string (with utf8 flag)
+# rather then encode it into octets. Email::MIME would call Encode::encode in 
+# its create function.
   return [ Email::MIME->create(
       attributes => { charset => 'UTF-8' },
-      body       => $fullbody,
+      body       => $self->full_body,
     ) ];
 }
 
