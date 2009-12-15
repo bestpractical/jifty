@@ -192,6 +192,8 @@ sub take_action {
     $self->report_success
       if $changed and not $self->result->failure;
 
+    $self->result->content(id => $self->record->id);
+
     $self->result->content( detailed_messages => $detailed_messages )
         if $self->report_detailed_messages;
 
