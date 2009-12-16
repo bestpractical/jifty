@@ -1,8 +1,8 @@
 --- 
 framework: 
   AdminMode: 1
-  ApplicationClass: TestApp::Notifications
-  ApplicationName: TestApp-Notifications
+  ApplicationClass: TestApp
+  ApplicationName: TestApp
   ApplicationUUID: F3F2F2C8-E9BB-11DE-AFD7-6AEE7828A805
   ConfigFileVersion: 4
   Database: 
@@ -19,33 +19,18 @@ framework:
   L10N: 
     PoDir: share/po
   LogLevel: INFO
-  Mailer: Sendmail
-  MailerArgs: []
-
+  Mailer: IO
+  MailerArgs:
+    - %log/mail.log%
   Plugins: 
-    - 
-      AdminUI: {}
-
-    - 
-      CompressedCSSandJS: {}
-
-    - 
-      ErrorTemplates: {}
-
-    - 
-      Halo: {}
-
-    - 
-      LetMe: {}
-
-    - 
-      OnlineDocs: {}
-
-    - 
-      REST: {}
-
-    - 
-      SkeletonApp: {}
+    - AdminUI: {}
+    - CompressedCSSandJS: {}
+    - ErrorTemplates: {}
+    - Halo: {}
+    - LetMe: {}
+    - OnlineDocs: {}
+    - REST: {}
+    - SkeletonApp: {}
 
   PubSub: 
     Backend: Memcached
