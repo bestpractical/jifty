@@ -7,7 +7,6 @@ use utf8;
 sub setup {
     my $self = shift;
     $self->SUPER::setup(@_);
-    warn 'Foo here';
 
     $self->recipients('foo@email');
     $self->subject('subject');
