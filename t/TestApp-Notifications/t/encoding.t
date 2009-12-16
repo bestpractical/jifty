@@ -23,11 +23,11 @@ sub send_and_receive {
     return $emails[0]->body;
 }
 
-my $body = send_and_receive("Simple Latin-1");
-is($body, "Simple Latin-1");
+my $body = send_and_receive("Simple Latin-1\n\n");
+is($body, "Simple Latin-1\n");
 
 # XXX: should this be "All L\N{LATIN SMALL LETTER E WITH ACUTE}on's fault"
-$body = send_and_receive("All L\x{c3}\x{a9}on's fault");
+$body = send_and_receive("All L\x{c3}\x{a9}on's fault\n\n");
 
-is($body, "All L\x{c3}\x{a9}on's fault", "proper encoding");
+is($body, "All L\x{c3}\x{a9}on's fault\n", "proper encoding");
 
