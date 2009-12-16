@@ -67,7 +67,7 @@ Create your model just as you normally would:
 Then, you need to tell Jifty at which version of your application the model was
 created.  To do this add a since sub to your new model class.
 
- sub since { 0.0.5 }
+ sub since { '0.0.5' }
 
 =head3 Adding a new column to an existing model
 
