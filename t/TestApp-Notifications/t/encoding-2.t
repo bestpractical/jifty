@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 use warnings;
 use strict;
-use Jifty::Test tests => 4;
+use Jifty::Test::Dist tests => 4;
 use Jifty::Test::Email;
 use Test::Exception;
 
