@@ -1,11 +1,12 @@
 #!/usr/bin/env perl
 use warnings;
 use strict;
-use utf8;
-use Jifty::Test::Dist tests => 2;
+use Jifty::Test::Dist tests => 4;
+use Jifty::Test::Email;
 use TestApp::Notifications::Notification;
+use utf8;
 
-sub send_and_receive {
+sub send_mail {
     local $Test::Builder::Level = $Test::Builder::Level + 1;
     my $body = shift;
 
@@ -13,16 +14,32 @@ sub send_and_receive {
 
     my $notification = TestApp::Notifications::Notification->new;
     $notification->body($body);
-
     $notification->send_one_message;
 
-    my @emails = Jifty::Test->messages;
-    use Data::Dumper; warn Dumper( \@emails  );
-    Jifty::Test->teardown_mailbox;
+    ok( $notification->body , 'body');
 
-    is(scalar @emails, 1, "Sent one notification email");
-    return $emails[0]->body;
+    # my @emails = Jifty::Test->messages;
+    # Jifty::Test->teardown_mailbox;
+
+    # is(scalar @emails, 1, "Sent one notification email");
+    # return $emails[0]->body;
 }
 
-my $body = send_and_receive("中文");
-is($body, "中文");
+send_mail("中文");
+
+sub read_mailbox {
+    my $file = shift;
+    local $/;
+    my $mailbox = $file || Jifty::Test->mailbox;
+    ok( -e $mailbox , 'mailbox file ok - ' . $mailbox );
+    open my $fh, "<",$mailbox;
+    binmode $fh, ":utf8";
+    my $text = <$fh>;
+    ok( $text , 'mail content ok' );
+    close $fh;
+    Jifty::Test->setup_mailbox;
+    return $text;
+}
+
+my $mail = read_mailbox;
+like($mail , qr'中文's );
