@@ -4,6 +4,8 @@ use warnings;
 
 use base qw/Jifty::Object/;
 
+use Encode ();
+
 =head1 NAME
 
 Jifty::View - Base class for view modules
@@ -42,7 +44,12 @@ sub out_method {
 
     # We now install a new, faster out_method that doesn't have to
     # keep checking whether headers have been sent.
-    my $content = sub { Jifty->web->response->{body} .= $_ for @_ };
+    my $content = sub {
+        Jifty->web->response->{body} .= $_
+            for map { Encode::is_utf8($_) ? Encode::encode('utf8', $_)
+                                          : $_ }
+                @_;
+    };
     Jifty->handler->buffer->out_method( $content );
     $content->(@_);
 }
