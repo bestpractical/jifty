@@ -9,6 +9,8 @@ BEGIN {
     unless (eval { require Test::WWW::Declare }) {
         plan skip_all => "Test::WWW::Declare isn't installed";
     }
+    plan skip_all => "This test is not using the test framework, and requires a server to connect to.  This doesn't work yet";
+
 }
 
 use Jifty::Test::WWW::Declare tests => 2;
