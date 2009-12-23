@@ -2,8 +2,8 @@
 var Jifty = {};
 
 // NOTICE: line break should be in a proper place.
-//   something like 
-//          return 
+//   something like
+//          return
 //          {
 //              a : 123
 //          };
@@ -69,16 +69,16 @@ Jifty.Web.current_actions = [];
 function register_action(a) {
     outs(div(function() {
                 attr(function() {
-                    return ['class', 'hidden']; 
+                    return ['class', 'hidden'];
                 });
-                return input(function() { 
+                return input(function() {
                       attr(function() {
                             return ['type', 'hidden',
                                         'name', a.register_name(),
                                         'id', a.register_name(),
                                         'value', a.actionClass];
-                      }); 
-                }); 
+                      });
+                });
             }));
     /* XXX: fallback values */
 }
@@ -302,9 +302,9 @@ Action.prototype = {
                     }
                 }
                 return true;
-            }            
+            }
         });
-        
+
         hide_wait_message();
         return false;
     },
@@ -392,7 +392,7 @@ ActionField.prototype = {
                         this.render_preamble,
                         this.render_label,
                         this.render_value);
-        } 
+        }
         else {
             return this.render_wrapper(
                         this.render_preamble,
@@ -531,7 +531,7 @@ jQuery.extend(Jifty.Form.Element, {
     // Takes an element or an element id
     getMoniker: function (element) {
         element = Jifty.$(element);
-        
+
         if (/^J:A(:F)+-[^-]+-.+$/.test(element.name)) {
             var bits = element.name.match(/^J:A(?::F)+-[^-]+-(.+)$/);
             return bits[1];
@@ -739,7 +739,7 @@ Behaviour.register({
             button.setAttribute('type',  'button');
             jQuery(button).insertAfter(e);
             jQuery(button).timepickr({val: 'Pick time'});
-            jQuery(button).blur( function() { 
+            jQuery(button).blur( function() {
                 var old_value = jQuery(this).prev().val();
                 if ( Jifty.Calendar.dateRegex.test(old_value) ) {
                     var bits = old_value.match(Jifty.Calendar.dateRegex);
@@ -751,7 +751,7 @@ Behaviour.register({
                 // Trigger an onchange event for any listeners
                 jQuery(e).change();
                 jQuery(button).val('');
-            } 
+            }
             );
             jQuery(e).addClass('has_datetime_link');
         }
@@ -846,7 +846,7 @@ Region.prototype = {
                 var parsed = k.match(/^(.*?)\.(.*)/);
                 if ((parsed != null) && (parsed.length == 3) && (parsed[1] == this.name)) {
                     current_args[k] = null;
-                }                
+                }
             });
         }
 
@@ -1095,7 +1095,7 @@ var apply_fragment_updates = function(fragment, f) {
             f['effect_args'],
             {
                 before: function() {
-                    if(f['is_new']) 
+                    if(f['is_new'])
                         jQuery(this).hide();
                 }
             }
@@ -1156,7 +1156,7 @@ Jifty.update = function () {
     // If the action is null, take all actions
     if (named_args['actions'] == null) {
         named_args['actions'] = {};
-        
+
         // Add all the actions into the list to submit
         if (form) {
             jQuery.each(Jifty.Form.getActions(form), function(){
@@ -1172,13 +1172,13 @@ Jifty.update = function () {
 
     // SPA Update __page when the form calls a continuation
     if (form && form['J:CALL']) {
-        optional_fragments = [ 
+        optional_fragments = [
             prepare_element_for_update({
                 'mode':   'Replace',
                 'args':   {},
                 'region': '__page',
                 'path':   null
-            }) 
+            })
         ];
     }
 
@@ -1209,13 +1209,13 @@ Jifty.update = function () {
             (function() {
                 var fields = a.fields();
                 var path = fields[fields.length - 1];
-                optional_fragments = [ 
+                optional_fragments = [
                     prepare_element_for_update({
                         'mode':   'Replace',
                         'args':   {},
                         'region': '__page',
                         'path':   path
-                    }) 
+                    })
                 ];
             })()
         }
@@ -1355,7 +1355,7 @@ Jifty.update = function () {
             <fragment id="__page-region-name">
                 <argument name="argument1">value1</argument>
                 <argument name="argument2">value2</argument>
-                <content> 
+                <content>
                         ...
                 </content>
             </fragment>
@@ -1370,10 +1370,10 @@ Jifty.update = function () {
         */
 
         // Look through the action results looking for field validation errors
-        walk_node(response, { 
+        walk_node(response, {
             result: function(result) {
                 var moniker = result.getAttribute("moniker");
-                walk_node(result, { 
+                walk_node(result, {
                     field: function(field) {
                         var error = field.getElementsByTagName('error')[0];
 
@@ -1394,16 +1394,16 @@ Jifty.update = function () {
             disabled_elements[i].disabled = false;
         }
 
-        // empty known action. 
+        // empty known action.
         // XXX: we should only need to discard actions being submitted
 
         // SPA We only care about __page sometimes
-        var expected_fragments = optional_fragments ? optional_fragments 
+        var expected_fragments = optional_fragments ? optional_fragments
                                :                      named_args['fragments'];
 
         // Loop through the response looking for fragments we requested
         for (var response_fragment = response.firstChild;
-                response_fragment != null && 
+                response_fragment != null &&
                     response_fragment.nodeName == 'fragment';
                 response_fragment = response_fragment.nextSibling) {
 
@@ -1431,7 +1431,7 @@ Jifty.update = function () {
             } catch (e) { alert(e) }
 
             // f
-            jQuery.each(Jifty.Update.response_hooks, function(i) { 
+            jQuery.each(Jifty.Update.response_hooks, function(i) {
                     this(response_fragment, f);
             });
 
@@ -1443,7 +1443,7 @@ Jifty.update = function () {
 
 
         // Look through the response again
-        walk_node(response, { 
+        walk_node(response, {
 
             // Report all the action results we have
             result: function(result) {
@@ -1712,7 +1712,7 @@ function show_action_result() {
     }
 
     /* This is a workaround for Safari, which does not support textContent */
-    var text = result.textContent 
+    var text = result.textContent
                     ? result.textContent
                     : (result.firstChild ? result.firstChild.nodeValue : '');
 
@@ -1745,7 +1745,7 @@ jQuery.extend(Jifty.Autocompleter.prototype, {
             Jifty.current_autocompleter_object = self;
             autocomplete_div.append(jQuery('#autocompleteHelper')).show();
         }).blur(function() { autocomplete_div.hide() });
-        
+
         jQuery(this.field).Autocomplete({
             source: this.url,
             minchars: -1,
@@ -1881,15 +1881,15 @@ if( !Object.prototype.hasOwnProperty ) {
 
 /*
  * Jifty.Effect Usage:
- * 
+ *
  * Jifty.Effect(element, "Fade", { duration: 2.0 });
- * 
+ *
  * When called, instantly pefrom a js effect on give element.
  *
  * The last arg "option" is a hash. Currently it's only used for
  * specificing callbacks. There are two possible callbacks, before
  * and after. You may specify them like this:
- * 
+ *
  * Jifty.Effect(element, "Fade", { duration: 2.0 }, {
  *     before: function() { ... },
  *     after: function() { ... }
@@ -1928,12 +1928,12 @@ Jifty.Effect = function(el, name, args, options) {
                     name;
 
     if ( jQuery.isFunction( jQuery(el)[ effect ] ) ) {
-        if ( jQuery.isFunction(options["before"]) ) 
+        if ( jQuery.isFunction(options["before"]) )
             options["before"].call( el );
 
         ( jQuery(el)[ effect ] )(args);
 
-        if ( jQuery.isFunction(options["after"]) ) 
+        if ( jQuery.isFunction(options["after"]) )
             options["after"].call( el );
     }
 };
@@ -1999,7 +1999,7 @@ jQuery.extend(Form.Element, {
                 return Jifty.Form.Element.disableValidation(element);
         },
 
-            //Reenable validation            
+            //Reenable validation
             enableValidation: function(element) {
                 // DEPRECATED: use Jifty.Form.Element.enableValidation instead
                 return Jifty.Form.Element.enableValidation(element);
@@ -2023,7 +2023,7 @@ jQuery.extend(Form.Element, {
     buttonActions: function(element) {
         // DEPRECATED: use Jifty.Form.Element.buttonActions instead
         return Jifty.Form.Element.buttonActions(element);
-    },  
+    },
 
     buttonFormElements: function(element) {
         // DEPRECATED: use Jifty.Form.Element.buttonFormElements instead
