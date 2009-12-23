@@ -38,24 +38,22 @@ Jifty.Update = {
 
 Jifty.$ = function(id) {
     if (typeof id == 'string')
-        return document.getElementById(id)
+        return document.getElementById(id);
     return id;
-}
+};
 
 Jifty.hasAjaxTransport = function() {
     var r = false;
-    jQuery.each(
-        [
-            function() {return new XMLHttpRequest()},
-            function() {return new ActiveXObject('Msxml2.XMLHTTP')},
-            function() {return new ActiveXObject('Microsoft.XMLHTTP')}
-        ],
-        function(i, v) {
+    jQuery.each( [
+            function() {return new XMLHttpRequest();},
+            function() {return new ActiveXObject('Msxml2.XMLHTTP');},
+            function() {return new ActiveXObject('Microsoft.XMLHTTP');}
+        ], function(i, v) {
             try {
                 r = v();
                 if (r) return false;
             } catch(e) {}
-        })
+        });
     return r ? true : false;
 }();
 
@@ -70,12 +68,18 @@ Jifty.Web.current_actions = [];
 
 function register_action(a) {
     outs(div(function() {
-                attr(function() { return ['class', 'hidden'] });
-                return input(function() { attr(function() {
-                                return ['type', 'hidden',
+                attr(function() {
+                    return ['class', 'hidden']; 
+                });
+                return input(function() { 
+                      attr(function() {
+                            return ['type', 'hidden',
                                         'name', a.register_name(),
                                         'id', a.register_name(),
-                                        'value', a.actionClass] }) } ) } ));
+                                        'value', a.actionClass];
+                      }); 
+                }); 
+            }));
     /* XXX: fallback values */
 }
 
@@ -102,13 +106,12 @@ Action.prototype = {
             var elements = [];
             // We need to go looking -- this also goes looking through this.extras, from above
 
-            var add_to_elements = function(){ elements.push(this) };
+            var add_to_elements = function(){ elements.push(this); };
             jQuery('input').each(add_to_elements);
             jQuery.each(this.extras, add_to_elements);
 
             for (var i = 0, l = elements.length; i < l; i++) {
-                if ((Jifty.Form.Element.getMoniker(elements[i]) == this.moniker)
-                    && (Jifty.Form.Element.getType(elements[i]) == "registration")) {
+                if ((Jifty.Form.Element.getMoniker(elements[i]) == this.moniker) && (Jifty.Form.Element.getType(elements[i]) == "registration")) {
                     this.register = elements[i];
                     break;
                 }
@@ -148,7 +151,7 @@ Action.prototype = {
                 //If the button has no actions explicitly associated
                 //with it, it's associated with all the actions in the
                 //form
-                if(   actions.length == 0
+                if( actions.length === 0
                    || actions.indexOf(this.moniker) >= 0) {
                     elements.push(possible[i]);
                 }
@@ -200,26 +203,26 @@ Action.prototype = {
                 a['order'] = tmp[1];
         }
 
-        a['fields']  = {};
+        a.fields  = {};
         var fields = this.fields();
         for (var i = 0; i < fields.length; i++) {
             var f = fields[i];
 
             if (   (Jifty.Form.Element.getType(f) != "registration")
-                && (Jifty.Form.Element.getValue(f) != null)
+                && (Jifty.Form.Element.getValue(f) !== null)
                 && (!Jifty.Placeholder.hasPlaceholder(f)))
             {
-                if (! a['fields'][Jifty.Form.Element.getField(f)])
-                    a['fields'][Jifty.Form.Element.getField(f)] = {};
+                if (! a.fields[Jifty.Form.Element.getField(f)])
+                    a.fields[Jifty.Form.Element.getField(f)] = {};
                 var field = Jifty.Form.Element.getField(f);
                 var type = Jifty.Form.Element.getType(f);
 
                 // XXX: fallback value being an array makes server
                 // upset, we don't think that should happen anyway
-                if (type == 'fallback' && a['fields'][field][type])
+                if (type == 'fallback' && a.fields[field][type])
                     continue;
 
-                a['fields'][field][type] = this._mergeValues(a['fields'][field][type],
+                a.fields[field][type] = this._mergeValues(a.fields[field][type],
                                                              Jifty.Form.Element.getValue(f));
 
             }
@@ -256,32 +259,32 @@ Action.prototype = {
             data: data,
             complete: function (request, status) {
                 var response  = request.responseXML.documentElement;
-                for (var action = response.firstChild; action != null; action = action.nextSibling) {
+                for (var action = response.firstChild; action !== null; action = action.nextSibling) {
                     if ((action.nodeName == 'validationaction') && (action.getAttribute("id") == id)) {
-                        for (var field = action.firstChild; field != null; field = field.nextSibling) {
+                        for (var field = action.firstChild; field !== null; field = field.nextSibling) {
                             // Possibilities for field.nodeName: it could be #text (whitespace),
                             // or 'blank' (the field was blank, don't mess with the error div), or 'ok'
                             // (clear the error and warning div!) or 'error' (fill in the error div, clear
                             // the warning div!) or 'warning' (fill in the warning div and clear the error div!)
                             if (field.nodeName == 'error' || field.nodeName == 'warning') {
                                 var err_div = document.getElementById(field.getAttribute("id"));
-                                if (err_div != null) {
+                                if (err_div !== null) {
                                     jQuery(err_div).show().html(field.firstChild.data);
                                 }
                             } else if (field.nodeName == 'ok') {
                                 var err_div = document.getElementById(field.getAttribute("id"));
-                                if (err_div != null) {
+                                if (err_div !== null) {
                                     jQuery(err_div).hide().html('');
                                 }
                             }
                         }
                     } else if ((action.nodeName == 'canonicalizeaction') && (action.getAttribute("id") == id)) {
-                        for (var field = action.firstChild; field != null; field = field.nextSibling) {
+                        for (var field = action.firstChild; field !== null; field = field.nextSibling) {
                             // Possibilities for field.nodeName: it could be 'ignored', 'blank' , 'update', or 'info'
                             // info is a separate action from the update
                             if (field.nodeName == 'canonicalization_note')  {
                                 var note_div= document.getElementById(field.getAttribute("id"));
-                                if (note_div != null) {
+                                if (note_div !== null) {
                                     jQuery(note_div).show().html(field.firstChild.data);
                                 }
                             }
@@ -358,7 +361,7 @@ Action.prototype = {
         var f = new ActionField(field, a_s[field], this);
         return f.render();
     },
-    register_name: function() { return this.register.id }
+    register_name: function() { return this.register.id; }
 
 };
 
@@ -384,12 +387,13 @@ ActionField.prototype = {
     },
 
  render: function() {
-        if (this.render_mode == 'read')
+        if (this.render_mode == 'read') {
             return this.render_wrapper(
                         this.render_preamble,
                         this.render_label,
                         this.render_value);
-        else
+        } 
+        else {
             return this.render_wrapper(
                         this.render_preamble,
                         this.render_label,
@@ -400,6 +404,7 @@ ActionField.prototype = {
                         this.render_errors,
                         this.render_warnings,
                         this.render_canonicalization_notes);
+        }
     },
  render_wrapper: function () {
         var classes = ['form_field'];
@@ -419,13 +424,13 @@ ActionField.prototype = {
     render_preamble: function() {
         var tthis = this;
         return span(function(){attr(function(){return ['class', "preamble"]});
-                return tthis.preamble });
+                return tthis.preamble; });
     },
 
     render_label: function() {
         var tthis = this;
         if(this.render_mode == 'update')
-            return label(function(){attr(function(){return['class', "label", 'for', tthis.element_id()]});
+            return label(function(){attr(function(){return['class', "label", 'for', tthis.element_id()];});
                     return tthis.label });
         else
             return span(function(){attr(function(){return['class', "label" ]});
