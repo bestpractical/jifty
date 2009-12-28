@@ -28,7 +28,8 @@ L<Template::Declare>.
 sub init {
     my $self = shift;
     return if $self->_pre_init;
-    return unless Jifty->config->framework('DevelMode');
+    return unless Jifty->config->framework('DevelMode')
+               && !Jifty->config->framework('HideHalos');
 
     warn "Overwriting an existing Template::Declare->around_template"
         if Template::Declare->around_template;

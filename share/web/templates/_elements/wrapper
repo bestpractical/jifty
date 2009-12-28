@@ -16,7 +16,7 @@
   <& /_elements/keybindings &>
   </div>
   <div id="jifty-wait-message" style="display: none"><%_('Loading...')%></div>
-% Jifty::View::Mason::Halo->render_component_tree() if (Jifty->config->framework('DevelMode'));
+% Jifty::View::Mason::Halo->render_component_tree() if Jifty->config->framework('DevelMode') && !Jifty->config->framework('HideHalos');
 %# This is required for jifty server push.  If you maintain your own
 %# wrapper, make sure you have this as well.
 % if ( Jifty->config->framework('PubSub')->{'Enable'} && Jifty::Subs->list ) {
