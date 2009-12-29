@@ -82,6 +82,8 @@ the halo data and metadata.
 
 sub render_component_tree {
     my $self  = shift;
+    return if Jifty->config->framework('HideHalos');
+
     my @stack = @{ Jifty->handler->stash->{'_halo_stack'} };
 
     for (@stack) {
