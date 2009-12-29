@@ -41,6 +41,8 @@ C</__jifty/empty>, which, as its name implies, is empty.
 Specifies an optional set of parameter defaults.  These should all be
 simple scalars, as they might be passed across HTTP if AJAX is used.
 
+See L<Jifty::Web::Form::Element> for a list of the supported parameters.
+
 =item force_arguments (optional)
 
 Specifies an optional set of parameter values. They will override anything
