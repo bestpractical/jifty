@@ -102,6 +102,12 @@ sub send_one_message {
 
     my %attrs = ( charset => 'UTF-8' );
 
+    my $from = $self->from || _('%1 <%2>' , $appname, Jifty->config->framework('AdminEmail'));
+    my $subj = Encode::encode(
+        'MIME-Header',
+        $self->subject || _("A notification from %1!",$appname )
+    );
+
     if (defined $self->html_body) {
 
         # NOTICE: we should keep string in perl string (with utf8 flag)
@@ -109,9 +115,9 @@ sub send_one_message {
         # its create function.
         $message = Email::MIME->create_html(
 					     header => [
-							From    => ($self->from    || _('%1 <%2>' , $appname, Jifty->config->framework('AdminEmail'))) ,
+							From    => $from,
 							To      => $to,
-							Subject => Encode::encode('MIME-Header', $self->subject || _("A notification from %1!",$appname )),
+							Subject => $subj,
 						       ],
 					     attributes => \%attrs,
                          text_body_attributes => \%attrs,
@@ -126,9 +132,9 @@ sub send_one_message {
     } else {
             $message = Email::MIME->create(
 					     header => [
-							From    => ($self->from    || _('%1 <%2>' , $appname, Jifty->config->framework('AdminEmail'))) ,
+							From    => $from,
 							To      => $to,
-							Subject => Encode::encode('MIME-Header', $self->subject || _("A notification from %1!",$appname )),
+							Subject => $subj,
 						       ],
 					     attributes => \%attrs,
 					     
