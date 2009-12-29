@@ -645,6 +645,17 @@ template 'sort_header' => sub {
     div {
         { class is "crud-column-headers" };
         for my $argument ($self->display_columns($update)) {
+            my $column = $record_class->column($argument);
+            unless ($column) {
+
+                # in case we want to show a field but it's not a real column
+                div {
+                    { class is 'crud-column-header' };
+                    $argument;
+                };
+                next;
+            }
+
             div {
                 { class is 'crud-column-header' };
                 ul { attr { class => 'crud-sort-menu', style => 'display:none;' };
