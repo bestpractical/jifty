@@ -111,41 +111,41 @@ sub send_one_message {
         $self->subject || _("A notification from %1!",$appname )
     );
 
-    if (defined $self->html_body) {
+    if ( defined $self->html_body ) {
 
-        # NOTICE: we should keep string in perl string (with utf8 flag)
-        # rather then encode it into octets. Email::MIME would call Encode::encode in 
-        # its create function.
+        # NOTICE: we should keep string in perl string (with utf8
+        # flag) rather then encode it into octets. Email::MIME would
+        # call Encode::encode in its create function.
         $message = Email::MIME->create_html(
-					     header => [
-							From    => $from,
-							To      => $to,
-							Subject => $subj,
-						       ],
-					     attributes => \%attrs,
-                         text_body_attributes => \%attrs,
-                         body_attributes => \%attrs,
-					     text_body => $self->full_body,
-					     body => $self->full_html,
-                         embed => 0,
-                         inline_css => 0
-					    );
+            header => [
+                From    => $from,
+                To      => $to,
+                Subject => $subj,
+            ],
+            attributes           => \%attrs,
+            text_body_attributes => \%attrs,
+            body_attributes      => \%attrs,
+            text_body            => $self->full_body,
+            body                 => $self->full_html,
+            embed                => 0,
+            inline_css           => 0,
+        );
+
         # Since the containing messsage will still be us-ascii otherwise
         $message->charset_set( $attrs{'charset'} );
     } else {
-            $message = Email::MIME->create(
-					     header => [
-							From    => $from,
-							To      => $to,
-							Subject => $subj,
-						       ],
-					     attributes => \%attrs,
-					     
-					     parts => $self->parts
-					    );
-	  }
+        $message = Email::MIME->create(
+            header => [
+                From    => $from,
+                To      => $to,
+                Subject => $subj,
+            ],
+            attributes => \%attrs,
+            parts      => $self->parts,
+        );
+    }
     $message->encoding_set('8bit')
-        if (scalar $message->parts == 1);
+        if ( scalar $message->parts == 1 );
     $self->set_headers($message);
 
     my $method   = Jifty->config->framework('Mailer');
