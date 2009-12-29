@@ -102,7 +102,10 @@ sub send_one_message {
 
     my %attrs = ( charset => 'UTF-8' );
 
-    my $from = $self->from || _('%1 <%2>' , $appname, Jifty->config->framework('AdminEmail'));
+    my $from = Encode::encode(
+        'MIME-Header',
+        $self->from || _('%1 <%2>' , $appname, Jifty->config->framework('AdminEmail'))
+    );
     my $subj = Encode::encode(
         'MIME-Header',
         $self->subject || _("A notification from %1!",$appname )
