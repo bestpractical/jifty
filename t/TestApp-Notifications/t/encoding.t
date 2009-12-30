@@ -22,7 +22,7 @@ sub send_and_receive {
     Jifty::Test->teardown_mailbox;
 
     is(scalar @emails, 1, "Sent one notification email");
-    return Email::MIME->new($emails[0]->as_string)->body_str;
+    return Email::MIME->new($emails[0]->as_string)->body_str . "\n";
 }
 
 {
