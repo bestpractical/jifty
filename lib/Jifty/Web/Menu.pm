@@ -300,7 +300,8 @@ sub render_as_context_menu {
 =head2 render_as_hierarchical_menu_item
 
 Render an <li> for this item. suitable for use in a regular or contextual
-menu. Currently renders one level of submenu, if it exists.
+menu. Currently renders one level of submenu, if it exists, using
+L</render_submenu>.
 
 =cut
 
@@ -311,35 +312,50 @@ sub render_as_hierarchical_menu_item {
         @_
     );
     my @kids = $self->children;
-    my $web = Jifty->web;
-    my $id   = $web->serial;
+    my $web  = Jifty->web;
     $web->out( qq{<li class="toplevel }
             . ( $self->active ? 'active' : 'closed' ) .' '.($self->class||"").' '. qq{">}
             . qq{<span class="title">} );
     $web->out( $self->as_link );
     $web->out(qq{</span>});
     if (@kids) {
+        my $id = $web->serial;
         $web->out(
             qq{<span class="expand"><a href="#" onclick="Jifty.ContextMenu.hideshow('}
                 . $id
-                . qq{'); return false;">&nbsp;</a></span>}
-                . qq{<ul id="}
-                . $id
-                . qq{">} );
-        for (@kids) {
-            $web->out(qq{<li class="submenu }.($_->active ? 'active' : '' ).' '. ($_->class || "").qq{">});
-
-            # We should be able to get this as a string.
-            # Either stringify the link object or output the label
-            # This is really icky. XXX TODO
-            $web->out( $_->as_link );
-            $web->out("</li>");
-        }
-        $web->out(qq{</ul>});
+                . qq{'); return false;">&nbsp;</a></span>} );
+        $self->render_submenu( id => $id );
     }
     $web->out(qq{</li>});
     '';
 
+}
+
+=head2 render_submenu
+
+Renders a <ul> for the children (but not descendants) of this menu object,
+suitable for use as part of a regular or contextual menu.  Called by
+L</render_as_hierarchical_menu_item>. You probably don't need to use this
+on it's own.
+
+=cut
+
+sub render_submenu {
+    my $self = shift;
+    my %args = ( id => '', @_ );
+
+    my $web = Jifty->web;
+    $web->out(qq(<ul id="$args{id}">));
+    for ($self->children) {
+        $web->out(qq{<li class="submenu }.($_->active ? 'active' : '' ).' '. ($_->class || "").qq{">});
+
+        # We should be able to get this as a string.
+        # Either stringify the link object or output the label
+        # This is really icky. XXX TODO
+        $web->out( $_->as_link );
+        $web->out("</li>");
+    }
+    $web->out(qq{</ul>});
 }
 
 =head2 render_as_classical_menu
