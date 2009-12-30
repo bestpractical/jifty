@@ -2,9 +2,10 @@
 use warnings;
 use strict;
 
-use Jifty::Test::Dist tests => 4;
+use Jifty::Test::Dist tests => 6;
 use TestApp::Notifications::Notification;
 use charnames ':full';
+use utf8;
 
 sub send_and_receive {
     local $Test::Builder::Level = $Test::Builder::Level + 1;
@@ -27,11 +28,17 @@ sub send_and_receive {
 {
     my $str = "Simple Latin-1\n\n";  # latin bytes string
     my $body = send_and_receive( $str );
-    is($body, $str );
+    is($body, $str, "Latin looks fine" );
 }
 
 {
     my $str = "All L\N{LATIN SMALL LETTER E WITH ACUTE}on's fault\n\n";
     my $body = send_and_receive( $str );
-    is($body, $str );
+    is($body, $str, "Implicit UTF8 char" );
+}
+
+{
+    my $str = "中文\n\n\n";
+    my $body = send_and_receive( $str );
+    is($body, $str, "Explicit UTF8 char" );
 }
