@@ -5,9 +5,7 @@ package Jifty::Notification;
 
 use base qw/Jifty::Object Class::Accessor::Fast/;
 use Email::Send            ();
-use Email::MIME::Creator;
 use Email::MIME::CreateHTML;
-use Email::MIME::Modifier;
 
 __PACKAGE__->mk_accessors(
     qw/body html_body preface footer subject from _recipients _to_list to/);
