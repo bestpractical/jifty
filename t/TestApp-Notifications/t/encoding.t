@@ -2,7 +2,7 @@
 use warnings;
 use strict;
 
-use Jifty::Test::Dist tests => 6;
+use Jifty::Test::Dist tests => 8;
 use TestApp::Notifications::Notification;
 use charnames ':full';
 use utf8;
@@ -41,4 +41,13 @@ sub send_and_receive {
     my $str = "中文\n\n\n";
     my $body = send_and_receive( $str );
     is($body, $str, "Explicit UTF8 char" );
+}
+
+{
+    my $lh = Jifty::I18N->get_handle("ja");
+    Jifty::I18N->install_global_loc(\$lh);
+
+    my $str = _("Alert") . "\n\n";
+    my $body = send_and_receive( $str );
+    is($body, $str, "L10N UTF8 char" );
 }
