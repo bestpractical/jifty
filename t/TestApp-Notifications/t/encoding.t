@@ -4,7 +4,6 @@ use strict;
 
 use Jifty::Test::Dist tests => 4;
 use TestApp::Notifications::Notification;
-use encoding 'utf8';
 
 sub send_and_receive {
     local $Test::Builder::Level = $Test::Builder::Level + 1;
@@ -21,7 +20,7 @@ sub send_and_receive {
     Jifty::Test->teardown_mailbox;
 
     is(scalar @emails, 1, "Sent one notification email");
-    return $emails[0]->body;
+    return Email::MIME->new($emails[0]->as_string)->body_str;
 }
 
 {
