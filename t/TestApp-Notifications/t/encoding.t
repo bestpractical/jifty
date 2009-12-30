@@ -4,6 +4,7 @@ use strict;
 
 use Jifty::Test::Dist tests => 4;
 use TestApp::Notifications::Notification;
+use charnames ':full';
 
 sub send_and_receive {
     local $Test::Builder::Level = $Test::Builder::Level + 1;
@@ -29,9 +30,8 @@ sub send_and_receive {
     is($body, $str );
 }
 
-# XXX: should this be "All L\N{LATIN SMALL LETTER E WITH ACUTE}on's fault"
 {
-    my $str = "All L\x{c3}\x{a9}on's fault\n\n";   # latin1 bytes string
+    my $str = "All L\N{LATIN SMALL LETTER E WITH ACUTE}on's fault\n\n";
     my $body = send_and_receive( $str );
     is($body, $str );
 }
