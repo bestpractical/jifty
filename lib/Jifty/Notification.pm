@@ -113,9 +113,12 @@ sub send_one_message {
 
     if ( defined $self->html_body ) {
 
-        # NOTICE: we should keep string in perl string (with utf8
-        # flag) rather then encode it into octets. Email::MIME would
-        # call Encode::encode in its create function.
+        # Email::MIME takes _bytes_, not characters, for the "body"
+        # argument, so we need to encode the full_body into UTF8.
+        # Modern Email::MIME->create takes a "body_str" argument which
+        # does the encoding for us, but Email::MIME::CreateHTML
+        # doesn't grok it.  See also L</parts> for the other location
+        # which does the encode.
         $message = Email::MIME->create_html(
             header => [
                 From    => $from,
@@ -125,8 +128,8 @@ sub send_one_message {
             attributes           => \%attrs,
             text_body_attributes => \%attrs,
             body_attributes      => \%attrs,
-            text_body            => $self->full_body,
-            body                 => $self->full_html,
+            text_body            => Encode::encode_utf8( $self->full_body ),
+            body                 => Encode::encode_utf8( $self->full_html ),
             embed                => 0,
             inline_css           => 0,
         );
@@ -333,7 +336,7 @@ sub parts {
 # its create function.
   return [ Email::MIME->create(
       attributes => { charset => 'UTF-8' },
-      body       => $self->full_body,
+      body       => Encode::encode_utf8( $self->full_body ),
     ) ];
 }
 
