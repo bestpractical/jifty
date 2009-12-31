@@ -26,7 +26,7 @@ column created => type is 'timestamp',
   filters are 'Jifty::DBI::Filter::DateTime';
 column updated => type is 'timestamp',
   filters are 'Jifty::DBI::Filter::DateTime';
-column key_type => type is 'varchar(32)', is case_sensitive;
+column key_type => type is 'varchar(32)', is case_sensitive, is no_placeholder;
 };
 
 use base qw( Jifty::Record );
