@@ -4,7 +4,7 @@ use warnings;
 use base 'Jifty::Plugin';
 use Time::HiRes 'time';
 
-__PACKAGE__->mk_accessors(qw(url_filter));
+__PACKAGE__->mk_accessors(qw(url_filter on_cookie));
 
 my $current_inspection;
 my @requests;
@@ -16,6 +16,7 @@ sub init {
     my %opt = @_;
     my $filter = $opt{url_filter} || '.*';
     $self->url_filter(qr/$filter/);
+    $self->on_cookie($opt{on_cookie}) if $opt{on_cookie};
 
     Jifty::Handler->add_trigger(before_request => sub {
         $self->before_request(@_);
@@ -111,8 +112,14 @@ sub should_handle_request {
     my $cgi  = shift;
 
     my $url = $cgi->url(-absolute => 1, -path_info => 1);
+    return unless $url =~ $self->url_filter;
 
-    return $url =~ $self->url_filter;
+    if (my $cookie_name = $self->on_cookie) {
+        my %cookies     = CGI::Cookie->fetch();
+        return unless $cookies{$cookie_name};
+    }
+
+    return 1;
 }
 
 1;
