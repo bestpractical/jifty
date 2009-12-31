@@ -152,6 +152,9 @@ sub _render_request {
         );
 
         outs sprintf ' (%.2gs)',  $request->{end} - $request->{start};
+        if ($request->{cookie}) {
+            outs " [" . $request->{cookie} . "]";
+        }
 
         render_region("request_$id");
     };

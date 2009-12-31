@@ -52,11 +52,17 @@ sub get_plugin_data {
 sub new_request_inspection {
     my ($self, $cgi) = @_;
 
-    return {
+    my $ret = {
         id    => 1 + @requests,
         start => time,
         url   => $cgi->url(-absolute => 1, -path_info => 1),
     };
+
+    if (my $cookie_name = $self->on_cookie) {
+        my %cookies     = CGI::Cookie->fetch();
+        $ret->{cookie} = $cookies{$cookie_name}->value;
+    }
+    return $ret;
 }
 
 do {
