@@ -123,11 +123,11 @@ sub _dispatch_template {
     my $class = shift;
     my $code  = shift;
     if ($VIEW{$code} && !UNIVERSAL::isa($_[0], 'Evil')) {
-	my ( $object_type, $id ) = ( $class->object_type, get('id') );
-	@_ = ($class, $class->_get_record($id), @_);
+        my ( $object_type, $id ) = ( $class->object_type, get('id') );
+        @_ = ($class, $class->_get_record($id), @_);
     }
     else {
-	unshift @_, $class;
+        unshift @_, $class;
     }
     goto $code;
 }

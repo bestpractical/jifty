@@ -368,28 +368,28 @@ sub render_as_subrequest {
 
     my %args;
     if ($self->path =~ m/\?/) {
-	# XXX: this only happens if we are redirect within region AND
-	# with continuation, which is already taken care of by the
-	# clone.
-	my ($path, $arg) = split(/\?/, $self->path, 2);
-	$subrequest->path( $path );
-	%args = (map { split /=/, $_ } split /&/, $arg);
-	if ($args{'J:C'}) {
-	    $subrequest->continuation($args{'J:C'});
-	}
+        # XXX: this only happens if we are redirect within region AND
+        # with continuation, which is already taken care of by the
+        # clone.
+        my ($path, $arg) = split(/\?/, $self->path, 2);
+        $subrequest->path( $path );
+        %args = (map { split /=/, $_ } split /&/, $arg);
+        if ($args{'J:C'}) {
+            $subrequest->continuation($args{'J:C'});
+        }
     }
     # Remove all of the actions
     unless ($enable_actions) {
-	$_->active(0) for ($subrequest->actions);
+        $_->active(0) for ($subrequest->actions);
     }
     # $subrequest->clear_actions;
     local Jifty->web->{request} = $subrequest;
     if ($args{'J:RETURN'}) {
-	my $top = Jifty->web->request->top_request;
-	my $cont = Jifty->web->session->get_continuation($args{'J:RETURN'});
-	$cont->return;
-	# need to set this as subrequest again as it's clobbered by the return
-	Jifty->web->request->top_request($top);
+        my $top = Jifty->web->request->top_request;
+        my $cont = Jifty->web->session->get_continuation($args{'J:RETURN'});
+        $cont->return;
+        # need to set this as subrequest again as it's clobbered by the return
+        Jifty->web->request->top_request($top);
     }
 
     # Call into the dispatcher

@@ -42,7 +42,7 @@ sub rc_ok {
     my %args = @_;
 
     $class->_skip_rest("live test doesn't work on Win32 at the moment")
-		if $^O eq 'MSWin32';
+                if $^O eq 'MSWin32';
 
     $ENV{JIFTY_OPENID_WHITELIST_HOST} = $ENV{SELENIUM_RC_TEST_AGAINST} || 'localhost';
 
@@ -97,31 +97,31 @@ my @cleanup;
 sub _start_src {
     my ($self, %args) = @_;
     eval 'require Alien::SeleniumRC; 1'
-	or die 'requires Alien::SeleniumRC to start selenium-rc.';
+        or die 'requires Alien::SeleniumRC to start selenium-rc.';
 
     my $pid = fork();
     die if $pid == -1;
     if ($pid) {
-	push @cleanup, $pid;
-	return ('localhost', 4444);
+        push @cleanup, $pid;
+        return ('localhost', 4444);
     }
     else {
         unless ($^O eq 'MSWin32') {
             require POSIX;
             POSIX::setsid();  # Win32 doesn't have this.
         }
-	unless ($ENV{TEST_VERBOSE}) {
-	    close *STDERR;
-	    close *STDOUT;
-	}
-	$ENV{LANG} = $args{lang} || 'en_US.UTF-8';
-	$ENV{PATH} = "$ENV{PATH}:/usr/lib/firefox:/usr/lib/mozilla-firefox";
-	Test::More::diag "start selenium rc [$$]";
-	local $SIG{CHLD} = \&_REAPER;
-	local $SIG{TERM} = sub { exit 0 };
-	Alien::SeleniumRC::start(@{ $args{args} || [] });
-	Test::More::diag "selenium rc [$$] finished.";
-	exit;
+        unless ($ENV{TEST_VERBOSE}) {
+            close *STDERR;
+            close *STDOUT;
+        }
+        $ENV{LANG} = $args{lang} || 'en_US.UTF-8';
+        $ENV{PATH} = "$ENV{PATH}:/usr/lib/firefox:/usr/lib/mozilla-firefox";
+        Test::More::diag "start selenium rc [$$]";
+        local $SIG{CHLD} = \&_REAPER;
+        local $SIG{TERM} = sub { exit 0 };
+        Alien::SeleniumRC::start(@{ $args{args} || [] });
+        Test::More::diag "selenium rc [$$] finished.";
+        exit;
     }
 }
 

@@ -348,7 +348,7 @@ You can use the canonicalization to change data in other fields.  For
 example you might want to update the postcode field when the suburb
 field is changed.
 
-	$self->argument_value( other_field => "new value" )
+        $self->argument_value( other_field => "new value" )
 
 
 =head2 Use iepngfix.htc to add PNG support in IE5.5+

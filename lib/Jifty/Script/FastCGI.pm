@@ -141,9 +141,9 @@ sub run {
             $ENV{$_} = '' if (defined $ENV{$_} );
         }
         Jifty->handler->handle_request( cgi => $cgi );
-	if ($self->{maxrequests} && ++$requests >= $self->{maxrequests}) {
-	    exit 0;
-	}
+        if ($self->{maxrequests} && ++$requests >= $self->{maxrequests}) {
+            exit 0;
+        }
     }
 }
 

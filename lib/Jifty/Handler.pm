@@ -43,7 +43,7 @@ BEGIN {
         no warnings qw(redefine);
         *CGI::new = sub {
             return Jifty->handler->cgi if Jifty->handler->cgi;
-            CGI::__jifty_real_new(@_);	
+            CGI::__jifty_real_new(@_);
         }
     }
 };

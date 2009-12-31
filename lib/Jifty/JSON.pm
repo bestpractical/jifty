@@ -91,13 +91,13 @@ sub _objToJson_syck {
 
     local $JSON::Syck::SingleQuote = $args->{singlequote};
     local $JSON::Syck::ImplicitUnicode = 1;
-	my $json = JSON::Syck::Dump($obj);
-	if (! $args->{singlequote}) {
-		$json =~ s/\n\n\n/\\n/gs;	# fix syck bug
-		$json =~ s/\n/\\n/gs;		# just to be safe
-		$json =~ s/\r/\\r/gs;
-	}
-	return $json;
+        my $json = JSON::Syck::Dump($obj);
+        if (! $args->{singlequote}) {
+                $json =~ s/\n\n\n/\\n/gs;       # fix syck bug
+                $json =~ s/\n/\\n/gs;           # just to be safe
+                $json =~ s/\r/\\r/gs;
+        }
+        return $json;
 }
 
 # We should escape double-quotes somehow, so that we can guarantee

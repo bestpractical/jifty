@@ -316,7 +316,7 @@ sub handle_request {
     # In the case where we have a continuation and want to redirect
     if ( $self->request->continuation_path && Jifty->web->request->argument('_webservice_redirect') ) {
         # for continuation - perform internal redirect under webservices
-	$self->webservices_redirect($self->request->continuation_path);
+        $self->webservices_redirect($self->request->continuation_path);
         return;
     }
 
@@ -781,8 +781,8 @@ sub _redirect {
     }
 
     if (my $redir = Jifty->web->request->argument('_webservice_redirect')) {
-	push @$redir, $page;
-	return;
+        push @$redir, $page;
+        return;
     }
     # $page can't lead with // or it assumes it's a URI scheme.
     $page =~ s{^/+}{/};
@@ -980,7 +980,7 @@ sub render_template {
     my $template = shift;
     my $handler;
     my $content;
-	my $void_context = ( defined wantarray ? 0 :1);
+        my $void_context = ( defined wantarray ? 0 :1);
 
     # Look for a possible handler, and cache it for future requests.
     # With DevelMode, always look it up.
@@ -1022,7 +1022,7 @@ sub render_template {
         if ($template eq '/errors/500') {
             $self->log->warn("Can't render internal_error: $err");
             # XXX Built-in static "oh noes" page?
-			die "ABORT";
+                        die "ABORT";
         }
 
         # XXX: This may leave a half-written tag open
@@ -1040,7 +1040,7 @@ sub render_template {
         Jifty->web->_redirect( "/errors/500?J:C=" . $c->id );
     } elsif ($err) {
         Jifty->handler->buffer->pop while Jifty->handler->buffer->depth > $start_depth;
-		die "ABORT";
+                die "ABORT";
 
     } else {
         return $content;

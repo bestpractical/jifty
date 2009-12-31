@@ -56,12 +56,12 @@ any more arguments to this method, or the method will return undef.
 NOTE that if you're using this in a series of different pages or forms, 
 you'll need to run it again for each new form:
 
-    $mech->fill_in_action_ok($mech->moniker_for('MyApp::Action::UpdateInfo'), 
+    $mech->fill_in_action_ok($mech->moniker_for('MyApp::Action::UpdateInfo'),
                              owner_id => 'someone');
-    $mech->submit_html_ok();  
+    $mech->submit_html_ok();
 
     is($mech->action_field_value($mech->moniker_for("MyApp::Action::UpdateInfo"),
-			     'owner_id'), 
+                                 'owner_id'),
        'someone',
        "Owner was reassigned properly to owner 'someone'");
 

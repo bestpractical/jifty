@@ -57,16 +57,15 @@ Applications should override this method to provide any application-specific use
 
 If you do nothing, code similar to this will be called by _init.
 
-	sub _init {
-	    my $self = shift;
-	    my %args = (@_);
-	
+    sub _init {
+        my $self = shift;
+        my %args = (@_);
         if (keys %args and UNIVERSAL::can(Jifty->app_class('Model', 'User'), 'new')) {
-	        $self->user_object(Jifty->app_class('Model', 'User')->new(current_user => $self));
-	        $self->user_object->load_by_cols(%args);
-	    }
+            $self->user_object(Jifty->app_class('Model', 'User')->new(current_user => $self));
+            $self->user_object->load_by_cols(%args);
+        }
         return 1;
-	}
+    }
 
 That is, it will attempt to load the columns given in the model named C<App::Model::User> (where I<App> is the name of your application class). If your notion of a user object isn't a typical Jifty model or named something else, you will definitely need to override this method. If you need to perform any additional initialization for user objects, you may want to override this as well.
 

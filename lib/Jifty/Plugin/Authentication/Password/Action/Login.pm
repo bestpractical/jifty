@@ -62,7 +62,7 @@ sub arguments {
 
               password => { type => 'password',
                             label => _('Password'),
-			    # mandatory in some cases; see validate_password
+                            # mandatory in some cases; see validate_password
                             mandatory => 0,
                         },
               hashed_password => { type => 'hidden',
@@ -73,9 +73,9 @@ sub arguments {
                             hints => _('Your browser can remember your login for you'),
                             default => 0,
                           },
-	      token => { type => 'hidden',
-			 label => 'token',
-			 mandatory => 0 },
+              token => { type => 'hidden',
+                         label => 'token',
+                         mandatory => 0 },
 
           });
 

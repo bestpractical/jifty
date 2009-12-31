@@ -26,8 +26,8 @@ sub setup {
     my $LoginUser   = Jifty->app_class('Model', 'User');
 
     unless ( UNIVERSAL::isa($self->to, $LoginUser) ){
-	$self->log->error((ref $self) . " called with invalid user argument");
-	return;
+        $self->log->error((ref $self) . " called with invalid user argument");
+        return;
     } 
    
 
