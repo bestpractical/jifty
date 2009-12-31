@@ -3,6 +3,7 @@ use strict;
 use warnings;
 use base 'Jifty::Plugin';
 use List::Util 'sum';
+use Carp;
 
 sub prereq_plugins { 'RequestInspector' }
 
@@ -18,9 +19,6 @@ sub init {
 sub post_init {
     Jifty->handle or return;
 
-    require Carp;
-
-    Jifty->handle->log_sql_statements(1);
     Jifty->handle->log_sql_hook(SQLQueryPlugin => sub {
         my ($time, $statement, $bindings, $duration) = @_;
         __PACKAGE__->log->debug(sprintf 'Query (%.3fs): "%s", with bindings: %s',
@@ -34,11 +32,16 @@ sub post_init {
 }
 
 sub inspect_before_request {
+    my $self = shift;
+    Jifty->handle->log_sql_statements(1);
     Jifty->handle->clear_sql_statement_log;
 }
 
 sub inspect_after_request {
-    return [ Jifty->handle->sql_statement_log ];
+    Jifty->handle->log_sql_statements(0);
+    my $ret = [ Jifty->handle->sql_statement_log ];
+    Jifty->handle->clear_sql_statement_log;
+    return $ret;
 }
 
 sub inspect_render_summary {
