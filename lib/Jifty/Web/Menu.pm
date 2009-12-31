@@ -402,7 +402,74 @@ sub _render_as_classical_menu_item {
 
 }
 
-=head2 render_as_yui_menubar [PARAMHASH]
+=head2 render_as_yui_menu [PARAMHASH]
+
+Render menu with YUI menu.  It can support arbitrary levels of submenus.
+
+Valid options for the paramhash are as follows:
+
+=over
+
+=item id
+
+The HTML element ID to use for the menu
+
+=item show
+
+A boolean indicating whether to show the menu after rendering the HTML.
+Defaults to true.  If you don't set this to true, you should use the
+button option (see below) or show the menu with Javascript like:
+
+    YAHOO.widget.MenuManager.getMenu("menu-html-id").show();
+
+=item button
+
+The ID of an HTML element.  The element's onclick Javascript event is bound
+to a function which shows the menu.
+
+=item options
+
+A hashref of options passed directly to the Javascript constructor for
+the menu.  See L<http://developer.yahoo.com/yui/menu/#configreference> for
+a list of the options available.
+
+=back
+
+=cut
+
+sub render_as_yui_menu {
+    my $self = shift;
+    my %args = (
+        id      => Jifty->web->serial,
+        show    => 1,
+        options => {},
+        @_
+    );
+
+    my $showjs = $args{'show'} ? "menu.show();" : "";
+    my $json   = Jifty::JSON::objToJson( $args{'options'} );
+
+    # Bind to a button to show the menu
+    my $binding = $args{'button'}
+                    ? qq[YAHOO.util.Event.addListener("$args{button}", "click", menu.show, null, menu);]
+                    : '';
+
+    $self->_render_as_yui_menu_item( class => "yuimenu", id => $args{'id'} );
+    Jifty->web->out(<<"    END");
+        <script type="text/javascript">
+            YAHOO.util.Event.onContentReady("$args{id}", function() {
+                // set container?
+                var menu = new YAHOO.widget.Menu("$args{id}", $json);
+                menu.render();
+                $showjs
+                $binding
+            });
+        </script>
+    END
+    '';
+}
+
+=head2 render_as_yui_menubar
 
 Render menubar with YUI menu, suitable for an application's menu.
 It can support arbitary levels of submenu.
