@@ -4,6 +4,9 @@ use warnings;
 use base 'Jifty::Plugin';
 use List::Util 'sum';
 use Carp;
+use Scalar::Util;
+
+__PACKAGE__->mk_accessors(qw(stacktrace explain));
 
 sub prereq_plugins { 'RequestInspector' }
 
@@ -11,24 +14,45 @@ sub init {
     my $self = shift;
     return if $self->_pre_init;
 
+    my %opts = (
+        stacktrace => 1,
+        explain    => 0,
+        @_,
+    );
+    $self->explain($opts{explain});
+    $self->stacktrace($opts{stacktrace});
+
+    my $weakself = $self;
+    Scalar::Util::weaken( $weakself );
     Jifty->add_trigger(
-        post_init => \&post_init
+        post_init => sub { $weakself->post_init(@_) }
     );
 }
 
 sub post_init {
+    my $self = shift;
     Jifty->handle or return;
 
-    Jifty->handle->log_sql_hook(SQLQueryPlugin => sub {
-        my ($time, $statement, $bindings, $duration) = @_;
-        __PACKAGE__->log->debug(sprintf 'Query (%.3fs): "%s", with bindings: %s',
-                            $duration,
-                            $statement,
-                            join ', ',
-                                map { defined $_ ? $_ : 'undef' } @$bindings,
-        );
-        return Carp::longmess("Query");
-    });
+    if ($self->stacktrace) {
+        Jifty->handle->log_sql_hook(SQLQueryPlugin_Stacktrace => sub {
+            my ($time, $statement, $bindings, $duration) = @_;
+            __PACKAGE__->log->debug(sprintf 'Query (%.3fs): "%s", with bindings: %s',
+                                $duration,
+                                $statement,
+                                join ', ',
+                                    map { defined $_ ? $_ : 'undef' } @$bindings,
+            );
+            return Carp::longmess("Query");
+        });
+    }
+
+    if ($self->explain) {
+        Jifty->handle->log_sql_hook(SQLQueryPlugin_Explain => sub {
+            my ($time, $statement, $bindings, $duration) = @_;
+            my $ret = Jifty->handle->dbh->selectcol_arrayref( "EXPLAIN $statement", {}, @{$bindings});
+            return $ret;
+        });
+    }
 }
 
 sub inspect_before_request {
@@ -78,7 +102,8 @@ Jifty::Plugin::SQLQueries - Inspect your app's SQL queries
 
 =head1 DESCRIPTION
 
-This plugin will log each SQL query, its duration, its bind parameters, and its stack trace. Such reports are available at:
+This plugin will log each SQL query, its duration, its bind
+parameters, and its stack trace. Such reports are available at:
 
     http://your.app/__jifty/admin/requests
 
@@ -89,6 +114,17 @@ Add the following to your site_config.yml
  framework:
    Plugins:
      - SQLQueries: {}
+
+You can turn on and off the stacktrace, as well as an "EXPLAIN" of
+each query, using options to the plugin:
+
+ framework:
+   Plugins:
+     - SQLQueries:
+         stacktrace: 0
+         explain: 1
+
+The plugin defaults to logging the stack trace, but not the explain.
 
 =head1 METHODS
 

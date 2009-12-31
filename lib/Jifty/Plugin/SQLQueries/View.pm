@@ -45,7 +45,8 @@ template '/__jifty/admin/requests/query' => sub {
     my $query_log = $log->[$query_id];
 
     my ($timestamp, $query, $binds, $duration, $plugins) = @$query_log;
-    my $stack_trace = $plugins->{SQLQueryPlugin};
+    my $stacktrace = $plugins->{SQLQueryPlugin_Stacktrace};
+    my $explain    = $plugins->{SQLQueryPlugin_Explain};
 
     if (@{ $binds || [] }) {
         h3 { "Bind Parameters" }
@@ -54,8 +55,15 @@ template '/__jifty/admin/requests/query' => sub {
         }
     }
 
-    h3 { "Stack Trace" }
-    pre { $stack_trace }
+    if ($stacktrace) {
+        h3 { "Stack Trace" }
+        pre { $stacktrace }
+    }
+
+    if ($explain) {
+        h3 { "Explain" }
+        pre { join "\n", @{$explain} }
+    }
 };
 
 1;
