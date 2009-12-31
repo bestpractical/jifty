@@ -169,14 +169,15 @@ time out the request.
 sub validate_token {
     my $self = shift;
     my $value = shift;
+    my $token = Jifty->web->session->get('login_token');
+    Jifty->web->session->remove('login_token');
     if ($value) {
         if(int $value < (time - TOKEN_EXPIRE_TIME)) { 
             return $self->validation_error(token => "Your login attempt has timed out. Please try again.");
         }
-        if ($value ne Jifty->web->session->get('login_token')) {
+        if ($value ne $token) {
             return $self->validation_error(token => "That didn't work. Please try again.");
         }
-        Jifty->web->session->set(login_token => '');
     }
     return $self->validation_ok("token");
 }
@@ -204,7 +205,6 @@ sub take_action {
             $self->result->error($BAD_PW);
             return;
         }
-        Jifty->web->session->set( login_token => '' );
     } else {                # no password hashing over the wire
         unless ( $user->id && $user->password_is($password) ) {
             $self->result->error($BAD_PW);
