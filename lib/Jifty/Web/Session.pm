@@ -318,6 +318,8 @@ sub set_cookie {
     # terrific problems
     return if Jifty->web->response->header('Expires');
 
+    $self->load unless $self->loaded;
+
     my $cookie_name = $self->cookie_name;
     my %cookies     = Jifty->web->request ? CGI::Simple::Cookie->parse(Jifty->web->request->env->{HTTP_COOKIE}) : ();
 
