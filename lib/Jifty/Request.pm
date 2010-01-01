@@ -6,6 +6,7 @@ package Jifty::Request;
 use Any::Moose;
 extends 'Plack::Request', 'Jifty::Object';
 
+has 'env' => (is => "ro", isa => "HashRef", default => sub { {} });
 has '_top_request' => (is => 'rw');
 has 'arguments' => (is => 'rw');
 has 'template_arguments' => (is => 'rw');
@@ -14,6 +15,13 @@ has 'continuation_id' => (is => 'rw');
 has 'future_continuation_id' => (is => 'rw');
 has 'continuation_type' => (is => 'rw');
 has 'continuation_path' => (is => 'rw');
+
+around 'method' => sub {
+    my ($orig, $self, $arg) = @_;
+    $self->{env}{REQUEST_METHOD} = $arg
+        if $arg;
+    $orig->($self, $arg ? $arg : ());
+};
 
 use Jifty::JSON;
 use Jifty::YAML;
@@ -82,6 +90,16 @@ sole argument.
 
 =cut
 
+sub BUILDARGS {
+    my ($class, %args) = @_;
+
+    if (my $path = delete $args{path}) {
+        $args{env}{REQUEST_URI} ||= $path;
+    }
+
+    return \%args;
+}
+
 sub BUILD {
     my $self = shift;
 
@@ -96,6 +114,10 @@ sub BUILD {
     $self->{'actions'} = {};
     $self->{'state_variables'} = {};
     $self->{'fragments'} = {};
+    $self->{env}{'REQUEST_METHOD'} ||= 'GET';
+    $self->{env}{'REQUEST_URI'} ||= '/';
+
+    $self->path($self->{env}{REQUEST_URI});
     $self->arguments({});
     $self->template_arguments({});
 }
