@@ -277,30 +277,39 @@ using the "back button" after making the webservice request.
 
 =cut
 
+sub _build_webservices_request {
+    my ($self, $endpoint, $data) = @_;
+
+    my $uri = $self->uri->clone;
+    $uri->path($endpoint);
+    $uri->query('');
+
+    my $body = Jifty::YAML::Dump({ path => $endpoint, %$data});
+
+    HTTP::Request->new(
+        POST => $uri,
+        [ 'Content-Type' => 'text/x-yaml',
+          'Content-Length' => length($body) ],
+        $body
+    );
+}
+
 sub send_action {
     my $self = shift;
     my $class = shift;
     my %args = @_;
 
-
-    my $uri = $self->uri->clone;
-    $uri->path("__jifty/webservices/yaml");
-
-    my $request = HTTP::Request->new(
-        POST => $uri,
-        [ 'Content-Type' => 'text/x-yaml' ],
-        Jifty::YAML::Dump(
-            {   path => $uri->path,
-                actions => {
-                    action => {
-                        moniker => 'action',
-                        class   => $class,
-                        fields  => \%args
-                    }
+    my $request = $self->_build_webservices_request
+        ( "__jifty/webservices/yaml",
+          { actions => {
+                action => {
+                    moniker => 'action',
+                    class   => $class,
+                    fields  => \%args
                 }
             }
-        )
-    );
+        });
+
     my $result = $self->request( $request );
     my $content = eval { Jifty::YAML::Load($result->content)->{action} } || undef;
     $self->back;
@@ -319,29 +328,16 @@ sub fragment_request {
     my $path = shift;
     my %args = @_;
 
-    my $uri = $self->uri->clone;
-    $uri->path("__jifty/webservices/xml");
-    $uri->query('');
-
-    my $body =
-        Jifty::YAML::Dump(
-            {   path => $uri->path,
-                fragments => {
-                    fragment => {
-                        name  => 'fragment',
-                        path  => $path,
-                        args  => \%args
-                    }
+    my $request = $self->_build_webservices_request
+        ( "__jifty/webservices/xml",
+          { fragments => {
+                fragment => {
+                    name  => 'fragment',
+                    path  => $path,
+                    args  => \%args
                 }
             }
-        );
-
-    my $request = HTTP::Request->new(
-        POST => $uri,
-        [ 'Content-Type' => 'text/x-yaml',
-          'Content-Length' => length($body) ],
-        $body
-    );
+        });
 
     my $result = $self->request( $request );
 
