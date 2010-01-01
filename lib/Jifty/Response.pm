@@ -20,6 +20,17 @@ extends 'Plack::Response';
 
 has 'error'   => (is => 'rw');
 
+=head2 add_header NAME VALUE
+
+Deprecated.  Use header(NAME, VALUE)
+
+=cut
+
+sub add_header {
+    my $self = shift;
+    $self->header(@_);
+}
+
 =head2 result MONIKER [RESULT]
 
 Gets or sets the L<Jifty::Result> of the L<Jifty::Action> with the given
