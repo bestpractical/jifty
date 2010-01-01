@@ -321,10 +321,9 @@ sub fragment_request {
 
     my $uri = $self->uri->clone;
     $uri->path("__jifty/webservices/xml");
+    $uri->query('');
 
-    my $request = HTTP::Request->new(
-        POST => $uri,
-        [ 'Content-Type' => 'text/x-yaml' ],
+    my $body =
         Jifty::YAML::Dump(
             {   path => $uri->path,
                 fragments => {
@@ -335,9 +334,17 @@ sub fragment_request {
                     }
                 }
             }
-        )
+        );
+
+    my $request = HTTP::Request->new(
+        POST => $uri,
+        [ 'Content-Type' => 'text/x-yaml',
+          'Content-Length' => length($body) ],
+        $body
     );
+
     my $result = $self->request( $request );
+
     use XML::Simple;
     my $content = eval { XML::Simple::XMLin($result->content, SuppressEmpty => '')->{fragment}{content} } || '';
     $self->back;
