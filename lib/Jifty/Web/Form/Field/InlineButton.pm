@@ -41,6 +41,7 @@ Don't show hints for an inline button
 
 sub render_wrapper_start { }
 sub render_wrapper_end {}
+sub render_preamble {}
 sub render_label {}
 sub render_hints {}
 
