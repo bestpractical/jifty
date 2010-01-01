@@ -599,7 +599,11 @@ sub as_link {
                                  target => $self->target,
                                  class => $self->class );
     } else {
-        return _( $self->label );
+        if ( $self->class ) {
+            return "<span class=\"@{[$self->class]}\">"._( $self->label )."</span>";
+        } else {
+            return _( $self->label );
+        }
     }
 }
 
