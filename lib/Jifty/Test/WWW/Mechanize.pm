@@ -50,6 +50,18 @@ sub new {
     return $self;
 }
 
+sub clone {
+    my $self = shift;
+    my $clone = $self->SUPER::clone($self);
+    $clone->_plack_hook(
+        uri => Jifty->web->url,
+        handler => sub {
+            Jifty->handler->handle_request(@_);
+        },
+    );
+    return $clone;
+}
+
 sub _plack_hook {
     my $self = shift;
     my %args = (
