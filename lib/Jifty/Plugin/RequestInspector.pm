@@ -4,7 +4,9 @@ use warnings;
 use base 'Jifty::Plugin';
 use Time::HiRes 'time';
 
-__PACKAGE__->mk_accessors(qw(url_filter on_cookie));
+sub version { '0.0.2' }
+
+__PACKAGE__->mk_accessors(qw(url_filter on_cookie persistent));
 
 my $current_inspection;
 my @requests;
@@ -16,11 +18,13 @@ sub init {
     my %opt = (
         url_filter => '.*',
         on_cookie  => undef,
+        persistent => 0,
         @_
     );
 
     $self->url_filter(qr/$opt{url_filter}/);
     $self->on_cookie($opt{on_cookie});
+    $self->persistent($opt{persistent});
 
     Jifty::Handler->add_trigger(before_request => sub {
         $self->before_request(@_);
@@ -38,14 +42,32 @@ sub requests {
         @_,
     );
 
-    return @requests[$args{after}..$#requests];
+    if ($self->persistent) {
+        my $requests = Jifty::Plugin::RequestInspector::Model::RequestCollection->new(
+            current_user => Jifty->app_class('CurrentUser')->superuser
+        );
+        $requests->unlimit;
+        $requests->limit( column => "id", operator => ">", value => $args{after}) if $args{after};
+        return map { {%{$_->data}, id => $_->id} } @{$requests->items_array_ref};
+    } else {
+        return @requests[$args{after}..$#requests];
+    }
 }
 
 sub get_request {
     my $self = shift;
     my $id   = shift;
 
-    return $requests[$id - 1]; # 1-based
+    if ($self->persistent) {
+        my $req = Jifty::Plugin::RequestInspector::Model::Request->new(
+            current_user => Jifty->app_class('CurrentUser')->superuser
+        );
+        $req->load( $id );
+        return undef unless $req->id;
+        return { %{$req->data}, id => $req->id };
+    } else {
+        return $requests[$id - 1]; # 1-based
+    }
 }
 
 sub add_request {
@@ -53,18 +75,37 @@ sub add_request {
 
     return unless $current_inspection;
 
-    push @requests, $current_inspection;
-    $requests[-1]{id} = scalar @requests;
+    if ($self->persistent) {
+        my $req = Jifty::Plugin::RequestInspector::Model::Request->new(
+            current_user => Jifty->app_class('CurrentUser')->superuser
+        );
+        my ($ok, $msg) = $req->create(
+            data => $current_inspection
+        );
+    } else {
+        push @requests, $current_inspection;
+        $requests[-1]{id} = scalar @requests;
+    }
 }
 
 sub clear_requests {
-    @requests = ();
+    my $self = shift;
+
+    if ($self->persistent) {
+        Jifty->handle->simple_query( "DELETE FROM ".Jifty::Plugin::RequestInspector::Model::Request->table );
+    } else {
+        @requests = ();
+    }
     undef $current_inspection;
 }
 
 sub last_id {
     my $self = shift;
-    return scalar @requests;
+    if ($self->persistent) {
+        return Jifty->handle->fetch_result( "SELECT MAX(id) FROM ". Jifty::Plugin::RequestInspector::Model::Request->table );
+    } else {
+        return scalar @requests;
+    }
 }
 
 sub get_plugin_data {
