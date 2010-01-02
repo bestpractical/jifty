@@ -13,10 +13,14 @@ sub init {
     my $self = shift;
     return if $self->_pre_init;
 
-    my %opt = @_;
-    my $filter = $opt{url_filter} || '.*';
-    $self->url_filter(qr/$filter/);
-    $self->on_cookie($opt{on_cookie}) if $opt{on_cookie};
+    my %opt = (
+        url_filter => '.*',
+        on_cookie  => undef,
+        @_
+    );
+
+    $self->url_filter(qr/$opt{url_filter}/);
+    $self->on_cookie($opt{on_cookie});
 
     Jifty::Handler->add_trigger(before_request => sub {
         $self->before_request(@_);
