@@ -62,6 +62,11 @@ sub clear_requests {
     undef $current_inspection;
 }
 
+sub last_id {
+    my $self = shift;
+    return scalar @requests;
+}
+
 sub get_plugin_data {
     my $self   = shift;
     my $id     = shift;

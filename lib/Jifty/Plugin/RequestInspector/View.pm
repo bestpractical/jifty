@@ -47,8 +47,7 @@ template '/__jifty/admin/requests/requests' => sub {
 
 template '/__jifty/admin/requests/more_button' => sub {
     my $request_inspector = Jifty->find_plugin('Jifty::Plugin::RequestInspector');
-    my $last_request = ($request_inspector->requests)[-1];
-    my $starting_id = $last_request ? $last_request->{id} : 0;
+    my $last_id = $request_inspector->last_id;
 
     hyperlink(
         label => "Load subsequent requests",
@@ -57,7 +56,7 @@ template '/__jifty/admin/requests/more_button' => sub {
             append  => '/__jifty/admin/requests/more_requests',
             effect  => 'slideDown',
             arguments => {
-                starting_id => $starting_id,
+                last_id => $last_id,
             },
         },
         {
@@ -68,9 +67,9 @@ template '/__jifty/admin/requests/more_button' => sub {
 
 template '/__jifty/admin/requests/more_requests' => sub {
     my $request_inspector = Jifty->find_plugin('Jifty::Plugin::RequestInspector');
-    my $starting_id = get('starting_id');
+    my $last_id = get('last_id');
 
-    my @requests = $request_inspector->requests( after => $starting_id );
+    my @requests = $request_inspector->requests( after => $last_id );
 
     for my $request (@requests) {
         _render_request($request);
