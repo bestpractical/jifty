@@ -31,13 +31,30 @@ sub init {
     });
 }
 
-sub requests { @requests }
+sub requests {
+    my $self = shift;
+    my %args = (
+        after => 0,
+        @_,
+    );
+
+    return @requests[$args{after}..$#requests];
+}
 
 sub get_request {
     my $self = shift;
     my $id   = shift;
 
     return $requests[$id - 1]; # 1-based
+}
+
+sub add_request {
+    my $self = shift;
+
+    return unless $current_inspection;
+
+    push @requests, $current_inspection;
+    $requests[-1]{id} = scalar @requests;
 }
 
 sub clear_requests {
@@ -57,7 +74,6 @@ sub new_request_inspection {
     my ($self, $cgi) = @_;
 
     my $ret = {
-        id    => 1 + @requests,
         start => time,
         url   => $cgi->url(-absolute => 1, -path_info => 1),
     };
@@ -111,7 +127,7 @@ sub after_request {
             }
         }
         $current_inspection->{end} = time;
-        push @requests, $current_inspection;
+        $self->add_request;
     }
 
     undef $current_inspection;
