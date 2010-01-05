@@ -517,13 +517,16 @@ sub _handle_stage {
 
     # Set the current stage so that rules can make smarter choices;
     local $CURRENT_STAGE = $stage;
+    Jifty->handler->call_trigger("before_dispatcher_$stage");
 
     eval { $self->_handle_rules( [ $self->rules($stage), @rules ] ); };
     if ( my $err = $@ ) {
         $self->log->warn( ref($err) . " " . "'$err'" )
             if ( $err !~ /^(LAST RULE|ABORT)/ );
+        Jifty->handler->call_trigger("after_dispatcher_$stage");
         return $err =~ /^ABORT/ ? 0 : 1;
     }
+    Jifty->handler->call_trigger("after_dispatcher_$stage");
     return 1;
 }
 
@@ -868,9 +871,11 @@ sub _do_dispatch {
 
     # Close the handle down, so the client can go on their merry way
     unless (Jifty->web->request->is_subrequest) {
+        Jifty->handler->call_trigger("before_flush");
         Jifty->handler->buffer->flush_output;
         close(STDOUT);
         $Jifty::SERVER->close_client_sockets if $Jifty::SERVER;
+        Jifty->handler->call_trigger("after_flush");
     }
 
     # Cleanup

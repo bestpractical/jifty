@@ -193,6 +193,8 @@ sub handle_request {
         Jifty->web->request( Jifty::Request->new()->fill( $self->cgi ) );
         Jifty->web->response( Jifty::Response->new );
 
+        $self->call_trigger('have_request');
+
         Jifty->api->reset;
         for ( Jifty->plugins ) {
             $_->new_request;

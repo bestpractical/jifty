@@ -1009,6 +1009,7 @@ sub render_template {
 
     Jifty->handler->buffer->push( private => 1 ) unless $void_context;
 
+    Jifty->handler->call_trigger("before_render_template", $handler, $template);
     eval { $handler->show($template) };
 
     # Handle parse errors
@@ -1016,6 +1017,7 @@ sub render_template {
 
     $content = Jifty->handler->buffer->pop unless $void_context;
 
+    Jifty->handler->call_trigger("after_render_template", $handler, $template, $content);
 
     if ( $err and not (eval { $err->isa('HTML::Mason::Exception::Abort') } or $err =~ /^ABORT/) ) {
         $self->log->fatal("View error: $err") if $err;
