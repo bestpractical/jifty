@@ -208,8 +208,7 @@ sub handle_request {
         unless (Jifty->web->request->return_from_continuation) {
             $self->buffer->out_method(\&Jifty::View::out_method);
             $self->dispatcher->handle_request();
-            $self->buffer->flush_output;
-        } 
+        }
 
         $self->call_trigger('before_cleanup', $args{cgi});
 
