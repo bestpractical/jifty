@@ -268,6 +268,10 @@ requiring that the user enter a value for that field.
 
 =cut
 
+sub class_arguments {
+    
+}
+
 sub arguments {
     my  $self= shift;
     return($self->PARAMS || {});
