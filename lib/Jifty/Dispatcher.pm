@@ -881,8 +881,9 @@ sub _do_dispatch {
     # Cleanup
     $self->_handle_stage('CLEANUP');
 
-    # Out to the next dispatcher's cleanup
-    $self->_abort;
+    # Out to the next dispatcher's cleanup; since try/catch using die
+    # is slow, we only do this if we're not in the topmost dispatcher.
+    $self->_abort if $self->{path} ne "/";
 }
 
 =head2 _match CONDITION
