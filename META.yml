@@ -67,11 +67,9 @@ requires:
   DateTime::Locale: 0
   Email::Folder: 0
   Email::LocalDelivery: 0.217
-  Email::MIME: 1.861
+  Email::MIME: 1.9
   Email::MIME::ContentType: 1.012
   Email::MIME::CreateHTML: 0
-  Email::MIME::Creator: 1.45
-  Email::MIME::Modifier: 1.442
   Email::Send: 2.10
   Email::Simple: 2.003
   Email::Simple::Creator: 1.4
@@ -95,7 +93,7 @@ requires:
   IPC::PubSub: 0.23
   IPC::Run3: 0
   JSON::Syck: 0.29
-  Jifty::DBI: 0.58
+  Jifty::DBI: 0.60
   LWP::UserAgent: 0
   List::MoreUtils: 0
   Locale::Maketext::Extract: 0.35
@@ -117,6 +115,7 @@ requires:
   String::Koremutake: 0
   Template::Declare: 0.36
   Test::Base: 0
+  Test::Exception: 0
   Test::LongString: 0
   Test::More: 0.62
   Test::Pod::Coverage: 0
@@ -134,4 +133,4 @@ requires:
   YAML::Syck: 0.71
   perl: 5.8.3
   version: 0
-version: 0.91117
+version: 1.00105
