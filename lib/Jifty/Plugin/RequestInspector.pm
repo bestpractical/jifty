@@ -116,6 +116,13 @@ sub get_plugin_data {
     return $self->get_request($id)->{plugin_data}{$plugin};
 }
 
+sub get_all_plugin_data {
+    my $self   = shift;
+    my $plugin = shift;
+
+    return map {$_->{plugin_data}{$plugin}} $self->requests;
+}
+
 sub new_request_inspection {
     my ($self, $cgi) = @_;
 
@@ -238,6 +245,11 @@ Returns the most recent request ID.
 
 Returns the B<opaque> plugin data for a particular request ID and plugin class
 name.
+
+=head2 get_all_plugin_data Plugin::Name
+
+Returns the B<opaque> plugin data for all requests, for a given plugin
+class name.
 
 =head2 get_request RequestID
 
