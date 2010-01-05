@@ -226,6 +226,14 @@ to RequestInspector plugins.
 
 Clears the list of request inspections.
 
+=head2 add_request
+
+Adds the current request inspection to the data store.
+
+=head2 last_id
+
+Returns the most recent request ID.
+
 =head2 get_plugin_data RequestID, Plugin::Name
 
 Returns the B<opaque> plugin data for a particular request ID and plugin class
@@ -251,6 +259,10 @@ Instantiates a new request inspection, setting up some defalt values.
 
 Decides whether the request described by the CGI parameter should be handled,
 based on plugin configuration.
+
+=head2 version
+
+This plugin is versioned because it provides model classes.
 
 =cut
 
