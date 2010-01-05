@@ -17,3 +17,17 @@ sub since { '0.0.2' }
 
 1;
 
+__END__
+
+=head1 NAME
+
+Jifty::Plugin::RequestInspector::Model::Request - Persistent storage for the request inspector
+
+=head1 METHODS
+
+=head2 since
+
+This model has existed since version 0.0.2 of the RequestInspector
+plugin.
+
+=cut
