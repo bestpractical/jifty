@@ -85,6 +85,7 @@ requires('Test::More' => 0.62 );
 requires('Test::Pod::Coverage');
 requires('Test::Script::Run' => 0.03);
 requires('Test::WWW::Mechanize' => 1.04 );
+requires('Test::WWW::Mechanize::PSGI' => 0.35 );
 requires('Test::WWW::Selenium' => 1.18 );
 requires('WWW::Mechanize' => 1.51 );
 requires('UNIVERSAL::require');

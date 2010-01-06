@@ -2,7 +2,7 @@ use strict;
 use warnings;
 
 package Jifty::Test::WWW::Mechanize;
-use base qw/Test::WWW::Mechanize/;
+use base qw/Test::WWW::Mechanize::PSGI/;
 
 delete $ENV{'http_proxy'}; # Otherwise Test::WWW::Mechanize tries to go through your HTTP proxy
 
@@ -39,53 +39,12 @@ bot a cookie jar.
 
 sub new {
     my $class = shift;
-    my $self = $class->SUPER::new(@_);
+    my $app = sub { Jifty->handler->handle_request(@_) };
+
+    my $self = $class->SUPER::new(@_, app => $app);
     $self->cookie_jar(HTTP::Cookies->new);
-    $self->_plack_hook(
-        uri => Jifty->web->url,
-        handler => sub {
-            Jifty->handler->handle_request(@_);
-        },
-    );
+
     return $self;
-}
-
-sub clone {
-    my $self = shift;
-    my $clone = $self->SUPER::clone($self);
-    $clone->_plack_hook(
-        uri => Jifty->web->url,
-        handler => sub {
-            Jifty->handler->handle_request(@_);
-        },
-    );
-    return $clone;
-}
-
-sub _plack_hook {
-    my $self = shift;
-    my %args = (
-        uri => "http://localhost:8888/",
-        @_
-    );
-
-    die "No handler provided"
-        unless $args{handler};
-
-    my $cb;
-
-    test_psgi
-        app => $args{handler},
-        client => sub {$cb = shift};
-
-    my $for = URI->new( $args{uri} );
-    $self->add_handler(
-        request_send => $cb,
-        m_scheme => $for->scheme,
-        m_host => $for->host,
-        m_port => $for->port,
-        m_path_prefix => $for->path,
-    );
 }
 
 =head2 moniker_for ACTION, FIELD1 => VALUE1, FIELD2 => VALUE2
