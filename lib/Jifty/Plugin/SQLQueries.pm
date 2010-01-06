@@ -22,10 +22,8 @@ sub init {
     $self->explain($opts{explain});
     $self->stacktrace($opts{stacktrace});
 
-    my $weakself = $self;
-    Scalar::Util::weaken( $weakself );
     Jifty->add_trigger(
-        post_init => sub { $weakself->post_init(@_) }
+        post_init => sub { $self->post_init(@_) }
     );
 }
 
