@@ -19,6 +19,11 @@ wrap 'Jifty::View::Mason::Handler::new',
 package Jifty::Plugin::Compat::Apache;
 use Carp;
 
+sub header_in {
+    my $class = shift;
+    return Jifty->web->request->header(@_);
+}
+
 sub header_out {
     my ($class, $key, $val) = @_;
     if ($key eq 'Status') {
@@ -46,6 +51,11 @@ sub content_type {
 sub AUTOLOAD {
     our $AUTOLOAD;
     croak "compat apache does not handle $AUTOLOAD";
+}
+
+sub params {
+    my $class = shift;
+    return %{ Jifty->web->request->parameters };
 }
 
 1;
