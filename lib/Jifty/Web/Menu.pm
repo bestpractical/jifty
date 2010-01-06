@@ -450,11 +450,10 @@ sub render_as_yui_menu {
     my $json   = Jifty::JSON::objToJson( $args{'options'} );
 
     # Bind to a button to show the menu
-    my $binding = $args{'button'}
-                    ? qq[YAHOO.util.Event.addListener("$args{button}", "click", menu.show, null, menu);]
-                    : '';
+    my $binding = (defined $args{'button'} and length $args{'button'}) ? 1 : 0;
 
     $self->_render_as_yui_menu_item( class => "yuimenu", id => $args{'id'} );
+
     Jifty->web->out(<<"    END");
         <script type="text/javascript">
             YAHOO.util.Event.onContentReady("$args{id}", function() {
@@ -462,7 +461,16 @@ sub render_as_yui_menu {
                 var menu = new YAHOO.widget.Menu("$args{id}", $json);
                 menu.render();
                 $showjs
-                $binding
+                if ( $binding ) {
+                    YAHOO.util.Event.addListener("$args{button}", "click",
+                        function() {
+                           this.show();
+                        },
+                        null, menu
+                    );
+                    menu.subscribe("show", function() { jQuery("#$args{button}").addClass("open") });
+                    menu.subscribe("hide", function() { jQuery("#$args{button}").removeClass("open") });
+                }
             });
         </script>
     END
