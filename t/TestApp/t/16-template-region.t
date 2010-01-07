@@ -10,7 +10,7 @@ my @tests = (
         text => q|list!
 <span>1</span>
 <span>2</span><script type="text/javascript">
-new Region('special',{'id':3},'/foo/item',null,null);
+new Region('special',{&#34;id&#34;:3},'/foo/item',null,null);
 </script><div id="region-special" class="jifty-region">
 <span>3</span></div>|
     },

@@ -223,7 +223,7 @@ sub output_format {
             format       => 'JSON',
             extension    => 'json',
             content_type => 'application/json; charset=UTF-8',
-            freezer      => \&Jifty::JSON::objToJson,
+            freezer      => \&Jifty::JSON::encode_json,
         };
     }
     elsif ($accept =~ /j(?:ava)?s|ecmascript/i) {
@@ -231,7 +231,7 @@ sub output_format {
             format       => 'JS',
             extension    => 'js',
             content_type => 'application/javascript; charset=UTF-8',
-            freezer      => sub { 'var $_ = ' . Jifty::JSON::objToJson( @_, { singlequote => 1 } ) },
+            freezer      => sub { 'var $_ = ' . Jifty::JSON::encode_json( @_ ) },
         };
     }
     elsif ($accept =~ qr{^(?:application/x-)?(?:perl|pl)$}i) {

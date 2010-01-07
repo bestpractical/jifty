@@ -35,11 +35,11 @@ sub result_of {
 
     my %loaders = (
         yml  => \&Jifty::YAML::Load,
-        json => \&Jifty::JSON::jsonToObj,
+        json => \&Jifty::JSON::decode_json,
         js   => sub {
             my $js = shift;
             $js =~ s/.*? = //; # variable assignment
-            return Jifty::JSON::jsonToObj($js);
+            return Jifty::JSON::decode_json($js);
         },
     );
 

@@ -553,15 +553,13 @@ sub javascript_attrs {
                      @{ $trigger_structure->{value} };
 
         if ( @$fragments or ( !$actions || %$actions ) ) {
-            my $update_json = Jifty::JSON::objToJson({
+            my $update_json = Jifty::JSON::encode_json({
                     actions      => $actions,
                     action_arguments => $trigger_structure->{action_arguments},
                     fragments    => $fragments,
                     continuation => $self->continuation,
                     preload_key  => $trigger_structure->{preload_key},
-                },
-                { singlequote => 1 },
-            );
+                });
 
             my $update = "Jifty.update($update_json, this);";
 
@@ -575,10 +573,7 @@ sub javascript_attrs {
         }
 
         if ($trigger_structure->{confirm}) {
-            my $text = Jifty::JSON::objToJson(
-                $trigger_structure->{confirm},
-                {singlequote => 1},
-            );
+            my $text = Jifty::JSON::encode_json( $trigger_structure->{confirm} );
             $string = "if(!confirm($text)){ Jifty.stopEvent(event); return false; }" . $string;
         }
 
@@ -644,10 +639,10 @@ sub key_binding_javascript {
                     : $self->label;
     if ($key) {
         return "Jifty.KeyBindings.add("
-                . Jifty::JSON::objToJson( uc($key), { singlequote => 1 } ).","
+                . Jifty::JSON::encode_json( uc $key ).","
                 . "'click', "
-                . Jifty::JSON::objToJson( $self->id, { singlequote => 1 } ).","
-                . Jifty::JSON::objToJson( $label, { singlequote => 0 } )
+                . Jifty::JSON::encode_json( $self->id ).","
+                . Jifty::JSON::encode_json( $label )
                 . ");";
     }
 }

@@ -175,7 +175,7 @@ template '/__jifty/admin/setupwizard/language' => sub {
 template '/__jifty/admin/setupwizard/database' => sub {
     # XXX: We've got to add a sane way to unquote stuff in onfoo handlers...
     my $onchange = 'Jifty.update('
-                 . Jifty::JSON::objToJson({
+                 . Jifty::JSON::encode_json({
                     actions          => {},
                     action_arguments => {},
                     fragments        => [
@@ -187,7 +187,7 @@ template '/__jifty/admin/setupwizard/database' => sub {
                     ],
                     continuation     => undef,
 
-                 }, {singlequote => 1})
+                 })
                  . ', this)';
 
     $onchange =~ s/PLACEHOLDER/'+this.value+'/;

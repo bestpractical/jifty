@@ -95,10 +95,9 @@ sub _js_gen {
 
         no strict 'refs';
         print $fh
-            Jifty::JSON::objToJson( { map { my $text = ${"Jifty::I18N::".$lang."::Lexicon"}{$_};
-                                            defined $text ? ( $_ => $text ) : () }
-                                      keys %{$LMExtract->lexicon} },
-                                    { singlequote => 1 } );
+            Jifty::JSON::encode_json( { map { my $text = ${"Jifty::I18N::".$lang."::Lexicon"}{$_};
+                                              defined $text ? ( $_ => $text ) : () }
+                                        keys %{$LMExtract->lexicon} } );
     }
 }
 

@@ -432,6 +432,7 @@ sub render_inline_javascript {
     );
     
     if($javascript =~ /\S/) {
+        $javascript = Jifty->web->escape( $javascript );
         Jifty->web->out(qq{<script type="text/javascript">$javascript</script>
 });
     }
@@ -450,6 +451,7 @@ sub render_preload_javascript {
     my $javascript = $self->preload_javascript;
 
     if($javascript =~ /\S/) {
+        $javascript = Jifty->web->escape( $javascript );
         Jifty->web->out(qq{<script type="text/javascript">$javascript</script>
 });
     }
@@ -747,12 +749,11 @@ sub preload_javascript {
 
         my @preloaded;
 
-        my $preload_json = Jifty::JSON::objToJson(
+        my $preload_json = Jifty::JSON::encode_json(
             {
                 fragments   => $trigger_structure->{fragments},
                 preload_key => $trigger_structure->{preload_key},
-            },
-            { singlequote => 1 },
+            }
         );
 
         push @javascript, "Jifty.preload($preload_json, this);";

@@ -128,7 +128,7 @@ sub fill {
     # Check it for something appropriate
     if ($data) {
         if ($ct =~ m{^text/x-json}) {
-            return $self->from_data_structure(eval{Jifty::JSON::jsonToObj($data)}, $cgi);
+            return $self->from_data_structure(eval{Jifty::JSON::decode_json($data)}, $cgi);
         } elsif ($ct =~ m{^text/x-yaml}) {
             return $self->from_data_structure(eval{Jifty::YAML::Load($data)}, $cgi);
         }

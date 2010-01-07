@@ -4,7 +4,10 @@ use strict;
 package Jifty::JSON;
 
 use base 'Exporter';
-our @EXPORT_OK = qw/jsonToObj objToJson/;
+our @EXPORT_OK = qw/jsonToObj objToJson decode_json encode_json/;
+
+use Carp qw//;
+use JSON qw/ -support_by_pp -no_export /;
 
 =head1 NAME
 
@@ -12,128 +15,88 @@ Jifty::JSON -- Wrapper around L<JSON>
 
 =head1 SYNOPSIS
 
-  use Jifty::JSON qw/jsonToObj objToJson/;
+  use Jifty::JSON qw/decode_json encode_json/;
 
-  # Even though you might be using JSON::Syck, use the original JSON names
-  my $obj  = jsonToObj(q! { 'x': 1, 'y': 2, 'z': 3 } !);
-  my $json = objToJson($obj);
+  my $obj  = decode_json(q! { "x": "1", "y": "2", "z": "3" } !);
+  my $json = encode_json($obj);
 
 =head1 DESCRIPTION
 
-Provides a wrapper around the L<JSON> library.
+Provides a thin wrapper around the L<JSON> 2.xx library, which provides a
+frontend for L<JSON::XS> and L<JSON::PP>.
 
-The JSON specification at L<http://www.json.org/> states that only
-double-quotes are possible for specifying strings.  However, for the purposes
-of embedding Javascript-compatible objects in XHTML attributes (which use
-double-quotes), we sometimes want to provide strings in single quotes.
-This provides a version of L<JSON/objToJson> which allows
-single-quoted string output.
+This module used to wrap L<JSON::Syck> and L<JSON> 1.xx with special-casing for
+outputing JSON with single quoted values.  Single quotes make it easy to
+simply plop JSON into HTML attributes but are in violation of the JSON spec
+which mandates only double quoted strings.
 
-If the faster L<JSON::Syck> is available, it is preferred over the pure-perl
-L<JSON>, as it provides native support for single-quoted strings.
+The old behavior is now unsupported and it is recommended that you simply HTML
+escape your entire blob of JSON if you are sticking it in an HTML attribute.
+You can use L<Jifty-E<gt>web-E<gt>escape()|Jifty::Web/escape> to properly
+escape problematic characters for HTML.
 
-=head1 METHODS
+=head1 FUNCTIONS
 
-=cut
+=head2 decode_json JSON, [ARGUMENT HASHREF]
 
-BEGIN {
-    # Errors that happen here, stay here.
-    local $@;
+=head2 encode_json JSON, [ARGUMENT HASHREF]
 
-    # We're hacking, so tell the nannies to leave for a minute
-    no strict 'refs';
-    no warnings 'once';
+These functions are just like L<JSON>'s, except that you can pass options to
+them like you can with L<JSON>'s C<from_json> and C<to_json> functions.
 
-    # If a good version of JSON::Syck is available use that...
-    if (eval { require JSON::Syck; JSON::Syck->VERSION(0.05) }) {
-        *jsonToObj = *_jsonToObj_syck;
-        *objToJson = *_objToJson_syck;
-        $JSON::Syck::ImplicitUnicode = 1;
-    }
+By default they encode/decode using UTF8 (like L<JSON>'s functions of the same
+name), but you can turn that off by passing C<utf8 =E<gt> 0> in the
+options.  The L<allow_nonref|JSON/allow_nonref> flag is also enabled for
+backwards compatibility with earlier versions of this module.  It allows
+encoding/decoding of values that are not references.
 
-    # Bummer, fallback to the pure Perl implementation
-    else {
-        require JSON;
-        *jsonToObj = *_jsonToObj_pp;
-        *objToJson = *_objToJson_pp;
-        $JSON::UTF8 = 1;
-    }
-}
-
-=head2 jsonToObj JSON, [ARGUMENTS]
-
-For completeness, C<Jifty::JSON> provides a C<jsonToObj>.  It is
-identical to L<JSON/jsonToObj>.
+L<JSON> is imported with the C<-support_by_pp> flag in order to support all
+options that L<JSON::PP> provides when using L<JSON::XS> as the backend.  If
+you are concerned with speed, be careful what options you specify as it may
+cause the pure Perl backend to be used.  Read L<JSON/JSON::PP SUPPORT METHODS>
+for more information.
 
 =cut
 
-sub _jsonToObj_syck {
-    local $JSON::Syck::SingleQuote = 0;
-    JSON::Syck::Load($_[0]);
+sub decode_json {
+    JSON::from_json( $_[0], { utf8 => 1, allow_nonref => 1, %{$_[1] || {}} } );
 }
 
-sub _jsonToObj_pp {
-    return JSON::jsonToObj(@_);
+sub encode_json {
+    JSON::to_json( $_[0], { utf8 => 1, allow_nonref => 1, %{$_[1] || {}} } );
 }
 
-=head2 objToJson OBJECT, [ARGUMENTS]
+=head2 DEPRECATED jsonToObj JSON, [ARGUMENTS]
 
-This method is identical to L<JSON/objToJson>, except it has an
-additional possible option.  The C<singlequote> option, if set to a
-true value in the C<ARGUMENTS> hashref, overrides L<JSON::Converter>'s
-string output method to output single quotes as delimters instead of
-double quotes.
+=head2 DEPRECATED objToJson JSON, [ARGUMENTS]
+
+These functions are deprecated and provided for backwards compatibility.  They
+wrap the appropriate function above, but L<Carp/croak> if you try to set the
+C<singlequote> option.
 
 =cut
 
-sub _objToJson_syck {
-    my ($obj, $args) = @_;
-
-    local $JSON::Syck::SingleQuote = $args->{singlequote};
-    local $JSON::Syck::ImplicitUnicode = 1;
-        my $json = JSON::Syck::Dump($obj);
-        if (! $args->{singlequote}) {
-                $json =~ s/\n\n\n/\\n/gs;       # fix syck bug
-                $json =~ s/\n/\\n/gs;           # just to be safe
-                $json =~ s/\r/\\r/gs;
-        }
-        return $json;
+sub jsonToObj {
+    my $args = $_[1] || {};
+    Carp::croak("Attempted to set 'singlequote' option, but it is no longer supported.".
+                "  You may need to HTML escape the resulting JSON.".
+                "  Please read the POD of Jifty::JSON and fix your code.")
+        if exists $args->{'singlequote'};
+    decode_json( @_ );
 }
 
-# We should escape double-quotes somehow, so that we can guarantee
-# that double-quotes *never* appear in the JSON string that is
-# returned.
-sub _objToJson_pp {
-    my ($obj, $args) = @_;
-
-    # Unless we're asking for single-quoting, just do what JSON.pm
-    # does
-    return JSON::Converter::objToJson($obj)
-      unless delete $args->{singlequote};
-
-    # Otherwise, insert our own stringify sub
-    no warnings 'redefine';
-    my %esc = (
-        "\n" => '\n',
-        "\r" => '\r',
-        "\t" => '\t',
-        "\f" => '\f',
-        "\b" => '\b',
-        "'"  => '\\\'',
-        "\\" => '\\\\',
-    );
-    local *JSON::Converter::_stringfy = sub {
-        my $arg = shift;
-        $arg =~ s/([\\\n'\r\t\f\b])/$esc{$1}/eg;
-        $arg =~ s/([\x00-\x07\x0b\x0e-\x1f])/'\\u00' . unpack('H2',$1)/egs;
-        return "'" . $arg ."'";
-    };
-    return JSON::objToJson($obj, $args);
+sub objToJson {
+    my $args = $_[1] || {};
+    Carp::croak("Attempted to set 'singlequote' option, but it is no longer supported.".
+                "  You may need to HTML escape the resulting JSON.".
+                "  Please read the POD of Jifty::JSON and fix your code.")
+        if exists $args->{'singlequote'};
+    encode_json( @_ );
 }
 
 =head1 LICENSE
 
-Jifty is Copyright 2005-2006 Best Practical Solutions, LLC.
+Jifty is Copyright 2005-2010 Best Practical Solutions, LLC.
 Jifty is distributed under the same terms as Perl itself.
 
 =cut

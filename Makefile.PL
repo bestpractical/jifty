@@ -53,6 +53,7 @@ requires('Hook::LexWrap');
 requires('IPC::PubSub' => '0.23' );
 requires('IPC::Run3');
 requires('Jifty::DBI' => '0.60' );            # Jifty::DBI::Collection Jifty::DBI::Handle Jifty::DBI::Record::Cachable Jifty::DBI::SchemaGenerator
+requires('JSON' => 2.17);
 requires('List::MoreUtils');
 requires('Locale::Maketext::Extract' => '0.35');
 requires('Locale::Maketext::Lexicon' => '0.77');
@@ -96,11 +97,10 @@ if (can_cc()) {
     requires('YAML' => 0.35); 	# Use YAML::Dump for the moment since YAML.pm segfaults on
 				# reading stupidly long (~20K characters) double-quoted
 				# strings, and we need to produce YAML.pm-readable output.
-    requires('JSON::Syck' => 0.29);
+    requires('JSON::XS' => 2.27);
 }
 else {
     requires('YAML' => 0.35) unless can_use('YAML::Syck' => 0.71);
-    requires('JSON' => 0.01) unless can_use('JSON::Syck' => 0.29);
 }
 
 feature 'Administrative Interface (web)' =>

@@ -1,5 +1,5 @@
 % $r->content_type("text/x-json");
-<% Jifty::JSON::objToJson(\%results) |n%>
+<% Jifty::JSON::encode_json(\%results) |n%>
 
 <%INIT>
 my %results = Jifty->web->response->results;
