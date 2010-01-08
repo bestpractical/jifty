@@ -197,10 +197,8 @@ sub _run_server {
     my %args = ( port => $port );
     $args{$_} = $self->{$_} for grep defined $self->{$_}, qw/host user group/;
 
-    my $app = sub { Jifty->handler->handle_request(@_) };
-
     $Jifty::SERVER = Plack::Loader->load('Standalone', %args);
-    $Jifty::SERVER->run($app);
+    $Jifty::SERVER->run(Jifty->handler->psgi_app);
 }
 
 sub _stop {

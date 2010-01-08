@@ -111,6 +111,17 @@ sub view {
     return $self->_view_handlers->{$class};
 }
 
+=head2 psgi_app
+
+Returns a closure for L<PSGI> application.
+
+=cut
+
+sub psgi_app {
+    my $self = shift;
+    return sub { $self->handle_request(@_) };
+}
+
 =head2 handle_request
 
 When your server processs (be it Jifty-internal, FastCGI or anything
