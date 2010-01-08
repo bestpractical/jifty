@@ -120,7 +120,7 @@ sub as_string {
 
     $output .= (
         '<script type="text/javascript">' .
-        $web->escape($self->key_binding_javascript).
+        $self->key_binding_javascript.
         "</script>") if $self->key_binding;
 
     return $output;

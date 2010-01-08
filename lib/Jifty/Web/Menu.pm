@@ -447,7 +447,7 @@ sub render_as_yui_menu {
     );
 
     my $showjs = $args{'show'} ? "menu.show();" : "";
-    my $json   = Jifty->web->escape( Jifty::JSON::encode_json( $args{'options'} ) );
+    my $json   = Jifty::JSON::encode_json( $args{'options'} );
 
     # Bind to a button to show the menu
     my $binding = (defined $args{'button'} and length $args{'button'}) ? 1 : 0;

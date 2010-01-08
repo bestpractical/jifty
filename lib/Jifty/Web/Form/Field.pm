@@ -432,7 +432,6 @@ sub render_inline_javascript {
     );
     
     if($javascript =~ /\S/) {
-        $javascript = Jifty->web->escape( $javascript );
         Jifty->web->out(qq{<script type="text/javascript">$javascript</script>
 });
     }
@@ -451,7 +450,6 @@ sub render_preload_javascript {
     my $javascript = $self->preload_javascript;
 
     if($javascript =~ /\S/) {
-        $javascript = Jifty->web->escape( $javascript );
         Jifty->web->out(qq{<script type="text/javascript">$javascript</script>
 });
     }

@@ -320,7 +320,7 @@ sub make_body {
     if ( $self->region_wrapper ) {
          $buffer->append(qq|<script type="text/javascript">\n|
             . qq|new Region('| . $self->qualified_name . qq|',|
-            . Jifty->web->escape(Jifty::JSON::encode_json( \%arguments )) . qq|,| 
+            . Jifty::JSON::encode_json( \%arguments ) . qq|,| 
             . qq|'| . $self->path . qq|',|
             . ( $self->parent ? qq|'| . $self->parent->qualified_name . qq|'| : q|null|)
             . qq|,| . (Jifty->web->form->is_open ? '1' : 'null')
