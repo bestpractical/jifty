@@ -638,6 +638,10 @@ sub key_binding_javascript {
                     ? $self->key_binding_label
                     : $self->label;
     if ($key) {
+        $self->log->warn("Keybinding '@{[uc $key]}' will NOT work because the"
+                        ." element ('$label') does not have an ID.")
+            if not defined $self->id or not length $self->id;
+
         return "Jifty.KeyBindings.add("
                 . Jifty::JSON::encode_json( uc $key ).","
                 . "'click', "
