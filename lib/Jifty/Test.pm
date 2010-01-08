@@ -658,7 +658,9 @@ sub _ending {
     return if $Test->{Original_Pid} != $$;
 
     my $should_die = 0;
-    if ($Jifty::SERVER && (my $plugin = Jifty->find_plugin("Jifty::Plugin::TestServerWarnings"))) {
+    if ($Jifty::SERVER &&
+        (my $plugin = Jifty->find_plugin("Jifty::Plugin::TestServerWarnings")) &&
+        grep { $_ eq 'Jifty::View::Declare::Handler' } Jifty->handler->view_handlers) { # testserverwarnings plugin requires TD handler to work properly.
         my @warnings = $plugin->decoded_warnings( 'http://localhost:'.$Jifty::SERVER->port );
 
         $Test->diag("Uncaught warning: $_") for @warnings;
