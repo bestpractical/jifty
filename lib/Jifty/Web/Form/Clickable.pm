@@ -155,7 +155,6 @@ get an unexpected error from your browser.
 
 sub new {
     my $class = shift;
-    my ($root) = Jifty->web->request->request_uri =~ /([^\?]*)/;
 
     my %args = (
         parameters => {},
@@ -170,7 +169,7 @@ sub new {
     my $self = $class->SUPER::new(
         {   class            => '',
             label            => 'Click me!',
-            url              => $root,
+            url              => Jifty->web->request->top_request->path,
             escape_label     => 1,
             tooltip          => '',
             continuation     => Jifty->web->request->continuation,
@@ -428,15 +427,13 @@ sub post_parameters {
     my %parameters
         = ( _map( %{ $self->{fallback} || {} } ), $self->parameters );
 
-    my ($root) = Jifty->web->request->request_uri =~ /([^\?]*)/;
-
     # Submit actions should only show up once
     my %uniq;
     $self->submit( [ grep { not $uniq{$_}++ } @{ $self->submit } ] )
         if $self->submit;
 
     # Add a redirect, if this isn't to the right page
-    if ( $self->url ne $root and not $self->returns ) {
+    if ( $self->url ne Jifty->web->request->top_request->path and not $self->returns ) {
         Jifty::Util->require('Jifty::Action::Redirect');
         my $redirect = Jifty::Action::Redirect->new(
             arguments => { url => $self->url } );
@@ -479,8 +476,7 @@ sub complete_url {
 
     my %parameters = $self->get_parameters;
 
-    my ($root) = Jifty->web->request->request_uri =~ /([^\?]*)/;
-    my $url = $self->returns ? $root : $self->url;
+    my $url = $self->returns ? Jifty->web->request->top_request->path : $self->url;
     if (%parameters) {
         $url .= ( $url =~ /\?/ ) ? ";" : "?";
         $url .= Jifty->web->query_string(%parameters);

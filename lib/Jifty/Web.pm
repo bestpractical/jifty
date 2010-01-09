@@ -137,7 +137,7 @@ sub url {
             $http_host_env = (Jifty->web->is_ssl ? "https" : "http") ."://$http_host_env";
         }
         $uri = URI->new($http_host_env);
-        if ($dirty && (my $req_uri_env = $ENV{REQUEST_URI})) {
+        if ($dirty && Jifty->web->request && (my $req_uri_env = Jifty->web->request->request_uri)) {
             my $req_uri = URI->new($req_uri_env);
             $uri->scheme($req_uri->scheme) if $req_uri->can('scheme');
             $dirty = $uri->scheme;

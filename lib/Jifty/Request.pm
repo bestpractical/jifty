@@ -89,17 +89,6 @@ method of that name is called, with the I<PARAMHASH>'s value as its
 sole argument.
 
 =cut
-
-sub BUILDARGS {
-    my ($class, %args) = @_;
-
-    if (my $path = delete $args{path}) {
-        $args{env}{REQUEST_URI} ||= $path;
-    }
-
-    return \%args;
-}
-
 sub BUILD {
     my $self = shift;
 
@@ -115,9 +104,8 @@ sub BUILD {
     $self->{'state_variables'} = {};
     $self->{'fragments'} = {};
     $self->{env}{'REQUEST_METHOD'} ||= 'GET';
-    $self->{env}{'REQUEST_URI'} ||= '/';
 
-    $self->path($self->{env}{REQUEST_URI});
+    $self->path("/") unless $self->path;
     $self->arguments({});
     $self->template_arguments({});
 }
