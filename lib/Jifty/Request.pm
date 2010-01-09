@@ -197,7 +197,7 @@ sub from_data_structure {
     my $path = $data->{'path'};
     $path ||= $self->path || '/';
 
-    $self->path( Jifty::Util->canonicalize_path( $path ) );
+    $self->path( Jifty::Util->canonicalize_path( $path, 1 ) );
     $self->just_validating( $data->{validating} ) if $data->{validating};
 
     if ( ref $data->{continuation} eq "HASH" ) {

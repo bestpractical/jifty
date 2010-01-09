@@ -941,6 +941,9 @@ sub template_exists {
 
     my $value = ref $template ? $$template : $template;
 
+    # Strip trailing slashes
+    $value =~ s{/$}{} if $value ne "/";
+
     foreach my $handler ( map {Jifty->handler->view($_)} Jifty->handler->view_handlers ) {
         if ( my $path = $handler->template_exists($value) ) {
             $$template = $path if ref $template;

@@ -50,6 +50,7 @@ both C</> and C<\> as valid separators in PATH.
 sub canonicalize_path {
     my $self = shift;
     my $path = shift;
+    my $keepempty = shift;
 
     my @path = File::Spec->splitdir($path);
 
@@ -65,13 +66,10 @@ sub canonicalize_path {
         } else {
             pop @newpath;
         }
-
     }
 
-    
-    return File::Spec::Unix->catdir(@newpath);
-
-
+    push @newpath, '' if $keepempty and @path and $path[-1] eq '';
+    return join("/",@newpath);
 }
 
 
