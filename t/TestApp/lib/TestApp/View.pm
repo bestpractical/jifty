@@ -151,6 +151,8 @@ template 'use_mason_wrapper' => page {
 };
 
 
-
+template 'otherplace' => page {
+    form { }
+};
 
 1;

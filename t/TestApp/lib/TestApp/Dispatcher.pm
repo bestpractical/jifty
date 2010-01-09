@@ -116,5 +116,11 @@ before '/content-type-bug' => run {
 };
 
 
+before '/someplace' => run {
+    my $result = Jifty::Result->new;
+    $result->action_class("TestApp::Action::DoSomething");
+    Jifty->web->response->result(foo => $result);
+    redirect '/otherplace';
+};
 
 1;
