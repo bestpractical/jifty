@@ -132,10 +132,13 @@ sub clone {
     my $self = shift;
     
     # "Semi-shallow" clone
-    return bless({map {
+    my $ret = bless({map {
         my $val = $self->{$_};
         $_ => (ref($val) eq "HASH" ? { %$val } : ref($val) eq "ARRAY" ? [ @$val ] : $val);
     } keys %$self}, ref($self));
+
+    $ret->uri( $self->uri->clone );
+    return $ret;
 }
 
 =head2 promote
