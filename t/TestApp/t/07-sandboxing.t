@@ -2,19 +2,14 @@
 use warnings;
 use strict;
 
-use Jifty::Test::Dist tests => 125;
+use Jifty::Test::Dist tests => 125, actual_server => 1;
 use Jifty::Test::WWW::Mechanize;
 use Net::HTTP;
 use URI;
 
 my $server  = Jifty::Test->make_server;
 
-isa_ok($server, 'Jifty::Server');
-
-if ($server->isa('Jifty::TestServer::Plack')) {
-    Jifty::Test->builder->todo_skip("This test is not using the test framework, and requires a server to connect to.  This doesn't work yet") for 1..124;
-    exit 0;
-}
+isa_ok($server, 'Jifty::TestServer');
 
 my $uri = URI->new($server->started_ok);
 my $plugin = Jifty->find_plugin("Jifty::Plugin::TestServerWarnings");

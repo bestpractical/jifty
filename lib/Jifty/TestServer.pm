@@ -1,10 +1,14 @@
 package Jifty::TestServer;
+use Any::Moose;
 
 use strict;
 use warnings;
 use File::Spec;
 use Test::Builder;
 use Test::Script::Run 'get_perl_cmd';
+use Plack::Loader;
+
+has port => (is => "rw", isa => "Int");
 
 =head1 NAME
 
@@ -20,6 +24,12 @@ Like started_ok in C<Test::HTTP::Server::Simple>, start the server and
 return the URL.
 
 =cut
+
+sub BUILD {
+    my $self = shift;
+    Jifty->config->framework('Web')->{'Port'} = $self->port if $self->port;
+    $self->port( Jifty->config->framework('Web')->{'Port'} || 8888 );
+}
 
 sub started_ok {
     my $self = shift;
@@ -45,12 +55,23 @@ sub started_ok {
         exit(0);
     }
 
+    $self->{plack_server} = Plack::Loader->load
+        ($ENV{JIFTY_TEST_SERVER},
+         port => $self->port,
+         server_ready => sub {
+             kill 'USR1' => getppid();
+         });
+    $Jifty::SERVER = $self;
+
     if (my $pid = fork()) {
-        # We are expecting a USR1 from the child Jifty::Server
-        # after it's ready to listen.
-        $SIG{USR1} = sub { };
+        # We are expecting a USR1 from the child process after it's
+        # ready to listen.
+        my $handled;
+        $SIG{USR1} = sub { $handled = 1};
         sleep 15;
-        $self->{started} = 1;
+        Test::More::diag "did not get expected USR1 for test server readiness"
+            unless $handled;
+        $self->{cleanup} = [sub { kill TERM => $pid }];
         my $Tester = Test::Builder->new;
         $Tester->ok(1, $text);
         # XXX: pull from jifty::config maybe
@@ -66,28 +87,14 @@ sub started_ok {
             or die "Can't start a new session: $!";
     }
 
-    my @extra;
-    if (my $profile_file = $ENV{JIFTY_TESTSERVER_PROFILE}) {
-        push @extra, '-d:DProf';
-        $ENV{"PERL_DPROF_OUT_FILE_NAME"} = $profile_file;
-    }
-    if ($ENV{JIFTY_TESTSERVER_NAMED_ACCESSOR}) {
-        push @extra, '-MClass::Accessor::Named';
-    }
-    if (my $coverage = $ENV{JIFTY_TESTSERVER_COVERAGE}) {
-        push @extra, '-MDevel::Cover'.($coverage =~ m/,/ ? "=$coverage" : '');
-    }
-
-    exec(get_perl_cmd(), @extra, '-MJifty::Util', '-MJifty::Script',
-         '-e', 'Jifty::Script->dispatch', 'server', '--quiet',
-         '--sigready', 'USR1',
-         $ENV{JIFTY_TESTSERVER_DBIPROF} ? ('--dbiprof') : (),
-         );
+    $self->{plack_server}->run(Jifty->handler->psgi_app);
+    exit;
 }
 
-sub DESTROY {
-    return unless $_[0]->{started};
-    exec(get_perl_cmd('jifty'), 'server', '--stop');
+sub DEMOLISH {
+    $_->() for @{$_[0]->{cleanup}}
 }
 
+__PACKAGE__->meta->make_immutable;
+no Any::Moose;
 1;

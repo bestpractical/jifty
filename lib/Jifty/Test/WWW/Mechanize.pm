@@ -2,7 +2,7 @@ use strict;
 use warnings;
 
 package Jifty::Test::WWW::Mechanize;
-use base qw/Test::WWW::Mechanize::PSGI/;
+use base qw/Test::WWW::Mechanize/;
 
 delete $ENV{'http_proxy'}; # Otherwise Test::WWW::Mechanize tries to go through your HTTP proxy
 
@@ -37,11 +37,15 @@ bot a cookie jar.
 
 =cut
 
-sub new {
-    my $class = shift;
-    my $app = sub { Jifty->handler->handle_request(@_) };
+my $plack_server_pid;
 
-    my $self = $class->SUPER::new(@_, app => $app);
+sub new {
+    my ($class, @args) = @_;
+
+    push @args, app => Jifty->handler->psgi_app
+        if $class->isa('Test::WWW::Mechanize::PSGI');
+
+    my $self = $class->SUPER::new(@args);
     $self->cookie_jar(HTTP::Cookies->new);
 
     return $self;

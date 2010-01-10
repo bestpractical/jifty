@@ -12,7 +12,7 @@ use utf8;
 use LWP::UserAgent;
 my $server  = Jifty::Test->make_server;
 
-isa_ok($server, 'Jifty::Server');
+isa_ok($server, 'Jifty::TestServer');
 
 my $base = URI->new($server->started_ok);
 

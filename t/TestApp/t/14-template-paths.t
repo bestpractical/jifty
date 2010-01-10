@@ -43,7 +43,7 @@ my @tests = (
 plan tests => 2 + scalar(@tests) * 2;
 
 my $server = Jifty::Test->make_server;
-isa_ok( $server, 'Jifty::Server' );
+isa_ok( $server, 'Jifty::TestServer' );
 my $URL = $server->started_ok;
 
 my $mech = Jifty::Test::WWW::Mechanize->new;

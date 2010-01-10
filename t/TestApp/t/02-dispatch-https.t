@@ -9,11 +9,11 @@ use Jifty::Test::WWW::Mechanize;
 
 my $server  = Jifty::Test->make_server;
 
-isa_ok($server, 'Jifty::Server');
+isa_ok($server, 'Jifty::TestServer');
 
 my $URL     = $server->started_ok;
 my $mech    = Jifty::Test::WWW::Mechanize->new();
-$URL =~ s/http:/https:/;
+#$URL =~ s/http:/https:/;
 
 $mech->get_ok("$URL/dispatch/protocol", "Got /dispatch/protocol");
 $mech->content_contains("HTTPS");

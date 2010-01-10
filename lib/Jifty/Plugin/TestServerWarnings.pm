@@ -125,7 +125,8 @@ sub decoded_warnings {
     my $base = shift;
 
     my $Test = Jifty::Test->builder;
-    if ($Test->{Original_Pid} == $$) {
+
+    if ($Jifty::SERVER && $Jifty::SERVER->isa('Jifty::TestServer::Inline')) {
         return splice @{ $self->{'stashed_warnings'} };
     }
 

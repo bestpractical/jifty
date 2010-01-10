@@ -40,7 +40,7 @@ is($bob->user_object->mygroup, 'admin', "The CurrentUser group is admin");
 ok($bob->is_superuser, "CurrentUser is a superuser");
 
 #my $server = Jifty::Test->make_server;
-#isa_ok($server, 'Jifty::Server');
+#isa_ok($server, 'Jifty::TestServer');
 
 #my $URL = $server->started_ok;
 #my $mech = Jifty::Test::WWW::Mechanize->new();

@@ -118,7 +118,6 @@ feature 'Development of a jifty application' =>
     recommends('DBD::SQLite' => 1.11),
     recommends('Test::Base' => 0.44),            # Test::Base::Filter
     recommends('Module::Install::Admin' => '0.50'),
-    recommends('Test::HTTP::Server::Simple' => '0.10'),
     recommends('Test::HTML::Lint' => 0),
     recommends('Test::MockModule' => '0.05'),
     recommends('Test::MockObject' => '1.07'),

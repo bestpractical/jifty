@@ -538,7 +538,7 @@ sub background {
     } else {
         close STDOUT;
         close STDIN;
-        $Jifty::SERVER->close_client_sockets if $Jifty::SERVER;
+        # XXX: make $Jifty::SERVER close client sockets if exists
         Jifty->handle->dbh->{InactiveDestroy} = 1;
         Jifty->setup_database_connection();
         $sub->();

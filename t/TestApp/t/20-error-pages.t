@@ -13,6 +13,8 @@ use Jifty::Test::Dist tests => 1 + 2 * 29;
 use Jifty::Test::WWW::Mechanize;
 
 my $URL = Jifty::Test->make_server->started_ok;
+#my $URL = $s->started_ok;
+diag $URL;
 my $mech = Jifty::Test::WWW::Mechanize->new;
 
 for my $path ("", "/td") {
