@@ -98,6 +98,7 @@ sub run {
     $self->_make_directories();
     $self->_install_jifty_binary();
     $self->_write_makefile();
+    $self->_write_dotpsgi();
     $self->_write_config();
 
 
@@ -139,6 +140,17 @@ WriteAll;
 EOT
     close MAKEFILE;
 } 
+
+sub _write_dotpsgi {
+    my $self = shift;
+    my $prefix = $self->prefix;
+    open(my $fh, ">$prefix/app.psgi") or die "Can't write app.psgi: $!";
+    print $fh <<"EOT";
+use Jifty;
+Jifty->new;
+Jifty->handler->psgi_app;
+EOT
+}
 
 sub _make_directories {
     my $self = shift;
