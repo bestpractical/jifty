@@ -462,7 +462,7 @@ sub render_as_yui_menu {
                 menu.render();
                 menu.subscribe("show", function() {
                     if ( !this.cfg.getProperty("constraintoviewport") )
-                        Jifty.Utils.scrollToShow("$args{id}");
+                        Jifty.Utils.scrollToShow(this.id);
                 });
                 $showjs
 
