@@ -48,10 +48,10 @@ use base qw/Jifty::Object Class::Accessor::Fast Class::Data::Inheritable/;
 
 __PACKAGE__->mk_accessors(qw(moniker argument_values values_from_request order result sticky_on_success sticky_on_failure));
 __PACKAGE__->mk_classdata(qw/PARAMS/);
-use Scalar::Defer qw/defer/;
+use Scalar::Defer qw/defer force/;
 
 use CHI;
-my $CACHE = defer { CHI->new(%{Jifty->config->framework('ClassActionCache')}) };
+our $CACHE = defer { CHI->new(%{Jifty->config->framework('ClassActionCache')}) };
 
 =head1 COMMON METHODS
 
@@ -272,22 +272,32 @@ requiring that the user enter a value for that field.
 
 =cut
 
-sub _class_arguments {
+use Data::Dumper;
+
+sub arguments {
     my $self = shift;
+#    warn ">>>>>>>>>>>>>>>>> $self ->_class_arguments; cache check";
     return $CACHE->compute(
-        ref($self) || $self,
-        sub { $self->class_arguments || {} },
+        (ref($self) || $self),
+        sub {
+#            warn ">>>>>>>>>>>>>>>>> $self ->_class_arguments; cache FAILED; valling class_arguments";
+            my $ref = $self->class_arguments || {};
+#            warn ">>>>>>>>>>>>>>>>> $self ->_class_arguments got ".Dumper($ref);
+            for my $v (values %{$ref}) {
+                if (ref($v) eq "HASH") {
+                    force $_ for keys %{$v};
+                }
+            }
+#            warn Dumper($ref);
+            return $ref;
+        },
     );
 }
 
 sub class_arguments {
     my $self = shift;
+#    warn ">>>>>>>>>>>>>>>>> $self ->class_arguments; calling PARAMS";
     return $self->PARAMS;
-}
-
-sub arguments {
-    my $self= shift;
-    return $self->_class_arguments;
 }
 
 =head2 run

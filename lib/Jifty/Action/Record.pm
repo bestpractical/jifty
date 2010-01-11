@@ -22,7 +22,7 @@ this action.
 =cut
 
 use base qw/Jifty::Action/;
-use Scalar::Defer qw/ defer /;
+use Scalar::Defer qw/ defer force /;
 use Scalar::Util qw/ blessed /;
 use Clone qw/clone/;
 use Jifty::Param::Schema ();
@@ -161,9 +161,14 @@ C<canonicalized_FIELD> should return the canonicalized value.
 sub arguments {
     my $self = shift;
 
-    return $CACHE->compute(
+#    warn "<<<<<<<<<<<<<<<<< $self ->arguments; cache check";
+    $CACHE->compute(
         join(" ", ref $self, $self->record->id || "0"),
-        sub { $self->record_arguments || {} },
+        sub {
+#            warn "<<<<<<<<<<<<<<<<< $self ->arguments; cache FAILED; calling record_arguments";
+            my $ref = $self->record_arguments || {};
+            return $ref;
+        },
     );
 }
 
@@ -177,17 +182,9 @@ sub record_arguments {
 
     for my $field ( keys %$arguments ) {
         if ( my $function = $self->record->can($field) ) {
-            my $weakself = $self;
-            Scalar::Util::weaken $weakself;
-            $arguments->{$field}->{default_value} = defer {
-                my $val = $function->( $weakself->record );
-
-                # If the current value is actually a pointer to
-                # another object, turn it into an ID
-                return $val->id
-                    if ( blessed($val) and $val->isa('Jifty::Record') );
-                return $val;
-            }
+            my $val = $function->($self->record);
+            $val = $val->id if blessed($val) and $val->isa('Jifty::Record');
+            $arguments->{$field}->{default_value} = $val;
         }
 
         # The record's current value becomes the widget's default value
@@ -201,9 +198,11 @@ sub clear_record_arguments {
 
 sub _class_arguments {
     my $self = shift;
-    return $CACHE->compute(
-        ref($self) || $self,
+#    warn "<<<<<<<<<<<<<<<<< $self ->_class_arguments; cache check";
+    return $Jifty::Action::CACHE->compute(
+        (ref($self) || $self),
         sub {
+#            warn "<<<<<<<<<<<<<<<<< $self ->_class_arguments; cache FAILED; caling class_arguments";
             my $field_info = $self->class_arguments;
 
             # Use the schema { ... } params for the final bits
@@ -228,13 +227,21 @@ sub _class_arguments {
 
             # Cache the result of merging the
             # Jifty::Action::Record and schema parameters
-            return Jifty::Param::Schema::merge_params( $field_info, $params );
+            my $ref = Jifty::Param::Schema::merge_params( $field_info, $params ); use Data::Dumper;
+            for my $v (values %{$ref}) {
+                if (ref($v) eq "HASH") {
+                    force $_ for keys %{$v};
+                }
+            }
+            return $ref;
         },
     );
 }
 
 sub class_arguments {
     my $self = shift;
+
+#    warn "<<<<<<<<<<<<<<<<< $self ->class_arguments";
 
     # Get ready to rumble
     my $field_info = {};
