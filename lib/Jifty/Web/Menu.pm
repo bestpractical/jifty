@@ -473,8 +473,8 @@ sub render_as_yui_menu {
                         },
                         null, menu
                     );
-                    menu.subscribe("show", function() { jQuery("#$args{button}").addClass("open") });
-                    menu.subscribe("hide", function() { jQuery("#$args{button}").removeClass("open") });
+                    menu.subscribe("show", function() { if (!this.parent) jQuery("#$args{button}").addClass("open") });
+                    menu.subscribe("hide", function() { if (!this.parent) jQuery("#$args{button}").removeClass("open") });
                 }
             });
         </script>
