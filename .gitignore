@@ -12,6 +12,7 @@ t/*/mason*/
 t/*/t/mailbox*
 var/
 mason*/
+.prove
 
 *.swp
 \#*#
