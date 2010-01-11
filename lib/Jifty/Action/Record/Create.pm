@@ -29,11 +29,11 @@ the column is in the model
 
 =cut
 
-sub arguments {
+sub class_arguments {
     my $self = shift;
 
     # Add default values to the arguments configured by Jifty::Action::Record
-    my $args = $self->SUPER::arguments;
+    my $args = $self->SUPER::class_arguments;
     for my $arg ( keys %{$args} ) {
         unless ( $args->{$arg}->{default_value} ) {
             my $column = $self->record->column($arg);
@@ -41,16 +41,7 @@ sub arguments {
             $args->{$arg}{default_value} = $column->default;
         }
     }
-   
-    if ( $self->can('PARAMS') ) {
-        use Jifty::Param::Schema;
-        return Jifty::Param::Schema::merge_params(
-            $args, ($self->PARAMS || {})
-        );
-    }
-    else {
-        return $args;
-    }
+    return $args;
 }
 
 =head2 take_action

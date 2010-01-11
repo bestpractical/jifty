@@ -25,7 +25,7 @@ The field for C<SendLostPasswordReminder> is:
 
 =cut
 
-sub arguments {
+sub class_arguments {
     return (
         {
             address => {

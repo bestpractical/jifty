@@ -92,7 +92,8 @@ requires:
   Hook::LexWrap: 0
   IPC::PubSub: 0.23
   IPC::Run3: 0
-  JSON::Syck: 0.29
+  JSON: 2.17
+  JSON::XS: 2.27
   Jifty::DBI: 0.60
   LWP::UserAgent: 0
   List::MoreUtils: 0

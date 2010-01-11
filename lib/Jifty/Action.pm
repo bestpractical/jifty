@@ -48,6 +48,10 @@ use base qw/Jifty::Object Class::Accessor::Fast Class::Data::Inheritable/;
 
 __PACKAGE__->mk_accessors(qw(moniker argument_values values_from_request order result sticky_on_success sticky_on_failure));
 __PACKAGE__->mk_classdata(qw/PARAMS/);
+use Scalar::Defer qw/defer/;
+
+use CHI;
+my $CACHE = defer { CHI->new(%{Jifty->config->framework('ClassActionCache')}) };
 
 =head1 COMMON METHODS
 
@@ -268,13 +272,22 @@ requiring that the user enter a value for that field.
 
 =cut
 
+sub _class_arguments {
+    my $self = shift;
+    return $CACHE->compute(
+        ref($self) || $self,
+        sub { $self->class_arguments || {} },
+    );
+}
+
 sub class_arguments {
-    
+    my $self = shift;
+    return $self->PARAMS;
 }
 
 sub arguments {
-    my  $self= shift;
-    return($self->PARAMS || {});
+    my $self= shift;
+    return $self->_class_arguments;
 }
 
 =head2 run

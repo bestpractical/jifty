@@ -29,7 +29,7 @@ arguments are required.
 
 =cut
 
-sub arguments {
+sub class_arguments {
     my $self = shift;
     my $arguments = {};
 

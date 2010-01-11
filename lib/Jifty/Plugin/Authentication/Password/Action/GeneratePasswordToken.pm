@@ -17,7 +17,7 @@ return the salt.
 
 =cut
 
-sub arguments { 
+sub class_arguments {
     return( { email => { mandatory => 1 } });
 
 }

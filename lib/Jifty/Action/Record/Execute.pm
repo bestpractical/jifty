@@ -73,7 +73,7 @@ This is customized so that it expects the C<record> argument of all L<Jifty::Act
 =cut
 
 # XXX TODO Copied from Jifty::Action::Record::Delete
-sub arguments {
+sub class_arguments {
     my $self = shift;
     my $arguments = {};
 
@@ -84,16 +84,7 @@ sub arguments {
         $arguments->{$pk}{'render_as'} = 'Unrendered'; 
         # primary key fields should always be hidden fields
     }
-
-    if ( $self->can('PARAMS') ) {
-        use Jifty::Param::Schema;
-        return Jifty::Param::Schema::merge_params(
-            $arguments, ($self->PARAMS || {})
-        );
-    }
-    else {
-        return $arguments;
-    }
+    return $arguments;
 }
 
 =head2 take_action

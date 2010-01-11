@@ -49,7 +49,7 @@ The only argument to redirect is the C<url> to redirect to.
 
 =cut
 
-sub arguments {
+sub class_arguments {
     {
         url => { constructor => 1 },
     }

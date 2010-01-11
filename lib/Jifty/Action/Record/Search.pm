@@ -49,16 +49,12 @@ the search value, such as C<< >100 >> and C<< !100 >>.
 
 =cut
 
-sub arguments {
+sub class_arguments {
     my $self = shift;
 
-    # The args processing here is involved, so only calculate them once
-    return $self->_cached_arguments if $self->_cached_arguments;
-    
     # Iterate through all the arguments setup by Jifty::Action::Record
-    my $args = $self->SUPER::arguments;
+    my $args = $self->SUPER::class_arguments;
     for my $field (keys %$args) {
-        
         # Figure out what information we know about the field
         my $info = $args->{$field};
         my $column = $self->record->column($field);
@@ -182,7 +178,7 @@ sub arguments {
     $args->{lacks} = { type => 'text', label => _('No field contains') };
 
     # Cache the results so we don't have to do THAT again
-    return $self->_cached_arguments($args);
+    return $args;
 }
 
 =head2 take_action

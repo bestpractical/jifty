@@ -23,7 +23,7 @@ Note that it can get the first two from the confirm dhandler.
 
 =cut
 
-sub arguments {
+sub class_arguments {
     return (
         {
             password         => { 

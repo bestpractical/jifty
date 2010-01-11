@@ -31,9 +31,9 @@ L<constructors|Jifty::Manual::Glossary/constructors>.
 
 =cut
 
-sub arguments {
+sub class_arguments {
     my $self = shift;
-    my $arguments = $self->SUPER::arguments(@_);
+    my $arguments = $self->SUPER::class_arguments(@_);
 
     # Mark read-only columns for read-only display
     for my $column ( $self->possible_columns ) {
@@ -48,16 +48,7 @@ sub arguments {
         $arguments->{$pk}{'mandatory'} = 1;
         $arguments->{$pk}{'render_mode'} = 'read';
     }
-
-    if ( $self->can('PARAMS') ) {
-        use Jifty::Param::Schema;
-        return Jifty::Param::Schema::merge_params(
-            $arguments, ($self->PARAMS || {})
-        );
-    }
-    else {
-        return $arguments;
-    }
+    return $arguments;
 }
 
 =head2 validate_arguments

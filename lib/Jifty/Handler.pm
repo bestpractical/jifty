@@ -251,6 +251,7 @@ sub cleanup_request {
 
     Jifty->web->session->unload();
     Jifty::Record->flush_cache if Jifty::Record->can('flush_cache');
+    Jifty::Action::Record->clear_record_arguments;
     $self->cgi(undef);
     $self->apache(undef);
     $self->stash(undef);

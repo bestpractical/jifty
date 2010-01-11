@@ -516,6 +516,14 @@ sub guess {
                 },
                 Globals => [],
             },
+            ClassActionCache => {
+                driver => "Memory",
+                datastore => {},
+            },
+            RecordActionCache => {
+                driver => "Memory",
+                datastore => {},
+            },
         },
     };
 

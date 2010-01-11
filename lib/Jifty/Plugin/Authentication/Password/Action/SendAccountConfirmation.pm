@@ -24,7 +24,7 @@ The field for C<ResendConfirmation> is:
 
 =cut
 
-sub arguments {
+sub class_arguments {
     return (
         {
             address => {

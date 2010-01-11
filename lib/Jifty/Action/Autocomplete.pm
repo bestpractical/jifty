@@ -41,7 +41,7 @@ to C<action> that we want to complete.
 
 =cut
 
-sub arguments {
+sub class_arguments {
     {
         moniker => {},
         argument => {}
