@@ -460,7 +460,12 @@ sub render_as_yui_menu {
                 // set container?
                 var menu = new YAHOO.widget.Menu("$args{id}", $json);
                 menu.render();
+                menu.subscribe("show", function() {
+                    if ( !this.cfg.getProperty("constraintoviewport") )
+                        Jifty.Utils.scrollToShow("$args{id}");
+                });
                 $showjs
+
                 if ( $binding ) {
                     YAHOO.util.Event.addListener("$args{button}", "click",
                         function() {
