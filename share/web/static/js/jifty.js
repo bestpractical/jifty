@@ -1938,6 +1938,10 @@ Jifty.Effect = function(el, name, args, options) {
     }
 };
 
+Jifty.closeLightbox = function () {
+    jQuery(document).trigger('close.facebox');
+};
+
 /*
  * Provide an alias in Global namespace for backward compatibility.
  * Also Jifty.Form will still work even if prototype.js is loaded
