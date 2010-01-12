@@ -557,7 +557,7 @@ sub upgrade_tables {
     } elsif ( $appv == $dbv ) {
 
         # Shouldn't happen
-        print "$baseclass version $appv up to date.\n";
+        print "$baseclass database version $appv up to date.\n";
         return;
     }
     $log->info("Generating SQL to upgrade $baseclass $dbv database to $appv");
