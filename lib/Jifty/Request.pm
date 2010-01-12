@@ -283,12 +283,13 @@ sub from_args {
         } elsif(!ref($val)) {
             $args{$k} = Jifty::I18N->promote_encoding($val, $self->content_type);
         }
-
-        if (ref($val) eq 'Fh') {
-            $args{$k} = Jifty::Web::FileUpload->new_from_fh($val);
-        }
     }
-    
+
+    my $uploads = $self->uploads;
+    for my $k (keys %$uploads) {
+        my $val = $uploads->{$k};
+        $args{$k} = Jifty::Web::FileUpload->new_from_plack($val);
+    }
     my @splittable_names = grep /=|\|/, keys %args;
     for my $splittable (@splittable_names) {
         delete $args{$splittable};
