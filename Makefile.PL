@@ -69,7 +69,7 @@ requires('Module::Refresh');
 requires('Module::ScanDeps');
 requires('Object::Declare' => '0.13');
 requires('Params::Validate');
-requires('Plack'); # Plack::Loader Plack::Test Plack::Util
+requires('Plack' => '0.9032'); # Plack::Loader Plack::Test Plack::Util
 requires('Plack::Request');
 requires('Scalar::Defer' => '0.12');
 requires('Shell::Command');
