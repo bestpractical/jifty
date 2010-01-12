@@ -497,7 +497,7 @@ It can support arbitary levels of submenu.
 
 sub render_as_yui_menubar {
     my $self = shift;
-    my $id   = Jifty->web->serial;
+    my $id   = shift || Jifty->web->serial;
     $self->_render_as_yui_menu_item( class => "yuimenubar", id => $id );
     Jifty->web->out(qq|<script type="text/javascript">\n|
         . qq|YAHOO.util.Event.onContentReady("|.$id.qq|", function() {\n|
@@ -545,7 +545,7 @@ sub _render_as_yui_menu_item {
         Jifty->web->out(
             qq{<div}
             . ($args{'id'} ? qq( id="$args{'id'}") : "")
-            . qq( class="$args{class}"><div class="bd">)
+            . qq( class="$args{class}"><div class="bd" @{[($args{id} ? "id=\"$args{id}-bd\"" : "")]}>)
         );
 
         my $count    = 1;
