@@ -1,0 +1,73 @@
+--- 
+framework: 
+  AdminMode: 1
+  ApplicationClass: TestApp::Uploads
+  ApplicationName: TestApp-Uploads
+  ApplicationUUID: EE2D4328-FF2F-11DE-9789-0CDBEE916148
+  ConfigFileVersion: 4
+  Database: 
+    AutoUpgrade: 1
+    CheckSchema: 1
+    Database: testapp_uploads
+    Driver: SQLite
+    Host: localhost
+    Password: ''
+    RecordBaseClass: Jifty::DBI::Record::Cachable
+    User: ''
+    Version: 0.0.1
+  DevelMode: 1
+  L10N: 
+    PoDir: share/po
+  LogLevel: INFO
+  Mailer: Sendmail
+  MailerArgs: []
+
+  Plugins: 
+    - 
+      AdminUI: {}
+
+    - 
+      CompressedCSSandJS: {}
+
+    - 
+      ErrorTemplates: {}
+
+    - 
+      Halo: {}
+
+    - 
+      LetMe: {}
+
+    - 
+      OnlineDocs: {}
+
+    - 
+      REST: {}
+
+    - 
+      SkeletonApp: {}
+
+  PubSub: 
+    Backend: Memcached
+    Enable: ~
+  SkipAccessControl: 0
+  TemplateClass: TestApp::Uploads::View
+  View: 
+    Handlers: 
+      - Jifty::View::Static::Handler
+      - Jifty::View::Declare::Handler
+      - Jifty::View::Mason::Handler
+  Web: 
+    BaseURL: http://localhost
+    DataDir: var/mason
+    Globals: []
+
+    MasonConfig: 
+      autoflush: 0
+      default_escape_flags: h
+      error_format: text
+      error_mode: fatal
+    Port: 8888
+    ServeStaticFiles: 1
+    StaticRoot: share/web/static
+    TemplateRoot: share/web/templates
