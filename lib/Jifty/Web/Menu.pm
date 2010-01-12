@@ -433,6 +433,11 @@ A hashref of options passed directly to the Javascript constructor for
 the menu.  See L<http://developer.yahoo.com/yui/menu/#configreference> for
 a list of the options available.
 
+=item beforeshow
+
+A string of Javascript to run immediately before the menu is shown.  The
+variable C<menu> is available and represents the current YUI Menu object.
+
 =back
 
 =cut
@@ -443,6 +448,7 @@ sub render_as_yui_menu {
         id      => Jifty->web->serial,
         show    => 1,
         options => {},
+        beforeshow => '',
         @_
     );
 
@@ -464,8 +470,6 @@ sub render_as_yui_menu {
                     if ( !this.cfg.getProperty("constraintoviewport") )
                         Jifty.Utils.scrollToShow(this.id);
                 });
-                $showjs
-
                 if ( $binding ) {
                     YAHOO.util.Event.addListener("$args{button}", "click",
                         function() {
@@ -476,6 +480,8 @@ sub render_as_yui_menu {
                     menu.subscribe("show", function() { if (!this.parent) jQuery("#$args{button}").addClass("open") });
                     menu.subscribe("hide", function() { if (!this.parent) jQuery("#$args{button}").removeClass("open") });
                 }
+                $args{beforeshow}
+                $showjs
             });
         </script>
     END
