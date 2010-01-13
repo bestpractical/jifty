@@ -429,22 +429,24 @@ sub follow_link_ok {
     my $self = shift;
 
 
+    my $desc;
+
     # Test::WWW::Mechanize allows passing in a hashref of arguments, so we should to
     if  ( ref($_[0]) eq 'HASH') {
         # if the user is pashing in { text => 'foo' } ...
-
+        $desc = $_[1] if $_[1];
         @_ = %{$_[0]};
     } elsif (@_ % 2 ) {
         # IF the user is passing in text => 'foo' ,"Cicked the right thing"
         # Remove reason from end if it's there
-        pop @_ ;
-
+        $desc = pop @_ ;
     }
+
     carp("Couldn't find link") unless $self->follow_link(@_);
     {
         local $Test::Builder::Level = $Test::Builder::Level;
         $Test::Builder::Level++;
-        Test::HTML::Lint::html_ok( $lint, $self->content );
+        Test::HTML::Lint::html_ok( $lint, $self->content, $desc );
     }
 }
 
