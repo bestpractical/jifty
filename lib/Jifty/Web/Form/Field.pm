@@ -852,7 +852,13 @@ sub available_values {
     }
 
     # Otherwise consult the action
-    return @{ $self->action->available_values($self->name) };
+
+    my $values =  $self->action->available_values($self->name);
+    if (!ref($values) || ref($values) ne 'ARRAY') {
+        die "available_values of parameter '" . $self->name . "' returned a " . (ref($values) || 'nonreference') . ", expected array reference";
+    }
+
+    return @$values;
 }
 
 =for private
