@@ -37,7 +37,7 @@ sub arguments {
 
     # Mark read-only columns for read-only display
     for my $column ( $self->possible_columns ) {
-        if ( not $column->writable and $column->readable ) {
+        if ( (not $column->writable) and $column->readable ) {
             $arguments->{$column->name}{'render_mode'} = 'read';
         }
     }
