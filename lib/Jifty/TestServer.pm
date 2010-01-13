@@ -63,7 +63,10 @@ sub started_ok {
          });
     $Jifty::SERVER = $self;
 
-    if (my $pid = fork()) {
+    my $pid = fork();
+    die "failed to fork" unless defined $pid;
+
+    if ($pid) {
         # We are expecting a USR1 from the child process after it's
         # ready to listen.
         my $handled;
