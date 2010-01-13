@@ -79,9 +79,8 @@ sub _render_checkboxes {
         $field .= $self->javascript;
         $field .= qq! /><label for="@{[ $id ]}"!;
         $field .= $self->_widget_class;
-        $field .= qq!>$display</label>\n!;
-        $field = qq{<span class="checkboxlistitemlabel">$field</span></li>};
-        
+        $field .= qq!>$display</label>\n</li>!;
+ 
         Jifty->web->out($field);
     }
     Jifty->web->out('</ul>');
