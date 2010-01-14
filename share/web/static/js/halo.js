@@ -1,3 +1,5 @@
+/* XXX TODO JS: move into Jifty.Halos rather than global */
+
 var halo_shown = null;
 var halos_drawn = null;
 
