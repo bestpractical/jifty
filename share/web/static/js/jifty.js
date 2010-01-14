@@ -724,7 +724,7 @@ Behaviour.register({
     },
     'input.date': function(e) {
         if ( !jQuery(e).hasClass('has_calendar_link') ) {
-            createCalendarLink(e);
+            Jifty.Utils.createCalendarLink(e);
             jQuery(e).addClass('has_calendar_link');
         }
     },
@@ -733,7 +733,7 @@ Behaviour.register({
     },
     'input.datetime': function(e) {
         if ( !jQuery(e).hasClass('has_datetime_link') ) {
-            createDateTimeLink(e);
+            Jifty.Utils.createDateTimeLink(e);
 
             var button = document.createElement('input');
             button.setAttribute('type',  'button');
@@ -757,7 +757,7 @@ Behaviour.register({
         }
     },
     'input.button_as_link': function(e) {
-        buttonToLink(e);
+        Jifty.Utils.buttonToLink(e);
     },
     "input.date, input.text": function(e) {
         /* XXX TODO: Figure out how to make our enter handler detect

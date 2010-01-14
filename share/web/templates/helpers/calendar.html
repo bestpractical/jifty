@@ -21,7 +21,7 @@
       <td>
 %         if ($day) {
 %             my $datestr = sprintf('%04d-%02d-%02d', $DisplayedYear, $DisplayedMonth, $day);
-        <a href="#" onclick="updateParentField('<% $field %>','<% $datestr %>'); return false;"><% $day %></a>
+        <a href="#" onclick="Jifty.Utils.updateParentField('<% $field %>','<% $datestr %>'); return false;"><% $day %></a>
 %         } else {
         &nbsp;
 %         }
@@ -32,13 +32,13 @@
   </table>
   <span class="calendar today">
 %             my $datestr = sprintf('%04d-%02d-%02d', $today[5]+1900,$today[4]+1, $today[3]);
-        <a href="#" onclick="updateParentField('<% $field %>','<% $datestr %>'); return false;">Today</a>
+        <a href="#" onclick="Jifty.Utils.updateParentField('<% $field %>','<% $datestr %>'); return false;">Today</a>
   
   </span>
   <span class="calendar tomorrow">
 % my @tomorrow = localtime(time()+86400);
 % $datestr = sprintf('%04d-%02d-%02d', $tomorrow[5]+1900,$tomorrow[4]+1, $tomorrow[3]);
-        <a href="#" onclick="updateParentField('<% $field %>','<% $datestr %>'); return false;">Tomorrow</a>
+        <a href="#" onclick="Jifty.Utils.updateParentField('<% $field %>','<% $datestr %>'); return false;">Tomorrow</a>
   </span>
 </div>
 </div>

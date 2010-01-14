@@ -1,7 +1,60 @@
 
 if (typeof Jifty == "undefined") Jifty = { };
 
-Jifty.Utils = {
+Jifty.Utils = {};
+
+jQuery.extend(Jifty.Utils, {
+    buttonToLink: function(e) {
+        var link = document.createElement("a");
+        link.setAttribute("href","#");
+        link.setAttribute("name",e.getAttribute("name"));
+
+        var form = Jifty.Form.Element.getForm(e);
+        var onclick = e.getAttribute("onclick");
+
+        /* Simple buttons that don't use any JS need us to create an onclick
+           for them that makes sure the original button's name gets passed
+           and the form submitted normally (without any Ajax-ness)
+        */
+        if ( !onclick ) {
+            jQuery( link ).click(function(ev) {
+                var a = ev.target;
+                var hidden = document.createElement("input");
+                hidden.setAttribute("type", "hidden");
+                hidden.setAttribute("name", a.getAttribute("name"));
+                a["virtualform"].appendChild( hidden );
+                if ( a["virtualform"].onsubmit )
+                    a["virtualform"].onsubmit();
+                a["virtualform"].submit();
+            });
+        }
+        link.setAttribute("onclick", onclick);
+        link.setAttribute("title", e.getAttribute("title"));
+
+        link.className = e.className;
+        link["virtualform"] = form;
+        link.appendChild(document.createTextNode(e.getAttribute("value")));
+
+        e.parentNode.insertBefore(link, e.nextSibling);
+        e.parentNode.removeChild(e);
+        return link;
+    },
+
+    updateParentField: function(field, value) {
+        if (window.opener) {
+            window.opener.document.getElementById(field).value = value;
+            window.close();
+        }
+    },
+
+    createCalendarLink: function(id) {
+        return Jifty.Calendar.registerDateWidget( id );
+    },
+
+    createDateTimeLink: function(id) {
+        return Jifty.DateTime.registerDateTimeWidget( id );
+    },
+
     /* From http://blog.firetree.net/2005/07/04/javascript-find-position/ */
     findPosX: function(obj)
     {
@@ -142,7 +195,7 @@ Jifty.Utils = {
     stripScripts: function(str) {
         return str.replace(/<script(.|\s)*?\/script>/g, "");
     }
-};
+});
 
 /* This sets Jifty.Utils.isMSIE to true in IE */
 /* @cc_on
