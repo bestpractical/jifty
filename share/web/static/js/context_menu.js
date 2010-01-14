@@ -1,8 +1,6 @@
-JSAN.use("DOM.Events");
-
 if (typeof Jifty == "undefined") Jifty = { };
 
-function prepExpandButton(e) {
+function jifty_context_menu_prepExpandButton(e) {
     e.onmousedown = function() { this.onfocus = this.blur };
     e.onmouseup   = function() { this.onfocus = window.clientInformation ? null : window.undefined };
     e = null;	// Don't leak in IE
@@ -10,8 +8,8 @@ function prepExpandButton(e) {
 
 Jifty.ContextMenu = {
     behaviourRules: {
-        "ul.menu li.toplevel span.expand a": prepExpandButton,
-        "ul.context_menu li.toplevel span.expand a": prepExpandButton
+        "ul.menu li.toplevel span.expand a": jifty_context_menu_prepExpandButton,
+        "ul.context_menu li.toplevel span.expand a": jifty_context_menu_prepExpandButton
     },
 
     currently_open:  "",
@@ -106,6 +104,6 @@ Jifty.ContextMenu = {
     }
 };
 
-DOM.Events.addListener( document, "click", Jifty.ContextMenu.hideOpenMenu );
+jQuery(document).click( Jifty.ContextMenu.hideOpenMenu );
 Behaviour.register( Jifty.ContextMenu.behaviourRules );
 
