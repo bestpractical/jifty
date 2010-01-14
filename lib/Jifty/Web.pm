@@ -58,7 +58,6 @@ __PACKAGE__->javascript_libs([qw(
     combobox.js
     key_bindings.js
     context_menu.js
-    bps_util.js
     yui/yahoo.js
     yui/dom.js
     yui/event.js
