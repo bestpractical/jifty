@@ -1,3 +1,9 @@
+/*
+ * XXX TODO JS
+ * This should be migrated to either Jifty's browser detection or jQuery's, but
+ * changing the class values has the potential to break existing CSS.
+ */
+
 // CSS Browser Selector   v0.4
 // Documentation:         http://rafael.adm.br/css_browser_selector
 // License:               http://creativecommons.org/licenses/by/2.5/
