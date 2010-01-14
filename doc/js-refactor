@@ -4,4 +4,13 @@ bps_util.js
     buttonToLink, updateParentField, createCalendarLink, createDateTimeLink moved to Jifty.Utils
 
 removing JSAN usage wherever I can
+
+
+
+What's left?
+
+grep 'XXX TODO JS'
+use DatePicker from jQuery UI instead of YUI
+    removes YUI calendar
+    most (all?) of our calendar handler JS
     
