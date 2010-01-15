@@ -12,9 +12,13 @@ formatDate not used in the last 3 years
 === What's left?
 
 grep 'XXX TODO JS'
+
 use DatePicker from jQuery UI instead of YUI
     removes YUI calendar
     most (all?) of our calendar handler JS
+
+Jifty.Utils has a bunch of methods probably redundant with those in jQuery, but
+we need to check compat with what uses them
 
 update libraries
     jQuery
