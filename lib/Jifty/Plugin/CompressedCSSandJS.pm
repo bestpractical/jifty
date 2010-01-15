@@ -24,6 +24,7 @@ Jifty::Plugin::CompressedCSSandJS - Compression of CSS and javascript files
         gzip: 1
         skipped_js:
             - complex.js
+        generate_early: 1
 
 
 =head1 DESCRIPTION
@@ -45,9 +46,14 @@ indicates it supports that feature.
 
 skipped_js is a list of js that you don't want to compress for some reason.
 
+generate_early tells the plugin to compress the CSS and JS at process start
+rather than on the first request.  This can save time, especially if your
+JS minifier is slow, for the poor sucker who makes the first request.  Enabled
+by default.
+
 =cut
 
-__PACKAGE__->mk_accessors(qw(css js jsmin cdn gzip_enabled skipped_js));
+__PACKAGE__->mk_accessors(qw(css js jsmin cdn gzip_enabled skipped_js generate_early));
 
 =head2 init
 
@@ -67,18 +73,27 @@ sub init {
     $self->js( $opt{js} );
     $self->jsmin( $opt{jsmin} );
     $self->cdn( $opt{cdn} || '');
+    $self->generate_early( exists $opt{generate_early} ? $opt{generate_early} : 1 );
 
-    Jifty::Web->add_trigger(
-        name      => 'include_javascript',
-        callback  => sub { $self->_include_javascript(@_) },
-        abortable => 1,
-    ) if $self->js_enabled;
+    if ( $self->js_enabled ) {
+        Jifty::Web->add_trigger(
+            name      => 'include_javascript',
+            callback  => sub { $self->_include_javascript(@_) },
+            abortable => 1,
+        );
+        Jifty->add_trigger( post_init => sub { $self->_generate_javascript })
+            if $self->generate_early;
+    }
 
-    Jifty::Web->add_trigger(
-        name => 'include_css',
-        callback => sub { $self->_include_css(@_) },
-        abortable => 1,
-    ) if $self->css_enabled;
+    if ( $self->css_enabled ) {
+        Jifty::Web->add_trigger(
+            name => 'include_css',
+            callback => sub { $self->_include_css(@_) },
+            abortable => 1,
+        );
+        Jifty->add_trigger( post_init => sub { $self->generate_css })
+            if $self->generate_early;
+    }
 }
 
 =head2 js_enabled
