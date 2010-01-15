@@ -1,27 +1,23 @@
-// Copyright 2004-2006, Best Practical Solutions, LLC
+// Copyright 2004-2010, Best Practical Solutions, LLC
 // This Library is licensed to you under the same terms as Perl 5.x
-
-JSAN.use("DOM.Events");
 
 if ( typeof Jifty == "undefined" ) Jifty = {};
 
 Jifty.KeyBindings = {
     bindings: new Array(),
-    listener: null,
+    listener: false,
 
     activate: function() {
         if ( Jifty.KeyBindings.listener )
             return;
         
-        Jifty.KeyBindings.listener = DOM.Events.addListener(
-                                        document,
-                                        "keydown",
-                                        Jifty.KeyBindings.doClick
-                                     );
+        jQuery(document).keydown( Jifty.KeyBindings.doClick );
+        Jifty.KeyBindings.listener = true;
     },
 
     deactivate: function() {
-        DOM.Events.removeListener(Jifty.KeyBindings.listener);
+        jQuery(document).unbind( "keydown", Jifty.KeyBindings.doClick );
+        Jifty.KeyBindings.listener = false;
     },
 
     reset: function() {
