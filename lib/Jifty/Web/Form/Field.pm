@@ -722,8 +722,8 @@ sub focus_javascript {
     my $self = shift;
     return undef;
     if($self->focus) {
-        return qq!document.getElementById("@{[$self->element_id]}").focus()!;
-        return qq!DOM.Events.addListener( window, "load", function(){document.getElementById("@{[$self->element_id]}").focus()})!;
+        return qq!document.getElementById("@{[$self->element_id]}").focus();!;
+        return qq!jQuery(document).ready(function(){jQuery("#@{[$self->element_id]}").focus()});!;
     }
 }
 
