@@ -130,22 +130,14 @@ libraries, like
 
 jQuery is a fast, concise, JavaScript Library that simplifies how you traverse HTML documents, handle events, perform animations, and add Ajax interactions to your web pages.
 
-=item C<Rico> L<http://openrico.org>
-
-Rico also provides graphical effects.
-
-=item C<Json> L<http://json.org>
+=item C<JSON> L<http://json.org>
 
 Hereby, major support for encoding and decoding data into the JSON
 data format (similar to C<YAML>) is provided.
 
-=item C<behaviour.js> L<http://bennolan.com/behaviour/>
+=item C<behaviour.js>
 
 With C<behaviour.js>, intelligent JavaScript handlers can be defined.
-
-=item C<cssQuery.js> L<http://dean.edwards.name/>
-
-This library adds support for querying the DOM using CSS selectors.
 
 =back
 
