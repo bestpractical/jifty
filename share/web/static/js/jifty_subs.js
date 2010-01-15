@@ -37,7 +37,7 @@ if (typeof Jifty == "undefined") Jifty = { };
 
     
     /* This function constructs a new Jifty.Subs object and sets
-    up a callback with HTTP.Push to run our onPushHandler each time
+    up a callback with jQuery.ajax to run our onPushHandler each time
     a new element is added to the hidden iframe's body.
 
     We could instead say "sets up our transport. every time the

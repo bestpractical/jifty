@@ -184,10 +184,6 @@ sub mime_type {
 
     # The key is the file extension, the value is the MIME type to send.
     my %type_override = (
-        # MIME::Types returns application/javascript for .js, but Opera
-        # chokes on ajax-fetched JS that has a type other than the one below
-        # JSAN.js fetches JS via Ajax when it loads JSAN modules
-        'js'   => 'application/x-javascript',
         'json' => 'application/json; charset=UTF-8',
         'htc'  => 'text/x-component',
     );

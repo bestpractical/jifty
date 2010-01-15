@@ -4,9 +4,9 @@ bps_util.js
     buttonToLink, updateParentField, createCalendarLink, createDateTimeLink moved to Jifty.Utils
 
 removing JSAN usage wherever I can
+removing JSAN core and now-unused libraries
 
 formatDate not used in the last 3 years
-
 
 
 === What's left?
@@ -27,3 +27,11 @@ update libraries
 jQuery 1.4
     http://jquery14.com/day-01/jquery-14#backwards
     we can replace css_browser_selector and our own browser stuff with jQuery.browser now
+
+
+=== Unused (but still useful??)
+
+DUBIOUS - rico.js - not even the full library, just corner rounding, and
+                    hacked ones at that
+
+UNCLEAR - jsTrace.js

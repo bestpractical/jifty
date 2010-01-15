@@ -32,11 +32,6 @@ __PACKAGE__->css_files([qw( main.css )]);
 __PACKAGE__->external_javascript_libs([]);
 
 __PACKAGE__->javascript_libs([qw(
-    jsan/JSAN.js
-    jsan/Push.js
-    setup_jsan.js
-    jsan/Upgrade/Array/push.js
-    jsan/DOM/Events.js
     json.js
     jquery-1.2.6.js
     iutil.js
