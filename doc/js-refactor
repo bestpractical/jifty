@@ -5,12 +5,21 @@ bps_util.js
 
 removing JSAN usage wherever I can
 
+formatDate not used in the last 3 years
 
 
-What's left?
+
+=== What's left?
 
 grep 'XXX TODO JS'
 use DatePicker from jQuery UI instead of YUI
     removes YUI calendar
     most (all?) of our calendar handler JS
-    
+
+update libraries
+    jQuery
+    iAutocompleter (and iUtil)
+
+jQuery 1.4
+    http://jquery14.com/day-01/jquery-14#backwards
+    we can replace css_browser_selector and our own browser stuff with jQuery.browser now
