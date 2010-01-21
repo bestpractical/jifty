@@ -39,6 +39,10 @@ wrap 'Jifty::View::Mason::Handler::new',
                   $self->interp->set_global('$r', 'Jifty::Plugin::Compat::Apache');
               };
 
+push @Jifty::TestServer::ISA, 'Jifty::Server';
+
+package Jifty::Server;
+
 package Jifty::Plugin::Compat::Apache;
 use Carp;
 
