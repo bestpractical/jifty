@@ -6,6 +6,29 @@ use base 'Jifty::Plugin';
 use Hook::LexWrap;
 require Jifty::View::Mason::Handler;
 
+=head1 NAME
+
+Jifty::Plugin::Compat - Provide Jifty API compatibility
+
+=head1 SYNOPSIS
+
+# In your jifty config.yml under the framework section:
+
+  Plugins:
+    - Compat: {}
+
+=head1 DESCRIPTION
+
+This plugin provides Jifty API compatibility.
+
+=head2 ConfigVersion VERSION 5
+
+Provides Jifty::Handler->apache for apps prior to ConfigFileVersion 5.
+
+TODO: this should also rebind STDIN/STDOUT in the per-request hook.
+
+=cut
+
 *Jifty::Handler::apache = sub {
     return 'Jifty::Plugin::Compat::Apache';
 };
