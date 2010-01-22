@@ -42,7 +42,7 @@ sub render_widget {
         '<input',
         'type="submit"',
         'name="' . $self->input_name . '" ',
-        'value="' . Jifty->web->escape(_($self->label )). '"',
+        'value="' . Jifty->web->escape(_($self->default_value || $self->label )). '"',
         ($self->title ? qq( title="@{[$self->title]}") : ''),
         'id="'. Jifty->web->serial . '"',
         ($self->key_binding ? qq( accesskey="@{[$self->key_binding]}") : ''),
