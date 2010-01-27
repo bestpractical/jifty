@@ -33,7 +33,7 @@ __PACKAGE__->external_javascript_libs([]);
 
 __PACKAGE__->javascript_libs([qw(
     json.js
-    jquery-1.2.6.js
+    jquery-1.4.1.js
     iutil.js
     iautocompleter.js
     jifty_interface.js
