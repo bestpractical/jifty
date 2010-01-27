@@ -12,16 +12,33 @@ Content-Addressable Storage facility
 
 =head1 SYNOPSIS
 
-Add the following to your Jifty config.yml:
+At the bare minimum, add the following to your Jifty config.yml:
 
     framework:
       CAS:
-        BaseClass: Jifty::CAS::Store::Memcached
+        BaseClass: 'Jifty::CAS::Store::Memcached'
+
+The options available include:
+
+    framework:
+      CAS:
+        BaseClass: 'Jifty::CAS::Store::Memcached'
+        Memcached:
+          # any options Cache::Memcached supports
+          servers:
+            - 10.0.0.2:11211
+            - 10.0.0.3:11211
+          compress_threshold: 5120
+
+        # Turned on by default. Keeps CAS working when memcached fails by
+        # falling back to the default in-process store. It probably should
+        # be turned off in most cases (like so) after successful testing.
+        MemcachedFallback: 0
 
 =head1 DESCRIPTION
 
-This is a memcached backend for L<Jifty::CAS>.  For more information, see
-L<Jifty::CAS/DESCRIPTION>.
+This is a memcached backend for L<Jifty::CAS>.  For more information about
+Jifty's CAS, see L<Jifty::CAS/DESCRIPTION>.
 
 =cut
 
@@ -133,7 +150,7 @@ C</framework/CAS/Memcached> like so:
 
     framework:
       CAS:
-        BaseClass: Jifty::CAS::Store::Memcached
+        BaseClass: 'Jifty::CAS::Store::Memcached'
         Memcached:
             servers:
                 - 10.0.0.2:11211
