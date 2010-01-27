@@ -65,6 +65,9 @@ __PACKAGE__->javascript_libs([qw(
     css_browser_selector.js
     cssQuery-jquery.js
     jquery.timepickr.js
+    ui.core.js
+    ui.sortable.js
+    ordered-list.js
 )]);
 
 use Class::Trigger;
