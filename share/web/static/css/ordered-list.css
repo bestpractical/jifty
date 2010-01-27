@@ -25,3 +25,7 @@ div.ordered-list-container ul.selected li.head {
     text-align: center;
 }
 
+div.ordered-list-container .hidden {
+    display: none;
+}
+
