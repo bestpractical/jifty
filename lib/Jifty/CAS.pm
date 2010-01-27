@@ -45,7 +45,7 @@ however.
 
 Publishes the given C<CONTENT> at the address C<DOMAIN> and C<NAME>.
 C<METADATA> is an arbitrary hash; see L<Jifty::CAS::Blob> for more.
-Returns the key.
+Returns the key on success, or undef on failure.
 
 =head2 key DOMAIN NAME
 
