@@ -1,0 +1,27 @@
+div.ordered-list-container div {
+    float: left;
+}
+
+div.ordered-list-container ul.unselected {
+    opacity: 0.6;
+}
+
+div.ordered-list-container ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 5px;
+    margin-right: 10px;
+    background: #eee; 
+}
+
+div.ordered-list-container ul.unselected li.head {
+    background: #736F6E; 
+    text-align: center;
+}
+
+
+div.ordered-list-container ul.selected li.head {
+    background: #4AA02C; 
+    text-align: center;
+}
+
