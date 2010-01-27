@@ -619,7 +619,7 @@ sub defaults {
                 Memcached => {
                     servers     => [ '127.0.0.1:11211' ],
                     debug       => 0,
-                    namespace   => $self->framework('ApplicationName'),
+                    namespace   => $self->framework('ApplicationName').":",
                     compress_threshold => 10240,
                 },
             },

@@ -44,7 +44,8 @@ sub memcached {
 
 =head2 _store DOMAIN NAME BLOB
 
-Stores the BLOB (a L<Jifty::CAS::Blob>) in memcached.  Returns the key.
+Stores the BLOB (a L<Jifty::CAS::Blob>) in memcached.  Returns the key on
+success or undef on failure.
 
 =cut
 
@@ -53,8 +54,25 @@ sub _store {
 
     # Default to expiring in two weeks. XXX TODO this should be configurable
     my $key = $blob->key;
-    $class->memcached->set("$domain:db:$key", $blob, 60*60*24*14);
-    $class->memcached->set("$domain:keys:$name", $key, 60*60*24*14);
+    my $success = $class->memcached->set("$domain:db:$key", $blob, 60*60*24*14);
+
+    unless ($success) {
+        my $err = "Failed to store content for key '$domain:db:$key' in memcached!";
+        {
+            use bytes;
+            $err .= "  Content length is: " . length($blob->content) . " bytes.";
+            $err .= "  Perhaps you need to increase memcached's max item size?";
+        }
+        Jifty->log->error($err);
+        return;
+    }
+
+    $success = $class->memcached->set("$domain:keys:$name", $key, 60*60*24*14);
+
+    unless ($success) {
+        Jifty->log->error("Failed to store key '$domain:keys:$name' in memcached!");
+        return;
+    }
 
     return $key;
 }
