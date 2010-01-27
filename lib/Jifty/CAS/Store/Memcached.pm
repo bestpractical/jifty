@@ -51,13 +51,10 @@ Stores the BLOB (a L<Jifty::CAS::Blob>) in memcached.  Returns the key.
 sub _store {
     my ($class, $domain, $name, $blob) = @_;
 
-    # my $db  = $CONTAINER{$domain} ||= {};
-    # $db->{DB}{$key} = $blob;
-    # $db->{KEYS}{$name} = $key;
-
+    # Default to expiring in two weeks. XXX TODO this should be configurable
     my $key = $blob->key;
-    $class->memcached->set("$domain:db:$key", $blob);
-    $class->memcached->set("$domain:keys:$name", $key);
+    $class->memcached->set("$domain:db:$key", $blob, 60*60*24*14);
+    $class->memcached->set("$domain:keys:$name", $key, 60*60*24*14);
 
     return $key;
 }
