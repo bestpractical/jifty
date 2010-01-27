@@ -1,9 +1,12 @@
-package Jifty::CAS;
 use strict;
+use warnings;
+
+package Jifty::CAS;
+use base 'Jifty::CAS::Store';
 
 =head1 NAME
 
-Jifty::CAS - Jifty's Content-addressable storage facility
+Jifty::CAS - Jifty's Content-Addressable Storage facility
 
 =head1 SYNOPSIS
 
@@ -28,11 +31,13 @@ stored under a "domain", and can be addressed using wither the "key",
 which is an C<md5> sum, or the "name", which simply stores the most
 recent key provided with that name.
 
-=cut
+=head1 BACKENDS
 
-my %CONTAINER;
-
-use Jifty::CAS::Blob;
+The default data store is an per-process, in-memory store.  A
+L<memcached|Jifty::CAS::Store::Memcached> backed store is also available and
+has the benefits of sharing the cache across all instances of a Jifty app using
+Jifty::CAS.  The memcached store is limited to objects less than 1MB in size,
+however.
 
 =head1 METHODS
 
@@ -42,36 +47,10 @@ Publishes the given C<CONTENT> at the address C<DOMAIN> and C<NAME>.
 C<METADATA> is an arbitrary hash; see L<Jifty::CAS::Blob> for more.
 Returns the key.
 
-=cut
-
-sub publish {
-    my ($class, $domain, $name, $content, $opt) = @_;
-    my $db = $CONTAINER{$domain} ||= {};
-    $opt ||= {};
-
-    my $blob = Jifty::CAS::Blob->new(
-        {   content  => $content,
-            metadata => $opt,
-        }
-    );
-    my $key = $blob->key;
-    $db->{DB}{$key} = $blob;
-    $db->{KEYS}{$name} = $key;
-
-    return $key;
-}
-
 =head2 key DOMAIN NAME
 
 Returns the most recent key for the given pair of C<DOMAIN> and
 C<NAME>, or undef if none such exists.
-
-=cut
-
-sub key {
-    my ($class, $domain, $name) = @_;
-    return $CONTAINER{$domain}{KEYS}{$name};
-}
 
 =head2 retrieve DOMAIN KEY
 
@@ -79,10 +58,5 @@ Returns a L<Jifty::CAS::Blob> for the given pair of C<DOMAIN> and
 C<KEY>, or undef if none such exists.
 
 =cut
-
-sub retrieve {
-    my ($class, $domain, $key) = @_;
-    return $CONTAINER{$domain}{DB}{$key};
-}
 
 1;

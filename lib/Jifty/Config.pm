@@ -614,6 +614,15 @@ sub defaults {
                 DefaultTemplateRoot => Jifty::Util->share_root . '/web/templates',
                 SessionCookieName => 'JIFTY_SID_$PORT',
             },
+            CAS => {
+                BaseClass => 'Jifty::CAS::Store',
+                Memcached => {
+                    servers     => [ '127.0.0.1:11211' ],
+                    debug       => 0,
+                    namespace   => $self->framework('ApplicationName'),
+                    compress_threshold => 10240,
+                },
+            },
         }
     };
 
