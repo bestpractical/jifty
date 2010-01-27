@@ -67,6 +67,9 @@ __PACKAGE__->javascript_libs([qw(
     jquery.ajaxQueue.js
     jquery.bgiframe.min.js
     jquery.autocomplete.js
+    ui.core.js
+    ui.sortable.js
+    ordered-list.js
 )]);
 
 use Class::Trigger;
