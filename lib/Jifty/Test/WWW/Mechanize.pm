@@ -126,7 +126,9 @@ sub fill_in_action {
         unless ($input) {
             return;
         } 
-        $input->value($args{$arg});
+
+        # not $input->value($args{$arg}), because it doesn't handle arrayref
+        $action_form->param( $input->name, $args{$arg} );
     } 
 
     return $action_form;
