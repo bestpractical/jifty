@@ -254,35 +254,6 @@ sub minify_js {
     $$input = $output;
 }
 
-# this should be cleaned up and moved to Jifty::CAS
-sub _serve_cas_object {
-    my ($self, $name, $incoming_key) = @_;
-    my $key = Jifty::CAS->key('ccjs', $name);
-
-    if ( Jifty->handler->cgi->http('If-Modified-Since') and $incoming_key eq $key ) {
-        $self->log->debug("Returning 304 for cached $name");
-        Jifty->handler->apache->header_out( Status => 304 );
-        return;
-    }
-
-    my $obj = Jifty::CAS->retrieve('ccjs', $key);
-    my $compression = '';
-    $compression = 'gzip' if $obj->metadata->{deflate}
-      && Jifty::View::Static::Handler->client_accepts_gzipped_content;
-
-    Jifty->handler->apache->content_type($obj->metadata->{content_type});
-    Jifty::View::Static::Handler->send_http_header($compression, length($obj->content));
-
-    if ( $compression ) {
-        $self->log->debug("Sending gzipped squished $name");
-        binmode STDOUT;
-        print $obj->content_deflated;
-    } else {
-        $self->log->debug("Sending squished $name");
-        print $obj->content;
-    }
-}
-
 sub _js_is_skipped {
     my $self       = shift;
     my $file       = shift;

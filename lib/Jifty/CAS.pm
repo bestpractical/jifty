@@ -57,6 +57,67 @@ C<NAME>, or undef if none such exists.
 Returns a L<Jifty::CAS::Blob> for the given pair of C<DOMAIN> and
 C<KEY>, or undef if none such exists.
 
+=head2 serve_by_name DOMAIN NAME REQUESTED_KEY
+
+Intelligently serves up the content of the object at NAME (B<not>
+REQUESTED_KEY) in DOMAIN.  REQUESTED_KEY is currently used only to check if the
+content at NAME equals the content requested.  If so, this method responds with
+an HTTP 304 status, indicating the content hasn't changed.  This use case
+assumes that content is served to clients from the CAS with the CAS key (an MD5
+sum) as the filename or part of it.
+
+The C<content_type> key in the requested object's metadata is expected to be
+set and is used for the HTTP response.  If a true value is set for C<deflate>
+in the object's metadata, then this method will serve gzipped content if the
+client supports it.
+
+This method is usually called from a dispatcher rule.  Returns the HTTP status
+code set by this method (possibly for your use in the dispatcher).
+
 =cut
+
+sub serve_by_name {
+    my ($class, $domain, $name, $incoming_key) = @_;
+    my $key = Jifty::CAS->key($domain, $name);
+
+    return $class->_serve_404( $domain, $name, "Unable to lookup key." )
+        if not defined $key;
+
+    if ( Jifty->handler->cgi->http('If-Modified-Since') and $incoming_key eq $key ) {
+        Jifty->log->debug("Returning 304 for CAS cached $domain:$name ($key)");
+        Jifty->handler->apache->header_out( Status => 304 );
+        return 304;
+    }
+
+    my $obj = Jifty::CAS->retrieve($domain, $key);
+
+    return $class->_serve_404( $domain, $name, "Unable to retrieve blob." )
+        if not defined $obj;
+
+    my $compression = '';
+    $compression = 'gzip' if $obj->metadata->{deflate}
+      && Jifty::View::Static::Handler->client_accepts_gzipped_content;
+
+    Jifty->handler->apache->content_type($obj->metadata->{content_type});
+    Jifty::View::Static::Handler->send_http_header($compression, length($obj->content));
+
+    if ( $compression ) {
+        Jifty->log->debug("Sending gzipped squished $domain:$name ($key) from CAS");
+        binmode STDOUT;
+        print $obj->content_deflated;
+    } else {
+        Jifty->log->debug("Sending squished $domain:$name ($key) from CAS");
+        print $obj->content;
+    }
+    return 200;
+}
+
+sub _serve_404 {
+    my ($class, $domain, $name, $msg) = @_;
+    $msg ||= '';
+    Jifty->log->error("Returning 404 for CAS cached $domain:$name.  $msg");
+    Jifty->handler->apache->header_out( Status => 404 );
+    return 404;
+}
 
 1;
