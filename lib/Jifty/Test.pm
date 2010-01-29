@@ -18,6 +18,11 @@ use Cwd qw/abs_path cwd/;
 # END to be at the very last, later than Jifty::Test's
 use Test::HTTP::Server::Simple;
 
+# Mechanize uses Test::LongString to report mismatches.  Increase the
+# limit so we can see where errors come from more easily.
+use Test::LongString;
+$Test::LongString::Max = 128;
+
 =head1 NAME
 
 Jifty::Test - Jifty's test module
