@@ -16,7 +16,7 @@ has 'future_continuation_id' => (is => 'rw');
 has 'continuation_type' => (is => 'rw');
 has 'continuation_path' => (is => 'rw');
 
-has 'parameters' => (is => 'rw', isa => 'HashRef');
+has 'parameters' => (is => 'rw', isa => 'HashRef', default => sub { {} });
 has 'uploads' => (is => 'rw', isa => 'HashRef');
 has 'headers' => (is => 'rw', isa => 'HTTP::Headers', default => sub { HTTP::Headers->new });
 has 'uri' => (is => 'rw', isa => 'URI', default => sub { URI->new('http:///') });

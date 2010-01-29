@@ -16,8 +16,7 @@ use Test::Base::Filter -Base;
 sub request_from_webform {
     my $form = shift;
     my $r = Jifty::Request->new->from_webform(%$form);
-    delete $r->{env};
-    delete $r->{headers};
+    delete $r->{$_} for qw(env headers parameters);
     return $r;
 }
 
