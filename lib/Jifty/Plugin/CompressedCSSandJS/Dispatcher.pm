@@ -34,7 +34,8 @@ on '/__jifty/js/*' => run {
 
     $arg =~ s/\.js$//;
     my $status = Jifty::CAS->serve_by_name( 'ccjs', 'js-all', $arg );
-    abort $status;
+    abort $status if $status != 200;
+    abort;
 };
 
 on '/__jifty/css/*' => run {
@@ -51,7 +52,8 @@ on '/__jifty/css/*' => run {
 
     $arg =~ s/\.css$//;
     my $status = Jifty::CAS->serve_by_name( 'ccjs', 'css-all', $arg );
-    abort $status;
+    abort $status if $status != 200;
+    abort;
 };
 
 1;
