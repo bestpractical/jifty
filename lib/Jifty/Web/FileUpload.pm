@@ -134,7 +134,10 @@ sub new_from_plack {
     my $self = shift;
     my $u    = shift;
 
-    $self->new(filehandle   => $u->fh,
+    open my $fh, '<:raw', $u->tempname
+        or die "Can't open '@{[ $u->tempname ]}': '$!'";
+
+    $self->new(filehandle   => $fh,
                filename     => $u->filename,
                content_type => $u->type,
            );
