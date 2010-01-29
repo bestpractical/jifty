@@ -27,6 +27,7 @@ use base qw/Class::Accessor::Fast Jifty::Object/;
 use Jifty::View::Declare::Handler ();
 use Class::Trigger;
 use String::BufferStack;
+use Plack::Request;
 
 __PACKAGE__->mk_accessors(qw(dispatcher _view_handlers stash buffer));
 

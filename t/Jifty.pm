@@ -17,6 +17,7 @@ sub request_from_webform {
     my $form = shift;
     my $r = Jifty::Request->new->from_webform(%$form);
     delete $r->{env};
+    delete $r->{headers};
     return $r;
 }
 

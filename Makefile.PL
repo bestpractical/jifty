@@ -13,7 +13,6 @@ requires('Class::Data::Inheritable');
 requires('Class::Trigger' => '0.13');
 requires('Clone' => '0.27');
 requires('CGI' => '3.30');
-requires('CGI::Simple'); # CGI::Simple::Cookie
 requires('CGI::Cookie::Splitter');
 requires('Class::Inspector' => 1.20); # For File::ShareDir on Win32
 requires('Crypt::CBC');
@@ -51,6 +50,7 @@ requires('HTTP::Date');
 requires('HTTP::Server::Simple' => '0.35');  # HTTP::Server::Simple::CGI
 requires('HTTP::Server::Simple::Recorder');
 requires('Hash::Merge');
+requires('Hash::MultiValue', 0.05);
 requires('Hook::LexWrap');
 requires('IPC::PubSub' => '0.23' );
 requires('IPC::Run3');
@@ -69,7 +69,7 @@ requires('Module::Refresh');
 requires('Module::ScanDeps');
 requires('Object::Declare' => '0.13');
 requires('Params::Validate');
-requires('Plack' => '0.9032'); # Plack::Loader Plack::Test Plack::Util
+requires('Plack' => '0.99_01'); # Plack::Loader Plack::Test Plack::Util
 requires('Plack::Request');
 requires('Scalar::Defer' => '0.12');
 requires('Shell::Command');

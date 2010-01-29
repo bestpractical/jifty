@@ -4,7 +4,7 @@ use strict;
 package Jifty::Request;
 
 use Any::Moose;
-extends 'Plack::Request', 'Jifty::Object';
+extends 'Jifty::Object';
 
 has 'env' => (is => "ro", isa => "HashRef", default => sub { {} });
 has '_top_request' => (is => 'rw');
@@ -16,12 +16,29 @@ has 'future_continuation_id' => (is => 'rw');
 has 'continuation_type' => (is => 'rw');
 has 'continuation_path' => (is => 'rw');
 
-around 'method' => sub {
-    my ($orig, $self, $arg) = @_;
-    $self->{env}{REQUEST_METHOD} = $arg
-        if $arg;
-    $orig->($self, $arg ? $arg : ());
-};
+has 'parameters' => (is => 'rw', isa => 'HashRef');
+has 'uploads' => (is => 'rw', isa => 'HashRef');
+has 'headers' => (is => 'rw', isa => 'HTTP::Headers', default => sub { HTTP::Headers->new });
+has 'uri' => (is => 'rw', isa => 'URI', default => sub { URI->new('http:///') });
+
+sub address     { $_[0]->env->{REMOTE_ADDR} }
+sub remote_host { $_[0]->env->{REMOTE_HOST} }
+sub protocol    { $_[0]->env->{SERVER_PROTOCOL} }
+sub method      { $_[0]->env->{REQUEST_METHOD} = $_[1] if @_ > 1; $_[0]->env->{REQUEST_METHOD} }
+sub port        { $_[0]->env->{SERVER_PORT} }
+sub user        { $_[0]->env->{REMOTE_USER} }
+sub request_uri { $_[0]->env->{REQUEST_URI} }
+sub path_info   { $_[0]->env->{PATH_INFO} }
+sub script_name { $_[0]->env->{SCRIPT_NAME} }
+sub scheme      { $_[0]->env->{'psgi.url_scheme'} }
+sub secure      { $_[0]->scheme eq 'https' }
+sub body        { $_[0]->env->{'psgi.input'} }
+sub input       { $_[0]->env->{'psgi.input'} }
+
+sub header { shift->headers->header(@_) }
+sub path { shift->uri->path(@_) }
+sub content_length   { shift->headers->content_length(@_) }
+sub content_type     { shift->headers->content_type(@_) }
 
 use Jifty::JSON;
 use Jifty::YAML;
@@ -144,16 +161,23 @@ sub promote {
     die Carp::longmess("old calling style") unless ref $req;
 
     # Import all props from Plack::Request object
-    my $self = bless $req, $class;
+    my $self = bless {}, $class;
     $self->{'actions'} = {};
     $self->{'state_variables'} = {};
     $self->{'fragments'} = {};
     $self->arguments({});
     $self->template_arguments({});
 
+    $req->cookies; # vivify plack.cookie.parsed
+    $self->{env} = $req->env;
+    $self->uri($req->uri);
+    $self->headers($req->headers);
+    $self->parameters($req->parameters->mixed);
+    $self->uploads($req->uploads->mixed);
+
     # Grab content type and posted data, if any
     my $ct   = $req->content_type;
-    my $data = $req->raw_body;
+    my $data = $req->content;
 
     # Check it for something appropriate
     if ($data) {

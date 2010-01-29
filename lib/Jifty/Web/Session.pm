@@ -3,7 +3,6 @@ use strict;
 
 package Jifty::Web::Session;
 use base qw/Jifty::Object/;
-use CGI::Simple::Cookie ();
 use DateTime    ();
 use Storable    ();
 $Storable::Deparse    = 1;
@@ -111,11 +110,9 @@ sub load_by_kv {
 
 sub _get_session_id_from_client {
     my $self        = shift;
-    my %cookies     = Jifty->web->request ? CGI::Simple::Cookie->parse(Jifty->web->request->env->{HTTP_COOKIE}) : ();
-    my $cookie_name = $self->cookie_name;
-    my $session_id
-        = $cookies{$cookie_name} ? $cookies{$cookie_name}->value() : undef;
-    return $session_id;
+    my $cookies     = Jifty->web->request
+        ? Jifty->web->request->env->{'plack.cookie.parsed'} : {};
+    return $cookies->{$self->cookie_name};
 }
 
 =head2 unload
@@ -321,19 +318,14 @@ sub set_cookie {
     $self->load unless $self->loaded;
 
     my $cookie_name = $self->cookie_name;
-    my %cookies     = Jifty->web->request ? CGI::Simple::Cookie->parse(Jifty->web->request->env->{HTTP_COOKIE}) : ();
-
-    my $cookie      = CGI::Simple::Cookie->new(
-        -name    => $cookie_name,
-        -value   => $self->id,
-        -expires => $self->expires,
-    );
-
-    if ( not $cookies{$cookie_name}
-        or ( $cookies{$cookie_name} ne $cookie->as_string ) )
-    {
-        Jifty->web->response->cookies->{$cookie->name} = $cookie;
-    }
+    my $cookies     = Jifty->web->request ? Jifty->web->request->env->{'plack.cookie.parsed'} : {};
+    my $cookie      = {
+        value   => $self->id,
+        expires => $self->expires,
+    };
+    # XXX: do we every need to check the existing cookie to decide if
+    # we want to set the cookie this time?
+    Jifty->web->response->cookies->{$cookie_name} = $cookie;
 }
 
 =head2 cookie_name
