@@ -20,6 +20,7 @@ has 'parameters' => (is => 'rw', isa => 'HashRef', default => sub { {} });
 has 'uploads' => (is => 'rw', isa => 'HashRef');
 has 'headers' => (is => 'rw', isa => 'HTTP::Headers', default => sub { HTTP::Headers->new });
 has 'uri' => (is => 'rw', isa => 'URI', default => sub { URI->new('http:///') });
+has 'cookies' => (is => 'rw', isa => 'HashRef', default => sub { {} } );
 
 sub address     { $_[0]->env->{REMOTE_ADDR} }
 sub remote_host { $_[0]->env->{REMOTE_HOST} }
@@ -161,19 +162,17 @@ sub promote {
     die Carp::longmess("old calling style") unless ref $req;
 
     # Import all props from Plack::Request object
-    my $self = bless {}, $class;
-    $self->{'actions'} = {};
-    $self->{'state_variables'} = {};
-    $self->{'fragments'} = {};
-    $self->arguments({});
-    $self->template_arguments({});
-
-    $req->cookies; # vivify plack.cookie.parsed
-    $self->{env} = $req->env;
-    $self->uri($req->uri);
-    $self->headers($req->headers);
-    $self->parameters($req->parameters->mixed);
-    $self->uploads($req->uploads->mixed);
+    my $self = $class->new( env => $req->env,
+                            headers => $req->headers,
+                            parameters => $req->parameters->mixed,
+                            uploads => $req->uploads->mixed,
+                            uri => $req->uri,
+                            cookies => $req->cookies,
+                            actions => {},
+                            state_variables => {},
+                            fragments => {},
+                            arguments => {},
+                            template_arguments => {} );
 
     # Grab content type and posted data, if any
     my $ct   = $req->content_type;

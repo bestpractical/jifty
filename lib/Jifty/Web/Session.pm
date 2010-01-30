@@ -111,7 +111,7 @@ sub load_by_kv {
 sub _get_session_id_from_client {
     my $self        = shift;
     my $cookies     = Jifty->web->request
-        ? Jifty->web->request->env->{'plack.cookie.parsed'} : {};
+        ? Jifty->web->request->cookies : {};
     return $cookies->{$self->cookie_name};
 }
 
@@ -318,7 +318,7 @@ sub set_cookie {
     $self->load unless $self->loaded;
 
     my $cookie_name = $self->cookie_name;
-    my $cookies     = Jifty->web->request ? Jifty->web->request->env->{'plack.cookie.parsed'} : {};
+    my $cookies     = Jifty->web->request ? Jifty->web->request->cookies : {};
     my $cookie      = {
         value   => $self->id,
         expires => $self->expires,
