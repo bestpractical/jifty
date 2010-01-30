@@ -68,6 +68,7 @@ __PACKAGE__->javascript_libs([qw(
     ui.core.js
     ui.sortable.js
     ordered-list.js
+    uploads.js
 )]);
 
 use Class::Trigger;
