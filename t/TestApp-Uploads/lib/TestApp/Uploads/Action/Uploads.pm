@@ -18,7 +18,6 @@ sub take_action {
     $self->result->content(files => {});
     for my $att ( ref $attachments eq 'ARRAY' ? @$attachments : $attachments ) {
         next unless $att && $att->isa('Jifty::Web::FileUpload');
-        warn $att->filename;
         $self->result->content('files')->{$att->filename} = $att->content;
     }
     return 1;
