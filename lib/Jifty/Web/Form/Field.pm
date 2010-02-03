@@ -465,7 +465,7 @@ Renders a default CSS class for each part of our widget.
 sub classes {
     my $self = shift;
     my $name = $self->name;
-    return join(' ', ($self->class||''), ($name ? "argument-".$name : ''));
+    return join(' ', ($self->class||()), ($name ? "argument-".$name : ()));
 }
 
 
@@ -613,10 +613,10 @@ sub _widget_class {
     my $self = shift;
     my @classes = ( 'widget',
                     $self->classes,
-                    ( $self->ajax_validates     ? ' ajaxvalidation' : '' ),
-                    ( $self->ajax_canonicalizes ? ' ajaxcanonicalization' : '' ),
-                    ( $self->autocompleter      ? ' ajaxautocompletes' : '' ),
-                    ( $self->focus              ? ' focus' : ''),
+                    ( $self->ajax_validates     ? ' ajaxvalidation' : () ),
+                    ( $self->ajax_canonicalizes ? ' ajaxcanonicalization' : () ),
+                    ( $self->autocompleter      ? ' ajaxautocompletes' : () ),
+                    ( $self->focus              ? ' focus' : ()),
                     @_ );
 
     return qq! class="!. join(' ',@classes).  qq!"!
