@@ -13,9 +13,10 @@ my $URL    = $server->started_ok;
 for my $test_file (qw(01.behaviour.html 02.action.html)) {
     $sel->open_ok("/static/js-test/$test_file");
     my $html = $sel->get_text("test");
-    $html =~ /(\d+)\.\.(\d+)/;
+    like( $html, qr/(\d+)\.\.(\d+)/, 'contains tests' );
+    my ( $start, $end ) = $html =~ /(\d+)\.\.(\d+)/;
 
-    for($1..$2) {
+    for($start .. $end ) {
         $sel->wait_for_text_present("exact:ok $_");
         ok(! $sel->is_text_present("exact:nok $_") );
     }

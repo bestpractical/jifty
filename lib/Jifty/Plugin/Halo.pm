@@ -194,7 +194,10 @@ sub new_frame {
 
                 if ($ref) {
                     my $expanded = Jifty->web->serial;
-                    my $yaml = Jifty->web->escape(Jifty::YAML::Dump($value));
+                    my $yaml =
+                      eval { defined $value && fileno($value) }
+                      ? '*GLOB*' : Jifty->web->escape( Jifty::YAML::Dump($value) );
+
                     $out .= qq{<a href="#" onclick="jQuery(Jifty.\$('$expanded')).toggle(); return false">$ref</a><div id="$expanded" class="halo-argument" style="display: none"><pre>$yaml</pre></div>};
                 }
                 elsif (defined $value) {

@@ -98,9 +98,10 @@ my $depth = 0;
 % for my $e (@args) {
 <li><b><% $e->[0] %></b>:
 % if ($e->[1]) {
+% my $yaml = eval { defined $e->[2] && fileno($e->[2]) } ? '*GLOB*' : Jifty::YAML::Dump($e->[2]);
 % my $expanded = Jifty->web->serial;
 <a href="#" onclick="jQuery(Jifty.$('<% $expanded %>')).toggle(); return false"><% $e->[1] %></a>
-<div id="<% $expanded %>" style="display: none; position: absolute; left: 200px; border: 1px solid black; background: #ccc; padding: 1em; padding-top: 0; width: 300px; height: 500px; overflow: auto"><pre><% Jifty::YAML::Dump($e->[2]) %></pre></div>
+<div id="<% $expanded %>" style="display: none; position: absolute; left: 200px; border: 1px solid black; background: #ccc; padding: 1em; padding-top: 0; width: 300px; height: 500px; overflow: auto"><pre><% $yaml %></pre></div>
 % } elsif (defined $e->[2]) {
 <% $e->[2] %>
 % } else {

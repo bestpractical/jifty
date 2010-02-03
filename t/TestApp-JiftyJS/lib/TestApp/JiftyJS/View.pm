@@ -89,7 +89,7 @@ template '/region/multiupdate' => page {
         id => 'update',
         label => "Update All",
         onclick => [
-            "alert(42);",
+            "alert('42');",
             { region => 'content1', replace_with => 'region1' },
             { region => 'content2', replace_with => 'region2' },
             { region => 'content3', replace_with => 'hello_world', arguments => { name => "Pony" } },
@@ -274,7 +274,7 @@ template '/p/two' => sub {
     outs_raw(<<E);
     <script type="text/javascript">
     jQuery(function() {
-        alert( jQuery("p").size() );
+        alert( ''+jQuery("p").size() );
     });
     </script>
 E
