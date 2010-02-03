@@ -44,7 +44,7 @@ open
     /__jifty/admin/model/Offer
 
 type
-    xpath=//div[contains(@class, "jifty_admin create item")]//input[@type="text"]
+    xpath=//div[contains(@class, "crud create item")]//input[@type="text"]
     Not A Job Offer
 
 click
@@ -76,13 +76,11 @@ type
     Offer A Job
 
 check
-    xpath=//input[starts-with(@id, "J:A:F-is_job-create")][@type="checkbox"]
-
+    xpath=//input[starts-with(@id, "J:A:F-is_job-auto")][@type="checkbox"]
 
 # Click the "Create" button
 click
-    xpath=//div[@class="submit_button"]/input[contains(@name,"create")]
- 
+    xpath=//div[@class="submit_button"]/input[@type="submit"]
 
 pause
     100

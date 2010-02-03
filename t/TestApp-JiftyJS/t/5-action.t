@@ -21,7 +21,7 @@ my $URL    = $server->started_ok;
 
 $sel->open("/");
 
-if ($ENV{'SELENIUM_RC_BROWSER'} eq '*iexplore') {
+if (($ENV{'SELENIUM_RC_BROWSER'}||'') eq '*iexplore') {
     $sel->set_speed(1000);
 }
 
