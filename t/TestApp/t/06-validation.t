@@ -46,8 +46,8 @@ $mech->fill_in_action_ok('dosomething',
     'bar' => '',
 );
 $mech->submit_html_ok();
-$mech->content_contains('<span class="error text  argument-bar" id="errors-J:A:F-bar-dosomething">You need to fill in the \'Bar\' field</span>', 'got error for bar');
-$mech->content_contains('<span class="error text  argument-foo" id="errors-J:A:F-foo-dosomething"></span>', 'got no error for foo');
+$mech->content_contains('<span class="error text argument-bar" id="errors-J:A:F-bar-dosomething">You need to fill in the \'Bar\' field</span>', 'got error for bar');
+$mech->content_contains('<span class="error text argument-foo" id="errors-J:A:F-foo-dosomething"></span>', 'got no error for foo');
 
 $mech->get_ok("$URL/__jifty/validator.xml?J:A-dosomething=TestApp::Action::DoSomethingElse&J:A:F-foo-dosomething=&J:A:F-bar-dosomething=blam&J:VALIDATE=1&_=",
     "Getting validator.xml output for a form entry");
