@@ -31,7 +31,7 @@ Returns a new, empty session.
 
 sub new {
     my $class = shift;
-        return bless { _cookie_name => $cookie_name }, $class;
+   return bless { _cookie_name => Jifty->config->framework('Web')->{'SessionCookieName'} }, $class;
 }
 
 =head2 id

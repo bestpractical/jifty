@@ -28,7 +28,7 @@ Returns a new, empty session.
 sub new {
     my $class = shift;
 
-    my $session_class = Jifty->config->framework('Web')->{'SessionClass'} || 'Jift::Web::Session::JDBI';
+    my $session_class = Jifty->config->framework('Web')->{'SessionClass'} || 'Jifty::Web::Session::JDBI';
     my $cookie_name = Jifty->config->framework('Web')->{'SessionCookieName'};
         Jifty::Util->require($session_class);
         return $session_class->new(@_);
