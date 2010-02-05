@@ -60,7 +60,7 @@ Retuens the key calculated for this content.
 
 =cut
 
-__PACKAGE__->mk_accessors(qw(content content_deflated metadata key));
+__PACKAGE__->mk_accessors(qw(content metadata key));
 
 sub new {
     my $class = shift;
@@ -71,9 +71,17 @@ sub new {
         %$args,
     } );
     $self->key( md5_hex( $self->metadata->{hash_with} || $self->content ) );
-    $self->content_deflated( Compress::Zlib::memGzip( $self->content ) )
-        if $self->metadata->{deflate};
     return $self;
+}
+
+sub content_deflated {
+    my $self = shift;
+    return unless $self->metadata->{deflate};
+
+    $self->{content_deflated} = Compress::Zlib::memGzip( $self->content )
+        unless exists $self->{content_deflated};
+
+    return $self->{content_deflated};
 }
 
 1;

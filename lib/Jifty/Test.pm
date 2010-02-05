@@ -14,6 +14,11 @@ use Hash::Merge;
 use Digest::MD5 qw/md5_hex/;
 use Cwd qw/abs_path cwd/;
 
+# Mechanize uses Test::LongString to report mismatches.  Increase the
+# limit so we can see where errors come from more easily.
+use Test::LongString;
+$Test::LongString::Max = 128;
+
 =head1 NAME
 
 Jifty::Test - Jifty's test module

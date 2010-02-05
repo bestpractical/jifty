@@ -108,6 +108,11 @@ else {
     requires('YAML' => 0.35) unless can_use('YAML::Syck' => 0.71);
 }
 
+feature "Memcached support for serving compressed CSS and JS from Jifty's CAS" =>
+    -default => 1,
+    recommends('Cache::Memcached' => 1.25),
+    ;
+
 feature 'Administrative Interface (web)' =>
     -default => 1,
     recommends('Pod::Simple' => 0), # Pod::Simple::Text Pod::Simple::HTML

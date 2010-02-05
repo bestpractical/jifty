@@ -18,7 +18,6 @@ use HTTP::Date ();
 
 use Jifty::Dispatcher -base;
 
-
 on '/__jifty/js/*' => run {
     my $arg = $1;
     if ( $arg !~ /^[0-9a-f]{32}\.js$/ ) {
@@ -34,7 +33,8 @@ on '/__jifty/js/*' => run {
     $ccjs->_generate_javascript;
 
     $arg =~ s/\.js$//;
-    $ccjs->_serve_cas_object( 'js-all', $arg );
+    my $status = Jifty::CAS->serve_by_name( 'ccjs', 'js-all', $arg );
+    abort $status if $status != 200;
     abort;
 };
 
@@ -51,7 +51,8 @@ on '/__jifty/css/*' => run {
     $ccjs->generate_css;
 
     $arg =~ s/\.css$//;
-    $ccjs->_serve_cas_object( 'css-all', $arg );
+    my $status = Jifty::CAS->serve_by_name( 'ccjs', 'css-all', $arg );
+    abort $status if $status != 200;
     abort;
 };
 
