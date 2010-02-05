@@ -4,7 +4,7 @@ framework:
   ApplicationClass: TestApp::Plugin::AppPluginHasModels
   ApplicationName: TestApp-Plugin-AppPluginHasModels
   ApplicationUUID: 646FD662-32DD-11DC-AD79-2A0157C3B83B
-  ConfigFileVersion: 2
+  ConfigFileVersion: 5
   Database: 
     CheckSchema: 1
     Database: testapp_plugin_apppluginhasmodels

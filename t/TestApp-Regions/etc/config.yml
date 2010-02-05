@@ -4,7 +4,7 @@ framework:
   ApplicationClass: TestApp::Regions
   ApplicationName: TestApp-Regions
   ApplicationUUID: B2619C96-9EC7-11DD-8442-E9B62EB97401
-  ConfigFileVersion: 4
+  ConfigFileVersion: 5
   Database: 
     AutoUpgrade: 1
     CheckSchema: 1

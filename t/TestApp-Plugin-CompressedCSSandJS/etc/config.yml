@@ -4,7 +4,7 @@ framework:
   ApplicationClass: TestApp::Plugin::CompressedCSSandJS
   ApplicationName: TestApp::Plugin::CompressedCSSandJS
   ApplicationUUID: DC3B58E4-4F3C-11DC-9ECB-E5DB6F105773
-  ConfigFileVersion: 2
+  ConfigFileVersion: 5
   Database: 
     CheckSchema: 1
     Database: testapp_plugin_singlepage

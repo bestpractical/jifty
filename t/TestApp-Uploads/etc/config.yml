@@ -4,7 +4,7 @@ framework:
   ApplicationClass: TestApp::Uploads
   ApplicationName: TestApp-Uploads
   ApplicationUUID: EE2D4328-FF2F-11DE-9789-0CDBEE916148
-  ConfigFileVersion: 4
+  ConfigFileVersion: 5
   Database: 
     AutoUpgrade: 1
     CheckSchema: 1

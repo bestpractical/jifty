@@ -4,7 +4,7 @@ framework:
   ApplicationClass: TestApp::Plugin::ActorMetadata
   ApplicationName: TestApp::Plugin::ActorMetadata
   ApplicationUUID: C4418A2E-DE0B-11DD-96DC-F9E9C3E98ACD
-  ConfigFileVersion: 4
+  ConfigFileVersion: 5
   Database: 
     AutoUpgrade: 1
     CheckSchema: 1
