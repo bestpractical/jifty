@@ -51,6 +51,20 @@ sub new {
     return $self;
 }
 
+=head2 request
+
+We override mechanize's defualt request method so accept-encoding is
+not set to gzip by default.
+
+=cut
+
+sub request {
+    my ($self, $req) = @_;
+    $req->header( 'Accept-Encoding', 'identity' )
+        unless $req->header( 'Accept-Encoding' );
+    return $self->SUPER::request($req);
+}
+
 =head2 moniker_for ACTION, FIELD1 => VALUE1, FIELD2 => VALUE2
 
 Finds the moniker of the first action of type I<ACTION> whose

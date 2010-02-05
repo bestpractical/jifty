@@ -17,15 +17,24 @@ my $server  = Jifty::Test->make_server;
 my $URL     = $server->started_ok;
 
 my $mech    = Jifty::Test::WWW::Mechanize->new();
-$mech->get_ok($URL);
+my $request = HTTP::Request->new( GET => "$URL/", ['Accept-Encoding' => 'identity'] );
+
+my $response = $mech->request($request);
+
 my $expected = $mech->response->content;
 like($expected, qr/Jifty Test Application/);
 
-SKIP: {
-skip "blah", 2;
-my $request = HTTP::Request->new( GET => "$URL/", ['Accept-Encoding' => 'gzip'] );
-my $response = $mech->request( $request );
+# now gzip
+
+$request = HTTP::Request->new( GET => "$URL/", ['Accept-Encoding' => 'gzip'] );
+$response = $mech->request( $request );
+
 is($response->header('Content-Encoding'), 'gzip');
-# blah, can't check if this is same as expected because there are continuation serials.
 like(Compress::Zlib::memGunzip($response->content), qr/Jifty Test Application/);
-}
+
+
+$request = HTTP::Request->new( GET => "$URL/static/images/pony.jpg", ['Accept-Encoding' => 'gzip'] );
+$response = $mech->request( $request );
+
+is($response->header('Content-Encoding'), undef, 'image are not compressed');
+

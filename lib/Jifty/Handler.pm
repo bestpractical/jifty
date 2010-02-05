@@ -28,6 +28,8 @@ use Jifty::View::Declare::Handler ();
 use Class::Trigger;
 use String::BufferStack;
 use Plack::Request;
+use Plack::Builder;
+use Plack::Util;
 
 __PACKAGE__->mk_accessors(qw(dispatcher _view_handlers stash buffer));
 
@@ -120,7 +122,24 @@ Returns a closure for L<PSGI> application.
 
 sub psgi_app {
     my $self = shift;
-    return sub { $self->handle_request(@_) };
+
+    my $app = sub { $self->handle_request(@_) };
+
+    # allow plugin to wrap $app
+    builder {
+        enable 'Deflater';
+        enable sub { my $app = shift;
+                     sub { my $env = shift;
+                           my $res = $app->($env);
+                           my $h = Plack::Util::headers($res->[1]);
+                           my $type = $h->get('Content-Type')
+                               or return $res;
+                           delete $env->{HTTP_ACCEPT_ENCODING}
+                               unless $type =~ m|application/x-javascript| || $type =~ m|^text/|;
+                           $res }
+                 };
+        $app;
+    };
 }
 
 =head2 handle_request
