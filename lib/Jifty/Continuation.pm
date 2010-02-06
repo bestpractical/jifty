@@ -131,9 +131,13 @@ sub new {
     my $key = Jifty->web->serial . "_" . int(rand(10)) . int(rand(10)) . int(rand(10)) . int(rand(10)) . int(rand(10)) . int(rand(10));
     $self->id($key);
 
+    # XXX: Jifty::Request should really just extract useful things
+    # from plack so we don't have plack-specified fields to hide here.
+
     # Make sure we don't store any of the connection information
     local $self->request->{env}{"psgi.input"};
     local $self->request->{env}{"psgi.errors"};
+    local $self->request->{env}{"plack.request.tempfh"};
     local $self->request->{_body_parser}{input_handle} if defined $self->request->{_body_parser};
 
     # Save it into the session
@@ -246,9 +250,16 @@ sub return {
     # Set the current request to the one in the continuation
     my $input  = Jifty->web->request->env->{"psgi.input"};
     my $errors = Jifty->web->request->env->{"psgi.errors"};
+    my $tempfh = Jifty->web->request->env->{"plack.request.tempfh"};
+    my $ihandle = Jifty->web->request->{_body_parser}
+        ? Jifty->web->request->{_body_parser}{input_handle} : undef;
+
     Jifty->web->request($self->request->clone);
+
     Jifty->web->request->env->{"psgi.input"}  = $input;
     Jifty->web->request->env->{"psgi.errors"} = $errors;
+    Jifty->web->request->env->{"plack.request.tempfh"} = $tempfh;
+    Jifty->web->request->{_body_parser}{input_handle} = $ihandle if $ihandle;
     return Jifty->web->request;
 }
 
