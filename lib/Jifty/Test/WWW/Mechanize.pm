@@ -58,11 +58,11 @@ not set to gzip by default.
 
 =cut
 
-sub request {
+sub _modify_request {
     my ($self, $req) = @_;
     $req->header( 'Accept-Encoding', 'identity' )
         unless $req->header( 'Accept-Encoding' );
-    return $self->SUPER::request($req);
+    return $self->SUPER::_modify_request($req);
 }
 
 =head2 moniker_for ACTION, FIELD1 => VALUE1, FIELD2 => VALUE2
