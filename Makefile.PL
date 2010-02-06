@@ -52,6 +52,7 @@ requires('HTTP::Server::Simple::Recorder');
 requires('Hash::Merge');
 requires('Hash::MultiValue', 0.05);
 requires('Hook::LexWrap');
+requires('IO::Handle::Util');
 requires('IPC::PubSub' => '0.23' );
 requires('IPC::Run3');
 requires('Jifty::DBI' => '0.60' );            # Jifty::DBI::Collection Jifty::DBI::Handle Jifty::DBI::Record::Cachable Jifty::DBI::SchemaGenerator

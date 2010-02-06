@@ -155,4 +155,8 @@ template 'otherplace' => page {
     form { }
 };
 
+template 'naughty' => sub {
+    print STDOUT "this is bad";
+};
+
 1;
