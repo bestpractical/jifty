@@ -4,10 +4,6 @@ use strict;
 package Jifty::Web::Session;
 use base qw/Jifty::Object/;
 use DateTime    ();
-use Storable    ();
-$Storable::Deparse    = 1;
-$Storable::Eval       = 1;
-$Storable::forgive_me = 1;
 
 =head1 NAME
 
@@ -31,14 +27,10 @@ Returns a new, empty session.
 sub new {
     my $class = shift;
 
-    my $session_class = Jifty->config->framework('Web')->{'SessionClass'};
+    my $session_class = Jifty->config->framework('Web')->{'SessionClass'} || 'Jifty::Web::Session::JDBI';
     my $cookie_name = Jifty->config->framework('Web')->{'SessionCookieName'};
-    if ( $session_class and $class ne $session_class ) {
         Jifty::Util->require($session_class);
         return $session_class->new(@_);
-    } else {
-        return bless { _cookie_name => $cookie_name }, $class;
-    }
 }
 
 =head2 id
@@ -48,8 +40,7 @@ Returns the session's id if it has been loaded, or C<undef> otherwise.
 =cut
 
 sub id {
-    my $self = shift;
-    return $self->loaded ? $self->_session->session_id : undef;
+    die "Subclass must implement 'id'";
 }
 
 =head2 load [ID]
@@ -61,19 +52,7 @@ creates a session in the database.
 =cut
 
 sub load {
-    my $self       = shift;
-    my $session_id = shift;
-
-    $session_id ||= $self->_get_session_id_from_client();
-
-    my $session = Jifty::Model::Session->new;
-    $session->load_by_cols(
-        session_id => $session_id,
-        key_type   => "session"
-    ) if $session_id;
-
-    $session->create( key_type => "session" ) unless $session->id;
-    $self->_session($session);
+    die "Subclass must implement 'load'";
 }
 
 =head2 load_by_kv key => value 
@@ -86,33 +65,7 @@ based on, say, a timestamp, then you're asking for trouble.
 =cut
 
 sub load_by_kv {
-    my $self = shift;
-    my $k    = shift;
-    my $v    = shift;
-
-# XXX TODO: we store this data in a storable. so we now want to match on the storable version
-# It would be so nice if Jifty::DBI could do this for us.
-    my $encoded = Storable::nfreeze( \$v );
-
-    my $session = Jifty::Model::Session->new;
-    $session->load_by_cols(
-        key_type => 'key',
-        data_key => $k,
-        value    => $encoded,
-    );
-    my $session_id = $session->session_id;
-
-    # XXX: if $session_id is undef, then bad things happen. This *can* happen.
-
-    $self->load($session_id);
-    $self->set( $k => $v ) if !$session_id;
-}
-
-sub _get_session_id_from_client {
-    my $self        = shift;
-    my $cookies     = Jifty->web->request
-        ? Jifty->web->request->cookies : {};
-    return $cookies->{$self->cookie_name};
+    die "Subclass must implement load_by_kv";
 }
 
 =head2 unload
@@ -154,20 +107,8 @@ session, including "metadata" and "continuation".
 =cut
 
 sub get {
-    my $self     = shift;
-    my $key      = shift;
-    my $key_type = shift || "key";
 
-    return undef unless $self->loaded;
-
-    my $setting = Jifty::Model::Session->new;
-    $setting->load_by_cols(
-        session_id => $self->id,
-        key_type   => $key_type,
-        data_key   => $key
-    );
-    return $setting->value;
-
+    die "subclass must implement 'get'"
 }
 
 =head2 set KEY => VALUE, [TYPE]
@@ -181,31 +122,7 @@ you.
 =cut
 
 sub set {
-    my $self     = shift;
-    my $key      = shift;
-    my $value    = shift;
-    my $key_type = shift || "key";
-
-    return undef unless $self->loaded;
-    $self->_session->set_updated( DateTime->now );
-
-    my $setting = Jifty::Model::Session->new;
-    $setting->load_by_cols(
-        session_id => $self->id,
-        key_type   => $key_type,
-        data_key   => $key
-    );
-    if ( $setting->id ) {
-        $setting->set_value($value);
-    } else {
-        $setting->create(
-            session_id => $self->id,
-            key_type   => $key_type,
-            data_key   => $key,
-            value      => $value
-        );
-    }
-
+    die "subclass must implement 'set'"
 }
 
 =head2 remove KEY, [TYPE]
@@ -215,20 +132,7 @@ Remove key C<KEY> from the cache.  C<TYPE> defaults to "key".
 =cut
 
 sub remove {
-    my $self     = shift;
-    my $key      = shift;
-    my $key_type = shift || "key";
-
-    return undef unless $self->loaded;
-    $self->_session->set_updated( DateTime->now );
-
-    my $setting = Jifty::Model::Session->new;
-    $setting->load_by_cols(
-        session_id => $self->id,
-        key_type   => $key_type,
-        data_key   => $key
-    );
-    $setting->delete if $setting->id;
+    die "subclass must implement 'remove'"
 }
 
 =head2 remove_all
@@ -238,12 +142,7 @@ Removes the session from the database entirely.
 =cut
 
 sub remove_all {
-    my $self = shift;
-    return unless $self->loaded;
-    my $settings = Jifty::Model::SessionCollection->new;
-    $settings->limit( column => "session_id", value => $self->id );
-    $_->delete while $_ = $settings->next;
-    $self->unload;
+    die "Subclass must implement 'remove_all'"
 }
 
 =head2 set_continuation ID CONT
@@ -289,17 +188,7 @@ continuations' C<id>.
 =cut
 
 sub continuations {
-    my $self = shift;
-
-    return () unless $self->loaded;
-
-    my $conts = Jifty::Model::SessionCollection->new;
-    $conts->limit( column => "key_type",   value => "continuation" );
-    $conts->limit( column => "session_id", value => $self->id );
-
-    my %continuations;
-    $continuations{ $_->data_key } = $_->value while $_ = $conts->next;
-    return %continuations;
+    die "Subclass must implement 'continuations'";
 }
 
 =head2 set_cookie
