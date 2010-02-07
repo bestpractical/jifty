@@ -11,6 +11,6 @@ my $URL     = $server->started_ok;
 my $mech    = Jifty::Test::WWW::Mechanize->new();
 my $request = HTTP::Request->new( GET => "$URL/naughty");
 my $response = $mech->request($request);
-is($response->content, 'this is bad');
+is($response->content, 'this is bad: localhost');
 $mech->warnings_like(qr/deprecated/);
 

@@ -16,7 +16,7 @@ INCOMPATABILITIES
  * Printing to STDOUT deprecated.  Use outs, outs_raw, or
    Jifty->web->response->body() instead.
 
- * munging with the %ENV hash is no longer supported.  Use
+ * munging with the %ENV hash is deprecated.  Use
    Jifty->web->request->env instead.
 
 -----------------------------------
