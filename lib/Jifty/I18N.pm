@@ -198,6 +198,7 @@ sub get_language_handle {
         }
     }
 
+    # I18N::LangTags::Detect wants these for detecting
     local $ENV{REQUEST_METHOD} = Jifty->web->request->method
         if Jifty->web->request;
     local $ENV{HTTP_ACCEPT_LANGUAGE} = Jifty->web->request->header("Accept-Language") || ""

@@ -349,7 +349,11 @@ sub reference_to_data {
     my $id = $obj->id;
 
     # probably a file extension, from the REST rewrite
-    my $extension = $ENV{HTTP_ACCEPT} =~ /^\w+$/ ? ".$ENV{HTTP_ACCEPT}" : '';
+    my $extension = '';
+    if (Jifty->web->request &&
+        Jifty->web->request->env->{HTTP_ACCEPT} =~ m/^\w+$/) {
+        $extension = '.'.Jifty->web->request->env->{HTTP_ACCEPT};
+    }
 
     return {
         jifty_model_reference => 1,

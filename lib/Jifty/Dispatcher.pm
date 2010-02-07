@@ -970,7 +970,7 @@ Returns true if the current request is under SSL.
 sub _match_https {
     my $self = shift;
     $self->log->debug("Matching request against HTTPS");
-    return exists $ENV{HTTPS} ? 1 : 0;
+    return Jifty->web->request->secure;
 }
 
 =head2 _match_http
@@ -982,7 +982,7 @@ Returns true if the current request is not under SSL.
 sub _match_http {
     my $self = shift;
     $self->log->debug("Matching request against HTTP");
-    return exists $ENV{HTTPS} ? 0 : 1;
+    return !Jifty->web->request->secure;
 }
 
 sub _match_plugin {

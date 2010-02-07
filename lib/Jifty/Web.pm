@@ -128,7 +128,7 @@ sub url {
     # Try to get a host out of the environment, useful in remote testing.
     # The code is a little hairy because there's no guarantee these
     # environment variables have all the information.
-    if (my $http_host_env = $ENV{HTTP_HOST}) {
+    if (Jifty->web->request && (my $http_host_env = Jifty->web->request->uri->host)) {
         # Explicit flag needed because URI->new("noscheme") is structurally
         # different from URI->new("http://smth"). Clunky, but works.
         my $dirty;
@@ -743,6 +743,7 @@ sub redirect {
         # We should replicate that here.
         $request->path( URI::Escape::uri_unescape( $page->url ) );
         $request->method("GET"); # ..effectively.
+        $request->scheme($self->request->scheme);
         $request->continuation($self->request->continuation);
         my $cont = Jifty::Continuation->new(
             request  => $request,
@@ -1512,6 +1513,6 @@ Indicates whether the current request was made using SSL.
 
 =cut
 
-sub is_ssl { $ENV{HTTPS} }
+sub is_ssl { Jifty->web->request && Jifty->web->request->secure }
 
 1;

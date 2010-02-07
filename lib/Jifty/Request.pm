@@ -21,6 +21,7 @@ has 'uploads' => (is => 'rw', isa => 'HashRef');
 has 'headers' => (is => 'rw', isa => 'HTTP::Headers', default => sub { HTTP::Headers->new });
 has 'uri' => (is => 'rw', isa => 'URI', default => sub { URI->new('http:///') });
 has 'cookies' => (is => 'rw', isa => 'HashRef', default => sub { {} } );
+has 'scheme' => (is => "rw", isa => "Str", default => sub { 'http' });
 
 sub address     { $_[0]->env->{REMOTE_ADDR} }
 sub remote_host { $_[0]->env->{REMOTE_HOST} }
@@ -32,7 +33,6 @@ sub user        { $_[0]->env->{REMOTE_USER} }
 sub request_uri { $_[0]->env->{REQUEST_URI} }
 sub path_info   { $_[0]->env->{PATH_INFO} }
 sub script_name { $_[0]->env->{SCRIPT_NAME} }
-sub scheme      { $_[0]->env->{'psgi.url_scheme'} }
 sub secure      { $_[0]->scheme eq 'https' }
 sub body        { $_[0]->env->{'psgi.input'} }
 sub input       { $_[0]->env->{'psgi.input'} }
@@ -167,6 +167,7 @@ sub promote {
                             headers => $req->headers,
                             parameters => $req->parameters->mixed,
                             uploads => $req->uploads->mixed,
+                            scheme => $req->scheme,
                             uri => $req->uri,
                             cookies => $req->cookies,
                             actions => {},
