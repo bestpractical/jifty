@@ -126,7 +126,11 @@ sub psgi_app {
     my $app = sub { $self->handle_request(@_) };
 
     # allow plugin to wrap $app
-    builder {
+    for ( Jifty->plugins ) {
+        $app = $_->wrap($app);
+    }
+
+    $app = builder {
         enable 'Deflater';
         enable sub { my $app = shift;
                      sub { my $env = shift;
@@ -140,6 +144,8 @@ sub psgi_app {
                  };
         $app;
     };
+
+    return $app;
 }
 
 =head2 handle_request
