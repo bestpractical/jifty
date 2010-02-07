@@ -250,16 +250,11 @@ sub return {
     # Set the current request to the one in the continuation
     my $input  = Jifty->web->request->env->{"psgi.input"};
     my $errors = Jifty->web->request->env->{"psgi.errors"};
-    my $tempfh = Jifty->web->request->env->{"plack.request.tempfh"};
-    my $ihandle = Jifty->web->request->{_body_parser}
-        ? Jifty->web->request->{_body_parser}{input_handle} : undef;
 
     Jifty->web->request($self->request->clone);
 
     Jifty->web->request->env->{"psgi.input"}  = $input;
     Jifty->web->request->env->{"psgi.errors"} = $errors;
-    Jifty->web->request->env->{"plack.request.tempfh"} = $tempfh;
-    Jifty->web->request->{_body_parser}{input_handle} = $ihandle if $ihandle;
     return Jifty->web->request;
 }
 
