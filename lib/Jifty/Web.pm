@@ -120,35 +120,30 @@ form the path part of the resulting URL.
 sub url {
     my $self = shift;
     my %args = (scheme => undef,
-                path => '/',
+                path => undef,
                 @_);
 
     my $uri;
 
-    $uri = Jifty->web->request->uri->clone if Jifty->web->request;
+    my $req = Jifty->web->request;
+    if ($req && $req->uri->host) {
+        $uri = $req->uri->clone;
+        $uri->path('/');
+    }
+    else {
+        $uri = URI->new(Jifty->config->framework("Web")->{BaseURL});
+        $uri->port(Jifty->config->framework("Web")->{Port});
+    }
 
-    if (!$uri) {
-      my $url  = Jifty->config->framework("Web")->{BaseURL};
-      my $port = Jifty->config->framework("Web")->{Port};
-   
-      $uri = URI->new($url);
-      $uri->port($port);
+    if (defined (my $path = $args{path})) {
+        # strip off leading '/' because ->canonical provides one
+        $path =~ s{^/}{};
+        $uri->path_query($path);
     }
 
     # https is sticky
     $uri->scheme('https') if $uri->scheme eq 'http' && Jifty->web->is_ssl;
 
-    if ( defined $args{'scheme'} ) {
-        $uri->scheme( $args{'scheme'} );
-    }
-
-    if (defined $args{path}) {
-      my $path = $args{path};
-      # strip off leading '/' because ->canonical provides one
-      $path =~ s{^/}{};
-      $uri->path_query($path);
-    }
-    
     return $uri->canonical->as_string;
 }
 
