@@ -33,6 +33,10 @@ TODO: this should also rebind STDIN/STDOUT in the per-request hook.
     return 'Jifty::Plugin::Compat::Apache';
 };
 
+*Jifty::Handler::cgi = sub {
+    return 'Jifty::Plugin::Compat::CGI';
+};
+
 wrap 'Jifty::View::Mason::Handler::new',
     post => sub { my $self = shift;
                   $self->interp->compiler->add_allowed_globals('$r');
@@ -42,6 +46,30 @@ wrap 'Jifty::View::Mason::Handler::new',
 push @Jifty::TestServer::ISA, 'Jifty::Server';
 
 package Jifty::Server;
+
+package Jifty::Plugin::Compat::CGI;
+use Carp;
+
+sub param {
+    my ($class, $key, $val) = @_;
+    my $params = Jifty->web->request->parameters;
+    if (defined $val) {
+        $params->{$key} = $val;
+    }
+    else {
+        return $params->{$key};
+    }
+}
+
+sub Vars {
+    my $params = Jifty->web->request->parameters;
+}
+
+sub AUTOLOAD {
+    our $AUTOLOAD;
+    croak "compat cgi does not handle $AUTOLOAD";
+}
+
 
 package Jifty::Plugin::Compat::Apache;
 use Carp;
