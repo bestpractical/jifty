@@ -473,7 +473,8 @@ sub _form_widget {
         render_mode => 'update',
         @_,
     );
-    my $cache_key = join '!!', %args;
+    my $cache_key = join '!!',
+      map { $_ => defined $args{$_} ? $args{$_} : '' } keys %args;
 
     # Setup the field name
     my $field = $args{'argument'};
