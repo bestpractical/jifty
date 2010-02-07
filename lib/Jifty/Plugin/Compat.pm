@@ -92,6 +92,10 @@ sub header_in {
     return Jifty->web->request->header(@_);
 }
 
+sub headers_in {
+    return Jifty->web->request->headers;
+}
+
 sub header_out {
     my ($class, $key, $val) = @_;
     if ($key eq 'Status') {
@@ -109,6 +113,15 @@ sub header_out {
     }
 
     Jifty->web->response->header( $key, $val );
+}
+
+sub headers_out {
+    return Jifty->web->response->headers;
+}
+
+sub uri {
+    my $req = Jifty->web->request;
+    return $req->script_name . $req->path_info || '';
 }
 
 sub method {
