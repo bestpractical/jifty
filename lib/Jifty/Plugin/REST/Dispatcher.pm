@@ -20,7 +20,7 @@ before qr{^ (/=/ .*) \. (js|json|yml|yaml|perl|pl|xml|html) $}x => run {
 };
 
 before POST qr{^ (/=/ .*) ! (DELETE|PUT|GET|POST|OPTIONS|HEAD|TRACE|CONNECT) $}x => run {
-    Jifty->web->request->request_method($2);
+    Jifty->web->request->method($2);
     Jifty->web->request->env->{REST_REWROTE_METHOD} = 1;
     dispatch $1;
 };
