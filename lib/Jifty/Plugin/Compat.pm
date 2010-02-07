@@ -98,6 +98,10 @@ sub header_out {
     Jifty->web->response->header( $key, $val );
 }
 
+sub method {
+    Jifty->web->request->method;
+}
+
 sub content_type {
     my $class = shift;
     Jifty->web->response->content_type( @_ );
