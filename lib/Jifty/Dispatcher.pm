@@ -957,7 +957,7 @@ came in with that method.
 
 sub _match_method {
     my ( $self, $method ) = @_;
-    #$self->log->debug("Matching method ".request->request_method." against ".$method);
+    #$self->log->debug("Matching method ".Jifty->web->request->method." against ".$method);
     $Request->method eq uc($method);
 }
 
