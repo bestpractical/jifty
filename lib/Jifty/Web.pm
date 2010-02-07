@@ -120,36 +120,12 @@ form the path part of the resulting URL.
 sub url {
     my $self = shift;
     my %args = (scheme => undef,
-                path => undef,
+                path => '/',
                 @_);
 
     my $uri;
 
-    # Try to get a host out of the environment, useful in remote testing.
-    # The code is a little hairy because there's no guarantee these
-    # environment variables have all the information.
-    if (Jifty->web->request && (my $http_host_env = Jifty->web->request->uri->host)) {
-        # Explicit flag needed because URI->new("noscheme") is structurally
-        # different from URI->new("http://smth"). Clunky, but works.
-        my $dirty;
-        if ($http_host_env !~ m{^http(s?)://}) {
-            $dirty++;
-            $http_host_env = (Jifty->web->is_ssl ? "https" : "http") ."://$http_host_env";
-        }
-        $uri = URI->new($http_host_env);
-        if ($dirty && Jifty->web->request && (my $req_uri_env = Jifty->web->request->request_uri)) {
-            my $req_uri = URI->new($req_uri_env);
-            $uri->scheme($req_uri->scheme) if $req_uri->can('scheme');
-            $dirty = $uri->scheme;
-        }
-        # As a last resort, peek at the BaseURL configuration setting
-        # for the scheme, which is an often-missing part.
-        if ($dirty) {
-            my $config_uri = URI->new(
-                    Jifty->config->framework("Web")->{BaseURL});
-            $uri->scheme($config_uri->scheme);
-        }
-    }
+    $uri = Jifty->web->request->uri->clone if Jifty->web->request;
 
     if (!$uri) {
       my $url  = Jifty->config->framework("Web")->{BaseURL};
