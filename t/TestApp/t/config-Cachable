@@ -2,3 +2,7 @@
 framework:
   Database:
     RecordBaseClass: Jifty::DBI::Record::Cachable
+  Plugins:
+    - CompressedCSSandJS: {}
+    - SkeletonApp: {}
+    - Deflater: {}
