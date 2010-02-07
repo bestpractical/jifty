@@ -210,6 +210,7 @@ sub set_cookie {
     my $cookies     = Jifty->web->request ? Jifty->web->request->cookies : {};
     my $cookie      = {
         value   => $self->id,
+        path    => '/',
         expires => $self->expires,
     };
     # XXX: do we every need to check the existing cookie to decide if
