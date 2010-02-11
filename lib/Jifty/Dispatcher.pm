@@ -214,6 +214,11 @@ Run a block of code unconditionally; all rules are allowed inside a C<run>
 block, as well as user code.  You can think of the {...} as an anonymous 
 subroutine.
 
+=head2 stream {...}
+
+Run a block of code unconditionally, which should return a coderef
+that is a PSGI streamy response.
+
 =head2 set $arg => $val
 
 Adds an argument to what we're passing to our template, overriding 
@@ -272,7 +277,7 @@ our @EXPORT = qw<
 
     before on after
 
-    show dispatch abort redirect tangent
+    show dispatch abort redirect tangent stream
 
     GET POST PUT HEAD DELETE OPTIONS
 
@@ -298,6 +303,7 @@ sub on ($$@)      { _ret @_ }    # exact match on the path component
 sub after ($$@)   { _ret @_ }    # exact match on the path component
 sub when (&@)     { _ret @_ }    # exact match on the path component
 sub run (&@)      { _ret @_ }    # execute a block of code
+sub stream (&@)   { _ret @_ }    # web return a PSGI-streamy response
 sub show (;$@)    { _ret @_ }    # render a page
 sub dispatch ($@) { _ret @_ }    # run dispatch again with another URI
 sub redirect ($@) { _ret @_ }    # web redirect
@@ -498,6 +504,7 @@ sub handle_request {
     if ( my $err = $@ ) {
         $self->log->warn(ref($err) . " " ."'$err'") if ( $err !~ /^ABORT/ );
     }
+    return $Dispatcher->{stream};
 }
 
 =head2 _handle_stage NAME, EXTRA_RULES
@@ -743,6 +750,20 @@ sub _do_tangent {
     my ( $self, $path ) = @_;
     $self->log->debug("Taking a tangent to $path");
     Jifty->web->tangent(url => $path);
+}
+
+=head2 _do_stream CODE
+
+THe method is called by the dispatcher internally. You shouldn't need to.
+
+Take a coderef that returns a PSGI streamy response code.
+
+=cut
+
+sub _do_stream {
+    my ( $self, $code ) = @_;
+    $self->{stream} = $code->();
+    $self->_abort;
 }
 
 =head2 _do_abort 

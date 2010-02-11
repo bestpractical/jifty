@@ -194,7 +194,9 @@ sub handle_request {
         # Return from the continuation if need be
         unless (Jifty->web->request->return_from_continuation) {
             $self->buffer->out_method(\&Jifty::View::out_method);
-            $self->dispatcher->handle_request();
+            my $ret = $self->dispatcher->handle_request();
+            return $ret if $ret; # if dispatcher returns a coderef,
+                                 # it's a streamy response
         }
 
         $self->call_trigger('before_cleanup', $req);
