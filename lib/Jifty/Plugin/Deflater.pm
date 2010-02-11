@@ -33,6 +33,8 @@ sub wrap {
         enable sub { my $app = shift;
                      sub { my $env = shift;
                            my $res = $app->($env);
+                           # skip streamy response
+                           return $res unless ref($res) eq 'ARRAY' && $res->[2];
                            my $h = Plack::Util::headers($res->[1]);
                            my $type = $h->get('Content-Type')
                                or return $res;
