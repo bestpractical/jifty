@@ -594,6 +594,10 @@ sub update_config {
         unshift (@{$config->{'framework'}->{'Plugins'}},
             { Compat        => {}, }
         );
+
+        push (@{$config->{'framework'}->{'Plugins'}},
+            { Deflater      => {}, }
+        );
     }
 
     return $config;
