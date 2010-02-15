@@ -233,7 +233,7 @@ Runs the given JS through jsmin
 sub minify_js {
     my $self = shift;
     my $input = shift;
-    my $output;
+    my ($output, $err);
 
     $self->log->debug("Minifying JS...");
 
@@ -249,7 +249,10 @@ sub minify_js {
     local *STDERR = $stderr;
 
     local $SIG{'CHLD'} = 'DEFAULT';
-    run3 [$self->jsmin], $input, \$output, undef;
+    run3 [$self->jsmin], $input, \$output, \$err;
+
+    my $ret = $? >> 8;
+    warn "Javascript minify @{[$self->jsmin]} returned $ret:\n$err" if $ret;
 
     $$input = $output;
 }
