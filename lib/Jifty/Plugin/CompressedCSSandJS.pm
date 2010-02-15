@@ -252,7 +252,7 @@ sub minify_js {
     run3 [$self->jsmin], $input, \$output, \$err;
 
     my $ret = $? >> 8;
-    warn "Javascript minify @{[$self->jsmin]} returned $ret:\n$err" if $ret;
+    $self->log->warn("Javascript minify @{[$self->jsmin]} returned $ret:\n$err") if $ret;
 
     $$input = $output;
 }
