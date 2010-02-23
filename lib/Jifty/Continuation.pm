@@ -137,6 +137,7 @@ sub new {
     # Make sure we don't store any of the connection information
     local $self->request->{env}{"psgi.input"};
     local $self->request->{env}{"psgi.errors"};
+    local $self->request->{env}{"psgix.io"};
     local $self->request->{env}{"plack.request.tempfh"};
     local $self->request->{_body_parser}{input_handle} if defined $self->request->{_body_parser};
 
