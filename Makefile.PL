@@ -71,7 +71,7 @@ requires('Module::Refresh');
 requires('Module::ScanDeps');
 requires('Object::Declare' => '0.13');
 requires('Params::Validate');
-requires('Plack' => '0.99_01'); # Plack::Loader Plack::Test Plack::Util Plack::Builder Plack::Request Plack::Handler::FCGI
+requires('Plack' => '0.9910'); # Plack::Loader Plack::Test Plack::Util Plack::Builder Plack::Request Plack::Handler::FCGI
 requires('Plack::Middleware::Deflater');
 requires('Scalar::Defer' => '0.12');
 requires('Shell::Command');
