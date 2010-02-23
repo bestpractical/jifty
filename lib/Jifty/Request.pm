@@ -23,6 +23,11 @@ has 'uri' => (is => 'rw', isa => 'URI', default => sub { URI->new('http:///') })
 has 'cookies' => (is => 'rw', isa => 'HashRef', default => sub { {} } );
 has 'scheme' => (is => "rw", isa => "Str", default => sub { 'http' });
 
+has 'request_uri' => (
+    is      => "rw",
+    isa     => "Str",
+);
+
 sub address     { $_[0]->env->{REMOTE_ADDR} }
 sub remote_host { $_[0]->env->{REMOTE_HOST} }
 sub protocol    { $_[0]->env->{SERVER_PROTOCOL} }
@@ -30,7 +35,6 @@ sub method      { $_[0]->env->{REQUEST_METHOD} = $_[1] if @_ > 1; $_[0]->env->{R
 sub request_method { Carp::carp "request_method is deprecated, use method instead"; goto \&method }
 sub port        { $_[0]->env->{SERVER_PORT} }
 sub user        { $_[0]->env->{REMOTE_USER} }
-sub request_uri { $_[0]->env->{REQUEST_URI} }
 sub path_info   { $_[0]->env->{PATH_INFO} }
 sub script_name { $_[0]->env->{SCRIPT_NAME} }
 sub secure      { $_[0]->scheme eq 'https' }
@@ -169,6 +173,7 @@ sub promote {
                             uploads => $req->uploads->mixed,
                             scheme => $req->scheme,
                             uri => $req->uri,
+                            request_uri => $req->request_uri,
                             cookies => $req->cookies,
                             actions => {},
                             state_variables => {},
