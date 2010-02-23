@@ -102,7 +102,7 @@ EOF
     };
 
     Jifty->handler->buffer->flush_output();
-    $Jifty::SERVER->restart;
+    # XXX: hook into plack::loader to restart server
 };
 
 1;

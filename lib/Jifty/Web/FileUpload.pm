@@ -66,9 +66,6 @@ sub new {
 
     my $fh = $args{filehandle};
 
-    ref($fh) eq 'Fh'
-        or die "The filehandle must be an Fh object produced by CGI";
-
     if (!defined($args{filename})) {
         $args{filename} = "$fh";
 
@@ -77,6 +74,9 @@ sub new {
     }
 
     if (!defined($args{content_type})) {
+        ref($fh) eq 'Fh'
+            or die "The filehandle must be an Fh object produced by CGI";
+
         my $info = Jifty->handler->cgi->uploadInfo($fh);
         $args{content_type} = $info->{'Content-Type'}
             if defined $info;
@@ -118,11 +118,29 @@ Convenience method, since the other bits can be gleaned from the L<Fh> object.
 
 =cut
 
+# DEPRECATED
 sub new_from_fh {
     my $self = shift;
     my $fh   = shift;
 
     $self->new(filehandle => $fh);
+}
+
+=head2 new_from_plack $u
+
+=cut
+
+sub new_from_plack {
+    my $self = shift;
+    my $u    = shift;
+
+    open my $fh, '<:raw', $u->tempname
+        or die "Can't open '@{[ $u->tempname ]}': '$!'";
+
+    $self->new(filehandle   => $fh,
+               filename     => $u->filename,
+               content_type => $u->type,
+           );
 }
 
 1;

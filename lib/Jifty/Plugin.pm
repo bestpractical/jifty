@@ -286,4 +286,17 @@ sub table_prefix {
     return lc $class;
 }
 
+=head2 wrap
+
+Takes a PSGI-$app closure and returns the wrapped one if your plugin
+wants to do something to the request handling process.  See also
+L<Plack::Middleware>.
+
+=cut
+
+sub wrap {
+    my ($self, $app) = @_;
+    return $app;
+}
+
 1;

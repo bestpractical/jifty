@@ -14,6 +14,7 @@ use HTTP::Cookies;
 use XML::XPath;
 use Hook::LexWrap;
 use List::Util qw(first);
+use Plack::Test;
 use Carp;
 
 # XXX TODO: We're leaving out FLUFF errors because it complains about non-standard
@@ -36,12 +37,33 @@ bot a cookie jar.
 
 =cut
 
+my $plack_server_pid;
+
 sub new {
-    my $class = shift;
-    my $self = $class->SUPER::new(@_);
+    my ($class, @args) = @_;
+
+    push @args, app => Jifty->handler->psgi_app
+        if $class->isa('Test::WWW::Mechanize::PSGI');
+
+    my $self = $class->SUPER::new(@args);
     $self->cookie_jar(HTTP::Cookies->new);
+
     return $self;
-} 
+}
+
+=head2 request
+
+We override mechanize's defualt request method so accept-encoding is
+not set to gzip by default.
+
+=cut
+
+sub _modify_request {
+    my ($self, $req) = @_;
+    $req->header( 'Accept-Encoding', 'identity' )
+        unless $req->header( 'Accept-Encoding' );
+    return $self->SUPER::_modify_request($req);
+}
 
 =head2 moniker_for ACTION, FIELD1 => VALUE1, FIELD2 => VALUE2
 
@@ -246,30 +268,39 @@ using the "back button" after making the webservice request.
 
 =cut
 
+sub _build_webservices_request {
+    my ($self, $endpoint, $data) = @_;
+
+    my $uri = $self->uri->clone;
+    $uri->path($endpoint);
+    $uri->query('');
+
+    my $body = Jifty::YAML::Dump({ path => $endpoint, %$data});
+
+    HTTP::Request->new(
+        POST => $uri,
+        [ 'Content-Type' => 'text/x-yaml',
+          'Content-Length' => length($body) ],
+        $body
+    );
+}
+
 sub send_action {
     my $self = shift;
     my $class = shift;
     my %args = @_;
 
-
-    my $uri = $self->uri->clone;
-    $uri->path("__jifty/webservices/yaml");
-
-    my $request = HTTP::Request->new(
-        POST => $uri,
-        [ 'Content-Type' => 'text/x-yaml' ],
-        Jifty::YAML::Dump(
-            {   path => $uri->path,
-                actions => {
-                    action => {
-                        moniker => 'action',
-                        class   => $class,
-                        fields  => \%args
-                    }
+    my $request = $self->_build_webservices_request
+        ( "__jifty/webservices/yaml",
+          { actions => {
+                action => {
+                    moniker => 'action',
+                    class   => $class,
+                    fields  => \%args
                 }
             }
-        )
-    );
+        });
+
     my $result = $self->request( $request );
     my $content = eval { Jifty::YAML::Load($result->content)->{action} } || undef;
     $self->back;
@@ -288,25 +319,19 @@ sub fragment_request {
     my $path = shift;
     my %args = @_;
 
-    my $uri = $self->uri->clone;
-    $uri->path("__jifty/webservices/xml");
-
-    my $request = HTTP::Request->new(
-        POST => $uri,
-        [ 'Content-Type' => 'text/x-yaml' ],
-        Jifty::YAML::Dump(
-            {   path => $uri->path,
-                fragments => {
-                    fragment => {
-                        name  => 'fragment',
-                        path  => $path,
-                        args  => \%args
-                    }
+    my $request = $self->_build_webservices_request
+        ( "__jifty/webservices/xml",
+          { fragments => {
+                fragment => {
+                    name  => 'fragment',
+                    path  => $path,
+                    args  => \%args
                 }
             }
-        )
-    );
+        });
+
     my $result = $self->request( $request );
+
     use XML::Simple;
     my $content = eval { XML::Simple::XMLin($result->content, SuppressEmpty => '')->{fragment}{content} } || '';
     $self->back;

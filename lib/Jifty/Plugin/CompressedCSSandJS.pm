@@ -21,7 +21,6 @@ Jifty::Plugin::CompressedCSSandJS - Compression of CSS and javascript files
         css: 1
         jsmin: /path/to/jsmin
         cdn: 'http://yourcdn.for.static.prefix/'
-        gzip: 1
         skipped_js:
             - complex.js
         generate_early: 1
@@ -40,10 +39,6 @@ L<http://www.crockford.com/javascript/jsmin.html>.
 Note that you will need to use C<ConfigFileVersion> 2 to be able to
 configure jsmin feature.
 
-The gzip configuration directive, which defaults to enabled, instructs
-Jifty to transparently gzip css and js files as they're served if the client
-indicates it supports that feature.
-
 skipped_js is a list of js that you don't want to compress for some reason.
 
 generate_early tells the plugin to compress the CSS and JS at process start
@@ -53,7 +48,7 @@ by default.
 
 =cut
 
-__PACKAGE__->mk_accessors(qw(css js jsmin cdn gzip_enabled skipped_js generate_early));
+__PACKAGE__->mk_accessors(qw(css js jsmin cdn skipped_js generate_early));
 
 =head2 init
 
@@ -69,7 +64,6 @@ sub init {
 
     my %opt  = @_;
     $self->css( $opt{css} );
-    $self->gzip_enabled( exists $opt{gzip} ? $opt{gzip} : 1);
     $self->js( $opt{js} );
     $self->jsmin( $opt{jsmin} );
     $self->cdn( $opt{cdn} || '');
@@ -117,12 +111,6 @@ sub css_enabled {
     my $self = shift;
     defined $self->css ? $self->css : 1;
 }
-
-=head2 gzip_enabled
-
-Returns whether gzipping is enabled (which it is by default)
-
-=cut
 
 sub _include_javascript {
     my $self = shift;
@@ -175,7 +163,7 @@ sub generate_css {
     );
 
     Jifty::CAS->publish( 'ccjs', 'css-all', $css,
-        { content_type => 'text/css', deflate => $self->gzip_enabled, time => time() } );
+        { content_type => 'text/css', time => time() } );
 }
 
 
@@ -205,6 +193,7 @@ sub _generate_javascript {
                 my $fh;
 
                 if ( open $fh, '<', $include ) {
+                    local $_;
                     $js .= "/* Including '$file' */\n\n";
                     $js .= $_ while <$fh>;
                     $js .= "\n/* End of '$file' */\n\n";
@@ -221,7 +210,7 @@ sub _generate_javascript {
         }
 
     Jifty::CAS->publish( 'ccjs', 'js-all', $js,
-        { content_type => 'application/x-javascript', deflate => $self->gzip_enabled, time => time() } );
+        { content_type => 'application/x-javascript', time => time() } );
 }
 
 =head2 minify_js \$js

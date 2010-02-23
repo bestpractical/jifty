@@ -1,10 +1,10 @@
 --- 
 framework: 
-  AdminMode: 1
+  AdminMode: 0
   ApplicationClass: TestApp::Mason
   ApplicationName: TestApp-Mason
   ApplicationUUID: 691A2590-F25E-11DD-9995-406635203BE5
-  ConfigFileVersion: 4
+  ConfigFileVersion: 5
   Database: 
     AutoUpgrade: 1
     CheckSchema: 1
@@ -15,7 +15,7 @@ framework:
     RecordBaseClass: Jifty::DBI::Record::Cachable
     User: ''
     Version: 0.0.1
-  DevelMode: 1
+  DevelMode: 0
   L10N: 
     PoDir: share/po
   LogLevel: INFO

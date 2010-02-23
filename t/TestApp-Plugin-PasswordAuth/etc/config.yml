@@ -1,6 +1,6 @@
 --- 
 framework: 
-  AdminMode: 1
+  AdminMode: 0
   ApplicationClass: TestApp::Plugin::PasswordAuth
   ApplicationName: TestApp-Plugin-PasswordAuth
   ApplicationUUID: E6B4180A-C68F-11DB-893B-FEFB1AECF28B
@@ -13,7 +13,7 @@ framework:
     RecordBaseClass: Jifty::DBI::Record::Cachable
     User: ''
     Version: 0.0.1
-  DevelMode: 1
+  DevelMode: 0
   L10N: 
     PoDir: share/po
   LogLevel: DEBUG

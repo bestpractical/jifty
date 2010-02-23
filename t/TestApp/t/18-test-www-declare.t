@@ -11,7 +11,7 @@ BEGIN {
     }
 }
 
-use Jifty::Test::WWW::Declare tests => 2;
+use Jifty::Test::WWW::Declare tests => 2, actual_server => 1;
 
 # this is a duplication of t/TestApp/t/17-template-region-internal-redirect.t
 # if the user sees failures here, then he either saw failures in t/17 OR

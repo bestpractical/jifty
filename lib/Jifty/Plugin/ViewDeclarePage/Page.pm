@@ -272,7 +272,7 @@ sub render_header {
     $self->render_doctype;
 
     head {
-        Jifty->handler->apache->content_type('text/html; charset=utf-8');
+        Jifty->web->response->content_type('text/html; charset=utf-8');
         with(
             'http-equiv' => "content-type",
             content      => "text/html; charset=utf-8"

@@ -69,11 +69,6 @@ use Jifty::Result ();
 use Jifty::Response ();
 use Jifty::CurrentUser ();
 
-# We can _not_ load Server.pm unless we're in a Server context because
-# HTTP::Server::Simple::Mason bastardizes HTML::Mason::FakeApache::send_http_header
-# with hook::lexwrap
-#use Jifty::Server;
-
 use Jifty::Web ();
 use Jifty::Web::Session ();
 use Jifty::Web::PageRegion ();

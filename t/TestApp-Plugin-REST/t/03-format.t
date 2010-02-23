@@ -6,10 +6,11 @@ use Jifty::Test::Dist tests => 102;
 use Jifty::Test::WWW::Mechanize;
 
 my $server  = Jifty::Test->make_server;
-isa_ok($server, 'Jifty::Server');
+isa_ok($server, 'Jifty::TestServer');
 
 my $URL     = $server->started_ok;
 my $mech    = Jifty::Test::WWW::Mechanize->new();
+$mech->requests_redirectable([]);
 
 ok(1, 'Loaded the test script');
 
@@ -52,7 +53,7 @@ sub result_of {
         my $method = $request->{mech_method};
         my $response = $mech->$method($url, @{ $request->{mech_args} || [] });
 
-        ok($response->is_success, "$method successful");
+        ok($response->is_success || $response->is_redirect, "$method successful");
         my @contents = $response->content;
 
         if (my $location = $response->header('Location')) {
@@ -150,7 +151,7 @@ result_of_post '/=/model/user' => {
 
 # on POST   '/=/model/*'     => \&create_item;
 $mech->post( $URL . '/=/model/User', { name => "moose", email => 'moose@example.com' } );
-is($mech->status, 200, "create via POST to model worked");
+is($mech->status, 302, "create via POST to model worked");
 
 $mech->post( $URL . '/=/model/Group', { name => "moose" } );
 is($mech->status, 403, "create via POST to model with disallowed create action failed with 403");

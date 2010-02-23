@@ -1,10 +1,10 @@
 --- 
 framework: 
-  AdminMode: 1
+  AdminMode: 0
   ApplicationClass: TestApp
   ApplicationName: TestApp
   ApplicationUUID: CE9AD926-F2A1-11DD-BB2C-5CD7FE13D77C
-  ConfigFileVersion: 4
+  ConfigFileVersion: 5
   Database: 
     AutoUpgrade: 1
     CheckSchema: 1
@@ -15,7 +15,7 @@ framework:
     RecordBaseClass: Jifty::DBI::Record::Cachable
     User: ''
     Version: 0.0.1
-  DevelMode: 1
+  DevelMode: 0
   L10N: 
     PoDir: share/po
   LogLevel: INFO

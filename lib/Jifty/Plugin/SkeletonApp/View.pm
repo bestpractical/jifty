@@ -2,7 +2,6 @@ package Jifty::Plugin::SkeletonApp::View;
 
 use strict;
 use warnings;
-use vars qw( $r );
 
 use Jifty::View::Declare -base;
 
@@ -48,7 +47,7 @@ template '__jifty/empty' => sub :Static {
 
 private template 'header' => sub {
     my ($title) = get_current_attr(qw(title));
-    Jifty->handler->apache->content_type('text/html; charset=utf-8');
+    Jifty->web->response->content_type('text/html; charset=utf-8');
     head { 
         with(
             'http-equiv' => "content-type",

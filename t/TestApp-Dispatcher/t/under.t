@@ -8,7 +8,7 @@ use Jifty::Test::WWW::Mechanize;
 my $server = Jifty::Test->make_server;
 ok($server, 'got a server');
 
-isa_ok($server, 'Jifty::Server');
+isa_ok($server, 'Jifty::TestServer');
 
 my $url     = $server->started_ok;
 my $mech    = Jifty::Test::WWW::Mechanize->new();

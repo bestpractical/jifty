@@ -457,7 +457,7 @@ In a C<Template::Declare> view, do something like this:
         # ...
         # create dynamic $image, for example using Chart::Clicker
 
-        Jifty->handler->apache->content_type('image/png');
+        Jifty->web->response->content_type('image/png');
         Jifty->web->out($image);
     };
 

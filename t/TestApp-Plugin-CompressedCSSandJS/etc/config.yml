@@ -1,10 +1,10 @@
 --- 
 framework: 
-  AdminMode: 1
+  AdminMode: 0
   ApplicationClass: TestApp::Plugin::CompressedCSSandJS
   ApplicationName: TestApp::Plugin::CompressedCSSandJS
   ApplicationUUID: DC3B58E4-4F3C-11DC-9ECB-E5DB6F105773
-  ConfigFileVersion: 2
+  ConfigFileVersion: 5
   Database: 
     CheckSchema: 1
     Database: testapp_plugin_singlepage
@@ -15,7 +15,7 @@ framework:
     RecordUUIDs: active
     User: ''
     Version: 0.0.1
-  DevelMode: 1
+  DevelMode: 0
   L10N: 
     PoDir: share/po
   LogLevel: DEBUG

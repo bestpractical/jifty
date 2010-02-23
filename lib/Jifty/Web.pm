@@ -99,7 +99,7 @@ sub mason {
 
 =head3 out
 
-Send a string to the browser. The default implementation uses Mason->out;
+Send a string to the browser.
 
 =cut
 
@@ -125,54 +125,25 @@ sub url {
 
     my $uri;
 
-    # Try to get a host out of the environment, useful in remote testing.
-    # The code is a little hairy because there's no guarantee these
-    # environment variables have all the information.
-    if (my $http_host_env = $ENV{HTTP_HOST}) {
-        # Explicit flag needed because URI->new("noscheme") is structurally
-        # different from URI->new("http://smth"). Clunky, but works.
-        my $dirty;
-        if ($http_host_env !~ m{^http(s?)://}) {
-            $dirty++;
-            $http_host_env = (Jifty->web->is_ssl ? "https" : "http") ."://$http_host_env";
-        }
-        $uri = URI->new($http_host_env);
-        if ($dirty && (my $req_uri_env = $ENV{REQUEST_URI})) {
-            my $req_uri = URI->new($req_uri_env);
-            $uri->scheme($req_uri->scheme) if $req_uri->can('scheme');
-            $dirty = $uri->scheme;
-        }
-        # As a last resort, peek at the BaseURL configuration setting
-        # for the scheme, which is an often-missing part.
-        if ($dirty) {
-            my $config_uri = URI->new(
-                    Jifty->config->framework("Web")->{BaseURL});
-            $uri->scheme($config_uri->scheme);
-        }
+    my $req = Jifty->web->request;
+    if ($req && $req->uri->host) {
+        $uri = $req->uri->clone;
+        $uri->path('/');
+    }
+    else {
+        $uri = URI->new(Jifty->config->framework("Web")->{BaseURL});
+        $uri->port(Jifty->config->framework("Web")->{Port});
     }
 
-    if (!$uri) {
-      my $url  = Jifty->config->framework("Web")->{BaseURL};
-      my $port = Jifty->config->framework("Web")->{Port};
-   
-      $uri = URI->new($url);
-      $uri->port($port);
+    if (defined (my $path = $args{path})) {
+        # strip off leading '/' because ->canonical provides one
+        $path =~ s{^/}{};
+        $uri->path_query($path);
     }
 
     # https is sticky
     $uri->scheme('https') if $uri->scheme eq 'http' && Jifty->web->is_ssl;
 
-    if ( defined $args{'scheme'} ) {
-        $uri->scheme( $args{'scheme'} );
-    }
-
-    if (defined $args{path}) {
-      my $path = $args{path};
-      # strip off leading '/' because ->canonical provides one
-      $path =~ s{^/}{};
-      $uri->path_query($path);
-    }
-    
     return $uri->canonical->as_string;
 }
 
@@ -358,7 +329,7 @@ sub _validate_request_actions {
                         . "'" );
                 $self->log->warn( Jifty->api->explain($request_action->class ) );
                 # Possible cross-site request forgery
-                $self->log->error("Action " . $request_action->class . " has been denied because the request is a GET") if $self->request->request_method eq "GET";
+                $self->log->error("Action " . $request_action->class . " has been denied because the request is a GET") if $self->request->method eq "GET";
                 push @denied_actions, $request_action;
                 next;
             }
@@ -742,7 +713,9 @@ sub redirect {
         # PATH_INFO, which is what $request->path is normally set to.
         # We should replicate that here.
         $request->path( URI::Escape::uri_unescape( $page->url ) );
-        $request->request_method("GET"); # ..effectively.
+        $request->request_uri( URI->new($page->url)->path_query );
+        $request->method("GET"); # ..effectively.
+        $request->scheme($self->request->scheme);
         $request->continuation($self->request->continuation);
         my $cont = Jifty::Continuation->new(
             request  => $request,
@@ -786,17 +759,15 @@ sub _redirect {
     # Clear out the output, if any
     Jifty->handler->buffer->clear;
 
-    my $apache = Jifty->handler->apache;
+    my $response = Jifty->web->response;
 
     $self->log->debug("Execing redirect to $page");
     # Headers..
-    $apache->header_out( Location => $page );
-    $apache->header_out( Status => 302 );
+    $response->header( Location => $page );
+    $response->status( 302 );
 
     # cookie has to be sent or returning from continuations breaks
     Jifty->web->session->set_cookie;
-
-    Jifty->handler->send_http_header;
 
     # Mason abort, or dispatcher abort out of here
     $self->mason->abort if $self->mason;
@@ -942,6 +913,9 @@ sub template_exists {
     my $template = shift;
 
     my $value = ref $template ? $$template : $template;
+
+    # Strip trailing slashes
+    $value =~ s{/$}{} if $value ne "/";
 
     foreach my $handler ( map {Jifty->handler->view($_)} Jifty->handler->view_handlers ) {
         if ( my $path = $handler->template_exists($value) ) {
@@ -1511,6 +1485,6 @@ Indicates whether the current request was made using SSL.
 
 =cut
 
-sub is_ssl { $ENV{HTTPS} }
+sub is_ssl { Jifty->web->request && Jifty->web->request->secure }
 
 1;

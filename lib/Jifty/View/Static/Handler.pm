@@ -2,7 +2,6 @@ use warnings;
 use strict;
 use File::MMagic ();
 use MIME::Types ();
-use Compress::Zlib ();
 use HTTP::Date ();
 
 package Jifty::View::Static::Handler;
@@ -16,6 +15,8 @@ our ($MIME,$MAGIC);
 Jifty::View::Static::Handler - Jifty view handler for static files
 
 =head1 DESCRIPTION
+
+This is deprecated and is being port to a stack of plack middleware and plack::app::file
 
 This class takes care of serving out static files for a Jifty application. 
 
@@ -92,7 +93,7 @@ sub handle_request {
 
     my $local_path = $self->file_path($path) or return undef;
 
-    if ( my $since = Jifty->handler->cgi->http('If-Modified-Since') ) {
+    if ( my $since = Jifty->web->request->header('If-Modified-Since') ) {
         my @file_info = stat($local_path);
 
         # IE appends "; length=N" to If-Modified-Since headers and we need
@@ -102,29 +103,9 @@ sub handle_request {
         return $self->send_not_modified
             unless $file_info[9] > HTTP::Date::str2time($since);
     }
-    my $mime_type = $self->mime_type($local_path);
 
-    if ( $self->client_accepts_gzipped_content and $mime_type =~ m!^(text/|application/x-javascript)! ) {
-        return $self->send_file($local_path, $mime_type, 'gzip');
-    } else {
-        return $self->send_file($local_path, $mime_type, 'uncompressed');
-    }
+    return $self->send_file($local_path, $self->mime_type($local_path));
 
-}
-
-
-=head2 client_accepts_gzipped_content
-
-Returns true if it looks like the client accepts gzip encoding. Otherwise, returns false.
-
-
-=cut
-
-
-sub client_accepts_gzipped_content {
-    my $self = shift;
-    no warnings 'uninitialized';
-    return Jifty->handler->cgi->http('Accept-Encoding') =~ /\bgzip\b/;
 }
 
 
@@ -201,12 +182,9 @@ sub mime_type {
 }
 
 
-=head2 send_file $path $mimetype $compression
+=head2 send_file $path $mimetype
 
 Print C<$path> to STDOUT (the client), identified with a mimetype of C<$mimetype>.
-
-If C<$compression> is C<gzip>, gzip the output stream.
-
 
 =cut
 
@@ -215,7 +193,6 @@ sub send_file {
     my $self        = shift;
     my $local_path  = shift;
     my $mime_type   = shift;
-    my $compression = shift;
 
     my $fh = IO::File->new( $local_path, 'r' );
     if ( defined $fh ) {
@@ -228,21 +205,11 @@ sub send_file {
         Jifty->web->mason->clear_buffer if Jifty->web->mason;
 
         my @file_info = stat($local_path);
-        my $apache    = Jifty->handler->apache;
-        $apache->content_type($mime_type);
-        $self->send_http_header( $compression, $file_info[7], $file_info[9] );
+        Jifty->web->response->content_type($mime_type);
+        $self->send_http_header( '', $file_info[7], $file_info[9] );
 
-        if ( $compression eq 'gzip' ) {
-            local $/;
-            binmode STDOUT;
+        Jifty->web->response->content($fh);
 
-            # XXX TODO: Cache this
-            print STDOUT Compress::Zlib::memGzip(<$fh>);
-        }
-        else {
-            $apache->send_fd($fh);
-        }
-        close($fh);
         return 1;
     }
     else {
@@ -253,30 +220,23 @@ sub send_file {
 =head2 send_http_header [COMPRESSION, LENGTH, LAST_MODIFIED]
 
 Sends appropriate cache control and expiration headers such that the
-client will cache the content.
+client will cache the content.  COMPRESSION is deprecated
 
 =cut
 
 sub send_http_header {
     my $self = shift;
-    my ($compression, $length, $modified) = @_;
+    my (undef, $length, $modified) = @_;
     my $now    = time();
-    my $apache = Jifty->handler->apache;
-    $apache->header_out( Status          => 200 );
+    my $response = Jifty->web->response;
+    $response->status( 200 );
 
     # Expire in a year
-    $apache->header_out( 'Cache-Control' => 'max-age=31536000, public' );
-    $apache->header_out( 'Expires' => HTTP::Date::time2str( $now + 31536000 ) );
- 
-    $apache->header_out(
+    $response->header( 'Cache-Control' => 'max-age=31536000, public' );
+    $response->header( 'Expires' => HTTP::Date::time2str( $now + 31536000 ) );
+
+    $response->header(
       'Last-Modified' => HTTP::Date::time2str( $modified ) ) if $modified;
-
-    $apache->header_out( 'Content-Length' => $length )
-      unless ( $compression eq 'gzip' );
-    $apache->header_out( 'Content-Encoding' => "gzip" )
-      if ( $compression eq 'gzip' );
-
-    Jifty->handler->send_http_header;
 }
 
 
@@ -288,11 +248,9 @@ Sends a "304 Not modified" response to the browser, telling it to use a cached c
 
 sub send_not_modified {
     my $self = shift;
-    my $apache = Jifty->handler->apache;
-    $apache->header_out( Status => 304 );
-    Jifty->handler->send_http_header;
+    my $response = Jifty->web->response;
+    $response->status( 304 );
     return 1;
-
 }
 
 1;

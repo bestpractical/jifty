@@ -4,6 +4,8 @@ use warnings;
 
 use base qw/Jifty::Object/;
 
+use Encode ();
+
 =head1 NAME
 
 Jifty::View - Base class for view modules
@@ -35,24 +37,19 @@ sends a header if need be.
 
 sub out_method {
     Jifty->web->session->set_cookie;
-    my $r = Jifty->handler->apache;
+    my $r = Jifty->web->response;
 
     # Send a header
     $r->content_type || $r->content_type('text/html; charset=utf-8'); # Set up a default
-    unless ( $r->http_header_sent or not __PACKAGE__->auto_send_headers ) {
-        Jifty->handler->send_http_header;
-    }
-
-    binmode *STDOUT;
 
     # We now install a new, faster out_method that doesn't have to
     # keep checking whether headers have been sent.
-    my $content;
-    if ( my ($enc) = $r->content_type =~ /charset=([\w-]+)$/ ) {
-        $content = sub { print STDOUT map Encode::encode($enc, $_), @_; };
-    } else {
-        $content = sub { print STDOUT @_; };
-    }
+    my $content = sub {
+        Jifty->web->response->{body} .= $_
+            for map { Encode::is_utf8($_) ? Encode::encode('utf8', $_)
+                                          : $_ }
+                @_;
+    };
     Jifty->handler->buffer->out_method( $content );
     $content->(@_);
 }

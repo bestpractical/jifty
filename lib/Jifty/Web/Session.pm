@@ -3,7 +3,6 @@ use strict;
 
 package Jifty::Web::Session;
 use base qw/Jifty::Object/;
-use CGI::Cookie ();
 use DateTime    ();
 
 =head1 NAME
@@ -66,7 +65,6 @@ based on, say, a timestamp, then you're asking for trouble.
 =cut
 
 sub load_by_kv {
-
     die "Subclass must implement load_by_kv";
 }
 
@@ -204,23 +202,20 @@ sub set_cookie {
 
     # never send a cookie with cached content. misbehaving proxies cause
     # terrific problems
-    return if Jifty->handler->apache->header_out('Expires');
+    return if Jifty->web->response->header('Expires');
+
+    $self->load unless $self->loaded;
 
     my $cookie_name = $self->cookie_name;
-    my %cookies     = CGI::Cookie->fetch();
-    my $cookie      = CGI::Cookie->new(
-        -name    => $cookie_name,
-        -value   => $self->id,
-        -expires => $self->expires,
-    );
-
-    # XXX TODO might need to change under mod_perl
-    if ( not $cookies{$cookie_name}
-        or ( $cookies{$cookie_name} ne $cookie->as_string ) )
-    {
-        Jifty->web->response->add_header(
-            'Set-Cookie' => $cookie->as_string );
-    }
+    my $cookies     = Jifty->web->request ? Jifty->web->request->cookies : {};
+    my $cookie      = {
+        value   => $self->id,
+        path    => '/',
+        expires => $self->expires,
+    };
+    # XXX: do we every need to check the existing cookie to decide if
+    # we want to set the cookie this time?
+    Jifty->web->response->cookies->{$cookie_name} = $cookie;
 }
 
 =head2 cookie_name

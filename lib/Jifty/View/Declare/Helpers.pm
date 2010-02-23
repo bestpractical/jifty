@@ -100,7 +100,7 @@ sub page (&;$) {
     my ( $meta, $code ) = @_;
     my $ret = sub {
         my $self = shift;
-        Jifty->handler->apache->content_type('text/html; charset=utf-8');
+        Jifty->web->response->content_type('text/html; charset=utf-8');
         my $wrapper = Jifty->app_class('View')->can('wrapper') || \&wrapper;
         my @metadata = $meta ? $meta->($self) : ();
         my $metadata = $#metadata == 0 ? $metadata[0] : {@metadata};

@@ -2,6 +2,7 @@ use inc::Module::Install 0.46;
 name('Jifty');
 license('Perl');
 perl_version '5.8.3';
+requires('Any::Moose');
 requires('App::CLI' => 0.08 ); # App::CLI::Command::Help App::CLI::Command
 requires('Cache::Cache'); #Cache::FileCache
 requires('Calendar::Simple');
@@ -13,6 +14,7 @@ requires('Class::Trigger' => '0.13');
 requires('Clone' => '0.27');
 requires('CGI' => '3.30');
 requires('CGI::Cookie::Splitter');
+requires('CGI::Emulate::PSGI');
 requires('Class::Inspector' => 1.20); # For File::ShareDir on Win32
 requires('Crypt::CBC');
 requires('Crypt::Rijndael');
@@ -49,7 +51,9 @@ requires('HTTP::Date');
 requires('HTTP::Server::Simple' => '0.35');  # HTTP::Server::Simple::CGI
 requires('HTTP::Server::Simple::Recorder');
 requires('Hash::Merge');
+requires('Hash::MultiValue', 0.05);
 requires('Hook::LexWrap');
+requires('IO::Handle::Util');
 requires('IPC::PubSub' => '0.23' );
 requires('IPC::Run3');
 requires('Jifty::DBI' => '0.60' );            # Jifty::DBI::Collection Jifty::DBI::Handle Jifty::DBI::Record::Cachable Jifty::DBI::SchemaGenerator
@@ -67,6 +71,8 @@ requires('Module::Refresh');
 requires('Module::ScanDeps');
 requires('Object::Declare' => '0.13');
 requires('Params::Validate');
+requires('Plack' => '0.9910'); # Plack::Loader Plack::Test Plack::Util Plack::Builder Plack::Request Plack::Handler::FCGI
+requires('Plack::Middleware::Deflater');
 requires('Scalar::Defer' => '0.12');
 requires('Shell::Command');
 requires('String::BufferStack' => '1.12');
@@ -81,6 +87,7 @@ requires('Test::More' => 0.62 );
 requires('Test::Pod::Coverage');
 requires('Test::Script::Run' => 0.03);
 requires('Test::WWW::Mechanize' => 1.04 );
+requires('Test::WWW::Mechanize::PSGI' => 0.35 );
 requires('Test::WWW::Selenium' => 1.18 );
 requires('WWW::Mechanize' => 1.51 );
 requires('UNIVERSAL::require');
@@ -118,7 +125,6 @@ feature 'Development of a jifty application' =>
     recommends('DBD::SQLite' => 1.11),
     recommends('Test::Base' => 0.44),            # Test::Base::Filter
     recommends('Module::Install::Admin' => '0.50'),
-    recommends('Test::HTTP::Server::Simple' => '0.10'),
     recommends('Test::HTML::Lint' => 0),
     recommends('Test::MockModule' => '0.05'),
     recommends('Test::MockObject' => '1.07'),

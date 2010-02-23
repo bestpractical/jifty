@@ -14,11 +14,8 @@ sub import
 {
     my $class = shift;
 
-    # examine the plan
-    Test::More->import(@_);
-
     # set up database and other things
-    Jifty::Test->setup(\@_);
+    Jifty::Test->import(@_);
 
     # export the DSL-ey functions
     Test::WWW::Declare->export_to_level(2);

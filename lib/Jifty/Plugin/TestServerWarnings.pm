@@ -124,6 +124,12 @@ sub decoded_warnings {
     my $self = shift;
     my $base = shift;
 
+    my $Test = Jifty::Test->builder;
+
+    if ($Jifty::SERVER && $Jifty::SERVER->isa('Jifty::TestServer::Inline')) {
+        return splice @{ $self->{'stashed_warnings'} };
+    }
+
     my $uri = URI->new_abs( "/__jifty/test_warnings", $base );
     my $text = LWP::Simple::get($uri);
 

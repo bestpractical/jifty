@@ -15,6 +15,8 @@ use Test::Base::Filter -Base;
 
 sub request_from_webform {
     my $form = shift;
-    Jifty::Request->new->from_webform(%$form);
+    my $r = Jifty::Request->new->from_webform(%$form);
+    delete $r->{$_} for qw(env headers parameters cookies scheme);
+    return $r;
 }
 

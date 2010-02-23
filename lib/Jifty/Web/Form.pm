@@ -200,8 +200,9 @@ sub start {
         }
     }
 
-    my $root = $self->submit_to;
-    ($root) = $ENV{'REQUEST_URI'} =~ /([^\?]*)/ unless defined $root;
+    my $root = $self->submit_to
+      || URI->new(Jifty->web->request->top_request->request_uri)->path;
+
     my $form_start = qq!<form method="post" action="!  . Jifty->web->escape( $root ) . qq!"!;
     $form_start .= qq! name="@{[ $self->name ]}"! if defined $self->name;
     $form_start .= qq! target="@{[ $self->target ]}"! if defined $self->target;

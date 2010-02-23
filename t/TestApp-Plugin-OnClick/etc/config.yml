@@ -1,10 +1,10 @@
 --- 
 framework: 
-  AdminMode: 1
+  AdminMode: 0
   ApplicationClass: TestApp::Plugin::OnClick
   ApplicationName: TestApp-Plugin-OnClick
   ApplicationUUID: 45E1B0FE-820A-11DC-9905-76B28F38D863
-  ConfigFileVersion: 4
+  ConfigFileVersion: 5
   Database: 
     CheckSchema: 1
     Database: testapp_plugin_onclick
@@ -14,7 +14,7 @@ framework:
     RecordBaseClass: Jifty::DBI::Record::Cachable
     User: ''
     Version: 0.0.1
-  DevelMode: 1
+  DevelMode: 0
   L10N: 
     PoDir: share/po
   LogLevel: INFO

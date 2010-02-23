@@ -101,12 +101,12 @@ sub load_by_kv {
     $self->set( $k => $v ) if !$session_id;
 }
 
+
 sub _get_session_id_from_client {
     my $self        = shift;
-    my %cookies     = CGI::Cookie->fetch();
-    my $cookie_name = $self->cookie_name;
-    my $session_id
-        = $cookies{$cookie_name} ? $cookies{$cookie_name}->value() : undef;
+    my $cookies     = Jifty->web->request
+        ? Jifty->web->request->cookies : {};
+    return $cookies->{$self->cookie_name};
 }
 
 =head2 get KEY [TYPE]

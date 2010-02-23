@@ -14,10 +14,6 @@ use Hash::Merge;
 use Digest::MD5 qw/md5_hex/;
 use Cwd qw/abs_path cwd/;
 
-# this is required here because we want Test::HTTP::Server::Simple's
-# END to be at the very last, later than Jifty::Test's
-use Test::HTTP::Server::Simple;
-
 # Mechanize uses Test::LongString to report mismatches.  Increase the
 # limit so we can see where errors come from more easily.
 use Test::LongString;
@@ -199,6 +195,19 @@ sub setup {
     $args ||= [];
     my %args = @{$args} % 2 ? (@{$args}, 1) : @{$args};
 
+    my $server = $ENV{JIFTY_TEST_SERVER} ||= 'Inline';
+
+    if ($server eq 'Inline') {
+        require Jifty::Test::WWW::Mechanize;
+        require Test::WWW::Mechanize::PSGI;
+        unshift @Jifty::Test::WWW::Mechanize::ISA, 'Test::WWW::Mechanize::PSGI';
+    }
+
+    if ($args{actual_server}) {
+        $class->builder->plan(skip_all => "This test requires an actual test server to run.  Run with JIFTY_TEST_SERVER=Standalone instead")
+            if $ENV{JIFTY_TEST_SERVER} eq 'Inline';
+    }
+
     # Spit out a plan (if we got one) *before* we load modules, in
     # case of compilation errors
     unless ($class->builder->has_plan) {
@@ -208,7 +217,6 @@ sub setup {
 
     # Require the things we need
     require Jifty::YAML;
-    require Jifty::Server;
     require Jifty::Script::Schema;
 
     $class->builder->{no_handle} = $args{no_handle};
@@ -453,35 +461,22 @@ sub _testfile_to_dbname {
 
 =head2 make_server
 
-Creates a new L<Jifty::Server> which C<ISA> L<Jifty::TestServer> and
-returns it.
+Creates a new L<Jifty::TestServer> depending on the value of
+$ENV{JIFTY_TEST_SERVER}.  If the environment variable is unset or
+C<Inline>, we run tests using PSGI inline wihtout spawning an actual
+server.  Otherwise, we fork off a Plack::Server to run tests against.
 
 =cut
 
 sub make_server {
     my $class = shift;
+    use Jifty::TestServer;
 
-    # XXX: Jifty::TestServer is not a Jifty::Server, it is actually
-    # server controller that invokes bin/jifty server. kill the
-    # unshift here once we fix all the tests expecting it to be
-    # jifty::server.
-    if ($ENV{JIFTY_TESTSERVER_PROFILE} ||
-        $ENV{JIFTY_TESTSERVER_COVERAGE} ||
-        $ENV{JIFTY_TESTSERVER_DBIPROF} ||
-        $^O eq 'MSWin32') {
-        require Jifty::TestServer;
-        unshift @Jifty::Server::ISA, 'Jifty::TestServer';
-    } elsif ($ENV{JIFTY_APACHETEST}) {
-        require Jifty::TestServer::Apache;
-        unshift @Jifty::Server::ISA, 'Jifty::TestServer::Apache';
-    }
-    else {
-        unshift @Jifty::Server::ISA, 'Test::HTTP::Server::Simple';
-    }
+    my $server_class = $ENV{JIFTY_TEST_SERVER} eq 'Inline'
+        ? 'Jifty::TestServer::Inline' : 'Jifty::TestServer';
+    Jifty::Util->require($server_class) or die $!;
 
-    my $server = Jifty::Server->new;
-    $Jifty::SERVER = $server;
-    return $server;
+    $Jifty::SERVER = $server_class->new;
 }
 
 =head2 web
@@ -662,7 +657,9 @@ sub _ending {
     return if $Test->{Original_Pid} != $$;
 
     my $should_die = 0;
-    if ($Jifty::SERVER && (my $plugin = Jifty->find_plugin("Jifty::Plugin::TestServerWarnings"))) {
+    if ($Jifty::SERVER &&
+        (my $plugin = Jifty->find_plugin("Jifty::Plugin::TestServerWarnings")) &&
+        grep { $_ eq 'Jifty::View::Declare::Handler' } Jifty->handler->view_handlers) { # testserverwarnings plugin requires TD handler to work properly.
         my @warnings = $plugin->decoded_warnings( 'http://localhost:'.$Jifty::SERVER->port );
 
         $Test->diag("Uncaught warning: $_") for @warnings;

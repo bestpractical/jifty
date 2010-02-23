@@ -63,6 +63,7 @@ use base qw/Class::Accessor::Fast Jifty::Object/;
 
 __PACKAGE__->mk_accessors(qw(id parent
                              request response code
+                             version
                              ));
 
 =head2 new PARAMHASH
@@ -112,7 +113,8 @@ sub new {
                 request  => Jifty::Request->new(),
                 response => Jifty::Response->new(),
                 code     => undef,
-                @_
+                @_,
+                version  => 2,
                );
 
     # We don't want refs
@@ -128,6 +130,16 @@ sub new {
     # FIXME: use a real ID
     my $key = Jifty->web->serial . "_" . int(rand(10)) . int(rand(10)) . int(rand(10)) . int(rand(10)) . int(rand(10)) . int(rand(10));
     $self->id($key);
+
+    # XXX: Jifty::Request should really just extract useful things
+    # from plack so we don't have plack-specified fields to hide here.
+
+    # Make sure we don't store any of the connection information
+    local $self->request->{env}{"psgi.input"};
+    local $self->request->{env}{"psgi.errors"};
+    local $self->request->{env}{"psgix.io"};
+    local $self->request->{env}{"plack.request.tempfh"};
+    local $self->request->{_body_parser}{input_handle} if defined $self->request->{_body_parser};
 
     # Save it into the session
     Jifty->web->session->set_continuation($key => $self);
@@ -145,20 +157,15 @@ to ask "are we about to call a continuation?"
 
 sub return_path_matches {
     my $self = shift;
-    my $called_uri = $ENV{'REQUEST_URI'};
-    my $request_path = $self->request->path;
 
-    # XXX TODO: WE should be using URI canonicalization
+    return unless Jifty->web->request->path eq $self->request->path;
 
-    my $escape;
-    $called_uri =~ s{/+}{/}g;
-    $called_uri = Encode::encode_utf8($called_uri);
-    $called_uri = $escape while $called_uri ne ($escape = URI::Escape::uri_unescape($called_uri));
-    $request_path =~ s{/+}{/}g; 
-    $request_path = Encode::encode_utf8($request_path);
-    $request_path = $escape while $request_path ne ($escape = URI::Escape::uri_unescape($request_path));
+    my $args = Jifty->web->request->arguments;
+    return unless scalar keys %{$args} == 1;
 
-    return $called_uri =~ /^\Q$request_path\E[?&;]J:RETURN=@{[$self->id]}$/;
+    return unless exists $args->{"J:RETURN"} and $args->{"J:RETURN"} eq $self->id;
+
+    return 1;
 }
 
 =head2 call
@@ -242,7 +249,14 @@ sub return {
       if $self->code;
 
     # Set the current request to the one in the continuation
-    return Jifty->web->request($self->request->clone);
+    my $input  = Jifty->web->request->env->{"psgi.input"};
+    my $errors = Jifty->web->request->env->{"psgi.errors"};
+
+    Jifty->web->request($self->request->clone);
+
+    Jifty->web->request->env->{"psgi.input"}  = $input;
+    Jifty->web->request->env->{"psgi.errors"} = $errors;
+    return Jifty->web->request;
 }
 
 =head2 delete

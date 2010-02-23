@@ -1,6 +1,6 @@
 --- 
 framework: 
-  ConfigFileVersion: 4
+  ConfigFileVersion: 5
 
   ApplicationClass: TestApp::Dispatcher
   ApplicationName: TestApp-Dispatcher

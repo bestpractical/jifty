@@ -1,4 +1,25 @@
 -----------------------------------
+Jifty 1.??? - 
+-----------------------------------
+
+INCOMPATABILITIES
+==========================
+ Jifty is ported to PSGI.
+ * The following methods are removed:
+   - Jifty->handler->apache
+   - Jifty->handler->cgi
+   Most methods for ->apache and ->cgi are provided by the Compat
+   plugin, which is automatically loaded for older jifty apps.  Use
+   corresponding header methods of Jifty->web->request and
+   Jifty->web->response.
+
+ * Printing to STDOUT deprecated.  Use outs, outs_raw, or
+   Jifty->web->response->body() instead.
+
+ * munging with the %ENV hash is deprecated.  Use
+   Jifty->web->request->env instead.
+
+-----------------------------------
 Jifty 0.91117 - November 17th, 2009
 -----------------------------------
 

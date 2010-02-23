@@ -5,8 +5,7 @@ use warnings;
 package Jifty::Script::FastCGI;
 use base qw/Jifty::Script/;
 
-use File::Basename;
-use CGI::Fast;
+use Plack::Handler::FCGI;
 
 =head1 NAME
 
@@ -56,6 +55,11 @@ sub options {
 }
 
 =head1 DESCRIPTION
+
+This command is provided for compatibility.  You should probably use
+Plack's fastcgi deployment tools with the C<app.psgi> file come with
+your jifty app.
+
 
 When you're ready to move up to something that can handle the increasing load your
 new world-changing application is generating, you'll need something a bit heavier-duty
@@ -125,26 +129,14 @@ sub run {
 
     Jifty->new();
     my $conf = Jifty->config->framework('Web')->{'FastCGI'} || {};
-    $self->{maxrequests} ||= $conf->{MaxRequests};
+    $self->{maxrequests} ||= $conf->{MaxRequests}; # XXX: make it work
 
-    my $PATH = $ENV{'PATH'} || '/bin:/usr/bin';
+    my $server = Plack::Handler::FCGI->new(
+        nproc  => $conf->{NProc} || 1,
+        detach => 1,
+    );
 
-    my $requests = 0;
-    while ( my $cgi = CGI::Fast->new ) {
-        # the whole point of fastcgi requires the env to get reset here..
-        # So we must squash it again
-        $ENV{'PATH'}   = $PATH;
-        $ENV{'SHELL'}  = '/bin/sh' if defined $ENV{'SHELL'};
-        $ENV{'PATH_INFO'}   = $ENV{'SCRIPT_NAME'}
-            if $ENV{'SERVER_SOFTWARE'} =~ /^lighttpd\b/;
-        for (qw(CDPATH ENV IFS)) {
-            $ENV{$_} = '' if (defined $ENV{$_} );
-        }
-        Jifty->handler->handle_request( cgi => $cgi );
-        if ($self->{maxrequests} && ++$requests >= $self->{maxrequests}) {
-            exit 0;
-        }
-    }
+    $server->run(Jifty->handler->psgi_app);
 }
 
 1;

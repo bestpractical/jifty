@@ -82,9 +82,6 @@ sub _i18n_js {
 
         unless ( $current_lang =~ /^$allowed_regex/) {
             $self->log->error("user is requesting $current_lang which is not allowed");
-            my $headers = Jifty->handler->apache->headers_in;
-            use Data::Dumper;
-            $self->log->error(Dumper($headers));
         }
     }
 

@@ -2,14 +2,14 @@
 use warnings;
 use strict;
 
-use Jifty::Test::Dist tests => 125;
+use Jifty::Test::Dist tests => 125, actual_server => 1;
 use Jifty::Test::WWW::Mechanize;
 use Net::HTTP;
 use URI;
 
 my $server  = Jifty::Test->make_server;
 
-isa_ok($server, 'Jifty::Server');
+isa_ok($server, 'Jifty::TestServer');
 
 my $uri = URI->new($server->started_ok);
 my $plugin = Jifty->find_plugin("Jifty::Plugin::TestServerWarnings");

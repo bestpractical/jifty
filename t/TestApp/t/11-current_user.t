@@ -69,7 +69,7 @@ my $dt = Jifty::DateTime->from_epoch(epoch => time);
 is($now->time_zone->name, 'America/Anchorage', "from_epoch correctly gets the user's timezone");
 
 my $server = Jifty::Test->make_server;
-isa_ok($server, 'Jifty::Server');
+isa_ok($server, 'Jifty::TestServer');
 
 my $URL = $server->started_ok;
 my $mech = Jifty::Test::WWW::Mechanize->new();

@@ -12,52 +12,52 @@ use utf8;
 use LWP::UserAgent;
 my $server  = Jifty::Test->make_server;
 
-isa_ok($server, 'Jifty::Server');
+isa_ok($server, 'Jifty::TestServer');
 
 my $base = URI->new($server->started_ok);
 
 
-my $ua = LWP::UserAgent->new;
+my $mech = Jifty::Test::WWW::Mechanize->new;
 my $res;
 
-$ua->default_header('Accept-Language' => "en");
-$res = $ua->get("$base/__jifty/admin/");
+$mech->default_header('Accept-Language' => "en");
+$res = $mech->get("$base/__jifty/admin/");
 ok $res->is_success, "can access admin console";
 like $res->content, qr/Models/, 'en works';
 
-$res = $ua->get("$base/concrete.html");
+$res = $mech->get("$base/concrete.html");
 ok $res->is_success, "can access concrete";
 like $res->content, qr/2 concrete mixers/, 'en works for an unknown string';
 
-$res = $ua->get("$base/concrete2.html");
+$res = $mech->get("$base/concrete2.html");
 ok $res->is_success, "can access concrete";
 like $res->content, qr/2 concrete mixers/, 'en works for an unknown string';
 
-$ua->default_header('Accept-Language' => "ja");
-$res = $ua->get("$base/__jifty/admin/");
+$mech->default_header('Accept-Language' => "ja");
+$res = $mech->get("$base/__jifty/admin/");
 ok $res->is_success, "can access admin console";
 like adjust($res->content), qr/モデル/, 'ja works';
 
-$res = $ua->get("$base/concrete.html");
+$res = $mech->get("$base/concrete.html");
 ok $res->is_success, "can access concrete";
 like $res->content, qr/2 concrete mixers/, 'ja works for an unknown string';
 
-$res = $ua->get("$base/concrete2.html");
+$res = $mech->get("$base/concrete2.html");
 ok $res->is_success, "can access concrete";
 like $res->content, qr/2 concrete mixers/, 'en works for an unknown string';
 
-$ua->default_header('Accept-Language' => "fr");
-$res = $ua->get("$base/__jifty/admin/");
+$mech->default_header('Accept-Language' => "fr");
+$res = $mech->get("$base/__jifty/admin/");
 ok $res->is_success, "can access admin console";
 like adjust($res->content), qr/Modèles/, 'fr locale works';
 
-$ua->default_header('Accept-Language' => "zh-cn");
-$res = $ua->get("$base/__jifty/admin/");
+$mech->default_header('Accept-Language' => "zh-cn");
+$res = $mech->get("$base/__jifty/admin/");
 ok $res->is_success, "can access admin console";
 like adjust($res->content), qr/数据库/, 'zh-cn works';
 
-$ua->default_header('Accept-Language' => "zh-tw");
-$res = $ua->get("$base/__jifty/admin/");
+$mech->default_header('Accept-Language' => "zh-tw");
+$res = $mech->get("$base/__jifty/admin/");
 ok $res->is_success, "can access admin console";
 like adjust($res->content), qr/資料庫/, 'zh-tw works';
 

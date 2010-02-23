@@ -3,9 +3,9 @@ $forever => 1
 </%args>
 <%init>
 
-$r->content_type("text/html; charset=utf-8");
-$r->headers_out->{'Pragma'}        = 'no-cache';
-$r->headers_out->{'Cache-control'} = 'no-cache';
+Jifty->web->response->content_type("text/html; charset=utf-8");
+Jifty->web->response->header('Pragma' => 'no-cache');
+Jifty->web->response->header('Cache-control' => 'no-cache');
 Jifty->handler->send_http_header;
 
 my $writer = XML::Writer->new;

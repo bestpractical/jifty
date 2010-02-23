@@ -214,6 +214,11 @@ Run a block of code unconditionally; all rules are allowed inside a C<run>
 block, as well as user code.  You can think of the {...} as an anonymous 
 subroutine.
 
+=head2 stream {...}
+
+Run a block of code unconditionally, which should return a coderef
+that is a PSGI streamy response.
+
 =head2 set $arg => $val
 
 Adds an argument to what we're passing to our template, overriding 
@@ -272,7 +277,7 @@ our @EXPORT = qw<
 
     before on after
 
-    show dispatch abort redirect tangent
+    show dispatch abort redirect tangent stream
 
     GET POST PUT HEAD DELETE OPTIONS
 
@@ -298,6 +303,7 @@ sub on ($$@)      { _ret @_ }    # exact match on the path component
 sub after ($$@)   { _ret @_ }    # exact match on the path component
 sub when (&@)     { _ret @_ }    # exact match on the path component
 sub run (&@)      { _ret @_ }    # execute a block of code
+sub stream (&@)   { _ret @_ }    # web return a PSGI-streamy response
 sub show (;$@)    { _ret @_ }    # render a page
 sub dispatch ($@) { _ret @_ }    # run dispatch again with another URI
 sub redirect ($@) { _ret @_ }    # web redirect
@@ -498,6 +504,7 @@ sub handle_request {
     if ( my $err = $@ ) {
         $self->log->warn(ref($err) . " " ."'$err'") if ( $err !~ /^ABORT/ );
     }
+    return $Dispatcher->{stream};
 }
 
 =head2 _handle_stage NAME, EXTRA_RULES
@@ -745,6 +752,20 @@ sub _do_tangent {
     Jifty->web->tangent(url => $path);
 }
 
+=head2 _do_stream CODE
+
+THe method is called by the dispatcher internally. You shouldn't need to.
+
+Take a coderef that returns a PSGI streamy response code.
+
+=cut
+
+sub _do_stream {
+    my ( $self, $code ) = @_;
+    $self->{stream} = $code->();
+    $self->_abort;
+}
+
 =head2 _do_abort 
 
 This method is called by the dispatcher internally. You shouldn't need to.
@@ -758,14 +779,7 @@ sub _do_abort {
     $self->log->debug("Aborting processing");
     if (@_) {
         # This is the status code
-        my $status = shift;
-        my $apache = Jifty->handler->apache;
-        $apache->header_out(Status => $status);
-        Jifty->handler->send_http_header;
-
-        # The body should just be the status
-        require HTTP::Status;
-        print STDOUT $status, ' ' , HTTP::Status::status_message($status);
+        Jifty->web->response->status( shift );
     }
     $self->_abort;
 }
@@ -871,8 +885,9 @@ sub _do_dispatch {
     unless (Jifty->web->request->is_subrequest) {
         Jifty->handler->call_trigger("before_flush");
         Jifty->handler->buffer->flush_output;
-        close(STDOUT);
-        $Jifty::SERVER->close_client_sockets if $Jifty::SERVER;
+		# XXX: flush
+		#close(STDOUT);
+		#$Jifty::SERVER->close_client_sockets if $Jifty::SERVER;
         Jifty->handler->call_trigger("after_flush");
     }
 
@@ -963,8 +978,8 @@ came in with that method.
 
 sub _match_method {
     my ( $self, $method ) = @_;
-    #$self->log->debug("Matching method ".request->request_method." against ".$method);
-    $Request->request_method eq uc($method);
+    #$self->log->debug("Matching method ".Jifty->web->request->method." against ".$method);
+    $Request->method eq uc($method);
 }
 
 =head2 _match_https
@@ -976,7 +991,7 @@ Returns true if the current request is under SSL.
 sub _match_https {
     my $self = shift;
     $self->log->debug("Matching request against HTTPS");
-    return exists $ENV{HTTPS} ? 1 : 0;
+    return Jifty->web->request->secure;
 }
 
 =head2 _match_http
@@ -988,7 +1003,7 @@ Returns true if the current request is not under SSL.
 sub _match_http {
     my $self = shift;
     $self->log->debug("Matching request against HTTP");
-    return exists $ENV{HTTPS} ? 0 : 1;
+    return !Jifty->web->request->secure;
 }
 
 sub _match_plugin {

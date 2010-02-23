@@ -151,6 +151,12 @@ template 'use_mason_wrapper' => page {
 };
 
 
+template 'otherplace' => page {
+    form { }
+};
 
+template 'naughty' => sub {
+    print STDOUT "this is bad: $ENV{REMOTE_HOST}";
+};
 
 1;
