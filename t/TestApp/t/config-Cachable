@@ -6,4 +6,5 @@ framework:
   Plugins:
     - CompressedCSSandJS: {}
     - SkeletonApp: {}
+    - Compat: {}
     - Deflater: {}
