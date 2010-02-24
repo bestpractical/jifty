@@ -195,6 +195,17 @@ sub setup {
     $args ||= [];
     my %args = @{$args} % 2 ? (@{$args}, 1) : @{$args};
 
+    my $root = Jifty::Util->app_root;
+
+    require Jifty::YAML;
+    # naive detect of configfileversion before jifty->new, since you
+    # probably don't want to override it in site_config or other places.
+    my $config = eval { Jifty::YAML::LoadFile("$root/etc/config.yml") };
+    if ($config && $config->{framework}{ConfigFileVersion} &&
+                   $config->{framework}{ConfigFileVersion} < 5) {
+        $ENV{JIFTY_TEST_SERVER} ||= 'Standalone';
+    }
+
     my $server = $ENV{JIFTY_TEST_SERVER} ||= 'Inline';
 
     if ($server eq 'Inline') {
@@ -216,7 +227,6 @@ sub setup {
     }
 
     # Require the things we need
-    require Jifty::YAML;
     require Jifty::Script::Schema;
 
     $class->builder->{no_handle} = $args{no_handle};
@@ -246,8 +256,6 @@ sub setup {
       }
         
     }
-    my $root = Jifty::Util->app_root;
-
     # Mason's disk caching sometimes causes false tests
     rmtree([ File::Spec->canonpath("$root/var/mason") ], 0, 1);
 
