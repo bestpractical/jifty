@@ -75,8 +75,8 @@ option:
 
 This marks the onclick handler as preloadable. When this button is I<rendered>,
 the user's web browser will request this region immediately. When this button
-is button is I<clicked>, the user's web browser will instantly refresh the
-region without having to send an AJAX request and wait for the response.
+is I<clicked>, the user's web browser will instantly refresh the region without
+having to send an AJAX request and wait for the response.
 
 The value of C<preload> is a cache key. This lets you reuse the same cache for
 preloaded regions. For example, if you're going to display ten vote buttons,
@@ -85,7 +85,7 @@ of the buttons the C<vote> cache key, only one preload request will be made.
 Obviously this means that the specific button being clicked should not matter.
 If you have a "undo vote" button which sends you backwards, you would not want
 to preload that with the same cache key as regular votes, since a different
-form would be displayed. In fact, you probably do not want to preload it al,
+form would be displayed. In fact, you probably do not want to preload it all,
 since it's presumably a rare occurrence.
 
 You may also pass a value of C<1> for the C<preload> key. This tells Jifty to
