@@ -143,22 +143,6 @@ feature 'Development of the jifty framework' =>
     recommends('Module::Install::Admin' => '0.50'),
     ;
 
-
-feature 'Forking jifty server' =>
-    -default => 0,
-    recommends('Net::Server::Fork' => 0),
-    ;
-
-feature 'Pre-forking jifty server' =>
-    -default => 0,
-    recommends('Net::Server::PreFork' => 0),
-    ;
-
-feature 'Apache2/ModPerl2 handler' =>
-    -default => 0,
-    recommends('Apache2::Const' => 0),
-    ;
-
 feature 'Improved halos' =>
     -default => 0,
     recommends('Data::Dump::Streamer' => 0),
