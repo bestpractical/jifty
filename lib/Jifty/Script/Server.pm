@@ -194,7 +194,15 @@ sub _run_server {
     Jifty->config->framework('Web')->{'Port'} = $self->{port} if $self->{port};
     my $port = Jifty->config->framework('Web')->{'Port'} || 8888;
 
-    my %args = ( port => $port );
+    my %args = (
+        port         => $port,
+        server_ready => sub {
+            Jifty->log->info( 'You can connect to your server at http://'
+                  . ( $self->{host} || 'localhost' )
+                  . ":$port/" );
+        },
+    );
+
     $args{$_} = $self->{$_} for grep defined $self->{$_}, qw/host user group/;
 
     $Jifty::SERVER = Plack::Loader->load('Standalone', %args);
