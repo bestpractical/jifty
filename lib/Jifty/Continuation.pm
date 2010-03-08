@@ -223,7 +223,7 @@ sub call {
         if defined $next->parent;
 
     # Redirect to right page if we're not there already
-    Jifty->web->_redirect($next->request->path . "?J:RETURN=" . $next->id);
+    Jifty->web->_redirect(URI->new($next->request->request_uri)->path . "?J:RETURN=" . $next->id);
     return 1;
 }
 

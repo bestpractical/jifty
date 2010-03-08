@@ -476,7 +476,7 @@ sub complete_url {
 
     my %parameters = $self->get_parameters;
 
-    my $url = $self->returns ? Jifty->web->request->top_request->path : $self->url;
+    my $url = $self->returns ? URI->new(Jifty->web->request->request_uri)->path : $self->url;
     if (%parameters) {
         $url .= ( $url =~ /\?/ ) ? ";" : "?";
         $url .= Jifty->web->query_string(%parameters);
