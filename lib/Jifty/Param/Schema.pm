@@ -168,6 +168,11 @@ use constant MERGE_PARAM_BEHAVIOUR => {
             HASH   => sub { Hash::Merge::_merge_hashes( $_[0], $_[1] ) } }
 };
 
+my $prev_behaviour = Hash::Merge::get_behavior();
+# the behavior name must be upper-case
+Hash::Merge::specify_behavior( MERGE_PARAM_BEHAVIOUR, 'MERGE_PARAMS' );
+Hash::Merge::set_behavior( $prev_behaviour );
+
 =head2 merge_params HASHREF HASHREF
 
 Takes two hashrefs. Merges them together and returns the merged hashref.
@@ -202,7 +207,7 @@ sub merge_params {
     my $prev_behaviour = Hash::Merge::get_behavior();
     my $prev_clone_behaviour = Hash::Merge::get_clone_behavior();
     Hash::Merge::set_clone_behavior(0);
-    Hash::Merge::specify_behavior( MERGE_PARAM_BEHAVIOUR, "merge_params" );
+    Hash::Merge::set_behavior( 'MERGE_PARAMS' );
     my $rv = Hash::Merge::merge(@_);
     Hash::Merge::set_behavior( $prev_behaviour );
     Hash::Merge::set_clone_behavior($prev_clone_behaviour);
