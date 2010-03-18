@@ -110,6 +110,11 @@ else {
     requires('YAML' => 0.35) unless can_use('YAML::Syck' => 0.71);
 }
 
+feature "FastCGI support" =>
+    -default => 0,
+    recommends('FCGI::ProcManager' => 0.19),
+    ;
+
 feature "Memcached support for serving compressed CSS and JS from Jifty's CAS" =>
     -default => 1,
     recommends('Cache::Memcached' => 1.25),
