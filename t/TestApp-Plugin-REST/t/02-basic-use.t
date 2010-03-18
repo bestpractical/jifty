@@ -9,7 +9,7 @@ This is a template for your own tests. Copy it and modify it.
 
 =cut
 
-use Jifty::Test::Dist tests => 78;
+use Jifty::Test::Dist tests => 80;
 use Jifty::Test::WWW::Mechanize;
 
 my $server  = Jifty::Test->make_server;
@@ -88,6 +88,10 @@ ok(!$response->is_success, "create via POST to model with disallowed create acti
 $mech->get_ok('/=/search/user/id/1.yml');
 my $content = get_content();
 is_deeply($content, [{ name => 'test', email => 'test@example.com', id => 1, tasty => undef }]);
+
+$mech->get_ok('/=/search/user/__not/id/1.yml');
+$content = get_content();
+is_deeply($content, [{ name => 'moose', email => 'moose@example.com', id => 2, tasty => undef }]);
 
 $mech->get_ok('/=/search/user/id/1/name/test.yml');
 $content = get_content();

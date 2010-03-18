@@ -140,8 +140,18 @@ looking for Tasks with due dates 1999-12-25 OR 2000-12-25, you can use:
 
     /=/search/Task/due/1999-12-25/due/2000-12-25/
 
-There are also some pseudo-columns that affect the results, but are not columns
-that are searched:
+
+There are also some pseudo-columns. They are prefixed by __ to avoid collisions
+with actual column names.
+
+Not:
+
+    .../__not/<column>/<value>
+
+This lets you search for records whose value for the column is NOT equal
+to the specified value.
+
+Ordering:
 
     .../__order_by/<column>
     .../__order_by_asc/<column>
@@ -149,6 +159,8 @@ that are searched:
 
 These let you change the output order of the results. Multiple '__order_by's
 will be respected.
+
+Pagination:
 
     .../__page/<number>
     .../__per_page/<number>
@@ -646,12 +658,6 @@ sub search_items {
     my @pieces = grep {length} split '/', $fragment;
     my $ret = ['search', $model, @pieces];
 
-    # if they provided an odd number of pieces, the last is the output column
-    my $field;
-    if (@pieces % 2 == 1) {
-        $field = pop @pieces;
-    }
-
     # limit to the key => value pairs they gave us
     my $collection = eval { $model->collection_class->new }
         or abort(404);
@@ -703,6 +709,20 @@ sub search_items {
                 );
             }
         },
+        __not => sub {
+            my $column = shift;
+            my $value  = shift @pieces;
+
+            my $canonicalizer = "canonicalize_$column";
+            $value = $record->$canonicalizer($value)
+                if $record->can($canonicalizer);
+
+            $collection->limit(
+                column   => $column,
+                value    => $value,
+                operator => '!=',
+            );
+        },
     );
 
     # this was called __limit before it was generalized
@@ -715,7 +735,7 @@ sub search_items {
     $special{__order_by_asc}  = $special{__order_by};
     $special{__order_by_desc} = sub { $special{__order_by}->($_[0], 'DESC') };
 
-    while (@pieces) {
+    while (@pieces > 1) {
         my $column = shift @pieces;
         my $value  = shift @pieces;
 
@@ -729,6 +749,12 @@ sub search_items {
 
             $collection->limit(column => $column, value => $value);
         }
+    }
+
+    # if they provided an odd number of pieces, the last is the output column
+    my $field;
+    if (@pieces) {
+        $field = shift @pieces;
     }
 
     if (defined($per_page) || defined($current_page)) {
