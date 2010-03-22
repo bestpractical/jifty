@@ -8,6 +8,8 @@
  *   http://www.gnu.org/licenses/gpl.html
  *
  * Revision: $Id: jquery.autocomplete.js 15 2009-08-22 10:30:27Z joern.zaefferer $
+ *
+ * 2010-03-22 Shawn M Moore: let extraParams itself be a function
  */
 
 ;(function($) {
@@ -350,14 +352,18 @@ $.Autocompleter = function(input, options) {
 			success(term, data);
 		// if an AJAX url has been supplied, try loading the data now
 		} else if( (typeof options.url == "string") && (options.url.length > 0) ){
-			
-			var extraParams = {
-				timestamp: +new Date()
-			};
-			$.each(options.extraParams, function(key, param) {
-				extraParams[key] = typeof param == "function" ? param() : param;
-			});
-			
+            var extraParams = {
+                timestamp: +new Date()
+            };
+            if (typeof options.extraParams == "function") {
+                extraParams = options.extraParams();
+            }
+            else {
+                $.each(options.extraParams, function(key, param) {
+                    extraParams[key] = typeof param == "function" ? param() : param;
+                });
+            }
+
 			$.ajax({
 				// try to leverage ajaxQueue plugin to abort previous requests
 				mode: "abort",
