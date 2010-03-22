@@ -35,7 +35,6 @@ __PACKAGE__->javascript_libs([qw(
     json.js
     jquery-1.2.6.js
     iutil.js
-    iautocompleter.js
     jifty_interface.js
     jquery_noconflict.js
     jquery.jgrowl.js
@@ -65,6 +64,9 @@ __PACKAGE__->javascript_libs([qw(
     css_browser_selector.js
     cssQuery-jquery.js
     jquery.timepickr.js
+    jquery.ajaxQueue.js
+    jquery.bgiframe.min.js
+    jquery.autocomplete.js
 )]);
 
 use Class::Trigger;
