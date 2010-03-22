@@ -1725,6 +1725,9 @@ function show_action_result() {
 Jifty.addAutocompleter = function (id) {
     var escaped_id = id.replace(/:/g, '\\\\\\:');
 
+    var field  = Jifty.$(id);
+    var action = Jifty.Form.Element.getAction(field);
+
     jQuery(escaped_id).autocomplete('/__jifty/autocomplete.xss', {
         extraParams: function () {
             var request = { path: this.url, actions: {} };
@@ -1732,13 +1735,13 @@ Jifty.addAutocompleter = function (id) {
             a['moniker'] = 'autocomplete';
             a['class']   = 'Jifty::Action::Autocomplete';
             a['fields']  = {};
-            a['fields']['moniker']  = this.action.moniker;
-            a['fields']['argument'] = Jifty.Form.Element.getField(this.field);
+            a['fields']['moniker']  = action.moniker;
+            a['fields']['argument'] = Jifty.Form.Element.getField(field);
             request['actions']['autocomplete'] = a;
-            request['actions'][this.action.moniker] = this.action.data_structure();
-            request['actions'][this.action.moniker]['active']  = 0;
+            request['actions'][action.moniker] = action.data_structure();
+            request['actions'][action.moniker]['active']  = 0;
             return request;
-        },
+        }
     });
 };
 
