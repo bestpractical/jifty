@@ -398,7 +398,6 @@ ActionField.prototype = {
                         this.render_preamble,
                         this.render_label,
                         this.render_widget,
-                        this.render_autocomplete_div,
                         this.render_inline_javascript,
                         this.render_hints,
                         this.render_errors,
@@ -1722,74 +1721,6 @@ function show_action_result() {
         theme: 'result-'+status
     });
 }
-
-Jifty.Autocompleter = function() {
-    var that = this;
-    var args = arguments;
-    jQuery(function () { that.initialize.apply(that, args) } );
-    return this;
-};
-
-jQuery.extend(Jifty.Autocompleter.prototype, {
-    initialize: function(field, div) {
-        this.field  = Jifty.$(field);
-        this.action = Jifty.Form.Element.getAction(this.field);
-        this.url    = '/__jifty/autocomplete.xml';
-
-        var sel = '#'+this.field.id+'-autocomplete';
-        var autocomplete_div = jQuery(sel.replace(/:/g, '\\\\\\:'));
-        var self = this;
-        jQuery(this.field).focus(function(event) {
-            self.changed  = true;
-            self.hasFocus = true;
-            Jifty.current_autocompleter_object = self;
-            autocomplete_div.append(jQuery('#autocompleteHelper')).show();
-        }).blur(function() { autocomplete_div.hide() });
-
-        jQuery(this.field).Autocomplete({
-            source: this.url,
-            minchars: -1,
-            delay: 100,
-            helperClass: 'autocomplete',
-            selectClass: 'selected'
-        });
-    },
-
-    beforeShow: function() {
-        /* Prevents the race for canonicalization and updating via autocomplete */
-        if ( this.field.onblur ) {
-            this.element._onblur = this.element.onblur;
-            this.element.onblur  = null;
-        }
-    },
-
-    beforeHide: function() {
-        /* Restore onblur and config option */
-        if ( this.element._onblur ) {
-            this.element.onblur  = this.element._onblur;
-            this.element._onblur = null;
-        }
-    },
-
-    afterUpdate: function(field, selection) {
-        Jifty.Form.Element.validate(field);
-    },
-
-    buildRequest: function() {
-        var request = { path: this.url, actions: {} };
-        var a = {};
-        a['moniker'] = 'autocomplete';
-        a['class']   = 'Jifty::Action::Autocomplete';
-        a['fields']  = {};
-        a['fields']['moniker']  = this.action.moniker;
-        a['fields']['argument'] = Jifty.Form.Element.getField(this.field);
-        request['actions']['autocomplete'] = a;
-        request['actions'][this.action.moniker] = this.action.data_structure();
-        request['actions'][this.action.moniker]['active']  = 0;
-        return request;
-    }
-});
-
 
 Jifty.Placeholder = function() {
     this.initialize.apply(this, arguments);
