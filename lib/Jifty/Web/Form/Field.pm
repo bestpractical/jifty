@@ -669,7 +669,7 @@ sub autocomplete_javascript {
     my $self = shift;
     return unless($self->autocompleter);
     my $element_id = $self->element_id;
-    return qq{new Jifty.Autocompleter('$element_id','$element_id-autocomplete')};
+    return "jQuery(document).ready(function(){Jifty.addAutocompleter('#$element_id');});"
 }
 
 =head2 placeholder_javascript

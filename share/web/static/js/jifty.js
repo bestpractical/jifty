@@ -1722,6 +1722,11 @@ function show_action_result() {
     });
 }
 
+Jifty.addAutocompleter = function (id) {
+    var escaped_id = id.replace(/:/g, '\\\\\\:');
+    jQuery(escaped_id).autocomplete(['foo', 'bar']);
+};
+
 Jifty.Placeholder = function() {
     this.initialize.apply(this, arguments);
     return this;
