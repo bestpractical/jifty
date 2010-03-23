@@ -1729,6 +1729,7 @@ Jifty.addAutocompleter = function (id) {
     var action = Jifty.Form.Element.getAction(field);
 
     jQuery(escaped_id).autocomplete('/__jifty/autocomplete.xss', {
+        cache: false,
         extraParams: function () {
             var request = { path: this.url, actions: {} };
             var a = {};
