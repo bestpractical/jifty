@@ -364,6 +364,15 @@ $.Autocompleter = function(input, options) {
                 });
             }
 
+            var data = $.extend({
+                q: lastWord(term),
+                limit: options.max
+            }, extraParams);
+
+            if (typeof options.mungeData == "function") {
+                data = options.mungeData(data, term);
+            }
+
 			$.ajax({
 				// try to leverage ajaxQueue plugin to abort previous requests
 				mode: "abort",
@@ -371,10 +380,8 @@ $.Autocompleter = function(input, options) {
 				port: "autocomplete" + input.name,
 				dataType: options.dataType,
 				url: options.url,
-				data: $.extend({
-					q: lastWord(term),
-					limit: options.max
-				}, extraParams),
+				data: data,
+                contentType: options.contentType,
 				success: function(data) {
 					var parsed = options.parse && options.parse(data) || parse(data);
 					cache.add(term, parsed);
