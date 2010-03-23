@@ -1723,12 +1723,12 @@ function show_action_result() {
 }
 
 Jifty.addAutocompleter = function (id) {
-    var escaped_id = id.replace(/:/g, '\\\\\\:');
-
     var field  = Jifty.$(id);
     var action = Jifty.Form.Element.getAction(field);
 
-    jQuery(escaped_id).autocomplete('/__jifty/autocomplete.xss', {
+    var selector = '#' + id.replace(/:/g, '\\\\\\:');
+
+    jQuery(selector).autocomplete('/__jifty/autocomplete.xss', {
         cache: false,
         extraParams: function () {
             var request = { path: this.url, actions: {} };
