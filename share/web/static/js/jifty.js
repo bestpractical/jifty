@@ -1730,6 +1730,11 @@ Jifty.addAutocompleter = function (id) {
 
     jQuery(selector).autocomplete('/__jifty/autocomplete.xml', {
         cache: false,
+        httpMethod: 'POST',
+        contentType: 'text/x-json',
+        mungeData: function (data, term) {
+            return JSON.stringify(data);
+        },
         extraParams: function () {
             var actions = {
                 autocomplete: {
