@@ -10,6 +10,7 @@
  * Revision: $Id: jquery.autocomplete.js 15 2009-08-22 10:30:27Z joern.zaefferer $
  *
  * 2010-03-22 Shawn M Moore: let extraParams itself be a function
+ * 2010-03-23 Shawn M Moore: add more options httpMethod, contentType, mungeData
  */
 
 ;(function($) {
