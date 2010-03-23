@@ -381,6 +381,7 @@ $.Autocompleter = function(input, options) {
 				dataType: options.dataType,
 				url: options.url,
 				data: data,
+                type: options.httpMethod,
                 contentType: options.contentType,
 				success: function(data) {
 					var parsed = options.parse && options.parse(data) || parse(data);
