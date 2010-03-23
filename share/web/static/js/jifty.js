@@ -1726,13 +1726,14 @@ Jifty.addAutocompleter = function (id) {
     var field  = Jifty.$(id);
     var action = Jifty.Form.Element.getAction(field);
 
+    // if there's a raw :, jQuery interprets the id as a css selector
     var selector = '#' + id.replace(/:/g, '\\\\\\:');
 
     jQuery(selector).autocomplete('/__jifty/autocomplete.xml', {
-        cache: false,
-        httpMethod: 'POST',
+        cacheLength: 0, // disable caching
+        httpMethod:  'POST',
         contentType: 'text/x-json',
-        mungeData: function (data, term) {
+        mungeData:   function (data, term) {
             return JSON.stringify(data);
         },
         extraParams: function () {
@@ -1747,6 +1748,7 @@ Jifty.addAutocompleter = function (id) {
                 }
             };
 
+            // the action we're autocompleting
             actions[action.moniker] = action.data_structure();
             actions[action.moniker]['active'] = 0;
 
