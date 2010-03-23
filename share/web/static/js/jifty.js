@@ -1728,7 +1728,7 @@ Jifty.addAutocompleter = function (id) {
 
     var selector = '#' + id.replace(/:/g, '\\\\\\:');
 
-    jQuery(selector).autocomplete('/__jifty/autocomplete.xss', {
+    jQuery(selector).autocomplete('/__jifty/autocomplete.xml', {
         cache: false,
         extraParams: function () {
             var actions = {
