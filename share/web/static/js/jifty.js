@@ -1731,17 +1731,24 @@ Jifty.addAutocompleter = function (id) {
     jQuery(selector).autocomplete('/__jifty/autocomplete.xss', {
         cache: false,
         extraParams: function () {
-            var request = { path: this.url, actions: {} };
-            var a = {};
-            a['moniker'] = 'autocomplete';
-            a['class']   = 'Jifty::Action::Autocomplete';
-            a['fields']  = {};
-            a['fields']['moniker']  = action.moniker;
-            a['fields']['argument'] = Jifty.Form.Element.getField(field);
-            request['actions']['autocomplete'] = a;
-            request['actions'][action.moniker] = action.data_structure();
-            request['actions'][action.moniker]['active']  = 0;
-            return request;
+            var actions = {
+                autocomplete: {
+                    moniker: 'autocomplete',
+                    class:   'Jifty::Action::Autocomplete',
+                    fields:  {
+                        moniker:  action.moniker,
+                        argument: Jifty.Form.Element.getField(field)
+                    }
+                }
+            };
+
+            actions[action.moniker] = action.data_structure();
+            actions[action.moniker]['active'] = 0;
+
+            return {
+                path:    this.url,
+                actions: actions
+            };
         }
     });
 };
