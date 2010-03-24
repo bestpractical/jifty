@@ -1739,10 +1739,26 @@ Jifty.addAutocompleter = function (id) {
         parse: function (data) {
             var results = [];
             jQuery(data).find("li").each(function () {
-                var label = jQuery(this).find(".informal").text();
-                var value = jQuery(this).find(".hidden_value").text();
 
-                if (value == '') {
+                var label, value;
+                jQuery(this).find("span").each(function () {
+                    var el = jQuery(this);
+
+                    // argh this is awful but hasClass('informal') returns false!?
+                    if (el.attr('class') == 'informal') {
+                        label = el.text();
+                    }
+                    else if (el.attr('class') == 'hidden_value') {
+                        value = el.text();
+                    }
+                });
+
+                // the above *should* be just the following but jQuery is kicking
+                // my puppies
+                // var label = jQuery(this).find(".informal").text();
+                // var value = jQuery(this).find(".hidden_value").text();
+
+                if (value === undefined) {
                     label = jQuery(this).text();
                     value = label;
                 }
