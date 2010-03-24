@@ -1736,6 +1736,24 @@ Jifty.addAutocompleter = function (id) {
         mungeData:   function (data, term) {
             return JSON.stringify(data);
         },
+        parse: function (data) {
+            var results = [];
+            jQuery(data).find("li").each(function () {
+                var label = jQuery(this).find(".informal").text();
+                var value = jQuery(this).find(".hidden_value").text();
+
+                if (value == '') {
+                    label = jQuery(this).text();
+                    value = label;
+                }
+
+                results.push({
+                    data:   [value],
+                    result: label
+                });
+            });
+            return results;
+        },
         extraParams: function () {
             var actions = {
                 autocomplete: {
