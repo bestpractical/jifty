@@ -1765,8 +1765,8 @@ Jifty.addAutocompleter = function (id) {
                 }
 
                 results.push({
-                    data:   [value],
-                    result: label
+                    data:   [label],
+                    result: value
                 });
             });
             return results;
