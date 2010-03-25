@@ -1765,7 +1765,7 @@ Jifty.addAutocompleter = function (id) {
                 }
 
                 results.push({
-                    data:   [label],
+                    data:   [label, value],
                     result: value
                 });
             });
@@ -1791,7 +1791,19 @@ Jifty.addAutocompleter = function (id) {
                 path:    this.url,
                 actions: actions
             };
-        }
+        },
+        formatItem: function (data) {
+            var label = data[0];
+            var value = data[1];
+
+            if (label == value) {
+                return escape(label);
+            }
+            else {
+                return '<div class="ac_label">' + escape(label) + '</div>' +
+                       '<div class="ac_value">' + escape(value) + '</div>';
+            }
+        },
     });
 };
 
