@@ -1797,11 +1797,11 @@ Jifty.addAutocompleter = function (id) {
             var value = data[1];
 
             if (label == value) {
-                return escape(label);
+                return Jifty.Utils.encodeEntities(label);
             }
             else {
-                return '<div class="ac_label">' + escape(label) + '</div>' +
-                       '<div class="ac_value">' + escape(value) + '</div>';
+                return '<div class="ac_label">' + Jifty.Utils.encodeEntities(label) + '</div>' +
+                       '<div class="ac_value">' + Jifty.Utils.encodeEntities(value) + '</div>';
             }
         },
     });
