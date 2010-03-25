@@ -1731,6 +1731,7 @@ Jifty.addAutocompleter = function (id) {
 
     jQuery(selector).autocomplete('/__jifty/autocomplete.xml', {
         cacheLength: 0, // disable caching
+        delay: 100,
         httpMethod:  'POST',
         contentType: 'text/x-json',
         mungeData:   function (data, term) {
