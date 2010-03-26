@@ -124,11 +124,11 @@ sub get_all_plugin_data {
 }
 
 sub new_request_inspection {
-    my ($self, $cgi) = @_;
+    my ($self, $req) = @_;
 
     my $ret = {
         start => time,
-        url   => $cgi->url(-absolute => 1, -path_info => 1),
+        url   => $req->request_uri,
     };
 
     if (my $cookie_name = $self->on_cookie) {
@@ -154,27 +154,28 @@ do {
 };
 
 sub before_request {
-    my ($self, $handler, $cgi) = @_;
+    my ($self, $handler, $req) = @_;
 
-    return unless $self->should_handle_request($cgi);
+    return unless $self->should_handle_request($req);
 
-    $current_inspection = $self->new_request_inspection($cgi);
+    $current_inspection = $self->new_request_inspection($req);
 
     for my $plugin ($self->inspector_plugins) {
         next unless $plugin->can('inspect_before_request');
-        my $plugin_data = $plugin->inspect_before_request($cgi);
+        my $plugin_data = $plugin->inspect_before_request($req);
         $current_inspection->{plugin_data}{ref $plugin} = $plugin_data;
     }
 }
 
 sub after_request {
-    my ($self, $handler, $cgi) = @_;
+    my ($self, $handler, $req) = @_;
 
     if ($current_inspection) {
         for my $plugin (reverse $self->inspector_plugins) {
             next unless $plugin->can('inspect_after_request');
             my $plugin_data = $current_inspection->{plugin_data}{ref $plugin};
-            my $new_plugin_data = $plugin->inspect_after_request($plugin_data, $cgi);
+            my $new_plugin_data =
+              $plugin->inspect_after_request( $plugin_data, $req );
             if (defined($new_plugin_data)) {
                 $current_inspection->{plugin_data}{ref $plugin} = $new_plugin_data;
             }
@@ -188,9 +189,9 @@ sub after_request {
 
 sub should_handle_request {
     my $self = shift;
-    my $cgi  = shift;
+    my $req  = shift;
 
-    my $url = $cgi->url(-absolute => 1, -path_info => 1);
+    my $url = $req->request_uri;
     return unless $url =~ $self->url_filter;
 
     if (my $cookie_name = $self->on_cookie) {
