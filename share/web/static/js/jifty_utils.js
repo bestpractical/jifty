@@ -194,6 +194,10 @@ jQuery.extend(Jifty.Utils, {
 
     stripScripts: function(str) {
         return str.replace(/<script(.|\s)*?\/script>/g, "");
+    },
+
+    encodeEntities: function (str) {
+        return jQuery("<div />").text(str).html();
     }
 });
 

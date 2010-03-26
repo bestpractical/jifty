@@ -393,7 +393,6 @@ sub render {
     $self->render_label();
     if ($self->render_mode eq 'update') { 
         $self->render_widget();
-        $self->render_autocomplete_div();
         $self->render_inline_javascript();
         $self->render_hints();
         $self->render_errors();
@@ -643,28 +642,11 @@ sub render_value {
 
 
 
-=head2 render_autocomplete_div
-
-Renders an empty div that /__jifty/autocomplete.xml can fill
-in. Returns an empty string.
-
-=cut
-
-sub render_autocomplete_div { 
-    my $self = shift;
-    return unless($self->autocompleter);
-    Jifty->web->out(
-qq!<div class="autocomplete" id="@{[$self->element_id]}-autocomplete" style="display: none;"></div>!);
-
-    return '';
-}
-
 =head2 render_autocomplete
 
 Renders the div tag and javascript necessary to do autocompletion for
-this form field. Deprecated internally in favor of
-L</render_autocomplete_div> and L</autocomplete_javascript>, but kept
-for backwards compatability since there exists external code that uses
+this form field. Deprecated internally in favor of L</autocomplete_javascript>,
+but kept for backwards compatability since there exists external code that uses
 it.
 
 =cut
@@ -672,12 +654,9 @@ it.
 sub render_autocomplete {
     my $self = shift;
     return unless $self->autocompleter;
-    $self->render_autocomplete_div;
     Jifty->web->out(qq!<script type="text/javascript">@{[$self->autocomplete_javascript]}</script>!);
     return '';
 }
-
-
 
 =head2 autocomplete_javascript
 
@@ -690,7 +669,7 @@ sub autocomplete_javascript {
     my $self = shift;
     return unless($self->autocompleter);
     my $element_id = $self->element_id;
-    return qq{new Jifty.Autocompleter('$element_id','$element_id-autocomplete')};
+    return "jQuery(document).ready(function(){Jifty.addAutocompleter('$element_id');});"
 }
 
 =head2 placeholder_javascript

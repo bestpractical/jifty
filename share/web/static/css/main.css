@@ -15,8 +15,10 @@
 @import "yui/menu/menu-core.css";
 @import "yui/menu/menu.css";
 @import "notices.css";
+@import "jquery.autocomplete.css";
 @import "jquery.jgrowl.css";
 @import "jquery.timepickr.css";
+@import "thickbox.css";
 @import "facebox.css";
 @import "datetime.css";
 @import "app-late.css";
