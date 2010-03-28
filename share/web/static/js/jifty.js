@@ -1774,9 +1774,9 @@ Jifty.addAutocompleter = function (id) {
         extraParams: function () {
             var actions = {
                 autocomplete: {
-                    moniker: 'autocomplete',
-                    class:   'Jifty::Action::Autocomplete',
-                    fields:  {
+                    'moniker': 'autocomplete',
+                    'class':   'Jifty::Action::Autocomplete',
+                    'fields':  {
                         moniker:  action.moniker,
                         argument: Jifty.Form.Element.getField(field)
                     }
