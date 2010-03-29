@@ -22,7 +22,7 @@ is available, then it's used instead.
 
 =head2 LoadFile
 
-Each of the above is alias to the equivient function in either L<YAML>
+Each of the above is alias to the equivalent function in either L<YAML>
 or L<YAML::Syck>.
 
 =cut
