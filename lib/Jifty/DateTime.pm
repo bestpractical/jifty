@@ -326,6 +326,10 @@ Returns the date given by this C<Jifty::DateTime> object. It will display "today
 for today, "tomorrow" for tomorrow, or "yesterday" for yesterday. Any other date
 will be displayed in ymd format.
 
+We currently shift by "24 hours" to detect yesterday and tomorrow, rather than
+"1 day" because of daylight saving issues. "1 day" can result in invalid local
+time errors.
+
 =cut
 
 sub friendly_date {
@@ -342,13 +346,13 @@ sub friendly_date {
     }
 
     # Is it yesterday?
-    my $yesterday = $rel->clone->subtract(days => 1);
+    my $yesterday = $rel->clone->subtract(hours => 24);
     if ($ymd eq $yesterday->ymd) {
         return "yesterday";
     }
 
     # Is it tomorrow?
-    my $tomorrow = $rel->clone->add(days => 1);
+    my $tomorrow = $rel->clone->add(hours => 24);
     if ($ymd eq $tomorrow->ymd) {
         return "tomorrow";
     }
