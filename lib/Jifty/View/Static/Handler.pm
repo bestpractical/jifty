@@ -234,6 +234,7 @@ sub send_http_header {
     # Expire in a year
     $response->header( 'Cache-Control' => 'max-age=31536000, public' );
     $response->header( 'Expires' => HTTP::Date::time2str( $now + 31536000 ) );
+    $response->header( 'Content-Length' => $length ) if $length;
 
     $response->header(
       'Last-Modified' => HTTP::Date::time2str( $modified ) ) if $modified;
