@@ -1803,7 +1803,7 @@ Jifty.addAutocompleter = function (id) {
                 return '<div class="ac_label">' + Jifty.Utils.encodeEntities(label) + '</div>' +
                        '<div class="ac_value">' + Jifty.Utils.encodeEntities(value) + '</div>';
             }
-        },
+        }
     });
 };
 
