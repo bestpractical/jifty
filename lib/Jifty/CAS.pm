@@ -80,7 +80,7 @@ sub serve_by_name {
     return $class->_serve_404( $domain, $name, "Unable to lookup key." )
         if not defined $key;
 
-    if ( Jifty->web->request->env->{'If-Modified-Since'} and $incoming_key eq $key ) {
+    if ( Jifty->web->request->header('If-Modified-Since')  and $incoming_key eq $key ) {
         Jifty->log->debug("Returning 304 for CAS cached $domain:$name ($key)");
         Jifty->web->response->header( Status => 304 );
         return 304;
@@ -92,7 +92,8 @@ sub serve_by_name {
         if not defined $obj;
 
     Jifty->web->response->content_type($obj->metadata->{content_type});
-    Jifty::View::Static::Handler->send_http_header('', length($obj->content));
+    Jifty::View::Static::Handler->send_http_header('', length($obj->content),
+                                                   $obj->metadata->{time});
 
     Jifty->log->debug("Sending squished $domain:$name ($key) from CAS");
     Jifty->web->out($obj->content);
