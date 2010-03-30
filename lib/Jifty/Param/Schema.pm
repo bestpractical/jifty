@@ -151,23 +151,6 @@ sub schema (&) {
 }
 
 use Hash::Merge ();
-{
-# XXX to eliminate the warning:
-#   Can't call method "isa" on unblessed reference
-# see https://rt.cpan.org/Public/Bug/Display.html?id=55978
-    no warnings 'redefine';
-    *Hash::Merge::_get_obj = sub {
-        my $type = ref $_[0];
-        if (   $type
-            && $type !~ /^(?:SCALAR|ARRAY|HASH)$/
-            && ( $type eq 'Hash::Merge' || $_[0]->isa('Hash::Merge') ) )
-        {
-            return shift;
-        }
-        return $Hash::Merge::context;
-    };
-}
-
 no warnings 'uninitialized';
 use constant MERGE_PARAM_BEHAVIOUR => {
     SCALAR => {
@@ -181,13 +164,14 @@ use constant MERGE_PARAM_BEHAVIOUR => {
     HASH => {
             SCALAR => sub { length($_[1]) ? $_[1] : $_[0] },
             ARRAY  => sub { [ @{$_[1]} ] },
-            HASH   => sub { Hash::Merge::_merge_hashes( $_[0], $_[1] ) } }
+            HASH   => sub { Hash::Merge::_merge_hashes( $Hash::Merge::context, $_[0], $_[1] ) } }
 };
 
 my $prev_behaviour = Hash::Merge::get_behavior();
 # the behavior name must be upper-case
 Hash::Merge::specify_behavior( MERGE_PARAM_BEHAVIOUR, 'MERGE_PARAMS' );
 Hash::Merge::set_behavior( $prev_behaviour );
+my $merge = Hash::Merge->new('MERGE_PARAMS');
 
 =head2 merge_params HASHREF HASHREF
 
@@ -220,13 +204,7 @@ sub merge_params {
         }
         push @types, \@t;
     }
-    my $prev_behaviour = Hash::Merge::get_behavior();
-    my $prev_clone_behaviour = Hash::Merge::get_clone_behavior();
-    Hash::Merge::set_clone_behavior(0);
-    Hash::Merge::set_behavior( 'MERGE_PARAMS' );
-    my $rv = Hash::Merge::merge(@_);
-    Hash::Merge::set_behavior( $prev_behaviour );
-    Hash::Merge::set_clone_behavior($prev_clone_behaviour);
+    my $rv = $merge->merge(@_);
     for my $m (@_) {
         my @t = @{shift @types};
         for (keys %{$m}) {
