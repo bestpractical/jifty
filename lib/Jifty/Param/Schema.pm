@@ -151,6 +151,22 @@ sub schema (&) {
 }
 
 use Hash::Merge ();
+{
+# XXX to eliminate the warning:
+#   Can't call method "isa" on unblessed reference
+# see https://rt.cpan.org/Public/Bug/Display.html?id=55978
+    no warnings 'redefine';
+    *Hash::Merge::_get_obj = sub {
+        my $type = ref $_[0];
+        if (   $type
+            && $type !~ /^(?:SCALAR|ARRAY|HASH)$/
+            && ( $type eq 'Hash::Merge' || $_[0]->isa('Hash::Merge') ) )
+        {
+            return shift;
+        }
+        return $Hash::Merge::context;
+    };
+}
 
 no warnings 'uninitialized';
 use constant MERGE_PARAM_BEHAVIOUR => {
