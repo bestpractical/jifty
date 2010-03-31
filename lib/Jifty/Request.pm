@@ -309,8 +309,10 @@ sub from_args {
     for my $k (keys %args) {
         my $val = $args{$k};
         if(ref($val) && ref($val) eq 'ARRAY') {
-            $args{$k} = [map { ref eq 'Fh' ?
-                Jifty::Web::FileUpload->new_from_fh($_) : Jifty::I18N->promote_encoding($_, $ENV{CONTENT_TYPE})} @$val];
+            $args{$k} = [
+                map { Jifty::I18N->promote_encoding( $_, $self->content_type ) }
+                  @$val
+            ];
         } elsif(!ref($val)) {
             $args{$k} = Jifty::I18N->promote_encoding($val, $self->content_type);
         }
