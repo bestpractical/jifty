@@ -1,11 +1,10 @@
 #!/usr/bin/env perl
 use warnings;
 use strict;
-use Jifty::Test::Dist tests => 9;
+use Jifty::Test::Dist tests => 8;
 use Jifty::Test::WWW::Selenium;
 
 my $server = Jifty::Test->make_server;
-isa_ok( $server, 'Jifty::Server' );
 my $URL = $server->started_ok;
 my $sel = Jifty::Test::WWW::Selenium->rc_ok($server);
 
