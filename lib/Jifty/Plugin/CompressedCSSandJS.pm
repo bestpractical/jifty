@@ -179,38 +179,53 @@ sub _generate_javascript {
     my $self = shift;
 
     return if Jifty::CAS->key('ccjs', 'js-all') && !Jifty->config->framework('DevelMode');
-    $self->log->debug("Generating JS...");
 
-    # for the file cascading logic
-        my $static_handler = Jifty->handler->view('Jifty::View::Static::Handler');
-        my $js = "";
-
-        for my $file ( @{ Jifty::Web->javascript_libs } ) {
-            next if $self->_js_is_skipped($file);
-            my $include = $static_handler->file_path( File::Spec->catdir( 'js', $file ) );
-
-            if ( defined $include ) {
-                my $fh;
-
-                if ( open $fh, '<', $include ) {
-                    local $_;
-                    $js .= "/* Including '$file' */\n\n";
-                    $js .= $_ while <$fh>;
-                    $js .= "\n/* End of '$file' */\n\n";
-                } else {
-                    $js .= "\n/* Unable to open '$file': $! */\n";
-                }
-            } else {
-                $js .= "\n/* Unable to find '$file' */\n";
-            }
-        }
-        if ($self->jsmin) {
-            eval { $self->minify_js(\$js) };
-            $self->log->error("Unable to run jsmin: $@") if $@;
-        }
+    my $js = $self->_generate_javascript_nocache;
 
     Jifty::CAS->publish( 'ccjs', 'js-all', $js,
         { content_type => 'application/x-javascript', time => time() } );
+}
+
+=head3 _generate_javascript_nocache
+
+Generates compressed javascript, ignoring the cache completely.
+
+=cut
+
+sub _generate_javascript_nocache {
+    my $self = shift;
+    $self->log->debug("Generating JS...");
+
+    # for the file cascading logic
+    my $static_handler = Jifty->handler->view('Jifty::View::Static::Handler');
+    my $js = "";
+
+    for my $file ( @{ Jifty::Web->javascript_libs } ) {
+        next if $self->_js_is_skipped($file);
+        my $include = $static_handler->file_path( File::Spec->catdir( 'js', $file ) );
+
+        if ( defined $include ) {
+            my $fh;
+
+            if ( open $fh, '<', $include ) {
+                local $_;
+                $js .= "/* Including '$file' */\n\n";
+                $js .= $_ while <$fh>;
+                $js .= "\n/* End of '$file' */\n\n";
+            } else {
+                $js .= "\n/* Unable to open '$file': $! */\n";
+            }
+        } else {
+            $js .= "\n/* Unable to find '$file' */\n";
+        }
+    }
+
+    if ($self->jsmin) {
+        eval { $self->minify_js(\$js) };
+        $self->log->error("Unable to run jsmin: $@") if $@;
+    }
+
+    return $js;
 }
 
 =head2 minify_js \$js
