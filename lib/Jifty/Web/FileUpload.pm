@@ -138,7 +138,7 @@ sub new_from_plack {
         or die "Can't open '@{[ $u->tempname ]}': '$!'";
 
     $self->new(filehandle   => $fh,
-               filename     => $u->filename,
+               filename     => $u->basename,
                content_type => $u->type,
            );
 }
