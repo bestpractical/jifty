@@ -12,7 +12,6 @@ use HTML::Lint;
 use Test::HTML::Lint qw();
 use HTTP::Cookies;
 use XML::XPath;
-use Hook::LexWrap;
 use List::Util qw(first);
 use Plack::Test;
 use Carp;
@@ -337,26 +336,6 @@ sub fragment_request {
     $self->back;
     return $content;
 }
-
-
-# When it sees something like
-# http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd as a DOCTYPE, this will make
-# it open static/dtd/xhtml1-strict.dtd instead -- great for offline hacking!
- 
-# This "require" is just to give us something to hook on to, and to prevent a
-# future require from taking effect.
-require 'XML/Parser/LWPExternEnt.pl';
-wrap 'XML::Parser::lwp_ext_ent_handler', pre => sub {
-    my $root = Jifty::Util->share_root;
-    $_[2] =~ s{ \A .+ / ([^/]+) \z }{$root/dtd/$1}xms;
-    open my $fh, '<', $_[2] or die "can't open $_[2]: $!";
-    my $content = do {local $/; <$fh>};
-    close $fh;
-    $_[-1] = $content; # override return value
-};
-wrap 'XML::Parser::lwp_ext_ent_cleanup', pre => sub {
-    $_[-1] = 1; # just return please
-};
 
 =head2 field_error_text MONIKER, FIELD
 
