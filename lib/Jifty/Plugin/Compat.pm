@@ -3,7 +3,6 @@ use warnings;
 
 package Jifty::Plugin::Compat;
 use base 'Jifty::Plugin';
-use Hook::LexWrap ();
 use CGI::Emulate::PSGI ();
 
 =head1 NAME
@@ -38,11 +37,16 @@ TODO: this should also rebind STDIN/STDOUT in the per-request hook.
 };
 
 require Jifty::View::Mason::Handler;
-Hook::LexWrap::wrap 'Jifty::View::Mason::Handler::new',
-    post => sub { my $self = shift;
-                  $self->interp->compiler->add_allowed_globals('$r');
-                  $self->interp->set_global('$r', 'Jifty::Plugin::Compat::Apache');
-              };
+my $old_new = Jifty::View::Mason::Handler->can('new');
+no warnings 'redefine';
+*Jifty::View::Mason::Handler::new = sub {
+    my $self = $old_new->(@_);
+
+    $self->interp->compiler->add_allowed_globals('$r');
+    $self->interp->set_global('$r', 'Jifty::Plugin::Compat::Apache');
+
+    return $self;
+};
 
 sub wrap {
     my ($self, $app) = @_;

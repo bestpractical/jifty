@@ -52,7 +52,6 @@ requires('HTTP::Server::Simple' => '0.35');  # HTTP::Server::Simple::CGI
 requires('HTTP::Server::Simple::Recorder');
 requires('Hash::Merge', '0.12');
 requires('Hash::MultiValue', 0.05);
-requires('Hook::LexWrap');
 requires('IO::Handle::Util');
 requires('IPC::PubSub' => '0.23' );
 requires('IPC::Run3');
