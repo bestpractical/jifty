@@ -319,9 +319,15 @@ sub from_args {
     }
 
     my $uploads = $self->uploads;
-    for my $k (keys %$uploads) {
+    for my $k ( keys %$uploads ) {
         my $val = $uploads->{$k};
-        $args{$k} = Jifty::Web::FileUpload->new_from_plack($val);
+        if ( ref $val eq 'ARRAY' ) {
+            $args{$k} =
+              [ map { Jifty::Web::FileUpload->new_from_plack($_) } @$val ];
+        }
+        else {
+            $args{$k} = Jifty::Web::FileUpload->new_from_plack($val);
+        }
     }
     my @splittable_names = grep /=|\|/, keys %args;
     for my $splittable (@splittable_names) {
