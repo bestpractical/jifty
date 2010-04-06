@@ -524,7 +524,7 @@ qw( name
 
 sub valid_column {
     my ( $model, $column ) = @_;
-    return scalar grep { $_->name eq $column and not $_->virtual and not $_->private } $model->new->columns;
+    return scalar grep { $_->name eq $column and not $_->private } $model->new->columns;
 }
 
 =head2 list_model_columns
