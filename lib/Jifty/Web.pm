@@ -134,7 +134,7 @@ sub url {
     my $req = Jifty->web->request;
     if ($req && $req->uri->host) {
         $uri = $req->uri->clone;
-        $uri->path('/');
+        $uri->path_query('/');
     }
     else {
         $uri = URI->new(Jifty->config->framework("Web")->{BaseURL});
