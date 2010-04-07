@@ -27,6 +27,7 @@ use base qw/Class::Accessor::Fast Jifty::Object/;
 use Jifty::View::Declare::Handler ();
 use Class::Trigger;
 use String::BufferStack;
+use Plack::Builder;
 use Plack::Request;
 
 __PACKAGE__->mk_accessors(qw(dispatcher _view_handlers stash buffer));
@@ -112,6 +113,47 @@ sub view {
     return $self->_view_handlers->{$class};
 }
 
+=head2 psgi_app_static
+
+Returns a closure for L<PSGI> application that handles all static
+content, including plugins.
+
+=cut
+
+sub psgi_app_static {
+    my $self = shift;
+
+    my $view_handler = $self->view('Jifty::View::Static::Handler')
+        or return;;
+
+    require Plack::App::Cascade;
+    require Plack::App::File;
+    my $static = Plack::App::Cascade->new;
+    $static->add( Plack::App::File->new(root => $_)->to_app)
+        for $view_handler->roots;
+
+    # the buffering and unsetting of psgi.streaming is to vivify the
+    # responded res from the $static cascade app.
+    builder {
+        enable 'Plack::Middleware::ConditionalGET';
+        enable
+            sub { my $app = shift;
+                  sub { my $env = shift;
+                        $env->{'psgi.streaming'} = 0;
+                        my $res = $app->($env);
+                        # skip streamy response
+                        return $res unless ref($res) eq 'ARRAY' && $res->[2];
+                        my $h = Plack::Util::headers($res->[1]);;
+                        $h->set( 'Cache-Control' => 'max-age=31536000, public' );
+                        $h->set( 'Expires' => HTTP::Date::time2str( time() + 31536000 ) );
+                        $res;
+                    };
+              };
+        enable 'Plack::Middleware::BufferedStreaming';
+        $static;
+    };
+}
+
 =head2 psgi_app
 
 Returns a closure for L<PSGI> application.
@@ -122,6 +164,13 @@ sub psgi_app {
     my $self = shift;
 
     my $app = sub { $self->handle_request(@_) };
+    my $static = $self->psgi_app_static;
+
+    $app = builder {
+        mount '/static' => $static;
+        mount '/'       => $app
+    }
+        if Jifty->config->framework("Web")->{PSGIStatic} && $static;
 
     # allow plugin to wrap $app
     for ( Jifty->plugins ) {

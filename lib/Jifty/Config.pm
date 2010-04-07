@@ -515,6 +515,7 @@ sub guess {
                     default_escape_flags => 'h',
                 },
                 Globals => [],
+                PSGIStatic => 1,
             },
         },
     };
