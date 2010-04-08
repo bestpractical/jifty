@@ -6,6 +6,9 @@ use base 'Jifty::Plugin';
 
 use IPC::Run3 'run3';
 use IO::Handle ();
+use Plack::Util;
+use HTTP::Message::PSGI;
+use HTTP::Request;
 
 =head1 NAME
 
@@ -197,26 +200,22 @@ sub _generate_javascript_nocache {
     $self->log->debug("Generating JS...");
 
     # for the file cascading logic
-    my $static_handler = Jifty->handler->view('Jifty::View::Static::Handler');
     my $js = "";
+
+    my $static_app = Jifty->handler->psgi_app_static;
 
     for my $file ( @{ Jifty::Web->javascript_libs } ) {
         next if $self->_js_is_skipped($file);
-        my $include = $static_handler->file_path( File::Spec->catdir( 'js', $file ) );
 
-        if ( defined $include ) {
-            my $fh;
-
-            if ( open $fh, '<', $include ) {
-                local $_;
-                $js .= "/* Including '$file' */\n\n";
-                $js .= $_ while <$fh>;
-                $js .= "\n/* End of '$file' */\n\n";
-            } else {
-                $js .= "\n/* Unable to open '$file': $! */\n";
-            }
-        } else {
-            $js .= "\n/* Unable to find '$file' */\n";
+        my $res = Plack::Util::run_app
+            ( $static_app,
+              HTTP::Request->new(GET => "/js/$file")->to_psgi );
+        if ($res->[0] == 200) {
+            Plack::Util::foreach($res->[2], sub { $js .= $_[0] } );
+        }
+        else {
+            $self->log->error("Unable to include '$file': $res->[0]");
+            $js .= "\n/* Unable to include '$file': $res->[0] */\n";
         }
     }
 

@@ -61,7 +61,7 @@ requires('List::MoreUtils');
 requires('Locale::Maketext::Extract' => '0.35');
 requires('Locale::Maketext::Lexicon' => '0.77');
 requires('Log::Log4perl' => '1.11'); # Log::Log4perl::Appender Log::Log4perl::Level
-requires('LWP::UserAgent'); # Net::HTTP LWP::Simple HTTP::Request::Common
+requires('LWP::UserAgent'); # Net::HTTP LWP::Simple HTTP::Request HTTP::Request::Common
 requires('MIME::Types');
 requires('Module::Pluggable' => '3.7'); # Module::Pluggable::Object
 requires('Module::Pluggable::Object');
@@ -70,7 +70,7 @@ requires('Module::Refresh');
 requires('Module::ScanDeps');
 requires('Object::Declare' => '0.13');
 requires('Params::Validate');
-requires('Plack' => '0.9910'); # Plack::Loader Plack::Test Plack::Util Plack::Builder Plack::Request Plack::Handler::FCGI
+requires('Plack' => '0.9910'); # Plack::Loader Plack::Test Plack::Util Plack::Builder Plack::Request Plack::Handler::FCGI HTTP::Message::PSGI
 requires('Plack::Middleware::Deflater');
 requires('Scalar::Defer' => '0.12');
 requires('Shell::Command');
