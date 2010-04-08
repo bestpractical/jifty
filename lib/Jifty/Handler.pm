@@ -123,14 +123,29 @@ content, including plugins.
 sub psgi_app_static {
     my $self = shift;
 
+    # XXX: this is no longer needed, however TestApp-Mason is having a
+    # static::handler-less config
     my $view_handler = $self->view('Jifty::View::Static::Handler')
         or return;;
 
     require Plack::App::Cascade;
     require Plack::App::File;
     my $static = Plack::App::Cascade->new;
-    $static->add( Plack::App::File->new(root => $_)->to_app)
-        for $view_handler->roots;
+
+    my $app_class = Jifty->app_class;
+
+    $static->add( $app_class->psgi_app_static )
+        if $app_class->can('psgi_app_static');
+
+    $static->add( Plack::App::File->new
+            ( root => Jifty->config->framework('Web')->{StaticRoot} )->to_app );
+
+    for ( grep { defined $_ } map { $_->psgi_app_static } Jifty->plugins ) {
+        $static->add( $_ );
+    }
+
+    $static->add( Plack::App::File->new
+            ( root => Jifty->config->framework('Web')->{DefaultStaticRoot} )->to_app );
 
     # the buffering and unsetting of psgi.streaming is to vivify the
     # responded res from the $static cascade app.

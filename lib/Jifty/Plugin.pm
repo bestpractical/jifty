@@ -299,4 +299,19 @@ sub wrap {
     return $app;
 }
 
+=head2 psgi_app_static
+
+Returns a PSGI-$app that serves the static content of the plugin if
+any.  The default is a <Plack::App::File> app with root set to
+plugin's C<static_root>
+
+=cut
+
+sub psgi_app_static {
+    my $self = shift;
+    my $static_root = $self->static_root;
+    return unless -d $static_root && -r $static_root;
+    Plack::App::File->new(root => $static_root)->to_app
+}
+
 1;
