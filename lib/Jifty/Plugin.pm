@@ -310,7 +310,7 @@ plugin's C<static_root>
 sub psgi_app_static {
     my $self = shift;
     my $static_root = $self->static_root;
-    return unless -d $static_root && -r $static_root;
+    return unless defined $static_root && -d $static_root && -r $static_root;
     Plack::App::File->new(root => $static_root)->to_app
 }
 
