@@ -405,9 +405,7 @@ template '/__jifty/admin/setupwizard/finalize' => sub {
     );
 
     form_next_page url => '/';
-    $action->button(
-        label => 'Done!',
-    );
+    form_submit( label => _('Done!') );
 };
 
 1;
