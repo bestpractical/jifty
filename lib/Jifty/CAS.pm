@@ -3,6 +3,8 @@ use warnings;
 
 package Jifty::CAS;
 use base 'Jifty::CAS::Store';
+use Plack::Request;
+use Plack::Response;
 
 =head1 NAME
 
@@ -74,16 +76,18 @@ code set by this method (possibly for your use in the dispatcher).
 =cut
 
 sub serve_by_name {
-    my ($class, $domain, $name, $incoming_key) = @_;
+    my ($class, $domain, $name, $incoming_key, $env) = @_;
     my $key = Jifty::CAS->key($domain, $name);
 
     return $class->_serve_404( $domain, $name, "Unable to lookup key." )
         if not defined $key;
 
-    if ( Jifty->web->request->header('If-Modified-Since')  and $incoming_key eq $key ) {
+    my $res = Plack::Response->new(200);
+    my $req = Plack::Request->new($env);
+    if ( $req->header('If-Modified-Since') and $incoming_key eq $key ) {
         Jifty->log->debug("Returning 304 for CAS cached $domain:$name ($key)");
-        Jifty->web->response->header( Status => 304 );
-        return 304;
+        $res->status(304);
+        return $res->finalize;
     }
 
     my $obj = Jifty::CAS->retrieve($domain, $key);
@@ -91,22 +95,24 @@ sub serve_by_name {
     return $class->_serve_404( $domain, $name, "Unable to retrieve blob." )
         if not defined $obj;
 
-    Jifty->web->response->content_type($obj->metadata->{content_type});
-    Jifty::View::Static::Handler->send_http_header('', length($obj->content),
-                                                   $obj->metadata->{time});
+    $res->content_type($obj->metadata->{content_type});
+    $res->header( 'Cache-Control' => 'max-age=31536000, public' );
+    $res->header( 'Expires' => HTTP::Date::time2str( time() + 31536000 ) );
+    $res->header( 'Content-Length' => length($obj->content) );
+    $res->header(
+      'Last-Modified' => HTTP::Date::time2str( $obj->metadata->{time} ) );
 
     Jifty->log->debug("Sending squished $domain:$name ($key) from CAS");
-    Jifty->web->out($obj->content);
+    $res->body($obj->content);
 
-    return 200;
+    return $res->finalize;
 }
 
 sub _serve_404 {
     my ($class, $domain, $name, $msg) = @_;
     $msg ||= '';
     Jifty->log->error("Returning 404 for CAS cached $domain:$name.  $msg");
-    Jifty->web->response->header( Status => 404 );
-    return 404;
+    return Plack::Response->new(404)->finalize;
 }
 
 1;

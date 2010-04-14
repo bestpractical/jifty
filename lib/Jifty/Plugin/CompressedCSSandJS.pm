@@ -9,6 +9,7 @@ use IO::Handle ();
 use Plack::Util;
 use HTTP::Message::PSGI;
 use HTTP::Request;
+use Plack::Response;
 
 =head1 NAME
 
@@ -78,7 +79,7 @@ sub init {
             callback  => sub { $self->_include_javascript(@_) },
             abortable => 1,
         );
-        Jifty->add_trigger( post_init => sub { $self->_generate_javascript })
+        Jifty->add_trigger( post_init => sub { $self->generate_javascript })
             if $self->generate_early;
     }
 
@@ -118,7 +119,7 @@ sub css_enabled {
 sub _include_javascript {
     my $self = shift;
 
-    $self->_generate_javascript;
+    $self->generate_javascript;
     Jifty->web->out(
         qq[<script type="text/javascript" src="@{[ $self->cdn ]}/__jifty/js/]
           . Jifty::CAS->key( 'ccjs', 'js-all' )
@@ -171,14 +172,14 @@ sub generate_css {
 
 
 
-=head3 _generate_javascript
+=head3 generate_javascript
 
 Checks if the compressed JS is generated, and if it isn't, generates
 and caches it.
 
 =cut
 
-sub _generate_javascript {
+sub generate_javascript {
     my $self = shift;
 
     return if Jifty::CAS->key('ccjs', 'js-all') && !Jifty->config->framework('DevelMode');
@@ -266,6 +267,37 @@ sub _js_is_skipped {
     my $skipped_js = $self->skipped_js;
     return unless $self->skipped_js;
     return grep { $file eq $_ } @{ $self->skipped_js };
+}
+
+=head2 wrap
+
+psgi app wrapper to serve url controlled by us
+
+=cut
+
+sub wrap {
+    my ($self, $app) = @_;
+
+    sub {
+        my $env = shift;
+        if (my ($mode, $arg) = $env->{PATH_INFO} =~ m{/__jifty/(css|js)/(.*)}) {
+            if ( $arg !~ /^[0-9a-f]{32}\.$mode$/ ) {
+                # This doesn't look like a real request for squished JS or CSS,
+                # so redirect to a more failsafe place
+                my $res = Plack::Response->new;
+                $res->redirect( "/static/$mode/$arg" );
+                return $res->finalize;
+            }
+
+            my $method = "generate_".($mode eq 'js' ? 'javascript' : 'css');
+            $self->can($method)->($self);
+            $arg =~ s/\.$mode//;
+            return Jifty::CAS->serve_by_name( 'ccjs', $mode.'-all', $arg, $env );
+        }
+        else {
+            return $app->($env);
+        }
+    };
 }
 
 
