@@ -45,6 +45,8 @@ sub header { shift->headers->header(@_) }
 sub path { shift->uri->path(@_) }
 sub content_length   { shift->headers->content_length(@_) }
 sub content_type     { shift->headers->content_type(@_) }
+sub referer          { shift->headers->referer(@_) }
+sub user_agent       { shift->headers->user_agent(@_) }
 
 use Jifty::JSON;
 use Jifty::YAML;
