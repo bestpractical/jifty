@@ -8,16 +8,16 @@ Jifty::Manual::Logging - ...
 
 =head1 Intro
 
-Jifty uses Log4perl module for logging messages, so you can define your own 
+Jifty uses the Log4perl module for logging messages, so you can define your own
 log4perl config for logging.
 
-you can define different behaviour for differnt log level. for example,
-send mail to administrator when error occured. or apply terminal color to 
-different log level.
+You can define different behaviour for different log levels. For example,
+you can send mail to administrator when error occured, or add color to
+warning messages that are logged to the terminal.
 
 =head1 Config from config.yml
 
-Log level stuff can be set from F<etc/config.yml> or F<etc/site_config.yml>.
+Various log level config can be set from F<etc/config.yml> or F<etc/site_config.yml>.
 
 =head1 Example
 
