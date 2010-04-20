@@ -37,6 +37,10 @@ Frequently asked questions, for some value of frequent
 
 Common terms that you might want to learn
 
+=item L<Jifty::Manual::Logging>
+
+How to control Jifty's logging, which is backed by L<Log::Log4perl>
+
 =item L<Jifty::Manual::Models>
 
 All about models -- the creepy crawlies that live in your database

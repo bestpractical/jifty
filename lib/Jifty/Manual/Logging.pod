@@ -4,7 +4,7 @@
 
 =head1 NAME
 
-Jifty::Manual::Logging - ...
+Jifty::Manual::Logging - Using and controlling Jifty's logging system
 
 =head1 Intro
 
