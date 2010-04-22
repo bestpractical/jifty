@@ -48,14 +48,7 @@ Resets the password.
 
 sub take_action {
     my $self        = shift;
-    my $LoginUser   = Jifty->app_class('Model', 'User');
-        my $CurrentUser   = Jifty->app_class('CurrentUser');
-
-
-
-
-    my $u = $LoginUser->new( current_user => $CurrentUser->superuser );
-    $u->load_by_cols( email => Jifty->web->current_user->user_object->email );
+    my $u = Jifty->web->current_user->user_object->as_superuser;
 
     unless ($u) {
         $self->result->error(
