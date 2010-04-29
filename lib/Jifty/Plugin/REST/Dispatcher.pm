@@ -546,6 +546,9 @@ sub list_model_columns {
             $cols{ $col->name }->{ $_ } = Scalar::Defer::force($val)
                 if defined $val and length $val;
         }
+        if (my $serialized = $col->attributes->{serialized}) {
+            $cols{ $col->name }->{serialized_as} = $serialized;
+        }
         $cols{ $col->name }{writable} = 0 if exists $cols{$col->name}{writable} and $col->protected;
     }
 

@@ -9,7 +9,7 @@ This is a template for your own tests. Copy it and modify it.
 
 =cut
 
-use Jifty::Test::Dist tests => 86;
+use Jifty::Test::Dist tests => 87;
 use Jifty::Test::WWW::Mechanize;
 
 my $server  = Jifty::Test->make_server;
@@ -62,6 +62,7 @@ my %keys =  %{get_content()};
 
 is((0+keys(%keys)), 5, "The model has 5 keys");
 is_deeply([sort keys %keys], [sort qw/group_id id name email tasty/]);
+is_deeply($keys{'group_id'}{serialized_as}, { name => 'group', columns => [qw(id name)] });
 
 # on GET    '/=/model/*/*'   => \&list_model_items;
 $mech->get_ok('/=/model/user/id.yml');
