@@ -291,9 +291,9 @@ sub outs {
     my $prefix = shift;
     my $format = output_format($prefix);
     warn "==> using $format->{format}" if $main::DEBUG;
-    Jifty->web->response->content_type($format->{content_type});
-    Jifty->web->response->body($format->{freezer}->(@_));
 
+    Jifty->web->response->content_type($format->{content_type});
+    Jifty->handler->buffer->out_method->($format->{freezer}->(@_));
     last_rule;
 }
 
