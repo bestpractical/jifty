@@ -257,7 +257,7 @@ sub output_format2 {
             format       => 'XML',
             extension    => 'xml',
             content_type => 'text/xml; charset=UTF-8',
-            freezer      => \&render_as_xml,
+            freezer_stream => \&render_as_xml_stream,
         };
     }
     # if we ever have a non-html fallback case, we should be checking for an
@@ -302,26 +302,30 @@ sub outs {
     last_rule;
 }
 
-our $xml_config = { SuppressEmpty   => '',
-                    NoAttr          => 1,
-                    RootName        => 'data' };
-
 =head2 render_as_xml DATASTRUCTURE
 
 Attempts to render DATASTRUCTURE as simple, tag-based XML.
 
 =cut
 
-sub render_as_xml {
-    my $content = shift;
+sub render_as_xml_stream {
+    my ($writer, $content) = @_;
+
+    my $xmlout = sub {
+        XMLout($_[0],
+               SuppressEmpty   => '',
+               NoAttr          => 1,
+               RootName        => 'data',
+               OutputFile      => $writer);
+    };
 
     if (ref($content) eq 'ARRAY') {
-        return XMLout({value => $content}, %$xml_config);
+        return $xmlout->({ value => $content });
     }
     elsif (ref($content) eq 'HASH') {
-        return XMLout($content, %$xml_config);
+        return $xmlout->($content);
     } else {
-        return XMLout({value => $content}, %$xml_config)
+        return $xmlout->({ value => $content });
     }
 }
 
@@ -991,8 +995,16 @@ sub run_action_stream {
         $writer = $responder->([$code,
                                 [@headers,
                                  'Content-Type' => $format->{content_type}]]);
-        # XXX: use writer for streamy freezer.
         my $res = $action->result->as_hash;
+
+        if ( $format->{freezer_stream} ) {
+            my $w = Plack::Util::inline_object(%$writer,
+                                           print => sub { $writer->write(@_)});
+            $format->{freezer_stream}->($w, $res);
+            $writer->close;
+            return;
+        }
+
         for ($format->{freezer}->($res)) {
             Encode::_utf8_off($_);
             $writer->write($_);
