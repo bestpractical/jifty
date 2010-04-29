@@ -2,7 +2,7 @@
 use warnings;
 use strict;
 
-use Jifty::Test::Dist tests => 102;
+use Jifty::Test::Dist tests => 103;
 use Jifty::Test::WWW::Mechanize;
 
 my $server  = Jifty::Test->make_server;
@@ -14,10 +14,15 @@ $mech->requests_redirectable([]);
 
 ok(1, 'Loaded the test script');
 
+my $g1 = TestApp::Plugin::REST::Model::Group->new(
+    current_user => TestApp::Plugin::REST::CurrentUser->superuser );
+$g1->create( name => 'test group' );
+ok( $g1->id );
+
 my $u1 = TestApp::Plugin::REST::Model::User->new(
     current_user => TestApp::Plugin::REST::CurrentUser->superuser,
 );
-$u1->create(name => 'test', email => 'test@example.com');
+$u1->create(name => 'test', email => 'test@example.com', group_id => $g1->id);
 ok($u1->id);
 
 our $FORMAT_NUMBER;
@@ -98,7 +103,7 @@ result_of '/=/model' => sub {
 };
 
 result_of '/=/model/User' => sub {
-    is(scalar keys %{ $_[0] }, 4, 'four keys in the user record');
+    is(scalar keys %{ $_[0] }, 5, '5 keys in the user record');
 };
 
 result_of '/=/model/user/id' => sub {
@@ -111,6 +116,8 @@ result_of '/=/model/user/id/1' => sub {
         email => 'test@example.com',
         id    => 1,
         tasty => undef,
+        group_id => 1,
+        group => { name => 'test group', id => 1 },
     });
 };
 
@@ -142,6 +149,8 @@ result_of_post '/=/model/user' => {
         id    => $id,
         name  => 'moose',
         tasty => undef,
+        group_id => undef,
+        group => undef,
     });
 };
 
@@ -166,11 +175,11 @@ TODO: {
 # on GET    '/=/search/*/**' => \&search_items;
 $mech->get_ok('/=/search/user/id/1.yml');
 my $content = get_content();
-is_deeply($content, [{ name => 'test', email => 'test@example.com', id => 1, tasty => undef }]);
+is_deeply($content, [{ name => 'test', email => 'test@example.com', id => 1, tasty => undef, group_id => 1, group => { name => 'test group', id => 1 } }]);
 
 $mech->get_ok('/=/search/user/id/1/name/test.yml');
 $content = get_content();
-is_deeply($content, [{ name => 'test', email => 'test@example.com', id => 1, tasty => undef }]);
+is_deeply($content, [{ name => 'test', email => 'test@example.com', id => 1, tasty => undef, group_id => 1, group => { name => 'test group', id => 1  } }]);
 
 $mech->get_ok('/=/search/user/id/1');
 $content = get_content();
