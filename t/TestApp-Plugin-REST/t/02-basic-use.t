@@ -9,7 +9,7 @@ This is a template for your own tests. Copy it and modify it.
 
 =cut
 
-use Jifty::Test::Dist tests => 80;
+use Jifty::Test::Dist tests => 81;
 use Jifty::Test::WWW::Mechanize;
 
 my $server  = Jifty::Test->make_server;
@@ -191,7 +191,11 @@ eval {
 ok($content{success});
 is($content{message}, 'Something happened!');
 
-    
+# Test XML posts
+$mech->post ( $URL . '/=/action/DoSomething.xml', { email => 'good@email.com' } );
+
+$mech->content_like(qr'<message>Something happened!</message>');
+
 $mech->post ( $URL . '/=/action/DoSomething.yaml', { email => 'bad@email.com' } );
 
 eval {
