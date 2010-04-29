@@ -847,6 +847,29 @@ sub schema_version {
     }
 }
 
+=head2 column_serialized_as
+
+
+
+=cut
+
+sub column_serialized_as {
+    my ($class, $column) = @_;
+    my $meta = $column->attributes->{serialized} or return;
+    $meta->{columns} ||= [$column->refers_to->default_serialized_as_columns]
+        if $column->refers_to;
+    return $meta;
+}
+
+=head2 default_serialized_as_columns
+
+=cut
+
+sub default_serialized_as_columns {
+    my $class = shift;
+    return ('id', $class->_brief_description);
+}
+
 =head2 jifty_serialize_format
 
 This is used to create a hash reference of the object's values. Unlike
@@ -868,7 +891,7 @@ sub jifty_serialize_format {
         my $name = $column->aliased_as || $column->name;
 
         if ((my $refers_to      = $column->refers_to) &&
-            (my $serialize_meta = $column->attributes->{serialized})) {
+            (my $serialize_meta = $record->column_serialized_as($column))) {
             my $column_data = $record->$name();
             if ( $column_data && $column_data->id ) {
                 $name = $serialize_meta->{name} if $serialize_meta->{name};

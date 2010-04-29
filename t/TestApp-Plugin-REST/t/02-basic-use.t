@@ -62,7 +62,7 @@ my %keys =  %{get_content()};
 
 is((0+keys(%keys)), 5, "The model has 5 keys");
 is_deeply([sort keys %keys], [sort qw/group_id id name email tasty/]);
-is_deeply($keys{'group_id'}{serialized_as}, { name => 'group', columns => [qw(id name)] });
+is_deeply($keys{'group_id'}{serialized_as}, { name => 'group' });
 
 # on GET    '/=/model/*/*'   => \&list_model_items;
 $mech->get_ok('/=/model/user/id.yml');

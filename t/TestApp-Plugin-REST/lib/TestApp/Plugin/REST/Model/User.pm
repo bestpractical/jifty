@@ -19,7 +19,7 @@ column 'tasty' =>
 
 column group_id => refers_to TestApp::Plugin::REST::Model::Group,
   label is 'Group',
-  serialized as { name => 'group', columns => [qw(id name)] } ;
+  serialized as { name => 'group' } ;
 
 };
 
