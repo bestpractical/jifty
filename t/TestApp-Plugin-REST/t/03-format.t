@@ -2,7 +2,7 @@
 use warnings;
 use strict;
 
-use Jifty::Test::Dist tests => 103;
+use Jifty::Test::Dist tests => 103, actual_server => 1;
 use Jifty::Test::WWW::Mechanize;
 
 my $server  = Jifty::Test->make_server;

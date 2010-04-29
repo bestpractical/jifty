@@ -762,7 +762,7 @@ Take a coderef that returns a PSGI streamy response code.
 
 sub _do_stream {
     my ( $self, $code ) = @_;
-    $self->{stream} = $code->();
+    $self->{stream} = $code->($self);
     $self->_abort;
 }
 

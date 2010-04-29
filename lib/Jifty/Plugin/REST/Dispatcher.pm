@@ -39,7 +39,7 @@ on GET    '/=/search/*/**'      => \&search_items;
 
 on GET    '/=/action/*'         => \&list_action_params;
 on GET    '/=/action'           => \&list_actions;
-on POST   '/=/action/*'         => \&run_action;
+on POST   '/=/action/*'         => stream \&run_action_stream;
 
 on GET    '/='                  => \&show_help;
 on GET    '/=/help'             => \&show_help;
@@ -207,7 +207,12 @@ Returns the user's desired output format. Returns a hashref of:
 
 sub output_format {
     my $prefix = shift;
-    my $accept = (Jifty->web->request->env->{HTTP_ACCEPT} || '');
+    output_format2(Jifty->web->request->env, $prefix);
+}
+
+sub output_format2 {
+    my ($env, $prefix) = @_;
+    my $accept = ($env->{HTTP_ACCEPT} || '');
 
     my (@prefix, $url);
     if ($prefix) {
@@ -237,7 +242,7 @@ sub output_format {
             extension    => 'js',
             content_type => 'application/javascript; charset=UTF-8',
             freezer      => sub { 'var $_ = ' . Jifty::JSON::encode_json( @_ ) },
-        };
+        };use Data::Dumper;
     }
     elsif ($accept =~ qr{^(?:application/x-)?(?:perl|pl)$}i) {
         return {
@@ -331,7 +336,7 @@ sub render_as_html {
     my $prefix = shift;
     my $url = shift;
     my $content = shift;
-
+#    warn 'rendering to html: '.Dumper($content) ;use Data::Dumper;
     my $title = _("%1 - REST API", Jifty->config->framework('ApplicationName'));
 
     if (ref($content) eq 'ARRAY') {
@@ -922,7 +927,7 @@ sub show_action_form {
     last_rule;
 }
 
-=head2 run_action 
+=head2 run_action_stream
 
 Expects $1 to be the name of an action we want to run.
 
@@ -940,16 +945,18 @@ On an internal error, throws a C<500>.
 
 =cut
 
-sub run_action {
-    my ($action_name) = action($1);
-    Jifty::Util->require($action_name) or abort(404);
-    
+
+sub run_action_stream {
+    my $dispatcher = shift;
+    my $action_name = action($1);
+    Jifty::Util->require($action_name) or $dispatcher->_do_abort(404);
+
     my $args = Jifty->web->request->arguments;
     delete $args->{''};
 
-    my $action = $action_name->new( arguments => $args ) or abort(404);
+    my $action = $action_name->new( arguments => $args ) or $dispatcher->_do_abort(404);
 
-    Jifty->api->is_allowed( $action_name ) or abort(403);
+    Jifty->api->is_allowed( $action_name ) or $dispatcher->_do_abort(403);
 
     $action->validate;
 
@@ -958,27 +965,38 @@ sub run_action {
 
     if ($@) {
         warn $@;
-        abort(500);
+        $dispatcher->_do_abort(500);
     }
 
+    my $env = Jifty->web->request->env;
     my $rec = $action->{record};
-    if ($action->result->success && $rec and $rec->isa('Jifty::Record') and $rec->id) {
-        my @fragments = ('model', ref($rec), 'id', $rec->id);
+    return sub {
+        my $responder = shift;
+        my $writer;
+        my $code = 200;
+        my @headers;
+        if ($action->result->success && $rec and $rec->isa('Jifty::Record') and $rec->id) {
+            my @fragments = ('model', ref($rec), 'id', $rec->id);
+            my $path = join '/', '=', map { Jifty::Web->escape_uri($_) } @fragments;
+            my $extension = output_format2($env, \@fragments)->{extension};
+            $path .= '.' . $extension;
+            my $url = Jifty->web->url(path => $path);
+            push @headers, 'Location' => $url;
+            $code = 302;
+        }
 
-        my $path = join '/', '=', map { Jifty::Web->escape_uri($_) } @fragments;
+        my $format = output_format2($env, undef);
+        warn "==> using $format->{format}" if $main::DEBUG;
 
-        my $extension = output_format(\@fragments)->{extension};
-        $path .= '.' . $extension;
-
-        my $url = Jifty->web->url(path => $path);
-
-        Jifty->web->response->status( 302 );
-        Jifty->web->response->header('Location' => $url);
-    }
-
-    outs(undef, $action->result->as_hash);
-
-    last_rule;
-}
-
-1;
+        $writer = $responder->([$code,
+                                [@headers,
+                                 'Content-Type' => $format->{content_type}]]);
+        # XXX: use writer for streamy freezer.
+        my $res = $action->result->as_hash;
+        for ($format->{freezer}->($res)) {
+            Encode::_utf8_off($_);
+            $writer->write($_);
+        }
+        $writer->close;
+    };
+};
