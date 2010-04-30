@@ -150,6 +150,8 @@ sub url {
     # https is sticky
     $uri->scheme('https') if $uri->scheme eq 'http' && Jifty->web->is_ssl;
 
+    $uri->scheme( $args{'scheme'} ) if defined $args{'scheme'};
+
     return $uri->canonical->as_string;
 }
 

@@ -10,11 +10,12 @@ Tests that URLs constructed with Jifty->web->url are correct
 
 =cut
 
-use Jifty::Test tests => 5;
+use Jifty::Test tests => 6;
 
 like(Jifty->web->url, qr{^http://localhost:\d+/$}, 'basic call works');
 like(Jifty->web->url(path => 'foo/bar'), qr{^http://localhost:\d+/foo/bar$}, 'path works');
 like(Jifty->web->url(path => '/foo/bar'), qr{^http://localhost:\d+/foo/bar$}, 'path with leading slash works');
+like(Jifty->web->url( scheme => 'https' ), qr{^https://localhost:\d+/$}, 'setting https scheme works');
 
 Jifty::Handler->add_trigger(
     have_request => sub {
