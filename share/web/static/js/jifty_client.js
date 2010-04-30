@@ -11,6 +11,17 @@ Class("JiftyClient", {
         }
     },
     methods: {
+        login: function (onSuccess, onFailure) {
+            this.runAction(
+                "Login",
+                {
+                    address:  this.email,
+                    password: this.password
+                },
+                onSuccess,
+                onFailure
+            );
+        },
         runAction: function (name, params, onSuccess, onFailure) {
             jQuery.ajax({
                 url: "/=/action/" + name + ".json",
