@@ -35,6 +35,8 @@ __PACKAGE__->javascript_libs([qw(
     json.js
     jquery-1.4.1.js
     iutil.js
+    joose.js
+    jifty_client.js
     jifty_interface.js
     jquery_noconflict.js
     jquery.jgrowl.js
