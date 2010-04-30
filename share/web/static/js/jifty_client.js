@@ -36,7 +36,6 @@ Class("JiftyClient", {
 
             jQuery.ajax({
                 url: "/=/action/" + name + ".json",
-                async: false,
                 data: params,
                 dataType: "json",
                 type: 'POST',
