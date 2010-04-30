@@ -23,6 +23,17 @@ Class("JiftyClient", {
             );
         },
         runAction: function (name, params, onSuccess, onFailure) {
+            // if the action returns failure then we want to run the onFailure
+            // handler, even though the AJAX request was successful
+            var onAjaxSuccess = function (result) {
+                if (result.success) {
+                    onSuccess(result);
+                }
+                else {
+                    onFailure(result);
+                }
+            };
+
             jQuery.ajax({
                 url: "/=/action/" + name + ".json",
                 async: false,
@@ -30,7 +41,7 @@ Class("JiftyClient", {
                 dataType: "json",
                 type: 'POST',
                 error: onFailure,
-                success: onSuccess
+                success: onAjaxSuccess
             });
         }
     }
