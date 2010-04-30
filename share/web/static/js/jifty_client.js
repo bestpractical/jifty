@@ -34,8 +34,13 @@ Class("JiftyClient", {
                 }
             };
 
+            var url = "/=/action/" + name + ".json";
+            if (this.baseUrl) {
+                url = this.baseUrl + url;
+            }
+
             jQuery.ajax({
-                url: "/=/action/" + name + ".json",
+                url: url,
                 data: params,
                 dataType: "json",
                 type: 'POST',
