@@ -1,7 +1,8 @@
 Class("JiftyClient", {
     has: {
         baseUrl: {
-            is: "rw"
+            is: "rw",
+            predicate: "hasBaseUrl"
         },
         email: {
             is: "rw"
@@ -35,7 +36,7 @@ Class("JiftyClient", {
             };
 
             var url = "/=/action/" + name + ".json";
-            if (this.baseUrl) {
+            if (this.hasBaseUrl()) {
                 url = this.baseUrl + url;
             }
 
