@@ -952,7 +952,40 @@ sub show_joose_class {
     my ($model) = model(shift);
     Jifty::Util->require($model) or abort(404);
     (my $class_name = $model) =~ s/.*:://;
-    return "Class('$class_name');";
+
+    my $cols = {};
+    for my $col ( $model->new->columns ) {
+        next if $col->private or $col->virtual;
+        my $props = {};
+
+        # map Jifty column property names to Joose names
+        if ($col->default) {
+            $props->{init} = Scalar::Defer::force($col->default);
+        }
+
+        if ($col->mandatory) {
+            $props->{required} = 1;
+        }
+
+        if ($col->readable) {
+            if ($col->writable) {
+                $props->{is} = 'rw';
+            }
+            else {
+                $props->{is} = 'ro';
+            }
+        }
+
+        $cols->{$col->name} = $props;
+    }
+
+    my $properties = {
+        has => $cols,
+    };
+
+    return "Class('$class_name',"
+         . Jifty::JSON::encode_json($properties)
+         . ");";
 }
 
 =head2 run_action 
