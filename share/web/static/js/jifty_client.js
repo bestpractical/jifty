@@ -50,6 +50,20 @@ Class("JiftyClient", {
                 error: onFailure,
                 success: onAjaxSuccess
             });
+        },
+        mirrorModel: function (modelName, className, onSuccess, onFailure) {
+            var that = this;
+            jQuery.ajax({
+                url: this._includeBaseUrl("/=/model/" + modelName + ".json"),
+                dataType: "json",
+                type: 'GET',
+                error: onFailure,
+                success: function (result) {
+                    onSuccess(that.buildClassFromModel(result, className));
+                }
+            });
+        },
+        buildClassFromModel: function (classStructure, className) {
         }
     }
 });
