@@ -54,7 +54,8 @@ sub wrap {
     sub {
         my $env = shift;
         my %cgi = CGI::Emulate::PSGI->emulate_environment($env);
-        local *STDIN;
+        local *STDIN  = $env->{'psgi.input'};
+        local *STDERR = $env->{'psgi.errors'};
         local %ENV = (%ENV, %cgi);
         $app->($env);
     }
