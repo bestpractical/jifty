@@ -23,6 +23,13 @@ Class("JiftyClient", {
                 onFailure
             );
         },
+        _includeBaseUrl: function (path) {
+            var url = path;
+            if (this.hasBaseUrl()) {
+                url = this.baseUrl + url;
+            }
+            return url;
+        },
         runAction: function (name, params, onSuccess, onFailure) {
             // if the action returns failure then we want to run the onFailure
             // handler, even though the AJAX request was successful
@@ -35,13 +42,8 @@ Class("JiftyClient", {
                 }
             };
 
-            var url = "/=/action/" + name + ".json";
-            if (this.hasBaseUrl()) {
-                url = this.baseUrl + url;
-            }
-
             jQuery.ajax({
-                url: url,
+                url: this._includeBaseUrl("/=/action/" + name + ".json"),
                 data: params,
                 dataType: "json",
                 type: 'POST',
