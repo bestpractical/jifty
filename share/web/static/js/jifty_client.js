@@ -54,24 +54,16 @@ Class("JiftyClient", {
                 success: onAjaxSuccess
             });
         },
-        mirrorModel: function (modelName, className, onSuccess, onFailure) {
+        mirrorModel: function (modelName, onSuccess, onFailure) {
             var that = this;
             jQuery.ajax({
-                url: this._includeBaseUrl("/=/model/" + modelName + ".json"),
-                dataType: "json",
+                url: this._includeBaseUrl("/=/model/" + modelName + ".joose"),
+                dataType: "script",
                 type: 'GET',
                 error: onFailure,
-                success: function (result) {
-                    onSuccess(that.buildClassFromModel(result, className));
-                }
+                success: onSuccess
             });
         },
-        buildClassFromModel: function (classStructure, className) {
-            Class(className, {
-                isa: JiftyModel,
-            });
-            return className;
-        }
     }
 });
 
