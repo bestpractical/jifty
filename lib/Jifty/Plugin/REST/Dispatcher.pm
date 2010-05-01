@@ -14,7 +14,7 @@ use Jifty::JSON ();
 use Data::Dumper ();
 use XML::Simple;
 
-before qr{^ (/=/ .*) \. (js|json|yml|yaml|perl|pl|xml|html) $}x => run {
+before qr{^ (/=/ .*) \. (js|json|joose|yml|yaml|perl|pl|xml|html) $}x => run {
     Jifty->web->request->env->{HTTP_ACCEPT} = $2;
     dispatch $1;
 };
@@ -237,6 +237,27 @@ sub output_format {
             extension    => 'js',
             content_type => 'application/javascript; charset=UTF-8',
             freezer      => sub { 'var $_ = ' . Jifty::JSON::encode_json( @_ ) },
+        };
+    }
+    elsif ($accept =~ /joose/i) {
+        my $freezer;
+
+        # Special case showing a particular model to construct a Joose class
+        if (    defined $prefix
+            and $prefix->[0] eq 'model'
+            and scalar @$prefix == 2 )
+        {
+            $freezer = sub { show_joose_class($prefix->[1]) };
+        }
+        else {
+            $freezer = sub { 'var $_ = ' . Jifty::JSON::encode_json( @_ ) },
+        }
+
+        return {
+            format       => 'Joose',
+            extension    => 'js',
+            content_type => 'application/javascript; charset=UTF-8',
+            freezer      => $freezer,
         };
     }
     elsif ($accept =~ qr{^(?:application/x-)?(?:perl|pl)$}i) {
@@ -917,6 +938,21 @@ sub show_action_form {
     Jifty->web->form->end;
     Jifty->web->response->{body} .= end_html;
     last_rule;
+}
+
+=head2 show_joose_class $MODEL_CLASS
+
+Takes a single parameter, the class of an model.
+
+Generates a Joose class definition of the model's attributes.
+
+=cut
+
+sub show_joose_class {
+    my ($model) = model(shift);
+    Jifty::Util->require($model) or abort(404);
+    (my $class_name = $model) =~ s/.*:://;
+    return "Class('$class_name');";
 }
 
 =head2 run_action 
