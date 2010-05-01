@@ -64,6 +64,8 @@ Class("JiftyClient", {
             });
         },
         buildClassFromModel: function (classStructure, className) {
+            Class(className);
+            return className;
         }
     }
 });
