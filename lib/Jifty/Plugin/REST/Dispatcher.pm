@@ -980,12 +980,21 @@ sub show_joose_class {
     }
 
     my $properties = {
+        isa => 'JiftyModel',
         has => $cols,
     };
 
-    return "Class('$class_name',"
+    my $class_definition = "Class('$class_name',"
          . Jifty::JSON::encode_json($properties)
          . ");";
+
+    # argh! I don't see any way to let JSON encode barewords. even trying
+    # to confuse it with an object that defines a TO_JSON method returning
+    # a bareword does not work. and Joose does not let you say isa: 'Super'.
+    # better ideas welcome...
+    $class_definition =~ s/"isa":"JiftyModel"/"isa":JiftyModel/;
+
+    return $class_definition;
 }
 
 =head2 run_action 
