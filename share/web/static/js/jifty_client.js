@@ -1,3 +1,6 @@
+Class("JiftyModel", {
+});
+
 Class("JiftyClient", {
     has: {
         baseUrl: {
@@ -64,7 +67,9 @@ Class("JiftyClient", {
             });
         },
         buildClassFromModel: function (classStructure, className) {
-            Class(className);
+            Class(className, {
+                isa: JiftyModel,
+            });
             return className;
         }
     }
