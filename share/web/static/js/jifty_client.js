@@ -16,7 +16,7 @@ Class("JiftyModel", {
 
             // should we abort if diff contains only id?
 
-            this.jiftyClient.runAction(actionName, diff, onSuccess, onFailure);
+            this.meta.getClassObject().jiftyClient.runAction(actionName, diff, onSuccess, onFailure);
         }
     },
     classMethods: {
@@ -27,7 +27,6 @@ Class("JiftyModel", {
             var onAjaxSuccess = function (result) {
                 if (result.id) {
                     var record = that.meta.instantiate(result);
-                    record.jiftyClient = that.jiftyClient;
                     record._original = result;
                     onSuccess(record);
                 }
