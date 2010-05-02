@@ -1,11 +1,12 @@
 Class("JiftyModel", {
     classMethods: {
         load: function (id, onSuccess, onFailure) {
+            var that = this;
             var className = this.meta.getName();
 
             var onAjaxSuccess = function (result) {
                 if (result.id) {
-                    var record = this.new(result);
+                    var record = that.meta.instantiate(result);
                     onSuccess(record);
                 }
                 else {
