@@ -70,7 +70,7 @@ Class("JiftyClient", {
                 error: onFailure,
                 success: onAjaxSuccess
             });
-        },
+        }
     }
 });
 
