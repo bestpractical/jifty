@@ -1,4 +1,22 @@
 Class("JiftyModel", {
+    classMethods: {
+        load: function (id, onSuccess, onFailure) {
+            var className = this.meta.getName();
+
+            var onAjaxSuccess = function (result) {
+                if (result.id) {
+                    var record = this.new(result);
+                    onSuccess(record);
+                }
+                else {
+                    onFailure(result);
+                }
+            };
+
+            alert(this.jiftyClient);
+            //this.jiftyClient.loadById(className, id, onAjaxSuccess, onFailure);
+        }
+    }
 });
 
 Class("JiftyClient", {
