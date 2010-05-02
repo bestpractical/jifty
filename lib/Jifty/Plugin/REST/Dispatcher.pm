@@ -1005,16 +1005,20 @@ sub run_action_stream {
         my $res = $action->result->as_hash;
 
         if ( $format->{freezer_stream} ) {
-            my $w = Plack::Util::inline_object(%$writer,
-                                           print => sub { $writer->write(@_)});
+            my $w = Plack::Util::inline_object
+                (%$writer,
+                 print => sub {
+                     $writer->write(map { Encode::is_utf8($_)
+                             ? Encode::encode('utf8', $_) : $_ } @_ );
+                 });
             $format->{freezer_stream}->($w, $res);
             $writer->close;
             return;
         }
 
         for ($format->{freezer}->($res)) {
-            Encode::_utf8_off($_);
-            $writer->write($_);
+            $writer->write(Encode::is_utf8($_)
+                    ? Encode::encode('utf8', $_) : $_);
         }
         $writer->close;
     };
