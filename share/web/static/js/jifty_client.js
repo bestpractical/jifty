@@ -1,4 +1,11 @@
 Class("JiftyModel", {
+    methods: {
+        sync: function (onSuccess, onFailure) {
+            var className = this.meta.getName();
+            var actionName = "update" + className;
+            this.jiftyClient.runAction(actionName, JSON.parse(JSON.stringify(this)), onSuccess, onFailure);
+        }
+    },
     classMethods: {
         load: function (id, onSuccess, onFailure) {
             var that = this;
