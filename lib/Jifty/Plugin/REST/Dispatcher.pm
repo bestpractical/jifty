@@ -257,6 +257,7 @@ sub output_format2 {
             format       => 'XML',
             extension    => 'xml',
             content_type => 'text/xml; charset=UTF-8',
+            freezer      => \&render_as_xml,
             freezer_stream => \&render_as_xml_stream,
         };
     }
@@ -307,6 +308,11 @@ sub outs {
 Attempts to render DATASTRUCTURE as simple, tag-based XML.
 
 =cut
+
+sub render_as_xml {
+    my $content = shift;
+    return render_as_xml_stream(undef, $content);
+}
 
 sub render_as_xml_stream {
     my ($writer, $content) = @_;
