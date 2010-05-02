@@ -1,9 +1,22 @@
 Class("JiftyModel", {
     methods: {
         sync: function (onSuccess, onFailure) {
-            var className = this.meta.getName();
+            var record = this;
+            var className = record.meta.getName();
             var actionName = "update" + className;
-            this.jiftyClient.runAction(actionName, JSON.parse(JSON.stringify(this)), onSuccess, onFailure);
+            var diff = {
+                id: record.id // we must always send this
+            };
+
+            Joose.O.eachSafe(record._original, function (value, field) {
+                if (record[field] != value) {
+                    diff[field] = record[field];
+                }
+            });
+
+            // should we abort if diff contains only id?
+
+            this.jiftyClient.runAction(actionName, diff, onSuccess, onFailure);
         }
     },
     classMethods: {
