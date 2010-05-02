@@ -7,6 +7,7 @@ Class("JiftyModel", {
             var onAjaxSuccess = function (result) {
                 if (result.id) {
                     var record = that.meta.instantiate(result);
+                    record.jiftyClient = that.jiftyClient;
                     onSuccess(record);
                 }
                 else {
