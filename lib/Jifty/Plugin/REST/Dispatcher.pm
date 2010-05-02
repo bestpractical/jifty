@@ -974,11 +974,12 @@ sub run_action_stream {
 
     my $env = Jifty->web->request->env;
     my $rec = $action->{record};
+    my $res = Jifty->web->response->finalize;
     return sub {
         my $responder = shift;
         my $writer;
         my $code = 200;
-        my @headers;
+        my @headers = @{$res->[1]};
         if ($action->result->success && $rec and $rec->isa('Jifty::Record') and $rec->id) {
             my @fragments = ('model', ref($rec), 'id', $rec->id);
             my $path = join '/', '=', map { Jifty::Web->escape_uri($_) } @fragments;
