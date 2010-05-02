@@ -3,7 +3,7 @@ Class("JiftyModel", {
         sync: function (onSuccess, onFailure) {
             var record = this;
             var className = record.meta.getName();
-            var actionName = "update" + className;
+            var actionName = "Update" + className;
             var diff = {
                 id: record.id // we must always send this
             };
