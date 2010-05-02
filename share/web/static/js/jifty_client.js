@@ -85,9 +85,9 @@ Class("JiftyClient", {
             var that = this;
 
             var onAjaxSuccess = function () {
-                that.meta.classNameToClassObject(modelName).meta.addClassMethod('jiftyClient', function () {
-                    return that;
-                });
+                var c = that.meta.classNameToClassObject(modelName);
+                c.jiftyClient = that;
+                onSuccess(c);
             };
 
             jQuery.ajax({
