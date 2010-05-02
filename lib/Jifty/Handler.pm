@@ -149,6 +149,8 @@ sub psgi_app_static {
 
     # the buffering and unsetting of psgi.streaming is to vivify the
     # responded res from the $static cascade app.
+    return $static if Jifty->config->framework('DevelMode');
+
     builder {
         enable 'Plack::Middleware::ConditionalGET';
         enable
