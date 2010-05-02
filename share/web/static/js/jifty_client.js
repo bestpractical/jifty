@@ -15,6 +15,7 @@ Class("JiftyModel", {
                 if (result.id) {
                     var record = that.meta.instantiate(result);
                     record.jiftyClient = that.jiftyClient;
+                    record._original = result;
                     onSuccess(record);
                 }
                 else {
