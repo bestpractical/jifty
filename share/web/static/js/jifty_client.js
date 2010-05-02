@@ -13,8 +13,7 @@ Class("JiftyModel", {
                 }
             };
 
-            alert(this.jiftyClient);
-            //this.jiftyClient.loadById(className, id, onAjaxSuccess, onFailure);
+            this.jiftyClient.loadById(className, id, onAjaxSuccess, onFailure);
         }
     }
 });
