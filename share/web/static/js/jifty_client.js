@@ -1,11 +1,17 @@
 Class("JiftyModel", {
     methods: {
+        syncDiff: function (diff, onSuccess, onFailure) {
+            var className = this.meta.getName();
+            var actionName = "Update" + className;
+
+            // should we abort if diff contains only id?
+
+            this.meta.getClassObject().jiftyClient.runAction(actionName, diff, onSuccess, onFailure);
+        },
         sync: function (onSuccess, onFailure) {
             var record = this;
-            var className = record.meta.getName();
-            var actionName = "Update" + className;
             var diff = {
-                id: record.id // we must always send this
+                id: this.id // we must always send this
             };
 
             Joose.O.eachSafe(record._original, function (value, field) {
@@ -14,9 +20,7 @@ Class("JiftyModel", {
                 }
             });
 
-            // should we abort if diff contains only id?
-
-            this.meta.getClassObject().jiftyClient.runAction(actionName, diff, onSuccess, onFailure);
+            this.syncDiff(diff, onSuccess, onFailure);
         }
     },
     classMethods: {
