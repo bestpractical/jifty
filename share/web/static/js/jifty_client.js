@@ -4,15 +4,19 @@ Class("JiftyModel", {
             var className = this.meta.getName();
             var actionName = "Update" + className;
 
+            // this is always required, but if someone is doing something
+            // bizarre, let them
+            if (!diff.id) {
+                diff.id = this.id;
+            }
+
             // should we abort if diff contains only id?
 
             this.meta.getClassObject().jiftyClient.runAction(actionName, diff, onSuccess, onFailure);
         },
         sync: function (onSuccess, onFailure) {
             var record = this;
-            var diff = {
-                id: this.id // we must always send this
-            };
+            var diff = {};
 
             Joose.O.eachSafe(record._original, function (value, field) {
                 if (record[field] != value) {
