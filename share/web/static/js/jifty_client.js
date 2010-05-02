@@ -76,11 +76,14 @@ Class("JiftyClient", {
             // if the action returns failure then we want to run the onFailure
             // handler, even though the AJAX request was successful
             var onAjaxSuccess = function (result) {
-                if (result.success) {
-                    onSuccess(result);
+                // on an Update action, we are redirected to a GET of the object
+                // which will (probably..) not have a success field. argh. is
+                // there anything better we can do here?
+                if (result.success === 0) {
+                    onFailure(result);
                 }
                 else {
-                    onFailure(result);
+                    onSuccess(result);
                 }
             };
 
