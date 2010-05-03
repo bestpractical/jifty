@@ -149,8 +149,6 @@ sub psgi_app_static {
 
     # the buffering and unsetting of psgi.streaming is to vivify the
     # responded res from the $static cascade app.
-    return $static if Jifty->config->framework('DevelMode');
-
     builder {
         enable 'Plack::Middleware::ConditionalGET';
         enable
@@ -160,6 +158,9 @@ sub psgi_app_static {
                         my $res = $app->($env);
                         # skip streamy response
                         return $res unless ref($res) eq 'ARRAY' && $res->[2];
+
+                        return $res if Jifty->config->framework('DevelMode');
+
                         my $h = Plack::Util::headers($res->[1]);;
                         $h->set( 'Cache-Control' => 'max-age=31536000, public' );
                         $h->set( 'Expires' => HTTP::Date::time2str( time() + 31536000 ) );
