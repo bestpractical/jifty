@@ -18,13 +18,17 @@ Class("JiftyModel", {
             var record = this;
             var diff = {};
 
-            if (!record._original) {
+            var original = record._original;
+
+            if (!original) {
                 console.log("This record seems to have no _original field; unable to compute diff.", record);
             }
 
-            Joose.O.eachSafe(record._original, function (value, field) {
-                if (record[field] != value) {
-                    diff[field] = record[field];
+            Joose.O.eachSafe(this.meta.getAttributes(), function (name, attr) {
+                if (attr.does(JiftyColumn)) {
+                    if (record[name] != original[name]) {
+                        diff[field] = record[field];
+                    }
                 }
             });
 
