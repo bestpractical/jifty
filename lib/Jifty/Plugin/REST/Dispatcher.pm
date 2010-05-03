@@ -977,17 +977,21 @@ sub show_joose_class {
         }
 
         if ($col->name eq 'id') {
-            $props->{coerce} = 1;
             $props->{isa} = 'Joose.Type.Int';
         }
         elsif ($col->is_string) {
-            $props->{coerce} = 1;
             $props->{isa} = 'Joose.Type.Str';
         }
         elsif ($col->is_numeric) {
-            $props->{coerce} = 1;
             $props->{isa} = 'Joose.Type.Num';
         }
+        elsif ($col->is_boolean) {
+            $props->{isa} = 'Joose.Type.Bool';
+        }
+
+        # always coerce because our REST API output is always strings even
+        # for int and bool columns
+        $props->{coerce} = 1 if $props->{isa};
 
         $cols->{$col->name} = $props;
     }
