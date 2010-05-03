@@ -18,6 +18,10 @@ Class("JiftyModel", {
             var record = this;
             var diff = {};
 
+            if (!record._original) {
+                console.log("This record seems to have no _original field; unable to compute diff.", record);
+            }
+
             Joose.O.eachSafe(record._original, function (value, field) {
                 if (record[field] != value) {
                     diff[field] = record[field];
