@@ -31,11 +31,11 @@ Class("JiftyModel", {
         load: function (id, onSuccess, onFailure) {
             var that = this;
             var className = this.meta.getName();
+            var jiftyClient = this.jiftyClient;
 
             var onAjaxSuccess = function (result) {
                 if (result.id) {
-                    var record = that.meta.instantiate(result);
-                    record._original = result;
+                    onSuccess(jiftyClient.inflateRecord(result, className));
                     onSuccess(record);
                 }
                 else {
@@ -43,7 +43,7 @@ Class("JiftyModel", {
                 }
             };
 
-            this.jiftyClient.loadById(className, id, onAjaxSuccess, onFailure);
+            jiftyClient.fetchRecord(className, id, onAjaxSuccess, onFailure);
         }
     }
 });
@@ -104,7 +104,7 @@ Class("JiftyClient", {
                 success: onAjaxSuccess
             });
         },
-        loadById: function (className, id, onSuccess, onFailure) {
+        fetchRecord: function (className, id, onSuccess, onFailure) {
             jQuery.ajax({
                 url: this._includeBaseUrl("/=/model/" + className + "/id/" + id + ".json"),
                 dataType: "json",
@@ -129,7 +129,13 @@ Class("JiftyClient", {
                 error: onFailure,
                 success: onAjaxSuccess
             });
-        }
+        },
+        inflateRecord: function (result, className) {
+            var c = this.meta.classNameToClassObject(className);
+            var record = c.meta.instantiate(result);
+            record._original = result;
+            return record;
+        },
     }
 });
 
