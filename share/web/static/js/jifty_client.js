@@ -135,6 +135,16 @@ Class("JiftyClient", {
         },
         inflateRecord: function (result, className) {
             var c = this.meta.classNameToClassObject(className);
+
+            // Joose really doesn't like when you pass an explicit "null"
+            // for an attribute with a type constraint, so we need to clear
+            // those
+            Joose.O.eachSafe(result, function (value, field) {
+                if (value === null) {
+                    delete result[field];
+                }
+            });
+
             var record = c.meta.instantiate(result);
             record._original = result;
             return record;
