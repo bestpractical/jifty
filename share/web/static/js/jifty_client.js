@@ -51,6 +51,10 @@ Class("JiftyModel", {
     }
 });
 
+// no logic here yet, just here for introspection
+Role("JiftyColumn", {
+});
+
 Class("JiftyClient", {
     has: {
         baseUrl: {

@@ -956,7 +956,10 @@ sub show_joose_class {
     my $cols = {};
     for my $col ( $model->new->columns ) {
         next if $col->private or $col->virtual;
-        my $props = {};
+
+        my $props = {
+            does => 'JiftyColumn',
+        };
 
         # map Jifty column property names to Joose names
         if ($col->default) {
@@ -1011,6 +1014,7 @@ sub show_joose_class {
     # better ideas welcome...
     $class_definition =~ s/"isa":"JiftyModel"/"isa":JiftyModel/g;
     $class_definition =~ s/"isa":"Joose\.Type\.(\w+)"/"isa":Joose.Type.$1/g;
+    $class_definition =~ s/"does":"JiftyColumn"/"does":JiftyColumn/g;
 
     return $class_definition;
 }
