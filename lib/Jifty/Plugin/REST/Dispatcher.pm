@@ -976,6 +976,16 @@ sub show_joose_class {
             }
         }
 
+        if ($col->name eq 'id') {
+            $props->{isa} = 'Joose.Type.Int';
+        }
+        elsif ($col->is_string) {
+            $props->{isa} = 'Joose.Type.Str';
+        }
+        elsif ($col->is_numeric) {
+            $props->{isa} = 'Joose.Type.Num';
+        }
+
         $cols->{$col->name} = $props;
     }
 
@@ -992,7 +1002,8 @@ sub show_joose_class {
     # to confuse it with an object that defines a TO_JSON method returning
     # a bareword does not work. and Joose does not let you say isa: 'Super'.
     # better ideas welcome...
-    $class_definition =~ s/"isa":"JiftyModel"/"isa":JiftyModel/;
+    $class_definition =~ s/"isa":"JiftyModel"/"isa":JiftyModel/g;
+    $class_definition =~ s/"isa":"Joose\.Type\.(\w+)"/"isa":Joose.Type.$1/g;
 
     return $class_definition;
 }
