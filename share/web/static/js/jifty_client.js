@@ -25,9 +25,9 @@ Class("JiftyModel", {
             }
 
             Joose.O.eachSafe(this.meta.getAttributes(), function (attr, name) {
-                if (attr.meta.does(JiftyColumn)) {
+                if (attr.getProps().jiftyColumn) {
                     if (record[name] != original[name]) {
-                        diff[field] = record[field];
+                        diff[name] = record[name];
                     }
                 }
             });
@@ -53,10 +53,6 @@ Class("JiftyModel", {
             jiftyClient.fetchRecord(className, id, onAjaxSuccess, onFailure);
         }
     }
-});
-
-// no logic here yet, just here for introspection
-Role("JiftyColumn", {
 });
 
 Class("JiftyClient", {
