@@ -25,7 +25,7 @@ Class("JiftyModel", {
             }
 
             Joose.O.eachSafe(this.meta.getAttributes(), function (attr, name) {
-                if (attr.does(JiftyColumn)) {
+                if (attr.meta.does(JiftyColumn)) {
                     if (record[name] != original[name]) {
                         diff[field] = record[field];
                     }
