@@ -39,7 +39,7 @@ on GET    '/=/search/*/**'      => \&search_items;
 
 on GET    '/=/action/*'         => \&list_action_params;
 on GET    '/=/action'           => \&list_actions;
-on POST   '/=/action/*'         => stream \&run_action_stream;
+on POST   '/=/action/*'         => \&run_action;
 
 on GET    '/='                  => \&show_help;
 on GET    '/=/help'             => \&show_help;
@@ -207,12 +207,7 @@ Returns the user's desired output format. Returns a hashref of:
 
 sub output_format {
     my $prefix = shift;
-    output_format2(Jifty->web->request->env, $prefix);
-}
-
-sub output_format2 {
-    my ($env, $prefix) = @_;
-    my $accept = ($env->{HTTP_ACCEPT} || '');
+    my $accept = (Jifty->web->request->env->{HTTP_ACCEPT} || '');
 
     my (@prefix, $url);
     if ($prefix) {
@@ -242,7 +237,7 @@ sub output_format2 {
             extension    => 'js',
             content_type => 'application/javascript; charset=UTF-8',
             freezer      => sub { 'var $_ = ' . Jifty::JSON::encode_json( @_ ) },
-        };use Data::Dumper;
+        };
     }
     elsif ($accept =~ qr{^(?:application/x-)?(?:perl|pl)$}i) {
         return {
@@ -258,7 +253,6 @@ sub output_format2 {
             extension    => 'xml',
             content_type => 'text/xml; charset=UTF-8',
             freezer      => \&render_as_xml,
-            freezer_stream => \&render_as_xml_stream,
         };
     }
     # if we ever have a non-html fallback case, we should be checking for an
@@ -303,6 +297,10 @@ sub outs {
     last_rule;
 }
 
+our $xml_config = { SuppressEmpty   => '',
+                    NoAttr          => 1,
+                    RootName        => 'data' };
+
 =head2 render_as_xml DATASTRUCTURE
 
 Attempts to render DATASTRUCTURE as simple, tag-based XML.
@@ -311,27 +309,14 @@ Attempts to render DATASTRUCTURE as simple, tag-based XML.
 
 sub render_as_xml {
     my $content = shift;
-    return render_as_xml_stream(undef, $content);
-}
-
-sub render_as_xml_stream {
-    my ($writer, $content) = @_;
-
-    my $xmlout = sub {
-        XMLout($_[0],
-               SuppressEmpty   => '',
-               NoAttr          => 1,
-               RootName        => 'data',
-               OutputFile      => $writer);
-    };
 
     if (ref($content) eq 'ARRAY') {
-        return $xmlout->({ value => $content });
+        return XMLout({value => $content}, %$xml_config);
     }
     elsif (ref($content) eq 'HASH') {
-        return $xmlout->($content);
+        return XMLout($content, %$xml_config);
     } else {
-        return $xmlout->({ value => $content });
+        return XMLout({value => $content}, %$xml_config)
     }
 }
 
@@ -346,7 +331,7 @@ sub render_as_html {
     my $prefix = shift;
     my $url = shift;
     my $content = shift;
-#    warn 'rendering to html: '.Dumper($content) ;use Data::Dumper;
+
     my $title = _("%1 - REST API", Jifty->config->framework('ApplicationName'));
 
     if (ref($content) eq 'ARRAY') {
@@ -937,7 +922,7 @@ sub show_action_form {
     last_rule;
 }
 
-=head2 run_action_stream
+=head2 run_action 
 
 Expects $1 to be the name of an action we want to run.
 
@@ -955,18 +940,16 @@ On an internal error, throws a C<500>.
 
 =cut
 
-
-sub run_action_stream {
-    my $dispatcher = shift;
-    my $action_name = action($1);
-    Jifty::Util->require($action_name) or $dispatcher->_do_abort(404);
-
+sub run_action {
+    my ($action_name) = action($1);
+    Jifty::Util->require($action_name) or abort(404);
+    
     my $args = Jifty->web->request->arguments;
     delete $args->{''};
 
-    my $action = $action_name->new( arguments => $args ) or $dispatcher->_do_abort(404);
+    my $action = $action_name->new( arguments => $args ) or abort(404);
 
-    Jifty->api->is_allowed( $action_name ) or $dispatcher->_do_abort(403);
+    Jifty->api->is_allowed( $action_name ) or abort(403);
 
     $action->validate;
 
@@ -975,51 +958,27 @@ sub run_action_stream {
 
     if ($@) {
         warn $@;
-        $dispatcher->_do_abort(500);
+        abort(500);
     }
 
-    my $env = Jifty->web->request->env;
     my $rec = $action->{record};
-    my $res = Jifty->web->response->finalize;
-    return sub {
-        my $responder = shift;
-        my $writer;
-        my $code = 200;
-        my @headers = @{$res->[1]};
-        if ($action->result->success && $rec and $rec->isa('Jifty::Record') and $rec->id) {
-            my @fragments = ('model', ref($rec), 'id', $rec->id);
-            my $path = join '/', '=', map { Jifty::Web->escape_uri($_) } @fragments;
-            my $extension = output_format2($env, \@fragments)->{extension};
-            $path .= '.' . $extension;
-            my $url = Jifty->web->url(path => $path);
-            push @headers, 'Location' => $url;
-            $code = 302;
-        }
+    if ($action->result->success && $rec and $rec->isa('Jifty::Record') and $rec->id) {
+        my @fragments = ('model', ref($rec), 'id', $rec->id);
 
-        my $format = output_format2($env, undef);
-        warn "==> using $format->{format}" if $main::DEBUG;
+        my $path = join '/', '=', map { Jifty::Web->escape_uri($_) } @fragments;
 
-        $writer = $responder->([$code,
-                                [@headers,
-                                 'Content-Type' => $format->{content_type}]]);
-        my $res = $action->result->as_hash;
+        my $extension = output_format(\@fragments)->{extension};
+        $path .= '.' . $extension;
 
-        if ( $format->{freezer_stream} ) {
-            my $w = Plack::Util::inline_object
-                (%$writer,
-                 print => sub {
-                     $writer->write(map { Encode::is_utf8($_)
-                             ? Encode::encode('utf8', $_) : $_ } @_ );
-                 });
-            $format->{freezer_stream}->($w, $res);
-            $writer->close;
-            return;
-        }
+        my $url = Jifty->web->url(path => $path);
 
-        for ($format->{freezer}->($res)) {
-            $writer->write(Encode::is_utf8($_)
-                    ? Encode::encode('utf8', $_) : $_);
-        }
-        $writer->close;
-    };
-};
+        Jifty->web->response->status( 302 );
+        Jifty->web->response->header('Location' => $url);
+    }
+
+    outs(undef, $action->result->as_hash);
+
+    last_rule;
+}
+
+1;

@@ -9,7 +9,7 @@ This is a template for your own tests. Copy it and modify it.
 
 =cut
 
-use Jifty::Test::Dist tests => 88, actual_server => 1;
+use Jifty::Test::Dist tests => 87, actual_server => 1;
 use Jifty::Test::WWW::Mechanize;
 
 my $server  = Jifty::Test->make_server;
@@ -159,8 +159,6 @@ $mech->get_ok('/=/action/DoSomething');
 is($mech->status, 200);
 $mech->get_ok('/=/action/TestApp::Plugin::REST::Action::DoSomething');
 is($mech->status, 200);
-$mech->get('/=/action/TestApp.Plugin.REST.Action.DoSomethingBad');
-is($mech->status, 404);
 $mech->get_ok('/=/action/TestApp.Plugin.REST.Action.DoSomething');
 is($mech->status, 200);
 
