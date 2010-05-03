@@ -40,7 +40,6 @@ Class("JiftyModel", {
             var onAjaxSuccess = function (result) {
                 if (result.id) {
                     onSuccess(jiftyClient.inflateRecord(result, className));
-                    onSuccess(record);
                 }
                 else {
                     onFailure(result);
