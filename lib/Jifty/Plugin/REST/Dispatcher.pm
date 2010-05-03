@@ -977,12 +977,15 @@ sub show_joose_class {
         }
 
         if ($col->name eq 'id') {
+            $props->{coerce} = 1;
             $props->{isa} = 'Joose.Type.Int';
         }
         elsif ($col->is_string) {
+            $props->{coerce} = 1;
             $props->{isa} = 'Joose.Type.Str';
         }
         elsif ($col->is_numeric) {
+            $props->{coerce} = 1;
             $props->{isa} = 'Joose.Type.Num';
         }
 
