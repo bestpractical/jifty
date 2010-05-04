@@ -24,11 +24,9 @@ Class("JiftyModel", {
                 console.log("This record seems to have no _original field; unable to compute diff.", record);
             }
 
-            Joose.O.eachSafe(this.meta.getAttributes(), function (attr, name) {
-                if (attr.getProps().jiftyColumn) {
-                    if (record[name] != original[name]) {
-                        diff[name] = record[name];
-                    }
+            this.meta.getClassObject().eachColumn(function (column, name) {
+                if (record[name] != original[name]) {
+                    diff[name] = record[name];
                 }
             });
 
@@ -51,6 +49,14 @@ Class("JiftyModel", {
             };
 
             jiftyClient.fetchRecord(className, id, onAjaxSuccess, onFailure);
+        },
+        eachColumn: function (callback) {
+            Joose.O.eachSafe(this.meta.getAttributes(), function (attr, name) {
+                if (attr.getProps().jiftyColumn) {
+                    callback(attr, name);
+                }
+            });
+
         }
     }
 });
