@@ -312,9 +312,9 @@ sub outs {
     my $prefix = shift;
     my $format = output_format($prefix);
     warn "==> using $format->{format}" if $main::DEBUG;
-    Jifty->web->response->content_type($format->{content_type});
-    Jifty->web->response->body($format->{freezer}->(@_));
 
+    Jifty->web->response->content_type($format->{content_type});
+    Jifty->handler->buffer->out_method->($format->{freezer}->(@_));
     last_rule;
 }
 
@@ -566,6 +566,9 @@ sub list_model_columns {
             my $val = $col->$_();
             $cols{ $col->name }->{ $_ } = Scalar::Defer::force($val)
                 if defined $val and length $val;
+        }
+        if (my $serialized = $model->column_serialized_as($col)) {
+            $cols{ $col->name }->{serialized_as} = $serialized;
         }
         $cols{ $col->name }{writable} = 0 if exists $cols{$col->name}{writable} and $col->protected;
     }

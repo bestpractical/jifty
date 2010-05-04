@@ -206,7 +206,8 @@ sub setup {
         $ENV{JIFTY_TEST_SERVER} ||= 'Standalone';
     }
 
-    my $server = $ENV{JIFTY_TEST_SERVER} ||= 'Inline';
+    my $server = $ENV{JIFTY_TEST_SERVER} ||=
+        $args{actual_server} ? 'Standalone' : 'Inline';
 
     if ($server eq 'Inline') {
         require Jifty::Test::WWW::Mechanize;

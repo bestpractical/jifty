@@ -16,6 +16,11 @@ column 'email' =>
 column 'tasty' =>
   type is 'boolean',
   is immutable;
+
+column group_id => refers_to TestApp::Plugin::REST::Model::Group,
+  label is 'Group',
+  serialized as { name => 'group' } ;
+
 };
 
 

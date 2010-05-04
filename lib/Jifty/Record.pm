@@ -847,6 +847,29 @@ sub schema_version {
     }
 }
 
+=head2 column_serialized_as
+
+
+
+=cut
+
+sub column_serialized_as {
+    my ($class, $column) = @_;
+    my $meta = $column->attributes->{serialized} or return;
+    $meta->{columns} ||= [$column->refers_to->default_serialized_as_columns]
+        if $column->refers_to;
+    return $meta;
+}
+
+=head2 default_serialized_as_columns
+
+=cut
+
+sub default_serialized_as_columns {
+    my $class = shift;
+    return ('id', $class->_brief_description);
+}
+
 =head2 jifty_serialize_format
 
 This is used to create a hash reference of the object's values. Unlike
@@ -861,12 +884,26 @@ sub jifty_serialize_format {
     my %data;
 
     # XXX: maybe just test ->virtual?
-    for ($record->readable_attributes) {
-        next if UNIVERSAL::isa($record->column($_)->refers_to,
+    for my $column (grep { $_->readable } $record->columns ) {
+        next if UNIVERSAL::isa($column->refers_to,
                                'Jifty::DBI::Collection');
-        next if $record->column($_)->container;
+        next if $column->container;
+        my $name = $column->aliased_as || $column->name;
 
-        $data{$_} = Jifty::Util->stringify($record->_value($_));
+        if ((my $refers_to      = $column->refers_to) &&
+            (my $serialize_meta = $record->column_serialized_as($column))) {
+            my $column_data = $record->$name();
+            if ( $column_data && $column_data->id ) {
+                $name = $serialize_meta->{name} if $serialize_meta->{name};
+                $data{$name} = { map { $_ => scalar $record->$name->$_ } @{$serialize_meta->{columns} } };
+            }
+            else {
+                $data{$name} = undef;
+            }
+        }
+        else {
+            $data{$name} = Jifty::Util->stringify($record->_value($name));
+        }
     }
 
     return \%data;

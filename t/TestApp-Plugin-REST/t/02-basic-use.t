@@ -9,7 +9,7 @@ This is a template for your own tests. Copy it and modify it.
 
 =cut
 
-use Jifty::Test::Dist tests => 80;
+use Jifty::Test::Dist tests => 87, actual_server => 1;
 use Jifty::Test::WWW::Mechanize;
 
 my $server  = Jifty::Test->make_server;
@@ -25,6 +25,11 @@ my $u1 = TestApp::Plugin::REST::Model::User->new(
     current_user => TestApp::Plugin::REST::CurrentUser->superuser );
 $u1->create( name => 'test', email => 'test@example.com' );
 ok( $u1->id );
+
+my $g1 = TestApp::Plugin::REST::Model::Group->new(
+    current_user => TestApp::Plugin::REST::CurrentUser->superuser );
+$g1->create( name => 'test group' );
+ok( $g1->id );
 
 # on GET    '/=/model'       => \&list_models;
 
@@ -55,9 +60,9 @@ is($mech->status,'200');
 $mech->get_ok('/=/model/User.yml');
 my %keys =  %{get_content()};
 
-is((0+keys(%keys)), 4, "The model has 4 keys");
-is_deeply([sort keys %keys], [sort qw/id name email tasty/]);
-
+is((0+keys(%keys)), 5, "The model has 5 keys");
+is_deeply([sort keys %keys], [sort qw/group_id id name email tasty/]);
+is_deeply($keys{'group_id'}{serialized_as}, { name => 'group' });
 
 # on GET    '/=/model/*/*'   => \&list_model_items;
 $mech->get_ok('/=/model/user/id.yml');
@@ -68,7 +73,7 @@ is($#rows,0);
 # on GET    '/=/model/*/*/*' => \&show_item;
 $mech->get_ok('/=/model/user/id/1.yml');
 my %content = %{get_content()};
-is_deeply(\%content, { name => 'test', email => 'test@example.com', id => 1, tasty => undef });
+is_deeply(\%content, { name => 'test', email => 'test@example.com', id => 1, tasty => undef, group_id => undef, group => undef });
 
 # on GET    '/=/model/*/*/*/*' => \&show_item_Field;
 $mech->get_ok('/=/model/user/id/1/email.yml');
@@ -87,15 +92,24 @@ ok(!$response->is_success, "create via POST to model with disallowed create acti
 # on GET    '/=/search/*/**' => \&search_items;
 $mech->get_ok('/=/search/user/id/1.yml');
 my $content = get_content();
-is_deeply($content, [{ name => 'test', email => 'test@example.com', id => 1, tasty => undef }]);
+is_deeply($content, [{ name => 'test', email => 'test@example.com', id => 1, tasty => undef, group_id => undef, group => undef }]);
 
 $mech->get_ok('/=/search/user/__not/id/1.yml');
 $content = get_content();
-is_deeply($content, [{ name => 'moose', email => 'moose@example.com', id => 2, tasty => undef }]);
+is_deeply($content, [{ name => 'moose', email => 'moose@example.com', id => 2, tasty => undef, group_id => undef, group => undef }]);
 
 $mech->get_ok('/=/search/user/id/1/name/test.yml');
 $content = get_content();
-is_deeply($content, [{ name => 'test', email => 'test@example.com', id => 1, tasty => undef }]);
+is_deeply($content, [{ name => 'test', email => 'test@example.com', id => 1, tasty => undef, group_id => undef, group => undef }]);
+
+$u1->set_group_id($g1->id);
+is($u1->group_id, $g1->id);
+is($u1->group->id, $g1->id);
+
+$mech->get_ok('/=/search/user/id/1/name/test.yml');
+$content = get_content();
+is_deeply($content, [{ name => 'test', email => 'test@example.com', id => 1, tasty => undef, group_id => $g1->id, group => { id => $g1->id, name => 'test group'} }]);
+
 
 $mech->get_ok('/=/search/user/id/1/name/test/email.yml');
 $content = get_content();
@@ -191,7 +205,11 @@ eval {
 ok($content{success});
 is($content{message}, 'Something happened!');
 
-    
+# Test XML posts
+$mech->post ( $URL . '/=/action/DoSomething.xml', { email => 'good@email.com' } );
+
+$mech->content_like(qr'<message>Something happened!</message>');
+
 $mech->post ( $URL . '/=/action/DoSomething.yaml', { email => 'bad@email.com' } );
 
 eval {

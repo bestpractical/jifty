@@ -8,7 +8,7 @@ Preloading lets you optimistically load regions before they are to be
 displayed. This improves user experience because preloaded updates are
 effectively instant; the user does not wait for an HTTP request/response cycle.
 The request/response cycle still happens, but it happens behind the scenes
-while the user is filling out the form or reading the current page.
+while the user is reading the current page, filling out a form, etc.
 
 =head1 WARNING
 
@@ -42,7 +42,8 @@ that contains a timestamp, then that timestamp may be stale by the time the
 region is actually shown. Similarly for displaying duration. For example, at
 the end of Hiveminder's task review, we tell you exactly how long you spent in
 the review. This final report update cannot be preloaded because the user may
-spend ten minutes on the last task.
+spend ten minutes on the last task, which would not be reported if we preloaded
+that update.
 
 Preloading can cause additional server load. Instead of a single request
 containing action submission and region updates, preloading sends a request
@@ -59,7 +60,7 @@ Good luck!
 
 =head1 USAGE
 
-To mark a form element as preloadable, use the C<< preload => 'cache_key' >>
+To mark a form handler as preloadable, use the C<< preload => 'cache_key' >>
 option:
 
     form_submit(
@@ -131,14 +132,15 @@ the cache. We do not do this yet because of cache staleness concerns.
 =head2 Activating handler before its request cycle finishes
 
 If a user is quick, they may click a preloadable button during, or even before,
-that region's preload request/response cycle finishes. The simple way to handle
-this would be to ignore that the handler has preloading and just continue with
-the usual update cycle, sending a fresh HTTP hit.
+that region's preload request/response cycle. The simple way to handle this
+would be to ignore that the handler has preloading and just continue with the
+usual update cycle, sending a fresh HTTP hit.
 
-We can do better though. Since we may have already sent the preload request, we
+We can do better though. Since we know we already sent the preload request, we
 instead of just wait for its response instead of initiating a new request. We
 then mark that preload key as "wanted". This means that upon response, it will
-be immediately processed instead of waiting for its handler to be activated.
+be immediately processed instead of waiting for its handler to be activated
+again.
 
 =head2 Actions
 
