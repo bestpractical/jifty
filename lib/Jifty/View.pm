@@ -36,7 +36,6 @@ sends a header if need be.
 =cut
 
 sub out_method {
-    Jifty->web->session->set_cookie;
     my $r = Jifty->web->response;
 
     # Send a header

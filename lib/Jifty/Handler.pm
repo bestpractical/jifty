@@ -252,6 +252,7 @@ sub handle_request {
         }
         $self->log->info( Jifty->web->request->method . " request for " . Jifty->web->request->path  );
         Jifty->web->setup_session;
+        Jifty->web->session->set_cookie;
 
         Jifty::I18N->get_language_handle;
 
