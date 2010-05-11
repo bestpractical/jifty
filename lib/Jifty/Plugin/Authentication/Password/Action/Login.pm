@@ -10,6 +10,7 @@ Jifty::Plugin::Authentication::Password::Action::Login - process login with pass
 package Jifty::Plugin::Authentication::Password::Action::Login;
 use base qw/Jifty::Action/;
 use Digest::MD5 qw(md5_hex);
+use HTTP::Date ();
 
 use constant TOKEN_EXPIRE_TIME => 30;
 
@@ -221,7 +222,7 @@ sub take_action {
 
     # Actually do the signin thing.
     Jifty->web->current_user(Jifty->app_class('CurrentUser')->new( id => $user->id));
-    Jifty->web->session->expires( $self->argument_value('remember') ? '+1y' : undef );
+    Jifty->web->session->expires($self->argument_value('remember') ? HTTP::Date::time2str( time() + 31536000 ) : undef);
     Jifty->web->session->set_cookie;
 
     return 1;
