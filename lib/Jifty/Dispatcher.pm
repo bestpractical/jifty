@@ -777,9 +777,13 @@ Don't display any page. just stop.
 sub _do_abort {
     my $self = shift;
     $self->log->debug("Aborting processing");
-    if (@_) {
+    if (my $code = shift) {
         # This is the status code
-        Jifty->web->response->status( shift );
+        Jifty->web->response->status( $code );
+        if ( $code == 403 && !Jifty->web->response->body) {
+            Jifty->web->response->content_type('text/plain');
+            Jifty->web->response->body('403 Forbidden');
+        }
     }
     $self->_abort;
 }
