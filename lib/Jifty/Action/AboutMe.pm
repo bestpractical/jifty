@@ -18,13 +18,13 @@ use base qw/Jifty::Action/;
 =head2 take_action
 
 Does nothing except set the results to the L<Jifty::CurrentUser> object.
+
 =cut
 
 sub take_action {
     my $self = shift;
 
     $self->result->content(current_user => $self->current_user);
-    $self->report_success;
 
     return 1;
 }
