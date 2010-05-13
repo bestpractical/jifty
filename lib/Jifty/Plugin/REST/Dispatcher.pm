@@ -999,6 +999,15 @@ sub show_joose_class {
         # for int and bool columns
         $props->{coerce} = 1 if $props->{isa};
 
+        # add an extra attribute for serialized records. for now they are just
+        # a plain hash of whatever serialized data is requested, but later they
+        # could easily become full objects in their own right
+        if (my $serialize_meta = $col->attributes->{serialized}) {
+            $cols->{$serialize_meta->{name}} = {
+                is => 'ro',
+            };
+        }
+
         $cols->{$col->name} = $props;
     }
 
