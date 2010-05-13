@@ -155,6 +155,7 @@ inc/Module/Install/Win32.pm
 inc/Module/Install/WriteAll.pm
 lib/Jifty.pm
 lib/Jifty/Action.pm
+lib/Jifty/Action/AboutMe.pm
 lib/Jifty/Action/Autocomplete.pm
 lib/Jifty/Action/Record.pm
 lib/Jifty/Action/Record/Bulk.pm
@@ -511,10 +512,12 @@ share/web/static/js/halo.js
 share/web/static/js/iepngfix.htc
 share/web/static/js/iutil.js
 share/web/static/js/jifty.js
+share/web/static/js/jifty_client.js
 share/web/static/js/jifty_interface.js
 share/web/static/js/jifty_smoothscroll.js
 share/web/static/js/jifty_subs.js
 share/web/static/js/jifty_utils.js
+share/web/static/js/joose.js
 share/web/static/js/jquery-1.4.1.js
 share/web/static/js/jquery.ajaxQueue.js
 share/web/static/js/jquery.autocomplete.js
@@ -752,6 +755,7 @@ t/TestApp-Plugin-REST/t/02-basic-use.t
 t/TestApp-Plugin-REST/t/03-format.t
 t/TestApp-Plugin-SetupWizard/bin/jifty
 t/TestApp-Plugin-SetupWizard/etc/config.yml
+t/TestApp-Plugin-SetupWizard/etc/site_config.yml
 t/TestApp-Plugin-SetupWizard/lib/TestApp/Plugin/SetupWizard/Dispatcher.pm
 t/TestApp-Plugin-SetupWizard/lib/TestApp/Plugin/SetupWizard/Test.pm
 t/TestApp-Plugin-SetupWizard/t/001-basic.t
