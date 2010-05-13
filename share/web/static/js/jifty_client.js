@@ -72,17 +72,37 @@ Class("JiftyClient", {
         },
         password: {
             is: "rw"
+        },
+        currentUser: {
+            is: "rw"
         }
     },
     methods: {
         login: function (onSuccess, onFailure) {
+            var that = this;
             this.runAction(
                 "Login",
                 {
                     address:  this.email,
                     password: this.password
                 },
-                onSuccess,
+                function (result) {
+                    that.aboutMe(function () {
+                        onSuccess(result);
+                    }, onFailure);
+                },
+                onFailure
+            );
+        },
+        aboutMe: function (onSuccess, onFailure) {
+            var that = this;
+            this.runAction(
+                "AboutMe",
+                {},
+                function (result) {
+                    that.currentUser = result.content.current_user;
+                    onSuccess(result);
+                },
                 onFailure
             );
         },
@@ -158,7 +178,7 @@ Class("JiftyClient", {
             var record = c.meta.instantiate(result);
             record._original = result;
             return record;
-        },
+        }
     }
 });
 
