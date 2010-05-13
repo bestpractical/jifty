@@ -9,7 +9,7 @@ This is a template for your own tests. Copy it and modify it.
 
 =cut
 
-use Jifty::Test::Dist tests => 87, actual_server => 1;
+use Jifty::Test::Dist tests => 88, actual_server => 1;
 use Jifty::Test::WWW::Mechanize;
 
 my $server  = Jifty::Test->make_server;
@@ -136,6 +136,7 @@ my @actions = qw(
                  TestApp.Plugin.REST.Action.SearchUser
                  TestApp.Plugin.REST.Action.ExecuteUser
                  TestApp.Plugin.REST.Action.DoSomething
+                 Jifty.Action.AboutMe
                  Jifty.Action.Autocomplete
                  Jifty.Action.Redirect);
 

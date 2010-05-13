@@ -121,9 +121,10 @@ sub qualify {
 =head2 reset
 
 Resets which actions are allowed to the defaults; that is, all of the
-application's actions, L<Jifty::Action::Autocomplete>, and
-L<Jifty::Action::Redirect> are allowed and visible; everything else is denied
-and hidden. See L</restrict> for the details of how limits are processed.
+application's actions, L<Jifty::Action::AboutMe>,
+L<Jifty::Action::Autocomplete>, and L<Jifty::Action::Redirect> are allowed and
+visible; everything else is denied and hidden. See L</restrict> for the details
+of how limits are processed.
 
 =cut
 
@@ -139,6 +140,7 @@ sub reset {
             { deny => 1,  hide => 1, restriction => qr/.*/ },
             { allow => 1, show => 1, restriction => qr/^\Q$app_actions\E/ },
             { deny => 1,  hide => 1, restriction => qr/^\Q$app_actions\E::Record::(Create|Delete|Execute|Search|Update)$/ },
+            { allow => 1, show => 1, restriction => 'Jifty::Action::AboutMe' },
             { allow => 1, show => 1, restriction => 'Jifty::Action::Autocomplete' },
             { allow => 1, show => 1, restriction => 'Jifty::Action::Redirect' },
         ]
@@ -147,10 +149,10 @@ sub reset {
 
 =head2 deny_for_get
 
-Denies all actions except L<Jifty::Action::Autocomplete> and
-L<Jifty::Action::Redirect>. This is to protect against a common cross-site
-scripting hole. In your C<before> dispatcher rules, you can whitelist actions
-that are known to be read-only.
+Denies all actions except L<Jifty::Action::AboutMe>,
+L<Jifty::Action::Autocomplete> and L<Jifty::Action::Redirect>. This is to
+protect against a common cross-site scripting hole. In your C<before>
+dispatcher rules, you can whitelist actions that are known to be read-only.
 
 This is called automatically during any C<GET> request.
 
@@ -159,6 +161,7 @@ This is called automatically during any C<GET> request.
 sub deny_for_get {
     my $self = shift;
     $self->deny(qr/.*/);
+    $self->allow("Jifty::Action::AboutMe");
     $self->allow("Jifty::Action::Autocomplete");
     $self->allow("Jifty::Action::Redirect");
 }

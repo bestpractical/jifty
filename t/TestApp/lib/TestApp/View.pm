@@ -156,7 +156,7 @@ template 'otherplace' => page {
 };
 
 template 'naughty' => sub {
-    print STDOUT "this is bad: $ENV{REMOTE_HOST}";
+    print STDOUT "this is bad";
 };
 
 1;

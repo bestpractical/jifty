@@ -210,8 +210,6 @@ sub show {
 sub _comp_setup {
     my ($self, $comp, $args) = @_;
 
-    Jifty->web->session->set_cookie;
-
     # XXX FIXME This is a kludge to get use_mason_wrapper to work
     $self->interp->set_global('$jifty_internal_request', 0);
     $self->interp->set_global('$jifty_internal_request', 1) if defined $args;

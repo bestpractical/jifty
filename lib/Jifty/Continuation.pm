@@ -158,7 +158,8 @@ to ask "are we about to call a continuation?"
 sub return_path_matches {
     my $self = shift;
 
-    return unless Jifty->web->request->path eq $self->request->path;
+    return unless Jifty->web->request->path eq $self->request->path
+        or Jifty->web->request->path eq $self->request->uri->canonical->path;
 
     my $args = Jifty->web->request->arguments;
     return unless scalar keys %{$args} == 1;

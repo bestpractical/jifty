@@ -228,7 +228,7 @@ users, but varies according to the port the server is running on.
 sub cookie_name {
     my $self        = shift;
     my $cookie_name = $self->{'_cookie_name'};
-    my $port        = ( $ENV{'SERVER_PORT'} || 'NOPORT' );
+    my $port        = ( ( Jifty->web->request && Jifty->web->request->port) || 'NOPORT' );
     $cookie_name =~ s/\$PORT/$port/g;
     return ($cookie_name);
 }

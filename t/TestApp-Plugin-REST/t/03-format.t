@@ -2,7 +2,7 @@
 use warnings;
 use strict;
 
-use Jifty::Test::Dist tests => 103;
+use Jifty::Test::Dist tests => 104;
 use Jifty::Test::WWW::Mechanize;
 
 my $server  = Jifty::Test->make_server;
@@ -215,6 +215,7 @@ my @actions = qw(
                  TestApp.Plugin.REST.Action.SearchUser
                  TestApp.Plugin.REST.Action.ExecuteUser
                  TestApp.Plugin.REST.Action.DoSomething
+                 Jifty.Action.AboutMe
                  Jifty.Action.Autocomplete
                  Jifty.Action.Redirect);
 

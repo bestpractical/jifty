@@ -221,7 +221,7 @@ If a lot of column could change, you can override C<_set> method:
 
         $self->SUPER::_set(column => 'changed_on', value => defer {DateTime->now});
         $self->SUPER::_set(column => 'from', 
-            value => $ENV{REMOTE_HOST}. " / ". Jifty->web->current_user->user_object->name );
+            value => Jifty->web->request->remote_host. " / ". Jifty->web->current_user->user_object->name );
 
         return ($val, $msg);
     }
