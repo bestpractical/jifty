@@ -257,6 +257,18 @@ sub current_user_can {
     return (0);
 }
 
+=head2 jifty_serialize_format
+
+Serializes as the user_object.
+
+=cut
+
+sub jifty_serialize_format {
+    my $self = shift;
+    return {} if !$self->user_object;
+    return $self->user_object->jifty_serialize_format(@_);
+}
+
 =head1 SEE ALSO
 
 L<Jifty::Object>, L<Jifty::Plugin::User>
