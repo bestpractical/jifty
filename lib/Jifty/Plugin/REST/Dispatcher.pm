@@ -982,17 +982,26 @@ sub show_joose_class {
             }
         }
 
-        if ($col->name eq 'id') {
-            $props->{isa} = 'Joose.Type.Int';
-        }
-        elsif ($col->is_string) {
-            $props->{isa} = 'Joose.Type.Str';
-        }
-        elsif ($col->is_numeric) {
-            $props->{isa} = 'Joose.Type.Num';
-        }
-        elsif ($col->is_boolean) {
+        # column types only affect what is stored in the database. using types
+        # with filters breaks attributes using, say,
+        # Jifty::DBI::Filter::Duration. though boolean is implemented as
+        # a filter so it is special-cased
+        my @filters = ($col->input_filters, $col->output_filters);
+
+        if ($col->is_boolean) {
             $props->{isa} = 'Joose.Type.Bool';
+        }
+        elsif (@filters == 0) {
+            if ($col->name eq 'id') {
+                $props->{isa} = 'Joose.Type.Int';
+            }
+            elsif ($col->is_string) {
+                $props->{isa} = 'Joose.Type.Str';
+            }
+            elsif ($col->is_numeric) {
+                $props->{isa} = 'Joose.Type.Num';
+            }
+
         }
 
         # always coerce because our REST API output is always strings even
