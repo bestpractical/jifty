@@ -100,6 +100,7 @@ non-terminals that are self-explanatory to perl-developers):
        | 'not_null'
        | 'distinct'
        | 'virtual'
+       | 'computed'
        | 'sort_order' 'is' number
        | 'input_filters' 'are' string_classname
        | 'output_filters' 'are' string_classname
@@ -111,7 +112,7 @@ non-terminals that are self-explanatory to perl-developers):
 
     * 'is', 'by', 'on', 'as' and 'are' are fill-words that may get omitted.
 
-For a full description of all parameter's meaning, look at
+For a full description of each parameter's meaning, look at
 L<Jifty::DBI::Schema>.
 
 =head3 Versioning
