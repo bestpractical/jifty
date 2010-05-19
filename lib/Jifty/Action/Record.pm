@@ -540,7 +540,7 @@ sub possible_columns {
     my $self = shift;
     return grep {
         $_->container
-            or ( !$_->private and !$_->virtual and $_->type ne "serial" )
+            or ( !$_->private and !$_->virtual and !$_->computed and $_->type ne "serial" )
     } $self->record->columns;
 }
 
