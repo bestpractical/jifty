@@ -195,6 +195,11 @@ sub psgi_app {
         $app = $_->wrap($app);
     }
 
+    my $app_class = Jifty->app_class;
+
+    $app = $app_class->psgi_wrap($app)
+        if $app_class->can('psgi_wrap');
+
     return $app;
 }
 
