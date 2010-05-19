@@ -601,13 +601,17 @@ sub upgrade_tables {
                     and $col->since > $dbv )
                 {
                     unshift @{ $UPGRADES{ $col->since } }, sub {
+                        # computed columns do not live in the database
+                        return if $col->computed;
+
                         my $renamed = $upgradeclass->just_renamed || {};
 
                         # skip it if this was added by a rename
-                        $model->add_column_in_db( $col->name )
-                            unless
+                        return unless
                             defined $renamed->{ $model->table }->{'add'}
                             ->{ $col->name };
+
+                        $model->add_column_in_db( $col->name );
                     };
                 }
             }
