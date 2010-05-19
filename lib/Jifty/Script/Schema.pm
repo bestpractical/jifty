@@ -592,7 +592,7 @@ sub upgrade_tables {
         } else {
 
             # Go through the currently-active columns
-            for my $col ( grep { not $_->virtual } $model->columns ) {
+            for my $col ( grep { not $_->virtual and not $_->computed } $model->columns ) {
 
                 # If they're new, add them
                 if (    $col->can('since')
@@ -601,17 +601,12 @@ sub upgrade_tables {
                     and $col->since > $dbv )
                 {
                     unshift @{ $UPGRADES{ $col->since } }, sub {
-                        # computed columns do not live in the database
-                        return if $col->computed;
-
                         my $renamed = $upgradeclass->just_renamed || {};
 
                         # skip it if this was added by a rename
-                        return unless
+                        $model->add_column_in_db( $col->name ) unless
                             defined $renamed->{ $model->table }->{'add'}
                             ->{ $col->name };
-
-                        $model->add_column_in_db( $col->name );
                     };
                 }
             }
