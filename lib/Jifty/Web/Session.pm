@@ -43,6 +43,16 @@ sub id {
     die "Subclass must implement 'id'";
 }
 
+=head2 create
+
+Assign a new ID, and store it server-side if necessary.
+
+=cut
+
+sub create {
+    die "Subclass must implement 'create'";
+}
+
 =head2 load [ID]
 
 Load up the current session from the given C<ID>, or the appropriate

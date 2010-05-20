@@ -59,6 +59,20 @@ sub id {
     return $self->loaded ? $self->_session->{_session_id} : undef;
 }
 
+=head2 create
+
+Creates a new session.
+
+=cut
+
+sub create {
+    my $self = shift;
+    my %session;
+    my $options = Jifty->config->framework('Web')->{'SessionOptions'};
+    tie %session => $self->{_backend_class}, undef, $options;
+    $self->{_session} = \%session;
+}
+
 =head2 load [ID]
 
 Load up the current session from the given C<ID>, or the appropriate
