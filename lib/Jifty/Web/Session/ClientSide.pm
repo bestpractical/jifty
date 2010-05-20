@@ -71,6 +71,23 @@ sub id {
     return $self->loaded ? $self->_session->{session_id} : undef;
 }
 
+=head2 create
+
+Since there is no server-side storage, this simply clears the object's
+local state.
+
+=cut
+
+sub create {
+    my $self = shift;
+    $self->_session({
+        session_id   => Jifty::Model::Session->new_session_id,
+        continuation => {},
+        metadata     => {},
+        key          => {},
+    });
+}
+
 =head2 load [ID]
 
 Load up the current session from the given C<ID>, or the appropriate

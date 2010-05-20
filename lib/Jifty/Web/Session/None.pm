@@ -56,6 +56,14 @@ Returns false.
 
 sub id {return undef }
 
+=head2 create
+
+Returns true.
+
+=cut
+
+sub create { return 1}
+
 =head2 load
 
 Returns true.

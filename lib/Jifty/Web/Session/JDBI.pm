@@ -45,6 +45,19 @@ sub id {
     return $self->loaded ? $self->_session->session_id : undef;
 }
 
+=head2 create
+
+Creates a new row in the L<Jifty::Model::Session> table.
+
+=cut
+
+sub create {
+    my $self = shift;
+    my $session = Jifty::Model::Session->new;
+    $session->create( key_type => "session" );
+    $self->_session($session);
+}
+
 =head2 load [ID]
 
 Load up the current session from the given C<ID>, or the appropriate
