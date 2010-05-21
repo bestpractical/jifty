@@ -135,10 +135,7 @@ sub new {
     # from plack so we don't have plack-specified fields to hide here.
 
     # Make sure we don't store any of the connection information
-    local $self->request->{env}{"psgi.input"};
-    local $self->request->{env}{"psgi.errors"};
-    local $self->request->{env}{"psgix.io"};
-    local $self->request->{env}{"plack.request.tempfh"};
+    local $self->request->{env};
     local $self->request->{_body_parser}{input_handle} if defined $self->request->{_body_parser};
 
     # Save it into the session
@@ -254,14 +251,16 @@ sub return {
     $self->code->(Jifty->web->request)
       if $self->code;
 
-    # Set the current request to the one in the continuation
-    my $input  = Jifty->web->request->env->{"psgi.input"};
-    my $errors = Jifty->web->request->env->{"psgi.errors"};
+    # We want to preserve the current actual request environment
+    # (headers, etc)
+    my $env = Jifty->web->request->env;
 
+    # Set the current request to the one in the continuation
     Jifty->web->request($self->request->clone);
 
-    Jifty->web->request->env->{"psgi.input"}  = $input;
-    Jifty->web->request->env->{"psgi.errors"} = $errors;
+    # Restore the environment we came in with
+    Jifty->web->request->{env} = $env;
+
     return Jifty->web->request;
 }
 
