@@ -1102,28 +1102,53 @@ var apply_fragment_updates = function(fragment, f) {
     }
 }
 
-// Update a region. It takes two arguments.
-//
-// The first argument is a hash of named parameters, including:
-//  - 'actions' is an array of monikers to submit
-//  - 'action_arguments' is a hash of action monikers to hashes of arguments which should override any arguments coming from form fields
-//        the hash keys for 'action_arguments' are the values of the 'actions' array
-//  - 'continuation' is ??? Please document me
-//  - 'hide_wait_message' for when you don't want to see it
-//  - 'preload' this request is preloading regions
-//  - 'preload_key' the cache key for using preloaded regions
-//  - 'headers' is a hash of headers to send in this request
-//  - 'fragments' is an array of hashes, which may have:
-//     - 'region' is the name of the region to update
-//     - 'args' is a hash of arguments to override
-//     - 'path' is the path of the fragment (if this is a new fragment)
-//     - 'element' is the CSS selector of the element to update, if 'region' isn't supplied
-//     - 'mode' is one of 'Replace', 'Top', 'Bottom', 'Before', or 'After'
-//     - 'effect' is the name of an effect
-//
-// The second argument is the element (usually a submit button) that triggered
-// it.
-//
+/* Region update helper 
+ *  Jifty.replaceRegion( 'region-name' , '/path' , { id: 123123 , msg: 'blah'  } );
+ */
+Jifty.updateRegion = function( regionName , path , args , mode ) {
+    Jifty.update({
+        fragments: [{ region: '__page-' + regionName ,
+            args: args, path: path, mode: mode ? mode : 'Replace' }]
+    });
+};
+
+/* Update a region. It takes two arguments.
+  
+   Usage:
+
+    Jifty.update({
+        fragments: [{
+            region: '__page-region_name' ,
+            args: { id => 123  }
+            path: '/path_to_replace',
+            mode: 'Replace'
+        }]
+    });
+   
+   Description:
+
+   The first argument is a hash of named parameters, including:
+    - 'actions' is an array of monikers to submit
+    - 'action_arguments' is a hash of action monikers to hashes of arguments which should override any arguments coming from form fields
+          the hash keys for 'action_arguments' are the values of the 'actions' array
+    - 'continuation' is ??? Please document me
+    - 'hide_wait_message' for when you don't want to see it
+    - 'preload' this request is preloading regions
+    - 'preload_key' the cache key for using preloaded regions
+    - 'headers' is a hash of headers to send in this request
+    - 'fragments' is an array of hashes, which may have:
+       - 'region' is the name of the region to update
+       - 'args' is a hash of arguments to override
+       - 'path' is the path of the fragment (if this is a new fragment)
+       - 'element' is the CSS selector of the element to update, if 'region' isn't supplied
+       - 'mode' is one of 'Replace', 'Top', 'Bottom', 'Before', or 'After'
+       - 'effect' is the name of an effect
+  
+    The second argument is the element (usually a submit button) that triggered
+    it.
+ */
+
+
 Jifty.update = function () {
     // Let the regular form submit take over if this browser can't do this
     if (!Jifty.hasAjaxTransport) return true;
