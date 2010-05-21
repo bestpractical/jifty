@@ -9,7 +9,6 @@ Jifty::Web - Web framework for a Jifty application
 
 =cut
 
-use CGI::Cookie;
 use XML::Writer;
 use CSS::Squish;
 use Digest::MD5 qw(md5_hex);

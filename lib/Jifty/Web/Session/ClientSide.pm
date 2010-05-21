@@ -23,6 +23,7 @@ use Storable ();
 use Compress::Zlib ();
 use Crypt::CBC ();
 use Crypt::Rijndael ();
+use CGI::Cookie;
 use CGI::Cookie::Splitter ();
 use MIME::Base64;
 
@@ -100,11 +101,11 @@ If both of those fail, creates a session in memory.
 sub load {
     my $self       = shift;
     my $session_id = shift;
-    my %cookies    = CGI::Cookie->fetch();
+    my %cookies    = %{ Jifty->web->request->cookies };
 
     unless ($session_id) {
         my $cookie_name = $self->cookie_name;
-        $session_id = $cookies{$cookie_name}->value() if $cookies{$cookie_name};
+        $session_id = $cookies{$cookie_name} if $cookies{$cookie_name};
         $session_id ||= Jifty::Model::Session->new_session_id;
     }
 
@@ -114,12 +115,17 @@ sub load {
     {
         local $@;
         eval {
-            ($data) = grep {
-                $_->name eq "JIFTY_DAT_$session_id"
-            } $splitter->join(values %cookies);
+            ($data)
+                = grep { $_->name eq "JIFTY_DAT_$session_id" }
+                $splitter->join(
+                map {
+                    CGI::Cookie->new( -name => $_, -value => $cookies{$_} )
+                    } keys %cookies
+                );
         };
 
         if ($@) {
+
             # Reassembly of cookie failed -- start a new session
             $session_id = Jifty::Model::Session->new_session_id;
             warn $@;

@@ -3,7 +3,6 @@ use strict;
 
 package Jifty::Web::Session::JDBI;
 use base qw/Jifty::Web::Session/;
-use CGI::Cookie ();
 use DateTime    ();
 use Storable    ();
 $Storable::Deparse    = 1;

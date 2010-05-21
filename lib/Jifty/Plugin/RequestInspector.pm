@@ -132,8 +132,7 @@ sub new_request_inspection {
     };
 
     if (my $cookie_name = $self->on_cookie) {
-        my %cookies     = CGI::Cookie->fetch();
-        $ret->{cookie} = $cookies{$cookie_name}->value;
+        $ret->{cookie} = $req->cookies->{$cookie_name};
     }
     return $ret;
 }
@@ -195,8 +194,7 @@ sub should_handle_request {
     return unless $url =~ $self->url_filter;
 
     if (my $cookie_name = $self->on_cookie) {
-        my %cookies     = CGI::Cookie->fetch();
-        return unless $cookies{$cookie_name};
+        return unless $req->cookies->{$cookie_name};
     }
 
     return 1;
