@@ -114,6 +114,7 @@ method of that name is called, with the I<PARAMHASH>'s value as its
 sole argument.
 
 =cut
+
 sub BUILD {
     my $self = shift;
 
