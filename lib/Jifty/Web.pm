@@ -233,8 +233,10 @@ sub current_user {
     } else {
         $object = Jifty->app_class({require => 0}, "CurrentUser")->new;
     }
-    
-    $self->{current_user} = $object;
+
+    # Don't cache the result unless the session had actually been
+    # loaded already.
+    $self->{current_user} = $object if $self->session->loaded;
     return $object;
 }
 
