@@ -678,6 +678,9 @@ sub _ending {
         }
     }
 
+    # Turn off the server
+    undef $Jifty::SERVER;
+
     # If all tests passed..
     if (Jifty::Test->is_passing && Jifty::Test->is_done) {
         # Clean up mailbox
