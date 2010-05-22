@@ -224,17 +224,16 @@ sub current_user {
     }
 
     my $object;
-
     if ( defined $self->temporary_current_user ) {
         return $self->temporary_current_user;
     } elsif ( defined $self->{current_user} ) {
         return $self->{current_user};
     } elsif ( my $id = $self->session->get('user_id') ) {
-         $object = Jifty->app_class({require => 0}, "CurrentUser")->new( id => $id );
+        $object = Jifty->app_class({require => 0}, "CurrentUser")->new( id => $id );
     } elsif ( Jifty->admin_mode ) {
-         $object = Jifty->app_class({require => 0}, "CurrentUser")->superuser;
+        $object = Jifty->app_class({require => 0}, "CurrentUser")->superuser;
     } else {
-         $object = Jifty->app_class({require => 0}, "CurrentUser")->new;
+        $object = Jifty->app_class({require => 0}, "CurrentUser")->new;
     }
     
     $self->{current_user} = $object;
