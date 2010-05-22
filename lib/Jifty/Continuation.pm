@@ -255,13 +255,15 @@ sub return {
 
     # We want to preserve the current actual request environment
     # (headers, etc)
-    my $env = Jifty->web->request->env;
+    my $env = Jifty->web->request->top_request->env;
 
     # Set the current request to the one in the continuation
     Jifty->web->request($self->request->clone);
 
     # Restore the environment we came in with
-    Jifty->web->request->{env} = $env;
+    Jifty->web->request->top_request->{env} = $env;
+    Jifty->web->request->setup_subrequest_env
+        if Jifty->web->request->is_subrequest;
 
     return Jifty->web->request;
 }
