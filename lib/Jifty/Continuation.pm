@@ -131,12 +131,14 @@ sub new {
     my $key = Jifty->web->serial . "_" . int(rand(10)) . int(rand(10)) . int(rand(10)) . int(rand(10)) . int(rand(10)) . int(rand(10));
     $self->id($key);
 
-    # XXX: Jifty::Request should really just extract useful things
-    # from plack so we don't have plack-specified fields to hide here.
-
     # Make sure we don't store any of the connection information
-    local $self->request->{env};
-    local $self->request->{_body_parser}{input_handle} if defined $self->request->{_body_parser};
+    my $req = $self->request;
+    local $req->{env};
+    local $req->{_body_parser}{input_handle} if defined $req->{_body_parser};
+    # We may also need to clean out the top request, if this is a subrequest
+    $req = $req->top_request;
+    local $req->{env};
+    local $req->{_body_parser}{input_handle} if defined $req->{_body_parser};
 
     # Save it into the session
     Jifty->web->session->set_continuation($key => $self);
