@@ -2,7 +2,7 @@
 use warnings;
 use strict;
 
-use Jifty::Test::Dist tests => 126, actual_server => 1;
+use Jifty::Test::Dist tests => 104, actual_server => 1;
 use Jifty::Test::WWW::Mechanize;
 use Net::HTTP;
 use URI;
@@ -45,10 +45,6 @@ while (my ($path, $expect) = splice(@requests,0,2)) {
     unlike( $body, qr{\Q<&|/_elements/\E|Jifty->web}, "Doesn't have the source code" );
 
     like( $body, $expect, "Has content" ) if $expect_status == 200;
-
-    my @warn = $plugin->decoded_warnings($uri);
-    my $warn_expect = $expect_status == 200 ? 0 : 1;
-    is(scalar @warn, $warn_expect, "Got expected warning: @warn");
 }
 
 sub bogus_request {

@@ -110,7 +110,7 @@ sub maybe_page (&;$) {
 
 template '/errors/404' => sub {
     my $file = get('path') || Jifty->web->request->path;
-    Jifty->log->error( "404: user tried to get to " . $file );
+    Jifty->log->info( "404: user tried to get to " . $file );
     Jifty->web->response->status( 404 )
         unless Jifty->web->request->is_subrequest;
     maybe_page { title => _("Something's not quite right") } content {
