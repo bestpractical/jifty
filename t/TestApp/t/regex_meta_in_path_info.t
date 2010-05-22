@@ -6,7 +6,7 @@
 use warnings;
 use strict;
 
-use Jifty::Test::Dist tests => 3;
+use Jifty::Test::Dist tests => 2;
 use Jifty::Test::WWW::Mechanize;
 
 my $server  = Jifty::Test->make_server;
@@ -15,4 +15,3 @@ my $mech    = Jifty::Test::WWW::Mechanize->new();
 
 $mech->get("$URL/*****");
 is( $mech->status, '404', 'regex metachars in URL does not cause error' );
-$mech->warnings_like(qr/404/);

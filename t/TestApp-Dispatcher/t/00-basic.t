@@ -33,4 +33,4 @@ get_ok("/on_not_exist_show");
 $mech->content_contains("woot");
 
 get_nok("/something_that_really_not_exists");
-$mech->warnings_like(qr/404/);
+$mech->content_like(qr/we don&#39;t think exists/);
