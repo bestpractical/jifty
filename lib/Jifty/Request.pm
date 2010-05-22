@@ -118,13 +118,7 @@ sole argument.
 sub BUILD {
     my $self = shift;
 
-    # Copy a bunch of information off of the top Plack request
-    if ( Jifty->web->request ) {
-        my $env = Jifty->web->request->top_request->env;
-        $self->{env}{$_} = $env->{$_} for qw/psgi.version psgi.multithread psgi.multiprocess psgi.errors/;
-        # Stub in an empty input filehandle
-        $self->{env}{"psgi.input"} = Plack::Util::inline_object( read => sub {0} );
-    }
+    $self->setup_subrequest_env if Jifty->web->request;
 
     $self->{'actions'} = {};
     $self->{'state_variables'} = {};
@@ -134,6 +128,23 @@ sub BUILD {
     $self->path("/") unless $self->path;
     $self->arguments({});
     $self->template_arguments({});
+}
+
+=head2 setup_subrequest_env
+
+Copies the bare minimals of the plack environment from the top
+request; this is called in L</BUILD> if the request is a subrequest.
+
+=cut
+
+sub setup_subrequest_env {
+    my $self = shift;
+    # Copy a bunch of information off of the top Plack request
+    my $env = Jifty->web->request->top_request->env;
+    $self->{env} = {};
+    $self->{env}{$_} = $env->{$_} for qw/psgi.version psgi.multithread psgi.multiprocess psgi.errors/;
+    # Stub in an empty input filehandle
+    $self->{env}{"psgi.input"} = Plack::Util::inline_object( read => sub {0} );
 }
 
 =head2 clone
