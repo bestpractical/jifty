@@ -123,7 +123,7 @@ sub BUILD {
     $self->{'actions'} = {};
     $self->{'state_variables'} = {};
     $self->{'fragments'} = {};
-    $self->{env}{'REQUEST_METHOD'} ||= 'GET';
+    $self->method('GET') unless $self->method;
 
     $self->path("/") unless $self->path;
     $self->arguments({});
