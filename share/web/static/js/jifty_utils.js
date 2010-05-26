@@ -198,6 +198,10 @@ jQuery.extend(Jifty.Utils, {
 
     encodeEntities: function (str) {
         return jQuery("<div />").text(str).html();
+    },
+
+    decodeEntities: function (str) {
+        return jQuery("<div />").html(str).text();
     }
 });
 
