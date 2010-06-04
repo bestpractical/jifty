@@ -310,7 +310,7 @@ sub form_next_page(@) {
     Jifty->web->form->next_page(@_);
 }
 
-=head2 Other functions and shortcutxs
+=head2 Other functions and shortcuts
 
 =head3 hyperlink
 
