@@ -1489,7 +1489,8 @@ Jifty.update = function () {
     };
 
     // When an HTTP communication failure happens, we need to clean up
-    var onFailure = function(transport, object) {
+    var onFailure = function(transport, message) {
+        console.log(message);
 
         // We failed, but we at least know we're done waiting
         if (!hide_wait) {
