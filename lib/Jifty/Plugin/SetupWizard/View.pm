@@ -190,7 +190,7 @@ template '/__jifty/admin/setupwizard/database' => sub {
                  })
                  . ', this)';
 
-    $onchange =~ s/PLACEHOLDER/'+this.value+'/;
+    $onchange =~ s/PLACEHOLDER/"+this.value+"/;
 
     # Only show them drivers they have available
     my (@available_drivers, @unavailable_drivers);
