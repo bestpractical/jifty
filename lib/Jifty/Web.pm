@@ -149,6 +149,16 @@ sub url {
     # https is sticky
     $uri->scheme('https') if $uri->scheme eq 'http' && Jifty->web->is_ssl;
 
+    # If we're generating a URL from an email (really a Jifty::Notification
+    # subclass), default to http
+    my $level = 0;
+    while ( my $class = caller($level++) ) {
+        if ( $class->isa("Jifty::Notification") ) {
+            $uri->scheme('http');
+            last;
+        }
+    }
+
     $uri->scheme( $args{'scheme'} ) if defined $args{'scheme'};
 
     return $uri->canonical->as_string;
