@@ -11,8 +11,10 @@ sub setup {
     $self->recipients('foo@email');
     $self->subject('subject');
     $self->from('from');
-    $self->body('body');
 }
 
+sub body {
+    return Jifty->web->url( path => '/notification/foo' ) . "\n\n";
+}
 
 1;
