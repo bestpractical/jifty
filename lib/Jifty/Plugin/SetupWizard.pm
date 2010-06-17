@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use base 'Jifty::Plugin';
 
-__PACKAGE__->mk_accessors(qw(steps));
+__PACKAGE__->mk_accessors(qw(opts steps));
 
 sub prereq_plugins { 'Config' }
 
@@ -16,7 +16,7 @@ sub init {
     if ($opt{steps}) {
         $self->steps($opt{steps});
     }
-    else {
+    elsif ( not $opt{'nodefault'} ) {
         $self->steps([
             {
                 template    => 'welcome',
@@ -43,10 +43,16 @@ sub init {
             },
         ]);
     }
+    else {
+        $self->steps([]);
+    }
 
     for my $step (@{ $opt{add_steps} || [] }) {
         $self->add_step(%$step);
     }
+    
+    # Save our config options for later
+    $self->opts( \%opt );
 }
 
 sub add_step {
@@ -76,11 +82,43 @@ Jifty::Plugin::SetupWizard - make it easy for end-users to set up your app
 
 =head1 USAGE
 
-Add the following to your site_config.yml
+Add the following to your site_config.yml to use the default generic setup
+wizard:
 
- framework:
-   Plugins:
-     - SetupWizard: {}
+    framework:
+      Plugins:
+        - SetupWizard: {}
+
+You may write your own steps to add to the generic steps:
+
+    framework:
+      Plugins:
+        - SetupWizard:
+            add_steps:
+              - template: /setup/bar
+                header: MyApp's Bar
+              - template: /setup/baz
+                header: Baz
+
+Or you may replace the generic steps altogether, but still use the generic
+wizard flow:
+
+    framework:
+      Plugins:
+        - SetupWizard:
+            steps:
+              - template: /setup/bar
+                header: MyApp's Bar
+              - template: /setup/baz
+                header: Baz
+
+Finally, you can disable the generic wizard and default setup steps entirely
+and just use the helpers provided by this plugin.
+
+    framework:
+      Plugins:
+        - SetupWizard:
+            nodefault: 1
 
 =head1 METHODS
 
