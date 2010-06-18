@@ -560,8 +560,18 @@ of C<< Jifty->config->framework('AdminMode') >>.
 =cut
 
 sub admin_mode {
-    return Jifty->config->framework('AdminMode')
-        || Jifty->config->framework('SetupMode');
+    return Jifty->config->framework('AdminMode');
+}
+
+=head2 setup_mode
+
+Returns true if the application is in setup mode. This should be used instead
+of C<< Jifty->config->framework('SetupMode') >>.
+
+=cut
+
+sub setup_mode {
+    return Jifty->config->framework('SetupMode');
 }
 
 =head1 SEE ALSO

@@ -90,6 +90,12 @@ sub _init {
 A convenience constructor that returns a new CurrentUser object that's
 marked as a superuser. Can be called either as a class or object method.
 
+If you override this method in your app, keep in mind that it may be called if
+AdminMode is on during schema creation when the database doesn't exist yet.
+This will cause a lot of warnings, may not do what you want, and if you're
+running Postgres may cause the schema creation to fail.  That said, overriding
+this method is often very useful when implementing ACLs.
+
 =cut
 
 sub superuser {
@@ -101,6 +107,28 @@ sub superuser {
 
     # Make it superuser and send it out
     $self->is_superuser(1);
+    return $self;
+}
+
+=head2 bootstrap_user
+
+A convenience constructor that returns a new CurrentUser object which is
+marked as a bootstrap user. Can be called either as a class or object method.
+
+You probably shouldn't ever override this method, as the bootstrap user should
+be as independent as possible.
+
+=cut
+
+sub bootstrap_user {
+    my $class = shift;
+    $class = ref( $class ) if ref $class;
+
+    # Create the current user object
+    my $self = $class->new();
+
+    # Make it bootstrap and send it out
+    $self->is_bootstrap_user(1);
     return $self;
 }
 

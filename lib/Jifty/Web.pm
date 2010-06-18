@@ -240,6 +240,8 @@ sub current_user {
         $object = Jifty->app_class({require => 0}, "CurrentUser")->new( id => $id );
     } elsif ( Jifty->admin_mode ) {
         $object = Jifty->app_class({require => 0}, "CurrentUser")->superuser;
+    } elsif ( Jifty->setup_mode ) {
+        $object = Jifty->app_class({require => 0}, "CurrentUser")->bootstrap_user;
     } else {
         $object = Jifty->app_class({require => 0}, "CurrentUser")->new;
     }
