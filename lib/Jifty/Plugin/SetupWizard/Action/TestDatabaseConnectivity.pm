@@ -41,7 +41,12 @@ sub take_action {
 
     # Remove empty arguments (empty port confuses DBI)
     # Maybe should go in Jifty::DBI. it does handle undef..
-    my %args = %{ $self->argument_values };
+    my $params = $self->arguments;
+    my %defaults = map { $_ => $params->{$_}{default_value} }
+                       keys %$params;
+
+    my %args = (%defaults, %{ $self->argument_values });
+
     for my $key (keys %args) {
         delete $args{$key} if !defined($args{$key}) || !length($args{$key});
     }
@@ -69,7 +74,7 @@ sub take_action {
         return $self->result->error($error);
     }
 
-    $self->result->message(_('Connection successful'));
+    $self->result->message(_('Connection to %1 database "%2" successful', $args{'driver'}, $args{'database'}));
 }
 
 1;
