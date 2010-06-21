@@ -150,6 +150,7 @@ used in.
 sub register_action {
     my $self = shift;
     my $action = shift;
+    $self->log->debug("Registering action ". $action->moniker);
     $self->actions->{ $action->moniker } =  $action;
     weaken $self->actions->{ $action->moniker};
     return $action;
