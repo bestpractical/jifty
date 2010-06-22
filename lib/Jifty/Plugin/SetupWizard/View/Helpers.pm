@@ -169,13 +169,6 @@ template 'database_widget/Pg' => sub {
 
 template 'database_widget/test_connectivity' => sub {
     my $self = shift;
-    use Data::Dumper;
-    warn Dumper([ keys %{ Jifty->web->form->actions } ]);
-
-    my @monikers = grep { /^addconfig-framework-Database-/i } 
-                   keys %{ Jifty->web->form->actions || {} };
-
-    Jifty->log->debug("Submitting actions: " . join ", ", @monikers );
 
     my $action = new_action(
         class   => 'Jifty::Plugin::SetupWizard::Action::TestDatabaseConnectivity',
@@ -194,14 +187,16 @@ template 'database_widget/test_connectivity' => sub {
         };
     }
 
-    hyperlink(
+    $action->button(
         label     => _("Test connectivity"),
-        as_button => 1,
         onclick   => {
-            # Submit the database config actions and then the connectivity test
-            submit => [ @monikers, $action ],
+            # Submit all actions, which will be the database config actions and
+            # then the connectivity test.
+            submit => undef,
             refresh_self => 1,
         },
+        # We need to register the action since we're not providing any arguments
+        register  => 1,
     );
 
 };
@@ -248,6 +243,7 @@ sub config_field {
     my $action = new_action(
         class   => 'AddConfig',
         moniker => $moniker,
+        order   => 50,
         %{ $args{action_args} || {} }
     );
 
