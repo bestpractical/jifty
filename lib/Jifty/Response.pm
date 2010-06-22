@@ -20,6 +20,19 @@ extends 'Plack::Response';
 
 has 'error'   => (is => 'rw');
 
+=head2 new
+
+Default the status to 200.
+
+=cut
+
+sub new {
+    my $class = shift;
+    my $self = $class->SUPER::new(@_);
+    $self->status(200) unless $self->status;
+    return $self;
+}
+
 =head2 add_header NAME VALUE
 
 Deprecated.  Use header(NAME, VALUE)
