@@ -117,6 +117,7 @@ sole argument.
 
 sub BUILD {
     my $self = shift;
+    my ($args) = @_;
 
     $self->setup_subrequest_env if Jifty->web->request;
 
@@ -125,7 +126,7 @@ sub BUILD {
     $self->{'fragments'} = {};
     $self->method('GET') unless $self->method;
 
-    $self->path("/") unless $self->path;
+    $self->path($args->{path}) if $args->{path};
     $self->arguments({});
     $self->template_arguments({});
 }

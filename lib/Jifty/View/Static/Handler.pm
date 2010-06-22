@@ -229,7 +229,6 @@ sub send_http_header {
     my (undef, $length, $modified) = @_;
     my $now    = time();
     my $response = Jifty->web->response;
-    $response->status( 200 );
 
     # Expire in a year
     $response->header( 'Cache-Control' => 'max-age=31536000, public' );

@@ -132,7 +132,7 @@ This badly wants to be redone.
 sub wrapper {
     my $content_code = shift;
     my $meta = shift;
-    my $page = _page_class()->new({ content_code => $content_code, _meta => $meta });
+    my $page = _page_class( $meta )->new({ content_code => $content_code, _meta => $meta });
 
     my ($spa) = Jifty->find_plugin('Jifty::Plugin::SinglePage');
 
@@ -159,8 +159,11 @@ sub wrapper {
 
 sub _page_class {
     my $hard_require = 0;
-    my $app_class = get_current_attr('PageClass');;
-    delete $Template::Declare::Tags::ATTRIBUTES{ 'PageClass' };
+    my $app_class = $_[0]->{'class'};
+    unless ( $app_class ) {
+        $app_class = get_current_attr('PageClass');;
+        delete $Template::Declare::Tags::ATTRIBUTES{ 'PageClass' };
+    }
     $hard_require = 1 if $app_class;
 
     my $page_class = Jifty->app_class( $app_class || 'View::Page' );

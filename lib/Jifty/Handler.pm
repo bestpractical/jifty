@@ -242,7 +242,6 @@ sub handle_request {
 
         Jifty->web->request( Jifty::Request->promote( $req ) );
         Jifty->web->response( Jifty::Response->new );
-        Jifty->web->response->status(200);
 
         $self->call_trigger('have_request');
 
