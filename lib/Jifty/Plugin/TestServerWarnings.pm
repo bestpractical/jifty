@@ -6,7 +6,7 @@ use base qw/Jifty::Plugin/;
 
 use LWP::Simple qw//;
 use Jifty::Plugin::TestServerWarnings::Appender;
-use Log::Log4perl::Level;
+use Log::Log4perl::Appender;
 
 __PACKAGE__->mk_accessors(qw(clear_screen));
 
@@ -72,9 +72,15 @@ sub new_request {
 
     Log::Log4perl->eradicate_appender("Screen") if $self->clear_screen;
 
-    my $a = Jifty::Plugin::TestServerWarnings::Appender->new(name => "TestServerAppender");
+    my $a = Log::Log4perl::Appender->new(
+        "Jifty::Plugin::TestServerWarnings::Appender",
+        name => "TestServerAppender"
+    );
+
+    # Only log warnings so that we only spit back warnings later
+    $a->threshold('WARN');
+
     Log::Log4perl->get_logger("")->add_appender($a);
-    Log::Log4perl->get_logger("")->level($WARN);
 }
 
 =head2 add_warnings WARN, WARN, ..

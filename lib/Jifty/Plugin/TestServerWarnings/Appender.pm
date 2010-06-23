@@ -34,8 +34,9 @@ storage.
 
 sub log {
     my $self = shift;
+    my %params = @_;
     my $plugin = Jifty->find_plugin("Jifty::Plugin::TestServerWarnings");
-    my $message = $_[0]{message};
+    my $message = $params{message};
     $message = join('',@{$message}) if ref $message eq "ARRAY";
     $plugin->add_warnings($message);
 }
