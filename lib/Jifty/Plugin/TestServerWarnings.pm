@@ -26,28 +26,31 @@ Jifty::Plugin::TestServerWarnings - Stores server warnings away for later fetchi
 
 This plugin add a new appender L<Jifty::Plugin::TestServerWarnings::Appender>
 on the first request it sees, which stores away all messages it receives. 
-It also removes the default "Screen" appender unless clear_screen in
-config.yml is set to be false or env TEST_VERBOSE is true.
+
+It also removes the default "Screen" appender unless C<clear_screen> in the
+plugin config is false or the environment variable C<TEST_VERBOSE> is true.
 
 The warnings can be retrieved by a client-side process by calling 
 L</decoded_warnings> with a base URI to the server.
 
-This plugin is automatically added for all jifty tests.
+This plugin is automatically added for all Jifty tests.
 
 =head1 METHODS
 
 =head2 init
 
-set clear_screen to 1 if the clear_screen in config.yml is set to be true,
-if it's not set at all, set it to 1 if TEST_VERBOSE is set to be true.
+Store the C<clear_screen> setting if it's set in the plugin config.  If it's
+not set in the config, default to true unless the environment variable
+C<TEST_VERBOSE> is true.
 
 =cut
 
 sub init {
     my $self = shift;
     my %opt = @_;
+
     if ( defined $opt{clear_screen} ) {
-        $self->clear_screen( 1 ) if $opt{clear_screen};
+        $self->clear_screen( $opt{clear_screen} );
     }
     elsif ( ! $ENV{TEST_VERBOSE} ) {
         $self->clear_screen( 1 );
