@@ -62,6 +62,7 @@ private template 'database_widget' => sub {
     $self->config_field(
         field      => 'Driver',
         context    => '/framework/Database',
+        message    => 'Set the database engine',
         value_args => {
             label            => _('Database Engine'),
             render_as        => 'select',
@@ -73,6 +74,7 @@ private template 'database_widget' => sub {
     $self->config_field(
         field      => 'Database',
         context    => '/framework/Database',
+        message    => 'Set the database name',
         value_args => {
             label     => _('Database Name'),
         },
@@ -107,6 +109,7 @@ private template 'database_widget/configure_connectivity' => sub {
     $self->config_field(
         field   => 'Host',
         context => '/framework/Database',
+        message => 'Set the database server',
         value_args => {
             hints => _('The host name of your database server (for example, localhost or db.example.com)'),
         },
@@ -116,6 +119,7 @@ private template 'database_widget/configure_connectivity' => sub {
     $self->config_field(
         field   => 'Port',
         context => '/framework/Database',
+        message => 'Set the database port',
         value_args => {
             hints => _('Leave blank to use the default value for your database'),
         },
@@ -131,6 +135,7 @@ private template 'database_widget/configure_connectivity' => sub {
     $self->config_field(
         field   => 'User',
         context => '/framework/Database',
+        message => 'Set the database user',
         empty_is_undef => 1,
         value_args => \%user_value_args,
     );
@@ -138,6 +143,7 @@ private template 'database_widget/configure_connectivity' => sub {
     $self->config_field(
         field   => 'Password',
         context => '/framework/Database',
+        message => 'Set the database password',
         value_args => {
             render_as => 'password',
         },
@@ -160,6 +166,7 @@ template 'database_widget/Pg' => sub {
     $self->config_field(
         field   => 'RequireSSL',
         context => '/framework/Database',
+        message => 'Set the database to require SSL',
         value_args => {
             label     => _('Require SSL?'),
             render_as => 'checkbox',
@@ -173,7 +180,7 @@ template 'database_widget/test_connectivity' => sub {
     my $action = new_action(
         class   => 'Jifty::Plugin::SetupWizard::Action::TestDatabaseConnectivity',
         moniker => 'test-db-connectivity',
-        order   => 100, # after everything else
+        order   => 60, # after everything else
     );
 
     if ( my $result = Jifty->web->response->result('test-db-connectivity') ) {
