@@ -280,7 +280,12 @@ Returns an absolute version of the relative path provided for use with regions.
 
 sub fragment_for {
     my $self = shift;
-    return current_base_path() . '/' . shift;
+    my $frag = shift;
+    return $frag if $frag =~ /^\//;
+
+    my $base = current_base_path();
+    $base = "/$base" unless $base =~ /^\//;
+    return "$base/$frag";
 }
 
 1;
