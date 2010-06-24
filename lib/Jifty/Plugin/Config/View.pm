@@ -45,6 +45,14 @@ This path (configurable by the C<restart_url> setting of the plugin)
 waits five seconds, then redirects to the configured
 C<after_restart_url>.
 
+The restart is accomplished by reloading the config, setting up new database
+handles (potentially using new database config and autocreating/updating the
+database), and finally calling the application's C<restart> method so
+handle any application-specific chores.
+
+It does NOT at the moment hook into L<Plack::Loader> to "fully" restart the
+server.
+
 =cut
 
 template $restart_url => sub {
@@ -102,6 +110,18 @@ EOF
     };
 
     Jifty->handler->buffer->flush_output();
+
+    # reload config
+    Jifty->config->load();
+
+    # reconnect our database handle in case that config changed
+    Jifty->setup_database_connection();
+
+    # call the app's restart method if it has one
+    my $app = Jifty->app_class;
+    $app->restart()
+        if $app->can('restart');
+
     # XXX: hook into plack::loader to restart server
 };
 
