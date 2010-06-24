@@ -1751,7 +1751,7 @@ Jifty.addAutocompleter = function (id) {
     var action = Jifty.Form.Element.getAction(field);
 
     // if there's a raw :, jQuery interprets the id as a css selector
-    var selector = '#' + id.replace(/:/g, '\\\\\\:');
+    var selector = '#' + id.replace(/:/g, '\\\:');
 
     jQuery(selector).autocomplete('/__jifty/autocomplete.xml', {
         cacheLength: 0, // disable caching
