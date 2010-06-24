@@ -1748,7 +1748,6 @@ function show_action_result() {
 
 Jifty.addAutocompleter = function (id) {
     var field  = Jifty.$(id);
-    var action = Jifty.Form.Element.getAction(field);
 
     // if there's a raw :, jQuery interprets the id as a css selector
     var selector = '#' + id.replace(/:/g, '\\\:');
@@ -1796,6 +1795,7 @@ Jifty.addAutocompleter = function (id) {
             return results;
         },
         extraParams: function () {
+            var action = Jifty.Form.Element.getAction(field);
             var actions = {
                 autocomplete: {
                     'moniker': 'autocomplete',
