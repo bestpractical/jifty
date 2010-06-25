@@ -77,11 +77,32 @@ code set by this method (possibly for your use in the dispatcher).
 Returns the L<Jifty::CAS::Store> which backs the given C<DOMAIN>.  If
 C<DOMAIN> is not specified, returns the default backing store.
 
+=head2 config
+
+Returns the CAS configuration, as specified in the framework's
+configuration.
+
 =head2 setup
 
 Configures the CAS for use.
 
 =cut
+
+sub config {
+    my $class = shift;
+    my $config = Jifty->config->framework('CAS');
+    if (Jifty->config->framework('ConfigFileVersion') < 6) {
+        $config = {
+            Default => {
+                Class => $config->{'BaseClass'},
+                %{ $config->{'Memcached'} || {} },
+            }
+        };
+    }
+    $config->{Default}{Class} ||= "Jifty::CAS::Store::Memory";
+    $config->{Domains} ||= {};
+    return $config;
+}
 
 sub serve_by_name {
     my ($class, $domain, $name, $incoming_key, $env) = @_;
@@ -116,12 +137,27 @@ sub serve_by_name {
     return $res->finalize;
 }
 
-my $BACKEND;
+my %BACKENDS;
+my $DEFAULT_BACKEND;
 sub setup {
     my $class = shift;
-    my $store_class = Jifty->config->framework('CAS')->{'BaseClass'};
-    Jifty::Util->require( $store_class );
-    $BACKEND = $store_class->new;
+    my $config = $class->config;
+
+    my %default = %{$config->{Default}};
+    my $defaultclass = delete $default{Class};
+    Jifty::Util->require( $defaultclass );
+    $DEFAULT_BACKEND = $defaultclass->new(
+        map {lc $_ => $config->{Default}{$_}} keys %default
+    );
+
+    for my $domain (keys %{$config->{Domains}}) {
+        my %domain = %{ $config->{Domains}{$domain} };
+        my $storeclass = delete $domain{Class};
+        Jifty::Util->require( $storeclass );
+        $BACKENDS{$domain} = $storeclass->new(
+            map {lc $_ => $config->{Domains}{$domain}{$_}} keys %domain
+        );
+    }
 }
 
 sub _serve_404 {
@@ -132,22 +168,28 @@ sub _serve_404 {
 }
 
 sub backend {
-    $BACKEND
+    my $class = shift;
+    my ($domain) = @_;
+    return $DEFAULT_BACKEND unless @_;
+    return $BACKENDS{$domain} || $DEFAULT_BACKEND;
 }
 
 sub publish {
     my $class = shift;
-    $BACKEND->publish(@_);
+    my ($domain) = @_;
+    ($BACKENDS{$domain} || $DEFAULT_BACKEND)->publish(@_);
 }
 
 sub key {
     my $class = shift;
-    $BACKEND->key(@_);
+    my ($domain) = @_;
+    ($BACKENDS{$domain} || $DEFAULT_BACKEND)->key(@_);
 }
 
 sub retrieve {
     my $class = shift;
-    $BACKEND->retrieve(@_);
+    my ($domain) = @_;
+    ($BACKENDS{$domain} || $DEFAULT_BACKEND)->retrieve(@_);
 }
 
 1;

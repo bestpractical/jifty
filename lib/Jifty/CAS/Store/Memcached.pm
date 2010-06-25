@@ -4,13 +4,17 @@ use warnings;
 package Jifty::CAS::Store::Memcached;
 use Any::Moose;
 extends 'Jifty::CAS::Store';
+has 'servers'            => (is => 'rw');
+has 'debug'              => (is => 'rw');
+has 'namespace'          => (is => 'rw');
+has 'compress_threshold' => (is => 'rw');
+has 'memcached'          => (is => 'rw');
 
 use Cache::Memcached;
 
 =head1 NAME
 
-Jifty::CAS::Store::Memcached - A memcached backend for Jifty's
-Content-Addressable Storage facility
+Jifty::CAS::Store::Memcached - A memcached backend for Jifty's CAS
 
 =head1 SYNOPSIS
 
@@ -18,19 +22,20 @@ At the bare minimum, add the following to your Jifty config.yml:
 
     framework:
       CAS:
-        BaseClass: 'Jifty::CAS::Store::Memcached'
+        Default:
+          Class: 'Jifty::CAS::Store::Memcached'
 
 The options available include:
 
     framework:
       CAS:
-        BaseClass: 'Jifty::CAS::Store::Memcached'
-        Memcached:
+        Default:
+          Class: 'Jifty::CAS::Store::Memcached'
           # any options Cache::Memcached supports
-          servers:
+          Servers:
             - 10.0.0.2:11211
             - 10.0.0.3:11211
-          compress_threshold: 5120
+          Compress_Threshold: 5120
 
 =head1 DESCRIPTION
 
@@ -47,18 +52,23 @@ arguments in the CAS configuration.
 
 =cut
 
-our $MEMCACHED;
-
+sub BUILD {
+    my $self = shift;
+    $self->memcached(
+        Cache::Memcached->new(
+            servers => $self->servers || [ '127.0.0.1:11211' ],
+            debug => $self->debug,
+            namespace => $self->namespace || Jifty->config->framework('ApplicationName').":CAS:",
+            compress_threshold => $self->compress_threshold || 10240,
+        )
+    );
+}
 
 =head2 memcached
 
 Returns the L<Cache::Memcached> object for this class.
 
 =cut
-
-sub memcached {
-    $MEMCACHED ||= Cache::Memcached->new( $_[0]->memcached_config );
-}
 
 =head2 _store DOMAIN NAME BLOB
 
@@ -122,37 +132,6 @@ sub retrieve {
     my $blob = $self->memcached->get("$domain:db:$key");
     return $blob if defined $blob;
     return;
-}
-
-=head2 memcached_config
-
-Returns a hashref containing arguments to pass to L<Cache::Memcached> during
-construction. The defaults are like:
-
-  {
-      servers     => [ '127.0.0.1:11211' ],
-      debug       => 0,
-      namespace   => Jifty->config->framework('ApplicationName'),
-      compress_threshold => 10240,
-  }
-
-To change these options, set them in your Jifty application config file under
-C</framework/CAS/Memcached> like so:
-
-    framework:
-      CAS:
-        BaseClass: 'Jifty::CAS::Store::Memcached'
-        Memcached:
-            servers:
-                - 10.0.0.2:11211
-                - 10.0.0.3:11211
-            compress_threshold: 5120
-
-=cut
-
-sub memcached_config {
-    Jifty->config->framework('CAS')->{'Memcached'}
-        || Jifty->config->defaults->{'framework'}{'CAS'}{'Memcached'}
 }
 
 no Any::Moose;

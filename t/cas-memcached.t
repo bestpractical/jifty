@@ -20,7 +20,7 @@ my $data    = "a" x (1024*10);
 my $databig = "a" x (1024*1024*2);
 
 {
-    isa_ok(Jifty::CAS->backend,  "Jifty::CAS::Store::Memcached", 'Using memcached backed store');
+    isa_ok(Jifty::CAS->backend("test$$"),  "Jifty::CAS::Store::Memcached", 'Using memcached backed store');
     my $key = Jifty::CAS->publish("test$$", 'one', $data, { content_type => 'text/plain' });
     ok $key, "Published";
     is length $key, 32, "Key is 32 chars long - an MD5 sum";
@@ -40,4 +40,3 @@ my $databig = "a" x (1024*1024*2);
 }
 
 # XXX TODO test serving up of CAS content
-

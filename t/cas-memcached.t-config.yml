@@ -1,6 +1,7 @@
 ---
 framework:
+  ConfigFileVersion: 6
   CAS:
-    BaseClass: 'Jifty::CAS::Store::Memcached'
-    Memcached:
+    Default:
+      Class: 'Jifty::CAS::Store::Memcached'
       compress_threshold: 100000000 # effectively disables compression
