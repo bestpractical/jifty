@@ -1223,5 +1223,7 @@ of C<J:ACTIONS>, all actions are active.
 
 =cut
 
+no Any::Moose;
+__PACKAGE__->meta->make_immutable(inline_constructor => 0);
 1;
 
