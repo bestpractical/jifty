@@ -6,19 +6,16 @@ use Any::Moose;
 
 =head1 NAME
 
-Jifty::CAS::Store - The default, per-process, in-memory store for Jifty's
-Content-Addressable Storage facility
+Jifty::CAS::Store - Abstract class for Jifty's Content-Addressed Storage
 
 =head1 DESCRIPTION
 
-This is the default backend store for L<Jifty::CAS>.  For more information, see
-L<Jifty::CAS/DESCRIPTION>.
+This is the abstract base class for a backend store for L<Jifty::CAS>.
+For more information, see L<Jifty::CAS/DESCRIPTION>.
 
 =cut
 
 use Jifty::CAS::Blob;
-
-my %CONTAINER;
 
 =head2 publish DOMAIN NAME CONTENT METADATA
 
@@ -42,41 +39,36 @@ sub publish {
 
 =head2 _store DOMAIN NAME BLOB
 
-Stores the BLOB (a L<Jifty::CAS::Blob>) in the backend.  Returns the key.  Don't use this directly, use C<publish> instead.
+Stores the BLOB (a L<Jifty::CAS::Blob>) in the backend.  Returns the
+key.  Subclasses should override this, but it should not be called
+directly -- use L</publish> instead.
 
 =cut
 
 sub _store {
-    my ($self, $domain, $name, $blob) = @_;
-    my $db  = $CONTAINER{$domain} ||= {};
-    my $key = $blob->key;
-    $db->{DB}{$key} = $blob;
-    $db->{KEYS}{$name} = $key;
-    return $key;
+    die "This is an abstract base class; use one of the provided subclasses instead\n";
 }
 
 =head2 key DOMAIN NAME
 
-Returns the most recent key for the given pair of C<DOMAIN> and
-C<NAME>, or undef if none such exists.
+Returns the most recent key for the given pair of C<DOMAIN> and C<NAME>,
+or undef if none such exists.  Subclasses should override this.
 
 =cut
 
 sub key {
-    my ($self, $domain, $name) = @_;
-    return $CONTAINER{$domain}{KEYS}{$name};
+    die "This is an abstract base class; use one of the provided subclasses instead\n";
 }
 
 =head2 retrieve DOMAIN KEY
 
 Returns a L<Jifty::CAS::Blob> for the given pair of C<DOMAIN> and
-C<KEY>, or undef if none such exists.
+C<KEY>, or undef if none such exists.  Subclasses should override this.
 
 =cut
 
 sub retrieve {
-    my ($self, $domain, $key) = @_;
-    return $CONTAINER{$domain}{DB}{$key};
+    die "This is an abstract base class; use one of the provided subclasses instead\n";
 }
 
 no Any::Moose;

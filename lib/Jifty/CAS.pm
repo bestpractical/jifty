@@ -33,11 +33,11 @@ recent key provided with that name.
 
 =head1 BACKENDS
 
-The default data store is an per-process, in-memory store.  A
-L<memcached|Jifty::CAS::Store::Memcached> backed store is also available and
-has the benefits of sharing the cache across all instances of a Jifty app using
-Jifty::CAS.  The memcached store is limited to objects less than 1MB in size,
-however.
+The default data store is a per-process, in-memory store via
+L<Jifty::CAS::Store::Memory>.  L<Jifty::CAS::Store::Memcached> is also
+available, and has the benefits of sharing the cache across all
+instances of a Jifty app using L<Jifty::CAS>.  The memcached store is
+limited to objects less than 1MB in size, however.
 
 =head1 METHODS
 

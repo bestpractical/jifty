@@ -626,7 +626,7 @@ sub defaults {
                 SessionCookieName => 'JIFTY_SID_$PORT',
             },
             CAS => {
-                BaseClass => 'Jifty::CAS::Store',
+                BaseClass => 'Jifty::CAS::Store::Memory',
                 Memcached => {
                     servers     => [ '127.0.0.1:11211' ],
                     debug       => 0,
