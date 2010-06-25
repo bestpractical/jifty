@@ -75,9 +75,8 @@ success or undef on failure.
 sub _store {
     my ($self, $domain, $name, $blob) = @_;
 
-    # Default to expiring in two weeks. XXX TODO this should be configurable
     my $key = $blob->key;
-    my $success = $self->memcached->set("$domain:db:$key", $blob, 60*60*24*14);
+    my $success = $self->memcached->set("$domain:db:$key", $blob);
 
     unless ($success) {
         my $err = "Failed to store content for key '$domain:db:$key' in memcached!";
@@ -99,7 +98,7 @@ sub _store {
         }
     }
 
-    $success = $self->memcached->set("$domain:keys:$name", $key, 60*60*24*14);
+    $success = $self->memcached->set("$domain:keys:$name", $key);
 
     unless ($success) {
         Jifty->log->error("Failed to store key '$domain:keys:$name' in memcached!");
