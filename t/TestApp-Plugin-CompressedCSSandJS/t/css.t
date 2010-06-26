@@ -10,9 +10,9 @@ my $mech = Jifty::Test::WWW::Mechanize->new();
 $mech->get_ok("$URL/static/css/main.css","Got main.css");
 $mech->content_contains('@import "combobox.css"');
 $mech->get_ok("$URL");
-ok($mech->content =~ m{<link rel="stylesheet" type="text/css" href="/__jifty/css/(.*)" /});
+ok($mech->content =~ m{<link rel="stylesheet" type="text/css" href="(.*)" /});
 my $css_file = $1;
 
-$mech->get_ok("$URL/__jifty/css/$css_file");
+$mech->get_ok($1);
 $mech->content_contains('End of combobox.css', 'squished');
 
