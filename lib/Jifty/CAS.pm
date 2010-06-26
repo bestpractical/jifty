@@ -38,6 +38,8 @@ L<Jifty::CAS::Store::Memory>.  L<Jifty::CAS::Store::Memcached> is also
 available, and has the benefits of sharing the cache across all
 instances of a Jifty app using L<Jifty::CAS>.  The memcached store is
 limited to objects less than 1MB in size, however.
+L<Jifty::CAS::Store::LocalFile> provides a durable store, which is
+well-suited for sharing the cache across instances and restarts.
 
 =head1 METHODS
 
