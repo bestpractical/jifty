@@ -26,7 +26,6 @@ Jifty::Plugin::CompressedCSSandJS - Compression of CSS and javascript files
         jsmin: /path/to/jsmin
         skipped_js:
             - complex.js
-        generate_early: 1
 
 
 =head1 DESCRIPTION
@@ -44,14 +43,9 @@ configure jsmin feature.
 
 skipped_js is a list of js that you don't want to compress for some reason.
 
-generate_early tells the plugin to compress the CSS and JS at process start
-rather than on the first request.  This can save time, especially if your
-JS minifier is slow, for the poor sucker who makes the first request.  Enabled
-by default.
-
 =cut
 
-__PACKAGE__->mk_accessors(qw(css js jsmin skipped_js generate_early external_publish));
+__PACKAGE__->mk_accessors(qw(css js jsmin skipped_js external_publish));
 
 =head2 init
 
@@ -69,7 +63,6 @@ sub init {
     $self->css( $opt{css} );
     $self->js( $opt{js} );
     $self->jsmin( $opt{jsmin} );
-    $self->generate_early( exists $opt{generate_early} ? $opt{generate_early} : 1 );
     $self->external_publish( $opt{external_publish} );
     if ($self->external_publish and not Jifty::CAS->backend("ccjs")->durable) {
         $self->log->warn("External publishing does not work with non-durable CAS stores; disabling");
@@ -82,8 +75,6 @@ sub init {
             callback  => sub { $self->_include_javascript(@_) },
             abortable => 1,
         );
-        Jifty->add_trigger( post_init => sub { $self->generate_javascript })
-            if $self->generate_early and not $self->external_publish;
     }
 
     if ( $self->css_enabled ) {
@@ -92,8 +83,6 @@ sub init {
             callback => sub { $self->_include_css(@_) },
             abortable => 1,
         );
-        Jifty->add_trigger( post_init => sub { $self->generate_css })
-            if $self->generate_early and not $self->external_publish;
     }
 }
 
