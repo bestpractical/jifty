@@ -20,12 +20,12 @@ my $data    = "a" x (1024*10);
 my $databig = "a" x (1024*1024*2);
 
 {
-    ok((grep { $_ eq 'Jifty::CAS::Store::Memcached' } @Jifty::CAS::ISA), 'Using memcached backed store');
+    isa_ok(Jifty::CAS->backend,  "Jifty::CAS::Store::Memcached", 'Using memcached backed store');
     my $key = Jifty::CAS->publish("test$$", 'one', $data, { content_type => 'text/plain' });
     ok $key, "Published";
     is length $key, 32, "Key is 32 chars long - an MD5 sum";
     is(Jifty::CAS->key("test$$", "one"), $key, "Matches what we get back from ->key");
-    
+
     my $blob = Jifty::CAS->retrieve("test$$", $key);
     ok $blob, "retrieved value";
     isa_ok $blob, 'Jifty::CAS::Blob', 'got a blob';

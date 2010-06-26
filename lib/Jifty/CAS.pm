@@ -2,7 +2,6 @@ use strict;
 use warnings;
 
 package Jifty::CAS;
-use base 'Jifty::CAS::Store';
 use Plack::Request;
 use Plack::Response;
 
@@ -73,6 +72,15 @@ set and is used for the HTTP response.
 This method is usually called from a dispatcher rule.  Returns the HTTP status
 code set by this method (possibly for your use in the dispatcher).
 
+=head2 backend [DOMAIN]
+
+Returns the L<Jifty::CAS::Store> which backs the given C<DOMAIN>.  If
+C<DOMAIN> is not specified, returns the default backing store.
+
+=head2 setup
+
+Configures the CAS for use.
+
 =cut
 
 sub serve_by_name {
@@ -108,11 +116,37 @@ sub serve_by_name {
     return $res->finalize;
 }
 
+my $BACKEND;
+sub setup {
+    my $class = shift;
+    $BACKEND = Jifty->config->framework('CAS')->{'BaseClass'};
+    Jifty::Util->require( $BACKEND );
+}
+
 sub _serve_404 {
     my ($class, $domain, $name, $msg) = @_;
     $msg ||= '';
     Jifty->log->error("Returning 404 for CAS cached $domain:$name.  $msg");
     return Plack::Response->new(404)->finalize;
+}
+
+sub backend {
+    $BACKEND
+}
+
+sub publish {
+    my $class = shift;
+    $BACKEND->publish(@_);
+}
+
+sub key {
+    my $class = shift;
+    $BACKEND->key(@_);
+}
+
+sub retrieve {
+    my $class = shift;
+    $BACKEND->retrieve(@_);
 }
 
 1;
