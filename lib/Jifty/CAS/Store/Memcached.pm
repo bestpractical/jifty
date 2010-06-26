@@ -2,8 +2,10 @@ use strict;
 use warnings;
 
 package Jifty::CAS::Store::Memcached;
+use Any::Moose;
+extends 'Jifty::CAS::Store';
 
-use base 'Jifty::CAS::Store';
+use Cache::Memcached;
 
 =head1 NAME
 
@@ -40,14 +42,18 @@ The options available include:
 This is a memcached backend for L<Jifty::CAS>.  For more information about
 Jifty's CAS, see L<Jifty::CAS/DESCRIPTION>.
 
-=cut
+=head1 METHODS
 
-use Cache::Memcached;
+=head2 BUILD
+
+Constructs the L</memcached> object for this object, based on the
+specified C<servers>, C<debug>, C<namespace>, and C<compress_threshold>
+arguments in the CAS configuration.
+
+=cut
 
 our $MEMCACHED;
 
-
-=head1 METHODS
 
 =head2 memcached
 
@@ -67,11 +73,11 @@ success or undef on failure.
 =cut
 
 sub _store {
-    my ($class, $domain, $name, $blob) = @_;
+    my ($self, $domain, $name, $blob) = @_;
 
     # Default to expiring in two weeks. XXX TODO this should be configurable
     my $key = $blob->key;
-    my $success = $class->memcached->set("$domain:db:$key", $blob, 60*60*24*14);
+    my $success = $self->memcached->set("$domain:db:$key", $blob, 60*60*24*14);
 
     unless ($success) {
         my $err = "Failed to store content for key '$domain:db:$key' in memcached!";
@@ -82,10 +88,10 @@ sub _store {
         }
         Jifty->log->error($err);
 
-        if ( $class->memcached_fallback ) {
+        if ( $self->memcached_fallback ) {
             Jifty->log->error("Falling back to default, in-process memory store.  "
                              ."This is suboptimal and you should investigate the cause.");
-            return $class->SUPER::_store($domain, $name, $blob);
+            return $self->SUPER::_store($domain, $name, $blob);
         }
         else {
             # fail with undef
@@ -93,7 +99,7 @@ sub _store {
         }
     }
 
-    $success = $class->memcached->set("$domain:keys:$name", $key, 60*60*24*14);
+    $success = $self->memcached->set("$domain:keys:$name", $key, 60*60*24*14);
 
     unless ($success) {
         Jifty->log->error("Failed to store key '$domain:keys:$name' in memcached!");
@@ -111,10 +117,10 @@ C<NAME>, or undef if none such exists.
 =cut
 
 sub key {
-    my ($class, $domain, $name) = @_;
-    my $key = $class->memcached->get("$domain:keys:$name");
+    my ($self, $domain, $name) = @_;
+    my $key = $self->memcached->get("$domain:keys:$name");
     return $key if defined $key;
-    return $class->SUPER::key($domain, $name) if $class->memcached_fallback;
+    return $self->SUPER::key($domain, $name) if $self->memcached_fallback;
     return;
 }
 
@@ -126,10 +132,10 @@ C<KEY>, or undef if none such exists.
 =cut
 
 sub retrieve {
-    my ($class, $domain, $key) = @_;
-    my $blob = $class->memcached->get("$domain:db:$key");
+    my ($self, $domain, $key) = @_;
+    my $blob = $self->memcached->get("$domain:db:$key");
     return $blob if defined $blob;
-    return $class->SUPER::retrieve($domain, $key) if $class->memcached_fallback;
+    return $self->SUPER::retrieve($domain, $key) if $self->memcached_fallback;
     return;
 }
 
@@ -175,4 +181,6 @@ sub memcached_fallback {
     Jifty->config->framework('CAS')->{'MemcachedFallback'} ? 1 : 0
 }
 
+no Any::Moose;
+__PACKAGE__->meta->make_immutable(inline_constructor => 0);
 1;

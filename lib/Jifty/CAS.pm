@@ -119,8 +119,9 @@ sub serve_by_name {
 my $BACKEND;
 sub setup {
     my $class = shift;
-    $BACKEND = Jifty->config->framework('CAS')->{'BaseClass'};
-    Jifty::Util->require( $BACKEND );
+    my $store_class = Jifty->config->framework('CAS')->{'BaseClass'};
+    Jifty::Util->require( $store_class );
+    $BACKEND = $store_class->new;
 }
 
 sub _serve_404 {

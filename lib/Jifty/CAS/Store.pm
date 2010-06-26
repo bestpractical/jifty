@@ -2,6 +2,7 @@ use strict;
 use warnings;
 
 package Jifty::CAS::Store;
+use Any::Moose;
 
 =head1 NAME
 
@@ -28,7 +29,7 @@ Returns the key.
 =cut
 
 sub publish {
-    my ($class, $domain, $name, $content, $opt) = @_;
+    my ($self, $domain, $name, $content, $opt) = @_;
     $opt ||= {};
 
     my $blob = Jifty::CAS::Blob->new(
@@ -36,7 +37,7 @@ sub publish {
             metadata => $opt,
         }
     );
-    return $class->_store( $domain, $name, $blob );
+    return $self->_store( $domain, $name, $blob );
 }
 
 =head2 _store DOMAIN NAME BLOB
@@ -46,7 +47,7 @@ Stores the BLOB (a L<Jifty::CAS::Blob>) in the backend.  Returns the key.  Don't
 =cut
 
 sub _store {
-    my ($class, $domain, $name, $blob) = @_;
+    my ($self, $domain, $name, $blob) = @_;
     my $db  = $CONTAINER{$domain} ||= {};
     my $key = $blob->key;
     $db->{DB}{$key} = $blob;
@@ -62,7 +63,7 @@ C<NAME>, or undef if none such exists.
 =cut
 
 sub key {
-    my ($class, $domain, $name) = @_;
+    my ($self, $domain, $name) = @_;
     return $CONTAINER{$domain}{KEYS}{$name};
 }
 
@@ -74,8 +75,10 @@ C<KEY>, or undef if none such exists.
 =cut
 
 sub retrieve {
-    my ($class, $domain, $key) = @_;
+    my ($self, $domain, $key) = @_;
     return $CONTAINER{$domain}{DB}{$key};
 }
 
+no Any::Moose;
+__PACKAGE__->meta->make_immutable(inline_constructor => 0);
 1;
