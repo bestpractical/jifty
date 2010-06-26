@@ -40,6 +40,9 @@ instances of a Jifty app using L<Jifty::CAS>.  The memcached store is
 limited to objects less than 1MB in size, however.
 L<Jifty::CAS::Store::LocalFile> provides a durable store, which is
 well-suited for sharing the cache across instances and restarts.
+Because of its speed, however, L<Jifty::CAS::Store::Nested> is suggested
+to provide a layered cache, most probably with fast memory-based cache
+in front of a durable, file-based cache.
 
 =head1 METHODS
 
