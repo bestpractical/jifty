@@ -51,7 +51,7 @@ by default.
 
 =cut
 
-__PACKAGE__->mk_accessors(qw(css js jsmin skipped_js generate_early));
+__PACKAGE__->mk_accessors(qw(css js jsmin skipped_js generate_early external_publish));
 
 =head2 init
 
@@ -70,6 +70,11 @@ sub init {
     $self->js( $opt{js} );
     $self->jsmin( $opt{jsmin} );
     $self->generate_early( exists $opt{generate_early} ? $opt{generate_early} : 1 );
+    $self->external_publish( $opt{external_publish} );
+    if ($self->external_publish and not Jifty::CAS->backend("ccjs")->durable) {
+        $self->log->warn("External publishing does not work with non-durable CAS stores; disabling");
+        $self->external_publish(0);
+    }
 
     if ( $self->js_enabled ) {
         Jifty::Web->add_trigger(
@@ -78,7 +83,7 @@ sub init {
             abortable => 1,
         );
         Jifty->add_trigger( post_init => sub { $self->generate_javascript })
-            if $self->generate_early;
+            if $self->generate_early and not $self->external_publish;
     }
 
     if ( $self->css_enabled ) {
@@ -88,7 +93,7 @@ sub init {
             abortable => 1,
         );
         Jifty->add_trigger( post_init => sub { $self->generate_css })
-            if $self->generate_early;
+            if $self->generate_early and not $self->external_publish;
     }
 }
 
@@ -117,7 +122,7 @@ sub css_enabled {
 sub _include_javascript {
     my $self = shift;
 
-    $self->generate_javascript;
+    $self->generate_javascript unless $self->external_publish;
     Jifty->web->out(
         qq[<script type="text/javascript" src="]
           . Jifty::CAS->uri("ccjs","js-all")
@@ -135,7 +140,7 @@ sub _include_javascript {
 
 sub _include_css {
     my $self = shift;
-    $self->generate_css;
+    $self->generate_css unless $self->external_publish;
     Jifty->web->out(
     qq{<link rel="stylesheet" type="text/css" href="}
         . Jifty::CAS->uri('ccjs', 'css-all').'.css" />');
@@ -153,7 +158,9 @@ and caches it. (In devel mode, it always regenerates it)
 sub generate_css {
     my $self = shift;
 
-    return if Jifty::CAS->key('ccjs', 'css-all') && !Jifty->config->framework('DevelMode');
+    return if !$self->external_publish
+        && Jifty::CAS->key('ccjs', 'css-all')
+        && !Jifty->config->framework('DevelMode');
 
     $self->log->debug("Generating CSS...");
 
@@ -180,7 +187,9 @@ and caches it.
 sub generate_javascript {
     my $self = shift;
 
-    return if Jifty::CAS->key('ccjs', 'js-all') && !Jifty->config->framework('DevelMode');
+    return if !$self->external_publish
+        && Jifty::CAS->key('ccjs', 'js-all')
+        && !Jifty->config->framework('DevelMode');
 
     my $js = $self->_generate_javascript_nocache;
 
