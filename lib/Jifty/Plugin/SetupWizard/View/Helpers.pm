@@ -194,12 +194,17 @@ template 'database_widget/test_connectivity' => sub {
         };
     }
 
+    my @monikers = qw(test-db-connectivity);
+
+    push @monikers, "addconfig-framework-Database-$_"
+        for qw(Driver Database Host Port User Password RequireSSL);
+
     $action->button(
         label     => _("Test connectivity"),
         onclick   => {
-            # Submit all actions, which will be the database config actions and
-            # then the connectivity test.
-            submit => undef,
+            # We can't just submit all actions, because that will also send the restart action,
+            # which we don't want for just testing the DB
+            submit => \@monikers,
             refresh_self => 1,
         },
         # We need to register the action since we're not providing any arguments

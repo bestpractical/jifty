@@ -621,6 +621,12 @@ sub generate {
                 $self->{submit} ||= [];
                 for my $moniker ( @{ $hook->{submit} } ) {
                     my $action = $web->{'actions'}{$moniker};
+
+                    if ( not defined $action ) {
+                        $self->log->warn("Trying to submit moniker with no registered action -- skipping!");
+                        next;
+                    }
+
                     $self->register_action($action);
                     $self->parameter( $action->form_field_name($_),
                         $hook->{action_arguments}{$moniker}{$_} )
