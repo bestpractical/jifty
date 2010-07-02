@@ -1893,9 +1893,9 @@ jQuery.extend(Jifty.Placeholder, {
      // VirtueDesktops does this some times, and I lose data.
      // These are normalized because sometimes one has \r\n and the other has \n
      if (Jifty.Placeholder.hasPlaceholder(elt)) {
-        elt.value = elt.value.replace(/\r/g, '');
-        elt.placeholderText = elt.placeholderText.replace(/\r/g, '');
-        if (elt.value == elt.placeholderText)
+        var value = elt.value.replace(/\r/g, '');
+        var placeholder = elt.placeholderText.replace(/\r/g, '');
+        if (value == placeholder)
             jQuery(elt).removeClass('placeholder').val('');
      }
   }
