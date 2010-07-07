@@ -288,10 +288,7 @@ sub drop_database {
 sub _create_original_database {
     my $self = shift;
 
-    my $hack = {};
-    require Jifty::Script::Schema;
-    bless $hack, "Jifty::Script::Schema";
-    $hack->create_all_tables;
+    Jifty::Schema->new->create_all_tables;
 
     # reconnect for consistency
     # SQLite complains about the schema being changed
@@ -301,11 +298,7 @@ sub _create_original_database {
 
 sub _upgrade_schema {
     my $self = shift;
-
-    my $hack = {};
-    require Jifty::Script::Schema;
-    bless $hack, "Jifty::Script::Schema";
-    $hack->run_upgrades;
+    Jifty::Schema->new->run_upgrades;
 }
 
 sub _fetch_dbv {
