@@ -149,7 +149,16 @@ sub run {
 
     $self->print_help();
     $self->setup_environment();
-    $self->schema->setup_database();
+
+    eval {
+        $self->schema->setup_database();
+    };
+
+    if ( $@ =~ /Error comitting create_all_tables/ ) {
+        exit 1; # Replicate the exit functionality we replaced with die
+    } elsif ( $@ ) {
+        die $@; # Throw it again
+    }
 
     print "Done.\n";
 }

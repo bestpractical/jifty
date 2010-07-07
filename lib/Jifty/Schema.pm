@@ -276,7 +276,9 @@ sub create_all_tables {
     }
 
     # Commit it all
-    Jifty->handle->commit or exit 1;
+    Jifty->handle->commit
+        or die "Error committing create_all_tables: "
+               . Jifty->handle->errstr . "\n";
 
     Jifty::Util->require('IPC::PubSub');
     IPC::PubSub->new(
