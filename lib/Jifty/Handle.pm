@@ -250,6 +250,7 @@ sub create_database {
     $query .= " TEMPLATE template0" if $driver =~ /Pg/;
     if ( $mode eq 'print' ) {
         print "$query;\n";
+        return 1;
     } elsif ( $driver =~ /SQLite/ ) {
         return 1; # Kinda an optimistic hack
     } else {
