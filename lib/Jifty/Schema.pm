@@ -39,8 +39,27 @@ delete $_SQL_RESERVED{ lc($_) } for (@_SQL_RESERVED_OVERRIDE);
 =head2 flags
 
 Takes and returns a hashref which holds schema management flags.  You
-shouldn't need to set these yourself unless you're doing something funky with
-the database.
+shouldn't need to set these yourself unless you're doing some advanced
+database foo.
+
+The following flags are respected, although the first four may be modified by
+L</probe_database_existence>, which is called by L</setup_database>.
+
+=head3 create_database
+
+=head3 drop_database
+
+=head3 create_all_tables
+
+=head3 setup_tables
+
+=head3 print
+
+=head3 no_bootstrap
+
+=head3 ignore_reserved
+
+See L<Jifty::Script::Schema> for an explanation of their usage.
 
 =cut
 
@@ -109,9 +128,19 @@ sub serialize_current_schema {
 
 }
 
+=head2 setup_database
+
+Sets up or upgrades a new or existing Jifty database.  It is used primarily by L<Jifty::Script::Schema>.  Respects a number of flags set with L</flags>.
+
+The methods it calls will die on error, so be sure to wrap any call to this
+method in an C<eval>.
+
+=cut
+
 sub setup_database {
     my $self = shift;
 
+    $self->setup_minimal_environment();
     $self->probe_database_existence();
     $self->manage_database_existence();
 
@@ -120,6 +149,20 @@ sub setup_database {
     } elsif ( $self->flags->{'setup_tables'} ) {
         $self->run_upgrades();
     }
+}
+
+=head2 setup_minimal_environment
+
+Sets up a minimal Jifty environment.
+
+=cut
+
+sub setup_minimal_environment {
+    # Import Jifty
+    Jifty::Util->require("Jifty");
+    Jifty::Util->require("Jifty::Model::Metadata");
+    Jifty->new( no_handle => 1, logger_component => 'SchemaTool', )
+        unless Jifty->class_loader;
 }
 
 =head2 probe_database_existence [NO_HANDLE]

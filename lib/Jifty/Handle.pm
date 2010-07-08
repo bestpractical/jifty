@@ -303,6 +303,7 @@ sub drop_database {
 sub _create_original_database {
     my $self = shift;
 
+    require Jifty::Schema;
     Jifty::Schema->new->create_all_tables;
 
     # reconnect for consistency
@@ -313,6 +314,8 @@ sub _create_original_database {
 
 sub _upgrade_schema {
     my $self = shift;
+    
+    require Jifty::Schema;
     Jifty::Schema->new->run_upgrades;
 }
 

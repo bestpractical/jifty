@@ -172,11 +172,8 @@ Sets up a minimal Jifty environment.
 sub setup_environment {
     my $self = shift;
 
-    # Import Jifty
-    Jifty::Util->require("Jifty");
-    Jifty::Util->require("Jifty::Model::Metadata");
-    Jifty->new( no_handle => 1, logger_component => 'SchemaTool', )
-        unless Jifty->class_loader;
+    # Ensure we have Jifty setup
+    $self->schema->setup_minimal_environment();
 
     # Set the flags for Jifty::Schema
     $self->schema->flags({    map { $_ => $self->{$_} }
