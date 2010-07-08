@@ -37,15 +37,9 @@ sub take_action {
     my $self = shift;
 
     my $database = Jifty->handle->canonical_database_name();
-    my $schema = Jifty::Schema->new(
-        flags => {
-            create_database => 1,
-            setup_tables    => 1
-        }
-    );
 
     eval {
-        $schema->setup_database();
+        Jifty::Schema->new->setup_database();
         Jifty->restart();
     };
 
