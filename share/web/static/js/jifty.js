@@ -1748,10 +1748,9 @@ function show_action_result() {
 
 Jifty.addAutocompleter = function (id) {
     var field  = Jifty.$(id);
-    var action = Jifty.Form.Element.getAction(field);
 
     // if there's a raw :, jQuery interprets the id as a css selector
-    var selector = '#' + id.replace(/:/g, '\\\\\\:');
+    var selector = '#' + id.replace(/:/g, '\\\:');
 
     jQuery(selector).autocomplete('/__jifty/autocomplete.xml', {
         cacheLength: 0, // disable caching
@@ -1796,6 +1795,7 @@ Jifty.addAutocompleter = function (id) {
             return results;
         },
         extraParams: function () {
+            var action = Jifty.Form.Element.getAction(field);
             var actions = {
                 autocomplete: {
                     'moniker': 'autocomplete',
@@ -1893,9 +1893,9 @@ jQuery.extend(Jifty.Placeholder, {
      // VirtueDesktops does this some times, and I lose data.
      // These are normalized because sometimes one has \r\n and the other has \n
      if (Jifty.Placeholder.hasPlaceholder(elt)) {
-        elt.value = elt.value.replace(/\r/g, '');
-        elt.placeholderText = elt.placeholderText.replace(/\r/g, '');
-        if (elt.value == elt.placeholderText)
+        var value = elt.value.replace(/\r/g, '');
+        var placeholder = elt.placeholderText.replace(/\r/g, '');
+        if (value == placeholder)
             jQuery(elt).removeClass('placeholder').val('');
      }
   }

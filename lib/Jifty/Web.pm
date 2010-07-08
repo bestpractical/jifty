@@ -1116,10 +1116,17 @@ sub _render_messages {
     $self->out(qq{<div class="jifty results messages" id="$plural">});
     
     foreach my $moniker ( sort keys %results ) {
-        if ( $results{$moniker}->$type() ) {
-            $self->out( qq{<div class="$type $moniker">}
-                        . $results{$moniker}->$type()
-                        . qq{</div>} );
+        if ( my $text = $results{$moniker}->$type() ) {
+            if ( ref $text eq 'ARRAY' ) {
+                $text = join '', @$text;
+            }
+            elsif ( ref $text ) {
+                $self->log->warn(
+                    ref($text) . " reference provided as result $type "
+                    . "for action $moniker (@{[$results{$moniker}->action_class]})"
+                );
+            }
+            $self->out( qq{<div class="$type $moniker">$text</div>} );
         }
     }
     $self->out(qq{</div>});
