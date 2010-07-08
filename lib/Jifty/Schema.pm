@@ -130,7 +130,8 @@ sub serialize_current_schema {
 
 =head2 setup_database
 
-Sets up or upgrades a new or existing Jifty database.  It is used primarily by L<Jifty::Script::Schema>.  Respects a number of flags set with L</flags>.
+Sets up or upgrades a new or existing Jifty database.  It is used primarily by
+L<Jifty::Script::Schema>.  Respects a number of flags set with L</flags>.
 
 The methods it calls will die on error, so be sure to wrap any call to this
 method in an C<eval>.

@@ -111,18 +111,7 @@ EOF
 
     Jifty->handler->buffer->flush_output();
 
-    # reload config
-    Jifty->config->load();
-
-    # reconnect our database handle in case that config changed
-    Jifty->setup_database_connection();
-
-    # call the app's restart method if it has one
-    my $app = Jifty->app_class;
-    $app->restart()
-        if $app->can('restart');
-
-    # XXX: hook into plack::loader to restart server
+    Jifty->restart();
 };
 
 1;

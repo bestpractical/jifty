@@ -264,6 +264,36 @@ sub new {
     Jifty->call_trigger('post_init');
 }
 
+=head2 restart
+
+Attempt to "soft" restart Jifty while still running.
+
+Currently this reloads the config from disk, sets up the database connections
+again, and calls the app-specific restart method if there is one.
+
+Possibly this should also reload plugins and use L<Module::Refresh>.
+
+=cut
+
+sub restart {
+    my $class = shift;
+    
+    Jifty->log->info("Soft restarting Jifty while still running");
+
+    # reload config
+    Jifty->config->load();
+
+    # reconnect our database handle in case that config changed
+    Jifty->setup_database_connection();
+
+    # call the app's restart method if it has one
+    my $app = Jifty->app_class;
+    $app->restart()
+        if $app->can('restart');
+
+    # XXX: hook into plack::loader to restart server?
+}
+
 # Explicitly destroy the classloader; if this happens during global
 # destruction, there's a period of time where there's a bogus entry in
 # @INC
