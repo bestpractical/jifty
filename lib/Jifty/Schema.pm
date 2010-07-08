@@ -197,26 +197,66 @@ Dies with an error message if the database drop or create fails.
 sub manage_database_existence {
     my $self = shift;
 
+    return if not $self->flags->{'drop_database'}
+           or not $self->flags->{'create_database'};
+
     my $handle = $self->connect_to_db_for_management();
 
-    if ( $self->flags->{'print'} ) {
-        $handle->drop_database('print')   if ( $self->flags->{'drop_database'} );
-        $handle->create_database('print') if ( $self->flags->{'create_database'} );
-    } else {
-        if ( $self->flags->{'drop_database'} ) {
-            my $ret = $handle->drop_database('execute');
-            die "Error dropping database: ". $ret->error_message
-                unless $ret or $ret->error_message =~ /database .*?(?:does not|doesn't) exist|unknown database/i;
-        }
-
-        if ( $self->flags->{'create_database'} ) {
-            my $ret = $handle->create_database('execute');
-            die "Error creating database: ". $ret->error_message unless $ret;
-        }
-
-        $handle->disconnect;
-        $self->_reinit_handle() if ( $self->flags->{'create_database'} );
+    # Drop the DB if necessary
+    if ( $self->flags->{'drop_database'} ) {
+        my $ret = $self->drop_database($handle);
+        die "Error dropping database: ". $ret->error_message
+            unless $ret or $ret->error_message =~ /database .*?(?:does not|doesn't) exist|unknown database/i;
     }
+
+    # Create it too
+    if ( $self->flags->{'create_database'} ) {
+        my $ret = $self->create_database($handle);
+        die "Error creating database: ". $ret->error_message unless $ret;
+    }
+
+    $handle->disconnect;
+}
+
+=head2 drop_database [HANDLE]
+
+A thin wrapper around L<Jifty::Handle/drop_database>, optionally using the
+HANDLE provided.  If no handle is provided, one is created using
+L</connect_to_db_for_management>.
+
+Returns undef on failure.
+
+=cut
+
+sub drop_database {
+    my $self   = shift;
+    my $handle = shift || $self->connect_to_db_for_management();
+
+    return $handle->drop_database( $self->flags->{'print'}
+                                        ? 'print' : 'execute' );
+}
+
+=head2 create_database [HANDLE]
+
+A thin wrapper around L<Jifty::Handle/create_database>, optionally using the
+HANDLE provided.  If no handle is provided, one is created using
+L</connect_to_db_for_management>.  This method will reinit Jifty->handle
+on success unless the C<print> flag is set.
+
+Returns undef on failure.
+
+=cut
+
+sub create_database {
+    my $self   = shift;
+    my $handle = shift || $self->connect_to_db_for_management();
+
+    my $good = $handle->create_database( $self->flags->{'print'}
+                                            ? 'print' : 'execute' );
+
+    $self->_reinit_handle() unless not $good or $self->flags->{'print'};
+
+    return $good;
 }
 
 sub _reinit_handle {

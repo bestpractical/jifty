@@ -15,6 +15,7 @@ database
 =cut
 
 use Jifty::Util;
+use Class::ReturnValue;
 our @ISA;
 
 =head1 METHODS
@@ -273,11 +274,24 @@ sub drop_database {
     my $driver   = Jifty->config->framework('Database')->{'Driver'};
     if ( $mode eq 'print' ) {
         print "DROP DATABASE $database;\n";
+        return 1;
     } elsif ( $driver =~ /SQLite/ ) {
 
         # Win32 complains when you try to unlink open DB
         $self->disconnect if $^O eq 'MSWin32';
-        return unlink($database);
+
+        if ( not unlink $database ) {
+            # simple_query returns a RV, so we should too
+            my $ret = Class::ReturnValue->new;
+            $ret->as_error(
+                errno   => $!,
+                message => "Unable to unlink the database '$database': $!",
+                do_backtrace => undef
+            );
+            return ( $ret->return_value );
+        }
+
+        return 1;
     } else {
         local $SIG{__WARN__}
             = sub { warn $_[0] unless $_[0] =~ /exist|couldn't execute/i };
