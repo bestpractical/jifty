@@ -11,7 +11,7 @@ Jifty::Plugin::SetupWizard::View::Helpers - Helper templates and functions for S
 
 =head2 database_widget
 
-Provides a simple database configuration widget
+Provides a database configuration and connectivity testing widget.
 
 =cut
 
@@ -89,6 +89,8 @@ private template 'database_widget' => sub {
         name => 'test_connectivity',
         path => $self->fragment_for("database_widget/test_connectivity"),
     );
+
+    show 'database_widget/setup_new_database';
 };
 
 private template 'database_widget/unavailable_drivers' => sub {
@@ -180,7 +182,7 @@ template 'database_widget/test_connectivity' => sub {
     my $action = new_action(
         class   => 'Jifty::Plugin::SetupWizard::Action::TestDatabaseConnectivity',
         moniker => 'test-db-connectivity',
-        order   => 60, # after everything else
+        order   => 60, # after everything else so far
     );
 
     if ( my $result = Jifty->web->response->result('test-db-connectivity') ) {
@@ -213,6 +215,16 @@ template 'database_widget/test_connectivity' => sub {
 
 };
 
+template 'database_widget/setup_new_database' => sub {
+    my $self = shift;
+
+    my $action = Jifty->web->form->add_action(
+        class   => 'Jifty::Plugin::SetupWizard::Action::SetupNewDatabase',
+        moniker => 'setup-new-database',
+        order   => 70, # After everything else in this widget,
+                       # but it should be before any Restart actions.
+    );
+};
 
 =head1 FUNCTIONS
 

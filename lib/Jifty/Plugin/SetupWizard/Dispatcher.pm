@@ -19,14 +19,17 @@ use Jifty::Dispatcher -base;
 
 =head2 before '*'
 
-Allows running L<Jifty::Plugin::SetupWizard::Action::TestDatabaseConnectivity>
-if C<SetupMode> is turned on.
+Allows running this plugin's
+L<TestDatabaseConnectivity|Jifty::Plugin::SetupWizard::Action::TestDatabaseConnectivity>
+and L<SetupNewDatabase|Jifty::Plugin::SetupWizard::Action::SetupNewDatabase>
+actions if C<SetupMode> is turned on.
 
 =cut
 
 before '*' => run {
     return if not Jifty->setup_mode;
-    Jifty->api->allow('Jifty::Plugin::SetupWizard::Action::TestDatabaseConnectivity');
+    Jifty->api->allow("Jifty::Plugin::SetupWizard::Action::$_")
+        for qw( TestDatabaseConnectivity SetupNewDatabase );
 };
 
 1;
