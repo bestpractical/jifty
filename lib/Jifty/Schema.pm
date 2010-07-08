@@ -166,16 +166,13 @@ sub setup_minimal_environment {
         unless Jifty->class_loader;
 }
 
-=head2 probe_database_existence [NO_HANDLE]
+=head2 probe_database_existence
 
 Probes our database to see if it exists and is up to date.  This sets various
 L</flags> for later use.
 
 If AutoUpgrade is true in the application's config, this may cause the
 database to be automatically upgraded.
-
-Optionally takes a boolean to indicate whether or not we should bother to try
-to create an actual database handle.
 
 =cut
 
@@ -241,8 +238,8 @@ Dies with an error message if the database drop or create fails.
 sub manage_database_existence {
     my $self = shift;
 
-    return if not $self->flags->{'drop_database'}
-           or not $self->flags->{'create_database'};
+    return if not (   $self->flags->{'drop_database'}
+                   or $self->flags->{'create_database'} );
 
     my $handle = $self->connect_to_db_for_management();
 
