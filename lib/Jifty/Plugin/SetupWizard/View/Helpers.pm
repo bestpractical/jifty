@@ -215,7 +215,7 @@ template 'database_widget/test_connectivity' => sub {
 
 };
 
-template 'database_widget/setup_new_database' => sub {
+private template 'database_widget/setup_new_database' => sub {
     my $self = shift;
 
     my $action = Jifty->web->form->add_action(
@@ -226,11 +226,114 @@ template 'database_widget/setup_new_database' => sub {
     );
 };
 
-=head1 FUNCTIONS
+=head2 buttons [PARAMHASH]
+
+Displays the appropriate buttons to go to the previous and next steps as
+determined by the parameters.  See also L<steps>, L<step_after>, and
+L<step_before>.
+
+Valid keys for the PARAMHASH are:
+
+=head3 for
+
+Specify the step to show buttons for (i.e. the current step most often)
+
+=head3 next and prev
+
+Manually specify the name of the next or previous step
+
+=head3 next_label and prev_label
+
+Manually specify the labels of the next or previous buttons
+
+=head3 restart
+
+If true, a L<Jifty::Plugin::Config::Action::Restart> action is automatically
+added to the next step button to run after all the other actions (order =
+90).  This might be useful if you want to restart your app after setting some
+config, but it's usually not necessary.
+
+=cut
+
+private template 'buttons' => sub {
+    my $self = shift;
+    show 'previous_step_button', @_;
+    show 'next_step_button', @_;
+};
+
+private template 'previous_step_button' => sub {
+    my $self = shift;
+    my %args = (
+        prev_label => 'Previous step',
+        @_
+    );
+
+    if ( defined $args{'for'} and not defined $args{'prev'} ) {
+        $args{'prev'} = $self->step_before( $args{'for'} );
+    }
+
+    unless ( not defined $args{'prev'} ) {
+        hyperlink(
+            url => $args{'prev'},
+            label => $args{'prev_label'},
+            as_button => 1,
+        );
+    }
+};
+
+private template 'next_step_button' => sub {
+    my $self = shift;
+    my %args = @_;
+
+    if ( defined $args{'for'} and not defined $args{'next'} ) {
+        $args{'next'} = $self->step_after( $args{'for'} );
+    }
+
+    unless ( defined $args{'next_label'} ) {
+        # If there's no step before us
+        if (     not defined $args{'prev'} and defined $args{'for'}
+             and not defined $self->step_before($args{'for'}) ) {
+            $args{'next_label'} = 'Start';
+        }
+        # The next step is the last one
+        elsif (     defined $args{'next'}
+                and not defined $self->step_after($args{'next'}) ) {
+            $args{'next_label'} = 'Finish';
+        }
+        # Keep calm and carry on
+        else {
+            $args{'next_label'} = 'Next step';
+        }
+    }
+
+    unless ( not defined $args{'next'} ) {
+        if ( $args{'restart'} ) {
+            Jifty->log->debug("Restarting the server before next setup wizard step");
+            my $restart = new_action(
+                class     => 'Jifty::Plugin::Config::Action::Restart',
+                moniker   => 'restart-jifty',
+                order     => 90
+            );
+            render_param(
+                $restart      => 'url',
+                default_value => $self->fragment_for($args{'next'})
+            );
+            form_submit( label => $args{'next_label'} );
+        }
+        else {
+            form_submit(
+                url     => $self->fragment_for($args{'next'}),
+                label   => $args{'next_label'},
+            );
+        }
+    }
+};
+
+=head1 METHODS
 
 =head2 config_field
 
-A helper function for constructing a mini-form for a config field. It returns
+A helper function for constructing a mini-form for a C<etc/config.yml> config field. It returns
 the action that was created. Expected arguments are:
 
 =over 4
@@ -311,6 +414,85 @@ sub fragment_for {
     $base = "/$base" unless $base =~ /^\//;
     return "$base/$frag";
 }
+
+=head2 steps
+
+If you plan to use the L<button> template or L<step_before> and L<step_after>
+methods, you must override this method to return a list of steps for your
+setup wizard.
+
+The steps are expected to be template paths to display in the order given.
+They need not be absolute paths.
+
+By default, it warns about misuse and returns an empty list.
+
+=cut
+
+sub steps {
+    warn "You need to override the steps method in "
+         .__PACKAGE__." to provide your own steps.";
+    return qw();
+}
+
+=head2 step_before STEP
+
+Returns the name of the step that came before the given STEP, or undef if
+there is none (i.e. the first step).
+
+=cut
+
+sub step_before {
+    my $self = shift;
+    return $self->_step_for(shift, 'before');
+}
+
+=head2 step_after STEP
+
+Returns the name of the step to come after the given STEP, or undef if there
+is none (i.e. the last step).
+
+=cut
+
+sub step_after {
+    my $self = shift;
+    return $self->_step_for(shift, 'after');
+}
+
+=head2 _step_for STEP, DIRECTION
+
+This is the logic behind L<step_before> and L<step_after>.  Returns the name
+of the adjacent step in the DIRECTION given, or undef if there is none.
+
+=cut
+
+sub _step_for {
+    my ($self, $step, $dir) = (@_);
+    my @steps = $self->steps;
+
+    my $new;
+    for (0..$#steps) {
+        if ( $step eq $steps[$_] ) {
+            $new = $_;
+            last;
+        }
+    }
+
+    if ( $dir eq 'before' ) {
+        $new--;
+        undef $new if $new < 0;
+    }
+    elsif ( $dir eq 'after' ) {
+        $new++;
+        undef $new if $new > $#steps;
+    }
+    else {
+        # Huh?
+        undef $new;
+    }
+
+    return defined $new ? $steps[$new] : undef;
+}
+
 
 1;
 
