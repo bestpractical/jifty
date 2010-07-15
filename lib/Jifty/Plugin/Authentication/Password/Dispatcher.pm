@@ -134,13 +134,19 @@ Adds the login and signup links to the navigation menu.
 
 sub not_logged_in_nav {
     Jifty->web->navigation->child(
-        Login   => label => _('Login') =>
-            url => '/login',
+        'Login',
+        link => Jifty->web->tangent(
+            label => _('Login'),
+            url   => '/login'
+        ),
         sort_order => '999'
     );
     Jifty->web->navigation->child(
-        Signup  => label => _('Sign up') =>
-            url => '/signup',
+        'Signup',
+        link => Jifty->web->tangent(
+            label => _('Sign up'),
+            url   => '/signup'
+        ),
         sort_order => '950'
     );
 }
