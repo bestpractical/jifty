@@ -32,8 +32,9 @@ are:
 
 =item filehandle
 
-The filehandle to read the content from. This must be a L<Fh> object produced
-by CGI.
+The filehandle to read the content from. If this is not an L<Fh> object
+produced by L<CGI>, then C<content_type> is mandatory and you probably want to
+set C<filename> yourself.
 
 =item content (optional)
 
