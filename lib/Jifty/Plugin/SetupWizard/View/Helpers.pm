@@ -203,6 +203,7 @@ template 'database_widget/test_connectivity' => sub {
 
     $action->button(
         label     => _("Test connectivity"),
+        class     => 'test-db-connectivity',
         onclick   => {
             # We can't just submit all actions, because that will also send the restart action,
             # which we don't want for just testing the DB
@@ -257,8 +258,11 @@ config, but it's usually not necessary.
 
 private template 'buttons' => sub {
     my $self = shift;
-    show 'previous_step_button', @_;
-    show 'next_step_button', @_;
+    my @args = @_;
+    div {{ class is 'button-line' };
+        show 'next_step_button', @args;
+        show 'previous_step_button', @args;
+    };
 };
 
 private template 'previous_step_button' => sub {
@@ -275,6 +279,7 @@ private template 'previous_step_button' => sub {
     unless ( not defined $args{'prev'} ) {
         hyperlink(
             url => $args{'prev'},
+            class => 'prev-button',
             label => $args{'prev_label'},
             as_button => 1,
         );
@@ -318,12 +323,16 @@ private template 'next_step_button' => sub {
                 $restart      => 'url',
                 default_value => $self->fragment_for($args{'next'})
             );
-            form_submit( label => $args{'next_label'} );
+            form_submit(
+                label => $args{'next_label'},
+                class => 'next-button',
+            );
         }
         else {
             form_submit(
                 url     => $self->fragment_for($args{'next'}),
                 label   => $args{'next_label'},
+                class   => 'next-button',
             );
         }
     }
