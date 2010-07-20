@@ -268,6 +268,7 @@ private template 'buttons' => sub {
     my @args = @_;
     div {{ class is 'button-line' };
         show 'next_step_button', @args;
+        show 'save_step_button', @args;
         show 'previous_step_button', @args;
     };
 };
@@ -275,7 +276,7 @@ private template 'buttons' => sub {
 private template 'previous_step_button' => sub {
     my $self = shift;
     my %args = (
-        prev_label => 'Previous step',
+        prev_label => 'Discard and go back',
         @_
     );
 
@@ -314,7 +315,7 @@ private template 'next_step_button' => sub {
         }
         # Keep calm and carry on
         else {
-            $args{'next_label'} = 'Next step';
+            $args{'next_label'} = 'Save and Continue';
         }
     }
 
@@ -342,6 +343,29 @@ private template 'next_step_button' => sub {
                 class   => 'next-button',
             );
         }
+    }
+};
+
+private template 'save_step_button' => sub {
+    my $self = shift;
+    my %args = (
+        save_label => 'Save',
+        @_
+    );
+    
+    if ( defined $args{'for'} and not defined $args{'next'} ) {
+        $args{'next'} = $self->step_after( $args{'for'} );
+    }
+    
+    if ( defined $args{'for'} and not defined $args{'prev'} ) {
+        $args{'prev'} = $self->step_before( $args{'for'} );
+    }
+
+    if ( defined $args{'prev'} and defined $args{'next'} ) {
+        form_submit(
+            label   => $args{'save_label'},
+            class   => 'save-button',
+        );
     }
 };
 
