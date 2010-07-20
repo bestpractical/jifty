@@ -42,7 +42,7 @@ private template 'database_widget' => sub {
         { display => 'SQLite',     value => 'SQLite' },
         { display => 'MySQL',      value => 'mysql' },
         { display => 'PostgreSQL', value => 'Pg' },
-        #{ display => 'Oracle', value => 'Oracle' },
+        { display => 'Oracle',     value => 'Oracle' },
     );
     for (@all_drivers) {
         if (Jifty->handle->is_available_driver($_->{value})) {
@@ -95,13 +95,20 @@ private template 'database_widget' => sub {
 
 private template 'database_widget/unavailable_drivers' => sub {
     my $self = shift;
+    my $count = scalar @_;
     my $databases = join ', ', map { $_->{display} } @_;
     my $drivers   = join ', ', map { "DBD::$_->{value}" } @_;
 
     $databases =~ s/, (?!.*,)/ and /;
     $drivers   =~ s/, (?!.*,)/ or /;
 
-    p { _("%quant(%1,%2 is,%2 are) also supported, but we couldn't find the database %quant(%1,driver,drivers). You may be able to remedy this by installing %3 from CPAN.", scalar @_, $databases, $drivers) };
+    my $helpingverb = $count == 1 ? _("is")     : _("are");
+    my $object      = $count == 1 ? _("driver") : _("drivers");
+
+    p {{ class is 'test-db-connectivity-drivers' };
+        _("%1 %2 also supported, but we couldn't find the database %3. You may be able to remedy this by installing %4 from CPAN.",
+          $databases, $helpingverb, $object, $drivers )
+    };
 };
 
 private template 'database_widget/configure_connectivity' => sub {
