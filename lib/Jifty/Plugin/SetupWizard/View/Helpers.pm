@@ -106,7 +106,7 @@ private template 'database_widget/unavailable_drivers' => sub {
     my $object      = $count == 1 ? _("driver") : _("drivers");
 
     p {{ class is 'test-db-connectivity-drivers' };
-        _("%1 %2 also supported, but we couldn't find the database %3. You may be able to remedy this by installing %4 from CPAN.",
+        _("%1 %2 supported, but we couldn't find the database %3. You may be able to remedy this by installing %4 from CPAN.",
           $databases, $helpingverb, $object, $drivers )
     };
 };
