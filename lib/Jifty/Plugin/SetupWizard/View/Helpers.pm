@@ -433,6 +433,10 @@ setup wizard.
 The steps are expected to be template paths to display in the order given.
 They need not be absolute paths.
 
+Optionally, you may specify an arrayref as a step, in which case the first
+element is taken to be the path and the second a step title.  This helps
+generate a list of steps to present.
+
 By default, it warns about misuse and returns an empty list.
 
 =cut
@@ -452,7 +456,7 @@ there is none (i.e. the first step).
 
 sub step_before {
     my $self = shift;
-    return $self->_step_for(shift, 'before');
+    return $self->step_for(shift, 'before')->[0];
 }
 
 =head2 step_after STEP
@@ -464,43 +468,66 @@ is none (i.e. the last step).
 
 sub step_after {
     my $self = shift;
-    return $self->_step_for(shift, 'after');
+    return $self->step_for(shift, 'after')->[0];
 }
 
-=head2 _step_for STEP, DIRECTION
+=head2 step_for STEP, DIRECTION
 
-This is the logic behind L<step_before> and L<step_after>.  Returns the name
-of the adjacent step in the DIRECTION given, or undef if there is none.
+This is the logic behind L<step_before> and L<step_after>.  Returns the
+adjacent step in the DIRECTION given, or an empty arrayref if there is none.
+
+Direction may be C<before>, C<after>, or C<undef> to indicate you want the step
+specified by the name given.
+
+All steps are normalized to an arrayref before being returned.
 
 =cut
 
-sub _step_for {
+sub step_for {
     my ($self, $step, $dir) = (@_);
     my @steps = $self->steps;
 
     my $new;
     for (0..$#steps) {
-        if ( $step eq $steps[$_] ) {
+        # Normalize into an arrayref
+        $steps[$_] = [ $steps[$_] ]
+            unless ref $steps[$_];
+
+        if ( $step eq $steps[$_][0] ) {
             $new = $_;
             last;
         }
     }
 
-    if ( $dir eq 'before' ) {
-        $new--;
-        undef $new if $new < 0;
-    }
-    elsif ( $dir eq 'after' ) {
-        $new++;
-        undef $new if $new > $#steps;
-    }
-    else {
-        # Huh?
-        undef $new;
+    unless ( not defined $dir ) {
+        if ( $dir eq 'before' ) {
+            $new--;
+            undef $new if $new < 0;
+        }
+        elsif ( $dir eq 'after' ) {
+            $new++;
+            undef $new if $new > $#steps;
+        }
+        else {
+            # Huh?
+            undef $new;
+        }
     }
 
-    return defined $new ? $steps[$new] : undef;
+    return defined $new ? $steps[$new] : [];
 }
+
+=head2 step_title STEP
+
+Returns the title of STEP, or undef if there is none.
+
+=cut
+
+sub step_title {
+    my $self = shift;
+    return $self->step_for(shift)->[1];
+}
+
 
 
 1;
