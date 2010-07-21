@@ -65,6 +65,14 @@ When you're ready to move up to something that can handle the increasing load yo
 new world-changing application is generating, you'll need something a bit heavier-duty
 than the pure-perl Jifty standalone server.  C<FastCGI> is what you're looking for.
 
+If you have MaxRequests options under FastCGI in your config.yml, or
+commandline option C<--maxrequests=N> assigned, the fastcgi process
+will exit after serving N requests.
+
+=head1 SERVER CONFIGURATIONS
+
+=head2 Apache + mod_fastcgi
+
  # These two lines are FastCGI-specific; skip them to run in vanilla CGI mode
  AddHandler fastcgi-script fcgi
  FastCgiServer /path/to/your/jifty/app/bin/jifty -initial-env JIFTY_COMMAND=fastcgi 
@@ -72,28 +80,7 @@ than the pure-perl Jifty standalone server.  C<FastCGI> is what you're looking f
  DocumentRoot /path/to/your/jifty/app/share/web/templates
  ScriptAlias / /path/to/your/jifty/app/bin/jifty/
 
-For B<lighttpd> (L<http://www.lighttpd.net/>), use this setting:
-
- server.modules  = ( "mod_fastcgi" )
- server.document-root = "/path/to/your/jifty/app/share/web/templates"
- fastcgi.server = (
-        "" => (
-            "your_jifty_app" => (
-                "socket"       => "/tmp/your_jifty_app.socket",
-                "check-local"  => "disable",
-                "bin-path"     => "/path/to/your/jifty/app/bin/jifty",
-                "bin-environment" => ( "JIFTY_COMMAND" => "fastcgi" ),
-                "min-procs"    => 1,
-                "max-procs"    => 5,
-                "max-load-per-proc" => 1,
-                "idle-timeout" => 20,
-            )
-        )
-    )
-
-If you have MaxRequests options under FastCGI in your config.yml, or
-commandline option C<--maxrequests=N> assigned, the fastcgi process
-will exit after serving N requests. 
+=head2 Apache + mod_fcgid + mod_rewrite
 
 An alternative to Apache mod_fastcgi is to use mod_fcgid with mod_rewrite.
 If you use mod_fcgid and mod_rewrite, you can use this in your Apache
@@ -113,6 +100,38 @@ configuration instead:
  </Directory>
 
 It may be possible to do this without using mod_rewrite.
+
+=head2 Lighttpd (L<http://www.lighttpd.net/>)
+
+Version 1.4.23 or newer is recommended, and you may adapt this config:
+
+ server.modules  = ( "mod_fastcgi" )
+ server.document-root = "/path/to/your/jifty/app/share/web/templates"
+ fastcgi.server = (
+        "/" => (
+            "your_jifty_app" => (
+                "socket"              => "/tmp/your_jifty_app.socket",
+                "check-local"         => "disable",
+                "fix-root-scriptname" => "enable",
+                "bin-path"            => "/path/to/your/jifty/app/bin/jifty",
+                "bin-environment"     => ( "JIFTY_COMMAND" => "fastcgi" ),
+                "min-procs"           => 1,
+                "max-procs"           => 5,
+                "max-load-per-proc"   => 1,
+                "idle-timeout"        => 20,
+            )
+        )
+    )
+
+Versions before 1.4.23 will work, but you should read L<Plack::Handler::FCGI's lighttpd
+documentation|http://search.cpan.org/dist/Plack/lib/Plack/Handler/FCGI.pm#lighttpd>
+for how to configure your server.
+
+=head2 More information
+
+Since this uses L<Plack::Handler::FCGI>, you might also want to read
+L<its documentation on webserver
+configurations|http://search.cpan.org/dist/Plack/lib/Plack/Handler/FCGI.pm#WEB_SERVER_CONFIGURATIONS>.
 
 =head1 METHODS
 

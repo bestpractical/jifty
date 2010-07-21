@@ -137,8 +137,13 @@ sub psgi_app_static {
     $static->add( $app_class->psgi_app_static )
         if $app_class->can('psgi_app_static');
 
-    $static->add( Plack::App::File->new
-            ( root => Jifty->config->framework('Web')->{StaticRoot} )->to_app );
+    $static->add(
+        Plack::App::File->new(
+            root => Jifty::Util->absolute_path(
+                Jifty->config->framework('Web')->{StaticRoot}
+            )
+        )->to_app
+    );
 
     for ( grep { defined $_ } map { $_->psgi_app_static } Jifty->plugins ) {
         $static->add( $_ );

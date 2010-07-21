@@ -182,12 +182,18 @@ sub promote {
     die Carp::longmess("old calling style") unless ref $req;
 
     # Import all props from Plack::Request object
+
+    # path of $req->uri is escaped by Plack::Request, we want it unescaped here
+    # see also http://github.com/miyagawa/Plack/commit/a01c607cb6d0b6470308987cb94aa4b011c2d7ff
+    my $uri = $req->uri;
+    $uri->path( URI::Escape::uri_unescape( $uri->path ) );
+
     my $self = $class->new( env => $req->env,
                             headers => $req->headers,
                             parameters => $req->parameters->mixed,
                             uploads => $req->uploads->mixed,
                             scheme => $req->scheme,
-                            uri => $req->uri,
+                            uri => $uri,
                             request_uri => $req->request_uri,
                             cookies => $req->cookies,
                             actions => {},
