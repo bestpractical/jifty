@@ -34,7 +34,7 @@ C<current_user>, and so on up the call stack.
 sub current_user {
     my $self = shift;
     unless (ref($self)) {
-        Carp::cluck("Called current_user as a class method. Dealing. Fix your code.");
+        Carp::cluck("Called current_user as a class method!  This has no chance of working.  Fix your code.");
     }
     $self->{'_current_user'} = shift if (@_); 
     return($self->{'_current_user'});
