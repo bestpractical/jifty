@@ -59,7 +59,9 @@ div#jifty-wait-message {
     padding: 5px;
     text-indent: 10em;
     z-index: 42;
+    border-radius: 15px;
     -moz-border-radius: 15px;
+    -webkit-border-radius: 15px;
 }
 
 div#jifty-region, div#jifty-region-lazy {
