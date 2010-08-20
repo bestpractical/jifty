@@ -396,7 +396,11 @@ template 'index.html' => page {
 
 =head2 search
 
-The search fragment displays a search screen connected to the search action of the module. 
+The search fragment displays a search screen connected to the search action of
+the module.  If your subclass can C<search_fields>, then that method will be
+called and the return value (which should be a list) will be used as a list of
+fields to render.  Otherwise, all the fields of the Search action are
+displayed.
 
 See L<Jifty::Action::Record::Search>.
 
@@ -411,8 +415,15 @@ template 'search' => sub {
     );
 
     div {
-        { class is "jifty_admin" };
-        render_action($search);
+        { class is "jifty_admin crud-search-form" };
+
+        if ( $self->can('search_fields') ) {
+            render_param( $search => $_ )
+                for $self->search_fields;
+        }
+        else {
+            render_action($search);
+        }
 
         $search->button(
             label   => _('Search'),
