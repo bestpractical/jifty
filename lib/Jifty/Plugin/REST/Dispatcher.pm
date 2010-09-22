@@ -962,7 +962,7 @@ sub run_action {
     }
 
     my $rec = $action->{record};
-    if ($action->result->success && $rec and $rec->isa('Jifty::Record') and $rec->id) {
+    if ($action->result->success && $rec and $rec->isa('Jifty::Record') and $rec->id and ($rec->load($rec->id))[0]) {
         my @fragments = ('model', ref($rec), 'id', $rec->id);
 
         my $path = join '/', '=', map { Jifty::Web->escape_uri($_) } @fragments;
