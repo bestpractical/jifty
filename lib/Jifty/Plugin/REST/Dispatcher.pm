@@ -884,7 +884,11 @@ sub list_action_params {
     for my $arg ( keys %$arguments ) {
         $args{ $arg } = { };
         for ( @param_attrs ) {
-            my $val = $arguments->{ $arg }{ $_ };
+            # Valid values is special because sometimes it has a collection
+            # object that needs to be abstracted away
+            my $val = $_ eq 'valid_values'
+                        ? $action->valid_values($arg)
+                        : $arguments->{ $arg }{ $_ };
             $args{ $arg }->{ $_ } = Scalar::Defer::force($val)
                 if defined $val and length $val;
         }
