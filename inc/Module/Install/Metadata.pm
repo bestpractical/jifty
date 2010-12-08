@@ -6,7 +6,7 @@ use Module::Install::Base ();
 
 use vars qw{$VERSION @ISA $ISCORE};
 BEGIN {
-	$VERSION = '0.95';
+	$VERSION = '1.00';
 	@ISA     = 'Module::Install::Base';
 	$ISCORE  = 1;
 }
@@ -178,43 +178,6 @@ sub perl_version {
 	$self->{values}->{perl_version} = $version;
 }
 
-#Stolen from M::B
-my %license_urls = (
-    perl         => 'http://dev.perl.org/licenses/',
-    apache       => 'http://apache.org/licenses/LICENSE-2.0',
-    artistic     => 'http://opensource.org/licenses/artistic-license.php',
-    artistic_2   => 'http://opensource.org/licenses/artistic-license-2.0.php',
-    lgpl         => 'http://opensource.org/licenses/lgpl-license.php',
-    lgpl2        => 'http://opensource.org/licenses/lgpl-2.1.php',
-    lgpl3        => 'http://opensource.org/licenses/lgpl-3.0.html',
-    bsd          => 'http://opensource.org/licenses/bsd-license.php',
-    gpl          => 'http://opensource.org/licenses/gpl-license.php',
-    gpl2         => 'http://opensource.org/licenses/gpl-2.0.php',
-    gpl3         => 'http://opensource.org/licenses/gpl-3.0.html',
-    mit          => 'http://opensource.org/licenses/mit-license.php',
-    mozilla      => 'http://opensource.org/licenses/mozilla1.1.php',
-    open_source  => undef,
-    unrestricted => undef,
-    restrictive  => undef,
-    unknown      => undef,
-);
-
-sub license {
-	my $self = shift;
-	return $self->{values}->{license} unless @_;
-	my $license = shift or die(
-		'Did not provide a value to license()'
-	);
-	$self->{values}->{license} = $license;
-
-	# Automatically fill in license URLs
-	if ( $license_urls{$license} ) {
-		$self->resources( license => $license_urls{$license} );
-	}
-
-	return 1;
-}
-
 sub all_from {
 	my ( $self, $file ) = @_;
 
@@ -354,6 +317,9 @@ sub version_from {
 	require ExtUtils::MM_Unix;
 	my ( $self, $file ) = @_;
 	$self->version( ExtUtils::MM_Unix->parse_version($file) );
+
+	# for version integrity check
+	$self->makemaker_args( VERSION_FROM => $file );
 }
 
 sub abstract_from {
@@ -364,7 +330,7 @@ sub abstract_from {
 			{ DISTNAME => $self->name },
 			'ExtUtils::MM_Unix'
 		)->parse_abstract($file)
-	 );
+	);
 }
 
 # Add both distribution and module name
@@ -479,42 +445,89 @@ sub author_from {
 	}
 }
 
+#Stolen from M::B
+my %license_urls = (
+    perl         => 'http://dev.perl.org/licenses/',
+    apache       => 'http://apache.org/licenses/LICENSE-2.0',
+    apache_1_1   => 'http://apache.org/licenses/LICENSE-1.1',
+    artistic     => 'http://opensource.org/licenses/artistic-license.php',
+    artistic_2   => 'http://opensource.org/licenses/artistic-license-2.0.php',
+    lgpl         => 'http://opensource.org/licenses/lgpl-license.php',
+    lgpl2        => 'http://opensource.org/licenses/lgpl-2.1.php',
+    lgpl3        => 'http://opensource.org/licenses/lgpl-3.0.html',
+    bsd          => 'http://opensource.org/licenses/bsd-license.php',
+    gpl          => 'http://opensource.org/licenses/gpl-license.php',
+    gpl2         => 'http://opensource.org/licenses/gpl-2.0.php',
+    gpl3         => 'http://opensource.org/licenses/gpl-3.0.html',
+    mit          => 'http://opensource.org/licenses/mit-license.php',
+    mozilla      => 'http://opensource.org/licenses/mozilla1.1.php',
+    open_source  => undef,
+    unrestricted => undef,
+    restrictive  => undef,
+    unknown      => undef,
+);
+
+sub license {
+	my $self = shift;
+	return $self->{values}->{license} unless @_;
+	my $license = shift or die(
+		'Did not provide a value to license()'
+	);
+	$license = __extract_license($license) || lc $license;
+	$self->{values}->{license} = $license;
+
+	# Automatically fill in license URLs
+	if ( $license_urls{$license} ) {
+		$self->resources( license => $license_urls{$license} );
+	}
+
+	return 1;
+}
+
 sub _extract_license {
 	my $pod = shift;
 	my $matched;
 	return __extract_license(
 		($matched) = $pod =~ m/
-			(=head \d \s+ (?:licen[cs]e|licensing)\b.*?)
+			(=head \d \s+ L(?i:ICEN[CS]E|ICENSING)\b.*?)
 			(=head \d.*|=cut.*|)\z
-		/ixms
+		/xms
 	) || __extract_license(
 		($matched) = $pod =~ m/
-			(=head \d \s+ (?:copyrights?|legal)\b.*?)
+			(=head \d \s+ (?:C(?i:OPYRIGHTS?)|L(?i:EGAL))\b.*?)
 			(=head \d.*|=cut.*|)\z
-		/ixms
+		/xms
 	);
 }
 
 sub __extract_license {
 	my $license_text = shift or return;
 	my @phrases      = (
-		'under the same (?:terms|license) as (?:perl|the perl programming language)' => 'perl', 1,
-		'under the terms of (?:perl|the perl programming language) itself' => 'perl', 1,
-		'Artistic and GPL'                   => 'perl',        1,
-		'GNU general public license'         => 'gpl',         1,
-		'GNU public license'                 => 'gpl',         1,
-		'GNU lesser general public license'  => 'lgpl',        1,
-		'GNU lesser public license'          => 'lgpl',        1,
-		'GNU library general public license' => 'lgpl',        1,
-		'GNU library public license'         => 'lgpl',        1,
-		'BSD license'                        => 'bsd',         1,
-		'Artistic license'                   => 'artistic',    1,
-		'GPL'                                => 'gpl',         1,
-		'LGPL'                               => 'lgpl',        1,
-		'BSD'                                => 'bsd',         1,
-		'Artistic'                           => 'artistic',    1,
-		'MIT'                                => 'mit',         1,
-		'proprietary'                        => 'proprietary', 0,
+		'(?:under )?the same (?:terms|license) as (?:perl|the perl (?:\d )?programming language)' => 'perl', 1,
+		'(?:under )?the terms of (?:perl|the perl programming language) itself' => 'perl', 1,
+		'Artistic and GPL'                   => 'perl',         1,
+		'GNU general public license'         => 'gpl',          1,
+		'GNU public license'                 => 'gpl',          1,
+		'GNU lesser general public license'  => 'lgpl',         1,
+		'GNU lesser public license'          => 'lgpl',         1,
+		'GNU library general public license' => 'lgpl',         1,
+		'GNU library public license'         => 'lgpl',         1,
+		'GNU Free Documentation license'     => 'unrestricted', 1,
+		'GNU Affero General Public License'  => 'open_source',  1,
+		'(?:Free)?BSD license'               => 'bsd',          1,
+		'Artistic license'                   => 'artistic',     1,
+		'Apache (?:Software )?license'       => 'apache',       1,
+		'GPL'                                => 'gpl',          1,
+		'LGPL'                               => 'lgpl',         1,
+		'BSD'                                => 'bsd',          1,
+		'Artistic'                           => 'artistic',     1,
+		'MIT'                                => 'mit',          1,
+		'Mozilla Public License'             => 'mozilla',      1,
+		'Q Public License'                   => 'open_source',  1,
+		'OpenSSL License'                    => 'unrestricted', 1,
+		'SSLeay License'                     => 'unrestricted', 1,
+		'zlib License'                       => 'open_source',  1,
+		'proprietary'                        => 'proprietary',  0,
 	);
 	while ( my ($pattern, $license, $osi) = splice(@phrases, 0, 3) ) {
 		$pattern =~ s#\s+#\\s+#gs;
@@ -522,6 +535,7 @@ sub __extract_license {
 			return $license;
 		}
 	}
+	return '';
 }
 
 sub license_from {
@@ -602,8 +616,15 @@ sub _perl_version {
 	return $v;
 }
 
-
-
+sub add_metadata {
+    my $self = shift;
+    my %hash = @_;
+    for my $key (keys %hash) {
+        warn "add_metadata: $key is not prefixed with 'x_'.\n" .
+             "Use appopriate function to add non-private metadata.\n" unless $key =~ /^x_/;
+        $self->{values}->{$key} = $hash{$key};
+    }
+}
 
 
 ######################################################################

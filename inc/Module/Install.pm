@@ -22,7 +22,6 @@ use strict 'vars';
 use Cwd        ();
 use File::Find ();
 use File::Path ();
-use FindBin;
 
 use vars qw{$VERSION $MAIN};
 BEGIN {
@@ -32,7 +31,7 @@ BEGIN {
 	# This is not enforced yet, but will be some time in the next few
 	# releases once we can make sure it won't clash with custom
 	# Module::Install extensions.
-	$VERSION = '0.95';
+	$VERSION = '1.00';
 
 	# Storage for the pseudo-singleton
 	$MAIN    = undef;
@@ -127,6 +126,11 @@ END_DIE
 	#-------------------------------------------------------------
 
 	unless ( -f $self->{file} ) {
+		foreach my $key (keys %INC) {
+			delete $INC{$key} if $key =~ /Module\/Install/;
+		}
+
+		local $^W;
 		require "$self->{path}/$self->{dispatch}.pm";
 		File::Path::mkpath("$self->{prefix}/$self->{author}");
 		$self->{admin} = "$self->{name}::$self->{dispatch}"->new( _top => $self );
@@ -135,12 +139,13 @@ END_DIE
 		goto &{"$self->{name}::import"};
 	}
 
+	local $^W;
 	*{"${who}::AUTOLOAD"} = $self->autoload;
 	$self->preload;
 
 	# Unregister loader and worker packages so subdirs can use them again
-	delete $INC{"$self->{file}"};
-	delete $INC{"$self->{path}.pm"};
+	delete $INC{'inc/Module/Install.pm'};
+	delete $INC{'Module/Install.pm'};
 
 	# Save to the singleton
 	$MAIN = $self;
@@ -159,7 +164,21 @@ sub autoload {
 			# Delegate back to parent dirs
 			goto &$code unless $cwd eq $pwd;
 		}
-		$$sym =~ /([^:]+)$/ or die "Cannot autoload $who - $sym";
+		unless ($$sym =~ s/([^:]+)$//) {
+			# XXX: it looks like we can't retrieve the missing function
+			# via $$sym (usually $main::AUTOLOAD) in this case.
+			# I'm still wondering if we should slurp Makefile.PL to
+			# get some context or not ...
+			my ($package, $file, $line) = caller;
+			die <<"EOT";
+Unknown function is found at $file line $line.
+Execution of $file aborted due to runtime errors.
+
+If you're a contributor to a project, you may need to install
+some Module::Install extensions from CPAN (or other repository).
+If you're a user of a module, please contact the author.
+EOT
+		}
 		my $method = $1;
 		if ( uc($method) eq $method ) {
 			# Do nothing
@@ -200,6 +219,7 @@ sub preload {
 
 	my $who = $self->_caller;
 	foreach my $name ( sort keys %seen ) {
+		local $^W;
 		*{"${who}::$name"} = sub {
 			${"${who}::AUTOLOAD"} = "${who}::$name";
 			goto &{"${who}::AUTOLOAD"};
@@ -210,12 +230,18 @@ sub preload {
 sub new {
 	my ($class, %args) = @_;
 
+	delete $INC{'FindBin.pm'};
+	{
+		# to suppress the redefine warning
+		local $SIG{__WARN__} = sub {};
+		require FindBin;
+	}
+
 	# ignore the prefix on extension modules built from top level.
 	my $base_path = Cwd::abs_path($FindBin::Bin);
 	unless ( Cwd::abs_path(Cwd::cwd()) eq $base_path ) {
 		delete $args{prefix};
 	}
-
 	return $args{_self} if $args{_self};
 
 	$args{dispatch} ||= 'Admin';
@@ -268,8 +294,10 @@ END_DIE
 sub load_extensions {
 	my ($self, $path, $top) = @_;
 
+	my $should_reload = 0;
 	unless ( grep { ! ref $_ and lc $_ eq lc $self->{prefix} } @INC ) {
 		unshift @INC, $self->{prefix};
+		$should_reload = 1;
 	}
 
 	foreach my $rv ( $self->find_extensions($path) ) {
@@ -277,12 +305,13 @@ sub load_extensions {
 		next if $self->{pathnames}{$pkg};
 
 		local $@;
-		my $new = eval { require $file; $pkg->can('new') };
+		my $new = eval { local $^W; require $file; $pkg->can('new') };
 		unless ( $new ) {
 			warn $@ if $@;
 			next;
 		}
-		$self->{pathnames}{$pkg} = delete $INC{$file};
+		$self->{pathnames}{$pkg} =
+			$should_reload ? delete $INC{$file} : $INC{$file};
 		push @{$self->{extensions}}, &{$new}($pkg, _top => $top );
 	}
 

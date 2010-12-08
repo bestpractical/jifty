@@ -155,6 +155,7 @@ inc/Module/Install/Win32.pm
 inc/Module/Install/WriteAll.pm
 lib/Jifty.pm
 lib/Jifty/Action.pm
+lib/Jifty/Action/AboutMe.pm
 lib/Jifty/Action/Autocomplete.pm
 lib/Jifty/Action/Record.pm
 lib/Jifty/Action/Record/Bulk.pm
@@ -441,7 +442,6 @@ share/web/static/css/main.css
 share/web/static/css/nav.css
 share/web/static/css/notices.css
 share/web/static/css/ordered-list.css
-share/web/static/css/thickbox.css
 share/web/static/css/uploads.css
 share/web/static/css/yui/calendar/calendar-core.css
 share/web/static/css/yui/calendar/calendar.css
@@ -689,6 +689,7 @@ t/TestApp-Notifications/etc/config.yml
 t/TestApp-Notifications/lib/TestApp/Notification/Foo.pm
 t/TestApp-Notifications/lib/TestApp/Notifications/Notification.pm
 t/TestApp-Notifications/t/encoding.t
+t/TestApp-Notifications/t/generated-urls.t
 t/TestApp-Plugin-ActorMetadata/bin/jifty
 t/TestApp-Plugin-ActorMetadata/etc/config.yml
 t/TestApp-Plugin-ActorMetadata/lib/TestApp/Plugin/ActorMetadata/Model/Comment.pm
@@ -870,6 +871,7 @@ t/TestApp/t/config/02-individual.t
 t/TestApp/t/config/02-individual.t-config.yml
 t/TestApp/t/config/03-nosubtest.t
 t/TestApp/t/config/test_config.yml
+t/TestApp/t/continuation-by-hand.t
 t/TestApp/t/crud.t
 t/TestApp/t/css_content_type.t
 t/TestApp/t/i18n-standalone.t
