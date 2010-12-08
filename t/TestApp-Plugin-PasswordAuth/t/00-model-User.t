@@ -70,9 +70,9 @@ ok($id, "Created with grey");
 
 my ($res, $msg) = $r->set_password('foo');
 TODO: {
-local $TODO = 'huh?';
+local $TODO = 'Validators are applied too late - [rt.cpan.org #63750]';
 ok(!$res, 'unable to set password shorter than 6');
-like($msg, qr/at least six/);
+like($msg||'', qr/at least six/);
 ok($r->password_is('secret'), 'password not changed');
 };
 
@@ -82,15 +82,15 @@ ok($r->password_is('secret'), 'password not changed');
                           password => '',
                           swallow_type => 'african' );
 
-ok(!$id, "Can't creaet without password");
+ok(!$id, "Can't create without password");
 like($msg, qr/at least six/);
 
 ($id, $msg) = $r->create( name => 'jesse3',
                           email => 'jrv2@orz',
                           color => 'gray',
-                          password => '',
+                          password => 'short',
                           swallow_type => 'african' );
 
-ok(!$id, "Can't create without password");
+ok(!$id, "Can't create with a short password");
 like($msg, qr/at least six/);
 
