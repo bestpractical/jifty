@@ -444,7 +444,7 @@ sub test_config {
             ],
             Mailer => 'Jifty::Test',
             MailerArgs => [],
-            LogLevel => 'WARN',
+            LogLevel => $ENV{JIFTY_TEST_LOGLEVEL} || 'FATAL',
             TestMode => 1,
         }
     };
