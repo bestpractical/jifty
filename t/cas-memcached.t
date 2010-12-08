@@ -1,7 +1,8 @@
 use strict;
 use warnings;
 
-use Jifty::Test;
+use Test::More;
+require Jifty::Test;
 
 eval "use Cache::Memcached";
 plan skip_all => "Cache::Memcached required for testing CAS memcache store" if $@;
@@ -11,7 +12,9 @@ require IO::Socket::INET;
 plan skip_all => "Testing CAS memcached store requires a memcached running on the default port"
     unless IO::Socket::INET->new('127.0.0.1:11211');
 
-plan tests => 17;
+# We want to do the import since it loads up Jifty and triggers CCJS's early
+# generation trying to use memcached
+Jifty::Test->import(tests => 17);
 
 my $data    = "a" x (1024*10);
 my $databig = "a" x (1024*1024*2);
