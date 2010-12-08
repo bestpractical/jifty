@@ -237,7 +237,7 @@ sub new_frame {
 =head2 push_frame -> frame
 
 Creates and pushes a frame onto the render stack. Mason's halos do not support
-"around"ing a component, so we fake it with an explicit stack.
+I<arounding> a component, so we fake it with an explicit stack.
 
 This also triggers C<halo_pre_template> for plugins adding halo data.
 
@@ -266,7 +266,7 @@ sub push_frame {
 =head2 pop_frame -> frame
 
 Pops a frame off the render stack. Mason's halos do not support
-"around"ing a component, so we fake it with an explicit stack.
+C<arounding> a component, so we fake it with an explicit stack.
 
 This also triggers C<halo_post_template> for plugins adding halo data.
 

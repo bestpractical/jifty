@@ -49,7 +49,7 @@ A B</collection> is a class representing all or a subset of the records stored i
 =item constructor
 
 A property of a L</parameter>; the action B<must> have an argument value for
-this paramater in order to be constructed.  This is different from
+this parameter in order to be constructed.  This is different from
 L</mandatory>, in that the user can leave mandatory fields empty.  For
 instance, the C<id> of a L<Jifty::Action::Record::Update> is a constructor.
 See L<Jifty::Action>.

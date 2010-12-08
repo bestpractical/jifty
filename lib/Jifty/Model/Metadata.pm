@@ -34,7 +34,7 @@ use base qw( Jifty::Record );
 
 =head2 table
 
-Schemas are stored in the table C<_jifty_metadata>.
+Each schema is stored in the table C<_jifty_metadata>.
 
 =cut
 

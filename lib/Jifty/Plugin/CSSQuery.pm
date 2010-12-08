@@ -63,11 +63,11 @@ L<http://jifty.org>, L<http://dean.edwards.name/my/cssQuery/>
 
 This plugin is Copyright 2007 Handlino, Inc.
 
-It is available for modication and distribution under the same terms
+It is available for modification and distribution under the same terms
 as Perl itself.
 
 cssQuery is available for use in all personal or commercial projects
-under both MIT and GPL licenses. This means taht you can choose the
+under both MIT and GPL licenses. This means that you can choose the
 license that best suits your project and use it accordingly. See
 L<http://jifty.com/> for current information on cssQuery copyrights
 and licensing.

@@ -12,7 +12,7 @@ Jifty::Plugin::REST - Add REST web services to your app
 
 =head1 DESCRIPTION
 
-A RESTian web services API for your Jifty app.
+A RESTful web services API for your Jifty app.
 
 =head1 USAGE
 
@@ -23,7 +23,7 @@ Add the following to your site_config.yml
      - REST: {}
 
 See the URL /=/help in your Jifty app for more information about
-how to access the RESTian resources.
+how to access the REST resources.
 
 =head1 MISC
 

@@ -77,7 +77,7 @@ killing the child pid, and let parent pid create a new one
 
 =item --sigready SIGNAL
 
-Sets the signal number that shouldbe sent to the server's parent
+Sets the signal number that should be sent to the server's parent
 process when the server is ready to accept connections.
 
 =item --quiet

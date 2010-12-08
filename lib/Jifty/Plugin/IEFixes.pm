@@ -23,7 +23,7 @@ Jifty::Plugin::IEFixes - Add javascript files for IE
         cdn: 'http://yourcdn.for.static.prefix/'
 
 
-  In your app, if you want to add more ie-specific js:
+  In your app, if you want to add more IE-specific js:
 
     my ($ief) = Jifty->find_plugin('Jifty::Plugin::IEFixes')
     $ief->add_javascript( qw(file.js) );

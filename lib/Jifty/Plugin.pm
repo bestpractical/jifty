@@ -260,7 +260,7 @@ sub bootstrapper {
 
 =head2 upgrade_class
 
-Returns the name of the class that can be used to upgrade the database models and schema (such as adding new data, fixing default values, and renaming columns). This normally returns the plugin's class name with C<::Upgrade> added to the end. Plugin upgraders can be built in exactly the same was as application upgrade classes.
+Returns the name of the class that can be used to upgrade the database models and schema (such as adding new data, fixing default values, and renaming columns). This normally returns the plugin's class name with C<::Upgrade> added to the end. Plugin upgrade classes can be built in exactly the same was as application upgrade classes.
 
 See L<Jifty::Upgrade>.
 

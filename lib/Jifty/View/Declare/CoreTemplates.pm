@@ -33,7 +33,7 @@ This library contains templates that Jifty can't function without:
 
 =for later 
 
-These templates are still in masonland. we're doign something wrong with escaping in them
+These templates are still in Masonland. we're doing something wrong with escaping in them
 
 
 template '__jifty/subs' => sub {

@@ -4,7 +4,7 @@ Jifty::Manual::Actions - 讓 Jifty 做事
 
 =head1 DESCRIPTION
 
-C<Jifty::Action> 抽象敘述了於編譯時期 (complie time) 宣告參數的想法
+C<Jifty::Action> 抽象敘述了於編譯時期 (compile time) 宣告參數的想法
 (L<"parameters"|Jifty::Manual::Glossary/parameter>).
 
 在執行時期 (runtime)，動作 (Action) 會收集使用者輸入資料做為參數
@@ -268,7 +268,7 @@ where C<'post_blog'> is the moniker for your post page action object.
 In fact, that's exactly how actions "return" values to other components 
 in your application.
 
-Mutiple action "return values" are possible and arbitrary data structures
+Multiple action "return values" are possible and arbitrary data structures
 can be passed too:
 
     $self->result->content( keys   => $keys );
@@ -377,7 +377,7 @@ of changes to many records at once.
 =head1 ACTIONS AS WEB SERVICES
 
 Your actions are also automatically published as web services.
-Clients can POST requsets, usually using the YAML or JSON request
+Clients can POST requests, usually using the YAML or JSON request
 format.  See C<bin/service> for a trivial generic webservice client.
 
 (XXX TODO More about webservices)

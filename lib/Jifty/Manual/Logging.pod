@@ -12,7 +12,7 @@ Jifty uses the Log4perl module for logging messages, so you can define your own
 log4perl config for logging.
 
 You can define different behaviour for different log levels. For example,
-you can send mail to administrator when error occured, or add color to
+you can send mail to administrator when error occurred, or add color to
 warning messages that are logged to the terminal.
 
 =head1 Config from config.yml

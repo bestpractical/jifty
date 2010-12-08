@@ -264,7 +264,7 @@ Returns a list of plugin instances that hook into RequestInspector.
 
 =head2 new_request_inspection
 
-Instantiates a new request inspection, setting up some defalt values.
+Instantiates a new request inspection, setting up some default values.
 
 =head2 should_handle_request CGI
 

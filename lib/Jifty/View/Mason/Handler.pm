@@ -165,7 +165,7 @@ sub escape_uri {
 =head2 template_exists COMPONENT
 
 Checks if the C<COMPONENT> exists, or if C<COMPONENT/index.html>
-exists, and returns which one did.  If neither did, it seaches for
+exists, and returns which one did.  If neither did, it searches for
 C<dhandler> components which could match, returning C<COMPONENT> if it
 finds one.  Finally, if it finds no possible component matches,
 returns undef.
@@ -239,7 +239,7 @@ sub request_args {
 
 =head2 create_cache_directories
 
-Attempts to create our app's mason cache directory.
+Attempts to create our application's mason cache directory.
 
 =cut
 

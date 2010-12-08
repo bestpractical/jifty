@@ -202,7 +202,7 @@ sub psgi_app {
 
 =head2 handle_request
 
-When your server processs (be it Jifty-internal, FastCGI or anything
+When your server process (be it Jifty-internal, FastCGI or anything
 else) wants to handle a request coming in from the outside world, you
 should call C<handle_request>.
 

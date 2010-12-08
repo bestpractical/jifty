@@ -43,7 +43,7 @@ run.
 =head3 Use Shell::Command
 
 Shell::Command has a number of functions which work like common shell
-file commands such as touch, cp and mv.  They are battle tested and
+file commands such as C<touch>, C<cp> and C<mv>.  They are battle tested and
 cross-platform.  Use them instead of coding your own.
 
 For example, instead of this:

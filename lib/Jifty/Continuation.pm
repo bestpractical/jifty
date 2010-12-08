@@ -237,7 +237,7 @@ sub call {
 Returns from the continuation by pulling out the stored request, and
 setting that to be the active request.  This shouldn't need to be
 called by hand -- use L<Jifty::Request/return_from_continuation>,
-which ensures that all requirements are ment before it calls this.
+which ensures that all requirements are met before it calls this.
 
 =cut
 

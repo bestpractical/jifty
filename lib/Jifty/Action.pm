@@ -125,7 +125,7 @@ sub new {
 
         # XXX Should this be pickier about sanitized monikers?
 
-        # Monkiers must not contain semi-colons
+        # Monikers must not contain semi-colons
         if ( $args{'moniker'} =~ /[\;]/ ) {
 
             # Replace the semis with underscores and warn
@@ -1067,7 +1067,7 @@ sub _autocomplete_argument {
 Given an L<parameter|Jifty::Manual::Glossary/parameter> name, returns the
 list of valid values for it, based on its C<valid_values> field.
 
-This method returns a hash referenece with a C<display> field for the string
+This method returns a hash reference with a C<display> field for the string
 to display for the value, and a C<value> field for the value to actually send
 to the server.
 
@@ -1141,7 +1141,7 @@ sub _values_for_field {
             # Check for a collection spec
             if ( $v->{'collection'} ) {
 
-                # Load the display_from/value_from paramters
+                # Load the display_from/value_from parameters
                 my $disp = $v->{'display_from'};
                 my $val  = $v->{'value_from'};
 
@@ -1305,7 +1305,7 @@ sub deny {
 =head2 Canonicalization
 
 If you wish to have the data in a field normalized into a particular
-format (such as changing a date into YYYY-MM-DD format, adding commas
+format (such as changing a date into C<YYYY-MM-DD> format, adding commas
 to numbers, capitalizing words, or whatever you need) you can do so
 using a canonicalizer.
 

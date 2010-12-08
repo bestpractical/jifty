@@ -13,7 +13,7 @@ Jifty::View::Declare::Page::NewStyle - new style page wrapper to simplify custom
 
 This library is a replacement for L<Jifty::View::Declare::Page>.
 That is in Jifty for a while and can not be replaced with something
-completly different because of backwards compatibility.
+completely different because of backwards compatibility.
 
 When you declare a L<Jifty::View::Declare> template that is a page, for example:
 
@@ -32,7 +32,7 @@ Page classes implement such layouts.
 It's very hard to extended L<Jifty::View::Declare::Page> class as
 it's written in such a way that forces you to copy&paste some
 internals from the class to make overriden method work and don't
-breake things.
+break things.
 
 I think this implementation is much better thing. To use this class
 as a base for all your pages you can just add this plugin to your app
@@ -174,13 +174,13 @@ sub init {
 Renders whole page from doctype till closing html tag. Takes
 no arguments.
 
-This method drives rendering of the page. Page is splitted
+This method drives rendering of the page. Page is split
 into three major parts: header, body and footer. Each is
 implemented as corresponding method with 'render_' prefix.
 
 It worth to note that order of rendering is changed and
 header is rendered after the body to allow you define page
-title, rss feeds and other thing in content. Read more
+title, RSS feeds and other things in content. Read more
 about this below in L</render_header> and L</instrument_content>.
 
 =cut
@@ -468,7 +468,7 @@ sub render_doctype {
 =head3 render_title_inhead
 
 Should output nothing but a title tag what will be placed into the head.
-Title is passed as onyl argument. Arguments are combined.
+Title is passed as only argument. Arguments are combined.
 
 =cut
 

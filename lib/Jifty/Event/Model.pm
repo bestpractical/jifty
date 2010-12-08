@@ -24,7 +24,7 @@ As yet, this functionality is unused.
 =head2 new
 
 creates a new L<Jifty::Event::Model> object.  If C<PubSub> is enabled for your application, 
-checks to make sure that this event has the following (underdocumented) parameters:
+checks to make sure that this event has the following (under-documented) parameters:
 
  record_id record_class action_class action_arguments timestamp result as_hash_before as_hash_after current_user_id
 

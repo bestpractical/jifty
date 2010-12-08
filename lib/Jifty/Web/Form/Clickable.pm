@@ -86,7 +86,7 @@ See L<Jifty::Request::Mapper/query_parameters> for details.
 =item submit
 
 A list of actions to run when the object is clicked.  This may be an
-array refrence or a single element; each element may either be a
+array reference or a single element; each element may either be a
 moniker or, a L<Jifty::Action> or a hashref with the keys 'action' and 'arguments'. 
 An undefined value submits B<all> actions in the form, an empty list 
 reference (the default) submits none.
@@ -274,7 +274,7 @@ L<Jifty::Request::Mapper> for details.
 =head2 submit [VALUE]
 
 Gets or sets the list of actions to run when the object is clicked.
-This may be an array refrence or a single element; each element may
+This may be an array reference or a single element; each element may
 either be a moniker or a L<Jifty::Action>.  An undefined value submits
 B<all> actions in the form, an empty list reference (the default)
 submits none.
@@ -287,7 +287,7 @@ otherwise.
 
 =head2 parameter KEY VALUE
 
-Sets the given HTTP paramter named C<KEY> to the given C<VALUE>.
+Sets the given HTTP parameter named C<KEY> to the given C<VALUE>.
 
 =cut
 
@@ -644,7 +644,7 @@ sub generate {
 
 =head2 register_action ACTION
 
-Reisters the action if it isn't registered already, but only on the
+Registers the action if it isn't registered already, but only on the
 link.  That is, the registration will not be seen by any other buttons
 in the form.
 

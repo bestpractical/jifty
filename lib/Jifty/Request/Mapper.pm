@@ -26,7 +26,7 @@ Extended syntax for generating query parameters.  This is used by
 L<Jifty::Web::Form::Clickable> for its C<parameters> argument, as well
 as for C<results> of continuations.
 
-Possible syntaxes for each key => value pair in the C<HASH> are:
+Possible formats for each key => value pair in the C<HASH> are:
 
 =over
 
@@ -110,7 +110,7 @@ sub query_parameters {
 
 Responsible for doing the actual mapping that L</query_parameters>
 above sets up.  That is, takes magical query parameters and extracts
-the values they were ment to have.
+the values they were meant to have.
 
 =over
 

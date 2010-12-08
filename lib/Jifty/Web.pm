@@ -167,7 +167,7 @@ sub url {
 =head3 serial 
 
 Returns a unique identifier, guaranteed to be unique within the
-runtime of a particular process (ie, within the lifetime of Jifty.pm).
+runtime of a particular process (i.e., within the lifetime of Jifty.pm).
 There's no sort of global uniqueness guarantee, but it should be good
 enough for generating things like moniker names.
 
@@ -1266,7 +1266,7 @@ The L<add_javascript> method will append the files to javascript_libs.
 If you need a different order, you'll have to massage javascript_libs
 directly.
 
-Jifty will look for javascript libraries under share/web/static/js/ by
+Jifty will look for javascript libraries under F<share/web/static/js/> by
 default as well as any plugin static roots.
 
 =cut
@@ -1312,7 +1312,7 @@ Removes the given files from C<< Jifty->web->javascript_libs >>.
 
 This is intended for plugins or applications that provide another version of
 the functionality given in our default JS libraries. For example, the CSSQuery
-plugin will get rid of the cssQuery-jQuery.js back-compat script.
+plugin will get rid of the F<cssQuery-jQuery.js> back-compat script.
 
 =cut
 
@@ -1327,7 +1327,7 @@ sub remove_javascript {
 
 =head3 add_external_javascript URL1, URL2, ...
 
-Pushes urls onto C<< Jifty->web->external_javascript_libs >>
+Pushes URLs onto C<< Jifty->web->external_javascript_libs >>
 
 =cut
 

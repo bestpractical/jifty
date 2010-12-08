@@ -130,8 +130,8 @@ that is, given a C<before plugin qr/^Jifty::Plugin::Auth::/> and both
 a C<Jifty::Plugin::Auth::Basic> and a C<Jifty::Plugin::Auth::Complex>,
 the rules will be placed before the first.
 
-C<after app> inserts the folowing C<RULES> after the application's
-dispatcher rules, and is identical to, but hopefuly clearer than,
+C<after app> inserts the following C<RULES> after the application's
+dispatcher rules, and is identical to, but hopefully clearer than,
 C<< after plugin Jifty => RULES >>.
 
 C<RULES> may either be a single C<before>, C<on>, C<under>, or
@@ -754,7 +754,7 @@ sub _do_tangent {
 
 =head2 _do_stream CODE
 
-THe method is called by the dispatcher internally. You shouldn't need to.
+The method is called by the dispatcher internally. You shouldn't need to.
 
 Take a coderef that returns a PSGI streamy response code.
 
@@ -918,7 +918,7 @@ as the first match is found.
 Hashref conditions are conjunctions: each non-empty hash key triggers a
 separate C<_match_$keyname> call on the dispatcher object. For example, a
 C<method> key would call C<_match_method> with its value to be matched against.
-After each subcondition is tried (in lexographical order) and succeeded,
+After each subcondition is tried (in lexicographical order) and succeeded,
 the value associated with the C<''> key is matched again as the condition.
 
 =cut

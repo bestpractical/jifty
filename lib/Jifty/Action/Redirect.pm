@@ -16,7 +16,7 @@ Jifty::Action::Redirect - Redirect the browser
 
 =head1 DESCRIPTION
 
-Given a URL, this action forces Jifty to perform a redirect to thast URL after processing the rest of the request.
+Given a URL, this action forces Jifty to perform a redirect to that URL after processing the rest of the request.
 
 =cut
 

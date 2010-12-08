@@ -9,7 +9,7 @@ what happens during the request processing phase.
 
 =head1 THE HANDLER
 
-As soon as a http request (whatever the method might be, like GET,
+As soon as a HTTP request (whatever the method might be, like GET,
 POST, PUT, ...) arrives at Jifty's border, the request is forwarded to
 a handler. By default, C<< Jifty->handler >> points to a L<Jifty::Handler>
 object that is responsible for handling an incoming request. The
@@ -36,7 +36,7 @@ will become possible.
 =item construct a request and response object
 
 Using the L<CGI> object, a L<Jifty::Request> object is constructed and
-its data is populated with the CGI's data. The request can be reached
+its data is populated with the CGI object's data. The request can be reached
 later using C<< Jifty->web->request >>. The request holds information
 about all actions involved, all page fragments, contains state
 variables and arguments (usually GET/POST parameters).
@@ -59,7 +59,7 @@ housed in a C<static> directory, this content is handled.
 
 =item setup the session
 
-Based on a cookie that is sent with every http response, the current
+Based on a cookie that is sent with every HTTP response, the current
 user is assigned a unique session. The session is stored in a
 L<Jifty::Web::Session> object and can be accessed using the
 C<< Jifty->web->session >> method.

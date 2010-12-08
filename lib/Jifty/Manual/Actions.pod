@@ -277,7 +277,7 @@ where C<'post_blog'> is the moniker for your post page action object.
 In fact, that's exactly how actions "return" values to other components 
 in your application.
 
-Mutiple action "return values" are possible and arbitrary data structures
+Multiple action "return values" are possible and arbitrary data structures
 can be passed too:
 
     $self->result->content( keys   => $keys );
@@ -386,7 +386,7 @@ of changes to many records at once.
 =head1 ACTIONS AS WEB SERVICES
 
 Your actions are also automatically published as web services.
-Clients can POST requsets, usually using the YAML or JSON request
+Clients can POST requests, usually using the YAML or JSON request
 format.  See C<bin/service> for a trivial generic webservice client.
 
 (XXX TODO More about webservices)

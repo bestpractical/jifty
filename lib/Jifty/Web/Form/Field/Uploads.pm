@@ -10,7 +10,7 @@ Jifty::Web::Form::Field::Uploads - File uploads field
 =head1 DESCRIPTION
 
 An input field that renders using C<< <input type="file" /> >>.  The
-argument value that the action recieves from this field via
+argument value that the action receives from this field via
 L<Jifty::Action/argument_value> will be a filehandle, which can be
 read in the usual ways.
 

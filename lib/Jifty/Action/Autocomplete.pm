@@ -51,7 +51,7 @@ sub arguments {
 =head2 take_action
 
 Find the submitted action in the L<Jifty::Request> named by the
-C<action> above, and ask it for autocompletion possibilites for the
+C<action> above, and ask it for autocompletion possibilities for the
 L<argument> in question.
 
 =cut

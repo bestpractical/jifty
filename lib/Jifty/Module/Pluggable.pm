@@ -28,7 +28,7 @@ Module::Pluggable used to to use UNIVERSAL::require but I switched
 because I was trying to get rid of dependencies.
 
 I farmed the requiring stuff off to it's own _require method in order to
-make it easy to subclass so that people could ovveride how the require
+make it easy to subclass so that people could override how the require
 was done.
 
 

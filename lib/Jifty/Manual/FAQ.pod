@@ -6,7 +6,7 @@ Jifty::Manual::FAQ - Frequently Answered Questions
 
 =head2  I need to make a web based program, is jifty mature enough?
 
-We built hiveminder.com with it.
+We built L<hiveminder.com> with it.
 
 =head2 What databases does Jifty support?
 

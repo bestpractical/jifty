@@ -30,7 +30,7 @@ TODO: this should also rebind STDIN/STDOUT in the per-request hook.
 
 =head2 wrap APP
 
-Wraps the provided Plack app in the compat layer. You'll never need to call
+Wraps the provided Plack app in the compatibility layer. You'll never need to call
 this yourself.
 
 =cut

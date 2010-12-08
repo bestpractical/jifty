@@ -174,7 +174,7 @@ is called in the mail and results in accepting the user.
 
 =item F</let/reset_lost_password>
 
-enabled by the passwordreminder template, this template allows a user
+enabled by the F</passwordreminder> template, this template allows a user
 to reenter a password for future use.
 
 =back

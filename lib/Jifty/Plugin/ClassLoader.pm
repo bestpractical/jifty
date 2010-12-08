@@ -5,7 +5,7 @@ package Jifty::Plugin::ClassLoader;
 
 =head1 NAME
 
-Jifty::Plugin::ClassLoader - Autogenerates application classes
+Jifty::Plugin::ClassLoader - Automatically generates application classes
 
 =head1 DESCRIPTION
 
@@ -53,7 +53,7 @@ auto-generated:
 
 =item I<Application>
 
-An empty application base class is created that doen't provide any
+An empty application base class is created that doesn't provide any
 methods or inherit from anything.
 
 =item I<Application>::Record

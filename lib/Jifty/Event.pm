@@ -91,7 +91,7 @@ sub republish {
 
 =head2 encode_queries(@query)
 
-Encode queries into some sort of canonical md5 encoding.
+Encode queries into some sort of canonical MD5 encoding.
 
 =cut
 

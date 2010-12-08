@@ -38,7 +38,7 @@ default is '/', 5 and '/__jifty/config', respectively
 after_restart_url is the url where we will redirect to after restart
 wait_seconds are the seconds that we wait for before redirecting
 config_url is the url where we will update the config
-restart_url is the url where we acturally do the restart, with a wait page
+restart_url is the url where we actually do the restart, with a wait page
 setting nav_menu to 0 will stop this plugin from adding anything to your application's navigation menu
 
 

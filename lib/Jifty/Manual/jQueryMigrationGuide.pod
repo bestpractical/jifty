@@ -46,7 +46,7 @@ localize this alias within a closure:
 
 =head1 Jifty API
 
-We re-architechted Jifty's javascript libraries to use jQuery. Especially
+We re-architected Jifty's javascript libraries to use jQuery. Especially
 the internal functions to process form elements.
 
 The old, Prototype-based way is to extend Form object and the
@@ -65,7 +65,7 @@ use directly.
 
 If you've ever written javascript code for your Jifty applications, and
 you'd like to remove the PrototypeJS library, here are some mechanical rules to
-re-write prototypejs-based javascript code with jQuery.
+re-write prototype.js-based javascript code with jQuery.
 
 =head3 Array iteration
 

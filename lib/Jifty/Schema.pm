@@ -7,7 +7,7 @@ use SQL::ReservedWords;
 
 =head1 NAME
 
-Jifty::Schema - Jifty schemas
+Jifty::Schema - generates and upgrades your application's schema
 
 =cut
 
@@ -34,7 +34,7 @@ delete $_SQL_RESERVED{ lc($_) } for (@_SQL_RESERVED_OVERRIDE);
 
 =head2 new
 
-Returns a new Jifty::Schema. Takes no arguments. Will automatically figure out and initialize the models defined in the app's source.
+Returns a new Jifty::Schema. Takes no arguments. Will automatically figure out and initialize the models defined in the application's source.
 
 =cut
 
@@ -49,7 +49,7 @@ sub new {
 
 =head2 _init_model_list
 
-Reads in our application class from the config file and finds all our app's models.
+Reads in our application class from the config file and finds all our application's models.
 
 =cut
 
@@ -92,7 +92,7 @@ sub serialize_current_schema {
 
 =head2 upgrade_schema
 
-Looks at the current schemas as defined by the source and the database and updates the database by adding, dropping, and renaming columns.
+Looks at the current schema as defined by the source code and the database and updates the database by adding, dropping, and renaming columns.
 
 =cut
 

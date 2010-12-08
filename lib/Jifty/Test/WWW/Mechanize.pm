@@ -52,7 +52,7 @@ sub new {
 
 =head2 request
 
-We override mechanize's defualt request method so accept-encoding is
+We override L<WWW::Mechanize>'s default request method so accept-encoding is
 not set to gzip by default.
 
 =cut

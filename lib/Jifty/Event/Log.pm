@@ -33,7 +33,7 @@ sub match {
 
 =head2 render_arguments
 
-All of the data is dumped into the redered arguments, verbatim.
+All of the data is dumped into the rendered arguments, verbatim.
 
 =cut
 

@@ -11,7 +11,7 @@ our $INITIAL_VERSION;
 
 =head1 NAME
 
-Jifty::Upgrade::Internal - Upgrades to Jifty-specific schemas and data
+Jifty::Upgrade::Internal - Upgrades to Jifty-specific schema and data
 
 =head1 UPGRADES
 

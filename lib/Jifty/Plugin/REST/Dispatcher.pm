@@ -53,7 +53,7 @@ Jifty::Plugin::REST::Dispatcher - Dispatcher for REST plugin
 
 =head2 show_help
 
-Shows basic help about resources and formats available via this RESTian interface.
+Shows basic help about resources and formats available via this RESTful interface.
 
 =cut
 
@@ -282,8 +282,8 @@ sub output_format {
 
 =head2 outs PREFIX DATASTRUCTURE
 
-TAkes a url path prefix and a datastructure.  Depending on what content types the other side of the HTTP connection can accept,
-renders the content as yaml, json, javascript, perl, xml or html.
+Takes a url path prefix and a data structure.  Depending on what content types the other side of the HTTP connection can accept,
+renders the content as YAML, JSON, JavaScript, Perl, XML or HTML.
 
 =cut
 
@@ -367,7 +367,7 @@ sub render_as_html {
 
 =head2 html_dump DATASTRUCTURE
 
-Recursively render DATASTRUCTURE as some simple html dls and ols. 
+Recursively render DATASTRUCTURE as some simple HTML C<dl>s and C<ol>s. 
 
 =cut
 
@@ -557,7 +557,7 @@ sub list_model_columns {
 
 =head2 list_model_items MODELCLASS COLUMNNAME
 
-Returns a list of items in MODELCLASS sorted by COLUMNNAME, with only COLUMNAME displayed.  (This should have some limiting thrown in)
+Returns a list of items in MODELCLASS sorted by COLUMNNAME, with only COLUMNNAME displayed.  (This should have some limiting thrown in)
 
 =cut
 
@@ -939,7 +939,7 @@ Returns the action's result.
 TODO, doc the format of the result.
 
 On an invalid action name, throws a C<404>.
-On a disallowed action mame, throws a C<403>. 
+On a disallowed action name, throws a C<403>. 
 On an internal error, throws a C<500>.
 
 =cut

@@ -65,7 +65,7 @@ or just about anything else.
 
 =item I<Application>
 
-An empty application base class is created that doen't provide any
+An empty application base class is created that doesn't provide any
 methods or inherit from anything.
 
 =item I<Application>::Action
@@ -412,7 +412,7 @@ line of code(*).
 working on it.
 
 This method finds all database-backed models and instantiates jifty classes for
-them it returns a list of classnames of the models it created.
+them it returns a list of class names of the models it created.
 
 =cut
 

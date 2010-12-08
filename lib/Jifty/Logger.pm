@@ -13,7 +13,7 @@ Jifty uses the Log4perl module to log error messages. In Jifty
 programs there's two ways you can get something logged:
 
 Firstly, Jifty::Logger captures all standard warnings that Perl
-emits.  So in addition to everying output from perl via the 
+emits.  So in addition to everything output from perl via the 
 warnings pragmas, you can also log messages like so:
 
     warn("The WHAM is overheating!");
@@ -34,7 +34,7 @@ Unless you specify otherwise in the configuration file, Jifty will
 supply a default Log4perl configuration.
 
 The default log configuration that logs all messages to the screen
-(i.e. to STDERR, be that directly to the terminal or to fastcgi's
+(i.e. to STDERR, be that directly to the terminal or to the FastCGI
 log file.)  It will log all messages of equal or higher priority
 to the LogLevel configuration option.
 
@@ -54,7 +54,7 @@ the format of this config file.)
 Note that specifying your own config file prevents the LogLevel
 config option from having any effect.
 
-You can tell Log4perl to check that file perodically for changes.
+You can tell Log4perl to check that file periodically for changes.
 This costs you a little in application performance, but allows
 you to change the logging level of a running application.  You
 need to set LogReload to the frequency, in seconds, that the
@@ -111,7 +111,7 @@ sub new {
 
         # This caller_depth line tells Log4perl to report
         # the error as coming from on step further up the
-        # caller chain (ie, where the warning originated)
+        # caller chain (i.e., where the warning originated)
         # instead of from the $logger->warn line.
         local $Log::Log4perl::caller_depth = $Log::Log4perl::caller_depth + 1;
 

@@ -10,7 +10,7 @@ Jifty::Plugin::LetMe - Plugin for url-based authentication
 
 =head1 DESCRIPTION
 
-This plugin provides dispatcher rules to support jifty's internal
+This plugin provides dispatcher rules to support Jifty's internal
 C<LetMe> url-based authentication.
 
 =cut

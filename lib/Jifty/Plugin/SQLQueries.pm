@@ -96,7 +96,7 @@ __END__
 
 =head1 NAME
 
-Jifty::Plugin::SQLQueries - Inspect your app's SQL queries
+Jifty::Plugin::SQLQueries - Inspect your application's SQL queries
 
 =head1 DESCRIPTION
 

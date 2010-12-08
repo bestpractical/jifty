@@ -6,7 +6,7 @@ use Jifty::View::Declare -base;
 
 =head1 NAME
 
-Jifty::Plugin::TestServerWarnings::View - Test warnings downloader
+Jifty::Plugin::TestServerWarnings::View - Downloads test warnings
 
 =head1 TEMPLATES
 

@@ -9,7 +9,7 @@ Jifty::Everything - Load all of the important Jifty modules at once.
 
 =head1 DESCRIPTION
 
-This package is loaded very early in the processof loading Jifty to bring in all of the wonderful goodies that make up Jifty. If you use L<JIfty>:
+This package is loaded very early in the process of loading Jifty to bring in all of the wonderful goodies that make up Jifty. If you use L<JIfty>:
 
   use Jifty;
 

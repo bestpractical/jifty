@@ -418,7 +418,7 @@ and C<Previous Page> links you now have. Turn off JavaScript or view the page
 in C<lynx>, and notice how the AJAX automatically falls-back to page loads for
 you. All for free, thanks to Jifty!
 
-=head3 Hey, where'd that class come from?
+=head3 Hey, where did that class come from?
 
 You may have wondered about C<MyWeblog::Model::PostCollection>, since there's
 no file called F<PostCollection.pm>. Jifty uses L<Jifty::ClassLoader> to

@@ -14,7 +14,7 @@ All the dispatcher rules jifty needs to support L<Jifty::Authentication::Passwor
 
 =head1 RULES
 
-=head2 before logout
+=head2 C<before logout>
 
 Logout and return home.
 
@@ -30,7 +30,7 @@ before 'logout' => run {
 # Make sure tangents work 
 # Before password reminders, login or signup, let's push the user off to the homepage if they're logged in
 
-=head2 before *
+=head2 C<before *>
 
 Setup the navigation menu for login or logout.
 
@@ -51,7 +51,7 @@ before '*' =>  run {
 
 };
 
-=head2 on qr/^(?:signup|lost_password)$/ 
+=head2 C<on qr/^(?:signup|lost_password)$/>
 
 Redirect to home if logged.
 
@@ -64,7 +64,7 @@ before qr'^/(?:signup|lost_password)$' => run {
     set 'next' => Jifty->web->request->continuation || Jifty::Continuation->new( request => Jifty::Request->new( path => "/login" ) );
 };
 
-=head2 on login
+=head2 C<on login>
 
 Redirect to home if logged.
 
@@ -77,7 +77,7 @@ before qr|^/(?:login)$| => run {
     set 'next' => Jifty->web->request->continuation || Jifty::Continuation->new( request => Jifty::Request->new( path => "/" ) );
 };
 
-=head2 before reset_lost_password
+=head2 C<before reset_lost_password>
 
 Request a password reset.
 
@@ -88,7 +88,7 @@ before qr|(?:reset_lost_password)| => run {
 };
 # Send a password reminder for a lost password
 
-=head2 before passwordreminder
+=head2 C<before passwordreminder>
 
 Request a new password reminder to be sent by email.
 
@@ -101,7 +101,7 @@ before 'passwordreminder' => run {
 };
 
 
-=head2 before signup
+=head2 C<before signup>
 
 Sign up for an account.
 
@@ -114,7 +114,7 @@ before 'signup' => run {
 
 };
 
-=head2 before login
+=head2 C<before login>
 
 Login to your account.
 

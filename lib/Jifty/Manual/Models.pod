@@ -61,7 +61,7 @@ Creating a model has important side effects:
 =back
 
 To get all these things done, Jifty allows to describe the schema
-definition in a simply comprehendable but powerful syntax that looks
+definition in a simply comprehensible but powerful syntax that looks
 more like written text than a programming language. The schema
 definition is made inside the C<MyApp::Model::XXX::Schema> package and
 every single column to get created starts with the word C<column>
@@ -121,7 +121,7 @@ Every time you run the jifty utility with C<schema> as an argument,
 Jifty will keep track on what it has done for you. To get that done,
 the version-number being stored in your application's config file
 C<etc/config.yml> under the key named C<framework/Database/Verson> is
-matched agains your schema definition.
+matched against your schema definition.
 
 To force an update of your schema, simple create a new version number
 in your config file and modify your schema definition by using exactly
@@ -169,7 +169,7 @@ directly deals with the underlying database.
 =item * App::Model::XxxCollection
 
 As the name applies, a collection is a set of typically more than one
-record. Every collection of this class conists of multiple
+record. Every collection of this class consists of multiple
 C<App::Model::Xxx> objects that can get retrieved from your data-store
 without explicit SQL statements, ordered by any criteria you give,
 paged in the fashion you like,
@@ -178,7 +178,7 @@ and iterated sequentially or accessed at random order.
 =item * App::Collection
 
 Every collection of your schemata will have this class as its
-base. Usually this class is autocreated by L<Jifty::ClassLoader>. If
+base. Usually this class is automatically created by L<Jifty::ClassLoader>. If
 you intend to create new features for all of your collection this will
 be your chance to do.
 
@@ -286,7 +286,7 @@ column is used repeatedly.
 
 Every clause is built up by combining its subclauses (if
 any) using the C<entry_aggregator> operator (whose default is I<OR>)
-as a combining operator. Clauses are then I<AND>ed together to yield
+as a combining operator. Clauses are then C<AND>ed together to yield
 the final restriction that is finally used to retrieve the records in
 question.
 

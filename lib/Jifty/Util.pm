@@ -298,7 +298,7 @@ sub _require {
 
 =head2 try_to_require Module
 
-This method works just like L</require>, except that it surpresses the error message
+This method works just like L</require>, except that it suppresses the error message
 in cases where the module isn't found.
 
 =cut
@@ -312,7 +312,7 @@ sub  try_to_require {
 
 =head2 already_required class
 
-Helper function to test whether a given class has already been require'd.
+Helper function to test whether a given class has already been loaded.
 
 =cut
 

@@ -145,7 +145,7 @@ JavaScript usually returns false, the fallback mode is never seen by
 the browser.
 
 When a region is output, it is output with a tiny "region wrapper",
-which serves two purposes: to inform the JavaScript of the existance
+which serves two purposes: to inform the JavaScript of the existence
 of the page region and its default path and variables, and to create a
 unique C<< <div> >> for the fragment to reside in.  The browser reads
 the JavaScript and creates, on the client-side, a model of the nested
@@ -173,7 +173,7 @@ any messages and errors from actions.
 
 =head3 Hidden information that shows after click on a link
 
-It's ofetn required to hide some extra information, a list of objects
+It's often required to hide some extra information, a list of objects
 or something else under a link. User clicks on the link and the
 information you're hiding shows up instead of the link. Regions could
 help you to do this task very easy.
@@ -203,7 +203,7 @@ current region, however value of the argument is overriden.
 
 You can add any arguments you want to this component that may be required
 to show the additional information, for example an id of some object, but
-you should remeber to use this arguments during links generation.
+you should remember to use this arguments during links generation.
 
 Next thing you should do is to add a region to some page:
 

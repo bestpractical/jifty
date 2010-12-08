@@ -15,7 +15,7 @@ Jifty::Web::Form::Field::Date - Add date pickers to your forms
 
 Output date fields with the class 'date'. If the current user's user object has
 a C<calendar_starts_monday> method, and it returns true, the
-'calendar-starts-monday' class is added as well.
+C<calendar-starts-monday> class is added as well.
 
 =cut
 
@@ -35,7 +35,7 @@ sub classes {
 
 =head2 canonicalize_value
 
-If the value is a DateTime, return just the ymd portion of it.
+If the value is a DateTime, return just the C<ymd> portion of it.
 
 =cut
 

@@ -1924,10 +1924,10 @@ if( !Object.prototype.hasOwnProperty ) {
  *
  * Jifty.Effect(element, "Fade", { duration: 2.0 });
  *
- * When called, instantly pefrom a js effect on give element.
+ * When called, instantly perform a js effect on give element.
  *
  * The last arg "option" is a hash. Currently it's only used for
- * specificing callbacks. There are two possible callbacks, before
+ * specifying callbacks. There are two possible callbacks, before
  * and after. You may specify them like this:
  *
  * Jifty.Effect(element, "Fade", { duration: 2.0 }, {

@@ -17,7 +17,7 @@ Jifty::Plugin::Deflater - Handles Accept-Encoding and compression
   Plugins:
     - Deflater: {}
 
-# You should put defalter at the end of the plugins list
+# You should put deflater at the end of the plugins list
 
 =head1 DESCRIPTION
 

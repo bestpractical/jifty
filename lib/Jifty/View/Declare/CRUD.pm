@@ -69,9 +69,9 @@ Basically, you can use this class to do most (and maybe all) of the work you nee
 
 =end pod_coverage
 
-=head2 mount_view MODELCASS VIEWCLASS /path
+=head2 mount_view MODELCLASS VIEWCLASS /path
 
-Call this method in your appliation's view class to add the CRUD views you're looking for. Only the first argument is required.
+Call this method in your application's view class to add the CRUD views you're looking for. Only the first argument is required.
 
 Arguments:
 
@@ -282,7 +282,7 @@ sub edit_columns {
 =head2 create_columns ACTION
 
 Returns a list of all of the columns that this REST view should
-displat for create.  Defaults to L</edit_columns>.
+display for create.  Defaults to L</edit_columns>.
 
 =cut
 

@@ -3,7 +3,7 @@ use strict;
 
 =head1 NAME
 
-Jifty::Upgrade - Superclass for schema/data upgrades to Jifty applicaitons
+Jifty::Upgrade - Superclass for schema/data upgrades to Jifty applications
 
 =head1 SYNOPSIS
 
@@ -32,7 +32,7 @@ Jifty::Upgrade - Superclass for schema/data upgrades to Jifty applicaitons
 
 =head1 DESCRIPTION
 
-C<Jifty::Upgrade> is an abstract baseclass to use to customize schema
+C<Jifty::Upgrade> is an abstract base class to use to customize schema
 and data upgrades that happen.
 
 =cut

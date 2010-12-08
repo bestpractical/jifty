@@ -18,7 +18,7 @@ Jifty::Subs::Render - Helper for subscriptions rendering
 
 =head2 render($id, $callback)
 
-Render all outstanding messges, and call C<$callback> with render
+Render all outstanding messages, and call C<$callback> with render
 mode, region name, and content.
 
 =cut

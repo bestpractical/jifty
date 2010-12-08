@@ -47,7 +47,7 @@ Returns a hashref of metadata.
 
 =head2 key
 
-Retuens the key calculated for this content.
+Returns the key calculated for this content.
 
 =cut
 

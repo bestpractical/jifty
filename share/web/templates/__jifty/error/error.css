@@ -7,7 +7,7 @@ Jifty->web->response->content_type("text/css");
 </%init>
 <%doc>
 
-This exists as a fallback CSS, in case the Jifty app's CSS is causing
+This exists as fallback CSS, in case the Jifty application's CSS is causing
 the error.
 
 </%doc>

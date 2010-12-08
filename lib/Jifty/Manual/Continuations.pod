@@ -52,7 +52,7 @@ the user navigate between multiple pages before returning to the previous page:
 
 Because this C<return> does not carry a result value, you can think of
 it as a form of C<gosub>.  In comparison, ordinary hyperlinks are akin to
-C<goto> staements.
+C<goto> statements.
 
 Sometimes, it may be possible for the user to get to a location
 without having a continuation set.  In that case, clicking on the

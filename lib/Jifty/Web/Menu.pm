@@ -491,7 +491,7 @@ sub render_as_yui_menu {
 =head2 render_as_yui_menubar
 
 Render menubar with YUI menu, suitable for an application's menu.
-It can support arbitary levels of submenu.
+It can support arbitrary levels of submenu.
 
 =cut
 

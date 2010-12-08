@@ -49,7 +49,7 @@ template '/error/_elements/error_text' => sub {
 =head2 wrapper
 
 This exists as a fallback wrapper, in case the error in question is
-caused by the Jifty app's wrapper, for instance.
+caused by the Jifty application's wrapper, for instance.
 
 =cut
 

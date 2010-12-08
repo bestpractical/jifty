@@ -39,7 +39,7 @@ C<create> can be called as either a class method or an object method.
 Takes an array of key-value pairs and inserts a new row into the
 database representing this object.
 
-Override's L<Jifty::DBI::Record> in these ways:
+Overrides L<Jifty::DBI::Record> in these ways:
 
 =over 4
 
@@ -345,7 +345,7 @@ for any allow or denial. See L</The before_access hook>.
 =item 3.
 
 Next, the default implementation returns true if the current user is a
-superuser or a boostrap user.
+superuser or a bootstrap user.
 
 =item 4.
 
@@ -596,7 +596,7 @@ sub _brief_description {'name'}
 
 =head2 null_reference
 
-By default, L<Jifty::DBI::Record> returns C<undef> on non-existant
+By default, L<Jifty::DBI::Record> returns C<undef> on non-existent
 related fields; Jifty prefers to get back an object with an undef id.
 
 =cut
@@ -815,7 +815,7 @@ itself, these use the version found in C<$Jifty::VERSION>.
 =item 2.
 
 Any model defined by your application use the database version
-declared in the configuration. In F<etc/config.yml>, this is lcoated
+declared in the configuration. In F<etc/config.yml>, this is located
 at:
 
   framework:

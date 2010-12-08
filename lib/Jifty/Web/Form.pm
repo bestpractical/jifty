@@ -158,7 +158,7 @@ sub register_action {
 
 =head2 has_action MONIKER
 
-If this form has an action whose monkier is C<MONIKER>, returns
+If this form has an action whose moniker is C<MONIKER>, returns
 it. Otherwise returns undef.
 
 =cut

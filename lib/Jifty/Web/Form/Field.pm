@@ -33,7 +33,7 @@ Jifty::Web::Form::Field - Web input of some sort
 =head1 DESCRIPTION
 
 Describes a form input in a L<Jifty::Action>.
-C<Jifty::Web::Form::Field>s know what action they are on, and aquire
+C<Jifty::Web::Form::Field>s know what action they are on, and acquire
 properties from the L<Jifty::Action> which they are part of.  Each key
 in the L<Jifty::Action/arguments> hash becomes a
 C<Jifty::Web::Form::Field> whose L</name> is that key.
@@ -138,7 +138,7 @@ __PACKAGE__->mk_accessors(@new_fields, map { "_$_" } @semiexposed_fields);
 
 =head2 name [VALUE]
 
-Gets or sets the name of the field.  This is seperate from the name of
+Gets or sets the name of the field.  This is separate from the name of
 the label (see L</label>) and the form input name (see
 L</input_name>), though both default to this name.  This name should
 match to a key in the L<Jifty::Action/arguments> hash.  If this
@@ -152,7 +152,7 @@ Gets or sets the CSS display class applied to the label and widget.
 =head2 type [VALUE]
 
 Gets or sets the type of the HTML <input> field -- that is, 'text' or
-'password'.  Defauts to 'text'.
+'password'.  Defaults to 'text'.
 
 =head2 key_binding VALUE
 
@@ -209,7 +209,7 @@ Gets or sets the preamble located in front of the field.
 =head2 multiple [VALUE]
 
 A boolean indicating that the field is multiple.
-aka. has multiple attribute, which is uselful for select field.
+aka. has multiple attribute, which is useful for select field.
 
 =head2 id 
 
@@ -354,7 +354,7 @@ Gets the current value we should be using for this form field.
 
 If the argument is marked as "sticky" (default) and there is a value for this 
 field from a previous action submit AND that action did not have a "success" 
-response, returns that submit's value. Otherwise, returns the action's argument's 
+response, returns that submit field's value. Otherwise, returns the action's argument's 
 default_value for this field.
 
 =cut
@@ -576,7 +576,7 @@ sub render_widget {
 =head2 canonicalize_value
 
 Called when a value is about to be displayed. Can be overridden to, for example,
-display only the yyyy-mm-dd portion of a DateTime.
+display only the C<YYYY-MM-DD> portion of a L<DateTime>.
 
 =cut
 
@@ -646,7 +646,7 @@ sub render_value {
 
 Renders the div tag and javascript necessary to do autocompletion for
 this form field. Deprecated internally in favor of L</autocomplete_javascript>,
-but kept for backwards compatability since there exists external code that uses
+but kept for backwards compatibility since there exists external code that uses
 it.
 
 =cut

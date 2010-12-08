@@ -6,7 +6,7 @@ Jifty::Manual::ObjectModel -- An overview of the Jifty object model
 
 Jifty applications are generally built in a similar way. There's no reason
 you I<need> to use the model we've built, but we find it a reasonably
-ok way to do things.
+OK way to do things.
 
 This document should serve as a roadmap to the Jifty class library, as 
 well as an introduction to the way Jifty applications are put together.
@@ -43,10 +43,10 @@ on the fly. It's always possible to I<actually> create these libraries
 when you need to customize the default behavior, but we work really
 hard to make sure you don't need to.
 
-Right now, Jifty is autocreating libraries, static web pages and web
+Right now, Jifty is automatically creating libraries, static web pages and web
 templates.
 
-We're not 100% satisfied with how Jifty autocreates web templates and
+We're not 100% satisfied with how Jifty automatically creates web templates and
 static pages and are working to redesign that.
 
 The library you I<see> when creating a Jifty app is:

@@ -80,7 +80,7 @@ L<arguments|Jifty::Manual::Glossary/arguments>, and an implementation
 class.  By default, all actions that are submitted are run; it is
 possible to only mark a subset of the submitted actions as "active",
 and only the active actions will be run.  These will eventually become
-full-fledge L<Jifty::Action> objects.
+full-fledged L<Jifty::Action> objects.
 
 =item state variables
 
@@ -163,8 +163,8 @@ independent fragments.  See L<Jifty::Web::PageRegion>.
 
 =head2 BUILD PARAMHASH
 
-Creates a new request object.  For each key in the I<PARAMHASH>, the
-method of that name is called, with the I<PARAMHASH>'s value as its
+Creates a new request object.  For each key in the C<PARAMHASH>, the
+method of that name is called, with the C<PARAMHASH>'s value as its
 sole argument.
 
 =cut
@@ -586,7 +586,7 @@ sub parse_form_field_name {
 
 =head2 webform_to_data_structure HASHREF
 
-Converts the data from a webform's %args to the datastructure that
+Converts the data from a webform's %args to the data structure that
 L<Jifty::Request> uses internally.
 
 XXX TODO: ALEX: DOC ME
@@ -753,7 +753,7 @@ sub call_continuation {
 Returns from the current continuation, if there is one.  If the
 request path doesn't match, we call the continuation again, which
 should redirect to the right place.  If we have to do this, we return
-true, which should be taken as a sign to not process the reqest
+true, which should be taken as a sign to not process the request
 further.
 
 =cut

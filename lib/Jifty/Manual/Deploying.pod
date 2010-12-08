@@ -167,7 +167,7 @@ You may want to adjust the configuration of the mailer you are using. See L<Jift
 
 =item Plugins
 
-You may want to disable plugins you've been using in your development that you don't ened in production. In general, if these plugins are well-behaved this isn't necessary, but you can provide yourself with extra insurance in case they are not.
+You may want to disable plugins you've been using in your development that you don't need in production. In general, if these plugins are well-behaved this isn't necessary, but you can provide yourself with extra insurance in case they are not.
 
 You can disable them without removing them from the file by commenting them out using the Perl-style "#" comment mark.
 
@@ -189,7 +189,7 @@ If you want to improve the performance of your server, you may want your main we
 
 Your application configuration may have additional changes that need to be made for your application to operate properly in a production environment.
 
-Make sure to check over all the settings to make sure they will work in your produciton environment to save yourself headaches later.
+Make sure to check over all the settings to make sure they will work in your production environment to save yourself headaches later.
 
 =back
 
@@ -263,11 +263,11 @@ Once you have done all of the above, your application should be ready to use at 
 
 =head2 Updating the Production Server
 
-After you've made some collection of updates to your Jifty application, you'll then need to install those changes onto your server and prepr your application to use the changes.
+After you've made some collection of updates to your Jifty application, you'll then need to install those changes onto your server and prepare your application to use the changes.
 
 This documentation assumes a "cold" upgrade with the application offline during the duration of the process. A future version of this document might also include instructions for performing a "hot" upgrade without taking the server offline.
 
-You can do  his with the following steps:
+You can do this with the following steps:
 
 =over
 
@@ -309,7 +309,7 @@ Remember, shutdown all Jifty application processes before continuing, or bad thi
 
 =head4 Shutting Down the Server
 
-This will involve a two step process. First, you will want to shutodwn your web server. The second is to shutdown the Jifty server. If you are using the built-in Jifty server, you may do this by running:
+This will involve a two step process. First, you will want to shutdown your web server. The second is to shutdown the Jifty server. If you are using the built-in Jifty server, you may do this by running:
 
   bin/jifty server --stop
 
@@ -376,7 +376,7 @@ Again, you need to look for any configuration updates that need to adjusted. Thi
 
 =head3 Clear Temporary/Cached Files
 
-This step is important to prevent strange issues from occuring. You remove all files from the following directories:
+This step is important to prevent strange issues from occurring. You remove all files from the following directories:
 
 =over
 

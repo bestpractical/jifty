@@ -55,7 +55,7 @@ to catch the file , in your C<take_action> method:
 
     }
 
-=head2 Use PostgreSQL insteads of default SQLite database.
+=head2 Use PostgreSQL instead of the default SQLite database.
 
 You need to modify your F<etc/config.yml> file.
 
@@ -199,11 +199,11 @@ like this:
 
 This approach is not really accurate, if you render this field in a
 form, then the defer value is evaluated by the time of rendering,
-which might be way eariler then the creation of record. However, it is
+which might be way earlier then the creation of record. However, it is
 the easiest one.
 
-If you're using the newly recommeded C<JIfty::DBI::Record schema {}>
-to declare schemas, you might find this trick not working at the moment.
+If you're using the newly recommended C<JIfty::DBI::Record schema {}>
+to declare your schema, you might find this trick not working at the moment.
 Please override model's C<before_create> method instead:
 
     sub before_create {
@@ -254,12 +254,12 @@ Finally, you can also allow or deny specific actions in the
 dispatcher, to limit who is able to perform what actions -- see
 L<Jifty::API>.
 
-=head2 Run my Jifty app as fastcgi in Apache/Lighttpd ?
+=head2 Run my Jifty app as FastCGI in Apache/Lighttpd ?
 
-Jifty provides a really simple way to run the application as a fastcgi
-server. The complete instructions and examples are in C<'jifty help
-fastcgi'> for both Apache servers and Lighttpd servers. (Please C<cd> to
-your app dir before running this command.)
+Jifty provides a really simple way to run the application as a FastCGI
+server. The complete instructions and examples are in
+C<jifty help FastCGI> for both Apache servers and Lighttpd servers.
+(Please C<cd> to your app directory before running this command.)
 
 You'll have to install C<CGI::Fast> and C<FCGI> module for this.
 
@@ -351,9 +351,9 @@ field is changed.
         $self->argument_value( other_field => "new value" )
 
 
-=head2 Use iepngfix.htc to add PNG support in IE5.5+
+=head2 Use F<iepngfix.htc> to add PNG support in IE5.5+
 
-Jifty has included iepngfix.htc by Angus Turnbull. The HTC file will
+Jifty has included F<iepngfix.htc> by Angus Turnbull. The HTC file will
 automatically add PNG support to IMG elements and also supports any
 element with a "background-image" CSS property.
 
@@ -522,7 +522,7 @@ Document how to do this with Mason
 
 =head2 Show login box on an action submit
 
-In app's dispatcher add the following:
+In your application's dispatcher add the following:
 
     before '*' => run {
         # do nothing if user is logged in
@@ -608,7 +608,7 @@ Last, but not least, you need to send arguments to the URL related to the action
 
   id => { result_of => $create, name => 'id' },
 
-This line tells Jifty that you want to set the "id" paramter sent to the URL given in C<append>, to the "id" set when C<$create> is executed. That is, after running the action, Jifty will contact the URL and effectively perform:
+This line tells Jifty that you want to set the "id" parameter sent to the URL given in C<append>, to the "id" set when C<$create> is executed. That is, after running the action, Jifty will contact the URL and effectively perform:
 
   set id => $create->result->content('id');
 

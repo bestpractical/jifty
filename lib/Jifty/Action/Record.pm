@@ -79,7 +79,7 @@ Construct a new C<Jifty::Action::Record> (as mentioned in
 L<Jifty::Action>, this should only be called by C<<
 framework->new_action >>.  The C<record> value, if provided in the
 PARAMHASH, will be used to load the L</record>; otherwise, the
-parimary keys will be loaded from the action's argument values, and
+primary keys will be loaded from the action's argument values, and
 the L</record> loaded from those primary keys.
 
 =cut

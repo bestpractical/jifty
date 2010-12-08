@@ -25,6 +25,6 @@ Alert: Jifty <% Jifty->web->tangent( label => 'administration mode' , url => '/_
 <%doc>
 
 This exists as a fallback wrapper, in case the mason error in question
-is caused by the Jifty app's wrapper, for instance.
+is caused by the Jifty application's wrapper, for instance.
 
 </%doc>

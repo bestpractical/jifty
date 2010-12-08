@@ -65,7 +65,7 @@ Defaults to true.
 =item lazy (optional)
 
 Delays the loading of the fragment until client render-time.
-Obviously, does not work with downlevel browsers which don't uspport
+Obviously, does not work with downlevel browsers which don't support
 javascript.
 
 =item loading_path (optional)
@@ -413,7 +413,7 @@ sub get_element {
 
 =head2 client_cacheable
 
-Returns the client cacheable state of the regions path. Returns false if the template has not been marked as client cacheable. Otherwise it returns the string "static" or "action" based uon the cacheable attribute set on the template.
+Returns the client cacheable state of the regions path. Returns false if the template has not been marked as client cacheable. Otherwise it returns the string "static" or "action" based on the cacheable attribute set on the template.
 
 =cut
 

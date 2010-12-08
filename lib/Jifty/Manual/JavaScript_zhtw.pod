@@ -10,7 +10,7 @@ jQuery, some good refactor is also being done.
 
 This document is written to help JavaScript programmers working for
 a Jifty project to understand what's the different before jQuery landed,
-and provide a quick reference for prototypism believers to learn the new wave
+and provide a quick reference for Prototypism believers to learn the new wave
 of JavaScript programming in Jifty.
 
 =head1 Migration to jQuery
@@ -20,7 +20,7 @@ of JavaScript programming in Jifty.
 
 =head2 Selecting elements with jQuery()
 
-Invokin jQuery function with exactly one string argument will return
+Invoking the jQuery function with exactly one string argument will return
 a jQuery object that represents a list of elements. The string is
 a CSS selector. For example:
 
@@ -38,10 +38,10 @@ to C<$(id)>. Selecting elements with C<jQuery()> function always
 returns a jQuery object, but not element it self. There are two notice
 especially for Jifty world.
 
-First of all, Jifty develoeprs should always use C<Jifty.$>. Deep in
+First of all, Jifty developers should always use C<Jifty.$>. Deep in
 the design of Jifty, there are many kind of elements with C<":">
 character in their id. Sadly it is a feature in jQuery to do more
-powerful seleciton with C<":"> character. For example, this selects
+powerful selection with C<":"> character. For example, this selects
 current mouse-overed elements:
 
     jQuery(":hover")
@@ -76,7 +76,7 @@ They are defined in jifty.js.
 
 =item Jifty.$( element_id )
 
-This is a shorthand of document.getElementById function, like the C<$>
+This is a shorthand of C<document.getElementById> function, like the C<$>
 function defined in Prototype library. It is also internally used a
 lot because many form specific element ID does not get along with
 jQuery's selector, which expect the ":" character is used for special
@@ -92,11 +92,11 @@ element object.
 
 =item Jifty.Effect(element, effect_name, option)
 
-When called, instantly pefrom a js effect on give element. "element" is an
+When called, instantly perform a js effect on the given element. "element" is an
 element object.
 
 The last arg "option" is a hash. Currently it's only used for
-specificing callbacks. There are two possible callbacks, before and
+specifying callbacks. There are two possible callbacks, before and
 after. You may specify them like this:
 
     Jifty.Effect(element, "Fade", { duration: 2.0 }, {
@@ -129,7 +129,7 @@ Jifty actions.
 =item Jifty.Form.Element.getMoniker( element )
 
 Given an element, or an element id, return a string representing a
-moniker of this element. It returs null if the given element is
+moniker of this element. It returns null if the given element is
 considered having no moniker at all.
 
 =item Jifty.Form.Element.getAction( element )
@@ -140,7 +140,7 @@ element. The returned value is an Action object.
 =item Jifty.Form.Element.getType( element )
 
 Takes an element or an element id, returns the type associated with
-this element. Possible return values are "registraion", "value",
+this element. Possible return values are "registration", "value",
 "fallback", or null if the element does not belongs to any of these
 types.
 
@@ -151,8 +151,8 @@ null if the element given does not have a name.
 
 =item Jifty.Form.Element.getValue( element )
 
-Tkaes an element or an element id, returns the element value. If the
-element is a CHECKBOX or a RADIO button but it's un-checked, returns
+Takes an element or an element id, returns the element value. If the
+element is a CHECKBOX or a RADIO button but it's unchecked, returns
 null.
 
 =item Jifty.Form.Element.validate( element )
@@ -279,7 +279,7 @@ The contents of the region or selected element will be completely replaced by th
 
 The server response will be inserted within the region or selected element before the rest of the content.
 
-=item Bottomer
+=item Bottom
 
 The server response will be inserted within the region or selected element after the rest of the content.
 
@@ -289,7 +289,7 @@ The content returned by the server will be inserted immediately before and outsi
 
 =item After
 
-The content returned by the server will be inserted immedately after and outside the given region or element.
+The content returned by the server will be inserted immediately after and outside the given region or element.
 
 =back
 
@@ -319,7 +319,7 @@ L<http://www.slideshare.net/simon/learning-jquery-in-30-minutes/>
 
 L<http://www.slideshare.net/remy.sharp/prototype-jquery-going-from-one-to-the-other/>
 
-=item jQuery Officail Documentation
+=item jQuery Official Documentation
 
 L<http://docs.jquery.com/>
 

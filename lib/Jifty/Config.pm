@@ -197,7 +197,7 @@ assumed based on the name of the application -- see L</guess>.
 
 =head3 Reblessing into application's sub-class
 
-Ok, config is ready. Rebless this object into C<YourApp::Config> class
+OK, config is ready. Rebless this object into C<YourApp::Config> class
 and call L</post_load> hook, so you can do some tricks detailed in
 L</SUB-CLASSING>.
 
@@ -664,7 +664,7 @@ For example check if file or module exists.
 =item * canonicalization
 
 For example turn relative paths into absolute or translate all possible
-variants of an option to a canonic structure
+variants of an option into a canonical structure
 
 =item * generation
 
@@ -687,7 +687,7 @@ Sub-classing is definitely not for:
 You have L<so many files|/"WHY SO MANY FILES"> to allow users of your
 app and you to override defaults.
 
-=item * anything else, but configs
+=item * anything else but configuration
 
 =back
 
@@ -711,7 +711,7 @@ This provides an additional layer of abstraction for truly complicated deploymen
 
 =head2 SITE
 
-The site configuration allows for specific overrides of the application and vendor configuration. For example, a particular Jifty application might define all the application defaults in the application configuration file. Then, each administrator that has downloaded that appliation and is installing it locally might customize the configuration for a particular deployment using this configuration file, while leaving the application defaults intact (and, thus, still available for later reference). This can even override the vendor file containing a standard set of overrides.
+The site configuration allows for specific overrides of the application and vendor configuration. For example, a particular Jifty application might define all the application defaults in the application configuration file. Then, each administrator that has downloaded that application and is installing it locally might customize the configuration for a particular deployment using this configuration file, while leaving the application defaults intact (and, thus, still available for later reference). This can even override the vendor file containing a standard set of overrides.
 
 =head1 SEE ALSO
 

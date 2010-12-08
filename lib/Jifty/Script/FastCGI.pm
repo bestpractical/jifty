@@ -57,7 +57,7 @@ sub options {
 =head1 DESCRIPTION
 
 This command is provided for compatibility.  You should probably use
-Plack's fastcgi deployment tools with the C<app.psgi> file come with
+Plack's FastCGI deployment tools with the C<app.psgi> file come with
 your jifty app.
 
 
@@ -66,7 +66,7 @@ new world-changing application is generating, you'll need something a bit heavie
 than the pure-perl Jifty standalone server.  C<FastCGI> is what you're looking for.
 
 If you have MaxRequests options under FastCGI in your config.yml, or
-commandline option C<--maxrequests=N> assigned, the fastcgi process
+command-line option C<--maxrequests=N> assigned, the FastCGI process
 will exit after serving N requests.
 
 =head1 SERVER CONFIGURATIONS

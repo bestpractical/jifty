@@ -20,7 +20,7 @@ Create a new "LetMe" authentication object; it takes no parameters.
 It calls L</_init> to do any initialization.
 
 A LetMe is a way to provide a one-time-use URL for a particular purpose.
-All LetMe objects give you a way to validate someone's identity and to
+All LetMe objects give you a way to validate a user's identity and to
 allow them a very small set of possible actions or page-access permissions.
 
 For example, you can put a LetMe URL in an email to a new user,
@@ -111,7 +111,7 @@ sub _generate_digest {
 
 =head2 generate_checksum
 
-Returns an auth checksum for the current combination of
+Returns an authentication checksum for the current combination of:
 
     user
     path
@@ -128,9 +128,9 @@ sub generate_checksum {
 
 =head2 generate_koremutake_checksum
 
-Generate a slightly more pronouncable version of the checksum using
+Generate a slightly more pronounceable version of the checksum using
 L<String::Koremutake>.  Due to hex -> integer limitations, this is
-imporecise and may vary depending on the platform it is used on; as
+imprecise and may vary depending on the platform it is used on; as
 such, it is deprecated.
 
 =cut
@@ -261,7 +261,7 @@ sub base_path {
 
 =head2 validate
 
-Returns true if the credentials the user presented validate ok.
+Returns true if the credentials the user presented validate OK.
 Returns false otherwise.
 
 =cut

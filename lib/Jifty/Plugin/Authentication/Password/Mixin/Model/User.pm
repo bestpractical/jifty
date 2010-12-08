@@ -170,7 +170,7 @@ sub has_alternative_auth { }
 
 =head2 after_set_password
 
-Regenerate auth tokens on password change
+Regenerate authentication tokens on password change
 
 =cut
 

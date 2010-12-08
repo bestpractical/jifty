@@ -58,7 +58,7 @@ Jifty::DBI::Schema->register_types(
 
 =head1 METHODS
 
-# XXX: podcoverage should count parent classes.  these pods are useless
+# XXX: pod coverage should count parent classes.  this pod is useless
 
 =head2 register_triggers
 

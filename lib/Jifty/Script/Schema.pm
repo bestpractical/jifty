@@ -11,7 +11,7 @@ use Jifty::Schema;
 
 =head1 NAME
 
-Jifty::Script::Schema - Create SQL to update or create your Jifty app's tables
+Jifty::Script::Schema - Create SQL to update or create your Jifty application's tables
 
 =head1 SYNOPSIS
 
@@ -64,7 +64,7 @@ the same as the application's version.
 
 =item B<--ignore-reserved-words>
 
-Ignore any SQL reserved words used in table or column deffinitions, if
+Ignore any SQL reserved words used in table or column definitions, if
 this option is not used and a reserved word is found it will cause an error.
 
 =item B<--no-bootstrap>

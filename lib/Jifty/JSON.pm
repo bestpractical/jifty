@@ -26,7 +26,7 @@ Provides a thin wrapper around the L<JSON> 2.xx library, which provides a
 frontend for L<JSON::XS> and L<JSON::PP>.
 
 This module used to wrap L<JSON::Syck> and L<JSON> 1.xx with special-casing for
-outputing JSON with single quoted values.  Single quotes make it easy to
+outputting JSON with single quoted values.  Single quotes make it easy to
 simply plop JSON into HTML attributes but are in violation of the JSON spec
 which mandates only double quoted strings.
 
@@ -66,9 +66,11 @@ sub encode_json {
     JSON::to_json( $_[0], { utf8 => 1, allow_nonref => 1, %{$_[1] || {}} } );
 }
 
-=head2 DEPRECATED jsonToObj JSON, [ARGUMENTS]
+=head1 DEPRECATED FUNCTIONS
 
-=head2 DEPRECATED objToJson JSON, [ARGUMENTS]
+=head2 jsonToObj JSON, [ARGUMENTS]
+
+=head2 objToJson JSON, [ARGUMENTS]
 
 These functions are deprecated and provided for backwards compatibility.  They
 wrap the appropriate function above, but L<Carp/croak> if you try to set the

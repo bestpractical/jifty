@@ -63,7 +63,7 @@ sub take_action {
     my $pass   = $self->argument_value('password');
     my $pass_c = $self->argument_value('password_confirm');
 
-    # Trying to set a password (ie, submitted the form)
+    # Trying to set a password (i.e., submitted the form)
     unless (defined $pass and defined $pass_c and length $pass and $pass eq $pass_c ) {
         $self->result->error( _("It looks like you didn't enter the same password into both boxes. Give it another shot?")
         );
