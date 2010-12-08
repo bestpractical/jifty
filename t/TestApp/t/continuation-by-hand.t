@@ -9,9 +9,8 @@ Creating a custom request and saving it in a continuation should work.
 
 =cut
 
-BEGIN {chdir "t/TestApp"}
 use lib '../../lib';
-use Jifty::Test tests => 6, actual_server => 1;
+use Jifty::Test::Dist tests => 6, actual_server => 1;
 use Jifty::Test::WWW::Mechanize;
 
 my $server  = Jifty::Test->make_server;
