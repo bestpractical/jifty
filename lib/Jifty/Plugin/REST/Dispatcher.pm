@@ -297,7 +297,7 @@ sub outs {
     last_rule;
 }
 
-our $xml_config = { SuppressEmpty   => '',
+our $xml_config = { SuppressEmpty   => undef,
                     NoAttr          => 1,
                     RootName        => 'data' };
 
