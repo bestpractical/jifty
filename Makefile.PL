@@ -26,7 +26,7 @@ requires('Data::Page');
 requires('Data::UUID');
 requires('DateTime');
 requires('DateTime::Locale');
-requires('Date::Manip');
+requires('Date::Manip' => '6.01');
 requires('Email::Folder');
 requires('Email::LocalDelivery' => 0.217 );
 requires('Email::MIME' => 1.900 );

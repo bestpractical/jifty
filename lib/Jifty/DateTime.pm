@@ -291,7 +291,7 @@ sub new_from_string {
         );
 
         my $dt_now = $class->now;
-        my $now = $dt_now->ymd . ' ' . $dt_now->hms;
+        my $now = $dt_now->ymd . '-' . $dt_now->hms;
 
         require Date::Manip;
 
