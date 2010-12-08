@@ -24,6 +24,10 @@ added to.
 
 Renders the select widget.
 
+=head2 accessors
+
+Returns the list of available accessors.
+
 =cut
 
 sub render_widget {

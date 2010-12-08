@@ -23,6 +23,13 @@ Jifty::Plugin::Deflater - Handles Accept-Encoding and compression
 
 This plugin provides Accept-Encoding handling.
 
+=head1 METHODS
+
+=head2 wrap APP
+
+Wraps the provided Plack app with the deflation middleware.  You'll never need
+to call this yourself.
+
 =cut
 
 sub wrap {

@@ -26,6 +26,13 @@ Provides Jifty::Handler->apache for apps prior to ConfigFileVersion 5.
 
 TODO: this should also rebind STDIN/STDOUT in the per-request hook.
 
+=head1 METHODS
+
+=head2 wrap APP
+
+Wraps the provided Plack app in the compat layer. You'll never need to call
+this yourself.
+
 =cut
 
 *Jifty::Handler::apache = sub {

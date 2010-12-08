@@ -105,6 +105,60 @@ independent fragments.  See L<Jifty::Web::PageRegion>.
 
 =back
 
+=head1 REQUEST PROPERTIES
+
+=head2 address
+
+=head2 arguments
+
+=head2 body
+
+=head2 content_length
+
+=head2 content_type
+
+=head2 cookies
+
+=head2 env
+
+=head2 header
+
+=head2 headers
+
+=head2 input
+
+=head2 method
+
+=head2 request_method (deprecated)
+
+=head2 path
+
+=head2 path_info
+
+=head2 port
+
+=head2 protocol
+
+=head2 referer
+
+=head2 remote_host
+
+=head2 request_uri
+
+=head2 scheme
+
+=head2 script_name
+
+=head2 secure
+
+=head2 uploads
+
+=head2 uri
+
+=head2 user
+
+=head2 user_agent
+
 =head1 METHODS
 
 =head2 BUILD PARAMHASH

@@ -23,6 +23,10 @@ Jifty::TestServer - Starting and stopping jifty server for tests
 Like started_ok in C<Test::HTTP::Server::Simple>, start the server and
 return the URL.
 
+=head2 BUILD
+
+Sets up the server instance.
+
 =cut
 
 sub BUILD {
@@ -93,6 +97,12 @@ sub started_ok {
     $self->{plack_server}->run(Jifty->handler->psgi_app);
     exit;
 }
+
+=head2 DEMOLISH
+
+Calls any cleanup handlers before exiting
+
+=cut
 
 sub DEMOLISH {
     $_->() for @{$_[0]->{cleanup}}
