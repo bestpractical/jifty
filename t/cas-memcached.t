@@ -12,8 +12,8 @@ require IO::Socket::INET;
 plan skip_all => "Testing CAS memcached store requires a memcached running on the default port"
     unless IO::Socket::INET->new('127.0.0.1:11211');
 
-# We want to do the import since it loads up Jifty and triggers CCJS's early
-# generation trying to use memcached
+# We want to do the import late since it loads up Jifty and triggers CCJS's
+# early generation trying to use memcached
 Jifty::Test->import(tests => 17);
 
 my $data    = "a" x (1024*10);
