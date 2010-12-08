@@ -34,7 +34,7 @@ sub site_config_is {
     my $name     = shift;
 
     my $got = eval { Jifty::YAML::LoadFile('etc/site_config.yml') };
-    die $@ if $@ && $@ !~ /Cannot read from/ && $@ !~ /is empty or non-existent/;
+    die $@ if $@ && $@ !~ /Cannot read from/ && $@ !~ /is empty or non-existant/; # XXX: sic from YAML::Syck
 
     Test::More::is_deeply($got, $expected, $name);
 }
