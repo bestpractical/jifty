@@ -372,9 +372,11 @@ sub load_test_configs {
         $test_options = _read_and_merge_config_file($file, $test_options);
 
         # are we at the app root? if so, then we can stop moving up
+        # did abs_path return undef? if so, there's not much we can do from here
         $directory = abs_path(File::Spec->catdir($directory, File::Spec->updir($directory)));
         return $test_options
-            if Jifty::Util->is_app_root($directory);
+            if not defined $directory
+            or Jifty::Util->is_app_root($directory);
     }
 
     Jifty->log->fatal("Stopping looking for test config files after recursing upwards $depth times. Either you have a nonstandard layout or an incredibly deep test hierarchy. If you really do have an incredibly deep test hierarchy, you can set the environment variable JIFTY_TEST_DEPTH to a larger value.") if (Jifty->logger);
