@@ -473,9 +473,9 @@ sub _testfile_to_dbname {
 =head2 make_server
 
 Creates a new L<Jifty::TestServer> depending on the value of
-$ENV{JIFTY_TEST_SERVER}.  If the environment variable is unset or
-C<Inline>, we run tests using PSGI inline wihtout spawning an actual
-server.  Otherwise, we fork off a Plack::Server to run tests against.
+C<$ENV{JIFTY_TEST_SERVER}>.  If the environment variable is C<Inline>,
+we run tests using PSGI inline without spawning an actual server.
+Otherwise, we fork off a L<Plack::Server> to run tests against.
 
 =cut
 
