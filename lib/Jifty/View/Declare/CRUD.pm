@@ -382,9 +382,8 @@ Contains the master form and page region containing the list of items. This is m
 
 =cut
 
-template 'index.html' => page {
+template 'index.html' => page { title => shift->page_title } content {
     my $self = shift;
-    title is $self->page_title;
     form {
         render_region(
             name     => $self->object_type.'-list',

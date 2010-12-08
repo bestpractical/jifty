@@ -2,7 +2,7 @@
 use warnings;
 use strict;
 
-use Jifty::Test::Dist tests => 3;
+use Jifty::Test::Dist tests => 4;
 use Jifty::Test::WWW::Mechanize;
 
 my $server = Jifty::Test->make_server;
@@ -13,5 +13,6 @@ my $url = $server->started_ok;
 my $mech = Jifty::Test::WWW::Mechanize->new;
 
 $mech->get_ok("$url/crud/User");
+$mech->title_is("User");
 
 # TODO FIXME XXX Surely more tests are needed... and don't call me Shirley.
