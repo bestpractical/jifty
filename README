@@ -86,18 +86,10 @@ METHODS
         database or do something extreme like that; most of Jifty expects
         the handle to exist. Defaults to false.
 
-    no_views
-        If this is set to true, does not initialize any of the view handling
-        components of Jifty. This is useful if you are running a
-        command-line script, and not want the overhead associated with it.
-        This also prevents the mason cache files from being created, which
-        may be the right thing if your script is running as a privileged
-        user. Defaults to false.
-
     logger_component
         The name that Jifty::Logger will log under. If you don't specify
         anything Jifty::Logger will log under the empty string. See
-        Jifty::Logger for more infomation.
+        Jifty::Logger for more information.
 
   config
     An accessor for the Jifty::Config object that stores the configuration
@@ -153,7 +145,7 @@ METHODS
     classes for the application.
 
   setup_database_connection
-    Set up our database connection. Optionally takes a param hash with a
+    Set up our database connection. Optionally takes a paramhash with a
     single argument. This method is automatically called by "new".
 
     no_handle
@@ -161,9 +153,9 @@ METHODS
         handle
 
     pre_init
-        Defaults to false. If true, plugins are notificed that this is a
+        Defaults to false. If true, plugins are notified that this is a
         pre-init, any trigger registration in "init()" should not happen
-        during this stage. Note that model mixins's register_triggers is
+        during this stage. Note that model mixins' "register_triggers" is
         unrelated to this.
 
     If "no_handle" is set or our application's config file is missing a
@@ -174,6 +166,14 @@ METHODS
     Returns a globally unique id for this instance of this jifty
     application. This value is generated the first time it's accessed
 
+  background SUB
+    Forks a background process, and ensures that database connections and
+    sockets are not shared with the parent process.
+
+  admin_mode
+    Returns true if the application is in admin mode. This should be used
+    instead of "Jifty->config->framework('AdminMode')".
+
 SEE ALSO
     <http://jifty.org>, Jifty::Manual::Tutorial, Jifty::Everything,
     Jifty::Config, Jifty::Handle, Jifty::Logger, Jifty::Handler, Jifty::Web,
@@ -183,6 +183,6 @@ AUTHORS
     Jesse Vincent, Alex Vandiver and David Glasser.
 
 LICENSE
-    Jifty is Copyright 2005-2008 Best Practical Solutions, LLC. Jifty is
+    Jifty is Copyright 2005-2010 Best Practical Solutions, LLC. Jifty is
     distributed under the same terms as Perl itself.
 
