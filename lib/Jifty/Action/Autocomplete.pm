@@ -80,7 +80,7 @@ L<Jifty::Action>
 
 =head1 LICENSE
 
-Jifty is Copyright 2005-2006 Best Practical Solutions, LLC.
+Jifty is Copyright 2005-2010 Best Practical Solutions, LLC.
 Jifty is distributed under the same terms as Perl itself.
 
 =cut

@@ -99,7 +99,7 @@ This plugin depends on L<Jifty::Plugin::Config>.
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2007-2009 Best Practical Solutions
+Copyright 2007-2010 Best Practical Solutions
 
 This is free software and may be modified and distributed under the same terms as Perl itself.
 

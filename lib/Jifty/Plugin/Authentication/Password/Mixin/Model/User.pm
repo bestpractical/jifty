@@ -201,7 +201,7 @@ L<Jifty::Plugin::Authentication::Password>, L<Jifty::Plugin::User::Mixin::Model>
 
 =head1 LICENSE
 
-Jifty is Copyright 2005-2007 Best Practical Solutions, LLC.
+Jifty is Copyright 2005-2010 Best Practical Solutions, LLC.
 Jifty is distributed under the same terms as Perl itself.
 
 =cut
