@@ -1,23 +1,140 @@
 -----------------------------------
-Jifty 1.??? - 
+Jifty 1.01209 - December 9th, 2010
 -----------------------------------
+  ____  _        _    ____ _  __  _ 
+ |  _ \| |      / \  / ___| |/ / | |
+ | |_) | |     / _ \| |   | ' /  | |
+ |  __/| |___ / ___ \ |___| . \  |_|
+ |_|   |_____/_/   \_\____|_|\_\ (_)
+
+ The biggest change since the last release is Jifty's move to Plack.  Please
+ be sure to read the INCOMPATIBILITIES section below.
 
 INCOMPATABILITIES
-==========================
- Jifty is ported to PSGI.
+=================
+ Jifty is ported to PSGI using Plack.  This changed much of the request and
+ response handling code, but hopefully in ways that don't hurt existing apps
+ too much.
+
  * The following methods are removed:
    - Jifty->handler->apache
    - Jifty->handler->cgi
-   Most methods for ->apache and ->cgi are provided by the Compat
-   plugin, which is automatically loaded for older jifty apps.  Use
-   corresponding header methods of Jifty->web->request and
-   Jifty->web->response.
+   Most methods for ->apache and ->cgi are provided by the Compat plugin,
+   which is automatically loaded for older jifty apps.  Use corresponding
+   header methods of Jifty->web->request and Jifty->web->response.
 
  * Printing to STDOUT deprecated.  Use outs, outs_raw, or
    Jifty->web->response->body() instead.
 
- * munging with the %ENV hash is deprecated.  Use
+ * Munging and using the %ENV hash is deprecated.  Use
    Jifty->web->request->env instead.
+
+ * Jifty::Server::* no longer exist, but you probably weren't using them
+   directly anyway
+
+POSSIBLE INCOMPATIBILITIES
+==========================
+ * template_exists and render_template now live in Jifty::Web instead of
+   Jifty::Dispatcher
+ * Jifty::JSON updated to use modern JSON.pm (2.xx): This removes the
+   "singlequote" option. Instead, HTML escape the entire blob of JSON if you
+   plan to put it in an HTML attribute.  Jifty::JSON will croak if you attempt
+   to use the "singlequote" option.
+
+CORE
+====
+ * Uploads are promoted to Jifty::Web::FileUpload objects for easier handling
+   in actions. They should be backwards compatible with CGI.pm's lightweight Fh
+   objects.
+ * Pass the intended action (create, update) to canonicalizers
+ * Pass the current state of other parameters/attributes to validators,
+   canonicaliers, and autocompleters
+ * Update actions set the record's ID in the result (imitating Create actions)
+ * Jifty::Web::Menu improvements, including YUI menu support and easier
+   subclassing
+ * CRUD: New sort headers
+ * CRUD: Allow subclasses to customize which search fields are rendered
+ * Revert a bunch of incorrect HTML escaping of <script> content
+ * Be helpful and Warn if a keybinding won't work because of a missing element ID
+ * CAS: Add a memcached backed store
+ * Refactor Jifty::Web::Session to extract the Jifty::DBI-based store
+ * Add an OrderedList form field widget
+ * Add an Uploads (plural!) form field widget
+ * Add a tool (utils/un-serial.pl) to standardize Jifty->serial values in
+   output files, for easier diff'ing
+ * Add an AboutMe action for dumping the CurrentUser -- useful for REST apps
+ * Add a way to explicitly create a new session
+ * Inspect callers to default to http URLs for notifications instead of the
+   scheme of the current user
+ * View: Make it possible to override the page class per page
+ * Add an after_include_css trigger
+
+PLUGINS
+=======
+ * Config: nav menu munging can be disabled
+ * Halo: HideHalos config setting enables turning off Halos even in DevelMode
+ * SQLQueries: Add an option to EXPLAIN all queries
+ * RequestInspector: Support display only on a certain cookie value
+ * RequestInspector: Add a persistent storage option
+ * RequestInspector: Add an aggregate rendering view
+ * CompressedCSSandJS: Support early generation of CSS/JS at server start
+   rather than first request
+ * CompressedCSSandJS: Move CAS serving methods into Jifty::CAS (and PSGI-ize
+   them)
+ * CompressedCSSandJS: Rewritten as Plack middleware rather than a Jifty
+   dispatcher
+ * REST: Add __not/<column>/<value> syntax for /=/search URLs
+ * REST: Support serialization of refers_to model columns
+ * REST: Cache bust before returning a 302 Found to avoid returning an invalid
+   Location: header
+ * REST: Expand valid_values when describing an action's params
+ * Authentication::Password: Fix a bug where a user can't read their own email
+   address
+ * Authentication::Password: Make the login and signup links tangent
+
+I18N
+====
+ * User language preference in the database is now respected
+
+JAVASCRIPT
+==========
+ * Update json.js
+ * Move functions in bps_utils.js to the Jifty.Utils namespace
+ * Replace JSAN libs with jQuery calls
+ * Remove unused formatDate.js
+ * Replace autocomplete implementation with a modified version of jQuery's
+   Autocomplete plugin.  Note that this is different than and predates the
+   jQuery UI autocomplete module.
+ * Update jQuery to 1.4.1
+ * Add jQuery UI 1.7.2 with the sortable module
+ * Add a region update helper Jifty.updateRegion
+ * Remove thickbox's unused and problematic CSS
+
+BUGFIXES
+========
+ * Only cache the current_user object if the session is loaded
+ * Don't modify the form value in-place when checking placeholder text to
+   workaround a bug in IE7 and 8
+ * Various for Jifty::Web::Menu
+ * Various Javascript syntax fixes for IE
+ * Various and sundry encoding fixes
+ * Lots more tiny fixes here and there
+
+DOCS
+====
+ * Update app_behaviour.js doc for the jQuery implementation
+ * Fix example lighttpd config and doc its quirks
+ * Various small improvements
+ * Spellchecked all the POD :)
+
+TESTS
+=====
+ * Many new and updated tests
+ * Tests should now be (and hopefully stay!) warnings free
+ * LogLevel now defaults to FATAL (instead of WARN) so expected errors don't
+   confuse users. This is overridable by setting JIFTY_TEST_LOGLEVEL in your
+   environment.
+
 
 -----------------------------------
 Jifty 0.91117 - November 17th, 2009
