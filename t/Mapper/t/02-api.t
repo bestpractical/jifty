@@ -31,7 +31,7 @@ $mech->content_like(qr/got the grail/, "Running the action produces the expected
 # first, test via setting arguments during action creation (which sets
 # sticky values)
 $mech->form_number(2);
-ok($mech->click_button(value => "Do both"));
+$mech->submit_form_ok;
 $mech->content_like(qr/got the grail/i, "Got the grail");
 $mech->content_like(qr/crossed the bridge/i, "And crossed the bridge");
 
@@ -42,6 +42,6 @@ $mech->content_like(qr/J:A:F-castle-(\S+): Aaaaaargh/, "Has the right value name
 
 # And then, the same, but via default_values on the form field
 $mech->form_number(3);
-ok($mech->click_button(value => "Do both"));
+$mech->submit_form_ok;
 $mech->content_like(qr/got the grail/i, "Got the grail");
 $mech->content_like(qr/crossed the bridge/i, "And crossed the bridge");
