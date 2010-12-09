@@ -134,6 +134,7 @@ feature 'Development of a jifty application' =>
     recommends('Test::MockObject' => '1.07'),
     recommends('Module::Refresh' => '0.09'),
     recommends('Test::WWW::Declare' => '0.01'),
+    recommends('Sub::Exporter'); # This is already required by SQL::ReservedWords (and also by Moose if that's around), but make it explicit
     recommends('Test::Email' => 0),
     recommends('Email::Abstract' => 0),
     ;

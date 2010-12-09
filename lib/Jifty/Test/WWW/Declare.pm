@@ -3,9 +3,17 @@ package Jifty::Test::WWW::Declare;
 use strict;
 use warnings;
 use base qw(Exporter);
+
+# Sub::Exporter doesn't warn about redefining functions, which we do in the
+# import routine below
+use Sub::Exporter -setup => {
+    -as => 'export_subs',
+    exports => ['get'],
+};
+
 BEGIN { require Jifty::Test; require Test::WWW::Declare }
 
-our @EXPORT = qw($server $URL get);
+our @EXPORT = qw($server $URL);
 
 our $server;
 our $URL;
@@ -20,11 +28,14 @@ sub import
     # export the DSL-ey functions
     Test::WWW::Declare->export_to_level(2);
 
-    # export $server, $URL, and whatever else J:T:W:D adds
-    # note that this must come AFTER T:W:D->export because we override some
-    # of its functions
-    no warnings 'redefine';
+    # Note that these next exports must come AFTER T:W:D->export because we
+    # override parts of it
+
+    # Exporter: $server and $URL
     __PACKAGE__->export_to_level(1);
+
+    # Sub::Exporter: get()
+    __PACKAGE__->export_subs({ into_level => 1 }, 'get');
 
     # create a server (which will be automatically exported)
     $server = Jifty::Test->make_server;
