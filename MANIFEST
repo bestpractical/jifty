@@ -588,6 +588,7 @@ t/11-config-files.t
 t/12-param-schema.t
 t/13-sessions.t
 t/99-pod-coverage.t
+t/99-pod-spelling.t
 t/99-pod.t
 t/cas-memcached.t
 t/cas-memcached.t-config.yml
