@@ -439,7 +439,7 @@ sub upgrade_jifty_tables {
         $appv, "Jifty::Upgrade::Internal"
         );
     if ( $self->{print} ) {
-        warn "Need to upgrade jifty_db_version to $appv here!";
+        warn "Need to upgrade jifty_db_version to $appv here!\n";
     } else {
         Jifty::Model::Metadata->store( jifty_db_version => $appv );
     }
@@ -460,7 +460,7 @@ sub upgrade_application_tables {
 
     return unless $self->upgrade_tables( Jifty->app_class, $dbv, $appv );
     if ( $self->{print} ) {
-        warn "Need to upgrade application_db_version to $appv here!";
+        warn "Need to upgrade application_db_version to $appv here!\n";
     } else {
         Jifty::Model::Metadata->store( application_db_version => $appv );
     }
@@ -491,7 +491,7 @@ sub upgrade_plugin_tables {
                 $plugin->upgrade_class );
             if ( $self->{print} ) {
                 warn
-                    "Need to upgrade ${plugin_class}_db_version to $appv here!";
+                    "Need to upgrade ${plugin_class}_db_version to $appv here!\n";
             } else {
                 Jifty::Model::Metadata->store(
                     $plugin_class . '_db_version' => $appv );
