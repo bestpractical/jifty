@@ -199,9 +199,18 @@ sub _write_config {
     my $cfg = Jifty::Config->new(load_config => 0);
     my $default_config = $cfg->initial_config($self->dist_name);
     my $file = join("/",$self->prefix, 'etc','config.yml');
-    print("Creating configuration file $file\n");
-    Jifty::YAML::DumpFile($file => $default_config);
 
+    # Open the file ourselves so we can print a comment to it before the
+    # default YAML config
+    open my $fh, '>', $file
+        or die "Can't create configuration file '$file': $!\n";
+    binmode $fh, ':utf8';
+
+    print("Creating configuration file $file\n");
+
+    print $fh "# See perldoc Jifty::Config for more information about config files\n";
+    Jifty::YAML::DumpFile($fh => $default_config);
+    close $fh;
 }
 
 
