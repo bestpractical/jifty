@@ -485,7 +485,8 @@ If C<no_handle> is set or our application's config file is missing a C<Database>
 
 sub setup_database_connection {
     my $self = shift;
-    my %args = (no_handle =>0,
+    my %args = (no_handle  => 0,
+                check_opts => {},
                 @_);
 
     # Don't setup the database connection if we're told not to
@@ -505,7 +506,7 @@ sub setup_database_connection {
             if $Jifty::DBI::Record::Memcached::MEMCACHED;
 
         # Make sure the app version matches the database version
-        Jifty->handle->check_schema_version()
+        Jifty->handle->check_schema_version(%{$args{'check_opts'}})
             unless $args{'no_version_check'};
     }
 }

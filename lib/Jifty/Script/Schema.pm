@@ -214,6 +214,7 @@ sub probe_database_existence {
         Jifty->setup_database_connection(
             no_handle        => $no_handle,
             logger_component => 'SchemaTool',
+            check_opts       => { pretend => $self->{'print'} ? 1 : 0 }
         );
     };
     my $error = $@;

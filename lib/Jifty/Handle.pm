@@ -119,15 +119,20 @@ sub connect {
     }
 }
 
-=head2 check_schema_version
+=head2 check_schema_version [pretend => 0|1]
 
 Make sure that we have a recent enough database schema.  If we don't,
 then error out.
+
+If C<pretend => 1> is passed, then any auto-upgrade action this might take is
+dry-run only.
 
 =cut
 
 sub check_schema_version {
     my $self = shift;
+    my %opts = ( pretend => 0, @_ );
+
     require Jifty::Model::Metadata;
     my $autoup = delete Jifty->config->framework('Database')->{'AutoUpgrade'};
 
@@ -162,7 +167,7 @@ sub check_schema_version {
                 if ( $autoup ) {
                     warn
                         "Automatically upgrading your database to match the current application schema.\n";
-                    $self->_upgrade_schema();
+                    $self->_upgrade_schema('print' => $opts{pretend});
                 } else {
                     die
                         "Please run `bin/jifty schema --setup` to upgrade the database.\n";
@@ -187,7 +192,7 @@ sub check_schema_version {
             if ($autoup) {
                 warn
                     "Automatically upgrading your database to match the current Jifty schema\n";
-                $self->_upgrade_schema;
+                $self->_upgrade_schema('print' => $opts{pretend});
             } else {
                 die
                     "Please run `bin/jifty schema --setup` to upgrade the database.\n";
@@ -209,7 +214,7 @@ sub check_schema_version {
             if ($autoup) {
                 warn
                     "Automatically upgrading your database to match the current plugin schema\n";
-                $self->_upgrade_schema;
+                $self->_upgrade_schema('print' => $opts{pretend});
             } else {
                 die
                     "Please run `bin/jifty schema --setup` to upgrade the database.\n";
@@ -220,7 +225,7 @@ sub check_schema_version {
             if ($autoup) {
                 warn
                     "Automatically upgrading your database to match the current plugin schema\n";
-                $self->_upgrade_schema;
+                $self->_upgrade_schema('print' => $opts{pretend});
             } else {
                 die
                     "Please run `bin/jifty schema --setup` to upgrade the database.\n";
@@ -301,8 +306,7 @@ sub _create_original_database {
 
 sub _upgrade_schema {
     my $self = shift;
-
-    my $hack = {};
+    my $hack = { @_ };
     require Jifty::Script::Schema;
     bless $hack, "Jifty::Script::Schema";
     $hack->run_upgrades;
