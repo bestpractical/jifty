@@ -16,6 +16,13 @@ L<Jifty::Result> objects of each L<Jifty::Action> that ran.
 =cut
 
 use Any::Moose;
+
+# Monkeypatch Mouse to silence misleading warnings.  See rt.cpan.org #63675.
+{
+    no warnings 'redefine';
+    *Mouse::Meta::Class::inherit_from_foreign_class = sub { return };
+}
+
 extends 'Plack::Response';
 
 has 'error'   => (is => 'rw');
