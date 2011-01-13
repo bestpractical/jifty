@@ -50,7 +50,7 @@ div.spacer {
 .prev-page { padding-left: 1em; }
 
 div#jifty-wait-message {
-    background: #fff url(/images/css/spinner.gif) no-repeat scroll center center;
+    background: #fff url(/static/images/css/spinner.gif) no-repeat scroll center center;
     position:fixed;
     top: 5px;
     right: 5px;
