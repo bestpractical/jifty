@@ -427,7 +427,7 @@ sub instrument_content {
     my $content = Template::Declare->buffer->pop;
 
     unless ( $seen_title ) {
-        $self->render_title_inpage;
+        $self->render_title_inpage( $self->_title );
     }
 
     Template::Declare->buffer->append( $content );
