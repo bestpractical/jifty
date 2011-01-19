@@ -1103,7 +1103,7 @@ var apply_fragment_updates = function(fragment, f) {
 }
 
 /* Region update helper 
- *  Jifty.replaceRegion( 'region-name' , '/path' , { id: 123123 , msg: 'blah'  } );
+ *  Jifty.updateRegion( 'region-name' , '/path' , { id: 123123 , msg: 'blah'  } );
  */
 Jifty.updateRegion = function( regionName , path , args , mode ) {
     Jifty.update({
