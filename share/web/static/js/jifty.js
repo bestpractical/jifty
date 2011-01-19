@@ -1106,8 +1106,8 @@ var apply_fragment_updates = function(fragment, f) {
  *  Jifty.updateRegion( 'region-name' , '/path' , { id: 123123 , msg: 'blah'  } );
  */
 Jifty.updateRegion = function( regionName , path , args , mode ) {
-    Jifty.update({
-        fragments: [{ region: '__page-' + regionName ,
+    return Jifty.update({
+        fragments: [{ region: regionName ,
             args: args, path: path, mode: mode ? mode : 'Replace' }]
     });
 };
@@ -1118,7 +1118,7 @@ Jifty.updateRegion = function( regionName , path , args , mode ) {
 
     Jifty.update({
         fragments: [{
-            region: '__page-region_name' ,
+            region: 'region_name',
             args: { id => 123  }
             path: '/path_to_replace',
             mode: 'Replace'
