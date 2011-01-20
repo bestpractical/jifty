@@ -475,7 +475,7 @@ sub _javascript_attrs_structure {
                 if ($region) {
                     @args{qw/mode path region/} = ('Replace', $region->path, $region->qualified_name);
                 } else {
-                    $self->log->warn("Can't find region ".$hook->{refresh});
+                    $self->log->debug("Can't find region ".$hook->{refresh});
                     @args{qw/mode path region/} = ('Replace', undef, $hook->{refresh});
                 }
             } elsif ((exists $hook->{refresh_self} and $current_region) or ($current_region and $hook->{args} and %{$hook->{args}})) {
