@@ -17,7 +17,7 @@ Jifty::Plugin::ActorMetadata::Mixin::Model::ActorMetadata - ActorMetadata mixin
   package MyApp::Model::CoffeeShop;
   use Jifty::DBI::Schema;
   use MyApp::Record schema {
-      # custom column defrinitions
+      # custom column definitions
   };
 
   use Jifty::Plugin::ActorMetadata::Mixin::Model::ActorMetadata; # created_by, created_on, updated_on and updated_by
