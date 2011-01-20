@@ -250,7 +250,7 @@ latter is merely an alias for the former.
 
 sub set_current_user_timezone {
     my $self    = shift;
-    my $default = shift || 'UTC';
+    my $default = shift || Jifty->config->framework('Timezone') || 'UTC';
     my $tz = $self->current_user_has_timezone || $default;
 
     $self->set_time_zone($tz);
