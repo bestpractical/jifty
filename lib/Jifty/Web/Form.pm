@@ -5,7 +5,10 @@ package Jifty::Web::Form;
 
 use base qw/Jifty::Object Class::Accessor::Fast/;
 
-__PACKAGE__->mk_accessors(qw(actions printed_actions name call is_open disable_autocomplete target submit_to onsubmit));
+__PACKAGE__->mk_accessors(qw(actions printed_actions name call is_open disable_autocomplete target submit_to onsubmit class));
+
+# Alias id to name
+*id = *name;
 
 use Scalar::Util qw/weaken/;
 
@@ -20,6 +23,15 @@ Jifty::Web::Form - Tools for rendering and dealing with HTML forms
 Creates a new L<Jifty::Web::Form>.  Arguments:
 
 =over
+
+=item id
+
+The HTML id attribute given to the form.  This is aliased to L<name>.  That is,
+name and id are always equal and changing one changes the other.
+
+=item class
+
+The HTML class attribute given to the form.
 
 =item name
 
@@ -205,6 +217,8 @@ sub start {
 
     my $form_start = qq!<form method="post" action="!  . Jifty->web->escape( $root ) . qq!"!;
     $form_start .= qq! name="@{[ $self->name ]}"! if defined $self->name;
+    $form_start .= qq! id="@{[ $self->name ]}"! if defined $self->name; # always the same as name
+    $form_start .= qq! class="@{[ $self->class ]}"! if defined $self->class;
     $form_start .= qq! target="@{[ $self->target ]}"! if defined $self->target;
     $form_start .= qq! autocomplete="off"!  if defined $self->disable_autocomplete;
     $form_start .= qq! onsubmit="! .Jifty->web->escape( $self->onsubmit ). qq!"!  if defined $self->onsubmit;
