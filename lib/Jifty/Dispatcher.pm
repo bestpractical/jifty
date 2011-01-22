@@ -1032,8 +1032,10 @@ sub _compile_condition {
     # Previously compiled (eg. a qr{} -- return it verbatim)
     return $cond if ref $cond;
 
-    my $cachekey = join('-', (($Dispatcher->{rule} eq 'on') ? 'on' : 'in'),
-                             $cond);
+    my $cachekey = join('-',
+                        (($Dispatcher->{rule} eq 'on') ? 'on' : 'in'),
+                        $self->{cwd},
+                        $cond);
     unless ( $CONDITION_CACHE{$cachekey} ) {
 
         my $compiled = $cond;
