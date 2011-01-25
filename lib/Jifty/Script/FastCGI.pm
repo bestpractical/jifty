@@ -56,10 +56,6 @@ sub options {
 
 =head1 DESCRIPTION
 
-This command is provided for backwards compatibility. For new deployments,
-use Plack's FastCGI deployment tools with the C<app.psgi> file that comes with
-your Jifty app.
-
 When you're ready to move up to something that can handle the increasing load your
 new world-changing application is generating, you'll need something a bit heavier-duty
 than the pure-perl Jifty standalone server.  C<FastCGI> is what you're looking for.
