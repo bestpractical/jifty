@@ -8,7 +8,7 @@ use Email::Send            ();
 use Email::MIME::CreateHTML;
 
 __PACKAGE__->mk_accessors(
-    qw/body html_body preface footer subject from _recipients _to_list to/);
+    qw/body html_body preface footer subject from _recipients _to_list to cc bcc/);
 
 =head1 NAME
 
@@ -109,6 +109,9 @@ sub send_one_message {
         $self->subject || _("A notification from %1!",$appname )
     );
 
+    my $cc  = Encode::encode('MIME-Header', $self->cc  || '');
+    my $bcc = Encode::encode('MIME-Header', $self->bcc || '');
+
     if ( defined $self->html_body ) {
 
         # Email::MIME takes _bytes_, not characters, for the "body"
@@ -121,6 +124,8 @@ sub send_one_message {
             header => [
                 From    => $from,
                 To      => $to,
+                Cc      => $cc,
+                Bcc     => $bcc,
                 Subject => $subj,
             ],
             attributes           => \%attrs,
@@ -139,6 +144,8 @@ sub send_one_message {
             header => [
                 From    => $from,
                 To      => $to,
+                Cc      => $cc,
+                Bcc     => $bcc,
                 Subject => $subj,
             ],
             attributes => \%attrs,
