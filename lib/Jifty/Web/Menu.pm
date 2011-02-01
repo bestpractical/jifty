@@ -345,7 +345,7 @@ sub render_submenu {
     my %args = ( id => '', @_ );
 
     my $web = Jifty->web;
-    $web->out(qq(<ul id="$args{id}">));
+    $web->out(qq(<ul id="$args{id}" class="submenu">));
     for ($self->children) {
         $web->out(qq{<li class="submenu }.($_->active ? 'active' : '' ).' '. ($_->class || "").qq{">});
 
