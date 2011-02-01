@@ -542,8 +542,10 @@ Called from L</render_page>.
 =cut
 
 sub render_navigation {
+    my $self = shift;
+    my @args = @_;
     div { attr { id => "navigation" };
-        Jifty->web->navigation->render_as_menu;
+        Jifty->web->navigation->render_as_menu(@args);
     };
     return '';
 }

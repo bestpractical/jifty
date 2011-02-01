@@ -269,6 +269,8 @@ sub children {
 Render this menu with HTML markup as multiple dropdowns, suitable for
 an application's menu
 
+Any arguments are passed to L<render_as_hierarchical_menu_item>.
+
 =cut
 
 sub render_as_menu {
@@ -277,7 +279,7 @@ sub render_as_menu {
     Jifty->web->out(qq{<ul class="menu">});
 
     for (@kids) {
-        $_->render_as_hierarchical_menu_item();
+        $_->render_as_hierarchical_menu_item(@_);
     }
     Jifty->web->out(qq{</ul>});
     '';
@@ -303,6 +305,8 @@ Render an <li> for this item. suitable for use in a regular or contextual
 menu. Currently renders one level of submenu, if it exists, using
 L</render_submenu>.
 
+Any arguments are passed to L<render_submenu>.
+
 =cut
 
 sub render_as_hierarchical_menu_item {
@@ -324,7 +328,7 @@ sub render_as_hierarchical_menu_item {
             qq{<span class="expand"><a href="#" onclick="Jifty.ContextMenu.hideshow('}
                 . $id
                 . qq{'); return false;">&nbsp;</a></span>} );
-        $self->render_submenu( id => $id );
+        $self->render_submenu( %args, id => $id );
     }
     $web->out(qq{</li>});
     '';
@@ -338,11 +342,18 @@ suitable for use as part of a regular or contextual menu.  Called by
 L</render_as_hierarchical_menu_item>. You probably don't need to use this
 on it's own.
 
+If passed C<deep_active => 1>, then it renders active descendants recursively
+all the way down.
+
 =cut
 
 sub render_submenu {
     my $self = shift;
-    my %args = ( id => '', @_ );
+    my %args = (
+        id => '',
+        deep_active => 0,
+        @_
+    );
 
     my $web = Jifty->web;
     $web->out(qq(<ul id="$args{id}" class="submenu">));
@@ -353,6 +364,11 @@ sub render_submenu {
         # Either stringify the link object or output the label
         # This is really icky. XXX TODO
         $web->out( $_->as_link );
+    
+        if ($args{'deep_active'} and $_->active and $_->children) {
+            $_->render_submenu( %args, id => $web->serial );
+        }
+
         $web->out("</li>");
     }
     $web->out(qq{</ul>});
