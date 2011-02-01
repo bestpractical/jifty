@@ -368,7 +368,8 @@ sub render_submenu {
         # This is really icky. XXX TODO
         $web->out( $_->as_link );
     
-        if ($args{'deep_active'} and $_->active and $_->children) {
+        my @kids = $_->children;
+        if ($args{'deep_active'} and $_->active and @kids) {
             $_->render_submenu( %args, id => $web->serial );
         }
 
