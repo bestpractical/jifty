@@ -305,6 +305,8 @@ Render an <li> for this item. suitable for use in a regular or contextual
 menu. Currently renders one level of submenu, if it exists, using
 L</render_submenu>.
 
+If you pass C<expand => 0>, the javascript expansion C<span> won't be output.
+
 Any arguments are passed to L<render_submenu>.
 
 =cut
@@ -312,7 +314,7 @@ Any arguments are passed to L<render_submenu>.
 sub render_as_hierarchical_menu_item {
     my $self = shift;
     my %args = (
-        class => '',
+        expand => 1,
         @_
     );
     my @kids = $self->children;
@@ -327,7 +329,8 @@ sub render_as_hierarchical_menu_item {
         $web->out(
             qq{<span class="expand"><a href="#" onclick="Jifty.ContextMenu.hideshow('}
                 . $id
-                . qq{'); return false;">&nbsp;</a></span>} );
+                . qq{'); return false;">&nbsp;</a></span>} )
+            if delete $args{'expand'};
         $self->render_submenu( %args, id => $id );
     }
     $web->out(qq{</li>});
