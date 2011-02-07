@@ -58,7 +58,7 @@ sub render {
 
 =head2 render_header $title
 
-Renders an HTML "doctype", <head> and the first part of a page body. This bit isn't terribly well thought out and we're not happy with it.
+Renders an HTML5 "doctype", <head> and the first part of a page body. This bit isn't terribly well thought out and we're not happy with it.
 
 =cut
 
@@ -67,9 +67,7 @@ sub render_header {
     return if $self->done_header;
 
     Template::Declare->buffer->push( private => 1 );
-    outs_raw(
-        '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">' . "\n"
-      . '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">' . "\n" );
+    outs_raw("<!DOCTYPE html>\n<html>\n");
 
     $self->_render_header($self->_title || Jifty->config->framework('ApplicationName'));
 
