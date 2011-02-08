@@ -12,7 +12,7 @@ my $URL = $server->started_ok;
 
 my $mech = Jifty::Test::WWW::Mechanize->new;
 $mech->get_ok( $URL . '/' , "testing template declare buffer" );
-$mech->content_contains( '<html xmlns' );
+$mech->content_contains( '<html' );
 $mech->content_contains( '<head title="tdpage_test">' , "find page header" );
 $mech->content_contains( '</head>' );
 $mech->content_contains( '<body>' , "find page body" );
