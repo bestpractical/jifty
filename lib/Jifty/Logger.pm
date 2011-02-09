@@ -42,6 +42,9 @@ to the LogLevel configuration option.
     framework: 
       LogLevel: DEBUG
 
+You can override the LogLevel configuration option by setting JIFTY_LOG_LEVEL
+in your environment.
+
 You can tell Jifty to use an entirely different Logging
 configuration by specifying the filename of a standard Log4perl
 config file in the LogConfig config option (see L<Log::Log4perl> for
@@ -150,7 +153,7 @@ sub _initialize_log4perl {
     } elsif ( -f $log_config and -r $log_config ) {
         Log::Log4perl->init($log_config);
     } else {
-        my $log_level = uc Jifty->config->framework('LogLevel');
+        my $log_level = uc($ENV{JIFTY_LOG_LEVEL} || Jifty->config->framework('LogLevel'));
         my %default = (
             'log4perl.rootLogger'        => "$log_level,Screen",
             'log4perl.appender.Screen'   => 'Log::Log4perl::Appender::Screen',

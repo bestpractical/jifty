@@ -149,6 +149,9 @@ Depending on your environment, you may want to adjust the default log level or y
 
 You can set the LogLevel to: DEBUG, INFO, WARN, ERROR, or FATAL to specify the level. If you want a custom log configuration for your server (allowing you to have per-module log settings among other features), you need to set L</LogConfig> and possibly L</LogReload>. See L<Jifty::Logger>
 
+This configuration setting is overridden by the JIFTY_LOG_LEVEL environment
+variable (if set).
+
 =item LogReload
 
 This allows you specify a custom reload period for your log configuration, if you use L</LogConfig>. See L<Jifty::Logger>.
