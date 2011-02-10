@@ -591,9 +591,19 @@ sub upgrade_tables {
             unshift @{ $UPGRADES{ $model->since } },
                 $model->table_schema_statements();
         } else {
+            # Go through the columns
+            for my $col ( grep { not $_->virtual and not $_->computed } $model->all_columns ) {
 
-            # Go through the currently-active columns
-            for my $col ( grep { not $_->virtual and not $_->computed } $model->columns ) {
+                # If they're old, drop them
+                if ( defined $col->till and $appv >= $col->till and $col->till > $dbv ) {
+                    push @{ $UPGRADES{ $col->till } }, sub {
+                        my $renamed = $upgradeclass->just_renamed || {};
+
+                        # skip it if this was dropped by a rename
+                        $model->drop_column_in_db($col->name)
+                            unless defined $renamed->{ $model->table }->{'drop'}->{ $col->name };
+                    };
+                }
 
                 # If they're new, add them
                 if (    $col->can('since')
