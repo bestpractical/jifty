@@ -101,6 +101,8 @@ sub take_action {
 
     my $detailed_messages = {};
 
+    $self->record->call_trigger('start_update_action');
+
     # Iterate through all the possible arguments
     for my $field ( $self->argument_names ) {
 
@@ -196,6 +198,8 @@ sub take_action {
 
     $self->result->content( detailed_messages => $detailed_messages )
         if $self->report_detailed_messages;
+
+    $self->record->call_trigger('end_update_action');
 
     # Publish the update event
     $self->_setup_event_after_action($event_info);
