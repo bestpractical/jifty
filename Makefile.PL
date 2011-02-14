@@ -55,7 +55,7 @@ requires('Hash::MultiValue', 0.05);
 requires('IO::Handle::Util');
 requires('IPC::PubSub' => '0.23' );
 requires('IPC::Run3');
-requires('Jifty::DBI' => '0.62' );            # Jifty::DBI::Collection Jifty::DBI::Handle Jifty::DBI::Record::Cachable Jifty::DBI::SchemaGenerator
+requires('Jifty::DBI' => '0.66' );            # Jifty::DBI::Collection Jifty::DBI::Handle Jifty::DBI::Record::Cachable Jifty::DBI::SchemaGenerator
 requires('JSON' => 2.17);
 requires('List::MoreUtils');
 requires('Locale::Maketext::Extract' => '0.35');
