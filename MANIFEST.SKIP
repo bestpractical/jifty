@@ -27,3 +27,5 @@ jiftyapptest$
 \.tmp$
 \.diff$
 blib
+jiftyapp
+t/TestApp-Plugin-SetupWizard/etc/site_config.yml
