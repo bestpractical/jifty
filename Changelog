@@ -1,4 +1,49 @@
 -----------------------------------
+Jifty 1.10214 - February 14th, 2011
+-----------------------------------
+CORE
+====
+ * Monkeypatch Mouse to silence misleading warnings
+ * Add a timestamp type
+ * Add a default timezone configuration
+ * Add support for cc and bcc in Jifty::Notification
+ * Let JIFTY_LOG_LEVEL override LogLevel from the config
+ * Notify the record when we're about to begin running through an Update
+
+VIEW
+====
+ * render_title_inpage expects to be passed the title
+ * Correct an image URL in CSS to point to /static/
+ * __page is only relevant for SPA, which isn't the default configuration
+ * Revert "* Upgrade a region error from a debug to a warning."
+ * Add the id and class attributes to Forms, aliasing id and name
+ * Make sure the submenu <ul> has the submenu class
+ * Add a deep_active option to render active menu items all the way down
+ * Add an option to kill the JS expand spans
+ * Test the count of children, not just the truth
+ * Switch to an HTML5 doctype from XHTML
+
+BUGFIXES
+========
+ * Don't automatically upgrade the schema when running jifty schema --print
+ * Add some newlines to our warnings to kill the line numbers
+ * Fix jifty schema --setup when AutoUpgrade is off
+ * Compiled condition cache should depend on cwd, as well
+ * Revert "Remove the unused drop-column logic from jifty schema --setup,
+   since ->columns returns only active cols"
+
+DOCS
+====
+ * Point users to perldoc Jifty::Config in the new app config file
+   [rt.cpan.org #24787]
+ * Grammar fix and strengthen the "don't use this for new deployments"
+ * Since plackup -s FCGI doesn't work, don't recommend it
+
+TESTS
+=====
+ * Fix a test that wants the old-style html tag
+
+-----------------------------------
 Jifty 1.01209 - December 9th, 2010
 -----------------------------------
   ____  _        _    ____ _  __  _ 
