@@ -4,6 +4,7 @@ use strict;
 package Jifty::Record;
 
 use Jifty::Config;
+use List::MoreUtils qw();
 
 =head1 NAME
 
@@ -574,6 +575,8 @@ sub delete {
 
 Display the friendly name of the record according to _brief_description.
 
+To change what this returns, override L<_brief_description> instead.
+
 =cut
 
 sub brief_description {
@@ -584,15 +587,22 @@ sub brief_description {
 
 =head2 _brief_description
 
-When displaying a list of records, Jifty can display a friendly value
-rather than the column's unique id.  Out of the box, Jifty always
-tries to display the 'name' field from the record. You can override
-this method to return the name of a method on your record class which
-will return a nice short human readable description for this record.
+When displaying a list of records, Jifty can display a friendly value rather
+than the column's unique id.  Out of the box, Jifty always tries to display the
+'name' field from the record.  If there is no 'name' field, Jifty falls back to
+the record id.
+
+You can override this method to return the name of a method on your record
+class which will return a nice short human readable description for this
+record.
 
 =cut
 
-sub _brief_description {'name'}
+sub _brief_description {
+    my $self = shift;
+    return 'name' if $self->can('name');
+    return 'id';
+}
 
 =head2 null_reference
 
@@ -867,7 +877,7 @@ sub column_serialized_as {
 
 sub default_serialized_as_columns {
     my $class = shift;
-    return ('id', $class->_brief_description);
+    return (List::MoreUtils::uniq 'id', $class->_brief_description);
 }
 
 =head2 jifty_serialize_format

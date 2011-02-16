@@ -456,14 +456,11 @@ sub _default_valid_values {
     );
     $collection->find_all_rows;
 
-    # Fetch the _brief_description() method
-    my $method = $refers_to->_brief_description();
-
     # FIXME: we should get value_from with the actualy refered by key
 
     # Setup the list of valid values
     @valid = (
-        {   display_from => $refers_to->can($method) ? $method : "id",
+        {   display_from => $refers_to->_brief_description(),
             value_from   => 'id',
             collection   => $collection
         }
