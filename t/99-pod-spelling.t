@@ -2,9 +2,10 @@
 
 use strict;
 use Test::More;
+plan skip_all => "Coverage tests only run for authors" unless (-d 'inc/.author');
+
 eval "use Test::Spelling";
 plan skip_all => "Test::Spelling required for testing POD spelling" if $@;
-plan skip_all => "Coverage tests only run for authors" unless (-d 'inc/.author');
 
 add_stopwords(<DATA>);
 
