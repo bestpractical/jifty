@@ -13,14 +13,14 @@ my @tests = (
     {
         url  => "/base/list_s",
         text => '/base/list=TestApp::View::base'.
-		'/base/view=TestApp::View::base'.
-		'/base/view=TestApp::View::base'
+                '/base/view=TestApp::View::base'.
+                '/base/view=TestApp::View::base'
     },
     {
         url  => "/base/list_ht",
         text => '/base/list=TestApp::View::base'.
-		'/base/view=TestApp::View::base'.
-		'/base/view=TestApp::View::base'
+                '/base/view=TestApp::View::base'.
+                '/base/view=TestApp::View::base'
     },
     {
         url  => "/base/list_rg",
@@ -34,14 +34,14 @@ my @tests = (
     {
         url  => "/instance/list_s",
         text => '/base/list=TestApp::View::instance'.
-		'/instance/view=TestApp::View::instance'.
-		'/instance/view=TestApp::View::instance'
+                '/instance/view=TestApp::View::instance'.
+                '/instance/view=TestApp::View::instance'
     },
     {
         url  => "/instance/list_ht",
         text => '/base/list=TestApp::View::instance'.
-		'/instance/view=TestApp::View::instance'.
-		'/instance/view=TestApp::View::instance'
+                '/instance/view=TestApp::View::instance'.
+                '/instance/view=TestApp::View::instance'
     },
     {
         url  => "/instance/list_rg",
