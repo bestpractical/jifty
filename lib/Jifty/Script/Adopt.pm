@@ -139,7 +139,7 @@ sub run {
     }
 
     if(-e $dest) {
-        print "$dest exists, overwrite? [n]\n";
+        print "$dest exists, overwrite? [n] ";
         chomp(my $ans = <STDIN>); $ans ||= 'n';
         exit 1 unless(lc($ans) eq 'y');
     }
