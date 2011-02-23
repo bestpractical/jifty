@@ -148,8 +148,7 @@ sub run {
 
     # TODO put an option on that?
     if($ENV{EDITOR}) {
-        fork and exit;
-        exec("$ENV{EDITOR} $dest");
+        system($ENV{EDITOR}, $dest);
     }
 
 } # end run
