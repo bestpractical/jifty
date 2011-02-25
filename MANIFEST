@@ -590,6 +590,7 @@ t/13-sessions.t
 t/99-pod-coverage.t
 t/99-pod-spelling.t
 t/99-pod.t
+t/99-tabs.t
 t/cas-memcached.t
 t/cas-memcached.t-config.yml
 t/Continuations/bin/jifty
