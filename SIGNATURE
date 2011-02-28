@@ -15,11 +15,11 @@ not run its Makefile.PL or Build.PL.
 Hash: SHA1
 
 SHA1 21a2c8d6579836d378f6530b6d6ae4572fc60d17 AUTHORS
-SHA1 4b96a32adcababef128b94f05cff72266b513027 Changelog
-SHA1 0b75f30ea7f6ab46b3a24fbbd20fcb16aab33e7d MANIFEST
+SHA1 5b53ea41f4d6f27cdd9203af5cbe795ea3a81623 Changelog
+SHA1 4854a6390ddbb9e3a0db290a497a8b713d5ae404 MANIFEST
 SHA1 0a3cad1e188f86089588ca0425b2d274235eb402 MANIFEST.SKIP
-SHA1 810daf475b1dac965d978f85bf0e2415ae8a2d75 META.yml
-SHA1 f815be28cd03743d8582740a0413848d88ce79ed Makefile.PL
+SHA1 b843b84e08b24d1685feba5a617e2692f9562485 META.yml
+SHA1 59a8465a8de188ab38eead80016b13b9cc5ccc0f Makefile.PL
 SHA1 2529f06059dfe9eb4edbe9997fcb0276e56d9dcf README
 SHA1 aaf8f7a1025fc97077072672f325e2a5f3c03a41 bin/build_par
 SHA1 2cbdb35e9070ce00e65df0e997e14e2206d35662 bin/jifty
@@ -174,12 +174,12 @@ SHA1 d3a4c720c6ec7f8fce7df37002fbc9177fb77050 inc/Module/Install/Scripts.pm
 SHA1 bccd856d0ce68773e1218527114ceed1468e1776 inc/Module/Install/Share.pm
 SHA1 5457015ea5a50e93465bf2dafa29feebd547f85b inc/Module/Install/Win32.pm
 SHA1 051e7fa8063908befa3440508d0584a2497b97db inc/Module/Install/WriteAll.pm
-SHA1 8ade78cf3c3898cc76c5f8c132bb18a430e0a6f7 lib/Jifty.pm
+SHA1 a3643326da3b3ed886b7ca6038f4108f3c4875e1 lib/Jifty.pm
 SHA1 a934bb5a39d869dc9341048fbae5460e38bbdc40 lib/Jifty/API.pm
 SHA1 24e037e503a45712e613ab7e50f0ed14b0f3e362 lib/Jifty/Action.pm
 SHA1 f2893e2747a181e45eeb9803245e411ef1ccd665 lib/Jifty/Action/AboutMe.pm
 SHA1 84967dd11f22979379859a8f5689fd2235dfe545 lib/Jifty/Action/Autocomplete.pm
-SHA1 b50dd31424306ba4ee895a857dd50dbec7aabef2 lib/Jifty/Action/Record.pm
+SHA1 a95bab30e2c7844520b16c6494f8aa4a1f7546a0 lib/Jifty/Action/Record.pm
 SHA1 5d8b4bc546676250a0d3bb8288527c9f106f3aa1 lib/Jifty/Action/Record/Bulk.pm
 SHA1 32e89fb30fe351aa7b2a224ffd1deb58aeccd1b6 lib/Jifty/Action/Record/Create.pm
 SHA1 64510014e440573bc2cae0240f98510f522e7c3b lib/Jifty/Action/Record/Delete.pm
@@ -313,16 +313,16 @@ SHA1 67b49295f8b08b38029ae2d0e7d5bf59bb4a3711 lib/Jifty/Plugin/User.pm
 SHA1 21a0fe0815c4ca1547680fe4e067fc719030b096 lib/Jifty/Plugin/User/Mixin/Model/User.pm
 SHA1 22ff56a742df99b1eff71a0b210d21d3ea75c5dc lib/Jifty/Plugin/ViewDeclarePage.pm
 SHA1 c1946da62865f12caf41eec30a396f2a486566db lib/Jifty/Plugin/ViewDeclarePage/Page.pm
-SHA1 f0e3d58ba9ea49a578613e75ead7c1c96ec67f10 lib/Jifty/Record.pm
+SHA1 d20b30b7c403c688c5b6f31a877e2952c2d3edb0 lib/Jifty/Record.pm
 SHA1 9093c23d4b0dca7ba5ccd03acdeb8c73a6d0c045 lib/Jifty/Request.pm
 SHA1 b90ffbb39c77ca1b9360286d960402df6d540f8d lib/Jifty/Request/Mapper.pm
 SHA1 664b25643def15a7e1e0200d755cc6fab9ce5bb8 lib/Jifty/Response.pm
 SHA1 ae33864c4a3e3e765a535006d810a040ae1437a2 lib/Jifty/Result.pm
 SHA1 d8bdfa7dfa44a99aa5ebf96b9e317ff31b54aad7 lib/Jifty/RightsFrom.pm
-SHA1 df9918a86559dc33a7a1e16b433a040e9b20581a lib/Jifty/Schema.pm
+SHA1 df7e8bef28efd471d3b041168da77f09f75a4622 lib/Jifty/Schema.pm
 SHA1 67cda038c1f1f358485a8ae93bea6d7f80000794 lib/Jifty/Script.pm
 SHA1 cdddaac871594ef9f2a14fa45afce2ba820a4787 lib/Jifty/Script/Action.pm
-SHA1 a9dde4d2ac71cb7e519b42d3d72cc0ac9d4631e5 lib/Jifty/Script/Adopt.pm
+SHA1 b5bc1ca2c1fb1068bbd43b4b18f5b3211a118440 lib/Jifty/Script/Adopt.pm
 SHA1 1d2555ab87b6cdac41fe3eda1ec703ea982522c2 lib/Jifty/Script/App.pm
 SHA1 3e24f6b8d591efaa2412df82e7e8bf461e85b2b9 lib/Jifty/Script/Env.pm
 SHA1 0315c3b95bd85d8690d0ab35bfab47a8063d794a lib/Jifty/Script/FastCGI.pm
@@ -344,7 +344,7 @@ SHA1 31394073e6949e5addbc6bad80c06f11a857599a lib/Jifty/Test/WWW/Selenium.pm
 SHA1 0fee7f492ce84b1bb89a50d46aa3a1c16b51c97b lib/Jifty/TestServer.pm
 SHA1 c552f1d9602240e682868dc87a2b3d2d8d266e31 lib/Jifty/TestServer/Inline.pm
 SHA1 8f97d0d38d86503e45510b66ce3c9db796008073 lib/Jifty/Upgrade.pm
-SHA1 135af5979af309389de513740b5f331eb9dcf88b lib/Jifty/Upgrade/Internal.pm
+SHA1 ca716f8c20c59cebede55ec8b50249c2d06e0d3b lib/Jifty/Upgrade/Internal.pm
 SHA1 be993be62a4551abe08eba22dd272ef37c0a793f lib/Jifty/Util.pm
 SHA1 f2b0d3a5c10d3903539e860f2d667113a95cbedb lib/Jifty/View.pm
 SHA1 ae6298445eb442fcae6d90f161cc224f5aab1900 lib/Jifty/View/Declare.pm
@@ -585,7 +585,7 @@ SHA1 c06f737a0e6035364371ad46c17d62d22476a647 t/00-load.t
 SHA1 31d69ead516d33a1b51af4df3e6a5d74eb591748 t/01-dependencies.t
 SHA1 777e40e7d3c591c21883d0ed880df8712dd50ff3 t/01-test-mechanize.t
 SHA1 7c1c866666971ae5271a4e2cfe59557f4688e38a t/01-test-web.t
-SHA1 d3bd781fa373c5a92ba4882008211755719f8943 t/01-version_checks.t
+SHA1 cb0b99519b834fd7927cf64b5ee8e764699f36f9 t/01-version_checks.t
 SHA1 4fa0e0143339298278c5e22a58236c6b71555508 t/02-connect.t
 SHA1 1bd0f7da627086d4f1c6fee322a3b8b302a0f653 t/03-form-protocol.t
 SHA1 411bf10441c2c9312b0a245c6a7bef73e001875e t/03-is_passing-no_plan.t
@@ -602,9 +602,10 @@ SHA1 4d22cf9380a78774b7671eff0f55521abccfd7ab t/10-utf8.t
 SHA1 871565df7b93002259d0e27120ee9614cee8fbed t/11-config-files.t
 SHA1 bd4520e6f2bfdabc6dba2d27e0cb6d33453f82e7 t/12-param-schema.t
 SHA1 6ffdffd5253935b7f8498f0f373724c867a723b8 t/13-sessions.t
-SHA1 cf5b3950070fda63ba1b497f7d89dd6c36ae9c93 t/99-pod-coverage.t
-SHA1 f1bfdfb738e42e784a2ca7eb55d4a84e2d35a2d4 t/99-pod-spelling.t
-SHA1 332d20b7b38fc5728b89d46b80f5b4e9e0ce4e29 t/99-pod.t
+SHA1 0e7ceb6deb91ae0c15bbd42f946b65a44e704706 t/99-pod-coverage.t
+SHA1 abc8a4011bce284eb30b62706083b93bdd731fdb t/99-pod-spelling.t
+SHA1 8bd5a73e6c58c5145dfd79cb46cfee75a78dffa6 t/99-pod.t
+SHA1 8d75d104aa4f1df81f269f35ea991edac8e5b20e t/99-tabs.t
 SHA1 a7dc1f376cac630ea28d2965e561469deb951cc7 t/Continuations/bin/jifty
 SHA1 adbc53cbd328b4d49d3336586fe8f7b7124da970 t/Continuations/lib/Continuations/Action/CrossBridge.pm
 SHA1 01ebcf50d361afff117bfbb14125470da3010f90 t/Continuations/lib/Continuations/Action/GetGrail.pm
@@ -774,7 +775,7 @@ SHA1 9b5d9862b4385107e235ea1619401f562a927f88 t/TestApp-Plugin-SinglePage/Makefi
 SHA1 c1ff9ff7f2a88bc4306b3866b6b80fb9aa8e8423 t/TestApp-Plugin-SinglePage/bin/jifty
 SHA1 28d71c6e7e3132ea899b3a6f48cdb79412ec9d15 t/TestApp-Plugin-SinglePage/etc/config.yml
 SHA1 65259a1e0c8a8c45b36800da0d34d3f370f1f0c3 t/TestApp-Plugin-SinglePage/lib/TestApp/Plugin/SinglePage/Model/User.pm
-SHA1 aa6dd0dfb87beb8fc547fed3a59cd2ca0b53cacf t/TestApp-Plugin-SinglePage/lib/TestApp/Plugin/SinglePage/View.pm
+SHA1 323534420b251ac62077e779b6032def6f830b92 t/TestApp-Plugin-SinglePage/lib/TestApp/Plugin/SinglePage/View.pm
 SHA1 ea691c7fcf59e3da761964220d67aee7b86afb61 t/TestApp-Plugin-SinglePage/t/history.t
 SHA1 310c688571fa410a90968b41669d9f65dbeeafcc t/TestApp-Regions/Makefile.PL
 SHA1 1798b2989f8bec7f1e3ad055a2dbde31b5e9db76 t/TestApp-Regions/bin/jifty
@@ -813,7 +814,7 @@ SHA1 50d0e77e2a11ed08d77775a7ae0c7d1523568bec t/TestApp/lib/TestApp/Action/NewSo
 SHA1 9f847665737703f4fda84f38ac8a1210f5d7f1c7 t/TestApp/lib/TestApp/Action/PassSomething.pm
 SHA1 05114360ab9678da24bbc0ad68562756d6300681 t/TestApp/lib/TestApp/Action/SayHi.pm
 SHA1 6e27f855429d18181d6c5a0de6b83492fa5c6219 t/TestApp/lib/TestApp/CurrentUser.pm
-SHA1 c8ff13aa49eff31584fbeeab260c08338cf3e63a t/TestApp/lib/TestApp/Dispatcher.pm
+SHA1 a72c0b407c98b007f1d2f7925c0eb3de86f61e71 t/TestApp/lib/TestApp/Dispatcher.pm
 SHA1 b1fe4704c7672d5cfb566e47738dd30e4dd117cc t/TestApp/lib/TestApp/Model/CanonTest.pm
 SHA1 01cc97136094c4dcaa0b00f7b89ea679f35e752d t/TestApp/lib/TestApp/Model/OtherThingy.pm
 SHA1 fe7630408f0831cacb77ecce75c2af3dd2ce523c t/TestApp/lib/TestApp/Model/Something.pm
@@ -821,7 +822,7 @@ SHA1 60e2eed33da6b06ea32506cc17229f8ed3c4d482 t/TestApp/lib/TestApp/Model/Thingy
 SHA1 0ca25037b8d32ef860ac615a98bb51682b87706a t/TestApp/lib/TestApp/Model/User.pm
 SHA1 b2d3474949dae7c171157e8697dbb208ef3805f8 t/TestApp/lib/TestApp/Upgrade.pm
 SHA1 0e7b4b8ea53e18902b20c9d2e1db93df06b5ed0e t/TestApp/lib/TestApp/View.pm
-SHA1 f8be83226541599e4543484128fd209dfc664ff6 t/TestApp/lib/TestApp/View/base.pm
+SHA1 9abcf13b1dfa0cdfb8e2a1fa54f76a1ea2b9602d t/TestApp/lib/TestApp/View/base.pm
 SHA1 e376d22f0db953b5c9ede1e4e07660fe94390bf5 t/TestApp/lib/TestApp/View/instance.pm
 SHA1 67f41db40d62b81d71cb60c542695e0d7e6d393d t/TestApp/share/web/static/images/pony.jpg
 SHA1 970120b3562495651809fa7f9bd2c09336d5aee9 t/TestApp/share/web/templates/_elements/wrapper
@@ -859,14 +860,14 @@ SHA1 c7e982544bf4936d139950ee6f3452036510d6bc t/TestApp/t/05-editactions-Cachabl
 SHA1 053aa6a88dda14d97320912d3f4cd7242ffa923a t/TestApp/t/05-editactions-Record.t
 SHA1 0f9de9cc9f87c8e45f1306f6df7d5fd15716be8f t/TestApp/t/06-validation.t
 SHA1 eda166a2aa12c5224b7593db9faebf8f7b94d168 t/TestApp/t/07-sandboxing.t
-SHA1 a283dd84adc3433fd426a1c376d5845d65e4f4ad t/TestApp/t/08-notifications.t
+SHA1 f769b4ee23a1986f60129c5fe7f91670c34e01e1 t/TestApp/t/08-notifications.t
 SHA1 343b927ecd8a24b262c854b928a8f0c24ee0e5d9 t/TestApp/t/09-redirect.t
 SHA1 7380bbb01f1e92e3fe745d66868ac07d39bff4c5 t/TestApp/t/10-compress.t
 SHA1 968c40da377487c6df24ffb8d8e0b812d5fb375c t/TestApp/t/11-current_user.t
 SHA1 e4142610dc02d9968357126b0c895d5cdd8c8394 t/TestApp/t/12-search.t
 SHA1 0808109ae739e69f0b493b03e0325f8671940455 t/TestApp/t/13-page-regions.t
 SHA1 61407ab834ecaf6e950aec671b83cf5473d76c33 t/TestApp/t/14-template-paths.t
-SHA1 70caac003580174b14505e8aed70dab800229fd4 t/TestApp/t/15-template-subclass.t
+SHA1 425a4f1df2fc70d0db96055b74bab273ffaf7383 t/TestApp/t/15-template-subclass.t
 SHA1 79ef95c23bfea9a7bd9443e98b1f28819d00cac6 t/TestApp/t/16-template-region.t
 SHA1 e45e04fd8e7f6be1acd8ec5d4c542d49272a983c t/TestApp/t/17-template-region-internal-redirect.t
 SHA1 93c1b9a0d2ae315f5b1858ec586620016aaf8f29 t/TestApp/t/18-test-www-declare.t
@@ -900,9 +901,9 @@ SHA1 e34d6d5bd8edf3214225893ad8378b356cac1dcc utils/js_size.pl
 SHA1 555f6174f4b023aa4648f71e3a5a6ea9d85841d6 utils/run_coverage.sh
 SHA1 b8eb1b9c3b2bd077020d9191b7d6b162caab1a90 utils/un-serial.pl
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (Darwin)
+Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAk1Zp+8ACgkQsxfQtHhyRPoZywCfV6NL2Ae0Q6Oa9mY9yCIRoUNg
-floAn0nOKeKlIKY8Ezz9s4Yd9TCWfL9t
-=zsoH
+iD8DBQFNa8nQHdv9ZfNcOAcRAgNoAJ9lmyrujIOGOHppkNPU/tWp7uNsUACffjhz
+Hy29g35hLoJnScEJTFt9wsw=
+=RaZP
 -----END PGP SIGNATURE-----

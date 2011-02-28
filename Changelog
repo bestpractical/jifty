@@ -1,4 +1,22 @@
 -----------------------------------
+Jifty 1.10228 - February 28th, 2011
+-----------------------------------
+BUGFIXES
+========
+ * brief_description now always works by returning ->name, or failing that,
+   ->id.
+ * jifty adopt: Don't bother forking before invoking $EDITOR
+
+DOCUMENTATION
+=============
+ * Document the models method of Jifty::Schema
+
+TESTS
+=====
+ * Avoid loading author test modules unless -d inc/.author
+ * Author tests for no tabs
+
+-----------------------------------
 Jifty 1.10214 - February 14th, 2011
 -----------------------------------
 CORE
