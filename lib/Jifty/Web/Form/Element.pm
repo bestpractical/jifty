@@ -298,7 +298,6 @@ This handler can be used with all form elements.
 
 The onkeyup event occurs when a key is released over an element. 
 This handler can be used with all form elements.
-=cut
 
 =head2 onselect
 
