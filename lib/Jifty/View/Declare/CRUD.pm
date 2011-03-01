@@ -428,7 +428,6 @@ template 'search' => sub {
             label   => _('Search'),
             onclick => [
                 { submit => $search },
-                "Jifty.closeLightbox();",
                 {
                     refresh => Jifty->web->current_region->parent,
                     args    => { page => 1 },
@@ -543,7 +542,6 @@ private template edit_item_controls => sub {
             label   => _("Save"),
             onclick => [
                 { submit => $update },
-                "Jifty.closeLightbox();",
                 { refresh => $view_region },
             ],
         );
@@ -555,7 +553,6 @@ private template edit_item_controls => sub {
                         submit  => $delete,
                         confirm => _('Really delete?'),
                     },
-                    "Jifty.closeLightbox();",
                     {
                         region => $view_region,
                         replace_with => '/__jifty/empty',

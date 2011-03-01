@@ -1394,6 +1394,7 @@ Jifty.update = function () {
         */
 
         // Look through the action results looking for field validation errors
+        var field_errors = 0;
         walk_node(response, {
             result: function(result) {
                 var moniker = result.getAttribute("moniker");
@@ -1407,11 +1408,18 @@ Jifty.update = function () {
                                         : (error.firstChild ? error.firstChild.nodeValue : '');
                             var action = current_actions[moniker];
                             action.result.field_error[field.getAttribute("name")] = text;
+                            field_errors++;
                         }
                     }
                 });
             }
         });
+
+        // If there's a lightbox, close it only if there are no validation
+        // errors
+        if (field_errors == 0) {
+            Jifty.closeLightbox();
+        }
 
         // Re-enable all the controls in the actions we previously disabled
         for ( var i = 0; i < disabled_elements.length; i++ ) {
