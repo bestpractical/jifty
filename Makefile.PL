@@ -48,8 +48,6 @@ requires('HTML::Mason' => 1.3101);           # HTML::Mason::Exceptions HTML::Mas
 requires('HTML::Mason::Plugin');
 requires('HTTP::Cookies');
 requires('HTTP::Date');
-requires('HTTP::Server::Simple' => '0.35');  # HTTP::Server::Simple::CGI
-requires('HTTP::Server::Simple::Recorder');
 requires('Hash::Merge', '0.12');
 requires('Hash::MultiValue', 0.05);
 requires('IO::Handle::Util');
