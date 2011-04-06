@@ -94,6 +94,8 @@ Initialize all of our view handlers.
 sub setup_view_handlers {
     my $self = shift;
 
+    return if $self->_view_handlers;
+
     $self->_view_handlers({});
     foreach my $class ($self->view_handlers()) {
         $self->_view_handlers->{$class} =  $class->new();
@@ -109,7 +111,7 @@ Returns the Jifty view handler for C<ClassName>.
 sub view {
     my $self = shift;
     my $class = shift;
-    $self->setup_view_handlers unless $self->_view_handlers;
+    $self->setup_view_handlers;
     return $self->_view_handlers->{$class};
 }
 
@@ -213,7 +215,7 @@ sub handle_request {
     my $req = Plack::Request->new($env);
     my $response;
 
-    $self->setup_view_handlers() unless $self->_view_handlers;
+    $self->setup_view_handlers;
 
     $self->call_trigger('before_request', $req);
 
