@@ -242,8 +242,8 @@ sub new {
     $class_loader->require;
 
     # Configure the request handler and action API handler
-    Jifty->handler(Jifty::Handler->new());
-    Jifty->api(Jifty::API->new());
+    Jifty->handler(Jifty::Handler->new()) unless Jifty->handler;
+    Jifty->api(Jifty::API->new()) unless Jifty->api;
 
     # We can only require view classes once we have our models and actions set.
     $class_loader->require_views;
