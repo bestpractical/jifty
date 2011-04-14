@@ -341,7 +341,7 @@ sub fragment_request {
 
 Finds the error span on the current page for the name FIELD in the
 action MONIKER, and returns the text (tags stripped) from it.  (If the
-field can't be found.
+field can't be found, return undef).
 
 =cut
 
@@ -350,10 +350,11 @@ sub field_error_text {
     my $moniker = shift;
     my $field = shift;
 
+    # Setup the XPath processor and the ID we're looking for
     my $xp = XML::XPath->new( xml => $self->content );
-
     my $id = "errors-J:A:F-$field-$moniker";
 
+    # Search for the span containing that error
     my $nodeset = $xp->findnodes(qq{//span[\@id = "$id"]});
     return unless $nodeset->size == 1;
     
