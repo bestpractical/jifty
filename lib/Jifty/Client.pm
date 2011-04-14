@@ -8,7 +8,7 @@ delete $ENV{'http_proxy'}; # Otherwise WWW::Mechanize tries to go through your H
 
 use Jifty::YAML;
 use HTTP::Cookies;
-use XML::XPath;
+use HTML::TreeBuilder::XPath;
 use List::Util qw(first);
 use Carp;
 
@@ -263,17 +263,15 @@ sub field_error_text {
     my $field = shift;
 
     # Setup the XPath processor and the ID we're looking for
-    my $xp = XML::XPath->new( xml => $self->content );
+    my $tree = HTML::TreeBuilder::XPath->new;
+    $tree->parse($self->content);
+    $tree->eof;
+
     my $id = "errors-J:A:F-$field-$moniker";
 
     # Search for the span containing that error
-    my $nodeset = $xp->findnodes(qq{//span[\@id = "$id"]});
-    return unless $nodeset->size == 1;
-    
-    # Note that $xp->getNodeText does not actually return undef for nodes that
-    # aren't found, even though it's documented to.  Thus the workaround above.
-    return $xp->getNodeText(qq{//span[\@id = "$id" ]});
-} 
+    return $tree->findvalue(qq{//span[\@id = "$id"]});
+}
 
 =head2 uri
 
