@@ -42,7 +42,10 @@ sub body        { $_[0]->env->{'psgi.input'} }
 sub input       { $_[0]->env->{'psgi.input'} }
 
 sub header { shift->headers->header(@_) }
-sub path { shift->uri->path(@_) }
+sub path {
+    return @_ == 1 ? $_[0]->uri->path
+                   : $_[0]->uri->path( Jifty::Util->canonicalize_path( $_[1], 1 ) )
+}
 sub content_length   { shift->headers->content_length(@_) }
 sub content_type     { shift->headers->content_type(@_) }
 sub referer          { shift->headers->referer(@_) }
@@ -290,7 +293,7 @@ sub from_data_structure {
     my $path = $data->{'path'};
     $path ||= $self->path || '/';
 
-    $self->path( Jifty::Util->canonicalize_path( $path, 1 ) );
+    $self->path( $path );
     $self->just_validating( $data->{validating} ) if $data->{validating};
 
     if ( ref $data->{continuation} eq "HASH" ) {
