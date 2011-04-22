@@ -498,6 +498,11 @@ sub handle_request {
     local $SIG{__DIE__} = 'DEFAULT';
     local $Request = Jifty->web->request;
 
+    my $handler = $Dispatcher->can("fragment_handler");
+    if ($Request->is_subrequest and $handler) {
+        $handler->();
+        return undef;
+    }
     eval {
          $Dispatcher->_do_dispatch( Jifty->web->request->path);
     };
