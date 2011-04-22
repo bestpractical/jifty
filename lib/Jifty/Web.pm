@@ -967,6 +967,12 @@ sub render_template {
     my $content;
         my $void_context = ( defined wantarray ? 0 :1);
 
+    # Check for ../../../../../etc/passwd
+    my $abs_template_path = Jifty::Util->absolute_path( Jifty->config->framework('Web')->{'TemplateRoot'} . $template );
+    my $abs_root_path = Jifty::Util->absolute_path( Jifty->config->framework('Web')->{'TemplateRoot'} );
+    $template = "/errors/500"
+        if $abs_template_path !~ /^\Q$abs_root_path\E/;
+
     # Look for a possible handler, and cache it for future requests.
     # With DevelMode, always look it up.
     if ( not exists $TEMPLATE_CACHE{$template} or Jifty->config->framework('DevelMode')) {

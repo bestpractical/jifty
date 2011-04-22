@@ -816,12 +816,6 @@ sub _do_show {
     # a relative path, prepend the working directory
     $path = "$self->{cwd}/$path" unless $path =~ m{^/};
 
-    # Check for ../../../../../etc/passwd
-    my $abs_template_path = Jifty::Util->absolute_path( Jifty->config->framework('Web')->{'TemplateRoot'} . $path );
-    my $abs_root_path = Jifty::Util->absolute_path( Jifty->config->framework('Web')->{'TemplateRoot'} );
-    Jifty->web->render_template('/errors/500')
-        if $abs_template_path !~ /^\Q$abs_root_path\E/;
-
     Jifty->web->render_template( $path );
 
     last_rule;
