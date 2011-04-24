@@ -143,6 +143,16 @@ sub _serve_404 {
     return Plack::Response->new(404)->finalize;
 }
 
+=head2 durable
+
+Returns true if the backing store is durable -- that is, if there is a
+guarantee that data placed there will be accessible from all proccesses at
+all later times.
+
+=cut
+
+sub durable { 0 }
+
 no Any::Moose;
 __PACKAGE__->meta->make_immutable(inline_constructor => 0);
 1;
