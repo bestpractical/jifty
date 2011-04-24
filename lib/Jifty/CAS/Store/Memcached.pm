@@ -32,11 +32,6 @@ The options available include:
             - 10.0.0.3:11211
           compress_threshold: 5120
 
-        # Turned on by default. Keeps CAS working when memcached fails by
-        # falling back to the default in-process store. It probably should
-        # be turned off in most cases (like so) after successful testing.
-        MemcachedFallback: 0
-
 =head1 DESCRIPTION
 
 This is a memcached backend for L<Jifty::CAS>.  For more information about
@@ -87,15 +82,8 @@ sub _store {
         }
         Jifty->log->error($err);
 
-        if ( $self->memcached_fallback ) {
-            Jifty->log->error("Falling back to default, in-process memory store.  "
-                             ."This is suboptimal and you should investigate the cause.");
-            return $self->SUPER::_store($domain, $name, $blob);
-        }
-        else {
-            # fail with undef
-            return;
-        }
+        # fail with undef
+        return;
     }
 
     $success = $self->memcached->set("$domain:keys:$name", $key);
@@ -119,7 +107,6 @@ sub key {
     my ($self, $domain, $name) = @_;
     my $key = $self->memcached->get("$domain:keys:$name");
     return $key if defined $key;
-    return $self->SUPER::key($domain, $name) if $self->memcached_fallback;
     return;
 }
 
@@ -134,7 +121,6 @@ sub retrieve {
     my ($self, $domain, $key) = @_;
     my $blob = $self->memcached->get("$domain:db:$key");
     return $blob if defined $blob;
-    return $self->SUPER::retrieve($domain, $key) if $self->memcached_fallback;
     return;
 }
 
@@ -167,17 +153,6 @@ C</framework/CAS/Memcached> like so:
 sub memcached_config {
     Jifty->config->framework('CAS')->{'Memcached'}
         || Jifty->config->defaults->{'framework'}{'CAS'}{'Memcached'}
-}
-
-=head2 memcached_fallback
-
-Returns a boolean (from the config file) indicating whether or not memcached
-should fallback to the per-process, in-memory store.
-
-=cut
-
-sub memcached_fallback {
-    Jifty->config->framework('CAS')->{'MemcachedFallback'} ? 1 : 0
 }
 
 no Any::Moose;

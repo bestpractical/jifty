@@ -4,4 +4,3 @@ framework:
     BaseClass: 'Jifty::CAS::Store::Memcached'
     Memcached:
       compress_threshold: 100000000 # effectively disables compression
-    MemcachedFallback: 0

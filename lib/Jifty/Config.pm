@@ -633,7 +633,6 @@ sub defaults {
                     namespace   => $self->framework('ApplicationName').":",
                     compress_threshold => 10240,
                 },
-                MemcachedFallback => 1,
             },
         }
     };

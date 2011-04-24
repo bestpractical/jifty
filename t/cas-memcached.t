@@ -14,7 +14,7 @@ plan skip_all => "Testing CAS memcached store requires a memcached running on th
 
 # We want to do the import late since it loads up Jifty and triggers CCJS's
 # early generation trying to use memcached
-Jifty::Test->import(tests => 17);
+Jifty::Test->import(tests => 10);
 
 my $data    = "a" x (1024*10);
 my $databig = "a" x (1024*1024*2);
@@ -37,20 +37,6 @@ my $databig = "a" x (1024*1024*2);
     my $key = Jifty::CAS->publish("test$$", "two", $databig, { content_type => 'text/plain' });
     is $key, undef, "Not published, there was an error";
     is(Jifty::CAS->key("test$$", "two"), undef, "Can't lookup a key because it isn't there");
-}
-
-{
-    Jifty->config->framework('CAS')->{'MemcachedFallback'} = 1;
-    my $key = Jifty::CAS->publish("test$$", "three", $databig, { content_type => 'text/plain' });
-    ok $key, "Published";
-    is length $key, 32, "Key is 32 chars long - an MD5 sum";
-    is(Jifty::CAS->key("test$$", "three"), $key, "Matches what we get back from ->key");
-    
-    my $blob = Jifty::CAS->retrieve("test$$", $key);
-    ok $blob, "retrieved value";
-    isa_ok $blob, 'Jifty::CAS::Blob', 'got a blob';
-    is $blob->content, $databig, "content is the same";
-    is_deeply $blob->metadata, { content_type => 'text/plain' }, "metadata is still good";
 }
 
 # XXX TODO test serving up of CAS content
