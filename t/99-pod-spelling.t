@@ -4,34 +4,16 @@ use strict;
 use Test::More;
 plan skip_all => "Coverage tests only run for authors" unless (-d 'inc/.author');
 
-eval "use Test::Spelling";
-plan skip_all => "Test::Spelling required for testing POD spelling" if $@;
+eval "use Test::Spelling 0.12";
+plan skip_all => "Test::Spelling 0.12 required for testing POD spelling" if $@;
 
 add_stopwords(<DATA>);
 
 local $ENV{LC_ALL} = 'C';
 set_spell_cmd('aspell list -l en');
 
-# monkeypatch Test::Spelling to hide translated files [rt.cpan.org #63755] {{{
-my @translations = (
-    qr/_de\.pod$/,
-    qr/_ja\.pod$/,
-    qr/_zhtw\.pod$/,
-);
-
-no warnings 'redefine';
-no warnings 'once';
-my $orig = Test::Spelling->can('pod_file_spelling_ok');
-*Test::Spelling::pod_file_spelling_ok = sub {
-    my $file = shift;
-
-    if (grep { $file =~ $_ } @translations) {
-        return ok("ignoring translated file $file");
-    }
-
-    $orig->($file, @_);
-};
-# }}}
+# ignore translations
+set_pod_file_filter(sub { shift !~ /_(de|ja|zhtw)\.pod$/ });
 
 all_pod_files_spelling_ok();
 
