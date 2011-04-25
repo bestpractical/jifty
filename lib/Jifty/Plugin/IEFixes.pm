@@ -26,11 +26,11 @@ Jifty::Plugin::IEFixes - Add javascript files for IE
   In your app, if you want to add more IE-specific js:
 
     my ($ief) = Jifty->find_plugin('Jifty::Plugin::IEFixes')
-    $ief->add_javascript( qw(file.js) );
+    $ief->add_javascript( qw/file.js/ );
 
 =cut
 
-__PACKAGE__->mk_accessors(qw(use_external_ie7js js cdn user_js));
+__PACKAGE__->mk_accessors(qw/use_external_ie7js js cdn user_js/);
 
 use constant IE7JS_VERSION => '2.0(beta3)';
 

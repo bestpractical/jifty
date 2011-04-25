@@ -85,7 +85,7 @@ we need L<Net::LDAP> and an accessor to our LDAP value.
 
   use Net::LDAP;
 
-  __PACKAGE__->mk_accessors(qw(LDAP));
+  __PACKAGE__->mk_accessors(qw/LDAP/);
 
 and we can write our C<ldap_search> function. 
 Search need at least 3 characters and return an array of C<DisplayName (login)>
@@ -174,7 +174,7 @@ for just a date. Jifty will then automatically translate to and from
 DateTime objects for you when you access the column on your
 model. Additionally, if you add:
 
-    filters are qw(Jifty::Filter::DateTime Jifty::DBI::Filter::Date)
+    filters are qw/Jifty::Filter::DateTime Jifty::DBI::Filter::Date/
 
 Jifty will inspect the model's
 L<current_user|Jifty::Manual::AccessControl> for a C<time_zone>
@@ -322,7 +322,7 @@ lowercase.  All you have to do is to define a method named
 C<canonicalize_username> in your Model class, like this:
 
     package MyApp::Model::User;
-    use base qw(MyApp::Record);
+    use base qw/MyApp::Record/;
 
     sub canonicalize_username {
         my $class = shift;

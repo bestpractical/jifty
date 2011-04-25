@@ -4,7 +4,7 @@ use strict;
 package Jifty::Event;
 
 use Jifty::YAML;
-use Digest::MD5 qw(md5_hex);
+use Digest::MD5 qw/md5_hex/;
 use vars qw/%PUBLISHER/;
 
 =head1 NAME

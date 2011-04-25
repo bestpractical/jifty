@@ -4,7 +4,7 @@ use warnings;
 package Jifty::Plugin::SinglePage;
 use base 'Jifty::Plugin';
 
-__PACKAGE__->mk_accessors(qw(region_name));
+__PACKAGE__->mk_accessors(qw/region_name/);
 
 our $NO_SPA;
 

@@ -6,12 +6,12 @@ use warnings;
 
 use base qw/Class::Accessor::Fast/;
 use URI;
-use Scalar::Util qw(weaken);
+use Scalar::Util qw/weaken/;
 
-__PACKAGE__->mk_accessors(qw(
+__PACKAGE__->mk_accessors(qw/
     label sort_order link target escape_label class render_children_inline
     raw_html
-));
+/);
 
 =head1 NAME
 

@@ -26,7 +26,7 @@ use Scalar::Defer qw/ defer /;
 use Scalar::Util qw/ blessed /;
 use Clone qw/clone/;
 
-__PACKAGE__->mk_accessors(qw(record _cached_arguments));
+__PACKAGE__->mk_accessors(qw/record _cached_arguments/);
 
 use constant report_detailed_messages => 1;
 
@@ -296,7 +296,7 @@ sub _build_class_arguments {
 
         # If we're hand-coding a render_as, hints or label, let's use it.
         for (
-            qw(render_as label hints display_length max_length mandatory sort_order container documentation attributes)
+            qw/render_as label hints display_length max_length mandatory sort_order container documentation attributes/
             )
         {
             if ( defined( my $val = $column->$_ ) ) {

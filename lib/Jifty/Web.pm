@@ -11,26 +11,26 @@ Jifty::Web - Web framework for a Jifty application
 
 use XML::Writer;
 use CSS::Squish;
-use Digest::MD5 qw(md5_hex);
-use Scalar::Util qw(blessed);
-use Carp qw(carp);
+use Digest::MD5 qw/md5_hex/;
+use Scalar::Util qw/blessed/;
+use Carp qw/carp/;
 use base qw/Class::Accessor::Fast Class::Data::Inheritable Jifty::Object/;
 
 use vars qw/$SERIAL @JS_INCLUDES/;
 
 __PACKAGE__->mk_accessors(
-    qw(next_page force_redirect request response session temporary_current_user)
+    qw/next_page force_redirect request response session temporary_current_user/
 );
 
 __PACKAGE__->mk_classdata($_)
-    for qw(cached_css cached_css_digest cached_css_time
-           css_files  javascript_libs   external_javascript_libs);
+    for qw/cached_css cached_css_digest cached_css_time
+           css_files  javascript_libs   external_javascript_libs/;
 
-__PACKAGE__->css_files([qw( main.css )]);
+__PACKAGE__->css_files([qw/ main.css /]);
 
 __PACKAGE__->external_javascript_libs([]);
 
-__PACKAGE__->javascript_libs([qw(
+__PACKAGE__->javascript_libs([qw!
     json.js
     jquery-1.4.1.js
     iutil.js
@@ -70,7 +70,7 @@ __PACKAGE__->javascript_libs([qw(
     ui.sortable.js
     ordered-list.js
     uploads.js
-)]);
+!]);
 
 use Class::Trigger;
 
@@ -1265,7 +1265,7 @@ the C<start> sub of your main application class.  For example if your
 application is Foo then in L<lib/Foo.pm>
 
  sub start {
-     Jifty->web->add_javascript(qw( jslib1.js jslib2.js ) );
+     Jifty->web->add_javascript(qw/ jslib1.js jslib2.js / );
  }
 
 The L<add_javascript> method will append the files to javascript_libs.

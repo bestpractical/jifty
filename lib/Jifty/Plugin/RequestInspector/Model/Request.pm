@@ -3,7 +3,7 @@ use warnings;
 
 package Jifty::Plugin::RequestInspector::Model::Request;
 
-use base qw( Jifty::Record );
+use base qw/ Jifty::Record /;
 
 use Jifty::DBI::Schema;
 use Jifty::Record schema {

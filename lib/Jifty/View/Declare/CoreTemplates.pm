@@ -37,7 +37,7 @@ These templates are still in Masonland. we're doing something wrong with escapin
 
 
 template '__jifty/subs' => sub {
-    my ($forever) = get(qw(forever)) || 1;
+    my ($forever) = get(qw/forever/) || 1;
 
     Jifty->web->response->content_type("text/html; charset=utf-8");
     Jifty->web->response->header('Pragma' => 'no-cache');
@@ -289,7 +289,7 @@ template '__jifty/webservices/xml' => sub {
         # Jifty::DBI::Record's yet, which are technically circular data
         # structures at some level (current_user of a
         # current_user->user_object is itself)
-        use Scalar::Util qw(blessed);
+        use Scalar::Util qw/blessed/;
         my $content = $results{$_}->content;
 
 

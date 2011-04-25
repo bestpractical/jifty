@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use base 'Jifty::Plugin';
 
-__PACKAGE__->mk_accessors(qw(steps));
+__PACKAGE__->mk_accessors(qw/steps/);
 
 sub prereq_plugins { 'Config' }
 

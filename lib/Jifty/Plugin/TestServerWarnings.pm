@@ -8,7 +8,7 @@ use LWP::Simple qw//;
 use Jifty::Plugin::TestServerWarnings::Appender;
 use Log::Log4perl::Level;
 
-__PACKAGE__->mk_accessors(qw(clear_screen));
+__PACKAGE__->mk_accessors(qw/clear_screen/);
 
 =head1 NAME
 

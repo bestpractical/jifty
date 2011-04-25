@@ -31,8 +31,8 @@ L<Jifty::Web::Form::Element/accessors>.
 
 =cut
 
-sub accessors { shift->SUPER::accessors(), qw(url escape_label tooltip target rel); }
-__PACKAGE__->mk_accessors(qw(url escape_label tooltip target rel));
+sub accessors { shift->SUPER::accessors(), qw/url escape_label tooltip target rel/; }
+__PACKAGE__->mk_accessors(qw/url escape_label tooltip target rel/);
 
 =head2 new PARAMHASH
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env perl -w
 use strict;
-use Test::More qw(no_plan);
+use Test::More qw/no_plan/;
 
 # by Eric Wilhelm in response to Randal Schwartz pointing out that
 # CPAN.pm chokes on the VERSION >... construct

@@ -120,9 +120,9 @@ L<Jifty::Manual::Models> 或 L<Jifty::DBI::Schema> 內參閱更詳細的資料�
     use strict;
     use warnings;
 
-    use base qw(Jifty::CurrentUser);
+    use base qw/Jifty::CurrentUser/;
 
-    __PACKAGE__->mk_accessors(qw(group));
+    __PACKAGE__->mk_accessors(qw/group/);
 
     sub _init {
         my $self = shift;

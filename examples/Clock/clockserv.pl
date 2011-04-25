@@ -1,6 +1,6 @@
 use strict;
 use lib 'lib';
-use Time::HiRes qw( time sleep );
+use Time::HiRes qw/ time sleep /;
 use Jifty;
 
 BEGIN { Jifty->new };

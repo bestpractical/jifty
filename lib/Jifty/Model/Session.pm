@@ -29,7 +29,7 @@ column updated => type is 'timestamp',
 column key_type => type is 'varchar(32)', is case_sensitive, is no_placeholder;
 };
 
-use base qw( Jifty::Record );
+use base qw/ Jifty::Record /;
 use DateTime ();
 
 =head2 table

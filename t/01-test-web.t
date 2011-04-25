@@ -23,11 +23,11 @@ isa_ok( $web->response, "Jifty::Response" );
 {
     package Jifty::Request::Subclass;
     use Any::Moose;
-    use base qw(Jifty::Request);
+    use base qw/Jifty::Request/;
 
     package Jifty::Response::Subclass;
     use Any::Moose;
-    use base qw(Jifty::Response);
+    use base qw/Jifty::Response/;
 }
 
 

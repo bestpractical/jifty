@@ -33,7 +33,7 @@ column 'created_on' =>
   type is 'datetime',
   is immutable,
   default is defer { DateTime->now },
-  filters are qw(Jifty::Filter::DateTime Jifty::DBI::Filter::Date);
+  filters are qw/Jifty::Filter::DateTime Jifty::DBI::Filter::Date/;
 };
 
 

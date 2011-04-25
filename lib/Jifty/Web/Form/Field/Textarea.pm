@@ -5,7 +5,7 @@ package Jifty::Web::Form::Field::Textarea;
 
 use base qw/Jifty::Web::Form::Field/;
 
-__PACKAGE__->mk_accessors(qw(rows cols));
+__PACKAGE__->mk_accessors(qw/rows cols/);
 
 =head1 NAME
 

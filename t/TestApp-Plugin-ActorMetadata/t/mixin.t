@@ -8,4 +8,4 @@ use Jifty::Test::Dist;
 
 is_deeply(
 [sort map { $_->name } TestApp::Plugin::ActorMetadata::Model::Evil->columns],
-[qw(created_by created_on id my_mixin_hello updated_by updated_on)]);
+[qw/created_by created_on id my_mixin_hello updated_by updated_on/]);

@@ -7,7 +7,7 @@ use Test::Email;
 use Email::Abstract;
 
 use base 'Exporter';
-our @EXPORT = qw(mail_ok);
+our @EXPORT = qw/mail_ok/;
 
 =head1 NAME
 

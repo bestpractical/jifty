@@ -146,7 +146,7 @@ sub import_extra {
     # we check for multiple args because of 'no_plan'
     if (@$args > 1) {
         my %args = @$args;
-        @$args = map { $args{$_} ? ($_ => $args{$_ }) : () } qw(tests skip_all);
+        @$args = map { $args{$_} ? ($_ => $args{$_ }) : () } qw/tests skip_all/;
     }
 }
 
@@ -223,7 +223,7 @@ sub setup {
     # Spit out a plan (if we got one) *before* we load modules, in
     # case of compilation errors
     unless ($class->builder->has_plan) {
-        $class->builder->plan(map { $_ => $args{$_ } } qw(tests skip_all))
+        $class->builder->plan(map { $_ => $args{$_ } } qw/tests skip_all/)
             if $args{tests} || $args{skip_all};
     }
 

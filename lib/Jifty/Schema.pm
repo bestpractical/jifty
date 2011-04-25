@@ -18,7 +18,7 @@ Jifty::Module::Pluggable->import(
 );
 
 our %_SQL_RESERVED          = ();
-our @_SQL_RESERVED_OVERRIDE = qw(value);
+our @_SQL_RESERVED_OVERRIDE = qw/value/;
 foreach my $dialect ( 'SQL::ReservedWords', &_sql_dialects ) {
     foreach my $word ( $dialect->words ) {
         push @{ $_SQL_RESERVED{ lc($word) } }, $dialect->reserved_by($word);

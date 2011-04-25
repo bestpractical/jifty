@@ -204,7 +204,7 @@ is_deeply($content, []);
 
 # on GET    '/=/action'      => \&list_actions;
 
-my @actions = qw(
+my @actions = qw/
                  TestApp.Plugin.REST.Action.CreateGroup
                  TestApp.Plugin.REST.Action.UpdateGroup
                  TestApp.Plugin.REST.Action.SearchGroup
@@ -217,7 +217,7 @@ my @actions = qw(
                  TestApp.Plugin.REST.Action.DoSomething
                  Jifty.Action.AboutMe
                  Jifty.Action.Autocomplete
-                 Jifty.Action.Redirect);
+                 Jifty.Action.Redirect/;
 
 $mech->get_ok('/=/action/');
 is($mech->status, 200);

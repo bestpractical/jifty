@@ -12,7 +12,7 @@ isa_ok($server, 'Jifty::TestServer');
 my $URL     = $server->started_ok;
 my $mech    = Jifty::Test::WWW::Mechanize->new();
 
-for my $image (qw(pony.jpg)) {
+for my $image (qw/pony.jpg/) {
     $mech->get_ok("$URL/images/$image");
     my $res = $mech->response;
     

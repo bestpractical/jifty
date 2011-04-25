@@ -17,19 +17,19 @@ L<HTML::Mason::CGIHandler> interface to interact with it.
 
 use HTML::Mason;
 use HTML::Mason::Utils;
-use Params::Validate qw(:all);
+use Params::Validate qw/:all/;
 use HTML::Mason::Exceptions;
 use HTML::Mason::FakeApache;
 use Encode qw();
 use Jifty::View::Mason::Request;
 
 use Class::Container;
-use base qw(Jifty::View Class::Container);
+use base qw/Jifty::View Class::Container/;
 
 use HTML::Mason::MethodMaker
-    ( read_write => [ qw( interp ) ] );
+    ( read_write => [ qw/ interp / ] );
 
-use vars qw($VERSION);
+use vars qw/$VERSION/;
 
 __PACKAGE__->valid_params
     (

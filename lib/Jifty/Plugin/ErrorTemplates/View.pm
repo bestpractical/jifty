@@ -19,7 +19,7 @@ Default error templates
 
 
 template '/error/_elements/error_text' => sub {
-    my ($error) = get(qw(error));
+    my ($error) = get(qw/error/);
     h1 { 'Sorry, something went awry' };
     p  {
         _(

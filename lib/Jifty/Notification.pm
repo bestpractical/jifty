@@ -46,7 +46,7 @@ sub new {
     my %args = @_;
 
     # initialize message bits to avoid 'undef' warnings
-    #for (qw(body preface footer subject)) { $self->$_(''); }
+    #for (qw/body preface footer subject/) { $self->$_(''); }
     $self->_recipients( [] );
 
     while ( my ( $arg, $value ) = each %args ) {

@@ -16,7 +16,7 @@ Subclass of L<HTML::Mason::Request> which is customised for Jifty's use.
 
 use HTML::Mason::Exceptions;
 use HTML::Mason::Request;
-use base qw(HTML::Mason::Request);
+use base qw/HTML::Mason::Request/;
 
 =head2 auto_send_headers
 

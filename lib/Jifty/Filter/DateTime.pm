@@ -11,7 +11,7 @@ Jifty::Filter::DateTime -- A Jifty::DBI filter to work with
    # use it with Jifty::DBI::Filter::Date or J::D::F::DateTime
     column created =>
       type is 'timestamp',
-      filters are qw( Jifty::Filter::DateTime Jifty::DBI::Filter::DateTime),
+      filters are qw/ Jifty::Filter::DateTime Jifty::DBI::Filter::DateTime/,
       label is 'Created',
       is immutable;
 
@@ -27,14 +27,14 @@ C<Jifty::DBI::Filter::DateTime>, e.g.
 
     column created =>
       type is 'timestamp',
-      filters are qw( Jifty::Filter::DateTime Jifty::DBI::Filter::DateTime),
+      filters are qw/ Jifty::Filter::DateTime Jifty::DBI::Filter::DateTime/,
       label is 'Created',
       is immutable;
 
 =cut
 
 package Jifty::Filter::DateTime;
-use base qw(Jifty::DBI::Filter);
+use base qw/Jifty::DBI::Filter/;
 
 
 =head2 decode
@@ -54,7 +54,7 @@ sub decode {
 
     # XXX There has to be a better way to do this
     my %args;
-    for (qw(year month day hour minute second nanosecond formatter time_zone)) {
+    for (qw/year month day hour minute second nanosecond formatter time_zone/) {
         $args{$_} = $$value_ref->$_ if(defined($$value_ref->$_));
     }
 

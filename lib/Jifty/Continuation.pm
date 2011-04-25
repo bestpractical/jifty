@@ -61,10 +61,10 @@ $Storable::forgive_me = 1;
 
 use base qw/Class::Accessor::Fast Jifty::Object/;
 
-__PACKAGE__->mk_accessors(qw(id parent
+__PACKAGE__->mk_accessors(qw/id parent
                              request response code
                              version
-                             ));
+                             /);
 
 =head2 new PARAMHASH
 

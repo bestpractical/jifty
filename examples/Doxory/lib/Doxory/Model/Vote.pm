@@ -12,7 +12,7 @@ use Doxory::Record schema {
         references Doxory::Model::User;
 
     column suggestion =>
-        valid are qw( a b skip );
+        valid are qw/ a b skip /;
 
     column comments =>
         label is _('Comments?'),

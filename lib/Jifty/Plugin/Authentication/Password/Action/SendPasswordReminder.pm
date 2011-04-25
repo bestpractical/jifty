@@ -11,7 +11,7 @@ package Jifty::Plugin::Authentication::Password::Action::SendPasswordReminder;
 use base qw/Jifty::Action/;
 
 
-__PACKAGE__->mk_accessors(qw(user_object));
+__PACKAGE__->mk_accessors(qw/user_object/);
 
 =head2 arguments
 

@@ -10,7 +10,7 @@ Makefile.PL as dependencies.
 
 =cut
 
-use Test::More qw(no_plan);
+use Test::More qw/no_plan/;
 use File::Find;
 use Module::CoreList;
 

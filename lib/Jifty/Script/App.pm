@@ -2,7 +2,7 @@ use warnings;
 use strict;
 
 package Jifty::Script::App;
-use base qw(Jifty::Script Class::Accessor::Fast);
+use base qw/Jifty::Script Class::Accessor::Fast/;
 
 use File::Copy;
 use Jifty::Config;
@@ -156,7 +156,7 @@ sub _make_directories {
     my $self = shift;
 
     mkdir($self->prefix) or die("Can't create " . $self->prefix . ": $!");
-    my @dirs = qw( lib );
+    my @dirs = qw/ lib /;
     my @dir_parts = split('::',$self->mod_name);
     my $lib_dir = "";
     foreach my $part (@dir_parts) {
@@ -175,7 +175,7 @@ sub _make_directories {
     }
 }
 sub _directories {
-    return qw(
+    return qw/
         bin
         etc
         doc
@@ -190,7 +190,7 @@ sub _directories {
         lib/__APP__/Model
         lib/__APP__/Action
         t
-    );
+    /;
 }
 
 

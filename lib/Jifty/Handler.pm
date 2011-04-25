@@ -30,7 +30,7 @@ use String::BufferStack;
 use Plack::Builder;
 use Plack::Request;
 
-__PACKAGE__->mk_accessors(qw(dispatcher _view_handlers stash buffer));
+__PACKAGE__->mk_accessors(qw/dispatcher _view_handlers stash buffer/);
 
 =head2 new
 
@@ -220,10 +220,10 @@ sub handle_request {
     $self->call_trigger('before_request', $req);
 
     # Simple ensure stdout is not writable in next major release
-    use IO::Handle::Util qw(io_prototype io_to_glob);
+    use IO::Handle::Util qw/io_prototype io_to_glob/;
     my $trapio= io_prototype
         print => sub {
-            use Carp::Clan qw(^(Jifty::Handler|Carp::|IO::Handle::));
+            use Carp::Clan qw/^(Jifty::Handler|Carp::|IO::Handle::)/;
             carp "printing to STDOUT is deprecated.  Use outs, outs_raw or Jifty->web->response->body() instead";
 
             my $self = shift;
