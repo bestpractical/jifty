@@ -6,7 +6,7 @@ use List::Util 'sum';
 use Carp;
 use Scalar::Util;
 
-__PACKAGE__->mk_accessors(qw/stacktrace explain/);
+__PACKAGE__->mk_accessors(qw(stacktrace explain));
 
 sub prereq_plugins { 'RequestInspector' }
 

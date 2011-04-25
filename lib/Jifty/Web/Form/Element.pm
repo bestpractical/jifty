@@ -170,11 +170,11 @@ error from your browser.
 
 =cut
 
-use constant handlers => qw/
+use constant handlers => qw(
     onclick onchange ondblclick onmousedown onmouseup onmouseover
     onmousemove onmouseout onfocus onblur onkeypress onkeydown
     onkeyup onselect
-/;
+);
 
 use constant possible_handlers => { map {($_ => 1)} handlers};
 
@@ -187,10 +187,10 @@ C<new> parameter hash.
 
 =cut
 
-sub accessors { handlers, qw/class title key_binding key_binding_label id label tooltip continuation rel/ }
+sub accessors { handlers, qw(class title key_binding key_binding_label id label tooltip continuation rel) }
 
 __PACKAGE__->mk_accessors(map "_$_", handlers);
-__PACKAGE__->mk_accessors(qw/class title key_binding key_binding_label id label tooltip continuation rel/ );
+__PACKAGE__->mk_accessors(qw(class title key_binding key_binding_label id label tooltip continuation rel) );
 
 =head2 new PARAMHASH OVERRIDE
 

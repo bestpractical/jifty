@@ -46,7 +46,7 @@ template '__jifty/empty' => sub :Static {
 
 
 private template 'header' => sub {
-    my ($title) = get_current_attr(qw/title/);
+    my ($title) = get_current_attr(qw(title));
     Jifty->web->response->content_type('text/html; charset=utf-8');
     head { 
         with(

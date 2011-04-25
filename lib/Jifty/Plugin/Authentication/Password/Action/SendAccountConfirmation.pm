@@ -10,7 +10,7 @@ Jifty::Plugin::Authentication::Password::Action::SendAccountConfirmation - send 
 package Jifty::Plugin::Authentication::Password::Action::SendAccountConfirmation;
 use base qw/Jifty::Action/;
 
-__PACKAGE__->mk_accessors(qw/user_object/);
+__PACKAGE__->mk_accessors(qw(user_object));
 
 =head2 arguments
 

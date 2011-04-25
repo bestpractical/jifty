@@ -1,7 +1,7 @@
 package Ping::PingServer;
 
 use Net::Ping;
-use Time::HiRes qw/ time sleep /;
+use Time::HiRes qw( time sleep );
 use Jifty;
 
 BEGIN { Jifty->new };

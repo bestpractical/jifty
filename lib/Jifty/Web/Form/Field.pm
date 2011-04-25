@@ -119,16 +119,16 @@ C<new>.  Subclasses should extend this list.
 
 =cut
 
-my @new_fields = qw/
+my @new_fields = qw(
     name type sticky sticky_value default_value action
     mandatory ajax_validates ajax_canonicalizes autocompleter preamble hints
     placeholder focus render_mode display_length max_length _element_id
     disable_autocomplete multiple attributes
-/;
+);
 
-my @semiexposed_fields = qw/
+my @semiexposed_fields = qw(
     label input_name available_values
-/;
+);
 
 sub accessors {
     shift->SUPER::accessors(), @new_fields, @semiexposed_fields;
@@ -476,7 +476,7 @@ Output the start of div that wraps the form field
 
 sub render_wrapper_start {
     my $self = shift;
-    my @classes = qw/form_field/;
+    my @classes = qw(form_field);
     if ($self->mandatory) { push @classes, 'mandatory' }
     if ($self->name)      { push @classes, 'argument-'.$self->name }
     Jifty->web->out('<div class="'.join(' ', @classes).'">' ."\n");

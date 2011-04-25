@@ -17,7 +17,7 @@ This library provides page wrappers
 
 use Jifty::View::Declare::Helpers;
 
-__PACKAGE__->mk_accessors(qw/content_code done_header _title _meta/);
+__PACKAGE__->mk_accessors(qw(content_code done_header _title _meta));
 use constant allow_single_page => 1;
 
 =head2 new
@@ -30,7 +30,7 @@ sub new {
     my $class = shift;
     my $self = $class->SUPER::new(@_);
 
-    my ($title) = get_current_attr(qw/title/);
+    my ($title) = get_current_attr(qw(title));
     $self->_title($title);
 
     $self->_title($self->_meta->{title})
@@ -109,7 +109,7 @@ sub render_page {
             attr { id is 'content' };
             div {
                 {
-                    no warnings qw/ redefine once /;
+                    no warnings qw( redefine once );
 
                     local *is::title = $self->mk_title_handler();
                     $self->render_pre_content_hook();
@@ -137,7 +137,7 @@ sub mk_title_handler {
     return sub {
         shift;
         for (@_) {
-            no warnings qw/ uninitialized /;
+            no warnings qw( uninitialized );
             if ( ref($_) eq 'CODE' ) {
                 Template::Declare->buffer->push( private => 1 );
                 $_->();

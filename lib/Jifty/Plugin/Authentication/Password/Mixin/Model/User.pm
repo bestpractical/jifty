@@ -7,7 +7,7 @@ use base 'Jifty::DBI::Record::Plugin';
 
 use Digest::MD5 qw'';
 
-our @EXPORT = qw/password_is hashed_password_is regenerate_auth_token has_alternative_auth/;
+our @EXPORT = qw(password_is hashed_password_is regenerate_auth_token has_alternative_auth);
 
 =head1 NAME
 

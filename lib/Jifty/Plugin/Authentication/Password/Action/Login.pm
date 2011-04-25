@@ -9,7 +9,7 @@ Jifty::Plugin::Authentication::Password::Action::Login - process login with pass
 
 package Jifty::Plugin::Authentication::Password::Action::Login;
 use base qw/Jifty::Action/;
-use Digest::MD5 qw/md5_hex/;
+use Digest::MD5 qw(md5_hex);
 use HTTP::Date ();
 
 use constant TOKEN_EXPIRE_TIME => 30;

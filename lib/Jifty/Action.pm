@@ -46,7 +46,7 @@ See L<Jifty::Manual::Actions> for examples of using actions.
 
 use base qw/Jifty::Object Class::Accessor::Fast Class::Data::Inheritable/;
 
-__PACKAGE__->mk_accessors(qw/moniker argument_values values_from_request order result sticky_on_success sticky_on_failure/);
+__PACKAGE__->mk_accessors(qw(moniker argument_values values_from_request order result sticky_on_success sticky_on_failure));
 __PACKAGE__->mk_classdata(qw/PARAMS/);
 
 =head1 COMMON METHODS
@@ -195,7 +195,7 @@ sub _generate_moniker {
     my $self = shift;
 
     # We use Digest::MD5 to generate the moniker
-    use Digest::MD5 qw/md5_hex/;
+    use Digest::MD5 qw(md5_hex);
 
     # Use information from the call stack as the data for the digest 
     my $frame = 1;

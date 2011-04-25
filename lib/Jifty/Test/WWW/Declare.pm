@@ -2,7 +2,7 @@
 package Jifty::Test::WWW::Declare;
 use strict;
 use warnings;
-use base qw/Exporter/;
+use base qw(Exporter);
 
 # Sub::Exporter doesn't warn about redefining functions, which we do in the
 # import routine below
@@ -13,7 +13,7 @@ use Sub::Exporter -setup => {
 
 BEGIN { require Jifty::Test; require Test::WWW::Declare }
 
-our @EXPORT = qw/$server $URL/;
+our @EXPORT = qw($server $URL);
 
 our $server;
 our $URL;

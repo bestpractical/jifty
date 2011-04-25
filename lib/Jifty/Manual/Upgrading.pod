@@ -109,8 +109,8 @@ At the very least your F<Upgrade.pm> should contain the following:
 
  package MyApp::Upgrade;
 
- use base qw/Jifty::Upgrade/;
- use Jifty::Upgrade qw/ since rename /;
+ use base qw(Jifty::Upgrade);
+ use Jifty::Upgrade qw( since rename );
 
  since '0.6.1' => sub {
     ....
@@ -143,8 +143,8 @@ Before you upgrade, though, you must tell Jifty that a rename is happening here,
 
  use MyApp::Upgrade;
 
- use base qw/Jifty::Upgrade/;
- use Jifty::Upgrade qw/ since rename /;
+ use base qw(Jifty::Upgrade);
+ use Jifty::Upgrade qw( since rename );
 
  since '0.6.1' => sub {
      rename(

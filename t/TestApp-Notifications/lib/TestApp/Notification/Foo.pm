@@ -1,7 +1,7 @@
 package TestApp::Notification::Foo;
 use warnings;
 use strict;
-use base qw/TestApp::Notification/;
+use base qw(TestApp::Notification);
 use utf8;
 
 sub setup {

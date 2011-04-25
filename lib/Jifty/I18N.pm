@@ -5,7 +5,7 @@ package Jifty::I18N;
 use base 'Locale::Maketext';
 use Locale::Maketext::Lexicon ();
 use Email::MIME::ContentType;
-use Encode::Guess qw/iso-8859-1/;
+use Encode::Guess qw(iso-8859-1);
 use Jifty::Util;
 
 =head1 NAME

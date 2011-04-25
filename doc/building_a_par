@@ -3,11 +3,11 @@ Incomplete instructions
  $ pp `find lib/ -name \*pm |perl -ne '$_ =~ s/.pm$//;print "-M ". join("::",grep { ! /(?:lib|\-)/ } split("/",$_)) '`  -I lib bin/jifty
 use warnings;
 use strict;
-use Cwd qw/cwd/;
+use Cwd qw(cwd);
 use Module::CoreList;
 use File::Copy;
-use File::Path qw/mkpath/;
-use File::Spec::Functions qw/splitdir catfile catdir/;
+use File::Path qw(mkpath);
+use File::Spec::Functions qw(splitdir catfile catdir);
 use CPAN;
 use CPAN::Config;
 use YAML;

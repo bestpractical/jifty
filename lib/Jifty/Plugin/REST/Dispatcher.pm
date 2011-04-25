@@ -6,7 +6,7 @@ package Jifty::Plugin::REST::Dispatcher;
 
 
 
-use CGI qw/ start_html end_html ol ul li a dl dt dd /;
+use CGI qw( start_html end_html ol ul li a dl dt dd );
 use Carp;
 use Jifty::Dispatcher -base;
 use Jifty::YAML ();
@@ -504,7 +504,7 @@ Returns true if the column is a valid column to observe on the model
 =cut
 
 our @column_attrs = 
-qw/ name
+qw( name
     documentation
     type
     default
@@ -520,7 +520,7 @@ qw/ name
     aliased_as
     label hints
     valid_values
-/;
+);
 
 sub valid_column {
     my ( $model, $column ) = @_;
@@ -862,7 +862,7 @@ Shows the user all possible parameters to the action.
 
 =cut
 
-our @param_attrs = qw/
+our @param_attrs = qw(
     name
     documentation
     type
@@ -873,7 +873,7 @@ our @param_attrs = qw/
     ajax_validates
     length
     valid_values
-/;
+);
 
 sub list_action_params {
     my ($class) = action($1);

@@ -4,7 +4,7 @@ use warnings;
 package Jifty::Plugin::Authentication::Password;
 use base qw/Jifty::Plugin/;
 
-__PACKAGE__->mk_accessors(qw/nav_menu/);
+__PACKAGE__->mk_accessors(qw(nav_menu));
 
 =head1 NAME
 

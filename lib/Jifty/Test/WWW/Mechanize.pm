@@ -12,7 +12,7 @@ use HTML::Lint;
 use Test::HTML::Lint qw();
 use HTTP::Cookies;
 use HTML::TreeBuilder::XPath;
-use List::Util qw/first/;
+use List::Util qw(first);
 use Plack::Test;
 use Carp;
 

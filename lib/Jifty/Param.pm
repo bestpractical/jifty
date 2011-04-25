@@ -76,7 +76,7 @@ use Jifty::Web::Form::Field ();
 use base qw/Class::Accessor::Fast/;
 use constant ACCESSORS => (
     Jifty::Web::Form::Field->accessors,
-    qw/constructor valid_values available_values sort_order documentation/,
+    qw(constructor valid_values available_values sort_order documentation),
 );
 
 __PACKAGE__->mk_accessors(ACCESSORS);

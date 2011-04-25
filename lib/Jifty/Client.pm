@@ -9,7 +9,7 @@ delete $ENV{'http_proxy'}; # Otherwise WWW::Mechanize tries to go through your H
 use Jifty::YAML;
 use HTTP::Cookies;
 use HTML::TreeBuilder::XPath;
-use List::Util qw/first/;
+use List::Util qw(first);
 use Carp;
 
 =head1 NAME

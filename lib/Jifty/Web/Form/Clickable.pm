@@ -29,10 +29,10 @@ L<Jifty::Web::Form::Element/accessors>.
 
 sub accessors {
     shift->SUPER::accessors,
-        qw/url escape_label tooltip continuation call returns submit target preserve_state render_as_button render_as_link/;
+        qw(url escape_label tooltip continuation call returns submit target preserve_state render_as_button render_as_link);
 }
 __PACKAGE__->mk_accessors(
-    qw/url escape_label tooltip continuation call returns submit target preserve_state render_as_button render_as_link/
+    qw(url escape_label tooltip continuation call returns submit target preserve_state render_as_button render_as_link)
 );
 
 =head2 new PARAMHASH

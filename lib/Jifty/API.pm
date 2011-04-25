@@ -59,7 +59,7 @@ available within your application and manage access to those actions.
 use base qw/Class::Accessor::Fast Jifty::Object/;
 
 
-__PACKAGE__->mk_accessors(qw/action_limits/);
+__PACKAGE__->mk_accessors(qw(action_limits));
 
 =head1 METHODS
 

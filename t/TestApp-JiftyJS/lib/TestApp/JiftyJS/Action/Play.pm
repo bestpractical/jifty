@@ -17,7 +17,7 @@ use Jifty::Action schema {
     param mood =>
         type is 'text',
         ajax validates,
-        valid are qw/happy angry normal/;
+        valid are qw(happy angry normal);
 
     param flavor =>
         autocompleter is \&autocomplete_flavor,
@@ -62,7 +62,7 @@ sub autocomplete_flavor {
     my ($self, $value) = @_;
     return grep {
         $_ =~ /$value/i;
-    } sort qw/ berry vanilla caramel caracara honey miso blueberry strawberry /;
+    } sort qw( berry vanilla caramel caracara honey miso blueberry strawberry );
 
 }
 

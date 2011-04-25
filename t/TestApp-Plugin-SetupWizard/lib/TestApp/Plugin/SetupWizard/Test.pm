@@ -13,7 +13,7 @@ use base 'Exporter';
 use Jifty::Test::Dist ();
 use Jifty::Test::WWW::Mechanize ();
 
-our @EXPORT = qw/site_config_is/;
+our @EXPORT = qw(site_config_is);
 
 sub import {
     my $class = shift;

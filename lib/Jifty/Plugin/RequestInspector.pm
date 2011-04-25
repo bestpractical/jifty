@@ -6,7 +6,7 @@ use Time::HiRes 'time';
 
 sub version { '0.0.2' }
 
-__PACKAGE__->mk_accessors(qw/url_filter on_cookie persistent/);
+__PACKAGE__->mk_accessors(qw(url_filter on_cookie persistent));
 
 my $current_inspection;
 my @requests;

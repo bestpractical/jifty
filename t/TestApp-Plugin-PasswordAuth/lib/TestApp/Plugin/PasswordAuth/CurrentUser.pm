@@ -3,9 +3,9 @@ package TestApp::Plugin::PasswordAuth::CurrentUser;
 use strict;
 use warnings;
 
-use base qw/Jifty::CurrentUser/;
+use base qw(Jifty::CurrentUser);
 
-__PACKAGE__->mk_accessors(qw/group/);
+__PACKAGE__->mk_accessors(qw(group));
 
 sub _init {
    my $self = shift;

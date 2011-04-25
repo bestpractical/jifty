@@ -5,7 +5,7 @@ package Jifty::Plugin::ActorMetadata::Mixin::Model::ActorMetadata;
 use Jifty::DBI::Schema;
 use base 'Jifty::DBI::Record::Plugin';
 
-our @EXPORT = qw/current_user_can current_user_is_owner/;
+our @EXPORT = qw(current_user_can current_user_is_owner);
 my %column_names;
 
 =head1 NAME
@@ -51,7 +51,7 @@ Jifty::DBI::Schema->register_types(
         input_filters are qw/Jifty::DBI::Filter::DateTime/ },
     TimeStamp => sub {
         type is 'timestamp',
-        filters are qw/ Jifty::Filter::DateTime Jifty::DBI::Filter::DateTime/,
+        filters are qw( Jifty::Filter::DateTime Jifty::DBI::Filter::DateTime),
     }
 );
 }

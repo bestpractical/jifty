@@ -5,7 +5,7 @@ use Test::More;
 use File::Spec;
 use Jifty::Test::WWW::Mechanize;
 use Test::Script::Run 'get_perl_cmd';
-use FindBin qw/$Bin/;
+use FindBin qw($Bin);
 use Cwd;
 my $cwd;
 

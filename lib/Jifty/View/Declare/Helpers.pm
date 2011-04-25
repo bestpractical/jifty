@@ -6,11 +6,11 @@ use Template::Declare::Tags;
 use base qw/Template::Declare Exporter/;
 
 our @EXPORT = (
-    qw/hyperlink tangent redirect new_action
+    qw(hyperlink tangent redirect new_action
     form_submit form_return form_next_page page content
     wrapper request get set render_param render_hidden
     render_action render_region render_mason
-    current_user js_handlers/,
+    current_user js_handlers),
     @Template::Declare::Tags::EXPORT,
     @Template::Declare::Tags::TagSubs,  # Backward compatibility only
     @Template::Declare::Tags::TAG_SUB_LIST,
@@ -35,7 +35,7 @@ If called in scalar context, pulls the first item in C<args> and returns it.
 If called in list context, returns the values of all items in C<args>.
 
     my $action = get('action');
-    my ($action, $object) = get(qw/action object/);
+    my ($action, $object) = get(qw(action object));
 
 =cut
 

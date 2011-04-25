@@ -51,7 +51,7 @@ Returns the key calculated for this content.
 
 =cut
 
-__PACKAGE__->mk_accessors(qw/content metadata key/);
+__PACKAGE__->mk_accessors(qw(content metadata key));
 
 sub new {
     my $class = shift;

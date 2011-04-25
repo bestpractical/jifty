@@ -52,7 +52,7 @@ by default.
 
 =cut
 
-__PACKAGE__->mk_accessors(qw/css js jsmin cdn skipped_js generate_early/);
+__PACKAGE__->mk_accessors(qw(css js jsmin cdn skipped_js generate_early));
 
 =head2 init
 

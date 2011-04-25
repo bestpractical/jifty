@@ -30,7 +30,7 @@ column value    => type is 'text';
 
 use version;
 
-use base qw/ Jifty::Record /;
+use base qw( Jifty::Record );
 
 =head2 table
 

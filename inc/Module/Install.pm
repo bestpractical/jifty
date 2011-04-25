@@ -121,7 +121,7 @@ END_DIE
 	# To save some more typing in Module::Install installers, every...
 	# use inc::Module::Install
 	# ...also acts as an implicit use strict.
-	$^H |= strict::bits(qw/refs subs vars/);
+	$^H |= strict::bits(qw(refs subs vars));
 
 	#-------------------------------------------------------------
 

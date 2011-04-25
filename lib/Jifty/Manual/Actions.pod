@@ -99,7 +99,7 @@ dropdown/text field), with some default values available:
     param category => 
         label is 'Category',
         render as 'Combobox',
-        available are qw/ Personal Work Block /;
+        available are qw( Personal Work Block );
     # ...
 
 But a static list is lame. What we really want is a C<Category> model,

@@ -4,7 +4,7 @@ eval 'exec /usr/bin/env perl  -S $0 ${1+"$@"}'
     if 0; # not running under some shell
 use warnings;
 use strict;
-use File::Basename qw/dirname/; 
+use File::Basename qw(dirname); 
 use UNIVERSAL::require;
 
 BEGIN {

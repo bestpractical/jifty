@@ -5,7 +5,7 @@ package Jifty::Web::Form;
 
 use base qw/Jifty::Object Class::Accessor::Fast/;
 
-__PACKAGE__->mk_accessors(qw/actions printed_actions name call is_open disable_autocomplete target submit_to onsubmit class/);
+__PACKAGE__->mk_accessors(qw(actions printed_actions name call is_open disable_autocomplete target submit_to onsubmit class));
 
 # Alias id to name
 *id = *name;

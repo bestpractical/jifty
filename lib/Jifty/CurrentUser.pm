@@ -6,7 +6,7 @@ package Jifty::CurrentUser;
 use base qw/Jifty::Object Class::Accessor::Fast/;
 use Scalar::Util qw();
 
-__PACKAGE__->mk_accessors(qw/is_superuser is_bootstrap_user/);
+__PACKAGE__->mk_accessors(qw(is_superuser is_bootstrap_user));
 
 =head1 NAME
 

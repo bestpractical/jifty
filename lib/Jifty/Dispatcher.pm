@@ -355,7 +355,7 @@ sub import {
 
     no strict 'refs';
     no warnings 'once';
-    for (qw/RULES_RUN RULES_SETUP RULES_CLEANUP RULES_DEFERRED/) {
+    for (qw(RULES_RUN RULES_SETUP RULES_CLEANUP RULES_DEFERRED)) {
         @{ $pkg . '::' . $_ } = ();
     }
     if ( @args != @_ ) {

@@ -2,7 +2,7 @@ use warnings;
 use strict;
 
 package Jifty::Script::Po;
-use base qw/Jifty::Script Class::Accessor::Fast/;
+use base qw(Jifty::Script Class::Accessor::Fast);
 
 use Pod::Usage;
 use File::Copy ();

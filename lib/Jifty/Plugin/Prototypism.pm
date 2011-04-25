@@ -27,7 +27,7 @@ javascript code, however.
 
 =cut
 
-__PACKAGE__->mk_accessors(qw/cdn/);
+__PACKAGE__->mk_accessors(qw(cdn));
 
 =head1 METHODS
 
@@ -44,12 +44,12 @@ sub init {
 
     my %opt  = @_;
     $self->cdn( $opt{ cdn } || '' );
-    my @js = qw!
+    my @js = qw(
         prototype
         scriptaculous/builder
         scriptaculous/effects
         scriptaculous/controls
-    !;
+    );
 
     push @js, 'jifty_compatible' if Jifty->config->framework('ConfigFileVersion') < 4;
     Jifty->web->add_javascript( "prototypism/$_.js" ) for @js;

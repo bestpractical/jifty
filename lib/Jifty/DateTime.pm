@@ -43,14 +43,14 @@ BEGIN {
     require DateTime::Locale;
 }
 
-use base qw/Jifty::Object DateTime/;
+use base qw(Jifty::Object DateTime);
 
 use Jifty::DBI::Schema;
 Jifty::DBI::Schema->register_types(
     timestamp => sub {
         encode_on_select is 1,
         type is 'timestamp',
-        filters are qw/ Jifty::Filter::DateTime Jifty::DBI::Filter::DateTime /,
+        filters are qw( Jifty::Filter::DateTime Jifty::DBI::Filter::DateTime ),
     },
 );
 

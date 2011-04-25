@@ -85,7 +85,7 @@ column 'username' =>
 column 'password' =>
   type is 'text',
   render_as 'Password',
-  filters are qw/Jifty::DBI::Filter::SaltHash/;
+  filters are qw(Jifty::DBI::Filter::SaltHash);
 
 sub password_is {
     my $self = shift;

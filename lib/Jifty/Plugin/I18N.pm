@@ -46,7 +46,7 @@ You will still need to manually do the following to make client side l10n work:
 
 =cut
 
-__PACKAGE__->mk_accessors(qw/js/);
+__PACKAGE__->mk_accessors(qw(js));
 
 Jifty->web->add_javascript('loc.js');
 

@@ -5,7 +5,7 @@ package TestApp::Plugin::FasterSwallow;
 use base 'Jifty::DBI::Record::Plugin';
 use Jifty::DBI::Schema;
 use Jifty::DBI::Record schema {
-        column swallow_type => valid are qw/african european/, default is 'african';
+        column swallow_type => valid are qw(african european), default is 'african';
     };
 
 

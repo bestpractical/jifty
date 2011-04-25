@@ -24,7 +24,7 @@ Displays a sign-up form.
 =cut
 
 template 'signup' => page { title => _('Sign up') } content {
-    my ( $action, $next ) = get(qw/action next/);
+    my ( $action, $next ) = get(qw(action next));
     Jifty->web->form->start( call => $next );
     render_param( $action => 'name' , focus => 1);
     render_param( $action => $_ ) for ( grep {$_ ne 'name'} $action->argument_names );
@@ -72,7 +72,7 @@ template login_widget => sub {
               } else {
                 render_param( $action, 'email', focus => 1 );
               };
-            render_param( $action, $_ ) for (qw/password remember/);
+            render_param( $action, $_ ) for (qw(password remember));
             form_return( label => _(q{Login}), submit => $action );
             hyperlink(
                 label => _("Lost your password?"),
@@ -94,7 +94,7 @@ See L<Jifty::Plugin::Authentication::Action::ResetLostPassword>.
 =cut
 
 template 'let/reset_lost_password' => page { title => _('Reset lost password') } content {
-    my ( $next ) = get(qw/next/);
+    my ( $next ) = get(qw(next));
     my $action = Jifty->web->new_action( class => 'ResetLostPassword' );
 
     h1 { {class is 'title'};  _('Reset lost password')};
@@ -126,7 +126,7 @@ See L<Jifty::Plugin::Authentication::Password::SendPasswordReminder>.
 =cut
 
 template 'lost_password' => page { title => 'Send a link to reset your password' } content {
-    my ( $next ) = get(qw/next/);
+    my ( $next ) = get(qw(next));
     my $action = Jifty->web->new_action(
         moniker => 'password_reminder',
         class   => 'SendPasswordReminder',

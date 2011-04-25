@@ -26,17 +26,17 @@ sub get_nok($) {
     is $mech->status, 404, "no $path (404)";
 }
 
-for(qw!some another some/deep!) {
+for(qw(some another some/deep)) {
     get_ok("/under_any/$_");
     $mech->content_contains("woot");
 }
 
-for(qw!some another some/deep!) {
+for(qw(some another some/deep)) {
     get_ok("/under/some_any/$_");
     $mech->content_contains("woot");
 }
 
-for(qw!some another some/deep!) {
+for(qw(some another some/deep)) {
     get_ok("/under_re/$_");
     $mech->content_contains("woot: $_");
 }

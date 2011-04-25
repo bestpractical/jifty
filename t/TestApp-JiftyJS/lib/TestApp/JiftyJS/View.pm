@@ -170,7 +170,7 @@ template '/act/play' => page {
 template '/effects' => page {
     h1 { "Jifty.update() tests with effects" };
 
-    for (qw/Appear SlideDown/) {
+    for (qw(Appear SlideDown)) {
         hyperlink(
             label => "Append ($_)",
             onclick => {

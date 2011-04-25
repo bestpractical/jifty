@@ -41,7 +41,7 @@ if you're here then you want to change layout, your App::View::Page
 should be something like:
 
     package MyApp::View::Page;
-    use base qw/Jifty::Plugin::ViewDeclarePage::Page/;
+    use base qw(Jifty::Plugin::ViewDeclarePage::Page);
     use Jifty::View::Declare::Helpers;
 
     ...
@@ -89,7 +89,7 @@ It's documented!
 =cut
 
 
-__PACKAGE__->mk_accessors(qw/content_code _title _links _meta/);
+__PACKAGE__->mk_accessors(qw(content_code _title _links _meta));
 use constant allow_single_page => 1;
 
 =head1 ACCESSORS
@@ -378,13 +378,13 @@ L</render_link_inpage> and fills _links accessor.
 sub instrument_content {
     my $self = shift;
 
-    no warnings qw/ redefine once /;
+    no warnings qw( redefine once );
 
     my $seen_title = 0;
     local *is::page_title = sub {
         shift;
         $seen_title = 1;
-        no warnings qw/uninitialized/;
+        no warnings qw(uninitialized);
         my $res = '';
         for (@_) {
             # just in case somebody if somebody put a tag into title

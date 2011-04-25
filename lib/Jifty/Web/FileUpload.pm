@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use base qw/Jifty::Object Class::Accessor::Fast/;
 
-__PACKAGE__->mk_accessors(qw/filehandle _content filename content_type/);
+__PACKAGE__->mk_accessors(qw(filehandle _content filename content_type));
 
 use overload (
     q{""} => sub { $_[0]->filename },

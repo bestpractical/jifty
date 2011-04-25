@@ -15,7 +15,7 @@ can be updated via AJAX or via query parameters.
 =cut
 
 use base qw/Jifty::Object Class::Accessor::Fast/;
-__PACKAGE__->mk_accessors(qw/name force_path force_arguments default_path default_arguments qualified_name parent region_wrapper lazy loading_path class/);
+__PACKAGE__->mk_accessors(qw(name force_path force_arguments default_path default_arguments qualified_name parent region_wrapper lazy loading_path class));
 use Jifty::JSON;
 use Encode ();
 

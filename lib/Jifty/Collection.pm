@@ -52,7 +52,7 @@ normal current_user_can checks.
 
 =cut
 
-__PACKAGE__->mk_accessors(qw/results_are_readable/);
+__PACKAGE__->mk_accessors(qw(results_are_readable));
 
 =head2 as_search_action PARAMHASH
 

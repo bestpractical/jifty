@@ -50,12 +50,12 @@ my @today = localtime(time());
 
 my @weekdays;
 push @weekdays, $_
-  for qw/Sun Mon Tue Wed Thu Fri Sat/;
+  for qw(Sun Mon Tue Wed Thu Fri Sat);
 
 my @months;
 push @months, $_
-  for qw/January February March April May June July August
-         September October November December/;
+  for qw(January February March April May June July August
+         September October November December);
 
 unless ($DisplayedYear) {
     $DisplayedMonth = $today[4] + 1;
