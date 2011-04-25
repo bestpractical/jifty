@@ -560,15 +560,10 @@ sub javascript_attrs {
                     preload_key  => $trigger_structure->{preload_key},
                 });
 
-            my $update = "Jifty.update($update_json, this);";
-
-            $string .=
-                'if(event.ctrlKey||event.metaKey||event.altKey||event.shiftKey) return true; '
-                if ( $trigger eq 'onclick' );
-
-            $string .= $self->javascript_preempt
-                ? "return $update"
-                : "$update; return true;";
+            my $update = $trigger eq "onclick" ? "Jifty.c(event,$update_json,this)"
+                                               : "Jifty.update($update_json,this);";
+            $string .= "return $update";
+            $string .= " || true" unless $self->javascript_preempt;
         }
 
         if ($trigger_structure->{confirm}) {

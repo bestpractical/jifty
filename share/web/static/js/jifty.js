@@ -1630,7 +1630,13 @@ Jifty.update = function () {
 
     // Disable regular browser form submission (we're Ajaxing instead)
     return false;
-}
+};
+
+Jifty.c = function (event, update, obj) {
+    if (event.ctrlKey || event.metaKey || event.altKey || event.shiftKey)
+        return true;
+    return Jifty.update(update, obj);
+};
 
 // A cache of preload_key to XMLresponse objects
 Jifty.preloaded_regions = {};
