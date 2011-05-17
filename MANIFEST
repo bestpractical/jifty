@@ -317,7 +317,6 @@ lib/Jifty/Subs/Render.pm
 lib/Jifty/Test.pm
 lib/Jifty/Test/Dist.pm
 lib/Jifty/Test/Email.pm
-lib/Jifty/Test/WWW/Declare.pm
 lib/Jifty/Test/WWW/Mechanize.pm
 lib/Jifty/Test/WWW/Selenium.pm
 lib/Jifty/TestServer.pm
@@ -857,7 +856,6 @@ t/TestApp/t/14-template-paths.t
 t/TestApp/t/15-template-subclass.t
 t/TestApp/t/16-template-region.t
 t/TestApp/t/17-template-region-internal-redirect.t
-t/TestApp/t/18-test-www-declare.t
 t/TestApp/t/19-rightsfrom.t
 t/TestApp/t/20-error-pages.t
 t/TestApp/t/21-js-arguments.t

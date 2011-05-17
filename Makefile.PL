@@ -130,7 +130,6 @@ feature 'Development of a jifty application' =>
     recommends('Test::MockModule' => '0.05'),
     recommends('Test::MockObject' => '1.07'),
     recommends('Module::Refresh' => '0.09'),
-    recommends('Test::WWW::Declare' => '0.01'),
     # Sub::Exporter is already required by SQL::ReservedWords (and also by
     # Moose if that's around), but make it explicit
     recommends('Sub::Exporter'),
