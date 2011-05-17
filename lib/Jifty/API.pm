@@ -270,7 +270,7 @@ sub restrict {
         die "For security reasons, Jifty won't let you allow all actions"
             if $polarity eq "allow"
             and ref $restriction
-            and $restriction =~ /^\(\?[-xism]*:\^?\.\*\$?\)$/;
+            and $restriction =~ /^\(\?^?[-xismadlu]*:\^?\.\*\$?\)$/;
 
         # Fully qualify it if it's a string
         $restriction = $self->qualify($restriction)
