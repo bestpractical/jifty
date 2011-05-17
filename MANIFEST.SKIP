@@ -6,6 +6,7 @@
 .gz$
 .bak$
 Makefile$
+MYMETA.yml$
 MANIFEST.perl$
 \.old$
 merge_bleadperl$
