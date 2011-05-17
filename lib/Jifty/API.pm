@@ -270,8 +270,7 @@ sub restrict {
         die "For security reasons, Jifty won't let you allow all actions"
             if $polarity eq "allow"
             and ref $restriction
-            and 'weird_string_that_does_not_match_normally' =~ $restriction
-            and '' =~ $restriction;
+            and $restriction =~ /^\(\?[-xism]*:\^?\.\*\$?\)$/;
 
         # Fully qualify it if it's a string
         $restriction = $self->qualify($restriction)
