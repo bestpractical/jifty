@@ -1,3 +1,51 @@
+------------------------------
+Jifty 1.10517 - May 17th, 2011
+------------------------------
+CORE
+====
+ * Only load view handlers and actions once
+   This speeds up startup, particularly under multi-threaded plack servers,
+   by allowing the view handlers and actions to be loaded once before
+   forking.  This is safe because essentially no state is saved (and almost
+   certainly none is modified) on the Jifty::Handler and Jifty::API objects
+   between first and second initialization.
+ * Replace XML::XPath with the more modern HTML::TreeBuilder::XPath
+ * Allow a shortcut around the dispatcher for fragments
+   Re-dispatching through the application's dispatcher can be a significant
+   performance hit on pageregion-heavy pages.  Allow dispatchers to declare
+   a fragment_handler method which will be used in place of the full
+   dispatcher.
+   Care must be taken to ensure that this does not allow walking around
+   ACLs.  Anything which runs on every request (sessions, Jifty->api
+   limiting) will have already run once on the original
+   /__jifty/webservices/json request; however, since that page is in no way
+   ACL protected by the dispatcher, a fragment_handler method which does
+   not adequately express the ACL checks of the rest of the dispatcher is a
+   security vulnerability.  Whitelisting, rather than blacklisting, is most
+   likely the correct course of action.
+
+SECURITY
+========
+ * Move directory traversal check to the more centralized ->render_template
+ * Canonicalize all request paths; this catches fragment requests as well
+   Previously, the path as passed in the fragment request data structure
+   was used verbatim in the dispatcher and other locations.  This possibly
+   allowed requests to walk around ACLs by requesting
+   '/some/safe/place/../../../dangerous' as a fragment.  As a non-fragment,
+   this would have been canonicalized to '/dangerous', but fragment paths
+   were not being so canonicalized.
+
+BUGFIXES
+========
+ * Close lightboxes automatically and only if there are no validation errors
+ * Have Jifty::Test::WWW::Mechanize pull in improvements from
+   Jifty::Client::field_error_text
+
+INSTALL
+=======
+ * We placked up a while ago, no need for HTTP::Server::Simple deps
+ * Depend on the Jifty::DBI 0.68 which has security fixes
+
 -----------------------------------
 Jifty 1.10228 - February 28th, 2011
 -----------------------------------
