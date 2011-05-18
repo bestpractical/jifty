@@ -23,6 +23,9 @@ CORE
    not adequately express the ACL checks of the rest of the dispatcher is a
    security vulnerability.  Whitelisting, rather than blacklisting, is most
    likely the correct course of action.
+ * Shorten onclick handlers by removing repeated boilerplate
+   This reduces page size significantly on pages which use them frequently.
+
 
 SECURITY
 ========
@@ -40,11 +43,15 @@ BUGFIXES
  * Close lightboxes automatically and only if there are no validation errors
  * Have Jifty::Test::WWW::Mechanize pull in improvements from
    Jifty::Client::field_error_text
+ * Handle 5.14's regex stringification better
+ * Do not repeatedly warn about cssQuery deprecation.
 
 INSTALL
 =======
  * We placked up a while ago, no need for HTTP::Server::Simple deps
  * Depend on the Jifty::DBI 0.68 which has security fixes
+ * Test::Spelling improvements
+ * Remove Test::WWW::Declare
 
 -----------------------------------
 Jifty 1.10228 - February 28th, 2011
