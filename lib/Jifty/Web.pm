@@ -61,7 +61,6 @@ __PACKAGE__->javascript_libs([qw(
     app.js
     app_behaviour.js
     css_browser_selector.js
-    cssQuery-jquery.js
     jquery.timepickr.js
     jquery.ajaxQueue.js
     jquery.bgiframe.min.js
