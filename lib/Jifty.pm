@@ -167,10 +167,7 @@ sub new {
     push @Jifty::Record::ISA, $record_base_class unless $record_base_class eq 'Jifty::Record';
 
     # Configure the base class for Jifty::CAS
-    @Jifty::CAS::ISA = grep { $_ ne 'Jifty::CAS::Store' } @Jifty::CAS::ISA;
-    my $cas_base = Jifty->config->framework('CAS')->{'BaseClass'};
-    Jifty::Util->require( $cas_base );
-    push @Jifty::CAS::ISA, $cas_base unless $cas_base eq 'Jifty::CAS';
+    Jifty::CAS->setup;
 
     # Logger turn on
     Jifty->logger( Jifty::Logger->new( $args{'logger_component'} ) );

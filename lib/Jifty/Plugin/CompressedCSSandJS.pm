@@ -24,10 +24,8 @@ Jifty::Plugin::CompressedCSSandJS - Compression of CSS and javascript files
         js: 1
         css: 1
         jsmin: /path/to/jsmin
-        cdn: 'http://yourcdn.for.static.prefix/'
         skipped_js:
             - complex.js
-        generate_early: 1
 
 
 =head1 DESCRIPTION
@@ -45,14 +43,9 @@ configure jsmin feature.
 
 skipped_js is a list of js that you don't want to compress for some reason.
 
-generate_early tells the plugin to compress the CSS and JS at process start
-rather than on the first request.  This can save time, especially if your
-JS minifier is slow, for the poor sucker who makes the first request.  Enabled
-by default.
-
 =cut
 
-__PACKAGE__->mk_accessors(qw(css js jsmin cdn skipped_js generate_early));
+__PACKAGE__->mk_accessors(qw(css js jsmin skipped_js external_publish));
 
 =head2 init
 
@@ -70,8 +63,11 @@ sub init {
     $self->css( $opt{css} );
     $self->js( $opt{js} );
     $self->jsmin( $opt{jsmin} );
-    $self->cdn( $opt{cdn} || '');
-    $self->generate_early( exists $opt{generate_early} ? $opt{generate_early} : 1 );
+    $self->external_publish( $opt{external_publish} );
+    if ($self->external_publish and not Jifty::CAS->backend("ccjs")->durable) {
+        $self->log->warn("External publishing does not work with non-durable CAS stores; disabling");
+        $self->external_publish(0);
+    }
 
     if ( $self->js_enabled ) {
         Jifty::Web->add_trigger(
@@ -79,8 +75,6 @@ sub init {
             callback  => sub { $self->_include_javascript(@_) },
             abortable => 1,
         );
-        Jifty->add_trigger( post_init => sub { $self->generate_javascript })
-            if $self->generate_early;
     }
 
     if ( $self->css_enabled ) {
@@ -89,8 +83,6 @@ sub init {
             callback => sub { $self->_include_css(@_) },
             abortable => 1,
         );
-        Jifty->add_trigger( post_init => sub { $self->generate_css })
-            if $self->generate_early;
     }
 }
 
@@ -119,10 +111,10 @@ sub css_enabled {
 sub _include_javascript {
     my $self = shift;
 
-    $self->generate_javascript;
+    $self->generate_javascript unless $self->external_publish;
     Jifty->web->out(
-        qq[<script type="text/javascript" src="@{[ $self->cdn ]}/__jifty/js/]
-          . Jifty::CAS->key( 'ccjs', 'js-all' )
+        qq[<script type="text/javascript" src="]
+          . Jifty::CAS->uri("ccjs","js-all")
           . qq[.js"></script>] );
 
     my $skipped_js = $self->skipped_js;
@@ -137,10 +129,10 @@ sub _include_javascript {
 
 sub _include_css {
     my $self = shift;
-    $self->generate_css;
+    $self->generate_css unless $self->external_publish;
     Jifty->web->out(
-    qq{<link rel="stylesheet" type="text/css" href="@{[ $self->cdn ]}/__jifty/css/}
-    . Jifty::CAS->key('ccjs', 'css-all') . '.css" />');
+    qq{<link rel="stylesheet" type="text/css" href="}
+        . Jifty::CAS->uri('ccjs', 'css-all').'.css" />');
     return 0;
 }
 
@@ -155,7 +147,9 @@ and caches it. (In devel mode, it always regenerates it)
 sub generate_css {
     my $self = shift;
 
-    return if Jifty::CAS->key('ccjs', 'css-all') && !Jifty->config->framework('DevelMode');
+    return if !$self->external_publish
+        && Jifty::CAS->key('ccjs', 'css-all')
+        && !Jifty->config->framework('DevelMode');
 
     $self->log->debug("Generating CSS...");
 
@@ -182,7 +176,9 @@ and caches it.
 sub generate_javascript {
     my $self = shift;
 
-    return if Jifty::CAS->key('ccjs', 'js-all') && !Jifty->config->framework('DevelMode');
+    return if !$self->external_publish
+        && Jifty::CAS->key('ccjs', 'js-all')
+        && !Jifty->config->framework('DevelMode');
 
     my $js = $self->_generate_javascript_nocache;
 
@@ -268,37 +264,5 @@ sub _js_is_skipped {
     return unless $self->skipped_js;
     return grep { $file eq $_ } @{ $self->skipped_js };
 }
-
-=head2 wrap
-
-psgi app wrapper to serve url controlled by us
-
-=cut
-
-sub wrap {
-    my ($self, $app) = @_;
-
-    sub {
-        my $env = shift;
-        if (my ($mode, $arg) = $env->{PATH_INFO} =~ m{/__jifty/(css|js)/(.*)}) {
-            if ( $arg !~ /^[0-9a-f]{32}\.$mode$/ ) {
-                # This doesn't look like a real request for squished JS or CSS,
-                # so redirect to a more failsafe place
-                my $res = Plack::Response->new;
-                $res->redirect( "/static/$mode/$arg" );
-                return $res->finalize;
-            }
-
-            my $method = "generate_".($mode eq 'js' ? 'javascript' : 'css');
-            $self->can($method)->($self);
-            $arg =~ s/\.$mode//;
-            return Jifty::CAS->serve_by_name( 'ccjs', $mode.'-all', $arg, $env );
-        }
-        else {
-            return $app->($env);
-        }
-    };
-}
-
 
 1;

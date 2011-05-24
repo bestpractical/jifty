@@ -2,7 +2,6 @@ use strict;
 use warnings;
 
 package Jifty::CAS;
-use base 'Jifty::CAS::Store';
 use Plack::Request;
 use Plack::Response;
 
@@ -34,11 +33,16 @@ recent key provided with that name.
 
 =head1 BACKENDS
 
-The default data store is an per-process, in-memory store.  A
-L<memcached|Jifty::CAS::Store::Memcached> backed store is also available and
-has the benefits of sharing the cache across all instances of a Jifty app using
-Jifty::CAS.  The memcached store is limited to objects less than 1MB in size,
-however.
+The default data store is a per-process, in-memory store via
+L<Jifty::CAS::Store::Memory>.  L<Jifty::CAS::Store::Memcached> is also
+available, and has the benefits of sharing the cache across all
+instances of a Jifty app using L<Jifty::CAS>.  The memcached store is
+limited to objects less than 1MB in size, however.
+L<Jifty::CAS::Store::LocalFile> provides a durable store, which is
+well-suited for sharing the cache across instances and restarts.
+Because of its speed, however, L<Jifty::CAS::Store::Nested> is suggested
+to provide a layered cache, most probably with fast memory-based cache
+in front of a durable, file-based cache.
 
 =head1 METHODS
 
@@ -58,61 +62,126 @@ C<NAME>, or undef if none such exists.
 Returns a L<Jifty::CAS::Blob> for the given pair of C<DOMAIN> and
 C<KEY>, or undef if none such exists.
 
-=head2 serve_by_name DOMAIN NAME REQUESTED_KEY
+=head2 uri DOMAIN NAME
 
-Intelligently serves up the content of the object at NAME (B<not>
-REQUESTED_KEY) in DOMAIN.  REQUESTED_KEY is currently used only to check if the
-content at NAME equals the content requested.  If so, this method responds with
-an HTTP 304 status, indicating the content hasn't changed.  This use case
-assumes that content is served to clients from the CAS with the CAS key (an MD5
-sum) as the filename or part of it.
+Returns a URL where the given C<DOMAIN> and C<NAME> can be accessed.
 
-The C<content_type> key in the requested object's metadata is expected to be
-set and is used for the HTTP response.
+=head2 serve DOMAIN ARGUMENT ENV
 
-This method is usually called from a dispatcher rule.  Returns the HTTP status
-code set by this method (possibly for your use in the dispatcher).
+Serves a plack request in C<ENV>, given a C<DOMAIN> and an C<ARGUMENT>,
+which may wither be a key or a name.  This method is usually only called
+by L</wrap>, which calls it as appropriate for all requests under
+C</__jifty/cas/>.
+
+=head2 backend [DOMAIN]
+
+Returns the L<Jifty::CAS::Store> which backs the given C<DOMAIN>.  If
+C<DOMAIN> is not specified, returns the default backing store.
+
+=head2 config
+
+Returns the CAS configuration, as specified in the framework's
+configuration.
+
+=head2 setup
+
+Configures the CAS for use.
+
+=head2 wrap APP
+
+Given a PSGI application, wraps it to handle C</__jifty/cas/> requests
+by calling the appropriate L</serve> method.
 
 =cut
 
-sub serve_by_name {
-    my ($class, $domain, $name, $incoming_key, $env) = @_;
-    my $key = Jifty::CAS->key($domain, $name);
-
-    return $class->_serve_404( $domain, $name, "Unable to lookup key." )
-        if not defined $key;
-
-    my $res = Plack::Response->new(200);
-    my $req = Plack::Request->new($env);
-    if ( $req->header('If-Modified-Since') and $incoming_key eq $key ) {
-        Jifty->log->debug("Returning 304 for CAS cached $domain:$name ($key)");
-        $res->status(304);
-        return $res->finalize;
+sub config {
+    my $class = shift;
+    my $config = Jifty->config->framework('CAS');
+    if (Jifty->config->framework('ConfigFileVersion') < 6) {
+        $config = {
+            Default => {
+                Class => $config->{'BaseClass'},
+                %{ $config->{'Memcached'} || {} },
+            }
+        };
     }
-
-    my $obj = Jifty::CAS->retrieve($domain, $key);
-
-    return $class->_serve_404( $domain, $name, "Unable to retrieve blob." )
-        if not defined $obj;
-
-    $res->content_type($obj->metadata->{content_type});
-    $res->header( 'Cache-Control' => 'max-age=31536000, public' );
-    $res->header( 'Expires' => HTTP::Date::time2str( time() + 31536000 ) );
-    $res->header( 'Content-Length' => length($obj->content) );
-    $res->header(
-      'Last-Modified' => HTTP::Date::time2str( $obj->metadata->{time} ) );
-
-    Jifty->log->debug("Sending squished $domain:$name ($key) from CAS");
-    $res->body($obj->content);
-
-    return $res->finalize;
+    $config->{Default}{Class} ||= "Jifty::CAS::Store::Memory";
+    $config->{Domains} ||= {};
+    return $config;
 }
 
-sub _serve_404 {
-    my ($class, $domain, $name, $msg) = @_;
-    $msg ||= '';
-    Jifty->log->error("Returning 404 for CAS cached $domain:$name.  $msg");
-    return Plack::Response->new(404)->finalize;
+my %BACKENDS;
+my $DEFAULT_BACKEND;
+sub setup {
+    my $class = shift;
+    my $config = $class->config;
+
+    my %default = %{$config->{Default}};
+    my $defaultclass = delete $default{Class};
+    Jifty::Util->require( $defaultclass );
+    $DEFAULT_BACKEND = $defaultclass->new(
+        map {lc $_ => $config->{Default}{$_}} keys %default
+    );
+
+    for my $domain (keys %{$config->{Domains}}) {
+        my %domain = %{ $config->{Domains}{$domain} };
+        my $storeclass = delete $domain{Class};
+        Jifty::Util->require( $storeclass );
+        $BACKENDS{$domain} = $storeclass->new(
+            map {lc $_ => $config->{Domains}{$domain}{$_}} keys %domain
+        );
+    }
+}
+
+sub wrap {
+    my ($class, $app) = @_;
+
+    sub {
+        my $env = shift;
+        if (my ($domain, $arg) = $env->{PATH_INFO} =~ m{/__jifty/cas/(.*?)/(.*?)(?:\.|$)}) {
+            return $class->serve($domain,$arg,$env);
+        }
+        else {
+            return $app->($env);
+        }
+    };
+}
+
+sub backend {
+    my $class = shift;
+    my ($domain) = @_;
+    return $DEFAULT_BACKEND unless @_;
+    return $BACKENDS{$domain} || $DEFAULT_BACKEND;
+}
+
+sub publish {
+    my $class = shift;
+    my ($domain) = @_;
+    ($BACKENDS{$domain} || $DEFAULT_BACKEND)->publish(@_);
+}
+
+sub key {
+    my $class = shift;
+    my ($domain) = @_;
+    ($BACKENDS{$domain} || $DEFAULT_BACKEND)->key(@_);
+}
+
+sub retrieve {
+    my $class = shift;
+    my ($domain) = @_;
+    ($BACKENDS{$domain} || $DEFAULT_BACKEND)->retrieve(@_);
+}
+
+sub uri {
+    my $class = shift;
+    my ($domain) = @_;
+    ($BACKENDS{$domain} || $DEFAULT_BACKEND)->uri(@_);
+}
+
+sub serve {
+    my $class = shift;
+    my ($domain) = @_;
+    ($BACKENDS{$domain} || $DEFAULT_BACKEND)->serve(@_);
 }
 
 1;

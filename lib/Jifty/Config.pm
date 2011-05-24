@@ -535,7 +535,7 @@ See L<Jifty::Script::App>.
 sub initial_config {
     my $self = shift;
     my $guess = $self->guess(@_);
-    $guess->{'framework'}->{'ConfigFileVersion'} = 5;
+    $guess->{'framework'}->{'ConfigFileVersion'} = 6;
 
     # These are the plugins which new apps will get by default
     $guess->{'framework'}->{'Plugins'} = [
@@ -624,16 +624,6 @@ sub defaults {
                 DefaultStaticRoot => Jifty::Util->share_root . '/web/static',
                 DefaultTemplateRoot => Jifty::Util->share_root . '/web/templates',
                 SessionCookieName => 'JIFTY_SID_$PORT',
-            },
-            CAS => {
-                BaseClass => 'Jifty::CAS::Store',
-                Memcached => {
-                    servers     => [ '127.0.0.1:11211' ],
-                    debug       => 0,
-                    namespace   => $self->framework('ApplicationName').":",
-                    compress_threshold => 10240,
-                },
-                MemcachedFallback => 1,
             },
         }
     };

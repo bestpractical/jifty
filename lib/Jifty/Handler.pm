@@ -194,6 +194,9 @@ sub psgi_app {
     }
         if Jifty->config->framework("Web")->{PSGIStatic} && $static;
 
+    # CAS wrapper
+    $app = Jifty::CAS->wrap($app);
+
     # allow plugin to wrap $app
     for ( Jifty->plugins ) {
         $app = $_->wrap($app);

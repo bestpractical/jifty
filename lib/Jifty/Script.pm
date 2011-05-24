@@ -68,6 +68,7 @@ The alias table lets users type C<fastcgi> in place of C<FastCGI>.
 sub alias {
     return (
             fastcgi => "FastCGI",
+            writeccjs => "WriteCCJS",
            )
 }
 
