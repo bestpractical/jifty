@@ -24,7 +24,13 @@ Displays a sign-up form.
 =cut
 
 template 'signup' => page { title => _('Sign up') } content {
+    show 'signup_widget';
+};
+
+template 'signup_widget' => sub {
     my ( $action, $next ) = get(qw(action next));
+    $action ||= new_action( class => 'Signup' );
+    $next ||= Jifty::Continuation->new( request => Jifty::Request->new(path => "/") );
     Jifty->web->form->start( call => $next );
     render_param( $action => 'name' , focus => 1);
     render_param( $action => $_ ) for ( grep {$_ ne 'name'} $action->argument_names );
@@ -59,7 +65,7 @@ template login_widget => sub {
     $next ||= Jifty::Continuation->new(
         request => Jifty::Request->new( path => "/" ) );
     unless ( Jifty->web->current_user->id ) {
-        p {
+        p {{ class is 'signup-pointer' };
             outs( _( "No account yet? It's quick and easy. " ));
             tangent( label => _("Sign up for an account!"), url   => '/signup');
         };
