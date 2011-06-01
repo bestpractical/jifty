@@ -97,7 +97,6 @@ template 'let/reset_lost_password' => page { title => _('Reset lost password') }
     my ( $next ) = get(qw(next));
     my $action = Jifty->web->new_action( class => 'ResetLostPassword' );
 
-    h1 { {class is 'title'};  _('Reset lost password')};
     Jifty->web->form->start( call => $next );
         render_param( $action => $_ ) for ( $action->argument_names );
         form_return( label => _("New password"), submit => $action );
@@ -132,7 +131,6 @@ template 'lost_password' => page { title => 'Send a link to reset your password'
         class   => 'SendPasswordReminder',
     );
 
-    h1 { {class is 'title'};  _('Send a link to reset your password')};
     outs( _(  "You lost your password. A link to reset it will be sent to the following email address:"));
     my $focused = 0;
     Jifty->web->form->start( call => $next );
