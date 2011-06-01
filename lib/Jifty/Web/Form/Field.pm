@@ -425,7 +425,6 @@ sub render_inline_javascript {
             $self->autocomplete_javascript(),
             $self->placeholder_javascript(),
             $self->key_binding_javascript(),
-            $self->focus_javascript(),
             $self->preload_javascript(),
         )
     );
@@ -688,22 +687,6 @@ sub placeholder_javascript {
     $placeholder =~ s{\n}{\\n}g;
     $placeholder =~ s{\r}{\\r}g;
     return qq!new Jifty.Placeholder('@{[$self->element_id]}', '$placeholder');!;
-}
-
-=head2 focus_javascript
-
-Returns the javascript necessary to focus this form field on page
-load, if necessary.
-
-=cut
-
-sub focus_javascript {
-    my $self = shift;
-    return undef;
-    if($self->focus) {
-        return qq!document.getElementById("@{[$self->element_id]}").focus();!;
-        return qq!jQuery(document).ready(function(){jQuery("#@{[$self->element_id]}").focus()});!;
-    }
 }
 
 =head2 preload_javascript
