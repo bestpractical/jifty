@@ -616,6 +616,7 @@ sub _do_under {
     my ( $self, $cond, $rules ) = @_;
     if ( my $regex = $self->_match($cond) ) {
 
+        $self->log->debug("Matched 'under' rule $cond as $regex for ".$self->{'path'});
         # match again to establish $1 $2 etc in the dynamic scope
         $self->{path} =~ $regex;
 
