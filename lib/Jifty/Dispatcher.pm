@@ -650,7 +650,7 @@ sub _do_before {
     my ( $self, $cond, $rules ) = @_;
     if ( my $regex = $self->_match($cond) ) {
 
-        $self->log->debug("Matched 'before' rule $regex for ".$self->{'path'});
+        $self->log->debug("Matched 'before' rule $cond as $regex for ".$self->{'path'});
         # match again to establish $1 $2 etc in the dynamic scope
         $self->{path} =~ $regex;
         $self->_handle_rules($rules);
@@ -668,7 +668,7 @@ sub _do_on {
     my ( $self, $cond, $rules ) = @_;
     if ( my $regex = $self->_match($cond) ) {
 
-        $self->log->debug("Matched 'on' rule $regex for ".$self->{'path'});
+        $self->log->debug("Matched 'on' rule $cond as $regex for ".$self->{'path'});
         # match again to establish $1 $2 etc in the dynamic scope
         $self->{path} =~ $regex;
         $self->_handle_rules($rules);
@@ -684,7 +684,7 @@ This method is called by the dispatcher internally. You shouldn't need to.
 sub _do_after {
     my ( $self, $cond, $rules ) = @_;
     if ( my $regex = $self->_match($cond) ) {
-        $self->log->debug("Matched 'after' rule $regex for ".$self->{'path'});
+        $self->log->debug("Matched 'after' rule $cond as $regex for ".$self->{'path'});
         # match again to establish $1 $2 etc in the dynamic scope
         $self->{path} =~ $regex;
         $self->_handle_rules($rules);
