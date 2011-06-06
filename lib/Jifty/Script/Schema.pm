@@ -572,6 +572,11 @@ sub upgrade_tables {
             $upgradeclass->versions();
     };
 
+    if ($@) {
+        $log->error("Error collecting upgrade steps: $@");
+        return;
+    }
+
     for my $model_class ( grep {/^\Q$baseclass\E::Model::/}
         $self->schema->models )
     {
