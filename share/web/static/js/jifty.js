@@ -800,6 +800,10 @@ Behaviour.register({
     '#messages.jifty.results.messages, #errors.jifty.results.messages, .popup_message, .popup_error': function(e) {
         jQuery(e).hide();
     },
+    /* Make full page refresh notifications sticky so they don't get lost in the page load */
+    '#messages.jifty.results.messages .message, #errors.jifty.results.messages .message': function(e) {
+        jQuery(e).addClass('popup_sticky');
+    },
     '#messages.jifty.results.messages .message, .popup_message': function(e) {
         var sticky = jQuery(e).hasClass('popup_sticky');
         jQuery.jGrowl( e.innerHTML, {
