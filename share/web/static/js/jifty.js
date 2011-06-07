@@ -1060,7 +1060,9 @@ var apply_fragment_updates = function(fragment, f) {
                 // Once we find it, do the insertion
                 if (f['mode'] == 'Popout') {
                     jQuery.facebox(textContent);
-                    element = document.getElementById('region-' + f['region']);
+                    // Facebox always uses its #facebox element, so point to
+                    // that regardless of what we were told earlier
+                    element = document.getElementById('facebox');
                 } else if (f['mode'] && (f['mode'] != 'Replace')) {
                     var method = ({
                         After: 'after',

@@ -462,7 +462,12 @@ sub _javascript_attrs_structure {
                 $hook->{element} ||= "#region-".$hook->{region};
             } elsif (exists $hook->{popout}) {
                 @args{qw/mode path/} = ('Popout', $hook->{popout});
-                $hook->{element} ||= "#region-".$hook->{region};
+                # Facebox always appends to its #facebox element, but that
+                # doesn't exist before the first use so we need something
+                # that's ever present. The value doesn't matter as long as it
+                # exists.  Setting a value here means you can use Popout
+                # outside a region without specifying a value yourself.
+                $hook->{element} = "body";
             } elsif (exists $hook->{replace_with}) {
                 if (defined $hook->{replace_with}) {
                     @args{qw/mode path region/} = ('Replace', $hook->{replace_with}, $hook->{region});
