@@ -146,7 +146,7 @@ sub _serve_404 {
 =head2 durable
 
 Returns true if the backing store is durable -- that is, if there is a
-guarantee that data placed there will be accessible from all proccesses at
+guarantee that data placed there will be accessible from all processes at
 all later times.
 
 =cut
