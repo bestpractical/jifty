@@ -244,6 +244,18 @@ sub delete {
     delete $self->{children}{$key};
 }
 
+=head2 empty
+
+Removes all children of this menu.
+
+=cut
+
+sub empty {
+    my $self = shift;
+    delete $self->{children_list};
+    delete $self->{children};
+}
+
 =head2 children
 
 Returns the children of this menu item in sorted order; as an array in
