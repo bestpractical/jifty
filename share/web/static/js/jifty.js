@@ -800,24 +800,16 @@ Behaviour.register({
     '#messages.jifty.results.messages, #errors.jifty.results.messages, .popup_message, .popup_error': function(e) {
         jQuery(e).hide();
     },
-    /* Make full page refresh notifications sticky so they don't get lost in the page load */
-    '#messages.jifty.results.messages .message, #errors.jifty.results.messages .message': function(e) {
-        jQuery(e).addClass('popup_sticky');
+    '#messages.jifty.results.messages .message, #errors.jifty.results.messages .error, .popup_message, .popup_error': function(e) {
+        var je   = jQuery(e);
+        var type = je.attr("class").match(/(message|error)\b/)[0];
+        var opt  = {
+            sticky: je.hasClass('popup_sticky'),
+            theme: 'result-' + type
+        };
+        if ( je.closest('.jifty.results').length ) opt["life"] = 10000;
+        jQuery.jGrowl( e.innerHTML, opt );
     },
-    '#messages.jifty.results.messages .message, .popup_message': function(e) {
-        var sticky = jQuery(e).hasClass('popup_sticky');
-        jQuery.jGrowl( e.innerHTML, {
-            sticky: sticky,
-            theme: 'result-message'
-        });
-    },
-    '#errors.jifty.results.messages .error, .popup_error': function(e) {
-        var sticky = jQuery(e).hasClass('popup_sticky');
-        jQuery.jGrowl( e.innerHTML, {
-            sticky: sticky,
-            theme: 'result-error'
-        });
-    }
 });
 
 
