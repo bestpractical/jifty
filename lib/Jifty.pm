@@ -148,6 +148,7 @@ sub new {
     # Setup the defaults
     my %args = (
         no_handle        => 0,
+        no_request       => 0,
         pre_init         => 0,
         logger_component => undef,
         @_
@@ -255,6 +256,12 @@ sub new {
     # Run the App::start() method if it exists for app-specific initialization
     $app->start
         if not $args{no_handle} and $app->can('start');
+
+    # Setup an empty request and response if we're not in a web environment
+    if ($args{no_request}) {
+        Jifty->web->request(Jifty::Request->new);
+        Jifty->web->response(Jifty::Response->new);
+    }
 
     # For plugins that want all the above initialization, but want to run before
     # we begin serving requests

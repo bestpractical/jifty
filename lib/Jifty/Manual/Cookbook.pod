@@ -434,11 +434,8 @@ Everything should work as expected.
 
     use lib '/path/to/MyApp/lib';
 
-    use Jifty::Everything;
-    BEGIN { Jifty->new; }
-
-    Jifty->web->request(Jifty::Request->new);
-    Jifty->web->response(Jifty::Response->new);
+    use Jifty;
+    BEGIN { Jifty->new(no_request => 1); }
 
     use MyApp::Model::Foo;
     use MyApp::Action::FrobFoo;
