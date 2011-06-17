@@ -1272,7 +1272,7 @@ will redirect to the appropriate url, with L<J:RETURN> set.
 =head3 request options
 
 The existence of C<J:VALIDATE> says that the request is only
-validating arguments.  C<J:ACTIONS> is set to a semicolon-separated
+validating arguments.  C<J:ACTIONS> is set to a exclamation mark separated
 list of monikers; the actions with those monikers will be marked
 active, while all other actions are marked inactive.  In the absence
 of C<J:ACTIONS>, all actions are active.
