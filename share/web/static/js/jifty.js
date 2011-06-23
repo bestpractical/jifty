@@ -323,7 +323,7 @@ Action.prototype = {
         var disable = function() {
             var elt = this;
             // Disabling hidden elements seems to  make IE sad for some reason
-            if(elt.type != 'hidden') {
+            if(elt.type != 'hidden' && !elt.className.match(/jifty-leave-enabled/)) {
                 // Triggers https://bugzilla.mozilla.org/show_bug.cgi?id=236791
                 elt.blur();
                 elt.disabled = true;
