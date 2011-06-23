@@ -334,13 +334,6 @@ Action.prototype = {
         jQuery.each(this.buttons(), disable);
     },
 
-    enable_input_fields: function() {
-        var enable = function() { this.disabled = false; };
-        jQuery.each(this.fields(), disable);
-        jQuery.each(this.buttons(), disable);
-    },
-
-
     /* client side logic extracted from Jifty::Action */
     _action_spec: function() {
         if (!this.s_a) {
