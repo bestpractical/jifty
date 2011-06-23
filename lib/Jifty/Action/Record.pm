@@ -47,10 +47,9 @@ the constructor.
 
 =head2 report_detailed_messages
 
-If the action returns true for C<report_detailed_message>, report the
-message returned by the model classes as the resulting message.  For
-Update actions, Put the per-field message in C<detailed_messages>
-field of action result content.  The default is false.
+If the action returns true for C<report_detailed_message>, put the
+per-field messages as C<detailed_messages> in the result content for
+Update actions.  The default is true.
 
 =cut
 
