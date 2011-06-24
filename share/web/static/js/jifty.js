@@ -175,7 +175,9 @@ Action.prototype = {
         var serialized = new Array;
 
         jQuery.each(fields, function() {
+            Jifty.Placeholder.clearPlaceholder(this);
             serialized.push( jQuery(this).serialize() )
+            Jifty.Placeholder.replacePlaceholder(this);
         });
 
         return serialized.join('&');
