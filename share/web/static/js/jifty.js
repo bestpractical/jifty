@@ -1872,13 +1872,7 @@ jQuery.extend(Jifty.Placeholder.prototype, {
   },
 
   onBlur: function() {
-     /* On browser back/forward, the placeholder text will be remembered
-        for the field, so we want to add the class if the value is the same
-        as the placeholder text.  This does have the effect of making it
-        impossible to submit a field with the same value as the placeholder. */
-     if (this.element.value == '' || this.element.value == this.text) {
-         jQuery(this.element).addClass('placeholder').val(this.text);
-     }
+    Jifty.Placeholder.replacePlaceholder(this.element);
   },
 
   onFocus: function() {
@@ -1890,6 +1884,16 @@ jQuery.extend(Jifty.Placeholder.prototype, {
 jQuery.extend(Jifty.Placeholder, {
    hasPlaceholder: function(elt) {
        return jQuery(elt).hasClass('placeholder');
+  },
+
+  replacePlaceholder: function(elt) {
+     /* On browser back/forward, the placeholder text will be remembered
+        for the field, so we want to add the class if the value is the same
+        as the placeholder text.  This does have the effect of making it
+        impossible to submit a field with the same value as the placeholder. */
+     if (elt.value == '' || elt.value == elt.placeholderText) {
+         jQuery(elt).addClass('placeholder').val(elt.placeholderText);
+     }
   },
 
   clearPlaceholder: function(elt) {
