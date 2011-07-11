@@ -804,7 +804,7 @@ Behaviour.register({
         };
         if ( je.closest('.jifty.results').length ) opt["life"] = 10000;
         jQuery.jGrowl( e.innerHTML, opt );
-    },
+    }
 });
 
 
