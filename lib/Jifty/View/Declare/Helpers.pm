@@ -50,7 +50,8 @@ sub get {
 sub request; # defined later
 
 sub _get_single {
-    my $v = request->template_argument($_[0]) || request->argument( $_[0] );
+    my $v = request->template_argument($_[0]);
+       $v = request->argument( $_[0] ) if not defined $v;
     return $v if defined $v;
 
     if (request->top_request ne request() and $v = request->top_request->template_argument($_[0])) {
