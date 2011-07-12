@@ -1909,7 +1909,7 @@ jQuery.extend(Jifty.Placeholder, {
      // These are normalized because sometimes one has \r\n and the other has \n
      if (Jifty.Placeholder.hasPlaceholder(elt)) {
         var value = elt.value.replace(/\r/g, '');
-        var placeholder = elt.placeholderText.replace(/\r/g, '');
+        var placeholder = (elt.placeholderText || '').replace(/\r/g, '');
         if (value == placeholder)
             jQuery(elt).removeClass('placeholder').val('');
      }
