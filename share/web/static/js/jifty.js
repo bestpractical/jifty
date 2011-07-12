@@ -175,9 +175,13 @@ Action.prototype = {
         var serialized = new Array;
 
         jQuery.each(fields, function() {
+            var hadPlaceholder = Jifty.Placeholder.hasPlaceholder(this);
             Jifty.Placeholder.clearPlaceholder(this);
+
             serialized.push( jQuery(this).serialize() )
-            Jifty.Placeholder.replacePlaceholder(this);
+
+            if (hadPlaceholder)
+                Jifty.Placeholder.replacePlaceholder(this);
         });
 
         return serialized.join('&');
