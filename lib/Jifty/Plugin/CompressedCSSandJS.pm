@@ -265,4 +265,27 @@ sub _js_is_skipped {
     return grep { $file eq $_ } @{ $self->skipped_js };
 }
 
+=head2 wrap
+
+If a JS or CSS file references another by a relative path, it will most
+likely end up being mis-requested under the CAS directory.  Catch those
+requests, warn about them, and re-dispatch them internally to what is
+likely the right place.
+
+=cut
+
+sub wrap {
+    my ($self, $app) = @_;
+    return sub {
+        my $env = shift;
+        if (my ($arg, $type) = $env->{PATH_INFO} =~ m{/__jifty/cas/ccjs/(.*?)\.(js|css)$}) {
+            if ($arg !~ /^[0-9a-fA-F]{32}$/ and not Jifty::CAS->key("ccjs",$arg)) {
+                $self->log->warn("Request for relative path $type file: $arg.$type");
+                $env->{PATH_INFO} = "/static/$type/$arg.$type";
+            }
+        }
+        $app->($env);
+    };
+}
+
 1;
