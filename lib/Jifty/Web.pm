@@ -127,6 +127,9 @@ sub url {
                 path => undef,
                 @_);
 
+    my $base_uri = URI->new(Jifty->config->framework("Web")->{BaseURL});
+    $base_uri->port(Jifty->config->framework("Web")->{Port});
+
     my $uri;
 
     my $req = Jifty->web->request;
@@ -135,27 +138,28 @@ sub url {
         $uri->path_query('/');
     }
     else {
-        $uri = URI->new(Jifty->config->framework("Web")->{BaseURL});
-        $uri->port(Jifty->config->framework("Web")->{Port});
-    }
-
-    if (defined (my $path = $args{path})) {
-        # strip off leading '/' because ->canonical provides one
-        $path =~ s{^/}{};
-        $uri->path_query($path);
+        $uri = $base_uri->clone;
     }
 
     # https is sticky
     $uri->scheme('https') if $uri->scheme eq 'http' && Jifty->web->is_ssl;
 
-    # If we're generating a URL from an email (really a Jifty::Notification
-    # subclass), default to http
+    # If we're generating a URL for an email (really a Jifty::Notification
+    # subclass), force the app's configured URL rather than relying on the
+    # irrelevant current request.
     my $level = 0;
     while ( my $class = caller($level++) ) {
         if ( $class->isa("Jifty::Notification") ) {
-            $uri->scheme('http');
+            $uri = $base_uri->clone;
             last;
         }
+    }
+
+    # Always set path and scheme if they're passed explicitly
+    if (defined (my $path = $args{path})) {
+        # strip off leading '/' because ->canonical provides one
+        $path =~ s{^/}{};
+        $uri->path_query($path);
     }
 
     $uri->scheme( $args{'scheme'} ) if defined $args{'scheme'};
