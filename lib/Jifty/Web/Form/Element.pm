@@ -29,15 +29,23 @@ specified by providing at most one of the following keys:
 
 =item append => PATH
 
-Add the given C<PATH> as a new fragment, just before the close of the
-CSS selector given by L</element>, which defaults to the end of the
-current region.
+Add the given C<PATH> as a new fragment at the end within the element
+specified by the CSS selector in L</element>.
 
 =item prepend => PATH
 
-Add the given C<PATH> as a new fragment, just after the start of the
-CSS selector given by L</element>, which defaults to the start of the
-current region.
+Add the given C<PATH> as a new fragment at the start within the element
+specified by the CSS selector in L</element>.
+
+=item before => PATH
+
+Add the given C<PATH> as a new fragment immediately before the element
+specified by the CSS selector in L</element>.
+
+=item after => PATH
+
+Add the given C<PATH> as a new fragment immediately after the element
+specified by the CSS selector in L</element>.
 
 =item popout => PATH
 
@@ -83,9 +91,11 @@ region.
 =item element => CSS SELECTOR
 
 A css selector specifying where the new region should be placed; used
-with L</append> and L</prepend>, above.  The
+with L</append>, L</prepend>, L</before>, and L</after> above.  The
 L<Jifty::Web::PageRegion/get_element> method may be useful in
 specifying elements of parent page regions.
+
+Defaults to the current region.
 
 =item submit => MONIKER
 
@@ -459,6 +469,12 @@ sub _javascript_attrs_structure {
                 $hook->{element} ||= "#region-".$hook->{region};
             } elsif (exists $hook->{prepend}) {
                 @args{qw/mode path/} = ('Top', $hook->{prepend});
+                $hook->{element} ||= "#region-".$hook->{region};
+            } elsif (exists $hook->{before}) {
+                @args{qw/mode path/} = ('Before', $hook->{before});
+                $hook->{element} ||= "#region-".$hook->{region};
+            } elsif (exists $hook->{after}) {
+                @args{qw/mode path/} = ('After', $hook->{after});
                 $hook->{element} ||= "#region-".$hook->{region};
             } elsif (exists $hook->{popout}) {
                 @args{qw/mode path/} = ('Popout', $hook->{popout});
