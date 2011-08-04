@@ -190,12 +190,6 @@ sub call {
         return;
     }
 
-    # If we needed to fix up the path (it contains invalid
-    # characters) then warn, because this may cause infinite
-    # redirects
-    $self->log->warn("Redirect to '@{[$self->request->path]}' contains unsafe characters")
-        if $self->request->path =~ m{[^A-Za-z0-9\-_.!~*'()/?&;+%]};
-
     # Clone our request
     my $request = $self->request->clone;
 
