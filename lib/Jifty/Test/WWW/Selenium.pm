@@ -26,7 +26,9 @@ starts selenium remote control for you, unless C<SELENIUM_RC_SERVER>
 is specified when the test is run.  You might also want to set
 C<SELENIUM_RC_TEST_AGAINST> to your local IP address so
 C<SELENIUM_RC_SERVER> can test against you.  C<SELENIUM_RC_BROWSER>
-tells the rc server what browser to run the tests with.
+tells the rc server what browser to run the tests with. You may want
+to set C<SELENIUM_CLASS> to a subclass of L<Test::WWW::Selenium> to
+refactor methods common to your application.
 
 =head2 rc_ok
 
@@ -59,13 +61,14 @@ sub rc_ok {
     $args{browser_url} ||= 'http://'.($ENV{SELENIUM_RC_TEST_AGAINST} || $args{test_server} || 'localhost').':'.$server->port;
 
     $args{browser} ||= $ENV{SELENIUM_RC_BROWSER} || $class->_get_default_browser;
+    $args{selenium_class} ||= $ENV{SELENIUM_CLASS} || 'Test::WWW::Selenium';
 
     $SIG{CHLD} = \&_REAPER;
 
     my $try = 5;
     my $sel;
     while ($try--) {
-        $sel = eval { Test::WWW::Selenium->new( %args, auto_stop => 0 ) };
+        $sel = eval { $args{selenium_class}->new( %args, auto_stop => 0 ) };
         last if $sel;
         Test::More::diag "waiting for selenium rc...";
         sleep 3;
