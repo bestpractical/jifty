@@ -145,6 +145,7 @@ sub _skip_rest {
             $Tester->skip($why); # skip rest of the test
         }
     }
+    $Tester->done_testing();
     exit(0);
 }
 
