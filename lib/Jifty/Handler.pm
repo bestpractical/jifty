@@ -230,7 +230,9 @@ sub handle_request {
             carp "printing to STDOUT is deprecated.  Use outs, outs_raw or Jifty->web->response->body() instead";
 
             my $self = shift;
-            Jifty->handler->buffer->out_method->(shift);
+            my $comma = defined $, ? $, : '';
+            my $slash = defined $\ ? $\ : '';
+            Jifty->handler->buffer->out_method->( join($comma, @_) . $slash );
         };
 
     local *STDOUT = io_to_glob($trapio);
