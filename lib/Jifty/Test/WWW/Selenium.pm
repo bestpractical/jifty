@@ -144,8 +144,8 @@ sub _skip_rest {
         for my $ct ($Tester->{Curr_Test} + 1 .. $Tester->{Expected_Tests}) {
             $Tester->skip($why); # skip rest of the test
         }
+        $Tester->done_testing();
     }
-    $Tester->done_testing();
     exit(0);
 }
 
