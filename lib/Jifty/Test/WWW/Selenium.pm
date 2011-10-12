@@ -122,9 +122,14 @@ sub _start_src {
         Test::More::diag "start selenium rc [$$]";
         local $SIG{CHLD} = \&_REAPER;
         local $SIG{TERM} = sub { exit 0 };
-        Alien::SeleniumRC::start(@{ $args{args} || [] });
-        Test::More::diag "selenium rc [$$] finished.";
-        exit;
+        eval { Alien::SeleniumRC::start(@{ $args{args} || [] }) };
+        if ($@) {
+            Test::More::diag "selenium rc [$$] failed to start: $@";
+            exit 1;
+        } else {
+            Test::More::diag "selenium rc [$$] finished.";
+            exit;
+        }
     }
 }
 
