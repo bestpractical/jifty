@@ -203,8 +203,9 @@ Action.prototype = {
         a['moniker'] = this.moniker;
         a['class']   = this.actionClass;
 
-        if (this.register && this.register.id) {
-            var tmp = this.register.id.match(/^J:A-(\d+)-/);
+        var id_or_name = this.register.id || this.register.name;
+        if (this.register && id_or_name) {
+            var tmp = id_or_name.match(/^J:A-(\d+)-/);
             if (tmp && tmp.length == 2)
                 a['order'] = tmp[1];
         }
