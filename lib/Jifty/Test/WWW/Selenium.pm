@@ -101,6 +101,7 @@ my @cleanup;
 
 sub _start_src {
     my ($self, %args) = @_;
+    $ENV{'JIFTY_TEST_SERVER'} = 'Standalone';
     eval 'require Alien::SeleniumRC; 1'
         or die 'requires Alien::SeleniumRC to start selenium-rc.';
 
