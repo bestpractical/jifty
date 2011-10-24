@@ -70,7 +70,9 @@ sub rc_ok {
     while ($try--) {
         $sel = eval { $args{selenium_class}->new( %args, auto_stop => 0 ) };
         last if $sel;
-        Test::More::diag "waiting for selenium rc...";
+        if ($ENV{'TEST_VERBOSE'}) {
+            Test::More::diag "waiting for selenium rc...";
+        }
         sleep 3;
     }
 
@@ -119,7 +121,9 @@ sub _start_src {
         }
         $ENV{LANG} = $args{lang} || 'en_US.UTF-8';
         $ENV{PATH} = "$ENV{PATH}:/usr/lib/firefox:/usr/lib/mozilla-firefox";
-        Test::More::diag "start selenium rc [$$]";
+        if ($ENV{'TEST_VERBOSE'}) {
+            Test::More::diag "start selenium rc [$$]";
+        }
         local $SIG{CHLD} = \&_REAPER;
         local $SIG{TERM} = sub { exit 0 };
         eval { Alien::SeleniumRC::start(@{ $args{args} || [] }) };
@@ -127,7 +131,9 @@ sub _start_src {
             Test::More::diag "selenium rc [$$] failed to start: $@";
             exit 1;
         } else {
-            Test::More::diag "selenium rc [$$] finished.";
+            if ($ENV{'TEST_VERBOSE'}) {
+                Test::More::diag "selenium rc [$$] finished.";
+            }
             exit;
         }
     }
