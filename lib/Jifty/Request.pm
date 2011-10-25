@@ -1056,6 +1056,15 @@ sub do_mapping {
         delete $self->arguments->{$_};
         $self->argument($key => $value);
     }
+    for my $request_action ($self->actions) {
+        while (my ($arg, $map) = each %{$request_action->arguments || {}}) {
+            my ($key, $value) = Jifty::Request::Mapper->map(destination => $arg, source => $map, %args);
+            next unless $key ne $arg or not defined $value or $value ne $map;
+            $request_action->delete($arg);
+            $request_action->argument($key => $value);
+            $request_action->modified(1);
+        }
+    }
     for ($self->state_variables) {
         my ($key, $value) = Jifty::Request::Mapper->map(destination => $_->key, source => $_->value, %args);
         next unless $key ne $_->key or not defined $value or $value ne $_->value;
