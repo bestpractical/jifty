@@ -9,8 +9,9 @@ Tests for request mapper
 
 =cut
 
-use Jifty::Test::Dist tests => 32;
+use Jifty::Test::Dist tests => 35;
 use_ok('Jifty::Test::WWW::Mechanize');
+use_ok('Jifty::JSON');
 
 # Set up server
 my $server = Jifty::Test->make_server;
@@ -85,6 +86,32 @@ $mech->content_unlike(qr/J:M-foo/, "Doesn't have mapping parameter");
 $mech->get("$URL/index.html?J:M-foo=A`bridge`quest;J:A-bridge=CrossBridge;J:A:F-quest-bridge=grail");
 $mech->content_like(qr/foo: grail/, "Argument is valid, sets to submitted value");
 $mech->content_unlike(qr/J:M-foo/, "Doesn't have mapping parameter");
+
+#### Webservices action results
+my $json = Jifty::JSON::encode_json({
+    path    => "/__jifty/webservices/json",
+    actions => {
+        grail  => {
+            moniker => 'grail',
+            class   => 'GetGrail',
+            order   => 1,
+            fields  => {},
+        },
+        bridge => {
+            moniker => "bridge",
+            class   => "CrossBridge",
+            order   => 2,
+            fields  => {
+                quest   => { value => { name => 'castle', result_of => 'grail' } },
+                castle  => { value => { result_of => 'grail' } },
+                colour  => { value => 'Green' },
+            },
+        },
+    },
+});
+$mech->post($URL, 'Content-Type' => 'text/x-json', Content => $json);
+$mech->content_like(qr/got the grail/i, "Got the grail");
+$mech->content_like(qr/crossed the bridge/i, "And crossed the bridge");
 
 1;
 
