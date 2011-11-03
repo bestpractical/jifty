@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use Jifty::Test::Dist qw(no_plan);
+use Jifty::Test::Dist actual_server => 1;
 use Jifty::Test::WWW::Selenium;
 use utf8;
 
@@ -23,4 +23,4 @@ for my $test_file (qw(01.behaviour.html 02.action.html)) {
 }
 
 $sel->stop;
-
+done_testing();

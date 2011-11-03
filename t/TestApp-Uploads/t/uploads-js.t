@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 use warnings;
 use strict;
-use Jifty::Test::Dist tests => 8;
+use Jifty::Test::Dist tests => 8, actual_server => 1;
 use Jifty::Test::WWW::Selenium;
 
 my $server = Jifty::Test->make_server;

@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use Jifty::Test::Dist tests => 29;
+use Jifty::Test::Dist tests => 29, actual_server => 1;
 use Jifty::Test::WWW::Selenium;
 use utf8;
 
