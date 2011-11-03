@@ -1300,6 +1300,20 @@ sub deny {
     return;
 }
 
+=head2 TO_JSON
+
+Returns this action's moniker for JSON serialization.  This is mostly to catch
+places where Jifty::Action objects are used instead of the moniker in a
+webservices request.
+
+Currently only L<Jifty::Web::Form::Element/javascript_attrs> enables the
+C<convert_blessed> option of L<JSON> (through L<Jifty::JSON>) which uses this
+method.  Objects without a TO_JSON method cause fatal JSON errors.
+
+=cut
+
+sub TO_JSON { shift->moniker }
+
 =head1 CUSTOMIZATION
 
 =head2 Canonicalization

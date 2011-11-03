@@ -579,7 +579,7 @@ sub javascript_attrs {
                     fragments    => $fragments,
                     continuation => $self->continuation,
                     preload_key  => $trigger_structure->{preload_key},
-                });
+                }, { convert_blessed => 1 });
 
             my $update = $trigger eq "onclick" ? "Jifty.c(event,$update_json,this)"
                                                : "Jifty.update($update_json,this);";
