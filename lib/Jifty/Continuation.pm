@@ -249,13 +249,17 @@ sub return {
 
     # We want to preserve the current actual request environment
     # (headers, etc)
-    my $env = Jifty->web->request->top_request->env;
+    my $env     = Jifty->web->request->top_request->env;
+    my $headers = Jifty->web->request->top_request->headers;
+    # XXX TODO: should we be saving cookies too since they're no longer pulled
+    # from env as of 1d90579c4448ceba113fae1bbdfd515c021b5ae0?
 
     # Set the current request to the one in the continuation
     Jifty->web->request($self->request->clone);
 
     # Restore the environment we came in with
     Jifty->web->request->top_request->{env} = $env;
+    Jifty->web->request->top_request->headers($headers);
     Jifty->web->request->setup_subrequest_env
         if Jifty->web->request->is_subrequest;
 
