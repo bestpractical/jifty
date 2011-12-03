@@ -729,13 +729,13 @@ The Jifty configuration can be loaded from many locations. This breakdown allows
 
 This section hopes to explain the intended purpose of each configuration file.
 
-=head1 APPLICATION
+=head2 APPLICATION
 
 The first configuration file loaded is the application configuration. This file provides the basis for the rest of the configuration loaded. The purpose of this file is for storing the primary application-specific configuration and defaults.
 
 This can be used as the sole configuration file on a simple deployment. In a complex environment, however, this file may be considered read-only to be overridden by other files, allowing the later files to customize the configuration at each level.
 
-=head1 VENDOR
+=head2 VENDOR
 
 The vendor configuration file is loaded and overrides settings in the application configuration. This is an intermediate level in the configuration. It overrides any defaults specified in the application configuration, but is itself overridden by the site configuration.
 
