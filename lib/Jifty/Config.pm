@@ -320,6 +320,32 @@ sub merge {
     delete $fallback->{framework}{MailerArgs} if exists $new->{framework}{MailerArgs};
     delete $fallback->{framework}{View}{Handlers} if exists $new->{framework}{View}{Handlers};
 
+    # Plugins _need_ some special-case magic to get merged, as they're
+    # not just a hashref of classname to config, but an arrayref of
+    # one-key hashrefs to config, where the key is the classname.  This
+    # is so there is an ordering between plugins.
+    #
+    # Grab all of the existant plugin config refs, and key them by classname.
+    my %plugins;
+    for my $p (@{$fallback->{framework}{Plugins} || []}) {
+        my ($class) = keys %{$p};
+        # It's _possible_ that a single config source defined a plugin
+        # multiple times; the || sets us up to merge into only the first
+        # one.
+        $plugins{$class} ||= $p->{$class};
+    }
+    # Now iterate through all of the new ones, peelling off and merging
+    # new data into the old ref, or pushing the new ref into the old
+    # plugin list.
+    for my $p (@{delete $new->{framework}{Plugins} || []}) {
+        my ($class) = keys %{$p};
+        if ($plugins{$class}) {
+            %{$plugins{$class}} = (%{$plugins{$class}}, %{$p->{$class}});
+        } else {
+            push @{$fallback->{framework}{Plugins}}, $p;
+        }
+    }
+
     my $unbang;
     $unbang = sub {
         my $ref = shift;
@@ -728,9 +754,30 @@ step, the new values are merged into the old values using
 L<Hash::Merge>.  Specifically, arrays which exist in both old and new
 data structures are appended, and hashes are merged.
 
-One special rule applies, however: if a key in a hash ends in C<!>, the
-it simply overrides the equivalent non-C<!> key's value, ignoring normal
-merging rules.
+Some special rules apply, however:
+
+=over
+
+=item *
+
+If a key in a hash ends in C<!>, the normal merging rules do not apply;
+it simply overrides the equivalent non-C<!> key's value.
+
+=item *
+
+Plugins from one file are merged into the plugin configuration from
+previous files if their plugin classes match.  That is, if both
+F<config.yml> and F<site_config.yml> define a
+L<Jifty::Plugin::CompressedCSSandJS>, rather than causing _two_ such
+plugins to be instantiated, the F<site_config.yml>'s plugin
+configuration keys will override those of F<config.yml>.
+
+This rule is only special because the C<Plugins> key in Jifty's config
+is an arrayref, not a hashref on plugin class name, to allow for both
+template and dispatcher ordering, as well as the possibility of repeated
+plugins.
+
+=back
 
 =head1 SEE ALSO
 
