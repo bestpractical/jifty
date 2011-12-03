@@ -315,10 +315,26 @@ sub merge {
     my ($new, $fallback) = @_;
     $fallback ||= $self->stash;
 
+    # These are now more correctly done with the ! syntax, below, rather
+    # than these special-cases.
     delete $fallback->{framework}{MailerArgs} if exists $new->{framework}{MailerArgs};
     delete $fallback->{framework}{View}{Handlers} if exists $new->{framework}{View}{Handlers};
 
-    $self->stash(Hash::Merge::merge( $fallback, $new ));
+    my $unbang;
+    $unbang = sub {
+        my $ref = shift;
+        if (ref $ref eq "HASH") {
+            $ref->{$_} = delete $ref->{$_ . "!"}
+                for map {s/!$//; $_} grep {/!$/} keys %{$ref};
+            $ref->{$_} = $unbang->( $ref->{$_} )
+                for keys %{$ref};
+        } elsif (ref $ref eq "ARRAY") {
+            $ref = [ map { $unbang->($_) } @{$ref} ];
+        }
+        return $ref;
+    };
+
+    $self->stash( $unbang->( Hash::Merge::merge( $fallback, $new ) ) );
 }
 
 # Sets up the initial location of the site configuration file
@@ -702,6 +718,19 @@ This provides an additional layer of abstraction for truly complicated deploymen
 =head2 SITE
 
 The site configuration allows for specific overrides of the application and vendor configuration. For example, a particular Jifty application might define all the application defaults in the application configuration file. Then, each administrator that has downloaded that application and is installing it locally might customize the configuration for a particular deployment using this configuration file, while leaving the application defaults intact (and, thus, still available for later reference). This can even override the vendor file containing a standard set of overrides.
+
+=head1 MERGING RULES
+
+Values from files loaded later take precedence; that is, Jifty's
+defaults are overridden by the application configuration file, then the
+vendor configuration file, then the site configuration file.  At each
+step, the new values are merged into the old values using
+L<Hash::Merge>.  Specifically, arrays which exist in both old and new
+data structures are appended, and hashes are merged.
+
+One special rule applies, however: if a key in a hash ends in C<!>, the
+it simply overrides the equivalent non-C<!> key's value, ignoring normal
+merging rules.
 
 =head1 SEE ALSO
 
