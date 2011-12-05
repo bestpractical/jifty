@@ -6,7 +6,7 @@ use Module::Install::Base ();
 
 use vars qw{$VERSION @ISA $ISCORE};
 BEGIN {
-	$VERSION = '1.01';
+	$VERSION = '1.02';
 	@ISA     = 'Module::Install::Base';
 	$ISCORE  = 1;
 }
@@ -170,7 +170,7 @@ sub perl_version {
 	# Normalize the version
 	$version = $self->_perl_version($version);
 
-	# We don't support the reall old versions
+	# We don't support the really old versions
 	unless ( $version >= 5.005 ) {
 		die "Module::Install only supports 5.005 or newer (use ExtUtils::MakeMaker)\n";
 	}
@@ -582,7 +582,7 @@ sub bugtracker_from {
 sub requires_from {
 	my $self     = shift;
 	my $content  = Module::Install::_readperl($_[0]);
-	my @requires = $content =~ m/^use\s+([^\W\d]\w*(?:::\w+)*)\s+([\d\.]+)/mg;
+	my @requires = $content =~ m/^use\s+([^\W\d]\w*(?:::\w+)*)\s+(v?[\d\.]+)/mg;
 	while ( @requires ) {
 		my $module  = shift @requires;
 		my $version = shift @requires;
