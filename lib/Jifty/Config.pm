@@ -315,10 +315,52 @@ sub merge {
     my ($new, $fallback) = @_;
     $fallback ||= $self->stash;
 
+    # These are now more correctly done with the ! syntax, below, rather
+    # than these special-cases.
     delete $fallback->{framework}{MailerArgs} if exists $new->{framework}{MailerArgs};
     delete $fallback->{framework}{View}{Handlers} if exists $new->{framework}{View}{Handlers};
 
-    $self->stash(Hash::Merge::merge( $fallback, $new ));
+    # Plugins _need_ some special-case magic to get merged, as they're
+    # not just a hashref of classname to config, but an arrayref of
+    # one-key hashrefs to config, where the key is the classname.  This
+    # is so there is an ordering between plugins.
+    #
+    # Grab all of the existant plugin config refs, and key them by classname.
+    my %plugins;
+    for my $p (@{$fallback->{framework}{Plugins} || []}) {
+        my ($class) = keys %{$p};
+        # It's _possible_ that a single config source defined a plugin
+        # multiple times; the || sets us up to merge into only the first
+        # one.
+        $plugins{$class} ||= $p->{$class};
+    }
+    # Now iterate through all of the new ones, peelling off and merging
+    # new data into the old ref, or pushing the new ref into the old
+    # plugin list.
+    for my $p (@{delete $new->{framework}{Plugins} || []}) {
+        my ($class) = keys %{$p};
+        if ($plugins{$class}) {
+            %{$plugins{$class}} = (%{$plugins{$class}}, %{$p->{$class}});
+        } else {
+            push @{$fallback->{framework}{Plugins}}, $p;
+        }
+    }
+
+    my $unbang;
+    $unbang = sub {
+        my $ref = shift;
+        if (ref $ref eq "HASH") {
+            $ref->{$_} = delete $ref->{$_ . "!"}
+                for map {s/!$//; $_} grep {/!$/} keys %{$ref};
+            $ref->{$_} = $unbang->( $ref->{$_} )
+                for keys %{$ref};
+        } elsif (ref $ref eq "ARRAY") {
+            $ref = [ map { $unbang->($_) } @{$ref} ];
+        }
+        return $ref;
+    };
+
+    $self->stash( $unbang->( Hash::Merge::merge( $fallback, $new ) ) );
 }
 
 # Sets up the initial location of the site configuration file
@@ -687,13 +729,13 @@ The Jifty configuration can be loaded from many locations. This breakdown allows
 
 This section hopes to explain the intended purpose of each configuration file.
 
-=head1 APPLICATION
+=head2 APPLICATION
 
 The first configuration file loaded is the application configuration. This file provides the basis for the rest of the configuration loaded. The purpose of this file is for storing the primary application-specific configuration and defaults.
 
 This can be used as the sole configuration file on a simple deployment. In a complex environment, however, this file may be considered read-only to be overridden by other files, allowing the later files to customize the configuration at each level.
 
-=head1 VENDOR
+=head2 VENDOR
 
 The vendor configuration file is loaded and overrides settings in the application configuration. This is an intermediate level in the configuration. It overrides any defaults specified in the application configuration, but is itself overridden by the site configuration.
 
@@ -702,6 +744,40 @@ This provides an additional layer of abstraction for truly complicated deploymen
 =head2 SITE
 
 The site configuration allows for specific overrides of the application and vendor configuration. For example, a particular Jifty application might define all the application defaults in the application configuration file. Then, each administrator that has downloaded that application and is installing it locally might customize the configuration for a particular deployment using this configuration file, while leaving the application defaults intact (and, thus, still available for later reference). This can even override the vendor file containing a standard set of overrides.
+
+=head1 MERGING RULES
+
+Values from files loaded later take precedence; that is, Jifty's
+defaults are overridden by the application configuration file, then the
+vendor configuration file, then the site configuration file.  At each
+step, the new values are merged into the old values using
+L<Hash::Merge>.  Specifically, arrays which exist in both old and new
+data structures are appended, and hashes are merged.
+
+Some special rules apply, however:
+
+=over
+
+=item *
+
+If a key in a hash ends in C<!>, the normal merging rules do not apply;
+it simply overrides the equivalent non-C<!> key's value.
+
+=item *
+
+Plugins from one file are merged into the plugin configuration from
+previous files if their plugin classes match.  That is, if both
+F<config.yml> and F<site_config.yml> define a
+L<Jifty::Plugin::CompressedCSSandJS>, rather than causing _two_ such
+plugins to be instantiated, the F<site_config.yml>'s plugin
+configuration keys will override those of F<config.yml>.
+
+This rule is only special because the C<Plugins> key in Jifty's config
+is an arrayref, not a hashref on plugin class name, to allow for both
+template and dispatcher ordering, as well as the possibility of repeated
+plugins.
+
+=back
 
 =head1 SEE ALSO
 
