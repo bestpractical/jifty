@@ -477,9 +477,16 @@ sub complete_url {
     my %parameters = $self->get_parameters;
 
     my $url = $self->returns ? URI->new(Jifty->web->request->request_uri)->path : $self->url;
+
+    # XXX TODO: This should really construct a URI object and call some
+    # setters, but what's the perf hit there?  This method is used all over the
+    # place.
     if (%parameters) {
+        # The query string can't come after the hash fragment.
+        my $hash = $url =~ s/(#.*)$// ? $1 : '';
         $url .= ( $url =~ /\?/ ) ? ";" : "?";
         $url .= Jifty->web->query_string(%parameters);
+        $url .= $hash if $hash;
     }
 
     return $url;
