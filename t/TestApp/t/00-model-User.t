@@ -8,7 +8,7 @@ A basic test harness for the User model.
 
 =cut
 
-use Jifty::Test::Dist tests => 24;
+use Jifty::Test::Dist tests => 26;
 Jifty::Test->web; # initialize for use with the as_*_action tests
 # Make sure we can load the model
 use_ok('TestApp::Model::User');
@@ -24,6 +24,10 @@ ok($id, "User create returned success");
 ok($o->id, "New User has valid id set");
 is($o->id, $id, "Create returned the right id");
 is($o->name, $$, "Created object has the right name");
+
+is $o->my_data, undef, 'my_data is undef';
+$o->set_my_data( { foo => 'bar' } );
+is_deeply $o->my_data, { foo => 'bar' }, 'my_data filtered correctly';
 
 # Test the as_foo_action methods
 my $action = $o->as_create_action( moniker => 'test1' );
