@@ -34,6 +34,9 @@ column 'created_on' =>
   is immutable,
   default is defer { DateTime->now },
   filters are qw(Jifty::Filter::DateTime Jifty::DBI::Filter::Date);
+column 'my_data' =>
+  type is 'text',
+  filters are qw/Jifty::Filter::JSON/;
 };
 
 
