@@ -4,6 +4,8 @@ use warnings;
 package Jifty::Plugin::Authentication::Password::Dispatcher;
 use Jifty::Dispatcher -base;
 
+my ($self) = Jifty->find_plugin('Jifty::Plugin::Authentication::Password');
+
 =head1 NAME
 
 Jifty::Plugin::Authentication::Password::Dispatcher - password plugin dispatcher
@@ -13,6 +15,12 @@ Jifty::Plugin::Authentication::Password::Dispatcher - password plugin dispatcher
 All the dispatcher rules jifty needs to support L<Jifty::Authentication::Password/>
 
 =head1 RULES
+
+=cut
+
+before '*' => run {
+    Jifty->api->hide( 'Signup' );
+} unless $self->signup;
 
 =head2 C<before logout>
 
@@ -37,11 +45,6 @@ Setup the navigation menu for login or logout.
 =cut
 
 before '*' =>  run {
-    my ($ap) = Jifty->find_plugin('Jifty::Plugin::Authentication::Password')
-        or return;
-
-    return unless $ap->nav_menu;
-
     if ( Jifty->web->current_user->id ) {
         logged_in_nav();
     } else {
@@ -49,7 +52,7 @@ before '*' =>  run {
 
     }
 
-};
+} if $self->nav_menu;
 
 =head2 C<on qr/^(?:signup|lost_password)$/>
 

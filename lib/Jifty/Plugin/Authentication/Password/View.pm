@@ -15,6 +15,8 @@ password authentication plugin.
 package Jifty::Plugin::Authentication::Password::View;
 use Jifty::View::Declare -base;
 
+my ($self) = Jifty->find_plugin('Jifty::Plugin::Authentication::Password');
+
 =head1 TEMPLATES
 
 =head2 signup
@@ -23,20 +25,22 @@ Displays a sign-up form.
 
 =cut
 
-template 'signup' => page { title => _('Sign up') } content {
-    show 'signup_widget';
-};
+if ($self->signup) {
+    template 'signup' => page { title => _('Sign up') } content {
+        show 'signup_widget';
+    };
 
-template 'signup_widget' => sub {
-    my ( $action, $next ) = get(qw(action next));
-    $action ||= new_action( class => 'Signup' );
-    $next ||= Jifty::Continuation->new( request => Jifty::Request->new(path => "/") );
-    Jifty->web->form->start( call => $next );
-    render_param( $action => 'name' , focus => 1);
-    render_param( $action => $_ ) for ( grep {$_ ne 'name'} $action->argument_names );
-    form_return( label => _('Sign up'), submit => $action );
-    Jifty->web->form->end();
-};
+    template 'signup_widget' => sub {
+        my ( $action, $next ) = get(qw(action next));
+        $action ||= new_action( class => 'Signup' );
+        $next ||= Jifty::Continuation->new( request => Jifty::Request->new(path => "/") );
+        Jifty->web->form->start( call => $next );
+        render_param( $action => 'name' , focus => 1);
+        render_param( $action => $_ ) for ( grep {$_ ne 'name'} $action->argument_names );
+        form_return( label => _('Sign up'), submit => $action );
+        Jifty->web->form->end();
+    };
+}
 
 =head2 login
 
@@ -109,19 +113,6 @@ template 'let/reset_lost_password' => page { title => _('Reset lost password') }
     Jifty->web->form->end();
 };
 
-=head2 let/confirm_email
-
-Handles the work of confirming an email address for a new account.
-
-See L<Jifty::Plugin::Authenticaiton::Password::View>.
-
-=cut
-
-template 'let/confirm_email' => sub {
-    new_action( class => 'ConfirmEmail' )->run;
-    redirect("/");
-};
-
 =head2 lost_password
 
 Starts the process of sending a link to reset a lost password by email.
@@ -144,6 +135,19 @@ template 'lost_password' => page { title => 'Send a link to reset your password'
             form_return( label => _(q{Send}), submit => $action);
     Jifty->web->form->end;
 
+};
+
+=head2 let/confirm_email
+
+Handles the work of confirming an email address for a new account.
+
+See L<Jifty::Plugin::Authenticaiton::Password::View>.
+
+=cut
+
+template 'let/confirm_email' => sub {
+    new_action( class => 'ConfirmEmail' )->run;
+    redirect("/");
 };
 
 =head2 resend_confirmation

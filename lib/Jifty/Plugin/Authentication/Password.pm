@@ -4,7 +4,7 @@ use warnings;
 package Jifty::Plugin::Authentication::Password;
 use base qw/Jifty::Plugin/;
 
-__PACKAGE__->mk_accessors(qw(nav_menu));
+__PACKAGE__->mk_accessors(qw(nav_menu signup));
 
 =head1 NAME
 
@@ -51,10 +51,14 @@ sub init {
     my $self = shift;
     return if $self->_pre_init;
 
-    my %opt  = ( nav_menu => 1,
-                 @_ );
+    my %opt  = (
+        nav_menu => 1,
+        signup   => 1,
+        @_
+    );
 
     $self->nav_menu( $opt{nav_menu} );
+    $self->signup( $opt{signup} );
 }
 
 =head1 SEE ALSO
