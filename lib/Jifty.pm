@@ -174,7 +174,7 @@ sub new {
     Jifty->logger( Jifty::Logger->new( $args{'logger_component'} ) );
 
     # Set up plugins
-    my @plugins;
+    @PLUGINS = ();
     my @plugins_to_load = @{Jifty->config->framework('Plugins')};
     my $app_plugin = Jifty->app_class('Plugin');
     # we are pushing prereq to plugin, hence the 3-part for.
@@ -204,7 +204,7 @@ sub new {
             next if grep { $_ =~ $this_class } @plugins_to_load;
 
             # already loaded plugin objects
-            next if grep { ref($_) =~ $this_class } @plugins;
+            next if grep { ref($_) =~ $this_class } Jifty->plugins;
         }
 
         # Load the plugin options
@@ -217,14 +217,10 @@ sub new {
 
         # Initialize the plugin and mark the prerequisites for loading too
         my $plugin_obj = $class->new(%options);
-        push @plugins, $plugin_obj;
         foreach my $name ($plugin_obj->prereq_plugins) {
             push @plugins_to_load, {$name => {}, _prereq => 1};
         }
     }
-
-    # All plugins loaded, save them for later reference
-    Jifty->plugins(@plugins);
 
     # Now that we have the config set up and loaded plugins,
     # load the localization files.

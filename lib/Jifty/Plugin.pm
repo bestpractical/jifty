@@ -51,11 +51,13 @@ sub new {
     my $class = shift;
     my $self = $class->SUPER::new( { @_ });
 
-    # Get a classloader set up
-    Jifty::Util->require($class->dispatcher);
-
     # XXX TODO: Add .po path
     $self->init(@_);
+
+    Jifty->plugins( Jifty->plugins, $self );
+
+    # Pull in the dispatcher
+    Jifty::Util->require($class->dispatcher);
 
     # XXX: If we have methods for halos, add them. Some way of detecting "are
     # we going to be using halos" would be superb. As it stands right now,
