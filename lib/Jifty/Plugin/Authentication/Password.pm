@@ -6,6 +6,8 @@ use base qw/Jifty::Plugin/;
 
 __PACKAGE__->mk_accessors(qw(nav_menu signup));
 
+Jifty->web->add_javascript(qw/ MD5.js login_hashing.js /);
+
 =head1 NAME
 
 Jifty::Plugin::Authentication::Password - password authentication plugin

@@ -66,6 +66,7 @@ template login_widget => sub {
 
     my ( $action, $next ) = get( 'action', 'next' );
     $action ||= new_action( class => 'Login' );
+    my $moniker = $action->moniker;
     $next ||= Jifty::Continuation->new(
         request => Jifty::Request->new( path => "/" ) );
     unless ( Jifty->web->current_user->id ) {
@@ -82,8 +83,12 @@ template login_widget => sub {
               } else {
                 render_param( $action, 'email', focus => 1 );
               };
-            render_param( $action, $_ ) for (qw(password remember));
-            form_return( label => _(q{Login}), submit => $action );
+            render_param( $action, $_ ) for (qw(password remember token hashed_password));
+            form_return(
+                label   => _(q{Login}),
+                submit  => $action,
+                onclick => "return getPasswordToken('$moniker');"
+            );
             hyperlink(
                 label => _("Lost your password?"),
                 url   => "/lost_password"
