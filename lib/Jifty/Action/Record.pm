@@ -569,43 +569,6 @@ sub take_action {
     );
 }
 
-sub _setup_event_before_action {
-    my $self = shift;
-
-    # Setup the information regarding the event for later publishing
-    my $event_info = {};
-    $event_info->{as_hash_before} = $self->record->as_hash;
-    $event_info->{record_id}      = $self->record->id;
-    $event_info->{record_class}   = ref( $self->record );
-    $event_info->{action_class}   = ref($self);
-    $event_info->{action_arguments}
-        = $self->argument_values;    # XXX does this work?
-    $event_info->{current_user_id} = $self->current_user->id || 0;
-    return ($event_info);
-}
-
-sub _setup_event_after_action {
-    my $self       = shift;
-    my $event_info = shift;
-
-    unless ( defined $event_info->{record_id} ) {
-        $event_info->{record_id}    = $self->record->id;
-        $event_info->{record_class} = ref( $self->record );
-        $event_info->{action_class} = ref($self);
-    }
-
-    # Add a few more bits about the result
-    $event_info->{result}        = $self->result;
-    $event_info->{timestamp}     = time();
-    $event_info->{as_hash_after} = $self->record->as_hash;
-
-    # Publish the event
-    my $event_class = $event_info->{'record_class'};
-    $event_class =~ s/::Model::/::Event::Model::/g;
-    Jifty::Util->require($event_class);
-    $event_class->new($event_info)->publish;
-}
-
 =head1 SEE ALSO
 
 L<Jifty::Action>, L<Jifty::Record>, L<Jifty::DBI::Record>,

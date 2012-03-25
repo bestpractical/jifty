@@ -33,9 +33,6 @@ framework:
     - SkeletonApp: {}
     - TestApp::Plugin::AppPluginHasModels::Plugin::MyAppPlugin: {}
 
-  PubSub: 
-    Backend: Memcached
-    Enable: ~
   SkipAccessControl: 0
   TemplateClass: TestApp::Plugin::AppPluginHasModels::View
   Web: 

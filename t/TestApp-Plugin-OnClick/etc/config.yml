@@ -31,9 +31,6 @@ framework:
     - REST: {}
     - SkeletonApp: {}
 
-  PubSub: 
-    Backend: Memcached
-    Enable: ~
   SkipAccessControl: 0
   TemplateClass: TestApp::Plugin::OnClick::View
   Web: 

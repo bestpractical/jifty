@@ -29,9 +29,6 @@ framework:
     - REST: {}
     - SkeletonApp: {}
 
-  PubSub: 
-    Backend: Memcached
-    Enable: ~
   TemplateClass: Doxory::View
   SkipAccessControl: 1
   Web: 

@@ -80,9 +80,6 @@ use Jifty::Web::Form::Link ();
 use Jifty::Web::Form::Field ();
 use Jifty::Web::Menu ();
 
-use Jifty::Subs ();
-use Jifty::Subs::Render ();
-
 use Jifty::CAS ();
 
 use Jifty::Module::Pluggable;

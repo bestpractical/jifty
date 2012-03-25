@@ -57,8 +57,6 @@ Returns a list of Models available to your application.  This includes
 your Models, Collections and those that come from core Jifty and
 plugins.
 
-Unfortunately, this list does not contain any of the PubSub Models
-
 =cut
 
 sub _init_model_list {

@@ -70,9 +70,6 @@ sub take_action {
     my $self   = shift;
     my $record = $self->record;
 
-    # Build the event to be fired later
-    my $event_info = $self->_setup_event_before_action();
-    
     my %values;
 
     # Iterate through all that are set, except for the virtual ones
@@ -103,9 +100,6 @@ sub take_action {
         $self->result->content(id => $self->record->id);
         $self->report_success if  not $self->result->failure;
     }
-
-    # Publish the event, noting success or failure
-    $self->_setup_event_after_action($event_info);
 
     return ($self->record->id);
 }

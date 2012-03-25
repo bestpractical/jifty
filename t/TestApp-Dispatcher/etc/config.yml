@@ -25,9 +25,6 @@ framework:
     - CompressedCSSandJS: {}
     - ErrorTemplates: {}
     - SkeletonApp: {}
-  PubSub: 
-    Backend: Memcached
-    Enable: ~
   SkipAccessControl: 0
   TemplateClass: TestApp::Dispatcher::View
   View: 

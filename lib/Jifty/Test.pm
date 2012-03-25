@@ -688,13 +688,6 @@ sub _ending {
         # Clean up mailbox
         Jifty::Test->teardown_mailbox;
 
-        # Disconnect the PubSub bus, if need be; otherwise we may not
-        # be able to drop the testing database.  Calling ->bus, if we
-        # never dealt with PubSub in the test, can actually _do_ the
-        # connect now, unless we explicitly tell it not to.
-        Jifty->bus->disconnect
-          if Jifty->config and Jifty->bus( connect => 0 );
-
         # Remove testing db
         if (Jifty->handle && !$ENV{JIFTY_FAST_TEST}) {
             Jifty->handle->disconnect();

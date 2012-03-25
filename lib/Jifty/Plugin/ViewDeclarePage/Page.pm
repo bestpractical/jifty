@@ -568,7 +568,7 @@ sub render_salutation {
 
 =head3 render_jifty_page_detritus
 
-Renders admin mode warning, the wait message, the keybindings and PubSub javascript.
+Renders admin mode warning, the wait message, and the keybindings javascript.
 Called from L</render_page>.
 
 =cut
@@ -590,12 +590,6 @@ sub render_jifty_page_detritus {
         div { _('Loading...') };
 
     div { id is "keybindings" };
-
-    # This is required for jifty server push
-    if ( Jifty->config->framework('PubSub')->{'Enable'} && Jifty::Subs->list )
-    {
-        script { outs_raw('new Jifty.Subs({}).start();') };
-    }
 }
 
 1;

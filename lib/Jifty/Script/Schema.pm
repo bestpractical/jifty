@@ -306,14 +306,6 @@ sub create_all_tables {
     # Commit it all
     Jifty->handle->commit or exit 1;
 
-    Jifty::Util->require('IPC::PubSub');
-    IPC::PubSub->new(
-        JiftyDBI => (
-            db_config    => Jifty->handle->{db_config},
-            table_prefix => '_jifty_pubsub_',
-            db_init      => 1,
-        )
-    )->disconnect;
     $log->info("Set up version $appv, jifty version $jiftyv");
 }
 

@@ -96,9 +96,6 @@ sub take_action {
     my $self = shift;
     my $changed = 0;
 
-    # Prepare the event for later publishing
-    my $event_info = $self->_setup_event_before_action();
-
     my $detailed_messages = {};
 
     $self->record->call_trigger('start_update_action');
@@ -200,9 +197,6 @@ sub take_action {
         if $self->report_detailed_messages;
 
     $self->record->call_trigger('end_update_action');
-
-    # Publish the update event
-    $self->_setup_event_after_action($event_info);
 
     return 1;
 }

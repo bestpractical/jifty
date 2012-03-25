@@ -517,10 +517,6 @@ sub guess {
             ApplicationName   => $app_name,
             ApplicationUUID   => $app_uuid,
             LogLevel          => 'INFO',
-            PubSub            => {
-                Enable  => undef,
-                Backend => 'Memcached',
-            },
             Database => {
                 AutoUpgrade     => 1,
                 Database        => $db_name,

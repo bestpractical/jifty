@@ -23,9 +23,6 @@ framework:
   MailerArgs: []
 
   Plugins: []
-  PubSub: 
-    Backend: Memcached
-    Enable: ~
   SkipAccessControl: 0
   TemplateClass: TestApp::Mason::View
   View: 

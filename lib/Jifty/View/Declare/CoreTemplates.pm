@@ -17,8 +17,6 @@ This library contains templates that Jifty can't function without:
 
 =over
 
-=item PubSub
-
 =item Validate
 
 =item Autocomplete
@@ -34,57 +32,6 @@ This library contains templates that Jifty can't function without:
 =for later 
 
 These templates are still in Masonland. we're doing something wrong with escaping in them
-
-
-template '__jifty/subs' => sub {
-    my ($forever) = get(qw(forever)) || 1;
-
-    Jifty->web->response->content_type("text/html; charset=utf-8");
-    Jifty->web->response->header('Pragma' => 'no-cache');
-    Jifty->web->response->header('Cache-control' => 'no-cache');
-
-    my $writer = XML::Writer->new;
-    $writer->xmlDecl( "UTF-8", "yes" );
-
-    my $begin = <<'END';
-<!DOCTYPE html>
-<html><head><title></title></head>
-END
-    chomp $begin;
-
-    if ($forever) {
-        my $whitespace = " " x ( 1024 - length $begin );
-        $begin =~ s/<body>$/$whitespace/s;
-    }
-
-    Jifty->web->out($begin);
-    $writer->startTag("body");
-
-    while (1) {
-        my $sent = _write_subs_once($writer);
-        flush STDOUT;
-        last if ( $sent && !$forever );
-        sleep 1;
-    }
-    $writer->endTag();
-    return;
-
-};
-
-sub _write_subs_once {
-    my $writer = shift;
-    Jifty::Subs::Render->render(
-        Jifty->web->session->id,
-        sub {
-            my ( $mode, $name, $content ) = @_;
-            $writer->startTag( "pushfrag", mode => $mode );
-            $writer->startTag( "fragment", id   => $name );
-            $writer->dataElement( "content", $content );
-            $writer->endTag();
-            $writer->endTag();
-        }
-    );
-}
 
 template '__jifty/autocomplete.xml' => sub {
 
