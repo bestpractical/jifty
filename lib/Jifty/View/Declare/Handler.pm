@@ -71,10 +71,17 @@ then print to STDOUT
 sub show {
     my $self     = shift;
     my $template = shift;
+    my $args     = shift;
 
     Template::Declare->buffer( Jifty->handler->buffer );
     eval {
-        Template::Declare::Tags::show_page( $template, { %{Jifty->web->request->arguments}, %{Jifty->web->request->template_arguments || {}} } );
+        Template::Declare::Tags::show_page(
+            $template,
+            $args || {
+                %{Jifty->web->request->arguments},
+                %{Jifty->web->request->template_arguments || {}},
+            },
+        } );
     };
     if (my $err = $@) {
         $err->rethrow if ref $err;

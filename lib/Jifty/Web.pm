@@ -951,7 +951,7 @@ sub template_exists {
 
 my %TEMPLATE_CACHE;
 
-=head2 render_template PATH
+=head2 render_template PATH, [ARGS]
 
 Use our templating system to render a template.  Searches through
 L<Jifty::Handler/view_handlers> to find the first handler which
@@ -966,6 +966,7 @@ C</errors/404> if the template cannot be found.
 sub render_template {
     my $self     = shift;
     my $template = shift;
+    my $args     = shift;
     my $handler;
     my $content;
         my $void_context = ( defined wantarray ? 0 :1);
@@ -1004,7 +1005,7 @@ sub render_template {
     Jifty->handler->buffer->push( private => 1 ) unless $void_context;
 
     Jifty->handler->call_trigger("before_render_template", $handler, $template);
-    eval { $handler->show($template) };
+    eval { $handler->show($template, $args) };
 
     # Handle parse errors
     my $err = $@;
