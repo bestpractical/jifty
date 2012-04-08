@@ -59,31 +59,6 @@ sub new {
     # Pull in the dispatcher
     Jifty::Util->require($class->dispatcher);
 
-    # XXX: If we have methods for halos, add them. Some way of detecting "are
-    # we going to be using halos" would be superb. As it stands right now,
-    # plugins are loaded, initialized, and prereq-examined in the order they're
-    # listed in the config files. Instead, each phase should be separate.
-    Jifty::Util->require("Jifty::Plugin::Halo");
-    Jifty::Util->require("Jifty::View::Mason::Halo");
-
-    if ($self->can('halo_pre_template')) {
-        Jifty::Plugin::Halo->add_trigger(
-            halo_pre_template => sub { $self->halo_pre_template(@_) },
-        );
-        Jifty::View::Mason::Halo->add_trigger(
-            halo_pre_template => sub { $self->halo_pre_template(@_) },
-        );
-    }
-
-    if ($self->can('halo_post_template')) {
-        Jifty::Plugin::Halo->add_trigger(
-            halo_post_template => sub { $self->halo_post_template(@_) },
-        );
-        Jifty::View::Mason::Halo->add_trigger(
-            halo_post_template => sub { $self->halo_post_template(@_) },
-        );
-    }
-
     return $self;
 }
 

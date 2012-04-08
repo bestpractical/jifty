@@ -296,9 +296,9 @@ target for subclassing instead of this.
 sub render_body {
     my $self = shift;
     body {
-        Jifty->handler->stash->{'in_body'} = 1;
+        Jifty::View->call_trigger('body_start');
         $self->render_page;
-        Jifty->handler->stash->{'in_body'} = 0;
+        Jifty::View->call_trigger('body_end');
     };
     return '';
 }

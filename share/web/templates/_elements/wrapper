@@ -1,4 +1,6 @@
+<& header, title => $title &>
 <body>
+% Jifty::View->call_trigger('body_start');
   <div id="headers">
     <%Jifty->web->link( url => "/", label => _(Jifty->config->framework('ApplicationName')))%>
     <h1 class="title"><% _($title) %></h1>
@@ -16,22 +18,12 @@
   <& /_elements/keybindings &>
   </div>
   <div id="jifty-wait-message" style="display: none"><%_('Loading...')%></div>
-% Jifty::View::Mason::Halo->render_component_tree() if Jifty->config->framework('DevelMode') && !Jifty->config->framework('HideHalos');
-%# This is required for jifty server push.  If you maintain your own
-%# wrapper, make sure you have this as well.
+% Jifty::View->call_trigger('body_end');
 % if ( Jifty->config->framework('PubSub')->{'Enable'} && Jifty::Subs->list ) {
 <script>new Jifty.Subs({}).start();</script>
 % }
 </body>
 </html>
-% Jifty->handler->stash->{'in_body'} = 0;
 <%args>
 $title => ""
 </%args>
-<%init>
-# First we set up the header. 
-$m->comp( 'header', title => $title);
-# now that we've printed out the header, we're inside the body, so it's safe to print
-# halo markers.
-Jifty->handler->stash->{'in_body'} = 1;
-</%init>

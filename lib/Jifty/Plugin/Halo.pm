@@ -2,6 +2,7 @@ use strict;
 use warnings;
 
 package Jifty::Plugin::Halo;
+use Jifty::Plugin::Halo::Mason;
 use base qw/Jifty::Plugin/;
 use Time::HiRes 'time';
 use Class::Trigger;
@@ -12,7 +13,7 @@ Jifty::Plugin::Halo - Provides halos
 
 =head1 DESCRIPTION
 
-This plugin provides L<http://seaside.st|Seasidesque> halos for your
+This plugin provides L<http://seaside.st|Seaside>-esque halos for your
 application. It's included by default when using Jifty with DevelMode
 turned on.
 
@@ -28,13 +29,39 @@ L<Template::Declare>.
 sub init {
     my $self = shift;
     return if $self->_pre_init;
-    return unless Jifty->config->framework('DevelMode')
-               && !Jifty->config->framework('HideHalos');
+    return unless Jifty->config->framework('DevelMode');
+
+    Jifty->web->add_javascript( 'halo.js' );
+    Jifty->web->add_css( 'halo.css' );
 
     warn "Overwriting an existing Template::Declare->around_template"
         if Template::Declare->around_template;
-
     Template::Declare->around_template(sub { $self->around_template(@_) });
+
+    push @{ Jifty->config->framework('Web')->{'MasonConfig'}{plugins} },
+        'Jifty::Plugin::Halo::Mason';
+    Jifty::View->add_trigger( body_start => sub { $self->body_start } );
+    Jifty::View->add_trigger( body_end => sub { $self->body_end } );
+
+    Jifty->add_trigger( post_init => sub { $self->find_halo_plugins } );
+}
+
+=head2 find_halo_plugins
+
+Finds plugins which have C<halo_pre_template> or C<halo_post_template>
+methods, and adds them as callbacks in the requisite places.
+
+=cut
+
+sub find_halo_plugins {
+    my $self = shift;
+    for my $plugin (Jifty->plugins) {
+        for my $cb (grep {$plugin->can($_)} qw/ halo_pre_template halo_post_template/ ) {
+            Jifty::Plugin::Halo->add_trigger(
+                $cb => sub { $plugin->$cb(@_) },
+            );
+        }
+    }
 }
 
 =head2 around_template
@@ -67,15 +94,11 @@ sub around_template {
             Jifty->web->escape($deparsed);
         },
     };
-    my $proscribed = $self->is_proscribed($frame);
 
-    Template::Declare->buffer->append($self->halo_header($frame))
-        unless $proscribed;
+    Template::Declare->buffer->append($self->halo_header($frame));
     $orig->();
-
     $frame = $self->pop_frame;
-    Template::Declare->buffer->append($self->halo_footer($frame))
-        unless $proscribed;
+    Template::Declare->buffer->append($self->halo_footer($frame));
 }
 
 =head2 halo_header frame -> string
@@ -224,7 +247,6 @@ sub new_frame {
         id           => Jifty->web->serial,
         start_time   => time,
         subcomponent => 0,
-        proscribed   => 0,
         displays     => {
             R => { name => "render", default => 1 },
             S => { name => "source" },
@@ -291,19 +313,35 @@ sub pop_frame {
     return $frame;
 }
 
-=head2 is_proscribed FRAME
+sub body_start {
+    my $self = shift;
+    Jifty->handler->stash->{'in_body'} = 1;
+}
 
-Returns true if the given C<FRAME> should not have a halo around it.
+sub body_end {
+    my $self = shift;
+    Jifty->handler->stash->{'in_body'} = 0;
+    $self->render_component_tree;
+}
+
+=head2 render_component_tree
+
+Once we're just about to finish rendering our HTML page (just before
+the C<</body>> tag, we should call render_component_tree to output all
+the halo data and metadata.
 
 =cut
 
-sub is_proscribed {
-    my ($self, $frame) = @_;
-    return 1 if $frame->{'proscribed'};
+sub render_component_tree {
+    my $self  = shift;
+    my @stack = @{ Jifty->handler->stash->{'_halo_stack'} };
 
-    $frame->{'proscribed'} = 1 unless Jifty->handler->stash->{'in_body'};
-
-    return $frame->{'proscribed'}? 1 : 0;
+    for (@stack) {
+        $_->{'render_time'} = int((($_->{'end_time'}||time) - $_->{'start_time'}) * 1000)/1000
+          unless defined $_->{'render_time'};
+    }
+    Jifty->web->render_template("/__jifty/halo", {stack => \@stack} );
+    return 1;
 }
 
 1;

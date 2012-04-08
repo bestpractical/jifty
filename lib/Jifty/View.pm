@@ -3,6 +3,7 @@ use strict;
 use warnings;
 
 use base qw/Jifty::Object/;
+use Class::Trigger;
 
 use Encode ();
 

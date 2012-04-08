@@ -46,7 +46,6 @@ __PACKAGE__->javascript_libs([qw(
     calendar.js
     datetime.js
     dom-drag.js
-    halo.js
     combobox.js
     key_bindings.js
     context_menu.js

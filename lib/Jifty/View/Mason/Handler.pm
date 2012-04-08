@@ -112,10 +112,8 @@ sub config {
     }
     push @{$config{comp_root}}, [jifty => Jifty::Util->absolute_path( Jifty->config->framework('Web')->{'DefaultTemplateRoot'})];
 
-    # In developer mode, we want halos, refreshing and all that other good stuff. 
+    # In developer mode, we want refreshing and all that other good stuff.
     if (Jifty->config->framework('DevelMode') ) {
-        push @{$config{'plugins'}}, 'Jifty::View::Mason::Halo'
-            unless Jifty->config->framework('HideHalos');
         $config{static_source}    = 0;
         $config{use_object_files} = 0;
     }

@@ -85,9 +85,9 @@ sub render_body {
     my ($self, $body_code) = @_;
 
     body {
-        Jifty->handler->stash->{'in_body'} = 1;
+        Jifty::View->call_trigger('body_start');
         $body_code->();
-        Jifty->handler->stash->{'in_body'} = 0;
+        Jifty::View->call_trigger('body_end');
     };
 }
 
@@ -225,10 +225,7 @@ sub _render_header {
     my $title = shift || '';
     $title =~ s/<.*?>//g;    # remove html
     HTML::Entities::decode_entities($title);
-    my $old = Jifty->handler->stash->{'in_body'};
-    Jifty->handler->stash->{'in_body'} = 0;
     with( title => $title ), show('/header');
-    Jifty->handler->stash->{'in_body'} = $old;
 }
 
 1;
