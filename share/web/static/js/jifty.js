@@ -922,76 +922,76 @@ var current_args = {};
 //  - 'fragment' is a hash, see fragments in update()
 
 function prepare_element_for_update(f) {
-        var name = f['region'];
+    var name = f['region'];
 
-        // Find where we are going to go
-        var element = document.getElementById('region-' + f['region']);
-        if (f['element']) {
-            element = jQuery(f['element'])[0];
-        }
-        f['element'] = element;
+    // Find where we are going to go
+    var element = document.getElementById('region-' + f['region']);
+    if (f['element']) {
+        element = jQuery(f['element'])[0];
+    }
+    f['element'] = element;
 
-        // If we can't find out where we're going, bail
-        if (element == null)
-            return;
+    // If we can't find out where we're going, bail
+    if (element == null)
+        return;
 
-        // If we're removing the element, do it now
-        if (f['mode'] == "Delete") {
-            fragments[name] = null;
-            if (f['effect']) {
-                Jifty.Effect(
-                    Jifty.$('region-'+f['region']),
-                    f['effect'],
-                    f['effect_args']
-                );
-                jQuery(element).queue(function() {
-                    jQuery(element).remove();
-                    jQuery(element).dequeue();
-                });
-            } else if (f['remove_effect']) {
-                Jifty.Effect(
-                    Jifty.$('region-'+f['region']),
-                    f['remove_effect'],
-                    f['remove_effect_args']
-                );
-                jQuery(element).queue(function() {
-                    jQuery(element).remove();
-                    jQuery(element).dequeue();
-                });
-            } else {
+    // If we're removing the element, do it now
+    if (f['mode'] == "Delete") {
+        fragments[name] = null;
+        if (f['effect']) {
+            Jifty.Effect(
+                Jifty.$('region-'+f['region']),
+                f['effect'],
+                f['effect_args']
+            );
+            jQuery(element).queue(function() {
                 jQuery(element).remove();
-            }
-            return;
+                jQuery(element).dequeue();
+            });
+        } else if (f['remove_effect']) {
+            Jifty.Effect(
+                Jifty.$('region-'+f['region']),
+                f['remove_effect'],
+                f['remove_effect_args']
+            );
+            jQuery(element).queue(function() {
+                jQuery(element).remove();
+                jQuery(element).dequeue();
+            });
+        } else {
+            jQuery(element).remove();
+        }
+        return;
+    }
+
+    f['is_new'] = (fragments[name] ? false : true);
+    // If it's new, we need to create it so we can dump it
+    if (f['is_new']) {
+        // Find what region we're inside
+        f['parent'] = null;
+        if (f['mode'] && ((f['mode'] == "Before") || (f['mode'] == "After")))
+            element = element.parentNode;
+        while ((element != null) && (element.getAttribute) && (f['parent'] == null)) {
+            if (/^region-/.test(element.getAttribute("id")))
+                f['parent'] = element.getAttribute("id").replace(/^region-/,"");
+            element = element.parentNode;
         }
 
-        f['is_new'] = (fragments[name] ? false : true);
-        // If it's new, we need to create it so we can dump it
-        if (f['is_new']) {
-            // Find what region we're inside
-            f['parent'] = null;
-            if (f['mode'] && ((f['mode'] == "Before") || (f['mode'] == "After")))
-                element = element.parentNode;
-            while ((element != null) && (element.getAttribute) && (f['parent'] == null)) {
-                if (/^region-/.test(element.getAttribute("id")))
-                    f['parent'] = element.getAttribute("id").replace(/^region-/,"");
-                element = element.parentNode;
-            }
-
-            if (f['parent']) {
-                f['region'] = name = f['parent'] + '-' + name;
-            }
-
-            // Make the region (for now)
-            new Region(name, f['args'], f['path'], f['parent'], f['parent'] ? fragments[f['parent']].in_form : null);
-        } else if ((f['path'] != null) && f['toggle'] && (f['path'] == fragments[name].path)) {
-            // If they set the 'toggle' flag, and clicking wouldn't change the path
-            jQuery(element).empty();
-            fragments[name].path = null;
-            return;
-        } else if (f['path'] == null) {
-            // If they didn't know the path, fill it in now
-            f['path'] == fragments[name].path;
+        if (f['parent']) {
+            f['region'] = name = f['parent'] + '-' + name;
         }
+
+        // Make the region (for now)
+        new Region(name, f['args'], f['path'], f['parent'], f['parent'] ? fragments[f['parent']].in_form : null);
+    } else if ((f['path'] != null) && f['toggle'] && (f['path'] == fragments[name].path)) {
+        // If they set the 'toggle' flag, and clicking wouldn't change the path
+        jQuery(element).empty();
+        fragments[name].path = null;
+        return;
+    } else if (f['path'] == null) {
+        // If they didn't know the path, fill it in now
+        f['path'] == fragments[name].path;
+    }
 
     return f;
 }
