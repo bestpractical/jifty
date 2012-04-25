@@ -81,7 +81,7 @@ sub show {
                 %{Jifty->web->request->arguments},
                 %{Jifty->web->request->template_arguments || {}},
             },
-        } );
+        );
     };
     if (my $err = $@) {
         $err->rethrow if ref $err;
