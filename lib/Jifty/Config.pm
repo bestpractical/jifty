@@ -605,12 +605,15 @@ sub update_config {
     my $self = shift;
     my $config = shift;
 
+    my $version = $config->{'framework'}->{'ConfigFileVersion'};
+    my $plugins = ($config->{'framework'}->{'Plugins'} ||= []);
+
     # This app configuration predates the plugin refactor
-    if ( $config->{'framework'}->{'ConfigFileVersion'} < 2) {
+    if ($version < 2) {
 
         # These are the plugins which old apps expect because their
         # features used to be in the core.
-        unshift (@{$config->{'framework'}->{'Plugins'}}, 
+        unshift (@{$plugins},
             { AdminUI            => {}, },
             { CompressedCSSandJS => {}, },
             { ErrorTemplates     => {}, },
@@ -621,25 +624,25 @@ sub update_config {
         );
     }
 
-    if ( $config->{'framework'}->{'ConfigFileVersion'} < 3) {
-        unshift (@{$config->{'framework'}->{'Plugins'}}, 
+    if ($version < 3) {
+        unshift (@{$plugins},
             { CSSQuery           => {}, }
         );
     }
 
-    if ( $config->{'framework'}->{'ConfigFileVersion'} < 4) {
-        unshift (@{$config->{'framework'}->{'Plugins'}}, 
+    if ($version < 4) {
+        unshift (@{$plugins},
             { Prototypism        => {}, }
         );
     }
 
-    if ( $config->{'framework'}->{'ConfigFileVersion'} < 5) {
-        unshift (@{$config->{'framework'}->{'Plugins'}},
-            { Compat        => {}, }
+    if ($version < 5) {
+        unshift (@{$plugins},
+            { Compat             => {}, }
         );
 
-        push (@{$config->{'framework'}->{'Plugins'}},
-            { Deflater      => {}, }
+        push (@{$plugins},
+            { Deflater           => {}, }
         );
     }
 
