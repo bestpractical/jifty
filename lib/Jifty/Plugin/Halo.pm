@@ -347,4 +347,8 @@ sub render_component_tree {
     return 1;
 }
 
+# Back-compat with old Mason "/_elements/wrapper" files
+package Jifty::View::Mason::Halo;
+*render_component_tree = \&Jifty::Plugin::Halo::render_component_tree;
+
 1;
