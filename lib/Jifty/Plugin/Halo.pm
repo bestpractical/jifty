@@ -74,6 +74,9 @@ around the template itself.
 sub around_template {
     my ($self, $orig, $path, $args, $code) = @_;
 
+    return $orig->() if $path eq "/__jifty/halo";
+    return $orig->() unless Jifty->handler->stash->{'in_body'};
+
     # for now, call the last piece of the template's path the name
     $path =~ m{.*/(.+)};
     my $name = $1 || $path;
