@@ -52,6 +52,7 @@ sub end_component_hook {
     return if ($context->comp->path || '') eq "/__jifty/halo";
     return unless Jifty->handler->stash->{'in_body'};
     return if $context->comp->is_subcomp;
+    return if ${ $context->error };
 
     my $frame = Jifty::Plugin::Halo->pop_frame;
     $context->request->out(Jifty::Plugin::Halo->halo_footer($frame));
