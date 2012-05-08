@@ -24,7 +24,6 @@ Jifty::Plugin::CompressedCSSandJS - Compression of CSS and javascript files
         js: 1
         css: 1
         jsmin: /path/to/jsmin
-        cdn_url_prefix: https://app.ssl.a.fastly.net
         skipped_js:
             - complex.js
 
@@ -46,7 +45,7 @@ skipped_js is a list of js that you don't want to compress for some reason.
 
 =cut
 
-__PACKAGE__->mk_accessors(qw(css js jsmin skipped_js cdn_url_prefix external_publish));
+__PACKAGE__->mk_accessors(qw(css js jsmin skipped_js external_publish));
 
 =head2 init
 
@@ -65,7 +64,6 @@ sub init {
     $self->js( $opt{js} );
     $self->jsmin( $opt{jsmin} );
     $self->external_publish( $opt{external_publish} );
-    $self->cdn_url_prefix($opt{cdn_url_prefix} ||'');
     if ($self->external_publish and not Jifty::CAS->backend("ccjs")->durable) {
         $self->log->warn("External publishing does not work with non-durable CAS stores; disabling");
         $self->external_publish(0);
@@ -116,7 +114,6 @@ sub _include_javascript {
     $self->generate_javascript unless $self->external_publish;
     Jifty->web->out(
         qq[<script type="text/javascript" src="]
-          . $self->cdn_url_prefix()
           . Jifty::CAS->uri("ccjs","js-all")
           . qq[.js"></script>] );
 
@@ -124,7 +121,7 @@ sub _include_javascript {
     if ( $self->skipped_js ) {
         for my $file ( @{ $self->skipped_js } ) {
             Jifty->web->out(
-                qq{<script type="text/javascript" src="'}.$self->cdn_url_prefix.qq{ '/static/js/$file" /> });
+                qq{<script type="text/javascript" src="/static/js/$file" /> });
         }
     }
     return 0;
@@ -135,7 +132,6 @@ sub _include_css {
     $self->generate_css unless $self->external_publish;
     Jifty->web->out(
     qq{<link rel="stylesheet" type="text/css" href="}
-        . $self->cdn_url_prefix()
         . Jifty::CAS->uri('ccjs', 'css-all').'.css" />');
     return 0;
 }
