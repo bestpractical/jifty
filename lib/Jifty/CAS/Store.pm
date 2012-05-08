@@ -80,7 +80,8 @@ Returns a URL where the given C<DOMAIN> and C<NAME> can be accessed.
 sub uri {
     my $self = shift;
     my ($domain, $name) = @_;
-    return "/__jifty/cas/$domain/" . $self->key($domain, $name);
+    my $CDN = Jifty->config->framework('Web')->{'CDN'} || "";
+    return "$CDN/__jifty/cas/$domain/" . $self->key($domain, $name);
 }
 
 =head2 serve DOMAIN ARGUMENT ENV
