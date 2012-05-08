@@ -166,6 +166,22 @@ sub url {
     return $uri->canonical->as_string;
 }
 
+=head3 static PATH
+
+Returns the URL to the static resource PATH, which is generally simply
+prepending C</static/>.  Also prepends the CDN host, if one is
+configured.
+
+=cut
+
+sub static {
+    my $class = shift;
+    my $path = shift;
+
+    my $CDN = Jifty->config->framework('Web')->{CDN} || "";
+    return "$CDN/static/$path";
+}
+
 =head3 serial 
 
 Returns a unique identifier, guaranteed to be unique within the

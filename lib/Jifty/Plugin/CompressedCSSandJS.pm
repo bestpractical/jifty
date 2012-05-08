@@ -120,8 +120,9 @@ sub _include_javascript {
     my $skipped_js = $self->skipped_js;
     if ( $self->skipped_js ) {
         for my $file ( @{ $self->skipped_js } ) {
+            my $url = Jifty->web->static("js/$file");
             Jifty->web->out(
-                qq{<script type="text/javascript" src="/static/js/$file" /> });
+                qq{<script type="text/javascript" src="$url" /> });
         }
     }
     return 0;
