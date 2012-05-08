@@ -20,7 +20,6 @@ Jifty::Plugin::IEFixes - Add javascript files for IE
           - IE8
           - ie7-recalc
           - ie7-squish
-        cdn: 'http://yourcdn.for.static.prefix/'
 
 
   In your app, if you want to add more IE-specific js:
@@ -30,7 +29,7 @@ Jifty::Plugin::IEFixes - Add javascript files for IE
 
 =cut
 
-__PACKAGE__->mk_accessors(qw(use_external_ie7js js cdn user_js));
+__PACKAGE__->mk_accessors(qw(use_external_ie7js js user_js));
 
 use constant IE7JS_VERSION => '2.0(beta3)';
 
@@ -49,7 +48,6 @@ sub init {
 
     my %opt  = @_;
     $self->use_external_ie7js( $opt{ use_external_ie7js } );
-    $self->cdn( $opt{ cdn } || '' );
     $self->user_js([]);
     # default is just IE7.js
     my @base_js = @{ $opt{ js } || ['IE7'] };
@@ -63,10 +61,10 @@ sub init {
             }
             else {
                 # XXX: make ccjs able to cope with this as a separate CAS object
-                Jifty->web->out(qq{<script type="text/javascript" src="@{[ $self->cdn ]}/static/js/iefixes/$_.js" type="text/javascript"></script>\n})
+                Jifty->web->out(qq{<script type="text/javascript" src="@{[ Jifty->web->static(qq{js/iefixes/$_.js}) ]}" type="text/javascript"></script>\n})
                     for @base_js;
 
-                Jifty->web->out(qq{<script type="text/javascript" src="@{[ $self->cdn ]}/static/js/$_" type="text/javascript"></script>\n})
+                Jifty->web->out(qq{<script type="text/javascript" src="@{[ Jifty->web->static(qq{js/$_}) ]}" type="text/javascript"></script>\n})
                     for @{ $self->user_js };
             }
             Jifty->web->out(qq{<![endif]-->\n});
