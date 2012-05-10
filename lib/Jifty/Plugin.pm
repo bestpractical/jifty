@@ -90,13 +90,12 @@ sub _calculate_share {
 
     return $self->{share} if exists $self->{share};
 
+    my $class_to_path = $class;
+    $class_to_path =~ s|::|/|g;
     unless ( $self->{share} and -d $self->{share} ) {
         # If we've got a Jifty in @INC, and the plugin is core, the
         # right thing to do is to strip off lib/ and replace it with
         # share/plugins/Jifty/Plugin/Whatever/
-        my $class_to_path = $class;
-        $class_to_path =~ s|::|/|g;
-
         $self->{share} = $INC{ $class_to_path . '.pm' };
         $self->{share} =~ s{lib/+\Q$class_to_path.pm}{share/plugins/$class_to_path};
         $self->{share} = File::Spec->rel2abs( $self->{share} );
@@ -106,9 +105,6 @@ sub _calculate_share {
         # non-core plugin in @INC.  We do this before the
         # File::ShareDir, because File::ShareDir only looks at install
         # locations, and the plugin could be hand-set in @INC.
-        my $class_to_path = $class;
-        $class_to_path =~ s|::|/|g;
-
         $self->{share} = $INC{ $class_to_path . '.pm' };
         $self->{share} =~ s{lib/+\Q$class_to_path.pm}{share};
         $self->{share} = File::Spec->rel2abs( $self->{share} );
@@ -127,8 +123,6 @@ sub _calculate_share {
         # updated plugin
 
         # Core plugins live in jifty's share/plugins/Jifty/Plugin/Whatever/
-        my $class_to_path = $class;
-        $class_to_path =~ s|::|/|g;
         $self->{share} = Jifty::Util->share_root;
         $self->{share} .= "/plugins/" . $class_to_path;
     }
