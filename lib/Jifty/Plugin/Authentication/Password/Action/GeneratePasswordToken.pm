@@ -12,6 +12,16 @@ use base qw/Jifty::Action/;
 
 __PACKAGE__->mk_accessors( 'login_by' );
 
+=head1 METHODS
+
+=head2 new
+
+Looks up what L<Jifty::Plugin::Authentication::Password> is configured
+to login via, username or email address, to know what form element to
+expect.
+
+=cut
+
 sub new {
     my $class = shift;
     my $self = $class->SUPER::new(@_);

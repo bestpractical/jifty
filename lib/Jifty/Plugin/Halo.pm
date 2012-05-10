@@ -316,10 +316,24 @@ sub pop_frame {
     return $frame;
 }
 
+=head2 body_start
+
+Called once the C<< <body> >> element has been opened; enables halos on
+templates.
+
+=cut
+
 sub body_start {
     my $self = shift;
     Jifty->handler->stash->{'in_body'} = 1;
 }
+
+=head2 body_end
+
+Called just before the C<< <body> >> element is closed; renders the halo
+component tree using L</render_component_tree>.
+
+=cut
 
 sub body_end {
     my $self = shift;
