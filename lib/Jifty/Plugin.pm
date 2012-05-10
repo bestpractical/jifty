@@ -88,6 +88,8 @@ sub _calculate_share {
     my $self  = shift;
     my $class = ref($self);
 
+    return $self->{share} if exists $self->{share};
+
     unless ( $self->{share} and -d $self->{share} ) {
         # If we've got a Jifty in @INC, and the plugin is core, the
         # right thing to do is to strip off lib/ and replace it with
