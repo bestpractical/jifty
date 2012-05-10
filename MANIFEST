@@ -170,7 +170,10 @@ lib/Jifty/Bootstrap.pm
 lib/Jifty/CAS.pm
 lib/Jifty/CAS/Blob.pm
 lib/Jifty/CAS/Store.pm
+lib/Jifty/CAS/Store/LocalFile.pm
 lib/Jifty/CAS/Store/Memcached.pm
+lib/Jifty/CAS/Store/Memory.pm
+lib/Jifty/CAS/Store/Nested.pm
 lib/Jifty/ClassLoader.pm
 lib/Jifty/Client.pm
 lib/Jifty/Collection.pm
@@ -184,6 +187,7 @@ lib/Jifty/Event/Log.pm
 lib/Jifty/Event/Model.pm
 lib/Jifty/Everything.pm
 lib/Jifty/Filter/DateTime.pm
+lib/Jifty/Filter/JSON.pm
 lib/Jifty/Handle.pm
 lib/Jifty/Handler.pm
 lib/Jifty/I18N.pm
@@ -262,6 +266,7 @@ lib/Jifty/Plugin/Deflater.pm
 lib/Jifty/Plugin/ErrorTemplates.pm
 lib/Jifty/Plugin/ErrorTemplates/View.pm
 lib/Jifty/Plugin/Halo.pm
+lib/Jifty/Plugin/Halo/Mason.pm
 lib/Jifty/Plugin/I18N.pm
 lib/Jifty/Plugin/I18N/Action/SetLang.pm
 lib/Jifty/Plugin/IEFixes.pm
@@ -312,6 +317,7 @@ lib/Jifty/Script/Po.pm
 lib/Jifty/Script/Schema.pm
 lib/Jifty/Script/Script.pm
 lib/Jifty/Script/Server.pm
+lib/Jifty/Script/WriteCCJS.pm
 lib/Jifty/Subs.pm
 lib/Jifty/Subs/Render.pm
 lib/Jifty/Test.pm
@@ -319,6 +325,7 @@ lib/Jifty/Test/Dist.pm
 lib/Jifty/Test/Email.pm
 lib/Jifty/Test/WWW/Mechanize.pm
 lib/Jifty/Test/WWW/Selenium.pm
+lib/Jifty/Test/WWW/WebDriver.pm
 lib/Jifty/TestServer.pm
 lib/Jifty/TestServer/Inline.pm
 lib/Jifty/Upgrade.pm
@@ -332,7 +339,6 @@ lib/Jifty/View/Declare/CRUD.pm
 lib/Jifty/View/Declare/Handler.pm
 lib/Jifty/View/Declare/Helpers.pm
 lib/Jifty/View/Declare/Page.pm
-lib/Jifty/View/Mason/Halo.pm
 lib/Jifty/View/Mason/Handler.pm
 lib/Jifty/View/Mason/Request.pm
 lib/Jifty/View/Static/Handler.pm
@@ -384,10 +390,15 @@ share/plugins/Jifty/Plugin/AdminUI/web/templates/__jifty/admin/_elements/nav
 share/plugins/Jifty/Plugin/AdminUI/web/templates/__jifty/admin/action/dhandler
 share/plugins/Jifty/Plugin/AdminUI/web/templates/__jifty/admin/autohandler
 share/plugins/Jifty/Plugin/AdminUI/web/templates/__jifty/admin/index.html
+share/plugins/Jifty/Plugin/Authentication/Password/web/static/js/login_hashing.js
+share/plugins/Jifty/Plugin/Authentication/Password/web/static/js/MD5.js
 share/plugins/Jifty/Plugin/CSSQuery/web/static/js/cssquery/cssQuery-level2.js
 share/plugins/Jifty/Plugin/CSSQuery/web/static/js/cssquery/cssQuery-level3.js
 share/plugins/Jifty/Plugin/CSSQuery/web/static/js/cssquery/cssQuery-standard.js
 share/plugins/Jifty/Plugin/CSSQuery/web/static/js/cssquery/cssQuery.js
+share/plugins/Jifty/Plugin/Halo/web/static/css/halo.css
+share/plugins/Jifty/Plugin/Halo/web/static/js/halo.js
+share/plugins/Jifty/Plugin/Halo/web/templates/__jifty/halo
 share/plugins/Jifty/Plugin/I18N/web/static/js/loc.js
 share/plugins/Jifty/Plugin/IEFixes/web/static/js/iefixes/blank.gif
 share/plugins/Jifty/Plugin/IEFixes/web/static/js/iefixes/ie7-recalc.js
@@ -432,7 +443,6 @@ share/web/static/css/crud.css
 share/web/static/css/datetime.css
 share/web/static/css/facebox.css
 share/web/static/css/forms.css
-share/web/static/css/halos.css
 share/web/static/css/jquery.autocomplete.css
 share/web/static/css/jquery.jgrowl.css
 share/web/static/css/jquery.timepickr.css
@@ -506,7 +516,6 @@ share/web/static/js/cssQuery-jquery.js
 share/web/static/js/datetime.js
 share/web/static/js/dom-drag.js
 share/web/static/js/facebox.js
-share/web/static/js/halo.js
 share/web/static/js/iepngfix.htc
 share/web/static/js/iutil.js
 share/web/static/js/jifty.js
@@ -547,7 +556,6 @@ share/web/templates/__jifty/error/autohandler
 share/web/templates/__jifty/error/dhandler
 share/web/templates/__jifty/error/error.css
 share/web/templates/__jifty/error/mason_internal_error
-share/web/templates/__jifty/halo
 share/web/templates/__jifty/validator.xml
 share/web/templates/__jifty/webservices/json
 share/web/templates/__jifty/webservices/xml
