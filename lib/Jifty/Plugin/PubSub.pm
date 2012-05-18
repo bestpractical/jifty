@@ -20,6 +20,7 @@ sub init {
               pubsub/hippie.js
               pubsub/hippie.pipe.js
               pubsub/jquery.ev.js
+              pubsub.js
           ! );
 
     $opt{connection} ||= Jifty->app_class({require => 0}, 'PubSub');
@@ -46,7 +47,7 @@ sub init {
 
 sub body_end {
     my $self = shift;
-    Jifty->web->out( qq|<script type="text/javascript">var hpipe = new Hippie.Pipe(); hpipe.init({path: "/__jifty"})</script>|);
+    Jifty->web->out( qq|<script type="text/javascript">hpipe_init()</script>|);
 }
 
 sub psgi_app_static {
