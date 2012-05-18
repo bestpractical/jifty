@@ -73,6 +73,11 @@ sub action_message {
     );
     $action->validate;
     $action->run if $action->result->success;
+
+    my $result = $action->result->as_hash;
+    $result->{type} = "jifty.result";
+    $self->send($result);
+
     return 1;
 }
 
