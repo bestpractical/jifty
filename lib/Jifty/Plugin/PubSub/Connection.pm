@@ -46,7 +46,35 @@ sub send {
         ->publish( @_ );
 }
 
-sub receive {}
+sub receive {
+    my $self = shift;
+    my $msg = shift;
+
+    return 1 if $self->action_message($msg);
+    return;
+}
+
+sub action_message {
+    my $self = shift;
+    my $msg = shift;
+    return unless exists $msg->{type}
+        and ($msg->{type} || '') eq "action"
+            and exists $msg->{class}
+                and defined $msg->{class};
+
+    my $class = Jifty->api->qualify($msg->{class});
+    unless (Jifty->api->is_allowed($class)) {
+        warn "Attempt to call denied action $class: ".Jifty->api->explain($class);
+        return 1;
+    }
+    my $action = Jifty->web->new_action(
+        class     => $class,
+        arguments => $msg->{arguments} || {},
+    );
+    $action->validate;
+    $action->run if $action->result->success;
+    return 1;
+}
 
 sub disconnect {}
 
