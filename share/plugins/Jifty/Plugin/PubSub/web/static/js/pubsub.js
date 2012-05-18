@@ -1,4 +1,7 @@
 var hpipe = new Hippie.Pipe();
+jQuery(hpipe).bind("message.jifty.fragment", function (e, d) {
+    hippie_fragment(d);
+});
 jQuery(hpipe).bind("message.jifty.result", function (event, d) {
     if (d.error)
         jQuery.jGrowl( d.error, { theme: 'result-error' } );
@@ -15,4 +18,9 @@ var hpipe_init = function() {
     if (arguments.length)
         opt.client_id = arguments[0];
     hpipe.init(opt);
+};
+var hippie_fragment = function(f) {
+    f = prepare_element_for_update(f);
+    if (f == null) return;
+    fragment_updates(f, f['args'], f['content']);
 };

@@ -30,16 +30,61 @@ sub client_id {
     return $self->{client_id};
 }
 
+sub clear_for {
+    my $self = shift;
+    my ($region) = @_;
+    $self->{store}{$self->{client_id}} = [
+        grep { $_->{region} ne $region }
+            @{$self->{store}{$self->{client_id}} }
+        ];
+}
+
 sub add {
     my $self = shift;
     my %args = (
-        topic => undef,
+        topic              => undef,
+        region             => undef,
+        render_with        => undef,
+        arguments          => undef,
+        mode               => undef,
+        element            => undef,
+        effect             => undef,
+        effect_args        => undef,
+        remove_effect      => undef,
+        remove_effect_args => undef,
         @_
     );
 
     $self->{client_id} ||= "jifty_" . Jifty->web->serial;
 
+    delete $args{$_} for grep {not defined $args{$_}} keys %args;
+
+    $args{attrs}{$_} = delete $args{$_}
+        for grep {defined $args{$_}}
+            qw/       effect        effect_args
+               remove_effect remove_effect_args/;
+
     push @{$self->{store}{$self->{client_id}}}, \%args;
+}
+
+sub update_on {
+    my $self = shift;
+    my $region = Jifty->web->current_region;
+    unless ($region) {
+        warn "Jifty->subs->update_on called when not in a region";
+        return;
+    }
+
+    my %args = %{ $region->arguments };
+    delete $args{region};
+    delete $args{event};
+    $self->add(
+        arguments   => \%args,
+        mode        => 'Replace',
+        region      => $region->qualified_name,
+        render_with => $region->path,
+        @_,
+    );
 }
 
 1;
