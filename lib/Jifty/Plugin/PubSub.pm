@@ -7,6 +7,7 @@ use base qw/Jifty::Plugin/;
 use AnyMQ;
 use Plack::Builder;
 use Web::Hippie::App::JSFiles;
+use Jifty::Plugin::PubSub::Connection;
 
 sub init {
     my $self = shift;
@@ -56,6 +57,7 @@ sub wrap {
     my $self = shift;
     my $app = shift;
 
+    my %connections;
     builder {
         mount '/__jifty/_hippie' => builder {
             enable "+Web::Hippie";
@@ -63,7 +65,20 @@ sub wrap {
             sub { my $env = shift;
                   my $listener  = $env->{'hippie.listener'}; # AnyMQ::Queue
                   my $client_id = $env->{'hippie.client_id'}; # client id
+
+                  $connections{$client_id}
+                      ||= Jifty::Plugin::PubSub::Connection->new($env);
+                  my $c = $connections{$client_id};
+
                   my $path = $env->{PATH_INFO};
+                  if ($path eq "/new_listener") {
+                      $c->connect;
+                  } elsif ($path eq "/message") {
+                      $c->receive($env->{'hippie.message'});
+                  } elsif ($path eq "/error") {
+                      delete $connections{$client_id};
+                      $c->disconnect;
+                  }
             };
         };
 
