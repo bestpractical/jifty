@@ -1009,12 +1009,10 @@ var walk_node = function(node, table) {
 // applying updates from a fragment
 //   - fragment: the fragment from the server
 //   - f: fragment spec
-var apply_fragment_updates = function(fragment, f) {
-    // We found the right fragment
-    var dom_fragment = fragments[ f['region'] ];
-    var new_dom_args = {};
+var xml_fragment_updates = function(fragment, f) {
+    var args = {};
+    var textContent = '';
 
-    var element = f['element'];
     walk_node(
         fragment,
         {
@@ -1029,60 +1027,66 @@ var apply_fragment_updates = function(fragment, f) {
                 } else if (fragment_bit.firstChild) {
                     textContent = fragment_bit.firstChild.nodeValue;
                 }
-                new_dom_args[ fragment_bit.getAttribute("name") ] = textContent;
+                args[ fragment_bit.getAttribute("name") ] = textContent;
             },
             content: function(fragment_bit) {
-                var textContent = '';
                 if (fragment_bit.textContent) {
                     textContent = fragment_bit.textContent;
                 } else if (fragment_bit.firstChild) {
                     textContent = fragment_bit.firstChild.nodeValue;
                 }
 
-                // Re-arrange all <script> tags to the end of textContent.
-                // This approach easily deal with the uncertain amount of
-                // time we need to wait before the region is ready for running
-                // some javascript.
-
-                var re = new RegExp('<script[^>]*>([\\S\\s]*?)<\/script>', 'img');
-                var scripts = (textContent.match(re) || []).join("");
-                var textContentWithoutScript = textContent.replace(re, '');
-                textContent = textContentWithoutScript + scripts;
-
-                // Once we find it, do the insertion
-                if (f['mode'] == 'Popout') {
-                    jQuery.facebox(textContent);
-                    // Facebox always uses its #facebox element, so point to
-                    // that regardless of what we were told earlier
-                    element = document.getElementById('facebox');
-                } else if (f['mode'] && (f['mode'] != 'Replace')) {
-                    var method = ({
-                        After: 'after',
-                        Before: 'before',
-                        Bottom: 'append',
-                        Top: 'prepend'
-                    })[ f['mode'] ];
-
-                    jQuery.fn[method].call(jQuery(element), textContent);
-                    element = document.getElementById('region-' + f['region']);
-                } else if (f['remove_effect']) {
-                    Jifty.Effect(
-                        Jifty.$('region-'+f['region']),
-                        f['remove_effect'],
-                        f['remove_effect_args']
-                    );
-                    jQuery(element).queue(function() {
-                        jQuery(element).html( textContent );
-                        jQuery(element).dequeue();
-                    });
-                } else {
-                    jQuery(element).html( textContent );
-                }
-                Behaviour.apply(element);
             }
         }
     );
-    dom_fragment.setArgs(new_dom_args);
+    fragment_updates(f, args, textContent);
+};
+
+var fragment_updates = function(f, args, textContent) {
+    // We found the right fragment
+    var dom_fragment = fragments[ f['region'] ];
+    var element = f['element'];
+
+    // Re-arrange all <script> tags to the end of textContent.
+    // This approach easily deal with the uncertain amount of
+    // time we need to wait before the region is ready for running
+    // some javascript.
+    var re = new RegExp('<script[^>]*>([\\S\\s]*?)<\/script>', 'img');
+    var scripts = (textContent.match(re) || []).join("");
+    var textContentWithoutScript = textContent.replace(re, '');
+    textContent = textContentWithoutScript + scripts;
+
+    // Once we find it, do the insertion
+    if (f['mode'] == 'Popout') {
+        jQuery.facebox(textContent);
+        // Facebox always uses its #facebox element, so point to
+        // that regardless of what we were told earlier
+        element = document.getElementById('facebox');
+    } else if (f['mode'] && (f['mode'] != 'Replace')) {
+        var method = ({
+            After: 'after',
+            Before: 'before',
+            Bottom: 'append',
+            Top: 'prepend'
+        })[ f['mode'] ];
+
+        jQuery.fn[method].call(jQuery(element), textContent);
+        element = document.getElementById('region-' + f['region']);
+    } else if (f['remove_effect']) {
+        Jifty.Effect(
+            Jifty.$('region-'+f['region']),
+            f['remove_effect'],
+            f['remove_effect_args']
+        );
+        jQuery(element).queue(function() {
+            jQuery(element).html( textContent );
+            jQuery(element).dequeue();
+        });
+    } else {
+        jQuery(element).html( textContent );
+    }
+    Behaviour.apply(element);
+    dom_fragment.setArgs(args);
 
     // Also, set us up the effect
     if (f['effect']) {
@@ -1457,7 +1461,7 @@ Jifty.update = function () {
 
             // Apply the fragment update to the page
             try {
-                apply_fragment_updates(response_fragment, f);
+                xml_fragment_updates(response_fragment, f);
             } catch (e) { alert(e) }
 
             // f
