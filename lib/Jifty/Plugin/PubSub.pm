@@ -8,6 +8,7 @@ use AnyMQ;
 use Plack::Builder;
 use Web::Hippie::App::JSFiles;
 use Jifty::Plugin::PubSub::Connection;
+use Jifty::Plugin::PubSub::Subscriptions;
 
 sub init {
     my $self = shift;
@@ -40,14 +41,23 @@ sub init {
     );
     *Jifty::bus = sub { $anymq };
 
+    my $subs = Jifty::Plugin::PubSub::Subscriptions->new;
+    *Jifty::subs = sub { $subs };
+
     Jifty::View->add_trigger(
         body_end => sub { $self->body_end }
     );
 }
 
+sub new_request {
+    Jifty->subs->reset;
+}
+
 sub body_end {
     my $self = shift;
-    Jifty->web->out( qq|<script type="text/javascript">hpipe_init()</script>|);
+    my $client_id = Jifty->subs->client_id || "";
+    $client_id = "'$client_id'" if $client_id;
+    Jifty->web->out( qq|<script type="text/javascript">hpipe_init($client_id)</script>|);
 }
 
 sub psgi_app_static {

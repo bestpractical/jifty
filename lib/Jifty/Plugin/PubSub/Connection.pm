@@ -22,6 +22,15 @@ sub new {
     $self->{listener}  = $env->{'hippie.listener'};
     $self->{client_id} = $env->{'hippie.client_id'};
 
+    $self->{subs} = Jifty->subs->retrieve($self->client_id);
+    if ( @{ $self->{subs} } ) {
+        my @subs = map {$_->{topic}} @{ $self->{subs} };
+        $self->{bus} = Jifty->bus->new_listener;
+        $self->{bus}->subscribe( $_ )
+            for map {Jifty->bus->topic($_)} @subs;
+        # Would ->poll for updates here
+    }
+
     $self->subscribe( "client." . $self->client_id );
 
     return $self;

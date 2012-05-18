@@ -11,5 +11,8 @@ jQuery(hpipe).bind("message.jifty.result", function (event, d) {
 });
 
 var hpipe_init = function() {
-    hpipe.init({path: "/__jifty"});
+    var opt = {path: "/__jifty"};
+    if (arguments.length)
+        opt.client_id = arguments[0];
+    hpipe.init(opt);
 };
