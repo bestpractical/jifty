@@ -22,6 +22,11 @@ sub init {
               pubsub/jquery.ev.js
           ! );
 
+    $opt{connection} ||= Jifty->app_class({require => 0}, 'PubSub');
+    $opt{connection} = 'Jifty::Plugin::PubSub::Connection'
+        unless Jifty::Util->try_to_require($opt{connection});
+    $self->{connection} = $opt{connection};
+
     my $anymq = AnyMQ->new_with_traits(
         traits => ['AMQP'],
         host   => 'localhost',
@@ -67,7 +72,7 @@ sub wrap {
                   my $client_id = $env->{'hippie.client_id'}; # client id
 
                   $connections{$client_id}
-                      ||= Jifty::Plugin::PubSub::Connection->new($env);
+                      ||= $self->{connection}->new($env);
                   my $c = $connections{$client_id};
 
                   my $path = $env->{PATH_INFO};
