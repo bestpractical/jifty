@@ -75,6 +75,10 @@ sub wrap {
                       ||= $self->{connection}->new($env);
                   my $c = $connections{$client_id};
 
+                  local $Jifty::WEB = $c->web;
+                  local $Jifty::API = $c->api;
+                  Jifty::Record->flush_cache if Jifty::Record->can('flush_cache');
+
                   my $path = $env->{PATH_INFO};
                   if ($path eq "/new_listener") {
                       $c->connect;

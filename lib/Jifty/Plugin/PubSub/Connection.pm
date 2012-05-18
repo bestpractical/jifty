@@ -8,7 +8,17 @@ sub new {
     my $env = shift;
 
     my $self = bless {}, $class;
+    $self->{web} = Jifty::Web->new;
+    $self->{web}->request(
+        Jifty::Request->promote( Plack::Request->new( $env ) ),
+    );
+    $self->{web}->response( Jifty::Response->new );
+    {
+        local $Jifty::WEB = $self->{web};
+        Jifty->web->setup_session;
+    }
 
+    $self->{api} = Jifty::API->new;
     $self->{listener}  = $env->{'hippie.listener'};
     $self->{client_id} = $env->{'hippie.client_id'};
 
@@ -17,6 +27,8 @@ sub new {
     return $self;
 }
 
+sub web       { shift->{web} }
+sub api       { shift->{api} }
 sub listener  { shift->{listener} }
 sub client_id { shift->{client_id} }
 
