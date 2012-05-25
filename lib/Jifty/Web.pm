@@ -986,6 +986,8 @@ sub render_template {
     my $content;
         my $void_context = ( defined wantarray ? 0 :1);
 
+    my $requested_template = $template;
+
     # Check for ../../../../../etc/passwd
     my $abs_template_path = Jifty::Util->absolute_path( Jifty->config->framework('Web')->{'TemplateRoot'} . $template );
     my $abs_root_path = Jifty::Util->absolute_path( Jifty->config->framework('Web')->{'TemplateRoot'} );
@@ -1008,6 +1010,7 @@ sub render_template {
 
     # Handle 404's
     unless ($handler) {
+        Jifty->log->debug("Template '$requested_template' couldn't be found");
         return $self->render_template("/errors/404") unless defined $template and $template eq "/errors/404";
         $self->log->warn("Can't find 404 page!");
         die "ABORT";
