@@ -1243,7 +1243,7 @@ sub include_css {
     # if there's no trigger, 0 is returned.  if aborted/handled, undef
     # is returned.
     if ( defined $self->call_trigger( 'include_css', @_ )) {
-        $self->out( qq[<link rel="stylesheet" type="text/css" href="].Jifty->web->static("css/$_").q[" />\n] )
+        $self->out( qq[<link rel="stylesheet" type="text/css" href="].Jifty->web->static("css/$_").qq[" />\n] )
             for @{ Jifty->web->css_files };
     }
 
