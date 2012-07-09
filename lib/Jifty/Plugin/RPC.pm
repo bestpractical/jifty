@@ -8,6 +8,8 @@ use AnyEvent::RabbitMQ::RPC;
 
 sub prereq_plugins { 'PubSub' }
 
+our $VERSION = '0.5';
+
 our $RPC;
 sub init {
     my $self = shift;

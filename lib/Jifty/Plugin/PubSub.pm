@@ -10,6 +10,8 @@ use Web::Hippie::App::JSFiles;
 use Jifty::Plugin::PubSub::Connection;
 use Jifty::Plugin::PubSub::Subscriptions;
 
+our $VERSION = '0.5';
+
 sub init {
     my $self = shift;
     my %opt  = @_;
