@@ -9,7 +9,7 @@ This is a template for your own tests. Copy it and modify it.
 
 =cut
 
-use Jifty::Test::Dist tests => 88, actual_server => 1;
+use Jifty::Test::Dist tests => 91, actual_server => 1;
 use Jifty::Test::WWW::Mechanize;
 
 my $server  = Jifty::Test->make_server;
@@ -80,6 +80,12 @@ $mech->get_ok('/=/model/user/id/1/email.yml');
 is(get_content(), 'test@example.com');
 
 # on PUT    '/=/model/*/*/*' => \&replace_item;
+
+# on PUT    '/=/model/*/*/*/*' => \&replace_item_field;
+$mech->put_ok('/=/model/user/id/1/email', {   content_type => 'application/x-www-form-urlencoded',content => 'test2@other.example.com'});
+$mech->get_ok('/=/model/user/id/1/email.yml');
+is(get_content(), 'test2@other.example.com');
+
 # on DELETE '/=/model/*/*/*' => \&delete_item;
 
 # on POST   '/=/model/*'     => \&create_item;
@@ -92,7 +98,7 @@ ok(!$response->is_success, "create via POST to model with disallowed create acti
 # on GET    '/=/search/*/**' => \&search_items;
 $mech->get_ok('/=/search/user/id/1.yml');
 my $content = get_content();
-is_deeply($content, [{ name => 'test', email => 'test@example.com', id => 1, tasty => undef, group_id => undef, group => undef }]);
+is_deeply($content, [{ name => 'test', email => 'test2@other.example.com', id => 1, tasty => undef, group_id => undef, group => undef }]);
 
 $mech->get_ok('/=/search/user/__not/id/1.yml');
 $content = get_content();
@@ -100,7 +106,7 @@ is_deeply($content, [{ name => 'moose', email => 'moose@example.com', id => 2, t
 
 $mech->get_ok('/=/search/user/id/1/name/test.yml');
 $content = get_content();
-is_deeply($content, [{ name => 'test', email => 'test@example.com', id => 1, tasty => undef, group_id => undef, group => undef }]);
+is_deeply($content, [{ name => 'test', email => 'test2@other.example.com', id => 1, tasty => undef, group_id => undef, group => undef }]);
 
 $u1->set_group_id($g1->id);
 is($u1->group_id, $g1->id);
@@ -108,12 +114,12 @@ is($u1->group->id, $g1->id);
 
 $mech->get_ok('/=/search/user/id/1/name/test.yml');
 $content = get_content();
-is_deeply($content, [{ name => 'test', email => 'test@example.com', id => 1, tasty => undef, group_id => $g1->id, group => { id => $g1->id, name => 'test group'} }]);
+is_deeply($content, [{ name => 'test', email => 'test2@other.example.com', id => 1, tasty => undef, group_id => $g1->id, group => { id => $g1->id, name => 'test group'} }]);
 
 
 $mech->get_ok('/=/search/user/id/1/name/test/email.yml');
 $content = get_content();
-is_deeply($content, ['test@example.com']);
+is_deeply($content, ['test2@other.example.com']);
 
 $mech->get('/=/search/Usery/id/1.yml');
 is($mech->status,'404');

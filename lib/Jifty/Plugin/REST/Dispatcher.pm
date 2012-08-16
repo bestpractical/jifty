@@ -33,6 +33,7 @@ on GET    '/=/model'            => \&list_models;
 
 on POST   '/=/model/*'          => \&create_item;
 on PUT    '/=/model/*/*/*'      => \&replace_item;
+on PUT    '/=/model/*/*/*/*'    => \&replace_item_field;
 on DELETE '/=/model/*/*/*'      => \&delete_item;
 
 on GET    '/=/search/*/**'      => \&search_items;
@@ -809,6 +810,39 @@ Implemented by redispatching to a CreateModel or UpdateModel action.
 =cut
 
 sub replace_item { _dispatch_to_action('Update') }
+
+=head2 replace_item_field $model, $column, $key, $field
+
+Loads up a model of type C<$model> which has a column C<$column> with a value C<$key>.
+Sets the value of the field based on the request payload.
+Returns 404 if it doesn't exist.
+
+=cut
+
+sub replace_item_field {
+    my ( $model, $column, $key, $field ) = ( model($1), $2, $3, $4 );
+    my $rec = $model->new;
+    $rec->load_by_cols( $column => $key );
+    $rec->id          or abort(404);
+    $rec->current_user_can(update => $field) or abort (403);
+
+    # Check that the field is actually a column (and not some other method)
+    abort(404) unless valid_column($model, $field);
+
+    my $buffer;
+    Jifty->web->request->body->read($buffer, Jifty->web->request->content_length);
+
+
+
+    my $method = "set_".$field;
+    my ($val,$msg) = $rec->$method($buffer);
+
+    if (!$val) {
+        Jifty->web->response->status( 500 );
+    }
+
+    outs($msg);
+}
 
 =head2 delete_item
 
