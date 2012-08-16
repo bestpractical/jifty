@@ -260,7 +260,7 @@ sub promote {
                             template_arguments => {} );
 
     # Grab content type and posted data, if any
-    my $ct   = $req->content_type;
+    my $ct   = $req->content_type || 'application/octet-stream';
     my $data = $req->content;
 
     # Check it for something appropriate
