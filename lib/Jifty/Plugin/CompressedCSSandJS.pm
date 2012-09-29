@@ -5,6 +5,7 @@ package Jifty::Plugin::CompressedCSSandJS;
 use base 'Jifty::Plugin';
 
 use IPC::Run3 'run3';
+use IPC::Run::SafeHandles;
 use IO::Handle ();
 use Plack::Util;
 use HTTP::Message::PSGI;
@@ -237,17 +238,6 @@ sub minify_js {
     my ($output, $err);
 
     $self->log->debug("Minifying JS...");
-
-    # We need to reopen stdout temporarily, because in FCGI
-    # environment, stdout is tied to FCGI::Stream, and the child
-    # of the run3 wouldn't be able to reopen STDOUT properly.
-    my $stdout = IO::Handle->new;
-    $stdout->fdopen( 1, 'w' );
-    local *STDOUT = $stdout;
-
-    my $stderr = IO::Handle->new;
-    $stderr->fdopen( 2, 'w' );
-    local *STDERR = $stderr;
 
     local $SIG{'CHLD'} = 'DEFAULT';
     run3 [$self->jsmin], $input, \$output, \$err;
