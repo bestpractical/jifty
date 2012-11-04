@@ -218,7 +218,10 @@ sub remove_all {
     return unless $self->loaded;
     my $settings = Jifty::Model::SessionCollection->new;
     $settings->limit( column => "session_id", value => $self->id );
-    $_->delete while $_ = $settings->next;
+    while (my $setting = $settings->next) {
+        $setting->delete;
+    }
+
     $self->unload;
 }
 
@@ -239,7 +242,9 @@ sub continuations {
     $conts->limit( column => "session_id", value => $self->id );
 
     my %continuations;
-    $continuations{ $_->data_key } = $_->value while $_ = $conts->next;
+    while (my $cont = $conts->next) {
+        $continuations{ $cont->data_key } = $cont->value;
+    }
     return %continuations;
 }
 
