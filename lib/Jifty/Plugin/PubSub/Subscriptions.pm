@@ -33,6 +33,7 @@ sub client_id {
 sub clear_for {
     my $self = shift;
     my ($region) = @_;
+    return unless $self->{client_id};
     $self->{store}{$self->{client_id}} = [
         grep { $_->{region} ne $region }
             @{$self->{store}{$self->{client_id}} }
