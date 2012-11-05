@@ -7,6 +7,7 @@ use base qw/Jifty::Plugin/;
 use AnyMQ;
 use Plack::Builder;
 use Web::Hippie::App::JSFiles;
+use Jifty::Plugin::PubSub::Bus;
 use Jifty::Plugin::PubSub::Connection;
 use Jifty::Plugin::PubSub::Subscriptions;
 
@@ -29,9 +30,9 @@ sub init {
     $opt{connection} ||= Jifty->app_class({require => 0}, 'PubSub');
     $opt{connection} = 'Jifty::Plugin::PubSub::Connection'
         unless Jifty::Util->try_to_require($opt{connection});
-    $self->{connection} = $opt{connection};
+    $self->{connection} = delete $opt{connection};
 
-    my $anymq = AnyMQ->new_with_traits(
+    my $anymq = Jifty::Plugin::PubSub::Bus->new_with_traits(
         traits => ['AMQP'],
         host   => 'localhost',
         port   => 5672,
