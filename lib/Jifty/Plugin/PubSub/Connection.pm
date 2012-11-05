@@ -117,8 +117,14 @@ sub region_event {
             # So we don't warn about "duplicate region"s
             local Jifty->web->{'regions'} = {};
             local Jifty->web->{'region_stack'} = [];
-            # So we don't pick up additional subs
-            local Jifty->subs->{region_subs} = [];
+
+            # XXX TODO: the "first page render" method of storing subs
+            # in Jifty->subs doesn't work when we're in the connection
+            # context; no-op all such attempts.  We _can_ nominally
+            # alter them immediately using $self->subscribe, however;
+            # shim in a Jifty->subs which wraps ->add and turns it into
+            # what we do in ->_new
+            local Jifty->subs->{store} = {};
 
             my $region = Jifty::Web::PageRegion->new(
                 name      => $sub->{region},
@@ -126,7 +132,6 @@ sub region_event {
                 arguments => $sub->{arguments},
             );
             $region_name = $region->qualified_name;
-            Jifty->subs->clear_for( $region_name );
 
             $region->enter;
             Jifty->handler->buffer->push( private => 1 );

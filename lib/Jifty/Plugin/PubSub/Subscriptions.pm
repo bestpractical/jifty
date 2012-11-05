@@ -31,15 +31,6 @@ sub client_id {
     return $self->{client_id};
 }
 
-sub clear_for {
-    my $self = shift;
-    my ($region) = @_;
-    return unless $self->{client_id};
-    $self->{store}{$self->{client_id}} = [
-        grep { not exists $_->{region} or $_->{region} ne $region }
-            @{$self->{store}{$self->{client_id}} }
-        ];
-}
 
 sub add {
     my $self = shift;
