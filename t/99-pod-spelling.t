@@ -379,4 +379,6 @@ validationaction
 pushfrag
 Closs
 mis
-
+websocket
+AMQP
+AnyMQ
