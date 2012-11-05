@@ -59,7 +59,7 @@ sub body_end {
     my $self = shift;
     my $client_id = Jifty->subs->client_id || "";
     $client_id = "'$client_id'" if $client_id;
-    Jifty->web->out( qq|<script type="text/javascript">hpipe_init($client_id)</script>|);
+    Jifty->web->out( qq|<script type="text/javascript">pubsub_init($client_id)</script>|);
 }
 
 sub psgi_app_static {
