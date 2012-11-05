@@ -241,11 +241,16 @@ lib/Jifty/Plugin/LetMe/Dispatcher.pm
 lib/Jifty/Plugin/OnlineDocs.pm
 lib/Jifty/Plugin/OnlineDocs/Dispatcher.pm
 lib/Jifty/Plugin/Prototypism.pm
+lib/Jifty/Plugin/PubSub.pm
+lib/Jifty/Plugin/PubSub/Bus.pm
+lib/Jifty/Plugin/PubSub/Connection.pm
+lib/Jifty/Plugin/PubSub/Subscriptions.pm
 lib/Jifty/Plugin/RequestInspector.pm
 lib/Jifty/Plugin/RequestInspector/Model/Request.pm
 lib/Jifty/Plugin/RequestInspector/View.pm
 lib/Jifty/Plugin/REST.pm
 lib/Jifty/Plugin/REST/Dispatcher.pm
+lib/Jifty/Plugin/RPC.pm
 lib/Jifty/Plugin/SetupWizard.pm
 lib/Jifty/Plugin/SetupWizard/Action/TestDatabaseConnectivity.pm
 lib/Jifty/Plugin/SetupWizard/View.pm
@@ -382,6 +387,7 @@ share/plugins/Jifty/Plugin/Prototypism/web/static/js/prototypism/scriptaculous/s
 share/plugins/Jifty/Plugin/Prototypism/web/static/js/prototypism/scriptaculous/slider.js
 share/plugins/Jifty/Plugin/Prototypism/web/static/js/prototypism/scriptaculous/sound.js
 share/plugins/Jifty/Plugin/Prototypism/web/static/js/prototypism/scriptaculous/unittest.js
+share/plugins/Jifty/Plugin/PubSub/web/static/js/pubsub.js
 share/plugins/Jifty/Plugin/SinglePage/web/static/js/singlepage/rsh/blank.html
 share/plugins/Jifty/Plugin/SinglePage/web/static/js/singlepage/rsh/LICENSE.txt
 share/plugins/Jifty/Plugin/SinglePage/web/static/js/singlepage/rsh/rsh.js
