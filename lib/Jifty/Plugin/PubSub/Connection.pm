@@ -21,8 +21,16 @@ sub new {
     $self->{api} = Jifty::API->new;
     $self->{listener}  = $env->{'hippie.listener'};
     $self->{client_id} = $env->{'hippie.client_id'};
+    $self->{region_subs} = [];
 
-    $self->{region_subs} = Jifty->subs->retrieve($self->client_id);
+    for my $sub ( @{ Jifty->subs->retrieve($self->client_id) }) {
+        if ( join(" ", keys %{$sub}) eq "topic" ) {
+            $self->subscribe( $sub->{topic} );
+        } else {
+            push @{ $self->{region_subs} }, $sub;
+        }
+    }
+
     if ( @{ $self->{region_subs} } ) {
         my @subs = map {$_->{topic}} @{ $self->{region_subs} };
         $self->{region_bus} = Jifty->bus->new_listener;

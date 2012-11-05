@@ -35,7 +35,7 @@ sub clear_for {
     my ($region) = @_;
     return unless $self->{client_id};
     $self->{store}{$self->{client_id}} = [
-        grep { $_->{region} ne $region }
+        grep { not exists $_->{region} or $_->{region} ne $region }
             @{$self->{store}{$self->{client_id}} }
         ];
 }
