@@ -66,10 +66,8 @@ sub receive {
 sub action_message {
     my $self = shift;
     my $msg = shift;
-    return unless exists $msg->{type}
-        and ($msg->{type} || '') eq "action"
-            and exists $msg->{class}
-                and defined $msg->{class};
+    return unless ($msg->{type} || '') eq "jifty.action"
+        and defined $msg->{class};
 
     my $class = Jifty->api->qualify($msg->{class});
     unless (Jifty->api->is_allowed($class)) {
