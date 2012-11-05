@@ -51,8 +51,10 @@ sub subscribe {
 
 sub send {
     my $self = shift;
+    my ($type, $data) = @_;
+    $data->{type} = $type;
     Jifty->bus->topic("client." . $self->client_id )
-        ->publish( @_ );
+        ->publish( $data );
 }
 
 sub receive {
@@ -82,8 +84,7 @@ sub action_message {
     $action->run if $action->result->success;
 
     my $result = $action->result->as_hash;
-    $result->{type} = "jifty.result";
-    $self->send($result);
+    $self->send( "jifty.result" => $result);
 
     return 1;
 }
@@ -128,8 +129,7 @@ sub region_event {
             1;
         } or warn "$@";
 
-        $self->send( {
-            type    => "jifty.fragment",
+        $self->send( "jifty.fragment" => {
             region  => $region_name,
             path    => $sub->{path},
             args    => $sub->{arguments},
