@@ -3,6 +3,20 @@ use warnings;
 
 package Jifty::Plugin::PubSub::Connection;
 
+=head1 NAME
+
+Jifty::Plugin::PubSub::Connection - Connection to browser
+
+=head1 DESCRIPTION
+
+This class represents a bidirectional channel between the server and the
+web browser.  You may wish to subclass this class as C<YourApp::PubSub>
+to override the L</connect>, L</receive>, or L</disconnect> methods.
+
+=head1 METHODS
+
+=cut
+
 # This is _new rather than new because it should never be called by
 # external code
 sub _new {
@@ -46,18 +60,62 @@ sub _new {
     return $self;
 }
 
+=head2 web
+
+Returns the constructed L<Jifty::Web> object which is seen as
+C<Jifty->web> whenever in the context of this connection's L</connect>,
+L</receive>, L</disconnect>, or when page regions are rendered to be
+sent over this channel.  This ensures that C<Jifty->web->current_user>
+is set whenever it is relevant.
+
+=head2 api
+
+A new L<Jifty::API> object is instantiated for each
+L<Jifty::Plugin::PubSub::Connection> object.  You may wish to limit it
+to limit which actions can be performed by the web browser.
+
+=head2 listener
+
+The L<AnyMQ::Queue> object which listens to events for the client.
+
+=head2 client_id
+
+Returns a unique identifier associated with this connection.
+
+=cut
+
 sub web       { shift->{web} }
 sub api       { shift->{api} }
 sub listener  { shift->{listener} }
 sub client_id { shift->{client_id} }
 
+=head2 connect
+
+Called when a connection is established from the browser.  By default,
+does nothing.
+
+=cut
+
 sub connect {}
+
+=head2 subscribe I<TOPIC> [, I<TOPIC>, ...]
+
+Subscribes the browser to receive messages on the given topics.
+
+=cut
 
 sub subscribe {
     my $self = shift;
     $self->{listener}->subscribe( $_ )
         for map { Jifty->bus->topic( $_) } @_;
 }
+
+=head2 send I<TYPE> I<DATA>
+
+Sends an arbitrary message to the browser.  It is not published to the
+rest of the message bus.
+
+=cut
 
 sub send {
     my $self = shift;
@@ -67,6 +125,21 @@ sub send {
         ->publish( $data );
 }
 
+=head2 receive I<DATA>
+
+Called when a message is received from the web browser; returns true if
+the message was processed, false otherwise.  If you override this
+method, be sure you respect this class' return value:
+
+    sub receive {
+        my $self = shift;
+        my $msg = shift;
+        return 1 if $self->SUPER::receive( $msg );
+        # ...
+    }
+
+=cut
+
 sub receive {
     my $self = shift;
     my $msg = shift;
@@ -74,6 +147,13 @@ sub receive {
     return 1 if $self->action_message($msg);
     return;
 }
+
+=head2 action_message I<DATA>
+
+Creates, validates, and runs an action if it was received by the client;
+called by L</receive>.
+
+=cut
 
 sub action_message {
     my $self = shift;
@@ -98,6 +178,15 @@ sub action_message {
 
     return 1;
 }
+
+=head2 region_event I<EVENT>
+
+Called when one or more regions on the page needs to be rendered and
+pushed to the client, as triggered by an event.  The rendered regions
+will be passed I<EVENT> as an C<event> variable.  Currently, rendered
+regions cannot alter the client's subscription set.
+
+=cut
 
 sub region_event {
     my $self = shift;
@@ -161,6 +250,14 @@ sub region_event {
     $self->{region_bus}->subscribe( $_ )
         for map {Jifty->bus->topic($_)} @subs;
 }
+
+=head2 disconnect
+
+Called when the connection to the browser is lost when the browser
+switches to a new page.  This is not immediate, but occurs after a
+15-second timeout.
+
+=cut
 
 sub disconnect {
     my $self = shift;
