@@ -13,10 +13,13 @@ our $VERSION = '0.5';
 our $RPC;
 sub init {
     my $self = shift;
-    my %opt  = @_;
+    my %opt  = (
+        serialize => "Storable",
+        @_,
+    );
 
     $RPC = AnyEvent::RabbitMQ::RPC->new(
-        serialize => "Storable",
+        serialize => $opt{serialize},
         connection => Jifty->bus->_rf,
     );
 
