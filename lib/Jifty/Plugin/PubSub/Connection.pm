@@ -3,7 +3,9 @@ use warnings;
 
 package Jifty::Plugin::PubSub::Connection;
 
-sub new {
+# This is _new rather than new because it should never be called by
+# external code
+sub _new {
     my $class = shift;
     my $env = shift;
 

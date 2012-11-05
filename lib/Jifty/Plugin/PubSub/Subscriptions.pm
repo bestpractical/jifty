@@ -3,7 +3,8 @@ use warnings;
 
 package Jifty::Plugin::PubSub::Subscriptions;
 
-sub new {
+# This is _new rather than new because it is a singleton
+sub _new {
     my $class = shift;
     my $env = shift;
 

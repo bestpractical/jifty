@@ -44,7 +44,7 @@ sub init {
     );
     *Jifty::bus = sub { $anymq };
 
-    my $subs = Jifty::Plugin::PubSub::Subscriptions->new;
+    my $subs = Jifty::Plugin::PubSub::Subscriptions->_new;
     *Jifty::subs = sub { $subs };
 
     Jifty::View->add_trigger(
@@ -86,7 +86,7 @@ sub wrap {
                   my $client_id = $env->{'hippie.client_id'}; # client id
 
                   $connections{$client_id}
-                      ||= $self->{connection}->new($env);
+                      ||= $self->{connection}->_new($env);
                   my $c = $connections{$client_id};
 
                   local $Jifty::WEB = $c->web;
