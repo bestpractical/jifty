@@ -45,7 +45,7 @@ sub add {
     my %args = (
         topic              => undef,
         region             => undef,
-        render_with        => undef,
+        path               => undef,
         arguments          => undef,
         mode               => undef,
         element            => undef,
@@ -80,10 +80,10 @@ sub update_on {
     delete $args{region};
     delete $args{event};
     $self->add(
-        arguments   => \%args,
-        mode        => 'Replace',
-        region      => $region->qualified_name,
-        render_with => $region->path,
+        arguments => \%args,
+        mode      => 'Replace',
+        region    => $region->qualified_name,
+        path      => $region->path,
         @_,
     );
 }

@@ -113,7 +113,7 @@ sub region_event {
 
             my $region = Jifty::Web::PageRegion->new(
                 name      => $sub->{region},
-                path      => $sub->{render_with},
+                path      => $sub->{path},
                 arguments => $sub->{arguments},
             );
             $region_name = $region->qualified_name;
@@ -133,7 +133,7 @@ sub region_event {
         $self->send( {
             type    => "jifty.fragment",
             region  => $region_name,
-            path    => $sub->{render_with},
+            path    => $sub->{path},
             args    => $sub->{arguments},
             content => $content,
             mode    => $sub->{mode},
