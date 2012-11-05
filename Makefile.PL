@@ -115,6 +115,17 @@ feature "Memcached support for serving compressed CSS and JS from Jifty's CAS" =
     recommends('Cache::Memcached' => 1.25),
     ;
 
+feature "Event-based publish/subscribe framework" =>
+    -default => 0,
+    recommends('Web::Hippie'), # Web::Hippie::App::JSFiles
+    ;
+
+feature "RPC support using AMQP" =>
+    -default => 0,
+    recommends('Web::Hippie'), # Web::Hippie::App::JSFiles
+    recommends('AnyEvent::RabbitMQ::RPC'),
+    ;
+
 feature 'Administrative Interface (web)' =>
     -default => 1,
     recommends('Pod::Simple' => 0), # Pod::Simple::Text Pod::Simple::HTML
