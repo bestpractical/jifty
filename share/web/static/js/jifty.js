@@ -13,29 +13,6 @@ var Jifty = {};
 //              a: 123
 //          };
 
-// Jifty.Update:
-//   to add a response_hook
-//   the handler will get two arguments:
-//
-//   response_fragment:
-//       - response xml dom object
-//
-//   f:
-//       - 'region' is the name of the region to update
-//       - 'args' is a hash of arguments to override
-//       - 'path' is the path of the fragment (if this is a new fragment)
-//       - 'element' is the CSS selector of the element to update, if 'region' isn't supplied
-//       - 'mode' is one of 'Replace', 'Top', 'Bottom', 'Before', or 'After'
-//       - 'effect' is the name of an effect
-//
-Jifty.Update = {
-    response_hooks: [],
-    handler_hooks: [],
-    addHook:function(f){
-        this.response_hooks.push(f);
-    }
-};
-
 Jifty.$ = function(id) {
     if (typeof id == 'string')
         return document.getElementById(id);
@@ -62,26 +39,6 @@ Jifty.stopEvent = function(ev) {
     ev.preventDefault();
     ev.stopPropagation();
 };
-
-Jifty.Web = {};
-Jifty.Web.current_actions = [];
-
-function register_action(a) {
-    outs(div(function() {
-                attr(function() {
-                    return ['class', 'hidden'];
-                });
-                return input(function() {
-                      attr(function() {
-                            return ['type', 'hidden',
-                                        'name', a.register_name(),
-                                        'id', a.register_name(),
-                                        'value', a.actionClass];
-                      });
-                });
-            }));
-    /* XXX: fallback values */
-}
 
 /* Actions */
 var Action = function() {
@@ -340,154 +297,6 @@ Action.prototype = {
         jQuery.each(this.fields(), disable);
         jQuery.each(this.buttons(), disable);
     },
-
-    /* client side logic extracted from Jifty::Action */
-    _action_spec: function() {
-        if (!this.s_a) {
-            /* XXX: make REST client accessible */
-            var Todo = new AsynapseRecord('todo');
-            this.s_a = jQuery.extend({}, Todo.eval_ajax_get('/=/action/'+this.actionClass+'.js'));
-        }
-
-        return this.s_a;
-    },
-    argument_names: function() {
-        return this._action_spec().keys();
-    },
-
-    render_param: function(field) {
-        var a_s = this._action_spec();
-        var type = 'text';
-        var f = new ActionField(field, a_s[field], this);
-        return f.render();
-    },
-    register_name: function() { return this.register.id; }
-
-};
-
-var SERIAL_postfix = Math.ceil(10000*Math.random());
-var SERIAL = 0;
-var ActionField = function() {
-    this.initialize.apply(this, arguments);
-    return this;
-};
-
-ActionField.prototype = {
- initialize: function(name, args, action) {
-        this.name = name;
-        this.label = args.label;
-        this.hints = args.hints;
-        this.mandatory = args.mandatory;
-        this.ajax_validates = args.ajax_validates;
-        this.current_value = action.data_structure().fields[name].value;
-        this.error = action.result.field_error[name];
-        this.action = action;
-        if (!this.render_mode) this.render_mode = 'update';
-        this.type = 'text';
-    },
-
- render: function() {
-        if (this.render_mode == 'read') {
-            return this.render_wrapper(
-                        this.render_preamble,
-                        this.render_label,
-                        this.render_value);
-        }
-        else {
-            return this.render_wrapper(
-                        this.render_preamble,
-                        this.render_label,
-                        this.render_widget,
-                        this.render_inline_javascript,
-                        this.render_hints,
-                        this.render_errors,
-                        this.render_warnings,
-                        this.render_canonicalization_notes);
-        }
-    },
- render_wrapper: function () {
-        var classes = ['form_field'];
-        if (this.mandatory) classes.push('mandatory');
-        if (this.name) classes.push('argument-'+this.name);
-        var args = arguments;
-        var tthis = this;
-        return div(function() {
-                attr(function(){return ['class', classes.join(' ')]});
-                var buf = new Array;
-                for (var i = 0; i < args.length; ++i) {
-                    buf.push(typeof(args[i]) == 'function' ? args[i].apply(tthis) : args[i]);
-                }
-                return buf.join('');
-            });
-    },
-    render_preamble: function() {
-        var tthis = this;
-        return span(function(){attr(function(){return ['class', "preamble"]});
-                return tthis.preamble; });
-    },
-
-    render_label: function() {
-        var tthis = this;
-        if(this.render_mode == 'update')
-            return label(function(){attr(function(){return['class', "label", 'for', tthis.element_id()];});
-                    return tthis.label });
-        else
-            return span(function(){attr(function(){return['class', "label" ]});
-                    return tthis.label });
-    },
- input_name: function() {
-        return ['J:A:F', this.name, this.action.moniker].join('-');
-    },
- render_hints: function() {
-        var tthis = this;
-        return span(function(){attr(function(){return ['class', "hints"]});
-                return tthis.hints });
-    },
-
- render_errors: function() {
-        if (!this.action) return '';
-        var tthis = this;
-        // XXX: post-request handler needs to extract field error messages
-        return span(function(){attr(function(){return ['class', "error", 'id', 'errors-'+tthis.input_name()]});
-                return tthis.error });
-    },
-
- render_widget: function () {
-        var tthis = this;
-        return input(function(){
-                    attr(function(){
-                            var fields = ['type', tthis.type];
-                            if (tthis.input_name) fields.push('name', tthis.input_name());
-                            fields.push('id', tthis.element_id());
-                            if (tthis.current_value) fields.push('value', tthis.current_value);
-                            fields.push('class', tthis._widget_class().join(' '));
-                            if (tthis.display_length) {
-                                fields.push('size', tthis.display_length)
-                            }
-                            else if (tthis.max_length) {
-                                fields.push('size', tthis.max_length)
-                            }
-
-                            if (tthis.max_length) fields.push('maxlength', tthis.max_length);
-                            if (tthis.disable_autocomplete) fields.push('autocomplete', "off");
-                            //" " .$self->other_widget_properties;
-                            return fields;
-                        })});
-    },
- _widget_class: function() {
-        var classes = ['form_field'];
-        if (this.mandatory)      classes.push('mandatory');
-        if (this.name)           classes.push('argument-'+this.name);
-        if (this.ajax_validates) classes.push('ajaxvalidation');
-        return classes;
-    },
-
- element_id: function() { if(!this._element_id) this._element_id = this.input_name() + '-S' + (++SERIAL + SERIAL_postfix);
-                          return this._element_id; },
- __noSuchMethod__: function(name) {
-        return '<!-- '+name+' not implemented yet -->';
-    }
-
 };
 
 /* Forms */
@@ -521,10 +330,9 @@ jQuery.extend(Jifty.Form, {
 
 var current_actions = {};
 
-Jifty.Form.Element = {};
 
 /* Fields */
-
+Jifty.Form.Element = {};
 jQuery.extend(Jifty.Form.Element, {
     // Get the moniker for this form element
     // Takes an element or an element id
@@ -1299,8 +1107,6 @@ Jifty.update = function () {
     // Get ready to specify the fragment updates we're looking for
     request.fragments = {};
 
-    var hooks = jQuery.map(Jifty.Update.handler_hooks, function(hook) { return hook.init() });
-
     // Build the fragments request
     for (var i = 0; i < named_args['fragments'].length; i++) {
 
@@ -1312,16 +1118,6 @@ Jifty.update = function () {
 
         // Skip it if we just deleted the fragment
         if (!f) continue;
-
-        var handled = 0;
-        for (var j = 0; j < hooks.length; ++j) {
-            if (hooks[j].process_fragment(f)) {
-                handled = 1;
-                break;
-            }
-        }
-        if (handled)
-            continue;
 
         // Build a fragment request from the path and args
         var name = f['region'];
@@ -1345,8 +1141,6 @@ Jifty.update = function () {
         // Remember that we have a request if we're updating a fragment
         ++has_request;
     }
-
-    jQuery.each(hooks, function() { this.process_update() } );
 
     if (!has_request) {
         return false;
@@ -1464,16 +1258,8 @@ Jifty.update = function () {
                 xml_fragment_updates(response_fragment, f);
             } catch (e) { alert(e) }
 
-            // f
-            jQuery.each(Jifty.Update.response_hooks, function(i) {
-                    this(response_fragment, f);
-            });
-
             jQuery('.fragment_updates_attached').trigger('fragment_updates',f);
         }
-
-
-        jQuery.each(hooks, function() { this.process_update() } );
 
 
         // Look through the response again
