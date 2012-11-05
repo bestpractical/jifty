@@ -60,35 +60,6 @@ sub _new {
     return $self;
 }
 
-=head2 web
-
-Returns the constructed L<Jifty::Web> object which is seen as
-C<Jifty->web> whenever in the context of this connection's L</connect>,
-L</receive>, L</disconnect>, or when page regions are rendered to be
-sent over this channel.  This ensures that C<Jifty->web->current_user>
-is set whenever it is relevant.
-
-=head2 api
-
-A new L<Jifty::API> object is instantiated for each
-L<Jifty::Plugin::PubSub::Connection> object.  You may wish to limit it
-to limit which actions can be performed by the web browser.
-
-=head2 listener
-
-The L<AnyMQ::Queue> object which listens to events for the client.
-
-=head2 client_id
-
-Returns a unique identifier associated with this connection.
-
-=cut
-
-sub web       { shift->{web} }
-sub api       { shift->{api} }
-sub listener  { shift->{listener} }
-sub client_id { shift->{client_id} }
-
 =head2 connect
 
 Called when a connection is established from the browser.  By default,
@@ -147,6 +118,52 @@ sub receive {
     return 1 if $self->action_message($msg);
     return;
 }
+
+=head2 disconnect
+
+Called when the connection to the browser is lost when the browser
+switches to a new page.  This is not immediate, but occurs after a
+15-second timeout.
+
+=cut
+
+sub disconnect {
+    my $self = shift;
+    if ($self->{region_bus}) {
+        $self->{region_bus}->timeout(0);
+        $self->{region_bus}->unpoll;
+        undef $self->{region_bus};
+    };
+}
+
+=head2 web
+
+Returns the constructed L<Jifty::Web> object which is seen as
+C<Jifty->web> whenever in the context of this connection's L</connect>,
+L</receive>, L</disconnect>, or when page regions are rendered to be
+sent over this channel.  This ensures that C<Jifty->web->current_user>
+is set whenever it is relevant.
+
+=head2 api
+
+A new L<Jifty::API> object is instantiated for each
+L<Jifty::Plugin::PubSub::Connection> object.  You may wish to limit it
+to limit which actions can be performed by the web browser.
+
+=head2 listener
+
+The L<AnyMQ::Queue> object which listens to events for the client.
+
+=head2 client_id
+
+Returns a unique identifier associated with this connection.
+
+=cut
+
+sub web       { shift->{web} }
+sub api       { shift->{api} }
+sub listener  { shift->{listener} }
+sub client_id { shift->{client_id} }
 
 =head2 action_message I<DATA>
 
@@ -249,23 +266,6 @@ sub region_event {
     my @subs = map {$_->{topic}} @{ $self->{region_subs} };
     $self->{region_bus}->subscribe( $_ )
         for map {Jifty->bus->topic($_)} @subs;
-}
-
-=head2 disconnect
-
-Called when the connection to the browser is lost when the browser
-switches to a new page.  This is not immediate, but occurs after a
-15-second timeout.
-
-=cut
-
-sub disconnect {
-    my $self = shift;
-    if ($self->{region_bus}) {
-        $self->{region_bus}->timeout(0);
-        $self->{region_bus}->unpoll;
-        undef $self->{region_bus};
-    };
 }
 
 1;

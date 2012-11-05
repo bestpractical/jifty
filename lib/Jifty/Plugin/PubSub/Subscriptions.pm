@@ -51,43 +51,6 @@ sub _new {
     return $self;
 }
 
-=head2 reset
-
-Called internally once per request to reset for the next request.
-
-=cut
-
-sub reset {
-    my $self = shift;
-    $self->{client_id} = undef;
-}
-
-=head2 retrieve I<CLIENT_ID>
-
-Returns the data structure of subscriptions for the given I<CLIENT_ID>,
-and removes it such that it is not accessible to future requests.
-
-=cut
-
-sub retrieve {
-    my $self = shift;
-    my $client_id = shift;
-    return delete $self->{store}{$client_id} || [];
-}
-
-
-=head2 client_id
-
-Returns the assigned I<CLIENT_ID> of the current connection.  This is
-C<undef> if the client has not been assigned any subscriptions yet.
-
-=cut
-
-sub client_id {
-    my $self = shift;
-    return $self->{client_id};
-}
-
 =head2 add topic => I<TOPIC> [, ...]
 
 Adds a subscription.  If only the I<TOPIC> is given, the event will be
@@ -149,6 +112,42 @@ sub update_on {
         path      => $region->path,
         @_,
     );
+}
+
+=head2 client_id
+
+Returns the assigned I<CLIENT_ID> of the current connection.  This is
+C<undef> if the client has not been assigned any subscriptions yet.
+
+=cut
+
+sub client_id {
+    my $self = shift;
+    return $self->{client_id};
+}
+
+=head2 reset
+
+Called internally once per request to reset for the next request.
+
+=cut
+
+sub reset {
+    my $self = shift;
+    $self->{client_id} = undef;
+}
+
+=head2 retrieve I<CLIENT_ID>
+
+Returns the data structure of subscriptions for the given I<CLIENT_ID>,
+and removes it such that it is not accessible to future requests.
+
+=cut
+
+sub retrieve {
+    my $self = shift;
+    my $client_id = shift;
+    return delete $self->{store}{$client_id} || [];
 }
 
 1;
