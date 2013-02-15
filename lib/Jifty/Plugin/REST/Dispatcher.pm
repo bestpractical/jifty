@@ -13,6 +13,7 @@ use Jifty::YAML ();
 use Jifty::JSON ();
 use Data::Dumper ();
 use XML::Simple;
+use URI::Escape ();
 
 before qr{^ (/=/ .*) \. (js|json|yml|yaml|perl|pl|xml|html) $}x => run {
     Jifty->web->request->env->{HTTP_ACCEPT} = $2;
@@ -487,6 +488,10 @@ sub _resolve {
     return $hit;
 }
 
+sub unescape {
+    return map { Jifty::I18N->maybe_decode_utf8( URI::Escape::uri_unescape($_) ) } @_;
+}
+
 
 =head2 list_models
 
@@ -565,7 +570,7 @@ Returns a list of items in MODELCLASS sorted by COLUMNNAME, with only COLUMNNAME
 
 sub list_model_items {
     # Normalize model name - fun!
-    my ( $model, $column ) = ( model($1), $2 );
+    my ( $model, $column ) = ( model($1), unescape($2) );
     my $col = $model->new->collection_class->new;
     $col->unlimit;
 
@@ -590,7 +595,7 @@ Returns 404 if it doesn't exist.
 =cut
 
 sub show_item_field {
-    my ( $model, $column, $key, $field ) = ( model($1), $2, $3, $4 );
+    my ( $model, $column, $key, $field ) = ( model($1), unescape($2, $3, $4) );
     my $rec = $model->new;
     $rec->load_by_cols( $column => $key );
     $rec->id          or abort(404);
@@ -612,7 +617,7 @@ Returns 404 if it doesn't exist.
 =cut
 
 sub show_item {
-    my ($model, $column, $key) = (model($1), $2, $3);
+    my ($model, $column, $key) = (model($1), unescape($2, $3));
     my $rec = $model->new;
 
     # Check that the field is actually a column
@@ -660,7 +665,7 @@ Order by the given column, descending.
 sub search_items {
     my ($model, $fragment) = (model($1), $2);
     my @pieces = grep {length} split '/', $fragment;
-    my $ret = ['search', $model, @pieces];
+    my $ret = ['search', $model, unescape(@pieces)];
 
     # limit to the key => value pairs they gave us
     my $collection = eval { $model->collection_class->new }

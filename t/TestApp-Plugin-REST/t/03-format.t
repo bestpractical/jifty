@@ -2,7 +2,7 @@
 use warnings;
 use strict;
 
-use Jifty::Test::Dist tests => 104;
+use Jifty::Test::Dist tests => 111;
 use Jifty::Test::WWW::Mechanize;
 
 my $server  = Jifty::Test->make_server;
@@ -24,6 +24,12 @@ my $u1 = TestApp::Plugin::REST::Model::User->new(
 );
 $u1->create(name => 'test', email => 'test@example.com', group_id => $g1->id);
 ok($u1->id);
+
+my $u2 = TestApp::Plugin::REST::Model::User->new(
+    current_user => TestApp::Plugin::REST::CurrentUser->superuser,
+);
+$u2->create(name => 'test#ing', email => 'testing@example.com');
+ok($u2->id);
 
 our $FORMAT_NUMBER;
 
@@ -107,7 +113,7 @@ result_of '/=/model/User' => sub {
 };
 
 result_of '/=/model/user/id' => sub {
-    is(@{ $_[0] }, 1, "one user");
+    is(@{ $_[0] }, 2, "two users");
 };
 
 result_of '/=/model/user/id/1' => sub {
@@ -125,13 +131,17 @@ result_of '/=/model/user/id/1/email' => sub {
     is($_[0], 'test@example.com');
 };
 
+result_of '/=/model/user/name/test%23ing/email' => sub {
+    is($_[0], 'testing@example.com');
+};
+
 result_of_post '/=/model/user' => {
     name => 'moose',
     email => 'moose@example.com',
 } => sub {
     my ($action_result, $record) = @_;
 
-    my $id = 2 + ($FORMAT_NUMBER - 1);
+    my $id = 3 + ($FORMAT_NUMBER - 1);
 
     is_deeply($action_result, {
         action_class   => 'TestApp::Plugin::REST::Action::CreateUser',
