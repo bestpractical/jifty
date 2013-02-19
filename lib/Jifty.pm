@@ -2,7 +2,6 @@ use warnings;
 use strict;
 
 package Jifty;
-use IPC::PubSub 0.22;
 use Data::UUID;
 use encoding 'utf8';
 use Class::Trigger;
@@ -41,12 +40,6 @@ Jifty - an application framework
 
  # Configure information related to your application's actions
  my $api      = Jifty->api;
-
- # Make parts of your page "subscribe" to information in a fragment
- my $subs     = Jifty->subs;
-
- # Share information via IPC::PubSub in your application
- my $bus      = Jifty->bus;
 
  # Retrieve general information about Mason
  my $handler  = Jifty->handler;
@@ -102,7 +95,7 @@ probably a better place to start.
 use base qw/Jifty::Object/;
 use Jifty::Everything;
 
-use vars qw/$HANDLE $CONFIG $LOGGER $HANDLER $API $CLASS_LOADER $PUB_SUB $WEB @PLUGINS/;
+use vars qw/$HANDLE $CONFIG $LOGGER $HANDLER $API $CLASS_LOADER $WEB @PLUGINS/;
 
 =head1 METHODS
 
@@ -372,52 +365,6 @@ sub web {
     return $Jifty::WEB ||= Jifty::Web->new();
 }
 
-=head2 subs
-
-An accessor for the L<Jifty::Subs> object that the subscription uses. 
-
-=cut
-
-sub subs {
-    return Jifty::Subs->new;
-}
-
-=head2 bus
-
-Returns an IPC::PubSub object for the current application.
-
-=cut
-
-sub bus {
-    my $class = shift;
-    my %args = ( connect => 1, @_ );
-    if (not $PUB_SUB and $args{connect}) {
-        my @args;
-
-        my $backend = Jifty->config->framework('PubSub')->{'Backend'};
-        if ( $backend eq 'Memcached' ) {
-            require IO::Socket::INET;
-
-            # If there's a running memcached on the default port. this should become configurable
-            if ( IO::Socket::INET->new('127.0.0.1:11211') ) {
-                @args = ( Jifty->app_instance_id );
-            } else {
-                $backend = 'JiftyDBI';
-            }
-        } 
-        
-        if ($backend eq 'JiftyDBI' and Jifty->handle ) {
-                @args    = (
-                    db_config    => Jifty->handle->{db_config},
-                    table_prefix => '_jifty_pubsub_',
-                );
-            }
-        $PUB_SUB = IPC::PubSub->new( $backend => @args );
-
-    }
-    return $PUB_SUB;
-}
-
 =head2 plugins
 
 Returns a list of L<Jifty::Plugin> objects for this Jifty application.
@@ -567,7 +514,7 @@ sub admin_mode {
 
 =head1 SEE ALSO
 
-L<http://jifty.org>, L<Jifty::Manual::Tutorial>, L<Jifty::Everything>, L<Jifty::Config>, L<Jifty::Handle>, L<Jifty::Logger>, L<Jifty::Handler>, L<Jifty::Web>, L<Jifty::API>, L<Jifty::Subs>, L<IPC::PubSub>, L<Jifty::Plugin>, L<Jifty::ClassLoader>
+L<http://jifty.org>, L<Jifty::Manual::Tutorial>, L<Jifty::Everything>, L<Jifty::Config>, L<Jifty::Handle>, L<Jifty::Logger>, L<Jifty::Handler>, L<Jifty::Web>, L<Jifty::API>, L<Jifty::Plugin>, L<Jifty::ClassLoader>
 
 =head1 AUTHORS
 

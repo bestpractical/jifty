@@ -26,9 +26,6 @@ framework:
     - CompressedCSSandJS: {}
     - OnlineDocs: {}
     - REST: {}
-  PubSub: 
-    Backend: Memcached
-    Enable: ~
   TemplateClass: TestApp::Plugin::PasswordAuth::View
   Web: 
     BaseURL: http://localhost

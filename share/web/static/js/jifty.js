@@ -13,29 +13,6 @@ var Jifty = {};
 //              a: 123
 //          };
 
-// Jifty.Update:
-//   to add a response_hook
-//   the handler will get two arguments:
-//
-//   response_fragment:
-//       - response xml dom object
-//
-//   f:
-//       - 'region' is the name of the region to update
-//       - 'args' is a hash of arguments to override
-//       - 'path' is the path of the fragment (if this is a new fragment)
-//       - 'element' is the CSS selector of the element to update, if 'region' isn't supplied
-//       - 'mode' is one of 'Replace', 'Top', 'Bottom', 'Before', or 'After'
-//       - 'effect' is the name of an effect
-//
-Jifty.Update = {
-    response_hooks: [],
-    handler_hooks: [],
-    addHook:function(f){
-        this.response_hooks.push(f);
-    }
-};
-
 Jifty.$ = function(id) {
     if (typeof id == 'string')
         return document.getElementById(id);
@@ -62,26 +39,6 @@ Jifty.stopEvent = function(ev) {
     ev.preventDefault();
     ev.stopPropagation();
 };
-
-Jifty.Web = {};
-Jifty.Web.current_actions = [];
-
-function register_action(a) {
-    outs(div(function() {
-                attr(function() {
-                    return ['class', 'hidden'];
-                });
-                return input(function() {
-                      attr(function() {
-                            return ['type', 'hidden',
-                                        'name', a.register_name(),
-                                        'id', a.register_name(),
-                                        'value', a.actionClass];
-                      });
-                });
-            }));
-    /* XXX: fallback values */
-}
 
 /* Actions */
 var Action = function() {
@@ -340,154 +297,6 @@ Action.prototype = {
         jQuery.each(this.fields(), disable);
         jQuery.each(this.buttons(), disable);
     },
-
-    /* client side logic extracted from Jifty::Action */
-    _action_spec: function() {
-        if (!this.s_a) {
-            /* XXX: make REST client accessible */
-            var Todo = new AsynapseRecord('todo');
-            this.s_a = jQuery.extend({}, Todo.eval_ajax_get('/=/action/'+this.actionClass+'.js'));
-        }
-
-        return this.s_a;
-    },
-    argument_names: function() {
-        return this._action_spec().keys();
-    },
-
-    render_param: function(field) {
-        var a_s = this._action_spec();
-        var type = 'text';
-        var f = new ActionField(field, a_s[field], this);
-        return f.render();
-    },
-    register_name: function() { return this.register.id; }
-
-};
-
-var SERIAL_postfix = Math.ceil(10000*Math.random());
-var SERIAL = 0;
-var ActionField = function() {
-    this.initialize.apply(this, arguments);
-    return this;
-};
-
-ActionField.prototype = {
- initialize: function(name, args, action) {
-        this.name = name;
-        this.label = args.label;
-        this.hints = args.hints;
-        this.mandatory = args.mandatory;
-        this.ajax_validates = args.ajax_validates;
-        this.current_value = action.data_structure().fields[name].value;
-        this.error = action.result.field_error[name];
-        this.action = action;
-        if (!this.render_mode) this.render_mode = 'update';
-        this.type = 'text';
-    },
-
- render: function() {
-        if (this.render_mode == 'read') {
-            return this.render_wrapper(
-                        this.render_preamble,
-                        this.render_label,
-                        this.render_value);
-        }
-        else {
-            return this.render_wrapper(
-                        this.render_preamble,
-                        this.render_label,
-                        this.render_widget,
-                        this.render_inline_javascript,
-                        this.render_hints,
-                        this.render_errors,
-                        this.render_warnings,
-                        this.render_canonicalization_notes);
-        }
-    },
- render_wrapper: function () {
-        var classes = ['form_field'];
-        if (this.mandatory) classes.push('mandatory');
-        if (this.name) classes.push('argument-'+this.name);
-        var args = arguments;
-        var tthis = this;
-        return div(function() {
-                attr(function(){return ['class', classes.join(' ')]});
-                var buf = new Array;
-                for (var i = 0; i < args.length; ++i) {
-                    buf.push(typeof(args[i]) == 'function' ? args[i].apply(tthis) : args[i]);
-                }
-                return buf.join('');
-            });
-    },
-    render_preamble: function() {
-        var tthis = this;
-        return span(function(){attr(function(){return ['class', "preamble"]});
-                return tthis.preamble; });
-    },
-
-    render_label: function() {
-        var tthis = this;
-        if(this.render_mode == 'update')
-            return label(function(){attr(function(){return['class', "label", 'for', tthis.element_id()];});
-                    return tthis.label });
-        else
-            return span(function(){attr(function(){return['class', "label" ]});
-                    return tthis.label });
-    },
- input_name: function() {
-        return ['J:A:F', this.name, this.action.moniker].join('-');
-    },
- render_hints: function() {
-        var tthis = this;
-        return span(function(){attr(function(){return ['class', "hints"]});
-                return tthis.hints });
-    },
-
- render_errors: function() {
-        if (!this.action) return '';
-        var tthis = this;
-        // XXX: post-request handler needs to extract field error messages
-        return span(function(){attr(function(){return ['class', "error", 'id', 'errors-'+tthis.input_name()]});
-                return tthis.error });
-    },
-
- render_widget: function () {
-        var tthis = this;
-        return input(function(){
-                    attr(function(){
-                            var fields = ['type', tthis.type];
-                            if (tthis.input_name) fields.push('name', tthis.input_name());
-                            fields.push('id', tthis.element_id());
-                            if (tthis.current_value) fields.push('value', tthis.current_value);
-                            fields.push('class', tthis._widget_class().join(' '));
-                            if (tthis.display_length) {
-                                fields.push('size', tthis.display_length)
-                            }
-                            else if (tthis.max_length) {
-                                fields.push('size', tthis.max_length)
-                            }
-
-                            if (tthis.max_length) fields.push('maxlength', tthis.max_length);
-                            if (tthis.disable_autocomplete) fields.push('autocomplete', "off");
-                            //" " .$self->other_widget_properties;
-                            return fields;
-                        })});
-    },
- _widget_class: function() {
-        var classes = ['form_field'];
-        if (this.mandatory)      classes.push('mandatory');
-        if (this.name)           classes.push('argument-'+this.name);
-        if (this.ajax_validates) classes.push('ajaxvalidation');
-        return classes;
-    },
-
- element_id: function() { if(!this._element_id) this._element_id = this.input_name() + '-S' + (++SERIAL + SERIAL_postfix);
-                          return this._element_id; },
- __noSuchMethod__: function(name) {
-        return '<!-- '+name+' not implemented yet -->';
-    }
-
 };
 
 /* Forms */
@@ -521,10 +330,9 @@ jQuery.extend(Jifty.Form, {
 
 var current_actions = {};
 
-Jifty.Form.Element = {};
 
 /* Fields */
-
+Jifty.Form.Element = {};
 jQuery.extend(Jifty.Form.Element, {
     // Get the moniker for this form element
     // Takes an element or an element id
@@ -922,76 +730,76 @@ var current_args = {};
 //  - 'fragment' is a hash, see fragments in update()
 
 function prepare_element_for_update(f) {
-        var name = f['region'];
+    var name = f['region'];
 
-        // Find where we are going to go
-        var element = document.getElementById('region-' + f['region']);
-        if (f['element']) {
-            element = jQuery(f['element'])[0];
-        }
-        f['element'] = element;
+    // Find where we are going to go
+    var element = document.getElementById('region-' + f['region']);
+    if (f['element']) {
+        element = jQuery(f['element'])[0];
+    }
+    f['element'] = element;
 
-        // If we can't find out where we're going, bail
-        if (element == null)
-            return;
+    // If we can't find out where we're going, bail
+    if (element == null)
+        return;
 
-        // If we're removing the element, do it now
-        if (f['mode'] == "Delete") {
-            fragments[name] = null;
-            if (f['effect']) {
-                Jifty.Effect(
-                    Jifty.$('region-'+f['region']),
-                    f['effect'],
-                    f['effect_args']
-                );
-                jQuery(element).queue(function() {
-                    jQuery(element).remove();
-                    jQuery(element).dequeue();
-                });
-            } else if (f['remove_effect']) {
-                Jifty.Effect(
-                    Jifty.$('region-'+f['region']),
-                    f['remove_effect'],
-                    f['remove_effect_args']
-                );
-                jQuery(element).queue(function() {
-                    jQuery(element).remove();
-                    jQuery(element).dequeue();
-                });
-            } else {
+    // If we're removing the element, do it now
+    if (f['mode'] == "Delete") {
+        fragments[name] = null;
+        if (f['effect']) {
+            Jifty.Effect(
+                Jifty.$('region-'+f['region']),
+                f['effect'],
+                f['effect_args']
+            );
+            jQuery(element).queue(function() {
                 jQuery(element).remove();
-            }
-            return;
+                jQuery(element).dequeue();
+            });
+        } else if (f['remove_effect']) {
+            Jifty.Effect(
+                Jifty.$('region-'+f['region']),
+                f['remove_effect'],
+                f['remove_effect_args']
+            );
+            jQuery(element).queue(function() {
+                jQuery(element).remove();
+                jQuery(element).dequeue();
+            });
+        } else {
+            jQuery(element).remove();
+        }
+        return;
+    }
+
+    f['is_new'] = (fragments[name] ? false : true);
+    // If it's new, we need to create it so we can dump it
+    if (f['is_new']) {
+        // Find what region we're inside
+        f['parent'] = null;
+        if (f['mode'] && ((f['mode'] == "Before") || (f['mode'] == "After")))
+            element = element.parentNode;
+        while ((element != null) && (element.getAttribute) && (f['parent'] == null)) {
+            if (/^region-/.test(element.getAttribute("id")))
+                f['parent'] = element.getAttribute("id").replace(/^region-/,"");
+            element = element.parentNode;
         }
 
-        f['is_new'] = (fragments[name] ? false : true);
-        // If it's new, we need to create it so we can dump it
-        if (f['is_new']) {
-            // Find what region we're inside
-            f['parent'] = null;
-            if (f['mode'] && ((f['mode'] == "Before") || (f['mode'] == "After")))
-                element = element.parentNode;
-            while ((element != null) && (element.getAttribute) && (f['parent'] == null)) {
-                if (/^region-/.test(element.getAttribute("id")))
-                    f['parent'] = element.getAttribute("id").replace(/^region-/,"");
-                element = element.parentNode;
-            }
-
-            if (f['parent']) {
-                f['region'] = name = f['parent'] + '-' + name;
-            }
-
-            // Make the region (for now)
-            new Region(name, f['args'], f['path'], f['parent'], f['parent'] ? fragments[f['parent']].in_form : null);
-        } else if ((f['path'] != null) && f['toggle'] && (f['path'] == fragments[name].path)) {
-            // If they set the 'toggle' flag, and clicking wouldn't change the path
-            jQuery(element).empty();
-            fragments[name].path = null;
-            return;
-        } else if (f['path'] == null) {
-            // If they didn't know the path, fill it in now
-            f['path'] == fragments[name].path;
+        if (f['parent']) {
+            f['region'] = name = f['parent'] + '-' + name;
         }
+
+        // Make the region (for now)
+        new Region(name, f['args'], f['path'], f['parent'], f['parent'] ? fragments[f['parent']].in_form : null);
+    } else if ((f['path'] != null) && f['toggle'] && (f['path'] == fragments[name].path)) {
+        // If they set the 'toggle' flag, and clicking wouldn't change the path
+        jQuery(element).empty();
+        fragments[name].path = null;
+        return;
+    } else if (f['path'] == null) {
+        // If they didn't know the path, fill it in now
+        f['path'] == fragments[name].path;
+    }
 
     return f;
 }
@@ -1009,12 +817,10 @@ var walk_node = function(node, table) {
 // applying updates from a fragment
 //   - fragment: the fragment from the server
 //   - f: fragment spec
-var apply_fragment_updates = function(fragment, f) {
-    // We found the right fragment
-    var dom_fragment = fragments[ f['region'] ];
-    var new_dom_args = {};
+var xml_fragment_updates = function(fragment, f) {
+    var args = {};
+    var textContent = '';
 
-    var element = f['element'];
     walk_node(
         fragment,
         {
@@ -1029,60 +835,66 @@ var apply_fragment_updates = function(fragment, f) {
                 } else if (fragment_bit.firstChild) {
                     textContent = fragment_bit.firstChild.nodeValue;
                 }
-                new_dom_args[ fragment_bit.getAttribute("name") ] = textContent;
+                args[ fragment_bit.getAttribute("name") ] = textContent;
             },
             content: function(fragment_bit) {
-                var textContent = '';
                 if (fragment_bit.textContent) {
                     textContent = fragment_bit.textContent;
                 } else if (fragment_bit.firstChild) {
                     textContent = fragment_bit.firstChild.nodeValue;
                 }
 
-                // Re-arrange all <script> tags to the end of textContent.
-                // This approach easily deal with the uncertain amount of
-                // time we need to wait before the region is ready for running
-                // some javascript.
-
-                var re = new RegExp('<script[^>]*>([\\S\\s]*?)<\/script>', 'img');
-                var scripts = (textContent.match(re) || []).join("");
-                var textContentWithoutScript = textContent.replace(re, '');
-                textContent = textContentWithoutScript + scripts;
-
-                // Once we find it, do the insertion
-                if (f['mode'] == 'Popout') {
-                    jQuery.facebox(textContent);
-                    // Facebox always uses its #facebox element, so point to
-                    // that regardless of what we were told earlier
-                    element = document.getElementById('facebox');
-                } else if (f['mode'] && (f['mode'] != 'Replace')) {
-                    var method = ({
-                        After: 'after',
-                        Before: 'before',
-                        Bottom: 'append',
-                        Top: 'prepend'
-                    })[ f['mode'] ];
-
-                    jQuery.fn[method].call(jQuery(element), textContent);
-                    element = document.getElementById('region-' + f['region']);
-                } else if (f['remove_effect']) {
-                    Jifty.Effect(
-                        Jifty.$('region-'+f['region']),
-                        f['remove_effect'],
-                        f['remove_effect_args']
-                    );
-                    jQuery(element).queue(function() {
-                        jQuery(element).html( textContent );
-                        jQuery(element).dequeue();
-                    });
-                } else {
-                    jQuery(element).html( textContent );
-                }
-                Behaviour.apply(element);
             }
         }
     );
-    dom_fragment.setArgs(new_dom_args);
+    fragment_updates(f, args, textContent);
+};
+
+var fragment_updates = function(f, args, textContent) {
+    // We found the right fragment
+    var dom_fragment = fragments[ f['region'] ];
+    var element = f['element'];
+
+    // Re-arrange all <script> tags to the end of textContent.
+    // This approach easily deal with the uncertain amount of
+    // time we need to wait before the region is ready for running
+    // some javascript.
+    var re = new RegExp('<script[^>]*>([\\S\\s]*?)<\/script>', 'img');
+    var scripts = (textContent.match(re) || []).join("");
+    var textContentWithoutScript = textContent.replace(re, '');
+    textContent = textContentWithoutScript + scripts;
+
+    // Once we find it, do the insertion
+    if (f['mode'] == 'Popout') {
+        jQuery.facebox(textContent);
+        // Facebox always uses its #facebox element, so point to
+        // that regardless of what we were told earlier
+        element = document.getElementById('facebox');
+    } else if (f['mode'] && (f['mode'] != 'Replace')) {
+        var method = ({
+            After: 'after',
+            Before: 'before',
+            Bottom: 'append',
+            Top: 'prepend'
+        })[ f['mode'] ];
+
+        jQuery.fn[method].call(jQuery(element), textContent);
+        element = document.getElementById('region-' + f['region']);
+    } else if (f['remove_effect']) {
+        Jifty.Effect(
+            Jifty.$('region-'+f['region']),
+            f['remove_effect'],
+            f['remove_effect_args']
+        );
+        jQuery(element).queue(function() {
+            jQuery(element).html( textContent );
+            jQuery(element).dequeue();
+        });
+    } else {
+        jQuery(element).html( textContent );
+    }
+    Behaviour.apply(element);
+    dom_fragment.setArgs(args);
 
     // Also, set us up the effect
     if (f['effect']) {
@@ -1295,8 +1107,6 @@ Jifty.update = function () {
     // Get ready to specify the fragment updates we're looking for
     request.fragments = {};
 
-    var hooks = jQuery.map(Jifty.Update.handler_hooks, function(hook) { return hook.init() });
-
     // Build the fragments request
     for (var i = 0; i < named_args['fragments'].length; i++) {
 
@@ -1308,16 +1118,6 @@ Jifty.update = function () {
 
         // Skip it if we just deleted the fragment
         if (!f) continue;
-
-        var handled = 0;
-        for (var j = 0; j < hooks.length; ++j) {
-            if (hooks[j].process_fragment(f)) {
-                handled = 1;
-                break;
-            }
-        }
-        if (handled)
-            continue;
 
         // Build a fragment request from the path and args
         var name = f['region'];
@@ -1341,8 +1141,6 @@ Jifty.update = function () {
         // Remember that we have a request if we're updating a fragment
         ++has_request;
     }
-
-    jQuery.each(hooks, function() { this.process_update() } );
 
     if (!has_request) {
         return false;
@@ -1457,19 +1255,11 @@ Jifty.update = function () {
 
             // Apply the fragment update to the page
             try {
-                apply_fragment_updates(response_fragment, f);
+                xml_fragment_updates(response_fragment, f);
             } catch (e) { alert(e) }
-
-            // f
-            jQuery.each(Jifty.Update.response_hooks, function(i) {
-                    this(response_fragment, f);
-            });
 
             jQuery('.fragment_updates_attached').trigger('fragment_updates',f);
         }
-
-
-        jQuery.each(hooks, function() { this.process_update() } );
 
 
         // Look through the response again

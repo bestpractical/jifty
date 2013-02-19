@@ -47,9 +47,6 @@ framework:
     - 
       SkeletonApp: {}
 
-  PubSub: 
-    Backend: Memcached
-    Enable: ~
   SkipAccessControl: 0
   TemplateClass: TestApp::Uploads::View
   View: 

@@ -37,9 +37,6 @@ framework:
     - SkeletonApp: {}
     - User: {}
 
-  PubSub: 
-    Backend: Memcached
-    Enable: ~
   TemplateClass: Yada::View
   ClientTemplate: 1
   Web: 

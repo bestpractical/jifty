@@ -52,7 +52,6 @@ requires('HTTP::Date');
 requires('Hash::Merge', '0.12');
 requires('Hash::MultiValue', 0.05);
 requires('IO::Handle::Util');
-requires('IPC::PubSub' => '0.23' );
 requires('IPC::Run3');
 requires('Jifty::DBI' => '0.68' );            # Jifty::DBI::Collection Jifty::DBI::Handle Jifty::DBI::Record::Cachable Jifty::DBI::SchemaGenerator
 requires('JSON' => 2.17);
@@ -114,6 +113,17 @@ feature "FastCGI support" =>
 feature "Memcached support for serving compressed CSS and JS from Jifty's CAS" =>
     -default => 1,
     recommends('Cache::Memcached' => 1.25),
+    ;
+
+feature "Event-based publish/subscribe framework" =>
+    -default => 0,
+    recommends('Web::Hippie'), # AnyMQ Web::Hippie::App::JSFiles
+    ;
+
+feature "RPC support using AMQP" =>
+    -default => 0,
+    recommends('Web::Hippie'), # AnyMQ Web::Hippie::App::JSFiles
+    recommends('AnyEvent::RabbitMQ::RPC'),
     ;
 
 feature 'Administrative Interface (web)' =>

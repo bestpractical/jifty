@@ -1,4 +1,0 @@
-<span><% $$event %></span>
-<%ARGS>
-$event
-</%ARGS>

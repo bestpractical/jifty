@@ -21,9 +21,6 @@ framework:
 
   Plugins: []
 
-  PubSub: 
-    Backend: Memcached
-    Enable: ~
   TemplateClass: HelloKitty::View
   Web: 
     BaseURL: http://localhost

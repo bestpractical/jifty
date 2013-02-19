@@ -22,9 +22,6 @@ framework:
   Plugins:
    - Login: {}
 
-  PubSub: 
-    Backend: Memcached
-    Enable: ~
   Web: 
     BaseURL: http://localhost
     DataDir: var/mason

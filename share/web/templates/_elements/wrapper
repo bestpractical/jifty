@@ -19,9 +19,6 @@
   </div>
   <div id="jifty-wait-message" style="display: none"><%_('Loading...')%></div>
 % Jifty::View->call_trigger('body_end');
-% if ( Jifty->config->framework('PubSub')->{'Enable'} && Jifty::Subs->list ) {
-<script>new Jifty.Subs({}).start();</script>
-% }
 </body>
 </html>
 <%args>

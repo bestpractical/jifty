@@ -53,18 +53,12 @@ delete the row from the database.
 sub take_action {
     my $self = shift;
 
-    # Setup the event info for later publishing
-    my $event_info = $self->_setup_event_before_action();
-
     # Delete the record and return an error if delete fails
     my ( $val, $msg ) = $self->record->delete;
     $self->result->error($msg || _('Permission denied')) if not $val;
 
     # Otherwise, we seem to have succeeded, report that
     $self->report_success if not $self->result->failure;
-
-    # Publish the event
-    $self->_setup_event_after_action($event_info);
 
     return 1;
 }

@@ -380,3 +380,6 @@ pushfrag
 Closs
 mis
 CDN
+websocket
+AMQP
+AnyMQ

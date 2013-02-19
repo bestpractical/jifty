@@ -113,6 +113,7 @@ sub options {
         'host=s'     => 'host',
         'u|user=s'   => 'user',
         'g|group=s'  => 'group',
+        's|server=s' => 'server',
     )
 }
 
@@ -205,7 +206,17 @@ sub _run_server {
 
     $args{$_} = $self->{$_} for grep defined $self->{$_}, qw/host user group/;
 
-    $Jifty::SERVER = Plack::Loader->load('Standalone', %args);
+    my $server_class = $self->{server} || 'Standalone';
+    if (Jifty->find_plugin('Jifty::Plugin::PubSub') and $server_class !~ /^(Twiggy|Feersum)$/i) {
+        if (Jifty::Util->try_to_require("Twiggy")) {
+            $server_class = "Twiggy";
+        } elsif (Jifty::Util->try_to_require("Feersum")) {
+            $server_class = "Feersum";
+        } else {
+            die "An event-based PSGI server (i.e. Twiggy, Feersum) is needed to run PubSub or RPC";
+        }
+    }
+    $Jifty::SERVER = Plack::Loader->load($server_class, %args);
     $Jifty::SERVER->run(Jifty->handler->psgi_app);
 }
 

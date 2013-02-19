@@ -873,7 +873,8 @@ sub _do_dispatch {
     $self->log->debug("Dispatching request to ".$self->{path});
 
     # Disable most actions on GET requests
-    Jifty->api->deny_for_get() if $self->_match_method('GET');
+    Jifty->api->deny_for_get() if $self->_match_method('GET')
+        and not Jifty->web->request->is_subrequest;
 
     # Setup -- we we don't abort out of setup, then run the
     # actions and then the RUN stage.

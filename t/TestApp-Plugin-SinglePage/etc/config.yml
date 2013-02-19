@@ -34,9 +34,6 @@ framework:
     - SkeletonApp: {}
     - User: {}
 
-  PubSub: 
-    Backend: Memcached
-    Enable: ~
   SkipAccessControl: 0
   TemplateClass: TestApp::Plugin::SinglePage::View
   Web: 

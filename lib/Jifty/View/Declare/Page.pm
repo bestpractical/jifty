@@ -202,7 +202,7 @@ sub render_pre_content_hook {
 
 =head2 render_jifty_page_detritus
 
-Renders the keybinding and PubSub javascript as well as the wait message
+Renders the keybinding javascript as well as the wait message
 
 =cut
 
@@ -211,13 +211,6 @@ sub render_jifty_page_detritus {
     show('/keybindings');
     with( id => "jifty-wait-message", style => "display: none" ),
         div { _('Loading...') };
-
-    # This is required for jifty server push.  If you maintain your own
-    # wrapper, make sure you have this as well.
-    if ( Jifty->config->framework('PubSub')->{'Enable'} && Jifty::Subs->list )
-    {
-        script { outs_raw('jQuery(document).ready(function(){new Jifty.Subs({}).start()});') };
-    }
 }
 
 sub _render_header { 

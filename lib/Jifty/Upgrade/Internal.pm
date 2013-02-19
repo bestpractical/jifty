@@ -62,4 +62,6 @@ since '0.61210' => sub {
     rename column => 'key', in => 'IPC::PubSub::Cache::JiftyDBI::Stash::Item', to => 'data_key';
 };
 
+# Drop PubSub tables
+
 1;
