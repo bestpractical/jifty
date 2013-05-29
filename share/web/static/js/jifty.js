@@ -296,7 +296,7 @@ Action.prototype = {
         };
         jQuery.each(this.fields(), disable);
         jQuery.each(this.buttons(), disable);
-    },
+    }
 };
 
 /* Forms */
