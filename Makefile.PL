@@ -13,7 +13,6 @@ requires('Class::Data::Inheritable');
 requires('Class::Trigger' => '0.13');
 requires('Clone' => '0.27');
 requires('CGI' => '3.30');
-requires('CGI::Cookie::Splitter');
 requires('CGI::Emulate::PSGI' => 0.06);
 requires('Class::Inspector' => 1.20); # For File::ShareDir on Win32
 requires('Crypt::CBC');
@@ -119,6 +118,10 @@ feature "Event-based publish/subscribe framework" =>
     -default => 0,
     recommends('Web::Hippie'), # AnyMQ Web::Hippie::App::JSFiles
     ;
+
+feature "Client-side session cookies (untested)" =>
+    -default => 0,
+    recommends("CGI::Cookie::Splitter");
 
 feature "RPC support using AMQP" =>
     -default => 0,
