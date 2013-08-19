@@ -121,7 +121,7 @@ feature "Event-based publish/subscribe framework" =>
 
 feature "Client-side session cookies (untested)" =>
     -default => 0,
-    recommends("CGI::Cookie::Splitter");
+    recommends('CGI::Cookie::Splitter');
 
 feature "RPC support using AMQP" =>
     -default => 0,
