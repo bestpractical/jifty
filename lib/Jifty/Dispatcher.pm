@@ -1058,11 +1058,11 @@ sub _compile_condition {
         } elsif ( length($compiled) ) {
 
             # 'foo' => qr{^$cwd/foo}
-            $compiled = "(?<=\\A$self->{cwd}/)$compiled";
+            $compiled = "(?<=\\A\Q$self->{cwd}\E/)$compiled";
         } else {
 
             # empty path -- just match $cwd itself
-            $compiled = "(?<=\\A$self->{cwd})";
+            $compiled = "(?<=\\A\Q$self->{cwd}\E)";
         }
 
         if ( $Dispatcher->{rule} eq 'on' ) {
