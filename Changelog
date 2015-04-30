@@ -1,3 +1,15 @@
+--------------------------------
+Jifty 1.50430 - April 30th, 2015
+--------------------------------
+ * Stop including cssquery back-compat JS
+ * Make the CAS into a durable store
+ * Rewrite pubsub framework, using websockets and AnyMQ
+ * Remove clientside sessions
+ * Refactor how halos work; this changes the default wrapper
+ * Instead of just using Hash::Merge, use a "!" suffix on hash keys to
+   explicitly override the associated site_config value, instead of
+   merging.
+
 ------------------------------
 Jifty 1.10518 - May 17th, 2011
 ------------------------------
