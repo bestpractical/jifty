@@ -1,6 +1,8 @@
+=encoding utf8
+
 =head1 NAME
 
-Jifty::Manual::Tutorial_de - Einführung in Jifty
+Jifty::Manual::Tutorial_de - EinfÃ¼hrung in Jifty
 
 =head1 BESCHREIBUNG
 
@@ -18,28 +20,28 @@ es schreiben.
 
 =head2 Jifty installieren
 
-Nicht wirklich eine große Sache. Wir glauben stark an das DRY (Don't
+Nicht wirklich eine groÃŸe Sache. Wir glauben stark an das DRY (Don't
 Repeat Yourself -- Keine Wiederholungen) Prinzip. Das ist einer der
-großen Gründe, warum wir Perl und das CPAN lieben. Jifty benutzt viel
-Code aus dem CPAN. Bei der letzten Zählung waren es wenigstens 60
+groÃŸen GrÃ¼nde, warum wir Perl und das CPAN lieben. Jifty benutzt viel
+Code aus dem CPAN. Bei der letzten ZÃ¤hlung waren es wenigstens 60
 Pakete. Die meisten Module sind auf vielen Plattformen einsetzbare
 nur in Perl geschriebene Module und sollten ohne Probleme funktionieren.
 
 Wir haben einige Anstrengungen unternommen, damit Sie nicht Ihre Zeit
-damit verbringen müssen, Abhängigkeiten aufzulösen, nur um Jifty zu
+damit verbringen mÃ¼ssen, AbhÃ¤ngigkeiten aufzulÃ¶sen, nur um Jifty zu
 installieren. Das Jifty Installationsprogramm stellt fest, welche
-Module Ihr System benötigt und lädt bei Bedarf die erforderlichen
+Module Ihr System benÃ¶tigt und lÃ¤dt bei Bedarf die erforderlichen
 Module nach. Also machen Sie sich keine Sorgen, Sie werden immer
-gefragt, bevor Änderungen vorgenommen werden.
+gefragt, bevor Ã„nderungen vorgenommen werden.
 
 Auf den meisten Systemen wird Perl mit dem CPAN Modul ausgeliefert,
 womit die Jifty Installation einfach wird:
 
-  # perl -MCPAN -e'install Jifty'       # auf Unix-ähnlichen Systemen
+  # perl -MCPAN -e'install Jifty'       # auf Unix-Ã¤hnlichen Systemen
   # perl -MCPAN -e"install Jifty"       # auf Win32 Systemen
 
 Falls Sie lieber eine C<.tar.gz> Datei von Jifty herunterladen wollen,
-können Sie diese wie folgt installieren:
+kÃ¶nnen Sie diese wie folgt installieren:
 
   # tar xzvf jifty-<version>.tgz
   # cd jifty-<version>
@@ -48,28 +50,28 @@ können Sie diese wie folgt installieren:
   # make test
   # make install
 
-Falls die Tests nicht erfolgreich verlaufen, wäre eine Rückmeldung an
+Falls die Tests nicht erfolgreich verlaufen, wÃ¤re eine RÃ¼ckmeldung an
 uns interessannt. Bitte melden Sie sich bei der Liste
 C<jifty-devel@lists.jifty.org> und melden den Fehler. (Oder sehen Sie
 nach unter L</HILFE> weiter unten wo beschrieben ist, wie Sie sich uns
-anschließen können.)
+anschlieÃŸen kÃ¶nnen.)
 
 =head2 Erstellung eines Rumpfes
 
-Wenn Sie Jifty erfolgreich installiert haben, können Sie Ihre erste
+Wenn Sie Jifty erfolgreich installiert haben, kÃ¶nnen Sie Ihre erste
 Applikation erstellen.
 
-Jifty ist geplantermaßen Minimalistisch. Wenn Sie eine Applikation
-erstellen möchten, kopieren Sie einfach das F<jifty>
+Jifty ist geplantermaÃŸen Minimalistisch. Wenn Sie eine Applikation
+erstellen mÃ¶chten, kopieren Sie einfach das F<jifty>
 Kommandozeilenprogramm in das F<bin/> Unterverzeichnis in Ihr
 Applikations-Verzeichnis.
 
-OK, es ist natürlich hilfreich, ein wenig strukturierter
+OK, es ist natÃ¼rlich hilfreich, ein wenig strukturierter
 vorzugehen. Jifty wird mit Werkzeugen geliefert, die Ihnen helfen, die
 notwendigen Strukturen anzulegen.
 
 Wechseln Sie in ein sicheres Verzeichnis, in dem Sie Ihre Applikation
-anlegen möchten (Jifty erstellt das notwendige Unterverzeichnis für Sie).
+anlegen mÃ¶chten (Jifty erstellt das notwendige Unterverzeichnis fÃ¼r Sie).
 
   # jifty app --name MyWeblog
   Can't guess application root from current path (/tmp) or bin path (/usr/bin)
@@ -101,16 +103,16 @@ Sehen wir uns die einzelnen Verzeichnisse genauer an.
 Innerhalb des F<bin/> Verzeichnisses liegt F<jifty>, die Jifty
 Kommandozentrale. Einige der wichtigsten Befehle sind C<schema>,
 welches ein Datenbank-Schema erstellt oder erneuert und C<server>,
-womit ein funktionsfähiger Webserver gestartet wird. Um die von
+womit ein funktionsfÃ¤higer Webserver gestartet wird. Um die von
 F<jifty> verstandenen Kommandos herauszufinden, tippen Sie:
 
     jifty help
 
 =item etc
 
-Konfigurationsdateien leben in F<etc/> und Jifty wird vernünftige
+Konfigurationsdateien leben in F<etc/> und Jifty wird vernÃ¼nftige
 Standardwerte verwenden, sollte keine Konfigurationsdatei vorhanden
-sein oder benötigte Einträge fehlen.
+sein oder benÃ¶tigte EintrÃ¤ge fehlen.
 
 =item doc
 
@@ -125,7 +127,7 @@ F<server.log> und F<error.log> in das F<log/> Verzeichnis.
 
 =item share/web/templates
 
-Jifty nutzt L<HTML::Mason> als sein primäres Template System. Legen
+Jifty nutzt L<HTML::Mason> als sein primÃ¤res Template System. Legen
 Sie die Templates Ihrer Appkikation in F<share/web/templates/>. Von
 Haus aus wird Jifty mit einer vordefinierten Applikation geliefert,
 die im Verzeichnis F<share/web/templates/> installiert wird. Diese
@@ -133,14 +135,14 @@ vordefinierte Applikation ist ein bequemer Weg um eine einfache eigene
 Applikation schnell zum Laufen zu bringen, jedoch sind sicher
 Anpassungen notwendig, wenn Ihre Applikation komplexer wird.
 
-Sie können schnell herausfinden, wo Jifty seine vordefinierten
+Sie kÃ¶nnen schnell herausfinden, wo Jifty seine vordefinierten
 Templates ablegt:
 
   perl -MJifty::Util -e 'print Jifty::Util->share_root'
 
 =item share/web/static
 
-Einige einfache Dinge, die zu Ihrer Applikation gehören, brauchen
+Einige einfache Dinge, die zu Ihrer Applikation gehÃ¶ren, brauchen
 nicht (oder I<sollten nicht>) durch das Template-System laufen.
 
 Stecken Sie solche Dateien einfach in das F<share/web/static/>
@@ -154,11 +156,11 @@ wo Jifty seine Standard-Templates ablegt.
 
 =item lib/MyWeblog
 
-Eine nähere Beschreibung des Objekt Modells und der
+Eine nÃ¤here Beschreibung des Objekt Modells und der
 Verzeichnishierarchie finden Sie unter L<Jifty::Manual::ObjectModel>
 
-Zum Bau einer funktionsfähigen einfachen Applikation brauchen Sie sich
-nur Gedanken über zwei Arten von Klassen, B<Models> und B<Actions> zu
+Zum Bau einer funktionsfÃ¤higen einfachen Applikation brauchen Sie sich
+nur Gedanken Ã¼ber zwei Arten von Klassen, B<Models> und B<Actions> zu
 machen.
 
 =item lib/MyWeblog/Model
@@ -171,38 +173,38 @@ Aktualisieren des Datenbank-Schemas, wenn dies notwendig sein sollte.
 
 =item lib/MyWeblog/Action
 
-Als wir gesagt haben, daß Sie sich nur über B<Models> und B<Actions>
-den Kopf zerbrechen müssen, haben wir nicht die ganze Wahrheit
-gesagt. Jifty kümmert sich um grundlegende Datenbank Interaktionen
+Als wir gesagt haben, daÃŸ Sie sich nur Ã¼ber B<Models> und B<Actions>
+den Kopf zerbrechen mÃ¼ssen, haben wir nicht die ganze Wahrheit
+gesagt. Jifty kÃ¼mmert sich um grundlegende Datenbank Interaktionen
 (C<CREATE (Anlegen), READ (Lesen), UPDATE (Aktualisieren), DELETE
-(Löschen)>). Entsprechend benötigte B<Actions> werden für die
-jeweiligen B<Models> automatisch erzeugt und können jederzeit
-verändert werden, sollte dies notwendig werden.
+(LÃ¶schen)>). Entsprechend benÃ¶tigte B<Actions> werden fÃ¼r die
+jeweiligen B<Models> automatisch erzeugt und kÃ¶nnen jederzeit
+verÃ¤ndert werden, sollte dies notwendig werden.
 
 =item t
 
-Jifty legt bereits Test-Routinen für Ihre Applikation an, kann
-allerdings nicht die Tests für Sie schreiben. (Es erstellt jedoch
-einfache Tests für die Model-Klassen, die Sie anlegen.)
+Jifty legt bereits Test-Routinen fÃ¼r Ihre Applikation an, kann
+allerdings nicht die Tests fÃ¼r Sie schreiben. (Es erstellt jedoch
+einfache Tests fÃ¼r die Model-Klassen, die Sie anlegen.)
 
 =item var
 
-Jifty speichert Cache-Dateien hier, während der Server
-läuft. Normalerweise werden Sie hier nichts tun müssen.
+Jifty speichert Cache-Dateien hier, wÃ¤hrend der Server
+lÃ¤uft. Normalerweise werden Sie hier nichts tun mÃ¼ssen.
 
 =back
 
 =head2 Erstellung eines Datenmodells
 
-Wie Sie sich aus der Tatsache, daß diese Tutorial-Applikation
-B<MyWeblog> heißt, vorstellen können, ist das hier vorgestellte
-Beispiel ein einfaches Weblog. Künftige Tutorials werden
+Wie Sie sich aus der Tatsache, daÃŸ diese Tutorial-Applikation
+B<MyWeblog> heiÃŸt, vorstellen kÃ¶nnen, ist das hier vorgestellte
+Beispiel ein einfaches Weblog. KÃ¼nftige Tutorials werden
 Authentifizierung, Kommentare sowie RSS und Atom Feeds beschreiben.
 
 =head3 Posts
 
 Weblogs konzentrieren sich rund um Posts, daher ist es keine
-Überraschung, daß unser erstes Model, das wir erzeugen werden, ein
+Ãœberraschung, daÃŸ unser erstes Model, das wir erzeugen werden, ein
 C<Post> ist.
 
   # cd MyWeblog
@@ -210,10 +212,10 @@ C<Post> ist.
   Writing file /tmp/MyWeblog/t/00-model-Post.t
   Writing file /tmp/MyWeblog/lib/MyWeblog/Model/Post.pm
 
-Großartig! Nun haben Sie ein B<Post> Model (Nur, daß es im Augenblick
+GroÃŸartig! Nun haben Sie ein B<Post> Model (Nur, daÃŸ es im Augenblick
 noch nichts modelliert).
 
-Öffnen Sie F<lib/MyWeblog/Model/Post.pm> in Ihrem Lieblings-Editor.
+Ã–ffnen Sie F<lib/MyWeblog/Model/Post.pm> in Ihrem Lieblings-Editor.
 
 Sie sollten etwas sehen wie:
 
@@ -231,18 +233,18 @@ Sie sollten etwas sehen wie:
   
   1;
 
-Nun ist es an der Zeit, der Model Klasse etwas über Posts zu
-erzählen. Fangen wir damit an, einem Post einen C<body> (Rumpf) und
+Nun ist es an der Zeit, der Model Klasse etwas Ã¼ber Posts zu
+erzÃ¤hlen. Fangen wir damit an, einem Post einen C<body> (Rumpf) und
 einen C<title> (Titel) zu geben. (In einem kommenden Tutorial wird die
-Applikation voll "Folksonomy"-tauglich werden, was wir durch Anfügen
+Applikation voll "Folksonomy"-tauglich werden, was wir durch AnfÃ¼gen
 einer C<category> (Kategorie) und Erweitern der C<category> zu einer
-C<tags> (Indexierung, Etikett) Tabelle erreichen könnten.)
+C<tags> (Indexierung, Etikett) Tabelle erreichen kÃ¶nnten.)
 
 Editieren Sie unter dieser Zeile:
 
   use MyWeblog::Record schema {
 
-Fügen Sie diese Zeilen an:
+FÃ¼gen Sie diese Zeilen an:
 
   column title =>
         type is 'text',
@@ -258,11 +260,11 @@ Abspeichern bitte nicht vergessen.
 
 =head2 Erstellung der Datenbank
 
-Gut. Nun ist es an der Zeit, die Datenbank zu erstellen. Standardgemäß
+Gut. Nun ist es an der Zeit, die Datenbank zu erstellen. StandardgemÃ¤ÃŸ
 benutzt Jifty eine SQLite Datenbank. Wenn Sie lieber PostgreSQL oder
-MySQL verwenden möchten, dann können Sie Anpassungen an
+MySQL verwenden mÃ¶chten, dann kÃ¶nnen Sie Anpassungen an
 F<etc/jifty.yml> vornehmen. (Sehen Sie dazu in C<Jifty::Config> nach,
-um mehr darüber zu erfahren.)
+um mehr darÃ¼ber zu erfahren.)
 
   # jifty schema --setup
   INFO - Generating SQL for application MyWeblog...
@@ -274,7 +276,7 @@ um mehr darüber zu erfahren.)
 
 =head2 Start des Jifty Application Server
 
-OK. Nun haben Sie eine lauffähige, aber noch einfache
+OK. Nun haben Sie eine lauffÃ¤hige, aber noch einfache
 Applikation. Starten Sie den Webserver und schauen Sie sich um. Werfen
 Sie einen Blick auf die AJAX gesteuerte Administrations-Umgebung, die
 Online Dokumentation und das Pony.
@@ -289,7 +291,7 @@ sein.
 Auf den meisten Plattformen wird ein einfaches "jifty server" Kommando
 ebenfalls funktionieren. :)
 
-=head2 Erstellung der Benutzeroberfläche
+=head2 Erstellung der BenutzeroberflÃ¤che
 
 Die Administrations-Umgebung gibt Ihnen zwar alles, was Sie brauchen,
 um mit den Daten der Applikation zu arbeiten, ist aber noch lange kein
@@ -302,7 +304,7 @@ Erstellen Sie eine Seite zum Posten eines neuen Weblog Eintrages:
   # cd share/web/templates/
 
 Erstellen Sie eine neue Datei namens F<post> in Ihrem Editor. Stellen
-Sie sicher, daß diese so aussieht:
+Sie sicher, daÃŸ diese so aussieht:
 
   <%init>
   my $action = Jifty->web->new_action(class => 'CreatePost');
@@ -318,29 +320,29 @@ Sie sicher, daß diese so aussieht:
   </&>
 
 Ja, dies ist eine Template Datei in L<HTML::Mason> Syntax. Wenn Sie
-noch nicht genug über Mason wissen, empfehlen wir dessen Online
-Dokumentation für mehr Details. I<Mason Templates> sollten jeweils in
+noch nicht genug Ã¼ber Mason wissen, empfehlen wir dessen Online
+Dokumentation fÃ¼r mehr Details. I<Mason Templates> sollten jeweils in
 der ersten Spalte der Datei beginnen. Besonders wichtig sind die
-C<E<lt>%initE<gt>> und C<E<lt>/%initE<gt>> Blöcke, die unbedingt
-lingsbündig geschrieben werden müssen.
+C<E<lt>%initE<gt>> und C<E<lt>/%initE<gt>> BlÃ¶cke, die unbedingt
+lingsbÃ¼ndig geschrieben werden mÃ¼ssen.
 
 =head3 Anzeige
 
-Es ist relativ einfach, eine I<einfache> Auflistung von Einträgen zu
-erhalten und ein wenig aufwändiger, eine AJAX gesteuerte seitenweise
+Es ist relativ einfach, eine I<einfache> Auflistung von EintrÃ¤gen zu
+erhalten und ein wenig aufwÃ¤ndiger, eine AJAX gesteuerte seitenweise
 Darstellung zu bekommen. Hier beschreiben wir, wie man beides macht;
-Sie können entscheiden, welches Ihnen besser gefällt.
+Sie kÃ¶nnen entscheiden, welches Ihnen besser gefÃ¤llt.
 
-(Falls Sie per Kopieren und Einfügen den Beispiel-Code von unten
-übertragen, stellen Sie sicher, daß er in einer Spalte erscheint,
+(Falls Sie per Kopieren und EinfÃ¼gen den Beispiel-Code von unten
+Ã¼bertragen, stellen Sie sicher, daÃŸ er in einer Spalte erscheint,
 ansonsten wird es nicht funktionieren.)
 
 =head4 Der schnelle Weg
 
 Erstellen Sie eine neue Datei F<index.html> im F<share/web/templates>
 Verzeichnis in Ihrem Editor. (Der Webserver wird die URL
-C</index.html> als die I<Standard> Seite für Ihre Applikation
-annehmen.) Befüllen Sie die Datei wie folgt:
+C</index.html> als die I<Standard> Seite fÃ¼r Ihre Applikation
+annehmen.) BefÃ¼llen Sie die Datei wie folgt:
 
   <%init>
   my $posts = MyWeblog::Model::PostCollection->new();
@@ -358,22 +360,22 @@ annehmen.) Befüllen Sie die Datei wie folgt:
 
 (Entfernen Sie die Leerzeichen am Zeilenanfang!)
 
-=head4 Die aufwändige Art, mit der Sie viele coole Dinge bekommen
+=head4 Die aufwÃ¤ndige Art, mit der Sie viele coole Dinge bekommen
 
-Die I<aufwändige Art> benutzt eines von Jifty's fortgeschrittenen
+Die I<aufwÃ¤ndige Art> benutzt eines von Jifty's fortgeschrittenen
 Eigenschaften: I<PageRegions> (Seitenbereiche). Diese Bereiche
 erlauben Ihrer Applikation einzelne Bestandteile einer Seite
-unabhängig voneinander neu zu laden. Das funktioniert sowohl unter
+unabhÃ¤ngig voneinander neu zu laden. Das funktioniert sowohl unter
 Benutzung von AJAX auf modernen Browsern, als auch mit GET Requests
-auf nicht JavaScript fähigen Browsern wie C<lynx>, C<w3m> oder dem
+auf nicht JavaScript fÃ¤higen Browsern wie C<lynx>, C<w3m> oder dem
 Browser Ihres Handys.
 
-Der Nachteil dieser Methode ist, daß jeder Seiten-Bereich in einer
-eigenen I<Fragment> Datei vorliegen muß.
+Der Nachteil dieser Methode ist, daÃŸ jeder Seiten-Bereich in einer
+eigenen I<Fragment> Datei vorliegen muÃŸ.
 
-Die aufwändige Art beginnt zunächst genauso wie der schnelle
+Die aufwÃ¤ndige Art beginnt zunÃ¤chst genauso wie der schnelle
 Weg. Erstellen Sie eine neue Datei mit dem Namen
-F<share/web/templates/index.html> in Ihrem Editor. Befüllen Sie die
+F<share/web/templates/index.html> in Ihrem Editor. BefÃ¼llen Sie die
 Datei mit:
 
   <&| /_elements/wrapper, title => Jifty->config->framework('ApplicationName') &>
@@ -382,10 +384,10 @@ Datei mit:
                         path => "/fragments/page_of_posts") %>
   </&>
 
-Wenn Sie mitgedacht haben, dann haben Sie bestimmt schon erraten, daß
-Sie als nächstes eine Datei
+Wenn Sie mitgedacht haben, dann haben Sie bestimmt schon erraten, daÃŸ
+Sie als nÃ¤chstes eine Datei
 F<share/web/templates/fragments/page_of_posts> mit dem nachfolgenden
-Inhalt anlegen dürfen:
+Inhalt anlegen dÃ¼rfen:
 
   <%args>
   $page => 1
@@ -396,7 +398,7 @@ Inhalt anlegen dürfen:
   $posts->set_page_info( current_page => $page,
                          per_page     => 15
                        );
-  $m->out("Keine Einträge.") if ($posts->pager->total_entries == 0);
+  $m->out("Keine EintrÃ¤ge.") if ($posts->pager->total_entries == 0);
 
   </%init>
   % if ($posts->pager->last_page > 1) {
@@ -413,15 +415,15 @@ Inhalt anlegen dürfen:
     <% Jifty->web->link( label => "vorherige Seite", onclick => { args => { page => $posts->pager->previous_page } } ) %>
   % }
   % if ($posts->pager->next_page) {
-    <% Jifty->web->link( label => "nächste Seite", onclick => { args => { page => $posts->pager->next_page } } ) %>
+    <% Jifty->web->link( label => "nÃ¤chste Seite", onclick => { args => { page => $posts->pager->next_page } } ) %>
   % }
 
 Nun starten Sie den Jifty Webserver erneut. Erstellen Sie einen Post
 indem Sie die URL C</post> auf Ihrem Webserver anfahren. Erstellen Sie
-wenigstens 15 Einträge und beobachten Sie dabei, wie Jifty Ihnen die
-AJAX Knöpfe C<vorherige Seite> und C<nächste Seite> erstellt. Schalten
+wenigstens 15 EintrÃ¤ge und beobachten Sie dabei, wie Jifty Ihnen die
+AJAX KnÃ¶pfe C<vorherige Seite> und C<nÃ¤chste Seite> erstellt. Schalten
 Sie JavaScript aus oder verwenden Sie lynx und beobachten Sie wie AJAX
-automatisch zurückfällt zum vollständigen Laden der jeweils neuen
+automatisch zurÃ¼ckfÃ¤llt zum vollstÃ¤ndigen Laden der jeweils neuen
 Seite. Alles umsonst. Danke, Jifty!
 
 =head3 Hey, woher kam diese Klasse?
@@ -429,34 +431,34 @@ Seite. Alles umsonst. Danke, Jifty!
 Wenn Sie genau aufgepasst haben, dann haben Sie sich sicher gefragt,
 woher die C<MyWeblog::Model::PostCollection> Klasse kam. Es gibt keine
 Datei mit dem Namen F<PostCollection.pm>. Jifty setzt
-C<Jifty::ClassLoader> ein, um einige Klassen für Sie zu
-erstellen. Selbstverständlich könnten Sie das ebenfalls tun. Lesen Sie
-unter L<Jifty::ClassLoader> mehr darüber.
+C<Jifty::ClassLoader> ein, um einige Klassen fÃ¼r Sie zu
+erstellen. SelbstverstÃ¤ndlich kÃ¶nnten Sie das ebenfalls tun. Lesen Sie
+unter L<Jifty::ClassLoader> mehr darÃ¼ber.
 
 =head2 Navigation
 
-Natürlich ist es unschön, sich die URL der Post Seite merken zu
-müssen. Um einen B<Post> Eintrag im Menü zu bekommen, müssen Sie die
-Standard Menüs überschreiben.
+NatÃ¼rlich ist es unschÃ¶n, sich die URL der Post Seite merken zu
+mÃ¼ssen. Um einen B<Post> Eintrag im MenÃ¼ zu bekommen, mÃ¼ssen Sie die
+Standard MenÃ¼s Ã¼berschreiben.
 
-Jifty's I<Standard> Menüs werden durch F<_elements/nav> in den
+Jifty's I<Standard> MenÃ¼s werden durch F<_elements/nav> in den
 Standard Applikations Templates (die mit dem Pony) erzeugt. Im
-Augenblick bleibt Ihnen nichts anderes übrig, als F<_elements/nav> zu
-überschreiben. (Wir arbeiten an Methoden, dies besser zu gestalten.)
+Augenblick bleibt Ihnen nichts anderes Ã¼brig, als F<_elements/nav> zu
+Ã¼berschreiben. (Wir arbeiten an Methoden, dies besser zu gestalten.)
 
 Legen Sie innerhalb des Verzeichnisses F<share/web/templates> Ihrer
 Applikation ein Verzeichnis F<_elements> an.
 
   mkdir share/web/templates/_elements
 
-Sie möchten bestimmt mit den normalen Jifty Templates arbeiten, also
-müssen wir nur den C<< $top->child( Post... ) >> Teil anfügen.
+Sie mÃ¶chten bestimmt mit den normalen Jifty Templates arbeiten, also
+mÃ¼ssen wir nur den C<< $top->child( Post... ) >> Teil anfÃ¼gen.
 
   cat $(perl -MJifty::Util -e 'print Jifty::Util->share_root' \
     )/web/templates/_elements/nav > share/web/templates/_elements/nav
 
-Ansonsten können Sie innerhalb F<_elements> auch gerne eine neue Datei
-namens C<nav> anlegen, die so aussehen könnte:
+Ansonsten kÃ¶nnen Sie innerhalb F<_elements> auch gerne eine neue Datei
+namens C<nav> anlegen, die so aussehen kÃ¶nnte:
 
   <%init>
   my $top = Jifty->web->navigation;
@@ -465,15 +467,15 @@ namens C<nav> anlegen, die so aussehen könnte:
                        label => "Neuen Eintrag");
   </%init>
 
-Mehr Information über das Menü System können Sie der Dokumentation
+Mehr Information Ã¼ber das MenÃ¼ System kÃ¶nnen Sie der Dokumentation
 unter L<Jifty::Web::Menu> entnehmen.
 
 =head2 Das war's
 
-Das war alles, das Sie benötigen, um anzufangen, Jifty Applikationen
+Das war alles, das Sie benÃ¶tigen, um anzufangen, Jifty Applikationen
 zu erstellen. Wir arbeiten hart daran, Jifty noch einfacher einsetzbar
 zu machen und die I<dicken Brocken> dieses Tutorials so bald als
-möglich zu vereinfachen.
+mÃ¶glich zu vereinfachen.
 
 Bitte nehmen Sie auf der C<jifty-devel> Mailing Liste Kontakt mit uns
 auf, wenn Sie Fragen haben, wie man Jifty benutzt oder was Sie
@@ -493,40 +495,40 @@ Funktion.
 
 Wenn Ihr Server mit eingeschaltetem Administrations-Modus arbeitet
 (die Konfigurations-Einstellung C<AdminMode> fehlt oder sie ist
-ungleich Null), dann können Sie den "Online Docs" Link in Ihrem
-Browser benutzen, um eine ausführliche modulweise Dokumentation zu
+ungleich Null), dann kÃ¶nnen Sie den "Online Docs" Link in Ihrem
+Browser benutzen, um eine ausfÃ¼hrliche modulweise Dokumentation zu
 Jifty zu erhalten.
 
 =head2 Beitreten der Mailing Liste
 
 C<jifty-devel@lists.jifty.org> ist der Ort, an dem wir besprechen, wie
-wir Jifty erstellen, was es an Problemen oder Vorschlägen gibt und so
+wir Jifty erstellen, was es an Problemen oder VorschlÃ¤gen gibt und so
 weiter.
 
 Um der Liste beizutreten, senden Sie eine Mail an
-C<jifty-devel-subscribe@lists.jifty.org>. Bitte beachten Sie, daß die
-Kommunikation in dieser Liste in englischer Sprache geführt wird.
+C<jifty-devel-subscribe@lists.jifty.org>. Bitte beachten Sie, daÃŸ die
+Kommunikation in dieser Liste in englischer Sprache gefÃ¼hrt wird.
 
 =head2 Unser Wiki
 
-Wir haben ein Wiki! (Tatsächlich ist das Wiki die hauptsächliche
+Wir haben ein Wiki! (TatsÃ¤chlich ist das Wiki die hauptsÃ¤chliche
 Website von Jifty).
 
 Besuchen Sie uns unter L<http://jifty.org/>, lesen Sie und tragen Sie
 etwas bei!
 
 Das Wiki wird von I<Wifty> betrieben, einem Wiki das auf Jifty
-basiert. Sein Code ist frei verfügbar in unserem Subversion
+basiert. Sein Code ist frei verfÃ¼gbar in unserem Subversion
 Repository.
 
 =head1 FEHLER MELDEN
 
-In dieser frühen Phase von Jifty melden Sie bitte alle Fehler, die
+In dieser frÃ¼hen Phase von Jifty melden Sie bitte alle Fehler, die
 Ihnen auffallen, an C<jifty-devel@lists.jifty.org>.
 
-=head1 KÜNFTIGE TUTORIALS
+=head1 KÃœNFTIGE TUTORIALS
 
-Künftige Tutorials werden enthalten:
+KÃ¼nftige Tutorials werden enthalten:
 
 =over 4
 

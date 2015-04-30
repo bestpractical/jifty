@@ -1,3 +1,5 @@
+=encoding utf8
+
 =head1 NAME
 
 Jifty::Manual::Actions - 讓 Jifty 做事
