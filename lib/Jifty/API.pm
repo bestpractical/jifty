@@ -228,7 +228,7 @@ Method that L</allow>, L</deny>, L</hide>, and L</show> call internally;
 I<POLARITY> is one of C<allow>, C<deny>, C<hide>, or C<show>. Limits are
 evaluated in the order they're called. The last limit that applies will be the
 one which takes effect. Regexes are matched against the class; strings are
-fully L</qualify|qualified> and used as an exact match against the class name.
+fully L<qualified|/qualify> and used as an exact match against the class name.
 The base set of restrictions (which is reset every request) is set in
 L</reset>, and usually modified by the application's L<Jifty::Dispatcher> if
 need be.
