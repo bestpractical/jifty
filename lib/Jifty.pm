@@ -1,9 +1,9 @@
 use warnings;
 use strict;
+use utf8;
 
 package Jifty;
 use Data::UUID;
-use encoding 'utf8';
 use Class::Trigger;
 
 BEGIN {
