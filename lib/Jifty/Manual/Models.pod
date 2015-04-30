@@ -60,7 +60,7 @@ Creating a model has important side effects:
 
 =back
 
-To get all these things done, Jifty allows to describe the schema
+To get all these things done, Jifty allows one to describe the schema
 definition in a simply comprehensible but powerful syntax that looks
 more like written text than a programming language. The schema
 definition is made inside the C<MyApp::Model::XXX::Schema> package and

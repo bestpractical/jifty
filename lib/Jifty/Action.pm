@@ -491,7 +491,7 @@ sub _form_widget {
         # It is in fact a form field for this action
 
         my $sticky = 0;
-        # $sticky can be overriden per-parameter
+        # $sticky can be overridden per-parameter
         if ( defined $field_info->{sticky} ) {
             $sticky = $field_info->{sticky};
         }

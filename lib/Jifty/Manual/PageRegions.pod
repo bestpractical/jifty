@@ -199,7 +199,7 @@ First of all you'll need a region's component F<templates/additional_info>:
 In this component we have one argument C<$collapsed> that controls either
 we show link or information. By default we prefer hidden state and in this
 case we show only the link with an C<onclick> action that refreshes the
-current region, however value of the argument is overriden.
+current region, however value of the argument is overridden.
 
 You can add any arguments you want to this component that may be required
 to show the additional information, for example an id of some object, but

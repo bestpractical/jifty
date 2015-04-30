@@ -453,7 +453,7 @@ F<PostCollection.pm>。 Jifty 使用 C<Jifty::ClassLoader> 來自動產生許多
         $self->render_header();
         body {
 
-            # so that we dont show menu template here.
+            # so that we don't show menu template here.
 
             $self->render_pre_content_hook();
             $body_code->();

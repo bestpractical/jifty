@@ -31,7 +31,7 @@ Page classes implement such layouts.
 
 It's very hard to extended L<Jifty::View::Declare::Page> class as
 it's written in such a way that forces you to copy&paste some
-internals from the class to make overriden method work and don't
+internals from the class to make overridden method work and don't
 break things.
 
 I think this implementation is much better thing. To use this class
