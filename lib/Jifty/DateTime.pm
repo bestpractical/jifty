@@ -299,16 +299,11 @@ sub new_from_string {
             $args{time_zone} ? (time_zone => $args{time_zone}) : (),
         );
 
-        my $dt_now = $class->now;
-        my $now = $dt_now->ymd . '-' . $dt_now->hms;
-
         require Date::Manip;
 
-        # TZ sets the timezone for parsing
-        # ConvTZ sets the output timezone
         # ForceDate forces the current date to be now in the user's timezone,
         #    if we don't set it then DM uses the machine's timezone
-        Date::Manip::Date_Init("TZ=$offset", "ConvTZ=+0000", "ForceDate=$now");
+        Date::Manip::Date_Init("ForceDate=now,$offset");
         $epoch = Date::Manip::UnixDate( $string, "%o" );
     }
 
