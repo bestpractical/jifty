@@ -2,6 +2,7 @@ use inc::Module::Install 1.05;
 name('Jifty');
 license('Perl');
 perl_version '5.8.3';
+repository('https://github.com/bestpractical/jifty');
 requires('Any::Moose');
 requires('App::CLI' => 0.08 ); # App::CLI::Command::Help App::CLI::Command
 requires('Cache::Cache'); #Cache::FileCache
