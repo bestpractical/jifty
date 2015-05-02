@@ -1,4 +1,4 @@
-use inc::Module::Install 0.46;
+use inc::Module::Install 1.05;
 name('Jifty');
 license('Perl');
 perl_version '5.8.3';
@@ -138,7 +138,7 @@ feature 'Development of a jifty application' =>
     -default => 1,
     recommends('DBD::SQLite' => 1.11),
     recommends('Test::Base' => 0.44),            # Test::Base::Filter
-    recommends('Module::Install::Admin' => '0.50'),
+    recommends('Module::Install::Admin' => '1.05'),
     recommends('Test::HTML::Lint' => 0),
     recommends('Test::MockModule' => '0.05'),
     recommends('Test::MockObject' => '1.07'),
@@ -156,7 +156,7 @@ feature 'Development of the jifty framework' =>
     recommends('Class::Accessor::Named' => 0),
     recommends('Devel::Cover' => 0),
     recommends('Module::CoreList' => 0),
-    recommends('Module::Install::Admin' => '0.50'),
+    recommends('Module::Install::Admin' => '1.05'),
     ;
 
 feature 'Improved halos' =>
