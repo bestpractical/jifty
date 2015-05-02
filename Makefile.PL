@@ -1,7 +1,8 @@
-use inc::Module::Install 0.46;
+use inc::Module::Install 1.05;
 name('Jifty');
 license('Perl');
 perl_version '5.8.3';
+repository('https://github.com/bestpractical/jifty');
 requires('Any::Moose');
 requires('App::CLI' => 0.08 ); # App::CLI::Command::Help App::CLI::Command
 requires('Cache::Cache'); #Cache::FileCache
@@ -110,7 +111,7 @@ feature "FastCGI support" =>
     ;
 
 feature "Memcached support for serving compressed CSS and JS from Jifty's CAS" =>
-    -default => 1,
+    -default => ($^O eq 'MSWin32'?0:1),
     recommends('Cache::Memcached' => 1.25),
     ;
 
@@ -138,7 +139,7 @@ feature 'Development of a jifty application' =>
     -default => 1,
     recommends('DBD::SQLite' => 1.11),
     recommends('Test::Base' => 0.44),            # Test::Base::Filter
-    recommends('Module::Install::Admin' => '0.50'),
+    recommends('Module::Install::Admin' => '1.05'),
     recommends('Test::HTML::Lint' => 0),
     recommends('Test::MockModule' => '0.05'),
     recommends('Test::MockObject' => '1.07'),
@@ -156,7 +157,7 @@ feature 'Development of the jifty framework' =>
     recommends('Class::Accessor::Named' => 0),
     recommends('Devel::Cover' => 0),
     recommends('Module::CoreList' => 0),
-    recommends('Module::Install::Admin' => '0.50'),
+    recommends('Module::Install::Admin' => '1.05'),
     ;
 
 feature 'Improved halos' =>
