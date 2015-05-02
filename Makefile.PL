@@ -110,7 +110,7 @@ feature "FastCGI support" =>
     ;
 
 feature "Memcached support for serving compressed CSS and JS from Jifty's CAS" =>
-    -default => 1,
+    -default => ($^O eq 'MSWin32'?0:1),
     recommends('Cache::Memcached' => 1.25),
     ;
 
